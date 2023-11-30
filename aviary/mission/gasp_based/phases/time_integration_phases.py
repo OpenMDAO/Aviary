@@ -9,8 +9,7 @@ from aviary.mission.gasp_based.ode.flight_path_ode import FlightPathODE
 from aviary.mission.gasp_based.phases.landing_group import LandingSegment
 from aviary.mission.gasp_based.ode.groundroll_ode import GroundrollODE
 from aviary.mission.gasp_based.ode.rotation_ode import RotationODE
-from aviary.mission.gasp_based.ode.time_integration_base_classes import (
-    SGMTrajBase, SimuPyProblem)
+from aviary.mission.gasp_based.ode.time_integration_base_classes import SimuPyProblem
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import AlphaModes, AnalysisScheme, SpeedType
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission

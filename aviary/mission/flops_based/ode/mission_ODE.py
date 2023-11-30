@@ -9,8 +9,9 @@ from aviary.mission.flops_based.ode.mission_EOM import MissionEOM
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import promote_aircraft_and_mission_vars
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.variable_info.variables import Dynamic, Mission
+from aviary.variable_info.variables import Dynamic, Mission, Aircraft
 from aviary.variable_info.variables_in import VariablesIn
+from aviary.variable_info.enums import AnalysisScheme
 
 
 class ExternalSubsystemGroup(om.Group):
@@ -42,6 +43,12 @@ class MissionODE(om.Group):
         self.options.declare(
             'use_actual_takeoff_mass', default=False,
             desc='flag to use actual takeoff mass in the climb phase, otherwise assume 100 kg fuel burn')
+        self.options.declare(
+            "analysis_scheme",
+            default=AnalysisScheme.COLLOCATION,
+            types=AnalysisScheme,
+            desc="The analysis method that will be used to close the trajectory; for example collocation or time integration",
+        )
 
     def setup(self):
         options = self.options
@@ -50,6 +57,14 @@ class MissionODE(om.Group):
         core_subsystems = options['core_subsystems']
         subsystem_options = options['subsystem_options']
         engine_count = len(aviary_options.get_val('engine_models'))
+
+        blank_execcomp = om.ExecComp()
+        blank_execcomp.add_input('t_curr')
+        blank_execcomp.add_input(Dynamic.Mission.RANGE, units='m')
+        self.add_subsystem('t_curr',
+                           blank_execcomp,
+                           promotes_inputs=['t_curr', Dynamic.Mission.RANGE]
+                           )
 
         self.add_subsystem(
             'input_port',
@@ -123,6 +138,36 @@ class MissionODE(om.Group):
                 Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
                 Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.ALTITUDE_RATE_MAX,
                 Dynamic.Mission.RANGE_RATE])
+
+        self.set_input_defaults(Mission.Design.GROSS_MASS, val=1, units='kg')
+        self.set_input_defaults(
+            Aircraft.Fuselage.CHARACTERISTIC_LENGTH, val=1, units='ft')
+        self.set_input_defaults(Aircraft.Fuselage.FINENESS, val=1, units='unitless')
+        self.set_input_defaults(Aircraft.Fuselage.WETTED_AREA, val=1, units='ft**2')
+        self.set_input_defaults(
+            Aircraft.VerticalTail.CHARACTERISTIC_LENGTH, val=1, units='ft')
+        self.set_input_defaults(Aircraft.VerticalTail.FINENESS, val=1, units='unitless')
+        self.set_input_defaults(Aircraft.VerticalTail.WETTED_AREA, val=1, units='ft**2')
+        self.set_input_defaults(
+            Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH, val=1, units='ft')
+        self.set_input_defaults(Aircraft.HorizontalTail.FINENESS,
+                                val=1, units='unitless')
+        self.set_input_defaults(
+            Aircraft.HorizontalTail.WETTED_AREA, val=1, units='ft**2')
+        self.set_input_defaults(Aircraft.Wing.CHARACTERISTIC_LENGTH, val=1, units='ft')
+        self.set_input_defaults(Aircraft.Wing.FINENESS, val=1, units='unitless')
+        self.set_input_defaults(Aircraft.Wing.WETTED_AREA, val=1, units='ft**2')
+        self.set_input_defaults(
+            Aircraft.Wing.SPAN_EFFICIENCY_FACTOR, val=1, units='unitless')
+        self.set_input_defaults(Aircraft.Wing.TAPER_RATIO, val=1, units='unitless')
+        self.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD,
+                                val=1, units='unitless')
+        self.set_input_defaults(Aircraft.Wing.SWEEP, val=1, units='deg')
+        self.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, val=1, units='unitless')
+        self.set_input_defaults(
+            Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, val=1, units='unitless')
+        self.set_input_defaults(
+            Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR, val=1, units='unitless')
 
         self.set_input_defaults(Dynamic.Mission.MASS, val=np.ones(nn), units='kg')
         self.set_input_defaults(Dynamic.Mission.VELOCITY, val=np.ones(nn), units='m/s')
