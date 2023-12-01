@@ -5,7 +5,7 @@ from dymos.models.atmosphere import USatm1976Comp
 from aviary.mission.flops_based.ode.mission_EOM import MissionEOM
 from aviary.subsystems.aerodynamics.flops_based.mach_number import MachNumber
 
-from aviary.mission.flops_based.ode.mission_EOM import MissionEOM
+from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import promote_aircraft_and_mission_vars
 from aviary.variable_info.variable_meta_data import _MetaData
@@ -53,18 +53,18 @@ class MissionODE(om.Group):
     def setup(self):
         options = self.options
         nn = options['num_nodes']
+        analysis_scheme = options['analysis_scheme']
         aviary_options = options['aviary_options']
         core_subsystems = options['core_subsystems']
         subsystem_options = options['subsystem_options']
         engine_count = len(aviary_options.get_val('engine_models'))
 
-        blank_execcomp = om.ExecComp()
-        blank_execcomp.add_input('t_curr')
-        blank_execcomp.add_input(Dynamic.Mission.RANGE, units='m')
-        self.add_subsystem('t_curr',
-                           blank_execcomp,
-                           promotes_inputs=['t_curr', Dynamic.Mission.RANGE]
-                           )
+        if analysis_scheme is AnalysisScheme.SHOOTING:
+            SGM_required_inputs = {
+                't_curr': {'units': 's'},
+                Dynamic.Mission.RANGE: {'units': 'm'},
+            }
+            add_SGM_required_inputs(self, SGM_required_inputs)
 
         self.add_subsystem(
             'input_port',

@@ -8,6 +8,16 @@ from simupy.systems import DynamicalSystem
 from aviary.mission.gasp_based.ode.params import ParamPort
 
 
+def add_SGM_required_inputs(group: om.Group, inputs_to_add: dict):
+    blank_execcomp = om.ExecComp()
+    for input, details in inputs_to_add.items():
+        blank_execcomp.add_input(input, **details)
+    group.add_subsystem('SGM_required_inputs',
+                        blank_execcomp,
+                        promotes_inputs=list(inputs_to_add.keys()),
+                        )
+
+
 # Subproblem used as a basis for forward in time integration phases.
 class SimuPyProblem(SimulationMixin):
     def __init__(
@@ -16,11 +26,11 @@ class SimuPyProblem(SimulationMixin):
         time_independent=False,
         t_name="t_curr",
         state_names=None,
-        alternate_state_names=None,
+        alternate_state_names={},
         blocked_state_names=None,
         state_units=None,
         state_rate_names=None,
-        alternate_state_rate_names=None,
+        alternate_state_rate_names={},
         state_rate_units=None,
         parameter_names=None,
         parameter_units=None,
@@ -97,7 +107,7 @@ class SimuPyProblem(SimulationMixin):
                 for name in blocked_state_names:
                     if name in state_names:
                         state_names.remove(name)
-            if alternate_state_names is not None:
+            if alternate_state_names:
                 for key, val in alternate_state_names.items():
                     state_key = key.replace(rate_suffix, "")
                     if state_key in state_names:  # Used to rename an existing state
@@ -107,7 +117,7 @@ class SimuPyProblem(SimulationMixin):
 
         if state_rate_names is None:
             state_rate_names = [state_name + rate_suffix for state_name in state_names]
-            if alternate_state_names is not None:
+            if alternate_state_rate_names:
                 state_rate_names = [name if name not in alternate_state_rate_names.keys(
                 ) else alternate_state_rate_names[name] for name in state_rate_names]
 
@@ -215,6 +225,7 @@ class SimuPyProblem(SimulationMixin):
 
     @state.setter
     def state(self, value):
+        print(self.state, value)
         if np.all(self.state == value):
             return
         for state_name, elem_val, unit in zip(

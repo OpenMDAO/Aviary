@@ -18,8 +18,12 @@ class SGMHeightEnergy(SimuPyProblem):
         super().__init__(MissionODE(
             analysis_scheme=AnalysisScheme.SHOOTING,
             **ode_args),
-            alternate_state_names={Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: Dynamic.Mission.MASS,
-                                   'TAS': 'TAS'},
+            # alternate_state_names={Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: Dynamic.Mission.MASS,},
+            state_names=[
+                Dynamic.Mission.MASS,
+                Dynamic.Mission.RANGE,
+                Dynamic.Mission.ALTITUDE,
+        ],
             alternate_state_rate_names={
                 Dynamic.Mission.MASS_RATE: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
             **simupy_args)
@@ -57,7 +61,8 @@ def test_phase(phases):
     traj = FlexibleTraj(
         Phases=phases,
         traj_final_state_output=[Dynamic.Mission.MASS,
-                                 Dynamic.Mission.RANGE, Dynamic.Mission.ALTITUDE],
+                                 Dynamic.Mission.RANGE,
+                                 Dynamic.Mission.ALTITUDE],
         traj_initial_state_input=[
             Dynamic.Mission.MASS,
             Dynamic.Mission.RANGE,
@@ -83,6 +88,9 @@ def test_phase(phases):
     prob.model.add_objective(Mission.Objectives.FUEL, ref=1e4)
 
     prob.setup()
+    prob.set_val("traj.altitude_initial", val=35000, units="ft")
+    prob.set_val("traj.mass_initial", val=171000, units="lbm")
+    prob.set_val("traj.range_initial", val=0, units="NM")
 
     prob.run_model()
 
@@ -109,41 +117,13 @@ if __name__ == '__main__':
     engine = EngineDeck(options=aviary_inputs)
     preprocess_propulsion(aviary_inputs, [engine])
 
-    # phase_options = phase_info['cruise']['user_options']
-    # phase_object = Cruise(
-    #     'cruise',
-    #     min_altitude=phase_options['min_altitude'],  # m
-    #     max_altitude=phase_options['max_altitude'],  # m
-    #     min_mach=phase_options['min_mach'],
-    #     max_mach=phase_options['max_mach'],
-    #     fix_initial=phase_options["fix_initial"],
-    #     fix_final=phase_options["fix_final"],
-    #     aero_builder=phase_options["aero_builder"],
-    #     required_altitude_rate=phase_options["required_altitude_rate"],
-    #     mass_f_cruise=phase_options["mass_f_cruise"],
-    #     range_f_cruise=phase_options["range_f_cruise"],
-    #     aviary_options=aviary_inputs,
-    # )
-    # ode_class = MissionODE
-    # transcription = dm.Radau(
-    #     num_segments=phase_options['num_segments'], order=phase_options['order'], compressed=True)
-    # external_subsystems = []
-    # meta_data = BaseMetaData.copy()
-
-    # phase = phase_object.build_phase(
-    #                     ode_class,
-    #                     transcription,
-    #                     external_subsystems,
-    #                     meta_data,
-    #                 )
-
     ode_args_tab['num_nodes'] = 1
     ode_args_tab['subsystem_options'] = {'core_aerodynamics': {'method': 'computed'}}
     phase_kwargs = dict(
         ode_args=ode_args_tab,
         simupy_args=dict(
-            DEBUG=False,
-            blocked_state_names=['engine.nox', 'nox', 'specific_energy'],
+            DEBUG=True,
+            # blocked_state_names=['engine.nox', 'nox', 'specific_energy'],
         ),
     )
     phase_vals = {
