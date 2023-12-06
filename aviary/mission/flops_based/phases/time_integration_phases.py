@@ -9,6 +9,10 @@ from aviary.mission.gasp_based.ode.time_integration_base_classes import SimuPyPr
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import AlphaModes, AnalysisScheme, SpeedType
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables_in import VariablesIn
+from aviary.subsystems.premission import CorePreMission
+from aviary.utils.functions import set_aviary_initial_values
+import warnings
 
 
 class SGMHeightEnergy(SimuPyProblem):
@@ -49,7 +53,7 @@ class SGMHeightEnergy(SimuPyProblem):
         ])
 
 
-def test_phase(phases):
+def test_phase(phases, ode_args_tab):
     prob = om.Problem()
     prob.driver = om.pyOptSparseDriver()
     prob.driver.options["optimizer"] = 'IPOPT'
@@ -58,8 +62,18 @@ def test_phase(phases):
     prob.driver.opt_settings['max_iter'] = 50
     prob.driver.opt_settings['print_level'] = 5
 
+    aviary_options = ode_args_tab['aviary_options']
+    subsystems = ode_args_tab['core_subsystems']
+
     traj = FlexibleTraj(
         Phases=phases,
+        traj_promote_initial_input={
+            Aircraft.Wing.CHARACTERISTIC_LENGTH: {'units': 'ft'},
+            Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH: {'units': 'ft'},
+            Aircraft.VerticalTail.CHARACTERISTIC_LENGTH: {'units': 'ft'},
+            Aircraft.Fuselage.CHARACTERISTIC_LENGTH: {'units': 'ft'},
+            Aircraft.Nacelle.CHARACTERISTIC_LENGTH: {'units': 'ft'},
+        },
         traj_final_state_output=[Dynamic.Mission.MASS,
                                  Dynamic.Mission.RANGE,
                                  Dynamic.Mission.ALTITUDE],
@@ -70,7 +84,20 @@ def test_phase(phases):
         ],
     )
     prob.model = om.Group()
-    prob.model.add_subsystem('traj', traj)
+    prob.model.add_subsystem(
+        'pre_mission',
+        CorePreMission(aviary_options=aviary_options,
+                       subsystems=subsystems),
+        promotes_inputs=['aircraft:*', 'mission:*'],
+        promotes_outputs=['aircraft:*', 'mission:*']
+    )
+    prob.model.add_subsystem('traj', traj,)  # promotes=['aircraft:*','mission:*']
+    prob.model.promotes('traj', inputs=[
+        Aircraft.Wing.CHARACTERISTIC_LENGTH,
+        Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH,
+        Aircraft.VerticalTail.CHARACTERISTIC_LENGTH,
+        Aircraft.Fuselage.CHARACTERISTIC_LENGTH,
+        Aircraft.Nacelle.CHARACTERISTIC_LENGTH,])
 
     prob.model.add_subsystem(
         "fuel_obj",
@@ -87,12 +114,39 @@ def test_phase(phases):
 
     prob.model.add_objective(Mission.Objectives.FUEL, ref=1e4)
 
+    prob.model.add_subsystem(
+        'input_sink',
+        VariablesIn(aviary_options=aviary_inputs,
+                    meta_data=BaseMetaData),
+        promotes_inputs=['*'],
+        promotes_outputs=['*'])
+
+    with warnings.catch_warnings():
+
+        # Set initial default values for all LEAPS aircraft variables.
+        set_aviary_initial_values(
+            prob.model, aviary_inputs, meta_data=BaseMetaData)
+
+        warnings.simplefilter("ignore", om.PromotionWarning)
+
     prob.setup()
     prob.set_val("traj.altitude_initial", val=35000, units="ft")
     prob.set_val("traj.mass_initial", val=171000, units="lbm")
     prob.set_val("traj.range_initial", val=0, units="NM")
 
+    # try:
     prob.run_model()
+    # except:
+    #     prob.final_setup()
+
+    with open('input_list.txt', 'w') as outfile:
+        prob.model.list_inputs(out_stream=outfile,)
+    with open('output_list.txt', 'w') as outfile:
+        prob.model.list_outputs(out_stream=outfile)
+
+    final_range = prob.get_val('traj.range_final', units='NM')[0]
+    final_mass = prob.get_val('traj.mass_final', units='lbm')[0]
+    print(final_range, final_mass)
 
 
 if __name__ == '__main__':
@@ -103,10 +157,8 @@ if __name__ == '__main__':
     from aviary.utils.preprocessors import preprocess_propulsion
     from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 
-    from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
-    from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
-    core_subsystems = [CorePropulsionBuilder('core_propulsion'), CoreAerodynamicsBuilder(
-        'core_aerodynamics', code_origin='FLOPS')]
+    from aviary.interface.default_flops_phases import aero, prop, geom
+    core_subsystems = [prop, geom, aero]
 
     aviary_inputs, initial_guesses = create_vehicle(
         'validation_cases/benchmark_tests/bench_4.csv')
@@ -133,4 +185,4 @@ if __name__ == '__main__':
         'vals_to_set': phase_vals
     }}
 
-    test_phase(phases)
+    test_phase(phases, ode_args_tab)

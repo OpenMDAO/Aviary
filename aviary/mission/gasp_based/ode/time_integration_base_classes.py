@@ -199,6 +199,8 @@ class SimuPyProblem(SimulationMixin):
 
         if DEBUG:
             om.n2(prob, outfile="n2_simupy_problem.html", show_browser=False)
+            with open('input_list_simupy.txt', 'w') as outfile:
+                prob.model.list_inputs(out_stream=outfile,)
             print(state_names)
             print(self.state_units)
             print(state_rate_names)
@@ -373,6 +375,7 @@ class SGMTrajBase(om.ExplicitComponent):
             ODEs,
             traj_final_state_output=None,
             traj_promote_final_output=None,
+            traj_promote_initial_input=None,
             traj_initial_state_input=None,
             traj_event_trigger_input=None,
     ):
@@ -392,13 +395,18 @@ class SGMTrajBase(om.ExplicitComponent):
             traj_final_state_output = []
         if traj_promote_final_output is None:
             traj_promote_final_output = []
+        if traj_promote_initial_input is None:
+            traj_promote_initial_input = {}
         if traj_initial_state_input is None:
             traj_initial_state_input = []
         if traj_event_trigger_input is None:
             traj_event_trigger_input = []
 
-        for name, kwargs in self.options["param_dict"].items():
+        self.traj_promote_initial_input = {
+            **self.options["param_dict"], **traj_promote_initial_input}
+        for name, kwargs in self.traj_promote_initial_input.items():
             self.add_input(name, **kwargs)
+
         final_suffix = "_final"
         self.traj_final_state_output = {
             final_state_output: {
@@ -474,17 +482,16 @@ class SGMTrajBase(om.ExplicitComponent):
         self.declare_partials(["*"], ["*"],)
 
     def compute_params(self, inputs):
-        # parameter pass-through setup
-        for param_input in self.options["param_dict"].keys():
+        for input in self.traj_promote_initial_input.keys():
             for ode in self.ODEs:
                 try:
-                    ode.set_val(param_input, inputs[param_input])
+                    ode.set_val(input, inputs[input])
                 except KeyError:
                     if self.DEBUG:
                         print(
-                            "*** ParamPort input not found:",
+                            "*** Input not found:",
                             ode,
-                            param_input
+                            input
                         )
                     pass
 
