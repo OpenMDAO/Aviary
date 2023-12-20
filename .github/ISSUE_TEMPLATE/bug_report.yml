@@ -10,8 +10,6 @@ assignees: ''
 name: Bug Report
 description: Submit a report if you believe you've found a bug in Aviary.
 labels: ["bug"]
-assignees:
-  - johnjasa
 body:
   - type: textarea
     id: description

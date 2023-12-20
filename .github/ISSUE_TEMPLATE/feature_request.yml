@@ -1,0 +1,25 @@
+name: Feature or change request
+description: Request a new capability or change in behavior in Aviary.
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Desired capability or behavior.
+      description: Please explain what you would like to happen, and any alternatives you've considered.
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Is your feature request related to a problem? Please describe.
+      description: A clear and concise description of what the problem is.
+    validations:
+      required: false
+  - type: input
+    id: bug-number
+    attributes:
+      label: Associated Bug Report
+      description: Number of the associated Bug Report, if available.
+      placeholder: "1"
+    validations:
+      required: false
