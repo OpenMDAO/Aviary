@@ -1,9 +1,5 @@
-&dev_email aviary@nasa.gov
 blank_issues_enabled: true
 contact_links:
   - name: Discussion Board
     url: https://github.com/OpenMDAO/om-Aviary/discussions
     about: "If you have questions or need support, please check the discussion board and create a \"New Discussion\" if necessary."
-  - name: Question
-    url: mailto:*dev_email
-    about: "Questions left in the Discussion Board get first priority for support, because they have the potential to help many people. \nHowever, you may contact the Dev Team directly if you need to."
