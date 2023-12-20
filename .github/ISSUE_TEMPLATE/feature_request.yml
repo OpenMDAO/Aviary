@@ -2,14 +2,14 @@ name: Feature or change request
 description: Request a new capability or change in behavior in Aviary.
 body:
   - type: textarea
-    id: description
+    id: desired
     attributes:
       label: Desired capability or behavior.
       description: Please explain what you would like to happen, and any alternatives you've considered.
     validations:
       required: true
   - type: textarea
-    id: description
+    id: problems
     attributes:
       label: Is your feature request related to a problem? Please describe.
       description: A clear and concise description of what the problem is.
