@@ -4,7 +4,7 @@ This is the landing page for all of Aviary's documentation, including a user's g
 
 ## What Aviary is
 
-[Aviary](https://github.com/OpenMDAO/Aviary) is an aircraft analysis, design, and optimization tool built on top of the Python-based optimization framework [OpenMDAO](https://github.com/OpenMDAO/OpenMDAO).
+[Aviary](https://github.com/OpenMDAO/om-Aviary) is an aircraft analysis, design, and optimization tool built on top of the Python-based optimization framework [OpenMDAO](https://github.com/OpenMDAO/OpenMDAO).
 Aviary provides a flexible and user-friendly optimization platform that allows the beginning aircraft modeler to build a useful model, the intermediate aircraft modeler to build an advanced model, and the advanced aircraft modeler to build any model they can imagine.
 
 Features of Aviary include:
