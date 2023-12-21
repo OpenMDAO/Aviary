@@ -1,4 +1,4 @@
-# Contributing Guidelines
+# Guidelines for Contributing Code
 
 Welcome to our guide for contributing to the Aviary codebase. We are so glad you are interested in contributing to our software! There are a few guidelines that our developers follow in order to ensure that Aviary is well organized and uniform. If you would like to contribute to Aviary, please take a minute to read these guidelines:
 
