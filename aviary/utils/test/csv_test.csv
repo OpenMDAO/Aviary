@@ -1,0 +1,9 @@
+# comment 1
+
+#comment 2# more comment 2
+aircraft:wing:span (ft), aircraft:crew_and_payload:num_passengers, fake_var (lbm)
+15.24, 125, 0.932
+118, 28, 1023.54 #inline comment
+  
+90,.355, 0,
+ 171,     44,-13

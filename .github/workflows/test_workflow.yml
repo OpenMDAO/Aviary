@@ -217,6 +217,31 @@ jobs:
           echo "Build the docs"
           echo "============================================================="
           bash build_book.sh
+          
+      - name: Display doc build reports
+        continue-on-error: True
+        if: matrix.extend
+        shell: bash -l {0}
+        run: |
+          cd $HOME/work/Aviary_deprecated/Aviary_deprecated/aviary/docs
+          find _build/html/reports/ -type f -name '*.log' \
+          -exec echo "#################################################################" \; \
+          -exec echo {} \; \
+          -exec echo "#################################################################" \; \
+          -exec cat {} \;
+
+      - name: Publish docs to github.io
+        if: |
+          github.event_name == 'push' && github.ref == 'refs/heads/main' &&
+          matrix.extend
+        shell: bash -l {0}
+        run: |
+          echo "============================================================="
+          echo "Publishing Docs to github.io"
+          echo "============================================================="
+          pip install ghp-import
+          cd $HOME/work/Aviary_deprecated/Aviary_deprecated/aviary
+          ghp-import -n -p -f docs/_build/html
 
       - name: Scan for security issues
         if: matrix.extend

@@ -1,0 +1,147 @@
+import argparse
+import os
+import sys
+
+import aviary
+from aviary.interface.methods_for_level1 import _exec_level1, _setup_level1_parser
+from aviary.utils.Fortran_to_Aviary import _exec_F2A, _setup_F2A_parser
+from aviary.visualization.dashboard import _dashboard_setup_parser, _dashboard_cmd
+from aviary.interface.graphical_input import IntegratedPlottingApp
+
+
+def _setup_flight_profile_parser(parser):
+    """
+    Set up the command line options for the Flight Profile plotting tool.
+
+    Parameters
+    ----------
+    parser : argparse.ArgumentParser
+        The parser instance.
+    """
+    pass
+
+
+def _exec_flight_profile(options, user_args):
+    """
+    Run the Flight Profile plotting tool.
+
+    Parameters
+    ----------
+    options : argparse.Namespace
+        Command line options.
+    user_args : list of str
+        Args to be passed to the user script.
+    """
+    app = IntegratedPlottingApp()
+    app.mainloop()
+
+
+def _load_and_exec(script_name, user_args):
+    """
+    Load and exec the given script as __main__.
+
+    Parameters
+    ----------
+    script_name : str
+        The name of the script to load and exec.
+    user_args : list of str
+        Args to be passed to the user script.
+    """
+
+    sys.path.insert(0, os.path.dirname(script_name))
+
+    sys.argv[:] = [script_name] + user_args
+
+    with open(script_name, 'rb') as fp:
+        code = compile(fp.read(), script_name, 'exec')
+
+    globals_dict = {
+        '__file__': script_name,
+        '__name__': '__main__',
+        '__package__': None,
+        '__cached__': None,
+    }
+
+    exec(code, globals_dict)  # nosec: private, internal use only
+
+
+_command_map = {
+    'fortran_to_aviary': (_setup_F2A_parser, _exec_F2A,
+                          "Converts legacy Fortran input decks to Aviary csv based decks"),
+    'run_mission': (_setup_level1_parser, _exec_level1,
+                    "Runs Aviary using a provided input deck"),
+    'draw_mission': (_setup_flight_profile_parser, _exec_flight_profile,
+                     "Allows users to draw a mission profile for use in Aviary."),
+    'dashboard': (_dashboard_setup_parser, _dashboard_cmd,
+                  "Run the Dashboard tool"),
+}
+
+
+def aviary_cmd():
+    """
+    Run an 'aviary' sub-command or list help info for 'aviary' command or sub-commands.
+    """
+    # pre-parse sys.argv to split between before and after '--'
+    if '--' in sys.argv:
+        idx = sys.argv.index('--')
+        sys_args = sys.argv[:idx]
+        user_args = sys.argv[idx + 1:]
+        sys.argv[:] = sys_args
+    else:
+        user_args = []
+
+    parser = argparse.ArgumentParser(description='aviary Command Line Tools',
+                                     #  epilog='Use -h after any sub-command for sub-command help, '
+                                     #  'for example, "openmdao tree -h" for help on the "tree" '
+                                     #  'command. If using a tool on a script that takes its own '
+                                     #  'command line arguments, place those arguments after a "--". '
+                                     #  'For example: '
+                                     #  '"openmdao n2 -o foo.html myscript.py -- -x --myarg=bar"'
+                                     )
+
+    # Adding the --version argument
+    parser.add_argument('--version', action='store_true', help='show version and exit')
+
+    subs = parser.add_subparsers(title='Tools', metavar='', dest="subparser_name")
+    for p, (parser_setup_func, executor, help_str) in sorted(_command_map.items()):
+        subp = subs.add_parser(p, help=help_str)
+        parser_setup_func(subp)
+        subp.set_defaults(executor=executor)
+
+    args = [a for a in sys.argv[1:] if not a.startswith('-')]
+    # '--version', '--dependency_versions')]
+    cmdargs = [a for a in sys.argv[1:] if a not in ('-h',)]
+
+    if len(args) == 1 and len(user_args) == 0:
+        if args[0] != 'draw_mission' and args[0] != 'run_mission':
+            parser.parse_args([args[0], '-h'])
+
+    if not set(args).intersection(subs.choices) and len(args) == 1 and os.path.isfile(cmdargs[0]):
+        _load_and_exec(args[0], user_args)
+    else:
+        options, unknown = parser.parse_known_args()
+
+        # Check if --version was passed
+        if options.version:
+            print(f"Aviary version: {aviary.__version__}")
+            return
+
+        if unknown:
+            msg = 'unrecognized arguments: ' + ', '.join(unknown)
+            try:
+                sub = subs.choices[options.subparser_name]
+            except KeyError:
+                parser.error(msg)
+            else:
+                print(sub.format_usage(), file=sys.stderr)
+                print(msg, file=sys.stderr)
+            parser.exit(2)
+
+        if hasattr(options, 'executor'):
+            options.executor(options, user_args)
+        else:
+            os.system('aviary -h')
+
+
+if __name__ == '__main__':
+    aviary_cmd()
