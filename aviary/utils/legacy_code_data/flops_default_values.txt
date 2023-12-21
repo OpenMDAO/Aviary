@@ -1,0 +1,5 @@
+Default Values from FLOPS
+
+  &WTIN
+  EEXP=1.15,
+ \

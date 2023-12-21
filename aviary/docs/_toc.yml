@@ -1,0 +1,90 @@
+# Table of contents
+# Learn more at https://jupyterbook.org/customize/toc.html
+
+format: jb-book
+root: intro
+parts:
+- caption: Getting Started
+  chapters:
+    - file: getting_started/installation
+    - file: getting_started/what_aviary_does
+    - file: getting_started/tools_that_aviary_uses
+    - file: getting_started/expected_user_knowledge
+    - file: getting_started/onboarding
+      sections:
+        - file: getting_started/onboarding_level1
+        - file: getting_started/onboarding_level2
+        - file: getting_started/onboarding_level3
+        - file: getting_started/onboarding_ext_subsystem
+        - file: getting_started/input_csv_phase_info
+    - file: getting_started/now_what
+
+- caption: User Guide
+  chapters:
+    - file: user_guide/user_interface
+      sections:
+      - file: user_guide/UI_Levels
+      - file: user_guide/examples_of_the_same_mission_at_different_UI_levels
+      - file: user_guide/aviary_commands
+      - file: user_guide/input_files
+    - file: user_guide/drawing_and_running_simple_missions
+    - file: user_guide/pre_mission_and_mission
+    - file: user_guide/outputs_and_how_to_read_them
+    - file: user_guide/variable_metadata
+    - file: user_guide/features_and_functionalities
+      sections:
+      - file: user_guide/aerodynamics
+      - file: user_guide/external_aero
+      - file: user_guide/propulsion
+      - file: user_guide/mass
+      - file: user_guide/subsystems
+      - file: user_guide/using_external_subsystems
+      - file: user_guide/step_by_step_external_guide
+      - file: user_guide/battery_subsystem_example
+      - file: user_guide/features/overriding
+      - file: user_guide/FLOPS_based_detailed_takeoff_and_landing
+    - file: user_guide/troubleshooting
+
+- caption: Examples
+  chapters:
+    - file: examples/intro
+    - file: examples/simple_mission_example
+    - file: examples/more_advanced_example
+    - file: examples/additional_flight_phases
+    - file: examples/coupled_aircraft_mission_optimization
+    - file: examples/OAS_subsystem
+
+- caption: Theory Guide
+  chapters:
+    - file: theory_guide/intro
+    - file: theory_guide/underlying_concepts
+      sections:
+      - file: theory_guide/assumptions
+      - file: theory_guide/aerodynamics
+      - file: theory_guide/geometry
+      - file: theory_guide/mass
+      - file: theory_guide/mission
+      - file: theory_guide/propulsion
+    - file: theory_guide/optimization_algorithms
+    - file: theory_guide/validation
+
+- caption: Developer Guide
+  chapters:
+    - file: developer_guide/codebase_overview
+    - file: developer_guide/coding_standards
+    - file: developer_guide/unit_tests
+    - file: developer_guide/how_to_contribute_docs
+    - file: developer_guide/debugging_env_from_github
+
+- caption: Miscellaneous Resources
+  chapters:
+    - file: misc_resources/FAQ
+    - file: misc_resources/glossary
+    - file: misc_resources/resources
+    - file: misc_resources/externally_supported_subsystems
+    - file: misc_resources/feature_comparison
+      sections:
+      - file: misc_resources/comparison_to_flops
+    - file: misc_resources/using_XDSM
+    - file: misc_resources/planned_future_features
+    - file: _srcdocs/index

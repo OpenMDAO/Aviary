@@ -1,0 +1,285 @@
+REF MDL N3CC (26616) AR11 1220t 1340p turbofan_22k M785 20210721
+
+  &OPTION
+
+  ! Program Control, Execution, Analysis and Plot Option Data
+  mprint=1,   iopt=1,   ianal=3,   ineng=0,   itakof=1,   iland=1
+  nopro=1,   noise=0,   icost=0,   ifite=0
+
+  ! Plot files for XFLOPS Graphical Interface Postprocessor (MSMPLOT)
+  ixfl=1
+
+  ! Takeoff and Climb Profile File for Noise Calculations (NPROF)
+  npfile=1
+
+  ! Approach and Landing Profile File for Noise Calculations (LPROF)
+  lpfile=0
+
+  ! Drag Polar Plot File (POLPLOT)
+  ipolp=1,   polalt=39000.0, 
+  nmach = 3,   pmach=0.3, 0.45222, 0.785
+
+  ! Engine Performance Data Plot File (THRPLOT)
+  ipltth=2
+
+  ! Design History Plot File (HISPLOT)
+  iplths=0
+ /
+
+
+  &WTIN
+
+  ! Geometric, Weight, Balance and Inertia Data
+  ulf=3.75,   dgw=1.0,   vmmo=0.785,   nwref=39,   cgrefl=0.0,   cgrefx=0.0
+  mywts=0,   hydpr=5000.0,   wpaint=0.0,   ialtwt=0
+
+  ! Special Option for Operating Weight Empty Calculations
+  ispowe=0,   spwth=2.2344,   spwsw=9.5,   spwgw=0.104087,   spwcon=38584.0
+
+  ! Wing Data
+  span=118.7505278165,   dih=6.0,   flapr=0.333,   glov=0.0,   varswp=0.0
+  fcomp=0.33333,   faert=0.33333,   fstrt=0.0
+
+  ! Detailed Wing Data
+  netaw = 4
+  etaw=0.0, 0.34453777998, 0.919, 1.0
+  chd=0.273522534166506, 0.204274849507037, 0.0888152947868224, 0.0725353313595661
+  toc=0.14233, 0.12233, 0.1108, 0.1058
+  swl=0.0, 23.6286942529271, 23.6286942529271
+  etae=0.289682918
+  pctl=1.0,   arref=11.5587605382765,   tcref=0.116565,   nstd=100
+  pdist=2.0
+
+  ! Tails, Fins, Canards
+
+  ! Horizontal Tail Data
+  sht=349.522730527158,   swpht=30.5853213018973,   arht=5.22699386503068,   trht=0.2734375,   tcht=0.115,   hht=0.0, 
+
+  ! Vertical Tail Data
+  nvert=1,   svt=227.184358191707,   swpvt=39.735053245438,   arvt=1.77777777777778,   trvt=0.25,   tcvt=0.1, 
+
+  ! Fin Data
+  nfin=0,   sfin=0.0,   arfin=-10.0,   trfin=-10.0,   swpfin=-10.0,   tcfin=0.0, 
+
+  ! Fuselage Data
+  nfuse=1,   xl=125.0,   wf=12.3,   df=13.0,   xlp=97.5, 
+
+  ! Landing Gear Data
+  xmlg=0.0,   xnlg=0.0,   wldg=0.0,   mldwt=0,   dldwt=0.0,   carbas=0.0, 
+
+  ! Propulsion System Data
+  new=2,   nef=0,   thrso=22200.5
+  weng=6293.8,   eexp=1.15,   winl=0.0,   einl=1.0,   wnoz=0.0,   enoz=1.0
+  xnac=35.0,   dnac=7.2,   wpmisc=0.0, 
+
+  ! Fuel System Data
+  ntank=7,   fulwmx=25.903,   fulden=1.0,   fulfmx=0.0,   ifufu=0,   fulaux=0.0,   fmxtot=0.0, 
+
+  ! Crew and Payload Data
+  npf=16,   npb=20,   npt=118,   nstu=-1,   ngalc=-1,   nflcr=-1
+  wppass=165.0,   bpp=35.0,   cargf=0.0,   cargow=0.0,   cargof=0.0,   paylmx=52000.0, 
+
+  ! Override Parameters
+  frwi=0.7412,   frwi1=1.0,   frwi2=0.749,   frwi3=1.7,   frwi4=1.0
+  frht=1.42225,   frvt=1.42225,   frfin=1.0,   frcan=1.0
+  frfu=0.69981,   frlgn=0.8846,   frlgm=0.8846
+  frna=0.0,   wthr=0.0,   wpmsc=0.0
+  wfsys=0.93202,   frsc=1.77696,   wapu=1.02321,   win=1.66955
+  whyd=0.95543,   welec=1.1976,   wavonc=1.123226,   warm=0.0
+  wfurn=0.81859,   wac=0.98094,   wai=0.53202,   wuf=1.0
+  woil=1.0,   wsrv=1.0,   wcon=0.0,   wauxt=1.0
+  wflcrb=1.0,   wstuab=1.0,   ewmarg=0.01498, 
+
+  ! Center of Gravity (C.G.) Data
+  cgw=0.0,   cght=0.0,   cgvt=0.0,   cgfin=0.0,   cgcan=0.0
+  cgf=0.0,   cglgn=0.0,   cglgm=0.0,   cgef=0.0,   cgea=0.0,   cgap=0.0
+  cgav=0.0,   cgarm=0.0,   cgcr=0.0,   cgp=0.0,   cgcw=0.0
+  cgcf=0.0,   cgzwf=0.0,   cgfwf=0.0,   cgais=0.0,   cgacon=0.0
+  cgaxg=0.0,   cgaxt=0.0,   cgammo=0.0,   cgmis=0.0
+ /
+
+
+  &CONFIN
+  desrng=3500.0,   wsr=0.0,   twr=0.0,   htvc=1.0,   vtvc=1.0
+  pglov=0.0,   fixspn=0.0,   fixful=0.0
+
+
+  ! Design Variables
+  gw=180000.0, 1.0, 0.0, 0.0, 0.0, 0.0
+  ar=11.5587605382765, 1.0, 0.0, 0.0, 0.0, 0.0
+  thrust=22200.0, 0.0, 0.0, 0.0, 0.0, 0.0
+  sw=1220.0, 1.0, 0.0, 0.0, 0.0, 0.0
+  tr=0.265189599754917, 0.0, 0.0, 0.0, 0.0, 0.0
+  sweep=23.6286942529271, 0.0, 0.0, 0.0, 0.0, 0.0
+  tca=0.12233, 0.0, 0.0, 0.0, 0.0, 0.0
+  vcmn=0.785, 0.0, 0.0, 0.0, 0.0, 0.0
+  ch=43000.0, 0.0, 0.0, 0.0, 0.0, 0.0
+  varth=0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+  rotvel=0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+  plr=0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+ /
+
+
+  &AERIN
+
+
+  ! Internally Computed Aerodynamics
+  cam=0.015,   sbase=0.0,   aitek=1.6,   modaro=0,   fcldes=-1.0,   fmdes=-1.0
+  xllam=1.0,   truw=58.0,   trlw=0.0,   truh=29.0,   trlh=0.0
+  truv=29.0,   trlv=29.0,   trub=0.0,   trlb=0.0,   trun=0.0
+  trln=0.0,   truc=0.0,   trlc=0.0
+  e=0.95,   swetw=2210.280228,   sweth=576.571192,   swetv=445.645658,   swetf=4235.082096,   swetn=244.468282,   swetc=0.0,   wratio=0.84
+  vappr=145.0,   flto=8190.0,   flldg=8190.0,   cltom=2.0,   clldm=2.5,   clapp=2.0,   dratio=1.0
+  elodss=0.0,   elodma=0.0,   thrss=0.0,   thrma=0.0,   throff=0.0,  /
+
+
+  &ENGDIN
+
+  ! Engine Deck Control, Scaling and Usage Data
+  ngprt=1,   igenen=-1,   extfac=1.0,   fffsub=1.0,   fffsup=1.0,   idle=1,   noneg=0
+  fidmin=0.08,   fidmax=1.0,   ixtrap=1,   ifill=2,   maxcr=1,   nox=1
+  boost=0.0,   igeo=0,   dffac=0.0,   fffac=0.0
+
+ /
+
+
+  &MISSIN
+
+  ! Performance Controls and Factors and Mission Segment Definition
+  indr=0,   fact=1.0,   fleak=0.0,   fcdo=0.96,   fcdi=0.93,   fcdsub=0.95,   fcdsup=1.0
+  iskal=1,   owfact=1.0,   iflag=2,   msumpt=1,   dtc=0.0,   irw=1
+  rtol=0.001,   nhold=0,   iata=0,   tlwind=0.0,   dwt=1.0,   idoq=0  npcon=1,
+  mywts=0,   
+
+  ! Ground Operations and Takeoff and Approach Allowances
+  takotm=2.0,   taxotm=9.0,   apprtm=4.0,   appfff=2.0,   taxitm=5.0,   ittff=1
+  takoff=0.0,   txfufl=0.0,   ftkofl=0.0,   ftxofl=0.0,   ftxifl=0.0,   faprfl=0.0
+
+
+  ! Climb Schedule Definition
+  nclimb = 2,
+  clmmin=0.3, 0.45222
+  clmmax=0.45222, 0.785
+  clamin=0.0, 10000.0
+  clamax=10000.0, 43000.0
+  nincl=3, 30
+  fwf=-1.0, -1.0
+  ncrcl=1, 1
+  cldcd=0.0, 0.0
+  ippcl=1, 1
+  maxcl=1, 1
+  keasvc=0
+  ifaacl=2,   ifaade=-1,   nodive=1,   divlim=0.0,   qlim=425.0
+  spdlim=288.69, ! Variable dynamic pressure limit during climb and descent
+  nql=2,
+  qlalt=1500.0, 10000.0
+  vqlm=260.0, 320.0
+
+
+  ! Cruise Schedule Definition
+  ncruse = 1,
+  ioc=1,   crmach=0.785
+  cralt=43000.0
+  crdcd=0.0
+  flrcr=1.0
+  crmmin=0.45222
+  crclmx=1.0
+  hpmin=15000.0
+  ffuel=1.0
+  fnox=0.0
+  ifeath=0
+  feathf=0.5
+  cdfeth=0.0
+  dcwt=1.0,   rcin=300.0, 
+
+  ! Descent Schedule Definition
+  ivs=2
+  decl=0.74,   demmin=0.3,   demmax=0.785,   deamin=0.0,   deamax=43000.0,   ninde=18,   dedcd=0.0
+  rdlim=-3000.0,   keasvd=0,   irs=1,   resrfu=0.0,   restrp=0.03
+  timmap=2.0,   altran=200.0,   nclres=1,   ncrres=1,   sremch=0.3,   eremch=0.45222,   srealt=1500.0
+  erealt=10000.0,   holdtm=20.0,   ncrhol=1,   ihopos=2,   icron=0,   thold=0.0,   ncrth=1, 
+ /
+START
+CLIMB    1                            
+CLIMB    2                           
+CRUISE
+DESCENT
+END
+
+  ! Performance Constraint
+  &PCONIN
+  conalt=43000.0,   conmch=0.785,   connz=1.0,   conpc=1.0,   conlim=300.0,   conaux=2.0,   neo=2,   icstdg=0,   conwt=0.0,   iconsg=2,   confm=1.0,   conwta=0.0,   icontp=5, 
+ /
+
+
+  &TOLIN
+  apa=0.0,   dtct=10.0,   whgt=8.6
+  alprun=0.0,   tinc=0.0,   rollmu=0.0175,   brakmu=0.35,   cdgear=0.024,   cdeout=0.0046077279938182
+  clspol=-0.81,   cdspol=0.085,   incgef=1,   argef=1.0,   itime=1
+
+
+  ! Thrust Reverser
+  inthrv=2,   rvfact=0.0,   tirvrs=2.0,   revcut=-1000.0,   clrev=0.0,   cdrev=0.0, 
+
+  ! Integration Intervals  (Default values will provide a precision of +/-.25 ft)
+  delvto=4.0,   deltro=0.2,   deltcl=0.2,   delhap=2.0,   deldfl=2.0,   deltrn=0.25, 
+
+  ! Takeoff Data
+  cltom=2.0,   cdmto=0.05,   fcdmto=0.3,   almxto=15.0,   obsto=35.0
+  alpto=0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0
+  clto=0.5178, 0.6, 0.75, 0.85, 0.95, 1.05, 1.15, 1.25, 1.35, 1.5, 1.6, 1.7, 1.8, 1.85, 1.9, 1.95
+  cdto=0.0674, 0.065, 0.065, 0.07, 0.072, 0.076, 0.084, 0.09, 0.10, 0.11, 0.12, 0.13, 0.15, 0.16, 0.18, 0.20
+  inthto=2,   alprot=8.8,   vrotat=1.05,   vangl=6.0,   thfact=1.0
+  ftocl=1.0,   ftocd=1.0,   igobs=0,   tdelg=3.0,   tigear=8.0,   ibal=2,   itxout=0
+
+
+  ! Aborted Takeoff Data
+  pilott=1.0,   tispa=0.0,   tibra=0.0,   tirva=0.0,   ispol=1,   irev=0, 
+
+  ! Landing Data
+  clldm=2.4,   cdmld=0.045,   fcdmld=0.3,   almxld=12.0,   obsld=50.0
+  alpld=0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0
+  clld=0.7, 0.9, 1.05, 1.15, 1.25, 1.4, 1.5, 1.60, 1.7, 1.8, 1.9, 2.0, 2.1, 2.2, 2.3, 2.40
+  cdld=0.1, 0.1, 0.12, 0.13, 0.14, 0.15, 0.16, 0.17, 0.18, 0.20, 0.22, 0.24, 0.26, 0.3, 0.32, 0.34
+  inthld=2,   thrld=,   aprhgt=100.0,   aprang=-3.0,   fldcl=1.0
+  fldcd=1.0,   tdsink=8.0,   vangld=2.2,   noflar=0,   tispol=1.46,   ticut=1.46,   tibrak=1.46
+  acclim=16.0,   magrup=1,  /
+
+ &PROIN
+  npol = 0,
+  ntime=1,   ipcmax=1,   txf=-1.0,   alpmin=0.0,   gamlim=0.0, 
+ /
+  &SEGIN
+  key  = 'ROTA',  nflap  = 1,
+ /
+  &SEGIN
+  key  = 'LIFT',  nflap  = 1,
+ /
+  &SEGIN
+  key  = 'OBST',  nflap  = 1,  vstop  = 220.0,
+ /
+  &SEGIN
+  key  = 'CHAN',  nflap  = 1,  vfix   = 10.0,  dstop  = 23000.0,
+ /
+  &SEGIN
+  key  = 'CUTB',  hstop  = 1500.0,  vstop  = 255.0,
+ /
+  &SEGIN
+  key  = 'LAST',  hstop  = 10000.0,  vstop  = 288.69,
+ /
+
+
+  &RERUN
+  desrng=900.0,   mywts=1,   itakof=0,   iland=0,   iplrng=-1, 
+ /
+
+  &MISSIN
+  irw=1, 
+  NPCON = 0
+ /
+START
+CLIMB    1                            
+CLIMB    2                           
+CRUISE
+DESCENT
+END

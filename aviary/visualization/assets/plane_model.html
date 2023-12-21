@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>3D Model Display</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script>
+AFRAME.registerComponent('drag-rotate-component', {
+  schema: { speed: { default: 1 } },
+  init: function () {
+    this.ifMouseDown = false;
+    this.x_cord = 0;
+    this.y_cord = 0;
+
+    this.onMouseDown = this.onMouseDown.bind(this);
+    this.onMouseUp = this.onMouseUp.bind(this);
+    this.onMouseMove = this.onMouseMove.bind(this);
+
+    window.addEventListener('mousedown', this.onMouseDown);
+    window.addEventListener('mouseup', this.onMouseUp);
+    window.addEventListener('mousemove', this.onMouseMove);
+  },
+  onMouseDown: function (e) {
+    this.ifMouseDown = true;
+    this.x_cord = e.clientX;
+    this.y_cord = e.clientY;
+  },
+  onMouseUp: function (e) {
+    this.ifMouseDown = false;
+  },
+  onMouseMove: function (e) {
+    if (this.ifMouseDown) {
+      var diffX = e.clientX - this.x_cord;
+      var diffY = e.clientY - this.y_cord;
+      this.el.object3D.rotation.y += this.data.speed * diffX * 0.005;
+      this.el.object3D.rotation.x += this.data.speed * diffY * 0.005;
+      this.x_cord = e.clientX;
+      this.y_cord = e.clientY;
+      this.el.setAttribute('rotation', {
+        x: this.el.object3D.rotation.x * (180 / Math.PI),
+        y: this.el.object3D.rotation.y * (180 / Math.PI),
+        z: this.el.object3D.rotation.z * (180 / Math.PI),
+      });
+    }
+  },
+  remove: function () {
+    window.removeEventListener('mousedown', this.onMouseDown);
+    window.removeEventListener('mouseup', this.onMouseUp);
+    window.removeEventListener('mousemove', this.onMouseMove);
+  }
+});
+
+    </script>
+  </head>
+  <body>
+    <a-scene
+      background="color: #FFFAF6"
+  renderer="antialias: true;
+    colorManagement: true;
+    physicallyCorrectLights: true;"
+  >
+      <a-assets>
+        <a-asset-item id="model-gltf" src="uploads_files_3981625_Bayraktar+TB2.glb"></a-asset-item>
+      </a-assets>
+
+      <a-gltf-model
+        shadow="cast: true"
+        src="#model-gltf"
+        scale="1.0 1.0 1.0"
+        position="0.0 3.5 -5"
+        drag-rotate-component
+      ></a-gltf-model>
+
+      <a-entity
+        light="type:directional; castShadow:true; intensity:2"
+        position="1 1 1"
+      ></a-entity>
+
+      <a-light type="ambient" intensity="2"> </a-light>
+
+<!--      <a-entity-->
+<!--        gltf-model="#model-gltf"-->
+<!--        position="0 0 0"-->
+<!--        rotation="0 0 0"-->
+<!--        scale="2 2 2">-->
+<!--      </a-entity>-->
+
+      <a-sky color="#87CEEB"></a-sky>
+      <a-camera
+              position="0 1.0 0"
+              rotation="-60 0 0"
+      ></a-camera>
+    </a-scene>
+  </body>
+</html>

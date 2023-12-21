@@ -1,0 +1,222 @@
+ LARGE SINGLE AISLE 1 / 23k SLS thrust turbofan                  -1                       -1
+debug_mode = False
+aircraft:engine:data_file=models/engines/turbofan_23k_1.deck
+ $INGASP
+ XCTCMX=.4
+ STATIC=.03
+ AS=1.,		! Number of aisles in the cabin
+ AR=10.13,	! Wing aspect ratio
+ ARHT=4.75,	! Horizontal tail aspect ratio
+ ARVT=1.67,	! Vertical tail aspect ratio
+ BOELTV=2.362,	! wing span/vertical tail moment arm (if VBARVX is input)
+ COELTH=.2307,	! wing chord/horizontal tail moment arm (if VBARHX is input)
+ DLMC4=25.00,	! sweep of wing quarter chord, degrees
+ DWPQCH=25.00,	! horizontal tail quarter chord sweep in degrees if LCWING <> 0
+ ELPC=9.5,	! length of pilot compartment in feet (4.44)
+ ELODN=1.0,	! length to diameter ratio of nose cone of fuselage (2)
+ ELODT=3.0,	! length to diameter ratio of tail cone of fuselage (3.2)
+ HCK=4.5,	! mean fuselage cabin diameter minus mean fuselage nose diameter in feet (2.47)
+ HTG=8.,	! wing height about ground during ground run in feet (3.0)
+ HWING=0.0,     ! wing location on fuselage =0, low wing; =1 high wing
+ PAX=180.,	! number of passenger seats excluding crew
+ PS=29.0,	! seat pitch in inches
+ RELR=0.4524,	! cg of fuselage and contents, fraction fuselage(.4) if LCWING <> 0
+ SAB=6.,	! seats abreast in fuselage
+ SAH=0., 	! horizontal tail location on vertical tail: 0: low tail, 1: T-tail
+ SCFAC=0.033,	! shift in drag divergence Mach number due to supercritical design (0.)
+ SF_FAC=4000.,	! Fuselage Wetted Area Adjustment factor (1.); if SF_FAC > 10., input as Fuselage Wetted area (ft^2)
+ SLM=.330,	! wing taper ratio
+ SLMH=.352,	! taper ratio of horizontal tail
+ SLMV=0.801,	! taper ratio of vertical tail
+ STRUT=0.,	! attachment location of strut as fraction of half-span
+ SSTQSW=0.,	! strut area divided by wing area
+ TCHT=.12,	! horizontal tail root thickness to chord ratio
+ TCR=.150,	! wing root thickness to chord ratio
+ TCSTRT = 0.,	! strut thickness to chord ratio
+ TCT=.12, 	! wing tip thickness to chord ratio
+ TCVT=.12,	! Vertical tail root thickness to chord rati
+ VBARHX=1.189,	! Hz tail volume coefficient (default function of fus length and diameter)
+ VBARVX=.145,	! vertical tail volume coefficient (default function of fuselage length and diameter)
+ WAS=24.,	! aisle width, in.
+ WS=20.2, 	! seat width, in
+ YMG=0.15,  	! span fraction location of main gear on wing    0: on fuselage   1: at tip
+ YP=.35,	! span fraction location of engines on wing    0: on fuselage   1: at tip
+ XLQDE=2.00,	! nacelle length to diameter ratio, KNAC=0 or 1
+ XWQLF=0.463,	! Distance from Nose to Wing Aerodynamic Center over Fuselage Length (0.40
+ ALPHL0=-1.2,	! zero lift angle of attack in degrees
+ CKF=1.25,	! fuselage drag form factor (numerical function of fuselage fineness ratio)
+ CKW=1.25,	! wing form factor (numerical function of TCR and TCT)
+ CKI=1.1,	! Wing/Fuselage Interference Factor (0.0, i.e No interference drag)
+ CKN=1.50,	! nacelle form factor (numerical function of nacelle fineness ratio)
+ FPYLND=1.0,    ! New Input
+ CKVT=1.25,	! vertical tail form factor (numerical function of TCVT)
+ CKHT=1.25,	! horizontal tail form factor (numerical function of TCHT and SAH)
+ CKSTRT=0.      ! Strut/Fuselage Interference Factor (0.0, i.e No interference drag)
+ DELCD=0.00175,	! increment in CD (.0015)
+ EYEW=1.5,	! wing incidence to fuselage horizontal reference in degrees
+ ! KNAC determines nacelle drag bookkeeping
+ ! 0: nacelle drag computed as penalty to engine performance (turbofans only)
+ ! 1: nacelle drag part of aircraft drag; nacelle sized by engine size
+ ! 2: same as 1, except uses nacelle size inputs DRARN, ELN    
+ KNAC=1, 
+ BENGOB=0.05,	! fraction of flap-free wing span due to engines
+ BTEOB=0.65, 	! ratio of flap span to wing span
+ CFOC=0.30, 	! flap chord to wing chord ratio
+ CLEOC=.15,	! ratio of leading edge device chord to wing chord (0 for no LED)
+ DCDOTE=0.10, 	! drag coeff increment due to optimally deflected TE flaps
+ DELLEO=20., 	! optimal deflection for leading edge device degrees (45)
+ DFLPTO=10.,	! takeoff flap deflection, degrees
+ DELLED=10.,	! leading edge device deflection, degrees (0) when?
+ DCLMTE=1.5,	! lift coefficient increment due to optimally deflected TE flaps
+ DFLPLD=40., 	! landing flap deflection, degrees
+ FLAPN=2., 	! number of flap segments per wing panel (1)
+ ! JFLTYP 1:plain flap, 2:split flap, 3:single slotted flap (default), 4:double slotted flap
+ !        5:triple slotted flap, 6:Fowler flap, 7:double slotted Fowler flap
+ JFLTYP=4,
+ ! RCLMAX is the CLMAX reference value of basic wing reference conditions: aspect ratio = 12, taper ratio = 1., 
+ !              t/c = 0.10, SweepQC = 0, Re = 6 x 10^6
+ RCLMAX=1.15,
+ WCFLAP=1.90, 	! weight trend coefficient in flap weight equation (default is a function of JFLYTYP)
+ ! CATD structural design category
+ ! 0 normal design FAR Part 23
+ ! 1 utility design FAR 23
+ ! 2 aerobatic design FAR 23
+ ! 3.0 for transports FAR Part 25
+ ! >3 value of input design limit load factor
+ CATD=3.,
+ DELP=7.50,	! fuselage pressure differential, psi
+ DELWST=0.,	! incremental structural weight, lb. (0.)
+ FPYL=1.25,	! factor for turbofan engine pylon weight if NTYE=7 and KNAC=2
+ SKB=128.0,	! weight trend coefficient of fuselage
+ SKCC=16.5,	! weight trend coefficient of cockpit controls
+ SKWF=.600,	! fraction of total theoretical wing volume used for wing fuel
+ SKFS=.041,	! weight trend coefficient for fuel system
+ SKFW=.95,	! weight trend coefficient of fixed wing controls
+ SKPEI=.14,	! weight trend coefficient of engine installation, fraction dry engine
+ SKLG=.040,	! weight trend coefficient of landing gear, fraction gross weight
+ SKMG=.85, 	! weight trend coefficient main gear, fraction of landing gear
+ SKPES=0.258,	! weight trend coefficient of engine nacelle, fraction dry engine, if KNAC <> 2
+ SKSTRUT=0.,    ! weight trend coefficient of strut, strut weight/wing weight
+ SKWW=102.5, 	! weight trend coefficient of wing without high lift devices
+ SKY=.232,	! weight trend coefficient horizontal tail
+ SKZ=.289, 	! weight trend coefficient vertical tail
+ UWNAC=3.0, 	! nacelle weight/nacelle surface area; lb per sq ft, if KNAC <> 2
+ UWPAX=200.,	! weight per passenger, including baggage, lb (200.)
+ WCARGO=10040.,	! weight of cargo, lb
+ WENG=6130., 	! dry weight of one engine, lb if KNAC = 2 (includes gearbox if propeller)
+ WG=175360., 	! initial gross weight guess, lb
+ WG=175400., 	! Testing New WGHT
+ !WG=174838.71739692, 
+ WNAC=0.,	! weight of one nacelle, lb if KNAC = 2
+ WPLX=0.,	! design payload, lb (default function of PAX)
+ WPYLON=0, 	! weight of one pylon, lb, if KNAC=2 and NTYPE=7
+ ! CW are weight coefficients for various subsytems.  >1 is actual weight in lbsf 
+ CW(1)=928.,   	! APU
+ CW(2)=.0736,  	! instruments
+ CW(3)=.112,   	! hydraulics for flight controls
+ CW(4)=.14,    	! hydraulics for gear
+ CW(5)=1959.,  	! avionics
+ CW(6)=1.65,   	! air conditioning
+ CW(7)=551.,   	! anti-icing system
+ CW(8)=11192.,  ! furnishings
+ CW(9)=5.0,    	! passenger service items lbsf per passenger
+ CW(10)=3.0,   	! water lbsf per occupant
+ CW(11)=50.0,   	! emergency equipment
+ CW(12)=7.6,   	! catering items lbsf per passenger CW(13)=6.0,
+ CW(13)=12.,    ! trapped fuel factor
+ CKFF=1.000,     ! factor on installed engine fuel flow
+ DCDSE=-1.0,	! delta CD due to engine out (default is zero), -1: program computes increment
+ DNQDE=1.25,	! Nacelle Diamter-to-Engine Diameter Ratio
+ ENP=2.		! number of engines
+ HBTP=0.333,	! turbofan engine face hub/tip ratio, if NTYE=7 and KNAC <> 2
+ KODETO=5,     	! engine power setting during takeoff segment if NTYE=7
+ KODECL=7,     	! engine power setting during climb segment if NTYE=7
+ KODETR=6,     	! engine power setting during turn segment if NTYE=7
+ ! KODEAC is engine power setting during acceleration segment if NTYE = 7
+ ! 5: maximum power (default)
+ ! 6: maximum continuous power
+ ! 7: maximum climb power
+ KODEAC=7, 
+ ! NTYE sets the type of engine
+ ! 1: reciprocating engine with carburetor, 2: reciprocating engine with fuel injection
+ ! 3: recip engine with fuel injection and geared, 4: rotary combustion engine
+ ! 5: turboshaft engine, 6: turboprop engine
+ ! 7: turbojet or turbofan engine
+ ! 11, 12, 13 same as 1, 2, 3 except HOPWSZ computes geometry and weight
+ ! 14 same as 4 except RCWSZ computes geometry and weight
+ NTYE=7, 
+ RELP=0.0,	! engine cg fraction of fuselage length, for fuselage mounted engines, (0.) if LCWING <> 0
+ SM1D=0.625,	! engine face Mach number sea level static if NTYE = 7 and KNAC <> 2
+ SWSLS=.21366, 	! engine specific weight lb/lb thrust or lb/HP for recip/ turboprop if KNAC <> 2
+ THIN=28690., 	! input thrust for one engine, lbf., if JENGSZ=4 and NTYE=7 
+ EMCRU=0.80,	! design cruise Mach number for engine sizing (not mission analysis)
+ HNCRU=37500.,	! design cruise altitude in feet
+ HSCREQ=20000.,	! required engine-out service ceiling
+ ! IWLD         0: landing weight = gross weight (default)  1: landing weight = weight at end of mission
+ !              2: landing weight = fraction of gross weight (see WLPCT)
+ IWLD=2,
+ ! JENGSZ sets the type of engine sizing
+ ! 0: size engine for cruise only
+ ! 1: cruise and takeoff only
+ ! 2: cruise, takeoff, and climb only
+ ! 3: size for cruise and climb only
+ ! 4: engine thrust specified; (input KNAC=2, ELN, DBARN, WENG, WNAC) only if NTYE=7
+ JENGSZ=4,
+ RWCRTX=.985,	! ratio of cruise weight to gross weight for propulsion sizing (1.0)
+ VMLFSL=402.5, 	! maximum structural design flight speed, mph
+ WGS=128.0, 	! wing loading, psf
+ WLPCT=.9423,   ! ratio of landing weight to gross weight, if IWLD=2
+ ROCTOC=300.,	! rate of climb at top of climb ft/min
+ XTORQ=8000.,	! required takeoff distance to clear 35 ft, input if JENGSZ=1 or 2 (99999.)
+ ARNGE(1) = 3675., ! 0: no range or endurance requirement (default) <24: design endurance, hrs >24: design range, nm
+ ! ARNGE(2) = 0.,  ! Design Altitude, Short Range
+ ARNGE(3) = 900.,    ! Off Design Altitude, Short Range
+ ! ARNGE(4) = 0.,  ! Off Design Altitude, Long Range
+ CRALT =37500.,	! mission cruise altitude, ft (HNCRU)
+ CRMACH=.80,	! mission analysis cruise Mach number (use EMCRU for engine sizing)
+ DELTT=0.1677,	! time spent taxiing before takeoff and after landing, hours
+ DV1=10.,	! increment of engine failure decision speed above stall, kts (5)
+ DVR=5.,	! increment of takeoff rotation speed above engine failure decision speed above stall, kts (5)
+ ! ICLM  1: climb at maximum rate of climb (default)  2: climb at maximum allowable operating speed
+ !       3: climb at input EAS
+ ICLM=3,
+! ICRUS = 0, cruise at CRALT (default) for cost and range calculation
+! ICRUS = 1, cruise at normal power for cost and range calculation
+! ICRUS = 2, cruise for best specific range for cost and range calculation
+! ICRUS = 3, cruise for best endurance for cost and range calculation
+! ICRUS = 10,11,12,13 – Cruise/Climb at constant Mach Number
+! ICRUS = 20,21,22,23 – Cruise/Climb at constant True Airspeed, TAS
+! ICRUS = 30,31,32,33 – Cruise/Climb at constant Equivalent Airspeed, EAS
+ ICRUS=0,	!cruise specifier
+ MX=0,		! 0 – No alternate mission profile (default); 1 – Alternate mission profile input in NEWMIS namelist
+ NFAIL=0,	! 0: computes engine out and accelerate/stop distance, 1: computes only all engine performance (default)
+ OFALT=0., 	! off design mission altitude in feet (0.0)
+ OFEM=.78,	! off design specified mission Mach number
+ ROSCAB=9999.,	! cabin rate of sink during descent (500.) fpm
+ RSMX=900.,	! maximum allowable rate of sink during landing approach ft per min (1000)
+ FRESF=4998,   ! Reserve Fuel fraction of mission fuel (minus sign for code trigger)
+ RF(1)=.05,	! Reserve Fuel Input: Time for Missed Approach
+ RF(2)=125.,	! Reserve Fuel Input: Range to alternate
+ RF(3)=20000.,	! Reserve Fuel Input: Cruise altitude to alternate
+ RF(4)=25000., 	! Reserve Fuel Input: Holding Altitude
+ SINKTD=5.,	! landing touchdown sink rate, ft per sec (3.0)
+ VCLMB=270.,	! climb speed, EAS, kts (input only if ICLM=3)
+ XLFMX=1.15, 	! landing flare load factor if < 4 or landing flare initiation height, ft if > 4.  (1.2)
+ ALR=1.11, 	! man-hour labor rate $ per hour ?
+ CINP=.11, 	! cost of annual inspection ?
+ CLIAB=1984.,	! cost of liability insurance ?
+ CMF=15.,	! increment to fixed annual cost ?
+ CMV=.15,	! increment to hourly operating cost ?
+ CRWOH=15.,     ! crew overhead rate ? 
+ DYR=12.,      	! aircraft depreciation period in years (8)
+ FCSF=2.5,     	! fuel cost, $ per gallon (0.51)      
+ HIR=0.015,     ! hull insurance rate; insurance cost/aircraft price (0.02)
+ HRI=2500.,     ! hours between annual inspection (100)
+ OHR=350.,  	! Overhaul cost of one engine, $ per lb thrust or $ per HP (5.5)
+ PRV=.15,  	! aircraft residual value/original value (0.2)
+ RI=.8,     	! loan interest rate; yearly interest/loan (0.)
+ SRPM=18000.,   ! Cabin Attendant Cost ($/yr.)   
+ TBO=3500., 	! time between overhauls, hr (0. default which deletes cost computations)
+ TR=1.0,  	! property tax rate; tax/value (0.)
+ $END
+
