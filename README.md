@@ -17,7 +17,7 @@ This installs the package in the current environment such that changes to the Py
 
 ## Documentation
 
-[Here is a pdf version of the docs if you're on a NASA device.](https://nasa.sharepoint.com/:b:/t/Aviary/EefUcNcvjD9Et4plLvenlAcBuBltqI6chbSGMc8kdaC3Pg)
+The Aviary documentation is located [here](https://openmdao.github.io/om-Aviary/intro.html).
 
 Otherwise you can build the docs locally:
 

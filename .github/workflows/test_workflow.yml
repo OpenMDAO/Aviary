@@ -223,7 +223,7 @@ jobs:
         if: matrix.extend
         shell: bash -l {0}
         run: |
-          cd $HOME/work/Aviary_deprecated/Aviary_deprecated/aviary/docs
+          cd $HOME/work/om-Aviary/om-Aviary/aviary/docs
           find _build/html/reports/ -type f -name '*.log' \
           -exec echo "#################################################################" \; \
           -exec echo {} \; \
@@ -240,7 +240,7 @@ jobs:
           echo "Publishing Docs to github.io"
           echo "============================================================="
           pip install ghp-import
-          cd $HOME/work/Aviary_deprecated/Aviary_deprecated/aviary
+          cd $HOME/work/om-Aviary/om-Aviary/aviary
           ghp-import -n -p -f docs/_build/html
 
       - name: Scan for security issues
