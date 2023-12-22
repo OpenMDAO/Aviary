@@ -1,4 +1,5 @@
 import unittest
+import os
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
@@ -8,7 +9,7 @@ from aviary.subsystems.mass.gasp_based.design_load import (DesignLoadGroup,
                                                            LoadParameters,
                                                            LoadSpeeds)
 from aviary.variable_info.options import get_option_defaults
-from aviary.utils.test_utils.IO_test_util import assert_match_spec
+from aviary.utils.test_utils.IO_test_util import assert_match_spec, XDSM_PATH
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -879,6 +880,7 @@ class DesignLoadGroupTestCase1(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-7, rtol=2e-7)
 
+    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'mass_and_sizing_basic_specs/design_load.json')), "`mass_and_sizing_basic_specs/design_load.json` does not exist")
     def test_io_fixed_group_spec(self):
 
         subsystem = self.prob.model
@@ -930,6 +932,7 @@ class DesignLoadGroupTestCase2smooth(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-7, rtol=2e-7)
 
+    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'mass_and_sizing_basic_specs/design_load.json')), "`mass_and_sizing_basic_specs/design_load.json` does not exist")
     def test_io_fixed_group_spec(self):
 
         subsystem = self.prob.model
