@@ -1,4 +1,5 @@
 import unittest
+import os
 
 import numpy as np
 import openmdao.api as om
@@ -6,7 +7,7 @@ from openmdao.utils.assert_utils import (assert_check_partials,
                                          assert_near_equal)
 
 from aviary.mission.gasp_based.ode.climb_eom import ClimbRates
-from aviary.utils.test_utils.IO_test_util import assert_match_spec
+from aviary.utils.test_utils.IO_test_util import assert_match_spec, XDSM_PATH
 from aviary.variable_info.variables import Dynamic
 
 
@@ -60,6 +61,7 @@ class ClimbTestCase(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
+    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'climb_specs/eom.json')), "`climb_specs/eom.json` does not exist")
     def test_climb_spec(self):
 
         subsystem = self.prob.model

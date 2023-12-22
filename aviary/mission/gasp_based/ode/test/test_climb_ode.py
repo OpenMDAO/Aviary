@@ -1,4 +1,5 @@
 import unittest
+import os
 
 import numpy as np
 import openmdao.api as om
@@ -6,7 +7,8 @@ from openmdao.utils.assert_utils import assert_check_partials
 
 from aviary.mission.gasp_based.ode.climb_ode import ClimbODE
 from aviary.utils.test_utils.IO_test_util import (assert_match_spec,
-                                                  check_prob_outputs)
+                                                  check_prob_outputs,
+                                                  XDSM_PATH)
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.interface.default_phase_info.gasp import default_mission_subsystems
@@ -93,10 +95,12 @@ class ClimbODETestCase(unittest.TestCase):
         }
         check_prob_outputs(self.prob, testvals, 1e-1)  # TODO tighten
 
+    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'statics_specs/climb1.json')), "`statics_specs/climb1.json` does not exist")
     def test_climb1_spec(self):
         """Test climb1 phase spec"""
         assert_match_spec(self.sys, "statics_specs/climb1.json")
 
+    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'statics_specs/climb2.json')), "`statics_specs/climb2.json` does not exist")
     def test_climb2_spec(self):
         """Test climb2 phase spec"""
         assert_match_spec(self.sys, "statics_specs/climb2.json")

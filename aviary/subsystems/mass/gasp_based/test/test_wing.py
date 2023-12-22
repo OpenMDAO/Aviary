@@ -1,4 +1,5 @@
 import unittest
+import os
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
@@ -7,7 +8,7 @@ from aviary.subsystems.mass.gasp_based.wing import (WingMassGroup,
                                                     WingMassSolve,
                                                     WingMassTotal)
 from aviary.variable_info.options import get_option_defaults
-from aviary.utils.test_utils.IO_test_util import assert_match_spec
+from aviary.utils.test_utils.IO_test_util import assert_match_spec, XDSM_PATH
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -270,6 +271,7 @@ class WingMassGroupTestCase1(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
+    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'mass_and_sizing_basic_specs/wing_mass.json')), "`mass_and_sizing_basic_specs/wing_mass.json` does not exist")
     def test_io_equip_and_useful_group_spec(self):
 
         subsystem = self.prob.model
@@ -470,6 +472,7 @@ class WingMassGroupTestCase4(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
+    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'mass_and_sizing_both_specs/wing_mass.json')), "`mass_and_sizing_both_specs/wing_mass.json` does not exist")
     def test_io_equip_and_useful_group_spec(self):
 
         subsystem = self.prob.model
