@@ -57,3 +57,15 @@ def add_subsystem_variables_to_phase(phase, phase_name, external_subsystems):
                 phase.add_path_constraint(constraint_name, **kwargs)
 
     return phase
+
+
+def get_initial(status, key, status_for_this_variable=False):
+    # Check if status is a dictionary.
+    # If so, return the value corresponding to the key or False if the key is not found.
+    # If not, return the value of status.
+    if isinstance(status, dict):
+        if key in status:
+            status_for_this_variable = status[key]
+    elif isinstance(status, bool):
+        status_for_this_variable = status
+    return status_for_this_variable
