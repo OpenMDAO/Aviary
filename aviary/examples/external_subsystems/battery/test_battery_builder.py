@@ -10,7 +10,6 @@ class TestBattery(TestSubsystemBuilderBase):
     def setUp(self):
         self.subsystem_builder = BatteryBuilder()
         self.aviary_values = AviaryValues()
-        self.aviary_values.set_val(Aircraft.Battery.CELL_TYPE, '18650')
 
 
 if __name__ == '__main__':

@@ -38,11 +38,10 @@ class BatteryMission(Group):
 
     def setup(self):
         n = self.options["num_nodes"]
-        cell_type = self.options['aviary_inputs'].get_val(Aircraft.Battery.CELL_TYPE)
 
         self.add_subsystem(
             name="interp_group",
-            subsys=RegTheveninInterpGroup(num_nodes=n, cell_type=cell_type),
+            subsys=RegTheveninInterpGroup(num_nodes=n),
         )
 
         self.add_subsystem(name="cell", subsys=CellComp(num_nodes=n))

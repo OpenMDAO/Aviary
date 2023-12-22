@@ -18,8 +18,6 @@ prob = av.AviaryProblem(phase_info, mission_method="simple", mass_method="FLOPS"
 # Allow for user overrides here
 prob.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm.csv')
 
-prob.aviary_inputs.set_val(Aircraft.Battery.CELL_TYPE, "18650")
-
 prob.add_pre_mission_systems()
 
 prob.add_phases()

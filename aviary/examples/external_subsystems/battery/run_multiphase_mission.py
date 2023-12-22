@@ -24,8 +24,6 @@ prob = AviaryProblem(phase_info, mission_method="FLOPS", mass_method="FLOPS")
 # Allow for user overrides here
 prob.load_inputs(input_file)
 
-prob.aviary_inputs.set_val(Aircraft.Battery.CELL_TYPE, "18650")
-
 # Have checks for clashing user inputs
 # Raise warnings or errors depending on how clashing the issues are
 prob.check_inputs()
