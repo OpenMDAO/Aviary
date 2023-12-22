@@ -50,7 +50,7 @@ class FlightConstraintTestCase(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=3e-11, rtol=1e-12)
 
-    @unittest.skipIf(not os.path.isfile(os.path.join('climb_specs/constraints.json', XDSM_PATH)), "`climb_specs/constraints.json` does not exist")
+    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'climb_specs/constraints.json')), "`climb_specs/constraints.json` does not exist")
     def test_flight_constraints_spec(self):
         subsystem = self.prob.model
         assert_match_spec(subsystem, "climb_specs/constraints.json")
