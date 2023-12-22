@@ -9,6 +9,7 @@ try:
 except ImportError:
     missing_dependecies = True
 
+
 @unittest.skipIf(missing_dependecies, "Skipping due to missing dependencies")
 class TestBattery(TestSubsystemBuilderBase):
 

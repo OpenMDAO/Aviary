@@ -7,6 +7,7 @@ try:
 except ImportError:
     missing_dependecies = True
 
+
 @unittest.skipIf(missing_dependecies, "Skipping due to missing dependencies")
 class TestStructures(av.TestSubsystemBuilderBase):
 
