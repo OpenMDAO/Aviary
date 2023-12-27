@@ -12,7 +12,7 @@ phase_info = deepcopy(av.default_simple_phase_info)
 phase_info['pre_mission']['external_subsystems'] = [battery_builder]
 phase_info['climb']['external_subsystems'] = [battery_builder]
 
-prob = av.AviaryProblem(phase_info, mission_method="simple", mass_method="FLOPS")
+prob = av.AviaryProblem(phase_info)
 
 # Load aircraft and options data from user
 # Allow for user overrides here

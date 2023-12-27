@@ -13,7 +13,7 @@ from aviary.api import SGMCruise, SGMDescent
 from aviary.api import Dynamic
 
 
-def run_aviary(aircraft_filename, phase_info, mission_method, mass_method, optimizer=None, analysis_scheme=AnalysisScheme.COLLOCATION,
+def run_aviary(aircraft_filename, phase_info, optimizer=None, analysis_scheme=AnalysisScheme.COLLOCATION,
                objective_type=None, record_filename='dymos_solution.db', restart_filename=None, max_iter=50, run_driver=True, make_plots=True):
     """
     This function runs the aviary optimization problem for the specified aircraft configuration and mission.
@@ -30,7 +30,7 @@ def run_aviary(aircraft_filename, phase_info, mission_method, mass_method, optim
     of the Aviary problem.
     """
     # Build problem
-    prob = AviaryProblem(phase_info, mission_method, mass_method, analysis_scheme)
+    prob = AviaryProblem(phase_info, analysis_scheme)
 
     # Load aircraft and options data from user
     # Allow for user overrides here
@@ -143,7 +143,4 @@ if __name__ == "__main__":
 
     from aviary.interface.default_phase_info.gasp import phase_info
     input_deck = 'models/large_single_aisle_1/large_single_aisle_1_GwGm.csv'
-    run_aviary(input_deck, phase_info,
-               mission_method="GASP", mass_method="GASP",
-               analysis_scheme=AnalysisScheme.SHOOTING, run_driver=False,
-               )
+    run_aviary(input_deck, phase_info, analysis_scheme=AnalysisScheme.SHOOTING, run_driver=False)

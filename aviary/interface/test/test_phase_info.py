@@ -92,7 +92,7 @@ class TestParameterizePhaseInfo(unittest.TestCase):
     def test_phase_info_parameterization_gasp(self):
         phase_info = deepcopy(ph_in_gasp)
 
-        prob = AviaryProblem(phase_info, mission_method="GASP", mass_method="GASP")
+        prob = AviaryProblem(phase_info)
 
         csv_path = pkg_resources.resource_filename(
             "aviary", "models/small_single_aisle/small_single_aisle_GwGm.csv")
@@ -129,7 +129,7 @@ class TestParameterizePhaseInfo(unittest.TestCase):
     def test_phase_info_parameterization_flops(self):
         phase_info = deepcopy(ph_in_flops)
 
-        prob = AviaryProblem(phase_info, mission_method="FLOPS", mass_method="FLOPS")
+        prob = AviaryProblem(phase_info)
 
         csv_path = pkg_resources.resource_filename(
             "aviary", "models/test_aircraft/aircraft_for_bench_FwFm.csv")

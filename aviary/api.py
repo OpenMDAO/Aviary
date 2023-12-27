@@ -30,7 +30,7 @@ from aviary.utils.named_values import NamedValues, get_keys, get_items, get_valu
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.csv_data_file import read_data_file, write_data_file
 from aviary.utils.data_interpolator_builder import build_data_interpolator
-from aviary.variable_info.enums import AlphaModes, AnalysisScheme, ProblemType, SpeedType, GASP_Engine_Type, Flap_Type
+from aviary.variable_info.enums import AlphaModes, AnalysisScheme, ProblemType, SpeedType, GASPEngineType, FlapType, EquationsOfMotion, LegacyCode, Verbosity
 from aviary.interface.default_phase_info.gasp import phase_info as default_2DOF_phase_info
 from aviary.interface.default_phase_info.flops import phase_info as default_height_energy_phase_info
 from aviary.interface.default_phase_info.gasp_fiti import create_gasp_based_ascent_phases, create_gasp_based_descent_phases

@@ -46,8 +46,7 @@ class TestSolvedAero(unittest.TestCase):
 
     def test_solved_aero_pass_polar(self):
         # Test that passing training data provides the same results
-        prob = AviaryProblem(
-            phase_info, mission_method="FLOPS", mass_method="FLOPS")
+        prob = AviaryProblem(phase_info)
 
         csv_path = pkg_resources.resource_filename(
             "aviary", "subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv")
@@ -88,7 +87,7 @@ class TestSolvedAero(unittest.TestCase):
 
         ph_in['cruise']['subsystem_options'] = {'core_aerodynamics': subsystem_options}
 
-        prob = AviaryProblem(ph_in, mission_method="FLOPS", mass_method="FLOPS")
+        prob = AviaryProblem(ph_in)
 
         prob.load_inputs(csv_path)
 

@@ -10,7 +10,7 @@ from aviary.variable_info.enums import AnalysisScheme
 from aviary.interface.methods_for_level2 import AviaryProblem
 
 
-def run_aviary(aircraft_filename, phase_info, mission_method, mass_method, optimizer=None,
+def run_aviary(aircraft_filename, phase_info, optimizer=None,
                analysis_scheme=AnalysisScheme.COLLOCATION, objective_type=None,
                record_filename='dymos_solution.db', restart_filename=None, max_iter=50,
                run_driver=True, make_plots=True, phase_info_parameterization=None):
@@ -28,10 +28,6 @@ def run_aviary(aircraft_filename, phase_info, mission_method, mass_method, optim
         Filename from which to load the aircraft and options data.
     phase_info : dict
         Information about the phases of the mission.
-    mission_method : str
-        The method used for defining the mission; can be 'GASP', 'FLOPS', 'solved', or 'simple'.
-    mass_method : str
-        The method used for calculating the mass; can be 'GASP' or 'FLOPS'.
     optimizer : str
         The optimizer to use.
     analysis_scheme : AnalysisScheme, optional
@@ -62,11 +58,10 @@ def run_aviary(aircraft_filename, phase_info, mission_method, mass_method, optim
     The function allows for user overrides on aircraft and options data.
     It raises warnings or errors if there are clashing user inputs.
     Users can modify or add methods to alter the Aviary problem's behavior.
-
     """
 
     # Build problem
-    prob = AviaryProblem(phase_info, mission_method, mass_method, analysis_scheme)
+    prob = AviaryProblem(phase_info, analysis_scheme)
 
     # Load aircraft and options data from user
     # Allow for user overrides here
@@ -186,20 +181,6 @@ def _setup_level1_parser(parser):
         choices=("SNOPT", "IPOPT", "SLSQP", "None")
     )
     parser.add_argument(
-        "--mass_origin",
-        type=str,
-        default="FLOPS",
-        help="Mass estimation origin to use",
-        choices=("GASP", "FLOPS")
-    )
-    parser.add_argument(
-        "--mission_origin",
-        type=str,
-        default="simple",
-        help="Mission origin to use",
-        choices=("GASP", "FLOPS", "simple")
-    )
-    parser.add_argument(
         "--phase_info",
         type=str,
         default=None,
@@ -236,8 +217,6 @@ def _exec_level1(args, user_args):
         input_deck=args.input_deck,
         outdir=args.outdir,
         optimizer=args.optimizer,
-        mass_origin=args.mass_origin,
-        mission_origin=args.mission_origin,
         phase_info=args.phase_info,
         n2=args.n2,
         max_iter=args.max_iter,

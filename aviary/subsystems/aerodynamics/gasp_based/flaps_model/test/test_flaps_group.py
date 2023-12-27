@@ -6,7 +6,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from aviary.subsystems.aerodynamics.gasp_based.flaps_model.flaps_model import \
     FlapsGroup
 from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.enums import Flap_Type
+from aviary.variable_info.enums import FlapType
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 """
@@ -21,7 +21,7 @@ class FlapsGroupTestCaseTripleSlotted(unittest.TestCase):
 
         options = get_option_defaults()
         options.set_val(Aircraft.Wing.FLAP_TYPE,
-                        val=Flap_Type.TRIPLE_SLOTTED, units='unitless')
+                        val=FlapType.TRIPLE_SLOTTED, units='unitless')
 
         self.prob.model = FCC = FlapsGroup(aviary_options=options)
 
@@ -123,7 +123,7 @@ class FlapsGroupTestCaseSplit(unittest.TestCase):
         self.prob = om.Problem()
 
         options = get_option_defaults()
-        options.set_val(Aircraft.Wing.FLAP_TYPE, val=Flap_Type.SPLIT, units='unitless')
+        options.set_val(Aircraft.Wing.FLAP_TYPE, val=FlapType.SPLIT, units='unitless')
 
         self.prob.model = FCC = FlapsGroup(aviary_options=options)
 
@@ -226,7 +226,7 @@ class FlapsGroupTestCaseSingleSlotted(unittest.TestCase):
 
         options = get_option_defaults()
         options.set_val(Aircraft.Wing.FLAP_TYPE,
-                        val=Flap_Type.SINGLE_SLOTTED, units='unitless')
+                        val=FlapType.SINGLE_SLOTTED, units='unitless')
 
         self.prob.model = FCC = FlapsGroup(aviary_options=options)
 
@@ -329,7 +329,7 @@ class FlapsGroupTestCasePlain(unittest.TestCase):
         self.prob = om.Problem()
 
         options = get_option_defaults()
-        options.set_val(Aircraft.Wing.FLAP_TYPE, val=Flap_Type.PLAIN, units='unitless')
+        options.set_val(Aircraft.Wing.FLAP_TYPE, val=FlapType.PLAIN, units='unitless')
 
         self.prob.model = FCC = FlapsGroup(aviary_options=options)
 
@@ -431,7 +431,7 @@ class FlapsGroupTestCaseFowler(unittest.TestCase):
         self.prob = om.Problem()
 
         options = get_option_defaults()
-        options.set_val(Aircraft.Wing.FLAP_TYPE, val=Flap_Type.FOWLER, units='unitless')
+        options.set_val(Aircraft.Wing.FLAP_TYPE, val=FlapType.FOWLER, units='unitless')
 
         self.prob.model = FCC = FlapsGroup(aviary_options=options)
 
@@ -534,7 +534,7 @@ class FlapsGroupTestCaseDoubleFowler(unittest.TestCase):
 
         options = get_option_defaults()
         options.set_val(Aircraft.Wing.FLAP_TYPE,
-                        val=Flap_Type.DOUBLE_SLOTTED_FOWLER, units='unitless')
+                        val=FlapType.DOUBLE_SLOTTED_FOWLER, units='unitless')
 
         self.prob.model = FCC = FlapsGroup(aviary_options=options)
 

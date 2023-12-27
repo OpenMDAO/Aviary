@@ -67,7 +67,7 @@ class PreMissionGroupTest(unittest.TestCase):
             WingWeightBuilder(name="wing_external")
         ]
 
-        prob = AviaryProblem(phase_info, mission_method="FLOPS", mass_method="FLOPS")
+        prob = AviaryProblem(phase_info)
 
         csv_path = pkg_resources.resource_filename(
             "aviary", "models/test_aircraft/aircraft_for_bench_GwFm.csv")

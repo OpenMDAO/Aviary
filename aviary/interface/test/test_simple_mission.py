@@ -1,7 +1,11 @@
 import unittest
-from aviary.interface.methods_for_level1 import run_aviary
-from aviary.subsystems.test.test_dummy_subsystem import ArrayGuessSubsystemBuilder
+
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
+
+from aviary.interface.methods_for_level1 import run_aviary
+from aviary.interface.methods_for_level2 import AviaryProblem
+from aviary.subsystems.test.test_dummy_subsystem import ArrayGuessSubsystemBuilder
+from aviary.variable_info.enums import EquationsOfMotion
 
 
 @use_tempdirs
@@ -91,8 +95,6 @@ class AircraftMissionTestSuite(unittest.TestCase):
         }
 
         self.aircraft_definition_file = 'models/test_aircraft/aircraft_for_bench_FwFm.csv'
-        self.mission_method = "simple"
-        self.mass_method = "FLOPS"
         self.make_plots = False
         self.max_iter = 100
 
@@ -107,10 +109,23 @@ class AircraftMissionTestSuite(unittest.TestCase):
                 phase_info[phase]['external_subsystems'].append(subsystem_builder)
 
     def run_mission(self, phase_info, optimizer):
-        return run_aviary(
-            self.aircraft_definition_file, phase_info,
-            mission_method=self.mission_method, mass_method=self.mass_method,
-            make_plots=self.make_plots, max_iter=self.max_iter, optimizer=optimizer)
+
+        prob = AviaryProblem(phase_info)
+
+        prob.load_inputs(self.aircraft_definition_file)
+        prob.mission_method = EquationsOfMotion.SIMPLE
+        prob.check_inputs()
+        prob.add_pre_mission_systems()
+        prob.add_phases()
+        prob.add_post_mission_systems()
+        prob.link_phases()
+        prob.add_driver(optimizer)
+        prob.add_design_variables()
+        prob.add_objective()
+        prob.setup()
+        prob.set_initial_guesses()
+        prob.failed = prob.run_aviary_problem()
+        return prob
 
     def test_mission_basic(self):
         prob = self.run_mission(self.phase_info, "SLSQP")

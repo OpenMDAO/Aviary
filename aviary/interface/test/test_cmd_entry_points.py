@@ -20,12 +20,12 @@ class CommandEntryPointsTestCases(unittest.TestCase):
 
     @require_pyoptsparse(optimizer="SNOPT")
     def bench_test_SNOPT_cmd(self):
-        cmd = 'aviary run_mission models/test_aircraft/aircraft_for_bench_GwGm.csv --optimizer SNOPT --mass_origin GASP --mission_origin GASP --max_iter 1'
+        cmd = 'aviary run_mission models/test_aircraft/aircraft_for_bench_GwGm.csv --optimizer SNOPT --max_iter 1'
         self.run_and_test_cmd(cmd)
 
     @require_pyoptsparse(optimizer="IPOPT")
     def bench_test_IPOPT_cmd(self):
-        cmd = 'aviary run_mission models/test_aircraft/aircraft_for_bench_GwGm.csv --optimizer IPOPT --mass_origin GASP --mission_origin GASP --max_iter 1'
+        cmd = 'aviary run_mission models/test_aircraft/aircraft_for_bench_GwGm.csv --optimizer IPOPT --max_iter 1'
         self.run_and_test_cmd(cmd)
 
     def test_diff_configuration_conversion(self):
@@ -82,4 +82,6 @@ class DashboardCommandTestCases(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    # unittest.main()
+    test = DashboardCommandTestCases()
+    test.test_dashboard()

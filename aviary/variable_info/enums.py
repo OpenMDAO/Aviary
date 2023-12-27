@@ -53,44 +53,19 @@ class AnalysisScheme(Enum):
     SHOOTING = auto()
 
 
-class ProblemType(Enum):
+class EquationsOfMotion(Enum):
     """
-    ProblemType is used to switch between different combinations of
-    design variables and constraints.
-
-    SIZING: Varies the design gross weight and actual gross weight to
-    close to design range. This causes the empty weight and the fuel
-    weight to change.
-
-    ALTERNATE: Requires a pre-sized aircraft. It holds the design gross
-    weight and empty weight constant. It then varies the fuel weight
-    and actual gross weight until the range closes to the off-design
-    range.
-
-    FALLOUT: Requires a pre-sized aircraft. It holds the design gross
-    weight and empty weight constant. Using the specified actual
-    gross weight, it will then find the maximum distance the off-design
-    aircraft can fly.
+    Available equations of motion for use during mission analysis
     """
-    SIZING = auto()
-    ALTERNATE = auto()
-    FALLOUT = auto()
-
-
-class SpeedType(Enum):
-    '''
-    SpeedType is used to specify the type of speed being used.
-    EAS is equivalent airspeed.
-    TAS is true airspeed.
-    MACH is mach
-    '''
-    EAS = auto()
-    TAS = auto()
-    MACH = auto()
+    HEIGHT_ENERGY = 'height_energy' #'HE'
+    TWO_DEGREES_OF_FREEDOM = '2dof' #'2DOF'
+    # TODO these are a little out of place atm
+    SIMPLE = 'simple'
+    SOLVED = 'solved'
 
 
 @unique
-class GASP_Engine_Type(Enum):
+class GASPEngineType(Enum):
     """
     Defines the type of engine to use in GASP-based mass calculations.
     Note that only the value for the first engine model will be used.
@@ -148,36 +123,81 @@ class GASP_Engine_Type(Enum):
 
 
 @unique
-class Flap_Type(Enum):
+class FlapType(Enum):
     """
     Defines the type of flap used on the wing. Used in GASP-based aerodynamics and mass calculations.
     """
-
+    # Plain flaps
     PLAIN = 1
-    """
-    Plain flaps
-    """
+    # Split flaps
     SPLIT = 2
-    """
-    Split flaps
-    """
+    # Single-slotted flaps
     SINGLE_SLOTTED = 3
-    """
-    Single-slotted flaps
-    """
+    # Double-slotted flaps
     DOUBLE_SLOTTED = 4
-    """
-    Double-slotted flaps
-    """
+    # Triple-slotted flaps
     TRIPLE_SLOTTED = 5
-    """
-    Triple-slotted flaps
-    """
+    # Folwer flaps
     FOWLER = 6
-    """
-    Fowler flaps
-    """
+    # Double-slotted fowler flaps
     DOUBLE_SLOTTED_FOWLER = 7
+
+
+class LegacyCode(Enum):
     """
-    Double-slotted Fowler flaps
+    Flag for legacy codebases
     """
+    FLOPS = 'FLOPS'
+    GASP = 'GASP'
+
+    def __str__(self):
+        return self.value
+
+
+class ProblemType(Enum):
+    """
+    ProblemType is used to switch between different combinations of
+    design variables and constraints.
+
+    SIZING: Varies the design gross weight and actual gross weight to
+    close to design range. This causes the empty weight and the fuel
+    weight to change.
+
+    ALTERNATE: Requires a pre-sized aircraft. It holds the design gross
+    weight and empty weight constant. It then varies the fuel weight
+    and actual gross weight until the range closes to the off-design
+    range.
+
+    FALLOUT: Requires a pre-sized aircraft. It holds the design gross
+    weight and empty weight constant. Using the specified actual
+    gross weight, it will then find the maximum distance the off-design
+    aircraft can fly.
+    """
+    SIZING = 'sizing'
+    ALTERNATE = 'alternate'
+    FALLOUT = 'fallout'
+
+
+class SpeedType(Enum):
+    '''
+    SpeedType is used to specify the type of speed being used.
+    EAS is equivalent airspeed.
+    TAS is true airspeed.
+    MACH is mach
+    '''
+    EAS = auto()
+    TAS = auto()
+    MACH = auto()
+
+
+class Verbosity(Enum):
+    """
+    Sets how much information Aviary outputs when run
+
+    Verbosity levels are based on ubuntu's standard:
+    https://discourse.ubuntu.com/t/cli-verbosity-levels/26973
+    """
+    QUIET = 0
+    BRIEF = 1
+    VERBOSE = 2
+    DEBUG = 3

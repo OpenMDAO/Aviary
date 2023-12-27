@@ -17,6 +17,10 @@ from aviary.validation_cases.validation_tests import (get_flops_inputs,
                                                       print_case)
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.variables_in import VariablesIn
+from aviary.variable_info.enums import LegacyCode
+
+FLOPS = LegacyCode.FLOPS
+GASP = LegacyCode.GASP
 
 
 class TabularAeroGroupFileTest(unittest.TestCase):
@@ -31,7 +35,7 @@ class TabularAeroGroupFileTest(unittest.TestCase):
         kwargs = {'method': 'tabular', 'CDI_data': CDI_table,
                   'CD0_data': CD0_table}
 
-        aero_builder = CoreAerodynamicsBuilder(code_origin='FLOPS')
+        aero_builder = CoreAerodynamicsBuilder(code_origin=FLOPS)
 
         self.prob.model.add_subsystem(
             "aero",
@@ -105,7 +109,7 @@ class TabularAeroGroupDataTest(unittest.TestCase):
         kwargs = {'method': 'tabular', 'CDI_data': CDI_table, 'CD0_data': CD0_table, }
         #   'training_data': True}
 
-        aero_builder = CoreAerodynamicsBuilder(code_origin='FLOPS')
+        aero_builder = CoreAerodynamicsBuilder(code_origin=FLOPS)
 
         self.prob.model.add_subsystem(
             "aero",
@@ -224,7 +228,7 @@ class ComputedVsTabularTest(unittest.TestCase):
         kwargs = {'method': 'tabular', 'CDI_data': CDI_data,
                   'CD0_data': CD0_data}
 
-        aero_builder = CoreAerodynamicsBuilder(code_origin='FLOPS')
+        aero_builder = CoreAerodynamicsBuilder(code_origin=FLOPS)
 
         prob.model.add_subsystem(
             "aero",
@@ -593,7 +597,7 @@ class _ComputedAeroHarness(om.Group):
 
         kwargs = {'method': 'computed', 'gamma': gamma}
 
-        aero_builder = CoreAerodynamicsBuilder(code_origin='FLOPS')
+        aero_builder = CoreAerodynamicsBuilder(code_origin=FLOPS)
 
         self.add_subsystem(
             "aero",

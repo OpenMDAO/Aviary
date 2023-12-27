@@ -17,7 +17,7 @@ class StaticGroupTest(unittest.TestCase):
     def test_post_mission_promotion(self):
         phase_info = deepcopy(ph_in_flops)
 
-        prob = AviaryProblem(phase_info, mission_method="FLOPS", mass_method="FLOPS")
+        prob = AviaryProblem(phase_info)
 
         csv_path = pkg_resources.resource_filename(
             "aviary", "models/test_aircraft/aircraft_for_bench_GwFm.csv")
@@ -51,7 +51,7 @@ class StaticGroupTest(unittest.TestCase):
     def test_gasp_relative_reserve(self):
         phase_info = deepcopy(ph_in_gasp)
 
-        prob = AviaryProblem(phase_info, mission_method="GASP", mass_method="GASP")
+        prob = AviaryProblem(phase_info)
 
         csv_path = pkg_resources.resource_filename(
             "aviary", "models/small_single_aisle/small_single_aisle_GwGm.csv")
