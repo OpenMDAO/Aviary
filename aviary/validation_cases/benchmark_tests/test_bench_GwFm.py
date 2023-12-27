@@ -20,8 +20,7 @@ from aviary.validation_cases.benchmark_utils import \
 @use_tempdirs
 class ProblemPhaseTestCase(unittest.TestCase):
     def bench_test_swap_1_GwFm(self):
-        prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwFm.csv', phase_info,
-                          mission_method="FLOPS", mass_method="GASP")
+        prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwFm.csv', phase_info)
 
         expected_dict = {}
         expected_dict['times'] = np.array([[120.],

@@ -14,8 +14,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
     @require_pyoptsparse(optimizer="SNOPT")
     def bench_test_swap_2_GwGm(self):
-        prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwGm.csv', phase_info,
-                          mission_method="GASP", mass_method="GASP")
+        prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwGm.csv', phase_info)
 
         rtol = 0.01
 
