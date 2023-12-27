@@ -90,11 +90,11 @@ class TestExternalSubsystemBus(unittest.TestCase):
         phase_info['cruise']['external_subsystems'] = [CustomBuilder(name='test')]
         phase_info['descent']['external_subsystems'] = [CustomBuilder(name='test')]
 
-        prob = AviaryProblem(phase_info)
+        prob = AviaryProblem()
 
         csv_path = pkg_resources.resource_filename(
             "aviary", "models/test_aircraft/aircraft_for_bench_FwFm.csv")
-        prob.load_inputs(csv_path)
+        prob.load_inputs(csv_path, phase_info)
         prob.check_inputs()
 
         prob.add_pre_mission_systems()

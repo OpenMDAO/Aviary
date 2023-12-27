@@ -735,3 +735,4 @@ class Settings:
     EQUATIONS_OF_MOTION = 'settings:equations_of_motion'
     MASS_METHOD = 'settings:mass_method'
     VERBOSITY = 'settings:verbosity'
+    

@@ -110,9 +110,9 @@ class AircraftMissionTestSuite(unittest.TestCase):
 
     def run_mission(self, phase_info, optimizer):
 
-        prob = AviaryProblem(phase_info)
+        prob = AviaryProblem()
 
-        prob.load_inputs(self.aircraft_definition_file)
+        prob.load_inputs(self.aircraft_definition_file, phase_info)
         prob.mission_method = EquationsOfMotion.SIMPLE
         prob.check_inputs()
         prob.add_pre_mission_systems()

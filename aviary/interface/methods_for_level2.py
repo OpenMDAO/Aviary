@@ -6,6 +6,8 @@ import inspect
 from copy import deepcopy
 from pathlib import Path
 from datetime import datetime
+import importlib.util
+import sys
 
 import numpy as np
 
@@ -135,7 +137,7 @@ class AviaryProblem(om.Problem):
     additional methods to help users create and solve Aviary problems.
     """
 
-    def __init__(self, phase_info, analysis_scheme=AnalysisScheme.COLLOCATION, **kwargs):
+    def __init__(self, analysis_scheme=AnalysisScheme.COLLOCATION, **kwargs):
         super().__init__(**kwargs)
 
         self.timestamp = datetime.now()
@@ -146,39 +148,23 @@ class AviaryProblem(om.Problem):
 
         self.aviary_inputs = None
 
-        phase_info = deepcopy(phase_info)
-
-        for phase_name in phase_info:
-            if 'external_subsystems' not in phase_info[phase_name]:
-                phase_info[phase_name]['external_subsystems'] = []
-
-        self.phase_info = phase_info
         self.traj = None
 
         self.analysis_scheme = analysis_scheme
 
-        if 'pre_mission' in self.phase_info:
-            self.pre_mission_info = self.phase_info.pop('pre_mission')
-        else:
-            self.pre_mission_info = {'include_takeoff': True,
-                                     'external_subsystems': []}
 
-        if 'post_mission' in self.phase_info:
-            self.post_mission_info = self.phase_info.pop('post_mission')
-        else:
-            self.post_mission_info = {'include_landing': True,
-                                      'external_subsystems': [],
-                                      'constrain_range': False}
-
-    def load_inputs(self, input_filename, engine_builder=None):
+    def load_inputs(self, input_filename, phase_info=None, engine_builder=None):
         """
         This method loads the aviary_values inputs and options that the
         user specifies. They could specify files to load and values to
         replace here as well.
+        Phase info is also loaded if provided by the user. If phase_info is None,
+        the appropriate default phase_info based on mission analysis method is used.
 
         This method is not strictly necessary; a user could also supply
-        an AviaryValues object of their own.
+        an AviaryValues object and/or phase_info dict of their own.
         """
+        ## LOAD INPUT FILE ###
         self.engine_builder = engine_builder
         self.aviary_inputs, self.initial_guesses = create_vehicle(input_filename)
 
@@ -205,6 +191,63 @@ class AviaryProblem(om.Problem):
                 Mission.Design.RANGE, units='NM')
             self.cruise_mach = aviary_inputs.get_val(Mission.Design.MACH)
 
+        ## LOAD PHASE_INFO ###
+        if phase_info is None:
+            # check if the user generated a phase_info from gui
+            # Load the phase info dynamically from the current working directory
+            phase_info_module_path = Path.cwd() / 'outputted_phase_info.py'
+
+            if phase_info_module_path.exists():
+                spec = importlib.util.spec_from_file_location(
+                    'outputted_phase_info', phase_info_module_path)
+                outputted_phase_info = importlib.util.module_from_spec(spec)
+                sys.modules['outputted_phase_info'] = outputted_phase_info
+                spec.loader.exec_module(outputted_phase_info)
+
+                # Access the phase_info variable from the loaded module
+                phase_info = outputted_phase_info.phase_info
+
+                print('Loaded outputted_phase_info.py generated with GUI')
+
+            else:
+                # load a default phase info
+                if self.mission_method is TWO_DEGREES_OF_FREEDOM:
+                    from aviary.interface.default_phase_info.gasp import phase_info
+
+                elif self.mission_method is HEIGHT_ENERGY:
+                    from aviary.interface.default_phase_info.flops import phase_info
+
+                elif self.mission_method is SIMPLE:
+                    from aviary.interface.default_phase_info.simple import phase_info
+                
+                elif self.mission_method is SOLVED:
+                    from aviary.interface.default_phase_info.solved import phase_info
+
+                print('Loaded default phase_info for'
+                      f'{self.mission_method.value.lower()} equations of motion')
+
+        phase_info = deepcopy(phase_info)
+
+        for phase_name in phase_info:
+            if 'external_subsystems' not in phase_info[phase_name]:
+                phase_info[phase_name]['external_subsystems'] = []
+
+        self.phase_info = phase_info
+
+        if 'pre_mission' in self.phase_info:
+            self.pre_mission_info = self.phase_info.pop('pre_mission')
+        else:
+            self.pre_mission_info = {'include_takeoff': True,
+                                     'external_subsystems': []}
+
+        if 'post_mission' in self.phase_info:
+            self.post_mission_info = self.phase_info.pop('post_mission')
+        else:
+            self.post_mission_info = {'include_landing': True,
+                                      'external_subsystems': [],
+                                      'constrain_range': False}
+
+        ## PROCESSING ##
         # set up core subsystems
         if mission_method in (HEIGHT_ENERGY, SIMPLE):
             everything_else_origin = FLOPS
@@ -916,7 +959,12 @@ class AviaryProblem(om.Problem):
         -------
         traj: The Dymos Trajectory object containing the added mission phases.
         """
-        if phase_info_parameterization is not None:
+        if phase_info_parameterization is None:
+            if self.mission_method in (HEIGHT_ENERGY, SIMPLE):
+                from aviary.interface.default_phase_info.flops import phase_info_parameterization
+            elif self.mission_method in (TWO_DEGREES_OF_FREEDOM, SOLVED):
+                from aviary.interface.default_phase_info.gasp import phase_info_parameterization
+        else:
             self.phase_info = phase_info_parameterization(self.phase_info,
                                                           self.aviary_inputs)
 

@@ -30,11 +30,11 @@ def run_aviary(aircraft_filename, phase_info, optimizer=None, analysis_scheme=An
     of the Aviary problem.
     """
     # Build problem
-    prob = AviaryProblem(phase_info, analysis_scheme)
+    prob = AviaryProblem(analysis_scheme)
 
     # Load aircraft and options data from user
     # Allow for user overrides here
-    prob.load_inputs(aircraft_filename)
+    prob.load_inputs(aircraft_filename, phase_info)
 
     # Have checks for clashing user inputs
     # Raise warnings or errors depending on how clashing the issues are

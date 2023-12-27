@@ -67,12 +67,12 @@ class PreMissionGroupTest(unittest.TestCase):
             WingWeightBuilder(name="wing_external")
         ]
 
-        prob = AviaryProblem(phase_info)
+        prob = AviaryProblem()
 
         csv_path = pkg_resources.resource_filename(
             "aviary", "models/test_aircraft/aircraft_for_bench_GwFm.csv")
 
-        prob.load_inputs(csv_path)
+        prob.load_inputs(csv_path, phase_info)
 
         # Have checks for clashing user inputs
         # Raise warnings or errors depending on how clashing the issues are

@@ -18,10 +18,10 @@ class ProblemPhaseTestCase(unittest.TestCase):
     def bench_test_solved_full_mission(self):
         # Build problem
 
-        prob = AviaryProblem(phase_info)
+        prob = AviaryProblem()
 
         input_file = 'models/test_aircraft/aircraft_for_bench_GwGm.csv'
-        prob.load_inputs(input_file)
+        prob.load_inputs(input_file, phase_info)
         prob.mission_method = EquationsOfMotion.SOLVED
         prob.aviary_inputs.set_val(Mission.Design.RANGE, 2000.0, units="NM")
 

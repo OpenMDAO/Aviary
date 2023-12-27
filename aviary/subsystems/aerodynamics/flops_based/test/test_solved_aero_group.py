@@ -46,12 +46,12 @@ class TestSolvedAero(unittest.TestCase):
 
     def test_solved_aero_pass_polar(self):
         # Test that passing training data provides the same results
-        prob = AviaryProblem(phase_info)
+        prob = AviaryProblem()
 
         csv_path = pkg_resources.resource_filename(
             "aviary", "subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv")
 
-        prob.load_inputs(csv_path)
+        prob.load_inputs(csv_path, phase_info)
         prob.add_pre_mission_systems()
         prob.add_phases()
         prob.add_post_mission_systems()
@@ -87,9 +87,9 @@ class TestSolvedAero(unittest.TestCase):
 
         ph_in['cruise']['subsystem_options'] = {'core_aerodynamics': subsystem_options}
 
-        prob = AviaryProblem(ph_in)
+        prob = AviaryProblem()
 
-        prob.load_inputs(csv_path)
+        prob.load_inputs(csv_path, ph_in)
 
         prob.aviary_inputs.set_val(Aircraft.Design.LIFT_POLAR,
                                    np.zeros_like(CL), units='unitless')

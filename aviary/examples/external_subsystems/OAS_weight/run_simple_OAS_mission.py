@@ -114,9 +114,9 @@ max_iter = 100
 optimizer = 'SNOPT'
 
 
-prob = av.AviaryProblem(phase_info)
+prob = av.AviaryProblem()
 
-prob.load_inputs(aircraft_definition_file)
+prob.load_inputs(aircraft_definition_file, phase_info)
 prob.mission_method = av.EquationsOfMotion.SIMPLE
 prob.check_inputs()
 prob.add_pre_mission_systems()
