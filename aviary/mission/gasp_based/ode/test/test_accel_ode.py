@@ -1,4 +1,5 @@
 import unittest
+import os
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
@@ -6,7 +7,8 @@ from openmdao.utils.assert_utils import assert_check_partials
 from aviary.mission.gasp_based.ode.accel_ode import AccelODE
 from aviary.variable_info.options import get_option_defaults
 from aviary.utils.test_utils.IO_test_util import (assert_match_spec,
-                                                  check_prob_outputs)
+                                                  check_prob_outputs,
+                                                  XDSM_PATH)
 from aviary.variable_info.variables import Dynamic
 from aviary.interface.default_phase_info.gasp import default_mission_subsystems
 
@@ -43,6 +45,7 @@ class AccelerationODETestCase(unittest.TestCase):
         )
         assert_check_partials(partial_data, rtol=1e-10)
 
+    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'statics_specs/accelerate.json')), "`statics_specs/accelerate.json` does not exist")
     def test_accel_spec(self):
         """Test accel ODE spec"""
         subsystem = self.prob.model

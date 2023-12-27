@@ -17,7 +17,7 @@ Let's discuss what Aviary does in more detail.
 ```{warning}
 Aviary is under active development!
 If you're using it, know that we are working to update Aviary to make it more user-friendly and capable.
-If you have suggestions or comments please let the Aviary team know by [submitting an issue on GitHub](https://github.com/OpenMDAO/om-Aviary/issues/new).
+If you have suggestions or comments please let the Aviary team know by [submitting an issue on GitHub](https://github.com/OpenMDAO/om-Aviary/issues/new/choose).
 ```
 
 ## Core functionalities
@@ -77,7 +77,7 @@ We've touched on some of these already, but let's discuss them more.
 
 ### Benefits
 
-- Open-source: Aviary is open-source and available on [GitHub](https://github.com/OpenMDAO/Aviary)
+- Open-source: Aviary is open-source and available on [GitHub](https://github.com/OpenMDAO/om-Aviary)
 - Flexible: Aviary is intended to be flexible enough to design a variety of aircraft and missions
 - Customizable: Aviary allows users to add their own subsystems to the problem
 - Optimization: Aviary is designed to be used effectively with gradient-based optimization

@@ -1,4 +1,5 @@
 import unittest
+import os
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import (assert_check_partials,
@@ -6,7 +7,7 @@ from openmdao.utils.assert_utils import (assert_check_partials,
 
 from aviary.subsystems.aerodynamics.gasp_based.flaps_model.meta_model import \
     MetaModelGroup
-from aviary.utils.test_utils.IO_test_util import assert_match_spec
+from aviary.utils.test_utils.IO_test_util import assert_match_spec, XDSM_PATH
 from aviary.variable_info.enums import FlapType
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
@@ -108,6 +109,7 @@ class MetaModelTestCasePlain(unittest.TestCase):
         data = self.prob.check_partials(out_stream=None, method="fd")
         assert_check_partials(data, atol=1e-4, rtol=1e-4)
 
+    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'flaps_specs/tables.json')), "`flaps_specs/tables.json` does not exist")
     def test_lookup_spec(self):
 
         subsystem = self.prob.model
@@ -153,6 +155,7 @@ class MetaModelTestCaseSingleSlotted(unittest.TestCase):
         data = self.prob.check_partials(out_stream=None, method="fd")
         assert_check_partials(data, atol=1e-4, rtol=1e-4)
 
+    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'flaps_specs/tables.json')), "`flaps_specs/tables.json` does not exist")
     def test_lookup_spec(self):
 
         subsystem = self.prob.model
@@ -188,6 +191,7 @@ class MetaModelTestCaseFowler(unittest.TestCase):
         data = self.prob.check_partials(out_stream=None, method="fd")
         assert_check_partials(data, atol=1e-4, rtol=1e-4)
 
+    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'flaps_specs/tables.json')), "`flaps_specs/tables.json` does not exist")
     def test_lookup_spec(self):
 
         subsystem = self.prob.model

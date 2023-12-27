@@ -15,3 +15,5 @@ The following is a non-exhaustive list of planned features that are not yet impl
 - Support for relevant FAA regulations governing aircraft design and operation
 - Capability to fly reserve missions using the same mission analysis techniques as the main mission (right now reserve estimates are fixed values or fixed percentages of mission fuel)
 - Improved model re-run capability
+- Full test suite that tests the code format, including testing for docstrings on all functions and classes
+- Fully tested code blocks in the documentation

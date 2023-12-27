@@ -1,10 +1,11 @@
 import unittest
+import os
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
 
 from aviary.mission.gasp_based.ode.ascent_ode import AscentODE
-from aviary.utils.test_utils.IO_test_util import assert_match_spec
+from aviary.utils.test_utils.IO_test_util import assert_match_spec, XDSM_PATH
 from aviary.interface.default_phase_info.gasp import default_mission_subsystems
 from aviary.variable_info.options import get_option_defaults
 
@@ -30,6 +31,7 @@ class AscentODETestCase(unittest.TestCase):
         )
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
+    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'statics_specs/ascent.json')), "`statics_specs/ascent.json` does not exist")
     def test_ascent_spec(self):
         """Test ascent ODE spec"""
         subsystem = self.prob.model

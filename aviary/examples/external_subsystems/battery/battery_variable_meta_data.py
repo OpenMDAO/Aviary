@@ -10,14 +10,6 @@ ExtendedMetaData = av.CoreMetaData
 ##### BATTERY VALUES #####
 
 av.add_meta_data(
-    Aircraft.Battery.CELL_TYPE,
-    desc="Type of battery to use in performance maps",
-    default_value="18650",
-    option=True,
-    meta_data=ExtendedMetaData
-)
-
-av.add_meta_data(
     Aircraft.Battery.CURRENT_MAX,
     units="A",
     desc="Max current through the pack",

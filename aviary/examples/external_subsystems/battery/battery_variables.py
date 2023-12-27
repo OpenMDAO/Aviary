@@ -14,7 +14,6 @@ class Aircraft(AviaryAircraft):
     # cell = single cell, battery = one case plus multiple cells
 
     class Battery:
-        CELL_TYPE = "aircraft:battery:cell_type"
         CURRENT_MAX = "aircraft:battery:current_max"
         EFFICIENCY = "aircraft:battery:efficiency"
         ENERGY_REQUIRED = "aircraft:battery:energy_required"

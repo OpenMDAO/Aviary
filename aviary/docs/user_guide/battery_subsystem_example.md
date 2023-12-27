@@ -151,8 +151,6 @@ def build_mission(self, num_nodes, aviary_inputs):
 
 Note that `build_mission` requires both `num_nodes` and `aviary_inputs` as arguments.
 `num_nodes` is needed to correctly set up all the vectors within your mission subsystem, whereas `aviary_inputs` helps provide necessary options for the subsystem.
-For example, in our battery case `aviary_inputs` contains `Aircraft.Battery.CELL_TYPE`, which naturally details which battery type to use.
-This allows the mission subsystem to use different battery performance maps based on what the user specifies.
 
 ## Defining helper methods, like preprocessing, initial guessing, and linking
 
@@ -169,29 +167,6 @@ For both users and developers: `preprocess_inputs` happens **once** per analysis
 ```
 
 You can have calculations or checks you need in this method based on user inputs.
-For the battery example, based on which cell type the user selects we want to prepopulate the `aviary_inputs` object differently, like this:
-
-```python
-def preprocess_inputs(self, aviary_inputs):
-    battery_cell_types = {
-        "18650": {
-            Aircraft.Battery.Cell.DISCHARGE_RATE: [10.5, 'A'],
-            Aircraft.Battery.Cell.ENERGY_CAPACITY_MAX: [3.5, 'A*h'],
-            Aircraft.Battery.Cell.HEAT_CAPACITY: [1020.0, 'J/(kg*K)'],
-            Aircraft.Battery.Cell.MASS: [0.045, 'kg'],
-            Aircraft.Battery.Cell.VOLTAGE_LOW: [2.9, 'V'],
-            Aircraft.Battery.Cell.VOLUME: [1.125, 'inch**3']
-        }
-    }
-
-    battery_info = battery_cell_types[aviary_inputs.get_val(
-        Aircraft.Battery.CELL_TYPE)]
-
-    for key, val in battery_info.items():
-        aviary_inputs.set_val(key, val[0], units=val[1], meta_data=ExtendedMetaData)
-
-    return aviary_inputs
-```
 
 Now you may want to link some variables between phases.
 States, for example, are usually great candidates for linking.
@@ -267,7 +242,6 @@ class TestBattery(av.TestSubsystemBuilderBase):
     def setUp(self):
         self.subsystem_builder = BatteryBuilder()
         self.aviary_inputs = av.AviaryValues()
-        self.aviary_inputs.set_val(Aircraft.Battery.CELL_TYPE, '18650')
 ```
 
 For instance, if you saved this class in a file called `test_battery.py`, you could then run `testflo test_battery.py` to verify that all the methods do what Aviary expects.

@@ -10,11 +10,8 @@ class RegTheveninInterpGroup(Group):
     def initialize(self):
         self.options.declare('num_nodes', types=int)
 
-        self.options.declare('cell_type', types=str, default='18650')
-
     def setup(self):
         n = self.options['num_nodes']
-        cell_type = self.options['cell_type']
 
         thevenin_interp_comp = MetaModelStructuredComp(method='slinear', vec_size=n,
                                                        training_data_gradients=False, extrapolate=True)
