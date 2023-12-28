@@ -46,7 +46,8 @@ jobs:
 
           # development versions of openmdao/dymos
           - NAME: dev
-            PY: '3.12' #temporary until testflo is fixed
+            PY: 3
+            TESTFLO: 'dev'  #temporary until testflo is fixed
             NUMPY: 1
             SCIPY: 1
             PYOPTSPARSE: 'v2.9.1'
@@ -102,7 +103,13 @@ jobs:
           echo "============================================================="
           conda install numpy=${{ matrix.NUMPY }} scipy=${{ matrix.SCIPY }} -q -y
           conda install matplotlib pandas panel hvplot -q -y
-          pip install testflo pyxdsm -q
+          pip install pyxdsm -q
+          #temporary until testflo is fixed
+          if [[ "${{ matrix.TESTFLO }}" == "dev" ]]; then
+            pip install git+https://github.com/swryan/testflo/tree/99_skip
+          else
+            pip install testflo -q
+          fi
 
       - name: Install pyOptSparse
         if: matrix.PYOPTSPARSE
