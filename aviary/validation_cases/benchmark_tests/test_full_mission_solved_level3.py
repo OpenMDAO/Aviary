@@ -10,6 +10,7 @@ from aviary.interface.default_phase_info.solved import phase_info
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.variable_info.enums import EquationsOfMotion
 
+
 @unittest.skipIf(version.parse(dymos.__version__) <= version.parse("1.8.0"),
                  "Older version of Dymos treats non-time integration variables differently.")
 @use_tempdirs

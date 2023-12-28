@@ -9,6 +9,7 @@ from aviary.variable_info.enums import EquationsOfMotion
 HEIGHT_ENERGY = EquationsOfMotion.HEIGHT_ENERGY
 TWO_DEGREES_OF_FREEDOM = EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
 
+
 class TestCheckInputs(unittest.TestCase):
     def test_correct_input_flops(self):
         # This should pass without any issue as it's the same valid dict as before
@@ -32,7 +33,8 @@ class TestCheckInputs(unittest.TestCase):
 
     def test_correct_input_gasp(self):
         # This should pass without any issue as it's the same valid dict as before
-        self.assertTrue(check_phase_info(phase_info_gasp, mission_method=TWO_DEGREES_OF_FREEDOM))
+        self.assertTrue(check_phase_info(phase_info_gasp,
+                        mission_method=TWO_DEGREES_OF_FREEDOM))
 
 
 if __name__ == '__main__':

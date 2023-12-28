@@ -143,4 +143,5 @@ if __name__ == "__main__":
 
     from aviary.interface.default_phase_info.gasp import phase_info
     input_deck = 'models/large_single_aisle_1/large_single_aisle_1_GwGm.csv'
-    run_aviary(input_deck, phase_info, analysis_scheme=AnalysisScheme.SHOOTING, run_driver=False)
+    run_aviary(input_deck, phase_info,
+               analysis_scheme=AnalysisScheme.SHOOTING, run_driver=False)

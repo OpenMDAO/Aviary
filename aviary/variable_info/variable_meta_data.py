@@ -7285,7 +7285,7 @@ add_meta_data(
     default_value=0.0001,
 )
 
-#  .----------------.  .----------------.  .----------------.  .----------------.  .----------------.  .-----------------. .----------------.  .----------------. 
+#  .----------------.  .----------------.  .----------------.  .----------------.  .----------------.  .-----------------. .----------------.  .----------------.
 # | .--------------. || .--------------. || .--------------. || .--------------. || .--------------. || .--------------. || .--------------. || .--------------. |
 # | |    _______   | || |  _________   | || |  _________   | || |  _________   | || |     _____    | || | ____  _____  | || |    ______    | || |    _______   | |
 # | |   /  ___  |  | || | |_   ___  |  | || | |  _   _  |  | || | |  _   _  |  | || |    |_   _|   | || ||_   \|_   _| | || |  .' ___  |   | || |   /  ___  |  | |
@@ -7295,15 +7295,15 @@ add_meta_data(
 # | |  |_______.'  | || | |_________|  | || |   |_____|    | || |   |_____|    | || |    |_____|   | || ||_____|\____| | || |  `._____.'   | || |  |_______.'  | |
 # | |              | || |              | || |              | || |              | || |              | || |              | || |              | || |              | |
 # | '--------------' || '--------------' || '--------------' || '--------------' || '--------------' || '--------------' || '--------------' || '--------------' |
-#  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'  '----------------' 
+#  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'
 
 add_meta_data(
     Settings.EQUATIONS_OF_MOTION,
     meta_data=_MetaData,
     historical_name={"GASP": None,
-                    "FLOPS": None,
-                    "LEAPS1": None
-                    },
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
     desc='Sets which equations of motion Aviary will use in mission analysis',
     option=True,
     types=EquationsOfMotion,
@@ -7314,9 +7314,9 @@ add_meta_data(
     Settings.MASS_METHOD,
     meta_data=_MetaData,
     historical_name={"GASP": None,
-                    "FLOPS": None,
-                    "LEAPS1": None
-                    },
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
     desc="Sets which legacy code's methods will be used for mass estimation",
     option=True,
     types=LegacyCode,
@@ -7327,9 +7327,9 @@ add_meta_data(
     Settings.VERBOSITY,
     meta_data=_MetaData,
     historical_name={"GASP": None,
-                    "FLOPS": None,
-                    "LEAPS1": None
-                    },
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
     desc='Sets how much information Aviary outputs when run. Options include:'
          '0. QUIET: All output except errors are suppressed'
          '1. BRIEF: Only important information is output, in human-readable format'

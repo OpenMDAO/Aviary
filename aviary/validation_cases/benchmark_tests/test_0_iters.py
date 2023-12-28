@@ -9,6 +9,7 @@ from aviary.interface.default_phase_info.flops import phase_info as flops_phase_
 from aviary.interface.default_phase_info.solved import phase_info as solved_phase_info
 from aviary.variable_info.enums import EquationsOfMotion
 
+
 class BaseProblemPhaseTestCase(unittest.TestCase):
 
     def build_and_run_problem(self, phase_info, input_filename, objective_type=None, mission_method=None):
@@ -37,7 +38,8 @@ class GASPZeroItersTestCase(BaseProblemPhaseTestCase):
 
     @require_pyoptsparse(optimizer="IPOPT")
     def test_gasp_zero_iters(self):
-        self.build_and_run_problem(gasp_phase_info, 'models/test_aircraft/aircraft_for_bench_GwGm.csv')
+        self.build_and_run_problem(
+            gasp_phase_info, 'models/test_aircraft/aircraft_for_bench_GwGm.csv')
 
 
 @use_tempdirs
@@ -45,7 +47,8 @@ class FLOPSZeroItersTestCase(BaseProblemPhaseTestCase):
 
     @require_pyoptsparse(optimizer="IPOPT")
     def test_flops_zero_iters(self):
-        self.build_and_run_problem(flops_phase_info, 'models/test_aircraft/aircraft_for_bench_FwFm.csv')
+        self.build_and_run_problem(
+            flops_phase_info, 'models/test_aircraft/aircraft_for_bench_FwFm.csv')
 
 
 @unittest.skipIf(version.parse(dymos.__version__) <= version.parse("1.8.0"),
