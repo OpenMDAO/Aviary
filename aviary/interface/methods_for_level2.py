@@ -152,7 +152,6 @@ class AviaryProblem(om.Problem):
 
         self.analysis_scheme = analysis_scheme
 
-
     def load_inputs(self, input_filename, phase_info=None, engine_builder=None):
         """
         This method loads the aviary_values inputs and options that the
@@ -170,7 +169,8 @@ class AviaryProblem(om.Problem):
 
         aviary_inputs = self.aviary_inputs
 
-        self.mission_method = mission_method = aviary_inputs.get_val(Settings.EQUATIONS_OF_MOTION)
+        self.mission_method = mission_method = aviary_inputs.get_val(
+            Settings.EQUATIONS_OF_MOTION)
         self.mass_method = mass_method = aviary_inputs.get_val(Settings.MASS_METHOD)
 
         if mission_method is TWO_DEGREES_OF_FREEDOM:
@@ -219,7 +219,7 @@ class AviaryProblem(om.Problem):
 
                 elif self.mission_method is SIMPLE:
                     from aviary.interface.default_phase_info.simple import phase_info
-                
+
                 elif self.mission_method is SOLVED:
                     from aviary.interface.default_phase_info.solved import phase_info
 
@@ -416,6 +416,7 @@ class AviaryProblem(om.Problem):
             return
 
         # Check for 2DOF mission method
+        # NOTE should solved trigger this as well?
         if self.mission_method is TWO_DEGREES_OF_FREEDOM:
             self._add_gasp_takeoff_systems()
 
