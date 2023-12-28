@@ -106,7 +106,7 @@ jobs:
           pip install pyxdsm -q
           #temporary until testflo is fixed
           if [[ "${{ matrix.TESTFLO }}" == "dev" ]]; then
-            pip install git+https://github.com/swryan/testflo/tree/99_skip
+            pip install git+https://github.com/OpenMDAO/testflo
           else
             pip install testflo -q
           fi
