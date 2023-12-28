@@ -46,7 +46,7 @@ jobs:
 
           # development versions of openmdao/dymos
           - NAME: dev
-            PY: 3
+            PY: '3.12' #temporary until testflo is fixed
             NUMPY: 1
             SCIPY: 1
             PYOPTSPARSE: 'v2.9.1'
