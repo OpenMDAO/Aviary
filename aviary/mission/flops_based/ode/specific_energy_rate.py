@@ -46,9 +46,6 @@ class SpecificEnergyRate(om.ExplicitComponent):
         weight = inputs[Dynamic.Mission.MASS] * gravity
         outputs[Dynamic.Mission.SPECIFIC_ENERGY_RATE] = velocity * \
             (thrust - drag) / weight
-        print('spec energy rate:')
-        print('velocity, thrust, drag, weight')
-        print(velocity, thrust, drag, weight)
 
     def setup_partials(self):
         arange = np.arange(self.options['num_nodes'])

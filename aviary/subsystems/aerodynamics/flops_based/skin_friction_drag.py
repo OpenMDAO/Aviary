@@ -108,9 +108,6 @@ class SkinFrictionDrag(om.ExplicitComponent):
         mission_wing_area = inputs[Aircraft.Wing.AREA]
 
         laminar_flow = np.any(lam_up > 0.0) or np.any(lam_low > 0.0)
-        print('skin friction:')
-        print('cf, Re, fineness, wetted_area, lam_up, lam_low, laminar_flow')
-        print(cf, Re, fineness, wetted_area, lam_up, lam_low, laminar_flow)
 
         if laminar_flow:
             laminar_upper = _calc_laminar_flow(lam_up)

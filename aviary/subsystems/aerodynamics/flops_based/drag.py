@@ -66,9 +66,6 @@ class SimpleDrag(om.ExplicitComponent):
         q = inputs[Dynamic.Mission.DYNAMIC_PRESSURE]
         CD = inputs['drag_coefficient']
 
-        print('simple drag')
-        print('M, q, CD')
-        print(M, q, CD)
         idx_sup = np.where(M >= 1.0)
         CD_scaled = CD * FCDSUB
         CD_scaled[idx_sup] = CD[idx_sup] * FCDSUP

@@ -115,9 +115,6 @@ class LiftDependentDrag(om.ExplicitComponent):
         gamma = self.options['gamma']
         mach, lift, P, CLDES, MDES, Sref, AR, CAM, SW25, TC = inputs.values()
 
-        print('lift dependent drag:')
-        print('gamma, mach, lift, P, CLDES, MDES, Sref, AR, CAM, SW25, TC')
-        print(gamma, mach, lift, P, CLDES, MDES, Sref, AR, CAM, SW25, TC)
         FCDP = np.empty(nn, dtype=mach.dtype)
         DCDP = np.empty(nn, dtype=mach.dtype)
         dFCDP_dDELM = np.empty(nn, dtype=mach.dtype)
