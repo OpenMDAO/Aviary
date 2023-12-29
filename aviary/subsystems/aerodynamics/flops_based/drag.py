@@ -67,8 +67,8 @@ class SimpleDrag(om.ExplicitComponent):
         CD = inputs['drag_coefficient']
 
         print('simple drag')
-        print('S,FCDSUB,FCDSUP')
-        print(S, FCDSUB, FCDSUP)
+        print('M, q, CD')
+        print(M, q, CD)
         idx_sup = np.where(M >= 1.0)
         CD_scaled = CD * FCDSUB
         CD_scaled[idx_sup] = CD[idx_sup] * FCDSUP

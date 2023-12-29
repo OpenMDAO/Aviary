@@ -73,6 +73,9 @@ class InducedDrag(om.ExplicitComponent):
 
         CL = 2.0 * lift / (Sref * gamma * P * mach ** 2)
 
+        print('induced drag:')
+        print('gamma, mach, lift, P, Sref, AR, span_efficiency_factor, SW25, TR')
+        print(gamma, mach, lift, P, Sref, AR, span_efficiency_factor, SW25, TR)
         redux, _ = aviary_options.get_item(
             Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION, (False, None))
 

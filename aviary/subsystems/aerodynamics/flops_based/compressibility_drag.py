@@ -76,6 +76,9 @@ class CompressibilityDrag(om.ExplicitComponent):
 
         outputs['compress_drag_coeff'][idx_super] = cdc_super
         outputs['compress_drag_coeff'][idx_sub] = cdc_sub
+        print('compressibility drag:')
+        print('cdc_sub, cdc_super')
+        print(cdc_sub, cdc_super)
 
     def _compute_supersonic(self, inputs, outputs, idx):
         """
