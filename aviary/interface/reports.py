@@ -1,6 +1,7 @@
 from pathlib import Path
-
 from openmdao.utils.reports_system import register_report
+
+from aviary.interface.utils.markdown_utils import write_markdown_variable_table
 
 
 def register_custom_reports():
@@ -17,11 +18,18 @@ def register_custom_reports():
                     func=subsystem_report,
                     desc='Generates reports for each subsystem builder in the '
                          'Aviary Problem',
-                    class_name='Problem',
+                    class_name='AviaryProblem',
                     method='run_model',
                     pre_or_post='post',
                     # **kwargs
                     )
+
+    register_report(name='mission',
+                    func=mission_report,
+                    desc='Generates report for mission results from Aviary problem',
+                    class_name='AviaryProblem',
+                    method='run_model',
+                    pre_or_post='post')
 
 
 def subsystem_report(prob, **kwargs):
@@ -42,3 +50,21 @@ def subsystem_report(prob, **kwargs):
 
     for subsystem in core_subsystems.values():
         subsystem.report(prob, reports_folder, **kwargs)
+
+
+# TODO update with more detailed mission report file
+def mission_report(prob, **kwargs):
+    """
+    Creates a basic mission summary report that is place in the reports folder
+
+    Parameters
+    ----------
+    prob : AviaryProblem
+        The AviaryProblem that will be used to generate this report
+    """
+    reports_folder = Path(prob.get_reports_dir())
+    report_file = reports_folder / 'mission_summary.md'
+
+    with open(report_file, mode='w') as f:
+        f.write('# MISSION SUMMARY')
+        write_markdown_variable_table(f, prob, {})
