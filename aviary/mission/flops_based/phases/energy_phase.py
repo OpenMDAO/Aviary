@@ -8,7 +8,7 @@ from aviary.mission.flops_based.phases.phase_builder_base import (
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.mission.flops_based.phases.phase_utils import add_subsystem_variables_to_phase
+from aviary.mission.flops_based.phases.phase_utils import add_subsystem_variables_to_phase, get_initial
 from aviary.variable_info.variables import Dynamic
 
 
@@ -203,16 +203,6 @@ class EnergyPhase(PhaseBuilderBase):
         ##############
         # TODO: critically think about how we should handle fix_initial and input_initial defaults.
         # In keeping with Dymos standards, the default should be False instead of True.
-        def get_initial(input_initial, key, input_initial_for_this_variable=False):
-            # Check if input_initial is a dictionary.
-            # If so, return the value corresponding to the key or False if the key is not found.
-            # If not, return the value of input_initial.
-            if isinstance(input_initial, dict):
-                if key in input_initial:
-                    input_initial_for_this_variable = input_initial[key]
-            elif isinstance(input_initial, bool):
-                input_initial_for_this_variable = input_initial
-            return input_initial_for_this_variable
 
         input_initial_alt = get_initial(input_initial, Dynamic.Mission.ALTITUDE)
         fix_initial_alt = get_initial(fix_initial, Dynamic.Mission.ALTITUDE)
