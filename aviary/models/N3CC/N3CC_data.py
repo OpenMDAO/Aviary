@@ -26,7 +26,7 @@ from aviary.variable_info.variables import Dynamic as _Dynamic
 from aviary.variable_info.variables import Mission
 from aviary.variable_info.variables import Settings
 from aviary.variable_info.enums import EquationsOfMotion, LegacyCode
-from aviary.interface.default_phase_info.flops import default_mission_subsystems
+from aviary.interface.default_phase_info.height_energy import default_mission_subsystems
 
 Dynamic = _Dynamic.Mission
 

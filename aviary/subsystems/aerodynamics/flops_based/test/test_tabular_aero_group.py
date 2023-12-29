@@ -8,7 +8,7 @@ from parameterized import parameterized
 
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.premission import CorePreMission
-from aviary.interface.default_phase_info.flops import aero, prop, geom
+from aviary.interface.default_phase_info.height_energy import aero, prop, geom
 from aviary.utils.aviary_values import AviaryValues, get_items
 from aviary.utils.functions import set_aviary_initial_values
 from aviary.utils.named_values import NamedValues

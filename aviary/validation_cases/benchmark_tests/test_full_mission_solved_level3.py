@@ -21,9 +21,8 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         prob = AviaryProblem()
 
-        input_file = 'models/test_aircraft/aircraft_for_bench_GwGm.csv'
+        input_file = 'models/test_aircraft/aircraft_for_bench_GwGm_solved.csv'
         prob.load_inputs(input_file, phase_info)
-        prob.mission_method = EquationsOfMotion.SOLVED
         prob.aviary_inputs.set_val(Mission.Design.RANGE, 2000.0, units="NM")
 
         # Have checks for clashing user inputs

@@ -8,7 +8,7 @@ entry point to Aviary.
 from aviary.api import AviaryProblem
 from aviary.api import AnalysisScheme, SpeedType, AlphaModes
 from aviary.api import FlexibleTraj
-from aviary.api import create_gasp_based_ascent_phases
+from aviary.api import create_2dof_based_ascent_phases
 from aviary.api import SGMCruise, SGMDescent
 from aviary.api import Dynamic
 
@@ -46,7 +46,7 @@ def run_aviary(aircraft_filename, phase_info, optimizer=None, analysis_scheme=An
 # replace the default trajectory with a custom trajectory
 # This trajectory uses the full GASP based ascent profile,
 # a Breguet cruise, and a simplified descent
-    ascent_phases = create_gasp_based_ascent_phases(
+    ascent_phases = create_2dof_based_ascent_phases(
         prob.ode_args,
         cruise_alt=prob.cruise_alt,
         cruise_mach=prob.cruise_mach)
@@ -140,8 +140,7 @@ def run_aviary(aircraft_filename, phase_info, optimizer=None, analysis_scheme=An
 
 
 if __name__ == "__main__":
-
-    from aviary.interface.default_phase_info.gasp import phase_info
+    from aviary.interface.default_phase_info.two_dof import phase_info
     input_deck = 'models/large_single_aisle_1/large_single_aisle_1_GwGm.csv'
     run_aviary(input_deck, phase_info,
                analysis_scheme=AnalysisScheme.SHOOTING, run_driver=False)

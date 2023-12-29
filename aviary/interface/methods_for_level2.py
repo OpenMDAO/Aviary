@@ -64,7 +64,7 @@ from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamics
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.merge_variable_metadata import merge_meta_data
 
-from aviary.interface.default_phase_info.gasp_fiti import create_gasp_based_ascent_phases, create_gasp_based_descent_phases
+from aviary.interface.default_phase_info.two_dof_fiti import create_2dof_based_ascent_phases, create_2dof_based_descent_phases
 from aviary.mission.gasp_based.idle_descent_estimation import descent_range_and_fuel
 
 
@@ -210,18 +210,12 @@ class AviaryProblem(om.Problem):
                 print('Loaded outputted_phase_info.py generated with GUI')
 
             else:
-                # load a default phase info
-                if self.mission_method is TWO_DEGREES_OF_FREEDOM:
-                    from aviary.interface.default_phase_info.gasp import phase_info
+                # 2dof -> two_dof
+                method = self.mission_method.value.replace('2dof', 'two_dof')
 
-                elif self.mission_method is HEIGHT_ENERGY:
-                    from aviary.interface.default_phase_info.flops import phase_info
-
-                elif self.mission_method is SIMPLE:
-                    from aviary.interface.default_phase_info.simple import phase_info
-
-                elif self.mission_method is SOLVED:
-                    from aviary.interface.default_phase_info.solved import phase_info
+                module = importlib.import_module(
+                    self.mission_method.value, 'aviary.interface.default_phase_info')
+                phase_info = getattr(module, 'phase_info')
 
                 print('Loaded default phase_info for'
                       f'{self.mission_method.value.lower()} equations of motion')
@@ -962,9 +956,9 @@ class AviaryProblem(om.Problem):
         """
         if phase_info_parameterization is None:
             if self.mission_method in (HEIGHT_ENERGY, SIMPLE):
-                from aviary.interface.default_phase_info.flops import phase_info_parameterization
+                from aviary.interface.default_phase_info.height_energy import phase_info_parameterization
             elif self.mission_method in (TWO_DEGREES_OF_FREEDOM, SOLVED):
-                from aviary.interface.default_phase_info.gasp import phase_info_parameterization
+                from aviary.interface.default_phase_info.two_dof import phase_info_parameterization
         else:
             self.phase_info = phase_info_parameterization(self.phase_info,
                                                           self.aviary_inputs)
@@ -979,12 +973,12 @@ class AviaryProblem(om.Problem):
         elif self.analysis_scheme is AnalysisScheme.SHOOTING:
             initial_mass = self.aviary_inputs.get_val(Mission.Summary.GROSS_MASS, 'lbm')
 
-            ascent_phases = create_gasp_based_ascent_phases(
+            ascent_phases = create_2dof_based_ascent_phases(
                 self.ode_args,
                 cruise_alt=self.cruise_alt,
                 cruise_mach=self.cruise_mach)
 
-            descent_phases = create_gasp_based_descent_phases(
+            descent_phases = create_2dof_based_descent_phases(
                 self.ode_args,
                 cruise_alt=self.cruise_alt,
                 cruise_mach=self.cruise_mach)

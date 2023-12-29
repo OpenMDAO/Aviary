@@ -6,7 +6,7 @@ import numpy as np
 from aviary.mission.gasp_based.phases.accel_phase import get_accel
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.interface.default_phase_info.gasp import default_mission_subsystems
+from aviary.interface.default_phase_info.two_dof import default_mission_subsystems
 from packaging import version
 
 

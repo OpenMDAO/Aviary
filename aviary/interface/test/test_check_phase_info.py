@@ -2,8 +2,8 @@ import unittest
 import copy
 
 from aviary.interface.utils.check_phase_info import check_phase_info
-from aviary.interface.default_phase_info.flops import phase_info as phase_info_flops
-from aviary.interface.default_phase_info.gasp import phase_info as phase_info_gasp
+from aviary.interface.default_phase_info.height_energy import phase_info as phase_info_flops
+from aviary.interface.default_phase_info.two_dof import phase_info as phase_info_gasp
 from aviary.variable_info.enums import EquationsOfMotion
 
 HEIGHT_ENERGY = EquationsOfMotion.HEIGHT_ENERGY

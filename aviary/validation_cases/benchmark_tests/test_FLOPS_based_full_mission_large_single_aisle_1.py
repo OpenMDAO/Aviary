@@ -31,7 +31,7 @@ from aviary.variable_info.functions import setup_trajectory_params
 from aviary.utils.preprocessors import preprocess_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.variables_in import VariablesIn
-from aviary.interface.default_phase_info.flops import default_premission_subsystems, default_mission_subsystems
+from aviary.interface.default_phase_info.height_energy import default_premission_subsystems, default_mission_subsystems
 
 try:
     import pyoptsparse
