@@ -17,7 +17,6 @@ def create_gasp_based_ascent_phases(
         ode_args=ode_args,
         simupy_args=dict(
             DEBUG=False,
-            blocked_state_names=['engine_deck.nox', 'nox'],
         ),
     )
     groundroll_vals = {
@@ -29,7 +28,6 @@ def create_gasp_based_ascent_phases(
         ode_args=ode_args,
         simupy_args=dict(
             DEBUG=False,
-            blocked_state_names=['engine_deck.nox', 'nox'],
         ),
     )
     rotation_vals = {}
@@ -38,7 +36,6 @@ def create_gasp_based_ascent_phases(
         ode_args=ode_args,
         simupy_args=dict(
             DEBUG=False,
-            blocked_state_names=['engine_deck.nox', 'nox'],
         ),
     )
     ascent_vals = {
@@ -53,7 +50,6 @@ def create_gasp_based_ascent_phases(
         ode_args=ode_args,
         simupy_args=dict(
             DEBUG=False,
-            blocked_state_names=['engine_deck.nox', 'nox'],
         ),
     )
     accel_vals = {}
@@ -64,7 +60,6 @@ def create_gasp_based_ascent_phases(
         ode_args=ode_args,
         simupy_args=dict(
             DEBUG=False,
-            blocked_state_names=['engine_deck.nox', 'nox'],
         ),
     )
     climb1_vals = {
@@ -79,7 +74,6 @@ def create_gasp_based_ascent_phases(
         ode_args=ode_args,
         simupy_args=dict(
             DEBUG=False,
-            blocked_state_names=['engine_deck.nox', 'nox'],
         ),
     )
     climb2_vals = {
@@ -94,7 +88,6 @@ def create_gasp_based_ascent_phases(
         ode_args=ode_args,
         simupy_args=dict(
             DEBUG=False,
-            blocked_state_names=['engine_deck.nox', 'nox'],
         ),
     )
     climb3_vals = {
@@ -150,7 +143,6 @@ def create_gasp_based_descent_phases(
         ode_args=ode_args,
         simupy_args=dict(
             DEBUG=False,
-            blocked_state_names=['engine_deck.nox', 'nox'],
         ),
     )
     descent1_vals = {
@@ -166,7 +158,6 @@ def create_gasp_based_descent_phases(
         ode_args=ode_args,
         simupy_args=dict(
             DEBUG=False,
-            blocked_state_names=['engine_deck.nox', 'nox'],
         ),
     )
     descent2_vals = {
@@ -182,7 +173,6 @@ def create_gasp_based_descent_phases(
         ode_args=ode_args,
         simupy_args=dict(
             DEBUG=False,
-            blocked_state_names=['engine_deck.nox', 'nox'],
         ),
     )
     descent3_vals = {

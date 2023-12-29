@@ -36,8 +36,13 @@ class SGMGroundroll(SimuPyProblem):
         super().__init__(
             GroundrollODE(analysis_scheme=AnalysisScheme.SHOOTING, **ode_args),
             output_names=["normal_force"],
-            alternate_state_names={Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: Dynamic.Mission.MASS,
-                                   'TAS': 'TAS'},
+            state_names=[
+                Dynamic.Mission.MASS,
+                Dynamic.Mission.DISTANCE,
+                Dynamic.Mission.ALTITUDE,
+                'TAS'
+            ],
+            # state_units=['lbm','nmi','ft','ft/s'],
             alternate_state_rate_names={
                 Dynamic.Mission.MASS_RATE: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
             **simupy_args,
@@ -72,8 +77,12 @@ class SGMRotation(SimuPyProblem):
         super().__init__(
             RotationODE(analysis_scheme=AnalysisScheme.SHOOTING, **ode_args),
             output_names=["normal_force", "alpha"],
-            alternate_state_names={
-                Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: Dynamic.Mission.MASS},
+            state_names=[
+                Dynamic.Mission.MASS,
+                Dynamic.Mission.DISTANCE,
+                Dynamic.Mission.ALTITUDE,
+            ],
+            # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
                 Dynamic.Mission.MASS_RATE: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
             **simupy_args,
@@ -126,8 +135,12 @@ class SGMAscent(SimuPyProblem):
                 "normal_force",
                 "alpha",
             ],
-            alternate_state_names={
-                Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: Dynamic.Mission.MASS},
+            state_names=[
+                Dynamic.Mission.MASS,
+                Dynamic.Mission.DISTANCE,
+                Dynamic.Mission.ALTITUDE,
+            ],
+            # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
                 Dynamic.Mission.MASS_RATE: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
             control_names=control_names,
@@ -365,8 +378,12 @@ class SGMAccel(SimuPyProblem):
         super().__init__(
             ode,
             output_names=["EAS", "mach", "alpha"],
-            alternate_state_names={
-                Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: Dynamic.Mission.MASS},
+            state_names=[
+                Dynamic.Mission.MASS,
+                Dynamic.Mission.DISTANCE,
+                Dynamic.Mission.ALTITUDE,
+            ],
+            # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
                 Dynamic.Mission.MASS_RATE: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
             **simupy_args,
@@ -431,8 +448,12 @@ class SGMClimb(SimuPyProblem):
                 "drag",
                 Dynamic.Mission.ALTITUDE_RATE,
             ],
-            alternate_state_names={
-                Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: Dynamic.Mission.MASS},
+            state_names=[
+                Dynamic.Mission.MASS,
+                Dynamic.Mission.DISTANCE,
+                Dynamic.Mission.ALTITUDE,
+            ],
+            # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
                 Dynamic.Mission.MASS_RATE: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
             **simupy_args,
@@ -495,8 +516,12 @@ class SGMCruise(SimuPyProblem):
                 "drag",
                 Dynamic.Mission.ALTITUDE_RATE,
             ],
-            alternate_state_names={
-                Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: Dynamic.Mission.MASS},
+            state_names=[
+                Dynamic.Mission.MASS,
+                Dynamic.Mission.DISTANCE,
+                Dynamic.Mission.ALTITUDE,
+            ],
+            # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
                 Dynamic.Mission.MASS_RATE: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
             **simupy_args,
@@ -570,8 +595,12 @@ class SGMDescent(SimuPyProblem):
                 "drag",
                 Dynamic.Mission.ALTITUDE_RATE,
             ],
-            alternate_state_names={
-                Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: Dynamic.Mission.MASS},
+            state_names=[
+                Dynamic.Mission.MASS,
+                Dynamic.Mission.DISTANCE,
+                Dynamic.Mission.ALTITUDE,
+            ],
+            # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
                 Dynamic.Mission.MASS_RATE: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
             **simupy_args,

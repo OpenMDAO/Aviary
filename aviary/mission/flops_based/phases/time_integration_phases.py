@@ -22,7 +22,6 @@ class SGMHeightEnergy(SimuPyProblem):
         super().__init__(MissionODE(
             analysis_scheme=AnalysisScheme.SHOOTING,
             **ode_args),
-            # alternate_state_names={Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: Dynamic.Mission.MASS,},
             state_names=[
                 Dynamic.Mission.MASS,
                 Dynamic.Mission.RANGE,
@@ -150,14 +149,13 @@ def test_phase(phases, ode_args_tab):
 
 
 if __name__ == '__main__':
-    from aviary.interface.default_flops_phases import phase_info
+    from aviary.interface.default_phase_info.flops import phase_info, aero, prop, geom
     from aviary.subsystems.propulsion.engine_deck import EngineDeck
     from aviary.variable_info.variables import Aircraft, Mission, Dynamic
-    from aviary.utils.UI import create_vehicle
+    from aviary.utils.process_input_decks import create_vehicle
     from aviary.utils.preprocessors import preprocess_propulsion
     from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 
-    from aviary.interface.default_flops_phases import aero, prop, geom
     core_subsystems = [prop, geom, aero]
 
     aviary_inputs, initial_guesses = create_vehicle(
@@ -175,7 +173,6 @@ if __name__ == '__main__':
         ode_args=ode_args_tab,
         simupy_args=dict(
             DEBUG=True,
-            # blocked_state_names=['engine.nox', 'nox', 'specific_energy'],
         ),
     )
     phase_vals = {
