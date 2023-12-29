@@ -82,6 +82,4 @@ class DashboardCommandTestCases(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    # unittest.main()
-    test = CommandEntryPointsTestCases()
-    test.bench_test_SNOPT_cmd()
+    unittest.main()
