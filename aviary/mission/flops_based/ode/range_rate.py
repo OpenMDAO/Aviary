@@ -32,6 +32,8 @@ class RangeRate(om.ExplicitComponent):
         velocity = inputs[Dynamic.Mission.VELOCITY]
         climb_rate_2 = climb_rate**2
         velocity_2 = velocity**2
+        print('range rate:')
+        print('climb_rate, velocity')
         print(climb_rate, velocity)
         if (climb_rate_2 >= velocity_2).any():
             raise om.AnalysisError(

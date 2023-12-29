@@ -34,6 +34,9 @@ class AltitudeRate(om.ExplicitComponent):
         acceleration = inputs[Dynamic.Mission.VELOCITY_RATE]
         velocity = inputs[Dynamic.Mission.VELOCITY]
 
+        print('alt rate:')
+        print('specific_power, acceleration, velocity')
+        print(specific_power, acceleration, velocity)
         outputs[Dynamic.Mission.ALTITUDE_RATE] = \
             specific_power - (velocity * acceleration) / gravity
 
