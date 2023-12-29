@@ -227,6 +227,7 @@ class SimuPyProblem(SimulationMixin):
 
     @state.setter
     def state(self, value):
+        print('state.setter: self.state, value')
         print(self.state, value)
         if np.all(self.state == value):
             return
@@ -373,6 +374,7 @@ class SGMTrajBase(om.ExplicitComponent):
     def setup_params(
             self,
             ODEs,
+            promote_all_auto_ivc=False,
             traj_final_state_output=None,
             traj_promote_final_output=None,
             traj_promote_initial_input=None,
@@ -401,6 +403,20 @@ class SGMTrajBase(om.ExplicitComponent):
             traj_initial_state_input = []
         if traj_event_trigger_input is None:
             traj_event_trigger_input = []
+
+        if promote_all_auto_ivc:
+            for ode in ODEs:
+                ode: SimuPyProblem
+                ode.auto_ivc_vars = ode.prob.model.list_inputs(
+                    is_indep_var=True, units=True, out_stream=None)
+                for abs_name, data in ode.auto_ivc_vars:
+                    prom_name = data.pop('prom_name')
+                    if '.' in prom_name:
+                        continue
+                    traj_promote_initial_input[prom_name] = data
+            # print(traj_promote_initial_input)
+            # print(len(traj_promote_initial_input))
+            # exit()
 
         self.traj_promote_initial_input = {
             **self.options["param_dict"], **traj_promote_initial_input}

@@ -66,13 +66,14 @@ def test_phase(phases, ode_args_tab):
 
     traj = FlexibleTraj(
         Phases=phases,
-        traj_promote_initial_input={
-            Aircraft.Wing.CHARACTERISTIC_LENGTH: {'units': 'ft'},
-            Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH: {'units': 'ft'},
-            Aircraft.VerticalTail.CHARACTERISTIC_LENGTH: {'units': 'ft'},
-            Aircraft.Fuselage.CHARACTERISTIC_LENGTH: {'units': 'ft'},
-            Aircraft.Nacelle.CHARACTERISTIC_LENGTH: {'units': 'ft'},
-        },
+        promote_all_auto_ivc=True,
+        # traj_promote_initial_input={
+        #     Aircraft.Wing.CHARACTERISTIC_LENGTH: {'units': 'ft'},
+        #     Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH: {'units': 'ft'},
+        #     Aircraft.VerticalTail.CHARACTERISTIC_LENGTH: {'units': 'ft'},
+        #     Aircraft.Fuselage.CHARACTERISTIC_LENGTH: {'units': 'ft'},
+        #     Aircraft.Nacelle.CHARACTERISTIC_LENGTH: {'units': 'ft'},
+        # },
         traj_final_state_output=[Dynamic.Mission.MASS,
                                  Dynamic.Mission.RANGE,
                                  Dynamic.Mission.ALTITUDE],
@@ -128,10 +129,12 @@ def test_phase(phases, ode_args_tab):
 
         warnings.simplefilter("ignore", om.PromotionWarning)
 
-    prob.setup()
+        prob.setup()
     prob.set_val("traj.altitude_initial", val=35000, units="ft")
     prob.set_val("traj.mass_initial", val=171000, units="lbm")
     prob.set_val("traj.range_initial", val=0, units="NM")
+    prob.set_val("traj.velocity", val=472, units="kn")
+    prob.set_val("traj.velocity_rate", val=0, units="m/s**2")
 
     # try:
     prob.run_model()
@@ -159,7 +162,7 @@ if __name__ == '__main__':
     core_subsystems = [prop, geom, aero]
 
     aviary_inputs, initial_guesses = create_vehicle(
-        'validation_cases/benchmark_tests/bench_4.csv')
+        'models/test_aircraft/aircraft_for_bench_FwFm.csv')
     aviary_inputs.set_val('debug_mode', False)
     aviary_inputs.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=28690, units="lbf")
     aviary_inputs.set_val(Dynamic.Mission.THROTTLE, val=0, units="unitless")
