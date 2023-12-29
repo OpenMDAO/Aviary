@@ -98,10 +98,10 @@ class CoreGeometryBuilder(GeometryBuilderBase):
                             Aircraft.Fuselage.AVG_DIAMETER]
 
         with open(filepath, mode='w') as f:
-            method = self.code_origin + ' METHOD'
+            method = self.code_origin + ' method'
             if self.use_both_geometries:
-                method = ('FLOPS AND GASP METHODS')
-            f.write(f'# GEOMETRY: {method}\n')
+                method = ('FLOPS and GASP methods')
+            f.write(f'# Geometry: {method}\n')
             f.write('## Wing')
             write_markdown_variable_table(f, prob, wing_outputs, self.meta_data)
             f.write('\n## Empennage\n')

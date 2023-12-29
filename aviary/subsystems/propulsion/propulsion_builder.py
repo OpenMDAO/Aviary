@@ -66,9 +66,9 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
                           Aircraft.Engine.SCALED_SLS_THRUST]
 
         with open(filepath, mode='w') as f:
-            f.write('# PROPULSION')
+            f.write('# Propulsion')
             write_markdown_variable_table(f, prob, propulsion_outputs, self.meta_data)
-            f.write('\n## ENGINES')
+            f.write('\n## Engines')
             for engine in prob.aviary_inputs.get_val('engine_models'):
                 f.write(f'\n### {engine.name}')
                 write_markdown_variable_table(f, engine, engine_outputs, self.meta_data)
