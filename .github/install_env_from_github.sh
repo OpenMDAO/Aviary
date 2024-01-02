@@ -93,6 +93,7 @@ $pkg_manager env create -f $output_yaml -n $env_name
 # source activate base
 
 # Activate the new conda environment
+eval "$(conda shell.bash hook)"
 conda activate $env_name
 
 # Check flags and install special packages if needed
