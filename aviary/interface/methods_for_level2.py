@@ -1,6 +1,5 @@
 import csv
 import warnings
-import getpass
 from packaging import version
 import inspect
 from copy import deepcopy
@@ -27,7 +26,6 @@ from aviary.mission.gasp_based.ode.groundroll_ode import GroundrollODE
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_ode import \
     UnsteadySolvedODE
-from aviary.mission.gasp_based.ode.constraints.flight_constraints import ClimbAtTopOfClimb
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 from aviary.mission.gasp_based.phases.time_integration_phases import SGMCruise
 from aviary.mission.gasp_based.phases.accel_phase import get_accel
@@ -65,6 +63,7 @@ from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 
 from aviary.interface.default_phase_info.gasp_fiti import create_gasp_based_ascent_phases, create_gasp_based_descent_phases
 from aviary.mission.gasp_based.idle_descent_estimation import descent_range_and_fuel
+from aviary.mission.flops_based.phases.phase_utils import get_initial
 
 
 def wrapped_convert_units(val_unit_tuple, new_units):
@@ -650,7 +649,7 @@ class AviaryProblem(om.Problem):
             promotes_inputs=["t_init_gear", "t_init_flaps"],
         )
 
-    def _get_flops_phase(self, phase_name):
+    def _get_flops_phase(self, phase_name, phase_idx):
         phase_options = self.phase_info[phase_name]
 
         fix_duration = phase_options['user_options'].pop('fix_duration')
@@ -707,15 +706,24 @@ class AviaryProblem(om.Problem):
 
             user_options = AviaryValues(phase_options.get('user_options', ()))
 
+            fix_initial = user_options.get_val("fix_initial")
+            if "fix_initial_time" in user_options:
+                fix_initial_time = user_options.get_val("fix_initial_time")
+            else:
+                fix_initial_time = get_initial(fix_initial, "time", True)
+
+            input_initial = False
             if self.mission_method == "simple":
                 user_options.set_val('initial_ref', 10., 'min')
                 duration_bounds = user_options.get_val("duration_bounds", 'min')
                 user_options.set_val(
                     'duration_ref', (duration_bounds[0] + duration_bounds[1]) / 2., 'min')
+                if phase_idx > 0:
+                    input_initial = True
 
-            if "fix_initial_time" in user_options:
+            if fix_initial_time or input_initial:
                 phase.set_time_options(
-                    fix_initial=user_options.get_val("fix_initial_time"), fix_duration=fix_duration, units='s',
+                    fix_initial=fix_initial_time, fix_duration=fix_duration, units='s',
                     duration_bounds=user_options.get_val("duration_bounds", 's'),
                     duration_ref=user_options.get_val("duration_ref", 's'),
                 )
@@ -729,7 +737,7 @@ class AviaryProblem(om.Problem):
                 )
             else:  # TODO: figure out how to handle this now that fix_initial is dict
                 phase.set_time_options(
-                    fix_initial=user_options.get_val("fix_initial"), fix_duration=fix_duration, units='s',
+                    fix_initial=fix_initial, fix_duration=fix_duration, units='s',
                     duration_bounds=user_options.get_val("duration_bounds", 's'),
                     duration_ref=user_options.get_val("duration_ref", 's'),
                     initial_bounds=user_options.get_val("initial_bounds", 's'),
@@ -1010,8 +1018,9 @@ class AviaryProblem(om.Problem):
                         self._add_groundroll_eq_constraint(phase)
 
         elif self.mission_method == "FLOPS" or self.mission_method == "simple":
-            for idx, phase_name in enumerate(phases):
-                phase = traj.add_phase(phase_name, self._get_flops_phase(phase_name))
+            for phase_idx, phase_name in enumerate(phases):
+                phase = traj.add_phase(
+                    phase_name, self._get_flops_phase(phase_name, phase_idx))
                 add_subsystem_timeseries_outputs(phase, phase_name)
 
             # loop through phase_info and external subsystems
@@ -2264,7 +2273,6 @@ class AviaryProblem(om.Problem):
             warnings.filterwarnings('ignore', category=UserWarning)
             failed = self.run_model()
             warnings.filterwarnings('default', category=UserWarning)
-            final_range_nmi = self.get_val('traj.distance_final', units='NM')[0]
 
         if self.aviary_inputs.get_val('debug_mode'):
             with open('output_list.txt', 'w') as outfile:

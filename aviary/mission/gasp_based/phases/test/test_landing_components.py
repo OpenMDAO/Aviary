@@ -8,7 +8,7 @@ from openmdao.utils.assert_utils import (assert_check_partials,
 from aviary.mission.gasp_based.phases.landing_components import (
     GlideConditionComponent, LandingAltitudeComponent,
     LandingGroundRollComponent)
-from aviary.utils.test_utils.IO_test_util import assert_match_spec, XDSM_PATH
+from aviary.utils.test_utils.IO_test_util import assert_match_spec, skipIfMissingXDSM
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -38,7 +38,7 @@ class LandingAltTestCase(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
-    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'landing_specs/landing_alt.json')), "`landing_specs/landing_alt.json` does not exist")
+    @skipIfMissingXDSM('landing_specs/landing_alt.json')
     def test_alt_spec(self):
         subsystem = self.prob.model
         assert_match_spec(subsystem, "landing_specs/landing_alt.json")
@@ -116,7 +116,7 @@ class GlideTestCase(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-12)
 
-    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'landing_specs/glide.json')), "`landing_specs/glide.json` does not exist")
+    @skipIfMissingXDSM('landing_specs/glide.json')
     def test_alt_spec(self):
         subsystem = self.prob.model
         assert_match_spec(subsystem, "landing_specs/glide.json")
@@ -168,7 +168,7 @@ class GroundRollTestCase(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=5e-12, rtol=1e-12)
 
-    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'landing_specs/groundroll.json')), "`landing_specs/groundroll.json` does not exist")
+    @skipIfMissingXDSM('landing_specs/groundroll.json')
     def test_alt_spec(self):
         subsystem = self.prob.model
         assert_match_spec(subsystem, "landing_specs/groundroll.json")
