@@ -5,7 +5,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
 
 from aviary.mission.gasp_based.ode.rotation_ode import RotationODE
-from aviary.utils.test_utils.IO_test_util import assert_match_spec, XDSM_PATH
+from aviary.utils.test_utils.IO_test_util import assert_match_spec, skipIfMissingXDSM
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.interface.default_phase_info.gasp import default_mission_subsystems
@@ -35,7 +35,7 @@ class RotationODETestCase(unittest.TestCase):
         )
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
-    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'statics_specs/rotation.json')), "`statics_specs/rotation.json` does not exist")
+    @skipIfMissingXDSM('statics_specs/rotation.json')
     def test_rotation_spec(self):
         """Test rotation ODE spec"""
         subsystem = self.prob.model

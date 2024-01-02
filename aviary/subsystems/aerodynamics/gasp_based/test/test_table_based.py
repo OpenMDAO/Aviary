@@ -10,7 +10,7 @@ from packaging import version
 
 from aviary.subsystems.aerodynamics.gasp_based.table_based import (
     CruiseAero, LowSpeedAero)
-from aviary.utils.test_utils.IO_test_util import assert_match_spec, XDSM_PATH
+from aviary.utils.test_utils.IO_test_util import assert_match_spec, skipIfMissingXDSM
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -88,7 +88,7 @@ class TestLowSpeedAero(unittest.TestCase):
     ground_data = pkg_resources.resource_filename(
         "aviary", f"subsystems/aerodynamics/gasp_based/data/large_single_aisle_1_aero_ground.txt")
 
-    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'rotation_specs/aero.json')), "`rotation_specs/aero.json` does not exist")
+    @skipIfMissingXDSM('rotation_specs/aero.json')
     def test_spec(self):
         comp = LowSpeedAero(free_aero_data=self.free_data,
                             flaps_aero_data=self.flaps_data,

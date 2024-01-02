@@ -7,7 +7,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from aviary.subsystems.mass.gasp_based.equipment_and_useful_load import \
     EquipAndUsefulLoadMass
 from aviary.variable_info.options import get_option_defaults
-from aviary.utils.test_utils.IO_test_util import assert_match_spec, XDSM_PATH
+from aviary.utils.test_utils.IO_test_util import assert_match_spec, skipIfMissingXDSM
 from aviary.variable_info.enums import GASP_Engine_Type
 from aviary.variable_info.variables import Aircraft, Mission
 
@@ -605,7 +605,7 @@ class EquipAndUsefulMassGroupTestCase1(
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
-    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'mass_and_sizing_basic_specs/equip.json')), "`mass_and_sizing_basic_specs/equip.json` does not exist")
+    @skipIfMissingXDSM('mass_and_sizing_basic_specs/equip.json')
     def test_io_equip_and_useful_group_spec(self):
 
         subsystem = self.prob.model

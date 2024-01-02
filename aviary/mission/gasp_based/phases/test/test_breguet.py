@@ -8,7 +8,7 @@ from openmdao.utils.assert_utils import (assert_check_partials,
 
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.mission.gasp_based.phases.breguet import RangeComp
-from aviary.utils.test_utils.IO_test_util import assert_match_spec, XDSM_PATH
+from aviary.utils.test_utils.IO_test_util import assert_match_spec, skipIfMissingXDSM
 from aviary.variable_info.variables import Dynamic
 
 
@@ -46,7 +46,7 @@ class TestBreguetResults(unittest.TestCase):
             partial_data = self.prob.check_partials(method="cs")  # , out_stream=None)
         assert_check_partials(partial_data, atol=tol, rtol=tol)
 
-    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'cruise_specs/breguet_eom.json')), "`cruise_specs/breguet_eom.json` does not exist")
+    @skipIfMissingXDSM('cruise_specs/breguet_eom.json')
     def test_climb_spec(self):
         subsystem = self.prob.model
         assert_match_spec(subsystem, "cruise_specs/breguet_eom.json")
