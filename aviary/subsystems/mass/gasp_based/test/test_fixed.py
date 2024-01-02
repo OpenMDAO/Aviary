@@ -1,4 +1,5 @@
 import unittest
+import os
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
@@ -13,7 +14,7 @@ from aviary.subsystems.mass.gasp_based.fixed import (ControlMass,
                                                      PayloadMass, TailMass)
 from aviary.utils.aviary_values import AviaryValues, get_keys
 from aviary.variable_info.options import get_option_defaults
-from aviary.utils.test_utils.IO_test_util import assert_match_spec
+from aviary.utils.test_utils.IO_test_util import assert_match_spec, XDSM_PATH
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -1115,6 +1116,7 @@ class FixedMassGroupTestCase1(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=3e-11, rtol=1e-12)
 
+    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'mass_and_sizing_both_specs/fixed_mass.json')), "`mass_and_sizing_both_specs/fixed_mass.json` does not exist")
     def test_io_fixed_group_spec(self):
 
         subsystem = self.prob.model

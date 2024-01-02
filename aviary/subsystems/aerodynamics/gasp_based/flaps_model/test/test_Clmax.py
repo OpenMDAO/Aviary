@@ -1,4 +1,5 @@
 import unittest
+import os
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import (assert_check_partials,
@@ -6,7 +7,7 @@ from openmdao.utils.assert_utils import (assert_check_partials,
 
 from aviary.subsystems.aerodynamics.gasp_based.flaps_model.Cl_max import \
     CLmaxCalculation
-from aviary.utils.test_utils.IO_test_util import assert_match_spec
+from aviary.utils.test_utils.IO_test_util import assert_match_spec, XDSM_PATH
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 """
@@ -74,6 +75,7 @@ class CLmaxCalculationTestCase(unittest.TestCase):
             data, atol=6400, rtol=0.007
         )  # large to account for large magnitude value, discrepancies are acceptable
 
+    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'flaps_specs/CL_max.json')), "`flaps_specs/CL_max.json` does not exist")
     def test_CLmax_spec(self):
 
         subsystem = self.prob.model

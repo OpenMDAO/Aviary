@@ -1,4 +1,5 @@
 import unittest
+import os
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
@@ -7,7 +8,7 @@ from aviary.subsystems.geometry.gasp_based.size_group import SizeGroup
 from aviary.subsystems.mass.gasp_based.mass_premission import MassPremission
 from aviary.utils.aviary_values import get_items
 from aviary.variable_info.options import get_option_defaults, is_option
-from aviary.utils.test_utils.IO_test_util import assert_match_spec
+from aviary.utils.test_utils.IO_test_util import assert_match_spec, XDSM_PATH
 from aviary.models.large_single_aisle_1.V3_bug_fixed_IO import (
     V3_bug_fixed_non_metadata, V3_bug_fixed_options)
 from aviary.variable_info.variables import Aircraft, Mission
@@ -157,6 +158,7 @@ class MassSummationTestCase1(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=3e-10, rtol=1e-12)
 
+    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'statics_specs/mass.json')), "`statics_specs/mass.json` does not exist")
     def test_mass_spec(self):
 
         subsystem = self.prob.model
