@@ -7,7 +7,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from aviary.subsystems.geometry.gasp_based.empennage import (EmpennageSize,
                                                              TailSize,
                                                              TailVolCoef)
-from aviary.utils.test_utils.IO_test_util import assert_match_spec, XDSM_PATH
+from aviary.utils.test_utils.IO_test_util import assert_match_spec, skipIfMissingXDSM
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft
 
@@ -185,7 +185,7 @@ class TestEmpennageGroup(
             self.prob[Aircraft.VerticalTail.MOMENT_ARM], 49.87526, tol
         )  # note: slightly different from GASP output value, likely numerical diff.s, this value is from Kenny
 
-    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'size_both1_specs/empennage.json')), "`size_both1_specs/empennage.json` does not exist")
+    @skipIfMissingXDSM('size_both1_specs/empennage.json')
     def test_io_emp_spec_defaults(self):
         self.prob.model.emp.options["aviary_options"] = get_option_defaults()
 
@@ -218,7 +218,7 @@ class TestEmpennageGroup(
             self.prob[Aircraft.VerticalTail.VOLUME_COEFFICIENT], 0.11623, tol
         )  # not actual GASP value
 
-    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'size_both2_specs/empennage.json')), "`size_both2_specs/empennage.json` does not exist")
+    @skipIfMissingXDSM('size_both2_specs/empennage.json')
     def test_io_emp_spec_vol_coefs(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF,

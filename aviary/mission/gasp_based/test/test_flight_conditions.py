@@ -7,7 +7,7 @@ from openmdao.utils.assert_utils import (assert_check_partials,
                                          assert_near_equal)
 
 from aviary.mission.gasp_based.flight_conditions import FlightConditions
-from aviary.utils.test_utils.IO_test_util import assert_match_spec, XDSM_PATH
+from aviary.utils.test_utils.IO_test_util import assert_match_spec, skipIfMissingXDSM
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variables import Dynamic
 
@@ -48,7 +48,7 @@ class FlightConditionsTestCase1(unittest.TestCase):
 
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
-    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'accel_specs/fc.json')), "`accel_specs/fc.json` does not exist")
+    @skipIfMissingXDSM('accel_specs/fc.json')
     def test_fc_spec1(self):
 
         subsystem = self.prob.model
@@ -91,7 +91,7 @@ class FlightConditionsTestCase2(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
-    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'climb_specs/fc.json')), "`climb_specs/fc.json` does not exist")
+    @skipIfMissingXDSM('climb_specs/fc.json')
     def test_fc_spec2(self):
 
         subsystem = self.prob.model
@@ -135,7 +135,7 @@ class FlightConditionsTestCase3(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
-    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'cruise_specs/fc.json')), "`cruise_specs/fc.json` does not exist")
+    @skipIfMissingXDSM('cruise_specs/fc.json')
     def test_fc_spec3(self):
 
         subsystem = self.prob.model
