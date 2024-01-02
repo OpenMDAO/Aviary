@@ -1,10 +1,15 @@
 import json
 import os
+from unittest import skipIf
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 
 XDSM_PATH = os.path.abspath(os.path.join(__file__, "../../..", "xdsm"))
+
+
+def skipIfMissingXDSM(filename):
+    return skipIf(not os.path.isfile(os.path.join(XDSM_PATH, filename)), "`"+filename+"` does not exist")
 
 
 def _load_spec(spec_path, path_prefix=XDSM_PATH):
