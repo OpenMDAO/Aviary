@@ -7,7 +7,7 @@ from openmdao.utils.assert_utils import (assert_check_partials,
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.mission.gasp_based.phases.taxi_component import TaxiFuelComponent
-from aviary.utils.test_utils.IO_test_util import assert_match_spec, XDSM_PATH
+from aviary.utils.test_utils.IO_test_util import assert_match_spec, skipIfMissingXDSM
 from aviary.variable_info.variables import Dynamic, Mission
 
 
@@ -33,7 +33,7 @@ class TaxiFuelComponentTestCase(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
-    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'taxi_specs/fuel.json')), "`taxi_specs/fuel.json` does not exist")
+    @skipIfMissingXDSM('taxi_specs/fuel.json')
     def test_fuel_spec(self):
         subsystem = self.prob.model
         assert_match_spec(subsystem, "taxi_specs/fuel.json")
