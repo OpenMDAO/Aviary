@@ -226,14 +226,6 @@ class AviaryProblem(om.Problem):
             aviary_inputs.set_val(Mission.Summary.GROSS_MASS,
                                   val=self.initial_guesses['actual_takeoff_mass'], units='lbm')
 
-            # Commonly referenced values
-            self.enable_engine_sizing = aviary_inputs.get_val(
-                Aircraft.Engine.SCALE_MASS)
-            self.cruise_alt = aviary_inputs.get_val(
-                Mission.Design.CRUISE_ALTITUDE, units='ft')
-            self.problem_type = aviary_inputs.get_val('problem_type')
-            self.mass_defect = aviary_inputs.get_val('mass_defect', units='lbm')
-
             self.cruise_mass_final = aviary_inputs.get_val(
                 Mission.Summary.CRUISE_MASS_FINAL, units='lbm')
             self.target_range = aviary_inputs.get_val(
@@ -1118,7 +1110,7 @@ class AviaryProblem(om.Problem):
 
         return traj
 
-    def add_post_mission_systems(self, include_landing=True, roc_at_toc=None):
+    def add_post_mission_systems(self, include_landing=True):
         """
         Add post-mission systems to the aircraft model. This is akin to the statics group
         or the "premission_systems", but occurs after the mission in the execution order.
