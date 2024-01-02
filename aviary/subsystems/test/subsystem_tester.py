@@ -1,6 +1,7 @@
 import unittest
 
 import numpy as np
+from importlib import import_module
 import openmdao.api as om
 from openmdao.core.system import System
 
@@ -8,7 +9,28 @@ from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.utils.aviary_values import AviaryValues
 
 
+def skipIfMissingDependencies(builder):
+    return unittest.skipIf(type(builder) is str, builder)
+
+
 class TestSubsystemBuilderBase(unittest.TestCase):
+    @staticmethod
+    def import_builder(path_to_builder: str, base_package='aviary.examples.external_subsystems'):
+        '''
+        import a subsytem builder
+
+        This is intended to be used with skipIfMissingDependencies
+        '''
+        try:
+            package, method = path_to_builder.rsplit('.', 1)
+            module = import_module(package, base_package)
+            builder = getattr(module, method)
+        except ImportError:
+            builder = 'Skipping due to missing dependencies'
+        except AttributeError:
+            builder = method + ' could not be imported from ' + base_package + '.' + package
+        return builder
+
     def setUp(self):
         self.subsystem_builder = SubsystemBuilderBase()
         self.aviary_values = AviaryValues()
