@@ -6,7 +6,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.aerodynamics.gasp_based.flaps_model.L_and_D_increments import \
     LiftAndDragIncrements
-from aviary.utils.test_utils.IO_test_util import assert_match_spec, XDSM_PATH
+from aviary.utils.test_utils.IO_test_util import assert_match_spec, skipIfMissingXDSM
 from aviary.variable_info.variables import Aircraft
 
 """
@@ -57,7 +57,7 @@ class LiftAndDragIncrementsTestCase(unittest.TestCase):
         data = self.prob.check_partials(out_stream=None, method="fd")
         assert_check_partials(data, atol=1e-4, rtol=1e-4)
 
-    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'flaps_specs/increments.json')), "`flaps_specs/increments.json` does not exist")
+    @skipIfMissingXDSM('flaps_specs/increments.json')
     def test_increment_spec(self):
 
         subsystem = self.prob.model
