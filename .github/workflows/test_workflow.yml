@@ -69,8 +69,8 @@ jobs:
             MAKE_DOCS: 0
 
           # latest versions of openmdao/dymos for docs only
-          - NAME: latest
-            PY: '3.10'
+          - NAME: latest_docs
+            PY: 3
             NUMPY: 1
             SCIPY: 1
             PYOPTSPARSE: 'v2.9.1'
