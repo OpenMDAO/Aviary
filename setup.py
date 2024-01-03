@@ -1,5 +1,4 @@
 from setuptools import find_packages, setup
-from pathlib import Path
 import re
 
 
@@ -8,9 +7,6 @@ __version__ = re.findall(
     r"""__version__ = ["']+([0-9\.\-dev]*)["']+""",
     open('aviary/__init__.py').read(),
 )[0]
-
-with open(Path(__file__).parent / "README.md", encoding="utf-8") as f:
-    long_description = f.read()
 
 pkgname = "aviary"
 extras_require = {
@@ -26,9 +22,7 @@ for packages in extras_require.values():
 extras_require["all"] = all_packages
 
 setup(
-    name="om-aviary",
-    long_description=long_description,
-    long_description_content_type='text/markdown',
+    name=pkgname,
     version=__version__,
     packages=find_packages(),
     install_requires=[
@@ -59,7 +53,7 @@ setup(
             'aviary=aviary.interface.cmd_entry_points:aviary_cmd',
         ],
         'openmdao_report': [
-            'summary=aviary.interface.reports:register_custom_reports',
+            'aviary_reports=aviary.interface.reports:register_custom_reports',
         ]
     }
 )
