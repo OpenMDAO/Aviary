@@ -77,7 +77,7 @@ jobs:
           echo "Install Aviary"
           echo "============================================================="
           pip install packaging
-          pip install .
+          pip install .[test]
 
       - name: Display conda environment info
         shell: bash -l {0}
