@@ -76,7 +76,7 @@ jobs:
           echo "============================================================="
           echo "Install Aviary"
           echo "============================================================="
-          pip install setuptools
+          pip install packaging
           pip install .
 
       - name: Display conda environment info
