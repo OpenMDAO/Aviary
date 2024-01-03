@@ -13,7 +13,8 @@ from aviary.interface.methods_for_level2 import AviaryProblem
 def run_aviary(aircraft_filename, phase_info, mission_method, mass_method, optimizer=None,
                analysis_scheme=AnalysisScheme.COLLOCATION, objective_type=None,
                record_filename='dymos_solution.db', restart_filename=None, max_iter=50,
-               run_driver=True, make_plots=True, phase_info_parameterization=None):
+               run_driver=True, make_plots=True, phase_info_parameterization=None,
+               optimization_history_filename=None):
     """
     Run the Aviary optimization problem for a specified aircraft configuration and mission.
 
@@ -98,7 +99,7 @@ def run_aviary(aircraft_filename, phase_info, mission_method, mass_method, optim
     prob.set_initial_guesses()
 
     prob.failed = prob.run_aviary_problem(
-        record_filename, restart_filename=restart_filename, run_driver=run_driver, make_plots=make_plots)
+        record_filename, restart_filename=restart_filename, run_driver=run_driver, make_plots=make_plots, optimization_history_filename=optimization_history_filename)
 
     return prob
 
