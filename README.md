@@ -1,5 +1,7 @@
 # Aviary -- NASA's aircraft design tool
 
+**Check out the Aviary documentation [here](https://openmdao.github.io/om-Aviary/intro.html).**
+
 ## Description
 
 This repository is an [OpenMDAO](https://openmdao.org/)-based aircraft modeling tool that incorporates aircraft sizing and weight equations from its predecessors [GASP (General Aviation Synthesis Program)](https://ntrs.nasa.gov/api/citations/19810010563/downloads/19810010563.pdf) and [FLOPS (Flight Optimization System)](https://software.nasa.gov/software/LAR-18934-1).
