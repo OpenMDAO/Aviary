@@ -8,6 +8,8 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  merge_group:
+    branches: [ main ]
 
 jobs:
 
@@ -180,7 +182,7 @@ jobs:
         run: |
           conda info
           conda list
-          conda env export --name test --file ${{ matrix.NAME }}_environment.yml
+          conda env export --name ${{ matrix.NAME }}_env --file ${{ matrix.NAME }}_environment.yml
 
       - name: 'Upload environment artifact'
         uses: actions/upload-artifact@v3

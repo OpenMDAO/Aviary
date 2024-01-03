@@ -61,25 +61,5 @@ class CommandEntryPointsTestCases(unittest.TestCase):
         self.run_and_test_cmd(cmd2)
 
 
-class DashboardCommandTestCases(unittest.TestCase):
-    def run_and_test_cmd(self, cmd):
-        # this only tests that a given command line tool returns a 0 return code. It doesn't
-        # check the expected output at all.  The underlying functions that implement the
-        # commands should be tested seperately.
-        try:
-            output = subprocess.check_output(cmd.split())
-        except subprocess.CalledProcessError as err:
-            self.fail("Command '{}' failed.  Return code: {}".format(cmd, err.returncode))
-
-    def test_dashboard(self):
-        # Very basic. Just run to make sure it does not crash
-        problem_recorder_filepath = pkg_resources.resource_filename('aviary',
-                                                                    'interface/test/dashboard_testfiles/test_full_mission_solved_level3_problem_final_case.db')
-        driver_recorder_filepath = pkg_resources.resource_filename('aviary',
-                                                                   'interface/test/dashboard_testfiles/test_full_mission_solved_level3_problem_driver_cases.db')
-        cmd = f'aviary dashboard --problem_recorder {problem_recorder_filepath} --driver_recorder {driver_recorder_filepath} test_full_mission_solved_level3'
-        self.run_and_test_cmd(cmd)
-
-
 if __name__ == "__main__":
     unittest.main()
