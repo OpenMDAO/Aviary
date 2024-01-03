@@ -55,7 +55,7 @@ jobs:
             SNOPT: '7.7'
             OPENMDAO: 'dev'
             DYMOS: 'dev'
-            MAKE_DOCS: 1
+            MAKE_DOCS: 0
 
           # latest versions of openmdao/dymos
           - NAME: latest
@@ -67,6 +67,17 @@ jobs:
             OPENMDAO: 'latest'
             DYMOS: 'latest'
             MAKE_DOCS: 0
+
+          # latest versions of openmdao/dymos for docs only
+          - NAME: latest
+            PY: '3.10'
+            NUMPY: 1
+            SCIPY: 1
+            PYOPTSPARSE: 'v2.9.1'
+            SNOPT: '7.7'
+            OPENMDAO: 'latest'
+            DYMOS: 'latest'
+            MAKE_DOCS: 1
 
     steps:
       - name: Display run details
@@ -192,6 +203,7 @@ jobs:
           retention-days: 5
 
       - name: Generate specs
+        if: matrix.MAKE_DOCS == 0
         shell: bash -l {0}
         run: |
           echo "============================================================="
