@@ -109,7 +109,7 @@ def run_level_1(
     outdir='output',
     optimizer='SNOPT',
     mass_origin='GASP',
-    mission_origin='GASP',
+    mission_method='GASP',
     phase_info=None,
     n2=False,
     max_iter=50,
@@ -132,7 +132,7 @@ def run_level_1(
     kwargs['optimizer'] = optimizer
 
     if phase_info is None:
-        if mission_origin == 'GASP':
+        if mission_method == 'GASP':
             from aviary.interface.default_phase_info.gasp import phase_info, phase_info_parameterization
             kwargs['phase_info_parameterization'] = phase_info_parameterization
 
@@ -155,7 +155,7 @@ def run_level_1(
         # Access the phase_info variable from the loaded module
         phase_info = outputted_phase_info.phase_info
 
-    prob = run_aviary(input_deck, phase_info, mission_method=mission_origin,
+    prob = run_aviary(input_deck, phase_info, mission_method=mission_method,
                       mass_method=mass_origin, **kwargs)
 
     if n2:
@@ -194,7 +194,7 @@ def _setup_level1_parser(parser):
         choices=("GASP", "FLOPS")
     )
     parser.add_argument(
-        "--mission_origin",
+        "--mission_method",
         type=str,
         default="simple",
         help="Mission origin to use",
@@ -238,7 +238,7 @@ def _exec_level1(args, user_args):
         outdir=args.outdir,
         optimizer=args.optimizer,
         mass_origin=args.mass_origin,
-        mission_origin=args.mission_origin,
+        mission_method=args.mission_method,
         phase_info=args.phase_info,
         n2=args.n2,
         max_iter=args.max_iter,
