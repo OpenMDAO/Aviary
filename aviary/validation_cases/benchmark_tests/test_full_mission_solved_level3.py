@@ -18,8 +18,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
     def bench_test_solved_full_mission(self):
         # Build problem
 
-        prob = AviaryProblem(phase_info, mission_method="solved",
-                             mass_method="GASP", reports='subsystems')
+        prob = AviaryProblem(phase_info, mission_method="solved", mass_method="GASP")
 
         input_file = 'models/test_aircraft/aircraft_for_bench_GwGm.csv'
         prob.load_inputs(input_file)

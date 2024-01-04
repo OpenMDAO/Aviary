@@ -67,4 +67,4 @@ def mission_report(prob, **kwargs):
 
     with open(report_file, mode='w') as f:
         f.write('# MISSION SUMMARY')
-        write_markdown_variable_table(f, prob, {})
+        # write_markdown_variable_table(f, prob, {})

@@ -1,9 +1,7 @@
 import csv
 import warnings
-from packaging import version
 import inspect
 from copy import deepcopy
-from pathlib import Path
 from datetime import datetime
 
 import numpy as np
@@ -13,7 +11,7 @@ from dymos.utils.misc import _unspecified
 
 import openmdao.api as om
 from openmdao.utils.units import convert_units
-from openmdao.utils.units import valid_units
+from openmdao.utils.reports_system import _default_reports
 
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
 from aviary.mission.flops_based.phases.build_landing import Landing
@@ -127,8 +125,6 @@ class AviaryProblem(om.Problem):
     """
 
     def __init__(self, phase_info, mission_method, mass_method, analysis_scheme=AnalysisScheme.COLLOCATION, **kwargs):
-        from openmdao.utils.reports_system import _default_reports
-
         # Modify OpenMDAO's default_reports for this session.
         new_reports = ['subsystems', 'mission']
         for report in new_reports:
