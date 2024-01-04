@@ -61,14 +61,12 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
         propulsion_outputs = [Aircraft.Propulsion.TOTAL_NUM_ENGINES,
                               Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST]
 
-        engine_outputs = [Aircraft.Engine.NUM_ENGINES,
-                          Aircraft.Engine.SCALE_FACTOR,
-                          Aircraft.Engine.SCALED_SLS_THRUST]
-
         with open(filepath, mode='w') as f:
             f.write('# Propulsion')
             write_markdown_variable_table(f, prob, propulsion_outputs, self.meta_data)
             f.write('\n## Engines')
-            for engine in prob.aviary_inputs.get_val('engine_models'):
-                f.write(f'\n### {engine.name}')
-                write_markdown_variable_table(f, engine, engine_outputs, self.meta_data)
+
+        # each engine can append to this file
+        kwargs['meta_data'] = self.meta_data
+        for engine in prob.aviary_inputs.get_val('engine_models'):
+            engine.report(prob, filepath, **kwargs)

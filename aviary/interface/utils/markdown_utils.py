@@ -8,6 +8,11 @@ from math import floor, log10
 
 def round_it(x, sig=None):
     # default sig figs to 2 decimal places out
+    if isinstance(x, str):
+        try:
+            x = float(x)
+        except ValueError:
+            return x
     if not sig:
         sig = len(str(round(x)))+2
     if x != 0:
@@ -44,6 +49,8 @@ def write_markdown_variable_table(open_file, problem, outputs, metadata):
                     val = problem.aviary_inputs.get_val(var_name, units)
                 else:
                     val, units = problem.aviary_inputs.get_item(var_name)
+                    if (val, units) == (None, None):
+                        raise KeyError
             except KeyError:
                 val = 'Not Found in Model'
                 units = None
