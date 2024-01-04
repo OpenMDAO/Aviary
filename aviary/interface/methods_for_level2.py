@@ -127,6 +127,14 @@ class AviaryProblem(om.Problem):
     """
 
     def __init__(self, phase_info, mission_method, mass_method, analysis_scheme=AnalysisScheme.COLLOCATION, **kwargs):
+        from openmdao.utils.reports_system import _default_reports
+
+        # Modify OpenMDAO's default_reports for this session.
+        new_reports = ['subsystems', 'mission']
+        for report in new_reports:
+            if report not in _default_reports:
+                _default_reports.append(report)
+
         super().__init__(**kwargs)
 
         self.timestamp = datetime.now()
