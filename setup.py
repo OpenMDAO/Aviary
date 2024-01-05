@@ -15,7 +15,6 @@ with open(Path(__file__).parent / "README.md", encoding="utf-8") as f:
 pkgname = "aviary"
 extras_require = {
     "test": ["testflo", "pyxdsm", "pre-commit"],
-    "optimizers": ["pyoptsparse"],
     "examples": ["openaerostruct", "ambiance", "boring_battery @ git+https://github.com/jcchin/boring.git"],
 }
 
@@ -45,11 +44,24 @@ setup(
     extras_require=extras_require,
     package_data={
         pkgname: [
-            "subsystems/aero/data/*.txt",
-            "subsystems/prop/data/*.eng",
+            "subsystems/aerodynamics/gasp_based/data/*",
+            "subsystems/aerodynamics/gasp_based/test/data/*",
+            "subsystems/aerodynamics/flops_based/test/*.csv",
+            "subsystems/aerodynamics/flops_based/test/data/*.csv",
+            "subsystems/propulsion/gasp_based/data/*",
             "validation_cases/validation_data/gasp_data/*.dat",
             "validation_cases/validation_data/gasp_data/*.csv",
-            "utils/*default_values.dat",
+            "validation_cases/validation_data/flops_data/engine_only/*.deck",
+            "utils/legacy_code_data/*default_values*",
+            "utils/test/*",
+            "models/engines/*.deck",
+            "models/engines/*.txt",
+            "models/N3CC/*",
+            "models/large_single_aisle_1/*",
+            "models/large_single_aisle_2/*",
+            "models/small_single_aisle/*",
+            "models/test_aircraft/*",
+            "visualization/assets/aviary_vars/*"
         ],
         f"{pkgname}.subsystems.aero.test.data": ["*.csv"],
         f"{pkgname}.subsystems.prop.test": ["*.csv"],
