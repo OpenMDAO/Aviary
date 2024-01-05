@@ -19,8 +19,7 @@ from openmdao.utils.general_utils import env_truthy
 
 pn.extension(sizing_mode='stretch_width')
 
-# Constants
-# Can't get using CSS to work with frames and the raw_css for the template so going with
+# Constants - # Can't get using CSS to work with frames and the raw_css for the template so going with
 #    this for now
 iframe_css = "width=100% height=4000vh overflow=hidden margin=0px padding=0px border=none"
 aviary_variables_json_file_name = 'aviary_vars.json'
@@ -300,7 +299,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
                                                    f'{reports_dir}/traj_linkage_report.html')
     if traj_linkage_report_pane:
         model_tabs_list.append(('Trajectory Linkage Report',
-                                 traj_linkage_report_pane))
+                                traj_linkage_report_pane))
 
     ####### Optimization Tab #######
     optimization_tabs_list = []
@@ -429,10 +428,12 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
         subsystem_tabs_list.append((md_file.stem, example_subsystems_pane))
 
     model_tabs = pn.Tabs(*model_tabs_list, stylesheets=['assets/aviary_styles.css'])
-    optimization_tabs = pn.Tabs(*optimization_tabs_list, stylesheets=['assets/aviary_styles.css'])
+    optimization_tabs = pn.Tabs(*optimization_tabs_list,
+                                stylesheets=['assets/aviary_styles.css'])
     results_tabs = pn.Tabs(*results_tabs_list, stylesheets=['assets/aviary_styles.css'])
     if subsystem_tabs_list:
-        subsystem_tabs = pn.Tabs(*subsystem_tabs_list, stylesheets=['assets/aviary_styles.css'])
+        subsystem_tabs = pn.Tabs(*subsystem_tabs_list,
+                                 stylesheets=['assets/aviary_styles.css'])
 
     # Add subtabs to tabs
     high_level_tabs = []
@@ -481,7 +482,6 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
 
 if __name__ == '__main__':
     # so we can get the files written to the repo top directory
-    # os.chdir('/Users/hschilli/Documents/OpenMDAO/dev/I365-create-launcher/')
     parser = argparse.ArgumentParser()
     _dashboard_setup_parser(parser)
     args = parser.parse_args()
