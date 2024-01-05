@@ -1163,7 +1163,7 @@ class AviaryProblem(om.Problem):
 
         return traj
 
-    def add_post_mission_systems(self, include_landing=True, roc_at_toc=None):
+    def add_post_mission_systems(self, include_landing=True):
         """
         Add post-mission systems to the aircraft model. This is akin to the statics group
         or the "premission_systems", but occurs after the mission in the execution order.
@@ -2318,7 +2318,6 @@ class AviaryProblem(om.Problem):
             warnings.filterwarnings('ignore', category=UserWarning)
             failed = self.run_model()
             warnings.filterwarnings('default', category=UserWarning)
-            final_range_nmi = self.get_val('traj.distance_final', units='NM')[0]
 
         if self.aviary_inputs.get_val('debug_mode'):
             with open('output_list.txt', 'w') as outfile:

@@ -5,7 +5,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
 
 from aviary.mission.gasp_based.ode.groundroll_ode import GroundrollODE
-from aviary.utils.test_utils.IO_test_util import assert_match_spec, XDSM_PATH
+from aviary.utils.test_utils.IO_test_util import assert_match_spec, skipIfMissingXDSM
 from aviary.variable_info.options import get_option_defaults
 from aviary.interface.default_phase_info.two_dof import default_mission_subsystems
 
@@ -31,7 +31,7 @@ class GroundrollODETestCase(unittest.TestCase):
         )
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
-    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'statics_specs/groundroll.json')), "`statics_specs/groundroll.json` does not exist")
+    @skipIfMissingXDSM('statics_specs/groundroll.json')
     def test_groundroll_spec(self):
         """Test groundroll ODE spec"""
         subsystem = self.prob.model

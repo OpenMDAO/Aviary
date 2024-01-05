@@ -6,7 +6,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
 
 from aviary.mission.gasp_based.ode.ascent_eom import AscentEOM
-from aviary.utils.test_utils.IO_test_util import assert_match_spec, XDSM_PATH
+from aviary.utils.test_utils.IO_test_util import assert_match_spec, skipIfMissingXDSM
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -41,7 +41,7 @@ class AscentEOMTestCase(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
-    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'ascent_specs/eom.json')), "`ascent_specs/eom.json` does not exist")
+    @skipIfMissingXDSM('ascent_specs/eom.json')
     def test_ascent_spec(self):
 
         subsystem = self.prob.model

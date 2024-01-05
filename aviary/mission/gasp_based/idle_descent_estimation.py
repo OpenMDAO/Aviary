@@ -9,7 +9,6 @@ from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 
 def descent_range_and_fuel(
     phases=None,
-
     ode_args=None,
     initial_mass=154e3,
     cruise_alt=35e3,
