@@ -4,11 +4,10 @@ import numpy as np
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.interface.default_phase_info.flops import phase_info
-from aviary.interface.default_phase_info.simple import phase_info as simple_phase_info
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.validation_cases.benchmark_utils import \
     compare_against_expected_values
-import copy
+from aviary.variable_info.variables import Dynamic
 
 
 @use_tempdirs
@@ -270,54 +269,92 @@ class ProblemPhaseTestCase(unittest.TestCase):
         compare_against_expected_values(prob, self.expected_dict)
 
     def bench_test_swap_4_FwFm_simple(self):
-        ph_in = copy.deepcopy(simple_phase_info)
+        phase_info = {
+            "pre_mission": {"include_takeoff": True, "optimize_mass": True},
+            "climb": {
+                "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
+                "user_options": {
+                    'fix_initial': {Dynamic.Mission.MASS: False, Dynamic.Mission.RANGE: False},
+                    'input_initial': True,
+                    "optimize_mach": True,
+                    "optimize_altitude": True,
+                    "polynomial_control_order": None,
+                    "num_segments": 6,
+                    "order": 3,
+                    "solve_for_range": False,
+                    "initial_mach": (0.2, "unitless"),
+                    "final_mach": (0.79, "unitless"),
+                    "mach_bounds": ((0.1, 0.8), "unitless"),
+                    "initial_altitude": (0.0, "ft"),
+                    "final_altitude": (35000.0, "ft"),
+                    "altitude_bounds": ((0.0, 36000.0), "ft"),
+                    "throttle_enforcement": "path_constraint",
+                    "constrain_final": False,
+                    "fix_duration": False,
+                    "initial_bounds": ((0.0, 0.0), "min"),
+                    "duration_bounds": ((5.0, 50.0), "min"),
+                    "no_descent": True,
+                    "add_initial_mass_constraint": False,
+                },
+                "initial_guesses": {"times": ([0, 40.0], "min")},
+            },
+            "cruise": {
+                "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
+                "user_options": {
+                    "optimize_mach": True,
+                    "optimize_altitude": True,
+                    "polynomial_control_order": 1,
+                    "num_segments": 1,
+                    "order": 3,
+                    "solve_for_range": False,
+                    "initial_mach": (0.79, "unitless"),
+                    "final_mach": (0.79, "unitless"),
+                    "mach_bounds": ((0.78, 0.8), "unitless"),
+                    "initial_altitude": (35000.0, "ft"),
+                    "final_altitude": (35000.0, "ft"),
+                    "altitude_bounds": ((35000.0, 35000.0), "ft"),
+                    "throttle_enforcement": "boundary_constraint",
+                    "fix_initial": False,
+                    "constrain_final": False,
+                    "fix_duration": False,
+                    "initial_bounds": ((64.0, 192.0), "min"),
+                    "duration_bounds": ((60.0, 7200.0), "min"),
+                },
+                "initial_guesses": {"times": ([128, 113], "min")},
+            },
+            "descent": {
+                "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
+                "user_options": {
+                    "optimize_mach": True,
+                    "optimize_altitude": True,
+                    "polynomial_control_order": None,
+                    "num_segments": 5,
+                    "order": 3,
+                    "solve_for_range": False,
+                    "initial_mach": (0.79, "unitless"),
+                    "final_mach": (0.3, "unitless"),
+                    "mach_bounds": ((0.2, 0.8), "unitless"),
+                    "initial_altitude": (35000.0, "ft"),
+                    "final_altitude": (500.0, "ft"),
+                    "altitude_bounds": ((0.0, 35000.0), "ft"),
+                    "throttle_enforcement": "path_constraint",
+                    "fix_initial": False,
+                    "constrain_final": True,
+                    "fix_duration": False,
+                    "initial_bounds": ((120.5, 361.5), "min"),
+                    "duration_bounds": ((5.0, 60.0), "min"),
+                    "no_climb": False
+                },
+                "initial_guesses": {"times": ([241, 58], "min")},
+            },
+            "post_mission": {
+                "include_landing": True,
+                "constrain_range": True,
+                "target_range": (3360.0, "nmi"),
+            },
+        }
 
-        ph_in['pre_mission']['include_takeoff'] = True
-
-        ph_in['climb']['user_options']['optimize_mach'] = True
-        ph_in['climb']['user_options']['optimize_altitude'] = True
-        ph_in['climb']['user_options']['mach_bounds'] = ((0.1, 0.8), "unitless")
-        ph_in['climb']['user_options']['duration_bounds'] = ((5.0, 50.0), "min")
-        ph_in['climb']['user_options']['initial_mach'] = (0.2, "unitless")
-        ph_in['climb']['user_options']['final_mach'] = (0.79, "unitless")
-        ph_in['climb']['user_options']['final_altitude'] = (35000., "ft")
-        ph_in['climb']['user_options']['altitude_bounds'] = ((0., 36000.), "ft")
-        ph_in['climb']['user_options']['polynomial_control_order'] = None
-        ph_in['climb']['user_options']['num_segments'] = 6
-        ph_in['climb']['user_options']['order'] = 3
-        ph_in['climb']['user_options']['no_descent'] = True
-        ph_in['climb']['initial_guesses']['times'] = ([0, 40.], "min")
-
-        ph_in['cruise']['user_options']['optimize_mach'] = True
-        ph_in['cruise']['user_options']['optimize_altitude'] = True
-        ph_in['cruise']['user_options']['polynomial_control_order'] = 1
-        ph_in['cruise']['user_options']['initial_mach'] = (0.79, "unitless")
-        ph_in['cruise']['user_options']['final_mach'] = (0.79, "unitless")
-        ph_in['cruise']['user_options']['initial_altitude'] = (35000., "ft")
-        ph_in['cruise']['user_options']['altitude_bounds'] = ((35000., 35000.), "ft")
-        ph_in['cruise']['user_options']['final_altitude'] = (35000., "ft")
-        ph_in['cruise']['user_options']['mach_bounds'] = ((0.78, 0.8), "unitless")
-        ph_in['cruise']['user_options']['duration_bounds'] = ((60., 7200.), "min")
-        ph_in['cruise']['user_options']['num_segments'] = 1
-        ph_in['cruise']['user_options']['order'] = 3
-
-        ph_in['descent']['user_options']['optimize_mach'] = True
-        ph_in['descent']['user_options']['optimize_altitude'] = True
-        ph_in['descent']['user_options']['mach_bounds'] = ((0.2, 0.8), "unitless")
-        ph_in['descent']['user_options']['initial_mach'] = (0.79, "unitless")
-        ph_in['descent']['user_options']['final_mach'] = (0.3, "unitless")
-        ph_in['descent']['user_options']['polynomial_control_order'] = None
-        ph_in['descent']['user_options']['initial_altitude'] = (35000., "ft")
-        ph_in['descent']['user_options']['altitude_bounds'] = ((0., 35000.), "ft")
-        ph_in['descent']['user_options']['duration_bounds'] = ((5., 60.), "min")
-        ph_in['descent']['user_options']['num_segments'] = 5
-        ph_in['descent']['user_options']['order'] = 3
-        ph_in['descent']['user_options']['no_climb'] = False
-
-        ph_in['post_mission']['include_landing'] = True
-        ph_in['post_mission']['target_range'] = (3360., 'nmi')
-
-        prob = run_aviary('models/test_aircraft/aircraft_for_bench_FwFm.csv', ph_in,
+        prob = run_aviary('models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info,
                           mission_method="simple", mass_method="FLOPS")
 
         compare_against_expected_values(prob, self.expected_dict, simple_flag=True)
@@ -325,4 +362,5 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
 if __name__ == '__main__':
     test = ProblemPhaseTestCase()
-    test.bench_test_swap_4_FwFm()
+    test.setUp()
+    test.bench_test_swap_4_FwFm_simple()

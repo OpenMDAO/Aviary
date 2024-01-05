@@ -36,6 +36,7 @@ phase_info = {
             "fix_duration": False,
             "initial_bounds": ((0.0, 0.0), "min"),
             "duration_bounds": ((64.0, 192.0), "min"),
+            "add_initial_mass_constraint": False,
         },
         "initial_guesses": {"times": ([0, 128], "min")},
     },

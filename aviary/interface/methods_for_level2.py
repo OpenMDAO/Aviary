@@ -1131,7 +1131,7 @@ class AviaryProblem(om.Problem):
         """
 
         if include_landing and self.post_mission_info['include_landing']:
-            if self.mission_method == "FLOPS":
+            if self.mission_method == "FLOPS" or self.mission_method == "simple":
                 self._add_flops_landing_systems()
             elif self.mission_method == "GASP":
                 self._add_gasp_landing_systems()
@@ -2347,16 +2347,30 @@ class AviaryProblem(om.Problem):
                                'traj.climb.initial_states:mass')
             self.model.connect(Mission.Takeoff.GROUND_DISTANCE,
                                'traj.climb.initial_states:range')
-            self.model.connect(Mission.Takeoff.FINAL_VELOCITY,
-                               'traj.climb.initial_states:velocity')
-            self.model.connect(Mission.Takeoff.FINAL_ALTITUDE,
-                               'traj.climb.initial_states:altitude')
+            if self.mission_method == "FLOPS":
+                self.model.connect(Mission.Takeoff.FINAL_VELOCITY,
+                                   'traj.climb.initial_states:velocity')
+                self.model.connect(Mission.Takeoff.FINAL_ALTITUDE,
+                                   'traj.climb.initial_states:altitude')
+            else:
+                pass
+                # TODO: connect this correctly
+                # mass is the most important to connect but these others should
+                # be connected as well
+                # self.model.connect(Mission.Takeoff.FINAL_VELOCITY,
+                #                 'traj.climb.initial_states:mach')
+                # self.model.connect(Mission.Takeoff.FINAL_ALTITUDE,
+                #                 'traj.climb.controls:altitude')
 
         self.model.connect('traj.descent.states:mass',
                            Mission.Landing.TOUCHDOWN_MASS, src_indices=[-1])
         # TODO: approach velocity should likely be connected
-        self.model.connect('traj.descent.states:altitude', Mission.Landing.INITIAL_ALTITUDE,
-                           src_indices=[-1])
+        if self.mission_method == "FLOPS":
+            self.model.connect('traj.descent.states:altitude', Mission.Landing.INITIAL_ALTITUDE,
+                               src_indices=[-1])
+        else:
+            self.model.connect('traj.descent.control_values:altitude', Mission.Landing.INITIAL_ALTITUDE,
+                               src_indices=[0])
 
     def _add_gasp_landing_systems(self):
         self.model.add_subsystem(
