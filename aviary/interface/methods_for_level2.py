@@ -962,12 +962,7 @@ class AviaryProblem(om.Problem):
         -------
         traj: The Dymos Trajectory object containing the added mission phases.
         """
-        if phase_info_parameterization is None:
-            if self.mission_method in (HEIGHT_ENERGY, SIMPLE):
-                from aviary.interface.default_phase_info.height_energy import phase_info_parameterization
-            elif self.mission_method in (TWO_DEGREES_OF_FREEDOM, SOLVED):
-                from aviary.interface.default_phase_info.two_dof import phase_info_parameterization
-        else:
+        if phase_info_parameterization is not None:
             self.phase_info = phase_info_parameterization(self.phase_info,
                                                           self.aviary_inputs)
 

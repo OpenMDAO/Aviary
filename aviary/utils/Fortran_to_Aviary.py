@@ -315,12 +315,11 @@ def generate_aviary_names(code_bases):
         alternate_names[code_base] = {}
         for key in _MetaData.keys():
             historical_dict = _MetaData[key]['historical_name']
-            if historical_dict:
-                if code_base in historical_dict:
-                    alt_name = _MetaData[key]['historical_name'][code_base]
-                    if isinstance(alt_name, str):
-                        alt_name = [alt_name]
-                    alternate_names[code_base][key] = alt_name
+            if historical_dict and code_base in historical_dict:
+                alt_name = _MetaData[key]['historical_name'][code_base]
+                if isinstance(alt_name, str):
+                    alt_name = [alt_name]
+                alternate_names[code_base][key] = alt_name
     return alternate_names
 
 
