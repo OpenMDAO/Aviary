@@ -1204,9 +1204,35 @@ add_meta_data(
                      "LEAPS1": None
                      },
     option=True,
+    units="lbm",
+    desc='required fuel reserves: directly in lbm',
+    default_value=0,
+)
+
+add_meta_data(
+    Aircraft.Design.RESERVES_FRACTION,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.FRESF2',  # the real name is INGASP.FRESF
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    option=True,
     units="unitless",
-    desc='required fuel reserves: given either as a proportion of mission fuel'
-    '(<0) or directly in lbf (>10)',
+    desc='required fuel reserves: given as a proportion of mission fuel',
+    default_value=0,
+)
+
+add_meta_data(
+    Aircraft.Design.RESERVES_OPTION,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.FRESF3',  # the real name is INGASP.FRESF
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    option=True,
+    types=int,
+    units="unitless",
+    desc='if 1, use Aircraft.Design.RESERVES; if 2, use Aircraft.Design.RESERVES_FRACTION',
     default_value=0,
 )
 

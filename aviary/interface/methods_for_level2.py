@@ -2436,31 +2436,45 @@ class AviaryProblem(om.Problem):
         )
 
     def _add_fuel_reserve_component(self, reserves_name=Mission.Design.RESERVE_FUEL):
-        reserves_val = self.aviary_inputs.get_val(Aircraft.Design.RESERVES)
-        if reserves_val <= 0:
-            reserves_val = -reserves_val
-            self.model.add_subsystem(
-                "reserves_calc",
-                om.ExecComp(
-                    f"reserve_fuel = {reserves_val}*(takeoff_mass - final_mass)",
-                    takeoff_mass={"units": "lbm"},
-                    final_mass={"units": "lbm"},
-                    reserve_fuel={"units": "lbm"}
-                ),
-                promotes_inputs=[
-                    ("takeoff_mass", Mission.Summary.GROSS_MASS),
-                    ("final_mass", Mission.Landing.TOUCHDOWN_MASS),
-                ],
-                promotes_outputs=[("reserve_fuel", reserves_name)],
-            )
-        elif reserves_val > 10:
-            self.model.add_subsystem(
-                "reserves_calc",
-                om.ExecComp(
-                    f"reserve_fuel = {reserves_val}",
-                    reserve_fuel={"val": reserves_val, "units": "lbm"}
-                ),
-                promotes_outputs=[("reserve_fuel", reserves_name)],
-            )
+        reserves_val = self.aviary_inputs.get_val(Aircraft.Design.RESERVES, units='lbm')
+        reserves_fac = self.aviary_inputs.get_val(
+            Aircraft.Design.RESERVES_FRACTION, units='unitless')
+        reserves_opt = self.aviary_inputs.get_val(
+            Aircraft.Design.RESERVES_OPTION, units='unitless')
+        if reserves_opt == 1:
+            if reserves_val > 10:
+                self.model.add_subsystem(
+                    "reserves_calc",
+                    om.ExecComp(
+                        f"reserve_fuel = {reserves_val}",
+                        reserve_fuel={"val": reserves_val, "units": "lbm"}
+                    ),
+                    promotes_outputs=[("reserve_fuel", reserves_name)],
+                )
+            else:
+                raise ValueError('"aircraft:design:reserves" is not valid below 10.')
+        elif reserves_opt == 2:
+            if reserves_fac <= 0 and reserves_fac >= -1:
+                reserves_fac = -reserves_fac
+                self.model.add_subsystem(
+                    "reserves_calc",
+                    om.ExecComp(
+                        f"reserve_fuel = {reserves_fac}*(takeoff_mass - final_mass)",
+                        takeoff_mass={"units": "lbm"},
+                        final_mass={"units": "lbm"},
+                        reserve_fuel={"units": "lbm"}
+                    ),
+                    promotes_inputs=[
+                        ("takeoff_mass", Mission.Summary.GROSS_MASS),
+                        ("final_mass", Mission.Landing.TOUCHDOWN_MASS),
+                    ],
+                    promotes_outputs=[("reserve_fuel", reserves_name)],
+                )
+            elif reserves_fac > 0 and reserves_fac <= 1:
+                raise ValueError(
+                    '"aircraft:design:reserves_fraction" between 0 and 1 is not implemented.')
+            else:
+                raise ValueError(
+                    '"aircraft:design:reserves_fraction" is not valid if less than -1 or larger than 1.')
         else:
-            raise ValueError('"aircraft:design:reserves" is not valid between 0 and 10.')
+            raise ValueError('"aircraft:design:reserves_option" must be 1 or 2.')

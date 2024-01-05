@@ -149,6 +149,8 @@ class Aircraft:
         OPERATING_MASS = 'aircraft:design:operating_mass'
         PART25_STRUCTURAL_CATEGORY = 'aircraft:design:part25_structural_category'
         RESERVES = 'aircraft:design:reserves'
+        RESERVES_FRACTION = 'aircraft:design:reserves_fraction'
+        RESERVES_OPTION = 'aircraft:design:reserves_option'
         SMOOTH_MASS_DISCONTINUITIES = 'aircraft:design:smooth_mass_discontinuities'
         STATIC_MARGIN = 'aircraft:design:static_margin'
         STRUCTURAL_MASS_INCREMENT = 'aircraft:design:structural_mass_increment'

@@ -6,6 +6,29 @@
 This section is under development.
 ```
 
+`initial_guesses` is a dictionary that contains values used to initialize the trajectory. It contains the following keys along with default values:
+
+- actual_takeoff_mass: 0,
+- rotation_mass: .99,
+- operating_empty_mass: 0,
+- fuel_burn_per_passenger_mile: 0.1,
+- cruise_mass_final: 0,
+- flight_duration: 0,
+- time_to_climb: 0,
+- climb_range: 0,
+- reserves: 0
+
+The initial guess of `reserves` is used to define the reserve fuel. Initially, its value can be anything larger than 10 or anything between -1 and 0. There are three variables to control the reserve fuel in the model file (`.csv`):
+- Aircraft.Design.RESERVES: the required fuel reserves: directly in lbm,
+- Aircraft.Design.RESERVES_FRACTION: the required fuel reserves: given as a proportion of mission fuel, 
+- Aircraft.Design.RESERVES_OPTION: if 1, use Aircraft.Design.RESERVES; if 2, use Aircraft.Design.RESERVES_FRACTION
+
+If the value of parameter `reserves` is not 0 and is within the allowed range, the initial guess of reserve fuel is determined by the parameter `reserves`:
+- if `reserves > 10.0`, we set `Aircraft.Design.RESERVES = reserves` and `Aircraft.Design.RESERVES_OPTION = 1`,
+- if `-1.0 <= reserves <= 0`, we set `Aircraft.Design.RESERVES_FRACTION = reserves` and `Aircraft.Design.RESERVES_OPTION = 2`.
+
+The initial guess of `reserves` is always converted to the actual design reserves (instead of reserve factor) and is used to update the initial guesses of `fuel_burn_per_passenger_mile` and `cruise_mass_final`.
+
 ## Phase Info Dictionary
 
 `phase_info` is a nested dictionary that Aviary uses for users to define their mission phases - how they are built, the design variables, constraints, connections, etc.
