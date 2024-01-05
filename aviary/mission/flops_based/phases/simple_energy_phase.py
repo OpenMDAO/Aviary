@@ -1,5 +1,3 @@
-from math import isclose
-
 import dymos as dm
 
 from aviary.mission.flops_based.phases.phase_builder_base import (
@@ -162,6 +160,8 @@ class EnergyPhase(PhaseBuilderBase):
         initial_altitude = user_options.get_item('initial_altitude')[0]
         final_altitude = user_options.get_item('final_altitude')[0]
         solve_for_range = user_options.get_val('solve_for_range')
+        no_descent = user_options.get_val('no_descent')
+        no_climb = user_options.get_val('no_climb')
 
         ##############
         # Add States #
@@ -205,13 +205,23 @@ class EnergyPhase(PhaseBuilderBase):
         ################
         # Add Controls #
         ################
-        phase.add_polynomial_control(
-            Dynamic.Mission.MACH,
-            targets=Dynamic.Mission.MACH, units=mach_bounds[1],
-            opt=optimize_mach, lower=mach_bounds[0][0], upper=mach_bounds[0][1],
-            rate_targets=[Dynamic.Mission.MACH_RATE],
-            order=polynomial_control_order, ref=0.5,
-        )
+        use_polynomial_control = polynomial_control_order is not None
+        if use_polynomial_control:
+            phase.add_polynomial_control(
+                Dynamic.Mission.MACH,
+                targets=Dynamic.Mission.MACH, units=mach_bounds[1],
+                opt=optimize_mach, lower=mach_bounds[0][0], upper=mach_bounds[0][1],
+                rate_targets=[Dynamic.Mission.MACH_RATE],
+                order=polynomial_control_order, ref=0.5,
+            )
+        else:
+            phase.add_control(
+                Dynamic.Mission.MACH,
+                targets=Dynamic.Mission.MACH, units=mach_bounds[1],
+                opt=optimize_mach, lower=mach_bounds[0][0], upper=mach_bounds[0][1],
+                rate_targets=[Dynamic.Mission.MACH_RATE],
+                ref=0.5,
+            )
 
         if optimize_mach and fix_initial:
             phase.add_boundary_constraint(
@@ -224,13 +234,22 @@ class EnergyPhase(PhaseBuilderBase):
             )
 
         # Add altitude rate as a control
-        phase.add_polynomial_control(
-            Dynamic.Mission.ALTITUDE,
-            targets=Dynamic.Mission.ALTITUDE, units=altitude_bounds[1],
-            opt=optimize_altitude, lower=altitude_bounds[0][0], upper=altitude_bounds[0][1],
-            rate_targets=[Dynamic.Mission.ALTITUDE_RATE],
-            order=polynomial_control_order, ref=altitude_bounds[0][1],
-        )
+        if use_polynomial_control:
+            phase.add_polynomial_control(
+                Dynamic.Mission.ALTITUDE,
+                targets=Dynamic.Mission.ALTITUDE, units=altitude_bounds[1],
+                opt=optimize_altitude, lower=altitude_bounds[0][0], upper=altitude_bounds[0][1],
+                rate_targets=[Dynamic.Mission.ALTITUDE_RATE],
+                order=polynomial_control_order, ref=altitude_bounds[0][1],
+            )
+        else:
+            phase.add_control(
+                Dynamic.Mission.ALTITUDE,
+                targets=Dynamic.Mission.ALTITUDE, units=altitude_bounds[1],
+                opt=optimize_altitude, lower=altitude_bounds[0][0], upper=altitude_bounds[0][1],
+                rate_targets=[Dynamic.Mission.ALTITUDE_RATE],
+                ref=altitude_bounds[0][1],
+            )
 
         if optimize_altitude and fix_initial:
             phase.add_boundary_constraint(
@@ -278,9 +297,20 @@ class EnergyPhase(PhaseBuilderBase):
             output_name=Dynamic.Mission.THROTTLE, units='unitless'
         )
 
+        phase.add_timeseries_output(
+            Dynamic.Mission.VELOCITY,
+            output_name=Dynamic.Mission.VELOCITY, units='m/s'
+        )
+
         ###################
         # Add Constraints #
         ###################
+        if no_descent:
+            phase.add_path_constraint(Dynamic.Mission.ALTITUDE_RATE, lower=0.0)
+
+        if no_climb:
+            phase.add_path_constraint(Dynamic.Mission.ALTITUDE_RATE, upper=0.0)
+
         required_available_climb_rate, units = user_options.get_item(
             'required_available_climb_rate')
 
@@ -359,6 +389,12 @@ EnergyPhase._add_meta_data('duration_bounds', val=(0., 100.), units='s')
 EnergyPhase._add_meta_data(
     'required_available_climb_rate', val=None, units='m/s',
     desc='minimum avaliable climb rate')
+
+EnergyPhase._add_meta_data(
+    'no_climb', val=False, desc='aircraft is not allowed to climb during phase')
+
+EnergyPhase._add_meta_data(
+    'no_descent', val=False, desc='aircraft is not allowed to descend during phase')
 
 EnergyPhase._add_meta_data('constrain_final', val=False)
 

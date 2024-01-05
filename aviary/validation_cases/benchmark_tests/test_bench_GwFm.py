@@ -5,13 +5,14 @@ Takeoff, Climb, Cruise, Descent, Landing
 Computed Aero
 Large Single Aisle 1 data
 '''
-import os
+import copy
 import unittest
 
 import numpy as np
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.interface.default_phase_info.flops import phase_info
+from aviary.interface.default_phase_info.simple import phase_info as simple_phase_info
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.validation_cases.benchmark_utils import \
     compare_against_expected_values
@@ -19,10 +20,7 @@ from aviary.validation_cases.benchmark_utils import \
 
 @use_tempdirs
 class ProblemPhaseTestCase(unittest.TestCase):
-    def bench_test_swap_1_GwFm(self):
-        prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwFm.csv', phase_info,
-                          mission_method="FLOPS", mass_method="GASP")
-
+    def setUp(self):
         expected_dict = {}
         expected_dict['times'] = np.array([[120.],
                                            [163.76271231],
@@ -269,7 +267,73 @@ class ProblemPhaseTestCase(unittest.TestCase):
                                                 [116.34759903],
                                                 [102.07377559]])
 
-        compare_against_expected_values(prob, expected_dict)
+        self.expected_dict = expected_dict
+
+    def bench_test_swap_1_GwFm(self):
+        prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwFm.csv', phase_info,
+                          mission_method="FLOPS", mass_method="GASP")
+
+        compare_against_expected_values(prob, self.expected_dict)
+
+    def bench_test_swap_1_GwFm_simple(self):
+        ph_in = copy.deepcopy(simple_phase_info)
+
+        ph_in['pre_mission']['include_takeoff'] = True
+
+        ph_in['climb']['user_options']['optimize_mach'] = True
+        ph_in['climb']['user_options']['optimize_altitude'] = True
+        ph_in['climb']['user_options']['mach_bounds'] = ((0.2, 0.8), "unitless")
+        ph_in['climb']['user_options']['duration_bounds'] = ((5.0, 50.0), "min")
+        ph_in['climb']['user_options']['initial_mach'] = (0.2, "unitless")
+        ph_in['climb']['user_options']['final_mach'] = (0.79, "unitless")
+        ph_in['climb']['user_options']['initial_altitude'] = (35., "ft")
+        ph_in['climb']['user_options']['final_altitude'] = (35000., "ft")
+        ph_in['climb']['user_options']['altitude_bounds'] = ((0., 35000.), "ft")
+        ph_in['climb']['user_options']['polynomial_control_order'] = None
+        ph_in['climb']['user_options']['num_segments'] = 6
+        ph_in['climb']['user_options']['order'] = 3
+        ph_in['climb']['user_options']['no_descent'] = True
+        ph_in['climb']['user_options']['solve_for_range'] = False
+        ph_in['climb']['initial_guesses']['times'] = ([0, 40.], "min")
+
+        ph_in['cruise']['user_options']['optimize_mach'] = True
+        ph_in['cruise']['user_options']['optimize_altitude'] = True
+        ph_in['cruise']['user_options']['polynomial_control_order'] = 1
+        ph_in['cruise']['user_options']['initial_mach'] = (0.79, "unitless")
+        ph_in['cruise']['user_options']['final_mach'] = (0.79, "unitless")
+        ph_in['cruise']['user_options']['initial_altitude'] = (35000., "ft")
+        ph_in['cruise']['user_options']['altitude_bounds'] = ((35.e3, 35.e3), "ft")
+        ph_in['cruise']['user_options']['final_altitude'] = (35000., "ft")
+        ph_in['cruise']['user_options']['mach_bounds'] = ((0.78, 0.8), "unitless")
+        ph_in['cruise']['user_options']['duration_bounds'] = ((120., 900.), "min")
+        ph_in['cruise']['user_options']['num_segments'] = 1
+        ph_in['cruise']['user_options']['order'] = 3
+        ph_in['cruise']['user_options']['solve_for_range'] = False
+        ph_in['cruise']['user_options']['required_available_climb_rate'] = (1.524, 'm/s')
+        ph_in['cruise']['initial_guesses']['times'] = ([40, 500.], "min")
+
+        ph_in['descent']['user_options']['optimize_mach'] = True
+        ph_in['descent']['user_options']['optimize_altitude'] = True
+        ph_in['descent']['user_options']['mach_bounds'] = ((0.3, 0.8), "unitless")
+        ph_in['descent']['user_options']['initial_mach'] = (0.79, "unitless")
+        ph_in['descent']['user_options']['final_mach'] = (0.3, "unitless")
+        ph_in['descent']['user_options']['polynomial_control_order'] = None
+        ph_in['descent']['user_options']['initial_altitude'] = (35000., "ft")
+        ph_in['descent']['user_options']['altitude_bounds'] = ((0., 35000.), "ft")
+        ph_in['descent']['user_options']['duration_bounds'] = ((5., 60.), "min")
+        ph_in['descent']['user_options']['num_segments'] = 5
+        ph_in['descent']['user_options']['order'] = 3
+        ph_in['descent']['user_options']['no_climb'] = True
+        ph_in['descent']['user_options']['solve_for_range'] = False
+        ph_in['descent']['initial_guesses']['times'] = ([360, 40.], "min")
+
+        ph_in['post_mission']['include_landing'] = True
+        ph_in['post_mission']['target_range'] = (3360., 'nmi')
+
+        prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwFm.csv', ph_in,
+                          mission_method="simple", mass_method="GASP")
+
+        compare_against_expected_values(prob, self.expected_dict, simple_flag=True)
 
 
 if __name__ == '__main__':

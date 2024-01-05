@@ -5,7 +5,7 @@ from openmdao.utils.assert_utils import assert_near_equal
 from aviary.utils.test_utils.assert_utils import warn_timeseries_near_equal
 
 
-def compare_against_expected_values(prob, expected_dict):
+def compare_against_expected_values(prob, expected_dict, simple_flag=False):
 
     expected_times = expected_dict['times']
     expected_altitudes = expected_dict['altitudes']
@@ -22,14 +22,24 @@ def compare_against_expected_values(prob, expected_dict):
     for idx, phase in enumerate(['climb', 'cruise', 'descent']):
 
         times.extend(prob.get_val(f'traj.{phase}.timeseries.time', units='s'))
-        altitudes.extend(prob.get_val(
-            f'traj.{phase}.timeseries.states:altitude', units='m'))
+        if simple_flag:
+            try:
+                altitudes.extend(prob.get_val(
+                    f'traj.{phase}.timeseries.polynomial_controls:altitude', units='m'))
+            except KeyError:
+                altitudes.extend(prob.get_val(
+                    f'traj.{phase}.timeseries.controls:altitude', units='m'))
+            velocities.extend(prob.get_val(
+                f'traj.{phase}.timeseries.velocity', units='m/s'))
+        else:
+            altitudes.extend(prob.get_val(
+                f'traj.{phase}.timeseries.states:altitude', units='m'))
+            velocities.extend(prob.get_val(
+                f'traj.{phase}.timeseries.states:velocity', units='m/s'))
         masses.extend(
             prob.get_val(f'traj.{phase}.timeseries.states:mass', units='kg'))
         ranges.extend(
             prob.get_val(f'traj.{phase}.timeseries.states:range', units='m'))
-        velocities.extend(prob.get_val(
-            f'traj.{phase}.timeseries.states:velocity', units='m/s'))
 
     times = np.array(times)
     altitudes = np.array(altitudes)

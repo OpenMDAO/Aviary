@@ -251,7 +251,7 @@ aircraft:wing:wetted_area,2396.56,ft**2
 aircraft:wing:zero_lift_angle,-1.2,deg
 mission:constraints:max_mach,0.785,unitless
 mission:design:cruise_altitude,25000,ft
-mission:design:gross_mass,175400.0,lbm
+mission:design:gross_mass,150935.0,lbm
 mission:design:lift_coefficient_max_flaps_up,1.2596,unitless
 mission:design:range,3500,NM
 mission:design:thrust_takeoff_per_eng,28928.1,lbf
@@ -261,7 +261,7 @@ mission:landing:lift_coefficient_flap_increment,1.0293,unitless
 mission:landing:lift_coefficient_max,2.8155,unitless
 mission:summary:cruise_mach,0.785,unitless
 mission:summary:fuel_flow_scaler,1.0,unitless
-mission:summary:gross_mass,175400,lbm
+mission:summary:gross_mass,150935,lbm
 mission:takeoff:airport_altitude,0,ft
 mission:takeoff:drag_coefficient_flap_increment,0.0085,unitless
 mission:takeoff:fuel_simple,577,lbm
