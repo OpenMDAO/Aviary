@@ -1,0 +1,90 @@
+# Run Tests
+
+name: Aviary Tests
+
+on:
+  # Trigger on push or pull request events for the main branch
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  merge_group:
+    branches: [ main ]
+
+jobs:
+
+  test_ubuntu_no_dev_install:
+    if: github.repository_owner == 'OpenMDAO'
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 90
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # latest versions of openmdao/dymos
+          - NAME: latest
+            PY: 3
+
+    steps:
+      - name: Display run details
+        run: |
+          echo "============================================================="
+          echo "Run #${GITHUB_RUN_NUMBER}"
+          echo "Run ID: ${GITHUB_RUN_ID}"
+          echo "Testing: ${GITHUB_REPOSITORY}"
+          echo "Triggered by: ${GITHUB_EVENT_NAME}"
+          echo "Initiated by: ${GITHUB_ACTOR}"
+          echo "============================================================="
+
+      - name: Create SSH key
+        shell: bash
+        env:
+          SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+          SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          sudo chmod 600 ~/.ssh/id_rsa
+          echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+
+      - name: Setup miniconda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          python-version: ${{ matrix.PY }}
+
+      - name: Checkout Aviary
+        uses: actions/checkout@v2
+
+      - name: Install Aviary
+        shell: bash -l {0}
+        run: |
+          echo "============================================================="
+          echo "Install Aviary"
+          echo "============================================================="
+          pip install packaging
+          pip install .[test]
+
+      - name: Display conda environment info
+        shell: bash -l {0}
+        run: |
+          conda info
+          conda list
+          conda env export --name ${{ matrix.NAME }}_env --file ${{ matrix.NAME }}_environment.yml
+
+      - name: 'Upload environment artifact'
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.NAME }}_environment
+          path: ${{ matrix.NAME }}_environment.yml
+          retention-days: 5
+
+      - name: Run tests
+        shell: bash -l {0}
+        run: |
+          echo "============================================================="
+          echo "Run Tests"
+          echo "============================================================="
+          testflo . -n 1 --show_skipped

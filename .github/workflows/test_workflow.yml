@@ -44,7 +44,7 @@ jobs:
             SNOPT: '7.7'
             OPENMDAO: '3.27'
             DYMOS: '1.8.0'
-            extend: 0
+            MAKE_DOCS: 0
 
           # development versions of openmdao/dymos
           - NAME: dev
@@ -55,7 +55,7 @@ jobs:
             SNOPT: '7.7'
             OPENMDAO: 'dev'
             DYMOS: 'dev'
-            extend: 1
+            MAKE_DOCS: 0
 
           # latest versions of openmdao/dymos
           - NAME: latest
@@ -66,7 +66,18 @@ jobs:
             SNOPT: '7.7'
             OPENMDAO: 'latest'
             DYMOS: 'latest'
-            extend: 0
+            MAKE_DOCS: 0
+
+          # latest versions of openmdao/dymos for docs only
+          - NAME: latest_docs
+            PY: 3
+            NUMPY: 1
+            SCIPY: 1
+            PYOPTSPARSE: 'v2.9.1'
+            SNOPT: '7.7'
+            OPENMDAO: 'latest'
+            DYMOS: 'latest'
+            MAKE_DOCS: 1
 
     steps:
       - name: Display run details
@@ -192,6 +203,7 @@ jobs:
           retention-days: 5
 
       - name: Generate specs
+        if: matrix.MAKE_DOCS == 0
         shell: bash -l {0}
         run: |
           echo "============================================================="
@@ -202,6 +214,7 @@ jobs:
           cd ../..
 
       - name: Run tests
+        if: matrix.MAKE_DOCS == 0
         shell: bash -l {0}
         run: |
           echo "============================================================="
@@ -210,7 +223,7 @@ jobs:
           testflo . -n 1 --show_skipped --coverage --coverpkg aviary
 
       - name: Build docs
-        if: matrix.extend
+        if: matrix.MAKE_DOCS
         shell: bash -l {0}
         run: |
           pip install -U jupyter-book
@@ -222,7 +235,7 @@ jobs:
           
       - name: Display doc build reports
         continue-on-error: True
-        if: matrix.extend
+        if: matrix.MAKE_DOCS
         shell: bash -l {0}
         run: |
           cd $HOME/work/om-Aviary/om-Aviary/aviary/docs
@@ -235,7 +248,7 @@ jobs:
       - name: Publish docs to github.io
         if: |
           github.event_name == 'push' && github.ref == 'refs/heads/main' &&
-          matrix.extend
+          matrix.MAKE_DOCS
         shell: bash -l {0}
         run: |
           echo "============================================================="
@@ -246,7 +259,7 @@ jobs:
           ghp-import -n -p -f docs/_build/html
 
       - name: Scan for security issues
-        if: matrix.extend
+        if: matrix.MAKE_DOCS
         shell: bash -l {0}
         run: |
           python -m pip install bandit
