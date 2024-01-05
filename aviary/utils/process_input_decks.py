@@ -22,7 +22,7 @@ from openmdao.utils.units import valid_units
 from aviary.utils.aviary_values import AviaryValues, get_keys
 from aviary.utils.functions import convert_strings_to_data, set_value
 from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.enums import ProblemType
+from aviary.variable_info.enums import ProblemType, Reserves_Type
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Mission
 from aviary.utils.functions import get_path
@@ -47,7 +47,7 @@ def create_vehicle(vehicle_deck=''):
     aircraft_values.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False)
     aircraft_values.set_val(Aircraft.Design.RESERVES, val=4998, units='lbm')
     aircraft_values.set_val(Aircraft.Design.RESERVES_FRACTION, val=0, units='unitless')
-    aircraft_values.set_val(Aircraft.Design.RESERVES_OPTION, val=0, units='unitless')
+    aircraft_values.set_val(Aircraft.Design.RESERVES_OPTION, val=Reserves_Type.Set_None, units='unitless')
 
     vehicle_deck = get_path(vehicle_deck)
 
@@ -169,11 +169,11 @@ def initial_guessing(aircraft_values: AviaryValues()):
     reserves_option = aircraft_values.get_val(Aircraft.Design.RESERVES_OPTION)
     reserves = aircraft_values.get_val(
         Aircraft.Design.RESERVES, units='lbm') if initial_guesses['reserves'] == 0 else initial_guesses['reserves']
-    if reserves_option == 1:
+    if reserves_option == Reserves_Type.Set_Direct:
         aircraft_values.set_val(Aircraft.Design.RESERVES, reserves, units='lbm')
         if reserves < 10:
-            raise ValueError('"aircraft:design:reserves" must be greater than 10 lbm.')
-    elif reserves_option == 2:
+            raise ValueError(f'"{Aircraft.Design.RESERVES}" must be greater than 10 lbm.')
+    elif reserves_option == Reserves_Type.Set_Fraction:
         if initial_guesses['reserves'] == 0:
             reserves = aircraft_values.get_val(
                 Aircraft.Design.RESERVES_FRACTION, units='unitless')
@@ -182,24 +182,24 @@ def initial_guessing(aircraft_values: AviaryValues()):
             aircraft_values.set_val(Aircraft.Design.RESERVES_FRACTION,
                                     reserves, units='unitless')
         if reserves < -1 or reserves > 0:
-            raise ValueError('"aircraft:design:reserves_fraction" must be in [-1, 0].')
+            raise ValueError(f'"{Aircraft.Design.RESERVES_FRACTION}" must be in [-1, 0].')
     else:
-        # if aircraft:design:reserves_option is not set,
+        # if Aircraft.Design.RESERVES_FRACTION is not set,
         # then determine reserves based on initial_guesses['reserves']
         if initial_guesses['reserves'] > 10:
             reserves = initial_guesses['reserves']
-            reserves_option = 1
+            reserves_option = Reserves_Type.Set_Direct
             aircraft_values.set_val(Aircraft.Design.RESERVES, reserves, units='lbm')
         elif initial_guesses['reserves'] < 0:
             reserves = initial_guesses['reserves']
-            reserves_option = 2
+            reserves_option = Reserves_Type.Set_Fraction
             aircraft_values.set_val(Aircraft.Design.RESERVES_FRACTION,
                                     reserves, units='unitless')
         elif initial_guesses['reserves'] == 0 and reserves > 10:
-            reserves_option = 1
+            reserves_option = Reserves_Type.Set_Direct
             aircraft_values.set_val(Aircraft.Design.RESERVES, reserves, units='lbm')
         elif initial_guesses['reserves'] == 0 and reserves < 0:
-            reserves_option = 2
+            reserves_option = Reserves_Type.Set_Fraction
             aircraft_values.set_val(Aircraft.Design.RESERVES_FRACTION,
                                     reserves, units='unitless')
         aircraft_values.set_val(Aircraft.Design.RESERVES_OPTION,
@@ -207,13 +207,13 @@ def initial_guessing(aircraft_values: AviaryValues()):
 
     num_pax = aircraft_values.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)
 
-    if reserves_option == 2:
+    if reserves_option == Reserves_Type.Set_Fraction:
         if reserves <= 0:
             reserves *= -(num_pax * initial_guesses['fuel_burn_per_passenger_mile'] *
                           aircraft_values.get_val(Mission.Design.RANGE, units='NM'))
         else:
             raise ValueError(
-                'The case that "aircraft:design:reserves_fraction" is between 0 and 1 is not implemented.')
+                f'The case that "{Aircraft.Design.RESERVES_FRACTION}" is between 0 and 1 is not implemented.')
     initial_guesses['reserves'] = reserves
 
     if Mission.Summary.GROSS_MASS in aircraft_values:

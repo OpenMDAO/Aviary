@@ -48,7 +48,7 @@ from aviary.utils.aviary_values import AviaryValues
 
 from aviary.variable_info.functions import setup_trajectory_params, override_aviary_vars
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic
-from aviary.variable_info.enums import AnalysisScheme, ProblemType, SpeedType, AlphaModes
+from aviary.variable_info.enums import AnalysisScheme, ProblemType, SpeedType, AlphaModes, Reserves_Type
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 from aviary.variable_info.variables_in import VariablesIn
 
@@ -2441,7 +2441,7 @@ class AviaryProblem(om.Problem):
             Aircraft.Design.RESERVES_FRACTION, units='unitless')
         reserves_opt = self.aviary_inputs.get_val(
             Aircraft.Design.RESERVES_OPTION, units='unitless')
-        if reserves_opt == 1:
+        if reserves_opt == Reserves_Type.Set_Direct:
             if reserves_val > 10:
                 self.model.add_subsystem(
                     "reserves_calc",
@@ -2452,8 +2452,8 @@ class AviaryProblem(om.Problem):
                     promotes_outputs=[("reserve_fuel", reserves_name)],
                 )
             else:
-                raise ValueError('"aircraft:design:reserves" is not valid below 10.')
-        elif reserves_opt == 2:
+                raise ValueError(f'"{Aircraft.Design.RESERVES}" is not valid below 10.')
+        elif reserves_opt == Reserves_Type.Set_Fraction:
             if reserves_fac <= 0 and reserves_fac >= -1:
                 reserves_fac = -reserves_fac
                 self.model.add_subsystem(
@@ -2472,9 +2472,10 @@ class AviaryProblem(om.Problem):
                 )
             elif reserves_fac > 0 and reserves_fac <= 1:
                 raise ValueError(
-                    '"aircraft:design:reserves_fraction" between 0 and 1 is not implemented.')
+                    f'"{Aircraft.Design.RESERVES_FRACTION}" between 0 and 1 is not implemented.')
             else:
                 raise ValueError(
-                    '"aircraft:design:reserves_fraction" is not valid if less than -1 or larger than 1.')
+                    f'"{Aircraft.Design.RESERVES_FRACTION}" is not valid if less than -1 or larger than 1.')
         else:
-            raise ValueError('"aircraft:design:reserves_option" must be 1 or 2.')
+            raise ValueError(f'"{Aircraft.Design.RESERVES_OPTION}" must be \
+                             {Reserves_Type.Set_Directn} or {Reserves_Type.Set_Fraction}.')
