@@ -182,6 +182,7 @@ class Flap_Type(Enum):
     Double-slotted Fowler flaps
     """
 
+
 @unique
 class Reserves_Type(Enum):
     """

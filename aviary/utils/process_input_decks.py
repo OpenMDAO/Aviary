@@ -47,7 +47,8 @@ def create_vehicle(vehicle_deck=''):
     aircraft_values.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False)
     aircraft_values.set_val(Aircraft.Design.RESERVES, val=4998, units='lbm')
     aircraft_values.set_val(Aircraft.Design.RESERVES_FRACTION, val=0, units='unitless')
-    aircraft_values.set_val(Aircraft.Design.RESERVES_OPTION, val=Reserves_Type.Set_None, units='unitless')
+    aircraft_values.set_val(Aircraft.Design.RESERVES_OPTION,
+                            val=Reserves_Type.Set_None, units='unitless')
 
     vehicle_deck = get_path(vehicle_deck)
 
@@ -172,7 +173,8 @@ def initial_guessing(aircraft_values: AviaryValues()):
     if reserves_option == Reserves_Type.Set_Direct:
         aircraft_values.set_val(Aircraft.Design.RESERVES, reserves, units='lbm')
         if reserves < 10:
-            raise ValueError(f'"{Aircraft.Design.RESERVES}" must be greater than 10 lbm.')
+            raise ValueError(
+                f'"{Aircraft.Design.RESERVES}" must be greater than 10 lbm.')
     elif reserves_option == Reserves_Type.Set_Fraction:
         if initial_guesses['reserves'] == 0:
             reserves = aircraft_values.get_val(
@@ -182,7 +184,8 @@ def initial_guessing(aircraft_values: AviaryValues()):
             aircraft_values.set_val(Aircraft.Design.RESERVES_FRACTION,
                                     reserves, units='unitless')
         if reserves < -1 or reserves > 0:
-            raise ValueError(f'"{Aircraft.Design.RESERVES_FRACTION}" must be in [-1, 0].')
+            raise ValueError(
+                f'"{Aircraft.Design.RESERVES_FRACTION}" must be in [-1, 0].')
     else:
         # if Aircraft.Design.RESERVES_FRACTION is not set,
         # then determine reserves based on initial_guesses['reserves']
