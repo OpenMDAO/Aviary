@@ -1,7 +1,5 @@
 import unittest
 
-from openmdao.utils.assert_utils import assert_equal_arrays
-
 from aviary.utils.test_utils.variable_test import (
     DuplicateHierarchy, assert_metadata_alphabetization, assert_no_duplicates,
     assert_structure_alphabetization, get_names_from_hierarchy)

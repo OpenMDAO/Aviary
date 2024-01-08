@@ -5,11 +5,13 @@ from openmdao.utils.assert_utils import assert_near_equal
 from aviary.interface.default_phase_info.gasp import default_mission_subsystems
 from aviary.mission.gasp_based.idle_descent_estimation import descent_range_and_fuel
 from aviary.subsystems.propulsion.engine_deck import EngineDeck
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.utils.process_input_decks import create_vehicle
 from aviary.utils.preprocessors import preprocess_propulsion
+import importlib
 
 
+@unittest.skipUnless(importlib.util.find_spec("pyoptsparse") is not None, "pyoptsparse is not installed")
 class IdleDescentTestCase(unittest.TestCase):
     def test_case1(self):
         tol = 1e-5
