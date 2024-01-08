@@ -17,13 +17,15 @@ from panel.theme import DefaultTheme
 import openmdao.api as om
 from openmdao.utils.general_utils import env_truthy
 
-pn.extension(sizing_mode='stretch_width')
+pn.extension(sizing_mode="stretch_width")
 
 # Constants
 # Can't get using CSS to work with frames and the raw_css for the template so going with
 #    this for now
-iframe_css = "width=100% height=4000vh overflow=hidden margin=0px padding=0px border=none"
-aviary_variables_json_file_name = 'aviary_vars.json'
+iframe_css = (
+    "width=100% height=4000vh overflow=hidden margin=0px padding=0px border=none"
+)
+aviary_variables_json_file_name = "aviary_vars.json"
 
 
 def _dashboard_setup_parser(parser):
@@ -36,21 +38,41 @@ def _dashboard_setup_parser(parser):
         The parser we're adding options to.
     """
     parser.add_argument(
-        'script_name',
+        "script_name",
         type=str,
-        help='Name of aviary script that was run (not including .py).'
+        help="Name of aviary script that was run (not including .py).",
     )
 
-    parser.add_argument('--problem_recorder', type=str, help="Problem case recorder file name",
-                        dest='problem_recorder', default='aviary_history.db')
-    parser.add_argument('--driver_recorder', type=str, help="Driver case recorder file name",
-                        dest='driver_recorder', default=None)
-    parser.add_argument('--port', dest='port', type=int,
-                        default=5000, help="dashboard server port ID (default is 5000)")
+    parser.add_argument(
+        "--problem_recorder",
+        type=str,
+        help="Problem case recorder file name",
+        dest="problem_recorder",
+        default="aviary_history.db",
+    )
+    parser.add_argument(
+        "--driver_recorder",
+        type=str,
+        help="Driver case recorder file name",
+        dest="driver_recorder",
+        default=None,
+    )
+    parser.add_argument(
+        "--port",
+        dest="port",
+        type=int,
+        default=5000,
+        help="dashboard server port ID (default is 5000)",
+    )
 
     # For future use
-    parser.add_argument('-d', '--debug', action='store_true', dest='debug_output',
-                        help="show debugging output")
+    parser.add_argument(
+        "-d",
+        "--debug",
+        action="store_true",
+        dest="debug_output",
+        help="show debugging output",
+    )
 
 
 def _dashboard_cmd(options, user_args):
@@ -64,8 +86,12 @@ def _dashboard_cmd(options, user_args):
     user_args : list of str
         Args to be passed to the user script.
     """
-    dashboard(options.script_name, options.problem_recorder,
-              options.driver_recorder, options.port)
+    dashboard(
+        options.script_name,
+        options.problem_recorder,
+        options.driver_recorder,
+        options.port,
+    )
 
 
 def create_report_frame(format, text_filepath):
@@ -82,21 +108,22 @@ def create_report_frame(format, text_filepath):
     Returns
     -------
     pane : Panel.Pane or None
-        A Panel Pane object to be displayed in the dashboard. Or None if the file 
+        A Panel Pane object to be displayed in the dashboard. Or None if the file
         does not exist.
     """
     if os.path.exists(text_filepath):
-        if format == 'html':
+        if format == "html":
             report_pane = pn.pane.HTML(
-                f'<iframe {iframe_css} src=/home/{text_filepath}></iframe>')
-        elif format in ['markdown', 'text']:
+                f"<iframe {iframe_css} src=/home/{text_filepath}></iframe>"
+            )
+        elif format in ["markdown", "text"]:
             with open(text_filepath, "rb") as f:
                 file_text = f.read()
                 # need to deal with some encoding errors
-                file_text = file_text.decode('latin-1')
-            if format == 'markdown':
+                file_text = file_text.decode("latin-1")
+            if format == "markdown":
                 report_pane = pn.pane.Markdown(file_text)
-            elif format == 'text':
+            elif format == "text":
                 report_pane = pn.pane.Markdown(f"```\n{file_text}\n```\n")
         else:
             raise RuntimeError(f"Report format of {format} is not supported.")
@@ -110,8 +137,8 @@ def create_aviary_variables_table_data_nested(script_name, recorder_file):
     Create a JSON file with information about Aviary variables.
 
     The JSON file has one level of hierarchy of the variables. The file
-    is written to aviary_vars.json. That file is then read in by the 
-    aviary/visualization/assets/aviary_vars/script.js script. That is inside the 
+    is written to aviary_vars.json. That file is then read in by the
+    aviary/visualization/assets/aviary_vars/script.js script. That is inside the
     aviary/visualization/assets/aviary_vars/index.html file that is embedded in the
     dashboard.
 
@@ -129,18 +156,29 @@ def create_aviary_variables_table_data_nested(script_name, recorder_file):
 
     """
     cr = om.CaseReader(recorder_file)
-    case = cr.get_case('final')
-    outputs = case.list_outputs(explicit=True, implicit=True, val=True,
-                                residuals=True, residuals_tol=None,
-                                units=True, shape=True, bounds=True, desc=True,
-                                scaling=False, hierarchical=True, print_arrays=True,
-                                out_stream=None, return_format='dict')
+    case = cr.get_case("final")
+    outputs = case.list_outputs(
+        explicit=True,
+        implicit=True,
+        val=True,
+        residuals=True,
+        residuals_tol=None,
+        units=True,
+        shape=True,
+        bounds=True,
+        desc=True,
+        scaling=False,
+        hierarchical=True,
+        print_arrays=True,
+        out_stream=None,
+        return_format="dict",
+    )
 
     sorted_abs_names = sorted(outputs.keys())
 
     grouped = {}
     for s in sorted_abs_names:
-        prefix = s.split(':')[0]
+        prefix = s.split(":")[0]
         if prefix not in grouped:
             grouped[prefix] = []
         grouped[prefix].append(s)
@@ -154,8 +192,8 @@ def create_aviary_variables_table_data_nested(script_name, recorder_file):
             table_data_nested.append(
                 {
                     "abs_name": group_name,
-                    "prom_name": outputs[var_info]['prom_name'],
-                    "value": str(outputs[var_info]['val']),
+                    "prom_name": outputs[var_info]["prom_name"],
+                    "value": str(outputs[var_info]["val"]),
                 }
             )
         else:
@@ -166,8 +204,8 @@ def create_aviary_variables_table_data_nested(script_name, recorder_file):
                 children_list.append(
                     {
                         "abs_name": children_name,
-                        "prom_name": outputs[children_name]['prom_name'],
-                        "value": str(outputs[children_name]['val']),
+                        "prom_name": outputs[children_name]["prom_name"],
+                        "value": str(outputs[children_name]["val"]),
                     }
                 )
             table_data_nested.append(  # not a real var, just a group of vars so no values
@@ -179,8 +217,10 @@ def create_aviary_variables_table_data_nested(script_name, recorder_file):
                 }
             )
 
-    aviary_variables_file_path = f'reports/{script_name}/aviary_vars/{aviary_variables_json_file_name}'
-    with open(aviary_variables_file_path, 'w') as fp:
+    aviary_variables_file_path = (
+        f"reports/{script_name}/aviary_vars/{aviary_variables_json_file_name}"
+    )
+    with open(aviary_variables_file_path, "w") as fp:
         json.dump(table_data_nested, fp)
 
     return table_data_nested
@@ -196,7 +236,7 @@ def convert_case_recorder_file_to_df(recorder_file_name):
         Name of the case recorder file.
     """
     cr = om.CaseReader(recorder_file_name)
-    driver_cases = cr.list_cases('driver', out_stream=None)
+    driver_cases = cr.list_cases("driver", out_stream=None)
 
     df = None
     for i, case in enumerate(driver_cases):
@@ -231,7 +271,9 @@ def convert_case_recorder_file_to_df(recorder_file_name):
             df = pd.DataFrame(columns=header)
 
         # Now fill up a row
-        row = [i,]
+        row = [
+            i,
+        ]
         # important to do in this order since that is the order added to the header
         for varname in objectives_names:
             value = objectives[varname]
@@ -268,7 +310,13 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
     driver_recorder : str
         Name of the recorder file containing the Driver cases.
     """
-    reports_dir = f'reports/{script_name}/'
+    reports_dir = f"reports/{script_name}/"
+
+    if not Path(reports_dir).is_dir():
+        raise ValueError(
+            f"The script name, '{script_name}', does not have a reports folder associated with it. "
+            f"The directory '{reports_dir}' does not exist."
+        )
 
     # TODO - use lists and functions to do this with a lot less code
 
@@ -276,125 +324,140 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
     design_tabs_list = []
 
     # Inputs
-    inputs_pane = create_report_frame('html', f'{reports_dir}/inputs.html')
+    inputs_pane = create_report_frame("html", f"{reports_dir}/inputs.html")
     if inputs_pane:
-        design_tabs_list.append(('Inputs', inputs_pane))
+        design_tabs_list.append(("Inputs", inputs_pane))
 
     #  Debug Input List
-    input_list_pane = create_report_frame('text', 'input_list.txt')
+    input_list_pane = create_report_frame("text", "input_list.txt")
     if input_list_pane:
-        design_tabs_list.append(('Debug Input List', input_list_pane))
+        design_tabs_list.append(("Debug Input List", input_list_pane))
 
     #  Debug Output List
-    output_list_pane = create_report_frame('text', 'output_list.txt')
+    output_list_pane = create_report_frame("text", "output_list.txt")
     if output_list_pane:
-        design_tabs_list.append(('Debug Output List', output_list_pane))
+        design_tabs_list.append(("Debug Output List", output_list_pane))
 
     # N2
-    n2_pane = create_report_frame('html', f'{reports_dir}/n2.html')
+    n2_pane = create_report_frame("html", f"{reports_dir}/n2.html")
     if n2_pane:
-        design_tabs_list.append(('N2', n2_pane))
+        design_tabs_list.append(("N2", n2_pane))
 
     # Trajectory Linkage
-    traj_linkage_report_pane = create_report_frame('html',
-                                                   f'{reports_dir}/traj_linkage_report.html')
+    traj_linkage_report_pane = create_report_frame(
+        "html", f"{reports_dir}/traj_linkage_report.html"
+    )
     if traj_linkage_report_pane:
-        design_tabs_list.append(('Trajectory Linkage Report',
-                                 traj_linkage_report_pane))
+        design_tabs_list.append(("Trajectory Linkage Report", traj_linkage_report_pane))
 
     ####### Optimization Tab #######
     optimization_tabs_list = []
 
     # Driver scaling
-    driver_scaling_report_pane = create_report_frame('html',
-                                                     f'{reports_dir}/driver_scaling_report.html')
+    driver_scaling_report_pane = create_report_frame(
+        "html", f"{reports_dir}/driver_scaling_report.html"
+    )
     if driver_scaling_report_pane:
-        optimization_tabs_list.append(('Driver Scaling Report',
-                                       driver_scaling_report_pane))
+        optimization_tabs_list.append(
+            ("Driver Scaling Report", driver_scaling_report_pane)
+        )
 
     # Coloring report
-    coloring_report_pane = create_report_frame('html',
-                                               f'{reports_dir}/total_coloring.html')
+    coloring_report_pane = create_report_frame(
+        "html", f"{reports_dir}/total_coloring.html"
+    )
     if coloring_report_pane:
-        optimization_tabs_list.append(('Total Coloring Report',
-                                       coloring_report_pane))
+        optimization_tabs_list.append(("Total Coloring Report", coloring_report_pane))
 
     # Optimization report
-    opt_report_pane = create_report_frame('html',
-                                          f'{reports_dir}/opt_report.html')
+    opt_report_pane = create_report_frame("html", f"{reports_dir}/opt_report.html")
     if opt_report_pane:
-        optimization_tabs_list.append(('Optimization Report',
-                                       opt_report_pane))
+        optimization_tabs_list.append(("Optimization Report", opt_report_pane))
 
     # IPOPT report
-    ipopt_pane = create_report_frame('text',
-                                     f'{reports_dir}/IPOPT.out')
+    ipopt_pane = create_report_frame("text", f"{reports_dir}/IPOPT.out")
     if ipopt_pane:
-        optimization_tabs_list.append(('IPOPT Output', ipopt_pane))
+        optimization_tabs_list.append(("IPOPT Output", ipopt_pane))
 
     # SNOPT report
-    snopt_pane = create_report_frame('text',
-                                     f'{reports_dir}/SNOPT_print.out')
+    snopt_pane = create_report_frame("text", f"{reports_dir}/SNOPT_print.out")
     if snopt_pane:
-        optimization_tabs_list.append(('SNOPT Output', snopt_pane))
+        optimization_tabs_list.append(("SNOPT Output", snopt_pane))
 
     # SNOPT summary
-    snopt_summary_pane = create_report_frame('text',
-                                             f'{reports_dir}/SNOPT_summary.out')
+    snopt_summary_pane = create_report_frame("text", f"{reports_dir}/SNOPT_summary.out")
     if snopt_summary_pane:
-        optimization_tabs_list.append(('SNOPT Summary', snopt_summary_pane))
+        optimization_tabs_list.append(("SNOPT Summary", snopt_summary_pane))
 
     # PyOpt report
-    pyopt_solution_pane = create_report_frame('text',
-                                              f'{reports_dir}/pyopt_solution.txt')
+    pyopt_solution_pane = create_report_frame(
+        "text", f"{reports_dir}/pyopt_solution.txt"
+    )
     if pyopt_solution_pane:
-        optimization_tabs_list.append(('PyOpt Solution', pyopt_solution_pane))
+        optimization_tabs_list.append(("PyOpt Solution", pyopt_solution_pane))
 
     # Desvars, cons, opt interactive plot
     if driver_recorder:
         if os.path.exists(driver_recorder):
-            df = convert_case_recorder_file_to_df(f'{driver_recorder}')
+            df = convert_case_recorder_file_to_df(f"{driver_recorder}")
             if df is not None:
                 variables = pn.widgets.CheckBoxGroup(
                     name="Variables",
                     options=list(df.columns),
                     # just so all of them aren't plotted from the beginning. Skip the iter count
-                    value=list(df.columns)[1:2]
+                    value=list(df.columns)[1:2],
                 )
                 ipipeline = df.interactive()
-                ihvplot = ipipeline.hvplot(y=variables, responsive=True, min_height=400,
-                                           color=list(Category10[10]),
-                                           yformatter="%.0f",
-                                           title="Model Optimization using OpenMDAO")
+                ihvplot = ipipeline.hvplot(
+                    y=variables,
+                    responsive=True,
+                    min_height=400,
+                    color=list(Category10[10]),
+                    yformatter="%.0f",
+                    title="Model Optimization using OpenMDAO",
+                )
                 optimization_plot_pane = pn.Column(
                     pn.Row(
                         pn.Column(
                             variables,
                             pn.VSpacer(height=30),
                             pn.VSpacer(height=30),
-                            width=300
+                            width=300,
                         ),
                         ihvplot.panel(),
                     )
                 )
                 optimization_tabs_list.append(
-                    ('Desvars, cons, opt', optimization_plot_pane))
+                    ("Desvars, cons, opt", optimization_plot_pane)
+                )
             else:
-                optimization_tabs_list.append(('Desvars, cons, opt', pn.pane.Markdown(
-                    f"# Recorder file '{driver_recorder}' does not have Driver case recordings")))
+                optimization_tabs_list.append(
+                    (
+                        "Desvars, cons, opt",
+                        pn.pane.Markdown(
+                            f"# Recorder file '{driver_recorder}' does not have Driver case recordings"
+                        ),
+                    )
+                )
         else:
-            optimization_tabs_list.append(('Desvars, cons, opt', pn.pane.Markdown(
-                f"# Recorder file '{driver_recorder}' not found")))
+            optimization_tabs_list.append(
+                (
+                    "Desvars, cons, opt",
+                    pn.pane.Markdown(f"# Recorder file '{driver_recorder}' not found"),
+                )
+            )
 
     ####### Results Tab #######
     results_tabs_list = []
 
     # Trajectory results
-    traj_results_report_pane = create_report_frame('html',
-                                                   f'{reports_dir}/traj_results_report.html')
+    traj_results_report_pane = create_report_frame(
+        "html", f"{reports_dir}/traj_results_report.html"
+    )
     if traj_results_report_pane:
-        results_tabs_list.append(('Trajectory Results Report',
-                                  traj_results_report_pane))
+        results_tabs_list.append(
+            ("Trajectory Results Report", traj_results_report_pane)
+        )
 
     # Make the Aviary variables table pane
     if problem_recorder:
@@ -406,26 +469,32 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
             # copy index.html file to reports/script_name/aviary_vars/index.html
             aviary_dir = pathlib.Path(importlib.util.find_spec("aviary").origin).parent
 
-            shutil.copy(aviary_dir.joinpath(
-                'visualization/assets/aviary_vars/index.html'), aviary_vars_dir.joinpath('index.html'))
-            shutil.copy(aviary_dir.joinpath(
-                'visualization/assets/aviary_vars/script.js'), aviary_vars_dir.joinpath('script.js'))
+            shutil.copy(
+                aviary_dir.joinpath("visualization/assets/aviary_vars/index.html"),
+                aviary_vars_dir.joinpath("index.html"),
+            )
+            shutil.copy(
+                aviary_dir.joinpath("visualization/assets/aviary_vars/script.js"),
+                aviary_vars_dir.joinpath("script.js"),
+            )
             # copy script.js file to reports/script_name/aviary_vars/index.html.
             # mod the script.js file to point at the json file
             # create the json file and put it in reports/script_name/aviary_vars/aviary_vars.json
             create_aviary_variables_table_data_nested(
-                script_name, problem_recorder)  # create the json file
-            aviary_vars_pane = create_report_frame('html',
-                                                   f'{reports_dir}/aviary_vars/index.html')
+                script_name, problem_recorder
+            )  # create the json file
+            aviary_vars_pane = create_report_frame(
+                "html", f"{reports_dir}/aviary_vars/index.html"
+            )
 
-            results_tabs_list.append(('Aviary Variables', aviary_vars_pane))
+            results_tabs_list.append(("Aviary Variables", aviary_vars_pane))
 
     ####### Subsystems Tab #######
     subsystem_tabs_list = []
 
     # Look through subsystems directory for markdown files
-    for md_file in Path(f'{reports_dir}subsystems').glob('*.md'):
-        example_subsystems_pane = create_report_frame('markdown', str(md_file))
+    for md_file in Path(f"{reports_dir}subsystems").glob("*.md"):
+        example_subsystems_pane = create_report_frame("markdown", str(md_file))
         subsystem_tabs_list.append((md_file.stem, example_subsystems_pane))
 
     design_tabs = pn.Tabs(*design_tabs_list)
@@ -458,48 +527,53 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
 
     # Add subtabs to tabs
     high_level_tabs = []
-    high_level_tabs.append(('Model', design_tabs))
-    high_level_tabs.append(('Optimization', optimization_tabs))
-    high_level_tabs.append(('Results', results_tabs))
+    high_level_tabs.append(("Model", design_tabs))
+    high_level_tabs.append(("Optimization", optimization_tabs))
+    high_level_tabs.append(("Results", results_tabs))
     if subsystem_tabs_list:
-        high_level_tabs.append(('Subsystems', subsystem_tabs))
-    tabs = pn.Tabs(*high_level_tabs, styles={'background': 'white'})
+        high_level_tabs.append(("Subsystems", subsystem_tabs))
+    tabs = pn.Tabs(*high_level_tabs, styles={"background": "white"})
 
     template = pn.template.FastListTemplate(
-        title=f'Aviary Dashboard for {script_name}',
+        title=f"Aviary Dashboard for {script_name}",
         logo="assets/aviary_logo.png",
         favicon="assets/aviary_logo.png",
         main=[tabs],
         accent_base_color="black",
         header_background="rgb(0, 212, 169)",
-        background_color='white',
+        background_color="white",
         theme=DefaultTheme,
         theme_toggle=False,
     )
 
-    if env_truthy('TESTFLO_RUNNING'):
+    if env_truthy("TESTFLO_RUNNING"):
         show = False
         threaded = True
     else:
         show = True
         threaded = False
 
-    assets_dir = pathlib.Path(importlib.util.find_spec(
-        "aviary").origin).parent.joinpath('visualization/assets/')
-    home_dir = '.'
-    server = pn.serve(template, port=port, address='localhost',
-                      websocket_origin=f'localhost:{port}',
-                      show=show,
-                      threaded=threaded,
-                      static_dirs={
-                          'reports': reports_dir,
-                          'home': home_dir,
-                          'assets': assets_dir,
-                      })
+    assets_dir = pathlib.Path(
+        importlib.util.find_spec("aviary").origin
+    ).parent.joinpath("visualization/assets/")
+    home_dir = "."
+    server = pn.serve(
+        template,
+        port=port,
+        address="localhost",
+        websocket_origin=f"localhost:{port}",
+        show=show,
+        threaded=threaded,
+        static_dirs={
+            "reports": reports_dir,
+            "home": home_dir,
+            "assets": assets_dir,
+        },
+    )
     server.stop()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # so we can get the files written to the repo top directory
     # os.chdir('/Users/hschilli/Documents/OpenMDAO/dev/I365-create-launcher/')
     parser = argparse.ArgumentParser()
