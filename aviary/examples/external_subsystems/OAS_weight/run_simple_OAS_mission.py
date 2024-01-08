@@ -113,8 +113,7 @@ mission_method = 'simple'
 mass_method = 'FLOPS'
 make_plots = False
 max_iter = 100
-optimizer = 'SNOPT'
-
+optimizer = 'IPOPT'
 
 prob = av.AviaryProblem(phase_info, mission_method=mission_method, mass_method='FLOPS')
 
@@ -124,15 +123,7 @@ prob.add_pre_mission_systems()
 prob.add_phases()
 prob.add_post_mission_systems()
 prob.link_phases()
-
-driver = prob.driver = om.pyOptSparseDriver()
-driver.options["optimizer"] = optimizer
-driver.declare_coloring()
-driver.opt_settings["Major iterations limit"] = max_iter
-driver.opt_settings["Major optimality tolerance"] = 1e-4
-driver.opt_settings["Major feasibility tolerance"] = 1e-5
-driver.opt_settings["iSumm"] = 6
-
+prob.add_driver(optimizer=optimizer, max_iter=max_iter)
 prob.add_design_variables()
 prob.add_objective()
 prob.setup()
