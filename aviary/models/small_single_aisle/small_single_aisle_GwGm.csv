@@ -16,7 +16,6 @@ aircraft:design:max_structural_speed,402.5,mi/h
 aircraft:design:part25_structural_category,3,unitless
 aircraft:design:reserves,0,lbm
 aircraft:design:reserves_fraction,-0.125,unitless
-aircraft:design:reserves_option,2,unitless
 aircraft:design:static_margin,0.05,unitless
 aircraft:design:structural_mass_increment,0,lbm
 aircraft:design:supercritical_drag_shift,0.025,unitless
