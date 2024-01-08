@@ -1,7 +1,10 @@
 from pathlib import Path
 from openmdao.utils.reports_system import register_report
 
+import numpy as np
+
 from aviary.interface.utils.markdown_utils import write_markdown_variable_table
+from aviary.utils.named_values import NamedValues
 
 
 def register_custom_reports():
@@ -62,9 +65,55 @@ def mission_report(prob, **kwargs):
     prob : AviaryProblem
         The AviaryProblem that will be used to generate this report
     """
+    def _get_phase_value(traj, phase, var_name, units):
+        try:
+            vals = prob.get_val(
+                f"{traj}.{phase}.states:{var_name}",
+                units=units,
+                indices=[-1, 0],
+            )
+        except KeyError:
+            try:
+                vals = prob.get_val(
+                    f"{traj}.{phase}.timeseries.{var_name}",
+                    units=units,
+                    indices=[-1, 0],
+                )
+            except KeyError:
+                try:
+                    vals = prob.get_val(
+                        f"{traj}.{phase}.{var_name}",
+                        units=units,
+                        indices=[-1, 0],
+                    )
+                except KeyError:
+                    return None
+
+        diff = vals[-1]-vals[0]
+        if isinstance(diff, np.ndarray):
+            diff = diff[0]
+
+        return diff
+
     reports_folder = Path(prob.get_reports_dir())
     report_file = reports_folder / 'mission_summary.md'
 
     with open(report_file, mode='w') as f:
-        f.write('# MISSION SUMMARY')
-        # write_markdown_variable_table(f, prob, {})
+        f.write('# MISSION SUMMARY\n')
+        for phase in prob.phase_info:
+            f.write(f'## {phase}')
+            # TODO for traj in trajectories, currently assuming single one named "traj"
+            fuel_burn = _get_phase_value('traj', phase, 'mass', 'lbm')
+            time = _get_phase_value('traj', phase, 't', 'min')
+            range = _get_phase_value('traj', phase, 'range', 'nmi')
+            if range is None:
+                range = _get_phase_value('traj', phase, 'distance', 'nmi')
+            outputs = NamedValues()
+            outputs.set_val('Fuel Burn', fuel_burn, 'lbm')
+            # Time, range are negative values from prob
+            outputs.set_val('Elapsed Time', -time, 'min')
+            outputs.set_val('Ground Distance', -range, 'nmi')
+            write_markdown_variable_table(f, outputs, ['Fuel Burn', 'Elapsed Time', 'Ground Distance'],
+                                          {'Fuel Burn': {'units': 'lbm'},
+                                           'Elapsed Time': {'units': 'min'},
+                                           'Ground Distance': {'units': 'nmi'}})
