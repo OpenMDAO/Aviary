@@ -2,12 +2,17 @@
 
 ## Quick start installation
 
-The simplest installation method for development is an "editable mode" install with ``pip``.
+The simplest installation method for users is to install via pip.
 From within the base folder of Aviary, perform this command in your terminal:
+
+    pip install .
+
+If you are a developer and plan to modify parts of the Aviary code, install in an "editable mode" with ``pip``:
 
     pip install -e .
 
-This installs the package in the current environment such that changes to the Python code don't require re-installation.This command should be performed while in the folder containing ``setup.py``.
+This installs the package in the current environment such that changes to the Python code don't require re-installation.
+This command should be performed while in the folder containing ``setup.py``.
 
 ## Installation on Linux for Developers
 

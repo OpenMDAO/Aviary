@@ -11,11 +11,10 @@ The user can select which type of mission analysis to use, as well as whether to
 
 ## Installation
 
-The simplest installation method for development is an "editable mode" install with ``pip`` in your terminal:
+The simplest installation method for users is to install via pip.
+From within the base folder of Aviary, perform this command in your terminal:
 
-    pip install -e .
-
-This installs the package in the current environment such that changes to the Python code don't require re-installation.This command should be performed while in the folder containing ``setup.py``.
+    pip install .
 
 ## Documentation
 
@@ -31,7 +30,7 @@ Otherwise you can build the docs locally:
 
 ## Visualization
 
-To visualize XDSMs and successfully pass spec tests, all the XDSM files must be run. This can be done using the `run_all.py` utility script within the `aviary/xdsm` directory. This is a necessary step before unit testing, otherwise unit tests will fail.
+To create XDSM visualizations of some of the Aviary code, run the `run_all.py` utility script within the `aviary/xdsm` directory.
 
 ## Validation
 

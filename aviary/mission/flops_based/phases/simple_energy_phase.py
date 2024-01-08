@@ -152,6 +152,7 @@ class EnergyPhase(PhaseBuilderBase):
         optimize_altitude = user_options.get_val('optimize_altitude')
         input_initial = user_options.get_val('input_initial')
         polynomial_control_order = user_options.get_item('polynomial_control_order')[0]
+        use_polynomial_control = user_options.get_val('use_polynomial_control')
         throttle_enforcement = user_options.get_val('throttle_enforcement')
         mach_bounds = user_options.get_item('mach_bounds')
         altitude_bounds = user_options.get_item('altitude_bounds')
@@ -205,7 +206,6 @@ class EnergyPhase(PhaseBuilderBase):
         ################
         # Add Controls #
         ################
-        use_polynomial_control = polynomial_control_order is not None
         if use_polynomial_control:
             phase.add_polynomial_control(
                 Dynamic.Mission.MACH,
@@ -373,6 +373,8 @@ EnergyPhase._add_meta_data(
     ' transcription is `order - 1`')
 
 EnergyPhase._add_meta_data('polynomial_control_order', val=None)
+
+EnergyPhase._add_meta_data('use_polynomial_control', val=True)
 
 EnergyPhase._add_meta_data('add_initial_mass_constraint', val=False)
 
