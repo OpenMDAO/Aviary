@@ -19,8 +19,7 @@ from openmdao.utils.general_utils import env_truthy
 
 pn.extension(sizing_mode='stretch_width')
 
-# Constants
-# Can't get using CSS to work with frames and the raw_css for the template so going with
+# Constants - # Can't get using CSS to work with frames and the raw_css for the template so going with
 #    this for now
 iframe_css = "width=100% height=4000vh overflow=hidden margin=0px padding=0px border=none"
 aviary_variables_json_file_name = 'aviary_vars.json'
@@ -272,35 +271,35 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
 
     # TODO - use lists and functions to do this with a lot less code
 
-    ####### Design Tab #######
-    design_tabs_list = []
+    ####### Model Tab #######
+    model_tabs_list = []
 
     # Inputs
     inputs_pane = create_report_frame('html', f'{reports_dir}/inputs.html')
     if inputs_pane:
-        design_tabs_list.append(('Inputs', inputs_pane))
+        model_tabs_list.append(('Inputs', inputs_pane))
 
     #  Debug Input List
     input_list_pane = create_report_frame('text', 'input_list.txt')
     if input_list_pane:
-        design_tabs_list.append(('Debug Input List', input_list_pane))
+        model_tabs_list.append(('Debug Input List', input_list_pane))
 
     #  Debug Output List
     output_list_pane = create_report_frame('text', 'output_list.txt')
     if output_list_pane:
-        design_tabs_list.append(('Debug Output List', output_list_pane))
+        model_tabs_list.append(('Debug Output List', output_list_pane))
 
     # N2
     n2_pane = create_report_frame('html', f'{reports_dir}/n2.html')
     if n2_pane:
-        design_tabs_list.append(('N2', n2_pane))
+        model_tabs_list.append(('N2', n2_pane))
 
     # Trajectory Linkage
     traj_linkage_report_pane = create_report_frame('html',
                                                    f'{reports_dir}/traj_linkage_report.html')
     if traj_linkage_report_pane:
-        design_tabs_list.append(('Trajectory Linkage Report',
-                                 traj_linkage_report_pane))
+        model_tabs_list.append(('Trajectory Linkage Report',
+                                traj_linkage_report_pane))
 
     ####### Optimization Tab #######
     optimization_tabs_list = []
@@ -428,42 +427,22 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
         example_subsystems_pane = create_report_frame('markdown', str(md_file))
         subsystem_tabs_list.append((md_file.stem, example_subsystems_pane))
 
-    design_tabs = pn.Tabs(*design_tabs_list)
-    optimization_tabs = pn.Tabs(*optimization_tabs_list)
-    results_tabs = pn.Tabs(*results_tabs_list)
+    model_tabs = pn.Tabs(*model_tabs_list, stylesheets=['assets/aviary_styles.css'])
+    optimization_tabs = pn.Tabs(*optimization_tabs_list,
+                                stylesheets=['assets/aviary_styles.css'])
+    results_tabs = pn.Tabs(*results_tabs_list, stylesheets=['assets/aviary_styles.css'])
     if subsystem_tabs_list:
-        subsystem_tabs = pn.Tabs(*subsystem_tabs_list)
-
-    # Some styling of the dashboard
-    # Margin-Top, Margin-Right, Margin-Bottom and Margin-Left,
-    optimization_tabs.margin = (20, 0, 0, 10)
-    results_tabs.margin = (20, 0, 0, 10)
-    design_tabs.margin = (20, 0, 0, 10)
-    if subsystem_tabs_list:
-        subsystem_tabs.margin = (20, 0, 0, 10)
-
-    #
-    # From https://discourse.holoviz.org/t/panel-is-it-possible-to-customize-the-background-color-text-colors-of-the-active-and-inactive-tabs-tags/781/8
-    css = """
-    .bk.bk-tab:not(bk-active) {
-    background-color: white !important;
-    color: lightgray !important;
-    }
-    .bk.bk-tab.bk-active {
-    background-color: lightgray !important;
-    color: black !important;
-    }
-    """
-    pn.extension(raw_css=[css])
+        subsystem_tabs = pn.Tabs(*subsystem_tabs_list,
+                                 stylesheets=['assets/aviary_styles.css'])
 
     # Add subtabs to tabs
     high_level_tabs = []
-    high_level_tabs.append(('Model', design_tabs))
+    high_level_tabs.append(('Model', model_tabs))
     high_level_tabs.append(('Optimization', optimization_tabs))
     high_level_tabs.append(('Results', results_tabs))
     if subsystem_tabs_list:
         high_level_tabs.append(('Subsystems', subsystem_tabs))
-    tabs = pn.Tabs(*high_level_tabs, styles={'background': 'white'})
+    tabs = pn.Tabs(*high_level_tabs, stylesheets=['assets/aviary_styles.css'])
 
     template = pn.template.FastListTemplate(
         title=f'Aviary Dashboard for {script_name}',
@@ -475,6 +454,8 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
         background_color='white',
         theme=DefaultTheme,
         theme_toggle=False,
+        main_layout=None,
+        css_files=['assets/aviary_styles.css']
     )
 
     if env_truthy('TESTFLO_RUNNING'):
@@ -501,7 +482,6 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
 
 if __name__ == '__main__':
     # so we can get the files written to the repo top directory
-    # os.chdir('/Users/hschilli/Documents/OpenMDAO/dev/I365-create-launcher/')
     parser = argparse.ArgumentParser()
     _dashboard_setup_parser(parser)
     args = parser.parse_args()
