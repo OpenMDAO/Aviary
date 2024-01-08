@@ -18,14 +18,13 @@ This section is under development.
 - climb_range: 0,
 - reserves: 0
 
-The initial guess of `reserves` is used to define the reserve fuel. Initially, its value can be anything larger than 10 or anything between -1 and 0. There are three variables to control the reserve fuel in the model file (`.csv`):
+The initial guess of `reserves` is used to define the reserve fuel. Initially, its value can be anything larger than or equal to 0. There are two variables to control the reserve fuel in the model file (`.csv`):
 - `Aircraft.Design.RESERVES`: the required fuel reserves: directly in lbm,
 - `Aircraft.Design.RESERVES_FRACTION`: the required fuel reserves: given as a proportion of mission fuel, 
-- `Aircraft.Design.RESERVES_OPTION`: if `Set_Direct` (1), use `Aircraft.Design.RESERVES`; if `Set_Fraction` (2), use `Aircraft.Design.RESERVES_FRACTION`.
 
-If the value of parameter `reserves` is not 0 and is within the allowed range, the initial guess of reserve fuel is determined by the parameter `reserves`:
-- if `reserves > 10.0`, we set `Aircraft.Design.RESERVES = reserves` and `Aircraft.Design.RESERVES_OPTION = 1`,
-- if `-1.0 <= reserves <= 0`, we set `Aircraft.Design.RESERVES_FRACTION = reserves` and `Aircraft.Design.RESERVES_OPTION = 2`.
+If the value of initial guess of `reserves` is not 0 and is within the allowed range, the initial guess of reserve fuel is determined by the parameter `reserves`:
+- if `reserves > 1.0`, we set `Aircraft.Design.RESERVES = reserves`,
+- if `0.0 <= reserves <= 1.0`, we set `Aircraft.Design.RESERVES_FRACTION = reserves`.
 
 The initial guess of `reserves` is always converted to the actual design reserves (instead of reserve factor) and is used to update the initial guesses of `fuel_burn_per_passenger_mile` and `cruise_mass_final`.
 

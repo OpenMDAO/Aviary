@@ -40,7 +40,6 @@ aircraft:design:touchdown_mass,152800.0,lbm
 aircraft:design:max_structural_speed,402.5,mi/h
 aircraft:design:part25_structural_category,3,unitless
 aircraft:design:reserves,5000.,lbm
-aircraft:design:reserves_option,1,unitless
 aircraft:design:smooth_mass_discontinuities,False,unitless
 aircraft:design:static_margin,0.03,unitless
 aircraft:design:structural_mass_increment,0,lbm

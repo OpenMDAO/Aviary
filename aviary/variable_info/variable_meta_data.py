@@ -7,7 +7,7 @@ from pathlib import Path
 import numpy as np
 
 from aviary.utils.develop_metadata import add_meta_data
-from aviary.variable_info.enums import Flap_Type, GASP_Engine_Type, Reserves_Type
+from aviary.variable_info.enums import Flap_Type, GASP_Engine_Type
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 # ---------------------------
@@ -1212,7 +1212,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.RESERVES_FRACTION,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.FRESF2',  # the real name is INGASP.FRESF
+    historical_name={"GASP": None,
                      "FLOPS": None,
                      "LEAPS1": None
                      },
@@ -1220,21 +1220,6 @@ add_meta_data(
     units="unitless",
     desc='required fuel reserves: given as a proportion of mission fuel',
     default_value=0,
-)
-
-add_meta_data(
-    Aircraft.Design.RESERVES_OPTION,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.FRESF3',  # the real name is INGASP.FRESF
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    option=True,
-    types=Reserves_Type,
-    units="unitless",
-    desc=f'if {Reserves_Type.Set_Direct}, use Aircraft.Design.RESERVES; \
-           if {Reserves_Type.Set_Fraction}, use Aircraft.Design.RESERVES_FRACTION',
-    default_value=Reserves_Type.Set_None,
 )
 
 add_meta_data(

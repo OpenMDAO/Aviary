@@ -48,7 +48,7 @@ from aviary.utils.aviary_values import AviaryValues
 
 from aviary.variable_info.functions import setup_trajectory_params, override_aviary_vars
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic
-from aviary.variable_info.enums import AnalysisScheme, ProblemType, SpeedType, AlphaModes, Reserves_Type
+from aviary.variable_info.enums import AnalysisScheme, ProblemType, SpeedType, AlphaModes
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 from aviary.variable_info.variables_in import VariablesIn
 
@@ -2439,43 +2439,27 @@ class AviaryProblem(om.Problem):
         reserves_val = self.aviary_inputs.get_val(Aircraft.Design.RESERVES, units='lbm')
         reserves_fac = self.aviary_inputs.get_val(
             Aircraft.Design.RESERVES_FRACTION, units='unitless')
-        reserves_opt = self.aviary_inputs.get_val(
-            Aircraft.Design.RESERVES_OPTION, units='unitless')
-        if reserves_opt == Reserves_Type.Set_Direct:
-            if reserves_val > 10:
-                self.model.add_subsystem(
-                    "reserves_calc",
-                    om.ExecComp(
-                        f"reserve_fuel = {reserves_val}",
-                        reserve_fuel={"val": reserves_val, "units": "lbm"}
-                    ),
-                    promotes_outputs=[("reserve_fuel", reserves_name)],
-                )
-            else:
-                raise ValueError(f'"{Aircraft.Design.RESERVES}" is not valid below 10.')
-        elif reserves_opt == Reserves_Type.Set_Fraction:
-            if reserves_fac <= 0 and reserves_fac >= -1:
-                reserves_fac = -reserves_fac
-                self.model.add_subsystem(
-                    "reserves_calc",
-                    om.ExecComp(
-                        f"reserve_fuel = {reserves_fac}*(takeoff_mass - final_mass)",
-                        takeoff_mass={"units": "lbm"},
-                        final_mass={"units": "lbm"},
-                        reserve_fuel={"units": "lbm"}
-                    ),
-                    promotes_inputs=[
-                        ("takeoff_mass", Mission.Summary.GROSS_MASS),
-                        ("final_mass", Mission.Landing.TOUCHDOWN_MASS),
-                    ],
-                    promotes_outputs=[("reserve_fuel", reserves_name)],
-                )
-            elif reserves_fac > 0 and reserves_fac <= 1:
-                raise ValueError(
-                    f'"{Aircraft.Design.RESERVES_FRACTION}" between 0 and 1 is not implemented.')
-            else:
-                raise ValueError(
-                    f'"{Aircraft.Design.RESERVES_FRACTION}" is not valid if less than -1 or larger than 1.')
+        if reserves_val > 0.0:
+            self.model.add_subsystem(
+                "reserves_calc",
+                om.ExecComp(
+                    f"reserve_fuel = {reserves_val}",
+                    reserve_fuel={"val": reserves_val, "units": "lbm"}
+                ),
+                promotes_outputs=[("reserve_fuel", reserves_name)],
+            )
         else:
-            raise ValueError(f'"{Aircraft.Design.RESERVES_OPTION}" must be \
-                             {Reserves_Type.Set_Directn} or {Reserves_Type.Set_Fraction}.')
+            self.model.add_subsystem(
+                "reserves_calc",
+                om.ExecComp(
+                    f"reserve_fuel = {reserves_fac}*(takeoff_mass - final_mass)",
+                    takeoff_mass={"units": "lbm"},
+                    final_mass={"units": "lbm"},
+                    reserve_fuel={"units": "lbm"}
+                ),
+                promotes_inputs=[
+                    ("takeoff_mass", Mission.Summary.GROSS_MASS),
+                    ("final_mass", Mission.Landing.TOUCHDOWN_MASS),
+                ],
+                promotes_outputs=[("reserve_fuel", reserves_name)],
+            )

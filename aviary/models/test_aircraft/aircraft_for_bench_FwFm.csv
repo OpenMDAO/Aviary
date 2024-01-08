@@ -26,7 +26,6 @@ aircraft:design:empty_mass_margin_scaler,0.0,unitless
 aircraft:design:lift_dependent_drag_coeff_factor,0.909839381134961,unitless
 aircraft:design:touchdown_mass,152800.0,lbm
 aircraft:design:reserves,3000.,lbm
-aircraft:design:reserves_option,1,unitless
 aircraft:design:subsonic_drag_coeff_factor,1.0,unitless
 aircraft:design:supersonic_drag_coeff_factor,1.0,unitless
 aircraft:design:use_alt_mass,False,unitless
