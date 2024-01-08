@@ -18,9 +18,6 @@ from openmdao.utils.units import valid_units
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
 from aviary.mission.flops_based.phases.build_landing import Landing
 from aviary.mission.flops_based.phases.build_takeoff import Takeoff
-from aviary.mission.flops_based.phases.climb_phase import Climb
-from aviary.mission.flops_based.phases.cruise_phase import Cruise
-from aviary.mission.flops_based.phases.descent_phase import Descent
 from aviary.mission.flops_based.phases.simple_energy_phase import EnergyPhase
 from aviary.mission.gasp_based.ode.groundroll_ode import GroundrollODE
 from aviary.mission.gasp_based.ode.params import ParamPort
@@ -145,6 +142,10 @@ class AviaryProblem(om.Problem):
 
         self.phase_info = phase_info
         self.traj = None
+
+        if mission_method == "FLOPS":
+            raise NotImplementedError(
+                "The FLOPS mission method is no longer supported in Aviary. Please use the `simple` mission method. This might require updating your `phase_info` object defintion.")
 
         self.mission_method = mission_method
         self.mass_method = mass_method
@@ -361,7 +362,7 @@ class AviaryProblem(om.Problem):
             self._add_gasp_takeoff_systems()
 
         # Check for 'FLOPS' mission method
-        elif self.mission_method == "FLOPS" or self.mission_method == "simple":
+        elif self.mission_method == "simple":
             self._add_flops_takeoff_systems()
 
     def _add_flops_takeoff_systems(self):
@@ -651,30 +652,9 @@ class AviaryProblem(om.Problem):
         default_mission_subsystems = [
             subsystems['aerodynamics'], subsystems['propulsion']]
 
-        if self.mission_method == "FLOPS" or self.mission_method == "simple":
-            if self.mission_method == "simple":
-                climb_builder = EnergyPhase
-                cruise_builder = EnergyPhase
-                descent_builder = EnergyPhase
-            else:
-                climb_builder = Climb
-                cruise_builder = Cruise
-                descent_builder = Descent
-
-            if phase_name == 'climb':
-                phase_object = climb_builder.from_phase_info(
-                    phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data)
-
-            elif phase_name == 'cruise':
-                phase_object = cruise_builder.from_phase_info(
-                    phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data)
-
-            elif phase_name == 'descent':
-                phase_object = descent_builder.from_phase_info(
-                    phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data)
-            else:
-                phase_object = EnergyPhase.from_phase_info(
-                    phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data)
+        if self.mission_method == "simple":
+            phase_object = EnergyPhase.from_phase_info(
+                phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data)
 
             phase = phase_object.build_phase(aviary_options=self.aviary_inputs)
 
@@ -1009,7 +989,7 @@ class AviaryProblem(om.Problem):
                     if phase_name == 'ascent':
                         self._add_groundroll_eq_constraint(phase)
 
-        elif self.mission_method == "FLOPS" or self.mission_method == "simple":
+        elif self.mission_method == "simple":
             for phase_idx, phase_name in enumerate(phases):
                 phase = traj.add_phase(
                     phase_name, self._get_flops_phase(phase_name, phase_idx))
@@ -1131,7 +1111,7 @@ class AviaryProblem(om.Problem):
         """
 
         if include_landing and self.post_mission_info['include_landing']:
-            if self.mission_method == "FLOPS" or self.mission_method == "simple":
+            if self.mission_method == "simple":
                 self._add_flops_landing_systems()
             elif self.mission_method == "GASP":
                 self._add_gasp_landing_systems()
@@ -1150,7 +1130,7 @@ class AviaryProblem(om.Problem):
                 self.post_mission.add_subsystem(external_subsystem.name,
                                                 subsystem_postmission)
 
-        if self.mission_method == "FLOPS" or self.mission_method == "simple":
+        if self.mission_method == "simple":
             phases = list(self.phase_info.keys())
             ecomp = om.ExecComp('fuel_burned = initial_mass - mass_final',
                                 initial_mass={'units': 'lbm'},
@@ -1324,13 +1304,6 @@ class AviaryProblem(om.Problem):
                 phases, 'optimize_altitude', Dynamic.Mission.ALTITUDE, ref=1.e4)
             self._link_phases_helper_with_options(
                 phases, 'optimize_mach', Dynamic.Mission.MACH)
-
-        elif self.mission_method == "FLOPS":
-            self.traj.link_phases(
-                phases, ["time", Dynamic.Mission.ALTITUDE,
-                         Dynamic.Mission.MASS, Dynamic.Mission.RANGE], connected=False, ref=1.e4)
-            self.traj.link_phases(
-                phases, [Dynamic.Mission.VELOCITY], connected=False, ref=250.)
 
         elif self.mission_method == "GASP":
             if self.analysis_scheme is AnalysisScheme.COLLOCATION:
@@ -1584,7 +1557,7 @@ class AviaryProblem(om.Problem):
             for dv_name, dv_dict in dv_dict.items():
                 self.model.add_design_var(dv_name, **dv_dict)
 
-        if self.mission_method == "FLOPS" or self.mission_method == "simple":
+        if self.mission_method == "simple":
             optimize_mass = self.pre_mission_info.get('optimize_mass')
             if optimize_mass:
                 self.model.add_design_var(Mission.Design.GROSS_MASS, units='lbm',
@@ -1707,7 +1680,7 @@ class AviaryProblem(om.Problem):
                 self.model.add_objective(Mission.Objectives.FUEL, ref=ref)
 
         # If 'mission_method' is 'FLOPS', add a 'fuel_burned' objective
-        elif self.mission_method == "FLOPS" or self.mission_method == "simple":
+        elif self.mission_method == "simple":
             ref = ref if ref is not None else default_ref_values.get("fuel_burned", 1)
             self.model.add_objective("fuel_burned", ref=ref)
 
@@ -2347,30 +2320,19 @@ class AviaryProblem(om.Problem):
                                'traj.climb.initial_states:mass')
             self.model.connect(Mission.Takeoff.GROUND_DISTANCE,
                                'traj.climb.initial_states:range')
-            if self.mission_method == "FLOPS":
-                self.model.connect(Mission.Takeoff.FINAL_VELOCITY,
-                                   'traj.climb.initial_states:velocity')
-                self.model.connect(Mission.Takeoff.FINAL_ALTITUDE,
-                                   'traj.climb.initial_states:altitude')
-            else:
-                pass
-                # TODO: connect this correctly
-                # mass is the most important to connect but these others should
-                # be connected as well
-                # self.model.connect(Mission.Takeoff.FINAL_VELOCITY,
-                #                 'traj.climb.initial_states:mach')
-                # self.model.connect(Mission.Takeoff.FINAL_ALTITUDE,
-                #                 'traj.climb.controls:altitude')
+            # TODO: connect this correctly
+            # mass is the most important to connect but these others should
+            # be connected as well
+            # self.model.connect(Mission.Takeoff.FINAL_VELOCITY,
+            #                 'traj.climb.initial_states:mach')
+            # self.model.connect(Mission.Takeoff.FINAL_ALTITUDE,
+            #                 'traj.climb.controls:altitude')
 
         self.model.connect('traj.descent.states:mass',
                            Mission.Landing.TOUCHDOWN_MASS, src_indices=[-1])
         # TODO: approach velocity should likely be connected
-        if self.mission_method == "FLOPS":
-            self.model.connect('traj.descent.states:altitude', Mission.Landing.INITIAL_ALTITUDE,
-                               src_indices=[-1])
-        else:
-            self.model.connect('traj.descent.control_values:altitude', Mission.Landing.INITIAL_ALTITUDE,
-                               src_indices=[0])
+        self.model.connect('traj.descent.control_values:altitude', Mission.Landing.INITIAL_ALTITUDE,
+                           src_indices=[0])
 
     def _add_gasp_landing_systems(self):
         self.model.add_subsystem(

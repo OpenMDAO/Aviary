@@ -1,8 +1,7 @@
 """
-    Test external subsystem bus API.
+Test external subsystem bus API.
 """
 from copy import deepcopy
-import pkg_resources
 import unittest
 
 import numpy as np
@@ -10,8 +9,7 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 
-import aviary.api as av
-from aviary.interface.default_phase_info.flops import phase_info as ph_in
+from aviary.interface.default_phase_info.simple import phase_info as ph_in
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 
@@ -23,7 +21,7 @@ class PreMissionComp(om.ExplicitComponent):
         self.add_output('for_cruise', np.ones((2, 1)), units='ft')
         self.add_output('for_descent', np.ones((2, 1)), units='ft')
 
-    def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
+    def compute(self, inputs, outputs):
         outputs['for_climb'] = np.array([[3.1], [1.7]])
         outputs['for_cruise'] = np.array([[1.2], [4.1]])
         outputs['for_descent'] = np.array([[3.], [8.]])
@@ -39,7 +37,7 @@ class MissionComp(om.ExplicitComponent):
         self.add_input('xx', shape=shape, units='ft')
         self.add_output('yy', shape=shape, units='ft')
 
-    def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
+    def compute(self, inputs, outputs):
         outputs['yy'] = 2.0 * inputs['xx']
 
 
@@ -90,11 +88,9 @@ class TestExternalSubsystemBus(unittest.TestCase):
         phase_info['cruise']['external_subsystems'] = [CustomBuilder(name='test')]
         phase_info['descent']['external_subsystems'] = [CustomBuilder(name='test')]
 
-        prob = AviaryProblem(phase_info, mission_method="FLOPS", mass_method="FLOPS")
+        prob = AviaryProblem(phase_info, mission_method="simple", mass_method="FLOPS")
 
-        csv_path = pkg_resources.resource_filename(
-            "aviary", "models/test_aircraft/aircraft_for_bench_FwFm.csv")
-        prob.load_inputs(csv_path)
+        prob.load_inputs("models/test_aircraft/aircraft_for_bench_FwFm.csv")
         prob.check_inputs()
 
         prob.add_pre_mission_systems()

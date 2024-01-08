@@ -1,16 +1,12 @@
 import unittest
-import openmdao
 
 import dymos as dm
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
-from packaging import version
 
 from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
-import dymos as dm
-import unittest
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
@@ -126,12 +122,7 @@ class SimpleTestEngine(EngineModel):
 @use_tempdirs
 class CustomEngineTest(unittest.TestCase):
     def test_custom_engine(self):
-
-        import pkg_resources
-
         from aviary.interface.methods_for_level2 import AviaryProblem
-
-        aero_data = "subsystems/aerodynamics/gasp_based/data/large_single_aisle_1_aero_free.txt"
 
         phase_info = {
             'pre_mission': {
@@ -140,38 +131,28 @@ class CustomEngineTest(unittest.TestCase):
                 'optimize_mass': True,
             },
             'cruise': {
-                'subsystem_options': {
-                    'core_aerodynamics': {'method': 'solved_alpha', 'aero_data': aero_data, 'training_data': False}
+                "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
+                "user_options": {
+                    "optimize_mach": False,
+                    "optimize_altitude": False,
+                    "polynomial_control_order": 1,
+                    "num_segments": 2,
+                    "order": 3,
+                    "solve_for_range": False,
+                    "initial_mach": (0.72, "unitless"),
+                    "final_mach": (0.72, "unitless"),
+                    "mach_bounds": ((0.7, 0.74), "unitless"),
+                    "initial_altitude": (35000.0, "ft"),
+                    "final_altitude": (35000.0, "ft"),
+                    "altitude_bounds": ((23000.0, 38000.0), "ft"),
+                    "throttle_enforcement": "boundary_constraint",
+                    "fix_initial": False,
+                    "constrain_final": False,
+                    "fix_duration": False,
+                    "initial_bounds": ((0.0, 0.0), "min"),
+                    "duration_bounds": ((10., 30.), "min"),
                 },
-                'external_subsystems': [],
-                'user_options': {
-                    'fix_initial': False,
-                    'fix_final': False,
-                    'fix_duration': False,
-                    'num_segments': 2,
-                    'order': 3,
-                    'initial_ref': (1., 's'),
-                    'initial_bounds': ((0., 0.), 's'),
-                    'duration_ref': (21.e3, 's'),
-                    'duration_bounds': ((1.e3, 10.e3), 's'),
-                    'min_altitude': (10.668e3, 'm'),
-                    'max_altitude': (10.668e3, 'm'),
-                    'min_mach': 0.8,
-                    'max_mach': 0.8,
-                    'required_available_climb_rate': (1.524, 'm/s'),
-                    'input_initial': False,
-                    'mass_f_cruise': (1.e4, 'lbm'),
-                    'range_f_cruise': (1.e6, 'm'),
-                },
-                'initial_guesses': {
-                    'times': ([0., 30.], 'min'),
-                    'altitude': ([35.e3, 35.e3], 'ft'),
-                    'velocity': ([455.49, 455.49], 'kn'),
-                    'mass': ([130.e3, 128.e3], 'lbm'),
-                    'range': ([0., 300.], 'nmi'),
-                    'velocity_rate': ([0., 0.], 'm/s**2'),
-                    'throttle': ([0.6, 0.6], 'unitless'),
-                }
+                "initial_guesses": {"times": ([0, 30], "min")},
             },
             'post_mission': {
                 'include_landing': False,
@@ -179,15 +160,13 @@ class CustomEngineTest(unittest.TestCase):
             }
         }
 
-        csv_path = pkg_resources.resource_filename(
-            "aviary", "models/test_aircraft/aircraft_for_bench_GwFm.csv")
-
-        prob = AviaryProblem(phase_info, mission_method="FLOPS",
+        prob = AviaryProblem(phase_info, mission_method="simple",
                              mass_method="FLOPS", reports=False)
 
         # Load aircraft and options data from user
         # Allow for user overrides here
-        prob.load_inputs(csv_path, engine_builder=SimpleTestEngine())
+        prob.load_inputs("models/test_aircraft/aircraft_for_bench_GwFm.csv",
+                         engine_builder=SimpleTestEngine())
 
         # Have checks for clashing user inputs
         # Raise warnings or errors depending on how clashing the issues are
@@ -225,34 +204,6 @@ class CustomEngineTest(unittest.TestCase):
         tol = 1.e-4
 
         assert_near_equal(float(prob.get_val('traj.cruise.rhs_all.y')), 4., tol)
-
-        prob_vars = prob.list_problem_vars(
-            print_arrays=True, driver_scaling=False, out_stream=None)
-
-        design_vars_dict = dict(prob_vars['design_vars'])
-
-        # List of all expected variable names in design_vars
-        expected_var_names = [
-            'traj.phases.cruise.indep_states.states:altitude',
-            'traj.phases.cruise.indep_states.states:velocity',
-            'traj.phases.cruise.indep_states.states:mass',
-            'traj.phases.cruise.indep_states.states:range',
-        ]
-
-        # Check that all expected variable names are present in design_vars
-        for var_name in expected_var_names:
-            self.assertIn(var_name, design_vars_dict)
-
-        # Check values
-        assert_near_equal(design_vars_dict['traj.phases.cruise.indep_states.states:altitude']['val'], [
-            10668.] * 7, tolerance=tol)
-        assert_near_equal(design_vars_dict['traj.phases.cruise.indep_states.states:velocity']['val'], [
-            234.3243] * 7, tolerance=tol)
-        # print the mass and range
-        assert_near_equal(design_vars_dict['traj.phases.cruise.indep_states.states:mass']['val'], [
-            58967.0081, 58805.95966377, 58583.74569223, 58513.41573, 58352.36729377, 58130.15332223, 58059.82336], tolerance=tol)
-        assert_near_equal(design_vars_dict['traj.phases.cruise.indep_states.states:range']['val'], [
-            0., 98633.17494548, 234726.82505452, 277800., 376433.17494548, 512526.82505452, 555600.], tolerance=tol)
 
 
 if __name__ == '__main__':
