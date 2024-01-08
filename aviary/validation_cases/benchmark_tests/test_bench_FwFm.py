@@ -1,3 +1,4 @@
+from copy import deepcopy
 import os
 import unittest
 
@@ -13,7 +14,9 @@ from aviary.validation_cases.benchmark_utils import \
 @use_tempdirs
 class ProblemPhaseTestCase(unittest.TestCase):
     def bench_test_swap_4_FwFm(self):
-        prob = run_aviary('models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info,
+        local_phase_info = deepcopy(phase_info)
+        prob = run_aviary('models/test_aircraft/aircraft_for_bench_FwFm.csv',
+                          local_phase_info,
                           mission_method="FLOPS", mass_method="FLOPS")
 
         expected_dict = {}

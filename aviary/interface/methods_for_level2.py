@@ -2,7 +2,6 @@ import csv
 import warnings
 from packaging import version
 import inspect
-from copy import deepcopy
 from pathlib import Path
 from datetime import datetime
 
@@ -136,8 +135,6 @@ class AviaryProblem(om.Problem):
         self.post_mission = PostMissionGroup()
 
         self.aviary_inputs = None
-
-        phase_info = deepcopy(phase_info)
 
         for phase_name in phase_info:
             if 'external_subsystems' not in phase_info[phase_name]:

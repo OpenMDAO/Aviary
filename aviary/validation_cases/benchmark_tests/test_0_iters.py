@@ -1,22 +1,21 @@
+from copy import deepcopy
 import os
 import unittest
-import pkg_resources
-import dymos
-from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 from packaging import version
 
-from aviary.api import Mission, Dynamic
+from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
+import dymos
+
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.interface.default_phase_info.gasp import phase_info as gasp_phase_info
 from aviary.interface.default_phase_info.flops import phase_info as flops_phase_info
-from aviary.interface.default_phase_info.flops import phase_info as ph_in
 from aviary.interface.default_phase_info.solved import phase_info as solved_phase_info
-from copy import deepcopy
 
 
 class BaseProblemPhaseTestCase(unittest.TestCase):
 
-    def build_and_run_problem(self, phase_info, mission_method, mass_method, input_filename, objective_type=None):
+    def build_and_run_problem(self, phase_info, mission_method, mass_method, input_filename,
+                              objective_type=None):
         # Build problem
         prob = AviaryProblem(
             phase_info, mission_method=mission_method, mass_method=mass_method)
@@ -41,7 +40,8 @@ class GASPZeroItersTestCase(BaseProblemPhaseTestCase):
 
     @require_pyoptsparse(optimizer="IPOPT")
     def test_gasp_zero_iters(self):
-        self.build_and_run_problem(gasp_phase_info, "GASP",
+        local_phase_info = deepcopy(gasp_phase_info)
+        self.build_and_run_problem(local_phase_info, "GASP",
                                    "GASP", 'models/test_aircraft/aircraft_for_bench_GwGm.csv')
 
 
@@ -50,7 +50,8 @@ class FLOPSZeroItersTestCase(BaseProblemPhaseTestCase):
 
     @require_pyoptsparse(optimizer="IPOPT")
     def test_flops_zero_iters(self):
-        self.build_and_run_problem(flops_phase_info, "FLOPS",
+        local_phase_info = deepcopy(flops_phase_info)
+        self.build_and_run_problem(local_phase_info, "FLOPS",
                                    "FLOPS", 'models/test_aircraft/aircraft_for_bench_FwFm.csv')
 
 
@@ -62,8 +63,10 @@ class SolvedProblemTestCase(BaseProblemPhaseTestCase):
     @require_pyoptsparse(optimizer="IPOPT")
     def test_zero_iters_solved(self):
         # Modify Aviary inputs before running the common operations
-        self.build_and_run_problem(solved_phase_info, "solved",
-                                   "GASP", 'models/test_aircraft/aircraft_for_bench_GwGm.csv', objective_type="hybrid_objective")
+        local_phase_info = deepcopy(solved_phase_info)
+        self.build_and_run_problem(local_phase_info, "solved",
+                                   "GASP", 'models/test_aircraft/aircraft_for_bench_GwGm.csv',
+                                   objective_type="hybrid_objective")
 
 
 if __name__ == "__main__":
