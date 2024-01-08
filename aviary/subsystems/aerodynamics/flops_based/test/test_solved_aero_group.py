@@ -14,7 +14,7 @@ from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.utils.csv_data_file import read_data_file
 from aviary.utils.named_values import NamedValues
-from aviary.interface.default_phase_info.flops import phase_info
+from aviary.interface.default_phase_info.simple import phase_info
 from aviary.variable_info.variables import Aircraft
 
 from copy import deepcopy
@@ -47,7 +47,7 @@ class TestSolvedAero(unittest.TestCase):
     def test_solved_aero_pass_polar(self):
         # Test that passing training data provides the same results
         prob = AviaryProblem(
-            phase_info, mission_method="FLOPS", mass_method="FLOPS")
+            phase_info, mission_method="simple", mass_method="FLOPS")
 
         csv_path = pkg_resources.resource_filename(
             "aviary", "subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv")
@@ -88,7 +88,7 @@ class TestSolvedAero(unittest.TestCase):
 
         ph_in['cruise']['subsystem_options'] = {'core_aerodynamics': subsystem_options}
 
-        prob = AviaryProblem(ph_in, mission_method="FLOPS", mass_method="FLOPS")
+        prob = AviaryProblem(ph_in, mission_method="simple", mass_method="FLOPS")
 
         prob.load_inputs(csv_path)
 
@@ -203,6 +203,4 @@ class FakeDragPolarBuilder(SubsystemBuilderBase):
 
 
 if __name__ == "__main__":
-    # unittest.main()
-    test = TestSolvedAero()
-    test.test_solved_aero_pass_polar()
+    unittest.main()

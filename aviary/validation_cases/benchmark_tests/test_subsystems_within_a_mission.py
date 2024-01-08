@@ -1,7 +1,6 @@
 import numpy as np
 import unittest
 
-import pkg_resources
 from numpy.testing import assert_almost_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
@@ -15,48 +14,36 @@ from aviary.subsystems.test.test_dummy_subsystem import (
 @use_tempdirs
 class TestSubsystemsMission(unittest.TestCase):
     def setUp(self):
-        polar_file = "subsystems/aerodynamics/gasp_based/data/large_single_aisle_1_aero_free.txt"
-        aero_data = pkg_resources.resource_filename("aviary", polar_file)
-
         self.phase_info = {
             'pre_mission': {
                 'include_takeoff': False,
                 'external_subsystems': [ArrayGuessSubsystemBuilder(), AdditionalArrayGuessSubsystemBuilder()],
-                'optimize_mass': False,
+                'optimize_mass': True,
             },
             'cruise': {
-                'subsystem_options': {
-                    'core_aerodynamics': {'method': 'solved_alpha', 'aero_data': aero_data, 'training_data': False}
-                },
+                "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
                 'external_subsystems': [ArrayGuessSubsystemBuilder(), AdditionalArrayGuessSubsystemBuilder()],
-                'user_options': {
-                    'fix_initial': True,
-                    'fix_final': False,
-                    'fix_duration': False,
-                    'num_segments': 1,
-                    'order': 5,
-                    'initial_ref': (1., 's'),
-                    'initial_bounds': ((0., 0.), 's'),
-                    'duration_ref': (21.e3, 's'),
-                    'duration_bounds': ((10.e3, 20.e3), 's'),
-                    'min_altitude': (10.668e3, 'm'),
-                    'max_altitude': (10.668e3, 'm'),
-                    'min_mach': 0.8,
-                    'max_mach': 0.8,
-                    'required_available_climb_rate': (1.524, 'm/s'),
-                    'input_initial': False,
-                    'mass_f_cruise': (1.e4, 'lbm'),
-                    'range_f_cruise': (1.e6, 'm'),
+                "user_options": {
+                    "optimize_mach": False,
+                    "optimize_altitude": False,
+                    "polynomial_control_order": 1,
+                    "num_segments": 2,
+                    "order": 3,
+                    "solve_for_range": False,
+                    "initial_mach": (0.72, "unitless"),
+                    "final_mach": (0.72, "unitless"),
+                    "mach_bounds": ((0.7, 0.74), "unitless"),
+                    "initial_altitude": (35000.0, "ft"),
+                    "final_altitude": (35000.0, "ft"),
+                    "altitude_bounds": ((23000.0, 38000.0), "ft"),
+                    "throttle_enforcement": "boundary_constraint",
+                    "fix_initial": True,
+                    "constrain_final": False,
+                    "fix_duration": False,
+                    "initial_bounds": ((0.0, 0.0), "min"),
+                    "duration_bounds": ((10., 30.), "min"),
                 },
-                'initial_guesses': {
-                    'times': ([0., 15000.], 's'),
-                    'altitude': ([35.e3, 35.e3], 'ft'),
-                    'velocity': ([455.49, 455.49], 'kn'),
-                    'mass': ([130.e3, 120.e3], 'lbm'),
-                    'range': ([0., 3000.], 'NM'),
-                    'velocity_rate': ([0., 0.], 'm/s**2'),
-                    'throttle': ([0.6, 0.6], 'unitless'),
-                }
+                "initial_guesses": {"times": ([0, 30], "min")},
             },
             'post_mission': {
                 'include_landing': False,
@@ -68,12 +55,9 @@ class TestSubsystemsMission(unittest.TestCase):
         phase_info = self.phase_info.copy()
 
         prob = AviaryProblem(
-            phase_info, mission_method="FLOPS", mass_method="FLOPS")
+            phase_info, mission_method="simple", mass_method="FLOPS")
 
-        csv_path = pkg_resources.resource_filename(
-            "aviary", "models/test_aircraft/aircraft_for_bench_GwFm.csv")
-
-        prob.load_inputs(csv_path)
+        prob.load_inputs("models/test_aircraft/aircraft_for_bench_FwFm.csv")
 
         # Have checks for clashing user inputs
         # Raise warnings or errors depending on how clashing the issues are
@@ -102,29 +86,27 @@ class TestSubsystemsMission(unittest.TestCase):
 
         # add an assert to see if the initial guesses are correct for Mission.Dummy.VARIABLE
         assert_almost_equal(prob[f'traj.phases.cruise.states:{Mission.Dummy.VARIABLE}'], [[10.],
-                                                                                          [22.57838779],
-                                                                                          [47.47686109],
-                                                                                          [75.08412877],
-                                                                                          [94.86062235],
-                                                                                          [100.],])
+                                                                                          [25.97729616],
+                                                                                          [48.02270384],
+                                                                                          [55.],
+                                                                                          [70.97729616],
+                                                                                          [93.02270384],
+                                                                                          [100.]])
 
         prob.run_aviary_problem()
 
         # add an assert to see if MoreMission.Dummy.TIMESERIES_VAR was correctly added to the dymos problem
         assert_almost_equal(prob[f'traj.phases.cruise.timeseries.{MoreMission.Dummy.TIMESERIES_VAR}'], np.array(
-            [[0.5, 0.5, 0.5, 0.5, 0.5, 0.5]]).T)
+            [[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]]).T)
 
     def test_bad_initial_guess_key(self):
         phase_info = self.phase_info.copy()
         phase_info['cruise']['initial_guesses']['bad_guess_name'] = ([10., 100.], 'm')
 
-        prob = AviaryProblem(phase_info, mission_method="FLOPS",
+        prob = AviaryProblem(phase_info, mission_method="simple",
                              mass_method="FLOPS", reports=False)
 
-        csv_path = pkg_resources.resource_filename(
-            "aviary", "models/test_aircraft/aircraft_for_bench_GwFm.csv")
-
-        prob.load_inputs(csv_path)
+        prob.load_inputs("models/test_aircraft/aircraft_for_bench_FwFm.csv")
 
         # Have checks for clashing user inputs
         # Raise warnings or errors depending on how clashing the issues are
@@ -134,12 +116,10 @@ class TestSubsystemsMission(unittest.TestCase):
 
         with self.assertRaises(TypeError) as context:
             prob.add_phases()
+        print(str(context.exception))
         self.assertTrue(
-            'Cruise: cruise: unsupported initial guess: bad_guess_name' in str(context.exception))
+            'EnergyPhase: cruise: unsupported initial guess: bad_guess_name' in str(context.exception))
 
 
 if __name__ == "__main__":
-    # unittest.main()
-    test = TestSubsystemsMission()
-    test.setUp()
-    test.test_subsystems_in_a_mission()
+    unittest.main()
