@@ -61,6 +61,7 @@ setup(
             "models/large_single_aisle_2/*",
             "models/small_single_aisle/*",
             "models/test_aircraft/*",
+            "visualization/assets/*",
             "visualization/assets/aviary_vars/*"
         ],
         f"{pkgname}.subsystems.aero.test.data": ["*.csv"],

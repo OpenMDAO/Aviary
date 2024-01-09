@@ -1,3 +1,4 @@
+from copy import deepcopy
 import os
 import unittest
 
@@ -17,8 +18,8 @@ from aviary.interface.methods_for_level2 import AviaryProblem
 class ProblemPhaseTestCase(unittest.TestCase):
     def bench_test_solved_full_mission(self):
         # Build problem
-
-        prob = AviaryProblem(phase_info, mission_method="solved",
+        local_phase_info = deepcopy(phase_info)
+        prob = AviaryProblem(local_phase_info, mission_method="solved",
                              mass_method="GASP", reports='subsystems')
 
         input_file = 'models/test_aircraft/aircraft_for_bench_GwGm.csv'

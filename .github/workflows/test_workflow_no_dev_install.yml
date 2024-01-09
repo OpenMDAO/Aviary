@@ -85,6 +85,7 @@ jobs:
         shell: bash -l {0}
         run: |
           echo "============================================================="
-          echo "Run Tests"
+          echo "Run Tests (from directory other than repo root)"
           echo "============================================================="
-          testflo . -n 1 --show_skipped
+          cd $HOME
+          testflo aviary -n 1 --show_skipped --timeout=240 --durations=20
