@@ -86,6 +86,7 @@ from aviary.mission.flops_based.phases.simplified_landing import LandingGroup as
 # Phase builders
 from aviary.mission.flops_based.phases.phase_builder_base import PhaseBuilderBase
 # note that this is only for simplified right now
+from aviary.mission.flops_based.phases.simple_energy_phase import EnergyPhase as HeightEnergyPhaseBuilder
 from aviary.mission.flops_based.phases.build_landing import Landing as HeightEnergyLandingPhaseBuilder
 # note that this is only for simplified right now
 from aviary.mission.flops_based.phases.build_takeoff import Takeoff as HeightEnergyTakeoffPhaseBuilder
