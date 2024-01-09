@@ -24,8 +24,9 @@ jobs:
       matrix:
         include:
           # latest versions of openmdao/dymos
-          - NAME: dev
+          - NAME: latest
             PY: 3
+            OPENMDAO: 'dev'
 
     steps:
       - name: Display run details
