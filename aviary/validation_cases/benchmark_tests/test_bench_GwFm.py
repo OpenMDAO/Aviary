@@ -10,7 +10,6 @@ import unittest
 import numpy as np
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.interface.default_phase_info.flops import phase_info
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.validation_cases.benchmark_utils import \
     compare_against_expected_values
@@ -269,12 +268,6 @@ class ProblemPhaseTestCase(unittest.TestCase):
         self.expected_dict = expected_dict
 
     def bench_test_swap_1_GwFm(self):
-        prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwFm.csv', phase_info,
-                          mission_method="FLOPS", mass_method="GASP")
-
-        compare_against_expected_values(prob, self.expected_dict)
-
-    def bench_test_swap_1_GwFm_simple(self):
         phase_info = {
             "pre_mission": {"include_takeoff": True, "optimize_mass": True},
             "climb": {
@@ -364,10 +357,10 @@ class ProblemPhaseTestCase(unittest.TestCase):
         prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwFm.csv', phase_info,
                           mission_method="simple", mass_method="GASP", max_iter=15)
 
-        compare_against_expected_values(prob, self.expected_dict, simple_flag=True)
+        compare_against_expected_values(prob, self.expected_dict)
 
 
 if __name__ == '__main__':
     z = ProblemPhaseTestCase()
     z.setUp()
-    z.bench_test_swap_1_GwFm_simple()
+    z.bench_test_swap_1_GwFm()

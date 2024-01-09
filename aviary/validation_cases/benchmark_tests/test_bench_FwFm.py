@@ -3,7 +3,6 @@ import unittest
 import numpy as np
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.interface.default_phase_info.flops import phase_info
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.validation_cases.benchmark_utils import \
     compare_against_expected_values
@@ -263,12 +262,6 @@ class ProblemPhaseTestCase(unittest.TestCase):
         self.expected_dict = expected_dict
 
     def bench_test_swap_4_FwFm(self):
-        prob = run_aviary('models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info,
-                          mission_method="FLOPS", mass_method="FLOPS")
-
-        compare_against_expected_values(prob, self.expected_dict)
-
-    def bench_test_swap_4_FwFm_simple(self):
         phase_info = {
             "pre_mission": {"include_takeoff": True, "optimize_mass": True},
             "climb": {
@@ -353,17 +346,17 @@ class ProblemPhaseTestCase(unittest.TestCase):
             "post_mission": {
                 "include_landing": True,
                 "constrain_range": True,
-                "target_range": (3360.0, "nmi"),
+                "target_range": (3350.0, "nmi"),
             },
         }
 
         prob = run_aviary('models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info,
                           mission_method="simple", mass_method="FLOPS")
 
-        compare_against_expected_values(prob, self.expected_dict, simple_flag=True)
+        compare_against_expected_values(prob, self.expected_dict)
 
 
 if __name__ == '__main__':
     test = ProblemPhaseTestCase()
     test.setUp()
-    test.bench_test_swap_4_FwFm_simple()
+    test.bench_test_swap_4_FwFm()
