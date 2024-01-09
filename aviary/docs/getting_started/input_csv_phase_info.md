@@ -18,13 +18,13 @@ This section is under development.
 - climb_range: 0,
 - reserves: 0
 
-The initial guess of `reserves` is used to define the reserve fuel. Initially, its value can be anything larger than or equal to 0. There are two variables to control the reserve fuel in the model file (`.csv`):
+The initial guess of `reserves` is used to define the reserve fuel. Initially, its value can be anything larger than or equal to 0. There are two Aviary variables to control the reserve fuel in the model file (`.csv`):
 - `Aircraft.Design.FIXED_RESERVES_FUEL`: the required fuel reserves: directly in lbm,
-- `Aircraft.Design.RESERVES_FRACTION`: the required fuel reserves: given as a proportion of mission fuel, 
+- `Aircraft.Design.RESERVES_FRACTION`: the required fuel reserves: given as a proportion of mission fuel.
 
-If the value of initial guess of `reserves` is not 0 and is within the allowed range, the initial guess of reserve fuel is determined by the parameter `reserves`:
-- if `reserves > 1.0`, we set `Aircraft.Design.FIXED_RESERVES_FUEL = reserves`,
-- if `0.0 <= reserves <= 1.0`, we set `Aircraft.Design.RESERVES_FRACTION = reserves`.
+Users should set one of them to zero. If the value of initial guess of `reserves` (also in the model file if any) is 0, the initial guess of reserve fuel comes from the above two Aviary variables. Otherwise, it is determined by the parameter `reserves`:
+- if `reserves > 10`, we assume it is the actual fuel reserves.
+- if `0.0 <= reserves <= 10`, we assume it is the fraction of the mission fuel. The case when `reserves` is between 1 and 10 is non-sensical but technically valid.
 
 The initial guess of `reserves` is always converted to the actual design reserves (instead of reserve factor) and is used to update the initial guesses of `fuel_burn_per_passenger_mile` and `cruise_mass_final`.
 
