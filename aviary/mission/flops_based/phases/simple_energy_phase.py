@@ -373,7 +373,7 @@ EnergyPhase._add_meta_data(
     desc='transcription: order of the state transcription; the order of the control'
     ' transcription is `order - 1`')
 
-EnergyPhase._add_meta_data('polynomial_control_order', val=None)
+EnergyPhase._add_meta_data('polynomial_control_order', val=3)
 
 EnergyPhase._add_meta_data('use_polynomial_control', val=True)
 
