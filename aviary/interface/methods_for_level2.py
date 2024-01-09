@@ -225,6 +225,9 @@ class AviaryProblem(om.Problem):
             if 'external_subsystems' not in phase_info[phase_name]:
                 phase_info[phase_name]['external_subsystems'] = []
 
+            if phase_name not in ['pre_mission', 'post_mission']:
+                self.phase_info[phase_name] = phase_info[phase_name]
+
         # pre_mission and post_mission are stored in their own dictionaries.
         if 'pre_mission' in phase_info:
             self.pre_mission_info = phase_info['pre_mission']
