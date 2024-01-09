@@ -2438,7 +2438,7 @@ class AviaryProblem(om.Problem):
     def _add_fuel_reserve_component(self, reserves_name=Mission.Design.RESERVE_FUEL):
         reserves_val = self.aviary_inputs.get_val(
             Aircraft.Design.FIXED_RESERVES_FUEL, units='lbm')
-        reserves_fac = self.aviary_inputs.get_val(
+        reserves_frac = self.aviary_inputs.get_val(
             Aircraft.Design.RESERVES_FRACTION, units='unitless')
         if reserves_val > 0.0:
             self.model.add_subsystem(
@@ -2449,11 +2449,11 @@ class AviaryProblem(om.Problem):
                 ),
                 promotes_outputs=[("reserve_fuel", reserves_name)],
             )
-        elif reserves_fac >= 0 and reserves_fac <= 1:
+        elif reserves_frac >= 0:
             self.model.add_subsystem(
                 "reserves_calc",
                 om.ExecComp(
-                    f"reserve_fuel = {reserves_fac}*(takeoff_mass - final_mass)",
+                    f"reserve_fuel = {reserves_frac}*(takeoff_mass - final_mass)",
                     takeoff_mass={"units": "lbm"},
                     final_mass={"units": "lbm"},
                     reserve_fuel={"units": "lbm"}
