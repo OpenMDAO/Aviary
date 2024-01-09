@@ -1206,7 +1206,10 @@ add_meta_data(
                      },
     option=True,
     units="unitless",
-    desc='required fuel reserves: given as a proportion of mission fuel',
+    desc='required fuel reserves: given as a proportion of mission fuel. This value must be nonnegative.\
+          If it is 0.5, the reserve fuel is half of the mission fuel (one third of the total fuel). Note\
+          it can be greater than 1. If it is 2, there would be twice as much reserve fuel as mission fuel\
+          (the total fuel carried would be 1/3 for the mission and 2/3 for the reserve)',
     default_value=0,
 )
 
