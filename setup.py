@@ -65,7 +65,7 @@ setup(
             "visualization/assets/*",
             "visualization/assets/aviary_vars/*"
         ],
-        'aviary.docs': ['*.py', 
+        'aviary.docs': ['*.py',
                         'tests/*.py',
                         '*/*.md',
                         '*/*.ipynb',
