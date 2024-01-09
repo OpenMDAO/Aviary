@@ -6,7 +6,7 @@ import openmdao.api as om
 
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
-from aviary.interface.default_phase_info.flops import phase_info as ph_in
+from aviary.interface.default_phase_info.simple import phase_info as ph_in
 from aviary.variable_info.variables import Aircraft
 from openmdao.utils.testing_utils import use_tempdirs
 

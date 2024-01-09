@@ -13,19 +13,13 @@ import openmdao.api as om
 import scipy.constants as _units
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
-from packaging import version
 
-from aviary.mission.flops_based.ode.mission_ODE import MissionODE
 from aviary.mission.flops_based.phases.build_landing import Landing
 from aviary.mission.flops_based.phases.build_takeoff import Takeoff
-from aviary.mission.flops_based.phases.climb_phase import Climb
-from aviary.mission.flops_based.phases.cruise_phase import Cruise
-from aviary.mission.flops_based.phases.descent_phase import Descent
 from aviary.subsystems.premission import CorePreMission
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import set_aviary_initial_values
 from aviary.utils.test_utils.assert_utils import warn_timeseries_near_equal
-from aviary.utils.functions import get_path
 from aviary.validation_cases.validation_tests import get_flops_inputs, get_flops_outputs
 from aviary.variable_info.functions import setup_trajectory_params
 from aviary.utils.preprocessors import preprocess_options

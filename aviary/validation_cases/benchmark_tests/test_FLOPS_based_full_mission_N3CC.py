@@ -17,12 +17,8 @@ from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 from packaging import version
 
-from aviary.mission.flops_based.ode.mission_ODE import MissionODE
 from aviary.mission.flops_based.phases.build_landing import Landing
 from aviary.mission.flops_based.phases.build_takeoff import Takeoff
-from aviary.mission.flops_based.phases.climb_phase import Climb
-from aviary.mission.flops_based.phases.cruise_phase import Cruise
-from aviary.mission.flops_based.phases.descent_phase import Descent
 from aviary.utils.functions import set_aviary_initial_values
 from aviary.utils.test_utils.assert_utils import warn_timeseries_near_equal
 from aviary.utils.functions import get_path

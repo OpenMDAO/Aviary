@@ -28,7 +28,7 @@ import dymos as dm
 import numpy as np
 import openmdao.api as om
 
-from aviary.mission.flops_based.ode.mission_ODE import MissionODE
+from aviary.mission.flops_based.ode.simple_mission_ODE import MissionODE
 from aviary.utils.aviary_values import AviaryValues, get_keys
 
 _require_new_meta_data_class_attr_ = \

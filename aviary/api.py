@@ -68,7 +68,6 @@ from aviary.utils.preprocessors import preprocess_crewpayload
 from aviary.mission.gasp_based.ode.base_ode import BaseODE
 from aviary.mission.flops_based.ode.landing_ode import LandingODE as DetailedLandingODE
 from aviary.mission.flops_based.ode.landing_ode import FlareODE as DetailedFlareODE
-from aviary.mission.flops_based.ode.mission_ODE import MissionODE as HeightEnergyMissionODE
 from aviary.mission.flops_based.ode.takeoff_ode import TakeoffODE as DetailedTakeoffODE
 from aviary.mission.gasp_based.ode.accel_ode import AccelODE as TwoDOFAccelerationODE
 from aviary.mission.gasp_based.ode.ascent_ode import AscentODE as TwoDOFAscentODE
@@ -90,9 +89,6 @@ from aviary.mission.flops_based.phases.phase_builder_base import PhaseBuilderBas
 from aviary.mission.flops_based.phases.build_landing import Landing as HeightEnergyLandingPhaseBuilder
 # note that this is only for simplified right now
 from aviary.mission.flops_based.phases.build_takeoff import Takeoff as HeightEnergyTakeoffPhaseBuilder
-from aviary.mission.flops_based.phases.climb_phase import Climb as HeightEnergyClimbPhaseBuilder
-from aviary.mission.flops_based.phases.cruise_phase import Cruise as HeightEnergyCruisePhaseBuilder
-from aviary.mission.flops_based.phases.descent_phase import Descent as HeightEnergyDescentPhaseBuilder
 from aviary.mission.flops_based.phases.detailed_landing_phases import LandingApproachToMicP3 as DetailedLandingApproachToMicP3PhaseBuilder
 from aviary.mission.flops_based.phases.detailed_landing_phases import LandingMicP3ToObstacle as DetailedLandingMicP3ToObstaclePhaseBuilder
 from aviary.mission.flops_based.phases.detailed_landing_phases import LandingObstacleToFlare as DetailedLandingObstacleToFlarePhaseBuilder

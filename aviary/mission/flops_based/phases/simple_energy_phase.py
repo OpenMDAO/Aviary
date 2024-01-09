@@ -16,6 +16,7 @@ from aviary.mission.flops_based.ode.simple_mission_ODE import MissionODE
 #     - currently handled in level 3 interface implementation
 # - self.external_subsystems
 # - self.meta_data, with cls.default_meta_data customization point
+@register
 class EnergyPhase(PhaseBuilderBase):
     '''
     A phase builder for a simple energy phase.
@@ -98,7 +99,7 @@ class EnergyPhase(PhaseBuilderBase):
 
     _initial_guesses_meta_data_ = {}
 
-    default_name = 'energy_phase'
+    default_name = 'cruise'
 
     default_ode_class = MissionODE
 
