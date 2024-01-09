@@ -25,7 +25,8 @@ class StaticGroupTest(unittest.TestCase):
         prob.load_inputs(csv_path)
         prob.check_inputs()
 
-        prob.aviary_inputs.set_val(Aircraft.Design.RESERVES, 10000.0, units='lbm')
+        prob.aviary_inputs.set_val(
+            Aircraft.Design.FIXED_RESERVES_FUEL, 10000.0, units='lbm')
 
         prob.add_pre_mission_systems()
         prob.add_phases()

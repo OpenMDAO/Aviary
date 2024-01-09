@@ -1049,6 +1049,19 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Design.FIXED_RESERVES_FUEL,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.FRESF',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    option=True,
+    units="lbm",
+    desc='required fuel reserves: directly in lbm',
+    default_value=0,
+)
+
+add_meta_data(
     Aircraft.Design.FIXED_USEFUL_LOAD,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.WFUL',
@@ -1057,18 +1070,6 @@ add_meta_data(
                      },
     units='lbm',
     desc='total mass of fixed useful load: crew, service items, trapped oil, etc',
-)
-
-add_meta_data(
-    Aircraft.Design.IJEFF,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.ijeff',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    desc="A flag used by Jeff V. Bowles to debug GASP code during his 53 years supporting the development of GASP. \
-        This flag is planted here to thank him for his hard work and dedication, Aviary wouldn't be what it is today \
-        without his help.",
 )
 
 add_meta_data(
@@ -1194,19 +1195,6 @@ add_meta_data(
     types=int,
     units="unitless",
     desc='part 25 structural category',
-)
-
-add_meta_data(
-    Aircraft.Design.RESERVES,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.FRESF',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    option=True,
-    units="lbm",
-    desc='required fuel reserves: directly in lbm',
-    default_value=0,
 )
 
 add_meta_data(

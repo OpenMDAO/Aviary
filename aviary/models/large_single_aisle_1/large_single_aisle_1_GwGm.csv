@@ -12,9 +12,9 @@ aircraft:design:cg_delta,0.25,unitless
 aircraft:design:cockpit_control_mass_coefficient,16.5,unitless
 aircraft:design:drag_increment,0.00175,unitless
 aircraft:design:equipment_mass_coefficients,928,0.0736,0.112,0.14,1959,1.65,551,11192,5,3,50,7.6,12,unitless
+aircraft:design:fixed_reserves_fuel,4998,lbm
 aircraft:design:max_structural_speed,402.5,mi/h
 aircraft:design:part25_structural_category,3,unitless
-aircraft:design:reserves,4998,lbm
 aircraft:design:reserves_fraction,0,unitless
 aircraft:design:static_margin,0.03,unitless
 aircraft:design:structural_mass_increment,0,lbm

@@ -45,7 +45,7 @@ def create_vehicle(vehicle_deck=''):
     aircraft_values.set_val('mass_defect', val=10000, units='lbm')
     aircraft_values.set_val('problem_type', val=ProblemType.SIZING)
     aircraft_values.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False)
-    aircraft_values.set_val(Aircraft.Design.RESERVES, val=4998, units='lbm')
+    aircraft_values.set_val(Aircraft.Design.FIXED_RESERVES_FUEL, val=4998, units='lbm')
     aircraft_values.set_val(Aircraft.Design.RESERVES_FRACTION, val=0, units='unitless')
 
     vehicle_deck = get_path(vehicle_deck)
@@ -166,7 +166,8 @@ def update_dependent_options(aircraft_values: AviaryValues(), dependent_options)
 def initial_guessing(aircraft_values: AviaryValues()):
     problem_type = aircraft_values.get_val('problem_type')
     if initial_guesses['reserves'] == 0:
-        reserves = aircraft_values.get_val(Aircraft.Design.RESERVES, units='lbm')
+        reserves = aircraft_values.get_val(
+            Aircraft.Design.FIXED_RESERVES_FUEL, units='lbm')
         if reserves == 0:
             reserves = aircraft_values.get_val(
                 Aircraft.Design.RESERVES_FRACTION, units='unitless')
@@ -175,11 +176,13 @@ def initial_guessing(aircraft_values: AviaryValues()):
         if reserves < 0.0:
             raise ValueError('initial_guesses["reserves"] must be greater than 0.')
         elif reserves <= 1.0:
-            aircraft_values.set_val(Aircraft.Design.RESERVES, 0.0, units='lbm')
+            aircraft_values.set_val(
+                Aircraft.Design.FIXED_RESERVES_FUEL, 0.0, units='lbm')
             aircraft_values.set_val(
                 Aircraft.Design.RESERVES_FRACTION, reserves, units='unitless')
         else:
-            aircraft_values.set_val(Aircraft.Design.RESERVES, reserves, units='lbm')
+            aircraft_values.set_val(
+                Aircraft.Design.FIXED_RESERVES_FUEL, reserves, units='lbm')
             aircraft_values.set_val(
                 Aircraft.Design.RESERVES_FRACTION, 0.0, units='unitless')
 
