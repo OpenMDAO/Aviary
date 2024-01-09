@@ -143,10 +143,10 @@ class TestSolvedAero(unittest.TestCase):
 
         ph_in = deepcopy(phase_info)
 
-        alt = np.array([0.,  3000.,  6000.,  9000., 12000., 15000., 18000., 21000.,
+        alt = np.array([0., 3000., 6000., 9000., 12000., 15000., 18000., 21000.,
                         24000., 27000., 30000., 33000., 36000., 38000., 42000.])
-        mach = np.array([0. , 0.2 , 0.4 , 0.5 , 0.6 , 0.7 , 0.75, 0.8 , 0.85, 0.9 ])
-        alpha = np.array([-2.,  0.,  2.,  4.,  6.,  8., 10.])
+        mach = np.array([0., 0.2, 0.4, 0.5, 0.6, 0.7, 0.75, 0.8, 0.85, 0.9])
+        alpha = np.array([-2., 0., 2., 4., 6., 8., 10.])
 
         polar_builder = FakeDragPolarBuilder(name="aero", altitude=alt, mach=mach,
                                              alpha=alpha)
