@@ -5,6 +5,7 @@ Takeoff, Climb, Cruise, Descent, Landing
 Computed Aero
 Large Single Aisle 1 data
 '''
+from copy import deepcopy
 import os
 import unittest
 
@@ -20,7 +21,9 @@ from aviary.validation_cases.benchmark_utils import \
 @use_tempdirs
 class ProblemPhaseTestCase(unittest.TestCase):
     def bench_test_swap_1_GwFm(self):
-        prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwFm.csv', phase_info)
+        local_phase_info = deepcopy(phase_info)
+        prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwFm.csv',
+                          local_phase_info)
 
         expected_dict = {}
         expected_dict['times'] = np.array([[120.],

@@ -1,3 +1,4 @@
+from copy import deepcopy
 import os
 import unittest
 
@@ -14,7 +15,9 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
     @require_pyoptsparse(optimizer="SNOPT")
     def bench_test_swap_3_FwGm(self):
-        prob = run_aviary('models/test_aircraft/aircraft_for_bench_FwGm.csv', phase_info)
+        local_phase_info = deepcopy(phase_info)
+        prob = run_aviary('models/test_aircraft/aircraft_for_bench_FwGm.csv',
+                          local_phase_info)
 
         rtol = 1e-2
 

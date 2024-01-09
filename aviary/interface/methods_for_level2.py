@@ -2,7 +2,6 @@ import csv
 import warnings
 from packaging import version
 import inspect
-from copy import deepcopy
 from pathlib import Path
 from datetime import datetime
 import importlib.util
@@ -219,22 +218,22 @@ class AviaryProblem(om.Problem):
                 print('Loaded default phase_info for'
                       f'{self.mission_method.value.lower()} equations of motion')
 
-        phase_info = deepcopy(phase_info)
+        # create a new dictionary that only contains the phases from phase_info
+        self.phase_info = {}
 
         for phase_name in phase_info:
             if 'external_subsystems' not in phase_info[phase_name]:
                 phase_info[phase_name]['external_subsystems'] = []
 
-        self.phase_info = phase_info
-
-        if 'pre_mission' in self.phase_info:
-            self.pre_mission_info = self.phase_info.pop('pre_mission')
+        # pre_mission and post_mission are stored in their own dictionaries.
+        if 'pre_mission' in phase_info:
+            self.pre_mission_info = phase_info['pre_mission']
         else:
             self.pre_mission_info = {'include_takeoff': True,
                                      'external_subsystems': []}
 
-        if 'post_mission' in self.phase_info:
-            self.post_mission_info = self.phase_info.pop('post_mission')
+        if 'post_mission' in phase_info:
+            self.post_mission_info = phase_info['post_mission']
         else:
             self.post_mission_info = {'include_landing': True,
                                       'external_subsystems': [],
@@ -695,9 +694,21 @@ class AviaryProblem(om.Problem):
         )
 
     def _get_height_energy_phase(self, phase_name, phase_idx):
-        phase_options = self.phase_info[phase_name]
+        base_phase_options = self.phase_info[phase_name]
+        fix_duration = base_phase_options['user_options']['fix_duration']
 
-        fix_duration = phase_options['user_options'].pop('fix_duration')
+        # We need to exclude some things from the phase_options that we pass down
+        # to the phases. Intead of "popping" keys, we just create new outer dictionaries.
+
+        phase_options = {}
+        for key, val in base_phase_options.items():
+            if key != 'user_options':
+                phase_options[key] = val
+
+        phase_options['user_options'] = {}
+        for key, val in base_phase_options['user_options'].items():
+            if key != 'fix_duration':
+                phase_options['user_options'][key] = val
 
         # TODO optionally accept which subsystems to load from phase_info
         subsystems = self.core_subsystems
@@ -1286,7 +1297,7 @@ class AviaryProblem(om.Problem):
     def _link_phases_helper_with_options(self, phases, option_name, var, **kwargs):
         phases_to_link = []
         for idx, phase_name in enumerate(self.phase_info):
-            if self.phase_info[phase_name]['user_options'][option_name][0]:
+            if self.phase_info[phase_name]['user_options'][option_name]:
                 # get the name of the previous phase
                 if idx > 0:
                     prev_phase_name = phases[idx - 1]
@@ -2393,7 +2404,7 @@ class AviaryProblem(om.Problem):
             promotes_outputs=['mission:*'])
 
         connect_takeoff_to_climb = not self.phase_info['climb']['user_options'].get(
-            'add_initial_mass_constraint', True)[0]
+            'add_initial_mass_constraint', True)
 
         if connect_takeoff_to_climb:
             self.model.connect(Mission.Takeoff.FINAL_MASS,

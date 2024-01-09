@@ -1,10 +1,9 @@
-
-import unittest
-from openmdao.utils.testing_utils import use_tempdirs
+from copy import deepcopy
 from pathlib import Path
+import unittest
 import warnings
 
-import pkg_resources
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.interface.default_phase_info.height_energy import phase_info
 from aviary.interface.methods_for_level1 import run_aviary
@@ -15,7 +14,9 @@ from openmdao.utils.testing_utils import use_tempdirs
 @use_tempdirs
 class BasicReportTestCase(unittest.TestCase):
     def setUp(self):
-        self.prob = run_aviary('models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info,
+        local_phase_info = deepcopy(phase_info)
+        self.prob = run_aviary('models/test_aircraft/aircraft_for_bench_FwFm.csv',
+                               local_phase_info,
                                mission_method="FLOPS", mass_method="FLOPS", optimizer='IPOPT')
 
     def test_text_report(self):

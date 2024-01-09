@@ -1,3 +1,4 @@
+from copy import deepcopy
 import os
 import unittest
 
@@ -18,11 +19,11 @@ from aviary.variable_info.enums import EquationsOfMotion
 class ProblemPhaseTestCase(unittest.TestCase):
     def bench_test_solved_full_mission(self):
         # Build problem
-
+        local_phase_info = deepcopy(phase_info)
         prob = AviaryProblem()
 
         input_file = 'models/test_aircraft/aircraft_for_bench_GwGm_solved.csv'
-        prob.load_inputs(input_file, phase_info)
+        prob.load_inputs(input_file, local_phase_info)
         prob.aviary_inputs.set_val(Mission.Design.RANGE, 2000.0, units="NM")
 
         # Have checks for clashing user inputs

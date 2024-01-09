@@ -46,12 +46,14 @@ class TestSolvedAero(unittest.TestCase):
 
     def test_solved_aero_pass_polar(self):
         # Test that passing training data provides the same results
+        local_phase_info = deepcopy(phase_info)
+
         prob = AviaryProblem()
 
         csv_path = pkg_resources.resource_filename(
             "aviary", "subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv")
 
-        prob.load_inputs(csv_path, phase_info)
+        prob.load_inputs(csv_path, local_phase_info)
         prob.add_pre_mission_systems()
         prob.add_phases()
         prob.add_post_mission_systems()

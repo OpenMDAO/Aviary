@@ -1,7 +1,10 @@
+from copy import deepcopy
+import os
 import unittest
-import dymos
-from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 from packaging import version
+
+from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
+import dymos
 
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.interface.default_phase_info.two_dof import phase_info as two_dof_phase_info
@@ -12,7 +15,7 @@ from aviary.variable_info.enums import EquationsOfMotion
 
 class BaseProblemPhaseTestCase(unittest.TestCase):
 
-    def build_and_run_problem(self, phase_info, input_filename, objective_type=None, mission_method=None):
+    def build_and_run_problem(self, input_filename, phase_info, objective_type=None):
         # Build problem
         prob = AviaryProblem()
 
@@ -35,9 +38,10 @@ class BaseProblemPhaseTestCase(unittest.TestCase):
 class TwoDOFZeroItersTestCase(BaseProblemPhaseTestCase):
 
     @require_pyoptsparse(optimizer="IPOPT")
-    def test_2dof_zero_iters(self):
-        self.build_and_run_problem(
-            two_dof_phase_info, 'models/test_aircraft/aircraft_for_bench_GwGm.csv')
+    def test_gasp_zero_iters(self):
+        local_phase_info = deepcopy(two_dof_phase_info)
+        self.build_and_run_problem('models/test_aircraft/aircraft_for_bench_GwGm.csv',
+                                   local_phase_info)
 
 
 @use_tempdirs
@@ -45,8 +49,9 @@ class HEZeroItersTestCase(BaseProblemPhaseTestCase):
 
     @require_pyoptsparse(optimizer="IPOPT")
     def test_height_energy_zero_iters(self):
-        self.build_and_run_problem(
-            height_energy_phase_info, 'models/test_aircraft/aircraft_for_bench_FwFm.csv')
+        local_phase_info = deepcopy(height_energy_phase_info)
+        self.build_and_run_problem('models/test_aircraft/aircraft_for_bench_FwFm.csv',
+                                   local_phase_info)
 
 
 @unittest.skipIf(version.parse(dymos.__version__) <= version.parse("1.8.0"),
@@ -57,8 +62,9 @@ class SolvedProblemTestCase(BaseProblemPhaseTestCase):
     @require_pyoptsparse(optimizer="IPOPT")
     def test_zero_iters_solved(self):
         # Modify Aviary inputs before running the common operations
-        self.build_and_run_problem(
-            solved_phase_info, 'models/test_aircraft/aircraft_for_bench_GwGm_solved.csv', objective_type="hybrid_objective")
+        local_phase_info = deepcopy(solved_phase_info)
+        self.build_and_run_problem('models/test_aircraft/aircraft_for_bench_GwGm_solved.csv',
+                                   local_phase_info, objective_type="hybrid_objective")
 
 
 if __name__ == "__main__":
