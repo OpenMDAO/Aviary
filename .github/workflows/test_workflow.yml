@@ -42,7 +42,7 @@ jobs:
             SCIPY: '1.6'
             PYOPTSPARSE: 'v2.9.1'
             SNOPT: '7.7'
-            OPENMDAO: '3.27'
+            OPENMDAO: 'dev'
             DYMOS: '1.8.0'
             MAKE_DOCS: 0
 
@@ -64,7 +64,7 @@ jobs:
             SCIPY: 1
             PYOPTSPARSE: 'v2.9.1'
             SNOPT: '7.7'
-            OPENMDAO: 'latest'
+            OPENMDAO: 'dev'
             DYMOS: 'latest'
             MAKE_DOCS: 0
 
@@ -75,7 +75,7 @@ jobs:
             SCIPY: 1
             PYOPTSPARSE: 'v2.9.1'
             SNOPT: '7.7'
-            OPENMDAO: 'latest'
+            OPENMDAO: 'dev'
             DYMOS: 'latest'
             MAKE_DOCS: 1
 
