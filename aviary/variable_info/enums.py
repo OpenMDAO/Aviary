@@ -58,7 +58,7 @@ class EquationsOfMotion(Enum):
     Available equations of motion for use during mission analysis
     """
     HEIGHT_ENERGY = 'height_energy'
-    TWO_DEGREES_OF_FREEDOM = '2dof'
+    TWO_DEGREES_OF_FREEDOM = '2DOF'
     # TODO these are a little out of place atm
     SIMPLE = 'simple'
     SOLVED = 'solved'

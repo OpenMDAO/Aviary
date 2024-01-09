@@ -210,7 +210,7 @@ class AviaryProblem(om.Problem):
 
             else:
                 # 2dof -> two_dof
-                method = self.mission_method.value.replace('2dof', 'two_dof')
+                method = self.mission_method.value.replace('2DOF', 'two_dof')
 
                 module = importlib.import_module(
                     self.mission_method.value, 'aviary.interface.default_phase_info')

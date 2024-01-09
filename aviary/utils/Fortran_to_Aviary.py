@@ -111,7 +111,7 @@ def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
             EOM = 'height_energy'
             mass = 'FLOPS'
         if legacy_code is GASP:
-            EOM = '2dof'
+            EOM = '2DOF'
             mass = 'GASP'
         writer.writerow(['settings:equations_of_motion'] + [EOM])
         writer.writerow(['settings:mass_method'] + [mass])
