@@ -1,10 +1,7 @@
 from copy import deepcopy
-import os
 import unittest
-from packaging import version
 
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
-import dymos
 
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.interface.default_phase_info.gasp import phase_info as gasp_phase_info
@@ -55,8 +52,6 @@ class FLOPSZeroItersTestCase(BaseProblemPhaseTestCase):
                                    "FLOPS", 'models/test_aircraft/aircraft_for_bench_FwFm.csv')
 
 
-@unittest.skipIf(version.parse(dymos.__version__) <= version.parse("1.8.0"),
-                 "Older version of Dymos treats non-time integration variables differently.")
 @use_tempdirs
 class SolvedProblemTestCase(BaseProblemPhaseTestCase):
 
