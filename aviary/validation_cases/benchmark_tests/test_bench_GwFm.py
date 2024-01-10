@@ -5,6 +5,7 @@ Takeoff, Climb, Cruise, Descent, Landing
 Computed Aero
 Large Single Aisle 1 data
 '''
+from copy import deepcopy
 import unittest
 
 import numpy as np
@@ -269,7 +270,8 @@ class ProblemPhaseTestCase(unittest.TestCase):
         self.expected_dict = expected_dict
 
     def bench_test_swap_1_GwFm(self):
-        prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwFm.csv', phase_info,
+        local_phase_info = deepcopy(phase_info)
+        prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwFm.csv', local_phase_info,
                           mission_method="FLOPS", mass_method="GASP")
 
         compare_against_expected_values(prob, self.expected_dict)
