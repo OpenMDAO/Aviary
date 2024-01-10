@@ -37,7 +37,7 @@ prob.add_post_mission_systems()
 # Link phases and variables
 prob.link_phases()
 
-prob.add_driver("SNOPT")
+prob.add_driver("SLSQP")
 
 prob.add_design_variables()
 
