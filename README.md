@@ -12,7 +12,7 @@ The user can select which type of mission analysis to use, as well as whether to
 ## Installation
 
 The simplest installation method for users is to install via pip.
-From within the base folder of Aviary, perform this command in your terminal:
+Once you have cloned the Aviary repo, change directories into the top-level Aviary folder (not within the `aviary` folder) and run the following command:
 
     pip install .
 

@@ -5,6 +5,7 @@ Takeoff, Climb, Cruise, Descent, Landing
 Computed Aero
 Large Single Aisle 1 data
 '''
+from copy import deepcopy
 import unittest
 
 import numpy as np
@@ -14,6 +15,7 @@ from aviary.interface.methods_for_level1 import run_aviary
 from aviary.validation_cases.benchmark_utils import \
     compare_against_expected_values
 from aviary.variable_info.variables import Dynamic
+from aviary.interface.default_phase_info.simple import phase_info
 
 
 @use_tempdirs
@@ -361,6 +363,6 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    z = ProblemPhaseTestCase()
-    z.setUp()
-    z.bench_test_swap_1_GwFm()
+    test = ProblemPhaseTestCase()
+    test.setUp()
+    test.bench_test_swap_1_GwFm_simple()
