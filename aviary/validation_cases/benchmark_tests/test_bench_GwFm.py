@@ -368,6 +368,6 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    z = ProblemPhaseTestCase()
-    z.setUp()
-    z.bench_test_swap_1_GwFm_simple()
+    test = ProblemPhaseTestCase()
+    test.setUp()
+    test.bench_test_swap_1_GwFm_simple()
