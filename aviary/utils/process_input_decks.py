@@ -96,7 +96,7 @@ def parse_inputs(vehicle_deck, aircraft_values: AviaryValues(), meta_data=_MetaD
             data = ''.join(line.rstrip(',').split())  # remove all white space
 
             if len(data) == 0:
-                continue  # skip line if it contains only white space
+                continue  # skip line it contained only commas
 
             # remove any elements that are empty (caused by trailing commas or extra commas)
             data_list = [dat for dat in data.split(',') if dat != '']
@@ -144,7 +144,7 @@ def update_options(aircraft_values: AviaryValues(), initial_guesses):
     Parameters
     ----------
     aircraft_values (AviaryValues): An instance of AviaryValues containing current aircraft values.
-        initial_guesses (dict): A dictionary of initial guesses for various parameters.
+    initial_guesses (dict): A dictionary of initial guesses for various parameters.
 
     Returns
     -------
