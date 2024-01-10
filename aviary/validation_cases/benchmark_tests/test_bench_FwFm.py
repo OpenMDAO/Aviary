@@ -265,9 +265,6 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
     def bench_test_swap_4_FwFm(self):
         local_phase_info = deepcopy(phase_info)
-        prob = run_aviary('models/test_aircraft/aircraft_for_bench_FwFm.csv',
-                          local_phase_info,
-                          mission_method="FLOPS", mass_method="FLOPS")
         prob = run_aviary('models/test_aircraft/aircraft_for_bench_FwFm.csv', local_phase_info,
                           mission_method="FLOPS", mass_method="FLOPS")
 
