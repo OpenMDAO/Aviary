@@ -18,7 +18,7 @@ from aviary.models.N3CC.N3CC_data import (
     takeoff_liftoff_user_options as _takeoff_liftoff_user_options)
 
 from aviary.variable_info.variables import Aircraft, Dynamic as _Dynamic
-from aviary.interface.default_phase_info.flops import default_premission_subsystems
+from aviary.interface.default_phase_info.height_energy import default_premission_subsystems
 from aviary.utils.preprocessors import preprocess_crewpayload
 from aviary.variable_info.variables_in import VariablesIn
 

@@ -11,6 +11,5 @@ This performs a coupled design-mission optimization and outputs the results from
 import aviary.api as av
 
 
-prob = av.run_aviary('models/test_aircraft/aircraft_for_bench_FwFm.csv', av.default_simple_phase_info,
-                     mission_method="simple", mass_method="FLOPS",
+prob = av.run_aviary('models/test_aircraft/aircraft_for_bench_FwFm_simple.csv', av.default_simple_phase_info,
                      optimizer="SLSQP", make_plots=True)

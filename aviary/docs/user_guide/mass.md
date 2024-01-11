@@ -33,6 +33,7 @@ Aviary's mass subsystem is designed to accommodate different methodologies, incl
 
 ## Using the Mass Subsystem
 
+The choice of which code's methods for mass estimate to use is set using the variable `settings:mass_method`. This variable can be specified in the Aviary input file or can be manually set when using the Level 2 or 3 interface.
 To effectively use the mass subsystem in Aviary, users need to provide reasonable estimates for mass-related variables in their aircraft .csv file.
 Which variables are used depends on which mass estimation subsystem you're using, such as `aircraft:crew_and_payload:mass_per_passenger`, `aircraft:engine:additional_mass_fraction`, etc.
 

@@ -14,7 +14,7 @@ from aviary.utils.test_utils.IO_test_util import (assert_match_spec,
                                                   skipIfMissingXDSM)
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variables import Dynamic
-from aviary.interface.default_phase_info.gasp import default_mission_subsystems
+from aviary.interface.default_phase_info.two_dof import default_mission_subsystems
 
 
 class DescentODETestCase(unittest.TestCase):

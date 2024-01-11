@@ -4,7 +4,7 @@ It runs the same mission as the `run_basic_aviary_example.py` script, but it use
 This exposes more options and flexibility to the user and uses the "Level 2" API within Aviary.
 
 We define a `phase_info` object, which tells Aviary how to model the mission.
-Here we have climb, cruise, a descent phases.
+Here we have climb, cruise, and descent phases.
 We then call the correct methods in order to set up and run an Aviary optimization problem.
 This performs a coupled design-mission optimization and outputs the results from Aviary into the `reports` folder.
 """
@@ -93,15 +93,15 @@ phase_info = {
 }
 
 
-prob = av.AviaryProblem(phase_info, "simple", "FLOPS", av.AnalysisScheme.COLLOCATION)
+prob = av.AviaryProblem()
 
 # Load aircraft and options data from user
 # Allow for user overrides here
-prob.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm.csv')
+prob.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm_simple.csv', phase_info)
 
-# Have checks for clashing user inputs
-# Raise warnings or errors depending on how clashing the issues are
-prob.check_inputs()
+
+# Preprocess inputs
+prob.check_and_preprocess_inputs()
 
 prob.add_pre_mission_systems()
 

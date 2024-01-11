@@ -5,7 +5,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.subsystems.premission import CorePreMission
-from aviary.interface.default_phase_info.flops import aero, prop, geom
+from aviary.interface.default_phase_info.height_energy import aero, prop, geom
 from aviary.utils.aviary_values import get_items
 from aviary.utils.functions import set_aviary_initial_values
 from aviary.validation_cases.validation_tests import get_flops_inputs, get_flops_outputs

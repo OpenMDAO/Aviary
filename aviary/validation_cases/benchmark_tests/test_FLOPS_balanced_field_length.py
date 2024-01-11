@@ -20,7 +20,7 @@ from aviary.models.N3CC.N3CC_data import \
     inputs as _inputs
 from aviary.variable_info.variables import Dynamic as _Dynamic
 from aviary.variable_info.variables_in import VariablesIn
-from aviary.interface.default_phase_info.flops import default_premission_subsystems
+from aviary.interface.default_phase_info.height_energy import default_premission_subsystems
 from aviary.subsystems.premission import CorePreMission
 
 Dynamic = _Dynamic.Mission

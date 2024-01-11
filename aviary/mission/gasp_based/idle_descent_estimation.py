@@ -2,7 +2,7 @@ import warnings
 
 import openmdao.api as om
 
-from aviary.interface.default_phase_info.gasp_fiti import create_gasp_based_descent_phases
+from aviary.interface.default_phase_info.two_dof_fiti import create_2dof_based_descent_phases
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 
@@ -27,7 +27,7 @@ def descent_range_and_fuel(
     prob.driver.opt_settings['print_level'] = 5
 
     if phases is None:
-        phases = create_gasp_based_descent_phases(
+        phases = create_2dof_based_descent_phases(
             ode_args,
             cruise_mach=cruise_mach,
         )

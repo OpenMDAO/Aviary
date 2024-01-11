@@ -4,11 +4,9 @@ Define meta data associated with variables in the Aviary data hierarchy.
 from copy import deepcopy
 from pathlib import Path
 
-import numpy as np
-
 from aviary.utils.develop_metadata import add_meta_data
-from aviary.variable_info.enums import Flap_Type, GASP_Engine_Type
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.enums import EquationsOfMotion, FlapType, GASPEngineType, LegacyCode, Verbosity
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 # ---------------------------
 # Meta data associated with variables in the aircraft data hierarchy.
@@ -2038,8 +2036,8 @@ add_meta_data(
                      "LEAPS1": None
                      },
     option=True,
-    default_value=GASP_Engine_Type.TURBOJET,
-    types=GASP_Engine_Type,
+    default_value=GASPEngineType.TURBOJET,
+    types=GASPEngineType,
     units="unitless",
     desc='specifies engine type used for engine mass calculation',
 )
@@ -4886,8 +4884,8 @@ add_meta_data(
                      "LEAPS1": None
                      },
     units="unitless",
-    default_value=Flap_Type.DOUBLE_SLOTTED,
-    types=Flap_Type,
+    default_value=FlapType.DOUBLE_SLOTTED,
+    types=FlapType,
     option=True,
     desc='Set the flap type. Available choices are: plain, split, single_slotted, '
     'double_slotted, triple_slotted, fowler, and double_slotted_fowler. '
@@ -7287,6 +7285,60 @@ add_meta_data(
     default_value=0.0001,
 )
 
+#  .----------------.  .----------------.  .----------------.  .----------------.  .----------------.  .-----------------. .----------------.  .----------------.
+# | .--------------. || .--------------. || .--------------. || .--------------. || .--------------. || .--------------. || .--------------. || .--------------. |
+# | |    _______   | || |  _________   | || |  _________   | || |  _________   | || |     _____    | || | ____  _____  | || |    ______    | || |    _______   | |
+# | |   /  ___  |  | || | |_   ___  |  | || | |  _   _  |  | || | |  _   _  |  | || |    |_   _|   | || ||_   \|_   _| | || |  .' ___  |   | || |   /  ___  |  | |
+# | |  |  (__ \_|  | || |   | |_  \_|  | || | |_/ | | \_|  | || | |_/ | | \_|  | || |      | |     | || |  |   \ | |   | || | / .'   \_|   | || |  |  (__ \_|  | |
+# | |   '.___`-.   | || |   |  _|  _   | || |     | |      | || |     | |      | || |      | |     | || |  | |\ \| |   | || | | |    ____  | || |   '.___`-.   | |
+# | |  |`\____) |  | || |  _| |___/ |  | || |    _| |_     | || |    _| |_     | || |     _| |_    | || | _| |_\   |_  | || | \ `.___]  _| | || |  |`\____) |  | |
+# | |  |_______.'  | || | |_________|  | || |   |_____|    | || |   |_____|    | || |    |_____|   | || ||_____|\____| | || |  `._____.'   | || |  |_______.'  | |
+# | |              | || |              | || |              | || |              | || |              | || |              | || |              | || |              | |
+# | '--------------' || '--------------' || '--------------' || '--------------' || '--------------' || '--------------' || '--------------' || '--------------' |
+#  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'
+
+add_meta_data(
+    Settings.EQUATIONS_OF_MOTION,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    desc='Sets which equations of motion Aviary will use in mission analysis',
+    option=True,
+    types=EquationsOfMotion,
+    default_value=None,
+)
+
+add_meta_data(
+    Settings.MASS_METHOD,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    desc="Sets which legacy code's methods will be used for mass estimation",
+    option=True,
+    types=LegacyCode,
+    default_value=None
+)
+
+add_meta_data(
+    Settings.VERBOSITY,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    desc='Sets how much information Aviary outputs when run. Options include:'
+         '0. QUIET: All output except errors are suppressed'
+         '1. BRIEF: Only important information is output, in human-readable format'
+         '2. VERBOSE: All avaliable informating is output, in human-readable format'
+         '3. DEBUG: Intermediate status and calculation outputs, no formatting requirement',
+    option=True,
+    types=Verbosity,
+    default_value=Verbosity.BRIEF
+)
 
 # here we create a copy of the Aviary-core metadata. The reason for this copy is that if we simply imported the Aviary _MetaData in all the external subsystem extensions, we would be modifying the original and the original _MetaData in the core of Aviary could get altered in undesirable ways. By importing this copy to the API the user modifies a new MetaData designed just for their purposes.
 CoreMetaData = deepcopy(_MetaData)
