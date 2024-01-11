@@ -6,7 +6,6 @@ a file.
 import unittest
 import numpy as np
 import openmdao.api as om
-import pkg_resources
 from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.interface.methods_for_level2 import AviaryProblem
@@ -47,13 +46,11 @@ class TestSolvedAero(unittest.TestCase):
     def test_solved_aero_pass_polar(self):
         # Test that passing training data provides the same results
         local_phase_info = deepcopy(phase_info)
-        prob = AviaryProblem(
-            local_phase_info, mission_method="simple", mass_method="FLOPS")
 
-        csv_path = pkg_resources.resource_filename(
-            "aviary", "subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv")
+        prob = AviaryProblem()
 
-        prob.load_inputs(csv_path)
+        prob.load_inputs(
+            "subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv", local_phase_info)
         prob.add_pre_mission_systems()
         prob.add_phases()
         prob.add_post_mission_systems()
@@ -89,9 +86,9 @@ class TestSolvedAero(unittest.TestCase):
 
         ph_in['cruise']['subsystem_options'] = {'core_aerodynamics': subsystem_options}
 
-        prob = AviaryProblem(ph_in, mission_method="simple", mass_method="FLOPS")
+        prob = AviaryProblem()
 
-        prob.load_inputs(csv_path)
+        prob.load_inputs(csv_path, ph_in)
 
         prob.aviary_inputs.set_val(Aircraft.Design.LIFT_POLAR,
                                    np.zeros_like(CL), units='unitless')

@@ -356,8 +356,8 @@ class ProblemPhaseTestCase(unittest.TestCase):
             },
         }
 
-        prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwFm.csv', phase_info,
-                          mission_method="simple", mass_method="GASP", max_iter=15)
+        prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwFm_simple.csv', phase_info,
+                          max_iter=15)
 
         compare_against_expected_values(prob, self.expected_dict)
 

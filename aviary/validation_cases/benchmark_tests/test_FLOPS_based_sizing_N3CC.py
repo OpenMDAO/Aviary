@@ -26,7 +26,7 @@ from aviary.mission.flops_based.phases.simple_energy_phase import EnergyPhase
 
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.subsystems.premission import CorePreMission
-from aviary.interface.default_phase_info.flops import default_premission_subsystems, default_mission_subsystems
+from aviary.interface.default_phase_info.height_energy import default_premission_subsystems, default_mission_subsystems
 from aviary.utils.preprocessors import preprocess_crewpayload
 
 try:

@@ -160,13 +160,12 @@ class CustomEngineTest(unittest.TestCase):
             }
         }
 
-        prob = AviaryProblem(phase_info, mission_method="simple",
-                             mass_method="FLOPS", reports=False)
+        prob = AviaryProblem(reports=False)
 
         # Load aircraft and options data from user
         # Allow for user overrides here
         prob.load_inputs("models/test_aircraft/aircraft_for_bench_GwFm.csv",
-                         engine_builder=SimpleTestEngine())
+                         phase_info, engine_builder=SimpleTestEngine())
 
         # Have checks for clashing user inputs
         # Raise warnings or errors depending on how clashing the issues are

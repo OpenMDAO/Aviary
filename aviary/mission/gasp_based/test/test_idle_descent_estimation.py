@@ -2,7 +2,7 @@ import unittest
 
 from openmdao.utils.assert_utils import assert_near_equal
 
-from aviary.interface.default_phase_info.gasp import default_mission_subsystems
+from aviary.interface.default_phase_info.two_dof import default_mission_subsystems
 from aviary.mission.gasp_based.idle_descent_estimation import descent_range_and_fuel
 from aviary.subsystems.propulsion.engine_deck import EngineDeck
 from aviary.variable_info.variables import Aircraft, Dynamic

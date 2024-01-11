@@ -352,8 +352,8 @@ class ProblemPhaseTestCase(unittest.TestCase):
             },
         }
 
-        prob = run_aviary('models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info,
-                          mission_method="simple", mass_method="FLOPS")
+        prob = run_aviary(
+            'models/test_aircraft/aircraft_for_bench_FwFm_simple.csv', phase_info)
 
         compare_against_expected_values(prob, self.expected_dict)
 

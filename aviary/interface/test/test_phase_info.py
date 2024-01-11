@@ -3,7 +3,6 @@ Test the conversion between phase info and phase builder to ensure
 consistency and correctness.
 """
 import unittest
-import pkg_resources
 from copy import deepcopy
 
 from openmdao.utils.assert_utils import assert_near_equal
@@ -15,7 +14,6 @@ from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.mission.flops_based.phases.phase_builder_base import \
     PhaseBuilderBase as PhaseBuilder, phase_info_to_builder
 # must keep this import to register the phase
-from aviary.mission.flops_based.phases.simple_energy_phase import EnergyPhase
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -90,12 +88,10 @@ class TestParameterizePhaseInfo(unittest.TestCase):
     def test_phase_info_parameterization_gasp(self):
         phase_info = deepcopy(ph_in_gasp)
 
-        prob = AviaryProblem(phase_info, mission_method="GASP", mass_method="GASP")
+        prob = AviaryProblem()
 
-        csv_path = pkg_resources.resource_filename(
-            "aviary", "models/small_single_aisle/small_single_aisle_GwGm.csv")
-
-        prob.load_inputs(csv_path)
+        prob.load_inputs(
+            "models/small_single_aisle/small_single_aisle_GwGm.csv", phase_info)
         prob.check_inputs()
 
         # We can set some crazy vals, since we aren't going to optimize.

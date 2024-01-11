@@ -16,6 +16,14 @@ Once you have cloned the Aviary repo, change directories into the top-level Avia
 
     pip install .
 
+If you want to also run the Aviary test suite (this is not strictly necessary), you can instead run:
+
+    pip install .[test]
+
+If you also want to install all packages used for the Aviary tests _and_ external subsystem examples, you can instead run:
+
+    pip install .[all]
+
 ## Documentation
 
 The Aviary documentation is located [here](https://openmdao.github.io/om-Aviary/intro.html).
@@ -30,7 +38,9 @@ Otherwise you can build the docs locally:
 
 ## Visualization
 
-To create XDSM visualizations of some of the Aviary code, run the `run_all.py` utility script within the `aviary/xdsm` directory.
+To create XDSM visualizations of some of the Aviary code, you can run the `run_all.py` utility script within the `aviary/xdsm` directory.
+This is not strictly necessary but is used in some of the unit tests.
+This requires installing Aviary with the `[test]` or `[all]` options as described above.
 
 ## Validation
 
@@ -66,4 +76,4 @@ We have also provided a static version of the `environment.yml` at the top level
 ## Planned future features
 
 Aviary is in active development.
-We plan to expand its capabilities and add features as detailed in [this doc page](https://openmdao.github.io/om-Aviary/misc_resources/planned_future_features.html).
+We plan to expand its capabilities and have provided a non-exhaustive [list of future features](https://openmdao.github.io/om-Aviary/misc_resources/planned_future_features.html).

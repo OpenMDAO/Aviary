@@ -53,6 +53,87 @@ class AnalysisScheme(Enum):
     SHOOTING = auto()
 
 
+class EquationsOfMotion(Enum):
+    """
+    Available equations of motion for use during mission analysis
+    """
+    HEIGHT_ENERGY = 'height_energy'
+    TWO_DEGREES_OF_FREEDOM = '2DOF'
+    # TODO these are a little out of place atm
+    SIMPLE = 'simple'
+    SOLVED = 'solved'
+
+
+@unique
+class GASPEngineType(Enum):
+    """
+    Defines the type of engine to use in GASP-based mass calculations.
+    Note that only the value for the first engine model will be used.
+    Currenly only the TURBOJET option is implemented, but other types of engines will be added in the future.
+    """
+    # Reciprocating engine with carburator
+    RECIP_CARB = 1
+
+    # Reciprocating engine with fuel injection
+    RECIP_FUEL_INJECT = 2
+
+    # Reciprocating engine with fuel injection and geared
+    RECIP_FUEL_INJECT_GEARED = 3
+
+    # Rotary-combustion engine
+    ROTARY = 4
+
+    # Turboshaft engine
+    TURBOSHAFT = 5
+
+    # Turboprop engine
+    TURBOPROP = 6
+
+    # Turbojet or turbofan engine
+    TURBOJET = 7
+
+    # Reciprocating engine with carburator; use HOPWSZ (horizontally-opposed piston
+    # weight and size) methodology for geometry and mass
+    RECIP_CARB_HOPWSZ = 11
+
+    # Reciprocating engine with fuel injection; use HOPWSZ (horizontally-opposed piston
+    # weight and size) methodology for geometry and mass
+    RECIP_FUEL_INJECT_HOPWSZ = 12
+
+    # Reciprocating engine with fuel injection and geared; use HOPWSZ (horizontally-
+    # opposed piston weight and size) methodology for geometry and mass
+    RECIP_FUEL_INJECT_GEARED_HOPWSZ = 13
+
+    # Rotary-combustion engine; use RCWSZ (rotary combustion weight and size) methodology
+    # for geometry and mass
+    ROTARY_RCWSZ = 14
+
+
+@unique
+class FlapType(Enum):
+    """
+    Defines the type of flap used on the wing. Used in GASP-based aerodynamics and mass calculations.
+    """
+    PLAIN = 1
+    SPLIT = 2
+    SINGLE_SLOTTED = 3
+    DOUBLE_SLOTTED = 4
+    TRIPLE_SLOTTED = 5
+    FOWLER = 6
+    DOUBLE_SLOTTED_FOWLER = 7
+
+
+class LegacyCode(Enum):
+    """
+    Flag for legacy codebases
+    """
+    FLOPS = 'FLOPS'
+    GASP = 'GASP'
+
+    def __str__(self):
+        return self.value
+
+
 class ProblemType(Enum):
     """
     ProblemType is used to switch between different combinations of
@@ -72,9 +153,9 @@ class ProblemType(Enum):
     gross weight, it will then find the maximum distance the off-design
     aircraft can fly.
     """
-    SIZING = auto()
-    ALTERNATE = auto()
-    FALLOUT = auto()
+    SIZING = 'sizing'
+    ALTERNATE = 'alternate'
+    FALLOUT = 'fallout'
 
 
 class SpeedType(Enum):
@@ -89,95 +170,14 @@ class SpeedType(Enum):
     MACH = auto()
 
 
-@unique
-class GASP_Engine_Type(Enum):
+class Verbosity(Enum):
     """
-    Defines the type of engine to use in GASP-based mass calculations.
-    Note that only the value for the first engine model will be used.
-    Currenly only the TURBOJET option is implemented, but other types of engines will be added in the future.
-    """
+    Sets how much information Aviary outputs when run
 
-    RECIP_CARB = 1
+    Verbosity levels are based on ubuntu's standard:
+    https://discourse.ubuntu.com/t/cli-verbosity-levels/26973
     """
-    Reciprocating engine with carburator
-    """
-    RECIP_FUEL_INJECT = 2
-    """
-    Reciprocating engine with fuel injection
-    """
-    RECIP_FUEL_INJECT_GEARED = 3
-    """
-    Reciprocating engine with fuel injection and geared
-    """
-    ROTARY = 4
-    """
-    Rotary-combustion engine
-    """
-    TURBOSHAFT = 5
-    """
-    Turboshaft engine
-    """
-    TURBOPROP = 6
-    """
-    Turboprop engine
-    """
-    TURBOJET = 7
-    """
-    Turbojet or turbofan engine
-    """
-    RECIP_CARB_HOPWSZ = 11
-    """
-    Reciprocating engine with carburator; use HOPWSZ (horizontally-opposed piston weight and size)
-    methodology for geometry and mass
-    """
-    RECIP_FUEL_INJECT_HOPWSZ = 12
-    """
-    Reciprocating engine with fuel injection; use HOPWSZ (horizontally-opposed piston weight and size)
-    methodology for geometry and mass
-    """
-    RECIP_FUEL_INJECT_GEARED_HOPWSZ = 13
-    """
-    Reciprocating engine with fuel injection and geared; use HOPWSZ (horizontally-opposed piston weight and size)
-    methodology for geometry and mass
-    """
-    ROTARY_RCWSZ = 14
-    """
-    Rotary-combustion engine; use RCWSZ (rotary combustion weight and size)
-    methodology for geometry and mass
-    """
-
-
-@unique
-class Flap_Type(Enum):
-    """
-    Defines the type of flap used on the wing. Used in GASP-based aerodynamics and mass calculations.
-    """
-
-    PLAIN = 1
-    """
-    Plain flaps
-    """
-    SPLIT = 2
-    """
-    Split flaps
-    """
-    SINGLE_SLOTTED = 3
-    """
-    Single-slotted flaps
-    """
-    DOUBLE_SLOTTED = 4
-    """
-    Double-slotted flaps
-    """
-    TRIPLE_SLOTTED = 5
-    """
-    Triple-slotted flaps
-    """
-    FOWLER = 6
-    """
-    Fowler flaps
-    """
-    DOUBLE_SLOTTED_FOWLER = 7
-    """
-    Double-slotted Fowler flaps
-    """
+    QUIET = 0
+    BRIEF = 1
+    VERBOSE = 2
+    DEBUG = 3

@@ -1,6 +1,6 @@
 '''
 This is a simple test mission to demonstrate the inclusion of a
-pre-mission user defined external subsystem.  The simple mission
+pre-mission user defined external subsystem. The simple mission
 is based on input data read from the benchmark data file bench_4.csv,
 which represents a single-aisle commercial transport aircraft.  The
 OpenAeroStruct (OAS) subsystem is used to compute an optimum wing
@@ -108,17 +108,15 @@ phase_info['pre_mission'] = {'include_takeoff': False, 'optimize_mass': True}
 if use_OAS:
     phase_info['pre_mission']['external_subsystems'] = [wing_weight_builder]
 
-aircraft_definition_file = 'models/test_aircraft/aircraft_for_bench_FwFm.csv'
-mission_method = 'simple'
-mass_method = 'FLOPS'
+aircraft_definition_file = 'models/test_aircraft/aircraft_for_bench_FwFm_simple.csv'
 make_plots = False
 max_iter = 100
 optimizer = 'SNOPT'
 
 
-prob = av.AviaryProblem(phase_info, mission_method=mission_method, mass_method='FLOPS')
+prob = av.AviaryProblem()
 
-prob.load_inputs(aircraft_definition_file)
+prob.load_inputs(aircraft_definition_file, phase_info)
 prob.check_inputs()
 prob.add_pre_mission_systems()
 prob.add_phases()
