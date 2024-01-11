@@ -36,6 +36,12 @@ class TestCheckInputs(unittest.TestCase):
         self.assertTrue(check_phase_info(phase_info_gasp,
                         mission_method=TWO_DEGREES_OF_FREEDOM))
 
+    def test_incorrect_mission_method(self):
+        # Let's pass an incorrect mission_method name
+        incorrect_mission_method = 'INVALID_METHOD'
+        with self.assertRaises(ValueError):
+            check_phase_info(phase_info_flops, mission_method=incorrect_mission_method)
+
 
 if __name__ == '__main__':
     unittest.main()

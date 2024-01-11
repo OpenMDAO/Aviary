@@ -226,8 +226,10 @@ def check_phase_info(phase_info, mission_method):
     elif mission_method is SIMPLE:
         return
     else:
-        raise ValueError(
-            "Invalid mission_method. Please choose from 'HEIGHT_ENERGY', 'TWO_DEGREES_OF_FREEDOM', 'SIMPLE', or 'SOLVED'.")
+        possible_values = ["'"+e.value+"'" for e in EquationsOfMotion]
+        possible_values[-1] = "or " + possible_values[-1]
+        raise ValueError("Invalid mission_method. Please choose from " +
+                         ", ".join(possible_values) + ".")
 
     # Check if all phases exist in phase_info
     for phase in phase_info:
