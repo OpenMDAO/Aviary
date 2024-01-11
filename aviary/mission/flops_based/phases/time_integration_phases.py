@@ -3,6 +3,8 @@ import dymos as dm
 import openmdao.api as om
 
 from aviary.mission.flops_based.ode.mission_ODE import MissionODE
+from aviary.mission.flops_based.ode.landing_ode import LandingODE
+from aviary.mission.flops_based.ode.takeoff_ode import TakeoffODE
 from aviary.mission.flops_based.phases.cruise_phase import Cruise
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 from aviary.mission.gasp_based.ode.time_integration_base_classes import SimuPyProblem
@@ -16,12 +18,17 @@ import warnings
 
 
 class SGMHeightEnergy(SimuPyProblem):
-    def __init__(self,
-                 ode_args={},
-                 simupy_args={},):
+    def __init__(
+        self,
+        phase_name='cruise',
+        distance_trigger_units='NM',
+        ode_args={},
+        simupy_args={},
+    ):
         super().__init__(MissionODE(
             analysis_scheme=AnalysisScheme.SHOOTING,
             **ode_args),
+            output_names=[],
             state_names=[
                 Dynamic.Mission.MASS,
                 Dynamic.Mission.RANGE,
@@ -31,6 +38,8 @@ class SGMHeightEnergy(SimuPyProblem):
                 Dynamic.Mission.MASS_RATE: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
             **simupy_args)
 
+        self.phase_name = phase_name
+        self.distance_trigger_units = distance_trigger_units
         self.event_channel_names = [
             # Dynamic.Mission.DISTANCE,
             Dynamic.Mission.MASS,
@@ -39,16 +48,86 @@ class SGMHeightEnergy(SimuPyProblem):
 
     def event_equation_function(self, t, x):
         self.output_equation_function(t, x)
-        distance = self.get_val(Dynamic.Mission.DISTANCE,
-                                units=self.distance_trigger_units).squeeze()
-        distance_trigger = self.get_val(
-            "distance_trigger", units=self.distance_trigger_units).squeeze()
+        # distance = self.get_val(Dynamic.Mission.RANGE,
+        #                         units=self.distance_trigger_units).squeeze()
+        # distance_trigger = self.get_val(
+        #     "distance_trigger", units=self.distance_trigger_units).squeeze()
 
         current_mass = self.get_val(Dynamic.Mission.MASS, units="lbm").squeeze()
         mass_trigger = 150000
-
         return np.array([
             current_mass - mass_trigger
+        ])
+
+
+class SGMDetailedTakeoff(SimuPyProblem):
+    def __init__(
+        self,
+        phase_name='detailed_takeoff',
+        ode_args={},
+        simupy_args={},
+    ):
+        super().__init__(TakeoffODE(
+            analysis_scheme=AnalysisScheme.SHOOTING,
+            **ode_args),
+            output_names=[],
+            state_names=[
+                Dynamic.Mission.MASS,
+                Dynamic.Mission.RANGE,
+                Dynamic.Mission.ALTITUDE,
+        ],
+            alternate_state_rate_names={
+                Dynamic.Mission.MASS_RATE: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
+            **simupy_args)
+
+        self.phase_name = phase_name
+        self.event_channel_names = [
+            Dynamic.Mission.ALTITUDE,
+        ]
+        self.num_events = len(self.event_channel_names)
+
+    def event_equation_function(self, t, x):
+        self.output_equation_function(t, x)
+        current_alt = self.get_val(Dynamic.Mission.ALTITUDE, units="ft").squeeze()
+        alt_trigger = 50
+        return np.array([
+            current_alt - alt_trigger
+            # maybe mach
+        ])
+
+
+class SGMDetailedLanding(SimuPyProblem):
+    def __init__(
+        self,
+        phase_name='detailed_landing',
+        ode_args={},
+        simupy_args={},
+    ):
+        super().__init__(LandingODE(
+            analysis_scheme=AnalysisScheme.SHOOTING,
+            **ode_args),
+            output_names=[],
+            state_names=[
+                Dynamic.Mission.MASS,
+                Dynamic.Mission.RANGE,
+                Dynamic.Mission.ALTITUDE,
+        ],
+            alternate_state_rate_names={
+                Dynamic.Mission.MASS_RATE: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
+            **simupy_args)
+
+        self.phase_name = phase_name
+        self.event_channel_names = [
+            Dynamic.Mission.ALTITUDE,
+        ]
+        self.num_events = len(self.event_channel_names)
+
+    def event_equation_function(self, t, x):
+        self.output_equation_function(t, x)
+        current_alt = self.get_val(Dynamic.Mission.ALTITUDE, units="ft").squeeze()
+        alt_trigger = 0
+        return np.array([
+            current_alt - alt_trigger
         ])
 
 
@@ -91,13 +170,15 @@ def test_phase(phases, ode_args_tab):
         promotes_inputs=['aircraft:*', 'mission:*'],
         promotes_outputs=['aircraft:*', 'mission:*']
     )
-    prob.model.add_subsystem('traj', traj,)  # promotes=['aircraft:*','mission:*']
-    prob.model.promotes('traj', inputs=[
-        Aircraft.Wing.CHARACTERISTIC_LENGTH,
-        Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH,
-        Aircraft.VerticalTail.CHARACTERISTIC_LENGTH,
-        Aircraft.Fuselage.CHARACTERISTIC_LENGTH,
-        Aircraft.Nacelle.CHARACTERISTIC_LENGTH,])
+    prob.model.add_subsystem('traj', traj,
+                             promotes=['aircraft:*', 'mission:*']
+                             )
+    # prob.model.promotes('traj', inputs=[
+    #     Aircraft.Wing.CHARACTERISTIC_LENGTH,
+    #     Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH,
+    #     Aircraft.VerticalTail.CHARACTERISTIC_LENGTH,
+    #     Aircraft.Fuselage.CHARACTERISTIC_LENGTH,
+    #     Aircraft.Nacelle.CHARACTERISTIC_LENGTH,])
 
     prob.model.add_subsystem(
         "fuel_obj",

@@ -179,7 +179,7 @@ class SimuPyProblem(SimulationMixin):
                 for output_name in output_names
             ]
 
-        if include_state_outputs:
+        if include_state_outputs or output_names == []:  # prevent empty outputs
             output_names = state_names + output_names
             self.output_units = self.state_units + self.output_units
 
@@ -227,8 +227,6 @@ class SimuPyProblem(SimulationMixin):
 
     @state.setter
     def state(self, value):
-        print('state.setter: self.state, value')
-        print(self.state, value)
         if np.all(self.state == value):
             return
         for state_name, elem_val, unit in zip(
@@ -414,9 +412,6 @@ class SGMTrajBase(om.ExplicitComponent):
                     if '.' in prom_name:
                         continue
                     traj_promote_initial_input[prom_name] = data
-            # print(traj_promote_initial_input)
-            # print(len(traj_promote_initial_input))
-            # exit()
 
         self.traj_promote_initial_input = {
             **self.options["param_dict"], **traj_promote_initial_input}

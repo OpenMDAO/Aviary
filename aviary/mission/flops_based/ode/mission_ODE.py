@@ -198,24 +198,21 @@ class MissionODE(om.Group):
                            ],
                            promotes_outputs=['initial_mass_residual'])
 
-        if analysis_scheme is AnalysisScheme.SHOOTING:
+        if analysis_scheme is AnalysisScheme.SHOOTING and False:
             from aviary.utils.functions import create_printcomp
             dummy_comp = create_printcomp(
                 all_inputs=[
-                    Aircraft.Design.OPERATING_MASS,
-                    Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS,  # should be total
+                    't_curr',
                     Mission.Design.RESERVE_FUEL,
                     Dynamic.Mission.MASS,
                     Dynamic.Mission.RANGE,
-                    Dynamic.Mission.THROTTLE,
-                    'required_lift',
-                    'load_factor',
                     Dynamic.Mission.ALTITUDE,
                     Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 ],
                 input_units={
-                    'required_lift': 'lbf',
+                    't_curr': 's',
                     Dynamic.Mission.FLIGHT_PATH_ANGLE: 'deg',
+                    Dynamic.Mission.RANGE: 'NM',
                 })
             self.add_subsystem(
                 "dummy_comp",
@@ -223,3 +220,4 @@ class MissionODE(om.Group):
                 promotes_inputs=["*"],)
             self.set_input_defaults(
                 Dynamic.Mission.RANGE, val=0, units='NM')
+            self.set_input_defaults('t_curr', val=0, units='s')
