@@ -59,7 +59,7 @@ class EquationsOfMotion(Enum):
     """
     TWO_DEGREES_OF_FREEDOM = '2DOF'
     # TODO these are a little out of place atm
-    SIMPLE = 'simple'
+    HEIGHT_ENERGY = 'height_energy'
     SOLVED = 'solved'
 
 

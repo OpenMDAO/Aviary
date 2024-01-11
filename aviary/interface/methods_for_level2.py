@@ -19,7 +19,7 @@ from openmdao.utils.units import valid_units
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
 from aviary.mission.flops_based.phases.build_landing import Landing
 from aviary.mission.flops_based.phases.build_takeoff import Takeoff
-from aviary.mission.flops_based.phases.simple_energy_phase import EnergyPhase
+from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
 from aviary.mission.gasp_based.ode.groundroll_ode import GroundrollODE
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_ode import \
@@ -67,7 +67,7 @@ FLOPS = LegacyCode.FLOPS
 GASP = LegacyCode.GASP
 
 TWO_DEGREES_OF_FREEDOM = EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
-SIMPLE = EquationsOfMotion.SIMPLE
+HEIGHT_ENERGY = EquationsOfMotion.HEIGHT_ENERGY
 SOLVED = EquationsOfMotion.SOLVED
 
 
@@ -206,8 +206,8 @@ class AviaryProblem(om.Problem):
             else:
                 if self.mission_method is TWO_DEGREES_OF_FREEDOM:
                     from aviary.interface.default_phase_info.two_dof import phase_info
-                elif self.mission_method is SIMPLE:
-                    from aviary.interface.default_phase_info.simple import phase_info
+                elif self.mission_method is HEIGHT_ENERGY:
+                    from aviary.interface.default_phase_info.height_energy import phase_info
                 elif self.mission_method is SOLVED:
                     from aviary.interface.default_phase_info.solved import phase_info
 
@@ -240,7 +240,7 @@ class AviaryProblem(om.Problem):
 
         ## PROCESSING ##
         # set up core subsystems
-        if mission_method is SIMPLE:
+        if mission_method is HEIGHT_ENERGY:
             everything_else_origin = FLOPS
         elif mission_method in (TWO_DEGREES_OF_FREEDOM, SOLVED):
             everything_else_origin = GASP
@@ -412,7 +412,7 @@ class AviaryProblem(om.Problem):
             self._add_gasp_takeoff_systems()
 
         # Check for HE mission method
-        elif self.mission_method is SIMPLE:
+        elif self.mission_method is HEIGHT_ENERGY:
             self._add_flops_takeoff_systems()
 
     def _add_flops_takeoff_systems(self):
@@ -714,7 +714,7 @@ class AviaryProblem(om.Problem):
         default_mission_subsystems = [
             subsystems['aerodynamics'], subsystems['propulsion']]
 
-        if self.mission_method is SIMPLE:
+        if self.mission_method is HEIGHT_ENERGY:
             phase_object = EnergyPhase.from_phase_info(
                 phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data)
 
@@ -747,7 +747,7 @@ class AviaryProblem(om.Problem):
                 fix_initial_time = get_initial(fix_initial, "time", True)
 
             input_initial = False
-            if self.mission_method is SIMPLE:
+            if self.mission_method is HEIGHT_ENERGY:
                 user_options.set_val('initial_ref', 10., 'min')
                 duration_bounds = user_options.get_val("duration_bounds", 'min')
                 user_options.set_val(
@@ -1051,7 +1051,7 @@ class AviaryProblem(om.Problem):
                     if phase_name == 'ascent':
                         self._add_groundroll_eq_constraint(phase)
 
-        elif self.mission_method is SIMPLE:
+        elif self.mission_method is HEIGHT_ENERGY:
             for phase_idx, phase_name in enumerate(phases):
                 phase = traj.add_phase(
                     phase_name, self._get_simple_phase(phase_name, phase_idx))
@@ -1173,7 +1173,7 @@ class AviaryProblem(om.Problem):
         """
 
         if include_landing and self.post_mission_info['include_landing']:
-            if self.mission_method is SIMPLE:
+            if self.mission_method is HEIGHT_ENERGY:
                 self._add_flops_landing_systems()
             elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
                 self._add_gasp_landing_systems()
@@ -1192,7 +1192,7 @@ class AviaryProblem(om.Problem):
                 self.post_mission.add_subsystem(external_subsystem.name,
                                                 subsystem_postmission)
 
-        if self.mission_method is SIMPLE:
+        if self.mission_method is HEIGHT_ENERGY:
             phases = list(self.phase_info.keys())
             ecomp = om.ExecComp('fuel_burned = initial_mass - mass_final',
                                 initial_mass={'units': 'lbm'},
@@ -1358,7 +1358,7 @@ class AviaryProblem(om.Problem):
                 phases, vars=[Dynamic.Mission.RANGE], units='m', ref=10.e3)
             self.traj.link_phases(phases[:7], vars=['TAS'], units='kn', ref=200.)
 
-        elif self.mission_method is SIMPLE:
+        elif self.mission_method is HEIGHT_ENERGY:
             self.traj.link_phases(
                 phases, ["time", Dynamic.Mission.MASS, Dynamic.Mission.RANGE], connected=True)
 
@@ -1619,7 +1619,7 @@ class AviaryProblem(om.Problem):
             for dv_name, dv_dict in dv_dict.items():
                 self.model.add_design_var(dv_name, **dv_dict)
 
-        if self.mission_method is SIMPLE:
+        if self.mission_method is HEIGHT_ENERGY:
             optimize_mass = self.pre_mission_info.get('optimize_mass')
             if optimize_mass:
                 self.model.add_design_var(Mission.Design.GROSS_MASS, units='lbm',
@@ -1742,7 +1742,7 @@ class AviaryProblem(om.Problem):
                 self.model.add_objective(Mission.Objectives.FUEL, ref=ref)
 
         # If 'mission_method' is 'FLOPS', add a 'fuel_burned' objective
-        elif self.mission_method is SIMPLE:
+        elif self.mission_method is HEIGHT_ENERGY:
             ref = ref if ref is not None else default_ref_values.get("fuel_burned", 1)
             self.model.add_objective("fuel_burned", ref=ref)
 
@@ -2031,7 +2031,7 @@ class AviaryProblem(om.Problem):
             rotation_mass = self.initial_guesses['rotation_mass']
             flight_duration = self.initial_guesses['flight_duration']
 
-        if self.mission_method is SIMPLE:
+        if self.mission_method is HEIGHT_ENERGY:
             control_keys = ["mach", "altitude"]
             state_keys = ["mass", "range"]
         else:
@@ -2045,7 +2045,7 @@ class AviaryProblem(om.Problem):
         prob_keys = ["tau_gear", "tau_flaps"]
 
         # for the simple mission method, use the provided initial and final mach and altitude values from phase_info
-        if self.mission_method is SIMPLE:
+        if self.mission_method is HEIGHT_ENERGY:
             initial_altitude = self.phase_info[phase_name]['user_options']['initial_altitude']
             final_altitude = self.phase_info[phase_name]['user_options']['final_altitude']
             initial_mach = self.phase_info[phase_name]['user_options']['initial_mach']

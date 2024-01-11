@@ -78,7 +78,7 @@ class TestPhaseInfo(unittest.TestCase):
 
     def test_default_phase_simple(self):
         """Tests the roundtrip conversion for default_phase_info.simple"""
-        from aviary.interface.default_phase_info.simple import phase_info
+        from aviary.interface.default_phase_info.height_energy import phase_info
         local_phase_info = deepcopy(phase_info)
         self._test_phase_info_dict(local_phase_info, 'cruise')
 

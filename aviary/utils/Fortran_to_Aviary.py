@@ -108,7 +108,7 @@ def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
         for var, (val, units) in sorted(vehicle_data['input_values']):
             writer.writerow([var] + val + [units])
         if legacy_code is FLOPS:
-            EOM = 'simple'
+            EOM = 'height_energy'
             mass = 'FLOPS'
         if legacy_code is GASP:
             EOM = '2DOF'
