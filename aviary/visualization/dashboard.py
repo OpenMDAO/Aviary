@@ -556,7 +556,6 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
 
 
 if __name__ == "__main__":
-    # so we can get the files written to the repo top directory
     parser = argparse.ArgumentParser()
     _dashboard_setup_parser(parser)
     args = parser.parse_args()
