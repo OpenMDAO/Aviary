@@ -6,8 +6,8 @@ from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.interface.default_phase_info.flops import phase_info as ph_in_flops
-from aviary.interface.default_phase_info.gasp import phase_info as ph_in_gasp
+from aviary.interface.default_phase_info.height_energy import phase_info as ph_in_flops
+from aviary.interface.default_phase_info.two_dof import phase_info as ph_in_gasp
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -17,12 +17,12 @@ class StaticGroupTest(unittest.TestCase):
     def test_post_mission_promotion(self):
         phase_info = deepcopy(ph_in_flops)
 
-        prob = AviaryProblem(phase_info, mission_method="FLOPS", mass_method="FLOPS")
+        prob = AviaryProblem()
 
         csv_path = pkg_resources.resource_filename(
             "aviary", "models/test_aircraft/aircraft_for_bench_GwFm.csv")
 
-        prob.load_inputs(csv_path)
+        prob.load_inputs(csv_path, phase_info)
         prob.check_inputs()
 
         # TODO: This needs to be converted into a reserve and a scaler so that it can
@@ -51,12 +51,12 @@ class StaticGroupTest(unittest.TestCase):
     def test_gasp_relative_reserve(self):
         phase_info = deepcopy(ph_in_gasp)
 
-        prob = AviaryProblem(phase_info, mission_method="GASP", mass_method="GASP")
+        prob = AviaryProblem()
 
         csv_path = pkg_resources.resource_filename(
             "aviary", "models/small_single_aisle/small_single_aisle_GwGm.csv")
 
-        prob.load_inputs(csv_path)
+        prob.load_inputs(csv_path, phase_info)
         prob.check_inputs()
 
         prob.aviary_inputs.set_val(Mission.Summary.GROSS_MASS, 140000.0, units='lbm')

@@ -2,7 +2,7 @@ import unittest
 
 import openmdao.api as om
 
-from aviary.interface.default_phase_info.flops import default_mission_subsystems
+from aviary.interface.default_phase_info.height_energy import default_mission_subsystems
 from aviary.mission.flops_based.ode.landing_ode import FlareODE
 from aviary.models.N3CC.N3CC_data import (
     detailed_landing_flare, inputs, landing_subsystem_options)

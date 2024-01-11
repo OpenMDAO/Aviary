@@ -8,12 +8,12 @@ entry point to Aviary.
 from aviary.api import AviaryProblem
 from aviary.api import AnalysisScheme, SpeedType, AlphaModes
 from aviary.api import FlexibleTraj
-from aviary.api import create_gasp_based_ascent_phases
+from aviary.api import create_2dof_based_ascent_phases
 from aviary.api import SGMCruise, SGMDescent
 from aviary.api import Dynamic
 
 
-def run_aviary(aircraft_filename, phase_info, mission_method, mass_method, optimizer=None, analysis_scheme=AnalysisScheme.COLLOCATION,
+def run_aviary(aircraft_filename, phase_info, optimizer=None, analysis_scheme=AnalysisScheme.COLLOCATION,
                objective_type=None, record_filename='dymos_solution.db', restart_filename=None, max_iter=50, run_driver=True, make_plots=True):
     """
     This function runs the aviary optimization problem for the specified aircraft configuration and mission.
@@ -30,11 +30,11 @@ def run_aviary(aircraft_filename, phase_info, mission_method, mass_method, optim
     of the Aviary problem.
     """
     # Build problem
-    prob = AviaryProblem(phase_info, mission_method, mass_method, analysis_scheme)
+    prob = AviaryProblem(analysis_scheme)
 
     # Load aircraft and options data from user
     # Allow for user overrides here
-    prob.load_inputs(aircraft_filename)
+    prob.load_inputs(aircraft_filename, phase_info)
 
     # Have checks for clashing user inputs
     # Raise warnings or errors depending on how clashing the issues are
@@ -46,7 +46,7 @@ def run_aviary(aircraft_filename, phase_info, mission_method, mass_method, optim
 # replace the default trajectory with a custom trajectory
 # This trajectory uses the full GASP based ascent profile,
 # a Breguet cruise, and a simplified descent
-    ascent_phases = create_gasp_based_ascent_phases(
+    ascent_phases = create_2dof_based_ascent_phases(
         prob.ode_args,
         cruise_alt=prob.cruise_alt,
         cruise_mach=prob.cruise_mach)
@@ -140,10 +140,7 @@ def run_aviary(aircraft_filename, phase_info, mission_method, mass_method, optim
 
 
 if __name__ == "__main__":
-
-    from aviary.interface.default_phase_info.gasp import phase_info
+    from aviary.interface.default_phase_info.two_dof import phase_info
     input_deck = 'models/large_single_aisle_1/large_single_aisle_1_GwGm.csv'
     run_aviary(input_deck, phase_info,
-               mission_method="GASP", mass_method="GASP",
-               analysis_scheme=AnalysisScheme.SHOOTING, run_driver=False,
-               )
+               analysis_scheme=AnalysisScheme.SHOOTING, run_driver=False)

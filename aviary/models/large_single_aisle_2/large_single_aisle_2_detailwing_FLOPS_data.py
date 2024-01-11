@@ -4,7 +4,8 @@ from aviary.subsystems.propulsion.engine_deck import EngineDeck
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.functions import get_path
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.enums import EquationsOfMotion, LegacyCode
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 LargeSingleAisle2FLOPSdw = {}
 inputs = LargeSingleAisle2FLOPSdw['inputs'] = AviaryValues()
@@ -260,6 +261,10 @@ inputs.set_val(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, .0175)
 # lbf TODO: where should this get connected from?
 inputs.set_val(Mission.Design.THRUST_TAKEOFF_PER_ENG, 24555.5, 'lbf')
 
+# Settings
+# ---------------------------
+inputs.set_val(Settings.EQUATIONS_OF_MOTION, EquationsOfMotion.HEIGHT_ENERGY)
+inputs.set_val(Settings.MASS_METHOD, LegacyCode.FLOPS)
 
 # ---------------------------
 #          OUTPUTS

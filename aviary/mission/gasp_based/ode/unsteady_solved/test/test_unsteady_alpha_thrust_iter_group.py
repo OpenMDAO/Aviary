@@ -5,7 +5,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.interface.default_phase_info.gasp import aero
+from aviary.interface.default_phase_info.two_dof import aero
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_control_iter_group import \
     UnsteadyControlIterGroup

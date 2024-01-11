@@ -23,7 +23,7 @@ from aviary.variable_info.variables_in import VariablesIn
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.mission.flops_based.phases.cruise_phase import Cruise
-from aviary.interface.default_phase_info.flops import prop, aero, geom
+from aviary.interface.default_phase_info.height_energy import prop, aero, geom
 from aviary.subsystems.premission import CorePreMission
 from aviary.utils.functions import set_aviary_initial_values
 from aviary.utils.functions import get_path
