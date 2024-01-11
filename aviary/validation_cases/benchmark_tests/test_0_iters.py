@@ -5,7 +5,7 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.interface.default_phase_info.two_dof import phase_info as two_dof_phase_info
-from aviary.interface.default_phase_info.simple import phase_info as height_energy_phase_info
+from aviary.interface.default_phase_info.simple import phase_info as simple_phase_info
 from aviary.interface.default_phase_info.solved import phase_info as solved_phase_info
 from aviary.variable_info.enums import EquationsOfMotion
 
@@ -45,8 +45,8 @@ class TwoDOFZeroItersTestCase(BaseProblemPhaseTestCase):
 class HEZeroItersTestCase(BaseProblemPhaseTestCase):
 
     @require_pyoptsparse(optimizer="IPOPT")
-    def test_height_energy_zero_iters(self):
-        local_phase_info = deepcopy(height_energy_phase_info)
+    def test_simple_zero_iters(self):
+        local_phase_info = deepcopy(simple_phase_info)
         self.build_and_run_problem('models/test_aircraft/aircraft_for_bench_FwFm_simple.csv',
                                    local_phase_info)
 

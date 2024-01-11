@@ -32,7 +32,7 @@ from aviary.utils.csv_data_file import read_data_file, write_data_file
 from aviary.utils.data_interpolator_builder import build_data_interpolator
 from aviary.variable_info.enums import AlphaModes, AnalysisScheme, ProblemType, SpeedType, GASPEngineType, FlapType, EquationsOfMotion, LegacyCode, Verbosity
 from aviary.interface.default_phase_info.two_dof import phase_info as default_2DOF_phase_info
-from aviary.interface.default_phase_info.height_energy import phase_info as default_height_energy_phase_info
+from aviary.interface.default_phase_info.simple import phase_info as default_simple_phase_info
 from aviary.interface.default_phase_info.two_dof_fiti import create_2dof_based_ascent_phases, create_2dof_based_descent_phases
 from aviary.interface.default_phase_info.solved import phase_info as default_solved_phase_info
 from aviary.interface.default_phase_info.simple import phase_info as default_simple_phase_info
@@ -46,7 +46,7 @@ from aviary.utils.functions import set_aviary_initial_values, get_path
 from aviary.utils.options import list_options
 from aviary.constants import GRAV_METRIC_GASP, GRAV_ENGLISH_GASP, GRAV_METRIC_FLOPS, GRAV_ENGLISH_FLOPS, GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH, RHO_SEA_LEVEL_METRIC, MU_TAKEOFF, MU_LANDING, PSLS_PSF, TSLS_DEGR, RADIUS_EARTH_METRIC
 from aviary.subsystems.test.subsystem_tester import TestSubsystemBuilderBase, skipIfMissingDependencies
-from aviary.interface.default_phase_info.height_energy import default_premission_subsystems, default_mission_subsystems
+from aviary.interface.default_phase_info.simple import default_premission_subsystems, default_mission_subsystems
 
 ###################
 # Level 3 Imports #

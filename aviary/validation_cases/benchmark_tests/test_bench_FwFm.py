@@ -8,7 +8,6 @@ from aviary.interface.methods_for_level1 import run_aviary
 from aviary.validation_cases.benchmark_utils import \
     compare_against_expected_values
 from aviary.variable_info.variables import Dynamic
-from aviary.interface.default_phase_info.simple import phase_info
 
 
 @use_tempdirs
@@ -273,7 +272,6 @@ class ProblemPhaseTestCase(unittest.TestCase):
                     'input_initial': True,
                     "optimize_mach": True,
                     "optimize_altitude": True,
-                    "polynomial_control_order": None,
                     "use_polynomial_control": False,
                     "num_segments": 6,
                     "order": 3,
@@ -324,7 +322,6 @@ class ProblemPhaseTestCase(unittest.TestCase):
                 "user_options": {
                     "optimize_mach": True,
                     "optimize_altitude": True,
-                    "polynomial_control_order": None,
                     "use_polynomial_control": False,
                     "num_segments": 5,
                     "order": 3,

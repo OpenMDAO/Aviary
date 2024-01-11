@@ -4,7 +4,7 @@ import pkg_resources
 
 from aviary.examples.external_subsystems.battery.battery_builder import BatteryBuilder
 from aviary.examples.external_subsystems.battery.battery_variables import Aircraft
-from aviary.api import default_height_energy_phase_info as phase_info
+from aviary.api import default_simple_phase_info as phase_info
 
 
 battery_builder = BatteryBuilder(include_constraints=False)

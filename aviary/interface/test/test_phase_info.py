@@ -7,8 +7,8 @@ from copy import deepcopy
 
 from openmdao.utils.assert_utils import assert_near_equal
 
-from aviary.interface.default_phase_info.gasp import phase_info as ph_in_gasp
-from aviary.interface.default_phase_info.gasp import phase_info_parameterization as phase_info_parameterization_gasp
+from aviary.interface.default_phase_info.two_dof import phase_info as ph_in_gasp
+from aviary.interface.default_phase_info.two_dof import phase_info_parameterization as phase_info_parameterization_gasp
 from aviary.interface.methods_for_level2 import AviaryProblem
 
 from aviary.mission.flops_based.phases.phase_builder_base import \
