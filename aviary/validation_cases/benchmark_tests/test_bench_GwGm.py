@@ -1,10 +1,11 @@
+from copy import deepcopy
 import os
 import unittest
 
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
-from aviary.interface.default_phase_info.gasp import phase_info
+from aviary.interface.default_phase_info.two_dof import phase_info
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.variable_info.variables import Aircraft, Mission
 
@@ -14,8 +15,9 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
     @require_pyoptsparse(optimizer="SNOPT")
     def bench_test_swap_2_GwGm(self):
-        prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwGm.csv', phase_info,
-                          mission_method="GASP", mass_method="GASP")
+        local_phase_info = deepcopy(phase_info)
+        prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwGm.csv',
+                          local_phase_info)
 
         rtol = 0.01
 

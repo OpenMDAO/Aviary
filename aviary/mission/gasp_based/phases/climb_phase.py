@@ -2,7 +2,7 @@ import dymos as dm
 
 from aviary.mission.gasp_based.ode.climb_ode import ClimbODE
 from aviary.variable_info.variables import Mission, Dynamic
-from aviary.interface.default_phase_info.gasp import default_mission_subsystems
+from aviary.interface.default_phase_info.two_dof import default_mission_subsystems
 
 
 def get_climb(

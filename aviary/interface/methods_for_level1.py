@@ -2,15 +2,13 @@
 This file contains functions needed to run Aviary using the Level 1 interface.
 """
 import os
-import importlib.util
-import sys
 
 import openmdao.api as om
 from aviary.variable_info.enums import AnalysisScheme
 from aviary.interface.methods_for_level2 import AviaryProblem
 
 
-def run_aviary(aircraft_filename, phase_info, mission_method, mass_method, optimizer=None,
+def run_aviary(aircraft_filename, phase_info, optimizer=None,
                analysis_scheme=AnalysisScheme.COLLOCATION, objective_type=None,
                record_filename='dymos_solution.db', restart_filename=None, max_iter=50,
                run_driver=True, make_plots=True, phase_info_parameterization=None,
@@ -29,10 +27,6 @@ def run_aviary(aircraft_filename, phase_info, mission_method, mass_method, optim
         Filename from which to load the aircraft and options data.
     phase_info : dict
         Information about the phases of the mission.
-    mission_method : str
-        The method used for defining the mission; can be 'GASP', 'FLOPS', 'solved', or 'simple'.
-    mass_method : str
-        The method used for calculating the mass; can be 'GASP' or 'FLOPS'.
     optimizer : str
         The optimizer to use.
     analysis_scheme : AnalysisScheme, optional
@@ -63,15 +57,14 @@ def run_aviary(aircraft_filename, phase_info, mission_method, mass_method, optim
     The function allows for user overrides on aircraft and options data.
     It raises warnings or errors if there are clashing user inputs.
     Users can modify or add methods to alter the Aviary problem's behavior.
-
     """
 
     # Build problem
-    prob = AviaryProblem(phase_info, mission_method, mass_method, analysis_scheme)
+    prob = AviaryProblem(analysis_scheme)
 
     # Load aircraft and options data from user
     # Allow for user overrides here
-    prob.load_inputs(aircraft_filename)
+    prob.load_inputs(aircraft_filename, phase_info)
 
     # Have checks for clashing user inputs
     # Raise warnings or errors depending on how clashing the issues are
@@ -108,8 +101,6 @@ def run_level_1(
     input_deck,
     outdir='output',
     optimizer='SNOPT',
-    mass_origin='GASP',
-    mission_method='GASP',
     phase_info=None,
     n2=False,
     max_iter=50,
@@ -131,32 +122,7 @@ def run_level_1(
     # else:
     kwargs['optimizer'] = optimizer
 
-    if phase_info is None:
-        if mission_method == 'GASP':
-            from aviary.interface.default_phase_info.gasp import phase_info, phase_info_parameterization
-            kwargs['phase_info_parameterization'] = phase_info_parameterization
-
-        else:
-            from aviary.interface.default_phase_info.flops import phase_info, phase_info_parameterization
-            kwargs['phase_info_parameterization'] = phase_info_parameterization
-    else:
-        # Load the phase info dynamically from the current working directory
-        phase_info_module_path = os.path.join(os.getcwd(), "outputted_phase_info.py")
-        if not os.path.exists(phase_info_module_path):
-            raise FileNotFoundError(
-                "The outputted_phase_info.py file is not in the current working directory. Please run `draw_mission` to generate this file.")
-
-        spec = importlib.util.spec_from_file_location(
-            "outputted_phase_info", phase_info_module_path)
-        outputted_phase_info = importlib.util.module_from_spec(spec)
-        sys.modules["outputted_phase_info"] = outputted_phase_info
-        spec.loader.exec_module(outputted_phase_info)
-
-        # Access the phase_info variable from the loaded module
-        phase_info = outputted_phase_info.phase_info
-
-    prob = run_aviary(input_deck, phase_info, mission_method=mission_method,
-                      mass_method=mass_origin, **kwargs)
+    prob = run_aviary(input_deck, phase_info, **kwargs)
 
     if n2:
         outfile = os.path.join(outdir, "n2.html")
@@ -185,20 +151,6 @@ def _setup_level1_parser(parser):
         default='SNOPT',
         help="Name of optimizer",
         choices=("SNOPT", "IPOPT", "SLSQP", "None")
-    )
-    parser.add_argument(
-        "--mass_origin",
-        type=str,
-        default="FLOPS",
-        help="Mass estimation origin to use",
-        choices=("GASP", "FLOPS")
-    )
-    parser.add_argument(
-        "--mission_method",
-        type=str,
-        default="simple",
-        help="Mission origin to use",
-        choices=("GASP", "FLOPS", "simple")
     )
     parser.add_argument(
         "--phase_info",
@@ -237,8 +189,6 @@ def _exec_level1(args, user_args):
         input_deck=args.input_deck,
         outdir=args.outdir,
         optimizer=args.optimizer,
-        mass_origin=args.mass_origin,
-        mission_method=args.mission_method,
         phase_info=args.phase_info,
         n2=args.n2,
         max_iter=args.max_iter,
