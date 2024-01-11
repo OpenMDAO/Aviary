@@ -98,7 +98,7 @@ class TestParameterizePhaseInfo(unittest.TestCase):
             "aviary", "models/small_single_aisle/small_single_aisle_GwGm.csv")
 
         prob.load_inputs(csv_path, phase_info)
-        prob.check_inputs()
+        prob.check_and_preprocess_inputs()
 
         # We can set some crazy vals, since we aren't going to optimize.
         prob.aviary_inputs.set_val(Mission.Design.RANGE, 5000, 'km')
@@ -135,7 +135,7 @@ class TestParameterizePhaseInfo(unittest.TestCase):
             "aviary", "models/test_aircraft/aircraft_for_bench_FwFm.csv")
 
         prob.load_inputs(csv_path, phase_info)
-        prob.check_inputs()
+        prob.check_and_preprocess_inputs()
 
         # We can set some crazy vals, since we aren't going to optimize.
         prob.aviary_inputs.set_val(Mission.Design.RANGE, 5000, 'km')

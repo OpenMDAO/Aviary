@@ -26,9 +26,9 @@ class ProblemPhaseTestCase(unittest.TestCase):
         prob.load_inputs(input_file, local_phase_info)
         prob.aviary_inputs.set_val(Mission.Design.RANGE, 2000.0, units="NM")
 
-        # Have checks for clashing user inputs
-        # Raise warnings or errors depending on how clashing the issues are
-        prob.check_inputs()
+
+# Preprocess inputs
+        prob.check_and_preprocess_inputs()
 
         prob.add_pre_mission_systems()
 

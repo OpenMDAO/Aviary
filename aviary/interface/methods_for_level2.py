@@ -345,11 +345,10 @@ class AviaryProblem(om.Problem):
             if variable in self.meta_data:
                 self.meta_data.pop(variable)
 
-    def check_inputs(self):
+    def check_and_preprocess_inputs(self):
         """
-        This method checks the user-supplied input values for any potential problems.
-        These problems include variable names that are not recognized in Aviary,
-        conflicting options or values, or units mismatching.
+        This method checks the user-supplied input values for any potential problems
+        and preprocesses the inputs to prepare them for use in the Aviary problem.
         """
         check_phase_info(self.phase_info, self.mission_method)
 

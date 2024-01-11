@@ -95,7 +95,7 @@ class TestExternalSubsystemBus(unittest.TestCase):
         csv_path = pkg_resources.resource_filename(
             "aviary", "models/test_aircraft/aircraft_for_bench_FwFm.csv")
         prob.load_inputs(csv_path, phase_info)
-        prob.check_inputs()
+        prob.check_and_preprocess_inputs()
 
         prob.add_pre_mission_systems()
         prob.add_phases()
