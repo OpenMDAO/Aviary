@@ -4,6 +4,7 @@ from aviary.subsystems.test.test_dummy_subsystem import ArrayGuessSubsystemBuild
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 import subprocess
 
+
 @use_tempdirs
 class AircraftMissionTestSuite(unittest.TestCase):
 
