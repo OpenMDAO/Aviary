@@ -76,4 +76,4 @@ We have also provided a static version of the `environment.yml` at the top level
 ## Planned future features
 
 Aviary is in active development.
-We plan to expand its capabilities and add features as detailed in [this doc page](https://openmdao.github.io/om-Aviary/misc_resources/planned_future_features.html).
+We plan to expand its capabilities and have provided a non-exhaustive [list of future features](https://openmdao.github.io/om-Aviary/misc_resources/planned_future_features.html).
