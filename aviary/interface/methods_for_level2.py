@@ -16,6 +16,7 @@ from dymos.utils.misc import _unspecified
 import openmdao.api as om
 from openmdao.utils.units import convert_units
 from openmdao.utils.units import valid_units
+from openmdao.utils.reports_system import _default_reports
 
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
 from aviary.mission.flops_based.phases.build_landing import Landing
