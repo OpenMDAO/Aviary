@@ -7,7 +7,7 @@ from aviary.examples.variable_meta_data_extension import ExtendedMetaData
 from aviary.examples.variables_extension import Aircraft as ExtendedAircraft
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import get_path
-from aviary.variable_info.enums import Flap_Type, GASP_Engine_Type
+from aviary.variable_info.enums import FlapType, GASPEngineType
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -78,38 +78,38 @@ class TestTypes(unittest.TestCase):
             self.fail('Expecting TypeError.')
 
         try:
-            vals.set_val(Aircraft.Engine.TYPE, GASP_Engine_Type.TURBOJET)
+            vals.set_val(Aircraft.Engine.TYPE, GASPEngineType.TURBOJET)
             self.assertTrue(vals.get_val(Aircraft.Engine.TYPE)
-                            is GASP_Engine_Type.TURBOJET)
+                            is GASPEngineType.TURBOJET)
         except:
             self.fail('Expecting to be able to set the value of an Enum.')
 
         try:
             vals.set_val(Aircraft.Engine.TYPE, 'turbojet')
             self.assertTrue(vals.get_val(Aircraft.Engine.TYPE)
-                            is GASP_Engine_Type.TURBOJET)
+                            is GASPEngineType.TURBOJET)
         except:
             self.fail('Expecting to be able to set the value of an Enum from a string.')
 
         try:
             vals.set_val(Aircraft.Engine.TYPE, 'TURBOJET')
             self.assertTrue(vals.get_val(Aircraft.Engine.TYPE)
-                            is GASP_Engine_Type.TURBOJET)
+                            is GASPEngineType.TURBOJET)
         except:
             self.fail('Expecting to be able to set the value of an Enum from a string.')
 
         try:
             vals.set_val(Aircraft.Engine.TYPE, 7)
             self.assertTrue(vals.get_val(Aircraft.Engine.TYPE)
-                            is GASP_Engine_Type.TURBOJET)
+                            is GASPEngineType.TURBOJET)
         except:
             self.fail('Expecting to be able to set the value of an Enum from an int.')
 
         try:
-            vals.set_val(Aircraft.Engine.TYPE, Flap_Type.DOUBLE_SLOTTED)
+            vals.set_val(Aircraft.Engine.TYPE, FlapType.DOUBLE_SLOTTED)
         except ValueError as err:
             self.assertEqual(str(err),
-                             "<Flap_Type.DOUBLE_SLOTTED: 4> is not a valid GASP_Engine_Type")
+                             "<FlapType.DOUBLE_SLOTTED: 4> is not a valid GASPEngineType")
         else:
             self.fail("Expecting ValueError.")
 

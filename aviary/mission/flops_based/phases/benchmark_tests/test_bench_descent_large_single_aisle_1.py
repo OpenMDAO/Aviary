@@ -20,7 +20,7 @@ from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.mission.flops_based.ode.mission_ODE import MissionODE
 from aviary.mission.flops_based.phases.descent_phase import Descent
-from aviary.interface.default_phase_info.flops import prop, aero, geom
+from aviary.interface.default_phase_info.height_energy import prop, aero, geom
 from aviary.subsystems.premission import CorePreMission
 from aviary.utils.functions import set_aviary_initial_values
 from aviary.utils.functions import get_path

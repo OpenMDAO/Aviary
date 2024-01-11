@@ -14,7 +14,7 @@ from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.utils.csv_data_file import read_data_file
 from aviary.utils.named_values import NamedValues
-from aviary.interface.default_phase_info.flops import phase_info
+from aviary.interface.default_phase_info.height_energy import phase_info
 from aviary.variable_info.variables import Aircraft
 
 from copy import deepcopy
@@ -47,13 +47,13 @@ class TestSolvedAero(unittest.TestCase):
     def test_solved_aero_pass_polar(self):
         # Test that passing training data provides the same results
         local_phase_info = deepcopy(phase_info)
-        prob = AviaryProblem(
-            local_phase_info, mission_method="FLOPS", mass_method="FLOPS")
+
+        prob = AviaryProblem()
 
         csv_path = pkg_resources.resource_filename(
             "aviary", "subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv")
 
-        prob.load_inputs(csv_path)
+        prob.load_inputs(csv_path, local_phase_info)
         prob.add_pre_mission_systems()
         prob.add_phases()
         prob.add_post_mission_systems()
@@ -89,9 +89,9 @@ class TestSolvedAero(unittest.TestCase):
 
         ph_in['cruise']['subsystem_options'] = {'core_aerodynamics': subsystem_options}
 
-        prob = AviaryProblem(ph_in, mission_method="FLOPS", mass_method="FLOPS")
+        prob = AviaryProblem()
 
-        prob.load_inputs(csv_path)
+        prob.load_inputs(csv_path, ph_in)
 
         prob.aviary_inputs.set_val(Aircraft.Design.LIFT_POLAR,
                                    np.zeros_like(CL), units='unitless')
