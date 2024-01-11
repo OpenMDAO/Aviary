@@ -208,15 +208,14 @@ class AviaryProblem(om.Problem):
                 print('Loaded outputted_phase_info.py generated with GUI')
 
             else:
-                # 2dof -> two_dof
-                method = self.mission_method.value.replace('2DOF', 'two_dof')
-
-                module = importlib.import_module(
-                    self.mission_method.value, 'aviary.interface.default_phase_info')
-                phase_info = getattr(module, 'phase_info')
-
-                print('Loaded default phase_info for'
-                      f'{self.mission_method.value.lower()} equations of motion')
+                if self.mission_method is TWO_DEGREES_OF_FREEDOM:
+                    from aviary.interface.default_phase_info.two_dof import phase_info
+                elif self.mission_method is HEIGHT_ENERGY:
+                    from aviary.interface.default_phase_info.height_energy import phase_info
+                elif self.mission_method is SIMPLE:
+                    from aviary.interface.default_phase_info.simple import phase_info
+                elif self.mission_method is SOLVED:
+                    from aviary.interface.default_phase_info.solved import phase_info
 
         # create a new dictionary that only contains the phases from phase_info
         self.phase_info = {}
