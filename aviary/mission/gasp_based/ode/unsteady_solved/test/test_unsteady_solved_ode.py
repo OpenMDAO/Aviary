@@ -11,7 +11,7 @@ from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_ode import \
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-from aviary.interface.default_phase_info.gasp import default_mission_subsystems
+from aviary.interface.default_phase_info.two_dof import default_mission_subsystems
 
 
 class TestUnsteadySolvedODE(unittest.TestCase):

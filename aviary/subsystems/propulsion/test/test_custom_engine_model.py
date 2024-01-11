@@ -182,12 +182,11 @@ class CustomEngineTest(unittest.TestCase):
         csv_path = pkg_resources.resource_filename(
             "aviary", "models/test_aircraft/aircraft_for_bench_GwFm.csv")
 
-        prob = AviaryProblem(phase_info, mission_method="FLOPS",
-                             mass_method="FLOPS", reports=False)
+        prob = AviaryProblem(reports=False)
 
         # Load aircraft and options data from user
         # Allow for user overrides here
-        prob.load_inputs(csv_path, engine_builder=SimpleTestEngine())
+        prob.load_inputs(csv_path, phase_info, engine_builder=SimpleTestEngine())
 
         # Have checks for clashing user inputs
         # Raise warnings or errors depending on how clashing the issues are

@@ -9,7 +9,7 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 from aviary.mission.gasp_based.ode.flight_path_ode import FlightPathODE
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Dynamic
-from aviary.interface.default_phase_info.gasp import default_mission_subsystems
+from aviary.interface.default_phase_info.two_dof import default_mission_subsystems
 
 
 def make_ascent_problem(optimizer='IPOPT', print_opt_iters=False):

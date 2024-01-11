@@ -67,13 +67,12 @@ class TestSubsystemsMission(unittest.TestCase):
     def test_subsystems_in_a_mission(self):
         phase_info = self.phase_info.copy()
 
-        prob = AviaryProblem(
-            phase_info, mission_method="FLOPS", mass_method="FLOPS")
+        prob = AviaryProblem()
 
         csv_path = pkg_resources.resource_filename(
             "aviary", "models/test_aircraft/aircraft_for_bench_GwFm.csv")
 
-        prob.load_inputs(csv_path)
+        prob.load_inputs(csv_path, phase_info)
 
         # Have checks for clashing user inputs
         # Raise warnings or errors depending on how clashing the issues are
@@ -118,13 +117,12 @@ class TestSubsystemsMission(unittest.TestCase):
         phase_info = self.phase_info.copy()
         phase_info['cruise']['initial_guesses']['bad_guess_name'] = ([10., 100.], 'm')
 
-        prob = AviaryProblem(phase_info, mission_method="FLOPS",
-                             mass_method="FLOPS", reports=False)
+        prob = AviaryProblem(reports=False)
 
         csv_path = pkg_resources.resource_filename(
             "aviary", "models/test_aircraft/aircraft_for_bench_GwFm.csv")
 
-        prob.load_inputs(csv_path)
+        prob.load_inputs(csv_path, phase_info)
 
         # Have checks for clashing user inputs
         # Raise warnings or errors depending on how clashing the issues are

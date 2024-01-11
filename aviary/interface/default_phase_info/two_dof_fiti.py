@@ -5,10 +5,10 @@ from aviary.mission.gasp_based.phases.time_integration_phases import SGMGroundro
     SGMRotation, SGMAscentCombined, SGMAccel, SGMClimb, SGMCruise, SGMDescent
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 
-# defaults for GASP based forward in time integeration phases
+# defaults for 2DOF based forward in time integeration phases
 
 
-def create_gasp_based_ascent_phases(
+def create_2dof_based_ascent_phases(
     ode_args,
     cruise_alt=35e3,
     cruise_mach=.8,
@@ -138,7 +138,7 @@ def create_gasp_based_ascent_phases(
     return phases
 
 
-def create_gasp_based_descent_phases(
+def create_2dof_based_descent_phases(
     ode_args,
     cruise_mach=.8,
 ):

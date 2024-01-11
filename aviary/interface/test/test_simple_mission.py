@@ -1,8 +1,11 @@
 import unittest
+import subprocess
+
+from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
+
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.subsystems.test.test_dummy_subsystem import ArrayGuessSubsystemBuilder
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
-import subprocess
 
 
 @use_tempdirs
@@ -91,9 +94,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
             },
         }
 
-        self.aircraft_definition_file = 'models/test_aircraft/aircraft_for_bench_FwFm.csv'
-        self.mission_method = "simple"
-        self.mass_method = "FLOPS"
+        self.aircraft_definition_file = 'models/test_aircraft/aircraft_for_bench_FwFm_simple.csv'
         self.make_plots = False
         self.max_iter = 100
 
@@ -110,7 +111,6 @@ class AircraftMissionTestSuite(unittest.TestCase):
     def run_mission(self, phase_info, optimizer):
         return run_aviary(
             self.aircraft_definition_file, phase_info,
-            mission_method=self.mission_method, mass_method=self.mass_method,
             make_plots=self.make_plots, max_iter=self.max_iter, optimizer=optimizer,
             optimization_history_filename="driver_test.db")
 

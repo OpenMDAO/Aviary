@@ -169,6 +169,8 @@ mission:takeoff:rolling_friction_coefficient,0.0175,unitless
 mission:takeoff:spoiler_drag_coefficient,0.085,unitless
 mission:takeoff:spoiler_lift_coefficient,-0.81,unitless
 mission:takeoff:thrust_incidence,0,deg
+settings:equations_of_motion,height_energy
+settings:mass_method,FLOPS
 
 # Unconverted Values
 AERIN.clapp,2
