@@ -5,7 +5,7 @@ import warnings
 
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.interface.default_phase_info.flops import phase_info
+from aviary.interface.default_phase_info.height_energy import phase_info
 from aviary.interface.methods_for_level1 import run_aviary
 from openmdao.utils.testing_utils import use_tempdirs
 

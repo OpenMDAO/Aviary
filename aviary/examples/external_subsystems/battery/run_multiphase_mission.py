@@ -18,11 +18,11 @@ up_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 input_file = pkg_resources.resource_filename(
     "aviary", "models/test_aircraft/aircraft_for_bench_FwFm.csv")
 
-prob = AviaryProblem(phase_info, mission_method="FLOPS", mass_method="FLOPS")
+prob = AviaryProblem()
 
 # Load aircraft and options data from user
 # Allow for user overrides here
-prob.load_inputs(input_file)
+prob.load_inputs(input_file, phase_info)
 
 # Have checks for clashing user inputs
 # Raise warnings or errors depending on how clashing the issues are

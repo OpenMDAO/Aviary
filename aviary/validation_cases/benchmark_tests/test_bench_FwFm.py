@@ -5,7 +5,7 @@ import unittest
 import numpy as np
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.interface.default_phase_info.flops import phase_info
+from aviary.interface.default_phase_info.height_energy import phase_info
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.validation_cases.benchmark_utils import \
     compare_against_expected_values
@@ -16,8 +16,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
     def bench_test_swap_4_FwFm(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary('models/test_aircraft/aircraft_for_bench_FwFm.csv',
-                          local_phase_info,
-                          mission_method="FLOPS", mass_method="FLOPS")
+                          local_phase_info)
 
         expected_dict = {}
 

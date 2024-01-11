@@ -5,7 +5,7 @@
 Aviary provides a range of built-in examples that serve as both regression tests and demonstrations of the tool's capabilities.
 These examples showcase various full mission analysis and optimization problems, incorporating different subsystem analyses from FLOPS and GASP.
 You can find these examples [here](https://github.com/OpenMDAO/om-Aviary/tree/main/aviary/validation_cases/benchmark_tests), especially the files that start `test_swap`.
-These cases highlight the progress and expansion of Aviary's functionality, reflecting the January milestone achieved by the Aviary team that combined basic GASP and FLOPS capabilities.
+These cases highlight Aviary's ability to replicate GASP and FLOPS capabilities, as well as use both code's methods in a single analysis.
 
 In addition to the examples for core Aviary, we also provide some examples for using external subsystems.
 These are contained in the `aviary/examples/external_subsystems` folder.

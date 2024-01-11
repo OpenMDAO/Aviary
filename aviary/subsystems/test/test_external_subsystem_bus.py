@@ -11,7 +11,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 
 import aviary.api as av
-from aviary.interface.default_phase_info.flops import phase_info as ph_in
+from aviary.interface.default_phase_info.height_energy import phase_info as ph_in
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 
@@ -90,11 +90,11 @@ class TestExternalSubsystemBus(unittest.TestCase):
         phase_info['cruise']['external_subsystems'] = [CustomBuilder(name='test')]
         phase_info['descent']['external_subsystems'] = [CustomBuilder(name='test')]
 
-        prob = AviaryProblem(phase_info, mission_method="FLOPS", mass_method="FLOPS")
+        prob = AviaryProblem()
 
         csv_path = pkg_resources.resource_filename(
             "aviary", "models/test_aircraft/aircraft_for_bench_FwFm.csv")
-        prob.load_inputs(csv_path)
+        prob.load_inputs(csv_path, phase_info)
         prob.check_inputs()
 
         prob.add_pre_mission_systems()

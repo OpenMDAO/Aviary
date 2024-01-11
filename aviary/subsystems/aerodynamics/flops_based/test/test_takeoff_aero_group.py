@@ -12,6 +12,7 @@ from aviary.models.N3CC.N3CC_data import (
 from aviary.variable_info.variables import Aircraft
 from aviary.variable_info.variables import Dynamic as _Dynamic
 from aviary.variable_info.variables import Mission
+from aviary.variable_info.enums import LegacyCode
 
 Dynamic = _Dynamic.Mission
 
@@ -92,7 +93,7 @@ def make_problem(subsystem_options={}):
             "rho", ("sos", Dynamic.SPEED_OF_SOUND), ("temp", Dynamic.TEMPERATURE),
             ("pres", Dynamic.STATIC_PRESSURE), "viscosity"])
 
-    aero_builder = CoreAerodynamicsBuilder(code_origin='FLOPS')
+    aero_builder = CoreAerodynamicsBuilder(code_origin=LegacyCode.FLOPS)
 
     prob.model.add_subsystem(
         name='core_aerodynamics',
