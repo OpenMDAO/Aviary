@@ -61,7 +61,7 @@ def write_markdown_variable_table(open_file, problem, outputs, metadata):
             if len(val) == 1:
                 val = val[0]
         else:
-            round_it(val)
+            val = round_it(val)
         if not units:
             units = 'unknown'
         if units == 'unitless':
