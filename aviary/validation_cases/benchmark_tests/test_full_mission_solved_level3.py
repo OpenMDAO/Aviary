@@ -1,3 +1,4 @@
+from copy import deepcopy
 import os
 import unittest
 
@@ -8,6 +9,7 @@ from packaging import version
 from aviary.api import Mission
 from aviary.interface.default_phase_info.solved import phase_info
 from aviary.interface.methods_for_level2 import AviaryProblem
+from aviary.variable_info.enums import EquationsOfMotion
 
 
 @unittest.skipIf(version.parse(dymos.__version__) <= version.parse("1.8.0"),
@@ -17,12 +19,11 @@ from aviary.interface.methods_for_level2 import AviaryProblem
 class ProblemPhaseTestCase(unittest.TestCase):
     def bench_test_solved_full_mission(self):
         # Build problem
+        local_phase_info = deepcopy(phase_info)
+        prob = AviaryProblem()
 
-        prob = AviaryProblem(phase_info, mission_method="solved", mass_method="GASP")
-
-        input_file = 'models/test_aircraft/aircraft_for_bench_GwGm.csv'
-        prob.load_inputs(input_file)
-
+        input_file = 'models/test_aircraft/aircraft_for_bench_GwGm_solved.csv'
+        prob.load_inputs(input_file, local_phase_info)
         prob.aviary_inputs.set_val(Mission.Design.RANGE, 2000.0, units="NM")
 
         # Have checks for clashing user inputs

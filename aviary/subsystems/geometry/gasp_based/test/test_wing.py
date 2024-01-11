@@ -8,7 +8,7 @@ from aviary.subsystems.geometry.gasp_based.wing import (WingFold, WingGroup,
                                                         WingParameters,
                                                         WingSize)
 from aviary.variable_info.options import get_option_defaults
-from aviary.utils.test_utils.IO_test_util import assert_match_spec, XDSM_PATH
+from aviary.utils.test_utils.IO_test_util import assert_match_spec, skipIfMissingXDSM
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -310,7 +310,7 @@ class WingGroupTestCase1(
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'size_basic_specs/wing.json')), "`size_basic_specs/wing.json` does not exist")
+    @skipIfMissingXDSM('size_basic_specs/wing.json')
     def test_io_wing_group_spec(self):
 
         subsystem = self.prob.model
@@ -394,7 +394,7 @@ class WingGroupTestCase2(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'size_both1_specs/wing.json')), "`size_both1_specs/wing.json` does not exist")
+    @skipIfMissingXDSM('size_both1_specs/wing.json')
     def test_io_wing_group_spec(self):
 
         subsystem = self.prob.model
@@ -563,7 +563,7 @@ class WingGroupTestCase4(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'size_both2_specs/wing.json')), "`size_both2_specs/wing.json` does not exist")
+    @skipIfMissingXDSM('size_both2_specs/wing.json')
     def test_io_wing_group_spec(self):
 
         subsystem = self.prob.model

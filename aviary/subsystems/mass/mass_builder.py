@@ -12,6 +12,11 @@ from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.subsystems.mass.flops_based.mass_premission import MassPremission as MassPremissionFLOPS
 from aviary.subsystems.mass.gasp_based.mass_premission import MassPremission as MassPremissionGASP
 from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.enums import LegacyCode
+
+
+GASP = LegacyCode.GASP
+FLOPS = LegacyCode.FLOPS
 
 _default_name = 'mass'
 
@@ -35,7 +40,7 @@ class CoreMassBuilder(MassBuilderBase):
         if name is None:
             name = 'core_mass'
 
-        if code_origin not in ('FLOPS', 'GASP'):
+        if code_origin not in (FLOPS, GASP):
             raise ValueError('Code origin is not one of the following: (FLOPS, GASP)')
 
         self.code_origin = code_origin
@@ -45,10 +50,10 @@ class CoreMassBuilder(MassBuilderBase):
     def build_pre_mission(self, aviary_inputs):
         code_origin = self.code_origin
 
-        if code_origin == 'GASP':
+        if code_origin is GASP:
             mass_premission = MassPremissionGASP(aviary_options=aviary_inputs,)
 
-        elif code_origin == 'FLOPS':
+        elif code_origin is FLOPS:
             mass_premission = MassPremissionFLOPS(aviary_options=aviary_inputs)
 
         return mass_premission

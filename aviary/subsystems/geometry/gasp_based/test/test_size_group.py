@@ -6,7 +6,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.geometry.gasp_based.size_group import SizeGroup
 from aviary.variable_info.options import get_option_defaults
-from aviary.utils.test_utils.IO_test_util import assert_match_spec, XDSM_PATH
+from aviary.utils.test_utils.IO_test_util import assert_match_spec, skipIfMissingXDSM
 from aviary.variable_info.variables import Aircraft, Mission
 
 # this is the GASP test case, input and output values based on large single aisle 1 v3 without bug fix
@@ -159,7 +159,7 @@ class SizeGroupTestCase1(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=2e-12, rtol=1e-12)
 
-    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'mass_and_sizing_basic_specs/size.json')), "`mass_and_sizing_basic_specs/size.json` does not exist")
+    @skipIfMissingXDSM('mass_and_sizing_basic_specs/size.json')
     def test_io_wing_group_spec(self):
 
         subsystem = self.prob.model
@@ -390,7 +390,7 @@ class SizeGroupTestCase2(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=3e-10, rtol=1e-12)
 
-    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'mass_and_sizing_both_specs/size.json')), "`mass_and_sizing_both_specs/size.json` does not exist")
+    @skipIfMissingXDSM('mass_and_sizing_both_specs/size.json')
     def test_io_wing_group_spec(self):
 
         subsystem = self.prob.model

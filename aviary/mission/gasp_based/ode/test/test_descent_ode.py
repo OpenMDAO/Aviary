@@ -11,10 +11,10 @@ from aviary.mission.gasp_based.ode.descent_ode import DescentODE
 from aviary.variable_info.options import get_option_defaults
 from aviary.utils.test_utils.IO_test_util import (assert_match_spec,
                                                   check_prob_outputs,
-                                                  XDSM_PATH)
+                                                  skipIfMissingXDSM)
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variables import Dynamic
-from aviary.interface.default_phase_info.gasp import default_mission_subsystems
+from aviary.interface.default_phase_info.two_dof import default_mission_subsystems
 
 
 class DescentODETestCase(unittest.TestCase):
@@ -96,7 +96,7 @@ class DescentODETestCase(unittest.TestCase):
         )
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
-    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'statics_specs/descent1.json')), "`statics_specs/descent1.json` does not exist")
+    @skipIfMissingXDSM('statics_specs/descent1.json')
     def test_descent1_ode_spec(self):
         """Test descent1 phase spec"""
         self.sys.options["input_speed_type"] = SpeedType.MACH
@@ -104,7 +104,7 @@ class DescentODETestCase(unittest.TestCase):
         subsystem = self.prob.model
         assert_match_spec(subsystem, "statics_specs/descent1.json")
 
-    @unittest.skipIf(not os.path.isfile(os.path.join(XDSM_PATH, 'statics_specs/descent2.json')), "`statics_specs/descent2.json` does not exist")
+    @skipIfMissingXDSM('statics_specs/descent2.json')
     def test_descent2_ode_spec(self):
         """Test descent2 phase spec"""
         self.sys.options["input_speed_type"] = SpeedType.EAS

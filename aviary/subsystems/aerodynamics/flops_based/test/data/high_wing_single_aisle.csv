@@ -137,3 +137,5 @@ mission:takeoff:fuel_simple,400,lbm
 mission:takeoff:lift_coefficient_max,2.55,unitless
 mission:takeoff:lift_over_drag,25,unitless
 mission:takeoff:rolling_friction_coefficient,0.0175,unitless
+settings:equations_of_motion,height_energy
+settings:mass_method,FLOPS
