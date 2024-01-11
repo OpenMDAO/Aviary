@@ -119,6 +119,6 @@ class CoreMassBuilder(MassBuilderBase):
                    ]
 
         with open(filepath, mode='w') as f:
-            method = self.code_origin + '-derived relations'
+            method = self.code_origin.value + '-derived relations'
             f.write(f'# Mass estimation: {method}')
             write_markdown_variable_table(f, prob, outputs, self.meta_data)

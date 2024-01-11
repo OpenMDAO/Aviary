@@ -105,7 +105,7 @@ class CoreGeometryBuilder(GeometryBuilderBase):
             if self.use_both_geometries:
                 method = ('FLOPS and GASP methods')
             else:
-                method = self.code_origin + ' method'
+                method = self.code_origin.value + ' method'
             f.write(f'# Geometry: {method}\n')
             f.write('## Wing')
             write_markdown_variable_table(f, prob, wing_outputs, self.meta_data)
