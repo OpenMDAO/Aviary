@@ -15,7 +15,7 @@ If you also want to install all packages used for the Aviary tests _and_ externa
 
     pip install .[all]
 
-If you are a developer and plan to modify parts of the Aviary code, install in an "editable mode" with ``pip``:
+If you are a developer and plan to modify parts of the Aviary code, install in an "editable mode" with pip:
 
     pip install -e .
 
