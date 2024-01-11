@@ -8,7 +8,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.mission.flops_based.phases.phase_utils import add_subsystem_variables_to_phase, get_initial
 from aviary.variable_info.variables import Dynamic
-from aviary.mission.flops_based.ode.simple_mission_ODE import MissionODE
+from aviary.mission.flops_based.ode.mission_ODE import MissionODE
 
 
 # TODO: support/handle the following in the base class
