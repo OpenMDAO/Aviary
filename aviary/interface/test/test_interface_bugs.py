@@ -6,7 +6,7 @@ import openmdao.api as om
 
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
-from aviary.interface.default_phase_info.flops import phase_info as ph_in
+from aviary.interface.default_phase_info.height_energy import phase_info as ph_in
 from aviary.variable_info.variables import Aircraft
 from openmdao.utils.testing_utils import use_tempdirs
 
@@ -67,12 +67,12 @@ class PreMissionGroupTest(unittest.TestCase):
             WingWeightBuilder(name="wing_external")
         ]
 
-        prob = AviaryProblem(phase_info, mission_method="FLOPS", mass_method="FLOPS")
+        prob = AviaryProblem()
 
         csv_path = pkg_resources.resource_filename(
             "aviary", "models/test_aircraft/aircraft_for_bench_GwFm.csv")
 
-        prob.load_inputs(csv_path)
+        prob.load_inputs(csv_path, phase_info)
 
         # Have checks for clashing user inputs
         # Raise warnings or errors depending on how clashing the issues are

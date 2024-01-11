@@ -8,10 +8,10 @@ from copy import deepcopy
 
 from openmdao.utils.assert_utils import assert_near_equal
 
-from aviary.interface.default_phase_info.flops import phase_info as ph_in_flops
-from aviary.interface.default_phase_info.flops import phase_info_parameterization as phase_info_parameterization_flops
-from aviary.interface.default_phase_info.gasp import phase_info as ph_in_gasp
-from aviary.interface.default_phase_info.gasp import phase_info_parameterization as phase_info_parameterization_gasp
+from aviary.interface.default_phase_info.height_energy import phase_info as ph_in_flops
+from aviary.interface.default_phase_info.height_energy import phase_info_parameterization as phase_info_parameterization_flops
+from aviary.interface.default_phase_info.two_dof import phase_info as ph_in_gasp
+from aviary.interface.default_phase_info.two_dof import phase_info_parameterization as phase_info_parameterization_gasp
 from aviary.interface.methods_for_level2 import AviaryProblem
 
 from aviary.mission.flops_based.phases.phase_builder_base import \
@@ -82,7 +82,7 @@ class TestPhaseInfo(unittest.TestCase):
 
     def test_default_phase_flops(self):
         """Tests the roundtrip conversion for default_phase_info.flops"""
-        from aviary.interface.default_phase_info.flops import phase_info
+        from aviary.interface.default_phase_info.height_energy import phase_info
         local_phase_info = deepcopy(phase_info)
         self._test_phase_info_dict(local_phase_info, 'climb')
 
@@ -92,12 +92,12 @@ class TestParameterizePhaseInfo(unittest.TestCase):
     def test_phase_info_parameterization_gasp(self):
         phase_info = deepcopy(ph_in_gasp)
 
-        prob = AviaryProblem(phase_info, mission_method="GASP", mass_method="GASP")
+        prob = AviaryProblem()
 
         csv_path = pkg_resources.resource_filename(
             "aviary", "models/small_single_aisle/small_single_aisle_GwGm.csv")
 
-        prob.load_inputs(csv_path)
+        prob.load_inputs(csv_path, phase_info)
         prob.check_inputs()
 
         # We can set some crazy vals, since we aren't going to optimize.
@@ -129,12 +129,12 @@ class TestParameterizePhaseInfo(unittest.TestCase):
     def test_phase_info_parameterization_flops(self):
         phase_info = deepcopy(ph_in_flops)
 
-        prob = AviaryProblem(phase_info, mission_method="FLOPS", mass_method="FLOPS")
+        prob = AviaryProblem()
 
         csv_path = pkg_resources.resource_filename(
             "aviary", "models/test_aircraft/aircraft_for_bench_FwFm.csv")
 
-        prob.load_inputs(csv_path)
+        prob.load_inputs(csv_path, phase_info)
         prob.check_inputs()
 
         # We can set some crazy vals, since we aren't going to optimize.
