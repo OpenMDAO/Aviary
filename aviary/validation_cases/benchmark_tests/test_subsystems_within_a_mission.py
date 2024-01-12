@@ -58,9 +58,9 @@ class TestSubsystemsMission(unittest.TestCase):
 
         prob.load_inputs("models/test_aircraft/aircraft_for_bench_GwFm.csv", phase_info)
 
-        # Have checks for clashing user inputs
-        # Raise warnings or errors depending on how clashing the issues are
-        prob.check_inputs()
+
+# Preprocess inputs
+        prob.check_and_preprocess_inputs()
 
         prob.add_pre_mission_systems()
 
@@ -106,9 +106,9 @@ class TestSubsystemsMission(unittest.TestCase):
 
         prob.load_inputs("models/test_aircraft/aircraft_for_bench_GwFm.csv", phase_info)
 
-        # Have checks for clashing user inputs
-        # Raise warnings or errors depending on how clashing the issues are
-        prob.check_inputs()
+
+# Preprocess inputs
+        prob.check_and_preprocess_inputs()
 
         prob.add_pre_mission_systems()
 

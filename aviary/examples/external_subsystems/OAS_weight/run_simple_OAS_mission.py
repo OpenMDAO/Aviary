@@ -110,13 +110,13 @@ if use_OAS:
 
 aircraft_definition_file = 'models/test_aircraft/aircraft_for_bench_FwFm_simple.csv'
 make_plots = False
-max_iter = 100
-optimizer = 'IPOPT'
+max_iter = 1  # set this to a higher number to fully run the optimization
+optimizer = 'SLSQP'
 
 prob = av.AviaryProblem()
 
 prob.load_inputs(aircraft_definition_file, phase_info)
-prob.check_inputs()
+prob.check_and_preprocess_inputs()
 prob.add_pre_mission_systems()
 prob.add_phases()
 prob.add_post_mission_systems()

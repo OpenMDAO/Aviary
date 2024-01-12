@@ -92,7 +92,7 @@ class TestParameterizePhaseInfo(unittest.TestCase):
 
         prob.load_inputs(
             "models/small_single_aisle/small_single_aisle_GwGm.csv", phase_info)
-        prob.check_inputs()
+        prob.check_and_preprocess_inputs()
 
         # We can set some crazy vals, since we aren't going to optimize.
         prob.aviary_inputs.set_val(Mission.Design.RANGE, 5000, 'km')

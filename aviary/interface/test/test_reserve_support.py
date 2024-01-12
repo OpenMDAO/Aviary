@@ -19,7 +19,7 @@ class StaticGroupTest(unittest.TestCase):
         prob = AviaryProblem()
 
         prob.load_inputs("models/test_aircraft/aircraft_for_bench_GwFm.csv", phase_info)
-        prob.check_inputs()
+        prob.check_and_preprocess_inputs()
 
         # TODO: This needs to be converted into a reserve and a scaler so that it can
         # be given proper units.
@@ -52,7 +52,7 @@ class StaticGroupTest(unittest.TestCase):
 
         prob.load_inputs(
             "models/small_single_aisle/small_single_aisle_GwGm.csv", phase_info)
-        prob.check_inputs()
+        prob.check_and_preprocess_inputs()
 
         prob.aviary_inputs.set_val(Mission.Summary.GROSS_MASS, 140000.0, units='lbm')
 
