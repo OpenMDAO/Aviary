@@ -103,12 +103,6 @@ class FinalTakeoffConditions(om.ExplicitComponent):
 
         add_aviary_input(self, Mission.Takeoff.LIFT_OVER_DRAG, val=2)
 
-        # we don't actually need this? It seems like we should from the equation in the
-        # paper, but we are using the equation from LEAPS1 because it doesn't require L
-        # or D
-        add_aviary_input(self, Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT,
-                         val=0.00175)
-
         add_aviary_output(self, Mission.Takeoff.GROUND_DISTANCE, val=0)
 
         add_aviary_output(self, Mission.Takeoff.FINAL_VELOCITY,
@@ -133,7 +127,6 @@ class FinalTakeoffConditions(om.ExplicitComponent):
                 Aircraft.Wing.AREA,
                 Mission.Takeoff.LIFT_COEFFICIENT_MAX,
                 Mission.Design.THRUST_TAKEOFF_PER_ENG,
-                Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT,
                 Mission.Takeoff.LIFT_OVER_DRAG,
             ],
         )
@@ -160,7 +153,6 @@ class FinalTakeoffConditions(om.ExplicitComponent):
         Cl_max = inputs[Mission.Takeoff.LIFT_COEFFICIENT_MAX]
         thrust = inputs[Mission.Design.THRUST_TAKEOFF_PER_ENG]
         L_over_D = inputs[Mission.Takeoff.LIFT_OVER_DRAG]
-        mu = inputs[Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT]
         num_engines = self.options['num_engines']
         rho_ratio = rho / rho_SL
 
@@ -205,17 +197,14 @@ class FinalTakeoffConditions(om.ExplicitComponent):
         outputs[Mission.Takeoff.FINAL_ALTITUDE] = 35
 
     def compute_partials(self, inputs, J):
-
         rho_SL = RHO_SEA_LEVEL_METRIC
 
-        v_stall = inputs["v_stall"]
         ramp_weight = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         rho = inputs["rho"]
         S = inputs[Aircraft.Wing.AREA]
         Cl_max = inputs[Mission.Takeoff.LIFT_COEFFICIENT_MAX]
         thrust = inputs[Mission.Design.THRUST_TAKEOFF_PER_ENG]
         L_over_D = inputs[Mission.Takeoff.LIFT_OVER_DRAG]
-        mu = inputs[Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT]
         num_engines = self.options['num_engines']
         rho_ratio = rho / rho_SL
 
@@ -408,7 +397,6 @@ class TakeoffGroup(om.Group):
                 Mission.Takeoff.LIFT_COEFFICIENT_MAX,
                 Mission.Design.THRUST_TAKEOFF_PER_ENG,
                 Mission.Takeoff.LIFT_OVER_DRAG,
-                Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT,
             ],
             promotes_outputs=[
                 Mission.Takeoff.GROUND_DISTANCE,
