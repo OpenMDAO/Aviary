@@ -266,6 +266,8 @@ mission:takeoff:lift_coefficient,3.0,unitless
 mission:takeoff:lift_over_drag,17.354,unitless
 mission:takeoff:rolling_friction_coefficient,0.0175,unitless
 aircraft:fuel:burn_per_passenger_mile,0.1
+settings:equations_of_motion,2DOF
+settings:mass_method,FLOPS
 
 # Initial Guesses
 actual_takeoff_mass,0

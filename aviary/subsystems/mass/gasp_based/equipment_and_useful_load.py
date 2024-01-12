@@ -3,7 +3,7 @@ import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.enums import GASP_Engine_Type
+from aviary.variable_info.enums import GASPEngineType
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission
 
@@ -92,7 +92,7 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
         num_pilots = 1.0
         if PAX > 9.0:
             num_pilots = 2.0
-        if engine_type is GASP_Engine_Type.TURBOJET and PAX > 5.0:
+        if engine_type is GASPEngineType.TURBOJET and PAX > 5.0:
             num_pilots = 2.0
         if PAX >= 251.0:
             num_pilots = 3.0
@@ -285,9 +285,9 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
                 20.0 * (num_flight_attendants + num_pilots) + 25.0 * num_pilots
             )
 
-        if engine_type is GASP_Engine_Type.TURBOJET:
+        if engine_type is GASPEngineType.TURBOJET:
             oil_per_eng_wt = 0.0054 * Fn_SLS + 12.0
-        # elif engine_type is GASP_Engine_Type.TURBOSHAFT or engine_type is GASP_Engine_Type.TURBOPROP:
+        # elif engine_type is GASPEngineType.TURBOSHAFT or engine_type is GASPEngineType.TURBOPROP:
         #     oil_per_eng_wt = 0.0124 * Fn_SLS + 14
         # else:
         #     oil_per_eng_wt = 0.062 * (Fn_SLS - 100) + 11
@@ -392,7 +392,7 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
         num_pilots = 1.0
         if PAX > 9.0:
             num_pilots = 2.0
-        if engine_type is GASP_Engine_Type.TURBOJET and PAX > 5.0:
+        if engine_type is GASPEngineType.TURBOJET and PAX > 5.0:
             num_pilots = 2.0
         if PAX >= 251.0:
             num_pilots = 3.0
@@ -677,9 +677,9 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
         if PAX >= 251.0:
             num_flight_attendants = 6.0
 
-        if engine_type is GASP_Engine_Type.TURBOJET:
+        if engine_type is GASPEngineType.TURBOJET:
             doil_per_eng_wt_dFn_SLS = 0.0054
-        # elif engine_type is GASP_Engine_Type.TURBOSHAFT or engine_type is GASP_Engine_Type.TURBOPROP:
+        # elif engine_type is GASPEngineType.TURBOSHAFT or engine_type is GASPEngineType.TURBOPROP:
         #     doil_per_eng_wt_dFn_SLS = 0.0124
         # else:
         #     doil_per_eng_wt_dFn_SLS = 0.062

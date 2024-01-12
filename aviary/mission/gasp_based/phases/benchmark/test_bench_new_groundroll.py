@@ -11,7 +11,7 @@ from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.phases.v_rotate_comp import VRotateComp
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.interface.default_phase_info.gasp import default_mission_subsystems
+from aviary.interface.default_phase_info.two_dof import default_mission_subsystems
 
 
 def make_groundroll_problem(optimizer='IPOPT', print_opt_iters=False, solve_segments=False):

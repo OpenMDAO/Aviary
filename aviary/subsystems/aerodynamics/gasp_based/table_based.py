@@ -588,11 +588,12 @@ def _structure_special_grid(aero_data):
     # units don't matter, not using values
     aoa = aero_data.get_val('angle_of_attack', 'deg')
 
-    # special case alpha - this format saturates alpha at its max
-    # get unique alphas at zero alt mach 0, should cover the full range
-    # TODO this does not work with data that is already in structured grid format
-    mask = (data[0] == x0[0]) & (data[1] == x1[0])
-    aoa = np.unique(aoa[mask])
+    if data[0].shape[0] > x0.shape[0]:
+        # special case alpha - this format saturates alpha at its max
+        # get unique alphas at zero alt mach 0, should cover the full range
+        mask = (data[0] == x0[0]) & (data[1] == x1[0])
+        aoa = np.unique(aoa[mask])
+
     _, _, aoa = np.meshgrid(x0, x1, aoa)
 
     # put the aoa data back in the NamedValues object

@@ -1,5 +1,10 @@
 from openmdao.utils.units import valid_units
-from aviary.variable_info.enums import SpeedType
+from aviary.variable_info.enums import SpeedType, EquationsOfMotion
+
+HEIGHT_ENERGY = EquationsOfMotion.HEIGHT_ENERGY
+TWO_DEGREES_OF_FREEDOM = EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
+SIMPLE = EquationsOfMotion.SIMPLE
+SOLVED = EquationsOfMotion.SOLVED
 
 
 def check_phase_info(phase_info, mission_method):
@@ -204,21 +209,21 @@ def check_phase_info(phase_info, mission_method):
     }
 
     phase_keys = {}
-    if mission_method == 'FLOPS':
+    if mission_method is HEIGHT_ENERGY:
         for phase in phase_info:
             if phase != 'pre_mission' and phase != 'post_mission':
                 phase_keys[phase] = {**common_keys, **phase_keys_flops[phase]}
             else:
                 phase_keys[phase] = phase_keys_flops[phase]
-    elif mission_method == 'GASP':
+    elif mission_method is TWO_DEGREES_OF_FREEDOM:
         for phase in phase_info:
             if phase != 'pre_mission' and phase != 'post_mission' and phase != 'cruise':
                 phase_keys[phase] = {**common_keys, **phase_keys_gasp[phase]}
             else:
                 phase_keys[phase] = phase_keys_gasp[phase]
-    elif mission_method == 'solved':
+    elif mission_method is SOLVED:
         return
-    elif mission_method == 'simple':
+    elif mission_method is SIMPLE:
         return
     else:
         raise ValueError(
