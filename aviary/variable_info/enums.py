@@ -181,27 +181,3 @@ class Flap_Type(Enum):
     """
     Double-slotted Fowler flaps
     """
-
-
-@unique
-class Reserves_Type(Enum):
-    """
-    Defines the type of reserves used. Currently, Set_by_Time is not implemented.
-    """
-
-    Set_None = 0
-    """
-    Do not set it and let initial_guess['reserves'] decide.
-    """
-    Set_Direct = 1
-    """
-    Set required fuel reserves directly in lbm (must be larger than 10).
-    """
-    Set_Fraction = 2
-    """
-    Set required fuel reserves as a proportion of mission fuel (must be btween -1 and 0).
-    """
-    Set_by_Time = 3
-    """
-    Set required fuel reserves as a proportion of time (must be btween 0 and 1 which correspond to 0 and 45 minutes). 
-    """

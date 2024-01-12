@@ -26,7 +26,7 @@ class StaticGroupTest(unittest.TestCase):
         prob.check_inputs()
 
         prob.aviary_inputs.set_val(
-            Aircraft.Design.FIXED_RESERVES_FUEL, 10000.0, units='lbm')
+            Aircraft.Design.RESERVE_FUEL_ADDITIONAL, 10000.0, units='lbm')
 
         prob.add_pre_mission_systems()
         prob.add_phases()
@@ -74,7 +74,7 @@ class StaticGroupTest(unittest.TestCase):
         prob.run_model()
 
         res_frac = prob.aviary_inputs.get_val(
-            Aircraft.Design.RESERVES_FRACTION, units='unitless')
+            Aircraft.Design.RESERVE_FUEL_FRACTION, units='unitless')
         td_mass = prob.model.get_val(Mission.Landing.TOUCHDOWN_MASS, units='lbm')
         reserve = prob.model.get_val(Mission.Design.RESERVE_FUEL, units='lbm')
         assert_near_equal(reserve, res_frac * (140000.0 - td_mass), 1e-3)

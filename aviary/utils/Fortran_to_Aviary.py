@@ -434,12 +434,16 @@ def update_gasp_options(vehicle_data):
         input_values.set_val(Aircraft.Wing.FLAP_DRAG_INCREMENT_OPTIMUM,
                              [[.12, .23, .13, .23, .23, .1, .15][flap_ind]])
 
-    res = input_values.get_val(Aircraft.Design.FIXED_RESERVES_FUEL, units='lbm')[0]
-    if res <= 1.0:
-        input_values.set_val(Aircraft.Design.FIXED_RESERVES_FUEL, [0], units='lbm')
-        input_values.set_val(Aircraft.Design.RESERVES_FRACTION, [res], units='unitless')
+    res = input_values.get_val(Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm')[0]
+    if res <= 0:
+        input_values.set_val(Aircraft.Design.RESERVE_FUEL_ADDITIONAL, [0], units='lbm')
+        input_values.set_val(Aircraft.Design.RESERVE_FUEL_FRACTION,
+                             [-res], units='unitless')
+    elif res >= 10:
+        input_values.set_val(Aircraft.Design.RESERVE_FUEL_FRACTION,
+                             [0], units='unitless')
     else:
-        input_values.set_val(Aircraft.Design.RESERVES_FRACTION, [0], units='unitless')
+        ValueError('"FRESF" is not valid between 0 and 10.')
 
     vehicle_data['input_values'] = input_values
     return vehicle_data

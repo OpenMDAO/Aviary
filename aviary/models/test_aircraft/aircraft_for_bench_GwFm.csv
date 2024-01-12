@@ -39,7 +39,7 @@ aircraft:design:lift_dependent_drag_coeff_factor,0.909839381134961,unitless
 aircraft:design:touchdown_mass,152800.0,lbm
 aircraft:design:max_structural_speed,402.5,mi/h
 aircraft:design:part25_structural_category,3,unitless
-aircraft:design:fixed_reserves_fuel,5000.,lbm
+aircraft:design:reserve_fuel_additional,5000.,lbm
 aircraft:design:smooth_mass_discontinuities,False,unitless
 aircraft:design:static_margin,0.03,unitless
 aircraft:design:structural_mass_increment,0,lbm

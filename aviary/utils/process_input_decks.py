@@ -45,8 +45,8 @@ def create_vehicle(vehicle_deck=''):
     aircraft_values.set_val('mass_defect', val=10000, units='lbm')
     aircraft_values.set_val('problem_type', val=ProblemType.SIZING)
     aircraft_values.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False)
-    aircraft_values.set_val(Aircraft.Design.FIXED_RESERVES_FUEL, val=4998, units='lbm')
-    aircraft_values.set_val(Aircraft.Design.RESERVES_FRACTION, val=0, units='unitless')
+    # aircraft_values.set_val(Aircraft.Design.RESERVE_FUEL_ADDITIONAL, val=4998, units='lbm')
+    # aircraft_values.set_val(Aircraft.Design.RESERVE_FUEL_FRACTION, val=0, units='unitless')
 
     vehicle_deck = get_path(vehicle_deck)
 
@@ -165,28 +165,24 @@ def update_dependent_options(aircraft_values: AviaryValues(), dependent_options)
 
 def initial_guessing(aircraft_values: AviaryValues()):
     problem_type = aircraft_values.get_val('problem_type')
-    if initial_guesses['reserves'] == 0:
-        reserves = aircraft_values.get_val(
-            Aircraft.Design.FIXED_RESERVES_FUEL, units='lbm')
-        reserves_option = "direct_val"
-        if reserves == 0:
-            reserves = aircraft_values.get_val(
-                Aircraft.Design.RESERVES_FRACTION, units='unitless')
-            reserves_option = "fraction_val"
-    else:
-        reserves = initial_guesses['reserves']
-        if reserves < 0.0:
-            raise ValueError('initial_guesses["reserves"] must be greater than 0.')
-        elif reserves > 10:
-            reserves_option = "direct_val"
-        else:
-            reserves_option = "fraction_val"
-
     num_pax = aircraft_values.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)
+    reserve_val = aircraft_values.get_val(
+        Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm')
+    reserve_frac = aircraft_values.get_val(
+        Aircraft.Design.RESERVE_FUEL_FRACTION, units='unitless')
 
-    if reserves_option == "fraction_val":
+    reserves = initial_guesses['reserves']
+    if reserves < 0.0:
+        raise ValueError(
+            'initial_guesses["reserves"] must be greater than or equal to 0.')
+    elif reserves == 0:
+        reserves += reserve_val
+        reserves += (reserve_frac * (num_pax * initial_guesses['fuel_burn_per_passenger_mile'] *
+                                     aircraft_values.get_val(Mission.Design.RANGE, units='NM')))
+    elif reserves < 10:
         reserves *= (num_pax * initial_guesses['fuel_burn_per_passenger_mile'] *
                      aircraft_values.get_val(Mission.Design.RANGE, units='NM'))
+
     initial_guesses['reserves'] = reserves
 
     if Mission.Summary.GROSS_MASS in aircraft_values:
