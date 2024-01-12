@@ -90,8 +90,9 @@ class TestParameterizePhaseInfo(unittest.TestCase):
 
         prob = AviaryProblem()
 
-        prob.load_inputs(
-            "models/small_single_aisle/small_single_aisle_GwGm.csv", phase_info)
+        csv_path = "models/small_single_aisle/small_single_aisle_GwGm.csv"
+
+        prob.load_inputs(csv_path, phase_info)
         prob.check_and_preprocess_inputs()
 
         # We can set some crazy vals, since we aren't going to optimize.
