@@ -312,7 +312,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
     reports_dir = f"reports/{script_name}/"
 
     import os
-    print(f"pwd = {os.cwd()}")
+    print(f"pwd = {os.getcwd()}")
 
     print("reports contents")
     reports_dir_contents = os.listdir("reports")
