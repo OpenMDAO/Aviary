@@ -1841,6 +1841,7 @@ class AviaryProblem(om.Problem):
             set_aviary_initial_values(
                 self.model, self.aviary_inputs, meta_data=self.meta_data)
 
+            warnings.simplefilter("ignore", om.OpenMDAOWarning)
             warnings.simplefilter("ignore", om.PromotionWarning)
             super().setup(**kwargs)
 
