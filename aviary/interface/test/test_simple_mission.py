@@ -117,10 +117,14 @@ class AircraftMissionTestSuite(unittest.TestCase):
     def test_mission_basic_and_dashboard(self):
         prob = self.run_mission(self.phase_info, "SLSQP")
         import os
-        print(f"pwd = {os.getcwd()}")
+        import sys
+        print(
+            f"in test_mission_basic_and_dashboard pwd = {os.getcwd()}", file=sys.stderr)
+        print("in current directory these are the files")
         files = os.listdir()
         for file in files:
             print(file)
+        print("end of current directory files")
 
         self.assertIsNotNone(prob)
         self.assertFalse(prob.failed)
