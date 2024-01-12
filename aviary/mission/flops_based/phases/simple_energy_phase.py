@@ -1,5 +1,3 @@
-from math import isclose
-
 import dymos as dm
 
 from aviary.mission.flops_based.phases.phase_builder_base import (
