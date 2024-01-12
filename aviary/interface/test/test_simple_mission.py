@@ -117,7 +117,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
     def test_mission_basic_and_dashboard(self):
         prob = self.run_mission(self.phase_info, "SLSQP")
         import os
-        print(f"pwd = {os.pwd()}")
+        print(f"pwd = {os.cwd()}")
         files = os.listdir()
         for file in files:
             print(file)
