@@ -126,7 +126,11 @@ class AircraftMissionTestSuite(unittest.TestCase):
         try:
             subprocess.check_output(cmd.split())
         except subprocess.CalledProcessError as err:
-            self.fail("Command '{}' failed.  Return code: {}".format(cmd, err.returncode))
+            self.fail("Command '{}' failed.  Return code: {} \n output: {} \n stderr: {} \n stdout: {}".format(cmd,
+                                                                                                               err.returncode,
+                                                                                                               err.output,
+                                                                                                               err.stderr,
+                                                                                                               err.stdout))
 
     @require_pyoptsparse(optimizer="IPOPT")
     def test_mission_basic_pyopt(self):
