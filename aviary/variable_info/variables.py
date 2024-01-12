@@ -709,6 +709,7 @@ class Mission:
         DRAG_COEFFICIENT_MIN = 'mission:takeoff:drag_coefficient_min'
         FIELD_LENGTH = 'mission:takeoff:field_length'
         FINAL_ALTITUDE = 'mission:takeoff:final_altitude'
+        FINAL_MACH = 'mission:takeoff:final_mach'
         FINAL_MASS = 'mission:takeoff:final_mass'
         FINAL_VELOCITY = 'mission:takeoff:final_velocity'
         FUEL_SIMPLE = 'mission:takeoff:fuel_simple'

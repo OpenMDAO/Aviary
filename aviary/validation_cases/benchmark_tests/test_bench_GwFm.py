@@ -5,7 +5,6 @@ Takeoff, Climb, Cruise, Descent, Landing
 Computed Aero
 Large Single Aisle 1 data
 '''
-from copy import deepcopy
 import unittest
 
 import numpy as np
@@ -14,8 +13,6 @@ from openmdao.utils.testing_utils import use_tempdirs
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.validation_cases.benchmark_utils import \
     compare_against_expected_values
-from aviary.variable_info.variables import Dynamic
-from aviary.interface.default_phase_info.height_energy import phase_info
 
 
 @use_tempdirs
@@ -275,7 +272,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
             "climb": {
                 "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
                 "user_options": {
-                    'fix_initial': {Dynamic.Mission.MASS: False, Dynamic.Mission.RANGE: False},
+                    'fix_initial': False,
                     'input_initial': True,
                     "optimize_mach": True,
                     "optimize_altitude": True,

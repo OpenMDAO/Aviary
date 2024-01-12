@@ -1,4 +1,3 @@
-from copy import deepcopy
 import unittest
 
 import numpy as np
@@ -7,7 +6,6 @@ from openmdao.utils.testing_utils import use_tempdirs
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.validation_cases.benchmark_utils import \
     compare_against_expected_values
-from aviary.variable_info.variables import Dynamic
 
 
 @use_tempdirs
@@ -268,7 +266,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
             "climb": {
                 "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
                 "user_options": {
-                    'fix_initial': {Dynamic.Mission.MASS: False, Dynamic.Mission.RANGE: False},
+                    'fix_initial': False,
                     'input_initial': True,
                     "optimize_mach": True,
                     "optimize_altitude": True,
@@ -279,7 +277,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
                     "initial_mach": (0.2, "unitless"),
                     "final_mach": (0.79, "unitless"),
                     "mach_bounds": ((0.1, 0.8), "unitless"),
-                    "initial_altitude": (0.0, "ft"),
+                    "initial_altitude": (35., "ft"),
                     "final_altitude": (35000.0, "ft"),
                     "altitude_bounds": ((0.0, 36000.0), "ft"),
                     "throttle_enforcement": "path_constraint",
@@ -350,7 +348,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         }
 
         prob = run_aviary(
-            'models/test_aircraft/aircraft_for_bench_FwFm_simple.csv', phase_info)
+            'models/test_aircraft/aircraft_for_bench_FwFm_simple.csv', phase_info, max_iter=100)
 
         compare_against_expected_values(prob, self.expected_dict)
 

@@ -379,7 +379,7 @@ class TakeoffGroup(om.Group):
             "USatm",
             USatm1976Comp(num_nodes=1),
             promotes_inputs=[("h", Dynamic.Mission.ALTITUDE)],
-            promotes_outputs=["rho"],
+            promotes_outputs=["rho", ("sos", "speed_of_sound")],
         )
 
         self.add_subsystem(
@@ -417,3 +417,11 @@ class TakeoffGroup(om.Group):
                 Mission.Takeoff.FINAL_ALTITUDE,
             ],
         )
+
+        self.add_subsystem('compute_mach', om.ExecComp('final_mach = final_velocity / speed_of_sound',
+                                                       final_mach={'units': 'unitless'},
+                                                       final_velocity={'units': 'm/s'},
+                                                       speed_of_sound={'units': 'm/s'}),
+                           promotes_inputs=[('speed_of_sound', 'speed_of_sound'),
+                                            ('final_velocity', Mission.Takeoff.FINAL_VELOCITY)],
+                           promotes_outputs=[('final_mach', Mission.Takeoff.FINAL_MACH)])

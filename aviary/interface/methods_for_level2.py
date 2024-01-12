@@ -2382,17 +2382,33 @@ class AviaryProblem(om.Problem):
                                'traj.climb.initial_states:mass')
             self.model.connect(Mission.Takeoff.GROUND_DISTANCE,
                                'traj.climb.initial_states:range')
-            # TODO: connect this correctly
-            # mass is the most important to connect but these others should
-            # be connected as well
-            # self.model.connect(Mission.Takeoff.FINAL_VELOCITY,
-            #                 'traj.climb.initial_states:mach')
-            # self.model.connect(Mission.Takeoff.FINAL_ALTITUDE,
-            #                 'traj.climb.controls:altitude')
+
+            # Create an ExecComp to compute the difference in mach
+            mach_diff_comp = om.ExecComp('mach_difference = final_mach - initial_mach')
+            self.model.add_subsystem('mach_diff_comp', mach_diff_comp)
+
+            # Connect the inputs to the mach difference component
+            self.model.connect(Mission.Takeoff.FINAL_MACH, 'mach_diff_comp.final_mach')
+            self.model.connect('traj.climb.control_values:mach',
+                               'mach_diff_comp.initial_mach', src_indices=[0])
+
+            # Add constraint for mach difference
+            self.model.add_constraint('mach_diff_comp.mach_difference', equals=0.0)
+
+            # Similar steps for altitude difference
+            alt_diff_comp = om.ExecComp(
+                'altitude_difference = final_altitude - initial_altitude', units='ft')
+            self.model.add_subsystem('alt_diff_comp', alt_diff_comp)
+
+            self.model.connect(Mission.Takeoff.FINAL_ALTITUDE,
+                               'alt_diff_comp.final_altitude')
+            self.model.connect('traj.climb.control_values:altitude',
+                               'alt_diff_comp.initial_altitude', src_indices=[0])
+
+            self.model.add_constraint('alt_diff_comp.altitude_difference', equals=0.0)
 
         self.model.connect('traj.descent.states:mass',
                            Mission.Landing.TOUCHDOWN_MASS, src_indices=[-1])
-        # TODO: approach velocity should likely be connected
         self.model.connect('traj.descent.control_values:altitude', Mission.Landing.INITIAL_ALTITUDE,
                            src_indices=[0])
 
