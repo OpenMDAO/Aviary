@@ -416,10 +416,10 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
             # mod the script.js file to point at the json file
             # create the json file and put it in reports/script_name/aviary_vars/aviary_vars.json
             table_data_nested = create_aviary_variables_table_data_nested(
-                script_name, problem_recorder)  # create the json file
+                script_name, problem_recorder)
             if table_data_nested:
                 aviary_vars_pane = create_report_frame('html',
-                                                    f'{reports_dir}/aviary_vars/index.html')
+                                                       f'{reports_dir}/aviary_vars/index.html')
 
                 results_tabs_list.append(('Aviary Variables', aviary_vars_pane))
 
