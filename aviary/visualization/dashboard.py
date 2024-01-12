@@ -311,6 +311,12 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
     """
     reports_dir = f"reports/{script_name}/"
 
+    print("reports contents")
+    reports_dir_contents = os.listdir("reports")
+    for item in reports_dir_contents:
+        print(item)
+    print("end reports contents")
+
     if not Path(reports_dir).is_dir():
         raise ValueError(
             f"The script name, '{script_name}', does not have a reports folder associated with it. "
