@@ -1,3 +1,4 @@
+import os
 import unittest
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.subsystems.test.test_dummy_subsystem import ArrayGuessSubsystemBuilder
@@ -9,6 +10,7 @@ import subprocess
 class AircraftMissionTestSuite(unittest.TestCase):
 
     def setUp(self):
+
         # Load the phase_info and other common setup tasks
         self.phase_info = {
             "pre_mission": {"include_takeoff": False, "optimize_mass": True},
@@ -115,16 +117,16 @@ class AircraftMissionTestSuite(unittest.TestCase):
             optimization_history_filename="driver_test.db")
 
     def test_mission_basic_and_dashboard(self):
+        # We need to remove the TESTFLO_RUNNING environment variable for this test to run.
+        # The reports code checks to see if TESTFLO_RUNNING is set and will not do anything if set
+        # But we need to remember whether it was set so we can restore it
+        testflo_running = os.environ.pop('TESTFLO_RUNNING', None)
+
         prob = self.run_mission(self.phase_info, "SLSQP")
-        import os
-        import sys
-        print(
-            f"in test_mission_basic_and_dashboard pwd = {os.getcwd()}", file=sys.stderr)
-        print("in current directory these are the files")
-        files = os.listdir()
-        for file in files:
-            print(file)
-        print("end of current directory files")
+
+        # restore what was there before running the test
+        if testflo_running is not None:
+            os.environ['TESTFLO_RUNNING'] = testflo_running
 
         self.assertIsNotNone(prob)
         self.assertFalse(prob.failed)
@@ -136,11 +138,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
         try:
             subprocess.check_output(cmd.split())
         except subprocess.CalledProcessError as err:
-            self.fail("Command '{}' failed.  Return code: {} \n output: {} \n stderr: {} \n stdout: {}".format(cmd,
-                                                                                                               err.returncode,
-                                                                                                               err.output,
-                                                                                                               err.stderr,
-                                                                                                               err.stdout))
+            self.fail("Command '{}' failed.  Return code: {}".format(cmd, err.returncode))
 
     @require_pyoptsparse(optimizer="IPOPT")
     def test_mission_basic_pyopt(self):
