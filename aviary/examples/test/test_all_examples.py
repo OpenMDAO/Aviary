@@ -45,8 +45,9 @@ class RunScriptTest(unittest.TestCase):
         This method is called once before starting the tests and is used to
         populate the 'run_files' attribute with a list of run scripts.
         """
-        cls.base_directory = "../external_subsystems"  # Adjust the path as necessary
-        cls.run_files = cls.find_run_files(cls.base_directory)
+        base_directory = os.path.join(os.path.dirname(
+            os.path.dirname(os.path.abspath(__file__))), ".")
+        cls.run_files = cls.find_run_files(base_directory)
 
     @staticmethod
     def find_run_files(base_dir):

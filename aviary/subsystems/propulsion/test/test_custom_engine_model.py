@@ -188,9 +188,9 @@ class CustomEngineTest(unittest.TestCase):
         # Allow for user overrides here
         prob.load_inputs(csv_path, phase_info, engine_builder=SimpleTestEngine())
 
-        # Have checks for clashing user inputs
-        # Raise warnings or errors depending on how clashing the issues are
-        prob.check_inputs()
+
+# Preprocess inputs
+        prob.check_and_preprocess_inputs()
 
         prob.add_pre_mission_systems()
 
