@@ -18,12 +18,10 @@ from aviary.models.N3CC.N3CC_data import \
     balanced_trajectory_builder as _takeoff_trajectory_builder
 from aviary.models.N3CC.N3CC_data import \
     inputs as _inputs
-from aviary.variable_info.variables import Dynamic as _Dynamic
+from aviary.variable_info.variables import Dynamic
 from aviary.variable_info.variables_in import VariablesIn
 from aviary.interface.default_phase_info.height_energy import default_premission_subsystems
 from aviary.subsystems.premission import CorePreMission
-
-Dynamic = _Dynamic.Mission
 
 
 @use_tempdirs
@@ -95,7 +93,7 @@ class TestFLOPSBalancedFieldLength(unittest.TestCase):
         liftoff = takeoff_trajectory_builder.get_phase('balanced_liftoff')
 
         liftoff.add_objective(
-            Dynamic.RANGE, loc='final', ref=max_range, units=units)
+            Dynamic.Mission.DISTANCE, loc='final', ref=max_range, units=units)
 
         takeoff.model.add_subsystem(
             'input_sink',
@@ -128,7 +126,7 @@ class TestFLOPSBalancedFieldLength(unittest.TestCase):
         # N3CC FLOPS output Line 2282
         desired = 7032.65
         actual = takeoff.model.get_val(
-            'traj.balanced_liftoff.states:range', units='ft')[-1]
+            'traj.balanced_liftoff.states:distance', units='ft')[-1]
         assert_near_equal(actual, desired, 2e-2)
 
         # Decision Time

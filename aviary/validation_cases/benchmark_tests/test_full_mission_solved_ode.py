@@ -293,7 +293,7 @@ def run_mission(optimizer):
             phase.set_state_options("mass", rate_source="dmass_dv",
                                     fix_initial=True, fix_final=False, lower=1, upper=195_000, ref=takeoff_mass, defect_ref=takeoff_mass)
 
-            phase.set_state_options(Dynamic.Mission.RANGE, rate_source="over_a",
+            phase.set_state_options(Dynamic.Mission.DISTANCE, rate_source="over_a",
                                     fix_initial=True, fix_final=False, lower=0, upper=2000., ref=1.e2, defect_ref=1.e2)
 
             phase.add_parameter("t_init_gear", units="s",
@@ -330,7 +330,7 @@ def run_mission(optimizer):
                 static_target=False)
 
             phase.set_time_options(fix_initial=False, fix_duration=False,
-                                   units="range_units", name=Dynamic.Mission.RANGE,
+                                   units="range_units", name=Dynamic.Mission.DISTANCE,
                                    duration_bounds=duration_bounds, duration_ref=duration_ref,
                                    initial_bounds=initial_bounds, initial_ref=initial_ref)
 
@@ -425,7 +425,7 @@ def run_mission(optimizer):
             pass
         elif phase_name == "descent":
             phase.add_boundary_constraint(
-                Dynamic.Mission.RANGE,
+                Dynamic.Mission.DISTANCE,
                 loc="final",
                 equals=target_range,
                 units="NM",
@@ -510,7 +510,7 @@ def run_mission(optimizer):
     traj.link_phases(phases[6:], vars=[Dynamic.Mission.ALTITUDE], ref=10.e3)
     traj.link_phases(phases, vars=['time'], ref=100.)
     traj.link_phases(phases, vars=['mass'], ref=10.e3)
-    traj.link_phases(phases, vars=[Dynamic.Mission.RANGE], units='m', ref=10.e3)
+    traj.link_phases(phases, vars=[Dynamic.Mission.DISTANCE], units='m', ref=10.e3)
     traj.link_phases(phases[:7], vars=['TAS'], units='kn', ref=200.)
     # traj.link_phases(phases[7:], vars=['TAS'], units='kn', ref=200.)
 
@@ -641,9 +641,9 @@ def run_mission(optimizer):
         if phase_name == "groundroll":
 
             ranges.extend(
-                p.get_val(f"traj.{phase_name}.timeseries.states:range", units="m")[0])
+                p.get_val(f"traj.{phase_name}.timeseries.states:distance", units="m")[0])
             ranges.extend(
-                p.get_val(f"traj.{phase_name}.timeseries.states:range", units="m")[-1])
+                p.get_val(f"traj.{phase_name}.timeseries.states:distance", units="m")[-1])
 
             masses.extend(
                 p.get_val(f"traj.{phase_name}.timeseries.mass", units="lbm")[0])

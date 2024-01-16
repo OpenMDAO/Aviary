@@ -189,13 +189,13 @@ class EnergyPhase(PhaseBuilderBase):
             # solve_segments='forward',
         )
 
-        input_initial_range = get_initial(input_initial, Dynamic.Mission.RANGE)
-        fix_initial_range = get_initial(fix_initial, Dynamic.Mission.RANGE, True)
+        input_initial_distance = get_initial(input_initial, Dynamic.Mission.DISTANCE)
+        fix_initial_distance = get_initial(fix_initial, Dynamic.Mission.DISTANCE, True)
         phase.add_state(
-            Dynamic.Mission.RANGE, fix_initial=fix_initial_range, fix_final=False,
+            Dynamic.Mission.DISTANCE, fix_initial=fix_initial_distance, fix_final=False,
             lower=0.0, ref=1e6, defect_ref=1e8, units='m',
-            rate_source=Dynamic.Mission.RANGE_RATE,
-            input_initial=input_initial_range,
+            rate_source=Dynamic.Mission.DISTANCE_RATE,
+            input_initial=input_initial_distance,
             solve_segments='forward' if solve_for_range else None,
         )
 
@@ -385,7 +385,7 @@ EnergyPhase._add_initial_guess_meta_data(
     desc='initial guess for initial time and duration specified as a tuple')
 
 EnergyPhase._add_initial_guess_meta_data(
-    InitialGuessState('range'),
+    InitialGuessState('distance'),
     desc='initial guess for horizontal distance traveled')
 
 EnergyPhase._add_initial_guess_meta_data(

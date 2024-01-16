@@ -253,9 +253,9 @@ def run_trajectory(sim=True):
         promotes_outputs=['mission:*'])
 
     traj.link_phases(["climb", "cruise"], ["time", Dynamic.Mission.ALTITUDE,
-                     Dynamic.Mission.VELOCITY, Dynamic.Mission.MASS, Dynamic.Mission.RANGE], connected=strong_couple)
+                     Dynamic.Mission.VELOCITY, Dynamic.Mission.MASS, Dynamic.Mission.DISTANCE], connected=strong_couple)
     traj.link_phases(["cruise", "descent"], ["time", Dynamic.Mission.ALTITUDE,
-                     Dynamic.Mission.VELOCITY, Dynamic.Mission.MASS, Dynamic.Mission.RANGE], connected=strong_couple)
+                     Dynamic.Mission.VELOCITY, Dynamic.Mission.MASS, Dynamic.Mission.DISTANCE], connected=strong_couple)
 
     traj = setup_trajectory_params(prob.model, traj, aviary_inputs)
 
@@ -293,7 +293,7 @@ def run_trajectory(sim=True):
 
     prob.model.connect('traj.climb.states:mass',
                        'takeoff_constraints.climb_start_mass', src_indices=[0])
-    prob.model.connect('traj.climb.states:range',
+    prob.model.connect('traj.climb.states:distance',
                        'takeoff_constraints.climb_start_range', src_indices=[0])
     prob.model.connect('traj.climb.states:velocity',
                        'takeoff_constraints.climb_start_vel', src_indices=[0])
@@ -303,7 +303,7 @@ def run_trajectory(sim=True):
     prob.model.connect(Mission.Takeoff.FINAL_MASS,
                        'traj.climb.initial_states:mass')
     prob.model.connect(Mission.Takeoff.GROUND_DISTANCE,
-                       'traj.climb.initial_states:range')
+                       'traj.climb.initial_states:distance')
     prob.model.connect(Mission.Takeoff.FINAL_VELOCITY,
                        'traj.climb.initial_states:velocity')
     prob.model.connect(Mission.Takeoff.FINAL_ALTITUDE,
@@ -363,8 +363,8 @@ def run_trajectory(sim=True):
         Dynamic.Mission.VELOCITY, ys=[v_i_climb, v_f_climb]), units='m/s')
     prob.set_val('traj.climb.states:mass', climb.interp(
         Dynamic.Mission.MASS, ys=[mass_i_climb, mass_f_climb]), units='kg')
-    prob.set_val('traj.climb.states:range', climb.interp(
-        Dynamic.Mission.RANGE, ys=[range_i_climb, range_f_climb]), units='m')  # nmi
+    prob.set_val('traj.climb.states:distance', climb.interp(
+        Dynamic.Mission.DISTANCE, ys=[range_i_climb, range_f_climb]), units='m')  # nmi
 
     prob.set_val('traj.climb.controls:velocity_rate',
                  climb.interp(Dynamic.Mission.VELOCITY_RATE, ys=[0.25, 0.05]),
@@ -382,8 +382,8 @@ def run_trajectory(sim=True):
         Dynamic.Mission.VELOCITY, ys=[v_i_cruise, v_f_cruise]), units='m/s')
     prob.set_val('traj.cruise.states:mass', cruise.interp(
         Dynamic.Mission.MASS, ys=[mass_i_cruise, mass_f_cruise]), units='kg')
-    prob.set_val('traj.cruise.states:range', cruise.interp(
-        Dynamic.Mission.RANGE, ys=[range_i_cruise, range_f_cruise]), units='m')  # nmi
+    prob.set_val('traj.cruise.states:distance', cruise.interp(
+        Dynamic.Mission.DISTANCE, ys=[range_i_cruise, range_f_cruise]), units='m')  # nmi
 
     prob.set_val('traj.cruise.controls:velocity_rate',
                  cruise.interp(Dynamic.Mission.VELOCITY_RATE, ys=[0.0, 0.0]),
@@ -401,8 +401,8 @@ def run_trajectory(sim=True):
         Dynamic.Mission.VELOCITY, ys=[v_i_descent, v_f_descent]), units='m/s')
     prob.set_val('traj.descent.states:mass', descent.interp(
         Dynamic.Mission.MASS, ys=[mass_i_descent, mass_f_descent]), units='kg')
-    prob.set_val('traj.descent.states:range', descent.interp(
-        Dynamic.Mission.RANGE, ys=[range_i_descent, range_f_descent]), units='m')
+    prob.set_val('traj.descent.states:distance', descent.interp(
+        Dynamic.Mission.DISTANCE, ys=[range_i_descent, range_f_descent]), units='m')
 
     prob.set_val('traj.descent.controls:velocity_rate',
                  descent.interp(Dynamic.Mission.VELOCITY_RATE, ys=[-0.25, 0.0]),
@@ -433,7 +433,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         altitudes_climb = prob.get_val(
             'traj.climb.timeseries.states:altitude', units='m')
         masses_climb = prob.get_val('traj.climb.timeseries.states:mass', units='kg')
-        ranges_climb = prob.get_val('traj.climb.timeseries.states:range', units='m')
+        ranges_climb = prob.get_val('traj.climb.timeseries.states:distance', units='m')
         velocities_climb = prob.get_val(
             'traj.climb.timeseries.states:velocity', units='m/s')
         thrusts_climb = prob.get_val('traj.climb.timeseries.thrust_net_total', units='N')
@@ -441,7 +441,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         altitudes_cruise = prob.get_val(
             'traj.cruise.timeseries.states:altitude', units='m')
         masses_cruise = prob.get_val('traj.cruise.timeseries.states:mass', units='kg')
-        ranges_cruise = prob.get_val('traj.cruise.timeseries.states:range', units='m')
+        ranges_cruise = prob.get_val('traj.cruise.timeseries.states:distance', units='m')
         velocities_cruise = prob.get_val(
             'traj.cruise.timeseries.states:velocity', units='m/s')
         thrusts_cruise = prob.get_val(
@@ -450,7 +450,8 @@ class ProblemPhaseTestCase(unittest.TestCase):
         altitudes_descent = prob.get_val(
             'traj.descent.timeseries.states:altitude', units='m')
         masses_descent = prob.get_val('traj.descent.timeseries.states:mass', units='kg')
-        ranges_descent = prob.get_val('traj.descent.timeseries.states:range', units='m')
+        ranges_descent = prob.get_val(
+            'traj.descent.timeseries.states:distance', units='m')
         velocities_descent = prob.get_val(
             'traj.descent.timeseries.states:velocity', units='m/s')
         thrusts_descent = prob.get_val(

@@ -21,14 +21,10 @@ from aviary.subsystems.propulsion.engine_deck import EngineDeck
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.functions import get_path
-from aviary.variable_info.variables import Aircraft
-from aviary.variable_info.variables import Dynamic as _Dynamic
-from aviary.variable_info.variables import Mission
-from aviary.variable_info.variables import Settings
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 from aviary.variable_info.enums import EquationsOfMotion, LegacyCode
 from aviary.interface.default_phase_info.height_energy import default_mission_subsystems
 
-Dynamic = _Dynamic.Mission
 
 N3CC = {}
 inputs = N3CC['inputs'] = AviaryValues()
@@ -490,7 +486,7 @@ takeoff_brake_release_user_options.set_val('max_velocity', val=167.85, units='kn
 takeoff_brake_release_initial_guesses = AviaryValues()
 
 takeoff_brake_release_initial_guesses.set_val('times', [0., 30.], 's')
-takeoff_brake_release_initial_guesses.set_val('range', [0., 4100.], 'ft')
+takeoff_brake_release_initial_guesses.set_val('distance', [0., 4100.], 'ft')
 takeoff_brake_release_initial_guesses.set_val('velocity', [0.01, 150.], 'kn')
 
 gross_mass_units = 'lbm'
@@ -523,7 +519,7 @@ takeoff_decision_speed_user_options.set_val('max_velocity', val=167.85, units='k
 takeoff_decision_speed_initial_guesses = AviaryValues()
 
 takeoff_decision_speed_initial_guesses.set_val('times', [30., 2.], 's')
-takeoff_decision_speed_initial_guesses.set_val('range', [4100., 4500.], 'ft')
+takeoff_decision_speed_initial_guesses.set_val('distance', [4100., 4500.], 'ft')
 takeoff_decision_speed_initial_guesses.set_val('velocity', [150., 160.], 'kn')
 takeoff_decision_speed_initial_guesses.set_val('mass', gross_mass, gross_mass_units)
 takeoff_decision_speed_initial_guesses.set_val('throttle', 1.)
@@ -552,7 +548,7 @@ takeoff_rotate_user_options.set_val('max_angle_of_attack', val=10.0, units='deg'
 takeoff_rotate_initial_guesses = AviaryValues()
 
 takeoff_rotate_initial_guesses.set_val('times', [32., 1.], 's')
-takeoff_rotate_initial_guesses.set_val('range', [4500, 4800.0], 'ft')
+takeoff_rotate_initial_guesses.set_val('distance', [4500, 4800.0], 'ft')
 takeoff_rotate_initial_guesses.set_val('velocity', [160., 160.0], 'kn')
 takeoff_rotate_initial_guesses.set_val('throttle', 1.)
 takeoff_rotate_initial_guesses.set_val('angle_of_attack', [0., 8.], 'deg')
@@ -585,11 +581,12 @@ takeoff_liftoff_user_options.set_val('angle_of_attack_ref', val=10., units='deg'
 takeoff_liftoff_initial_guesses = AviaryValues()
 
 takeoff_liftoff_initial_guesses.set_val('times', [33., 4.], 's')
-takeoff_liftoff_initial_guesses.set_val('range', [4800, 5700.0], 'ft')
+takeoff_liftoff_initial_guesses.set_val('distance', [4800, 5700.0], 'ft')
 takeoff_liftoff_initial_guesses.set_val('velocity', [160, 167.0], 'kn')
 takeoff_liftoff_initial_guesses.set_val('throttle', 1.)
 takeoff_liftoff_initial_guesses.set_val('altitude', [0, 35.0], 'ft')
-takeoff_liftoff_initial_guesses.set_val(Dynamic.FLIGHT_PATH_ANGLE, [0, 6.0], 'deg')
+takeoff_liftoff_initial_guesses.set_val(
+    Dynamic.Mission.FLIGHT_PATH_ANGLE, [0, 6.0], 'deg')
 takeoff_liftoff_initial_guesses.set_val('angle_of_attack', 8.117, 'deg')
 takeoff_liftoff_initial_guesses.set_val('mass', gross_mass, gross_mass_units)
 
@@ -627,11 +624,12 @@ takeoff_mic_p2_user_options.set_val('mic_altitude', val=985., units='ft')
 takeoff_mic_p2_initial_guesses = AviaryValues()
 
 takeoff_mic_p2_initial_guesses.set_val('times', [36., 18], 's')
-takeoff_mic_p2_initial_guesses.set_val('range', [5700, 10000.0], 'ft')
+takeoff_mic_p2_initial_guesses.set_val('distance', [5700, 10000.0], 'ft')
 takeoff_mic_p2_initial_guesses.set_val('velocity', [167, 167.0], 'kn')
 takeoff_mic_p2_initial_guesses.set_val('throttle', 1.)
 takeoff_mic_p2_initial_guesses.set_val('altitude', [35, 985.0], 'ft')
-takeoff_mic_p2_initial_guesses.set_val(Dynamic.FLIGHT_PATH_ANGLE, [7.0, 10.0], 'deg')
+takeoff_mic_p2_initial_guesses.set_val(
+    Dynamic.Mission.FLIGHT_PATH_ANGLE, [7.0, 10.0], 'deg')
 takeoff_mic_p2_initial_guesses.set_val('angle_of_attack', 8.117, 'deg')
 takeoff_mic_p2_initial_guesses.set_val('mass', gross_mass, gross_mass_units)
 
@@ -679,13 +677,14 @@ takeoff_mic_p2_to_engine_cutback_user_options.set_val(
 takeoff_mic_p2_to_engine_cutback_initial_guesses = AviaryValues()
 
 takeoff_mic_p2_to_engine_cutback_initial_guesses.set_val('times', [53., 27], 's')
-takeoff_mic_p2_to_engine_cutback_initial_guesses.set_val('range', [10000, 19000.0], 'ft')
+takeoff_mic_p2_to_engine_cutback_initial_guesses.set_val(
+    'distance', [10000, 19000.0], 'ft')
 takeoff_mic_p2_to_engine_cutback_initial_guesses.set_val('velocity', [167, 167.0], 'kn')
 takeoff_mic_p2_to_engine_cutback_initial_guesses.set_val('throttle', 1.0)
 takeoff_mic_p2_to_engine_cutback_initial_guesses.set_val('altitude', [985, 2500.0], 'ft')
 
 takeoff_mic_p2_to_engine_cutback_initial_guesses.set_val(
-    Dynamic.FLIGHT_PATH_ANGLE, [11.0, 10.0], 'deg')
+    Dynamic.Mission.FLIGHT_PATH_ANGLE, [11.0, 10.0], 'deg')
 
 takeoff_mic_p2_to_engine_cutback_initial_guesses.set_val('angle_of_attack', 5.0, 'deg')
 
@@ -734,13 +733,13 @@ takeoff_engine_cutback_user_options.set_val('angle_of_attack_ref', val=10., unit
 takeoff_engine_cutback_initial_guesses = AviaryValues()
 
 takeoff_engine_cutback_initial_guesses.set_val('times', [84., cutback_duration], 's')
-takeoff_engine_cutback_initial_guesses.set_val('range', [19000, 20000.0], 'ft')
+takeoff_engine_cutback_initial_guesses.set_val('distance', [19000, 20000.0], 'ft')
 takeoff_engine_cutback_initial_guesses.set_val('velocity', [167, 167.0], 'kn')
 takeoff_engine_cutback_initial_guesses.set_val('throttle', [1.0, cutback_throttle])
 takeoff_engine_cutback_initial_guesses.set_val('altitude', [2500.0, 2600.0], 'ft')
 
 takeoff_engine_cutback_initial_guesses.set_val(
-    Dynamic.FLIGHT_PATH_ANGLE, [10.0, 10.0], 'deg')
+    Dynamic.Mission.FLIGHT_PATH_ANGLE, [10.0, 10.0], 'deg')
 
 takeoff_engine_cutback_initial_guesses.set_val('angle_of_attack', 5.0, 'deg')
 takeoff_engine_cutback_initial_guesses.set_val('mass', gross_mass, gross_mass_units)
@@ -792,7 +791,8 @@ takeoff_engine_cutback_to_mic_p1_user_options.set_val(
 takeoff_engine_cutback_to_mic_p1_initial_guesses = AviaryValues()
 
 takeoff_engine_cutback_to_mic_p1_initial_guesses.set_val('times', [87., 10], 's')
-takeoff_engine_cutback_to_mic_p1_initial_guesses.set_val('range', [20000, 21325.0], 'ft')
+takeoff_engine_cutback_to_mic_p1_initial_guesses.set_val(
+    'distance', [20000, 21325.0], 'ft')
 takeoff_engine_cutback_to_mic_p1_initial_guesses.set_val('velocity', [167, 167.0], 'kn')
 takeoff_engine_cutback_to_mic_p1_initial_guesses.set_val('throttle', cutback_throttle)
 
@@ -800,7 +800,7 @@ takeoff_engine_cutback_to_mic_p1_initial_guesses.set_val(
     'altitude', [2600, 2700.0], 'ft')
 
 takeoff_engine_cutback_to_mic_p1_initial_guesses.set_val(
-    Dynamic.FLIGHT_PATH_ANGLE, 2.29, 'deg')
+    Dynamic.Mission.FLIGHT_PATH_ANGLE, 2.29, 'deg')
 takeoff_engine_cutback_to_mic_p1_initial_guesses.set_val('angle_of_attack', 5.0, 'deg')
 
 takeoff_engine_cutback_to_mic_p1_initial_guesses.set_val(
@@ -842,11 +842,12 @@ takeoff_mic_p1_to_climb_user_options.set_val('mic_range', val=30000., units='ft'
 takeoff_mic_p1_to_climb_initial_guesses = AviaryValues()
 
 takeoff_mic_p1_to_climb_initial_guesses.set_val('times', [95., 32], 's')
-takeoff_mic_p1_to_climb_initial_guesses.set_val('range', [21325, 30000.0], 'ft')
+takeoff_mic_p1_to_climb_initial_guesses.set_val('distance', [21325, 30000.0], 'ft')
 takeoff_mic_p1_to_climb_initial_guesses.set_val('velocity', [167, 167.0], 'kn')
 takeoff_mic_p1_to_climb_initial_guesses.set_val('throttle', cutback_throttle)
 takeoff_mic_p1_to_climb_initial_guesses.set_val('altitude', [2700, 3200.0], 'ft')
-takeoff_mic_p1_to_climb_initial_guesses.set_val(Dynamic.FLIGHT_PATH_ANGLE, 2.29, 'deg')
+takeoff_mic_p1_to_climb_initial_guesses.set_val(
+    Dynamic.Mission.FLIGHT_PATH_ANGLE, 2.29, 'deg')
 takeoff_mic_p1_to_climb_initial_guesses.set_val('angle_of_attack', 5.0, 'deg')
 takeoff_mic_p1_to_climb_initial_guesses.set_val('mass', gross_mass, gross_mass_units)
 
@@ -867,51 +868,54 @@ takeoff_trajectory_builder.set_mic_p1_to_climb(takeoff_mic_p1_to_climb_builder)
 detailed_takeoff = AviaryValues()
 
 detailed_takeoff.set_val('time', [0.77, 32.01, 33.00, 35.40], 's')
-detailed_takeoff.set_val(Dynamic.RANGE, [3.08, 4626.88, 4893.40, 5557.61], 'ft')
-detailed_takeoff.set_val(Dynamic.ALTITUDE, [0.00, 0.00, 0.64, 27.98], 'ft')
+detailed_takeoff.set_val(Dynamic.Mission.DISTANCE, [
+                         3.08, 4626.88, 4893.40, 5557.61], 'ft')
+detailed_takeoff.set_val(Dynamic.Mission.ALTITUDE, [0.00, 0.00, 0.64, 27.98], 'ft')
 velocity = np.array([4.74, 157.58, 160.99, 166.68])
-detailed_takeoff.set_val(Dynamic.VELOCITY, velocity, 'kn')
-detailed_takeoff.set_val(Dynamic.MACH, [0.007, 0.2342, 0.2393, 0.2477])
+detailed_takeoff.set_val(Dynamic.Mission.VELOCITY, velocity, 'kn')
+detailed_takeoff.set_val(Dynamic.Mission.MACH, [0.007, 0.2342, 0.2393, 0.2477])
 
 detailed_takeoff.set_val(
-    Dynamic.THRUST_TOTAL, [44038.8, 34103.4, 33929.0, 33638.2], 'lbf')
+    Dynamic.Mission.THRUST_TOTAL, [44038.8, 34103.4, 33929.0, 33638.2], 'lbf')
 
 detailed_takeoff.set_val('angle_of_attack', [0.000, 3.600, 8.117, 8.117], 'deg')
-detailed_takeoff.set_val(Dynamic.FLIGHT_PATH_ANGLE, [0.000, 0.000, 0.612, 4.096], 'deg')
+detailed_takeoff.set_val(Dynamic.Mission.FLIGHT_PATH_ANGLE, [
+                         0.000, 0.000, 0.612, 4.096], 'deg')
 
 # missing from the default FLOPS output generated by hand
 # RANGE_RATE = VELOCITY * cos(flight_path_angle)
 range_rate = np.array([4.74, 157.58, 160.98, 166.25])
-detailed_takeoff.set_val(Dynamic.RANGE_RATE, range_rate, 'kn')
+detailed_takeoff.set_val(Dynamic.Mission.DISTANCE_RATE, range_rate, 'kn')
 # ALTITUDE_RATE = VELOCITY * sin(flight_path_angle)
 altitude_rate = np.array([0.00, 0.00, 1.72, 11.91])
-detailed_takeoff.set_val(Dynamic.ALTITUDE_RATE, altitude_rate, 'kn')
+detailed_takeoff.set_val(Dynamic.Mission.ALTITUDE_RATE, altitude_rate, 'kn')
 
 # NOTE FLOPS output is horizontal acceleration only
 #    - divide the FLOPS values by the cos(flight_path_angle)
-# detailed_takeoff.set_val(Dynamic.VELOCITY_RATE, [10.36, 6.20, 5.23, 2.69], 'ft/s**2')
+# detailed_takeoff.set_val(Dynamic.Mission.VELOCITY_RATE, [10.36, 6.20, 5.23, 2.69], 'ft/s**2')
 velocity_rate = [10.36, 6.20, 5.23, 2.70]
-detailed_takeoff.set_val(Dynamic.VELOCITY_RATE, velocity_rate, 'ft/s**2')
+detailed_takeoff.set_val(Dynamic.Mission.VELOCITY_RATE, velocity_rate, 'ft/s**2')
 
 # NOTE FLOPS output is based on "constant" takeoff mass - assume gross weight
 #    - currently neglecting taxi
-detailed_takeoff.set_val(Dynamic.MASS, [129734., 129734., 129734., 129734.], 'lbm')
+detailed_takeoff.set_val(Dynamic.Mission.MASS, [
+                         129734., 129734., 129734., 129734.], 'lbm')
 
 lift_coeff = np.array([0.5580, 0.9803, 1.4831, 1.3952])
 drag_coeff = np.array([0.0801, 0.0859, 0.1074, 0.1190])
 
 S = inputs.get_val(Aircraft.Wing.AREA, 'm**2')
-v = detailed_takeoff.get_val(Dynamic.VELOCITY, 'm/s')
+v = detailed_takeoff.get_val(Dynamic.Mission.VELOCITY, 'm/s')
 # NOTE sea level; includes effect of FLOPS &TOLIN DTCT 10 DEG C
 rho = 1.18391  # kg/m**3
 
 RHV2 = 0.5 * rho * v * v * S
 
 lift = RHV2 * lift_coeff  # N
-detailed_takeoff.set_val(Dynamic.LIFT, lift, 'N')
+detailed_takeoff.set_val(Dynamic.Mission.LIFT, lift, 'N')
 
 drag = RHV2 * drag_coeff  # N
-detailed_takeoff.set_val(Dynamic.DRAG, drag, 'N')
+detailed_takeoff.set_val(Dynamic.Mission.DRAG, drag, 'N')
 
 
 def _split_aviary_values(aviary_values, slicing):
@@ -941,7 +945,7 @@ balanced_brake_release_user_options.set_val('max_velocity', val=167.85, units='k
 balanced_brake_release_initial_guesses = AviaryValues()
 
 balanced_brake_release_initial_guesses.set_val('times', [0., 30.], 's')
-balanced_brake_release_initial_guesses.set_val('range', [0., 4100.], 'ft')
+balanced_brake_release_initial_guesses.set_val('distance', [0., 4100.], 'ft')
 balanced_brake_release_initial_guesses.set_val('velocity', [0.01, 150.], 'kn')
 balanced_brake_release_initial_guesses.set_val('mass', gross_mass, gross_mass_units)
 balanced_brake_release_initial_guesses.set_val('throttle', 1.)
@@ -971,7 +975,7 @@ num_engines = float(engine_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
 engine_out_throttle = (num_engines - 1) / num_engines
 
 balanced_decision_speed_initial_guesses.set_val('times', [30., 2.], 's')
-balanced_decision_speed_initial_guesses.set_val('range', [4100., 4500.], 'ft')
+balanced_decision_speed_initial_guesses.set_val('distance', [4100., 4500.], 'ft')
 balanced_decision_speed_initial_guesses.set_val('velocity', [150., 160.], 'kn')
 balanced_decision_speed_initial_guesses.set_val('mass', gross_mass, gross_mass_units)
 balanced_decision_speed_initial_guesses.set_val('throttle', engine_out_throttle)
@@ -999,7 +1003,7 @@ balanced_rotate_user_options.set_val('max_angle_of_attack', val=8.117, units='de
 balanced_rotate_initial_guesses = AviaryValues()
 
 balanced_rotate_initial_guesses.set_val('times', [32., 1.], 's')
-balanced_rotate_initial_guesses.set_val('range', [4500., 4800.], 'ft')
+balanced_rotate_initial_guesses.set_val('distance', [4500., 4800.], 'ft')
 balanced_rotate_initial_guesses.set_val('velocity', [160., 160.], 'kn')
 balanced_rotate_initial_guesses.set_val('throttle', engine_out_throttle)
 balanced_rotate_initial_guesses.set_val('angle_of_attack', [0., 8.], 'deg')
@@ -1031,11 +1035,12 @@ balanced_liftoff_user_options.set_val('angle_of_attack_ref', val=10., units='deg
 balanced_liftoff_initial_guesses = AviaryValues()
 
 balanced_liftoff_initial_guesses.set_val('times', [33., 4.], 's')
-balanced_liftoff_initial_guesses.set_val('range', [4800., 7000.], 'ft')
+balanced_liftoff_initial_guesses.set_val('distance', [4800., 7000.], 'ft')
 balanced_liftoff_initial_guesses.set_val('velocity', [160., 167.], 'kn')
 balanced_liftoff_initial_guesses.set_val('throttle', engine_out_throttle)
 balanced_liftoff_initial_guesses.set_val('altitude', [0., 35.], 'ft')
-balanced_liftoff_initial_guesses.set_val(Dynamic.FLIGHT_PATH_ANGLE, [0., 5.], 'deg')
+balanced_liftoff_initial_guesses.set_val(
+    Dynamic.Mission.FLIGHT_PATH_ANGLE, [0., 5.], 'deg')
 balanced_liftoff_initial_guesses.set_val('angle_of_attack', 8.117, 'deg')
 balanced_liftoff_initial_guesses.set_val('mass', gross_mass, gross_mass_units)
 
@@ -1059,7 +1064,7 @@ balanced_delayed_brake_user_options.set_val('max_velocity', val=167.85, units='k
 balanced_delayed_brake_initial_guesses = AviaryValues()
 
 balanced_delayed_brake_initial_guesses.set_val('times', [30., 3.], 's')
-balanced_delayed_brake_initial_guesses.set_val('range', [4100., 4600.], 'ft')
+balanced_delayed_brake_initial_guesses.set_val('distance', [4100., 4600.], 'ft')
 balanced_delayed_brake_initial_guesses.set_val('velocity', [150., 150.], 'kn')
 balanced_delayed_brake_initial_guesses.set_val('mass', gross_mass, gross_mass_units)
 balanced_delayed_brake_initial_guesses.set_val('throttle', engine_out_throttle)
@@ -1086,7 +1091,7 @@ balanced_abort_user_options.set_val('max_velocity', val=167.85, units='kn')
 balanced_abort_initial_guesses = AviaryValues()
 
 balanced_abort_initial_guesses.set_val('times', [32., 22.], 's')
-balanced_abort_initial_guesses.set_val('range', [4600., 7000.], 'ft')
+balanced_abort_initial_guesses.set_val('distance', [4600., 7000.], 'ft')
 balanced_abort_initial_guesses.set_val('velocity', [150., 0.01], 'kn')
 balanced_abort_initial_guesses.set_val('mass', gross_mass, gross_mass_units)
 balanced_abort_initial_guesses.set_val('throttle', 0.)
@@ -1179,10 +1184,10 @@ values = np.array([
 
 base = values[0]
 values = values - base
-detailed_landing.set_val(Dynamic.RANGE, values, 'ft')
+detailed_landing.set_val(Dynamic.Mission.DISTANCE, values, 'ft')
 
 detailed_landing.set_val(
-    Dynamic.ALTITUDE,
+    Dynamic.Mission.ALTITUDE,
     [
         100, 100, 98, 96, 94, 92, 90, 88, 86, 84,
         82, 80, 78, 76, 74, 72, 70, 68, 66, 64,
@@ -1194,7 +1199,7 @@ detailed_landing.set_val(
     'ft')
 
 detailed_landing.set_val(
-    Dynamic.VELOCITY,
+    Dynamic.Mission.VELOCITY,
     np.array([
         138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65,
         138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65,
@@ -1206,7 +1211,7 @@ detailed_landing.set_val(
     'kn')
 
 detailed_landing.set_val(
-    Dynamic.MACH,
+    Dynamic.Mission.MACH,
     [
         0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.2061,
         0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.2061,
@@ -1217,7 +1222,7 @@ detailed_landing.set_val(
         0.086, 0.0756, 0.0653, 0.0551, 0.045, 0.035, 0.025, 0.015, 0.0051, 0])
 
 detailed_landing.set_val(
-    Dynamic.THRUST_TOTAL,
+    Dynamic.Mission.THRUST_TOTAL,
     [
         7614, 7614, 7607.7, 7601, 7593.9, 7586.4, 7578.5, 7570.2, 7561.3, 7551.8,
         7541.8, 7531.1, 7519.7, 7507.6, 7494.6, 7480.6, 7465.7, 7449.7, 7432.5, 7414,
@@ -1242,7 +1247,7 @@ detailed_landing.set_val(
 
 # glide slope == flight path angle?
 detailed_landing.set_val(
-    Dynamic.FLIGHT_PATH_ANGLE,
+    Dynamic.Mission.FLIGHT_PATH_ANGLE,
     np.array([
         -3, -3, -3, -3, -3, -3, -3, -3, -3, -3,
         -3, -3, -3, -3, -3, -3, -3, -3, -3, -3,
@@ -1255,13 +1260,13 @@ detailed_landing.set_val(
 
 # missing from the default FLOPS output generated by script
 # RANGE_RATE = VELOCITY * cos(flight_path_angle)
-velocity: np.ndarray = detailed_landing.get_val(Dynamic.VELOCITY, 'kn')
-flight_path_angle = detailed_landing.get_val(Dynamic.FLIGHT_PATH_ANGLE, 'rad')
+velocity: np.ndarray = detailed_landing.get_val(Dynamic.Mission.VELOCITY, 'kn')
+flight_path_angle = detailed_landing.get_val(Dynamic.Mission.FLIGHT_PATH_ANGLE, 'rad')
 range_rate = velocity * np.cos(-flight_path_angle)
-detailed_landing.set_val(Dynamic.RANGE_RATE, range_rate, 'kn')
+detailed_landing.set_val(Dynamic.Mission.DISTANCE_RATE, range_rate, 'kn')
 # ALTITUDE_RATE = VELOCITY * sin(flight_path_angle)
 altitude_rate = velocity * np.sin(flight_path_angle)
-detailed_landing.set_val(Dynamic.ALTITUDE_RATE, altitude_rate, 'kn')
+detailed_landing.set_val(Dynamic.Mission.ALTITUDE_RATE, altitude_rate, 'kn')
 
 # NOTE FLOPS output is horizontal acceleration only, and virtually no acceleration while
 # airborne
@@ -1272,7 +1277,7 @@ detailed_landing.set_val(Dynamic.ALTITUDE_RATE, altitude_rate, 'kn')
 detailed_landing_mass = 106292.  # units='lbm'
 
 detailed_landing.set_val(
-    Dynamic.MASS, np.full(velocity.shape, detailed_landing_mass), 'lbm')
+    Dynamic.Mission.MASS, np.full(velocity.shape, detailed_landing_mass), 'lbm')
 
 # lift/drag is calculated very close to landing altitude (sea level, in this case)...
 lift_coeff = np.array([
@@ -1294,17 +1299,17 @@ drag_coeff = np.array([
     0.1785, 0.1785, 0.1785, 0.1785, 0.1785, 0.1785, 0.1785, 0.1785, 0.1785, 0.1785])
 
 S = inputs.get_val(Aircraft.Wing.AREA, 'm**2')
-v = detailed_landing.get_val(Dynamic.VELOCITY, 'm/s')
+v = detailed_landing.get_val(Dynamic.Mission.VELOCITY, 'm/s')
 # NOTE sea level; includes effect of FLOPS &TOLIN DTCT 10 DEG C
 rho = 1.18391  # kg/m**3
 
 RHV2 = 0.5 * rho * v * v * S
 
 lift = RHV2 * lift_coeff  # N
-detailed_landing.set_val(Dynamic.LIFT, lift, 'N')
+detailed_landing.set_val(Dynamic.Mission.LIFT, lift, 'N')
 
 drag = RHV2 * drag_coeff  # N
-detailed_landing.set_val(Dynamic.DRAG, drag, 'N')
+detailed_landing.set_val(Dynamic.Mission.DRAG, drag, 'N')
 
 # Flops variable APRANG
 apr_angle = -3.0  # deg
@@ -1338,14 +1343,14 @@ landing_approach_to_mic_p3_user_options.set_val('initial_height', val=600., unit
 landing_approach_to_mic_p3_initial_guesses = AviaryValues()
 
 landing_approach_to_mic_p3_initial_guesses.set_val('times', [-42., 15.], 's')
-landing_approach_to_mic_p3_initial_guesses.set_val('range', [-4000., -2000.], 'ft')
+landing_approach_to_mic_p3_initial_guesses.set_val('distance', [-4000., -2000.], 'ft')
 landing_approach_to_mic_p3_initial_guesses.set_val('velocity', 140., 'kn')
 landing_approach_to_mic_p3_initial_guesses.set_val('mass', detailed_landing_mass, 'lbm')
 landing_approach_to_mic_p3_initial_guesses.set_val('throttle', throttle)
 landing_approach_to_mic_p3_initial_guesses.set_val('altitude', [600., 394.], 'ft')
 
 landing_approach_to_mic_p3_initial_guesses.set_val(
-    Dynamic.FLIGHT_PATH_ANGLE, [apr_angle, apr_angle], 'deg')
+    Dynamic.Mission.FLIGHT_PATH_ANGLE, [apr_angle, apr_angle], 'deg')
 
 landing_approach_to_mic_p3_initial_guesses.set_val('angle_of_attack', 5.25, 'deg')
 
@@ -1389,14 +1394,14 @@ landing_mic_p3_to_obstacle_user_options.set_val('initial_height', val=394., unit
 landing_mic_p3_to_obstacle_initial_guesses = AviaryValues()
 
 landing_mic_p3_to_obstacle_initial_guesses.set_val('times', [-27., 27.], 's')
-landing_mic_p3_to_obstacle_initial_guesses.set_val('range', [-2000., 0.], 'ft')
+landing_mic_p3_to_obstacle_initial_guesses.set_val('distance', [-2000., 0.], 'ft')
 landing_mic_p3_to_obstacle_initial_guesses.set_val('velocity', 140., 'kn')
 landing_mic_p3_to_obstacle_initial_guesses.set_val('mass', detailed_landing_mass, 'lbm')
 landing_mic_p3_to_obstacle_initial_guesses.set_val('throttle', throttle)
 landing_mic_p3_to_obstacle_initial_guesses.set_val('altitude', [394., 50.], 'ft')
 
 landing_mic_p3_to_obstacle_initial_guesses.set_val(
-    Dynamic.FLIGHT_PATH_ANGLE, [apr_angle, apr_angle], 'deg')
+    Dynamic.Mission.FLIGHT_PATH_ANGLE, [apr_angle, apr_angle], 'deg')
 
 landing_mic_p3_to_obstacle_initial_guesses.set_val('angle_of_attack', 5.25, 'deg')
 
@@ -1427,14 +1432,14 @@ landing_obstacle_user_options.set_val('altitude_ref', val=50., units='ft')
 landing_obstacle_initial_guesses = AviaryValues()
 
 landing_obstacle_initial_guesses.set_val('times', [0., 4.], 's')
-landing_obstacle_initial_guesses.set_val('range', [0., 800.], 'ft')
+landing_obstacle_initial_guesses.set_val('distance', [0., 800.], 'ft')
 landing_obstacle_initial_guesses.set_val('velocity', 140., 'kn')
 landing_obstacle_initial_guesses.set_val('mass', detailed_landing_mass, 'lbm')
 landing_obstacle_initial_guesses.set_val('throttle', throttle)
 landing_obstacle_initial_guesses.set_val('altitude', [50., 15.], 'ft')
 
 landing_obstacle_initial_guesses.set_val(
-    Dynamic.FLIGHT_PATH_ANGLE, [apr_angle, apr_angle], 'deg')
+    Dynamic.Mission.FLIGHT_PATH_ANGLE, [apr_angle, apr_angle], 'deg')
 
 landing_obstacle_initial_guesses.set_val('angle_of_attack', 5.2, 'deg')
 
@@ -1469,12 +1474,13 @@ landing_flare_user_options.set_val('angle_of_attack_ref', val=12., units='deg')
 landing_flare_initial_guesses = AviaryValues()
 
 landing_flare_initial_guesses.set_val('times', [4., 6.], 's')
-landing_flare_initial_guesses.set_val('range', [800., 1000.], 'ft')
+landing_flare_initial_guesses.set_val('distance', [800., 1000.], 'ft')
 landing_flare_initial_guesses.set_val('velocity', 140., 'kn')
 landing_flare_initial_guesses.set_val('mass', detailed_landing_mass, 'lbm')
 landing_flare_initial_guesses.set_val('throttle', [throttle, throttle*4/7])
 landing_flare_initial_guesses.set_val('altitude', [15., 0.], 'ft')
-landing_flare_initial_guesses.set_val(Dynamic.FLIGHT_PATH_ANGLE, [apr_angle, 0.], 'deg')
+landing_flare_initial_guesses.set_val(
+    Dynamic.Mission.FLIGHT_PATH_ANGLE, [apr_angle, 0.], 'deg')
 landing_flare_initial_guesses.set_val('angle_of_attack', [5.2, 7.5], 'deg')
 
 landing_flare_builder = LandingFlareToTouchdown(
@@ -1504,7 +1510,7 @@ landing_touchdown_user_options.set_val('max_angle_of_attack', val=8., units='deg
 landing_touchdown_initial_guesses = AviaryValues()
 
 landing_touchdown_initial_guesses.set_val('times', [6., 9.], 's')
-landing_touchdown_initial_guesses.set_val('range', [1000., 1400.], 'ft')
+landing_touchdown_initial_guesses.set_val('distance', [1000., 1400.], 'ft')
 landing_touchdown_initial_guesses.set_val('velocity', [140., 135.], 'kn')
 landing_touchdown_initial_guesses.set_val('mass', detailed_landing_mass, 'lbm')
 landing_touchdown_initial_guesses.set_val('throttle', 0.)
@@ -1536,7 +1542,7 @@ landing_fullstop_user_options.set_val('max_velocity', val=140., units='kn')
 landing_fullstop_initial_guesses = AviaryValues()
 
 landing_fullstop_initial_guesses.set_val('times', [9., 29.], 's')
-landing_fullstop_initial_guesses.set_val('range', [1400., 3500.], 'ft')
+landing_fullstop_initial_guesses.set_val('distance', [1400., 3500.], 'ft')
 landing_fullstop_initial_guesses.set_val('velocity', [135., 0.01], 'kn')
 landing_fullstop_initial_guesses.set_val('mass', detailed_landing_mass, 'lbm')
 landing_fullstop_initial_guesses.set_val('throttle', 0.)
