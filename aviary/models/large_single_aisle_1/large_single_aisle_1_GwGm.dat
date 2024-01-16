@@ -18,7 +18,7 @@ aircraft:engine:data_file=models/engines/turbofan_23k_1.deck
  HCK=4.5,	! mean fuselage cabin diameter minus mean fuselage nose diameter in feet (2.47)
  HTG=8.,	! wing height about ground during ground run in feet (3.0)
  HWING=0.0,     ! wing location on fuselage =0, low wing; =1 high wing
- PAX=180.,	! number of passenger seats excluding crew
+ PAX=169.,	! number of passenger seats excluding crew
  PS=29.0,	! seat pitch in inches
  RELR=0.4524,	! cg of fuselage and contents, fraction fuselage(.4) if LCWING <> 0
  SAB=6.,	! seats abreast in fuselage
