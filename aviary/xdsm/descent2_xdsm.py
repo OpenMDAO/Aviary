@@ -54,7 +54,7 @@ x.connect("aero", "balance_lift", [Dynamic.Mission.LIFT])
 # create outputs
 x.add_output("eom", [
     Dynamic.Mission.ALTITUDE_RATE,
-    "distance_rate",
+    Dynamic.Mission.DISTANCE_RATE,
     "required_lift"
 ], side="right")
 

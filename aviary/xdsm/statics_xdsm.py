@@ -411,32 +411,32 @@ x.connect("poly", "opt", ["h_init_gear", "h_init_flaps"])
 # Connect State Rates
 x.connect(
     "groundroll", "dymos", [
-        "TAS_rate", Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, "distance_rate"])
+        "TAS_rate", Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, Dynamic.Mission.DISTANCE_RATE])
 x.connect("rotation",
           "dymos",
           ["TAS_rate",
            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-           "distance_rate",
+           Dynamic.Mission.DISTANCE_RATE,
            "alpha_rate"])
 x.connect("ascent",
           "dymos",
           ["TAS_rate",
            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-           "distance_rate",
+           Dynamic.Mission.DISTANCE_RATE,
            Dynamic.Mission.ALTITUDE_RATE,
            Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE],
           )
 x.connect(
     "accelerate", "dymos", [
-        "TAS_rate", Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, "distance_rate"])
+        "TAS_rate", Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, Dynamic.Mission.DISTANCE_RATE])
 x.connect("climb1", "dymos", [Dynamic.Mission.ALTITUDE_RATE,
-          Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, "distance_rate"])
+          Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, Dynamic.Mission.DISTANCE_RATE])
 x.connect("climb2", "dymos", [Dynamic.Mission.ALTITUDE_RATE,
-          Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, "distance_rate"])
+          Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, Dynamic.Mission.DISTANCE_RATE])
 x.connect("descent1", "dymos", [Dynamic.Mission.ALTITUDE_RATE,
-          Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, "distance_rate"])
+          Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, Dynamic.Mission.DISTANCE_RATE])
 x.connect("descent2", "dymos", [Dynamic.Mission.ALTITUDE_RATE,
-          Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, "distance_rate"])
+          Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, Dynamic.Mission.DISTANCE_RATE])
 
 x.write("statics_xdsm")
 x.write_sys_specs("statics_specs")

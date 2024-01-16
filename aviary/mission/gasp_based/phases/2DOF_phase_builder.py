@@ -108,7 +108,7 @@ class Phase2DOF:
             lower=self.bounds.get_val("distance_bounds")["value"][0],
             upper=self.bounds.get_val("distance_bounds")["value"][1],
             units=self.bounds.get_val("distance_bounds")["units"],
-            rate_source="distance_rate",
+            rate_source=Dynamic.Mission.DISTANCE_RATE,
             targets=Dynamic.Mission.DISTANCE,
             ref=self.scalers.get_val("distance_ref")["value"],
             ref0=self.scalers.get_val("distance_ref0")["value"],
@@ -254,7 +254,8 @@ def linked_vars(phase1, phase2):  # TODO: add other combinations of phases
     elif type1 == "cruise" and type2 == "descent":
         linked_vars = []  # TODO: update this
     elif type1 == "descent" and type2 == "descent":
-        linked_vars = ["time", Dynamic.Mission.ALTITUDE, "mass", "distance"]
+        linked_vars = ["time", Dynamic.Mission.ALTITUDE,
+                       "mass", Dynamic.Mission.DISTANCE]
     else:
         raise om.AnalysisError(
             "You have provided a phase order which is not yet supported."

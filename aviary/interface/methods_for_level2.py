@@ -1400,7 +1400,7 @@ class AviaryProblem(om.Problem):
         elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
             if self.analysis_scheme is AnalysisScheme.COLLOCATION:
                 self.traj.link_phases(["groundroll", "rotation", "ascent"], [
-                    "time", "TAS", "mass", "distance"], connected=True)
+                    "time", "TAS", "mass", Dynamic.Mission.DISTANCE], connected=True)
                 self.traj.link_phases(
                     ["rotation", "ascent"], ["alpha"], connected=False,
                     ref=5e1,
@@ -1408,8 +1408,8 @@ class AviaryProblem(om.Problem):
                 self.traj.add_linkage_constraint(
                     "ascent",
                     "accel",
-                    "distance",
-                    "distance",
+                    Dynamic.Mission.DISTANCE,
+                    Dynamic.Mission.DISTANCE,
                     "final",
                     "initial",
                     connected=False,
@@ -1422,13 +1422,14 @@ class AviaryProblem(om.Problem):
                         "time", "mass", "TAS"], connected=True)
                 self.traj.link_phases(
                     phases=["accel", "climb1", "climb2"],
-                    vars=["time", Dynamic.Mission.ALTITUDE, "mass", "distance"],
+                    vars=["time", Dynamic.Mission.ALTITUDE,
+                          "mass", Dynamic.Mission.DISTANCE],
                     connected=True,
                 )
 
                 self.traj.link_phases(
                     phases=["desc1", "desc2"],
-                    vars=["time", "mass", "distance"],
+                    vars=["time", "mass", Dynamic.Mission.DISTANCE],
                     connected=True,
                 )
 
@@ -2063,11 +2064,11 @@ class AviaryProblem(om.Problem):
 
         if self.mission_method is SIMPLE:
             control_keys = ["mach", "altitude"]
-            state_keys = ["mass", "range"]
+            state_keys = ["mass", Dynamic.Mission.RANGE]
         else:
             control_keys = ["velocity_rate", "throttle"]
             state_keys = ["altitude", "velocity", "mass",
-                          "range", "TAS", "distance", "flight_path_angle", "alpha"]
+                          Dynamic.Mission.RANGE, "TAS", Dynamic.Mission.DISTANCE, "flight_path_angle", "alpha"]
             if self.mission_method is TWO_DEGREES_OF_FREEDOM and phase_name == 'ascent':
                 # Alpha is a control for ascent.
                 control_keys.append('alpha')
@@ -2171,7 +2172,7 @@ class AviaryProblem(om.Problem):
                 # Set the distance guesses as the initial values for the distance state variable
                 self.set_val(
                     f"traj.{phase_name}.states:distance", phase.interp(
-                        "distance", ys=ys)
+                        Dynamic.Mission.DISTANCE, ys=ys)
                 )
 
     def _add_solved_guesses(self, idx, phase_name, phase):
