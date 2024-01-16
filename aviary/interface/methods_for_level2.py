@@ -217,12 +217,14 @@ class AviaryProblem(om.Problem):
                 print('Loaded outputted_phase_info.py generated with GUI')
 
             else:
-                # 2dof -> two_dof
-                method = self.mission_method.value.replace('2DOF', 'two_dof')
-
-                module = importlib.import_module(
-                    self.mission_method.value, 'aviary.interface.default_phase_info')
-                phase_info = getattr(module, 'phase_info')
+                if self.mission_method is TWO_DEGREES_OF_FREEDOM:
+                    from aviary.interface.default_phase_info.two_dof import phase_info
+                elif self.mission_method is HEIGHT_ENERGY:
+                    from aviary.interface.default_phase_info.height_energy import phase_info
+                elif self.mission_method is SIMPLE:
+                    from aviary.interface.default_phase_info.simple import phase_info
+                elif self.mission_method is SOLVED:
+                    from aviary.interface.default_phase_info.solved import phase_info
 
                 print('Loaded default phase_info for'
                       f'{self.mission_method.value.lower()} equations of motion')
@@ -355,11 +357,10 @@ class AviaryProblem(om.Problem):
             if variable in self.meta_data:
                 self.meta_data.pop(variable)
 
-    def check_inputs(self):
+    def check_and_preprocess_inputs(self):
         """
-        This method checks the user-supplied input values for any potential problems.
-        These problems include variable names that are not recognized in Aviary,
-        conflicting options or values, or units mismatching.
+        This method checks the user-supplied input values for any potential problems
+        and preprocesses the inputs to prepare them for use in the Aviary problem.
         """
         check_phase_info(self.phase_info, self.mission_method)
 
@@ -1207,7 +1208,7 @@ class AviaryProblem(om.Problem):
         """
 
         if include_landing and self.post_mission_info['include_landing']:
-            if self.mission_method is HEIGHT_ENERGY:
+            if self.mission_method is HEIGHT_ENERGY or self.mission_method is SIMPLE:
                 self._add_flops_landing_systems()
             elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
                 self._add_gasp_landing_systems()
@@ -2423,16 +2424,30 @@ class AviaryProblem(om.Problem):
                                'traj.climb.initial_states:mass')
             self.model.connect(Mission.Takeoff.GROUND_DISTANCE,
                                'traj.climb.initial_states:range')
-            self.model.connect(Mission.Takeoff.FINAL_VELOCITY,
-                               'traj.climb.initial_states:velocity')
-            self.model.connect(Mission.Takeoff.FINAL_ALTITUDE,
-                               'traj.climb.initial_states:altitude')
+            if self.mission_method is HEIGHT_ENERGY:
+                self.model.connect(Mission.Takeoff.FINAL_VELOCITY,
+                                   'traj.climb.initial_states:velocity')
+                self.model.connect(Mission.Takeoff.FINAL_ALTITUDE,
+                                   'traj.climb.initial_states:altitude')
+            else:
+                pass
+                # TODO: connect this correctly
+                # mass is the most important to connect but these others should
+                # be connected as well
+                # self.model.connect(Mission.Takeoff.FINAL_VELOCITY,
+                #                 'traj.climb.initial_states:mach')
+                # self.model.connect(Mission.Takeoff.FINAL_ALTITUDE,
+                #                 'traj.climb.controls:altitude')
 
         self.model.connect('traj.descent.states:mass',
                            Mission.Landing.TOUCHDOWN_MASS, src_indices=[-1])
         # TODO: approach velocity should likely be connected
-        self.model.connect('traj.descent.states:altitude', Mission.Landing.INITIAL_ALTITUDE,
-                           src_indices=[-1])
+        if self.mission_method is HEIGHT_ENERGY:
+            self.model.connect('traj.descent.states:altitude', Mission.Landing.INITIAL_ALTITUDE,
+                               src_indices=[-1])
+        else:
+            self.model.connect('traj.descent.control_values:altitude', Mission.Landing.INITIAL_ALTITUDE,
+                               src_indices=[0])
 
     def _add_gasp_landing_systems(self):
         self.model.add_subsystem(
