@@ -27,12 +27,12 @@ from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_ode import \
     UnsteadySolvedODE
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 from aviary.mission.gasp_based.phases.time_integration_phases import SGMCruise
-from aviary.mission.gasp_based.phases.new_groundroll_phase import GroundrollPhase
-from aviary.mission.gasp_based.phases.new_rotation_phase import RotationPhase
-from aviary.mission.gasp_based.phases.new_climb_phase import ClimbPhase
-from aviary.mission.gasp_based.phases.new_accel_phase import AccelPhase
-from aviary.mission.gasp_based.phases.new_ascent_phase import AscentPhase
-from aviary.mission.gasp_based.phases.new_descent_phase import DescentPhase
+from aviary.mission.gasp_based.phases.groundroll_phase import GroundrollPhase
+from aviary.mission.gasp_based.phases.rotation_phase import RotationPhase
+from aviary.mission.gasp_based.phases.climb_phase import ClimbPhase
+from aviary.mission.gasp_based.phases.accel_phase import AccelPhase
+from aviary.mission.gasp_based.phases.ascent_phase import AscentPhase
+from aviary.mission.gasp_based.phases.descent_phase import DescentPhase
 from aviary.mission.gasp_based.phases.landing_group import LandingSegment
 from aviary.mission.gasp_based.phases.taxi_group import TaxiSegment
 from aviary.mission.gasp_based.phases.v_rotate_comp import VRotateComp
