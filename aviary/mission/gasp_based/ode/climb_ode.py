@@ -14,6 +14,8 @@ from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBas
 from aviary.subsystems.propulsion.propulsion_mission import PropulsionMission
 from aviary.variable_info.enums import AnalysisScheme, AlphaModes, SpeedType
 from aviary.variable_info.variables import Dynamic
+from aviary.mission.flops_based.ode.specific_energy_rate import SpecificEnergyRate
+from aviary.mission.flops_based.ode.altitude_rate import AltitudeRate
 
 
 class ClimbODE(BaseODE):
@@ -196,6 +198,28 @@ class ClimbODE(BaseODE):
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
             ],
         )
+
+        lift_balance_group.add_subsystem(
+            name='SPECIFIC_ENERGY_RATE_EXCESS',
+            subsys=SpecificEnergyRate(num_nodes=nn),
+            promotes_inputs=["TAS", Dynamic.Mission.MASS,
+                             Dynamic.Mission.THRUST_MAX_TOTAL, Dynamic.Mission.DRAG],
+            promotes_outputs=[(Dynamic.Mission.SPECIFIC_ENERGY_RATE,
+                               Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS)]
+        )
+
+        # Note when TAS_rate = 0, SPECIFIC_ENERGY_RATE_EXCESS = ALTITUDE_RATE_MAX
+        lift_balance_group.add_subsystem(
+            name='ALTITUDE_RATE_MAX',
+            subsys=AltitudeRate(num_nodes=nn),
+            promotes_inputs=[
+                (Dynamic.Mission.SPECIFIC_ENERGY_RATE,
+                 Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS),
+                "TAS_rate",
+                "TAS"],
+            promotes_outputs=[
+                (Dynamic.Mission.ALTITUDE_RATE,
+                 Dynamic.Mission.ALTITUDE_RATE_MAX)])
 
         self.AddAlphaControl(
             alpha_group=lift_balance_group,
