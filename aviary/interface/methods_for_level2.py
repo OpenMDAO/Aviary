@@ -27,17 +27,13 @@ from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_ode import \
     UnsteadySolvedODE
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 from aviary.mission.gasp_based.phases.time_integration_phases import SGMCruise
-from aviary.mission.gasp_based.phases.accel_phase import get_accel
-from aviary.mission.gasp_based.phases.ascent_phase import get_ascent
-from aviary.mission.gasp_based.phases.climb_phase import get_climb
+from aviary.mission.gasp_based.phases.new_groundroll_phase import GroundrollPhase
+from aviary.mission.gasp_based.phases.new_rotation_phase import RotationPhase
 from aviary.mission.gasp_based.phases.new_climb_phase import ClimbPhase
 from aviary.mission.gasp_based.phases.new_accel_phase import AccelPhase
 from aviary.mission.gasp_based.phases.new_ascent_phase import AscentPhase
 from aviary.mission.gasp_based.phases.new_descent_phase import DescentPhase
-from aviary.mission.gasp_based.phases.desc_phase import get_descent
-from aviary.mission.gasp_based.phases.groundroll_phase import get_groundroll
 from aviary.mission.gasp_based.phases.landing_group import LandingSegment
-from aviary.mission.gasp_based.phases.rotation_phase import get_rotation
 from aviary.mission.gasp_based.phases.taxi_group import TaxiSegment
 from aviary.mission.gasp_based.phases.v_rotate_comp import VRotateComp
 from aviary.mission.gasp_based.polynomial_fit import PolynomialFit
@@ -606,64 +602,14 @@ class AviaryProblem(om.Problem):
             phase.add_timeseries_output("time", units="s")
 
         else:
-            # Create a dictionary of phase functions
-            phase_functions = {
-                'groundroll': get_groundroll,
-                'rotation': get_rotation,
-                'ascent': get_ascent,
-                'accel': get_accel
-            }
-
-            # Set the phase function based on the phase name
-            if 'climb' in phase_name or 'accel' in phase_name or 'ascent' in phase_name or 'desc' in phase_name:
-                phase_functions[phase_name] = get_climb
-                num_segments = phase_options['user_options']['num_segments']
-                order = phase_options['user_options']['order']
-            else:
-                num_segments = phase_options['num_segments']
-                order = phase_options['order']
-
+            num_segments = phase_options['user_options']['num_segments']
+            order = phase_options['user_options']['order']
             # Create a Radau transcription scheme object with the specified num_segments and order
             transcription = dm.Radau(
                 num_segments=num_segments,
                 order=order,
                 compressed=True,
                 solve_segments=False)
-
-            # Get the phase function corresponding to the phase name
-            phase_func = phase_functions.get(phase_name)
-
-            # Calculate the phase by calling the phase function
-            # with the transcription object and remaining phase options
-            trimmed_phase_options = {k: v for k, v in phase_options.items(
-            ) if k not in ['num_segments', 'order', 'initial_guesses', 'external_subsystems']}
-
-            # define expected units for each phase option
-            expected_units = {
-                'alt': 'ft',
-                'mass': 'lbm',
-                'distance': 'ft',
-                'time': 's',
-                'duration': 's',
-                'initial': 's',
-                'EAS': 'kn',
-                'TAS': 'kn',
-                'angle': 'deg',
-                'pitch': 'deg',
-                'normal': 'lbf',
-                'final_alt': 'ft',
-                'required_available_climb_rate': 'ft/min',
-            }
-
-            if phase_name in ['accel', 'climb1', 'climb2', 'desc1', 'desc2']:
-                expected_units['distance'] = 'NM'
-
-            # loop through all trimmed_phase_options and call wrapped_convert_units with the correct expected units
-            for key, value in trimmed_phase_options.items():
-                for expected_key, expected_unit in expected_units.items():
-                    if key.startswith(expected_key):
-                        trimmed_phase_options[key] = wrapped_convert_units(
-                            value, expected_unit)
 
             if 'climb' in phase_name:
                 phase_object = ClimbPhase.from_phase_info(
@@ -681,12 +627,14 @@ class AviaryProblem(om.Problem):
                 phase_object = DescentPhase.from_phase_info(
                     phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data, transcription=transcription)
                 phase = phase_object.build_phase(aviary_options=self.aviary_inputs)
-
-            else:
-                phase = phase_func(
-                    ode_args=self.ode_args,
-                    transcription=transcription,
-                    **trimmed_phase_options)
+            elif 'groundroll' in phase_name:
+                phase_object = GroundrollPhase.from_phase_info(
+                    phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data, transcription=transcription)
+                phase = phase_object.build_phase(aviary_options=self.aviary_inputs)
+            elif 'rotation' in phase_name:
+                phase_object = RotationPhase.from_phase_info(
+                    phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data, transcription=transcription)
+                phase = phase_object.build_phase(aviary_options=self.aviary_inputs)
 
             phase.add_control(
                 Dynamic.Mission.THROTTLE, targets=Dynamic.Mission.THROTTLE, units='unitless',
