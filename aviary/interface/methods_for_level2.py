@@ -31,6 +31,7 @@ from aviary.mission.gasp_based.phases.accel_phase import get_accel
 from aviary.mission.gasp_based.phases.ascent_phase import get_ascent
 from aviary.mission.gasp_based.phases.climb_phase import get_climb
 from aviary.mission.gasp_based.phases.new_climb_phase import ClimbPhase
+from aviary.mission.gasp_based.phases.new_accel_phase import AccelPhase
 from aviary.mission.gasp_based.phases.desc_phase import get_descent
 from aviary.mission.gasp_based.phases.groundroll_phase import get_groundroll
 from aviary.mission.gasp_based.phases.landing_group import LandingSegment
@@ -606,7 +607,7 @@ class AviaryProblem(om.Problem):
             }
 
             # Set the phase function based on the phase name
-            if 'climb' in phase_name:
+            if 'climb' in phase_name or 'accel' in phase_name:
                 phase_functions[phase_name] = get_climb
                 num_segments = phase_options['user_options']['num_segments']
                 order = phase_options['user_options']['order']
@@ -662,6 +663,10 @@ class AviaryProblem(om.Problem):
 
             if 'climb' in phase_name:
                 phase_object = ClimbPhase.from_phase_info(
+                    phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data, transcription=transcription)
+                phase = phase_object.build_phase(aviary_options=self.aviary_inputs)
+            elif 'accel' in phase_name:
+                phase_object = AccelPhase.from_phase_info(
                     phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data, transcription=transcription)
                 phase = phase_object.build_phase(aviary_options=self.aviary_inputs)
 
