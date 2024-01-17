@@ -2,7 +2,7 @@ import numpy as np
 import dymos as dm
 import openmdao.api as om
 
-from aviary.mission.flops_based.ode.mission_ODE import MissionODE
+from aviary.mission.flops_based.ode.simple_mission_ODE import MissionODE
 from aviary.mission.flops_based.ode.landing_ode import LandingODE
 from aviary.mission.flops_based.ode.takeoff_ode import TakeoffODE
 from aviary.mission.flops_based.phases.cruise_phase import Cruise
@@ -233,7 +233,7 @@ def test_phase(phases, ode_args_tab):
 
 
 if __name__ == '__main__':
-    from aviary.interface.default_phase_info.flops import phase_info, aero, prop, geom
+    from aviary.interface.default_phase_info.simple import phase_info, aero, prop, geom
     from aviary.subsystems.propulsion.engine_deck import EngineDeck
     from aviary.variable_info.variables import Aircraft, Mission, Dynamic
     from aviary.utils.process_input_decks import create_vehicle

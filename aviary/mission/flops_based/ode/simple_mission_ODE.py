@@ -2,12 +2,14 @@ import numpy as np
 import openmdao.api as om
 from dymos.models.atmosphere import USatm1976Comp
 
+from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
 from aviary.mission.flops_based.ode.simple_mission_EOM import MissionEOM
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import promote_aircraft_and_mission_vars
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Dynamic, Mission
 from aviary.variable_info.variables_in import VariablesIn
+from aviary.variable_info.enums import AnalysisScheme
 
 
 class ExternalSubsystemGroup(om.Group):
@@ -43,14 +45,28 @@ class MissionODE(om.Group):
             'throttle_enforcement', default='path',
             desc='flag to enforce throttle constraints on the path or at the segment boundaries or using solver bounds'
         )
+        self.options.declare(
+            "analysis_scheme",
+            default=AnalysisScheme.COLLOCATION,
+            types=AnalysisScheme,
+            desc="The analysis method that will be used to close the trajectory; for example collocation or time integration",
+        )
 
     def setup(self):
         options = self.options
         nn = options['num_nodes']
+        analysis_scheme = options['analysis_scheme']
         aviary_options = options['aviary_options']
         core_subsystems = options['core_subsystems']
         subsystem_options = options['subsystem_options']
         engine_count = len(aviary_options.get_val('engine_models'))
+
+        if analysis_scheme is AnalysisScheme.SHOOTING:
+            SGM_required_inputs = {
+                't_curr': {'units': 's'},
+                Dynamic.Mission.RANGE: {'units': 'm'},
+            }
+            add_SGM_required_inputs(self, SGM_required_inputs)
 
         self.add_subsystem(
             'input_port',
@@ -204,3 +220,27 @@ class MissionODE(om.Group):
         self.linear_solver = om.DirectSolver(assemble_jac=True)
         self.nonlinear_solver.options['err_on_non_converge'] = True
         self.nonlinear_solver.options['iprint'] = 2
+
+        if analysis_scheme is AnalysisScheme.SHOOTING and False:
+            from aviary.utils.functions import create_printcomp
+            dummy_comp = create_printcomp(
+                all_inputs=[
+                    't_curr',
+                    Mission.Design.RESERVE_FUEL,
+                    Dynamic.Mission.MASS,
+                    Dynamic.Mission.RANGE,
+                    Dynamic.Mission.ALTITUDE,
+                    Dynamic.Mission.FLIGHT_PATH_ANGLE,
+                ],
+                input_units={
+                    't_curr': 's',
+                    Dynamic.Mission.FLIGHT_PATH_ANGLE: 'deg',
+                    Dynamic.Mission.RANGE: 'NM',
+                })
+            self.add_subsystem(
+                "dummy_comp",
+                dummy_comp(),
+                promotes_inputs=["*"],)
+            self.set_input_defaults(
+                Dynamic.Mission.RANGE, val=0, units='NM')
+            self.set_input_defaults('t_curr', val=0, units='s')
