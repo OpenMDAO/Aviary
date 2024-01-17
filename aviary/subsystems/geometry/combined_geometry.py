@@ -5,6 +5,10 @@ from aviary.variable_info.variables import Aircraft
 from aviary.utils.aviary_values import AviaryValues
 from aviary.subsystems.geometry.flops_based.prep_geom import PrepGeom
 from aviary.subsystems.geometry.gasp_based.size_group import SizeGroup
+from aviary.variable_info.enums import LegacyCode
+
+FLOPS = LegacyCode.FLOPS
+GASP = LegacyCode.GASP
 
 
 class CombinedGeometry(om.Group):
@@ -15,7 +19,7 @@ class CombinedGeometry(om.Group):
         )
 
         self.options.declare('code_origin_to_prioritize',
-                             values=['GASP', 'FLOPS', None],
+                             values=[GASP, FLOPS, None],
                              default=None,
                              desc='sets which code origin to prioritize if there are'
                                   ' conflicting outputs.'
@@ -53,7 +57,7 @@ class CombinedGeometry(om.Group):
         gasp_fus_diam_path = gasp_geom_pathname + \
             '.fuselage.parameters.' + Aircraft.Fuselage.AVG_DIAMETER
 
-        if prioritize_origin == 'GASP':
+        if prioritize_origin is GASP:
             override = [flops_fus_area_path, flops_fus_diam_path]
 
             name = Aircraft.Fuselage.WETTED_AREA
@@ -64,7 +68,7 @@ class CombinedGeometry(om.Group):
             outs = [(name, f"MANUAL_OVERRIDE:{name}")]
             self.flops_based_geom.promotes('fuselage_prelim', outputs=outs)
 
-        elif prioritize_origin == 'FLOPS':
+        elif prioritize_origin is FLOPS:
             override = [gasp_fus_area_path, gasp_fus_diam_path]
 
             name = Aircraft.Fuselage.WETTED_AREA

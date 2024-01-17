@@ -8,7 +8,7 @@ from aviary.mission.gasp_based.ode.rotation_ode import RotationODE
 from aviary.utils.test_utils.IO_test_util import assert_match_spec, skipIfMissingXDSM
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.interface.default_phase_info.gasp import default_mission_subsystems
+from aviary.interface.default_phase_info.two_dof import default_mission_subsystems
 
 
 class RotationODETestCase(unittest.TestCase):

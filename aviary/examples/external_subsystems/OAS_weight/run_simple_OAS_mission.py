@@ -1,6 +1,6 @@
 '''
 This is a simple test mission to demonstrate the inclusion of a
-pre-mission user defined external subsystem.  The simple mission
+pre-mission user defined external subsystem. The simple mission
 is based on input data read from the benchmark data file bench_4.csv,
 which represents a single-aisle commercial transport aircraft.  The
 OpenAeroStruct (OAS) subsystem is used to compute an optimum wing
@@ -108,31 +108,20 @@ phase_info['pre_mission'] = {'include_takeoff': False, 'optimize_mass': True}
 if use_OAS:
     phase_info['pre_mission']['external_subsystems'] = [wing_weight_builder]
 
-aircraft_definition_file = 'models/test_aircraft/aircraft_for_bench_FwFm.csv'
-mission_method = 'simple'
-mass_method = 'FLOPS'
+aircraft_definition_file = 'models/test_aircraft/aircraft_for_bench_FwFm_simple.csv'
 make_plots = False
-max_iter = 100
-optimizer = 'SNOPT'
+max_iter = 1  # set this to a higher number to fully run the optimization
+optimizer = 'SLSQP'
 
+prob = av.AviaryProblem()
 
-prob = av.AviaryProblem(phase_info, mission_method=mission_method, mass_method='FLOPS')
-
-prob.load_inputs(aircraft_definition_file)
-prob.check_inputs()
+prob.load_inputs(aircraft_definition_file, phase_info)
+prob.check_and_preprocess_inputs()
 prob.add_pre_mission_systems()
 prob.add_phases()
 prob.add_post_mission_systems()
 prob.link_phases()
-
-driver = prob.driver = om.pyOptSparseDriver()
-driver.options["optimizer"] = optimizer
-driver.declare_coloring()
-driver.opt_settings["Major iterations limit"] = max_iter
-driver.opt_settings["Major optimality tolerance"] = 1e-4
-driver.opt_settings["Major feasibility tolerance"] = 1e-5
-driver.opt_settings["iSumm"] = 6
-
+prob.add_driver(optimizer=optimizer, max_iter=max_iter)
 prob.add_design_variables()
 prob.add_objective()
 prob.setup()

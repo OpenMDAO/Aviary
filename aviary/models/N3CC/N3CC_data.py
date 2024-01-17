@@ -24,7 +24,9 @@ from aviary.utils.functions import get_path
 from aviary.variable_info.variables import Aircraft
 from aviary.variable_info.variables import Dynamic as _Dynamic
 from aviary.variable_info.variables import Mission
-from aviary.interface.default_phase_info.flops import default_mission_subsystems
+from aviary.variable_info.variables import Settings
+from aviary.variable_info.enums import EquationsOfMotion, LegacyCode
+from aviary.interface.default_phase_info.height_energy import default_mission_subsystems
 
 Dynamic = _Dynamic.Mission
 
@@ -310,6 +312,11 @@ inputs.set_val(Mission.Landing.OBSTACLE_HEIGHT, 50., 'ft')
 inputs.set_val(Mission.Landing.SPOILER_DRAG_COEFFICIENT, 0.085000)
 inputs.set_val(Mission.Landing.SPOILER_LIFT_COEFFICIENT, -0.810000)
 inputs.set_val(Mission.Takeoff.THRUST_INCIDENCE, 0., 'deg')
+
+# Settings
+# ---------------------------
+inputs.set_val(Settings.EQUATIONS_OF_MOTION, EquationsOfMotion.HEIGHT_ENERGY)
+inputs.set_val(Settings.MASS_METHOD, LegacyCode.FLOPS)
 
 # ---------------------------
 #          OUTPUTS
