@@ -882,15 +882,15 @@ class AviaryProblem(om.Problem):
                 static_target=False)
 
             phase.set_time_options(fix_initial=False, fix_duration=False,
-                                   units="range_units", name=Dynamic.Mission.DISTANCE,
+                                   units="distance_units", name=Dynamic.Mission.DISTANCE,
                                    duration_bounds=wrapped_convert_units(
-                                       phase_options['duration_bounds'], "range_units"),
+                                       phase_options['duration_bounds'], "distance_units"),
                                    duration_ref=wrapped_convert_units(
-                                       phase_options['duration_ref'], "range_units"),
+                                       phase_options['duration_ref'], "distance_units"),
                                    initial_bounds=wrapped_convert_units(
-                                       phase_options['initial_bounds'], "range_units"),
+                                       phase_options['initial_bounds'], "distance_units"),
                                    initial_ref=wrapped_convert_units(
-                                       phase_options['initial_ref'], "range_units"),
+                                       phase_options['initial_ref'], "distance_units"),
                                    )
 
             if phase_name == "cruise" or phase_name == "descent":
@@ -2250,9 +2250,9 @@ class AviaryProblem(om.Problem):
         if phase_name != "groundroll":
             range_initial = range_guesses[idx]
             self.set_val(f"traj.{phase_name}.t_initial",
-                         range_initial, units='range_units')
+                         range_initial, units='distance_units')
             self.set_val(f"traj.{phase_name}.t_duration",
-                         range_guesses[idx+1] - range_initial, units='range_units')
+                         range_guesses[idx+1] - range_initial, units='distance_units')
 
             self.set_val(
                 f"traj.{phase_name}.polynomial_controls:altitude",

@@ -330,7 +330,7 @@ def run_mission(optimizer):
                 static_target=False)
 
             phase.set_time_options(fix_initial=False, fix_duration=False,
-                                   units="range_units", name=Dynamic.Mission.DISTANCE,
+                                   units="distance_units", name=Dynamic.Mission.DISTANCE,
                                    duration_bounds=duration_bounds, duration_ref=duration_ref,
                                    initial_bounds=initial_bounds, initial_ref=initial_ref)
 
@@ -590,9 +590,9 @@ def run_mission(optimizer):
         if phase_name != "groundroll":
             range_initial = range_guesses[idx]
             p.set_val(f"traj.{phase_name}.t_initial",
-                      range_initial, units='range_units')
+                      range_initial, units='distance_units')
             p.set_val(f"traj.{phase_name}.t_duration",
-                      range_guesses[idx+1] - range_initial, units='range_units')
+                      range_guesses[idx+1] - range_initial, units='distance_units')
 
             p.set_val(
                 f"traj.{phase_name}.polynomial_controls:altitude",
@@ -658,12 +658,12 @@ def run_mission(optimizer):
                 p.get_val(f"traj.{phase_name}.timeseries.TAS", units="kn")[-1])
         else:
             range_initial = p.get_val(
-                f"traj.{phase_name}.t_initial", units='range_units')
+                f"traj.{phase_name}.t_initial", units='distance_units')
             if idx > 1:
                 ranges.extend(range_initial)
             if idx == (len(traj._phases) - 1):
                 ranges.extend(
-                    p.get_val(f"traj.{phase_name}.t_duration", units='range_units') + range_initial)
+                    p.get_val(f"traj.{phase_name}.t_duration", units='distance_units') + range_initial)
             masses.extend(
                 p.get_val(f"traj.{phase_name}.timeseries.mass", units="lbm")[-1])
             alts.extend(
