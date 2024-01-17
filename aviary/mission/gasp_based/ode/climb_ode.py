@@ -199,24 +199,25 @@ class ClimbODE(BaseODE):
             ],
         )
 
-        lift_balance_group.add_subsystem(
+        # defalting to outside the balance to minimize calcs.
+        self.add_subsystem(
             name='SPECIFIC_ENERGY_RATE_EXCESS',
             subsys=SpecificEnergyRate(num_nodes=nn),
-            promotes_inputs=["TAS", Dynamic.Mission.MASS,
+            promotes_inputs=[(Dynamic.Mission.VELOCITY, "TAS"), Dynamic.Mission.MASS,
                              Dynamic.Mission.THRUST_MAX_TOTAL, Dynamic.Mission.DRAG],
             promotes_outputs=[(Dynamic.Mission.SPECIFIC_ENERGY_RATE,
                                Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS)]
         )
 
         # Note when TAS_rate = 0, SPECIFIC_ENERGY_RATE_EXCESS = ALTITUDE_RATE_MAX
-        lift_balance_group.add_subsystem(
+        self.add_subsystem(
             name='ALTITUDE_RATE_MAX',
             subsys=AltitudeRate(num_nodes=nn),
             promotes_inputs=[
                 (Dynamic.Mission.SPECIFIC_ENERGY_RATE,
                  Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS),
-                "TAS_rate",
-                "TAS"],
+                (Dynamic.Mission.VELOCITY_RATE, "TAS_rate"),
+                (Dynamic.Mission.VELOCITY, "TAS")],
             promotes_outputs=[
                 (Dynamic.Mission.ALTITUDE_RATE,
                  Dynamic.Mission.ALTITUDE_RATE_MAX)])
