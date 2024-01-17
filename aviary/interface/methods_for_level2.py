@@ -33,6 +33,7 @@ from aviary.mission.gasp_based.phases.climb_phase import get_climb
 from aviary.mission.gasp_based.phases.new_climb_phase import ClimbPhase
 from aviary.mission.gasp_based.phases.new_accel_phase import AccelPhase
 from aviary.mission.gasp_based.phases.new_ascent_phase import AscentPhase
+from aviary.mission.gasp_based.phases.new_descent_phase import DescentPhase
 from aviary.mission.gasp_based.phases.desc_phase import get_descent
 from aviary.mission.gasp_based.phases.groundroll_phase import get_groundroll
 from aviary.mission.gasp_based.phases.landing_group import LandingSegment
@@ -614,14 +615,10 @@ class AviaryProblem(om.Problem):
             }
 
             # Set the phase function based on the phase name
-            if 'climb' in phase_name or 'accel' in phase_name or 'ascent' in phase_name:
+            if 'climb' in phase_name or 'accel' in phase_name or 'ascent' in phase_name or 'desc' in phase_name:
                 phase_functions[phase_name] = get_climb
                 num_segments = phase_options['user_options']['num_segments']
                 order = phase_options['user_options']['order']
-            elif 'desc' in phase_name:
-                phase_functions[phase_name] = get_descent
-                num_segments = phase_options['num_segments']
-                order = phase_options['order']
             else:
                 num_segments = phase_options['num_segments']
                 order = phase_options['order']
@@ -678,6 +675,10 @@ class AviaryProblem(om.Problem):
                 phase = phase_object.build_phase(aviary_options=self.aviary_inputs)
             elif 'ascent' in phase_name:
                 phase_object = AscentPhase.from_phase_info(
+                    phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data, transcription=transcription)
+                phase = phase_object.build_phase(aviary_options=self.aviary_inputs)
+            elif 'desc' in phase_name:
+                phase_object = DescentPhase.from_phase_info(
                     phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data, transcription=transcription)
                 phase = phase_object.build_phase(aviary_options=self.aviary_inputs)
 
