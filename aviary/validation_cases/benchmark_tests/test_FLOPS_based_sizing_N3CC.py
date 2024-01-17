@@ -29,7 +29,7 @@ from aviary.variable_info.variables_in import VariablesIn
 
 from aviary.variable_info.variables import Aircraft, Mission
 from aviary.subsystems.premission import CorePreMission
-from aviary.interface.default_phase_info.flops import default_premission_subsystems, default_mission_subsystems
+from aviary.interface.default_phase_info.height_energy import default_premission_subsystems, default_mission_subsystems
 from aviary.utils.preprocessors import preprocess_crewpayload
 
 try:

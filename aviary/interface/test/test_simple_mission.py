@@ -1,4 +1,8 @@
 import unittest
+import subprocess
+
+from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
+
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.subsystems.test.test_dummy_subsystem import ArrayGuessSubsystemBuilder
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
@@ -90,9 +94,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
             },
         }
 
-        self.aircraft_definition_file = 'models/test_aircraft/aircraft_for_bench_FwFm.csv'
-        self.mission_method = "simple"
-        self.mass_method = "FLOPS"
+        self.aircraft_definition_file = 'models/test_aircraft/aircraft_for_bench_FwFm_simple.csv'
         self.make_plots = False
         self.max_iter = 100
 
@@ -109,16 +111,25 @@ class AircraftMissionTestSuite(unittest.TestCase):
     def run_mission(self, phase_info, optimizer):
         return run_aviary(
             self.aircraft_definition_file, phase_info,
-            mission_method=self.mission_method, mass_method=self.mass_method,
-            make_plots=self.make_plots, max_iter=self.max_iter, optimizer=optimizer)
+            make_plots=self.make_plots, max_iter=self.max_iter, optimizer=optimizer,
+            optimization_history_filename="driver_test.db")
 
-    def test_mission_basic(self):
+    def test_mission_basic_and_dashboard(self):
         prob = self.run_mission(self.phase_info, "SLSQP")
         self.assertIsNotNone(prob)
         self.assertFalse(prob.failed)
 
+        cmd = f'aviary dashboard --problem_recorder dymos_solution.db --driver_recorder driver_test.db tmp'
+        # this only tests that a given command line tool returns a 0 return code. It doesn't
+        # check the expected output at all.  The underlying functions that implement the
+        # commands should be tested seperately.
+        try:
+            subprocess.check_output(cmd.split())
+        except subprocess.CalledProcessError as err:
+            self.fail("Command '{}' failed.  Return code: {}".format(cmd, err.returncode))
+
     @require_pyoptsparse(optimizer="IPOPT")
-    def test_mission_basic(self):
+    def test_mission_basic_pyopt(self):
         prob = self.run_mission(self.phase_info, "IPOPT")
         self.assertIsNotNone(prob)
         self.assertFalse(prob.failed)

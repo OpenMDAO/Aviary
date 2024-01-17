@@ -1,14 +1,12 @@
 import unittest
 import aviary.api as av
 
-try:
-    from aviary.examples.external_subsystems.OAS_weight.OAS_wing_weight_builder import OASWingWeightBuilder
-    missing_dependecies = False
-except ImportError:
-    missing_dependecies = True
+
+path_to_builder = 'OAS_weight.OAS_wing_weight_builder.OASWingWeightBuilder'
+OASWingWeightBuilder = av.TestSubsystemBuilderBase.import_builder(path_to_builder)
 
 
-@unittest.skipIf(missing_dependecies, "Skipping due to missing dependencies")
+@av.skipIfMissingDependencies(OASWingWeightBuilder)
 class TestStructures(av.TestSubsystemBuilderBase):
 
     def setUp(self):

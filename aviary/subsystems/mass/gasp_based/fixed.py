@@ -3,7 +3,7 @@ import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.enums import Flap_Type
+from aviary.variable_info.enums import FlapType
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission
 
@@ -1637,10 +1637,10 @@ class HighLiftMass(om.ExplicitComponent):
         outputs['slat_mass'] = WLED / GRAV_ENGLISH_LBM
 
         # Flap Mass
-        if flap_type is Flap_Type.PLAIN:
+        if flap_type is FlapType.PLAIN:
             outputs["flap_mass"] = c_mass_trend_high_lift * \
                 (VFLAP/100.)**2*SFLAP*num_flaps**(-.5) / GRAV_ENGLISH_LBM
-        elif flap_type is Flap_Type.SPLIT:
+        elif flap_type is FlapType.SPLIT:
             if VFLAP > 160:
                 outputs["flap_mass"] = c_mass_trend_high_lift*SFLAP * \
                     (VFLAP**2.195)/45180. / GRAV_ENGLISH_LBM
@@ -1649,12 +1649,12 @@ class HighLiftMass(om.ExplicitComponent):
                     0.369*VFLAP**0.2733 / GRAV_ENGLISH_LBM
 
         elif (
-            flap_type is Flap_Type.SINGLE_SLOTTED or flap_type is Flap_Type.DOUBLE_SLOTTED
-            or flap_type is Flap_Type.TRIPLE_SLOTTED
+            flap_type is FlapType.SINGLE_SLOTTED or flap_type is FlapType.DOUBLE_SLOTTED
+            or flap_type is FlapType.TRIPLE_SLOTTED
         ):
             outputs["flap_mass"] = c_mass_trend_high_lift * \
                 (VFLAP/100.)**2*SFLAP*num_flaps**.5 / GRAV_ENGLISH_LBM
-        elif flap_type is Flap_Type.FOWLER or flap_type is Flap_Type.DOUBLE_SLOTTED_FOWLER:
+        elif flap_type is FlapType.FOWLER or flap_type is FlapType.DOUBLE_SLOTTED_FOWLER:
             outputs["flap_mass"] = c_mass_trend_high_lift * \
                 (VFLAP/100.)**2.38*SFLAP**1.19 / \
                 (num_flaps**.595) / GRAV_ENGLISH_LBM
@@ -1762,7 +1762,7 @@ class HighLiftMass(om.ExplicitComponent):
             1.13*(SLE**.13)*dSLE_dBTSR*dBTSR_dCW / GRAV_ENGLISH_LBM
 
         # Flap Mass
-        if flap_type is Flap_Type.PLAIN:
+        if flap_type is FlapType.PLAIN:
             # c_wt_trend_high_lift * (VFLAP/100.)**2*SFLAP*num_flaps**(-.5)
             J["flap_mass", Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT] = (
                 VFLAP/100)**2 * SFLAP * num_flaps**(-.5) / GRAV_ENGLISH_LBM
@@ -1799,7 +1799,7 @@ class HighLiftMass(om.ExplicitComponent):
             J["flap_mass", Aircraft.Fuselage.AVG_DIAMETER] = c_mass_trend_high_lift * \
                 (VFLAP/100)**2 * dSFLAP_dBTSR * dBTSR_dCW * \
                 num_flaps**(-.5) / GRAV_ENGLISH_LBM
-        elif flap_type is Flap_Type.SPLIT:
+        elif flap_type is FlapType.SPLIT:
             if VFLAP > 160:
                 # c_wt_trend_high_lift*SFLAP*(VFLAP**2.195)/45180.
                 J["flap_mass", Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT] = SFLAP * \
@@ -1886,8 +1886,8 @@ class HighLiftMass(om.ExplicitComponent):
                     * VFLAP**0.2733 / GRAV_ENGLISH_LBM)
 
         elif (
-            flap_type is Flap_Type.SINGLE_SLOTTED or flap_type is Flap_Type.DOUBLE_SLOTTED
-            or flap_type is Flap_Type.TRIPLE_SLOTTED
+            flap_type is FlapType.SINGLE_SLOTTED or flap_type is FlapType.DOUBLE_SLOTTED
+            or flap_type is FlapType.TRIPLE_SLOTTED
         ):
             # c_wt_trend_high_lift*(VFLAP/100.)**2*SFLAP*num_flaps**.5
             J["flap_mass", Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT] = (
@@ -1923,7 +1923,7 @@ class HighLiftMass(om.ExplicitComponent):
             J["flap_mass", Aircraft.Fuselage.AVG_DIAMETER] = c_mass_trend_high_lift * \
                 (VFLAP/100.)**2*dSFLAP_dBTSR*dBTSR_dCW * \
                 num_flaps**.5 / GRAV_ENGLISH_LBM
-        elif flap_type is Flap_Type.FOWLER or flap_type is Flap_Type.DOUBLE_SLOTTED_FOWLER:
+        elif flap_type is FlapType.FOWLER or flap_type is FlapType.DOUBLE_SLOTTED_FOWLER:
             # c_wt_trend_high_lift * (VFLAP/100.)**2.38*SFLAP**1.19/(num_flaps**.595)
             J["flap_mass", Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT] = (
                 VFLAP/100.)**2.38*SFLAP**1.19/(num_flaps**.595) / GRAV_ENGLISH_LBM

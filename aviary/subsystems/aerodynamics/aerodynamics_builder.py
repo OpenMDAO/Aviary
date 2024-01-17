@@ -27,6 +27,11 @@ from aviary.subsystems.aerodynamics.flops_based.solved_alpha_group import \
     SolvedAlphaGroup
 from aviary.subsystems.aerodynamics.flops_based.tabular_aero_group import \
     TabularAeroGroup
+from aviary.variable_info.enums import LegacyCode
+
+
+GASP = LegacyCode.GASP
+FLOPS = LegacyCode.FLOPS
 
 _default_name = 'aerodynamics'
 
@@ -50,7 +55,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
         if name is None:
             name = 'core_aerodynamics'
 
-        if code_origin not in ('FLOPS', 'GASP'):
+        if code_origin not in (FLOPS, GASP):
             raise ValueError('Code origin is not one of the following: (FLOPS, GASP)')
 
         self.code_origin = code_origin
@@ -60,10 +65,10 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
     def build_pre_mission(self, aviary_inputs):
         code_origin = self.code_origin
 
-        if code_origin == 'GASP':
+        if code_origin is GASP:
             aero_group = PreMissionAero(aviary_options=aviary_inputs)
 
-        elif code_origin == 'FLOPS':
+        elif code_origin is FLOPS:
             aero_group = om.Group()
             aero_group.add_subsystem(
                 'design', Design(aviary_options=aviary_inputs),
@@ -82,7 +87,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
             method = kwargs.pop('method')
         except KeyError:
             method = None
-        if self.code_origin == 'FLOPS':
+        if self.code_origin is FLOPS:
             if method is None:
                 aero_group = ComputedAeroGroup(num_nodes=num_nodes,
                                                aviary_options=aviary_inputs)
@@ -115,7 +120,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                 raise ValueError('FLOPS-based aero method is not one of the following: '
                                  '(computed, low_speed, solved_alpha, tabular)')
 
-        elif self.code_origin == 'GASP':
+        elif self.code_origin is GASP:
             if method is None:
                 aero_group = CruiseAero(num_nodes=num_nodes)
 
@@ -155,7 +160,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
         method = kwargs['method']
         promotes = ['*']
 
-        if self.code_origin == 'FLOPS':
+        if self.code_origin is FLOPS:
             if method == 'computed':
                 promotes = [Dynamic.Mission.STATIC_PRESSURE,
                             Dynamic.Mission.MACH,
@@ -193,7 +198,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                 raise ValueError('FLOPS-based aero method is not one of the following: '
                                  '(computed, low_speed, solved_alpha, tabular)')
 
-        elif self.code_origin == 'GASP':
+        elif self.code_origin is GASP:
             if method == 'low_speed':
                 promotes = ['*',
                             ("airport_alt", Mission.Takeoff.AIRPORT_ALTITUDE),
@@ -217,12 +222,12 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
         method = kwargs['method']
         promotes = ['*']
 
-        if self.code_origin == 'FLOPS':
+        if self.code_origin is FLOPS:
             promotes = [Dynamic.Mission.DRAG]
             if method == 'low_speed':
                 promotes.append(Dynamic.Mission.LIFT)
 
-        elif self.code_origin == 'GASP':
+        elif self.code_origin is GASP:
             if method == 'low_speed':
                 promotes = [Dynamic.Mission.DRAG,
                             Dynamic.Mission.LIFT,
@@ -256,9 +261,9 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
         reports_folder : Path
             Location of the subsystems_report folder this report will be placed in
         """
-        if self.code_origin == 'FLOPS':
+        if self.code_origin is FLOPS:
             # FLOPS aero report goes here
             return
-        elif self.code_origin == 'GASP':
+        elif self.code_origin is GASP:
             # GASP aero report goes here
             return
