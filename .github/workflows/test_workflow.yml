@@ -213,6 +213,10 @@ jobs:
           python run_all.py
           cd ../..
 
+      # - name: Setup tmate session
+      #   uses: mxschmitt/action-tmate@v3
+
+
       - name: Run tests
         if: matrix.MAKE_DOCS == 0
         shell: bash -l {0}
