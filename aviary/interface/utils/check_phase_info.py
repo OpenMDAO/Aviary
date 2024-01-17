@@ -102,7 +102,6 @@ def check_phase_info(phase_info, mission_method):
         'time_initial_bounds': tuple,
         'time_initial_ref': tuple,
         'alt_constraint_ref': tuple,
-        'throttle_setting': float,
     }
 
     phase_keys_gasp = {
@@ -113,7 +112,6 @@ def check_phase_info(phase_info, mission_method):
             **common_TAS,
             **common_mass,
             **common_distance,
-            'throttle_setting': float,
             'distance_defect_ref': tuple,
         },
         'rotation': {
@@ -123,7 +121,6 @@ def check_phase_info(phase_info, mission_method):
             **common_distance,
             **common_angle,
             'normal_ref': tuple,
-            'throttle_setting': float,
             'TAS_ref0': tuple,
             'distance_defect_ref': tuple,
         },
@@ -140,7 +137,6 @@ def check_phase_info(phase_info, mission_method):
             'pitch_constraint_lower': tuple,
             'pitch_constraint_upper': tuple,
             'pitch_constraint_ref': tuple,
-            'throttle_setting': float,
             'TAS_ref0': tuple,
             'distance_defect_ref': tuple,
         },
@@ -153,7 +149,6 @@ def check_phase_info(phase_info, mission_method):
             **common_TAS,
             **common_mass,
             **common_distance,
-            'throttle_setting': float,
             'TAS_ref0': tuple,
             'distance_defect_ref': tuple,
         },
@@ -167,7 +162,6 @@ def check_phase_info(phase_info, mission_method):
             **common_alt,
             **common_mass,
             **common_distance,
-            'throttle_setting': float,
             'distance_ref0': tuple,
         },
         'climb2': {
@@ -181,7 +175,6 @@ def check_phase_info(phase_info, mission_method):
             **common_alt,
             **common_mass,
             **common_distance,
-            'throttle_setting': float,
             'alt_ref0': tuple,
             'distance_ref0': tuple,
             'distance_defect_ref': tuple,

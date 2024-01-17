@@ -1,6 +1,5 @@
 import csv
 import warnings
-from packaging import version
 import inspect
 from pathlib import Path
 from datetime import datetime
@@ -14,7 +13,6 @@ from dymos.utils.misc import _unspecified
 
 import openmdao.api as om
 from openmdao.utils.units import convert_units
-from openmdao.utils.units import valid_units
 
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
 from aviary.mission.flops_based.phases.build_landing import Landing
@@ -32,6 +30,7 @@ from aviary.mission.gasp_based.phases.time_integration_phases import SGMCruise
 from aviary.mission.gasp_based.phases.accel_phase import get_accel
 from aviary.mission.gasp_based.phases.ascent_phase import get_ascent
 from aviary.mission.gasp_based.phases.climb_phase import get_climb
+from aviary.mission.gasp_based.phases.new_climb_phase import ClimbPhase
 from aviary.mission.gasp_based.phases.desc_phase import get_descent
 from aviary.mission.gasp_based.phases.groundroll_phase import get_groundroll
 from aviary.mission.gasp_based.phases.landing_group import LandingSegment
@@ -204,8 +203,6 @@ class AviaryProblem(om.Problem):
 
                 # Access the phase_info variable from the loaded module
                 phase_info = outputted_phase_info.phase_info
-
-                print('Loaded outputted_phase_info.py generated with GUI')
 
             else:
                 if self.mission_method is TWO_DEGREES_OF_FREEDOM:
@@ -559,6 +556,10 @@ class AviaryProblem(om.Problem):
         # Get the phase options for the specified phase name
         phase_options = self.phase_info[phase_name]
 
+        subsystems = self.core_subsystems
+        default_mission_subsystems = [
+            subsystems['aerodynamics'], subsystems['propulsion']]
+
         if 'cruise' in phase_name:
             phase = dm.AnalyticPhase(
                 ode_class=BreguetCruiseODESolution,
@@ -582,9 +583,12 @@ class AviaryProblem(om.Problem):
             )
 
             phase.add_parameter(Dynamic.Mission.ALTITUDE, opt=False,
-                                val=self.phase_info['climb2']['final_alt'][0], units=self.phase_info['climb2']['final_alt'][1])
+                                val=self.phase_info['climb2']['user_options']['final_alt'][0], units=self.phase_info['climb2']['user_options']['final_alt'][1])
+            mach_cruise = self.phase_info['climb2']['user_options']['mach_cruise']
+            if type(mach_cruise) is tuple:
+                mach_cruise = mach_cruise[0]
             phase.add_parameter(Dynamic.Mission.MACH, opt=False,
-                                val=self.phase_info['climb2']['mach_cruise'])
+                                val=mach_cruise)
             phase.add_parameter("initial_distance", opt=False, val=0.0,
                                 units="NM", static_target=True)
             phase.add_parameter("initial_time", opt=False, val=0.0,
@@ -593,13 +597,6 @@ class AviaryProblem(om.Problem):
             phase.add_timeseries_output("time", units="s")
 
         else:
-            # Create a Radau transcription scheme object with the specified num_segments and order
-            transcription = dm.Radau(
-                num_segments=phase_options['num_segments'],
-                order=phase_options['order'],
-                compressed=True,
-                solve_segments=False)
-
             # Create a dictionary of phase functions
             phase_functions = {
                 'groundroll': get_groundroll,
@@ -611,8 +608,22 @@ class AviaryProblem(om.Problem):
             # Set the phase function based on the phase name
             if 'climb' in phase_name:
                 phase_functions[phase_name] = get_climb
+                num_segments = phase_options['user_options']['num_segments']
+                order = phase_options['user_options']['order']
             elif 'desc' in phase_name:
                 phase_functions[phase_name] = get_descent
+                num_segments = phase_options['num_segments']
+                order = phase_options['order']
+            else:
+                num_segments = phase_options['num_segments']
+                order = phase_options['order']
+
+            # Create a Radau transcription scheme object with the specified num_segments and order
+            transcription = dm.Radau(
+                num_segments=num_segments,
+                order=order,
+                compressed=True,
+                solve_segments=False)
 
             # Get the phase function corresponding to the phase name
             phase_func = phase_functions.get(phase_name)
@@ -620,7 +631,7 @@ class AviaryProblem(om.Problem):
             # Calculate the phase by calling the phase function
             # with the transcription object and remaining phase options
             trimmed_phase_options = {k: v for k, v in phase_options.items(
-            ) if k not in ['num_segments', 'order', 'initial_guesses', 'throttle_setting', 'external_subsystems']}
+            ) if k not in ['num_segments', 'order', 'initial_guesses', 'external_subsystems']}
 
             # define expected units for each phase option
             expected_units = {
@@ -649,10 +660,16 @@ class AviaryProblem(om.Problem):
                         trimmed_phase_options[key] = wrapped_convert_units(
                             value, expected_unit)
 
-            phase = phase_func(
-                ode_args=self.ode_args,
-                transcription=transcription,
-                **trimmed_phase_options)
+            if 'climb' in phase_name:
+                phase_object = ClimbPhase.from_phase_info(
+                    phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data, transcription=transcription)
+                phase = phase_object.build_phase(aviary_options=self.aviary_inputs)
+
+            else:
+                phase = phase_func(
+                    ode_args=self.ode_args,
+                    transcription=transcription,
+                    **trimmed_phase_options)
 
             phase.add_control(
                 Dynamic.Mission.THROTTLE, targets=Dynamic.Mission.THROTTLE, units='unitless',

@@ -1,5 +1,3 @@
-import numpy as np
-
 from aviary.variable_info.enums import SpeedType
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
 from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
@@ -10,11 +8,6 @@ from aviary.variable_info.enums import LegacyCode
 
 
 GASP = LegacyCode.GASP
-
-throttle_max = 1.0
-throttle_climb = 0.956
-throttle_cruise = 0.930
-throttle_idle = 0.0
 
 prop = CorePropulsionBuilder('core_propulsion', BaseMetaData)
 mass = CoreMassBuilder('core_mass', BaseMetaData, GASP)
@@ -46,7 +39,6 @@ phase_info = {
         'distance_upper': (10.e3, 'ft'),
         'distance_ref': (3000, 'ft'),
         'distance_defect_ref': (3000, 'ft'),
-        'throttle_setting': throttle_max,
         'initial_guesses': {
             'times': ([0.0, 40.0], 's'),
             'TAS': ([0.066, 143.1], 'kn'),
@@ -77,7 +69,6 @@ phase_info = {
         'angle_ref': (5., 'deg'),
         'angle_defect_ref': (5., 'deg'),
         'normal_ref': (10000, 'lbf'),
-        'throttle_setting': throttle_max,
         'initial_guesses': {
             'times': ([40.0, 5.0], 's'),
             'alpha': ([0.0, 2.5], 'deg'),
@@ -116,7 +107,6 @@ phase_info = {
         'pitch_constraint_lower': (0., 'deg'),
         'pitch_constraint_upper': (15., 'deg'),
         'pitch_constraint_ref': (1., 'deg'),
-        'throttle_setting': throttle_max,
         'initial_guesses': {
             'times': ([45., 25.], 's'),
             'flight_path_angle': ([0.0, 8.], 'deg'),
@@ -150,7 +140,6 @@ phase_info = {
         'distance_upper': (150, 'NM'),
         'distance_ref': (5, 'NM'),
         'distance_defect_ref': (5, 'NM'),
-        'throttle_setting': throttle_max,
         'initial_guesses': {
             'times': ([70., 13.], 's'),
             'TAS': ([185., 250.], 'kn'),
@@ -159,28 +148,29 @@ phase_info = {
         }
     },
     'climb1': {
-        'num_segments': 1,
-        'order': 3,
-        'fix_initial': False,
-        'EAS_target': (250, 'kn'),
-        'mach_cruise': 0.8,
-        'target_mach': False,
-        'final_alt': (10.e3, 'ft'),
-        'time_initial_bounds': ((20, 200), 's'),
-        'duration_bounds': ((30, 300), 's'),
-        'duration_ref': (1000, 's'),
-        'alt_lower': (400, 'ft'),
-        'alt_upper': (11_000, 'ft'),
-        'alt_ref': (10.e3, 'ft'),
-        'mass_lower': (0, 'lbm'),
-        'mass_upper': (None, 'lbm'),
-        'mass_ref': (150_000, 'lbm'),
-        'mass_defect_ref': (150_000, 'lbm'),
-        'distance_lower': (0, 'NM'),
-        'distance_upper': (500, 'NM'),
-        'distance_ref': (10, 'NM'),
-        'distance_ref0': (0, 'NM'),
-        'throttle_setting': throttle_climb,
+        'user_options': {
+            'num_segments': 1,
+            'order': 3,
+            'fix_initial': False,
+            'EAS_target': (250, 'kn'),
+            'mach_cruise': 0.8,
+            'target_mach': False,
+            'final_alt': (10.e3, 'ft'),
+            'time_initial_bounds': ((20, 200), 's'),
+            'duration_bounds': ((30, 300), 's'),
+            'duration_ref': (1000, 's'),
+            'alt_lower': (400, 'ft'),
+            'alt_upper': (11_000, 'ft'),
+            'alt_ref': (10.e3, 'ft'),
+            'mass_lower': (0, 'lbm'),
+            'mass_upper': (None, 'lbm'),
+            'mass_ref': (150_000, 'lbm'),
+            'mass_defect_ref': (150_000, 'lbm'),
+            'distance_lower': (0, 'NM'),
+            'distance_upper': (500, 'NM'),
+            'distance_ref': (10, 'NM'),
+            'distance_ref0': (0, 'NM'),
+        },
         'initial_guesses': {
             'times': ([1., 2.], 'min'),
             'distance': ([20.e3, 100.e3], 'ft'),
@@ -189,31 +179,32 @@ phase_info = {
         }
     },
     'climb2': {
-        'num_segments': 3,
-        'order': 3,
-        'fix_initial': False,
-        'EAS_target': (270, 'kn'),
-        'mach_cruise': 0.8,
-        'target_mach': True,
-        'final_alt': (37.5e3, 'ft'),
-        'required_available_climb_rate': (0.1, 'ft/min'),
-        'time_initial_bounds': ((10, 700), 's'),
-        'duration_bounds': ((200, 17_000), 's'),
-        'duration_ref': (5000, 's'),
-        'alt_lower': (9000, 'ft'),
-        'alt_upper': (40000, 'ft'),
-        'alt_ref': (30000, 'ft'),
-        'alt_ref0': (0, 'ft'),
-        'mass_lower': (0, 'lbm'),
-        'mass_upper': (None, 'lbm'),
-        'mass_ref': (150_000, 'lbm'),
-        'mass_defect_ref': (150_000, 'lbm'),
-        'distance_lower': (10, 'NM'),
-        'distance_upper': (1000, 'NM'),
-        'distance_ref': (500, 'NM'),
-        'distance_ref0': (0, 'NM'),
-        'distance_defect_ref': (500, 'NM'),
-        'throttle_setting': throttle_climb,
+        'user_options': {
+            'num_segments': 3,
+            'order': 3,
+            'fix_initial': False,
+            'EAS_target': (270, 'kn'),
+            'mach_cruise': 0.8,
+            'target_mach': True,
+            'final_alt': (37.5e3, 'ft'),
+            'required_available_climb_rate': (0.1, 'ft/min'),
+            'time_initial_bounds': ((10, 700), 's'),
+            'duration_bounds': ((200, 17_000), 's'),
+            'duration_ref': (5000, 's'),
+            'alt_lower': (9000, 'ft'),
+            'alt_upper': (40000, 'ft'),
+            'alt_ref': (30000, 'ft'),
+            'alt_ref0': (0, 'ft'),
+            'mass_lower': (0, 'lbm'),
+            'mass_upper': (None, 'lbm'),
+            'mass_ref': (150_000, 'lbm'),
+            'mass_defect_ref': (150_000, 'lbm'),
+            'distance_lower': (10, 'NM'),
+            'distance_upper': (1000, 'NM'),
+            'distance_ref': (500, 'NM'),
+            'distance_ref0': (0, 'NM'),
+            'distance_defect_ref': (500, 'NM'),
+        },
         'initial_guesses': {
             'times': ([216., 1300.], 's'),
             'distance': ([100.e3, 200.e3], 'ft'),
@@ -259,7 +250,6 @@ phase_info = {
         'distance_ref': (mission_distance, 'NM'),
         'distance_ref0': (0, 'NM'),
         'distance_defect_ref': (100, 'NM'),
-        'throttle_setting': throttle_idle,
         'initial_guesses': {
             'mass': (136000., 'lbm'),
             'altitude': ([37.5e3, 10.e3], 'ft'),
@@ -294,7 +284,6 @@ phase_info = {
         'distance_upper': (5000, 'NM'),
         'distance_ref': (3500, 'NM'),
         'distance_defect_ref': (100, 'NM'),
-        'throttle_setting': throttle_idle,
         'initial_guesses': {
             'mass': (136000., 'lbm'),
             'altitude': ([10.e3, 1.e3], 'ft'),

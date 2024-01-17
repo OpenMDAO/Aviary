@@ -33,6 +33,7 @@ def get_climb(
     distance_ref0=0,
     distance_defect_ref=None,
 ):
+
     ode_init_kwargs = dict(
         EAS_target=EAS_target,
         mach_cruise=mach_cruise,

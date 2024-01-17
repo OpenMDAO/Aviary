@@ -481,7 +481,7 @@ class PhaseBuilderBase(ABC):
         return (self.name, phase_info)
 
     @classmethod
-    def from_phase_info(cls, name, phase_info: dict, core_subsystems=None, meta_data=None):
+    def from_phase_info(cls, name, phase_info: dict, core_subsystems=None, meta_data=None, transcription=None):
         '''
         Return a new phase builder based on the specified phase info.
 
@@ -518,7 +518,7 @@ class PhaseBuilderBase(ABC):
         phase_builder = cls(
             name, subsystem_options=subsystem_options, user_options=user_options,
             initial_guesses=initial_guesses, meta_data=meta_data,
-            core_subsystems=core_subsystems, external_subsystems=external_subsystems)
+            core_subsystems=core_subsystems, external_subsystems=external_subsystems, transcription=transcription)
 
         return phase_builder
 
