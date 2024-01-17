@@ -15,7 +15,7 @@ with open(Path(__file__).parent / "README.md", encoding="utf-8") as f:
 pkgname = "aviary"
 extras_require = {
     "test": ["testflo", "pyxdsm", "pre-commit"],
-    "examples": ["openaerostruct", "ambiance", "boring_battery @ git+https://github.com/jcchin/boring.git"],
+    "examples": ["openaerostruct", "ambiance"],
 }
 
 all_packages = []
