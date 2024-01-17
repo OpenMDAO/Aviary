@@ -32,6 +32,7 @@ from aviary.mission.gasp_based.phases.ascent_phase import get_ascent
 from aviary.mission.gasp_based.phases.climb_phase import get_climb
 from aviary.mission.gasp_based.phases.new_climb_phase import ClimbPhase
 from aviary.mission.gasp_based.phases.new_accel_phase import AccelPhase
+from aviary.mission.gasp_based.phases.new_ascent_phase import AscentPhase
 from aviary.mission.gasp_based.phases.desc_phase import get_descent
 from aviary.mission.gasp_based.phases.groundroll_phase import get_groundroll
 from aviary.mission.gasp_based.phases.landing_group import LandingSegment
@@ -463,7 +464,13 @@ class AviaryProblem(om.Problem):
             self.model.add_subsystem(
                 "event_xform",
                 om.ExecComp(
-                    ["t_init_gear=m*tau_gear+b", "t_init_flaps=m*tau_flaps+b"], units="s"
+                    ["t_init_gear=m*tau_gear+b", "t_init_flaps=m*tau_flaps+b"],
+                    t_init_gear={"units": "s"},
+                    t_init_flaps={"units": "s"},
+                    tau_gear={"units": "unitless"},
+                    tau_flaps={"units": "unitless"},
+                    m={"units": "s"},
+                    b={"units": "s"},
                 ),
                 promotes_inputs=[
                     "tau_gear",
@@ -607,7 +614,7 @@ class AviaryProblem(om.Problem):
             }
 
             # Set the phase function based on the phase name
-            if 'climb' in phase_name or 'accel' in phase_name:
+            if 'climb' in phase_name or 'accel' in phase_name or 'ascent' in phase_name:
                 phase_functions[phase_name] = get_climb
                 num_segments = phase_options['user_options']['num_segments']
                 order = phase_options['user_options']['order']
@@ -667,6 +674,10 @@ class AviaryProblem(om.Problem):
                 phase = phase_object.build_phase(aviary_options=self.aviary_inputs)
             elif 'accel' in phase_name:
                 phase_object = AccelPhase.from_phase_info(
+                    phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data, transcription=transcription)
+                phase = phase_object.build_phase(aviary_options=self.aviary_inputs)
+            elif 'ascent' in phase_name:
+                phase_object = AscentPhase.from_phase_info(
                     phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data, transcription=transcription)
                 phase = phase_object.build_phase(aviary_options=self.aviary_inputs)
 
@@ -1685,9 +1696,9 @@ class AviaryProblem(om.Problem):
                 self.model.add_design_var(Mission.Takeoff.ASCENT_DURATION,
                                           lower=1, upper=1000, ref=10.)
                 self.model.add_design_var("tau_gear", lower=0.01,
-                                          upper=1.0, units="s", ref=1)
+                                          upper=1.0, units="unitless", ref=1)
                 self.model.add_design_var("tau_flaps", lower=0.01,
-                                          upper=1.0, units="s", ref=1)
+                                          upper=1.0, units="unitless", ref=1)
                 self.model.add_constraint(
                     "h_fit.h_init_gear", equals=50.0, units="ft", ref=50.0)
                 self.model.add_constraint("h_fit.h_init_flaps",
