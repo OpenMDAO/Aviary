@@ -112,12 +112,12 @@ from aviary.mission.flops_based.phases.detailed_takeoff_phases import TakeoffMic
 from aviary.mission.flops_based.phases.detailed_takeoff_phases import TakeoffBrakeToAbort as DetailedTakeoffBrakeToAbortPhaseBuilder
 
 # Phase getters  # TODO these should be going away in favor of phase builders
-from aviary.mission.gasp_based.phases.accel_phase import get_accel as get_2DOF_acceleration_phase
-from aviary.mission.gasp_based.phases.ascent_phase import get_ascent as get_2DOF_ascent_phase
-from aviary.mission.gasp_based.phases.climb_phase import get_climb as get_2DOF_climb_phase
-from aviary.mission.gasp_based.phases.desc_phase import get_descent as get_2DOF_descent_phase
-from aviary.mission.gasp_based.phases.groundroll_phase import get_groundroll as get_2DOF_groundroll_phase
-from aviary.mission.gasp_based.phases.rotation_phase import get_rotation as get_2DOF_rotation_phase
+from aviary.mission.gasp_based.phases.accel_phase import AccelPhase as TwoDOFAccelerationPhase
+from aviary.mission.gasp_based.phases.ascent_phase import AscentPhase as TwoDOFAscentPhase
+from aviary.mission.gasp_based.phases.climb_phase import ClimbPhase as TwoDOFClimbPhase
+from aviary.mission.gasp_based.phases.descent_phase import DescentPhase as TwoDOFDescentPhase
+from aviary.mission.gasp_based.phases.groundroll_phase import GroundrollPhase as TwoDOFGroundrollPhase
+from aviary.mission.gasp_based.phases.rotation_phase import RotationPhase as TwoDOFRotationPhase
 
 
 # Trajectory builders
