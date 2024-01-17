@@ -588,11 +588,11 @@ def run_mission(optimizer):
 
     for idx, (phase_name, phase) in enumerate(traj._phases.items()):
         if phase_name != "groundroll":
-            range_initial = range_guesses[idx]
+            distance_initial = range_guesses[idx]
             p.set_val(f"traj.{phase_name}.t_initial",
-                      range_initial, units='distance_units')
+                      distance_initial, units='distance_units')
             p.set_val(f"traj.{phase_name}.t_duration",
-                      range_guesses[idx+1] - range_initial, units='distance_units')
+                      range_guesses[idx+1] - distance_initial, units='distance_units')
 
             p.set_val(
                 f"traj.{phase_name}.polynomial_controls:altitude",
@@ -657,13 +657,13 @@ def run_mission(optimizer):
             TASs.extend(
                 p.get_val(f"traj.{phase_name}.timeseries.TAS", units="kn")[-1])
         else:
-            range_initial = p.get_val(
+            distance_initial = p.get_val(
                 f"traj.{phase_name}.t_initial", units='distance_units')
             if idx > 1:
-                ranges.extend(range_initial)
+                ranges.extend(distance_initial)
             if idx == (len(traj._phases) - 1):
                 ranges.extend(
-                    p.get_val(f"traj.{phase_name}.t_duration", units='distance_units') + range_initial)
+                    p.get_val(f"traj.{phase_name}.t_duration", units='distance_units') + distance_initial)
             masses.extend(
                 p.get_val(f"traj.{phase_name}.timeseries.mass", units="lbm")[-1])
             alts.extend(

@@ -161,7 +161,7 @@ class CustomEngineTest(unittest.TestCase):
                     'required_available_climb_rate': (1.524, 'm/s'),
                     'input_initial': False,
                     'mass_f_cruise': (1.e4, 'lbm'),
-                    'range_f_cruise': (1.e6, 'm'),
+                    'distance_f_cruise': (1.e6, 'm'),
                 },
                 'initial_guesses': {
                     'times': ([0., 30.], 'min'),

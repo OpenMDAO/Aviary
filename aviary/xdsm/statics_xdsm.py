@@ -363,12 +363,12 @@ x.connect("dymos",
            Dynamic.Mission.MACH,
            "mass_initial",
            "cruise_time_initial",
-           "cruise_range_initial"],
+           "cruise_distance_initial"],
           )
 x.connect("dymos", "descent1", [Dynamic.Mission.ALTITUDE, Dynamic.Mission.MASS])
 x.connect("dymos", "fuelburn", [Mission.Landing.TOUCHDOWN_MASS])
 x.connect("dymos", Dynamic.Mission.DISTANCE, [Mission.Summary.RANGE])
-x.connect("cruise", "dymos", ["cruise_time_final", "cruise_range_final"])
+x.connect("cruise", "dymos", ["cruise_time_final", "cruise_distance_final"])
 
 # Add Design Variables
 x.connect(

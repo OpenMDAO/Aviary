@@ -177,7 +177,7 @@ class Cruise(PhaseBuilderBase):
         num_engines = len(aviary_options.get_val('engine_models'))
         input_initial = user_options.get_val('input_initial')
         mass_f_cruise = user_options.get_val('mass_f_cruise', units='kg')
-        range_f_cruise = user_options.get_val('range_f_cruise', units='m')
+        distance_f_cruise = user_options.get_val('distance_f_cruise', units='m')
         polynomial_control_order = user_options.get_item('polynomial_control_order')[0]
 
         ##############
@@ -216,7 +216,7 @@ class Cruise(PhaseBuilderBase):
         fix_initial_distance = get_initial(fix_initial, Dynamic.Mission.DISTANCE, True)
         phase.add_state(
             Dynamic.Mission.DISTANCE, fix_initial=fix_initial_distance, fix_final=fix_final,
-            lower=0.0, ref=range_f_cruise, defect_ref=range_f_cruise, units='m',
+            lower=0.0, ref=distance_f_cruise, defect_ref=distance_f_cruise, units='m',
             rate_source=Dynamic.Mission.DISTANCE_RATE,
             input_initial=input_initial_distance
         )
@@ -396,7 +396,7 @@ Cruise._add_meta_data('mass_i_cruise', val=1.e4, units='kg')
 
 Cruise._add_meta_data('mass_f_cruise', val=1.e4, units='kg')
 
-Cruise._add_meta_data('range_f_cruise', val=1.e6, units='m')
+Cruise._add_meta_data('distance_f_cruise', val=1.e6, units='m')
 
 Cruise._add_meta_data(
     'required_available_climb_rate', val=None, units='m/s',

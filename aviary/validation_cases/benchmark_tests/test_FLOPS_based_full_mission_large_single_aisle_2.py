@@ -85,8 +85,8 @@ def run_trajectory(sim=True):
     v_f_climb = 452.61*_units.knot  # m/s
     mach_i_climb = 0.2    # TODO: (need to compute this in takeoff)
     mach_f_climb = 0.785
-    range_i_climb = 0*_units.nautical_mile  # m  (comes from takeoff)
-    range_f_climb = 124*_units.nautical_mile  # m
+    distance_i_climb = 0*_units.nautical_mile  # m  (comes from takeoff)
+    distance_f_climb = 124*_units.nautical_mile  # m
     t_i_climb = 0
     t_duration_climb = 20.14*_units.minute  # sec
 
@@ -101,8 +101,8 @@ def run_trajectory(sim=True):
     mach_f_cruise = 0.785
     mach_min_cruise = 0.785
     mach_max_cruise = 0.785
-    range_i_cruise = 124*_units.nautical_mile  # m
-    range_f_cruise = 2830.8*_units.nautical_mile  # m
+    distance_i_cruise = 124*_units.nautical_mile  # m
+    distance_f_cruise = 2830.8*_units.nautical_mile  # m
     t_i_cruise = t_i_climb + t_duration_climb  # sec
     t_duration_cruise = (378.95)*_units.minute - t_duration_climb  # sec
 
@@ -114,8 +114,8 @@ def run_trajectory(sim=True):
     mass_f_descent = 140002*_units.pound  # kg
     mach_i_descent = mach_f_cruise
     mach_f_descent = 0.3
-    range_i_descent = 2830.8*_units.nautical_mile  # m
-    range_f_descent = 2960.0*_units.nautical_mile  # m
+    distance_i_descent = 2830.8*_units.nautical_mile  # m
+    distance_f_descent = 2960.0*_units.nautical_mile  # m
     t_i_descent = t_duration_cruise+t_duration_climb  # sec
     t_duration_descent = 2000  # sec
 
@@ -364,7 +364,7 @@ def run_trajectory(sim=True):
     prob.set_val('traj.climb.states:mass', climb.interp(
         Dynamic.Mission.MASS, ys=[mass_i_climb, mass_f_climb]), units='kg')
     prob.set_val('traj.climb.states:distance', climb.interp(
-        Dynamic.Mission.DISTANCE, ys=[range_i_climb, range_f_climb]), units='m')  # nmi
+        Dynamic.Mission.DISTANCE, ys=[distance_i_climb, distance_f_climb]), units='m')  # nmi
 
     prob.set_val('traj.climb.controls:velocity_rate',
                  climb.interp(Dynamic.Mission.VELOCITY_RATE, ys=[0.25, 0.05]),
@@ -383,7 +383,7 @@ def run_trajectory(sim=True):
     prob.set_val('traj.cruise.states:mass', cruise.interp(
         Dynamic.Mission.MASS, ys=[mass_i_cruise, mass_f_cruise]), units='kg')
     prob.set_val('traj.cruise.states:distance', cruise.interp(
-        Dynamic.Mission.DISTANCE, ys=[range_i_cruise, range_f_cruise]), units='m')  # nmi
+        Dynamic.Mission.DISTANCE, ys=[distance_i_cruise, distance_f_cruise]), units='m')  # nmi
 
     prob.set_val('traj.cruise.controls:velocity_rate',
                  cruise.interp(Dynamic.Mission.VELOCITY_RATE, ys=[0.0, 0.0]),
@@ -402,7 +402,7 @@ def run_trajectory(sim=True):
     prob.set_val('traj.descent.states:mass', descent.interp(
         Dynamic.Mission.MASS, ys=[mass_i_descent, mass_f_descent]), units='kg')
     prob.set_val('traj.descent.states:distance', descent.interp(
-        Dynamic.Mission.DISTANCE, ys=[range_i_descent, range_f_descent]), units='m')
+        Dynamic.Mission.DISTANCE, ys=[distance_i_descent, distance_f_descent]), units='m')
 
     prob.set_val('traj.descent.controls:velocity_rate',
                  descent.interp(Dynamic.Mission.VELOCITY_RATE, ys=[-0.25, 0.0]),

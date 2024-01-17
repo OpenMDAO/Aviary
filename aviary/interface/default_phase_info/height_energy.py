@@ -75,7 +75,7 @@ phase_info = {
             'max_mach': 0.79,
             'required_available_climb_rate': (1.524, 'm/s'),
             'mass_f_cruise': (1.e4, 'kg'),
-            'range_f_cruise': (1.e6, 'm'),
+            'distance_f_cruise': (1.e6, 'm'),
         },
         'initial_guesses': {
             'times': ([26.2, 406.18], 'min'),

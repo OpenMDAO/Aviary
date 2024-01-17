@@ -86,8 +86,8 @@ def run_trajectory():
     mach_f_descent = 0.3
     mass_i_descent = 143521*_units.pound
     mass_f_descent = 143035*_units.pound
-    range_i_descent = 3243.9*_units.nautical_mile
-    range_f_descent = 3378.7*_units.nautical_mile
+    distance_i_descent = 3243.9*_units.nautical_mile
+    distance_f_descent = 3378.7*_units.nautical_mile
     t_i_descent = 432.38*_units.minute
     t_f_descent = 461.62*_units.minute
     t_duration_descent = t_f_descent - t_i_descent
@@ -148,7 +148,7 @@ def run_trajectory():
     prob.set_val('traj.descent.states:mass', descent.interp(
         Dynamic.Mission.MASS, ys=[mass_i_descent, mass_f_descent]), units='kg')
     prob.set_val('traj.descent.states:distance', descent.interp(
-        Dynamic.Mission.DISTANCE, ys=[range_i_descent, range_f_descent]), units='m')
+        Dynamic.Mission.DISTANCE, ys=[distance_i_descent, distance_f_descent]), units='m')
 
     prob.set_val('traj.descent.controls:velocity_rate',
                  descent.interp(Dynamic.Mission.VELOCITY_RATE, ys=[0.0, 0.0]),

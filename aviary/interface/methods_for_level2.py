@@ -2248,11 +2248,11 @@ class AviaryProblem(om.Problem):
         time_guesses = np.hstack((0., np.cumsum(range_durations / mean_TAS)))
 
         if phase_name != "groundroll":
-            range_initial = range_guesses[idx]
+            distance_initial = range_guesses[idx]
             self.set_val(f"traj.{phase_name}.t_initial",
-                         range_initial, units='distance_units')
+                         distance_initial, units='distance_units')
             self.set_val(f"traj.{phase_name}.t_duration",
-                         range_guesses[idx+1] - range_initial, units='distance_units')
+                         range_guesses[idx+1] - distance_initial, units='distance_units')
 
             self.set_val(
                 f"traj.{phase_name}.polynomial_controls:altitude",
