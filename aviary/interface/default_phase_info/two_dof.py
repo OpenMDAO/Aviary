@@ -344,10 +344,10 @@ def phase_info_parameterization(phase_info, aviary_inputs):
         range_scale = range_cruise / old_range_cruise
 
     # Altitude
-    old_alt_cruise = phase_info['climb2']['final_alt'][0]
+    old_alt_cruise = phase_info['climb2']['user_options']['final_alt'][0]
     if alt_cruise != old_alt_cruise:
 
-        phase_info['climb2']['final_alt'] = (alt_cruise, 'ft')
+        phase_info['climb2']['user_options']['final_alt'] = (alt_cruise, 'ft')
         phase_info['climb2']['initial_guesses']['altitude'] = ([10.e3, alt_cruise], 'ft')
         phase_info['cruise']['initial_guesses']['altitude'] = (alt_cruise, 'ft')
         phase_info['desc1']['initial_guesses']['altitude'] = ([alt_cruise, 10.e3], 'ft')
