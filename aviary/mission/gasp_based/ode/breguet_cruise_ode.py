@@ -10,8 +10,8 @@ from aviary.subsystems.mass.mass_to_weight import MassToWeight
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variables import Dynamic
-from aviary.mission.flops_based.ode.specific_energy_rate import SpecificEnergyRate
-from aviary.mission.flops_based.ode.altitude_rate import AltitudeRate
+from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
+from aviary.mission.ode.altitude_rate import AltitudeRate
 
 
 class BreguetCruiseODESolution(BaseODE):
