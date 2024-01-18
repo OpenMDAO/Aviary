@@ -9,6 +9,8 @@ from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.subsystems.mass.mass_to_weight import MassToWeight
 from aviary.variable_info.enums import AnalysisScheme, SpeedType
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.mission.flops_based.ode.specific_energy_rate import SpecificEnergyRate
+from aviary.mission.flops_based.ode.altitude_rate import AltitudeRate
 
 
 class AccelODE(BaseODE):
@@ -92,6 +94,29 @@ class AccelODE(BaseODE):
                 "distance_rate", ]
             + sgm_outputs,
         )
+
+        # the last two subsystems will also be used for constraints
+        self.add_subsystem(
+            name='SPECIFIC_ENERGY_RATE_EXCESS',
+            subsys=SpecificEnergyRate(num_nodes=nn),
+            promotes_inputs=[(Dynamic.Mission.VELOCITY, "TAS"), Dynamic.Mission.MASS,
+                             (Dynamic.Mission.THRUST_TOTAL, Dynamic.Mission.THRUST_MAX_TOTAL),
+                             Dynamic.Mission.DRAG],
+            promotes_outputs=[(Dynamic.Mission.SPECIFIC_ENERGY_RATE,
+                               Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS)]
+        )
+
+        self.add_subsystem(
+            name='ALTITUDE_RATE_MAX',
+            subsys=AltitudeRate(num_nodes=nn),
+            promotes_inputs=[
+                (Dynamic.Mission.SPECIFIC_ENERGY_RATE,
+                 Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS),
+                (Dynamic.Mission.VELOCITY_RATE, "TAS_rate"),
+                (Dynamic.Mission.VELOCITY, "TAS")],
+            promotes_outputs=[
+                (Dynamic.Mission.ALTITUDE_RATE,
+                 Dynamic.Mission.ALTITUDE_RATE_MAX)])
 
         ParamPort.set_default_vals(self)
         self.set_input_defaults(Dynamic.Mission.MASS, val=14e4 *
