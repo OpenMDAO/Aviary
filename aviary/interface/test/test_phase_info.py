@@ -94,8 +94,7 @@ class TestParameterizePhaseInfo(unittest.TestCase):
 
         prob = AviaryProblem()
 
-        csv_path = pkg_resources.resource_filename(
-            "aviary", "models/small_single_aisle/small_single_aisle_GwGm.csv")
+        csv_path = "models/small_single_aisle/small_single_aisle_GwGm.csv"
 
         prob.load_inputs(csv_path, phase_info)
         prob.check_and_preprocess_inputs()
@@ -131,8 +130,7 @@ class TestParameterizePhaseInfo(unittest.TestCase):
 
         prob = AviaryProblem()
 
-        csv_path = pkg_resources.resource_filename(
-            "aviary", "models/test_aircraft/aircraft_for_bench_FwFm.csv")
+        csv_path = "models/test_aircraft/aircraft_for_bench_FwFm.csv"
 
         prob.load_inputs(csv_path, phase_info)
         prob.check_and_preprocess_inputs()
@@ -154,7 +152,7 @@ class TestParameterizePhaseInfo(unittest.TestCase):
 
         prob.run_model()
 
-        assert_near_equal(prob.get_val("traj.descent.timeseries.input_values:states:range", units='km')[-1],
+        assert_near_equal(prob.get_val("traj.descent.timeseries.input_values:states:distance", units='km')[-1],
                           5000.0 * 3378.7 / 3500)
         assert_near_equal(prob.get_val("traj.cruise.timeseries.input_values:states:altitude", units='ft')[0],
                           31000.0)

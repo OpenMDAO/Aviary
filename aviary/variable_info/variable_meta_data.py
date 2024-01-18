@@ -5868,7 +5868,7 @@ add_meta_data(
     Dynamic.Mission.DISTANCE,
     meta_data=_MetaData,
     historical_name={"GASP": None,
-                     "FLOPS": None,
+                     "FLOPS": 'range',
                      "LEAPS1": None
                      },
     units='NM',
@@ -5879,7 +5879,7 @@ add_meta_data(
     Dynamic.Mission.DISTANCE_RATE,
     meta_data=_MetaData,
     historical_name={"GASP": None,
-                     "FLOPS": None,
+                     "FLOPS": 'range_rate',
                      "LEAPS1": None
                      },
     units='NM/s',
@@ -6091,29 +6091,6 @@ add_meta_data(
                      },
     units='lbm/h',
     desc='Current total rate of nitrous oxide (NOx) production by the vehicle'
-)
-
-add_meta_data(
-    Dynamic.Mission.RANGE,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='nm',
-    desc='Current cumulative ground distance the vehicle has flown'
-)
-
-add_meta_data(
-    Dynamic.Mission.RANGE_RATE,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='nm/s',
-    desc='Current rate of change in cumulative ground distance (ground velocity) for '
-         'the vehicle'
 )
 
 add_meta_data(

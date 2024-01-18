@@ -148,7 +148,7 @@ class MissionODE(om.Group):
             promotes_outputs=[
                 Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
                 Dynamic.Mission.ALTITUDE_RATE_MAX,
-                Dynamic.Mission.RANGE_RATE,
+                Dynamic.Mission.DISTANCE_RATE,
                 'T_required',
             ])
 

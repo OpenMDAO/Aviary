@@ -124,7 +124,7 @@ def run_groundroll():
 
     p.set_val(
         "traj.groundroll.states:distance",
-        groundroll.interp("distance", [0, 1000]),
+        groundroll.interp(Dynamic.Mission.DISTANCE, [0, 1000]),
         units="ft",
     )
 

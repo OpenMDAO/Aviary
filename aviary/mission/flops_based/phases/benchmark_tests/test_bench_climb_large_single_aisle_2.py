@@ -78,8 +78,8 @@ def run_trajectory():
     v_f_climb = 452.61 * _units.knot  # m/s
     mach_i_climb = 0.3
     mach_f_climb = 0.775
-    range_i_climb = 0 * _units.nautical_mile  # m
-    range_f_climb = 124 * _units.nautical_mile  # m
+    distance_i_climb = 0 * _units.nautical_mile  # m
+    distance_f_climb = 124 * _units.nautical_mile  # m
     t_i_climb = 0
     t_f_climb = 20.14 * _units.minute  # sec
 
@@ -152,8 +152,8 @@ def run_trajectory():
         Dynamic.Mission.VELOCITY, ys=[v_i_climb, v_f_climb]), units='m/s')
     prob.set_val('traj.climb.states:mass', climb.interp(
         Dynamic.Mission.MASS, ys=[mass_i_climb, mass_f_climb]), units='kg')
-    prob.set_val('traj.climb.states:range', climb.interp(
-        Dynamic.Mission.RANGE, ys=[range_i_climb, range_f_climb]), units='m')  # nmi
+    prob.set_val('traj.climb.states:distance', climb.interp(
+        Dynamic.Mission.DISTANCE, ys=[distance_i_climb, distance_f_climb]), units='m')  # nmi
 
     prob.set_val('traj.climb.controls:velocity_rate',
                  climb.interp(Dynamic.Mission.VELOCITY_RATE, ys=[0.25, 0.05]),
@@ -182,7 +182,7 @@ class ClimbPhaseTestCase(unittest.TestCase):
         times = prob.get_val('traj.climb.timeseries.time', units='s')
         altitudes = prob.get_val('traj.climb.timeseries.states:altitude', units='m')
         masses = prob.get_val('traj.climb.timeseries.states:mass', units='kg')
-        ranges = prob.get_val('traj.climb.timeseries.states:range', units='m')
+        ranges = prob.get_val('traj.climb.timeseries.states:distance', units='m')
         velocities = prob.get_val('traj.climb.timeseries.states:velocity', units='m/s')
         thrusts = prob.get_val('traj.climb.timeseries.thrust_net_total', units='N')
 

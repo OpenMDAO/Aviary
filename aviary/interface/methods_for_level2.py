@@ -217,6 +217,9 @@ class AviaryProblem(om.Problem):
                 elif self.mission_method is SOLVED:
                     from aviary.interface.default_phase_info.solved import phase_info
 
+                print('Loaded default phase_info for'
+                      f'{self.mission_method.value.lower()} equations of motion')
+
         # create a new dictionary that only contains the phases from phase_info
         self.phase_info = {}
 
@@ -840,7 +843,7 @@ class AviaryProblem(om.Problem):
             phase.set_state_options("mass", rate_source="dmass_dv",
                                     fix_initial=True, fix_final=False, lower=1, upper=195_000, ref=takeoff_mass, defect_ref=takeoff_mass)
 
-            phase.set_state_options(Dynamic.Mission.RANGE, rate_source="over_a",
+            phase.set_state_options(Dynamic.Mission.DISTANCE, rate_source="over_a",
                                     fix_initial=True, fix_final=False, lower=0, upper=2000., ref=1.e2, defect_ref=1.e2)
 
             phase.add_parameter("t_init_gear", units="s",
@@ -879,15 +882,15 @@ class AviaryProblem(om.Problem):
                 static_target=False)
 
             phase.set_time_options(fix_initial=False, fix_duration=False,
-                                   units="range_units", name=Dynamic.Mission.RANGE,
+                                   units="distance_units", name=Dynamic.Mission.DISTANCE,
                                    duration_bounds=wrapped_convert_units(
-                                       phase_options['duration_bounds'], "range_units"),
+                                       phase_options['duration_bounds'], "distance_units"),
                                    duration_ref=wrapped_convert_units(
-                                       phase_options['duration_ref'], "range_units"),
+                                       phase_options['duration_ref'], "distance_units"),
                                    initial_bounds=wrapped_convert_units(
-                                       phase_options['initial_bounds'], "range_units"),
+                                       phase_options['initial_bounds'], "distance_units"),
                                    initial_ref=wrapped_convert_units(
-                                       phase_options['initial_ref'], "range_units"),
+                                       phase_options['initial_ref'], "distance_units"),
                                    )
 
             if phase_name == "cruise" or phase_name == "descent":
@@ -1132,7 +1135,7 @@ class AviaryProblem(om.Problem):
                     pass
                 elif phase_name == "descent":
                     phase.add_boundary_constraint(
-                        Dynamic.Mission.RANGE,
+                        Dynamic.Mission.DISTANCE,
                         loc="final",
                         equals=target_range,
                         units="NM",
@@ -1196,7 +1199,7 @@ class AviaryProblem(om.Problem):
         """
 
         if include_landing and self.post_mission_info['include_landing']:
-            if self.mission_method is HEIGHT_ENERGY:
+            if self.mission_method is HEIGHT_ENERGY or self.mission_method is SIMPLE:
                 self._add_flops_landing_systems()
             elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
                 self._add_gasp_landing_systems()
@@ -1263,7 +1266,7 @@ class AviaryProblem(om.Problem):
                             ("range_resid", Mission.Constraints.RANGE_RESIDUAL)],
                     )
 
-                    self.model.connect(f"traj.{phases[-1]}.timeseries.states:range",
+                    self.model.connect(f"traj.{phases[-1]}.timeseries.states:distance",
                                        "range_constraint.actual_range", src_indices=[-1])
                     self.model.add_constraint(
                         Mission.Constraints.RANGE_RESIDUAL, equals=0.0, ref=1.e2)
@@ -1378,12 +1381,12 @@ class AviaryProblem(om.Problem):
             self.traj.link_phases(phases, vars=['time'], ref=100.)
             self.traj.link_phases(phases, vars=['mass'], ref=10.e3)
             self.traj.link_phases(
-                phases, vars=[Dynamic.Mission.RANGE], units='m', ref=10.e3)
+                phases, vars=[Dynamic.Mission.DISTANCE], units='m', ref=10.e3)
             self.traj.link_phases(phases[:7], vars=['TAS'], units='kn', ref=200.)
 
         elif self.mission_method is SIMPLE:
             self.traj.link_phases(
-                phases, ["time", Dynamic.Mission.MASS, Dynamic.Mission.RANGE], connected=True)
+                phases, ["time", Dynamic.Mission.MASS, Dynamic.Mission.DISTANCE], connected=True)
 
             self._link_phases_helper_with_options(
                 phases, 'optimize_altitude', Dynamic.Mission.ALTITUDE, ref=1.e4)
@@ -1393,14 +1396,14 @@ class AviaryProblem(om.Problem):
         elif self.mission_method is HEIGHT_ENERGY:
             self.traj.link_phases(
                 phases, ["time", Dynamic.Mission.ALTITUDE,
-                         Dynamic.Mission.MASS, Dynamic.Mission.RANGE], connected=False, ref=1.e4)
+                         Dynamic.Mission.MASS, Dynamic.Mission.DISTANCE], connected=False, ref=1.e4)
             self.traj.link_phases(
                 phases, [Dynamic.Mission.VELOCITY], connected=False, ref=250.)
 
         elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
             if self.analysis_scheme is AnalysisScheme.COLLOCATION:
                 self.traj.link_phases(["groundroll", "rotation", "ascent"], [
-                    "time", "TAS", "mass", "distance"], connected=True)
+                    "time", "TAS", "mass", Dynamic.Mission.DISTANCE], connected=True)
                 self.traj.link_phases(
                     ["rotation", "ascent"], ["alpha"], connected=False,
                     ref=5e1,
@@ -1408,8 +1411,8 @@ class AviaryProblem(om.Problem):
                 self.traj.add_linkage_constraint(
                     "ascent",
                     "accel",
-                    "distance",
-                    "distance",
+                    Dynamic.Mission.DISTANCE,
+                    Dynamic.Mission.DISTANCE,
                     "final",
                     "initial",
                     connected=False,
@@ -1422,13 +1425,14 @@ class AviaryProblem(om.Problem):
                         "time", "mass", "TAS"], connected=True)
                 self.traj.link_phases(
                     phases=["accel", "climb1", "climb2"],
-                    vars=["time", Dynamic.Mission.ALTITUDE, "mass", "distance"],
+                    vars=["time", Dynamic.Mission.ALTITUDE,
+                          "mass", Dynamic.Mission.DISTANCE],
                     connected=True,
                 )
 
                 self.traj.link_phases(
                     phases=["desc1", "desc2"],
-                    vars=["time", "mass", "distance"],
+                    vars=["time", "mass", Dynamic.Mission.DISTANCE],
                     connected=True,
                 )
 
@@ -2063,11 +2067,11 @@ class AviaryProblem(om.Problem):
 
         if self.mission_method is SIMPLE:
             control_keys = ["mach", "altitude"]
-            state_keys = ["mass", "range"]
+            state_keys = ["mass", Dynamic.Mission.DISTANCE]
         else:
             control_keys = ["velocity_rate", "throttle"]
             state_keys = ["altitude", "velocity", "mass",
-                          "range", "TAS", "distance", "flight_path_angle", "alpha"]
+                          Dynamic.Mission.DISTANCE, "TAS", Dynamic.Mission.DISTANCE, "flight_path_angle", "alpha"]
             if self.mission_method is TWO_DEGREES_OF_FREEDOM and phase_name == 'ascent':
                 # Alpha is a control for ascent.
                 control_keys.append('alpha')
@@ -2171,7 +2175,7 @@ class AviaryProblem(om.Problem):
                 # Set the distance guesses as the initial values for the distance state variable
                 self.set_val(
                     f"traj.{phase_name}.states:distance", phase.interp(
-                        "distance", ys=ys)
+                        Dynamic.Mission.DISTANCE, ys=ys)
                 )
 
     def _add_solved_guesses(self, idx, phase_name, phase):
@@ -2244,11 +2248,11 @@ class AviaryProblem(om.Problem):
         time_guesses = np.hstack((0., np.cumsum(range_durations / mean_TAS)))
 
         if phase_name != "groundroll":
-            range_initial = range_guesses[idx]
+            distance_initial = range_guesses[idx]
             self.set_val(f"traj.{phase_name}.t_initial",
-                         range_initial, units='range_units')
+                         distance_initial, units='distance_units')
             self.set_val(f"traj.{phase_name}.t_duration",
-                         range_guesses[idx+1] - range_initial, units='range_units')
+                         range_guesses[idx+1] - distance_initial, units='distance_units')
 
             self.set_val(
                 f"traj.{phase_name}.polynomial_controls:altitude",
@@ -2411,17 +2415,31 @@ class AviaryProblem(om.Problem):
             self.model.connect(Mission.Takeoff.FINAL_MASS,
                                'traj.climb.initial_states:mass')
             self.model.connect(Mission.Takeoff.GROUND_DISTANCE,
-                               'traj.climb.initial_states:range')
-            self.model.connect(Mission.Takeoff.FINAL_VELOCITY,
-                               'traj.climb.initial_states:velocity')
-            self.model.connect(Mission.Takeoff.FINAL_ALTITUDE,
-                               'traj.climb.initial_states:altitude')
+                               'traj.climb.initial_states:distance')
+            if self.mission_method is HEIGHT_ENERGY:
+                self.model.connect(Mission.Takeoff.FINAL_VELOCITY,
+                                   'traj.climb.initial_states:velocity')
+                self.model.connect(Mission.Takeoff.FINAL_ALTITUDE,
+                                   'traj.climb.initial_states:altitude')
+            else:
+                pass
+                # TODO: connect this correctly
+                # mass is the most important to connect but these others should
+                # be connected as well
+                # self.model.connect(Mission.Takeoff.FINAL_VELOCITY,
+                #                 'traj.climb.initial_states:mach')
+                # self.model.connect(Mission.Takeoff.FINAL_ALTITUDE,
+                #                 'traj.climb.controls:altitude')
 
         self.model.connect('traj.descent.states:mass',
                            Mission.Landing.TOUCHDOWN_MASS, src_indices=[-1])
         # TODO: approach velocity should likely be connected
-        self.model.connect('traj.descent.states:altitude', Mission.Landing.INITIAL_ALTITUDE,
-                           src_indices=[-1])
+        if self.mission_method is HEIGHT_ENERGY:
+            self.model.connect('traj.descent.states:altitude', Mission.Landing.INITIAL_ALTITUDE,
+                               src_indices=[-1])
+        else:
+            self.model.connect('traj.descent.control_values:altitude', Mission.Landing.INITIAL_ALTITUDE,
+                               src_indices=[0])
 
     def _add_gasp_landing_systems(self):
         self.model.add_subsystem(

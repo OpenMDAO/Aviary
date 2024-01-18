@@ -40,7 +40,7 @@ def check_phase_info(phase_info, mission_method):
         'max_mach': float,
         'required_available_climb_rate': tuple,
         'mass_f_cruise': tuple,
-        'range_f_cruise': tuple,
+        'distance_f_cruise': tuple,
         'fix_final': bool,
     }
 
@@ -226,8 +226,10 @@ def check_phase_info(phase_info, mission_method):
     elif mission_method is SIMPLE:
         return
     else:
-        raise ValueError(
-            "Invalid mission_method. Please choose either 'FLOPS', 'GASP', 'simple', or 'solved'.")
+        possible_values = ["'"+e.value+"'" for e in EquationsOfMotion]
+        possible_values[-1] = "or " + possible_values[-1]
+        raise ValueError("Invalid mission_method. Please choose from " +
+                         ", ".join(possible_values) + ".")
 
     # Check if all phases exist in phase_info
     for phase in phase_info:

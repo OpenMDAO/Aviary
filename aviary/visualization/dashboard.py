@@ -128,6 +128,9 @@ def create_aviary_variables_table_data_nested(script_name, recorder_file):
 
     """
     cr = om.CaseReader(recorder_file)
+    if 'final' not in cr.list_cases():
+        return None
+
     case = cr.get_case('final')
     outputs = case.list_outputs(explicit=True, implicit=True, val=True,
                                 residuals=True, residuals_tol=None,
@@ -412,12 +415,13 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
             # copy script.js file to reports/script_name/aviary_vars/index.html.
             # mod the script.js file to point at the json file
             # create the json file and put it in reports/script_name/aviary_vars/aviary_vars.json
-            create_aviary_variables_table_data_nested(
-                script_name, problem_recorder)  # create the json file
-            aviary_vars_pane = create_report_frame('html',
-                                                   f'{reports_dir}/aviary_vars/index.html')
+            table_data_nested = create_aviary_variables_table_data_nested(
+                script_name, problem_recorder)
+            if table_data_nested:
+                aviary_vars_pane = create_report_frame('html',
+                                                       f'{reports_dir}/aviary_vars/index.html')
 
-            results_tabs_list.append(('Aviary Variables', aviary_vars_pane))
+                results_tabs_list.append(('Aviary Variables', aviary_vars_pane))
 
     ####### Subsystems Tab #######
     subsystem_tabs_list = []
