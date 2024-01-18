@@ -11,7 +11,7 @@ TWO_DEGREES_OF_FREEDOM = EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
 
 
 class TestCheckInputs(unittest.TestCase):
-    def test_correct_input_simple(self):
+    def test_correct_input_height_energy(self):
         # This should pass without any issue as it's the same valid dict as before
         self.assertTrue(check_phase_info(phase_info_flops, mission_method=HEIGHT_ENERGY))
 

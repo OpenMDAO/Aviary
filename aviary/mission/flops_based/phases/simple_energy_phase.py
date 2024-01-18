@@ -8,7 +8,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.mission.flops_based.phases.phase_utils import add_subsystem_variables_to_phase, get_initial
 from aviary.variable_info.variables import Dynamic
-from aviary.mission.flops_based.ode.mission_ODE import MissionODE
+from aviary.mission.flops_based.ode.simple_mission_ODE import MissionODE
 
 
 # TODO: support/handle the following in the base class
@@ -16,7 +16,6 @@ from aviary.mission.flops_based.ode.mission_ODE import MissionODE
 #     - currently handled in level 3 interface implementation
 # - self.external_subsystems
 # - self.meta_data, with cls.default_meta_data customization point
-@register
 class EnergyPhase(PhaseBuilderBase):
     '''
     A phase builder for a simple energy phase.
@@ -53,7 +52,7 @@ class EnergyPhase(PhaseBuilderBase):
 
         supported options:
             - times
-            - distance
+            - range
             - altitude
             - velocity
             - velocity_rate
@@ -99,7 +98,7 @@ class EnergyPhase(PhaseBuilderBase):
 
     _initial_guesses_meta_data_ = {}
 
-    default_name = 'cruise'
+    default_name = 'energy_phase'
 
     default_ode_class = MissionODE
 
@@ -373,7 +372,7 @@ EnergyPhase._add_meta_data(
     desc='transcription: order of the state transcription; the order of the control'
     ' transcription is `order - 1`')
 
-EnergyPhase._add_meta_data('polynomial_control_order', val=3)
+EnergyPhase._add_meta_data('polynomial_control_order', val=None)
 
 EnergyPhase._add_meta_data('use_polynomial_control', val=True)
 

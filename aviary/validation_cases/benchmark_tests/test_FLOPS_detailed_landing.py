@@ -17,13 +17,10 @@ from aviary.models.N3CC.N3CC_data import (
     landing_trajectory_builder as _landing_trajectory_builder,
     landing_fullstop_user_options as _landing_fullstop_user_options)
 
-from aviary.variable_info.variables import Dynamic as _Dynamic
+from aviary.variable_info.variables import Dynamic
 from aviary.interface.default_phase_info.height_energy import default_premission_subsystems
 from aviary.utils.preprocessors import preprocess_crewpayload
 from aviary.variable_info.variables_in import VariablesIn
-
-
-Dynamic = _Dynamic.Mission
 
 
 @use_tempdirs
@@ -87,10 +84,11 @@ class TestFLOPSDetailedLanding(unittest.TestCase):
         landing_trajectory_builder.build_trajectory(
             aviary_options=aviary_options, model=landing.model, traj=traj)
 
-        max_range, units = landing_fullstop_user_options.get_item('max_range')
+        distance_max, units = landing_fullstop_user_options.get_item('distance_max')
         fullstop = landing_trajectory_builder.get_phase('landing_fullstop')
 
-        fullstop.add_objective(Dynamic.RANGE, loc='final', ref=max_range, units=units)
+        fullstop.add_objective(Dynamic.Mission.DISTANCE, loc='final',
+                               ref=distance_max, units=units)
 
         landing.model.add_subsystem(
             'input_sink',
@@ -123,7 +121,7 @@ class TestFLOPSDetailedLanding(unittest.TestCase):
         desired = 3409.47  # ft
 
         actual = landing.model.get_val(
-            'traj.landing_fullstop.states:range', units='ft')[-1]
+            'traj.landing_fullstop.states:distance', units='ft')[-1]
 
         assert_near_equal(actual, desired, 0.05)
 

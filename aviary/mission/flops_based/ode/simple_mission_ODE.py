@@ -2,7 +2,7 @@ import numpy as np
 import openmdao.api as om
 from dymos.models.atmosphere import USatm1976Comp
 
-from aviary.mission.flops_based.ode.mission_EOM import MissionEOM
+from aviary.mission.flops_based.ode.simple_mission_EOM import MissionEOM
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import promote_aircraft_and_mission_vars
 from aviary.variable_info.variable_meta_data import _MetaData

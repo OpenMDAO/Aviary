@@ -76,8 +76,8 @@ class TestPhaseInfo(unittest.TestCase):
                         raise RuntimeError(
                             f'value mismatch ({key}): {lhs_value} != {rhs_value}')
 
-    def test_default_phase_simple(self):
-        """Tests the roundtrip conversion for default_phase_info.simple"""
+    def test_default_phase_height_energy(self):
+        """Tests the roundtrip conversion for default_phase_info.height_energy"""
         from aviary.interface.default_phase_info.height_energy import phase_info
         local_phase_info = deepcopy(phase_info)
         self._test_phase_info_dict(local_phase_info, 'cruise')

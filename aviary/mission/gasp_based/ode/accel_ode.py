@@ -89,7 +89,7 @@ class AccelODE(BaseODE):
             + sgm_inputs,
             promotes_outputs=[
                 "TAS_rate",
-                "distance_rate", ]
+                Dynamic.Mission.DISTANCE_RATE, ]
             + sgm_outputs,
         )
 

@@ -43,7 +43,7 @@ def run_rotation(make_plots=False):
     )
     p.set_val(
         "traj.rotation.states:distance",
-        rotation.interp("distance", [3680.37217765, 4000]),
+        rotation.interp(Dynamic.Mission.DISTANCE, [3680.37217765, 4000]),
         units="ft",
     )
     p.set_val("traj.rotation.t_duration", 50.0)

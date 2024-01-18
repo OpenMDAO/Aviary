@@ -29,7 +29,7 @@ class TestSubsystemsMission(unittest.TestCase):
                     "polynomial_control_order": 1,
                     "num_segments": 2,
                     "order": 3,
-                    "solve_for_range": False,
+                    "solve_for_distance": False,
                     "initial_mach": (0.72, "unitless"),
                     "final_mach": (0.72, "unitless"),
                     "mach_bounds": ((0.7, 0.74), "unitless"),

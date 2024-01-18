@@ -45,7 +45,8 @@ class ClimbTestCase(unittest.TestCase):
                 [6.24116612, 6.24116612]), tol
         )  # note: values from GASP are: np.array([5.9667, 5.9667])
         assert_near_equal(
-            self.prob["distance_rate"], np.array([774.679584, 774.679584]), tol
+            self.prob[Dynamic.Mission.DISTANCE_RATE], np.array(
+                [774.679584, 774.679584]), tol
             # note: these values are finite differenced and lose accuracy. Fd values are: np.array([799.489, 799.489])
         )
         assert_near_equal(

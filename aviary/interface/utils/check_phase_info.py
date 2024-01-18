@@ -18,7 +18,7 @@ def check_phase_info(phase_info, mission_method):
     common_entries = {
         'optimize_mach': bool,
         'optimize_altitude': bool,
-        'solve_for_range': bool,
+        'solve_for_distance': bool,
         'initial_mach': tuple,
         'final_mach': tuple,
         'mach_bounds': tuple,
@@ -33,7 +33,7 @@ def check_phase_info(phase_info, mission_method):
     }
 
     # Combine common and phase-specific entries
-    phase_keys_simple = {
+    phase_keys_height_energy = {
         'pre_mission': {'include_takeoff': bool, 'optimize_mass': bool},
         'post_mission': {'include_landing': bool}
     }
@@ -198,7 +198,7 @@ def check_phase_info(phase_info, mission_method):
             if phase != 'pre_mission' and phase != 'post_mission':
                 phase_keys[phase] = {**common_keys, **common_entries}
             else:
-                phase_keys[phase] = phase_keys_simple[phase]
+                phase_keys[phase] = phase_keys_height_energy[phase]
     else:
         possible_values = ["'"+e.value+"'" for e in EquationsOfMotion]
         possible_values[-1] = "or " + possible_values[-1]
