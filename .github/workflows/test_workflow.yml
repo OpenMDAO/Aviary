@@ -213,8 +213,8 @@ jobs:
           python run_all.py
           cd ../..
 
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
+      # - name: Setup tmate session
+      #   uses: mxschmitt/action-tmate@v3
 
 
       - name: Run tests
