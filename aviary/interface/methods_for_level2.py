@@ -2519,31 +2519,35 @@ class AviaryProblem(om.Problem):
         )
 
     def _add_fuel_reserve_component(self, reserves_name=Mission.Design.RESERVE_FUEL):
-        reserves_val = self.aviary_inputs.get_val(Aircraft.Design.RESERVES)
-        if reserves_val <= 0:
-            reserves_val = -reserves_val
-            self.model.add_subsystem(
-                "reserves_calc",
-                om.ExecComp(
-                    f"reserve_fuel = {reserves_val}*(takeoff_mass - final_mass)",
-                    takeoff_mass={"units": "lbm"},
-                    final_mass={"units": "lbm"},
-                    reserve_fuel={"units": "lbm"}
-                ),
-                promotes_inputs=[
-                    ("takeoff_mass", Mission.Summary.GROSS_MASS),
-                    ("final_mass", Mission.Landing.TOUCHDOWN_MASS),
-                ],
-                promotes_outputs=[("reserve_fuel", reserves_name)],
-            )
-        elif reserves_val > 10:
-            self.model.add_subsystem(
-                "reserves_calc",
-                om.ExecComp(
-                    f"reserve_fuel = {reserves_val}",
-                    reserve_fuel={"val": reserves_val, "units": "lbm"}
-                ),
-                promotes_outputs=[("reserve_fuel", reserves_name)],
-            )
-        else:
-            raise ValueError('"aircraft:design:reserves" is not valid between 0 and 10.')
+        reserves_val = self.aviary_inputs.get_val(
+            Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm')
+        reserves_frac = self.aviary_inputs.get_val(
+            Aircraft.Design.RESERVE_FUEL_FRACTION, units='unitless')
+
+        if reserves_frac == 0 and reserves_val == 0:
+            return
+
+        input_data = {}
+        input_promotions = {}
+        equation_string = f"reserve_fuel = "
+        if reserves_frac != 0:
+            input_data = {'takeoff_mass': {"units": "lbm"},
+                          'final_mass': {"units": "lbm"}}
+            input_promotions = {'promotes_inputs': [
+                                ("takeoff_mass", Mission.Summary.GROSS_MASS),
+                                ("final_mass", Mission.Landing.TOUCHDOWN_MASS)
+                                ]}
+            equation_string += f"{reserves_frac}*(takeoff_mass - final_mass)"
+        if reserves_val != 0:
+            equation_string += f" + {reserves_val}"
+
+        self.model.add_subsystem(
+            "reserves_calc",
+            om.ExecComp(
+                equation_string,
+                reserve_fuel={"val": reserves_val, "units": "lbm"},
+                **input_data
+            ),
+            promotes_outputs=[("reserve_fuel", reserves_name)],
+            **input_promotions
+        )
