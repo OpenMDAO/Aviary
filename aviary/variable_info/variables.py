@@ -598,8 +598,6 @@ class Dynamic:
         MASS_RATE = 'mass_rate'
         NOX_RATE = 'nox_rate'
         NOX_RATE_TOTAL = 'nox_rate_total'
-        RANGE = 'range'
-        RANGE_RATE = 'range_rate'
         SPECIFIC_ENERGY = 'specific_energy'
         SPECIFIC_ENERGY_RATE = 'specific_energy_rate'
         SPECIFIC_ENERGY_RATE_EXCESS = 'specific_energy_rate_excess'
@@ -730,3 +728,9 @@ class Mission:
     class Taxi:
         DURATION = 'mission:taxi:duration'
         MACH = 'mission:taxi:mach'
+
+
+class Settings:
+    EQUATIONS_OF_MOTION = 'settings:equations_of_motion'
+    MASS_METHOD = 'settings:mass_method'
+    VERBOSITY = 'settings:verbosity'

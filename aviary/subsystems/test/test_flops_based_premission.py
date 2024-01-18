@@ -13,7 +13,7 @@ from aviary.validation_cases.validation_tests import (
 from aviary.variable_info.variables import Aircraft, Mission
 from aviary.variable_info.variables_in import VariablesIn
 from aviary.utils.functions import set_aviary_initial_values
-from aviary.interface.default_phase_info.flops import default_premission_subsystems
+from aviary.interface.default_phase_info.height_energy import default_premission_subsystems
 from aviary.utils.preprocessors import preprocess_crewpayload
 
 

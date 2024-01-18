@@ -21,7 +21,7 @@ from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.mission.flops_based.ode.mission_ODE import MissionODE
 from aviary.mission.flops_based.phases.descent_phase import Descent
-from aviary.interface.default_phase_info.flops import prop, aero, geom
+from aviary.interface.default_phase_info.height_energy import prop, aero, geom
 from aviary.subsystems.premission import CorePreMission
 from aviary.utils.functions import set_aviary_initial_values
 from aviary.utils.functions import get_path
@@ -89,8 +89,8 @@ def run_trajectory():
     mach_f = 0.3
     mass_i = 140515*_units.pound
     mass_f = 140002*_units.pound
-    range_i = 2830.8*_units.nautical_mile
-    range_f = 2960.0*_units.nautical_mile
+    distance_i = 2830.8*_units.nautical_mile
+    distance_f = 2960.0*_units.nautical_mile
     t_i_descent = 0.0
     t_f_descent = 2000.0
 
@@ -127,7 +127,7 @@ def run_trajectory():
 
     descent = descent_options.build_phase(MissionODE, transcription)
 
-    descent.add_objective(Dynamic.Mission.RANGE, ref=-1e5, loc='final')
+    descent.add_objective(Dynamic.Mission.DISTANCE, ref=-1e5, loc='final')
     traj.add_phase('descent', descent)
 
     traj = setup_trajectory_params(prob.model, traj, aviary_inputs)
@@ -147,8 +147,8 @@ def run_trajectory():
         Dynamic.Mission.VELOCITY, ys=[v_i, v_f]), units='m/s')
     prob.set_val('traj.descent.states:mass', descent.interp(
         Dynamic.Mission.MASS, ys=[mass_i, mass_f]), units='kg')
-    prob.set_val('traj.descent.states:range', descent.interp(
-        Dynamic.Mission.RANGE, ys=[range_i, range_f]), units='m')
+    prob.set_val('traj.descent.states:distance', descent.interp(
+        Dynamic.Mission.DISTANCE, ys=[distance_i, distance_f]), units='m')
 
     prob.set_val('traj.descent.controls:velocity_rate',
                  descent.interp(Dynamic.Mission.VELOCITY_RATE, ys=[0.0, 0.0]),
@@ -177,7 +177,7 @@ class DescentPhaseTestCase(unittest.TestCase):
         times = prob.get_val('traj.descent.timeseries.time', units='s')
         altitudes = prob.get_val('traj.descent.timeseries.states:altitude', units='m')
         masses = prob.get_val('traj.descent.timeseries.states:mass', units='kg')
-        ranges = prob.get_val('traj.descent.timeseries.states:range', units='m')
+        ranges = prob.get_val('traj.descent.timeseries.states:distance', units='m')
         velocities = prob.get_val('traj.descent.timeseries.states:velocity', units='m/s')
         thrusts = prob.get_val('traj.descent.timeseries.thrust_net', units='N')
 

@@ -46,14 +46,14 @@ class TestSubsystemsMission(unittest.TestCase):
                     'required_available_climb_rate': (1.524, 'm/s'),
                     'input_initial': False,
                     'mass_f_cruise': (1.e4, 'lbm'),
-                    'range_f_cruise': (1.e6, 'm'),
+                    'distance_f_cruise': (1.e6, 'm'),
                 },
                 'initial_guesses': {
                     'times': ([0., 15000.], 's'),
                     'altitude': ([35.e3, 35.e3], 'ft'),
                     'velocity': ([455.49, 455.49], 'kn'),
                     'mass': ([130.e3, 120.e3], 'lbm'),
-                    'range': ([0., 3000.], 'NM'),
+                    'distance': ([0., 3000.], 'NM'),
                     'velocity_rate': ([0., 0.], 'm/s**2'),
                     'throttle': ([0.6, 0.6], 'unitless'),
                 }
@@ -67,17 +67,16 @@ class TestSubsystemsMission(unittest.TestCase):
     def test_subsystems_in_a_mission(self):
         phase_info = self.phase_info.copy()
 
-        prob = AviaryProblem(
-            phase_info, mission_method="FLOPS", mass_method="FLOPS")
+        prob = AviaryProblem()
 
         csv_path = pkg_resources.resource_filename(
             "aviary", "models/test_aircraft/aircraft_for_bench_GwFm.csv")
 
-        prob.load_inputs(csv_path)
+        prob.load_inputs(csv_path, phase_info)
 
-        # Have checks for clashing user inputs
-        # Raise warnings or errors depending on how clashing the issues are
-        prob.check_inputs()
+
+# Preprocess inputs
+        prob.check_and_preprocess_inputs()
 
         prob.add_pre_mission_systems()
 
@@ -118,17 +117,16 @@ class TestSubsystemsMission(unittest.TestCase):
         phase_info = self.phase_info.copy()
         phase_info['cruise']['initial_guesses']['bad_guess_name'] = ([10., 100.], 'm')
 
-        prob = AviaryProblem(phase_info, mission_method="FLOPS",
-                             mass_method="FLOPS", reports=False)
+        prob = AviaryProblem(reports=False)
 
         csv_path = pkg_resources.resource_filename(
             "aviary", "models/test_aircraft/aircraft_for_bench_GwFm.csv")
 
-        prob.load_inputs(csv_path)
+        prob.load_inputs(csv_path, phase_info)
 
-        # Have checks for clashing user inputs
-        # Raise warnings or errors depending on how clashing the issues are
-        prob.check_inputs()
+
+# Preprocess inputs
+        prob.check_and_preprocess_inputs()
 
         prob.add_pre_mission_systems()
 

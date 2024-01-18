@@ -161,14 +161,14 @@ class CustomEngineTest(unittest.TestCase):
                     'required_available_climb_rate': (1.524, 'm/s'),
                     'input_initial': False,
                     'mass_f_cruise': (1.e4, 'lbm'),
-                    'range_f_cruise': (1.e6, 'm'),
+                    'distance_f_cruise': (1.e6, 'm'),
                 },
                 'initial_guesses': {
                     'times': ([0., 30.], 'min'),
                     'altitude': ([35.e3, 35.e3], 'ft'),
                     'velocity': ([455.49, 455.49], 'kn'),
                     'mass': ([130.e3, 128.e3], 'lbm'),
-                    'range': ([0., 300.], 'nmi'),
+                    'distance': ([0., 300.], 'nmi'),
                     'velocity_rate': ([0., 0.], 'm/s**2'),
                     'throttle': ([0.6, 0.6], 'unitless'),
                 }
@@ -182,16 +182,15 @@ class CustomEngineTest(unittest.TestCase):
         csv_path = pkg_resources.resource_filename(
             "aviary", "models/test_aircraft/aircraft_for_bench_GwFm.csv")
 
-        prob = AviaryProblem(phase_info, mission_method="FLOPS",
-                             mass_method="FLOPS", reports=False)
+        prob = AviaryProblem(reports=False)
 
         # Load aircraft and options data from user
         # Allow for user overrides here
-        prob.load_inputs(csv_path, engine_builder=SimpleTestEngine())
+        prob.load_inputs(csv_path, phase_info, engine_builder=SimpleTestEngine())
 
-        # Have checks for clashing user inputs
-        # Raise warnings or errors depending on how clashing the issues are
-        prob.check_inputs()
+
+# Preprocess inputs
+        prob.check_and_preprocess_inputs()
 
         prob.add_pre_mission_systems()
 
@@ -236,7 +235,7 @@ class CustomEngineTest(unittest.TestCase):
             'traj.phases.cruise.indep_states.states:altitude',
             'traj.phases.cruise.indep_states.states:velocity',
             'traj.phases.cruise.indep_states.states:mass',
-            'traj.phases.cruise.indep_states.states:range',
+            'traj.phases.cruise.indep_states.states:distance',
         ]
 
         # Check that all expected variable names are present in design_vars
@@ -251,7 +250,7 @@ class CustomEngineTest(unittest.TestCase):
         # print the mass and range
         assert_near_equal(design_vars_dict['traj.phases.cruise.indep_states.states:mass']['val'], [
             58967.0081, 58805.95966377, 58583.74569223, 58513.41573, 58352.36729377, 58130.15332223, 58059.82336], tolerance=tol)
-        assert_near_equal(design_vars_dict['traj.phases.cruise.indep_states.states:range']['val'], [
+        assert_near_equal(design_vars_dict['traj.phases.cruise.indep_states.states:distance']['val'], [
             0., 98633.17494548, 234726.82505452, 277800., 376433.17494548, 512526.82505452, 555600.], tolerance=tol)
 
 

@@ -6,7 +6,7 @@ import numpy as np
 from aviary.mission.gasp_based.phases.accel_phase import get_accel
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.interface.default_phase_info.gasp import default_mission_subsystems
+from aviary.interface.default_phase_info.two_dof import default_mission_subsystems
 from packaging import version
 
 
@@ -68,7 +68,8 @@ def run_accel():
     accel.add_timeseries_output("EAS", output_name="EAS", units="kn")
     accel.add_timeseries_output("TAS", output_name="TAS", units="kn")
     accel.add_timeseries_output("mass", output_name="mass", units="lbm")
-    accel.add_timeseries_output("distance", output_name="distance", units="NM")
+    accel.add_timeseries_output(Dynamic.Mission.DISTANCE,
+                                output_name=Dynamic.Mission.DISTANCE, units="NM")
     accel.timeseries_options['use_prefix'] = True
 
     accel.add_objective("time", loc="final")

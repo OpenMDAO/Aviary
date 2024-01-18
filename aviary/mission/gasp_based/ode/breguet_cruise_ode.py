@@ -125,7 +125,7 @@ class BreguetCruiseODESolution(BaseODE):
             "eom",
             RangeComp(num_nodes=nn),
             promotes_inputs=[
-                ("cruise_range_initial", "initial_distance"),
+                ("cruise_distance_initial", "initial_distance"),
                 ("cruise_time_initial", "initial_time"),
                 "mass",
                 Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,

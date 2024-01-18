@@ -1,6 +1,4 @@
-import warnings
 import unittest
-from parameterized import parameterized
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal, assert_check_partials
@@ -10,7 +8,7 @@ from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
 from aviary.subsystems.mass.mass_builder import CoreMassBuilder
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.premission import CorePreMission
-from aviary.utils.aviary_values import AviaryValues, get_items, get_keys
+from aviary.utils.aviary_values import get_items, get_keys
 from aviary.validation_cases.validation_tests import (
     get_flops_case_names, get_flops_inputs, get_flops_outputs
 )
@@ -19,6 +17,11 @@ from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 from aviary.models.large_single_aisle_1.V3_bug_fixed_IO import V3_bug_fixed_options, V3_bug_fixed_non_metadata
 from aviary.utils.functions import set_aviary_initial_values
 from aviary.variable_info.variables_in import VariablesIn
+from aviary.variable_info.enums import LegacyCode
+
+
+FLOPS = LegacyCode.FLOPS
+GASP = LegacyCode.GASP
 
 data_sets = get_flops_case_names()
 
@@ -65,12 +68,12 @@ class PreMissionTestCase(unittest.TestCase):
         input_options.delete(Aircraft.Nacelle.AVG_LENGTH)
 
         prop = CorePropulsionBuilder('core_propulsion', BaseMetaData)
-        mass = CoreMassBuilder('core_mass', BaseMetaData, 'GASP')
-        aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, 'FLOPS')
+        mass = CoreMassBuilder('core_mass', BaseMetaData, GASP)
+        aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, FLOPS)
         geom = CoreGeometryBuilder('core_geometry',
                                    BaseMetaData,
                                    use_both_geometries=True,
-                                   code_origin_to_prioritize='GASP')
+                                   code_origin_to_prioritize=GASP)
 
         core_subsystems = [prop, geom, mass, aero]
 
@@ -273,12 +276,12 @@ class PreMissionTestCase(unittest.TestCase):
         model = prob.model
 
         prop = CorePropulsionBuilder('core_propulsion', BaseMetaData)
-        mass = CoreMassBuilder('core_mass', BaseMetaData, 'GASP')
-        aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, 'FLOPS')
+        mass = CoreMassBuilder('core_mass', BaseMetaData, GASP)
+        aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, FLOPS)
         geom = CoreGeometryBuilder('core_geometry',
                                    BaseMetaData,
                                    use_both_geometries=True,
-                                   code_origin_to_prioritize='FLOPS')
+                                   code_origin_to_prioritize=FLOPS)
 
         core_subsystems = [prop, geom, mass, aero]
 

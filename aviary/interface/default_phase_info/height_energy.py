@@ -4,11 +4,15 @@ from aviary.subsystems.mass.mass_builder import CoreMassBuilder
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 from aviary.variable_info.variables import Dynamic, Mission
+from aviary.variable_info.enums import LegacyCode
+
+FLOPS = LegacyCode.FLOPS
+
 
 prop = CorePropulsionBuilder('core_propulsion', BaseMetaData)
-mass = CoreMassBuilder('core_mass', BaseMetaData, 'FLOPS')
-aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, 'FLOPS')
-geom = CoreGeometryBuilder('core_geometry', BaseMetaData, 'FLOPS')
+mass = CoreMassBuilder('core_mass', BaseMetaData, FLOPS)
+aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, FLOPS)
+geom = CoreGeometryBuilder('core_geometry', BaseMetaData, FLOPS)
 
 default_premission_subsystems = [prop, geom, mass, aero]
 default_mission_subsystems = [aero, prop]
@@ -23,7 +27,7 @@ phase_info = {
             'core_aerodynamics': {'method': 'computed'}
         },
         'user_options': {
-            'fix_initial': {Dynamic.Mission.MASS: False, Dynamic.Mission.RANGE: False},
+            'fix_initial': {Dynamic.Mission.MASS: False, Dynamic.Mission.DISTANCE: False},
             'fix_initial_time': True,
             'fix_duration': False,
             'num_segments': 6,
@@ -46,7 +50,7 @@ phase_info = {
             'altitude': ([0., 35.e3], 'ft'),
             'velocity': ([220., 455.49], 'kn'),
             'mass': ([170.e3, 165.e3], 'lbm'),
-            'range': ([0., 160.3], 'nmi'),
+            'distance': ([0., 160.3], 'nmi'),
             'velocity_rate': ([0.25, 0.05], 'm/s**2'),
             'throttle': ([0.5, 0.5], 'unitless'),
         }
@@ -71,14 +75,14 @@ phase_info = {
             'max_mach': 0.79,
             'required_available_climb_rate': (1.524, 'm/s'),
             'mass_f_cruise': (1.e4, 'kg'),
-            'range_f_cruise': (1.e6, 'm'),
+            'distance_f_cruise': (1.e6, 'm'),
         },
         'initial_guesses': {
             'times': ([26.2, 406.18], 'min'),
             'altitude': ([35.e3, 35.e3], 'ft'),
             'velocity': ([455.49, 455.49], 'kn'),
             'mass': ([165.e3, 140.e3], 'lbm'),
-            'range': ([160.3, 3243.9], 'nmi'),
+            'distance': ([160.3, 3243.9], 'nmi'),
             'velocity_rate': ([0., 0.], 'm/s**2'),
             'throttle': ([0.95, 0.9], 'unitless'),
         }
@@ -108,7 +112,7 @@ phase_info = {
             'altitude': ([35.e3, 35.], 'ft'),
             'velocity': ([455.49, 198.44], 'kn'),
             'mass': ([120.e3, 115.e3], 'lbm'),
-            'range': ([3243.9, 3378.7], 'nmi'),
+            'distance': ([3243.9, 3378.7], 'nmi'),
             'velocity_rate': ([-0.25, 0.0], 'm/s**2'),
             'throttle': ([0., 0.], 'unitless'),
         }
@@ -150,13 +154,13 @@ def phase_info_parameterization(phase_info, aviary_inputs):
     if range_cruise != old_range_cruise:
         range_scale = range_cruise / old_range_cruise
 
-        vals = phase_info['descent']['initial_guesses']['range'][0]
+        vals = phase_info['descent']['initial_guesses']['distance'][0]
         new_vals = [vals[0] * range_scale, vals[1] * range_scale]
-        phase_info['descent']['initial_guesses']['range'] = (new_vals, 'NM')
+        phase_info['descent']['initial_guesses']['distance'] = (new_vals, 'NM')
 
-        vals = phase_info['cruise']['initial_guesses']['range'][0]
+        vals = phase_info['cruise']['initial_guesses']['distance'][0]
         new_val = vals[1] * range_scale
-        phase_info['cruise']['initial_guesses']['range'] = ([vals[0], new_val], 'NM')
+        phase_info['cruise']['initial_guesses']['distance'] = ([vals[0], new_val], 'NM')
 
     # Altitude
 

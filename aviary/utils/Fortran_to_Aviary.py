@@ -29,16 +29,9 @@ from aviary.utils.functions import convert_strings_to_data
 from aviary.utils.named_values import NamedValues, get_items
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.enums import LegacyCode
 from aviary.utils.functions import get_path
 from aviary.utils.legacy_code_data.deprecated_vars import flops_deprecated_vars, gasp_deprecated_vars
-
-
-class LegacyCode(Enum):
-    FLOPS = 'FLOPS'
-    GASP = 'GASP'
-
-    def __str__(self):
-        return self.value
 
 
 FLOPS = LegacyCode.FLOPS
@@ -114,6 +107,14 @@ def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
         writer.writerow(['# Input Values'])
         for var, (val, units) in sorted(vehicle_data['input_values']):
             writer.writerow([var] + val + [units])
+        if legacy_code is FLOPS:
+            EOM = 'height_energy'
+            mass = 'FLOPS'
+        if legacy_code is GASP:
+            EOM = '2DOF'
+            mass = 'GASP'
+        writer.writerow(['settings:equations_of_motion'] + [EOM])
+        writer.writerow(['settings:mass_method'] + [mass])
 
         if legacy_code is GASP:
             # Values used in initial guessing of the trajectory
@@ -313,10 +314,12 @@ def generate_aviary_names(code_bases):
     for code_base in code_bases:
         alternate_names[code_base] = {}
         for key in _MetaData.keys():
-            alt_name = _MetaData[key]['historical_name'][code_base]
-            if isinstance(alt_name, str):
-                alt_name = [alt_name]
-            alternate_names[code_base][key] = alt_name
+            historical_dict = _MetaData[key]['historical_name']
+            if historical_dict and code_base in historical_dict:
+                alt_name = _MetaData[key]['historical_name'][code_base]
+                if isinstance(alt_name, str):
+                    alt_name = [alt_name]
+                alternate_names[code_base][key] = alt_name
     return alternate_names
 
 
@@ -349,7 +352,7 @@ def update_gasp_options(vehicle_data):
 
     ## PROBLEM TYPE ##
     # if multiple values of target_range are specified, use the one that corresponds to the problem_type
-    design_range, range_units = input_values.get_item(Mission.Design.RANGE)
+    design_range, distance_units = input_values.get_item(Mission.Design.RANGE)
     try:
         problem_type = input_values.get_val('problem_type')[0]
     except KeyError:
@@ -369,7 +372,7 @@ def update_gasp_options(vehicle_data):
     else:
         if design_range == 0:
             input_values.set_val('problem_type', ['fallout'])
-    input_values.set_val(Mission.Design.RANGE, [design_range], range_units)
+    input_values.set_val(Mission.Design.RANGE, [design_range], distance_units)
 
     ## STRUT AND FOLD ##
     strut_loc = input_values.get_val(Aircraft.Strut.ATTACHMENT_LOCATION, 'ft')[0]

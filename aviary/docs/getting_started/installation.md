@@ -2,16 +2,37 @@
 
 ## Quick start installation
 
-The simplest installation method for development is an "editable mode" install with ``pip``.
-From within the base folder of Aviary, perform this command in your terminal:
+The simplest installation method for users is to install via pip.
+Once you have cloned the Aviary repo, change directories into the top-level Aviary folder (not within the `aviary` folder) and run the following command:
+
+    pip install .
+
+If you want to also run the Aviary test suite (this is not strictly necessary), you can instead run:
+
+    pip install .[test]
+
+If you also want to install all packages used for the Aviary tests _and_ external subsystem examples, you can instead run:
+
+    pip install .[all]
+
+If you are a developer and plan to modify parts of the Aviary code, install in an "editable mode" with pip:
+
+    pip install .
+
+If you are a developer and plan to modify parts of the Aviary code, install in an "editable mode" with ``pip``:
 
     pip install -e .
 
-This installs the package in the current environment such that changes to the Python code don't require re-installation.This command should be performed while in the folder containing ``setup.py``.
+This installs the package in the current environment such that changes to the Python code don't require re-installation.
+This command should be performed while in the folder containing ``setup.py``.
+
+```{note}
+You can do this editable installation with any of the `[test]` or `[all]` options as well.
+``````
 
 ## Installation on Linux for Developers
 
-As an example, let us do a step-by-step installation from scratch on your Linux operating system. We assume that you have [Anaconda ](https://www.anaconda.com/distribution) and your new environment will be built on top of it. In this section, we assume you are a developer and hence you will need developer's versions of OpenMDAO and Dymos. As a result, you will need [Git](https://git-scm.com/). We also assume that you have a bash shell.
+As an example, let us do a step-by-step installation from scratch on your Linux operating system. We assume that you have [Anaconda](https://www.anaconda.com/distribution) and your new environment will be built on top of it. In this section, we assume you are a developer and hence you will need developer's versions of OpenMDAO and Dymos. As a result, you will need [Git](https://git-scm.com/). We also assume that you have a bash shell.
 
 We will be installing some Python packages from source in this part of the docs.
 Depending on the system you're installing on, the OpenMDAO repositories might require a password-protected SSH key.
@@ -198,7 +219,7 @@ Successfully installed pyoptsparse-2.10.1
 
 ### Installing Aviary and Running Tests
 
-Now, we are ready to install Aviary. Assume that you will become a contributor sonner or later, we want to install a copy from the main source. Assume you have a GitHub account. Let us open `https://github.com/openMDAO/om-aviary/` in a web browser and click [fork](https://github.com/OpenMDAO/om-Aviary/fork) on the top-right corner. You then have created your own copy of Aviary on GitHub website. Now we create a copy on your local drive (supposed `USER_ID` is your GitHub account ID):
+Now, we are ready to install Aviary. Assuming that you will become a contributor sooner or later, we want to install a copy from the main source. (You will need a GitHub account for this) Let us open `https://github.com/openMDAO/om-aviary/` in a web browser and click [fork](https://github.com/OpenMDAO/om-Aviary/fork) on the top-right corner. You then have created your own copy of Aviary on GitHub website. Now we create a copy on your local drive (supposing `USER_ID` is your GitHub account ID):
 
 ```
 $ cd ~/workspace

@@ -20,7 +20,7 @@ from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.mission.flops_based.ode.mission_ODE import MissionODE
 from aviary.mission.flops_based.phases.climb_phase import Climb
-from aviary.interface.default_phase_info.flops import prop, aero, geom
+from aviary.interface.default_phase_info.height_energy import prop, aero, geom
 from aviary.subsystems.premission import CorePreMission
 from aviary.utils.functions import set_aviary_initial_values
 from aviary.validation_cases.validation_tests import get_flops_inputs
@@ -84,8 +84,8 @@ def run_trajectory():
     v_f_climb = 455.49*_units.knot  # m/s
     mach_i_climb = 0.3
     mach_f_climb = 0.79
-    range_i_climb = 0*_units.nautical_mile  # m
-    range_f_climb = 160.3*_units.nautical_mile  # m
+    distance_i_climb = 0*_units.nautical_mile  # m
+    distance_f_climb = 160.3*_units.nautical_mile  # m
     t_i_climb = 2 * _units.minute  # sec
     t_f_climb = 26.20*_units.minute  # sec
     t_duration_climb = t_f_climb - t_i_climb
@@ -149,8 +149,8 @@ def run_trajectory():
         Dynamic.Mission.VELOCITY, ys=[v_i_climb, v_f_climb]), units='m/s')
     prob.set_val('traj.climb.states:mass', climb.interp(
         Dynamic.Mission.MASS, ys=[mass_i_climb, mass_f_climb]), units='kg')
-    prob.set_val('traj.climb.states:range', climb.interp(
-        Dynamic.Mission.RANGE, ys=[range_i_climb, range_f_climb]), units='m')
+    prob.set_val('traj.climb.states:distance', climb.interp(
+        Dynamic.Mission.DISTANCE, ys=[distance_i_climb, distance_f_climb]), units='m')
 
     prob.set_val('traj.climb.controls:velocity_rate',
                  climb.interp(Dynamic.Mission.VELOCITY_RATE, ys=[0.25, 0.05]),
@@ -179,7 +179,7 @@ class ClimbPhaseTestCase(unittest.TestCase):
         times = prob.get_val('traj.climb.timeseries.time', units='s')
         altitudes = prob.get_val('traj.climb.timeseries.states:altitude', units='m')
         masses = prob.get_val('traj.climb.timeseries.states:mass', units='kg')
-        ranges = prob.get_val('traj.climb.timeseries.states:range', units='m')
+        ranges = prob.get_val('traj.climb.timeseries.states:distance', units='m')
         velocities = prob.get_val('traj.climb.timeseries.states:velocity', units='m/s')
         thrusts = prob.get_val('traj.climb.timeseries.thrust_net_total', units='N')
 

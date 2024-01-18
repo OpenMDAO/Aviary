@@ -14,7 +14,11 @@ from aviary.subsystems.geometry.combined_geometry import CombinedGeometry
 from aviary.subsystems.geometry.flops_based.prep_geom import PrepGeom
 from aviary.subsystems.geometry.gasp_based.size_group import SizeGroup
 from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.enums import LegacyCode
 
+
+GASP = LegacyCode.GASP
+FLOPS = LegacyCode.FLOPS
 
 _default_name = 'geometry'
 
@@ -39,7 +43,7 @@ class CoreGeometryBuilder(GeometryBuilderBase):
         if name is None:
             name = 'core_geometry'
 
-        if code_origin not in ('FLOPS', 'GASP') and not use_both_geometries:
+        if code_origin not in (FLOPS, GASP) and not use_both_geometries:
             raise ValueError('Code origin is not one of the following: (FLOPS, GASP)')
 
         self.code_origin = code_origin
@@ -59,11 +63,11 @@ class CoreGeometryBuilder(GeometryBuilderBase):
             geom_group = CombinedGeometry(aviary_options=aviary_inputs,
                                           code_origin_to_prioritize=code_origin_to_prioritize)
 
-        elif code_origin == 'GASP':
+        elif code_origin is GASP:
             geom_group = SizeGroup(aviary_options=aviary_inputs)
             geom_group.manual_overrides = None
 
-        elif code_origin == 'FLOPS':
+        elif code_origin is FLOPS:
             geom_group = PrepGeom(aviary_options=aviary_inputs)
             geom_group.manual_overrides = None
 

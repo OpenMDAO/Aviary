@@ -123,6 +123,11 @@ class AviaryValues(NamedValues):
 
     def _convert_to_enum(self, val, enum_type):
         if isinstance(val, str):
-            return enum_type[val.upper()]
+            try:
+                # see if str maps to ENUM value
+                return enum_type(val)
+            except ValueError:
+                # str instead maps to ENUM name
+                return enum_type[val.upper()]
         else:
             return enum_type(val)

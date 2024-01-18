@@ -51,10 +51,7 @@ from aviary.mission.flops_based.phases.phase_builder_base import (
     InitialGuessState, InitialGuessTime, PhaseBuilderBase)
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_trajectory_params
-from aviary.variable_info.variables import Dynamic as _Dynamic
-from aviary.variable_info.variables import Mission
-
-Dynamic = _Dynamic.Mission
+from aviary.variable_info.variables import Dynamic, Mission
 
 
 def _init_initial_guess_meta_data(cls: PhaseBuilderBase):
@@ -68,7 +65,7 @@ def _init_initial_guess_meta_data(cls: PhaseBuilderBase):
         desc='initial guess for initial time and duration specified as a tuple')
 
     cls._add_initial_guess_meta_data(
-        InitialGuessState('range'),
+        InitialGuessState('distance'),
         desc='initial guess for horizontal distance traveled')
 
     cls._add_initial_guess_meta_data(
@@ -107,7 +104,7 @@ class TakeoffBrakeReleaseToDecisionSpeed(PhaseBuilderBase):
         supported options:
             - max_duration (1000.0, 's')
             - duration_ref (10.0, 's')
-            - max_range (1000.0, 'ft')
+            - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
 
     initial_guesses : AviaryValues (<empty>)
@@ -182,43 +179,43 @@ class TakeoffBrakeReleaseToDecisionSpeed(PhaseBuilderBase):
             fix_initial=True, duration_bounds=(1, max_duration),
             duration_ref=duration_ref, units=units)
 
-        max_range, units = user_options.get_item('max_range')
+        distance_max, units = user_options.get_item('distance_max')
 
         phase.add_state(
-            Dynamic.RANGE, fix_initial=True, lower=0, ref=max_range,
-            defect_ref=max_range, units=units, upper=max_range,
-            rate_source=Dynamic.RANGE_RATE)
+            Dynamic.Mission.DISTANCE, fix_initial=True, lower=0, ref=distance_max,
+            defect_ref=distance_max, units=units, upper=distance_max,
+            rate_source=Dynamic.Mission.DISTANCE_RATE)
 
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.VELOCITY, fix_initial=True, lower=0, ref=max_velocity,
+            Dynamic.Mission.VELOCITY, fix_initial=True, lower=0, ref=max_velocity,
             defect_ref=max_velocity, units=units, upper=max_velocity,
-            rate_source=Dynamic.VELOCITY_RATE)
+            rate_source=Dynamic.Mission.VELOCITY_RATE)
 
         phase.add_state(
-            Dynamic.MASS, fix_initial=True, fix_final=False,
-            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
-            rate_source=Dynamic.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            targets=Dynamic.MASS,
+            Dynamic.Mission.MASS, fix_initial=True, fix_final=False,
+            lower=0.0, upper=1e9, ref=5e4, units='kg',
+            rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            targets=Dynamic.Mission.MASS,
         )
 
         # TODO: Energy phase places this under an if num_engines > 0.
         phase.add_control(
-            Dynamic.THROTTLE,
-            targets=Dynamic.THROTTLE, units='unitless',
+            Dynamic.Mission.THROTTLE,
+            targets=Dynamic.Mission.THROTTLE, units='unitless',
             opt=False
         )
 
         phase.add_parameter('angle_of_attack', val=0.0, opt=False, units='deg')
 
         phase.add_timeseries_output(
-            Dynamic.THRUST_TOTAL,
-            output_name=Dynamic.THRUST_TOTAL, units='lbf'
+            Dynamic.Mission.THRUST_TOTAL,
+            output_name=Dynamic.Mission.THRUST_TOTAL, units='lbf'
         )
 
         phase.add_timeseries_output(
-            Dynamic.DRAG, output_name=Dynamic.DRAG, units='lbf'
+            Dynamic.Mission.DRAG, output_name=Dynamic.Mission.DRAG, units='lbf'
         )
 
         return phase
@@ -244,7 +241,7 @@ TakeoffBrakeReleaseToDecisionSpeed._add_meta_data('max_duration', val=1000.0, un
 
 TakeoffBrakeReleaseToDecisionSpeed._add_meta_data('duration_ref', val=10.0, units='s')
 
-TakeoffBrakeReleaseToDecisionSpeed._add_meta_data('max_range', val=1000.0, units='ft')
+TakeoffBrakeReleaseToDecisionSpeed._add_meta_data('distance_max', val=1000.0, units='ft')
 
 TakeoffBrakeReleaseToDecisionSpeed._add_meta_data(
     'max_velocity', val=100.0, units='ft/s')
@@ -274,7 +271,7 @@ class TakeoffDecisionSpeedToRotate(PhaseBuilderBase):
             - max_duration (1000.0, 's')
             - duration_ref (1.0, 's')
             - initial_ref (10.0, 's')
-            - max_range (1000.0, 'ft')
+            - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
 
     initial_guesses : AviaryValues (<empty>)
@@ -352,31 +349,31 @@ class TakeoffDecisionSpeedToRotate(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        max_range, units = user_options.get_item('max_range')
+        distance_max, units = user_options.get_item('distance_max')
 
         phase.add_state(
-            Dynamic.RANGE, fix_initial=False, lower=0, ref=max_range,
-            defect_ref=max_range, units=units, upper=max_range,
-            rate_source=Dynamic.RANGE_RATE)
+            Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=distance_max,
+            defect_ref=distance_max, units=units, upper=distance_max,
+            rate_source=Dynamic.Mission.DISTANCE_RATE)
 
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
+            Dynamic.Mission.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
             defect_ref=max_velocity, units=units, upper=max_velocity,
-            rate_source=Dynamic.VELOCITY_RATE)
+            rate_source=Dynamic.Mission.VELOCITY_RATE)
 
         phase.add_state(
-            Dynamic.MASS, fix_initial=False, fix_final=False,
+            Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
             lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
-            rate_source=Dynamic.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            targets=Dynamic.MASS,
+            rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            targets=Dynamic.Mission.MASS,
         )
 
         # TODO: Energy phase places this under an if num_engines > 0.
         phase.add_control(
-            Dynamic.THROTTLE,
-            targets=Dynamic.THROTTLE, units='unitless',
+            Dynamic.Mission.THROTTLE,
+            targets=Dynamic.Mission.THROTTLE, units='unitless',
             opt=False
         )
 
@@ -385,12 +382,12 @@ class TakeoffDecisionSpeedToRotate(PhaseBuilderBase):
         phase.add_parameter('angle_of_attack', val=0.0, opt=False, units='deg')
 
         phase.add_timeseries_output(
-            Dynamic.THRUST_TOTAL,
-            output_name=Dynamic.THRUST_TOTAL, units='lbf'
+            Dynamic.Mission.THRUST_TOTAL,
+            output_name=Dynamic.Mission.THRUST_TOTAL, units='lbf'
         )
 
         phase.add_timeseries_output(
-            Dynamic.DRAG, output_name=Dynamic.DRAG, units='lbf'
+            Dynamic.Mission.DRAG, output_name=Dynamic.Mission.DRAG, units='lbf'
         )
 
         phase.add_timeseries_output(
@@ -422,7 +419,7 @@ TakeoffDecisionSpeedToRotate._add_meta_data('duration_ref', val=1.0, units='s')
 
 TakeoffDecisionSpeedToRotate._add_meta_data('initial_ref', val=10.0, units='s')
 
-TakeoffDecisionSpeedToRotate._add_meta_data('max_range', val=1000.0, units='ft')
+TakeoffDecisionSpeedToRotate._add_meta_data('distance_max', val=1000.0, units='ft')
 
 TakeoffDecisionSpeedToRotate._add_meta_data('max_velocity', val=100.0, units='ft/s')
 
@@ -451,7 +448,7 @@ class TakeoffDecisionSpeedBrakeDelay(TakeoffDecisionSpeedToRotate):
             - max_duration (1000.0, 's')
             - duration_ref (1.0, 's')
             - initial_ref (10.0, 's')
-            - max_range (1000.0, 'ft')
+            - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
 
     initial_guesses : AviaryValues (<empty>)
@@ -526,7 +523,7 @@ TakeoffDecisionSpeedBrakeDelay._add_meta_data('duration_ref', val=1.0, units='s'
 
 TakeoffDecisionSpeedBrakeDelay._add_meta_data('initial_ref', val=10.0, units='s')
 
-TakeoffDecisionSpeedBrakeDelay._add_meta_data('max_range', val=1000.0, units='ft')
+TakeoffDecisionSpeedBrakeDelay._add_meta_data('distance_max', val=1000.0, units='ft')
 
 TakeoffDecisionSpeedBrakeDelay._add_meta_data('max_velocity', val=100.0, units='ft/s')
 
@@ -554,7 +551,7 @@ class TakeoffRotateToLiftoff(PhaseBuilderBase):
             - max_duration (5.0, 's')
             - duration_ref (1.0, 's')
             - initial_ref (10.0, 's')
-            - max_range (1000.0, 'ft')
+            - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
             - max_angle_of_attack (10.0, 'deg')
 
@@ -633,32 +630,32 @@ class TakeoffRotateToLiftoff(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        max_range, units = user_options.get_item('max_range')
+        distance_max, units = user_options.get_item('distance_max')
 
         phase.add_state(
-            Dynamic.RANGE, fix_initial=False, lower=0, ref=max_range,
-            defect_ref=max_range, units=units, upper=max_range,
-            rate_source=Dynamic.RANGE_RATE)
+            Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=distance_max,
+            defect_ref=distance_max, units=units, upper=distance_max,
+            rate_source=Dynamic.Mission.DISTANCE_RATE)
 
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
+            Dynamic.Mission.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
             defect_ref=max_velocity, units=units, upper=max_velocity,
-            rate_source=Dynamic.VELOCITY_RATE)
+            rate_source=Dynamic.Mission.VELOCITY_RATE)
 
         max_angle_of_attack, units = user_options.get_item('max_angle_of_attack')
 
         phase.add_state(
-            Dynamic.MASS, fix_initial=False, fix_final=False,
+            Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
             lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
-            rate_source=Dynamic.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            targets=Dynamic.MASS,
+            rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            targets=Dynamic.Mission.MASS,
         )
 
         phase.add_control(
-            Dynamic.THROTTLE,
-            targets=Dynamic.THROTTLE, units='unitless',
+            Dynamic.Mission.THROTTLE,
+            targets=Dynamic.Mission.THROTTLE, units='unitless',
             opt=False
         )
 
@@ -668,12 +665,12 @@ class TakeoffRotateToLiftoff(PhaseBuilderBase):
             ref=max_angle_of_attack)
 
         phase.add_timeseries_output(
-            Dynamic.DRAG, output_name=Dynamic.DRAG, units='lbf'
+            Dynamic.Mission.DRAG, output_name=Dynamic.Mission.DRAG, units='lbf'
         )
 
         phase.add_timeseries_output(
-            Dynamic.THRUST_TOTAL,
-            output_name=Dynamic.THRUST_TOTAL, units='lbf'
+            Dynamic.Mission.THRUST_TOTAL,
+            output_name=Dynamic.Mission.THRUST_TOTAL, units='lbf'
         )
 
         phase.add_timeseries_output(
@@ -705,7 +702,7 @@ TakeoffRotateToLiftoff._add_meta_data('duration_ref', val=1.0, units='s')
 
 TakeoffRotateToLiftoff._add_meta_data('initial_ref', val=10.0, units='s')
 
-TakeoffRotateToLiftoff._add_meta_data('max_range', val=1000.0, units='ft')
+TakeoffRotateToLiftoff._add_meta_data('distance_max', val=1000.0, units='ft')
 
 TakeoffRotateToLiftoff._add_meta_data('max_velocity', val=100.0, units='ft/s')
 
@@ -736,7 +733,7 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
             - max_duration (100.0, 's')
             - duration_ref (1.0, 's')
             - initial_ref (10.0, 's')
-            - max_range (1000.0, 'ft')
+            - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
             - altitude_ref (1.0, 'ft')
             - flight_path_angle_ref (5., 'deg')
@@ -821,45 +818,45 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        max_range, units = user_options.get_item('max_range')
+        distance_max, units = user_options.get_item('distance_max')
 
         phase.add_state(
-            Dynamic.RANGE, fix_initial=False, lower=0, ref=max_range,
-            defect_ref=max_range, units=units, upper=max_range,
-            rate_source=Dynamic.RANGE_RATE)
+            Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=distance_max,
+            defect_ref=distance_max, units=units, upper=distance_max,
+            rate_source=Dynamic.Mission.DISTANCE_RATE)
 
         altitude_ref, units = user_options.get_item('altitude_ref')
 
         phase.add_state(
-            Dynamic.ALTITUDE, fix_initial=True, lower=0, ref=altitude_ref,
+            Dynamic.Mission.ALTITUDE, fix_initial=True, lower=0, ref=altitude_ref,
             defect_ref=altitude_ref, units=units, upper=altitude_ref,
-            rate_source=Dynamic.ALTITUDE_RATE)
+            rate_source=Dynamic.Mission.ALTITUDE_RATE)
 
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
+            Dynamic.Mission.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
             defect_ref=max_velocity, units=units, upper=max_velocity,
-            rate_source=Dynamic.VELOCITY_RATE)
+            rate_source=Dynamic.Mission.VELOCITY_RATE)
 
         flight_path_angle_ref, units = user_options.get_item('flight_path_angle_ref')
 
         phase.add_state(
-            Dynamic.FLIGHT_PATH_ANGLE, fix_initial=True, lower=0,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE, fix_initial=True, lower=0,
             ref=flight_path_angle_ref, upper=flight_path_angle_ref,
             defect_ref=flight_path_angle_ref, units=units,
-            rate_source=Dynamic.FLIGHT_PATH_ANGLE_RATE)
+            rate_source=Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE)
 
         phase.add_state(
-            Dynamic.MASS, fix_initial=False, fix_final=False,
+            Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
             lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
-            rate_source=Dynamic.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            targets=Dynamic.MASS,
+            rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            targets=Dynamic.Mission.MASS,
         )
 
         phase.add_control(
-            Dynamic.THROTTLE,
-            targets=Dynamic.THROTTLE, units='unitless',
+            Dynamic.Mission.THROTTLE,
+            targets=Dynamic.Mission.THROTTLE, units='unitless',
             opt=False
         )
 
@@ -873,12 +870,12 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
             ref=angle_of_attack_ref)
 
         phase.add_timeseries_output(
-            Dynamic.DRAG, output_name=Dynamic.DRAG, units='lbf'
+            Dynamic.Mission.DRAG, output_name=Dynamic.Mission.DRAG, units='lbf'
         )
 
         phase.add_timeseries_output(
-            Dynamic.THRUST_TOTAL,
-            output_name=Dynamic.THRUST_TOTAL, units='lbf'
+            Dynamic.Mission.THRUST_TOTAL,
+            output_name=Dynamic.Mission.THRUST_TOTAL, units='lbf'
         )
 
         obstacle_height, units = aviary_options.get_item(
@@ -894,7 +891,7 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
         h = obstacle_height + airport_altitude
 
         phase.add_boundary_constraint(
-            Dynamic.ALTITUDE, loc='final', equals=h, ref=h, units=units, linear=True)
+            Dynamic.Mission.ALTITUDE, loc='final', equals=h, ref=h, units=units, linear=True)
 
         phase.add_path_constraint(
             'v_over_v_stall', lower=1.25, ref=2.0)
@@ -927,7 +924,7 @@ TakeoffLiftoffToObstacle._add_meta_data('duration_ref', val=1., units='s')
 
 TakeoffLiftoffToObstacle._add_meta_data('initial_ref', val=10.0, units='s')
 
-TakeoffLiftoffToObstacle._add_meta_data('max_range', val=1000., units='ft')
+TakeoffLiftoffToObstacle._add_meta_data('distance_max', val=1000., units='ft')
 
 TakeoffLiftoffToObstacle._add_meta_data('max_velocity', val=100., units='ft/s')
 
@@ -947,7 +944,7 @@ TakeoffLiftoffToObstacle._add_initial_guess_meta_data(
 TakeoffLiftoffToObstacle._add_initial_guess_meta_data(InitialGuessState('altitude'))
 
 TakeoffLiftoffToObstacle._add_initial_guess_meta_data(
-    InitialGuessState(Dynamic.FLIGHT_PATH_ANGLE))
+    InitialGuessState(Dynamic.Mission.FLIGHT_PATH_ANGLE))
 
 
 @_init_initial_guess_meta_data
@@ -971,7 +968,7 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
             - max_duration (100.0, 's')
             - duration_ref (1.0, 's')
             - initial_ref (10.0, 's')
-            - max_range (1000.0, 'ft')
+            - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
             - altitude_ref (1.0, 'ft')
             - flight_path_angle_ref (5., 'deg')
@@ -1057,45 +1054,45 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        max_range, units = user_options.get_item('max_range')
+        distance_max, units = user_options.get_item('distance_max')
 
         phase.add_state(
-            Dynamic.RANGE, fix_initial=False, lower=0, ref=max_range,
-            defect_ref=max_range, units=units, upper=max_range,
-            rate_source=Dynamic.RANGE_RATE)
+            Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=distance_max,
+            defect_ref=distance_max, units=units, upper=distance_max,
+            rate_source=Dynamic.Mission.DISTANCE_RATE)
 
         altitude_ref, units = user_options.get_item('altitude_ref')
 
         phase.add_state(
-            Dynamic.ALTITUDE, fix_initial=False, lower=0, ref=altitude_ref,
+            Dynamic.Mission.ALTITUDE, fix_initial=False, lower=0, ref=altitude_ref,
             defect_ref=altitude_ref, units=units,
-            rate_source=Dynamic.ALTITUDE_RATE)
+            rate_source=Dynamic.Mission.ALTITUDE_RATE)
 
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
+            Dynamic.Mission.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
             defect_ref=max_velocity, units=units, upper=max_velocity,
-            rate_source=Dynamic.VELOCITY_RATE)
+            rate_source=Dynamic.Mission.VELOCITY_RATE)
 
         flight_path_angle_ref, units = user_options.get_item('flight_path_angle_ref')
 
         phase.add_state(
-            Dynamic.FLIGHT_PATH_ANGLE, fix_initial=False, lower=0,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE, fix_initial=False, lower=0,
             ref=flight_path_angle_ref,
             defect_ref=flight_path_angle_ref, units=units,
-            rate_source=Dynamic.FLIGHT_PATH_ANGLE_RATE)
+            rate_source=Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE)
 
         phase.add_state(
-            Dynamic.MASS, fix_initial=False, fix_final=False,
+            Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
             lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
-            rate_source=Dynamic.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            targets=Dynamic.MASS,
+            rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            targets=Dynamic.Mission.MASS,
         )
 
         phase.add_control(
-            Dynamic.THROTTLE,
-            targets=Dynamic.THROTTLE, units='unitless',
+            Dynamic.Mission.THROTTLE,
+            targets=Dynamic.Mission.THROTTLE, units='unitless',
             opt=False
         )
 
@@ -1109,12 +1106,12 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
             ref=angle_of_attack_ref)
 
         phase.add_timeseries_output(
-            Dynamic.DRAG, output_name=Dynamic.DRAG, units='lbf'
+            Dynamic.Mission.DRAG, output_name=Dynamic.Mission.DRAG, units='lbf'
         )
 
         phase.add_timeseries_output(
-            Dynamic.THRUST_TOTAL,
-            output_name=Dynamic.THRUST_TOTAL, units='lbf'
+            Dynamic.Mission.THRUST_TOTAL,
+            output_name=Dynamic.Mission.THRUST_TOTAL, units='lbf'
         )
 
         final_alt, units = user_options.get_item('mic_altitude')
@@ -1125,7 +1122,7 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
         h = final_alt + airport_altitude
 
         phase.add_boundary_constraint(
-            Dynamic.ALTITUDE, loc='final', equals=h, ref=h, units=units, linear=True)
+            Dynamic.Mission.ALTITUDE, loc='final', equals=h, ref=h, units=units, linear=True)
 
         phase.add_boundary_constraint(
             'v_over_v_stall', loc='final', lower=1.25, ref=1.25)
@@ -1157,7 +1154,7 @@ TakeoffObstacleToMicP2._add_meta_data('duration_ref', val=1., units='s')
 
 TakeoffObstacleToMicP2._add_meta_data('initial_ref', val=10.0, units='s')
 
-TakeoffObstacleToMicP2._add_meta_data('max_range', val=1000., units='ft')
+TakeoffObstacleToMicP2._add_meta_data('distance_max', val=1000., units='ft')
 
 TakeoffObstacleToMicP2._add_meta_data('max_velocity', val=100., units='ft/s')
 
@@ -1179,7 +1176,7 @@ TakeoffObstacleToMicP2._add_initial_guess_meta_data(
 TakeoffObstacleToMicP2._add_initial_guess_meta_data(InitialGuessState('altitude'))
 
 TakeoffObstacleToMicP2._add_initial_guess_meta_data(
-    InitialGuessState(Dynamic.FLIGHT_PATH_ANGLE))
+    InitialGuessState(Dynamic.Mission.FLIGHT_PATH_ANGLE))
 
 
 @_init_initial_guess_meta_data
@@ -1203,7 +1200,7 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
             - max_duration (100.0, 's')
             - duration_ref (1.0, 's')
             - initial_ref (10.0, 's')
-            - max_range (1000.0, 'ft')
+            - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
             - altitude_ref (1.0, 'ft')
             - flight_path_angle_ref (5., 'deg')
@@ -1289,45 +1286,45 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        max_range, units = user_options.get_item('max_range')
+        distance_max, units = user_options.get_item('distance_max')
 
         phase.add_state(
-            Dynamic.RANGE, fix_initial=False, lower=0, ref=max_range,
-            defect_ref=max_range, units=units, upper=max_range,
-            rate_source=Dynamic.RANGE_RATE)
+            Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=distance_max,
+            defect_ref=distance_max, units=units, upper=distance_max,
+            rate_source=Dynamic.Mission.DISTANCE_RATE)
 
         altitude_ref, units = user_options.get_item('altitude_ref')
 
         phase.add_state(
-            Dynamic.ALTITUDE, fix_initial=False, lower=0, ref=altitude_ref,
+            Dynamic.Mission.ALTITUDE, fix_initial=False, lower=0, ref=altitude_ref,
             defect_ref=altitude_ref, units=units,
-            rate_source=Dynamic.ALTITUDE_RATE)
+            rate_source=Dynamic.Mission.ALTITUDE_RATE)
 
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
+            Dynamic.Mission.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
             defect_ref=max_velocity, units=units, upper=max_velocity,
-            rate_source=Dynamic.VELOCITY_RATE)
+            rate_source=Dynamic.Mission.VELOCITY_RATE)
 
         flight_path_angle_ref, units = user_options.get_item('flight_path_angle_ref')
 
         phase.add_state(
-            Dynamic.FLIGHT_PATH_ANGLE, fix_initial=False, lower=0,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE, fix_initial=False, lower=0,
             ref=flight_path_angle_ref,
             defect_ref=flight_path_angle_ref, units=units,
-            rate_source=Dynamic.FLIGHT_PATH_ANGLE_RATE)
+            rate_source=Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE)
 
         phase.add_state(
-            Dynamic.MASS, fix_initial=False, fix_final=False,
+            Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
             lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
-            rate_source=Dynamic.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            targets=Dynamic.MASS,
+            rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            targets=Dynamic.Mission.MASS,
         )
 
         phase.add_control(
-            Dynamic.THROTTLE,
-            targets=Dynamic.THROTTLE, units='unitless',
+            Dynamic.Mission.THROTTLE,
+            targets=Dynamic.Mission.THROTTLE, units='unitless',
             opt=False
         )
 
@@ -1341,22 +1338,22 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
             ref=angle_of_attack_ref)
 
         phase.add_timeseries_output(
-            Dynamic.DRAG, output_name=Dynamic.DRAG, units='lbf'
+            Dynamic.Mission.DRAG, output_name=Dynamic.Mission.DRAG, units='lbf'
         )
 
         phase.add_timeseries_output(
-            Dynamic.THRUST_TOTAL,
-            output_name=Dynamic.THRUST_TOTAL, units='lbf'
+            Dynamic.Mission.THRUST_TOTAL,
+            output_name=Dynamic.Mission.THRUST_TOTAL, units='lbf'
         )
 
         # start engine cutback phase at this range, where this phase ends
-        # TODO: what is the difference between max_range and final_range?
-        #    - should final_range replace max_range?
+        # TODO: what is the difference between distance_max and final_range?
+        #    - should final_range replace distance_max?
         #    - is there any reason to support both in this phase?
         final_range, units = user_options.get_item('final_range')
 
         phase.add_boundary_constraint(
-            Dynamic.RANGE, loc='final', equals=final_range, ref=final_range,
+            Dynamic.Mission.DISTANCE, loc='final', equals=final_range, ref=final_range,
             units=units, linear=True)
 
         phase.add_boundary_constraint(
@@ -1389,7 +1386,7 @@ TakeoffMicP2ToEngineCutback._add_meta_data('duration_ref', val=1., units='s')
 
 TakeoffMicP2ToEngineCutback._add_meta_data('initial_ref', val=10.0, units='s')
 
-TakeoffMicP2ToEngineCutback._add_meta_data('max_range', val=1000., units='ft')
+TakeoffMicP2ToEngineCutback._add_meta_data('distance_max', val=1000., units='ft')
 
 TakeoffMicP2ToEngineCutback._add_meta_data('max_velocity', val=100., units='ft/s')
 
@@ -1412,7 +1409,7 @@ TakeoffMicP2ToEngineCutback._add_initial_guess_meta_data(
 TakeoffMicP2ToEngineCutback._add_initial_guess_meta_data(InitialGuessState('altitude'))
 
 TakeoffMicP2ToEngineCutback._add_initial_guess_meta_data(
-    InitialGuessState(Dynamic.FLIGHT_PATH_ANGLE))
+    InitialGuessState(Dynamic.Mission.FLIGHT_PATH_ANGLE))
 
 
 @_init_initial_guess_meta_data
@@ -1434,7 +1431,7 @@ class TakeoffEngineCutback(PhaseBuilderBase):
 
         supported options:
             - initial_ref (10.0, 's')
-            - max_range (1000.0, 'ft')
+            - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
             - altitude_ref (1.0, 'ft')
             - flight_path_angle_ref (5., 'deg')
@@ -1517,45 +1514,45 @@ class TakeoffEngineCutback(PhaseBuilderBase):
             initial_ref=initial_ref,
             units=units)
 
-        max_range, units = user_options.get_item('max_range')
+        distance_max, units = user_options.get_item('distance_max')
 
         phase.add_state(
-            Dynamic.RANGE, fix_initial=False, lower=0, ref=max_range,
-            defect_ref=max_range, units=units, upper=max_range,
-            rate_source=Dynamic.RANGE_RATE)
+            Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=distance_max,
+            defect_ref=distance_max, units=units, upper=distance_max,
+            rate_source=Dynamic.Mission.DISTANCE_RATE)
 
         altitude_ref, units = user_options.get_item('altitude_ref')
 
         phase.add_state(
-            Dynamic.ALTITUDE, fix_initial=False, lower=0, ref=altitude_ref,
+            Dynamic.Mission.ALTITUDE, fix_initial=False, lower=0, ref=altitude_ref,
             defect_ref=altitude_ref, units=units,
-            rate_source=Dynamic.ALTITUDE_RATE)
+            rate_source=Dynamic.Mission.ALTITUDE_RATE)
 
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
+            Dynamic.Mission.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
             defect_ref=max_velocity, units=units, upper=max_velocity,
-            rate_source=Dynamic.VELOCITY_RATE)
+            rate_source=Dynamic.Mission.VELOCITY_RATE)
 
         flight_path_angle_ref, units = user_options.get_item('flight_path_angle_ref')
 
         phase.add_state(
-            Dynamic.FLIGHT_PATH_ANGLE, fix_initial=False, lower=0,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE, fix_initial=False, lower=0,
             ref=flight_path_angle_ref,
             defect_ref=flight_path_angle_ref, units=units,
-            rate_source=Dynamic.FLIGHT_PATH_ANGLE_RATE)
+            rate_source=Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE)
 
         phase.add_state(
-            Dynamic.MASS, fix_initial=False, fix_final=False,
+            Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
             lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
-            rate_source=Dynamic.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            targets=Dynamic.MASS,
+            rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            targets=Dynamic.Mission.MASS,
         )
 
         phase.add_control(
-            Dynamic.THROTTLE,
-            targets=Dynamic.THROTTLE, units='unitless',
+            Dynamic.Mission.THROTTLE,
+            targets=Dynamic.Mission.THROTTLE, units='unitless',
             opt=False
         )
 
@@ -1569,12 +1566,12 @@ class TakeoffEngineCutback(PhaseBuilderBase):
             ref=angle_of_attack_ref)
 
         phase.add_timeseries_output(
-            Dynamic.DRAG, output_name=Dynamic.DRAG, units='lbf'
+            Dynamic.Mission.DRAG, output_name=Dynamic.Mission.DRAG, units='lbf'
         )
 
         phase.add_timeseries_output(
-            Dynamic.THRUST_TOTAL,
-            output_name=Dynamic.THRUST_TOTAL, units='lbf'
+            Dynamic.Mission.THRUST_TOTAL,
+            output_name=Dynamic.Mission.THRUST_TOTAL, units='lbf'
         )
 
         phase.add_boundary_constraint(
@@ -1603,7 +1600,7 @@ class TakeoffEngineCutback(PhaseBuilderBase):
 
 TakeoffEngineCutback._add_meta_data('initial_ref', val=10.0, units='s')
 
-TakeoffEngineCutback._add_meta_data('max_range', val=1000., units='ft')
+TakeoffEngineCutback._add_meta_data('distance_max', val=1000., units='ft')
 
 TakeoffEngineCutback._add_meta_data('max_velocity', val=100., units='ft/s')
 
@@ -1623,7 +1620,7 @@ TakeoffEngineCutback._add_initial_guess_meta_data(
 TakeoffEngineCutback._add_initial_guess_meta_data(InitialGuessState('altitude'))
 
 TakeoffEngineCutback._add_initial_guess_meta_data(
-    InitialGuessState(Dynamic.FLIGHT_PATH_ANGLE))
+    InitialGuessState(Dynamic.Mission.FLIGHT_PATH_ANGLE))
 
 
 @_init_initial_guess_meta_data
@@ -1647,7 +1644,7 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilderBase):
             - max_duration (100.0, 's')
             - duration_ref (1.0, 's')
             - initial_ref (10.0, 's')
-            - max_range (1000.0, 'ft')
+            - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
             - altitude_ref (1.0, 'ft')
             - flight_path_angle_ref (5., 'deg')
@@ -1733,45 +1730,45 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        max_range, units = user_options.get_item('max_range')
+        distance_max, units = user_options.get_item('distance_max')
 
         phase.add_state(
-            Dynamic.RANGE, fix_initial=False, lower=0, ref=max_range,
-            defect_ref=max_range, units=units, upper=max_range,
-            rate_source=Dynamic.RANGE_RATE)
+            Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=distance_max,
+            defect_ref=distance_max, units=units, upper=distance_max,
+            rate_source=Dynamic.Mission.DISTANCE_RATE)
 
         altitude_ref, units = user_options.get_item('altitude_ref')
 
         phase.add_state(
-            Dynamic.ALTITUDE, fix_initial=False, lower=0, ref=altitude_ref,
+            Dynamic.Mission.ALTITUDE, fix_initial=False, lower=0, ref=altitude_ref,
             defect_ref=altitude_ref, units=units,
-            rate_source=Dynamic.ALTITUDE_RATE)
+            rate_source=Dynamic.Mission.ALTITUDE_RATE)
 
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
+            Dynamic.Mission.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
             defect_ref=max_velocity, units=units, upper=max_velocity,
-            rate_source=Dynamic.VELOCITY_RATE)
+            rate_source=Dynamic.Mission.VELOCITY_RATE)
 
         flight_path_angle_ref, units = user_options.get_item('flight_path_angle_ref')
 
         phase.add_state(
-            Dynamic.FLIGHT_PATH_ANGLE, fix_initial=False, lower=0,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE, fix_initial=False, lower=0,
             ref=flight_path_angle_ref,
             defect_ref=flight_path_angle_ref, units=units,
-            rate_source=Dynamic.FLIGHT_PATH_ANGLE_RATE)
+            rate_source=Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE)
 
         phase.add_state(
-            Dynamic.MASS, fix_initial=False, fix_final=False,
+            Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
             lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
-            rate_source=Dynamic.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            targets=Dynamic.MASS,
+            rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            targets=Dynamic.Mission.MASS,
         )
 
         phase.add_control(
-            Dynamic.THROTTLE,
-            targets=Dynamic.THROTTLE, units='unitless',
+            Dynamic.Mission.THROTTLE,
+            targets=Dynamic.Mission.THROTTLE, units='unitless',
             opt=False
         )
 
@@ -1785,18 +1782,18 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilderBase):
             ref=angle_of_attack_ref)
 
         phase.add_timeseries_output(
-            Dynamic.DRAG, output_name=Dynamic.DRAG, units='lbf'
+            Dynamic.Mission.DRAG, output_name=Dynamic.Mission.DRAG, units='lbf'
         )
 
         phase.add_timeseries_output(
-            Dynamic.THRUST_TOTAL,
-            output_name=Dynamic.THRUST_TOTAL, units='lbf'
+            Dynamic.Mission.THRUST_TOTAL,
+            output_name=Dynamic.Mission.THRUST_TOTAL, units='lbf'
         )
 
         mic_range, units = user_options.get_item('mic_range')
 
         phase.add_boundary_constraint(
-            Dynamic.RANGE, loc='final', equals=mic_range, ref=mic_range,
+            Dynamic.Mission.DISTANCE, loc='final', equals=mic_range, ref=mic_range,
             units=units, linear=True)
 
         phase.add_boundary_constraint(
@@ -1829,7 +1826,7 @@ TakeoffEngineCutbackToMicP1._add_meta_data('duration_ref', val=1., units='s')
 
 TakeoffEngineCutbackToMicP1._add_meta_data('initial_ref', val=10.0, units='s')
 
-TakeoffEngineCutbackToMicP1._add_meta_data('max_range', val=1000., units='ft')
+TakeoffEngineCutbackToMicP1._add_meta_data('distance_max', val=1000., units='ft')
 
 TakeoffEngineCutbackToMicP1._add_meta_data('max_velocity', val=100., units='ft/s')
 
@@ -1852,7 +1849,7 @@ TakeoffEngineCutbackToMicP1._add_initial_guess_meta_data(
 TakeoffEngineCutbackToMicP1._add_initial_guess_meta_data(InitialGuessState('altitude'))
 
 TakeoffEngineCutbackToMicP1._add_initial_guess_meta_data(
-    InitialGuessState(Dynamic.FLIGHT_PATH_ANGLE))
+    InitialGuessState(Dynamic.Mission.FLIGHT_PATH_ANGLE))
 
 
 @_init_initial_guess_meta_data
@@ -1876,7 +1873,7 @@ class TakeoffMicP1ToClimb(PhaseBuilderBase):
             - max_duration (100.0, 's')
             - duration_ref (1.0, 's')
             - initial_ref (10.0, 's')
-            - max_range (1000.0, 'ft')
+            - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
             - altitude_ref (1.0, 'ft')
             - flight_path_angle_ref (5., 'deg')
@@ -1962,45 +1959,45 @@ class TakeoffMicP1ToClimb(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        max_range, units = user_options.get_item('max_range')
+        distance_max, units = user_options.get_item('distance_max')
 
         phase.add_state(
-            Dynamic.RANGE, fix_initial=False, lower=0, ref=max_range,
-            defect_ref=max_range, units=units, upper=max_range,
-            rate_source=Dynamic.RANGE_RATE)
+            Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=distance_max,
+            defect_ref=distance_max, units=units, upper=distance_max,
+            rate_source=Dynamic.Mission.DISTANCE_RATE)
 
         altitude_ref, units = user_options.get_item('altitude_ref')
 
         phase.add_state(
-            Dynamic.ALTITUDE, fix_initial=False, lower=0, ref=altitude_ref,
+            Dynamic.Mission.ALTITUDE, fix_initial=False, lower=0, ref=altitude_ref,
             defect_ref=altitude_ref, units=units,
-            rate_source=Dynamic.ALTITUDE_RATE)
+            rate_source=Dynamic.Mission.ALTITUDE_RATE)
 
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
+            Dynamic.Mission.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
             defect_ref=max_velocity, units=units, upper=max_velocity,
-            rate_source=Dynamic.VELOCITY_RATE)
+            rate_source=Dynamic.Mission.VELOCITY_RATE)
 
         flight_path_angle_ref, units = user_options.get_item('flight_path_angle_ref')
 
         phase.add_state(
-            Dynamic.FLIGHT_PATH_ANGLE, fix_initial=False, lower=0,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE, fix_initial=False, lower=0,
             ref=flight_path_angle_ref,
             defect_ref=flight_path_angle_ref, units=units,
-            rate_source=Dynamic.FLIGHT_PATH_ANGLE_RATE)
+            rate_source=Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE)
 
         phase.add_state(
-            Dynamic.MASS, fix_initial=False, fix_final=False,
+            Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
             lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
-            rate_source=Dynamic.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            targets=Dynamic.MASS,
+            rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            targets=Dynamic.Mission.MASS,
         )
 
         phase.add_control(
-            Dynamic.THROTTLE,
-            targets=Dynamic.THROTTLE, units='unitless',
+            Dynamic.Mission.THROTTLE,
+            targets=Dynamic.Mission.THROTTLE, units='unitless',
             opt=False
         )
 
@@ -2014,18 +2011,18 @@ class TakeoffMicP1ToClimb(PhaseBuilderBase):
             ref=angle_of_attack_ref)
 
         phase.add_timeseries_output(
-            Dynamic.DRAG, output_name=Dynamic.DRAG, units='lbf'
+            Dynamic.Mission.DRAG, output_name=Dynamic.Mission.DRAG, units='lbf'
         )
 
         phase.add_timeseries_output(
-            Dynamic.THRUST_TOTAL,
-            output_name=Dynamic.THRUST_TOTAL, units='lbf'
+            Dynamic.Mission.THRUST_TOTAL,
+            output_name=Dynamic.Mission.THRUST_TOTAL, units='lbf'
         )
 
         mic_range, units = user_options.get_item('mic_range')
 
         phase.add_boundary_constraint(
-            Dynamic.RANGE, loc='final', equals=mic_range, ref=mic_range,
+            Dynamic.Mission.DISTANCE, loc='final', equals=mic_range, ref=mic_range,
             units=units, linear=True)
 
         phase.add_boundary_constraint(
@@ -2058,7 +2055,7 @@ TakeoffMicP1ToClimb._add_meta_data('duration_ref', val=1., units='s')
 
 TakeoffMicP1ToClimb._add_meta_data('initial_ref', val=10.0, units='s')
 
-TakeoffMicP1ToClimb._add_meta_data('max_range', val=1000., units='ft')
+TakeoffMicP1ToClimb._add_meta_data('distance_max', val=1000., units='ft')
 
 TakeoffMicP1ToClimb._add_meta_data('max_velocity', val=100., units='ft/s')
 
@@ -2080,7 +2077,7 @@ TakeoffMicP1ToClimb._add_initial_guess_meta_data(
 TakeoffMicP1ToClimb._add_initial_guess_meta_data(InitialGuessState('altitude'))
 
 TakeoffMicP1ToClimb._add_initial_guess_meta_data(
-    InitialGuessState(Dynamic.FLIGHT_PATH_ANGLE))
+    InitialGuessState(Dynamic.Mission.FLIGHT_PATH_ANGLE))
 
 
 @_init_initial_guess_meta_data
@@ -2104,7 +2101,7 @@ class TakeoffBrakeToAbort(PhaseBuilderBase):
             - max_duration (1000.0, 's')
             - duration_ref (1.0, 's')
             - initial_ref (10.0, 's')
-            - max_range (1000.0, 'ft')
+            - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
 
     initial_guesses : AviaryValues (<empty>)
@@ -2182,31 +2179,31 @@ class TakeoffBrakeToAbort(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        max_range, units = user_options.get_item('max_range')
+        distance_max, units = user_options.get_item('distance_max')
 
         phase.add_state(
-            Dynamic.RANGE, fix_initial=False, lower=0, ref=max_range,
-            defect_ref=max_range, units=units, upper=max_range,
-            rate_source=Dynamic.RANGE_RATE)
+            Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=distance_max,
+            defect_ref=distance_max, units=units, upper=distance_max,
+            rate_source=Dynamic.Mission.DISTANCE_RATE)
 
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.VELOCITY, fix_initial=False, fix_final=True,
+            Dynamic.Mission.VELOCITY, fix_initial=False, fix_final=True,
             lower=0, ref=max_velocity, upper=max_velocity,
             defect_ref=max_velocity, units=units,
-            rate_source=Dynamic.VELOCITY_RATE)
+            rate_source=Dynamic.Mission.VELOCITY_RATE)
 
         phase.add_state(
-            Dynamic.MASS, fix_initial=False, fix_final=False,
+            Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
             lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
-            rate_source=Dynamic.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            targets=Dynamic.MASS,
+            rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            targets=Dynamic.Mission.MASS,
         )
 
         phase.add_control(
-            Dynamic.THROTTLE,
-            targets=Dynamic.THROTTLE, units='unitless',
+            Dynamic.Mission.THROTTLE,
+            targets=Dynamic.Mission.THROTTLE, units='unitless',
             opt=False
         )
 
@@ -2237,7 +2234,7 @@ TakeoffBrakeToAbort._add_meta_data('duration_ref', val=1.0, units='s')
 
 TakeoffBrakeToAbort._add_meta_data('initial_ref', val=10.0, units='s')
 
-TakeoffBrakeToAbort._add_meta_data('max_range', val=1000.0, units='ft')
+TakeoffBrakeToAbort._add_meta_data('distance_max', val=1000.0, units='ft')
 
 TakeoffBrakeToAbort._add_meta_data('max_velocity', val=100.0, units='ft/s')
 
@@ -2519,7 +2516,7 @@ class TakeoffTrajectory:
         brake_release_name = self._brake_release_to_decision_speed.name
         decision_speed_name = self._decision_speed_to_rotate.name
 
-        basic_vars = ['time', 'range', 'velocity', 'mass']
+        basic_vars = ['time', 'distance', 'velocity', 'mass']
 
         traj.link_phases([brake_release_name, decision_speed_name], vars=basic_vars)
 
@@ -2542,7 +2539,7 @@ class TakeoffTrajectory:
             engine_cutback_to_mic_p1_name = self._engine_cutback_to_mic_p1.name
             mic_p1_to_climb_name = self._mic_p1_to_climb.name
 
-            acoustics_vars = ext_vars + [Dynamic.FLIGHT_PATH_ANGLE, 'altitude']
+            acoustics_vars = ext_vars + [Dynamic.Mission.FLIGHT_PATH_ANGLE, 'altitude']
 
             traj.link_phases(
                 [liftoff_name, obstacle_to_mic_p2_name],
@@ -2574,8 +2571,8 @@ class TakeoffTrajectory:
             traj.link_phases([brake_name, abort_name], vars=basic_vars)
 
             traj.add_linkage_constraint(
-                phase_a=abort_name, var_a='range', loc_a='final',
-                phase_b=liftoff_name, var_b='range', loc_b='final',
+                phase_a=abort_name, var_a='distance', loc_a='final',
+                phase_b=liftoff_name, var_b='distance', loc_b='final',
                 ref=self._balanced_field_ref)
 
     def _add_phase(self, phase_builder: PhaseBuilderBase, aviary_options: AviaryValues):
