@@ -61,7 +61,7 @@ class LandingApproachToMicP3(PhaseBuilderBase):
             - max_duration (100.0, 's')
             - duration_ref (1.0, 's')
             - initial_ref (10.0, 's')
-            - max_range (1000.0, 'ft')
+            - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
             - altitude_ref (1.0, 'ft')
             - lower_angle_of_attack (-10.0, 'deg')
@@ -145,12 +145,12 @@ class LandingApproachToMicP3(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        max_range, units = user_options.get_item('max_range')
+        distance_max, units = user_options.get_item('distance_max')
 
         phase.add_state(
             Dynamic.Mission.DISTANCE, fix_initial=False, fix_final=False,
-            upper=0, ref=max_range,
-            defect_ref=max_range, units=units,
+            upper=0, ref=distance_max,
+            defect_ref=distance_max, units=units,
             rate_source=Dynamic.Mission.DISTANCE_RATE)
 
         altitude_ref, units = user_options.get_item('altitude_ref')
@@ -239,7 +239,7 @@ LandingApproachToMicP3._add_meta_data('duration_ref', val=1., units='s')
 
 LandingApproachToMicP3._add_meta_data('initial_ref', val=10.0, units='s')
 
-LandingApproachToMicP3._add_meta_data('max_range', val=1000., units='ft')
+LandingApproachToMicP3._add_meta_data('distance_max', val=1000., units='ft')
 
 LandingApproachToMicP3._add_meta_data('max_velocity', val=100., units='ft/s')
 
@@ -284,7 +284,7 @@ class LandingMicP3ToObstacle(LandingApproachToMicP3):
             - max_duration (100.0, 's')
             - duration_ref (1.0, 's')
             - initial_ref (10.0, 's')
-            - max_range (1000.0, 'ft')
+            - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
             - altitude_ref (1.0, 'ft')
             - lower_angle_of_attack (-10.0, 'deg')
@@ -384,7 +384,7 @@ class LandingObstacleToFlare(PhaseBuilderBase):
 
         supported options:
             - max_duration (100.0, 's')
-            - max_range (1000.0, 'ft')
+            - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
             - altitude_ref (1.0, 'ft')
 
@@ -461,11 +461,11 @@ class LandingObstacleToFlare(PhaseBuilderBase):
             fix_initial=True, duration_bounds=(1, max_duration),
             units=units)
 
-        max_range, units = user_options.get_item('max_range')
+        distance_max, units = user_options.get_item('distance_max')
 
         phase.add_state(
-            Dynamic.Mission.DISTANCE, fix_initial=True, lower=0, ref=max_range,
-            defect_ref=max_range, units=units,
+            Dynamic.Mission.DISTANCE, fix_initial=True, lower=0, ref=distance_max,
+            defect_ref=distance_max, units=units,
             rate_source=Dynamic.Mission.DISTANCE_RATE)
 
         altitude_ref, units = user_options.get_item('altitude_ref')
@@ -545,7 +545,7 @@ class LandingObstacleToFlare(PhaseBuilderBase):
 
 LandingObstacleToFlare._add_meta_data('max_duration', val=100., units='s')
 
-LandingObstacleToFlare._add_meta_data('max_range', val=1000., units='ft')
+LandingObstacleToFlare._add_meta_data('distance_max', val=1000., units='ft')
 
 LandingObstacleToFlare._add_meta_data('max_velocity', val=100., units='ft/s')
 
@@ -581,7 +581,7 @@ class LandingFlareToTouchdown(PhaseBuilderBase):
             - max_duration (100.0, 's')
             - duration_ref (1.0, 's')
             - initial_ref (10.0, 's')
-            - max_range (1000.0, 'ft')
+            - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
             - altitude_ref (1.0, 'ft')
             - lower_angle_of_attack (-10.0, 'deg')
@@ -664,11 +664,11 @@ class LandingFlareToTouchdown(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        max_range, units = user_options.get_item('max_range')
+        distance_max, units = user_options.get_item('distance_max')
 
         phase.add_state(
-            Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=max_range,
-            defect_ref=max_range, units=units,
+            Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=distance_max,
+            defect_ref=distance_max, units=units,
             rate_source=Dynamic.Mission.DISTANCE_RATE)
 
         altitude_ref, units = user_options.get_item('altitude_ref')
@@ -764,7 +764,7 @@ LandingFlareToTouchdown._add_meta_data('duration_ref', val=1., units='s')
 
 LandingFlareToTouchdown._add_meta_data('initial_ref', val=10.0, units='s')
 
-LandingFlareToTouchdown._add_meta_data('max_range', val=1000., units='ft')
+LandingFlareToTouchdown._add_meta_data('distance_max', val=1000., units='ft')
 
 LandingFlareToTouchdown._add_meta_data('max_velocity', val=100., units='ft/s')
 
@@ -805,7 +805,7 @@ class LandingTouchdownToNoseDown(PhaseBuilderBase):
             - max_duration (5.0, 's')
             - duration_ref (1.0, 's')
             - initial_ref (10.0, 's')
-            - max_range (1000.0, 'ft')
+            - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
             - max_angle_of_attack (10.0, 'deg')
 
@@ -883,11 +883,11 @@ class LandingTouchdownToNoseDown(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        max_range, units = user_options.get_item('max_range')
+        distance_max, units = user_options.get_item('distance_max')
 
         phase.add_state(
-            Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=max_range,
-            defect_ref=max_range, units=units,
+            Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=distance_max,
+            defect_ref=distance_max, units=units,
             rate_source=Dynamic.Mission.DISTANCE_RATE)
 
         max_velocity, units = user_options.get_item('max_velocity')
@@ -952,7 +952,7 @@ LandingTouchdownToNoseDown._add_meta_data('duration_ref', val=1.0, units='s')
 
 LandingTouchdownToNoseDown._add_meta_data('initial_ref', val=10.0, units='s')
 
-LandingTouchdownToNoseDown._add_meta_data('max_range', val=1000.0, units='ft')
+LandingTouchdownToNoseDown._add_meta_data('distance_max', val=1000.0, units='ft')
 
 LandingTouchdownToNoseDown._add_meta_data('max_velocity', val=100.0, units='ft/s')
 
@@ -981,7 +981,7 @@ class LandingNoseDownToStop(PhaseBuilderBase):
         supported options:
             - max_duration
             - duration_ref
-            - max_range
+            - distance_max
             - max_velocity
 
     initial_guesses : AviaryValues (<empty>)
@@ -1058,12 +1058,12 @@ class LandingNoseDownToStop(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        max_range, units = user_options.get_item('max_range')
+        distance_max, units = user_options.get_item('distance_max')
 
         phase.add_state(
             Dynamic.Mission.DISTANCE, fix_initial=False, fix_final=False,
-            lower=0, ref=max_range,
-            defect_ref=max_range, units=units,
+            lower=0, ref=distance_max,
+            defect_ref=distance_max, units=units,
             rate_source=Dynamic.Mission.DISTANCE_RATE)
 
         max_velocity, units = user_options.get_item('max_velocity')
@@ -1124,7 +1124,7 @@ LandingNoseDownToStop._add_meta_data('duration_ref', val=10.0, units='s')
 
 LandingNoseDownToStop._add_meta_data('initial_ref', val=10.0, units='s')
 
-LandingNoseDownToStop._add_meta_data('max_range', val=1000.0, units='ft')
+LandingNoseDownToStop._add_meta_data('distance_max', val=1000.0, units='ft')
 
 LandingNoseDownToStop._add_meta_data('max_velocity', val=100.0, units='ft/s')
 

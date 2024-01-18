@@ -89,11 +89,11 @@ class TestFLOPSBalancedFieldLength(unittest.TestCase):
         takeoff_trajectory_builder.build_trajectory(
             aviary_options=aviary_options, model=takeoff.model, traj=traj)
 
-        max_range, units = takeoff_liftoff_user_options.get_item('max_range')
+        distance_max, units = takeoff_liftoff_user_options.get_item('distance_max')
         liftoff = takeoff_trajectory_builder.get_phase('balanced_liftoff')
 
         liftoff.add_objective(
-            Dynamic.Mission.DISTANCE, loc='final', ref=max_range, units=units)
+            Dynamic.Mission.DISTANCE, loc='final', ref=distance_max, units=units)
 
         takeoff.model.add_subsystem(
             'input_sink',

@@ -480,7 +480,7 @@ takeoff_brake_release_user_options = AviaryValues()
 
 takeoff_brake_release_user_options.set_val('max_duration', val=60.0, units='s')
 takeoff_brake_release_user_options.set_val('duration_ref', val=60.0, units='s')
-takeoff_brake_release_user_options.set_val('max_range', val=7500.0, units='ft')
+takeoff_brake_release_user_options.set_val('distance_max', val=7500.0, units='ft')
 takeoff_brake_release_user_options.set_val('max_velocity', val=167.85, units='kn')
 
 takeoff_brake_release_initial_guesses = AviaryValues()
@@ -513,7 +513,7 @@ takeoff_decision_speed_user_options = AviaryValues()
 takeoff_decision_speed_user_options.set_val('max_duration', val=60.0, units='s')
 takeoff_decision_speed_user_options.set_val('duration_ref', val=60.0, units='s')
 takeoff_decision_speed_user_options.set_val('initial_ref', val=35.0, units='s')
-takeoff_decision_speed_user_options.set_val('max_range', val=7500.0, units='ft')
+takeoff_decision_speed_user_options.set_val('distance_max', val=7500.0, units='ft')
 takeoff_decision_speed_user_options.set_val('max_velocity', val=167.85, units='kn')
 
 takeoff_decision_speed_initial_guesses = AviaryValues()
@@ -541,7 +541,7 @@ takeoff_rotate_user_options = AviaryValues()
 takeoff_rotate_user_options.set_val('max_duration', val=60.0, units='s')
 takeoff_rotate_user_options.set_val('duration_ref', val=60.0, units='s')
 takeoff_rotate_user_options.set_val('initial_ref', val=38.0, units='s')
-takeoff_rotate_user_options.set_val('max_range', val=7500.0, units='ft')
+takeoff_rotate_user_options.set_val('distance_max', val=7500.0, units='ft')
 takeoff_rotate_user_options.set_val('max_velocity', val=167.85, units='kn')
 takeoff_rotate_user_options.set_val('max_angle_of_attack', val=10.0, units='deg')
 
@@ -570,7 +570,7 @@ takeoff_liftoff_user_options = AviaryValues()
 takeoff_liftoff_user_options.set_val('max_duration', val=12., units='s')
 takeoff_liftoff_user_options.set_val('duration_ref', val=12., units='s')
 takeoff_liftoff_user_options.set_val('initial_ref', val=39.0, units='s')
-takeoff_liftoff_user_options.set_val('max_range', val=7500., units='ft')
+takeoff_liftoff_user_options.set_val('distance_max', val=7500., units='ft')
 takeoff_liftoff_user_options.set_val('max_velocity', val=167.85, units='kn')
 takeoff_liftoff_user_options.set_val('altitude_ref', val=35., units='ft')
 takeoff_liftoff_user_options.set_val('flight_path_angle_ref', val=10., units='deg')
@@ -606,7 +606,7 @@ takeoff_mic_p2_user_options = AviaryValues()
 takeoff_mic_p2_user_options.set_val('max_duration', val=25., units='s')
 takeoff_mic_p2_user_options.set_val('duration_ref', val=25., units='s')
 takeoff_mic_p2_user_options.set_val('initial_ref', val=50.0, units='s')
-takeoff_mic_p2_user_options.set_val('max_range', val=12000., units='ft')
+takeoff_mic_p2_user_options.set_val('distance_max', val=12000., units='ft')
 takeoff_mic_p2_user_options.set_val('max_velocity', val=167.85, units='kn')
 takeoff_mic_p2_user_options.set_val('altitude_ref', val=1500., units='ft')
 takeoff_mic_p2_user_options.set_val('mic_altitude', val=985., units='ft')
@@ -651,7 +651,7 @@ takeoff_mic_p2_to_engine_cutback_user_options.set_val('duration_ref', val=40., u
 takeoff_mic_p2_to_engine_cutback_user_options.set_val('initial_ref', val=65.0, units='s')
 
 takeoff_mic_p2_to_engine_cutback_user_options.set_val(
-    'max_range', val=20000., units='ft')
+    'distance_max', val=20000., units='ft')
 
 takeoff_mic_p2_to_engine_cutback_user_options.set_val(
     'max_velocity', val=167.85, units='kn')
@@ -717,7 +717,7 @@ cutback_rate = 0.1  # Throttle setting per second
 cutback_duration = (1.0 - cutback_throttle) / cutback_rate
 
 takeoff_engine_cutback_user_options.set_val('initial_ref', val=95.0, units='s')
-takeoff_engine_cutback_user_options.set_val('max_range', val=21000., units='ft')
+takeoff_engine_cutback_user_options.set_val('distance_max', val=21000., units='ft')
 takeoff_engine_cutback_user_options.set_val('max_velocity', val=167.85, units='kn')
 takeoff_engine_cutback_user_options.set_val('altitude_ref', val=4000., units='ft')
 
@@ -762,7 +762,7 @@ takeoff_engine_cutback_to_mic_p1_user_options.set_val('duration_ref', val=11., u
 takeoff_engine_cutback_to_mic_p1_user_options.set_val('initial_ref', val=97.0, units='s')
 
 takeoff_engine_cutback_to_mic_p1_user_options.set_val(
-    'max_range', val=22000., units='ft')
+    'distance_max', val=22000., units='ft')
 
 takeoff_engine_cutback_to_mic_p1_user_options.set_val(
     'max_velocity', val=167.85, units='kn')
@@ -823,7 +823,7 @@ takeoff_mic_p1_to_climb_user_options = AviaryValues()
 takeoff_mic_p1_to_climb_user_options.set_val('max_duration', val=40., units='s')
 takeoff_mic_p1_to_climb_user_options.set_val('duration_ref', val=40., units='s')
 takeoff_mic_p1_to_climb_user_options.set_val('initial_ref', val=100.0, units='s')
-takeoff_mic_p1_to_climb_user_options.set_val('max_range', val=30000., units='ft')
+takeoff_mic_p1_to_climb_user_options.set_val('distance_max', val=30000., units='ft')
 takeoff_mic_p1_to_climb_user_options.set_val('max_velocity', val=167.85, units='kn')
 takeoff_mic_p1_to_climb_user_options.set_val('altitude_ref', val=4000., units='ft')
 
@@ -939,7 +939,7 @@ balanced_brake_release_user_options = AviaryValues()
 
 balanced_brake_release_user_options.set_val('max_duration', val=60.0, units='s')
 balanced_brake_release_user_options.set_val('duration_ref', val=60.0, units='s')
-balanced_brake_release_user_options.set_val('max_range', val=7500.0, units='ft')
+balanced_brake_release_user_options.set_val('distance_max', val=7500.0, units='ft')
 balanced_brake_release_user_options.set_val('max_velocity', val=167.85, units='kn')
 
 balanced_brake_release_initial_guesses = AviaryValues()
@@ -966,7 +966,7 @@ balanced_decision_speed_user_options = AviaryValues()
 balanced_decision_speed_user_options.set_val('max_duration', val=60.0, units='s')
 balanced_decision_speed_user_options.set_val('duration_ref', val=5.0, units='s')
 balanced_decision_speed_user_options.set_val('initial_ref', val=35.0, units='s')
-balanced_decision_speed_user_options.set_val('max_range', val=7500.0, units='ft')
+balanced_decision_speed_user_options.set_val('distance_max', val=7500.0, units='ft')
 balanced_decision_speed_user_options.set_val('max_velocity', val=167.85, units='kn')
 
 balanced_decision_speed_initial_guesses = AviaryValues()
@@ -996,7 +996,7 @@ balanced_rotate_user_options = AviaryValues()
 balanced_rotate_user_options.set_val('max_duration', val=20.0, units='s')
 balanced_rotate_user_options.set_val('duration_ref', val=5.0, units='s')
 balanced_rotate_user_options.set_val('initial_ref', val=35.0, units='s')
-balanced_rotate_user_options.set_val('max_range', val=7500.0, units='ft')
+balanced_rotate_user_options.set_val('distance_max', val=7500.0, units='ft')
 balanced_rotate_user_options.set_val('max_velocity', val=167.85, units='kn')
 balanced_rotate_user_options.set_val('max_angle_of_attack', val=8.117, units='deg')
 
@@ -1024,7 +1024,7 @@ balanced_liftoff_user_options = AviaryValues()
 balanced_liftoff_user_options.set_val('max_duration', val=20., units='s')
 balanced_liftoff_user_options.set_val('duration_ref', val=20., units='s')
 balanced_liftoff_user_options.set_val('initial_ref', val=40.0, units='s')
-balanced_liftoff_user_options.set_val('max_range', val=7500., units='ft')
+balanced_liftoff_user_options.set_val('distance_max', val=7500., units='ft')
 balanced_liftoff_user_options.set_val('max_velocity', val=167.85, units='kn')
 balanced_liftoff_user_options.set_val('altitude_ref', val=35., units='ft')
 balanced_liftoff_user_options.set_val('flight_path_angle_ref', val=5., units='deg')
@@ -1058,7 +1058,7 @@ balanced_delayed_brake_user_options = AviaryValues()
 
 balanced_delayed_brake_user_options.set_val('duration_ref', val=4.0, units='s')
 balanced_delayed_brake_user_options.set_val('initial_ref', val=35.0, units='s')
-balanced_delayed_brake_user_options.set_val('max_range', val=7500.0, units='ft')
+balanced_delayed_brake_user_options.set_val('distance_max', val=7500.0, units='ft')
 balanced_delayed_brake_user_options.set_val('max_velocity', val=167.85, units='kn')
 
 balanced_delayed_brake_initial_guesses = AviaryValues()
@@ -1085,7 +1085,7 @@ balanced_abort_user_options = AviaryValues()
 balanced_abort_user_options.set_val('max_duration', val=60.0, units='s')
 balanced_abort_user_options.set_val('initial_ref', val=35.0, units='s')
 balanced_abort_user_options.set_val('duration_ref', val=60.0, units='s')
-balanced_abort_user_options.set_val('max_range', val=7500.0, units='ft')
+balanced_abort_user_options.set_val('distance_max', val=7500.0, units='ft')
 balanced_abort_user_options.set_val('max_velocity', val=167.85, units='kn')
 
 balanced_abort_initial_guesses = AviaryValues()
@@ -1104,10 +1104,10 @@ balanced_abort_builder = TakeoffBrakeToAbort(
     user_options=balanced_abort_user_options,
     initial_guesses=balanced_abort_initial_guesses)
 
-max_range = balanced_liftoff_user_options.get_val('max_range', 'ft')
+distance_max = balanced_liftoff_user_options.get_val('distance_max', 'ft')
 
 balanced_trajectory_builder.set_brake_to_abort(
-    balanced_abort_builder, balanced_field_ref=max_range)
+    balanced_abort_builder, balanced_field_ref=distance_max)
 # endregion balanced field length
 
 # region - detailed landing
@@ -1325,7 +1325,7 @@ landing_approach_to_mic_p3_user_options = AviaryValues()
 landing_approach_to_mic_p3_user_options.set_val('max_duration', val=50., units='s')
 landing_approach_to_mic_p3_user_options.set_val('duration_ref', val=50., units='s')
 landing_approach_to_mic_p3_user_options.set_val('initial_ref', val=50.0, units='s')
-landing_approach_to_mic_p3_user_options.set_val('max_range', val=10000., units='ft')
+landing_approach_to_mic_p3_user_options.set_val('distance_max', val=10000., units='ft')
 landing_approach_to_mic_p3_user_options.set_val('max_velocity', val=140., units='kn')
 landing_approach_to_mic_p3_user_options.set_val('altitude_ref', val=800., units='ft')
 
@@ -1376,7 +1376,7 @@ landing_mic_p3_to_obstacle_user_options = AviaryValues()
 landing_mic_p3_to_obstacle_user_options.set_val('max_duration', val=50., units='s')
 landing_mic_p3_to_obstacle_user_options.set_val('duration_ref', val=50., units='s')
 landing_mic_p3_to_obstacle_user_options.set_val('initial_ref', val=50.0, units='s')
-landing_mic_p3_to_obstacle_user_options.set_val('max_range', val=6000., units='ft')
+landing_mic_p3_to_obstacle_user_options.set_val('distance_max', val=6000., units='ft')
 landing_mic_p3_to_obstacle_user_options.set_val('max_velocity', val=140., units='kn')
 landing_mic_p3_to_obstacle_user_options.set_val('altitude_ref', val=400., units='ft')
 
@@ -1425,7 +1425,7 @@ detailed_landing_mic_p3_to_obstacle = _split_aviary_values(
 landing_obstacle_user_options = AviaryValues()
 
 landing_obstacle_user_options.set_val('max_duration', val=5., units='s')
-landing_obstacle_user_options.set_val('max_range', val=800., units='ft')
+landing_obstacle_user_options.set_val('distance_max', val=800., units='ft')
 landing_obstacle_user_options.set_val('max_velocity', val=140., units='kn')
 landing_obstacle_user_options.set_val('altitude_ref', val=50., units='ft')
 
@@ -1463,7 +1463,7 @@ landing_flare_user_options = AviaryValues()
 landing_flare_user_options.set_val('max_duration', val=7., units='s')
 landing_flare_user_options.set_val('duration_ref', val=7., units='s')
 landing_flare_user_options.set_val('initial_ref', val=4., units='s')
-landing_flare_user_options.set_val('max_range', val=1000., units='ft')
+landing_flare_user_options.set_val('distance_max', val=1000., units='ft')
 landing_flare_user_options.set_val('max_velocity', val=140., units='kn')
 landing_flare_user_options.set_val('altitude_ref', val=15., units='ft')
 
@@ -1503,7 +1503,7 @@ landing_touchdown_user_options = AviaryValues()
 landing_touchdown_user_options.set_val('max_duration', val=10., units='s')
 landing_touchdown_user_options.set_val('duration_ref', val=10., units='s')
 landing_touchdown_user_options.set_val('initial_ref', val=6., units='s')
-landing_touchdown_user_options.set_val('max_range', val=3000., units='ft')
+landing_touchdown_user_options.set_val('distance_max', val=3000., units='ft')
 landing_touchdown_user_options.set_val('max_velocity', val=140., units='kn')
 landing_touchdown_user_options.set_val('max_angle_of_attack', val=8., units='deg')
 
@@ -1536,7 +1536,7 @@ landing_fullstop_user_options = AviaryValues()
 landing_fullstop_user_options.set_val('max_duration', val=30., units='s')
 landing_fullstop_user_options.set_val('duration_ref', val=30., units='s')
 landing_fullstop_user_options.set_val('initial_ref', val=14., units='s')
-landing_fullstop_user_options.set_val('max_range', val=4400., units='ft')
+landing_fullstop_user_options.set_val('distance_max', val=4400., units='ft')
 landing_fullstop_user_options.set_val('max_velocity', val=140., units='kn')
 
 landing_fullstop_initial_guesses = AviaryValues()

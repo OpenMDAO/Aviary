@@ -104,7 +104,7 @@ class TakeoffBrakeReleaseToDecisionSpeed(PhaseBuilderBase):
         supported options:
             - max_duration (1000.0, 's')
             - duration_ref (10.0, 's')
-            - max_range (1000.0, 'ft')
+            - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
 
     initial_guesses : AviaryValues (<empty>)
@@ -179,11 +179,11 @@ class TakeoffBrakeReleaseToDecisionSpeed(PhaseBuilderBase):
             fix_initial=True, duration_bounds=(1, max_duration),
             duration_ref=duration_ref, units=units)
 
-        max_range, units = user_options.get_item('max_range')
+        distance_max, units = user_options.get_item('distance_max')
 
         phase.add_state(
-            Dynamic.Mission.DISTANCE, fix_initial=True, lower=0, ref=max_range,
-            defect_ref=max_range, units=units, upper=max_range,
+            Dynamic.Mission.DISTANCE, fix_initial=True, lower=0, ref=distance_max,
+            defect_ref=distance_max, units=units, upper=distance_max,
             rate_source=Dynamic.Mission.DISTANCE_RATE)
 
         max_velocity, units = user_options.get_item('max_velocity')
@@ -241,7 +241,7 @@ TakeoffBrakeReleaseToDecisionSpeed._add_meta_data('max_duration', val=1000.0, un
 
 TakeoffBrakeReleaseToDecisionSpeed._add_meta_data('duration_ref', val=10.0, units='s')
 
-TakeoffBrakeReleaseToDecisionSpeed._add_meta_data('max_range', val=1000.0, units='ft')
+TakeoffBrakeReleaseToDecisionSpeed._add_meta_data('distance_max', val=1000.0, units='ft')
 
 TakeoffBrakeReleaseToDecisionSpeed._add_meta_data(
     'max_velocity', val=100.0, units='ft/s')
@@ -271,7 +271,7 @@ class TakeoffDecisionSpeedToRotate(PhaseBuilderBase):
             - max_duration (1000.0, 's')
             - duration_ref (1.0, 's')
             - initial_ref (10.0, 's')
-            - max_range (1000.0, 'ft')
+            - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
 
     initial_guesses : AviaryValues (<empty>)
@@ -349,11 +349,11 @@ class TakeoffDecisionSpeedToRotate(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        max_range, units = user_options.get_item('max_range')
+        distance_max, units = user_options.get_item('distance_max')
 
         phase.add_state(
-            Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=max_range,
-            defect_ref=max_range, units=units, upper=max_range,
+            Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=distance_max,
+            defect_ref=distance_max, units=units, upper=distance_max,
             rate_source=Dynamic.Mission.DISTANCE_RATE)
 
         max_velocity, units = user_options.get_item('max_velocity')
@@ -419,7 +419,7 @@ TakeoffDecisionSpeedToRotate._add_meta_data('duration_ref', val=1.0, units='s')
 
 TakeoffDecisionSpeedToRotate._add_meta_data('initial_ref', val=10.0, units='s')
 
-TakeoffDecisionSpeedToRotate._add_meta_data('max_range', val=1000.0, units='ft')
+TakeoffDecisionSpeedToRotate._add_meta_data('distance_max', val=1000.0, units='ft')
 
 TakeoffDecisionSpeedToRotate._add_meta_data('max_velocity', val=100.0, units='ft/s')
 
@@ -448,7 +448,7 @@ class TakeoffDecisionSpeedBrakeDelay(TakeoffDecisionSpeedToRotate):
             - max_duration (1000.0, 's')
             - duration_ref (1.0, 's')
             - initial_ref (10.0, 's')
-            - max_range (1000.0, 'ft')
+            - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
 
     initial_guesses : AviaryValues (<empty>)
@@ -523,7 +523,7 @@ TakeoffDecisionSpeedBrakeDelay._add_meta_data('duration_ref', val=1.0, units='s'
 
 TakeoffDecisionSpeedBrakeDelay._add_meta_data('initial_ref', val=10.0, units='s')
 
-TakeoffDecisionSpeedBrakeDelay._add_meta_data('max_range', val=1000.0, units='ft')
+TakeoffDecisionSpeedBrakeDelay._add_meta_data('distance_max', val=1000.0, units='ft')
 
 TakeoffDecisionSpeedBrakeDelay._add_meta_data('max_velocity', val=100.0, units='ft/s')
 
@@ -551,7 +551,7 @@ class TakeoffRotateToLiftoff(PhaseBuilderBase):
             - max_duration (5.0, 's')
             - duration_ref (1.0, 's')
             - initial_ref (10.0, 's')
-            - max_range (1000.0, 'ft')
+            - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
             - max_angle_of_attack (10.0, 'deg')
 
@@ -630,11 +630,11 @@ class TakeoffRotateToLiftoff(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        max_range, units = user_options.get_item('max_range')
+        distance_max, units = user_options.get_item('distance_max')
 
         phase.add_state(
-            Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=max_range,
-            defect_ref=max_range, units=units, upper=max_range,
+            Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=distance_max,
+            defect_ref=distance_max, units=units, upper=distance_max,
             rate_source=Dynamic.Mission.DISTANCE_RATE)
 
         max_velocity, units = user_options.get_item('max_velocity')
@@ -702,7 +702,7 @@ TakeoffRotateToLiftoff._add_meta_data('duration_ref', val=1.0, units='s')
 
 TakeoffRotateToLiftoff._add_meta_data('initial_ref', val=10.0, units='s')
 
-TakeoffRotateToLiftoff._add_meta_data('max_range', val=1000.0, units='ft')
+TakeoffRotateToLiftoff._add_meta_data('distance_max', val=1000.0, units='ft')
 
 TakeoffRotateToLiftoff._add_meta_data('max_velocity', val=100.0, units='ft/s')
 
@@ -733,7 +733,7 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
             - max_duration (100.0, 's')
             - duration_ref (1.0, 's')
             - initial_ref (10.0, 's')
-            - max_range (1000.0, 'ft')
+            - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
             - altitude_ref (1.0, 'ft')
             - flight_path_angle_ref (5., 'deg')
@@ -818,11 +818,11 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        max_range, units = user_options.get_item('max_range')
+        distance_max, units = user_options.get_item('distance_max')
 
         phase.add_state(
-            Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=max_range,
-            defect_ref=max_range, units=units, upper=max_range,
+            Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=distance_max,
+            defect_ref=distance_max, units=units, upper=distance_max,
             rate_source=Dynamic.Mission.DISTANCE_RATE)
 
         altitude_ref, units = user_options.get_item('altitude_ref')
@@ -924,7 +924,7 @@ TakeoffLiftoffToObstacle._add_meta_data('duration_ref', val=1., units='s')
 
 TakeoffLiftoffToObstacle._add_meta_data('initial_ref', val=10.0, units='s')
 
-TakeoffLiftoffToObstacle._add_meta_data('max_range', val=1000., units='ft')
+TakeoffLiftoffToObstacle._add_meta_data('distance_max', val=1000., units='ft')
 
 TakeoffLiftoffToObstacle._add_meta_data('max_velocity', val=100., units='ft/s')
 
@@ -968,7 +968,7 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
             - max_duration (100.0, 's')
             - duration_ref (1.0, 's')
             - initial_ref (10.0, 's')
-            - max_range (1000.0, 'ft')
+            - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
             - altitude_ref (1.0, 'ft')
             - flight_path_angle_ref (5., 'deg')
@@ -1054,11 +1054,11 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        max_range, units = user_options.get_item('max_range')
+        distance_max, units = user_options.get_item('distance_max')
 
         phase.add_state(
-            Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=max_range,
-            defect_ref=max_range, units=units, upper=max_range,
+            Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=distance_max,
+            defect_ref=distance_max, units=units, upper=distance_max,
             rate_source=Dynamic.Mission.DISTANCE_RATE)
 
         altitude_ref, units = user_options.get_item('altitude_ref')
@@ -1154,7 +1154,7 @@ TakeoffObstacleToMicP2._add_meta_data('duration_ref', val=1., units='s')
 
 TakeoffObstacleToMicP2._add_meta_data('initial_ref', val=10.0, units='s')
 
-TakeoffObstacleToMicP2._add_meta_data('max_range', val=1000., units='ft')
+TakeoffObstacleToMicP2._add_meta_data('distance_max', val=1000., units='ft')
 
 TakeoffObstacleToMicP2._add_meta_data('max_velocity', val=100., units='ft/s')
 
@@ -1200,7 +1200,7 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
             - max_duration (100.0, 's')
             - duration_ref (1.0, 's')
             - initial_ref (10.0, 's')
-            - max_range (1000.0, 'ft')
+            - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
             - altitude_ref (1.0, 'ft')
             - flight_path_angle_ref (5., 'deg')
@@ -1286,11 +1286,11 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        max_range, units = user_options.get_item('max_range')
+        distance_max, units = user_options.get_item('distance_max')
 
         phase.add_state(
-            Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=max_range,
-            defect_ref=max_range, units=units, upper=max_range,
+            Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=distance_max,
+            defect_ref=distance_max, units=units, upper=distance_max,
             rate_source=Dynamic.Mission.DISTANCE_RATE)
 
         altitude_ref, units = user_options.get_item('altitude_ref')
@@ -1347,8 +1347,8 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
         )
 
         # start engine cutback phase at this range, where this phase ends
-        # TODO: what is the difference between max_range and final_range?
-        #    - should final_range replace max_range?
+        # TODO: what is the difference between distance_max and final_range?
+        #    - should final_range replace distance_max?
         #    - is there any reason to support both in this phase?
         final_range, units = user_options.get_item('final_range')
 
@@ -1386,7 +1386,7 @@ TakeoffMicP2ToEngineCutback._add_meta_data('duration_ref', val=1., units='s')
 
 TakeoffMicP2ToEngineCutback._add_meta_data('initial_ref', val=10.0, units='s')
 
-TakeoffMicP2ToEngineCutback._add_meta_data('max_range', val=1000., units='ft')
+TakeoffMicP2ToEngineCutback._add_meta_data('distance_max', val=1000., units='ft')
 
 TakeoffMicP2ToEngineCutback._add_meta_data('max_velocity', val=100., units='ft/s')
 
@@ -1431,7 +1431,7 @@ class TakeoffEngineCutback(PhaseBuilderBase):
 
         supported options:
             - initial_ref (10.0, 's')
-            - max_range (1000.0, 'ft')
+            - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
             - altitude_ref (1.0, 'ft')
             - flight_path_angle_ref (5., 'deg')
@@ -1514,11 +1514,11 @@ class TakeoffEngineCutback(PhaseBuilderBase):
             initial_ref=initial_ref,
             units=units)
 
-        max_range, units = user_options.get_item('max_range')
+        distance_max, units = user_options.get_item('distance_max')
 
         phase.add_state(
-            Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=max_range,
-            defect_ref=max_range, units=units, upper=max_range,
+            Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=distance_max,
+            defect_ref=distance_max, units=units, upper=distance_max,
             rate_source=Dynamic.Mission.DISTANCE_RATE)
 
         altitude_ref, units = user_options.get_item('altitude_ref')
@@ -1600,7 +1600,7 @@ class TakeoffEngineCutback(PhaseBuilderBase):
 
 TakeoffEngineCutback._add_meta_data('initial_ref', val=10.0, units='s')
 
-TakeoffEngineCutback._add_meta_data('max_range', val=1000., units='ft')
+TakeoffEngineCutback._add_meta_data('distance_max', val=1000., units='ft')
 
 TakeoffEngineCutback._add_meta_data('max_velocity', val=100., units='ft/s')
 
@@ -1644,7 +1644,7 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilderBase):
             - max_duration (100.0, 's')
             - duration_ref (1.0, 's')
             - initial_ref (10.0, 's')
-            - max_range (1000.0, 'ft')
+            - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
             - altitude_ref (1.0, 'ft')
             - flight_path_angle_ref (5., 'deg')
@@ -1730,11 +1730,11 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        max_range, units = user_options.get_item('max_range')
+        distance_max, units = user_options.get_item('distance_max')
 
         phase.add_state(
-            Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=max_range,
-            defect_ref=max_range, units=units, upper=max_range,
+            Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=distance_max,
+            defect_ref=distance_max, units=units, upper=distance_max,
             rate_source=Dynamic.Mission.DISTANCE_RATE)
 
         altitude_ref, units = user_options.get_item('altitude_ref')
@@ -1826,7 +1826,7 @@ TakeoffEngineCutbackToMicP1._add_meta_data('duration_ref', val=1., units='s')
 
 TakeoffEngineCutbackToMicP1._add_meta_data('initial_ref', val=10.0, units='s')
 
-TakeoffEngineCutbackToMicP1._add_meta_data('max_range', val=1000., units='ft')
+TakeoffEngineCutbackToMicP1._add_meta_data('distance_max', val=1000., units='ft')
 
 TakeoffEngineCutbackToMicP1._add_meta_data('max_velocity', val=100., units='ft/s')
 
@@ -1873,7 +1873,7 @@ class TakeoffMicP1ToClimb(PhaseBuilderBase):
             - max_duration (100.0, 's')
             - duration_ref (1.0, 's')
             - initial_ref (10.0, 's')
-            - max_range (1000.0, 'ft')
+            - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
             - altitude_ref (1.0, 'ft')
             - flight_path_angle_ref (5., 'deg')
@@ -1959,11 +1959,11 @@ class TakeoffMicP1ToClimb(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        max_range, units = user_options.get_item('max_range')
+        distance_max, units = user_options.get_item('distance_max')
 
         phase.add_state(
-            Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=max_range,
-            defect_ref=max_range, units=units, upper=max_range,
+            Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=distance_max,
+            defect_ref=distance_max, units=units, upper=distance_max,
             rate_source=Dynamic.Mission.DISTANCE_RATE)
 
         altitude_ref, units = user_options.get_item('altitude_ref')
@@ -2055,7 +2055,7 @@ TakeoffMicP1ToClimb._add_meta_data('duration_ref', val=1., units='s')
 
 TakeoffMicP1ToClimb._add_meta_data('initial_ref', val=10.0, units='s')
 
-TakeoffMicP1ToClimb._add_meta_data('max_range', val=1000., units='ft')
+TakeoffMicP1ToClimb._add_meta_data('distance_max', val=1000., units='ft')
 
 TakeoffMicP1ToClimb._add_meta_data('max_velocity', val=100., units='ft/s')
 
@@ -2101,7 +2101,7 @@ class TakeoffBrakeToAbort(PhaseBuilderBase):
             - max_duration (1000.0, 's')
             - duration_ref (1.0, 's')
             - initial_ref (10.0, 's')
-            - max_range (1000.0, 'ft')
+            - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
 
     initial_guesses : AviaryValues (<empty>)
@@ -2179,11 +2179,11 @@ class TakeoffBrakeToAbort(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        max_range, units = user_options.get_item('max_range')
+        distance_max, units = user_options.get_item('distance_max')
 
         phase.add_state(
-            Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=max_range,
-            defect_ref=max_range, units=units, upper=max_range,
+            Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=distance_max,
+            defect_ref=distance_max, units=units, upper=distance_max,
             rate_source=Dynamic.Mission.DISTANCE_RATE)
 
         max_velocity, units = user_options.get_item('max_velocity')
@@ -2234,7 +2234,7 @@ TakeoffBrakeToAbort._add_meta_data('duration_ref', val=1.0, units='s')
 
 TakeoffBrakeToAbort._add_meta_data('initial_ref', val=10.0, units='s')
 
-TakeoffBrakeToAbort._add_meta_data('max_range', val=1000.0, units='ft')
+TakeoffBrakeToAbort._add_meta_data('distance_max', val=1000.0, units='ft')
 
 TakeoffBrakeToAbort._add_meta_data('max_velocity', val=100.0, units='ft/s')
 

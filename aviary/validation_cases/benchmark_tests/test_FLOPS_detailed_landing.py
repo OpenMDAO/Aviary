@@ -84,11 +84,11 @@ class TestFLOPSDetailedLanding(unittest.TestCase):
         landing_trajectory_builder.build_trajectory(
             aviary_options=aviary_options, model=landing.model, traj=traj)
 
-        max_range, units = landing_fullstop_user_options.get_item('max_range')
+        distance_max, units = landing_fullstop_user_options.get_item('distance_max')
         fullstop = landing_trajectory_builder.get_phase('landing_fullstop')
 
         fullstop.add_objective(Dynamic.Mission.DISTANCE, loc='final',
-                               ref=max_range, units=units)
+                               ref=distance_max, units=units)
 
         landing.model.add_subsystem(
             'input_sink',
