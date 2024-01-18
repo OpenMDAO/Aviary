@@ -1,0 +1,12 @@
+name: Send email
+
+on:
+  # Trigger on push or pull request events for the main branch
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  get_data:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: dawidd6/action-send-mail@v3.10.0
