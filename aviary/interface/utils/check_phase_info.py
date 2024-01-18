@@ -179,7 +179,10 @@ def check_phase_info(phase_info, mission_method):
             'distance_ref0': tuple,
             'distance_defect_ref': tuple,
         },
-        'cruise': {'initial_guesses': dict, },
+        'cruise': {
+            'mach_cruise': float,
+            'alt_cruise': tuple,
+        },
         'desc1': {
             **common_descent,
             **common_duration,
@@ -210,10 +213,11 @@ def check_phase_info(phase_info, mission_method):
                 phase_keys[phase] = phase_keys_flops[phase]
     elif mission_method is TWO_DEGREES_OF_FREEDOM:
         for phase in phase_info:
-            if phase != 'pre_mission' and phase != 'post_mission' and phase != 'cruise':
-                phase_keys[phase] = {**common_keys, **phase_keys_gasp[phase]}
-            else:
-                phase_keys[phase] = phase_keys_gasp[phase]
+            if phase != 'pre_mission' and phase != 'post_mission':
+                if phase == 'cruise':
+                    phase_keys[phase] = {**phase_keys_gasp[phase]}
+                else:
+                    phase_keys[phase] = {**common_keys, **phase_keys_gasp[phase]}
     elif mission_method is SOLVED:
         return
     elif mission_method is SIMPLE:

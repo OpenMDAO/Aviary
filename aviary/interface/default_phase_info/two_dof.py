@@ -221,6 +221,10 @@ phase_info = {
         }
     },
     'cruise': {
+        'user_options': {
+            'alt_cruise': (37.5e3, 'ft'),
+            'mach_cruise': 0.8,
+        },
         'initial_guesses': {
             # [Initial mass, delta mass] for special cruise phase.
             'mass': ([171481., -35000], 'lbm'),

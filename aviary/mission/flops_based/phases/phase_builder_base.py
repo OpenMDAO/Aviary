@@ -232,6 +232,14 @@ class PhaseBuilderBase(ABC):
         class attribute: derived type customization point; the default value
         for ode_class used by build_phase
 
+    is_analytic_phase : bool (False)
+        class attribute: derived type customization point; if True, build_phase
+        will return an AnalyticPhase instead of a Phase
+
+    num_nodes : int (5)
+        class attribute: derived type customization point; the default value
+        for num_nodes used by build_phase, only for AnalyticPhases
+
     Methods
     -------
     build_phase
@@ -241,7 +249,8 @@ class PhaseBuilderBase(ABC):
     '''
     __slots__ = (
         'name',  'core_subsystems', 'subsystem_options', 'user_options',
-        'initial_guesses', 'ode_class', 'transcription', 'aero_builder'
+        'initial_guesses', 'ode_class', 'transcription', 'aero_builder',
+        'is_analytic_phase', 'num_nodes',
     )
 
     # region : derived type customization points
@@ -256,7 +265,7 @@ class PhaseBuilderBase(ABC):
 
     def __init__(
         self, name=None, core_subsystems=None, aero_builder=None, user_options=None, initial_guesses=None,
-        ode_class=None, transcription=None, subsystem_options=None,
+        ode_class=None, transcription=None, subsystem_options=None, is_analytic_phase=False, num_nodes=5,
     ):
         if name is None:
             name = self.default_name
@@ -288,6 +297,8 @@ class PhaseBuilderBase(ABC):
 
         self.ode_class = ode_class
         self.transcription = transcription
+        self.is_analytic_phase = is_analytic_phase
+        self.num_nodes = num_nodes
 
     def build_phase(self, aviary_options=None):
         '''
@@ -314,7 +325,7 @@ class PhaseBuilderBase(ABC):
 
         transcription = self.transcription
 
-        if transcription is None:
+        if transcription is None and not self.is_analytic_phase:
             transcription = self.make_default_transcription()
 
         if aviary_options is None:
@@ -334,10 +345,17 @@ class PhaseBuilderBase(ABC):
 
         kwargs['core_subsystems'] = self.core_subsystems
 
-        phase = dm.Phase(
-            ode_class=ode_class, transcription=transcription,
-            ode_init_kwargs=kwargs
-        )
+        if self.is_analytic_phase:
+            phase = dm.AnalyticPhase(
+                ode_class=ode_class,
+                ode_init_kwargs=self.ode_args,
+                num_nodes=self.num_nodes,
+            )
+        else:
+            phase = dm.Phase(
+                ode_class=ode_class, transcription=transcription,
+                ode_init_kwargs=kwargs
+            )
 
         # overrides should add state, controls, etc.
         return phase

@@ -30,6 +30,7 @@ from aviary.mission.gasp_based.phases.time_integration_phases import SGMCruise
 from aviary.mission.gasp_based.phases.groundroll_phase import GroundrollPhase
 from aviary.mission.gasp_based.phases.rotation_phase import RotationPhase
 from aviary.mission.gasp_based.phases.climb_phase import ClimbPhase
+from aviary.mission.gasp_based.phases.cruise_phase import CruisePhase
 from aviary.mission.gasp_based.phases.accel_phase import AccelPhase
 from aviary.mission.gasp_based.phases.ascent_phase import AscentPhase
 from aviary.mission.gasp_based.phases.descent_phase import DescentPhase
@@ -565,43 +566,7 @@ class AviaryProblem(om.Problem):
         default_mission_subsystems = [
             subsystems['aerodynamics'], subsystems['propulsion']]
 
-        if 'cruise' in phase_name:
-            phase = dm.AnalyticPhase(
-                ode_class=BreguetCruiseODESolution,
-                ode_init_kwargs=self.ode_args,
-                num_nodes=5,
-            )
-
-            # Time here is really the independent variable through which we are integrating.
-            # In the case of the Breguet Range ODE, it's mass.
-            # We rely on mass being monotonically non-increasing across the phase.
-            phase.set_time_options(
-                name='mass',
-                fix_initial=False,
-                fix_duration=False,
-                units="lbm",
-                targets="mass",
-                initial_bounds=(10.e3, 500_000),
-                initial_ref=100_000,
-                duration_bounds=(-50000, -10),
-                duration_ref=50000,
-            )
-
-            phase.add_parameter(Dynamic.Mission.ALTITUDE, opt=False,
-                                val=self.phase_info['climb2']['user_options']['final_alt'][0], units=self.phase_info['climb2']['user_options']['final_alt'][1])
-            mach_cruise = self.phase_info['climb2']['user_options']['mach_cruise']
-            if type(mach_cruise) is tuple:
-                mach_cruise = mach_cruise[0]
-            phase.add_parameter(Dynamic.Mission.MACH, opt=False,
-                                val=mach_cruise)
-            phase.add_parameter("initial_distance", opt=False, val=0.0,
-                                units="NM", static_target=True)
-            phase.add_parameter("initial_time", opt=False, val=0.0,
-                                units="s", static_target=True)
-
-            phase.add_timeseries_output("time", units="s")
-
-        else:
+        if 'cruise' not in phase_name:
             num_segments = phase_options['user_options']['num_segments']
             order = phase_options['user_options']['order']
             # Create a Radau transcription scheme object with the specified num_segments and order
@@ -610,36 +575,32 @@ class AviaryProblem(om.Problem):
                 order=order,
                 compressed=True,
                 solve_segments=False)
+        else:
+            transcription = None
 
-            if 'climb' in phase_name:
-                phase_object = ClimbPhase.from_phase_info(
-                    phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data, transcription=transcription)
-                phase = phase_object.build_phase(aviary_options=self.aviary_inputs)
-            elif 'accel' in phase_name:
-                phase_object = AccelPhase.from_phase_info(
-                    phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data, transcription=transcription)
-                phase = phase_object.build_phase(aviary_options=self.aviary_inputs)
-            elif 'ascent' in phase_name:
-                phase_object = AscentPhase.from_phase_info(
-                    phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data, transcription=transcription)
-                phase = phase_object.build_phase(aviary_options=self.aviary_inputs)
-            elif 'desc' in phase_name:
-                phase_object = DescentPhase.from_phase_info(
-                    phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data, transcription=transcription)
-                phase = phase_object.build_phase(aviary_options=self.aviary_inputs)
-            elif 'groundroll' in phase_name:
-                phase_object = GroundrollPhase.from_phase_info(
-                    phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data, transcription=transcription)
-                phase = phase_object.build_phase(aviary_options=self.aviary_inputs)
-            elif 'rotation' in phase_name:
-                phase_object = RotationPhase.from_phase_info(
-                    phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data, transcription=transcription)
-                phase = phase_object.build_phase(aviary_options=self.aviary_inputs)
+        if 'groundroll' in phase_name:
+            phase_builder = GroundrollPhase
+        elif 'rotation' in phase_name:
+            phase_builder = RotationPhase
+        elif 'accel' in phase_name:
+            phase_builder = AccelPhase
+        elif 'ascent' in phase_name:
+            phase_builder = AscentPhase
+        elif 'climb' in phase_name:
+            phase_builder = ClimbPhase
+        elif 'cruise' in phase_name:
+            phase_builder = CruisePhase
+        elif 'desc' in phase_name:
+            phase_builder = DescentPhase
 
-            phase.add_control(
-                Dynamic.Mission.THROTTLE, targets=Dynamic.Mission.THROTTLE, units='unitless',
-                opt=False, lower=0.0, upper=1.0
-            )
+        phase_object = phase_builder.from_phase_info(
+            phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data, transcription=transcription)
+        phase = phase_object.build_phase(aviary_options=self.aviary_inputs)
+
+        phase.add_control(
+            Dynamic.Mission.THROTTLE, targets=Dynamic.Mission.THROTTLE, units='unitless',
+            opt=False, lower=0.0, upper=1.0
+        )
 
         phase.timeseries_options['use_prefix'] = True
 
