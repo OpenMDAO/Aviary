@@ -200,7 +200,7 @@ class FlightPathODE(BaseODE):
             promotes_inputs=EOM_inputs,
             promotes_outputs=[
                 "TAS_rate",
-                "distance_rate",
+                Dynamic.Mission.DISTANCE_RATE,
                 "normal_force",
                 "fuselage_pitch",
                 "load_factor",

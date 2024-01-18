@@ -183,7 +183,7 @@ class DescentODE(BaseODE):
             integration_states,
             promotes_outputs=[
                 Dynamic.Mission.ALTITUDE_RATE,
-                "distance_rate",
+                Dynamic.Mission.DISTANCE_RATE,
                 "required_lift",
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
             ],

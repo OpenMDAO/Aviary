@@ -25,7 +25,7 @@ class MissionEOM(om.Group):
                            subsys=RangeRate(num_nodes=nn),
                            promotes_inputs=[
                                Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.VELOCITY],
-                           promotes_outputs=[Dynamic.Mission.RANGE_RATE])
+                           promotes_outputs=[Dynamic.Mission.DISTANCE_RATE])
 
         self.add_subsystem(name='excess_specific_power',
                            subsys=SpecificEnergyRate(num_nodes=nn),

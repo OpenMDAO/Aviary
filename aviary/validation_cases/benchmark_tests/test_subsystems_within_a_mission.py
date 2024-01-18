@@ -46,14 +46,14 @@ class TestSubsystemsMission(unittest.TestCase):
                     'required_available_climb_rate': (1.524, 'm/s'),
                     'input_initial': False,
                     'mass_f_cruise': (1.e4, 'lbm'),
-                    'range_f_cruise': (1.e6, 'm'),
+                    'distance_f_cruise': (1.e6, 'm'),
                 },
                 'initial_guesses': {
                     'times': ([0., 15000.], 's'),
                     'altitude': ([35.e3, 35.e3], 'ft'),
                     'velocity': ([455.49, 455.49], 'kn'),
                     'mass': ([130.e3, 120.e3], 'lbm'),
-                    'range': ([0., 3000.], 'NM'),
+                    'distance': ([0., 3000.], 'NM'),
                     'velocity_rate': ([0., 0.], 'm/s**2'),
                     'throttle': ([0.6, 0.6], 'unitless'),
                 }

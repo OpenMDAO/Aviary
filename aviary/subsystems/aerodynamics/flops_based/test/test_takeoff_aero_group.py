@@ -9,12 +9,8 @@ from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamics
 from aviary.utils.aviary_values import AviaryValues, get_items
 from aviary.models.N3CC.N3CC_data import (
     N3CC, takeoff_subsystem_options, takeoff_subsystem_options_spoilers)
-from aviary.variable_info.variables import Aircraft
-from aviary.variable_info.variables import Dynamic as _Dynamic
-from aviary.variable_info.variables import Mission
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.enums import LegacyCode
-
-Dynamic = _Dynamic.Mission
 
 
 class TestTakeoffAeroGroup(unittest.TestCase):
@@ -80,18 +76,19 @@ def make_problem(subsystem_options={}):
 
     dynamic_inputs = AviaryValues({
         'angle_of_attack': (np.array([0., 2., 6.]), 'deg'),
-        Dynamic.ALTITUDE: (np.array([0., 32., 55.]), 'm'),
-        Dynamic.FLIGHT_PATH_ANGLE: (np.array([0., 0.5, 1.]), 'deg')})
+        Dynamic.Mission.ALTITUDE: (np.array([0., 32., 55.]), 'm'),
+        Dynamic.Mission.FLIGHT_PATH_ANGLE: (np.array([0., 0.5, 1.]), 'deg')})
 
     prob = om.Problem()
 
     prob.model.add_subsystem(
         "USatm",
         USatm1976Comp(num_nodes=nn),
-        promotes_inputs=[("h", Dynamic.ALTITUDE)],
+        promotes_inputs=[("h", Dynamic.Mission.ALTITUDE)],
         promotes_outputs=[
-            "rho", ("sos", Dynamic.SPEED_OF_SOUND), ("temp", Dynamic.TEMPERATURE),
-            ("pres", Dynamic.STATIC_PRESSURE), "viscosity"])
+            "rho", ("sos", Dynamic.Mission.SPEED_OF_SOUND), ("temp",
+                                                             Dynamic.Mission.TEMPERATURE),
+            ("pres", Dynamic.Mission.STATIC_PRESSURE), "viscosity"])
 
     aero_builder = CoreAerodynamicsBuilder(code_origin=LegacyCode.FLOPS)
 
@@ -104,7 +101,7 @@ def make_problem(subsystem_options={}):
             **subsystem_options['core_aerodynamics']),
         promotes_outputs=aero_builder.mission_outputs(**subsystem_options['core_aerodynamics']))
 
-    prob.model.set_input_defaults(Dynamic.ALTITUDE, np.zeros(nn), 'm')
+    prob.model.set_input_defaults(Dynamic.Mission.ALTITUDE, np.zeros(nn), 'm')
 
     prob.setup(force_alloc_complex=True)
 
@@ -135,9 +132,9 @@ _units_drag = 'N'
 # - generate new regression data if, and only if, takeoff aero group is updated with a
 #   more trusted implementation
 _regression_data = AviaryValues({
-    Dynamic.LIFT: (
+    Dynamic.Mission.LIFT: (
         [3028.138891962988, 4072.059743068957, 6240.85493286], _units_lift),
-    Dynamic.DRAG: (
+    Dynamic.Mission.DRAG: (
         [434.6285684000267, 481.5245555324278, 586.0976806512001], _units_drag)})
 
 # NOTE:
@@ -146,9 +143,9 @@ _regression_data = AviaryValues({
 # - generate new regression data if, and only if, takeoff aero group is updated with a
 #   more trusted implementation
 _regression_data_spoiler = AviaryValues({
-    Dynamic.LIFT: (
+    Dynamic.Mission.LIFT: (
         [-1367.5937129210124, -323.67286181504335, 1845.1223279759993], _units_lift),
-    Dynamic.DRAG: (
+    Dynamic.Mission.DRAG: (
         [895.9091503940268, 942.8051375264279, 1047.3782626452], _units_drag)})
 
 
@@ -204,8 +201,8 @@ def _generate_regression_data(subsystem_options={}):
 
     prob.run_model()
 
-    lift = prob.get_val(Dynamic.LIFT, _units_lift)
-    drag = prob.get_val(Dynamic.DRAG, _units_drag)
+    lift = prob.get_val(Dynamic.Mission.LIFT, _units_lift)
+    drag = prob.get_val(Dynamic.Mission.DRAG, _units_drag)
 
     prob.check_partials(compact_print=True, method="cs")
 
