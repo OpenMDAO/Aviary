@@ -94,8 +94,7 @@ class TestParameterizePhaseInfo(unittest.TestCase):
 
         prob = AviaryProblem()
 
-        csv_path = pkg_resources.resource_filename(
-            "aviary", "models/small_single_aisle/small_single_aisle_GwGm.csv")
+        csv_path = "models/small_single_aisle/small_single_aisle_GwGm.csv"
 
         prob.load_inputs(csv_path, phase_info)
         prob.check_and_preprocess_inputs()
@@ -131,8 +130,7 @@ class TestParameterizePhaseInfo(unittest.TestCase):
 
         prob = AviaryProblem()
 
-        csv_path = pkg_resources.resource_filename(
-            "aviary", "models/test_aircraft/aircraft_for_bench_FwFm.csv")
+        csv_path = "models/test_aircraft/aircraft_for_bench_FwFm.csv"
 
         prob.load_inputs(csv_path, phase_info)
         prob.check_and_preprocess_inputs()
