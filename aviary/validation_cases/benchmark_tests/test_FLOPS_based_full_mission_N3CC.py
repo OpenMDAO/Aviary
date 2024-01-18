@@ -268,14 +268,14 @@ def run_trajectory(driver: Driver, sim=True):
         om.ExecComp(
             [
                 "takeoff_mass_con=takeoff_mass-climb_start_mass",
-                "takeoff_range_con=takeoff_range-climb_start_range",
+                "takeoff_range_con=takeoff_range-climb_start_distance",
                 "takeoff_vel_con=takeoff_vel-climb_start_vel",
                 "takeoff_alt_con=takeoff_alt-climb_start_alt"
             ],
             takeoff_mass_con={'units': 'lbm'}, takeoff_mass={'units': 'lbm'},
             climb_start_mass={'units': 'lbm'},
             takeoff_range_con={'units': 'ft'}, takeoff_range={'units': 'ft'},
-            climb_start_range={'units': 'ft'},
+            climb_start_distance={'units': 'ft'},
             takeoff_vel_con={'units': 'm/s'}, takeoff_vel={'units': 'm/s'},
             climb_start_vel={'units': 'm/s'},
             takeoff_alt_con={'units': 'ft'}, takeoff_alt={'units': 'ft'},
@@ -294,7 +294,7 @@ def run_trajectory(driver: Driver, sim=True):
     prob.model.connect('traj.climb.states:mass',
                        'takeoff_constraints.climb_start_mass', src_indices=[0])
     prob.model.connect('traj.climb.states:distance',
-                       'takeoff_constraints.climb_start_range', src_indices=[0])
+                       'takeoff_constraints.climb_start_distance', src_indices=[0])
     prob.model.connect('traj.climb.states:velocity',
                        'takeoff_constraints.climb_start_vel', src_indices=[0])
     prob.model.connect('traj.climb.states:altitude',
