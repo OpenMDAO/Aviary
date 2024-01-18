@@ -95,7 +95,6 @@ class AccelODE(BaseODE):
             + sgm_outputs,
         )
 
-        # the last two subsystems will also be used for constraints
         self.add_subsystem(
             name='SPECIFIC_ENERGY_RATE_EXCESS',
             subsys=SpecificEnergyRate(num_nodes=nn),
@@ -123,3 +122,5 @@ class AccelODE(BaseODE):
                                 np.ones(nn), units="lbm")
         self.set_input_defaults(Dynamic.Mission.ALTITUDE,
                                 val=500 * np.ones(nn), units="ft")
+        self.set_input_defaults("TAS", val=200*np.ones(nn),
+                                units="m/s")  # val here is nominal
