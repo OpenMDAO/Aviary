@@ -597,10 +597,11 @@ class AviaryProblem(om.Problem):
             phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data, transcription=transcription)
         phase = phase_object.build_phase(aviary_options=self.aviary_inputs)
 
-        phase.add_control(
-            Dynamic.Mission.THROTTLE, targets=Dynamic.Mission.THROTTLE, units='unitless',
-            opt=False, lower=0.0, upper=1.0
-        )
+        if 'cruise' not in phase_name:
+            phase.add_control(
+                Dynamic.Mission.THROTTLE, targets=Dynamic.Mission.THROTTLE, units='unitless',
+                opt=False, lower=0.0, upper=1.0
+            )
 
         phase.timeseries_options['use_prefix'] = True
 

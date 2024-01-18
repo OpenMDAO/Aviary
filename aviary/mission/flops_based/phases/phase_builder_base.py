@@ -348,7 +348,7 @@ class PhaseBuilderBase(ABC):
         if self.is_analytic_phase:
             phase = dm.AnalyticPhase(
                 ode_class=ode_class,
-                ode_init_kwargs=self.ode_args,
+                ode_init_kwargs=kwargs,
                 num_nodes=self.num_nodes,
             )
         else:
