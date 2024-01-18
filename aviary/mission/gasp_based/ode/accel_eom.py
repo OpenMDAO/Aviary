@@ -56,7 +56,7 @@ class AccelerationRates(om.ExplicitComponent):
             desc="rate of change of true air speed",
         )
         self.add_output(
-            "distance_rate",
+            Dynamic.Mission.DISTANCE_RATE,
             val=np.zeros(nn),
             units="ft/s",
             desc="rate of change of horizontal distance covered",
@@ -65,7 +65,8 @@ class AccelerationRates(om.ExplicitComponent):
         self.declare_partials(
             "TAS_rate", [
                 Dynamic.Mission.MASS, Dynamic.Mission.DRAG, Dynamic.Mission.THRUST_TOTAL], rows=arange, cols=arange)
-        self.declare_partials("distance_rate", ["TAS"], rows=arange, cols=arange, val=1.)
+        self.declare_partials(Dynamic.Mission.DISTANCE_RATE, [
+                              "TAS"], rows=arange, cols=arange, val=1.)
 
         if analysis_scheme is AnalysisScheme.SHOOTING:
             self.add_input("t_curr", val=np.ones(nn), desc="time", units="s")
@@ -83,7 +84,7 @@ class AccelerationRates(om.ExplicitComponent):
         TAS = inputs["TAS"]
 
         outputs["TAS_rate"] = (GRAV_ENGLISH_GASP / weight) * (thrust - drag)
-        outputs["distance_rate"] = TAS
+        outputs[Dynamic.Mission.DISTANCE_RATE] = TAS
 
         if analysis_scheme is AnalysisScheme.SHOOTING:
             outputs[Dynamic.Mission.ALTITUDE_RATE] = 0

@@ -42,7 +42,7 @@ class MissionEOMTest(unittest.TestCase):
                                         #    - actual: 760.55416759
                                         #    - desired: 3.86361517135375
                                         # Dynamic.Mission.ALTITUDE_RATE_MAX,
-                                        Dynamic.Mission.RANGE_RATE,
+                                        Dynamic.Mission.DISTANCE_RATE,
                                         Dynamic.Mission.SPECIFIC_ENERGY_RATE,
                                         Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS],
                            tol=1e-12)

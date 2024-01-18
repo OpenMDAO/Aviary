@@ -152,7 +152,7 @@ class TestParameterizePhaseInfo(unittest.TestCase):
 
         prob.run_model()
 
-        assert_near_equal(prob.get_val("traj.descent.timeseries.input_values:states:range", units='km')[-1],
+        assert_near_equal(prob.get_val("traj.descent.timeseries.input_values:states:distance", units='km')[-1],
                           5000.0 * 3378.7 / 3500)
         assert_near_equal(prob.get_val("traj.cruise.timeseries.input_values:states:altitude", units='ft')[0],
                           31000.0)

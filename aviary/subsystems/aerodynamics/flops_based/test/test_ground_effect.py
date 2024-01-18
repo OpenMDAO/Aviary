@@ -6,10 +6,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.aerodynamics.flops_based.ground_effect import GroundEffect
 from aviary.utils.aviary_values import AviaryValues, get_items
-from aviary.variable_info.variables import Aircraft
-from aviary.variable_info.variables import Dynamic as _Dynamic
-
-Dynamic = _Dynamic.Mission
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class TestGroundEffect(unittest.TestCase):
@@ -61,8 +58,8 @@ def make_problem():
 
     inputs = AviaryValues({
         'angle_of_attack': (np.array([0., 2., 6]), 'deg'),
-        Dynamic.ALTITUDE: (np.array([100.0, 132, 155]), 'm'),
-        Dynamic.FLIGHT_PATH_ANGLE: (np.array([0., 0.5, 1.0]), 'deg'),
+        Dynamic.Mission.ALTITUDE: (np.array([100.0, 132, 155]), 'm'),
+        Dynamic.Mission.FLIGHT_PATH_ANGLE: (np.array([0., 0.5, 1.0]), 'deg'),
         'minimum_drag_coefficient': minimum_drag_coefficient,
         'base_lift_coefficient': base_lift_coefficient,
         'base_drag_coefficient': base_drag_coefficient,

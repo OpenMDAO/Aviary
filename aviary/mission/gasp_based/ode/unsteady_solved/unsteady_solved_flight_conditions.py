@@ -107,7 +107,7 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
             self.add_input(
                 "dTAS_dr",
                 val=np.zeros(nn),
-                units="m/s/range_units",
+                units="m/s/distance_units",
                 desc="change in true air speed per unit range",
             )
 
@@ -206,7 +206,7 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
             self.add_input(
                 "dmach_dr",
                 val=np.zeros(nn),
-                units="unitless/range_units",
+                units="unitless/distance_units",
                 desc="change in mach number per unit range",
             )
             self.add_input(

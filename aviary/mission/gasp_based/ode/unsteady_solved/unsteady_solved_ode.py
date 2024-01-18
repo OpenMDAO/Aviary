@@ -214,8 +214,8 @@ class UnsteadySolvedODE(BaseODE):
         self.add_subsystem("mass_rate",
                            om.ExecComp("dmass_dr = fuelflow * dt_dr",
                                        fuelflow={"units": "lbm/s", "shape": nn},
-                                       dt_dr={"units": "s/range_units", "shape": nn},
-                                       dmass_dr={"units": "lbm/range_units",
+                                       dt_dr={"units": "s/distance_units", "shape": nn},
+                                       dmass_dr={"units": "lbm/distance_units",
                                                  "shape": nn,
                                                  "tags": ['dymos.state_rate_source:mass',
                                                           'dymos.state_units:lbm']},
@@ -241,5 +241,6 @@ class UnsteadySolvedODE(BaseODE):
             name=Dynamic.Mission.ALTITUDE,
             val=10000. * onn,
             units="ft")
-        self.set_input_defaults(name="dh_dr", val=0. * onn, units="ft/range_units")
-        self.set_input_defaults(name="d2h_dr2", val=0. * onn, units="ft/range_units**2")
+        self.set_input_defaults(name="dh_dr", val=0. * onn, units="ft/distance_units")
+        self.set_input_defaults(name="d2h_dr2", val=0. * onn,
+                                units="ft/distance_units**2")

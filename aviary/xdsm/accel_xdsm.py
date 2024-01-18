@@ -33,7 +33,7 @@ else:
 x.add_output("fc", ["EAS"], side="right")
 x.add_output("aero", [Dynamic.Mission.LIFT, Dynamic.Mission.DRAG, "alpha"], side="right")
 # for accel_ode, CruiseAero(output_alpha=True). So alpha is not an input.
-x.add_output("eom", ["TAS_rate", "distance_rate"], side="right")
+x.add_output("eom", ["TAS_rate", Dynamic.Mission.DISTANCE_RATE], side="right")
 
 # make connections
 x.add_input("atmos", [Dynamic.Mission.ALTITUDE])

@@ -11,11 +11,7 @@ from aviary.subsystems.aerodynamics.flops_based.ground_effect import \
     GroundEffect
 from aviary.subsystems.aerodynamics.gasp_based.common import AeroForces
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables import Aircraft
-from aviary.variable_info.variables import Dynamic as _Dynamic
-from aviary.variable_info.variables import Mission
-
-Dynamic = _Dynamic.Mission
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class TakeoffAeroGroup(om.Group):
@@ -119,7 +115,7 @@ class TakeoffAeroGroup(om.Group):
         }
 
         inputs = [
-            'angle_of_attack', Dynamic.ALTITUDE, Dynamic.FLIGHT_PATH_ANGLE,
+            'angle_of_attack', Dynamic.Mission.ALTITUDE, Dynamic.Mission.FLIGHT_PATH_ANGLE,
             ('minimum_drag_coefficient', Mission.Takeoff.DRAG_COEFFICIENT_MIN),
             Aircraft.Wing.ASPECT_RATIO, Aircraft.Wing.HEIGHT,
             Aircraft.Wing.SPAN
@@ -173,8 +169,8 @@ class TakeoffAeroGroup(om.Group):
         self.connect('ground_effect.drag_coefficient', 'ground_effect_drag')
         self.connect('climb_drag_coefficient', 'aero_forces.CD')
 
-        inputs = [Dynamic.DYNAMIC_PRESSURE, Aircraft.Wing.AREA]
-        outputs = [Dynamic.LIFT, Dynamic.DRAG]
+        inputs = [Dynamic.Mission.DYNAMIC_PRESSURE, Aircraft.Wing.AREA]
+        outputs = [Dynamic.Mission.LIFT, Dynamic.Mission.DRAG]
 
         self.add_subsystem(
             'aero_forces', AeroForces(num_nodes=nn),

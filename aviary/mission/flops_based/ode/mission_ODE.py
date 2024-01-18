@@ -122,7 +122,7 @@ class MissionODE(om.Group):
                 Dynamic.Mission.SPECIFIC_ENERGY_RATE,
                 Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
                 Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.ALTITUDE_RATE_MAX,
-                Dynamic.Mission.RANGE_RATE])
+                Dynamic.Mission.DISTANCE_RATE])
 
         self.set_input_defaults(Dynamic.Mission.MASS, val=np.ones(nn), units='kg')
         self.set_input_defaults(Dynamic.Mission.VELOCITY, val=np.ones(nn), units='m/s')
