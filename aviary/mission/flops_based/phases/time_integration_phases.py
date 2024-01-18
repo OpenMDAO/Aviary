@@ -34,6 +34,11 @@ class SGMHeightEnergy(SimuPyProblem):
                 Dynamic.Mission.RANGE,
                 Dynamic.Mission.ALTITUDE,
         ],
+            state_rate_units=[
+                'lbm/s',
+                'm/s',
+                'm/s',
+        ],
             alternate_state_rate_names={
                 Dynamic.Mission.MASS_RATE: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
             **simupy_args)
@@ -214,8 +219,9 @@ def test_phase(phases, ode_args_tab):
     prob.set_val("traj.altitude_initial", val=35000, units="ft")
     prob.set_val("traj.mass_initial", val=171000, units="lbm")
     prob.set_val("traj.range_initial", val=0, units="NM")
-    prob.set_val("traj.velocity", val=472, units="kn")
-    prob.set_val("traj.velocity_rate", val=0, units="m/s**2")
+    prob.set_val("traj.mach", val=.8, units="unitless")
+    # prob.set_val("traj.velocity", val=472, units="kn")
+    # prob.set_val("traj.velocity_rate", val=0, units="m/s**2")
 
     # try:
     prob.run_model()

@@ -7,7 +7,7 @@ from aviary.mission.flops_based.ode.simple_mission_EOM import MissionEOM
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import promote_aircraft_and_mission_vars
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.variable_info.variables import Dynamic, Mission
+from aviary.variable_info.variables import Dynamic, Mission, Aircraft
 from aviary.variable_info.variables_in import VariablesIn
 from aviary.variable_info.enums import AnalysisScheme
 
@@ -183,9 +183,42 @@ class MissionODE(om.Group):
                            promotes_inputs=['*'],
                            promotes_outputs=['*'])
 
+        self.set_input_defaults(Mission.Design.GROSS_MASS, val=1, units='kg')
+        self.set_input_defaults(
+            Aircraft.Fuselage.CHARACTERISTIC_LENGTH, val=1, units='ft')
+        self.set_input_defaults(Aircraft.Fuselage.FINENESS, val=1, units='unitless')
+        self.set_input_defaults(Aircraft.Fuselage.WETTED_AREA, val=1, units='ft**2')
+        self.set_input_defaults(
+            Aircraft.VerticalTail.CHARACTERISTIC_LENGTH, val=1, units='ft')
+        self.set_input_defaults(Aircraft.VerticalTail.FINENESS, val=1, units='unitless')
+        self.set_input_defaults(Aircraft.VerticalTail.WETTED_AREA, val=1, units='ft**2')
+        self.set_input_defaults(
+            Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH, val=1, units='ft')
+        self.set_input_defaults(Aircraft.HorizontalTail.FINENESS,
+                                val=1, units='unitless')
+        self.set_input_defaults(
+            Aircraft.HorizontalTail.WETTED_AREA, val=1, units='ft**2')
+        self.set_input_defaults(Aircraft.Wing.CHARACTERISTIC_LENGTH, val=1, units='ft')
+        self.set_input_defaults(Aircraft.Wing.FINENESS, val=1, units='unitless')
+        self.set_input_defaults(Aircraft.Wing.WETTED_AREA, val=1, units='ft**2')
+        self.set_input_defaults(
+            Aircraft.Wing.SPAN_EFFICIENCY_FACTOR, val=1, units='unitless')
+        self.set_input_defaults(Aircraft.Wing.TAPER_RATIO, val=1, units='unitless')
+        self.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD,
+                                val=1, units='unitless')
+        self.set_input_defaults(Aircraft.Wing.SWEEP, val=1, units='deg')
+        self.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, val=1, units='unitless')
+        self.set_input_defaults(
+            Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, val=1, units='unitless')
+        self.set_input_defaults(
+            Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR, val=1, units='unitless')
+
+        self.set_input_defaults(Dynamic.Mission.MACH, val=np.ones(nn), units='unitless')
         self.set_input_defaults(Dynamic.Mission.MASS, val=np.ones(nn), units='kg')
         self.set_input_defaults(Dynamic.Mission.VELOCITY, val=np.ones(nn), units='m/s')
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.ones(nn), units='m')
+        self.set_input_defaults(Dynamic.Mission.ALTITUDE_RATE,
+                                val=np.ones(nn), units='m/s')
         self.set_input_defaults(
             Dynamic.Mission.THROTTLE, val=np.ones((nn, engine_count)),
             units='unitless')

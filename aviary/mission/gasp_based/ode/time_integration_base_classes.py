@@ -26,11 +26,11 @@ class SimuPyProblem(SimulationMixin):
         time_independent=False,
         t_name="t_curr",
         state_names=None,
-        alternate_state_names={},
+        alternate_state_names=None,
         blocked_state_names=None,
         state_units=None,
         state_rate_names=None,
-        alternate_state_rate_names={},
+        alternate_state_rate_names=None,
         state_rate_units=None,
         parameter_names=None,
         parameter_units=None,
@@ -95,6 +95,10 @@ class SimuPyProblem(SimulationMixin):
             outputs = [val['prom_name'] for key, val in data]
             data = prob.model.list_inputs(prom_name=True, val=False, out_stream=None)
             inputs = [val['prom_name'] for key, val in data]
+        if alternate_state_names is None:
+            alternate_state_names = {}
+        if alternate_state_rate_names is None:
+            alternate_state_rate_names = {}
 
         if state_names is None:
             state_names = [
@@ -133,6 +137,9 @@ class SimuPyProblem(SimulationMixin):
                     units=True,
                 )
             ]
+            if len(self.state_rate_units) != len(state_rate_names):
+                raise RuntimeError(
+                    'state_rate_units could not be auto generated, declare them explicitly.')
 
         if state_units is not None:
             self.state_units = state_units
@@ -141,6 +148,9 @@ class SimuPyProblem(SimulationMixin):
                 units.simplify_unit("s*" + rate_unit)
                 for rate_unit in self.state_rate_units
             ]
+            if len(self.state_units) != len(state_names):
+                raise RuntimeError(
+                    'state_units could not be auto generated, declare them explicitly.')
 
         if parameter_names is None:
             parameter_names = [
