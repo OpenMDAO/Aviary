@@ -20,7 +20,7 @@ problem
 
 PhaseBuilderBase : the interface for a phase builder
 '''
-from abc import ABC, abstractmethod
+from abc import ABC
 from collections import namedtuple
 from collections.abc import Sequence
 
@@ -205,9 +205,6 @@ class PhaseBuilderBase(ABC):
     core_subsystems : (None)
         list of SubsystemBuilderBase objects that will be added to the phase ODE
 
-    aero_builder (None)
-        utility for building and connecting a dynamic aerodynamics analysis component
-
     user_options : AviaryValues (<empty>)
         state/path constraint values and flags
 
@@ -249,7 +246,7 @@ class PhaseBuilderBase(ABC):
     '''
     __slots__ = (
         'name',  'core_subsystems', 'subsystem_options', 'user_options',
-        'initial_guesses', 'ode_class', 'transcription', 'aero_builder',
+        'initial_guesses', 'ode_class', 'transcription',
         'is_analytic_phase', 'num_nodes',
     )
 
@@ -264,7 +261,7 @@ class PhaseBuilderBase(ABC):
     # endregion : derived type customization points
 
     def __init__(
-        self, name=None, core_subsystems=None, aero_builder=None, user_options=None, initial_guesses=None,
+        self, name=None, core_subsystems=None, user_options=None, initial_guesses=None,
         ode_class=None, transcription=None, subsystem_options=None, is_analytic_phase=False, num_nodes=5,
     ):
         if name is None:
@@ -279,9 +276,6 @@ class PhaseBuilderBase(ABC):
 
         if subsystem_options is None:
             subsystem_options = {}
-
-        if aero_builder is not None:
-            self.aero_builder = aero_builder
 
         self.subsystem_options = subsystem_options
 

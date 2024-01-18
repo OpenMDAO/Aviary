@@ -1,5 +1,5 @@
 from aviary.mission.flops_based.phases.phase_builder_base import (
-    PhaseBuilderBase, InitialGuessState, InitialGuessTime, InitialGuessControl)
+    PhaseBuilderBase, InitialGuessState, InitialGuessTime)
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
 from aviary.mission.gasp_based.ode.breguet_cruise_ode import BreguetCruiseODESolution

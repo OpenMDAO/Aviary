@@ -14,9 +14,6 @@ class Descent(EnergyPhase):
     name : str ('descent')
         object label
 
-    aero_builder (None)
-        utility for building and connecting a dynamic aerodynamics analysis component
-
     user_options : AviaryValues (<empty>)
         state/path constraint values and flags
 
