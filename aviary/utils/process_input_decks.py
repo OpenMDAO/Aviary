@@ -160,10 +160,6 @@ def update_GASP_options(aircraft_values: AviaryValues(), initial_guesses):
     GASP_defaults.update(aircraft_values)
     aircraft_values = GASP_defaults
 
-    for var in initial_guesses:
-        if var in aircraft_values:
-            initial_guesses[var], _ = aircraft_values.get_item(var)
-
     # update the options that depend on variables
     update_dependent_options(aircraft_values, dependent_options)
 

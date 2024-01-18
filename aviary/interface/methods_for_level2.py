@@ -167,7 +167,6 @@ class AviaryProblem(om.Problem):
         # Create AviaryValues object from file (or process existing AviaryValues object
         # with default values from metadata) and generate initial guesses
         aviary_inputs, initial_guesses = create_vehicle(aviary_inputs)
-        # aviary_inputs = self.aviary_inputs
 
         # pull which methods will be used for subsystems and mission
         self.mission_method = mission_method = aviary_inputs.get_val(
