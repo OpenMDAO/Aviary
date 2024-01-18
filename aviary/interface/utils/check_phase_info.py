@@ -40,7 +40,7 @@ def check_phase_info(phase_info, mission_method):
         'max_mach': float,
         'required_available_climb_rate': tuple,
         'mass_f_cruise': tuple,
-        'range_f_cruise': tuple,
+        'distance_f_cruise': tuple,
         'fix_final': bool,
     }
 

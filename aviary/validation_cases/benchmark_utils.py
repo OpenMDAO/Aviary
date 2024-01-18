@@ -39,7 +39,7 @@ def compare_against_expected_values(prob, expected_dict, simple_flag=False):
         masses.extend(
             prob.get_val(f'traj.{phase}.timeseries.states:mass', units='kg'))
         ranges.extend(
-            prob.get_val(f'traj.{phase}.timeseries.states:range', units='m'))
+            prob.get_val(f'traj.{phase}.timeseries.states:distance', units='m'))
 
     times = np.array(times)
     altitudes = np.array(altitudes)

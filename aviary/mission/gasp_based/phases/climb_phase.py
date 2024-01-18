@@ -90,7 +90,7 @@ def get_climb(
         lower=distance_lower,
         upper=distance_upper,
         units="NM",
-        rate_source="distance_rate",
+        rate_source=Dynamic.Mission.DISTANCE_RATE,
         ref=distance_ref,
         ref0=distance_ref0,
         defect_ref=distance_defect_ref,

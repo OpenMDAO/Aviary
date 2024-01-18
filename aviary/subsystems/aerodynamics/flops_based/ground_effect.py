@@ -11,10 +11,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.variable_info.functions import add_aviary_input
-from aviary.variable_info.variables import Aircraft
-from aviary.variable_info.variables import Dynamic as _Dynamic
-
-Dynamic = _Dynamic.Mission
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class GroundEffect(om.ExplicitComponent):
@@ -41,9 +38,10 @@ class GroundEffect(om.ExplicitComponent):
 
         self.add_input('angle_of_attack', val=np.zeros(nn), units='rad')
 
-        add_aviary_input(self, Dynamic.ALTITUDE, np.zeros(nn), units='m')
+        add_aviary_input(self, Dynamic.Mission.ALTITUDE, np.zeros(nn), units='m')
 
-        add_aviary_input(self, Dynamic.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units='rad')
+        add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE,
+                         val=np.zeros(nn), units='rad')
 
         self.add_input(
             'minimum_drag_coefficient', 0.0,
@@ -83,14 +81,14 @@ class GroundEffect(om.ExplicitComponent):
         )
 
         self.declare_partials(
-            'lift_coefficient', [Dynamic.ALTITUDE, 'base_lift_coefficient'],
+            'lift_coefficient', [Dynamic.Mission.ALTITUDE, 'base_lift_coefficient'],
             rows=rows_cols, cols=rows_cols
         )
 
         self.declare_partials(
             'lift_coefficient',
             [
-                'angle_of_attack', Dynamic.FLIGHT_PATH_ANGLE, 'minimum_drag_coefficient',
+                'angle_of_attack', Dynamic.Mission.FLIGHT_PATH_ANGLE, 'minimum_drag_coefficient',
                 'base_drag_coefficient',
             ],
             dependent=False
@@ -104,7 +102,7 @@ class GroundEffect(om.ExplicitComponent):
         self.declare_partials(
             'drag_coefficient',
             [
-                'angle_of_attack', Dynamic.ALTITUDE, Dynamic.FLIGHT_PATH_ANGLE,
+                'angle_of_attack', Dynamic.Mission.ALTITUDE, Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 'base_drag_coefficient', 'base_lift_coefficient'
             ],
             rows=rows_cols, cols=rows_cols
@@ -121,8 +119,8 @@ class GroundEffect(om.ExplicitComponent):
         ground_altitude = options['ground_altitude']
 
         angle_of_attack = inputs['angle_of_attack']
-        altitude = inputs[Dynamic.ALTITUDE]
-        flight_path_angle = inputs[Dynamic.FLIGHT_PATH_ANGLE]
+        altitude = inputs[Dynamic.Mission.ALTITUDE]
+        flight_path_angle = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
         minimum_drag_coefficient = inputs['minimum_drag_coefficient']
         base_lift_coefficient = inputs['base_lift_coefficient']
         base_drag_coefficient = inputs['base_drag_coefficient']
@@ -177,8 +175,8 @@ class GroundEffect(om.ExplicitComponent):
         ground_altitude = options['ground_altitude']
 
         angle_of_attack = inputs['angle_of_attack']
-        altitude = inputs[Dynamic.ALTITUDE]
-        flight_path_angle = inputs[Dynamic.FLIGHT_PATH_ANGLE]
+        altitude = inputs[Dynamic.Mission.ALTITUDE]
+        flight_path_angle = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
         minimum_drag_coefficient = inputs['minimum_drag_coefficient']
         base_lift_coefficient = inputs['base_lift_coefficient']
         base_drag_coefficient = inputs['base_drag_coefficient']
@@ -224,7 +222,7 @@ class GroundEffect(om.ExplicitComponent):
             (d_hf_alt * lift_coeff_factor_denom) - (height_factor * d_lcfd_alt)
         ) / lift_coeff_factor_denom**2
 
-        J['lift_coefficient', Dynamic.ALTITUDE] = base_lift_coefficient * d_lcf_alt
+        J['lift_coefficient', Dynamic.Mission.ALTITUDE] = base_lift_coefficient * d_lcf_alt
 
         J['lift_coefficient', 'base_lift_coefficient'] = lift_coeff_factor
         # endregion lift_coefficient wrt [altitude, base_lift_coefficient]
@@ -306,7 +304,7 @@ class GroundEffect(om.ExplicitComponent):
 
         d_dc_fpa = base_lift_coefficient * (lift_coeff_factor - 1.) * d_ca_fpa
 
-        J['drag_coefficient', Dynamic.FLIGHT_PATH_ANGLE] = d_dc_fpa
+        J['drag_coefficient', Dynamic.Mission.FLIGHT_PATH_ANGLE] = d_dc_fpa
         # endregion drag_coefficient wrt flight_path_angle
 
         # region drag_coefficient wrt altitude
@@ -336,7 +334,7 @@ class GroundEffect(om.ExplicitComponent):
             + combined_angle * base_lift_coefficient * d_lcf_alt
         )
 
-        J['drag_coefficient', Dynamic.ALTITUDE] = d_dc_alt
+        J['drag_coefficient', Dynamic.Mission.ALTITUDE] = d_dc_alt
         # endregion drag_coefficient wrt altitude
 
         # region drag_coefficient wrt minimum_drag_coefficient
@@ -401,7 +399,7 @@ class GroundEffect(om.ExplicitComponent):
         # Check for out of ground effect.
         idx = np.where(ground_effect_state > 1.1)
         if idx:
-            J['drag_coefficient', Dynamic.ALTITUDE][idx] = 0.0
+            J['drag_coefficient', Dynamic.Mission.ALTITUDE][idx] = 0.0
             J['drag_coefficient', 'minimum_drag_coefficient'][idx] = 0.0
             J['drag_coefficient', 'base_lift_coefficient'][idx] = 0.0
             J['drag_coefficient', 'base_drag_coefficient'][idx] = 1.0
@@ -409,9 +407,9 @@ class GroundEffect(om.ExplicitComponent):
             J['drag_coefficient', Aircraft.Wing.HEIGHT][idx] = 0.0
             J['drag_coefficient', Aircraft.Wing.SPAN][idx] = 0.0
             J['drag_coefficient', 'angle_of_attack'][idx] = 0.0
-            J['drag_coefficient', Dynamic.FLIGHT_PATH_ANGLE][idx] = 0.0
+            J['drag_coefficient', Dynamic.Mission.FLIGHT_PATH_ANGLE][idx] = 0.0
 
-            J['lift_coefficient', Dynamic.ALTITUDE][idx] = 0.0
+            J['lift_coefficient', Dynamic.Mission.ALTITUDE][idx] = 0.0
             J['lift_coefficient', 'base_lift_coefficient'][idx] = 1.0
             J['lift_coefficient', Aircraft.Wing.ASPECT_RATIO][idx] = 0.0
             J['lift_coefficient', Aircraft.Wing.HEIGHT][idx] = 0.0
