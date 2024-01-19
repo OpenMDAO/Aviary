@@ -1,3 +1,4 @@
+import os
 import unittest
 import subprocess
 
@@ -5,13 +6,13 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.subsystems.test.test_dummy_subsystem import ArrayGuessSubsystemBuilder
-from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 
 @use_tempdirs
 class AircraftMissionTestSuite(unittest.TestCase):
 
     def setUp(self):
+
         # Load the phase_info and other common setup tasks
         self.phase_info = {
             "pre_mission": {"include_takeoff": False, "optimize_mass": True},
@@ -115,11 +116,21 @@ class AircraftMissionTestSuite(unittest.TestCase):
             optimization_history_filename="driver_test.db")
 
     def test_mission_basic_and_dashboard(self):
+        # We need to remove the TESTFLO_RUNNING environment variable for this test to run.
+        # The reports code checks to see if TESTFLO_RUNNING is set and will not do anything if set
+        # But we need to remember whether it was set so we can restore it
+        testflo_running = os.environ.pop('TESTFLO_RUNNING', None)
+
         prob = self.run_mission(self.phase_info, "SLSQP")
+
+        # restore what was there before running the test
+        if testflo_running is not None:
+            os.environ['TESTFLO_RUNNING'] = testflo_running
+
         self.assertIsNotNone(prob)
         self.assertFalse(prob.failed)
 
-        cmd = f'aviary dashboard --problem_recorder dymos_solution.db --driver_recorder driver_test.db tmp'
+        cmd = f'aviary dashboard --problem_recorder dymos_solution.db --driver_recorder driver_test.db {prob.driver._problem()._name}'
         # this only tests that a given command line tool returns a 0 return code. It doesn't
         # check the expected output at all.  The underlying functions that implement the
         # commands should be tested seperately.
