@@ -153,7 +153,6 @@ def update_GASP_options(aircraft_values: AviaryValues(), initial_guesses):
     GASP_defaults.set_val('mass_defect', val=10000, units='lbm')
     GASP_defaults.set_val('problem_type', val=ProblemType.SIZING)
     GASP_defaults.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False)
-    GASP_defaults.set_val(Aircraft.Design.RESERVES, val=4998)
 
     # overwrite GASP_defaults with values from aircraft_values, then replace
     # aircraft_values with this merged set
