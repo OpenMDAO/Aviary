@@ -36,8 +36,7 @@ from aviary.mission.gasp_based.phases.taxi_group import TaxiSegment
 from aviary.mission.gasp_based.phases.v_rotate_comp import VRotateComp
 from aviary.mission.gasp_based.polynomial_fit import PolynomialFit
 from aviary.subsystems.premission import CorePreMission
-from aviary.mission.gasp_based.ode.breguet_cruise_ode import BreguetCruiseODESolution
-from aviary.utils.functions import set_aviary_initial_values, Null, create_opts2vals, add_opts2vals, promote_aircraft_and_mission_vars
+from aviary.utils.functions import set_aviary_initial_values, create_opts2vals, add_opts2vals, promote_aircraft_and_mission_vars
 from aviary.utils.process_input_decks import create_vehicle
 from aviary.utils.preprocessors import preprocess_crewpayload
 from aviary.interface.utils.check_phase_info import check_phase_info
