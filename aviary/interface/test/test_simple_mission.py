@@ -94,7 +94,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
             },
         }
 
-        self.aircraft_definition_file = 'models/test_aircraft/aircraft_for_bench_FwFm_simple.csv'
+        self.aircraft_definition_file = 'models/test_aircraft/aircraft_for_bench_FwFm.csv'
         self.make_plots = False
         self.max_iter = 100
 

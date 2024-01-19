@@ -108,7 +108,7 @@ phase_info['pre_mission'] = {'include_takeoff': False, 'optimize_mass': True}
 if use_OAS:
     phase_info['pre_mission']['external_subsystems'] = [wing_weight_builder]
 
-aircraft_definition_file = 'models/test_aircraft/aircraft_for_bench_FwFm_simple.csv'
+aircraft_definition_file = 'models/test_aircraft/aircraft_for_bench_FwFm.csv'
 make_plots = False
 max_iter = 1  # set this to a higher number to fully run the optimization
 optimizer = 'SLSQP'
