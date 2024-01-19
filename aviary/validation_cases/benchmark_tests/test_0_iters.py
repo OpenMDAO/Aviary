@@ -63,4 +63,6 @@ class SolvedProblemTestCase(BaseProblemPhaseTestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    # unittest.main()
+    test = SolvedProblemTestCase()
+    test.test_zero_iters_solved()

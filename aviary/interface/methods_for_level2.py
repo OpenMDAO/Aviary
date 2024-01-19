@@ -951,8 +951,9 @@ class AviaryProblem(om.Problem):
         traj: The Dymos Trajectory object containing the added mission phases.
         """
         if phase_info_parameterization is not None:
-            self.phase_info = phase_info_parameterization(self.phase_info,
-                                                          self.aviary_inputs)
+            self.phase_info, self.post_mission_info = phase_info_parameterization(self.phase_info,
+                                                                                  self.post_mission_info,
+                                                                                  self.aviary_inputs)
 
         phase_info = self.phase_info
 
@@ -2385,7 +2386,8 @@ class AviaryProblem(om.Problem):
                                'traj.climb.initial_states:distance')
 
             # Create an ExecComp to compute the difference in mach
-            mach_diff_comp = om.ExecComp('mach_difference = final_mach - initial_mach')
+            mach_diff_comp = om.ExecComp(
+                'mach_resid_for_connecting_takeoff = final_mach - initial_mach')
             self.model.add_subsystem('mach_diff_comp', mach_diff_comp)
 
             # Connect the inputs to the mach difference component
@@ -2394,11 +2396,12 @@ class AviaryProblem(om.Problem):
                                'mach_diff_comp.initial_mach', src_indices=[0])
 
             # Add constraint for mach difference
-            self.model.add_constraint('mach_diff_comp.mach_difference', equals=0.0)
+            self.model.add_constraint(
+                'mach_diff_comp.mach_resid_for_connecting_takeoff', equals=0.0)
 
             # Similar steps for altitude difference
             alt_diff_comp = om.ExecComp(
-                'altitude_difference = final_altitude - initial_altitude', units='ft')
+                'altitude_resid_for_connecting_takeoff = final_altitude - initial_altitude', units='ft')
             self.model.add_subsystem('alt_diff_comp', alt_diff_comp)
 
             self.model.connect(Mission.Takeoff.FINAL_ALTITUDE,
@@ -2406,7 +2409,8 @@ class AviaryProblem(om.Problem):
             self.model.connect('traj.climb.control_values:altitude',
                                'alt_diff_comp.initial_altitude', src_indices=[0])
 
-            self.model.add_constraint('alt_diff_comp.altitude_difference', equals=0.0)
+            self.model.add_constraint(
+                'alt_diff_comp.altitude_resid_for_connecting_takeoff', equals=0.0)
 
         self.model.connect('traj.descent.states:mass',
                            Mission.Landing.TOUCHDOWN_MASS, src_indices=[-1])
