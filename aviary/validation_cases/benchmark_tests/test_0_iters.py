@@ -7,7 +7,6 @@ from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.interface.default_phase_info.two_dof import phase_info as two_dof_phase_info
 from aviary.interface.default_phase_info.height_energy import phase_info as height_energy_phase_info
 from aviary.interface.default_phase_info.solved import phase_info as solved_phase_info
-from aviary.interface.default_phase_info.simple import phase_info as simple_phase_info
 from aviary.models.N3CC.N3CC_data import inputs
 from aviary.variable_info.variables import Settings
 from aviary.variable_info.enums import EquationsOfMotion
@@ -49,7 +48,7 @@ class HEZeroItersTestCase(BaseProblemPhaseTestCase):
 
     @require_pyoptsparse(optimizer="IPOPT")
     def test_zero_iters_height_energy(self):
-        local_phase_info = deepcopy(simple_phase_info)
+        local_phase_info = deepcopy(height_energy_phase_info)
         inputs.set_val(Settings.EQUATIONS_OF_MOTION, EquationsOfMotion.SIMPLE)
         self.build_and_run_problem(inputs, local_phase_info)
 
