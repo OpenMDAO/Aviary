@@ -41,7 +41,7 @@ class MissionODE(om.Group):
             desc='flag to use actual takeoff mass in the climb phase, otherwise assume 100 kg fuel burn')
         self.options.declare(
             'throttle_enforcement', default='path_constraint',
-            values=['path_constraint', 'boundary_constraint', 'bounded'],
+            values=['path_constraint', 'boundary_constraint', 'bounded', None],
             desc='flag to enforce throttle constraints on the path or at the segment boundaries or using solver bounds'
         )
 
