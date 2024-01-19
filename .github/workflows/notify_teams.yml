@@ -48,8 +48,8 @@ jobs:
             }
           ignore_cert: true
           # Optional priority: 'high', 'normal' (default) or 'low'
-          nodemailerlog: false
-          nodemailerdebug: false
+          nodemailerlog: true
+          nodemailerdebug: true
 
   send_email_on_updated_assignees:
     if: github.event_name == 'pull_request' && github.event.action == 'assigned'
@@ -79,5 +79,5 @@ jobs:
             }
           ignore_cert: true
           # Optional priority: 'high', 'normal' (default) or 'low'
-          nodemailerlog: false
-          nodemailerdebug: false
+          nodemailerlog: true
+          nodemailerdebug: true
