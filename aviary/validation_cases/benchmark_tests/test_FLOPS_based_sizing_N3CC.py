@@ -274,7 +274,7 @@ def run_trajectory(sim=True):
         promotes_outputs=['mission:*'])
 
     traj.link_phases(["climb", "cruise", "descent"], [
-                     "time", Dynamic.Mission.MASS, Dynamic.Mission.DISTANCE], connected=strong_couple)
+                     "time", Dynamic.Mission.ALTITUDE, Dynamic.Mission.MASS, Dynamic.Mission.DISTANCE], connected=strong_couple)
 
     traj = setup_trajectory_params(prob.model, traj, aviary_inputs)
 

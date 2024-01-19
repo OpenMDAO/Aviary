@@ -47,7 +47,7 @@ class HEZeroItersTestCase(BaseProblemPhaseTestCase):
     @require_pyoptsparse(optimizer="IPOPT")
     def test_simple_zero_iters(self):
         local_phase_info = deepcopy(simple_phase_info)
-        self.build_and_run_problem('models/test_aircraft/aircraft_for_bench_FwFm_simple.csv',
+        self.build_and_run_problem('models/test_aircraft/aircraft_for_bench_FwFm.csv',
                                    local_phase_info)
 
 
