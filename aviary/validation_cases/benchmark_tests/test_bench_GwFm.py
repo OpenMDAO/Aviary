@@ -5,17 +5,14 @@ Takeoff, Climb, Cruise, Descent, Landing
 Computed Aero
 Large Single Aisle 1 data
 '''
-from copy import deepcopy
 import unittest
 
 import numpy as np
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.interface.default_phase_info.height_energy import phase_info
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.validation_cases.benchmark_utils import \
     compare_against_expected_values
-from aviary.variable_info.variables import Dynamic
 
 
 @use_tempdirs
@@ -270,19 +267,12 @@ class ProblemPhaseTestCase(unittest.TestCase):
         self.expected_dict = expected_dict
 
     def bench_test_swap_1_GwFm(self):
-        local_phase_info = deepcopy(phase_info)
-        prob = run_aviary(
-            'models/test_aircraft/aircraft_for_bench_GwFm.csv', local_phase_info)
-
-        compare_against_expected_values(prob, self.expected_dict)
-
-    def bench_test_swap_1_GwFm_simple(self):
         phase_info = {
             "pre_mission": {"include_takeoff": True, "optimize_mass": True},
             "climb": {
                 "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
                 "user_options": {
-                    'fix_initial': {Dynamic.Mission.MASS: False, Dynamic.Mission.DISTANCE: False},
+                    'fix_initial': False,
                     'input_initial': True,
                     "optimize_mach": True,
                     "optimize_altitude": True,
@@ -351,10 +341,10 @@ class ProblemPhaseTestCase(unittest.TestCase):
                     "constrain_final": True,
                     "fix_duration": False,
                     "initial_bounds": ((120.5, 361.5), "min"),
-                    "duration_bounds": ((5.0, 60.0), "min"),
-                    "no_climb": False
+                    "duration_bounds": ((5.0, 30.0), "min"),
+                    "no_climb": True,
                 },
-                "initial_guesses": {"times": ([241, 58], "min")},
+                "initial_guesses": {"times": ([241, 30], "min")},
             },
             "post_mission": {
                 "include_landing": True,
@@ -363,13 +353,13 @@ class ProblemPhaseTestCase(unittest.TestCase):
             },
         }
 
-        prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwFm_simple.csv', phase_info,
-                          max_iter=15)
+        prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwFm.csv', phase_info,
+                          max_iter=50)
 
-        compare_against_expected_values(prob, self.expected_dict, simple_flag=True)
+        compare_against_expected_values(prob, self.expected_dict)
 
 
 if __name__ == '__main__':
     test = ProblemPhaseTestCase()
     test.setUp()
-    test.bench_test_swap_1_GwFm_simple()
+    test.bench_test_swap_1_GwFm()

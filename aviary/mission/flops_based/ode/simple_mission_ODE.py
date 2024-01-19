@@ -149,7 +149,7 @@ class MissionODE(om.Group):
                 Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
                 Dynamic.Mission.ALTITUDE_RATE_MAX,
                 Dynamic.Mission.DISTANCE_RATE,
-                'T_required',
+                'thrust_required',
             ])
 
         # add a balance comp to compute throttle based on the altitude rate
@@ -157,7 +157,7 @@ class MissionODE(om.Group):
                            subsys=om.BalanceComp(name=Dynamic.Mission.THROTTLE,
                                                  units="unitless",
                                                  val=np.ones(nn),
-                                                 lhs_name='T_required',
+                                                 lhs_name='thrust_required',
                                                  rhs_name=Dynamic.Mission.THRUST_TOTAL,
                                                  eq_units="lbf",
                                                  normalize=False,

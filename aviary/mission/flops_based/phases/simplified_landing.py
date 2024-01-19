@@ -117,10 +117,10 @@ class LandingGroup(om.Group):
         self.add_subsystem(
             "calcs",
             LandingCalc(),
+            promotes_inputs=[Mission.Landing.TOUCHDOWN_MASS, "rho",
+                             Aircraft.Wing.AREA, Mission.Landing.LIFT_COEFFICIENT_MAX],
             promotes_outputs=[
                 Mission.Landing.GROUND_DISTANCE,
                 Mission.Landing.INITIAL_VELOCITY,
             ],
-            promotes_inputs=[Mission.Landing.TOUCHDOWN_MASS, "rho",
-                             Aircraft.Wing.AREA, Mission.Landing.LIFT_COEFFICIENT_MAX],
         )
