@@ -11,7 +11,7 @@ env:
   EMAIL_USERNAME: ${{ secrets.EMAIL_USERNAME }}
   EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
   EMAIL_FROM: GitHub Actions
-  EMAIL_TO: agency-aviary@nasa.gov
+  EMAIL_TO: ${{ secrets.DESTINATION_EMAIL }}
 
 jobs:
   send_email_on_opened_pr:
