@@ -19,6 +19,8 @@ x.add_system("eom", GROUP, [r"\textbf{EOM}"])
 x.add_system("balance_lift", FUNC, ["BalanceLift"])
 x.add_system("aero", IGROUP, ["CruiseAero", "(alpha~in)"])
 x.add_system("pitch", FUNC, ["Constraints"])
+x.add_system('specific_energy', FUNC, ["specific_energy"])
+x.add_system('alt_rate', FUNC, ["alt_rate"])
 
 # create inputs
 # x.add_input("fc", [Dynamic.Mission.MACH])
@@ -37,6 +39,8 @@ x.add_input("pitch", [
     Aircraft.Wing.AREA,
     Aircraft.Wing.INCIDENCE,
 ])
+x.add_input("specific_energy", [Dynamic.Mission.MASS])
+x.add_input("alt_rate", ["TAS_rate"])
 
 # make connections
 x.connect("atmos", "fc", ["rho", Dynamic.Mission.SPEED_OF_SOUND])
@@ -62,6 +66,11 @@ x.connect("balance_lift", "pitch", ["alpha"])
 x.connect("aero", "eom", [Dynamic.Mission.DRAG])
 x.connect("aero", "pitch", ["CL_max"])
 x.connect("aero", "balance_lift", [Dynamic.Mission.LIFT])
+x.connect("fc", "specific_energy", ["TAS"])
+x.connect("aero", "specific_energy", [Dynamic.Mission.DRAG])
+x.connect("prop", "specific_energy", [Dynamic.Mission.THRUST_MAX_TOTAL])
+x.connect("specific_energy", "alt_rate", [Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS])
+x.connect("fc", "alt_rate", ["TAS"])
 
 # create outputs
 x.add_output("eom", [
@@ -69,6 +78,8 @@ x.add_output("eom", [
     Dynamic.Mission.DISTANCE_RATE,
     "required_lift"
 ], side="right")
+
+x.add_output("alt_rate", [Dynamic.Mission.ALTITUDE_RATE_MAX], side="right")
 
 x.write("descent1_xdsm")
 x.write_sys_specs("descent1_specs")

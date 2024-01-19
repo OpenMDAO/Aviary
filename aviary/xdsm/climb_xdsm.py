@@ -19,6 +19,8 @@ x.add_system("aero", GROUP, ["CruiseAero", "(alpha~in)"])
 x.add_system("eom", GROUP, [r"\textbf{ClimbEOM}"])
 x.add_system("balance_lift", IFUNC, ["BalanceLift"])
 x.add_system("constraints", FUNC, [r"\textbf{Constraints}"])
+x.add_system('specific_energy', FUNC, ["specific_energy"])
+x.add_system('alt_rate', FUNC, ["alt_rate"])
 
 # create inputs
 x.add_input("speeds", [Dynamic.Mission.MACH])
@@ -49,8 +51,10 @@ x.add_input("prop", [
     Aircraft.Engine.SCALE_FACTOR,
 ])
 x.add_input("eom", [Dynamic.Mission.MASS])
+x.add_input("specific_energy", [Dynamic.Mission.MASS])
+x.add_input("alt_rate", ["TAS_rate"])
 
-# make connections
+# make connections6
 x.connect("atmos", "fc", ["rho", Dynamic.Mission.SPEED_OF_SOUND])
 # x.connect("atmos", "prop", [Dynamic.Mission.TEMPERATURE, Dynamic.Mission.STATIC_PRESSURE])
 x.connect("atmos", "constraints", ["rho"])
@@ -71,6 +75,12 @@ x.connect("aero", "balance_lift", [Dynamic.Mission.LIFT])
 x.connect("eom", "balance_lift", ["required_lift"])
 x.connect("balance_lift", "constraints", ["alpha"])
 x.connect("balance_lift", "aero", ["alpha"])
+x.connect("fc", "specific_energy", ["TAS"])
+x.connect("aero", "specific_energy", [Dynamic.Mission.DRAG])
+x.connect("prop", "specific_energy", [Dynamic.Mission.THRUST_MAX_TOTAL])
+x.connect("specific_energy", "alt_rate", [Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS])
+x.connect("fc", "alt_rate", ["TAS"])
+
 
 # create outputs
 x.add_output("eom", [
@@ -85,6 +95,8 @@ x.add_output("aero", [
     Dynamic.Mission.DRAG,
     "CL_max",
 ], side="right")
+
+x.add_output("alt_rate", [Dynamic.Mission.ALTITUDE_RATE_MAX], side="right")
 
 x.write("climb_xdsm")
 x.write_sys_specs("climb_specs")
