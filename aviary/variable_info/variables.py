@@ -132,7 +132,7 @@ class Aircraft:
         FINENESS = 'aircraft:design:fineness'
         FIXED_EQUIPMENT_MASS = 'aircraft:design:fixed_equipment_mass'
         FIXED_USEFUL_LOAD = 'aircraft:design:fixed_useful_load'
-        IJEFF = 'aircraft:design:ijeff'
+        IJEFF = 'ijeff'
         LAMINAR_FLOW_LOWER = 'aircraft:design:laminar_flow_lower'
         LAMINAR_FLOW_UPPER = 'aircraft:design:laminar_flow_upper'
 
@@ -148,7 +148,8 @@ class Aircraft:
         MAX_STRUCTURAL_SPEED = 'aircraft:design:max_structural_speed'
         OPERATING_MASS = 'aircraft:design:operating_mass'
         PART25_STRUCTURAL_CATEGORY = 'aircraft:design:part25_structural_category'
-        RESERVES = 'aircraft:design:reserves'
+        RESERVE_FUEL_ADDITIONAL = 'aircraft:design:reserve_fuel_additional'
+        RESERVE_FUEL_FRACTION = 'aircraft:design:reserve_fuel_fraction'
         SMOOTH_MASS_DISCONTINUITIES = 'aircraft:design:smooth_mass_discontinuities'
         STATIC_MARGIN = 'aircraft:design:static_margin'
         STRUCTURAL_MASS_INCREMENT = 'aircraft:design:structural_mass_increment'
