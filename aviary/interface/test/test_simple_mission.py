@@ -6,7 +6,6 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.subsystems.test.test_dummy_subsystem import ArrayGuessSubsystemBuilder
-from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 
 @use_tempdirs
@@ -131,7 +130,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
         self.assertIsNotNone(prob)
         self.assertFalse(prob.failed)
 
-        cmd = f'aviary dashboard --problem_recorder dymos_solution.db --driver_recorder driver_test.db test_simple_mission'
+        cmd = f'aviary dashboard --problem_recorder dymos_solution.db --driver_recorder driver_test.db {prob.driver._problem()._name}'
         # this only tests that a given command line tool returns a 0 return code. It doesn't
         # check the expected output at all.  The underlying functions that implement the
         # commands should be tested seperately.
