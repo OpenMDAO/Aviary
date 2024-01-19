@@ -1,9 +1,8 @@
 from openmdao.utils.units import valid_units
 from aviary.variable_info.enums import SpeedType, EquationsOfMotion
 
-HEIGHT_ENERGY = EquationsOfMotion.HEIGHT_ENERGY
 TWO_DEGREES_OF_FREEDOM = EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
-SIMPLE = EquationsOfMotion.SIMPLE
+HEIGHT_ENERGY = EquationsOfMotion.HEIGHT_ENERGY
 SOLVED = EquationsOfMotion.SOLVED
 
 
@@ -17,48 +16,25 @@ def check_phase_info(phase_info, mission_method):
 
     # Common key-values for climb, cruise, and descent
     common_entries = {
-        'initial_ref': tuple,
+        'optimize_mach': bool,
+        'optimize_altitude': bool,
+        'solve_for_distance': bool,
+        'initial_mach': tuple,
+        'final_mach': tuple,
+        'mach_bounds': tuple,
+        'initial_altitude': tuple,
+        'final_altitude': tuple,
+        'altitude_bounds': tuple,
+        'throttle_enforcement': str,
+        'constrain_final': bool,
+        'fix_duration': bool,
         'initial_bounds': tuple,
-        'duration_ref': tuple,
         'duration_bounds': tuple,
     }
 
-    # Phase-specific entries
-    climb_specific = {
-        'input_initial': bool,
-        'no_descent': bool,
-        'initial_mach': float,
-        'initial_altitude': tuple,
-        'final_altitude': tuple,
-        'final_mach': float,
-        'fix_range': bool,
-        'fix_initial_time': bool,
-    }
-
-    cruise_specific = {
-        'min_mach': float,
-        'max_mach': float,
-        'required_available_climb_rate': tuple,
-        'mass_f_cruise': tuple,
-        'range_f_cruise': tuple,
-        'fix_final': bool,
-    }
-
-    descent_specific = {
-        'initial_altitude': tuple,
-        'final_altitude': tuple,
-        'initial_mach': float,
-        'final_mach': float,
-        'no_climb': bool,
-        'fix_range': bool,
-    }
-
     # Combine common and phase-specific entries
-    phase_keys_flops = {
+    phase_keys_height_energy = {
         'pre_mission': {'include_takeoff': bool, 'optimize_mass': bool},
-        'climb': {**common_entries, **climb_specific},
-        'cruise': {**common_entries, **cruise_specific},
-        'descent': {**common_entries, **descent_specific},
         'post_mission': {'include_landing': bool}
     }
 
@@ -94,7 +70,7 @@ def check_phase_info(phase_info, mission_method):
         'alt_ref': tuple,
     }
     common_descent = {
-        'input_initial': bool,
+        'input_initial': (bool, dict),
         'EAS_limit': tuple,
         'mach_cruise': float,
         'input_speed_type': SpeedType,
@@ -205,13 +181,7 @@ def check_phase_info(phase_info, mission_method):
     }
 
     phase_keys = {}
-    if mission_method is HEIGHT_ENERGY:
-        for phase in phase_info:
-            if phase != 'pre_mission' and phase != 'post_mission':
-                phase_keys[phase] = {**common_keys, **phase_keys_flops[phase]}
-            else:
-                phase_keys[phase] = phase_keys_flops[phase]
-    elif mission_method is TWO_DEGREES_OF_FREEDOM:
+    if mission_method is TWO_DEGREES_OF_FREEDOM:
         for phase in phase_info:
             if phase != 'pre_mission' and phase != 'post_mission':
                 if phase == 'cruise':
@@ -220,11 +190,17 @@ def check_phase_info(phase_info, mission_method):
                     phase_keys[phase] = {**common_keys, **phase_keys_gasp[phase]}
     elif mission_method is SOLVED:
         return
-    elif mission_method is SIMPLE:
-        return
+    elif mission_method is HEIGHT_ENERGY:
+        for phase in phase_info:
+            if phase != 'pre_mission' and phase != 'post_mission':
+                phase_keys[phase] = {**common_keys, **common_entries}
+            else:
+                phase_keys[phase] = phase_keys_height_energy[phase]
     else:
-        raise ValueError(
-            "Invalid mission_method. Please choose either 'FLOPS', 'GASP', 'simple', or 'solved'.")
+        possible_values = ["'"+e.value+"'" for e in EquationsOfMotion]
+        possible_values[-1] = "or " + possible_values[-1]
+        raise ValueError("Invalid mission_method. Please choose from " +
+                         ", ".join(possible_values) + ".")
 
     # Check if all phases exist in phase_info
     for phase in phase_info:

@@ -39,7 +39,7 @@ class RotationEOM(om.ExplicitComponent):
         self.add_output(Dynamic.Mission.ALTITUDE_RATE, val=np.ones(nn),
                         desc="altitude rate", units="ft/s")
         self.add_output(
-            "distance_rate", val=np.ones(nn), desc="distance rate", units="ft/s"
+            Dynamic.Mission.DISTANCE_RATE, val=np.ones(nn), desc="distance rate", units="ft/s"
         )
         self.add_output(
             "normal_force", val=np.ones(nn), desc="normal forces", units="lbf"
@@ -74,7 +74,7 @@ class RotationEOM(om.ExplicitComponent):
         self.declare_partials(Dynamic.Mission.ALTITUDE_RATE, [
                               "TAS", Dynamic.Mission.FLIGHT_PATH_ANGLE], rows=arange, cols=arange)
         self.declare_partials(
-            "distance_rate", ["TAS", Dynamic.Mission.FLIGHT_PATH_ANGLE], rows=arange, cols=arange
+            Dynamic.Mission.DISTANCE_RATE, ["TAS", Dynamic.Mission.FLIGHT_PATH_ANGLE], rows=arange, cols=arange
         )
 
         self.declare_partials(
@@ -125,7 +125,7 @@ class RotationEOM(om.ExplicitComponent):
         outputs[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE] = np.zeros(nn)
 
         outputs[Dynamic.Mission.ALTITUDE_RATE] = TAS * np.sin(gamma)
-        outputs["distance_rate"] = TAS * np.cos(gamma)
+        outputs[Dynamic.Mission.DISTANCE_RATE] = TAS * np.cos(gamma)
         outputs["normal_force"] = normal_force
 
         outputs["fuselage_pitch"] = gamma * 180 / np.pi - i_wing + alpha
@@ -209,8 +209,9 @@ class RotationEOM(om.ExplicitComponent):
         J[Dynamic.Mission.ALTITUDE_RATE,
             Dynamic.Mission.FLIGHT_PATH_ANGLE] = TAS * np.cos(gamma)
 
-        J["distance_rate", "TAS"] = np.cos(gamma)
-        J["distance_rate", Dynamic.Mission.FLIGHT_PATH_ANGLE] = -TAS * np.sin(gamma)
+        J[Dynamic.Mission.DISTANCE_RATE, "TAS"] = np.cos(gamma)
+        J[Dynamic.Mission.DISTANCE_RATE,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE] = -TAS * np.sin(gamma)
 
         J["normal_force", Dynamic.Mission.MASS] = dNF_dWeight * GRAV_ENGLISH_LBM
         J["normal_force", Dynamic.Mission.LIFT] = dNF_dLift

@@ -53,7 +53,7 @@ class ClimbRates(om.ExplicitComponent):
             desc="rate of change of altitude",
         )
         self.add_output(
-            "distance_rate",
+            Dynamic.Mission.DISTANCE_RATE,
             val=np.zeros(nn),
             units="ft/s",
             desc="rate of change of horizontal distance covered",
@@ -79,7 +79,7 @@ class ClimbRates(om.ExplicitComponent):
                               rows=arange,
                               cols=arange)
         self.declare_partials(
-            "distance_rate",
+            Dynamic.Mission.DISTANCE_RATE,
             ["TAS", Dynamic.Mission.THRUST_TOTAL, Dynamic.Mission.DRAG, Dynamic.Mission.MASS],
             rows=arange,
             cols=arange,
@@ -113,7 +113,7 @@ class ClimbRates(om.ExplicitComponent):
         gamma = np.arcsin((thrust - drag) / weight)
 
         outputs[Dynamic.Mission.ALTITUDE_RATE] = TAS * np.sin(gamma)
-        outputs["distance_rate"] = TAS * np.cos(gamma)
+        outputs[Dynamic.Mission.DISTANCE_RATE] = TAS * np.cos(gamma)
         outputs["required_lift"] = weight * np.cos(gamma)
         outputs[Dynamic.Mission.FLIGHT_PATH_ANGLE] = gamma
 
@@ -142,11 +142,12 @@ class ClimbRates(om.ExplicitComponent):
         J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.MASS] = \
             TAS * np.cos(gamma) * dGamma_dWeight * GRAV_ENGLISH_LBM
 
-        J["distance_rate", "TAS"] = np.cos(gamma)
-        J["distance_rate", Dynamic.Mission.THRUST_TOTAL] = - \
+        J[Dynamic.Mission.DISTANCE_RATE, "TAS"] = np.cos(gamma)
+        J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Mission.THRUST_TOTAL] = - \
             TAS * np.sin(gamma) * dGamma_dThrust
-        J["distance_rate", Dynamic.Mission.DRAG] = -TAS * np.sin(gamma) * dGamma_dDrag
-        J["distance_rate", Dynamic.Mission.MASS] = \
+        J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Mission.DRAG] = - \
+            TAS * np.sin(gamma) * dGamma_dDrag
+        J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Mission.MASS] = \
             -TAS * np.sin(gamma) * dGamma_dWeight * GRAV_ENGLISH_LBM
 
         J["required_lift", Dynamic.Mission.MASS] = (

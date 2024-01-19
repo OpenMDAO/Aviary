@@ -23,7 +23,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
                     "polynomial_control_order": 1,
                     "num_segments": 5,
                     "order": 3,
-                    "solve_for_range": False,
+                    "solve_for_distance": False,
                     "initial_mach": (0.2, "unitless"),
                     "final_mach": (0.72, "unitless"),
                     "mach_bounds": ((0.18, 0.74), "unitless"),
@@ -47,7 +47,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
                     "polynomial_control_order": 1,
                     "num_segments": 5,
                     "order": 3,
-                    "solve_for_range": False,
+                    "solve_for_distance": False,
                     "initial_mach": (0.72, "unitless"),
                     "final_mach": (0.72, "unitless"),
                     "mach_bounds": ((0.7, 0.74), "unitless"),
@@ -71,7 +71,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
                     "polynomial_control_order": 1,
                     "num_segments": 5,
                     "order": 3,
-                    "solve_for_range": False,
+                    "solve_for_distance": False,
                     "initial_mach": (0.72, "unitless"),
                     "final_mach": (0.36, "unitless"),
                     "mach_bounds": ((0.34, 0.74), "unitless"),
@@ -94,7 +94,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
             },
         }
 
-        self.aircraft_definition_file = 'models/test_aircraft/aircraft_for_bench_FwFm_simple.csv'
+        self.aircraft_definition_file = 'models/test_aircraft/aircraft_for_bench_FwFm.csv'
         self.make_plots = False
         self.max_iter = 100
 
@@ -163,17 +163,17 @@ class AircraftMissionTestSuite(unittest.TestCase):
         self.assertFalse(prob.failed)
 
     @require_pyoptsparse(optimizer="IPOPT")
-    def test_mission_solve_for_range(self):
+    def test_mission_solve_for_distance(self):
         modified_phase_info = self.phase_info.copy()
         for phase in ["climb_1", "climb_2", "descent_1"]:
-            modified_phase_info[phase]["user_options"]["solve_for_range"] = True
+            modified_phase_info[phase]["user_options"]["solve_for_distance"] = True
         prob = self.run_mission(modified_phase_info, "IPOPT")
         self.assertFalse(prob.failed)
 
-    def test_mission_solve_for_range(self):
+    def test_mission_solve_for_distance(self):
         modified_phase_info = self.phase_info.copy()
         for phase in ["climb_1", "climb_2", "descent_1"]:
-            modified_phase_info[phase]["user_options"]["solve_for_range"] = True
+            modified_phase_info[phase]["user_options"]["solve_for_distance"] = True
         prob = self.run_mission(modified_phase_info, "SLSQP")
         self.assertFalse(prob.failed)
 

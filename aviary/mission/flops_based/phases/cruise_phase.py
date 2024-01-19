@@ -177,7 +177,7 @@ class Cruise(PhaseBuilderBase):
         num_engines = len(aviary_options.get_val('engine_models'))
         input_initial = user_options.get_val('input_initial')
         mass_f_cruise = user_options.get_val('mass_f_cruise', units='kg')
-        range_f_cruise = user_options.get_val('range_f_cruise', units='m')
+        distance_f_cruise = user_options.get_val('distance_f_cruise', units='m')
         polynomial_control_order = user_options.get_item('polynomial_control_order')[0]
 
         ##############
@@ -212,13 +212,13 @@ class Cruise(PhaseBuilderBase):
             input_initial=input_initial_mass
         )
 
-        input_initial_range = get_initial(input_initial, Dynamic.Mission.RANGE)
-        fix_initial_range = get_initial(fix_initial, Dynamic.Mission.RANGE, True)
+        input_initial_distance = get_initial(input_initial, Dynamic.Mission.DISTANCE)
+        fix_initial_distance = get_initial(fix_initial, Dynamic.Mission.DISTANCE, True)
         phase.add_state(
-            Dynamic.Mission.RANGE, fix_initial=fix_initial_range, fix_final=fix_final,
-            lower=0.0, ref=range_f_cruise, defect_ref=range_f_cruise, units='m',
-            rate_source=Dynamic.Mission.RANGE_RATE,
-            input_initial=input_initial_range
+            Dynamic.Mission.DISTANCE, fix_initial=fix_initial_distance, fix_final=fix_final,
+            lower=0.0, ref=distance_f_cruise, defect_ref=distance_f_cruise, units='m',
+            rate_source=Dynamic.Mission.DISTANCE_RATE,
+            input_initial=input_initial_distance
         )
 
         phase = add_subsystem_variables_to_phase(
@@ -396,7 +396,7 @@ Cruise._add_meta_data('mass_i_cruise', val=1.e4, units='kg')
 
 Cruise._add_meta_data('mass_f_cruise', val=1.e4, units='kg')
 
-Cruise._add_meta_data('range_f_cruise', val=1.e6, units='m')
+Cruise._add_meta_data('distance_f_cruise', val=1.e6, units='m')
 
 Cruise._add_meta_data(
     'required_available_climb_rate', val=None, units='m/s',
@@ -413,7 +413,7 @@ Cruise._add_initial_guess_meta_data(
     desc='initial guess for initial time and duration specified as a tuple')
 
 Cruise._add_initial_guess_meta_data(
-    InitialGuessState('range'),
+    InitialGuessState('distance'),
     desc='initial guess for horizontal distance traveled')
 
 Cruise._add_initial_guess_meta_data(

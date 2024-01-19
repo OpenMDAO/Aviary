@@ -37,10 +37,7 @@ from aviary.mission.flops_based.phases.phase_builder_base import (
     InitialGuessState, PhaseBuilderBase)
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_trajectory_params
-from aviary.variable_info.variables import Dynamic as _Dynamic
-from aviary.variable_info.variables import Mission
-
-Dynamic = _Dynamic.Mission
+from aviary.variable_info.variables import Dynamic, Mission
 
 
 @_init_initial_guess_meta_data
@@ -61,7 +58,7 @@ class LandingApproachToMicP3(PhaseBuilderBase):
             - max_duration (100.0, 's')
             - duration_ref (1.0, 's')
             - initial_ref (10.0, 's')
-            - max_range (1000.0, 'ft')
+            - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
             - altitude_ref (1.0, 'ft')
             - lower_angle_of_attack (-10.0, 'deg')
@@ -145,42 +142,42 @@ class LandingApproachToMicP3(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        max_range, units = user_options.get_item('max_range')
+        distance_max, units = user_options.get_item('distance_max')
 
         phase.add_state(
-            Dynamic.RANGE, fix_initial=False, fix_final=False,
-            upper=0, ref=max_range,
-            defect_ref=max_range, units=units,
-            rate_source=Dynamic.RANGE_RATE)
+            Dynamic.Mission.DISTANCE, fix_initial=False, fix_final=False,
+            upper=0, ref=distance_max,
+            defect_ref=distance_max, units=units,
+            rate_source=Dynamic.Mission.DISTANCE_RATE)
 
         altitude_ref, units = user_options.get_item('altitude_ref')
 
         phase.add_state(
-            Dynamic.ALTITUDE, fix_initial=False, fix_final=False,
+            Dynamic.Mission.ALTITUDE, fix_initial=False, fix_final=False,
             ref=altitude_ref,
             defect_ref=altitude_ref, units=units,
-            rate_source=Dynamic.ALTITUDE_RATE)
+            rate_source=Dynamic.Mission.ALTITUDE_RATE)
 
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.VELOCITY, fix_initial=False, fix_final=False,
+            Dynamic.Mission.VELOCITY, fix_initial=False, fix_final=False,
             lower=0, ref=max_velocity,
             defect_ref=max_velocity, units=units,
-            rate_source=Dynamic.VELOCITY_RATE)
+            rate_source=Dynamic.Mission.VELOCITY_RATE)
 
-        phase.add_control(Dynamic.FLIGHT_PATH_ANGLE, opt=False, fix_initial=True)
+        phase.add_control(Dynamic.Mission.FLIGHT_PATH_ANGLE, opt=False, fix_initial=True)
 
         phase.add_state(
-            Dynamic.MASS, fix_initial=True, fix_final=False,
+            Dynamic.Mission.MASS, fix_initial=True, fix_final=False,
             lower=0.0, ref=5e4, defect_ref=5e4, units='kg',
-            rate_source=Dynamic.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            targets=Dynamic.MASS,
+            rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            targets=Dynamic.Mission.MASS,
         )
 
         phase.add_control(
-            Dynamic.THROTTLE,
-            targets=Dynamic.THROTTLE, units='unitless',
+            Dynamic.Mission.THROTTLE,
+            targets=Dynamic.Mission.THROTTLE, units='unitless',
             opt=False
         )
 
@@ -196,12 +193,12 @@ class LandingApproachToMicP3(PhaseBuilderBase):
         )
 
         phase.add_timeseries_output(
-            Dynamic.DRAG, output_name=Dynamic.DRAG, units='lbf'
+            Dynamic.Mission.DRAG, output_name=Dynamic.Mission.DRAG, units='lbf'
         )
 
         phase.add_timeseries_output(
-            Dynamic.THRUST_TOTAL,
-            output_name=Dynamic.THRUST_TOTAL, units='lbf'
+            Dynamic.Mission.THRUST_TOTAL,
+            output_name=Dynamic.Mission.THRUST_TOTAL, units='lbf'
         )
 
         initial_height, units = user_options.get_item('initial_height')
@@ -212,7 +209,7 @@ class LandingApproachToMicP3(PhaseBuilderBase):
         h = initial_height + airport_altitude
 
         phase.add_boundary_constraint(
-            Dynamic.ALTITUDE, loc='initial', equals=h, ref=h, units=units, linear=True)
+            Dynamic.Mission.ALTITUDE, loc='initial', equals=h, ref=h, units=units, linear=True)
 
         return phase
 
@@ -239,7 +236,7 @@ LandingApproachToMicP3._add_meta_data('duration_ref', val=1., units='s')
 
 LandingApproachToMicP3._add_meta_data('initial_ref', val=10.0, units='s')
 
-LandingApproachToMicP3._add_meta_data('max_range', val=1000., units='ft')
+LandingApproachToMicP3._add_meta_data('distance_max', val=1000., units='ft')
 
 LandingApproachToMicP3._add_meta_data('max_velocity', val=100., units='ft/s')
 
@@ -259,7 +256,7 @@ LandingApproachToMicP3._add_initial_guess_meta_data(
 LandingApproachToMicP3._add_initial_guess_meta_data(InitialGuessState('altitude'))
 
 LandingApproachToMicP3._add_initial_guess_meta_data(
-    InitialGuessControl(Dynamic.FLIGHT_PATH_ANGLE))
+    InitialGuessControl(Dynamic.Mission.FLIGHT_PATH_ANGLE))
 
 
 # @_init_initial_guess_meta_data  # <--- inherited from base class
@@ -281,7 +278,7 @@ class LandingMicP3ToObstacle(LandingApproachToMicP3):
             - max_duration (100.0, 's')
             - duration_ref (1.0, 's')
             - initial_ref (10.0, 's')
-            - max_range (1000.0, 'ft')
+            - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
             - altitude_ref (1.0, 'ft')
             - lower_angle_of_attack (-10.0, 'deg')
@@ -354,9 +351,9 @@ class LandingMicP3ToObstacle(LandingApproachToMicP3):
 
         # at the moment, these state options are the only differences between phases of
         # this class and phases of its base class
-        phase.set_state_options(Dynamic.RANGE, fix_final=True)
-        phase.set_state_options(Dynamic.VELOCITY, fix_final=True)
-        phase.set_state_options(Dynamic.MASS, fix_initial=False)
+        phase.set_state_options(Dynamic.Mission.DISTANCE, fix_final=True)
+        phase.set_state_options(Dynamic.Mission.VELOCITY, fix_final=True)
+        phase.set_state_options(Dynamic.Mission.MASS, fix_initial=False)
 
         return phase
 
@@ -378,7 +375,7 @@ class LandingObstacleToFlare(PhaseBuilderBase):
 
         supported options:
             - max_duration (100.0, 's')
-            - max_range (1000.0, 'ft')
+            - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
             - altitude_ref (1.0, 'ft')
 
@@ -455,51 +452,52 @@ class LandingObstacleToFlare(PhaseBuilderBase):
             fix_initial=True, duration_bounds=(1, max_duration),
             units=units)
 
-        max_range, units = user_options.get_item('max_range')
+        distance_max, units = user_options.get_item('distance_max')
 
         phase.add_state(
-            Dynamic.RANGE, fix_initial=True, lower=0, ref=max_range,
-            defect_ref=max_range, units=units,
-            rate_source=Dynamic.RANGE_RATE)
+            Dynamic.Mission.DISTANCE, fix_initial=True, lower=0, ref=distance_max,
+            defect_ref=distance_max, units=units,
+            rate_source=Dynamic.Mission.DISTANCE_RATE)
 
         altitude_ref, units = user_options.get_item('altitude_ref')
 
         phase.add_state(
-            Dynamic.ALTITUDE, fix_initial=False, lower=0, ref=altitude_ref,
+            Dynamic.Mission.ALTITUDE, fix_initial=False, lower=0, ref=altitude_ref,
             defect_ref=altitude_ref, units=units,
-            rate_source=Dynamic.ALTITUDE_RATE)
+            rate_source=Dynamic.Mission.ALTITUDE_RATE)
 
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.VELOCITY, fix_initial=True, lower=0, ref=max_velocity,
+            Dynamic.Mission.VELOCITY, fix_initial=True, lower=0, ref=max_velocity,
             defect_ref=max_velocity, units=units,
-            rate_source=Dynamic.VELOCITY_RATE)
+            rate_source=Dynamic.Mission.VELOCITY_RATE)
 
-        phase.add_control(Dynamic.FLIGHT_PATH_ANGLE, opt=False, fix_initial=False)
+        phase.add_control(Dynamic.Mission.FLIGHT_PATH_ANGLE,
+                          opt=False, fix_initial=False)
 
         phase.add_state(
-            Dynamic.MASS, fix_initial=False, fix_final=False,
+            Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
             lower=0.0, ref=5e4, defect_ref=5e4, units='kg',
-            rate_source=Dynamic.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            targets=Dynamic.MASS,
+            rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            targets=Dynamic.Mission.MASS,
         )
 
         phase.add_control(
-            Dynamic.THROTTLE,
-            targets=Dynamic.THROTTLE, units='unitless',
+            Dynamic.Mission.THROTTLE,
+            targets=Dynamic.Mission.THROTTLE, units='unitless',
             opt=False
         )
 
         phase.add_control('angle_of_attack', opt=False, units='deg')
 
         phase.add_timeseries_output(
-            Dynamic.DRAG, output_name=Dynamic.DRAG, units='lbf'
+            Dynamic.Mission.DRAG, output_name=Dynamic.Mission.DRAG, units='lbf'
         )
 
         phase.add_timeseries_output(
-            Dynamic.THRUST_TOTAL,
-            output_name=Dynamic.THRUST_TOTAL, units='lbf'
+            Dynamic.Mission.THRUST_TOTAL,
+            output_name=Dynamic.Mission.THRUST_TOTAL, units='lbf'
         )
 
         obstacle_height, units = aviary_options.get_item(
@@ -515,7 +513,7 @@ class LandingObstacleToFlare(PhaseBuilderBase):
         h = obstacle_height + airport_altitude
 
         phase.add_boundary_constraint(
-            Dynamic.ALTITUDE, loc='initial', equals=h, ref=h, units=units, linear=True)
+            Dynamic.Mission.ALTITUDE, loc='initial', equals=h, ref=h, units=units, linear=True)
 
         return phase
 
@@ -538,7 +536,7 @@ class LandingObstacleToFlare(PhaseBuilderBase):
 
 LandingObstacleToFlare._add_meta_data('max_duration', val=100., units='s')
 
-LandingObstacleToFlare._add_meta_data('max_range', val=1000., units='ft')
+LandingObstacleToFlare._add_meta_data('distance_max', val=1000., units='ft')
 
 LandingObstacleToFlare._add_meta_data('max_velocity', val=100., units='ft/s')
 
@@ -550,7 +548,7 @@ LandingObstacleToFlare._add_initial_guess_meta_data(
 LandingObstacleToFlare._add_initial_guess_meta_data(InitialGuessState('altitude'))
 
 LandingObstacleToFlare._add_initial_guess_meta_data(
-    InitialGuessControl(Dynamic.FLIGHT_PATH_ANGLE))
+    InitialGuessControl(Dynamic.Mission.FLIGHT_PATH_ANGLE))
 
 
 @_init_initial_guess_meta_data
@@ -571,7 +569,7 @@ class LandingFlareToTouchdown(PhaseBuilderBase):
             - max_duration (100.0, 's')
             - duration_ref (1.0, 's')
             - initial_ref (10.0, 's')
-            - max_range (1000.0, 'ft')
+            - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
             - altitude_ref (1.0, 'ft')
             - lower_angle_of_attack (-10.0, 'deg')
@@ -654,42 +652,43 @@ class LandingFlareToTouchdown(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        max_range, units = user_options.get_item('max_range')
+        distance_max, units = user_options.get_item('distance_max')
 
         phase.add_state(
-            Dynamic.RANGE, fix_initial=False, lower=0, ref=max_range,
-            defect_ref=max_range, units=units,
-            rate_source=Dynamic.RANGE_RATE)
+            Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=distance_max,
+            defect_ref=distance_max, units=units,
+            rate_source=Dynamic.Mission.DISTANCE_RATE)
 
         altitude_ref, units = user_options.get_item('altitude_ref')
 
         phase.add_state(
-            Dynamic.ALTITUDE, fix_initial=False, fix_final=True,
+            Dynamic.Mission.ALTITUDE, fix_initial=False, fix_final=True,
             lower=0, ref=altitude_ref,
             defect_ref=altitude_ref, units=units,
-            rate_source=Dynamic.ALTITUDE_RATE)
+            rate_source=Dynamic.Mission.ALTITUDE_RATE)
 
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
+            Dynamic.Mission.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
             defect_ref=max_velocity, units=units,
-            rate_source=Dynamic.VELOCITY_RATE)
+            rate_source=Dynamic.Mission.VELOCITY_RATE)
 
-        phase.add_control(Dynamic.FLIGHT_PATH_ANGLE, fix_initial=False, opt=False)
+        phase.add_control(Dynamic.Mission.FLIGHT_PATH_ANGLE,
+                          fix_initial=False, opt=False)
 
         phase.add_state(
-            Dynamic.MASS, fix_initial=False, fix_final=False,
+            Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
             lower=0.0, ref=5e4, defect_ref=5e4, units='kg',
-            rate_source=Dynamic.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            targets=Dynamic.MASS,
+            rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            targets=Dynamic.Mission.MASS,
         )
 
         # TODO: Upper limit is a bit of a hack. It hopefully won't be needed if we
         # can get some other constraints working.
         phase.add_control(
-            Dynamic.THROTTLE,
-            targets=Dynamic.THROTTLE, units='unitless',
+            Dynamic.Mission.THROTTLE,
+            targets=Dynamic.Mission.THROTTLE, units='unitless',
             lower=0.0, upper=0.2,
             opt=True
         )
@@ -707,12 +706,12 @@ class LandingFlareToTouchdown(PhaseBuilderBase):
         )
 
         phase.add_timeseries_output(
-            Dynamic.DRAG, output_name=Dynamic.DRAG, units='lbf'
+            Dynamic.Mission.DRAG, output_name=Dynamic.Mission.DRAG, units='lbf'
         )
 
         phase.add_timeseries_output(
-            Dynamic.THRUST_TOTAL,
-            output_name=Dynamic.THRUST_TOTAL, units='lbf'
+            Dynamic.Mission.THRUST_TOTAL,
+            output_name=Dynamic.Mission.THRUST_TOTAL, units='lbf'
         )
 
         phase.add_timeseries_output(
@@ -753,7 +752,7 @@ LandingFlareToTouchdown._add_meta_data('duration_ref', val=1., units='s')
 
 LandingFlareToTouchdown._add_meta_data('initial_ref', val=10.0, units='s')
 
-LandingFlareToTouchdown._add_meta_data('max_range', val=1000., units='ft')
+LandingFlareToTouchdown._add_meta_data('distance_max', val=1000., units='ft')
 
 LandingFlareToTouchdown._add_meta_data('max_velocity', val=100., units='ft/s')
 
@@ -771,7 +770,7 @@ LandingFlareToTouchdown._add_initial_guess_meta_data(
 LandingFlareToTouchdown._add_initial_guess_meta_data(InitialGuessState('altitude'))
 
 LandingFlareToTouchdown._add_initial_guess_meta_data(
-    InitialGuessControl(Dynamic.FLIGHT_PATH_ANGLE))
+    InitialGuessControl(Dynamic.Mission.FLIGHT_PATH_ANGLE))
 
 
 @_init_initial_guess_meta_data
@@ -791,7 +790,7 @@ class LandingTouchdownToNoseDown(PhaseBuilderBase):
             - max_duration (5.0, 's')
             - duration_ref (1.0, 's')
             - initial_ref (10.0, 's')
-            - max_range (1000.0, 'ft')
+            - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
             - max_angle_of_attack (10.0, 'deg')
 
@@ -869,30 +868,30 @@ class LandingTouchdownToNoseDown(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        max_range, units = user_options.get_item('max_range')
+        distance_max, units = user_options.get_item('distance_max')
 
         phase.add_state(
-            Dynamic.RANGE, fix_initial=False, lower=0, ref=max_range,
-            defect_ref=max_range, units=units,
-            rate_source=Dynamic.RANGE_RATE)
+            Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=distance_max,
+            defect_ref=distance_max, units=units,
+            rate_source=Dynamic.Mission.DISTANCE_RATE)
 
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
+            Dynamic.Mission.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
             defect_ref=max_velocity, units=units,
-            rate_source=Dynamic.VELOCITY_RATE)
+            rate_source=Dynamic.Mission.VELOCITY_RATE)
 
         phase.add_state(
-            Dynamic.MASS, fix_initial=False, fix_final=False,
+            Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
             lower=0.0, ref=5e4, defect_ref=5e4, units='kg',
-            rate_source=Dynamic.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            targets=Dynamic.MASS,
+            rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            targets=Dynamic.Mission.MASS,
         )
 
         phase.add_control(
-            Dynamic.THROTTLE,
-            targets=Dynamic.THROTTLE, units='unitless',
+            Dynamic.Mission.THROTTLE,
+            targets=Dynamic.Mission.THROTTLE, units='unitless',
             opt=False
         )
 
@@ -905,12 +904,12 @@ class LandingTouchdownToNoseDown(PhaseBuilderBase):
             fix_initial=False, ref=max_angle_of_attack)
 
         phase.add_timeseries_output(
-            Dynamic.DRAG, output_name=Dynamic.DRAG, units='lbf'
+            Dynamic.Mission.DRAG, output_name=Dynamic.Mission.DRAG, units='lbf'
         )
 
         phase.add_timeseries_output(
-            Dynamic.THRUST_TOTAL,
-            output_name=Dynamic.THRUST_TOTAL, units='lbf'
+            Dynamic.Mission.THRUST_TOTAL,
+            output_name=Dynamic.Mission.THRUST_TOTAL, units='lbf'
         )
 
         return phase
@@ -938,7 +937,7 @@ LandingTouchdownToNoseDown._add_meta_data('duration_ref', val=1.0, units='s')
 
 LandingTouchdownToNoseDown._add_meta_data('initial_ref', val=10.0, units='s')
 
-LandingTouchdownToNoseDown._add_meta_data('max_range', val=1000.0, units='ft')
+LandingTouchdownToNoseDown._add_meta_data('distance_max', val=1000.0, units='ft')
 
 LandingTouchdownToNoseDown._add_meta_data('max_velocity', val=100.0, units='ft/s')
 
@@ -964,7 +963,7 @@ class LandingNoseDownToStop(PhaseBuilderBase):
         supported options:
             - max_duration
             - duration_ref
-            - max_range
+            - distance_max
             - max_velocity
 
     initial_guesses : AviaryValues (<empty>)
@@ -1041,45 +1040,45 @@ class LandingNoseDownToStop(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        max_range, units = user_options.get_item('max_range')
+        distance_max, units = user_options.get_item('distance_max')
 
         phase.add_state(
-            Dynamic.RANGE, fix_initial=False, fix_final=False,
-            lower=0, ref=max_range,
-            defect_ref=max_range, units=units,
-            rate_source=Dynamic.RANGE_RATE)
+            Dynamic.Mission.DISTANCE, fix_initial=False, fix_final=False,
+            lower=0, ref=distance_max,
+            defect_ref=distance_max, units=units,
+            rate_source=Dynamic.Mission.DISTANCE_RATE)
 
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.VELOCITY, fix_initial=False, fix_final=True,
+            Dynamic.Mission.VELOCITY, fix_initial=False, fix_final=True,
             lower=0, ref=max_velocity,
             defect_ref=max_velocity, units=units,
-            rate_source=Dynamic.VELOCITY_RATE)
+            rate_source=Dynamic.Mission.VELOCITY_RATE)
 
         phase.add_state(
-            Dynamic.MASS, fix_initial=False, fix_final=False,
+            Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
             lower=0.0, ref=5e4, defect_ref=5e4, units='kg',
-            rate_source=Dynamic.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            targets=Dynamic.MASS,
+            rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            targets=Dynamic.Mission.MASS,
         )
 
         # TODO: Energy phase places this under an if num_engines > 0.
         phase.add_control(
-            Dynamic.THROTTLE,
-            targets=Dynamic.THROTTLE, units='unitless',
+            Dynamic.Mission.THROTTLE,
+            targets=Dynamic.Mission.THROTTLE, units='unitless',
             opt=False
         )
 
         phase.add_parameter('angle_of_attack', val=0.0, opt=False, units='deg')
 
         phase.add_timeseries_output(
-            Dynamic.THRUST_TOTAL,
-            output_name=Dynamic.THRUST_TOTAL, units='lbf'
+            Dynamic.Mission.THRUST_TOTAL,
+            output_name=Dynamic.Mission.THRUST_TOTAL, units='lbf'
         )
 
         phase.add_timeseries_output(
-            Dynamic.DRAG, output_name=Dynamic.DRAG, units='lbf'
+            Dynamic.Mission.DRAG, output_name=Dynamic.Mission.DRAG, units='lbf'
         )
 
         return phase
@@ -1107,7 +1106,7 @@ LandingNoseDownToStop._add_meta_data('duration_ref', val=10.0, units='s')
 
 LandingNoseDownToStop._add_meta_data('initial_ref', val=10.0, units='s')
 
-LandingNoseDownToStop._add_meta_data('max_range', val=1000.0, units='ft')
+LandingNoseDownToStop._add_meta_data('distance_max', val=1000.0, units='ft')
 
 LandingNoseDownToStop._add_meta_data('max_velocity', val=100.0, units='ft/s')
 
@@ -1296,7 +1295,7 @@ class LandingTrajectory:
     def _link_phases(self):
         traj: dm.Trajectory = self._traj
 
-        basic_vars = ['time', 'range', 'velocity', 'mass']
+        basic_vars = ['time', 'distance', 'velocity', 'mass']
         ext_vars = basic_vars + ['angle_of_attack']
         full_vars = ext_vars + ['altitude']
 
@@ -1311,7 +1310,7 @@ class LandingTrajectory:
             obstacle_vars = ['mass', 'time', 'altitude', 'angle_of_attack']
             traj.link_phases([p3_obstacle_name, obstacle_name], vars=obstacle_vars)
 
-            pre_obs_vars = obstacle_vars + ['range', 'velocity']
+            pre_obs_vars = obstacle_vars + ['distance', 'velocity']
             traj.link_phases([approach_p3_name, p3_obstacle_name], vars=pre_obs_vars)
 
         flare_name = self._flare_to_touchdown.name

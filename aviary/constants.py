@@ -1,6 +1,6 @@
 import openmdao.utils.units as units
 
-units.add_unit('range_units', '1*m')
+units.add_unit('distance_units', '1*m')
 
 GRAV_METRIC_GASP = 9.81  # m/s^2
 GRAV_ENGLISH_GASP = 32.2  # ft/s^2

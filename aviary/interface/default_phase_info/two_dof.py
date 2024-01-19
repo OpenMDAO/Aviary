@@ -311,7 +311,7 @@ phase_info = {
 }
 
 
-def phase_info_parameterization(phase_info, aviary_inputs):
+def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs):
     """
     Modify the values in the phase_info dictionary to accomodate different values
     for the following mission design inputs: cruise altitude, cruise mach number,
@@ -388,4 +388,4 @@ def phase_info_parameterization(phase_info, aviary_inputs):
 
         phase_info['cruise']['initial_guesses']['mach'] = (mach_cruise, 'unitless')
 
-    return phase_info
+    return phase_info, post_mission_info
