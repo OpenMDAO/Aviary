@@ -691,7 +691,7 @@ class AviaryProblem(om.Problem):
             promotes_inputs=["t_init_gear", "t_init_flaps"],
         )
 
-    def _get_simple_phase(self, phase_name, phase_idx):
+    def _get_height_energy_phase(self, phase_name, phase_idx):
         base_phase_options = self.phase_info[phase_name]
         fix_duration = base_phase_options['user_options']['fix_duration']
 
@@ -1053,7 +1053,7 @@ class AviaryProblem(om.Problem):
         elif self.mission_method is HEIGHT_ENERGY:
             for phase_idx, phase_name in enumerate(phases):
                 phase = traj.add_phase(
-                    phase_name, self._get_simple_phase(phase_name, phase_idx))
+                    phase_name, self._get_height_energy_phase(phase_name, phase_idx))
                 add_subsystem_timeseries_outputs(phase, phase_name)
 
             # loop through phase_info and external subsystems
