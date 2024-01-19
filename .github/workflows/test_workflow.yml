@@ -106,6 +106,7 @@ jobs:
         with:
           auto-update-conda: true
           python-version: ${{ matrix.PY }}
+          channels: conda-forge
 
       - name: Install dependencies
         shell: bash -l {0}
@@ -232,7 +233,7 @@ jobs:
           echo "Build the docs"
           echo "============================================================="
           bash build_book.sh
-          
+
       - name: Display doc build reports
         continue-on-error: True
         if: matrix.MAKE_DOCS

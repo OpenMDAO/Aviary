@@ -54,6 +54,7 @@ jobs:
         with:
           auto-update-conda: true
           python-version: ${{ matrix.PY }}
+          channels: conda-forge
 
       - name: Checkout Aviary
         uses: actions/checkout@v2
