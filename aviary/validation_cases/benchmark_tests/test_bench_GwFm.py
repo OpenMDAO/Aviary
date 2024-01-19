@@ -292,7 +292,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
                     "initial_bounds": ((0.0, 0.0), "min"),
                     "duration_bounds": ((5.0, 50.0), "min"),
                     "no_descent": True,
-                    "add_initial_mass_constraint": False,
+                    "add_initial_mass_constraint": True,
                 },
                 "initial_guesses": {"times": ([0, 40.0], "min")},
             },
