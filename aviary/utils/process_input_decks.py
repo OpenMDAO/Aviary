@@ -242,9 +242,25 @@ def initial_guessing(aircraft_values: AviaryValues()):
     tuple: Updated aircraft values and initial guesses.
     """
     problem_type = aircraft_values.get_val('problem_type')
-    reserves = aircraft_values.get_val(
-        Aircraft.Design.RESERVES) if initial_guesses['reserves'] == 0 else initial_guesses['reserves']
     num_pax = aircraft_values.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)
+    reserve_val = aircraft_values.get_val(
+        Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm')
+    reserve_frac = aircraft_values.get_val(
+        Aircraft.Design.RESERVE_FUEL_FRACTION, units='unitless')
+
+    reserves = initial_guesses['reserves']
+    if reserves < 0.0:
+        raise ValueError(
+            'initial_guesses["reserves"] must be greater than or equal to 0.')
+    elif reserves == 0:
+        reserves += reserve_val
+        reserves += (reserve_frac * (num_pax * initial_guesses['fuel_burn_per_passenger_mile'] *
+                                     aircraft_values.get_val(Mission.Design.RANGE, units='NM')))
+    elif reserves < 10:
+        reserves *= (num_pax * initial_guesses['fuel_burn_per_passenger_mile'] *
+                     aircraft_values.get_val(Mission.Design.RANGE, units='NM'))
+
+    initial_guesses['reserves'] = reserves
 
     if Mission.Summary.GROSS_MASS in aircraft_values:
         mission_mass = aircraft_values.get_val(Mission.Summary.GROSS_MASS, units='lbm')
@@ -256,11 +272,6 @@ def initial_guessing(aircraft_values: AviaryValues()):
             Mission.Summary.CRUISE_MASS_FINAL, units='lbm')
     else:
         cruise_mass_final = initial_guesses['cruise_mass_final']
-
-    if reserves < 0:
-        reserves *= -(num_pax *
-                      initial_guesses['fuel_burn_per_passenger_mile'] * aircraft_values.get_val(Mission.Design.RANGE, units='NM'))
-    initial_guesses['reserves'] = reserves
 
     # takeoff mass not given
     if mission_mass <= 0:

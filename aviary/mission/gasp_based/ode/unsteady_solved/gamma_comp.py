@@ -15,16 +15,16 @@ class GammaComp(om.ExplicitComponent):
     def setup(self):
         nn = self.options["num_nodes"]
 
-        self.add_input("dh_dr", shape=nn, units="m/range_units",
+        self.add_input("dh_dr", shape=nn, units="m/distance_units",
                        desc="change in altitude wrt range")
 
-        self.add_input("d2h_dr2", shape=nn, units="m/range_units**2",
+        self.add_input("d2h_dr2", shape=nn, units="m/distance_units**2",
                        desc="second derivative of altitude wrt range")
 
         self.add_output(Dynamic.Mission.FLIGHT_PATH_ANGLE, shape=nn, units="rad",
                         desc="flight path angle")
 
-        self.add_output("dgam_dr", shape=nn, units="rad/range_units",
+        self.add_output("dgam_dr", shape=nn, units="rad/distance_units",
                         desc="change in flight path angle per unit range traversed")
 
     def setup_partials(self):

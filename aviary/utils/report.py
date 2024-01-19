@@ -234,7 +234,7 @@ def report_benchmark_comparison(
     #     check_val = no_size_yes_pyCycle
     if base == 'FLOPS':
         check_val = FLOPS_base
-        distance_name = 'traj.descent.timeseries.states:range'
+        distance_name = 'traj.descent.timeseries.states:distance'
         landing_dist_name = Mission.Landing.GROUND_DISTANCE
     else:
         distance_name = "traj.desc2.timeseries.states:distance"
