@@ -17,7 +17,6 @@ on:
 jobs:
 
   pre_commit:
-    if: github.repository_owner == 'OpenMDAO'
     # run pre-commit checks
     runs-on: ubuntu-latest
 
@@ -29,7 +28,6 @@ jobs:
     - uses: pre-commit/action@v3.0.0
 
   test_ubuntu:
-    if: github.repository_owner == 'OpenMDAO'
     runs-on: ubuntu-latest
 
     timeout-minutes: 90

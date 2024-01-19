@@ -17,7 +17,6 @@ on:
 jobs:
 
   test_ubuntu_no_dev_install:
-    if: github.repository_owner == 'OpenMDAO'
     runs-on: ubuntu-latest
 
     timeout-minutes: 90
