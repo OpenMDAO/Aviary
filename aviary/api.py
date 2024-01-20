@@ -145,5 +145,6 @@ from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBas
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
 
 # Testing
+# NOTE these load every FLOPS validation test case, every Avairy run
 from aviary.validation_cases.validation_tests import get_flops_inputs, get_flops_outputs
 from aviary.validation_cases.validation_data.flops_data.FLOPS_Test_Data import FLOPS_Test_Data

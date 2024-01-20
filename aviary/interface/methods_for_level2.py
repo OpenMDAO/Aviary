@@ -39,7 +39,7 @@ from aviary.mission.gasp_based.polynomial_fit import PolynomialFit
 from aviary.subsystems.premission import CorePreMission
 from aviary.mission.gasp_based.ode.breguet_cruise_ode import BreguetCruiseODESolution
 from aviary.utils.functions import set_aviary_initial_values, Null, create_opts2vals, add_opts2vals, promote_aircraft_and_mission_vars
-from aviary.utils.process_input_decks import create_vehicle
+from aviary.utils.process_input_decks import create_vehicle, update_GASP_options
 from aviary.utils.preprocessors import preprocess_crewpayload
 from aviary.interface.utils.check_phase_info import check_phase_info
 from aviary.utils.aviary_values import AviaryValues
@@ -146,7 +146,7 @@ class AviaryProblem(om.Problem):
 
         self.analysis_scheme = analysis_scheme
 
-    def load_inputs(self, input_filename, phase_info=None, engine_builder=None):
+    def load_inputs(self, aviary_inputs, phase_info=None, engine_builder=None):
         """
         This method loads the aviary_values inputs and options that the
         user specifies. They could specify files to load and values to
@@ -159,13 +159,21 @@ class AviaryProblem(om.Problem):
         """
         ## LOAD INPUT FILE ###
         self.engine_builder = engine_builder
-        self.aviary_inputs, self.initial_guesses = create_vehicle(input_filename)
 
-        aviary_inputs = self.aviary_inputs
+        # Create AviaryValues object from file (or process existing AviaryValues object
+        # with default values from metadata) and generate initial guesses
+        aviary_inputs, initial_guesses = create_vehicle(aviary_inputs)
 
+        # pull which methods will be used for subsystems and mission
         self.mission_method = mission_method = aviary_inputs.get_val(
             Settings.EQUATIONS_OF_MOTION)
         self.mass_method = mass_method = aviary_inputs.get_val(Settings.MASS_METHOD)
+
+        if mission_method is TWO_DEGREES_OF_FREEDOM or mass_method is GASP:
+            aviary_inputs, initial_guesses = update_GASP_options(aviary_inputs,
+                                                                 initial_guesses)
+        self.aviary_inputs = aviary_inputs
+        self.initial_guesses = initial_guesses
 
         if mission_method is TWO_DEGREES_OF_FREEDOM:
             aviary_inputs.set_val(Mission.Summary.CRUISE_MASS_FINAL,
