@@ -7060,6 +7060,18 @@ add_meta_data(
 )
 
 add_meta_data(
+    Mission.Takeoff.FINAL_MACH,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None,
+                     },
+    units='unitless',
+    desc='Mach number of aircraft after taking off and '
+    'clearing a 35 foot obstacle'
+)
+
+add_meta_data(
     Mission.Takeoff.FINAL_MASS,
     meta_data=_MetaData,
     historical_name={"GASP": None,
