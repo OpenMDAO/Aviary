@@ -6,6 +6,10 @@ from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
 from aviary.subsystems.mass.mass_builder import CoreMassBuilder
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData, Mission
+from aviary.variable_info.enums import LegacyCode
+
+
+GASP = LegacyCode.GASP
 
 throttle_max = 1.0
 throttle_climb = 0.956
@@ -13,9 +17,9 @@ throttle_cruise = 0.930
 throttle_idle = 0.0
 
 prop = CorePropulsionBuilder('core_propulsion', BaseMetaData)
-mass = CoreMassBuilder('core_mass', BaseMetaData, 'GASP')
-aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, 'GASP')
-geom = CoreGeometryBuilder('core_geometry', BaseMetaData, 'GASP')
+mass = CoreMassBuilder('core_mass', BaseMetaData, GASP)
+aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, GASP)
+geom = CoreGeometryBuilder('core_geometry', BaseMetaData, GASP)
 
 default_premission_subsystems = [prop, geom, aero, mass]
 default_mission_subsystems = [aero, prop]
@@ -302,7 +306,7 @@ phase_info = {
 }
 
 
-def phase_info_parameterization(phase_info, aviary_inputs):
+def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs):
     """
     Modify the values in the phase_info dictionary to accomodate different values
     for the following mission design inputs: cruise altitude, cruise mach number,
@@ -379,4 +383,4 @@ def phase_info_parameterization(phase_info, aviary_inputs):
 
         phase_info['cruise']['initial_guesses']['mach'] = (mach_cruise, 'unitless')
 
-    return phase_info
+    return phase_info, post_mission_info

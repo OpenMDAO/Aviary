@@ -80,7 +80,7 @@ class FlightPathEOM(om.ExplicitComponent):
             self.add_input("alpha", val=np.ones(nn), desc="angle of attack", units="deg")
 
         self.add_output(
-            "distance_rate",
+            Dynamic.Mission.DISTANCE_RATE,
             val=np.ones(nn),
             desc="distance rate",
             units="ft/s",
@@ -157,7 +157,7 @@ class FlightPathEOM(om.ExplicitComponent):
             )
 
         self.declare_partials(
-            "distance_rate", ["TAS", Dynamic.Mission.FLIGHT_PATH_ANGLE], rows=arange, cols=arange
+            Dynamic.Mission.DISTANCE_RATE, ["TAS", Dynamic.Mission.FLIGHT_PATH_ANGLE], rows=arange, cols=arange
         )
         # self.declare_partials("alpha_rate", ["*"], val=0.0)
         self.declare_partials(
@@ -211,7 +211,7 @@ class FlightPathEOM(om.ExplicitComponent):
             )
             outputs[Dynamic.Mission.ALTITUDE_RATE] = TAS * np.sin(gamma)
 
-        outputs["distance_rate"] = TAS * np.cos(gamma)
+        outputs[Dynamic.Mission.DISTANCE_RATE] = TAS * np.cos(gamma)
 
         outputs["normal_force"] = normal_force
 
@@ -343,8 +343,9 @@ class FlightPathEOM(om.ExplicitComponent):
             J["load_factor", Aircraft.Wing.INCIDENCE] = dTAcF_dIwing / \
                 (weight * np.cos(gamma))
 
-        J["distance_rate", "TAS"] = np.cos(gamma)
-        J["distance_rate", Dynamic.Mission.FLIGHT_PATH_ANGLE] = -TAS * np.sin(gamma)
+        J[Dynamic.Mission.DISTANCE_RATE, "TAS"] = np.cos(gamma)
+        J[Dynamic.Mission.DISTANCE_RATE,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE] = -TAS * np.sin(gamma)
 
         J["normal_force", Dynamic.Mission.MASS] = dNF_dWeight * GRAV_ENGLISH_LBM
         J["normal_force", Dynamic.Mission.LIFT] = dNF_dLift

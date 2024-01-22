@@ -8,7 +8,7 @@ from aviary.subsystems.mass.gasp_based.equipment_and_useful_load import \
     EquipAndUsefulLoadMass
 from aviary.variable_info.options import get_option_defaults
 from aviary.utils.test_utils.IO_test_util import assert_match_spec, skipIfMissingXDSM
-from aviary.variable_info.enums import GASP_Engine_Type
+from aviary.variable_info.enums import GASPEngineType
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -181,7 +181,7 @@ class FixedEquipMassTestCase3(unittest.TestCase):
 
         options = get_option_defaults()
         options.set_val(Aircraft.Engine.TYPE,
-                        val=[GASP_Engine_Type.RECIP_CARB], units='unitless')
+                        val=[GASPEngineType.RECIP_CARB], units='unitless')
         options.set_val(Aircraft.LandingGear.FIXED_GEAR,
                         val=False, units='unitless')
 
@@ -439,7 +439,7 @@ class FixedEquipMassTestCase6smooth(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=5, units='unitless')
         options.set_val(Aircraft.Engine.TYPE,
-                        val=[GASP_Engine_Type.RECIP_CARB], units='unitless')
+                        val=[GASPEngineType.RECIP_CARB], units='unitless')
         options.set_val(Aircraft.LandingGear.FIXED_GEAR,
                         val=False, units='unitless')
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES,

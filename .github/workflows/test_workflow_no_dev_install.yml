@@ -11,10 +11,12 @@ on:
   merge_group:
     branches: [ main ]
 
+  # Allow running the workflow manually from the Actions tab
+  workflow_dispatch:
+
 jobs:
 
   test_ubuntu_no_dev_install:
-    if: github.repository_owner == 'OpenMDAO'
     runs-on: ubuntu-latest
 
     timeout-minutes: 90
@@ -54,6 +56,7 @@ jobs:
         with:
           auto-update-conda: true
           python-version: ${{ matrix.PY }}
+          channels: conda-forge
 
       - name: Checkout Aviary
         uses: actions/checkout@v2
@@ -65,7 +68,7 @@ jobs:
           echo "Install Aviary"
           echo "============================================================="
           pip install packaging
-          pip install .[test]
+          pip install .[all]
 
       - name: Display conda environment info
         shell: bash -l {0}

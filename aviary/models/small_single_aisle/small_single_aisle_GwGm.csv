@@ -14,7 +14,8 @@ aircraft:design:drag_increment,0.0018,unitless
 aircraft:design:equipment_mass_coefficients,778,0.06,0.112,0.14,1349,1.65,397,9071,7.6,3,50,6,12,unitless
 aircraft:design:max_structural_speed,402.5,mi/h
 aircraft:design:part25_structural_category,3,unitless
-aircraft:design:reserves,-0.125,unitless
+aircraft:design:reserve_fuel_additional,0,lbm
+aircraft:design:reserve_fuel_fraction,0.125,unitless
 aircraft:design:static_margin,0.05,unitless
 aircraft:design:structural_mass_increment,0,lbm
 aircraft:design:supercritical_drag_shift,0.025,unitless
@@ -142,6 +143,8 @@ mission:summary:gross_mass,124780
 mission:takeoff:decision_speed_increment,10,kn
 mission:takeoff:rotation_speed_increment,5,kn
 mission:taxi:duration,0.3333,h
+settings:equations_of_motion,2DOF
+settings:mass_method,GASP
 
 # Initial Guesses
 actual_takeoff_mass,0

@@ -72,7 +72,7 @@ if with_EXE_Comps:
 eom_output_list = [
     Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
     Dynamic.Mission.ALTITUDE_RATE,
-    "distance_rate",
+    Dynamic.Mission.DISTANCE_RATE,
     "alpha_rate",
     "normal_force",
     "fuselage_pitch",

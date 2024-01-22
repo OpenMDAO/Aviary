@@ -45,8 +45,9 @@ class RunScriptTest(unittest.TestCase):
         This method is called once before starting the tests and is used to
         populate the 'run_files' attribute with a list of run scripts.
         """
-        cls.base_directory = "../external_subsystems"  # Adjust the path as necessary
-        cls.run_files = cls.find_run_files(cls.base_directory)
+        base_directory = os.path.join(os.path.dirname(
+            os.path.dirname(os.path.abspath(__file__))), ".")
+        cls.run_files = cls.find_run_files(base_directory)
 
     @staticmethod
     def find_run_files(base_dir):
@@ -84,12 +85,13 @@ class RunScriptTest(unittest.TestCase):
         Exception
             Any exception other than ImportError or TimeoutExpired that occurs while running the script.
         """
-        try:
-            subprocess.check_call(['python', script_path], timeout=10)
-        except subprocess.TimeoutExpired:
-            pass  # Test passes if it runs longer than 10 seconds
-        except subprocess.CalledProcessError as e:
-            if 'ImportError' in str(e):
+        proc = subprocess.Popen(['python', script_path],
+                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc.wait()
+        (stdout, stderr) = proc.communicate()
+
+        if proc.returncode != 0:
+            if 'ImportError' in str(stderr):
                 self.skipTest(f"Skipped {script_path.name} due to ImportError")
             else:
                 raise

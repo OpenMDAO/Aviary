@@ -2,14 +2,12 @@ import unittest
 
 import openmdao.api as om
 
-from aviary.interface.default_phase_info.flops import default_mission_subsystems
+from aviary.interface.default_phase_info.height_energy import default_mission_subsystems
 from aviary.mission.flops_based.ode.landing_ode import FlareODE
 from aviary.models.N3CC.N3CC_data import (
     detailed_landing_flare, inputs, landing_subsystem_options)
 from aviary.validation_cases.validation_tests import do_validation_test
-from aviary.variable_info.variables import Dynamic as _Dynamic
-
-Dynamic = _Dynamic.Mission
+from aviary.variable_info.variables import Dynamic
 
 
 class FlareODETest(unittest.TestCase):
@@ -39,15 +37,15 @@ class FlareODETest(unittest.TestCase):
             output_validation_data=detailed_landing_flare,
             input_keys=[
                 'angle_of_attack',
-                Dynamic.FLIGHT_PATH_ANGLE,
-                Dynamic.VELOCITY,
-                Dynamic.MASS,
-                Dynamic.LIFT,
-                Dynamic.THRUST_TOTAL,
-                Dynamic.DRAG],
+                Dynamic.Mission.FLIGHT_PATH_ANGLE,
+                Dynamic.Mission.VELOCITY,
+                Dynamic.Mission.MASS,
+                Dynamic.Mission.LIFT,
+                Dynamic.Mission.THRUST_TOTAL,
+                Dynamic.Mission.DRAG],
             output_keys=[
-                Dynamic.RANGE_RATE,
-                Dynamic.ALTITUDE_RATE],
+                Dynamic.Mission.DISTANCE_RATE,
+                Dynamic.Mission.ALTITUDE_RATE],
             tol=1e-2, atol=5e-9, rtol=5e-9,
             check_values=False, check_partials=True)
 

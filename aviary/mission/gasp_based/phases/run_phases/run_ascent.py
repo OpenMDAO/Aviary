@@ -5,7 +5,7 @@ from aviary.mission.gasp_based.phases.ascent_phase import get_ascent
 from aviary.mission.gasp_based.polynomial_fit import PolynomialFit
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-from aviary.interface.default_phase_info.flops import default_mission_subsystems
+from aviary.interface.default_phase_info.height_energy import default_mission_subsystems
 
 
 def run_ascent(make_plots=False):

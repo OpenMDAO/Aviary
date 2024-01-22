@@ -4,11 +4,9 @@ Define meta data associated with variables in the Aviary data hierarchy.
 from copy import deepcopy
 from pathlib import Path
 
-import numpy as np
-
 from aviary.utils.develop_metadata import add_meta_data
-from aviary.variable_info.enums import Flap_Type, GASP_Engine_Type
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.enums import EquationsOfMotion, FlapType, GASPEngineType, LegacyCode, Verbosity
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 # ---------------------------
 # Meta data associated with variables in the aircraft data hierarchy.
@@ -1062,7 +1060,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.IJEFF,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.ijeff',
+    historical_name={"GASP": 'INGASP.IJEFF',
                      "FLOPS": None,
                      "LEAPS1": None
                      },
@@ -1197,16 +1195,31 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.RESERVES,
+    Aircraft.Design.RESERVE_FUEL_ADDITIONAL,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.FRESF',
                      "FLOPS": None,
                      "LEAPS1": None
                      },
     option=True,
+    units="lbm",
+    desc='required fuel reserves: directly in lbm',
+    default_value=0,
+)
+
+add_meta_data(
+    Aircraft.Design.RESERVE_FUEL_FRACTION,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    option=True,
     units="unitless",
-    desc='required fuel reserves: given either as a proportion of mission fuel'
-    '(<0) or directly in lbf (>10)',
+    desc='required fuel reserves: given as a proportion of mission fuel. This value must be nonnegative.\
+          If it is 0.5, the reserve fuel is half of the mission fuel (one third of the total fuel). Note\
+          it can be greater than 1. If it is 2, there would be twice as much reserve fuel as mission fuel\
+          (the total fuel carried would be 1/3 for the mission and 2/3 for the reserve)',
     default_value=0,
 )
 
@@ -2038,8 +2051,8 @@ add_meta_data(
                      "LEAPS1": None
                      },
     option=True,
-    default_value=GASP_Engine_Type.TURBOJET,
-    types=GASP_Engine_Type,
+    default_value=GASPEngineType.TURBOJET,
+    types=GASPEngineType,
     units="unitless",
     desc='specifies engine type used for engine mass calculation',
 )
@@ -4886,8 +4899,8 @@ add_meta_data(
                      "LEAPS1": None
                      },
     units="unitless",
-    default_value=Flap_Type.DOUBLE_SLOTTED,
-    types=Flap_Type,
+    default_value=FlapType.DOUBLE_SLOTTED,
+    types=FlapType,
     option=True,
     desc='Set the flap type. Available choices are: plain, split, single_slotted, '
     'double_slotted, triple_slotted, fowler, and double_slotted_fowler. '
@@ -5855,7 +5868,7 @@ add_meta_data(
     Dynamic.Mission.DISTANCE,
     meta_data=_MetaData,
     historical_name={"GASP": None,
-                     "FLOPS": None,
+                     "FLOPS": 'range',
                      "LEAPS1": None
                      },
     units='NM',
@@ -5866,7 +5879,7 @@ add_meta_data(
     Dynamic.Mission.DISTANCE_RATE,
     meta_data=_MetaData,
     historical_name={"GASP": None,
-                     "FLOPS": None,
+                     "FLOPS": 'range_rate',
                      "LEAPS1": None
                      },
     units='NM/s',
@@ -6078,29 +6091,6 @@ add_meta_data(
                      },
     units='lbm/h',
     desc='Current total rate of nitrous oxide (NOx) production by the vehicle'
-)
-
-add_meta_data(
-    Dynamic.Mission.RANGE,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='nm',
-    desc='Current cumulative ground distance the vehicle has flown'
-)
-
-add_meta_data(
-    Dynamic.Mission.RANGE_RATE,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='nm/s',
-    desc='Current rate of change in cumulative ground distance (ground velocity) for '
-         'the vehicle'
 )
 
 add_meta_data(
@@ -7070,6 +7060,18 @@ add_meta_data(
 )
 
 add_meta_data(
+    Mission.Takeoff.FINAL_MACH,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None,
+                     },
+    units='unitless',
+    desc='Mach number of aircraft after taking off and '
+    'clearing a 35 foot obstacle'
+)
+
+add_meta_data(
     Mission.Takeoff.FINAL_MASS,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -7287,6 +7289,60 @@ add_meta_data(
     default_value=0.0001,
 )
 
+#  .----------------.  .----------------.  .----------------.  .----------------.  .----------------.  .-----------------. .----------------.  .----------------.
+# | .--------------. || .--------------. || .--------------. || .--------------. || .--------------. || .--------------. || .--------------. || .--------------. |
+# | |    _______   | || |  _________   | || |  _________   | || |  _________   | || |     _____    | || | ____  _____  | || |    ______    | || |    _______   | |
+# | |   /  ___  |  | || | |_   ___  |  | || | |  _   _  |  | || | |  _   _  |  | || |    |_   _|   | || ||_   \|_   _| | || |  .' ___  |   | || |   /  ___  |  | |
+# | |  |  (__ \_|  | || |   | |_  \_|  | || | |_/ | | \_|  | || | |_/ | | \_|  | || |      | |     | || |  |   \ | |   | || | / .'   \_|   | || |  |  (__ \_|  | |
+# | |   '.___`-.   | || |   |  _|  _   | || |     | |      | || |     | |      | || |      | |     | || |  | |\ \| |   | || | | |    ____  | || |   '.___`-.   | |
+# | |  |`\____) |  | || |  _| |___/ |  | || |    _| |_     | || |    _| |_     | || |     _| |_    | || | _| |_\   |_  | || | \ `.___]  _| | || |  |`\____) |  | |
+# | |  |_______.'  | || | |_________|  | || |   |_____|    | || |   |_____|    | || |    |_____|   | || ||_____|\____| | || |  `._____.'   | || |  |_______.'  | |
+# | |              | || |              | || |              | || |              | || |              | || |              | || |              | || |              | |
+# | '--------------' || '--------------' || '--------------' || '--------------' || '--------------' || '--------------' || '--------------' || '--------------' |
+#  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'
+
+add_meta_data(
+    Settings.EQUATIONS_OF_MOTION,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    desc='Sets which equations of motion Aviary will use in mission analysis',
+    option=True,
+    types=EquationsOfMotion,
+    default_value=None,
+)
+
+add_meta_data(
+    Settings.MASS_METHOD,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    desc="Sets which legacy code's methods will be used for mass estimation",
+    option=True,
+    types=LegacyCode,
+    default_value=None
+)
+
+add_meta_data(
+    Settings.VERBOSITY,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    desc='Sets how much information Aviary outputs when run. Options include:'
+         '0. QUIET: All output except errors are suppressed'
+         '1. BRIEF: Only important information is output, in human-readable format'
+         '2. VERBOSE: All avaliable informating is output, in human-readable format'
+         '3. DEBUG: Intermediate status and calculation outputs, no formatting requirement',
+    option=True,
+    types=Verbosity,
+    default_value=Verbosity.BRIEF
+)
 
 # here we create a copy of the Aviary-core metadata. The reason for this copy is that if we simply imported the Aviary _MetaData in all the external subsystem extensions, we would be modifying the original and the original _MetaData in the core of Aviary could get altered in undesirable ways. By importing this copy to the API the user modifies a new MetaData designed just for their purposes.
 CoreMetaData = deepcopy(_MetaData)

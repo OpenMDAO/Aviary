@@ -123,7 +123,7 @@ data.set_val(
 
 data.set_val(
     # state_rates:range
-    Dynamic.Mission.RANGE_RATE,
+    Dynamic.Mission.DISTANCE_RATE,
     val=[163.776550884386, 232.775306059091, 117.631414542995, ],
     units='m/s',
 )

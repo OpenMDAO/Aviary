@@ -91,8 +91,6 @@ class FinalConditionsTest(unittest.TestCase):
             Mission.Design.THRUST_TAKEOFF_PER_ENG, val=28928.0, units="lbf")  # check
         self.prob.model.set_input_defaults(
             Mission.Takeoff.LIFT_OVER_DRAG, val=17.354, units='unitless')  # check
-        self.prob.model.set_input_defaults(
-            Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, val=0.0175, units='unitless')  # check
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -145,8 +143,6 @@ class TakeoffGroupTest(unittest.TestCase):
             Mission.Design.THRUST_TAKEOFF_PER_ENG, val=28928.0, units="lbf")  # check
         self.prob.model.set_input_defaults(
             Mission.Takeoff.LIFT_OVER_DRAG, val=17.354, units='unitless')  # check
-        self.prob.model.set_input_defaults(
-            Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, val=0.0175, units='unitless')  # check
         self.prob.model.set_input_defaults(
             Dynamic.Mission.ALTITUDE, val=0, units="ft")  # check
 
