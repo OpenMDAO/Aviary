@@ -789,7 +789,7 @@ class AeroSetup(om.Group):
         self.add_subsystem("xlifts", Xlifts(num_nodes=nn), promotes=["*"])
 
         # implements EAERO
-        interp = om.MetaModelStructuredComp(method="slinear")
+        interp = om.MetaModelStructuredComp(method="2D-slinear")
         interp.add_input("bbar", 0.0, units="unitless", training_data=xbbar)
         interp.add_input("hbar", 0.0, units="unitless", training_data=xhbar)
         interp.add_output("sigma", 0.0, units="unitless", training_data=sig1)
