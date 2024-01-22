@@ -2384,47 +2384,62 @@ class AviaryProblem(om.Problem):
             'landing', landing, promotes_inputs=['aircraft:*', 'mission:*'],
             promotes_outputs=['mission:*'])
 
-        self.model.connect('traj.descent.states:mass',
+        last_flight_phase_name = list(self.phase_info.keys())[-1]
+        if self.phase_info[last_flight_phase_name]['user_options'].get('use_polynomial_control', True):
+            control_type_string = 'polynomial_control_values'
+        else:
+            control_type_string = 'control_values'
+
+        self.model.connect(f'traj.{last_flight_phase_name}.states:mass',
                            Mission.Landing.TOUCHDOWN_MASS, src_indices=[-1])
-        self.model.connect('traj.descent.control_values:altitude', Mission.Landing.INITIAL_ALTITUDE,
+        self.model.connect(f'traj.{last_flight_phase_name}.{control_type_string}:altitude', Mission.Landing.INITIAL_ALTITUDE,
                            src_indices=[0])
 
     def _add_post_mission_takeoff_systems(self):
-        connect_takeoff_to_climb = not self.phase_info['climb']['user_options'].get(
+        first_flight_phase_name = list(self.phase_info.keys())[0]
+        connect_takeoff_to_climb = not self.phase_info[first_flight_phase_name]['user_options'].get(
             'add_initial_mass_constraint', True)
 
         if connect_takeoff_to_climb:
             self.model.connect(Mission.Takeoff.FINAL_MASS,
-                               'traj.climb.initial_states:mass')
+                               f'traj.{first_flight_phase_name}.initial_states:mass')
             self.model.connect(Mission.Takeoff.GROUND_DISTANCE,
-                               'traj.climb.initial_states:distance')
+                               f'traj.{first_flight_phase_name}.initial_states:distance')
 
-            # Create an ExecComp to compute the difference in mach
-            mach_diff_comp = om.ExecComp(
-                'mach_resid_for_connecting_takeoff = final_mach - initial_mach')
-            self.model.add_subsystem('mach_diff_comp', mach_diff_comp)
+            if self.phase_info[first_flight_phase_name].get('optimize_mach', False):
+                if self.phase_info[first_flight_phase_name].get('use_polynomial_control', True):
+                    control_type_string = 'polynomial_control_values'
+                else:
+                    control_type_string = 'control_values'
 
-            # Connect the inputs to the mach difference component
-            self.model.connect(Mission.Takeoff.FINAL_MACH, 'mach_diff_comp.final_mach')
-            self.model.connect('traj.climb.control_values:mach',
-                               'mach_diff_comp.initial_mach', src_indices=[0])
+                # Create an ExecComp to compute the difference in mach
+                mach_diff_comp = om.ExecComp(
+                    'mach_resid_for_connecting_takeoff = final_mach - initial_mach')
+                self.model.add_subsystem('mach_diff_comp', mach_diff_comp)
 
-            # Add constraint for mach difference
-            self.model.add_constraint(
-                'mach_diff_comp.mach_resid_for_connecting_takeoff', equals=0.0)
+                # Connect the inputs to the mach difference component
+                self.model.connect(Mission.Takeoff.FINAL_MACH,
+                                   'mach_diff_comp.final_mach')
+                self.model.connect(f'traj.{first_flight_phase_name}.{control_type_string}:mach',
+                                   'mach_diff_comp.initial_mach', src_indices=[0])
 
-            # Similar steps for altitude difference
-            alt_diff_comp = om.ExecComp(
-                'altitude_resid_for_connecting_takeoff = final_altitude - initial_altitude', units='ft')
-            self.model.add_subsystem('alt_diff_comp', alt_diff_comp)
+                # Add constraint for mach difference
+                self.model.add_constraint(
+                    'mach_diff_comp.mach_resid_for_connecting_takeoff', equals=0.0)
 
-            self.model.connect(Mission.Takeoff.FINAL_ALTITUDE,
-                               'alt_diff_comp.final_altitude')
-            self.model.connect('traj.climb.control_values:altitude',
-                               'alt_diff_comp.initial_altitude', src_indices=[0])
+            if self.phase_info[first_flight_phase_name].get('optimize_altitude', False):
+                # Similar steps for altitude difference
+                alt_diff_comp = om.ExecComp(
+                    'altitude_resid_for_connecting_takeoff = final_altitude - initial_altitude', units='ft')
+                self.model.add_subsystem('alt_diff_comp', alt_diff_comp)
 
-            self.model.add_constraint(
-                'alt_diff_comp.altitude_resid_for_connecting_takeoff', equals=0.0)
+                self.model.connect(Mission.Takeoff.FINAL_ALTITUDE,
+                                   'alt_diff_comp.final_altitude')
+                self.model.connect(f'traj.{first_flight_phase_name}.{control_type_string}:altitude',
+                                   'alt_diff_comp.initial_altitude', src_indices=[0])
+
+                self.model.add_constraint(
+                    'alt_diff_comp.altitude_resid_for_connecting_takeoff', equals=0.0)
 
     def _add_two_dof_landing_systems(self):
         self.model.add_subsystem(

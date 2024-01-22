@@ -47,6 +47,10 @@ class HEZeroItersTestCase(BaseProblemPhaseTestCase):
     @require_pyoptsparse(optimizer="IPOPT")
     def test_zero_iters_height_energy(self):
         local_phase_info = deepcopy(height_energy_phase_info)
+        local_phase_info['pre_mission']['include_takeoff'] = True
+        local_phase_info['post_mission']['include_landing'] = True
+        local_phase_info['climb']['user_options']['fix_initial'] = False
+        local_phase_info['climb']['user_options']['input_initial'] = True
         self.build_and_run_problem(inputs, local_phase_info)
 
 
