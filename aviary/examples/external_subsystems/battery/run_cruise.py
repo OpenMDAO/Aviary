@@ -7,7 +7,7 @@ from aviary.examples.external_subsystems.battery.battery_variables import Aircra
 
 battery_builder = BatteryBuilder()
 
-phase_info = deepcopy(av.default_simple_phase_info)
+phase_info = deepcopy(av.default_height_energy_phase_info)
 # Here we just add the simple weight system to only the pre-mission
 phase_info['pre_mission']['external_subsystems'] = [battery_builder]
 phase_info['climb']['external_subsystems'] = [battery_builder]
@@ -16,7 +16,7 @@ prob = av.AviaryProblem()
 
 # Load aircraft and options data from user
 # Allow for user overrides here
-prob.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm_simple.csv', phase_info)
+prob.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
 
 prob.add_pre_mission_systems()
 
