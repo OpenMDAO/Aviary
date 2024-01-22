@@ -58,7 +58,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
         # only perform check if at least one passenger class is entered
         if passenger_check > 0 and passenger_count != passenger_check:
             raise om.AnalysisError(
-                "ERROR: In preprocesssors.py: passenger_count does not equal the sum of firt class + business class + tourist class passengers.")
+                f"ERROR: In preprocesssors.py: passenger_count ({passenger_count}) does not equal the sum of first class + business class + tourist class passengers (total of {passenger_check}).")
 
     if Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS not in aviary_options:
         flight_attendants_count = 0  # assume no passengers
