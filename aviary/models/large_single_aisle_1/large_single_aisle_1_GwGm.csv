@@ -6,7 +6,7 @@ aircraft:controls:control_mass_increment,0,lbm
 aircraft:controls:stability_augmentation_system_mass,0,lbm
 aircraft:controls:stability_augmentation_system_mass_scaler,1,unitless
 aircraft:crew_and_payload:cargo_mass,10040,lbm
-aircraft:crew_and_payload:num_passengers,169,unitless
+aircraft:crew_and_payload:num_passengers,180,unitless
 aircraft:crew_and_payload:passenger_mass_with_bags,200,lbm
 aircraft:design:cg_delta,0.25,unitless
 aircraft:design:cockpit_control_mass_coefficient,16.5,unitless
