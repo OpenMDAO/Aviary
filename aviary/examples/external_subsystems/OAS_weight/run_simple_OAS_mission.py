@@ -33,7 +33,7 @@ phase_info = {
             'polynomial_control_order': 1,
             'num_segments': 5,
             'order': 3,
-            'solve_for_range': False,
+            'solve_for_distance': False,
             'initial_mach': (0.2, 'unitless'),
             'final_mach': (0.72, 'unitless'),
             'mach_bounds': ((0.18, 0.74), 'unitless'),
@@ -57,7 +57,7 @@ phase_info = {
             'polynomial_control_order': 1,
             'num_segments': 5,
             'order': 3,
-            'solve_for_range': False,
+            'solve_for_distance': False,
             'initial_mach': (0.72, 'unitless'),
             'final_mach': (0.72, 'unitless'),
             'mach_bounds': ((0.7, 0.74), 'unitless'),
@@ -81,7 +81,7 @@ phase_info = {
             'polynomial_control_order': 1,
             'num_segments': 5,
             'order': 3,
-            'solve_for_range': False,
+            'solve_for_distance': False,
             'initial_mach': (0.72, 'unitless'),
             'final_mach': (0.36, 'unitless'),
             'mach_bounds': ((0.34, 0.74), 'unitless'),
@@ -108,7 +108,7 @@ phase_info['pre_mission'] = {'include_takeoff': False, 'optimize_mass': True}
 if use_OAS:
     phase_info['pre_mission']['external_subsystems'] = [wing_weight_builder]
 
-aircraft_definition_file = 'models/test_aircraft/aircraft_for_bench_FwFm_simple.csv'
+aircraft_definition_file = 'models/test_aircraft/aircraft_for_bench_FwFm.csv'
 make_plots = False
 max_iter = 1  # set this to a higher number to fully run the optimization
 optimizer = 'SLSQP'

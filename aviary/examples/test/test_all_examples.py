@@ -85,12 +85,13 @@ class RunScriptTest(unittest.TestCase):
         Exception
             Any exception other than ImportError or TimeoutExpired that occurs while running the script.
         """
-        try:
-            subprocess.check_call(['python', script_path], timeout=10)
-        except subprocess.TimeoutExpired:
-            pass  # Test passes if it runs longer than 10 seconds
-        except subprocess.CalledProcessError as e:
-            if 'ImportError' in str(e):
+        proc = subprocess.Popen(['python', script_path],
+                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc.wait()
+        (stdout, stderr) = proc.communicate()
+
+        if proc.returncode != 0:
+            if 'ImportError' in str(stderr):
                 self.skipTest(f"Skipped {script_path.name} due to ImportError")
             else:
                 raise

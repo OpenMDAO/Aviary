@@ -160,7 +160,7 @@ class EnergyPhase(PhaseBuilderBase):
         final_mach = user_options.get_item('final_mach')[0]
         initial_altitude = user_options.get_item('initial_altitude')[0]
         final_altitude = user_options.get_item('final_altitude')[0]
-        solve_for_range = user_options.get_val('solve_for_range')
+        solve_for_distance = user_options.get_val('solve_for_distance')
         no_descent = user_options.get_val('no_descent')
         no_climb = user_options.get_val('no_climb')
 
@@ -190,14 +190,14 @@ class EnergyPhase(PhaseBuilderBase):
             # solve_segments='forward',
         )
 
-        input_initial_range = get_initial(input_initial, Dynamic.Mission.RANGE)
-        fix_initial_range = get_initial(fix_initial, Dynamic.Mission.RANGE, True)
+        input_initial_distance = get_initial(input_initial, Dynamic.Mission.DISTANCE)
+        fix_initial_distance = get_initial(fix_initial, Dynamic.Mission.DISTANCE, True)
         phase.add_state(
-            Dynamic.Mission.RANGE, fix_initial=fix_initial_range, fix_final=False,
+            Dynamic.Mission.DISTANCE, fix_initial=fix_initial_distance, fix_final=False,
             lower=0.0, ref=1e6, defect_ref=1e8, units='m',
-            rate_source=Dynamic.Mission.RANGE_RATE,
-            input_initial=input_initial_range,
-            solve_segments='forward' if solve_for_range else None,
+            rate_source=Dynamic.Mission.DISTANCE_RATE,
+            input_initial=input_initial_distance,
+            solve_segments='forward' if solve_for_distance else None,
         )
 
         phase = add_subsystem_variables_to_phase(
@@ -416,14 +416,14 @@ EnergyPhase._add_meta_data('mach_bounds', val=(0., 2.), units='unitless')
 
 EnergyPhase._add_meta_data('altitude_bounds', val=(0., 60.e3), units='ft')
 
-EnergyPhase._add_meta_data('solve_for_range', val=False)
+EnergyPhase._add_meta_data('solve_for_distance', val=False)
 
 EnergyPhase._add_initial_guess_meta_data(
     InitialGuessTime(),
     desc='initial guess for initial time and duration specified as a tuple')
 
 EnergyPhase._add_initial_guess_meta_data(
-    InitialGuessState('range'),
+    InitialGuessState('distance'),
     desc='initial guess for horizontal distance traveled')
 
 EnergyPhase._add_initial_guess_meta_data(

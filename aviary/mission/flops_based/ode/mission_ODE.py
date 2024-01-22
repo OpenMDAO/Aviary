@@ -3,9 +3,6 @@ import openmdao.api as om
 from dymos.models.atmosphere import USatm1976Comp
 
 from aviary.mission.flops_based.ode.mission_EOM import MissionEOM
-from aviary.subsystems.aerodynamics.flops_based.mach_number import MachNumber
-
-from aviary.mission.flops_based.ode.mission_EOM import MissionEOM
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import promote_aircraft_and_mission_vars
 from aviary.variable_info.variable_meta_data import _MetaData
@@ -42,6 +39,11 @@ class MissionODE(om.Group):
         self.options.declare(
             'use_actual_takeoff_mass', default=False,
             desc='flag to use actual takeoff mass in the climb phase, otherwise assume 100 kg fuel burn')
+        self.options.declare(
+            'throttle_enforcement', default='path_constraint',
+            values=['path_constraint', 'boundary_constraint', 'bounded', None],
+            desc='flag to enforce throttle constraints on the path or at the segment boundaries or using solver bounds'
+        )
 
     def setup(self):
         options = self.options
@@ -65,11 +67,36 @@ class MissionODE(om.Group):
             promotes_outputs=[
                 ('sos', Dynamic.Mission.SPEED_OF_SOUND), ('rho', Dynamic.Mission.DENSITY),
                 ('temp', Dynamic.Mission.TEMPERATURE), ('pres', Dynamic.Mission.STATIC_PRESSURE)])
+
+        # add an execcomp to compute velocity based off mach and sos
         self.add_subsystem(
-            name=Dynamic.Mission.MACH,
-            subsys=MachNumber(num_nodes=nn),
-            promotes_inputs=[Dynamic.Mission.VELOCITY, Dynamic.Mission.SPEED_OF_SOUND],
-            promotes_outputs=[Dynamic.Mission.MACH])
+            name='velocity_comp',
+            subsys=om.ExecComp(
+                'velocity = mach * sos',
+                mach={'units': 'unitless', 'shape': (nn,)},
+                sos={'units': 'm/s', 'shape': (nn,)},
+                velocity={'units': 'm/s', 'shape': (nn,)},
+                has_diag_partials=True,
+            ),
+            promotes_inputs=[('mach', Dynamic.Mission.MACH),
+                             ('sos', Dynamic.Mission.SPEED_OF_SOUND)],
+            promotes_outputs=[('velocity', Dynamic.Mission.VELOCITY)],
+        )
+
+        # add execcomp to compute velocity_rate based off mach_rate and sos
+        self.add_subsystem(
+            name='velocity_rate_comp',
+            subsys=om.ExecComp(
+                'velocity_rate = mach_rate * sos',
+                mach_rate={'units': 'unitless/s', 'shape': (nn,)},
+                sos={'units': 'm/s', 'shape': (nn,)},
+                velocity_rate={'units': 'm/s**2', 'shape': (nn,)},
+                has_diag_partials=True,
+            ),
+            promotes_inputs=[('mach_rate', Dynamic.Mission.MACH_RATE),
+                             ('sos', Dynamic.Mission.SPEED_OF_SOUND)],
+            promotes_outputs=[('velocity_rate', Dynamic.Mission.VELOCITY_RATE)],
+        )
 
         base_options = {'num_nodes': nn, 'aviary_inputs': aviary_options}
 
@@ -116,13 +143,30 @@ class MissionODE(om.Group):
             subsys=MissionEOM(num_nodes=nn),
             promotes_inputs=[
                 Dynamic.Mission.VELOCITY, Dynamic.Mission.MASS,
-                Dynamic.Mission.THRUST_TOTAL, Dynamic.Mission.THRUST_MAX_TOTAL,
-                Dynamic.Mission.DRAG, Dynamic.Mission.VELOCITY_RATE],
+                Dynamic.Mission.THRUST_MAX_TOTAL,
+                Dynamic.Mission.DRAG, Dynamic.Mission.ALTITUDE_RATE,
+                Dynamic.Mission.VELOCITY_RATE],
             promotes_outputs=[
-                Dynamic.Mission.SPECIFIC_ENERGY_RATE,
                 Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
-                Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.ALTITUDE_RATE_MAX,
-                Dynamic.Mission.RANGE_RATE])
+                Dynamic.Mission.ALTITUDE_RATE_MAX,
+                Dynamic.Mission.DISTANCE_RATE,
+                'thrust_required',
+            ])
+
+        # add a balance comp to compute throttle based on the altitude rate
+        self.add_subsystem(name='throttle_balance',
+                           subsys=om.BalanceComp(name=Dynamic.Mission.THROTTLE,
+                                                 units="unitless",
+                                                 val=np.ones(nn),
+                                                 lhs_name='thrust_required',
+                                                 rhs_name=Dynamic.Mission.THRUST_TOTAL,
+                                                 eq_units="lbf",
+                                                 normalize=False,
+                                                 lower=0.0 if options['throttle_enforcement'] == 'bounded' else None,
+                                                 upper=1.0 if options['throttle_enforcement'] == 'bounded' else None,
+                                                 ),
+                           promotes_inputs=['*'],
+                           promotes_outputs=['*'])
 
         self.set_input_defaults(Dynamic.Mission.MASS, val=np.ones(nn), units='kg')
         self.set_input_defaults(Dynamic.Mission.VELOCITY, val=np.ones(nn), units='m/s')
@@ -152,3 +196,12 @@ class MissionODE(om.Group):
                                ('mass', Dynamic.Mission.MASS)
                            ],
                            promotes_outputs=['initial_mass_residual'])
+
+        self.nonlinear_solver = om.NewtonSolver(solve_subsystems=True,
+                                                atol=1.0e-10,
+                                                rtol=1.0e-10,
+                                                )
+        self.nonlinear_solver.linesearch = om.BoundsEnforceLS()
+        self.linear_solver = om.DirectSolver(assemble_jac=True)
+        self.nonlinear_solver.options['err_on_non_converge'] = True
+        self.nonlinear_solver.options['iprint'] = 2

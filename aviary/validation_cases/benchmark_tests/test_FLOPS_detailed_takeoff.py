@@ -17,13 +17,10 @@ from aviary.models.N3CC.N3CC_data import (
     takeoff_trajectory_builder as _takeoff_trajectory_builder,
     takeoff_liftoff_user_options as _takeoff_liftoff_user_options)
 
-from aviary.variable_info.variables import Aircraft, Dynamic as _Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.interface.default_phase_info.height_energy import default_premission_subsystems
 from aviary.utils.preprocessors import preprocess_crewpayload
 from aviary.variable_info.variables_in import VariablesIn
-
-
-Dynamic = _Dynamic.Mission
 
 
 @use_tempdirs
@@ -93,11 +90,11 @@ class TestFLOPSDetailedTakeoff(unittest.TestCase):
         takeoff_trajectory_builder.build_trajectory(
             aviary_options=aviary_options, model=takeoff.model, traj=traj)
 
-        max_range, units = takeoff_liftoff_user_options.get_item('max_range')
+        distance_max, units = takeoff_liftoff_user_options.get_item('distance_max')
         liftoff = takeoff_trajectory_builder.get_phase('takeoff_liftoff')
 
         liftoff.add_objective(
-            Dynamic.RANGE, loc='final', ref=max_range, units=units)
+            Dynamic.Mission.DISTANCE, loc='final', ref=distance_max, units=units)
 
         # Insert a constraint for a fake decision speed, until abort is added.
         takeoff.model.add_constraint(
@@ -140,7 +137,7 @@ class TestFLOPSDetailedTakeoff(unittest.TestCase):
         desired = 5649.9  # ft
 
         actual = takeoff.model.get_val(
-            'traj.takeoff_liftoff.states:range', units='ft')[-1]
+            'traj.takeoff_liftoff.states:distance', units='ft')[-1]
 
         assert_near_equal(actual, desired, 2e-2)
 

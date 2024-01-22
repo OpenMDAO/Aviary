@@ -77,7 +77,7 @@ def get_groundroll(
         lower=distance_lower,
         upper=distance_upper,
         units="ft",
-        rate_source="distance_rate",
+        rate_source=Dynamic.Mission.DISTANCE_RATE,
         ref=distance_ref,
         defect_ref=distance_defect_ref,
         ref0=distance_ref0,
