@@ -74,7 +74,6 @@ def run_aviary(aircraft_filename, phase_info, optimizer=None, analysis_scheme=An
         ode_args=prob.ode_args,
         simupy_args=dict(
             DEBUG=False,
-            blocked_state_names=['engine.nox', 'nox'],
         ),
     )
     descent1_vals = {

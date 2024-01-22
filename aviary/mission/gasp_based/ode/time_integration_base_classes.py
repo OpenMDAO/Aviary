@@ -8,7 +8,18 @@ from simupy.systems import DynamicalSystem
 from aviary.mission.gasp_based.ode.params import ParamPort
 
 
+def add_SGM_required_inputs(group: om.Group, inputs_to_add: dict):
+    blank_execcomp = om.ExecComp()
+    for input, details in inputs_to_add.items():
+        blank_execcomp.add_input(input, **details)
+    group.add_subsystem('SGM_required_inputs',
+                        blank_execcomp,
+                        promotes_inputs=list(inputs_to_add.keys()),
+                        )
+
 # Subproblem used as a basis for forward in time integration phases.
+
+
 class SimuPyProblem(SimulationMixin):
     def __init__(
         self,
@@ -61,6 +72,10 @@ class SimuPyProblem(SimulationMixin):
         self.time_independent = time_independent
         if control_names is None:
             control_names = []
+        if alternate_state_names is None:
+            alternate_state_names = {}
+        if alternate_state_rate_names is None:
+            alternate_state_rate_names = {}
         self.control_names = control_names
         if control_units is not None:
             self.control_units = control_units
@@ -97,7 +112,7 @@ class SimuPyProblem(SimulationMixin):
                 for name in blocked_state_names:
                     if name in state_names:
                         state_names.remove(name)
-            if alternate_state_names is not None:
+            if alternate_state_names:
                 for key, val in alternate_state_names.items():
                     state_key = key.replace(rate_suffix, "")
                     if state_key in state_names:  # Used to rename an existing state
@@ -107,7 +122,7 @@ class SimuPyProblem(SimulationMixin):
 
         if state_rate_names is None:
             state_rate_names = [state_name + rate_suffix for state_name in state_names]
-            if alternate_state_names is not None:
+            if alternate_state_rate_names:
                 state_rate_names = [name if name not in alternate_state_rate_names.keys(
                 ) else alternate_state_rate_names[name] for name in state_rate_names]
 
@@ -169,7 +184,7 @@ class SimuPyProblem(SimulationMixin):
                 for output_name in output_names
             ]
 
-        if include_state_outputs:
+        if include_state_outputs or output_names == []:  # prevent empty outputs
             output_names = state_names + output_names
             self.output_units = self.state_units + self.output_units
 
@@ -189,6 +204,8 @@ class SimuPyProblem(SimulationMixin):
 
         if DEBUG:
             om.n2(prob, outfile="n2_simupy_problem.html", show_browser=False)
+            with open('input_list_simupy.txt', 'w') as outfile:
+                prob.model.list_inputs(out_stream=outfile,)
             print(state_names)
             print(self.state_units)
             print(state_rate_names)
@@ -360,8 +377,10 @@ class SGMTrajBase(om.ExplicitComponent):
     def setup_params(
             self,
             ODEs,
+            promote_all_auto_ivc=False,
             traj_final_state_output=None,
             traj_promote_final_output=None,
+            traj_promote_initial_input=None,
             traj_initial_state_input=None,
             traj_event_trigger_input=None,
     ):
@@ -381,13 +400,29 @@ class SGMTrajBase(om.ExplicitComponent):
             traj_final_state_output = []
         if traj_promote_final_output is None:
             traj_promote_final_output = []
+        if traj_promote_initial_input is None:
+            traj_promote_initial_input = {}
         if traj_initial_state_input is None:
             traj_initial_state_input = []
         if traj_event_trigger_input is None:
             traj_event_trigger_input = []
 
-        for name, kwargs in self.options["param_dict"].items():
+        if promote_all_auto_ivc:
+            for ode in ODEs:
+                ode: SimuPyProblem
+                ode.auto_ivc_vars = ode.prob.model.list_inputs(
+                    is_indep_var=True, units=True, out_stream=None)
+                for abs_name, data in ode.auto_ivc_vars:
+                    prom_name = data.pop('prom_name')
+                    if '.' in prom_name:
+                        continue
+                    traj_promote_initial_input[prom_name] = data
+
+        self.traj_promote_initial_input = {
+            **self.options["param_dict"], **traj_promote_initial_input}
+        for name, kwargs in self.traj_promote_initial_input.items():
             self.add_input(name, **kwargs)
+
         final_suffix = "_final"
         self.traj_final_state_output = {
             final_state_output: {
@@ -463,17 +498,16 @@ class SGMTrajBase(om.ExplicitComponent):
         self.declare_partials(["*"], ["*"],)
 
     def compute_params(self, inputs):
-        # parameter pass-through setup
-        for param_input in self.options["param_dict"].keys():
+        for input in self.traj_promote_initial_input.keys():
             for ode in self.ODEs:
                 try:
-                    ode.set_val(param_input, inputs[param_input])
+                    ode.set_val(input, inputs[input])
                 except KeyError:
                     if self.DEBUG:
                         print(
-                            "*** ParamPort input not found:",
+                            "*** Input not found:",
                             ode,
-                            param_input
+                            input
                         )
                     pass
 
