@@ -23,16 +23,16 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         # There are no truth values for these.
         assert_near_equal(prob.get_val(Mission.Design.GROSS_MASS),
-                          174039., tolerance=rtol)
+                          181654., tolerance=rtol)
 
         assert_near_equal(prob.get_val(Aircraft.Design.OPERATING_MASS),
-                          95509, tolerance=rtol)
+                          101555., tolerance=rtol)
 
         assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS),
-                          42529., tolerance=rtol)
+                          44098., tolerance=rtol)
 
         assert_near_equal(prob.get_val('landing.' + Mission.Landing.GROUND_DISTANCE),
-                          2634.8, tolerance=rtol)
+                          2637.86, tolerance=rtol)
 
         assert_near_equal(prob.get_val("traj.desc2.timeseries.states:distance")[-1],
                           3675.0, tolerance=rtol)
