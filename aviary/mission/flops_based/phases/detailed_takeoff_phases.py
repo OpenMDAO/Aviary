@@ -195,7 +195,7 @@ class TakeoffBrakeReleaseToDecisionSpeed(PhaseBuilderBase):
 
         phase.add_state(
             Dynamic.Mission.MASS, fix_initial=True, fix_final=False,
-            lower=0.0, ref=5e4, defect_ref=5e4, units='kg',
+            lower=0.0, upper=1e9, ref=5e4, units='kg',
             rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Mission.MASS,
         )
@@ -365,7 +365,7 @@ class TakeoffDecisionSpeedToRotate(PhaseBuilderBase):
 
         phase.add_state(
             Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, ref=5e4, defect_ref=5e4, units='kg',
+            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
             rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Mission.MASS,
         )
@@ -648,7 +648,7 @@ class TakeoffRotateToLiftoff(PhaseBuilderBase):
 
         phase.add_state(
             Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, ref=5e4, defect_ref=5e4, units='kg',
+            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
             rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Mission.MASS,
         )
@@ -849,7 +849,7 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
 
         phase.add_state(
             Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, ref=5e4, defect_ref=5e4, units='kg',
+            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
             rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Mission.MASS,
         )
@@ -1085,7 +1085,7 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
 
         phase.add_state(
             Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, ref=5e4, defect_ref=5e4, units='kg',
+            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
             rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Mission.MASS,
         )
@@ -1317,7 +1317,7 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
 
         phase.add_state(
             Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, ref=5e4, defect_ref=5e4, units='kg',
+            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
             rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Mission.MASS,
         )
@@ -1545,7 +1545,7 @@ class TakeoffEngineCutback(PhaseBuilderBase):
 
         phase.add_state(
             Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, ref=5e4, defect_ref=5e4, units='kg',
+            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
             rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Mission.MASS,
         )
@@ -1761,7 +1761,7 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilderBase):
 
         phase.add_state(
             Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, ref=5e4, defect_ref=5e4, units='kg',
+            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
             rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Mission.MASS,
         )
@@ -1990,7 +1990,7 @@ class TakeoffMicP1ToClimb(PhaseBuilderBase):
 
         phase.add_state(
             Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, ref=5e4, defect_ref=5e4, units='kg',
+            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
             rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Mission.MASS,
         )
@@ -2196,7 +2196,7 @@ class TakeoffBrakeToAbort(PhaseBuilderBase):
 
         phase.add_state(
             Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, ref=5e4, defect_ref=5e4, units='kg',
+            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
             rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Mission.MASS,
         )
