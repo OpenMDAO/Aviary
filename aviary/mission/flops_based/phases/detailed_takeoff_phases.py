@@ -46,7 +46,7 @@ import dymos as dm
 import openmdao.api as om
 
 from aviary.mission.flops_based.ode.takeoff_ode import TakeoffODE
-from aviary.mission.flops_based.phases.phase_builder_base import (
+from aviary.mission.phase_builder_base import (
     InitialGuessControl, InitialGuessParameter, InitialGuessPolynomialControl,
     InitialGuessState, InitialGuessTime, PhaseBuilderBase)
 from aviary.utils.aviary_values import AviaryValues

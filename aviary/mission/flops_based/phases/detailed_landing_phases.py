@@ -32,7 +32,7 @@ from aviary.mission.flops_based.phases.detailed_takeoff_phases import \
     TakeoffTrajectory as _TakeoffTrajectory
 from aviary.mission.flops_based.phases.detailed_takeoff_phases import \
     _init_initial_guess_meta_data
-from aviary.mission.flops_based.phases.phase_builder_base import (
+from aviary.mission.phase_builder_base import (
     InitialGuessControl, InitialGuessParameter, InitialGuessPolynomialControl,
     InitialGuessState, PhaseBuilderBase)
 from aviary.utils.aviary_values import AviaryValues

@@ -83,7 +83,7 @@ from aviary.mission.flops_based.phases.simplified_landing import LandingGroup as
 
 
 # Phase builders
-from aviary.mission.flops_based.phases.phase_builder_base import PhaseBuilderBase
+from aviary.mission.phase_builder_base import PhaseBuilderBase
 # note that this is only for simplified right now
 from aviary.mission.flops_based.phases.energy_phase import EnergyPhase as HeightEnergyPhaseBuilder
 from aviary.mission.flops_based.phases.build_landing import Landing as HeightEnergyLandingPhaseBuilder
@@ -107,7 +107,7 @@ from aviary.mission.flops_based.phases.detailed_takeoff_phases import TakeoffEng
 from aviary.mission.flops_based.phases.detailed_takeoff_phases import TakeoffMicP1ToClimb as DetailedTakeoffMicP1ToClimbPhaseBuilder
 from aviary.mission.flops_based.phases.detailed_takeoff_phases import TakeoffBrakeToAbort as DetailedTakeoffBrakeToAbortPhaseBuilder
 
-# Phase getters  # TODO these should be going away in favor of phase builders
+# Phase builders
 from aviary.mission.gasp_based.phases.accel_phase import AccelPhase as TwoDOFAccelerationPhase
 from aviary.mission.gasp_based.phases.ascent_phase import AscentPhase as TwoDOFAscentPhase
 from aviary.mission.gasp_based.phases.climb_phase import ClimbPhase as TwoDOFClimbPhase
@@ -145,5 +145,6 @@ from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBas
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
 
 # Testing
+# NOTE these load every FLOPS validation test case, every Avairy run
 from aviary.validation_cases.validation_tests import get_flops_inputs, get_flops_outputs
 from aviary.validation_cases.validation_data.flops_data.FLOPS_Test_Data import FLOPS_Test_Data
