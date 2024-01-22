@@ -416,13 +416,13 @@ class AviaryProblem(om.Problem):
         # Check for 2DOF mission method
         # NOTE should solved trigger this as well?
         if self.mission_method is TWO_DEGREES_OF_FREEDOM:
-            self._add_gasp_takeoff_systems()
+            self._add_two_dof_takeoff_systems()
 
         # Check for HE mission method
         elif self.mission_method is HEIGHT_ENERGY:
-            self._add_flops_takeoff_systems()
+            self._add_height_energy_takeoff_systems()
 
-    def _add_flops_takeoff_systems(self):
+    def _add_height_energy_takeoff_systems(self):
         # Initialize takeoff options
         takeoff_options = Takeoff(
             airport_altitude=0.,  # ft
@@ -435,7 +435,7 @@ class AviaryProblem(om.Problem):
             'takeoff', takeoff, promotes_inputs=['aircraft:*', 'mission:*'],
             promotes_outputs=['mission:*'])
 
-    def _add_gasp_takeoff_systems(self):
+    def _add_two_dof_takeoff_systems(self):
         # Create options to values
         OptionsToValues = create_opts2vals(
             [Aircraft.CrewPayload.NUM_PASSENGERS,
@@ -1180,11 +1180,14 @@ class AviaryProblem(om.Problem):
         A user can override this with their own postmission systems.
         """
 
+        if self.pre_mission_info['include_takeoff'] and self.mission_method is HEIGHT_ENERGY:
+            self._add_post_mission_takeoff_systems()
+
         if include_landing and self.post_mission_info['include_landing']:
             if self.mission_method is HEIGHT_ENERGY:
-                self._add_flops_landing_systems()
+                self._add_height_energy_landing_systems()
             elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
-                self._add_gasp_landing_systems()
+                self._add_two_dof_landing_systems()
 
         self.model.add_subsystem('post_mission', self.post_mission,
                                  promotes_inputs=['*'],
@@ -1750,7 +1753,6 @@ class AviaryProblem(om.Problem):
             elif objective_type == "fuel":
                 self.model.add_objective(Mission.Objectives.FUEL, ref=ref)
 
-        # If 'mission_method' is 'FLOPS', add a 'fuel_burned' objective
         elif self.mission_method is HEIGHT_ENERGY:
             ref = ref if ref is not None else default_ref_values.get("fuel_burned", 1)
             self.model.add_objective("fuel_burned", ref=ref)
@@ -2369,7 +2371,7 @@ class AviaryProblem(om.Problem):
 
         return all_subsystems
 
-    def _add_flops_landing_systems(self):
+    def _add_height_energy_landing_systems(self):
         landing_options = Landing(
             ref_wing_area=self.aviary_inputs.get_val(
                 Aircraft.Wing.AREA, units='ft**2'),
@@ -2377,13 +2379,17 @@ class AviaryProblem(om.Problem):
                 Mission.Landing.LIFT_COEFFICIENT_MAX)  # no units
         )
 
-        landing = landing_options.build_phase(
-            False,
-        )
+        landing = landing_options.build_phase(False)
         self.model.add_subsystem(
             'landing', landing, promotes_inputs=['aircraft:*', 'mission:*'],
             promotes_outputs=['mission:*'])
 
+        self.model.connect('traj.descent.states:mass',
+                           Mission.Landing.TOUCHDOWN_MASS, src_indices=[-1])
+        self.model.connect('traj.descent.control_values:altitude', Mission.Landing.INITIAL_ALTITUDE,
+                           src_indices=[0])
+
+    def _add_post_mission_takeoff_systems(self):
         connect_takeoff_to_climb = not self.phase_info['climb']['user_options'].get(
             'add_initial_mass_constraint', True)
 
@@ -2420,12 +2426,7 @@ class AviaryProblem(om.Problem):
             self.model.add_constraint(
                 'alt_diff_comp.altitude_resid_for_connecting_takeoff', equals=0.0)
 
-        self.model.connect('traj.descent.states:mass',
-                           Mission.Landing.TOUCHDOWN_MASS, src_indices=[-1])
-        self.model.connect('traj.descent.control_values:altitude', Mission.Landing.INITIAL_ALTITUDE,
-                           src_indices=[0])
-
-    def _add_gasp_landing_systems(self):
+    def _add_two_dof_landing_systems(self):
         self.model.add_subsystem(
             "landing",
             LandingSegment(
