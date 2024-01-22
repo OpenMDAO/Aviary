@@ -43,7 +43,7 @@ def run_desc1(make_plots=False):
         EAS_limit=350,
         mach_cruise=0.8,
         transcription=transcription,
-        final_alt=10000,
+        final_altitude=10000,
         input_speed_type=SpeedType.MACH,
     )
 

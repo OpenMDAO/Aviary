@@ -587,7 +587,7 @@ class AviaryProblem(om.Problem):
             )
 
             phase.add_parameter(Dynamic.Mission.ALTITUDE, opt=False,
-                                val=self.phase_info['climb2']['final_alt'][0], units=self.phase_info['climb2']['final_alt'][1])
+                                val=self.phase_info['climb2']['final_altitude'][0], units=self.phase_info['climb2']['final_altitude'][1])
             phase.add_parameter(Dynamic.Mission.MACH, opt=False,
                                 val=self.phase_info['climb2']['mach_cruise'])
             phase.add_parameter("initial_distance", opt=False, val=0.0,
@@ -640,7 +640,7 @@ class AviaryProblem(om.Problem):
                 'angle': 'deg',
                 'pitch': 'deg',
                 'normal': 'lbf',
-                'final_alt': 'ft',
+                'final_altitude': 'ft',
                 'required_available_climb_rate': 'ft/min',
             }
 

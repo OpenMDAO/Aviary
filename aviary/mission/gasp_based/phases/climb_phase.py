@@ -12,7 +12,7 @@ def get_climb(
     EAS_target=0,
     mach_cruise=0,
     target_mach=False,
-    final_alt=0,
+    final_altitude=0,
     required_available_climb_rate=None,
     time_initial_bounds=(0, 0),
     duration_bounds=(0, 0),
@@ -99,9 +99,9 @@ def get_climb(
     climb.add_boundary_constraint(
         Dynamic.Mission.ALTITUDE,
         loc="final",
-        equals=final_alt,
+        equals=final_altitude,
         units="ft",
-        ref=final_alt)
+        ref=final_altitude)
     if required_available_climb_rate:
         climb.add_boundary_constraint(
             Dynamic.Mission.ALTITUDE_RATE,

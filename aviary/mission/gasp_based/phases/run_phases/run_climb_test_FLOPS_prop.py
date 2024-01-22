@@ -76,7 +76,7 @@ def setup_climb1():
         EAS_target=250,
         mach_cruise=0.8,
         target_mach=False,
-        final_alt=10.e3,
+        final_altitude=10.e3,
         alt_ref=10.e3,
         distance_ref=300,
     )
@@ -135,7 +135,7 @@ def setup_climb2():
         EAS_target=270,
         mach_cruise=0.8,
         target_mach=True,
-        final_alt=37500,
+        final_altitude=37500,
         alt_ref=40000,
         mass_ref=200000,
         distance_ref=300,

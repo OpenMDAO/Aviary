@@ -40,7 +40,7 @@ def run_desc2():
         EAS_limit=250,
         mach_cruise=0.8,
         transcription=transcription,
-        final_alt=1000,
+        final_altitude=1000,
         input_speed_type=SpeedType.EAS,
     )
 
