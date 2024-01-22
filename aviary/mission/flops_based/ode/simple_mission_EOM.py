@@ -19,7 +19,7 @@ class MissionEOM(om.Group):
                            subsys=RequiredThrust(num_nodes=nn),
                            promotes_inputs=[Dynamic.Mission.DRAG, Dynamic.Mission.ALTITUDE_RATE,
                                             Dynamic.Mission.VELOCITY, Dynamic.Mission.VELOCITY_RATE, Dynamic.Mission.MASS],
-                           promotes_outputs=['T_required'])
+                           promotes_outputs=['thrust_required'])
 
         self.add_subsystem(name='groundspeed',
                            subsys=RangeRate(num_nodes=nn),

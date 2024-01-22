@@ -51,22 +51,14 @@ def create_vehicle(vehicle_deck=''):
     """
     aircraft_values = get_option_defaults(engine=False)
 
-    # TODO remove all hardcoded GASP values here, find appropriate place for them
+    # TODO temporary, needed until debug_mode retired in favor of new verbosity flag
     aircraft_values.set_val('debug_mode', val=False)
-    aircraft_values.set_val('INGASP.JENGSZ', val=4)
-    aircraft_values.set_val('test_mode', val=False)
-    aircraft_values.set_val('use_surrogates', val=True)
-    aircraft_values.set_val('mass_defect', val=10000, units='lbm')
-    aircraft_values.set_val('problem_type', val=ProblemType.SIZING)
-    aircraft_values.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False)
-    # aircraft_values.set_val(Aircraft.Design.RESERVE_FUEL_ADDITIONAL, val=4998, units='lbm')
-    # aircraft_values.set_val(Aircraft.Design.RESERVE_FUEL_FRACTION, val=0, units='unitless')
 
-    vehicle_deck = get_path(vehicle_deck)
-
-    parse_inputs(vehicle_deck, aircraft_values)
-    # update the dependent options with the current values
-    update_options(aircraft_values, initial_guesses)
+    if isinstance(vehicle_deck, AviaryValues):
+        aircraft_values.update(vehicle_deck)
+    else:
+        vehicle_deck = get_path(vehicle_deck)
+        parse_inputs(vehicle_deck, aircraft_values)
 
     return aircraft_values, initial_guesses
 
@@ -121,7 +113,7 @@ def parse_inputs(vehicle_deck, aircraft_values: AviaryValues(), meta_data=_MetaD
                 aircraft_values = set_value(var_name, var_values, aircraft_values)
                 continue
 
-            elif var_name in meta_data.keys():
+            if var_name in meta_data.keys():
                 aircraft_values = set_value(
                     var_name, var_values, aircraft_values, units=data_units, is_array=is_array, meta_data=meta_data)
                 continue
@@ -136,8 +128,11 @@ def parse_inputs(vehicle_deck, aircraft_values: AviaryValues(), meta_data=_MetaD
 
     return aircraft_values, initial_guesses
 
+# TODO this should be a preprocessor, and tasks split to be specific to subsystem
+#      e.g. aero preprocessor, mass preprocessor, 2DOF preprocessor, etc.
 
-def update_options(aircraft_values: AviaryValues(), initial_guesses):
+
+def update_GASP_options(aircraft_values: AviaryValues(), initial_guesses):
     """
     Updates options based on the current values in aircraft_values. This function also handles special cases 
     and prints debug information if the debug mode is active.
@@ -151,11 +146,22 @@ def update_options(aircraft_values: AviaryValues(), initial_guesses):
     -------
     tuple: Updated aircraft values and initial guesses.
     """
+    GASP_defaults = AviaryValues()
+    GASP_defaults.set_val('INGASP.JENGSZ', val=4)
+    GASP_defaults.set_val('test_mode', val=False)
+    GASP_defaults.set_val('use_surrogates', val=True)
+    GASP_defaults.set_val('mass_defect', val=10000, units='lbm')
+    GASP_defaults.set_val('problem_type', val=ProblemType.SIZING)
+    GASP_defaults.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False)
+
+    # overwrite GASP_defaults with values from aircraft_values, then replace
+    # aircraft_values with this merged set
+    GASP_defaults.update(aircraft_values)
+    aircraft_values = GASP_defaults
+
     # update the options that depend on variables
     update_dependent_options(aircraft_values, dependent_options)
 
-    # TODO this is GASP only, don't always run it! These should go in a GASP-only options
-    #      preprocessor
     ## STRUT AND FOLD ##
     if not aircraft_values.get_val(Aircraft.Wing.HAS_STRUT):
         aircraft_values.set_val(

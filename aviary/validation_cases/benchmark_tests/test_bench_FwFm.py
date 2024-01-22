@@ -1,14 +1,11 @@
-from copy import deepcopy
 import unittest
 
 import numpy as np
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.interface.default_phase_info.height_energy import phase_info
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.validation_cases.benchmark_utils import \
     compare_against_expected_values
-from aviary.variable_info.variables import Dynamic
 
 
 @use_tempdirs
@@ -264,39 +261,31 @@ class ProblemPhaseTestCase(unittest.TestCase):
         self.expected_dict = expected_dict
 
     def bench_test_swap_4_FwFm(self):
-        local_phase_info = deepcopy(phase_info)
-        prob = run_aviary('models/test_aircraft/aircraft_for_bench_FwFm.csv',
-                          local_phase_info)
-
-        compare_against_expected_values(prob, self.expected_dict)
-
-    def bench_test_swap_4_FwFm_simple(self):
         phase_info = {
             "pre_mission": {"include_takeoff": True, "optimize_mass": True},
             "climb": {
                 "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
                 "user_options": {
-                    'fix_initial': {Dynamic.Mission.MASS: False, Dynamic.Mission.DISTANCE: False},
+                    'fix_initial': False,
                     'input_initial': True,
                     "optimize_mach": True,
                     "optimize_altitude": True,
-                    "polynomial_control_order": None,
                     "use_polynomial_control": False,
                     "num_segments": 6,
                     "order": 3,
                     "solve_for_distance": False,
-                    "initial_mach": (0.2, "unitless"),
+                    "initial_mach": (0.3, "unitless"),
                     "final_mach": (0.79, "unitless"),
                     "mach_bounds": ((0.1, 0.8), "unitless"),
-                    "initial_altitude": (0.0, "ft"),
+                    "initial_altitude": (35., "ft"),
                     "final_altitude": (35000.0, "ft"),
-                    "altitude_bounds": ((0.0, 36000.0), "ft"),
+                    "altitude_bounds": ((0.0, 35000.0), "ft"),
                     "throttle_enforcement": "path_constraint",
                     "constrain_final": False,
                     "fix_duration": False,
-                    "initial_bounds": ((0.0, 0.0), "min"),
+                    "initial_bounds": ((0.0, 2.0), "min"),
                     "duration_bounds": ((5.0, 50.0), "min"),
-                    "no_descent": True,
+                    "no_descent": False,
                     "add_initial_mass_constraint": False,
                 },
                 "initial_guesses": {"times": ([0, 40.0], "min")},
@@ -313,7 +302,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
                     "solve_for_distance": False,
                     "initial_mach": (0.79, "unitless"),
                     "final_mach": (0.79, "unitless"),
-                    "mach_bounds": ((0.78, 0.8), "unitless"),
+                    "mach_bounds": ((0.79, 0.79), "unitless"),
                     "initial_altitude": (35000.0, "ft"),
                     "final_altitude": (35000.0, "ft"),
                     "altitude_bounds": ((35000.0, 35000.0), "ft"),
@@ -322,7 +311,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
                     "constrain_final": False,
                     "fix_duration": False,
                     "initial_bounds": ((64.0, 192.0), "min"),
-                    "duration_bounds": ((60.0, 7200.0), "min"),
+                    "duration_bounds": ((60.0, 720.0), "min"),
                 },
                 "initial_guesses": {"times": ([128, 113], "min")},
             },
@@ -331,7 +320,6 @@ class ProblemPhaseTestCase(unittest.TestCase):
                 "user_options": {
                     "optimize_mach": True,
                     "optimize_altitude": True,
-                    "polynomial_control_order": None,
                     "use_polynomial_control": False,
                     "num_segments": 5,
                     "order": 3,
@@ -340,32 +328,32 @@ class ProblemPhaseTestCase(unittest.TestCase):
                     "final_mach": (0.3, "unitless"),
                     "mach_bounds": ((0.2, 0.8), "unitless"),
                     "initial_altitude": (35000.0, "ft"),
-                    "final_altitude": (500.0, "ft"),
+                    "final_altitude": (35.0, "ft"),
                     "altitude_bounds": ((0.0, 35000.0), "ft"),
                     "throttle_enforcement": "path_constraint",
                     "fix_initial": False,
                     "constrain_final": True,
                     "fix_duration": False,
-                    "initial_bounds": ((120.5, 361.5), "min"),
-                    "duration_bounds": ((5.0, 60.0), "min"),
-                    "no_climb": False
+                    "initial_bounds": ((120., 800.), "min"),
+                    "duration_bounds": ((5.0, 35.0), "min"),
+                    "no_climb": True,
                 },
-                "initial_guesses": {"times": ([241, 58], "min")},
+                "initial_guesses": {"times": ([241, 30], "min")},
             },
             "post_mission": {
                 "include_landing": True,
                 "constrain_range": True,
-                "target_range": (3360.0, "nmi"),
+                "target_range": (3375.0, "nmi"),
             },
         }
 
         prob = run_aviary(
-            'models/test_aircraft/aircraft_for_bench_FwFm_simple.csv', phase_info)
+            'models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info, max_iter=50)
 
-        compare_against_expected_values(prob, self.expected_dict, simple_flag=True)
+        compare_against_expected_values(prob, self.expected_dict)
 
 
 if __name__ == '__main__':
     test = ProblemPhaseTestCase()
     test.setUp()
-    test.bench_test_swap_4_FwFm_simple()
+    test.bench_test_swap_4_FwFm()
