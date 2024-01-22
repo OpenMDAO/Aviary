@@ -9,6 +9,7 @@ import unittest
 
 import numpy as np
 from openmdao.utils.testing_utils import use_tempdirs
+from openmdao.utils.testing_utils import require_pyoptsparse
 
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.validation_cases.benchmark_utils import \
@@ -266,6 +267,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         self.expected_dict = expected_dict
 
+    @require_pyoptsparse(optimizer="IPOPT")
     def bench_test_swap_1_GwFm(self):
         phase_info = {
             "pre_mission": {"include_takeoff": True, "optimize_mass": True},
@@ -354,7 +356,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         }
 
         prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwFm.csv', phase_info,
-                          max_iter=50)
+                          max_iter=50, optimizer='IPOPT')
 
         compare_against_expected_values(prob, self.expected_dict)
 

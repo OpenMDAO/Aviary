@@ -1,5 +1,4 @@
 from copy import deepcopy
-import os
 import unittest
 
 from openmdao.utils.assert_utils import assert_near_equal
@@ -13,11 +12,11 @@ from aviary.variable_info.variables import Aircraft, Mission
 @use_tempdirs
 class ProblemPhaseTestCase(unittest.TestCase):
 
-    @require_pyoptsparse(optimizer="SNOPT")
+    @require_pyoptsparse(optimizer="IPOPT")
     def bench_test_swap_3_FwGm(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary('models/test_aircraft/aircraft_for_bench_FwGm.csv',
-                          local_phase_info)
+                          local_phase_info, optimizer='IPOPT')
 
         rtol = 1e-2
 
