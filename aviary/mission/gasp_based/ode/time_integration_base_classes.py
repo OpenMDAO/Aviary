@@ -17,9 +17,8 @@ def add_SGM_required_inputs(group: om.Group, inputs_to_add: dict):
                         promotes_inputs=list(inputs_to_add.keys()),
                         )
 
+
 # Subproblem used as a basis for forward in time integration phases.
-
-
 class SimuPyProblem(SimulationMixin):
     def __init__(
         self,
