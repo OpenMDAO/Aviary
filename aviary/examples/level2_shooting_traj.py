@@ -58,8 +58,6 @@ def run_aviary(aircraft_filename, phase_info, optimizer=None, analysis_scheme=An
         alpha_mode=AlphaModes.REQUIRED_LIFT,
         simupy_args=dict(
             DEBUG=True,
-            blocked_state_names=['engine.nox', 'nox',
-                                 'TAS', Dynamic.Mission.FLIGHT_PATH_ANGLE],
         ),
     )
     cruise_vals = {
