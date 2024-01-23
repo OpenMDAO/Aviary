@@ -13,6 +13,8 @@ from aviary.subsystems.aerodynamics.gasp_based.gaspaero import LowSpeedAero
 from aviary.subsystems.propulsion.propulsion_mission import PropulsionMission
 from aviary.variable_info.enums import AlphaModes
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
+from aviary.mission.ode.altitude_rate import AltitudeRate
 
 
 class AscentODE(BaseODE):
@@ -116,6 +118,28 @@ class AscentODE(BaseODE):
             ],
         )
 
+        self.add_subsystem(
+            name='SPECIFIC_ENERGY_RATE_EXCESS',
+            subsys=SpecificEnergyRate(num_nodes=nn),
+            promotes_inputs=[(Dynamic.Mission.VELOCITY, "TAS"), Dynamic.Mission.MASS,
+                             (Dynamic.Mission.THRUST_TOTAL, Dynamic.Mission.THRUST_MAX_TOTAL),
+                             Dynamic.Mission.DRAG],
+            promotes_outputs=[(Dynamic.Mission.SPECIFIC_ENERGY_RATE,
+                               Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS)]
+        )
+
+        self.add_subsystem(
+            name='ALTITUDE_RATE_MAX',
+            subsys=AltitudeRate(num_nodes=nn),
+            promotes_inputs=[
+                (Dynamic.Mission.SPECIFIC_ENERGY_RATE,
+                 Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS),
+                (Dynamic.Mission.VELOCITY_RATE, "TAS_rate"),
+                (Dynamic.Mission.VELOCITY, "TAS")],
+            promotes_outputs=[
+                (Dynamic.Mission.ALTITUDE_RATE,
+                 Dynamic.Mission.ALTITUDE_RATE_MAX)])
+
         ParamPort.set_default_vals(self)
         self.set_input_defaults("t_init_flaps", val=47.5)
         self.set_input_defaults("t_init_gear", val=37.3)
@@ -129,3 +153,5 @@ class AscentODE(BaseODE):
         self.set_input_defaults('aero_ramps.gear_factor:final_val', val=0.)
         self.set_input_defaults('aero_ramps.flap_factor:initial_val', val=1.)
         self.set_input_defaults('aero_ramps.gear_factor:initial_val', val=1.)
+        self.set_input_defaults(Dynamic.Mission.MASS, val=np.ones(
+            nn), units='kg')  # val here is nominal
