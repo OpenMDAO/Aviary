@@ -54,7 +54,7 @@ x.add_input("eom", [Dynamic.Mission.MASS])
 x.add_input("specific_energy", [Dynamic.Mission.MASS])
 x.add_input("alt_rate", ["TAS_rate"])
 
-# make connections6
+# make connections
 x.connect("atmos", "fc", ["rho", Dynamic.Mission.SPEED_OF_SOUND])
 # x.connect("atmos", "prop", [Dynamic.Mission.TEMPERATURE, Dynamic.Mission.STATIC_PRESSURE])
 x.connect("atmos", "constraints", ["rho"])
