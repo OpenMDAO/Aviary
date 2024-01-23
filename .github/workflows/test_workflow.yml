@@ -11,10 +11,12 @@ on:
   merge_group:
     branches: [ main ]
 
+  # Allow running the workflow manually from the Actions tab
+  workflow_dispatch:
+
 jobs:
 
   pre_commit:
-    if: github.repository_owner == 'OpenMDAO'
     # run pre-commit checks
     runs-on: ubuntu-latest
 
@@ -26,7 +28,6 @@ jobs:
     - uses: pre-commit/action@v3.0.0
 
   test_ubuntu:
-    if: github.repository_owner == 'OpenMDAO'
     runs-on: ubuntu-latest
 
     timeout-minutes: 90
@@ -42,7 +43,7 @@ jobs:
             SCIPY: '1.6'
             PYOPTSPARSE: 'v2.9.1'
             SNOPT: '7.7'
-            OPENMDAO: '3.27'
+            OPENMDAO: 'dev'
             DYMOS: '1.8.0'
             MAKE_DOCS: 0
 
@@ -64,7 +65,7 @@ jobs:
             SCIPY: 1
             PYOPTSPARSE: 'v2.9.1'
             SNOPT: '7.7'
-            OPENMDAO: 'latest'
+            OPENMDAO: 'dev'
             DYMOS: 'latest'
             MAKE_DOCS: 0
 
@@ -75,7 +76,7 @@ jobs:
             SCIPY: 1
             PYOPTSPARSE: 'v2.9.1'
             SNOPT: '7.7'
-            OPENMDAO: 'latest'
+            OPENMDAO: 'dev'
             DYMOS: 'latest'
             MAKE_DOCS: 1
 
@@ -106,6 +107,7 @@ jobs:
         with:
           auto-update-conda: true
           python-version: ${{ matrix.PY }}
+          channels: conda-forge
 
       - name: Install dependencies
         shell: bash -l {0}
@@ -232,7 +234,7 @@ jobs:
           echo "Build the docs"
           echo "============================================================="
           bash build_book.sh
-          
+
       - name: Display doc build reports
         continue-on-error: True
         if: matrix.MAKE_DOCS

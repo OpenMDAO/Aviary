@@ -25,19 +25,13 @@ class SimuPyProblem(SimulationMixin):
         ode,
         time_independent=False,
         t_name="t_curr",
-        state_names=None,
+        states=None,
         alternate_state_names=None,
         blocked_state_names=None,
-        state_units=None,
-        state_rate_names=None,
         alternate_state_rate_names=None,
-        state_rate_units=None,
-        parameter_names=None,
-        parameter_units=None,
-        output_names=None,
-        output_units=None,
-        control_names=None,
-        control_units=None,
+        parameters=None,
+        outputs=None,
+        controls=None,
         include_state_outputs=False,
         rate_suffix="_rate",
         DEBUG=False,
@@ -46,9 +40,21 @@ class SimuPyProblem(SimulationMixin):
 
     ):
         """
+        states: a dictionary of the form {state_name:{'units':unit, 'rate':state_rate_name, 'rate_units':state_rate_units}}
+        alternate_state_names: a dictionary of the form {state_to_replace:new_state_name}
+        blocked_state_names: a list of the form [state_name_to_block]
+        alternate_state_rate_names: a dictionary of the form {state_to_modify:new_state_rate_name}
+        parameters: a dictionary of the form {parameter_name:unit}
+        outputs: a dictionary of the form {output_name:unit}
+        controls: a dictionary of the form {control_name:unit}
         include_state_outputs : automatically add the state to the input
         works well for auto-parsed naming, does not check for duplication before adding
+        states, parameters, outputs, and controls can also be input as a list of keys for the dictionary 
         """
+
+        default_om_list_args = dict(prom_name=True, val=False,
+                                    out_stream=None, units=True)
+
         self.DEBUG = DEBUG
         self.max_allowable_time = max_allowable_time
         self.adjoint_int_opts = adjoint_int_opts
@@ -69,152 +75,122 @@ class SimuPyProblem(SimulationMixin):
         prob.final_setup()
 
         self.time_independent = time_independent
-        if control_names is None:
-            control_names = []
-        self.control_names = control_names
-        if control_units is not None:
-            self.control_units = control_units
-        else:
-            self.control_units = [
-                om_dict["units"]
-                for om_name, om_dict in prob.model.list_inputs(
-                    includes=control_names,
-                    out_stream=False,
-                    val=False,
-                    units=True,
-                )
-            ]
-
-        if (
-            state_names is None
-            or parameter_names is None
-            or output_names is None  # or
-            # event_names is None
-        ):
-            data = prob.model.list_outputs(prom_name=True, val=False, out_stream=None)
-            outputs = [val['prom_name'] for key, val in data]
-            data = prob.model.list_inputs(prom_name=True, val=False, out_stream=None)
-            inputs = [val['prom_name'] for key, val in data]
+        if type(states) is list:
+            states = {state: {'units': None, 'rate': state+rate_suffix, 'rate_units': None}
+                      for state in states}
+        if type(parameters) is list:
+            parameters = {parameter: None for parameter in parameters}
+        if type(outputs) is list:
+            outputs = {output: None for output in outputs}
+        if controls is None:
+            controls = {}
+        elif type(controls) is list:
+            controls = {control: None for control in controls}
         if alternate_state_names is None:
             alternate_state_names = {}
         if alternate_state_rate_names is None:
             alternate_state_rate_names = {}
 
-        if state_names is None:
-            state_names = [
-                output.replace(rate_suffix, "")
-                for output in outputs
+        data = prob.model.list_inputs(includes=controls.keys(), **default_om_list_args)
+        control_data = {val.pop('prom_name'): val for key, val in data}
+        for control_name, control_units in controls.items():
+            if control_units is None:
+                controls[control_name] = control_data[control_name]["units"]
+        self.controls = controls
+
+        if (
+            states is None
+            or parameters is None
+            or outputs is None  # or
+            # event_names is None
+        ):
+            data = prob.model.list_outputs(**default_om_list_args)
+            model_outputs = [val['prom_name'] for key, val in data]
+            data = prob.model.list_inputs(**default_om_list_args)
+            model_inputs = [val['prom_name'] for key, val in data]
+
+        if states is None:
+            states = {
+                output.replace(rate_suffix, ""): {'units': None, 'rate': output}
+                for output in model_outputs
                 if output.endswith(rate_suffix)
                 or output in alternate_state_names.keys()
-            ]
+            }
+
             if blocked_state_names is not None:
                 for name in blocked_state_names:
-                    if name in state_names:
-                        state_names.remove(name)
+                    if name in states.keys():
+                        states.pop(name)
             if alternate_state_names:
-                for key, val in alternate_state_names.items():
-                    state_key = key.replace(rate_suffix, "")
-                    if state_key in state_names:  # Used to rename an existing state
-                        state_names[state_names.index(state_key)] = val
+                for state_key, val in alternate_state_names.items():
+                    if state_key in states.keys():  # Used to rename an existing state
+                        states[val] = states.pop(state_key)
                     else:  # Used to add a new state
-                        state_names.append(val)
+                        states[val]: {'units': None, 'rate': val+rate_suffix}
 
-        if state_rate_names is None:
-            state_rate_names = [state_name + rate_suffix for state_name in state_names]
-            if alternate_state_rate_names:
-                state_rate_names = [name if name not in alternate_state_rate_names.keys(
-                ) else alternate_state_rate_names[name] for name in state_rate_names]
+        if alternate_state_rate_names:
+            for state_name, val in alternate_state_rate_names.items():
+                if state_name in states.keys():
+                    states[state_name]['rate'] = val
 
-        if state_rate_units is not None:
-            self.state_rate_units = state_rate_units
-        else:
-            self.state_rate_units = [
-                om_dict["units"]
-                for om_name, om_dict in prob.model.list_outputs(
-                    includes=state_rate_names,
-                    out_stream=False,
-                    val=False,
-                    units=True,
-                )
-            ]
-            if len(self.state_rate_units) != len(state_rate_names):
-                raise RuntimeError(
-                    'state_rate_units could not be auto generated, declare them explicitly.')
+        state_rate_names = [val['rate'] for _, val in states.items()]
+        data = prob.model.list_outputs(includes=state_rate_names, **default_om_list_args)
+        rate_data = {val.pop('prom_name'): val for key, val in data}
+        for state_name, state_data in states.items():
+            if state_data['rate_units'] is None:
+                state_data['rate_units'] = rate_data[state_data['rate']]["units"]
+            if state_data['units'] is None:
+                rate_unit = rate_data[state_data['rate']]["units"]
+                states[state_name]['units'] = units.simplify_unit("s*" + rate_unit)
 
-        if state_units is not None:
-            self.state_units = state_units
-        else:
-            self.state_units = [
-                units.simplify_unit("s*" + rate_unit)
-                for rate_unit in self.state_rate_units
-            ]
-            if len(self.state_units) != len(state_names):
-                raise RuntimeError(
-                    'state_units could not be auto generated, declare them explicitly.')
+        if parameters is None:
+            parameters = {
+                inp: None
+                for inp in set(model_inputs)
+                if inp not in list(states.keys()) + list(controls.keys()) + [t_name]
+            }
 
-        if parameter_names is None:
-            parameter_names = [
-                inp
-                for inp in set(inputs)
-                if inp not in state_names + control_names + [t_name]
-            ]
-        if parameter_units is not None:
-            self.parameter_units = parameter_units
-        else:
-            self.parameter_units = [
-                om_dict["units"]
-                for om_name, om_dict in prob.model.list_inputs(
-                    includes=parameter_names,
-                    out_stream=False,
-                    val=False,
-                    units=True,
-                )
-            ]
+        data = prob.model.list_inputs(includes=parameters.keys(), **default_om_list_args)
+        parameter_data = {val.pop('prom_name'): val for key, val in data}
+        for parameter_name, parameter_units in parameters.items():
+            if parameter_units is None:
+                parameters[parameter_name] = parameter_data[parameter_name]["units"]
 
-        if output_names is None:
-            output_names = [
-                outp
+        if outputs is None:
+            outputs = {
+                outp: None
                 for outp in outputs
                 if outp not in state_rate_names  # + event_names
-            ]
+            }
 
-        if output_units is not None:
-            self.output_units = output_units
-        else:
-            self.output_units = [
-                next(iter(prob.model.get_io_metadata(
+        for output_name, output_units in outputs.items():
+            if output_units is None:
+                outputs[output_name] = next(iter(prob.model.get_io_metadata(
                     includes=[output_name],
                     metadata_keys=["units"]
                 ).values()))["units"]
-                for output_name in output_names
-            ]
 
-        if include_state_outputs or output_names == []:  # prevent empty outputs
-            output_names = state_names + output_names
-            self.output_units = self.state_units + self.output_units
+        if include_state_outputs or outputs == {}:  # prevent empty outputs
+            outputs = states + outputs
 
         self.t_name = t_name
-        self.state_names = state_names
+        self.states = states
 
-        self.state_rate_names = state_rate_names
-        self.parameter_names = parameter_names
-        self.output_names = output_names
+        self.parameters = parameters
+        self.outputs = outputs
 
-        self.dim_state = len(state_names)
-        self.dim_output = len(output_names)
-        self.dim_input = len(control_names)
-        self.dim_parameters = len(parameter_names)
+        self.dim_state = len(states)
+        self.dim_output = len(outputs)
+        self.dim_input = len(controls)
+        self.dim_parameters = len(parameters)
         # TODO: add defensive checks to make sure dimensions match in both setup and
         # calls
 
-        if DEBUG:
+        if DEBUG or True:
             om.n2(prob, outfile="n2_simupy_problem.html", show_browser=False)
             with open('input_list_simupy.txt', 'w') as outfile:
                 prob.model.list_inputs(out_stream=outfile,)
-            print(state_names)
-            print(self.state_units)
-            print(state_rate_names)
-            print(self.state_rate_units)
+            print(states)
 
     @property
     def time(self):
@@ -230,8 +206,8 @@ class SimuPyProblem(SimulationMixin):
     def state(self):
         return np.array(
             [
-                self.prob.get_val(state_name, units=unit)[0]
-                for state_name, unit in zip(self.state_names, self.state_units)
+                self.prob.get_val(state_name, units=state_data['units'])[0]
+                for state_name, state_data in self.states.items()
             ]
         )
 
@@ -239,15 +215,17 @@ class SimuPyProblem(SimulationMixin):
     def state(self, value):
         if np.all(self.state == value):
             return
-        for state_name, elem_val, unit in zip(
-            self.state_names, value, self.state_units
+        for state_name, elem_val in zip(
+            self.states.keys(), value
         ):
-            self.prob.set_val(state_name, elem_val, units=unit)
+            self.prob.set_val(state_name, elem_val,
+                              units=self.states[state_name]['units'])
 
     def compute_along_traj(self, ts, xs):
         self.prob.set_val(self.t_name, ts)
-        for state_name, elem_val, unit in zip(self.state_names, xs.T, self.state_units):
-            self.prob.set_val(state_name, elem_val, units=unit)
+        for state_name, elem_val in zip(self.states.keys(), xs.T):
+            self.prob.set_val(state_name, elem_val,
+                              units=self.states[state_name]['units'])
 
         self.prob.run_model()
 
@@ -256,7 +234,7 @@ class SimuPyProblem(SimulationMixin):
         return np.array(
             [
                 self.prob.get_val(control_name, units=unit)[0]
-                for control_name, unit in zip(self.control_names, self.control_units)
+                for control_name, unit in self.controls.items()
             ]
         )
 
@@ -266,19 +244,17 @@ class SimuPyProblem(SimulationMixin):
             value = np.array([])
         if (self.control.size == value.size) and np.all(self.control == value):
             return
-        for control_name, elem_val, unit in zip(
-            self.control_names, value, self.control_units
+        for control_name, elem_val in zip(
+            self.controls, value
         ):
-            self.prob.set_val(control_name, elem_val, units=unit)
+            self.prob.set_val(control_name, elem_val, units=self.controls[control_name])
 
     @property
     def parameter(self):
         return np.array(
             [
                 self.prob.get_val(parameter_name, units=unit)[0]
-                for parameter_name, unit in zip(
-                    self.parameter_names, self.parameter_units
-                )
+                for parameter_name, unit in self.parameters.items()
             ]
         )
 
@@ -286,8 +262,8 @@ class SimuPyProblem(SimulationMixin):
     def parameter(self, value):
         if np.all(self.parameter == value):
             return
-        for parameter_name, elem_val, unit in zip(
-            self.parameter_names, value, self.parameter_units
+        for parameter_name, elem_val in zip(
+            self.paramaters, value
         ):
             self.prob.set_val(parameter_name, elem_val)
 
@@ -295,10 +271,8 @@ class SimuPyProblem(SimulationMixin):
     def state_rate(self):
         return np.array(
             [
-                self.prob.get_val(state_rate_name, units=unit)[0]
-                for state_rate_name, unit in zip(
-                    self.state_rate_names, self.state_rate_units
-                )
+                self.prob.get_val(state_data['rate'], units=state_data['rate_units'])[0]
+                for _, state_data in self.states.items()
             ]
         )
 
@@ -307,7 +281,7 @@ class SimuPyProblem(SimulationMixin):
         return np.array(
             [
                 self.prob.get_val(output_name, units=unit)[0]
-                for output_name, unit in zip(self.output_names, self.output_units)
+                for output_name, unit in self.outputs.items()
             ]
         )
 
@@ -437,9 +411,7 @@ class SGMTrajBase(om.ExplicitComponent):
                 ),
                 **self.add_output(
                     final_state_output+final_suffix,
-                    units=ODEs[-1].state_units[
-                        ODEs[-1].state_names.index(final_state_output)
-                    ],
+                    units=ODEs[-1].states[final_state_output]['units'],
                 )
             }
             for final_state_output in traj_final_state_output
@@ -452,9 +424,7 @@ class SGMTrajBase(om.ExplicitComponent):
                 ),
                 **self.add_output(
                     promoted_final_output+final_suffix,
-                    units=ODEs[-1].output_units[
-                        ODEs[-1].output_names.index(promoted_final_output)
-                    ],
+                    units=ODEs[-1].outputs[promoted_final_output],
                 ),
             }
             for promoted_final_output in traj_promote_final_output
@@ -469,9 +439,7 @@ class SGMTrajBase(om.ExplicitComponent):
                 **dict(name=initial_state_input+initial_suffix),
                 **self.add_input(
                     initial_state_input+initial_suffix,
-                    units=ODEs[0].state_units[
-                        ODEs[0].state_names.index(initial_state_input)
-                    ],
+                    units=ODEs[0].states[initial_state_input]['units'],
                 )
             }
             for initial_state_input in traj_initial_state_input
@@ -492,9 +460,7 @@ class SGMTrajBase(om.ExplicitComponent):
                         event_trigger_input[1],
                         trigger_suffix
                     ]),
-                    units=event_trigger_input[0].state_units[
-                        event_trigger_input[0].state_names.index(event_trigger_input[1])
-                    ],
+                    units=event_trigger_input[0].states[event_trigger_input[1]]['units'],
                 )
             }
             for event_trigger_input in traj_event_trigger_input
@@ -529,7 +495,7 @@ class SGMTrajBase(om.ExplicitComponent):
                 inputs[state_name+"_initial"].squeeze()
                 if state_name in self.traj_initial_state_input
                 else 0.
-                for state_name in first_problem.state_names
+                for state_name in first_problem.states.keys()
             ]).squeeze()
 
         while True:
@@ -572,10 +538,8 @@ class SGMTrajBase(om.ExplicitComponent):
             current_problem.output_equation_function(t, x)
             state = np.array(
                 [
-                    current_problem.prob.get_val(state_name, units=unit)
-                    for state_name, unit in zip(
-                        next_problem.state_names, next_problem.state_units
-                    )
+                    current_problem.prob.get_val(state_name, units=state_data['units'])
+                    for state_name, state_data in next_problem.states.items()
                 ]
             ).squeeze()
             sim_problems.append(next_problem)
@@ -594,7 +558,7 @@ class SGMTrajBase(om.ExplicitComponent):
 
             outputs[output_name] = sim_results[-1].x[
                 -1,
-                sim_problems[-1].state_names.index(state_name)
+                list(sim_problems[-1].states.keys()).index(state_name)
             ]
 
         for output in self.traj_promote_final_output:
@@ -603,7 +567,7 @@ class SGMTrajBase(om.ExplicitComponent):
 
             outputs[promoted_name] = sim_results[-1].y[
                 -1,
-                sim_problems[-1].output_names.index(output_name)
+                list(sim_problems[-1].outputs.keys()).index(output_name)
             ]
 
         self.last_inputs = np.array(list(inputs.values()))
@@ -651,13 +615,13 @@ class SGMTrajBase(om.ExplicitComponent):
             param_deriv = np.zeros(len(param_dict))
 
             if output in self.traj_final_state_output:
-                costate[next_prob.state_names.index(output)] = 1.
+                costate[list(next_prob.states.keys()).index(output)] = 1.
             else:  # in self.traj_promote_final_output
 
                 next_prob.state_equation_function(next_res.t[-1], next_res.x[-1, :])
                 costate[:] = next_prob.compute_totals(
                     output,
-                    next_prob.state_names,
+                    next_prob.states.keys(),
                     return_format='array'
                 ).squeeze()
 
@@ -698,12 +662,12 @@ class SGMTrajBase(om.ExplicitComponent):
                 num_active_event_channels += 1
                 dg_dx = np.zeros((1, prob.dim_state))
 
-                if channel_name in prob.state_names:
-                    dg_dx[0, prob.state_names.index(channel_name)] = 1.
+                if channel_name in prob.states.keys():
+                    dg_dx[0, list(prob.states.keys()).index(channel_name)] = 1.
                 else:
                     dg_dx[0, :] = prob.compute_totals(
                         [channel_name],
-                        prob.state_names,
+                        prob.states.keys(),
                         return_format='array'
                     )
 
@@ -739,17 +703,17 @@ class SGMTrajBase(om.ExplicitComponent):
 
                     # here and co-state assume number of states is only decreasing
                     # forward in time
-                    for state_name in next_prob.state_names:
-                        state_idx = next_prob.state_names.index(state_name)
+                    for state_name in next_prob.states.keys():
+                        state_idx = list(next_prob.states.keys()).index(state_name)
 
-                        if state_name in prob.state_names:
+                        if state_name in prob.states.keys():
                             f_plus[
                                 state_idx
-                            ] = plus_rate[prob.state_names.index(state_name)]
+                            ] = plus_rate[list(prob.states.keys()).index(state_name)]
 
                             # state_update[
-                            #    next_prob.state_names.index(state_name)
-                            # ] = x[prob.state_names.index(state_name)]
+                            #    list(next_prob.states.keys()).index(state_name)
+                            # ] = x[list(prob.states.keys()).index(state_name)]
 
                             # TODO: make sure index multiplying next_pronb costate
                             # lines up -- since costate is pre-filled to next_prob's
@@ -757,14 +721,14 @@ class SGMTrajBase(om.ExplicitComponent):
                             # column should map to
                             dh_dx[state_idx, state_idx] = 1.
 
-                        elif state_name in prob.output_names:
+                        elif state_name in prob.outputs.keys():
                             state_update[
                                 state_idx
-                            ] = res.y[-1, prob.output_names.index(state_name)]
+                            ] = res.y[-1, list(prob.outputs.keys()).index(state_name)]
 
                             dh_j_dx = prob.compute_totals(
                                 [state_name],
-                                prob.state_names,
+                                prob.states.keys(),
                                 return_format='array').squeeze()
 
                             dh_dparam[state_idx, :] = prob.compute_totals(
@@ -773,15 +737,15 @@ class SGMTrajBase(om.ExplicitComponent):
                                 return_format='array'
                             ).squeeze()
 
-                            for state_name_2 in prob.state_names:
+                            for state_name_2 in prob.states.keys():
                                 # I'm actually computing dh_dx.T
                                 # dh_dx rows are new state, columns are old state
                                 # now, dh_dx.T rows are old state, columns are new
                                 # so I think this is right
                                 dh_dx[
-                                    next_prob.state_names.index(state_name_2),
+                                    list(next_prob.states.keys()).index(state_name_2),
                                     state_idx,
-                                ] = dh_j_dx[prob.state_names.index(state_name_2)]
+                                ] = dh_j_dx[list(prob.states.keys()).index(state_name_2)]
 
                         else:
                             state_update[
@@ -793,12 +757,13 @@ class SGMTrajBase(om.ExplicitComponent):
                     dh_dxs.append(dh_dx)
                     dh_dparams.append(dh_dparam)
 
-                df_dx_data[idx, :, :] = prob.compute_totals(prob.state_rate_names,
-                                                            prob.state_names,
+                state_rate_names = [val['rate'] for _, val in prob.states.items()]
+                df_dx_data[idx, :, :] = prob.compute_totals(state_rate_names,
+                                                            prob.states.keys(),
                                                             return_format='array').T
                 if param_dict:
                     df_dparam_data[idx, ...] = prob.compute_totals(
-                        prob.state_rate_names,
+                        state_rate_names,
                         list(param_dict.keys()),
                         return_format='array'
                     )
@@ -909,7 +874,7 @@ class SGMTrajBase(om.ExplicitComponent):
                         # lamda_dot_plus = lamda_dot
                         if self.DEBUG:
                             if np.any(state_disc):
-                                print("update is non-zero!", prob, prob.state_names,
+                                print("update is non-zero!", prob, prob.states.keys(),
                                       state_disc, costate, lamda_dot)
                                 print(
                                     "inner product becomes...",
@@ -918,7 +883,7 @@ class SGMTrajBase(om.ExplicitComponent):
                                     state_disc[None,
                                                :] @ dh_dx.T @ lamda_dot_plus[:, None]
                                 )
-                            print("dh_dx for", prob, prob.state_names, "\n",  dh_dx)
+                            print("dh_dx for", prob, prob.states.keys(), "\n",  dh_dx)
                             print("costate", costate)
                         costate_update_terms = [
                             dh_dx.T @ costate[:, None],
@@ -1015,17 +980,17 @@ class SGMTrajBase(om.ExplicitComponent):
 
                 # TODO: do co-states need unit changes? probably not...
                 for state_name in prob.state_names:
-                    costate[next_prob.state_names.index(state_name)] = co_res.x[-1,
-                                                                                prob.state_names.index(state_name)]
+                    costate[list(next_prob.states.keys()).index(
+                        state_name)] = co_res.x[-1, list(prob.states.keys()).index(state_name)]
                     lamda_dot_plus[
-                        next_prob.state_names.index(state_name)
-                    ] = lamda_dot_plus_rate[prob.state_names.index(state_name)]
+                        list(next_prob.states.keys()).index(state_name)
+                    ] = lamda_dot_plus_rate[list(prob.states.keys()).index(state_name)]
 
             for state_to_deriv, metadata in self.traj_initial_state_input.items():
                 param_name = metadata["name"]
                 J[output_name, param_name] = costate_reses[output][-1].x[
                     -1,
-                    prob.state_names.index(state_to_deriv)
+                    list(prob.states.keys()).index(state_to_deriv)
                 ]
             for param_deriv_val, param_deriv_name in zip(param_deriv, param_dict):
                 J[output_name, param_deriv_name] = param_deriv_val

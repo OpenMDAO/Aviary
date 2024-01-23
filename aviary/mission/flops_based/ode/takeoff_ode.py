@@ -10,13 +10,9 @@ from aviary.mission.gasp_based.flight_conditions import FlightConditions
 from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import set_aviary_initial_values, promote_aircraft_and_mission_vars
-from aviary.variable_info.variables import Aircraft
-from aviary.variable_info.variables import Dynamic as _Dynamic
-from aviary.variable_info.variables import Mission
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.variables_in import VariablesIn
 from aviary.variable_info.enums import AnalysisScheme
-
-Dynamic = _Dynamic.Mission
 
 
 class ExternalSubsystemGroup(om.Group):
@@ -94,16 +90,18 @@ class TakeoffODE(om.Group):
         self.add_subsystem(
             "USatm",
             USatm1976Comp(num_nodes=nn),
-            promotes_inputs=[("h", Dynamic.ALTITUDE)],
+            promotes_inputs=[("h", Dynamic.Mission.ALTITUDE)],
             promotes_outputs=[
-                "rho", ("sos", Dynamic.SPEED_OF_SOUND), ("temp", Dynamic.TEMPERATURE),
-                ("pres", Dynamic.STATIC_PRESSURE), "viscosity"])
+                "rho", ("sos", Dynamic.Mission.SPEED_OF_SOUND), ("temp",
+                                                                 Dynamic.Mission.TEMPERATURE),
+                ("pres", Dynamic.Mission.STATIC_PRESSURE), "viscosity"])
 
         self.add_subsystem(
             "fc",
             FlightConditions(num_nodes=nn),
-            promotes_inputs=["rho", Dynamic.SPEED_OF_SOUND, ("TAS", Dynamic.VELOCITY)],
-            promotes_outputs=[Dynamic.DYNAMIC_PRESSURE, Dynamic.MACH, "EAS"])
+            promotes_inputs=["rho", Dynamic.Mission.SPEED_OF_SOUND,
+                             ("TAS", Dynamic.Mission.VELOCITY)],
+            promotes_outputs=[Dynamic.Mission.DYNAMIC_PRESSURE, Dynamic.Mission.MACH, "EAS"])
 
         # NOTE: the following are potentially signficant differences in implementation
         # between FLOPS and Aviary:
@@ -171,11 +169,11 @@ class TakeoffODE(om.Group):
         self.add_subsystem(
             'eoms', TakeoffEOM(**kwargs),
             promotes_inputs=[
-                Dynamic.FLIGHT_PATH_ANGLE, Dynamic.VELOCITY, Dynamic.MASS, Dynamic.LIFT,
-                Dynamic.THRUST_TOTAL, Dynamic.DRAG, 'angle_of_attack'],
+                Dynamic.Mission.FLIGHT_PATH_ANGLE, Dynamic.Mission.VELOCITY, Dynamic.Mission.MASS, Dynamic.Mission.LIFT,
+                Dynamic.Mission.THRUST_TOTAL, Dynamic.Mission.DRAG, 'angle_of_attack'],
             promotes_outputs=[
-                Dynamic.RANGE_RATE, Dynamic.ALTITUDE_RATE, Dynamic.VELOCITY_RATE,
-                Dynamic.FLIGHT_PATH_ANGLE_RATE])
+                Dynamic.Mission.DISTANCE_RATE, Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.VELOCITY_RATE,
+                Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE])
 
         self.add_subsystem(
             'comp_v_ratio',
@@ -185,11 +183,11 @@ class TakeoffODE(om.Group):
                 v={'units': 'm/s', 'shape': nn},
                 # NOTE: FLOPS detailed takeoff stall speed is not dynamic - see above
                 v_stall={'units': 'm/s', 'shape': nn}),
-            promotes_inputs=[('v', Dynamic.VELOCITY), 'v_stall'],
+            promotes_inputs=[('v', Dynamic.Mission.VELOCITY), 'v_stall'],
             promotes_outputs=['v_over_v_stall'])
 
-        self.set_input_defaults(Dynamic.ALTITUDE, np.zeros(nn), 'm')
-        self.set_input_defaults(Dynamic.VELOCITY, np.zeros(nn), 'm/s')
+        self.set_input_defaults(Dynamic.Mission.ALTITUDE, np.zeros(nn), 'm')
+        self.set_input_defaults(Dynamic.Mission.VELOCITY, np.zeros(nn), 'm/s')
         self.set_input_defaults(Mission.Design.GROSS_MASS, val=1.0, units='kg')
 
         set_aviary_initial_values(self, aviary_options)

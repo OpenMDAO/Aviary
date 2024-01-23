@@ -49,7 +49,7 @@ fi
 # pyoptsparse_line=$(grep ' pyoptsparse' $input_yaml | sed 's/^    //')
 
 # Remove specified packages and write to an intermediate file
-grep -v -e 'aviary' -e 'om-aviary' -e 'build-pyoptsparse' -e 'pyoptsparse' -e 'boring-battery' -e 'networkx' -e '  - pip:' $input_yaml > $intermediate_yaml
+grep -v -e 'aviary' -e 'om-aviary' -e 'build-pyoptsparse' -e 'pyoptsparse' -e 'networkx' -e '  - pip:' $input_yaml > $intermediate_yaml
 
 # Check for 'dev' versions of OpenMDAO and Dymos
 if grep -q -e 'openmdao.*dev' $intermediate_yaml; then
@@ -98,8 +98,6 @@ conda activate $env_name
 
 # Check flags and install special packages if needed
 pip install -r $requirements_txt
-
-pip install "boring_battery @ git+https://github.com/jcchin/boring.git"
 
 if [ "$install_openmdao_from_git" = true ]; then
     pip install git+https://github.com/OpenMDAO/OpenMDAO.git

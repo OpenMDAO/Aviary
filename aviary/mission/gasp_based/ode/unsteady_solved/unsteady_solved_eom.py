@@ -46,12 +46,12 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
             self.add_input(Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(
                 nn), desc="flight path angle", units="rad")
             self.add_input("dh_dr", val=np.zeros(
-                nn), desc="d(alt)/d(range)", units="m/range_units")
+                nn), desc="d(alt)/d(range)", units="m/distance_units")
             self.add_input("d2h_dr2", val=np.zeros(
-                nn), desc="d(climb_rate)/d(range)", units="1/range_units")
+                nn), desc="d(climb_rate)/d(range)", units="1/distance_units")
 
         # Outputs
-        self.add_output("dt_dr", shape=nn, units="s/range_units",
+        self.add_output("dt_dr", shape=nn, units="s/distance_units",
                         desc="Seconds passed per each meter of range covered.",
                         tags=['dymos.state_rate_source:time', 'dymos.state_units:s'])
         self.add_output("normal_force", val=np.ones(nn), units="N",
