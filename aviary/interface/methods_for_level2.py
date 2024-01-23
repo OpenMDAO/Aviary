@@ -980,7 +980,6 @@ class AviaryProblem(om.Problem):
 
             descent_phases = create_2dof_based_descent_phases(
                 self.ode_args,
-                cruise_alt=self.cruise_alt,
                 cruise_mach=self.cruise_mach)
 
             descent_estimation = descent_range_and_fuel(
