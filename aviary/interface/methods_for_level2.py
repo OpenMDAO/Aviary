@@ -2406,12 +2406,12 @@ class AviaryProblem(om.Problem):
             self.model.connect(Mission.Takeoff.GROUND_DISTANCE,
                                f'traj.{first_flight_phase_name}.initial_states:distance')
 
-            if self.phase_info[first_flight_phase_name].get('optimize_mach', False):
-                if self.phase_info[first_flight_phase_name].get('use_polynomial_control', True):
-                    control_type_string = 'polynomial_control_values'
-                else:
-                    control_type_string = 'control_values'
+            if self.phase_info[first_flight_phase_name]['user_options'].get('use_polynomial_control', True):
+                control_type_string = 'polynomial_control_values'
+            else:
+                control_type_string = 'control_values'
 
+            if self.phase_info[first_flight_phase_name]['user_options'].get('optimize_mach', False):
                 # Create an ExecComp to compute the difference in mach
                 mach_diff_comp = om.ExecComp(
                     'mach_resid_for_connecting_takeoff = final_mach - initial_mach')
@@ -2427,7 +2427,7 @@ class AviaryProblem(om.Problem):
                 self.model.add_constraint(
                     'mach_diff_comp.mach_resid_for_connecting_takeoff', equals=0.0)
 
-            if self.phase_info[first_flight_phase_name].get('optimize_altitude', False):
+            if self.phase_info[first_flight_phase_name]['user_options'].get('optimize_altitude', False):
                 # Similar steps for altitude difference
                 alt_diff_comp = om.ExecComp(
                     'altitude_resid_for_connecting_takeoff = final_altitude - initial_altitude', units='ft')
