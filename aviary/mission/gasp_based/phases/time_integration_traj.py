@@ -103,9 +103,7 @@ class FlexibleTraj(TimeIntegrationTrajBase):
 
         print('t_final', t_final)
         print('x_final', x_final)
-        print('states', self.ODEs[-1].state_names)
-        print('units', self.ODEs[-1].state_units)
-
+        print(self.ODEs[-1].states)
 
 # class SGMTraj1(TimeIntegrationTrajBase):
 #     '''
