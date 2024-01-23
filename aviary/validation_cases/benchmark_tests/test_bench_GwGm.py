@@ -13,7 +13,7 @@ from aviary.variable_info.variables import Aircraft, Mission
 class ProblemPhaseTestCase(unittest.TestCase):
 
     @require_pyoptsparse(optimizer="IPOPT")
-    def bench_test_swap_2_GwGm(self):
+    def test_bench_GwGm(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwGm.csv',
                           local_phase_info, optimizer='IPOPT')
@@ -22,16 +22,16 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         # There are no truth values for these.
         assert_near_equal(prob.get_val(Mission.Design.GROSS_MASS),
-                          181654., tolerance=rtol)
+                          174039., tolerance=rtol)
 
         assert_near_equal(prob.get_val(Aircraft.Design.OPERATING_MASS),
-                          101555., tolerance=rtol)
+                          95509, tolerance=rtol)
 
         assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS),
-                          44098., tolerance=rtol)
+                          42529., tolerance=rtol)
 
         assert_near_equal(prob.get_val('landing.' + Mission.Landing.GROUND_DISTANCE),
-                          2637.86, tolerance=rtol)
+                          2634.8, tolerance=rtol)
 
         assert_near_equal(prob.get_val("traj.desc2.timeseries.states:distance")[-1],
                           3675.0, tolerance=rtol)

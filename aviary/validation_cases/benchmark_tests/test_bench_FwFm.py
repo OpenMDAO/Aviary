@@ -262,7 +262,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         self.expected_dict = expected_dict
 
     @require_pyoptsparse(optimizer="IPOPT")
-    def bench_test_swap_4_FwFm(self):
+    def test_bench_FwFm(self):
         phase_info = {
             "pre_mission": {"include_takeoff": True, "optimize_mass": True},
             "climb": {

@@ -39,7 +39,7 @@ from aviary.mission.gasp_based.polynomial_fit import PolynomialFit
 from aviary.subsystems.premission import CorePreMission
 from aviary.mission.gasp_based.ode.breguet_cruise_ode import BreguetCruiseODESolution
 from aviary.utils.functions import set_aviary_initial_values, Null, create_opts2vals, add_opts2vals, promote_aircraft_and_mission_vars
-from aviary.utils.process_input_decks import create_vehicle, update_GASP_options
+from aviary.utils.process_input_decks import create_vehicle, update_GASP_options, initial_guessing
 from aviary.utils.preprocessors import preprocess_crewpayload
 from aviary.interface.utils.check_phase_info import check_phase_info
 from aviary.utils.aviary_values import AviaryValues
@@ -170,8 +170,8 @@ class AviaryProblem(om.Problem):
         self.mass_method = mass_method = aviary_inputs.get_val(Settings.MASS_METHOD)
 
         if mission_method is TWO_DEGREES_OF_FREEDOM or mass_method is GASP:
-            aviary_inputs, initial_guesses = update_GASP_options(aviary_inputs,
-                                                                 initial_guesses)
+            aviary_inputs = update_GASP_options(aviary_inputs)
+            initial_guesses = initial_guessing(aviary_inputs, initial_guesses)
         self.aviary_inputs = aviary_inputs
         self.initial_guesses = initial_guesses
 
