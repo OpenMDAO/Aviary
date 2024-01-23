@@ -44,7 +44,7 @@ class SGMGroundroll(SimuPyProblem):
             ],
             # state_units=['lbm','nmi','ft','ft/s'],
             alternate_state_rate_names={
-                Dynamic.Mission.MASS_RATE: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
+                Dynamic.Mission.MASS: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
             **simupy_args,
         )
 
@@ -84,7 +84,7 @@ class SGMRotation(SimuPyProblem):
             ],
             # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
-                Dynamic.Mission.MASS_RATE: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
+                Dynamic.Mission.MASS: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
             **simupy_args,
         )
 
@@ -142,7 +142,7 @@ class SGMAscent(SimuPyProblem):
             ],
             # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
-                Dynamic.Mission.MASS_RATE: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
+                Dynamic.Mission.MASS: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
             control_names=control_names,
             **simupy_args,
         )
@@ -385,7 +385,7 @@ class SGMAccel(SimuPyProblem):
             ],
             # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
-                Dynamic.Mission.MASS_RATE: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
+                Dynamic.Mission.MASS: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
             **simupy_args,
         )
         self.phase_name = phase_name
@@ -455,7 +455,7 @@ class SGMClimb(SimuPyProblem):
             ],
             # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
-                Dynamic.Mission.MASS_RATE: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
+                Dynamic.Mission.MASS: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
             **simupy_args,
         )
         self.phase_name = phase_name
@@ -523,7 +523,7 @@ class SGMCruise(SimuPyProblem):
             ],
             # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
-                Dynamic.Mission.MASS_RATE: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
+                Dynamic.Mission.MASS: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
             **simupy_args,
         )
 
@@ -602,7 +602,7 @@ class SGMDescent(SimuPyProblem):
             ],
             # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
-                Dynamic.Mission.MASS_RATE: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
+                Dynamic.Mission.MASS: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
             **simupy_args,
         )
 

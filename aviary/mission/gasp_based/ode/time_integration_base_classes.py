@@ -28,7 +28,6 @@ class SimuPyProblem(SimulationMixin):
         states=None,
         alternate_state_names=None,
         blocked_state_names=None,
-        state_rates=None,
         alternate_state_rate_names=None,
         parameters=None,
         outputs=None,
@@ -41,17 +40,16 @@ class SimuPyProblem(SimulationMixin):
 
     ):
         """
-        states: a dictionary of the form {state_name:{'units':unit, 'rate':state_rate_name}}
-        alternate_state_names: a dictionary of the form {state_to_replace:'new_state_name'}
+        states: a dictionary of the form {state_name:{'units':unit, 'rate':state_rate_name, 'rate_units':state_rate_units}}
+        alternate_state_names: a dictionary of the form {state_to_replace:new_state_name}
         blocked_state_names: a list of the form [state_name_to_block]
-        state_rates: a dictionary of the form {state_rate_name:unit}
-        alternate_state_rate_names: a dictionary of the form {state_rate_to_replace:'new_state_rate_name'}
+        alternate_state_rate_names: a dictionary of the form {state_to_modify:new_state_rate_name}
         parameters: a dictionary of the form {parameter_name:unit}
         outputs: a dictionary of the form {output_name:unit}
         controls: a dictionary of the form {control_name:unit}
         include_state_outputs : automatically add the state to the input
         works well for auto-parsed naming, does not check for duplication before adding
-        states, state_rates, parameters, outputs, and controls can also be input as a list of keys for the dictionary 
+        states, parameters, outputs, and controls can also be input as a list of keys for the dictionary 
         """
 
         default_args = dict(prom_name=True, val=False, out_stream=None, units=True)
@@ -77,7 +75,7 @@ class SimuPyProblem(SimulationMixin):
 
         self.time_independent = time_independent
         if type(states) is list:
-            states = {state: {'units': None, 'rate': state+rate_suffix}
+            states = {state: {'units': None, 'rate': state+rate_suffix, 'rate_units': None}
                       for state in states}
         if type(parameters) is list:
             parameters = {parameter: None for parameter in parameters}
@@ -125,41 +123,21 @@ class SimuPyProblem(SimulationMixin):
             if alternate_state_names:
                 for state_key, val in alternate_state_names.items():
                     if state_key in states.keys():  # Used to rename an existing state
-                        # modified_states = {}
-                        # for name, state_data in states.items():
-                        #     key = name if name not in alternate_state_names else alternate_state_names[name]
-                        #     modified_states[key] = state_data
-                        # states = modified_states
                         states[val] = states.pop(state_key)
                     else:  # Used to add a new state
                         states[val]: {'units': None, 'rate': val+rate_suffix}
 
-        if state_rates is None:
-            state_rates = {
-                state_name + rate_suffix: None
-                for state_name in states.keys()}
-            if alternate_state_rate_names:
-                for rate_name, val in alternate_state_rate_names.items():
-                    if rate_name in state_rates.keys():
-                        # state_rates[val] = state_rates.pop(rate_name)
-                        modified_rates = {}
-                        for name, rate_data in state_rates.items():
-                            key = name if name not in alternate_state_rate_names else alternate_state_rate_names[
-                                name]
-                            modified_rates[key] = rate_data
-                        state_rates = modified_rates
+        if alternate_state_rate_names:
+            for state_name, val in alternate_state_rate_names.items():
+                if state_name in states.keys():
+                    states[state_name]['rate'] = val
 
-                        state_name = rate_name.replace(rate_suffix, "")
-                        if state_name in states.keys():
-                            states[state_name]['rate'] = val
-
-        data = prob.model.list_outputs(includes=state_rates.keys(), **default_args)
+        state_rate_names = [val['rate'] for _, val in states.items()]
+        data = prob.model.list_outputs(includes=state_rate_names, **default_args)
         rate_data = {val.pop('prom_name'): val for key, val in data}
-        for rate_name, rate_units in state_rates.items():
-            if rate_units is None:
-                state_rates[rate_name] = rate_data[rate_name]["units"]
-
         for state_name, state_data in states.items():
+            if state_data['rate_units'] is None:
+                state_data['rate_units'] = rate_data[state_data['rate']]["units"]
             if state_data['units'] is None:
                 rate_unit = rate_data[state_data['rate']]["units"]
                 states[state_name]['units'] = units.simplify_unit("s*" + rate_unit)
@@ -181,7 +159,7 @@ class SimuPyProblem(SimulationMixin):
             outputs = {
                 outp: None
                 for outp in outputs
-                if outp not in state_rates  # + event_names
+                if outp not in state_rate_names  # + event_names
             }
 
         for output_name, output_units in outputs.items():
@@ -197,7 +175,6 @@ class SimuPyProblem(SimulationMixin):
         self.t_name = t_name
         self.states = states
 
-        self.state_rates = state_rates
         self.parameters = parameters
         self.outputs = outputs
 
@@ -213,7 +190,6 @@ class SimuPyProblem(SimulationMixin):
             with open('input_list_simupy.txt', 'w') as outfile:
                 prob.model.list_inputs(out_stream=outfile,)
             print(states)
-            print(state_rates)
 
     @property
     def time(self):
@@ -294,8 +270,8 @@ class SimuPyProblem(SimulationMixin):
     def state_rate(self):
         return np.array(
             [
-                self.prob.get_val(state_rate_name, units=unit)[0]
-                for state_rate_name, unit in self.state_rates.items()
+                self.prob.get_val(state_data['rate'], units=state_data['rate_units'])[0]
+                for _, state_data in self.states.items()
             ]
         )
 
@@ -780,12 +756,13 @@ class SGMTrajBase(om.ExplicitComponent):
                     dh_dxs.append(dh_dx)
                     dh_dparams.append(dh_dparam)
 
-                df_dx_data[idx, :, :] = prob.compute_totals(prob.state_rates.keys(),
+                state_rate_names = [val['rate'] for _, val in prob.states.items()]
+                df_dx_data[idx, :, :] = prob.compute_totals(state_rate_names,
                                                             prob.states.keys(),
                                                             return_format='array').T
                 if param_dict:
                     df_dparam_data[idx, ...] = prob.compute_totals(
-                        prob.state_rates.keys(),
+                        state_rate_names,
                         list(param_dict.keys()),
                         return_format='array'
                     )
