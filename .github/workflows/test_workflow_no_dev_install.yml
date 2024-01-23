@@ -58,6 +58,16 @@ jobs:
           python-version: ${{ matrix.PY }}
           channels: conda-forge
 
+      - name: Install OpenMDAO Dev
+        shell: bash -l {0}
+        run: |
+          echo "============================================================="
+          echo "THIS STEP IS TEMPORARY"
+          echo "Please remove after the release of OpenMDAO 3.31."
+          echo "Install OpenMDAO"
+          echo "============================================================="
+          pip install git+https://github.com/OpenMDAO/OpenMDAO
+
       - name: Checkout Aviary
         uses: actions/checkout@v2
 
