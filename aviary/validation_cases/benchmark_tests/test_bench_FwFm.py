@@ -261,8 +261,6 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         self.expected_dict = expected_dict
 
-    @require_pyoptsparse(optimizer="IPOPT")
-    def test_bench_FwFm(self):
         phase_info = {
             "pre_mission": {"include_takeoff": True, "optimize_mass": True},
             "climb": {
@@ -349,8 +347,19 @@ class ProblemPhaseTestCase(unittest.TestCase):
             },
         }
 
+        self.phase_info = phase_info
+
+    @require_pyoptsparse(optimizer="IPOPT")
+    def test_bench_FwFm(self):
         prob = run_aviary(
-            'models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info, max_iter=50, optimizer='IPOPT')
+            'models/test_aircraft/aircraft_for_bench_FwFm.csv', self.phase_info, max_iter=50, optimizer='IPOPT')
+
+        compare_against_expected_values(prob, self.expected_dict)
+
+    @require_pyoptsparse(optimizer="SNOPT")
+    def test_bench_FwFm_SNOPT(self):
+        prob = run_aviary(
+            'models/test_aircraft/aircraft_for_bench_FwFm.csv', self.phase_info, max_iter=50, optimizer='SNOPT')
 
         compare_against_expected_values(prob, self.expected_dict)
 
@@ -358,4 +367,4 @@ class ProblemPhaseTestCase(unittest.TestCase):
 if __name__ == '__main__':
     test = ProblemPhaseTestCase()
     test.setUp()
-    test.bench_test_swap_4_FwFm()
+    test.test_bench_FwFm_SNOPT()
