@@ -52,7 +52,8 @@ class SimuPyProblem(SimulationMixin):
         states, parameters, outputs, and controls can also be input as a list of keys for the dictionary 
         """
 
-        default_args = dict(prom_name=True, val=False, out_stream=None, units=True)
+        default_om_list_args = dict(prom_name=True, val=False,
+                                    out_stream=None, units=True)
 
         self.DEBUG = DEBUG
         self.max_allowable_time = max_allowable_time
@@ -90,7 +91,7 @@ class SimuPyProblem(SimulationMixin):
         if alternate_state_rate_names is None:
             alternate_state_rate_names = {}
 
-        data = prob.model.list_inputs(includes=controls.keys(), **default_args)
+        data = prob.model.list_inputs(includes=controls.keys(), **default_om_list_args)
         control_data = {val.pop('prom_name'): val for key, val in data}
         for control_name, control_units in controls.items():
             if control_units is None:
@@ -103,9 +104,9 @@ class SimuPyProblem(SimulationMixin):
             or outputs is None  # or
             # event_names is None
         ):
-            data = prob.model.list_outputs(**default_args)
+            data = prob.model.list_outputs(**default_om_list_args)
             model_outputs = [val['prom_name'] for key, val in data]
-            data = prob.model.list_inputs(**default_args)
+            data = prob.model.list_inputs(**default_om_list_args)
             model_inputs = [val['prom_name'] for key, val in data]
 
         if states is None:
@@ -133,7 +134,7 @@ class SimuPyProblem(SimulationMixin):
                     states[state_name]['rate'] = val
 
         state_rate_names = [val['rate'] for _, val in states.items()]
-        data = prob.model.list_outputs(includes=state_rate_names, **default_args)
+        data = prob.model.list_outputs(includes=state_rate_names, **default_om_list_args)
         rate_data = {val.pop('prom_name'): val for key, val in data}
         for state_name, state_data in states.items():
             if state_data['rate_units'] is None:
@@ -149,7 +150,7 @@ class SimuPyProblem(SimulationMixin):
                 if inp not in list(states.keys()) + list(controls.keys()) + [t_name]
             }
 
-        data = prob.model.list_inputs(includes=parameters.keys(), **default_args)
+        data = prob.model.list_inputs(includes=parameters.keys(), **default_om_list_args)
         parameter_data = {val.pop('prom_name'): val for key, val in data}
         for parameter_name, parameter_units in parameters.items():
             if parameter_units is None:
