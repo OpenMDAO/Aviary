@@ -90,7 +90,7 @@ def create_report_frame(format, text_filepath):
             #     f'<iframe {iframe_css} src=/home/{text_filepath}></iframe>')
             # iframe_css = "width=1200px height=1200px overflow=scroll margin=0px padding=0px border=20px frameBorder=20px scrolling=yes"
             iframe_css = 'max-width=1200px max-height=1200px overflow="scroll" margin=0px padding=0px border=20px frameBorder=20px scrolling="yes"'
-            iframe_css = 'width=1200px height=1200px overflow-x="scroll" overflow="scroll" margin=0px padding=0px border=20px frameBorder=20px scrolling="yes"'
+            iframe_css = 'width=1200px height=800px overflow-x="scroll" overflow="scroll" margin=0px padding=0px border=20px frameBorder=20px scrolling="yes"'
             report_pane = pn.pane.HTML(
                 f'<iframe {iframe_css} src=/home/{text_filepath}></iframe>'              )
         elif format in ['markdown', 'text']:
