@@ -607,8 +607,6 @@ class AviaryProblem(om.Problem):
                 opt=False, lower=0.0, upper=1.0
             )
 
-        phase.timeseries_options['use_prefix'] = True
-
         return phase
 
     def _add_groundroll_eq_constraint(self, phase):
@@ -727,8 +725,6 @@ class AviaryProblem(om.Problem):
                     initial_bounds=user_options.get_val("initial_bounds", 's'),
                     initial_ref=user_options.get_val("initial_ref", 's'),
                 )
-
-            phase.timeseries_options['use_prefix'] = True
 
             return phase
 
@@ -882,8 +878,6 @@ class AviaryProblem(om.Problem):
                                              fix_initial=False,
                                              rate_targets=['dh_dr'], rate2_targets=['d2h_dr2'],
                                              opt=phase_options['opt'], upper=40.e3, ref=30.e3, lower=-1.)
-
-        phase.timeseries_options['use_prefix'] = True
 
         return phase
 
@@ -1150,7 +1144,7 @@ class AviaryProblem(om.Problem):
             self.post_mission.add_subsystem('fuel_burn', ecomp,
                                             promotes_outputs=['fuel_burned'])
 
-            self.model.connect(f"traj.{phases[0]}.timeseries.states:mass",
+            self.model.connect(f"traj.{phases[0]}.timeseries.mass",
                                "fuel_burn.initial_mass", src_indices=[0])
             self.model.connect(f"traj.{phases[-1]}.states:mass",
                                "fuel_burn.mass_final", src_indices=[-1])
@@ -1188,7 +1182,7 @@ class AviaryProblem(om.Problem):
                             ("range_resid", Mission.Constraints.RANGE_RESIDUAL)],
                     )
 
-                    self.model.connect(f"traj.{phases[-1]}.timeseries.states:distance",
+                    self.model.connect(f"traj.{phases[-1]}.timeseries.distance",
                                        "range_constraint.actual_range", src_indices=[-1])
                     self.model.add_constraint(
                         Mission.Constraints.RANGE_RESIDUAL, equals=0.0, ref=1.e2)
@@ -1415,17 +1409,17 @@ class AviaryProblem(om.Problem):
 
                 self.model.connect("traj.ascent.timeseries.time", "h_fit.time_cp")
                 self.model.connect(
-                    "traj.ascent.timeseries.states:altitude", "h_fit.h_cp")
+                    "traj.ascent.timeseries.altitude", "h_fit.h_cp")
 
                 self.model.connect(
-                    "traj.desc2.timeseries.states:mass",
+                    "traj.desc2.timeseries.mass",
                     "landing.mass",
                     src_indices=[-1],
                     flat_src_indices=True,
                 )
 
                 connect_map = {
-                    "traj.desc2.timeseries.states:distance": Mission.Summary.RANGE,
+                    "traj.desc2.timeseries.distance": Mission.Summary.RANGE,
                     "traj.desc2.states:mass": Mission.Landing.TOUCHDOWN_MASS,
                 }
             else:

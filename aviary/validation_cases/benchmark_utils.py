@@ -24,16 +24,16 @@ def compare_against_expected_values(prob, expected_dict):
         times.extend(prob.get_val(f'traj.{phase}.timeseries.time', units='s'))
         try:
             altitudes.extend(prob.get_val(
-                f'traj.{phase}.timeseries.polynomial_controls:altitude', units='m'))
+                f'traj.{phase}.timeseries.altitude', units='m'))
         except KeyError:
             altitudes.extend(prob.get_val(
-                f'traj.{phase}.timeseries.controls:altitude', units='m'))
+                f'traj.{phase}.timeseries.altitude', units='m'))
         velocities.extend(prob.get_val(
             f'traj.{phase}.timeseries.velocity', units='m/s'))
         masses.extend(
-            prob.get_val(f'traj.{phase}.timeseries.states:mass', units='kg'))
+            prob.get_val(f'traj.{phase}.timeseries.mass', units='kg'))
         ranges.extend(
-            prob.get_val(f'traj.{phase}.timeseries.states:distance', units='m'))
+            prob.get_val(f'traj.{phase}.timeseries.distance', units='m'))
 
     times = np.array(times)
     altitudes = np.array(altitudes)
