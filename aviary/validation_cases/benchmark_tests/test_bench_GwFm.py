@@ -373,4 +373,4 @@ class ProblemPhaseTestCase(unittest.TestCase):
 if __name__ == '__main__':
     test = ProblemPhaseTestCase()
     test.setUp()
-    test.bench_test_swap_1_GwFm()
+    test.bench_test_swap_1_GwFm_SNOPT()

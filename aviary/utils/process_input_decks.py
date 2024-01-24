@@ -60,8 +60,6 @@ def create_vehicle(vehicle_deck=''):
     aircraft_values.set_val('mass_defect', val=10000, units='lbm')
     aircraft_values.set_val('problem_type', val=ProblemType.SIZING)
     aircraft_values.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False)
-    aircraft_values.set_val(
-        Aircraft.Design.RESERVE_FUEL_ADDITIONAL, val=4998, units='lbm')
 
     if isinstance(vehicle_deck, AviaryValues):
         aircraft_values.update(vehicle_deck)
@@ -338,6 +336,11 @@ def initial_guessing(aircraft_values: AviaryValues(), initial_guesses):
     if initial_guesses['climb_range'] <= 0:
         initial_guesses['climb_range'] = initial_guesses['time_to_climb'] / \
             (60 * 60) * (avg_speed_guess * np.cos(gamma_guess))
+
+    if aircraft_values.get_val('debug_mode'):
+        print('\nInitial Guesses')
+        for key, value in initial_guesses.items():
+            print(key, value)
 
     return initial_guesses
 
