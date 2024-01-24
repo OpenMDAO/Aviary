@@ -220,17 +220,6 @@ jobs:
           path: ${{ matrix.NAME }}_environment.yml
           retention-days: 5
 
-      - name: Generate specs
-        if: matrix.MAKE_DOCS == 0 && matrix.RUN_BENCHES == 0
-        shell: bash -l {0}
-        run: |
-          echo "============================================================="
-          echo "Generate specs"
-          echo "============================================================="
-          cd aviary/xdsm
-          python run_all.py
-          cd ../..
-
       - name: Run tests
         if: matrix.MAKE_DOCS == 0 && matrix.RUN_BENCHES == 0
         shell: bash -l {0}

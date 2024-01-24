@@ -1116,7 +1116,6 @@ class FixedMassGroupTestCase1(unittest.TestCase):
         assert_check_partials(partial_data, atol=3e-11, rtol=1e-12)
 
 
-
 class FixedMassGroupTestCase2(unittest.TestCase):
     def setUp(self):
 

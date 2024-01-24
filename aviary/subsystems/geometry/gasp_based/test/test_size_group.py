@@ -159,7 +159,6 @@ class SizeGroupTestCase1(unittest.TestCase):
         assert_check_partials(partial_data, atol=2e-12, rtol=1e-12)
 
 
-
 class SizeGroupTestCase2(unittest.TestCase):
     def setUp(self):
 
@@ -382,7 +381,6 @@ class SizeGroupTestCase2(unittest.TestCase):
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=3e-10, rtol=1e-12)
-
 
 
 class SizeGroupTestCase3(unittest.TestCase):
