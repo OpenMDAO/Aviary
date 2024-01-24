@@ -1,4 +1,4 @@
-name: Send Notification to Teams Through Email
+name: Notify Teams
 
 on:
   pull_request_target:
@@ -83,6 +83,7 @@ jobs:
           # Optional priority: 'high', 'normal' (default) or 'low'
           nodemailerlog: true
           nodemailerdebug: true
+  
   send_email_on_updated_assignees:
     if: github.event_name == 'pull_request' && github.event.action == 'assigned'
     runs-on: ubuntu-latest
