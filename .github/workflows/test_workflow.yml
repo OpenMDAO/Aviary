@@ -133,7 +133,7 @@ jobs:
           echo "============================================================="
           conda install numpy=${{ matrix.NUMPY }} scipy=${{ matrix.SCIPY }} -q -y
           conda install matplotlib pandas panel hvplot -q -y
-          pip install testflo pyxdsm -q
+          pip install testflo -q
 
       - name: Install pyOptSparse
         if: matrix.PYOPTSPARSE
@@ -155,15 +155,6 @@ jobs:
 
           pip install git+https://github.com/OpenMDAO/build_pyoptsparse
           build_pyoptsparse -v -b ${{ matrix.PYOPTSPARSE }} $SNOPT
-
-      - name: Install TeX Live
-        shell: bash
-        run: |
-          echo "============================================================="
-          echo "Install TeX Live (for pyXDSM)"
-          echo "============================================================="
-          sudo apt-get update
-          sudo apt-get install texlive-pictures texlive-latex-extra -y
 
       - name: Install OpenMDAO
         if: matrix.OPENMDAO
