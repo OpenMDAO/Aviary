@@ -1437,7 +1437,7 @@ class AviaryProblem(om.Problem):
             self.model.promotes("landing", inputs=param_list)
             if self.analysis_scheme is AnalysisScheme.SHOOTING:
                 self.model.promotes("traj", inputs=param_list)
-                self.model.list_inputs()
+                # self.model.list_inputs()
                 # self.model.promotes("traj", inputs=['ascent.ODE_group.eoms.'+Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE])
 
             self.model.connect("taxi.mass", "vrot.mass")
