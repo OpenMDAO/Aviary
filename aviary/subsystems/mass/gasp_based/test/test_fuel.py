@@ -10,7 +10,6 @@ from aviary.subsystems.mass.gasp_based.fuel import (BodyTankCalculations,
                                                     FuelSysAndFullFuselageMass,
                                                     FuselageAndStructMass)
 from aviary.variable_info.options import get_option_defaults
-from aviary.utils.test_utils.IO_test_util import assert_match_spec, skipIfMissingXDSM
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -611,13 +610,6 @@ class FuelMassGroupTestCase2(
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=2e-11, rtol=1e-12)
 
-    @skipIfMissingXDSM('mass_and_sizing_basic_specs/fuel_mass.json')
-    def test_io_fuel_group_spec(self):
-
-        subsystem = self.prob.model
-
-        assert_match_spec(subsystem, "mass_and_sizing_basic_specs/fuel_mass.json")
-
 
 class FuelMassGroupTestCase3(
     unittest.TestCase
@@ -745,13 +737,6 @@ class FuelMassGroupTestCase3(
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=3e-9, rtol=6e-11)
-
-    @skipIfMissingXDSM('mass_and_sizing_basic_specs/fuel_mass.json')
-    def test_io_fuel_group_spec(self):
-
-        subsystem = self.prob.model
-
-        assert_match_spec(subsystem, "mass_and_sizing_basic_specs/fuel_mass.json")
 
 
 if __name__ == "__main__":

@@ -86,6 +86,5 @@ parts:
     - file: misc_resources/feature_comparison
       sections:
       - file: misc_resources/comparison_to_flops
-    - file: misc_resources/using_XDSM
     - file: misc_resources/planned_future_features
     - file: _srcdocs/index
