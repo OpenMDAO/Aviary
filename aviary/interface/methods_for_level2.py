@@ -944,8 +944,6 @@ class AviaryProblem(om.Problem):
                 alpha_mode=AlphaModes.REQUIRED_LIFT,
                 simupy_args=dict(
                     DEBUG=True,
-                    blocked_state_names=['engine.nox', 'nox',
-                                         'TAS', Dynamic.Mission.FLIGHT_PATH_ANGLE],
                 ),
             )
             cruise_vals = {
