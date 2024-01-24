@@ -28,7 +28,7 @@ x.add_system("descent2", GROUP, [r"\textbf{DescentTo1kFt}"])
 x.add_system("landing", GROUP, [r"\textbf{Landing}"])
 x.add_system("fuelburn", FUNC, ["FuelBurn"])
 x.add_system("mass_diff", FUNC, ["MassDifference"])
-x.add_system(Dynamic.Mission.RANGE, FUNC, ["RangeConstraint"])
+x.add_system(Dynamic.Mission.DISTANCE, FUNC, ["RangeConstraint"])
 
 if simplified is False:
     # independent vars input to ParamPort, common to all phases
@@ -339,10 +339,14 @@ if simplified is False:
 
     )
     x.add_input("fuelburn", [Aircraft.Fuel.FUEL_MARGIN, Mission.Summary.GROSS_MASS])
-    x.add_input(Dynamic.Mission.RANGE, [Mission.Design.RANGE])
+    x.add_input(Dynamic.Mission.DISTANCE, [Mission.Design.RANGE])
 
 # Create outputs
 x.add_output("landing", [Mission.Landing.GROUND_DISTANCE], side="right")
+x.add_output("climb1", [Dynamic.Mission.ALTITUDE_RATE_MAX], side="right")
+x.add_output("climb2", [Dynamic.Mission.ALTITUDE_RATE_MAX], side="right")
+x.add_output("descent2", [Dynamic.Mission.ALTITUDE_RATE_MAX], side="right")
+x.add_output("descent1", [Dynamic.Mission.ALTITUDE_RATE_MAX], side="right")
 
 # Create phase continuities
 x.connect("dymos", "groundroll", [Dynamic.Mission.MASS, "TAS", "t_curr"])
@@ -351,10 +355,13 @@ x.connect("dymos", "rotation", [Dynamic.Mission.MASS, "TAS",
 x.connect("dymos", "ascent", [Dynamic.Mission.MASS, Dynamic.Mission.ALTITUDE,
           "TAS", Dynamic.Mission.FLIGHT_PATH_ANGLE, "t_curr", "alpha"])
 x.connect("dymos", "accelerate", [Dynamic.Mission.ALTITUDE, "TAS", Dynamic.Mission.MASS])
-x.connect("dymos", "climb1", [Dynamic.Mission.ALTITUDE, Dynamic.Mission.MASS])
-x.connect("dymos", "climb2", [Dynamic.Mission.ALTITUDE, Dynamic.Mission.MASS])
+x.connect("dymos", "climb1", [Dynamic.Mission.ALTITUDE,
+          Dynamic.Mission.MASS, "TAS_rate"])
+x.connect("dymos", "climb2", [Dynamic.Mission.ALTITUDE,
+          Dynamic.Mission.MASS, "TAS_rate"])
 x.connect("dymos", "poly", ["time_cp", "h_cp"])
-x.connect("dymos", "descent2", [Dynamic.Mission.ALTITUDE, Dynamic.Mission.MASS])
+x.connect("dymos", "descent2", [Dynamic.Mission.ALTITUDE,
+          Dynamic.Mission.MASS, "TAS_rate"])
 x.connect("dymos", "landing", [Dynamic.Mission.MASS])
 x.connect("taxi", "groundroll", [Dynamic.Mission.MASS])
 x.connect("dymos",
@@ -363,12 +370,13 @@ x.connect("dymos",
            Dynamic.Mission.MACH,
            "mass_initial",
            "cruise_time_initial",
-           "cruise_range_initial"],
+           "cruise_distance_initial"],
           )
-x.connect("dymos", "descent1", [Dynamic.Mission.ALTITUDE, Dynamic.Mission.MASS])
+x.connect("dymos", "descent1", [Dynamic.Mission.ALTITUDE,
+          Dynamic.Mission.MASS, "TAS_rate"])
 x.connect("dymos", "fuelburn", [Mission.Landing.TOUCHDOWN_MASS])
-x.connect("dymos", Dynamic.Mission.RANGE, [Mission.Summary.RANGE])
-x.connect("cruise", "dymos", ["cruise_time_final", "cruise_range_final"])
+x.connect("dymos", Dynamic.Mission.DISTANCE, [Mission.Summary.RANGE])
+x.connect("cruise", "dymos", ["cruise_time_final", "cruise_distance_final"])
 
 # Add Design Variables
 x.connect(
@@ -405,38 +413,38 @@ x.connect("opt", "mass_diff", [Mission.Design.GROSS_MASS])
 # Add Constraints
 x.connect("dymos", "opt", [r"\mathcal{R}"])
 x.connect("mass_diff", "opt", [Mission.Constraints.MASS_RESIDUAL])
-x.connect(Dynamic.Mission.RANGE, "opt", [Mission.Constraints.RANGE_RESIDUAL])
+x.connect(Dynamic.Mission.DISTANCE, "opt", [Mission.Constraints.RANGE_RESIDUAL])
 x.connect("poly", "opt", ["h_init_gear", "h_init_flaps"])
 
 # Connect State Rates
 x.connect(
     "groundroll", "dymos", [
-        "TAS_rate", Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, "distance_rate"])
+        "TAS_rate", Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, Dynamic.Mission.DISTANCE_RATE])
 x.connect("rotation",
           "dymos",
           ["TAS_rate",
            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-           "distance_rate",
+           Dynamic.Mission.DISTANCE_RATE,
            "alpha_rate"])
 x.connect("ascent",
           "dymos",
           ["TAS_rate",
            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-           "distance_rate",
+           Dynamic.Mission.DISTANCE_RATE,
            Dynamic.Mission.ALTITUDE_RATE,
            Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE],
           )
 x.connect(
     "accelerate", "dymos", [
-        "TAS_rate", Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, "distance_rate"])
+        "TAS_rate", Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, Dynamic.Mission.DISTANCE_RATE])
 x.connect("climb1", "dymos", [Dynamic.Mission.ALTITUDE_RATE,
-          Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, "distance_rate"])
+          Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, Dynamic.Mission.DISTANCE_RATE])
 x.connect("climb2", "dymos", [Dynamic.Mission.ALTITUDE_RATE,
-          Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, "distance_rate"])
+          Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, Dynamic.Mission.DISTANCE_RATE])
 x.connect("descent1", "dymos", [Dynamic.Mission.ALTITUDE_RATE,
-          Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, "distance_rate"])
+          Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, Dynamic.Mission.DISTANCE_RATE])
 x.connect("descent2", "dymos", [Dynamic.Mission.ALTITUDE_RATE,
-          Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, "distance_rate"])
+          Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, Dynamic.Mission.DISTANCE_RATE])
 
 x.write("statics_xdsm")
 x.write_sys_specs("statics_specs")

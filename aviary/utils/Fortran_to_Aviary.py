@@ -352,7 +352,7 @@ def update_gasp_options(vehicle_data):
 
     ## PROBLEM TYPE ##
     # if multiple values of target_range are specified, use the one that corresponds to the problem_type
-    design_range, range_units = input_values.get_item(Mission.Design.RANGE)
+    design_range, distance_units = input_values.get_item(Mission.Design.RANGE)
     try:
         problem_type = input_values.get_val('problem_type')[0]
     except KeyError:
@@ -372,7 +372,7 @@ def update_gasp_options(vehicle_data):
     else:
         if design_range == 0:
             input_values.set_val('problem_type', ['fallout'])
-    input_values.set_val(Mission.Design.RANGE, [design_range], range_units)
+    input_values.set_val(Mission.Design.RANGE, [design_range], distance_units)
 
     ## STRUT AND FOLD ##
     strut_loc = input_values.get_val(Aircraft.Strut.ATTACHMENT_LOCATION, 'ft')[0]
@@ -436,6 +436,17 @@ def update_gasp_options(vehicle_data):
     if input_values.get_val(Aircraft.Wing.FLAP_DRAG_INCREMENT_OPTIMUM)[0] == 0:
         input_values.set_val(Aircraft.Wing.FLAP_DRAG_INCREMENT_OPTIMUM,
                              [[.12, .23, .13, .23, .23, .1, .15][flap_ind]])
+
+    res = input_values.get_val(Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm')[0]
+    if res <= 0:
+        input_values.set_val(Aircraft.Design.RESERVE_FUEL_ADDITIONAL, [0], units='lbm')
+        input_values.set_val(Aircraft.Design.RESERVE_FUEL_FRACTION,
+                             [-res], units='unitless')
+    elif res >= 10:
+        input_values.set_val(Aircraft.Design.RESERVE_FUEL_FRACTION,
+                             [0], units='unitless')
+    else:
+        ValueError('"FRESF" is not valid between 0 and 10.')
 
     vehicle_data['input_values'] = input_values
     return vehicle_data

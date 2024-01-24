@@ -8,11 +8,10 @@ from aviary.mission.gasp_based.flight_conditions import FlightConditions
 from aviary.mission.gasp_based.ode.base_ode import BaseODE
 from aviary.mission.gasp_based.ode.flight_path_eom import FlightPathEOM
 from aviary.mission.gasp_based.ode.params import ParamPort
-from aviary.subsystems.aerodynamics.gasp_based.gaspaero import (CruiseAero,
-                                                                LowSpeedAero)
-from aviary.subsystems.propulsion.propulsion_mission import PropulsionMission
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
+from aviary.mission.ode.altitude_rate import AltitudeRate
 
 
 class FlightPathODE(BaseODE):
@@ -198,7 +197,7 @@ class FlightPathODE(BaseODE):
             promotes_inputs=EOM_inputs,
             promotes_outputs=[
                 "TAS_rate",
-                "distance_rate",
+                Dynamic.Mission.DISTANCE_RATE,
                 "normal_force",
                 "fuselage_pitch",
                 "load_factor",
@@ -208,6 +207,28 @@ class FlightPathODE(BaseODE):
         if not self.options['ground_roll']:
             self.promotes('eoms', outputs=[
                           Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE])
+
+        self.add_subsystem(
+            name='SPECIFIC_ENERGY_RATE_EXCESS',
+            subsys=SpecificEnergyRate(num_nodes=nn),
+            promotes_inputs=[(Dynamic.Mission.VELOCITY, "TAS"), Dynamic.Mission.MASS,
+                             (Dynamic.Mission.THRUST_TOTAL, Dynamic.Mission.THRUST_MAX_TOTAL),
+                             Dynamic.Mission.DRAG],
+            promotes_outputs=[(Dynamic.Mission.SPECIFIC_ENERGY_RATE,
+                               Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS)]
+        )
+
+        self.add_subsystem(
+            name='ALTITUDE_RATE_MAX',
+            subsys=AltitudeRate(num_nodes=nn),
+            promotes_inputs=[
+                (Dynamic.Mission.SPECIFIC_ENERGY_RATE,
+                 Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS),
+                (Dynamic.Mission.VELOCITY_RATE, "TAS_rate"),
+                (Dynamic.Mission.VELOCITY, "TAS")],
+            promotes_outputs=[
+                (Dynamic.Mission.ALTITUDE_RATE,
+                 Dynamic.Mission.ALTITUDE_RATE_MAX)])
 
         # Example of how to use a print_comp
         debug_comp = []
@@ -261,7 +282,9 @@ class FlightPathODE(BaseODE):
                 'alpha_comp',
                 'prop_group',
                 'eoms',
-                'mass_trigger'
+                'mass_trigger',
+                'SPECIFIC_ENERGY_RATE_EXCESS',
+                'ALTITUDE_RATE_MAX',
             ] +
                 debug_comp)
 

@@ -48,7 +48,7 @@ class ClimbODETestCase(unittest.TestCase):
             "CD": 0.0307,
             Dynamic.Mission.ALTITUDE_RATE: 3186 / 60,
             # TAS (kts -> ft/s) * cos(gamma)
-            "distance_rate": (254 * 1.68781) * np.cos(np.deg2rad(7.12)),
+            Dynamic.Mission.DISTANCE_RATE: (254 * 1.68781) * np.cos(np.deg2rad(7.12)),
             Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: -13505,  # lbm/h
             "theta": np.deg2rad(12.31),
             Dynamic.Mission.FLIGHT_PATH_ANGLE: np.deg2rad(7.12),
@@ -84,7 +84,7 @@ class ClimbODETestCase(unittest.TestCase):
             "CD": [0.0270, 0.0326],
             Dynamic.Mission.ALTITUDE_RATE: [3054 / 60, 453 / 60],
             # TAS (kts -> ft/s) * cos(gamma)
-            "distance_rate": [
+            Dynamic.Mission.DISTANCE_RATE: [
                 (319 * 1.68781) * np.cos(np.deg2rad(5.42)),
                 (459 * 1.68781) * np.cos(np.deg2rad(0.56)),
             ],

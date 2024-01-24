@@ -1,9 +1,9 @@
 import openmdao.api as om
 
 from aviary.variable_info.variables import Dynamic
-from aviary.mission.flops_based.ode.altitude_rate import AltitudeRate
+from aviary.mission.ode.altitude_rate import AltitudeRate
 from aviary.mission.flops_based.ode.range_rate import RangeRate
-from aviary.mission.flops_based.ode.specific_energy_rate import SpecificEnergyRate
+from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
 from aviary.mission.flops_based.ode.required_thrust import RequiredThrust
 
 
@@ -19,13 +19,13 @@ class MissionEOM(om.Group):
                            subsys=RequiredThrust(num_nodes=nn),
                            promotes_inputs=[Dynamic.Mission.DRAG, Dynamic.Mission.ALTITUDE_RATE,
                                             Dynamic.Mission.VELOCITY, Dynamic.Mission.VELOCITY_RATE, Dynamic.Mission.MASS],
-                           promotes_outputs=['T_required'])
+                           promotes_outputs=['thrust_required'])
 
         self.add_subsystem(name='groundspeed',
                            subsys=RangeRate(num_nodes=nn),
                            promotes_inputs=[
                                Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.VELOCITY],
-                           promotes_outputs=[Dynamic.Mission.RANGE_RATE])
+                           promotes_outputs=[Dynamic.Mission.DISTANCE_RATE])
 
         self.add_subsystem(name='excess_specific_power',
                            subsys=SpecificEnergyRate(num_nodes=nn),

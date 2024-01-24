@@ -30,7 +30,7 @@ varinfo = {
     "time": ("TIME", "time", "s"),
     Dynamic.Mission.ALTITUDE: ("ALT", "states:altitude", "ft"),
     "mass": ("MASS", "states:mass", "lbm"),
-    Dynamic.Mission.DISTANCE: ("RANGE", "states:distance", "NM"),
+    Dynamic.Mission.DISTANCE: (Dynamic.Mission.DISTANCE, "states:distance", "NM"),
     Dynamic.Mission.MACH: ("MACH", Dynamic.Mission.MACH, None),
     "EAS": ("EAS", "EAS", "kn"),
     "alpha": ("ALPHA", "alpha", "deg"),

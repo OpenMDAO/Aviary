@@ -53,7 +53,8 @@ def run_takeoff(make_plots=False):
         transcription=rotation_trans,
     )
     traj.add_phase("rotation", rotation)
-    traj.link_phases(["groundroll", "rotation"], ["time", "TAS", "mass", "distance"])
+    traj.link_phases(["groundroll", "rotation"], [
+                     "time", "TAS", "mass", Dynamic.Mission.DISTANCE])
 
     ascent_trans = dm.Radau(
         num_segments=2, order=5, compressed=True, solve_segments=False
@@ -66,7 +67,7 @@ def run_takeoff(make_plots=False):
     )
     traj.add_phase("ascent", ascent)
     traj.link_phases(
-        ["rotation", "ascent"], ["time", "TAS", "mass", "distance", "alpha"]
+        ["rotation", "ascent"], ["time", "TAS", "mass", Dynamic.Mission.DISTANCE, "alpha"]
     )
     p.model.promotes(
         "traj",
@@ -142,7 +143,7 @@ def run_takeoff(make_plots=False):
     )
     p.set_val(
         "traj.groundroll.states:distance",
-        groundroll.interp("distance", [0, 1000]),
+        groundroll.interp(Dynamic.Mission.DISTANCE, [0, 1000]),
         units="ft",
     )
     p.set_val("traj.groundroll.t_duration", 50.0)
@@ -158,7 +159,7 @@ def run_takeoff(make_plots=False):
     )
     p.set_val(
         "traj.rotation.states:distance",
-        rotation.interp("distance", [3680.37217765, 4000]),
+        rotation.interp(Dynamic.Mission.DISTANCE, [3680.37217765, 4000]),
         units="ft",
     )
     p.set_val("traj.rotation.t_duration", 50.0)
@@ -179,7 +180,7 @@ def run_takeoff(make_plots=False):
     )
     p.set_val(
         "traj.ascent.states:distance",
-        ascent.interp("distance", [4330.83393029, 5000]),
+        ascent.interp(Dynamic.Mission.DISTANCE, [4330.83393029, 5000]),
         units="ft",
     )
     p.set_val("traj.ascent.t_initial", 31.2)

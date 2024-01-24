@@ -21,7 +21,7 @@ phase_info = {
             "polynomial_control_order": 1,
             "num_segments": 5,
             "order": 3,
-            "solve_for_range": False,
+            "solve_for_distance": False,
             "initial_mach": (0.2, "unitless"),
             "final_mach": (0.72, "unitless"),
             "mach_bounds": ((0.18, 0.74), "unitless"),
@@ -45,7 +45,7 @@ phase_info = {
             "polynomial_control_order": 1,
             "num_segments": 5,
             "order": 3,
-            "solve_for_range": False,
+            "solve_for_distance": False,
             "initial_mach": (0.72, "unitless"),
             "final_mach": (0.72, "unitless"),
             "mach_bounds": ((0.7, 0.74), "unitless"),
@@ -69,7 +69,7 @@ phase_info = {
             "polynomial_control_order": 1,
             "num_segments": 5,
             "order": 3,
-            "solve_for_range": False,
+            "solve_for_distance": False,
             "initial_mach": (0.72, "unitless"),
             "final_mach": (0.36, "unitless"),
             "mach_bounds": ((0.34, 0.74), "unitless"),
@@ -97,7 +97,7 @@ prob = av.AviaryProblem()
 
 # Load aircraft and options data from user
 # Allow for user overrides here
-prob.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm_simple.csv', phase_info)
+prob.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
 
 
 # Preprocess inputs
