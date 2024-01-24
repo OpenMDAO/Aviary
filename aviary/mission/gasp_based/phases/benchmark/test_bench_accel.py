@@ -1,10 +1,12 @@
 import unittest
 
 from openmdao.utils.assert_utils import assert_near_equal
+from openmdao.utils.testing_utils import require_pyoptsparse
 
 from aviary.mission.gasp_based.phases.run_phases.run_accel import run_accel
 
 
+@require_pyoptsparse(optimizer="SNOPT")
 class AccelPhaseTestCase(unittest.TestCase):
     def bench_test_accel(self):
 
