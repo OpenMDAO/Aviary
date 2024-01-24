@@ -1,5 +1,4 @@
 from copy import deepcopy
-import os
 import unittest
 
 from openmdao.utils.assert_utils import assert_near_equal
@@ -13,11 +12,35 @@ from aviary.variable_info.variables import Aircraft, Mission
 @use_tempdirs
 class ProblemPhaseTestCase(unittest.TestCase):
 
-    @require_pyoptsparse(optimizer="SNOPT")
-    def bench_test_swap_2_GwGm(self):
+    @require_pyoptsparse(optimizer="IPOPT")
+    def test_bench_GwGm(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwGm.csv',
-                          local_phase_info)
+                          local_phase_info, optimizer='IPOPT')
+
+        rtol = 0.01
+
+        # There are no truth values for these.
+        assert_near_equal(prob.get_val(Mission.Design.GROSS_MASS),
+                          174039., tolerance=rtol)
+
+        assert_near_equal(prob.get_val(Aircraft.Design.OPERATING_MASS),
+                          95509, tolerance=rtol)
+
+        assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS),
+                          42529., tolerance=rtol)
+
+        assert_near_equal(prob.get_val('landing.' + Mission.Landing.GROUND_DISTANCE),
+                          2634.8, tolerance=rtol)
+
+        assert_near_equal(prob.get_val("traj.desc2.timeseries.states:distance")[-1],
+                          3675.0, tolerance=rtol)
+
+    @require_pyoptsparse(optimizer="SNOPT")
+    def test_bench_GwGm_SNOPT(self):
+        local_phase_info = deepcopy(phase_info)
+        prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwGm.csv',
+                          local_phase_info, optimizer='SNOPT')
 
         rtol = 0.01
 
@@ -41,4 +64,4 @@ class ProblemPhaseTestCase(unittest.TestCase):
 if __name__ == '__main__':
     # unittest.main()
     test = ProblemPhaseTestCase()
-    test.bench_test_swap_2_GwGm()
+    test.test_bench_GwGm_SNOPT()
