@@ -81,7 +81,7 @@ class FlareODE(om.Group):
         if analysis_scheme is AnalysisScheme.SHOOTING:
             SGM_required_inputs = {
                 't_curr': {'units': 's'},
-                Dynamic.RANGE: {'units': 'm'},
+                Dynamic.Mission.DISTANCE: {'units': 'm'},
             }
             add_SGM_required_inputs(self, SGM_required_inputs)
 

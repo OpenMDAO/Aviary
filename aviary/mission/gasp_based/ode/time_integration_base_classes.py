@@ -9,16 +9,27 @@ from aviary.mission.gasp_based.ode.params import ParamPort
 
 
 def add_SGM_required_inputs(group: om.Group, inputs_to_add: dict):
-    blank_execcomp = om.ExecComp()
+    blank_component = om.ExplicitComponent()
     for input, details in inputs_to_add.items():
-        blank_execcomp.add_input(input, **details)
+        blank_component.add_input(input, **details)
     group.add_subsystem('SGM_required_inputs',
-                        blank_execcomp,
+                        blank_component,
                         promotes_inputs=list(inputs_to_add.keys()),
                         )
 
 
+def add_SGM_required_outputs(group: om.Group, outputs_to_add: dict):
+    iv_comp = om.IndepVarComp()
+    for output, details in outputs_to_add.items():
+        iv_comp.add_output(output, **details)
+    group.add_subsystem('SGM_required_outputs',
+                        iv_comp,
+                        promotes_outputs=list(outputs_to_add.keys()),
+                        )
+
 # Subproblem used as a basis for forward in time integration phases.
+
+
 class SimuPyProblem(SimulationMixin):
     def __init__(
         self,
@@ -159,7 +170,7 @@ class SimuPyProblem(SimulationMixin):
         if outputs is None:
             outputs = {
                 outp: None
-                for outp in outputs
+                for outp in model_outputs
                 if outp not in state_rate_names  # + event_names
             }
 
@@ -171,7 +182,7 @@ class SimuPyProblem(SimulationMixin):
                 ).values()))["units"]
 
         if include_state_outputs or outputs == {}:  # prevent empty outputs
-            outputs = states + outputs
+            outputs.update({state: data['units'] for state, data in states.items()})
 
         self.t_name = t_name
         self.states = states
@@ -186,7 +197,7 @@ class SimuPyProblem(SimulationMixin):
         # TODO: add defensive checks to make sure dimensions match in both setup and
         # calls
 
-        if DEBUG or True:
+        if DEBUG:
             om.n2(prob, outfile="n2_simupy_problem.html", show_browser=False)
             with open('input_list_simupy.txt', 'w') as outfile:
                 prob.model.list_inputs(out_stream=outfile,)

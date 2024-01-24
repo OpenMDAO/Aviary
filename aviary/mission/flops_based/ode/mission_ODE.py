@@ -3,7 +3,7 @@ import openmdao.api as om
 from dymos.models.atmosphere import USatm1976Comp
 
 from aviary.mission.flops_based.ode.mission_EOM import MissionEOM
-from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
+from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs, add_SGM_required_outputs
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import promote_aircraft_and_mission_vars
 from aviary.variable_info.variable_meta_data import _MetaData
@@ -65,7 +65,7 @@ class MissionODE(om.Group):
         if analysis_scheme is AnalysisScheme.SHOOTING:
             SGM_required_inputs = {
                 't_curr': {'units': 's'},
-                Dynamic.Mission.RANGE: {'units': 'm'},
+                Dynamic.Mission.DISTANCE: {'units': 'm'},
             }
             add_SGM_required_inputs(self, SGM_required_inputs)
 
@@ -214,9 +214,12 @@ class MissionODE(om.Group):
         self.set_input_defaults(
             Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR, val=1, units='unitless')
 
+        self.set_input_defaults(Dynamic.Mission.MACH, val=np.ones(nn), units='unitless')
         self.set_input_defaults(Dynamic.Mission.MASS, val=np.ones(nn), units='kg')
         self.set_input_defaults(Dynamic.Mission.VELOCITY, val=np.ones(nn), units='m/s')
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.ones(nn), units='m')
+        self.set_input_defaults(Dynamic.Mission.ALTITUDE_RATE,
+                                val=np.ones(nn), units='m/s')
         self.set_input_defaults(
             Dynamic.Mission.THROTTLE, val=np.ones((nn, engine_count)),
             units='unitless')
@@ -243,6 +246,14 @@ class MissionODE(om.Group):
                            ],
                            promotes_outputs=['initial_mass_residual'])
 
+        if analysis_scheme is AnalysisScheme.SHOOTING:
+            SGM_required_outputs = {
+                Dynamic.Mission.ALTITUDE_RATE: {'units': 'm/s'},
+            }
+            add_SGM_required_outputs(self, SGM_required_outputs)
+
+        print_level = 0 if analysis_scheme is AnalysisScheme.SHOOTING else 2
+
         if analysis_scheme is AnalysisScheme.SHOOTING and False:
             from aviary.utils.functions import create_printcomp
             dummy_comp = create_printcomp(
@@ -250,21 +261,21 @@ class MissionODE(om.Group):
                     't_curr',
                     Mission.Design.RESERVE_FUEL,
                     Dynamic.Mission.MASS,
-                    Dynamic.Mission.RANGE,
+                    Dynamic.Mission.DISTANCE,
                     Dynamic.Mission.ALTITUDE,
                     Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 ],
                 input_units={
                     't_curr': 's',
                     Dynamic.Mission.FLIGHT_PATH_ANGLE: 'deg',
-                    Dynamic.Mission.RANGE: 'NM',
+                    Dynamic.Mission.DISTANCE: 'NM',
                 })
             self.add_subsystem(
                 "dummy_comp",
                 dummy_comp(),
                 promotes_inputs=["*"],)
             self.set_input_defaults(
-                Dynamic.Mission.RANGE, val=0, units='NM')
+                Dynamic.Mission.DISTANCE, val=0, units='NM')
             self.set_input_defaults('t_curr', val=0, units='s')
 
         self.nonlinear_solver = om.NewtonSolver(solve_subsystems=True,
@@ -274,4 +285,4 @@ class MissionODE(om.Group):
         self.nonlinear_solver.linesearch = om.BoundsEnforceLS()
         self.linear_solver = om.DirectSolver(assemble_jac=True)
         self.nonlinear_solver.options['err_on_non_converge'] = True
-        self.nonlinear_solver.options['iprint'] = 2
+        self.nonlinear_solver.options['iprint'] = print_level
