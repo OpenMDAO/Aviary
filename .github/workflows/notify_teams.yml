@@ -3,7 +3,7 @@ name: Send Notification to Teams Through Email
 on:
   pull_request_target:
     branches: [main]
-    types: [opened, assigned, closed]
+    types: [opened, reopened, assigned, closed]
 
 env:
   SMTP_SERVER: smtp.gmail.com
@@ -39,7 +39,7 @@ jobs:
           subject: "***Notification*** New Pull Request: ${{ env.number }}"
           body: |
             {
-              "action": "opened",
+              "action": "${{ env.action }}",
               "number": "${{ env.number }}",
               "user": "${{ env.user }}",
               "title": "${{ env.title }}",
@@ -51,6 +51,38 @@ jobs:
           nodemailerlog: true
           nodemailerdebug: true
 
+  send_email_on_reopened_pr:
+    if: github.event_name == 'pull_request' && github.event.action == 'reopened'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get PR Data
+        run: |
+          echo "action=${{ github.event.action }}" >> $GITHUB_ENV
+          echo "number=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
+          echo "user=${{ github.event.pull_request.user.login }}" >> $GITHUB_ENV
+          echo "title=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
+
+      - name: Send Email on Reopened PR
+        uses: dawidd6/action-send-mail@v3
+        with: 
+          server_address: ${{ env.SMTP_SERVER }}
+          server_port: ${{ env.SMTP_PORT }}
+          username: ${{ env.EMAIL_USERNAME }}
+          password: ${{ env.EMAIL_PASSWORD }}
+          to: ${{ env.EMAIL_TO }}
+          from: ${{ env.EMAIL_FROM }}
+          subject: "***Notification*** Reopened: ${{ env.number }}"
+          body: |
+            {
+              "action": "${{ env.action }}",
+              "number": "${{ env.number }}",
+              "user": "${{ env.user }}",
+              "title": "${{ env.title }}"
+            }
+          ignore_cert: true
+          # Optional priority: 'high', 'normal' (default) or 'low'
+          nodemailerlog: true
+          nodemailerdebug: true
   send_email_on_updated_assignees:
     if: github.event_name == 'pull_request' && github.event.action == 'assigned'
     runs-on: ubuntu-latest
