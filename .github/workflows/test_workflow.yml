@@ -46,6 +46,7 @@ jobs:
             OPENMDAO: 'dev'
             DYMOS: '1.8.0'
             MAKE_DOCS: 0
+            RUN_BENCHES: 0
 
           # development versions of openmdao/dymos
           - NAME: dev
@@ -57,6 +58,7 @@ jobs:
             OPENMDAO: 'dev'
             DYMOS: 'dev'
             MAKE_DOCS: 0
+            RUN_BENCHES: 0
 
           # latest versions of openmdao/dymos
           - NAME: latest
@@ -68,6 +70,7 @@ jobs:
             OPENMDAO: 'dev'
             DYMOS: 'latest'
             MAKE_DOCS: 0
+            RUN_BENCHES: 0
 
           # latest versions of openmdao/dymos for docs only
           - NAME: latest_docs
@@ -79,6 +82,19 @@ jobs:
             OPENMDAO: 'dev'
             DYMOS: 'latest'
             MAKE_DOCS: 1
+            RUN_BENCHES: 0
+
+          # latest versions of openmdao/dymos for benches only
+          - NAME: latest_benches
+            PY: 3
+            NUMPY: 1
+            SCIPY: 1
+            PYOPTSPARSE: 'v2.9.1'
+            SNOPT: '7.7'
+            OPENMDAO: 'latest'
+            DYMOS: 'latest'
+            MAKE_DOCS: 0
+            RUN_BENCHES: 1
 
     steps:
       - name: Display run details
@@ -205,7 +221,7 @@ jobs:
           retention-days: 5
 
       - name: Generate specs
-        if: matrix.MAKE_DOCS == 0
+        if: matrix.MAKE_DOCS == 0 && matrix.RUN_BENCHES == 0
         shell: bash -l {0}
         run: |
           echo "============================================================="
@@ -216,13 +232,22 @@ jobs:
           cd ../..
 
       - name: Run tests
-        if: matrix.MAKE_DOCS == 0
+        if: matrix.MAKE_DOCS == 0 && matrix.RUN_BENCHES == 0
         shell: bash -l {0}
         run: |
           echo "============================================================="
           echo "Run Tests"
           echo "============================================================="
           testflo . -n 1 --show_skipped --coverage --coverpkg aviary
+
+      - name: Run benchmarks
+        if: matrix.RUN_BENCHES
+        shell: bash -l {0}
+        run: |
+          echo "============================================================="
+          echo "Run Benchmarks"
+          echo "============================================================="
+          testflo . --testmatch=bench_test*
 
       - name: Build docs
         if: matrix.MAKE_DOCS

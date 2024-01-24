@@ -37,7 +37,7 @@ from aviary.mission.gasp_based.phases.v_rotate_comp import VRotateComp
 from aviary.mission.gasp_based.polynomial_fit import PolynomialFit
 from aviary.subsystems.premission import CorePreMission
 from aviary.utils.functions import set_aviary_initial_values, create_opts2vals, add_opts2vals, promote_aircraft_and_mission_vars
-from aviary.utils.process_input_decks import create_vehicle, update_GASP_options
+from aviary.utils.process_input_decks import create_vehicle, update_GASP_options, initial_guessing
 from aviary.utils.preprocessors import preprocess_crewpayload
 from aviary.interface.utils.check_phase_info import check_phase_info
 from aviary.utils.aviary_values import AviaryValues
@@ -168,8 +168,8 @@ class AviaryProblem(om.Problem):
         self.mass_method = mass_method = aviary_inputs.get_val(Settings.MASS_METHOD)
 
         if mission_method is TWO_DEGREES_OF_FREEDOM or mass_method is GASP:
-            aviary_inputs, initial_guesses = update_GASP_options(aviary_inputs,
-                                                                 initial_guesses)
+            aviary_inputs = update_GASP_options(aviary_inputs)
+            initial_guesses = initial_guessing(aviary_inputs, initial_guesses)
         self.aviary_inputs = aviary_inputs
         self.initial_guesses = initial_guesses
 
@@ -923,7 +923,6 @@ class AviaryProblem(om.Problem):
 
             descent_phases = create_2dof_based_descent_phases(
                 self.ode_args,
-                cruise_alt=self.cruise_alt,
                 cruise_mach=self.cruise_mach)
 
             descent_estimation = descent_range_and_fuel(

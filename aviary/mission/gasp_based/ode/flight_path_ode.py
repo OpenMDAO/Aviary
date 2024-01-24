@@ -8,9 +8,6 @@ from aviary.mission.gasp_based.flight_conditions import FlightConditions
 from aviary.mission.gasp_based.ode.base_ode import BaseODE
 from aviary.mission.gasp_based.ode.flight_path_eom import FlightPathEOM
 from aviary.mission.gasp_based.ode.params import ParamPort
-from aviary.subsystems.aerodynamics.gasp_based.gaspaero import (CruiseAero,
-                                                                LowSpeedAero)
-from aviary.subsystems.propulsion.propulsion_mission import PropulsionMission
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
@@ -285,7 +282,9 @@ class FlightPathODE(BaseODE):
                 'alpha_comp',
                 'prop_group',
                 'eoms',
-                'mass_trigger'
+                'mass_trigger',
+                'SPECIFIC_ENERGY_RATE_EXCESS',
+                'ALTITUDE_RATE_MAX',
             ] +
                 debug_comp)
 
