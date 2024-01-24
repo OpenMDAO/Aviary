@@ -604,7 +604,7 @@ class AviaryProblem(om.Problem):
         if 'cruise' not in phase_name:
             phase.add_control(
                 Dynamic.Mission.THROTTLE, targets=Dynamic.Mission.THROTTLE, units='unitless',
-                opt=False, lower=0.0, upper=1.0
+                opt=False,
             )
 
         return phase
@@ -1452,8 +1452,6 @@ class AviaryProblem(om.Problem):
 
             for source, target in connect_map.items():
                 connect_with_common_params(self, source, target)
-
-            self.model.set_input_defaults(Mission.Takeoff.ASCENT_DURATION, val=30.0)
 
     def add_driver(self, optimizer=None, use_coloring=None, max_iter=50, debug_print=False):
         """
