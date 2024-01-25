@@ -10,7 +10,6 @@ from packaging import version
 
 from aviary.subsystems.aerodynamics.gasp_based.table_based import (
     CruiseAero, LowSpeedAero)
-from aviary.utils.test_utils.IO_test_util import assert_match_spec, skipIfMissingXDSM
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -87,14 +86,6 @@ class TestLowSpeedAero(unittest.TestCase):
         "aviary", f"subsystems/aerodynamics/gasp_based/data/large_single_aisle_1_aero_flaps.txt")
     ground_data = pkg_resources.resource_filename(
         "aviary", f"subsystems/aerodynamics/gasp_based/data/large_single_aisle_1_aero_ground.txt")
-
-    @skipIfMissingXDSM('rotation_specs/aero.json')
-    def test_spec(self):
-        comp = LowSpeedAero(free_aero_data=self.free_data,
-                            flaps_aero_data=self.flaps_data,
-                            ground_aero_data=self.ground_data,
-                            extrapolate=True)
-        assert_match_spec(comp, "rotation_specs/aero.json")
 
     @unittest.skipIf(version.parse(openmdao.__version__) < version.parse("3.26"),
                      "Older version of OpenMDAO does not properly skip Metamodel.")

@@ -133,7 +133,7 @@ jobs:
           echo "============================================================="
           conda install numpy=${{ matrix.NUMPY }} scipy=${{ matrix.SCIPY }} -q -y
           conda install matplotlib pandas panel hvplot -q -y
-          pip install testflo pyxdsm -q
+          pip install testflo -q
 
       - name: Install pyOptSparse
         if: matrix.PYOPTSPARSE
@@ -155,15 +155,6 @@ jobs:
 
           pip install git+https://github.com/OpenMDAO/build_pyoptsparse
           build_pyoptsparse -v -b ${{ matrix.PYOPTSPARSE }} $SNOPT
-
-      - name: Install TeX Live
-        shell: bash
-        run: |
-          echo "============================================================="
-          echo "Install TeX Live (for pyXDSM)"
-          echo "============================================================="
-          sudo apt-get update
-          sudo apt-get install texlive-pictures texlive-latex-extra -y
 
       - name: Install OpenMDAO
         if: matrix.OPENMDAO
@@ -219,17 +210,6 @@ jobs:
           name: ${{ matrix.NAME }}_environment
           path: ${{ matrix.NAME }}_environment.yml
           retention-days: 5
-
-      - name: Generate specs
-        if: matrix.MAKE_DOCS == 0 && matrix.RUN_BENCHES == 0
-        shell: bash -l {0}
-        run: |
-          echo "============================================================="
-          echo "Generate specs"
-          echo "============================================================="
-          cd aviary/xdsm
-          python run_all.py
-          cd ../..
 
       - name: Run tests
         if: matrix.MAKE_DOCS == 0 && matrix.RUN_BENCHES == 0

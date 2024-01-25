@@ -36,12 +36,6 @@ Otherwise you can build the docs locally:
 3. Run the command `sh build_book.sh` from your command prompt of choice
 4. Navigate to the built html: `/Aviary/aviary/docs/\_build/html/intro.html`
 
-## Visualization
-
-To create XDSM visualizations of some of the Aviary code, you can run the `run_all.py` utility script within the `aviary/xdsm` directory.
-This is not strictly necessary but is used in some of the unit tests.
-This requires installing Aviary with the `[test]` or `[all]` options as described above.
-
 ## Validation
 
 This code has been validated using output and data from the GASP and FLOPS codes themselves. The GASP-based weight calculations in this code include in their comments which versions of the GASP standalone weights module were used in validation. The aero and EOM subsystem validations were based on runs of the entire GASP and FLOPS code as they stood in the summer of 2021 and the summer of 2022 respectively.
