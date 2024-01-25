@@ -21,19 +21,22 @@ class EnginePodMass(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
+        count = len(self.options['aviary_options'].get_val('engine_models'))
+
         add_aviary_input(self, Aircraft.Electrical.MASS, val=0.0)
         add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS, val=0.0)
         add_aviary_input(self, Aircraft.Hydraulics.MASS, val=0.0)
         add_aviary_input(self, Aircraft.Instruments.MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Nacelle.MASS, val=np.zeros(1))
+        add_aviary_input(self, Aircraft.Nacelle.MASS, val=np.zeros(count))
         add_aviary_input(self, Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Engine.MASS, val=np.zeros(1))
+        add_aviary_input(self, Aircraft.Engine.MASS, val=np.zeros(count))
         add_aviary_input(self, Aircraft.Propulsion.TOTAL_STARTER_MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Engine.THRUST_REVERSERS_MASS, val=np.zeros(1))
-        add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST, val=np.zeros(1))
+        add_aviary_input(self, Aircraft.Engine.THRUST_REVERSERS_MASS,
+                         val=np.zeros(count))
+        add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST, val=np.zeros(count))
         add_aviary_input(self, Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, val=0.0)
 
-        add_aviary_output(self, Aircraft.Engine.POD_MASS, val=np.zeros(1))
+        add_aviary_output(self, Aircraft.Engine.POD_MASS, val=np.zeros(count))
 
     def setup_partials(self):
         self.declare_partials('*', '*')

@@ -21,12 +21,11 @@ class SizeEngine(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        # count = len(self.options['aviary_options'].get_val('engine_models'))
-        count = 1
+        count = len(self.options['aviary_options'].get_val('engine_models'))
 
-        add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST, val=np.zeros(count))
+        add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST, val=0.0)
 
-        add_aviary_output(self, Aircraft.Engine.SCALE_FACTOR, val=np.zeros(count))
+        add_aviary_output(self, Aircraft.Engine.SCALE_FACTOR, val=0.0)
 
         # variables that also may require scaling
         # TODO - inlet_weight <input>
@@ -38,11 +37,12 @@ class SizeEngine(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         options: AviaryValues = self.options['aviary_options']
+
         # engine_models = options.get_val('engine_models')
         scale_engine = options.get_val(Aircraft.Engine.SCALE_PERFORMANCE)
 
-        reference_sls_thrust = options.get_val(
-            Aircraft.Engine.REFERENCE_SLS_THRUST, units='lbf')
+        reference_sls_thrust = options.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST,
+                                               units='lbf')
 
         scaled_sls_thrust = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
 
@@ -61,7 +61,7 @@ class SizeEngine(om.ExplicitComponent):
         if scale_engine:
             engine_scale_factor = scaled_sls_thrust / reference_sls_thrust
 
-        outputs[Aircraft.Engine.SCALE_FACTOR] = engine_scale_factor
+        outputs['scale_factor'] = engine_scale_factor
 
     def setup_partials(self):
         # count = len(self.options['aviary_options'].get_val('engine_models'))

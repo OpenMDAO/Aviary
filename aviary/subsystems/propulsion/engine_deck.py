@@ -679,7 +679,7 @@ class EngineDeck(EngineModel):
             scaling factors.
         """
 
-        return SizeEngine(aviary_options=self.options)
+        return SizeEngine(aviary_options=aviary_inputs)
 
     def build_mission(self, num_nodes, aviary_inputs):
         """
@@ -904,6 +904,8 @@ class EngineDeck(EngineModel):
         """
         engine_mapping = get_keys(self.options)
 
+        # Find reference thrust if not provided - assumed user-provided value is "best"
+        # estimate of reference thrust
         if Aircraft.Engine.REFERENCE_SLS_THRUST not in engine_mapping:
             alt_tol = self.alt_tol
             mach_tol = self.mach_tol

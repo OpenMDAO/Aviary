@@ -146,7 +146,7 @@ class AviaryProblem(om.Problem):
 
         self.analysis_scheme = analysis_scheme
 
-    def load_inputs(self, aviary_inputs, phase_info=None, engine_builder=None):
+    def load_inputs(self, aviary_inputs, phase_info=None):
         """
         This method loads the aviary_values inputs and options that the
         user specifies. They could specify files to load and values to
@@ -158,8 +158,6 @@ class AviaryProblem(om.Problem):
         an AviaryValues object and/or phase_info dict of their own.
         """
         ## LOAD INPUT FILE ###
-        self.engine_builder = engine_builder
-
         # Create AviaryValues object from file (or process existing AviaryValues object
         # with default values from metadata) and generate initial guesses
         aviary_inputs, initial_guesses = create_vehicle(aviary_inputs)
@@ -297,12 +295,12 @@ class AviaryProblem(om.Problem):
         self.ode_args = dict(aviary_options=aviary_inputs,
                              core_subsystems=default_mission_subsystems)
 
-        if engine_builder is None:
-            engine = EngineDeck(options=aviary_inputs)
+        if 'engine_models' in aviary_inputs:
+            engine_models = aviary_inputs.get_val('engine_models')
         else:
-            engine = engine_builder
+            engine_models = [EngineDeck(options=aviary_inputs)]
 
-        preprocess_propulsion(aviary_inputs, [engine])
+        preprocess_propulsion(aviary_inputs, engine_models)
 
         self._update_metadata_from_subsystems()
 
@@ -2364,8 +2362,8 @@ class AviaryProblem(om.Problem):
         else:
             all_subsystems.extend(external_subsystems)
 
-        if self.engine_builder is not None:
-            all_subsystems.append(self.engine_builder)
+        # if self.engine_builder is not None:
+        #     all_subsystems.append(self.engine_builder)
 
         return all_subsystems
 

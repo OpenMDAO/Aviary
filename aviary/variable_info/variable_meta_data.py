@@ -7337,8 +7337,8 @@ add_meta_data(
     desc='Sets how much information Aviary outputs when run. Options include:'
          '0. QUIET: All output except errors are suppressed'
          '1. BRIEF: Only important information is output, in human-readable format'
-         '2. VERBOSE: All avaliable informating is output, in human-readable format'
-         '3. DEBUG: Intermediate status and calculation outputs, no formatting requirement',
+         '2. VERBOSE: All user-relevant information is output, in human-readable format'
+         '3. DEBUG: All information is output, including warnings, intermediate calculations, etc., no formatting requirement',
     option=True,
     types=Verbosity,
     default_value=Verbosity.BRIEF
