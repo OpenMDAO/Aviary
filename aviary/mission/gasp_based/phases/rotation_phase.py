@@ -1,5 +1,4 @@
 import numpy as np
-from dymos.utils.misc import _unspecified
 
 from aviary.mission.phase_builder_base import (
     PhaseBuilderBase, InitialGuessState, InitialGuessTime, InitialGuessControl)
