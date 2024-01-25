@@ -90,7 +90,7 @@ jobs:
           echo "number=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
           echo "title=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
 
-      - name: Send Email on Updated Assignees
+      - name: Send Email on Closed PR
         uses: dawidd6/action-send-mail@v3
         with: 
           server_address: ${{ env.SMTP_SERVER }}
