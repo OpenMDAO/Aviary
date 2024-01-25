@@ -13,6 +13,7 @@ import openmdao.api as om
 import scipy.constants as _units
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
+from openmdao.utils.testing_utils import require_pyoptsparse
 
 from aviary.mission.flops_based.phases.build_landing import Landing
 from aviary.mission.flops_based.phases.build_takeoff import Takeoff
@@ -274,7 +275,7 @@ def run_trajectory(sim=True):
         promotes_outputs=['mission:*'])
 
     traj.link_phases(["climb", "cruise", "descent"], [
-                     "time", Dynamic.Mission.ALTITUDE, Dynamic.Mission.MASS, Dynamic.Mission.DISTANCE], connected=strong_couple)
+                     "time", Dynamic.Mission.MASS, Dynamic.Mission.DISTANCE], connected=strong_couple)
 
     traj = setup_trajectory_params(prob.model, traj, aviary_inputs)
 
@@ -437,6 +438,8 @@ def run_trajectory(sim=True):
 
 @use_tempdirs
 class ProblemPhaseTestCase(unittest.TestCase):
+
+    @require_pyoptsparse(optimizer="SNOPT")
     def bench_test_sizing_N3CC(self):
 
         prob = run_trajectory(sim=False)

@@ -125,7 +125,7 @@ class SGMAscent(SimuPyProblem):
         ode_args={},
         simupy_args={},
     ):
-        control_names = None
+        controls = None
         super().__init__(
             AscentODE(analysis_scheme=AnalysisScheme.SHOOTING,
                       alpha_mode=alpha_mode, **ode_args),
@@ -143,7 +143,7 @@ class SGMAscent(SimuPyProblem):
             # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
                 Dynamic.Mission.MASS: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
-            control_names=control_names,
+            controls=controls,
             **simupy_args,
         )
 

@@ -66,8 +66,7 @@ def run_aviary(aircraft_filename, phase_info, optimizer=None,
     # Allow for user overrides here
     prob.load_inputs(aircraft_filename, phase_info)
 
-
-# Preprocess inputs
+    # Preprocess inputs
     prob.check_and_preprocess_inputs()
 
     prob.add_pre_mission_systems()
