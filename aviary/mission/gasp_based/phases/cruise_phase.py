@@ -89,9 +89,9 @@ class CruisePhase(PhaseBuilderBase):
             fix_duration=False,
             units="lbm",
             targets="mass",
-            initial_bounds=(10.e3, 500_000),
-            initial_ref=100_000,
-            duration_bounds=(-50000, -10),
+            initial_bounds=(0., 1.e7),
+            initial_ref=100.e3,
+            duration_bounds=(-1.e7, -1),
             duration_ref=50000,
         )
 
