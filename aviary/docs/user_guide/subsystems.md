@@ -12,7 +12,7 @@ In the following outline, the methods listed at the top-level are defined in `me
 Any sub-listed method is one that you can provide with your subsystem builder, showing where within the level 3 method hierarchy that subsystem method gets used.
 
 - `load_inputs` - loads the aviary_values inputs and options that the user specifies.
-- `check_inputs` - checks the user-supplied input values for any potential problems.
+- `check_and_preprocess_inputs` - checks the user-supplied input values for any potential problems.
   - `preprocess_inputs`
 - `add_pre_mission_systems` - adds pre-mission Systems to the Aviary problem
   - `get_mass_names`

@@ -23,7 +23,10 @@ class TestSubsystemBuilderBase(unittest.TestCase):
         '''
         try:
             package, method = path_to_builder.rsplit('.', 1)
-            module = import_module(package, base_package)
+            package_path, package_name = package.rsplit('.', 1)
+            module_path = '.'.join([path_to_builder, package_path]) if package_path \
+                else path_to_builder
+            module = import_module(package_name, module_path)
             builder = getattr(module, method)
         except ImportError:
             builder = 'Skipping due to missing dependencies'

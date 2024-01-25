@@ -40,7 +40,7 @@ x.add_input("prop", [
 ])
 x.add_input("breguet_eom", [
     Dynamic.Mission.MASS,
-    "cruise_range_initial",
+    "cruise_distance_initial",
     "cruise_time_initial",
 ])
 x.add_input("weight", ["mass"])

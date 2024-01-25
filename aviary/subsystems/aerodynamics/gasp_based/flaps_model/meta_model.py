@@ -2,7 +2,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.enums import Flap_Type
+from aviary.variable_info.enums import FlapType
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -21,7 +21,7 @@ class MetaModelGroup(om.Group):
         # VDEL1
         VDEL1_interp = self.add_subsystem(
             "VDEL1_interp",
-            om.MetaModelStructuredComp(method="scipy_slinear", extrapolate=True),
+            om.MetaModelStructuredComp(method="1D-slinear", extrapolate=True),
             promotes_inputs=[
                 "aircraft:*",
             ],
@@ -38,7 +38,7 @@ class MetaModelGroup(om.Group):
             desc="ratio of flap chord to wing chord",
         )
 
-        if flap_type is Flap_Type.PLAIN or flap_type is Flap_Type.SPLIT:
+        if flap_type is FlapType.PLAIN or flap_type is FlapType.SPLIT:
 
             VDEL1_interp.add_output(
                 "VDEL1",
@@ -61,7 +61,7 @@ class MetaModelGroup(om.Group):
         # VDEL2
         VDEL2_interp = self.add_subsystem(
             "VDEL2_interp",
-            om.MetaModelStructuredComp(method="scipy_slinear", extrapolate=True),
+            om.MetaModelStructuredComp(method="1D-slinear", extrapolate=True),
             promotes_inputs=[
                 "flap_defl_ratio",
             ],
@@ -149,7 +149,7 @@ class MetaModelGroup(om.Group):
         # VLAM1
         VLAM1_interp = self.add_subsystem(
             "VLAM1_interp",
-            om.MetaModelStructuredComp(method="scipy_slinear", extrapolate=True),
+            om.MetaModelStructuredComp(method="1D-slinear", extrapolate=True),
             promotes_inputs=[
                 "aircraft:*",
             ],
@@ -215,7 +215,7 @@ class MetaModelGroup(om.Group):
         # VLAM2
         VLAM2_interp = self.add_subsystem(
             "VLAM2_interp",
-            om.MetaModelStructuredComp(method="scipy_slinear", extrapolate=True),
+            om.MetaModelStructuredComp(method="1D-slinear", extrapolate=True),
             promotes_inputs=[
                 Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED,
             ],
@@ -275,7 +275,7 @@ class MetaModelGroup(om.Group):
         # VLAM3
         VLAM3_interp = self.add_subsystem(
             "VLAM3_interp",
-            om.MetaModelStructuredComp(method="scipy_slinear", extrapolate=True),
+            om.MetaModelStructuredComp(method="1D-slinear", extrapolate=True),
             promotes_inputs=[
                 "aircraft:*",
             ],
@@ -339,7 +339,7 @@ class MetaModelGroup(om.Group):
         # VLAM4
         VLAM4_interp = self.add_subsystem(
             "VLAM4_interp",
-            om.MetaModelStructuredComp(method="scipy_slinear", extrapolate=True),
+            om.MetaModelStructuredComp(method="1D-slinear", extrapolate=True),
             promotes_inputs=[
                 Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED,
             ],
@@ -373,7 +373,7 @@ class MetaModelGroup(om.Group):
             desc="average wing thickness to chord ratio",
         )
 
-        if flap_type is Flap_Type.PLAIN or flap_type is Flap_Type.SPLIT:
+        if flap_type is FlapType.PLAIN or flap_type is FlapType.SPLIT:
 
             VLAM4_interp.add_output(
                 "VLAM4",
@@ -430,7 +430,7 @@ class MetaModelGroup(om.Group):
         # VLAM5
         VLAM5_interp = self.add_subsystem(
             "VLAM5_intep",
-            om.MetaModelStructuredComp(method="scipy_slinear", extrapolate=True),
+            om.MetaModelStructuredComp(method="1D-slinear", extrapolate=True),
             promotes_inputs=[
                 "aircraft:*",
             ],
@@ -445,7 +445,7 @@ class MetaModelGroup(om.Group):
             desc="ratio of flap chord to wing chord",
         )
 
-        if flap_type is Flap_Type.PLAIN or flap_type is Flap_Type.SPLIT:
+        if flap_type is FlapType.PLAIN or flap_type is FlapType.SPLIT:
 
             VLAM5_interp.add_output(
                 "VLAM5",
@@ -456,9 +456,9 @@ class MetaModelGroup(om.Group):
             )
 
         elif (
-            flap_type is Flap_Type.SINGLE_SLOTTED
-            or flap_type is Flap_Type.DOUBLE_SLOTTED
-            or flap_type is Flap_Type.TRIPLE_SLOTTED
+            flap_type is FlapType.SINGLE_SLOTTED
+            or flap_type is FlapType.DOUBLE_SLOTTED
+            or flap_type is FlapType.TRIPLE_SLOTTED
         ):
 
             VLAM5_interp.add_output(
@@ -482,7 +482,7 @@ class MetaModelGroup(om.Group):
         # VLAM6
         VLAM6_interp = self.add_subsystem(
             "VLAM6_interp",
-            om.MetaModelStructuredComp(method="scipy_slinear", extrapolate=True),
+            om.MetaModelStructuredComp(method="1D-slinear", extrapolate=True),
             promotes_inputs=[
                 "flap_defl",
             ],
@@ -515,7 +515,7 @@ class MetaModelGroup(om.Group):
             desc="flap deflection",
         )
 
-        if flap_type is Flap_Type.PLAIN or flap_type is Flap_Type.SPLIT:
+        if flap_type is FlapType.PLAIN or flap_type is FlapType.SPLIT:
 
             VLAM6_interp.add_output(
                 "VLAM6",
@@ -542,9 +542,9 @@ class MetaModelGroup(om.Group):
             )
 
         elif (
-            flap_type is Flap_Type.SINGLE_SLOTTED
-            or flap_type is Flap_Type.DOUBLE_SLOTTED
-            or flap_type is Flap_Type.TRIPLE_SLOTTED
+            flap_type is FlapType.SINGLE_SLOTTED
+            or flap_type is FlapType.DOUBLE_SLOTTED
+            or flap_type is FlapType.TRIPLE_SLOTTED
         ):
 
             VLAM6_interp.add_output(
@@ -571,7 +571,7 @@ class MetaModelGroup(om.Group):
                 desc="sensitivity of flap clean wing maximum lift coefficient to wing flap deflection",
             )
 
-        elif (flap_type is Flap_Type.FOWLER or flap_type is Flap_Type.DOUBLE_SLOTTED_FOWLER):
+        elif (flap_type is FlapType.FOWLER or flap_type is FlapType.DOUBLE_SLOTTED_FOWLER):
 
             VLAM6_interp.add_output(
                 "VLAM6",
@@ -603,7 +603,7 @@ class MetaModelGroup(om.Group):
         # VLAM7
         VLAM7_interp = self.add_subsystem(
             "VLAM7_interp",
-            om.MetaModelStructuredComp(method="scipy_slinear", extrapolate=True),
+            om.MetaModelStructuredComp(method="1D-slinear", extrapolate=True),
             promotes_inputs=[
                 Aircraft.Wing.FLAP_SPAN_RATIO,
             ],
@@ -631,7 +631,7 @@ class MetaModelGroup(om.Group):
         # VLAM10
         VLAM10_interp = self.add_subsystem(
             "VLAM10_interp",
-            om.MetaModelStructuredComp(method="scipy_slinear", extrapolate=True),
+            om.MetaModelStructuredComp(method="1D-slinear", extrapolate=True),
             promotes_inputs=[
                 "slat_defl_ratio",
             ],
@@ -689,7 +689,7 @@ class MetaModelGroup(om.Group):
         # VLAM11
         VLAM11_interp = self.add_subsystem(
             "VLAM11_interp",
-            om.MetaModelStructuredComp(method="scipy_slinear", extrapolate=True),
+            om.MetaModelStructuredComp(method="1D-slinear", extrapolate=True),
             promotes_inputs=[
                 Aircraft.Wing.SLAT_SPAN_RATIO,
             ],
@@ -717,7 +717,7 @@ class MetaModelGroup(om.Group):
         # VLAM13
         VLAM13_interp = self.add_subsystem(
             "VLAM13_interp",
-            om.MetaModelStructuredComp(method="scipy_slinear", extrapolate=True),
+            om.MetaModelStructuredComp(method="1D-slinear", extrapolate=True),
             promotes_inputs=[
                 "reynolds",
             ],
@@ -775,7 +775,7 @@ class MetaModelGroup(om.Group):
         # VLAM14
         VLAM14_interp = self.add_subsystem(
             "VLAM14_interp",
-            om.MetaModelStructuredComp(method="scipy_slinear", extrapolate=True),
+            om.MetaModelStructuredComp(method="1D-slinear", extrapolate=True),
             promotes_inputs=[
                 Dynamic.Mission.MACH,
             ],

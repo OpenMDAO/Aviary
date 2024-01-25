@@ -1,14 +1,18 @@
+import os
 import unittest
+import subprocess
+
+from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
+
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.subsystems.test.test_dummy_subsystem import ArrayGuessSubsystemBuilder
-from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
-import subprocess
 
 
 @use_tempdirs
 class AircraftMissionTestSuite(unittest.TestCase):
 
     def setUp(self):
+
         # Load the phase_info and other common setup tasks
         self.phase_info = {
             "pre_mission": {"include_takeoff": False, "optimize_mass": True},
@@ -20,7 +24,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
                     "polynomial_control_order": 1,
                     "num_segments": 5,
                     "order": 3,
-                    "solve_for_range": False,
+                    "solve_for_distance": False,
                     "initial_mach": (0.2, "unitless"),
                     "final_mach": (0.72, "unitless"),
                     "mach_bounds": ((0.18, 0.74), "unitless"),
@@ -44,7 +48,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
                     "polynomial_control_order": 1,
                     "num_segments": 5,
                     "order": 3,
-                    "solve_for_range": False,
+                    "solve_for_distance": False,
                     "initial_mach": (0.72, "unitless"),
                     "final_mach": (0.72, "unitless"),
                     "mach_bounds": ((0.7, 0.74), "unitless"),
@@ -68,7 +72,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
                     "polynomial_control_order": 1,
                     "num_segments": 5,
                     "order": 3,
-                    "solve_for_range": False,
+                    "solve_for_distance": False,
                     "initial_mach": (0.72, "unitless"),
                     "final_mach": (0.36, "unitless"),
                     "mach_bounds": ((0.34, 0.74), "unitless"),
@@ -92,8 +96,6 @@ class AircraftMissionTestSuite(unittest.TestCase):
         }
 
         self.aircraft_definition_file = 'models/test_aircraft/aircraft_for_bench_FwFm.csv'
-        self.mission_method = "simple"
-        self.mass_method = "FLOPS"
         self.make_plots = False
         self.max_iter = 100
 
@@ -110,16 +112,25 @@ class AircraftMissionTestSuite(unittest.TestCase):
     def run_mission(self, phase_info, optimizer):
         return run_aviary(
             self.aircraft_definition_file, phase_info,
-            mission_method=self.mission_method, mass_method=self.mass_method,
             make_plots=self.make_plots, max_iter=self.max_iter, optimizer=optimizer,
             optimization_history_filename="driver_test.db")
 
     def test_mission_basic_and_dashboard(self):
+        # We need to remove the TESTFLO_RUNNING environment variable for this test to run.
+        # The reports code checks to see if TESTFLO_RUNNING is set and will not do anything if set
+        # But we need to remember whether it was set so we can restore it
+        testflo_running = os.environ.pop('TESTFLO_RUNNING', None)
+
         prob = self.run_mission(self.phase_info, "SLSQP")
+
+        # restore what was there before running the test
+        if testflo_running is not None:
+            os.environ['TESTFLO_RUNNING'] = testflo_running
+
         self.assertIsNotNone(prob)
         self.assertFalse(prob.failed)
 
-        cmd = f'aviary dashboard --problem_recorder dymos_solution.db --driver_recorder driver_test.db tmp'
+        cmd = f'aviary dashboard --problem_recorder dymos_solution.db --driver_recorder driver_test.db {prob.driver._problem()._name}'
         # this only tests that a given command line tool returns a 0 return code. It doesn't
         # check the expected output at all.  The underlying functions that implement the
         # commands should be tested seperately.
@@ -163,17 +174,17 @@ class AircraftMissionTestSuite(unittest.TestCase):
         self.assertFalse(prob.failed)
 
     @require_pyoptsparse(optimizer="IPOPT")
-    def test_mission_solve_for_range(self):
+    def test_mission_solve_for_distance(self):
         modified_phase_info = self.phase_info.copy()
         for phase in ["climb_1", "climb_2", "descent_1"]:
-            modified_phase_info[phase]["user_options"]["solve_for_range"] = True
+            modified_phase_info[phase]["user_options"]["solve_for_distance"] = True
         prob = self.run_mission(modified_phase_info, "IPOPT")
         self.assertFalse(prob.failed)
 
-    def test_mission_solve_for_range(self):
+    def test_mission_solve_for_distance(self):
         modified_phase_info = self.phase_info.copy()
         for phase in ["climb_1", "climb_2", "descent_1"]:
-            modified_phase_info[phase]["user_options"]["solve_for_range"] = True
+            modified_phase_info[phase]["user_options"]["solve_for_distance"] = True
         prob = self.run_mission(modified_phase_info, "SLSQP")
         self.assertFalse(prob.failed)
 

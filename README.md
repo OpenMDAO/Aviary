@@ -11,11 +11,18 @@ The user can select which type of mission analysis to use, as well as whether to
 
 ## Installation
 
-The simplest installation method for development is an "editable mode" install with ``pip`` in your terminal:
+The simplest installation method for users is to install via pip.
+Once you have cloned the Aviary repo, change directories into the top-level Aviary folder (not within the `aviary` folder) and run the following command:
 
-    pip install -e .
+    pip install .
 
-This installs the package in the current environment such that changes to the Python code don't require re-installation.This command should be performed while in the folder containing ``setup.py``.
+If you want to also run the Aviary test suite (this is not strictly necessary), you can instead run:
+
+    pip install .[test]
+
+If you also want to install all packages used for the Aviary tests _and_ external subsystem examples, you can instead run:
+
+    pip install .[all]
 
 ## Documentation
 
@@ -31,7 +38,9 @@ Otherwise you can build the docs locally:
 
 ## Visualization
 
-To visualize XDSMs and successfully pass spec tests, all the XDSM files must be run. This can be done using the `run_all.py` utility script within the `aviary/xdsm` directory. This is a necessary step before unit testing, otherwise unit tests will fail.
+To create XDSM visualizations of some of the Aviary code, you can run the `run_all.py` utility script within the `aviary/xdsm` directory.
+This is not strictly necessary but is used in some of the unit tests.
+This requires installing Aviary with the `[test]` or `[all]` options as described above.
 
 ## Validation
 
@@ -67,4 +76,4 @@ We have also provided a static version of the `environment.yml` at the top level
 ## Planned future features
 
 Aviary is in active development.
-We plan to expand its capabilities and add features as detailed in [this doc page](https://openmdao.github.io/om-Aviary/misc_resources/planned_future_features.html).
+We plan to expand its capabilities and have provided a non-exhaustive [list of future features](https://openmdao.github.io/om-Aviary/misc_resources/planned_future_features.html).

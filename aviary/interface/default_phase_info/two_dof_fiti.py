@@ -5,10 +5,10 @@ from aviary.mission.gasp_based.phases.time_integration_phases import SGMGroundro
     SGMRotation, SGMAscentCombined, SGMAccel, SGMClimb, SGMCruise, SGMDescent
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 
-# defaults for GASP based forward in time integeration phases
+# defaults for 2DOF based forward in time integeration phases
 
 
-def create_gasp_based_ascent_phases(
+def create_2dof_based_ascent_phases(
     ode_args,
     cruise_alt=35e3,
     cruise_mach=.8,
@@ -17,7 +17,6 @@ def create_gasp_based_ascent_phases(
         ode_args=ode_args,
         simupy_args=dict(
             DEBUG=False,
-            blocked_state_names=['engine_deck.nox', 'nox'],
         ),
     )
     groundroll_vals = {
@@ -29,7 +28,6 @@ def create_gasp_based_ascent_phases(
         ode_args=ode_args,
         simupy_args=dict(
             DEBUG=False,
-            blocked_state_names=['engine_deck.nox', 'nox'],
         ),
     )
     rotation_vals = {}
@@ -38,7 +36,6 @@ def create_gasp_based_ascent_phases(
         ode_args=ode_args,
         simupy_args=dict(
             DEBUG=False,
-            blocked_state_names=['engine_deck.nox', 'nox'],
         ),
     )
     ascent_vals = {
@@ -53,7 +50,6 @@ def create_gasp_based_ascent_phases(
         ode_args=ode_args,
         simupy_args=dict(
             DEBUG=False,
-            blocked_state_names=['engine_deck.nox', 'nox'],
         ),
     )
     accel_vals = {}
@@ -64,7 +60,6 @@ def create_gasp_based_ascent_phases(
         ode_args=ode_args,
         simupy_args=dict(
             DEBUG=False,
-            blocked_state_names=['engine_deck.nox', 'nox'],
         ),
     )
     climb1_vals = {
@@ -79,7 +74,6 @@ def create_gasp_based_ascent_phases(
         ode_args=ode_args,
         simupy_args=dict(
             DEBUG=False,
-            blocked_state_names=['engine_deck.nox', 'nox'],
         ),
     )
     climb2_vals = {
@@ -94,7 +88,6 @@ def create_gasp_based_ascent_phases(
         ode_args=ode_args,
         simupy_args=dict(
             DEBUG=False,
-            blocked_state_names=['engine_deck.nox', 'nox'],
         ),
     )
     climb3_vals = {
@@ -138,7 +131,7 @@ def create_gasp_based_ascent_phases(
     return phases
 
 
-def create_gasp_based_descent_phases(
+def create_2dof_based_descent_phases(
     ode_args,
     cruise_mach=.8,
 ):
@@ -150,7 +143,6 @@ def create_gasp_based_descent_phases(
         ode_args=ode_args,
         simupy_args=dict(
             DEBUG=False,
-            blocked_state_names=['engine_deck.nox', 'nox'],
         ),
     )
     descent1_vals = {
@@ -166,7 +158,6 @@ def create_gasp_based_descent_phases(
         ode_args=ode_args,
         simupy_args=dict(
             DEBUG=False,
-            blocked_state_names=['engine_deck.nox', 'nox'],
         ),
     )
     descent2_vals = {
@@ -182,7 +173,6 @@ def create_gasp_based_descent_phases(
         ode_args=ode_args,
         simupy_args=dict(
             DEBUG=False,
-            blocked_state_names=['engine_deck.nox', 'nox'],
         ),
     )
     descent3_vals = {

@@ -2,7 +2,7 @@ import dymos as dm
 
 from aviary.mission.gasp_based.ode.climb_ode import ClimbODE
 from aviary.variable_info.variables import Mission, Dynamic
-from aviary.interface.default_phase_info.gasp import default_mission_subsystems
+from aviary.interface.default_phase_info.two_dof import default_mission_subsystems
 
 
 def get_climb(
@@ -90,7 +90,7 @@ def get_climb(
         lower=distance_lower,
         upper=distance_upper,
         units="NM",
-        rate_source="distance_rate",
+        rate_source=Dynamic.Mission.DISTANCE_RATE,
         ref=distance_ref,
         ref0=distance_ref0,
         defect_ref=distance_defect_ref,

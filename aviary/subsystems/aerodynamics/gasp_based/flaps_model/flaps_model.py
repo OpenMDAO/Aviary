@@ -9,7 +9,7 @@ from aviary.subsystems.aerodynamics.gasp_based.flaps_model.L_and_D_increments im
 from aviary.subsystems.aerodynamics.gasp_based.flaps_model.meta_model import \
     MetaModelGroup
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.enums import Flap_Type
+from aviary.variable_info.enums import FlapType
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -26,13 +26,13 @@ class FlapsGroup(om.Group):
 
         # optimum trailing edge flap deflection angle defaults (ADELTO table in GASP)
         self.optimum_flap_defls = {
-            Flap_Type.PLAIN: 60.0,
-            Flap_Type.SPLIT: 60.0,
-            Flap_Type.SINGLE_SLOTTED: 40.0,
-            Flap_Type.DOUBLE_SLOTTED: 55.0,
-            Flap_Type.TRIPLE_SLOTTED: 55.0,
-            Flap_Type.FOWLER: 30.0,
-            Flap_Type.DOUBLE_SLOTTED_FOWLER: 30.0,
+            FlapType.PLAIN: 60.0,
+            FlapType.SPLIT: 60.0,
+            FlapType.SINGLE_SLOTTED: 40.0,
+            FlapType.DOUBLE_SLOTTED: 55.0,
+            FlapType.TRIPLE_SLOTTED: 55.0,
+            FlapType.FOWLER: 30.0,
+            FlapType.DOUBLE_SLOTTED_FOWLER: 30.0,
         }
 
     def setup(self):

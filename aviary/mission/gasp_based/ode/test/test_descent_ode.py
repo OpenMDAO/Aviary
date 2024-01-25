@@ -14,7 +14,7 @@ from aviary.utils.test_utils.IO_test_util import (assert_match_spec,
                                                   skipIfMissingXDSM)
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variables import Dynamic
-from aviary.interface.default_phase_info.gasp import default_mission_subsystems
+from aviary.interface.default_phase_info.two_dof import default_mission_subsystems
 
 
 class DescentODETestCase(unittest.TestCase):
@@ -48,7 +48,7 @@ class DescentODETestCase(unittest.TestCase):
             "CD": np.array([0.0279, 0.0197]),
             Dynamic.Mission.ALTITUDE_RATE: np.array([-2385, -3076]) / 60,
             # TAS (ft/s) * cos(gamma)
-            "distance_rate": [
+            Dynamic.Mission.DISTANCE_RATE: [
                 (459 * 1.68781) * np.cos(np.deg2rad(-2.94)),
                 (437 * 1.68781) * np.cos(np.deg2rad(-3.98)),
             ],
@@ -85,7 +85,7 @@ class DescentODETestCase(unittest.TestCase):
             "CD": 0.0271,
             Dynamic.Mission.ALTITUDE_RATE: -1158 / 60,
             # TAS (ft/s) * cos(gamma)
-            "distance_rate": (255 * 1.68781) * np.cos(np.deg2rad(-2.56)),
+            Dynamic.Mission.DISTANCE_RATE: (255 * 1.68781) * np.cos(np.deg2rad(-2.56)),
             Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: -1294,
             Dynamic.Mission.FLIGHT_PATH_ANGLE: np.deg2rad(-2.56),
         }

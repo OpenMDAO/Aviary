@@ -14,6 +14,8 @@ from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBas
 from aviary.subsystems.propulsion.propulsion_mission import PropulsionMission
 from aviary.variable_info.enums import AnalysisScheme, AlphaModes, SpeedType
 from aviary.variable_info.variables import Dynamic
+from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
+from aviary.mission.ode.altitude_rate import AltitudeRate
 
 
 class ClimbODE(BaseODE):
@@ -191,7 +193,7 @@ class ClimbODE(BaseODE):
             integration_states,
             promotes_outputs=[
                 Dynamic.Mission.ALTITUDE_RATE,
-                "distance_rate",
+                Dynamic.Mission.DISTANCE_RATE,
                 "required_lift",
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
             ],
@@ -218,9 +220,33 @@ class ClimbODE(BaseODE):
             + constraint_inputs,
             promotes_outputs=["theta", "TAS_violation"],
         )
+
+        # the last two subsystems will also be used for constraints
+        self.add_subsystem(
+            name='SPECIFIC_ENERGY_RATE_EXCESS',
+            subsys=SpecificEnergyRate(num_nodes=nn),
+            promotes_inputs=[(Dynamic.Mission.VELOCITY, "TAS"), Dynamic.Mission.MASS,
+                             (Dynamic.Mission.THRUST_TOTAL, Dynamic.Mission.THRUST_MAX_TOTAL),
+                             Dynamic.Mission.DRAG],
+            promotes_outputs=[(Dynamic.Mission.SPECIFIC_ENERGY_RATE,
+                               Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS)]
+        )
+
+        self.add_subsystem(
+            name='ALTITUDE_RATE_MAX',
+            subsys=AltitudeRate(num_nodes=nn),
+            promotes_inputs=[
+                (Dynamic.Mission.SPECIFIC_ENERGY_RATE,
+                 Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS),
+                (Dynamic.Mission.VELOCITY_RATE, "TAS_rate"),
+                (Dynamic.Mission.VELOCITY, "TAS")],
+            promotes_outputs=[
+                (Dynamic.Mission.ALTITUDE_RATE,
+                 Dynamic.Mission.ALTITUDE_RATE_MAX)])
+
         if analysis_scheme is AnalysisScheme.COLLOCATION:
             self.set_order(['params', 'USatm', 'mach_balance_group'] + prop_groups +
-                           ['lift_balance_group', 'constraints'])
+                           ['lift_balance_group', 'constraints', 'SPECIFIC_ENERGY_RATE_EXCESS', 'ALTITUDE_RATE_MAX'])
 
         ParamPort.set_default_vals(self)
         self.set_input_defaults("CL_max", val=5 * np.ones(nn), units="unitless")

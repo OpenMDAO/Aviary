@@ -6,12 +6,9 @@ import pkg_resources
 import os
 
 from aviary.utils.aviary_values import AviaryValues, get_keys
-from aviary.variable_info.enums import ProblemType
+from aviary.variable_info.enums import ProblemType, EquationsOfMotion, LegacyCode
 from aviary.variable_info.functions import add_aviary_output, add_aviary_input
 from aviary.variable_info.variable_meta_data import _MetaData
-
-problem_types = {'sizing': ProblemType.SIZING,
-                 'alternate': ProblemType.ALTERNATE, 'fallout': ProblemType.FALLOUT}
 
 
 class Null:
@@ -111,8 +108,13 @@ def set_value(var_name, var_value, aviary_values: AviaryValues, units=None, is_a
         # if only a single value is provided, don't store it as a list
         var_value = var_value[0]
 
+    # TODO handle enums in an automated method via checking metadata for enum type
     if var_name == 'problem_type':
-        var_values = problem_types[var_values]
+        var_values = ProblemType[var_value]
+    if var_name == 'settings:equations_of_motion':
+        var_values = EquationsOfMotion(var_value)
+    if var_name == 'settings:mass_method':
+        var_values = LegacyCode(var_value)
 
     aviary_values.set_val(var_name, val=var_value, units=units, meta_data=meta_data)
     return aviary_values
