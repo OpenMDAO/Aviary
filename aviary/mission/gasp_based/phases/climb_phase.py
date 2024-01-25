@@ -79,7 +79,7 @@ class ClimbPhase(PhaseBuilderBase):
         fix_initial = user_options.get_val('fix_initial')
         mach_cruise = user_options.get_val('mach_cruise')
         target_mach = user_options.get_val('target_mach')
-        final_alt = user_options.get_val('final_alt', units='ft')
+        final_altitude = user_options.get_val('final_altitude', units='ft')
         required_available_climb_rate = user_options.get_val(
             'required_available_climb_rate', units='ft/min')
         time_initial_bounds = user_options.get_val('time_initial_bounds', units='s')
@@ -155,9 +155,9 @@ class ClimbPhase(PhaseBuilderBase):
         phase.add_boundary_constraint(
             Dynamic.Mission.ALTITUDE,
             loc="final",
-            equals=final_alt,
+            equals=final_altitude,
             units="ft",
-            ref=final_alt,
+            ref=final_altitude,
         )
 
         if required_available_climb_rate is not None:
@@ -211,7 +211,7 @@ ClimbPhase._add_meta_data('fix_initial', val=False)
 ClimbPhase._add_meta_data('EAS_target', val=0)
 ClimbPhase._add_meta_data('mach_cruise', val=0)
 ClimbPhase._add_meta_data('target_mach', val=False)
-ClimbPhase._add_meta_data('final_alt', val=0)
+ClimbPhase._add_meta_data('final_altitude', val=0)
 ClimbPhase._add_meta_data('required_available_climb_rate', val=None, units='ft/min')
 ClimbPhase._add_meta_data('time_initial_bounds', val=(0, 0), units='s')
 ClimbPhase._add_meta_data('duration_bounds', val=(0, 0), units='s')
