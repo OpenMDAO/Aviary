@@ -343,6 +343,10 @@ if simplified is False:
 
 # Create outputs
 x.add_output("landing", [Mission.Landing.GROUND_DISTANCE], side="right")
+x.add_output("climb1", [Dynamic.Mission.ALTITUDE_RATE_MAX], side="right")
+x.add_output("climb2", [Dynamic.Mission.ALTITUDE_RATE_MAX], side="right")
+x.add_output("descent2", [Dynamic.Mission.ALTITUDE_RATE_MAX], side="right")
+x.add_output("descent1", [Dynamic.Mission.ALTITUDE_RATE_MAX], side="right")
 
 # Create phase continuities
 x.connect("dymos", "groundroll", [Dynamic.Mission.MASS, "TAS", "t_curr"])
@@ -351,10 +355,13 @@ x.connect("dymos", "rotation", [Dynamic.Mission.MASS, "TAS",
 x.connect("dymos", "ascent", [Dynamic.Mission.MASS, Dynamic.Mission.ALTITUDE,
           "TAS", Dynamic.Mission.FLIGHT_PATH_ANGLE, "t_curr", "alpha"])
 x.connect("dymos", "accelerate", [Dynamic.Mission.ALTITUDE, "TAS", Dynamic.Mission.MASS])
-x.connect("dymos", "climb1", [Dynamic.Mission.ALTITUDE, Dynamic.Mission.MASS])
-x.connect("dymos", "climb2", [Dynamic.Mission.ALTITUDE, Dynamic.Mission.MASS])
+x.connect("dymos", "climb1", [Dynamic.Mission.ALTITUDE,
+          Dynamic.Mission.MASS, "TAS_rate"])
+x.connect("dymos", "climb2", [Dynamic.Mission.ALTITUDE,
+          Dynamic.Mission.MASS, "TAS_rate"])
 x.connect("dymos", "poly", ["time_cp", "h_cp"])
-x.connect("dymos", "descent2", [Dynamic.Mission.ALTITUDE, Dynamic.Mission.MASS])
+x.connect("dymos", "descent2", [Dynamic.Mission.ALTITUDE,
+          Dynamic.Mission.MASS, "TAS_rate"])
 x.connect("dymos", "landing", [Dynamic.Mission.MASS])
 x.connect("taxi", "groundroll", [Dynamic.Mission.MASS])
 x.connect("dymos",
@@ -365,7 +372,8 @@ x.connect("dymos",
            "cruise_time_initial",
            "cruise_distance_initial"],
           )
-x.connect("dymos", "descent1", [Dynamic.Mission.ALTITUDE, Dynamic.Mission.MASS])
+x.connect("dymos", "descent1", [Dynamic.Mission.ALTITUDE,
+          Dynamic.Mission.MASS, "TAS_rate"])
 x.connect("dymos", "fuelburn", [Mission.Landing.TOUCHDOWN_MASS])
 x.connect("dymos", Dynamic.Mission.DISTANCE, [Mission.Summary.RANGE])
 x.connect("cruise", "dymos", ["cruise_time_final", "cruise_distance_final"])

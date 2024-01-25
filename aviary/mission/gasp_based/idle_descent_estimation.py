@@ -34,8 +34,11 @@ def descent_range_and_fuel(
 
     traj = FlexibleTraj(
         Phases=phases,
-        traj_final_state_output=[Dynamic.Mission.MASS,
-                                 Dynamic.Mission.DISTANCE, Dynamic.Mission.ALTITUDE],
+        traj_final_state_output=[
+            Dynamic.Mission.MASS,
+            Dynamic.Mission.DISTANCE,
+            Dynamic.Mission.ALTITUDE,
+        ],
         traj_initial_state_input=[
             Dynamic.Mission.MASS,
             Dynamic.Mission.DISTANCE,

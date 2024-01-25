@@ -2,7 +2,7 @@ import unittest
 
 import openmdao.api as om
 
-from aviary.mission.flops_based.ode.specific_energy_rate import SpecificEnergyRate
+from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_data.flops_data.full_mission_test_data import \
     data
