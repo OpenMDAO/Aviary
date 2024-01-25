@@ -111,7 +111,7 @@ def create_report_frame(format, text_filepath):
         if format == 'html':
             iframe_css = 'width=1200px height=800px overflow-x="scroll" overflow="scroll" margin=0px padding=0px border=20px frameBorder=20px scrolling="yes"'
             report_pane = pn.pane.HTML(
-                f'<iframe {iframe_css} src=/home/{text_filepath}></iframe>'              )
+                f'<iframe {iframe_css} src=/home/{text_filepath}></iframe>')
         elif format in ['markdown', 'text']:
             with open(text_filepath, "rb") as f:
                 file_text = f.read()
@@ -307,7 +307,6 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
         )
 
     # TODO - use lists and functions to do this with a lot less code
-
     ####### Model Tab #######
     model_tabs_list = []
 
