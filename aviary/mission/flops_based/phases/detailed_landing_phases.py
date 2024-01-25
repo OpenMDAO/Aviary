@@ -32,7 +32,7 @@ from aviary.mission.flops_based.phases.detailed_takeoff_phases import \
     TakeoffTrajectory as _TakeoffTrajectory
 from aviary.mission.flops_based.phases.detailed_takeoff_phases import \
     _init_initial_guess_meta_data
-from aviary.mission.flops_based.phases.phase_builder_base import (
+from aviary.mission.phase_builder_base import (
     InitialGuessControl, InitialGuessParameter, InitialGuessPolynomialControl,
     InitialGuessState, PhaseBuilderBase)
 from aviary.utils.aviary_values import AviaryValues
@@ -50,9 +50,6 @@ class LandingApproachToMicP3(PhaseBuilderBase):
     ----------
     name : str ('landing_approach')
         object label
-
-    aero_builder (None)
-        utility for building and connecting a dynamic aerodynamics analysis component
 
     user_options : AviaryValues (<empty>)
         state/path constraint values and flags
@@ -274,9 +271,6 @@ class LandingMicP3ToObstacle(LandingApproachToMicP3):
     name : str ('landing_approach')
         object label
 
-    aero_builder (None)
-        utility for building and connecting a dynamic aerodynamics analysis component
-
     user_options : AviaryValues (<empty>)
         state/path constraint values and flags
 
@@ -375,9 +369,6 @@ class LandingObstacleToFlare(PhaseBuilderBase):
     ----------
     name : str ('landing_obstacle')
         object label
-
-    aero_builder (None)
-        utility for building and connecting a dynamic aerodynamics analysis component
 
     user_options : AviaryValues (<empty>)
         state/path constraint values and flags
@@ -570,9 +561,6 @@ class LandingFlareToTouchdown(PhaseBuilderBase):
     ----------
     name : str ('landing_flare')
         object label
-
-    aero_builder (None)
-        utility for building and connecting a dynamic aerodynamics analysis component
 
     user_options : AviaryValues (<empty>)
         state/path constraint values and flags
@@ -795,9 +783,6 @@ class LandingTouchdownToNoseDown(PhaseBuilderBase):
     name : str ('landing_touchdown')
         object label
 
-    aero_builder (None)
-        utility for building and connecting a dynamic aerodynamics analysis component
-
     user_options : AviaryValues (<empty>)
         state/path constraint values and flags
 
@@ -971,9 +956,6 @@ class LandingNoseDownToStop(PhaseBuilderBase):
     ----------
     name : str ('landing_stop')
         object label
-
-    aero_builder (None)
-        utility for building and connecting a dynamic aerodynamics analysis component
 
     user_options : AviaryValues (<empty>)
         state/path constraint values and flags

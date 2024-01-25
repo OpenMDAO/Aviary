@@ -46,7 +46,7 @@ import dymos as dm
 import openmdao.api as om
 
 from aviary.mission.flops_based.ode.takeoff_ode import TakeoffODE
-from aviary.mission.flops_based.phases.phase_builder_base import (
+from aviary.mission.phase_builder_base import (
     InitialGuessControl, InitialGuessParameter, InitialGuessPolynomialControl,
     InitialGuessState, InitialGuessTime, PhaseBuilderBase)
 from aviary.utils.aviary_values import AviaryValues
@@ -94,9 +94,6 @@ class TakeoffBrakeReleaseToDecisionSpeed(PhaseBuilderBase):
     ----------
     name : str ('takeoff_brake_release')
         object label
-
-    aero_builder (None)
-        utility for building and connecting a dynamic aerodynamics analysis component
 
     user_options : AviaryValues (<empty>)
         state/path constraint values and flags
@@ -260,9 +257,6 @@ class TakeoffDecisionSpeedToRotate(PhaseBuilderBase):
     ----------
     name : str ('takeoff_decision_speed')
         object label
-
-    aero_builder (None)
-        utility for building and connecting a dynamic aerodynamics analysis component
 
     user_options : AviaryValues (<empty>)
         state/path constraint values and flags
@@ -438,9 +432,6 @@ class TakeoffDecisionSpeedBrakeDelay(TakeoffDecisionSpeedToRotate):
     name : str ('takeoff_decision_speed')
         object label
 
-    aero_builder (None)
-        utility for building and connecting a dynamic aerodynamics analysis component
-
     user_options : AviaryValues (<empty>)
         state/path constraint values and flags
 
@@ -540,9 +531,6 @@ class TakeoffRotateToLiftoff(PhaseBuilderBase):
     ----------
     name : str ('takeoff_rotate')
         object label
-
-    aero_builder (None)
-        utility for building and connecting a dynamic aerodynamics analysis component
 
     user_options : AviaryValues (<empty>)
         state/path constraint values and flags
@@ -722,9 +710,6 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
     ----------
     name : str ('takeoff_liftoff')
         object label
-
-    aero_builder (None)
-        utility for building and connecting a dynamic aerodynamics analysis component
 
     user_options : AviaryValues (<empty>)
         state/path constraint values and flags
@@ -958,9 +943,6 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
     name : str ('takeoff_climb')
         object label
 
-    aero_builder (None)
-        utility for building and connecting a dynamic aerodynamics analysis component
-
     user_options : AviaryValues (<empty>)
         state/path constraint values and flags
 
@@ -1189,9 +1171,6 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
     ----------
     name : str ('takeoff_climb')
         object label
-
-    aero_builder (None)
-        utility for building and connecting a dynamic aerodynamics analysis component
 
     user_options : AviaryValues (<empty>)
         state/path constraint values and flags
@@ -1423,9 +1402,6 @@ class TakeoffEngineCutback(PhaseBuilderBase):
     name : str ('takeoff_climb')
         object label
 
-    aero_builder (None)
-        utility for building and connecting a dynamic aerodynamics analysis component
-
     user_options : AviaryValues (<empty>)
         state/path constraint values and flags
 
@@ -1633,9 +1609,6 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilderBase):
     ----------
     name : str ('takeoff_climb')
         object label
-
-    aero_builder (None)
-        utility for building and connecting a dynamic aerodynamics analysis component
 
     user_options : AviaryValues (<empty>)
         state/path constraint values and flags
@@ -1863,9 +1836,6 @@ class TakeoffMicP1ToClimb(PhaseBuilderBase):
     name : str ('takeoff_climb')
         object label
 
-    aero_builder (None)
-        utility for building and connecting a dynamic aerodynamics analysis component
-
     user_options : AviaryValues (<empty>)
         state/path constraint values and flags
 
@@ -2090,9 +2060,6 @@ class TakeoffBrakeToAbort(PhaseBuilderBase):
     ----------
     name : str ('takeoff_abort')
         object label
-
-    aero_builder (None)
-        utility for building and connecting a dynamic aerodynamics analysis component
 
     user_options : AviaryValues (<empty>)
         state/path constraint values and flags

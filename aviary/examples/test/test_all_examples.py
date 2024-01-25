@@ -94,7 +94,8 @@ class RunScriptTest(unittest.TestCase):
             if 'ImportError' in str(stderr):
                 self.skipTest(f"Skipped {script_path.name} due to ImportError")
             else:
-                raise
+                raise Exception(
+                    f"Error running {script_path.name}:\n{stderr.decode('utf-8')}")
 
     def test_run_scripts(self):
         """
