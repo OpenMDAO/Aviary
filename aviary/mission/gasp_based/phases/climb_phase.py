@@ -82,7 +82,6 @@ class ClimbPhase(PhaseBuilderBase):
         final_altitude = user_options.get_val('final_altitude', units='ft')
         required_available_climb_rate = user_options.get_val(
             'required_available_climb_rate', units='ft/min')
-        time_initial_bounds = user_options.get_val('time_initial_bounds', units='s')
         duration_bounds = user_options.get_val('duration_bounds', units='s')
         duration_ref = user_options.get_val('duration_ref', units='s')
         alt_lower = user_options.get_val('alt_lower', units='ft')
@@ -103,7 +102,6 @@ class ClimbPhase(PhaseBuilderBase):
 
         phase.set_time_options(
             fix_initial=fix_initial,
-            initial_bounds=time_initial_bounds,
             duration_bounds=duration_bounds,
             duration_ref=duration_ref,
             units="s",
@@ -213,7 +211,6 @@ ClimbPhase._add_meta_data('mach_cruise', val=0)
 ClimbPhase._add_meta_data('target_mach', val=False)
 ClimbPhase._add_meta_data('final_altitude', val=0)
 ClimbPhase._add_meta_data('required_available_climb_rate', val=None, units='ft/min')
-ClimbPhase._add_meta_data('time_initial_bounds', val=(0, 0), units='s')
 ClimbPhase._add_meta_data('duration_bounds', val=(0, 0), units='s')
 ClimbPhase._add_meta_data('duration_ref', val=1, units='s')
 ClimbPhase._add_meta_data('alt_lower', val=0, units='ft')

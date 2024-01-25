@@ -44,12 +44,10 @@ class DescentPhase(PhaseBuilderBase):
 
         # Retrieve user options values
         user_options = self.user_options
-        time_initial_bounds = user_options.get_val('time_initial_bounds', units='s')
         duration_bounds = user_options.get_val('duration_bounds', units='s')
         fix_initial = user_options.get_val('fix_initial')
         input_initial = user_options.get_val('input_initial')
         duration_ref = user_options.get_val('duration_ref', units='s')
-        time_initial_ref = user_options.get_val('time_initial_ref', units='s')
         alt_lower = user_options.get_val('alt_lower', units='ft')
         alt_upper = user_options.get_val('alt_upper', units='ft')
         alt_ref = user_options.get_val('alt_ref', units='ft')
@@ -72,13 +70,11 @@ class DescentPhase(PhaseBuilderBase):
 
         # Time options
         phase.set_time_options(
-            initial_bounds=time_initial_bounds,
             duration_bounds=duration_bounds,
             fix_initial=fix_initial,
             input_initial=input_initial,
             units="s",
             duration_ref=duration_ref,
-            initial_ref=time_initial_ref,
         )
 
         # Add states
@@ -172,8 +168,6 @@ DescentPhase._add_meta_data('EAS_limit', val=0, units='kn')
 DescentPhase._add_meta_data('mach_cruise', val=0)
 DescentPhase._add_meta_data('input_speed_type', val=SpeedType.MACH)
 DescentPhase._add_meta_data('final_altitude', val=0, units='ft')
-DescentPhase._add_meta_data('time_initial_bounds', val=(0, 0), units='s')
-DescentPhase._add_meta_data('time_initial_ref', val=1, units='s')
 DescentPhase._add_meta_data('duration_bounds', val=(0, 0), units='s')
 DescentPhase._add_meta_data('duration_ref', val=1, units='s')
 DescentPhase._add_meta_data('alt_lower', val=0, units='ft')

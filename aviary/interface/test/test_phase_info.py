@@ -113,11 +113,11 @@ class TestParameterizePhaseInfo(unittest.TestCase):
 
         prob.run_model()
 
-        assert_near_equal(prob.get_val("traj.desc2.timeseries.input_values:states:distance", units='km')[-1],
+        assert_near_equal(prob.get_val("traj.desc2.timeseries.input_values:distance", units='km')[-1],
                           5000.0)
-        assert_near_equal(prob.get_val("traj.climb2.timeseries.input_values:states:altitude", units='ft')[-1],
+        assert_near_equal(prob.get_val("traj.climb2.timeseries.input_values:altitude", units='ft')[-1],
                           31000.0)
-        assert_near_equal(prob.get_val("traj.groundroll.timeseries.input_values:states:mass", units='lbm')[0],
+        assert_near_equal(prob.get_val("traj.groundroll.timeseries.input_values:mass", units='lbm')[0],
                           120000.0)
         assert_near_equal(prob.get_val("traj.cruise.rhs.mach")[0],
                           0.6)
@@ -152,9 +152,9 @@ class TestParameterizePhaseInfo(unittest.TestCase):
 
         range_resid = prob.get_val(Mission.Constraints.RANGE_RESIDUAL, units='km')[-1]
         assert_near_equal(range_resid, 5000.0 - 1.e-3)
-        assert_near_equal(prob.get_val("traj.cruise.timeseries.polynomial_controls:altitude", units='ft')[0],
+        assert_near_equal(prob.get_val("traj.cruise.timeseries.altitude", units='ft')[0],
                           31000.0)
-        assert_near_equal(prob.get_val("traj.cruise.timeseries.polynomial_controls:mach")[0],
+        assert_near_equal(prob.get_val("traj.cruise.timeseries.mach")[0],
                           0.6)
 
 

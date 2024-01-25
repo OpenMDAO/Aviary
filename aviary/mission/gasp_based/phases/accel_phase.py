@@ -72,7 +72,6 @@ class AccelPhase(PhaseBuilderBase):
         # Extracting and setting options
         fix_initial = user_options.get_val('fix_initial')
         EAS_constraint_eq = user_options.get_val('EAS_constraint_eq', units='kn')
-        time_initial_bounds = user_options.get_val('time_initial_bounds', units='s')
         duration_bounds = user_options.get_val('duration_bounds', units='s')
         duration_ref = user_options.get_val('duration_ref', units='s')
         TAS_lower = user_options.get_val('TAS_lower', units='kn')
@@ -94,7 +93,6 @@ class AccelPhase(PhaseBuilderBase):
 
         phase.set_time_options(
             fix_initial=fix_initial,
-            initial_bounds=time_initial_bounds,
             duration_bounds=duration_bounds,
             units="s",
             duration_ref=duration_ref,
@@ -165,7 +163,6 @@ class AccelPhase(PhaseBuilderBase):
 # Adding metadata for the AccelPhase
 AccelPhase._add_meta_data('fix_initial', val=False)
 AccelPhase._add_meta_data('EAS_constraint_eq', val=250, units='kn')
-AccelPhase._add_meta_data('time_initial_bounds', val=(0, 0), units='s')
 AccelPhase._add_meta_data('duration_bounds', val=(0, 0), units='s')
 AccelPhase._add_meta_data('duration_ref', val=1, units='s')
 AccelPhase._add_meta_data('TAS_lower', val=0, units='kn')

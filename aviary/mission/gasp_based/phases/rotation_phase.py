@@ -46,7 +46,6 @@ class RotationPhase(PhaseBuilderBase):
         # Retrieve user options values
         user_options = self.user_options
         fix_initial = user_options.get_val('fix_initial')
-        initial_ref = user_options.get_val('initial_ref', units='s')
         duration_bounds = user_options.get_val('duration_bounds', units='s')
         duration_ref = user_options.get_val('duration_ref', units='s')
         angle_lower = user_options.get_val('angle_lower', units='rad')
@@ -72,13 +71,11 @@ class RotationPhase(PhaseBuilderBase):
         normal_ref = user_options.get_val('normal_ref', units='lbf')
         normal_ref0 = user_options.get_val('normal_ref0', units='lbf')
 
-        # Set time options
         phase.set_time_options(
             fix_initial=fix_initial,
             fix_duration=False,
             units="s",
             targets="t_curr",
-            initial_ref=initial_ref,
             duration_bounds=duration_bounds,
             duration_ref=duration_ref,
         )
@@ -167,7 +164,6 @@ class RotationPhase(PhaseBuilderBase):
 
 # Adding metadata for the RotationPhase
 RotationPhase._add_meta_data('fix_initial', val=False)
-RotationPhase._add_meta_data('initial_ref', val=1, units='s')
 RotationPhase._add_meta_data('duration_bounds', val=(1, 100), units='s')
 RotationPhase._add_meta_data('duration_ref', val=1, units='s')
 RotationPhase._add_meta_data('angle_lower', val=0.0, units='rad')  # rad
