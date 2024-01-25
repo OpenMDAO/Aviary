@@ -1137,16 +1137,6 @@ landing_subsystem_options_spoilers = {'core_aerodynamics': {
                                       'spoiler_lift_coefficient': -0.81,
                                       'spoiler_drag_coefficient': 0.085}}
 
-# landing_aero_builder = TakeoffAero(**landing_aero_user_options)
-
-# fullstop_aero_user_options = dict(landing_aero_user_options)
-# fullstop_aero_user_options['use_spoilers'] = True
-# fullstop_aero_user_options['spoiler_lift_coefficient'] = -0.81
-# fullstop_aero_user_options['spoiler_drag_coefficient'] = 0.085
-
-# fullstop_aero_builder = TakeoffAero(**fullstop_aero_user_options)
-# endregion - landing aero
-
 #                            VELOCITY     TIME   DISTANCE    ALPHA   ALTITUDE
 #                              KNOTS      SEC.     FEET       DEG.     FEET
 # 50. FOOT OBSTACLE            138.65     0.00       0.00     5.22    50.00
