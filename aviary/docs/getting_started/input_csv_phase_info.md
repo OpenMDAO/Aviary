@@ -49,7 +49,7 @@ We will now discuss the meaning of the keys within the `phase_info` objects.
 - If a key ends with `_constraint_eq`, it is an equality constraint.
 
 - Keys related to altitude:
-  - In `FLOPS` missions, it is `final_altitude`. In GASP missions, it is `final_alt`.
+  - We use `final_altitude` to indicate the final altitude of the phase.
   - Meanwhile, `alt` is a key in acceleration phase parameter for altitude in `GASP` missions and `altitude` is a key in all other phases of all missions.
 
 - Some keys are a boolean flag of True or False:

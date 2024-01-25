@@ -13,7 +13,7 @@ from aviary.interface.default_phase_info.height_energy import phase_info as ph_i
 from aviary.interface.default_phase_info.height_energy import phase_info_parameterization as phase_info_parameterization_height_energy
 from aviary.interface.methods_for_level2 import AviaryProblem
 
-from aviary.mission.flops_based.phases.phase_builder_base import \
+from aviary.mission.phase_builder_base import \
     PhaseBuilderBase as PhaseBuilder, phase_info_to_builder
 from aviary.variable_info.variables import Aircraft, Mission
 
