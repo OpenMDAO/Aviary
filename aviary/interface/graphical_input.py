@@ -148,7 +148,7 @@ def create_phase_info(times, altitudes, mach_values,
                 'use_polynomial_control': True,
                 'num_segments': num_segments,
                 'order': 3,
-                'solve_for_range': False,
+                'solve_for_distance': False,
                 'initial_mach': (mach_values[i], 'unitless'),
                 'final_mach': (mach_values[i+1], 'unitless'),
                 'mach_bounds': ((np.min(mach_values[i:i+2]) - 0.02, np.max(mach_values[i:i+2]) + 0.02), 'unitless'),
@@ -178,7 +178,7 @@ def create_phase_info(times, altitudes, mach_values,
         if 'pre_mission' in phase_name or 'post_mission' in phase_name:
             continue
         phase_info[phase_name]['user_options'].update({
-            'solve_for_range': user_choices.get('solve_for_range', False),
+            'solve_for_distance': user_choices.get('solve_for_distance', False),
         })
 
     # Apply global settings if required
@@ -307,9 +307,9 @@ class IntegratedPlottingApp(tk.Tk):
         tk.Checkbutton(checkbox_frame, text="Constrain Range",
                        variable=self.constrain_range_var).pack(anchor="w")
         self.constrain_range_var.set(True)
-        self.solve_for_range_var = tk.BooleanVar()
+        self.solve_for_distance_var = tk.BooleanVar()
         tk.Checkbutton(checkbox_frame, text="Solve for Range",
-                       variable=self.solve_for_range_var).pack(anchor="w")
+                       variable=self.solve_for_distance_var).pack(anchor="w")
 
         # Textbox for Polynomial Control Order
         self.polynomial_order_var = tk.StringVar()
@@ -458,7 +458,7 @@ class IntegratedPlottingApp(tk.Tk):
         # Retrieve user choices from checkboxes
         user_choices = {
             "constrain_range": self.constrain_range_var.get(),
-            "solve_for_range": self.solve_for_range_var.get()
+            "solve_for_distance": self.solve_for_distance_var.get()
         }
 
         polynomial_order = int(self.polynomial_order_var.get())

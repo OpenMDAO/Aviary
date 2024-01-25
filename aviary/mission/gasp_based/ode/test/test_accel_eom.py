@@ -48,7 +48,8 @@ class AccelerationTestCase(unittest.TestCase):
             # note: this was finite differenced from GASP. The fd value is: np.array([5.2353365, 5.2353365])
         )
         assert_near_equal(
-            self.prob["distance_rate"], np.array([425.32808399, 425.32808399]), tol
+            self.prob[Dynamic.Mission.DISTANCE_RATE], np.array(
+                [425.32808399, 425.32808399]), tol
             # note: this was finite differenced from GASP. The fd value is: np.array([441.6439, 441.6439])
         )
 

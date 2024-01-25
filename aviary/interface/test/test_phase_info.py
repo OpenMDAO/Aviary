@@ -3,21 +3,18 @@ Test the conversion between phase info and phase builder to ensure
 consistency and correctness.
 """
 import unittest
-import pkg_resources
 from copy import deepcopy
 
 from openmdao.utils.assert_utils import assert_near_equal
 
-from aviary.interface.default_phase_info.height_energy import phase_info as ph_in_flops
-from aviary.interface.default_phase_info.height_energy import phase_info_parameterization as phase_info_parameterization_flops
-from aviary.interface.default_phase_info.two_dof import phase_info as ph_in_gasp
-from aviary.interface.default_phase_info.two_dof import phase_info_parameterization as phase_info_parameterization_gasp
+from aviary.interface.default_phase_info.two_dof import phase_info as ph_in_two_dof
+from aviary.interface.default_phase_info.two_dof import phase_info_parameterization as phase_info_parameterization_two_dof
+from aviary.interface.default_phase_info.height_energy import phase_info as ph_in_height_energy
+from aviary.interface.default_phase_info.height_energy import phase_info_parameterization as phase_info_parameterization_height_energy
 from aviary.interface.methods_for_level2 import AviaryProblem
 
 from aviary.mission.flops_based.phases.phase_builder_base import \
     PhaseBuilderBase as PhaseBuilder, phase_info_to_builder
-# must keep this import to register the phase
-from aviary.mission.flops_based.phases.climb_phase import Climb
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -80,17 +77,17 @@ class TestPhaseInfo(unittest.TestCase):
                         raise RuntimeError(
                             f'value mismatch ({key}): {lhs_value} != {rhs_value}')
 
-    def test_default_phase_flops(self):
-        """Tests the roundtrip conversion for default_phase_info.flops"""
+    def test_default_phase_height_energy(self):
+        """Tests the roundtrip conversion for default_phase_info.height_energy"""
         from aviary.interface.default_phase_info.height_energy import phase_info
         local_phase_info = deepcopy(phase_info)
-        self._test_phase_info_dict(local_phase_info, 'climb')
+        self._test_phase_info_dict(local_phase_info, 'cruise')
 
 
 class TestParameterizePhaseInfo(unittest.TestCase):
 
-    def test_phase_info_parameterization_gasp(self):
-        phase_info = deepcopy(ph_in_gasp)
+    def test_phase_info_parameterization_two_dof(self):
+        phase_info = deepcopy(ph_in_two_dof)
 
         prob = AviaryProblem()
 
@@ -106,7 +103,7 @@ class TestParameterizePhaseInfo(unittest.TestCase):
         prob.aviary_inputs.set_val(Mission.Design.MACH, 0.6, 'unitless')
 
         prob.add_pre_mission_systems()
-        prob.add_phases(phase_info_parameterization=phase_info_parameterization_gasp)
+        prob.add_phases(phase_info_parameterization=phase_info_parameterization_two_dof)
         prob.add_post_mission_systems()
 
         prob.link_phases()
@@ -125,8 +122,8 @@ class TestParameterizePhaseInfo(unittest.TestCase):
         assert_near_equal(prob.get_val("traj.cruise.rhs.mach")[0],
                           0.6)
 
-    def test_phase_info_parameterization_flops(self):
-        phase_info = deepcopy(ph_in_flops)
+    def test_phase_info_parameterization_height_energy(self):
+        phase_info = deepcopy(ph_in_height_energy)
 
         prob = AviaryProblem()
 
@@ -136,13 +133,14 @@ class TestParameterizePhaseInfo(unittest.TestCase):
         prob.check_and_preprocess_inputs()
 
         # We can set some crazy vals, since we aren't going to optimize.
-        prob.aviary_inputs.set_val(Mission.Design.RANGE, 5000, 'km')
-        prob.aviary_inputs.set_val(Mission.Design.CRUISE_ALTITUDE, 31000, units='ft')
-        prob.aviary_inputs.set_val(Mission.Design.GROSS_MASS, 195000, 'lbm')
+        prob.aviary_inputs.set_val(Mission.Design.RANGE, 5000., 'km')
+        prob.aviary_inputs.set_val(Mission.Design.CRUISE_ALTITUDE, 31000., units='ft')
+        prob.aviary_inputs.set_val(Mission.Design.GROSS_MASS, 195000., 'lbm')
         prob.aviary_inputs.set_val(Mission.Summary.CRUISE_MACH, 0.6, 'unitless')
 
         prob.add_pre_mission_systems()
-        prob.add_phases(phase_info_parameterization=phase_info_parameterization_flops)
+        prob.add_phases(
+            phase_info_parameterization=phase_info_parameterization_height_energy)
         prob.add_post_mission_systems()
 
         prob.link_phases()
@@ -152,20 +150,16 @@ class TestParameterizePhaseInfo(unittest.TestCase):
 
         prob.run_model()
 
-        assert_near_equal(prob.get_val("traj.descent.timeseries.input_values:states:range", units='km')[-1],
-                          5000.0 * 3378.7 / 3500)
-        assert_near_equal(prob.get_val("traj.cruise.timeseries.input_values:states:altitude", units='ft')[0],
+        range_resid = prob.get_val(Mission.Constraints.RANGE_RESIDUAL, units='km')[-1]
+        assert_near_equal(range_resid, 5000.0 - 1.e-3)
+        assert_near_equal(prob.get_val("traj.cruise.timeseries.polynomial_controls:altitude", units='ft')[0],
                           31000.0)
-        assert_near_equal(prob.get_val("traj.climb.timeseries.input_values:states:mass", units='lbm')[-1],
-                          195000.0 * 165000 / 175400)
-
-        # Mach enters as a constraint, so it won't impact openmdao outputs until successful optimization.
-        # So, to verify we are setting it, reach into internal constraint dicts.
-        # Order may change if more path constraints are added.
-        assert_near_equal(prob.model.traj.phases.cruise._path_constraints[1]['equals'],
+        assert_near_equal(prob.get_val("traj.cruise.timeseries.polynomial_controls:mach")[0],
                           0.6)
 
 
 # To run the tests
 if __name__ == '__main__':
     unittest.main()
+    # test = TestPhaseInfo()
+    # test.test_default_phase_height_energy()
