@@ -53,7 +53,7 @@ class DescentPhase(PhaseBuilderBase):
         alt_ref = user_options.get_val('alt_ref', units='ft')
         alt_ref0 = user_options.get_val('alt_ref0', units='ft')
         alt_defect_ref = user_options.get_val('alt_defect_ref', units='ft')
-        final_alt = user_options.get_val('final_alt', units='ft')
+        final_altitude = user_options.get_val('final_altitude', units='ft')
         alt_constraint_ref = user_options.get_val('alt_constraint_ref', units='ft')
         mass_lower = user_options.get_val('mass_lower', units='lbm')
         mass_upper = user_options.get_val('mass_upper', units='lbm')
@@ -125,7 +125,7 @@ class DescentPhase(PhaseBuilderBase):
         phase.add_boundary_constraint(
             Dynamic.Mission.ALTITUDE,
             loc="final",
-            equals=final_alt,
+            equals=final_altitude,
             units="ft",
             ref=alt_constraint_ref)
 
@@ -167,7 +167,7 @@ DescentPhase._add_meta_data('input_initial', val=False)
 DescentPhase._add_meta_data('EAS_limit', val=0, units='kn')
 DescentPhase._add_meta_data('mach_cruise', val=0)
 DescentPhase._add_meta_data('input_speed_type', val=SpeedType.MACH)
-DescentPhase._add_meta_data('final_alt', val=0, units='ft')
+DescentPhase._add_meta_data('final_altitude', val=0, units='ft')
 DescentPhase._add_meta_data('duration_bounds', val=(0, 0), units='s')
 DescentPhase._add_meta_data('duration_ref', val=1, units='s')
 DescentPhase._add_meta_data('alt_lower', val=0, units='ft')

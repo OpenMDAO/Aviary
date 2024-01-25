@@ -7,7 +7,6 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from aviary.subsystems.geometry.gasp_based.empennage import (EmpennageSize,
                                                              TailSize,
                                                              TailVolCoef)
-from aviary.utils.test_utils.IO_test_util import assert_match_spec, skipIfMissingXDSM
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft
 
@@ -185,16 +184,6 @@ class TestEmpennageGroup(
             self.prob[Aircraft.VerticalTail.MOMENT_ARM], 49.87526, tol
         )  # note: slightly different from GASP output value, likely numerical diff.s, this value is from Kenny
 
-    @skipIfMissingXDSM('size_both1_specs/empennage.json')
-    def test_io_emp_spec_defaults(self):
-        self.prob.model.emp.options["aviary_options"] = get_option_defaults()
-
-        self.prob.setup(check=False, force_alloc_complex=True)
-
-        subsystem = self.prob.model
-
-        assert_match_spec(subsystem, "size_both1_specs/empennage.json")
-
     def test_large_sinle_aisle_1_calc_volcoefs(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF,
@@ -217,20 +206,6 @@ class TestEmpennageGroup(
         assert_near_equal(
             self.prob[Aircraft.VerticalTail.VOLUME_COEFFICIENT], 0.11623, tol
         )  # not actual GASP value
-
-    @skipIfMissingXDSM('size_both2_specs/empennage.json')
-    def test_io_emp_spec_vol_coefs(self):
-        options = get_option_defaults()
-        options.set_val(Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF,
-                        val=True, units='unitless')
-        options.set_val(Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF,
-                        val=True, units='unitless')
-        self.prob.model.emp.options["aviary_options"] = options
-        self.prob.setup(check=False, force_alloc_complex=True)
-
-        subsystem = self.prob.model
-
-        assert_match_spec(subsystem, "size_both2_specs/empennage.json")
 
 
 if __name__ == "__main__":

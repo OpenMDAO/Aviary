@@ -2,9 +2,6 @@
 Test file to test the outputs, derivatives, and IO of each sample component/group.
 The name of this file needs to start with 'test' so that the testflo command will
 find and run the file.
-
-Before this file is run, the sample_XDSM.py file in the XDSM folder must be run in
-order to generate the spec files which are used in the test_spec tests.
 """
 
 import unittest
@@ -52,14 +49,6 @@ class StallSpeedTest(unittest.TestCase):
         assert_check_partials(
             partial_data, atol=1e-12, rtol=1e-12
         )  # check the partial derivatives
-
-    # def test_spec(self):
-
-    #     subsystem = self.prob.model
-
-    #     assert_match_spec(
-    #         subsystem, "takeoff_specs/vstall.json"
-    #     )
 
 
 class FinalConditionsTest(unittest.TestCase):
@@ -112,12 +101,6 @@ class FinalConditionsTest(unittest.TestCase):
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
-
-    # def test_spec(self):
-
-    #     subsystem = self.prob.model
-
-    #     assert_match_spec(subsystem, "takeoff_specs/final_conds.json")
 
 
 class TakeoffGroupTest(unittest.TestCase):

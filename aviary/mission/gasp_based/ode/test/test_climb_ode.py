@@ -6,9 +6,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
 
 from aviary.mission.gasp_based.ode.climb_ode import ClimbODE
-from aviary.utils.test_utils.IO_test_util import (assert_match_spec,
-                                                  check_prob_outputs,
-                                                  skipIfMissingXDSM)
+from aviary.utils.test_utils.IO_test_util import check_prob_outputs
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.interface.default_phase_info.two_dof import default_mission_subsystems
@@ -94,16 +92,6 @@ class ClimbODETestCase(unittest.TestCase):
             Dynamic.Mission.THRUST_TOTAL: [25610, 10790],
         }
         check_prob_outputs(self.prob, testvals, 1e-1)  # TODO tighten
-
-    @skipIfMissingXDSM('statics_specs/climb1.json')
-    def test_climb1_spec(self):
-        """Test climb1 phase spec"""
-        assert_match_spec(self.sys, "statics_specs/climb1.json")
-
-    @skipIfMissingXDSM('statics_specs/climb2.json')
-    def test_climb2_spec(self):
-        """Test climb2 phase spec"""
-        assert_match_spec(self.sys, "statics_specs/climb2.json")
 
 
 if __name__ == "__main__":

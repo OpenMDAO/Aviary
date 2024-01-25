@@ -74,7 +74,7 @@ def check_phase_info(phase_info, mission_method):
         'EAS_limit': tuple,
         'mach_cruise': float,
         'input_speed_type': SpeedType,
-        'final_alt': tuple,
+        'final_altitude': tuple,
         'alt_constraint_ref': tuple,
     }
 
@@ -129,7 +129,7 @@ def check_phase_info(phase_info, mission_method):
             'EAS_target': tuple,
             'mach_cruise': float,
             'target_mach': bool,
-            'final_alt': tuple,
+            'final_altitude': tuple,
             **common_duration,
             **common_alt,
             **common_mass,
@@ -140,7 +140,7 @@ def check_phase_info(phase_info, mission_method):
             'EAS_target': tuple,
             'mach_cruise': float,
             'target_mach': bool,
-            'final_alt': tuple,
+            'final_altitude': tuple,
             'required_available_climb_rate': tuple,
             **common_duration,
             **common_alt,
