@@ -3,13 +3,11 @@ Define utilities for building phases.
 
 Classes
 -------
-PhaseBuilderBase : the interface for a phase builder
+
 '''
 from abc import ABC
 from collections import namedtuple
 from collections.abc import Sequence
-
-from aviary.mission.initial_guess_builders import InitialGuess
 
 import dymos as dm
 import numpy as np
@@ -464,6 +462,13 @@ if __name__ == '__main__':
 
     try:
         PhaseBuilderBase._add_meta_data('test', val=0, units=None, desc='test')
+
+    except Exception as error:
+        print(error)
+
+    try:
+        PhaseBuilderBase._add_initial_guess_meta_data(
+            InitialGuessTime(), desc='test initial guess')
 
     except Exception as error:
         print(error)
