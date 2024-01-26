@@ -17,6 +17,7 @@ import openmdao.api as om
 
 from aviary.mission.flops_based.ode.mission_ODE import MissionODE
 from aviary.utils.aviary_values import AviaryValues, get_keys
+from aviary.variable_info.variable_meta_data import _MetaData
 
 _require_new_meta_data_class_attr_ = \
     namedtuple('_require_new_meta_data_class_attr_', ())
@@ -80,7 +81,7 @@ class PhaseBuilderBase(ABC):
     __slots__ = (
         'name',  'core_subsystems', 'subsystem_options', 'user_options',
         'initial_guesses', 'ode_class', 'transcription',
-        'is_analytic_phase', 'num_nodes',
+        'is_analytic_phase', 'num_nodes', 'external_subsystems', 'meta_data',
     )
 
     # region : derived type customization points
@@ -91,11 +92,13 @@ class PhaseBuilderBase(ABC):
     default_name = '<unknown phase>'
 
     default_ode_class = MissionODE
+
+    default_meta_data = _MetaData
     # endregion : derived type customization points
 
     def __init__(
         self, name=None, core_subsystems=None, user_options=None, initial_guesses=None,
-        ode_class=None, transcription=None, subsystem_options=None, is_analytic_phase=False, num_nodes=5,
+        ode_class=None, transcription=None, subsystem_options=None, is_analytic_phase=False, num_nodes=5, external_subsystems=None, meta_data=None,
     ):
         if name is None:
             name = self.default_name
@@ -126,6 +129,16 @@ class PhaseBuilderBase(ABC):
         self.transcription = transcription
         self.is_analytic_phase = is_analytic_phase
         self.num_nodes = num_nodes
+
+        if external_subsystems is None:
+            external_subsystems = []
+
+        self.external_subsystems = external_subsystems
+
+        if meta_data is None:
+            meta_data = self.default_meta_data
+
+        self.meta_data = meta_data
 
     def build_phase(self, aviary_options=None):
         '''

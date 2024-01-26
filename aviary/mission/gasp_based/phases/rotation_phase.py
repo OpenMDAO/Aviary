@@ -5,40 +5,14 @@ from aviary.mission.initial_guess_builders import InitialGuessState, InitialGues
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
 from aviary.mission.gasp_based.ode.rotation_ode import RotationODE
-from aviary.variable_info.variable_meta_data import _MetaData
 
 
 class RotationPhase(PhaseBuilderBase):
     default_name = 'rotation_phase'
     default_ode_class = RotationODE
 
-    __slots__ = ('external_subsystems', 'meta_data')
-
     _meta_data_ = {}
     _initial_guesses_meta_data_ = {}
-
-    default_meta_data = _MetaData
-
-    def __init__(
-        self, name=None, subsystem_options=None, user_options=None, initial_guesses=None,
-        ode_class=None, transcription=None, core_subsystems=None,
-        external_subsystems=None, meta_data=None
-    ):
-        super().__init__(
-            name=name, subsystem_options=subsystem_options, user_options=user_options,
-            initial_guesses=initial_guesses, ode_class=ode_class, transcription=transcription,
-            core_subsystems=core_subsystems,
-        )
-
-        if external_subsystems is None:
-            external_subsystems = []
-
-        self.external_subsystems = external_subsystems
-
-        if meta_data is None:
-            meta_data = self.default_meta_data
-
-        self.meta_data = meta_data
 
     def build_phase(self, aviary_options: AviaryValues = None):
         phase = super().build_phase(aviary_options)
