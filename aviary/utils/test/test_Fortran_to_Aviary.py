@@ -4,7 +4,7 @@ from pathlib import Path
 from aviary.utils.functions import get_path
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.utils.Fortran_to_Aviary import LegacyCode, _exec_F2A
+from aviary.utils.fortran_to_aviary import LegacyCode, _exec_F2A
 
 
 class DummyArgs(object):

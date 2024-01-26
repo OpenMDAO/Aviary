@@ -40,7 +40,7 @@ from aviary.interface.methods_for_level1 import run_aviary
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.interface.utils.check_phase_info import check_phase_info
 from aviary.utils.engine_deck_conversion import EngineDeckConverter
-from aviary.utils.Fortran_to_Aviary import create_aviary_deck
+from aviary.utils.fortran_to_aviary import create_aviary_deck
 from aviary.utils.functions import set_aviary_initial_values, get_path
 from aviary.utils.options import list_options
 from aviary.constants import GRAV_METRIC_GASP, GRAV_ENGLISH_GASP, GRAV_METRIC_FLOPS, GRAV_ENGLISH_FLOPS, GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH, RHO_SEA_LEVEL_METRIC, MU_TAKEOFF, MU_LANDING, PSLS_PSF, TSLS_DEGR, RADIUS_EARTH_METRIC
