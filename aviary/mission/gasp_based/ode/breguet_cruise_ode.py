@@ -140,7 +140,7 @@ class BreguetCruiseODESolution(BaseODE):
         self.add_subsystem(
             name='SPECIFIC_ENERGY_RATE_EXCESS',
             subsys=SpecificEnergyRate(num_nodes=nn),
-            promotes_inputs=[(Dynamic.Mission.VELOCITY, Dynamic.Mission.VELOCITY), Dynamic.Mission.MASS,
+            promotes_inputs=[Dynamic.Mission.VELOCITY, Dynamic.Mission.MASS,
                              (Dynamic.Mission.THRUST_TOTAL, Dynamic.Mission.THRUST_MAX_TOTAL),
                              Dynamic.Mission.DRAG],
             promotes_outputs=[(Dynamic.Mission.SPECIFIC_ENERGY_RATE,
@@ -154,7 +154,7 @@ class BreguetCruiseODESolution(BaseODE):
                 (Dynamic.Mission.SPECIFIC_ENERGY_RATE,
                  Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS),
                 (Dynamic.Mission.VELOCITY_RATE, Dynamic.Mission.VELOCITY_RATE),
-                (Dynamic.Mission.VELOCITY, Dynamic.Mission.VELOCITY)],
+                Dynamic.Mission.VELOCITY],
             promotes_outputs=[
                 (Dynamic.Mission.ALTITUDE_RATE,
                  Dynamic.Mission.ALTITUDE_RATE_MAX)])
