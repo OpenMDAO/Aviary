@@ -21,8 +21,6 @@ class GroundrollPhase(PhaseBuilderBase):
         fix_initial = user_options.get_val('fix_initial')
         fix_initial_mass = user_options.get_val('fix_initial_mass')
         connect_initial_mass = user_options.get_val('connect_initial_mass')
-        duration_bounds = user_options.get_val('duration_bounds', units='s')
-        duration_ref = user_options.get_val('duration_ref', units='s')
         mass_lower = user_options.get_val('mass_lower', units='lbm')
         mass_upper = user_options.get_val('mass_upper', units='lbm')
         mass_ref = user_options.get_val('mass_ref', units='lbm')
@@ -34,15 +32,7 @@ class GroundrollPhase(PhaseBuilderBase):
         distance_ref0 = user_options.get_val('distance_ref0', units='ft')
         distance_defect_ref = user_options.get_val('distance_defect_ref', units='ft')
 
-        # Set time options
-        phase.set_time_options(
-            fix_initial=fix_initial,
-            fix_duration=False,
-            units="s",
-            targets="t_curr",
-            duration_bounds=duration_bounds,
-            duration_ref=duration_ref,
-        )
+        self.set_time_options(user_options, targets='t_curr')
 
         # Add states
         self.add_TAS_state(user_options)

@@ -20,8 +20,6 @@ class RotationPhase(PhaseBuilderBase):
         # Retrieve user options values
         user_options = self.user_options
         fix_initial = user_options.get_val('fix_initial')
-        duration_bounds = user_options.get_val('duration_bounds', units='s')
-        duration_ref = user_options.get_val('duration_ref', units='s')
         angle_lower = user_options.get_val('angle_lower', units='rad')
         angle_upper = user_options.get_val('angle_upper', units='rad')
         angle_ref = user_options.get_val('angle_ref', units='rad')
@@ -35,14 +33,7 @@ class RotationPhase(PhaseBuilderBase):
         normal_ref = user_options.get_val('normal_ref', units='lbf')
         normal_ref0 = user_options.get_val('normal_ref0', units='lbf')
 
-        phase.set_time_options(
-            fix_initial=fix_initial,
-            fix_duration=False,
-            units="s",
-            targets="t_curr",
-            duration_bounds=duration_bounds,
-            duration_ref=duration_ref,
-        )
+        self.set_time_options(user_options, targets='t_curr')
 
         # Add states
         phase.add_state(

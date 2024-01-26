@@ -18,23 +18,11 @@ InitialGuessState : a utility for setting an initial guess for a state on a prob
 InitialGuessTime : a utility for setting guesses for initial time and duration on a
 problem
 '''
-from abc import ABC
-from collections import namedtuple
 from collections.abc import Sequence
 
 import dymos as dm
 import numpy as np
 import openmdao.api as om
-
-from aviary.mission.flops_based.ode.mission_ODE import MissionODE
-from aviary.utils.aviary_values import AviaryValues, get_keys
-
-_require_new_meta_data_class_attr_ = \
-    namedtuple('_require_new_meta_data_class_attr_', ())
-
-
-_require_new_initial_guesses_meta_data_class_attr_ = \
-    namedtuple('_require_new_initial_guesses_meta_data_class_attr_', ())
 
 
 class InitialGuess:

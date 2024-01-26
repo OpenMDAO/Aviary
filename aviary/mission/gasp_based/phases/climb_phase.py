@@ -47,21 +47,13 @@ class ClimbPhase(PhaseBuilderBase):
         # Custom configurations for the climb phase
         user_options = self.user_options
 
-        fix_initial = user_options.get_val('fix_initial')
         mach_cruise = user_options.get_val('mach_cruise')
         target_mach = user_options.get_val('target_mach')
         final_altitude = user_options.get_val('final_altitude', units='ft')
         required_available_climb_rate = user_options.get_val(
             'required_available_climb_rate', units='ft/min')
-        duration_bounds = user_options.get_val('duration_bounds', units='s')
-        duration_ref = user_options.get_val('duration_ref', units='s')
 
-        phase.set_time_options(
-            fix_initial=fix_initial,
-            duration_bounds=duration_bounds,
-            duration_ref=duration_ref,
-            units="s",
-        )
+        self.set_time_options(user_options)
 
         # States
         self.add_altitude_state(user_options)

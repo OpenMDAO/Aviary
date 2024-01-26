@@ -44,18 +44,10 @@ class AccelPhase(PhaseBuilderBase):
         user_options = self.user_options
 
         # Extracting and setting options
-        fix_initial = user_options.get_val('fix_initial')
         EAS_constraint_eq = user_options.get_val('EAS_constraint_eq', units='kn')
-        duration_bounds = user_options.get_val('duration_bounds', units='s')
-        duration_ref = user_options.get_val('duration_ref', units='s')
         alt = user_options.get_val('alt', units='ft')
 
-        phase.set_time_options(
-            fix_initial=fix_initial,
-            duration_bounds=duration_bounds,
-            units="s",
-            duration_ref=duration_ref,
-        )
+        self.set_time_options(user_options)
 
         # States
         self.add_TAS_state(user_options)
