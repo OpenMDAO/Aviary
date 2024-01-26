@@ -141,7 +141,7 @@ AscentPhase._add_initial_guess_meta_data(
     desc='initial guess for altitude state')
 
 AscentPhase._add_initial_guess_meta_data(
-    InitialGuessState('TAS'),
+    InitialGuessState('velocity'),
     desc='initial guess for true airspeed state')
 
 AscentPhase._add_initial_guess_meta_data(

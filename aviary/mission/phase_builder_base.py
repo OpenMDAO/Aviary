@@ -439,14 +439,14 @@ class PhaseBuilderBase(ABC):
         TAS_ref0 = user_options.get_val('TAS_ref0', units='kn')
         TAS_defect_ref = user_options.get_val('TAS_defect_ref', units='kn')
         self.phase.add_state(
-            "TAS",
+            Dynamic.Mission.VELOCITY,
             fix_initial=user_options.get_val('fix_initial'),
             fix_final=False,
             lower=TAS_lower,
             upper=TAS_upper,
             units="kn",
-            rate_source="TAS_rate",
-            targets="TAS",
+            rate_source=Dynamic.Mission.VELOCITY_RATE,
+            targets=Dynamic.Mission.VELOCITY,
             ref=TAS_ref,
             ref0=TAS_ref0,
             defect_ref=TAS_defect_ref,

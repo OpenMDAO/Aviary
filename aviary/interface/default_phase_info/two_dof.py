@@ -43,7 +43,7 @@ phase_info = {
         },
         'initial_guesses': {
             'times': ([0.0, 40.0], 's'),
-            'TAS': ([0.066, 143.1], 'kn'),
+            'velocity': ([0.066, 143.1], 'kn'),
             'distance': ([0.0, 1000.], 'ft'),
             'throttle': ([0.956, 0.956], 'unitless'),
         }
@@ -76,7 +76,7 @@ phase_info = {
         'initial_guesses': {
             'times': ([40.0, 5.0], 's'),
             'alpha': ([0.0, 2.5], 'deg'),
-            'TAS': ([143, 150.], 'kn'),
+            'velocity': ([143, 150.], 'kn'),
             'distance': ([3680.37217765, 4000], 'ft'),
             'throttle': ([0.956, 0.956], 'unitless'),
         }
@@ -116,7 +116,7 @@ phase_info = {
             'times': ([45., 25.], 's'),
             'flight_path_angle': ([0.0, 8.], 'deg'),
             'alpha': ([2.5, 1.5], 'deg'),
-            'TAS': ([150., 185.], 'kn'),
+            'velocity': ([150., 185.], 'kn'),
             'distance': ([4.e3, 10.e3], 'ft'),
             'altitude': ([0.0, 500.], 'ft'),
             'tau_gear': (0.2, 'unitless'),
@@ -148,7 +148,7 @@ phase_info = {
         },
         'initial_guesses': {
             'times': ([70., 13.], 's'),
-            'TAS': ([185., 250.], 'kn'),
+            'velocity': ([185., 250.], 'kn'),
             'distance': ([10.e3, 20.e3], 'ft'),
             'throttle': ([0.956, 0.956], 'unitless'),
         }

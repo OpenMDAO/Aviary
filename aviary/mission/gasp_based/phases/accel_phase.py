@@ -105,7 +105,7 @@ AccelPhase._add_initial_guess_meta_data(
     desc='initial guess for initial time and duration specified as a tuple')
 
 AccelPhase._add_initial_guess_meta_data(
-    InitialGuessState('TAS'),
+    InitialGuessState('velocity'),
     desc='initial guess for true airspeed')
 
 AccelPhase._add_initial_guess_meta_data(

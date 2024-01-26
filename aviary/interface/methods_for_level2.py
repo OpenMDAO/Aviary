@@ -617,17 +617,17 @@ class AviaryProblem(om.Problem):
         self.model.add_subsystem(
             "groundroll_boundary",
             om.EQConstraintComp(
-                "TAS",
+                "velocity",
                 eq_units="ft/s",
                 normalize=True,
                 add_constraint=True,
             ),
         )
         self.model.connect(Mission.Takeoff.ROTATION_VELOCITY,
-                           "groundroll_boundary.rhs:TAS")
+                           "groundroll_boundary.rhs:velocity")
         self.model.connect(
-            "traj.groundroll.states:TAS",
-            "groundroll_boundary.lhs:TAS",
+            "traj.groundroll.states:velocity",
+            "groundroll_boundary.lhs:velocity",
             src_indices=[-1],
             flat_src_indices=True,
         )
@@ -1315,7 +1315,7 @@ class AviaryProblem(om.Problem):
         elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
             if self.analysis_scheme is AnalysisScheme.COLLOCATION:
                 self.traj.link_phases(["groundroll", "rotation", "ascent"], [
-                    "time", "TAS", "mass", Dynamic.Mission.DISTANCE], connected=True)
+                    "time", Dynamic.Mission.VELOCITY, "mass", Dynamic.Mission.DISTANCE], connected=True)
                 self.traj.link_phases(
                     ["rotation", "ascent"], ["alpha"], connected=False,
                     ref=5e1,
@@ -1334,7 +1334,7 @@ class AviaryProblem(om.Problem):
                 self.traj.link_phases(
                     phases=[
                         "ascent", "accel"], vars=[
-                        "time", "mass", "TAS"], connected=True)
+                        "time", "mass", Dynamic.Mission.VELOCITY], connected=True)
                 self.traj.link_phases(
                     phases=["accel", "climb1", "climb2"],
                     vars=["time", Dynamic.Mission.ALTITUDE,
@@ -1980,8 +1980,8 @@ class AviaryProblem(om.Problem):
             state_keys = ["mass", Dynamic.Mission.DISTANCE]
         else:
             control_keys = ["velocity_rate", "throttle"]
-            state_keys = ["altitude", "velocity", "mass",
-                          Dynamic.Mission.DISTANCE, "TAS", Dynamic.Mission.DISTANCE, "flight_path_angle", "alpha"]
+            state_keys = ["altitude", "mass",
+                          Dynamic.Mission.DISTANCE, Dynamic.Mission.VELOCITY, "flight_path_angle", "alpha"]
             if self.mission_method is TWO_DEGREES_OF_FREEDOM and phase_name == 'ascent':
                 # Alpha is a control for ascent.
                 control_keys.append('alpha')
@@ -2277,7 +2277,7 @@ class AviaryProblem(om.Problem):
                                    lhs_name="v_rot_computed", rhs_name="groundroll_v_final", add_constraint=True)
 
         self.model.connect('vrot_comp.Vrot', 'vrot_eq_comp.v_rot_computed')
-        self.model.connect('traj.groundroll.timeseries.TAS',
+        self.model.connect('traj.groundroll.timeseries.velocity',
                            'vrot_eq_comp.groundroll_v_final', src_indices=om.slicer[-1, ...])
 
     def _save_to_csv_file(self, filename):

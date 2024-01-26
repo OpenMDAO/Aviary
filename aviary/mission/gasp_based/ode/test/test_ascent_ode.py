@@ -20,7 +20,7 @@ class AscentODETestCase(unittest.TestCase):
         """Test partial derivatives"""
         self.prob.setup(check=False, force_alloc_complex=True)
 
-        self.prob.set_val("TAS", [100, 100], units="kn")
+        self.prob.set_val(Dynamic.Mission.VELOCITY, [100, 100], units="kn")
         self.prob.set_val("t_curr", [1, 2], units="s")
 
         self.prob.run_model()

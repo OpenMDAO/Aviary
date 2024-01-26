@@ -283,7 +283,7 @@ def run_mission(optimizer):
             )
 
             phase.set_time_options(fix_initial=True, fix_duration=False,
-                                   units="kn", name="TAS",
+                                   units="kn", name=Dynamic.Mission.VELOCITY,
                                    duration_bounds=duration_bounds, duration_ref=duration_ref, initial_ref=initial_ref)
 
             phase.set_state_options("time", rate_source="dt_dv", units="s",
@@ -355,7 +355,7 @@ def run_mission(optimizer):
                     "t_init_flaps", units="s", static_target=True, opt=False, val=100)
 
             if 'rotation' in phase_name:
-                phase.add_polynomial_control("TAS",
+                phase.add_polynomial_control(Dynamic.Mission.VELOCITY,
                                              order=control_order,
                                              units="kn", val=200.0,
                                              opt=opt, lower=1, upper=500, ref=250)
@@ -385,7 +385,7 @@ def run_mission(optimizer):
                     phase.add_parameter(
                         Dynamic.Mission.MACH, units="unitless", val=cruise_mach)
                 else:
-                    phase.add_polynomial_control("TAS",
+                    phase.add_polynomial_control(Dynamic.Mission.VELOCITY,
                                                  order=control_order,
                                                  fix_initial=False,
                                                  units="kn", val=200.0,
@@ -403,7 +403,7 @@ def run_mission(optimizer):
                 "fuselage_pitch", upper=15., units='deg', ref=15)
         if phase_name == "rotation":
             phase.add_boundary_constraint(
-                "TAS", loc="final", upper=200., units="kn", ref=200.)
+                Dynamic.Mission.VELOCITY, loc="final", upper=200., units="kn", ref=200.)
             phase.add_boundary_constraint(
                 "normal_force", loc="final", equals=0., units="lbf", ref=10000.0)
         elif phase_name == "ascent_to_gear_retract":
@@ -436,14 +436,14 @@ def run_mission(optimizer):
                 units="ft",
                 ref=10e3)
             phase.add_boundary_constraint(
-                "TAS", loc="final", equals=250., units="kn", ref=250.)
+                Dynamic.Mission.VELOCITY, loc="final", equals=250., units="kn", ref=250.)
 
         phase.add_timeseries_output(Dynamic.Mission.THRUST_TOTAL, units="lbf")
         phase.add_timeseries_output("thrust_req", units="lbf")
         phase.add_timeseries_output("normal_force")
         phase.add_timeseries_output(Dynamic.Mission.MACH)
         phase.add_timeseries_output("EAS", units="kn")
-        phase.add_timeseries_output("TAS", units="kn")
+        phase.add_timeseries_output(Dynamic.Mission.VELOCITY, units="kn")
         phase.add_timeseries_output(Dynamic.Mission.LIFT)
         phase.add_timeseries_output("CL")
         phase.add_timeseries_output("CD")
@@ -607,7 +607,8 @@ def run_mission(optimizer):
             else:
                 p.set_val(
                     f"traj.{phase_name}.polynomial_controls:TAS",
-                    phase.interp("TAS", [TAS_guesses[idx], TAS_guesses[idx+1]]),
+                    phase.interp(Dynamic.Mission.VELOCITY, [
+                                 TAS_guesses[idx], TAS_guesses[idx+1]]),
                     units="kn",
                 )
         else:

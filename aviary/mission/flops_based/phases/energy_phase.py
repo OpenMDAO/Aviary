@@ -421,19 +421,3 @@ EnergyPhase._add_meta_data('solve_for_distance', val=False)
 EnergyPhase._add_initial_guess_meta_data(
     InitialGuessTime(),
     desc='initial guess for initial time and duration specified as a tuple')
-
-EnergyPhase._add_initial_guess_meta_data(
-    InitialGuessState('distance'),
-    desc='initial guess for horizontal distance traveled')
-
-EnergyPhase._add_initial_guess_meta_data(
-    InitialGuessControl('altitude'),
-    desc='initial guess for vertical distances')
-
-EnergyPhase._add_initial_guess_meta_data(
-    InitialGuessControl('mach'),
-    desc='initial guess for speed')
-
-EnergyPhase._add_initial_guess_meta_data(
-    InitialGuessState('mass'),
-    desc='initial guess for mass')

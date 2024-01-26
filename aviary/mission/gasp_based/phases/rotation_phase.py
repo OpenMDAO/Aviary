@@ -134,7 +134,7 @@ RotationPhase._add_initial_guess_meta_data(
     InitialGuessState('alpha'),
     desc='initial guess for angle of attack state')
 RotationPhase._add_initial_guess_meta_data(
-    InitialGuessState('TAS'),
+    InitialGuessState('velocity'),
     desc='initial guess for true airspeed state')
 RotationPhase._add_initial_guess_meta_data(
     InitialGuessState('mass'),

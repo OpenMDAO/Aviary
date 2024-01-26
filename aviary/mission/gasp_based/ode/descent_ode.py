@@ -57,10 +57,10 @@ class DescentODE(BaseODE):
 
         if input_speed_type is SpeedType.EAS:
             speed_inputs = ["EAS"]
-            speed_outputs = ["mach", "TAS"]
+            speed_outputs = ["mach", ("TAS", Dynamic.Mission.VELOCITY)]
         elif input_speed_type is SpeedType.MACH:
             speed_inputs = ["mach"]
-            speed_outputs = ["EAS", "TAS"]
+            speed_outputs = ["EAS", ("TAS", Dynamic.Mission.VELOCITY)]
 
         # TODO: paramport
         self.add_subsystem("params", ParamPort(), promotes=["*"])
@@ -176,7 +176,7 @@ class DescentODE(BaseODE):
                 analysis_scheme=analysis_scheme),
             promotes_inputs=[
                 Dynamic.Mission.MASS,
-                "TAS",
+                Dynamic.Mission.VELOCITY,
                 Dynamic.Mission.DRAG,
                 Dynamic.Mission.THRUST_TOTAL,
                 "alpha",] +
@@ -198,7 +198,7 @@ class DescentODE(BaseODE):
                 "rho",
                 "CL_max",
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
-                "TAS",
+                ("TAS", Dynamic.Mission.VELOCITY),
             ]
             + ["aircraft:*"]
             + constraint_inputs,
@@ -235,27 +235,7 @@ class DescentODE(BaseODE):
             num_nodes=nn)
 
         # the last two subsystems will also be used for constraints
-        self.add_subsystem(
-            name='SPECIFIC_ENERGY_RATE_EXCESS',
-            subsys=SpecificEnergyRate(num_nodes=nn),
-            promotes_inputs=[(Dynamic.Mission.VELOCITY, "TAS"), Dynamic.Mission.MASS,
-                             (Dynamic.Mission.THRUST_TOTAL, Dynamic.Mission.THRUST_MAX_TOTAL),
-                             Dynamic.Mission.DRAG],
-            promotes_outputs=[(Dynamic.Mission.SPECIFIC_ENERGY_RATE,
-                               Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS)]
-        )
-
-        self.add_subsystem(
-            name='ALTITUDE_RATE_MAX',
-            subsys=AltitudeRate(num_nodes=nn),
-            promotes_inputs=[
-                (Dynamic.Mission.SPECIFIC_ENERGY_RATE,
-                 Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS),
-                (Dynamic.Mission.VELOCITY_RATE, "TAS_rate"),
-                (Dynamic.Mission.VELOCITY, "TAS")],
-            promotes_outputs=[
-                (Dynamic.Mission.ALTITUDE_RATE,
-                 Dynamic.Mission.ALTITUDE_RATE_MAX)])
+        self.add_excess_rate_comps(nn)
 
         if analysis_scheme is AnalysisScheme.COLLOCATION:
             fc_loc = ['fc']

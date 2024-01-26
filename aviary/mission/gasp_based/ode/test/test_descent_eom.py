@@ -23,7 +23,8 @@ class DescentTestCase(unittest.TestCase):
             "group", DescentRates(num_nodes=2), promotes=["*"]
         )
 
-        self.prob.model.set_input_defaults("TAS", np.array([459, 459]), units="kn")
+        self.prob.model.set_input_defaults(
+            Dynamic.Mission.VELOCITY, np.array([459, 459]), units="kn")
         self.prob.model.set_input_defaults(
             Dynamic.Mission.THRUST_TOTAL, np.array([452, 452]), units="lbf")
         self.prob.model.set_input_defaults(

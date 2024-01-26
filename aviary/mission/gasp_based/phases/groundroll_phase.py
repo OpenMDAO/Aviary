@@ -118,7 +118,7 @@ GroundrollPhase._add_initial_guess_meta_data(
     InitialGuessTime(),
     desc='initial guess for time options')
 GroundrollPhase._add_initial_guess_meta_data(
-    InitialGuessState('TAS'),
+    InitialGuessState('velocity'),
     desc='initial guess for true airspeed state')
 GroundrollPhase._add_initial_guess_meta_data(
     InitialGuessState('mass'),
