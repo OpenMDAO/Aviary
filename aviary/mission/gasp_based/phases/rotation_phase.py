@@ -15,7 +15,7 @@ class RotationPhase(PhaseBuilderBase):
     _initial_guesses_meta_data_ = {}
 
     def build_phase(self, aviary_options: AviaryValues = None):
-        phase = super().build_phase(aviary_options)
+        phase = self.phase = super().build_phase(aviary_options)
 
         # Retrieve user options values
         user_options = self.user_options
@@ -27,16 +27,6 @@ class RotationPhase(PhaseBuilderBase):
         angle_ref = user_options.get_val('angle_ref', units='rad')
         angle_ref0 = user_options.get_val('angle_ref0', units='rad')
         angle_defect_ref = user_options.get_val('angle_defect_ref', units='rad')
-        TAS_lower = user_options.get_val('TAS_lower', units='kn')
-        TAS_upper = user_options.get_val('TAS_upper', units='kn')
-        TAS_ref = user_options.get_val('TAS_ref', units='kn')
-        TAS_ref0 = user_options.get_val('TAS_ref0', units='kn')
-        TAS_defect_ref = user_options.get_val('TAS_defect_ref', units='kn')
-        mass_lower = user_options.get_val('mass_lower', units='lbm')
-        mass_upper = user_options.get_val('mass_upper', units='lbm')
-        mass_ref = user_options.get_val('mass_ref', units='lbm')
-        mass_ref0 = user_options.get_val('mass_ref0', units='lbm')
-        mass_defect_ref = user_options.get_val('mass_defect_ref', units='lbm')
         distance_lower = user_options.get_val('distance_lower', units='ft')
         distance_upper = user_options.get_val('distance_upper', units='ft')
         distance_ref = user_options.get_val('distance_ref', units='ft')
@@ -68,31 +58,9 @@ class RotationPhase(PhaseBuilderBase):
             defect_ref=angle_defect_ref,
         )
 
-        phase.add_state(
-            "TAS",
-            fix_initial=fix_initial,
-            fix_final=False,
-            lower=TAS_lower,
-            upper=TAS_upper,
-            units="kn",
-            rate_source="TAS_rate",
-            ref=TAS_ref,
-            ref0=TAS_ref0,
-            defect_ref=TAS_defect_ref,
-        )
+        self.add_TAS_state(user_options)
 
-        phase.add_state(
-            Dynamic.Mission.MASS,
-            fix_initial=fix_initial,
-            fix_final=False,
-            lower=mass_lower,
-            upper=mass_upper,
-            units="lbm",
-            rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            ref=mass_ref,
-            ref0=mass_ref0,
-            defect_ref=mass_defect_ref,
-        )
+        self.add_mass_state(user_options)
 
         phase.add_state(
             Dynamic.Mission.DISTANCE,

@@ -13,7 +13,7 @@ class GroundrollPhase(PhaseBuilderBase):
     _initial_guesses_meta_data_ = {}
 
     def build_phase(self, aviary_options: AviaryValues = None):
-        phase = super().build_phase(aviary_options)
+        phase = self.phase = super().build_phase(aviary_options)
 
         # Retrieve user options values
         user_options = self.user_options
@@ -23,11 +23,6 @@ class GroundrollPhase(PhaseBuilderBase):
         connect_initial_mass = user_options.get_val('connect_initial_mass')
         duration_bounds = user_options.get_val('duration_bounds', units='s')
         duration_ref = user_options.get_val('duration_ref', units='s')
-        TAS_lower = user_options.get_val('TAS_lower', units='kn')
-        TAS_upper = user_options.get_val('TAS_upper', units='kn')
-        TAS_ref = user_options.get_val('TAS_ref', units='kn')
-        TAS_ref0 = user_options.get_val('TAS_ref0', units='kn')
-        TAS_defect_ref = user_options.get_val('TAS_defect_ref', units='kn')
         mass_lower = user_options.get_val('mass_lower', units='lbm')
         mass_upper = user_options.get_val('mass_upper', units='lbm')
         mass_ref = user_options.get_val('mass_ref', units='lbm')
@@ -50,18 +45,7 @@ class GroundrollPhase(PhaseBuilderBase):
         )
 
         # Add states
-        phase.add_state(
-            "TAS",
-            fix_initial=fix_initial,
-            fix_final=False,
-            lower=TAS_lower,
-            upper=TAS_upper,
-            units="kn",
-            rate_source="TAS_rate",
-            ref=TAS_ref,
-            defect_ref=TAS_defect_ref,
-            ref0=TAS_ref0,
-        )
+        self.add_TAS_state(user_options)
 
         phase.add_state(
             Dynamic.Mission.MASS,

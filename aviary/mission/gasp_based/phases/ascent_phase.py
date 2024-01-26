@@ -15,38 +15,14 @@ class AscentPhase(PhaseBuilderBase):
     _initial_guesses_meta_data_ = {}
 
     def build_phase(self, aviary_options: AviaryValues = None):
-        phase = super().build_phase(aviary_options)
+        phase = self.phase = super().build_phase(aviary_options)
 
         # Retrieve user options values
         user_options = self.user_options
-        angle_lower = user_options.get_val('angle_lower', units='rad')
-        angle_upper = user_options.get_val('angle_upper', units='rad')
-        angle_ref = user_options.get_val('angle_ref', units='rad')
-        angle_ref0 = user_options.get_val('angle_ref0', units='rad')
-        angle_defect_ref = user_options.get_val('angle_defect_ref', units='rad')
-        alt_lower = user_options.get_val('alt_lower', units='ft')
-        alt_upper = user_options.get_val('alt_upper', units='ft')
-        alt_ref = user_options.get_val('alt_ref', units='ft')
-        alt_ref0 = user_options.get_val('alt_ref0', units='ft')
-        alt_defect_ref = user_options.get_val('alt_defect_ref', units='ft')
+
         alt_constraint_eq = user_options.get_val('alt_constraint_eq', units='ft')
         alt_constraint_ref = user_options.get_val('alt_constraint_ref', units='ft')
         alt_constraint_ref0 = user_options.get_val('alt_constraint_ref0', units='ft')
-        TAS_lower = user_options.get_val('TAS_lower', units='kn')
-        TAS_upper = user_options.get_val('TAS_upper', units='kn')
-        TAS_ref = user_options.get_val('TAS_ref', units='kn')
-        TAS_ref0 = user_options.get_val('TAS_ref0', units='kn')
-        TAS_defect_ref = user_options.get_val('TAS_defect_ref', units='kn')
-        mass_lower = user_options.get_val('mass_lower', units='lbm')
-        mass_upper = user_options.get_val('mass_upper', units='lbm')
-        mass_ref = user_options.get_val('mass_ref', units='lbm')
-        mass_ref0 = user_options.get_val('mass_ref0', units='lbm')
-        mass_defect_ref = user_options.get_val('mass_defect_ref', units='lbm')
-        distance_lower = user_options.get_val('distance_lower', units='ft')
-        distance_upper = user_options.get_val('distance_upper', units='ft')
-        distance_ref = user_options.get_val('distance_ref', units='ft')
-        distance_ref0 = user_options.get_val('distance_ref0', units='ft')
-        distance_defect_ref = user_options.get_val('distance_defect_ref', units='ft')
         pitch_constraint_lower = user_options.get_val(
             'pitch_constraint_lower', units='deg')
         pitch_constraint_upper = user_options.get_val(
@@ -65,70 +41,11 @@ class AscentPhase(PhaseBuilderBase):
             input_duration=True,
         )
 
-        phase.add_state(
-            Dynamic.Mission.FLIGHT_PATH_ANGLE,
-            fix_initial=True,
-            fix_final=False,
-            lower=angle_lower,
-            upper=angle_upper,
-            units="rad",
-            rate_source=Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
-            ref=angle_ref,
-            defect_ref=angle_defect_ref,
-            ref0=angle_ref0,
-        )
-
-        phase.add_state(
-            Dynamic.Mission.ALTITUDE,
-            fix_initial=True,
-            fix_final=False,
-            lower=alt_lower,
-            upper=alt_upper,
-            units="ft",
-            rate_source=Dynamic.Mission.ALTITUDE_RATE,
-            ref=alt_ref,
-            defect_ref=alt_defect_ref,
-            ref0=alt_ref0,
-        )
-
-        phase.add_state(
-            "TAS",
-            fix_initial=user_options.get_val('fix_initial'),
-            fix_final=False,
-            lower=TAS_lower,
-            upper=TAS_upper,
-            units="kn",
-            rate_source="TAS_rate",
-            ref=TAS_ref,
-            defect_ref=TAS_defect_ref,
-            ref0=TAS_ref0,
-        )
-
-        phase.add_state(
-            Dynamic.Mission.MASS,
-            fix_initial=user_options.get_val('fix_initial'),
-            fix_final=False,
-            lower=mass_lower,
-            upper=mass_upper,
-            units="lbm",
-            rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            ref=mass_ref,
-            defect_ref=mass_defect_ref,
-            ref0=mass_ref0,
-        )
-
-        phase.add_state(
-            Dynamic.Mission.DISTANCE,
-            fix_initial=user_options.get_val('fix_initial'),
-            fix_final=False,
-            lower=distance_lower,
-            upper=distance_upper,
-            units="ft",
-            rate_source="distance_rate",
-            ref=distance_ref,
-            defect_ref=distance_defect_ref,
-            ref0=distance_ref0,
-        )
+        self.add_flight_path_angle_state(user_options)
+        self.add_altitude_state(user_options)
+        self.add_TAS_state(user_options)
+        self.add_mass_state(user_options)
+        self.add_distance_state(user_options)
 
         phase.add_boundary_constraint(
             Dynamic.Mission.ALTITUDE,

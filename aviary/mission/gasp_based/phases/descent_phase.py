@@ -14,7 +14,7 @@ class DescentPhase(PhaseBuilderBase):
     _initial_guesses_meta_data_ = {}
 
     def build_phase(self, aviary_options: AviaryValues = None):
-        phase = super().build_phase(aviary_options)
+        phase = self.phase = super().build_phase(aviary_options)
 
         # Retrieve user options values
         user_options = self.user_options
@@ -22,23 +22,8 @@ class DescentPhase(PhaseBuilderBase):
         fix_initial = user_options.get_val('fix_initial')
         input_initial = user_options.get_val('input_initial')
         duration_ref = user_options.get_val('duration_ref', units='s')
-        alt_lower = user_options.get_val('alt_lower', units='ft')
-        alt_upper = user_options.get_val('alt_upper', units='ft')
-        alt_ref = user_options.get_val('alt_ref', units='ft')
-        alt_ref0 = user_options.get_val('alt_ref0', units='ft')
-        alt_defect_ref = user_options.get_val('alt_defect_ref', units='ft')
         final_altitude = user_options.get_val('final_altitude', units='ft')
         alt_constraint_ref = user_options.get_val('alt_constraint_ref', units='ft')
-        mass_lower = user_options.get_val('mass_lower', units='lbm')
-        mass_upper = user_options.get_val('mass_upper', units='lbm')
-        mass_ref = user_options.get_val('mass_ref', units='lbm')
-        mass_ref0 = user_options.get_val('mass_ref0', units='lbm')
-        mass_defect_ref = user_options.get_val('mass_defect_ref', units='lbm')
-        distance_lower = user_options.get_val('distance_lower', units='NM')
-        distance_upper = user_options.get_val('distance_upper', units='NM')
-        distance_ref = user_options.get_val('distance_ref', units='NM')
-        distance_ref0 = user_options.get_val('distance_ref0', units='NM')
-        distance_defect_ref = user_options.get_val('distance_defect_ref', units='NM')
         input_speed_type = user_options.get_val('input_speed_type')
         EAS_limit = user_options.get_val('EAS_limit', units='kn')
 
@@ -52,48 +37,11 @@ class DescentPhase(PhaseBuilderBase):
         )
 
         # Add states
-        phase.add_state(
-            Dynamic.Mission.ALTITUDE,
-            fix_initial=True,
-            fix_final=False,
-            lower=alt_lower,
-            upper=alt_upper,
-            units="ft",
-            rate_source=Dynamic.Mission.ALTITUDE_RATE,
-            targets=Dynamic.Mission.ALTITUDE,
-            ref=alt_ref,
-            ref0=alt_ref0,
-            defect_ref=alt_defect_ref,
-        )
+        self.add_altitude_state(user_options)
 
-        phase.add_state(
-            Dynamic.Mission.MASS,
-            fix_initial=fix_initial,
-            input_initial=input_initial,
-            fix_final=False,
-            lower=mass_lower,
-            upper=mass_upper,
-            units="lbm",
-            rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            targets=Dynamic.Mission.MASS,
-            ref=mass_ref,
-            ref0=mass_ref0,
-            defect_ref=mass_defect_ref,
-        )
+        self.add_mass_state(user_options)
 
-        phase.add_state(
-            Dynamic.Mission.DISTANCE,
-            fix_initial=fix_initial,
-            input_initial=input_initial,
-            fix_final=False,
-            lower=distance_lower,
-            upper=distance_upper,
-            units="NM",
-            rate_source="distance_rate",
-            ref=distance_ref,
-            ref0=distance_ref0,
-            defect_ref=distance_defect_ref,
-        )
+        self.add_distance_state(user_options)
 
         # Add boundary constraint
         phase.add_boundary_constraint(
