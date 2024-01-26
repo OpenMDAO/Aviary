@@ -164,6 +164,7 @@ class MissionODE(om.Group):
                                                  normalize=False,
                                                  lower=0.0 if options['throttle_enforcement'] == 'bounded' else None,
                                                  upper=1.0 if options['throttle_enforcement'] == 'bounded' else None,
+                                                 res_ref=1.0e6,
                                                  ),
                            promotes_inputs=['*'],
                            promotes_outputs=['*'])
@@ -187,7 +188,7 @@ class MissionODE(om.Group):
             exec_comp_string,
             initial_mass={'units': 'kg'},
             mass={'units': 'kg', 'shape': (nn,)},
-            initial_mass_residual={'units': 'kg'},
+            initial_mass_residual={'units': 'kg', 'res_ref': 1.0e5},
         )
 
         self.add_subsystem('initial_mass_residual_constraint', initial_mass_residual_constraint,
