@@ -20,9 +20,6 @@ class AscentPhase(PhaseBuilderBase):
         # Retrieve user options values
         user_options = self.user_options
 
-        alt_constraint_eq = user_options.get_val('alt_constraint_eq', units='ft')
-        alt_constraint_ref = user_options.get_val('alt_constraint_ref', units='ft')
-        alt_constraint_ref0 = user_options.get_val('alt_constraint_ref0', units='ft')
         pitch_constraint_lower = user_options.get_val(
             'pitch_constraint_lower', units='deg')
         pitch_constraint_upper = user_options.get_val(
@@ -47,14 +44,7 @@ class AscentPhase(PhaseBuilderBase):
         self.add_mass_state(user_options)
         self.add_distance_state(user_options)
 
-        phase.add_boundary_constraint(
-            Dynamic.Mission.ALTITUDE,
-            loc="final",
-            equals=alt_constraint_eq,
-            units="ft",
-            ref=alt_constraint_ref,
-            ref0=alt_constraint_ref0,
-        )
+        self.add_altitude_constraint(user_options)
 
         phase.add_path_constraint(
             "load_factor",
@@ -110,7 +100,7 @@ AscentPhase._add_meta_data('alt_upper', val=700, units='ft')
 AscentPhase._add_meta_data('alt_ref', val=100, units='ft')
 AscentPhase._add_meta_data('alt_ref0', val=0, units='ft')
 AscentPhase._add_meta_data('alt_defect_ref', val=100, units='ft')
-AscentPhase._add_meta_data('alt_constraint_eq', val=500, units='ft')
+AscentPhase._add_meta_data('final_altitude', val=500, units='ft')
 AscentPhase._add_meta_data('alt_constraint_ref', val=100, units='ft')
 AscentPhase._add_meta_data('alt_constraint_ref0', val=0, units='ft')
 AscentPhase._add_meta_data('TAS_lower', val=0, units='kn')

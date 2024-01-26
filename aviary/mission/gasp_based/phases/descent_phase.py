@@ -22,8 +22,6 @@ class DescentPhase(PhaseBuilderBase):
         fix_initial = user_options.get_val('fix_initial')
         input_initial = user_options.get_val('input_initial')
         duration_ref = user_options.get_val('duration_ref', units='s')
-        final_altitude = user_options.get_val('final_altitude', units='ft')
-        alt_constraint_ref = user_options.get_val('alt_constraint_ref', units='ft')
         input_speed_type = user_options.get_val('input_speed_type')
         EAS_limit = user_options.get_val('EAS_limit', units='kn')
 
@@ -44,12 +42,7 @@ class DescentPhase(PhaseBuilderBase):
         self.add_distance_state(user_options)
 
         # Add boundary constraint
-        phase.add_boundary_constraint(
-            Dynamic.Mission.ALTITUDE,
-            loc="final",
-            equals=final_altitude,
-            units="ft",
-            ref=alt_constraint_ref)
+        self.add_altitude_constraint(user_options)
 
         # Add parameter if necessary
         if input_speed_type == SpeedType.EAS:
