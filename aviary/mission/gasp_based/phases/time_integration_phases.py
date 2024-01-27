@@ -40,7 +40,7 @@ class SGMGroundroll(SimuPyProblem):
                 Dynamic.Mission.MASS,
                 Dynamic.Mission.DISTANCE,
                 Dynamic.Mission.ALTITUDE,
-                'TAS'
+                Dynamic.Mission.VELOCITY,
             ],
             # state_units=['lbm','nmi','ft','ft/s'],
             alternate_state_rate_names={
@@ -51,14 +51,13 @@ class SGMGroundroll(SimuPyProblem):
         self.phase_name = phase_name
         self.VR_value = VR_value
         self.VR_units = VR_units
-        self.event_channel_names = ["TAS"]
+        self.event_channel_names = ["velocity"]
         self.num_events = len(self.event_channel_names)
 
     def event_equation_function(self, t, x):
         self.time = t
         self.state = x
-        return self.get_val("TAS", units='ft/s') - self.VR_value
-        return self.get_val("TAS", units=self.VR_units) - self.VR_value
+        return self.get_val("velocity", units='ft/s') - self.VR_value
 
 
 class SGMRotation(SimuPyProblem):
@@ -280,7 +279,7 @@ class SGMAscentCombined(SGMAscent):
                 alpha = self.compute_alpha(ode, t, x)
                 load_factor_val = ode.get_val("load_factor")
                 fuselage_pitch_val = ode.get_val("fuselage_pitch", units="deg")
-                TAS_rate_val = ode.get_val("TAS_rate")
+                TAS_rate_val = ode.get_val("velocity_rate")
 
                 if (
                     (load_factor_val > load_factor_max) and not
@@ -319,7 +318,7 @@ class SGMAscentCombined(SGMAscent):
             else:
                 print("time :", t)
                 print("ode :", self.ode_name[ode])
-                for key in ["load_factor", "fuselage_pitch", "TAS_rate"]:
+                for key in ["load_factor", "fuselage_pitch", "velocity_rate"]:
                     print(key, ":", ode.get_val(key))
                 raise ValueError("Ascent could not satisfy all constraints")
 
@@ -443,7 +442,7 @@ class SGMClimb(SimuPyProblem):
                 "lift",
                 "mach",
                 "EAS",
-                "TAS",
+                Dynamic.Mission.VELOCITY,
                 Dynamic.Mission.THRUST_TOTAL,
                 "drag",
                 Dynamic.Mission.ALTITUDE_RATE,
@@ -511,7 +510,7 @@ class SGMCruise(SimuPyProblem):
                 "alpha",  # ?
                 "lift",
                 "EAS",
-                "TAS",
+                Dynamic.Mission.VELOCITY,
                 Dynamic.Mission.THRUST_TOTAL,
                 "drag",
                 Dynamic.Mission.ALTITUDE_RATE,
@@ -590,7 +589,7 @@ class SGMDescent(SimuPyProblem):
                 "required_lift",
                 "lift",
                 "EAS",
-                "TAS",
+                Dynamic.Mission.VELOCITY,
                 Dynamic.Mission.THRUST_TOTAL,
                 "drag",
                 Dynamic.Mission.ALTITUDE_RATE,

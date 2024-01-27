@@ -236,7 +236,7 @@ class UnsteadySolvedODE(BaseODE):
         if not self.options['ground_roll']:
             self.set_input_defaults(
                 name=Dynamic.Mission.FLIGHT_PATH_ANGLE, val=0.0 * onn, units="rad")
-        self.set_input_defaults(name=Dynamic.Mission.VELOCITY,
+        self.set_input_defaults(name="TAS",
                                 val=250. * onn, units="kn")
         self.set_input_defaults(
             name=Dynamic.Mission.ALTITUDE,

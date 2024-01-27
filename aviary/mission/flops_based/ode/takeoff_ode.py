@@ -83,7 +83,7 @@ class TakeoffODE(om.Group):
             "fc",
             FlightConditions(num_nodes=nn),
             promotes_inputs=["rho", Dynamic.Mission.SPEED_OF_SOUND,
-                             Dynamic.Mission.VELOCITY],
+                             ("TAS", Dynamic.Mission.VELOCITY)],
             promotes_outputs=[Dynamic.Mission.DYNAMIC_PRESSURE, Dynamic.Mission.MACH, "EAS"])
 
         # NOTE: the following are potentially signficant differences in implementation

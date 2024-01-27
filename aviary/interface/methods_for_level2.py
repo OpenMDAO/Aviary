@@ -748,7 +748,7 @@ class AviaryProblem(om.Problem):
             )
 
             phase.set_time_options(fix_initial=True, fix_duration=False,
-                                   units="kn", name="TAS",
+                                   units="kn", name=Dynamic.Mission.VELOCITY,
                                    duration_bounds=wrapped_convert_units(
                                        phase_options['duration_bounds'], 'kn'),
                                    duration_ref=wrapped_convert_units(
@@ -835,7 +835,7 @@ class AviaryProblem(om.Problem):
                     "t_init_flaps", units="s", static_target=True, opt=False, val=100)
 
             if 'rotation' in phase_name:
-                phase.add_polynomial_control("TAS",
+                phase.add_polynomial_control(Dynamic.Mission.VELOCITY,
                                              order=phase_options['control_order'],
                                              units="kn", val=200.0,
                                              opt=phase_options['opt'], lower=1, upper=500, ref=250)
@@ -866,7 +866,7 @@ class AviaryProblem(om.Problem):
                     phase.add_parameter(
                         Dynamic.Mission.MACH, units="unitless", val=self.cruise_mach)
                 else:
-                    phase.add_polynomial_control("TAS",
+                    phase.add_polynomial_control(Dynamic.Mission.VELOCITY,
                                                  order=phase_options['control_order'],
                                                  fix_initial=False,
                                                  units="kn", val=200.0,
@@ -967,7 +967,7 @@ class AviaryProblem(om.Problem):
                     # specify ODE, output_name, with units that SimuPyProblem expects
                     # assume event function is of form ODE.output_name - value
                     # third key is event_idx associated with input
-                    (phases['groundroll']['ode'], "TAS", 0,),
+                    (phases['groundroll']['ode'], Dynamic.Mission.VELOCITY, 0,),
                     (phases['climb3']['ode'], Dynamic.Mission.ALTITUDE, 0,),
                     (phases['cruise']['ode'], Dynamic.Mission.MASS, 0,),
                 ],
@@ -1029,7 +1029,7 @@ class AviaryProblem(om.Problem):
                         "fuselage_pitch", upper=15., units='deg', ref=15)
                 if phase_name == "rotation":
                     phase.add_boundary_constraint(
-                        "TAS", loc="final", upper=200., units="kn", ref=200.)
+                        Dynamic.Mission.VELOCITY, loc="final", upper=200., units="kn", ref=200.)
                     phase.add_boundary_constraint(
                         "normal_force", loc="final", equals=0., units="lbf", ref=10000.0)
                 elif phase_name == "ascent_to_gear_retract":
@@ -1063,7 +1063,7 @@ class AviaryProblem(om.Problem):
                         units="ft",
                         ref=10e3)
                     phase.add_boundary_constraint(
-                        "TAS", loc="final", equals=250., units="kn", ref=250.)
+                        Dynamic.Mission.VELOCITY, loc="final", equals=250., units="kn", ref=250.)
 
                 phase.add_timeseries_output(
                     Dynamic.Mission.THRUST_TOTAL, units="lbf")
@@ -1071,7 +1071,7 @@ class AviaryProblem(om.Problem):
                 phase.add_timeseries_output("normal_force")
                 phase.add_timeseries_output(Dynamic.Mission.MACH)
                 phase.add_timeseries_output("EAS", units="kn")
-                phase.add_timeseries_output("TAS", units="kn")
+                phase.add_timeseries_output(Dynamic.Mission.VELOCITY, units="kn")
                 phase.add_timeseries_output(Dynamic.Mission.LIFT)
                 phase.add_timeseries_output("CL")
                 phase.add_timeseries_output("CD")
@@ -1301,7 +1301,8 @@ class AviaryProblem(om.Problem):
             self.traj.link_phases(phases, vars=['mass'], ref=10.e3)
             self.traj.link_phases(
                 phases, vars=[Dynamic.Mission.DISTANCE], units='m', ref=10.e3)
-            self.traj.link_phases(phases[:7], vars=['TAS'], units='kn', ref=200.)
+            self.traj.link_phases(
+                phases[:7], vars=[Dynamic.Mission.VELOCITY], units='kn', ref=200.)
 
         elif self.mission_method is HEIGHT_ENERGY:
             self.traj.link_phases(
@@ -2175,9 +2176,9 @@ class AviaryProblem(om.Problem):
                 pass
             else:
                 self.set_val(
-                    f"traj.{phase_name}.polynomial_controls:TAS",
+                    f"traj.{phase_name}.polynomial_controls:{Dynamic.Mission.VELOCITY}",
                     phase.interp(
-                        "TAS", [TAS_guesses[idx], TAS_guesses[idx+1]]),
+                        Dynamic.Mission.VELOCITY, [TAS_guesses[idx], TAS_guesses[idx+1]]),
                     units="kn",
                 )
         else:
