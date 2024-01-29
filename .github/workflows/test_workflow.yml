@@ -245,7 +245,7 @@ jobs:
         if: matrix.MAKE_DOCS
         shell: bash -l {0}
         run: |
-          cd $HOME/work/om-Aviary/om-Aviary/aviary/docs
+          cd $HOME/work/Aviary/Aviary/aviary/docs
           find _build/html/reports/ -type f -name '*.log' \
           -exec echo "#################################################################" \; \
           -exec echo {} \; \
