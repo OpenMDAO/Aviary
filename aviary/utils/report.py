@@ -108,7 +108,7 @@ def report_gasp_comparison(prob, rtol=0.1, remote=False, file=None):
             "flight distance (NM)",
             3675.0,
             prob.get_val(
-                "traj.desc2.timeseries.states:distance", units="NM", get_remote=remote
+                "traj.desc2.timeseries.distance", units="NM", get_remote=remote
             )[-1][0],
         ),
         # ROC @ 49 seconds to get from 456.3 ft to 500 ft minus liftoff time
@@ -234,10 +234,10 @@ def report_benchmark_comparison(
     #     check_val = no_size_yes_pyCycle
     if base == 'FLOPS':
         check_val = FLOPS_base
-        distance_name = 'traj.descent.timeseries.states:distance'
+        distance_name = 'traj.descent.timeseries.distance'
         landing_dist_name = Mission.Landing.GROUND_DISTANCE
     else:
-        distance_name = "traj.desc2.timeseries.states:distance"
+        distance_name = "traj.desc2.timeseries.distance"
         landing_dist_name = 'landing.'+Mission.Landing.GROUND_DISTANCE
 
     expected_vals = [

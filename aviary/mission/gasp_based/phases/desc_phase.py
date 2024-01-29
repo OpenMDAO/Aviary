@@ -13,7 +13,7 @@ def get_descent(
     EAS_limit=0,
     mach_cruise=0,
     input_speed_type=SpeedType.MACH,
-    final_alt=0,
+    final_altitude=0,
     time_initial_bounds=(0, 0),
     time_initial_ref=1,
     duration_bounds=(0, 0),
@@ -110,7 +110,7 @@ def get_descent(
     desc.add_boundary_constraint(
         Dynamic.Mission.ALTITUDE,
         loc="final",
-        equals=final_alt,
+        equals=final_altitude,
         units="ft",
         ref=alt_constraint_ref)
 

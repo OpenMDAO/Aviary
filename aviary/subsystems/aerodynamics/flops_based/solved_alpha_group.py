@@ -76,7 +76,7 @@ class SolvedAlphaGroup(om.Group):
                            promotes_outputs=[Dynamic.Mission.LIFT, Dynamic.Mission.DRAG])
 
         balance = self.add_subsystem('balance', om.BalanceComp())
-        balance.add_balance('alpha', val=np.ones(nn), units='deg')
+        balance.add_balance('alpha', val=np.ones(nn), units='deg', res_ref=1.0e6)
 
         self.connect('balance.alpha', 'tabular_aero.alpha')
         self.connect('needed_lift.lift_resid', 'balance.lhs:alpha')

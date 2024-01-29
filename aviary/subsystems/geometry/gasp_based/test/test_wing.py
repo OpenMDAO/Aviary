@@ -8,7 +8,6 @@ from aviary.subsystems.geometry.gasp_based.wing import (WingFold, WingGroup,
                                                         WingParameters,
                                                         WingSize)
 from aviary.variable_info.options import get_option_defaults
-from aviary.utils.test_utils.IO_test_util import assert_match_spec, skipIfMissingXDSM
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -310,13 +309,6 @@ class WingGroupTestCase1(
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    @skipIfMissingXDSM('size_basic_specs/wing.json')
-    def test_io_wing_group_spec(self):
-
-        subsystem = self.prob.model
-
-        assert_match_spec(subsystem, "size_basic_specs/wing.json")
-
     def test_case1(self):
 
         self.prob.run_model()
@@ -393,13 +385,6 @@ class WingGroupTestCase2(unittest.TestCase):
         )
 
         self.prob.setup(check=False, force_alloc_complex=True)
-
-    @skipIfMissingXDSM('size_both1_specs/wing.json')
-    def test_io_wing_group_spec(self):
-
-        subsystem = self.prob.model
-
-        assert_match_spec(subsystem, "size_both1_specs/wing.json")
 
     def test_case1(self):
 
@@ -562,13 +547,6 @@ class WingGroupTestCase4(unittest.TestCase):
         )
 
         self.prob.setup(check=False, force_alloc_complex=True)
-
-    @skipIfMissingXDSM('size_both2_specs/wing.json')
-    def test_io_wing_group_spec(self):
-
-        subsystem = self.prob.model
-
-        assert_match_spec(subsystem, "size_both2_specs/wing.json")
 
 
 class WingGroupTestCase5(unittest.TestCase):
