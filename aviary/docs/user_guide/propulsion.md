@@ -13,7 +13,7 @@ Each unique type of engine is referred to as an engine model<!-- Link to whereve
 The built-in way Aviary handles engine performance is by interpolating tabular data from a user-defined file that describes performance characteristics for a given engine. Engines modeled in this manner are called engine decks<!-- Link to wherever this class is described - theory guide? -->. Engine decks are a type of engine model - they use the same basic interface, but have additional functionality to handle reading and processing data files.
 
 ### Formatting
-An engine deck data file requires specific formatting for Aviary to correctly interpret. These files must follow the [Aviary data file format](input_files).An example of a properly-formatted engine deck can be found [here](https://github.com/OpenMDAO/om-Aviary/blob/main/aviary/models/engines/turbofan_22k.deck).
+An engine deck data file requires specific formatting for Aviary to correctly interpret. These files must follow the [Aviary data file format](input_files).An example of a properly-formatted engine deck can be found [here](https://github.com/OpenMDAO/Aviary/blob/main/aviary/models/engines/turbofan_22k.deck).
 
 ### Variables
 

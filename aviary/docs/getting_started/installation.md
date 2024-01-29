@@ -218,7 +218,7 @@ Successfully installed pyoptsparse-2.10.1
 
 ### Installing Aviary and Running Tests
 
-Now, we are ready to install Aviary. Assuming that you will become a contributor sooner or later, we want to install a copy from the main source. (You will need a GitHub account for this) Let us open `https://github.com/openMDAO/om-aviary/` in a web browser and click [fork](https://github.com/OpenMDAO/om-Aviary/fork) on the top-right corner. You then have created your own copy of Aviary on GitHub website. Now we create a copy on your local drive (supposing `USER_ID` is your GitHub account ID):
+Now, we are ready to install Aviary. Assuming that you will become a contributor sooner or later, we want to install a copy from the main source. (You will need a GitHub account for this) Let us open `https://github.com/openMDAO/om-aviary/` in a web browser and click [fork](https://github.com/OpenMDAO/Aviary/fork) on the top-right corner. You then have created your own copy of Aviary on GitHub website. Now we create a copy on your local drive (supposing `USER_ID` is your GitHub account ID):
 
 ```
 $ cd ~/workspace
