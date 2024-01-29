@@ -1,6 +1,6 @@
 import dymos as dm
 
-from aviary.mission.flops_based.phases.phase_builder_base import (
+from aviary.mission.phase_builder_base import (
     register, PhaseBuilderBase, InitialGuessControl, InitialGuessParameter,
     InitialGuessPolynomialControl, InitialGuessState, InitialGuessTime)
 

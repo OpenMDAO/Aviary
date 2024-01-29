@@ -5,7 +5,6 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
-from packaging import version
 
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.variable_info.enums import SpeedType
@@ -465,8 +464,6 @@ def run_mission(optimizer):
 
         traj.add_phase(phase_name, phase)
 
-        phase.timeseries_options['use_prefix'] = True
-
     traj.add_linkage_constraint(phase_a='ascent_to_gear_retract',
                                 phase_b='ascent_to_flap_retract',
                                 var_a='time',
@@ -641,9 +638,9 @@ def run_mission(optimizer):
         if phase_name == "groundroll":
 
             ranges.extend(
-                p.get_val(f"traj.{phase_name}.timeseries.states:distance", units="m")[0])
+                p.get_val(f"traj.{phase_name}.timeseries.distance", units="m")[0])
             ranges.extend(
-                p.get_val(f"traj.{phase_name}.timeseries.states:distance", units="m")[-1])
+                p.get_val(f"traj.{phase_name}.timeseries.distance", units="m")[-1])
 
             masses.extend(
                 p.get_val(f"traj.{phase_name}.timeseries.mass", units="lbm")[0])

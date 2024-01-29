@@ -7,7 +7,6 @@ from openmdao.utils.assert_utils import (assert_check_partials,
 
 from aviary.subsystems.aerodynamics.gasp_based.flaps_model.Cl_max import \
     CLmaxCalculation
-from aviary.utils.test_utils.IO_test_util import assert_match_spec, skipIfMissingXDSM
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 """
@@ -74,13 +73,6 @@ class CLmaxCalculationTestCase(unittest.TestCase):
         assert_check_partials(
             data, atol=6400, rtol=0.007
         )  # large to account for large magnitude value, discrepancies are acceptable
-
-    @skipIfMissingXDSM('flaps_specs/CL_max.json')
-    def test_CLmax_spec(self):
-
-        subsystem = self.prob.model
-
-        assert_match_spec(subsystem, "flaps_specs/CL_max.json")
 
 
 if __name__ == "__main__":

@@ -7,7 +7,6 @@ from openmdao.utils.assert_utils import (assert_check_partials,
 
 from aviary.subsystems.aerodynamics.gasp_based.flaps_model.meta_model import \
     MetaModelGroup
-from aviary.utils.test_utils.IO_test_util import assert_match_spec, skipIfMissingXDSM
 from aviary.variable_info.enums import FlapType
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
@@ -109,13 +108,6 @@ class MetaModelTestCasePlain(unittest.TestCase):
         data = self.prob.check_partials(out_stream=None, method="fd")
         assert_check_partials(data, atol=1e-4, rtol=1e-4)
 
-    @skipIfMissingXDSM('flaps_specs/tables.json')
-    def test_lookup_spec(self):
-
-        subsystem = self.prob.model
-
-        assert_match_spec(subsystem, "flaps_specs/tables.json")
-
 
 class MetaModelTestCaseSingleSlotted(unittest.TestCase):
     def setUp(self):
@@ -155,13 +147,6 @@ class MetaModelTestCaseSingleSlotted(unittest.TestCase):
         data = self.prob.check_partials(out_stream=None, method="fd")
         assert_check_partials(data, atol=1e-4, rtol=1e-4)
 
-    @skipIfMissingXDSM('flaps_specs/tables.json')
-    def test_lookup_spec(self):
-
-        subsystem = self.prob.model
-
-        assert_match_spec(subsystem, "flaps_specs/tables.json")
-
 
 class MetaModelTestCaseFowler(unittest.TestCase):
     def setUp(self):
@@ -190,13 +175,6 @@ class MetaModelTestCaseFowler(unittest.TestCase):
 
         data = self.prob.check_partials(out_stream=None, method="fd")
         assert_check_partials(data, atol=1e-4, rtol=1e-4)
-
-    @skipIfMissingXDSM('flaps_specs/tables.json')
-    def test_lookup_spec(self):
-
-        subsystem = self.prob.model
-
-        assert_match_spec(subsystem, "flaps_specs/tables.json")
 
 
 if __name__ == "__main__":

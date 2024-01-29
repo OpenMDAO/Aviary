@@ -2,6 +2,7 @@ import unittest
 
 import numpy as np
 from openmdao.utils.testing_utils import use_tempdirs
+from openmdao.utils.testing_utils import require_pyoptsparse
 
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.validation_cases.benchmark_utils import \
@@ -260,7 +261,6 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         self.expected_dict = expected_dict
 
-    def bench_test_swap_4_FwFm(self):
         phase_info = {
             "pre_mission": {"include_takeoff": True, "optimize_mass": True},
             "climb": {
@@ -286,7 +286,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
                     "initial_bounds": ((0.0, 2.0), "min"),
                     "duration_bounds": ((5.0, 50.0), "min"),
                     "no_descent": False,
-                    "add_initial_mass_constraint": False,
+                    "add_initial_mass_constraint": True,
                 },
                 "initial_guesses": {"times": ([0, 40.0], "min")},
             },
@@ -347,8 +347,19 @@ class ProblemPhaseTestCase(unittest.TestCase):
             },
         }
 
+        self.phase_info = phase_info
+
+    @require_pyoptsparse(optimizer="IPOPT")
+    def test_bench_FwFm(self):
         prob = run_aviary(
-            'models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info, max_iter=50)
+            'models/test_aircraft/aircraft_for_bench_FwFm.csv', self.phase_info, max_iter=50, optimizer='IPOPT')
+
+        compare_against_expected_values(prob, self.expected_dict)
+
+    @require_pyoptsparse(optimizer="SNOPT")
+    def test_bench_FwFm_SNOPT(self):
+        prob = run_aviary(
+            'models/test_aircraft/aircraft_for_bench_FwFm.csv', self.phase_info, max_iter=50, optimizer='SNOPT')
 
         compare_against_expected_values(prob, self.expected_dict)
 
@@ -356,4 +367,4 @@ class ProblemPhaseTestCase(unittest.TestCase):
 if __name__ == '__main__':
     test = ProblemPhaseTestCase()
     test.setUp()
-    test.bench_test_swap_4_FwFm()
+    test.test_bench_FwFm_SNOPT()
