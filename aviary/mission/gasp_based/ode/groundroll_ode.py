@@ -2,12 +2,9 @@ import numpy as np
 import openmdao.api as om
 from dymos.models.atmosphere.atmos_1976 import USatm1976Comp
 
-from aviary.mission.gasp_based.flight_conditions import FlightConditions
 from aviary.mission.gasp_based.ode.base_ode import BaseODE
 from aviary.mission.gasp_based.ode.groundroll_eom import GroundrollEOM
 from aviary.mission.gasp_based.ode.params import ParamPort
-from aviary.subsystems.aerodynamics.gasp_based.gaspaero import LowSpeedAero
-from aviary.subsystems.propulsion.propulsion_mission import PropulsionMission
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase
 

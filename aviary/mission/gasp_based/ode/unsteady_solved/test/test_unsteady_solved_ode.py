@@ -43,7 +43,7 @@ class TestUnsteadySolvedODE(unittest.TestCase):
 
         p.set_val(Dynamic.Mission.SPEED_OF_SOUND, 968.076 * np.ones(nn), units="ft/s")
         p.set_val("rho", 0.000659904 * np.ones(nn), units="slug/ft**3")
-        p.set_val(Dynamic.Mission.VELOCITY, 487 * np.ones(nn), units="kn")
+        p.set_val("TAS", 487 * np.ones(nn), units="kn")
         p.set_val("mass", 170_000 * np.ones(nn), units="lbm")
         p.set_val("dTAS_dr", 0.0 * np.ones(nn), units="kn/NM")
 
@@ -67,10 +67,9 @@ class TestUnsteadySolvedODE(unittest.TestCase):
             Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units="lbm/s")
         dmass_dr = p.model.get_val("dmass_dr", units="lbm/ft")
         dt_dr = p.model.get_val("dt_dr", units="s/ft")
-        tas = p.model.get_val(Dynamic.Mission.VELOCITY, units="ft/s")
+        tas = p.model.get_val("TAS", units="ft/s")
         iwing = p.model.get_val(Aircraft.Wing.INCIDENCE, units="deg")
         alpha = p.model.get_val("alpha", units="deg")
-        throttle = p.model.get_val(Dynamic.Mission.THROTTLE, units="unitless")
 
         c_alphai = np.cos(np.radians(alpha - iwing))
         s_alphai = np.sin(np.radians(alpha - iwing))

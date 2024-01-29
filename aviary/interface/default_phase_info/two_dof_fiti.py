@@ -21,7 +21,7 @@ def create_2dof_based_ascent_phases(
     )
     groundroll_vals = {
         # special case
-        'attr:VR_value': {'val': 'SGMGroundroll_TAS_trigger', 'units': 'kn'},
+        'attr:VR_value': {'val': 'SGMGroundroll_velocity_trigger', 'units': 'kn'},
     }
 
     rotation_kwargs = dict(

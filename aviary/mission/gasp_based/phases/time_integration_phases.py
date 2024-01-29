@@ -51,7 +51,7 @@ class SGMGroundroll(SimuPyProblem):
         self.phase_name = phase_name
         self.VR_value = VR_value
         self.VR_units = VR_units
-        self.event_channel_names = ["velocity"]
+        self.event_channel_names = [Dynamic.Mission.VELOCITY]
         self.num_events = len(self.event_channel_names)
 
     def event_equation_function(self, t, x):

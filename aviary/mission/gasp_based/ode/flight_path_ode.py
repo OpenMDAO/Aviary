@@ -54,13 +54,13 @@ class FlightPathODE(BaseODE):
 
         if input_speed_type is SpeedType.EAS:
             speed_inputs = ["EAS"]
-            speed_outputs = ["mach", Dynamic.Mission.VELOCITY]
+            speed_outputs = ["mach", ("TAS", Dynamic.Mission.VELOCITY)]
         elif input_speed_type is SpeedType.TAS:
-            speed_inputs = [Dynamic.Mission.VELOCITY]
+            speed_inputs = [("TAS", Dynamic.Mission.VELOCITY)]
             speed_outputs = ["mach", "EAS"]
         elif input_speed_type is SpeedType.MACH:
             speed_inputs = ["mach"]
-            speed_outputs = ["EAS", Dynamic.Mission.VELOCITY]
+            speed_outputs = ["EAS", ("TAS", Dynamic.Mission.VELOCITY)]
 
         EOM_inputs = [
             Dynamic.Mission.MASS,
