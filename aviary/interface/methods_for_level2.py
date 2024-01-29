@@ -1302,7 +1302,7 @@ class AviaryProblem(om.Problem):
             self.traj.link_phases(
                 phases, vars=[Dynamic.Mission.DISTANCE], units='m', ref=10.e3)
             self.traj.link_phases(
-                phases[:7], vars=[Dynamic.Mission.VELOCITY], units='kn', ref=200.)
+                phases[:7], vars=[Dynamic.Mission.MACH], units='unitless', ref=1., connected=False)
 
         elif self.mission_method is HEIGHT_ENERGY:
             self.traj.link_phases(
@@ -2235,6 +2235,15 @@ class AviaryProblem(om.Problem):
         if optimization_history_filename:
             recorder = om.SqliteRecorder(optimization_history_filename)
             self.driver.add_recorder(recorder)
+
+        # # set up the problem
+        # self.final_setup()
+        # self.model.list_inputs(print_arrays=True, units=True)
+        # self.model.list_outputs(print_arrays=True, units=True)
+        # self.run_model()
+        # self.model.list_inputs(print_arrays=True, units=True)
+        # self.model.list_outputs(print_arrays=True, units=True)
+        # exit()
 
         # and run mission, and dynamics
         if run_driver:

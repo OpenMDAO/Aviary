@@ -472,19 +472,19 @@ class PhaseBuilderBase(ABC):
             defect_ref=mass_defect_ref,
         )
 
-    def add_distance_state(self, user_options):
-        distance_lower = user_options.get_val('distance_lower', units='NM')
-        distance_upper = user_options.get_val('distance_upper', units='NM')
-        distance_ref = user_options.get_val('distance_ref', units='NM')
-        distance_ref0 = user_options.get_val('distance_ref0', units='NM')
-        distance_defect_ref = user_options.get_val('distance_defect_ref', units='NM')
+    def add_distance_state(self, user_options, units='NM'):
+        distance_lower = user_options.get_val('distance_lower', units=units)
+        distance_upper = user_options.get_val('distance_upper', units=units)
+        distance_ref = user_options.get_val('distance_ref', units=units)
+        distance_ref0 = user_options.get_val('distance_ref0', units=units)
+        distance_defect_ref = user_options.get_val('distance_defect_ref', units=units)
         self.phase.add_state(
             Dynamic.Mission.DISTANCE,
             fix_initial=user_options.get_val('fix_initial'),
             fix_final=False,
             lower=distance_lower,
             upper=distance_upper,
-            units="NM",
+            units=units,
             rate_source=Dynamic.Mission.DISTANCE_RATE,
             ref=distance_ref,
             ref0=distance_ref0,
@@ -510,19 +510,19 @@ class PhaseBuilderBase(ABC):
             ref0=angle_ref0,
         )
 
-    def add_altitude_state(self, user_options):
-        alt_lower = user_options.get_val('alt_lower', units='ft')
-        alt_upper = user_options.get_val('alt_upper', units='ft')
-        alt_ref = user_options.get_val('alt_ref', units='ft')
-        alt_ref0 = user_options.get_val('alt_ref0', units='ft')
-        alt_defect_ref = user_options.get_val('alt_defect_ref', units='ft')
+    def add_altitude_state(self, user_options, units='ft'):
+        alt_lower = user_options.get_val('alt_lower', units=units)
+        alt_upper = user_options.get_val('alt_upper', units=units)
+        alt_ref = user_options.get_val('alt_ref', units=units)
+        alt_ref0 = user_options.get_val('alt_ref0', units=units)
+        alt_defect_ref = user_options.get_val('alt_defect_ref', units=units)
         self.phase.add_state(
             Dynamic.Mission.ALTITUDE,
             fix_initial=True,
             fix_final=False,
             lower=alt_lower,
             upper=alt_upper,
-            units="ft",
+            units=units,
             rate_source=Dynamic.Mission.ALTITUDE_RATE,
             ref=alt_ref,
             defect_ref=alt_defect_ref,

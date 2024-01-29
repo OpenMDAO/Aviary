@@ -55,7 +55,7 @@ class HEZeroItersTestCase(BaseProblemPhaseTestCase):
         self.build_and_run_problem(local_inputs, local_phase_info)
 
 
-@use_tempdirs
+# @use_tempdirs
 class SolvedZeroItersTestCase(BaseProblemPhaseTestCase):
 
     @require_pyoptsparse(optimizer="IPOPT")
@@ -67,6 +67,6 @@ class SolvedZeroItersTestCase(BaseProblemPhaseTestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
-    # test = HEZeroItersTestCase()
-    # test.test_zero_iters_height_energy()
+    # unittest.main()
+    test = SolvedZeroItersTestCase()
+    test.test_zero_iters_solved()

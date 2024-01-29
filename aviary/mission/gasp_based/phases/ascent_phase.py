@@ -42,7 +42,7 @@ class AscentPhase(PhaseBuilderBase):
         self.add_altitude_state(user_options)
         self.add_TAS_state(user_options)
         self.add_mass_state(user_options)
-        self.add_distance_state(user_options)
+        self.add_distance_state(user_options, units='ft')
 
         self.add_altitude_constraint(user_options)
 

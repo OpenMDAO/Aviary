@@ -64,10 +64,11 @@ class GroundrollODE(BaseODE):
         self.add_subsystem("eoms", GroundrollEOM(num_nodes=nn, analysis_scheme=analysis_scheme),
                            promotes=["*"])
 
-        self.add_subsystem("exec", om.ExecComp(f"over_a = TAS / velocity_rate",
+        self.add_subsystem("exec", om.ExecComp(f"over_a = velocity / velocity_rate",
                                                velocity_rate={"units": "kn/s",
                                                               "val": np.ones(nn)},
-                                               TAS={"units": "kn", "val": np.ones(nn)},
+                                               velocity={"units": "kn",
+                                                         "val": np.ones(nn)},
                                                over_a={"units": "s", "val": np.ones(nn)},
                                                has_diag_partials=True,
                                                ),
