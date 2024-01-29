@@ -13,4 +13,3 @@ Within the Aviary repository and package, the codebase is structured as follows:
 - `utils` contains utility functions for use in Aviary code, examples, and tests
 - `validation_cases` contains validation cases for testing and benchmarking Aviary
 - `visualization` is where the Aviary dashboard is located
-- `xdsm` contains diagrams to help developers and users of Aviary understand how systems are connected together

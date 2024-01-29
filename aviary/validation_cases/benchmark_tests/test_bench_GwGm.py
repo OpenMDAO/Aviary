@@ -33,7 +33,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         assert_near_equal(prob.get_val('landing.' + Mission.Landing.GROUND_DISTANCE),
                           2634.8, tolerance=rtol)
 
-        assert_near_equal(prob.get_val("traj.desc2.timeseries.states:distance")[-1],
+        assert_near_equal(prob.get_val("traj.desc2.timeseries.distance")[-1],
                           3675.0, tolerance=rtol)
 
     @require_pyoptsparse(optimizer="SNOPT")
@@ -57,7 +57,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         assert_near_equal(prob.get_val('landing.' + Mission.Landing.GROUND_DISTANCE),
                           2634.8, tolerance=rtol)
 
-        assert_near_equal(prob.get_val("traj.desc2.timeseries.states:distance")[-1],
+        assert_near_equal(prob.get_val("traj.desc2.timeseries.distance")[-1],
                           3675.0, tolerance=rtol)
 
 

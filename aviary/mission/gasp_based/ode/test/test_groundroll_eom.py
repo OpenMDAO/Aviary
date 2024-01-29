@@ -6,7 +6,6 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
 
 from aviary.mission.gasp_based.ode.groundroll_eom import GroundrollEOM
-from aviary.utils.test_utils.IO_test_util import assert_match_spec, skipIfMissingXDSM
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -42,13 +41,6 @@ class GroundrollEOMTestCase(unittest.TestCase):
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
-
-    @skipIfMissingXDSM('groundroll_specs/eom.json')
-    def test_groundroll_spec(self):
-
-        subsystem = self.prob.model
-
-        assert_match_spec(subsystem, "groundroll_specs/eom.json")
 
 
 if __name__ == "__main__":

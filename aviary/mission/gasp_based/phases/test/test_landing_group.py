@@ -9,9 +9,7 @@ from packaging import version
 
 from aviary.mission.gasp_based.phases.landing_group import LandingSegment
 from aviary.variable_info.options import get_option_defaults
-from aviary.utils.test_utils.IO_test_util import (assert_match_spec,
-                                                  check_prob_outputs,
-                                                  skipIfMissingXDSM)
+from aviary.utils.test_utils.IO_test_util import check_prob_outputs
 from aviary.variable_info.variables import Dynamic, Mission
 
 
@@ -54,11 +52,6 @@ class DLandTestCase(unittest.TestCase):
             out_stream=None, method="cs", excludes=["*USatm*", "*params*", "*aero*"]
         )
         assert_check_partials(partial_data, atol=1e-6, rtol=1e-6)
-
-    @skipIfMissingXDSM('statics_specs/landing.json')
-    def test_dland_spec(self):
-        subsystem = self.prob.model
-        assert_match_spec(subsystem, "statics_specs/landing.json")
 
 
 if __name__ == "__main__":

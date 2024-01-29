@@ -1044,7 +1044,7 @@ class DragCoefClean(om.ExplicitComponent):
         outputs["CD"] = cd0 + cdi + delcdm
 
 
-class LiftCoef(om.ExplicitComponent):
+class LiftCoeff(om.ExplicitComponent):
     """GASP lift coefficient calculation for low-speed near-ground flight"""
 
     def initialize(self):
@@ -1117,7 +1117,6 @@ class LiftCoef(om.ExplicitComponent):
 
         self.declare_partials("CL_base", ["*"], method="cs")
         self.declare_partials("CL_base", dynvars, rows=ar, cols=ar, method="cs")
-        self.declare_partials("CL_base", ["CL_max_flaps"], val=0)
 
         self.declare_partials("dCL_flaps_full", ["dCL_flaps_model"], method="cs")
         self.declare_partials(
@@ -1125,7 +1124,6 @@ class LiftCoef(om.ExplicitComponent):
 
         self.declare_partials("alpha_stall", ["*"], method="cs")
         self.declare_partials("alpha_stall", dynvars, rows=ar, cols=ar, method="cs")
-        # self.declare_partials("alpha_stall", ["lift_ratio"], val=0)
 
         self.declare_partials("CL_max", ["CL_max_flaps"], method="cs")
         self.declare_partials("CL_max", ["lift_ratio"], rows=ar, cols=ar, method="cs")
@@ -1180,7 +1178,7 @@ class LiftCoef(om.ExplicitComponent):
         outputs["CL_max"] = CL_max_flaps * (1 + lift_ratio)
 
 
-class LiftCoefClean(om.ExplicitComponent):
+class LiftCoeffClean(om.ExplicitComponent):
     """Clean wing lift coefficient for high-speed flight"""
 
     def initialize(self):
@@ -1297,7 +1295,7 @@ class CruiseAero(om.Group):
             self.add_subsystem("lift2cl", CLFromLift(num_nodes=nn), promotes=["*"])
         self.add_subsystem(
             "lift_coef",
-            LiftCoefClean(output_alpha=self.options["output_alpha"], num_nodes=nn),
+            LiftCoeffClean(output_alpha=self.options["output_alpha"], num_nodes=nn),
             promotes=["*"],
         )
         self.add_subsystem("drag_coef", DragCoefClean(num_nodes=nn), promotes=["*"])
@@ -1379,7 +1377,7 @@ class LowSpeedAero(om.Group):
             # alpha be useful? an issue is ground effects depend on alpha
             self.add_subsystem(
                 "lift_coef",
-                LiftCoef(num_nodes=nn),
+                LiftCoeff(num_nodes=nn),
                 promotes_inputs=["*"],
                 promotes_outputs=["*"]
             )
