@@ -1829,7 +1829,11 @@ class AviaryProblem(om.Problem):
                 self._add_solved_guesses(idx, phase_name, phase)
             else:
                 # If not, fetch the initial guesses specific to the phase
-                guesses = self.phase_info[phase_name]['initial_guesses']
+                # check if guesses exist for this phase
+                if "initial_guesses" in self.phase_info[phase_name]:
+                    guesses = self.phase_info[phase_name]['initial_guesses']
+                else:
+                    guesses = {}
 
                 if 'cruise' in phase_name and self.mission_method is TWO_DEGREES_OF_FREEDOM:
                     for guess_key, guess_data in guesses.items():
@@ -2002,6 +2006,17 @@ class AviaryProblem(om.Problem):
             guesses["mach"] = ([initial_mach[0], final_mach[0]], "unitless")
             guesses["altitude"] = (
                 [initial_altitude[0], final_altitude[0]], initial_altitude[1])
+
+            # if times not in initial guesses, set it to the average of the initial_bounds and the duration_bounds
+            if 'times' not in guesses:
+                initial_bounds = self.phase_info[phase_name]['user_options']['initial_bounds']
+                duration_bounds = self.phase_info[phase_name]['user_options']['duration_bounds']
+                # Add a check for the initial and duration bounds, raise an error if they are not consistent
+                if initial_bounds[1] != duration_bounds[1]:
+                    raise ValueError(
+                        f"Initial and duration bounds for {phase_name} are not consistent.")
+                guesses["times"] = ([np.mean(initial_bounds[0]), np.mean(
+                    duration_bounds[0])], initial_bounds[1])
 
         for guess_key, guess_data in guesses.items():
             val, units = guess_data
