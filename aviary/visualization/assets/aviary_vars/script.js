@@ -56,6 +56,12 @@ function createTabulator(tableData)
         width: 300,
         tooltip: (e, cell, onRendered) => displayValueInToolTip(e, cell, onRendered),
       },
+      {
+        title: "Units",
+        field: "units",
+        width: 200,
+        tooltip: (e, cell, onRendered) => displayValueInToolTip(e, cell, onRendered),
+      },
     ]
   });
 
