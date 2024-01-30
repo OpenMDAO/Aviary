@@ -18,10 +18,6 @@ class DescentPhase(PhaseBuilderBase):
 
         # Retrieve user options values
         user_options = self.user_options
-        duration_bounds = user_options.get_val('duration_bounds', units='s')
-        fix_initial = user_options.get_val('fix_initial')
-        input_initial = user_options.get_val('input_initial')
-        duration_ref = user_options.get_val('duration_ref', units='s')
         input_speed_type = user_options.get_val('input_speed_type')
         EAS_limit = user_options.get_val('EAS_limit', units='kn')
 

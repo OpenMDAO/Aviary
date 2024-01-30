@@ -562,53 +562,6 @@ class AviaryProblem(om.Problem):
                                            promotes_outputs=[
                 ('subsystem_mass', Aircraft.Design.EXTERNAL_SUBSYSTEMS_MASS)])
 
-    def _get_2dof_phase(self, phase_name):
-        # Get the phase options for the specified phase name
-        phase_options = self.phase_info[phase_name]
-
-        subsystems = self.core_subsystems
-        default_mission_subsystems = [
-            subsystems['aerodynamics'], subsystems['propulsion']]
-
-        if 'cruise' not in phase_name:
-            num_segments = phase_options['user_options']['num_segments']
-            order = phase_options['user_options']['order']
-            # Create a Radau transcription scheme object with the specified num_segments and order
-            transcription = dm.Radau(
-                num_segments=num_segments,
-                order=order,
-                compressed=True,
-                solve_segments=False)
-        else:
-            transcription = None
-
-        if 'groundroll' in phase_name:
-            phase_builder = GroundrollPhase
-        elif 'rotation' in phase_name:
-            phase_builder = RotationPhase
-        elif 'accel' in phase_name:
-            phase_builder = AccelPhase
-        elif 'ascent' in phase_name:
-            phase_builder = AscentPhase
-        elif 'climb' in phase_name:
-            phase_builder = ClimbPhase
-        elif 'cruise' in phase_name:
-            phase_builder = CruisePhase
-        elif 'desc' in phase_name:
-            phase_builder = DescentPhase
-
-        phase_object = phase_builder.from_phase_info(
-            phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data, transcription=transcription)
-        phase = phase_object.build_phase(aviary_options=self.aviary_inputs)
-
-        if 'cruise' not in phase_name:
-            phase.add_control(
-                Dynamic.Mission.THROTTLE, targets=Dynamic.Mission.THROTTLE, units='unitless',
-                opt=False,
-            )
-
-        return phase
-
     def _add_groundroll_eq_constraint(self, phase):
         """
         Add an equality constraint to the problem to ensure that the TAS at the end of the
@@ -674,24 +627,11 @@ class AviaryProblem(om.Problem):
                 phase_builder = CruisePhase
             elif 'desc' in phase_name:
                 phase_builder = DescentPhase
-
-            if 'cruise' not in phase_name:
-                num_segments = phase_options['user_options']['num_segments']
-                order = phase_options['user_options']['order']
-                # Create a Radau transcription scheme object with the specified num_segments and order
-                transcription = dm.Radau(
-                    num_segments=num_segments,
-                    order=order,
-                    compressed=True,
-                    solve_segments=False)
-            else:
-                transcription = None
         else:
             phase_builder = EnergyPhase
-            transcription = None
 
         phase_object = phase_builder.from_phase_info(
-            phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data, transcription=transcription)
+            phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data)
 
         phase = phase_object.build_phase(aviary_options=self.aviary_inputs)
 
@@ -715,20 +655,9 @@ class AviaryProblem(om.Problem):
 
         user_options = AviaryValues(phase_options.get('user_options', ()))
 
-        if 'fix_initial' in phase_options:
-            fix_initial = phase_options.get_val('fix_initial')
-        else:
-            fix_initial = False
-
-        if 'fix_duration' in phase_options:
-            fix_duration = phase_options.get_val('fix_duration')
-        else:
-            fix_duration = False
-
-        if 'initial_bounds' in phase_options:
-            initial_bounds = phase_options.get_val('initial_bounds', 's')
-        else:
-            initial_bounds = _unspecified
+        fix_initial = phase_options.get('fix_initial', False)
+        fix_duration = phase_options.get('fix_duration', False)
+        initial_bounds = phase_options.get('initial_bounds', _unspecified)
 
         if phase_name == 'ascent' and self.mission_method is TWO_DEGREES_OF_FREEDOM:
             phase.set_time_options(
@@ -1057,21 +986,15 @@ class AviaryProblem(om.Problem):
                 for timeseries in timeseries_to_add:
                     phase.add_timeseries_output(timeseries)
 
-        if self.mission_method is TWO_DEGREES_OF_FREEDOM:
+        if self.mission_method is TWO_DEGREES_OF_FREEDOM or self.mission_method is HEIGHT_ENERGY:
             if self.analysis_scheme is AnalysisScheme.COLLOCATION:
                 for phase_idx, phase_name in enumerate(phases):
                     phase = traj.add_phase(
                         phase_name, self._get_phase(phase_name, phase_idx))
                     add_subsystem_timeseries_outputs(phase, phase_name)
 
-                    if phase_name == 'ascent':
+                    if phase_name == 'ascent' and self.mission_method is TWO_DEGREES_OF_FREEDOM:
                         self._add_groundroll_eq_constraint(phase)
-
-        elif self.mission_method is HEIGHT_ENERGY:
-            for phase_idx, phase_name in enumerate(phases):
-                phase = traj.add_phase(
-                    phase_name, self._get_phase(phase_name, phase_idx))
-                add_subsystem_timeseries_outputs(phase, phase_name)
 
             # loop through phase_info and external subsystems
             external_parameters = {}
@@ -1084,14 +1007,13 @@ class AviaryProblem(om.Problem):
                     for parameter in parameter_dict:
                         external_parameters[phase_name][parameter] = parameter_dict[parameter]
 
-            traj = setup_trajectory_params(
-                self.model, traj, self.aviary_inputs, phases, meta_data=self.meta_data, external_parameters=external_parameters)
+            if self.mission_method is HEIGHT_ENERGY:
+                traj = setup_trajectory_params(
+                    self.model, traj, self.aviary_inputs, phases, meta_data=self.meta_data, external_parameters=external_parameters)
 
         elif self.mission_method is SOLVED:
             target_range = self.aviary_inputs.get_val(
                 Mission.Design.RANGE, units='nmi')
-            takeoff_mass = self.aviary_inputs.get_val(
-                Mission.Design.GROSS_MASS, units='lbm')
             climb_mach = 0.8
 
             for idx, phase_name in enumerate(phases):
