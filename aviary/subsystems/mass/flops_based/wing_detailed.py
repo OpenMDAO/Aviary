@@ -1,4 +1,7 @@
+import math
+
 import numpy as np
+
 import openmdao.api as om
 from openmdao.components.interp_util.interp import InterpND
 
@@ -37,7 +40,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
 
         add_aviary_input(self, Mission.Design.GROSS_MASS, val=0.0)
 
-        add_aviary_input(self, Aircraft.Engine.POD_MASS, val=0.0)
+        add_aviary_input(self, Aircraft.Engine.POD_MASS, val=np.zeros(count))
 
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, val=0.0)
 

@@ -19,7 +19,7 @@ from aviary.variable_info.variable_meta_data import _MetaData
 # ---------------------------
 
 
-def add_aviary_input(comp, varname, val=None, units=None, desc=None, shape_by_conn=False, meta_data=_MetaData):
+def add_aviary_input(comp, varname, val=None, units=None, desc=None, shape_by_conn=False, meta_data=_MetaData, shape=None):
     '''
     This function provides a clean way to add variables from the
     variable hierarchy into components as Aviary inputs. It takes
@@ -42,7 +42,7 @@ def add_aviary_input(comp, varname, val=None, units=None, desc=None, shape_by_co
     if val is None:
         val = meta['default_value']
     comp.add_input(varname, val=val, units=input_units,
-                   desc=input_desc, shape_by_conn=shape_by_conn)
+                   desc=input_desc, shape_by_conn=shape_by_conn, shape=shape)
 
 
 def add_aviary_output(comp, varname, val, units=None, desc=None, shape_by_conn=False, meta_data=_MetaData):

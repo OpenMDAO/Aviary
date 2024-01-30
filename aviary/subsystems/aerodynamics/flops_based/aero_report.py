@@ -1,6 +1,8 @@
 """
 OpenMDAO system for generating the aero tables that were typically printed in FLOPS.
 """
+import numpy as np
+
 import openmdao.api as om
 
 from aviary.utils.aviary_values import AviaryValues
@@ -21,24 +23,27 @@ class AeroReport(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
+        aviary_options = self.options['aviary_options']
+        count = len(aviary_options.get_val('engine_models'))
+
         add_aviary_input(self, Aircraft.Canard.WETTED_AREA, 0.0)
         add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA, 0.0)
         add_aviary_input(self, Aircraft.HorizontalTail.WETTED_AREA, 0.0)
-        add_aviary_input(self, Aircraft.Nacelle.WETTED_AREA, 0.0)
+        add_aviary_input(self, Aircraft.Nacelle.WETTED_AREA, np.zeros(count))
         add_aviary_input(self, Aircraft.VerticalTail.WETTED_AREA, 0.0)
         add_aviary_input(self, Aircraft.Wing.WETTED_AREA, 0.0)
 
         add_aviary_input(self, Aircraft.Canard.FINENESS, 0.0)
         add_aviary_input(self, Aircraft.Fuselage.FINENESS, 0.0)
         add_aviary_input(self, Aircraft.HorizontalTail.FINENESS, 0.0)
-        add_aviary_input(self, Aircraft.Nacelle.FINENESS, 0.0)
+        add_aviary_input(self, Aircraft.Nacelle.FINENESS, np.zeros(count))
         add_aviary_input(self, Aircraft.VerticalTail.FINENESS, 0.0)
         add_aviary_input(self, Aircraft.Wing.FINENESS, 0.0)
 
         add_aviary_input(self, Aircraft.Canard.CHARACTERISTIC_LENGTH, 0.0)
         add_aviary_input(self, Aircraft.Fuselage.CHARACTERISTIC_LENGTH, 0.0)
         add_aviary_input(self, Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH, 0.0)
-        add_aviary_input(self, Aircraft.Nacelle.CHARACTERISTIC_LENGTH, 0.0)
+        add_aviary_input(self, Aircraft.Nacelle.CHARACTERISTIC_LENGTH, np.zeros(count))
         add_aviary_input(self, Aircraft.VerticalTail.CHARACTERISTIC_LENGTH, 0.0)
         add_aviary_input(self, Aircraft.Wing.CHARACTERISTIC_LENGTH, 0.0)
 

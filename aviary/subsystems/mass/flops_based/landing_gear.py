@@ -278,9 +278,11 @@ class MainGearLength(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
+        count = len(self.options['aviary_options'].get_val('engine_models'))
+
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, val=0.0)
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, val=0.0)
-        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, val=0.0)
+        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, val=np.zeros(count))
         add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS, val=0.0)
         add_aviary_input(self, Aircraft.Wing.DIHEDRAL, val=0.0)
         add_aviary_input(self, Aircraft.Wing.SPAN, val=0.0)

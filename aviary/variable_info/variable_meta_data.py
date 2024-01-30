@@ -2066,7 +2066,8 @@ add_meta_data(
                      },
     units='unitless',
     desc='Engine wing mount locations as fractions of semispan; (engines_count)/2 values '
-         'are input'
+         'are input',
+    # default_value=np.array([0.0])
 )
 
 #  ______   _

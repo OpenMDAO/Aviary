@@ -68,19 +68,19 @@ class PropulsionPreMission(om.Group):
         comp_list = [self._get_subsystem(group) for group in dir(self) if self._get_subsystem(
             group) and group not in ['pre_mission_mux', 'propulsion_sum']]
 
+        # Dictionary of all unique inputs/outputs from all new components, keys are
+        # units for each var
+        unique_outputs = {}
+        unique_inputs = {}
+
+        # dictionaries of inputs/outputs for each added component in prop pre-mission
+        input_dict = {}
+        output_dict = {}
+
         for idx, comp in enumerate(comp_list):
             # Patterns to identify which inputs/outputs are vectorized and need to be
             # split then re-muxed
             pattern = ['engine:', 'nacelle:']
-
-            # dictionaries of inputs/outputs for each added component in prop pre-mission
-            input_dict = {}
-            output_dict = {}
-
-            # Dictionary of all unique inputs/outputs from all new components, keys are
-            # units for each var
-            unique_outputs = {}
-            unique_inputs = {}
 
             # pull out all inputs (in dict format) in component
             comp_inputs = comp.list_inputs(
@@ -89,8 +89,10 @@ class PropulsionPreMission(om.Group):
             input_dict[comp.name] = dict((key, comp_inputs[key])
                                          for key in comp_inputs if any([x in key for x in pattern]))
             # Track list of ALL inputs present in prop pre-mission in a "flat" dict.
-            # We don't care what the actual units are, since openMDAO will convert
-            # (if they aren't compatible, then a component specified the wrong units vs. metadata)
+            # Repeating inputs will just override what's already in the dict - we don't
+            # care if units get overridden, if they differ openMDAO will convert
+            # (if they aren't compatible, then a component specified the wrong units and
+            # needs to be fixed there)
             unique_inputs.update([(key, input_dict[comp.name][key]['units'])
                                  for key in input_dict[comp.name]])
 
@@ -115,7 +117,7 @@ class PropulsionPreMission(om.Group):
         # Get individual comp outputs back into the proper vectorized variable
         for output in unique_outputs:
             self.pre_mission_mux.add_var(output,
-                                         shape=(engine_count,),
+                                         #  shape=(1,),
                                          units=unique_outputs[output])
             # promote/alias outputs for each comp that has relevant outputs
             for i, comp in enumerate(output_dict):
@@ -143,7 +145,7 @@ class PropulsionSum(om.ExplicitComponent):
     def setup(self):
         count = len(self.options['aviary_options'].get_val('engine_models'))
 
-        add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST, val=np.zeros((count)))
+        add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST, val=np.zeros(count))
 
         add_aviary_output(
             self, Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, val=0.0)
