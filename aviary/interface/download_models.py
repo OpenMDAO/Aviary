@@ -56,7 +56,7 @@ def get_model(file_name: str, verbose=False) -> Path:
 
 def save_file(aviary_path: Path, outdir: Path, verbose=False) -> Path:
     '''
-    Saves the file or folder specified into the output directory
+    Saves the file or folder specified into the output directory, creating directories as needed.
     '''
     outdir.mkdir(parents=True, exist_ok=True)
     if aviary_path.is_dir():
@@ -81,7 +81,7 @@ def _setup_hanger_parser(parser: argparse.ArgumentParser):
         'input_decks', metavar='indecks', type=str, nargs='+', help='Name of vehicle input deck file'
     )
     parser.add_argument(
-        "-o", "--outdir", default=def_outdir, help="Directory to write outputs"
+        "-o", "--outdir", default=def_outdir, help="Directory to write outputs. Defaults to aviary_models in the current directory."
     )
     parser.add_argument(
         "-v", "--verbose",
