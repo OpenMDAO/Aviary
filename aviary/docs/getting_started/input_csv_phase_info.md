@@ -91,7 +91,7 @@ We will now discuss the meaning of the keys within the `phase_info` objects.
   - `optimize_altitude`: if True, the altitude is a design variable.
 
 ```{note}
-Not all the keys apply to all phases. The users should select the right keys for each phase of interest. The required keys for each phase are defined in [check_phase_info](https://github.com/OpenMDAO/om-Aviary/blob/main/aviary/interface/utils.py) function. Currently, this function does the check only for `FLOPS` and `GASP` missions.
+Not all the keys apply to all phases. The users should select the right keys for each phase of interest. The required keys for each phase are defined in [check_phase_info](https://github.com/OpenMDAO/Aviary/blob/main/aviary/interface/utils.py) function. Currently, this function does the check only for `FLOPS` and `GASP` missions.
 ```
 
 Users can add their own keys as needed.
