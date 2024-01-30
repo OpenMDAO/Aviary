@@ -95,3 +95,16 @@ Not all the keys apply to all phases. The users should select the right keys for
 ```
 
 Users can add their own keys as needed.
+
+## Using custom phase builders
+
+For the `height_energy`, you can use a user-defined phase builder.
+The user-defined phase builder must inherit from `PhaseBuilderBase` and provide the `from_phase_info` and the `build_phase` methods.
+The `from_phase_info` method is used to convert the `phase_info` dictionary into the inputs needed for the phase builder object.
+The `build_phase` method is used to actually build and output the `Phase` object.
+
+For examples of how to create a custom phase builder, see the `energy_phase.py` file.
+
+```{note}
+Using custom phase builders is a particularly advanced feature and is not recommended for most users.
+```

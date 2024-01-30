@@ -59,6 +59,7 @@ from aviary.utils.merge_variable_metadata import merge_meta_data
 from aviary.interface.default_phase_info.two_dof_fiti import create_2dof_based_ascent_phases, create_2dof_based_descent_phases
 from aviary.mission.gasp_based.idle_descent_estimation import descent_range_and_fuel
 from aviary.mission.flops_based.phases.phase_utils import get_initial
+from aviary.mission.phase_builder_base import PhaseBuilderBase
 
 
 FLOPS = LegacyCode.FLOPS
@@ -663,7 +664,15 @@ class AviaryProblem(om.Problem):
             subsystems['aerodynamics'], subsystems['propulsion']]
 
         if self.mission_method is HEIGHT_ENERGY:
-            phase_object = EnergyPhase.from_phase_info(
+            if 'phase_builder' in phase_options:
+                phase_builder = phase_options['phase_builder']
+                if not issubclass(phase_builder, PhaseBuilderBase):
+                    raise TypeError(
+                        f"phase_builder for the phase called {phase_name} must be a PhaseBuilderBase object.")
+            else:
+                phase_builder = EnergyPhase
+
+            phase_object = phase_builder.from_phase_info(
                 phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data)
 
             phase = phase_object.build_phase(aviary_options=self.aviary_inputs)
