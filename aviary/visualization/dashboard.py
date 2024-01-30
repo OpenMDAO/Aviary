@@ -185,6 +185,7 @@ def create_aviary_variables_table_data_nested(script_name, recorder_file):
                     "abs_name": group_name,
                     "prom_name": outputs[var_info]["prom_name"],
                     "value": str(outputs[var_info]["val"]),
+                    "units": str(outputs[var_info]["units"]),
                 }
             )
         else:
@@ -197,6 +198,7 @@ def create_aviary_variables_table_data_nested(script_name, recorder_file):
                         "abs_name": children_name,
                         "prom_name": outputs[children_name]["prom_name"],
                         "value": str(outputs[children_name]["val"]),
+                        "units": str(outputs[children_name]["units"]),
                     }
                 )
             table_data_nested.append(  # not a real var, just a group of vars so no values
@@ -204,6 +206,7 @@ def create_aviary_variables_table_data_nested(script_name, recorder_file):
                     "abs_name": group_name,
                     "prom_name": "",
                     "value": "",
+                    "units": "",
                     "_children": children_list,
                 }
             )
