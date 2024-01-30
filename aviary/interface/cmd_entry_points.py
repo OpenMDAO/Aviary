@@ -7,7 +7,7 @@ from aviary.interface.methods_for_level1 import _exec_level1, _setup_level1_pars
 from aviary.utils.Fortran_to_Aviary import _exec_F2A, _setup_F2A_parser
 from aviary.visualization.dashboard import _dashboard_setup_parser, _dashboard_cmd
 from aviary.interface.graphical_input import _exec_flight_profile, _setup_flight_profile_parser
-from aviary.interface.download_models import _exec_hanger, _setup_hanger_parser
+from aviary.interface.download_models import _exec_hangar, _setup_hangar_parser
 
 
 def _load_and_exec(script_name, user_args):
@@ -48,8 +48,8 @@ _command_map = {
                      "Allows users to draw a mission profile for use in Aviary."),
     'dashboard': (_dashboard_setup_parser, _dashboard_cmd,
                   "Run the Dashboard tool"),
-    'hanger': (_setup_hanger_parser, _exec_hanger,
-               "Allows users that pip installed Aviary to download models from the Aviary Hanger"),
+    'hangar': (_setup_hangar_parser, _exec_hangar,
+               "Allows users that pip installed Aviary to download models from the Aviary hangar"),
 }
 
 
