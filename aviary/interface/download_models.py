@@ -47,7 +47,7 @@ def get_model(file_name: str, verbose=False) -> Path:
     # If the path still doesn't exist, raise an error.
     if not aviary_path.exists():
         raise FileNotFoundError(
-            f"File or Folder not found in Aviary's hanger"
+            f"File or Folder not found in Aviary's hangar"
         )
     if verbose:
         print('found', aviary_path, '\n')
@@ -75,10 +75,10 @@ def save_file(aviary_path: Path, outdir: Path, verbose=False) -> Path:
     return outdir
 
 
-def _setup_hanger_parser(parser: argparse.ArgumentParser):
+def _setup_hangar_parser(parser: argparse.ArgumentParser):
     def_outdir = os.path.join(os.getcwd(), "aviary_models")
     parser.add_argument(
-        'input_decks', metavar='indecks', type=str, nargs='+', help='Name of vehicle input deck file'
+        'input_decks', metavar='indecks', type=str, nargs='+', help='Name of file or folder to download from Aviary/models'
     )
     parser.add_argument(
         "-o", "--outdir", default=def_outdir, help="Directory to write outputs. Defaults to aviary_models in the current directory."
@@ -90,7 +90,7 @@ def _setup_hanger_parser(parser: argparse.ArgumentParser):
     )
 
 
-def _exec_hanger(args, user_args):
+def _exec_hangar(args, user_args):
     # check if args.input_deck is a list, if so, use the first element
     input_decks = []
     for input_deck in args.input_decks:
