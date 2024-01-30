@@ -380,6 +380,8 @@ EnergyPhase._add_meta_data('add_initial_mass_constraint', val=False)
 
 EnergyPhase._add_meta_data('fix_initial', val=True)
 
+EnergyPhase._add_meta_data('fix_duration', val=False)
+
 EnergyPhase._add_meta_data('optimize_mach', val=False)
 
 EnergyPhase._add_meta_data('optimize_altitude', val=False)

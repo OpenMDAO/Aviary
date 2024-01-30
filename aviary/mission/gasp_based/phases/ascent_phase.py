@@ -31,13 +31,6 @@ class AscentPhase(PhaseBuilderBase):
             'alpha_constraint_upper', units='rad')
         alpha_constraint_ref = user_options.get_val('alpha_constraint_ref', units='rad')
 
-        phase.set_time_options(
-            units="s",
-            targets="t_curr",
-            input_initial=True,
-            input_duration=True,
-        )
-
         self.add_flight_path_angle_state(user_options)
         self.add_altitude_state(user_options)
         self.add_TAS_state(user_options)

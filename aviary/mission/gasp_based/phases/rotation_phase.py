@@ -33,8 +33,6 @@ class RotationPhase(PhaseBuilderBase):
         normal_ref = user_options.get_val('normal_ref', units='lbf')
         normal_ref0 = user_options.get_val('normal_ref0', units='lbf')
 
-        self.set_time_options(user_options, targets='t_curr')
-
         # Add states
         phase.add_state(
             "alpha",

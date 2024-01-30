@@ -419,19 +419,6 @@ class PhaseBuilderBase(ABC):
         meta_data[name] = dict(
             apply_initial_guess=initial_guess.apply_initial_guess, desc=desc)
 
-    def set_time_options(self, user_options, targets=[]):
-        fix_initial = user_options.get_val('fix_initial')
-        duration_bounds = user_options.get_val('duration_bounds', units='s')
-        duration_ref = user_options.get_val('duration_ref', units='s')
-
-        self.phase.set_time_options(
-            fix_initial=fix_initial,
-            duration_bounds=duration_bounds,
-            units="s",
-            targets=targets,
-            duration_ref=duration_ref,
-        )
-
     def add_TAS_state(self, user_options):
         TAS_lower = user_options.get_val('TAS_lower', units='kn')
         TAS_upper = user_options.get_val('TAS_upper', units='kn')

@@ -47,8 +47,6 @@ class AccelPhase(PhaseBuilderBase):
         EAS_constraint_eq = user_options.get_val('EAS_constraint_eq', units='kn')
         alt = user_options.get_val('alt', units='ft')
 
-        self.set_time_options(user_options)
-
         # States
         self.add_TAS_state(user_options)
 

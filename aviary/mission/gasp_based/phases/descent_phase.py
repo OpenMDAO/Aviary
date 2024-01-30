@@ -25,15 +25,6 @@ class DescentPhase(PhaseBuilderBase):
         input_speed_type = user_options.get_val('input_speed_type')
         EAS_limit = user_options.get_val('EAS_limit', units='kn')
 
-        # Time options
-        phase.set_time_options(
-            duration_bounds=duration_bounds,
-            fix_initial=fix_initial,
-            input_initial=input_initial,
-            units="s",
-            duration_ref=duration_ref,
-        )
-
         # Add states
         self.add_altitude_state(user_options)
 

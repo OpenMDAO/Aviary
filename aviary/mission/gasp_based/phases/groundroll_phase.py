@@ -32,8 +32,6 @@ class GroundrollPhase(PhaseBuilderBase):
         distance_ref0 = user_options.get_val('distance_ref0', units='ft')
         distance_defect_ref = user_options.get_val('distance_defect_ref', units='ft')
 
-        self.set_time_options(user_options, targets='t_curr')
-
         # Add states
         self.add_TAS_state(user_options)
 
