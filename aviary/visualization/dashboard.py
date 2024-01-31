@@ -21,10 +21,7 @@ pn.extension(sizing_mode="stretch_width")
 
 # Constants - # Can't get using CSS to work with frames and the raw_css for the template so going with
 #    this for now
-iframe_css = (
-    "width=100% height=4000vh overflow=hidden margin=0px padding=0px border=none"
-)
-aviary_variables_json_file_name = "aviary_vars.json"
+aviary_variables_json_file_name = 'aviary_vars.json'
 
 
 def _dashboard_setup_parser(parser):
@@ -111,11 +108,11 @@ def create_report_frame(format, text_filepath):
         does not exist.
     """
     if os.path.exists(text_filepath):
-        if format == "html":
+        if format == 'html':
+            iframe_css = 'width=1200px height=800px overflow-x="scroll" overflow="scroll" margin=0px padding=0px border=20px frameBorder=20px scrolling="yes"'
             report_pane = pn.pane.HTML(
-                f"<iframe {iframe_css} src=/home/{text_filepath}></iframe>"
-            )
-        elif format in ["markdown", "text"]:
+                f'<iframe {iframe_css} src=/home/{text_filepath}></iframe>')
+        elif format in ['markdown', 'text']:
             with open(text_filepath, "rb") as f:
                 file_text = f.read()
                 # need to deal with some encoding errors
@@ -313,7 +310,6 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
         )
 
     # TODO - use lists and functions to do this with a lot less code
-
     ####### Model Tab #######
     model_tabs_list = []
 
