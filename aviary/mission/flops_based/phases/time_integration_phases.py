@@ -18,7 +18,6 @@ class SGMHeightEnergy(SimuPyProblem):
     def __init__(
         self,
         phase_name='cruise',
-        distance_trigger_units='NM',
         ode_args={},
         simupy_args={},
     ):
@@ -31,29 +30,18 @@ class SGMHeightEnergy(SimuPyProblem):
                 Dynamic.Mission.DISTANCE,
                 Dynamic.Mission.ALTITUDE,
         ],
-            #     state_rate_units=[
-            #         'lbm/s',
-            #         'm/s',
-            #         'm/s',
-            # ],
             alternate_state_rate_names={
                 Dynamic.Mission.MASS: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
             **simupy_args)
 
         self.phase_name = phase_name
-        self.distance_trigger_units = distance_trigger_units
         self.event_channel_names = [
-            # Dynamic.Mission.DISTANCE,
             Dynamic.Mission.MASS,
         ]
         self.num_events = len(self.event_channel_names)
 
     def event_equation_function(self, t, x):
         self.output_equation_function(t, x)
-        # distance = self.get_val(Dynamic.Mission.DISTANCE,
-        #                         units=self.distance_trigger_units).squeeze()
-        # distance_trigger = self.get_val(
-        #     "distance_trigger", units=self.distance_trigger_units).squeeze()
 
         current_mass = self.get_val(Dynamic.Mission.MASS, units="lbm").squeeze()
         mass_trigger = 150000
@@ -94,7 +82,6 @@ class SGMDetailedTakeoff(SimuPyProblem):
         alt_trigger = 50
         return np.array([
             current_alt - alt_trigger
-            # maybe mach
         ])
 
 
@@ -222,13 +209,8 @@ def test_phase(phases, ode_args_tab):
 
     for key, val in initial_values_cruise.items():
         prob.set_val(key, **val)
-    # prob.set_val("traj.velocity", val=472, units="kn")
-    # prob.set_val("traj.velocity_rate", val=0, units="m/s**2")
 
-    # try:
     prob.run_model()
-    # except:
-    #     prob.final_setup()
 
     with open('input_list.txt', 'w') as outfile:
         prob.model.list_inputs(out_stream=outfile,)
@@ -267,16 +249,29 @@ if __name__ == '__main__':
     ode_args_tab['subsystem_options'] = {'core_aerodynamics': {'method': 'computed'}}
     # ode_args_tab['friction_key'] = Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT
     # ode_args_tab['friction_key'] = Mission.Takeoff.BRAKING_FRICTION_COEFFICIENT
+
     phase_kwargs = dict(
         ode_args=ode_args_tab,
         simupy_args=dict(
             DEBUG=True,
         ),
     )
+
+    def func(self, t, x):
+        self.output_equation_function(t, x)
+        current_mass = self.get_val(Dynamic.Mission.MASS, units="lbm").squeeze()
+        mass_trigger = 160000
+        return np.array([
+            current_mass - mass_trigger
+        ])
+
+    SGMCruise = SGMHeightEnergy
+    SGMCruise.event_equation_function = func
+
     phase_vals = {
     }
     phases = {'HE': {
-        'ode': SGMHeightEnergy(**phase_kwargs),
+        'ode': SGMCruise(**phase_kwargs),
         'vals_to_set': phase_vals
     }}
 

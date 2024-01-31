@@ -2,7 +2,6 @@ import numpy as np
 import openmdao.api as om
 from aviary.constants import GRAV_METRIC_FLOPS as gravity
 from aviary.variable_info.variables import Dynamic
-from aviary.variable_info.enums import AnalysisScheme
 
 
 class SpecificEnergyRate(om.ExplicitComponent):
@@ -13,8 +12,6 @@ class SpecificEnergyRate(om.ExplicitComponent):
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)
-        self.options.declare("analysis_scheme", types=AnalysisScheme, default=AnalysisScheme.COLLOCATION,
-                             desc="The analysis method that will be used to close the trajectory; for example collocation or time integration")
 
     def setup(self):
         nn = self.options['num_nodes']
