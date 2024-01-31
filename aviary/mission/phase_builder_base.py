@@ -421,8 +421,7 @@ class PhaseBuilderBase(ABC):
 
     def _add_user_defined_constraints(self, phase, constraints):
         # Add each constraint and its corresponding arguments to the phase
-        for constraint_name in constraints:
-            kwargs = constraints[constraint_name]
+        for constraint_name, kwargs in constraints.items():
             if kwargs['type'] == 'boundary':
                 kwargs.pop('type')
                 phase.add_boundary_constraint(constraint_name, **kwargs)
