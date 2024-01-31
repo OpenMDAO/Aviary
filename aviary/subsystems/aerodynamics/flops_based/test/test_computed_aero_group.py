@@ -55,7 +55,6 @@ class MissionDragTest(unittest.TestCase):
         prob = om.Problem()
         model = prob.model
 
-        # replace debug_no_mass flag with list of subsystem builders without mass
         core_subsystems = [prop, geom, aero]
 
         # Upstream static analysis for aero
@@ -184,7 +183,6 @@ class MissionDragTest(unittest.TestCase):
         prob = om.Problem()
         model = prob.model
 
-        # replace debug_no_mass flag with list of subsystem builders without mass
         core_subsystems = [prop, geom, aero]
 
         # Upstream static analysis for aero
@@ -301,7 +299,6 @@ class MissionDragTest(unittest.TestCase):
         prob = om.Problem()
         model = prob.model
 
-        # replace debug_no_mass flag with list of subsystem builders without mass
         core_subsystems = [prop, geom, aero]
 
         # Upstream static analysis for aero

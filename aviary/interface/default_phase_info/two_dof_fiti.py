@@ -1,6 +1,6 @@
 import numpy as np
 
-from aviary.variable_info.enums import SpeedType
+from aviary.variable_info.enums import SpeedType, Verbosity
 from aviary.mission.gasp_based.phases.time_integration_phases import SGMGroundroll, \
     SGMRotation, SGMAscentCombined, SGMAccel, SGMClimb, SGMCruise, SGMDescent
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic
@@ -16,7 +16,7 @@ def create_2dof_based_ascent_phases(
     groundroll_kwargs = dict(
         ode_args=ode_args,
         simupy_args=dict(
-            DEBUG=False,
+            verbosity=Verbosity.QUIET,
         ),
     )
     groundroll_vals = {
@@ -27,7 +27,7 @@ def create_2dof_based_ascent_phases(
     rotation_kwargs = dict(
         ode_args=ode_args,
         simupy_args=dict(
-            DEBUG=False,
+            verbosity=Verbosity.QUIET,
         ),
     )
     rotation_vals = {}
@@ -35,7 +35,7 @@ def create_2dof_based_ascent_phases(
     ascent_kwargs = dict(
         ode_args=ode_args,
         simupy_args=dict(
-            DEBUG=False,
+            verbosity=Verbosity.QUIET,
         ),
     )
     ascent_vals = {
@@ -49,7 +49,7 @@ def create_2dof_based_ascent_phases(
     accel_kwargs = dict(
         ode_args=ode_args,
         simupy_args=dict(
-            DEBUG=False,
+            verbosity=Verbosity.QUIET,
         ),
     )
     accel_vals = {}
@@ -59,7 +59,7 @@ def create_2dof_based_ascent_phases(
         input_speed_units='kn',
         ode_args=ode_args,
         simupy_args=dict(
-            DEBUG=False,
+            DEverbosity=Verbosity.QUIET,
         ),
     )
     climb1_vals = {
@@ -73,7 +73,7 @@ def create_2dof_based_ascent_phases(
         input_speed_units='kn',
         ode_args=ode_args,
         simupy_args=dict(
-            DEBUG=False,
+            verbosity=Verbosity.QUIET,
         ),
     )
     climb2_vals = {
@@ -87,7 +87,7 @@ def create_2dof_based_ascent_phases(
         input_speed_units='unitless',
         ode_args=ode_args,
         simupy_args=dict(
-            DEBUG=False,
+            verbosity=Verbosity.QUIET,
         ),
     )
     climb3_vals = {
@@ -142,7 +142,7 @@ def create_2dof_based_descent_phases(
         speed_trigger_units='kn',
         ode_args=ode_args,
         simupy_args=dict(
-            DEBUG=False,
+            verbosity=Verbosity.QUIET,
         ),
     )
     descent1_vals = {
@@ -157,7 +157,7 @@ def create_2dof_based_descent_phases(
         speed_trigger_units='kn',
         ode_args=ode_args,
         simupy_args=dict(
-            DEBUG=False,
+            verbosity=Verbosity.QUIET,
         ),
     )
     descent2_vals = {
@@ -172,7 +172,7 @@ def create_2dof_based_descent_phases(
         speed_trigger_units='kn',
         ode_args=ode_args,
         simupy_args=dict(
-            DEBUG=False,
+            verbosity=Verbosity.QUIET,
         ),
     )
     descent3_vals = {

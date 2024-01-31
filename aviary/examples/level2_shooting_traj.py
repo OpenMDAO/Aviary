@@ -6,7 +6,7 @@ entry point to Aviary.
 """
 
 from aviary.api import AviaryProblem
-from aviary.api import AnalysisScheme, SpeedType, AlphaModes
+from aviary.api import AnalysisScheme, SpeedType, AlphaModes, Verbosity
 from aviary.api import FlexibleTraj
 from aviary.api import create_2dof_based_ascent_phases
 from aviary.api import SGMCruise, SGMDescent
@@ -57,7 +57,7 @@ def run_aviary(aircraft_filename, phase_info, optimizer=None, analysis_scheme=An
         ode_args=prob.ode_args,
         alpha_mode=AlphaModes.REQUIRED_LIFT,
         simupy_args=dict(
-            DEBUG=True,
+            verbosity=Verbosity.DEBUG,
         ),
     )
     cruise_vals = {
@@ -71,7 +71,7 @@ def run_aviary(aircraft_filename, phase_info, optimizer=None, analysis_scheme=An
         speed_trigger_units='kn',
         ode_args=prob.ode_args,
         simupy_args=dict(
-            DEBUG=False,
+            verbosity=Verbosity.QUIET,
         ),
     )
     descent1_vals = {
