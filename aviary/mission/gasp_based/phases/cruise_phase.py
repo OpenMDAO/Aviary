@@ -1,5 +1,5 @@
-from aviary.mission.phase_builder_base import (
-    PhaseBuilderBase, InitialGuessState, InitialGuessTime)
+from aviary.mission.phase_builder_base import PhaseBuilderBase
+from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessTime
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
 from aviary.mission.gasp_based.ode.breguet_cruise_ode import BreguetCruiseODESolution
@@ -25,14 +25,8 @@ class CruisePhase(PhaseBuilderBase):
     default_name = 'cruise_phase'
     default_ode_class = BreguetCruiseODESolution
 
-    __slots__ = ('external_subsystems', 'meta_data')
-
-    # region : derived type customization points
     _meta_data_ = {}
-
     _initial_guesses_meta_data_ = {}
-
-    default_meta_data = _MetaData
 
     def __init__(
         self, name=None, subsystem_options=None, user_options=None, initial_guesses=None,
@@ -42,20 +36,8 @@ class CruisePhase(PhaseBuilderBase):
         super().__init__(
             name=name, subsystem_options=subsystem_options, user_options=user_options,
             initial_guesses=initial_guesses, ode_class=ode_class, transcription=transcription,
-            core_subsystems=core_subsystems,
+            core_subsystems=core_subsystems, is_analytic_phase=True,
         )
-
-        # TODO: support external_subsystems and meta_data in the base class
-        if external_subsystems is None:
-            external_subsystems = []
-
-        self.external_subsystems = external_subsystems
-
-        if meta_data is None:
-            meta_data = self.default_meta_data
-
-        self.meta_data = meta_data
-        self.is_analytic_phase = True
 
     def build_phase(self, aviary_options: AviaryValues = None):
         """
