@@ -173,6 +173,12 @@ class AircraftMissionTestSuite(unittest.TestCase):
         prob = self.run_mission(modified_phase_info, "IPOPT")
         self.assertFalse(prob.failed)
 
+        constraints = prob.driver._cons
+        for name, meta in constraints.items():
+            if 'traj.phases.climb->path_constraint->throttle' in name:
+                self.assertEqual(meta['upper'], 0.9)
+                self.assertEqual(meta['lower'], 0.2)
+
     @require_pyoptsparse(optimizer="IPOPT")
     def test_mission_optimize_altitude_only(self):
         # Test with optimize_altitude flag set to True
