@@ -1,8 +1,7 @@
 import dymos as dm
 
-from aviary.mission.phase_builder_base import (
-    register, PhaseBuilderBase, InitialGuessControl, InitialGuessParameter,
-    InitialGuessPolynomialControl, InitialGuessState, InitialGuessTime)
+from aviary.mission.phase_builder_base import PhaseBuilderBase, register
+from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessTime, InitialGuessControl
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variable_meta_data import _MetaData
@@ -428,11 +427,11 @@ EnergyPhase._add_initial_guess_meta_data(
     desc='initial guess for horizontal distance traveled')
 
 EnergyPhase._add_initial_guess_meta_data(
-    InitialGuessState('altitude'),
+    InitialGuessControl('altitude'),
     desc='initial guess for vertical distances')
 
 EnergyPhase._add_initial_guess_meta_data(
-    InitialGuessState('mach'),
+    InitialGuessControl('mach'),
     desc='initial guess for speed')
 
 EnergyPhase._add_initial_guess_meta_data(
