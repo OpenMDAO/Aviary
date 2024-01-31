@@ -102,7 +102,7 @@ class SGMRotation(SimuPyProblem):
 # TODO : turn these into parameters? inputs? they need to match between
 # ODE and SimuPy wrappers
 load_factor_max = 1.10
-TAS_rate_safety = -np.inf  # 100.
+velocity_rate_safety = -np.inf  # 100.
 fuselage_pitch_max = 15.0
 gear_retraction_alt = 50.0
 flap_retraction_alt = 400.0
@@ -279,7 +279,7 @@ class SGMAscentCombined(SGMAscent):
                 alpha = self.compute_alpha(ode, t, x)
                 load_factor_val = ode.get_val("load_factor")
                 fuselage_pitch_val = ode.get_val("fuselage_pitch", units="deg")
-                TAS_rate_val = ode.get_val("velocity_rate")
+                velocity_rate_val = ode.get_val("velocity_rate")
 
                 if (
                     (load_factor_val > load_factor_max) and not
@@ -296,8 +296,8 @@ class SGMAscentCombined(SGMAscent):
                     ode = fuselage_pitch
                     continue
                 elif (
-                    (TAS_rate_val < TAS_rate_safety) and not
-                    np.isclose(TAS_rate_val, TAS_rate_safety)
+                    (velocity_rate_val < velocity_rate_safety) and not
+                    np.isclose(velocity_rate_val, velocity_rate_safety)
                 ):
                     print('*'*20, 'switching to decel', '*'*20)
                     ode = decel
@@ -306,7 +306,7 @@ class SGMAscentCombined(SGMAscent):
                     if (
                         np.isnan(load_factor_val) or
                         np.isnan(fuselage_pitch_val) or
-                        np.isnan(TAS_rate_val)
+                        np.isnan(velocity_rate_val)
                     ):
                         continue
                     SATISFIED_CONSTRAINTS = True

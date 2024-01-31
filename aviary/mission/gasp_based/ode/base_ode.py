@@ -219,13 +219,21 @@ class BaseODE(om.Group):
             )
 
     def add_flight_conditions(self, nn, input_speed_type=SpeedType.TAS):
+        if input_speed_type is SpeedType.TAS:
+            promotes_inputs = [("TAS", Dynamic.Mission.VELOCITY)]
+            promotes_outputs = ["EAS", Dynamic.Mission.MACH]
+        elif input_speed_type is SpeedType.EAS:
+            promotes_inputs = ["EAS"]
+            promotes_outputs = [("TAS", Dynamic.Mission.VELOCITY), Dynamic.Mission.MACH]
+        elif input_speed_type is SpeedType.MACH:
+            promotes_inputs = [Dynamic.Mission.MACH]
+            promotes_outputs = ["EAS", ("TAS", Dynamic.Mission.VELOCITY)]
+
         self.add_subsystem(
             "flight_conditions",
             FlightConditions(num_nodes=nn, input_speed_type=input_speed_type),
-            promotes_inputs=["rho", Dynamic.Mission.SPEED_OF_SOUND,
-                             ("TAS", Dynamic.Mission.VELOCITY)],
-            promotes_outputs=[Dynamic.Mission.DYNAMIC_PRESSURE,
-                              Dynamic.Mission.MACH, "EAS"],
+            promotes_inputs=["rho", Dynamic.Mission.SPEED_OF_SOUND] + promotes_inputs,
+            promotes_outputs=[Dynamic.Mission.DYNAMIC_PRESSURE] + promotes_outputs,
         )
 
     def add_excess_rate_comps(self, nn):

@@ -2231,15 +2231,6 @@ class AviaryProblem(om.Problem):
             recorder = om.SqliteRecorder(optimization_history_filename)
             self.driver.add_recorder(recorder)
 
-        # # set up the problem
-        # self.final_setup()
-        # self.model.list_inputs(print_arrays=True, units=True)
-        # self.model.list_outputs(print_arrays=True, units=True)
-        # self.run_model()
-        # self.model.list_inputs(print_arrays=True, units=True)
-        # self.model.list_outputs(print_arrays=True, units=True)
-        # exit()
-
         # and run mission, and dynamics
         if run_driver:
             failed = dm.run_problem(self, run_driver=run_driver, simulate=simulate, make_plots=make_plots,

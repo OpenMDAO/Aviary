@@ -48,7 +48,7 @@ class AccelPhase(PhaseBuilderBase):
         alt = user_options.get_val('alt', units='ft')
 
         # States
-        self.add_TAS_state(user_options)
+        self.add_velocity_state(user_options)
 
         self.add_mass_state(user_options)
 
@@ -79,11 +79,11 @@ AccelPhase._add_meta_data('fix_initial', val=False)
 AccelPhase._add_meta_data('EAS_constraint_eq', val=250, units='kn')
 AccelPhase._add_meta_data('duration_bounds', val=(0, 0), units='s')
 AccelPhase._add_meta_data('duration_ref', val=1, units='s')
-AccelPhase._add_meta_data('TAS_lower', val=0, units='kn')
-AccelPhase._add_meta_data('TAS_upper', val=0, units='kn')
-AccelPhase._add_meta_data('TAS_ref', val=1, units='kn')
-AccelPhase._add_meta_data('TAS_ref0', val=0, units='kn')
-AccelPhase._add_meta_data('TAS_defect_ref', val=None, units='kn')
+AccelPhase._add_meta_data('velocity_lower', val=0, units='kn')
+AccelPhase._add_meta_data('velocity_upper', val=0, units='kn')
+AccelPhase._add_meta_data('velocity_ref', val=1, units='kn')
+AccelPhase._add_meta_data('velocity_ref0', val=0, units='kn')
+AccelPhase._add_meta_data('velocity_defect_ref', val=None, units='kn')
 AccelPhase._add_meta_data('mass_lower', val=0, units='lbm')
 AccelPhase._add_meta_data('mass_upper', val=0, units='lbm')
 AccelPhase._add_meta_data('mass_ref', val=1, units='lbm')

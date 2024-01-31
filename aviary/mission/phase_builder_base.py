@@ -419,24 +419,24 @@ class PhaseBuilderBase(ABC):
         meta_data[name] = dict(
             apply_initial_guess=initial_guess.apply_initial_guess, desc=desc)
 
-    def add_TAS_state(self, user_options):
-        TAS_lower = user_options.get_val('TAS_lower', units='kn')
-        TAS_upper = user_options.get_val('TAS_upper', units='kn')
-        TAS_ref = user_options.get_val('TAS_ref', units='kn')
-        TAS_ref0 = user_options.get_val('TAS_ref0', units='kn')
-        TAS_defect_ref = user_options.get_val('TAS_defect_ref', units='kn')
+    def add_velocity_state(self, user_options):
+        velocity_lower = user_options.get_val('velocity_lower', units='kn')
+        velocity_upper = user_options.get_val('velocity_upper', units='kn')
+        velocity_ref = user_options.get_val('velocity_ref', units='kn')
+        velocity_ref0 = user_options.get_val('velocity_ref0', units='kn')
+        velocity_defect_ref = user_options.get_val('velocity_defect_ref', units='kn')
         self.phase.add_state(
             Dynamic.Mission.VELOCITY,
             fix_initial=user_options.get_val('fix_initial'),
             fix_final=False,
-            lower=TAS_lower,
-            upper=TAS_upper,
+            lower=velocity_lower,
+            upper=velocity_upper,
             units="kn",
             rate_source=Dynamic.Mission.VELOCITY_RATE,
             targets=Dynamic.Mission.VELOCITY,
-            ref=TAS_ref,
-            ref0=TAS_ref0,
-            defect_ref=TAS_defect_ref,
+            ref=velocity_ref,
+            ref0=velocity_ref0,
+            defect_ref=velocity_defect_ref,
         )
 
     def add_mass_state(self, user_options):
