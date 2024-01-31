@@ -245,7 +245,7 @@ jobs:
         if: matrix.MAKE_DOCS
         shell: bash -l {0}
         run: |
-          cd $HOME/work/om-Aviary/om-Aviary/aviary/docs
+          cd $HOME/work/Aviary/Aviary/aviary/docs
           find _build/html/reports/ -type f -name '*.log' \
           -exec echo "#################################################################" \; \
           -exec echo {} \; \
@@ -262,7 +262,7 @@ jobs:
           echo "Publishing Docs to github.io"
           echo "============================================================="
           pip install ghp-import
-          cd $HOME/work/om-Aviary/om-Aviary/aviary
+          cd $HOME/work/Aviary/Aviary/aviary
           ghp-import -n -p -f docs/_build/html
 
       - name: Scan for security issues
