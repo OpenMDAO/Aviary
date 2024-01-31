@@ -1,9 +1,8 @@
-from aviary.mission.phase_builder_base import (
-    PhaseBuilderBase, InitialGuessState, InitialGuessTime, InitialGuessControl)
+from aviary.mission.phase_builder_base import PhaseBuilderBase
+from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessTime, InitialGuessControl
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
 from aviary.mission.gasp_based.ode.climb_ode import ClimbODE
-from aviary.variable_info.variable_meta_data import _MetaData
 
 
 class ClimbPhase(PhaseBuilderBase):
@@ -25,36 +24,8 @@ class ClimbPhase(PhaseBuilderBase):
     default_name = 'climb_phase'
     default_ode_class = ClimbODE
 
-    __slots__ = ('external_subsystems', 'meta_data')
-
-    # region : derived type customization points
     _meta_data_ = {}
-
     _initial_guesses_meta_data_ = {}
-
-    default_meta_data = _MetaData
-
-    def __init__(
-        self, name=None, subsystem_options=None, user_options=None, initial_guesses=None,
-        ode_class=None, transcription=None, core_subsystems=None,
-        external_subsystems=None, meta_data=None
-    ):
-        super().__init__(
-            name=name, subsystem_options=subsystem_options, user_options=user_options,
-            initial_guesses=initial_guesses, ode_class=ode_class, transcription=transcription,
-            core_subsystems=core_subsystems,
-        )
-
-        # TODO: support external_subsystems and meta_data in the base class
-        if external_subsystems is None:
-            external_subsystems = []
-
-        self.external_subsystems = external_subsystems
-
-        if meta_data is None:
-            meta_data = self.default_meta_data
-
-        self.meta_data = meta_data
 
     def build_phase(self, aviary_options: AviaryValues = None):
         """
@@ -71,93 +42,33 @@ class ClimbPhase(PhaseBuilderBase):
         -------
         dymos.Phase
         """
-        phase = super().build_phase(aviary_options)
+        phase = self.phase = super().build_phase(aviary_options)
 
         # Custom configurations for the climb phase
         user_options = self.user_options
 
-        fix_initial = user_options.get_val('fix_initial')
         mach_cruise = user_options.get_val('mach_cruise')
         target_mach = user_options.get_val('target_mach')
-        final_alt = user_options.get_val('final_alt', units='ft')
+        final_altitude = user_options.get_val('final_altitude', units='ft')
         required_available_climb_rate = user_options.get_val(
             'required_available_climb_rate', units='ft/min')
-        time_initial_bounds = user_options.get_val('time_initial_bounds', units='s')
-        duration_bounds = user_options.get_val('duration_bounds', units='s')
-        duration_ref = user_options.get_val('duration_ref', units='s')
-        alt_lower = user_options.get_val('alt_lower', units='ft')
-        alt_upper = user_options.get_val('alt_upper', units='ft')
-        alt_ref = user_options.get_val('alt_ref', units='ft')
-        alt_ref0 = user_options.get_val('alt_ref0', units='ft')
-        alt_defect_ref = user_options.get_val('alt_defect_ref', units='ft')
-        mass_lower = user_options.get_val('mass_lower', units='lbm')
-        mass_upper = user_options.get_val('mass_upper', units='lbm')
-        mass_ref = user_options.get_val('mass_ref', units='lbm')
-        mass_ref0 = user_options.get_val('mass_ref0', units='lbm')
-        mass_defect_ref = user_options.get_val('mass_defect_ref', units='lbm')
-        distance_lower = user_options.get_val('distance_lower', units='NM')
-        distance_upper = user_options.get_val('distance_upper', units='NM')
-        distance_ref = user_options.get_val('distance_ref', units='NM')
-        distance_ref0 = user_options.get_val('distance_ref0', units='NM')
-        distance_defect_ref = user_options.get_val('distance_defect_ref', units='NM')
 
-        phase.set_time_options(
-            fix_initial=fix_initial,
-            initial_bounds=time_initial_bounds,
-            duration_bounds=duration_bounds,
-            duration_ref=duration_ref,
-            units="s",
-        )
+        self.set_time_options(user_options)
 
         # States
-        phase.add_state(
-            Dynamic.Mission.ALTITUDE,
-            fix_initial=fix_initial,
-            fix_final=False,
-            lower=alt_lower,
-            upper=alt_upper,
-            units="ft",
-            rate_source=Dynamic.Mission.ALTITUDE_RATE,
-            targets=Dynamic.Mission.ALTITUDE,
-            ref=alt_ref,
-            ref0=alt_ref0,
-            defect_ref=alt_defect_ref,
-        )
+        self.add_altitude_state(user_options)
 
-        phase.add_state(
-            Dynamic.Mission.MASS,
-            fix_initial=fix_initial,
-            fix_final=False,
-            lower=mass_lower,
-            upper=mass_upper,
-            units="lbm",
-            rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            targets=Dynamic.Mission.MASS,
-            ref=mass_ref,
-            ref0=mass_ref0,
-            defect_ref=mass_defect_ref,
-        )
+        self.add_mass_state(user_options)
 
-        phase.add_state(
-            Dynamic.Mission.DISTANCE,
-            fix_initial=fix_initial,
-            fix_final=False,
-            lower=distance_lower,
-            upper=distance_upper,
-            units="NM",
-            rate_source="distance_rate",
-            ref=distance_ref,
-            ref0=distance_ref0,
-            defect_ref=distance_defect_ref,
-        )
+        self.add_distance_state(user_options)
 
         # Boundary Constraints
         phase.add_boundary_constraint(
             Dynamic.Mission.ALTITUDE,
             loc="final",
-            equals=final_alt,
+            equals=final_altitude,
             units="ft",
-            ref=final_alt,
+            ref=final_altitude,
         )
 
         if required_available_climb_rate is not None:
@@ -211,9 +122,8 @@ ClimbPhase._add_meta_data('fix_initial', val=False)
 ClimbPhase._add_meta_data('EAS_target', val=0)
 ClimbPhase._add_meta_data('mach_cruise', val=0)
 ClimbPhase._add_meta_data('target_mach', val=False)
-ClimbPhase._add_meta_data('final_alt', val=0)
+ClimbPhase._add_meta_data('final_altitude', val=0)
 ClimbPhase._add_meta_data('required_available_climb_rate', val=None, units='ft/min')
-ClimbPhase._add_meta_data('time_initial_bounds', val=(0, 0), units='s')
 ClimbPhase._add_meta_data('duration_bounds', val=(0, 0), units='s')
 ClimbPhase._add_meta_data('duration_ref', val=1, units='s')
 ClimbPhase._add_meta_data('alt_lower', val=0, units='ft')

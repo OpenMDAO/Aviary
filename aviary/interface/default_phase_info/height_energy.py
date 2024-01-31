@@ -123,7 +123,6 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs):
     # Range
     old_range_cruise, range_units = post_mission_info['target_range']
     range_cruise = aviary_inputs.get_val(Mission.Design.RANGE, units=range_units)
-    print(old_range_cruise, range_cruise)
     if range_cruise != old_range_cruise:
         new_val = post_mission_info['target_range'][0] * range_cruise / old_range_cruise
         post_mission_info['target_range'] = (new_val, range_units)

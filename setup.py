@@ -14,8 +14,8 @@ with open(Path(__file__).parent / "README.md", encoding="utf-8") as f:
 
 pkgname = "aviary"
 extras_require = {
-    "test": ["testflo", "pyxdsm", "pre-commit"],
-    "examples": ["openaerostruct", "ambiance"],
+    "test": ["testflo", "pre-commit"],
+    "examples": ["openaerostruct", "ambiance", "itables"],
 }
 
 all_packages = []

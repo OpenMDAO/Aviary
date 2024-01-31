@@ -72,6 +72,7 @@ class BaseODE(om.Group):
                 name="alpha",
                 val=np.full(nn, 10),  # initial guess
                 units="deg",
+                eq_units="unitless",
                 lhs_name="load_factor",
                 rhs_val=target_load_factor,
                 upper=25.,
@@ -99,6 +100,7 @@ class BaseODE(om.Group):
                 lhs_name="TAS_rate",
                 rhs_name='target_tas_rate',
                 rhs_val=target_tas_rate,
+                eq_units="kn/s",
                 upper=25.,
                 lower=-2.,
             )

@@ -412,13 +412,13 @@ class AviaryProblem(om.Problem):
         # Check for 2DOF mission method
         # NOTE should solved trigger this as well?
         if self.mission_method is TWO_DEGREES_OF_FREEDOM:
-            self._add_gasp_takeoff_systems()
+            self._add_two_dof_takeoff_systems()
 
         # Check for HE mission method
         elif self.mission_method is HEIGHT_ENERGY:
-            self._add_flops_takeoff_systems()
+            self._add_height_energy_takeoff_systems()
 
-    def _add_flops_takeoff_systems(self):
+    def _add_height_energy_takeoff_systems(self):
         # Initialize takeoff options
         takeoff_options = Takeoff(
             airport_altitude=0.,  # ft
@@ -431,7 +431,7 @@ class AviaryProblem(om.Problem):
             'takeoff', takeoff, promotes_inputs=['aircraft:*', 'mission:*'],
             promotes_outputs=['mission:*'])
 
-    def _add_gasp_takeoff_systems(self):
+    def _add_two_dof_takeoff_systems(self):
         # Create options to values
         OptionsToValues = create_opts2vals(
             [Aircraft.CrewPayload.NUM_PASSENGERS,
@@ -604,10 +604,8 @@ class AviaryProblem(om.Problem):
         if 'cruise' not in phase_name:
             phase.add_control(
                 Dynamic.Mission.THROTTLE, targets=Dynamic.Mission.THROTTLE, units='unitless',
-                opt=False, lower=0.0, upper=1.0
+                opt=False,
             )
-
-        phase.timeseries_options['use_prefix'] = True
 
         return phase
 
@@ -727,8 +725,6 @@ class AviaryProblem(om.Problem):
                     initial_bounds=user_options.get_val("initial_bounds", 's'),
                     initial_ref=user_options.get_val("initial_ref", 's'),
                 )
-
-            phase.timeseries_options['use_prefix'] = True
 
             return phase
 
@@ -882,8 +878,6 @@ class AviaryProblem(om.Problem):
                                              fix_initial=False,
                                              rate_targets=['dh_dr'], rate2_targets=['d2h_dr2'],
                                              opt=phase_options['opt'], upper=40.e3, ref=30.e3, lower=-1.)
-
-        phase.timeseries_options['use_prefix'] = True
 
         return phase
 
@@ -1120,11 +1114,14 @@ class AviaryProblem(om.Problem):
         A user can override this with their own postmission systems.
         """
 
+        if self.pre_mission_info['include_takeoff'] and self.mission_method is HEIGHT_ENERGY:
+            self._add_post_mission_takeoff_systems()
+
         if include_landing and self.post_mission_info['include_landing']:
             if self.mission_method is HEIGHT_ENERGY:
-                self._add_flops_landing_systems()
+                self._add_height_energy_landing_systems()
             elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
-                self._add_gasp_landing_systems()
+                self._add_two_dof_landing_systems()
 
         self.model.add_subsystem('post_mission', self.post_mission,
                                  promotes_inputs=['*'],
@@ -1150,7 +1147,7 @@ class AviaryProblem(om.Problem):
             self.post_mission.add_subsystem('fuel_burn', ecomp,
                                             promotes_outputs=['fuel_burned'])
 
-            self.model.connect(f"traj.{phases[0]}.timeseries.states:mass",
+            self.model.connect(f"traj.{phases[0]}.timeseries.mass",
                                "fuel_burn.initial_mass", src_indices=[0])
             self.model.connect(f"traj.{phases[-1]}.states:mass",
                                "fuel_burn.mass_final", src_indices=[-1])
@@ -1188,7 +1185,7 @@ class AviaryProblem(om.Problem):
                             ("range_resid", Mission.Constraints.RANGE_RESIDUAL)],
                     )
 
-                    self.model.connect(f"traj.{phases[-1]}.timeseries.states:distance",
+                    self.model.connect(f"traj.{phases[-1]}.timeseries.distance",
                                        "range_constraint.actual_range", src_indices=[-1])
                     self.model.add_constraint(
                         Mission.Constraints.RANGE_RESIDUAL, equals=0.0, ref=1.e2)
@@ -1415,17 +1412,17 @@ class AviaryProblem(om.Problem):
 
                 self.model.connect("traj.ascent.timeseries.time", "h_fit.time_cp")
                 self.model.connect(
-                    "traj.ascent.timeseries.states:altitude", "h_fit.h_cp")
+                    "traj.ascent.timeseries.altitude", "h_fit.h_cp")
 
                 self.model.connect(
-                    "traj.desc2.timeseries.states:mass",
+                    "traj.desc2.timeseries.mass",
                     "landing.mass",
                     src_indices=[-1],
                     flat_src_indices=True,
                 )
 
                 connect_map = {
-                    "traj.desc2.timeseries.states:distance": Mission.Summary.RANGE,
+                    "traj.desc2.timeseries.distance": Mission.Summary.RANGE,
                     "traj.desc2.states:mass": Mission.Landing.TOUCHDOWN_MASS,
                 }
             else:
@@ -1443,7 +1440,7 @@ class AviaryProblem(om.Problem):
             self.model.promotes("landing", inputs=param_list)
             if self.analysis_scheme is AnalysisScheme.SHOOTING:
                 self.model.promotes("traj", inputs=param_list)
-                self.model.list_inputs()
+                # self.model.list_inputs()
                 # self.model.promotes("traj", inputs=['ascent.ODE_group.eoms.'+Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE])
 
             self.model.connect("taxi.mass", "vrot.mass")
@@ -1458,8 +1455,6 @@ class AviaryProblem(om.Problem):
 
             for source, target in connect_map.items():
                 connect_with_common_params(self, source, target)
-
-            self.model.set_input_defaults(Mission.Takeoff.ASCENT_DURATION, val=30.0)
 
     def add_driver(self, optimizer=None, use_coloring=None, max_iter=50, debug_print=False):
         """
@@ -1690,7 +1685,6 @@ class AviaryProblem(om.Problem):
             elif objective_type == "fuel":
                 self.model.add_objective(Mission.Objectives.FUEL, ref=ref)
 
-        # If 'mission_method' is 'FLOPS', add a 'fuel_burned' objective
         elif self.mission_method is HEIGHT_ENERGY:
             ref = ref if ref is not None else default_ref_values.get("fuel_burned", 1)
             self.model.add_objective("fuel_burned", ref=ref)
@@ -2309,7 +2303,7 @@ class AviaryProblem(om.Problem):
 
         return all_subsystems
 
-    def _add_flops_landing_systems(self):
+    def _add_height_energy_landing_systems(self):
         landing_options = Landing(
             ref_wing_area=self.aviary_inputs.get_val(
                 Aircraft.Wing.AREA, units='ft**2'),
@@ -2317,55 +2311,69 @@ class AviaryProblem(om.Problem):
                 Mission.Landing.LIFT_COEFFICIENT_MAX)  # no units
         )
 
-        landing = landing_options.build_phase(
-            False,
-        )
+        landing = landing_options.build_phase(False)
         self.model.add_subsystem(
             'landing', landing, promotes_inputs=['aircraft:*', 'mission:*'],
             promotes_outputs=['mission:*'])
 
-        connect_takeoff_to_climb = not self.phase_info['climb']['user_options'].get(
+        last_flight_phase_name = list(self.phase_info.keys())[-1]
+        if self.phase_info[last_flight_phase_name]['user_options'].get('use_polynomial_control', True):
+            control_type_string = 'polynomial_control_values'
+        else:
+            control_type_string = 'control_values'
+
+        self.model.connect(f'traj.{last_flight_phase_name}.states:mass',
+                           Mission.Landing.TOUCHDOWN_MASS, src_indices=[-1])
+        self.model.connect(f'traj.{last_flight_phase_name}.{control_type_string}:altitude', Mission.Landing.INITIAL_ALTITUDE,
+                           src_indices=[0])
+
+    def _add_post_mission_takeoff_systems(self):
+        first_flight_phase_name = list(self.phase_info.keys())[0]
+        connect_takeoff_to_climb = not self.phase_info[first_flight_phase_name]['user_options'].get(
             'add_initial_mass_constraint', True)
 
         if connect_takeoff_to_climb:
             self.model.connect(Mission.Takeoff.FINAL_MASS,
-                               'traj.climb.initial_states:mass')
+                               f'traj.{first_flight_phase_name}.initial_states:mass')
             self.model.connect(Mission.Takeoff.GROUND_DISTANCE,
-                               'traj.climb.initial_states:distance')
+                               f'traj.{first_flight_phase_name}.initial_states:distance')
 
-            # Create an ExecComp to compute the difference in mach
-            mach_diff_comp = om.ExecComp(
-                'mach_resid_for_connecting_takeoff = final_mach - initial_mach')
-            self.model.add_subsystem('mach_diff_comp', mach_diff_comp)
+            if self.phase_info[first_flight_phase_name]['user_options'].get('use_polynomial_control', True):
+                control_type_string = 'polynomial_control_values'
+            else:
+                control_type_string = 'control_values'
 
-            # Connect the inputs to the mach difference component
-            self.model.connect(Mission.Takeoff.FINAL_MACH, 'mach_diff_comp.final_mach')
-            self.model.connect('traj.climb.control_values:mach',
-                               'mach_diff_comp.initial_mach', src_indices=[0])
+            if self.phase_info[first_flight_phase_name]['user_options'].get('optimize_mach', False):
+                # Create an ExecComp to compute the difference in mach
+                mach_diff_comp = om.ExecComp(
+                    'mach_resid_for_connecting_takeoff = final_mach - initial_mach')
+                self.model.add_subsystem('mach_diff_comp', mach_diff_comp)
 
-            # Add constraint for mach difference
-            self.model.add_constraint(
-                'mach_diff_comp.mach_resid_for_connecting_takeoff', equals=0.0)
+                # Connect the inputs to the mach difference component
+                self.model.connect(Mission.Takeoff.FINAL_MACH,
+                                   'mach_diff_comp.final_mach')
+                self.model.connect(f'traj.{first_flight_phase_name}.{control_type_string}:mach',
+                                   'mach_diff_comp.initial_mach', src_indices=[0])
 
-            # Similar steps for altitude difference
-            alt_diff_comp = om.ExecComp(
-                'altitude_resid_for_connecting_takeoff = final_altitude - initial_altitude', units='ft')
-            self.model.add_subsystem('alt_diff_comp', alt_diff_comp)
+                # Add constraint for mach difference
+                self.model.add_constraint(
+                    'mach_diff_comp.mach_resid_for_connecting_takeoff', equals=0.0)
 
-            self.model.connect(Mission.Takeoff.FINAL_ALTITUDE,
-                               'alt_diff_comp.final_altitude')
-            self.model.connect('traj.climb.control_values:altitude',
-                               'alt_diff_comp.initial_altitude', src_indices=[0])
+            if self.phase_info[first_flight_phase_name]['user_options'].get('optimize_altitude', False):
+                # Similar steps for altitude difference
+                alt_diff_comp = om.ExecComp(
+                    'altitude_resid_for_connecting_takeoff = final_altitude - initial_altitude', units='ft')
+                self.model.add_subsystem('alt_diff_comp', alt_diff_comp)
 
-            self.model.add_constraint(
-                'alt_diff_comp.altitude_resid_for_connecting_takeoff', equals=0.0)
+                self.model.connect(Mission.Takeoff.FINAL_ALTITUDE,
+                                   'alt_diff_comp.final_altitude')
+                self.model.connect(f'traj.{first_flight_phase_name}.{control_type_string}:altitude',
+                                   'alt_diff_comp.initial_altitude', src_indices=[0])
 
-        self.model.connect('traj.descent.states:mass',
-                           Mission.Landing.TOUCHDOWN_MASS, src_indices=[-1])
-        self.model.connect('traj.descent.control_values:altitude', Mission.Landing.INITIAL_ALTITUDE,
-                           src_indices=[0])
+                self.model.add_constraint(
+                    'alt_diff_comp.altitude_resid_for_connecting_takeoff', equals=0.0)
 
-    def _add_gasp_landing_systems(self):
+    def _add_two_dof_landing_systems(self):
         self.model.add_subsystem(
             "landing",
             LandingSegment(

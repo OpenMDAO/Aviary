@@ -49,7 +49,7 @@ We will now discuss the meaning of the keys within the `phase_info` objects.
 - If a key ends with `_constraint_eq`, it is an equality constraint.
 
 - Keys related to altitude:
-  - In `FLOPS` missions, it is `final_altitude`. In GASP missions, it is `final_alt`.
+  - We use `final_altitude` to indicate the final altitude of the phase.
   - Meanwhile, `alt` is a key in acceleration phase parameter for altitude in `GASP` missions and `altitude` is a key in all other phases of all missions.
 
 - Some keys are a boolean flag of True or False:
@@ -89,7 +89,7 @@ We will now discuss the meaning of the keys within the `phase_info` objects.
   - `fix_duration`: default to `False`.
 
 ```{note}
-Not all the keys apply to all phases. The users should select the right keys for each phase of interest. The required keys for each phase are defined in [check_phase_info](https://github.com/OpenMDAO/om-Aviary/blob/main/aviary/interface/utils.py) function. Currently, this function does the check only for `FLOPS` and `GASP` missions.
+Not all the keys apply to all phases. The users should select the right keys for each phase of interest. The required keys for each phase are defined in [check_phase_info](https://github.com/OpenMDAO/Aviary/blob/main/aviary/interface/utils.py) function. Currently, this function does the check only for `FLOPS` and `GASP` missions.
 ```
 
 Users can add their own keys as needed.

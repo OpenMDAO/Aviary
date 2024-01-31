@@ -46,9 +46,8 @@ import dymos as dm
 import openmdao.api as om
 
 from aviary.mission.flops_based.ode.takeoff_ode import TakeoffODE
-from aviary.mission.phase_builder_base import (
-    InitialGuessControl, InitialGuessParameter, InitialGuessPolynomialControl,
-    InitialGuessState, InitialGuessTime, PhaseBuilderBase)
+from aviary.mission.phase_builder_base import PhaseBuilderBase
+from aviary.mission.initial_guess_builders import InitialGuessControl, InitialGuessParameter, InitialGuessPolynomialControl, InitialGuessState, InitialGuessTime
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_trajectory_params
 from aviary.variable_info.variables import Dynamic, Mission
@@ -1096,12 +1095,12 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
             output_name=Dynamic.Mission.THRUST_TOTAL, units='lbf'
         )
 
-        final_alt, units = user_options.get_item('mic_altitude')
+        final_altitude, units = user_options.get_item('mic_altitude')
 
         airport_altitude = aviary_options.get_val(
             Mission.Takeoff.AIRPORT_ALTITUDE, units)
 
-        h = final_alt + airport_altitude
+        h = final_altitude + airport_altitude
 
         phase.add_boundary_constraint(
             Dynamic.Mission.ALTITUDE, loc='final', equals=h, ref=h, units=units, linear=True)
