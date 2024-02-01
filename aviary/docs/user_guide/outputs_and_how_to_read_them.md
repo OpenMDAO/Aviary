@@ -22,6 +22,7 @@ The dashboard assumes these locations for the various reports that are embedded 
 | Optimization | Desvars, cons, opt plot                       | Derived from Case Recorder file specified by `driver_recorder` command option  |
 | Results      | Trajectory Results Report                     | ./reports/*name_of_run_script*/traj_results_report.html                        |
 | Results      | Subsystem Results                              | ./reports/subsystems/*name_of_subsystem.md (or .html)* |
+| Results      | Mission Results                              | ./reports/subsystems/mission_summary.md |
 
 As an example of the workflow for the dashboard, assume that the user has run an Aviary script, `test_full_mission_solved_level3`, which records both the `Problem` final case and also all the cases of the optimization done by the `Driver`. (To record both the Problem final case and also the Driver optimization iterations, the user must make use of the `optimization_history_filename` option in the call to `run_aviary_problem`.)
 
