@@ -186,7 +186,7 @@ class SimuPyProblem(SimulationMixin):
         # TODO: add defensive checks to make sure dimensions match in both setup and
         # calls
 
-        if DEBUG or True:
+        if DEBUG:
             om.n2(prob, outfile="n2_simupy_problem.html", show_browser=False)
             with open('input_list_simupy.txt', 'w') as outfile:
                 prob.model.list_inputs(out_stream=outfile,)
