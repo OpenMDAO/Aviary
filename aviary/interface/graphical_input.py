@@ -559,6 +559,33 @@ class IntegratedPlottingApp(tk.Tk):
         ax.figure.canvas.draw()
 
 
+def _setup_flight_profile_parser(parser):
+    """
+    Set up the command line options for the Flight Profile plotting tool.
+
+    Parameters
+    ----------
+    parser : argparse.ArgumentParser
+        The parser instance.
+    """
+    pass
+
+
+def _exec_flight_profile(options, user_args):
+    """
+    Run the Flight Profile plotting tool.
+
+    Parameters
+    ----------
+    options : argparse.Namespace
+        Command line options.
+    user_args : list of str
+        Args to be passed to the user script.
+    """
+    app = IntegratedPlottingApp()
+    app.mainloop()
+
+
 if __name__ == "__main__":
     app = IntegratedPlottingApp()
     app.mainloop()
