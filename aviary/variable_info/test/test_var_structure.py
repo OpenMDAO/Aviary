@@ -24,7 +24,7 @@ class MetaDataTest(unittest.TestCase):
 
         # TODO currently excluding Dynamic variables that do not have proper full
         #      names mirroring the hierarchy
-        metadata_var_names = [catey for catey in _MetaData if ':' in catey]
+        metadata_var_names = [key for key in _MetaData if ':' in key]
 
         assert_metadata_alphabetization(metadata_var_names)
 
@@ -72,7 +72,7 @@ class VariableStructureTest(unittest.TestCase):
 
 
 class TestTheTests(unittest.TestCase):
-    def test_duplication_checcat(self):
+    def test_duplication_check(self):
 
         with self.assertRaises(ValueError) as cm:
             duplicated_names = get_names_from_hierarchy(DuplicateHierarchy)
