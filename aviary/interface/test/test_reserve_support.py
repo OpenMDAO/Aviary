@@ -1,5 +1,4 @@
 from copy import deepcopy
-import pkg_resources
 import unittest
 
 from openmdao.utils.assert_utils import assert_near_equal
@@ -19,16 +18,13 @@ class StaticGroupTest(unittest.TestCase):
 
         prob = AviaryProblem()
 
-        csv_path = pkg_resources.resource_filename(
-            "aviary", "models/test_aircraft/aircraft_for_bench_GwFm.csv")
+        csv_path = "models/test_aircraft/aircraft_for_bench_GwFm.csv"
 
         prob.load_inputs(csv_path, phase_info)
-        prob.check_inputs()
+        prob.check_and_preprocess_inputs()
 
-        # TODO: This needs to be converted into a reserve and a scaler so that it can
-        # be given proper units.
-        # The units here are lbm.
-        prob.aviary_inputs.set_val(Aircraft.Design.RESERVES, 10000.0, units='unitless')
+        prob.aviary_inputs.set_val(
+            Aircraft.Design.RESERVE_FUEL_ADDITIONAL, 10000.0, units='lbm')
 
         prob.add_pre_mission_systems()
         prob.add_phases()
@@ -40,6 +36,7 @@ class StaticGroupTest(unittest.TestCase):
         prob.add_objective(objective_type="mass", ref=-1e5)
 
         prob.setup()
+        prob.set_initial_guesses()
 
         prob.run_model()
 
@@ -53,11 +50,10 @@ class StaticGroupTest(unittest.TestCase):
 
         prob = AviaryProblem()
 
-        csv_path = pkg_resources.resource_filename(
-            "aviary", "models/small_single_aisle/small_single_aisle_GwGm.csv")
+        csv_path = "models/small_single_aisle/small_single_aisle_GwGm.csv"
 
         prob.load_inputs(csv_path, phase_info)
-        prob.check_inputs()
+        prob.check_and_preprocess_inputs()
 
         prob.aviary_inputs.set_val(Mission.Summary.GROSS_MASS, 140000.0, units='lbm')
 
@@ -75,10 +71,11 @@ class StaticGroupTest(unittest.TestCase):
 
         prob.run_model()
 
-        res_frac = prob.aviary_inputs.get_val(Aircraft.Design.RESERVES, units='unitless')
+        res_frac = prob.aviary_inputs.get_val(
+            Aircraft.Design.RESERVE_FUEL_FRACTION, units='unitless')
         td_mass = prob.model.get_val(Mission.Landing.TOUCHDOWN_MASS, units='lbm')
         reserve = prob.model.get_val(Mission.Design.RESERVE_FUEL, units='lbm')
-        assert_near_equal(reserve, -res_frac * (140000.0 - td_mass), 1e-3)
+        assert_near_equal(reserve, res_frac * (140000.0 - td_mass), 1e-3)
 
 
 if __name__ == '__main__':

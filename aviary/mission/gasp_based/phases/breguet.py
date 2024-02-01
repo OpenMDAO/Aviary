@@ -15,7 +15,7 @@ class RangeComp(om.ExplicitComponent):
 
         self.add_input("cruise_time_initial", val=0.0, units="s",
                        desc="time at which cruise begins")
-        self.add_input("cruise_range_initial", val=0.0, units="NM",
+        self.add_input("cruise_distance_initial", val=0.0, units="NM",
                        desc="range reference at which cruise begins")
 
         self.add_input("TAS_cruise", val=0.8 * np.ones(nn),
@@ -64,7 +64,7 @@ class RangeComp(om.ExplicitComponent):
         self.declare_partials(
             "cruise_time", [Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, "mass", "TAS_cruise"], rows=rs, cols=cs)
 
-        self.declare_partials("cruise_range", "cruise_range_initial", val=1.0)
+        self.declare_partials("cruise_range", "cruise_distance_initial", val=1.0)
         self.declare_partials("cruise_time", "cruise_time_initial", val=1.0)
 
         # Allocated memory so we don't have to repeatedly do it in compute_partials
@@ -78,7 +78,7 @@ class RangeComp(om.ExplicitComponent):
         v_x = inputs["TAS_cruise"]
         m = inputs["mass"]
         FF = -inputs[Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL]
-        r0 = inputs["cruise_range_initial"]
+        r0 = inputs["cruise_distance_initial"]
         t0 = inputs["cruise_time_initial"]
 
         FF_1 = FF[:-1]  # Initial fuel flow across each two-node pair

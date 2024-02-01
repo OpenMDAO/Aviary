@@ -6,9 +6,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
 
 from aviary.mission.gasp_based.ode.climb_ode import ClimbODE
-from aviary.utils.test_utils.IO_test_util import (assert_match_spec,
-                                                  check_prob_outputs,
-                                                  skipIfMissingXDSM)
+from aviary.utils.test_utils.IO_test_util import check_prob_outputs
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.interface.default_phase_info.two_dof import default_mission_subsystems
@@ -48,7 +46,7 @@ class ClimbODETestCase(unittest.TestCase):
             "CD": 0.0307,
             Dynamic.Mission.ALTITUDE_RATE: 3186 / 60,
             # TAS (kts -> ft/s) * cos(gamma)
-            "distance_rate": (254 * 1.68781) * np.cos(np.deg2rad(7.12)),
+            Dynamic.Mission.DISTANCE_RATE: (254 * 1.68781) * np.cos(np.deg2rad(7.12)),
             Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: -13505,  # lbm/h
             "theta": np.deg2rad(12.31),
             Dynamic.Mission.FLIGHT_PATH_ANGLE: np.deg2rad(7.12),
@@ -84,7 +82,7 @@ class ClimbODETestCase(unittest.TestCase):
             "CD": [0.0270, 0.0326],
             Dynamic.Mission.ALTITUDE_RATE: [3054 / 60, 453 / 60],
             # TAS (kts -> ft/s) * cos(gamma)
-            "distance_rate": [
+            Dynamic.Mission.DISTANCE_RATE: [
                 (319 * 1.68781) * np.cos(np.deg2rad(5.42)),
                 (459 * 1.68781) * np.cos(np.deg2rad(0.56)),
             ],
@@ -94,16 +92,6 @@ class ClimbODETestCase(unittest.TestCase):
             Dynamic.Mission.THRUST_TOTAL: [25610, 10790],
         }
         check_prob_outputs(self.prob, testvals, 1e-1)  # TODO tighten
-
-    @skipIfMissingXDSM('statics_specs/climb1.json')
-    def test_climb1_spec(self):
-        """Test climb1 phase spec"""
-        assert_match_spec(self.sys, "statics_specs/climb1.json")
-
-    @skipIfMissingXDSM('statics_specs/climb2.json')
-    def test_climb2_spec(self):
-        """Test climb2 phase spec"""
-        assert_match_spec(self.sys, "statics_specs/climb2.json")
 
 
 if __name__ == "__main__":

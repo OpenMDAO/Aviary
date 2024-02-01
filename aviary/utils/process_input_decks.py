@@ -51,6 +51,7 @@ def create_vehicle(vehicle_deck=''):
     """
     aircraft_values = get_option_defaults(engine=False)
 
+    # TODO temporary, needed until debug_mode retired in favor of new verbosity flag
     # TODO remove all hardcoded GASP values here, find appropriate place for them
     aircraft_values.set_val('debug_mode', val=False)
     aircraft_values.set_val('INGASP.JENGSZ', val=4)
@@ -59,13 +60,13 @@ def create_vehicle(vehicle_deck=''):
     aircraft_values.set_val('mass_defect', val=10000, units='lbm')
     aircraft_values.set_val('problem_type', val=ProblemType.SIZING)
     aircraft_values.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False)
-    aircraft_values.set_val(Aircraft.Design.RESERVES, val=4998)
 
-    vehicle_deck = get_path(vehicle_deck)
-
-    parse_inputs(vehicle_deck, aircraft_values)
-    # update the dependent options with the current values
-    update_options(aircraft_values, initial_guesses)
+    if isinstance(vehicle_deck, AviaryValues):
+        aircraft_values.update(vehicle_deck)
+        initial_guesses = {}
+    else:
+        vehicle_deck = get_path(vehicle_deck)
+        aircraft_values, initial_guesses = parse_inputs(vehicle_deck, aircraft_values)
 
     return aircraft_values, initial_guesses
 
@@ -84,6 +85,18 @@ def parse_inputs(vehicle_deck, aircraft_values: AviaryValues(), meta_data=_MetaD
     -------
     tuple: Updated aircraft values and initial guesses.
     """
+    initial_guesses = {
+        # initial_guesses is a dictionary that contains values used to initialize the trajectory
+        'actual_takeoff_mass': 0,
+        'rotation_mass': .99,
+        'operating_empty_mass': 0,
+        'fuel_burn_per_passenger_mile': 0.1,
+        'cruise_mass_final': 0,
+        'flight_duration': 0,
+        'time_to_climb': 0,
+        'climb_range': 0,
+        'reserves': 0
+    }
     guess_names = list(initial_guesses.keys())
 
     with open(vehicle_deck, newline='') as f_in:
@@ -120,7 +133,7 @@ def parse_inputs(vehicle_deck, aircraft_values: AviaryValues(), meta_data=_MetaD
                 aircraft_values = set_value(var_name, var_values, aircraft_values)
                 continue
 
-            elif var_name in meta_data.keys():
+            if var_name in meta_data.keys():
                 aircraft_values = set_value(
                     var_name, var_values, aircraft_values, units=data_units, is_array=is_array, meta_data=meta_data)
                 continue
@@ -135,8 +148,11 @@ def parse_inputs(vehicle_deck, aircraft_values: AviaryValues(), meta_data=_MetaD
 
     return aircraft_values, initial_guesses
 
+# TODO this should be a preprocessor, and tasks split to be specific to subsystem
+#      e.g. aero preprocessor, mass preprocessor, 2DOF preprocessor, etc.
 
-def update_options(aircraft_values: AviaryValues(), initial_guesses):
+
+def update_GASP_options(aircraft_values: AviaryValues()):
     """
     Updates options based on the current values in aircraft_values. This function also handles special cases 
     and prints debug information if the debug mode is active.
@@ -144,7 +160,6 @@ def update_options(aircraft_values: AviaryValues(), initial_guesses):
     Parameters
     ----------
     aircraft_values (AviaryValues): An instance of AviaryValues containing current aircraft values.
-    initial_guesses (dict): A dictionary of initial guesses for various parameters.
 
     Returns
     -------
@@ -153,8 +168,6 @@ def update_options(aircraft_values: AviaryValues(), initial_guesses):
     # update the options that depend on variables
     update_dependent_options(aircraft_values, dependent_options)
 
-    # TODO this is GASP only, don't always run it! These should go in a GASP-only options
-    #      preprocessor
     ## STRUT AND FOLD ##
     if not aircraft_values.get_val(Aircraft.Wing.HAS_STRUT):
         aircraft_values.set_val(
@@ -174,18 +187,13 @@ def update_options(aircraft_values: AviaryValues(), initial_guesses):
         aircraft_values.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=False)
 
-    initial_guessing(aircraft_values)
-
     if aircraft_values.get_val('debug_mode'):
         print('\nOptions')
         for key in get_keys(aircraft_values):
             val, units = aircraft_values.get_item(key)
-            print(key, val)
-        print('\nInitial Guesses')
-        for key, value in initial_guesses.items():
-            print(key, value)
+            print(key, val, units)
 
-    return aircraft_values, initial_guesses
+    return aircraft_values
 
 
 def update_dependent_options(aircraft_values: AviaryValues(), dependent_options):
@@ -220,7 +228,7 @@ def update_dependent_options(aircraft_values: AviaryValues(), dependent_options)
     return aircraft_values
 
 
-def initial_guessing(aircraft_values: AviaryValues()):
+def initial_guessing(aircraft_values: AviaryValues(), initial_guesses):
     """
     Sets initial guesses for various aircraft parameters based on the current problem type, aircraft values,
     and other factors. It calculates and sets values like takeoff mass, cruise mass, flight duration, etc.
@@ -234,9 +242,25 @@ def initial_guessing(aircraft_values: AviaryValues()):
     tuple: Updated aircraft values and initial guesses.
     """
     problem_type = aircraft_values.get_val('problem_type')
-    reserves = aircraft_values.get_val(
-        Aircraft.Design.RESERVES) if initial_guesses['reserves'] == 0 else initial_guesses['reserves']
     num_pax = aircraft_values.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)
+    reserve_val = aircraft_values.get_val(
+        Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm')
+    reserve_frac = aircraft_values.get_val(
+        Aircraft.Design.RESERVE_FUEL_FRACTION, units='unitless')
+
+    reserves = initial_guesses['reserves']
+    if reserves < 0.0:
+        raise ValueError(
+            'initial_guesses["reserves"] must be greater than or equal to 0.')
+    elif reserves == 0:
+        reserves += reserve_val
+        reserves += (reserve_frac * (num_pax * initial_guesses['fuel_burn_per_passenger_mile'] *
+                                     aircraft_values.get_val(Mission.Design.RANGE, units='NM')))
+    elif reserves < 10:
+        reserves *= (num_pax * initial_guesses['fuel_burn_per_passenger_mile'] *
+                     aircraft_values.get_val(Mission.Design.RANGE, units='NM'))
+
+    initial_guesses['reserves'] = reserves
 
     if Mission.Summary.GROSS_MASS in aircraft_values:
         mission_mass = aircraft_values.get_val(Mission.Summary.GROSS_MASS, units='lbm')
@@ -248,11 +272,6 @@ def initial_guessing(aircraft_values: AviaryValues()):
             Mission.Summary.CRUISE_MASS_FINAL, units='lbm')
     else:
         cruise_mass_final = initial_guesses['cruise_mass_final']
-
-    if reserves < 0:
-        reserves *= -(num_pax *
-                      initial_guesses['fuel_burn_per_passenger_mile'] * aircraft_values.get_val(Mission.Design.RANGE, units='NM'))
-    initial_guesses['reserves'] = reserves
 
     # takeoff mass not given
     if mission_mass <= 0:
@@ -318,7 +337,12 @@ def initial_guessing(aircraft_values: AviaryValues()):
         initial_guesses['climb_range'] = initial_guesses['time_to_climb'] / \
             (60 * 60) * (avg_speed_guess * np.cos(gamma_guess))
 
-    return aircraft_values, initial_guesses
+    if aircraft_values.get_val('debug_mode'):
+        print('\nInitial Guesses')
+        for key, value in initial_guesses.items():
+            print(key, value)
+
+    return initial_guesses
 
 
 dependent_options = [
@@ -360,16 +384,3 @@ dependent_options = [
     [Aircraft.VerticalTail.VOLUME_COEFFICIENT, {
         'val': 0, 'relation': '==', 'target': Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF, 'result': True, 'alternate': False}],
 ]
-
-initial_guesses = {
-    # initial_guesses is a dictionary that contains values used to initialize the trajectory
-    'actual_takeoff_mass': 0,
-    'rotation_mass': .99,
-    'operating_empty_mass': 0,
-    'fuel_burn_per_passenger_mile': 0.1,
-    'cruise_mass_final': 0,
-    'flight_duration': 0,
-    'time_to_climb': 0,
-    'climb_range': 0,
-    'reserves': 0
-}

@@ -6,6 +6,28 @@
 This section is under development.
 ```
 
+`initial_guesses` is a dictionary that contains values used to initialize the trajectory. It contains the following keys along with default values:
+
+- actual_takeoff_mass: 0,
+- rotation_mass: .99,
+- operating_empty_mass: 0,
+- fuel_burn_per_passenger_mile: 0.1,
+- cruise_mass_final: 0,
+- flight_duration: 0,
+- time_to_climb: 0,
+- climb_range: 0,
+- reserves: 0
+
+The initial guess of `reserves` is used to define the reserve fuel. Initially, its value can be anything larger than or equal to 0. There are two Aviary variables to control the reserve fuel in the model file (`.csv`):
+- `Aircraft.Design.RESERVE_FUEL_ADDITIONAL`: the required fuel reserves: directly in lbm,
+- `Aircraft.Design.RESERVE_FUEL_FRACTION`: the required fuel reserves: given as a proportion of mission fuel.
+
+If the value of initial guess of `reserves` (also in the model file if any) is 0, the initial guess of reserve fuel comes from the above two Aviary variables.  Otherwise, it is determined by the parameter `reserves`:
+- if `reserves > 10`, we assume it is the actual fuel reserves.
+- if `0.0 <= reserves <= 10`, we assume it is the fraction of the mission fuel.
+
+The initial guess of `reserves` is always converted to the actual design reserves (instead of reserve factor) and is used to update the initial guesses of `fuel_burn_per_passenger_mile` and `cruise_mass_final`.
+
 ## Phase Info Dictionary
 
 `phase_info` is a nested dictionary that Aviary uses for users to define their mission phases - how they are built, the design variables, constraints, connections, etc.
@@ -27,7 +49,7 @@ We will now discuss the meaning of the keys within the `phase_info` objects.
 - If a key ends with `_constraint_eq`, it is an equality constraint.
 
 - Keys related to altitude:
-  - In `FLOPS` missions, it is `final_altitude`. In GASP missions, it is `final_alt`.
+  - We use `final_altitude` to indicate the final altitude of the phase.
   - Meanwhile, `alt` is a key in acceleration phase parameter for altitude in `GASP` missions and `altitude` is a key in all other phases of all missions.
 
 - Some keys are a boolean flag of True or False:
@@ -67,7 +89,7 @@ We will now discuss the meaning of the keys within the `phase_info` objects.
   - `fix_duration`: default to `False`.
 
 ```{note}
-Not all the keys apply to all phases. The users should select the right keys for each phase of interest. The required keys for each phase are defined in [check_phase_info](https://github.com/OpenMDAO/om-Aviary/blob/main/aviary/interface/utils.py) function. Currently, this function does the check only for `FLOPS` and `GASP` missions.
+Not all the keys apply to all phases. The users should select the right keys for each phase of interest. The required keys for each phase are defined in [check_phase_info](https://github.com/OpenMDAO/Aviary/blob/main/aviary/interface/utils.py) function. Currently, this function does the check only for `FLOPS` and `GASP` missions.
 ```
 
 Users can add their own keys as needed.

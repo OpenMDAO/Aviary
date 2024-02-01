@@ -1060,7 +1060,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.IJEFF,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.ijeff',
+    historical_name={"GASP": 'INGASP.IJEFF',
                      "FLOPS": None,
                      "LEAPS1": None
                      },
@@ -1195,16 +1195,31 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.RESERVES,
+    Aircraft.Design.RESERVE_FUEL_ADDITIONAL,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.FRESF',
                      "FLOPS": None,
                      "LEAPS1": None
                      },
     option=True,
+    units="lbm",
+    desc='required fuel reserves: directly in lbm',
+    default_value=0,
+)
+
+add_meta_data(
+    Aircraft.Design.RESERVE_FUEL_FRACTION,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    option=True,
     units="unitless",
-    desc='required fuel reserves: given either as a proportion of mission fuel'
-    '(<0) or directly in lbf (>10)',
+    desc='required fuel reserves: given as a proportion of mission fuel. This value must be nonnegative.\
+          If it is 0.5, the reserve fuel is half of the mission fuel (one third of the total fuel). Note\
+          it can be greater than 1. If it is 2, there would be twice as much reserve fuel as mission fuel\
+          (the total fuel carried would be 1/3 for the mission and 2/3 for the reserve)',
     default_value=0,
 )
 
@@ -5853,7 +5868,7 @@ add_meta_data(
     Dynamic.Mission.DISTANCE,
     meta_data=_MetaData,
     historical_name={"GASP": None,
-                     "FLOPS": None,
+                     "FLOPS": 'range',
                      "LEAPS1": None
                      },
     units='NM',
@@ -5864,7 +5879,7 @@ add_meta_data(
     Dynamic.Mission.DISTANCE_RATE,
     meta_data=_MetaData,
     historical_name={"GASP": None,
-                     "FLOPS": None,
+                     "FLOPS": 'range_rate',
                      "LEAPS1": None
                      },
     units='NM/s',
@@ -6076,29 +6091,6 @@ add_meta_data(
                      },
     units='lbm/h',
     desc='Current total rate of nitrous oxide (NOx) production by the vehicle'
-)
-
-add_meta_data(
-    Dynamic.Mission.RANGE,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='nm',
-    desc='Current cumulative ground distance the vehicle has flown'
-)
-
-add_meta_data(
-    Dynamic.Mission.RANGE_RATE,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='nm/s',
-    desc='Current rate of change in cumulative ground distance (ground velocity) for '
-         'the vehicle'
 )
 
 add_meta_data(
@@ -7065,6 +7057,18 @@ add_meta_data(
     #    - transport: 35 ft
     # assume transport for now
     default_value=35.0,
+)
+
+add_meta_data(
+    Mission.Takeoff.FINAL_MACH,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None,
+                     },
+    units='unitless',
+    desc='Mach number of aircraft after taking off and '
+    'clearing a 35 foot obstacle'
 )
 
 add_meta_data(

@@ -9,9 +9,7 @@ from packaging import version
 
 from aviary.mission.gasp_based.ode.descent_ode import DescentODE
 from aviary.variable_info.options import get_option_defaults
-from aviary.utils.test_utils.IO_test_util import (assert_match_spec,
-                                                  check_prob_outputs,
-                                                  skipIfMissingXDSM)
+from aviary.utils.test_utils.IO_test_util import check_prob_outputs
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variables import Dynamic
 from aviary.interface.default_phase_info.two_dof import default_mission_subsystems
@@ -48,7 +46,7 @@ class DescentODETestCase(unittest.TestCase):
             "CD": np.array([0.0279, 0.0197]),
             Dynamic.Mission.ALTITUDE_RATE: np.array([-2385, -3076]) / 60,
             # TAS (ft/s) * cos(gamma)
-            "distance_rate": [
+            Dynamic.Mission.DISTANCE_RATE: [
                 (459 * 1.68781) * np.cos(np.deg2rad(-2.94)),
                 (437 * 1.68781) * np.cos(np.deg2rad(-3.98)),
             ],
@@ -85,7 +83,7 @@ class DescentODETestCase(unittest.TestCase):
             "CD": 0.0271,
             Dynamic.Mission.ALTITUDE_RATE: -1158 / 60,
             # TAS (ft/s) * cos(gamma)
-            "distance_rate": (255 * 1.68781) * np.cos(np.deg2rad(-2.56)),
+            Dynamic.Mission.DISTANCE_RATE: (255 * 1.68781) * np.cos(np.deg2rad(-2.56)),
             Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: -1294,
             Dynamic.Mission.FLIGHT_PATH_ANGLE: np.deg2rad(-2.56),
         }
@@ -95,22 +93,6 @@ class DescentODETestCase(unittest.TestCase):
             out_stream=None, method="cs", excludes=["*USatm*", "*params*", "*aero*"]
         )
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
-
-    @skipIfMissingXDSM('statics_specs/descent1.json')
-    def test_descent1_ode_spec(self):
-        """Test descent1 phase spec"""
-        self.sys.options["input_speed_type"] = SpeedType.MACH
-        self.prob.setup()
-        subsystem = self.prob.model
-        assert_match_spec(subsystem, "statics_specs/descent1.json")
-
-    @skipIfMissingXDSM('statics_specs/descent2.json')
-    def test_descent2_ode_spec(self):
-        """Test descent2 phase spec"""
-        self.sys.options["input_speed_type"] = SpeedType.EAS
-        self.prob.setup()
-        subsystem = self.prob.model
-        assert_match_spec(subsystem, "statics_specs/descent2.json")
 
 
 if __name__ == "__main__":

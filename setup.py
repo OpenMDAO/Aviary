@@ -10,8 +10,8 @@ __version__ = re.findall(
 
 pkgname = "aviary"
 extras_require = {
-    "test": ["testflo", "pyxdsm", "pre-commit"],
-    "examples": ["openaerostruct", "ambiance", "boring_battery @ git+https://github.com/jcchin/boring.git"],
+    "test": ["testflo", "pre-commit"],
+    "examples": ["openaerostruct", "ambiance", "itables"],
 }
 
 all_packages = []
@@ -59,12 +59,14 @@ setup(
             "visualization/assets/*",
             "visualization/assets/aviary_vars/*"
         ],
-        'aviary.docs': ['*.py',
-                        'tests/*.py',
-                        '*/*.md',
-                        '*/*.ipynb',
-                        '*/*/*.md',
-                        '*/*/*.ipynb',],
+        f"{pkgname}.docs": [
+            "*.py",
+            "tests/*.py",
+            "*/*.md",
+            "*/*.ipynb",
+            "*/*/*.md",
+            "*/*/*.ipynb",
+        ],
         f"{pkgname}.subsystems.aero.test.data": ["*.csv"],
         f"{pkgname}.subsystems.prop.test": ["*.csv"],
     },

@@ -1,104 +1,121 @@
-import dymos as dm
-
-from aviary.mission.gasp_based.ode.accel_ode import AccelODE
+from aviary.mission.phase_builder_base import PhaseBuilderBase
+from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessTime, InitialGuessControl
+from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
+from aviary.mission.gasp_based.ode.accel_ode import AccelODE
 
 
-def get_accel(
-    ode_args=None,
-    transcription=None,
-    fix_initial=False,
-    alt=500,
-    EAS_constraint_eq=250,
-    time_initial_bounds=(0, 0),
-    duration_bounds=(0, 0),
-    duration_ref=1,
-    TAS_lower=0,
-    TAS_upper=0,
-    TAS_ref=1,
-    TAS_ref0=0,
-    TAS_defect_ref=None,
-    mass_lower=0,
-    mass_upper=0,
-    mass_ref=1,
-    mass_ref0=0,
-    mass_defect_ref=None,
-    distance_lower=0,
-    distance_upper=0,
-    distance_ref=1,
-    distance_ref0=0,
-    distance_defect_ref=None,
-):
-    accel = dm.Phase(
-        ode_class=AccelODE,
-        transcription=transcription,
-        ode_init_kwargs=ode_args,
-    )
+class AccelPhase(PhaseBuilderBase):
+    """
+    A phase builder for an acceleration phase in a mission simulation.
 
-    accel.set_time_options(
-        fix_initial=fix_initial,
-        initial_bounds=time_initial_bounds,
-        duration_bounds=duration_bounds,
-        units="s",
-        duration_ref=duration_ref,
-    )
+    This class extends the PhaseBuilderBase class, providing specific implementations for
+    the acceleration phase of a flight mission.
 
-    accel.add_state(
-        "TAS",
-        fix_initial=fix_initial,
-        fix_final=False,
-        lower=TAS_lower,
-        upper=TAS_upper,
-        units="kn",
-        rate_source="TAS_rate",
-        targets="TAS",
-        ref=TAS_ref,
-        ref0=TAS_ref0,
-        defect_ref=TAS_defect_ref,
-    )
+    Attributes
+    ----------
+    Inherits all attributes from PhaseBuilderBase.
 
-    accel.add_state(
-        Dynamic.Mission.MASS,
-        fix_initial=fix_initial,
-        fix_final=False,
-        lower=mass_lower,
-        upper=mass_upper,
-        units="lbm",
-        rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-        targets=Dynamic.Mission.MASS,
-        ref=mass_ref,
-        ref0=mass_ref0,
-        defect_ref=mass_defect_ref,
-    )
+    Methods
+    -------
+    Inherits all methods from PhaseBuilderBase.
+    Additional method overrides and new methods specific to the acceleration phase are included.
+    """
+    default_name = 'accel_phase'
+    default_ode_class = AccelODE
 
-    accel.add_state(
-        Dynamic.Mission.DISTANCE,
-        fix_initial=fix_initial,
-        fix_final=False,
-        lower=distance_lower,
-        upper=distance_upper,
-        units="NM",
-        rate_source="distance_rate",
-        ref=distance_ref,
-        ref0=distance_ref0,
-        defect_ref=distance_defect_ref,
-    )
+    _meta_data_ = {}
+    _initial_guesses_meta_data_ = {}
 
-    accel.add_boundary_constraint(
-        "EAS", loc="final", equals=EAS_constraint_eq, units="kn", ref=EAS_constraint_eq
-    )
+    def build_phase(self, aviary_options: AviaryValues = None):
+        """
+        Return a new acceleration phase for analysis using these constraints.
 
-    accel.add_parameter(Dynamic.Mission.ALTITUDE, opt=False, units="ft", val=alt)
+        Parameters
+        ----------
+        aviary_options : AviaryValues
+            Collection of Aircraft/Mission specific options
 
-    accel.add_timeseries_output("EAS", output_name="EAS", units="kn")
-    accel.add_timeseries_output(
-        Dynamic.Mission.MACH,
-        output_name=Dynamic.Mission.MACH,
-        units="unitless")
-    accel.add_timeseries_output("alpha", output_name="alpha", units="deg")
-    accel.add_timeseries_output("aero.CL", output_name="CL", units="unitless")
-    accel.add_timeseries_output(Dynamic.Mission.THRUST_TOTAL,
-                                output_name=Dynamic.Mission.THRUST_TOTAL, units="lbf")
-    accel.add_timeseries_output("aero.CD", output_name="CD", units="unitless")
+        Returns
+        -------
+        dymos.Phase
+        """
+        phase = self.phase = super().build_phase(aviary_options)
+        user_options = self.user_options
 
-    return accel
+        # Extracting and setting options
+        EAS_constraint_eq = user_options.get_val('EAS_constraint_eq', units='kn')
+        alt = user_options.get_val('alt', units='ft')
+
+        self.set_time_options(user_options)
+
+        # States
+        self.add_TAS_state(user_options)
+
+        self.add_mass_state(user_options)
+
+        self.add_distance_state(user_options)
+
+        # Boundary Constraints
+        phase.add_boundary_constraint(
+            "EAS", loc="final", equals=EAS_constraint_eq, units="kn", ref=EAS_constraint_eq
+        )
+
+        phase.add_parameter(Dynamic.Mission.ALTITUDE, opt=False, units="ft", val=alt)
+
+        # Timeseries Outputs
+        phase.add_timeseries_output("EAS", output_name="EAS", units="kn")
+        phase.add_timeseries_output(
+            Dynamic.Mission.MACH, output_name=Dynamic.Mission.MACH, units="unitless")
+        phase.add_timeseries_output("alpha", output_name="alpha", units="deg")
+        phase.add_timeseries_output("aero.CL", output_name="CL", units="unitless")
+        phase.add_timeseries_output(
+            Dynamic.Mission.THRUST_TOTAL, output_name=Dynamic.Mission.THRUST_TOTAL, units="lbf")
+        phase.add_timeseries_output("aero.CD", output_name="CD", units="unitless")
+
+        return phase
+
+
+# Adding metadata for the AccelPhase
+AccelPhase._add_meta_data('fix_initial', val=False)
+AccelPhase._add_meta_data('EAS_constraint_eq', val=250, units='kn')
+AccelPhase._add_meta_data('duration_bounds', val=(0, 0), units='s')
+AccelPhase._add_meta_data('duration_ref', val=1, units='s')
+AccelPhase._add_meta_data('TAS_lower', val=0, units='kn')
+AccelPhase._add_meta_data('TAS_upper', val=0, units='kn')
+AccelPhase._add_meta_data('TAS_ref', val=1, units='kn')
+AccelPhase._add_meta_data('TAS_ref0', val=0, units='kn')
+AccelPhase._add_meta_data('TAS_defect_ref', val=None, units='kn')
+AccelPhase._add_meta_data('mass_lower', val=0, units='lbm')
+AccelPhase._add_meta_data('mass_upper', val=0, units='lbm')
+AccelPhase._add_meta_data('mass_ref', val=1, units='lbm')
+AccelPhase._add_meta_data('mass_ref0', val=0, units='lbm')
+AccelPhase._add_meta_data('mass_defect_ref', val=None, units='lbm')
+AccelPhase._add_meta_data('distance_lower', val=0, units='NM')
+AccelPhase._add_meta_data('distance_upper', val=0, units='NM')
+AccelPhase._add_meta_data('distance_ref', val=1, units='NM')
+AccelPhase._add_meta_data('distance_ref0', val=0, units='NM')
+AccelPhase._add_meta_data('distance_defect_ref', val=None, units='NM')
+AccelPhase._add_meta_data('alt', val=500, units='ft')
+AccelPhase._add_meta_data('num_segments', val=None, units='unitless')
+AccelPhase._add_meta_data('order', val=None, units='unitless')
+
+AccelPhase._add_initial_guess_meta_data(
+    InitialGuessTime(),
+    desc='initial guess for initial time and duration specified as a tuple')
+
+AccelPhase._add_initial_guess_meta_data(
+    InitialGuessState('TAS'),
+    desc='initial guess for true airspeed')
+
+AccelPhase._add_initial_guess_meta_data(
+    InitialGuessState('mass'),
+    desc='initial guess for mass')
+
+AccelPhase._add_initial_guess_meta_data(
+    InitialGuessState('distance'),
+    desc='initial guess for horizontal distance traveled')
+
+AccelPhase._add_initial_guess_meta_data(
+    InitialGuessControl('throttle'),
+    desc='initial guess for throttle')

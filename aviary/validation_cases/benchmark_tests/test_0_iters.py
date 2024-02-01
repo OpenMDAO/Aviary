@@ -7,7 +7,7 @@ from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.interface.default_phase_info.two_dof import phase_info as two_dof_phase_info
 from aviary.interface.default_phase_info.height_energy import phase_info as height_energy_phase_info
 from aviary.interface.default_phase_info.solved import phase_info as solved_phase_info
-from aviary.variable_info.enums import EquationsOfMotion
+from aviary.models.N3CC.N3CC_data import inputs
 
 
 class BaseProblemPhaseTestCase(unittest.TestCase):
@@ -18,7 +18,7 @@ class BaseProblemPhaseTestCase(unittest.TestCase):
 
         prob.load_inputs(input_filename, phase_info)
 
-        prob.check_inputs()
+        prob.check_and_preprocess_inputs()
         prob.add_pre_mission_systems()
         prob.add_phases()
         prob.add_post_mission_systems()
@@ -35,7 +35,7 @@ class BaseProblemPhaseTestCase(unittest.TestCase):
 class TwoDOFZeroItersTestCase(BaseProblemPhaseTestCase):
 
     @require_pyoptsparse(optimizer="IPOPT")
-    def test_gasp_zero_iters(self):
+    def test_zero_iters_2DOF(self):
         local_phase_info = deepcopy(two_dof_phase_info)
         self.build_and_run_problem('models/test_aircraft/aircraft_for_bench_GwGm.csv',
                                    local_phase_info)
@@ -45,14 +45,18 @@ class TwoDOFZeroItersTestCase(BaseProblemPhaseTestCase):
 class HEZeroItersTestCase(BaseProblemPhaseTestCase):
 
     @require_pyoptsparse(optimizer="IPOPT")
-    def test_height_energy_zero_iters(self):
+    def test_zero_iters_height_energy(self):
         local_phase_info = deepcopy(height_energy_phase_info)
-        self.build_and_run_problem('models/test_aircraft/aircraft_for_bench_FwFm.csv',
-                                   local_phase_info)
+        local_inputs = deepcopy(inputs)
+        local_phase_info['pre_mission']['include_takeoff'] = True
+        local_phase_info['post_mission']['include_landing'] = True
+        local_phase_info['climb']['user_options']['fix_initial'] = False
+        local_phase_info['climb']['user_options']['input_initial'] = True
+        self.build_and_run_problem(local_inputs, local_phase_info)
 
 
 @use_tempdirs
-class SolvedProblemTestCase(BaseProblemPhaseTestCase):
+class SolvedZeroItersTestCase(BaseProblemPhaseTestCase):
 
     @require_pyoptsparse(optimizer="IPOPT")
     def test_zero_iters_solved(self):
@@ -64,5 +68,5 @@ class SolvedProblemTestCase(BaseProblemPhaseTestCase):
 
 if __name__ == "__main__":
     # unittest.main()
-    test = SolvedProblemTestCase()
-    test.test_zero_iters_solved()
+    test = HEZeroItersTestCase()
+    test.test_zero_iters_height_energy()

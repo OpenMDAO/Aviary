@@ -13,21 +13,19 @@ import openmdao.api as om
 import scipy.constants as _units
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
+from openmdao.utils.testing_utils import require_pyoptsparse
 
 from aviary.mission.flops_based.phases.build_landing import Landing
 from aviary.mission.flops_based.phases.build_takeoff import Takeoff
-from aviary.mission.flops_based.phases.climb_phase import Climb
-from aviary.mission.flops_based.phases.cruise_phase import Cruise
-from aviary.mission.flops_based.phases.descent_phase import Descent
 from aviary.utils.functions import set_aviary_initial_values
 from aviary.utils.test_utils.assert_utils import warn_timeseries_near_equal
-from aviary.utils.functions import get_path
 from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.variable_info.functions import setup_trajectory_params
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables_in import VariablesIn
+from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
 
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.subsystems.premission import CorePreMission
 from aviary.interface.default_phase_info.height_energy import default_premission_subsystems, default_mission_subsystems
 from aviary.utils.preprocessors import preprocess_crewpayload
@@ -95,14 +93,12 @@ def run_trajectory(sim=True):
     alt_f_climb = 35000.0*_units.foot  # m
     mass_i_climb = 131000*_units.lb  # kg
     mass_f_climb = 126000*_units.lb  # kg
-    v_i_climb = 198.44*_units.knot  # m/s
-    v_f_climb = 455.49*_units.knot  # m/s
     # initial mach set to lower value so it can intersect with takeoff end mach
     # mach_i_climb = 0.3
     mach_i_climb = 0.2
     mach_f_climb = 0.79
-    range_i_climb = 0*_units.nautical_mile  # m
-    range_f_climb = 160.3*_units.nautical_mile  # m
+    distance_i_climb = 0*_units.nautical_mile  # m
+    distance_f_climb = 160.3*_units.nautical_mile  # m
     t_i_climb = 2 * _units.minute  # sec
     t_f_climb = 26.20*_units.minute  # sec
     t_duration_climb = t_f_climb - t_i_climb
@@ -113,12 +109,9 @@ def run_trajectory(sim=True):
     alt_max_cruise = 35000*_units.foot  # m
     mass_i_cruise = 126000*_units.lb  # kg
     mass_f_cruise = 102000*_units.lb  # kg
-    v_i_cruise = 455.49*_units.knot  # m/s
-    v_f_cruise = 455.49*_units.knot  # m/s
-    mach_min_cruise = 0.79
-    mach_max_cruise = 0.79
-    range_i_cruise = 160.3*_units.nautical_mile  # m
-    range_f_cruise = 3243.9*_units.nautical_mile  # m
+    cruise_mach = 0.79
+    distance_i_cruise = 160.3*_units.nautical_mile  # m
+    distance_f_cruise = 3243.9*_units.nautical_mile  # m
     t_i_cruise = 26.20*_units.minute  # sec
     t_f_cruise = 432.38*_units.minute  # sec
     t_duration_cruise = t_f_cruise - t_i_cruise
@@ -127,14 +120,12 @@ def run_trajectory(sim=True):
     # final altitude set to 35 to ensure landing is feasible point
     # alt_f_descent = 0*_units.foot
     alt_f_descent = 35*_units.foot
-    v_i_descent = 455.49*_units.knot
-    v_f_descent = 198.44*_units.knot
     mach_i_descent = 0.79
     mach_f_descent = 0.3
     mass_i_descent = 102000*_units.pound
     mass_f_descent = 101000*_units.pound
-    range_i_descent = 3243.9*_units.nautical_mile
-    range_f_descent = 3378.7*_units.nautical_mile
+    distance_i_descent = 3243.9*_units.nautical_mile
+    distance_f_descent = 3378.7*_units.nautical_mile
     t_i_descent = 432.38*_units.minute
     t_f_descent = 461.62*_units.minute
     t_duration_descent = t_f_descent - t_i_descent
@@ -174,7 +165,7 @@ def run_trajectory(sim=True):
         num_segments=num_segments_descent, order=3, compressed=True,
         segment_ends=descent_seg_ends)
 
-    climb_options = Climb(
+    climb_options = EnergyPhase(
         'test_climb',
         user_options=AviaryValues({
             'initial_altitude': (alt_i_climb, 'm'),
@@ -182,31 +173,30 @@ def run_trajectory(sim=True):
             'initial_mach': (mach_i_climb, 'unitless'),
             'final_mach': (mach_f_climb, 'unitless'),
             'fix_initial': (False, 'unitless'),
-            'fix_range': (False, 'unitless'),
             'input_initial': (True, 'unitless'),
+            'use_polynomial_control': (False, 'unitless'),
         }),
         core_subsystems=default_mission_subsystems,
         subsystem_options={'core_aerodynamics': {'method': 'computed'}},
         transcription=transcription_climb,
     )
 
-    cruise_options = Cruise(
+    cruise_options = EnergyPhase(
         'test_cruise',
         user_options=AviaryValues({
-            'min_altitude': (alt_min_cruise, 'm'),
-            'max_altitude': (alt_max_cruise, 'm'),
-            'min_mach': (mach_min_cruise, 'unitless'),
-            'max_mach': (mach_max_cruise, 'unitless'),
+            'initial_altitude': (alt_min_cruise, 'm'),
+            'final_altitude': (alt_max_cruise, 'm'),
+            'initial_mach': (cruise_mach, 'unitless'),
+            'final_mach': (cruise_mach, 'unitless'),
             'required_available_climb_rate': (300, 'ft/min'),
             'fix_initial': (False, 'unitless'),
-            'fix_final': (False, 'unitless'),
         }),
         core_subsystems=default_mission_subsystems,
         subsystem_options={'core_aerodynamics': {'method': 'computed'}},
         transcription=transcription_cruise,
     )
 
-    descent_options = Descent(
+    descent_options = EnergyPhase(
         'test_descent',
         user_options=AviaryValues({
             'final_altitude': (alt_f_descent, 'm'),
@@ -214,7 +204,7 @@ def run_trajectory(sim=True):
             'initial_mach': (mach_i_descent, 'unitless'),
             'final_mach': (mach_f_descent, 'unitless'),
             'fix_initial': (False, 'unitless'),
-            'fix_range': (True, 'unitless'),
+            'use_polynomial_control': (False, 'unitless'),
         }),
         core_subsystems=default_mission_subsystems,
         subsystem_options={'core_aerodynamics': {'method': 'computed'}},
@@ -280,78 +270,27 @@ def run_trajectory(sim=True):
 
     traj.add_phase('descent', descent)
 
-    try:
-        climb.timeseries_options['use_prefix'] = True
-        cruise.timeseries_options['use_prefix'] = True
-        descent.timeseries_options['use_prefix'] = True
-    except KeyError:
-        pass
-
     prob.model.add_subsystem(
         'landing', landing, promotes_inputs=['aircraft:*', 'mission:*'],
         promotes_outputs=['mission:*'])
 
-    traj.link_phases(["climb", "cruise"], ["time", "altitude",
-                     "velocity", "mass", "range"], connected=strong_couple)
-    traj.link_phases(["cruise", "descent"], ["time", "altitude",
-                     "velocity", "mass", "range"], connected=strong_couple)
+    traj.link_phases(["climb", "cruise", "descent"], [
+                     "time", Dynamic.Mission.MASS, Dynamic.Mission.DISTANCE], connected=strong_couple)
 
     traj = setup_trajectory_params(prob.model, traj, aviary_inputs)
 
     ##################################
     # Connect in Takeoff and Landing #
     ##################################
-
-    prob.model.add_subsystem(
-        "takeoff_constraints",
-        om.ExecComp(
-            [
-                "takeoff_mass_con=takeoff_mass-climb_start_mass",
-                "takeoff_range_con=takeoff_range-climb_start_range",
-                "takeoff_vel_con=takeoff_vel-climb_start_vel",
-                "takeoff_alt_con=takeoff_alt-climb_start_alt"
-            ],
-            takeoff_mass_con={'units': 'lbm'}, takeoff_mass={'units': 'lbm'},
-            climb_start_mass={'units': 'lbm'},
-            takeoff_range_con={'units': 'ft'}, takeoff_range={'units': 'ft'},
-            climb_start_range={'units': 'ft'},
-            takeoff_vel_con={'units': 'm/s'}, takeoff_vel={'units': 'm/s'},
-            climb_start_vel={'units': 'm/s'},
-            takeoff_alt_con={'units': 'ft'}, takeoff_alt={'units': 'ft'},
-            climb_start_alt={'units': 'ft'}
-        ),
-        promotes_inputs=[
-            ("takeoff_mass", Mission.Takeoff.FINAL_MASS),
-            ("takeoff_range", Mission.Takeoff.GROUND_DISTANCE),
-            ("takeoff_vel", Mission.Takeoff.FINAL_VELOCITY),
-            ("takeoff_alt", Mission.Takeoff.FINAL_ALTITUDE),
-        ],
-        promotes_outputs=["takeoff_mass_con", "takeoff_range_con",
-                          "takeoff_vel_con", "takeoff_alt_con"],
-    )
-
-    prob.model.connect('traj.climb.states:mass',
-                       'takeoff_constraints.climb_start_mass', src_indices=[0])
-    prob.model.connect('traj.climb.states:range',
-                       'takeoff_constraints.climb_start_range', src_indices=[0])
-    prob.model.connect('traj.climb.states:velocity',
-                       'takeoff_constraints.climb_start_vel', src_indices=[0])
-    prob.model.connect('traj.climb.states:altitude',
-                       'takeoff_constraints.climb_start_alt', src_indices=[0])
-
     prob.model.connect(Mission.Takeoff.FINAL_MASS,
                        'traj.climb.initial_states:mass')
     prob.model.connect(Mission.Takeoff.GROUND_DISTANCE,
-                       'traj.climb.initial_states:range')
-    prob.model.connect(Mission.Takeoff.FINAL_VELOCITY,
-                       'traj.climb.initial_states:velocity')
-    prob.model.connect(Mission.Takeoff.FINAL_ALTITUDE,
-                       'traj.climb.initial_states:altitude')
+                       'traj.climb.initial_states:distance')
 
     prob.model.connect('traj.descent.states:mass',
                        Mission.Landing.TOUCHDOWN_MASS, src_indices=[-1])
     # TODO: approach velocity should likely be connected
-    prob.model.connect('traj.descent.states:altitude', Mission.Landing.INITIAL_ALTITUDE,
+    prob.model.connect('traj.descent.control_values:altitude', Mission.Landing.INITIAL_ALTITUDE,
                        src_indices=[-1])
 
     ##########################
@@ -446,60 +385,41 @@ def run_trajectory(sim=True):
     prob.set_val('traj.climb.t_initial', t_i_climb, units='s')
     prob.set_val('traj.climb.t_duration', t_duration_climb, units='s')
 
-    prob.set_val('traj.climb.states:altitude', climb.interp(
-        'altitude', ys=[alt_i_climb, alt_f_climb]), units='m')
-    # prob.set_val('traj.climb.states:velocity', climb.interp('velocity', ys=[170, v_f_climb]), units='m/s')
-    prob.set_val('traj.climb.states:velocity', climb.interp(
-        'velocity', ys=[v_i_climb, v_f_climb]), units='m/s')
+    prob.set_val('traj.climb.controls:altitude', climb.interp(
+        Dynamic.Mission.ALTITUDE, ys=[alt_i_climb, alt_f_climb]), units='m')
+    prob.set_val(
+        'traj.climb.controls:mach', climb.interp(
+            Dynamic.Mission.MACH, ys=[mach_i_climb, mach_f_climb]), units='unitless')
     prob.set_val('traj.climb.states:mass', climb.interp(
-        'mass', ys=[mass_i_climb, mass_f_climb]), units='kg')
-    prob.set_val('traj.climb.states:range', climb.interp(
-        'range', ys=[range_i_climb, range_f_climb]), units='m')  # nmi
-
-    prob.set_val('traj.climb.controls:velocity_rate',
-                 climb.interp('velocity_rate', ys=[0.25, 0.05]),
-                 units='m/s**2')
-    prob.set_val('traj.climb.controls:throttle',
-                 climb.interp('throttle', ys=[0.5, 0.5]),
-                 units=None)
+        Dynamic.Mission.MASS, ys=[mass_i_climb, mass_f_climb]), units='kg')
+    prob.set_val('traj.climb.states:distance', climb.interp(
+        Dynamic.Mission.DISTANCE, ys=[distance_i_climb, distance_f_climb]), units='m')
 
     prob.set_val('traj.cruise.t_initial', t_i_cruise, units='s')
     prob.set_val('traj.cruise.t_duration', t_duration_cruise, units='s')
 
-    prob.set_val('traj.cruise.states:altitude', cruise.interp(
-        'altitude', ys=[alt_i_cruise, alt_f_cruise]), units='m')
-    prob.set_val('traj.cruise.states:velocity', cruise.interp(
-        'velocity', ys=[v_i_cruise, v_f_cruise]), units='m/s')
+    prob.set_val('traj.cruise.polynomial_controls:altitude', cruise.interp(
+        Dynamic.Mission.ALTITUDE, ys=[alt_i_cruise, alt_f_cruise]), units='m')
+    prob.set_val(
+        'traj.cruise.polynomial_controls:mach', cruise.interp(
+            Dynamic.Mission.MACH, ys=[cruise_mach, cruise_mach]), units='unitless')
     prob.set_val('traj.cruise.states:mass', cruise.interp(
-        'mass', ys=[mass_i_cruise, mass_f_cruise]), units='kg')
-    prob.set_val('traj.cruise.states:range', cruise.interp(
-        'range', ys=[range_i_cruise, range_f_cruise]), units='m')  # nmi
-
-    prob.set_val('traj.cruise.controls:velocity_rate',
-                 cruise.interp('velocity_rate', ys=[0.0, 0.0]),
-                 units='m/s**2')
-    prob.set_val('traj.cruise.controls:throttle',
-                 cruise.interp('throttle', ys=[0.5, 0.5]),
-                 units=None)
+        Dynamic.Mission.MASS, ys=[mass_i_cruise, mass_f_cruise]), units='kg')
+    prob.set_val('traj.cruise.states:distance', cruise.interp(
+        Dynamic.Mission.DISTANCE, ys=[distance_i_cruise, distance_f_cruise]), units='m')
 
     prob.set_val('traj.descent.t_initial', t_i_descent, units='s')
     prob.set_val('traj.descent.t_duration', t_duration_descent, units='s')
 
-    prob.set_val('traj.descent.states:altitude', descent.interp(
-        'altitude', ys=[alt_i_descent, alt_f_descent]), units='m')
-    prob.set_val('traj.descent.states:velocity', descent.interp(
-        'velocity', ys=[v_i_descent, v_f_descent]), units='m/s')
+    prob.set_val('traj.descent.controls:altitude', descent.interp(
+        Dynamic.Mission.ALTITUDE, ys=[alt_i_descent, alt_f_descent]), units='m')
+    prob.set_val(
+        'traj.descent.controls:mach', descent.interp(
+            Dynamic.Mission.MACH, ys=[mach_i_descent, mach_f_descent]), units='unitless')
     prob.set_val('traj.descent.states:mass', descent.interp(
-        'mass', ys=[mass_i_descent, mass_f_descent]), units='kg')
-    prob.set_val('traj.descent.states:range', descent.interp(
-        'range', ys=[range_i_descent, range_f_descent]), units='m')
-
-    prob.set_val('traj.descent.controls:velocity_rate',
-                 descent.interp('velocity_rate', ys=[-0.25, 0.05]),
-                 units='m/s**2')
-    prob.set_val('traj.descent.controls:throttle',
-                 descent.interp('throttle', ys=[0.0, 0.0]),
-                 units=None)
+        Dynamic.Mission.MASS, ys=[mass_i_descent, mass_f_descent]), units='kg')
+    prob.set_val('traj.descent.states:distance', descent.interp(
+        Dynamic.Mission.DISTANCE, ys=[distance_i_descent, distance_f_descent]), units='m')
 
     # Turn off solver printing so that the SNOPT output is readable.
     prob.set_solver_print(level=0)
@@ -518,34 +438,36 @@ def run_trajectory(sim=True):
 
 @use_tempdirs
 class ProblemPhaseTestCase(unittest.TestCase):
+
+    @require_pyoptsparse(optimizer="SNOPT")
     def bench_test_sizing_N3CC(self):
 
         prob = run_trajectory(sim=False)
 
         times_climb = prob.get_val('traj.climb.timeseries.time', units='s')
         altitudes_climb = prob.get_val(
-            'traj.climb.timeseries.states:altitude', units='m')
-        masses_climb = prob.get_val('traj.climb.timeseries.states:mass', units='kg')
-        ranges_climb = prob.get_val('traj.climb.timeseries.states:range', units='m')
+            'traj.climb.timeseries.altitude', units='m')
+        masses_climb = prob.get_val('traj.climb.timeseries.mass', units='kg')
+        distances_climb = prob.get_val('traj.climb.timeseries.distance', units='m')
         velocities_climb = prob.get_val(
-            'traj.climb.timeseries.states:velocity', units='m/s')
+            'traj.climb.timeseries.velocity', units='m/s')
         thrusts_climb = prob.get_val('traj.climb.timeseries.thrust_net_total', units='N')
         times_cruise = prob.get_val('traj.cruise.timeseries.time', units='s')
         altitudes_cruise = prob.get_val(
-            'traj.cruise.timeseries.states:altitude', units='m')
-        masses_cruise = prob.get_val('traj.cruise.timeseries.states:mass', units='kg')
-        ranges_cruise = prob.get_val('traj.cruise.timeseries.states:range', units='m')
+            'traj.cruise.timeseries.altitude', units='m')
+        masses_cruise = prob.get_val('traj.cruise.timeseries.mass', units='kg')
+        distances_cruise = prob.get_val('traj.cruise.timeseries.distance', units='m')
         velocities_cruise = prob.get_val(
-            'traj.cruise.timeseries.states:velocity', units='m/s')
+            'traj.cruise.timeseries.velocity', units='m/s')
         thrusts_cruise = prob.get_val(
             'traj.cruise.timeseries.thrust_net_total', units='N')
         times_descent = prob.get_val('traj.descent.timeseries.time', units='s')
         altitudes_descent = prob.get_val(
-            'traj.descent.timeseries.states:altitude', units='m')
-        masses_descent = prob.get_val('traj.descent.timeseries.states:mass', units='kg')
-        ranges_descent = prob.get_val('traj.descent.timeseries.states:range', units='m')
+            'traj.descent.timeseries.altitude', units='m')
+        masses_descent = prob.get_val('traj.descent.timeseries.mass', units='kg')
+        distances_descent = prob.get_val('traj.descent.timeseries.distance', units='m')
         velocities_descent = prob.get_val(
-            'traj.descent.timeseries.states:velocity', units='m/s')
+            'traj.descent.timeseries.velocity', units='m/s')
         thrusts_descent = prob.get_val(
             'traj.descent.timeseries.thrust_net_total', units='N')
 
@@ -572,14 +494,17 @@ class ProblemPhaseTestCase(unittest.TestCase):
                                     [57509.28816794], [57509.28816794], [57468.36184014],
                                     [57411.39726843], [57392.97463799], [57392.97463799],
                                     [57372.80054331], [57344.30023996], [57335.11578186]]
-        expected_ranges_m_climb = [[1459.66454213], [6138.11750563], [15269.84014039],
-                                   [18334.78691191], [18334.78691191], [34224.35398213],
-                                   [57056.15756331], [64259.82264908], [64259.82264908],
-                                   [85983.44219477], [116781.82372802], [126787.42506431],
-                                   [126787.42506431], [149770.216723], [181655.376959],
-                                   [191785.63505195], [191785.63505195], [210054.32022093],
-                                   [236459.08240245], [245218.76016711], [245218.76016711],
-                                   [254896.51199279], [268679.73823007], [273140.04867091]]
+        expected_distances_m_climb = [[1459.66454213], [6138.11750563], [15269.84014039],
+                                      [18334.78691191], [18334.78691191], [34224.35398213],
+                                      [57056.15756331], [64259.82264908], [64259.82264908],
+                                      [85983.44219477], [116781.82372802], [
+                                          126787.42506431],
+                                      [126787.42506431], [149770.216723], [181655.376959],
+                                      [191785.63505195], [191785.63505195], [
+                                          210054.32022093],
+                                      [236459.08240245], [245218.76016711], [
+                                          245218.76016711],
+                                      [254896.51199279], [268679.73823007], [273140.04867091]]
         expected_velocities_ms_climb = [[77.19291754], [132.35228283], [162.28279625],
                                         [166.11250634], [166.11250634], [176.30796789],
                                         [178.55049791], [178.67862048], [178.67862048],
@@ -603,8 +528,8 @@ class ProblemPhaseTestCase(unittest.TestCase):
                                        [10668.], [10668.]]
         expected_masses_kg_cruise = [[57335.11578186], [53895.3524649],
                                      [49306.34176818], [47887.72131688]]
-        expected_ranges_m_cruise = [[273140.04867091], [2300136.11626779],
-                                    [5096976.9738027], [5982167.54261146]]
+        expected_distances_m_cruise = [[273140.04867091], [2300136.11626779],
+                                       [5096976.9738027], [5982167.54261146]]
         expected_velocities_ms_cruise = [[234.25795132], [234.25795132],
                                          [234.25795132], [234.25795132]]
         expected_thrusts_N_cruise = [[28998.46944214], [28027.44677784],
@@ -631,18 +556,18 @@ class ProblemPhaseTestCase(unittest.TestCase):
                                       [47884.40804261], [47872.68009732], [47849.34258173],
                                       [47842.09391697], [47842.09391697], [47833.150133],
                                       [47820.60083267], [47816.69389115]]
-        expected_ranges_m_descent = [[5982167.54261146], [5998182.9986382], [6017437.15474761],
-                                     [6023441.80485498], [6023441.80485498], [
-                                         6050450.80904601],
-                                     [6085202.09693457], [6095472.55993089], [
-                                         6095472.55993089],
-                                     [6122427.64793619], [6158176.53029461], [
-                                         6169433.26612421],
-                                     [6169433.26612421], [6191073.79296936], [
-                                         6220839.65410345],
-                                     [6230195.89769052], [6230195.89769052], [
-                                         6240573.15704622],
-                                     [6253740.15118502], [6257352.4]]
+        expected_distances_m_descent = [[5982167.54261146], [5998182.9986382], [6017437.15474761],
+                                        [6023441.80485498], [6023441.80485498], [
+            6050450.80904601],
+            [6085202.09693457], [6095472.55993089], [
+            6095472.55993089],
+            [6122427.64793619], [6158176.53029461], [
+            6169433.26612421],
+            [6169433.26612421], [6191073.79296936], [
+            6220839.65410345],
+            [6230195.89769052], [6230195.89769052], [
+            6240573.15704622],
+            [6253740.15118502], [6257352.4]]
         expected_velocities_ms_descent = [[234.25795132], [197.64415171], [182.5029101],
                                           [181.15994177], [181.15994177], [172.42254637],
                                           [156.92424445], [152.68023428], [152.68023428],
@@ -660,21 +585,21 @@ class ProblemPhaseTestCase(unittest.TestCase):
         expected_times_s_climb = np.array(expected_times_s_climb)
         expected_altitudes_m_climb = np.array(expected_altitudes_m_climb)
         expected_masses_kg_climb = np.array(expected_masses_kg_climb)
-        expected_ranges_m_climb = np.array(expected_ranges_m_climb)
+        expected_distances_m_climb = np.array(expected_distances_m_climb)
         expected_velocities_ms_climb = np.array(expected_velocities_ms_climb)
         expected_thrusts_N_climb = np.array(expected_thrusts_N_climb)
 
         expected_times_s_cruise = np.array(expected_times_s_cruise)
         expected_altitudes_m_cruise = np.array(expected_altitudes_m_cruise)
         expected_masses_kg_cruise = np.array(expected_masses_kg_cruise)
-        expected_ranges_m_cruise = np.array(expected_ranges_m_cruise)
+        expected_distances_m_cruise = np.array(expected_distances_m_cruise)
         expected_velocities_ms_cruise = np.array(expected_velocities_ms_cruise)
         expected_thrusts_N_cruise = np.array(expected_thrusts_N_cruise)
 
         expected_times_s_descent = np.array(expected_times_s_descent)
         expected_altitudes_m_descent = np.array(expected_altitudes_m_descent)
         expected_masses_kg_descent = np.array(expected_masses_kg_descent)
-        expected_ranges_m_descent = np.array(expected_ranges_m_descent)
+        expected_distances_m_descent = np.array(expected_distances_m_descent)
         expected_velocities_ms_descent = np.array(expected_velocities_ms_descent)
         expected_thrusts_N_descent = np.array(expected_thrusts_N_descent)
 
@@ -688,8 +613,8 @@ class ProblemPhaseTestCase(unittest.TestCase):
                           expected_masses_kg_descent[-1], tolerance=rtol)
 
         # Range at the end of Descent
-        assert_near_equal(ranges_descent[-1],
-                          expected_ranges_m_descent[-1], tolerance=rtol)
+        assert_near_equal(distances_descent[-1],
+                          expected_distances_m_descent[-1], tolerance=rtol)
 
         # Flight time
         assert_near_equal(times_descent[-1],
@@ -715,8 +640,8 @@ class ProblemPhaseTestCase(unittest.TestCase):
             times_climb, masses_climb, expected_times_s_climb,
             expected_masses_kg_climb, abs_tolerance=atol, rel_tolerance=rtol)
         warn_timeseries_near_equal(
-            times_climb, ranges_climb, expected_times_s_climb,
-            expected_ranges_m_climb, abs_tolerance=atol, rel_tolerance=rtol)
+            times_climb, distances_climb, expected_times_s_climb,
+            expected_distances_m_climb, abs_tolerance=atol, rel_tolerance=rtol)
         warn_timeseries_near_equal(
             times_climb, velocities_climb, expected_times_s_climb,
             expected_velocities_ms_climb, abs_tolerance=atol, rel_tolerance=rtol)
@@ -732,8 +657,8 @@ class ProblemPhaseTestCase(unittest.TestCase):
             times_cruise, masses_cruise, expected_times_s_cruise,
             expected_masses_kg_cruise, abs_tolerance=atol, rel_tolerance=rtol)
         warn_timeseries_near_equal(
-            times_cruise, ranges_cruise, expected_times_s_cruise,
-            expected_ranges_m_cruise, abs_tolerance=atol, rel_tolerance=rtol)
+            times_cruise, distances_cruise, expected_times_s_cruise,
+            expected_distances_m_cruise, abs_tolerance=atol, rel_tolerance=rtol)
         warn_timeseries_near_equal(
             times_cruise, velocities_cruise, expected_times_s_cruise,
             expected_velocities_ms_cruise, abs_tolerance=atol, rel_tolerance=rtol)
@@ -750,8 +675,8 @@ class ProblemPhaseTestCase(unittest.TestCase):
             times_descent, masses_descent, expected_times_s_descent,
             expected_masses_kg_descent, abs_tolerance=atol, rel_tolerance=rtol)
         warn_timeseries_near_equal(
-            times_descent, ranges_descent, expected_times_s_descent,
-            expected_ranges_m_descent, abs_tolerance=atol, rel_tolerance=rtol)
+            times_descent, distances_descent, expected_times_s_descent,
+            expected_distances_m_descent, abs_tolerance=atol, rel_tolerance=rtol)
         warn_timeseries_near_equal(
             times_descent, velocities_descent, expected_times_s_descent,
             expected_velocities_ms_descent, abs_tolerance=atol, rel_tolerance=rtol)

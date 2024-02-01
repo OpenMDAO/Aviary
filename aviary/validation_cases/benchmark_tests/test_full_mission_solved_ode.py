@@ -5,7 +5,6 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
-from packaging import version
 
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.variable_info.enums import SpeedType
@@ -293,7 +292,7 @@ def run_mission(optimizer):
             phase.set_state_options("mass", rate_source="dmass_dv",
                                     fix_initial=True, fix_final=False, lower=1, upper=195_000, ref=takeoff_mass, defect_ref=takeoff_mass)
 
-            phase.set_state_options(Dynamic.Mission.RANGE, rate_source="over_a",
+            phase.set_state_options(Dynamic.Mission.DISTANCE, rate_source="over_a",
                                     fix_initial=True, fix_final=False, lower=0, upper=2000., ref=1.e2, defect_ref=1.e2)
 
             phase.add_parameter("t_init_gear", units="s",
@@ -330,7 +329,7 @@ def run_mission(optimizer):
                 static_target=False)
 
             phase.set_time_options(fix_initial=False, fix_duration=False,
-                                   units="range_units", name=Dynamic.Mission.RANGE,
+                                   units="distance_units", name=Dynamic.Mission.DISTANCE,
                                    duration_bounds=duration_bounds, duration_ref=duration_ref,
                                    initial_bounds=initial_bounds, initial_ref=initial_ref)
 
@@ -425,7 +424,7 @@ def run_mission(optimizer):
             pass
         elif phase_name == "descent":
             phase.add_boundary_constraint(
-                Dynamic.Mission.RANGE,
+                Dynamic.Mission.DISTANCE,
                 loc="final",
                 equals=target_range,
                 units="NM",
@@ -464,8 +463,6 @@ def run_mission(optimizer):
                                 static_target=True, opt=False, val=100)
 
         traj.add_phase(phase_name, phase)
-
-        phase.timeseries_options['use_prefix'] = True
 
     traj.add_linkage_constraint(phase_a='ascent_to_gear_retract',
                                 phase_b='ascent_to_flap_retract',
@@ -510,7 +507,7 @@ def run_mission(optimizer):
     traj.link_phases(phases[6:], vars=[Dynamic.Mission.ALTITUDE], ref=10.e3)
     traj.link_phases(phases, vars=['time'], ref=100.)
     traj.link_phases(phases, vars=['mass'], ref=10.e3)
-    traj.link_phases(phases, vars=[Dynamic.Mission.RANGE], units='m', ref=10.e3)
+    traj.link_phases(phases, vars=[Dynamic.Mission.DISTANCE], units='m', ref=10.e3)
     traj.link_phases(phases[:7], vars=['TAS'], units='kn', ref=200.)
     # traj.link_phases(phases[7:], vars=['TAS'], units='kn', ref=200.)
 
@@ -588,11 +585,11 @@ def run_mission(optimizer):
 
     for idx, (phase_name, phase) in enumerate(traj._phases.items()):
         if phase_name != "groundroll":
-            range_initial = range_guesses[idx]
+            distance_initial = range_guesses[idx]
             p.set_val(f"traj.{phase_name}.t_initial",
-                      range_initial, units='range_units')
+                      distance_initial, units='distance_units')
             p.set_val(f"traj.{phase_name}.t_duration",
-                      range_guesses[idx+1] - range_initial, units='range_units')
+                      range_guesses[idx+1] - distance_initial, units='distance_units')
 
             p.set_val(
                 f"traj.{phase_name}.polynomial_controls:altitude",
@@ -641,9 +638,9 @@ def run_mission(optimizer):
         if phase_name == "groundroll":
 
             ranges.extend(
-                p.get_val(f"traj.{phase_name}.timeseries.states:range", units="m")[0])
+                p.get_val(f"traj.{phase_name}.timeseries.distance", units="m")[0])
             ranges.extend(
-                p.get_val(f"traj.{phase_name}.timeseries.states:range", units="m")[-1])
+                p.get_val(f"traj.{phase_name}.timeseries.distance", units="m")[-1])
 
             masses.extend(
                 p.get_val(f"traj.{phase_name}.timeseries.mass", units="lbm")[0])
@@ -657,13 +654,13 @@ def run_mission(optimizer):
             TASs.extend(
                 p.get_val(f"traj.{phase_name}.timeseries.TAS", units="kn")[-1])
         else:
-            range_initial = p.get_val(
-                f"traj.{phase_name}.t_initial", units='range_units')
+            distance_initial = p.get_val(
+                f"traj.{phase_name}.t_initial", units='distance_units')
             if idx > 1:
-                ranges.extend(range_initial)
+                ranges.extend(distance_initial)
             if idx == (len(traj._phases) - 1):
                 ranges.extend(
-                    p.get_val(f"traj.{phase_name}.t_duration", units='range_units') + range_initial)
+                    p.get_val(f"traj.{phase_name}.t_duration", units='distance_units') + distance_initial)
             masses.extend(
                 p.get_val(f"traj.{phase_name}.timeseries.mass", units="lbm")[-1])
             alts.extend(

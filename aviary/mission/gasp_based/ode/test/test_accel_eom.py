@@ -7,7 +7,6 @@ from openmdao.utils.assert_utils import (assert_check_partials,
                                          assert_near_equal)
 
 from aviary.mission.gasp_based.ode.accel_eom import AccelerationRates
-from aviary.utils.test_utils.IO_test_util import assert_match_spec, skipIfMissingXDSM
 from aviary.variable_info.variables import Dynamic
 
 
@@ -48,19 +47,13 @@ class AccelerationTestCase(unittest.TestCase):
             # note: this was finite differenced from GASP. The fd value is: np.array([5.2353365, 5.2353365])
         )
         assert_near_equal(
-            self.prob["distance_rate"], np.array([425.32808399, 425.32808399]), tol
+            self.prob[Dynamic.Mission.DISTANCE_RATE], np.array(
+                [425.32808399, 425.32808399]), tol
             # note: this was finite differenced from GASP. The fd value is: np.array([441.6439, 441.6439])
         )
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
-
-    @skipIfMissingXDSM('accel_specs/eom.json')
-    def test_accel_spec(self):
-
-        subsystem = self.prob.model
-
-        assert_match_spec(subsystem, "accel_specs/eom.json")
 
 
 if __name__ == "__main__":

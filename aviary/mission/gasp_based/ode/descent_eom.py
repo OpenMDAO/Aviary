@@ -51,7 +51,7 @@ class DescentRates(om.ExplicitComponent):
             desc="rate of change of altitude",
         )
         self.add_output(
-            "distance_rate",
+            Dynamic.Mission.DISTANCE_RATE,
             val=np.zeros(nn),
             units="ft/s",
             desc="rate of change of horizontal distance covered",
@@ -77,7 +77,7 @@ class DescentRates(om.ExplicitComponent):
                               rows=arange,
                               cols=arange)
         self.declare_partials(
-            "distance_rate",
+            Dynamic.Mission.DISTANCE_RATE,
             ["TAS", Dynamic.Mission.THRUST_TOTAL, Dynamic.Mission.DRAG, Dynamic.Mission.MASS],
             rows=arange,
             cols=arange,
@@ -112,7 +112,7 @@ class DescentRates(om.ExplicitComponent):
         gamma = (thrust - drag) / weight
 
         outputs[Dynamic.Mission.ALTITUDE_RATE] = alt_rate = TAS * np.sin(gamma)
-        outputs["distance_rate"] = TAS * np.cos(gamma)
+        outputs[Dynamic.Mission.DISTANCE_RATE] = TAS * np.cos(gamma)
         outputs["required_lift"] = weight * np.cos(gamma) - thrust * np.sin(alpha)
         outputs[Dynamic.Mission.FLIGHT_PATH_ANGLE] = gamma
 
@@ -134,10 +134,12 @@ class DescentRates(om.ExplicitComponent):
         J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.MASS] = TAS * \
             np.cos(gamma) * (-(thrust - drag) / weight**2) * GRAV_ENGLISH_LBM
 
-        J["distance_rate", "TAS"] = np.cos(gamma)
-        J["distance_rate", Dynamic.Mission.THRUST_TOTAL] = -TAS * np.sin(gamma) / weight
-        J["distance_rate", Dynamic.Mission.DRAG] = -TAS * np.sin(gamma) * (-1 / weight)
-        J["distance_rate", Dynamic.Mission.MASS] = (
+        J[Dynamic.Mission.DISTANCE_RATE, "TAS"] = np.cos(gamma)
+        J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Mission.THRUST_TOTAL] = - \
+            TAS * np.sin(gamma) / weight
+        J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Mission.DRAG] = - \
+            TAS * np.sin(gamma) * (-1 / weight)
+        J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Mission.MASS] = (
             -TAS * np.sin(gamma) * (-(thrust - drag) / weight**2) * GRAV_ENGLISH_LBM
         )
 

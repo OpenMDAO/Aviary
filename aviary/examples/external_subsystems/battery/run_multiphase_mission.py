@@ -24,9 +24,9 @@ prob = AviaryProblem()
 # Allow for user overrides here
 prob.load_inputs(input_file, phase_info)
 
-# Have checks for clashing user inputs
-# Raise warnings or errors depending on how clashing the issues are
-prob.check_inputs()
+
+# Preprocess inputs
+prob.check_and_preprocess_inputs()
 
 prob.add_pre_mission_systems()
 
@@ -37,7 +37,7 @@ prob.add_post_mission_systems()
 # Link phases and variables
 prob.link_phases()
 
-prob.add_driver("SNOPT")
+prob.add_driver("SLSQP")
 
 prob.add_design_variables()
 

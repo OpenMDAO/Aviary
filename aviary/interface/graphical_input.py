@@ -145,9 +145,10 @@ def create_phase_info(times, altitudes, mach_values,
                 'optimize_mach': optimize_mach_phase_vars[i].get(),
                 'optimize_altitude': optimize_altitude_phase_vars[i].get(),
                 'polynomial_control_order': polynomial_order,
+                'use_polynomial_control': True,
                 'num_segments': num_segments,
                 'order': 3,
-                'solve_for_range': False,
+                'solve_for_distance': False,
                 'initial_mach': (mach_values[i], 'unitless'),
                 'final_mach': (mach_values[i+1], 'unitless'),
                 'mach_bounds': ((np.min(mach_values[i:i+2]) - 0.02, np.max(mach_values[i:i+2]) + 0.02), 'unitless'),
@@ -177,7 +178,7 @@ def create_phase_info(times, altitudes, mach_values,
         if 'pre_mission' in phase_name or 'post_mission' in phase_name:
             continue
         phase_info[phase_name]['user_options'].update({
-            'solve_for_range': user_choices.get('solve_for_range', False),
+            'solve_for_distance': user_choices.get('solve_for_distance', False),
         })
 
     # Apply global settings if required
@@ -306,9 +307,9 @@ class IntegratedPlottingApp(tk.Tk):
         tk.Checkbutton(checkbox_frame, text="Constrain Range",
                        variable=self.constrain_range_var).pack(anchor="w")
         self.constrain_range_var.set(True)
-        self.solve_for_range_var = tk.BooleanVar()
+        self.solve_for_distance_var = tk.BooleanVar()
         tk.Checkbutton(checkbox_frame, text="Solve for Range",
-                       variable=self.solve_for_range_var).pack(anchor="w")
+                       variable=self.solve_for_distance_var).pack(anchor="w")
 
         # Textbox for Polynomial Control Order
         self.polynomial_order_var = tk.StringVar()
@@ -457,7 +458,7 @@ class IntegratedPlottingApp(tk.Tk):
         # Retrieve user choices from checkboxes
         user_choices = {
             "constrain_range": self.constrain_range_var.get(),
-            "solve_for_range": self.solve_for_range_var.get()
+            "solve_for_distance": self.solve_for_distance_var.get()
         }
 
         polynomial_order = int(self.polynomial_order_var.get())
@@ -556,6 +557,33 @@ class IntegratedPlottingApp(tk.Tk):
 
         self.setup_plot(ax)
         ax.figure.canvas.draw()
+
+
+def _setup_flight_profile_parser(parser):
+    """
+    Set up the command line options for the Flight Profile plotting tool.
+
+    Parameters
+    ----------
+    parser : argparse.ArgumentParser
+        The parser instance.
+    """
+    pass
+
+
+def _exec_flight_profile(options, user_args):
+    """
+    Run the Flight Profile plotting tool.
+
+    Parameters
+    ----------
+    options : argparse.Namespace
+        Command line options.
+    user_args : list of str
+        Args to be passed to the user script.
+    """
+    app = IntegratedPlottingApp()
+    app.mainloop()
 
 
 if __name__ == "__main__":

@@ -17,6 +17,10 @@ If you also want to install all packages used for the Aviary tests _and_ externa
 
 If you are a developer and plan to modify parts of the Aviary code, install in an "editable mode" with pip:
 
+    pip install .
+
+If you are a developer and plan to modify parts of the Aviary code, install in an "editable mode" with ``pip``:
+
     pip install -e .
 
 This installs the package in the current environment such that changes to the Python code don't require re-installation.
@@ -61,7 +65,6 @@ dependencies:
   - pip:
     - parameterized
     - testflo
-    - pyxdsm
     - jupyter-book
     - mdolab-baseclasses
     - sqlitedict
@@ -71,7 +74,7 @@ dependencies:
 
 In this file, the `name` can be anything you like. The version of python is not limited to 3.9, but we recommend that you stay with this version because it is the version that we use to fully test Aviary and that it is required for some packages later on. For example, if you are going to add `OpenVSP` to your environment, you will find that you need this version.
 
-In the list, we see the popular Python packages for scientific computations: `numpy`, `scipy`, `matplotlib` and `pandas`. Aviary follows a standard source code formatting convention. `autopep8` provides an easy way to check your source code for this purpose. `jupyter` and `jupyter-book` are used to create Aviary manual. `parameterized` and `testflo` are for Aviary testing. `pyxdsm` is used to create XDSM diagrams. Aviary uses a lot of packages developed by [MDOLab](https://mdolab.engin.umich.edu/). So, we want to include its base classes. OpenMDAO records data in SQLite database and that is what `sqlitedict` comes for. `f90nml` is A Python module and command line tool for parsing Fortran namelist files. `bokeh` is an interactive visualization library for modern web browsers. It is needed to generate Aviary output (traj_results_report.html).
+In the list, we see the popular Python packages for scientific computations: `numpy`, `scipy`, `matplotlib` and `pandas`. Aviary follows a standard source code formatting convention. `autopep8` provides an easy way to check your source code for this purpose. `jupyter` and `jupyter-book` are used to create Aviary manual. `parameterized` and `testflo` are for Aviary testing. Aviary uses a lot of packages developed by [MDOLab](https://mdolab.engin.umich.edu/). So, we want to include its base classes. OpenMDAO records data in SQLite database and that is what `sqlitedict` comes for. `f90nml` is A Python module and command line tool for parsing Fortran namelist files. `bokeh` is an interactive visualization library for modern web browsers. It is needed to generate Aviary output (traj_results_report.html).
 
 Since we are going to depend on `OpenMDAO` and `dymos`, we could have included them in the `pip` list. We leave them out because we will install the developer version later. In this way, we will get the latest working copies that Aviary depends on. But we do not intend to make changes to them.
 
@@ -215,20 +218,13 @@ Successfully installed pyoptsparse-2.10.1
 
 ### Installing Aviary and Running Tests
 
-Now, we are ready to install Aviary. Assuming that you will become a contributor sooner or later, we want to install a copy from the main source. (You will need a GitHub account for this) Let us open `https://github.com/openMDAO/om-aviary/` in a web browser and click [fork](https://github.com/OpenMDAO/om-Aviary/fork) on the top-right corner. You then have created your own copy of Aviary on GitHub website. Now we create a copy on your local drive (supposing `USER_ID` is your GitHub account ID):
+Now, we are ready to install Aviary. Assuming that you will become a contributor sooner or later, we want to install a copy from the main source. (You will need a GitHub account for this) Let us open `https://github.com/openMDAO/om-aviary/` in a web browser and click [fork](https://github.com/OpenMDAO/Aviary/fork) on the top-right corner. You then have created your own copy of Aviary on GitHub website. Now we create a copy on your local drive (supposing `USER_ID` is your GitHub account ID):
 
 ```
 $ cd ~/workspace
 $ git clone git@github.com:USER_ID/Aviary.git
 $ cd Aviary
 $ pip install -e .
-```
-
-Before we run tests on Aviary, we need to build XDSM diagrams first:
-
-```
-% cd aviary/xdsm/
-% python run_all.py
 ```
 
 When it is done, let us run test:

@@ -7,7 +7,7 @@ from aviary.examples.external_subsystems.battery.battery_variables import Aircra
 
 battery_builder = BatteryBuilder()
 
-phase_info = deepcopy(av.default_simple_phase_info)
+phase_info = deepcopy(av.default_height_energy_phase_info)
 # Here we just add the simple weight system to only the pre-mission
 phase_info['pre_mission']['external_subsystems'] = [battery_builder]
 phase_info['climb']['external_subsystems'] = [battery_builder]

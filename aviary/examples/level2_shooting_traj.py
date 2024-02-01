@@ -36,9 +36,9 @@ def run_aviary(aircraft_filename, phase_info, optimizer=None, analysis_scheme=An
     # Allow for user overrides here
     prob.load_inputs(aircraft_filename, phase_info)
 
-    # Have checks for clashing user inputs
-    # Raise warnings or errors depending on how clashing the issues are
-    prob.check_inputs()
+
+# Preprocess inputs
+    prob.check_and_preprocess_inputs()
 
     prob.add_pre_mission_systems()
 
@@ -58,8 +58,6 @@ def run_aviary(aircraft_filename, phase_info, optimizer=None, analysis_scheme=An
         alpha_mode=AlphaModes.REQUIRED_LIFT,
         simupy_args=dict(
             DEBUG=True,
-            blocked_state_names=['engine.nox', 'nox',
-                                 'TAS', Dynamic.Mission.FLIGHT_PATH_ANGLE],
         ),
     )
     cruise_vals = {
@@ -74,7 +72,6 @@ def run_aviary(aircraft_filename, phase_info, optimizer=None, analysis_scheme=An
         ode_args=prob.ode_args,
         simupy_args=dict(
             DEBUG=False,
-            blocked_state_names=['engine.nox', 'nox'],
         ),
     )
     descent1_vals = {

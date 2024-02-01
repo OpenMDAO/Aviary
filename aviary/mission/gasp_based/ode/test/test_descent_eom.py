@@ -7,7 +7,6 @@ from openmdao.utils.assert_utils import (assert_check_partials,
                                          assert_near_equal)
 
 from aviary.mission.gasp_based.ode.descent_eom import DescentRates
-from aviary.utils.test_utils.IO_test_util import assert_match_spec, skipIfMissingXDSM
 from aviary.variable_info.variables import Dynamic
 
 
@@ -47,7 +46,8 @@ class DescentTestCase(unittest.TestCase):
                 [-39.41011217, -39.41011217]), tol
         )  # note: values from GASP are: np.array([-39.75, -39.75])
         assert_near_equal(
-            self.prob["distance_rate"], np.array([773.70165638, 773.70165638]), tol
+            self.prob[Dynamic.Mission.DISTANCE_RATE], np.array(
+                [773.70165638, 773.70165638]), tol
             # note: these values are finite differenced and lose accuracy. Fd values are:np.array([964.4634921, 964.4634921])
         )
         assert_near_equal(
@@ -62,13 +62,6 @@ class DescentTestCase(unittest.TestCase):
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
-
-    @skipIfMissingXDSM('descent1_specs/eom.json')
-    def test_descent_spec(self):
-
-        subsystem = self.prob.model
-
-        assert_match_spec(subsystem, "descent1_specs/eom.json")
 
 
 if __name__ == "__main__":

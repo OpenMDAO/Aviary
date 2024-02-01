@@ -1,6 +1,6 @@
 # Aviary -- NASA's aircraft design tool
 
-**Check out the Aviary documentation [here](https://openmdao.github.io/om-Aviary/intro.html).**
+**Check out the Aviary documentation [here](https://openmdao.github.io/Aviary/intro.html).**
 
 ## Description
 
@@ -26,7 +26,7 @@ If you also want to install all packages used for the Aviary tests _and_ externa
 
 ## Documentation
 
-The Aviary documentation is located [here](https://openmdao.github.io/om-Aviary/intro.html).
+The Aviary documentation is located [here](https://openmdao.github.io/Aviary/intro.html).
 
 Otherwise you can build the docs locally:
 
@@ -35,12 +35,6 @@ Otherwise you can build the docs locally:
 2. Go to Aviary/aviary/docs
 3. Run the command `sh build_book.sh` from your command prompt of choice
 4. Navigate to the built html: `/Aviary/aviary/docs/\_build/html/intro.html`
-
-## Visualization
-
-To create XDSM visualizations of some of the Aviary code, you can run the `run_all.py` utility script within the `aviary/xdsm` directory.
-This is not strictly necessary but is used in some of the unit tests.
-This requires installing Aviary with the `[test]` or `[all]` options as described above.
 
 ## Validation
 
@@ -76,4 +70,4 @@ We have also provided a static version of the `environment.yml` at the top level
 ## Planned future features
 
 Aviary is in active development.
-We plan to expand its capabilities and have provided a non-exhaustive [list of future features](https://openmdao.github.io/om-Aviary/misc_resources/planned_future_features.html).
+We plan to expand its capabilities and have provided a non-exhaustive [list of future features](https://openmdao.github.io/Aviary/misc_resources/planned_future_features.html).
