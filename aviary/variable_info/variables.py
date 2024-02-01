@@ -206,7 +206,6 @@ class Aircraft:
         MASS = 'aircraft:engine:mass'
         MASS_SCALER = 'aircraft:engine:mass_scaler'
         MASS_SPECIFIC = 'aircraft:engine:mass_specific'
-        MODEL_SLS_THRUST = 'aircraft:engine:model_sls_thrust'
         NUM_ENGINES = 'aircraft:engine:num_engines'
         NUM_FUSELAGE_ENGINES = 'aircraft:engine:num_fuselage_engines'
         NUM_WING_ENGINES = 'aircraft:engine:num_wing_engines'
@@ -472,7 +471,8 @@ class Aircraft:
         AVERAGE_CHORD = 'aircraft:wing:average_chord'
         BENDING_FACTOR = 'aircraft:wing:bending_factor'
         BENDING_MASS = 'aircraft:wing:bending_mass'
-        BENDING_MASS_NO_INERTIA = 'aircraft:wing:bending_mass_no_inertia'
+        # Not defined in metadata!
+        # BENDING_MASS_NO_INERTIA = 'aircraft:wing:bending_mass_no_inertia'
         BENDING_MASS_SCALER = 'aircraft:wing:bending_mass_scaler'
         BWB_AFTBODY_MASS = 'aircraft:wing:bwb_aft_body_mass'
         BWB_AFTBODY_MASS_SCALER = 'aircraft:wing:bwb_aft_body_mass_scaler'

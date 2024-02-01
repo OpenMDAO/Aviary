@@ -6049,6 +6049,17 @@ add_meta_data(
 )
 
 add_meta_data(
+    Dynamic.Mission.MACH_RATE,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='unitless',
+    desc='Current rate at which the Mach number of the vehicle is changing'
+)
+
+add_meta_data(
     Dynamic.Mission.MASS,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -6091,6 +6102,18 @@ add_meta_data(
                      },
     units='lbm/h',
     desc='Current total rate of nitrous oxide (NOx) production by the vehicle'
+)
+
+add_meta_data(
+    Dynamic.Mission.SPECIFIC_ENERGY,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='m/s',
+    desc='Rate of change in specific energy (energy per unit weight) of the vehicle at current '
+         'flight condition'
 )
 
 add_meta_data(
