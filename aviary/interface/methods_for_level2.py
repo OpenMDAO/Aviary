@@ -2003,18 +2003,15 @@ class AviaryProblem(om.Problem):
 
         # for the simple mission method, use the provided initial and final mach and altitude values from phase_info
         if self.mission_method is HEIGHT_ENERGY:
-            initial_altitude = self.phase_info[phase_name]['user_options']['initial_altitude']
-            final_altitude = self.phase_info[phase_name]['user_options']['final_altitude']
+            initial_altitude = wrapped_convert_units(
+                self.phase_info[phase_name]['user_options']['initial_altitude'], 'ft')
+            final_altitude = wrapped_convert_units(
+                self.phase_info[phase_name]['user_options']['final_altitude'], 'ft')
             initial_mach = self.phase_info[phase_name]['user_options']['initial_mach']
             final_mach = self.phase_info[phase_name]['user_options']['final_mach']
 
-            # add a check for the altitude units, raise an error if they are not consistent
-            if initial_altitude[1] != final_altitude[1]:
-                raise ValueError(
-                    f"Initial and final altitude units for {phase_name} are not consistent.")
             guesses["mach"] = ([initial_mach[0], final_mach[0]], "unitless")
-            guesses["altitude"] = (
-                [initial_altitude[0], final_altitude[0]], initial_altitude[1])
+            guesses["altitude"] = ([initial_altitude, final_altitude], 'ft')
 
             # if times not in initial guesses, set it to the average of the initial_bounds and the duration_bounds
             if 'times' not in guesses:
