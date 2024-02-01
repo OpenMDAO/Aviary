@@ -210,9 +210,9 @@ def assert_match_varnames(system, MetaData=None):
 def get_names_from_hierarchy(hierarchy):
 
     names = []
-    variables = vars(hierarchy).keys()  # get initial class keys
+    keys = vars(hierarchy).keys()  # get initial class keys
     # filter out keys that aren't for relevant variables
-    keys = list(filter(filter_underscore, list(variables)))
+    keys = list(filter(filter_underscore, list(keys)))
 
     for key in keys:
         try:
