@@ -6,6 +6,7 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.subsystems.test.test_dummy_subsystem import ArrayGuessSubsystemBuilder
+from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
 
 
 @use_tempdirs
@@ -16,7 +17,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
         # Load the phase_info and other common setup tasks
         self.phase_info = {
             "pre_mission": {"include_takeoff": False, "optimize_mass": True},
-            "climb_1": {
+            "climb": {
                 "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
                 "user_options": {
                     "optimize_mach": False,
@@ -40,7 +41,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
                 },
                 "initial_guesses": {"times": ([0, 128], "min")},
             },
-            "climb_2": {
+            "cruise": {
                 "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
                 "user_options": {
                     "optimize_mach": False,
@@ -64,7 +65,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
                 },
                 "initial_guesses": {"times": ([128, 113], "min")},
             },
-            "descent_1": {
+            "descent": {
                 "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
                 "user_options": {
                     "optimize_mach": False,
@@ -149,7 +150,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
     def test_mission_optimize_mach_only(self):
         # Test with optimize_mach flag set to True
         modified_phase_info = self.phase_info.copy()
-        for phase in ["climb_1", "climb_2", "descent_1"]:
+        for phase in ["climb", "cruise", "descent"]:
             modified_phase_info[phase]["user_options"]["optimize_mach"] = True
         prob = self.run_mission(modified_phase_info, "IPOPT")
         self.assertFalse(prob.failed)
@@ -158,7 +159,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
     def test_mission_optimize_altitude_and_mach(self):
         # Test with optimize_altitude flag set to True
         modified_phase_info = self.phase_info.copy()
-        for phase in ["climb_1", "climb_2", "descent_1"]:
+        for phase in ["climb", "cruise", "descent"]:
             modified_phase_info[phase]["user_options"]["optimize_altitude"] = True
             modified_phase_info[phase]["user_options"]["optimize_mach"] = True
         prob = self.run_mission(modified_phase_info, "IPOPT")
@@ -168,7 +169,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
     def test_mission_optimize_altitude_only(self):
         # Test with optimize_altitude flag set to True
         modified_phase_info = self.phase_info.copy()
-        for phase in ["climb_1", "climb_2", "descent_1"]:
+        for phase in ["climb", "cruise", "descent"]:
             modified_phase_info[phase]["user_options"]["optimize_altitude"] = True
         prob = self.run_mission(modified_phase_info, "IPOPT")
         self.assertFalse(prob.failed)
@@ -176,14 +177,14 @@ class AircraftMissionTestSuite(unittest.TestCase):
     @require_pyoptsparse(optimizer="IPOPT")
     def test_mission_solve_for_distance(self):
         modified_phase_info = self.phase_info.copy()
-        for phase in ["climb_1", "climb_2", "descent_1"]:
+        for phase in ["climb", "cruise", "descent"]:
             modified_phase_info[phase]["user_options"]["solve_for_distance"] = True
         prob = self.run_mission(modified_phase_info, "IPOPT")
         self.assertFalse(prob.failed)
 
     def test_mission_solve_for_distance(self):
         modified_phase_info = self.phase_info.copy()
-        for phase in ["climb_1", "climb_2", "descent_1"]:
+        for phase in ["climb", "cruise", "descent"]:
             modified_phase_info[phase]["user_options"]["solve_for_distance"] = True
         prob = self.run_mission(modified_phase_info, "SLSQP")
         self.assertFalse(prob.failed)
@@ -197,6 +198,21 @@ class AircraftMissionTestSuite(unittest.TestCase):
 
         prob = self.run_mission(modified_phase_info, "IPOPT")
         self.assertFalse(prob.failed)
+
+    def test_custom_phase_builder(self):
+        local_phase_info = self.phase_info.copy()
+        local_phase_info['climb']['phase_builder'] = EnergyPhase
+
+        run_aviary(self.aircraft_definition_file,
+                   local_phase_info, max_iter=1, optimizer='SLSQP')
+
+    def test_custom_phase_builder_error(self):
+        local_phase_info = self.phase_info.copy()
+        local_phase_info['climb']['phase_builder'] = "fake phase object"
+
+        with self.assertRaises(TypeError):
+            run_aviary(self.aircraft_definition_file,
+                       local_phase_info, max_iter=1, optimizer='SLSQP')
 
 
 if __name__ == '__main__':

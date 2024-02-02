@@ -62,6 +62,13 @@ Upon completion, the tool outputs a Python script named `outputted_phase_info.py
 This tool overwrites any existing file called `outputted_phase_info.py` in the current working directory.
 This outputted file contains the `phase_info` dictionary, which holds the flight profile data structured for use in mission simulations.
 
+```{note}
+When using the outputted `phase_info` dict in a mission simulation, you can modify the settings by directly changing the outputted Python file.
+```
+
+The `phase_info` dictionary makes some assumptions about different settings which you can also modify.
+For example, the time duration of each phase is controlled by the optimizer if `fix_duration` is False, though this can be changed to True to fix the duration of each phase.
+
 ## Running a Mission Simulation
 
 After generating the flight profile, use the `run_mission` command to simulate the mission.
