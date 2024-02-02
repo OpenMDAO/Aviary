@@ -1,9 +1,8 @@
-from aviary.mission.phase_builder_base import (
-    PhaseBuilderBase, InitialGuessState, InitialGuessTime, InitialGuessControl)
+from aviary.mission.phase_builder_base import PhaseBuilderBase
+from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessTime, InitialGuessControl
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
 from aviary.mission.gasp_based.ode.accel_ode import AccelODE
-from aviary.variable_info.variable_meta_data import _MetaData
 
 
 class AccelPhase(PhaseBuilderBase):
@@ -25,33 +24,8 @@ class AccelPhase(PhaseBuilderBase):
     default_name = 'accel_phase'
     default_ode_class = AccelODE
 
-    __slots__ = ('external_subsystems', 'meta_data')
-
     _meta_data_ = {}
     _initial_guesses_meta_data_ = {}
-
-    default_meta_data = _MetaData
-
-    def __init__(
-        self, name=None, subsystem_options=None, user_options=None, initial_guesses=None,
-        ode_class=None, transcription=None, core_subsystems=None,
-        external_subsystems=None, meta_data=None
-    ):
-        super().__init__(
-            name=name, subsystem_options=subsystem_options, user_options=user_options,
-            initial_guesses=initial_guesses, ode_class=ode_class, transcription=transcription,
-            core_subsystems=core_subsystems,
-        )
-
-        if external_subsystems is None:
-            external_subsystems = []
-
-        self.external_subsystems = external_subsystems
-
-        if meta_data is None:
-            meta_data = self.default_meta_data
-
-        self.meta_data = meta_data
 
     def build_phase(self, aviary_options: AviaryValues = None):
         """
@@ -66,79 +40,21 @@ class AccelPhase(PhaseBuilderBase):
         -------
         dymos.Phase
         """
-        phase = super().build_phase(aviary_options)
+        phase = self.phase = super().build_phase(aviary_options)
         user_options = self.user_options
 
         # Extracting and setting options
-        fix_initial = user_options.get_val('fix_initial')
         EAS_constraint_eq = user_options.get_val('EAS_constraint_eq', units='kn')
-        duration_bounds = user_options.get_val('duration_bounds', units='s')
-        duration_ref = user_options.get_val('duration_ref', units='s')
-        TAS_lower = user_options.get_val('TAS_lower', units='kn')
-        TAS_upper = user_options.get_val('TAS_upper', units='kn')
-        TAS_ref = user_options.get_val('TAS_ref', units='kn')
-        TAS_ref0 = user_options.get_val('TAS_ref0', units='kn')
-        TAS_defect_ref = user_options.get_val('TAS_defect_ref', units='kn')
-        mass_lower = user_options.get_val('mass_lower', units='lbm')
-        mass_upper = user_options.get_val('mass_upper', units='lbm')
-        mass_ref = user_options.get_val('mass_ref', units='lbm')
-        mass_ref0 = user_options.get_val('mass_ref0', units='lbm')
-        mass_defect_ref = user_options.get_val('mass_defect_ref', units='lbm')
-        distance_lower = user_options.get_val('distance_lower', units='NM')
-        distance_upper = user_options.get_val('distance_upper', units='NM')
-        distance_ref = user_options.get_val('distance_ref', units='NM')
-        distance_ref0 = user_options.get_val('distance_ref0', units='NM')
-        distance_defect_ref = user_options.get_val('distance_defect_ref', units='NM')
         alt = user_options.get_val('alt', units='ft')
 
-        phase.set_time_options(
-            fix_initial=fix_initial,
-            duration_bounds=duration_bounds,
-            units="s",
-            duration_ref=duration_ref,
-        )
+        self.set_time_options(user_options)
 
         # States
-        phase.add_state(
-            "TAS",
-            fix_initial=fix_initial,
-            fix_final=False,
-            lower=TAS_lower,
-            upper=TAS_upper,
-            units="kn",
-            rate_source="TAS_rate",
-            targets="TAS",
-            ref=TAS_ref,
-            ref0=TAS_ref0,
-            defect_ref=TAS_defect_ref,
-        )
+        self.add_TAS_state(user_options)
 
-        phase.add_state(
-            Dynamic.Mission.MASS,
-            fix_initial=fix_initial,
-            fix_final=False,
-            lower=mass_lower,
-            upper=mass_upper,
-            units="lbm",
-            rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            targets=Dynamic.Mission.MASS,
-            ref=mass_ref,
-            ref0=mass_ref0,
-            defect_ref=mass_defect_ref,
-        )
+        self.add_mass_state(user_options)
 
-        phase.add_state(
-            Dynamic.Mission.DISTANCE,
-            fix_initial=fix_initial,
-            fix_final=False,
-            lower=distance_lower,
-            upper=distance_upper,
-            units="NM",
-            rate_source="distance_rate",
-            ref=distance_ref,
-            ref0=distance_ref0,
-            defect_ref=distance_defect_ref,
-        )
+        self.add_distance_state(user_options)
 
         # Boundary Constraints
         phase.add_boundary_constraint(
