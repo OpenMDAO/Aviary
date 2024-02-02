@@ -23,7 +23,7 @@ class SkinFriction(om.ImplicitComponent):
         self.sea_level_pressure = 14.6959 * 144  # psi -> psf
 
         self.nonlinear_solver = om.NewtonSolver(solve_subsystems=False,
-                                                rtol=1e-12, atol=1e-12)
+                                                atol=1e-12, rtol=1e-12)
         self.linear_solver = om.DirectSolver()
         self.nonlinear_solver.options['iprint'] = -1
         self.linear_solver.options['iprint'] = -1
