@@ -17,6 +17,8 @@ from panel.theme import DefaultTheme
 import openmdao.api as om
 from openmdao.utils.general_utils import env_truthy
 
+import aviary.api as av
+
 pn.extension(sizing_mode="stretch_width")
 
 # Constants - # Can't get using CSS to work with frames and the raw_css for the template so going with
@@ -180,25 +182,31 @@ def create_aviary_variables_table_data_nested(script_name, recorder_file):
     for group_name in sorted_group_names:
         if len(grouped[group_name]) == 1:  # a list of one var.
             var_info = grouped[group_name][0]
+            prom_name = outputs[var_info]["prom_name"]
+            aviary_metadata = av.CoreMetaData.get(prom_name)
             table_data_nested.append(
                 {
                     "abs_name": group_name,
-                    "prom_name": outputs[var_info]["prom_name"],
+                    "prom_name": prom_name,
                     "value": str(outputs[var_info]["val"]),
                     "units": str(outputs[var_info]["units"]),
+                    "metadata": json.dumps(aviary_metadata),
                 }
             )
         else:
             # create children
             children_list = []
             for children_name in grouped[group_name]:
-                var_info = outputs[children_name]
+                # var_info = outputs[children_name]
+                prom_name = outputs[children_name]["prom_name"]
+                aviary_metadata = av.CoreMetaData.get(prom_name)
                 children_list.append(
                     {
                         "abs_name": children_name,
-                        "prom_name": outputs[children_name]["prom_name"],
+                        "prom_name": prom_name,
                         "value": str(outputs[children_name]["val"]),
                         "units": str(outputs[children_name]["units"]),
+                        "metadata": json.dumps(aviary_metadata),
                     }
                 )
             table_data_nested.append(  # not a real var, just a group of vars so no values
