@@ -9,7 +9,6 @@ from aviary.subsystems.test.test_dummy_subsystem import ArrayGuessSubsystemBuild
 from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
 from aviary.variable_info.variables import Dynamic
 
-
 @use_tempdirs
 class AircraftMissionTestSuite(unittest.TestCase):
 
