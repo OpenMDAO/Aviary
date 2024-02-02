@@ -7,6 +7,7 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.subsystems.test.test_dummy_subsystem import ArrayGuessSubsystemBuilder
 from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
+from aviary.variable_info.variables import Dynamic
 
 
 @use_tempdirs
@@ -162,8 +163,21 @@ class AircraftMissionTestSuite(unittest.TestCase):
         for phase in ["climb", "cruise", "descent"]:
             modified_phase_info[phase]["user_options"]["optimize_altitude"] = True
             modified_phase_info[phase]["user_options"]["optimize_mach"] = True
+        modified_phase_info['climb']['user_options']['constraints'] = {
+            Dynamic.Mission.THROTTLE: {
+                'lower': 0.2,
+                'upper': 0.9,
+                'type': 'path',
+            },
+        }
         prob = self.run_mission(modified_phase_info, "IPOPT")
         self.assertFalse(prob.failed)
+
+        constraints = prob.driver._cons
+        for name, meta in constraints.items():
+            if 'traj.phases.climb->path_constraint->throttle' in name:
+                self.assertEqual(meta['upper'], 0.9)
+                self.assertEqual(meta['lower'], 0.2)
 
     @require_pyoptsparse(optimizer="IPOPT")
     def test_mission_optimize_altitude_only(self):

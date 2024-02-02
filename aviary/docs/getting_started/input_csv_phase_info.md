@@ -89,12 +89,11 @@ We will now discuss the meaning of the keys within the `phase_info` objects.
   - `solve_for_distance`: if True, use a nonlinear solver to converge the `distance` state variable to the desired value. Otherwise use the optimizer to converge the `distance` state.
   - `optimize_mach`: if True, the Mach number is a design variable.
   - `optimize_altitude`: if True, the altitude is a design variable.
+  - `constraints`: a dictionary of user-defined constraints. The keys are the names of the constraints and the values are the keyword arguments expected by Dymos.
 
 ```{note}
 Not all the keys apply to all phases. The users should select the right keys for each phase of interest. The required keys for each phase are defined in [check_phase_info](https://github.com/OpenMDAO/Aviary/blob/main/aviary/interface/utils.py) function. Currently, this function does the check only for `FLOPS` and `GASP` missions.
 ```
-
-Users can add their own keys as needed.
 
 ## Using custom phase builders
 

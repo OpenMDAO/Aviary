@@ -20,6 +20,10 @@ aviary draw_mission
 
 This command will open a graphical interface where you can interactively design a flight profile.
 
+```{note}
+If you are [WSL on Windows](https://learn.microsoft.com/en-us/windows/wsl/install) you might need to install an [X Server](https://sourceforge.net/projects/xming/) to run the GUI without issues. If you do this, also modify your `.bashrc` file to include this line: `export DISPLAY=localhost:0.0`. 
+```
+
 ## Graphical Interface Usage
 
 ### Main Components
