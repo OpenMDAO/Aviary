@@ -20,3 +20,7 @@ nav#header {
 .bk-header .bk-tab {
     height: 25px;;
 }
+
+.tabulator-tooltip {
+    background-color: #6bbecd;
+}
