@@ -5,11 +5,25 @@
   <title>Aviary Dashboard</title>
   <link rel='stylesheet' href='https://unpkg.com/tabulator-tables@5.5.2/dist/css/tabulator.min.css'>
 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+
+  <style>
+    .tabulator-tooltip {
+      background-color: rgb(164, 227, 215);
+      white-space: pre; /* This will respect the line breaks and white space in the text */
+      max-width:Min(1200px,100%);
+    }
+  </style>
+    
+
 </head>
 
 <!-- this page is accessed with http://localhost:5000/assets/aviary_vars/index.html -->
 
 <body>
+<input type="checkbox" id="aviary-vars-filter"> Show Only Aviary Variables
+
 <!-- partial:index.partial.html -->
 <div id="example-table"></div>
 <!-- partial -->
