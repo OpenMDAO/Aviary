@@ -27,10 +27,25 @@ def add_SGM_required_outputs(group: om.Group, outputs_to_add: dict):
                         promotes_outputs=list(outputs_to_add.keys()),
                         )
 
-# Subproblem used as a basis for forward in time integration phases.
+
+class event_trigger():
+    def __init__(
+            self,
+            state: str,
+            value: str | float | int,
+            units: str,
+            channel_name: str = None,
+    ):
+        self.state = state
+        self.value = value
+        self.units = units
+        if channel_name is None:
+            channel_name = state
+        self.channel_name = channel_name
 
 
 class SimuPyProblem(SimulationMixin):
+    # Subproblem used as a basis for forward in time integration phases.
     def __init__(
         self,
         ode,
@@ -43,6 +58,7 @@ class SimuPyProblem(SimulationMixin):
         parameters=None,
         outputs=None,
         controls=None,
+        triggers=None,
         include_state_outputs=False,
         rate_suffix="_rate",
         DEBUG=False,
@@ -84,6 +100,13 @@ class SimuPyProblem(SimulationMixin):
         self.prob = prob
         prob.setup(check=False, force_alloc_complex=True)
         prob.final_setup()
+
+        if triggers is None:
+            triggers = []
+        elif not isinstance(triggers, list):
+            triggers = [triggers]
+        self.triggers = triggers
+        self.event_channel_names = [trigger.channel_name for trigger in triggers]
 
         self.time_independent = time_independent
         if type(states) is list:
@@ -342,6 +365,30 @@ class SimuPyProblem(SimulationMixin):
     def update_equation_function(self, t, x, event_channels=None):
         self.output_nan = True
         return x
+
+    def add_trigger(self, state, value, units=None, channel_name=None):
+        if units is None:
+            units = self.states[state]['units']
+        if channel_name is None:
+            channel_name = state
+
+        self.triggers.append(
+            event_trigger(state, value, units, channel_name)
+        )
+        self.event_channel_names.append(channel_name)
+        self.num_events = len(self.event_channel_names)
+
+    def event_equation_function(self, t, x):
+        self.output_equation_function(t, x)
+        event_values = [self.evaluate_trigger(trigger) for trigger in self.triggers]
+        return np.array(event_values)
+
+    def evaluate_trigger(self, trigger: event_trigger):
+        trigger_value = trigger.value
+        if isinstance(trigger_value, str):
+            trigger_value = self.get_val(trigger_value, units=trigger.units).squeeze()
+        current_value = self.get_val(trigger.state, units=trigger.units)
+        return current_value - trigger_value
 
     @property
     def get_val(self):
