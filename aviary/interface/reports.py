@@ -85,7 +85,7 @@ def mission_report(prob, **kwargs):
                         vals = prob.get_val(f"{traj}.{phase}.{var_name}",
                                             units=units,
                                             indices=indices,)
-                    # 2DOF breguet range cruise sneakily uses time integration to track mass
+                    # 2DOF breguet range cruise uses time integration to track mass
                     except TypeError:
                         vals = prob.get_val(f"{traj}.{phase}.timeseries.time",
                                             units=units,
