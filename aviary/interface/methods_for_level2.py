@@ -182,7 +182,7 @@ class AviaryProblem(om.Problem):
         self.aviary_inputs = aviary_inputs
         self.initial_guesses = initial_guesses
 
-        if mission_method is TWO_DEGREES_OF_FREEDOM:
+        if mission_method is TWO_DEGREES_OF_FREEDOM or mission_method is SOLVED:
             aviary_inputs.set_val(Mission.Summary.CRUISE_MASS_FINAL,
                                   val=self.initial_guesses['cruise_mass_final'], units='lbm')
             aviary_inputs.set_val(Mission.Summary.GROSS_MASS,
@@ -1602,7 +1602,7 @@ class AviaryProblem(om.Problem):
                 self.model.add_constraint("h_fit.h_init_flaps",
                                           equals=400.0, units="ft", ref=400.0)
 
-            self.problem_type = self.aviary_inputs.get_val('problem_type')
+            # self.problem_type = self.aviary_inputs.get_val('problem_type')
 
             # vehicle sizing problem
             # size the vehicle (via design GTOW) to meet a target range using all fuel capacity

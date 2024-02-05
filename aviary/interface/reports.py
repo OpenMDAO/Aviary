@@ -139,11 +139,11 @@ def mission_report(prob, **kwargs):
         data[phase] = outputs
 
         # get final values, last in traj
-        final_mass = _get_phase_value('traj', phase, 'mass', 'lbm', [0])[0]
-        final_time = _get_phase_value('traj', phase, 't', 'min', [0])
-        final_range = _get_phase_value('traj', phase, 'range', 'nmi', [0])
+        final_mass = _get_phase_value('traj', phase, 'mass', 'lbm', -1)[0]
+        final_time = _get_phase_value('traj', phase, 't', 'min', -1)[0]
+        final_range = _get_phase_value('traj', phase, 'range', 'nmi', -1)
         if final_range is None:
-            final_range = _get_phase_value('traj', phase, 'distance', 'nmi', [0])
+            final_range = _get_phase_value('traj', phase, 'distance', 'nmi', -1)
         final_range = final_range[0]
 
     totals = NamedValues()
