@@ -2022,6 +2022,17 @@ class AviaryProblem(om.Problem):
                 guesses["times"] = ([np.mean(initial_bounds[0]), np.mean(
                     duration_bounds[0])], 's')
 
+            # if times not in initial guesses, set it to the average of the initial_bounds and the duration_bounds
+            if 'times' not in guesses:
+                initial_bounds = self.phase_info[phase_name]['user_options']['initial_bounds']
+                duration_bounds = self.phase_info[phase_name]['user_options']['duration_bounds']
+                # Add a check for the initial and duration bounds, raise an error if they are not consistent
+                if initial_bounds[1] != duration_bounds[1]:
+                    raise ValueError(
+                        f"Initial and duration bounds for {phase_name} are not consistent.")
+                guesses["times"] = ([np.mean(initial_bounds[0]), np.mean(
+                    duration_bounds[0])], initial_bounds[1])
+
         for guess_key, guess_data in guesses.items():
             val, units = guess_data
 
