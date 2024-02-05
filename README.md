@@ -11,30 +11,15 @@ The user can select which type of mission analysis to use, as well as whether to
 
 ## Installation
 
-The simplest installation method for users is to install via pip.
-Once you have cloned the Aviary repo, change directories into the top-level Aviary folder (not within the `aviary` folder) and run the following command:
+The simplest installation method for users is to install via pip:
 
-    pip install .
+    pip install om-aviary
 
-If you want to also run the Aviary test suite (this is not strictly necessary), you can instead run:
-
-    pip install .[test]
-
-If you also want to install all packages used for the Aviary tests _and_ external subsystem examples, you can instead run:
-
-    pip install .[all]
+Please see the [installation doc page](https://openmdao.github.io/Aviary/getting_started/installation.html) for more detailed instructions.
 
 ## Documentation
 
 The Aviary documentation is located [here](https://openmdao.github.io/Aviary/intro.html).
-
-Otherwise you can build the docs locally:
-
-1. Install jupyter-book using instructions located [here](https://jupyterbook.org/en/stable/start/overview.html
-)
-2. Go to Aviary/aviary/docs
-3. Run the command `sh build_book.sh` from your command prompt of choice
-4. Navigate to the built html: `/Aviary/aviary/docs/\_build/html/intro.html`
 
 ## Validation
 
@@ -42,7 +27,7 @@ This code has been validated using output and data from the GASP and FLOPS codes
 
 ### Quick testing
 
-The repository installation can be tested using the command ``testflo .`` at the top-level Aviary folder. Assuming you have both SNOPT and IPOPT installed, the output should look something like this:
+The repository installation can be tested using the command ``testflo .`` at the top-level Aviary folder. If you have both SNOPT and IPOPT installed the output should look something like this:
 
         OK
 

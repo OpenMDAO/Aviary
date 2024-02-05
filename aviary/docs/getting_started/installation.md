@@ -7,17 +7,9 @@ Once you have cloned the Aviary repo, change directories into the top-level Avia
 
     pip install .
 
-If you want to also run the Aviary test suite (this is not strictly necessary), you can instead run:
-
-    pip install .[test]
-
 If you also want to install all packages used for the Aviary tests _and_ external subsystem examples, you can instead run:
 
     pip install .[all]
-
-If you are a developer and plan to modify parts of the Aviary code, install in an "editable mode" with pip:
-
-    pip install .
 
 If you are a developer and plan to modify parts of the Aviary code, install in an "editable mode" with ``pip``:
 
@@ -28,7 +20,11 @@ This command should be performed while in the folder containing ``setup.py``.
 
 ```{note}
 You can do this editable installation with any of the `[test]` or `[all]` options as well.
-``````
+```
+
+```{note}
+You can install the optional package [pyOptSparse by following the instructions here](https://mdolab-pyoptsparse.readthedocs-hosted.com/en/latest/install.html). If you do not need the SNOPT optimizer, installing pyOptSparse is as simple as running `conda install -c conda-forge pyoptsparse`.
+```
 
 ## Installation on Linux for Developers
 
@@ -138,6 +134,13 @@ Successfully installed dymos-1.9.2.dev0
 ### Installing pyOptSparse
 
 Next, we will install `pyoptsparse`.
+If you want to easily install and use pyOptSparse, follow the [installation instructions on the pyOptSparse docs](https://mdolab-pyoptsparse.readthedocs-hosted.com/en/latest/install.html).
+Specifically, if you do not need the SNOPT optimizer and want to run Aviary with IPOPT, you can install pyOptSparse using the following command:
+
+```
+conda install -c conda-forge pyoptsparse
+```
+
 The OpenMDAO team provides a [`build_pyoptsparse`](https://github.com/OpenMDAO/build_pyoptsparse) package to help users install MDO Lab's pyOptSparse, optionally including the `SNOPT` and `IPOPT` optimizers.
 
 This process depends on certain libraries.
