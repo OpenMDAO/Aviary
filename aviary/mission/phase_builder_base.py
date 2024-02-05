@@ -419,6 +419,16 @@ class PhaseBuilderBase(ABC):
         meta_data[name] = dict(
             apply_initial_guess=initial_guess.apply_initial_guess, desc=desc)
 
+    def _add_user_defined_constraints(self, phase, constraints):
+        # Add each constraint and its corresponding arguments to the phase
+        for constraint_name, kwargs in constraints.items():
+            if kwargs['type'] == 'boundary':
+                kwargs.pop('type')
+                phase.add_boundary_constraint(constraint_name, **kwargs)
+            elif kwargs['type'] == 'path':
+                kwargs.pop('type')
+                phase.add_path_constraint(constraint_name, **kwargs)
+
     def set_time_options(self, user_options, targets=[]):
         fix_initial = user_options.get_val('fix_initial')
         duration_bounds = user_options.get_val('duration_bounds', units='s')

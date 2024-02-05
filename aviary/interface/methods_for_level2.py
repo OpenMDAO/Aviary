@@ -59,6 +59,7 @@ from aviary.utils.merge_variable_metadata import merge_meta_data
 from aviary.interface.default_phase_info.two_dof_fiti import create_2dof_based_ascent_phases, create_2dof_based_descent_phases
 from aviary.mission.gasp_based.idle_descent_estimation import descent_range_and_fuel
 from aviary.mission.flops_based.phases.phase_utils import get_initial
+from aviary.mission.phase_builder_base import PhaseBuilderBase
 
 
 FLOPS = LegacyCode.FLOPS
@@ -663,7 +664,15 @@ class AviaryProblem(om.Problem):
             subsystems['aerodynamics'], subsystems['propulsion']]
 
         if self.mission_method is HEIGHT_ENERGY:
-            phase_object = EnergyPhase.from_phase_info(
+            if 'phase_builder' in phase_options:
+                phase_builder = phase_options['phase_builder']
+                if not issubclass(phase_builder, PhaseBuilderBase):
+                    raise TypeError(
+                        f"phase_builder for the phase called {phase_name} must be a PhaseBuilderBase object.")
+            else:
+                phase_builder = EnergyPhase
+
+            phase_object = phase_builder.from_phase_info(
                 phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data)
 
             phase = phase_object.build_phase(aviary_options=self.aviary_inputs)
@@ -1829,7 +1838,11 @@ class AviaryProblem(om.Problem):
                 self._add_solved_guesses(idx, phase_name, phase)
             else:
                 # If not, fetch the initial guesses specific to the phase
-                guesses = self.phase_info[phase_name]['initial_guesses']
+                # check if guesses exist for this phase
+                if "initial_guesses" in self.phase_info[phase_name]:
+                    guesses = self.phase_info[phase_name]['initial_guesses']
+                else:
+                    guesses = {}
 
                 if 'cruise' in phase_name and self.mission_method is TWO_DEGREES_OF_FREEDOM:
                     for guess_key, guess_data in guesses.items():
@@ -1990,18 +2003,35 @@ class AviaryProblem(om.Problem):
 
         # for the simple mission method, use the provided initial and final mach and altitude values from phase_info
         if self.mission_method is HEIGHT_ENERGY:
-            initial_altitude = self.phase_info[phase_name]['user_options']['initial_altitude']
-            final_altitude = self.phase_info[phase_name]['user_options']['final_altitude']
+            initial_altitude = wrapped_convert_units(
+                self.phase_info[phase_name]['user_options']['initial_altitude'], 'ft')
+            final_altitude = wrapped_convert_units(
+                self.phase_info[phase_name]['user_options']['final_altitude'], 'ft')
             initial_mach = self.phase_info[phase_name]['user_options']['initial_mach']
             final_mach = self.phase_info[phase_name]['user_options']['final_mach']
 
-            # add a check for the altitude units, raise an error if they are not consistent
-            if initial_altitude[1] != final_altitude[1]:
-                raise ValueError(
-                    f"Initial and final altitude units for {phase_name} are not consistent.")
             guesses["mach"] = ([initial_mach[0], final_mach[0]], "unitless")
-            guesses["altitude"] = (
-                [initial_altitude[0], final_altitude[0]], initial_altitude[1])
+            guesses["altitude"] = ([initial_altitude, final_altitude], 'ft')
+
+            # if times not in initial guesses, set it to the average of the initial_bounds and the duration_bounds
+            if 'times' not in guesses:
+                initial_bounds = wrapped_convert_units(
+                    self.phase_info[phase_name]['user_options']['initial_bounds'], 's')
+                duration_bounds = wrapped_convert_units(
+                    self.phase_info[phase_name]['user_options']['duration_bounds'], 's')
+                guesses["times"] = ([np.mean(initial_bounds[0]), np.mean(
+                    duration_bounds[0])], 's')
+
+            # if times not in initial guesses, set it to the average of the initial_bounds and the duration_bounds
+            if 'times' not in guesses:
+                initial_bounds = self.phase_info[phase_name]['user_options']['initial_bounds']
+                duration_bounds = self.phase_info[phase_name]['user_options']['duration_bounds']
+                # Add a check for the initial and duration bounds, raise an error if they are not consistent
+                if initial_bounds[1] != duration_bounds[1]:
+                    raise ValueError(
+                        f"Initial and duration bounds for {phase_name} are not consistent.")
+                guesses["times"] = ([np.mean(initial_bounds[0]), np.mean(
+                    duration_bounds[0])], initial_bounds[1])
 
         for guess_key, guess_data in guesses.items():
             val, units = guess_data
