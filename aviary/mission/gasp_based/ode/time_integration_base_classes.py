@@ -32,7 +32,7 @@ class event_trigger():
     def __init__(
             self,
             state: str,
-            value: str | float | int,
+            value: tuple[str, float, int],
             units: str,
             channel_name: str = None,
     ):
@@ -369,6 +369,8 @@ class SimuPyProblem(SimulationMixin):
     def add_trigger(self, state, value, units=None, channel_name=None):
         if units is None:
             units = self.states[state]['units']
+        elif hasattr(self, units):
+            units = getattr(self, units)
         if channel_name is None:
             channel_name = state
 

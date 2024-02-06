@@ -443,7 +443,7 @@ class SGMClimb(SimuPyProblem):
         self.add_trigger(Dynamic.Mission.ALTITUDE, "alt_trigger",
                          units=self.alt_trigger_units)
         self.add_trigger(self.speed_trigger_name, "speed_trigger",
-                         units=self.speed_trigger_units)
+                         units="speed_trigger_units")
 
 
 class SGMCruise(SimuPyProblem):
