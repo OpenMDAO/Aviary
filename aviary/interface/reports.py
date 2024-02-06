@@ -13,7 +13,6 @@ def register_custom_reports():
     added to the same reports folder as other default reports
     """
     # TODO top-level aircraft report?
-    # TODO mission report?
     # TODO add flag to skip registering reports?
 
     # register per-subsystem report generation
@@ -55,7 +54,6 @@ def subsystem_report(prob, **kwargs):
         subsystem.report(prob, reports_folder, **kwargs)
 
 
-# TODO update with more detailed mission report file
 def mission_report(prob, **kwargs):
     """
     Creates a basic mission summary report that is place in the "reports" folder

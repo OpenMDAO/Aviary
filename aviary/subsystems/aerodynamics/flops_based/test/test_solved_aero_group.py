@@ -4,7 +4,6 @@ Computed lift and drag should be the same as reading the same polar in from
 a file.
 """
 import unittest
-import pkg_resources
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal

@@ -1602,8 +1602,6 @@ class AviaryProblem(om.Problem):
                 self.model.add_constraint("h_fit.h_init_flaps",
                                           equals=400.0, units="ft", ref=400.0)
 
-            # self.problem_type = self.aviary_inputs.get_val('problem_type')
-
             # vehicle sizing problem
             # size the vehicle (via design GTOW) to meet a target range using all fuel capacity
             if self.problem_type is ProblemType.SIZING:
