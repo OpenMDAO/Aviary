@@ -57,7 +57,7 @@ def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
 
     if not out_file:
         name = fortran_deck.stem
-        out_file: Path = fortran_deck.parents / name + '_converted.csv'
+        out_file: Path = fortran_deck.parent.resolve().joinpath(name + '_converted.csv')
 
     if legacy_code is GASP:
         default_extension = '.dat'
@@ -362,6 +362,7 @@ def update_gasp_options(vehicle_data):
         # if the design range target_range value is 0, set the problem_type to fallout
         if design_range[0] == 0:
             input_values.set_val('problem_type', ['fallout'])
+            problem_type = 'fallout'
             design_range = 0
         if problem_type == 'sizing':
             design_range = design_range[0]
@@ -613,5 +614,8 @@ def _exec_F2A(args, user_args):
         args.input_deck = args.input_deck[0]
     filepath = args.input_deck
 
-    create_aviary_deck(filepath, args.legacy_code, args.defaults_deck,
-                       Path(args.out_file), args.force)
+    if args.out_file:
+        create_aviary_deck(filepath, args.legacy_code, args.defaults_deck,
+                           Path(args.out_file), args.force)
+    else:
+        create_aviary_deck(filepath, args.legacy_code, args.defaults_deck, args.force)
