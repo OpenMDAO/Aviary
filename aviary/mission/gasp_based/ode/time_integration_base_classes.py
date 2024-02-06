@@ -378,6 +378,11 @@ class SimuPyProblem(SimulationMixin):
         self.event_channel_names.append(channel_name)
         self.num_events = len(self.event_channel_names)
 
+    def clear_triggers(self):
+        self.triggers = []
+        self.event_channel_names = []
+        self.num_events = []
+
     def event_equation_function(self, t, x):
         self.output_equation_function(t, x)
         event_values = [self.evaluate_trigger(trigger) for trigger in self.triggers]
@@ -385,7 +390,9 @@ class SimuPyProblem(SimulationMixin):
 
     def evaluate_trigger(self, trigger: event_trigger):
         trigger_value = trigger.value
-        if isinstance(trigger_value, str):
+        if hasattr(self, trigger_value):
+            trigger_value = getattr(self, trigger_value)
+        elif isinstance(trigger_value, str):
             trigger_value = self.get_val(trigger_value, units=trigger.units).squeeze()
         current_value = self.get_val(trigger.state, units=trigger.units)
         return current_value - trigger_value

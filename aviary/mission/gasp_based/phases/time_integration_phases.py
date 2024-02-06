@@ -50,15 +50,14 @@ class SGMGroundroll(SimuPyProblem):
 
         self.phase_name = phase_name
         self.VR_value = VR_value
-        self.VR_units = VR_units
-        self.event_channel_names = ["TAS"]
-        self.num_events = len(self.event_channel_names)
+        # self.VR_units = VR_units
+        self.add_trigger("TAS", "VR_value", units='ft/s')
 
-    def event_equation_function(self, t, x):
-        self.time = t
-        self.state = x
-        return self.get_val("TAS", units='ft/s') - self.VR_value
-        return self.get_val("TAS", units=self.VR_units) - self.VR_value
+    # def event_equation_function(self, t, x):
+    #     self.time = t
+    #     self.state = x
+    #     return self.get_val("TAS", units='ft/s') - self.VR_value
+    #     return self.get_val("TAS", units=self.VR_units) - self.VR_value
 
 
 class SGMRotation(SimuPyProblem):
@@ -89,15 +88,7 @@ class SGMRotation(SimuPyProblem):
         )
 
         self.phase_name = phase_name
-        self.event_channel_names = ["normal_force"]
-        self.num_events = len(self.event_channel_names)
-
-    def event_equation_function(self, t, x):
-        self.output_equation_function(t, x)
-        self.compute()
-        norm_force = self.get_val("normal_force", units="lbf") + 0.0
-
-        return norm_force
+        self.add_trigger("normal_force", 0, units='lbf')
 
 
 # TODO : turn these into parameters? inputs? they need to match between
@@ -389,16 +380,7 @@ class SGMAccel(SimuPyProblem):
             **simupy_args,
         )
         self.phase_name = phase_name
-        self.VC_value = VC_value
-        self.VC_units = VC_units
-        self.event_channel_names = [
-            "EAS",
-        ]
-        self.num_events = len(self.event_channel_names)
-
-    def event_equation_function(self, t, x):
-        self.output_equation_function(t, x)
-        return self.get_val("EAS", units=self.VC_units) - self.VC_value
+        self.add_trigger("EAS", VC_value, units=VC_units)
 
 
 class SGMClimb(SimuPyProblem):
@@ -459,25 +441,10 @@ class SGMClimb(SimuPyProblem):
             **simupy_args,
         )
         self.phase_name = phase_name
-        self.event_channel_names = [
-            Dynamic.Mission.ALTITUDE,
-            self.speed_trigger_name,
-        ]
-        self.num_events = len(self.event_channel_names)
-
-    def event_equation_function(self, t, x):
-        self.output_equation_function(t, x)
-        alt = self.get_val(Dynamic.Mission.ALTITUDE,
-                           units=self.alt_trigger_units).squeeze()
-        alt_trigger = self.get_val("alt_trigger", units=self.alt_trigger_units).squeeze()
-
-        speed = self.get_val(
-            self.speed_trigger_name, units=self.speed_trigger_units
-        ).squeeze()
-        speed_trigger = self.get_val(
-            "speed_trigger", units=self.speed_trigger_units
-        ).squeeze()
-        return np.array([alt - alt_trigger, speed - speed_trigger])
+        self.add_trigger(Dynamic.Mission.ALTITUDE, "alt_trigger",
+                         units=self.alt_trigger_units)
+        self.add_trigger(self.speed_trigger_name, "speed_trigger",
+                         units=self.speed_trigger_units)
 
 
 class SGMCruise(SimuPyProblem):
@@ -528,26 +495,9 @@ class SGMCruise(SimuPyProblem):
         )
 
         self.phase_name = phase_name
-        self.event_channel_names = [
-            Dynamic.Mission.MASS,
-            Dynamic.Mission.DISTANCE,
-        ]
-        self.num_events = len(self.event_channel_names)
-
-    def event_equation_function(self, t, x):
-        self.output_equation_function(t, x)
-        current_mass = self.get_val(Dynamic.Mission.MASS, units="lbm").squeeze()
-        mass_trigger = self.get_val('mass_trigger.mass_trigger', units="lbm").squeeze()
-
-        distance = self.get_val(Dynamic.Mission.DISTANCE,
-                                units=self.distance_trigger_units).squeeze()
-        distance_trigger = self.get_val(
-            "distance_trigger", units=self.distance_trigger_units).squeeze()
-
-        return np.array([
-            current_mass - mass_trigger,
-            distance - distance_trigger
-        ])
+        self.add_trigger(Dynamic.Mission.MASS, 'mass_trigger.mass_trigger', units='lbm')
+        self.add_trigger(Dynamic.Mission.DISTANCE, "distance_trigger",
+                         units=self.distance_trigger_units)
 
 
 class SGMDescent(SimuPyProblem):
@@ -607,22 +557,7 @@ class SGMDescent(SimuPyProblem):
         )
 
         self.phase_name = phase_name
-        self.event_channel_names = [
-            Dynamic.Mission.ALTITUDE,
-            self.speed_trigger_name,
-        ]
-        self.num_events = len(self.event_channel_names)
-
-    def event_equation_function(self, t, x):
-        self.output_equation_function(t, x)
-        alt = self.get_val(Dynamic.Mission.ALTITUDE,
-                           units=self.alt_trigger_units).squeeze()
-        alt_trigger = self.get_val("alt_trigger", units=self.alt_trigger_units).squeeze()
-
-        speed = self.get_val(
-            self.speed_trigger_name, units=self.speed_trigger_units
-        ).squeeze()
-        speed_trigger = self.get_val(
-            "speed_trigger", units=self.speed_trigger_units
-        ).squeeze()
-        return np.array([alt - alt_trigger, speed - speed_trigger])
+        self.add_trigger(Dynamic.Mission.ALTITUDE, "alt_trigger",
+                         units=self.alt_trigger_units)
+        self.add_trigger(self.speed_trigger_name, "speed_trigger",
+                         units=self.speed_trigger_units)

@@ -35,19 +35,7 @@ class SGMHeightEnergy(SimuPyProblem):
             **simupy_args)
 
         self.phase_name = phase_name
-        self.event_channel_names = [
-            Dynamic.Mission.MASS,
-        ]
-        self.num_events = len(self.event_channel_names)
-
-    def event_equation_function(self, t, x):
-        self.output_equation_function(t, x)
-
-        current_mass = self.get_val(Dynamic.Mission.MASS, units="lbm").squeeze()
-        mass_trigger = 150000
-        return np.array([
-            current_mass - mass_trigger
-        ])
+        self.add_trigger(Dynamic.Mission.MASS, 150000, units='lbm')
 
 
 class SGMDetailedTakeoff(SimuPyProblem):
@@ -71,18 +59,7 @@ class SGMDetailedTakeoff(SimuPyProblem):
             **simupy_args)
 
         self.phase_name = phase_name
-        self.event_channel_names = [
-            Dynamic.Mission.ALTITUDE,
-        ]
-        self.num_events = len(self.event_channel_names)
-
-    def event_equation_function(self, t, x):
-        self.output_equation_function(t, x)
-        current_alt = self.get_val(Dynamic.Mission.ALTITUDE, units="ft").squeeze()
-        alt_trigger = 50
-        return np.array([
-            current_alt - alt_trigger
-        ])
+        self.add_trigger(Dynamic.Mission.ALTITUDE, 50, units='ft')
 
 
 class SGMDetailedLanding(SimuPyProblem):
@@ -106,18 +83,7 @@ class SGMDetailedLanding(SimuPyProblem):
             **simupy_args)
 
         self.phase_name = phase_name
-        self.event_channel_names = [
-            Dynamic.Mission.ALTITUDE,
-        ]
-        self.num_events = len(self.event_channel_names)
-
-    def event_equation_function(self, t, x):
-        self.output_equation_function(t, x)
-        current_alt = self.get_val(Dynamic.Mission.ALTITUDE, units="ft").squeeze()
-        alt_trigger = 0
-        return np.array([
-            current_alt - alt_trigger
-        ])
+        self.add_trigger(Dynamic.Mission.ALTITUDE, 0, units='ft')
 
 
 def test_phase(phases, ode_args_tab):
@@ -257,21 +223,13 @@ if __name__ == '__main__':
         ),
     )
 
-    def func(self, t, x):
-        self.output_equation_function(t, x)
-        current_mass = self.get_val(Dynamic.Mission.MASS, units="lbm").squeeze()
-        mass_trigger = 160000
-        return np.array([
-            current_mass - mass_trigger
-        ])
-
-    SGMCruise = SGMHeightEnergy
-    SGMCruise.event_equation_function = func
+    SGMCruise = SGMHeightEnergy(**phase_kwargs)
+    SGMCruise.triggers[0].value = 160000
 
     phase_vals = {
     }
     phases = {'HE': {
-        'ode': SGMCruise(**phase_kwargs),
+        'ode': SGMCruise,
         'vals_to_set': phase_vals
     }}
 
