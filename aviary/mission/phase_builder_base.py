@@ -419,6 +419,16 @@ class PhaseBuilderBase(ABC):
         meta_data[name] = dict(
             apply_initial_guess=initial_guess.apply_initial_guess, desc=desc)
 
+    def _add_user_defined_constraints(self, phase, constraints):
+        # Add each constraint and its corresponding arguments to the phase
+        for constraint_name, kwargs in constraints.items():
+            if kwargs['type'] == 'boundary':
+                kwargs.pop('type')
+                phase.add_boundary_constraint(constraint_name, **kwargs)
+            elif kwargs['type'] == 'path':
+                kwargs.pop('type')
+                phase.add_path_constraint(constraint_name, **kwargs)
+
     def set_time_options(self, user_options, targets=[]):
         fix_initial = user_options.get_val('fix_initial')
         duration_bounds = user_options.get_val('duration_bounds', units='s')
@@ -432,24 +442,24 @@ class PhaseBuilderBase(ABC):
             duration_ref=duration_ref,
         )
 
-    def add_TAS_state(self, user_options):
-        TAS_lower = user_options.get_val('TAS_lower', units='kn')
-        TAS_upper = user_options.get_val('TAS_upper', units='kn')
-        TAS_ref = user_options.get_val('TAS_ref', units='kn')
-        TAS_ref0 = user_options.get_val('TAS_ref0', units='kn')
-        TAS_defect_ref = user_options.get_val('TAS_defect_ref', units='kn')
+    def add_velocity_state(self, user_options):
+        velocity_lower = user_options.get_val('velocity_lower', units='kn')
+        velocity_upper = user_options.get_val('velocity_upper', units='kn')
+        velocity_ref = user_options.get_val('velocity_ref', units='kn')
+        velocity_ref0 = user_options.get_val('velocity_ref0', units='kn')
+        velocity_defect_ref = user_options.get_val('velocity_defect_ref', units='kn')
         self.phase.add_state(
-            "TAS",
+            Dynamic.Mission.VELOCITY,
             fix_initial=user_options.get_val('fix_initial'),
             fix_final=False,
-            lower=TAS_lower,
-            upper=TAS_upper,
+            lower=velocity_lower,
+            upper=velocity_upper,
             units="kn",
-            rate_source="TAS_rate",
-            targets="TAS",
-            ref=TAS_ref,
-            ref0=TAS_ref0,
-            defect_ref=TAS_defect_ref,
+            rate_source=Dynamic.Mission.VELOCITY_RATE,
+            targets=Dynamic.Mission.VELOCITY,
+            ref=velocity_ref,
+            ref0=velocity_ref0,
+            defect_ref=velocity_defect_ref,
         )
 
     def add_mass_state(self, user_options):
@@ -472,19 +482,19 @@ class PhaseBuilderBase(ABC):
             defect_ref=mass_defect_ref,
         )
 
-    def add_distance_state(self, user_options):
-        distance_lower = user_options.get_val('distance_lower', units='NM')
-        distance_upper = user_options.get_val('distance_upper', units='NM')
-        distance_ref = user_options.get_val('distance_ref', units='NM')
-        distance_ref0 = user_options.get_val('distance_ref0', units='NM')
-        distance_defect_ref = user_options.get_val('distance_defect_ref', units='NM')
+    def add_distance_state(self, user_options, units='NM'):
+        distance_lower = user_options.get_val('distance_lower', units=units)
+        distance_upper = user_options.get_val('distance_upper', units=units)
+        distance_ref = user_options.get_val('distance_ref', units=units)
+        distance_ref0 = user_options.get_val('distance_ref0', units=units)
+        distance_defect_ref = user_options.get_val('distance_defect_ref', units=units)
         self.phase.add_state(
             Dynamic.Mission.DISTANCE,
             fix_initial=user_options.get_val('fix_initial'),
             fix_final=False,
             lower=distance_lower,
             upper=distance_upper,
-            units="NM",
+            units=units,
             rate_source=Dynamic.Mission.DISTANCE_RATE,
             ref=distance_ref,
             ref0=distance_ref0,
@@ -510,19 +520,19 @@ class PhaseBuilderBase(ABC):
             ref0=angle_ref0,
         )
 
-    def add_altitude_state(self, user_options):
-        alt_lower = user_options.get_val('alt_lower', units='ft')
-        alt_upper = user_options.get_val('alt_upper', units='ft')
-        alt_ref = user_options.get_val('alt_ref', units='ft')
-        alt_ref0 = user_options.get_val('alt_ref0', units='ft')
-        alt_defect_ref = user_options.get_val('alt_defect_ref', units='ft')
+    def add_altitude_state(self, user_options, units='ft'):
+        alt_lower = user_options.get_val('alt_lower', units=units)
+        alt_upper = user_options.get_val('alt_upper', units=units)
+        alt_ref = user_options.get_val('alt_ref', units=units)
+        alt_ref0 = user_options.get_val('alt_ref0', units=units)
+        alt_defect_ref = user_options.get_val('alt_defect_ref', units=units)
         self.phase.add_state(
             Dynamic.Mission.ALTITUDE,
             fix_initial=True,
             fix_final=False,
             lower=alt_lower,
             upper=alt_upper,
-            units="ft",
+            units=units,
             rate_source=Dynamic.Mission.ALTITUDE_RATE,
             ref=alt_ref,
             defect_ref=alt_defect_ref,

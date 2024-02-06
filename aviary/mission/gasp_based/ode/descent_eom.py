@@ -18,7 +18,7 @@ class DescentRates(om.ExplicitComponent):
         arange = np.arange(nn)
 
         self.add_input(
-            "TAS",
+            Dynamic.Mission.VELOCITY,
             val=np.zeros(nn),
             units="ft/s",
             desc="true air speed",
@@ -70,7 +70,7 @@ class DescentRates(om.ExplicitComponent):
         )
 
         self.declare_partials(Dynamic.Mission.ALTITUDE_RATE,
-                              ["TAS",
+                              [Dynamic.Mission.VELOCITY,
                                Dynamic.Mission.THRUST_TOTAL,
                                Dynamic.Mission.DRAG,
                                Dynamic.Mission.MASS],
@@ -78,7 +78,8 @@ class DescentRates(om.ExplicitComponent):
                               cols=arange)
         self.declare_partials(
             Dynamic.Mission.DISTANCE_RATE,
-            ["TAS", Dynamic.Mission.THRUST_TOTAL, Dynamic.Mission.DRAG, Dynamic.Mission.MASS],
+            [Dynamic.Mission.VELOCITY, Dynamic.Mission.THRUST_TOTAL,
+                Dynamic.Mission.DRAG, Dynamic.Mission.MASS],
             rows=arange,
             cols=arange,
         )
@@ -103,7 +104,7 @@ class DescentRates(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
 
-        TAS = inputs["TAS"]
+        TAS = inputs[Dynamic.Mission.VELOCITY]
         thrust = inputs[Dynamic.Mission.THRUST_TOTAL]
         drag = inputs[Dynamic.Mission.DRAG]
         weight = inputs[Dynamic.Mission.MASS] * GRAV_ENGLISH_LBM
@@ -118,7 +119,7 @@ class DescentRates(om.ExplicitComponent):
 
     def compute_partials(self, inputs, J):
 
-        TAS = inputs["TAS"]
+        TAS = inputs[Dynamic.Mission.VELOCITY]
         thrust = inputs[Dynamic.Mission.THRUST_TOTAL]
         drag = inputs[Dynamic.Mission.DRAG]
         weight = inputs[Dynamic.Mission.MASS] * GRAV_ENGLISH_LBM
@@ -126,7 +127,7 @@ class DescentRates(om.ExplicitComponent):
 
         gamma = (thrust - drag) / weight
 
-        J[Dynamic.Mission.ALTITUDE_RATE, "TAS"] = np.sin(gamma)
+        J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.VELOCITY] = np.sin(gamma)
         J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.THRUST_TOTAL] = TAS * \
             np.cos(gamma) / weight
         J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.DRAG] = TAS * \
@@ -134,7 +135,7 @@ class DescentRates(om.ExplicitComponent):
         J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.MASS] = TAS * \
             np.cos(gamma) * (-(thrust - drag) / weight**2) * GRAV_ENGLISH_LBM
 
-        J[Dynamic.Mission.DISTANCE_RATE, "TAS"] = np.cos(gamma)
+        J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Mission.VELOCITY] = np.cos(gamma)
         J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Mission.THRUST_TOTAL] = - \
             TAS * np.sin(gamma) / weight
         J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Mission.DRAG] = - \

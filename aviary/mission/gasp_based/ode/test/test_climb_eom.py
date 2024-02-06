@@ -21,7 +21,8 @@ class ClimbTestCase(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem("group", ClimbRates(num_nodes=2), promotes=["*"])
 
-        self.prob.model.set_input_defaults("TAS", np.array([459, 459]), units="kn")
+        self.prob.model.set_input_defaults(
+            Dynamic.Mission.VELOCITY, np.array([459, 459]), units="kn")
         self.prob.model.set_input_defaults(
             Dynamic.Mission.THRUST_TOTAL, np.array([10473, 10473]), units="lbf"
         )

@@ -40,7 +40,7 @@ class SGMGroundroll(SimuPyProblem):
                 Dynamic.Mission.MASS,
                 Dynamic.Mission.DISTANCE,
                 Dynamic.Mission.ALTITUDE,
-                'TAS'
+                Dynamic.Mission.VELOCITY,
             ],
             # state_units=['lbm','nmi','ft','ft/s'],
             alternate_state_rate_names={
@@ -51,13 +51,12 @@ class SGMGroundroll(SimuPyProblem):
         self.phase_name = phase_name
         self.VR_value = VR_value
         # self.VR_units = VR_units
-        self.add_trigger("TAS", "VR_value", units='ft/s')
+        self.add_trigger(Dynamic.Mission.VELOCITY, "VR_value", units='ft/s')
 
-    # def event_equation_function(self, t, x):
-    #     self.time = t
-    #     self.state = x
-    #     return self.get_val("TAS", units='ft/s') - self.VR_value
-    #     return self.get_val("TAS", units=self.VR_units) - self.VR_value
+    def event_equation_function(self, t, x):
+        self.time = t
+        self.state = x
+        return self.get_val(Dynamic.Mission.VELOCITY, units='ft/s') - self.VR_value
 
 
 class SGMRotation(SimuPyProblem):
@@ -94,7 +93,7 @@ class SGMRotation(SimuPyProblem):
 # TODO : turn these into parameters? inputs? they need to match between
 # ODE and SimuPy wrappers
 load_factor_max = 1.10
-TAS_rate_safety = -np.inf  # 100.
+velocity_rate_safety = -np.inf  # 100.
 fuselage_pitch_max = 15.0
 gear_retraction_alt = 50.0
 flap_retraction_alt = 400.0
@@ -271,7 +270,7 @@ class SGMAscentCombined(SGMAscent):
                 alpha = self.compute_alpha(ode, t, x)
                 load_factor_val = ode.get_val("load_factor")
                 fuselage_pitch_val = ode.get_val("fuselage_pitch", units="deg")
-                TAS_rate_val = ode.get_val("TAS_rate")
+                velocity_rate_val = ode.get_val("velocity_rate")
 
                 if (
                     (load_factor_val > load_factor_max) and not
@@ -288,8 +287,8 @@ class SGMAscentCombined(SGMAscent):
                     ode = fuselage_pitch
                     continue
                 elif (
-                    (TAS_rate_val < TAS_rate_safety) and not
-                    np.isclose(TAS_rate_val, TAS_rate_safety)
+                    (velocity_rate_val < velocity_rate_safety) and not
+                    np.isclose(velocity_rate_val, velocity_rate_safety)
                 ):
                     print('*'*20, 'switching to decel', '*'*20)
                     ode = decel
@@ -298,7 +297,7 @@ class SGMAscentCombined(SGMAscent):
                     if (
                         np.isnan(load_factor_val) or
                         np.isnan(fuselage_pitch_val) or
-                        np.isnan(TAS_rate_val)
+                        np.isnan(velocity_rate_val)
                     ):
                         continue
                     SATISFIED_CONSTRAINTS = True
@@ -310,7 +309,7 @@ class SGMAscentCombined(SGMAscent):
             else:
                 print("time :", t)
                 print("ode :", self.ode_name[ode])
-                for key in ["load_factor", "fuselage_pitch", "TAS_rate"]:
+                for key in ["load_factor", "fuselage_pitch", "velocity_rate"]:
                     print(key, ":", ode.get_val(key))
                 raise ValueError("Ascent could not satisfy all constraints")
 
@@ -425,7 +424,7 @@ class SGMClimb(SimuPyProblem):
                 "lift",
                 "mach",
                 "EAS",
-                "TAS",
+                Dynamic.Mission.VELOCITY,
                 Dynamic.Mission.THRUST_TOTAL,
                 "drag",
                 Dynamic.Mission.ALTITUDE_RATE,
@@ -478,7 +477,7 @@ class SGMCruise(SimuPyProblem):
                 "alpha",  # ?
                 "lift",
                 "EAS",
-                "TAS",
+                Dynamic.Mission.VELOCITY,
                 Dynamic.Mission.THRUST_TOTAL,
                 "drag",
                 Dynamic.Mission.ALTITUDE_RATE,
@@ -540,7 +539,7 @@ class SGMDescent(SimuPyProblem):
                 "required_lift",
                 "lift",
                 "EAS",
-                "TAS",
+                Dynamic.Mission.VELOCITY,
                 Dynamic.Mission.THRUST_TOTAL,
                 "drag",
                 Dynamic.Mission.ALTITUDE_RATE,

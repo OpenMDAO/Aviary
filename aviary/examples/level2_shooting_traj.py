@@ -103,7 +103,7 @@ def run_aviary(aircraft_filename, phase_info, optimizer=None, analysis_scheme=An
             Dynamic.Mission.ALTITUDE,
         ],
         traj_event_trigger_input=[
-            (phases['groundroll']['ode'], "TAS", 0,),
+            (phases['groundroll']['ode'], Dynamic.Mission.VELOCITY, 0,),
             (phases['climb3']['ode'], Dynamic.Mission.ALTITUDE, 0,),
             (phases['cruise']['ode'], Dynamic.Mission.MASS, 0,),
         ],
