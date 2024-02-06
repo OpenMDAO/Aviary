@@ -638,11 +638,6 @@ class AviaryProblem(om.Problem):
             else:
                 phase_builder = EnergyPhase
 
-            phase_object = phase_builder.from_phase_info(
-                phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data)
-
-            phase = phase_object.build_phase(aviary_options=self.aviary_inputs)
-
         phase_object = phase_builder.from_phase_info(
             phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data)
 
