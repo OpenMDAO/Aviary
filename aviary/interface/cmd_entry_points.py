@@ -6,34 +6,8 @@ import aviary
 from aviary.interface.methods_for_level1 import _exec_level1, _setup_level1_parser
 from aviary.utils.Fortran_to_Aviary import _exec_F2A, _setup_F2A_parser
 from aviary.visualization.dashboard import _dashboard_setup_parser, _dashboard_cmd
-from aviary.interface.graphical_input import IntegratedPlottingApp
-
-
-def _setup_flight_profile_parser(parser):
-    """
-    Set up the command line options for the Flight Profile plotting tool.
-
-    Parameters
-    ----------
-    parser : argparse.ArgumentParser
-        The parser instance.
-    """
-    pass
-
-
-def _exec_flight_profile(options, user_args):
-    """
-    Run the Flight Profile plotting tool.
-
-    Parameters
-    ----------
-    options : argparse.Namespace
-        Command line options.
-    user_args : list of str
-        Args to be passed to the user script.
-    """
-    app = IntegratedPlottingApp()
-    app.mainloop()
+from aviary.interface.graphical_input import _exec_flight_profile, _setup_flight_profile_parser
+from aviary.interface.download_models import _exec_hangar, _setup_hangar_parser
 
 
 def _load_and_exec(script_name, user_args):
@@ -74,6 +48,8 @@ _command_map = {
                      "Allows users to draw a mission profile for use in Aviary."),
     'dashboard': (_dashboard_setup_parser, _dashboard_cmd,
                   "Run the Dashboard tool"),
+    'hangar': (_setup_hangar_parser, _exec_hangar,
+               "Allows users that pip installed Aviary to download models from the Aviary hangar"),
 }
 
 

@@ -1,5 +1,5 @@
 blank_issues_enabled: true
 contact_links:
   - name: Discussion Board
-    url: https://github.com/OpenMDAO/om-Aviary/discussions
+    url: https://github.com/OpenMDAO/Aviary/discussions
     about: "If you have questions or need support, please check the discussion board and create a \"New Discussion\" if necessary."

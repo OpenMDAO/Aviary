@@ -163,6 +163,7 @@ class EnergyPhase(PhaseBuilderBase):
         solve_for_distance = user_options.get_val('solve_for_distance')
         no_descent = user_options.get_val('no_descent')
         no_climb = user_options.get_val('no_climb')
+        constraints = user_options.get_val('constraints')
 
         ##############
         # Add States #
@@ -223,16 +224,6 @@ class EnergyPhase(PhaseBuilderBase):
                 ref=0.5,
             )
 
-        if optimize_mach and fix_initial:
-            phase.add_boundary_constraint(
-                Dynamic.Mission.MACH, loc='initial', equals=initial_mach,
-            )
-
-        if optimize_mach and constrain_final:
-            phase.add_boundary_constraint(
-                Dynamic.Mission.MACH, loc='final', equals=final_mach,
-            )
-
         # Add altitude rate as a control
         if use_polynomial_control:
             phase.add_polynomial_control(
@@ -249,16 +240,6 @@ class EnergyPhase(PhaseBuilderBase):
                 opt=optimize_altitude, lower=altitude_bounds[0][0], upper=altitude_bounds[0][1],
                 rate_targets=[Dynamic.Mission.ALTITUDE_RATE],
                 ref=altitude_bounds[0][1],
-            )
-
-        if optimize_altitude and fix_initial:
-            phase.add_boundary_constraint(
-                Dynamic.Mission.ALTITUDE, loc='initial', equals=initial_altitude, units=altitude_bounds[1], ref=1.e4,
-            )
-
-        if optimize_altitude and constrain_final:
-            phase.add_boundary_constraint(
-                Dynamic.Mission.ALTITUDE, loc='final', equals=final_altitude, units=altitude_bounds[1], ref=1.e4,
             )
 
         ##################
@@ -305,32 +286,55 @@ class EnergyPhase(PhaseBuilderBase):
         ###################
         # Add Constraints #
         ###################
-        if no_descent:
+        if optimize_mach and fix_initial and not Dynamic.Mission.MACH in constraints:
+            phase.add_boundary_constraint(
+                Dynamic.Mission.MACH, loc='initial', equals=initial_mach,
+            )
+
+        if optimize_mach and constrain_final and not Dynamic.Mission.MACH in constraints:
+            phase.add_boundary_constraint(
+                Dynamic.Mission.MACH, loc='final', equals=final_mach,
+            )
+
+        if optimize_altitude and fix_initial and not Dynamic.Mission.ALTITUDE in constraints:
+            phase.add_boundary_constraint(
+                Dynamic.Mission.ALTITUDE, loc='initial', equals=initial_altitude, units=altitude_bounds[1], ref=1.e4,
+            )
+
+        if optimize_altitude and constrain_final and not Dynamic.Mission.ALTITUDE in constraints:
+            phase.add_boundary_constraint(
+                Dynamic.Mission.ALTITUDE, loc='final', equals=final_altitude, units=altitude_bounds[1], ref=1.e4,
+            )
+
+        if no_descent and not Dynamic.Mission.ALTITUDE_RATE in constraints:
             phase.add_path_constraint(Dynamic.Mission.ALTITUDE_RATE, lower=0.0)
 
-        if no_climb:
+        if no_climb and not Dynamic.Mission.ALTITUDE_RATE in constraints:
             phase.add_path_constraint(Dynamic.Mission.ALTITUDE_RATE, upper=0.0)
 
         required_available_climb_rate, units = user_options.get_item(
             'required_available_climb_rate')
 
-        if required_available_climb_rate is not None:
+        if required_available_climb_rate is not None and not Dynamic.Mission.ALTITUDE_RATE_MAX in constraints:
             phase.add_path_constraint(
                 Dynamic.Mission.ALTITUDE_RATE_MAX,
                 lower=required_available_climb_rate, units=units
             )
 
-        if throttle_enforcement == 'boundary_constraint':
-            phase.add_boundary_constraint(
-                Dynamic.Mission.THROTTLE, loc='initial', lower=0.0, upper=1.0, units='unitless',
-            )
-            phase.add_boundary_constraint(
-                Dynamic.Mission.THROTTLE, loc='final', lower=0.0, upper=1.0, units='unitless',
-            )
-        elif throttle_enforcement == 'path_constraint':
-            phase.add_path_constraint(
-                Dynamic.Mission.THROTTLE, lower=0.0, upper=1.0, units='unitless',
-            )
+        if not Dynamic.Mission.THROTTLE in constraints:
+            if throttle_enforcement == 'boundary_constraint':
+                phase.add_boundary_constraint(
+                    Dynamic.Mission.THROTTLE, loc='initial', lower=0.0, upper=1.0, units='unitless',
+                )
+                phase.add_boundary_constraint(
+                    Dynamic.Mission.THROTTLE, loc='final', lower=0.0, upper=1.0, units='unitless',
+                )
+            elif throttle_enforcement == 'path_constraint':
+                phase.add_path_constraint(
+                    Dynamic.Mission.THROTTLE, lower=0.0, upper=1.0, units='unitless',
+                )
+
+        self._add_user_defined_constraints(phase, constraints)
 
         return phase
 
@@ -419,6 +423,8 @@ EnergyPhase._add_meta_data('mach_bounds', val=(0., 2.), units='unitless')
 EnergyPhase._add_meta_data('altitude_bounds', val=(0., 60.e3), units='ft')
 
 EnergyPhase._add_meta_data('solve_for_distance', val=False)
+
+EnergyPhase._add_meta_data('constraints', val={})
 
 EnergyPhase._add_initial_guess_meta_data(
     InitialGuessTime(),

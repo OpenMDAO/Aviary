@@ -22,7 +22,8 @@ class SkinFriction(om.ImplicitComponent):
         self.TAW = 1.0
         self.sea_level_pressure = 14.6959 * 144  # psi -> psf
 
-        self.nonlinear_solver = om.NewtonSolver(solve_subsystems=False)
+        self.nonlinear_solver = om.NewtonSolver(solve_subsystems=False,
+                                                atol=1e-12, rtol=1e-12)
         self.linear_solver = om.DirectSolver()
         self.nonlinear_solver.options['iprint'] = -1
         self.linear_solver.options['iprint'] = -1
@@ -61,7 +62,7 @@ class SkinFriction(om.ImplicitComponent):
 
         self.add_output('cf_iter', np.ones((nn, nc)), units='unitless')
         self.add_output('skin_friction_coeff', np.ones((nn, nc)), units='unitless')
-        self.add_output('Re', np.ones((nn, nc)), units='unitless')
+        self.add_output('Re', np.ones((nn, nc)), units='unitless', res_ref=1e6)
         self.add_output('wall_temp', np.ones((nn, nc)), units='degR')
 
     def setup_partials(self):
