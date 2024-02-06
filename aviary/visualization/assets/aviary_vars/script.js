@@ -93,6 +93,109 @@ $(function () {
     return resultString;
   }
 
+
+  // d3.format('g');
+
+
+  function formatNumberIntelligently(value, precision = 3) {
+    // Determine the absolute value to decide on the formatting
+    const absValue = Math.abs(value);
+    
+    // Define thresholds for using scientific notation
+    const upperThreshold = 1e5;
+    const lowerThreshold = 1e-3;
+    
+    // Use scientific notation for very small or very large numbers
+    if (absValue >= upperThreshold || (absValue > 0 && absValue < lowerThreshold)) {
+      return value.toExponential(precision);
+    }
+    
+    // Use fixed-point notation for numbers within a 'normal' range, ensuring the precision is respected
+    // Adjust the maximumFractionDigits based on the integer part length to maintain overall precision
+    const integerPartLength = Math.floor(value) === 0 ? 1 : Math.floor(Math.log10(Math.abs(Math.floor(value)))) + 1;
+    const adjustedPrecision = Math.max(0, precision - integerPartLength);
+    
+    return value.toLocaleString('en-US', {
+      minimumFractionDigits: adjustedPrecision,
+      maximumFractionDigits: precision,
+      useGrouping: false,
+    });
+  }
+  
+  // // Usage examples:
+  // console.log(formatNumberIntelligently(1234.5678)); // Outputs: "1234.568"
+  // console.log(formatNumberIntelligently(0.000123456)); // Outputs: "1.23e-4"
+  // console.log(formatNumberIntelligently(12345678)); // Outputs: "1.235e+7"
+  // console.log(formatNumberIntelligently(0.00123456)); // Outputs: "0.001"
+  // console.log(formatNumberIntelligently(123)); // Outputs: "123"
+  
+
+
+
+      /**
+     * Convert an element to a string that is human readable.
+     * @param {Object} element The scalar item to convert.
+     * @returns {String} The string representation of the element.
+     */
+      function elementToString(element) {
+        if (typeof element === 'number') {
+            if (Number.isInteger(element)) { return element.toString(); }
+            // return this.floatFormatter(element); /* float */
+            return formatNumberIntelligently(element); /* float */
+        }
+
+        if (element === 'nan') { return element; }
+        return JSON.stringify(element);
+    }
+
+
+
+  /**
+     * Convert a value to a string that can be used in Python code.
+     * @param {Object} val The value to convert.
+     * @returns {String} The string of the converted object.
+     */
+  function valToCopyStringOld(val) {
+    if (!Array.isArray(val)) { return elementToString(val); }
+
+    let valStr = 'array([';
+    for (const element of val) {
+        valStr += valToCopyString(element) + ', ';
+    }
+
+    if (val.length > 0) {
+        var qqq = valStr.replace(/^(.+)(, )$/, '$1])')
+        return valStr.replace(/^(.+)(, )$/, '$1])');
+    }
+}
+
+/**
+     * Convert a value to a string that can be used in Python code.
+     * @param {Object} val The value to convert.
+     * @returns {String} The string of the converted object.
+     */
+function valToCopyString(val, isTopLevel = true) {
+  if (!Array.isArray(val)) { return elementToString(val); }
+  let valStr;
+
+  if (isTopLevel){
+    valStr = 'array([';
+  } else {
+    valStr = '[';
+  }
+  for (const element of val) {
+      valStr += valToCopyString(element, false) + ', ';
+  }
+
+  if (val.length > 0) {
+    if (isTopLevel){
+      return valStr.replace(/^(.+)(, )$/, '$1])');
+    } else {
+      return valStr.replace(/^(.+)(, )$/, '$1]');
+    }
+  }
+}
+
   function formatMetadataTooltip(cell) {
     prom_name = cell.getValue();
     metadata = cell.getData().metadata;
@@ -138,29 +241,30 @@ $(function () {
     }
 
     var button = document.createElement("button");
-    // button.textContent = "Copy";
+    button.textContent = "Copy";
     button.style.marginRight = "5px"; // Add some spacing between the cell content and the button
     button.style.padding = "1px"; // Add some spacing between the cell content and the button
-    button.classList.add("btn", "btn-light", "btn-sm", "fa-xs"); // Add any additional classes for styling
+    // button.classList.add("btn", "btn-light", "btn-sm", "fa-xs"); // Add any additional classes for styling
 
     // Create an icon element using FontAwesome
-    var icon = document.createElement("i");
-    icon.className = "fas fa-copy"; // Use the copy icon from FontAwesome
-    button.appendChild(icon); // Add the icon to the button
+    // var icon = document.createElement("i");
+    // icon.className = "fas fa-copy"; // Use the copy icon from FontAwesome
+    // button.appendChild(icon); // Add the icon to the button
 
     // Append the button to the cellContent container
     cellContent.appendChild(button);
 
 
     var text = document.createElement("value");
-    text.textContent = cellValue;
+    text.textContent = JSON.stringify(cellValue);
     cellContent.appendChild(text);
 
 
     onRendered(function () {
       $(button).on('click', (e) => {
         e.stopPropagation();
-        navigator.clipboard.writeText(cellValue);
+        copiedCellValue = valToCopyString(cellValue);
+        navigator.clipboard.writeText(copiedCellValue);
       });
     }
     );
@@ -210,7 +314,8 @@ $(function () {
           field: "value",
           width: 300,
           tooltip: function (e, cell) {
-            return formatValueTooltip(cell);
+            // return formatValueTooltip(cell);
+            return cell.getValue();
           },
           formatter: copyButtonFormatter
         },
