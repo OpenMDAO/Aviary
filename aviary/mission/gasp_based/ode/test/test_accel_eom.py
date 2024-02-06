@@ -33,7 +33,8 @@ class AccelerationTestCase(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Dynamic.Mission.THRUST_TOTAL, np.array([32589, 32589]), units="lbf"
         )
-        self.prob.model.set_input_defaults("TAS", np.array([252, 252]), units="kn")
+        self.prob.model.set_input_defaults(
+            Dynamic.Mission.VELOCITY, np.array([252, 252]), units="kn")
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -43,7 +44,8 @@ class AccelerationTestCase(unittest.TestCase):
         self.prob.run_model()
 
         assert_near_equal(
-            self.prob["TAS_rate"], np.array([5.51533958, 5.51533958]), tol
+            self.prob[Dynamic.Mission.VELOCITY_RATE], np.array(
+                [5.51533958, 5.51533958]), tol
             # note: this was finite differenced from GASP. The fd value is: np.array([5.2353365, 5.2353365])
         )
         assert_near_equal(

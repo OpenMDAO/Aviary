@@ -54,20 +54,20 @@ class FlightPathODE(BaseODE):
 
         if input_speed_type is SpeedType.EAS:
             speed_inputs = ["EAS"]
-            speed_outputs = ["mach", "TAS"]
+            speed_outputs = ["mach", ("TAS", Dynamic.Mission.VELOCITY)]
         elif input_speed_type is SpeedType.TAS:
-            speed_inputs = ["TAS"]
+            speed_inputs = [("TAS", Dynamic.Mission.VELOCITY)]
             speed_outputs = ["mach", "EAS"]
         elif input_speed_type is SpeedType.MACH:
             speed_inputs = ["mach"]
-            speed_outputs = ["EAS", "TAS"]
+            speed_outputs = ["EAS", ("TAS", Dynamic.Mission.VELOCITY)]
 
         EOM_inputs = [
             Dynamic.Mission.MASS,
             Dynamic.Mission.THRUST_TOTAL,
             Dynamic.Mission.LIFT,
             Dynamic.Mission.DRAG,
-            "TAS",
+            Dynamic.Mission.VELOCITY,
             Dynamic.Mission.FLIGHT_PATH_ANGLE,
         ] + ['aircraft:*']
         if not self.options['ground_roll']:
@@ -196,7 +196,7 @@ class FlightPathODE(BaseODE):
                 analysis_scheme=analysis_scheme),
             promotes_inputs=EOM_inputs,
             promotes_outputs=[
-                "TAS_rate",
+                Dynamic.Mission.VELOCITY_RATE,
                 Dynamic.Mission.DISTANCE_RATE,
                 "normal_force",
                 "fuselage_pitch",
@@ -208,27 +208,7 @@ class FlightPathODE(BaseODE):
             self.promotes('eoms', outputs=[
                           Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE])
 
-        self.add_subsystem(
-            name='SPECIFIC_ENERGY_RATE_EXCESS',
-            subsys=SpecificEnergyRate(num_nodes=nn),
-            promotes_inputs=[(Dynamic.Mission.VELOCITY, "TAS"), Dynamic.Mission.MASS,
-                             (Dynamic.Mission.THRUST_TOTAL, Dynamic.Mission.THRUST_MAX_TOTAL),
-                             Dynamic.Mission.DRAG],
-            promotes_outputs=[(Dynamic.Mission.SPECIFIC_ENERGY_RATE,
-                               Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS)]
-        )
-
-        self.add_subsystem(
-            name='ALTITUDE_RATE_MAX',
-            subsys=AltitudeRate(num_nodes=nn),
-            promotes_inputs=[
-                (Dynamic.Mission.SPECIFIC_ENERGY_RATE,
-                 Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS),
-                (Dynamic.Mission.VELOCITY_RATE, "TAS_rate"),
-                (Dynamic.Mission.VELOCITY, "TAS")],
-            promotes_outputs=[
-                (Dynamic.Mission.ALTITUDE_RATE,
-                 Dynamic.Mission.ALTITUDE_RATE_MAX)])
+        self.add_excess_rate_comps(nn)
 
         # Example of how to use a print_comp
         debug_comp = []
@@ -299,4 +279,4 @@ class FlightPathODE(BaseODE):
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.zeros(nn), units="ft")
         self.set_input_defaults(Dynamic.Mission.MACH, val=np.zeros(nn), units="unitless")
         self.set_input_defaults(Dynamic.Mission.MASS, val=np.zeros(nn), units="lbm")
-        self.set_input_defaults("TAS", val=np.zeros(nn), units="kn")
+        self.set_input_defaults(Dynamic.Mission.VELOCITY, val=np.zeros(nn), units="kn")

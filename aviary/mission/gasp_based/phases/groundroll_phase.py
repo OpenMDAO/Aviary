@@ -32,10 +32,8 @@ class GroundrollPhase(PhaseBuilderBase):
         distance_ref0 = user_options.get_val('distance_ref0', units='ft')
         distance_defect_ref = user_options.get_val('distance_defect_ref', units='ft')
 
-        self.set_time_options(user_options, targets='t_curr')
-
         # Add states
-        self.add_TAS_state(user_options)
+        self.add_velocity_state(user_options)
 
         phase.add_state(
             Dynamic.Mission.MASS,
@@ -93,11 +91,11 @@ GroundrollPhase._add_meta_data('fix_initial_mass', val=False)
 GroundrollPhase._add_meta_data('connect_initial_mass', val=True)
 GroundrollPhase._add_meta_data('duration_bounds', val=(1, 100), units='s')
 GroundrollPhase._add_meta_data('duration_ref', val=1, units='s')
-GroundrollPhase._add_meta_data('TAS_lower', val=0, units='kn')
-GroundrollPhase._add_meta_data('TAS_upper', val=1000, units='kn')
-GroundrollPhase._add_meta_data('TAS_ref', val=100, units='kn')
-GroundrollPhase._add_meta_data('TAS_ref0', val=0, units='kn')
-GroundrollPhase._add_meta_data('TAS_defect_ref', val=None, units='kn')
+GroundrollPhase._add_meta_data('velocity_lower', val=0, units='kn')
+GroundrollPhase._add_meta_data('velocity_upper', val=1000, units='kn')
+GroundrollPhase._add_meta_data('velocity_ref', val=100, units='kn')
+GroundrollPhase._add_meta_data('velocity_ref0', val=0, units='kn')
+GroundrollPhase._add_meta_data('velocity_defect_ref', val=None, units='kn')
 GroundrollPhase._add_meta_data('mass_lower', val=0, units='lbm')
 GroundrollPhase._add_meta_data('mass_upper', val=200_000, units='lbm')
 GroundrollPhase._add_meta_data('mass_ref', val=100_000, units='lbm')
@@ -118,7 +116,7 @@ GroundrollPhase._add_initial_guess_meta_data(
     InitialGuessTime(),
     desc='initial guess for time options')
 GroundrollPhase._add_initial_guess_meta_data(
-    InitialGuessState('TAS'),
+    InitialGuessState('velocity'),
     desc='initial guess for true airspeed state')
 GroundrollPhase._add_initial_guess_meta_data(
     InitialGuessState('mass'),

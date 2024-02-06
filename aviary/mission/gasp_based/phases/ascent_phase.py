@@ -31,18 +31,11 @@ class AscentPhase(PhaseBuilderBase):
             'alpha_constraint_upper', units='rad')
         alpha_constraint_ref = user_options.get_val('alpha_constraint_ref', units='rad')
 
-        phase.set_time_options(
-            units="s",
-            targets="t_curr",
-            input_initial=True,
-            input_duration=True,
-        )
-
         self.add_flight_path_angle_state(user_options)
         self.add_altitude_state(user_options)
-        self.add_TAS_state(user_options)
+        self.add_velocity_state(user_options)
         self.add_mass_state(user_options)
-        self.add_distance_state(user_options)
+        self.add_distance_state(user_options, units='ft')
 
         self.add_altitude_constraint(user_options)
 
@@ -103,11 +96,11 @@ AscentPhase._add_meta_data('alt_defect_ref', val=100, units='ft')
 AscentPhase._add_meta_data('final_altitude', val=500, units='ft')
 AscentPhase._add_meta_data('alt_constraint_ref', val=100, units='ft')
 AscentPhase._add_meta_data('alt_constraint_ref0', val=0, units='ft')
-AscentPhase._add_meta_data('TAS_lower', val=0, units='kn')
-AscentPhase._add_meta_data('TAS_upper', val=1000, units='kn')
-AscentPhase._add_meta_data('TAS_ref', val=1e2, units='kn')
-AscentPhase._add_meta_data('TAS_ref0', val=0, units='kn')
-AscentPhase._add_meta_data('TAS_defect_ref', val=None, units='kn')
+AscentPhase._add_meta_data('velocity_lower', val=0, units='kn')
+AscentPhase._add_meta_data('velocity_upper', val=1000, units='kn')
+AscentPhase._add_meta_data('velocity_ref', val=1e2, units='kn')
+AscentPhase._add_meta_data('velocity_ref0', val=0, units='kn')
+AscentPhase._add_meta_data('velocity_defect_ref', val=None, units='kn')
 AscentPhase._add_meta_data('mass_lower', val=0, units='lbm')
 AscentPhase._add_meta_data('mass_upper', val=190_000, units='lbm')
 AscentPhase._add_meta_data('mass_ref', val=100_000, units='lbm')
@@ -141,7 +134,7 @@ AscentPhase._add_initial_guess_meta_data(
     desc='initial guess for altitude state')
 
 AscentPhase._add_initial_guess_meta_data(
-    InitialGuessState('TAS'),
+    InitialGuessState('velocity'),
     desc='initial guess for true airspeed state')
 
 AscentPhase._add_initial_guess_meta_data(

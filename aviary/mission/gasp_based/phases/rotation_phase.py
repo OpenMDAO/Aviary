@@ -33,8 +33,6 @@ class RotationPhase(PhaseBuilderBase):
         normal_ref = user_options.get_val('normal_ref', units='lbf')
         normal_ref0 = user_options.get_val('normal_ref0', units='lbf')
 
-        self.set_time_options(user_options, targets='t_curr')
-
         # Add states
         phase.add_state(
             "alpha",
@@ -49,7 +47,7 @@ class RotationPhase(PhaseBuilderBase):
             defect_ref=angle_defect_ref,
         )
 
-        self.add_TAS_state(user_options)
+        self.add_velocity_state(user_options)
 
         self.add_mass_state(user_options)
 
@@ -104,11 +102,11 @@ RotationPhase._add_meta_data('angle_upper', val=25 * np.pi / 180, units='rad')  
 RotationPhase._add_meta_data('angle_ref', val=1, units='rad')
 RotationPhase._add_meta_data('angle_ref0', val=0, units='rad')
 RotationPhase._add_meta_data('angle_defect_ref', val=0.01, units='rad')
-RotationPhase._add_meta_data('TAS_lower', val=0, units='kn')
-RotationPhase._add_meta_data('TAS_upper', val=1000, units='kn')
-RotationPhase._add_meta_data('TAS_ref', val=100, units='kn')
-RotationPhase._add_meta_data('TAS_ref0', val=0, units='kn')
-RotationPhase._add_meta_data('TAS_defect_ref', val=None, units='kn')
+RotationPhase._add_meta_data('velocity_lower', val=0, units='kn')
+RotationPhase._add_meta_data('velocity_upper', val=1000, units='kn')
+RotationPhase._add_meta_data('velocity_ref', val=100, units='kn')
+RotationPhase._add_meta_data('velocity_ref0', val=0, units='kn')
+RotationPhase._add_meta_data('velocity_defect_ref', val=None, units='kn')
 RotationPhase._add_meta_data('mass_lower', val=0, units='lbm')
 RotationPhase._add_meta_data('mass_upper', val=190_000, units='lbm')
 RotationPhase._add_meta_data('mass_ref', val=100_000, units='lbm')
@@ -134,7 +132,7 @@ RotationPhase._add_initial_guess_meta_data(
     InitialGuessState('alpha'),
     desc='initial guess for angle of attack state')
 RotationPhase._add_initial_guess_meta_data(
-    InitialGuessState('TAS'),
+    InitialGuessState('velocity'),
     desc='initial guess for true airspeed state')
 RotationPhase._add_initial_guess_meta_data(
     InitialGuessState('mass'),
