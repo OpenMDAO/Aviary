@@ -394,7 +394,7 @@ class SimuPyProblem(SimulationMixin):
             trigger_value = getattr(self, trigger_value)
         elif isinstance(trigger_value, str):
             trigger_value = self.get_val(trigger_value, units=trigger.units).squeeze()
-        current_value = self.get_val(trigger.state, units=trigger.units)
+        current_value = self.get_val(trigger.state, units=trigger.units).squeeze()
         return current_value - trigger_value
 
     @property
