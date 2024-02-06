@@ -16,7 +16,6 @@ class AscentEOM(om.ExplicitComponent):
     def setup(self):
         nn = self.options["num_nodes"]
         analysis_scheme = self.options["analysis_scheme"]
-        arange = np.arange(nn)
 
         self.add_input(Dynamic.Mission.MASS, val=np.ones(nn),
                        desc="aircraft mass", units="lbm")
@@ -33,7 +32,7 @@ class AscentEOM(om.ExplicitComponent):
             desc=Dynamic.Mission.DRAG,
             units="lbf")
         self.add_input(Dynamic.Mission.VELOCITY, val=np.ones(nn),
-                       desc="true air speed", units="ft/s")
+                       desc="Velocity", units="ft/s")
         self.add_input(Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.ones(nn),
                        desc="flight path angle", units="rad")
         add_aviary_input(self, Aircraft.Wing.INCIDENCE, val=0, units="deg")
@@ -41,7 +40,7 @@ class AscentEOM(om.ExplicitComponent):
         self.add_input("alpha", val=np.ones(nn), desc="angle of attack", units="deg")
 
         self.add_output(Dynamic.Mission.VELOCITY_RATE, val=np.ones(nn),
-                        desc="TAS rate", units="ft/s**2")
+                        desc="Velocity rate", units="ft/s**2")
         self.add_output(
             Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, val=np.ones(nn), desc="flight path angle rate", units="rad/s"
         )

@@ -153,7 +153,7 @@ class BreguetCruiseODESolution(BaseODE):
             promotes_inputs=[
                 (Dynamic.Mission.SPECIFIC_ENERGY_RATE,
                  Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS),
-                (Dynamic.Mission.VELOCITY_RATE, Dynamic.Mission.VELOCITY_RATE),
+                Dynamic.Mission.VELOCITY_RATE,
                 Dynamic.Mission.VELOCITY],
             promotes_outputs=[
                 (Dynamic.Mission.ALTITUDE_RATE,

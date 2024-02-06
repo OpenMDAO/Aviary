@@ -58,7 +58,7 @@ class FlightPathEOM(om.ExplicitComponent):
             add_aviary_input(self, Dynamic.Mission.DISTANCE, val=np.ones(nn), units="ft")
 
         self.add_output(Dynamic.Mission.VELOCITY_RATE, val=np.ones(nn), desc="TAS rate", units="ft/s**2",
-                        tags=['dymos.state_rate_source:TAS', 'dymos.state_units:kn'])
+                        tags=['dymos.state_rate_source:velocity', 'dymos.state_units:kn'])
 
         if not ground_roll:
             self._mu = 0.0
