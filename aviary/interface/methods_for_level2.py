@@ -118,6 +118,7 @@ class AviaryGroup(om.Group):
     method. This assures that we only call set_input_defaults on variables
     that are present in the model.
     """
+
     def initialize(self):
         self.options.declare(
             'aviary_options', types=AviaryValues,
