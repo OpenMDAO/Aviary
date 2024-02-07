@@ -182,7 +182,7 @@ class AviaryProblem(om.Problem):
         self.aviary_inputs = aviary_inputs
         self.initial_guesses = initial_guesses
 
-        if mission_method is TWO_DEGREES_OF_FREEDOM or mission_method is SOLVED:
+        if mission_method is TWO_DEGREES_OF_FREEDOM:
             aviary_inputs.set_val(Mission.Summary.CRUISE_MASS_FINAL,
                                   val=self.initial_guesses['cruise_mass_final'], units='lbm')
             aviary_inputs.set_val(Mission.Summary.GROSS_MASS,
