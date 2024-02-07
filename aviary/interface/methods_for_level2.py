@@ -12,6 +12,7 @@ import dymos as dm
 from dymos.utils.misc import _unspecified
 
 import openmdao.api as om
+from openmdao.core.component import Component
 from openmdao.utils.units import convert_units
 
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
@@ -131,12 +132,22 @@ class AviaryGroup(om.Group):
         aviary_options = self.options['aviary_options']
         aviary_metadata = self.options['aviary_metadata']
 
+        # Find promoted name of every input in the model.
         all_prom_inputs = []
 
-        # Find promoted name of every input in the model.
+        # We can call list_inputs on the groups.
         for system in self.system_iter(recurse=False, typ=om.Group):
             var_abs = system.list_inputs(out_stream=None)
             var_prom = [v['prom_name'] for k, v in var_abs]
+            all_prom_inputs.extend(var_prom)
+
+        # Component promotes aren't handled until this group resolves.
+        # Here, we address anything promoted in AviaryProblem.
+        for system in self.system_iter(recurse=False, typ=Component):
+            input_meta = system._var_promotes['input']
+            var_prom = [v[0][1] for v in input_meta if isinstance(v[0], tuple)]
+            all_prom_inputs.extend(var_prom)
+            var_prom = [v[0] for v in input_meta if not isinstance(v[0], tuple)]
             all_prom_inputs.extend(var_prom)
 
         for key in aviary_metadata:
