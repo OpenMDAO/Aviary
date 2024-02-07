@@ -64,4 +64,4 @@ class ProblemPhaseTestCase(unittest.TestCase):
 if __name__ == "__main__":
     # unittest.main()
     test = ProblemPhaseTestCase()
-    test.bench_test_swap_3_FwGm_IPOPT()
+    test.bench_test_swap_3_FwGm_SNOPT()

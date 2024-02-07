@@ -134,7 +134,7 @@ class AviaryGroup(om.Group):
         all_prom_inputs = []
 
         # Find promoted name of every input in the model.
-        for system in self.system_iter(recurse=False):
+        for system in self.system_iter(recurse=False, typ=om.Group):
             var_abs = system.list_inputs(out_stream=None)
             var_prom = [v['prom_name'] for k, v in var_abs]
             all_prom_inputs.extend(var_prom)
