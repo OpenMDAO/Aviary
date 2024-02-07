@@ -27,6 +27,12 @@ jobs:
           echo "title=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
           echo "url=${{ github.event.pull_request.html_url }}" >> $GITHUB_ENV
           echo "assignees=${{ join(github.event.pull_request.assignees.*.login, ',') }}" >> $GITHUB_ENV
+          reviewers_list=()
+          for review in ${{ github.event.pull_request.reviews }};
+          do
+            reviewers_list+=([$review.user.login, $review.state])
+          done
+          echo "::set-output name=reviewers_list::${reviewers_list[@]}"
 
       - name: Send Email on Opened PR
         uses: dawidd6/action-send-mail@v3
@@ -45,7 +51,8 @@ jobs:
               "user": "${{ env.user }}",
               "title": "${{ env.title }}",
               "url": "${{ env.url }}",
-              "assignees": "${{ env.assignees }}"
+              "assignees": "${{ env.assignees }}",
+              "reviewers": "${{ env.reviewers_list}}"
             }
           ignore_cert: true
           nodemailerlog: true
