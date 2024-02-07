@@ -1825,7 +1825,6 @@ class AviaryProblem(om.Problem):
         # "input variable '...' promoted using '*' was already promoted using 'aircraft:*'
         with warnings.catch_warnings():
 
-            # Set initial default values for all LEAPS aircraft variables.
             self.model.options['aviary_options'] = self.aviary_inputs
             self.model.options['aviary_metadata'] = self.meta_data
 
