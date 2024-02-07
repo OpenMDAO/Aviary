@@ -71,7 +71,7 @@ class AccelODE(BaseODE):
             Dynamic.Mission.ALTITUDE_RATE] if analysis_scheme is AnalysisScheme.SHOOTING else []
 
         self.add_subsystem(
-            "eom",
+            "accel_eom",
             AccelerationRates(
                 num_nodes=nn,
                 analysis_scheme=analysis_scheme),
