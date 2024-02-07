@@ -24,7 +24,8 @@ class RotationEOMTestCase(unittest.TestCase):
             Dynamic.Mission.LIFT, val=200 * np.ones(2), units="lbf")
         self.prob.model.set_input_defaults(
             Dynamic.Mission.DRAG, val=10000 * np.ones(2), units="lbf")
-        self.prob.model.set_input_defaults("TAS", val=10 * np.ones(2), units="ft/s")
+        self.prob.model.set_input_defaults(
+            Dynamic.Mission.VELOCITY, val=10 * np.ones(2), units="ft/s")
         self.prob.model.set_input_defaults(
             Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(2), units="rad")
         self.prob.model.set_input_defaults(Aircraft.Wing.INCIDENCE, val=0, units="deg")

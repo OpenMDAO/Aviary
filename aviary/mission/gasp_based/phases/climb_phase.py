@@ -53,8 +53,6 @@ class ClimbPhase(PhaseBuilderBase):
         required_available_climb_rate = user_options.get_val(
             'required_available_climb_rate', units='ft/min')
 
-        self.set_time_options(user_options)
-
         # States
         self.add_altitude_state(user_options)
 

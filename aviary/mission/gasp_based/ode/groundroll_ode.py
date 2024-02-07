@@ -2,12 +2,9 @@ import numpy as np
 import openmdao.api as om
 from dymos.models.atmosphere.atmos_1976 import USatm1976Comp
 
-from aviary.mission.gasp_based.flight_conditions import FlightConditions
 from aviary.mission.gasp_based.ode.base_ode import BaseODE
 from aviary.mission.gasp_based.ode.groundroll_eom import GroundrollEOM
 from aviary.mission.gasp_based.ode.params import ParamPort
-from aviary.subsystems.aerodynamics.gasp_based.gaspaero import LowSpeedAero
-from aviary.subsystems.propulsion.propulsion_mission import PropulsionMission
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase
 
@@ -35,13 +32,8 @@ class GroundrollODE(BaseODE):
                 ("h", Dynamic.Mission.ALTITUDE)], promotes_outputs=[
                 "rho", ("sos", Dynamic.Mission.SPEED_OF_SOUND), ("temp", Dynamic.Mission.TEMPERATURE), ("pres", Dynamic.Mission.STATIC_PRESSURE), "viscosity"], )
 
-        self.add_subsystem(
-            "fc",
-            FlightConditions(num_nodes=nn),
-            promotes_inputs=["rho", Dynamic.Mission.SPEED_OF_SOUND, "TAS"],
-            promotes_outputs=[Dynamic.Mission.DYNAMIC_PRESSURE,
-                              Dynamic.Mission.MACH, "EAS"],
-        )
+        self.add_flight_conditions(nn)
+
         # broadcast scalar i_wing to alpha for aero
         self.add_subsystem("init_alpha",
                            om.ExecComp("alpha = i_wing",
@@ -69,18 +61,19 @@ class GroundrollODE(BaseODE):
         self.add_subsystem("eoms", GroundrollEOM(num_nodes=nn, analysis_scheme=analysis_scheme),
                            promotes=["*"])
 
-        self.add_subsystem("exec", om.ExecComp("over_a = TAS / TAS_rate",
-                                               TAS_rate={"units": "kn/s",
+        self.add_subsystem("exec", om.ExecComp(f"over_a = velocity / velocity_rate",
+                                               velocity_rate={"units": "kn/s",
+                                                              "val": np.ones(nn)},
+                                               velocity={"units": "kn",
                                                          "val": np.ones(nn)},
-                                               TAS={"units": "kn", "val": np.ones(nn)},
                                                over_a={"units": "s", "val": np.ones(nn)},
                                                has_diag_partials=True,
                                                ),
                            promotes=["*"])
 
-        self.add_subsystem("exec2", om.ExecComp("dt_dv = 1 / TAS_rate",
-                                                TAS_rate={"units": "kn/s",
-                                                          "val": np.ones(nn)},
+        self.add_subsystem("exec2", om.ExecComp(f"dt_dv = 1 / velocity_rate",
+                                                velocity_rate={"units": "kn/s",
+                                                               "val": np.ones(nn)},
                                                 dt_dv={"units": "s/kn",
                                                        "val": np.ones(nn)},
                                                 has_diag_partials=True,
@@ -120,6 +113,7 @@ class GroundrollODE(BaseODE):
         self.set_input_defaults(Dynamic.Mission.FLIGHT_PATH_ANGLE,
                                 val=np.zeros(nn), units="deg")
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.zeros(nn), units="ft")
-        self.set_input_defaults("TAS", val=np.zeros(nn), units="kn")
-        self.set_input_defaults("TAS_rate", val=np.zeros(nn), units="kn/s")
+        self.set_input_defaults(Dynamic.Mission.VELOCITY, val=np.zeros(nn), units="kn")
+        self.set_input_defaults(Dynamic.Mission.VELOCITY_RATE,
+                                val=np.zeros(nn), units="kn/s")
         self.set_input_defaults("t_curr", val=np.zeros(nn), units="s")
