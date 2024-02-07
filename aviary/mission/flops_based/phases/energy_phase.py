@@ -384,6 +384,8 @@ EnergyPhase._add_meta_data('add_initial_mass_constraint', val=False)
 
 EnergyPhase._add_meta_data('fix_initial', val=True)
 
+EnergyPhase._add_meta_data('fix_duration', val=False)
+
 EnergyPhase._add_meta_data('optimize_mach', val=False)
 
 EnergyPhase._add_meta_data('optimize_altitude', val=False)
@@ -433,11 +435,11 @@ EnergyPhase._add_initial_guess_meta_data(
     desc='initial guess for horizontal distance traveled')
 
 EnergyPhase._add_initial_guess_meta_data(
-    InitialGuessControl('altitude'),
+    InitialGuessState('altitude'),
     desc='initial guess for vertical distances')
 
 EnergyPhase._add_initial_guess_meta_data(
-    InitialGuessControl('mach'),
+    InitialGuessState('mach'),
     desc='initial guess for speed')
 
 EnergyPhase._add_initial_guess_meta_data(

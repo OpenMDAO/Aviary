@@ -39,9 +39,9 @@ def check_phase_info(phase_info, mission_method):
     }
 
     common_TAS = {
-        'TAS_lower': tuple,
-        'TAS_upper': tuple,
-        'TAS_ref': tuple,
+        'velocity_lower': tuple,
+        'velocity_upper': tuple,
+        'velocity_ref': tuple,
     }
     common_mass = {
         'mass_lower': tuple,
@@ -95,7 +95,7 @@ def check_phase_info(phase_info, mission_method):
             **common_distance,
             **common_angle,
             'normal_ref': tuple,
-            'TAS_ref0': tuple,
+            'velocity_ref0': tuple,
             'distance_defect_ref': tuple,
         },
         'ascent': {
@@ -110,7 +110,7 @@ def check_phase_info(phase_info, mission_method):
             'pitch_constraint_lower': tuple,
             'pitch_constraint_upper': tuple,
             'pitch_constraint_ref': tuple,
-            'TAS_ref0': tuple,
+            'velocity_ref0': tuple,
             'distance_defect_ref': tuple,
         },
         'accel': {
@@ -121,7 +121,7 @@ def check_phase_info(phase_info, mission_method):
             **common_TAS,
             **common_mass,
             **common_distance,
-            'TAS_ref0': tuple,
+            'velocity_ref0': tuple,
             'distance_defect_ref': tuple,
         },
         'climb1': {

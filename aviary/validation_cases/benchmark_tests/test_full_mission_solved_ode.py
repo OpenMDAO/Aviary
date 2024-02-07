@@ -283,7 +283,7 @@ def run_mission(optimizer):
             )
 
             phase.set_time_options(fix_initial=True, fix_duration=False,
-                                   units="kn", name="TAS",
+                                   units="kn", name=Dynamic.Mission.VELOCITY,
                                    duration_bounds=duration_bounds, duration_ref=duration_ref, initial_ref=initial_ref)
 
             phase.set_state_options("time", rate_source="dt_dv", units="s",
@@ -508,8 +508,14 @@ def run_mission(optimizer):
     traj.link_phases(phases, vars=['time'], ref=100.)
     traj.link_phases(phases, vars=['mass'], ref=10.e3)
     traj.link_phases(phases, vars=[Dynamic.Mission.DISTANCE], units='m', ref=10.e3)
-    traj.link_phases(phases[:7], vars=['TAS'], units='kn', ref=200.)
-    # traj.link_phases(phases[7:], vars=['TAS'], units='kn', ref=200.)
+    traj.link_phases(phases[1:7], vars=['TAS'], units='kn', ref=200.)
+    traj.add_linkage_constraint(phase_a='groundroll',
+                                phase_b='rotation',
+                                var_a=Dynamic.Mission.VELOCITY,
+                                var_b='TAS',
+                                loc_a='final',
+                                loc_b='initial',
+                                connected=False)
 
     p.model.add_subsystem("vrot_comp", VRotateComp())
     p.model.connect('traj.groundroll.states:mass',
@@ -520,7 +526,7 @@ def run_mission(optimizer):
                                lhs_name="v_rot_computed", rhs_name="groundroll_v_final", add_constraint=True)
 
     p.model.connect('vrot_comp.Vrot', 'vrot_eq_comp.v_rot_computed')
-    p.model.connect('traj.groundroll.timeseries.TAS',
+    p.model.connect('traj.groundroll.timeseries.velocity',
                     'vrot_eq_comp.groundroll_v_final', src_indices=om.slicer[-1, ...])
 
     traj.add_parameter('wing_area', units='ft**2', static_target=True, opt=False)
@@ -607,7 +613,8 @@ def run_mission(optimizer):
             else:
                 p.set_val(
                     f"traj.{phase_name}.polynomial_controls:TAS",
-                    phase.interp("TAS", [TAS_guesses[idx], TAS_guesses[idx+1]]),
+                    phase.interp("TAS", [
+                                 TAS_guesses[idx], TAS_guesses[idx+1]]),
                     units="kn",
                 )
         else:
@@ -650,9 +657,9 @@ def run_mission(optimizer):
             alts.extend([0., 0.])
 
             TASs.extend(
-                p.get_val(f"traj.{phase_name}.timeseries.TAS", units="kn")[0])
+                p.get_val(f"traj.{phase_name}.timeseries.velocity", units="kn")[0])
             TASs.extend(
-                p.get_val(f"traj.{phase_name}.timeseries.TAS", units="kn")[-1])
+                p.get_val(f"traj.{phase_name}.timeseries.velocity", units="kn")[-1])
         else:
             distance_initial = p.get_val(
                 f"traj.{phase_name}.t_initial", units='distance_units')

@@ -3,9 +3,12 @@ import numpy as np
 
 import openmdao.api as om
 
+from aviary.mission.gasp_based.flight_conditions import FlightConditions
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.enums import AnalysisScheme, AlphaModes
+from aviary.variable_info.enums import AnalysisScheme, AlphaModes, SpeedType
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic
+from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
+from aviary.mission.ode.altitude_rate import AltitudeRate
 
 
 class BaseODE(om.Group):
@@ -97,14 +100,14 @@ class BaseODE(om.Group):
                 name="alpha",
                 val=np.full(nn, 10),  # initial guess
                 units="deg",
-                lhs_name="TAS_rate",
+                lhs_name=Dynamic.Mission.VELOCITY_RATE,
                 rhs_name='target_tas_rate',
                 rhs_val=target_tas_rate,
                 eq_units="kn/s",
                 upper=25.,
                 lower=-2.,
             )
-            alpha_comp_inputs = ["TAS_rate"]
+            alpha_comp_inputs = [Dynamic.Mission.VELOCITY_RATE]
 
         elif alpha_mode is AlphaModes.REQUIRED_LIFT:
             alpha_comp = om.BalanceComp(
@@ -214,3 +217,44 @@ class BaseODE(om.Group):
                 prop_group,
                 promotes=['*']
             )
+
+    def add_flight_conditions(self, nn, input_speed_type=SpeedType.TAS):
+        if input_speed_type is SpeedType.TAS:
+            promotes_inputs = [("TAS", Dynamic.Mission.VELOCITY)]
+            promotes_outputs = ["EAS", Dynamic.Mission.MACH]
+        elif input_speed_type is SpeedType.EAS:
+            promotes_inputs = ["EAS"]
+            promotes_outputs = [("TAS", Dynamic.Mission.VELOCITY), Dynamic.Mission.MACH]
+        elif input_speed_type is SpeedType.MACH:
+            promotes_inputs = [Dynamic.Mission.MACH]
+            promotes_outputs = ["EAS", ("TAS", Dynamic.Mission.VELOCITY)]
+
+        self.add_subsystem(
+            "flight_conditions",
+            FlightConditions(num_nodes=nn, input_speed_type=input_speed_type),
+            promotes_inputs=["rho", Dynamic.Mission.SPEED_OF_SOUND] + promotes_inputs,
+            promotes_outputs=[Dynamic.Mission.DYNAMIC_PRESSURE] + promotes_outputs,
+        )
+
+    def add_excess_rate_comps(self, nn):
+        self.add_subsystem(
+            name='SPECIFIC_ENERGY_RATE_EXCESS',
+            subsys=SpecificEnergyRate(num_nodes=nn),
+            promotes_inputs=[Dynamic.Mission.VELOCITY, Dynamic.Mission.MASS,
+                             (Dynamic.Mission.THRUST_TOTAL, Dynamic.Mission.THRUST_MAX_TOTAL),
+                             Dynamic.Mission.DRAG],
+            promotes_outputs=[(Dynamic.Mission.SPECIFIC_ENERGY_RATE,
+                               Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS)]
+        )
+
+        self.add_subsystem(
+            name='ALTITUDE_RATE_MAX',
+            subsys=AltitudeRate(num_nodes=nn),
+            promotes_inputs=[
+                (Dynamic.Mission.SPECIFIC_ENERGY_RATE,
+                 Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS),
+                Dynamic.Mission.VELOCITY_RATE,
+                Dynamic.Mission.VELOCITY],
+            promotes_outputs=[
+                (Dynamic.Mission.ALTITUDE_RATE,
+                 Dynamic.Mission.ALTITUDE_RATE_MAX)])

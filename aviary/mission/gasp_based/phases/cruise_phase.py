@@ -62,21 +62,6 @@ class CruisePhase(PhaseBuilderBase):
         mach_cruise = user_options.get_val('mach_cruise')
         alt_cruise, alt_units = user_options.get_item('alt_cruise')
 
-        # Time here is really the independent variable through which we are integrating.
-        # In the case of the Breguet Range ODE, it's mass.
-        # We rely on mass being monotonically non-increasing across the phase.
-        phase.set_time_options(
-            name='mass',
-            fix_initial=False,
-            fix_duration=False,
-            units="lbm",
-            targets="mass",
-            initial_bounds=(0., 1.e7),
-            initial_ref=100.e3,
-            duration_bounds=(-1.e7, -1),
-            duration_ref=50000,
-        )
-
         phase.add_parameter(Dynamic.Mission.ALTITUDE, opt=False,
                             val=alt_cruise, units=alt_units)
         phase.add_parameter(Dynamic.Mission.MACH, opt=False,
