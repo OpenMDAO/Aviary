@@ -1,5 +1,4 @@
 import argparse
-import glob
 import json
 import os
 from pathlib import Path
@@ -170,7 +169,6 @@ def create_aviary_variables_table_data_nested(script_name, recorder_file):
                                 units=True, shape=True, bounds=True, desc=True,
                                 scaling=False, hierarchical=True, print_arrays=True,
                                 out_stream=None, return_format='dict')
-
 
     sorted_abs_names = sorted(outputs.keys())
 
