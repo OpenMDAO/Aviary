@@ -65,12 +65,13 @@ def mission_report(prob, **kwargs):
     """
     def _get_phase_value(traj, phase, var_name, units, indices=None):
         try:
-            vals = prob.get_val(f"{traj}.{phase}.states:{var_name}",
+            vals = prob.get_val(f"{traj}.{phase}.timeseries.{var_name}",
                                 units=units,
                                 indices=indices,)
+
         except KeyError:
             try:
-                vals = prob.get_val(f"{traj}.{phase}.timeseries.{var_name}",
+                vals = prob.get_val(f"{traj}.{phase}.states:{var_name}",
                                     units=units,
                                     indices=indices,)
             except KeyError:
@@ -138,7 +139,7 @@ def mission_report(prob, **kwargs):
 
         # get final values, last in traj
         final_mass = _get_phase_value('traj', phase, 'mass', 'lbm', -1)[0]
-        final_time = _get_phase_value('traj', phase, 't', 'min', -1)[0]
+        final_time = _get_phase_value('traj', phase, 't', 'min', -1)
         final_range = _get_phase_value('traj', phase, 'range', 'nmi', -1)
         if final_range is None:
             final_range = _get_phase_value('traj', phase, 'distance', 'nmi', -1)
