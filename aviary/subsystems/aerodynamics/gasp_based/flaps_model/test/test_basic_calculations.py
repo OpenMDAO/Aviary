@@ -7,7 +7,6 @@ from openmdao.utils.assert_utils import (assert_check_partials,
 
 from aviary.subsystems.aerodynamics.gasp_based.flaps_model.basic_calculations import \
     BasicFlapsCalculations
-from aviary.utils.test_utils.IO_test_util import assert_match_spec, skipIfMissingXDSM
 from aviary.variable_info.variables import Aircraft
 
 """
@@ -84,13 +83,6 @@ class BasicFlapsCalculationsTestCase(unittest.TestCase):
 
         data = self.prob.check_partials(out_stream=None, method="fd")
         assert_check_partials(data, atol=1e-6, rtol=4e-6)
-
-    @skipIfMissingXDSM('flaps_specs/basic.json')
-    def test_basic_spec(self):
-
-        subsystem = self.prob.model
-
-        assert_match_spec(subsystem, "flaps_specs/basic.json")
 
 
 if __name__ == "__main__":

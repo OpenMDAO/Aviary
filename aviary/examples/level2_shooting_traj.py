@@ -58,8 +58,6 @@ def run_aviary(aircraft_filename, phase_info, optimizer=None, analysis_scheme=An
         alpha_mode=AlphaModes.REQUIRED_LIFT,
         simupy_args=dict(
             DEBUG=True,
-            blocked_state_names=['engine.nox', 'nox',
-                                 'TAS', Dynamic.Mission.FLIGHT_PATH_ANGLE],
         ),
     )
     cruise_vals = {
@@ -74,7 +72,6 @@ def run_aviary(aircraft_filename, phase_info, optimizer=None, analysis_scheme=An
         ode_args=prob.ode_args,
         simupy_args=dict(
             DEBUG=False,
-            blocked_state_names=['engine.nox', 'nox'],
         ),
     )
     descent1_vals = {
@@ -106,7 +103,7 @@ def run_aviary(aircraft_filename, phase_info, optimizer=None, analysis_scheme=An
             Dynamic.Mission.ALTITUDE,
         ],
         traj_event_trigger_input=[
-            (phases['groundroll']['ode'], "TAS", 0,),
+            (phases['groundroll']['ode'], Dynamic.Mission.VELOCITY, 0,),
             (phases['climb3']['ode'], Dynamic.Mission.ALTITUDE, 0,),
             (phases['cruise']['ode'], Dynamic.Mission.MASS, 0,),
         ],

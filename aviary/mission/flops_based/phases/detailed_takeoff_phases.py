@@ -46,9 +46,8 @@ import dymos as dm
 import openmdao.api as om
 
 from aviary.mission.flops_based.ode.takeoff_ode import TakeoffODE
-from aviary.mission.flops_based.phases.phase_builder_base import (
-    InitialGuessControl, InitialGuessParameter, InitialGuessPolynomialControl,
-    InitialGuessState, InitialGuessTime, PhaseBuilderBase)
+from aviary.mission.phase_builder_base import PhaseBuilderBase
+from aviary.mission.initial_guess_builders import InitialGuessControl, InitialGuessParameter, InitialGuessPolynomialControl, InitialGuessState, InitialGuessTime
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_trajectory_params
 from aviary.variable_info.variables import Dynamic, Mission
@@ -94,9 +93,6 @@ class TakeoffBrakeReleaseToDecisionSpeed(PhaseBuilderBase):
     ----------
     name : str ('takeoff_brake_release')
         object label
-
-    aero_builder (None)
-        utility for building and connecting a dynamic aerodynamics analysis component
 
     user_options : AviaryValues (<empty>)
         state/path constraint values and flags
@@ -195,7 +191,7 @@ class TakeoffBrakeReleaseToDecisionSpeed(PhaseBuilderBase):
 
         phase.add_state(
             Dynamic.Mission.MASS, fix_initial=True, fix_final=False,
-            lower=0.0, ref=5e4, defect_ref=5e4, units='kg',
+            lower=0.0, upper=1e9, ref=5e4, units='kg',
             rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Mission.MASS,
         )
@@ -260,9 +256,6 @@ class TakeoffDecisionSpeedToRotate(PhaseBuilderBase):
     ----------
     name : str ('takeoff_decision_speed')
         object label
-
-    aero_builder (None)
-        utility for building and connecting a dynamic aerodynamics analysis component
 
     user_options : AviaryValues (<empty>)
         state/path constraint values and flags
@@ -365,7 +358,7 @@ class TakeoffDecisionSpeedToRotate(PhaseBuilderBase):
 
         phase.add_state(
             Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, ref=5e4, defect_ref=5e4, units='kg',
+            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
             rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Mission.MASS,
         )
@@ -437,9 +430,6 @@ class TakeoffDecisionSpeedBrakeDelay(TakeoffDecisionSpeedToRotate):
     ----------
     name : str ('takeoff_decision_speed')
         object label
-
-    aero_builder (None)
-        utility for building and connecting a dynamic aerodynamics analysis component
 
     user_options : AviaryValues (<empty>)
         state/path constraint values and flags
@@ -540,9 +530,6 @@ class TakeoffRotateToLiftoff(PhaseBuilderBase):
     ----------
     name : str ('takeoff_rotate')
         object label
-
-    aero_builder (None)
-        utility for building and connecting a dynamic aerodynamics analysis component
 
     user_options : AviaryValues (<empty>)
         state/path constraint values and flags
@@ -648,7 +635,7 @@ class TakeoffRotateToLiftoff(PhaseBuilderBase):
 
         phase.add_state(
             Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, ref=5e4, defect_ref=5e4, units='kg',
+            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
             rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Mission.MASS,
         )
@@ -722,9 +709,6 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
     ----------
     name : str ('takeoff_liftoff')
         object label
-
-    aero_builder (None)
-        utility for building and connecting a dynamic aerodynamics analysis component
 
     user_options : AviaryValues (<empty>)
         state/path constraint values and flags
@@ -849,7 +833,7 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
 
         phase.add_state(
             Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, ref=5e4, defect_ref=5e4, units='kg',
+            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
             rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Mission.MASS,
         )
@@ -896,7 +880,7 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
         phase.add_path_constraint(
             'v_over_v_stall', lower=1.25, ref=2.0)
 
-        phase.add_boundary_constraint('eoms.forces_vertical', loc='initial', equals=0,
+        phase.add_boundary_constraint('takeoff_eom.forces_vertical', loc='initial', equals=0,
                                       ref=100000)
 
         return phase
@@ -957,9 +941,6 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
     ----------
     name : str ('takeoff_climb')
         object label
-
-    aero_builder (None)
-        utility for building and connecting a dynamic aerodynamics analysis component
 
     user_options : AviaryValues (<empty>)
         state/path constraint values and flags
@@ -1085,7 +1066,7 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
 
         phase.add_state(
             Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, ref=5e4, defect_ref=5e4, units='kg',
+            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
             rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Mission.MASS,
         )
@@ -1114,12 +1095,12 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
             output_name=Dynamic.Mission.THRUST_TOTAL, units='lbf'
         )
 
-        final_alt, units = user_options.get_item('mic_altitude')
+        final_altitude, units = user_options.get_item('mic_altitude')
 
         airport_altitude = aviary_options.get_val(
             Mission.Takeoff.AIRPORT_ALTITUDE, units)
 
-        h = final_alt + airport_altitude
+        h = final_altitude + airport_altitude
 
         phase.add_boundary_constraint(
             Dynamic.Mission.ALTITUDE, loc='final', equals=h, ref=h, units=units, linear=True)
@@ -1189,9 +1170,6 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
     ----------
     name : str ('takeoff_climb')
         object label
-
-    aero_builder (None)
-        utility for building and connecting a dynamic aerodynamics analysis component
 
     user_options : AviaryValues (<empty>)
         state/path constraint values and flags
@@ -1317,7 +1295,7 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
 
         phase.add_state(
             Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, ref=5e4, defect_ref=5e4, units='kg',
+            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
             rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Mission.MASS,
         )
@@ -1422,9 +1400,6 @@ class TakeoffEngineCutback(PhaseBuilderBase):
     ----------
     name : str ('takeoff_climb')
         object label
-
-    aero_builder (None)
-        utility for building and connecting a dynamic aerodynamics analysis component
 
     user_options : AviaryValues (<empty>)
         state/path constraint values and flags
@@ -1545,7 +1520,7 @@ class TakeoffEngineCutback(PhaseBuilderBase):
 
         phase.add_state(
             Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, ref=5e4, defect_ref=5e4, units='kg',
+            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
             rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Mission.MASS,
         )
@@ -1633,9 +1608,6 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilderBase):
     ----------
     name : str ('takeoff_climb')
         object label
-
-    aero_builder (None)
-        utility for building and connecting a dynamic aerodynamics analysis component
 
     user_options : AviaryValues (<empty>)
         state/path constraint values and flags
@@ -1761,7 +1733,7 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilderBase):
 
         phase.add_state(
             Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, ref=5e4, defect_ref=5e4, units='kg',
+            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
             rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Mission.MASS,
         )
@@ -1862,9 +1834,6 @@ class TakeoffMicP1ToClimb(PhaseBuilderBase):
     ----------
     name : str ('takeoff_climb')
         object label
-
-    aero_builder (None)
-        utility for building and connecting a dynamic aerodynamics analysis component
 
     user_options : AviaryValues (<empty>)
         state/path constraint values and flags
@@ -1990,7 +1959,7 @@ class TakeoffMicP1ToClimb(PhaseBuilderBase):
 
         phase.add_state(
             Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, ref=5e4, defect_ref=5e4, units='kg',
+            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
             rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Mission.MASS,
         )
@@ -2090,9 +2059,6 @@ class TakeoffBrakeToAbort(PhaseBuilderBase):
     ----------
     name : str ('takeoff_abort')
         object label
-
-    aero_builder (None)
-        utility for building and connecting a dynamic aerodynamics analysis component
 
     user_options : AviaryValues (<empty>)
         state/path constraint values and flags
@@ -2196,7 +2162,7 @@ class TakeoffBrakeToAbort(PhaseBuilderBase):
 
         phase.add_state(
             Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, ref=5e4, defect_ref=5e4, units='kg',
+            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
             rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Mission.MASS,
         )

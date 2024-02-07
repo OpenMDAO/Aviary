@@ -1,14 +1,14 @@
 import numpy as np
-import openmdao.api as om
 from dymos.models.atmosphere.atmos_1976 import USatm1976Comp
 
-from aviary.mission.gasp_based.flight_conditions import FlightConditions
 from aviary.mission.gasp_based.ode.accel_eom import AccelerationRates
 from aviary.mission.gasp_based.ode.base_ode import BaseODE
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.subsystems.mass.mass_to_weight import MassToWeight
 from aviary.variable_info.enums import AnalysisScheme, SpeedType
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
+from aviary.mission.ode.altitude_rate import AltitudeRate
 
 
 class AccelODE(BaseODE):
@@ -46,13 +46,7 @@ class AccelODE(BaseODE):
                 "viscosity"],
         )
 
-        self.add_subsystem(
-            "flight_conditions",
-            FlightConditions(num_nodes=nn, input_speed_type=SpeedType.TAS),
-            promotes_inputs=["rho", Dynamic.Mission.SPEED_OF_SOUND, "TAS"],
-            promotes_outputs=[Dynamic.Mission.DYNAMIC_PRESSURE,
-                              Dynamic.Mission.MACH, "EAS"],
-        )
+        self.add_flight_conditions(nn)
 
         self.add_subsystem(
             "calc_weight",
@@ -77,24 +71,28 @@ class AccelODE(BaseODE):
             Dynamic.Mission.ALTITUDE_RATE] if analysis_scheme is AnalysisScheme.SHOOTING else []
 
         self.add_subsystem(
-            "eom",
+            "accel_eom",
             AccelerationRates(
                 num_nodes=nn,
                 analysis_scheme=analysis_scheme),
             promotes_inputs=[
                 Dynamic.Mission.MASS,
-                "TAS",
+                Dynamic.Mission.VELOCITY,
                 Dynamic.Mission.DRAG,
                 Dynamic.Mission.THRUST_TOTAL, ]
             + sgm_inputs,
             promotes_outputs=[
-                "TAS_rate",
+                Dynamic.Mission.VELOCITY_RATE,
                 Dynamic.Mission.DISTANCE_RATE, ]
             + sgm_outputs,
         )
+
+        self.add_excess_rate_comps(nn)
 
         ParamPort.set_default_vals(self)
         self.set_input_defaults(Dynamic.Mission.MASS, val=14e4 *
                                 np.ones(nn), units="lbm")
         self.set_input_defaults(Dynamic.Mission.ALTITUDE,
                                 val=500 * np.ones(nn), units="ft")
+        self.set_input_defaults(Dynamic.Mission.VELOCITY, val=200*np.ones(nn),
+                                units="m/s")  # val here is nominal

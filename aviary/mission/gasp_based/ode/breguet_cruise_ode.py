@@ -10,6 +10,8 @@ from aviary.subsystems.mass.mass_to_weight import MassToWeight
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variables import Dynamic
+from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
+from aviary.mission.ode.altitude_rate import AltitudeRate
 
 
 class BreguetCruiseODESolution(BaseODE):
@@ -51,7 +53,7 @@ class BreguetCruiseODESolution(BaseODE):
             promotes_outputs=[
                 Dynamic.Mission.DYNAMIC_PRESSURE,
                 "EAS",
-                "TAS"],
+                ("TAS", Dynamic.Mission.VELOCITY)],
         )
 
         self.add_subsystem(
@@ -122,18 +124,40 @@ class BreguetCruiseODESolution(BaseODE):
         # collect initial/final outputs
         #
         self.add_subsystem(
-            "eom",
+            "breguet_eom",
             RangeComp(num_nodes=nn),
             promotes_inputs=[
                 ("cruise_distance_initial", "initial_distance"),
                 ("cruise_time_initial", "initial_time"),
                 "mass",
                 Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-                ("TAS_cruise", "TAS"),
+                ("TAS_cruise", Dynamic.Mission.VELOCITY),
             ],
             promotes_outputs=[("cruise_range", Dynamic.Mission.DISTANCE),
                               ("cruise_time", "time")],
         )
+
+        self.add_subsystem(
+            name='SPECIFIC_ENERGY_RATE_EXCESS',
+            subsys=SpecificEnergyRate(num_nodes=nn),
+            promotes_inputs=[Dynamic.Mission.VELOCITY, Dynamic.Mission.MASS,
+                             (Dynamic.Mission.THRUST_TOTAL, Dynamic.Mission.THRUST_MAX_TOTAL),
+                             Dynamic.Mission.DRAG],
+            promotes_outputs=[(Dynamic.Mission.SPECIFIC_ENERGY_RATE,
+                               Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS)]
+        )
+
+        self.add_subsystem(
+            name='ALTITUDE_RATE_MAX',
+            subsys=AltitudeRate(num_nodes=nn),
+            promotes_inputs=[
+                (Dynamic.Mission.SPECIFIC_ENERGY_RATE,
+                 Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS),
+                Dynamic.Mission.VELOCITY_RATE,
+                Dynamic.Mission.VELOCITY],
+            promotes_outputs=[
+                (Dynamic.Mission.ALTITUDE_RATE,
+                 Dynamic.Mission.ALTITUDE_RATE_MAX)])
 
         ParamPort.set_default_vals(self)
         self.set_input_defaults(

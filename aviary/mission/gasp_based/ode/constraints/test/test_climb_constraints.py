@@ -8,7 +8,6 @@ from openmdao.utils.assert_utils import (assert_check_partials,
 
 from aviary.mission.gasp_based.ode.constraints.speed_constraints import \
     SpeedConstraints
-from aviary.utils.test_utils.IO_test_util import assert_match_spec, skipIfMissingXDSM
 from aviary.variable_info.variables import Dynamic
 
 
@@ -43,13 +42,6 @@ class SpeedConstraintTestCase1(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
-    @skipIfMissingXDSM('climb_specs/speeds.json')
-    def test_speed_constraints_spec(self):
-
-        subsystem = self.prob.model
-
-        assert_match_spec(subsystem, "climb_specs/speeds.json")
-
 
 class SpeedConstraintTestCase2(unittest.TestCase):
     def setUp(self):
@@ -81,13 +73,6 @@ class SpeedConstraintTestCase2(unittest.TestCase):
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
-
-    @skipIfMissingXDSM('descent_specs/speeds.json')
-    def test_speed_constraints_spec(self):
-
-        subsystem = self.prob.model
-
-        assert_match_spec(subsystem, "descent1_specs/speeds.json")
 
 
 if __name__ == "__main__":

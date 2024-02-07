@@ -8,7 +8,6 @@ from aviary.subsystems.geometry.gasp_based.size_group import SizeGroup
 from aviary.subsystems.mass.gasp_based.mass_premission import MassPremission
 from aviary.utils.aviary_values import get_items
 from aviary.variable_info.options import get_option_defaults, is_option
-from aviary.utils.test_utils.IO_test_util import assert_match_spec, skipIfMissingXDSM
 from aviary.models.large_single_aisle_1.V3_bug_fixed_IO import (
     V3_bug_fixed_non_metadata, V3_bug_fixed_options)
 from aviary.variable_info.variables import Aircraft, Mission
@@ -157,13 +156,6 @@ class MassSummationTestCase1(unittest.TestCase):
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=3e-10, rtol=1e-12)
-
-    @skipIfMissingXDSM('statics_specs/mass.json')
-    def test_mass_spec(self):
-
-        subsystem = self.prob.model
-
-        assert_match_spec(subsystem, "statics_specs/mass.json")
 
 
 class MassSummationTestCase2(unittest.TestCase):

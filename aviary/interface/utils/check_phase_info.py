@@ -39,9 +39,9 @@ def check_phase_info(phase_info, mission_method):
     }
 
     common_TAS = {
-        'TAS_lower': tuple,
-        'TAS_upper': tuple,
-        'TAS_ref': tuple,
+        'velocity_lower': tuple,
+        'velocity_upper': tuple,
+        'velocity_ref': tuple,
     }
     common_mass = {
         'mass_lower': tuple,
@@ -74,11 +74,8 @@ def check_phase_info(phase_info, mission_method):
         'EAS_limit': tuple,
         'mach_cruise': float,
         'input_speed_type': SpeedType,
-        'final_alt': tuple,
-        'time_initial_bounds': tuple,
-        'time_initial_ref': tuple,
+        'final_altitude': tuple,
         'alt_constraint_ref': tuple,
-        'throttle_setting': float,
     }
 
     phase_keys_gasp = {
@@ -89,7 +86,6 @@ def check_phase_info(phase_info, mission_method):
             **common_TAS,
             **common_mass,
             **common_distance,
-            'throttle_setting': float,
             'distance_defect_ref': tuple,
         },
         'rotation': {
@@ -99,8 +95,7 @@ def check_phase_info(phase_info, mission_method):
             **common_distance,
             **common_angle,
             'normal_ref': tuple,
-            'throttle_setting': float,
-            'TAS_ref0': tuple,
+            'velocity_ref0': tuple,
             'distance_defect_ref': tuple,
         },
         'ascent': {
@@ -108,61 +103,56 @@ def check_phase_info(phase_info, mission_method):
             **common_mass,
             **common_distance,
             **common_alt,
-            'alt_constraint_eq': tuple,
+            'final_altitude': tuple,
             'alt_constraint_ref': tuple,
-            'alt_constraint_ref0': tuple,
             'alt_defect_ref': tuple,
             **common_angle,
             'pitch_constraint_lower': tuple,
             'pitch_constraint_upper': tuple,
             'pitch_constraint_ref': tuple,
-            'throttle_setting': float,
-            'TAS_ref0': tuple,
+            'velocity_ref0': tuple,
             'distance_defect_ref': tuple,
         },
         'accel': {
             'alt': tuple,
             'EAS_constraint_eq': tuple,
-            'time_initial_bounds': tuple,
             **common_duration,
             'duration_ref': tuple,
             **common_TAS,
             **common_mass,
             **common_distance,
-            'throttle_setting': float,
-            'TAS_ref0': tuple,
+            'velocity_ref0': tuple,
             'distance_defect_ref': tuple,
         },
         'climb1': {
             'EAS_target': tuple,
             'mach_cruise': float,
             'target_mach': bool,
-            'final_alt': tuple,
-            'time_initial_bounds': tuple,
+            'final_altitude': tuple,
             **common_duration,
             **common_alt,
             **common_mass,
             **common_distance,
-            'throttle_setting': float,
             'distance_ref0': tuple,
         },
         'climb2': {
             'EAS_target': tuple,
             'mach_cruise': float,
             'target_mach': bool,
-            'final_alt': tuple,
+            'final_altitude': tuple,
             'required_available_climb_rate': tuple,
-            'time_initial_bounds': tuple,
             **common_duration,
             **common_alt,
             **common_mass,
             **common_distance,
-            'throttle_setting': float,
             'alt_ref0': tuple,
             'distance_ref0': tuple,
             'distance_defect_ref': tuple,
         },
-        'cruise': {'initial_guesses': dict, },
+        'cruise': {
+            'mach_cruise': float,
+            'alt_cruise': tuple,
+        },
         'desc1': {
             **common_descent,
             **common_duration,
@@ -187,10 +177,11 @@ def check_phase_info(phase_info, mission_method):
     phase_keys = {}
     if mission_method is TWO_DEGREES_OF_FREEDOM:
         for phase in phase_info:
-            if phase != 'pre_mission' and phase != 'post_mission' and phase != 'cruise':
-                phase_keys[phase] = {**common_keys, **phase_keys_gasp[phase]}
-            else:
-                phase_keys[phase] = phase_keys_gasp[phase]
+            if phase != 'pre_mission' and phase != 'post_mission':
+                if phase == 'cruise':
+                    phase_keys[phase] = {**phase_keys_gasp[phase]}
+                else:
+                    phase_keys[phase] = {**common_keys, **phase_keys_gasp[phase]}
     elif mission_method is SOLVED:
         return
     elif mission_method is HEIGHT_ENERGY:

@@ -291,6 +291,7 @@ inputs.set_val(Mission.Summary.FUEL_FLOW_SCALER, 1.0)
 inputs.set_val(Mission.Design.RANGE, 3500, 'NM')
 inputs.set_val(Mission.Constraints.MAX_MACH, 0.785)
 inputs.set_val(Mission.Landing.DRAG_COEFFICIENT, 0.045, 'unitless')
+inputs.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, 2.0, 'unitless')
 inputs.set_val(Mission.Takeoff.AIRPORT_ALTITUDE, 0., 'ft')
 inputs.set_val(Mission.Takeoff.DRAG_COEFFICIENT_MIN, 0.05, 'unitless')
 inputs.set_val(Mission.Takeoff.LIFT_COEFFICIENT_MAX, 2.0, 'unitless')
@@ -308,6 +309,7 @@ inputs.set_val(Mission.Landing.OBSTACLE_HEIGHT, 50., 'ft')
 inputs.set_val(Mission.Landing.SPOILER_DRAG_COEFFICIENT, 0.085000)
 inputs.set_val(Mission.Landing.SPOILER_LIFT_COEFFICIENT, -0.810000)
 inputs.set_val(Mission.Takeoff.THRUST_INCIDENCE, 0., 'deg')
+inputs.set_val(Mission.Takeoff.FUEL_SIMPLE, 577., 'lbm')
 
 # Settings
 # ---------------------------
@@ -1136,16 +1138,6 @@ landing_subsystem_options_spoilers = {'core_aerodynamics': {
                                       'use_spoilers': True,
                                       'spoiler_lift_coefficient': -0.81,
                                       'spoiler_drag_coefficient': 0.085}}
-
-# landing_aero_builder = TakeoffAero(**landing_aero_user_options)
-
-# fullstop_aero_user_options = dict(landing_aero_user_options)
-# fullstop_aero_user_options['use_spoilers'] = True
-# fullstop_aero_user_options['spoiler_lift_coefficient'] = -0.81
-# fullstop_aero_user_options['spoiler_drag_coefficient'] = 0.085
-
-# fullstop_aero_builder = TakeoffAero(**fullstop_aero_user_options)
-# endregion - landing aero
 
 #                            VELOCITY     TIME   DISTANCE    ALPHA   ALTITUDE
 #                              KNOTS      SEC.     FEET       DEG.     FEET

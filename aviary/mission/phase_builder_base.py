@@ -3,33 +3,20 @@ Define utilities for building phases.
 
 Classes
 -------
-InitialGuess : a utility for setting an initial guess on a problem
-
-InitialGuessControl : a utility for setting an initial guess for a control on a problem
-
-InitialGuessParameter : a utility for setting an initial guess for a parameter on a
-problem
-
-InitialGuessPolynomialControl : a utility for setting an initial guess for a polynomial
-control on a problem
-
-InitialGuessState : a utility for setting an initial guess for a state on a problem
-
-InitialGuessTime : a utility for setting guesses for initial time and duration on a
-problem
-
 PhaseBuilderBase : the interface for a phase builder
 '''
-from abc import ABC, abstractmethod
+from abc import ABC
 from collections import namedtuple
-from collections.abc import Sequence
+
+from aviary.mission.initial_guess_builders import InitialGuess
+from aviary.variable_info.variables import Dynamic
 
 import dymos as dm
-import numpy as np
 import openmdao.api as om
 
 from aviary.mission.flops_based.ode.mission_ODE import MissionODE
 from aviary.utils.aviary_values import AviaryValues, get_keys
+from aviary.variable_info.variable_meta_data import _MetaData
 
 _require_new_meta_data_class_attr_ = \
     namedtuple('_require_new_meta_data_class_attr_', ())
@@ -37,160 +24,6 @@ _require_new_meta_data_class_attr_ = \
 
 _require_new_initial_guesses_meta_data_class_attr_ = \
     namedtuple('_require_new_initial_guesses_meta_data_class_attr_', ())
-
-
-class InitialGuess:
-    '''
-    Define a utility for setting an initial guess on a problem.
-
-    Attributes
-    ----------
-    key : str
-        base name for the initial guess
-    '''
-    __slots__ = ('key',)
-
-    def __init__(self, key):
-        self.key = key
-
-    def apply_initial_guess(
-        self, prob: om.Problem, traj_name, phase: dm.Phase, phase_name, val, units
-    ):
-        '''
-        Set the initial guess on the problem.
-        '''
-        complete_key = self._get_complete_key(traj_name, phase_name)
-
-        # TODO: this is a short term hack in need of an appropriate long term solution
-        #    - to interpolate, or not to interpolate: that is the question
-        #    - the solution should probably be a value decoration (a wrapper) that is
-        #      both lightweight and easy to check and unpack
-        if (
-            isinstance(val, np.ndarray)
-            or (isinstance(val, Sequence) and not isinstance(val, str))
-        ):
-            val = phase.interp(self.key, val)
-
-        prob.set_val(complete_key, val, units)
-
-    def _get_complete_key(self, traj_name, phase_name):
-        '''
-        Compose the complete key for setting the initial guess.
-        '''
-        _ = traj_name
-        _ = phase_name
-
-        return self.key
-
-
-class InitialGuessControl(InitialGuess):
-    '''
-    Define a utility for setting an initial guess for a control on a problem.
-
-    Attributes
-    ----------
-    key : str
-        base name for the control
-    '''
-    __slots__ = ()
-
-    def _get_complete_key(self, traj_name, phase_name):
-        '''
-        Compose the complete key for setting the control initial guess.
-        '''
-        key = f'{traj_name}.{phase_name}.controls:{self.key}'
-
-        return key
-
-
-class InitialGuessParameter(InitialGuess):
-    '''
-    Define a utility for setting an initial guess for a parameter on a problem.
-
-    Attributes
-    ----------
-    key : str
-        base name for the parameter
-    '''
-    __slots__ = ()
-
-    def _get_complete_key(self, traj_name, phase_name):
-        '''
-        Compose the complete key for setting the parameter initial guess.
-        '''
-        key = f'{traj_name}.{phase_name}.parameters:{self.key}'
-
-        return key
-
-
-class InitialGuessPolynomialControl(InitialGuess):
-    '''
-    Define a utility for setting an initial guess for a polynomial control on a problem.
-
-    Attributes
-    ----------
-    key : str
-        base name for the polynomial control
-    '''
-    __slots__ = ()
-
-    def _get_complete_key(self, traj_name, phase_name):
-        '''
-        Compose the complete key for setting the polynomial control initial guess.
-        '''
-        key = f'{traj_name}.{phase_name}.polynomial_controls:{self.key}'
-
-        return key
-
-
-class InitialGuessState(InitialGuess):
-    '''
-    Define a utility for setting an initial guess for a state on a problem.
-
-    Attributes
-    ----------
-    key : str
-        base name for the state
-    '''
-    __slots__ = ()
-
-    def _get_complete_key(self, traj_name, phase_name):
-        '''
-        Compose the complete key for setting the state initial guess.
-        '''
-        key = f'{traj_name}.{phase_name}.states:{self.key}'
-
-        return key
-
-
-class InitialGuessTime(InitialGuess):
-    '''
-    Define a utility for setting guesses for initial time and duration on a problem.
-
-    Attributes
-    ----------
-    key : str ('times')
-        the group identifier for guesses for initial time and duration
-    '''
-    __slots__ = ()
-
-    def __init__(self, key='times'):
-        super().__init__(key)
-
-    def apply_initial_guess(
-        self, prob: om.Problem, traj_name, phase: dm.Phase, phase_name, val, units
-    ):
-        '''
-        Set the guesses for initial time and duration on the problem.
-        '''
-        _ = phase
-
-        name = f'{traj_name}.{phase_name}.t_initial'
-        t_initial, t_duration = val
-        prob.set_val(name, t_initial, units)
-
-        name = f'{traj_name}.{phase_name}.t_duration'
-        prob.set_val(name, t_duration, units)
 
 
 class PhaseBuilderBase(ABC):
@@ -204,9 +37,6 @@ class PhaseBuilderBase(ABC):
 
     core_subsystems : (None)
         list of SubsystemBuilderBase objects that will be added to the phase ODE
-
-    aero_builder (None)
-        utility for building and connecting a dynamic aerodynamics analysis component
 
     user_options : AviaryValues (<empty>)
         state/path constraint values and flags
@@ -232,6 +62,14 @@ class PhaseBuilderBase(ABC):
         class attribute: derived type customization point; the default value
         for ode_class used by build_phase
 
+    is_analytic_phase : bool (False)
+        class attribute: derived type customization point; if True, build_phase
+        will return an AnalyticPhase instead of a Phase
+
+    num_nodes : int (5)
+        class attribute: derived type customization point; the default value
+        for num_nodes used by build_phase, only for AnalyticPhases
+
     Methods
     -------
     build_phase
@@ -241,7 +79,8 @@ class PhaseBuilderBase(ABC):
     '''
     __slots__ = (
         'name',  'core_subsystems', 'subsystem_options', 'user_options',
-        'initial_guesses', 'ode_class', 'transcription', 'aero_builder'
+        'initial_guesses', 'ode_class', 'transcription',
+        'is_analytic_phase', 'num_nodes', 'external_subsystems', 'meta_data',
     )
 
     # region : derived type customization points
@@ -252,11 +91,13 @@ class PhaseBuilderBase(ABC):
     default_name = '<unknown phase>'
 
     default_ode_class = MissionODE
+
+    default_meta_data = _MetaData
     # endregion : derived type customization points
 
     def __init__(
-        self, name=None, core_subsystems=None, aero_builder=None, user_options=None, initial_guesses=None,
-        ode_class=None, transcription=None, subsystem_options=None,
+        self, name=None, core_subsystems=None, user_options=None, initial_guesses=None,
+        ode_class=None, transcription=None, subsystem_options=None, is_analytic_phase=False, num_nodes=5, external_subsystems=None, meta_data=None,
     ):
         if name is None:
             name = self.default_name
@@ -270,9 +111,6 @@ class PhaseBuilderBase(ABC):
 
         if subsystem_options is None:
             subsystem_options = {}
-
-        if aero_builder is not None:
-            self.aero_builder = aero_builder
 
         self.subsystem_options = subsystem_options
 
@@ -288,6 +126,18 @@ class PhaseBuilderBase(ABC):
 
         self.ode_class = ode_class
         self.transcription = transcription
+        self.is_analytic_phase = is_analytic_phase
+        self.num_nodes = num_nodes
+
+        if external_subsystems is None:
+            external_subsystems = []
+
+        self.external_subsystems = external_subsystems
+
+        if meta_data is None:
+            meta_data = self.default_meta_data
+
+        self.meta_data = meta_data
 
     def build_phase(self, aviary_options=None):
         '''
@@ -314,7 +164,7 @@ class PhaseBuilderBase(ABC):
 
         transcription = self.transcription
 
-        if transcription is None:
+        if transcription is None and not self.is_analytic_phase:
             transcription = self.make_default_transcription()
 
         if aviary_options is None:
@@ -334,10 +184,17 @@ class PhaseBuilderBase(ABC):
 
         kwargs['core_subsystems'] = self.core_subsystems
 
-        phase = dm.Phase(
-            ode_class=ode_class, transcription=transcription,
-            ode_init_kwargs=kwargs
-        )
+        if self.is_analytic_phase:
+            phase = dm.AnalyticPhase(
+                ode_class=ode_class,
+                ode_init_kwargs=kwargs,
+                num_nodes=self.num_nodes,
+            )
+        else:
+            phase = dm.Phase(
+                ode_class=ode_class, transcription=transcription,
+                ode_init_kwargs=kwargs
+            )
 
         # overrides should add state, controls, etc.
         return phase
@@ -481,7 +338,7 @@ class PhaseBuilderBase(ABC):
         return (self.name, phase_info)
 
     @classmethod
-    def from_phase_info(cls, name, phase_info: dict, core_subsystems=None, meta_data=None):
+    def from_phase_info(cls, name, phase_info: dict, core_subsystems=None, meta_data=None, transcription=None):
         '''
         Return a new phase builder based on the specified phase info.
 
@@ -518,7 +375,7 @@ class PhaseBuilderBase(ABC):
         phase_builder = cls(
             name, subsystem_options=subsystem_options, user_options=user_options,
             initial_guesses=initial_guesses, meta_data=meta_data,
-            core_subsystems=core_subsystems, external_subsystems=external_subsystems)
+            core_subsystems=core_subsystems, external_subsystems=external_subsystems, transcription=transcription)
 
         return phase_builder
 
@@ -561,6 +418,137 @@ class PhaseBuilderBase(ABC):
 
         meta_data[name] = dict(
             apply_initial_guess=initial_guess.apply_initial_guess, desc=desc)
+
+    def _add_user_defined_constraints(self, phase, constraints):
+        # Add each constraint and its corresponding arguments to the phase
+        for constraint_name, kwargs in constraints.items():
+            if kwargs['type'] == 'boundary':
+                kwargs.pop('type')
+                phase.add_boundary_constraint(constraint_name, **kwargs)
+            elif kwargs['type'] == 'path':
+                kwargs.pop('type')
+                phase.add_path_constraint(constraint_name, **kwargs)
+
+    def set_time_options(self, user_options, targets=[]):
+        fix_initial = user_options.get_val('fix_initial')
+        duration_bounds = user_options.get_val('duration_bounds', units='s')
+        duration_ref = user_options.get_val('duration_ref', units='s')
+
+        self.phase.set_time_options(
+            fix_initial=fix_initial,
+            duration_bounds=duration_bounds,
+            units="s",
+            targets=targets,
+            duration_ref=duration_ref,
+        )
+
+    def add_velocity_state(self, user_options):
+        velocity_lower = user_options.get_val('velocity_lower', units='kn')
+        velocity_upper = user_options.get_val('velocity_upper', units='kn')
+        velocity_ref = user_options.get_val('velocity_ref', units='kn')
+        velocity_ref0 = user_options.get_val('velocity_ref0', units='kn')
+        velocity_defect_ref = user_options.get_val('velocity_defect_ref', units='kn')
+        self.phase.add_state(
+            Dynamic.Mission.VELOCITY,
+            fix_initial=user_options.get_val('fix_initial'),
+            fix_final=False,
+            lower=velocity_lower,
+            upper=velocity_upper,
+            units="kn",
+            rate_source=Dynamic.Mission.VELOCITY_RATE,
+            targets=Dynamic.Mission.VELOCITY,
+            ref=velocity_ref,
+            ref0=velocity_ref0,
+            defect_ref=velocity_defect_ref,
+        )
+
+    def add_mass_state(self, user_options):
+        mass_lower = user_options.get_val('mass_lower', units='lbm')
+        mass_upper = user_options.get_val('mass_upper', units='lbm')
+        mass_ref = user_options.get_val('mass_ref', units='lbm')
+        mass_ref0 = user_options.get_val('mass_ref0', units='lbm')
+        mass_defect_ref = user_options.get_val('mass_defect_ref', units='lbm')
+        self.phase.add_state(
+            Dynamic.Mission.MASS,
+            fix_initial=user_options.get_val('fix_initial'),
+            fix_final=False,
+            lower=mass_lower,
+            upper=mass_upper,
+            units="lbm",
+            rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            targets=Dynamic.Mission.MASS,
+            ref=mass_ref,
+            ref0=mass_ref0,
+            defect_ref=mass_defect_ref,
+        )
+
+    def add_distance_state(self, user_options, units='NM'):
+        distance_lower = user_options.get_val('distance_lower', units=units)
+        distance_upper = user_options.get_val('distance_upper', units=units)
+        distance_ref = user_options.get_val('distance_ref', units=units)
+        distance_ref0 = user_options.get_val('distance_ref0', units=units)
+        distance_defect_ref = user_options.get_val('distance_defect_ref', units=units)
+        self.phase.add_state(
+            Dynamic.Mission.DISTANCE,
+            fix_initial=user_options.get_val('fix_initial'),
+            fix_final=False,
+            lower=distance_lower,
+            upper=distance_upper,
+            units=units,
+            rate_source=Dynamic.Mission.DISTANCE_RATE,
+            ref=distance_ref,
+            ref0=distance_ref0,
+            defect_ref=distance_defect_ref,
+        )
+
+    def add_flight_path_angle_state(self, user_options):
+        angle_lower = user_options.get_val('angle_lower', units='rad')
+        angle_upper = user_options.get_val('angle_upper', units='rad')
+        angle_ref = user_options.get_val('angle_ref', units='rad')
+        angle_ref0 = user_options.get_val('angle_ref0', units='rad')
+        angle_defect_ref = user_options.get_val('angle_defect_ref', units='rad')
+        self.phase.add_state(
+            Dynamic.Mission.FLIGHT_PATH_ANGLE,
+            fix_initial=True,
+            fix_final=False,
+            lower=angle_lower,
+            upper=angle_upper,
+            units="rad",
+            rate_source=Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
+            ref=angle_ref,
+            defect_ref=angle_defect_ref,
+            ref0=angle_ref0,
+        )
+
+    def add_altitude_state(self, user_options, units='ft'):
+        alt_lower = user_options.get_val('alt_lower', units=units)
+        alt_upper = user_options.get_val('alt_upper', units=units)
+        alt_ref = user_options.get_val('alt_ref', units=units)
+        alt_ref0 = user_options.get_val('alt_ref0', units=units)
+        alt_defect_ref = user_options.get_val('alt_defect_ref', units=units)
+        self.phase.add_state(
+            Dynamic.Mission.ALTITUDE,
+            fix_initial=True,
+            fix_final=False,
+            lower=alt_lower,
+            upper=alt_upper,
+            units=units,
+            rate_source=Dynamic.Mission.ALTITUDE_RATE,
+            ref=alt_ref,
+            defect_ref=alt_defect_ref,
+            ref0=alt_ref0,
+        )
+
+    def add_altitude_constraint(self, user_options):
+        final_altitude = user_options.get_val('final_altitude', units='ft')
+        alt_constraint_ref = user_options.get_val('alt_constraint_ref', units='ft')
+        self.phase.add_boundary_constraint(
+            Dynamic.Mission.ALTITUDE,
+            loc="final",
+            equals=final_altitude,
+            units="ft",
+            ref=alt_constraint_ref,
+        )
 
 
 _registered_phase_builder_types = []
@@ -619,13 +607,6 @@ if __name__ == '__main__':
 
     try:
         PhaseBuilderBase._add_meta_data('test', val=0, units=None, desc='test')
-
-    except Exception as error:
-        print(error)
-
-    try:
-        PhaseBuilderBase._add_initial_guess_meta_data(
-            InitialGuessTime(), desc='test initial guess')
 
     except Exception as error:
         print(error)

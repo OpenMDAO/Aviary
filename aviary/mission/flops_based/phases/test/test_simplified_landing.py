@@ -49,14 +49,6 @@ class LandingCalcTest(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
-    # def test_spec(self):
-
-    #     subsystem = self.prob.model
-
-    #     assert_match_spec(
-    #         subsystem, "landing_specs/landing_calcs.json"
-    #     )
-
 
 class LandingGroupTest(unittest.TestCase):
     def setUp(self):
@@ -97,14 +89,6 @@ class LandingGroupTest(unittest.TestCase):
         partial_data = self.prob.check_partials(
             out_stream=None, excludes=['*.USatm'], method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
-
-    # def test_spec(self):
-
-    #     subsystem = self.prob.model
-
-    #     assert_match_spec(
-    #         subsystem, "landing_specs/landing_group.json"
-    #     )
 
 
 if __name__ == "__main__":

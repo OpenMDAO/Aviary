@@ -8,7 +8,6 @@ from openmdao.utils.assert_utils import (assert_check_partials,
 
 from aviary.mission.gasp_based.ode.constraints.flight_constraints import \
     FlightConstraints
-from aviary.utils.test_utils.IO_test_util import assert_match_spec, skipIfMissingXDSM
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -49,11 +48,6 @@ class FlightConstraintTestCase(unittest.TestCase):
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=3e-11, rtol=1e-12)
-
-    @skipIfMissingXDSM('climb_specs/constraints.json')
-    def test_flight_constraints_spec(self):
-        subsystem = self.prob.model
-        assert_match_spec(subsystem, "climb_specs/constraints.json")
 
 
 if __name__ == "__main__":

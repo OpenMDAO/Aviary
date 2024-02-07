@@ -41,7 +41,6 @@ phase_info = {
             "duration_bounds": ((64.0, 192.0), "min"),
             "add_initial_mass_constraint": False,
         },
-        "initial_guesses": {"times": ([0, 128], "min")},
     },
     "cruise": {
         "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
@@ -64,7 +63,6 @@ phase_info = {
             "initial_bounds": ((64.0, 192.0), "min"),
             "duration_bounds": ((56.5, 169.5), "min"),
         },
-        "initial_guesses": {"times": ([128, 113], "min")},
     },
     "descent": {
         "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
@@ -87,7 +85,6 @@ phase_info = {
             "initial_bounds": ((120.5, 361.5), "min"),
             "duration_bounds": ((29.0, 87.0), "min"),
         },
-        "initial_guesses": {"times": ([241, 58], "min")},
     },
     "post_mission": {
         "include_landing": False,
@@ -123,7 +120,6 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs):
     # Range
     old_range_cruise, range_units = post_mission_info['target_range']
     range_cruise = aviary_inputs.get_val(Mission.Design.RANGE, units=range_units)
-    print(old_range_cruise, range_cruise)
     if range_cruise != old_range_cruise:
         new_val = post_mission_info['target_range'][0] * range_cruise / old_range_cruise
         post_mission_info['target_range'] = (new_val, range_units)

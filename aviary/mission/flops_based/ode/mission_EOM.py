@@ -1,9 +1,9 @@
 import openmdao.api as om
 
-from aviary.variable_info.variables import Dynamic
-from aviary.mission.flops_based.ode.altitude_rate import AltitudeRate
+from aviary.mission.ode.altitude_rate import AltitudeRate
 from aviary.mission.flops_based.ode.range_rate import RangeRate
-from aviary.mission.flops_based.ode.specific_energy_rate import SpecificEnergyRate
+from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
+from aviary.variable_info.variables import Dynamic
 from aviary.mission.flops_based.ode.required_thrust import RequiredThrust
 
 

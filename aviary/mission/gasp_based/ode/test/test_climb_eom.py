@@ -7,7 +7,6 @@ from openmdao.utils.assert_utils import (assert_check_partials,
                                          assert_near_equal)
 
 from aviary.mission.gasp_based.ode.climb_eom import ClimbRates
-from aviary.utils.test_utils.IO_test_util import assert_match_spec, skipIfMissingXDSM
 from aviary.variable_info.variables import Dynamic
 
 
@@ -22,7 +21,8 @@ class ClimbTestCase(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem("group", ClimbRates(num_nodes=2), promotes=["*"])
 
-        self.prob.model.set_input_defaults("TAS", np.array([459, 459]), units="kn")
+        self.prob.model.set_input_defaults(
+            Dynamic.Mission.VELOCITY, np.array([459, 459]), units="kn")
         self.prob.model.set_input_defaults(
             Dynamic.Mission.THRUST_TOTAL, np.array([10473, 10473]), units="lbf"
         )
@@ -61,13 +61,6 @@ class ClimbTestCase(unittest.TestCase):
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
-
-    @skipIfMissingXDSM('climb_specs/eom.json')
-    def test_climb_spec(self):
-
-        subsystem = self.prob.model
-
-        assert_match_spec(subsystem, "climb_specs/eom.json")
 
 
 if __name__ == "__main__":

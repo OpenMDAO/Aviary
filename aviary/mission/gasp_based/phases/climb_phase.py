@@ -1,140 +1,163 @@
-import dymos as dm
-
+from aviary.mission.phase_builder_base import PhaseBuilderBase
+from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessTime, InitialGuessControl
+from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.variables import Dynamic
 from aviary.mission.gasp_based.ode.climb_ode import ClimbODE
-from aviary.variable_info.variables import Mission, Dynamic
-from aviary.interface.default_phase_info.two_dof import default_mission_subsystems
 
 
-def get_climb(
-    ode_args=None,
-    transcription=None,
-    fix_initial=False,
-    EAS_target=0,
-    mach_cruise=0,
-    target_mach=False,
-    final_alt=0,
-    required_available_climb_rate=None,
-    time_initial_bounds=(0, 0),
-    duration_bounds=(0, 0),
-    duration_ref=1,
-    alt_lower=0,
-    alt_upper=0,
-    alt_ref=1,
-    alt_ref0=0,
-    alt_defect_ref=None,
-    mass_lower=0,
-    mass_upper=0,
-    mass_ref=1,
-    mass_ref0=0,
-    mass_defect_ref=None,
-    distance_lower=0,
-    distance_upper=0,
-    distance_ref=1,
-    distance_ref0=0,
-    distance_defect_ref=None,
-):
-    ode_init_kwargs = dict(
-        EAS_target=EAS_target,
-        mach_cruise=mach_cruise,
-        core_subsystems=default_mission_subsystems
-    )
-    if ode_args:
-        ode_init_kwargs.update(ode_args)
+class ClimbPhase(PhaseBuilderBase):
+    """
+    A phase builder for a climb phase in a mission simulation.
 
-    climb = dm.Phase(
-        ode_class=ClimbODE,
-        transcription=transcription,
-        ode_init_kwargs=ode_init_kwargs,
-    )
+    This class extends the PhaseBuilderBase class, providing specific implementations for
+    the climb phase of a flight mission.
 
-    climb.set_time_options(
-        fix_initial=fix_initial,
-        initial_bounds=time_initial_bounds,
-        duration_bounds=duration_bounds,
-        duration_ref=duration_ref,
-        units="s",
-    )
+    Attributes
+    ----------
+    Inherits all attributes from PhaseBuilderBase.
 
-    climb.add_state(
-        Dynamic.Mission.ALTITUDE,
-        fix_initial=fix_initial,
-        fix_final=False,
-        lower=alt_lower,
-        upper=alt_upper,
-        units="ft",
-        rate_source=Dynamic.Mission.ALTITUDE_RATE,
-        targets=Dynamic.Mission.ALTITUDE,
-        ref=alt_ref,
-        ref0=alt_ref0,
-        defect_ref=alt_defect_ref,
-    )
+    Methods
+    -------
+    Inherits all methods from PhaseBuilderBase.
+    Additional method overrides and new methods specific to the climb phase are included.
+    """
+    default_name = 'climb_phase'
+    default_ode_class = ClimbODE
 
-    climb.add_state(
-        Dynamic.Mission.MASS,
-        fix_initial=fix_initial,
-        fix_final=False,
-        lower=mass_lower,
-        upper=mass_upper,
-        units="lbm",
-        rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-        targets=Dynamic.Mission.MASS,
-        ref=mass_ref,
-        ref0=mass_ref0,
-        defect_ref=mass_defect_ref,
-    )
+    _meta_data_ = {}
+    _initial_guesses_meta_data_ = {}
 
-    climb.add_state(
-        Dynamic.Mission.DISTANCE,
-        fix_initial=fix_initial,
-        fix_final=False,
-        lower=distance_lower,
-        upper=distance_upper,
-        units="NM",
-        rate_source=Dynamic.Mission.DISTANCE_RATE,
-        ref=distance_ref,
-        ref0=distance_ref0,
-        defect_ref=distance_defect_ref,
-    )
+    def build_phase(self, aviary_options: AviaryValues = None):
+        """
+        Return a new climb phase for analysis using these constraints.
 
-    climb.add_boundary_constraint(
-        Dynamic.Mission.ALTITUDE,
-        loc="final",
-        equals=final_alt,
-        units="ft",
-        ref=final_alt)
-    if required_available_climb_rate:
-        climb.add_boundary_constraint(
-            Dynamic.Mission.ALTITUDE_RATE,
+        If ode_class is None, ClimbODE is used as the default.
+
+        Parameters
+        ----------
+        aviary_options : AviaryValues
+            Collection of Aircraft/Mission specific options
+
+        Returns
+        -------
+        dymos.Phase
+        """
+        phase = self.phase = super().build_phase(aviary_options)
+
+        # Custom configurations for the climb phase
+        user_options = self.user_options
+
+        mach_cruise = user_options.get_val('mach_cruise')
+        target_mach = user_options.get_val('target_mach')
+        final_altitude = user_options.get_val('final_altitude', units='ft')
+        required_available_climb_rate = user_options.get_val(
+            'required_available_climb_rate', units='ft/min')
+
+        # States
+        self.add_altitude_state(user_options)
+
+        self.add_mass_state(user_options)
+
+        self.add_distance_state(user_options)
+
+        # Boundary Constraints
+        phase.add_boundary_constraint(
+            Dynamic.Mission.ALTITUDE,
             loc="final",
-            lower=required_available_climb_rate,
-            units="ft/min",
-            ref=1,
+            equals=final_altitude,
+            units="ft",
+            ref=final_altitude,
         )
 
-    if target_mach is True:
-        climb.add_boundary_constraint(
-            Dynamic.Mission.MACH, loc="final", equals=mach_cruise, units="unitless"
-        )
+        if required_available_climb_rate is not None:
+            # TODO: this should be altitude rate max
+            phase.add_boundary_constraint(
+                Dynamic.Mission.ALTITUDE_RATE,
+                loc="final",
+                lower=required_available_climb_rate,
+                units="ft/min",
+                ref=1,
+            )
 
-    climb.add_timeseries_output(
-        Dynamic.Mission.MACH,
-        output_name=Dynamic.Mission.MACH,
-        units="unitless")
-    climb.add_timeseries_output("EAS", output_name="EAS", units="kn")
-    climb.add_timeseries_output(
-        Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units="lbm/s"
-    )
-    climb.add_timeseries_output("theta", output_name="theta", units="deg")
-    climb.add_timeseries_output("alpha", output_name="alpha", units="deg")
-    climb.add_timeseries_output(Dynamic.Mission.FLIGHT_PATH_ANGLE,
-                                output_name=Dynamic.Mission.FLIGHT_PATH_ANGLE, units="deg")
-    climb.add_timeseries_output(
-        "TAS_violation", output_name="TAS_violation", units="kn"
-    )
-    climb.add_timeseries_output("TAS", output_name="TAS", units="kn")
-    climb.add_timeseries_output("aero.CL", output_name="CL", units="unitless")
-    climb.add_timeseries_output(Dynamic.Mission.THRUST_TOTAL,
-                                output_name=Dynamic.Mission.THRUST_TOTAL, units="lbf")
-    climb.add_timeseries_output("aero.CD", output_name="CD", units="unitless")
+        if target_mach:
+            phase.add_boundary_constraint(
+                Dynamic.Mission.MACH, loc="final", equals=mach_cruise,
+            )
 
-    return climb
+        # Timeseries Outputs
+        phase.add_timeseries_output(
+            Dynamic.Mission.MACH, output_name=Dynamic.Mission.MACH, units="unitless")
+        phase.add_timeseries_output("EAS", output_name="EAS", units="kn")
+        phase.add_timeseries_output(
+            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units="lbm/s")
+        phase.add_timeseries_output("theta", output_name="theta", units="deg")
+        phase.add_timeseries_output("alpha", output_name="alpha", units="deg")
+        phase.add_timeseries_output(Dynamic.Mission.FLIGHT_PATH_ANGLE,
+                                    output_name=Dynamic.Mission.FLIGHT_PATH_ANGLE, units="deg")
+        phase.add_timeseries_output(
+            "TAS_violation", output_name="TAS_violation", units="kn")
+        phase.add_timeseries_output("TAS", output_name="TAS", units="kn")
+        phase.add_timeseries_output("aero.CL", output_name="CL", units="unitless")
+        phase.add_timeseries_output(
+            Dynamic.Mission.THRUST_TOTAL, output_name=Dynamic.Mission.THRUST_TOTAL, units="lbf")
+        phase.add_timeseries_output("aero.CD", output_name="CD", units="unitless")
+
+        return phase
+
+    def _extra_ode_init_kwargs(self):
+        """
+        Return extra kwargs required for initializing the ODE.
+        """
+        # TODO: support external_subsystems and meta_data in the base class
+        return {
+            'EAS_target': self.user_options.get_val('EAS_target', units='kn'),
+            'mach_cruise': self.user_options.get_val('mach_cruise'),
+        }
+
+
+# Adding metadata for the ClimbPhase
+ClimbPhase._add_meta_data('fix_initial', val=False)
+ClimbPhase._add_meta_data('EAS_target', val=0)
+ClimbPhase._add_meta_data('mach_cruise', val=0)
+ClimbPhase._add_meta_data('target_mach', val=False)
+ClimbPhase._add_meta_data('final_altitude', val=0)
+ClimbPhase._add_meta_data('required_available_climb_rate', val=None, units='ft/min')
+ClimbPhase._add_meta_data('duration_bounds', val=(0, 0), units='s')
+ClimbPhase._add_meta_data('duration_ref', val=1, units='s')
+ClimbPhase._add_meta_data('alt_lower', val=0, units='ft')
+ClimbPhase._add_meta_data('alt_upper', val=0, units='ft')
+ClimbPhase._add_meta_data('alt_ref', val=1, units='ft')
+ClimbPhase._add_meta_data('alt_ref0', val=0, units='ft')
+ClimbPhase._add_meta_data('alt_defect_ref', val=None, units='ft')
+ClimbPhase._add_meta_data('mass_lower', val=0, units='lbm')
+ClimbPhase._add_meta_data('mass_upper', val=0, units='lbm')
+ClimbPhase._add_meta_data('mass_ref', val=1, units='lbm')
+ClimbPhase._add_meta_data('mass_ref0', val=0, units='lbm')
+ClimbPhase._add_meta_data('mass_defect_ref', val=None, units='lbm')
+ClimbPhase._add_meta_data('distance_lower', val=0, units='NM')
+ClimbPhase._add_meta_data('distance_upper', val=0, units='NM')
+ClimbPhase._add_meta_data('distance_ref', val=1, units='NM')
+ClimbPhase._add_meta_data('distance_ref0', val=0, units='NM')
+ClimbPhase._add_meta_data('distance_defect_ref', val=None, units='NM')
+ClimbPhase._add_meta_data('num_segments', val=None, units='unitless')
+ClimbPhase._add_meta_data('order', val=None, units='unitless')
+
+ClimbPhase._add_initial_guess_meta_data(
+    InitialGuessTime(),
+    desc='initial guess for initial time and duration specified as a tuple')
+
+ClimbPhase._add_initial_guess_meta_data(
+    InitialGuessState('distance'),
+    desc='initial guess for horizontal distance traveled')
+
+ClimbPhase._add_initial_guess_meta_data(
+    InitialGuessState('altitude'),
+    desc='initial guess for vertical distances')
+
+ClimbPhase._add_initial_guess_meta_data(
+    InitialGuessState('mass'),
+    desc='initial guess for mass')
+
+ClimbPhase._add_initial_guess_meta_data(
+    InitialGuessControl('throttle'),
+    desc='initial guess for throttle')

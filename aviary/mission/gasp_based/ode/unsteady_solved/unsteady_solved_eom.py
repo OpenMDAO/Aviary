@@ -26,7 +26,8 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
 
         # Inputs
 
-        self.add_input("TAS", shape=nn, desc="true air speed", units="m/s")
+        self.add_input("TAS", shape=nn,
+                       desc="true air speed", units="m/s")
 
         # TODO: This should probably be declared in Newtons, but the weight variable
         # is really a mass. This should be resolved with an adapter component that
@@ -123,7 +124,8 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
                                   wrt=[Dynamic.Mission.FLIGHT_PATH_ANGLE],
                                   rows=ar, cols=ar)
 
-            self.declare_partials(of=["dgam_dt"], wrt=["TAS"], rows=ar, cols=ar)
+            self.declare_partials(of=["dgam_dt"], wrt=[
+                                  "TAS"], rows=ar, cols=ar)
 
             self.declare_partials(of="load_factor", wrt=[Dynamic.Mission.FLIGHT_PATH_ANGLE],
                                   rows=ar, cols=ar)
@@ -285,7 +287,8 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
             partials["dgam_dt", Dynamic.Mission.FLIGHT_PATH_ANGLE] = m * \
                 tas * weight * sgam / mtas2
             partials["dgam_dt", "alpha"] = m * tas * tcai / mtas2
-            partials["dgam_dt", "TAS"] = -m * (tsai + lift - weight * cgam) / mtas2
+            partials["dgam_dt", "TAS"] = - \
+                m * (tsai + lift - weight * cgam) / mtas2
             partials["dgam_dt", Aircraft.Wing.INCIDENCE] = -m * tas * tcai / mtas2
 
             dgam_dr = d2h_dr2 / (dh_dr ** 2 + 1)

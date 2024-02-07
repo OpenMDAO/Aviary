@@ -1,16 +1,12 @@
 import numpy as np
-import openmdao.api as om
 from dymos.models.atmosphere.atmos_1976 import USatm1976Comp
 
 from aviary.variable_info.enums import AlphaModes, AnalysisScheme
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic
-from aviary.mission.gasp_based.flight_conditions import FlightConditions
 from aviary.mission.gasp_based.ode.ascent_eom import AscentEOM
 
 from aviary.mission.gasp_based.ode.base_ode import BaseODE
 from aviary.mission.gasp_based.ode.params import ParamPort
-from aviary.subsystems.aerodynamics.gasp_based.gaspaero import LowSpeedAero
-from aviary.subsystems.propulsion.propulsion_mission import PropulsionMission
 from aviary.variable_info.enums import AlphaModes
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
@@ -60,13 +56,7 @@ class AscentODE(BaseODE):
                 "viscosity"],
         )
 
-        self.add_subsystem(
-            "fc",
-            FlightConditions(num_nodes=nn),
-            promotes_inputs=["rho", Dynamic.Mission.SPEED_OF_SOUND, "TAS"],
-            promotes_outputs=[Dynamic.Mission.DYNAMIC_PRESSURE,
-                              Dynamic.Mission.MACH, "EAS"],
-        )
+        self.add_flight_conditions(nn)
 
         kwargs = {'num_nodes': nn, 'aviary_inputs': aviary_options,
                   'method': 'low_speed', 'retract_gear': True, 'retract_flaps': True}
@@ -90,7 +80,7 @@ class AscentODE(BaseODE):
             shooting_inputs = []
 
         self.add_subsystem(
-            "eoms",
+            "ascent_eom",
             AscentEOM(num_nodes=nn,
                       analysis_scheme=analysis_scheme),
             promotes_inputs=[
@@ -98,14 +88,14 @@ class AscentODE(BaseODE):
                 Dynamic.Mission.THRUST_TOTAL,
                 Dynamic.Mission.LIFT,
                 Dynamic.Mission.DRAG,
-                "TAS",
+                Dynamic.Mission.VELOCITY,
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 "alpha",
             ]
             + shooting_inputs
             + ["aircraft:*"],
             promotes_outputs=[
-                "TAS_rate",
+                Dynamic.Mission.VELOCITY_RATE,
                 Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
                 Dynamic.Mission.ALTITUDE_RATE,
                 Dynamic.Mission.DISTANCE_RATE,
@@ -116,6 +106,8 @@ class AscentODE(BaseODE):
             ],
         )
 
+        self.add_excess_rate_comps(nn)
+
         ParamPort.set_default_vals(self)
         self.set_input_defaults("t_init_flaps", val=47.5)
         self.set_input_defaults("t_init_gear", val=37.3)
@@ -123,9 +115,11 @@ class AscentODE(BaseODE):
         self.set_input_defaults(Dynamic.Mission.FLIGHT_PATH_ANGLE,
                                 val=np.zeros(nn), units="deg")
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.zeros(nn), units="ft")
-        self.set_input_defaults("TAS", val=np.zeros(nn), units="kn")
+        self.set_input_defaults(Dynamic.Mission.VELOCITY, val=np.zeros(nn), units="kn")
         self.set_input_defaults("t_curr", val=np.zeros(nn), units="s")
         self.set_input_defaults('aero_ramps.flap_factor:final_val', val=0.)
         self.set_input_defaults('aero_ramps.gear_factor:final_val', val=0.)
         self.set_input_defaults('aero_ramps.flap_factor:initial_val', val=1.)
         self.set_input_defaults('aero_ramps.gear_factor:initial_val', val=1.)
+        self.set_input_defaults(Dynamic.Mission.MASS, val=np.ones(
+            nn), units='kg')  # val here is nominal

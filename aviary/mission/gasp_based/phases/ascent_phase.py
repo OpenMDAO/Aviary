@@ -1,167 +1,162 @@
-import dymos as dm
 import numpy as np
 
-from aviary.mission.gasp_based.ode.ascent_ode import AscentODE
+from aviary.mission.phase_builder_base import PhaseBuilderBase
+from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessTime, InitialGuessControl
+from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
+from aviary.mission.gasp_based.ode.ascent_ode import AscentODE
 
 
-def get_ascent(
-    ode_args=None,
-    transcription=None,
-    fix_initial=False,
-    angle_lower=-15 * np.pi / 180,
-    angle_upper=25 * np.pi / 180,
-    angle_ref=np.deg2rad(1),
-    angle_ref0=0,
-    angle_defect_ref=0.01,
-    alt_lower=0,
-    alt_upper=700,
-    alt_ref=100,
-    alt_ref0=0,
-    alt_defect_ref=100,
-    alt_constraint_eq=500,
-    alt_constraint_ref=100,
-    alt_constraint_ref0=0,
-    TAS_lower=0,
-    TAS_upper=1000,
-    TAS_ref=1e2,
-    TAS_ref0=0,
-    TAS_defect_ref=None,
-    mass_lower=0,
-    mass_upper=190_000,
-    mass_ref=100_000,
-    mass_ref0=0,
-    mass_defect_ref=1e2,
-    distance_lower=0,
-    distance_upper=10.e3,
-    distance_ref=3000,
-    distance_ref0=0,
-    distance_defect_ref=3000,
-    pitch_constraint_lower=0,
-    pitch_constraint_upper=15,
-    pitch_constraint_ref=1,
-    alpha_constraint_lower=np.deg2rad(-30),
-    alpha_constraint_upper=np.deg2rad(30),
-    alpha_constraint_ref=np.deg2rad(5),
-):
-    phase = dm.Phase(
-        ode_class=AscentODE,
-        ode_init_kwargs=ode_args,
-        transcription=transcription,
-    )
+class AscentPhase(PhaseBuilderBase):
+    default_name = 'ascent_phase'
+    default_ode_class = AscentODE
 
-    phase.set_time_options(
-        units="s",
-        targets="t_curr",
-        input_initial=True,
-        input_duration=True,
-    )
+    _meta_data_ = {}
+    _initial_guesses_meta_data_ = {}
 
-    phase.add_state(
-        Dynamic.Mission.FLIGHT_PATH_ANGLE,
-        fix_initial=True,
-        fix_final=False,
-        lower=angle_lower,
-        upper=angle_upper,
-        units="rad",
-        rate_source=Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
-        ref=angle_ref,
-        defect_ref=angle_defect_ref,
-        ref0=angle_ref0,
-    )
+    def build_phase(self, aviary_options: AviaryValues = None):
+        phase = self.phase = super().build_phase(aviary_options)
 
-    phase.add_state(
-        Dynamic.Mission.ALTITUDE,
-        fix_initial=True,
-        fix_final=False,
-        lower=alt_lower,
-        upper=alt_upper,
-        units="ft",
-        rate_source=Dynamic.Mission.ALTITUDE_RATE,
-        ref=alt_ref,
-        defect_ref=alt_defect_ref,
-        ref0=alt_ref0,
-    )
+        # Retrieve user options values
+        user_options = self.user_options
 
-    phase.add_state(
-        "TAS",
-        fix_initial=fix_initial,
-        fix_final=False,
-        lower=TAS_lower,
-        upper=TAS_upper,
-        units="kn",
-        rate_source="TAS_rate",
-        ref=TAS_ref,
-        defect_ref=TAS_defect_ref,
-        ref0=TAS_ref0,
-    )
+        pitch_constraint_lower = user_options.get_val(
+            'pitch_constraint_lower', units='deg')
+        pitch_constraint_upper = user_options.get_val(
+            'pitch_constraint_upper', units='deg')
+        pitch_constraint_ref = user_options.get_val('pitch_constraint_ref', units='deg')
+        alpha_constraint_lower = user_options.get_val(
+            'alpha_constraint_lower', units='rad')
+        alpha_constraint_upper = user_options.get_val(
+            'alpha_constraint_upper', units='rad')
+        alpha_constraint_ref = user_options.get_val('alpha_constraint_ref', units='rad')
 
-    phase.add_state(
-        Dynamic.Mission.MASS,
-        fix_initial=fix_initial,
-        fix_final=False,
-        lower=mass_lower,
-        upper=mass_upper,
-        units="lbm",
-        rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-        ref=mass_ref,
-        defect_ref=mass_defect_ref,
-        ref0=mass_ref0,
-    )
+        self.add_flight_path_angle_state(user_options)
+        self.add_altitude_state(user_options)
+        self.add_velocity_state(user_options)
+        self.add_mass_state(user_options)
+        self.add_distance_state(user_options, units='ft')
 
-    phase.add_state(
-        Dynamic.Mission.DISTANCE,
-        fix_initial=fix_initial,
-        fix_final=False,
-        lower=distance_lower,
-        upper=distance_upper,
-        units="ft",
-        rate_source=Dynamic.Mission.DISTANCE_RATE,
-        ref=distance_ref,
-        defect_ref=distance_defect_ref,
-        ref0=distance_ref0,
-    )
+        self.add_altitude_constraint(user_options)
 
-    # boundary/path constraints + controls
-    phase.add_boundary_constraint(
-        Dynamic.Mission.ALTITUDE,
-        loc="final",
-        equals=alt_constraint_eq,
-        units="ft",
-        ref=alt_constraint_ref,
-        ref0=alt_constraint_ref0,
-    )
-    phase.add_path_constraint("load_factor", upper=1.10, lower=0.0)
-    phase.add_path_constraint(
-        "fuselage_pitch",
-        "theta",
-        lower=pitch_constraint_lower,
-        upper=pitch_constraint_upper,
-        units="deg",
-        ref=pitch_constraint_ref,
-    )
+        phase.add_path_constraint(
+            "load_factor",
+            upper=1.10,
+            lower=0.0
+        )
 
-    phase.add_control(
-        "alpha",
-        val=0,
-        lower=alpha_constraint_lower,
-        upper=alpha_constraint_upper,
-        units="rad",
-        ref=alpha_constraint_ref,
-        opt=True,
-    )
-    phase.add_parameter("t_init_gear", units="s",
-                        static_target=True, opt=False, val=38.25)
-    phase.add_parameter("t_init_flaps", units="s",
-                        static_target=True, opt=False, val=48.21)
-    phase.add_timeseries_output(Dynamic.Mission.THRUST_TOTAL, units="lbf")
+        phase.add_path_constraint(
+            "fuselage_pitch",
+            "theta",
+            lower=pitch_constraint_lower,
+            upper=pitch_constraint_upper,
+            units="deg",
+            ref=pitch_constraint_ref,
+        )
 
-    phase.add_timeseries_output("normal_force")
-    phase.add_timeseries_output(Dynamic.Mission.MACH)
-    phase.add_timeseries_output("EAS", units="kn")
+        phase.add_control(
+            "alpha",
+            val=0,
+            lower=alpha_constraint_lower,
+            upper=alpha_constraint_upper,
+            units="rad",
+            ref=alpha_constraint_ref,
+            opt=True,
+        )
 
-    phase.add_timeseries_output(Dynamic.Mission.LIFT)
-    phase.add_timeseries_output("CL")
-    phase.add_timeseries_output("CD")
+        phase.add_parameter("t_init_gear", units="s",
+                            static_target=True, opt=False, val=38.25)
 
-    return phase
+        phase.add_parameter("t_init_flaps", units="s",
+                            static_target=True, opt=False, val=48.21)
+
+        phase.add_timeseries_output(Dynamic.Mission.THRUST_TOTAL, units="lbf")
+        phase.add_timeseries_output("normal_force")
+        phase.add_timeseries_output(Dynamic.Mission.MACH)
+        phase.add_timeseries_output("EAS", units="kn")
+        phase.add_timeseries_output(Dynamic.Mission.LIFT)
+        phase.add_timeseries_output("CL")
+        phase.add_timeseries_output("CD")
+
+        return phase
+
+
+# Adding metadata for the AscentPhase
+AscentPhase._add_meta_data('fix_initial', val=False)
+AscentPhase._add_meta_data('angle_lower', val=-15 * np.pi / 180, units='rad')
+AscentPhase._add_meta_data('angle_upper', val=25 * np.pi / 180, units='rad')
+AscentPhase._add_meta_data('angle_ref', val=np.deg2rad(1), units='rad')
+AscentPhase._add_meta_data('angle_ref0', val=0, units='rad')
+AscentPhase._add_meta_data('angle_defect_ref', val=0.01, units='rad')
+AscentPhase._add_meta_data('alt_lower', val=0, units='ft')
+AscentPhase._add_meta_data('alt_upper', val=700, units='ft')
+AscentPhase._add_meta_data('alt_ref', val=100, units='ft')
+AscentPhase._add_meta_data('alt_ref0', val=0, units='ft')
+AscentPhase._add_meta_data('alt_defect_ref', val=100, units='ft')
+AscentPhase._add_meta_data('final_altitude', val=500, units='ft')
+AscentPhase._add_meta_data('alt_constraint_ref', val=100, units='ft')
+AscentPhase._add_meta_data('alt_constraint_ref0', val=0, units='ft')
+AscentPhase._add_meta_data('velocity_lower', val=0, units='kn')
+AscentPhase._add_meta_data('velocity_upper', val=1000, units='kn')
+AscentPhase._add_meta_data('velocity_ref', val=1e2, units='kn')
+AscentPhase._add_meta_data('velocity_ref0', val=0, units='kn')
+AscentPhase._add_meta_data('velocity_defect_ref', val=None, units='kn')
+AscentPhase._add_meta_data('mass_lower', val=0, units='lbm')
+AscentPhase._add_meta_data('mass_upper', val=190_000, units='lbm')
+AscentPhase._add_meta_data('mass_ref', val=100_000, units='lbm')
+AscentPhase._add_meta_data('mass_ref0', val=0, units='lbm')
+AscentPhase._add_meta_data('mass_defect_ref', val=1e2, units='lbm')
+AscentPhase._add_meta_data('distance_lower', val=0, units='ft')
+AscentPhase._add_meta_data('distance_upper', val=10.e3, units='ft')
+AscentPhase._add_meta_data('distance_ref', val=3000, units='ft')
+AscentPhase._add_meta_data('distance_ref0', val=0, units='ft')
+AscentPhase._add_meta_data('distance_defect_ref', val=3000, units='ft')
+AscentPhase._add_meta_data('pitch_constraint_lower', val=0, units='deg')
+AscentPhase._add_meta_data('pitch_constraint_upper', val=15, units='deg')
+AscentPhase._add_meta_data('pitch_constraint_ref', val=1, units='deg')
+AscentPhase._add_meta_data('alpha_constraint_lower', val=np.deg2rad(-30), units='rad')
+AscentPhase._add_meta_data('alpha_constraint_upper', val=np.deg2rad(30), units='rad')
+AscentPhase._add_meta_data('alpha_constraint_ref', val=np.deg2rad(5), units='rad')
+AscentPhase._add_meta_data('num_segments', val=None, units='unitless')
+AscentPhase._add_meta_data('order', val=None, units='unitless')
+
+# Adding initial guess metadata
+AscentPhase._add_initial_guess_meta_data(
+    InitialGuessTime(),
+    desc='initial guess for time options')
+
+AscentPhase._add_initial_guess_meta_data(
+    InitialGuessState('flight_path_angle'),
+    desc='initial guess for flight path angle state')
+
+AscentPhase._add_initial_guess_meta_data(
+    InitialGuessState('altitude'),
+    desc='initial guess for altitude state')
+
+AscentPhase._add_initial_guess_meta_data(
+    InitialGuessState('velocity'),
+    desc='initial guess for true airspeed state')
+
+AscentPhase._add_initial_guess_meta_data(
+    InitialGuessState('mass'),
+    desc='initial guess for mass state')
+
+AscentPhase._add_initial_guess_meta_data(
+    InitialGuessState('distance'),
+    desc='initial guess for distance state')
+
+AscentPhase._add_initial_guess_meta_data(
+    InitialGuessControl('alpha'),
+    desc='initial guess for angle of attack control')
+
+AscentPhase._add_initial_guess_meta_data(
+    InitialGuessControl('tau_gear'),
+    desc='when the gear is retracted')
+
+AscentPhase._add_initial_guess_meta_data(
+    InitialGuessControl('tau_flaps'),
+    desc='when the flaps are retracted')
+
+AscentPhase._add_initial_guess_meta_data(
+    InitialGuessControl('throttle'),
+    desc='initial guess for throttle')

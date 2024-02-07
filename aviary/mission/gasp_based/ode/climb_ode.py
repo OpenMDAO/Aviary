@@ -11,9 +11,10 @@ from aviary.mission.gasp_based.ode.constraints.speed_constraints import SpeedCon
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
-from aviary.subsystems.propulsion.propulsion_mission import PropulsionMission
 from aviary.variable_info.enums import AnalysisScheme, AlphaModes, SpeedType
 from aviary.variable_info.variables import Dynamic
+from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
+from aviary.mission.ode.altitude_rate import AltitudeRate
 
 
 class ClimbODE(BaseODE):
@@ -47,10 +48,10 @@ class ClimbODE(BaseODE):
 
         if input_speed_type is SpeedType.EAS:
             speed_inputs = ["EAS"]
-            speed_outputs = ["mach", "TAS"]
+            speed_outputs = ["mach", ("TAS", Dynamic.Mission.VELOCITY)]
         elif input_speed_type is SpeedType.MACH:
             speed_inputs = ["mach"]
-            speed_outputs = ["EAS", "TAS"]
+            speed_outputs = ["EAS", ("TAS", Dynamic.Mission.VELOCITY)]
 
         # TODO: paramport
         self.add_subsystem("params", ParamPort(), promotes=["*"])
@@ -179,13 +180,13 @@ class ClimbODE(BaseODE):
         lift_balance_group.linear_solver = om.DirectSolver(assemble_jac=True)
 
         lift_balance_group.add_subsystem(
-            "eom",
+            "climb_eom",
             ClimbRates(
                 num_nodes=nn,
                 analysis_scheme=analysis_scheme),
             promotes_inputs=[
                 Dynamic.Mission.MASS,
-                "TAS",
+                Dynamic.Mission.VELOCITY,
                 Dynamic.Mission.DRAG,
                 Dynamic.Mission.THRUST_TOTAL,] +
             integration_states,
@@ -212,15 +213,19 @@ class ClimbODE(BaseODE):
                 "CL_max",
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 Dynamic.Mission.MASS,
-                "TAS",
+                ("TAS", Dynamic.Mission.VELOCITY),
             ]
             + ["aircraft:*"]
             + constraint_inputs,
             promotes_outputs=["theta", "TAS_violation"],
         )
+
+        # the last two subsystems will also be used for constraints
+        self.add_excess_rate_comps(nn)
+
         if analysis_scheme is AnalysisScheme.COLLOCATION:
             self.set_order(['params', 'USatm', 'mach_balance_group'] + prop_groups +
-                           ['lift_balance_group', 'constraints'])
+                           ['lift_balance_group', 'constraints', 'SPECIFIC_ENERGY_RATE_EXCESS', 'ALTITUDE_RATE_MAX'])
 
         ParamPort.set_default_vals(self)
         self.set_input_defaults("CL_max", val=5 * np.ones(nn), units="unitless")
