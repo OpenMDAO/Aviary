@@ -180,7 +180,7 @@ class ClimbODE(BaseODE):
         lift_balance_group.linear_solver = om.DirectSolver(assemble_jac=True)
 
         lift_balance_group.add_subsystem(
-            "eom",
+            "climb_eom",
             ClimbRates(
                 num_nodes=nn,
                 analysis_scheme=analysis_scheme),
