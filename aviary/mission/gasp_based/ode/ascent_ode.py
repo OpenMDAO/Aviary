@@ -80,7 +80,7 @@ class AscentODE(BaseODE):
             shooting_inputs = []
 
         self.add_subsystem(
-            "eoms",
+            "ascent_eom",
             AscentEOM(num_nodes=nn,
                       analysis_scheme=analysis_scheme),
             promotes_inputs=[
