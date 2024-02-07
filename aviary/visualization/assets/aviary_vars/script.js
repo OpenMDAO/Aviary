@@ -241,11 +241,6 @@ $(function () {
       headerSort: true,
       movableColumns: false,
       dataTreeStartExpanded: false,
-      // fitData - not a big difference maybe because already gave fixed width to the columns
-      // fitDataFill - not a big difference maybe because already gave fixed width to the columns
-      // fitDataTable - not a big difference maybe because already gave fixed width to the columns
-      // fitColumns - not a big difference maybe because already gave fixed width to the columns
-      // fitDataStretch - uses the full width for the value, which is good
       layout: "fitDataStretch",
       columns: [
         {

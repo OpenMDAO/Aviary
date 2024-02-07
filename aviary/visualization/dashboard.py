@@ -158,15 +158,19 @@ def create_aviary_variables_table_data_nested(script_name, recorder_file):
 
     """
     cr = om.CaseReader(recorder_file)
+    print(f"r.list_c with {cr=}")
+
     if 'final' not in cr.list_cases():
         return None
 
+    print(f"cr.get_case with {cr=}")
     case = cr.get_case('final')
     outputs = case.list_outputs(explicit=True, implicit=True, val=True,
                                 residuals=True, residuals_tol=None,
                                 units=True, shape=True, bounds=True, desc=True,
                                 scaling=False, hierarchical=True, print_arrays=True,
                                 out_stream=None, return_format='dict')
+
 
     sorted_abs_names = sorted(outputs.keys())
 
