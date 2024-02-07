@@ -124,7 +124,7 @@ class BreguetCruiseODESolution(BaseODE):
         # collect initial/final outputs
         #
         self.add_subsystem(
-            "eom",
+            "breguet_eom",
             RangeComp(num_nodes=nn),
             promotes_inputs=[
                 ("cruise_distance_initial", "initial_distance"),

@@ -167,7 +167,7 @@ class FlareODE(om.Group):
             'aviary_options':  options['aviary_options']}
 
         self.add_subsystem(
-            'eoms',
+            'landing_eom',
             FlareEOM(**kwargs),
             promotes_inputs=[
                 Dynamic.Mission.FLIGHT_PATH_ANGLE, Dynamic.Mission.VELOCITY, Dynamic.Mission.MASS, Dynamic.Mission.LIFT,

@@ -167,7 +167,7 @@ class TakeoffODE(om.Group):
             'aviary_options':  options['aviary_options']}
 
         self.add_subsystem(
-            'eoms', TakeoffEOM(**kwargs),
+            'takeoff_eom', TakeoffEOM(**kwargs),
             promotes_inputs=[
                 Dynamic.Mission.FLIGHT_PATH_ANGLE, Dynamic.Mission.VELOCITY, Dynamic.Mission.MASS, Dynamic.Mission.LIFT,
                 Dynamic.Mission.THRUST_TOTAL, Dynamic.Mission.DRAG, 'angle_of_attack'],
