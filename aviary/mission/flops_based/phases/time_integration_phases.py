@@ -24,6 +24,7 @@ class SGMHeightEnergy(SimuPyProblem):
         super().__init__(MissionODE(
             analysis_scheme=AnalysisScheme.SHOOTING,
             **ode_args),
+            problem_name=phase_name,
             outputs=[],
             states=[
                 Dynamic.Mission.MASS,
@@ -48,6 +49,7 @@ class SGMDetailedTakeoff(SimuPyProblem):
         super().__init__(TakeoffODE(
             analysis_scheme=AnalysisScheme.SHOOTING,
             **ode_args),
+            problem_name=phase_name,
             outputs=[],
             states=[
                 Dynamic.Mission.MASS,
@@ -72,6 +74,7 @@ class SGMDetailedLanding(SimuPyProblem):
         super().__init__(LandingODE(
             analysis_scheme=AnalysisScheme.SHOOTING,
             **ode_args),
+            problem_name=phase_name,
             outputs=[],
             states=[
                 Dynamic.Mission.MASS,

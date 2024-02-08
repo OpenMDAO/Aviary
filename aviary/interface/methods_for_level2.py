@@ -216,7 +216,7 @@ class AviaryProblem(om.Problem):
                 elif self.mission_method is SOLVED:
                     from aviary.interface.default_phase_info.solved import phase_info
 
-                print('Loaded default phase_info for'
+                print('Loaded default phase_info for '
                       f'{self.mission_method.value.lower()} equations of motion')
 
         # create a new dictionary that only contains the phases from phase_info
@@ -929,16 +929,18 @@ class AviaryProblem(om.Problem):
                 self.ode_args,
                 cruise_mach=self.cruise_mach)
 
-            descent_estimation = descent_range_and_fuel(
-                phases=descent_phases,
-                initial_mass=initial_mass,
-                cruise_alt=self.cruise_alt,
-                cruise_mach=self.cruise_mach)
+            # TEMPORARY
+            # descent_estimation = descent_range_and_fuel(
+            #     phases=descent_phases,
+            #     initial_mass=initial_mass,
+            #     cruise_alt=self.cruise_alt,
+            #     cruise_mach=self.cruise_mach)
 
-            estimated_descent_range = descent_estimation['refined_guess']['distance_flown']
-            end_of_cruise_range = self.target_range - estimated_descent_range
+            # estimated_descent_range = descent_estimation['refined_guess']['distance_flown']
+            # end_of_cruise_range = self.target_range - estimated_descent_range
 
-            estimated_descent_fuel = descent_estimation['refined_guess']['fuel_burned']
+            # estimated_descent_fuel = descent_estimation['refined_guess']['fuel_burned']
+            estimated_descent_fuel = 250
 
             cruise_kwargs = dict(
                 input_speed_type=SpeedType.MACH,

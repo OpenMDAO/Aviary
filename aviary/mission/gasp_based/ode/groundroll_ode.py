@@ -103,6 +103,26 @@ class GroundrollODE(BaseODE):
                  Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL),
                 "dt_dv"])
 
+        import aviary.api as av
+        if analysis_scheme is av.AnalysisScheme.SHOOTING and False:
+            from aviary.utils.functions import create_printcomp
+            dummy_comp = create_printcomp(
+                all_inputs=[
+                    "t_curr",
+                    'alpha',
+                    'velocity'
+                ],
+                input_units={
+                    't_curr': 's',
+                    'alpha': 'deg',
+                })
+            self.add_subsystem(
+                "dummy_comp",
+                dummy_comp(),
+                promotes_inputs=["*"],)
+            # self.set_input_defaults('start_rotation', val=0, units='s')
+            # self.set_input_defaults('rotation_rate', val=10/3, units='deg/s')
+
         ParamPort.set_default_vals(self)
         self.set_input_defaults("t_init_flaps", val=100.)
         self.set_input_defaults("t_init_gear", val=100.)

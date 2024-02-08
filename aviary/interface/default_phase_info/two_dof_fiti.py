@@ -54,6 +54,7 @@ def create_2dof_based_ascent_phases(
     )
     accel_vals = {}
 
+    # need to set trigger units
     climb1_kwargs = dict(
         input_speed_type=SpeedType.EAS,
         input_speed_units='kn',
@@ -65,7 +66,7 @@ def create_2dof_based_ascent_phases(
     climb1_vals = {
         'alt_trigger': {'val': 10000, 'units': 'ft'},
         'EAS': {'val': 250, 'units': climb1_kwargs['input_speed_units']},
-        'speed_trigger': {'val': cruise_mach, 'units': 'unitless'},
+        'speed_trigger': {'val': cruise_mach, 'units': None},
     }
 
     climb2_kwargs = dict(
@@ -79,7 +80,7 @@ def create_2dof_based_ascent_phases(
     climb2_vals = {
         'alt_trigger': {'val': cruise_alt, 'units': 'ft'},
         'EAS': {'val': 270, 'units': climb2_kwargs['input_speed_units']},
-        'speed_trigger': {'val': cruise_mach, 'units': 'unitless'},
+        'speed_trigger': {'val': cruise_mach, 'units': None},
     }
 
     climb3_kwargs = dict(

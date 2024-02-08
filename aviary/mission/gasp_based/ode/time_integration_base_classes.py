@@ -49,6 +49,7 @@ class SimuPyProblem(SimulationMixin):
     def __init__(
         self,
         ode,
+        problem_name='',
         time_independent=False,
         t_name="t_curr",
         states=None,
@@ -220,11 +221,14 @@ class SimuPyProblem(SimulationMixin):
         # TODO: add defensive checks to make sure dimensions match in both setup and
         # calls
 
-        if DEBUG:
-            om.n2(prob, outfile="n2_simupy_problem.html", show_browser=False)
-            with open('input_list_simupy.txt', 'w') as outfile:
+        if DEBUG or True:
+            if problem_name:
+                problem_name = '_'+problem_name
+            om.n2(prob, outfile="n2_simupy_problem" +
+                  problem_name+".html", show_browser=False)
+            with open('input_list_simupy'+problem_name+'.txt', 'w') as outfile:
                 prob.model.list_inputs(out_stream=outfile,)
-            print(states)
+            # print(states)
 
     @property
     def time(self):
@@ -387,15 +391,19 @@ class SimuPyProblem(SimulationMixin):
 
     def event_equation_function(self, t, x):
         self.output_equation_function(t, x)
+        self.compute()
         event_values = [self.evaluate_trigger(trigger) for trigger in self.triggers]
+        # print(event_values)
         return np.array(event_values)
 
     def evaluate_trigger(self, trigger: event_trigger):
         trigger_value = trigger.value
-        if hasattr(self, trigger_value):
-            trigger_value = getattr(self, trigger_value)
-        elif isinstance(trigger_value, str):
-            trigger_value = self.get_val(trigger_value, units=trigger.units).squeeze()
+        if isinstance(trigger_value, str):
+            if hasattr(self, trigger_value):
+                trigger_value = getattr(self, trigger_value)
+            else:
+                trigger_value = self.get_val(
+                    trigger_value, units=trigger.units).squeeze()
         current_value = self.get_val(trigger.state, units=trigger.units).squeeze()
         return current_value - trigger_value
 

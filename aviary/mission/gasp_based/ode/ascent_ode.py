@@ -108,6 +108,24 @@ class AscentODE(BaseODE):
 
         self.add_excess_rate_comps(nn)
 
+        if analysis_scheme is AnalysisScheme.SHOOTING or False:
+            from aviary.utils.functions import create_printcomp
+            dummy_comp = create_printcomp(
+                all_inputs=[
+                    "t_curr",
+                    'alpha',
+                    Dynamic.Mission.VELOCITY,
+                    Dynamic.Mission.ALTITUDE,
+                ],
+                input_units={
+                    't_curr': 's',
+                    'alpha': 'deg',
+                })
+            self.add_subsystem(
+                "dummy_comp",
+                dummy_comp(),
+                promotes_inputs=["*"],)
+
         ParamPort.set_default_vals(self)
         self.set_input_defaults("t_init_flaps", val=47.5)
         self.set_input_defaults("t_init_gear", val=37.3)

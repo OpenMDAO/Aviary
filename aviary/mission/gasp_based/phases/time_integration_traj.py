@@ -7,7 +7,7 @@ from aviary.variable_info.enums import SpeedType
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 
-DEBUG = 0
+DEBUG = 1
 
 
 class TimeIntegrationTrajBase(SGMTrajBase):
@@ -70,7 +70,12 @@ class FlexibleTraj(TimeIntegrationTrajBase):
                         phase.rotation.set_val(name.replace(
                             'rotation.', ''), data['val'], units=data['units'])
                     else:
-                        phase.set_val(name, data['val'], units=data['units'])
+                        try:
+                            phase.set_val(name, data['val'], units=data['units'])
+                        except TypeError:
+                            print('\n')
+                            print(phase_name, name, data['val'], data['units'])
+                            exit()
 
         ode_index = 0
         sim_gen = self.compute_traj_loop(self.ODEs[0], inputs, outputs)
@@ -89,12 +94,26 @@ class FlexibleTraj(TimeIntegrationTrajBase):
                 next_problem = None
 
             print('Finished: '+current_problem.phase_name)
+            print([name+'_'+data['units']
+                  for name, data in current_problem.states.items()])
+            print(x_final)
+            print('outputs')
+            for output_name, unit in current_problem.outputs.items():
+                val = current_problem.get_val(output_name, units=unit)[0]
+                print(output_name+':', val, unit)
+
+            # print(self.outputs.items())
+            # print(current_problem.output)
             if next_problem is not None:
                 if type(current_problem) is SGMGroundroll:
                     next_problem.prob.set_val("start_rotation", t_start_rotation)
+                    # next_problem.prob.set_val(Dynamic.Mission.VELOCITY, 150, units='kn')
                 elif type(current_problem) is SGMRotation:
                     next_problem.rotation.set_val("start_rotation", t_start_rotation)
+                print('\n\n')
                 print('Starting: '+next_problem.phase_name)
+                print([name+'_'+data['units']
+                      for name, data in next_problem.states.items()])
                 sim_gen.send(next_problem)
             else:
                 print('Reached the end of the Trajectory!')
