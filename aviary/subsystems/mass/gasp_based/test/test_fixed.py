@@ -1,5 +1,6 @@
 import unittest
 import os
+from aviary.constants import RHO_SEA_LEVEL_ENGLISH
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
@@ -1539,7 +1540,7 @@ class FixedMassGroupTestCase3(unittest.TestCase):
             Aircraft.Fuselage.AVG_DIAMETER: (11.0, 'ft'),
             Aircraft.Wing.CENTER_CHORD: (17.0, 'ft'),
             Mission.Landing.LIFT_COEFFICIENT_MAX: (1.8, 'unitless'),
-            'density': (0.0023769, 'slug/ft**3'),
+            'density': (RHO_SEA_LEVEL_ENGLISH, 'slug/ft**3'),
             Aircraft.Wing.ULTIMATE_LOAD_FACTOR: (7.0, 'unitless'),
             Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT: (1.11, 'unitless'),
             Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS: (200.0, 'lbm'),

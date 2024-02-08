@@ -1,7 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_LBM
+from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import FlapType
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
@@ -1559,7 +1559,7 @@ class HighLiftMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, val=13.1)
         add_aviary_input(self, Aircraft.Wing.CENTER_CHORD, val=17.48974)
         add_aviary_input(self, Mission.Landing.LIFT_COEFFICIENT_MAX, val=1.8)
-        self.add_input("density", val=.0023769, units='slug/ft**3',
+        self.add_input("density", val=RHO_SEA_LEVEL_ENGLISH, units='slug/ft**3',
                        desc='RHO: Density of air')
 
         add_aviary_output(self, Aircraft.Wing.HIGH_LIFT_MASS, val=0)
