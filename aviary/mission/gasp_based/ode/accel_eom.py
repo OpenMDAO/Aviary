@@ -43,14 +43,14 @@ class AccelerationRates(om.ExplicitComponent):
             desc="total thrust",
         )
         self.add_input(
-            "TAS",
+            Dynamic.Mission.VELOCITY,
             val=np.zeros(nn),
             units="ft/s",
             desc="true air speed",
         )
 
         self.add_output(
-            "TAS_rate",
+            Dynamic.Mission.VELOCITY_RATE,
             val=np.zeros(nn),
             units="ft/s**2",
             desc="rate of change of true air speed",
@@ -63,10 +63,10 @@ class AccelerationRates(om.ExplicitComponent):
         )
 
         self.declare_partials(
-            "TAS_rate", [
+            Dynamic.Mission.VELOCITY_RATE, [
                 Dynamic.Mission.MASS, Dynamic.Mission.DRAG, Dynamic.Mission.THRUST_TOTAL], rows=arange, cols=arange)
         self.declare_partials(Dynamic.Mission.DISTANCE_RATE, [
-                              "TAS"], rows=arange, cols=arange, val=1.)
+                              Dynamic.Mission.VELOCITY], rows=arange, cols=arange, val=1.)
 
         if analysis_scheme is AnalysisScheme.SHOOTING:
             self.add_input("t_curr", val=np.ones(nn), desc="time", units="s")
@@ -81,9 +81,10 @@ class AccelerationRates(om.ExplicitComponent):
         weight = inputs[Dynamic.Mission.MASS] * GRAV_ENGLISH_LBM
         drag = inputs[Dynamic.Mission.DRAG]
         thrust = inputs[Dynamic.Mission.THRUST_TOTAL]
-        TAS = inputs["TAS"]
+        TAS = inputs[Dynamic.Mission.VELOCITY]
 
-        outputs["TAS_rate"] = (GRAV_ENGLISH_GASP / weight) * (thrust - drag)
+        outputs[Dynamic.Mission.VELOCITY_RATE] = (
+            GRAV_ENGLISH_GASP / weight) * (thrust - drag)
         outputs[Dynamic.Mission.DISTANCE_RATE] = TAS
 
         if analysis_scheme is AnalysisScheme.SHOOTING:
@@ -94,7 +95,8 @@ class AccelerationRates(om.ExplicitComponent):
         drag = inputs[Dynamic.Mission.DRAG]
         thrust = inputs[Dynamic.Mission.THRUST_TOTAL]
 
-        J["TAS_rate", Dynamic.Mission.MASS] = \
+        J[Dynamic.Mission.VELOCITY_RATE, Dynamic.Mission.MASS] = \
             -(GRAV_ENGLISH_GASP / weight**2) * (thrust - drag) * GRAV_ENGLISH_LBM
-        J["TAS_rate", Dynamic.Mission.DRAG] = -(GRAV_ENGLISH_GASP / weight)
-        J["TAS_rate", Dynamic.Mission.THRUST_TOTAL] = GRAV_ENGLISH_GASP / weight
+        J[Dynamic.Mission.VELOCITY_RATE, Dynamic.Mission.DRAG] = - \
+            (GRAV_ENGLISH_GASP / weight)
+        J[Dynamic.Mission.VELOCITY_RATE, Dynamic.Mission.THRUST_TOTAL] = GRAV_ENGLISH_GASP / weight

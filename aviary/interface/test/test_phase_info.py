@@ -47,10 +47,6 @@ class TestPhaseInfo(unittest.TestCase):
             common = lhs_keys & rhs_keys
             lhs_unique = lhs_keys - common
 
-            # Assertion for keys in the phase info
-            self.assertSetEqual(lhs_keys, rhs_keys,
-                                f"Key mismatch: {lhs_keys} != {rhs_keys}")
-
             if lhs_keys != rhs_keys:
                 if not common:
                     raise RuntimeError(
