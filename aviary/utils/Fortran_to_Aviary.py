@@ -38,7 +38,7 @@ GASP = LegacyCode.GASP
 
 
 def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
-                       out_file=None, force=False, verbosity=Verbosity.QUIET):
+                       out_file=None, force=False, verbosity=Verbosity.BRIEF):
     '''
     Create an Aviary CSV file from a Fortran input deck
     Required input is the filepath to the input deck and legacy code. Optionally, a
@@ -255,7 +255,7 @@ def process_and_store_data(data, var_name, legacy_code, current_namelist, altern
 
         vehicle_data['unused_values'] = set_value(name, var_values, vehicle_data['unused_values'],
                                                   var_ind=var_ind, units=data_units)
-        if vehicle_data['verbosity'] is Verbosity.DEBUG:
+        if vehicle_data['verbosity'].value >= 2:
             print('Unused:', name, var_values, comment)
 
     return vehicle_data
@@ -316,7 +316,7 @@ def generate_aviary_names(code_bases):
     return alternate_names
 
 
-def update_name(alternate_names, var_name, verbosity=Verbosity.QUIET):
+def update_name(alternate_names, var_name, verbosity=Verbosity.BRIEF):
     '''update_name will convert a Fortran name to a list of equivalent Aviary names.'''
 
     all_equivalent_names = []
@@ -328,7 +328,7 @@ def update_name(alternate_names, var_name, verbosity=Verbosity.QUIET):
 
     # if there are no equivalent variable names, return the original name
     if len(all_equivalent_names) == 0:
-        if verbosity is Verbosity.DEBUG:
+        if verbosity.value >= 2:
             print('passing: ', var_name)
         all_equivalent_names = [var_name]
     return all_equivalent_names
@@ -602,6 +602,12 @@ def _setup_F2A_parser(parser):
         "-v",
         "--verbose",
         action="store_true",
+        help="Enable verbose print statements",
+    )
+    parser.add_argument(
+        "-vv",
+        "--very_verbose",
+        action="store_true",
         help="Enable debug print statements",
     )
 
@@ -612,10 +618,12 @@ def _exec_F2A(args, user_args):
         args.input_deck = args.input_deck[0]
     filepath = args.input_deck
 
-    if args.verbose is True:
+    if args.very_verbose is True:
         verbosity = Verbosity.DEBUG
+    elif args.verbose is True:
+        verbosity = Verbosity.VERBOSE
     else:
-        verbosity = Verbosity.QUIET
+        verbosity = Verbosity.BRIEF
 
     create_aviary_deck(filepath, args.legacy_code, args.defaults_deck,
                        Path(args.out_file), args.force, verbosity)

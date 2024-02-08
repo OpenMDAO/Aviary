@@ -233,7 +233,7 @@ class FlexibleTraj(TimeIntegrationTrajBase):
 
 #             # trajectory-specific phase switching
 #             if current_problem is groundroll:
-#                 if sel.verbosity is Verbosity.DEBUG:
+#                 if self.verbosity is Verbosity.DEBUG:
 #                     print("starting rotation")
 #                 rotation.prob.set_val("start_rotation", t)
 #                 ascent.rotation.set_val("start_rotation", t)

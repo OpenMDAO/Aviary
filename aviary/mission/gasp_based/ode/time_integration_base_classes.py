@@ -187,7 +187,7 @@ class SimuPyProblem(SimulationMixin):
         # TODO: add defensive checks to make sure dimensions match in both setup and
         # calls
 
-        if verbosity is Verbosity.DEBUG or True:
+        if verbosity.value >= 2:
             om.n2(prob, outfile="n2_simupy_problem.html", show_browser=False)
             with open('input_list_simupy.txt', 'w') as outfile:
                 prob.model.list_inputs(out_stream=outfile,)
@@ -475,7 +475,7 @@ class SGMTrajBase(om.ExplicitComponent):
                 try:
                     ode.set_val(input, inputs[input])
                 except KeyError:
-                    if self.verbosity is Verbosity.DEBUG:
+                    if self.verbosity.value >= 2:
                         print(
                             "*** Input not found:",
                             ode,
@@ -484,7 +484,7 @@ class SGMTrajBase(om.ExplicitComponent):
                     pass
 
     def compute_traj_loop(self, first_problem, inputs, outputs, t0=0., state0=None):
-        if self.verbosity is Verbosity.DEBUG:
+        if self.verbosity.value >= 2:
             print("initializing compute_traj_loop")
         sim_results = []
         sim_problems = [first_problem]
@@ -518,7 +518,7 @@ class SGMTrajBase(om.ExplicitComponent):
             try:
                 try_next_problem = (yield current_problem, sim_result)
             except GeneratorExit:
-                if self.verbosity is Verbosity.DEBUG:
+                if self.verbosity.value >= 2:
                     print("stop iteration 1")
                 break
 
@@ -528,11 +528,11 @@ class SGMTrajBase(om.ExplicitComponent):
                 try:
                     next_problem = (yield current_problem, sim_result)
                 except GeneratorExit:
-                    if self.verbosity is Verbosity.DEBUG:
+                    if self.verbosity.value >= 2:
                         print("stop iteration 2")
                     break
 
-                if self.verbosity is Verbosity.DEBUG:
+                if self.verbosity.value >= 2:
                     print(" was on problem:", current_problem,
                           "\n got back:", next_problem)
             # compute the output at the final condition to make sure all outputs are current
@@ -545,7 +545,7 @@ class SGMTrajBase(om.ExplicitComponent):
             ).squeeze()
             sim_problems.append(next_problem)
 
-        if self.verbosity is Verbosity.DEBUG:
+        if self.verbosity.value >= 2:
             print("ended loop")
 
         # wrap main loop
@@ -823,7 +823,7 @@ class SGMTrajBase(om.ExplicitComponent):
             lamda_dot_plus = np.zeros_like(costate)
 
             # self.sim_results[-1].x[-1, next_prob.state_names.index(output)]
-            if self.verbosity is Verbosity.DEBUG:
+            if self.verbosity.value >= 2:
                 print("\nstarting partial for %s" % output, costate)
 
             dg_dt = 0.
@@ -905,7 +905,7 @@ class SGMTrajBase(om.ExplicitComponent):
                         in self.traj_event_trigger_input
                     ):
                         event_trigger_name = self.traj_event_trigger_input[event_key]["name"]
-                        if self.verbosity is Verbosity.DEBUG:
+                        if self.verbosity.value >= 2:
                             print("setting event trigger data", event_trigger_name)
                         J[output_name, event_trigger_name] = (
                             + costate[None, :] @ (f_minus - f_plus) /
@@ -922,7 +922,7 @@ class SGMTrajBase(om.ExplicitComponent):
                 def co_state_rate(t, costate, *args):
                     return df_dx(t) @ costate
 
-                if self.verbosity is Verbosity.DEBUG:
+                if self.verbosity.value >= 2:
                     print('dim_state:', prob.dim_state, "ic:", costate)
 
                 costate_sys = DynamicalSystem(state_equation_function=co_state_rate,
