@@ -15,7 +15,13 @@ from panel.theme import DefaultTheme
 
 import openmdao.api as om
 from openmdao.utils.general_utils import env_truthy
-from openmdao.utils.array_utils import convert_ndarray_to_support_nans_in_json
+
+# support getting this function from OpenMDAO post movement of the function to utils
+#    but also support it's old location
+try:
+    from openmdao.utils.array_utils import convert_ndarray_to_support_nans_in_json
+except ImportError:
+    from openmdao.visualization.n2_viewer.n2_viewer import _convert_nans_in_nested_list as convert_nans_in_nested_list
 
 import aviary.api as av
 
