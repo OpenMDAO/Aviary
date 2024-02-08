@@ -70,7 +70,6 @@ class TestUnsteadySolvedODE(unittest.TestCase):
         tas = p.model.get_val("TAS", units="ft/s")
         iwing = p.model.get_val(Aircraft.Wing.INCIDENCE, units="deg")
         alpha = p.model.get_val("alpha", units="deg")
-        throttle = p.model.get_val(Dynamic.Mission.THROTTLE, units="unitless")
 
         c_alphai = np.cos(np.radians(alpha - iwing))
         s_alphai = np.sin(np.radians(alpha - iwing))

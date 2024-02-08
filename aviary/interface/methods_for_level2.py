@@ -12,6 +12,7 @@ import dymos as dm
 from dymos.utils.misc import _unspecified
 
 import openmdao.api as om
+from openmdao.core.component import Component
 from openmdao.utils.units import convert_units
 
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
@@ -36,7 +37,7 @@ from aviary.mission.gasp_based.phases.taxi_group import TaxiSegment
 from aviary.mission.gasp_based.phases.v_rotate_comp import VRotateComp
 from aviary.mission.gasp_based.polynomial_fit import PolynomialFit
 from aviary.subsystems.premission import CorePreMission
-from aviary.utils.functions import set_aviary_initial_values, create_opts2vals, add_opts2vals, promote_aircraft_and_mission_vars
+from aviary.utils.functions import create_opts2vals, add_opts2vals, promote_aircraft_and_mission_vars
 from aviary.utils.process_input_decks import create_vehicle, update_GASP_options, initial_guessing
 from aviary.utils.preprocessors import preprocess_crewpayload
 from aviary.interface.utils.check_phase_info import check_phase_info
@@ -46,7 +47,6 @@ from aviary.variable_info.functions import setup_trajectory_params, override_avi
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
 from aviary.variable_info.enums import AnalysisScheme, ProblemType, SpeedType, AlphaModes, EquationsOfMotion, LegacyCode
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
-from aviary.variable_info.variables_in import VariablesIn
 
 from aviary.subsystems.propulsion.engine_deck import EngineDeck
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
@@ -58,7 +58,6 @@ from aviary.utils.merge_variable_metadata import merge_meta_data
 
 from aviary.interface.default_phase_info.two_dof_fiti import create_2dof_based_ascent_phases, create_2dof_based_descent_phases
 from aviary.mission.gasp_based.idle_descent_estimation import descent_range_and_fuel
-from aviary.mission.flops_based.phases.phase_utils import get_initial
 from aviary.mission.phase_builder_base import PhaseBuilderBase
 
 
@@ -114,6 +113,68 @@ class PostMissionGroup(om.Group):
         promote_aircraft_and_mission_vars(self)
 
 
+class AviaryGroup(om.Group):
+    """
+    A standard OpenMDAO group that handles Aviary's promotions in the configure
+    method. This assures that we only call set_input_defaults on variables
+    that are present in the model.
+    """
+
+    def initialize(self):
+        self.options.declare(
+            'aviary_options', types=AviaryValues,
+            desc='collection of Aircraft/Mission specific options')
+        self.options.declare(
+            'aviary_metadata', types=dict,
+            desc='metadata dictionary of the full aviary problem.')
+
+    def configure(self):
+        aviary_options = self.options['aviary_options']
+        aviary_metadata = self.options['aviary_metadata']
+
+        # Find promoted name of every input in the model.
+        all_prom_inputs = []
+
+        # We can call list_inputs on the groups.
+        for system in self.system_iter(recurse=False, typ=om.Group):
+            var_abs = system.list_inputs(out_stream=None)
+            var_prom = [v['prom_name'] for k, v in var_abs]
+            all_prom_inputs.extend(var_prom)
+
+        # Component promotes aren't handled until this group resolves.
+        # Here, we address anything promoted in AviaryProblem.
+        for system in self.system_iter(recurse=False, typ=Component):
+            input_meta = system._var_promotes['input']
+            var_prom = [v[0][1] for v in input_meta if isinstance(v[0], tuple)]
+            all_prom_inputs.extend(var_prom)
+            var_prom = [v[0] for v in input_meta if not isinstance(v[0], tuple)]
+            all_prom_inputs.extend(var_prom)
+
+        for key in aviary_metadata:
+
+            if ':' not in key or key.startswith('dynamic:'):
+                continue
+
+            if aviary_metadata[key]['option']:
+                continue
+
+            # Skip anything that is not presently an input.
+            if key not in all_prom_inputs:
+                continue
+
+            if key in aviary_options:
+                val, units = aviary_options.get_item(key)
+            else:
+                val = aviary_metadata[key]['default_value']
+                units = aviary_metadata[key]['units']
+
+                if val is None:
+                    # optional, but no default value
+                    continue
+
+            self.set_input_defaults(key, val=val, units=units)
+
+
 class AviaryProblem(om.Problem):
     """
     Main class for instantiating, formulating, and solving Aviary problems.
@@ -135,7 +196,7 @@ class AviaryProblem(om.Problem):
 
         self.timestamp = datetime.now()
 
-        self.model = om.Group()
+        self.model = AviaryGroup()
         self.pre_mission = PreMissionGroup()
         self.post_mission = PostMissionGroup()
 
@@ -563,53 +624,6 @@ class AviaryProblem(om.Problem):
                                            promotes_outputs=[
                 ('subsystem_mass', Aircraft.Design.EXTERNAL_SUBSYSTEMS_MASS)])
 
-    def _get_2dof_phase(self, phase_name):
-        # Get the phase options for the specified phase name
-        phase_options = self.phase_info[phase_name]
-
-        subsystems = self.core_subsystems
-        default_mission_subsystems = [
-            subsystems['aerodynamics'], subsystems['propulsion']]
-
-        if 'cruise' not in phase_name:
-            num_segments = phase_options['user_options']['num_segments']
-            order = phase_options['user_options']['order']
-            # Create a Radau transcription scheme object with the specified num_segments and order
-            transcription = dm.Radau(
-                num_segments=num_segments,
-                order=order,
-                compressed=True,
-                solve_segments=False)
-        else:
-            transcription = None
-
-        if 'groundroll' in phase_name:
-            phase_builder = GroundrollPhase
-        elif 'rotation' in phase_name:
-            phase_builder = RotationPhase
-        elif 'accel' in phase_name:
-            phase_builder = AccelPhase
-        elif 'ascent' in phase_name:
-            phase_builder = AscentPhase
-        elif 'climb' in phase_name:
-            phase_builder = ClimbPhase
-        elif 'cruise' in phase_name:
-            phase_builder = CruisePhase
-        elif 'desc' in phase_name:
-            phase_builder = DescentPhase
-
-        phase_object = phase_builder.from_phase_info(
-            phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data, transcription=transcription)
-        phase = phase_object.build_phase(aviary_options=self.aviary_inputs)
-
-        if 'cruise' not in phase_name:
-            phase.add_control(
-                Dynamic.Mission.THROTTLE, targets=Dynamic.Mission.THROTTLE, units='unitless',
-                opt=False,
-            )
-
-        return phase
-
     def _add_groundroll_eq_constraint(self, phase):
         """
         Add an equality constraint to the problem to ensure that the TAS at the end of the
@@ -618,17 +632,17 @@ class AviaryProblem(om.Problem):
         self.model.add_subsystem(
             "groundroll_boundary",
             om.EQConstraintComp(
-                "TAS",
+                "velocity",
                 eq_units="ft/s",
                 normalize=True,
                 add_constraint=True,
             ),
         )
         self.model.connect(Mission.Takeoff.ROTATION_VELOCITY,
-                           "groundroll_boundary.rhs:TAS")
+                           "groundroll_boundary.rhs:velocity")
         self.model.connect(
-            "traj.groundroll.states:TAS",
-            "groundroll_boundary.lhs:TAS",
+            "traj.groundroll.states:velocity",
+            "groundroll_boundary.lhs:velocity",
             src_indices=[-1],
             flat_src_indices=True,
         )
@@ -641,27 +655,40 @@ class AviaryProblem(om.Problem):
             promotes_inputs=["t_init_gear", "t_init_flaps"],
         )
 
-    def _get_height_energy_phase(self, phase_name, phase_idx):
+    def _get_phase(self, phase_name, phase_idx):
         base_phase_options = self.phase_info[phase_name]
-        fix_duration = base_phase_options['user_options']['fix_duration']
 
         # We need to exclude some things from the phase_options that we pass down
         # to the phases. Intead of "popping" keys, we just create new outer dictionaries.
 
         phase_options = {}
         for key, val in base_phase_options.items():
-            if key != 'user_options':
-                phase_options[key] = val
+            phase_options[key] = val
 
         phase_options['user_options'] = {}
         for key, val in base_phase_options['user_options'].items():
-            if key != 'fix_duration':
-                phase_options['user_options'][key] = val
+            phase_options['user_options'][key] = val
 
         # TODO optionally accept which subsystems to load from phase_info
         subsystems = self.core_subsystems
         default_mission_subsystems = [
             subsystems['aerodynamics'], subsystems['propulsion']]
+
+        if self.mission_method is TWO_DEGREES_OF_FREEDOM:
+            if 'groundroll' in phase_name:
+                phase_builder = GroundrollPhase
+            elif 'rotation' in phase_name:
+                phase_builder = RotationPhase
+            elif 'accel' in phase_name:
+                phase_builder = AccelPhase
+            elif 'ascent' in phase_name:
+                phase_builder = AscentPhase
+            elif 'climb' in phase_name:
+                phase_builder = ClimbPhase
+            elif 'cruise' in phase_name:
+                phase_builder = CruisePhase
+            elif 'desc' in phase_name:
+                phase_builder = DescentPhase
 
         if self.mission_method is HEIGHT_ENERGY:
             if 'phase_builder' in phase_options:
@@ -672,58 +699,87 @@ class AviaryProblem(om.Problem):
             else:
                 phase_builder = EnergyPhase
 
-            phase_object = phase_builder.from_phase_info(
-                phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data)
+        phase_object = phase_builder.from_phase_info(
+            phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data)
 
-            phase = phase_object.build_phase(aviary_options=self.aviary_inputs)
+        phase = phase_object.build_phase(aviary_options=self.aviary_inputs)
 
-            # TODO: add logic to filter which phases get which controls.
-            # right now all phases get all controls added from every subsystem.
-            # for example, we might only want ELECTRIC_SHAFT_POWER applied during the climb phase.
-            all_subsystems = self._get_all_subsystems(
-                phase_options['external_subsystems'])
+        # TODO: add logic to filter which phases get which controls.
+        # right now all phases get all controls added from every subsystem.
+        # for example, we might only want ELECTRIC_SHAFT_POWER applied during the climb phase.
+        all_subsystems = self._get_all_subsystems(
+            phase_options['external_subsystems'])
 
-            # loop through all_subsystems and call `get_controls` on each subsystem
-            for subsystem in all_subsystems:
-                # add the controls from the subsystems to each phase
-                arg_spec = inspect.getfullargspec(subsystem.get_controls)
-                if 'phase_name' in arg_spec.args:
-                    control_dicts = subsystem.get_controls(
-                        phase_name=phase_name)
-                else:
-                    control_dicts = subsystem.get_controls()
-                for control_name, control_dict in control_dicts.items():
-                    phase.add_control(control_name, **control_dict)
-
-            user_options = AviaryValues(phase_options.get('user_options', ()))
-
-            fix_initial = user_options.get_val("fix_initial")
-            if "fix_initial_time" in user_options:
-                fix_initial_time = user_options.get_val("fix_initial_time")
+        # loop through all_subsystems and call `get_controls` on each subsystem
+        for subsystem in all_subsystems:
+            # add the controls from the subsystems to each phase
+            arg_spec = inspect.getfullargspec(subsystem.get_controls)
+            if 'phase_name' in arg_spec.args:
+                control_dicts = subsystem.get_controls(
+                    phase_name=phase_name)
             else:
-                fix_initial_time = get_initial(fix_initial, "time", True)
+                control_dicts = subsystem.get_controls()
+            for control_name, control_dict in control_dicts.items():
+                phase.add_control(control_name, **control_dict)
 
+        user_options = AviaryValues(phase_options.get('user_options', ()))
+
+        fix_initial = phase_options.get('fix_initial', False)
+        fix_duration = phase_options.get('fix_duration', False)
+        initial_bounds = phase_options.get('initial_bounds', _unspecified)
+
+        if phase_name == 'ascent' and self.mission_method is TWO_DEGREES_OF_FREEDOM:
+            phase.set_time_options(
+                units="s",
+                targets="t_curr",
+                input_initial=True,
+                input_duration=True,
+            )
+        elif phase_name == 'cruise' and self.mission_method is TWO_DEGREES_OF_FREEDOM:
+            # Time here is really the independent variable through which we are integrating.
+            # In the case of the Breguet Range ODE, it's mass.
+            # We rely on mass being monotonically non-increasing across the phase.
+            phase.set_time_options(
+                name='mass',
+                fix_initial=False,
+                fix_duration=False,
+                units="lbm",
+                targets="mass",
+                initial_bounds=(0., 1.e7),
+                initial_ref=100.e3,
+                duration_bounds=(-1.e7, -1),
+                duration_ref=50000,
+            )
+        elif phase_name == 'descent' and self.mission_method is TWO_DEGREES_OF_FREEDOM:
+            duration_ref = user_options.get_val("duration_ref", 's')
+            phase.set_time_options(
+                duration_bounds=duration_bounds,
+                fix_initial=fix_initial,
+                input_initial=input_initial,
+                units="s",
+                duration_ref=duration_ref,
+            )
+        else:
             input_initial = False
-            if self.mission_method is HEIGHT_ENERGY:
-                user_options.set_val('initial_ref', 10., 'min')
-                duration_bounds = user_options.get_val("duration_bounds", 'min')
-                user_options.set_val(
-                    'duration_ref', (duration_bounds[0] + duration_bounds[1]) / 2., 'min')
-                if phase_idx > 0:
-                    input_initial = True
+            user_options.set_val('initial_ref', 10., 'min')
+            duration_bounds = user_options.get_val("duration_bounds", 'min')
+            user_options.set_val(
+                'duration_ref', (duration_bounds[0] + duration_bounds[1]) / 2., 'min')
+            if phase_idx > 0:
+                input_initial = True
 
-            if fix_initial_time or input_initial:
+            if fix_initial or input_initial:
                 phase.set_time_options(
-                    fix_initial=fix_initial_time, fix_duration=fix_duration, units='s',
+                    fix_initial=fix_initial, fix_duration=fix_duration, units='s',
                     duration_bounds=user_options.get_val("duration_bounds", 's'),
                     duration_ref=user_options.get_val("duration_ref", 's'),
                 )
-            elif phase_name == 'descent':  # TODO: generalize this logic for all phases
+            elif phase_name == 'descent' and self.mission_method is HEIGHT_ENERGY:  # TODO: generalize this logic for all phases
                 phase.set_time_options(
                     fix_initial=False, fix_duration=False, units='s',
                     duration_bounds=user_options.get_val("duration_bounds", 's'),
                     duration_ref=user_options.get_val("duration_ref", 's'),
-                    initial_bounds=user_options.get_val("initial_bounds", 's'),
+                    initial_bounds=initial_bounds,
                     initial_ref=user_options.get_val("initial_ref", 's'),
                 )
             else:  # TODO: figure out how to handle this now that fix_initial is dict
@@ -731,11 +787,17 @@ class AviaryProblem(om.Problem):
                     fix_initial=fix_initial, fix_duration=fix_duration, units='s',
                     duration_bounds=user_options.get_val("duration_bounds", 's'),
                     duration_ref=user_options.get_val("duration_ref", 's'),
-                    initial_bounds=user_options.get_val("initial_bounds", 's'),
+                    initial_bounds=initial_bounds,
                     initial_ref=user_options.get_val("initial_ref", 's'),
                 )
 
-            return phase
+        if 'cruise' not in phase_name and self.mission_method is TWO_DEGREES_OF_FREEDOM:
+            phase.add_control(
+                Dynamic.Mission.THROTTLE, targets=Dynamic.Mission.THROTTLE, units='unitless',
+                opt=False,
+            )
+
+        return phase
 
     def _get_solved_phase(self, phase_name):
         phase_options = self.phase_info[phase_name]
@@ -976,7 +1038,7 @@ class AviaryProblem(om.Problem):
                     # specify ODE, output_name, with units that SimuPyProblem expects
                     # assume event function is of form ODE.output_name - value
                     # third key is event_idx associated with input
-                    (phases['groundroll']['ode'], "TAS", 0,),
+                    (phases['groundroll']['ode'], Dynamic.Mission.VELOCITY, 0,),
                     (phases['climb3']['ode'], Dynamic.Mission.ALTITUDE, 0,),
                     (phases['cruise']['ode'], Dynamic.Mission.MASS, 0,),
                 ],
@@ -993,20 +1055,15 @@ class AviaryProblem(om.Problem):
                 for timeseries in timeseries_to_add:
                     phase.add_timeseries_output(timeseries)
 
-        if self.mission_method is TWO_DEGREES_OF_FREEDOM:
+        if self.mission_method is TWO_DEGREES_OF_FREEDOM or self.mission_method is HEIGHT_ENERGY:
             if self.analysis_scheme is AnalysisScheme.COLLOCATION:
-                for idx, phase_name in enumerate(phases):
-                    phase = traj.add_phase(phase_name, self._get_2dof_phase(phase_name))
+                for phase_idx, phase_name in enumerate(phases):
+                    phase = traj.add_phase(
+                        phase_name, self._get_phase(phase_name, phase_idx))
                     add_subsystem_timeseries_outputs(phase, phase_name)
 
-                    if phase_name == 'ascent':
+                    if phase_name == 'ascent' and self.mission_method is TWO_DEGREES_OF_FREEDOM:
                         self._add_groundroll_eq_constraint(phase)
-
-        elif self.mission_method is HEIGHT_ENERGY:
-            for phase_idx, phase_name in enumerate(phases):
-                phase = traj.add_phase(
-                    phase_name, self._get_height_energy_phase(phase_name, phase_idx))
-                add_subsystem_timeseries_outputs(phase, phase_name)
 
             # loop through phase_info and external subsystems
             external_parameters = {}
@@ -1019,14 +1076,13 @@ class AviaryProblem(om.Problem):
                     for parameter in parameter_dict:
                         external_parameters[phase_name][parameter] = parameter_dict[parameter]
 
-            traj = setup_trajectory_params(
-                self.model, traj, self.aviary_inputs, phases, meta_data=self.meta_data, external_parameters=external_parameters)
+            if self.mission_method is HEIGHT_ENERGY:
+                traj = setup_trajectory_params(
+                    self.model, traj, self.aviary_inputs, phases, meta_data=self.meta_data, external_parameters=external_parameters)
 
         elif self.mission_method is SOLVED:
             target_range = self.aviary_inputs.get_val(
                 Mission.Design.RANGE, units='nmi')
-            takeoff_mass = self.aviary_inputs.get_val(
-                Mission.Design.GROSS_MASS, units='lbm')
             climb_mach = 0.8
 
             for idx, phase_name in enumerate(phases):
@@ -1310,7 +1366,7 @@ class AviaryProblem(om.Problem):
             self.traj.link_phases(phases, vars=['mass'], ref=10.e3)
             self.traj.link_phases(
                 phases, vars=[Dynamic.Mission.DISTANCE], units='m', ref=10.e3)
-            self.traj.link_phases(phases[:7], vars=['TAS'], units='kn', ref=200.)
+            self.traj.link_phases(phases[:7], vars=["TAS"], units='kn', ref=200.)
 
         elif self.mission_method is HEIGHT_ENERGY:
             self.traj.link_phases(
@@ -1324,7 +1380,7 @@ class AviaryProblem(om.Problem):
         elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
             if self.analysis_scheme is AnalysisScheme.COLLOCATION:
                 self.traj.link_phases(["groundroll", "rotation", "ascent"], [
-                    "time", "TAS", "mass", Dynamic.Mission.DISTANCE], connected=True)
+                    "time", Dynamic.Mission.VELOCITY, "mass", Dynamic.Mission.DISTANCE], connected=True)
                 self.traj.link_phases(
                     ["rotation", "ascent"], ["alpha"], connected=False,
                     ref=5e1,
@@ -1343,7 +1399,7 @@ class AviaryProblem(om.Problem):
                 self.traj.link_phases(
                     phases=[
                         "ascent", "accel"], vars=[
-                        "time", "mass", "TAS"], connected=True)
+                        "time", "mass", Dynamic.Mission.VELOCITY], connected=True)
                 self.traj.link_phases(
                     phases=["accel", "climb1", "climb2"],
                     vars=["time", Dynamic.Mission.ALTITUDE,
@@ -1437,7 +1493,7 @@ class AviaryProblem(om.Problem):
             else:
                 connect_map = {
                     "taxi.mass": "traj.mass_initial",
-                    Mission.Takeoff.ROTATION_VELOCITY: "traj.SGMGroundroll_TAS_trigger",
+                    Mission.Takeoff.ROTATION_VELOCITY: "traj.SGMGroundroll_velocity_trigger",
                     "traj.distance_final": Mission.Summary.RANGE,
                     "traj.mass_final": Mission.Landing.TOUCHDOWN_MASS,
                     "traj.mass_final": "landing.mass",
@@ -1777,22 +1833,12 @@ class AviaryProblem(om.Problem):
         calls to `set_input_defaults` and do some simple `set_vals`
         if needed.
         """
-        # Adding a trailing component that contains all inputs so that set_input_defaults
-        # doesn't raise any errors.
-        self.model.add_subsystem(
-            'input_sink',
-            VariablesIn(aviary_options=self.aviary_inputs,
-                        meta_data=self.meta_data),
-            promotes_inputs=['*'],
-            promotes_outputs=['*'])
-
         # suppress warnings:
         # "input variable '...' promoted using '*' was already promoted using 'aircraft:*'
         with warnings.catch_warnings():
 
-            # Set initial default values for all LEAPS aircraft variables.
-            set_aviary_initial_values(
-                self.model, self.aviary_inputs, meta_data=self.meta_data)
+            self.model.options['aviary_options'] = self.aviary_inputs
+            self.model.options['aviary_metadata'] = self.meta_data
 
             warnings.simplefilter("ignore", om.OpenMDAOWarning)
             warnings.simplefilter("ignore", om.PromotionWarning)
@@ -1993,8 +2039,8 @@ class AviaryProblem(om.Problem):
             state_keys = ["mass", Dynamic.Mission.DISTANCE]
         else:
             control_keys = ["velocity_rate", "throttle"]
-            state_keys = ["altitude", "velocity", "mass",
-                          Dynamic.Mission.DISTANCE, "TAS", Dynamic.Mission.DISTANCE, "flight_path_angle", "alpha"]
+            state_keys = ["altitude", "mass",
+                          Dynamic.Mission.DISTANCE, Dynamic.Mission.VELOCITY, "flight_path_angle", "alpha"]
             if self.mission_method is TWO_DEGREES_OF_FREEDOM and phase_name == 'ascent':
                 # Alpha is a control for ascent.
                 control_keys.append('alpha')
@@ -2307,7 +2353,7 @@ class AviaryProblem(om.Problem):
                                    lhs_name="v_rot_computed", rhs_name="groundroll_v_final", add_constraint=True)
 
         self.model.connect('vrot_comp.Vrot', 'vrot_eq_comp.v_rot_computed')
-        self.model.connect('traj.groundroll.timeseries.TAS',
+        self.model.connect('traj.groundroll.timeseries.velocity',
                            'vrot_eq_comp.groundroll_v_final', src_indices=om.slicer[-1, ...])
 
     def _save_to_csv_file(self, filename):
