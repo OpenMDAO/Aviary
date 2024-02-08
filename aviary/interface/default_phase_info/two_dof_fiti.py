@@ -59,7 +59,7 @@ def create_2dof_based_ascent_phases(
         input_speed_units='kn',
         ode_args=ode_args,
         simupy_args=dict(
-            DEverbosity=Verbosity.QUIET,
+            verbosity=Verbosity.QUIET,
         ),
     )
     climb1_vals = {
