@@ -47,9 +47,7 @@ jobs:
 
   test_ubuntu:
     runs-on: ubuntu-latest
-
     timeout-minutes: 90
-
     strategy:
       fail-fast: false
 
