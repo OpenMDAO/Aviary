@@ -137,26 +137,22 @@ class AviaryGroup(om.Group):
         all_prom_inputs = []
 
         # We can call list_inputs on the groups.
-        for sysinfo in self._subsystems_allprocs.values():
-            system = sysinfo.system
-            if isinstance(system, om.Group):
-                var_abs = system.list_inputs(out_stream=None)
-                var_prom = [v['prom_name'] for k, v in var_abs]
-                all_prom_inputs.extend(var_prom)
+        for system in self.system_iter(recurse=False, typ=om.Group):
+            var_abs = system.list_inputs(out_stream=None)
+            var_prom = [v['prom_name'] for k, v in var_abs]
+            all_prom_inputs.extend(var_prom)
 
-            # Component promotes aren't handled until this group resolves.
-            # Here, we address anything promoted with an alias in AviaryProblem.
-            elif isinstance(system, Component):
-                input_meta = system._var_promotes['input']
-                var_prom = [v[0][1] for v in input_meta \
-                            if isinstance(v[0], tuple)]
-                all_prom_inputs.extend(var_prom)
-                var_prom = [v[0] for v in input_meta \
-                            if not isinstance(v[0], tuple)]
-                all_prom_inputs.extend(var_prom)
+        # Component promotes aren't handled until this group resolves.
+        # Here, we address anything promoted with an alias in AviaryProblem.
+        for system in self.system_iter(recurse=False, typ=Component):
+            input_meta = system._var_promotes['input']
+            var_prom = [v[0][1] for v in input_meta if isinstance(v[0], tuple)]
+            all_prom_inputs.extend(var_prom)
+            var_prom = [v[0] for v in input_meta if not isinstance(v[0], tuple)]
+            all_prom_inputs.extend(var_prom)
 
         if MPI and self.comm.size > 1:
-            # Under MPI, promotion info only lives on rank 1, so broadcast it to all.
+            # Under MPI, promotion info only lives on rank 0, so broadcast.
             all_prom_inputs = self.comm.bcast(all_prom_inputs, root=0)
 
         for key in aviary_metadata:
