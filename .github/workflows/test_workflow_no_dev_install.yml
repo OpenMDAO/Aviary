@@ -101,4 +101,4 @@ jobs:
           echo "Run Tests (from directory other than repo root)"
           echo "============================================================="
           cd $HOME
-          testflo aviary -n 1 --show_skipped --timeout=240 --durations=20 --pre_announce
+          testflo aviary -n 1 --show_skipped --timeout=240 --durations=20
