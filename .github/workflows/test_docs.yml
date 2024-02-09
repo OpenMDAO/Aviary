@@ -1,0 +1,89 @@
+# Run Tests
+
+name: Aviary Tests
+
+on:
+  # Trigger on push or pull request events for the main branch
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  merge_group:
+    branches: [ main ]
+
+  # Allow running the workflow manually from the Actions tab
+  workflow_dispatch:
+
+env:
+  PY: 3
+  NUMPY: 1
+  SCIPY: 1
+  PYOPTSPARSE: 'v2.9.1'
+  SNOPT: '7.7'
+  OPENMDAO: 'dev'
+  DYMOS: 'latest'
+      
+jobs:
+  prepare_environment:    
+    uses: ./.github/workflows/prepare_environment.yml
+    with:
+        NAME: ${{ env.NAME }}
+        PY: ${{ env.PY }}
+        NUMPY: ${{ env.NUMPY }}
+        SCIPY: ${{ env.SCIPY }}
+        PYOPTSPARSE: ${{ env.PYOPTSPARSE }}
+        SNOPT: ${{ env.SNOPT }}
+        OPENMDAO: ${{ env.OPENMDAO }}
+        DYMOS: ${{ env.DYMOS }}
+    secrets: inherit
+
+  test_ubuntu:
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 90
+
+    needs: prepare_environment
+
+    steps:
+      - name: Build docs
+        shell: bash -l {0}
+        run: |
+          pip install -U jupyter-book
+          cd aviary/docs
+          echo "============================================================="
+          echo "Build the docs"
+          echo "============================================================="
+          bash build_book.sh
+
+      - name: Display doc build reports
+        continue-on-error: True
+        shell: bash -l {0}
+        run: |
+          cd $HOME/work/Aviary/Aviary/aviary/docs
+          find _build/html/reports/ -type f -name '*.log' \
+          -exec echo "#################################################################" \; \
+          -exec echo {} \; \
+          -exec echo "#################################################################" \; \
+          -exec cat {} \;
+
+      - name: Publish docs to github.io
+        if: |
+          github.event_name == 'push' && github.ref == 'refs/heads/main'
+        shell: bash -l {0}
+        run: |
+          echo "============================================================="
+          echo "Publishing Docs to github.io"
+          echo "============================================================="
+          pip install ghp-import
+          cd $HOME/work/Aviary/Aviary/aviary
+          ghp-import -n -p -f docs/_build/html
+
+      - name: Scan for security issues
+        shell: bash -l {0}
+        run: |
+          python -m pip install bandit
+          echo "============================================================="
+          echo "Run bandit scan for medium/high severity issues"
+          echo "============================================================="
+          cd $GITHUB_WORKSPACE
+          python -m bandit -r -ll aviary

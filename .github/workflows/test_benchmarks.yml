@@ -1,0 +1,55 @@
+# Run Tests
+
+name: Aviary Tests
+
+on:
+  # Trigger on push or pull request events for the main branch
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  merge_group:
+    branches: [ main ]
+
+  # Allow running the workflow manually from the Actions tab
+  workflow_dispatch:
+
+env:
+  PY: 3
+  NUMPY: 1
+  SCIPY: 1
+  PYOPTSPARSE: 'v2.9.1'
+  SNOPT: '7.7'
+  OPENMDAO: 'latest'
+  DYMOS: 'latest'
+
+jobs:
+
+  prepare_environment:    
+    uses: ./.github/workflows/prepare_environment.yml
+    with:
+        NAME: ${{ env.NAME }}
+        PY: ${{ env.PY }}
+        NUMPY: ${{ env.NUMPY }}
+        SCIPY: ${{ env.SCIPY }}
+        PYOPTSPARSE: ${{ env.PYOPTSPARSE }}
+        SNOPT: ${{ env.SNOPT }}
+        OPENMDAO: ${{ env.OPENMDAO }}
+        DYMOS: ${{ env.DYMOS }}
+    secrets: inherit
+
+  test_benchmarks:
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 90
+
+    needs: prepare_environment
+
+    steps:
+      - name: Run benchmarks
+        shell: bash -l {0}
+        run: |
+          echo "============================================================="
+          echo "Run Benchmarks"
+          echo "============================================================="
+          testflo . --testmatch=bench_test*

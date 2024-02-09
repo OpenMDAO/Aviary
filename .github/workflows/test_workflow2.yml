@@ -1,0 +1,80 @@
+# Run Tests
+
+name: Aviary Tests
+
+on:
+  # Trigger on push or pull request events for the main branch
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  merge_group:
+    branches: [ main ]
+
+  # Allow running the workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+
+  pre_commit:
+    # run pre-commit checks
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v3
+      with:
+        python-version: '3.11'
+    - uses: pre-commit/action@v3.0.0
+
+  test_ubuntu:
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 90
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # oldest versions of openmdao/dymos
+          - NAME: oldest
+            PY: '3.9'
+            NUMPY: '1.20'
+            SCIPY: '1.6'
+            PYOPTSPARSE: 'v2.9.1'
+            SNOPT: '7.7'
+            OPENMDAO: 'dev'
+            DYMOS: '1.8.0'
+
+          # development versions of openmdao/dymos
+          - NAME: dev
+            PY: 3
+            NUMPY: 1
+            SCIPY: 1
+            PYOPTSPARSE: 'v2.9.1'
+            SNOPT: '7.7'
+            OPENMDAO: 'dev'
+            DYMOS: 'dev'
+
+          # latest versions of openmdao/dymos
+          - NAME: latest
+            PY: '3.10'
+            NUMPY: 1
+            SCIPY: 1
+            PYOPTSPARSE: 'v2.9.1'
+            SNOPT: '7.7'
+            OPENMDAO: 'dev'
+            DYMOS: 'latest'
+
+    uses: ./.github/workflows/prepare_environment.yml
+    with:
+      NAME: ${{ matrix.NAME }}
+      PY: ${{ matrix.PY }}
+      NUMPY: ${{ matrix.NUMPY }}
+      SCIPY: ${{ matrix.SCIPY }}
+      PYOPTSPARSE: ${{ matrix.PYOPTSPARSE }}
+      SNOPT: ${{ matrix.SNOPT }}
+      OPENMDAO: ${{ matrix.OPENMDAO }}
+      DYMOS: ${{ matrix.DYMOS }}
+      Run_tests: true
+    secrets: inherit
