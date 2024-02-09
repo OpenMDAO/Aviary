@@ -16,7 +16,7 @@ env:
 
 jobs:
   send_email_on_opened_pr:
-    if: (github.event_name == 'pull_request' || github.event_name == 'pull_request_target') && (github.event.action == 'opened' || github.event.action == 'reopened')
+    if: github.event.action == 'opened' || github.event.action == 'reopened'
     runs-on: ubuntu-latest
     steps:
       - name: Get PR Data
@@ -52,7 +52,7 @@ jobs:
           nodemailerdebug: true
 
   send_email_on_updated_assignees:
-    if: (github.event_name == 'pull_request' || github.event_name == 'pull_request_target') && github.event.action == 'assigned'
+    if: github.event.action == 'assigned'
     runs-on: ubuntu-latest
     steps:
       - name: Get Updated Assignees
@@ -82,7 +82,7 @@ jobs:
           nodemailerdebug: true
 
   send_email_on_closed_pr:
-    if: (github.event_name == 'pull_request' || github.event_name == 'pull_request_target') && github.event.action == 'closed'
+    if: github.event.action == 'closed'
     runs-on: ubuntu-latest
     steps:
       - name: Get PR Data
