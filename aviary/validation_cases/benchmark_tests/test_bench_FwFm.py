@@ -10,6 +10,11 @@ from aviary.interface.methods_for_level1 import run_aviary
 from aviary.validation_cases.benchmark_utils import \
     compare_against_expected_values
 
+try:
+    from openmdao.vectors.petsc_vector import PETScVector
+except ImportError:
+    PETScVector = None
+
 
 class ProblemPhaseTestCase(unittest.TestCase):
     def setUp(self):
@@ -370,6 +375,7 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
 
 
 @use_tempdirs
+@unittest.skipUnless(MPI and PETScVector, "MPI and PETSc are required.")
 class TestBenchFwFmParallel(ProblemPhaseTestCase):
 
     N_PROCS = 3
