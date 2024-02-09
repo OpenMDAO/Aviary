@@ -21,7 +21,7 @@ def register_custom_reports():
                     desc='Generates reports for each subsystem builder in the '
                          'Aviary Problem',
                     class_name='Problem',
-                    method='run_model',
+                    method='run_driver',
                     pre_or_post='post',
                     # **kwargs
                     )
@@ -30,7 +30,7 @@ def register_custom_reports():
                     func=mission_report,
                     desc='Generates report for mission results from Aviary problem',
                     class_name='Problem',
-                    method='run_model',
+                    method='run_driver',
                     pre_or_post='post')
 
 
@@ -68,29 +68,18 @@ def mission_report(prob, **kwargs):
             vals = prob.get_val(f"{traj}.{phase}.timeseries.{var_name}",
                                 units=units,
                                 indices=indices,)
-
         except KeyError:
             try:
-                vals = prob.get_val(f"{traj}.{phase}.states:{var_name}",
+                vals = prob.get_val(f"{traj}.{phase}.{var_name}",
+                                    units=units,
+                                    indices=indices,)
+            # 2DOF breguet range cruise uses time integration to track mass
+            except TypeError:
+                vals = prob.get_val(f"{traj}.{phase}.timeseries.time",
                                     units=units,
                                     indices=indices,)
             except KeyError:
-                try:
-                    vals = prob.get_val(f"{traj}.{phase}.timeseries.states:{var_name}",
-                                        units=units,
-                                        indices=indices,)
-                except KeyError:
-                    try:
-                        vals = prob.get_val(f"{traj}.{phase}.{var_name}",
-                                            units=units,
-                                            indices=indices,)
-                    # 2DOF breguet range cruise uses time integration to track mass
-                    except TypeError:
-                        vals = prob.get_val(f"{traj}.{phase}.timeseries.time",
-                                            units=units,
-                                            indices=indices,)
-                    except KeyError:
-                        vals = None
+                vals = None
 
         return vals
 
@@ -115,7 +104,7 @@ def mission_report(prob, **kwargs):
         # TODO delta mass and fuel consumption need to be tracked separately
         fuel_burn = _get_phase_diff('traj', phase, 'mass', 'lbm', [-1, 0])
         time = _get_phase_diff('traj', phase, 't', 'min')
-        range = _get_phase_diff('traj', phase, 'range', 'nmi')
+        range = _get_phase_diff('traj', phase, 'distance', 'nmi')
         # both "distance" and "range" currently exist to track ground distance, logic
         # here accounts for that
         if range is None:
@@ -125,10 +114,7 @@ def mission_report(prob, **kwargs):
         if idx == 0:
             initial_mass = _get_phase_value('traj', phase, 'mass', 'lbm', 0)[0]
             initial_time = _get_phase_value('traj', phase, 't', 'min', 0)
-            initial_range = _get_phase_value('traj', phase, 'range', 'nmi', 0)
-            if initial_range is None:
-                initial_range = _get_phase_value('traj', phase, 'distance', 'nmi', 0)
-            initial_range = initial_range[0]
+            initial_range = _get_phase_value('traj', phase, 'distance', 'nmi', 0)[0]
 
         outputs = NamedValues()
         # Fuel burn is negative of delta mass
@@ -140,10 +126,7 @@ def mission_report(prob, **kwargs):
         # get final values, last in traj
         final_mass = _get_phase_value('traj', phase, 'mass', 'lbm', -1)[0]
         final_time = _get_phase_value('traj', phase, 't', 'min', -1)
-        final_range = _get_phase_value('traj', phase, 'range', 'nmi', -1)
-        if final_range is None:
-            final_range = _get_phase_value('traj', phase, 'distance', 'nmi', -1)
-        final_range = final_range[0]
+        final_range = _get_phase_value('traj', phase, 'distance', 'nmi', -1)[0]
 
     totals = NamedValues()
     totals.set_val('Total Fuel Burn', initial_mass - final_mass, 'lbm')
