@@ -18,7 +18,7 @@ on:
 
       
 jobs:
-  prepare_environment:    
+  prepare_docs_environment:    
     uses: ./.github/workflows/prepare_environment.yml
     with:
         NAME: 'latest'
@@ -34,7 +34,7 @@ jobs:
   test_docs:
     runs-on: ubuntu-latest
     timeout-minutes: 90
-    needs: prepare_environment
+    needs: prepare_docs_environment
 
     steps:
       - name: Build docs
