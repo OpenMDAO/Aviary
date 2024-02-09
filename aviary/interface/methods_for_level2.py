@@ -179,6 +179,19 @@ class AviaryGroup(om.Group):
 
             self.set_input_defaults(key, val=val, units=units)
 
+        # Set a more appropriate solver for dymos when the phases are linked.
+        if MPI and isinstance(self.traj.phases.linear_solver, om.PETScKrylov):
+
+            # When any phase is connected with input_initial = True, dymos puts
+            # a jacobi solver in the phases group. This is necessary in case
+            # you the phases are cyclic. However, this causes some problems
+            # with the newton solvers in Aviary, exacerbating issues with
+            # sovler tolerances at multiple levels. Since Aviary's phases
+            # are basically in series, the jacobi solver is a much better
+            # choice and should be able to handle it in a couple of
+            # iterations.
+            self.traj.phases.linear_solver = om.LinearBlockJac(maxiter=5)
+
 
 class AviaryProblem(om.Problem):
     """
