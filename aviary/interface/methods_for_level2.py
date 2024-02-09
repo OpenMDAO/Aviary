@@ -12,6 +12,7 @@ import dymos as dm
 from dymos.utils.misc import _unspecified
 
 import openmdao.api as om
+from openmdao.core.component import Component
 from openmdao.utils.units import convert_units
 from openmdao.utils.reports_system import _default_reports
 
@@ -37,7 +38,7 @@ from aviary.mission.gasp_based.phases.taxi_group import TaxiSegment
 from aviary.mission.gasp_based.phases.v_rotate_comp import VRotateComp
 from aviary.mission.gasp_based.polynomial_fit import PolynomialFit
 from aviary.subsystems.premission import CorePreMission
-from aviary.utils.functions import set_aviary_initial_values, create_opts2vals, add_opts2vals, promote_aircraft_and_mission_vars
+from aviary.utils.functions import create_opts2vals, add_opts2vals, promote_aircraft_and_mission_vars
 from aviary.utils.process_input_decks import create_vehicle, update_GASP_options, initial_guessing
 from aviary.utils.preprocessors import preprocess_crewpayload
 from aviary.interface.utils.check_phase_info import check_phase_info
@@ -47,7 +48,6 @@ from aviary.variable_info.functions import setup_trajectory_params, override_avi
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
 from aviary.variable_info.enums import AnalysisScheme, ProblemType, SpeedType, AlphaModes, EquationsOfMotion, LegacyCode
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
-from aviary.variable_info.variables_in import VariablesIn
 
 from aviary.subsystems.propulsion.engine_deck import EngineDeck
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
@@ -59,7 +59,6 @@ from aviary.utils.merge_variable_metadata import merge_meta_data
 
 from aviary.interface.default_phase_info.two_dof_fiti import create_2dof_based_ascent_phases, create_2dof_based_descent_phases
 from aviary.mission.gasp_based.idle_descent_estimation import descent_range_and_fuel
-from aviary.mission.flops_based.phases.phase_utils import get_initial
 from aviary.mission.phase_builder_base import PhaseBuilderBase
 
 
@@ -115,6 +114,68 @@ class PostMissionGroup(om.Group):
         promote_aircraft_and_mission_vars(self)
 
 
+class AviaryGroup(om.Group):
+    """
+    A standard OpenMDAO group that handles Aviary's promotions in the configure
+    method. This assures that we only call set_input_defaults on variables
+    that are present in the model.
+    """
+
+    def initialize(self):
+        self.options.declare(
+            'aviary_options', types=AviaryValues,
+            desc='collection of Aircraft/Mission specific options')
+        self.options.declare(
+            'aviary_metadata', types=dict,
+            desc='metadata dictionary of the full aviary problem.')
+
+    def configure(self):
+        aviary_options = self.options['aviary_options']
+        aviary_metadata = self.options['aviary_metadata']
+
+        # Find promoted name of every input in the model.
+        all_prom_inputs = []
+
+        # We can call list_inputs on the groups.
+        for system in self.system_iter(recurse=False, typ=om.Group):
+            var_abs = system.list_inputs(out_stream=None)
+            var_prom = [v['prom_name'] for k, v in var_abs]
+            all_prom_inputs.extend(var_prom)
+
+        # Component promotes aren't handled until this group resolves.
+        # Here, we address anything promoted in AviaryProblem.
+        for system in self.system_iter(recurse=False, typ=Component):
+            input_meta = system._var_promotes['input']
+            var_prom = [v[0][1] for v in input_meta if isinstance(v[0], tuple)]
+            all_prom_inputs.extend(var_prom)
+            var_prom = [v[0] for v in input_meta if not isinstance(v[0], tuple)]
+            all_prom_inputs.extend(var_prom)
+
+        for key in aviary_metadata:
+
+            if ':' not in key or key.startswith('dynamic:'):
+                continue
+
+            if aviary_metadata[key]['option']:
+                continue
+
+            # Skip anything that is not presently an input.
+            if key not in all_prom_inputs:
+                continue
+
+            if key in aviary_options:
+                val, units = aviary_options.get_item(key)
+            else:
+                val = aviary_metadata[key]['default_value']
+                units = aviary_metadata[key]['units']
+
+                if val is None:
+                    # optional, but no default value
+                    continue
+
+            self.set_input_defaults(key, val=val, units=units)
+
+
 class AviaryProblem(om.Problem):
     """
     Main class for instantiating, formulating, and solving Aviary problems.
@@ -142,7 +203,7 @@ class AviaryProblem(om.Problem):
 
         self.timestamp = datetime.now()
 
-        self.model = om.Group()
+        self.model = AviaryGroup()
         self.pre_mission = PreMissionGroup()
         self.post_mission = PostMissionGroup()
 
@@ -1777,22 +1838,12 @@ class AviaryProblem(om.Problem):
         calls to `set_input_defaults` and do some simple `set_vals`
         if needed.
         """
-        # Adding a trailing component that contains all inputs so that set_input_defaults
-        # doesn't raise any errors.
-        self.model.add_subsystem(
-            'input_sink',
-            VariablesIn(aviary_options=self.aviary_inputs,
-                        meta_data=self.meta_data),
-            promotes_inputs=['*'],
-            promotes_outputs=['*'])
-
         # suppress warnings:
         # "input variable '...' promoted using '*' was already promoted using 'aircraft:*'
         with warnings.catch_warnings():
 
-            # Set initial default values for all LEAPS aircraft variables.
-            set_aviary_initial_values(
-                self.model, self.aviary_inputs, meta_data=self.meta_data)
+            self.model.options['aviary_options'] = self.aviary_inputs
+            self.model.options['aviary_metadata'] = self.meta_data
 
             warnings.simplefilter("ignore", om.OpenMDAOWarning)
             warnings.simplefilter("ignore", om.PromotionWarning)
