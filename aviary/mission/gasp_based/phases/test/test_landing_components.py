@@ -11,6 +11,7 @@ from aviary.mission.gasp_based.phases.landing_components import (
     LandingGroundRollComponent)
 from aviary.variable_info.variables import Aircraft, Mission
 
+
 class LandingAltTestCase(unittest.TestCase):
     def setUp(self):
 
