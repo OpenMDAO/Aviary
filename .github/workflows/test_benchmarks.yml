@@ -15,6 +15,7 @@ on:
   workflow_dispatch:
 
 env:
+  Name: 'latest'
   PY: 3
   NUMPY: 1
   SCIPY: 1

@@ -15,6 +15,7 @@ on:
   workflow_dispatch:
 
 env:
+  Name: 'latest'
   PY: 3
   NUMPY: 1
   SCIPY: 1
@@ -37,7 +38,7 @@ jobs:
         DYMOS: ${{ env.DYMOS }}
     secrets: inherit
 
-  test_ubuntu:
+  test_docs:
     runs-on: ubuntu-latest
 
     timeout-minutes: 90
