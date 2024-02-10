@@ -1,3 +1,5 @@
+import numpy as np
+
 import openmdao.api as om
 
 from aviary.subsystems.mass.flops_based.empty_margin import EmptyMassMargin
@@ -74,13 +76,14 @@ class StructureMass(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
+        num_engines = self.options['aviary_options'].get_val(Aircraft.Engine.NUM_ENGINES)
         add_aviary_input(self, Aircraft.Canard.MASS, val=0.0)
         add_aviary_input(self, Aircraft.Fins.MASS, val=0.0)
         add_aviary_input(self, Aircraft.Fuselage.MASS, val=0.0)
         add_aviary_input(self, Aircraft.HorizontalTail.MASS, val=0.0)
         add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_MASS, val=0.0)
         add_aviary_input(self, Aircraft.LandingGear.NOSE_GEAR_MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Nacelle.MASS, val=0.0)
+        add_aviary_input(self, Aircraft.Nacelle.MASS, val=np.zeros(len(num_engines)))
         add_aviary_input(self, Aircraft.Paint.MASS, val=0.0)
         add_aviary_input(self, Aircraft.VerticalTail.MASS, val=0.0)
         add_aviary_input(self, Aircraft.Wing.MASS, val=0.0)

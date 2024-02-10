@@ -26,8 +26,8 @@ class DetailedWingBendingFact(om.ExplicitComponent):
 
         # wing locations are different for each engine type - ragged array!
         # this "tricks" numpy into allowing a ragged array, with limitations
-        wing_location_default = np.empty(count, object)
-        wing_location_default[:] = [np.array([int(num)]) for num in num_wing_engines/2]
+        # wing_location_default = np.empty(count, object)
+        # wing_location_default[:] = [np.array([int(num)]) for num in num_wing_engines/2]
 
         add_aviary_input(self, Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
                          val=np.zeros(num_input_stations - 1))
@@ -51,7 +51,8 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, val=0.0)
 
         add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS,
-                         val=wing_location_default)
+                         val=0.0, shape_by_conn=True)
+        #  val=wing_location_default)
 
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, val=0.0)
 

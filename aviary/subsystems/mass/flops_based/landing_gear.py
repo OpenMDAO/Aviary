@@ -283,7 +283,8 @@ class MainGearLength(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, val=0.0)
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, val=0.0)
         add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, val=np.zeros(count))
-        add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS, val=0.0)
+        add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS,
+                         val=0.0, shape_by_conn=True)
         add_aviary_input(self, Aircraft.Wing.DIHEDRAL, val=0.0)
         add_aviary_input(self, Aircraft.Wing.SPAN, val=0.0)
 

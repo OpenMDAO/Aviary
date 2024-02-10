@@ -120,7 +120,7 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
     Performs basic sanity checks on inputs that are universal to all EngineModels.
 
     !!! WARNING !!!
-    Values in aviary_options are overwritten with corresponding values in engine_models!
+    Values in aviary_options are overwritten with corresponding values from engine_models!
 
     Parameters
     ----------

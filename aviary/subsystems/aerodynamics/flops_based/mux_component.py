@@ -68,20 +68,19 @@ class MuxComponent(om.ExplicitComponent):
             add_aviary_input(self, Aircraft.Fuselage.LAMINAR_FLOW_LOWER, 0.0)
             nc += num
 
-        num, _ = aviary_options.get_item(
-            Aircraft.Engine.NUM_ENGINES, zero_count)
-        self.num_nacelles = int(sum(num))
-        if any(num > 0):
+        num_engines = aviary_options.get_val(Aircraft.Engine.NUM_ENGINES)
+        self.num_nacelles = int(sum(num_engines))
+        if self.num_nacelles > 0:
             add_aviary_input(self, Aircraft.Nacelle.WETTED_AREA,
-                             np.zeros(len(num)))
+                             np.zeros(len(num_engines)))
             add_aviary_input(self, Aircraft.Nacelle.FINENESS,
-                             np.zeros(len(num)))
+                             np.zeros(len(num_engines)))
             add_aviary_input(self, Aircraft.Nacelle.CHARACTERISTIC_LENGTH,
-                             np.zeros(len(num)))
+                             np.zeros(len(num_engines)))
             add_aviary_input(self, Aircraft.Nacelle.LAMINAR_FLOW_UPPER,
-                             np.zeros(len(num)))
+                             np.zeros(len(num_engines)))
             add_aviary_input(self, Aircraft.Nacelle.LAMINAR_FLOW_LOWER,
-                             np.zeros(len(num)))
+                             np.zeros(len(num_engines)))
             nc += self.num_nacelles
 
         self.add_output(

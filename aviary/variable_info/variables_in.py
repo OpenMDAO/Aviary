@@ -59,10 +59,10 @@ class VariablesIn(om.ExplicitComponent):
                 val, units = aviary_options.get_item(key, item)
                 if units == 'unitless' and info['units'] != 'unitless':
                     units = info['units']
-                if type(val) in (np.ndarray, list, tuple):
-                    shape_by_conn = False
-                else:
-                    shape_by_conn = True
+                # if type(val) in (np.ndarray, list, tuple):
+                #     shape_by_conn = False
+                # else:
+                #     shape_by_conn = True
 
-                add_aviary_input(self, key, val=val, units=units, meta_data=meta_data,
-                                 shape_by_conn=shape_by_conn)
+                add_aviary_input(self, key, val=val, units=units, meta_data=meta_data,)
+                #  shape_by_conn=shape_by_conn)
