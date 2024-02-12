@@ -364,6 +364,26 @@ class AviaryProblem(om.Problem):
         # Fill in anything missing in the options with computed defaults.
         preprocess_crewpayload(self.aviary_inputs)
 
+        # Check to ensure no non-reserve phases are specified after reserve phases
+        # separate regular phases and reserve phases
+        start_reserve = False
+        reserve_phases = []
+        regular_phases = []
+        for idx, phase_name in enumerate(self.phase_info):
+            if self.phase_info[phase_name]["user_options"]["reserve"] is False:
+                # This is a regular phase
+                regular_phases.append(phase_name)
+                if start_reserve is True:
+                    raise ValueError(
+                        f'In phase_info, reserve=False cannot be specified after a phase where reserve=True. '
+                        f'All reserve phases must happen after non-reserve phases. '
+                        f'Regular Phases : {regular_phases} | '
+                        f'Reserve Phases : {reserve_phases} ')
+            else:
+                # This is a reserve phase
+                reserve_phases.append(phase_name)
+                start_reserve = True
+
     def add_pre_mission_systems(self):
         """
         Add pre-mission systems to the Aviary problem. These systems are executed before the mission
@@ -1197,8 +1217,6 @@ class AviaryProblem(om.Problem):
                             reserve_phases.append(phase_name)
                         else:
                             regular_phases.append(phase_name)
-                    print('regular_phases',regular_phases)
-                    print('reserve_phases',reserve_phases)
 
                     # determine distance traveled based on regular_phases
                     self.model.connect(f"traj.{regular_phases[-1]}.timeseries.distance",
