@@ -866,7 +866,7 @@ add_meta_data(
                      },
     units='ft**2',
     desc='Aircraft base area (total exit cross-section area minus inlet '
-    'capture areas for internally mounted engines)',
+         'capture areas for internally mounted engines)',
     default_value=0.0,
 )
 
@@ -879,7 +879,7 @@ add_meta_data(
                      },
     units='unitless',
     desc='allowable center-of-gravity (cg) travel as a fraction of '
-    'the mean aerodynamic chord',
+         'the mean aerodynamic chord',
 )
 
 add_meta_data(
@@ -1296,7 +1296,7 @@ add_meta_data(
                      },
     units='unitless',
     desc='shift in drag divergence Mach number due to '
-    'supercritical design',
+         'supercritical design',
 )
 
 add_meta_data(
@@ -1606,9 +1606,9 @@ add_meta_data(
     option=True,
     default_value=1.0,
     desc='If Aircraft.Engine.GENERATE_FLIGHT_IDLE is True, bounds engine '
-    'performance outputs (other than thrust) at flight idle to be below a '
-    'decimal fraction of the max value of that output produced by the engine '
-    'at each flight condition.'
+         'performance outputs (other than thrust) at flight idle to be below a '
+         'decimal fraction of the max value of that output produced by the engine '
+         'at each flight condition.'
 )
 
 add_meta_data(
@@ -1622,9 +1622,9 @@ add_meta_data(
     option=True,
     default_value=0.08,
     desc='If Aircraft.Engine.GENERATE_FLIGHT_IDLE is True, bounds engine '
-    'performance outputs (other than thrust) at flight idle to be above a '
-    'decimal fraction of the max value of that output produced by the engine '
-    'at each flight condition.'
+         'performance outputs (other than thrust) at flight idle to be above a '
+         'decimal fraction of the max value of that output produced by the engine '
+         'at each flight condition.'
 )
 
 add_meta_data(
@@ -5153,7 +5153,7 @@ add_meta_data(
                      },
     units='unitless',
     desc='controls spatial distribution of integratin stations for detailed'
-    ' wing',
+         ' wing',
     default_value=2.0,
     option=True,
 )
