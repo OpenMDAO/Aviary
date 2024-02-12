@@ -1588,7 +1588,7 @@ class AviaryProblem(om.Problem):
         if verbosity != Verbosity.QUIET:
             if isinstance(verbosity, list):
                 driver.options['debug_print'] = verbosity
-            else:
+            elif verbosity.value >= 2:
                 driver.options['debug_print'] = ['desvars', 'ln_cons', 'nl_cons', 'objs']
 
     def add_design_variables(self):
