@@ -21,7 +21,8 @@ def compare_against_expected_values(prob, expected_dict):
 
     for idx, phase in enumerate(['climb', 'cruise', 'descent']):
 
-        times.extend(prob.get_val(f'traj.{phase}.timeseries.time', units='s', get_remote=True))
+        times.extend(prob.get_val(f'traj.{phase}.timeseries.time', units='s',
+                                  get_remote=True))
         try:
             altitudes.extend(prob.get_val(
                 f'traj.{phase}.timeseries.altitude', units='m', get_remote=True))
