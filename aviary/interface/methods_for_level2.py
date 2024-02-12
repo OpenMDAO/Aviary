@@ -186,7 +186,7 @@ class AviaryGroup(om.Group):
             # a jacobi solver in the phases group. This is necessary in case
             # you the phases are cyclic. However, this causes some problems
             # with the newton solvers in Aviary, exacerbating issues with
-            # sovler tolerances at multiple levels. Since Aviary's phases
+            # solver tolerances at multiple levels. Since Aviary's phases
             # are basically in series, the jacobi solver is a much better
             # choice and should be able to handle it in a couple of
             # iterations.
