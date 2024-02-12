@@ -46,9 +46,8 @@ import dymos as dm
 import openmdao.api as om
 
 from aviary.mission.flops_based.ode.takeoff_ode import TakeoffODE
-from aviary.mission.phase_builder_base import (
-    InitialGuessControl, InitialGuessParameter, InitialGuessPolynomialControl,
-    InitialGuessState, InitialGuessTime, PhaseBuilderBase)
+from aviary.mission.phase_builder_base import PhaseBuilderBase
+from aviary.mission.initial_guess_builders import InitialGuessControl, InitialGuessParameter, InitialGuessPolynomialControl, InitialGuessState, InitialGuessTime
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_trajectory_params
 from aviary.variable_info.variables import Dynamic, Mission
@@ -881,7 +880,7 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
         phase.add_path_constraint(
             'v_over_v_stall', lower=1.25, ref=2.0)
 
-        phase.add_boundary_constraint('eoms.forces_vertical', loc='initial', equals=0,
+        phase.add_boundary_constraint('takeoff_eom.forces_vertical', loc='initial', equals=0,
                                       ref=100000)
 
         return phase

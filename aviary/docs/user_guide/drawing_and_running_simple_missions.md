@@ -20,6 +20,10 @@ aviary draw_mission
 
 This command will open a graphical interface where you can interactively design a flight profile.
 
+```{note}
+If you are [WSL on Windows](https://learn.microsoft.com/en-us/windows/wsl/install) you might need to install an [X Server](https://sourceforge.net/projects/xming/) to run the GUI without issues. If you do this, also modify your `.bashrc` file to include this line: `export DISPLAY=localhost:0.0`. 
+```
+
 ## Graphical Interface Usage
 
 ### Main Components
@@ -61,6 +65,13 @@ This command will open a graphical interface where you can interactively design 
 Upon completion, the tool outputs a Python script named `outputted_phase_info.py` in the current working directory.
 This tool overwrites any existing file called `outputted_phase_info.py` in the current working directory.
 This outputted file contains the `phase_info` dictionary, which holds the flight profile data structured for use in mission simulations.
+
+```{note}
+When using the outputted `phase_info` dict in a mission simulation, you can modify the settings by directly changing the outputted Python file.
+```
+
+The `phase_info` dictionary makes some assumptions about different settings which you can also modify.
+For example, the time duration of each phase is controlled by the optimizer if `fix_duration` is False, though this can be changed to True to fix the duration of each phase.
 
 ## Running a Mission Simulation
 
