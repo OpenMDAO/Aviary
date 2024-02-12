@@ -21,7 +21,7 @@ from openmdao.utils.general_utils import env_truthy
 try:
     from openmdao.utils.array_utils import convert_ndarray_to_support_nans_in_json
 except ImportError:
-    from openmdao.visualization.n2_viewer.n2_viewer import _convert_nans_in_nested_list as convert_nans_in_nested_list
+    from openmdao.visualization.n2_viewer.n2_viewer import _convert_ndarray_to_support_nans_in_json as convert_ndarray_to_support_nans_in_json
 
 import aviary.api as av
 
