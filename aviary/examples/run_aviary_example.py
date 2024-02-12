@@ -16,6 +16,7 @@ phase_info = {
     "climb": {
         "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
         "user_options": {
+            "reserve": False,
             "optimize_mach": False,
             "optimize_altitude": False,
             "polynomial_control_order": 1,
@@ -40,6 +41,7 @@ phase_info = {
     "cruise": {
         "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
         "user_options": {
+            "reserve": False,
             "optimize_mach": False,
             "optimize_altitude": False,
             "polynomial_control_order": 1,
@@ -64,6 +66,7 @@ phase_info = {
     "descent": {
         "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
         "user_options": {
+            "reserve": False,
             "optimize_mach": False,
             "optimize_altitude": False,
             "polynomial_control_order": 1,
@@ -89,6 +92,31 @@ phase_info = {
         "include_landing": False,
         "constrain_range": True,
         "target_range": (1906, "nmi"),
+    },
+    "cruise_reserve_for_monkeys": {
+        "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
+        "user_options": {
+            "reserve": True,
+            "optimize_mach": False,
+            "optimize_altitude": False,
+            "polynomial_control_order": 1,
+            "num_segments": 5,
+            "order": 3,
+            "solve_for_distance": False,
+            "initial_mach": (0.72, "unitless"),
+            "final_mach": (0.72, "unitless"),
+            "mach_bounds": ((0.7, 0.74), "unitless"),
+            "initial_altitude": (32000.0, "ft"),
+            "final_altitude": (32000.0, "ft"),
+            "altitude_bounds": ((23000.0, 38000.0), "ft"),
+            "throttle_enforcement": "boundary_constraint",
+            "fix_initial": False,
+            "constrain_final": False,
+            "fix_duration": True,
+            "initial_bounds": ((149.5, 448.5), "min"),
+            "duration_bounds": ((60, 60), "min"),  # set this for fixed duration phases
+        },
+        "initial_guesses": {"times": ([60, 60], "min")},
     },
 }
 

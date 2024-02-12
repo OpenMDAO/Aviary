@@ -1142,7 +1142,7 @@ class AviaryProblem(om.Problem):
                                                 subsystem_postmission)
 
         if self.mission_method is HEIGHT_ENERGY:
-            phases = list(self.phase_info.keys())
+            phases = list(self.phase_info.keys()) # list of all phases included reserve 
             ecomp = om.ExecComp('fuel_burned = initial_mass - mass_final',
                                 initial_mass={'units': 'lbm'},
                                 mass_final={'units': 'lbm'},
@@ -1189,6 +1189,12 @@ class AviaryProblem(om.Problem):
                             ("range_resid", Mission.Constraints.RANGE_RESIDUAL)],
                     )
 
+                    # separate non-reserve phases and reserve phases
+                    for idx, phase_name in enumerate(self.phase_info):
+                        if self.phase_info[phase_name]["user_options"]["reserve"] is True:
+                            phases.pop(idx)  # remove that phase from the list of phases
+
+                    # determine distance traveled based on non-reserve phases
                     self.model.connect(f"traj.{phases[-1]}.timeseries.distance",
                                        "range_constraint.actual_range", src_indices=[-1])
                     self.model.add_constraint(
@@ -1222,17 +1228,22 @@ class AviaryProblem(om.Problem):
                 Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.e5)
 
     def _link_phases_helper_with_options(self, phases, option_name, var, **kwargs):
+        # if there is a phase that has 'option_name' of optimize_mach or optimize_altitude = True,
+        # link that phase to the adacent phases passed in via 'phases'
+
         phases_to_link = []
-        for idx, phase_name in enumerate(self.phase_info):
-            if self.phase_info[phase_name]['user_options'][option_name]:
-                # get the name of the previous phase
+        for idx, phase_name in enumerate(phases):
+            if self.phase_info[phase_name]['user_options'][option_name] is True:
+                # get the name of the previous phase if possible
                 if idx > 0:
                     prev_phase_name = phases[idx - 1]
                     phases_to_link.append(prev_phase_name)
                 phases_to_link.append(phase_name)
+                # get the name of the next phase if possible
                 if idx < len(phases) - 1:
                     next_phase_name = phases[idx + 1]
                     phases_to_link.append(next_phase_name)
+        # if we have more than one phase, link them
         if len(phases_to_link) > 1:
             phases_to_link = list(dict.fromkeys(phases))
             self.traj.link_phases(phases=phases_to_link, vars=[var], **kwargs)
@@ -1308,13 +1319,29 @@ class AviaryProblem(om.Problem):
             self.traj.link_phases(phases[:7], vars=["TAS"], units='kn', ref=200.)
 
         elif self.mission_method is HEIGHT_ENERGY:
+
+            # connect mass and distance between all phases regardless of reserve / non-reserve status
             self.traj.link_phases(
                 phases, ["time", Dynamic.Mission.MASS, Dynamic.Mission.DISTANCE], connected=True)
 
+            # separate regular phases and reserve phases
+            reserve_phases = []
+            for idx, phase_name in enumerate(self.phase_info):
+                if self.phase_info[phase_name]["user_options"]["reserve"] is True:
+                    reserve_phases.append(phase_name)
+                    phases.pop(idx)  # remove that phase from the list of phases
+
+            # connect regular phases with eachother if your are optimizing alt or mach
             self._link_phases_helper_with_options(
                 phases, 'optimize_altitude', Dynamic.Mission.ALTITUDE, ref=1.e4)
             self._link_phases_helper_with_options(
                 phases, 'optimize_mach', Dynamic.Mission.MACH)
+
+            # connect reserve phases with eachother if your are optimizing alt or mach
+            self._link_phases_helper_with_options(
+                reserve_phases, 'optimize_altitude', Dynamic.Mission.ALTITUDE, ref=1.e4)
+            self._link_phases_helper_with_options(
+                reserve_phases, 'optimize_mach', Dynamic.Mission.MACH)
 
         elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
             if self.analysis_scheme is AnalysisScheme.COLLOCATION:

@@ -32,6 +32,8 @@ class EnergyPhase(PhaseBuilderBase):
         state/path constraint values and flags
 
         supported options:
+            - reserve : bool (False)
+                Determines if the phase is handled as a reserve phase or a no-reserve phase
             - num_segments : int (5)
                 transcription: number of segments
             - order : int (3)
@@ -146,6 +148,7 @@ class EnergyPhase(PhaseBuilderBase):
 
         user_options: AviaryValues = self.user_options
 
+        reserve = user_options.get_val('reserve')  # do we need this here?
         fix_initial = user_options.get_val('fix_initial')
         constrain_final = user_options.get_val('constrain_final')
         optimize_mach = user_options.get_val('optimize_mach')
@@ -367,6 +370,9 @@ class EnergyPhase(PhaseBuilderBase):
             'throttle_enforcement': self.user_options.get_val('throttle_enforcement'),
         }
 
+
+EnergyPhase._add_meta_data(
+    'reserve', val=False, desc='this phase is part of the reserve mission.')
 
 EnergyPhase._add_meta_data(
     'num_segments', val=5, desc='transcription: number of segments')
