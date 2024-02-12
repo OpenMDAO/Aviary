@@ -1142,7 +1142,7 @@ class AviaryProblem(om.Problem):
                                                 subsystem_postmission)
 
         if self.mission_method is HEIGHT_ENERGY:
-            phases = list(self.phase_info.keys()) # list of all phases included reserve 
+            phases = list(self.phase_info.keys())  # list of all phases included reserve
             ecomp = om.ExecComp('fuel_burned = initial_mass - mass_final',
                                 initial_mass={'units': 'lbm'},
                                 mass_final={'units': 'lbm'},
@@ -1189,13 +1189,19 @@ class AviaryProblem(om.Problem):
                             ("range_resid", Mission.Constraints.RANGE_RESIDUAL)],
                     )
 
-                    # separate non-reserve phases and reserve phases
+                    # separate regular phases and reserve phases
+                    reserve_phases = []
+                    regular_phases = []
                     for idx, phase_name in enumerate(self.phase_info):
                         if self.phase_info[phase_name]["user_options"]["reserve"] is True:
-                            phases.pop(idx)  # remove that phase from the list of phases
+                            reserve_phases.append(phase_name)
+                        else:
+                            regular_phases.append(phase_name)
+                    print('regular_phases',regular_phases)
+                    print('reserve_phases',reserve_phases)
 
-                    # determine distance traveled based on non-reserve phases
-                    self.model.connect(f"traj.{phases[-1]}.timeseries.distance",
+                    # determine distance traveled based on regular_phases
+                    self.model.connect(f"traj.{regular_phases[-1]}.timeseries.distance",
                                        "range_constraint.actual_range", src_indices=[-1])
                     self.model.add_constraint(
                         Mission.Constraints.RANGE_RESIDUAL, equals=0.0, ref=1.e2)
@@ -1326,16 +1332,18 @@ class AviaryProblem(om.Problem):
 
             # separate regular phases and reserve phases
             reserve_phases = []
+            regular_phases = []
             for idx, phase_name in enumerate(self.phase_info):
                 if self.phase_info[phase_name]["user_options"]["reserve"] is True:
                     reserve_phases.append(phase_name)
-                    phases.pop(idx)  # remove that phase from the list of phases
+                else:
+                    regular_phases.append(phase_name)
 
             # connect regular phases with eachother if your are optimizing alt or mach
             self._link_phases_helper_with_options(
-                phases, 'optimize_altitude', Dynamic.Mission.ALTITUDE, ref=1.e4)
+                regular_phases, 'optimize_altitude', Dynamic.Mission.ALTITUDE, ref=1.e4)
             self._link_phases_helper_with_options(
-                phases, 'optimize_mach', Dynamic.Mission.MACH)
+                regular_phases, 'optimize_mach', Dynamic.Mission.MACH)
 
             # connect reserve phases with eachother if your are optimizing alt or mach
             self._link_phases_helper_with_options(
