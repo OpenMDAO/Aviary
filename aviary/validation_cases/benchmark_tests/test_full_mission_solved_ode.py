@@ -633,7 +633,7 @@ def run_mission(optimizer):
             units="s",
         )
 
-    dm.run_problem(p, run_driver=True, simulate=False, make_plots=False,
+    dm.run_problem(p, run_driver=True, simulate=False, make_plots=True,
                    solution_record_file=f'solved_{optimizer}.sql',
                    )
 
