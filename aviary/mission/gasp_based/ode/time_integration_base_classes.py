@@ -161,7 +161,7 @@ class SimuPyProblem(SimulationMixin):
                     if state_key in states.keys():  # Used to rename an existing state
                         states[val] = states.pop(state_key)
                     else:  # Used to add a new state
-                        states[val]: {'units': None, 'rate': val+rate_suffix}
+                        states[val] = {'units': None, 'rate': val+rate_suffix}
 
         if alternate_state_rate_names:
             for state_name, val in alternate_state_rate_names.items():
