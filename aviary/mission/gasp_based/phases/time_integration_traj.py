@@ -7,8 +7,6 @@ from aviary.variable_info.enums import SpeedType
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 
-DEBUG = 0
-
 
 class TimeIntegrationTrajBase(SGMTrajBase):
     def initialize(self):
@@ -235,46 +233,46 @@ class FlexibleTraj(TimeIntegrationTrajBase):
 
 #             # trajectory-specific phase switching
 #             if current_problem is groundroll:
-#                 if DEBUG:
+#                 if self.verbosity is Verbosity.DEBUG:
 #                     print("starting rotation")
 #                 rotation.prob.set_val("start_rotation", t)
 #                 ascent.rotation.set_val("start_rotation", t)
 #                 next_problem = rotation
 #             elif current_problem is rotation:
-#                 if DEBUG:
+#                 if self.verbosity is Verbosity.DEBUG:
 #                     print("starting ascent")
 #                 next_problem = ascent
 #             elif current_problem is ascent:
 #                 next_problem = accel
-#                 if DEBUG:
+#                 if self.verbosity is Verbosity.DEBUG:
 #                     print("starting accel")
 #             elif current_problem is accel:
-#                 if DEBUG:
+#                 if self.verbosity is Verbosity.DEBUG:
 #                     print("climb1")
 #                 next_problem = climb1
 #             elif current_problem is climb1:
-#                 if DEBUG:
+#                 if self.verbosity is Verbosity.DEBUG:
 #                     print("climb2")
 #                 if event_idx != 0:
-#                     if DEBUG:
+#                     if self.verbosity is Verbosity.DEBUG:
 #                         print("expected to hit alt trigger for climb1")
 #                 next_problem = climb2
 #             elif current_problem is climb2:
-#                 if DEBUG:
+#                 if self.verbosity is Verbosity.DEBUG:
 #                     print("climb3")
 #                 if event_idx != 1:
-#                     if DEBUG:
+#                     if self.verbosity is Verbosity.DEBUG:
 #                         print("expected to hit speed trigger for climb2")
 #                 next_problem = climb3
 #             elif current_problem is climb3:
-#                 if DEBUG:
+#                 if self.verbosity is Verbosity.DEBUG:
 #                     print("climb ending")
 #                 if event_idx != 0:
-#                     if DEBUG:
+#                     if self.verbosity is Verbosity.DEBUG:
 #                         print("expected to hit alt trigger for climb3")
 #                 next_problem = None
 #             else:
-#                 if DEBUG:
+#                 if self.verbosity is Verbosity.DEBUG:
 #                     print("unexpected termination")
 #                 next_problem = None
 
@@ -369,27 +367,27 @@ class FlexibleTraj(TimeIntegrationTrajBase):
 
 #             # trajectory-specific phase switching
 #             if current_problem is desc1:
-#                 if DEBUG:
+#                 if self.verbosity is Verbosity.DEBUG:
 #                     print("desc2")
 #                 if event_idx != 1:
-#                     if DEBUG:
+#                     if self.verbosity is Verbosity.DEBUG:
 #                         print("expected to hit speed trigger for desc1")
 #                 sim_gen.send(desc2)
 #             elif current_problem is desc2:
-#                 if DEBUG:
+#                 if self.verbosity is Verbosity.DEBUG:
 #                     print("desc3")
 #                 if event_idx != 0:
-#                     if DEBUG:
+#                     if self.verbosity is Verbosity.DEBUG:
 #                         print("expected to hit alt trigger for desc2")
 #                 sim_gen.send(desc3)
 #             elif current_problem is desc3:
-#                 if DEBUG:
+#                 if self.verbosity is Verbosity.DEBUG:
 #                     print("desc ending")
 #                 if event_idx != 0:
-#                     if DEBUG:
+#                     if self.verbosity is Verbosity.DEBUG:
 #                         print("expected to hit alt trigger for desc3")
 #                 sim_gen.close()
 #             else:
-#                 if DEBUG:
+#                 if self.verbosity is Verbosity.DEBUG:
 #                     print("unexpected termination")
 #                 sim_gen.close()
