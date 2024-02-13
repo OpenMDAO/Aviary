@@ -6,7 +6,6 @@ $(function () {
   // does not exceed this length
 
   // Read in the json file that the dashboard.py script generated
-  // fetch('/home/aviary_vars.json')
   fetch('./aviary_vars.json')
     .then((response) => response.json())
     .then((json) => createTabulator(json));
@@ -89,7 +88,6 @@ $(function () {
   function elementToString(element) {
     if (typeof element === 'number') {
       if (Number.isInteger(element)) { return element.toString(); }
-      // return this.floatFormatter(element); /* float */
       return formatNumberIntelligently(element); /* float */
     }
 
@@ -284,7 +282,6 @@ $(function () {
           field: "value",
           width: 300,
           tooltip: function (e, cell) {
-            // return formatValueTooltip(cell);
             return cell.getValue();
           },
           formatter: copyButtonFormatter
