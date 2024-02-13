@@ -14,6 +14,7 @@ from aviary.variable_info.variables import Dynamic
 from aviary.variable_info.variables_in import VariablesIn
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
+from aviary.variable_info.variable_meta_data import _MetaData
 
 
 class UnsteadySolvedODE(BaseODE):
@@ -61,6 +62,12 @@ class UnsteadySolvedODE(BaseODE):
             default=False,
             desc='Flag if throttle should be solved for to match thrust to drag'
         )
+        self.options.declare(
+            'external_subsystems', default=[],
+            desc='list of external subsystem builder instances to be added to the ODE')
+        self.options.declare(
+            'meta_data', default=_MetaData,
+            desc='metadata associated with the variables to be passed into the ODE')
 
     def setup(self):
         nn = self.options["num_nodes"]
@@ -155,6 +162,9 @@ class UnsteadySolvedODE(BaseODE):
             kwargs['method'] = 'cruise'
             kwargs['output_alpha'] = False
         for subsystem in core_subsystems:
+            # check if subsystem_options has entry for a subsystem of this name
+            if subsystem.name in subsystem_options:
+                kwargs.update(subsystem_options[subsystem.name])
             system = subsystem.build_mission(**kwargs)
             if system is not None:
                 if isinstance(subsystem, AerodynamicsBuilderBase):

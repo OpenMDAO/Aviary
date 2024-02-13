@@ -1,7 +1,7 @@
 import dymos as dm
 
 from aviary.mission.phase_builder_base import PhaseBuilderBase, register
-from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessTime, InitialGuessControl
+from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessTime, InitialGuessControl, InitialGuessPolynomialControl
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variable_meta_data import _MetaData
@@ -76,13 +76,15 @@ class TwoDOFPhase(PhaseBuilderBase):
 
         user_options: AviaryValues = self.user_options
 
-        throttle_setting = user_options['throttle_setting']
-        initial_bounds = user_options['initial_bounds']
-        duration_bounds = user_options['duration_bounds']
-        initial_ref = user_options['initial_ref']
-        duration_ref = user_options['duration_ref']
-        control_order = user_options['control_order']
-        opt = user_options['opt']
+        throttle_setting = user_options.get_val('throttle_setting')
+        control_order = user_options.get_val('control_order')
+        opt = user_options.get_val('opt')
+
+        fix_initial = user_options.get_val('fix_initial')
+        initial_bounds = user_options.get_val('initial_bounds', units='distance_units')
+        initial_ref = user_options.get_val('initial_ref', units='distance_units')
+        duration_bounds = user_options.get_val('duration_bounds', units='distance_units')
+        duration_ref = user_options.get_val('duration_ref', units='distance_units')
 
         phase_name = 'rotation'
 
@@ -93,7 +95,7 @@ class TwoDOFPhase(PhaseBuilderBase):
             val=throttle_setting,
             static_target=False)
 
-        phase.set_time_options(fix_initial=False, fix_duration=False,
+        phase.set_time_options(fix_initial=fix_initial, fix_duration=False,
                                units="distance_units", name=Dynamic.Mission.DISTANCE,
                                duration_bounds=duration_bounds, duration_ref=duration_ref,
                                initial_bounds=initial_bounds, initial_ref=initial_ref)
@@ -104,10 +106,10 @@ class TwoDOFPhase(PhaseBuilderBase):
             time_ref = 100.
 
         phase.set_state_options("time", rate_source="dt_dr", targets=['t_curr'] if 'retract' in phase_name else [],
-                                fix_initial=False, fix_final=False, ref=time_ref, defect_ref=time_ref * 1.e2)
+                                fix_initial=fix_initial, fix_final=False, ref=time_ref, defect_ref=time_ref * 1.e2)
 
         phase.set_state_options("mass", rate_source="dmass_dr",
-                                fix_initial=False, fix_final=False, ref=170.e3, defect_ref=170.e5,
+                                fix_initial=fix_initial, fix_final=False, ref=170.e3, defect_ref=170.e5,
                                 val=170.e3, units='lbm', lower=10.e3)
 
         phase.add_parameter("wing_area", units="ft**2",
@@ -210,13 +212,9 @@ class TwoDOFPhase(PhaseBuilderBase):
         phase.add_timeseries_output("EAS", units="kn")
         phase.add_timeseries_output("TAS", units="kn")
         phase.add_timeseries_output(Dynamic.Mission.LIFT)
-        phase.add_timeseries_output("CL")
-        phase.add_timeseries_output("CD")
         phase.add_timeseries_output("time")
         phase.add_timeseries_output("mass")
         phase.add_timeseries_output(Dynamic.Mission.ALTITUDE)
-        phase.add_timeseries_output("gear_factor")
-        phase.add_timeseries_output("flap_factor")
         phase.add_timeseries_output("alpha")
         phase.add_timeseries_output(
             "fuselage_pitch", output_name="theta", units="deg")
@@ -263,13 +261,7 @@ TwoDOFPhase._add_meta_data(
     desc='transcription: order of the state transcription; the order of the control'
     ' transcription is `order - 1`')
 
-TwoDOFPhase._add_meta_data('polynomial_control_order', val=3)
-
-TwoDOFPhase._add_meta_data('use_polynomial_control', val=True)
-
-TwoDOFPhase._add_meta_data('add_initial_mass_constraint', val=False)
-
-TwoDOFPhase._add_meta_data('fix_initial', val=True)
+TwoDOFPhase._add_meta_data('fix_initial', val=False)
 
 TwoDOFPhase._add_meta_data('fix_duration', val=False)
 
@@ -277,68 +269,31 @@ TwoDOFPhase._add_meta_data('optimize_mach', val=False)
 
 TwoDOFPhase._add_meta_data('optimize_altitude', val=False)
 
-TwoDOFPhase._add_meta_data('initial_ref', val=100., units='s')
-
-TwoDOFPhase._add_meta_data('duration_ref', val=100., units='s')
-
-TwoDOFPhase._add_meta_data('initial_bounds', val=(0., 100.), units='s')
-
-TwoDOFPhase._add_meta_data('duration_bounds', val=(0., 100.), units='s')
-
-TwoDOFPhase._add_meta_data(
-    'required_available_climb_rate', val=None, units='m/s',
-    desc='minimum avaliable climb rate')
-
-TwoDOFPhase._add_meta_data(
-    'no_climb', val=False, desc='aircraft is not allowed to climb during phase')
-
-TwoDOFPhase._add_meta_data(
-    'no_descent', val=False, desc='aircraft is not allowed to descend during phase')
-
-TwoDOFPhase._add_meta_data('constrain_final', val=False)
-
-TwoDOFPhase._add_meta_data('input_initial', val=False)
-
-TwoDOFPhase._add_meta_data('initial_mach', val=None, units='unitless')
-
-TwoDOFPhase._add_meta_data('final_mach', val=None, units='unitless')
-
-TwoDOFPhase._add_meta_data('initial_altitude', val=None, units='ft')
-
-TwoDOFPhase._add_meta_data('final_altitude', val=None, units='ft')
-
-TwoDOFPhase._add_meta_data('throttle_enforcement', val=None)
-
-TwoDOFPhase._add_meta_data('throttle_setting', val=None)
-
-TwoDOFPhase._add_meta_data('input_speed_type', val=None)
-
+TwoDOFPhase._add_meta_data('throttle_setting', val=None, desc='throttle setting')
+TwoDOFPhase._add_meta_data('initial_bounds', val=(0., 100.),
+                           units='s', desc='initial bounds')
+TwoDOFPhase._add_meta_data('duration_bounds', val=(
+    0., 3600.), units='s', desc='duration bounds')
+TwoDOFPhase._add_meta_data('initial_ref', val=100., units='s', desc='initial reference')
+TwoDOFPhase._add_meta_data('duration_ref', val=1000.,
+                           units='s', desc='duration reference')
+TwoDOFPhase._add_meta_data('control_order', val=1, desc='control order')
+TwoDOFPhase._add_meta_data('opt', val=True, desc='opt')
+TwoDOFPhase._add_meta_data('input_speed_type', val='TAS', desc='input speed type')
+TwoDOFPhase._add_meta_data('ground_roll', val=True)
 TwoDOFPhase._add_meta_data('clean', val=False)
 
-TwoDOFPhase._add_meta_data('ground_roll', val=None)
-
-TwoDOFPhase._add_meta_data('mach_bounds', val=(0., 2.), units='unitless')
-
-TwoDOFPhase._add_meta_data('altitude_bounds', val=(0., 60.e3), units='ft')
-
-TwoDOFPhase._add_meta_data('solve_for_distance', val=False)
-
-TwoDOFPhase._add_meta_data('constraints', val={})
 
 TwoDOFPhase._add_initial_guess_meta_data(
     InitialGuessTime(),
     desc='initial guess for initial time and duration specified as a tuple')
 
 TwoDOFPhase._add_initial_guess_meta_data(
-    InitialGuessState('distance'),
-    desc='initial guess for horizontal distance traveled')
-
-TwoDOFPhase._add_initial_guess_meta_data(
-    InitialGuessState('altitude'),
+    InitialGuessPolynomialControl('altitude'),
     desc='initial guess for vertical distances')
 
 TwoDOFPhase._add_initial_guess_meta_data(
-    InitialGuessState('mach'),
+    InitialGuessPolynomialControl('TAS'),
     desc='initial guess for speed')
 
 TwoDOFPhase._add_initial_guess_meta_data(
