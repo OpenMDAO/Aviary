@@ -55,24 +55,24 @@ default_mission_subsystems = [aero, prop]
 phase_info = {
     'rotation': {
         'user_options': {
-            'num_segments': 2,
+            'num_segments': 5,
+            'order': 3,
             'fix_initial': True,
             'throttle_setting': throttle_max,
             'input_speed_type': SpeedType.TAS,
             'ground_roll': True,
             'clean': False,
             'initial_ref': (1.e3, 'm'),
-            'initial_bounds': ((50., 5000.), 'm'),
+            'initial_bounds': ((0., 0.), 'm'),
             'duration_ref': (1.e3, 'm'),
             'duration_bounds': ((50., 2000.), 'm'),
             'control_order': 1,
-            'order': 3,
             'opt': True,
         },
         'subsystem_options': subsystem_options,
         'initial_guesses': {
             'times': [(0., 1000.), 'm'],
-            'TAS': [(0., 100.), 'm/s'],
+            'TAS': [(1., 100.), 'kn'],
             'mass': [(175.e3, 175.e3), 'lbm'],
             'altitude': [(0., 0.), 'ft'],
         },
@@ -154,7 +154,7 @@ phase = phase_object.build_phase(aviary_options=aviary_inputs)
 
 traj.add_phase(phase_name, phase)
 
-phase.add_objective('time', loc='final', ref=1e3)
+phase.add_objective('time', loc='final')
 
 prob.driver = om.pyOptSparseDriver()
 prob.driver.declare_coloring(show_sparsity=False, show_summary=False)

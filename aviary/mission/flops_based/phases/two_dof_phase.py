@@ -81,10 +81,10 @@ class TwoDOFPhase(PhaseBuilderBase):
         opt = user_options.get_val('opt')
 
         fix_initial = user_options.get_val('fix_initial')
-        initial_bounds = user_options.get_val('initial_bounds', units='distance_units')
-        initial_ref = user_options.get_val('initial_ref', units='distance_units')
-        duration_bounds = user_options.get_val('duration_bounds', units='distance_units')
-        duration_ref = user_options.get_val('duration_ref', units='distance_units')
+        initial_bounds = user_options.get_val('initial_bounds', units='m')
+        initial_ref = user_options.get_val('initial_ref', units='m')
+        duration_bounds = user_options.get_val('duration_bounds', units='m')
+        duration_ref = user_options.get_val('duration_ref', units='m')
 
         phase_name = 'rotation'
 
@@ -95,10 +95,15 @@ class TwoDOFPhase(PhaseBuilderBase):
             val=throttle_setting,
             static_target=False)
 
-        phase.set_time_options(fix_initial=fix_initial, fix_duration=False,
-                               units="distance_units", name=Dynamic.Mission.DISTANCE,
-                               duration_bounds=duration_bounds, duration_ref=duration_ref,
-                               initial_bounds=initial_bounds, initial_ref=initial_ref)
+        if fix_initial:
+            phase.set_time_options(fix_initial=fix_initial, fix_duration=False,
+                                   units="m", name=Dynamic.Mission.DISTANCE,
+                                   duration_bounds=duration_bounds, duration_ref=duration_ref)
+        else:
+            phase.set_time_options(fix_initial=fix_initial, fix_duration=False,
+                                   units="m", name=Dynamic.Mission.DISTANCE,
+                                   initial_bounds=initial_bounds, initial_ref=initial_ref,
+                                   duration_bounds=duration_bounds, duration_ref=duration_ref)
 
         if phase_name == "cruise" or phase_name == "descent":
             time_ref = 1.e4
@@ -125,20 +130,26 @@ class TwoDOFPhase(PhaseBuilderBase):
             phase.add_polynomial_control("TAS",
                                          order=control_order,
                                          units="kn", val=200.0,
-                                         opt=opt, lower=1, upper=500, ref=250)
+                                         opt=opt, lower=1, upper=500, ref=250,
+                                         fix_initial=fix_initial,
+                                         )
 
             phase.add_polynomial_control(Dynamic.Mission.ALTITUDE,
                                          order=control_order,
-                                         fix_initial=False,
+                                         fix_initial=fix_initial,
                                          rate_targets=['dh_dr'], rate2_targets=['d2h_dr2'],
                                          opt=False, upper=40.e3, ref=30.e3, lower=-1.)
 
             phase.add_polynomial_control("alpha",
                                          order=control_order,
+                                         fix_initial=fix_initial,
                                          lower=-4, upper=15,
                                          units='deg', ref=10.,
-                                         val=[0., 5.],
+                                         val=[0., 0.],
                                          opt=opt)
+
+        phase.add_boundary_constraint(
+            'TAS', loc='final', equals=100., units='kn', ref=100.)
         # else:
         #     if 'constant_EAS' in phase_name:
         #         fixed_EAS = phase_info[phase_name]['fixed_EAS']

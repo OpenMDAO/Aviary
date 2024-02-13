@@ -55,7 +55,6 @@ class InitialGuess:
             isinstance(val, np.ndarray)
             or (isinstance(val, Sequence) and not isinstance(val, str))
         ):
-            print(phase, self.key, val)
             val = phase.interp(self.key, val)
 
         prob.set_val(complete_key, val, units)
