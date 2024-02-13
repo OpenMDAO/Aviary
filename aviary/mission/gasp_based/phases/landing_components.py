@@ -1,7 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_GASP, GRAV_ENGLISH_LBM, MU_LANDING
+from aviary.constants import GRAV_ENGLISH_GASP, GRAV_ENGLISH_LBM, MU_LANDING, RHO_SEA_LEVEL_ENGLISH
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
@@ -203,7 +203,7 @@ class GlideConditionComponent(om.ExplicitComponent):
         outputs[Mission.Landing.INITIAL_VELOCITY] = TAS_glide
         outputs[Mission.Landing.STALL_VELOCITY] = TAS_stall
         outputs["TAS_touchdown"] = TAS_touchdown
-        outputs["density_ratio"] = rho_app / 0.002378
+        outputs["density_ratio"] = rho_app / RHO_SEA_LEVEL_ENGLISH
         outputs["wing_loading_land"] = wing_loading_land
         outputs["glide_distance"] = glide_distance
         outputs["tr_distance"] = tr_distance
@@ -292,7 +292,7 @@ class GlideConditionComponent(om.ExplicitComponent):
             touchdown_velocity_ratio * dTasStall_dRhoApp
         )
 
-        J["density_ratio", "rho_app"] = 1 / 0.002378
+        J["density_ratio", "rho_app"] = 1 / RHO_SEA_LEVEL_ENGLISH
 
         J["wing_loading_land", Dynamic.Mission.MASS] = GRAV_ENGLISH_LBM / wing_area
         J["wing_loading_land", Aircraft.Wing.AREA] = -weight / wing_area**2

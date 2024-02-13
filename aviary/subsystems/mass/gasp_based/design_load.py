@@ -1,6 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
+from aviary.constants import RHO_SEA_LEVEL_ENGLISH
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission
@@ -724,7 +725,8 @@ class LoadFactors(om.ExplicitComponent):
             Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, units='unitless')
 
         mass_ratio = (
-            2.0 * wing_loading / (density_ratio * 0.00237 * avg_chord * Cl_alpha * 32.2)
+            2.0 * wing_loading /
+            (density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha * 32.2)
         )
         k_load_factor = 0.88 * mass_ratio / (5.3 + mass_ratio)
         cruise_load_factor = 1.0 + (
@@ -785,7 +787,8 @@ class LoadFactors(om.ExplicitComponent):
             Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, units='unitless')
 
         mass_ratio = (
-            2.0 * wing_loading / (density_ratio * 0.00237 * avg_chord * Cl_alpha * 32.2)
+            2.0 * wing_loading /
+            (density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha * 32.2)
         )
         k_load_factor = 0.88 * mass_ratio / (5.3 + mass_ratio)
         cruise_load_factor = 1.0 + (
@@ -797,18 +800,18 @@ class LoadFactors(om.ExplicitComponent):
         gust_load_factor = dive_load_factor
 
         dmass_ratio_dwing_loading = 2.0 / (
-            density_ratio * 0.00237 * avg_chord * Cl_alpha * 32.2
+            density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha * 32.2
         )
         dmass_ratio_ddensity_ratio = (
-            -2.0 * wing_loading / (density_ratio**2 * 0.00237 *
+            -2.0 * wing_loading / (density_ratio**2 * RHO_SEA_LEVEL_ENGLISH *
                                    avg_chord * Cl_alpha * 32.2)
         )
         dmass_ratio_davg_chord = (
-            -2.0 * wing_loading / (density_ratio * 0.00237 *
+            -2.0 * wing_loading / (density_ratio * RHO_SEA_LEVEL_ENGLISH *
                                    avg_chord**2 * Cl_alpha * 32.2)
         )
         dmass_ratio_dCl_alpha = (
-            -2.0 * wing_loading / (density_ratio * 0.00237 *
+            -2.0 * wing_loading / (density_ratio * RHO_SEA_LEVEL_ENGLISH *
                                    avg_chord * Cl_alpha**2 * 32.2)
         )
 
