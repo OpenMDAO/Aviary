@@ -66,6 +66,22 @@ $(function () {
   }
 
   /**
+   * Converts the input element to a string representation intelligently. 
+   * 
+   * @param {any} element - The element to be converted to a string. Can be of any type.
+   * @returns {string} The string representation of the input element.
+   */
+  function intelligentStringify(element) {
+    if (typeof element === 'string') {
+      // Return the string directly without quotes
+      return element;
+    } else {
+      // Use JSON.stringify for other types
+      return JSON.stringify(element);
+    }
+  }
+
+  /**
  * Convert an element to a string that is human readable.
  * @param {Object} element The scalar item to convert.
  * @returns {String} The string representation of the element.
@@ -77,8 +93,7 @@ $(function () {
       return formatNumberIntelligently(element); /* float */
     }
 
-    if (element === 'nan') { return element; }
-    return JSON.stringify(element);
+    return intelligentStringify(element);
   }
 
   /**
@@ -135,7 +150,7 @@ $(function () {
         lines.push(currentLine);
         currentLine = word;
       } else {
-        currentLine += word + ' ';
+        currentLine += ' ' + word;
       }
     });
 
@@ -216,7 +231,8 @@ $(function () {
     cellContent.appendChild(button);
 
     var text = document.createElement("value");
-    text.textContent = JSON.stringify(cellValue);
+
+    text.textContent = intelligentStringify(cellValue);
     cellContent.appendChild(text);
 
     onRendered(function () {
