@@ -3,6 +3,7 @@ import unittest
 import subprocess
 
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
+from openmdao.core.problem import _clear_problem_names
 
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.subsystems.test.test_dummy_subsystem import ArrayGuessSubsystemBuilder
@@ -100,6 +101,8 @@ class AircraftMissionTestSuite(unittest.TestCase):
         self.aircraft_definition_file = 'models/test_aircraft/aircraft_for_bench_FwFm.csv'
         self.make_plots = False
         self.max_iter = 100
+
+        _clear_problem_names()  # need to reset these to simulate separate runs
 
     def add_external_subsystem(self, phase_info, subsystem_builder):
         """
