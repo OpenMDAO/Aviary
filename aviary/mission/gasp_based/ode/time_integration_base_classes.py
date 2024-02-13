@@ -6,6 +6,7 @@ from simupy.block_diagram import DEFAULT_INTEGRATOR_OPTIONS, SimulationMixin
 from simupy.systems import DynamicalSystem
 
 from aviary.mission.gasp_based.ode.params import ParamPort
+from aviary.variable_info.enums import Verbosity
 
 
 def add_SGM_required_inputs(group: om.Group, inputs_to_add: dict):
@@ -34,7 +35,7 @@ class SimuPyProblem(SimulationMixin):
         controls=None,
         include_state_outputs=False,
         rate_suffix="_rate",
-        DEBUG=False,
+        verbosity=Verbosity.QUIET,
         max_allowable_time=1_000_000,
         adjoint_int_opts=DEFAULT_INTEGRATOR_OPTIONS.copy(),
 
@@ -55,7 +56,7 @@ class SimuPyProblem(SimulationMixin):
         default_om_list_args = dict(prom_name=True, val=False,
                                     out_stream=None, units=True)
 
-        self.DEBUG = DEBUG
+        self.verbosity = verbosity
         self.max_allowable_time = max_allowable_time
         self.adjoint_int_opts = adjoint_int_opts
         self.adjoint_int_opts['nsteps'] = 5000
@@ -186,7 +187,7 @@ class SimuPyProblem(SimulationMixin):
         # TODO: add defensive checks to make sure dimensions match in both setup and
         # calls
 
-        if DEBUG or True:
+        if verbosity.value >= 2:
             om.n2(prob, outfile="n2_simupy_problem.html", show_browser=False)
             with open('input_list_simupy.txt', 'w') as outfile:
                 prob.model.list_inputs(out_stream=outfile,)
@@ -347,7 +348,7 @@ class SGMTrajBase(om.ExplicitComponent):
         # TODO: param_dict
         self.options.declare("param_dict",
                              default=ParamPort.param_data)
-        self.DEBUG = False
+        self.verbosity = Verbosity.QUIET
         self.max_allowable_time = 1_000_000
         self.adjoint_int_opts = DEFAULT_INTEGRATOR_OPTIONS.copy()
         self.adjoint_int_opts['nsteps'] = 5000
@@ -474,7 +475,7 @@ class SGMTrajBase(om.ExplicitComponent):
                 try:
                     ode.set_val(input, inputs[input])
                 except KeyError:
-                    if self.DEBUG:
+                    if self.verbosity.value >= 2:
                         print(
                             "*** Input not found:",
                             ode,
@@ -483,7 +484,7 @@ class SGMTrajBase(om.ExplicitComponent):
                     pass
 
     def compute_traj_loop(self, first_problem, inputs, outputs, t0=0., state0=None):
-        if self.DEBUG:
+        if self.verbosity.value >= 2:
             print("initializing compute_traj_loop")
         sim_results = []
         sim_problems = [first_problem]
@@ -517,7 +518,7 @@ class SGMTrajBase(om.ExplicitComponent):
             try:
                 try_next_problem = (yield current_problem, sim_result)
             except GeneratorExit:
-                if self.DEBUG:
+                if self.verbosity.value >= 2:
                     print("stop iteration 1")
                 break
 
@@ -527,11 +528,11 @@ class SGMTrajBase(om.ExplicitComponent):
                 try:
                     next_problem = (yield current_problem, sim_result)
                 except GeneratorExit:
-                    if self.DEBUG:
+                    if self.verbosity.value >= 2:
                         print("stop iteration 2")
                     break
 
-                if self.DEBUG:
+                if self.verbosity.value >= 2:
                     print(" was on problem:", current_problem,
                           "\n got back:", next_problem)
             # compute the output at the final condition to make sure all outputs are current
@@ -544,7 +545,7 @@ class SGMTrajBase(om.ExplicitComponent):
             ).squeeze()
             sim_problems.append(next_problem)
 
-        if self.DEBUG:
+        if self.verbosity.value >= 2:
             print("ended loop")
 
         # wrap main loop
@@ -803,7 +804,7 @@ class SGMTrajBase(om.ExplicitComponent):
             else:
                 df_dparams.append(None)
 
-        if self.DEBUG:
+        if self.verbosity is Verbosity.DEBUG:
             print("data....")
             print("dgs", dg_dxs)
             print("f-", f_minuses)
@@ -822,7 +823,7 @@ class SGMTrajBase(om.ExplicitComponent):
             lamda_dot_plus = np.zeros_like(costate)
 
             # self.sim_results[-1].x[-1, next_prob.state_names.index(output)]
-            if self.DEBUG:
+            if self.verbosity.value >= 2:
                 print("\nstarting partial for %s" % output, costate)
 
             dg_dt = 0.
@@ -872,7 +873,7 @@ class SGMTrajBase(om.ExplicitComponent):
                     if channel_name != prob.t_name:
                         lamda_dot = df_dx(res.t[-1]) @ costate
                         # lamda_dot_plus = lamda_dot
-                        if self.DEBUG:
+                        if self.verbosity is Verbosity.DEBUG:
                             if np.any(state_disc):
                                 print("update is non-zero!", prob, prob.states.keys(),
                                       state_disc, costate, lamda_dot)
@@ -904,7 +905,7 @@ class SGMTrajBase(om.ExplicitComponent):
                         in self.traj_event_trigger_input
                     ):
                         event_trigger_name = self.traj_event_trigger_input[event_key]["name"]
-                        if self.DEBUG:
+                        if self.verbosity.value >= 2:
                             print("setting event trigger data", event_trigger_name)
                         J[output_name, event_trigger_name] = (
                             + costate[None, :] @ (f_minus - f_plus) /
@@ -921,7 +922,7 @@ class SGMTrajBase(om.ExplicitComponent):
                 def co_state_rate(t, costate, *args):
                     return df_dx(t) @ costate
 
-                if self.DEBUG:
+                if self.verbosity.value >= 2:
                     print('dim_state:', prob.dim_state, "ic:", costate)
 
                 costate_sys = DynamicalSystem(state_equation_function=co_state_rate,

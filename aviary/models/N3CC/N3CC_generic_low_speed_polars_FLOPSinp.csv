@@ -1,5 +1,3 @@
-debug_mode,False
-
 # Input Values
 aircraft:air_conditioning:mass_scaler,0.98094,unitless
 aircraft:anti_icing:mass_scaler,0.53202,unitless
