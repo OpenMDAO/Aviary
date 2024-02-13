@@ -1,5 +1,4 @@
 Default Values from GASP
-debug_mode = False
  $INGASP
 ALPHL0=-1.2,deg
 ALTLND=0,ft

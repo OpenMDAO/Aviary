@@ -1,6 +1,5 @@
  Small Single Aisle / turbofan_24k_2                                      -1                        
 
- debug_mode = False
  aircraft:engine:data_file=models/engines/turbofan_24k_2.deck 
  aircraft:engine:data_file=models/engines/turbofan_23k_1.deck !temporary
  mission:summary:gross_mass=124780

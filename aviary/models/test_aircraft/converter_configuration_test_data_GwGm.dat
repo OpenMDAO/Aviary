@@ -1,6 +1,5 @@
  Baseline new configuration Mach 0.80 / 23k SLS thrust turbofan                           -1                       -1
  
-debug_mode = False
 aircraft:engine:reference_diameter = 6.15,
 aircraft:engine:data_file=models/engines/turbofan_23k_1.deck
 

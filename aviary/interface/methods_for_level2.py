@@ -45,7 +45,7 @@ from aviary.utils.aviary_values import AviaryValues
 
 from aviary.variable_info.functions import setup_trajectory_params, override_aviary_vars
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
-from aviary.variable_info.enums import AnalysisScheme, ProblemType, SpeedType, AlphaModes, EquationsOfMotion, LegacyCode
+from aviary.variable_info.enums import AnalysisScheme, ProblemType, SpeedType, AlphaModes, EquationsOfMotion, LegacyCode, Verbosity
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 
 from aviary.subsystems.propulsion.engine_deck import EngineDeck
@@ -1007,7 +1007,7 @@ class AviaryProblem(om.Problem):
                 ode_args=self.ode_args,
                 alpha_mode=AlphaModes.REQUIRED_LIFT,
                 simupy_args=dict(
-                    DEBUG=True,
+                    verbosity=Verbosity.DEBUG,
                 ),
             )
             cruise_vals = {
@@ -1521,7 +1521,7 @@ class AviaryProblem(om.Problem):
             for source, target in connect_map.items():
                 connect_with_common_params(self, source, target)
 
-    def add_driver(self, optimizer=None, use_coloring=None, max_iter=50, debug_print=False):
+    def add_driver(self, optimizer=None, use_coloring=None, max_iter=50, verbosity=Verbosity.BRIEF):
         """
         Add an optimization driver to the Aviary problem.
 
@@ -1542,8 +1542,8 @@ class AviaryProblem(om.Problem):
             The maximum number of iterations allowed for the optimization process. Default is 50. This option is
             applicable to "SNOPT", "IPOPT", and "SLSQP" optimizers.
 
-        debug_print : bool or list, optional
-            If True, default debug print options ['desvars','ln_cons','nl_cons','objs'] will be set. If a list is
+        verbosity : Verbosity or list, optional
+            If Verbosity.DEBUG, debug print options ['desvars','ln_cons','nl_cons','objs'] will be set. If a list is
             provided, it will be used as the debug print options.
 
         Returns
@@ -1585,10 +1585,10 @@ class AviaryProblem(om.Problem):
             driver.options["maxiter"] = max_iter
             driver.options["disp"] = True
 
-        if debug_print:
-            if isinstance(debug_print, list):
-                driver.options['debug_print'] = debug_print
-            else:
+        if verbosity != Verbosity.QUIET:
+            if isinstance(verbosity, list):
+                driver.options['debug_print'] = verbosity
+            elif verbosity.value >= 2:
                 driver.options['debug_print'] = ['desvars', 'ln_cons', 'nl_cons', 'objs']
 
     def add_design_variables(self):
@@ -2299,7 +2299,7 @@ class AviaryProblem(om.Problem):
             If True (default), Dymos html plots will be generated as part of the output.
         """
 
-        if self.aviary_inputs.get_val('debug_mode'):
+        if self.aviary_inputs.get_val('verbosity').value >= 2:
             self.final_setup()
             with open('input_list.txt', 'w') as outfile:
                 self.model.list_inputs(out_stream=outfile)
@@ -2321,7 +2321,7 @@ class AviaryProblem(om.Problem):
             failed = self.run_model()
             warnings.filterwarnings('default', category=UserWarning)
 
-        if self.aviary_inputs.get_val('debug_mode'):
+        if self.aviary_inputs.get_val('verbosity').value >= 2:
             with open('output_list.txt', 'w') as outfile:
                 self.model.list_outputs(out_stream=outfile)
 
