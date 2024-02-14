@@ -110,7 +110,7 @@ class TwoDOFPhase(PhaseBuilderBase):
         else:
             time_ref = 100.
 
-        phase.set_state_options("time", rate_source="dt_dr", targets=['t_curr'] if 'retract' in phase_name else [],
+        phase.set_state_options("time", rate_source="dt_dr",
                                 fix_initial=fix_initial, fix_final=False, ref=time_ref, defect_ref=time_ref * 1.e2)
 
         phase.set_state_options("mass", rate_source="dmass_dr",
@@ -126,6 +126,12 @@ class TwoDOFPhase(PhaseBuilderBase):
             phase.add_parameter(
                 "t_init_flaps", units="s", static_target=True, opt=False, val=100)
 
+        phase.add_polynomial_control(Dynamic.Mission.ALTITUDE,
+                                     order=control_order,
+                                     fix_initial=fix_initial,
+                                     rate_targets=['dh_dr'], rate2_targets=['d2h_dr2'],
+                                     opt=False, upper=40.e3, ref=30.e3, lower=-1.)
+
         if 'rotation' in phase_name:
             phase.add_polynomial_control("TAS",
                                          order=control_order,
@@ -133,12 +139,6 @@ class TwoDOFPhase(PhaseBuilderBase):
                                          opt=opt, lower=1, upper=500, ref=250,
                                          fix_initial=fix_initial,
                                          )
-
-            phase.add_polynomial_control(Dynamic.Mission.ALTITUDE,
-                                         order=control_order,
-                                         fix_initial=fix_initial,
-                                         rate_targets=['dh_dr'], rate2_targets=['d2h_dr2'],
-                                         opt=False, upper=40.e3, ref=30.e3, lower=-1.)
 
             phase.add_polynomial_control("alpha",
                                          order=control_order,

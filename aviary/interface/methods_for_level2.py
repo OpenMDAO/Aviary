@@ -19,6 +19,7 @@ from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
 from aviary.mission.flops_based.phases.build_landing import Landing
 from aviary.mission.flops_based.phases.build_takeoff import Takeoff
 from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
+from aviary.mission.flops_based.phases.two_dof_phase import TwoDOFPhase
 from aviary.mission.gasp_based.ode.groundroll_ode import GroundrollODE
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_ode import \
@@ -67,6 +68,7 @@ GASP = LegacyCode.GASP
 TWO_DEGREES_OF_FREEDOM = EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
 HEIGHT_ENERGY = EquationsOfMotion.HEIGHT_ENERGY
 SOLVED = EquationsOfMotion.SOLVED
+SOLVED_2DOF = EquationsOfMotion.SOLVED_2DOF
 
 
 def wrapped_convert_units(val_unit_tuple, new_units):
@@ -306,7 +308,7 @@ class AviaryProblem(om.Problem):
 
         ## PROCESSING ##
         # set up core subsystems
-        if mission_method is HEIGHT_ENERGY:
+        if mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
             everything_else_origin = FLOPS
         elif mission_method in (TWO_DEGREES_OF_FREEDOM, SOLVED):
             everything_else_origin = GASP
@@ -699,10 +701,15 @@ class AviaryProblem(om.Problem):
             else:
                 phase_builder = EnergyPhase
 
+        if self.mission_method is SOLVED_2DOF:
+            phase_builder = TwoDOFPhase
+
         phase_object = phase_builder.from_phase_info(
             phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data)
 
         phase = phase_object.build_phase(aviary_options=self.aviary_inputs)
+
+        self.phase_objects.append(phase_object)
 
         # TODO: add logic to filter which phases get which controls.
         # right now all phases get all controls added from every subsystem.
@@ -759,7 +766,7 @@ class AviaryProblem(om.Problem):
                 units="s",
                 duration_ref=duration_ref,
             )
-        else:
+        elif self.mission_method is HEIGHT_ENERGY:
             input_initial = False
             user_options.set_val('initial_ref', 10., 'min')
             duration_bounds = user_options.get_val("duration_bounds", 'min')
@@ -1055,8 +1062,9 @@ class AviaryProblem(om.Problem):
                 for timeseries in timeseries_to_add:
                     phase.add_timeseries_output(timeseries)
 
-        if self.mission_method is TWO_DEGREES_OF_FREEDOM or self.mission_method is HEIGHT_ENERGY:
+        if self.mission_method in (TWO_DEGREES_OF_FREEDOM, HEIGHT_ENERGY, SOLVED_2DOF):
             if self.analysis_scheme is AnalysisScheme.COLLOCATION:
+                self.phase_objects = []
                 for phase_idx, phase_name in enumerate(phases):
                     phase = traj.add_phase(
                         phase_name, self._get_phase(phase_name, phase_idx))
@@ -1377,6 +1385,9 @@ class AviaryProblem(om.Problem):
             self._link_phases_helper_with_options(
                 phases, 'optimize_mach', Dynamic.Mission.MACH)
 
+        elif self.mission_method is SOLVED_2DOF:
+            pass
+
         elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
             if self.analysis_scheme is AnalysisScheme.COLLOCATION:
                 self.traj.link_phases(["groundroll", "rotation", "ascent"], [
@@ -1628,7 +1639,7 @@ class AviaryProblem(om.Problem):
             for dv_name, dv_dict in dv_dict.items():
                 self.model.add_design_var(dv_name, **dv_dict)
 
-        if self.mission_method is HEIGHT_ENERGY:
+        if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
             optimize_mass = self.pre_mission_info.get('optimize_mass')
             if optimize_mass:
                 self.model.add_design_var(Mission.Design.GROSS_MASS, units='lbm',
@@ -1882,6 +1893,8 @@ class AviaryProblem(om.Problem):
             if self.mission_method is SOLVED:
                 # If so, add solved guesses to the problem
                 self._add_solved_guesses(idx, phase_name, phase)
+            elif self.mission_method is SOLVED_2DOF:
+                self.phase_objects[idx].apply_initial_guesses(self, 'traj', phase)
             else:
                 # If not, fetch the initial guesses specific to the phase
                 # check if guesses exist for this phase
