@@ -53,7 +53,7 @@ jobs:
               "title": "${{ env.title }}",
               "url": "${{ env.url }}",
               "assignees": "${{ env.assignees }}",
-              "reviewers": "${{ env.reviewers_list}}"
+              "reviewers": "${{ env.reviewers_list }}"
             }
           ignore_cert: true
           nodemailerlog: true
