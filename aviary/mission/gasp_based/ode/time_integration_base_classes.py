@@ -697,7 +697,7 @@ class SGMTrajBase(om.ExplicitComponent):
                 next_prob.state_equation_function(next_res.t[-1], next_res.x[-1, :])
                 costate[:] = next_prob.compute_totals(
                     output,
-                    next_prob.states.keys(),
+                    list(next_prob.states.keys()),
                     return_format='array'
                 ).squeeze()
 
@@ -743,7 +743,7 @@ class SGMTrajBase(om.ExplicitComponent):
                 else:
                     dg_dx[0, :] = prob.compute_totals(
                         [channel_name],
-                        prob.states.keys(),
+                        list(prob.states.keys()),
                         return_format='array'
                     )
 
@@ -804,7 +804,7 @@ class SGMTrajBase(om.ExplicitComponent):
 
                             dh_j_dx = prob.compute_totals(
                                 [state_name],
-                                prob.states.keys(),
+                                list(prob.states.keys()),
                                 return_format='array').squeeze()
 
                             dh_dparam[state_idx, :] = prob.compute_totals(
@@ -835,7 +835,7 @@ class SGMTrajBase(om.ExplicitComponent):
 
                 state_rate_names = [val['rate'] for _, val in prob.states.items()]
                 df_dx_data[idx, :, :] = prob.compute_totals(state_rate_names,
-                                                            prob.states.keys(),
+                                                            list(prob.states.keys()),
                                                             return_format='array').T
                 if param_dict:
                     df_dparam_data[idx, ...] = prob.compute_totals(
