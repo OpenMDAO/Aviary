@@ -73,7 +73,7 @@ class RunScriptTest(unittest.TestCase):
 
     def run_script(self, script_path, max_allowable_time=180):
         """
-        Attempt to run a script with a 90-second timeout and handle errors.
+        Attempt to run a script with a 180-second timeout and handle errors.
 
         Parameters
         ----------
