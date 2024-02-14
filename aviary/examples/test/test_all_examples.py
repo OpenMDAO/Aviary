@@ -71,9 +71,9 @@ class RunScriptTest(unittest.TestCase):
                     run_files.append(Path(root) / file)
         return run_files
 
-    def run_script(self, script_path):
+    def run_script(self, script_path, max_allowable_time=90):
         """
-        Attempt to run a script with a 10-second timeout and handle errors.
+        Attempt to run a script with a 90-second timeout and handle errors.
 
         Parameters
         ----------
@@ -85,9 +85,10 @@ class RunScriptTest(unittest.TestCase):
         Exception
             Any exception other than ImportError or TimeoutExpired that occurs while running the script.
         """
-        proc = subprocess.Popen(['python', script_path],
-                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        proc.wait()
+        with open(os.devnull, 'w') as devnull:
+            proc = subprocess.Popen(['python', script_path],
+                                    stdout=devnull, stderr=subprocess.PIPE)
+        proc.wait(timeout=max_allowable_time)
         (stdout, stderr) = proc.communicate()
 
         if proc.returncode != 0:

@@ -189,7 +189,7 @@ class FlightPathODE(BaseODE):
                                     atol=1e-8, print_level=print_level)
 
         self.add_subsystem(
-            "eoms",
+            "flight_path_eom",
             FlightPathEOM(
                 num_nodes=nn,
                 ground_roll=self.options['ground_roll'],
@@ -205,7 +205,7 @@ class FlightPathODE(BaseODE):
         )
 
         if not self.options['ground_roll']:
-            self.promotes('eoms', outputs=[
+            self.promotes('flight_path_eom', outputs=[
                           Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE])
 
         self.add_excess_rate_comps(nn)
@@ -261,7 +261,7 @@ class FlightPathODE(BaseODE):
                 'core_aerodynamics',
                 'alpha_comp',
                 'prop_group',
-                'eoms',
+                'flight_path_eom',
                 'mass_trigger',
                 'SPECIFIC_ENERGY_RATE_EXCESS',
                 'ALTITUDE_RATE_MAX',

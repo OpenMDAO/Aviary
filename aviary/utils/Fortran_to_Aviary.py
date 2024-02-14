@@ -15,7 +15,6 @@ Example inputs:
 aircraft:fuselage:pressure_differential = .5, atm !DELP in GASP, but using atmospheres instead of psi
 ARNGE(1) = 3600 !target range in nautical miles
 pyc_phases = taxi, groundroll, rotation, landing
-debug_mode = True
 """
 
 import csv
@@ -29,7 +28,7 @@ from aviary.utils.functions import convert_strings_to_data
 from aviary.utils.named_values import NamedValues, get_items
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Mission
-from aviary.variable_info.enums import LegacyCode
+from aviary.variable_info.enums import LegacyCode, Verbosity
 from aviary.utils.functions import get_path
 from aviary.utils.legacy_code_data.deprecated_vars import flops_deprecated_vars, gasp_deprecated_vars
 
@@ -39,7 +38,7 @@ GASP = LegacyCode.GASP
 
 
 def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
-                       out_file=None, force=False):
+                       out_file=None, force=False, verbosity=Verbosity.BRIEF):
     '''
     Create an Aviary CSV file from a Fortran input deck
     Required input is the filepath to the input deck and legacy code. Optionally, a
@@ -51,13 +50,15 @@ def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
     # TODO generate both an Aviary input file and a phase_info file
 
     vehicle_data = {'input_values': NamedValues(), 'unused_values': NamedValues(),
-                    'initial_guesses': initial_guesses, 'debug_mode': False}
+                    'initial_guesses': initial_guesses, 'verbosity': verbosity}
 
     fortran_deck: Path = get_path(fortran_deck, verbose=False)
 
-    if not out_file:
+    if out_file:
+        out_file = Path(out_file)
+    else:
         name = fortran_deck.stem
-        out_file: Path = fortran_deck.parents / name + '_converted.csv'
+        out_file: Path = fortran_deck.parent.resolve().joinpath(name + '_converted.csv')
 
     if legacy_code is GASP:
         default_extension = '.dat'
@@ -100,8 +101,6 @@ def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
     # open the file in write mode
     with open(out_file, 'w', newline='') as f:
         writer = csv.writer(f)
-        writer.writerow(['debug_mode', vehicle_data['debug_mode']])
-        writer.writerow([])
 
         # Values that have been successfully translated to Aviary variables
         writer.writerow(['# Input Values'])
@@ -243,14 +242,10 @@ def process_and_store_data(data, var_name, legacy_code, current_namelist, altern
         var_name = var_name.split('(')[0]  # remove the index formatting
 
     list_of_equivalent_aviary_names = update_name(
-        alternate_names, current_namelist+var_name, vehicle_data['debug_mode'])
+        alternate_names, current_namelist+var_name, vehicle_data['verbosity'])
     for name in list_of_equivalent_aviary_names:
         if not skip_variable:
-            if name == 'debug_mode':
-                vehicle_data['debug_mode'] = var_values[0]
-                continue
-
-            elif name in guess_names and legacy_code is GASP:
+            if name in guess_names and legacy_code is GASP:
                 # all initial guesses take only a single value
                 vehicle_data['initial_guesses'][name] = float(var_values[0])
                 continue
@@ -262,7 +257,7 @@ def process_and_store_data(data, var_name, legacy_code, current_namelist, altern
 
         vehicle_data['unused_values'] = set_value(name, var_values, vehicle_data['unused_values'],
                                                   var_ind=var_ind, units=data_units)
-        if vehicle_data['debug_mode']:
+        if vehicle_data['verbosity'].value >= 2:
             print('Unused:', name, var_values, comment)
 
     return vehicle_data
@@ -323,7 +318,7 @@ def generate_aviary_names(code_bases):
     return alternate_names
 
 
-def update_name(alternate_names, var_name, debug_mode=False):
+def update_name(alternate_names, var_name, verbosity=Verbosity.BRIEF):
     '''update_name will convert a Fortran name to a list of equivalent Aviary names.'''
 
     all_equivalent_names = []
@@ -335,7 +330,7 @@ def update_name(alternate_names, var_name, debug_mode=False):
 
     # if there are no equivalent variable names, return the original name
     if len(all_equivalent_names) == 0:
-        if debug_mode:
+        if verbosity.value >= 2:
             print('passing: ', var_name)
         all_equivalent_names = [var_name]
     return all_equivalent_names
@@ -361,7 +356,8 @@ def update_gasp_options(vehicle_data):
     if isinstance(design_range, list):
         # if the design range target_range value is 0, set the problem_type to fallout
         if design_range[0] == 0:
-            input_values.set_val('problem_type', ['fallout'])
+            problem_type = 'fallout'
+            input_values.set_val('problem_type', [problem_type])
             design_range = 0
         if problem_type == 'sizing':
             design_range = design_range[0]
@@ -605,6 +601,18 @@ def _setup_F2A_parser(parser):
         action="store_true",
         help="Allow overwriting existing output files",
     )
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        help="Enable verbose print statements",
+    )
+    parser.add_argument(
+        "-vv",
+        "--very_verbose",
+        action="store_true",
+        help="Enable debug print statements",
+    )
 
 
 def _exec_F2A(args, user_args):
@@ -613,5 +621,12 @@ def _exec_F2A(args, user_args):
         args.input_deck = args.input_deck[0]
     filepath = args.input_deck
 
+    if args.very_verbose is True:
+        verbosity = Verbosity.DEBUG
+    elif args.verbose is True:
+        verbosity = Verbosity.VERBOSE
+    else:
+        verbosity = Verbosity.BRIEF
+
     create_aviary_deck(filepath, args.legacy_code, args.defaults_deck,
-                       Path(args.out_file), args.force)
+                       args.out_file, args.force, verbosity)

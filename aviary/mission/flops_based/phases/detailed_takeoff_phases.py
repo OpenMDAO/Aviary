@@ -880,7 +880,7 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
         phase.add_path_constraint(
             'v_over_v_stall', lower=1.25, ref=2.0)
 
-        phase.add_boundary_constraint('eoms.forces_vertical', loc='initial', equals=0,
+        phase.add_boundary_constraint('takeoff_eom.forces_vertical', loc='initial', equals=0,
                                       ref=100000)
 
         return phase

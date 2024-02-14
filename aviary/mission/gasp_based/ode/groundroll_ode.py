@@ -58,7 +58,7 @@ class GroundrollODE(BaseODE):
                     src_indices=np.zeros(nn, dtype=int),
                 )
 
-        self.add_subsystem("eoms", GroundrollEOM(num_nodes=nn, analysis_scheme=analysis_scheme),
+        self.add_subsystem("groundroll_eom", GroundrollEOM(num_nodes=nn, analysis_scheme=analysis_scheme),
                            promotes=["*"])
 
         self.add_subsystem("exec", om.ExecComp(f"over_a = velocity / velocity_rate",
