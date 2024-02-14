@@ -13,6 +13,7 @@ from dymos.utils.misc import _unspecified
 
 import openmdao.api as om
 from openmdao.core.component import Component
+from openmdao.utils.mpi import MPI
 from openmdao.utils.units import convert_units
 
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
@@ -142,13 +143,17 @@ class AviaryGroup(om.Group):
             all_prom_inputs.extend(var_prom)
 
         # Component promotes aren't handled until this group resolves.
-        # Here, we address anything promoted in AviaryProblem.
+        # Here, we address anything promoted with an alias in AviaryProblem.
         for system in self.system_iter(recurse=False, typ=Component):
             input_meta = system._var_promotes['input']
             var_prom = [v[0][1] for v in input_meta if isinstance(v[0], tuple)]
             all_prom_inputs.extend(var_prom)
             var_prom = [v[0] for v in input_meta if not isinstance(v[0], tuple)]
             all_prom_inputs.extend(var_prom)
+
+        if MPI and self.comm.size > 1:
+            # Under MPI, promotion info only lives on rank 0, so broadcast.
+            all_prom_inputs = self.comm.bcast(all_prom_inputs, root=0)
 
         for key in aviary_metadata:
 
@@ -173,6 +178,19 @@ class AviaryGroup(om.Group):
                     continue
 
             self.set_input_defaults(key, val=val, units=units)
+
+        # Set a more appropriate solver for dymos when the phases are linked.
+        if MPI and isinstance(self.traj.phases.linear_solver, om.PETScKrylov):
+
+            # When any phase is connected with input_initial = True, dymos puts
+            # a jacobi solver in the phases group. This is necessary in case
+            # you the phases are cyclic. However, this causes some problems
+            # with the newton solvers in Aviary, exacerbating issues with
+            # solver tolerances at multiple levels. Since Aviary's phases
+            # are basically in series, the jacobi solver is a much better
+            # choice and should be able to handle it in a couple of
+            # iterations.
+            self.traj.phases.linear_solver = om.LinearBlockJac(maxiter=5)
 
 
 class AviaryProblem(om.Problem):
