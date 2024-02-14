@@ -1084,7 +1084,7 @@ class AviaryProblem(om.Problem):
                     for parameter in parameter_dict:
                         external_parameters[phase_name][parameter] = parameter_dict[parameter]
 
-            if self.mission_method is HEIGHT_ENERGY:
+            if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
                 traj = setup_trajectory_params(
                     self.model, traj, self.aviary_inputs, phases, meta_data=self.meta_data, external_parameters=external_parameters)
 
@@ -1210,7 +1210,7 @@ class AviaryProblem(om.Problem):
                 self.post_mission.add_subsystem(external_subsystem.name,
                                                 subsystem_postmission)
 
-        if self.mission_method is HEIGHT_ENERGY:
+        if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
             phases = list(self.phase_info.keys())
             ecomp = om.ExecComp('fuel_burned = initial_mass - mass_final',
                                 initial_mass={'units': 'lbm'},
@@ -1286,7 +1286,7 @@ class AviaryProblem(om.Problem):
                 ('initial_mass', Mission.Design.GROSS_MASS)],
             promotes_outputs=[("mass_resid", Mission.Constraints.MASS_RESIDUAL)])
 
-        if self.mission_method is not SOLVED:
+        if self.mission_method not in (SOLVED, SOLVED_2DOF):
             self.post_mission.add_constraint(
                 Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.e5)
 
@@ -1387,9 +1387,15 @@ class AviaryProblem(om.Problem):
 
         elif self.mission_method is SOLVED_2DOF:
             self.traj.link_phases(
-                phases, [Dynamic.Mission.MASS, Dynamic.Mission.ALTITUDE], connected=True)
+                phases, [Dynamic.Mission.MASS], connected=True)
             self.traj.link_phases(
                 phases, ["time", Dynamic.Mission.DISTANCE, Dynamic.Mission.MACH], connected=False)
+            if len(phases) > 2:
+                self.traj.link_phases(
+                    phases[1:], [Dynamic.Mission.ALTITUDE], connected=False)
+            if len(phases) > 3:
+                self.traj.link_phases(
+                    phases[2:], [Dynamic.Mission.FLIGHT_PATH_ANGLE], connected=False)
 
         elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
             if self.analysis_scheme is AnalysisScheme.COLLOCATION:
@@ -1756,6 +1762,10 @@ class AviaryProblem(om.Problem):
                 last_phase = list(self.traj._phases.items())[-1][1]
                 last_phase.add_objective(
                     Dynamic.Mission.MASS, loc='final', ref=ref)
+            elif objective_type == 'time':
+                final_phase_name = list(self.phase_info.keys())[-1]
+                self.model.add_objective(
+                    f"traj.{final_phase_name}.timeseries.time", index=-1, ref=ref)
             elif objective_type == "hybrid_objective":
                 self._add_hybrid_objective(self.phase_info)
                 self.model.add_objective("obj_comp.obj")

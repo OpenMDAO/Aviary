@@ -40,7 +40,7 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
         self.add_input(Dynamic.Mission.DRAG, shape=nn,
                        desc=Dynamic.Mission.DRAG, units="N")
         add_aviary_input(self, Aircraft.Wing.INCIDENCE, val=0, units="rad")
-        self.add_input("alpha", val=np.zeros(
+        self.add_input(Dynamic.Mission.ANGLE_OF_ATTACK, val=np.zeros(
             nn), desc="angle of attack", units="rad")
 
         if not self.options["ground_roll"]:
@@ -97,18 +97,18 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
                               wrt=[Aircraft.Wing.INCIDENCE])
 
         self.declare_partials(of=["normal_force", "dTAS_dt"],
-                              wrt=["alpha"],
+                              wrt=[Dynamic.Mission.ANGLE_OF_ATTACK],
                               rows=ar, cols=ar)
 
         self.declare_partials(of="fuselage_pitch",
-                              wrt=["alpha"],
+                              wrt=[Dynamic.Mission.ANGLE_OF_ATTACK],
                               rows=ar, cols=ar, val=1.0)
 
         self.declare_partials(of="fuselage_pitch",
                               wrt=Aircraft.Wing.INCIDENCE,
                               val=-1.0)
 
-        self.declare_partials(of="load_factor", wrt=["alpha"],
+        self.declare_partials(of="load_factor", wrt=[Dynamic.Mission.ANGLE_OF_ATTACK],
                               rows=ar, cols=ar)
 
         if not ground_roll:
@@ -117,7 +117,7 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
 
             self.declare_partials(of=["dgam_dt", "dgam_dt_approx"],
                                   wrt=[Dynamic.Mission.LIFT, "mass", Dynamic.Mission.THRUST_TOTAL,
-                                       Dynamic.Mission.DRAG, "alpha", Dynamic.Mission.FLIGHT_PATH_ANGLE],
+                                       Dynamic.Mission.DRAG, Dynamic.Mission.ANGLE_OF_ATTACK, Dynamic.Mission.FLIGHT_PATH_ANGLE],
                                   rows=ar, cols=ar)
 
             self.declare_partials(of=["normal_force", "dTAS_dt"],
@@ -132,7 +132,7 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
 
             self.declare_partials(of=["dgam_dt", "dgam_dt_approx"],
                                   wrt=[Dynamic.Mission.LIFT, "mass",
-                                       Dynamic.Mission.THRUST_TOTAL, "alpha", Dynamic.Mission.FLIGHT_PATH_ANGLE],
+                                       Dynamic.Mission.THRUST_TOTAL, Dynamic.Mission.ANGLE_OF_ATTACK, Dynamic.Mission.FLIGHT_PATH_ANGLE],
                                   rows=ar, cols=ar)
 
             self.declare_partials(of="fuselage_pitch",
@@ -153,7 +153,7 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
         weight = inputs["mass"] * GRAV_ENGLISH_LBM * LBF_TO_N
         drag = inputs[Dynamic.Mission.DRAG]
         lift = inputs[Dynamic.Mission.LIFT]
-        alpha = inputs["alpha"]
+        alpha = inputs[Dynamic.Mission.ANGLE_OF_ATTACK]
 
         i_wing = inputs[Aircraft.Wing.INCIDENCE]
 
@@ -212,7 +212,7 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
         lift = inputs[Dynamic.Mission.LIFT]
         tas = inputs["TAS"]
         i_wing = inputs[Aircraft.Wing.INCIDENCE]
-        alpha = inputs["alpha"]
+        alpha = inputs[Dynamic.Mission.ANGLE_OF_ATTACK]
 
         if self.options["ground_roll"]:
             mu = MU_TAKEOFF
@@ -257,7 +257,7 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
             GRAV_ENGLISH_LBM * (LBF_TO_N * (-sgam - mu) / m - _f / (weight/LBF_TO_N * m))
 
         partials["dTAS_dt", Dynamic.Mission.LIFT] = mu / m
-        partials["dTAS_dt", "alpha"] = -tsai / m + mu * tcai / m
+        partials["dTAS_dt", Dynamic.Mission.ANGLE_OF_ATTACK] = -tsai / m + mu * tcai / m
         partials["dTAS_dt", Aircraft.Wing.INCIDENCE] = tsai / m - mu * tcai / m
 
         partials["normal_force", Dynamic.Mission.THRUST_TOTAL] = -salpha_i
@@ -268,11 +268,11 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
         partials["load_factor", "mass"] = \
             - (lift + tsai) / (weight**2/LBF_TO_N * cgam) * GRAV_ENGLISH_LBM
 
-        partials["normal_force", "alpha"] = -tcai
+        partials["normal_force", Dynamic.Mission.ANGLE_OF_ATTACK] = -tcai
         partials["normal_force", Aircraft.Wing.INCIDENCE] = tcai
         partials["load_factor", Aircraft.Wing.INCIDENCE] = -tcai / (weight * cgam)
 
-        partials["load_factor", "alpha"] = tcai / (weight * cgam)
+        partials["load_factor", Dynamic.Mission.ANGLE_OF_ATTACK] = tcai / (weight * cgam)
 
         if not ground_roll:
             partials["dt_dr", Dynamic.Mission.FLIGHT_PATH_ANGLE] = -drdot_dgam / dr_dt**2
@@ -286,7 +286,7 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
                                     lift + weight*cgam)/(weight**2 / LBF_TO_N/g * tas))
             partials["dgam_dt", Dynamic.Mission.FLIGHT_PATH_ANGLE] = m * \
                 tas * weight * sgam / mtas2
-            partials["dgam_dt", "alpha"] = m * tas * tcai / mtas2
+            partials["dgam_dt", Dynamic.Mission.ANGLE_OF_ATTACK] = m * tas * tcai / mtas2
             partials["dgam_dt", "TAS"] = - \
                 m * (tsai + lift - weight * cgam) / mtas2
             partials["dgam_dt", Aircraft.Wing.INCIDENCE] = -m * tas * tcai / mtas2

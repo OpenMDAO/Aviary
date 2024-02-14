@@ -156,8 +156,11 @@ class UnsteadySolvedODE(BaseODE):
             throttle_balance_group.linear_solver = om.DirectSolver(assemble_jac=True)
             throttle_balance_group.nonlinear_solver.options['err_on_non_converge'] = True
 
-        kwargs = {'num_nodes': nn, 'aviary_inputs': aviary_options,
-                  'method': 'low_speed'}
+        kwargs = {
+            'num_nodes': nn,
+            'aviary_inputs': aviary_options,
+            'method': 'low_speed',
+        }
         if self.options['clean']:
             kwargs['method'] = 'cruise'
             kwargs['output_alpha'] = False
@@ -195,12 +198,14 @@ class UnsteadySolvedODE(BaseODE):
 
         thrust_alpha_bal = om.BalanceComp()
         if not self.options['ground_roll']:
-            thrust_alpha_bal.add_balance("alpha",
+            thrust_alpha_bal.add_balance(Dynamic.Mission.ANGLE_OF_ATTACK,
                                          units="rad",
                                          val=np.zeros(nn),
                                          lhs_name="dgam_dt_approx",
                                          rhs_name="dgam_dt",
                                          eq_units="rad/s",
+                                         lower=-np.pi/12,
+                                         upper=np.pi/12,
                                          normalize=False)
 
         thrust_alpha_bal.add_balance("thrust_req",
@@ -218,7 +223,7 @@ class UnsteadySolvedODE(BaseODE):
         control_iter_group.nonlinear_solver = om.NewtonSolver(solve_subsystems=True,
                                                               atol=1.0e-10,
                                                               rtol=1.0e-10)
-        # self.nonlinear_solver.linesearch = om.ArmijoGoldsteinLS()
+        # control_iter_group.nonlinear_solver.linesearch = om.BoundsEnforceLS()
         control_iter_group.linear_solver = om.DirectSolver(assemble_jac=True)
 
         self.add_subsystem("mass_rate",

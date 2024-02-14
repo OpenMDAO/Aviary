@@ -577,6 +577,7 @@ class Dynamic:
         ALTITUDE = 'altitude'
         ALTITUDE_RATE = 'altitude_rate'
         ALTITUDE_RATE_MAX = 'altitude_rate_max'
+        ANGLE_OF_ATTACK = 'angle_of_attack'
         DENSITY = 'density'
         DISTANCE = 'distance'
         DISTANCE_RATE = 'distance_rate'

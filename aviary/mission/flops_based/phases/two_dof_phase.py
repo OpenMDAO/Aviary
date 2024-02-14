@@ -8,7 +8,6 @@ from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.mission.flops_based.phases.phase_utils import add_subsystem_variables_to_phase, get_initial
 from aviary.variable_info.variables import Dynamic
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_ode import UnsteadySolvedODE
-from aviary.mission.gasp_based.ode.groundroll_ode import GroundrollODE
 
 
 # TODO: support/handle the following in the base class
@@ -85,15 +84,18 @@ class TwoDOFPhase(PhaseBuilderBase):
         initial_ref = user_options.get_val('initial_ref', units='m')
         duration_bounds = user_options.get_val('duration_bounds', units='m')
         duration_ref = user_options.get_val('duration_ref', units='m')
+        ground_roll = user_options.get_val('ground_roll')
+        balance_throttle = user_options.get_val('balance_throttle')
+        rotation = user_options.get_val('rotation')
+        constraints = user_options.get_val('constraints')
 
-        phase_name = 'rotation'
-
-        phase.add_parameter(
-            Dynamic.Mission.THROTTLE,
-            opt=False,
-            units="unitless",
-            val=throttle_setting,
-            static_target=False)
+        if not balance_throttle:
+            phase.add_parameter(
+                Dynamic.Mission.THROTTLE,
+                opt=False,
+                units="unitless",
+                val=throttle_setting,
+                static_target=False)
 
         if fix_initial:
             phase.set_time_options(fix_initial=fix_initial, fix_duration=False,
@@ -105,13 +107,8 @@ class TwoDOFPhase(PhaseBuilderBase):
                                    initial_bounds=initial_bounds, initial_ref=initial_ref,
                                    duration_bounds=duration_bounds, duration_ref=duration_ref)
 
-        if phase_name == "cruise" or phase_name == "descent":
-            time_ref = 1.e4
-        else:
-            time_ref = 100.
-
         phase.set_state_options("time", rate_source="dt_dr",
-                                fix_initial=fix_initial, fix_final=False, ref=time_ref, defect_ref=time_ref * 1.e2)
+                                fix_initial=fix_initial, fix_final=False, ref=100., defect_ref=100. * 1.e2)
 
         phase.set_state_options("mass", rate_source="dmass_dr",
                                 fix_initial=fix_initial, fix_final=False, ref=170.e3, defect_ref=170.e5,
@@ -120,31 +117,28 @@ class TwoDOFPhase(PhaseBuilderBase):
         phase.add_parameter("wing_area", units="ft**2",
                             static_target=True, opt=False, val=1370)
 
-        if Dynamic.Mission.VELOCITY_RATE in phase_name or 'ascent' in phase_name:
-            phase.add_parameter(
-                "t_init_gear", units="s", static_target=True, opt=False, val=100)
-            phase.add_parameter(
-                "t_init_flaps", units="s", static_target=True, opt=False, val=100)
+        phase.add_polynomial_control("TAS",
+                                     order=control_order,
+                                     units="kn", val=200.0,
+                                     opt=opt, lower=1, upper=500, ref=250,
+                                     fix_initial=fix_initial,
+                                     rate_targets=['dTAS_dr'],
+                                     )
 
-        if 'rotation' in phase_name:
-            phase.add_polynomial_control("TAS",
-                                         order=control_order,
-                                         units="kn", val=200.0,
-                                         opt=opt, lower=1, upper=500, ref=250,
-                                         fix_initial=fix_initial,
-                                         )
-
-            phase.add_polynomial_control("alpha",
+        if rotation:
+            phase.add_polynomial_control(Dynamic.Mission.ANGLE_OF_ATTACK,
                                          order=control_order,
                                          fix_initial=fix_initial,
-                                         lower=-4, upper=15,
+                                         lower=0, upper=15,
                                          units='deg', ref=10.,
-                                         val=[0., 0.],
+                                         val=0.,
                                          opt=opt)
 
-            phase.add_parameter(Dynamic.Mission.ALTITUDE,
-                                val=0., units="ft", opt=False, static_target=True)
-
+        if ground_roll:
+            phase.add_polynomial_control(Dynamic.Mission.ALTITUDE,
+                                         order=1, val=0, opt=False,
+                                         fix_initial=fix_initial,
+                                         rate_targets=['dh_dr'], rate2_targets=['d2h_dr2'])
         else:
             phase.add_polynomial_control(Dynamic.Mission.ALTITUDE,
                                          order=control_order,
@@ -152,73 +146,7 @@ class TwoDOFPhase(PhaseBuilderBase):
                                          rate_targets=['dh_dr'], rate2_targets=['d2h_dr2'],
                                          opt=opt, upper=40.e3, ref=30.e3, lower=-1.)
 
-        phase.add_boundary_constraint(
-            'TAS', loc='final', equals=100., units='kn', ref=100.)
-        # else:
-        #     if 'constant_EAS' in phase_name:
-        #         fixed_EAS = phase_info[phase_name]['fixed_EAS']
-        #         phase.add_parameter("EAS", units="kn", val=fixed_EAS)
-        #     elif 'constant_mach' in phase_name:
-        #         phase.add_parameter(
-        #             Dynamic.Mission.MACH,
-        #             units="unitless",
-        #             val=climb_mach)
-        #     elif 'cruise' in phase_name:
-        #         phase.add_parameter(
-        #             Dynamic.Mission.MACH, units="unitless", val=cruise_mach)
-        #     else:
-        #         phase.add_polynomial_control("TAS",
-        #                                         order=control_order,
-        #                                         fix_initial=False,
-        #                                         units="kn", val=200.0,
-        #                                         opt=True, lower=1, upper=500, ref=250)
-
-        #     phase.add_polynomial_control(Dynamic.Mission.ALTITUDE,
-        #                                     order=control_order,
-        #                                     units="ft", val=0.,
-        #                                     fix_initial=False,
-        #                                     rate_targets=['dh_dr'], rate2_targets=['d2h_dr2'],
-        #                                     opt=opt, upper=40.e3, ref=30.e3, lower=-1.)
-
-        # if phase_name in phases[1:3]:
-        #     phase.add_path_constraint(
-        #         "fuselage_pitch", upper=15., units='deg', ref=15)
-        # if phase_name == "rotation":
-        #     phase.add_boundary_constraint(
-        #         "TAS", loc="final", upper=200., units="kn", ref=200.)
-        #     phase.add_boundary_constraint(
-        #         "normal_force", loc="final", equals=0., units="lbf", ref=10000.0)
-        # elif phase_name == "ascent_to_gear_retract":
-        #     phase.add_path_constraint("load_factor", lower=0.0, upper=1.10)
-        # elif phase_name == "ascent_to_flap_retract":
-        #     phase.add_path_constraint("load_factor", lower=0.0, upper=1.10)
-        # elif phase_name == "ascent":
-        #     phase.add_path_constraint("EAS", upper=250., units="kn", ref=250.)
-        # elif phase_name == Dynamic.Mission.VELOCITY_RATE:
-        #     phase.add_boundary_constraint(
-        #         "EAS", loc="final", equals=250., units="kn", ref=250.)
-        # elif phase_name == "climb_at_constant_EAS":
-        #     pass
-        # elif phase_name == "climb_at_constant_EAS_to_mach":
-        #     phase.add_boundary_constraint(
-        #         Dynamic.Mission.MACH, loc="final", equals=climb_mach, units="unitless")
-        # elif phase_name == "climb_at_constant_mach":
-        #     pass
-        # elif phase_name == "descent":
-        #     phase.add_boundary_constraint(
-        #         Dynamic.Mission.DISTANCE,
-        #         loc="final",
-        #         equals=target_range,
-        #         units="NM",
-        #         ref=1.e3)
-        #     phase.add_boundary_constraint(
-        #         Dynamic.Mission.ALTITUDE,
-        #         loc="final",
-        #         equals=10.e3,
-        #         units="ft",
-        #         ref=10e3)
-        #     phase.add_boundary_constraint(
-        #         "TAS", loc="final", equals=250., units="kn", ref=250.)
+        self._add_user_defined_constraints(phase, constraints)
 
         phase.add_timeseries_output(Dynamic.Mission.THRUST_TOTAL, units="lbf")
         phase.add_timeseries_output("thrust_req", units="lbf")
@@ -227,10 +155,12 @@ class TwoDOFPhase(PhaseBuilderBase):
         phase.add_timeseries_output("EAS", units="kn")
         phase.add_timeseries_output("TAS", units="kn")
         phase.add_timeseries_output(Dynamic.Mission.LIFT)
+        phase.add_timeseries_output(Dynamic.Mission.DRAG)
         phase.add_timeseries_output("time")
         phase.add_timeseries_output("mass")
         phase.add_timeseries_output(Dynamic.Mission.ALTITUDE)
-        phase.add_timeseries_output("alpha")
+        phase.add_timeseries_output(Dynamic.Mission.ANGLE_OF_ATTACK)
+        phase.add_timeseries_output(Dynamic.Mission.THROTTLE)
         phase.add_timeseries_output(
             "fuselage_pitch", output_name="theta", units="deg")
 
@@ -265,6 +195,7 @@ class TwoDOFPhase(PhaseBuilderBase):
             'input_speed_type': self.user_options.get_val('input_speed_type'),
             'clean': self.user_options.get_val('clean'),
             'ground_roll': self.user_options.get_val('ground_roll'),
+            'balance_throttle': self.user_options.get_val('balance_throttle'),
         }
 
 
@@ -296,11 +227,13 @@ TwoDOFPhase._add_meta_data('control_order', val=1, desc='control order')
 TwoDOFPhase._add_meta_data('opt', val=True, desc='opt')
 TwoDOFPhase._add_meta_data('input_speed_type', val='TAS', desc='input speed type')
 TwoDOFPhase._add_meta_data('ground_roll', val=True)
+TwoDOFPhase._add_meta_data('rotation', val=False)
 TwoDOFPhase._add_meta_data('clean', val=False)
-
+TwoDOFPhase._add_meta_data('balance_throttle', val=False)
+TwoDOFPhase._add_meta_data('constraints', val={})
 
 TwoDOFPhase._add_initial_guess_meta_data(
-    InitialGuessTime(),
+    InitialGuessTime(key='distance'),
     desc='initial guess for initial time and duration specified as a tuple')
 
 TwoDOFPhase._add_initial_guess_meta_data(
@@ -314,3 +247,7 @@ TwoDOFPhase._add_initial_guess_meta_data(
 TwoDOFPhase._add_initial_guess_meta_data(
     InitialGuessState('mass'),
     desc='initial guess for mass')
+
+TwoDOFPhase._add_initial_guess_meta_data(
+    InitialGuessState('time'),
+    desc='initial guess for time')
