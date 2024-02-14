@@ -13,8 +13,6 @@ from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuil
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
 from aviary.variable_info.enums import AnalysisScheme, AlphaModes, SpeedType
 from aviary.variable_info.variables import Dynamic
-from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
-from aviary.mission.ode.altitude_rate import AltitudeRate
 
 
 class ClimbODE(BaseODE):

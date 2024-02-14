@@ -145,6 +145,8 @@ class SGMAscent(SimuPyProblem):
                 Dynamic.Mission.DISTANCE,
                 Dynamic.Mission.ALTITUDE,
                 Dynamic.Mission.VELOCITY,
+                Dynamic.Mission.FLIGHT_PATH_ANGLE,
+                "alpha",
             ],
             # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
@@ -217,15 +219,15 @@ class SGMAscentCombined(SGMAscent):
         self.phase_name = phase_name
         self.fuselage_pitch_max = fuselage_pitch_max
 
-        ode0 = SGMAscent(alpha_mode=AlphaModes.DEFAULT,
+        ode0 = SGMAscent(alpha_mode=AlphaModes.DEFAULT, phase_name='ascent_ode0',
                          ode_args=ode_args, simupy_args=simupy_args)
-        rotation = SGMAscent(alpha_mode=AlphaModes.ROTATION,
+        rotation = SGMAscent(alpha_mode=AlphaModes.ROTATION, phase_name='ascent_rotation',
                              ode_args=ode_args, simupy_args=simupy_args)
-        load_factor = SGMAscent(alpha_mode=AlphaModes.LOAD_FACTOR,
+        load_factor = SGMAscent(alpha_mode=AlphaModes.LOAD_FACTOR, phase_name='ascent_load_factor',
                                 ode_args=ode_args, simupy_args=simupy_args)
-        fuselage_pitch = SGMAscent(
-            alpha_mode=AlphaModes.FUSELAGE_PITCH, ode_args=ode_args, simupy_args=simupy_args)
-        decel = SGMAscent(alpha_mode=AlphaModes.DECELERATION,
+        fuselage_pitch = SGMAscent(alpha_mode=AlphaModes.FUSELAGE_PITCH, phase_name='ascent_pitch',
+                                   ode_args=ode_args, simupy_args=simupy_args)
+        decel = SGMAscent(alpha_mode=AlphaModes.DECELERATION, phase_name='ascent_decel',
                           ode_args=ode_args, simupy_args=simupy_args)
 
         self.odes = (ode0, rotation, load_factor, fuselage_pitch, decel,)
@@ -390,6 +392,7 @@ class SGMAccel(SimuPyProblem):
                 Dynamic.Mission.MASS,
                 Dynamic.Mission.DISTANCE,
                 Dynamic.Mission.ALTITUDE,
+                Dynamic.Mission.VELOCITY,
             ],
             # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
@@ -506,6 +509,7 @@ class SGMCruise(SimuPyProblem):
                 Dynamic.Mission.MASS,
                 Dynamic.Mission.DISTANCE,
                 Dynamic.Mission.ALTITUDE,
+                Dynamic.Mission.VELOCITY,
             ],
             # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={

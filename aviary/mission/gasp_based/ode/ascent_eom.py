@@ -151,17 +151,12 @@ class AscentEOM(om.ExplicitComponent):
             * GRAV_ENGLISH_GASP
             / weight
         )
-        import warnings
-        warnings.simplefilter("error")
-        try:
-            outputs[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE] = (
-                (thrust_across_flightpath + incremented_lift - weight * np.cos(gamma))
-                * GRAV_ENGLISH_GASP
-                / (TAS * weight)
-            )
-        except:
-            print(TAS, weight)
-            exit()
+
+        outputs[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE] = (
+            (thrust_across_flightpath + incremented_lift - weight * np.cos(gamma))
+            * GRAV_ENGLISH_GASP
+            / (TAS * weight)
+        )
 
         outputs[Dynamic.Mission.ALTITUDE_RATE] = TAS * np.sin(gamma)
         outputs[Dynamic.Mission.DISTANCE_RATE] = TAS * np.cos(gamma)
