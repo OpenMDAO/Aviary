@@ -1386,7 +1386,10 @@ class AviaryProblem(om.Problem):
                 phases, 'optimize_mach', Dynamic.Mission.MACH)
 
         elif self.mission_method is SOLVED_2DOF:
-            pass
+            self.traj.link_phases(
+                phases, [Dynamic.Mission.MASS, Dynamic.Mission.ALTITUDE], connected=True)
+            self.traj.link_phases(
+                phases, ["time", Dynamic.Mission.DISTANCE, Dynamic.Mission.MACH], connected=False)
 
         elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
             if self.analysis_scheme is AnalysisScheme.COLLOCATION:

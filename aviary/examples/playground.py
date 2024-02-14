@@ -27,7 +27,7 @@ subsystem_options = {'core_aerodynamics':
 
 phase_info = {
     "pre_mission": {"include_takeoff": False, "optimize_mass": True},
-    'rotation': {
+    'groundroll': {
         'user_options': {
             'num_segments': 5,
             'order': 3,
@@ -48,7 +48,31 @@ phase_info = {
             'times': [(0., 1000.), 'm'],
             'TAS': [(1., 100.), 'kn'],
             'mass': [(175.e3, 175.e3), 'lbm'],
-            'altitude': [(0., 0.), 'ft'],
+            # 'altitude': [(0., 0.), 'ft'],
+        },
+    },
+    'rotation': {
+        'user_options': {
+            'num_segments': 5,
+            'order': 3,
+            'fix_initial': False,
+            'throttle_setting': throttle_max,
+            'input_speed_type': av.SpeedType.TAS,
+            'ground_roll': True,
+            'clean': False,
+            'initial_ref': (1.e3, 'm'),
+            'initial_bounds': ((1., 500.), 'm'),
+            'duration_ref': (1.e3, 'm'),
+            'duration_bounds': ((50., 2000.), 'm'),
+            'control_order': 1,
+            'opt': True,
+        },
+        'subsystem_options': subsystem_options,
+        'initial_guesses': {
+            'times': [(50., 1000.), 'm'],
+            'TAS': [(1., 100.), 'kn'],
+            'mass': [(175.e3, 175.e3), 'lbm'],
+            # 'altitude': [(0., 0.), 'ft'],
         },
     },
     "post_mission": {

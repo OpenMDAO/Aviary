@@ -126,12 +126,6 @@ class TwoDOFPhase(PhaseBuilderBase):
             phase.add_parameter(
                 "t_init_flaps", units="s", static_target=True, opt=False, val=100)
 
-        phase.add_polynomial_control(Dynamic.Mission.ALTITUDE,
-                                     order=control_order,
-                                     fix_initial=fix_initial,
-                                     rate_targets=['dh_dr'], rate2_targets=['d2h_dr2'],
-                                     opt=False, upper=40.e3, ref=30.e3, lower=-1.)
-
         if 'rotation' in phase_name:
             phase.add_polynomial_control("TAS",
                                          order=control_order,
@@ -147,6 +141,16 @@ class TwoDOFPhase(PhaseBuilderBase):
                                          units='deg', ref=10.,
                                          val=[0., 0.],
                                          opt=opt)
+
+            phase.add_parameter(Dynamic.Mission.ALTITUDE,
+                                val=0., units="ft", opt=False, static_target=True)
+
+        else:
+            phase.add_polynomial_control(Dynamic.Mission.ALTITUDE,
+                                         order=control_order,
+                                         fix_initial=fix_initial,
+                                         rate_targets=['dh_dr'], rate2_targets=['d2h_dr2'],
+                                         opt=opt, upper=40.e3, ref=30.e3, lower=-1.)
 
         phase.add_boundary_constraint(
             'TAS', loc='final', equals=100., units='kn', ref=100.)
