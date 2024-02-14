@@ -929,17 +929,16 @@ class AviaryProblem(om.Problem):
                 self.ode_args,
                 cruise_mach=self.cruise_mach)
 
-            # TEMPORARY
-            # descent_estimation = descent_range_and_fuel(
-            #     phases=descent_phases,
-            #     initial_mass=initial_mass,
-            #     cruise_alt=self.cruise_alt,
-            #     cruise_mach=self.cruise_mach)
+            descent_estimation = descent_range_and_fuel(
+                phases=descent_phases,
+                initial_mass=initial_mass,
+                cruise_alt=self.cruise_alt,
+                cruise_mach=self.cruise_mach)
 
-            # estimated_descent_range = descent_estimation['refined_guess']['distance_flown']
-            # end_of_cruise_range = self.target_range - estimated_descent_range
+            estimated_descent_range = descent_estimation['refined_guess']['distance_flown']
+            end_of_cruise_range = self.target_range - estimated_descent_range
 
-            # estimated_descent_fuel = descent_estimation['refined_guess']['fuel_burned']
+            estimated_descent_fuel = descent_estimation['refined_guess']['fuel_burned']
             estimated_descent_fuel = 250
 
             cruise_kwargs = dict(
