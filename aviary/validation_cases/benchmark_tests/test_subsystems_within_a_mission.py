@@ -74,7 +74,7 @@ class TestSubsystemsMission(unittest.TestCase):
 
         prob.add_design_variables()
 
-        prob.add_objective('fuel')
+        prob.add_objective('fuel_burned')
 
         prob.setup()
 

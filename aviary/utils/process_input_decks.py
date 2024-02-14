@@ -24,7 +24,7 @@ from openmdao.utils.units import valid_units
 from aviary.utils.aviary_values import AviaryValues, get_keys
 from aviary.utils.functions import convert_strings_to_data, set_value
 from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.enums import ProblemType
+from aviary.variable_info.enums import ProblemType, Verbosity
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Mission
 from aviary.utils.functions import get_path
@@ -36,7 +36,7 @@ problem_types = {'sizing': ProblemType.SIZING,
                  'alternate': ProblemType.ALTERNATE, 'fallout': ProblemType.FALLOUT}
 
 
-def create_vehicle(vehicle_deck=''):
+def create_vehicle(vehicle_deck='', verbosity=Verbosity.BRIEF):
     """
     Creates and initializes a vehicle with default or specified parameters. It sets up the aircraft values
     and initial guesses based on the input from the vehicle deck.
@@ -51,9 +51,8 @@ def create_vehicle(vehicle_deck=''):
     """
     aircraft_values = get_option_defaults(engine=False)
 
-    # TODO temporary, needed until debug_mode retired in favor of new verbosity flag
     # TODO remove all hardcoded GASP values here, find appropriate place for them
-    aircraft_values.set_val('debug_mode', val=False)
+    aircraft_values.set_val('verbosity', val=verbosity)
     aircraft_values.set_val('INGASP.JENGSZ', val=4)
     aircraft_values.set_val('test_mode', val=False)
     aircraft_values.set_val('use_surrogates', val=True)
@@ -129,10 +128,6 @@ def parse_inputs(vehicle_deck, aircraft_values: AviaryValues(), meta_data=_MetaD
 
             var_values = convert_strings_to_data(data_list)
 
-            if var_name == 'debug_mode':
-                aircraft_values = set_value(var_name, var_values, aircraft_values)
-                continue
-
             if var_name in meta_data.keys():
                 aircraft_values = set_value(
                     var_name, var_values, aircraft_values, units=data_units, is_array=is_array, meta_data=meta_data)
@@ -143,7 +138,7 @@ def parse_inputs(vehicle_deck, aircraft_values: AviaryValues(), meta_data=_MetaD
                 initial_guesses[var_name] = float(var_values[0])
                 continue
 
-            if 'debug_mode' in aircraft_values and aircraft_values.get_val('debug_mode'):
+            if aircraft_values.get_val('verbosity') is not Verbosity.QUIET:
                 print('Unused:', var_name, var_values, comment)
 
     return aircraft_values, initial_guesses
@@ -187,7 +182,7 @@ def update_GASP_options(aircraft_values: AviaryValues()):
         aircraft_values.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=False)
 
-    if aircraft_values.get_val('debug_mode'):
+    if aircraft_values.get_val('verbosity').value >= 2:
         print('\nOptions')
         for key in get_keys(aircraft_values):
             val, units = aircraft_values.get_item(key)
@@ -337,7 +332,7 @@ def initial_guessing(aircraft_values: AviaryValues(), initial_guesses):
         initial_guesses['climb_range'] = initial_guesses['time_to_climb'] / \
             (60 * 60) * (avg_speed_guess * np.cos(gamma_guess))
 
-    if aircraft_values.get_val('debug_mode'):
+    if aircraft_values.get_val('verbosity').value >= 2:
         print('\nInitial Guesses')
         for key, value in initial_guesses.items():
             print(key, value)

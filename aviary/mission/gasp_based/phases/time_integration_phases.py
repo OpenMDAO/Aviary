@@ -11,10 +11,8 @@ from aviary.mission.gasp_based.ode.groundroll_ode import GroundrollODE
 from aviary.mission.gasp_based.ode.rotation_ode import RotationODE
 from aviary.mission.gasp_based.ode.time_integration_base_classes import SimuPyProblem
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.enums import AlphaModes, AnalysisScheme, SpeedType
+from aviary.variable_info.enums import AlphaModes, AnalysisScheme, SpeedType, Verbosity
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-
-DEBUG = 0
 
 
 class SGMGroundroll(SimuPyProblem):
@@ -178,11 +176,11 @@ class SGMAscent(SimuPyProblem):
             self.output_nan = True
             return x
         elif 1 in event_channels:
-            if DEBUG:
+            if self.verbosity.value >= 2:
                 print("flaps!", t)
             self.set_val("t_init_flaps", t)
         elif 2 in event_channels:
-            if DEBUG:
+            if self.verbosity.value >= 2:
                 print("gear!", t)
             self.set_val("t_init_gear", t)
         else:

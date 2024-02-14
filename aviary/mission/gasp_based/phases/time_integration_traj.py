@@ -7,8 +7,6 @@ from aviary.variable_info.enums import SpeedType
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 
-DEBUG = 0
-
 
 class TimeIntegrationTrajBase(SGMTrajBase):
     def initialize(self):
