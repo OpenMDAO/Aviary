@@ -93,15 +93,6 @@ class SGMRotation(SimuPyProblem):
 
         self.phase_name = phase_name
         self.add_trigger("normal_force", 0, units='lbf')
-    #     self.event_channel_names = ["normal_force"]
-    #     self.num_events = len(self.event_channel_names)
-
-    # def event_equation_function(self, t, x):
-    #     self.output_equation_function(t, x)
-    #     self.compute()
-    #     norm_force = self.get_val("normal_force", units="lbf") + 0.0
-
-    #     return norm_force
 
 
 # TODO : turn these into parameters? inputs? they need to match between

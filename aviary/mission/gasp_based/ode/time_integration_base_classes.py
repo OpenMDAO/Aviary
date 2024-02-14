@@ -221,14 +221,14 @@ class SimuPyProblem(SimulationMixin):
         # TODO: add defensive checks to make sure dimensions match in both setup and
         # calls
 
-        if DEBUG or True:
+        if DEBUG:
             if problem_name:
                 problem_name = '_'+problem_name
             om.n2(prob, outfile="n2_simupy_problem" +
                   problem_name+".html", show_browser=False)
             with open('input_list_simupy'+problem_name+'.txt', 'w') as outfile:
                 prob.model.list_inputs(out_stream=outfile,)
-            # print(states)
+            print(states)
 
     @property
     def time(self):

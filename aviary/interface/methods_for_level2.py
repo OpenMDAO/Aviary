@@ -939,7 +939,6 @@ class AviaryProblem(om.Problem):
             end_of_cruise_range = self.target_range - estimated_descent_range
 
             estimated_descent_fuel = descent_estimation['refined_guess']['fuel_burned']
-            estimated_descent_fuel = 250
 
             cruise_kwargs = dict(
                 input_speed_type=SpeedType.MACH,
