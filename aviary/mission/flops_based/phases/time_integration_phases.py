@@ -6,7 +6,7 @@ from aviary.mission.flops_based.ode.landing_ode import LandingODE
 from aviary.mission.flops_based.ode.takeoff_ode import TakeoffODE
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 from aviary.mission.gasp_based.ode.time_integration_base_classes import SimuPyProblem
-from aviary.variable_info.enums import AlphaModes, AnalysisScheme, SpeedType
+from aviary.variable_info.enums import AnalysisScheme, Verbosity
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.variables_in import VariablesIn
 from aviary.subsystems.premission import CorePreMission
@@ -203,7 +203,7 @@ if __name__ == '__main__':
 
     aviary_inputs, initial_guesses = create_vehicle(
         'models/test_aircraft/aircraft_for_bench_FwFm.csv')
-    aviary_inputs.set_val('debug_mode', False)
+    # aviary_inputs.set_val('debug_mode', False)
     aviary_inputs.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=28690, units="lbf")
     aviary_inputs.set_val(Dynamic.Mission.THROTTLE, val=0, units="unitless")
     aviary_inputs.set_val(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT,
@@ -222,7 +222,7 @@ if __name__ == '__main__':
     phase_kwargs = dict(
         ode_args=ode_args_tab,
         simupy_args=dict(
-            DEBUG=True,
+            verbosity=Verbosity.QUIET,
         ),
     )
 
