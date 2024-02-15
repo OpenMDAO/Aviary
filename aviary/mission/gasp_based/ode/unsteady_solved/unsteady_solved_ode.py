@@ -191,9 +191,11 @@ class UnsteadySolvedODE(BaseODE):
 
         eom_comp = UnsteadySolvedEOM(num_nodes=nn, ground_roll=ground_roll)
 
+        input_list = ['*']
+        if balance_throttle:
+            input_list.append((Dynamic.Mission.THRUST_TOTAL, "thrust_req"))
         control_iter_group.add_subsystem("eom", subsys=eom_comp,
-                                         promotes_inputs=["*",
-                                                          (Dynamic.Mission.THRUST_TOTAL, "thrust_req")],
+                                         promotes_inputs=input_list,
                                          promotes_outputs=["*"])
 
         thrust_alpha_bal = om.BalanceComp()
@@ -208,13 +210,14 @@ class UnsteadySolvedODE(BaseODE):
                                          upper=np.pi/12,
                                          normalize=False)
 
-        thrust_alpha_bal.add_balance("thrust_req",
-                                     units="N",
-                                     val=100*np.ones(nn),
-                                     lhs_name="dTAS_dt_approx",
-                                     rhs_name="dTAS_dt",
-                                     eq_units="m/s**2",
-                                     normalize=False)
+        if balance_throttle:
+            thrust_alpha_bal.add_balance("thrust_req",
+                                         units="N",
+                                         val=100*np.ones(nn),
+                                         lhs_name="dTAS_dt_approx",
+                                         rhs_name="dTAS_dt",
+                                         eq_units="m/s**2",
+                                         normalize=False)
 
         control_iter_group.add_subsystem("thrust_alpha_bal", subsys=thrust_alpha_bal,
                                          promotes_inputs=["*"],

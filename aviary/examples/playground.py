@@ -29,7 +29,7 @@ phase_info = {
     "pre_mission": {"include_takeoff": False, "optimize_mass": False},
     'AB': {
         'user_options': {
-            'num_segments': 2,
+            'num_segments': 10,
             'order': 3,
             'fix_initial': True,
             'throttle_setting': throttle_max,
@@ -42,7 +42,7 @@ phase_info = {
             'duration_bounds': ((10., 16.e3), 'ft'),
             'control_order': 1,
             'opt': True,
-            'balance_throttle': True,
+            'balance_throttle': False,
             'constraints': {
                 'TAS': {
                     'equals': 120.,  # V_rot
@@ -50,6 +50,12 @@ phase_info = {
                     'units': 'kn',
                     'type': 'boundary',
                 },
+                # 'distance': {
+                #     'equals': 8000.,
+                #     'loc': 'final',
+                #     'units': 'ft',
+                #     'type': 'boundary',
+                # },
                 # 'time': {
                 #     'upper': 80.,
                 #     'loc': 'final',
@@ -60,7 +66,7 @@ phase_info = {
         },
         'subsystem_options': subsystem_options,
         'initial_guesses': {
-            'distance': [(0., 5.e3), 'ft'],
+            'distance': [(0., 8.e3), 'ft'],
             'time': [(0., 50.), 's'],
             'TAS': [(1., 120.), 'kn'],
             'mass': [(175.e3, 175.e3-100.), 'lbm'],
