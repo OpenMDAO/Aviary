@@ -105,10 +105,6 @@ def mission_report(prob, **kwargs):
         fuel_burn = _get_phase_diff('traj', phase, 'mass', 'lbm', [-1, 0])
         time = _get_phase_diff('traj', phase, 't', 'min')
         range = _get_phase_diff('traj', phase, 'distance', 'nmi')
-        # both "distance" and "range" currently exist to track ground distance, logic
-        # here accounts for that
-        if range is None:
-            range = _get_phase_diff('traj', phase, 'distance', 'nmi')
 
         # get initial values, first in traj
         if idx == 0:
