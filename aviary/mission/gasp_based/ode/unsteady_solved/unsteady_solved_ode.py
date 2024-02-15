@@ -219,6 +219,20 @@ class UnsteadySolvedODE(BaseODE):
                                          eq_units="m/s**2",
                                          normalize=False)
 
+        else:
+            # add a kscomp to compute the residual of dTAS_dt_approx - dTAS_dt
+            control_iter_group.add_subsystem("TAS_residual",
+                                             om.ExecComp("TAS_resid = dTAS_dt_approx - dTAS_dt", units="m/s**2", shape=nn,
+                                                         has_diag_partials=True),
+                                             promotes_inputs=[
+                                                 "dTAS_dt_approx", "dTAS_dt"],
+                                             promotes_outputs=["TAS_resid"])
+
+            control_iter_group.add_subsystem("KS_comp",
+                                             om.KSComp(width=nn, add_constraint=True),
+                                             promotes_inputs=[("g", "TAS_resid")],
+                                             promotes_outputs=[("KS", "ks_TAS_resid")])
+
         control_iter_group.add_subsystem("thrust_alpha_bal", subsys=thrust_alpha_bal,
                                          promotes_inputs=["*"],
                                          promotes_outputs=["*"])
