@@ -192,40 +192,41 @@ phase_info = {
             'altitude': [(50., 985.), 'ft'],
         },
     },
-    # 'CD_past_P2': {
-    #     'user_options': {
-    #         'num_segments': 3,
-    #         'order': 3,
-    #         'fix_initial': False,
-    #         'throttle_setting': throttle_climb,
-    #         'input_speed_type': av.SpeedType.TAS,
-    #         'ground_roll': False,
-    #         'clean': False,
-    #         'initial_ref': (1.e3, 'ft'),
-    #         'initial_bounds': ((500., 60.e3), 'ft'),
-    #         'duration_ref': (1.e3, 'ft'),
-    #         'duration_bounds': ((150., 60.e3), 'ft'),
-    #         'control_order': 1,
-    #         'opt': True,
-    #         'balance_throttle': False,
-    #         'constraints': {
-    #             'distance': {
-    #                 'upper': 19000.,
-    #                 'units': 'ft',
-    #                 'type': 'boundary',
-    #                 'loc': 'final',
-    #             },
-    #         },
-    #     },
-    #     'subsystem_options': subsystem_options,
-    #     'initial_guesses': {
-    #         'distance': [(37.e3, 20.e3), 'ft'],
-    #         'time': [(120., 250.), 's'],
-    #         'TAS': [(150., 150.), 'kn'],
-    #         # 'mass': [(175.e3, 174.e3), 'lbm'],
-    #         'altitude': [(985., 2000.), 'ft'],
-    #     },
-    # },
+    'CD_past_P2': {
+        'user_options': {
+            'num_segments': 5,
+            'order': 3,
+            'fix_initial': False,
+            'throttle_setting': throttle_climb,
+            'input_speed_type': av.SpeedType.TAS,
+            'ground_roll': False,
+            'clean': False,
+            'initial_ref': (1.e3, 'ft'),
+            'initial_bounds': ((500., 60.e3), 'ft'),
+            'duration_ref': (1.e3, 'ft'),
+            'duration_bounds': ((150., 60.e3), 'ft'),
+            'control_order': 1,
+            'opt': True,
+            'balance_throttle': False,
+            'constraints': {
+                'distance': {
+                    'upper': 60.e3,
+                    'units': 'ft',
+                    'type': 'boundary',
+                    'loc': 'final',
+                    'ref': 30.e3,
+                },
+            },
+        },
+        'subsystem_options': subsystem_options,
+        'initial_guesses': {
+            'distance': [(15.e3, 20.e3), 'ft'],
+            'time': [(120., 250.), 's'],
+            'TAS': [(150., 150.), 'kn'],
+            # 'mass': [(175.e3, 174.e3), 'lbm'],
+            'altitude': [(985., 2000.), 'ft'],
+        },
+    },
     # 'DE': {
     #     'user_options': {
     #         'num_segments': 3,
@@ -341,7 +342,7 @@ prob.add_post_mission_systems()
 # Link phases and variables
 prob.link_phases()
 
-prob.add_driver("SNOPT", max_iter=10)
+prob.add_driver("SNOPT", max_iter=100)
 
 prob.add_design_variables()
 
