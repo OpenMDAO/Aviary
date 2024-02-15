@@ -81,7 +81,7 @@ setup(
             'aviary=aviary.interface.cmd_entry_points:aviary_cmd',
         ],
         'openmdao_report': [
-            'summary=aviary.interface.reports:register_custom_reports',
+            'aviary_reports=aviary.interface.reports:register_custom_reports',
         ]
     }
 )

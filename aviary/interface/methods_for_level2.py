@@ -15,6 +15,7 @@ import openmdao.api as om
 from openmdao.core.component import Component
 from openmdao.utils.mpi import MPI
 from openmdao.utils.units import convert_units
+from openmdao.utils.reports_system import _default_reports
 
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
 from aviary.mission.flops_based.phases.build_landing import Landing
@@ -210,6 +211,12 @@ class AviaryProblem(om.Problem):
     """
 
     def __init__(self, analysis_scheme=AnalysisScheme.COLLOCATION, **kwargs):
+        # Modify OpenMDAO's default_reports for this session.
+        new_reports = ['subsystems', 'mission']
+        for report in new_reports:
+            if report not in _default_reports:
+                _default_reports.append(report)
+
         super().__init__(**kwargs)
 
         self.timestamp = datetime.now()
@@ -1667,8 +1674,6 @@ class AviaryProblem(om.Problem):
                     "h_fit.h_init_gear", equals=50.0, units="ft", ref=50.0)
                 self.model.add_constraint("h_fit.h_init_flaps",
                                           equals=400.0, units="ft", ref=400.0)
-
-            self.problem_type = self.aviary_inputs.get_val('problem_type')
 
             # vehicle sizing problem
             # size the vehicle (via design GTOW) to meet a target range using all fuel capacity
