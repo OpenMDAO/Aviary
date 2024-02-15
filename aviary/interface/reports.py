@@ -20,7 +20,7 @@ def register_custom_reports():
                     func=subsystem_report,
                     desc='Generates reports for each subsystem builder in the '
                          'Aviary Problem',
-                    class_name='Problem',
+                    class_name='AviaryProblem',
                     method='run_driver',
                     pre_or_post='post',
                     # **kwargs
@@ -29,7 +29,7 @@ def register_custom_reports():
     register_report(name='mission',
                     func=mission_report,
                     desc='Generates report for mission results from Aviary problem',
-                    class_name='Problem',
+                    class_name='AviaryProblem',
                     method='run_driver',
                     pre_or_post='post')
 

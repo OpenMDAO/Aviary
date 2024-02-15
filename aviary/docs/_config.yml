@@ -13,7 +13,7 @@ execute:
   timeout: 120
   # execute_notebooks: auto
 
-exclude_patterns: ["*examples/reports/*", "*getting_started/reports/*"]
+exclude_patterns: ["*/reports/*"]
 
 # Define the name of the latex output file for PDF builds
 latex:
