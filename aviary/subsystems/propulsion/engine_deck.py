@@ -40,6 +40,7 @@ from aviary.utils.named_values import NamedValues, get_keys, get_items
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.utils.csv_data_file import read_data_file
+from aviary.interface.utils.markdown_utils import round_it
 
 
 MACH = EngineModelVariables.MACH
@@ -890,6 +891,84 @@ class EngineDeck(EngineModel):
                                    promotes_outputs=['*'])
 
         return engine_group
+
+    def report(self, problem, reports_file, **kwargs):
+        meta_data = kwargs['meta_data']
+
+        outputs = [Aircraft.Engine.NUM_ENGINES,
+                   Aircraft.Engine.SCALED_SLS_THRUST,
+                   Aircraft.Engine.SCALE_FACTOR]
+
+        # determine which index in problem-level aviary values corresponds to this engine
+        engine_idx = None
+        for idx, engine in enumerate(problem.aviary_inputs.get_val('engine_models')):
+            if engine.name == self.name:
+                engine_idx = idx
+
+        if engine_idx is None:
+            with open(reports_file, mode='a') as f:
+                f.write(f'\n### {self.name}')
+                f.write(f'\nEngine deck {self.name} not found\n')
+            return
+
+        # modified version of markdown table util adjusted to handle engine decks
+        with open(reports_file, mode='a') as f:
+            f.write(f'\n### {self.name}')
+            f.write('\n| Variable Name | Value | Units |\n')
+            f.write('| :- | :- | :- |\n')
+            for var_name in outputs:
+                # get default units from metadata
+                try:
+                    units = meta_data[var_name]['units']
+                except KeyError:
+                    units = None
+                # try to get value from engine
+                try:
+                    if units:
+                        val = self.get_val(var_name, units)
+                    else:
+                        val, units = self.get_item(var_name)
+                        if (val, units) == (None, None):
+                            raise KeyError
+                except KeyError:
+                    # get value from problem
+                    try:
+                        if units:
+                            val = problem.get_val(var_name, units)
+                        else:
+                            # TODO find units for variable in problem?
+                            val = problem.get_val(var_name)
+                            units = 'unknown'
+                    # variable not in problem, get from aviary_inputs instead
+                    except KeyError:
+                        try:
+                            if units:
+                                val = problem.aviary_inputs.get_val(var_name, units)
+                            else:
+                                val, units = problem.aviary_inputs.get_item(var_name)
+                                if (val, units) == (None, None):
+                                    raise KeyError
+                        except KeyError:
+                            val = 'Not Found in Model'
+                            units = None
+                        else:
+                            val = val[engine_idx]
+                    else:
+                        val = val[engine_idx]
+                # handle rounding + formatting
+                if isinstance(val, (np.ndarray, list, tuple)):
+                    val = [round_it(item) for item in val]
+                    # if an interable with a length of 1, remove bracket/paretheses, etc.
+                    if len(val) == 1:
+                        val = val[0]
+                else:
+                    round_it(val)
+                if not units:
+                    units = 'unknown'
+                if units == 'unitless':
+                    units = '-'
+                summary_line = f'| {var_name} | {val} | {units} |\n'
+                f.write(summary_line)
 
     def _set_reference_thrust(self):
         """
