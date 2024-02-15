@@ -157,7 +157,7 @@ class TakeoffBrakeReleaseToDecisionSpeed(PhaseBuilderBase):
 
         Parameters
         ----------
-        aviary_options : AviaryValues (emtpy)
+        aviary_options : AviaryValues (empty)
             collection of Aircraft/Mission specific options
 
         Returns
@@ -321,7 +321,7 @@ class TakeoffDecisionSpeedToRotate(PhaseBuilderBase):
 
         Parameters
         ----------
-        aviary_options : AviaryValues (emtpy)
+        aviary_options : AviaryValues (empty)
             collection of Aircraft/Mission specific options
 
         Returns
@@ -495,7 +495,7 @@ class TakeoffDecisionSpeedBrakeDelay(TakeoffDecisionSpeedToRotate):
 
         Parameters
         ----------
-        aviary_options : AviaryValues (emtpy)
+        aviary_options : AviaryValues (empty)
             collection of Aircraft/Mission specific options
 
         Returns
@@ -596,7 +596,7 @@ class TakeoffRotateToLiftoff(PhaseBuilderBase):
 
         Parameters
         ----------
-        aviary_options : AviaryValues (emtpy)
+        aviary_options : AviaryValues (empty)
             collection of Aircraft/Mission specific options
 
         Returns
@@ -781,7 +781,7 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
 
         Parameters
         ----------
-        aviary_options : AviaryValues (emtpy)
+        aviary_options : AviaryValues (empty)
             collection of Aircraft/Mission specific options
 
         Returns
@@ -1014,7 +1014,7 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
 
         Parameters
         ----------
-        aviary_options : AviaryValues (emtpy)
+        aviary_options : AviaryValues (empty)
             collection of Aircraft/Mission specific options
 
         Returns
@@ -1243,7 +1243,7 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
 
         Parameters
         ----------
-        aviary_options : AviaryValues (emtpy)
+        aviary_options : AviaryValues (empty)
             collection of Aircraft/Mission specific options
 
         Returns
@@ -1470,7 +1470,7 @@ class TakeoffEngineCutback(PhaseBuilderBase):
 
         Parameters
         ----------
-        aviary_options : AviaryValues (emtpy)
+        aviary_options : AviaryValues (empty)
             collection of Aircraft/Mission specific options
 
         Returns
@@ -1681,7 +1681,7 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilderBase):
 
         Parameters
         ----------
-        aviary_options : AviaryValues (emtpy)
+        aviary_options : AviaryValues (empty)
             collection of Aircraft/Mission specific options
 
         Returns
@@ -1907,7 +1907,7 @@ class TakeoffMicP1ToClimb(PhaseBuilderBase):
 
         Parameters
         ----------
-        aviary_options : AviaryValues (emtpy)
+        aviary_options : AviaryValues (empty)
             collection of Aircraft/Mission specific options
 
         Returns
@@ -2124,7 +2124,7 @@ class TakeoffBrakeToAbort(PhaseBuilderBase):
 
         Parameters
         ----------
-        aviary_options : AviaryValues (emtpy)
+        aviary_options : AviaryValues (empty)
             collection of Aircraft/Mission specific options
 
         Returns

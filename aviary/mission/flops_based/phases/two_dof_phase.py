@@ -64,7 +64,7 @@ class TwoDOFPhase(PhaseBuilderBase):
 
         Parameters
         ----------
-        aviary_options : AviaryValues (<emtpy>)
+        aviary_options : AviaryValues (<empty>)
             collection of Aircraft/Mission specific options
 
         Returns
@@ -160,9 +160,8 @@ class TwoDOFPhase(PhaseBuilderBase):
         phase.add_timeseries_output("mass")
         phase.add_timeseries_output(Dynamic.Mission.ALTITUDE)
         phase.add_timeseries_output(Dynamic.Mission.ANGLE_OF_ATTACK)
+        phase.add_timeseries_output(Dynamic.Mission.FLIGHT_PATH_ANGLE)
         phase.add_timeseries_output(Dynamic.Mission.THROTTLE)
-        phase.add_timeseries_output(
-            "fuselage_pitch", output_name="theta", units="deg")
 
         return phase
 

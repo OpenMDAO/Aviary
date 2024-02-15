@@ -29,27 +29,19 @@ phase_info = {
     "pre_mission": {"include_takeoff": False, "optimize_mass": False},
     'AB': {
         'user_options': {
-            'num_segments': 10,
+            'num_segments': 5,
             'order': 3,
             'fix_initial': True,
-            'throttle_setting': throttle_max,
-            'input_speed_type': av.SpeedType.TAS,
             'ground_roll': True,
-            'clean': False,
-            'initial_ref': (1.e3, 'ft'),
-            'initial_bounds': ((0., 0.), 'ft'),
-            'duration_ref': (1.e3, 'ft'),
-            'duration_bounds': ((1000., 16.e3), 'ft'),
-            'control_order': 1,
-            'opt': True,
-            'balance_throttle': False,
+            'duration_ref': (100., 'kn'),
+            'duration_bounds': ((1., 500.), 'kn'),
             'constraints': {
-                'TAS': {
-                    'equals': 120.,  # V_rot
-                    'loc': 'final',
-                    'units': 'kn',
-                    'type': 'boundary',
-                },
+                # 'TAS': {
+                #     'equals': 120.,  # V_rot
+                #     'loc': 'final',
+                #     'units': 'kn',
+                #     'type': 'boundary',
+                # },
                 # 'distance': {
                 #     'equals': 8000.,
                 #     'loc': 'final',
@@ -66,9 +58,9 @@ phase_info = {
         },
         'subsystem_options': subsystem_options,
         'initial_guesses': {
-            'distance': [(0., 6.e3), 'ft'],
-            'time': [(0., 50.), 's'],
-            'TAS': [(1., 120.), 'kn'],
+            'distance': [(0., 2.e3), 'ft'],
+            'time': [(0., 20.), 's'],
+            'velocity': [(1., 120.), 'kn'],
             'mass': [(175.e3, 175.e3-100.), 'lbm'],
             # 'altitude': [(0., 0.), 'ft'],
         },
@@ -85,7 +77,7 @@ phase_info = {
             'initial_ref': (1.e3, 'ft'),
             'initial_bounds': ((1., 16.e3), 'ft'),
             'duration_ref': (1.e3, 'ft'),
-            'duration_bounds': ((500., 10.e3), 'ft'),
+            'duration_bounds': ((200., 10.e3), 'ft'),
             'control_order': 1,
             'opt': True,
             'balance_throttle': False,
@@ -108,9 +100,9 @@ phase_info = {
         },
         'subsystem_options': subsystem_options,
         'initial_guesses': {
-            'distance': [(6000., 8000.), 'ft'],
-            'TAS': [(200., 200.), 'kn'],
-            'time': [(20., 60.), 's'],
+            'distance': [(2.e3, 500.), 'ft'],
+            'TAS': [(120., 130.), 'kn'],
+            'time': [(20., 25.), 's'],
             'mass': [(175.e3-100., 175.e3-200.), 'lbm'],
             # 'altitude': [(0., 0.), 'ft'],
         },
@@ -134,26 +126,27 @@ phase_info = {
             'rotation': False,
             'constraints': {
                 'flight_path_angle': {
-                    'equals': 4.,
+                    'lower': 4.,
                     'loc': 'final',
                     'units': 'deg',
                     'type': 'boundary',
                 },
                 # 'TAS': {
-                #     'upper': 220.,
+                #     'equals': 150.,
                 #     'loc': 'final',
                 #     'units': 'kn',
                 #     'type': 'boundary',
+                #     'ref': 150.,
                 # },
 
             },
         },
         'subsystem_options': subsystem_options,
         'initial_guesses': {
-            'distance': [(8000., 2000.), 'ft'],
-            'TAS': [(200., 200.), 'kn'],
-            'time': [(60., 80.), 's'],
-            'mass': [(175.e3-100., 175.e3-200.), 'lbm'],
+            'distance': [(2.5e3, 500.), 'ft'],
+            'TAS': [(130., 130.), 'kn'],
+            'time': [(25., 35.), 's'],
+            'mass': [(175.e3-200., 175.e3-400.), 'lbm'],
             'altitude': [(0., 0.), 'ft'],
         },
     },
@@ -162,7 +155,7 @@ phase_info = {
             'num_segments': 3,
             'order': 3,
             'fix_initial': False,
-            'throttle_setting': throttle_climb,
+            'throttle_setting': throttle_max,
             'input_speed_type': av.SpeedType.TAS,
             'ground_roll': False,
             'clean': False,
@@ -175,7 +168,7 @@ phase_info = {
             'balance_throttle': False,
             'constraints': {
                 'altitude': {
-                    'equals': 985.,
+                    'lower': 100.,
                     'units': 'ft',
                     'type': 'boundary',
                     'loc': 'final',
@@ -185,48 +178,48 @@ phase_info = {
         },
         'subsystem_options': subsystem_options,
         'initial_guesses': {
-            'distance': [(12000., 12.e3), 'ft'],
-            'time': [(60., 120.), 's'],
-            'TAS': [(150., 150.), 'kn'],
+            'distance': [(3.e3, 10.e3), 'ft'],
+            'time': [(35., 180.), 's'],
+            'TAS': [(130., 130.), 'kn'],
             # 'mass': [(175.e3, 174.e3), 'lbm'],
-            'altitude': [(50., 985.), 'ft'],
+            'altitude': [(0., 985.), 'ft'],
         },
     },
-    'CD_past_P2': {
-        'user_options': {
-            'num_segments': 5,
-            'order': 3,
-            'fix_initial': False,
-            'throttle_setting': throttle_climb,
-            'input_speed_type': av.SpeedType.TAS,
-            'ground_roll': False,
-            'clean': False,
-            'initial_ref': (1.e3, 'ft'),
-            'initial_bounds': ((500., 60.e3), 'ft'),
-            'duration_ref': (1.e3, 'ft'),
-            'duration_bounds': ((150., 60.e3), 'ft'),
-            'control_order': 1,
-            'opt': True,
-            'balance_throttle': False,
-            'constraints': {
-                'distance': {
-                    'upper': 60.e3,
-                    'units': 'ft',
-                    'type': 'boundary',
-                    'loc': 'final',
-                    'ref': 30.e3,
-                },
-            },
-        },
-        'subsystem_options': subsystem_options,
-        'initial_guesses': {
-            'distance': [(15.e3, 20.e3), 'ft'],
-            'time': [(120., 250.), 's'],
-            'TAS': [(150., 150.), 'kn'],
-            # 'mass': [(175.e3, 174.e3), 'lbm'],
-            'altitude': [(985., 2000.), 'ft'],
-        },
-    },
+    # 'CD_past_P2': {
+    #     'user_options': {
+    #         'num_segments': 5,
+    #         'order': 3,
+    #         'fix_initial': False,
+    #         'throttle_setting': throttle_climb,
+    #         'input_speed_type': av.SpeedType.TAS,
+    #         'ground_roll': False,
+    #         'clean': False,
+    #         'initial_ref': (1.e3, 'ft'),
+    #         'initial_bounds': ((500., 60.e3), 'ft'),
+    #         'duration_ref': (1.e3, 'ft'),
+    #         'duration_bounds': ((150., 60.e3), 'ft'),
+    #         'control_order': 1,
+    #         'opt': True,
+    #         'balance_throttle': False,
+    #         'constraints': {
+    #             'distance': {
+    #                 'upper': 60.e3,
+    #                 'units': 'ft',
+    #                 'type': 'boundary',
+    #                 'loc': 'final',
+    #                 'ref': 30.e3,
+    #             },
+    #         },
+    #     },
+    #     'subsystem_options': subsystem_options,
+    #     'initial_guesses': {
+    #         'distance': [(15.e3, 20.e3), 'ft'],
+    #         'time': [(120., 250.), 's'],
+    #         'TAS': [(150., 150.), 'kn'],
+    #         # 'mass': [(175.e3, 174.e3), 'lbm'],
+    #         'altitude': [(985., 2000.), 'ft'],
+    #     },
+    # },
     # 'DE': {
     #     'user_options': {
     #         'num_segments': 3,
@@ -342,16 +335,19 @@ prob.add_post_mission_systems()
 # Link phases and variables
 prob.link_phases()
 
-prob.add_driver("SNOPT", max_iter=100)
+prob.add_driver("SNOPT", max_iter=50)
 
 prob.add_design_variables()
 
 # Load optimization problem formulation
 # Detail which variables the optimizer can control
-prob.add_objective('time')
+prob.add_objective('fuel_burned')
 
 prob.setup()
 
 prob.set_initial_guesses()
 
 prob.run_aviary_problem()
+
+# prob.model.list_inputs(units=True, print_arrays=True)
+# prob.model.list_outputs(units=True, print_arrays=True)

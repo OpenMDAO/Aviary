@@ -27,6 +27,7 @@ from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_ode import \
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 from aviary.mission.gasp_based.phases.time_integration_phases import SGMCruise
 from aviary.mission.gasp_based.phases.groundroll_phase import GroundrollPhase
+from aviary.mission.flops_based.phases.groundroll_phase import GroundrollPhase as GroundrollPhaseVelocityIntegrated
 from aviary.mission.gasp_based.phases.rotation_phase import RotationPhase
 from aviary.mission.gasp_based.phases.climb_phase import ClimbPhase
 from aviary.mission.gasp_based.phases.cruise_phase import CruisePhase
@@ -702,7 +703,10 @@ class AviaryProblem(om.Problem):
                 phase_builder = EnergyPhase
 
         if self.mission_method is SOLVED_2DOF:
-            phase_builder = TwoDOFPhase
+            if phase_options['user_options']['ground_roll'] and phase_options['user_options']['fix_initial']:
+                phase_builder = GroundrollPhaseVelocityIntegrated
+            else:
+                phase_builder = TwoDOFPhase
 
         phase_object = phase_builder.from_phase_info(
             phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data)
@@ -1389,13 +1393,14 @@ class AviaryProblem(om.Problem):
             self.traj.link_phases(
                 phases, [Dynamic.Mission.MASS], connected=True)
             self.traj.link_phases(
-                phases, ["time", Dynamic.Mission.DISTANCE, Dynamic.Mission.MACH], connected=False)
+                phases, ["time", Dynamic.Mission.DISTANCE, Dynamic.Mission.MACH], units='ft', connected=False)
             if len(phases) > 2:
                 self.traj.link_phases(
                     phases[1:], [Dynamic.Mission.ALTITUDE], connected=False)
-            if len(phases) > 3:
-                self.traj.link_phases(
-                    phases[2:], [Dynamic.Mission.FLIGHT_PATH_ANGLE], connected=False)
+                # self.traj.link_phases(
+                #     phases[1:], [Dynamic.Mission.FLIGHT_PATH_ANGLE], connected=False)
+                # self.traj.link_phases(
+                #     phases[1:], [Dynamic.Mission.ANGLE_OF_ATTACK], units='rad', connected=False)
 
         elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
             if self.analysis_scheme is AnalysisScheme.COLLOCATION:

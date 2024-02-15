@@ -121,7 +121,7 @@ class LandingApproachToMicP3(PhaseBuilderBase):
 
         Parameters
         ----------
-        aviary_options : AviaryValues (emtpy)
+        aviary_options : AviaryValues (empty)
             collection of Aircraft/Mission specific options
 
         Returns
@@ -339,7 +339,7 @@ class LandingMicP3ToObstacle(LandingApproachToMicP3):
 
         Parameters
         ----------
-        aviary_options : AviaryValues (emtpy)
+        aviary_options : AviaryValues (empty)
             collection of Aircraft/Mission specific options
 
         Returns
@@ -434,7 +434,7 @@ class LandingObstacleToFlare(PhaseBuilderBase):
 
         Parameters
         ----------
-        aviary_options : AviaryValues (emtpy)
+        aviary_options : AviaryValues (empty)
             collection of Aircraft/Mission specific options
 
         Returns
@@ -631,7 +631,7 @@ class LandingFlareToTouchdown(PhaseBuilderBase):
 
         Parameters
         ----------
-        aviary_options : AviaryValues (emtpy)
+        aviary_options : AviaryValues (empty)
             collection of Aircraft/Mission specific options
 
         Returns
@@ -847,7 +847,7 @@ class LandingTouchdownToNoseDown(PhaseBuilderBase):
 
         Parameters
         ----------
-        aviary_options : AviaryValues (emtpy)
+        aviary_options : AviaryValues (empty)
             collection of Aircraft/Mission specific options
 
         Returns
@@ -1019,7 +1019,7 @@ class LandingNoseDownToStop(PhaseBuilderBase):
 
         Parameters
         ----------
-        aviary_options : AviaryValues (emtpy)
+        aviary_options : AviaryValues (empty)
             collection of Aircraft/Mission specific options
 
         Returns

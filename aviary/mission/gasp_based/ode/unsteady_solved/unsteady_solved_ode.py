@@ -206,8 +206,8 @@ class UnsteadySolvedODE(BaseODE):
                                          lhs_name="dgam_dt_approx",
                                          rhs_name="dgam_dt",
                                          eq_units="rad/s",
-                                         lower=-np.pi/12,
-                                         upper=np.pi/12,
+                                         lower=-np.pi/2,
+                                         upper=np.pi/2,
                                          normalize=False)
 
         if balance_throttle:
@@ -229,9 +229,11 @@ class UnsteadySolvedODE(BaseODE):
                                              promotes_outputs=["TAS_resid"])
 
             control_iter_group.add_subsystem("KS_comp",
-                                             om.KSComp(width=nn, add_constraint=True),
+                                             om.KSComp(width=nn),
                                              promotes_inputs=[("g", "TAS_resid")],
                                              promotes_outputs=[("KS", "ks_TAS_resid")])
+
+            control_iter_group.add_constraint("ks_TAS_resid", equals=0.0)
 
         control_iter_group.add_subsystem("thrust_alpha_bal", subsys=thrust_alpha_bal,
                                          promotes_inputs=["*"],
