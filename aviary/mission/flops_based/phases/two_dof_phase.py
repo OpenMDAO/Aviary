@@ -88,6 +88,8 @@ class TwoDOFPhase(PhaseBuilderBase):
         balance_throttle = user_options.get_val('balance_throttle')
         rotation = user_options.get_val('rotation')
         constraints = user_options.get_val('constraints')
+        optimize_mach = user_options.get_val('optimize_mach')
+        optimize_altitude = user_options.get_val('optimize_altitude')
 
         if not balance_throttle:
             phase.add_parameter(
@@ -117,12 +119,12 @@ class TwoDOFPhase(PhaseBuilderBase):
         phase.add_parameter("wing_area", units="ft**2",
                             static_target=True, opt=False, val=1370)
 
-        phase.add_polynomial_control("TAS",
+        phase.add_polynomial_control(Dynamic.Mission.MACH,
                                      order=control_order,
-                                     units="kn", val=200.0,
-                                     opt=opt, lower=1, upper=500, ref=250,
+                                     val=0.4,
+                                     opt=optimize_mach, lower=0.0, upper=0.99,
                                      fix_initial=fix_initial,
-                                     rate_targets=['dTAS_dr'],
+                                     rate_targets=['dmach_dr'],
                                      )
 
         if rotation:
@@ -144,7 +146,7 @@ class TwoDOFPhase(PhaseBuilderBase):
                                          order=control_order,
                                          fix_initial=fix_initial,
                                          rate_targets=['dh_dr'], rate2_targets=['d2h_dr2'],
-                                         opt=opt, upper=40.e3, ref=30.e3, lower=-1.)
+                                         opt=optimize_altitude, upper=40.e3, ref=30.e3, lower=-1.)
 
         self._add_user_defined_constraints(phase, constraints)
 
@@ -240,7 +242,7 @@ TwoDOFPhase._add_initial_guess_meta_data(
     desc='initial guess for vertical distances')
 
 TwoDOFPhase._add_initial_guess_meta_data(
-    InitialGuessPolynomialControl('TAS'),
+    InitialGuessPolynomialControl('mach'),
     desc='initial guess for speed')
 
 TwoDOFPhase._add_initial_guess_meta_data(

@@ -91,7 +91,7 @@ class UnsteadySolvedODE(BaseODE):
         self.add_subsystem(
             "USatm",
             USatm1976Comp(
-                num_nodes=nn),
+                num_nodes=nn, output_dsos_dh=True),
             promotes_inputs=[
                 ("h",
                  Dynamic.Mission.ALTITUDE)],
@@ -104,7 +104,9 @@ class UnsteadySolvedODE(BaseODE):
                 ("pres",
                  Dynamic.Mission.STATIC_PRESSURE),
                 "viscosity",
-                "drhos_dh"],
+                "drhos_dh",
+                "dsos_dh",
+            ],
         )
 
         self.add_subsystem("flight_path_angle",
