@@ -61,7 +61,7 @@ phase_info = {
             'control_order': 1,
             'opt': True,
             'balance_throttle': False,
-            'optimize_mach': True,
+            'optimize_mach': False,
             'optimize_altitude': False,
             'rotation': True,
             'constraints': {
@@ -83,7 +83,7 @@ phase_info = {
         'subsystem_options': subsystem_options,
         'initial_guesses': {
             'distance': [(2.e3, 500.), 'ft'],
-            'mach': [(0.3, 0.3), 'unitless'],
+            'mach': [(0.18, 0.2), 'unitless'],
             'time': [(20., 25.), 's'],
             'mass': [(175.e3-100., 175.e3-200.), 'lbm'],
             # 'altitude': [(0., 0.), 'ft'],
@@ -91,7 +91,7 @@ phase_info = {
     },
     'BC': {
         'user_options': {
-            'num_segments': 5,
+            'num_segments': 3,
             'order': 3,
             'fix_initial': False,
             'throttle_setting': throttle_max,
@@ -101,12 +101,12 @@ phase_info = {
             'initial_ref': (1.e3, 'ft'),
             'initial_bounds': ((1., 16.e3), 'ft'),
             'duration_ref': (1.e3, 'ft'),
-            'duration_bounds': ((1000., 1500.), 'ft'),
+            'duration_bounds': ((500., 1500.), 'ft'),
             'control_order': 1,
             'opt': True,
             'balance_throttle': False,
-            'optimize_mach': True,
-            'optimize_altitude': True,
+            'optimize_mach': False,
+            'optimize_altitude': False,
             'rotation': False,
             'constraints': {
                 # 'flight_path_angle': {
@@ -120,7 +120,7 @@ phase_info = {
         'subsystem_options': subsystem_options,
         'initial_guesses': {
             'distance': [(2.5e3, 1000.), 'ft'],
-            'mach': [(0.22, 0.22), 'unitless'],
+            'mach': [(0.2, 0.22), 'unitless'],
             'time': [(25., 35.), 's'],
             'mass': [(175.e3-200., 175.e3-400.), 'lbm'],
             'altitude': [(0., 50.), 'ft'],
@@ -128,7 +128,7 @@ phase_info = {
     },
     'CD_to_P2': {
         'user_options': {
-            'num_segments': 3,
+            'num_segments': 6,
             'order': 3,
             'fix_initial': False,
             'throttle_setting': throttle_max,
@@ -142,15 +142,22 @@ phase_info = {
             'control_order': 1,
             'opt': True,
             'balance_throttle': False,
-            'optimize_mach': True,
-            'optimize_altitude': True,
+            'optimize_mach': False,
+            'optimize_altitude': False,
             'constraints': {
-                'altitude': {
-                    'equals': 985.,
+                # 'altitude': {
+                #     'equals': 985.,
+                #     'units': 'ft',
+                #     'type': 'boundary',
+                #     'loc': 'final',
+                #     'ref': 1000.,
+                # },
+                'distance': {
+                    'equals': 20.e3,
                     'units': 'ft',
                     'type': 'boundary',
                     'loc': 'final',
-                    'ref': 1000.,
+                    'ref': 30.e3,
                 },
                 #     'mach_rate': {
                 #         'lower': 0.,
@@ -162,9 +169,9 @@ phase_info = {
         },
         'subsystem_options': subsystem_options,
         'initial_guesses': {
-            'distance': [(3.5e3, 6.e3), 'ft'],
+            'distance': [(3.5e3, 20.e3), 'ft'],
             'time': [(35., 180.), 's'],
-            'mach': [(0.3, 0.3), 'unitless'],
+            'mach': [(0.22, 0.3), 'unitless'],
             # 'mass': [(175.e3, 174.e3), 'lbm'],
             'altitude': [(50., 985.), 'ft'],
         },
@@ -185,7 +192,7 @@ phase_info = {
     #         'control_order': 1,
     #         'opt': True,
     #         'balance_throttle': False,
-    #         'optimize_mach': True,
+    #         'optimize_mach': False,
     #         'optimize_altitude': True,
     #         'constraints': {
     #             # 'distance': {
@@ -326,7 +333,7 @@ prob.add_design_variables()
 
 # Load optimization problem formulation
 # Detail which variables the optimizer can control
-prob.add_objective('fuel_burned')
+prob.add_objective('time')
 
 prob.setup()
 
