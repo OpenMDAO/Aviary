@@ -21,8 +21,6 @@ class SizeEngine(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        count = len(self.options['aviary_options'].get_val('engine_models'))
-
         add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST, val=0.0)
 
         add_aviary_output(self, Aircraft.Engine.SCALE_FACTOR, val=0.0)
@@ -61,7 +59,7 @@ class SizeEngine(om.ExplicitComponent):
         if scale_engine:
             engine_scale_factor = scaled_sls_thrust / reference_sls_thrust
 
-        outputs['scale_factor'] = engine_scale_factor
+        outputs[Aircraft.Engine.SCALE_FACTOR] = engine_scale_factor
 
     def setup_partials(self):
         # count = len(self.options['aviary_options'].get_val('engine_models'))

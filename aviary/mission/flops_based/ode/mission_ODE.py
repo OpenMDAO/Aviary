@@ -6,7 +6,7 @@ from aviary.mission.flops_based.ode.mission_EOM import MissionEOM
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import promote_aircraft_and_mission_vars
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.variable_info.variables import Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.variables_in import VariablesIn
 
 
@@ -154,10 +154,12 @@ class MissionODE(om.Group):
             ])
 
         # add a balance comp to compute throttle based on the altitude rate
+        engine_count = len(self.options['aviary_options'].get_val(
+            Aircraft.Engine.NUM_ENGINES))
         self.add_subsystem(name='throttle_balance',
                            subsys=om.BalanceComp(name=Dynamic.Mission.THROTTLE,
                                                  units="unitless",
-                                                 val=np.ones(nn),
+                                                 val=np.ones((nn, engine_count)),
                                                  lhs_name='thrust_required',
                                                  rhs_name=Dynamic.Mission.THRUST_TOTAL,
                                                  eq_units="lbf",

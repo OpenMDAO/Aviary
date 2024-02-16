@@ -22,6 +22,7 @@ class PropulsionPreMission(om.Group):
     def setup(self):
         options = self.options['aviary_options']
         engine_models = options.get_val('engine_models')
+        engine_count = len(engine_models)
 
         # Each engine model pre_mission component only needs to accept and output single
         # value relevant to that variable - this group's configure step will handle
@@ -35,13 +36,14 @@ class PropulsionPreMission(om.Group):
                                    subsys=subsys,
                                    )
 
-        # Add an empty mux comp, which will be customized to handle all required outputs
-        # in self.configure()
-        self.add_subsystem(
-            'pre_mission_mux',
-            subsys=om.MuxComp(),
-            promotes_outputs=['*']
-        )
+        if engine_count > 1:
+            # Add an empty mux comp, which will be customized to handle all required outputs
+            # in self.configure()
+            self.add_subsystem(
+                'pre_mission_mux',
+                subsys=om.MuxComp(),
+                promotes_outputs=['*']
+            )
 
         self.add_subsystem(
             'propulsion_sum',
@@ -62,6 +64,7 @@ class PropulsionPreMission(om.Group):
         # determine if openMDAO messages and warnings should be suppressed
         verbosity = self.options['aviary_options'].get_val(Settings.VERBOSITY)
         out_stream = None
+        # DEBUG
         if verbosity.value > 2:
             out_stream = sys.stdout
 
@@ -114,22 +117,23 @@ class PropulsionPreMission(om.Group):
                               input for input in comp_inputs if input not in input_dict[comp.name]],
                           outputs=[output for output in comp_outputs if output not in output_dict[comp.name]])
 
-        # Get individual comp outputs back into the proper vectorized variable
-        for output in unique_outputs:
-            self.pre_mission_mux.add_var(output,
-                                         #  shape=(1,),
-                                         units=unique_outputs[output])
-            # promote/alias outputs for each comp that has relevant outputs
-            for i, comp in enumerate(output_dict):
-                if output in output_dict[comp]:
-                    # if this component provides the output, connect it to the correct mux input
-                    self.connect(comp + '.' + output, 'pre_mission_mux.' +
-                                 output + '_' + str(i))
-                else:
-                    # If this component does not provide the output, pass the existing
-                    # value for that index to the mux
-                    self.connect(output, 'pre_mission_mux.' + output +
-                                 '_' + str(i), src_indices=om.slicer[i])
+        # add variables to the mux component and make connections to individual
+        # component outputs
+        if engine_count > 1:
+            for output in unique_outputs:
+                self.pre_mission_mux.add_var(output,
+                                             units=unique_outputs[output])
+                # promote/alias outputs for each comp that has relevant outputs
+                for i, comp in enumerate(output_dict):
+                    if output in output_dict[comp]:
+                        # if this component provides the output, connect it to the correct mux input
+                        self.connect(comp + '.' + output, 'pre_mission_mux.' +
+                                     output + '_' + str(i))
+                    else:
+                        # If this component does not provide the output, pass the existing
+                        # value for that index to the mux
+                        self.connect(output, 'pre_mission_mux.' + output +
+                                     '_' + str(i), src_indices=om.slicer[i])
 
 
 class PropulsionSum(om.ExplicitComponent):
