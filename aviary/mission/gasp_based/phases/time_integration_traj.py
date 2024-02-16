@@ -1,11 +1,7 @@
 import numpy as np
 import openmdao.api as om
-from aviary.mission.gasp_based.ode.time_integration_base_classes import SimuPyProblem, SGMTrajBase
-from aviary.mission.gasp_based.phases.time_integration_phases import SGMGroundroll, SGMRotation, SGMAscentCombined, SGMAccel, SGMClimb, SGMCruise, SGMDescent
-
-from aviary.variable_info.enums import SpeedType
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic
+from aviary.mission.gasp_based.ode.time_integration_base_classes import SGMTrajBase
+from aviary.mission.gasp_based.phases.time_integration_phases import SGMGroundroll, SGMRotation
 
 
 class TimeIntegrationTrajBase(SGMTrajBase):
@@ -72,8 +68,9 @@ class FlexibleTraj(TimeIntegrationTrajBase):
 
         ode_index = 0
         sim_gen = self.compute_traj_loop(self.ODEs[0], inputs, outputs)
-        print('*'*40)
-        print('Starting: '+self.ODEs[ode_index].phase_name)
+        if self.verbosity.value >= 1:
+            print('*'*40)
+            print('Starting: '+self.ODEs[ode_index].phase_name)
         for current_problem, sim_result in sim_gen:
             t_final = sim_result.t[-1]
             x_final = sim_result.x[-1, :]
@@ -86,32 +83,25 @@ class FlexibleTraj(TimeIntegrationTrajBase):
             except IndexError:
                 next_problem = None
 
-            print('Finished: '+current_problem.phase_name)
-            # print([name+'_'+data['units']
-            #       for name, data in current_problem.states.items()])
-            # print(x_final)
-            # print('outputs')
-            # for output_name, unit in current_problem.outputs.items():
-            #     val = current_problem.get_val(output_name, units=unit)[0]
-            #     print(output_name+':', val, unit)
+            if self.verbosity.value >= 1:
+                print('Finished: '+current_problem.phase_name)
 
-            # print(self.outputs.items())
-            # print(current_problem.output)
             if next_problem is not None:
                 if type(current_problem) is SGMGroundroll:
                     next_problem.prob.set_val("start_rotation", t_start_rotation)
                 elif type(current_problem) is SGMRotation:
                     next_problem.rotation.set_val("start_rotation", t_start_rotation)
-                # print('\n\n')
-                print('Starting: '+next_problem.phase_name)
-                # print([name+'_'+data['units']
-                #       for name, data in next_problem.states.items()])
+
+                if self.verbosity.value >= 1:
+                    print('Starting: '+next_problem.phase_name)
                 sim_gen.send(next_problem)
             else:
-                print('Reached the end of the Trajectory!')
+                if self.verbosity.value >= 1:
+                    print('Reached the end of the Trajectory!')
                 sim_gen.close()
                 break
 
-        print('t_final', t_final)
-        print('x_final', x_final)
-        print(self.ODEs[-1].states)
+        if self.verbosity.value >= 1:
+            print('t_final', t_final)
+            print('x_final', x_final)
+            print(self.ODEs[-1].states)

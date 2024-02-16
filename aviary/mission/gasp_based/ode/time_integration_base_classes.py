@@ -7,6 +7,7 @@ from simupy.systems import DynamicalSystem
 
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.variable_info.enums import Verbosity
+from aviary.variable_info.variable_meta_data import _MetaData
 
 
 def add_SGM_required_inputs(group: om.Group, inputs_to_add: dict):
@@ -50,6 +51,8 @@ class SimuPyProblem(SimulationMixin):
     def __init__(
         self,
         ode,
+        aviary_options=None,
+        meta_data=_MetaData,
         problem_name='',
         time_independent=False,
         t_name="t_curr",
@@ -92,6 +95,10 @@ class SimuPyProblem(SimulationMixin):
 
         self.dt = 0.0
         prob = om.Problem()
+        if aviary_options:
+            from aviary.interface.methods_for_level2 import AviaryGroup
+            prob.model = AviaryGroup(
+                aviary_options=aviary_options, aviary_metadata=meta_data)
         prob.model.add_subsystem(
             "ODE_group",
             ode,
@@ -418,12 +425,12 @@ class SimuPyProblem(SimulationMixin):
 
 
 class SGMTrajBase(om.ExplicitComponent):
-    def initialize(self):
+    def initialize(self, verbosity=Verbosity.QUIET):
         # needs to get passed to each ODE
         # TODO: param_dict
         self.options.declare("param_dict",
                              default=ParamPort.param_data)
-        self.verbosity = Verbosity.QUIET
+        self.verbosity = verbosity
         self.max_allowable_time = 1_000_000
         self.adjoint_int_opts = DEFAULT_INTEGRATOR_OPTIONS.copy()
         self.adjoint_int_opts['nsteps'] = 5000

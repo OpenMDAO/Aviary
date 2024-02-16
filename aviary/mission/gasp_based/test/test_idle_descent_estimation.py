@@ -29,8 +29,8 @@ class IdleDescentTestCase(unittest.TestCase):
         results = descent_range_and_fuel(ode_args=ode_args)['refined_guess']
 
         # Values obtained by running idle_descent_estimation
-        assert_near_equal(results['distance_flown'], 91.8911599691433, tol)
-        assert_near_equal(results['fuel_burned'], 236.73893823639082, tol)
+        assert_near_equal(results['distance_flown'], 91.50393932590772, tol)
+        assert_near_equal(results['fuel_burned'], 235.39517919329228, tol)
 
 
 if __name__ == "__main__":

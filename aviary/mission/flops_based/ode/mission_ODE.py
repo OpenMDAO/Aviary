@@ -185,36 +185,6 @@ class MissionODE(om.Group):
                            promotes_inputs=['*'],
                            promotes_outputs=['*'])
 
-        self.set_input_defaults(Mission.Design.GROSS_MASS, val=1, units='kg')
-        self.set_input_defaults(
-            Aircraft.Fuselage.CHARACTERISTIC_LENGTH, val=1, units='ft')
-        self.set_input_defaults(Aircraft.Fuselage.FINENESS, val=1, units='unitless')
-        self.set_input_defaults(Aircraft.Fuselage.WETTED_AREA, val=1, units='ft**2')
-        self.set_input_defaults(
-            Aircraft.VerticalTail.CHARACTERISTIC_LENGTH, val=1, units='ft')
-        self.set_input_defaults(Aircraft.VerticalTail.FINENESS, val=1, units='unitless')
-        self.set_input_defaults(Aircraft.VerticalTail.WETTED_AREA, val=1, units='ft**2')
-        self.set_input_defaults(
-            Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH, val=1, units='ft')
-        self.set_input_defaults(Aircraft.HorizontalTail.FINENESS,
-                                val=1, units='unitless')
-        self.set_input_defaults(
-            Aircraft.HorizontalTail.WETTED_AREA, val=1, units='ft**2')
-        self.set_input_defaults(Aircraft.Wing.CHARACTERISTIC_LENGTH, val=1, units='ft')
-        self.set_input_defaults(Aircraft.Wing.FINENESS, val=1, units='unitless')
-        self.set_input_defaults(Aircraft.Wing.WETTED_AREA, val=1, units='ft**2')
-        self.set_input_defaults(
-            Aircraft.Wing.SPAN_EFFICIENCY_FACTOR, val=1, units='unitless')
-        self.set_input_defaults(Aircraft.Wing.TAPER_RATIO, val=1, units='unitless')
-        self.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD,
-                                val=1, units='unitless')
-        self.set_input_defaults(Aircraft.Wing.SWEEP, val=1, units='deg')
-        self.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, val=1, units='unitless')
-        self.set_input_defaults(
-            Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, val=1, units='unitless')
-        self.set_input_defaults(
-            Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR, val=1, units='unitless')
-
         self.set_input_defaults(Dynamic.Mission.MACH, val=np.ones(nn), units='unitless')
         self.set_input_defaults(Dynamic.Mission.MASS, val=np.ones(nn), units='kg')
         self.set_input_defaults(Dynamic.Mission.VELOCITY, val=np.ones(nn), units='m/s')
