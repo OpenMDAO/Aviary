@@ -223,9 +223,9 @@ phase_info = {
             'ground_roll': False,
             'clean': False,
             'initial_ref': (1.e3, 'ft'),
-            'initial_bounds': ((500., 2500.), 'ft'),
+            'initial_bounds': ((500., 30.e3), 'ft'),
             'duration_ref': (1.e3, 'ft'),
-            'duration_bounds': ((50., 2000.), 'ft'),
+            'duration_bounds': ((50., 5000.), 'ft'),
             'control_order': 1,
             'opt': True,
             'optimize_mach': False,
@@ -247,11 +247,12 @@ phase_info = {
         },
         'subsystem_options': subsystem_options,
         'initial_guesses': {
-            'distance': [(20.e3, 10.e3), 'ft'],
+            'distance': [(20.e3, 2.e3), 'ft'],
             'mach': [(0.3, 0.3), 'unitless'],
             'mass': [(175.e3, 174.e3), 'lbm'],
-            'altitude': [(0., 1000.), 'ft'],
+            'altitude': [(985., 1200.), 'ft'],
         },
+    },
     # 'EF_to_P1': {
     #     'user_options': {
     #         'num_segments': 3,
