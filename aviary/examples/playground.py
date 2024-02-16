@@ -152,13 +152,13 @@ phase_info = {
                 #     'loc': 'final',
                 #     'ref': 1000.,
                 # },
-                'distance': {
-                    'equals': 20.e3,
-                    'units': 'ft',
-                    'type': 'boundary',
-                    'loc': 'final',
-                    'ref': 30.e3,
-                },
+                # 'distance': {
+                #     'equals': 20.e3,
+                #     'units': 'ft',
+                #     'type': 'boundary',
+                #     'loc': 'final',
+                #     'ref': 30.e3,
+                # },
                 #     'mach_rate': {
                 #         'lower': 0.,
                 #         'units': 'unitless/m',
@@ -231,12 +231,6 @@ phase_info = {
             'optimize_mach': False,
             'optimize_altitude': False,
             'constraints': {
-                'distance': {
-                    'upper': 30.e3,
-                    'units': 'ft',
-                    'type': 'boundary',
-                    'loc': 'final',
-                },
                 'flight_path_angle': {
                     'equals': 4.,
                     'loc': 'final',
@@ -253,37 +247,38 @@ phase_info = {
             'altitude': [(985., 1200.), 'ft'],
         },
     },
-    # 'EF_to_P1': {
-    #     'user_options': {
-    #         'num_segments': 3,
-    #         'order': 3,
-    #         'fix_initial': False,
-    #         'throttle_setting': throttle_climb,
-    #         'input_speed_type': av.SpeedType.MACH,
-    #         'ground_roll': False,
-    #         'clean': False,
-    #         'initial_ref': (1.e3, 'ft'),
-    #         'initial_bounds': ((500., 2500.), 'ft'),
-    #         'duration_ref': (1.e3, 'ft'),
-    #         'duration_bounds': ((50., 2000.), 'ft'),
-    #         'control_order': 1,
-    #         'opt': True,
-    #         'constraints': {
-    #             'distance': {
-    #                 'equals': 21325.,
-    #                 'units': 'ft',
-    #                 'type': 'boundary',
-    #                 'loc': 'final',
-    #             },
-    #         },
-    #     },
-    #     'subsystem_options': subsystem_options,
-    #     'initial_guesses': {
-    #         'distance': [(1000., 2000.), 'ft'],
-    #         'TAS': [(100., 150.), 'kn'],
-    #         'mass': [(175.e3, 174.e3), 'lbm'],
-    #         'altitude': [(0., 1000.), 'ft'],
-    #     },
+    'EF_to_P1': {
+        'user_options': {
+            'num_segments': 3,
+            'order': 3,
+            'fix_initial': False,
+            'throttle_setting': throttle_climb,
+            'input_speed_type': av.SpeedType.MACH,
+            'ground_roll': False,
+            'clean': False,
+            'initial_ref': (1.e3, 'ft'),
+            'initial_bounds': ((500., 50.e3), 'ft'),
+            'duration_ref': (1.e3, 'ft'),
+            'duration_bounds': ((100., 20.e3), 'ft'),
+            'control_order': 1,
+            'opt': True,
+            'constraints': {
+                'distance': {
+                    'equals': 21325.,
+                    'units': 'ft',
+                    'type': 'boundary',
+                    'loc': 'final',
+                    'ref': 30.e3,
+                },
+            },
+        },
+        'subsystem_options': subsystem_options,
+        'initial_guesses': {
+            'distance': [(21.e3, 2000.), 'ft'],
+            'mach': [(0.3, 0.3), 'unitless'],
+            'mass': [(175.e3, 174.e3), 'lbm'],
+            'altitude': [(0., 1000.), 'ft'],
+        },
     # 'EF_past_P1': {
     #     'user_options': {
     #         'num_segments': 3,
