@@ -1,0 +1,47 @@
+"""
+Run the a mission with a simple external component that computes the wing
+and horizontal tail mass.
+"""
+from copy import deepcopy
+import aviary.api as av
+
+from aviary.examples.external_subsystems.engine_NPSS.table_engine_builder import TableEngineBuilder as EngineBuilder
+
+
+phase_info = deepcopy(av.default_height_energy_phase_info)
+
+prob = av.AviaryProblem()
+
+prob.options["group_by_pre_opt_post"] = True
+
+# Load aircraft and options data from user
+# Allow for user overrides here
+# add engine builder
+prob.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info, engine_builder=EngineBuilder())
+
+prob.add_pre_mission_systems()
+
+prob.add_phases()
+
+prob.add_post_mission_systems()
+
+# Link phases and variables
+prob.link_phases()
+
+prob.add_driver("SLSQP")
+
+prob.add_design_variables()
+
+prob.add_objective()
+
+prob.setup()
+
+prob.set_initial_guesses()
+
+prob.run_aviary_problem(suppress_solver_print=True)
+
+# print('Engine Mass', prob.get_val(av.Aircraft.Engine.MASS))
+# print('Wing Mass', prob.get_val(av.Aircraft.Wing.MASS))
+# print('Horizontal Tail Mass', prob.get_val(av.Aircraft.HorizontalTail.MASS))
+
+print('done')
