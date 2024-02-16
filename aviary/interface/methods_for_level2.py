@@ -1401,8 +1401,8 @@ class AviaryProblem(om.Problem):
             #         phases[1:], [Dynamic.Mission.ALTITUDE], connected=False)
             # self.traj.link_phases(
             #     phases[1:], [Dynamic.Mission.FLIGHT_PATH_ANGLE], connected=False)
-            # self.traj.link_phases(
-            #     phases[1:], [Dynamic.Mission.ANGLE_OF_ATTACK], units='rad', connected=False)
+            self.traj.link_phases(
+                phases[1:], [Dynamic.Mission.ANGLE_OF_ATTACK], units='rad', connected=False)
 
         elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
             if self.analysis_scheme is AnalysisScheme.COLLOCATION:

@@ -235,7 +235,7 @@ class UnsteadySolvedODE(BaseODE):
                                              promotes_inputs=[("g", "TAS_resid")],
                                              promotes_outputs=[("KS", "ks_TAS_resid")])
 
-            control_iter_group.add_constraint("ks_TAS_resid", equals=0.0)
+            control_iter_group.add_constraint("ks_TAS_resid", equals=0.0, ref=1.e4)
 
         control_iter_group.add_subsystem("thrust_alpha_bal", subsys=thrust_alpha_bal,
                                          promotes_inputs=["*"],

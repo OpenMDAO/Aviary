@@ -130,7 +130,7 @@ class TwoDOFPhase(PhaseBuilderBase):
         if rotation:
             phase.add_polynomial_control(Dynamic.Mission.ANGLE_OF_ATTACK,
                                          order=control_order,
-                                         fix_initial=fix_initial,
+                                         fix_initial=True,
                                          lower=0, upper=15,
                                          units='deg', ref=10.,
                                          val=0.,
