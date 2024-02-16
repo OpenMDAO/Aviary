@@ -208,8 +208,8 @@ class UnsteadySolvedODE(BaseODE):
                                          lhs_name="dgam_dt_approx",
                                          rhs_name="dgam_dt",
                                          eq_units="rad/s",
-                                         lower=-np.pi/2,
-                                         upper=np.pi/2,
+                                         lower=-np.pi/12,
+                                         upper=np.pi/12,
                                          normalize=False)
 
         if balance_throttle:
