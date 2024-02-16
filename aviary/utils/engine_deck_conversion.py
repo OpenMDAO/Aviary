@@ -23,6 +23,7 @@ from aviary.utils.named_values import NamedValues
 class EngineDeckType(Enum):
     FLOPS = 'FLOPS'
     GASP = 'GASP'
+    GASP_TP = 'GASP_TP'
 
 
 MACH = EngineModelVariables.MACH
@@ -30,7 +31,9 @@ ALTITUDE = EngineModelVariables.ALTITUDE
 THROTTLE = EngineModelVariables.THROTTLE
 HYBRID_THROTTLE = EngineModelVariables.HYBRID_THROTTLE
 THRUST = EngineModelVariables.THRUST
+TAILPIPE_THRUST = EngineModelVariables.TAILPIPE_THRUST
 GROSS_THRUST = EngineModelVariables.GROSS_THRUST
+SHAFT_POWER_CORRECTED = EngineModelVariables.SHAFT_POWER_CORRECTED
 RAM_DRAG = EngineModelVariables.RAM_DRAG
 FUEL_FLOW = EngineModelVariables.FUEL_FLOW
 ELECTRIC_POWER = EngineModelVariables.ELECTRIC_POWER
@@ -48,7 +51,7 @@ flops_keys = [
     NOX_RATE]  # , EXIT_AREA]
 
 # later code assumes T4 is last item in keys
-gasp_keys = [MACH, ALTITUDE, THROTTLE, THRUST, FUEL_FLOW, TEMPERATURE]
+gasp_keys = [MACH, ALTITUDE, THROTTLE, FUEL_FLOW, TEMPERATURE]
 
 header_names = {
     MACH: 'Mach_Number',
@@ -120,10 +123,24 @@ def EngineDeckConverter(input_file=None, output_file=None, data_format=None):
                 data[NOX_RATE] = np.append(data[NOX_RATE], line[6])
                 # data[EXIT_AREA].append(line[7])
 
-    elif data_format == EngineDeckType.GASP:
+    elif data_format in (EngineDeckType.GASP, EngineDeckType.GASP_TP):
+        is_turbo_prop = True if data_format == EngineDeckType.GASP_TP else False
+        temperature = gasp_keys.pop()
+        fuelflow = gasp_keys.pop()
+        if is_turbo_prop:
+            gasp_keys.extend((SHAFT_POWER_CORRECTED, TAILPIPE_THRUST))
+        else:
+            gasp_keys.extend((THRUST))
+        gasp_keys.extend((fuelflow, temperature))
+
         data = {key: [] for key in gasp_keys}
 
-        scalars, tables = _read_gasp_engine(data_file)
+        scalars, tables = _read_gasp_engine(data_file, is_turbo_prop)
+        if 'throttle_type' in scalars:
+            throttle_type = scalars.pop('throttle_type')
+        else:
+            throttle_type = 1
+
         # save scalars as comments
         comments.extend(['# ' + key + ': ' + str(scalars[key])
                         for key in scalars.keys()])
@@ -131,23 +148,28 @@ def EngineDeckConverter(input_file=None, output_file=None, data_format=None):
         # recommended to always generate structured grid
         structure_data = True
         if structure_data:
-            structured_data = _make_structured_grid(tables, method='lagrange3')
+            structured_data = _make_structured_grid(tables, method='lagrange3',
+                                                    is_turbo_prop=is_turbo_prop)
 
             data[MACH] = structured_data['thrust']['machs']
             data[ALTITUDE] = structured_data['thrust']['alts']
             data[THRUST] = structured_data['thrust']['vals']
             data[FUEL_FLOW] = structured_data['fuelflow']['vals']
             T4T2 = structured_data['thrust']['t4t2s']
+            if is_turbo_prop:
+                data[SHAFT_POWER_CORRECTED] = structured_data['shaft_power']['vals']
 
         else:
             data[MACH] = tables['thrust'][:, 2]
             data[ALTITUDE] = tables['thrust'][:, 0]
-            data[THRUST] = tables['thrust'][:, 3]
             data[FUEL_FLOW] = tables['fuelflow'][:, 3]
             T4T2 = tables['thrust'][:, 1]
+            data[THRUST] = tables['thrust'][:, 3]
+            if is_turbo_prop:
+                data[SHAFT_POWER_CORRECTED] = tables['shaft_power'][:, 3]
 
         generate_flight_idle = True
-        if generate_flight_idle:
+        if generate_flight_idle and not is_turbo_prop:
             data, T4T2 = _generate_flight_idle(data, T4T2,
                                                ref_sls_airflow=scalars['sls_airflow'],
                                                ref_sfn_idle=scalars['sfn_idle'])
@@ -155,7 +177,7 @@ def EngineDeckConverter(input_file=None, output_file=None, data_format=None):
         t4max = scalars['t4max']
 
         # if t4max 100 or less, it is actually throttle. Remove temperature as variable
-        if t4max <= 100:
+        if t4max <= 100 or throttle_type == 3:
             compute_T4 = False
             data.pop(TEMPERATURE)
             # temperature is assumed last in keys
@@ -312,7 +334,7 @@ def _flops_field_convert(arg: str):
 _flops_empty_field = '0'
 
 
-def _read_gasp_engine(fp):
+def _read_gasp_engine(fp, is_turbo_prop=False):
     """Read a GASP engine deck file and parse its scalars and tabular data.
     Scalars (T4 max, SLS airflow, etc.) are read from the first line of the engine deck
     (IREAD=1 is assumed) and returned in a dictionary.
@@ -324,10 +346,44 @@ def _read_gasp_engine(fp):
     final column is the dependent variable (one of thrust, fuelflow, or airflow).
     """
     with open(fp, "r") as f:
-        scalars = _read_header(f)
-        tables = {k: _read_table(f) for k in ["thrust", "fuelflow", "airflow"]}
+        if is_turbo_prop:
+            table_types = ["shaft_power", "fuelflow", "tailpipe_thrust"]
+            scalars = _read_tp_header(f)
+        else:
+            table_types = ["thrust", "fuelflow", "airflow"]
+            scalars = _read_header(f)
+
+        tables = {k: _read_table(f) for k in table_types}
 
     return scalars, tables
+
+
+def _read_tp_header(f):
+    """Read GASP engine deck header, returning the engine scalars in a dict"""
+    # file header: FORMAT(2I5,10X,6F10.4)
+    iread, iprint, t4max, t4mcl, t4mc, t4idle, xsfc, cexp = _parse(
+        f, [*_rep(2, (int, 5)), (None, 10), *_rep(6, (float, 10))]
+    )
+    # file header: FORMAT(7F10.4)
+    sls_hp, xncref, prop_rpm, gbx_rat, torque_lim, waslrf = _parse(
+        f, [*_rep(7, (float, 10))]
+    )
+
+    return {
+        "throttle_type": iread,
+        "t4max": t4max,
+        "t4cruise": t4mc,
+        "t4climb": t4mcl,
+        "t4flight_idle": t4idle,
+        "xsfc": xsfc,
+        "cexp": cexp,
+        "sls_horsepower": sls_hp,
+        "freeturbine_rpm": xncref,
+        "propeller_rpm": prop_rpm,
+        "gearbox_ratio": gbx_rat,
+        "torque_limit": torque_lim,
+        "sls_corrected_airflow": waslrf,
+    }
 
 
 def _read_header(f):
@@ -353,7 +409,8 @@ def _read_table(f):
     """Read an entire table from a GASP engine deck file.
     The table data is returned as a "tidy format" array with three columns for the
     independent variables (altitude, T4/T2, and Mach number) and the final column for
-    the table field (one of thrust, fuelflow, or airflow).
+    the table field (one of thrust, fuelflow, or airflow for TurboFans or 
+    shaft_power, fuelflow, or (tailpipe) thrust for TurboProps).
     """
     tab_data = None
 
@@ -440,7 +497,7 @@ def _read_map(f):
     return map_data
 
 
-def _make_structured_grid(data, method="lagrange3"):
+def _make_structured_grid(data, method="lagrange3", is_turbo_prop=False):
     """Generate a structured grid of unique mach/T4:T2/alt values in the deck"""
     # step size in t4/t2 ratio used in generating the structured grid
     # t2t2_step = 0.5 # original value
@@ -460,7 +517,12 @@ def _make_structured_grid(data, method="lagrange3"):
     pts = np.dstack(np.meshgrid(t4t2s, machs, indexing="ij")).reshape(-1, 2)
     npts = pts.shape[0]
 
-    for field in ["thrust", "fuelflow", "airflow"]:
+    if is_turbo_prop:
+        fields = ["shaft_power", "fuelflow", "tailpipe_thrust"]
+    else:
+        fields = ["thrust", "fuelflow", "airflow"]
+
+    for field in fields:
         map_data = data[field]
         all_alts = map_data[:, 0]
         alts = np.unique(all_alts)
