@@ -244,7 +244,7 @@ phase_info = {
             'distance': [(20.e3, 2.e3), 'ft'],
             'mach': [(0.3, 0.3), 'unitless'],
             'mass': [(175.e3, 174.e3), 'lbm'],
-            'altitude': [(985., 1200.), 'ft'],
+            'altitude': [(985., 1100.), 'ft'],
         },
     },
     'EF_to_P1': {
@@ -261,6 +261,8 @@ phase_info = {
             'duration_ref': (1.e3, 'ft'),
             'duration_bounds': ((100., 20.e3), 'ft'),
             'control_order': 1,
+            'optimize_mach': False,
+            'optimize_altitude': False,
             'opt': True,
             'constraints': {
                 'distance': {
@@ -277,8 +279,9 @@ phase_info = {
             'distance': [(21.e3, 2000.), 'ft'],
             'mach': [(0.3, 0.3), 'unitless'],
             'mass': [(175.e3, 174.e3), 'lbm'],
-            'altitude': [(0., 1000.), 'ft'],
+            'altitude': [(1100., 1200.), 'ft'],
         },
+    },
     # 'EF_past_P1': {
     #     'user_options': {
     #         'num_segments': 3,
