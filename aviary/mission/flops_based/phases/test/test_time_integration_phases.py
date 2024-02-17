@@ -19,8 +19,10 @@ from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 
 import warnings
 import unittest
+import importlib
 
 
+@unittest.skipUnless(importlib.util.find_spec("pyoptsparse") is not None, "pyoptsparse is not installed")
 class IdleDescentTestCase(unittest.TestCase):
     def setUp(self):
         core_subsystems = [prop, geom, aero]
