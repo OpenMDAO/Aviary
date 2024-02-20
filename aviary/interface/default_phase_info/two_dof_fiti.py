@@ -54,6 +54,7 @@ def create_2dof_based_ascent_phases(
     )
     accel_vals = {}
 
+    # need to set trigger units
     climb1_kwargs = dict(
         input_speed_type=SpeedType.EAS,
         input_speed_units='kn',
