@@ -1297,7 +1297,7 @@ class AviaryProblem(om.Problem):
     def _link_phases_helper_with_options(self, phases, option_name, var, **kwargs):
         phases_to_link = []
         for idx, phase_name in enumerate(self.phase_info):
-            if self.phase_info[phase_name]['user_options'][option_name]:
+            if self.phase_info[phase_name]['user_options'].get(option_name, False):
                 # get the name of the previous phase
                 if idx > 0:
                     prev_phase_name = phases[idx - 1]
@@ -1308,6 +1308,9 @@ class AviaryProblem(om.Problem):
                     phases_to_link.append(next_phase_name)
         if len(phases_to_link) > 1:
             phases_to_link = list(dict.fromkeys(phases))
+            # TODO: implement correct logic to not connect groundroll phases
+            if self.mission_method is SOLVED_2DOF and option_name == 'optimize_altitude':
+                phases_to_link = phases_to_link[1:]
             self.traj.link_phases(phases=phases_to_link, vars=[var], **kwargs)
 
     def link_phases(self):
@@ -1393,12 +1396,14 @@ class AviaryProblem(om.Problem):
             self.traj.link_phases(phases, [Dynamic.Mission.MASS], connected=True)
             self.traj.link_phases(
                 phases, [Dynamic.Mission.DISTANCE], units='ft', ref=1.e3, connected=False)
-            # self.traj.link_phases(
-            #     phases[1:], [Dynamic.Mission.ALTITUDE], units='ft', ref=1.e3, connected=False)
             self.traj.link_phases(phases, ["time"], connected=False)
-            # self.traj.link_phases(phases[:2], [Dynamic.Mission.MACH], connected=False)
             self.traj.link_phases(
                 phases[1:], [Dynamic.Mission.ANGLE_OF_ATTACK], units='rad', connected=False)
+
+            self._link_phases_helper_with_options(
+                phases, 'optimize_altitude', Dynamic.Mission.ALTITUDE, ref=1.e4)
+            self._link_phases_helper_with_options(
+                phases, 'optimize_mach', Dynamic.Mission.MACH)
 
         elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
             if self.analysis_scheme is AnalysisScheme.COLLOCATION:

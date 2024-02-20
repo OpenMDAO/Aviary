@@ -3,7 +3,7 @@ import aviary.api as av
 
 throttle_max = 1.0
 throttle_climb = 0.956
-throttle_cruise = 0.930
+throttle_cruise = 0.8
 throttle_idle = 0.0
 
 
@@ -25,8 +25,8 @@ subsystem_options = {'core_aerodynamics':
                       'lift_coefficient_factor': 1.,
                       'drag_coefficient_factor': 1.}}
 
-optimize_mach = False
-optimize_altitude = False
+optimize_mach = True
+optimize_altitude = True
 
 phase_info = {
     "pre_mission": {"include_takeoff": False, "optimize_mass": False},
@@ -45,7 +45,6 @@ phase_info = {
             'time': [(0., 20.), 's'],
             'velocity': [(1., 120.), 'kn'],
             'mass': [(175.e3, 175.e3-100.), 'lbm'],
-            # 'altitude': [(0., 0.), 'ft'],
         },
     },
     'rotate': {
@@ -75,12 +74,6 @@ phase_info = {
                     'type': 'boundary',
                     'ref': 10.e5,
                 },
-                # 'TAS': {
-                #     'upper': 220.,
-                #     'loc': 'final',
-                #     'units': 'kn',
-                #     'type': 'boundary',
-                # },
             },
         },
         'subsystem_options': subsystem_options,
@@ -89,12 +82,11 @@ phase_info = {
             'mach': [(0.18, 0.2), 'unitless'],
             'time': [(20., 25.), 's'],
             'mass': [(175.e3-100., 175.e3-200.), 'lbm'],
-            # 'altitude': [(0., 0.), 'ft'],
         },
     },
     'BC': {
         'user_options': {
-            'num_segments': 3,
+            'num_segments': 5,
             'order': 3,
             'fix_initial': False,
             'throttle_setting': throttle_max,
@@ -105,21 +97,13 @@ phase_info = {
             'duration_ref': (1.e3, 'ft'),
             'duration_bounds': ((500., 1500.), 'ft'),
             'mach_bounds': ((0.2, 0.22), 'unitless'),
-            'altitude_bounds': ((0., 50.), 'ft'),
+            'altitude_bounds': ((0., 250.), 'ft'),
             'control_order': 1,
             'opt': True,
             'balance_throttle': False,
             'optimize_mach': optimize_mach,
             'optimize_altitude': optimize_altitude,
             'rotation': False,
-            'constraints': {
-                # 'flight_path_angle': {
-                #     'equals': 4.,
-                #     'loc': 'final',
-                #     'units': 'deg',
-                #     'type': 'boundary',
-                # },
-            },
         },
         'subsystem_options': subsystem_options,
         'initial_guesses': {
@@ -149,80 +133,21 @@ phase_info = {
             'balance_throttle': False,
             'optimize_mach': optimize_mach,
             'optimize_altitude': optimize_altitude,
-            'constraints': {
-                # 'altitude': {
-                #     'equals': 985.,
-                #     'units': 'ft',
-                #     'type': 'boundary',
-                #     'loc': 'final',
-                #     'ref': 1000.,
-                # },
-                # 'distance': {
-                #     'equals': 20.e3,
-                #     'units': 'ft',
-                #     'type': 'boundary',
-                #     'loc': 'final',
-                #     'ref': 30.e3,
-                # },
-                #     'mach_rate': {
-                #         'lower': 0.,
-                #         'units': 'unitless/m',
-                #         'type': 'boundary',
-                #         'loc': 'final',
-                #     },
-            },
         },
         'subsystem_options': subsystem_options,
         'initial_guesses': {
             'distance': [(4.e3, 14.e3), 'ft'],
             'time': [(35., 180.), 's'],
             'mach': [(0.22, 0.3), 'unitless'],
-            # 'mass': [(175.e3, 174.e3), 'lbm'],
             'altitude': [(50., 985.), 'ft'],
         },
     },
-    # 'CD_past_P2': {
-    #     'user_options': {
-    #         'num_segments': 5,
-    #         'order': 3,
-    #         'fix_initial': False,
-    #         'throttle_setting': throttle_max,
-    #         'ground_roll': False,
-    #         'clean': False,
-    #         'initial_ref': (1.e3, 'ft'),
-    #         'initial_bounds': ((500., 60.e3), 'ft'),
-    #         'duration_ref': (1.e3, 'ft'),
-    #         'duration_bounds': ((150., 60.e3), 'ft'),
-    #         'control_order': 1,
-    #         'opt': True,
-    #         'balance_throttle': False,
-    #         'optimize_mach': optimize_mach,
-    #         'optimize_altitude': optimize_altitude,
-    #         'constraints': {
-    #             # 'distance': {
-    #             #     'equals': 20.e3,
-    #             #     'units': 'ft',
-    #             #     'type': 'boundary',
-    #             #     'loc': 'final',
-    #             #     'ref': 30.e3,
-    #             # },
-    #         },
-    #     },
-    #     'subsystem_options': subsystem_options,
-    #     'initial_guesses': {
-    #         'distance': [(15.e3, 20.e3), 'ft'],
-    #         'time': [(120., 250.), 's'],
-    #         'mach': [(0.4, 0.4), 'unitless'],
-    #         # 'mass': [(175.e3, 174.e3), 'lbm'],
-    #         'altitude': [(985., 2000.), 'ft'],
-    #     },
-    # },
     'DE': {
         'user_options': {
             'num_segments': 3,
             'order': 3,
             'fix_initial': False,
-            'throttle_setting': throttle_climb,
+            'throttle_setting': throttle_cruise,
             'ground_roll': False,
             'clean': False,
             'initial_ref': (1.e3, 'ft'),
@@ -257,7 +182,7 @@ phase_info = {
             'num_segments': 3,
             'order': 3,
             'fix_initial': False,
-            'throttle_setting': throttle_climb,
+            'throttle_setting': throttle_cruise,
             'ground_roll': False,
             'clean': False,
             'initial_ref': (1.e3, 'ft'),
@@ -290,10 +215,10 @@ phase_info = {
     },
     'EF_past_P1': {
         'user_options': {
-            'num_segments': 3,
+            'num_segments': 5,
             'order': 3,
             'fix_initial': False,
-            'throttle_setting': throttle_climb,
+            'throttle_setting': throttle_cruise,
             'ground_roll': False,
             'clean': False,
             'initial_ref': (1.e3, 'ft'),
@@ -307,11 +232,25 @@ phase_info = {
             'optimize_altitude': optimize_altitude,
             'opt': True,
             'constraints': {
+                'distance': {
+                    'equals': 50.e3,
+                    'units': 'ft',
+                    'type': 'boundary',
+                    'loc': 'final',
+                    'ref': 30.e3,
+                },
+                'altitude': {
+                    'equals': 2000.,
+                    'units': 'ft',
+                    'type': 'boundary',
+                    'loc': 'final',
+                    'ref': 3.e3,
+                },
             },
         },
         'subsystem_options': subsystem_options,
         'initial_guesses': {
-            'distance': [(21325., 30000.), 'ft'],
+            'distance': [(21325., 40.e3), 'ft'],
             'mach': [(0.3, 0.3), 'unitless'],
             'mass': [(174.e3, 173.5e3), 'lbm'],
             'altitude': [(1200, 2000.), 'ft'],
@@ -349,7 +288,7 @@ prob.add_design_variables()
 
 # Load optimization problem formulation
 # Detail which variables the optimizer can control
-prob.add_objective('time')
+prob.add_objective('mass')
 
 prob.setup()
 
