@@ -225,30 +225,6 @@ class MissionODE(om.Group):
 
         print_level = 0 if analysis_scheme is AnalysisScheme.SHOOTING else 2
 
-        if analysis_scheme is AnalysisScheme.SHOOTING and False:
-            from aviary.utils.functions import create_printcomp
-            dummy_comp = create_printcomp(
-                all_inputs=[
-                    't_curr',
-                    Mission.Design.RESERVE_FUEL,
-                    Dynamic.Mission.MASS,
-                    Dynamic.Mission.DISTANCE,
-                    Dynamic.Mission.ALTITUDE,
-                    Dynamic.Mission.FLIGHT_PATH_ANGLE,
-                ],
-                input_units={
-                    't_curr': 's',
-                    Dynamic.Mission.FLIGHT_PATH_ANGLE: 'deg',
-                    Dynamic.Mission.DISTANCE: 'NM',
-                })
-            self.add_subsystem(
-                "dummy_comp",
-                dummy_comp(),
-                promotes_inputs=["*"],)
-            self.set_input_defaults(
-                Dynamic.Mission.DISTANCE, val=0, units='NM')
-            self.set_input_defaults('t_curr', val=0, units='s')
-
         self.nonlinear_solver = om.NewtonSolver(solve_subsystems=True,
                                                 atol=1.0e-10,
                                                 rtol=1.0e-10,

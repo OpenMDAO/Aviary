@@ -218,6 +218,7 @@ class SimuPyProblem(SimulationMixin):
 
         self.t_name = t_name
         self.states = states
+        self.state_names = list(states.keys())
 
         self.parameters = parameters
         self.outputs = outputs
@@ -578,7 +579,7 @@ class SGMTrajBase(om.ExplicitComponent):
                 inputs[state_name+"_initial"].squeeze()
                 if state_name in self.traj_initial_state_input
                 else 0.
-                for state_name in first_problem.states.keys()
+                for state_name in first_problem.state_names
             ]).squeeze()
 
         while True:
@@ -641,7 +642,7 @@ class SGMTrajBase(om.ExplicitComponent):
 
             outputs[output_name] = sim_results[-1].x[
                 -1,
-                list(sim_problems[-1].states.keys()).index(state_name)
+                sim_problems[-1].state_names.index(state_name)
             ]
 
         for output in self.traj_promote_final_output:
@@ -698,13 +699,13 @@ class SGMTrajBase(om.ExplicitComponent):
             param_deriv = np.zeros(len(param_dict))
 
             if output in self.traj_final_state_output:
-                costate[list(next_prob.states.keys()).index(output)] = 1.
+                costate[next_prob.state_names.index(output)] = 1.
             else:  # in self.traj_promote_final_output
 
                 next_prob.state_equation_function(next_res.t[-1], next_res.x[-1, :])
                 costate[:] = next_prob.compute_totals(
                     output,
-                    list(next_prob.states.keys()),
+                    next_prob.state_names,
                     return_format='array'
                 ).squeeze()
 
@@ -745,12 +746,12 @@ class SGMTrajBase(om.ExplicitComponent):
                 num_active_event_channels += 1
                 dg_dx = np.zeros((1, prob.dim_state))
 
-                if channel_name in prob.states.keys():
-                    dg_dx[0, list(prob.states.keys()).index(channel_name)] = 1.
+                if channel_name in prob.state_names:
+                    dg_dx[0, prob.state_names.index(channel_name)] = 1.
                 else:
                     dg_dx[0, :] = prob.compute_totals(
                         [channel_name],
-                        list(prob.states.keys()),
+                        prob.state_names,
                         return_format='array'
                     )
 
@@ -786,17 +787,17 @@ class SGMTrajBase(om.ExplicitComponent):
 
                     # here and co-state assume number of states is only decreasing
                     # forward in time
-                    for state_name in next_prob.states.keys():
-                        state_idx = list(next_prob.states.keys()).index(state_name)
+                    for state_name in next_prob.state_names:
+                        state_idx = next_prob.state_names.index(state_name)
 
-                        if state_name in prob.states.keys():
+                        if state_name in prob.state_names:
                             f_plus[
                                 state_idx
-                            ] = plus_rate[list(prob.states.keys()).index(state_name)]
+                            ] = plus_rate[prob.state_names.index(state_name)]
 
                             # state_update[
-                            #    list(next_prob.states.keys()).index(state_name)
-                            # ] = x[list(prob.states.keys()).index(state_name)]
+                            #    next_prob.state_names.index(state_name)
+                            # ] = x[prob.state_names.index(state_name)]
 
                             # TODO: make sure index multiplying next_pronb costate
                             # lines up -- since costate is pre-filled to next_prob's
@@ -811,7 +812,7 @@ class SGMTrajBase(om.ExplicitComponent):
 
                             dh_j_dx = prob.compute_totals(
                                 [state_name],
-                                list(prob.states.keys()),
+                                prob.state_names,
                                 return_format='array').squeeze()
 
                             dh_dparam[state_idx, :] = prob.compute_totals(
@@ -820,15 +821,15 @@ class SGMTrajBase(om.ExplicitComponent):
                                 return_format='array'
                             ).squeeze()
 
-                            for state_name_2 in prob.states.keys():
+                            for state_name_2 in prob.state_names:
                                 # I'm actually computing dh_dx.T
                                 # dh_dx rows are new state, columns are old state
                                 # now, dh_dx.T rows are old state, columns are new
                                 # so I think this is right
                                 dh_dx[
-                                    list(next_prob.states.keys()).index(state_name_2),
+                                    next_prob.state_names.index(state_name_2),
                                     state_idx,
-                                ] = dh_j_dx[list(prob.states.keys()).index(state_name_2)]
+                                ] = dh_j_dx[prob.state_names.index(state_name_2)]
 
                         else:
                             state_update[
@@ -842,7 +843,7 @@ class SGMTrajBase(om.ExplicitComponent):
 
                 state_rate_names = [val['rate'] for _, val in prob.states.items()]
                 df_dx_data[idx, :, :] = prob.compute_totals(state_rate_names,
-                                                            list(prob.states.keys()),
+                                                            prob.state_names,
                                                             return_format='array').T
                 if param_dict:
                     df_dparam_data[idx, ...] = prob.compute_totals(
@@ -957,7 +958,7 @@ class SGMTrajBase(om.ExplicitComponent):
                         # lamda_dot_plus = lamda_dot
                         if self.verbosity is Verbosity.DEBUG:
                             if np.any(state_disc):
-                                print("update is non-zero!", prob, prob.states.keys(),
+                                print("update is non-zero!", prob, prob.state_names,
                                       state_disc, costate, lamda_dot)
                                 print(
                                     "inner product becomes...",
@@ -966,7 +967,7 @@ class SGMTrajBase(om.ExplicitComponent):
                                     state_disc[None,
                                                :] @ dh_dx.T @ lamda_dot_plus[:, None]
                                 )
-                            print("dh_dx for", prob, prob.states.keys(), "\n",  dh_dx)
+                            print("dh_dx for", prob, prob.state_names, "\n",  dh_dx)
                             print("costate", costate)
                         costate_update_terms = [
                             dh_dx.T @ costate[:, None],
@@ -1063,17 +1064,17 @@ class SGMTrajBase(om.ExplicitComponent):
 
                 # TODO: do co-states need unit changes? probably not...
                 for state_name in prob.state_names:
-                    costate[list(next_prob.states.keys()).index(
-                        state_name)] = co_res.x[-1, list(prob.states.keys()).index(state_name)]
+                    costate[next_prob.state_names.index(
+                        state_name)] = co_res.x[-1, prob.state_names.index(state_name)]
                     lamda_dot_plus[
-                        list(next_prob.states.keys()).index(state_name)
-                    ] = lamda_dot_plus_rate[list(prob.states.keys()).index(state_name)]
+                        next_prob.state_names.index(state_name)
+                    ] = lamda_dot_plus_rate[prob.state_names.index(state_name)]
 
             for state_to_deriv, metadata in self.traj_initial_state_input.items():
                 param_name = metadata["name"]
                 J[output_name, param_name] = costate_reses[output][-1].x[
                     -1,
-                    list(prob.states.keys()).index(state_to_deriv)
+                    prob.state_names.index(state_to_deriv)
                 ]
             for param_deriv_val, param_deriv_name in zip(param_deriv, param_dict):
                 J[output_name, param_deriv_name] = param_deriv_val
