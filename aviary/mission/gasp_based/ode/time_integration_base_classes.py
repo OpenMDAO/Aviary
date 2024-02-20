@@ -395,7 +395,7 @@ class SimuPyProblem(SimulationMixin):
     def clear_triggers(self):
         self.triggers = []
         self.event_channel_names = []
-        self.num_events = []
+        self.num_events = 0
 
     def event_equation_function(self, t, x):
         self.output_equation_function(t, x)
