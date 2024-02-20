@@ -6,9 +6,7 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 core_mission_inputs = [
     Aircraft.Design.BASE_AREA,
-    Aircraft.Design.DRAG_POLAR,
     Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR,
-    Aircraft.Design.LIFT_POLAR,
     Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR,
     Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR,
     Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR,
