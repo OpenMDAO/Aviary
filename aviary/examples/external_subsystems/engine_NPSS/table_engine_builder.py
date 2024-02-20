@@ -137,20 +137,6 @@ class TableEngineBuilder(EngineModel):
             variable to be controlled.
         '''
 
-        # TODO: we will need to handle this throttle_dict differently if the
-        # injected electric input magnitude is greater than 400 hp
-        # throttle_dict = {'units': None, 'upper': 1, 'lower': .625, 'ref': 1}
-
-        # HPX_dict = {'units': 'hp', 'upper': 0., 'lower': -400, 'ref': 400., 'opt': True}  # bounds are notional for now
-
-        # if phase_name == 'climb':
-        #    controls_dict = {
-        #        Dynamic.Engine.ELECTRIC_SHAFT_POWER : HPX_dict,
-        #        }
-        # else:
-        #    controls_dict = {}
-
-        # return controls_dict
         return {}
 
     def get_design_vars(self):
@@ -165,10 +151,8 @@ class TableEngineBuilder(EngineModel):
         '''
         mass_flow_dict = {'units': 'lbm/s', 'upper': 450, 'lower': 100,
                           'ref': 450}  # upper and lower are just notional for now
-        # GTOW_dict = {'units': 'kg', 'upper': 70_000, 'lower': 60_000, 'ref': 70_000}
         design_vars = {
             Aircraft.Engine.DESIGN_MASS_FLOW: mass_flow_dict,
-            # Mission.Design.GROSS_MASS : GTOW_dict
         }
 
         return design_vars

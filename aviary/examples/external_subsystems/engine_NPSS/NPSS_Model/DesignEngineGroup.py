@@ -46,7 +46,7 @@ class NPSSExternalCodeComp(om.ExternalCodeComp):
     def setup_partials(self):
         # this external code does not provide derivatives, use finite difference
         # Note: step size should be larger than NPSS solver tolerance
-        self.declare_partials(of='*', wrt='*', method='fd', step=1e-3)
+        self.declare_partials(of='*', wrt='*', method='fd', step=1e-6)
 
     def compute(self, inputs, outputs):
         Alt_DES = inputs['Alt_DES']
@@ -99,15 +99,13 @@ class DesignEngineGroup(om.Group):
     def setup(self):
         self.add_subsystem('DESIGN', NPSSExternalCodeComp(),
                            promotes_inputs=[('W_DES', Aircraft.Engine.DESIGN_MASS_FLOW)],
-                           # promotes_outputs=[('Fn_SLS', Aircraft.Engine.SCALED_SLS_THRUST), ('thrust_training_data', Dynamic.Mission.THRUST+'_train'),
-                           #                   ('thrustmax_training_data', Dynamic.Mission.THRUST_MAX+'_train'), ('Wf_training_data', 'Wf_td')])
                            promotes_outputs=[('Fn_SLS', Aircraft.Engine.SCALED_SLS_THRUST), ('thrust_training_data', 'Fn_train'),
                                              ('thrustmax_training_data', 'Fn_max_train'), ('Wf_training_data', 'Wf_td')])
 
-        self.add_subsystem('neg_Wf', om.ExecComp('y=-x',
-                                                 x={'val': np.ones(
-                                                     vec_size), 'units': 'lbm/s'},
-                                                 y={'val': np.ones(vec_size), 'units': 'lbm/s'}),
+        self.add_subsystem('negative_fuel_rate', om.ExecComp('y=-x',
+                                                             x={'val': np.ones(
+                                                                 vec_size), 'units': 'lbm/s'},
+                                                             y={'val': np.ones(vec_size), 'units': 'lbm/s'}),
                            promotes_inputs=[('x', 'Wf_td')],
                            promotes_outputs=[('y', 'Wf_inv_train')])
 
@@ -116,52 +114,3 @@ class DesignEngineGroup(om.Group):
         self.set_input_defaults('DESIGN.Alt_DES', 0.0, units='ft')
         self.set_input_defaults('DESIGN.MN_DES', 0.0)
         super().configure()
-
-
-if __name__ == "__main__":
-    import openmdao.api as om
-
-    SNOPT_EN = False
-    prob = om.Problem()
-    model = prob.model
-
-    # add system model
-    model.add_subsystem('p', DesignEngineGroup())
-
-    # Add solver
-    newton = model.nonlinear_solver = om.NewtonSolver()
-    newton.options['atol'] = 1e-3
-    newton.options['rtol'] = 1e-4
-    newton.options['iprint'] = 2
-    newton.options['debug_print'] = False
-    newton.options['maxiter'] = 50
-    newton.options['solve_subsystems'] = True
-    newton.options['max_sub_solves'] = 100
-    newton.options['err_on_non_converge'] = False
-    newton.linesearch = om.BoundsEnforceLS()
-    # newton.linesearch.options['maxiter'] = 1
-    newton.linesearch.options['bound_enforcement'] = 'scalar'
-    newton.linesearch.options['iprint'] = 2
-    newton.linesearch.options['print_bound_enforce'] = False
-
-    # model.nonlinear_solver = om.DirectSolver()
-
-    model.linear_solver = om.DirectSolver(assemble_jac=True)
-
-    prob.setup()
-
-    print('\n\nSTART MDP\n\n')
-    st = time.time()
-    # use run driver if optimizing.
-    # prob.run_driver()
-    # use run model if only using balances.
-    prob.run_model()
-    run_time = time.time() - st
-    print('\n\nEND MDP \n run time : ', run_time, '\n\n')
-
-    # print the output
-    # print('opt fail : ',prob.driver.fail )
-    print('Fn_SLS : ', prob.get_val('p.'+Aircraft.Engine.SCALED_SLS_THRUST))
-    print('Fn_train : ', prob.get_val('p.'+Dynamic.Mission.THRUST+'_train'))
-    print('Fn_max : ', prob.get_val('p.'+Dynamic.Mission.THRUST_MAX+'_train'))
-    print('Wf_td :', prob.get_val('p.Wf_td'))
