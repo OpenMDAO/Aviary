@@ -11,7 +11,7 @@ from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.variables_in import VariablesIn
 
-from aviary.interface.default_phase_info.height_energy import phase_info, aero, prop, geom
+from aviary.interface.default_phase_info.height_energy import aero, prop, geom
 from aviary.subsystems.propulsion.engine_deck import EngineDeck
 from aviary.utils.process_input_decks import create_vehicle
 from aviary.utils.preprocessors import preprocess_propulsion
@@ -23,10 +23,8 @@ import importlib
 
 
 @unittest.skipUnless(importlib.util.find_spec("pyoptsparse") is not None, "pyoptsparse is not installed")
-class IdleDescentTestCase(unittest.TestCase):
+class HE_SGMDescentTestCase(unittest.TestCase):
     def setUp(self):
-        core_subsystems = [prop, geom, aero]
-
         aviary_inputs, initial_guesses = create_vehicle(
             'models/test_aircraft/aircraft_for_bench_FwFm.csv')
         aviary_inputs.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=28690, units="lbf")
@@ -35,9 +33,8 @@ class IdleDescentTestCase(unittest.TestCase):
                               val=0.0175, units="unitless")
         aviary_inputs.set_val(Mission.Takeoff.BRAKING_FRICTION_COEFFICIENT,
                               val=0.35, units="unitless")
-        ode_args = dict(aviary_options=aviary_inputs, core_subsystems=core_subsystems)
-        engine = EngineDeck(options=aviary_inputs)
-        preprocess_propulsion(aviary_inputs, [engine])
+        ode_args = dict(aviary_options=aviary_inputs, core_subsystems=[prop, geom, aero])
+        preprocess_propulsion(aviary_inputs, [EngineDeck(options=aviary_inputs)])
 
         ode_args['num_nodes'] = 1
         ode_args['subsystem_options'] = {'core_aerodynamics': {'method': 'computed'}}
@@ -137,25 +134,26 @@ class IdleDescentTestCase(unittest.TestCase):
     #         "traj.altitude_initial": {'val': 0, 'units': "ft"},
     #         "traj.mass_initial": {'val': 171000, 'units': "lbm"},
     #         "traj.distance_initial": {'val': 0, 'units': "NM"},
-    #         "traj.velocity": {'val': 0, 'units': "m/s"},
+    #         "traj.velocity": {'val': .1, 'units': "m/s"},
     #     }
 
     #     ode_args = self.ode_args
     #     ode_args['friction_key'] = Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT
-    #     increased_alt_Takeoff = SGMDetailedTakeoff(
+    #     brake_release_to_decision = SGMDetailedTakeoff(
     #         ode_args,
-    #         simupy_args=dict(verbosity=Verbosity.QUIET,)
+    #         simupy_args=dict(verbosity=Verbosity.DEBUG,)
     #         )
-    #     increased_alt_Takeoff.clear_triggers()
-    #     increased_alt_Takeoff.add_trigger(Dynamic.Mission.ALTITUDE, 500, units='ft')
+    #     brake_release_to_decision.clear_triggers()
+    #     brake_release_to_decision.add_trigger(Dynamic.Mission.VELOCITY, value=167.85, units='kn')
 
     #     phases = {'HE': {
-    #         'ode': increased_alt_Takeoff,
+    #         'ode': brake_release_to_decision,
     #         'vals_to_set': {}
     #     }}
 
     #     final_states = self.run_simulation(phases, initial_values_takeoff)
-    #     assert_near_equal(final_states['altitude'], 500, self.tol)
+    #     # assert_near_equal(final_states['altitude'], 500, self.tol)
+    #     assert_near_equal(final_states['velocity'], 167.85, self.tol)
 
     def test_cruise(self):
         initial_values_cruise = {
