@@ -1,6 +1,7 @@
 """
-Run the a mission with a simple external component that computes the wing
-and horizontal tail mass.
+Run a mission with an NPSS defined engine. During pre-mission the engine is designed and an engine deck is made.  
+During the mission the deck is used for performance. Weight is estimated using the default Aviary method.
+The engine model was developed using NPSS v3.2.
 """
 from copy import deepcopy
 import aviary.api as av
@@ -17,7 +18,8 @@ prob.options["group_by_pre_opt_post"] = True
 # Load aircraft and options data from user
 # Allow for user overrides here
 # add engine builder
-prob.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info, engine_builder=EngineBuilder())
+prob.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm.csv',
+                 phase_info, engine_builder=EngineBuilder())
 
 prob.add_pre_mission_systems()
 
@@ -39,9 +41,5 @@ prob.setup()
 prob.set_initial_guesses()
 
 prob.run_aviary_problem(suppress_solver_print=True)
-
-# print('Engine Mass', prob.get_val(av.Aircraft.Engine.MASS))
-# print('Wing Mass', prob.get_val(av.Aircraft.Wing.MASS))
-# print('Horizontal Tail Mass', prob.get_val(av.Aircraft.HorizontalTail.MASS))
 
 print('done')

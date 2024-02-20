@@ -16,14 +16,18 @@ vec_size = 72
 
 class NPSSExternalCodeComp(om.ExternalCodeComp):
     def setup(self):
-        self.add_input('Alt_DES', val=0.0, units='ft')
-        self.add_input('MN_DES', val=0.0, units=None)
-        self.add_input('W_DES', val=240.0, units='lbm/s')
+        self.add_input('Alt_DES', val=0.0, units='ft', desc='design altitude')
+        self.add_input('MN_DES', val=0.0, units=None, desc='design Mach number')
+        self.add_input('W_DES', val=240.0, units='lbm/s', desc='design mass flow')
 
-        self.add_output('Fn_SLS', val=1.0, units='lbf')
-        self.add_output('Wf_training_data', val=np.ones(vec_size), units='lbm/s')
-        self.add_output('thrust_training_data', val=np.ones(vec_size), units='lbf')
-        self.add_output('thrustmax_training_data', val=np.ones(vec_size), units='lbf')
+        self.add_output('Fn_SLS', val=1.0, units='lbf',
+                        desc='net thrust at sea-level-static conditions')
+        self.add_output('Wf_training_data', val=np.ones(vec_size),
+                        units='lbm/s', desc='fuel flow training data')
+        self.add_output('thrust_training_data', val=np.ones(
+            vec_size), units='lbf', desc='thrust training data')
+        self.add_output('thrustmax_training_data', val=np.ones(vec_size),
+                        units='lbf', desc='maximum thrust training data')
 
         self.input_file = get_path(
             './examples/external_subsystems/engine_NPSS/NPSS_Model/Design_files/input.int')

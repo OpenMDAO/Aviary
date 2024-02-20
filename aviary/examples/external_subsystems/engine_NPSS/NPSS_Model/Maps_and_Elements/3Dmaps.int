@@ -41,7 +41,7 @@ version 2.4.  What used to be the TurbineNeppMap subelement is now the
 TurbinePRmap subelement, and what used to be the TurbineEfficiencyMap
 subelement has been absorbed by the new TurbinePRmap subelement.  This
 single subelement was created to simplify the operations performed in the
-turbine S_map socket.  Only a few attributes � such as S_hum socket, effDes
+turbine S_map socket.  Only a few attributes such as S_hum socket, effDes
 and geom-related variables - have been eliminated from the subelement in
 the process, and several variable names have been changed. 
 
@@ -66,7 +66,7 @@ S_Re socket if it is filled.
       During DESIGN:
       s_NpDes = NpDes/NpMapDes;
       s_effDes = effDes/(effMapDes * s_effRe);
-      s_PRdes = (PRdes � 1)/(PRmapDes � 1);
+      s_PRdes = (PRdes - 1)/(PRmapDes - 1);
       s_WpDes = WpDes/(WpMapDes * s_WpRe);
 
 - The desired design point is set by the user in the turbine parent element
@@ -88,7 +88,7 @@ effects also appear in the effBase and WpBase calculations.
 	 Note: PRbase is determined by solver independent ind_PRbase
 	 
      NpMap = Np / s_NpDes;
-	 PRmap = 1 + (PRbase � 1)/s_PRdes;
+	 PRmap = 1 + (PRbase - 1)/s_PRdes;
 
      WpMap = TB_Wp(NpMap, PRmap);
      effMap = TB_eff(NpMap, PRmap);
