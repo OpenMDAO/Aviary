@@ -25,6 +25,9 @@ subsystem_options = {'core_aerodynamics':
                       'lift_coefficient_factor': 1.,
                       'drag_coefficient_factor': 1.}}
 
+optimize_mach = True
+optimize_altitude = True
+
 phase_info = {
     "pre_mission": {"include_takeoff": False, "optimize_mass": False},
     'AB': {
@@ -38,7 +41,7 @@ phase_info = {
         },
         'subsystem_options': subsystem_options,
         'initial_guesses': {
-            'distance': [(0., 1500.), 'ft'],
+            'distance': [(0., 2.e3), 'ft'],
             'time': [(0., 20.), 's'],
             'velocity': [(1., 120.), 'kn'],
             'mass': [(175.e3, 175.e3-100.), 'lbm'],
@@ -58,11 +61,12 @@ phase_info = {
             'initial_bounds': ((1., 16.e3), 'ft'),
             'duration_ref': (1.e3, 'ft'),
             'duration_bounds': ((200., 10.e3), 'ft'),
+            'mach_bounds': ((0.18, 0.2), 'unitless'),
             'control_order': 1,
             'opt': True,
             'balance_throttle': False,
-            'optimize_mach': False,
-            'optimize_altitude': False,
+            'optimize_mach': optimize_mach,
+            'optimize_altitude': optimize_altitude,
             'rotation': True,
             'constraints': {
                 'normal_force': {
@@ -82,7 +86,7 @@ phase_info = {
         },
         'subsystem_options': subsystem_options,
         'initial_guesses': {
-            'distance': [(2.e3, 500.), 'ft'],
+            'distance': [(2.e3, 1.e3), 'ft'],
             'mach': [(0.18, 0.2), 'unitless'],
             'time': [(20., 25.), 's'],
             'mass': [(175.e3-100., 175.e3-200.), 'lbm'],
@@ -102,11 +106,13 @@ phase_info = {
             'initial_bounds': ((1., 16.e3), 'ft'),
             'duration_ref': (1.e3, 'ft'),
             'duration_bounds': ((500., 1500.), 'ft'),
+            'mach_bounds': ((0.2, 0.22), 'unitless'),
+            'altitude_bounds': ((0., 50.), 'ft'),
             'control_order': 1,
             'opt': True,
             'balance_throttle': False,
-            'optimize_mach': False,
-            'optimize_altitude': False,
+            'optimize_mach': optimize_mach,
+            'optimize_altitude': optimize_altitude,
             'rotation': False,
             'constraints': {
                 # 'flight_path_angle': {
@@ -119,7 +125,7 @@ phase_info = {
         },
         'subsystem_options': subsystem_options,
         'initial_guesses': {
-            'distance': [(2.5e3, 1000.), 'ft'],
+            'distance': [(3.e3, 1.e3), 'ft'],
             'mach': [(0.2, 0.22), 'unitless'],
             'time': [(25., 35.), 's'],
             'mass': [(175.e3-200., 175.e3-400.), 'lbm'],
@@ -139,19 +145,21 @@ phase_info = {
             'initial_bounds': ((1.e3, 20.e3), 'ft'),
             'duration_ref': (1.e3, 'ft'),
             'duration_bounds': ((3.e3, 20.e3), 'ft'),
+            'mach_bounds': ((0.22, 0.3), 'unitless'),
+            'altitude_bounds': ((0., 985.), 'ft'),
             'control_order': 1,
             'opt': True,
             'balance_throttle': False,
-            'optimize_mach': False,
-            'optimize_altitude': False,
+            'optimize_mach': optimize_mach,
+            'optimize_altitude': optimize_altitude,
             'constraints': {
-                # 'altitude': {
-                #     'equals': 985.,
-                #     'units': 'ft',
-                #     'type': 'boundary',
-                #     'loc': 'final',
-                #     'ref': 1000.,
-                # },
+                'altitude': {
+                    'equals': 985.,
+                    'units': 'ft',
+                    'type': 'boundary',
+                    'loc': 'final',
+                    'ref': 1000.,
+                },
                 # 'distance': {
                 #     'equals': 20.e3,
                 #     'units': 'ft',
@@ -169,7 +177,7 @@ phase_info = {
         },
         'subsystem_options': subsystem_options,
         'initial_guesses': {
-            'distance': [(3.5e3, 20.e3), 'ft'],
+            'distance': [(4.e3, 14.e3), 'ft'],
             'time': [(35., 180.), 's'],
             'mach': [(0.22, 0.3), 'unitless'],
             # 'mass': [(175.e3, 174.e3), 'lbm'],
@@ -192,8 +200,8 @@ phase_info = {
     #         'control_order': 1,
     #         'opt': True,
     #         'balance_throttle': False,
-    #         'optimize_mach': False,
-    #         'optimize_altitude': True,
+    #         'optimize_mach': optimize_mach,
+    #         'optimize_altitude': optimize_altitude,
     #         'constraints': {
     #             # 'distance': {
     #             #     'equals': 20.e3,
@@ -226,10 +234,12 @@ phase_info = {
             'initial_bounds': ((500., 30.e3), 'ft'),
             'duration_ref': (1.e3, 'ft'),
             'duration_bounds': ((50., 5000.), 'ft'),
+            'mach_bounds': ((0.24, 0.32), 'unitless'),
+            'altitude_bounds': ((985., 1.5e3), 'ft'),
             'control_order': 1,
             'opt': True,
-            'optimize_mach': False,
-            'optimize_altitude': False,
+            'optimize_mach': optimize_mach,
+            'optimize_altitude': optimize_altitude,
             'constraints': {
                 'flight_path_angle': {
                     'equals': 4.,
@@ -241,7 +251,7 @@ phase_info = {
         },
         'subsystem_options': subsystem_options,
         'initial_guesses': {
-            'distance': [(20.e3, 2.e3), 'ft'],
+            'distance': [(18.e3, 2.e3), 'ft'],
             'mach': [(0.3, 0.3), 'unitless'],
             'mass': [(175.e3, 174.e3), 'lbm'],
             'altitude': [(985., 1100.), 'ft'],
@@ -260,9 +270,11 @@ phase_info = {
             'initial_bounds': ((500., 50.e3), 'ft'),
             'duration_ref': (1.e3, 'ft'),
             'duration_bounds': ((100., 20.e3), 'ft'),
+            'mach_bounds': ((0.24, 0.32), 'unitless'),
+            'altitude_bounds': ((1.e3, 2.e3), 'ft'),
             'control_order': 1,
-            'optimize_mach': False,
-            'optimize_altitude': False,
+            'optimize_mach': optimize_mach,
+            'optimize_altitude': optimize_altitude,
             'opt': True,
             'constraints': {
                 'distance': {
@@ -276,7 +288,7 @@ phase_info = {
         },
         'subsystem_options': subsystem_options,
         'initial_guesses': {
-            'distance': [(21.e3, 2000.), 'ft'],
+            'distance': [(20.e3, 1325.), 'ft'],
             'mach': [(0.3, 0.3), 'unitless'],
             'mass': [(175.e3, 174.e3), 'lbm'],
             'altitude': [(1100., 1200.), 'ft'],
@@ -295,9 +307,11 @@ phase_info = {
             'initial_bounds': ((20.e3, 50.e3), 'ft'),
             'duration_ref': (1.e3, 'ft'),
             'duration_bounds': ((100., 50.e3), 'ft'),
+            'mach_bounds': ((0.24, 0.32), 'unitless'),
+            'altitude_bounds': ((1.e3, 3.e3), 'ft'),
             'control_order': 1,
-            'optimize_mach': False,
-            'optimize_altitude': False,
+            'optimize_mach': optimize_mach,
+            'optimize_altitude': optimize_altitude,
             'opt': True,
             'constraints': {
             },
@@ -306,7 +320,7 @@ phase_info = {
         'initial_guesses': {
             'distance': [(21325., 30000.), 'ft'],
             'mach': [(0.3, 0.3), 'unitless'],
-            'mass': [(175.e3, 174.e3), 'lbm'],
+            'mass': [(174.e3, 173.5e3), 'lbm'],
             'altitude': [(1200, 2000.), 'ft'],
         },
     },

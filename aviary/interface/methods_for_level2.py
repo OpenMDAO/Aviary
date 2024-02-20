@@ -1390,17 +1390,11 @@ class AviaryProblem(om.Problem):
                 phases, 'optimize_mach', Dynamic.Mission.MACH)
 
         elif self.mission_method is SOLVED_2DOF:
+            self.traj.link_phases(phases, [Dynamic.Mission.MASS], connected=True)
             self.traj.link_phases(
-                phases, [Dynamic.Mission.MASS], connected=True)
-            self.traj.link_phases(
-                phases, ["time", Dynamic.Mission.DISTANCE], units='ft', connected=False)
-            self.traj.link_phases(
-                phases[:2], [Dynamic.Mission.MACH], connected=False)
-            # if len(phases) > 2:
-            #     self.traj.link_phases(
-            #         phases[1:], [Dynamic.Mission.ALTITUDE], connected=False)
-            # self.traj.link_phases(
-            #     phases[1:], [Dynamic.Mission.FLIGHT_PATH_ANGLE], connected=False)
+                phases, [Dynamic.Mission.DISTANCE], units='ft', ref=1.e3, connected=False)
+            self.traj.link_phases(phases, ["time"], connected=False)
+            self.traj.link_phases(phases[:2], [Dynamic.Mission.MACH], connected=False)
             self.traj.link_phases(
                 phases[1:], [Dynamic.Mission.ANGLE_OF_ATTACK], units='rad', connected=False)
 
