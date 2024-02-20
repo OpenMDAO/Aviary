@@ -1,5 +1,4 @@
 import argparse
-import glob
 import json
 import os
 from pathlib import Path
@@ -16,6 +15,15 @@ from panel.theme import DefaultTheme
 
 import openmdao.api as om
 from openmdao.utils.general_utils import env_truthy
+
+# support getting this function from OpenMDAO post movement of the function to utils
+#    but also support it's old location
+try:
+    from openmdao.utils.array_utils import convert_ndarray_to_support_nans_in_json
+except ImportError:
+    from openmdao.visualization.n2_viewer.n2_viewer import _convert_ndarray_to_support_nans_in_json as convert_ndarray_to_support_nans_in_json
+
+import aviary.api as av
 
 pn.extension(sizing_mode="stretch_width")
 
@@ -152,9 +160,12 @@ def create_aviary_variables_table_data_nested(script_name, recorder_file):
 
     """
     cr = om.CaseReader(recorder_file)
+    print(f"r.list_c with {cr=}")
+
     if 'final' not in cr.list_cases():
         return None
 
+    print(f"cr.get_case with {cr=}")
     case = cr.get_case('final')
     outputs = case.list_outputs(explicit=True, implicit=True, val=True,
                                 residuals=True, residuals_tol=None,
@@ -177,25 +188,30 @@ def create_aviary_variables_table_data_nested(script_name, recorder_file):
     for group_name in sorted_group_names:
         if len(grouped[group_name]) == 1:  # a list of one var.
             var_info = grouped[group_name][0]
+            prom_name = outputs[var_info]["prom_name"]
+            aviary_metadata = av.CoreMetaData.get(prom_name)
             table_data_nested.append(
                 {
                     "abs_name": group_name,
-                    "prom_name": outputs[var_info]["prom_name"],
-                    "value": str(outputs[var_info]["val"]),
-                    "units": str(outputs[var_info]["units"]),
+                    "prom_name": prom_name,
+                    "value": convert_ndarray_to_support_nans_in_json(outputs[var_info]["val"]),
+                    "units": outputs[var_info]["units"],
+                    "metadata": json.dumps(aviary_metadata),
                 }
             )
         else:
             # create children
             children_list = []
             for children_name in grouped[group_name]:
-                var_info = outputs[children_name]
+                prom_name = outputs[children_name]["prom_name"]
+                aviary_metadata = av.CoreMetaData.get(prom_name)
                 children_list.append(
                     {
                         "abs_name": children_name,
-                        "prom_name": outputs[children_name]["prom_name"],
-                        "value": str(outputs[children_name]["val"]),
-                        "units": str(outputs[children_name]["units"]),
+                        "prom_name": prom_name,
+                        "value": convert_ndarray_to_support_nans_in_json(outputs[children_name]["val"]),
+                        "units": outputs[children_name]["units"],
+                        "metadata": json.dumps(aviary_metadata),
                     }
                 )
             table_data_nested.append(  # not a real var, just a group of vars so no values
