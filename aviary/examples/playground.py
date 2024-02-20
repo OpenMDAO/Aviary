@@ -25,8 +25,8 @@ subsystem_options = {'core_aerodynamics':
                       'lift_coefficient_factor': 1.,
                       'drag_coefficient_factor': 1.}}
 
-optimize_mach = True
-optimize_altitude = True
+optimize_mach = False
+optimize_altitude = False
 
 phase_info = {
     "pre_mission": {"include_takeoff": False, "optimize_mass": False},
@@ -54,13 +54,12 @@ phase_info = {
             'order': 3,
             'fix_initial': False,
             'throttle_setting': throttle_max,
-            'input_speed_type': av.SpeedType.MACH,
             'ground_roll': True,
             'clean': False,
             'initial_ref': (1.e3, 'ft'),
-            'initial_bounds': ((1., 16.e3), 'ft'),
+            'initial_bounds': ((1.e3, 3.e3), 'ft'),
             'duration_ref': (1.e3, 'ft'),
-            'duration_bounds': ((200., 10.e3), 'ft'),
+            'duration_bounds': ((200., 2.e3), 'ft'),
             'mach_bounds': ((0.18, 0.2), 'unitless'),
             'control_order': 1,
             'opt': True,
@@ -99,7 +98,6 @@ phase_info = {
             'order': 3,
             'fix_initial': False,
             'throttle_setting': throttle_max,
-            'input_speed_type': av.SpeedType.MACH,
             'ground_roll': False,
             'clean': False,
             'initial_ref': (1.e3, 'ft'),
@@ -138,7 +136,6 @@ phase_info = {
             'order': 3,
             'fix_initial': False,
             'throttle_setting': throttle_max,
-            'input_speed_type': av.SpeedType.MACH,
             'ground_roll': False,
             'clean': False,
             'initial_ref': (1.e3, 'ft'),
@@ -153,13 +150,13 @@ phase_info = {
             'optimize_mach': optimize_mach,
             'optimize_altitude': optimize_altitude,
             'constraints': {
-                'altitude': {
-                    'equals': 985.,
-                    'units': 'ft',
-                    'type': 'boundary',
-                    'loc': 'final',
-                    'ref': 1000.,
-                },
+                # 'altitude': {
+                #     'equals': 985.,
+                #     'units': 'ft',
+                #     'type': 'boundary',
+                #     'loc': 'final',
+                #     'ref': 1000.,
+                # },
                 # 'distance': {
                 #     'equals': 20.e3,
                 #     'units': 'ft',
@@ -190,7 +187,6 @@ phase_info = {
     #         'order': 3,
     #         'fix_initial': False,
     #         'throttle_setting': throttle_max,
-    #         'input_speed_type': av.SpeedType.MACH,
     #         'ground_roll': False,
     #         'clean': False,
     #         'initial_ref': (1.e3, 'ft'),
@@ -227,7 +223,6 @@ phase_info = {
             'order': 3,
             'fix_initial': False,
             'throttle_setting': throttle_climb,
-            'input_speed_type': av.SpeedType.MACH,
             'ground_roll': False,
             'clean': False,
             'initial_ref': (1.e3, 'ft'),
@@ -263,15 +258,14 @@ phase_info = {
             'order': 3,
             'fix_initial': False,
             'throttle_setting': throttle_climb,
-            'input_speed_type': av.SpeedType.MACH,
             'ground_roll': False,
             'clean': False,
             'initial_ref': (1.e3, 'ft'),
             'initial_bounds': ((500., 50.e3), 'ft'),
             'duration_ref': (1.e3, 'ft'),
-            'duration_bounds': ((100., 20.e3), 'ft'),
+            'duration_bounds': ((1.e3, 20.e3), 'ft'),
             'mach_bounds': ((0.24, 0.32), 'unitless'),
-            'altitude_bounds': ((1.e3, 2.e3), 'ft'),
+            'altitude_bounds': ((1.1e3, 1.2e3), 'ft'),
             'control_order': 1,
             'optimize_mach': optimize_mach,
             'optimize_altitude': optimize_altitude,
@@ -300,7 +294,6 @@ phase_info = {
             'order': 3,
             'fix_initial': False,
             'throttle_setting': throttle_climb,
-            'input_speed_type': av.SpeedType.MACH,
             'ground_roll': False,
             'clean': False,
             'initial_ref': (1.e3, 'ft'),

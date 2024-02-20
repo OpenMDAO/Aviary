@@ -8,13 +8,15 @@ from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.mission.flops_based.phases.phase_utils import add_subsystem_variables_to_phase, get_initial
 from aviary.variable_info.variables import Dynamic
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_ode import UnsteadySolvedODE
-
+from aviary.variable_info.enums import SpeedType
 
 # TODO: support/handle the following in the base class
 # - phase.set_time_options()
 #     - currently handled in level 3 interface implementation
 # - self.external_subsystems
 # - self.meta_data, with cls.default_meta_data customization point
+
+
 @register
 class TwoDOFPhase(PhaseBuilderBase):
     '''
@@ -149,7 +151,11 @@ class TwoDOFPhase(PhaseBuilderBase):
                                          fix_initial=fix_initial,
                                          units=altitude_bounds[1],
                                          rate_targets=['dh_dr'], rate2_targets=['d2h_dr2'],
-                                         opt=optimize_altitude, lower=altitude_bounds[0][0], upper=altitude_bounds[0][1])
+                                         opt=optimize_altitude, lower=altitude_bounds[
+                                             0][0], upper=altitude_bounds[0][1],
+                                         ref=(altitude_bounds[0][0] +
+                                              altitude_bounds[0][1]) / 2,
+                                         )
 
         self._add_user_defined_constraints(phase, constraints)
 
@@ -196,7 +202,7 @@ class TwoDOFPhase(PhaseBuilderBase):
             'external_subsystems': self.external_subsystems,
             'meta_data': self.meta_data,
             'subsystem_options': self.subsystem_options,
-            'input_speed_type': self.user_options.get_val('input_speed_type'),
+            'input_speed_type': SpeedType.MACH,
             'clean': self.user_options.get_val('clean'),
             'ground_roll': self.user_options.get_val('ground_roll'),
             'balance_throttle': self.user_options.get_val('balance_throttle'),
@@ -229,7 +235,6 @@ TwoDOFPhase._add_meta_data('duration_ref', val=1000.,
                            units='s', desc='duration reference')
 TwoDOFPhase._add_meta_data('control_order', val=1, desc='control order')
 TwoDOFPhase._add_meta_data('opt', val=True, desc='opt')
-TwoDOFPhase._add_meta_data('input_speed_type', val='TAS', desc='input speed type')
 TwoDOFPhase._add_meta_data('ground_roll', val=True)
 TwoDOFPhase._add_meta_data('rotation', val=False)
 TwoDOFPhase._add_meta_data('clean', val=False)

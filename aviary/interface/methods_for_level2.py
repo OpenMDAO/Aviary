@@ -1393,8 +1393,10 @@ class AviaryProblem(om.Problem):
             self.traj.link_phases(phases, [Dynamic.Mission.MASS], connected=True)
             self.traj.link_phases(
                 phases, [Dynamic.Mission.DISTANCE], units='ft', ref=1.e3, connected=False)
+            # self.traj.link_phases(
+            #     phases[1:], [Dynamic.Mission.ALTITUDE], units='ft', ref=1.e3, connected=False)
             self.traj.link_phases(phases, ["time"], connected=False)
-            self.traj.link_phases(phases[:2], [Dynamic.Mission.MACH], connected=False)
+            # self.traj.link_phases(phases[:2], [Dynamic.Mission.MACH], connected=False)
             self.traj.link_phases(
                 phases[1:], [Dynamic.Mission.ANGLE_OF_ATTACK], units='rad', connected=False)
 
