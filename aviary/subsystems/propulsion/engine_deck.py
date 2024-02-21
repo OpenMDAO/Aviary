@@ -79,6 +79,7 @@ required_variables = {
     MACH,
     ALTITUDE,
     THROTTLE,
+    THRUST,
 }
 
 # EngineDecks internally require these options to have values. Input checks will set
@@ -134,10 +135,6 @@ class EngineDeck(EngineModel):
 
         # also calls _preprocess_inputs() as part of EngineModel __init__
         super().__init__(name, options)
-        if 'is_turbo_prop' in options:
-            self.is_turbo_prop, _ = options.get_item('is_turbo_prop')
-        else:
-            self.is_turbo_prop = False
 
         # copy of raw data read from data_file or memory, never modified or used outside
         #     EngineDeck
@@ -173,6 +170,8 @@ class EngineDeck(EngineModel):
         #      to truly fix)
         self.global_throttle = True
         self.global_hybrid_throttle = True
+
+        self.required_variables = required_variables
 
         self._set_variable_flags()
 
@@ -468,16 +467,11 @@ class EngineDeck(EngineModel):
         self.model_length = len(self.data[ALTITUDE])
 
         # check that all required variables are present in engine data
-        if self.is_turbo_prop:
-            required_variables.add(SHAFT_POWER_CORRECTED)
-            required_variables.add(TAILPIPE_THRUST)
-        else:
-            required_variables.add(THRUST)
-        if not required_variables.issubset(engine_variables):
+        if not self.required_variables.issubset(engine_variables):
             # gather all missing required variables
             missing_variables = set()
             for var in engine_variables:
-                if var in required_variables:
+                if var in self.required_variables:
                     missing_variables.add(var)
 
             # if missing_variables is not empty
@@ -1262,6 +1256,22 @@ class EngineDeck(EngineModel):
         self.alt_max_count = max_alt_count
         self.data_max_count = max_data_count
         self.data_indices = data_indices.astype(int)
+
+
+class TurboPropDeck(EngineDeck):
+    def __init__(self, name='engine_deck', options: AviaryValues = None, data: NamedValues = None):
+        if 'is_turbo_prop' in options:
+            self.is_turbo_prop, _ = options.get_item('is_turbo_prop')
+        else:
+            self.is_turbo_prop = True
+
+        super().__init__(name, options, data)
+
+        if THRUST in self.required_variables:
+            self.required_variables.pop(THRUST)
+
+        self.required_variables.add(SHAFT_POWER_CORRECTED)
+        self.required_variables.add(TAILPIPE_THRUST)
 
 
 #####################
