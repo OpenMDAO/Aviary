@@ -63,6 +63,8 @@ header_names = {
     FUEL_FLOW: 'Fuel_Flow',
     NOX_RATE: 'NOx_Rate',
     TEMPERATURE: 'T4',
+    SHAFT_POWER_CORRECTED: 'SHAFT_POWER_CORRECTED',
+    TAILPIPE_THRUST: 'TAILPIPE_THRUST',
     # EXIT_AREA: 'Exit Area',
 }
 
@@ -151,22 +153,26 @@ def EngineDeckConverter(input_file=None, output_file=None, data_format=None):
             structured_data = _make_structured_grid(tables, method='lagrange3',
                                                     is_turbo_prop=is_turbo_prop)
 
-            data[MACH] = structured_data['thrust']['machs']
-            data[ALTITUDE] = structured_data['thrust']['alts']
-            data[THRUST] = structured_data['thrust']['vals']
+            data[MACH] = structured_data['fuelflow']['machs']
+            data[ALTITUDE] = structured_data['fuelflow']['alts']
             data[FUEL_FLOW] = structured_data['fuelflow']['vals']
-            T4T2 = structured_data['thrust']['t4t2s']
+            T4T2 = structured_data['fuelflow']['t4t2s']
             if is_turbo_prop:
                 data[SHAFT_POWER_CORRECTED] = structured_data['shaft_power']['vals']
+                data[TAILPIPE_THRUST] = structured_data['tailpipe_thrust']['vals']
+            else:
+                data[THRUST] = structured_data['thrust']['vals']
 
         else:
-            data[MACH] = tables['thrust'][:, 2]
-            data[ALTITUDE] = tables['thrust'][:, 0]
+            data[MACH] = tables['fuelflow'][:, 2]
+            data[ALTITUDE] = tables['fuelflow'][:, 0]
             data[FUEL_FLOW] = tables['fuelflow'][:, 3]
-            T4T2 = tables['thrust'][:, 1]
-            data[THRUST] = tables['thrust'][:, 3]
+            T4T2 = tables['fuelflow'][:, 1]
             if is_turbo_prop:
                 data[SHAFT_POWER_CORRECTED] = tables['shaft_power'][:, 3]
+                data[TAILPIPE_THRUST] = tables['tailpipe_thrust'][:, 3]
+            else:
+                data[THRUST] = tables['thrust'][:, 3]
 
         generate_flight_idle = True
         if generate_flight_idle and not is_turbo_prop:
@@ -249,9 +255,13 @@ def EngineDeckConverter(input_file=None, output_file=None, data_format=None):
             data[MACH] = data[MACH][valid_idx]
             data[ALTITUDE] = data[ALTITUDE][valid_idx]
             data[THROTTLE] = data[THROTTLE][valid_idx]
-            data[THRUST] = data[THRUST][valid_idx]
             data[FUEL_FLOW] = data[FUEL_FLOW][valid_idx]
             data[TEMPERATURE] = data[TEMPERATURE][valid_idx]
+            if is_turbo_prop:
+                data[SHAFT_POWER_CORRECTED] = data[SHAFT_POWER_CORRECTED][valid_idx]
+                data[TAILPIPE_THRUST] = data[TAILPIPE_THRUST][valid_idx]
+            else:
+                data[THRUST] = data[THRUST][valid_idx]
 
         else:
             data[THROTTLE] = T4T2
@@ -343,7 +353,8 @@ def _read_gasp_engine(fp, is_turbo_prop=False):
     Each table consists of both the independent variables and the dependent variable for
     the corresponding field. The table is a "tidy format" 2D array where the first three
     columns are the independent varaiables (altitude, T4/T2, and Mach number) and the
-    final column is the dependent variable (one of thrust, fuelflow, or airflow).
+    final column is the dependent variable (one of thrust, fuelflow, or airflow for TurboFans or 
+    shaft_power, fuelflow, or tailpipe_thrust for TurboProps).
     """
     with open(fp, "r") as f:
         if is_turbo_prop:
@@ -353,7 +364,7 @@ def _read_gasp_engine(fp, is_turbo_prop=False):
             table_types = ["thrust", "fuelflow", "airflow"]
             scalars = _read_header(f)
 
-        tables = {k: _read_table(f) for k in table_types}
+        tables = {k: _read_table(f, is_turbo_prop) for k in table_types}
 
     return scalars, tables
 
@@ -366,7 +377,7 @@ def _read_tp_header(f):
     )
     # file header: FORMAT(7F10.4)
     sls_hp, xncref, prop_rpm, gbx_rat, torque_lim, waslrf = _parse(
-        f, [*_rep(7, (float, 10))]
+        f, [*_rep(6, (float, 10))]
     )
 
     return {
@@ -405,12 +416,12 @@ def _read_header(f):
     }
 
 
-def _read_table(f):
+def _read_table(f, is_turbo_prop=False):
     """Read an entire table from a GASP engine deck file.
     The table data is returned as a "tidy format" array with three columns for the
     independent variables (altitude, T4/T2, and Mach number) and the final column for
     the table field (one of thrust, fuelflow, or airflow for TurboFans or 
-    shaft_power, fuelflow, or (tailpipe) thrust for TurboProps).
+    shaft_power, fuelflow, or tailpipe_thrust for TurboProps).
     """
     tab_data = None
 
@@ -422,7 +433,7 @@ def _read_table(f):
     f.readline()
 
     for i in range(nmaps):
-        map_data = _read_map(f)
+        map_data = _read_map(f, is_turbo_prop)
 
         # blank line following all but the last map in the table
         if i < nmaps - 1:
@@ -459,7 +470,7 @@ def _strparse(s, fmt):
         p += length
 
 
-def _read_map(f):
+def _read_map(f, is_turbo_prop=False):
     """Read a single map of a table from the engine deck file.
     The map data is returned in the same format as in ``read_table``, except there is a
     single altitude value per map.
@@ -487,8 +498,12 @@ def _read_map(f):
         y = vals[0]
         z = vals[1:]
         if npts > nptloc:
-            # ad remaining vals on warapped line
-            z.extend(list(_parse(f, _rep(npts - nptloc, (float, 10)))))
+            # add remaining vals on warapped line
+            if is_turbo_prop:
+                z.extend(list(_parse(f,
+                                     [(None, 10), *_rep(npts - nptloc, (float, 10))])))
+            else:
+                z.extend(list(_parse(f, _rep(npts - nptloc, (float, 10)))))
 
         sl = slice(j * npts, (j + 1) * npts)
         map_data[sl, 1] = y
@@ -508,8 +523,8 @@ def _make_structured_grid(data, method="lagrange3", is_turbo_prop=False):
 
     structured_data = {}
 
-    tt4 = data['thrust'][:, 1]
-    tma = data['thrust'][:, 2]
+    tt4 = data['fuelflow'][:, 1]
+    tma = data['fuelflow'][:, 2]
     t4t2s = np.arange(min(tt4), max(tt4) + t4t2_step, t4t2_step)
     machs = np.arange(min(tma), max(tma) + mach_step, mach_step)
 
@@ -746,14 +761,7 @@ class AtmosCalc(om.ExplicitComponent):
         outputs["p2"] = p2
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Converts FLOPS- or GASP-formatted '
-                                     'engine decks into Aviary csv format.\nFLOPS decks '
-                                     'are changed from column-delimited to csv format '
-                                     'with added headers.\nGASP decks are reorganized '
-                                     'into column based csv. T4 is recovered through '
-                                     'calculation. Data points whose T4 exceeds T4max '
-                                     'are removed.')
+def _setup_EDC_parser(parser):
     parser.add_argument('input_file', type=str,
                         help='path to engine deck file to be converted')
     parser.add_argument('output_file', type=str,
@@ -761,6 +769,25 @@ if __name__ == '__main__':
     parser.add_argument('data_format', type=EngineDeckType, choices=list(EngineDeckType),
                         help='data format used by input_file')
 
-    args = parser.parse_args()
 
-    EngineDeckConverter(**vars(args))
+def _exec_EDC(args, user_args):
+    EngineDeckConverter(
+        input_file=args.input_file,
+        output_file=args.output_file,
+        data_format=args.data_format
+    )
+
+
+EDC_description = 'Converts FLOPS- or GASP-formatted ' \
+                  'engine decks into Aviary csv format.\nFLOPS decks ' \
+                  'are changed from column-delimited to csv format ' \
+                  'with added headers.\nGASP decks are reorganized ' \
+                  'into column based csv. T4 is recovered through ' \
+                  'calculation. Data points whose T4 exceeds T4max ' \
+                  'are removed.'
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(EDC_description)
+    _setup_EDC_parser(parser)
+    args = parser.parse_args()
+    _exec_EDC(args, None)

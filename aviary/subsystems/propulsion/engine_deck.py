@@ -36,7 +36,7 @@ from aviary.subsystems.propulsion.engine_sizing import SizeEngine
 from aviary.subsystems.propulsion.utils import (EngineModelVariables,
                                                 convert_geopotential_altitude,
                                                 default_units)
-from aviary.utils.named_values import NamedValues, get_keys, get_items
+from aviary.utils.aviary_values import AviaryValues, NamedValues, get_keys, get_items
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.utils.csv_data_file import read_data_file
@@ -79,7 +79,6 @@ required_variables = {
     MACH,
     ALTITUDE,
     THROTTLE,
-    THRUST
 }
 
 # EngineDecks internally require these options to have values. Input checks will set
@@ -126,7 +125,7 @@ class EngineDeck(EngineModel):
     update
     """
 
-    def __init__(self, name='engine_deck', options=None, data: NamedValues = None):
+    def __init__(self, name='engine_deck', options: AviaryValues = None, data: NamedValues = None):
         if data is not None:
             self.read_from_file = False
         else:
@@ -135,6 +134,10 @@ class EngineDeck(EngineModel):
 
         # also calls _preprocess_inputs() as part of EngineModel __init__
         super().__init__(name, options)
+        if 'is_turbo_prop' in options:
+            self.is_turbo_prop, _ = options.get_item('is_turbo_prop')
+        else:
+            self.is_turbo_prop = False
 
         # copy of raw data read from data_file or memory, never modified or used outside
         #     EngineDeck
@@ -143,8 +146,10 @@ class EngineDeck(EngineModel):
         self.data = {key: np.array([]) for key in EngineModelVariables}
         # gross thrust and ram drag are not used outside of EngineDeck, remove from
         #     working data
-        self.data.pop(GROSS_THRUST)
-        self.data.pop(RAM_DRAG)
+        if GROSS_THRUST in self.data:
+            self.data.pop(GROSS_THRUST)
+        if RAM_DRAG in self.data:
+            self.data.pop(RAM_DRAG)
 
         # number of data points in engine data
         self.model_length = 0
@@ -463,6 +468,11 @@ class EngineDeck(EngineModel):
         self.model_length = len(self.data[ALTITUDE])
 
         # check that all required variables are present in engine data
+        if self.is_turbo_prop:
+            required_variables.add(SHAFT_POWER_CORRECTED)
+            required_variables.add(TAILPIPE_THRUST)
+        else:
+            required_variables.add(THRUST)
         if not required_variables.issubset(engine_variables):
             # gather all missing required variables
             missing_variables = set()
