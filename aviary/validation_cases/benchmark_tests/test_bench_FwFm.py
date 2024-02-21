@@ -391,6 +391,6 @@ class TestBenchFwFmParallel(ProblemPhaseTestCase):
 
 
 if __name__ == '__main__':
-    test = ProblemPhaseTestCase()
+    test = TestBenchFwFmSerial()
     test.setUp()
     test.test_bench_FwFm_SNOPT()
