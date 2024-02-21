@@ -16,7 +16,6 @@ phase_info = {
     "climb": {
         "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
         "user_options": {
-            "reserve": False,
             "optimize_mach": False,
             "optimize_altitude": False,
             "polynomial_control_order": 1,
@@ -41,7 +40,6 @@ phase_info = {
     "cruise": {
         "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
         "user_options": {
-            "reserve": False,
             "optimize_mach": False,
             "optimize_altitude": False,
             "polynomial_control_order": 1,
@@ -66,7 +64,6 @@ phase_info = {
     "descent": {
         "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
         "user_options": {
-            "reserve": False,
             "optimize_mach": False,
             "optimize_altitude": False,
             "polynomial_control_order": 1,

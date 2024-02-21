@@ -347,6 +347,44 @@ class AviaryProblem(om.Problem):
             if variable in self.meta_data:
                 self.meta_data.pop(variable)
 
+    def phase_separator(self):
+        """
+        This method checks for reserve=True & False
+        Returns errors if reserve = False no reserve no specified after reserve = True 
+        return two dictionaries of phases, regular_phases and reserve_phaes
+        """
+
+        # Check to ensure no non-reserve phases are specified after reserve phases
+        start_reserve = False
+        raise_error = False
+        reserve_phases = []
+        regular_phases = []
+        for idx, phase_name in enumerate(self.phase_info):
+            if 'reserve' in self.phase_info[phase_name]["user_options"]:
+                if self.phase_info[phase_name]["user_options"]["reserve"] is False:
+                    # This is a regular phase
+                    regular_phases.append(phase_name)
+                    if start_reserve is True:
+                        raise_error = True
+                else:
+                    # This is a reserve phase
+                    reserve_phases.append(phase_name)
+                    start_reserve = True
+            else:
+                # This is a regular phase by default
+                regular_phases.append(phase_name)
+                if start_reserve is True:
+                    raise_error = True
+
+        if raise_error is True:
+            raise ValueError(
+                f'In phase_info, reserve=False cannot be specified after a phase where reserve=True. '
+                f'All reserve phases must happen after non-reserve phases. '
+                f'Regular Phases : {regular_phases} | '
+                f'Reserve Phases : {reserve_phases} ')
+
+        return (regular_phases, reserve_phases)
+
     def check_and_preprocess_inputs(self):
         """
         This method checks the user-supplied input values for any potential problems
@@ -363,26 +401,6 @@ class AviaryProblem(om.Problem):
         # PREPROCESSORS #
         # Fill in anything missing in the options with computed defaults.
         preprocess_crewpayload(self.aviary_inputs)
-
-        # Check to ensure no non-reserve phases are specified after reserve phases
-        # separate regular phases and reserve phases
-        start_reserve = False
-        reserve_phases = []
-        regular_phases = []
-        for idx, phase_name in enumerate(self.phase_info):
-            if self.phase_info[phase_name]["user_options"]["reserve"] is False:
-                # This is a regular phase
-                regular_phases.append(phase_name)
-                if start_reserve is True:
-                    raise ValueError(
-                        f'In phase_info, reserve=False cannot be specified after a phase where reserve=True. '
-                        f'All reserve phases must happen after non-reserve phases. '
-                        f'Regular Phases : {regular_phases} | '
-                        f'Reserve Phases : {reserve_phases} ')
-            else:
-                # This is a reserve phase
-                reserve_phases.append(phase_name)
-                start_reserve = True
 
     def add_pre_mission_systems(self):
         """
@@ -1193,15 +1211,9 @@ class AviaryProblem(om.Problem):
                 ],
                 promotes_outputs=[('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS)])
 
+            regular_phases, reserve_phases = self.phase_separator()
+
             if 'constrain_range' in self.post_mission_info:
-                # separate regular phases and reserve phases
-                reserve_phases = []
-                regular_phases = []
-                for idx, phase_name in enumerate(self.phase_info):
-                    if self.phase_info[phase_name]["user_options"]["reserve"] is True:
-                        reserve_phases.append(phase_name)
-                    else:
-                        regular_phases.append(phase_name)
 
                 if self.post_mission_info['constrain_range']:
                     target_range = wrapped_convert_units(
@@ -1395,14 +1407,7 @@ class AviaryProblem(om.Problem):
             self.traj.link_phases(
                 phases, ["time", Dynamic.Mission.MASS, Dynamic.Mission.DISTANCE], connected=True)
 
-            # separate regular phases and reserve phases
-            reserve_phases = []
-            regular_phases = []
-            for idx, phase_name in enumerate(self.phase_info):
-                if self.phase_info[phase_name]["user_options"]["reserve"] is True:
-                    reserve_phases.append(phase_name)
-                else:
-                    regular_phases.append(phase_name)
+            regular_phases, reserve_phases = self.phase_separator()
 
             # connect regular phases with eachother if your are optimizing alt or mach
             self._link_phases_helper_with_options(
