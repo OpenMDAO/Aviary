@@ -1335,8 +1335,11 @@ class AviaryProblem(om.Problem):
             phases_to_link = list(dict.fromkeys(phases))
             # TODO: implement correct logic to not connect groundroll phases
             if self.mission_method is SOLVED_2DOF and option_name == 'optimize_altitude':
-                phases_to_link = phases_to_link[1:]
-            self.traj.link_phases(phases=phases_to_link, vars=[var], **kwargs)
+                if len(phases_to_link) > 2:
+                    phases_to_link = phases_to_link[1:]
+                    self.traj.link_phases(phases=phases_to_link, vars=[var], **kwargs)
+            else:
+                self.traj.link_phases(phases=phases_to_link, vars=[var], **kwargs)
 
     def link_phases(self):
         """
@@ -1422,8 +1425,10 @@ class AviaryProblem(om.Problem):
             self.traj.link_phases(
                 phases, [Dynamic.Mission.DISTANCE], units='ft', ref=1.e3, connected=False)
             self.traj.link_phases(phases, ["time"], connected=False)
-            self.traj.link_phases(
-                phases[1:], ["alpha"], units='rad', connected=False)
+
+            if len(phases) > 2:
+                self.traj.link_phases(
+                    phases[1:], ["alpha"], units='rad', connected=False)
 
             self._link_phases_helper_with_options(
                 phases, 'optimize_altitude', Dynamic.Mission.ALTITUDE, ref=1.e4)

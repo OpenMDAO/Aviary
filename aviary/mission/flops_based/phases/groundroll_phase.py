@@ -84,7 +84,7 @@ class GroundrollPhase(PhaseBuilderBase):
                                duration_bounds=duration_bounds, duration_ref=duration_ref)
 
         phase.set_state_options("time", rate_source="dt_dv", units="s",
-                                fix_initial=True, fix_final=False, ref=1., defect_ref=1.)
+                                fix_initial=True, fix_final=False, ref=1., defect_ref=1., solve_segments='forward')
 
         phase.set_state_options("mass", rate_source="dmass_dv",
                                 fix_initial=True, fix_final=False, lower=1, upper=500.e3, ref=100.e3, defect_ref=100.e3, units='lbm')

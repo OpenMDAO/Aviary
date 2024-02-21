@@ -25,8 +25,13 @@ subsystem_options = {'core_aerodynamics':
                       'lift_coefficient_factor': 1.,
                       'drag_coefficient_factor': 1.}}
 
-optimize_mach = True
-optimize_altitude = True
+optimize_mach = False
+optimize_altitude = False
+
+# Currently the more complete takeoff trajectory requires SNOPT to converge.
+# If False, the takeoff trajectory will be simplified to a ground roll only
+# to ensure the methods_for_level2 API works.
+use_full_takeoff = False
 
 phase_info = {
     "pre_mission": {"include_takeoff": False, "optimize_mass": False},
@@ -44,7 +49,7 @@ phase_info = {
             'distance': [(0., 2.e3), 'ft'],
             'time': [(0., 20.), 's'],
             'velocity': [(1., 120.), 'kn'],
-            'mass': [(175.e3, 175.e3-100.), 'lbm'],
+            'mass': [(175.e3, 174.85e3), 'lbm'],
         },
     },
     'rotate': {
@@ -81,7 +86,8 @@ phase_info = {
             'distance': [(2.e3, 1.e3), 'ft'],
             'mach': [(0.18, 0.2), 'unitless'],
             'time': [(20., 25.), 's'],
-            'mass': [(175.e3-100., 175.e3-200.), 'lbm'],
+            'mass': [(174.85e3, 174.84e3), 'lbm'],
+            'alpha': [(0., 12.), 'deg'],
         },
     },
     'BC': {
@@ -110,7 +116,7 @@ phase_info = {
             'distance': [(3.e3, 1.e3), 'ft'],
             'mach': [(0.2, 0.22), 'unitless'],
             'time': [(25., 35.), 's'],
-            'mass': [(175.e3-200., 175.e3-400.), 'lbm'],
+            'mass': [(174.84e3, 174.82e3), 'lbm'],
             'altitude': [(0., 50.), 'ft'],
         },
     },
@@ -137,9 +143,10 @@ phase_info = {
         'subsystem_options': subsystem_options,
         'initial_guesses': {
             'distance': [(4.e3, 14.e3), 'ft'],
-            'time': [(35., 180.), 's'],
+            'time': [(35., 80.), 's'],
             'mach': [(0.22, 0.3), 'unitless'],
             'altitude': [(50., 985.), 'ft'],
+            'mass': [(174.82e3, 174.5e3), 'lbm'],
         },
     },
     'DE': {
@@ -173,7 +180,8 @@ phase_info = {
         'initial_guesses': {
             'distance': [(18.e3, 2.e3), 'ft'],
             'mach': [(0.3, 0.3), 'unitless'],
-            'mass': [(175.e3, 174.e3), 'lbm'],
+            'mass': [(174.5e3, 174.4e3), 'lbm'],
+            'time': [(80., 85.), 's'],
             'altitude': [(985., 1100.), 'ft'],
         },
     },
@@ -209,7 +217,8 @@ phase_info = {
         'initial_guesses': {
             'distance': [(20.e3, 1325.), 'ft'],
             'mach': [(0.3, 0.3), 'unitless'],
-            'mass': [(175.e3, 174.e3), 'lbm'],
+            'mass': [(174.4e3, 174.3e3), 'lbm'],
+            'time': [(85., 90.), 's'],
             'altitude': [(1100., 1200.), 'ft'],
         },
     },
@@ -252,8 +261,9 @@ phase_info = {
         'initial_guesses': {
             'distance': [(21325., 40.e3), 'ft'],
             'mach': [(0.3, 0.3), 'unitless'],
-            'mass': [(174.e3, 173.5e3), 'lbm'],
+            'mass': [(174.3e3, 174.2e3), 'lbm'],
             'altitude': [(1200, 2000.), 'ft'],
+            'time': [(90., 180.), 's'],
         },
     },
     "post_mission": {
@@ -262,6 +272,17 @@ phase_info = {
     },
 }
 
+
+if not use_full_takeoff:
+    phase_info.pop('rotate')
+    phase_info.pop('BC')
+    phase_info.pop('CD_to_P2')
+    phase_info.pop('DE')
+    phase_info.pop('EF_to_P1')
+    phase_info.pop('EF_past_P1')
+    driver = "SLSQP"
+else:
+    driver = "SNOPT"
 
 prob = av.AviaryProblem()
 
@@ -281,7 +302,7 @@ prob.add_post_mission_systems()
 # Link phases and variables
 prob.link_phases()
 
-prob.add_driver("SNOPT", max_iter=50)
+prob.add_driver(driver, max_iter=50)
 
 prob.add_design_variables()
 

@@ -120,9 +120,6 @@ class TwoDOFPhase(PhaseBuilderBase):
                                 fix_initial=fix_initial, fix_final=False, ref=170.e3, defect_ref=170.e5,
                                 val=170.e3, units='lbm', lower=10.e3)
 
-        phase.add_parameter("wing_area", units="ft**2",
-                            static_target=True, opt=False, val=1370)
-
         phase.add_polynomial_control(Dynamic.Mission.MACH,
                                      order=control_order,
                                      val=0.4, units=mach_bounds[1],
@@ -256,6 +253,10 @@ TwoDOFPhase._add_initial_guess_meta_data(
 TwoDOFPhase._add_initial_guess_meta_data(
     InitialGuessPolynomialControl('mach'),
     desc='initial guess for speed')
+
+TwoDOFPhase._add_initial_guess_meta_data(
+    InitialGuessPolynomialControl('alpha'),
+    desc='initial guess for alpha')
 
 TwoDOFPhase._add_initial_guess_meta_data(
     InitialGuessState('mass'),
