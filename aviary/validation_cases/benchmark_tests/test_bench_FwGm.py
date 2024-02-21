@@ -13,6 +13,9 @@ from aviary.variable_info.variables import Aircraft, Mission
 @use_tempdirs
 class ProblemPhaseTestCase(unittest.TestCase):
 
+    def setUp(self):
+        _clear_problem_names()  # need to reset these to simulate separate runs
+
     @require_pyoptsparse(optimizer="IPOPT")
     def bench_test_swap_3_FwGm_IPOPT(self):
         local_phase_info = deepcopy(phase_info)

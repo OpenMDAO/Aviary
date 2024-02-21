@@ -14,7 +14,7 @@ from aviary.variable_info.enums import AnalysisScheme
 @use_tempdirs
 class ProblemPhaseTestCase(unittest.TestCase):
 
-    def setup(self):
+    def setUp(self):
         _clear_problem_names()  # need to reset these to simulate separate runs
 
     @require_pyoptsparse(optimizer="IPOPT")
