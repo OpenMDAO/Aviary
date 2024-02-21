@@ -202,7 +202,7 @@ class UnsteadySolvedODE(BaseODE):
 
         thrust_alpha_bal = om.BalanceComp()
         if not self.options['ground_roll']:
-            thrust_alpha_bal.add_balance(Dynamic.Mission.ANGLE_OF_ATTACK,
+            thrust_alpha_bal.add_balance("alpha",
                                          units="rad",
                                          val=np.zeros(nn),
                                          lhs_name="dgam_dt_approx",

@@ -112,7 +112,7 @@ class GroundrollPhase(PhaseBuilderBase):
         phase.add_timeseries_output("time")
         phase.add_timeseries_output("mass")
         phase.add_timeseries_output(Dynamic.Mission.ALTITUDE)
-        phase.add_timeseries_output(Dynamic.Mission.ANGLE_OF_ATTACK)
+        phase.add_timeseries_output("alpha")
         phase.add_timeseries_output(Dynamic.Mission.FLIGHT_PATH_ANGLE)
         phase.add_timeseries_output(Dynamic.Mission.THROTTLE)
 

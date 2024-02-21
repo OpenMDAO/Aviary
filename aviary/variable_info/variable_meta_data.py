@@ -5855,17 +5855,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Mission.ANGLE_OF_ATTACK,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='rad',
-    desc='Current angle of attack of the vehicle'
-)
-
-add_meta_data(
     Dynamic.Mission.DENSITY,
     meta_data=_MetaData,
     historical_name={"GASP": None,

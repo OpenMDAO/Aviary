@@ -1423,7 +1423,7 @@ class AviaryProblem(om.Problem):
                 phases, [Dynamic.Mission.DISTANCE], units='ft', ref=1.e3, connected=False)
             self.traj.link_phases(phases, ["time"], connected=False)
             self.traj.link_phases(
-                phases[1:], [Dynamic.Mission.ANGLE_OF_ATTACK], units='rad', connected=False)
+                phases[1:], ["alpha"], units='rad', connected=False)
 
             self._link_phases_helper_with_options(
                 phases, 'optimize_altitude', Dynamic.Mission.ALTITUDE, ref=1.e4)
