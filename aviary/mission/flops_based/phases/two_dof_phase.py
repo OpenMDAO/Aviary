@@ -173,6 +173,8 @@ class TwoDOFPhase(PhaseBuilderBase):
         phase.add_timeseries_output(Dynamic.Mission.ANGLE_OF_ATTACK)
         phase.add_timeseries_output(Dynamic.Mission.FLIGHT_PATH_ANGLE)
         phase.add_timeseries_output(Dynamic.Mission.THROTTLE)
+        phase.add_timeseries_output(
+            "fuselage_pitch", output_name="theta", units="deg")
 
         return phase
 

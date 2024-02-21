@@ -49,7 +49,7 @@ class TestUnsteadySolvedODE(unittest.TestCase):
 
         if not ground_roll:
             p.set_val(Dynamic.Mission.FLIGHT_PATH_ANGLE, 0.0 * np.ones(nn), units="rad")
-            p.set_val("alpha", 4 * np.ones(nn), units="deg")
+            p.set_val(Dynamic.Mission.ANGLE_OF_ATTACK, 4 * np.ones(nn), units="deg")
             p.set_val("dh_dr", 0.0 * np.ones(nn), units="ft/NM")
             p.set_val("d2h_dr2", 0.0 * np.ones(nn), units="1/NM")
 
@@ -69,7 +69,7 @@ class TestUnsteadySolvedODE(unittest.TestCase):
         dt_dr = p.model.get_val("dt_dr", units="s/ft")
         tas = p.model.get_val("TAS", units="ft/s")
         iwing = p.model.get_val(Aircraft.Wing.INCIDENCE, units="deg")
-        alpha = p.model.get_val("alpha", units="deg")
+        alpha = p.model.get_val(Dynamic.Mission.ANGLE_OF_ATTACK, units="deg")
 
         c_alphai = np.cos(np.radians(alpha - iwing))
         s_alphai = np.sin(np.radians(alpha - iwing))

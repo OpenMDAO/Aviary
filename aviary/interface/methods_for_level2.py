@@ -305,7 +305,7 @@ class AviaryProblem(om.Problem):
                 elif self.mission_method is SOLVED:
                     from aviary.interface.default_phase_info.solved import phase_info
 
-                print('Loaded default phase_info for'
+                print('Loaded default phase_info for '
                       f'{self.mission_method.value.lower()} equations of motion')
 
         # create a new dictionary that only contains the phases from phase_info
