@@ -3,7 +3,7 @@ import numpy as np
 from dymos.models.atmosphere import USatm1976Comp
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
-from aviary.models.XJ.hamilton_standard import HamiltonStandard, PostHamiltonStandard, PreHamiltonStandard
+from aviary.HMT_STD.hamilton_standard import HamiltonStandard, PostHamiltonStandard, PreHamiltonStandard
 
 def print_report(num, p):
     print(f"Case {num}")
