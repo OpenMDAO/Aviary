@@ -9,7 +9,7 @@ from aviary.mission.gasp_based.ode.unsteady_solved.gamma_comp import GammaComp
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_flight_conditions import \
     UnsteadySolvedFlightConditions
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_eom import UnsteadySolvedEOM
-from aviary.variable_info.enums import SpeedType
+from aviary.variable_info.enums import SpeedType, LegacyCode
 from aviary.variable_info.variables import Dynamic
 from aviary.variable_info.variables_in import VariablesIn
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase
@@ -173,10 +173,13 @@ class UnsteadySolvedODE(BaseODE):
             system = subsystem.build_mission(**kwargs)
             if system is not None:
                 if isinstance(subsystem, AerodynamicsBuilderBase):
+                    mission_inputs = subsystem.mission_inputs(**kwargs)
+                    if subsystem.code_origin is LegacyCode.FLOPS:
+                        mission_inputs.remove('angle_of_attack')
+                        mission_inputs.append(('angle_of_attack', 'alpha'))
                     control_iter_group.add_subsystem(subsystem.name,
                                                      system,
-                                                     promotes_inputs=subsystem.mission_inputs(
-                                                         **kwargs),
+                                                     promotes_inputs=mission_inputs,
                                                      promotes_outputs=subsystem.mission_outputs(**kwargs))
                 elif isinstance(subsystem, PropulsionBuilderBase) and balance_throttle:
                     throttle_balance_group.add_subsystem(subsystem.name,
