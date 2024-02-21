@@ -584,7 +584,6 @@ class _ComputedAeroHarness(om.Group):
         gamma = options['gamma']
         aviary_options: AviaryValues = options['aviary_options']
 
-        # replace debug_no_mass flag with list of subsystem builders without mass
         core_subsystems = [prop, geom, aero]
 
         # Upstream static analysis for aero

@@ -1,9 +1,10 @@
 name: Notify Teams
 
 on:
+  # Could also include pull_request
   pull_request_target:
     branches: [main]
-    types: [opened, reopened, assigned, closed]
+    types: [opened, reopened, assigned, closed, ready_for_review, converted_to_draft]
 
 env:
   SMTP_SERVER: smtp.gmail.com
@@ -16,7 +17,7 @@ env:
 
 jobs:
   send_email_on_opened_pr:
-    if: (github.event_name == 'pull_request' || github.event_name == 'pull_request_target') && (github.event.action == 'opened' || github.event.action == 'reopened')
+    if: github.event.action == 'opened' || github.event.action == 'reopened' || github.event.action == 'ready_for_review'
     runs-on: ubuntu-latest
     steps:
       - name: Get PR Data
@@ -27,6 +28,12 @@ jobs:
           echo "title=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
           echo "url=${{ github.event.pull_request.html_url }}" >> $GITHUB_ENV
           echo "assignees=${{ join(github.event.pull_request.assignees.*.login, ',') }}" >> $GITHUB_ENV
+          reviewers_list=()
+          for review in ${{ github.event.pull_request.reviews }};
+          do
+            reviewers_list+=([$review.user.login, $review.state])
+          done
+          echo "::set-output name=reviewers_list::${reviewers_list[@]}"
 
       - name: Send Email on Opened PR
         uses: dawidd6/action-send-mail@v3
@@ -45,14 +52,15 @@ jobs:
               "user": "${{ env.user }}",
               "title": "${{ env.title }}",
               "url": "${{ env.url }}",
-              "assignees": "${{ env.assignees }}"
+              "assignees": "${{ env.assignees }}",
+              "reviewers": "${{ env.reviewers_list }}"
             }
           ignore_cert: true
           nodemailerlog: true
           nodemailerdebug: true
 
   send_email_on_updated_assignees:
-    if: (github.event_name == 'pull_request' || github.event_name == 'pull_request_target') && github.event.action == 'assigned'
+    if: github.event.action == 'assigned'
     runs-on: ubuntu-latest
     steps:
       - name: Get Updated Assignees
@@ -82,7 +90,7 @@ jobs:
           nodemailerdebug: true
 
   send_email_on_closed_pr:
-    if: (github.event_name == 'pull_request' || github.event_name == 'pull_request_target') && github.event.action == 'closed'
+    if: github.event.action == 'closed' || github.event.action == 'converted_to_draft'
     runs-on: ubuntu-latest
     steps:
       - name: Get PR Data
@@ -103,7 +111,8 @@ jobs:
           body: |
             {
               "number": "${{ env.number }}",
-              "title": "${{ env.title }}"
+              "title": "${{ env.title }}",
+              "action": "${{ env.action }}"
             }
           ignore_cert: true
           nodemailerlog: true

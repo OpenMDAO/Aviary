@@ -60,7 +60,7 @@ class RotationODE(BaseODE):
                                promotes_outputs=["alpha"],
                                )
 
-        self.add_subsystem("eoms", RotationEOM(
+        self.add_subsystem("rotation_eom", RotationEOM(
             num_nodes=nn, analysis_scheme=analysis_scheme), promotes=["*"])
 
         ParamPort.set_default_vals(self)

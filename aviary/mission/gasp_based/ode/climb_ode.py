@@ -13,8 +13,6 @@ from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuil
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
 from aviary.variable_info.enums import AnalysisScheme, AlphaModes, SpeedType
 from aviary.variable_info.variables import Dynamic
-from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
-from aviary.mission.ode.altitude_rate import AltitudeRate
 
 
 class ClimbODE(BaseODE):
@@ -180,7 +178,7 @@ class ClimbODE(BaseODE):
         lift_balance_group.linear_solver = om.DirectSolver(assemble_jac=True)
 
         lift_balance_group.add_subsystem(
-            "eom",
+            "climb_eom",
             ClimbRates(
                 num_nodes=nn,
                 analysis_scheme=analysis_scheme),

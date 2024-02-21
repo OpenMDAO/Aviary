@@ -1,5 +1,3 @@
-debug_mode,False
-
 # Input Values
 aircraft:controls:cockpit_control_mass_scaler,1,unitless
 aircraft:controls:control_mass_increment,0,lbm

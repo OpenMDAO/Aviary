@@ -12,10 +12,12 @@ from dymos.models.atmosphere.atmos_1976 import USatm1976Comp
 from aviary.mission.flops_based.ode.landing_eom import FlareEOM, StallSpeed
 from aviary.mission.flops_based.ode.takeoff_ode import TakeoffODE as _TakeoffODE
 from aviary.mission.gasp_based.flight_conditions import FlightConditions
+from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import set_aviary_initial_values, promote_aircraft_and_mission_vars
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.variables_in import VariablesIn
+from aviary.variable_info.enums import AnalysisScheme
 
 
 class ExternalSubsystemGroup(om.Group):
@@ -60,13 +62,28 @@ class FlareODE(om.Group):
             'external_subsystems', default=[],
             desc='list of external subsystem builder instances to be added to the ODE')
 
+        self.options.declare(
+            "analysis_scheme",
+            default=AnalysisScheme.COLLOCATION,
+            types=AnalysisScheme,
+            desc="The analysis method that will be used to close the trajectory; for example collocation or time integration",
+        )
+
     def setup(self):
         options = self.options
 
         nn = options["num_nodes"]
+        analysis_scheme = options['analysis_scheme']
         aviary_options = options['aviary_options']
         subsystem_options = options['subsystem_options']
         core_subsystems = options['core_subsystems']
+
+        if analysis_scheme is AnalysisScheme.SHOOTING:
+            SGM_required_inputs = {
+                't_curr': {'units': 's'},
+                Dynamic.Mission.DISTANCE: {'units': 'm'},
+            }
+            add_SGM_required_inputs(self, SGM_required_inputs)
 
         self.add_subsystem(
             'input_port', VariablesIn(aviary_options=aviary_options),
@@ -150,7 +167,7 @@ class FlareODE(om.Group):
             'aviary_options':  options['aviary_options']}
 
         self.add_subsystem(
-            'eoms',
+            'landing_eom',
             FlareEOM(**kwargs),
             promotes_inputs=[
                 Dynamic.Mission.FLIGHT_PATH_ANGLE, Dynamic.Mission.VELOCITY, Dynamic.Mission.MASS, Dynamic.Mission.LIFT,

@@ -13,14 +13,11 @@ from aviary.mission.gasp_based.ode.base_ode import BaseODE
 from aviary.mission.gasp_based.ode.constraints.flight_constraints import \
     FlightConstraints
 from aviary.mission.gasp_based.ode.constraints.speed_constraints import SpeedConstraints
-from aviary.mission.gasp_based.ode.descent_eom import DescentRates
 
 from aviary.variable_info.enums import AnalysisScheme, SpeedType
 from aviary.variable_info.variables import Dynamic
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
-from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
-from aviary.mission.ode.altitude_rate import AltitudeRate
 
 
 class DescentODE(BaseODE):
@@ -170,7 +167,7 @@ class DescentODE(BaseODE):
         lift_balance_group.linear_solver = om.DirectSolver(assemble_jac=True)
 
         lift_balance_group.add_subsystem(
-            "eom",
+            "descent_eom",
             DescentRates(
                 num_nodes=nn,
                 analysis_scheme=analysis_scheme),
