@@ -92,6 +92,7 @@ phase_info = {
         "include_landing": False,
         "constrain_range": True,
         "target_range": (1906, "nmi"),
+        "target_range_reserve": (200, 'km'),
     },
     "cruise_reserve": {
         "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
@@ -112,11 +113,11 @@ phase_info = {
             "throttle_enforcement": "boundary_constraint",
             "fix_initial": False,
             "constrain_final": False,
-            "fix_duration": True,
+            "fix_duration": False,
             "initial_bounds": ((149.5, 448.5), "min"),
-            "duration_bounds": ((60, 60), "min"),  # set this for fixed duration phases
+            "duration_bounds": ((0, 120), "min"),
         },
-        "initial_guesses": {"times": ([60, 60], "min")},
+        "initial_guesses": {"times": ([0, 120], "min")},
     },
 }
 

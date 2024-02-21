@@ -623,6 +623,7 @@ class Mission:
         MASS_RESIDUAL = 'mission:constraints:mass_residual'
         MAX_MACH = 'mission:constraints:max_mach'
         RANGE_RESIDUAL = 'mission:constraints:range_residual'
+        RANGE_RESIDUAL_RESERVE = 'mission:constraints:range_residual_reserve'
 
     class Design:
         # These values MAY change in design mission, but in off-design
