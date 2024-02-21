@@ -1316,8 +1316,8 @@ class AviaryProblem(om.Problem):
                 )
 
                 # determine distance traveled based on regular_phases
-                self.model.connect(f"traj.{regular_phases[-1]}.timeseries.distance",
-                                    "range_constraint.actual_range", src_indices=[-1])
+                self.model.connect(
+                    f"traj.{regular_phases[-1]}.timeseries.distance", "range_constraint.actual_range", src_indices=[-1])
                 self.model.add_constraint(
                     Mission.Constraints.RANGE_RESIDUAL, equals=0.0, ref=1.e2)
 
