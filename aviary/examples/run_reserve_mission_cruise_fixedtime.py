@@ -90,7 +90,6 @@ phase_info = {
     },
     "post_mission": {
         "include_landing": False,
-        "constrain_range": True,
         "target_range": (1906, "nmi"),
     },
     "cruise_reserve": {

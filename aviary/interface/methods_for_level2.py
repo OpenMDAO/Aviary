@@ -240,8 +240,7 @@ class AviaryProblem(om.Problem):
             self.post_mission_info = phase_info['post_mission']
         else:
             self.post_mission_info = {'include_landing': True,
-                                      'external_subsystems': [],
-                                      'constrain_range': False}
+                                      'external_subsystems': []}
 
         ## PROCESSING ##
         # set up core subsystems
@@ -1213,29 +1212,28 @@ class AviaryProblem(om.Problem):
 
             regular_phases, reserve_phases = self.phase_separator()
 
-            if 'constrain_range' in self.post_mission_info:
+            # If a target range has been specified
+            if 'target_range' in self.post_mission_info:
+                target_range = wrapped_convert_units(
+                    self.post_mission_info['target_range'], 'nmi')
+                self.post_mission.add_subsystem(
+                    "range_constraint",
+                    om.ExecComp(
+                        "range_resid = target_range - actual_range",
+                        range_resid={'units': 'nmi'},
+                        actual_range={'units': 'nmi'},
+                        target_range={
+                            'val': target_range, 'units': 'nmi'},
+                    ),
+                    promotes_outputs=[
+                        ("range_resid", Mission.Constraints.RANGE_RESIDUAL)],
+                )
 
-                if self.post_mission_info['constrain_range']:
-                    target_range = wrapped_convert_units(
-                        self.post_mission_info['target_range'], 'nmi')
-                    self.post_mission.add_subsystem(
-                        "range_constraint",
-                        om.ExecComp(
-                            "range_resid = target_range - actual_range",
-                            range_resid={'units': 'nmi'},
-                            actual_range={'units': 'nmi'},
-                            target_range={
-                                'val': target_range, 'units': 'nmi'},
-                        ),
-                        promotes_outputs=[
-                            ("range_resid", Mission.Constraints.RANGE_RESIDUAL)],
-                    )
-
-                    # determine distance traveled based on regular_phases
-                    self.model.connect(f"traj.{regular_phases[-1]}.timeseries.distance",
-                                       "range_constraint.actual_range", src_indices=[-1])
-                    self.model.add_constraint(
-                        Mission.Constraints.RANGE_RESIDUAL, equals=0.0, ref=1.e2)
+                # determine distance traveled based on regular_phases
+                self.model.connect(f"traj.{regular_phases[-1]}.timeseries.distance",
+                                    "range_constraint.actual_range", src_indices=[-1])
+                self.model.add_constraint(
+                    Mission.Constraints.RANGE_RESIDUAL, equals=0.0, ref=1.e2)
 
             if reserve_phases:  # if there are reserve phases
                 # check if a target range reserve has been specified
