@@ -151,6 +151,7 @@ class AscentEOM(om.ExplicitComponent):
             * GRAV_ENGLISH_GASP
             / weight
         )
+
         outputs[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE] = (
             (thrust_across_flightpath + incremented_lift - weight * np.cos(gamma))
             * GRAV_ENGLISH_GASP
