@@ -305,7 +305,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                     n1u = np.unique(altitude).size
 
                     if n1 > n1u:
-                        # Data is free-format
+                        # Data is free-format instead of pre-formatted.
                         n1 = n1u
                         n2 = np.unique(mach).size
                         n3 = np.unique(angle_of_attack).size
