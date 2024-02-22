@@ -9,10 +9,10 @@ We then call the correct methods in order to set up and run an Aviary optimizati
 This performs a coupled design-mission optimization and outputs the results from Aviary into the `reports` folder.
 """
 import aviary.api as av
-from run_aviary_example import phase_info
+from example_phase_info import phase_info
 
 # Add reserve phase(s)
-time_cruise = 60  # fixed cruise time (min)
+time_cruise = [60, 'min']  # fixed cruise time
 phase_info.update({
     "cruise_reserve": {
         "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
@@ -35,9 +35,9 @@ phase_info.update({
             "constrain_final": False,
             "fix_duration": True,
             "initial_bounds": ((149.5, 448.5), "min"),
-            "duration_bounds": ((time_cruise, time_cruise), "min"),
+            "duration_bounds": ((time_cruise[0], time_cruise[0]), time_cruise[1]),
         },
-        "initial_guesses": {"times": ([time_cruise, time_cruise], "min")},
+        "initial_guesses": {"times": ([time_cruise[0], time_cruise[0]], time_cruise[1])},
     },
 })
 

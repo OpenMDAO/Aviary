@@ -9,117 +9,36 @@ We then call the correct methods in order to set up and run an Aviary optimizati
 This performs a coupled design-mission optimization and outputs the results from Aviary into the `reports` folder.
 """
 import aviary.api as av
+from example_phase_info import phase_info
 
+prob = av.AviaryProblem()
 
-phase_info = {
-    "pre_mission": {"include_takeoff": False, "optimize_mass": True},
-    "climb": {
-        "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
-        "user_options": {
-            "optimize_mach": False,
-            "optimize_altitude": False,
-            "polynomial_control_order": 1,
-            "num_segments": 5,
-            "order": 3,
-            "solve_for_distance": False,
-            "initial_mach": (0.2, "unitless"),
-            "final_mach": (0.72, "unitless"),
-            "mach_bounds": ((0.18, 0.74), "unitless"),
-            "initial_altitude": (0.0, "ft"),
-            "final_altitude": (32000.0, "ft"),
-            "altitude_bounds": ((0.0, 34000.0), "ft"),
-            "throttle_enforcement": "path_constraint",
-            "fix_initial": True,
-            "constrain_final": False,
-            "fix_duration": False,
-            "initial_bounds": ((0.0, 0.0), "min"),
-            "duration_bounds": ((64.0, 192.0), "min"),
-        },
-        "initial_guesses": {"times": ([0, 128], "min")},
-    },
-    "cruise": {
-        "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
-        "user_options": {
-            "optimize_mach": False,
-            "optimize_altitude": False,
-            "polynomial_control_order": 1,
-            "num_segments": 5,
-            "order": 3,
-            "solve_for_distance": False,
-            "initial_mach": (0.72, "unitless"),
-            "final_mach": (0.72, "unitless"),
-            "mach_bounds": ((0.7, 0.74), "unitless"),
-            "initial_altitude": (32000.0, "ft"),
-            "final_altitude": (34000.0, "ft"),
-            "altitude_bounds": ((23000.0, 38000.0), "ft"),
-            "throttle_enforcement": "boundary_constraint",
-            "fix_initial": False,
-            "constrain_final": False,
-            "fix_duration": False,
-            "initial_bounds": ((64.0, 192.0), "min"),
-            "duration_bounds": ((56.5, 169.5), "min"),
-        },
-        "initial_guesses": {"times": ([128, 113], "min")},
-    },
-    "descent": {
-        "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
-        "user_options": {
-            "optimize_mach": False,
-            "optimize_altitude": False,
-            "polynomial_control_order": 1,
-            "num_segments": 5,
-            "order": 3,
-            "solve_for_distance": False,
-            "initial_mach": (0.72, "unitless"),
-            "final_mach": (0.36, "unitless"),
-            "mach_bounds": ((0.34, 0.74), "unitless"),
-            "initial_altitude": (34000.0, "ft"),
-            "final_altitude": (500.0, "ft"),
-            "altitude_bounds": ((0.0, 38000.0), "ft"),
-            "throttle_enforcement": "path_constraint",
-            "fix_initial": False,
-            "constrain_final": True,
-            "fix_duration": False,
-            "initial_bounds": ((120.5, 361.5), "min"),
-            "duration_bounds": ((29.0, 87.0), "min"),
-        },
-        "initial_guesses": {"times": ([241, 58], "min")},
-    },
-    "post_mission": {
-        "include_landing": False,
-        "target_range": (1906, "nmi"),
-    },
-}
+# Load aircraft and options data from user
+# Allow for user overrides here
+prob.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
 
-if __name__ == "__main__":
-    prob = av.AviaryProblem()
+# Preprocess inputs
+prob.check_and_preprocess_inputs()
 
-    # Load aircraft and options data from user
-    # Allow for user overrides here
-    prob.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
+prob.add_pre_mission_systems()
 
-    # Preprocess inputs
-    prob.check_and_preprocess_inputs()
+prob.add_phases()
 
-    prob.add_pre_mission_systems()
+prob.add_post_mission_systems()
 
-    prob.add_phases()
+# Link phases and variables
+prob.link_phases()
 
-    prob.add_post_mission_systems()
+prob.add_driver("SLSQP", max_iter=100)
 
-    # Link phases and variables
-    prob.link_phases()
+prob.add_design_variables()
 
-    prob.add_driver("SLSQP", max_iter=100)
+# Load optimization problem formulation
+# Detail which variables the optimizer can control
+prob.add_objective()
 
-    prob.add_design_variables()
+prob.setup()
 
-    # Load optimization problem formulation
-    # Detail which variables the optimizer can control
-    prob.add_objective()
+prob.set_initial_guesses()
 
-    prob.setup()
-
-    prob.set_initial_guesses()
-
-    prob.run_aviary_problem()
+prob.run_aviary_problem()

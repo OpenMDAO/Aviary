@@ -9,7 +9,7 @@ We then call the correct methods in order to set up and run an Aviary optimizati
 This performs a coupled design-mission optimization and outputs the results from Aviary into the `reports` folder.
 """
 import aviary.api as av
-from run_aviary_example import phase_info
+from example_phase_info import phase_info
 
 # Specify Target Range for Reserve Phase(s)
 # Range is relative to end of regular mission phases
