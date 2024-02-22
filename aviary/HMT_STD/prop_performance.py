@@ -46,7 +46,7 @@ class PropPerf(om.Group):
             num_blade = options['num_blade']
 
             self.add_subsystem(
-                name='sqa',
+                name='sqa_comp',
                 subsys=om.ExecComp(
                     'sqa = minimum(DiamNac_DiamProp*DiamNac_DiamProp,0.32)',
                     DiamNac_DiamProp={'units': 'unitless'},
@@ -170,9 +170,9 @@ class PropPerf(om.Group):
                 name='hamilton_standard',
                 subsys=HamiltonStandard(num_blade=num_blade),
                 promotes_inputs=[
+                    Dynamic.Mission.MACH,
                     "power_coefficient",
                     "adv_ratio",
-                    Dynamic.Mission.MACH,
                     "tip_mach",
                     "act_fac",
                     "cli"],
