@@ -91,36 +91,35 @@ phase_info = {
     },
 }
 
+if __name__ == "__main__":
+    prob = av.AviaryProblem()
 
-prob = av.AviaryProblem()
+    # Load aircraft and options data from user
+    # Allow for user overrides here
+    prob.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
 
-# Load aircraft and options data from user
-# Allow for user overrides here
-prob.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
+    # Preprocess inputs
+    prob.check_and_preprocess_inputs()
 
+    prob.add_pre_mission_systems()
 
-# Preprocess inputs
-prob.check_and_preprocess_inputs()
+    prob.add_phases()
 
-prob.add_pre_mission_systems()
+    prob.add_post_mission_systems()
 
-prob.add_phases()
+    # Link phases and variables
+    prob.link_phases()
 
-prob.add_post_mission_systems()
+    prob.add_driver("SLSQP", max_iter=100)
 
-# Link phases and variables
-prob.link_phases()
+    prob.add_design_variables()
 
-prob.add_driver("SLSQP", max_iter=100)
+    # Load optimization problem formulation
+    # Detail which variables the optimizer can control
+    prob.add_objective()
 
-prob.add_design_variables()
+    prob.setup()
 
-# Load optimization problem formulation
-# Detail which variables the optimizer can control
-prob.add_objective()
+    prob.set_initial_guesses()
 
-prob.setup()
-
-prob.set_initial_guesses()
-
-prob.run_aviary_problem()
+    prob.run_aviary_problem()

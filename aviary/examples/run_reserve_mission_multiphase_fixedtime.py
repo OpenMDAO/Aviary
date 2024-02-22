@@ -9,89 +9,11 @@ We then call the correct methods in order to set up and run an Aviary optimizati
 This performs a coupled design-mission optimization and outputs the results from Aviary into the `reports` folder.
 """
 import aviary.api as av
+from run_aviary_example import phase_info
 
-
-phase_info = {
-    "pre_mission": {"include_takeoff": False, "optimize_mass": True},
-    "climb": {
-        "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
-        "user_options": {
-            "reserve": False,
-            "optimize_mach": False,
-            "optimize_altitude": False,
-            "polynomial_control_order": 1,
-            "num_segments": 5,
-            "order": 3,
-            "solve_for_distance": False,
-            "initial_mach": (0.2, "unitless"),
-            "final_mach": (0.72, "unitless"),
-            "mach_bounds": ((0.18, 0.74), "unitless"),
-            "initial_altitude": (0.0, "ft"),
-            "final_altitude": (32000.0, "ft"),
-            "altitude_bounds": ((0.0, 34000.0), "ft"),
-            "throttle_enforcement": "path_constraint",
-            "fix_initial": True,
-            "constrain_final": False,
-            "fix_duration": False,
-            "initial_bounds": ((0.0, 0.0), "min"),
-            "duration_bounds": ((64.0, 192.0), "min"),
-        },
-        "initial_guesses": {"times": ([0, 128], "min")},
-    },
-    "cruise": {
-        "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
-        "user_options": {
-            "reserve": False,
-            "optimize_mach": False,
-            "optimize_altitude": False,
-            "polynomial_control_order": 1,
-            "num_segments": 5,
-            "order": 3,
-            "solve_for_distance": False,
-            "initial_mach": (0.72, "unitless"),
-            "final_mach": (0.72, "unitless"),
-            "mach_bounds": ((0.7, 0.74), "unitless"),
-            "initial_altitude": (32000.0, "ft"),
-            "final_altitude": (34000.0, "ft"),
-            "altitude_bounds": ((23000.0, 38000.0), "ft"),
-            "throttle_enforcement": "boundary_constraint",
-            "fix_initial": False,
-            "constrain_final": False,
-            "fix_duration": False,
-            "initial_bounds": ((64.0, 192.0), "min"),
-            "duration_bounds": ((56.5, 169.5), "min"),
-        },
-        "initial_guesses": {"times": ([128, 113], "min")},
-    },
-    "descent": {
-        "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
-        "user_options": {
-            "reserve": False,
-            "optimize_mach": False,
-            "optimize_altitude": False,
-            "polynomial_control_order": 1,
-            "num_segments": 5,
-            "order": 3,
-            "solve_for_distance": False,
-            "initial_mach": (0.72, "unitless"),
-            "final_mach": (0.36, "unitless"),
-            "mach_bounds": ((0.34, 0.74), "unitless"),
-            "initial_altitude": (34000.0, "ft"),
-            "final_altitude": (500.0, "ft"),
-            "altitude_bounds": ((0.0, 38000.0), "ft"),
-            "throttle_enforcement": "path_constraint",
-            "fix_initial": False,
-            "constrain_final": True,
-            "fix_duration": False,
-            "initial_bounds": ((120.5, 361.5), "min"),
-            "duration_bounds": ((29.0, 87.0), "min"),
-        },
-        "initial_guesses": {"times": ([241, 58], "min")},
-    },
-    "post_mission": {
-        "include_landing": False,
-        "target_range": (1906, "nmi"),
-    },
+# Add reserve phase(s)
+time_cruise = 60  # fixed cruise time (min)
+phase_info.update({
     "climb_reserve": {
         "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
         "user_options": {
@@ -138,9 +60,9 @@ phase_info = {
             "constrain_final": False,
             "fix_duration": True,
             "initial_bounds": ((149.5, 448.5), "min"),
-            "duration_bounds": ((60, 60), "min"),  # set this for fixed duration phases
+            "duration_bounds": ((time_cruise, time_cruise), "min"),
         },
-        "initial_guesses": {"times": ([60, 60], "min")},
+        "initial_guesses": {"times": ([time_cruise, time_cruise], "min")},
     },
     "descent_reserve": {
         "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
@@ -167,8 +89,7 @@ phase_info = {
         },
         "initial_guesses": {"times": ([241, 58], "min")},
     },
-}
-
+})
 
 prob = av.AviaryProblem()
 

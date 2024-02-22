@@ -487,6 +487,8 @@ class AviaryProblem(om.Problem):
         # Fill in anything missing in the options with computed defaults.
         preprocess_crewpayload(self.aviary_inputs)
 
+        self.regular_phases, self.reserve_phases = self.phase_separator()
+
     def add_pre_mission_systems(self):
         """
         Add pre-mission systems to the Aviary problem. These systems are executed before the mission
@@ -1296,8 +1298,6 @@ class AviaryProblem(om.Problem):
                 ],
                 promotes_outputs=[('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS)])
 
-            regular_phases, reserve_phases = self.phase_separator()
-
             # If a target range has been specified
             if 'target_range' in self.post_mission_info:
                 target_range = wrapped_convert_units(
@@ -1317,11 +1317,11 @@ class AviaryProblem(om.Problem):
 
                 # determine distance traveled based on regular_phases
                 self.model.connect(
-                    f"traj.{regular_phases[-1]}.timeseries.distance", "range_constraint.actual_range", src_indices=[-1])
+                    f"traj.{self.regular_phases[-1]}.timeseries.distance", "range_constraint.actual_range", src_indices=[-1])
                 self.model.add_constraint(
                     Mission.Constraints.RANGE_RESIDUAL, equals=0.0, ref=1.e2)
 
-            if reserve_phases:  # if there are reserve phases
+            if self.reserve_phases:  # if there are reserve phases
                 # check if a target range reserve has been specified
                 if 'target_range_reserve' in self.post_mission_info:
 
@@ -1343,9 +1343,9 @@ class AviaryProblem(om.Problem):
                         ),
                         promotes_outputs=['actual_range_reserve']
                     )
-                    self.model.connect(f"traj.{reserve_phases[0]}.timeseries.distance",
+                    self.model.connect(f"traj.{self.reserve_phases[0]}.timeseries.distance",
                                        "range_reserve_mission.initial_range_reserve", src_indices=[0])
-                    self.model.connect(f"traj.{reserve_phases[-1]}.timeseries.distance",
+                    self.model.connect(f"traj.{self.reserve_phases[-1]}.timeseries.distance",
                                        "range_reserve_mission.final_range_reserve", src_indices=[-1])
 
                     # Constrain the reserve mission range
@@ -1491,19 +1491,17 @@ class AviaryProblem(om.Problem):
             self.traj.link_phases(
                 phases, ["time", Dynamic.Mission.MASS, Dynamic.Mission.DISTANCE], connected=True)
 
-            regular_phases, reserve_phases = self.phase_separator()
-
             # connect regular phases with eachother if your are optimizing alt or mach
             self._link_phases_helper_with_options(
-                regular_phases, 'optimize_altitude', Dynamic.Mission.ALTITUDE, ref=1.e4)
+                self.regular_phases, 'optimize_altitude', Dynamic.Mission.ALTITUDE, ref=1.e4)
             self._link_phases_helper_with_options(
-                regular_phases, 'optimize_mach', Dynamic.Mission.MACH)
+                self.regular_phases, 'optimize_mach', Dynamic.Mission.MACH)
 
             # connect reserve phases with eachother if your are optimizing alt or mach
             self._link_phases_helper_with_options(
-                reserve_phases, 'optimize_altitude', Dynamic.Mission.ALTITUDE, ref=1.e4)
+                self.reserve_phases, 'optimize_altitude', Dynamic.Mission.ALTITUDE, ref=1.e4)
             self._link_phases_helper_with_options(
-                reserve_phases, 'optimize_mach', Dynamic.Mission.MACH)
+                self.reserve_phases, 'optimize_mach', Dynamic.Mission.MACH)
 
         elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
             if self.analysis_scheme is AnalysisScheme.COLLOCATION:

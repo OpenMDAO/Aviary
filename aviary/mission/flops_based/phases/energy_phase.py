@@ -148,7 +148,6 @@ class EnergyPhase(PhaseBuilderBase):
 
         user_options: AviaryValues = self.user_options
 
-        reserve = user_options.get_val('reserve')  # do we need this here?
         fix_initial = user_options.get_val('fix_initial')
         constrain_final = user_options.get_val('constrain_final')
         optimize_mach = user_options.get_val('optimize_mach')
