@@ -435,7 +435,7 @@ class AviaryProblem(om.Problem):
     def phase_separator(self):
         """
         This method checks for reserve=True & False
-        Returns errors if reserve = False no reserve no specified after reserve = True 
+        Returns an error if a non-reserve phase is specified after a reserve phase.
         return two dictionaries of phases, regular_phases and reserve_phaes
         """
 
