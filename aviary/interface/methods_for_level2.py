@@ -1267,7 +1267,7 @@ class AviaryProblem(om.Problem):
                                                 subsystem_postmission)
 
         if self.mission_method is HEIGHT_ENERGY:
-            phases = list(self.phase_info.keys())  # list of all phases included reserve
+            phases = list(self.phase_info.keys())  # list of all phases including reserve
             ecomp = om.ExecComp('fuel_burned = initial_mass - mass_final',
                                 initial_mass={'units': 'lbm'},
                                 mass_final={'units': 'lbm'},
