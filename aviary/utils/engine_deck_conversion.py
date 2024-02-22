@@ -63,8 +63,8 @@ header_names = {
     FUEL_FLOW: 'Fuel_Flow',
     NOX_RATE: 'NOx_Rate',
     TEMPERATURE: 'T4',
-    SHAFT_POWER_CORRECTED: 'SHAFT_POWER_CORRECTED',
-    TAILPIPE_THRUST: 'TAILPIPE_THRUST',
+    SHAFT_POWER_CORRECTED: 'Shaft_Power_Corrected',
+    TAILPIPE_THRUST: 'Tailpipe_Thrust',
     # EXIT_AREA: 'Exit Area',
 }
 
@@ -499,11 +499,10 @@ def _read_map(f, is_turbo_prop=False):
         z = vals[1:]
         if npts > nptloc:
             # add remaining vals on warapped line
+            line_format = [*_rep(npts - nptloc, (float, 10))]
             if is_turbo_prop:
-                z.extend(list(_parse(f,
-                                     [(None, 10), *_rep(npts - nptloc, (float, 10))])))
-            else:
-                z.extend(list(_parse(f, _rep(npts - nptloc, (float, 10)))))
+                line_format = [(None, 10), *line_format]
+            z.extend(list(_parse(f, line_format)))
 
         sl = slice(j * npts, (j + 1) * npts)
         map_data[sl, 1] = y

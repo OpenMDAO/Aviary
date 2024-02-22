@@ -687,7 +687,7 @@ class EngineDeck(EngineModel):
 
         return SizeEngine(aviary_options=self.options)
 
-    def build_mission(self, num_nodes, aviary_inputs):
+    def build_mission(self, num_nodes, aviary_inputs) -> om.Group:
         """
         Creates interpolator objects to be added to mission-level propulsion subsystem.
         Interpolators must be re-generated for each ODE due to potentialy different
@@ -747,10 +747,11 @@ class EngineDeck(EngineModel):
                           self.data[ELECTRIC_POWER],
                           units=units[ELECTRIC_POWER],
                           desc='Current electric energy rate (unscaled)')
-        engine.add_output('nox_rate_unscaled',
-                          self.data[NOX_RATE],
-                          units=units[NOX_RATE],
-                          desc='Current NOx emission rate (unscaled)')
+        if self.use_nox:
+            engine.add_output('nox_rate_unscaled',
+                              self.data[NOX_RATE],
+                              units=units[NOX_RATE],
+                              desc='Current NOx emission rate (unscaled)')
         # if self.use_exit_area:
         # engine.add_output('exit_area_unscaled',
         #                   self.data[EXIT_AREA],
@@ -804,11 +805,11 @@ class EngineDeck(EngineModel):
                                 alt_table, packed_data[ALTITUDE][M, A, 0])
 
                 # add inputs and outputs to interpolator
-                interp_throttles.add_input(Dynamic.MACH,
+                interp_throttles.add_input(Dynamic.Mission.MACH,
                                            mach_table,
                                            units='unitless',
                                            desc='Current flight Mach number')
-                interp_throttles.add_input(Dynamic.ALTITUDE,
+                interp_throttles.add_input(Dynamic.Mission.ALTITUDE,
                                            alt_table,
                                            units=units[ALTITUDE],
                                            desc='Current flight altitude')
@@ -1260,11 +1261,6 @@ class EngineDeck(EngineModel):
 
 class TurboPropDeck(EngineDeck):
     def __init__(self, name='engine_deck', options: AviaryValues = None, data: NamedValues = None):
-        if 'is_turbo_prop' in options:
-            self.is_turbo_prop, _ = options.get_item('is_turbo_prop')
-        else:
-            self.is_turbo_prop = True
-
         super().__init__(name, options, data)
 
         if THRUST in self.required_variables:
@@ -1272,6 +1268,47 @@ class TurboPropDeck(EngineDeck):
 
         self.required_variables.add(SHAFT_POWER_CORRECTED)
         self.required_variables.add(TAILPIPE_THRUST)
+
+    def build_mission(self, num_nodes, aviary_inputs, prop_model=None):
+        engine_group = super().build_mission(num_nodes, aviary_inputs)
+
+        if prop_model:
+            engine_group.add_subsystem(
+                'propeller_model',
+                prop_model,
+                promotes_inputs=['shaft_hp'],
+                promotes_outputs=['prop_thrust'],
+            )
+        else:
+            self._add_dummy_prop(engine_group)
+
+        engine_group.add_subsystem(
+            'total_thrust',
+            om.ExecComp(
+                'total_thrust = prop_thrust + tailpipe_thrust',
+                total_thrust={'units': 'lbf'},
+                prop_thrust={'units': 'lbf'},
+                tailpipe_thrust={'units': 'lbf'},
+            ),
+            promotes_inputs=['prop_thrust', 'tailpipe_thrust'],
+            promotes_outputs=[('total_thrust', Dynamic.Mission.THRUST)],
+        )
+
+        return engine_group
+
+    def _add_dummy_prop(self, engine_group: om.Group):
+        engine_group.add_subsystem(
+            'propeller_model',
+            om.ExecComp(
+                'prop_thrust = (shaft_power * eff) / Vp',
+                shaft_power={'units': "W"},
+                eff={'val': .5, 'units': 'unitless', },
+                Vp={'units': 'm/s'},
+                prop_thrust={'units': 'N'},
+            ),
+            promotes_inputs=['shaft_power', 'eff', ('Vp', Dynamic.Mission.VELOCITY)],
+            promotes_outputs=['prop_thrust'],
+        )
 
 
 #####################
