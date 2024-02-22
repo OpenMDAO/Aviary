@@ -115,17 +115,8 @@ class PropPerf(om.Group):
                         ),
                 )
             else:
-                self.add_subsystem(
-                    name='input_install',
-                    subsys=om.ExecComp(
-                        'blockage_factor = input_blockage_factor',
-                        input_blockage_factor={'units': 'unitless'},
-                        blockage_factor={'units': 'unitless'},
-                        has_diag_partials=True,
-                    ),
-                    promotes_inputs=["input_blockage_factor"],
-                    promotes_outputs=["blockage_factor"],
-                )
+                comp = om.IndepVarComp('blockage_factor', val=1.0, units='unitless', lower=0.0, upper=1.0)
+                self.add_subsystem('input_blockage', comp, promotes=['*'])
 
             self.add_subsystem(
                 name='FT',
@@ -271,7 +262,7 @@ if __name__ == "__main__":
     # Case 4
     pp.options.set(compute_blockage_factor=False)
     prob.setup()
-    prob.set_val('input_blockage_factor', 1.0, units="unitless")
+    prob.set_val('blockage_factor', 1.0, units="unitless")
     prob.set_val('diam_prop', 12.0, units="ft")
     prob.set_val('act_fac', 150.0, units="unitless")
     prob.set_val('cli', 0.5, units="unitless")
@@ -290,7 +281,7 @@ if __name__ == "__main__":
     print_report(4, prob)
 
     # Case 5
-    prob.set_val('input_blockage_factor', 0.95, units="unitless")
+    prob.set_val('blockage_factor', 0.95, units="unitless")
     print("Case 5")
     print(f"DPROP,BLADT,AFT,CLI: {prob.get_val('diam_prop')}, {pp.options['num_blade']}, {prob.get_val('act_fac')}, {prob.get_val('cli')}")
     print(f"Nacalle Diam to Prop Diam Ratio: {prob.get_val('DiamNac_DiamProp')}")
@@ -316,7 +307,7 @@ if __name__ == "__main__":
     # Case 7
     pp.options.set(num_blade=3)
     prob.setup()
-    prob.set_val('input_blockage_factor', 1.0, units="unitless")
+    prob.set_val('blockage_factor', 1.0, units="unitless")
     prob.set_val('diam_prop', 12.0, units="ft")
     prob.set_val('act_fac', 150.0, units="unitless")
     prob.set_val('cli', 0.5, units="unitless")
@@ -335,7 +326,7 @@ if __name__ == "__main__":
     print_report(7, prob)
 
     # Case 8
-    prob.set_val('input_blockage_factor', 0.95, units="unitless")
+    prob.set_val('blockage_factor', 0.95, units="unitless")
     print("Case 8")
     print(f"DPROP,BLADT,AFT,CLI: {prob.get_val('diam_prop')}, {pp.options['num_blade']}, {prob.get_val('act_fac')}, {prob.get_val('cli')}")
     print(f"Nacalle Diam to Prop Diam Ratio: {prob.get_val('DiamNac_DiamProp')}")
