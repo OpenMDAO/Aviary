@@ -36,7 +36,7 @@ phase_info.update({
             "constrain_final": False,
             "fix_duration": True,
             "initial_bounds": ((149.5, 448.5), "min"),
-            "duration_bounds": ((45, 45), "min"),
+            "duration_bounds": ((45, 45), "min"),  # TBD remove in future
         },
     },
 })
