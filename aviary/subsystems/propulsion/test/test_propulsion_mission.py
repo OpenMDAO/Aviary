@@ -264,6 +264,8 @@ class TurboPropTest(unittest.TestCase):
         thrust = self.prob.get_val(Dynamic.Mission.THRUST_TOTAL, units='lbf')
         fuel_flow = self.prob.get_val(
             Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/h')
+        print(thrust)
+        print(fuel_flow)
 
 
 if __name__ == "__main__":
