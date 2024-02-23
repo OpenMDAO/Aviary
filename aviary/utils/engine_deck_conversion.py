@@ -137,7 +137,7 @@ def EngineDeckConverter(input_file=None, output_file=None, data_format=None):
 
         data = {key: [] for key in gasp_keys}
 
-        scalars, tables = _read_gasp_engine(data_file, is_turbo_prop)
+        scalars, tables, fields = _read_gasp_engine(data_file, is_turbo_prop)
         if 'throttle_type' in scalars:
             throttle_type = scalars.pop('throttle_type')
         else:
@@ -150,8 +150,8 @@ def EngineDeckConverter(input_file=None, output_file=None, data_format=None):
         # recommended to always generate structured grid
         structure_data = True
         if structure_data:
-            structured_data = _make_structured_grid(tables, method='lagrange3',
-                                                    is_turbo_prop=is_turbo_prop)
+            structured_data = _make_structured_grid(
+                tables, method='lagrange3', fields=fields)
 
             data[MACH] = structured_data['fuelflow']['machs']
             data[ALTITUDE] = structured_data['fuelflow']['alts']
@@ -366,7 +366,7 @@ def _read_gasp_engine(fp, is_turbo_prop=False):
 
         tables = {k: _read_table(f, is_turbo_prop) for k in table_types}
 
-    return scalars, tables
+    return scalars, tables, table_types
 
 
 def _read_tp_header(f):
@@ -511,7 +511,7 @@ def _read_map(f, is_turbo_prop=False):
     return map_data
 
 
-def _make_structured_grid(data, method="lagrange3", is_turbo_prop=False):
+def _make_structured_grid(data, method="lagrange3", fields=["thrust", "fuelflow", "airflow"]):
     """Generate a structured grid of unique mach/T4:T2/alt values in the deck"""
     # step size in t4/t2 ratio used in generating the structured grid
     # t2t2_step = 0.5 # original value
@@ -530,11 +530,6 @@ def _make_structured_grid(data, method="lagrange3", is_turbo_prop=False):
     # need t4t2 in first column, mach varies on each row
     pts = np.dstack(np.meshgrid(t4t2s, machs, indexing="ij")).reshape(-1, 2)
     npts = pts.shape[0]
-
-    if is_turbo_prop:
-        fields = ["shaft_power", "fuelflow", "tailpipe_thrust"]
-    else:
-        fields = ["thrust", "fuelflow", "airflow"]
 
     for field in fields:
         map_data = data[field]

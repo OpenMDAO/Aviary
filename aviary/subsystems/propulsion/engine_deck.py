@@ -1276,7 +1276,7 @@ class TurboPropDeck(EngineDeck):
             engine_group.add_subsystem(
                 'propeller_model',
                 prop_model,
-                promotes_inputs=['shaft_hp'],
+                promotes_inputs=[Dynamic.Mission.SHAFT_POWER_CORRECTED],
                 promotes_outputs=['prop_thrust'],
             )
         else:
@@ -1306,7 +1306,11 @@ class TurboPropDeck(EngineDeck):
                 Vp={'units': 'm/s'},
                 prop_thrust={'units': 'N'},
             ),
-            promotes_inputs=['shaft_power', 'eff', ('Vp', Dynamic.Mission.VELOCITY)],
+            promotes_inputs=[
+                'eff',
+                ('shaft_power', Dynamic.Mission.SHAFT_POWER_CORRECTED),
+                ('Vp', Dynamic.Mission.VELOCITY),
+            ],
             promotes_outputs=['prop_thrust'],
         )
 
