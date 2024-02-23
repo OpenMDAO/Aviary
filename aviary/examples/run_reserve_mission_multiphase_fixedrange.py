@@ -19,7 +19,7 @@ phase_info["post_mission"].update({
 
 # Add reserve phase(s)
 phase_info.update({
-    "climb_reserve": {
+    "reserve_climb": {
         "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
         "user_options": {
             "reserve": True,
@@ -44,7 +44,7 @@ phase_info.update({
         },
         "initial_guesses": {"times": ([0, 128], "min")},
     },
-    "cruise_reserve": {
+    "reserve_cruise": {
         "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
         "user_options": {
             "reserve": True,
@@ -69,7 +69,7 @@ phase_info.update({
         },
         "initial_guesses": {"times": ([30, 120], "min")},
     },
-    "descent_reserve": {
+    "reserve_descent": {
         "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
         "user_options": {
             "reserve": True,

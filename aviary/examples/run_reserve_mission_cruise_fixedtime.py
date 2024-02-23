@@ -14,7 +14,7 @@ from example_phase_info import phase_info
 # Add reserve phase(s)
 time_cruise = [60, 'min']  # fixed cruise time
 phase_info.update({
-    "cruise_reserve": {
+    "reserve_cruise": {
         "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
         "user_options": {
             "reserve": True,

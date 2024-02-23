@@ -19,7 +19,7 @@ phase_info["post_mission"].update({
 
 # Add reserve phase(s)
 phase_info.update({
-    "cruise_reserve": {
+    "reserve_cruise": {
         "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
         "user_options": {
             "reserve": True,

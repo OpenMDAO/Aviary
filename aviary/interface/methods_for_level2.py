@@ -1491,13 +1491,13 @@ class AviaryProblem(om.Problem):
             self.traj.link_phases(
                 phases, ["time", Dynamic.Mission.MASS, Dynamic.Mission.DISTANCE], connected=True)
 
-            # connect regular phases with eachother if your are optimizing alt or mach
+            # connect regular phases with each other if your are optimizing alt or mach
             self._link_phases_helper_with_options(
                 self.regular_phases, 'optimize_altitude', Dynamic.Mission.ALTITUDE, ref=1.e4)
             self._link_phases_helper_with_options(
                 self.regular_phases, 'optimize_mach', Dynamic.Mission.MACH)
 
-            # connect reserve phases with eachother if your are optimizing alt or mach
+            # connect reserve phases with each other if your are optimizing alt or mach
             self._link_phases_helper_with_options(
                 self.reserve_phases, 'optimize_altitude', Dynamic.Mission.ALTITUDE, ref=1.e4)
             self._link_phases_helper_with_options(
