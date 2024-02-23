@@ -1354,7 +1354,7 @@ class EngineDeck(EngineModel):
 
 
 class TurboPropDeck(EngineDeck):
-    def __init__(self, name='engine_deck', options: AviaryValues = None, data: NamedValues = None):
+    def __init__(self, name='engine_deck', options: AviaryValues = None, data: NamedValues = None, prop_model=None):
         super().__init__(name, options, data)
 
         if THRUST in self.required_variables:
@@ -1362,6 +1362,8 @@ class TurboPropDeck(EngineDeck):
 
         self.required_variables.add(SHAFT_POWER_CORRECTED)
         self.required_variables.add(TAILPIPE_THRUST)
+
+        self.prop_model = prop_model
 
     def _setup(self, data):
         """
@@ -1393,7 +1395,7 @@ class TurboPropDeck(EngineDeck):
         if self.get_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE):
             self._generate_flight_idle()
 
-    def build_mission(self, num_nodes, aviary_inputs, prop_model=None):
+    def build_mission(self, num_nodes, aviary_inputs):
         engine_group = om.Group()
 
         engine = self.build_engine_interpolator(num_nodes, aviary_inputs)
@@ -1431,10 +1433,10 @@ class TurboPropDeck(EngineDeck):
                                    promotes_inputs=['*'],
                                    promotes_outputs=['*'])
 
-        if prop_model:
+        if self.prop_model:
             engine_group.add_subsystem(
                 'propeller_model',
-                prop_model,
+                self.prop_model,
                 promotes_inputs=[Dynamic.Mission.SHAFT_POWER_CORRECTED],
                 promotes_outputs=['prop_thrust'],
             )
