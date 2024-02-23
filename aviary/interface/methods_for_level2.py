@@ -231,6 +231,9 @@ class AviaryProblem(om.Problem):
 
         self.analysis_scheme = analysis_scheme
 
+        self.regular_phases = []
+        self.reserve_phases = []
+
     def load_inputs(self, aviary_inputs, phase_info=None, engine_builder=None):
         """
         This method loads the aviary_values inputs and options that the
@@ -442,22 +445,20 @@ class AviaryProblem(om.Problem):
         # Check to ensure no non-reserve phases are specified after reserve phases
         start_reserve = False
         raise_error = False
-        reserve_phases = []
-        regular_phases = []
         for idx, phase_name in enumerate(self.phase_info):
             if 'reserve' in self.phase_info[phase_name]["user_options"]:
                 if self.phase_info[phase_name]["user_options"]["reserve"] is False:
                     # This is a regular phase
-                    regular_phases.append(phase_name)
+                    self.regular_phases.append(phase_name)
                     if start_reserve is True:
                         raise_error = True
                 else:
                     # This is a reserve phase
-                    reserve_phases.append(phase_name)
+                    self.reserve_phases.append(phase_name)
                     start_reserve = True
             else:
                 # This is a regular phase by default
-                regular_phases.append(phase_name)
+                self.regular_phases.append(phase_name)
                 if start_reserve is True:
                     raise_error = True
 
@@ -465,10 +466,8 @@ class AviaryProblem(om.Problem):
             raise ValueError(
                 f'In phase_info, reserve=False cannot be specified after a phase where reserve=True. '
                 f'All reserve phases must happen after non-reserve phases. '
-                f'Regular Phases : {regular_phases} | '
-                f'Reserve Phases : {reserve_phases} ')
-
-        return (regular_phases, reserve_phases)
+                f'Regular Phases : {self.regular_phases} | '
+                f'Reserve Phases : {self.reserve_phases} ')
 
     def check_and_preprocess_inputs(self):
         """
@@ -487,7 +486,7 @@ class AviaryProblem(om.Problem):
         # Fill in anything missing in the options with computed defaults.
         preprocess_crewpayload(self.aviary_inputs)
 
-        self.regular_phases, self.reserve_phases = self.phase_separator()
+        self.phase_separator()
 
         # Target_distance verification for all phases
         # Checks to make sure target_distance is positive,
