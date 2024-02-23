@@ -12,12 +12,13 @@ import aviary.api as av
 from example_phase_info import phase_info
 
 # Add reserve phase(s)
-time_cruise = [60, 'min']  # fixed cruise time
 phase_info.update({
     "reserve_cruise": {
         "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
         "user_options": {
             "reserve": True,
+            # Time length of this phase
+            "target_time": (30, 'min'),
             "optimize_mach": False,
             "optimize_altitude": False,
             "polynomial_control_order": 1,
@@ -35,9 +36,8 @@ phase_info.update({
             "constrain_final": False,
             "fix_duration": True,
             "initial_bounds": ((149.5, 448.5), "min"),
-            "duration_bounds": ((time_cruise[0], time_cruise[0]), time_cruise[1]),
+            "duration_bounds": ((45, 45), "min"),
         },
-        "initial_guesses": {"times": ([time_cruise[0], time_cruise[0]], time_cruise[1])},
     },
 })
 

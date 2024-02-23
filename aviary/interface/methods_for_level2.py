@@ -508,21 +508,24 @@ class AviaryProblem(om.Problem):
                 target_time = self.phase_info[phase_name]["user_options"]["target_time"]
                 if target_time[0] <= 0:
                     raise ValueError(
-                        f"Invalid target_time in {phase_name}.[user_options]."
+                        f"Invalid target_time in phase_info[{phase_name}][user_options]."
                         f"Current (value: {target_time[0]}), (units: {target_time[1]}) <= 0")
-                if self.phase_info[phase_name]["user_options"]["duration_bounds"] is True:
-                    raise ValueError(
-                        f"When specifying target_time, duration_bounds for time should be removed."
-                        f"Unexpected duration_bounds encountered in [{phase_name}].[user_options].")
-                if self.phase_info[phase_name]["initial_guesses"] is True:
-                    raise ValueError(
-                        f"When specifying target_time, initial_guesses for times should be removed."
-                        f"Unexpected initial_guesses encountered in [{phase_name}].[user_options].")
+                if 'duration_bounds' in self.phase_info[phase_name]["user_options"]:
+                    # raise ValueError(
+                    print(
+                        f"When specifying target_time, duration_bounds for time should be removed. "
+                        f"Unexpected duration_bounds encountered in phase_info[{phase_name}][user_options].")
+                if 'initial_guesses' in self.phase_info[phase_name]:
+                    if 'times' in self.phase_info[phase_name]['initial_guesses']:
+                        # raise ValueError(
+                        print(
+                            f"When specifying target_time, initial_guesses for times should be removed. "
+                            f"Unexpected initial_guesses.times encountered in phase_info[{phase_name}][initial_guesses].")
                 # Set duartion_bounds and initial_guesses for time:
                 self.phase_info[phase_name]["user_options"].update({
                     "duration_bounds": ((target_time[0], target_time[0]), target_time[1])})
                 self.phase_info[phase_name].update({
-                    "initial_guesses": ((target_time[0], target_time[0]), target_time[1])})
+                    "initial_guesses": {"times": ((target_time[0], target_time[0]), target_time[1])}})
 
     def add_pre_mission_systems(self):
         """

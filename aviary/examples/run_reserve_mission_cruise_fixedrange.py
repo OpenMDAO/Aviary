@@ -17,7 +17,7 @@ phase_info.update({
         "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
         "user_options": {
             "reserve": True,
-            # specify the distance traveled in this phase
+            # Distance traveled in this phase
             "target_distance": (200, 'km'),
             "optimize_mach": False,
             "optimize_altitude": False,
