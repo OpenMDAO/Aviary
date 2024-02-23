@@ -1437,8 +1437,8 @@ class TurboPropDeck(EngineDeck):
             engine_group.add_subsystem(
                 'propeller_model',
                 self.prop_model,
-                promotes_inputs=[Dynamic.Mission.SHAFT_POWER_CORRECTED],
-                promotes_outputs=['prop_thrust'],
+                promotes_inputs=['*', ('SHP', Dynamic.Mission.SHAFT_POWER_CORRECTED)],
+                promotes_outputs=[('Thrust', 'prop_thrust')],
             )
         else:
             self._add_dummy_prop(engine_group, num_nodes)
