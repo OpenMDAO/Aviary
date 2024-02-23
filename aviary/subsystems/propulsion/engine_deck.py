@@ -71,7 +71,9 @@ aliases = {
     FUEL_FLOW: ['fuel', 'fuel_flow', 'fuel_flow_rate'],
     ELECTRIC_POWER: 'electric_power',
     NOX_RATE: ['nox', 'nox_rate'],
-    TEMPERATURE: ['t4', 'temp', 'temperature']
+    TEMPERATURE: ['t4', 'temp', 'temperature'],
+    SHAFT_POWER_CORRECTED: ['shaft_power', 'shaft_power_corrected', 'shp', 'corrected_horsepower'],
+    TAILPIPE_THRUST: ['tailpipe_thrust'],
 }
 
 # these variables must be present in engine performance data
@@ -271,6 +273,7 @@ class EngineDeck(EngineModel):
         self.use_hybrid_throttle = HYBRID_THROTTLE in engine_variables
         self.use_nox = NOX_RATE in engine_variables
         self.use_t4 = TEMPERATURE in engine_variables
+        self.use_shaft_power = SHAFT_POWER_CORRECTED in engine_variables
         # self.use_exit_area = EXIT_AREA in engine_variables
 
     def _setup(self, data):
@@ -716,6 +719,7 @@ class EngineDeck(EngineModel):
         units = default_units
         for key in self.engine_variables:
             units[key] = self.engine_variables[key]
+        self.engine_variable_units = units
 
         # add inputs and outputs to interpolator
         engine.add_input(Dynamic.Mission.MACH,
@@ -747,11 +751,16 @@ class EngineDeck(EngineModel):
                           self.data[ELECTRIC_POWER],
                           units=units[ELECTRIC_POWER],
                           desc='Current electric energy rate (unscaled)')
-        if self.use_nox:
-            engine.add_output('nox_rate_unscaled',
-                              self.data[NOX_RATE],
-                              units=units[NOX_RATE],
-                              desc='Current NOx emission rate (unscaled)')
+        # if self.use_nox:
+        engine.add_output('nox_rate_unscaled',
+                          self.data[NOX_RATE],
+                          units=units[NOX_RATE],
+                          desc='Current NOx emission rate (unscaled)')
+        # if self.use_shaft_power:
+        #     engine.add_output('shaft_power_unscaled',
+        #                       self.data[SHAFT_POWER_CORRECTED],
+        #                       units=units[SHAFT_POWER_CORRECTED],
+        #                       desc='Current corrected shaft power (unscaled)')
         # if self.use_exit_area:
         # engine.add_output('exit_area_unscaled',
         #                   self.data[EXIT_AREA],
@@ -1271,6 +1280,14 @@ class TurboPropDeck(EngineDeck):
 
     def build_mission(self, num_nodes, aviary_inputs, prop_model=None):
         engine_group = super().build_mission(num_nodes, aviary_inputs)
+        engine_group.engine.add_output('shaft_power_unscaled',
+                                       self.data[SHAFT_POWER_CORRECTED],
+                                       units=self.engine_variable_units[SHAFT_POWER_CORRECTED],
+                                       desc='Current corrected shaft power (unscaled)')
+        engine_group.engine.add_output('tailpipe_thrust_unscaled',
+                                       self.data[TAILPIPE_THRUST],
+                                       units=self.engine_variable_units[TAILPIPE_THRUST],
+                                       desc='Current tailpipe thrust (unscaled)')
 
         if prop_model:
             engine_group.add_subsystem(
@@ -1288,7 +1305,7 @@ class TurboPropDeck(EngineDeck):
                 'total_thrust = prop_thrust + tailpipe_thrust',
                 total_thrust={'units': 'lbf'},
                 prop_thrust={'units': 'lbf'},
-                tailpipe_thrust={'units': 'lbf'},
+                tailpipe_thrust={'val': 0, 'units': 'lbf'},
             ),
             promotes_inputs=['prop_thrust', 'tailpipe_thrust'],
             promotes_outputs=[('total_thrust', Dynamic.Mission.THRUST)],

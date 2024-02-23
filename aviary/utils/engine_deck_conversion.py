@@ -142,6 +142,11 @@ def EngineDeckConverter(input_file=None, output_file=None, data_format=None):
             throttle_type = scalars.pop('throttle_type')
         else:
             throttle_type = 1
+        t4max = scalars['t4max']
+        if t4max <= 100 or throttle_type == 3:
+            throttle_step = 2
+        else:
+            throttle_step = .05
 
         # save scalars as comments
         comments.extend(['# ' + key + ': ' + str(scalars[key])
@@ -150,8 +155,8 @@ def EngineDeckConverter(input_file=None, output_file=None, data_format=None):
         # recommended to always generate structured grid
         structure_data = True
         if structure_data:
-            structured_data = _make_structured_grid(
-                tables, method='lagrange3', fields=fields)
+            structured_data = _make_structured_grid(tables, method='lagrange3',
+                                                    fields=fields, throttle_step=throttle_step)
 
             data[MACH] = structured_data['fuelflow']['machs']
             data[ALTITUDE] = structured_data['fuelflow']['alts']
@@ -179,8 +184,6 @@ def EngineDeckConverter(input_file=None, output_file=None, data_format=None):
             data, T4T2 = _generate_flight_idle(data, T4T2,
                                                ref_sls_airflow=scalars['sls_airflow'],
                                                ref_sfn_idle=scalars['sfn_idle'])
-
-        t4max = scalars['t4max']
 
         # if t4max 100 or less, it is actually throttle. Remove temperature as variable
         if t4max <= 100 or throttle_type == 3:
@@ -511,11 +514,11 @@ def _read_map(f, is_turbo_prop=False):
     return map_data
 
 
-def _make_structured_grid(data, method="lagrange3", fields=["thrust", "fuelflow", "airflow"]):
+def _make_structured_grid(data, method="lagrange3", fields=["thrust", "fuelflow", "airflow"], throttle_step=.05):
     """Generate a structured grid of unique mach/T4:T2/alt values in the deck"""
     # step size in t4/t2 ratio used in generating the structured grid
     # t2t2_step = 0.5 # original value
-    t4t2_step = 0.5
+    t4t2_step = throttle_step
     # step size in mach number used in generating the structured grid
     # mach_step = 0.02 # original value
     mach_step = 0.05
