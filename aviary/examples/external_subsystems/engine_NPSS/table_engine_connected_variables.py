@@ -1,7 +1,7 @@
 from aviary.examples.external_subsystems.engine_NPSS.engine_variables import Aircraft, Dynamic
 
 vars_to_connect = {
-    "Fn_train" : {
+    "Fn_train": {
         "mission_name": [
             Dynamic.Mission.THRUST+"_train",
         ],
