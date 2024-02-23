@@ -218,7 +218,7 @@ class TurboPropTest(unittest.TestCase):
         nn = 20
 
         filename = get_path(
-            'models/engines/PT6.csv')
+            'models/engines/PT6.deck')
 
         options = AviaryValues()
         options.set_val(Aircraft.Engine.DATA_FILE, filename)
