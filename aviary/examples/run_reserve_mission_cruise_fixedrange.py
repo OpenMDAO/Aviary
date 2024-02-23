@@ -11,18 +11,14 @@ This performs a coupled design-mission optimization and outputs the results from
 import aviary.api as av
 from example_phase_info import phase_info
 
-# Specify Target Range for Reserve Phase(s)
-# Range is relative to end of regular mission phases
-phase_info["post_mission"].update({
-    "target_range_reserve": (200, 'km'),
-})
-
 # Add reserve phase(s)
 phase_info.update({
     "reserve_cruise": {
         "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
         "user_options": {
             "reserve": True,
+            # specify the distance traveled in this phase
+            "target_distance": (200, 'km'),
             "optimize_mach": False,
             "optimize_altitude": False,
             "polynomial_control_order": 1,

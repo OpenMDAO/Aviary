@@ -374,6 +374,10 @@ EnergyPhase._add_meta_data(
     'reserve', val=False, desc='this phase is part of the reserve mission.')
 
 EnergyPhase._add_meta_data(
+    'target_distance', val={}, desc='the constrained distance of this phase'
+)
+
+EnergyPhase._add_meta_data(
     'num_segments', val=5, desc='transcription: number of segments')
 
 EnergyPhase._add_meta_data(

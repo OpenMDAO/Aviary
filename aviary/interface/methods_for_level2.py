@@ -489,6 +489,41 @@ class AviaryProblem(om.Problem):
 
         self.regular_phases, self.reserve_phases = self.phase_separator()
 
+        # Target_distance verification for all phases
+        # Checks to make sure target_distance is positive,
+        for idx, phase_name in enumerate(self.phase_info):
+            if 'target_distance' in self.phase_info[phase_name]["user_options"]:
+                target_distance = self.phase_info[phase_name]["user_options"]["target_distance"]
+                if target_distance[0] <= 0:
+                    raise ValueError(
+                        f"Invalid target_distance in [{phase_name}].[user_options]. "
+                        f"Current (value: {target_distance[0]}), (units: {target_distance[1]}) <= 0")
+
+        # Target_time verification for all phases
+        # Checks to make sure target_time is positive,
+        # duration_bounds and initial_guesses for time have not been set,
+        # Then sets duration_bounds and initial_guesses
+        for idx, phase_name in enumerate(self.phase_info):
+            if 'target_time' in self.phase_info[phase_name]["user_options"]:
+                target_time = self.phase_info[phase_name]["user_options"]["target_time"]
+                if target_time[0] <= 0:
+                    raise ValueError(
+                        f"Invalid target_time in {phase_name}.[user_options]."
+                        f"Current (value: {target_time[0]}), (units: {target_time[1]}) <= 0")
+                if self.phase_info[phase_name]["user_options"]["duration_bounds"] is True:
+                    raise ValueError(
+                        f"When specifying target_time, duration_bounds for time should be removed."
+                        f"Unexpected duration_bounds encountered in [{phase_name}].[user_options].")
+                if self.phase_info[phase_name]["initial_guesses"] is True:
+                    raise ValueError(
+                        f"When specifying target_time, initial_guesses for times should be removed."
+                        f"Unexpected initial_guesses encountered in [{phase_name}].[user_options].")
+                # Set duartion_bounds and initial_guesses for time:
+                self.phase_info[phase_name]["user_options"].update({
+                    "duration_bounds": ((target_time[0], target_time[0]), target_time[1])})
+                self.phase_info[phase_name].update({
+                    "initial_guesses": ((target_time[0], target_time[0]), target_time[1])})
+
     def add_pre_mission_systems(self):
         """
         Add pre-mission systems to the Aviary problem. These systems are executed before the mission
@@ -1299,6 +1334,7 @@ class AviaryProblem(om.Problem):
                 promotes_outputs=[('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS)])
 
             # If a target range has been specified
+            # range is measured from the first phase to the last normal phase
             if 'target_range' in self.post_mission_info:
                 target_range = wrapped_convert_units(
                     self.post_mission_info['target_range'], 'nmi')
@@ -1321,51 +1357,77 @@ class AviaryProblem(om.Problem):
                 self.model.add_constraint(
                     Mission.Constraints.RANGE_RESIDUAL, equals=0.0, ref=1.e2)
 
-            if self.reserve_phases:  # if there are reserve phases
-                # check if a target range reserve has been specified
-                if 'target_range_reserve' in self.post_mission_info:
-
-                    # Validate data
-                    target_range_reserve_check = self.post_mission_info['target_range_reserve']
-                    if target_range_reserve_check[0] <= 0:
-                        raise ValueError(
-                            f"Invalid value for target_reserve_range: {target_range_reserve_check[0]} <= 0.",
-                            "Set target_range_reserve > 0 or remove it.")
-
-                    # Actual range flown for reserve mission
+            # If a target distance has been specified for this phase
+            # distance is measured from the start of this phase to the end of this phase
+            for idx, phase_name in enumerate(self.phase_info):
+                if 'target_distance' in self.phase_info[phase_name]["user_options"]:
+                    print(f'Adding distance constraint for {phase_name}')
+                    target_distance = wrapped_convert_units(
+                        self.phase_info[phase_name]["user_options"]["target_distance"], 'nmi')
                     self.post_mission.add_subsystem(
-                        "range_reserve_mission",
+                        f"{phase_name}_distance_constraint",
                         om.ExecComp(
-                            "actual_range_reserve = final_range_reserve - initial_range_reserve",
-                            actual_range_reserve={'units': 'nmi'},
-                            final_range_reserve={'units': 'nmi'},
-                            initial_range_reserve={'units': 'nmi'},
-                        ),
-                        promotes_outputs=['actual_range_reserve']
-                    )
-                    self.model.connect(f"traj.{self.reserve_phases[0]}.timeseries.distance",
-                                       "range_reserve_mission.initial_range_reserve", src_indices=[0])
-                    self.model.connect(f"traj.{self.reserve_phases[-1]}.timeseries.distance",
-                                       "range_reserve_mission.final_range_reserve", src_indices=[-1])
-
-                    # Constrain the reserve mission range
-                    target_range_reserve = wrapped_convert_units(
-                        self.post_mission_info['target_range_reserve'], 'nmi')
-                    self.post_mission.add_subsystem(
-                        "range_constraint_reserve",
-                        om.ExecComp(
-                            "range_resid_reserve = target_range_reserve - actual_range_reserve",
-                            range_resid_reserve={'units': 'nmi'},
-                            actual_range_reserve={'units': 'nmi'},
-                            target_range_reserve={
-                                'val': target_range_reserve, 'units': 'nmi'},
-                        ),
-                        promotes_inputs=['actual_range_reserve'],
-                        promotes_outputs=[
-                            ("range_resid_reserve", Mission.Constraints.RANGE_RESIDUAL_RESERVE)],
-                    )
+                            "distance_resid = target_distance - (final_distance - initial_distance)",
+                            distance_resid={'units': 'nmi'},
+                            target_distance={'val': target_distance, 'units': 'nmi'},
+                            final_distance={'units': 'nmi'},
+                            initial_distance={'units': 'nmi'},
+                        ))
+                    self.model.connect(
+                        f"traj.{phase_name}.timeseries.distance",
+                        f"{phase_name}_distance_constraint.final_distance", src_indices=[-1])
+                    self.model.connect(
+                        f"traj.{phase_name}.timeseries.distance",
+                        f"{phase_name}_distance_constraint.initial_distance", src_indices=[0])
                     self.model.add_constraint(
-                        Mission.Constraints.RANGE_RESIDUAL_RESERVE, equals=0.0, ref=1.e2)
+                        f"{phase_name}_distance_constraint.distance_resid", equals=0.0, ref=1e2)
+
+            # # old for multi-phase range constraints
+            # if self.reserve_phases:  # if there are reserve phases
+            #     # check if a target range reserve has been specified
+            #     if 'target_range_reserve' in self.post_mission_info:
+
+            #         # Validate data
+            #         target_range_reserve_check = self.post_mission_info['target_range_reserve']
+            #         if target_range_reserve_check[0] <= 0:
+            #             raise ValueError(
+            #                 f"Invalid value for target_reserve_range: {target_range_reserve_check[0]} <= 0.",
+            #                 "Set target_range_reserve > 0 or remove it.")
+
+            #         # Actual range flown for reserve mission
+            #         self.post_mission.add_subsystem(
+            #             "range_reserve_mission",
+            #             om.ExecComp(
+            #                 "actual_range_reserve = final_range_reserve - initial_range_reserve",
+            #                 actual_range_reserve={'units': 'nmi'},
+            #                 final_range_reserve={'units': 'nmi'},
+            #                 initial_range_reserve={'units': 'nmi'},
+            #             ),
+            #             promotes_outputs=['actual_range_reserve']
+            #         )
+            #         self.model.connect(f"traj.{self.reserve_phases[0]}.timeseries.distance",
+            #                            "range_reserve_mission.initial_range_reserve", src_indices=[0])
+            #         self.model.connect(f"traj.{self.reserve_phases[-1]}.timeseries.distance",
+            #                            "range_reserve_mission.final_range_reserve", src_indices=[-1])
+
+            #         # Constrain the reserve mission range
+            #         target_range_reserve = wrapped_convert_units(
+            #             self.post_mission_info['target_range_reserve'], 'nmi')
+            #         self.post_mission.add_subsystem(
+            #             "range_constraint_reserve",
+            #             om.ExecComp(
+            #                 "range_resid_reserve = target_range_reserve - actual_range_reserve",
+            #                 range_resid_reserve={'units': 'nmi'},
+            #                 actual_range_reserve={'units': 'nmi'},
+            #                 target_range_reserve={
+            #                     'val': target_range_reserve, 'units': 'nmi'},
+            #             ),
+            #             promotes_inputs=['actual_range_reserve'],
+            #             promotes_outputs=[
+            #                 ("range_resid_reserve", Mission.Constraints.RANGE_RESIDUAL_RESERVE)],
+            #         )
+            #         self.model.add_constraint(
+            #             Mission.Constraints.RANGE_RESIDUAL_RESERVE, equals=0.0, ref=1.e2)
 
         ecomp = om.ExecComp(
             'mass_resid = operating_empty_mass + overall_fuel + payload_mass -'
