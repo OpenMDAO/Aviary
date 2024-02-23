@@ -502,7 +502,7 @@ class AviaryProblem(om.Problem):
         # Target_time verification for all phases
         # Checks to make sure target_time is positive,
         # duration_bounds and initial_guesses for time have not been set,
-        # Then sets duration_bounds and initial_guesses
+        # Then sets duration_bounds, initial_guesses, and fixed_duration
         for idx, phase_name in enumerate(self.phase_info):
             if 'target_time' in self.phase_info[phase_name]["user_options"]:
                 target_time = self.phase_info[phase_name]["user_options"]["target_time"]
@@ -521,11 +521,19 @@ class AviaryProblem(om.Problem):
                         print(
                             f"When specifying target_time, initial_guesses for times should be removed. "
                             f"Unexpected initial_guesses.times encountered in phase_info[{phase_name}][initial_guesses].")
+                if 'fix_duration' in self.phase_info[phase_name]["user_options"]:
+                    # raise ValueError(
+                    print(
+                        f"When specifying target_time, fix_duration is assumed to be True. "
+                        f"Unexpected fix_duration encourntered in phase_info[{phase_name}][user_options].")
                 # Set duartion_bounds and initial_guesses for time:
                 self.phase_info[phase_name]["user_options"].update({
                     "duration_bounds": ((target_time[0], target_time[0]), target_time[1])})
                 self.phase_info[phase_name].update({
                     "initial_guesses": {"times": ((target_time[0], target_time[0]), target_time[1])}})
+                # Set Fixed_duration to true:
+                self.phase_info[phase_name]["user_options"].update({
+                    "fix_duration": True})
 
     def add_pre_mission_systems(self):
         """
@@ -1364,7 +1372,6 @@ class AviaryProblem(om.Problem):
             # distance is measured from the start of this phase to the end of this phase
             for idx, phase_name in enumerate(self.phase_info):
                 if 'target_distance' in self.phase_info[phase_name]["user_options"]:
-                    print(f'Adding distance constraint for {phase_name}')
                     target_distance = wrapped_convert_units(
                         self.phase_info[phase_name]["user_options"]["target_distance"], 'nmi')
                     self.post_mission.add_subsystem(

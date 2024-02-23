@@ -34,7 +34,7 @@ phase_info.update({
             "throttle_enforcement": "boundary_constraint",
             "fix_initial": False,
             "constrain_final": False,
-            "fix_duration": True,
+            "fix_duration": True,  # TBD remove in future
             "initial_bounds": ((149.5, 448.5), "min"),
             "duration_bounds": ((45, 45), "min"),  # TBD remove in future
         },
