@@ -185,36 +185,6 @@ class MissionODE(om.Group):
                            promotes_inputs=['*'],
                            promotes_outputs=['*'])
 
-        self.set_input_defaults(Mission.Design.GROSS_MASS, val=1, units='kg')
-        self.set_input_defaults(
-            Aircraft.Fuselage.CHARACTERISTIC_LENGTH, val=1, units='ft')
-        self.set_input_defaults(Aircraft.Fuselage.FINENESS, val=1, units='unitless')
-        self.set_input_defaults(Aircraft.Fuselage.WETTED_AREA, val=1, units='ft**2')
-        self.set_input_defaults(
-            Aircraft.VerticalTail.CHARACTERISTIC_LENGTH, val=1, units='ft')
-        self.set_input_defaults(Aircraft.VerticalTail.FINENESS, val=1, units='unitless')
-        self.set_input_defaults(Aircraft.VerticalTail.WETTED_AREA, val=1, units='ft**2')
-        self.set_input_defaults(
-            Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH, val=1, units='ft')
-        self.set_input_defaults(Aircraft.HorizontalTail.FINENESS,
-                                val=1, units='unitless')
-        self.set_input_defaults(
-            Aircraft.HorizontalTail.WETTED_AREA, val=1, units='ft**2')
-        self.set_input_defaults(Aircraft.Wing.CHARACTERISTIC_LENGTH, val=1, units='ft')
-        self.set_input_defaults(Aircraft.Wing.FINENESS, val=1, units='unitless')
-        self.set_input_defaults(Aircraft.Wing.WETTED_AREA, val=1, units='ft**2')
-        self.set_input_defaults(
-            Aircraft.Wing.SPAN_EFFICIENCY_FACTOR, val=1, units='unitless')
-        self.set_input_defaults(Aircraft.Wing.TAPER_RATIO, val=1, units='unitless')
-        self.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD,
-                                val=1, units='unitless')
-        self.set_input_defaults(Aircraft.Wing.SWEEP, val=1, units='deg')
-        self.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, val=1, units='unitless')
-        self.set_input_defaults(
-            Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, val=1, units='unitless')
-        self.set_input_defaults(
-            Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR, val=1, units='unitless')
-
         self.set_input_defaults(Dynamic.Mission.MACH, val=np.ones(nn), units='unitless')
         self.set_input_defaults(Dynamic.Mission.MASS, val=np.ones(nn), units='kg')
         self.set_input_defaults(Dynamic.Mission.VELOCITY, val=np.ones(nn), units='m/s')
@@ -254,30 +224,6 @@ class MissionODE(om.Group):
             add_SGM_required_outputs(self, SGM_required_outputs)
 
         print_level = 0 if analysis_scheme is AnalysisScheme.SHOOTING else 2
-
-        if analysis_scheme is AnalysisScheme.SHOOTING and False:
-            from aviary.utils.functions import create_printcomp
-            dummy_comp = create_printcomp(
-                all_inputs=[
-                    't_curr',
-                    Mission.Design.RESERVE_FUEL,
-                    Dynamic.Mission.MASS,
-                    Dynamic.Mission.DISTANCE,
-                    Dynamic.Mission.ALTITUDE,
-                    Dynamic.Mission.FLIGHT_PATH_ANGLE,
-                ],
-                input_units={
-                    't_curr': 's',
-                    Dynamic.Mission.FLIGHT_PATH_ANGLE: 'deg',
-                    Dynamic.Mission.DISTANCE: 'NM',
-                })
-            self.add_subsystem(
-                "dummy_comp",
-                dummy_comp(),
-                promotes_inputs=["*"],)
-            self.set_input_defaults(
-                Dynamic.Mission.DISTANCE, val=0, units='NM')
-            self.set_input_defaults('t_curr', val=0, units='s')
 
         self.nonlinear_solver = om.NewtonSolver(solve_subsystems=True,
                                                 atol=1.0e-10,

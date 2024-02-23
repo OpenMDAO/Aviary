@@ -61,7 +61,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         assert_near_equal(prob.get_val("traj.desc2.timeseries.distance")[-1],
                           3675.0, tolerance=rtol)
 
-    @require_pyoptsparse(optimizer="SNOPT")
+    @require_pyoptsparse(optimizer="IPOPT")
     def test_bench_GwGm_shooting(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwGm.csv',
