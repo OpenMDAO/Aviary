@@ -1,8 +1,10 @@
 import numpy as np
 import math
 import openmdao.api as om
-from aviary.variable_info.variables import Dynamic
+from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH, TSLS_DEGR
+import pdb
 
 # JK NOTE lagrange3?
 def unint(xa, ya, x):
@@ -246,11 +248,11 @@ JK NOTE:
 
 class PreHamiltonStandard(om.ExplicitComponent):
     def setup(self):
-        self.add_input('tipspd', val=0.0, units='ft/s')
-        self.add_input('diam_prop', val=0.0, units='ft')
-        self.add_input('SHP', val=0.0, units='hp')
+        self.add_input(Aircraft.Engine.PROPELLER_TIP_SPEED, val=0.0, units='ft/s')
+        self.add_input(Aircraft.Engine.PROPELLER_DIAMETER, val=0.0, units='ft')
+        self.add_input(Dynamic.Mission.SHAFT_POWER, val=0.0, units='hp')
         self.add_input('rho', val=0.0, units='slug/ft**3')
-        self.add_input('vktas', val=0.0, units='knot')
+        self.add_input(Dynamic.Mission.VELOCITY, val=0.0, units='knot')
         self.add_input('temp', val=0.0, units='degR')
 
         self.add_output('power_coefficient', val=0.0, units='unitless')
@@ -263,27 +265,33 @@ class PreHamiltonStandard(om.ExplicitComponent):
         outputs['density_ratio'] = inputs['rho']/RHO_SEA_LEVEL_ENGLISH
         FC = math.sqrt(TSLS_DEGR/inputs['temp'])
         #vktas = Dynamic.Mission.VELOCITY*0.5924838739671128
-        vktas = inputs['vktas']
+        vktas = self.get_val(Dynamic.Mission.VELOCITY)[0]
         outputs['mach'] = .00150933 * vktas * FC  # at sea level, 1 knot = .00150933 (actually 0.00149984 Mach)
-        outputs['tip_mach'] = inputs['tipspd']*FC/1118.21948771  # 1118.21948771 is speed of sound at sea level
-        outputs['adv_ratio'] = 5.309*vktas/inputs['tipspd']
-        outputs['power_coefficient'] = inputs['SHP']*10.E10/outputs['density_ratio']/(2.*inputs['tipspd']**3*inputs['diam_prop']**2*6966.)
+        tipspd = self.get_val(Aircraft.Engine.PROPELLER_TIP_SPEED)[0]
+        outputs['tip_mach'] = tipspd*FC/1118.21948771  # 1118.21948771 is speed of sound at sea level
+        outputs['adv_ratio'] = 5.309*vktas/tipspd
+        diam_prop = self.get_val(Aircraft.Engine.PROPELLER_DIAMETER)[0]
+        shp = self.get_val(Dynamic.Mission.SHAFT_POWER)
+        outputs['power_coefficient'] = shp*10.E10/outputs['density_ratio']/(2.*tipspd**3*diam_prop**2*6966.)
 
 
 # perfm will probably be a group
 class HamiltonStandard(om.ExplicitComponent):
     def initialize(self):
-        self.options.declare('num_blade', default=2, desc='number of blades')
+        self.options.declare('num_blades', default=2, desc='number of blades per propeller')
         # JK NOTE kwrite == 1 -> Settings.VERBOSITY is Verbosity.DEBUG
         self.options.declare('kwrite', default=0, desc='print control')
+        self.options.declare(
+            'aviary_options', types=AviaryValues,
+            desc='collection of Aircraft/Mission specific options')
     
     def setup(self):
         self.add_input('power_coefficient', val=0.0, units='unitless')
         self.add_input('adv_ratio', val=0.0, units='unitless')
         self.add_input('mach', val=0.0, units='unitless')
         self.add_input('tip_mach', val=0.0, units='unitless')
-        self.add_input('act_fac', val=0.0, units='unitless')  # Actitivty Factor per Blade
-        self.add_input('cli', val=0.0, units='unitless')  # blade integrated lift coeff
+        self.add_input(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, val=0.0, units='unitless')  # Actitivty Factor per Blade
+        self.add_input(Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT, val=0.0, units='unitless')  # blade integrated lift coeff
 
         self.add_output('thrust_coefficient', units='unitless')
         self.add_output('ang_blade', units='deg')
@@ -477,9 +485,11 @@ class HamiltonStandard(om.ExplicitComponent):
         CTTT = np.zeros(4)
         XXXFT = np.zeros(4)
         # an adjustment for cp and CT for AF (for the 7 J's)
+        #pdb.set_trace()
+        act_factor = self.get_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR)[0]
         for k in range(2):
-            AFCP[k], run_flag = unint(Act_Factor_table, AFCPC[k], inputs['act_fac'][0])
-            AFCT[k], run_flag = unint(Act_Factor_table, AFCTC[k], inputs['act_fac'][0])
+            AFCP[k], run_flag = unint(Act_Factor_table, AFCPC[k], act_factor)
+            AFCT[k], run_flag = unint(Act_Factor_table, AFCTC[k], act_factor)
         for k in range(2, 7):
             AFCP[k] = AFCP[1]
             AFCT[k] = AFCT[1]
@@ -505,16 +515,17 @@ class HamiltonStandard(om.ExplicitComponent):
         # flag that given lift coeff (cli) does not fall on a node point of CL_List
         NCL_flg = 0
         ifnd = 0
+        cli = self.get_val(Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT)[0]
         for ii in range(6):
             iz = ii
-            if (abs(inputs['cli'][0] - CL_List[ii]) <= 0.0009):
+            if (abs(cli - CL_List[ii]) <= 0.0009):
                 ifnd = 1
                 break
         if (ifnd == 0):
-            if (inputs['cli'][0] <= 0.6):
+            if (cli <= 0.6):
                 NCLT = 0
                 NCLTT = 3
-            elif (inputs['cli'][0] <= 0.7):
+            elif (cli <= 0.7):
                 NCLT = 1
                 NCLTT = 4
             else:
@@ -525,10 +536,10 @@ class HamiltonStandard(om.ExplicitComponent):
             NCLTT = iz
             NCL_flg = 1  # flag that given lift coeff (cli) falls on a node point of CL_List
 
-        lmod = (self.options['num_blade'] % 2) + 1
+        lmod = (self.options['num_blades'] % 2) + 1
         if (lmod == 1):
             nbb = 1
-            idx_blade = int(self.options['num_blade']/2.0)
+            idx_blade = int(self.options['num_blades']/2.0)
             # even number of blades idx_blade = 1 if 2 blades;
             #                       idx_blade = 2 if 4 blades;
             #                       idx_blade = 3 if 6 blades;
@@ -635,8 +646,9 @@ class HamiltonStandard(om.ExplicitComponent):
                         XFFT[kl], run_flag = biquad(ZMMMC, 1, DMN, CTE2)
                     NNCLT = NNCLT + 1
                 if (NCL_flg != 1):
-                    TCLII, run_flag = unint(CL_List[NCLT:NCLT+4], TXCLI[NCLT:NCLT+4], inputs['cli'][0])
-                    xft, run_flag = unint(CL_List[NCLT:NCLT+4], XFFT[NCLT:NCLT+4], inputs['cli'][0])
+                    cli = self.get_val(Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT)[0]
+                    TCLII, run_flag = unint(CL_List[NCLT:NCLT+4], TXCLI[NCLT:NCLT+4], cli)
+                    xft, run_flag = unint(CL_List[NCLT:NCLT+4], XFFT[NCLT:NCLT+4], cli)
                 else:
                     TCLII = TXCLI[NCLT]
                     xft = XFFT[NCLT]
@@ -664,9 +676,9 @@ class HamiltonStandard(om.ExplicitComponent):
 
         if (nbb != 1):
             # interpolation by the number of blades if odd number
-            ang_blade, run_flag = unint(XLB, BLLL[:4], self.options['num_blade'])
-            ct, run_flag = unint(XLB, CTTT, self.options['num_blade'])
-            xft, run_flag = unint(XLB, XXXFT, self.options['num_blade'])
+            ang_blade, run_flag = unint(XLB, BLLL[:4], self.options['num_blades'])
+            ct, run_flag = unint(XLB, CTTT, self.options['num_blades'])
+            xft, run_flag = unint(XLB, XXXFT, self.options['num_blades'])
 
         # JK NOTE this should be handled via the metamodel comps (extrapolate flag)
         if ichck > 0:
@@ -681,10 +693,10 @@ class PostHamiltonStandard(om.ExplicitComponent):
     def setup(self):
         self.add_input('thrust_coefficient', units='unitless')
         self.add_input('comp_tip_loss_factor', units='unitless')
-        self.add_input('tipspd', val=0.0, units='ft/s')
-        self.add_input('diam_prop', val=0.0, units='ft')
+        self.add_input(Aircraft.Engine.PROPELLER_TIP_SPEED, val=0.0, units='ft/s')
+        self.add_input(Aircraft.Engine.PROPELLER_DIAMETER, val=0.0, units='ft')
         self.add_input('density_ratio', val=0.0, units='unitless')
-        self.add_input('install_loss_factor', val=0.0, units='unitless')
+        self.add_input(Aircraft.Engine.INSTALLATION_LOSS_FACTOR, val=0.0, units='unitless')
         self.add_input('adv_ratio', val=0.0, units='unitless')
         self.add_input('power_coefficient', val=0.0, units='unitless')
 
@@ -697,9 +709,12 @@ class PostHamiltonStandard(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         ctx = inputs['thrust_coefficient']*inputs['comp_tip_loss_factor']
         outputs['thrust_coefficient_comp_loss'] = ctx
-        outputs['Thrust'] = ctx*inputs['tipspd']**2*inputs['diam_prop']**2*inputs['density_ratio']/(1.515E06)*364.76*(1. - inputs['install_loss_factor'])
+        diam_prop = self.get_val(Aircraft.Engine.PROPELLER_DIAMETER)[0]
+        tipspd = self.get_val(Aircraft.Engine.PROPELLER_TIP_SPEED)[0]
+        install_loss_factor = self.get_val(Aircraft.Engine.INSTALLATION_LOSS_FACTOR)[0]
+        outputs['Thrust'] = ctx*tipspd**2*diam_prop**2*inputs['density_ratio']/(1.515E06)*364.76*(1. - install_loss_factor)
         outputs['propeller_efficiency'] = inputs['adv_ratio']*ctx/inputs['power_coefficient']
-        outputs['install_efficiency'] = outputs['propeller_efficiency']*(1. - inputs['install_loss_factor'])
+        outputs['install_efficiency'] = outputs['propeller_efficiency']*(1. - install_loss_factor)
 
 
 if __name__ == "__main__":
@@ -710,19 +725,19 @@ if __name__ == "__main__":
 
     prob.set_val('hs.power_coefficient', 0.2352124866909703)  # 0.235239178
     prob.set_val('hs.adv_ratio', 0.0)
-    prob.set_val('hs.act_fac', 114)
-    prob.set_val('hs.cli', 0.5)
+    prob.set_val('Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR', 114)
+    prob.set_val('Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT', 0.5)
     prob.set_val('hs.mach', 0.0)
     prob.set_val('hs.tip_mach', 0.7154230531595535)  # 0.71542275
-    hs.options.set(num_blade=4)
+    hs.options.set(num_blades=4)
     print("Inputs to HamiltonStandard:")
     print(f"  power_coefficient: {prob.get_val('hs.power_coefficient')}")
     print(f"  adv_ratio: {prob.get_val('hs.adv_ratio')}")
-    print(f"  act_fac: {prob.get_val('hs.act_fac')}")
-    print(f"  cli: {prob.get_val('hs.cli')}")
+    print(f"  act_fac: {prob.get_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR)}")
+    print(f"  cli: {prob.get_val(Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT)}")
     print(f"  mach: {prob.get_val('hs.mach')}")
     print(f"  tip_mach: {prob.get_val('hs.tip_mach')}")
-    print(f"  num_blade: {hs.options['num_blade']}")
+    print(f"  num_blades: {hs.options['num_blades']}")
 
     prob.run_model()
     print()

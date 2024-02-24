@@ -2,16 +2,57 @@ import openmdao.api as om
 import numpy as np
 from dymos.models.atmosphere import USatm1976Comp
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.options import get_option_defaults
 from aviary.HMT_STD.hamilton_standard import HamiltonStandard, PostHamiltonStandard, PreHamiltonStandard
+import pdb
 
-def print_report(num, p):
-    print(f"Case {num}")
+def print_report1(nCase, p, nBlades):
+    print()
+    print(f"Case {nCase}")
+    diam = p.get_val(Aircraft.Engine.PROPELLER_DIAMETER)
+    if diam.ndim == 1:
+        diam = diam[0]
+    actF = p.get_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR)
+    if actF.ndim == 1:
+        actF = actF[0]
+    pcli = p.get_val(Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT)
+    if pcli.ndim == 1:
+        pcli = pcli[0]
+    print(f"DPROP,BLADT,AFT,CLI: {diam}, {nBlades}, {actF}, {pcli}")
+    DiamNac = p.get_val(Aircraft.Nacelle.AVG_DIAMETER)
+    DiamProp = p.get_val(Aircraft.Engine.PROPELLER_DIAMETER)
+    if DiamNac.ndim == 0:
+        DiamNac = float(DiamNac)
+    else:
+        DiamNac = float(DiamNac[0])
+    if DiamProp.ndim == 0:
+        DiamProp = float(DiamProp)
+    else:
+        DiamProp = float(DiamProp[0])
+    DiamNac_DiamProp = DiamNac/DiamProp
+    print(f"Nacalle Diam to Prop Diam Ratio: {round(DiamNac_DiamProp, 3)}")
+    alt = p.get_val(Dynamic.Mission.ALTITUDE)
+    if alt.ndim == 1:
+        alt = alt[0]
+    vktas = p.get_val(Dynamic.Mission.VELOCITY)
+    if vktas.ndim == 1:
+        vktas = vktas[0]
+    tipspd = p.get_val(Aircraft.Engine.PROPELLER_TIP_SPEED)
+    if tipspd.ndim == 1:
+        tipspd = tipspd[0]
+    shp = p.get_val(Dynamic.Mission.SHAFT_POWER)
+    if shp.ndim == 1:
+        shp = shp[0]
+    print(
+         f"ALT, VKTAS, VTIP, SHP: {alt}, {vktas}, {tipspd}, {shp}")
+
+def print_report2(p):
     mach = float(p.get_val(Dynamic.Mission.MACH)[0])
     tipm = float(p.get_val('tip_mach')[0])
     advr = float(p.get_val('adv_ratio')[0])
     cpow = float(p.get_val('power_coefficient')[0])
-    loss = float(p.get_val('install_loss_factor')[0])
+    loss = float(p.get_val(Aircraft.Engine.INSTALLATION_LOSS_FACTOR)[0])
     print(f"Inputs to PERFM: Mach = {round(mach, 3)}, Tip Mach = {round(tipm, 3)}, Advance Ratio = {round(advr, 3)}, Power Coeff = {round(cpow, 5)}, Install Loss Factor = {round(loss, 4)}")
     cthr = float(p.get_val('thrust_coefficient')[0])
     ctlf = float(p.get_val('comp_tip_loss_factor')[0])
@@ -20,7 +61,7 @@ def print_report(num, p):
     print(f"Performance: CT = {round(cthr, 5)}, XFT = {round(ctlf, 4)}, CTX = {round(tccl, 5)}, 3/4 Blade Angle = {round(angb , 2)}")
     thrt = float(p.get_val('Thrust')[0])
     peff = float(p.get_val('propeller_efficiency')[0])
-    lfac = float(p.get_val('install_loss_factor')[0])
+    lfac = float(p.get_val(Aircraft.Engine.INSTALLATION_LOSS_FACTOR)[0])
     ieff = float(p.get_val('install_efficiency')[0])
     print(f"             Thrust = {round(thrt, 1)}, Prop Eff. = {round(peff, 4)}, Instll Loss = {round(lfac, 4)}, Install Eff. = {round(ieff, 4)}")
 
@@ -30,30 +71,29 @@ class PropPerf(om.Group):
             'num_nodes', types=int,
             desc='Number of nodes to be evaluated in the RHS')
         self.options.declare(
-            'num_blade', types=int,
-            desc='Number of blades')
-        self.options.declare(
-            'compute_blockage_factor', types=bool,
+            'compute_installation_loss', types=bool,
             desc='Flag to compute installation factor')
         self.options.declare(
             'aviary_options', types=AviaryValues,
             desc='collection of Aircraft/Mission specific options')
-        self.options.declare('num_blade', default=2, desc='number of blades')
 
     def setup(self):
             options = self.options
             #nn = options['num_nodes']
-            num_blade = options['num_blade']
+            options = options['aviary_options']
+            compute_installation_loss = options.get_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS)
+            num_blades = options.get_val(Aircraft.Engine.NUM_BLADES)
 
             self.add_subsystem(
                 name='sqa_comp',
                 subsys=om.ExecComp(
-                    'sqa = minimum(DiamNac_DiamProp*DiamNac_DiamProp,0.32)',
-                    DiamNac_DiamProp={'units': 'unitless'},
+                    'sqa = minimum(DiamNac/DiamProp*DiamNac/DiamProp, 0.32)',
+                    DiamNac={'units': 'ft'},
+                    DiamProp={'units': 'ft'},
                     sqa={'units': 'unitless'},
                     has_diag_partials=True,
                 ),
-                promotes_inputs=["DiamNac_DiamProp"],
+                promotes_inputs=[("DiamNac", Aircraft.Nacelle.AVG_DIAMETER), ("DiamProp", Aircraft.Engine.PROPELLER_DIAMETER)],
                 promotes_outputs=["sqa"],
             )
 
@@ -66,12 +106,12 @@ class PropPerf(om.Group):
                     sqa={'units': 'unitless'},
                     equiv_adv_ratio={'units': 'unitless'},
                 ),
-                promotes_inputs=["sqa","vktas","tipspd"],
+                promotes_inputs=["sqa",("vktas", Dynamic.Mission.VELOCITY),("tipspd", Aircraft.Engine.PROPELLER_TIP_SPEED)],
                 promotes_outputs=["equiv_adv_ratio"],
             )
 
             # JK NOTE it looks like tloss can be its own component. Optionally loaded? Or install_loss_factor is an override value? Might need to talk with Ken
-            if self.options['compute_blockage_factor']:
+            if compute_installation_loss:
                 self.blockage_factor_interp = self.add_subsystem(
                     "blockage_factor_interp",
                     om.MetaModelStructuredComp(method="scipy_slinear", extrapolate=True),
@@ -114,20 +154,21 @@ class PropPerf(om.Group):
                         [0.940, 0.924, 0.902, 0.848, 0.790, 0.726, 0.662]]
                         ),
                 )
-            else:
-                comp = om.IndepVarComp('blockage_factor', val=1.0, units='unitless', lower=0.0, upper=1.0)
-                self.add_subsystem('input_blockage', comp, promotes=['*'])
 
-            self.add_subsystem(
-                name='FT',
-                subsys=om.ExecComp(
-                    'install_loss_factor = 1 - blockage_factor',
-                    blockage_factor={'units': 'unitless'},
-                    install_loss_factor={'units': 'unitless'},
-                ),
-                promotes_inputs=["blockage_factor"],
-                promotes_outputs=["install_loss_factor"],
-            )
+                self.add_subsystem(
+                    name='FT',
+                    subsys=om.ExecComp(
+                        'install_loss_factor = 1 - blockage_factor',
+                        blockage_factor={'units': 'unitless'},
+                        install_loss_factor={'units': 'unitless'},
+                    ),
+                    promotes_inputs=["blockage_factor"],
+                    promotes_outputs=[("install_loss_factor", Aircraft.Engine.INSTALLATION_LOSS_FACTOR)],
+                )
+            else:
+                comp = om.IndepVarComp(Aircraft.Engine.INSTALLATION_LOSS_FACTOR, val=0.0, units='unitless', lower=0.0, upper=1.0)
+                self.add_subsystem('input_install_loss', comp, promotes=['*'])
+
 
             self.add_subsystem(
                 name='atmosphere',
@@ -144,10 +185,10 @@ class PropPerf(om.Group):
                 promotes_inputs=[
                     ("rho", Dynamic.Mission.DENSITY),
                     ("temp", Dynamic.Mission.TEMPERATURE),
-                    "vktas",
-                    "tipspd",
-                    "diam_prop",
-                    "SHP",
+                    Dynamic.Mission.VELOCITY,
+                    Aircraft.Engine.PROPELLER_TIP_SPEED,
+                    Aircraft.Engine.PROPELLER_DIAMETER,
+                    Dynamic.Mission.SHAFT_POWER,
                 ],
                 promotes_outputs=[
                     Dynamic.Mission.MACH,
@@ -159,14 +200,15 @@ class PropPerf(om.Group):
 
             self.add_subsystem(
                 name='hamilton_standard',
-                subsys=HamiltonStandard(num_blade=num_blade),
+                subsys=HamiltonStandard(num_blades=num_blades),
                 promotes_inputs=[
                     Dynamic.Mission.MACH,
                     "power_coefficient",
                     "adv_ratio",
                     "tip_mach",
-                    "act_fac",
-                    "cli"],
+                    Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,
+                    Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT,
+                ],
                 promotes_outputs=[
                     "thrust_coefficient",
                     "ang_blade",
@@ -179,13 +221,13 @@ class PropPerf(om.Group):
                 promotes_inputs=[
                     "thrust_coefficient",
                     "comp_tip_loss_factor",
-                    "tipspd",
-                    "diam_prop",
+                    Aircraft.Engine.PROPELLER_TIP_SPEED,
+                    Aircraft.Engine.PROPELLER_DIAMETER,
                     "density_ratio",
-                    "install_loss_factor",
+                    Aircraft.Engine.INSTALLATION_LOSS_FACTOR,
                     "adv_ratio",
                     "power_coefficient",
-                    ],
+                ],
                 promotes_outputs=[
                     "thrust_coefficient_comp_loss",
                     "Thrust",
@@ -195,190 +237,138 @@ class PropPerf(om.Group):
 
 
 if __name__ == "__main__":
+    options = get_option_defaults()
+    options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS,
+                        val=True, units='unitless')
+    options.set_val(Aircraft.Engine.NUM_BLADES,
+                        val=4, units='unitless')
+
     prob = om.Problem()
     pp = prob.model.add_subsystem(
         'pp',
-        PropPerf(),
+        PropPerf(aviary_options=options),
         promotes_inputs=['*'],
         promotes_outputs=["*"],
     )
 
-    pp.set_input_defaults('tipspd', 800, units="ft/s")
-    pp.set_input_defaults('vktas', 0, units="knot")
-    pp.options.set(num_blade=4)
-    pp.options.set(compute_blockage_factor=True)
+    pp.set_input_defaults(Aircraft.Engine.PROPELLER_DIAMETER, 10, units="ft")
+    pp.set_input_defaults(Aircraft.Engine.PROPELLER_TIP_SPEED, 800, units="ft/s")
+    pp.set_input_defaults(Dynamic.Mission.VELOCITY, 0, units="knot")
+    num_blades = 4
+    options.set_val(Aircraft.Engine.NUM_BLADES,
+                        val=num_blades, units='unitless')
+    #pp.options.set(compute_installation_loss=True)
+    options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS,
+                        val=True, units='unitless')
     prob.setup()
 
     print()
-    prob.set_val('diam_prop', 10.5, units="ft")
-    prob.set_val('act_fac', 114.0, units="unitless")
-    prob.set_val('cli', 0.5, units="unitless")
-    prob.set_val('DiamNac_DiamProp', 0.275, units="unitless")
+    prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 10.5, units="ft")
+    prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, 114.0, units="unitless")
+    prob.set_val(Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT, 0.5, units="unitless")
+    #prob.set_val('DiamNac_DiamProp', 0.275, units="unitless")
+    prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, 2.8875, units='ft')
 
-    #"""
     # Case 1
     prob.set_val(Dynamic.Mission.ALTITUDE, 0.0, units="ft")
-    prob.set_val('vktas', 0.0, units="knot")
-    prob.set_val('tipspd', 800.0, units="ft/s")
-    prob.set_val('SHP', 1850.0, units="hp")
+    prob.set_val(Dynamic.Mission.VELOCITY, 0.0, units="knot")
+    prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED, 800.0, units="ft/s")
+    prob.set_val(Dynamic.Mission.SHAFT_POWER, 1850.0, units="hp")
 
-    print("Case 1")
-    print(f"DPROP,BLADT,AFT,CLI: {prob.get_val('diam_prop')}, {pp.options['num_blade']}, {prob.get_val('act_fac')}, {prob.get_val('cli')}")
-    print(f"Nacalle Diam to Prop Diam Ratio: {prob.get_val('DiamNac_DiamProp')}")
-    print(
-         f"ALT, VKTAS, VTIP, SHP & FT: {prob.get_val(Dynamic.Mission.ALTITUDE)}, {prob.get_val('vktas')}, {prob.get_val('tipspd')}, {prob.get_val('SHP')}, {0.0},")
+    print_report1(1, prob, num_blades)
     prob.run_model()
-    print_report(1, prob)
+    print_report2(prob)
 
     # Case 2
     prob.set_val(Dynamic.Mission.ALTITUDE, 0.0, units="ft")
-    prob.set_val('vktas', 125.0, units="knot")
-    prob.set_val('tipspd', 800.0, units="ft/s")
-    prob.set_val('SHP', 1850.0, units="hp")
+    prob.set_val(Dynamic.Mission.VELOCITY, 125.0, units="knot")
+    prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED, 800.0, units="ft/s")
+    prob.set_val(Dynamic.Mission.SHAFT_POWER, 1850.0, units="hp")
 
-    print("Case 2")
-    print(f"DPROP,BLADT,AFT,CLI: {prob.get_val('diam_prop')}, {pp.options['num_blade']}, {prob.get_val('act_fac')}, {prob.get_val('cli')}")
-    print(f"Nacalle Diam to Prop Diam Ratio: {prob.get_val('DiamNac_DiamProp')}")
-    print(
-         f"ALT, VKTAS, VTIP, SHP & FT: {prob.get_val(Dynamic.Mission.ALTITUDE)}, {prob.get_val('vktas')}, {prob.get_val('tipspd')}, {prob.get_val('SHP')}, {0.0},")
+    print_report1(2, prob, num_blades)
     prob.run_model()
-    print_report(2, prob)
+    print_report2(prob)
 
     # Case 3
     prob.set_val(Dynamic.Mission.ALTITUDE, 25000.0, units="ft")
-    prob.set_val('vktas', 300.0, units="knot")
-    prob.set_val('tipspd', 750.0, units="ft/s")
-    prob.set_val('SHP', 900.0, units="hp")
+    prob.set_val(Dynamic.Mission.VELOCITY, 300.0, units="knot")
+    prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED, 750.0, units="ft/s")
+    prob.set_val(Dynamic.Mission.SHAFT_POWER, 900.0, units="hp")
 
-    print("Case 3")
-    print(f"DPROP,BLADT,AFT,CLI: {prob.get_val('diam_prop')}, {pp.options['num_blade']}, {prob.get_val('act_fac')}, {prob.get_val('cli')}")
-    print(f"Nacalle Diam to Prop Diam Ratio: {prob.get_val('DiamNac_DiamProp')}")
-    print(
-         f"ALT, VKTAS, VTIP, SHP & FT: {prob.get_val(Dynamic.Mission.ALTITUDE)}, {prob.get_val('vktas')}, {prob.get_val('tipspd')}, {prob.get_val('SHP')}, {0.0},")
+    print_report1(3, prob, num_blades)
     prob.run_model()
-    print_report(3, prob)
-    #"""
+    print_report2(prob)
 
     # Case 4
-    pp.options.set(compute_blockage_factor=False)
+    #pp.options.set(compute_installation_loss=False)
+    options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS,
+                        val=False, units='unitless')
     prob.setup()
-    prob.set_val('blockage_factor', 1.0, units="unitless")
-    prob.set_val('diam_prop', 12.0, units="ft")
-    prob.set_val('act_fac', 150.0, units="unitless")
-    prob.set_val('cli', 0.5, units="unitless")
-    prob.set_val('DiamNac_DiamProp', 0.2, units="unitless")
+    prob.set_val(Aircraft.Engine.INSTALLATION_LOSS_FACTOR, 0.0, units="unitless")
+    prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 12.0, units="ft")
+    prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, 2.4, units='ft')
+    prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, 150.0, units="unitless")
+    prob.set_val(Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT, 0.5, units="unitless")
+    #prob.set_val('DiamNac_DiamProp', 0.2, units="unitless")
     prob.set_val(Dynamic.Mission.ALTITUDE, 10000.0, units="ft")
-    prob.set_val('vktas', 200.0, units="knot")
-    prob.set_val('tipspd', 750.0, units="ft/s")
-    prob.set_val('SHP', 1000.0, units="hp")
+    prob.set_val(Dynamic.Mission.VELOCITY, 200.0, units="knot")
+    prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED, 750.0, units="ft/s")
+    prob.set_val(Dynamic.Mission.SHAFT_POWER, 1000.0, units="hp")
 
-    print("Case 4")
-    print(f"DPROP,BLADT,AFT,CLI: {prob.get_val('diam_prop')}, {pp.options['num_blade']}, {prob.get_val('act_fac')}, {prob.get_val('cli')}")
-    print(f"Nacalle Diam to Prop Diam Ratio: {prob.get_val('DiamNac_DiamProp')}")
-    print(
-         f"ALT, VKTAS, VTIP, SHP & FT: {prob.get_val(Dynamic.Mission.ALTITUDE)}, {prob.get_val('vktas')}, {prob.get_val('tipspd')}, {prob.get_val('SHP')}, {0.0},")
+    print_report1(4, prob, num_blades)
     prob.run_model()
-    print_report(4, prob)
+    print_report2(prob)
 
     # Case 5
-    prob.set_val('blockage_factor', 0.95, units="unitless")
-    print("Case 5")
-    print(f"DPROP,BLADT,AFT,CLI: {prob.get_val('diam_prop')}, {pp.options['num_blade']}, {prob.get_val('act_fac')}, {prob.get_val('cli')}")
-    print(f"Nacalle Diam to Prop Diam Ratio: {prob.get_val('DiamNac_DiamProp')}")
-    print(
-         f"ALT, VKTAS, VTIP, SHP & FT: {prob.get_val(Dynamic.Mission.ALTITUDE)}, {prob.get_val('vktas')}, {prob.get_val('tipspd')}, {prob.get_val('SHP')}, {0.0},")
+    prob.set_val(Aircraft.Engine.INSTALLATION_LOSS_FACTOR, 0.05, units="unitless")
+
+    print_report1(5, prob, num_blades)
     prob.run_model()
-    print_report(5, prob)
+    print_report2(prob)
 
     # Case 6
     prob.set_val(Dynamic.Mission.ALTITUDE, 0.0, units="ft")
-    prob.set_val('vktas', 50.0, units="knot")
-    prob.set_val('tipspd', 785.0, units="ft/s")
-    prob.set_val('SHP', 1250.0, units="hp")
+    prob.set_val(Dynamic.Mission.VELOCITY, 50.0, units="knot")
+    prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED, 785.0, units="ft/s")
+    prob.set_val(Dynamic.Mission.SHAFT_POWER, 1250.0, units="hp")
 
-    print("Case 6")
-    print(f"DPROP,BLADT,AFT,CLI: {prob.get_val('diam_prop')}, {pp.options['num_blade']}, {prob.get_val('act_fac')}, {prob.get_val('cli')}")
-    print(f"Nacalle Diam to Prop Diam Ratio: {prob.get_val('DiamNac_DiamProp')}")
-    print(
-         f"ALT, VKTAS, VTIP, SHP & FT: {prob.get_val(Dynamic.Mission.ALTITUDE)}, {prob.get_val('vktas')}, {prob.get_val('tipspd')}, {prob.get_val('SHP')}, {0.0},")
+    print_report1(6, prob, num_blades)
     prob.run_model()
-    print_report(6, prob)
+    print_report2(prob)
 
     # Case 7
-    pp.options.set(num_blade=3)
+    num_blades = 3
+    options.set_val(Aircraft.Engine.NUM_BLADES,
+                        val=num_blades, units='unitless')
     prob.setup()
-    prob.set_val('blockage_factor', 1.0, units="unitless")
-    prob.set_val('diam_prop', 12.0, units="ft")
-    prob.set_val('act_fac', 150.0, units="unitless")
-    prob.set_val('cli', 0.5, units="unitless")
-    prob.set_val('DiamNac_DiamProp', 0.2, units="unitless")
+    prob.set_val(Aircraft.Engine.INSTALLATION_LOSS_FACTOR, 0.0, units="unitless")
+    prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 12.0, units="ft")
+    prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, 2.4, units='ft')
+    prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, 150.0, units="unitless")
+    prob.set_val(Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT, 0.5, units="unitless")
+    #prob.set_val('DiamNac_DiamProp', 0.2, units="unitless")
     prob.set_val(Dynamic.Mission.ALTITUDE, 10000.0, units="ft")
-    prob.set_val('vktas', 200.0, units="knot")
-    prob.set_val('tipspd', 750.0, units="ft/s")
-    prob.set_val('SHP', 1000.0, units="hp")
+    prob.set_val(Dynamic.Mission.VELOCITY, 200.0, units="knot")
+    prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED, 750.0, units="ft/s")
+    prob.set_val(Dynamic.Mission.SHAFT_POWER, 1000.0, units="hp")
 
-    print("Case 7")
-    print(f"DPROP,BLADT,AFT,CLI: {prob.get_val('diam_prop')}, {pp.options['num_blade']}, {prob.get_val('act_fac')}, {prob.get_val('cli')}")
-    print(f"Nacalle Diam to Prop Diam Ratio: {prob.get_val('DiamNac_DiamProp')}")
-    print(
-         f"ALT, VKTAS, VTIP, SHP & FT: {prob.get_val(Dynamic.Mission.ALTITUDE)}, {prob.get_val('vktas')}, {prob.get_val('tipspd')}, {prob.get_val('SHP')}, {0.0},")
+    print_report1(7, prob, num_blades)
     prob.run_model()
-    print_report(7, prob)
+    print_report2(prob)
 
     # Case 8
-    prob.set_val('blockage_factor', 0.95, units="unitless")
-    print("Case 8")
-    print(f"DPROP,BLADT,AFT,CLI: {prob.get_val('diam_prop')}, {pp.options['num_blade']}, {prob.get_val('act_fac')}, {prob.get_val('cli')}")
-    print(f"Nacalle Diam to Prop Diam Ratio: {prob.get_val('DiamNac_DiamProp')}")
-    print(
-         f"ALT, VKTAS, VTIP, SHP & FT: {prob.get_val(Dynamic.Mission.ALTITUDE)}, {prob.get_val('vktas')}, {prob.get_val('tipspd')}, {prob.get_val('SHP')}, {0.0},")
+    prob.set_val(Aircraft.Engine.INSTALLATION_LOSS_FACTOR, 0.05, units="unitless")
+    print_report1(8, prob, num_blades)
     prob.run_model()
-    print_report(8, prob)
+    print_report2(prob)
 
     # Case 9
     prob.set_val(Dynamic.Mission.ALTITUDE, 0.0, units="ft")
-    prob.set_val('vktas', 50.0, units="knot")
-    prob.set_val('tipspd', 785.0, units="ft/s")
-    prob.set_val('SHP', 1250.0, units="hp")
+    prob.set_val(Dynamic.Mission.VELOCITY, 50.0, units="knot")
+    prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED, 785.0, units="ft/s")
+    prob.set_val(Dynamic.Mission.SHAFT_POWER, 1250.0, units="hp")
 
-    print("Case 9")
-    print(f"DPROP,BLADT,AFT,CLI: {prob.get_val('diam_prop')}, {pp.options['num_blade']}, {prob.get_val('act_fac')}, {prob.get_val('cli')}")
-    print(f"Nacalle Diam to Prop Diam Ratio: {prob.get_val('DiamNac_DiamProp')}")
-    print(
-         f"ALT, VKTAS, VTIP, SHP & FT: {prob.get_val(Dynamic.Mission.ALTITUDE)}, {prob.get_val('vktas')}, {prob.get_val('tipspd')}, {prob.get_val('SHP')}, {0.0},")
+    print_report1(9, prob, num_blades)
     prob.run_model()
-    print_report(9, prob)
+    print_report2(prob)
 
-    """
-    print()
-    print("Inputs to HamiltonStandard:")
-    print(f"  power_coefficient: {prob.get_val('pp.power_coefficient')[0]}")
-    print(f"  adv_ratio: {prob.get_val('pp.adv_ratio')[0]}")
-    print(f"  act_fac: {prob.get_val('pp.act_fac')[0]}")
-    print(f"  cli: {prob.get_val('pp.cli')[0]}")
-    print(f"  mach: {prob.get_val('pp.mach')[0]}")
-    print(f"  tip_mach: {prob.get_val('pp.tip_mach')[0]}")
-    print(f"  num_blade: {pp.options['num_blade']}")
-    print()
-
-    # print(f"sqa = {prob.get_val('sqa')[0]}")
-    # print(f"equiv_adv_ratio = {prob.get_val('equiv_adv_ratio')[0]}")
-    # print(f"density = {prob.get_val(Dynamic.Mission.DENSITY)[0]}")
-    # print(f"temp = {prob.get_val(Dynamic.Mission.TEMPERATURE)[0]}")
-    # print(f"blockage_factor = {prob.get_val('blockage_factor')[0]}")
-    # print(f"install_loss_factor = {prob.get_val('install_loss_factor')[0]}")
-    # print(f"mach = {prob.get_val('mach')[0]}")
-    # print(f"cp = {prob.get_val('power_coefficient')[0]}")
-    # print(f"adv_ratio = {prob.get_val('adv_ratio')[0]}")
-    # print(f"tip_mach = {prob.get_val('tip_mach')[0]}")
-    # print(f"thrust_coefficient = {prob.get_val('thrust_coefficient')[0]}")
-    # print(f"ang_blade = {prob.get_val('ang_blade')[0]}")
-    # print(f"comp_tip_loss_factor = {prob.get_val('comp_tip_loss_factor')[0]}")
-
-    print("Outputs:")
-    print(f"  3/4 Blade Angle = {prob.get_val('ang_blade')[0]}")
-    print(f"  CT = {prob.get_val('thrust_coefficient')[0]}")
-    print(f"  XFT = {prob.get_val('comp_tip_loss_factor')[0]}")
-
-    print(f"num_blade = {pp.options['num_blade']}")
-    """
