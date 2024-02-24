@@ -1,17 +1,14 @@
 import numpy as np
-import openmdao.api as om
 
 from aviary.mission.gasp_based.ode.accel_ode import AccelODE
 from aviary.mission.gasp_based.ode.ascent_ode import AscentODE
 from aviary.mission.gasp_based.ode.climb_ode import ClimbODE
 from aviary.mission.gasp_based.ode.descent_ode import DescentODE
 from aviary.mission.gasp_based.ode.flight_path_ode import FlightPathODE
-from aviary.mission.gasp_based.phases.landing_group import LandingSegment
 from aviary.mission.gasp_based.ode.groundroll_ode import GroundrollODE
 from aviary.mission.gasp_based.ode.rotation_ode import RotationODE
 from aviary.mission.gasp_based.ode.time_integration_base_classes import SimuPyProblem
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.enums import AlphaModes, AnalysisScheme, SpeedType, Verbosity
+from aviary.variable_info.enums import AlphaModes, AnalysisScheme, SpeedType
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
@@ -33,6 +30,7 @@ class SGMGroundroll(SimuPyProblem):
 
         super().__init__(
             GroundrollODE(analysis_scheme=AnalysisScheme.SHOOTING, **ode_args),
+            problem_name=phase_name,
             outputs=["normal_force"],
             states=[
                 Dynamic.Mission.MASS,
@@ -48,14 +46,15 @@ class SGMGroundroll(SimuPyProblem):
 
         self.phase_name = phase_name
         self.VR_value = VR_value
-        self.VR_units = VR_units
+        # self.VR_units = VR_units
         self.event_channel_names = [Dynamic.Mission.VELOCITY]
         self.num_events = len(self.event_channel_names)
+        # self.add_trigger(Dynamic.Mission.VELOCITY, "VR_value", units='ft/s')
 
     def event_equation_function(self, t, x):
         self.time = t
         self.state = x
-        return self.get_val("velocity", units='ft/s') - self.VR_value
+        return self.get_val(Dynamic.Mission.VELOCITY, units='ft/s') - self.VR_value
 
 
 class SGMRotation(SimuPyProblem):
@@ -73,11 +72,13 @@ class SGMRotation(SimuPyProblem):
     ):
         super().__init__(
             RotationODE(analysis_scheme=AnalysisScheme.SHOOTING, **ode_args),
+            problem_name=phase_name,
             outputs=["normal_force", "alpha"],
             states=[
                 Dynamic.Mission.MASS,
                 Dynamic.Mission.DISTANCE,
                 Dynamic.Mission.ALTITUDE,
+                Dynamic.Mission.VELOCITY,
             ],
             # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
@@ -86,15 +87,7 @@ class SGMRotation(SimuPyProblem):
         )
 
         self.phase_name = phase_name
-        self.event_channel_names = ["normal_force"]
-        self.num_events = len(self.event_channel_names)
-
-    def event_equation_function(self, t, x):
-        self.output_equation_function(t, x)
-        self.compute()
-        norm_force = self.get_val("normal_force", units="lbf") + 0.0
-
-        return norm_force
+        self.add_trigger("normal_force", 0, units='lbf')
 
 
 # TODO : turn these into parameters? inputs? they need to match between
@@ -126,6 +119,7 @@ class SGMAscent(SimuPyProblem):
         super().__init__(
             AscentODE(analysis_scheme=AnalysisScheme.SHOOTING,
                       alpha_mode=alpha_mode, **ode_args),
+            problem_name=phase_name,
             outputs=[
                 "load_factor",
                 "fuselage_pitch",
@@ -136,6 +130,9 @@ class SGMAscent(SimuPyProblem):
                 Dynamic.Mission.MASS,
                 Dynamic.Mission.DISTANCE,
                 Dynamic.Mission.ALTITUDE,
+                Dynamic.Mission.VELOCITY,
+                Dynamic.Mission.FLIGHT_PATH_ANGLE,
+                "alpha",
             ],
             # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
@@ -202,20 +199,21 @@ class SGMAscentCombined(SGMAscent):
         simupy_args={},
     ):
         self.ode_args = ode_args
-        super().__init__(alpha_mode=AlphaModes.DEFAULT, ode_args=ode_args, simupy_args=simupy_args)
+        super().__init__(phase_name=phase_name, alpha_mode=AlphaModes.DEFAULT,
+                         ode_args=ode_args, simupy_args=simupy_args)
 
         self.phase_name = phase_name
         self.fuselage_pitch_max = fuselage_pitch_max
 
-        ode0 = SGMAscent(alpha_mode=AlphaModes.DEFAULT,
+        ode0 = SGMAscent(alpha_mode=AlphaModes.DEFAULT, phase_name='ascent_ode0',
                          ode_args=ode_args, simupy_args=simupy_args)
-        rotation = SGMAscent(alpha_mode=AlphaModes.ROTATION,
+        rotation = SGMAscent(alpha_mode=AlphaModes.ROTATION, phase_name='ascent_rotation',
                              ode_args=ode_args, simupy_args=simupy_args)
-        load_factor = SGMAscent(alpha_mode=AlphaModes.LOAD_FACTOR,
+        load_factor = SGMAscent(alpha_mode=AlphaModes.LOAD_FACTOR, phase_name='ascent_load_factor',
                                 ode_args=ode_args, simupy_args=simupy_args)
-        fuselage_pitch = SGMAscent(
-            alpha_mode=AlphaModes.FUSELAGE_PITCH, ode_args=ode_args, simupy_args=simupy_args)
-        decel = SGMAscent(alpha_mode=AlphaModes.DECELERATION,
+        fuselage_pitch = SGMAscent(alpha_mode=AlphaModes.FUSELAGE_PITCH, phase_name='ascent_pitch',
+                                   ode_args=ode_args, simupy_args=simupy_args)
+        decel = SGMAscent(alpha_mode=AlphaModes.DECELERATION, phase_name='ascent_decel',
                           ode_args=ode_args, simupy_args=simupy_args)
 
         self.odes = (ode0, rotation, load_factor, fuselage_pitch, decel,)
@@ -374,11 +372,13 @@ class SGMAccel(SimuPyProblem):
         ode = AccelODE(analysis_scheme=AnalysisScheme.SHOOTING, **ode_args)
         super().__init__(
             ode,
+            problem_name=phase_name,
             outputs=["EAS", "mach", "alpha"],
             states=[
                 Dynamic.Mission.MASS,
                 Dynamic.Mission.DISTANCE,
                 Dynamic.Mission.ALTITUDE,
+                Dynamic.Mission.VELOCITY,
             ],
             # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
@@ -386,16 +386,7 @@ class SGMAccel(SimuPyProblem):
             **simupy_args,
         )
         self.phase_name = phase_name
-        self.VC_value = VC_value
-        self.VC_units = VC_units
-        self.event_channel_names = [
-            "EAS",
-        ]
-        self.num_events = len(self.event_channel_names)
-
-    def event_equation_function(self, t, x):
-        self.output_equation_function(t, x)
-        return self.get_val("EAS", units=self.VC_units) - self.VC_value
+        self.add_trigger("EAS", VC_value, units=VC_units)
 
 
 class SGMClimb(SimuPyProblem):
@@ -433,6 +424,7 @@ class SGMClimb(SimuPyProblem):
         self.alt_trigger_units = alt_trigger_units
         super().__init__(
             ode,
+            problem_name=phase_name,
             outputs=[
                 "alpha",
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
@@ -456,25 +448,10 @@ class SGMClimb(SimuPyProblem):
             **simupy_args,
         )
         self.phase_name = phase_name
-        self.event_channel_names = [
-            Dynamic.Mission.ALTITUDE,
-            self.speed_trigger_name,
-        ]
-        self.num_events = len(self.event_channel_names)
-
-    def event_equation_function(self, t, x):
-        self.output_equation_function(t, x)
-        alt = self.get_val(Dynamic.Mission.ALTITUDE,
-                           units=self.alt_trigger_units).squeeze()
-        alt_trigger = self.get_val("alt_trigger", units=self.alt_trigger_units).squeeze()
-
-        speed = self.get_val(
-            self.speed_trigger_name, units=self.speed_trigger_units
-        ).squeeze()
-        speed_trigger = self.get_val(
-            "speed_trigger", units=self.speed_trigger_units
-        ).squeeze()
-        return np.array([alt - alt_trigger, speed - speed_trigger])
+        self.add_trigger(Dynamic.Mission.ALTITUDE, "alt_trigger",
+                         units=self.alt_trigger_units)
+        self.add_trigger(self.speed_trigger_name, "speed_trigger",
+                         units="speed_trigger_units")
 
 
 class SGMCruise(SimuPyProblem):
@@ -504,6 +481,7 @@ class SGMCruise(SimuPyProblem):
 
         super().__init__(
             ode,
+            problem_name=phase_name,
             outputs=[
                 "alpha",  # ?
                 "lift",
@@ -517,6 +495,7 @@ class SGMCruise(SimuPyProblem):
                 Dynamic.Mission.MASS,
                 Dynamic.Mission.DISTANCE,
                 Dynamic.Mission.ALTITUDE,
+                Dynamic.Mission.VELOCITY,
             ],
             # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
@@ -525,26 +504,9 @@ class SGMCruise(SimuPyProblem):
         )
 
         self.phase_name = phase_name
-        self.event_channel_names = [
-            Dynamic.Mission.MASS,
-            Dynamic.Mission.DISTANCE,
-        ]
-        self.num_events = len(self.event_channel_names)
-
-    def event_equation_function(self, t, x):
-        self.output_equation_function(t, x)
-        current_mass = self.get_val(Dynamic.Mission.MASS, units="lbm").squeeze()
-        mass_trigger = self.get_val('mass_trigger.mass_trigger', units="lbm").squeeze()
-
-        distance = self.get_val(Dynamic.Mission.DISTANCE,
-                                units=self.distance_trigger_units).squeeze()
-        distance_trigger = self.get_val(
-            "distance_trigger", units=self.distance_trigger_units).squeeze()
-
-        return np.array([
-            current_mass - mass_trigger,
-            distance - distance_trigger
-        ])
+        self.add_trigger(Dynamic.Mission.MASS, 'mass_trigger.mass_trigger', units='lbm')
+        self.add_trigger(Dynamic.Mission.DISTANCE, "distance_trigger",
+                         units=self.distance_trigger_units)
 
 
 class SGMDescent(SimuPyProblem):
@@ -582,6 +544,7 @@ class SGMDescent(SimuPyProblem):
         self.alt_trigger_units = alt_trigger_units
         super().__init__(
             ode,
+            problem_name=phase_name,
             outputs=[
                 "alpha",
                 "required_lift",
@@ -604,22 +567,7 @@ class SGMDescent(SimuPyProblem):
         )
 
         self.phase_name = phase_name
-        self.event_channel_names = [
-            Dynamic.Mission.ALTITUDE,
-            self.speed_trigger_name,
-        ]
-        self.num_events = len(self.event_channel_names)
-
-    def event_equation_function(self, t, x):
-        self.output_equation_function(t, x)
-        alt = self.get_val(Dynamic.Mission.ALTITUDE,
-                           units=self.alt_trigger_units).squeeze()
-        alt_trigger = self.get_val("alt_trigger", units=self.alt_trigger_units).squeeze()
-
-        speed = self.get_val(
-            self.speed_trigger_name, units=self.speed_trigger_units
-        ).squeeze()
-        speed_trigger = self.get_val(
-            "speed_trigger", units=self.speed_trigger_units
-        ).squeeze()
-        return np.array([alt - alt_trigger, speed - speed_trigger])
+        self.add_trigger(Dynamic.Mission.ALTITUDE, "alt_trigger",
+                         units=self.alt_trigger_units)
+        self.add_trigger(self.speed_trigger_name, "speed_trigger",
+                         units=self.speed_trigger_units)
