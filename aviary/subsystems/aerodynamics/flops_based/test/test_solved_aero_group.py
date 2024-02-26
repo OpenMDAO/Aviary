@@ -95,6 +95,9 @@ class TestSolvedAero(unittest.TestCase):
         prob.load_inputs(
             "subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv", ph_in)
 
+        # Preprocess inputs
+        prob.check_and_preprocess_inputs()
+
         prob.aviary_inputs.set_val(Aircraft.Design.LIFT_POLAR,
                                    np.zeros_like(CL), units='unitless')
         prob.aviary_inputs.set_val(Aircraft.Design.DRAG_POLAR,
