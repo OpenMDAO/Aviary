@@ -446,21 +446,22 @@ class AviaryProblem(om.Problem):
         start_reserve = False
         raise_error = False
         for idx, phase_name in enumerate(self.phase_info):
-            if 'reserve' in self.phase_info[phase_name]["user_options"]:
-                if self.phase_info[phase_name]["user_options"]["reserve"] is False:
-                    # This is a regular phase
+            if 'user_options' in self.phase_info[phase_name]:
+                if 'reserve' in self.phase_info[phase_name]["user_options"]:
+                    if self.phase_info[phase_name]["user_options"]["reserve"] is False:
+                        # This is a regular phase
+                        self.regular_phases.append(phase_name)
+                        if start_reserve is True:
+                            raise_error = True
+                    else:
+                        # This is a reserve phase
+                        self.reserve_phases.append(phase_name)
+                        start_reserve = True
+                else:
+                    # This is a regular phase by default
                     self.regular_phases.append(phase_name)
                     if start_reserve is True:
                         raise_error = True
-                else:
-                    # This is a reserve phase
-                    self.reserve_phases.append(phase_name)
-                    start_reserve = True
-            else:
-                # This is a regular phase by default
-                self.regular_phases.append(phase_name)
-                if start_reserve is True:
-                    raise_error = True
 
         if raise_error is True:
             raise ValueError(
@@ -486,53 +487,56 @@ class AviaryProblem(om.Problem):
         # Fill in anything missing in the options with computed defaults.
         preprocess_crewpayload(self.aviary_inputs)
 
-        self.phase_separator()
+        if self.mission_method is HEIGHT_ENERGY:
+            self.phase_separator()
 
         # Target_distance verification for all phases
         # Checks to make sure target_distance is positive,
         for idx, phase_name in enumerate(self.phase_info):
-            if 'target_distance' in self.phase_info[phase_name]["user_options"]:
-                target_distance = self.phase_info[phase_name]["user_options"]["target_distance"]
-                if target_distance[0] <= 0:
-                    raise ValueError(
-                        f"Invalid target_distance in [{phase_name}].[user_options]. "
-                        f"Current (value: {target_distance[0]}), (units: {target_distance[1]}) <= 0")
+            if 'user_options' in self.phase_info[phase_name]:
+                if 'target_distance' in self.phase_info[phase_name]["user_options"]:
+                    target_distance = self.phase_info[phase_name]["user_options"]["target_distance"]
+                    if target_distance[0] <= 0:
+                        raise ValueError(
+                            f"Invalid target_distance in [{phase_name}].[user_options]. "
+                            f"Current (value: {target_distance[0]}), (units: {target_distance[1]}) <= 0")
 
         # Target_time verification for all phases
         # Checks to make sure target_time is positive,
         # duration_bounds and initial_guesses for time have not been set,
         # Then sets duration_bounds, initial_guesses, and fixed_duration
         for idx, phase_name in enumerate(self.phase_info):
-            if 'target_time' in self.phase_info[phase_name]["user_options"]:
-                target_time = self.phase_info[phase_name]["user_options"]["target_time"]
-                if target_time[0] <= 0:
-                    raise ValueError(
-                        f"Invalid target_time in phase_info[{phase_name}][user_options]."
-                        f"Current (value: {target_time[0]}), (units: {target_time[1]}) <= 0")
-                if 'duration_bounds' in self.phase_info[phase_name]["user_options"]:
-                    # raise ValueError(
-                    print(
-                        f"When specifying target_time, duration_bounds for time should be removed. "
-                        f"Unexpected duration_bounds encountered in phase_info[{phase_name}][user_options].")
-                if 'initial_guesses' in self.phase_info[phase_name]:
-                    if 'times' in self.phase_info[phase_name]['initial_guesses']:
+            if 'user_options' in self.phase_info[phase_name]:
+                if 'target_time' in self.phase_info[phase_name]["user_options"]:
+                    target_time = self.phase_info[phase_name]["user_options"]["target_time"]
+                    if target_time[0] <= 0:
+                        raise ValueError(
+                            f"Invalid target_time in phase_info[{phase_name}][user_options]."
+                            f"Current (value: {target_time[0]}), (units: {target_time[1]}) <= 0")
+                    if 'duration_bounds' in self.phase_info[phase_name]["user_options"]:
                         # raise ValueError(
                         print(
-                            f"When specifying target_time, initial_guesses for times should be removed. "
-                            f"Unexpected initial_guesses.times encountered in phase_info[{phase_name}][initial_guesses].")
-                if 'fix_duration' in self.phase_info[phase_name]["user_options"]:
-                    # raise ValueError(
-                    print(
-                        f"When specifying target_time, fix_duration is assumed to be True. "
-                        f"Unexpected fix_duration encourntered in phase_info[{phase_name}][user_options].")
-                # Set duartion_bounds and initial_guesses for time:
-                self.phase_info[phase_name]["user_options"].update({
-                    "duration_bounds": ((target_time[0], target_time[0]), target_time[1])})
-                self.phase_info[phase_name].update({
-                    "initial_guesses": {"times": ((target_time[0], target_time[0]), target_time[1])}})
-                # Set Fixed_duration to true:
-                self.phase_info[phase_name]["user_options"].update({
-                    "fix_duration": True})
+                            f"When specifying target_time, duration_bounds for time should be removed. "
+                            f"Unexpected duration_bounds encountered in phase_info[{phase_name}][user_options].")
+                    if 'initial_guesses' in self.phase_info[phase_name]:
+                        if 'times' in self.phase_info[phase_name]['initial_guesses']:
+                            # raise ValueError(
+                            print(
+                                f"When specifying target_time, initial_guesses for times should be removed. "
+                                f"Unexpected initial_guesses.times encountered in phase_info[{phase_name}][initial_guesses].")
+                    if 'fix_duration' in self.phase_info[phase_name]["user_options"]:
+                        # raise ValueError(
+                        print(
+                            f"When specifying target_time, fix_duration is assumed to be True. "
+                            f"Unexpected fix_duration encourntered in phase_info[{phase_name}][user_options].")
+                    # Set duartion_bounds and initial_guesses for time:
+                    self.phase_info[phase_name]["user_options"].update({
+                        "duration_bounds": ((target_time[0], target_time[0]), target_time[1])})
+                    self.phase_info[phase_name].update({
+                        "initial_guesses": {"times": ((target_time[0], target_time[0]), target_time[1])}})
+                    # Set Fixed_duration to true:
+                    self.phase_info[phase_name]["user_options"].update({
+                        "fix_duration": True})
 
     def add_pre_mission_systems(self):
         """
