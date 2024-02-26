@@ -24,6 +24,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         input_file = 'models/test_aircraft/aircraft_for_bench_GwGm_solved.csv'
         prob.load_inputs(input_file, local_phase_info)
+        prob.check_and_preprocess_inputs()
         prob.aviary_inputs.set_val(Mission.Design.RANGE, 2000.0, units="NM")
 
 
