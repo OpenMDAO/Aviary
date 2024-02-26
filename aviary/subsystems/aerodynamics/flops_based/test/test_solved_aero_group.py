@@ -51,6 +51,10 @@ class TestSolvedAero(unittest.TestCase):
 
         prob.load_inputs(
             "subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv", local_phase_info)
+
+        # Preprocess inputs
+        prob.check_and_preprocess_inputs()
+
         prob.add_pre_mission_systems()
         prob.add_phases()
         prob.add_post_mission_systems()
@@ -122,6 +126,10 @@ class TestSolvedAero(unittest.TestCase):
 
         csv_path = "subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv"
         prob.load_inputs(csv_path, local_phase_info)
+
+        # Preprocess inputs
+        prob.check_and_preprocess_inputs()
+
         prob.add_pre_mission_systems()
         prob.add_phases()
         prob.add_post_mission_systems()
@@ -163,6 +171,9 @@ class TestSolvedAero(unittest.TestCase):
         prob = AviaryProblem()
 
         prob.load_inputs(csv_path, ph_in)
+
+        # Preprocess inputs
+        prob.check_and_preprocess_inputs()
 
         prob.aviary_inputs.set_val(Aircraft.Design.LIFT_POLAR,
                                    np.zeros_like(CL), units='unitless')
