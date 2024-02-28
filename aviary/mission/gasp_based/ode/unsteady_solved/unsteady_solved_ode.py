@@ -57,10 +57,9 @@ class UnsteadySolvedODE(BaseODE):
             types=SpeedType,
             desc="Airspeed type specified as input.")
         self.options.declare(
-            'balance_throttle',
-            types=bool,
-            default=False,
-            desc='Flag if throttle should be solved for to match thrust to drag'
+            'throttle_enforcement', default='path_constraint',
+            values=['path_constraint', 'boundary_constraint', 'bounded', None],
+            desc='flag to enforce throttle constraints on the path or at the segment boundaries or using solver bounds'
         )
         self.options.declare(
             'external_subsystems', default=[],
@@ -76,7 +75,7 @@ class UnsteadySolvedODE(BaseODE):
         aviary_options = self.options['aviary_options']
         subsystem_options = self.options['subsystem_options']
         core_subsystems = self.options['core_subsystems']
-        balance_throttle = self.options['balance_throttle']
+        throttle_enforcement = self.options['throttle_enforcement']
 
         if self.options["include_param_comp"]:
             # TODO: paramport
@@ -129,34 +128,34 @@ class UnsteadySolvedODE(BaseODE):
                                                 promotes_outputs=["*"])
 
         # Also need to change the run script and the iter group solver when using this; just testing for now
-        if balance_throttle:
-            throttle_balance_group = self.add_subsystem("throttle_balance_group",
-                                                        om.Group(),
-                                                        promotes=["*"])
+        throttle_balance_group = self.add_subsystem("throttle_balance_group",
+                                                    om.Group(),
+                                                    promotes=["*"])
 
-            throttle_balance_comp = om.BalanceComp()
-            throttle_balance_comp.add_balance(Dynamic.Mission.THROTTLE,
-                                              units="unitless",
-                                              val=np.ones(nn) * 0.5,
-                                              lhs_name=Dynamic.Mission.THRUST_TOTAL,
-                                              rhs_name="thrust_req",
-                                              eq_units="lbf",
-                                              normalize=True,
-                                              lower=0.0,
-                                              upper=1.0,
-                                              )
+        throttle_balance_comp = om.BalanceComp()
+        throttle_balance_comp.add_balance(Dynamic.Mission.THROTTLE,
+                                          units="unitless",
+                                          val=np.ones(nn) * 0.5,
+                                          lhs_name=Dynamic.Mission.THRUST_TOTAL,
+                                          rhs_name="thrust_req",
+                                          eq_units="lbf",
+                                          normalize=False,
+                                          lower=0.0 if throttle_enforcement == 'bounded' else None,
+                                          upper=1.0 if throttle_enforcement == 'bounded' else None,
+                                          res_ref=1.0e6,
+                                          )
 
-            throttle_balance_group.add_subsystem("throttle_balance_comp", subsys=throttle_balance_comp,
-                                                 promotes_inputs=["*"],
-                                                 promotes_outputs=["*"])
+        throttle_balance_group.add_subsystem("throttle_balance_comp", subsys=throttle_balance_comp,
+                                             promotes_inputs=["*"],
+                                             promotes_outputs=["*"])
 
-            throttle_balance_group.nonlinear_solver = om.NewtonSolver(solve_subsystems=True,
-                                                                      atol=1.0e-10,
-                                                                      rtol=1.0e-10,
-                                                                      )
-            throttle_balance_group.nonlinear_solver.linesearch = om.BoundsEnforceLS()
-            throttle_balance_group.linear_solver = om.DirectSolver(assemble_jac=True)
-            throttle_balance_group.nonlinear_solver.options['err_on_non_converge'] = True
+        throttle_balance_group.nonlinear_solver = om.NewtonSolver(solve_subsystems=True,
+                                                                  atol=1.0e-10,
+                                                                  rtol=1.0e-10,
+                                                                  )
+        throttle_balance_group.nonlinear_solver.linesearch = om.BoundsEnforceLS()
+        throttle_balance_group.linear_solver = om.DirectSolver(assemble_jac=True)
+        throttle_balance_group.nonlinear_solver.options['err_on_non_converge'] = True
 
         kwargs = {
             'num_nodes': nn,
@@ -164,8 +163,7 @@ class UnsteadySolvedODE(BaseODE):
             'method': 'low_speed',
         }
         if self.options['clean']:
-            kwargs['method'] = 'cruise'
-            kwargs['output_alpha'] = False
+            kwargs['method'] = 'tabular'
         for subsystem in core_subsystems:
             # check if subsystem_options has entry for a subsystem of this name
             if subsystem.name in subsystem_options:
@@ -174,14 +172,14 @@ class UnsteadySolvedODE(BaseODE):
             if system is not None:
                 if isinstance(subsystem, AerodynamicsBuilderBase):
                     mission_inputs = subsystem.mission_inputs(**kwargs)
-                    if subsystem.code_origin is LegacyCode.FLOPS:
+                    if subsystem.code_origin is LegacyCode.FLOPS and 'angle_of_attack' in mission_inputs:
                         mission_inputs.remove('angle_of_attack')
                         mission_inputs.append(('angle_of_attack', 'alpha'))
                     control_iter_group.add_subsystem(subsystem.name,
                                                      system,
                                                      promotes_inputs=mission_inputs,
                                                      promotes_outputs=subsystem.mission_outputs(**kwargs))
-                elif isinstance(subsystem, PropulsionBuilderBase) and balance_throttle:
+                elif isinstance(subsystem, PropulsionBuilderBase):
                     throttle_balance_group.add_subsystem(subsystem.name,
                                                          system,
                                                          promotes_inputs=subsystem.mission_inputs(
@@ -197,8 +195,7 @@ class UnsteadySolvedODE(BaseODE):
         eom_comp = UnsteadySolvedEOM(num_nodes=nn, ground_roll=ground_roll)
 
         input_list = ['*']
-        if balance_throttle:
-            input_list.append((Dynamic.Mission.THRUST_TOTAL, "thrust_req"))
+        input_list.append((Dynamic.Mission.THRUST_TOTAL, "thrust_req"))
         control_iter_group.add_subsystem("eom", subsys=eom_comp,
                                          promotes_inputs=input_list,
                                          promotes_outputs=["*"])
@@ -215,30 +212,13 @@ class UnsteadySolvedODE(BaseODE):
                                          upper=np.pi/12,
                                          normalize=False)
 
-        if balance_throttle:
-            thrust_alpha_bal.add_balance("thrust_req",
-                                         units="N",
-                                         val=100*np.ones(nn),
-                                         lhs_name="dTAS_dt_approx",
-                                         rhs_name="dTAS_dt",
-                                         eq_units="m/s**2",
-                                         normalize=False)
-
-        else:
-            # add a kscomp to compute the residual of dTAS_dt_approx - dTAS_dt
-            control_iter_group.add_subsystem("TAS_residual",
-                                             om.ExecComp("TAS_resid = dTAS_dt_approx - dTAS_dt", units="m/s**2", shape=nn,
-                                                         has_diag_partials=True),
-                                             promotes_inputs=[
-                                                 "dTAS_dt_approx", "dTAS_dt"],
-                                             promotes_outputs=["TAS_resid"])
-
-            control_iter_group.add_subsystem("KS_comp",
-                                             om.KSComp(width=nn),
-                                             promotes_inputs=[("g", "TAS_resid")],
-                                             promotes_outputs=[("KS", "ks_TAS_resid")])
-
-            control_iter_group.add_constraint("ks_TAS_resid", equals=0.0, ref=1.e4)
+        thrust_alpha_bal.add_balance("thrust_req",
+                                     units="N",
+                                     val=100*np.ones(nn),
+                                     lhs_name="dTAS_dt_approx",
+                                     rhs_name="dTAS_dt",
+                                     eq_units="m/s**2",
+                                     normalize=False)
 
         control_iter_group.add_subsystem("thrust_alpha_bal", subsys=thrust_alpha_bal,
                                          promotes_inputs=["*"],

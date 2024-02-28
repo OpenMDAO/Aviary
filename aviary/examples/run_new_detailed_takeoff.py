@@ -31,7 +31,7 @@ optimize_altitude = False
 # Currently the more complete takeoff trajectory requires SNOPT to converge.
 # If False, the takeoff trajectory will be simplified to a ground roll only
 # to ensure the methods_for_level2 API works.
-use_full_takeoff = False
+use_full_takeoff = True
 
 phase_info = {
     "pre_mission": {"include_takeoff": False, "optimize_mass": False},
@@ -66,7 +66,6 @@ phase_info = {
             'duration_bounds': ((200., 2.e3), 'ft'),
             'mach_bounds': ((0.18, 0.2), 'unitless'),
             'control_order': 1,
-            'opt': True,
             'balance_throttle': False,
             'optimize_mach': optimize_mach,
             'optimize_altitude': optimize_altitude,
@@ -105,7 +104,6 @@ phase_info = {
             'mach_bounds': ((0.2, 0.22), 'unitless'),
             'altitude_bounds': ((0., 250.), 'ft'),
             'control_order': 1,
-            'opt': True,
             'balance_throttle': False,
             'optimize_mach': optimize_mach,
             'optimize_altitude': optimize_altitude,
@@ -135,7 +133,6 @@ phase_info = {
             'mach_bounds': ((0.22, 0.3), 'unitless'),
             'altitude_bounds': ((0., 985.), 'ft'),
             'control_order': 1,
-            'opt': True,
             'balance_throttle': False,
             'optimize_mach': optimize_mach,
             'optimize_altitude': optimize_altitude,
@@ -164,7 +161,6 @@ phase_info = {
             'mach_bounds': ((0.24, 0.32), 'unitless'),
             'altitude_bounds': ((985., 1.5e3), 'ft'),
             'control_order': 1,
-            'opt': True,
             'optimize_mach': optimize_mach,
             'optimize_altitude': optimize_altitude,
             'constraints': {
@@ -202,7 +198,6 @@ phase_info = {
             'control_order': 1,
             'optimize_mach': optimize_mach,
             'optimize_altitude': optimize_altitude,
-            'opt': True,
             'constraints': {
                 'distance': {
                     'equals': 21325.,
@@ -239,7 +234,6 @@ phase_info = {
             'control_order': 1,
             'optimize_mach': optimize_mach,
             'optimize_altitude': optimize_altitude,
-            'opt': True,
             'constraints': {
                 'distance': {
                     'equals': 50.e3,
@@ -248,13 +242,13 @@ phase_info = {
                     'loc': 'final',
                     'ref': 30.e3,
                 },
-                'altitude': {
-                    'equals': 2000.,
-                    'units': 'ft',
-                    'type': 'boundary',
-                    'loc': 'final',
-                    'ref': 3.e3,
-                },
+                # 'altitude': {
+                #     'equals': 2000.,
+                #     'units': 'ft',
+                #     'type': 'boundary',
+                #     'loc': 'final',
+                #     'ref': 3.e3,
+                # },
             },
         },
         'subsystem_options': subsystem_options,

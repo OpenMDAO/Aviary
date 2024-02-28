@@ -22,19 +22,26 @@ subsystem_options = {'core_aerodynamics':
                           0.084, 0.09, 0.10, 0.11, 0.12, 0.13,
                           0.15, 0.16, 0.18, 0.20],
                       'lift_coefficient_factor': 1.,
-                      'drag_coefficient_factor': .4}}
+                      'drag_coefficient_factor': .5}}
+
+# CDI_table = "subsystems/aerodynamics/flops_based/test/large_single_aisle_1_CDI_polar.csv"
+# CD0_table = "subsystems/aerodynamics/flops_based/test/large_single_aisle_1_CD0_polar.csv"
+
+# kwargs = {'method': 'tabular', 'CDI_data': CDI_table,
+#             'CD0_data': CD0_table}
+# subsystem_options = {'core_aerodynamics': kwargs}
 
 phase_info = {
     "pre_mission": {"include_takeoff": False, "optimize_mass": False},
     'cruise': {
         'user_options': {
-            'num_segments': 20,
+            'num_segments': 10,
             'order': 3,
             'fix_initial': True,
             'throttle_setting': throttle_max,
-            'balance_throttle': True,
+            'throttle_enforcement': 'path_constraint',
             'ground_roll': False,
-            'clean': False,
+            'clean': True,
             'initial_ref': (1.e3, 'ft'),
             'initial_bounds': ((0.e3, 0.e3), 'ft'),
             'duration_ref': (100., 'nmi'),
@@ -42,9 +49,8 @@ phase_info = {
             'mach_bounds': ((0.72, 0.8), 'unitless'),
             'altitude_bounds': ((32.e3, 36.e3), 'ft'),
             'control_order': 2,
-            'optimize_mach': True,
-            'optimize_altitude': True,
-            'opt': True,
+            'optimize_mach': False,
+            'optimize_altitude': False,
             'constraints': {
                 'flight_path_angle': {
                     'equals': 0.,
@@ -59,7 +65,7 @@ phase_info = {
             'distance': [(0., 1000.), 'nmi'],
             'mach': [(0.72, 0.72), 'unitless'],
             'mass': [(175.e3, 174.e3), 'lbm'],
-            'altitude': [(32.e3, 35.e3), 'ft'],
+            'altitude': [(35.e3, 35.e3), 'ft'],
             # 'time': [(0., 1200.), 's'],
         },
     },

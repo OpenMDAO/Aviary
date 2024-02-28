@@ -79,7 +79,6 @@ class TwoDOFPhase(PhaseBuilderBase):
 
         throttle_setting = user_options.get_val('throttle_setting')
         control_order = user_options.get_val('control_order')
-        opt = user_options.get_val('opt')
 
         fix_initial = user_options.get_val('fix_initial')
         initial_bounds = user_options.get_val('initial_bounds', units='ft')
@@ -87,21 +86,13 @@ class TwoDOFPhase(PhaseBuilderBase):
         duration_bounds = user_options.get_val('duration_bounds', units='ft')
         duration_ref = user_options.get_val('duration_ref', units='ft')
         ground_roll = user_options.get_val('ground_roll')
-        balance_throttle = user_options.get_val('balance_throttle')
+        throttle_enforcement = user_options.get_val('throttle_enforcement')
         rotation = user_options.get_val('rotation')
         constraints = user_options.get_val('constraints')
         optimize_mach = user_options.get_val('optimize_mach')
         optimize_altitude = user_options.get_val('optimize_altitude')
         mach_bounds = user_options.get_item('mach_bounds')
         altitude_bounds = user_options.get_item('altitude_bounds')
-
-        if not balance_throttle:
-            phase.add_parameter(
-                Dynamic.Mission.THROTTLE,
-                opt=False,
-                units="unitless",
-                val=throttle_setting,
-                static_target=False)
 
         if fix_initial:
             phase.set_time_options(fix_initial=fix_initial, fix_duration=False,
@@ -135,7 +126,7 @@ class TwoDOFPhase(PhaseBuilderBase):
                                          lower=0, upper=15,
                                          units='deg', ref=10.,
                                          val=0.,
-                                         opt=opt)
+                                         opt=True)
 
         if ground_roll:
             phase.add_polynomial_control(Dynamic.Mission.ALTITUDE,
@@ -153,6 +144,19 @@ class TwoDOFPhase(PhaseBuilderBase):
                                          ref=(altitude_bounds[0][0] +
                                               altitude_bounds[0][1]) / 2,
                                          )
+
+        if not Dynamic.Mission.THROTTLE in constraints:
+            if throttle_enforcement == 'boundary_constraint':
+                phase.add_boundary_constraint(
+                    Dynamic.Mission.THROTTLE, loc='initial', lower=0.0, upper=1.0, units='unitless',
+                )
+                phase.add_boundary_constraint(
+                    Dynamic.Mission.THROTTLE, loc='final', lower=0.0, upper=1.0, units='unitless',
+                )
+            elif throttle_enforcement == 'path_constraint':
+                phase.add_path_constraint(
+                    Dynamic.Mission.THROTTLE, lower=0.0, upper=1.0, units='unitless',
+                )
 
         self._add_user_defined_constraints(phase, constraints)
 
@@ -204,7 +208,7 @@ class TwoDOFPhase(PhaseBuilderBase):
             'input_speed_type': SpeedType.MACH,
             'clean': self.user_options.get_val('clean'),
             'ground_roll': self.user_options.get_val('ground_roll'),
-            'balance_throttle': self.user_options.get_val('balance_throttle'),
+            'throttle_enforcement': self.user_options.get_val('throttle_enforcement'),
         }
 
 
@@ -233,11 +237,10 @@ TwoDOFPhase._add_meta_data('initial_ref', val=100., units='s', desc='initial ref
 TwoDOFPhase._add_meta_data('duration_ref', val=1000.,
                            units='s', desc='duration reference')
 TwoDOFPhase._add_meta_data('control_order', val=1, desc='control order')
-TwoDOFPhase._add_meta_data('opt', val=True, desc='opt')
 TwoDOFPhase._add_meta_data('ground_roll', val=True)
 TwoDOFPhase._add_meta_data('rotation', val=False)
 TwoDOFPhase._add_meta_data('clean', val=False)
-TwoDOFPhase._add_meta_data('balance_throttle', val=False)
+TwoDOFPhase._add_meta_data('throttle_enforcement', val=None)
 TwoDOFPhase._add_meta_data('constraints', val={})
 TwoDOFPhase._add_meta_data('mach_bounds', val=(0., 2.), units='unitless')
 TwoDOFPhase._add_meta_data('altitude_bounds', val=(0., 60.e3), units='ft')
