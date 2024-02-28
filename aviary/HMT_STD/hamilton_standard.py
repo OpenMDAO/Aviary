@@ -802,6 +802,58 @@ class PostHamiltonStandard(om.ExplicitComponent):
         self.add_output('propeller_efficiency', val=0.0, units='unitless')
         self.add_output('install_efficiency', val=0.0, units='unitless')
 
+
+    def setup_partials(self):
+        self.declare_partials('thrust_coefficient_comp_loss', [
+            'thrust_coefficient',
+            'comp_tip_loss_factor',
+        ])
+        self.declare_partials('thrust_coefficient_comp_loss', [
+            Aircraft.Engine.PROPELLER_TIP_SPEED,
+            Aircraft.Engine.PROPELLER_DIAMETER,
+            'density_ratio',
+            Aircraft.Engine.INSTALLATION_LOSS_FACTOR,
+            'adv_ratio',
+            'power_coefficient',
+        ], dependent=False)
+        self.declare_partials('Thrust', [
+            'thrust_coefficient',
+            'comp_tip_loss_factor',
+            Aircraft.Engine.PROPELLER_TIP_SPEED,
+            Aircraft.Engine.PROPELLER_DIAMETER,
+            'density_ratio',
+            Aircraft.Engine.INSTALLATION_LOSS_FACTOR,
+        ])
+        self.declare_partials('thrust_coefficient_comp_loss', [
+            'adv_ratio',
+            'power_coefficient',
+        ], dependent=False)
+        self.declare_partials('propeller_efficiency', [
+            'adv_ratio',
+            'power_coefficient',
+            'thrust_coefficient',
+            'comp_tip_loss_factor',
+        ])
+        self.declare_partials('propeller_efficiency', [
+            Aircraft.Engine.PROPELLER_TIP_SPEED,
+            Aircraft.Engine.PROPELLER_DIAMETER,
+            'density_ratio',
+            Aircraft.Engine.INSTALLATION_LOSS_FACTOR,
+        ], dependent=False)
+        self.declare_partials('install_efficiency', [
+            'adv_ratio',
+            'power_coefficient',
+            Aircraft.Engine.INSTALLATION_LOSS_FACTOR,
+            'thrust_coefficient',
+            'comp_tip_loss_factor'
+        ])
+        self.declare_partials('install_efficiency', [
+            Aircraft.Engine.PROPELLER_TIP_SPEED,
+            Aircraft.Engine.PROPELLER_DIAMETER,
+            'density_ratio',
+        ], dependent=False)
+
+
     def compute(self, inputs, outputs):
         ctx = inputs['thrust_coefficient']*inputs['comp_tip_loss_factor']
         outputs['thrust_coefficient_comp_loss'] = ctx
@@ -816,7 +868,39 @@ class PostHamiltonStandard(om.ExplicitComponent):
             (1. - install_loss_factor)
 
 
-if __name__ == "__main__":
+    def compute_partials(self, inputs, partials):
+        XFT = inputs['comp_tip_loss_factor']
+        ctx = inputs['thrust_coefficient']*XFT
+        diam_prop = inputs[Aircraft.Engine.PROPELLER_DIAMETER][0]
+        tipspd = inputs[Aircraft.Engine.PROPELLER_TIP_SPEED][0]
+        install_loss_factor = inputs[Aircraft.Engine.INSTALLATION_LOSS_FACTOR][0]
+
+        partials["thrust_coefficient_comp_loss", 'thrust_coefficient'] = XFT
+        partials["thrust_coefficient_comp_loss", 'comp_tip_loss_factor'] = inputs['thrust_coefficient']
+        partials["Thrust", 'thrust_coefficient'] = XFT*tipspd**2*diam_prop**2 * \
+            inputs['density_ratio']/(1.515E06)*364.76*(1. - install_loss_factor)
+        partials["Thrust", 'comp_tip_loss_factor'] = inputs['thrust_coefficient']*tipspd**2*diam_prop**2 * \
+            inputs['density_ratio']/(1.515E06)*364.76*(1. - install_loss_factor)
+        partials["Thrust", Aircraft.Engine.PROPELLER_TIP_SPEED] = 2*ctx*tipspd*diam_prop**2 * \
+            inputs['density_ratio']/(1.515E06)*364.76*(1. - install_loss_factor)
+        partials["Thrust", Aircraft.Engine.PROPELLER_DIAMETER] = 2*ctx*tipspd**2*diam_prop * \
+            inputs['density_ratio']/(1.515E06)*364.76*(1. - install_loss_factor)
+        partials["Thrust", 'density_ratio'] = ctx*tipspd**2*diam_prop**2/(1.515E06)*364.76*(1. - install_loss_factor)
+        partials["Thrust", Aircraft.Engine.INSTALLATION_LOSS_FACTOR] = -ctx*tipspd**2*diam_prop**2 * \
+            inputs['density_ratio']/(1.515E06)*364.76
+        partials["propeller_efficiency", "adv_ratio"] = ctx/inputs['power_coefficient']
+        partials["propeller_efficiency", "thrust_coefficient"] = inputs['adv_ratio']*XFT/inputs['power_coefficient']
+        partials["propeller_efficiency", "comp_tip_loss_factor"] = inputs['adv_ratio']*inputs['thrust_coefficient']/inputs['power_coefficient']
+        partials["propeller_efficiency", "power_coefficient"] = -2*inputs['adv_ratio']*ctx/inputs['power_coefficient']**2
+
+        partials["install_efficiency", "adv_ratio"] = ctx/inputs['power_coefficient']* (1. - install_loss_factor)
+        partials["install_efficiency", "thrust_coefficient"] = inputs['adv_ratio']*XFT/inputs['power_coefficient']* (1. - install_loss_factor)
+        partials["install_efficiency", "comp_tip_loss_factor"] = inputs['adv_ratio']*inputs['thrust_coefficient']/inputs['power_coefficient']* (1. - install_loss_factor)
+        partials["install_efficiency", "power_coefficient"] = -2*inputs['adv_ratio']*ctx/inputs['power_coefficient']**2* (1. - install_loss_factor)
+        partials["install_efficiency", Aircraft.Engine.INSTALLATION_LOSS_FACTOR] = -inputs['adv_ratio']*ctx/inputs['power_coefficient']
+
+
+if __name__ == "__main1__":
     model = om.Group()
     prehs = model.add_subsystem('prehs', PreHamiltonStandard(), promotes=['*'])
     prob = om.Problem(model)
@@ -832,7 +916,12 @@ if __name__ == "__main__":
     prob.set_val(Dynamic.Mission.TEMPERATURE, val=TSLS_DEGR, units='degR')
     prob.run_model()
 
-    data = prob.check_partials(compact_print=False, show_only_incorrect=True)
+    print(f"  density_ratio: {prob.get_val('prehs.density_ratio')}")
+    print(f"  adv_ratio: {prob.get_val('prehs.adv_ratio')}")
+    print(f"  power_coefficient: {prob.get_val('prehs.power_coefficient')}")
+
+    # 10.E10 is causing just a little numerical noise
+    data = prob.check_partials(compact_print=True, show_only_incorrect=True, minimum_step=1e-12)
 
 
 if __name__ == "__main2__":
@@ -863,3 +952,24 @@ if __name__ == "__main2__":
     print(f"  3/4 Blade Angle: {prob['hs.ang_blade'][0]}")
     print(f"  CT: {prob['hs.thrust_coefficient'][0]}")
     print(f"  XFT: {prob['hs.comp_tip_loss_factor'][0]}")
+
+
+if __name__ == "__main__":
+    model = om.Group()
+    prehs = model.add_subsystem('posths', PostHamiltonStandard(), promotes=['*'])
+    prob = om.Problem(model)
+    prob.set_solver_print(level=1)
+    # prob.setup(mode='rev')
+    prob.setup()
+
+    prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED, 785.0, units='ft/s')
+    prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 12.0, units='ft')
+    prob.set_val('power_coefficient', 0.19062805, units='unitless')
+    prob.set_val('adv_ratio', 0.0, units='unitless')
+    prob.set_val('density_ratio', 1.0, units='unitless')
+    prob.set_val('thrust_coefficient', 0.27650621496575234, units='unitless')
+    prob.set_val('comp_tip_loss_factor', 1.0, units='unitless')
+    prob.set_val(Aircraft.Engine.INSTALLATION_LOSS_FACTOR, 0.05, units='unitless')
+    prob.run_model()
+
+    data = prob.check_partials(compact_print=True, show_only_incorrect=True, minimum_step=1e-12)
