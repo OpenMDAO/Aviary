@@ -1422,11 +1422,11 @@ class TurboPropDeck(EngineDeck):
         variables_to_scale = ['shaft_power', 'tailpipe_thrust',
                               'nox_rate', 'electric_power', 'thrust_net_max']
         for variable in variables_to_scale:
-            self.add_scaling_exec_comp(scaling_group, variable, num_nodes)
-        self.add_scaling_exec_comp(scaling_group, 'fuel_flow_rate',
-                                   num_nodes, alias=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE)
+            self.add_scaling_exec_comp(scaling_group, variable, num_nodes=num_nodes)
+        self.add_scaling_exec_comp(scaling_group, 'fuel_flow_rate', num_nodes=num_nodes,
+                                   alias=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE)
         self.add_scaling_exec_comp(scaling_group, 'thrust_net',
-                                   num_nodes, alias='unused')
+                                   num_nodes=num_nodes, alias='unused')
 
         engine_group.add_subsystem('engine_scaling',
                                    subsys=scaling_group,
@@ -1457,23 +1457,24 @@ class TurboPropDeck(EngineDeck):
 
         return engine_group
 
-    @staticmethod
-    def add_scaling_exec_comp(grp: om.Group, variable: str, num_nodes=1, alias=None):
+    def add_scaling_exec_comp(self, grp: om.Group, variable: str, units=None, num_nodes=1, alias=None):
         if alias is None:
             alias = variable
+        if units is None:
+            _, units = self.options.get_item(variable)
         grp.add_subsystem(
             variable+'_scaling',
             om.ExecComp(
-                'variable = variable_unscaled * scale_factor',
-                variable={'shape': num_nodes},
-                variable_unscaled={'shape': num_nodes},
+                'scaled_variable = variable_unscaled * scale_factor',
+                scaled_variable={'shape': num_nodes, 'units': units},
+                variable_unscaled={'shape': num_nodes, 'units': units},
                 scale_factor={'val': 1, 'units': 'unitless'},
             ),
             promotes_inputs=[
                 ('variable_unscaled', variable+'_unscaled'),
                 ('scale_factor', Aircraft.Engine.SCALE_FACTOR)
             ],
-            promotes_outputs=[('variable', alias)]
+            promotes_outputs=[('scaled_variable', alias)]
         )
 
     def _add_dummy_prop(self, engine_group: om.Group, num_nodes=1):
