@@ -114,7 +114,7 @@ class TwoDOFPhase(PhaseBuilderBase):
                                    duration_bounds=duration_bounds, duration_ref=duration_ref)
 
         phase.set_state_options("time", rate_source="dt_dr",
-                                fix_initial=fix_initial, fix_final=False, ref=100., defect_ref=100. * 1.e2)
+                                fix_initial=fix_initial, fix_final=False, ref=100., defect_ref=100.)
 
         phase.set_state_options("mass", rate_source="dmass_dr",
                                 fix_initial=fix_initial, fix_final=False, ref=170.e3, defect_ref=170.e5,
