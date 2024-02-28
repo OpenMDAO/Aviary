@@ -6,13 +6,14 @@ import openmdao.api as om
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH, TSLS_DEGR
 import pdb
 
+
 def prop_perform():
     """
     Propeller Performance Routine based on Hamliton Standard Report NASA CR-2066
     Inputs:
         diam_prop = Prop Diameter (ft.)
         aft = Actitivty Factor per Blade (Range: 80 to 200)
-        num_blade = numbr of Blades (Range: 2 to 8)
+        num_blades = numbr of Blades (Range: 2 to 8)
         CLI = Blade intergrated lift coeff (Range: 0.3 to 0.8)
               Code sometimes has trouble with CLI's greater than 0.5 at high J's 
               (J: advance ratio, ZJI, or adv_ratio)
@@ -28,9 +29,9 @@ def prop_perform():
         CTX: thrust coeff with compress losses
         ang_blade: 3/4 Blade Angle (deg)
         Thrust (lbf): thrust including both compressibility and installation losses
-	    EFFP: Propeller Efficiency
-	    Install_loss_factor: Installation Loss factor (if input -1.)
-	    EFFPI: Installation efficiency
+            EFFP: Propeller Efficiency
+            Install_loss_factor: Installation Loss factor (if input -1.)
+            EFFPI: Installation efficiency
     """
 
     RHOsls = RHO_SEA_LEVEL_ENGLISH  # Air density is 0.002378 slugs per cubic foot at sea level
@@ -40,10 +41,10 @@ def prop_perform():
     kwrite = 1
 
     print("Input propeller data:")
-    diam_prop, num_blade, aft, cli = [
-        float(x) for x in input("  diam_prop (ft), num_blade, aft, cli: ").split()]
-    num_blade = int(num_blade)
-    if(diam_prop <= 0.):
+    diam_prop, num_blades, aft, cli = [
+        float(x) for x in input("  diam_prop (ft), num_blades, aft, cli: ").split()]
+    num_blades = int(num_blades)
+    if (diam_prop <= 0.):
         exit()
 
     DiamNac_DiamProp = float(input("Input Nacalle Diam to Prop Diam Ratio: "))
@@ -72,7 +73,8 @@ def prop_perform():
         # ROR0 = RHOsls/rho0
         density_ratio = rho0/RHOsls
         FC = math.sqrt(TSLS_DEGR/temp0)  # 518.67 is TSLS_DEGR
-        mach = .00150933 * vktas * FC  # at sea level, 1 knot = .00150933 (actually 0.00149984 Mach)
+        # at sea level, 1 knot = .00150933 (actually 0.00149984 Mach)
+        mach = .00150933 * vktas * FC
         tip_mach = tipspd*FC/1118.21948771  # 1118.21948771 is speed of sound at sea level
         adv_ratio = 5.309*vktas/tipspd
         cp = SHP*10.E10/density_ratio/(2.*tipspd**3*diam_prop**2*6966.)
@@ -82,7 +84,7 @@ def prop_perform():
             print(f"  Power Coeff = {cp}")
             print(f"  Advance Ratio = {adv_ratio}")
             print(f"  Actitivty Factor per Blade = {aft}")
-            print(f"  number of blade = {num_blade}")
+            print(f"  number of blade = {num_blades}")
             print(f"  Blade intergrated lift coeff = {cli}")
             print(f"  Mach = {mach}")
             print(f"  Tip Mach = {tip_mach}")
@@ -90,10 +92,11 @@ def prop_perform():
 
         # Call PERFM
         ct, ang_blade, xft, limit = perfm(
-            iw, cp, adv_ratio, aft, num_blade, cli, mach, tip_mach, kwrite)
+            iw, cp, adv_ratio, aft, num_blades, cli, mach, tip_mach, kwrite)
 
         ctx = ct*xft
-        Thrust = ctx*tipspd**2*diam_prop**2*density_ratio/(1.515E06)*364.76*(1. - Install_loss_factor)
+        Thrust = ctx*tipspd**2*diam_prop**2*density_ratio / \
+            (1.515E06)*364.76*(1. - Install_loss_factor)
         EFFP = adv_ratio*ctx/cp
         EFFPI = EFFP*(1. - Install_loss_factor)
 
@@ -111,7 +114,7 @@ def prop_perform():
         print()
 
 
-def perfm(iw, cp, adv_ratio, act_fac, num_blade, cli, mach, tip_mach, kwrite):
+def perfm(iw, cp, adv_ratio, act_fac, num_blades, cli, mach, tip_mach, kwrite):
     """
     IW=1      SHP INPUT (CP)
     IW=2      THRUST INPUT
@@ -121,7 +124,7 @@ def perfm(iw, cp, adv_ratio, act_fac, num_blade, cli, mach, tip_mach, kwrite):
     adv_ratio (input)  ADVANCE RATIO
     act_fac   (input)  Actitivty Factor per Blade (ref. 150, range 80 - 200). 
               installation lost = thrust loss due to propeller installed ahead of nacelle (verses a propeller all by itself)
-    num_blade (input)  number of blade (range 2 - 8)
+    num_blades (input)  number of blade (range 2 - 8)
     cli       (input)  blade integrated lift coeff (ref. 0.5, range 0.3 - 0.8)
     mach      (input)  Mach
     tip_mach  (input)  Tip Mach
@@ -225,13 +228,15 @@ def perfm(iw, cp, adv_ratio, act_fac, num_blade, cli, mach, tip_mach, kwrite):
         [57.5, 60., 62.5, 65., 67.5, 70., 0.0, 0.0, 0.0, 0.0],
     ]
     BLDCR = [
-        [1.84, 1.775, 1.75, 1.74, 1.76, 1.78, 1.80, 1.81, 1.835, 1.85, 1.865, 1.875, 1.88, 1.88],
+        [1.84, 1.775, 1.75, 1.74, 1.76, 1.78, 1.80,
+            1.81, 1.835, 1.85, 1.865, 1.875, 1.88, 1.88],
         [1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00],
         [.585, .635, .675, .710, .738, .745, .758, .755, .705, .735, .710, .725, .725, .725],
         [.415, .460, .505, .535, .560, .575, .600, .610, .630, .630, .610, .605, .600, .600]
     ]
     BTDCR = [
-        [1.58, 1.685, 1.73, 1.758, 1.777, 1.802, 1.828, 1.839, 1.848, 1.850, 1.850, 1.850, 1.850, 1.850],
+        [1.58, 1.685, 1.73, 1.758, 1.777, 1.802, 1.828,
+            1.839, 1.848, 1.850, 1.850, 1.850, 1.850, 1.850],
         [1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00],
         [.918, .874, .844, .821, .802, .781, .764, .752, .750, .750, .750, .750, .750, .750],
         [.864, .797, .758, .728, .701, .677, .652, .640, .630, .622, .620, .620, .620, .620]
@@ -273,16 +278,20 @@ def perfm(iw, cp, adv_ratio, act_fac, num_blade, cli, mach, tip_mach, kwrite):
     TFCLI = [1.22, 1.105, 1.0, .882, .792, .665, .540]
     XLB = [2.0, 4.0, 6.0, 8.0]
     XPCLI = [
-        [4.26, 2.285, 1.780, 1.568, 1.452, 1.300, 1.220, 1.160, 1.110, 1.085, 1.054, 1.048, 0.0, 0.0],
-        [2.0, 1.88, 1.652, 1.408, 1.292, 1.228, 1.188, 1.132, 1.105, 1.08, 1.058, 1.042, 1.029, 1.022],
+        [4.26, 2.285, 1.780, 1.568, 1.452, 1.300, 1.220,
+            1.160, 1.110, 1.085, 1.054, 1.048, 0.0, 0.0],
+        [2.0, 1.88, 1.652, 1.408, 1.292, 1.228, 1.188,
+            1.132, 1.105, 1.08, 1.058, 1.042, 1.029, 1.022],
         [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-        [0.0, .40, .52, .551, .619, .712, .775, .815, .845, .865, .891,.928, .958, .975],
+        [0.0, .40, .52, .551, .619, .712, .775, .815, .845, .865, .891, .928, .958, .975],
         [0.00, .436, .545, .625, .682, .726, .755, .804, .835, .864, .889, .914, .935, .944],
         [0.00, .333, .436, .520, .585, .635, .670, .730, .770, .807, .835, .871, .897, .909]
     ]
     XTCLI = [
-        [22.85, 2.40, 1.75, 1.529, 1.412, 1.268, 1.191, 1.158, 1.130, 1.122, 1.108, 1.108, 0.0, 0.0],
-        [5.5, 2.27, 1.880, 1.40, 1.268, 1.208, 1.170, 1.110, 1.089, 1.071, 1.060, 1.054, 1.051, 1.048],
+        [22.85, 2.40, 1.75, 1.529, 1.412, 1.268, 1.191,
+            1.158, 1.130, 1.122, 1.108, 1.108, 0.0, 0.0],
+        [5.5, 2.27, 1.880, 1.40, 1.268, 1.208, 1.170, 1.110,
+            1.089, 1.071, 1.060, 1.054, 1.051, 1.048],
         [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
         [.000, .399, .694, .787, .831, .860, .881, .908, .926, .940, .945, .951, .958, .958],
         [.000, .251, .539, .654, .719, .760, .788, .831, .865, .885, .900, .910, .916, .916],
@@ -387,10 +396,10 @@ def perfm(iw, cp, adv_ratio, act_fac, num_blade, cli, mach, tip_mach, kwrite):
         NCLTT = iz
         NCL_flg = 1  # flag that given lift coeff (cli) falls on a node point of CL_List
 
-    lmod = (num_blade % 2) + 1
+    lmod = (num_blades % 2) + 1
     if (lmod == 1):
         nbb = 1
-        idx_blade = int(num_blade/2.0)
+        idx_blade = int(num_blades/2.0)
         # even number of blades idx_blade = 1 if 2 blades;
         #                       idx_blade = 2 if 4 blades;
         #                       idx_blade = 3 if 6 blades;
@@ -573,7 +582,8 @@ def perfm(iw, cp, adv_ratio, act_fac, num_blade, cli, mach, tip_mach, kwrite):
                     NERPT = 5
                     if (limit == 1):
                         # off lower bound only.
-                        print(f"ERROR IN PROP. PERF.-- NERPT={NERPT}, LIMIT={limit}, il = {il}, kl = {kl}")
+                        print(
+                            f"ERROR IN PROP. PERF.-- NERPT={NERPT}, LIMIT={limit}, il = {il}, kl = {kl}")
                     if (adv_ratio != 0.0):
                         ZMCRT, limit = unint(ZJCL, ZMCRL[NNCLT], adv_ratio)
                         DMN = mach - ZMCRT
@@ -662,15 +672,15 @@ def perfm(iw, cp, adv_ratio, act_fac, num_blade, cli, mach, tip_mach, kwrite):
     if (nbb != 1):
         # interpolation by the number of blades if odd number
         if (iw == 1 or iw == 3):
-            ang_blade, limit = unint(XLB, BLLL[:4], num_blade)
-            ct, limit = unint(XLB, CTTT, num_blade)
+            ang_blade, limit = unint(XLB, BLLL[:4], num_blades)
+            ct, limit = unint(XLB, CTTT, num_blades)
         elif (iw == 2):
-            ang_blade, limit = unint(XLB, BLLL[:4], num_blade)
-            cp, limit = unint(XLB, CPPP, num_blade)
+            ang_blade, limit = unint(XLB, BLLL[:4], num_blades)
+            cp, limit = unint(XLB, CPPP, num_blades)
         elif (iw == 4):
-            ct, limit = unint(XLB, CTTT, num_blade)
-            cp, limit = unint(XLB, CPPP, num_blade)
-        xft, limit = unint(XLB, XXXFT, num_blade)
+            ct, limit = unint(XLB, CTTT, num_blades)
+            cp, limit = unint(XLB, CPPP, num_blades)
+        xft, limit = unint(XLB, XXXFT, num_blades)
 
         if (iw == 1 or iw == 3):
             # print(f"final blade_angle = {ang_blade}")
@@ -925,14 +935,14 @@ def tloss(sqa, vktas, tipspd):
     aje = [0., 0.5, 1.0, 2.0, 3.0, 4.0, 5.0]
     asqa = [0.00, 0.04, 0.08, 0.12, 0.16, 0.20, 0.24, 0.28, 0.32]
     array_blockage_factors = [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
-           0.992, 0.991, 0.988, 0.983, 0.976, 0.970, 0.963,
-           0.986, 0.982, 0.977, 0.965, 0.953, 0.940, 0.927,
-           0.979, 0.974, 0.967, 0.948, 0.929, 0.908, 0.887,
-           0.972, 0.965, 0.955, 0.932, 0.905, 0.872, 0.835,
-           0.964, 0.954, 0.943, 0.912, 0.876, 0.834, 0.786,
-           0.955, 0.943, 0.928, 0.892, 0.848, 0.801, 0.751,
-           0.948, 0.935, 0.917, 0.872, 0.820, 0.763, 0.706,
-           0.940, 0.924, 0.902, 0.848, 0.790, 0.726, 0.662]
+                              0.992, 0.991, 0.988, 0.983, 0.976, 0.970, 0.963,
+                              0.986, 0.982, 0.977, 0.965, 0.953, 0.940, 0.927,
+                              0.979, 0.974, 0.967, 0.948, 0.929, 0.908, 0.887,
+                              0.972, 0.965, 0.955, 0.932, 0.905, 0.872, 0.835,
+                              0.964, 0.954, 0.943, 0.912, 0.876, 0.834, 0.786,
+                              0.955, 0.943, 0.928, 0.892, 0.848, 0.801, 0.751,
+                              0.948, 0.935, 0.917, 0.872, 0.820, 0.763, 0.706,
+                              0.940, 0.924, 0.902, 0.848, 0.790, 0.726, 0.662]
 
     zji = 5.309 * vktas/tipspd
     if (sqa > 0.32):
@@ -1080,9 +1090,9 @@ def biv(x, y, ax, ay, az1):
         zk = az1[m2] + fx*(az1[m1] - az1[m2])
         zkm1 = az1[m4] + fx*(az1[m3] - az1[m4])
         z = zkm1 + fy*(zk - zkm1)
-        #nerr = 1
+        # nerr = 1
     else:
-        #nerr = 2
+        # nerr = 2
         print(
             f"x = {x}, ax[0] = {ax[0]}, ax[-1] = {ax[-1]}, y = {y}, ay[0] = {ay[0]}, ay[-1] = {ay[-1]}")
         raise Exception("x or y is not in the right range.")
