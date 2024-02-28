@@ -251,9 +251,9 @@ class PreHamiltonStandard(om.ExplicitComponent):
         self.add_input(Aircraft.Engine.PROPELLER_TIP_SPEED, val=0.0, units='ft/s')
         self.add_input(Aircraft.Engine.PROPELLER_DIAMETER, val=0.0, units='ft')
         self.add_input(Dynamic.Mission.SHAFT_POWER, val=0.0, units='hp')
-        self.add_input('rho', val=0.0, units='slug/ft**3')
+        self.add_input(Dynamic.Mission.DENSITY, val=0.0, units='slug/ft**3')
         self.add_input(Dynamic.Mission.VELOCITY, val=0.0, units='knot')
-        self.add_input('temp', val=0.0, units='degR')
+        self.add_input(Dynamic.Mission.TEMPERATURE, val=0.0, units='degR')
 
         self.add_output('power_coefficient', val=0.0, units='unitless')
         self.add_output('adv_ratio', val=0.0, units='unitless')
@@ -261,18 +261,90 @@ class PreHamiltonStandard(om.ExplicitComponent):
         self.add_output('tip_mach', val=0.0, units='unitless')
         self.add_output('density_ratio', val=0.0, units='unitless')
 
+    def setup_partials(self):
+        self.declare_partials('density_ratio', Dynamic.Mission.DENSITY)
+        self.declare_partials('density_ratio', [
+            Aircraft.Engine.PROPELLER_TIP_SPEED,
+            Aircraft.Engine.PROPELLER_DIAMETER,
+            Dynamic.Mission.SHAFT_POWER,
+            Dynamic.Mission.VELOCITY,
+            Dynamic.Mission.TEMPERATURE,
+        ], dependent=False)
+        self.declare_partials('tip_mach', [
+            Aircraft.Engine.PROPELLER_TIP_SPEED,
+            Dynamic.Mission.TEMPERATURE,
+        ])
+        self.declare_partials('tip_mach', [
+            Aircraft.Engine.PROPELLER_DIAMETER,
+            Dynamic.Mission.SHAFT_POWER,
+            Dynamic.Mission.DENSITY,
+            Dynamic.Mission.VELOCITY,
+        ], dependent=False)
+        self.declare_partials('mach', [
+            Dynamic.Mission.VELOCITY,
+            Dynamic.Mission.TEMPERATURE,
+        ])
+        self.declare_partials('mach', [
+            Aircraft.Engine.PROPELLER_TIP_SPEED,
+            Aircraft.Engine.PROPELLER_DIAMETER,
+            Dynamic.Mission.SHAFT_POWER,
+            Dynamic.Mission.DENSITY,
+        ], dependent=False)
+        self.declare_partials('adv_ratio', [
+            Dynamic.Mission.VELOCITY,
+            Aircraft.Engine.PROPELLER_TIP_SPEED,
+        ])
+        self.declare_partials('adv_ratio', [
+            Aircraft.Engine.PROPELLER_DIAMETER,
+            Dynamic.Mission.SHAFT_POWER,
+            Dynamic.Mission.DENSITY,
+            Dynamic.Mission.TEMPERATURE,
+        ], dependent=False)
+        self.declare_partials('power_coefficient', [
+            Dynamic.Mission.SHAFT_POWER,
+            Dynamic.Mission.DENSITY,
+            Aircraft.Engine.PROPELLER_TIP_SPEED,
+            Aircraft.Engine.PROPELLER_DIAMETER,
+        ])
+        self.declare_partials('power_coefficient', [
+            Dynamic.Mission.VELOCITY, 
+            Dynamic.Mission.TEMPERATURE
+        ], dependent=False)
+
     def compute(self, inputs, outputs):
-        outputs['density_ratio'] = inputs['rho']/RHO_SEA_LEVEL_ENGLISH
-        FC = math.sqrt(TSLS_DEGR/inputs['temp'])
+        outputs['density_ratio'] = self.get_val(Dynamic.Mission.DENSITY)/RHO_SEA_LEVEL_ENGLISH
+        sqrt_temp_ratio = math.sqrt(TSLS_DEGR/self.get_val(Dynamic.Mission.TEMPERATURE)[0])
         #vktas = Dynamic.Mission.VELOCITY*0.5924838739671128
         vktas = self.get_val(Dynamic.Mission.VELOCITY)[0]
-        outputs['mach'] = .00150933 * vktas * FC  # at sea level, 1 knot = .00150933 (actually 0.00149984 Mach)
+        outputs['mach'] = 0.00150933 * vktas * sqrt_temp_ratio  # at sea level, 1 knot = .00150933 (actually 0.00149984 Mach)
         tipspd = self.get_val(Aircraft.Engine.PROPELLER_TIP_SPEED)[0]
-        outputs['tip_mach'] = tipspd*FC/1118.21948771  # 1118.21948771 is speed of sound at sea level
+        outputs['tip_mach'] = tipspd*sqrt_temp_ratio/1118.21948771  # 1118.21948771 is speed of sound at sea level
         outputs['adv_ratio'] = 5.309*vktas/tipspd
         diam_prop = self.get_val(Aircraft.Engine.PROPELLER_DIAMETER)[0]
-        shp = self.get_val(Dynamic.Mission.SHAFT_POWER)
+        shp = self.get_val(Dynamic.Mission.SHAFT_POWER)[0]
         outputs['power_coefficient'] = shp*10.E10/outputs['density_ratio']/(2.*tipspd**3*diam_prop**2*6966.)
+
+    def compute_partials(self, inputs, partials):
+        vktas = self.get_val(Dynamic.Mission.VELOCITY)[0]
+        tipspd = self.get_val(Aircraft.Engine.PROPELLER_TIP_SPEED)[0]
+        rho = self.get_val(Dynamic.Mission.DENSITY)[0]
+        diam_prop = self.get_val(Aircraft.Engine.PROPELLER_DIAMETER)[0]
+        shp = self.get_val(Dynamic.Mission.SHAFT_POWER)[0]
+        temp = self.get_val(Dynamic.Mission.TEMPERATURE)[0]
+        sqrt_temp_ratio = math.sqrt(TSLS_DEGR/temp)
+        density_ratio = self.get_val(Dynamic.Mission.DENSITY)/RHO_SEA_LEVEL_ENGLISH
+
+        partials["density_ratio", Dynamic.Mission.DENSITY] = 1 / RHO_SEA_LEVEL_ENGLISH
+        #partials["tip_mach", Aircraft.Engine.PROPELLER_TIP_SPEED] = sqrt_temp_ratio / 1118.21948771
+        #partials["tip_mach", Dynamic.Mission.TEMPERATURE] = -tipspd * sqrt_temp_ratio/(1118.21948771*2*temp)
+        #partials["mach", Dynamic.Mission.VELOCITY] = 0.00150933 * sqrt_temp_ratio
+        #partials["mach", Dynamic.Mission.TEMPERATURE] = -0.00150933 * vktas * sqrt_temp_ratio / (2 * temp)
+        #partials["adv_ratio", Dynamic.Mission.VELOCITY] = 5.309 / tipspd
+        #partials["adv_ratio", Aircraft.Engine.PROPELLER_TIP_SPEED] = -5.309 / (tipspd * tipspd)
+        #partials["power_coefficient", Dynamic.Mission.SHAFT_POWER] = 10.E10 * RHO_SEA_LEVEL_ENGLISH / (rho * 2.*tipspd**3*diam_prop**2*6966.)
+        #partials["power_coefficient", Dynamic.Mission.DENSITY] = -10.E10 * RHO_SEA_LEVEL_ENGLISH / (rho * rho * 2.*tipspd**3*diam_prop**2*6966.)
+        #partials["power_coefficient", Aircraft.Engine.PROPELLER_TIP_SPEED] = -3*10.E10 * RHO_SEA_LEVEL_ENGLISH / (rho * rho * 2.*tipspd**4*diam_prop**2*6966.)
+        #partials["power_coefficient", Aircraft.Engine.PROPELLER_DIAMETER] = -2*10.E10 * RHO_SEA_LEVEL_ENGLISH / (rho * rho * 2.*tipspd**3*diam_prop**3*6966.)
 
 
 # perfm will probably be a group
@@ -719,14 +791,33 @@ class PostHamiltonStandard(om.ExplicitComponent):
 
 if __name__ == "__main__":
     model = om.Group()
-    hs = model.add_subsystem('hs', HamiltonStandard())
+    prehs = model.add_subsystem('prehs', PreHamiltonStandard(), promotes=['*'])
+    prob = om.Problem(model)
+    prob.set_solver_print(level=1)
+    #prob.setup(mode='rev')
+    prob.setup()
+
+    prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED, 785.0, units='ft/s')
+    prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 12.0, units='ft')
+    prob.set_val(Dynamic.Mission.SHAFT_POWER, val=1850.0, units='hp')
+    prob.set_val(Dynamic.Mission.DENSITY, val=RHO_SEA_LEVEL_ENGLISH, units='slug/ft**3')
+    prob.set_val(Dynamic.Mission.VELOCITY, val=0.0, units='knot')
+    prob.set_val(Dynamic.Mission.TEMPERATURE, val=TSLS_DEGR, units='degR')
+    prob.run_model()
+
+    data = prob.check_partials(compact_print=False, show_only_incorrect=True)
+
+
+if __name__ == "__main2__":
+    model = om.Group()
+    hs = model.add_subsystem('hs', HamiltonStandard(), promotes=['*'])
     prob = om.Problem(model)
     prob.setup()
 
     prob.set_val('hs.power_coefficient', 0.2352124866909703)  # 0.235239178
     prob.set_val('hs.adv_ratio', 0.0)
-    prob.set_val('Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR', 114)
-    prob.set_val('Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT', 0.5)
+    prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, 114)
+    prob.set_val(Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT, 0.5)
     prob.set_val('hs.mach', 0.0)
     prob.set_val('hs.tip_mach', 0.7154230531595535)  # 0.71542275
     hs.options.set(num_blades=4)
