@@ -6,7 +6,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from packaging import version
 
-from aviary.subsystems.propulsion.engine_deck import EngineDeck, TurboPropDeck
+from aviary.subsystems.propulsion.engine_deck import EngineDeck
 from aviary.subsystems.propulsion.propulsion_mission import (
     PropulsionMission, PropulsionSum)
 from aviary.utils.aviary_values import AviaryValues
@@ -206,66 +206,6 @@ class PropulsionMissionTest(unittest.TestCase):
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
-
-
-class TurboPropTest(unittest.TestCase):
-    def setUp(self):
-        self.prob = om.Problem()
-
-    @unittest.skipIf(version.parse(openmdao.__version__) < version.parse("3.26"), "Skipping due to OpenMDAO version being too low (<3.26)")
-    def test_case_1(self):
-        # 'clean' test using GASP-derived engine deck
-        nn = 20
-
-        filename = get_path(
-            'models/engines/PT6.deck')
-
-        options = AviaryValues()
-        options.set_val(Aircraft.Engine.DATA_FILE, filename)
-        options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
-        options.set_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER, 1.0)
-        options.set_val(Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER, 1.0)
-        options.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM, 0.0)
-        options.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM, 1.0)
-        options.set_val(Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION, 0.0, units='lbm/h')
-        options.set_val(Aircraft.Engine.SCALE_PERFORMANCE, True)
-        options.set_val(Mission.Summary.FUEL_FLOW_SCALER, 1.0)
-        options.set_val(Aircraft.Engine.SCALE_FACTOR, 1)
-        options.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, False)
-        options.set_val(Aircraft.Engine.IGNORE_NEGATIVE_THRUST, False)
-        options.set_val(Aircraft.Engine.FLIGHT_IDLE_THRUST_FRACTION, 0.0)
-        options.set_val(Aircraft.Engine.FLIGHT_IDLE_MAX_FRACTION, 1.0)
-        options.set_val(Aircraft.Engine.FLIGHT_IDLE_MIN_FRACTION, 0.08)
-        options.set_val(Aircraft.Engine.GEOPOTENTIAL_ALT, False)
-        options.set_val(Aircraft.Engine.INTERPOLATION_METHOD, 'slinear')
-
-        engine = TurboPropDeck(options=options)
-        preprocess_propulsion(options, [engine])
-
-        self.prob.model = PropulsionMission(num_nodes=nn, aviary_options=options)
-
-        IVC = om.IndepVarComp(Dynamic.Mission.MACH,
-                              np.linspace(0, 0.8, nn),
-                              units='unitless')
-        IVC.add_output(Dynamic.Mission.ALTITUDE,
-                       np.linspace(0, 40000, nn),
-                       units='ft')
-        IVC.add_output(Dynamic.Mission.THROTTLE,
-                       np.linspace(1, 0.7, nn),
-                       units='unitless')
-        self.prob.model.add_subsystem('IVC', IVC, promotes=['*'])
-
-        self.prob.setup(force_alloc_complex=True)
-        self.prob.set_val(Aircraft.Engine.SCALE_FACTOR, options.get_val(
-            Aircraft.Engine.SCALE_FACTOR), units='unitless')
-
-        self.prob.run_model()
-
-        thrust = self.prob.get_val(Dynamic.Mission.THRUST_TOTAL, units='lbf')
-        fuel_flow = self.prob.get_val(
-            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/h')
-        print(thrust)
-        print(fuel_flow)
 
 
 if __name__ == "__main__":
