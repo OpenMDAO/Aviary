@@ -51,12 +51,3 @@ av.add_meta_data(
     meta_data=ExtendedMetaData,
     historical_name={'NPSS': 'shaft.Nmech'}
 )
-
-# av.add_meta_data(
-#     Dynamic.Engine.ELECTRIC_SHAFT_POWER,
-#     units="hp",
-#     desc="Power Extraction from the shaft",
-#     default_value=0.,
-#     meta_data=ExtendedMetaData,
-#     historical_name={'NPSS': 'shaft.HPX'}
-# )

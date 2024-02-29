@@ -9,13 +9,14 @@ import os
 
 from aviary.examples.external_subsystems.engine_NPSS.engine_variables import Aircraft, Dynamic
 
-# Number of points in NPSS model deck.
-# Will need to be updated if the size of the deck changes.
-vec_size = 72
-
 
 class NPSSExternalCodeComp(om.ExternalCodeComp):
+    def initialize(self):
+        self.options.declare('vec_size', default=72, types=int,
+                             desc='number of points in NPSS model deck. Will need to be updated if size of deck changes')
+
     def setup(self):
+        vec_size = self.options['vec_size']
         self.add_input('Alt_DES', val=0.0, units='ft', desc='design altitude')
         self.add_input('MN_DES', val=0.0, units=None, desc='design Mach number')
         self.add_input('W_DES', val=240.0, units='lbm/s', desc='design mass flow')
@@ -52,6 +53,7 @@ class NPSSExternalCodeComp(om.ExternalCodeComp):
         Alt_DES = inputs['Alt_DES']
         MN_DES = inputs['MN_DES']
         W_DES = inputs['W_DES']
+        vec_size = self.options['vec_size']
 
         # generate the input file for the external code
         with open(self.input_file, 'w') as input_file:
@@ -96,8 +98,13 @@ class NPSSExternalCodeComp(om.ExternalCodeComp):
 
 
 class DesignEngineGroup(om.Group):
+    def initialize(self):
+        self.options.declare('vec_size', default=72, types=int,
+                             desc='number of points in NPSS model deck. Will need to be updated if size of deck changes')
+
     def setup(self):
-        self.add_subsystem('DESIGN', NPSSExternalCodeComp(),
+        vec_size = self.options['vec_size']
+        self.add_subsystem('DESIGN', NPSSExternalCodeComp(vec_size=vec_size),
                            promotes_inputs=[('W_DES', Aircraft.Engine.DESIGN_MASS_FLOW)],
                            promotes_outputs=[('Fn_SLS', Aircraft.Engine.SCALED_SLS_THRUST), ('thrust_training_data', 'Fn_train'),
                                              ('thrustmax_training_data', 'Fn_max_train'), ('Wf_training_data', 'Wf_td')])
