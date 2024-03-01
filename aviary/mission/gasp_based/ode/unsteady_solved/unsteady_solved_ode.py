@@ -95,7 +95,7 @@ class UnsteadySolvedODE(BaseODE):
                 ("h",
                  Dynamic.Mission.ALTITUDE)],
             promotes_outputs=[
-                "rho",
+                ("rho", Dynamic.Mission.DENSITY),
                 ("sos",
                  Dynamic.Mission.SPEED_OF_SOUND),
                 ("temp",
@@ -118,8 +118,8 @@ class UnsteadySolvedODE(BaseODE):
             UnsteadySolvedFlightConditions(num_nodes=nn,
                                            ground_roll=ground_roll,
                                            input_speed_type=input_speed_type),
-            promotes_inputs=["*"],
-            promotes_outputs=["*"],
+            promotes_inputs=["*", ('rho', Dynamic.Mission.DENSITY)],
+            promotes_outputs=["*", ('TAS', Dynamic.Mission.VELOCITY)],
         )
 
         control_iter_group = self.add_subsystem("control_iter_group",
@@ -194,8 +194,8 @@ class UnsteadySolvedODE(BaseODE):
 
         eom_comp = UnsteadySolvedEOM(num_nodes=nn, ground_roll=ground_roll)
 
-        input_list = ['*']
-        input_list.append((Dynamic.Mission.THRUST_TOTAL, "thrust_req"))
+        input_list = ['*', (Dynamic.Mission.THRUST_TOTAL, "thrust_req"),
+                      ('TAS', Dynamic.Mission.VELOCITY)]
         control_iter_group.add_subsystem("eom", subsys=eom_comp,
                                          promotes_inputs=input_list,
                                          promotes_outputs=["*"])
@@ -247,7 +247,8 @@ class UnsteadySolvedODE(BaseODE):
             ParamPort.set_default_vals(self)
 
         onn = np.ones(nn)
-        self.set_input_defaults(name="rho", val=rho_sl * onn, units="slug/ft**3")
+        self.set_input_defaults(name=Dynamic.Mission.DENSITY,
+                                val=rho_sl * onn, units="slug/ft**3")
         self.set_input_defaults(
             name=Dynamic.Mission.SPEED_OF_SOUND,
             val=1116.4 * onn,
@@ -255,7 +256,7 @@ class UnsteadySolvedODE(BaseODE):
         if not self.options['ground_roll']:
             self.set_input_defaults(
                 name=Dynamic.Mission.FLIGHT_PATH_ANGLE, val=0.0 * onn, units="rad")
-        self.set_input_defaults(name="TAS",
+        self.set_input_defaults(name=Dynamic.Mission.VELOCITY,
                                 val=250. * onn, units="kn")
         self.set_input_defaults(
             name=Dynamic.Mission.ALTITUDE,

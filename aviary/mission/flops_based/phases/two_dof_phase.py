@@ -77,7 +77,6 @@ class TwoDOFPhase(PhaseBuilderBase):
 
         user_options: AviaryValues = self.user_options
 
-        throttle_setting = user_options.get_val('throttle_setting')
         control_order = user_options.get_val('control_order')
 
         fix_initial = user_options.get_val('fix_initial')
@@ -228,7 +227,6 @@ TwoDOFPhase._add_meta_data('optimize_mach', val=False)
 
 TwoDOFPhase._add_meta_data('optimize_altitude', val=False)
 
-TwoDOFPhase._add_meta_data('throttle_setting', val=None, desc='throttle setting')
 TwoDOFPhase._add_meta_data('initial_bounds', val=(0., 100.),
                            units='s', desc='initial bounds')
 TwoDOFPhase._add_meta_data('duration_bounds', val=(

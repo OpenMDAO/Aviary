@@ -1,3 +1,4 @@
+import openmdao.api as om
 import aviary.api as av
 
 
@@ -24,12 +25,12 @@ subsystem_options = {'core_aerodynamics':
                       'lift_coefficient_factor': 1.,
                       'drag_coefficient_factor': .5}}
 
-# CDI_table = "subsystems/aerodynamics/flops_based/test/large_single_aisle_1_CDI_polar.csv"
-# CD0_table = "subsystems/aerodynamics/flops_based/test/large_single_aisle_1_CD0_polar.csv"
+CDI_table = "subsystems/aerodynamics/flops_based/test/large_single_aisle_1_CDI_polar.csv"
+CD0_table = "subsystems/aerodynamics/flops_based/test/large_single_aisle_1_CD0_polar.csv"
 
-# kwargs = {'method': 'tabular', 'CDI_data': CDI_table,
-#             'CD0_data': CD0_table}
-# subsystem_options = {'core_aerodynamics': kwargs}
+kwargs = {'method': 'tabular', 'CDI_data': CDI_table,
+          'CD0_data': CD0_table}
+subsystem_options = {'core_aerodynamics': kwargs}
 
 phase_info = {
     "pre_mission": {"include_takeoff": False, "optimize_mass": False},
@@ -38,8 +39,7 @@ phase_info = {
             'num_segments': 10,
             'order': 3,
             'fix_initial': True,
-            'throttle_setting': throttle_max,
-            'throttle_enforcement': 'path_constraint',
+            'throttle_enforcement': 'bounded',
             'ground_roll': False,
             'clean': True,
             'initial_ref': (1.e3, 'ft'),
@@ -108,12 +108,11 @@ prob.setup()
 
 prob.set_initial_guesses()
 
-# import openmdao.api as om
-# om.n2(prob)
+om.n2(prob)
 
 prob.run_aviary_problem()
 
 # prob.check_partials(compact_print=True)
 
-# prob.model.list_inputs(units=True, print_arrays=True)
-# prob.model.list_outputs(units=True, print_arrays=True)
+prob.model.list_inputs(units=True, print_arrays=True)
+prob.model.list_outputs(units=True, print_arrays=True)
