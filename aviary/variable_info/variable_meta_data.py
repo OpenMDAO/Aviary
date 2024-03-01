@@ -6933,6 +6933,19 @@ add_meta_data(
 )
 
 add_meta_data(
+    Mission.Summary.RESERVE_FUEL_BURNED,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='lbm',
+    desc='fuel burned during reserve phases'
+         'does not include fuel burned in regular phases',
+    default_value=0.,
+)
+
+add_meta_data(
     Mission.Summary.TOTAL_FUEL_MASS,
     meta_data=_MetaData,
     historical_name={"GASP": "INGASP.WFA",
@@ -6945,18 +6958,6 @@ add_meta_data(
          'and fuel margin',
 )
 
-add_meta_data(
-    Mission.Summary.RESERVE_FUEL_BURNED,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='lbm',
-    desc='fuel burned during reserve phases'
-         'does not include fuel burned in regular phases',
-    default_value=0.,
-)
 
 #  _______           _                      __    __
 # |__   __|         | |                    / _|  / _|
