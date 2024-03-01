@@ -2,6 +2,7 @@
 This file contains functions needed to run Aviary using the Level 1 interface.
 """
 import os
+from pathlib import Path
 
 import openmdao.api as om
 from aviary.variable_info.enums import AnalysisScheme
@@ -60,7 +61,7 @@ def run_aviary(aircraft_filename, phase_info, optimizer=None,
     """
 
     # Build problem
-    prob = AviaryProblem(analysis_scheme)
+    prob = AviaryProblem(analysis_scheme, name=Path(aircraft_filename).stem)
 
     # Load aircraft and options data from user
     # Allow for user overrides here
