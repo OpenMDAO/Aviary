@@ -63,8 +63,8 @@ class TurboPropTest(unittest.TestCase):
             Aircraft.Engine.SCALE_FACTOR), units='unitless')
 
     def get_results(self, point_names=None, display_results=False):
-        shp = self.prob.get_val(Dynamic.Mission.SHAFT_POWER_CORRECTED, units='hp')
-        shp = self.prob.get_val('engine_deck.shaft_power_unscaled', units='hp')
+        # shp = self.prob.get_val(Dynamic.Mission.SHAFT_POWER_CORRECTED, units='hp')
+        shp = self.prob.get_val('engine_deck.shaft_power_corrected_unscaled', units='hp')
         total_thrust = self.prob.get_val(Dynamic.Mission.THRUST, units='lbf')
         prop_thrust = self.prob.get_val(
             'engine_deck.total_thrust.prop_thrust', units='lbf')

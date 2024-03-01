@@ -599,6 +599,7 @@ class Dynamic:
         MASS_RATE = 'mass_rate'
         NOX_RATE = 'nox_rate'
         NOX_RATE_TOTAL = 'nox_rate_total'
+        SHAFT_POWER = 'shaft_power'
         SHAFT_POWER_CORRECTED = 'shaft_power_corrected'
         SPECIFIC_ENERGY = 'specific_energy'
         SPECIFIC_ENERGY_RATE = 'specific_energy_rate'

@@ -50,6 +50,7 @@ HYBRID_THROTTLE = EngineModelVariables.HYBRID_THROTTLE
 THRUST = EngineModelVariables.THRUST
 TAILPIPE_THRUST = EngineModelVariables.TAILPIPE_THRUST
 GROSS_THRUST = EngineModelVariables.GROSS_THRUST
+SHAFT_POWER = EngineModelVariables.SHAFT_POWER
 SHAFT_POWER_CORRECTED = EngineModelVariables.SHAFT_POWER_CORRECTED
 RAM_DRAG = EngineModelVariables.RAM_DRAG
 FUEL_FLOW = EngineModelVariables.FUEL_FLOW
@@ -73,7 +74,8 @@ aliases = {
     ELECTRIC_POWER: 'electric_power',
     NOX_RATE: ['nox', 'nox_rate'],
     TEMPERATURE: ['t4', 'temp', 'temperature'],
-    SHAFT_POWER_CORRECTED: ['shaft_power', 'shaft_power_corrected', 'shp', 'corrected_horsepower'],
+    SHAFT_POWER: ['shaft_power', 'shp'],
+    SHAFT_POWER_CORRECTED: ['shaft_power_corrected', 'shpcor', 'corrected_horsepower'],
     TAILPIPE_THRUST: ['tailpipe_thrust'],
 }
 
@@ -1354,13 +1356,25 @@ class EngineDeck(EngineModel):
 
 
 class TurboPropDeck(EngineDeck):
-    def __init__(self, name='engine_deck', options: AviaryValues = None, data: NamedValues = None, prop_model=None):
+    def __init__(
+        self,
+        name='engine_deck',
+        options: AviaryValues = None,
+        data: NamedValues = None,
+        prop_model=None,
+        power_type=EngineModelVariables.SHAFT_POWER_CORRECTED,
+    ):
         super().__init__(name, options, data)
 
         if THRUST in self.required_variables:
             self.required_variables.remove(THRUST)
 
-        self.required_variables.add(SHAFT_POWER_CORRECTED)
+        if power_type in (SHAFT_POWER, SHAFT_POWER_CORRECTED):
+            self.required_variables.add(power_type)
+            self.power_type = power_type
+        else:
+            raise ValueError(
+                f'{power_type} is not not a valid power_type.\nChose from (EngineModelVariables.SHAFT_POWER, EngineModelVariables.SHAFT_POWER_CORRECTED)')
         self.required_variables.add(TAILPIPE_THRUST)
 
         self.prop_model = prop_model
@@ -1396,14 +1410,19 @@ class TurboPropDeck(EngineDeck):
             self._generate_flight_idle()
 
     def build_mission(self, num_nodes, aviary_inputs):
+        power_type = self.power_type
         engine_group = om.Group()
 
         engine = self.build_engine_interpolator(num_nodes, aviary_inputs)
         units = self.engine_variable_units
-        engine.add_output('shaft_power_unscaled',
-                          self.data[SHAFT_POWER_CORRECTED],
-                          units=units[SHAFT_POWER_CORRECTED],
-                          desc='Current corrected shaft power (unscaled)')
+        if power_type is SHAFT_POWER_CORRECTED:
+            correction = '_corrected'
+        else:
+            correction = ''
+        engine.add_output('shaft_power'+correction+'_unscaled',
+                          self.data[power_type],
+                          units=units[power_type],
+                          desc='Current'+correction.replace('_', ' ')+' shaft power (unscaled)')
         engine.add_output('tailpipe_thrust_unscaled',
                           self.data[TAILPIPE_THRUST],
                           units=units[TAILPIPE_THRUST],
@@ -1418,6 +1437,10 @@ class TurboPropDeck(EngineDeck):
                                    engine,
                                    promotes_inputs=['*'],
                                    promotes_outputs=['*'])
+
+        if power_type is SHAFT_POWER_CORRECTED:
+            self._uncorrect_shaft_power(engine_group, num_nodes=num_nodes)
+
         scaling_group = om.Group()
         variables_to_scale = ['shaft_power', 'tailpipe_thrust',
                               'nox_rate', 'electric_power', 'thrust_net_max']
@@ -1437,7 +1460,7 @@ class TurboPropDeck(EngineDeck):
             engine_group.add_subsystem(
                 'propeller_model',
                 self.prop_model,
-                promotes_inputs=[Dynamic.Mission.SHAFT_POWER_CORRECTED],
+                promotes_inputs=[Dynamic.Mission.SHAFT_POWER],
                 promotes_outputs=['prop_thrust'],
             )
         else:
@@ -1477,6 +1500,71 @@ class TurboPropDeck(EngineDeck):
             promotes_outputs=[('scaled_variable', alias)]
         )
 
+    def _uncorrect_shaft_power(self,  engine_group: om.Group, num_nodes=1, scaled=False):
+        if scaled:
+            suffix = ''
+        else:
+            suffix = '_unscaled'
+        anti_correction_group = om.Group()
+        anti_correction_group.add_subsystem(
+            'pressure_term',
+            om.ExecComp(
+                'delta_T = (P0 * (1 + .2*mach**2)**3.5) / P_amb',
+                delta_T={'units': "unitless", 'shape': num_nodes},
+                P0={'units': 'psi', 'shape': num_nodes},
+                mach={'units': 'unitless', 'shape': num_nodes},
+                P_amb={'val': np.full(num_nodes, 14.696), 'units': 'psi', },
+            ),
+            promotes_inputs=[
+                ('P0', 'freestream_pressure'),
+                ('mach', Dynamic.Mission.MACH),
+            ],
+            promotes_outputs=['delta_T'],
+        )
+        anti_correction_group.add_subsystem(
+            'temperature_term',
+            om.ExecComp(
+                'theta_T = T0 * (1 + .2*mach**2)/T_amb',
+                theta_T={'units': "unitless", 'shape': num_nodes},
+                T0={'units': 'degR', 'shape': num_nodes},
+                mach={'units': 'unitless', 'shape': num_nodes},
+                T_amb={'val': np.full(num_nodes, 518.67), 'units': 'degR', },
+            ),
+            promotes_inputs=[
+                ('T0', 'freestream_temperature'),
+                ('mach', Dynamic.Mission.MACH),
+            ],
+            promotes_outputs=['theta_T'],
+        )
+        anti_correction_group.add_subsystem(
+            'uncorrection',
+            om.ExecComp(
+                'shaft_power = shaft_power_corrected * (delta_T + theta_T**.5)',
+                shaft_power={'units': "hp", 'shape': num_nodes},
+                delta_T={'units': "unitless", 'shape': num_nodes},
+                theta_T={'units': "unitless", 'shape': num_nodes},
+                shaft_power_corrected={'units': "hp", 'shape': num_nodes},
+            ),
+            promotes_inputs=[
+                'delta_T',
+                'theta_T',
+                ('shaft_power_corrected', Dynamic.Mission.SHAFT_POWER_CORRECTED+suffix),
+            ],
+            promotes_outputs=[('shaft_power', Dynamic.Mission.SHAFT_POWER+suffix)],
+        )
+        engine_group.add_subsystem(
+            'shaft_power_uncorrection',
+            anti_correction_group,
+            promotes_inputs=[
+                Dynamic.Mission.SHAFT_POWER_CORRECTED+suffix,
+                ('freestream_temperature', Dynamic.Mission.TEMPERATURE),
+                ('freestream_pressure', Dynamic.Mission.STATIC_PRESSURE),
+            ],
+            promotes_outputs=[
+                Dynamic.Mission.SHAFT_POWER+suffix
+            ],
+        )
+
     def _add_dummy_prop(self, engine_group: om.Group, num_nodes=1):
         engine_group.add_subsystem(
             'propeller_model',
@@ -1489,7 +1577,7 @@ class TurboPropDeck(EngineDeck):
             ),
             promotes_inputs=[
                 'eff',
-                ('shaft_power', Dynamic.Mission.SHAFT_POWER_CORRECTED),
+                ('shaft_power', Dynamic.Mission.SHAFT_POWER),
                 ('Vp', Dynamic.Mission.VELOCITY),
             ],
             promotes_outputs=['prop_thrust'],

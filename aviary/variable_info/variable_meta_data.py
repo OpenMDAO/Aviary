@@ -6107,6 +6107,16 @@ add_meta_data(
 )
 
 add_meta_data(
+    Dynamic.Mission.SHAFT_POWER,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'SHPCOR',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='hp',
+    desc='The shaft horsepower'
+)
+add_meta_data(
     Dynamic.Mission.SHAFT_POWER_CORRECTED,
     meta_data=_MetaData,
     historical_name={"GASP": 'SHP',

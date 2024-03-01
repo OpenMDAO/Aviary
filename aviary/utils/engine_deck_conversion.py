@@ -174,7 +174,7 @@ def EngineDeckConverter(input_file=None, output_file=None, data_format=None):
             data[FUEL_FLOW] = tables['fuelflow'][:, 3]
             T4T2 = tables['fuelflow'][:, 1]
             if is_turbo_prop:
-                data[SHAFT_POWER_CORRECTED] = tables['shaft_power'][:, 3]
+                data[SHAFT_POWER_CORRECTED] = tables['shaft_power_corrected'][:, 3]
                 data[TAILPIPE_THRUST] = tables['tailpipe_thrust'][:, 3]
             else:
                 data[THRUST] = tables['thrust'][:, 3]
@@ -357,11 +357,11 @@ def _read_gasp_engine(fp, is_turbo_prop=False):
     the corresponding field. The table is a "tidy format" 2D array where the first three
     columns are the independent varaiables (altitude, T4/T2, and Mach number) and the
     final column is the dependent variable (one of thrust, fuelflow, or airflow for TurboFans or 
-    shaft_power, fuelflow, or tailpipe_thrust for TurboProps).
+    shaft_power_corrected, fuelflow, or tailpipe_thrust for TurboProps).
     """
     with open(fp, "r") as f:
         if is_turbo_prop:
-            table_types = ["shaft_power", "fuelflow", "tailpipe_thrust"]
+            table_types = ["shaft_power_corrected", "fuelflow", "tailpipe_thrust"]
             scalars = _read_tp_header(f)
         else:
             table_types = ["thrust", "fuelflow", "airflow"]
@@ -424,7 +424,7 @@ def _read_table(f, is_turbo_prop=False):
     The table data is returned as a "tidy format" array with three columns for the
     independent variables (altitude, T4/T2, and Mach number) and the final column for
     the table field (one of thrust, fuelflow, or airflow for TurboFans or 
-    shaft_power, fuelflow, or tailpipe_thrust for TurboProps).
+    shaft_power_corrected, fuelflow, or tailpipe_thrust for TurboProps).
     """
     tab_data = None
 
