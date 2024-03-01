@@ -1316,39 +1316,55 @@ class AviaryProblem(om.Problem):
                                                 subsystem_postmission)
 
         if self.mission_method is HEIGHT_ENERGY:
-            phases = list(self.phase_info.keys())  # list of all phases including reserve
+            # Fuel burn in regular phases
             ecomp = om.ExecComp('fuel_burned = initial_mass - mass_final',
                                 initial_mass={'units': 'lbm'},
                                 mass_final={'units': 'lbm'},
                                 fuel_burned={'units': 'lbm'})
 
-            self.post_mission.add_subsystem('fuel_burn', ecomp,
-                                            promotes_outputs=['fuel_burned'])
+            self.post_mission.add_subsystem('fuel_burned', ecomp,
+                                            promotes_outputs=[('fuel_burned', Mission.Summary.FUEL_BURNED)])
 
-            self.model.connect(f"traj.{phases[0]}.timeseries.mass",
-                               "fuel_burn.initial_mass", src_indices=[0])
-            self.model.connect(f"traj.{phases[-1]}.states:mass",
-                               "fuel_burn.mass_final", src_indices=[-1])
+            self.model.connect(f"traj.{self.regular_phases[0]}.timeseries.mass",
+                               "fuel_burned.initial_mass", src_indices=[0])
+            self.model.connect(f"traj.{self.regular_phases[-1]}.states:mass",
+                               "fuel_burned.mass_final", src_indices=[-1])
+
+            # Fuel burn in reserve phases
+            if self.reserve_phases:
+                ecomp = om.ExecComp('reserve_fuel_burned = initial_mass - mass_final',
+                                    initial_mass={'units': 'lbm'},
+                                    mass_final={'units': 'lbm'},
+                                    reserve_fuel_burned={'units': 'lbm'})
+
+                self.post_mission.add_subsystem('reserve_fuel_burned', ecomp,
+                                                promotes_outputs=[('reserve_fuel_burned', Mission.Summary.RESERVE_FUEL_BURNED)])
+
+                self.model.connect(f"traj.{self.reserve_phases[0]}.timeseries.mass",
+                                   "reserve_fuel_burned.initial_mass", src_indices=[0])
+                self.model.connect(f"traj.{self.reserve_phases[-1]}.states:mass",
+                                   "reserve_fuel_burned.mass_final", src_indices=[-1])
 
             self._add_fuel_reserve_component()
 
             # TODO: need to add some sort of check that this value is less than the fuel capacity
             # TODO: the overall_fuel variable is the burned fuel plus the reserve, but should
             # also include the unused fuel, and the hierarchy variable name should be more clear
-            ecomp = om.ExecComp('overall_fuel = fuel_burned + fuel_reserve',
-                                fuel_burned={'units': 'lbm', 'shape': 1},
-                                fuel_reserve={'units': 'lbm', 'shape': 1},
-                                overall_fuel={'units': 'lbm'})
+            ecomp = om.ExecComp('overall_fuel = fuel_burned + reserve_fuel',
+                                overall_fuel={'units': 'lbm', 'shape': 1},
+                                fuel_burned={'units': 'lbm'},  # from regular_phases only
+                                reserve_fuel={'units': 'lbm', 'shape': 1},
+                                )
             self.post_mission.add_subsystem(
                 'fuel_calc', ecomp,
                 promotes_inputs=[
-                    'fuel_burned',
-                    ("fuel_reserve", Mission.Design.RESERVE_FUEL),
+                    ('fuel_burned', Mission.Summary.FUEL_BURNED),
+                    ("reserve_fuel", Mission.Design.RESERVE_FUEL),
                 ],
                 promotes_outputs=[('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS)])
 
             # If a target range has been specified
-            # range is measured from the first phase to the last normal phase
+            # range is measured from the start of the first phase to the end of the last normal phase
             if 'target_range' in self.post_mission_info:
                 target_range = wrapped_convert_units(
                     self.post_mission_info['target_range'], 'nmi')
@@ -1898,13 +1914,14 @@ class AviaryProblem(om.Problem):
                 self._add_hybrid_objective(self.phase_info)
                 self.model.add_objective("obj_comp.obj")
             elif objective_type == "fuel_burned":
-                self.model.add_objective("fuel_burned", ref=ref)
+                self.model.add_objective(Mission.Summary.FUEL_BURNED, ref=ref)
             elif objective_type == "fuel":
                 self.model.add_objective(Mission.Objectives.FUEL, ref=ref)
 
         elif self.mission_method is HEIGHT_ENERGY:
-            ref = ref if ref is not None else default_ref_values.get("fuel_burned", 1)
-            self.model.add_objective("fuel_burned", ref=ref)
+            ref = ref if ref is not None else default_ref_values.get(
+                Mission.Summary.FUEL_BURNED, 1)
+            self.model.add_objective(Mission.Summary.FUEL_BURNED, ref=ref)
 
         else:  # If no 'objective_type' is specified, we handle based on 'problem_type'
             # If 'ref' is not specified, assign a default value
@@ -2550,10 +2567,19 @@ class AviaryProblem(om.Problem):
         else:
             control_type_string = 'control_values'
 
-        self.model.connect(f'traj.{last_flight_phase_name}.states:mass',
-                           Mission.Landing.TOUCHDOWN_MASS, src_indices=[-1])
-        self.model.connect(f'traj.{last_flight_phase_name}.{control_type_string}:altitude', Mission.Landing.INITIAL_ALTITUDE,
-                           src_indices=[0])
+        if HEIGHT_ENERGY:
+            last_regular_phase = self.regular_phases[-1]
+            self.model.connect(f'traj.{last_regular_phase}.states:mass',
+                               Mission.Landing.TOUCHDOWN_MASS, src_indices=[-1])
+            self.model.connect(f'traj.{last_regular_phase}.{control_type_string}:altitude',
+                               Mission.Landing.INITIAL_ALTITUDE,
+                               src_indices=[0])
+        else:
+            self.model.connect(f'traj.{last_flight_phase_name}.states:mass',
+                               Mission.Landing.TOUCHDOWN_MASS, src_indices=[-1])
+            self.model.connect(f'traj.{last_flight_phase_name}.{control_type_string}:altitude',
+                               Mission.Landing.INITIAL_ALTITUDE,
+                               src_indices=[0])
 
     def _add_post_mission_takeoff_systems(self):
         first_flight_phase_name = list(self.phase_info.keys())[0]
@@ -2678,36 +2704,31 @@ class AviaryProblem(om.Problem):
                 ("range_resid", Mission.Constraints.RANGE_RESIDUAL)],
         )
 
-    def _add_fuel_reserve_component(self, reserves_name=Mission.Design.RESERVE_FUEL):
-        reserves_val = self.aviary_inputs.get_val(
-            Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm')
-        reserves_frac = self.aviary_inputs.get_val(
-            Aircraft.Design.RESERVE_FUEL_FRACTION, units='unitless')
-
-        if reserves_frac == 0 and reserves_val == 0:
-            return
-
-        input_data = {}
-        input_promotions = {}
-        equation_string = f"reserve_fuel = "
-        if reserves_frac != 0:
-            input_data = {'takeoff_mass': {"units": "lbm"},
-                          'final_mass': {"units": "lbm"}}
-            input_promotions = {'promotes_inputs': [
-                                ("takeoff_mass", Mission.Summary.GROSS_MASS),
-                                ("final_mass", Mission.Landing.TOUCHDOWN_MASS)
-                                ]}
-            equation_string += f"{reserves_frac}*(takeoff_mass - final_mass)"
-        if reserves_val != 0:
-            equation_string += f" + {reserves_val}"
+    def _add_fuel_reserve_component(self):
+        if self.aviary_inputs.get_val(Aircraft.Design.RESERVE_FUEL_FRACTION, units='unitless') != 0:
+            self.model.add_subsystem(
+                "reserve_fuel_frac",
+                om.ExecComp('reserve_fuel_frac_mass = reserve_fuel_fraction * (final_mass - takeoff_mass)',
+                            reserve_fuel_frac_mass={"units": "lbm"},
+                            reserve_fuel_fraction={"units": "lbm"},
+                            final_mass={"units": "lbm"},
+                            takeoff_mass={"units": "lbm"}),
+                promotes_inputs=[("takeoff_mass", Mission.Summary.GROSS_MASS),
+                                 ("final_mass", Mission.Landing.TOUCHDOWN_MASS),
+                                 ("reserve_fuel_fraction", Aircraft.Design.RESERVE_FUEL_FRACTION)],
+                promotes_outputs=["reserve_fuel_frac_mass"]
+            )
 
         self.model.add_subsystem(
-            "reserves_calc",
-            om.ExecComp(
-                equation_string,
-                reserve_fuel={"val": reserves_val, "units": "lbm"},
-                **input_data
-            ),
-            promotes_outputs=[("reserve_fuel", reserves_name)],
-            **input_promotions
+            "reserve_fuel",
+            om.ExecComp('reserve_fuel = reserve_fuel_frac_mass + reserve_fuel_additional + reserve_fuel_burned',
+                        reserve_fuel={"units": "lbm", 'shape': 1},
+                        reserve_fuel_frac_mass={"units": "lbm", "val": 0},
+                        reserve_fuel_additional={"units": "lbm"},
+                        reserve_fuel_burned={"units": "lbm"}),
+            promotes_inputs=["reserve_fuel_frac_mass",
+                             ("reserve_fuel_additional",
+                              Aircraft.Design.RESERVE_FUEL_ADDITIONAL),
+                             ("reserve_fuel_burned", Mission.Summary.RESERVE_FUEL_BURNED)],
+            promotes_outputs=[("reserve_fuel", Mission.Design.RESERVE_FUEL)]
         )
