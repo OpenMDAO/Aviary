@@ -15,22 +15,22 @@ subsystem_options = {'core_aerodynamics':
                           6.0, 7.0, 8.0, 9.0, 10.0, 11.0,
                           12.0, 13.0, 14.0, 15.0],  # units='deg'
                       'lift_coefficients': [
-                          0.5178, 0.6, 0.75, 0.85, 0.95, 1.05,
+                          0.5, 0.6, 0.75, 0.85, 0.95, 1.05,
                           1.15, 1.25, 1.35, 1.5, 1.6, 1.7,
                           1.8, 1.85, 1.9, 1.95],
                       'drag_coefficients': [
-                          0.0674, 0.065, 0.065, 0.07, 0.072, 0.076,
-                          0.084, 0.09, 0.10, 0.11, 0.12, 0.13,
+                          0.03, 0.0325, 0.035, 0.04, 0.049, 0.057,
+                          0.07, 0.09, 0.10, 0.11, 0.12, 0.13,
                           0.15, 0.16, 0.18, 0.20],
                       'lift_coefficient_factor': 1.,
-                      'drag_coefficient_factor': .5}}
+                      'drag_coefficient_factor': 1.}}
 
-CDI_table = "subsystems/aerodynamics/flops_based/test/large_single_aisle_1_CDI_polar.csv"
-CD0_table = "subsystems/aerodynamics/flops_based/test/large_single_aisle_1_CD0_polar.csv"
+# CDI_table = "subsystems/aerodynamics/flops_based/test/large_single_aisle_1_CDI_polar.csv"
+# CD0_table = "subsystems/aerodynamics/flops_based/test/large_single_aisle_1_CD0_polar.csv"
 
-kwargs = {'method': 'tabular', 'CDI_data': CDI_table,
-          'CD0_data': CD0_table}
-subsystem_options = {'core_aerodynamics': kwargs}
+# kwargs = {'method': 'tabular', 'CDI_data': CDI_table,
+#           'CD0_data': CD0_table}
+# subsystem_options = {'core_aerodynamics': kwargs}
 
 phase_info = {
     "pre_mission": {"include_takeoff": False, "optimize_mass": False},
@@ -114,5 +114,5 @@ prob.run_aviary_problem()
 
 # prob.check_partials(compact_print=True)
 
-prob.model.list_inputs(units=True, print_arrays=True)
-prob.model.list_outputs(units=True, print_arrays=True)
+# prob.model.list_inputs(units=True, print_arrays=True)
+# prob.model.list_outputs(units=True, print_arrays=True)
