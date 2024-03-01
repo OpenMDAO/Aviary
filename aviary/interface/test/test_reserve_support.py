@@ -10,7 +10,7 @@ from aviary.interface.default_phase_info.two_dof import phase_info as ph_in_gasp
 from aviary.variable_info.variables import Aircraft, Mission
 
 
-@use_tempdirs
+# @use_tempdirs
 class StaticGroupTest(unittest.TestCase):
 
     def test_post_mission_promotion(self):

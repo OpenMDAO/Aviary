@@ -1411,6 +1411,76 @@ class AviaryProblem(om.Problem):
                     self.model.add_constraint(
                         f"{phase_name}_distance_constraint.distance_resid", equals=0.0, ref=1e2)
 
+        if self.mission_method is TWO_DEGREES_OF_FREEDOM:
+
+            self._add_fuel_reserve_component()
+
+            self.post_mission.add_subsystem(
+                "fuel_burn",
+                om.ExecComp(
+                    "overall_fuel = (1 + fuel_margin/100)*(takeoff_mass - final_mass) + reserve_fuel",
+                    takeoff_mass={"units": "lbm"},
+                    final_mass={"units": "lbm"},
+                    fuel_margin={"units": "unitless"},
+                    reserve_fuel={"units": "lbm"},
+                    overall_fuel={"units": "lbm"},
+                ),
+                promotes_inputs=[
+                    ("takeoff_mass", Mission.Summary.GROSS_MASS),
+                    ("fuel_margin", Aircraft.Fuel.FUEL_MARGIN),
+                    ("final_mass", Mission.Landing.TOUCHDOWN_MASS),
+                    ("reserve_fuel", Mission.Design.RESERVE_FUEL),
+                ],
+                promotes_outputs=[("overall_fuel", Mission.Summary.TOTAL_FUEL_MASS)],
+            )
+
+            self.post_mission.add_subsystem(
+                "fuel_obj",
+                om.ExecComp(
+                    "reg_objective = overall_fuel/10000 + ascent_duration/30.",
+                    reg_objective={"val": 0.0, "units": "unitless"},
+                    ascent_duration={"units": "s", "shape": 1},
+                    overall_fuel={"units": "lbm"},
+                ),
+                promotes_inputs=[
+                    ("ascent_duration", Mission.Takeoff.ASCENT_DURATION),
+                    ("overall_fuel", Mission.Summary.TOTAL_FUEL_MASS),
+                ],
+                promotes_outputs=[("reg_objective", Mission.Objectives.FUEL)],
+            )
+
+            self.post_mission.add_subsystem(
+                "range_obj",
+                om.ExecComp(
+                    "reg_objective = -actual_range/1000 + ascent_duration/30.",
+                    reg_objective={"val": 0.0, "units": "unitless"},
+                    ascent_duration={"units": "s", "shape": 1},
+                    actual_range={
+                        "val": self.target_range, "units": "NM"},
+                ),
+                promotes_inputs=[
+                    ("actual_range", Mission.Summary.RANGE),
+                    ("ascent_duration", Mission.Takeoff.ASCENT_DURATION),
+                ],
+                promotes_outputs=[("reg_objective", Mission.Objectives.RANGE)],
+            )
+
+            self.post_mission.add_subsystem(
+                "range_constraint",
+                om.ExecComp(
+                    "range_resid = target_range - actual_range",
+                    target_range={"val": self.target_range, "units": "NM"},
+                    actual_range={"val": self.target_range - 25, "units": "NM"},
+                    range_resid={"val": 30, "units": "NM"},
+                ),
+                promotes_inputs=[
+                    ("actual_range", Mission.Summary.RANGE),
+                    ("target_range", Mission.Design.RANGE),
+                ],
+                promotes_outputs=[
+                    ("range_resid", Mission.Constraints.RANGE_RESIDUAL)],
+            )
+
         ecomp = om.ExecComp(
             'mass_resid = operating_empty_mass + overall_fuel + payload_mass -'
             ' initial_mass',
@@ -2636,81 +2706,14 @@ class AviaryProblem(om.Problem):
             promotes_outputs=['mission:*'],
         )
 
-        self._add_fuel_reserve_component()
-
-        self.model.add_subsystem(
-            "fuel_burn",
-            om.ExecComp(
-                "overall_fuel = (1 + fuel_margin/100)*(takeoff_mass - final_mass) + reserve_fuel",
-                takeoff_mass={"units": "lbm"},
-                final_mass={"units": "lbm"},
-                fuel_margin={"units": "unitless"},
-                reserve_fuel={"units": "lbm"},
-                overall_fuel={"units": "lbm"},
-            ),
-            promotes_inputs=[
-                ("takeoff_mass", Mission.Summary.GROSS_MASS),
-                ("fuel_margin", Aircraft.Fuel.FUEL_MARGIN),
-                ("final_mass", Mission.Landing.TOUCHDOWN_MASS),
-                ("reserve_fuel", Mission.Design.RESERVE_FUEL),
-            ],
-            promotes_outputs=[("overall_fuel", Mission.Summary.TOTAL_FUEL_MASS)],
-        )
-
-        self.model.add_subsystem(
-            "fuel_obj",
-            om.ExecComp(
-                "reg_objective = overall_fuel/10000 + ascent_duration/30.",
-                reg_objective={"val": 0.0, "units": "unitless"},
-                ascent_duration={"units": "s", "shape": 1},
-                overall_fuel={"units": "lbm"},
-            ),
-            promotes_inputs=[
-                ("ascent_duration", Mission.Takeoff.ASCENT_DURATION),
-                ("overall_fuel", Mission.Summary.TOTAL_FUEL_MASS),
-            ],
-            promotes_outputs=[("reg_objective", Mission.Objectives.FUEL)],
-        )
-
-        self.model.add_subsystem(
-            "range_obj",
-            om.ExecComp(
-                "reg_objective = -actual_range/1000 + ascent_duration/30.",
-                reg_objective={"val": 0.0, "units": "unitless"},
-                ascent_duration={"units": "s", "shape": 1},
-                actual_range={
-                    "val": self.target_range, "units": "NM"},
-            ),
-            promotes_inputs=[
-                ("actual_range", Mission.Summary.RANGE),
-                ("ascent_duration", Mission.Takeoff.ASCENT_DURATION),
-            ],
-            promotes_outputs=[("reg_objective", Mission.Objectives.RANGE)],
-        )
-
-        self.model.add_subsystem(
-            "range_constraint",
-            om.ExecComp(
-                "range_resid = target_range - actual_range",
-                target_range={"val": self.target_range, "units": "NM"},
-                actual_range={"val": self.target_range - 25, "units": "NM"},
-                range_resid={"val": 30, "units": "NM"},
-            ),
-            promotes_inputs=[
-                ("actual_range", Mission.Summary.RANGE),
-                ("target_range", Mission.Design.RANGE),
-            ],
-            promotes_outputs=[
-                ("range_resid", Mission.Constraints.RANGE_RESIDUAL)],
-        )
-
     def _add_fuel_reserve_component(self):
         if self.aviary_inputs.get_val(Aircraft.Design.RESERVE_FUEL_FRACTION, units='unitless') != 0:
-            self.model.add_subsystem(
+            self.post_mission.add_subsystem(
                 "reserve_fuel_frac",
-                om.ExecComp('reserve_fuel_frac_mass = reserve_fuel_fraction * (final_mass - takeoff_mass)',
+                om.ExecComp('reserve_fuel_frac_mass = reserve_fuel_fraction * (takeoff_mass - final_mass)',
                             reserve_fuel_frac_mass={"units": "lbm"},
-                            reserve_fuel_fraction={"units": "lbm"},
+                            reserve_fuel_fraction={"units": "lbm", "val": self.aviary_inputs.get_val(
+                                Aircraft.Design.RESERVE_FUEL_FRACTION, units='unitless')},
                             final_mass={"units": "lbm"},
                             takeoff_mass={"units": "lbm"}),
                 promotes_inputs=[("takeoff_mass", Mission.Summary.GROSS_MASS),
@@ -2719,13 +2722,14 @@ class AviaryProblem(om.Problem):
                 promotes_outputs=["reserve_fuel_frac_mass"]
             )
 
-        self.model.add_subsystem(
+        self.post_mission.add_subsystem(
             "reserve_fuel",
             om.ExecComp('reserve_fuel = reserve_fuel_frac_mass + reserve_fuel_additional + reserve_fuel_burned',
                         reserve_fuel={"units": "lbm", 'shape': 1},
                         reserve_fuel_frac_mass={"units": "lbm", "val": 0},
-                        reserve_fuel_additional={"units": "lbm"},
-                        reserve_fuel_burned={"units": "lbm"}),
+                        reserve_fuel_additional={"units": "lbm", "val": self.aviary_inputs.get_val(
+                            Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm')},
+                        reserve_fuel_burned={"units": "lbm", "val": 0}),
             promotes_inputs=["reserve_fuel_frac_mass",
                              ("reserve_fuel_additional",
                               Aircraft.Design.RESERVE_FUEL_ADDITIONAL),
