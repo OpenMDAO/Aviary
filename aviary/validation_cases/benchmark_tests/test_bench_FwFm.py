@@ -5,6 +5,7 @@ import numpy as np
 from openmdao.utils.mpi import MPI
 from openmdao.utils.testing_utils import use_tempdirs
 from openmdao.utils.testing_utils import require_pyoptsparse
+from openmdao.core.problem import _clear_problem_names
 
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.validation_cases.benchmark_utils import \
@@ -354,6 +355,8 @@ class ProblemPhaseTestCase(unittest.TestCase):
         }
 
         self.phase_info = phase_info
+
+        _clear_problem_names()  # need to reset these to simulate separate runs
 
 
 @use_tempdirs
