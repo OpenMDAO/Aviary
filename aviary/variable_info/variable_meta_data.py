@@ -6204,6 +6204,7 @@ add_meta_data(
     units='hp',
     desc='The shaft horsepower'
 )
+
 add_meta_data(
     Dynamic.Mission.SHAFT_POWER_CORRECTED,
     meta_data=_MetaData,

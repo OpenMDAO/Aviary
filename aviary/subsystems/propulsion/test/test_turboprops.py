@@ -97,8 +97,8 @@ class TurboPropTest(unittest.TestCase):
         return results
 
     def test_case_1(self):
-        # 'clean' test using GASP-derived engine deck
-        filename = get_path('models/engines/PT6.deck')
+        # test using GASP-derived engine deck that includes tailpipe thrust
+        filename = get_path('models/engines/turboprop_1120hp.deck')
         test_points = [(0, 0, 0), (0, 0, 1), (.6, 25000, 1)]
         point_names = ['idle', 'SLS', 'TOC']
         truth_vals = [(112, 37.7, 195.8), (1120, 136.3, 644), (1742.5, 21.3, 839.7)]
@@ -112,8 +112,8 @@ class TurboPropTest(unittest.TestCase):
         assert_near_equal(results, truth_vals)
 
     def test_case_2(self):
-        # 'clean' test using GASP-derived engine deck
-        filename = get_path('models/engines/Aviary_TP.deck')
+        # test using GASP-derived engine deck that does not include tailpipe thrust
+        filename = get_path('models/engines/turboprop_1120hp_no_tailpipe.deck')
         test_points = [(0, 0, 0), (0, 0, 1), (.6, 25000, 1)]
         point_names = ['idle', 'SLS', 'TOC']
         truth_vals = [(112, 0, 195.8), (1120, 0, 644), (1742.5, 0, 839.7)]
