@@ -172,8 +172,10 @@ class PropPerf(om.Group):
         self.options.declare(
             'num_nodes', types=int,
             desc='Number of nodes to be evaluated in the RHS')
+        self.options.declare(Aircraft.Engine.NUM_BLADES, default=2,
+                             desc='number of blades per propeller')
         self.options.declare(
-            'compute_installation_loss', types=bool,
+            Aircraft.Design.COMPUTE_INSTALLATION_LOSS, types=bool,
             desc='Flag to compute installation factor')
         self.options.declare(
             'aviary_options', types=AviaryValues,

@@ -20,6 +20,7 @@ class EngineModelVariables(Enum):
     THRUST = auto()
     TAILPIPE_THRUST = auto()
     GROSS_THRUST = auto()
+    SHAFT_POWER = auto()
     SHAFT_POWER_CORRECTED = auto()
     RAM_DRAG = auto()
     FUEL_FLOW = auto()
@@ -37,6 +38,7 @@ default_units = {
     EngineModelVariables.THRUST: 'lbf',
     EngineModelVariables.TAILPIPE_THRUST: 'lbf',
     EngineModelVariables.GROSS_THRUST: 'lbf',
+    EngineModelVariables.SHAFT_POWER: 'hp',
     EngineModelVariables.SHAFT_POWER_CORRECTED: 'hp',
     EngineModelVariables.RAM_DRAG: 'lbf',
     EngineModelVariables.FUEL_FLOW: 'lb/h',

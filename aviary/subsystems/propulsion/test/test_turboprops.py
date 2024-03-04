@@ -40,6 +40,12 @@ class TurboPropTest(unittest.TestCase):
         options.set_val(Aircraft.Engine.GEOPOTENTIAL_ALT, False)
         options.set_val(Aircraft.Engine.INTERPOLATION_METHOD, 'slinear')
 
+        options.set_val(Aircraft.Engine.NUM_BLADES, 4)
+        options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS, True)
+
+        if prop_model:
+            prop_model.pp.options.set(aviary_options=options)
+
         engine = TurboPropDeck(options=options, prop_model=prop_model)
         preprocess_propulsion(options, [engine])
 
@@ -59,8 +65,8 @@ class TurboPropTest(unittest.TestCase):
         self.prob.model.add_subsystem('IVC', IVC, promotes=['*'])
 
     def get_results(self, point_names=None, display_results=False):
-        shp = self.prob.get_val(Dynamic.Mission.SHAFT_POWER_CORRECTED, units='hp')
-        shp = self.prob.get_val('engine_deck.shaft_power_unscaled', units='hp')
+        # shp = self.prob.get_val(Dynamic.Mission.SHAFT_POWER_CORRECTED, units='hp')
+        shp = self.prob.get_val('engine_deck.shaft_power_corrected_unscaled', units='hp')
         total_thrust = self.prob.get_val(Dynamic.Mission.THRUST, units='lbf')
         prop_thrust = self.prob.get_val(
             'engine_deck.total_thrust.prop_thrust', units='lbf')
@@ -95,7 +101,6 @@ class TurboPropTest(unittest.TestCase):
                  round_it(fuel_flow[n][0])))
         return results
 
-    @unittest.skipIf(version.parse(openmdao.__version__) < version.parse("3.26"), "Skipping due to OpenMDAO version being too low (<3.26)")
     def test_case_1(self):
         # 'clean' test using GASP-derived engine deck
         filename = get_path('models/engines/PT6.deck')
@@ -111,7 +116,6 @@ class TurboPropTest(unittest.TestCase):
         results = self.get_results(point_names)
         assert_near_equal(results, truth_vals)
 
-    @unittest.skipIf(version.parse(openmdao.__version__) < version.parse("3.26"), "Skipping due to OpenMDAO version being too low (<3.26)")
     def test_case_2(self):
         # 'clean' test using GASP-derived engine deck
         filename = get_path('models/engines/Aviary_TP.deck')
@@ -127,7 +131,6 @@ class TurboPropTest(unittest.TestCase):
         results = self.get_results(point_names)
         assert_near_equal(results, truth_vals)
 
-    @unittest.skipIf(version.parse(openmdao.__version__) < version.parse("3.26"), "Skipping due to OpenMDAO version being too low (<3.26)")
     def test_case_3(self):
         # 'clean' test using GASP-derived engine deck
         filename = get_path('models/engines/PT6.deck')
@@ -150,9 +153,7 @@ class TurboPropTest(unittest.TestCase):
 
         pp.set_input_defaults('tipspd', 800, units="ft/s")
         pp.set_input_defaults('vktas', 0, units="knot")
-        pp.options.set(num_blade=4)
         pp.options.set(num_nodes=len(test_points))
-        pp.options.set(compute_blockage_factor=True)
 
         self.prepare_model(filename, test_points, prop_group)
 
