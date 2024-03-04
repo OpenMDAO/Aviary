@@ -113,7 +113,7 @@ class TurboPropTest(unittest.TestCase):
 
     def test_case_2(self):
         # 'clean' test using GASP-derived engine deck
-        filename = get_path('models/engines/Aviary_TP.deck')
+        filename = get_path('models/engines/turboprop_1120hp.deck')
         test_points = [(0, 0, 0), (0, 0, 1), (.6, 25000, 1)]
         point_names = ['idle', 'SLS', 'TOC']
         truth_vals = [(112, 0, 195.8), (1120, 0, 644), (1742.5, 0, 839.7)]
