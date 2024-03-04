@@ -11,7 +11,7 @@ from aviary.variable_info.variables import Aircraft, Mission
 from aviary.variable_info.enums import AnalysisScheme
 
 
-@use_tempdirs
+# @use_tempdirs
 class ProblemPhaseTestCase(unittest.TestCase):
 
     def setUp(self):
@@ -80,11 +80,11 @@ class ProblemPhaseTestCase(unittest.TestCase):
         assert_near_equal(prob.get_val(Aircraft.Design.OPERATING_MASS),
                           95509, tolerance=rtol)
 
-        assert_near_equal(prob.get_val(Mission.Summary.RANGE, units='NM'),
-                          3774.3, tolerance=rtol)
-
         assert_near_equal(prob.get_val(Mission.Landing.TOUCHDOWN_MASS, units='lbm'),
                           136823.47, tolerance=rtol)
+
+        assert_near_equal(prob.get_val(Mission.Summary.RANGE, units='NM'),
+                          3774.3, tolerance=rtol)
 
 
 if __name__ == '__main__':
