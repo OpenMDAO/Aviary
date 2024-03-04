@@ -2719,7 +2719,7 @@ class AviaryProblem(om.Problem):
                                                 Aircraft.Design.RESERVE_FUEL_FRACTION, units='unitless')},
                                             final_mass={"units": "lbm"},
                                             takeoff_mass={"units": "lbm"})
-            if location is 'post_mission':
+            if location == 'post_mission':
                 self.post_mission.add_subsystem("reserve_fuel_frac", reserve_fuel_frac,
                                                 promotes_inputs=[("takeoff_mass", Mission.Summary.GROSS_MASS),
                                                                  ("final_mass",
@@ -2741,7 +2741,7 @@ class AviaryProblem(om.Problem):
                                        Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm')},
                                    reserve_fuel_burned={"units": "lbm", "val": 0})
 
-        if location is 'post_mission':
+        if location == 'post_mission':
             self.post_mission.add_subsystem("reserve_fuel", reserve_fuel,
                                             promotes_inputs=["reserve_fuel_frac_mass",
                                                              ("reserve_fuel_additional",
