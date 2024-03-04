@@ -2734,7 +2734,7 @@ class AviaryProblem(om.Problem):
                                                           ("reserve_fuel_fraction", Aircraft.Design.RESERVE_FUEL_FRACTION)],
                                          promotes_outputs=["reserve_fuel_frac_mass"])
 
-            reserve_fuel = om.ExecComp('reserve_fuel = reserve_fuel_frac_mass + reserve_fuel_additional + reserve_fuel_burned',
+        reserve_fuel = om.ExecComp('reserve_fuel = reserve_fuel_frac_mass + reserve_fuel_additional + reserve_fuel_burned',
                                        reserve_fuel={"units": "lbm", 'shape': 1},
                                        reserve_fuel_frac_mass={"units": "lbm", "val": 0},
                                        reserve_fuel_additional={"units": "lbm", "val": self.aviary_inputs.get_val(
