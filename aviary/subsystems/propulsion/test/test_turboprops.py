@@ -13,8 +13,8 @@ from aviary.interface.utils.markdown_utils import round_it
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.functions import get_path
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-from aviary.variable_info.enums import SpeedType
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
+from aviary.variable_info.enums import SpeedType, Verbosity
 
 
 class TurboPropTest(unittest.TestCase):
@@ -129,7 +129,7 @@ class TurboPropTest(unittest.TestCase):
     def test_case_3(self):
         # 'clean' test using GASP-derived engine deck
         filename = get_path('models/engines/PT6.deck')
-        test_points = [(0.000001, 0, 1)]
+        test_points = [(0, 0, 1)]
         point_names = ['SLS',]
         truth_vals = [(1120, 136.3, 644),]
         # test_points = [(0, 0, 0), (0, 0, 1), (.6, 25000, 1)]
@@ -155,7 +155,6 @@ class TurboPropTest(unittest.TestCase):
                               'EAS', ('TAS', 'velocity')],
         )
 
-        # prop_group = om.Group()
         pp = prop_group.add_subsystem(
             'pp',
             PropPerf(aviary_options=options),
@@ -178,13 +177,14 @@ class TurboPropTest(unittest.TestCase):
                           114.0, units="unitless")
         self.prob.set_val(
             Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT, 0.5, units="unitless")
-        # self.prob.set_val('DiamNac_DiamProp', 0.275, units="unitless")
 
-        om.n2(
-            self.prob,
-            outfile="n2.html",
-            show_browser=False,
-        )
+        if options.get_val(Settings.VERBOSITY, units='unitless') is Verbosity.DEBUG:
+            om.n2(
+                self.prob,
+                outfile="n2.html",
+                show_browser=False,
+            )
+
         self.prob.run_model()
         results = self.get_results(point_names)
         assert_near_equal(results, truth_vals)
