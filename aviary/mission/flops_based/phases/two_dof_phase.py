@@ -92,6 +92,7 @@ class TwoDOFPhase(PhaseBuilderBase):
         optimize_altitude = user_options.get_val('optimize_altitude')
         mach_bounds = user_options.get_item('mach_bounds')
         altitude_bounds = user_options.get_item('altitude_bounds')
+        use_polynomial_control = user_options.get_val('use_polynomial_control')
 
         if fix_initial:
             phase.set_time_options(fix_initial=fix_initial, fix_duration=False,
@@ -110,13 +111,21 @@ class TwoDOFPhase(PhaseBuilderBase):
                                 fix_initial=fix_initial, fix_final=False, ref=170.e3, defect_ref=170.e5,
                                 val=170.e3, units='lbm', lower=10.e3)
 
-        phase.add_polynomial_control(Dynamic.Mission.MACH,
-                                     order=control_order,
-                                     val=0.4, units=mach_bounds[1],
-                                     opt=optimize_mach, lower=mach_bounds[0][0], upper=mach_bounds[0][1],
-                                     fix_initial=fix_initial,
-                                     rate_targets=['dmach_dr'],
-                                     )
+        if use_polynomial_control:
+            phase.add_polynomial_control(Dynamic.Mission.MACH,
+                                         order=control_order,
+                                         val=0.4, units=mach_bounds[1],
+                                         opt=optimize_mach, lower=mach_bounds[0][0], upper=mach_bounds[0][1],
+                                         fix_initial=fix_initial,
+                                         rate_targets=['dmach_dr'],
+                                         )
+        else:
+            phase.add_control(Dynamic.Mission.MACH,
+                              fix_initial=fix_initial,
+                              val=0.4, units=mach_bounds[1],
+                              opt=optimize_mach, lower=mach_bounds[0][0], upper=mach_bounds[0][1],
+                              rate_targets=['dmach_dr'],
+                              )
 
         if rotation:
             phase.add_polynomial_control("alpha",
@@ -133,16 +142,27 @@ class TwoDOFPhase(PhaseBuilderBase):
                                          fix_initial=fix_initial,
                                          rate_targets=['dh_dr'], rate2_targets=['d2h_dr2'])
         else:
-            phase.add_polynomial_control(Dynamic.Mission.ALTITUDE,
-                                         order=control_order,
-                                         fix_initial=fix_initial,
-                                         units=altitude_bounds[1],
-                                         rate_targets=['dh_dr'], rate2_targets=['d2h_dr2'],
-                                         opt=optimize_altitude, lower=altitude_bounds[
-                                             0][0], upper=altitude_bounds[0][1],
-                                         ref=(altitude_bounds[0][0] +
-                                              altitude_bounds[0][1]) / 2,
-                                         )
+            if use_polynomial_control:
+                phase.add_polynomial_control(Dynamic.Mission.ALTITUDE,
+                                             order=control_order,
+                                             fix_initial=fix_initial,
+                                             units=altitude_bounds[1],
+                                             rate_targets=['dh_dr'], rate2_targets=['d2h_dr2'],
+                                             opt=optimize_altitude, lower=altitude_bounds[
+                                                 0][0], upper=altitude_bounds[0][1],
+                                             ref=(altitude_bounds[0][0] +
+                                                  altitude_bounds[0][1]) / 2,
+                                             )
+            else:
+                phase.add_control(Dynamic.Mission.ALTITUDE,
+                                  fix_initial=fix_initial,
+                                  units=altitude_bounds[1],
+                                  rate_targets=['dh_dr'], rate2_targets=['d2h_dr2'],
+                                  opt=optimize_altitude, lower=altitude_bounds[
+                                      0][0], upper=altitude_bounds[0][1],
+                                  ref=(altitude_bounds[0][0] +
+                                       altitude_bounds[0][1]) / 2,
+                                  )
 
         if not Dynamic.Mission.THROTTLE in constraints:
             if throttle_enforcement == 'boundary_constraint':
@@ -242,6 +262,7 @@ TwoDOFPhase._add_meta_data('throttle_enforcement', val=None)
 TwoDOFPhase._add_meta_data('constraints', val={})
 TwoDOFPhase._add_meta_data('mach_bounds', val=(0., 2.), units='unitless')
 TwoDOFPhase._add_meta_data('altitude_bounds', val=(0., 60.e3), units='ft')
+TwoDOFPhase._add_meta_data('use_polynomial_control', val=True)
 
 TwoDOFPhase._add_initial_guess_meta_data(
     InitialGuessTime(key='distance'),

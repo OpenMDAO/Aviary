@@ -36,28 +36,29 @@ phase_info = {
     "pre_mission": {"include_takeoff": False, "optimize_mass": False},
     'cruise': {
         'user_options': {
-            'num_segments': 10,
+            'num_segments': 5,
             'order': 3,
             'fix_initial': True,
-            'throttle_enforcement': 'bounded',
+            'throttle_enforcement': 'path_constraint',
             'ground_roll': False,
             'clean': True,
             'initial_ref': (1.e3, 'ft'),
             'initial_bounds': ((0.e3, 0.e3), 'ft'),
             'duration_ref': (100., 'nmi'),
             'duration_bounds': ((1000., 1000.), 'nmi'),
-            'mach_bounds': ((0.72, 0.8), 'unitless'),
-            'altitude_bounds': ((32.e3, 36.e3), 'ft'),
-            'control_order': 2,
-            'optimize_mach': False,
-            'optimize_altitude': False,
+            'mach_bounds': ((0.60, 0.84), 'unitless'),
+            'altitude_bounds': ((10.e3, 36.e3), 'ft'),
+            'control_order': 1,
+            'optimize_mach': True,
+            'optimize_altitude': True,
+            'use_polynomial_control': True,
             'constraints': {
-                'flight_path_angle': {
-                    'equals': 0.,
-                    'loc': 'final',
-                    'units': 'deg',
-                    'type': 'boundary',
-                },
+                # 'flight_path_angle': {
+                #     'equals': 0.,
+                #     'loc': 'final',
+                #     'units': 'deg',
+                #     'type': 'boundary',
+                # },
             }
         },
         'subsystem_options': subsystem_options,
@@ -65,7 +66,7 @@ phase_info = {
             'distance': [(0., 1000.), 'nmi'],
             'mach': [(0.72, 0.72), 'unitless'],
             'mass': [(175.e3, 174.e3), 'lbm'],
-            'altitude': [(35.e3, 35.e3), 'ft'],
+            'altitude': [(10.e3, 35.e3), 'ft'],
             # 'time': [(0., 1200.), 's'],
         },
     },
@@ -96,7 +97,7 @@ prob.add_post_mission_systems()
 # Link phases and variables
 prob.link_phases()
 
-prob.add_driver(driver, max_iter=50)
+prob.add_driver(driver, max_iter=150)
 
 prob.add_design_variables()
 
