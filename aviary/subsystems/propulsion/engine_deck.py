@@ -1442,7 +1442,7 @@ class TurboPropDeck(EngineDeck):
             self._uncorrect_shaft_power(engine_group, num_nodes=num_nodes)
 
         scaling_group = om.Group()
-        variables_to_scale = ['shaft_power', 'tailpipe_thrust',
+        variables_to_scale = ['shaft_power_corrected', 'tailpipe_thrust',
                               'nox_rate', 'electric_power', 'thrust_net_max']
         for variable in variables_to_scale:
             self.add_scaling_exec_comp(scaling_group, variable, num_nodes=num_nodes)
@@ -1460,7 +1460,7 @@ class TurboPropDeck(EngineDeck):
             engine_group.add_subsystem(
                 'propeller_model',
                 self.prop_model,
-                promotes_inputs=[Dynamic.Mission.SHAFT_POWER],
+                promotes_inputs=['*'],
                 promotes_outputs=[('Thrust', 'prop_thrust')],
             )
         else:

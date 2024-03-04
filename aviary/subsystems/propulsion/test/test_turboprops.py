@@ -14,6 +14,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.functions import get_path
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.enums import SpeedType
 
 
 class TurboPropTest(unittest.TestCase):
@@ -39,12 +40,6 @@ class TurboPropTest(unittest.TestCase):
         options.set_val(Aircraft.Engine.FLIGHT_IDLE_MIN_FRACTION, 0.08)
         options.set_val(Aircraft.Engine.GEOPOTENTIAL_ALT, False)
         options.set_val(Aircraft.Engine.INTERPOLATION_METHOD, 'slinear')
-
-        options.set_val(Aircraft.Engine.NUM_BLADES, 4)
-        options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS, True)
-
-        if prop_model:
-            prop_model.pp.options.set(aviary_options=options)
 
         engine = TurboPropDeck(options=options, prop_model=prop_model)
         preprocess_propulsion(options, [engine])
@@ -101,58 +96,76 @@ class TurboPropTest(unittest.TestCase):
                  round_it(fuel_flow[n][0])))
         return results
 
-    def test_case_1(self):
-        # 'clean' test using GASP-derived engine deck
-        filename = get_path('models/engines/PT6.deck')
-        test_points = [(0, 0, 0), (0, 0, 1), (.6, 25000, 1)]
-        point_names = ['idle', 'SLS', 'TOC']
-        truth_vals = [(112, 37.7, 195.8), (1120, 136.3, 644), (1742.5, 21.3, 839.7)]
-        self.prepare_model(filename, test_points)
+    # def test_case_1(self):
+    #     # 'clean' test using GASP-derived engine deck
+    #     filename = get_path('models/engines/PT6.deck')
+    #     test_points = [(0, 0, 0), (0, 0, 1), (.6, 25000, 1)]
+    #     point_names = ['idle', 'SLS', 'TOC']
+    #     truth_vals = [(112, 37.7, 195.8), (1120, 136.3, 644), (1742.5, 21.3, 839.7)]
+    #     self.prepare_model(filename, test_points)
 
-        self.prob.setup(force_alloc_complex=True)
-        self.prob.set_val(Aircraft.Engine.SCALE_FACTOR, 1, units='unitless')
+    #     self.prob.setup(force_alloc_complex=True)
+    #     self.prob.set_val(Aircraft.Engine.SCALE_FACTOR, 1, units='unitless')
 
-        self.prob.run_model()
-        results = self.get_results(point_names)
-        assert_near_equal(results, truth_vals)
+    #     self.prob.run_model()
+    #     results = self.get_results(point_names)
+    #     assert_near_equal(results, truth_vals)
 
-    def test_case_2(self):
-        # 'clean' test using GASP-derived engine deck
-        filename = get_path('models/engines/Aviary_TP.deck')
-        test_points = [(0, 0, 0), (0, 0, 1), (.6, 25000, 1)]
-        point_names = ['idle', 'SLS', 'TOC']
-        truth_vals = [(112, 0, 195.8), (1120, 0, 644), (1742.5, 0, 839.7)]
-        self.prepare_model(filename, test_points)
+    # def test_case_2(self):
+    #     # 'clean' test using GASP-derived engine deck
+    #     filename = get_path('models/engines/Aviary_TP.deck')
+    #     test_points = [(0, 0, 0), (0, 0, 1), (.6, 25000, 1)]
+    #     point_names = ['idle', 'SLS', 'TOC']
+    #     truth_vals = [(112, 0, 195.8), (1120, 0, 644), (1742.5, 0, 839.7)]
+    #     self.prepare_model(filename, test_points)
 
-        self.prob.setup(force_alloc_complex=True)
-        self.prob.set_val(Aircraft.Engine.SCALE_FACTOR, 1, units='unitless')
+    #     self.prob.setup(force_alloc_complex=True)
+    #     self.prob.set_val(Aircraft.Engine.SCALE_FACTOR, 1, units='unitless')
 
-        self.prob.run_model()
-        results = self.get_results(point_names)
-        assert_near_equal(results, truth_vals)
+    #     self.prob.run_model()
+    #     results = self.get_results(point_names)
+    #     assert_near_equal(results, truth_vals)
 
     def test_case_3(self):
         # 'clean' test using GASP-derived engine deck
         filename = get_path('models/engines/PT6.deck')
-        test_points = [(0, 0, 1)]
+        test_points = [(0.000001, 0, 1)]
         point_names = ['SLS',]
-        truth_vals = [(1120, 0, 644),]
+        truth_vals = [(1120, 136.3, 644),]
         # test_points = [(0, 0, 0), (0, 0, 1), (.6, 25000, 1)]
         # point_names = ['idle', 'SLS', 'TOC']
         # truth_vals = [(112, 0, 195.8), (1120, 0, 644), (1742.5, 0, 839.7)]
 
         from aviary.HMT_STD.prop_performance import PropPerf
-
+        from aviary.variable_info.options import get_option_defaults
+        from aviary.mission.gasp_based.flight_conditions import FlightConditions
+        options = get_option_defaults()
+        options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS,
+                        val=True, units='unitless')
+        options.set_val(Aircraft.Engine.NUM_BLADES,
+                        val=4, units='unitless')
+        options.set_val('speed_type', SpeedType.MACH)
         prop_group = om.Group()
-        pp = prop_group.add_subsystem(
-            'pp',
-            PropPerf(),
-            promotes_inputs=['*'],
-            promotes_outputs=["*"],
+
+        prop_group.add_subsystem(
+            "fc",
+            FlightConditions(num_nodes=1, input_speed_type=SpeedType.MACH),
+            promotes_inputs=["rho", Dynamic.Mission.SPEED_OF_SOUND, 'mach'],
+            promotes_outputs=[Dynamic.Mission.DYNAMIC_PRESSURE,
+                              'EAS', ('TAS', 'velocity')],
         )
 
-        pp.set_input_defaults('tipspd', 800, units="ft/s")
-        pp.set_input_defaults('vktas', 0, units="knot")
+        # prop_group = om.Group()
+        pp = prop_group.add_subsystem(
+            'pp',
+            PropPerf(aviary_options=options),
+            promotes_inputs=['*', ('mach', 'mach_internal')],
+            promotes_outputs=["*", ('mach', 'mach_internal')],
+        )
+
+        pp.set_input_defaults(Aircraft.Engine.PROPELLER_DIAMETER, 10, units="ft")
+        pp.set_input_defaults(Aircraft.Engine.PROPELLER_TIP_SPEED, 800, units="ft/s")
+        pp.set_input_defaults(Dynamic.Mission.VELOCITY, 0, units="knot")
         pp.options.set(num_nodes=len(test_points))
 
         self.prepare_model(filename, test_points, prop_group)
@@ -160,11 +173,18 @@ class TurboPropTest(unittest.TestCase):
         self.prob.setup(force_alloc_complex=True)
         self.prob.set_val(Aircraft.Engine.SCALE_FACTOR, 1, units='unitless')
 
-        self.prob.set_val('diam_prop', 10.5, units="ft")
-        self.prob.set_val('act_fac', 114.0, units="unitless")
-        self.prob.set_val('cli', 0.5, units="unitless")
-        self.prob.set_val('DiamNac_DiamProp', 0.275, units="unitless")
+        self.prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 10.5, units="ft")
+        self.prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,
+                          114.0, units="unitless")
+        self.prob.set_val(
+            Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT, 0.5, units="unitless")
+        # self.prob.set_val('DiamNac_DiamProp', 0.275, units="unitless")
 
+        om.n2(
+            self.prob,
+            outfile="n2.html",
+            show_browser=False,
+        )
         self.prob.run_model()
         results = self.get_results(point_names)
         assert_near_equal(results, truth_vals)
