@@ -1492,6 +1492,7 @@ class TurboPropDeck(EngineDeck):
                 scaled_variable={'shape': num_nodes, 'units': units},
                 variable_unscaled={'shape': num_nodes, 'units': units},
                 scale_factor={'val': 1, 'units': 'unitless'},
+                has_diag_partials=True,
             ),
             promotes_inputs=[
                 ('variable_unscaled', variable+'_unscaled'),
@@ -1514,6 +1515,7 @@ class TurboPropDeck(EngineDeck):
                 P0={'units': 'psi', 'shape': num_nodes},
                 mach={'units': 'unitless', 'shape': num_nodes},
                 P_amb={'val': np.full(num_nodes, 14.696), 'units': 'psi', },
+                has_diag_partials=True,
             ),
             promotes_inputs=[
                 ('P0', 'freestream_pressure'),
@@ -1529,6 +1531,7 @@ class TurboPropDeck(EngineDeck):
                 T0={'units': 'degR', 'shape': num_nodes},
                 mach={'units': 'unitless', 'shape': num_nodes},
                 T_amb={'val': np.full(num_nodes, 518.67), 'units': 'degR', },
+                has_diag_partials=True,
             ),
             promotes_inputs=[
                 ('T0', 'freestream_temperature'),
@@ -1544,6 +1547,7 @@ class TurboPropDeck(EngineDeck):
                 delta_T={'units': "unitless", 'shape': num_nodes},
                 theta_T={'units': "unitless", 'shape': num_nodes},
                 shaft_power_corrected={'units': "hp", 'shape': num_nodes},
+                has_diag_partials=True,
             ),
             promotes_inputs=[
                 'delta_T',
@@ -1574,6 +1578,7 @@ class TurboPropDeck(EngineDeck):
                 eff={'val': .5, 'units': 'unitless', },
                 Vp={'units': 'm/s', 'shape': num_nodes},
                 prop_thrust={'units': 'N', 'shape': num_nodes},
+                has_diag_partials=True,
             ),
             promotes_inputs=[
                 'eff',

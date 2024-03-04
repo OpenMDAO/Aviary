@@ -99,7 +99,6 @@ class TurboPropTest(unittest.TestCase):
                  round_it(fuel_flow[n][0])))
         return results
 
-    @unittest.skipIf(version.parse(openmdao.__version__) < version.parse("3.26"), "Skipping due to OpenMDAO version being too low (<3.26)")
     def test_case_1(self):
         # 'clean' test using GASP-derived engine deck
         filename = get_path('models/engines/PT6.deck')
@@ -112,7 +111,6 @@ class TurboPropTest(unittest.TestCase):
         results = self.get_results(point_names)
         assert_near_equal(results, truth_vals)
 
-    @unittest.skipIf(version.parse(openmdao.__version__) < version.parse("3.26"), "Skipping due to OpenMDAO version being too low (<3.26)")
     def test_case_2(self):
         # 'clean' test using GASP-derived engine deck
         filename = get_path('models/engines/Aviary_TP.deck')
