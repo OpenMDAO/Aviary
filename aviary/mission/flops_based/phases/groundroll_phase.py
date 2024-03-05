@@ -27,7 +27,7 @@ class GroundrollPhase(PhaseBuilderBase):
 
     _initial_guesses_meta_data_ = {}
 
-    default_name = 'cruise'
+    default_name = 'groundroll'
 
     default_ode_class = GroundrollODE
 
@@ -55,7 +55,7 @@ class GroundrollPhase(PhaseBuilderBase):
 
     def build_phase(self, aviary_options: AviaryValues = None):
         '''
-        Return a new energy phase for analysis using these constraints.
+        Return a new 2dof phase for analysis using these constraints.
 
         If ode_class is None, default_ode_class is used.
 
@@ -183,7 +183,7 @@ GroundrollPhase._add_meta_data('constraints', val={})
 
 GroundrollPhase._add_initial_guess_meta_data(
     InitialGuessTime(key='velocity'),
-    desc='initial guess for initial time and duration specified as a tuple')
+    desc='initial guess for initial velocity and final specified as a tuple')
 
 GroundrollPhase._add_initial_guess_meta_data(
     InitialGuessPolynomialControl('altitude'),

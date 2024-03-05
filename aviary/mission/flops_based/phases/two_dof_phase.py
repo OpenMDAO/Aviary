@@ -57,7 +57,7 @@ class TwoDOFPhase(PhaseBuilderBase):
 
     def build_phase(self, aviary_options: AviaryValues = None):
         '''
-        Return a new energy phase for analysis using these constraints.
+        Return a new 2dof phase for analysis using these constraints.
 
         If ode_class is None, default_ode_class is used.
 
