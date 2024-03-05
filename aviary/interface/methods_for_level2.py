@@ -589,8 +589,6 @@ class AviaryProblem(om.Problem):
         if self.mission_method is TWO_DEGREES_OF_FREEDOM:
             self._add_two_dof_takeoff_systems()
 
-            self._add_fuel_reserve_component(post_mission=False)
-
         # Check for HE mission method
         elif self.mission_method is HEIGHT_ENERGY:
             self._add_height_energy_takeoff_systems()
@@ -614,6 +612,8 @@ class AviaryProblem(om.Problem):
             [Aircraft.CrewPayload.NUM_PASSENGERS,
                 Mission.Design.CRUISE_ALTITUDE, ])
         add_opts2vals(self.model, OptionsToValues, self.aviary_inputs)
+
+        self._add_fuel_reserve_component(post_mission=False)
 
         # Add thrust-to-weight ratio subsystem
         self.model.add_subsystem(
