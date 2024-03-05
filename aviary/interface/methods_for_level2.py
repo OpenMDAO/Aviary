@@ -589,6 +589,8 @@ class AviaryProblem(om.Problem):
         if self.mission_method is TWO_DEGREES_OF_FREEDOM:
             self._add_two_dof_takeoff_systems()
 
+            self._add_fuel_reserve_component(post_mission=False)
+
         # Check for HE mission method
         elif self.mission_method is HEIGHT_ENERGY:
             self._add_height_energy_takeoff_systems()
@@ -2643,8 +2645,6 @@ class AviaryProblem(om.Problem):
 
         # TBD Re-organize shooting so that fuel-reserve, etc
         # are calculated in prob.post_mission rather than in prob.model
-
-        self._add_fuel_reserve_component(post_mission=False)
 
         self.model.add_subsystem(
             "fuel_burn",

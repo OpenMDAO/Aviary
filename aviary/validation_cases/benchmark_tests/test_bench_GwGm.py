@@ -80,17 +80,11 @@ class ProblemPhaseTestCase(unittest.TestCase):
         assert_near_equal(prob.get_val(Aircraft.Design.OPERATING_MASS),
                           95509, tolerance=rtol)
 
-        assert_near_equal(prob.get_val('traj.distance_final', units='NM'),
+        assert_near_equal(prob.get_val(Mission.Summary.RANGE, units='NM'),
                           3774.3, tolerance=rtol)
 
-        assert_near_equal(prob.get_val('traj.mass_final', units='lbm'),
+        assert_near_equal(prob.get_val(Mission.Landing.TOUCHDOWN_MASS, units='lbm'),
                           136823.47, tolerance=rtol)
-
-        # assert_near_equal(prob.get_val(Mission.Summary.RANGE, units='NM'),
-        #                   3774.3, tolerance=rtol)
-
-        # assert_near_equal(prob.get_val(Mission.Landing.TOUCHDOWN_MASS, units='lbm'),
-        #                   136823.47, tolerance=rtol)
 
 
 if __name__ == '__main__':
