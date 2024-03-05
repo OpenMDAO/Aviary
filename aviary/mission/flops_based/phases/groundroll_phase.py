@@ -178,7 +178,6 @@ GroundrollPhase._add_meta_data('input_speed_type', val='TAS', desc='input speed 
 GroundrollPhase._add_meta_data('ground_roll', val=True)
 GroundrollPhase._add_meta_data('rotation', val=False)
 GroundrollPhase._add_meta_data('clean', val=False)
-GroundrollPhase._add_meta_data('balance_throttle', val=False)
 GroundrollPhase._add_meta_data('constraints', val={})
 
 GroundrollPhase._add_initial_guess_meta_data(

@@ -278,7 +278,7 @@ if not use_full_takeoff:
     phase_info.pop('DE')
     phase_info.pop('EF_to_P1')
     phase_info.pop('EF_past_P1')
-    driver = "IPOPT"
+    driver = "SLSQP"
 else:
     driver = "SNOPT"
 

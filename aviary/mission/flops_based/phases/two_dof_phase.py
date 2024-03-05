@@ -82,8 +82,6 @@ class TwoDOFPhase(PhaseBuilderBase):
         opt = user_options.get_val('opt')
 
         fix_initial = user_options.get_val('fix_initial')
-        initial_bounds = user_options.get_val('initial_bounds', units='ft')
-        initial_ref = user_options.get_val('initial_ref', units='ft')
         duration_bounds = user_options.get_val('duration_bounds', units='ft')
         duration_ref = user_options.get_val('duration_ref', units='ft')
         ground_roll = user_options.get_val('ground_roll')
@@ -103,15 +101,17 @@ class TwoDOFPhase(PhaseBuilderBase):
                 val=throttle_setting,
                 static_target=False)
 
-        if fix_initial:
-            phase.set_time_options(fix_initial=fix_initial, fix_duration=False,
-                                   units='ft', name=Dynamic.Mission.DISTANCE,
-                                   duration_bounds=duration_bounds, duration_ref=duration_ref)
-        else:
-            phase.set_time_options(fix_initial=fix_initial, fix_duration=False,
-                                   units='ft', name=Dynamic.Mission.DISTANCE,
-                                   initial_bounds=initial_bounds, initial_ref=initial_ref,
-                                   duration_bounds=duration_bounds, duration_ref=duration_ref)
+        initial_kwargs = {}
+        if not fix_initial:
+            initial_kwargs = {
+                'initial_bounds': user_options.get_val('initial_bounds', units='ft'),
+                'initial_ref': user_options.get_val('initial_ref', units='ft'),
+            }
+
+        phase.set_time_options(fix_initial=fix_initial, fix_duration=False,
+                               units='ft', name=Dynamic.Mission.DISTANCE,
+                               duration_bounds=duration_bounds, duration_ref=duration_ref,
+                               **initial_kwargs)
 
         phase.set_state_options("time", rate_source="dt_dr",
                                 fix_initial=fix_initial, fix_final=False, ref=100., defect_ref=100. * 1.e2, solve_segments='forward')
@@ -234,7 +234,7 @@ TwoDOFPhase._add_meta_data('duration_ref', val=1000.,
                            units='s', desc='duration reference')
 TwoDOFPhase._add_meta_data('control_order', val=1, desc='control order')
 TwoDOFPhase._add_meta_data('opt', val=True, desc='opt')
-TwoDOFPhase._add_meta_data('ground_roll', val=True)
+TwoDOFPhase._add_meta_data('ground_roll', val=False)
 TwoDOFPhase._add_meta_data('rotation', val=False)
 TwoDOFPhase._add_meta_data('clean', val=False)
 TwoDOFPhase._add_meta_data('balance_throttle', val=False)
