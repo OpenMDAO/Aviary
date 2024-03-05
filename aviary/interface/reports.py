@@ -1,7 +1,9 @@
 from pathlib import Path
-from openmdao.utils.reports_system import register_report
 
 import numpy as np
+
+from openmdao.utils.mpi import MPI
+from openmdao.utils.reports_system import register_report
 
 from aviary.interface.utils.markdown_utils import write_markdown_variable_table
 from aviary.utils.named_values import NamedValues
@@ -15,12 +17,15 @@ def register_custom_reports():
     # TODO top-level aircraft report?
     # TODO add flag to skip registering reports?
 
+    # Note: Due to a possible bug in OpenMDAO, we need to assign Problem as the
+    # class_name instead of AviaryProblem.
+
     # register per-subsystem report generation
     register_report(name='subsystems',
                     func=subsystem_report,
                     desc='Generates reports for each subsystem builder in the '
                          'Aviary Problem',
-                    class_name='AviaryProblem',
+                    class_name='Problem',
                     method='run_driver',
                     pre_or_post='post',
                     # **kwargs
@@ -29,7 +34,7 @@ def register_custom_reports():
     register_report(name='mission',
                     func=mission_report,
                     desc='Generates report for mission results from Aviary problem',
-                    class_name='AviaryProblem',
+                    class_name='Problem',
                     method='run_driver',
                     pre_or_post='post')
 
@@ -44,6 +49,14 @@ def subsystem_report(prob, **kwargs):
     prob : AviaryProblem
         The AviaryProblem used to generate this report
     """
+
+    # Note: Due to a possible bug in OpenMDAO, we need to assign Problem as the
+    # class_name instead of AviaryProblem. Make sure that we don't try to write
+    # aviary reports without aviary in the model.
+    from aviary.interface.methods_for_level2 import AviaryProblem
+    if not isinstance(prob, AviaryProblem):
+        return
+
     reports_folder = Path(prob.get_reports_dir() / 'subsystems')
     reports_folder.mkdir(exist_ok=True)
 
@@ -67,17 +80,20 @@ def mission_report(prob, **kwargs):
         try:
             vals = prob.get_val(f"{traj}.{phase}.timeseries.{var_name}",
                                 units=units,
-                                indices=indices,)
+                                indices=indices,
+                                get_remote=True)
         except KeyError:
             try:
                 vals = prob.get_val(f"{traj}.{phase}.{var_name}",
                                     units=units,
-                                    indices=indices,)
+                                    indices=indices,
+                                    get_remote=True)
             # 2DOF breguet range cruise uses time integration to track mass
             except TypeError:
                 vals = prob.get_val(f"{traj}.{phase}.timeseries.time",
                                     units=units,
-                                    indices=indices,)
+                                    indices=indices,
+                                    get_remote=True)
             except KeyError:
                 vals = None
 
@@ -93,6 +109,13 @@ def mission_report(prob, **kwargs):
             return diff
         else:
             return None
+
+    # Note: Due to a possible bug in OpenMDAO, we need to assign Problem as the
+    # class_name instead of AviaryProblem. Make sure that we don't try to write
+    # aviary reports without aviary in the model.
+    from aviary.interface.methods_for_level2 import AviaryProblem
+    if not isinstance(prob, AviaryProblem):
+        return
 
     reports_folder = Path(prob.get_reports_dir())
     report_file = reports_folder / 'mission_summary.md'
@@ -128,6 +151,9 @@ def mission_report(prob, **kwargs):
     totals.set_val('Total Fuel Burn', initial_mass - final_mass, 'lbm')
     totals.set_val('Total Time', final_time - initial_time, 'min')
     totals.set_val('Total Ground Distance', final_range - initial_range, 'nmi')
+
+    if MPI and MPI.COMM_WORLD.rank != 0:
+        return
 
     with open(report_file, mode='w') as f:
         f.write('# MISSION SUMMARY')
