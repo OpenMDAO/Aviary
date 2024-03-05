@@ -5,6 +5,7 @@ import sys
 import aviary
 from aviary.interface.methods_for_level1 import _exec_level1, _setup_level1_parser
 from aviary.utils.Fortran_to_Aviary import _exec_F2A, _setup_F2A_parser
+from aviary.utils.engine_deck_conversion import _exec_EDC, _setup_EDC_parser, EDC_description
 from aviary.visualization.dashboard import _dashboard_setup_parser, _dashboard_cmd
 from aviary.interface.graphical_input import _exec_flight_profile, _setup_flight_profile_parser
 from aviary.interface.download_models import _exec_hangar, _setup_hangar_parser
@@ -50,6 +51,7 @@ _command_map = {
                   "Run the Dashboard tool"),
     'hangar': (_setup_hangar_parser, _exec_hangar,
                "Allows users that pip installed Aviary to download models from the Aviary hangar"),
+    'convert_engine': (_setup_EDC_parser, _exec_EDC, EDC_description),
 }
 
 
