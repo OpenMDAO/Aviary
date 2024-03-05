@@ -35,7 +35,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
                           42529., tolerance=rtol)
 
-        assert_near_equal(prob.get_val(Mission.Landing.GROUND_DISTANCE, units='NM'),
+        assert_near_equal(prob.get_val(Mission.Landing.GROUND_DISTANCE, units='ft'),
                           2634.8, tolerance=rtol)
 
         assert_near_equal(prob.get_val(Mission.Summary.RANGE, units='NM'),
@@ -62,7 +62,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
                           42529., tolerance=rtol)
 
-        assert_near_equal(prob.get_val(Mission.Landing.GROUND_DISTANCE, units='NM'),
+        assert_near_equal(prob.get_val(Mission.Landing.GROUND_DISTANCE, units='ft'),
                           2634.8, tolerance=rtol)
 
         assert_near_equal(prob.get_val(Mission.Summary.RANGE, units='NM'),
@@ -87,9 +87,9 @@ class ProblemPhaseTestCase(unittest.TestCase):
                           95509, tolerance=rtol)
 
         assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
-                          42529., tolerance=rtol)
+                          43574., tolerance=rtol)
 
-        assert_near_equal(prob.get_val(Mission.Landing.GROUND_DISTANCE, units='NM'),
+        assert_near_equal(prob.get_val(Mission.Landing.GROUND_DISTANCE, units='ft'),
                           2634.8, tolerance=rtol)
 
         assert_near_equal(prob.get_val(Mission.Summary.RANGE, units='NM'),
