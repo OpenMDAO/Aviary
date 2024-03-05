@@ -36,7 +36,7 @@ from aviary.subsystems.propulsion.engine_sizing import SizeEngine
 from aviary.subsystems.propulsion.utils import (EngineModelVariables,
                                                 convert_geopotential_altitude,
                                                 default_units)
-from aviary.utils.named_values import NamedValues, get_keys, get_items
+from aviary.utils.aviary_values import AviaryValues, NamedValues, get_keys, get_items
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.utils.csv_data_file import read_data_file
@@ -48,7 +48,10 @@ ALTITUDE = EngineModelVariables.ALTITUDE
 THROTTLE = EngineModelVariables.THROTTLE
 HYBRID_THROTTLE = EngineModelVariables.HYBRID_THROTTLE
 THRUST = EngineModelVariables.THRUST
+TAILPIPE_THRUST = EngineModelVariables.TAILPIPE_THRUST
 GROSS_THRUST = EngineModelVariables.GROSS_THRUST
+SHAFT_POWER = EngineModelVariables.SHAFT_POWER
+SHAFT_POWER_CORRECTED = EngineModelVariables.SHAFT_POWER_CORRECTED
 RAM_DRAG = EngineModelVariables.RAM_DRAG
 FUEL_FLOW = EngineModelVariables.FUEL_FLOW
 ELECTRIC_POWER = EngineModelVariables.ELECTRIC_POWER
@@ -70,7 +73,10 @@ aliases = {
     FUEL_FLOW: ['fuel', 'fuel_flow', 'fuel_flow_rate'],
     ELECTRIC_POWER: 'electric_power',
     NOX_RATE: ['nox', 'nox_rate'],
-    TEMPERATURE: ['t4', 'temp', 'temperature']
+    TEMPERATURE: ['t4', 'temp', 'temperature'],
+    SHAFT_POWER: ['shaft_power', 'shp'],
+    SHAFT_POWER_CORRECTED: ['shaft_power_corrected', 'shpcor', 'corrected_horsepower'],
+    TAILPIPE_THRUST: ['tailpipe_thrust'],
 }
 
 # these variables must be present in engine performance data
@@ -78,7 +84,7 @@ required_variables = {
     MACH,
     ALTITUDE,
     THROTTLE,
-    THRUST
+    THRUST,
 }
 
 # EngineDecks internally require these options to have values. Input checks will set
@@ -125,7 +131,7 @@ class EngineDeck(EngineModel):
     update
     """
 
-    def __init__(self, name='engine_deck', options=None, data: NamedValues = None):
+    def __init__(self, name='engine_deck', options: AviaryValues = None, data: NamedValues = None):
         if data is not None:
             self.read_from_file = False
         else:
@@ -142,8 +148,10 @@ class EngineDeck(EngineModel):
         self.data = {key: np.array([]) for key in EngineModelVariables}
         # gross thrust and ram drag are not used outside of EngineDeck, remove from
         #     working data
-        self.data.pop(GROSS_THRUST)
-        self.data.pop(RAM_DRAG)
+        if GROSS_THRUST in self.data:
+            self.data.pop(GROSS_THRUST)
+        if RAM_DRAG in self.data:
+            self.data.pop(RAM_DRAG)
 
         # number of data points in engine data
         self.model_length = 0
@@ -167,6 +175,8 @@ class EngineDeck(EngineModel):
         #      to truly fix)
         self.global_throttle = True
         self.global_hybrid_throttle = True
+
+        self.required_variables = required_variables
 
         self._set_variable_flags()
 
@@ -266,6 +276,7 @@ class EngineDeck(EngineModel):
         self.use_hybrid_throttle = HYBRID_THROTTLE in engine_variables
         self.use_nox = NOX_RATE in engine_variables
         self.use_t4 = TEMPERATURE in engine_variables
+        self.use_shaft_power = SHAFT_POWER_CORRECTED in engine_variables
         # self.use_exit_area = EXIT_AREA in engine_variables
 
     def _setup(self, data):
@@ -462,11 +473,11 @@ class EngineDeck(EngineModel):
         self.model_length = len(self.data[ALTITUDE])
 
         # check that all required variables are present in engine data
-        if not required_variables.issubset(engine_variables):
+        if not self.required_variables.issubset(engine_variables):
             # gather all missing required variables
             missing_variables = set()
             for var in engine_variables:
-                if var in required_variables:
+                if var in self.required_variables:
                     missing_variables.add(var)
 
             # if missing_variables is not empty
@@ -682,28 +693,8 @@ class EngineDeck(EngineModel):
 
         return SizeEngine(aviary_options=self.options)
 
-    def build_mission(self, num_nodes, aviary_inputs):
-        """
-        Creates interpolator objects to be added to mission-level propulsion subsystem.
-        Interpolators must be re-generated for each ODE due to potentialy different
-        num_nodes in each mission segment.
-
-        Parameters
-        ----------
-        num_nodes : int
-            Number of nodes present in the current Dymos phase of mission analysis.
-
-        Returns
-        -------
-        engine_group : openmdao.core.Group
-            An OpenMDAO group containing engine data interpolators, an EngineScaling
-            component, and max throttle/max hybrid_throttle generating components as
-            needed for this EngineDeck.
-        """
+    def build_engine_interpolator(self, num_nodes, aviary_inputs):
         interp_method = self.get_val(Aircraft.Engine.INTERPOLATION_METHOD)
-
-        engine_group = om.Group()
-
         # interpolator object for engine data
         engine = om.MetaModelSemiStructuredComp(
             method=interp_method, extrapolate=True, vec_size=num_nodes)
@@ -711,6 +702,7 @@ class EngineDeck(EngineModel):
         units = default_units
         for key in self.engine_variables:
             units[key] = self.engine_variables[key]
+        self.engine_variable_units = units
 
         # add inputs and outputs to interpolator
         engine.add_input(Dynamic.Mission.MACH,
@@ -742,10 +734,16 @@ class EngineDeck(EngineModel):
                           self.data[ELECTRIC_POWER],
                           units=units[ELECTRIC_POWER],
                           desc='Current electric energy rate (unscaled)')
+        # if self.use_nox:
         engine.add_output('nox_rate_unscaled',
                           self.data[NOX_RATE],
                           units=units[NOX_RATE],
                           desc='Current NOx emission rate (unscaled)')
+        # if self.use_shaft_power:
+        #     engine.add_output('shaft_power_unscaled',
+        #                       self.data[SHAFT_POWER_CORRECTED],
+        #                       units=units[SHAFT_POWER_CORRECTED],
+        #                       desc='Current corrected shaft power (unscaled)')
         # if self.use_exit_area:
         # engine.add_output('exit_area_unscaled',
         #                   self.data[EXIT_AREA],
@@ -755,6 +753,32 @@ class EngineDeck(EngineModel):
                           self.data[TEMPERATURE],
                           units=units[TEMPERATURE],
                           desc='Current turbine exit temperature')
+        return engine
+
+    def build_mission(self, num_nodes, aviary_inputs) -> om.Group:
+        """
+        Creates interpolator objects to be added to mission-level propulsion subsystem.
+        Interpolators must be re-generated for each ODE due to potentialy different
+        num_nodes in each mission segment.
+
+        Parameters
+        ----------
+        num_nodes : int
+            Number of nodes present in the current Dymos phase of mission analysis.
+
+        Returns
+        -------
+        engine_group : openmdao.core.Group
+            An OpenMDAO group containing engine data interpolators, an EngineScaling
+            component, and max throttle/max hybrid_throttle generating components as
+            needed for this EngineDeck.
+        """
+        interp_method = self.get_val(Aircraft.Engine.INTERPOLATION_METHOD)
+
+        engine_group = om.Group()
+
+        engine = self.build_engine_interpolator(num_nodes, aviary_inputs)
+        units = self.engine_variable_units
 
         # Create copy of interpolation component that computes max thrust for current
         # flight condition
@@ -799,11 +823,11 @@ class EngineDeck(EngineModel):
                                 alt_table, packed_data[ALTITUDE][M, A, 0])
 
                 # add inputs and outputs to interpolator
-                interp_throttles.add_input(Dynamic.MACH,
+                interp_throttles.add_input(Dynamic.Mission.MACH,
                                            mach_table,
                                            units='unitless',
                                            desc='Current flight Mach number')
-                interp_throttles.add_input(Dynamic.ALTITUDE,
+                interp_throttles.add_input(Dynamic.Mission.ALTITUDE,
                                            alt_table,
                                            units=units[ALTITUDE],
                                            desc='Current flight altitude')
@@ -1329,6 +1353,240 @@ class EngineDeck(EngineModel):
         self.alt_max_count = max_alt_count
         self.data_max_count = max_data_count
         self.data_indices = data_indices.astype(int)
+
+
+class TurboPropDeck(EngineDeck):
+    def __init__(
+        self,
+        name='engine_deck',
+        options: AviaryValues = None,
+        data: NamedValues = None,
+        prop_model=None,
+        power_type=EngineModelVariables.SHAFT_POWER_CORRECTED,
+    ):
+        super().__init__(name, options, data)
+
+        if THRUST in self.required_variables:
+            self.required_variables.remove(THRUST)
+
+        if power_type in (SHAFT_POWER, SHAFT_POWER_CORRECTED):
+            self.required_variables.add(power_type)
+            self.power_type = power_type
+        else:
+            raise ValueError(
+                f'{power_type} is not not a valid power_type.\nChose from (EngineModelVariables.SHAFT_POWER, EngineModelVariables.SHAFT_POWER_CORRECTED)')
+        self.required_variables.add(TAILPIPE_THRUST)
+
+        self.prop_model = prop_model
+
+    def _setup(self, data):
+        """
+        Read in and process engine data:
+            Check data consistency.
+            Convert altitudes to geometric.
+            Sort and pack data.
+            Determine reference thrust.
+            Normalize throttles/hybrid throttles.
+            Fill flight idle points.
+        """
+        self._read_data(data)
+
+        # perform consistency checks on data
+        self._check_data()
+
+        # convert geopotential altitude to geometric if required
+        if self.get_val(Aircraft.Engine.GEOPOTENTIAL_ALT):
+            self.data[ALTITUDE] = convert_geopotential_altitude(
+                self.data[ALTITUDE])
+
+        # sort and organize data
+        self._pack_data()
+
+        # normalize throttle and hybrid throttle (if included) to |0-1| scale
+        self._normalize_throttle()
+
+        # extrapolate flight idle data if requested
+        if self.get_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE):
+            self._generate_flight_idle()
+
+    def build_mission(self, num_nodes, aviary_inputs):
+        power_type = self.power_type
+        engine_group = om.Group()
+
+        engine = self.build_engine_interpolator(num_nodes, aviary_inputs)
+        units = self.engine_variable_units
+        if power_type is SHAFT_POWER_CORRECTED:
+            correction = '_corrected'
+        else:
+            correction = ''
+        engine.add_output('shaft_power'+correction+'_unscaled',
+                          self.data[power_type],
+                          units=units[power_type],
+                          desc='Current'+correction.replace('_', ' ')+' shaft power (unscaled)')
+        engine.add_output('tailpipe_thrust_unscaled',
+                          self.data[TAILPIPE_THRUST],
+                          units=units[TAILPIPE_THRUST],
+                          desc='Current tailpipe thrust (unscaled)')
+        engine.add_output('thrust_net_max_unscaled',
+                          self.data[THRUST],
+                          units=units[THRUST],
+                          desc='Current max net thrust produced (unscaled)')
+
+        # add created subsystems to engine_group
+        engine_group.add_subsystem('interpolation',
+                                   engine,
+                                   promotes_inputs=['*'],
+                                   promotes_outputs=['*'])
+
+        if power_type is SHAFT_POWER_CORRECTED:
+            self._uncorrect_shaft_power(engine_group, num_nodes=num_nodes)
+
+        scaling_group = om.Group()
+        variables_to_scale = ['shaft_power', 'tailpipe_thrust',
+                              'nox_rate', 'electric_power', 'thrust_net_max']
+        for variable in variables_to_scale:
+            self.add_scaling_exec_comp(scaling_group, variable, num_nodes=num_nodes)
+        self.add_scaling_exec_comp(scaling_group, 'fuel_flow_rate', num_nodes=num_nodes,
+                                   alias=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE)
+        self.add_scaling_exec_comp(scaling_group, 'thrust_net',
+                                   num_nodes=num_nodes, alias='unused')
+
+        engine_group.add_subsystem('engine_scaling',
+                                   subsys=scaling_group,
+                                   promotes_inputs=['*'],
+                                   promotes_outputs=['*'])
+
+        if self.prop_model:
+            engine_group.add_subsystem(
+                'propeller_model',
+                self.prop_model,
+                promotes_inputs=[Dynamic.Mission.SHAFT_POWER],
+                promotes_outputs=['prop_thrust'],
+            )
+        else:
+            self._add_dummy_prop(engine_group, num_nodes)
+
+        engine_group.add_subsystem(
+            'total_thrust',
+            om.ExecComp(
+                'total_thrust = prop_thrust + tailpipe_thrust',
+                total_thrust={'units': 'lbf', 'shape': num_nodes},
+                prop_thrust={'units': 'lbf', 'shape': num_nodes},
+                tailpipe_thrust={'val': np.zeros(num_nodes), 'units': 'lbf'},
+            ),
+            promotes_inputs=['prop_thrust', 'tailpipe_thrust'],
+            promotes_outputs=[('total_thrust', Dynamic.Mission.THRUST)],
+        )
+
+        return engine_group
+
+    def add_scaling_exec_comp(self, grp: om.Group, variable: str, units=None, num_nodes=1, alias=None):
+        if alias is None:
+            alias = variable
+        if units is None:
+            _, units = self.options.get_item(variable)
+        grp.add_subsystem(
+            variable+'_scaling',
+            om.ExecComp(
+                'scaled_variable = variable_unscaled * scale_factor',
+                scaled_variable={'shape': num_nodes, 'units': units},
+                variable_unscaled={'shape': num_nodes, 'units': units},
+                scale_factor={'val': 1, 'units': 'unitless'},
+                has_diag_partials=True,
+            ),
+            promotes_inputs=[
+                ('variable_unscaled', variable+'_unscaled'),
+                ('scale_factor', Aircraft.Engine.SCALE_FACTOR)
+            ],
+            promotes_outputs=[('scaled_variable', alias)]
+        )
+
+    def _uncorrect_shaft_power(self,  engine_group: om.Group, num_nodes=1, scaled=False):
+        if scaled:
+            suffix = ''
+        else:
+            suffix = '_unscaled'
+        anti_correction_group = om.Group()
+        anti_correction_group.add_subsystem(
+            'pressure_term',
+            om.ExecComp(
+                'delta_T = (P0 * (1 + .2*mach**2)**3.5) / P_amb',
+                delta_T={'units': "unitless", 'shape': num_nodes},
+                P0={'units': 'psi', 'shape': num_nodes},
+                mach={'units': 'unitless', 'shape': num_nodes},
+                P_amb={'val': np.full(num_nodes, 14.696), 'units': 'psi', },
+                has_diag_partials=True,
+            ),
+            promotes_inputs=[
+                ('P0', 'freestream_pressure'),
+                ('mach', Dynamic.Mission.MACH),
+            ],
+            promotes_outputs=['delta_T'],
+        )
+        anti_correction_group.add_subsystem(
+            'temperature_term',
+            om.ExecComp(
+                'theta_T = T0 * (1 + .2*mach**2)/T_amb',
+                theta_T={'units': "unitless", 'shape': num_nodes},
+                T0={'units': 'degR', 'shape': num_nodes},
+                mach={'units': 'unitless', 'shape': num_nodes},
+                T_amb={'val': np.full(num_nodes, 518.67), 'units': 'degR', },
+                has_diag_partials=True,
+            ),
+            promotes_inputs=[
+                ('T0', 'freestream_temperature'),
+                ('mach', Dynamic.Mission.MACH),
+            ],
+            promotes_outputs=['theta_T'],
+        )
+        anti_correction_group.add_subsystem(
+            'uncorrection',
+            om.ExecComp(
+                'shaft_power = shaft_power_corrected * (delta_T + theta_T**.5)',
+                shaft_power={'units': "hp", 'shape': num_nodes},
+                delta_T={'units': "unitless", 'shape': num_nodes},
+                theta_T={'units': "unitless", 'shape': num_nodes},
+                shaft_power_corrected={'units': "hp", 'shape': num_nodes},
+                has_diag_partials=True,
+            ),
+            promotes_inputs=[
+                'delta_T',
+                'theta_T',
+                ('shaft_power_corrected', Dynamic.Mission.SHAFT_POWER_CORRECTED+suffix),
+            ],
+            promotes_outputs=[('shaft_power', Dynamic.Mission.SHAFT_POWER+suffix)],
+        )
+        engine_group.add_subsystem(
+            'shaft_power_uncorrection',
+            anti_correction_group,
+            promotes_inputs=[
+                Dynamic.Mission.SHAFT_POWER_CORRECTED+suffix,
+                ('freestream_temperature', Dynamic.Mission.TEMPERATURE),
+                ('freestream_pressure', Dynamic.Mission.STATIC_PRESSURE),
+            ],
+            promotes_outputs=[
+                Dynamic.Mission.SHAFT_POWER+suffix
+            ],
+        )
+
+    def _add_dummy_prop(self, engine_group: om.Group, num_nodes=1):
+        engine_group.add_subsystem(
+            'propeller_model',
+            om.ExecComp(
+                'prop_thrust = (shaft_power * eff) / Vp',
+                shaft_power={'units': "W", 'shape': num_nodes},
+                eff={'val': .5, 'units': 'unitless', },
+                Vp={'units': 'm/s', 'shape': num_nodes},
+                prop_thrust={'units': 'N', 'shape': num_nodes},
+                has_diag_partials=True,
+            ),
+            promotes_inputs=[
+                'eff',
+                ('shaft_power', Dynamic.Mission.SHAFT_POWER),
+                ('Vp', Dynamic.Mission.VELOCITY),
+            ],
+            promotes_outputs=['prop_thrust'],
+        )
 
 
 #####################
