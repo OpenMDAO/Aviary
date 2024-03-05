@@ -1652,23 +1652,12 @@ class AviaryProblem(om.Problem):
                 self.model.connect(
                     "traj.ascent.timeseries.altitude", "h_fit.h_cp")
 
-                # self.model.connect(
-                #     "traj.desc2.timeseries.mass",
-                #     "landing.mass",
-                #     src_indices=[-1],
-                #     flat_src_indices=True,
-                # )
-
                 last_flight_phase_name = list(self.phase_info.keys())[-1]
                 self.model.connect(f'traj.{last_flight_phase_name}.states:mass',
                                    Mission.Landing.TOUCHDOWN_MASS, src_indices=[-1])
-                self.model.connect(f'traj.{last_flight_phase_name}.states:altitude',
-                                   Mission.Landing.INITIAL_ALTITUDE,
-                                   src_indices=[0])
 
                 connect_map = {
                     "traj.desc2.timeseries.distance": Mission.Summary.RANGE,
-                    # "traj.desc2.states:mass": Mission.Landing.TOUCHDOWN_MASS,
                 }
             else:
                 connect_map = {
@@ -1676,8 +1665,6 @@ class AviaryProblem(om.Problem):
                     Mission.Takeoff.ROTATION_VELOCITY: "traj.SGMGroundroll_velocity_trigger",
                     "traj.distance_final": Mission.Summary.RANGE,
                     "traj.mass_final": Mission.Landing.TOUCHDOWN_MASS,
-                    # "traj.mass_final": "landing.mass",
-                    "traj.altitude_final": Mission.Landing.INITIAL_ALTITUDE,
                 }
 
             # promote all ParamPort inputs for analytic segments as well
