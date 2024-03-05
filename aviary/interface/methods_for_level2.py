@@ -2568,19 +2568,12 @@ class AviaryProblem(om.Problem):
         else:
             control_type_string = 'control_values'
 
-        if HEIGHT_ENERGY:
-            last_regular_phase = self.regular_phases[-1]
-            self.model.connect(f'traj.{last_regular_phase}.states:mass',
-                               Mission.Landing.TOUCHDOWN_MASS, src_indices=[-1])
-            self.model.connect(f'traj.{last_regular_phase}.{control_type_string}:altitude',
-                               Mission.Landing.INITIAL_ALTITUDE,
-                               src_indices=[0])
-        else:
-            self.model.connect(f'traj.{last_flight_phase_name}.states:mass',
-                               Mission.Landing.TOUCHDOWN_MASS, src_indices=[-1])
-            self.model.connect(f'traj.{last_flight_phase_name}.{control_type_string}:altitude',
-                               Mission.Landing.INITIAL_ALTITUDE,
-                               src_indices=[0])
+        last_regular_phase = self.regular_phases[-1]
+        self.model.connect(f'traj.{last_regular_phase}.states:mass',
+                           Mission.Landing.TOUCHDOWN_MASS, src_indices=[-1])
+        self.model.connect(f'traj.{last_regular_phase}.{control_type_string}:altitude',
+                           Mission.Landing.INITIAL_ALTITUDE,
+                           src_indices=[0])
 
     def _add_post_mission_takeoff_systems(self):
         first_flight_phase_name = list(self.phase_info.keys())[0]
@@ -2637,10 +2630,21 @@ class AviaryProblem(om.Problem):
             promotes_outputs=['mission:*'],
         )
 
+        # last_flight_phase_name = list(self.phase_info.keys())[-1]
+        # # if self.phase_info[last_flight_phase_name]['user_options'].get('use_polynomial_control', True):
+        # #     control_type_string = 'polynomial_control_values'
+        # # else:
+        # #     control_type_string = 'control_values'
+        # # self.model.connect(f'traj.{last_flight_phase_name}.states:mass',
+        # #                    Mission.Landing.TOUCHDOWN_MASS, src_indices=[-1])
+        # self.model.connect(f'traj.desc2.states:altitude',
+        #                    Mission.Landing.INITIAL_ALTITUDE,
+        #                    src_indices=[0])
+
         # TBD Re-organize shooting so that fuel-reserve, etc
         # are calculated in prob.post_mission rather than in prob.model
 
-        self._add_fuel_reserve_component(location='model')
+        self._add_fuel_reserve_component(post_mission=False)
 
         self.model.add_subsystem(
             "fuel_burn",
@@ -2708,16 +2712,17 @@ class AviaryProblem(om.Problem):
                 ("range_resid", Mission.Constraints.RANGE_RESIDUAL)],
         )
 
-    def _add_fuel_reserve_component(self, location='post_mission'):
-        if self.aviary_inputs.get_val(Aircraft.Design.RESERVE_FUEL_FRACTION, units='unitless') != 0:
-
+    def _add_fuel_reserve_component(self, post_mission=True):
+        RESERVE_FUEL_FRACTION = self.aviary_inputs.get_val(
+            Aircraft.Design.RESERVE_FUEL_FRACTION, units='unitless')
+        if RESERVE_FUEL_FRACTION != 0:
             reserve_fuel_frac = om.ExecComp('reserve_fuel_frac_mass = reserve_fuel_fraction * (takeoff_mass - final_mass)',
                                             reserve_fuel_frac_mass={"units": "lbm"},
-                                            reserve_fuel_fraction={"units": "lbm", "val": self.aviary_inputs.get_val(
-                                                Aircraft.Design.RESERVE_FUEL_FRACTION, units='unitless')},
+                                            reserve_fuel_fraction={
+                                                "units": "lbm", "val": RESERVE_FUEL_FRACTION},
                                             final_mass={"units": "lbm"},
                                             takeoff_mass={"units": "lbm"})
-            if location == 'post_mission':
+            if post_mission:
                 self.post_mission.add_subsystem("reserve_fuel_frac", reserve_fuel_frac,
                                                 promotes_inputs=[("takeoff_mass", Mission.Summary.GROSS_MASS),
                                                                  ("final_mass",
@@ -2732,14 +2737,16 @@ class AviaryProblem(om.Problem):
                                                           ("reserve_fuel_fraction", Aircraft.Design.RESERVE_FUEL_FRACTION)],
                                          promotes_outputs=["reserve_fuel_frac_mass"])
 
+        RESERVE_FUEL_ADDITIONAL = self.aviary_inputs.get_val(
+            Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm')
         reserve_fuel = om.ExecComp('reserve_fuel = reserve_fuel_frac_mass + reserve_fuel_additional + reserve_fuel_burned',
                                    reserve_fuel={"units": "lbm", 'shape': 1},
                                    reserve_fuel_frac_mass={"units": "lbm", "val": 0},
-                                   reserve_fuel_additional={"units": "lbm", "val": self.aviary_inputs.get_val(
-                                       Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm')},
+                                   reserve_fuel_additional={
+                                       "units": "lbm", "val": RESERVE_FUEL_ADDITIONAL},
                                    reserve_fuel_burned={"units": "lbm", "val": 0})
 
-        if location == 'post_mission':
+        if post_mission:
             self.post_mission.add_subsystem("reserve_fuel", reserve_fuel,
                                             promotes_inputs=["reserve_fuel_frac_mass",
                                                              ("reserve_fuel_additional",
