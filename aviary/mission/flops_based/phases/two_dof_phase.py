@@ -1,7 +1,7 @@
 import dymos as dm
 
 from aviary.mission.phase_builder_base import PhaseBuilderBase, register
-from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessTime, InitialGuessControl, InitialGuessPolynomialControl
+from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessIntegrationVariable, InitialGuessControl, InitialGuessPolynomialControl
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variable_meta_data import _MetaData
@@ -243,8 +243,8 @@ TwoDOFPhase._add_meta_data('mach_bounds', val=(0., 2.), units='unitless')
 TwoDOFPhase._add_meta_data('altitude_bounds', val=(0., 60.e3), units='ft')
 
 TwoDOFPhase._add_initial_guess_meta_data(
-    InitialGuessTime(key='distance'),
-    desc='initial guess for initial time and duration specified as a tuple')
+    InitialGuessIntegrationVariable(key='distance'),
+    desc='initial guess for initial distance and duration specified as a tuple')
 
 TwoDOFPhase._add_initial_guess_meta_data(
     InitialGuessPolynomialControl('altitude'),

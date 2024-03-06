@@ -1,7 +1,7 @@
 import dymos as dm
 
 from aviary.mission.phase_builder_base import PhaseBuilderBase, register
-from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessTime, InitialGuessControl, InitialGuessPolynomialControl
+from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessIntegrationVariable, InitialGuessControl, InitialGuessPolynomialControl
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variable_meta_data import _MetaData
@@ -181,7 +181,7 @@ GroundrollPhase._add_meta_data('clean', val=False)
 GroundrollPhase._add_meta_data('constraints', val={})
 
 GroundrollPhase._add_initial_guess_meta_data(
-    InitialGuessTime(key='velocity'),
+    InitialGuessIntegrationVariable(key='velocity'),
     desc='initial guess for initial velocity and final specified as a tuple')
 
 GroundrollPhase._add_initial_guess_meta_data(
