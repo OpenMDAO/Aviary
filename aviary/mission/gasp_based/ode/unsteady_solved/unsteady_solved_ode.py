@@ -163,7 +163,7 @@ class UnsteadySolvedODE(BaseODE):
             'method': 'low_speed',
         }
         if self.options['clean']:
-            kwargs['method'] = 'tabular'
+            kwargs['method'] = 'cruise'
         for subsystem in core_subsystems:
             # check if subsystem_options has entry for a subsystem of this name
             if subsystem.name in subsystem_options:
