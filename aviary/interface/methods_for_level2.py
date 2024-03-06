@@ -206,7 +206,6 @@ class AviaryGroup(om.Group):
             phase.linear_solver = om.LinearRunOnce()
             if isinstance(phase.indep_states, om.ImplicitComponent):
                 phase.indep_states.nonlinear_solver = om.NewtonSolver(solve_subsystems=False)
-                #phase.indep_states.nonlinear_solver = om.NonlinearBlockGS()
                 phase.indep_states.linear_solver = om.DirectSolver()
 
 
