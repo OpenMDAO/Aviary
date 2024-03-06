@@ -28,7 +28,7 @@ optimize_altitude = False
 # Currently the more complete takeoff trajectory requires SNOPT to converge.
 # If False, the takeoff trajectory will be simplified to a ground roll only
 # to ensure the methods_for_level2 API works.
-use_full_takeoff = True
+use_full_takeoff = False
 
 phase_info = {
     "pre_mission": {"include_takeoff": False, "optimize_mass": False},
@@ -262,10 +262,6 @@ phase_info = {
 
 
 if not use_full_takeoff:
-    phase_info.pop('CD_to_P2')
-    phase_info.pop('DE')
-    phase_info.pop('EF_to_P1')
-    phase_info.pop('EF_past_P1')
     driver = "SLSQP"
 else:
     driver = "SNOPT"
