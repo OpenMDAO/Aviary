@@ -79,6 +79,14 @@ OpenMDAO has a reports system which will generate reports when you run your mode
 
 There is an SQLite database output. By default, it is `aviary_history.db`. It can be used to rerun your case though we do not detail that here. Users can write separate Python script to create user customized outputs and graphs. We will show how to use the this database to create user's customized graph in [the onboarding docs](../getting_started/onboarding.md).
 
+### Report Location
+
+Reports are placed a subdirectory called `reports` under the directory where the script was run. The subdirectory's name for Level 1 runs is based on the name of the CSV file used to define aircraft and mission properties. For Level 2 and Level 3 runs, the name is based on the name of the Python script being run. 
+
+### Warning About the Reports Directory
+
+Repeated runs of the same script (Levels 2 and 3) or the same aircraft defintion CSV file (Level 1) will overwrite existing reports directories. So to preserve reports from previous runs, the user should make copies of the report directory before starting another run.
+
 ### Relevant Reports
 
 There is an optimizer output. If `SNOPT` is the optimizer, `SNOPT_print.out` is generated. The SNOPT output is a detailed output of the optimizer performance. New users likely will want to exercise caution when viewing this output, as it includes some advanced information.
