@@ -25,7 +25,7 @@ subsystem_options = {'core_aerodynamics':
                       'lift_coefficient_factor': 1.,
                       'drag_coefficient_factor': 1.}}
 
-optimize_mach = False
+optimize_mach = True
 optimize_altitude = False
 
 # Currently the more complete takeoff trajectory requires SNOPT to converge.
@@ -268,8 +268,6 @@ phase_info = {
 
 
 if not use_full_takeoff:
-    phase_info.pop('rotate')
-    phase_info.pop('BC')
     phase_info.pop('CD_to_P2')
     phase_info.pop('DE')
     phase_info.pop('EF_to_P1')

@@ -1,7 +1,7 @@
 import dymos as dm
 
 from aviary.mission.phase_builder_base import PhaseBuilderBase, register
-from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessTime, InitialGuessControl, InitialGuessPolynomialControl
+from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessIntegrationVariable, InitialGuessControl, InitialGuessPolynomialControl
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variable_meta_data import _MetaData
@@ -27,7 +27,7 @@ class GroundrollPhase(PhaseBuilderBase):
 
     _initial_guesses_meta_data_ = {}
 
-    default_name = 'cruise'
+    default_name = 'groundroll'
 
     default_ode_class = GroundrollODE
 
@@ -55,7 +55,7 @@ class GroundrollPhase(PhaseBuilderBase):
 
     def build_phase(self, aviary_options: AviaryValues = None):
         '''
-        Return a new energy phase for analysis using these constraints.
+        Return a new 2dof phase for analysis using these constraints.
 
         If ode_class is None, default_ode_class is used.
 
@@ -178,12 +178,11 @@ GroundrollPhase._add_meta_data('input_speed_type', val='TAS', desc='input speed 
 GroundrollPhase._add_meta_data('ground_roll', val=True)
 GroundrollPhase._add_meta_data('rotation', val=False)
 GroundrollPhase._add_meta_data('clean', val=False)
-GroundrollPhase._add_meta_data('balance_throttle', val=False)
 GroundrollPhase._add_meta_data('constraints', val={})
 
 GroundrollPhase._add_initial_guess_meta_data(
-    InitialGuessTime(key='velocity'),
-    desc='initial guess for initial time and duration specified as a tuple')
+    InitialGuessIntegrationVariable(key='velocity'),
+    desc='initial guess for initial velocity and final specified as a tuple')
 
 GroundrollPhase._add_initial_guess_meta_data(
     InitialGuessPolynomialControl('altitude'),

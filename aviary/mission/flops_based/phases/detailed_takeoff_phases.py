@@ -47,7 +47,7 @@ import openmdao.api as om
 
 from aviary.mission.flops_based.ode.takeoff_ode import TakeoffODE
 from aviary.mission.phase_builder_base import PhaseBuilderBase
-from aviary.mission.initial_guess_builders import InitialGuessControl, InitialGuessParameter, InitialGuessPolynomialControl, InitialGuessState, InitialGuessTime
+from aviary.mission.initial_guess_builders import InitialGuessControl, InitialGuessParameter, InitialGuessPolynomialControl, InitialGuessState, InitialGuessIntegrationVariable
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_trajectory_params
 from aviary.variable_info.variables import Dynamic, Mission
@@ -60,7 +60,7 @@ def _init_initial_guess_meta_data(cls: PhaseBuilderBase):
     cls._initial_guesses_meta_data_ = {}
 
     cls._add_initial_guess_meta_data(
-        InitialGuessTime(),
+        InitialGuessIntegrationVariable(),
         desc='initial guess for initial time and duration specified as a tuple')
 
     cls._add_initial_guess_meta_data(

@@ -1,7 +1,7 @@
 import dymos as dm
 
 from aviary.mission.phase_builder_base import PhaseBuilderBase, register
-from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessTime, InitialGuessControl, InitialGuessPolynomialControl
+from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessIntegrationVariable, InitialGuessControl, InitialGuessPolynomialControl
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variable_meta_data import _MetaData
@@ -57,7 +57,7 @@ class TwoDOFPhase(PhaseBuilderBase):
 
     def build_phase(self, aviary_options: AviaryValues = None):
         '''
-        Return a new energy phase for analysis using these constraints.
+        Return a new 2dof phase for analysis using these constraints.
 
         If ode_class is None, default_ode_class is used.
 
@@ -80,8 +80,6 @@ class TwoDOFPhase(PhaseBuilderBase):
         control_order = user_options.get_val('control_order')
 
         fix_initial = user_options.get_val('fix_initial')
-        initial_bounds = user_options.get_val('initial_bounds', units='ft')
-        initial_ref = user_options.get_val('initial_ref', units='ft')
         duration_bounds = user_options.get_val('duration_bounds', units='ft')
         duration_ref = user_options.get_val('duration_ref', units='ft')
         ground_roll = user_options.get_val('ground_roll')
@@ -94,15 +92,17 @@ class TwoDOFPhase(PhaseBuilderBase):
         altitude_bounds = user_options.get_item('altitude_bounds')
         use_polynomial_control = user_options.get_val('use_polynomial_control')
 
-        if fix_initial:
-            phase.set_time_options(fix_initial=fix_initial, fix_duration=False,
-                                   units='ft', name=Dynamic.Mission.DISTANCE,
-                                   duration_bounds=duration_bounds, duration_ref=duration_ref)
-        else:
-            phase.set_time_options(fix_initial=fix_initial, fix_duration=False,
-                                   units='ft', name=Dynamic.Mission.DISTANCE,
-                                   initial_bounds=initial_bounds, initial_ref=initial_ref,
-                                   duration_bounds=duration_bounds, duration_ref=duration_ref)
+        initial_kwargs = {}
+        if not fix_initial:
+            initial_kwargs = {
+                'initial_bounds': user_options.get_val('initial_bounds', units='ft'),
+                'initial_ref': user_options.get_val('initial_ref', units='ft'),
+            }
+
+        phase.set_time_options(fix_initial=fix_initial, fix_duration=False,
+                               units='ft', name=Dynamic.Mission.DISTANCE,
+                               duration_bounds=duration_bounds, duration_ref=duration_ref,
+                               **initial_kwargs)
 
         phase.set_state_options("time", rate_source="dt_dr",
                                 fix_initial=fix_initial, fix_final=False, ref=100., defect_ref=100.)
@@ -255,7 +255,7 @@ TwoDOFPhase._add_meta_data('initial_ref', val=100., units='s', desc='initial ref
 TwoDOFPhase._add_meta_data('duration_ref', val=1000.,
                            units='s', desc='duration reference')
 TwoDOFPhase._add_meta_data('control_order', val=1, desc='control order')
-TwoDOFPhase._add_meta_data('ground_roll', val=True)
+TwoDOFPhase._add_meta_data('ground_roll', val=False)
 TwoDOFPhase._add_meta_data('rotation', val=False)
 TwoDOFPhase._add_meta_data('clean', val=False)
 TwoDOFPhase._add_meta_data('throttle_enforcement', val=None)
@@ -265,8 +265,8 @@ TwoDOFPhase._add_meta_data('altitude_bounds', val=(0., 60.e3), units='ft')
 TwoDOFPhase._add_meta_data('use_polynomial_control', val=True)
 
 TwoDOFPhase._add_initial_guess_meta_data(
-    InitialGuessTime(key='distance'),
-    desc='initial guess for initial time and duration specified as a tuple')
+    InitialGuessIntegrationVariable(key='distance'),
+    desc='initial guess for initial distance and duration specified as a tuple')
 
 TwoDOFPhase._add_initial_guess_meta_data(
     InitialGuessPolynomialControl('altitude'),

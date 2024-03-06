@@ -1315,7 +1315,7 @@ class AviaryProblem(om.Problem):
                 ('initial_mass', Mission.Design.GROSS_MASS)],
             promotes_outputs=[("mass_resid", Mission.Constraints.MASS_RESIDUAL)])
 
-        if self.mission_method not in (SOLVED, SOLVED_2DOF):
+        if self.mission_method in (HEIGHT_ENERGY, TWO_DEGREES_OF_FREEDOM):
             self.post_mission.add_constraint(
                 Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.e5)
 
