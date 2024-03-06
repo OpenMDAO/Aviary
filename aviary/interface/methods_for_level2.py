@@ -136,7 +136,6 @@ class AviaryGroup(om.Group):
     def configure(self):
         aviary_options = self.options['aviary_options']
         aviary_metadata = self.options['aviary_metadata']
-        phase_info = self.options['phase_info']
 
         # Find promoted name of every input in the model.
         all_prom_inputs = []
@@ -184,6 +183,13 @@ class AviaryGroup(om.Group):
 
             self.set_input_defaults(key, val=val, units=units)
 
+        # The section below this contains some manipulations of the dymos solver
+        # structure for height energy.
+        if aviary_options.get_val(Settings.EQUATIONS_OF_MOTION) is not HEIGHT_ENERGY:
+            return
+
+        phase_info = self.options['phase_info']
+
         # Set a more appropriate solver for dymos when the phases are linked.
         if MPI and isinstance(self.traj.phases.linear_solver, om.PETScKrylov):
 
@@ -205,20 +211,18 @@ class AviaryGroup(om.Group):
         # numerical problems, and can slow things down, we need to move it down
         # into the state interp component.
         # TODO: Future updates to dymos may make this unneccesary.
-        # Only do this for pseudospectral phases.
-        if aviary_options.get_val(Settings.EQUATIONS_OF_MOTION) is HEIGHT_ENERGY:
-            for phase in self.traj.phases.system_iter(recurse=False):
+        for phase in self.traj.phases.system_iter(recurse=False):
 
-                # Don't move the solvers if we are using solve segements.
-                if phase_info[phase.name]['user_options'].get('solve_for_distance'):
-                    continue
+            # Don't move the solvers if we are using solve segements.
+            if phase_info[phase.name]['user_options'].get('solve_for_distance'):
+                continue
 
-                phase.nonlinear_solver = om.NonlinearRunOnce()
-                phase.linear_solver = om.LinearRunOnce()
-                if isinstance(phase.indep_states, om.ImplicitComponent):
-                    phase.indep_states.nonlinear_solver = \
-                        om.NewtonSolver(solve_subsystems=True)
-                    phase.indep_states.linear_solver = om.DirectSolver()
+            phase.nonlinear_solver = om.NonlinearRunOnce()
+            phase.linear_solver = om.LinearRunOnce()
+            if isinstance(phase.indep_states, om.ImplicitComponent):
+                phase.indep_states.nonlinear_solver = \
+                    om.NewtonSolver(solve_subsystems=True)
+                phase.indep_states.linear_solver = om.DirectSolver()
 
 
 class AviaryProblem(om.Problem):
