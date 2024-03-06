@@ -21,6 +21,8 @@ subsystem_options = {'core_aerodynamics':
                           0.15, 0.16, 0.18, 0.20],
                       'lift_coefficient_factor': 2.,
                       'drag_coefficient_factor': 2.}}
+subsystem_options_landing = subsystem_options.copy()
+subsystem_options_landing['core_aerodynamics']['drag_coefficient_factor'] = 3.
 
 optimize_mach = False
 optimize_altitude = False
@@ -109,18 +111,18 @@ phase_info = {
             'initial_ref': (1.e3, 'ft'),
             'initial_bounds': ((0., 30.e3), 'ft'),
             'duration_ref': (1.e3, 'ft'),
-            'duration_bounds': ((50., 15.e3), 'ft'),
+            'duration_bounds': ((500., 15.e3), 'ft'),
             'mach_bounds': ((0.1, 0.5), 'unitless'),
             'altitude_bounds': ((0., 1000.), 'ft'),
             'control_order': 2,
-            'throttle_enforcement': 'bounded',
+            'throttle_enforcement': 'path_constraint',
             'optimize_mach': False,
             'optimize_altitude': True,
             'rotation': False,
             'constraints': {
             },
         },
-        'subsystem_options': subsystem_options,
+        'subsystem_options': subsystem_options_landing,
         'initial_guesses': {
             'distance': [(8.5e3, 2.e3), 'ft'],
             'mach': [(0.15, 0.15), 'unitless'],
@@ -135,8 +137,6 @@ phase_info = {
     },
 }
 
-
-driver = "SNOPT"
 
 prob = av.AviaryProblem()
 
@@ -156,7 +156,7 @@ prob.add_post_mission_systems()
 # Link phases and variables
 prob.link_phases()
 
-prob.add_driver(driver, max_iter=10)
+prob.add_driver("SLSQP", max_iter=100)
 
 prob.add_design_variables()
 
