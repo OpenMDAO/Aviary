@@ -202,6 +202,12 @@ class AviaryGroup(om.Group):
         # into the state interp component.
         # TODO: Future updates to dymos may make this unneccesary.
         for phase in self.traj.phases.system_iter(recurse=False):
+
+            # Only do this for pseudospectral phases.
+            ps_class = dm.transcriptions.pseudospectral.pseudospectral_base.PseudospectralBase
+            if not isinstance(phase.options['transcription'], ps_class):
+                continue
+
             phase.nonlinear_solver = om.NonlinearRunOnce()
             phase.linear_solver = om.LinearRunOnce()
             if isinstance(phase.indep_states, om.ImplicitComponent):
