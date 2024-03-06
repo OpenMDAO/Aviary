@@ -205,21 +205,20 @@ class AviaryGroup(om.Group):
         # numerical problems, and can slow things down, we need to move it down
         # into the state interp component.
         # TODO: Future updates to dymos may make this unneccesary.
-        for phase in self.traj.phases.system_iter(recurse=False):
+        # Only do this for pseudospectral phases.
+        if aviary_options.get_val(Settings.EQUATIONS_OF_MOTION) is HEIGHT_ENERGY:
+            for phase in self.traj.phases.system_iter(recurse=False):
 
-            # Don't move the solvers if we are using solve segements.
-            if phase_info[phase.name]['user_options'].get('solve_for_distance'):
-                continue
+                # Don't move the solvers if we are using solve segements.
+                if phase_info[phase.name]['user_options'].get('solve_for_distance'):
+                    continue
 
-            # Only do this for pseudospectral phases.
-            if aviary_options.get_val(Settings.EQUATIONS_OF_MOTION) is not HEIGHT_ENERGY:
-                continue
-
-            phase.nonlinear_solver = om.NonlinearRunOnce()
-            phase.linear_solver = om.LinearRunOnce()
-            if isinstance(phase.indep_states, om.ImplicitComponent):
-                phase.indep_states.nonlinear_solver = om.NewtonSolver(solve_subsystems=True)
-                phase.indep_states.linear_solver = om.DirectSolver()
+                phase.nonlinear_solver = om.NonlinearRunOnce()
+                phase.linear_solver = om.LinearRunOnce()
+                if isinstance(phase.indep_states, om.ImplicitComponent):
+                    phase.indep_states.nonlinear_solver = \
+                        om.NewtonSolver(solve_subsystems=True)
+                    phase.indep_states.linear_solver = om.DirectSolver()
 
 
 class AviaryProblem(om.Problem):
