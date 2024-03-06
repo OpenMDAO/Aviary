@@ -15,6 +15,7 @@ from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.functions import get_path
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 from aviary.variable_info.enums import SpeedType, Verbosity
+from aviary.variable_info.options import get_option_defaults
 
 
 class TurboPropTest(unittest.TestCase):
@@ -22,7 +23,7 @@ class TurboPropTest(unittest.TestCase):
         self.prob = om.Problem()
 
     def prepare_model(self, filename, test_points=[(0, 0, 0), (0, 0, 1)], prop_model=None):
-        options = AviaryValues()
+        options = get_option_defaults()
         options.set_val(Aircraft.Engine.DATA_FILE, filename)
         options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
         options.set_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER, 1.0)
@@ -40,6 +41,11 @@ class TurboPropTest(unittest.TestCase):
         options.set_val(Aircraft.Engine.FLIGHT_IDLE_MIN_FRACTION, 0.08)
         options.set_val(Aircraft.Engine.GEOPOTENTIAL_ALT, False)
         options.set_val(Aircraft.Engine.INTERPOLATION_METHOD, 'slinear')
+
+        options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS,
+                        val=True, units='unitless')
+        options.set_val(Aircraft.Engine.NUM_BLADES,
+                        val=4, units='unitless')
 
         engine = TurboPropDeck(options=options, prop_model=prop_model)
         preprocess_propulsion(options, [engine])
@@ -128,7 +134,7 @@ class TurboPropTest(unittest.TestCase):
 
     def test_case_3(self):
         # 'clean' test using GASP-derived engine deck
-        filename = get_path('models/engines/PT6.deck')
+        filename = get_path('models/engines/turboprop_1120hp.deck')
         test_points = [(0, 0, 1)]
         point_names = ['SLS',]
         truth_vals = [(1120, 136.3, 644),]
@@ -159,7 +165,7 @@ class TurboPropTest(unittest.TestCase):
             'pp',
             PropPerf(aviary_options=options),
             promotes_inputs=['*', ('mach', 'mach_internal')],
-            promotes_outputs=["*", ('mach', 'mach_internal')],
+            promotes_outputs=["*", ('mach', 'mach_internal'), ('Thrust', 'prop_thrust')],
         )
 
         pp.set_input_defaults(Aircraft.Engine.PROPELLER_DIAMETER, 10, units="ft")
@@ -184,6 +190,37 @@ class TurboPropTest(unittest.TestCase):
                 outfile="n2.html",
                 show_browser=False,
             )
+
+        self.prob.run_model()
+        results = self.get_results(point_names)
+        assert_near_equal(results, truth_vals)
+
+    def test_case_4(self):
+        # 'clean' test using GASP-derived engine deck
+        filename = get_path('models/engines/turboprop_1120hp.deck')
+        test_points = [(0, 0, 1)]
+        point_names = ['SLS',]
+        truth_vals = [(1120, 136.3, 644),]
+        # test_points = [(0, 0, 0), (0, 0, 1), (.6, 25000, 1)]
+        # point_names = ['idle', 'SLS', 'TOC']
+        # truth_vals = [(112, 0, 195.8), (1120, 0, 644), (1742.5, 0, 839.7)]
+
+        self.prepare_model(filename, test_points, True)
+
+        self.prob.setup(force_alloc_complex=True)
+        self.prob.set_val(Aircraft.Engine.SCALE_FACTOR, 1, units='unitless')
+
+        self.prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 10.5, units="ft")
+        self.prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,
+                          114.0, units="unitless")
+        self.prob.set_val(
+            Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT, 0.5, units="unitless")
+
+        om.n2(
+            self.prob,
+            outfile="n2.html",
+            show_browser=False,
+        )
 
         self.prob.run_model()
         results = self.get_results(point_names)
