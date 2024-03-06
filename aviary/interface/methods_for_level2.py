@@ -129,10 +129,14 @@ class AviaryGroup(om.Group):
         self.options.declare(
             'aviary_metadata', types=dict,
             desc='metadata dictionary of the full aviary problem.')
+        self.options.declare(
+            'phase_info', types=dict,
+            desc='phase-specific settings.')
 
     def configure(self):
         aviary_options = self.options['aviary_options']
         aviary_metadata = self.options['aviary_metadata']
+        phase_info = self.options['phase_info']
 
         # Find promoted name of every input in the model.
         all_prom_inputs = []
@@ -203,15 +207,18 @@ class AviaryGroup(om.Group):
         # TODO: Future updates to dymos may make this unneccesary.
         for phase in self.traj.phases.system_iter(recurse=False):
 
+            # Don't move the solvers if we are using solve segements.
+            if phase_info[phase.name]['user_options'].get('solve_for_distance'):
+                continue
+
             # Only do this for pseudospectral phases.
-            ps_class = dm.transcriptions.pseudospectral.pseudospectral_base.PseudospectralBase
-            if not isinstance(phase.options['transcription'], ps_class):
+            if aviary_options.get_val(Settings.EQUATIONS_OF_MOTION) is not HEIGHT_ENERGY:
                 continue
 
             phase.nonlinear_solver = om.NonlinearRunOnce()
             phase.linear_solver = om.LinearRunOnce()
             if isinstance(phase.indep_states, om.ImplicitComponent):
-                phase.indep_states.nonlinear_solver = om.NewtonSolver(solve_subsystems=False)
+                phase.indep_states.nonlinear_solver = om.NewtonSolver(solve_subsystems=True)
                 phase.indep_states.linear_solver = om.DirectSolver()
 
 
@@ -810,7 +817,7 @@ class AviaryProblem(om.Problem):
 
             # Make a good guess for a reasonable intitial time scaler.
             init_bounds = user_options.get_item('initial_bounds')
-            if init_bounds[0] is not None:
+            if init_bounds[0] is not None and init_bounds[0][1] != 0.0:
                 # Upper bound is good for a ref.
                 user_options.set_val('initial_ref', init_bounds[0][1],
                                      units=init_bounds[1])
@@ -1906,6 +1913,7 @@ class AviaryProblem(om.Problem):
 
             self.model.options['aviary_options'] = self.aviary_inputs
             self.model.options['aviary_metadata'] = self.meta_data
+            self.model.options['phase_info'] = self.phase_info
 
             warnings.simplefilter("ignore", om.OpenMDAOWarning)
             warnings.simplefilter("ignore", om.PromotionWarning)
