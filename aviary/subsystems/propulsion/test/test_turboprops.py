@@ -142,7 +142,7 @@ class TurboPropTest(unittest.TestCase):
         # point_names = ['idle', 'SLS', 'TOC']
         # truth_vals = [(112, 0, 195.8), (1120, 0, 644), (1742.5, 0, 839.7)]
 
-        from aviary.HMT_STD.prop_performance import PropPerf
+        from aviary.subsystems.propulsion.prop_performance import PropPerf
         from aviary.variable_info.options import get_option_defaults
         from aviary.mission.gasp_based.flight_conditions import FlightConditions
         options = get_option_defaults()
@@ -169,7 +169,7 @@ class TurboPropTest(unittest.TestCase):
         )
 
         pp.set_input_defaults(Aircraft.Engine.PROPELLER_DIAMETER, 10, units="ft")
-        pp.set_input_defaults(Aircraft.Engine.PROPELLER_TIP_SPEED, 800, units="ft/s")
+        pp.set_input_defaults(Dynamic.Mission.PROPELLER_TIP_SPEED, 800, units="ft/s")
         pp.set_input_defaults(Dynamic.Mission.VELOCITY, 0, units="knot")
         pp.options.set(num_nodes=len(test_points))
 
@@ -215,12 +215,6 @@ class TurboPropTest(unittest.TestCase):
                           114.0, units="unitless")
         self.prob.set_val(
             Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT, 0.5, units="unitless")
-
-        om.n2(
-            self.prob,
-            outfile="n2.html",
-            show_browser=False,
-        )
 
         self.prob.run_model()
         results = self.get_results(point_names)

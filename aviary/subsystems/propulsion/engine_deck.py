@@ -1576,7 +1576,7 @@ class TurboPropDeck(EngineDeck):
         )
 
     def _add_HS_prop(self, engine_group: om.Group, num_nodes=1):
-        from aviary.HMT_STD.prop_performance import PropPerf
+        from aviary.subsystems.propulsion.prop_performance import PropPerf
         from aviary.mission.gasp_based.flight_conditions import FlightConditions
         from aviary.variable_info.enums import SpeedType
         prop_group = om.Group()
@@ -1600,7 +1600,7 @@ class TurboPropDeck(EngineDeck):
         )
 
         pp.set_input_defaults(Aircraft.Engine.PROPELLER_DIAMETER, 10, units="ft")
-        pp.set_input_defaults(Aircraft.Engine.PROPELLER_TIP_SPEED, 800, units="ft/s")
+        pp.set_input_defaults(Dynamic.Mission.PROPELLER_TIP_SPEED, 800, units="ft/s")
         pp.set_input_defaults(Dynamic.Mission.VELOCITY, 0, units="knot")
 
         engine_group.add_subsystem(
