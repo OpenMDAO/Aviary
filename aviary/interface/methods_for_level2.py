@@ -2704,7 +2704,7 @@ class AviaryProblem(om.Problem):
             reserve_fuel_frac = om.ExecComp('reserve_fuel_frac_mass = reserve_fuel_fraction * (takeoff_mass - final_mass)',
                                             reserve_fuel_frac_mass={"units": "lbm"},
                                             reserve_fuel_fraction={
-                                                "units": "lbm", "val": RESERVE_FUEL_FRACTION},
+                                                "units": "unitless", "val": RESERVE_FUEL_FRACTION},
                                             final_mass={"units": "lbm"},
                                             takeoff_mass={"units": "lbm"})
             if post_mission:

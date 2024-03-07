@@ -6503,7 +6503,8 @@ add_meta_data(
                      "LEAPS1": None
                      },
     units="lbm",
-    desc='the total fuel reserves in lbm available during the mission',
+    desc='the total fuel reserves which is the sum of:'
+         'RESERVE_FUEL_BURNED, RESERVE_FUEL_ADDITIONAL, RESERVE_FUEL_FRACTION',
     default_value=0,
 )
 
