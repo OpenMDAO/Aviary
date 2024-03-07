@@ -4,11 +4,11 @@ from dymos.models.atmosphere import USatm1976Comp
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.variable_info.options import get_option_defaults
-from aviary.HMT_STD.hamilton_standard import HamiltonStandard, PostHamiltonStandard, PreHamiltonStandard
+from aviary.subsystems.propulsion.hamilton_standard import HamiltonStandard, PostHamiltonStandard, PreHamiltonStandard
 import pdb
 
 
-def print_report1(nCase, p, nBlades):
+def _print_report1(nCase, p, nBlades):
     print()
     print(f"Case {nCase}")
     diam = p.get_val(Aircraft.Engine.PROPELLER_DIAMETER)
@@ -43,7 +43,7 @@ def print_report1(nCase, p, nBlades):
     vktas = p.get_val(Dynamic.Mission.VELOCITY)
     if vktas.ndim == 1:
         vktas = vktas[0]
-    tipspd = p.get_val(Aircraft.Engine.PROPELLER_TIP_SPEED)
+    tipspd = p.get_val(Dynamic.Mission.PROPELLER_TIP_SPEED)
     if tipspd.ndim == 1:
         tipspd = tipspd[0]
     shp = p.get_val(Dynamic.Mission.SHAFT_POWER)
@@ -53,7 +53,7 @@ def print_report1(nCase, p, nBlades):
         f"ALT, VKTAS, VTIP, SHP: {alt}, {vktas}, {tipspd}, {shp}")
 
 
-def print_report2(p):
+def _print_report2(p):
     mach = float(p.get_val(Dynamic.Mission.MACH)[0])
     tipm = float(p.get_val('tip_mach')[0])
     advr = float(p.get_val('adv_ratio')[0])
@@ -74,7 +74,11 @@ def print_report2(p):
         f"             Thrust = {round(thrt, 1)}, Prop Eff. = {round(peff, 4)}, Instll Loss = {round(lfac, 4)}, Install Eff. = {round(ieff, 4)}")
 
 
-class Install_Loss(om.Group):
+class InstallLoss(om.Group):
+    """
+    Compute installation loss
+    """
+
     def initialize(self):
         self.options.declare(
             'num_nodes', types=int,
@@ -108,7 +112,7 @@ class Install_Loss(om.Group):
                 equiv_adv_ratio={'units': 'unitless'},
             ),
             promotes_inputs=["sqa", ("vktas", Dynamic.Mission.VELOCITY),
-                             ("tipspd", Aircraft.Engine.PROPELLER_TIP_SPEED)],
+                             ("tipspd", Dynamic.Mission.PROPELLER_TIP_SPEED)],
             promotes_outputs=["equiv_adv_ratio"],
         )
 
@@ -168,6 +172,11 @@ class Install_Loss(om.Group):
 
 
 class PropPerf(om.Group):
+    """
+    Computation of propeller thrust coefficient based on Hamilton Standard.
+    The installation loss factor is either a user input or computed internally.
+    """
+
     def initialize(self):
         self.options.declare(
             'num_nodes', types=int,
@@ -193,12 +202,12 @@ class PropPerf(om.Group):
         if compute_installation_loss:
             self.add_subsystem(
                 name='loss',
-                subsys=Install_Loss(),
+                subsys=InstallLoss(),
                 promotes_inputs=[
                     Aircraft.Nacelle.AVG_DIAMETER,
                     Aircraft.Engine.PROPELLER_DIAMETER,
                     Dynamic.Mission.VELOCITY,
-                    Aircraft.Engine.PROPELLER_TIP_SPEED,
+                    Dynamic.Mission.PROPELLER_TIP_SPEED,
                 ],
                 promotes_outputs=["install_loss_factor"],
             )
@@ -227,7 +236,7 @@ class PropPerf(om.Group):
                 Dynamic.Mission.DENSITY,
                 Dynamic.Mission.TEMPERATURE,
                 Dynamic.Mission.VELOCITY,
-                Aircraft.Engine.PROPELLER_TIP_SPEED,
+                Dynamic.Mission.PROPELLER_TIP_SPEED,
                 Aircraft.Engine.PROPELLER_DIAMETER,
                 Dynamic.Mission.SHAFT_POWER,
             ],
@@ -262,7 +271,7 @@ class PropPerf(om.Group):
             promotes_inputs=[
                 "thrust_coefficient",
                 "comp_tip_loss_factor",
-                Aircraft.Engine.PROPELLER_TIP_SPEED,
+                Dynamic.Mission.PROPELLER_TIP_SPEED,
                 Aircraft.Engine.PROPELLER_DIAMETER,
                 "density_ratio",
                 Aircraft.Engine.INSTALLATION_LOSS_FACTOR,
@@ -293,7 +302,7 @@ if __name__ == "__main__":
     )
 
     pp.set_input_defaults(Aircraft.Engine.PROPELLER_DIAMETER, 10, units="ft")
-    pp.set_input_defaults(Aircraft.Engine.PROPELLER_TIP_SPEED, 800, units="ft/s")
+    pp.set_input_defaults(Dynamic.Mission.PROPELLER_TIP_SPEED, 800, units="ft/s")
     pp.set_input_defaults(Dynamic.Mission.VELOCITY, 0, units="knot")
     num_blades = 4
     options.set_val(Aircraft.Engine.NUM_BLADES,
@@ -314,32 +323,32 @@ if __name__ == "__main__":
     # Case 1
     prob.set_val(Dynamic.Mission.ALTITUDE, 0.0, units="ft")
     prob.set_val(Dynamic.Mission.VELOCITY, 0.0, units="knot")
-    prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED, 800.0, units="ft/s")
+    prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED, 800.0, units="ft/s")
     prob.set_val(Dynamic.Mission.SHAFT_POWER, 1850.0, units="hp")
 
-    print_report1(1, prob, num_blades)
+    _print_report1(1, prob, num_blades)
     prob.run_model()
-    print_report2(prob)
+    _print_report2(prob)
 
     # Case 2
     prob.set_val(Dynamic.Mission.ALTITUDE, 0.0, units="ft")
     prob.set_val(Dynamic.Mission.VELOCITY, 125.0, units="knot")
-    prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED, 800.0, units="ft/s")
+    prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED, 800.0, units="ft/s")
     prob.set_val(Dynamic.Mission.SHAFT_POWER, 1850.0, units="hp")
 
-    print_report1(2, prob, num_blades)
+    _print_report1(2, prob, num_blades)
     prob.run_model()
-    print_report2(prob)
+    _print_report2(prob)
 
     # Case 3
     prob.set_val(Dynamic.Mission.ALTITUDE, 25000.0, units="ft")
     prob.set_val(Dynamic.Mission.VELOCITY, 300.0, units="knot")
-    prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED, 750.0, units="ft/s")
+    prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED, 750.0, units="ft/s")
     prob.set_val(Dynamic.Mission.SHAFT_POWER, 900.0, units="hp")
 
-    print_report1(3, prob, num_blades)
+    _print_report1(3, prob, num_blades)
     prob.run_model()
-    print_report2(prob)
+    _print_report2(prob)
 
     # Case 4
     # pp.options.set(compute_installation_loss=False)
@@ -355,29 +364,29 @@ if __name__ == "__main__":
     # prob.set_val('DiamNac_DiamProp', 0.2, units="unitless")
     prob.set_val(Dynamic.Mission.ALTITUDE, 10000.0, units="ft")
     prob.set_val(Dynamic.Mission.VELOCITY, 200.0, units="knot")
-    prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED, 750.0, units="ft/s")
+    prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED, 750.0, units="ft/s")
     prob.set_val(Dynamic.Mission.SHAFT_POWER, 1000.0, units="hp")
 
-    print_report1(4, prob, num_blades)
+    _print_report1(4, prob, num_blades)
     prob.run_model()
-    print_report2(prob)
+    _print_report2(prob)
 
     # Case 5
     prob.set_val(Aircraft.Engine.INSTALLATION_LOSS_FACTOR, 0.05, units="unitless")
 
-    print_report1(5, prob, num_blades)
+    _print_report1(5, prob, num_blades)
     prob.run_model()
-    print_report2(prob)
+    _print_report2(prob)
 
     # Case 6
     prob.set_val(Dynamic.Mission.ALTITUDE, 0.0, units="ft")
     prob.set_val(Dynamic.Mission.VELOCITY, 50.0, units="knot")
-    prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED, 785.0, units="ft/s")
+    prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED, 785.0, units="ft/s")
     prob.set_val(Dynamic.Mission.SHAFT_POWER, 1250.0, units="hp")
 
-    print_report1(6, prob, num_blades)
+    _print_report1(6, prob, num_blades)
     prob.run_model()
-    print_report2(prob)
+    _print_report2(prob)
 
     # Case 7
     num_blades = 3
@@ -393,25 +402,25 @@ if __name__ == "__main__":
     # prob.set_val('DiamNac_DiamProp', 0.2, units="unitless")
     prob.set_val(Dynamic.Mission.ALTITUDE, 10000.0, units="ft")
     prob.set_val(Dynamic.Mission.VELOCITY, 200.0, units="knot")
-    prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED, 750.0, units="ft/s")
+    prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED, 750.0, units="ft/s")
     prob.set_val(Dynamic.Mission.SHAFT_POWER, 1000.0, units="hp")
 
-    print_report1(7, prob, num_blades)
+    _print_report1(7, prob, num_blades)
     prob.run_model()
-    print_report2(prob)
+    _print_report2(prob)
 
     # Case 8
     prob.set_val(Aircraft.Engine.INSTALLATION_LOSS_FACTOR, 0.05, units="unitless")
-    print_report1(8, prob, num_blades)
+    _print_report1(8, prob, num_blades)
     prob.run_model()
-    print_report2(prob)
+    _print_report2(prob)
 
     # Case 9
     prob.set_val(Dynamic.Mission.ALTITUDE, 0.0, units="ft")
     prob.set_val(Dynamic.Mission.VELOCITY, 50.0, units="knot")
-    prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED, 785.0, units="ft/s")
+    prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED, 785.0, units="ft/s")
     prob.set_val(Dynamic.Mission.SHAFT_POWER, 1250.0, units="hp")
 
-    print_report1(9, prob, num_blades)
+    _print_report1(9, prob, num_blades)
     prob.run_model()
-    print_report2(prob)
+    _print_report2(prob)

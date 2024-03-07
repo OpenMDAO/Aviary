@@ -1941,18 +1941,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Engine.PROPELLER_TIP_SPEED,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CLI',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='ft/s',
-    desc='propeller blade integrated design lift coefficient (Range: 0.3 to 0.8)',
-    default_value=500.0,
-)
-
-add_meta_data(
     Aircraft.Engine.PYLON_FACTOR,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.FPYL',
@@ -6180,6 +6168,18 @@ add_meta_data(
                      },
     units='lbm/h',
     desc='Current total rate of nitrous oxide (NOx) production by the vehicle'
+)
+
+add_meta_data(
+    Dynamic.Mission.PROPELLER_TIP_SPEED,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.CLI',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='ft/s',
+    desc='propeller blade integrated design lift coefficient (Range: 0.3 to 0.8)',
+    default_value=500.0,
 )
 
 add_meta_data(
