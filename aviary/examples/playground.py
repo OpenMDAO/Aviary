@@ -48,6 +48,10 @@ phase_info = {
             'duration_bounds': ((1000., 1000.), 'nmi'),
             'mach_bounds': ((0.60, 0.84), 'unitless'),
             'altitude_bounds': ((10.e3, 36.e3), 'ft'),
+            'initial_mach': (0.72, 'unitless'),
+            'final_mach': (0.72, 'unitless'),
+            'initial_altitude': (10.e3, 'ft'),
+            'final_altitude': (35.e3, 'ft'),
             'control_order': 1,
             'optimize_mach': True,
             'optimize_altitude': True,
@@ -64,10 +68,7 @@ phase_info = {
         'subsystem_options': subsystem_options,
         'initial_guesses': {
             'distance': [(0., 1000.), 'nmi'],
-            'mach': [(0.72, 0.72), 'unitless'],
             'mass': [(175.e3, 174.e3), 'lbm'],
-            'altitude': [(10.e3, 35.e3), 'ft'],
-            # 'time': [(0., 1200.), 's'],
         },
     },
     "post_mission": {

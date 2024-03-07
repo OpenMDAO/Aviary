@@ -233,4 +233,6 @@ class AircraftMissionTestSuite(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    z = AircraftMissionTestSuite()
+    z.setUp()
+    z.test_mission_solve_for_distance()

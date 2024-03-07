@@ -20,8 +20,10 @@ from openmdao.utils.reports_system import _default_reports
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
 from aviary.mission.flops_based.phases.build_landing import Landing
 from aviary.mission.flops_based.phases.build_takeoff import Takeoff
-from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
-from aviary.mission.flops_based.phases.two_dof_phase import TwoDOFPhase
+# from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
+from aviary.mission.new_energy_phase import EnergyPhase
+# from aviary.mission.flops_based.phases.two_dof_phase import TwoDOFPhase
+from aviary.mission.new_twodof_phase import TwoDOFPhase
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 from aviary.mission.gasp_based.phases.time_integration_phases import SGMCruise
@@ -1861,7 +1863,7 @@ class AviaryProblem(om.Problem):
         prob_keys = ["tau_gear", "tau_flaps"]
 
         # for the simple mission method, use the provided initial and final mach and altitude values from phase_info
-        if self.mission_method is HEIGHT_ENERGY:
+        if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
             initial_altitude = wrapped_convert_units(
                 self.phase_info[phase_name]['user_options']['initial_altitude'], 'ft')
             final_altitude = wrapped_convert_units(
