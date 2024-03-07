@@ -129,6 +129,9 @@ class AviaryGroup(om.Group):
         self.options.declare(
             'aviary_metadata', types=dict,
             desc='metadata dictionary of the full aviary problem.')
+        self.options.declare(
+            'phase_info', types=dict,
+            desc='phase-specific settings.')
 
     def configure(self):
         aviary_options = self.options['aviary_options']
@@ -180,18 +183,46 @@ class AviaryGroup(om.Group):
 
             self.set_input_defaults(key, val=val, units=units)
 
+        # The section below this contains some manipulations of the dymos solver
+        # structure for height energy.
+        if aviary_options.get_val(Settings.EQUATIONS_OF_MOTION) is not HEIGHT_ENERGY:
+            return
+
+        phase_info = self.options['phase_info']
+
         # Set a more appropriate solver for dymos when the phases are linked.
         if MPI and isinstance(self.traj.phases.linear_solver, om.PETScKrylov):
 
             # When any phase is connected with input_initial = True, dymos puts
             # a jacobi solver in the phases group. This is necessary in case
-            # you the phases are cyclic. However, this causes some problems
+            # the phases are cyclic. However, this causes some problems
             # with the newton solvers in Aviary, exacerbating issues with
             # solver tolerances at multiple levels. Since Aviary's phases
             # are basically in series, the jacobi solver is a much better
             # choice and should be able to handle it in a couple of
             # iterations.
             self.traj.phases.linear_solver = om.LinearBlockJac(maxiter=5)
+
+        # Due to recent changes in dymos, there is now a solver in any phase
+        # that has connected initial states. It is not clear that this solver
+        # is necessary except in certain corner cases that do not apply to the
+        # Aviary trajectory. In our case, this solver merely addresses a lag
+        # in the state input component. Since this solver can cause some
+        # numerical problems, and can slow things down, we need to move it down
+        # into the state interp component.
+        # TODO: Future updates to dymos may make this unneccesary.
+        for phase in self.traj.phases.system_iter(recurse=False):
+
+            # Don't move the solvers if we are using solve segements.
+            if phase_info[phase.name]['user_options'].get('solve_for_distance'):
+                continue
+
+            phase.nonlinear_solver = om.NonlinearRunOnce()
+            phase.linear_solver = om.LinearRunOnce()
+            if isinstance(phase.indep_states, om.ImplicitComponent):
+                phase.indep_states.nonlinear_solver = \
+                    om.NewtonSolver(solve_subsystems=True)
+                phase.indep_states.linear_solver = om.DirectSolver()
 
 
 class AviaryProblem(om.Problem):
@@ -786,7 +817,16 @@ class AviaryProblem(om.Problem):
             )
         else:
             input_initial = False
-            user_options.set_val('initial_ref', 10., 'min')
+
+            # Make a good guess for a reasonable intitial time scaler.
+            init_bounds = user_options.get_item('initial_bounds')
+            if init_bounds[0] is not None and init_bounds[0][1] != 0.0:
+                # Upper bound is good for a ref.
+                user_options.set_val('initial_ref', init_bounds[0][1],
+                                     units=init_bounds[1])
+            else:
+                user_options.set_val('initial_ref', 10., 'min')
+
             duration_bounds = user_options.get_val("duration_bounds", 'min')
             user_options.set_val(
                 'duration_ref', (duration_bounds[0] + duration_bounds[1]) / 2., 'min')
@@ -798,6 +838,7 @@ class AviaryProblem(om.Problem):
                     fix_initial=fix_initial, fix_duration=fix_duration, units='s',
                     duration_bounds=user_options.get_val("duration_bounds", 's'),
                     duration_ref=user_options.get_val("duration_ref", 's'),
+                    initial_ref=user_options.get_val("initial_ref", 's'),
                 )
             elif phase_name == 'descent' and self.mission_method is HEIGHT_ENERGY:  # TODO: generalize this logic for all phases
                 phase.set_time_options(
@@ -1354,6 +1395,15 @@ class AviaryProblem(om.Problem):
         # get unique variable names from lists_to_link
         unique_vars = list(set([var for sublist in lists_to_link for var in sublist]))
 
+        # Phase linking.
+        # If we are under mpi, and traj.phases is running in parallel, then let the
+        # optimizer handle the linkage constraints.  Note that we can technically
+        # paralellize connected phases, but it requires a solver that we would like
+        # to avoid.
+        true_unless_mpi = True
+        if self.comm.size > 1 and self.traj.options['parallel_phases']:
+            true_unless_mpi = False
+
         # loop over unique variable names
         for var in unique_vars:
             phases_to_link = []
@@ -1372,7 +1422,7 @@ class AviaryProblem(om.Problem):
                                                  var_b=var_b,
                                                  loc_a='final',
                                                  loc_b='initial',
-                                                 connected=True)
+                                                 connected=true_unless_mpi)
 
             add_linkage_constraint(self, 'ascent_to_gear_retract',
                                    'ascent_to_flap_retract', 't_init_gear')
@@ -1394,8 +1444,12 @@ class AviaryProblem(om.Problem):
             self.traj.link_phases(phases[:7], vars=["TAS"], units='kn', ref=200.)
 
         elif self.mission_method is HEIGHT_ENERGY:
-            self.traj.link_phases(
-                phases, ["time", Dynamic.Mission.MASS, Dynamic.Mission.DISTANCE], connected=True)
+            self.traj.link_phases(phases, ["time"], ref=1e3,
+                                  connected=true_unless_mpi)
+            self.traj.link_phases(phases, [Dynamic.Mission.MASS], ref=1e6,
+                                  connected=true_unless_mpi)
+            self.traj.link_phases(phases, [Dynamic.Mission.DISTANCE], ref=1e3,
+                                  connected=true_unless_mpi)
 
             self._link_phases_helper_with_options(
                 phases, 'optimize_altitude', Dynamic.Mission.ALTITUDE, ref=1.e4)
@@ -1862,6 +1916,7 @@ class AviaryProblem(om.Problem):
 
             self.model.options['aviary_options'] = self.aviary_inputs
             self.model.options['aviary_metadata'] = self.meta_data
+            self.model.options['phase_info'] = self.phase_info
 
             warnings.simplefilter("ignore", om.OpenMDAOWarning)
             warnings.simplefilter("ignore", om.PromotionWarning)
