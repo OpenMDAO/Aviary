@@ -7,15 +7,6 @@ from openmdao.utils.testing_utils import use_tempdirs
 from aviary.utils.engine_deck_conversion import EngineDeckType, _exec_EDC
 
 
-def _setup_EDC_parser(parser):
-    parser.add_argument('input_file', type=str,
-                        help='path to engine deck file to be converted')
-    parser.add_argument('output_file', type=str,
-                        help='path to file where new converted data will be written')
-    parser.add_argument('data_format', type=EngineDeckType, choices=list(EngineDeckType),
-                        help='data format used by input_file')
-
-
 class DummyArgs(object):
     def __init__(self):
         self.input_file = None
