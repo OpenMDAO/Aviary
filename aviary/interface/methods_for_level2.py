@@ -1086,25 +1086,44 @@ class AviaryProblem(om.Problem):
                 Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.e5)
 
     def _link_phases_helper_with_options(self, phases, option_name, var, **kwargs):
-        phases_to_link = []
-        for idx, phase_name in enumerate(self.phase_info):
+        # Initialize a list to keep track of indices where option_name is True
+        true_option_indices = []
+
+        # Loop through phases to find where option_name is True
+        for idx, phase_name in enumerate(phases):
             if self.phase_info[phase_name]['user_options'].get(option_name, False):
-                # get the name of the previous phase
-                if idx > 0:
-                    prev_phase_name = phases[idx - 1]
-                    phases_to_link.append(prev_phase_name)
-                phases_to_link.append(phase_name)
-                if idx < len(phases) - 1:
-                    next_phase_name = phases[idx + 1]
-                    phases_to_link.append(next_phase_name)
-        if len(phases_to_link) > 1:
-            phases_to_link = list(dict.fromkeys(phases))
-            # TODO: implement correct logic to not connect groundroll phases
-            if self.mission_method is SOLVED_2DOF and option_name == 'optimize_altitude':
-                if len(phases_to_link) > 2:
-                    phases_to_link = phases_to_link[1:]
-                    self.traj.link_phases(phases=phases_to_link, vars=[var], **kwargs)
+                true_option_indices.append(idx)
+
+        # Determine the groups of phases to link based on consecutive indices
+        groups_to_link = []
+        current_group = []
+
+        for idx in true_option_indices:
+            if not current_group or idx == current_group[-1] + 1:
+                # If the current index is consecutive, add it to the current group
+                current_group.append(idx)
             else:
+                # Otherwise, start a new group and save the previous one
+                groups_to_link.append(current_group)
+                current_group = [idx]
+
+        # Add the last group if it exists
+        if current_group:
+            groups_to_link.append(current_group)
+
+        # Loop through each group and determine the phases to link
+        for group in groups_to_link:
+            # Extend the group to include the phase before the first True option and after the last True option, if applicable
+            if group[0] > 0:
+                group.insert(0, group[0] - 1)
+            if group[-1] < len(phases) - 1:
+                group.append(group[-1] + 1)
+
+            # Extract the phase names for the current group
+            phases_to_link = [phases[idx] for idx in group]
+
+            # Link the phases for the current group
+            if len(phases_to_link) > 1:
                 self.traj.link_phases(phases=phases_to_link, vars=[var], **kwargs)
 
     def link_phases(self):
