@@ -5,7 +5,6 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.variable_info.options import get_option_defaults
 from aviary.subsystems.propulsion.hamilton_standard import HamiltonStandard, PostHamiltonStandard, PreHamiltonStandard
-import pdb
 
 
 def _print_report1(nCase, p, nBlades):
