@@ -1,7 +1,7 @@
 import dymos as dm
 
 from aviary.mission.phase_builder_base import PhaseBuilderBase, register
-from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessTime, InitialGuessControl
+from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessIntegrationVariable, InitialGuessControl
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variable_meta_data import _MetaData
@@ -135,7 +135,7 @@ class EnergyPhase(PhaseBuilderBase):
 
         Parameters
         ----------
-        aviary_options : AviaryValues (<emtpy>)
+        aviary_options : AviaryValues (<empty>)
             collection of Aircraft/Mission specific options
 
         Returns
@@ -427,7 +427,7 @@ EnergyPhase._add_meta_data('solve_for_distance', val=False)
 EnergyPhase._add_meta_data('constraints', val={})
 
 EnergyPhase._add_initial_guess_meta_data(
-    InitialGuessTime(),
+    InitialGuessIntegrationVariable(),
     desc='initial guess for initial time and duration specified as a tuple')
 
 EnergyPhase._add_initial_guess_meta_data(

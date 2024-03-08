@@ -3,6 +3,7 @@ import unittest
 import subprocess
 
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
+from openmdao.core.problem import _clear_problem_names
 
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.subsystems.test.test_dummy_subsystem import ArrayGuessSubsystemBuilder
@@ -101,6 +102,8 @@ class AircraftMissionTestSuite(unittest.TestCase):
         self.make_plots = False
         self.max_iter = 100
 
+        _clear_problem_names()  # need to reset these to simulate separate runs
+
     def add_external_subsystem(self, phase_info, subsystem_builder):
         """
         Add an external subsystem to all phases in the mission.
@@ -189,14 +192,14 @@ class AircraftMissionTestSuite(unittest.TestCase):
         self.assertFalse(prob.failed)
 
     @require_pyoptsparse(optimizer="IPOPT")
-    def test_mission_solve_for_distance(self):
+    def test_mission_solve_for_distance_IPOPT(self):
         modified_phase_info = self.phase_info.copy()
         for phase in ["climb", "cruise", "descent"]:
             modified_phase_info[phase]["user_options"]["solve_for_distance"] = True
         prob = self.run_mission(modified_phase_info, "IPOPT")
         self.assertFalse(prob.failed)
 
-    def test_mission_solve_for_distance(self):
+    def test_mission_solve_for_distance_SLSQP(self):
         modified_phase_info = self.phase_info.copy()
         for phase in ["climb", "cruise", "descent"]:
             modified_phase_info[phase]["user_options"]["solve_for_distance"] = True

@@ -150,7 +150,7 @@ class PhaseBuilderBase(ABC):
 
         Parameters
         ----------
-        aviary_options : AviaryValues (emtpy)
+        aviary_options : AviaryValues (empty)
             collection of Aircraft/Mission specific options
 
         Returns
