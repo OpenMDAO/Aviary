@@ -253,7 +253,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
         return promotes
 
-    def get_parameters(self, phase_info=None):
+    def get_parameters(self, aviary_inputs=None, phase_info=None):
         """
         Return a dictionary of fixed values for the subsystem.
 
@@ -311,11 +311,24 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                         n3 = np.unique(angle_of_attack).size
 
                     shape = (n1, n2, n3)
-                    param_opts = {'shape': shape,
-                                  'static_target': True}
+
+                    if aviary_inputs is not None and Aircraft.Design.LIFT_POLAR in aviary_inputs:
+                        lift_opts = {'val': aviary_inputs.get_val(Aircraft.Design.LIFT_POLAR),
+                                      'static_target': True}
+                    else:
+                        lift_opts = {'shape': shape,
+                                      'static_target': True}
+
+                    if aviary_inputs is not None and Aircraft.Design.DRAG_POLAR in aviary_inputs:
+                        drag_opts = {'val': aviary_inputs.get_val(Aircraft.Design.DRAG_POLAR),
+                                      'static_target': True}
+                    else:
+                        drag_opts = {'shape': shape,
+                                      'static_target': True}
+
                     params = {
-                        Aircraft.Design.LIFT_POLAR: param_opts,
-                        Aircraft.Design.DRAG_POLAR: param_opts
+                        Aircraft.Design.LIFT_POLAR: lift_opts,
+                        Aircraft.Design.DRAG_POLAR: drag_opts
                     }
 
 

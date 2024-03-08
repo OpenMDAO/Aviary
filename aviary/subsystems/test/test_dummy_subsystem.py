@@ -292,7 +292,7 @@ class ArrayGuessSubsystemBuilder(SubsystemBuilderBase):
     def get_controls(self):
         return {}
 
-    def get_parameters(self, phase_info):
+    def get_parameters(self, aviary_inputs=None, phase_info=None):
         return {Aircraft.Dummy.PARAMETER: {'val': 2., 'units': 'm'}}
 
 

@@ -1150,7 +1150,10 @@ class AviaryProblem(om.Problem):
                 all_subsystems = self._get_all_subsystems(
                     self.phase_info[phase_name]['external_subsystems'])
                 for subsystem in all_subsystems:
-                    parameter_dict = subsystem.get_parameters(phase_info=self.phase_info[phase_name])
+                    parameter_dict = subsystem.get_parameters(
+                        phase_info=self.phase_info[phase_name],
+                        aviary_inputs=self.aviary_inputs
+                    )
                     for parameter in parameter_dict:
                         external_parameters[phase_name][parameter] = parameter_dict[parameter]
 
