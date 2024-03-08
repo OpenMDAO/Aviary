@@ -1,4 +1,5 @@
 import unittest
+import numpy as np
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
@@ -10,104 +11,19 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.variable_info.options import get_option_defaults
 
 # Setting up truth values from GASP
-CT = []
-XFT = []
-CTX = []
-three_quart_blade_angle = []
-thrust = []
-prop_eff = []
-install_loss = []
-install_eff = []
-
-# Case 1
-CT.append(0.27651)
-XFT.append(1.0000)
-CTX.append(0.27651)
-three_quart_blade_angle.append(25.17)
-thrust.append(4634.8)
-prop_eff.append(0.0000)
-install_loss.append(0.0133)
-install_eff.append(0.0000)
-
-# Case 2
-CT.append(0.20518)
-XFT.append(1.0000)
-CTX.append(0.20518)
-three_quart_blade_angle.append(29.67)
-thrust.append(3415.9)
-prop_eff.append(0.7235)
-install_loss.append(0.0200)
-install_eff.append(0.7090)
-
-# Case 3
-CT.append(0.13093)
-XFT.append(0.9976)
-CTX.append(0.13062)
-three_quart_blade_angle.append(44.23)
-thrust.append(841.5)
-prop_eff.append(0.8920)
-install_loss.append(0.0340)
-install_eff.append(0.8617)
-
-# Case 4
-CT.append(0.10236)
-XFT.append(1.0000)
-CTX.append(0.10236)
-three_quart_blade_angle.append(31.94)
-thrust.append(1474.3)
-prop_eff.append(0.9059)
-install_loss.append(0.0000)
-install_eff.append(0.9059)
-
-# Case 5
-CT.append(0.10236)
-XFT.append(1.0000)
-CTX.append(0.10236)
-three_quart_blade_angle.append(31.94)
-thrust.append(1400.6)
-prop_eff.append(0.9059)
-install_loss.append(0.0500)
-install_eff.append(0.8606)
-
-# Case 6
-CT.append(0.19331)
-XFT.append(1.0000)
-CTX.append(0.19331)
-three_quart_blade_angle.append(17.44)
-thrust.append(3923.5)
-prop_eff.append(0.5075)
-install_loss.append(0.0500)
-install_eff.append(0.4821)
-
-# Case 7
-CT.append(0.10189)
-XFT.append(1.0000)
-CTX.append(0.10189)
-three_quart_blade_angle.append(33.43)
-thrust.append(1467.6)
-prop_eff.append(0.9017)
-install_loss.append(0.0000)
-install_eff.append(0.9017)
-
-# Case 8
-CT.append(0.10189)
-XFT.append(1.0000)
-CTX.append(0.10189)
-three_quart_blade_angle.append(33.43)
-thrust.append(1394.2)
-prop_eff.append(0.9017)
-install_loss.append(0.0500)
-install_eff.append(0.8566)
-
-# Case 9
-CT.append(0.18123)
-XFT.append(1.0000)
-CTX.append(0.18123)
-three_quart_blade_angle.append(20.08)
-thrust.append(3678.3)
-prop_eff.append(0.4758)
-install_loss.append(0.0500)
-install_eff.append(0.4520)
+CT = np.array([0.27651, 0.20518, 0.13093, 0.10236,
+              0.10236, 0.19331, 0.10189, 0.10189, 0.18123])
+XFT = np.array([1.0, 1.0, 0.9976, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0])
+CTX = np.array([0.27651, 0.20518, 0.13062, 0.10236,
+               0.10236, 0.19331, 0.10189, 0.10189, 0.18123])
+three_quart_blade_angle = np.array(
+    [25.17, 29.67, 44.23, 31.94, 31.94, 17.44, 33.43, 33.43, 20.08])
+thrust = np.array([4634.8, 3415.9, 841.5, 1474.3, 1400.6,
+                  3923.5, 1467.6, 1394.2, 3678.3])
+prop_eff = np.array([0.0, 0.7235, 0.892, 0.9059, 0.9059, 0.5075, 0.9017, 0.9017, 0.4758])
+install_loss = np.array([0.0133, 0.02, 0.034, 0.0, 0.05, 0.05, 0.0, 0.05, 0.05])
+install_eff = np.array([0.0, 0.709, 0.8617, 0.9059, 0.8606,
+                       0.4821, 0.9017, 0.8566, 0.452])
 
 
 class PropPerformanceTest(unittest.TestCase):
