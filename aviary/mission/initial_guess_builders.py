@@ -15,8 +15,8 @@ control on a problem
 
 InitialGuessState : a utility for setting an initial guess for a state on a problem
 
-InitialGuessIntegrationVariable : a utility for setting guesses for initial time and duration on a
-problem
+InitialGuessIntegrationVariable : a utility for setting guesses for initial value and duration
+of an integration variable in a problem
 '''
 from collections.abc import Sequence
 
