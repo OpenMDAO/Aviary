@@ -1577,20 +1577,9 @@ class TurboPropDeck(EngineDeck):
 
     def _add_HS_prop(self, engine_group: om.Group, num_nodes=1):
         from aviary.subsystems.propulsion.prop_performance import PropPerf
-        from aviary.mission.gasp_based.flight_conditions import FlightConditions
-        from aviary.variable_info.enums import SpeedType
-        prop_group = om.Group()
 
-        prop_group.add_subsystem(
-            "fc",
-            FlightConditions(num_nodes=num_nodes, input_speed_type=SpeedType.MACH),
-            promotes_inputs=["rho", Dynamic.Mission.SPEED_OF_SOUND, 'mach'],
-            promotes_outputs=[Dynamic.Mission.DYNAMIC_PRESSURE,
-                              'EAS', ('TAS', 'velocity')],
-        )
-
-        pp = prop_group.add_subsystem(
-            'pp',
+        engine_group.add_subsystem(
+            'propeller_model',
             PropPerf(
                 aviary_options=self.options,
                 num_nodes=num_nodes,
@@ -1598,18 +1587,8 @@ class TurboPropDeck(EngineDeck):
             promotes_inputs=['*', ('mach', 'mach_internal')],
             promotes_outputs=["*", ('mach', 'mach_internal')],
         )
-
-        pp.set_input_defaults(Dynamic.Mission.PROPELLER_TIP_SPEED,
-                              val=800 * np.ones(num_nodes), units="ft/s")
-        pp.set_input_defaults(Dynamic.Mission.VELOCITY, val=0 *
-                              np.ones(num_nodes), units="knot")
-
-        engine_group.add_subsystem(
-            'propeller_model',
-            prop_group,
-            promotes_inputs=['*'],
-            promotes_outputs=[('Thrust', 'prop_thrust')],
-        )
+        engine_group.set_input_defaults(
+            Aircraft.Engine.PROPELLER_DIAMETER, 10, units="ft")
 
     def _add_dummy_prop(self, engine_group: om.Group, num_nodes=1):
         engine_group.add_subsystem(

@@ -135,6 +135,9 @@ class PropPerf(om.Group):
         self.options.declare(
             'aviary_options', types=AviaryValues,
             desc='collection of Aircraft/Mission specific options')
+        self.options.declare(
+            'include_atmosphere', types=bool, default=False,
+            desc='Flag to include atmosphere in the model')
 
     def setup(self):
         options = self.options
@@ -165,14 +168,15 @@ class PropPerf(om.Group):
             self.add_subsystem('input_install_loss', comp,
                                promotes=[('install_loss_factor', Dynamic.Mission.INSTALLATION_LOSS_FACTOR)])
 
-        self.add_subsystem(
-            name='atmosphere',
-            subsys=USatm1976Comp(num_nodes=nn),
-            promotes_inputs=[('h', Dynamic.Mission.ALTITUDE)],
-            promotes_outputs=[
-                ('sos', Dynamic.Mission.SPEED_OF_SOUND), ('rho', Dynamic.Mission.DENSITY),
-                ('temp', Dynamic.Mission.TEMPERATURE), ('pres', Dynamic.Mission.STATIC_PRESSURE)],
-        )
+        if self.options['include_atmosphere']:
+            self.add_subsystem(
+                name='atmosphere',
+                subsys=USatm1976Comp(num_nodes=nn),
+                promotes_inputs=[('h', Dynamic.Mission.ALTITUDE)],
+                promotes_outputs=[
+                    ('sos', Dynamic.Mission.SPEED_OF_SOUND), ('rho', Dynamic.Mission.DENSITY),
+                    ('temp', Dynamic.Mission.TEMPERATURE), ('pres', Dynamic.Mission.STATIC_PRESSURE)],
+            )
 
         self.add_subsystem(
             name='pre_hamilton_standard',
