@@ -342,6 +342,8 @@ FlightPhaseBase._add_meta_data('polynomial_control_order', val=3)
 
 FlightPhaseBase._add_meta_data('use_polynomial_control', val=True)
 
+FlightPhaseBase._add_meta_data('ground_roll', val=False)
+
 FlightPhaseBase._add_meta_data('add_initial_mass_constraint', val=False)
 
 FlightPhaseBase._add_meta_data('fix_initial', val=True)

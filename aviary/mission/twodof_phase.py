@@ -115,7 +115,6 @@ TwoDOFPhase._add_meta_data('initial_ref', val=100., units='s', desc='initial ref
 TwoDOFPhase._add_meta_data('duration_ref', val=1000.,
                            units='s', desc='duration reference')
 TwoDOFPhase._add_meta_data('control_order', val=1, desc='control order')
-TwoDOFPhase._add_meta_data('ground_roll', val=False)
 TwoDOFPhase._add_meta_data('rotation', val=False)
 TwoDOFPhase._add_meta_data('clean', val=False)
 

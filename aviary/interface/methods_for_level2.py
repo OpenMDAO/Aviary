@@ -20,10 +20,8 @@ from openmdao.utils.reports_system import _default_reports
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
 from aviary.mission.flops_based.phases.build_landing import Landing
 from aviary.mission.flops_based.phases.build_takeoff import Takeoff
-# from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
-from aviary.mission.new_energy_phase import EnergyPhase
-# from aviary.mission.flops_based.phases.two_dof_phase import TwoDOFPhase
-from aviary.mission.new_twodof_phase import TwoDOFPhase
+from aviary.mission.energy_phase import EnergyPhase
+from aviary.mission.twodof_phase import TwoDOFPhase
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 from aviary.mission.gasp_based.phases.time_integration_phases import SGMCruise
@@ -1697,37 +1695,39 @@ class AviaryProblem(om.Problem):
         for idx, (phase_name, phase) in enumerate(phase_items):
             if self.mission_method is SOLVED_2DOF:
                 self.phase_objects[idx].apply_initial_guesses(self, 'traj', phase)
-            else:
-                # If not, fetch the initial guesses specific to the phase
-                # check if guesses exist for this phase
-                if "initial_guesses" in self.phase_info[phase_name]:
-                    guesses = self.phase_info[phase_name]['initial_guesses']
-                else:
-                    guesses = {}
-
-                if 'cruise' in phase_name and self.mission_method is TWO_DEGREES_OF_FREEDOM:
-                    for guess_key, guess_data in guesses.items():
-                        val, units = guess_data
-
-                        if 'mass' == guess_key:
-                            # Set initial and duration mass for the analytic cruise phase.
-                            # Note we are integrating over mass, not time for this phase.
-                            self.set_val(f'traj.{phase_name}.t_initial',
-                                         val[0], units=units)
-                            self.set_val(f'traj.{phase_name}.t_duration',
-                                         val[1], units=units)
-                        else:
-                            # Otherwise, set the value of the parameter in the trajectory phase
-                            self.set_val(f'traj.{phase_name}.parameters:{guess_key}',
-                                         val, units=units)
-
+                if self.phase_info[phase_name]['user_options']['ground_roll'] and self.phase_info[phase_name]['user_options']['fix_initial']:
                     continue
 
-                # If not cruise and GASP, add subsystem guesses
-                self._add_subsystem_guesses(phase_name, phase)
+            # If not, fetch the initial guesses specific to the phase
+            # check if guesses exist for this phase
+            if "initial_guesses" in self.phase_info[phase_name]:
+                guesses = self.phase_info[phase_name]['initial_guesses']
+            else:
+                guesses = {}
 
-                # Set initial guesses for states and controls for each phase
-                self._add_guesses(phase_name, phase, guesses)
+            if 'cruise' in phase_name and self.mission_method is TWO_DEGREES_OF_FREEDOM:
+                for guess_key, guess_data in guesses.items():
+                    val, units = guess_data
+
+                    if 'mass' == guess_key:
+                        # Set initial and duration mass for the analytic cruise phase.
+                        # Note we are integrating over mass, not time for this phase.
+                        self.set_val(f'traj.{phase_name}.t_initial',
+                                     val[0], units=units)
+                        self.set_val(f'traj.{phase_name}.t_duration',
+                                     val[1], units=units)
+                    else:
+                        # Otherwise, set the value of the parameter in the trajectory phase
+                        self.set_val(f'traj.{phase_name}.parameters:{guess_key}',
+                                     val, units=units)
+
+                continue
+
+            # If not cruise and GASP, add subsystem guesses
+            self._add_subsystem_guesses(phase_name, phase)
+
+            # Set initial guesses for states and controls for each phase
+            self._add_guesses(phase_name, phase, guesses)
 
     def _process_guess_var(self, val, key, phase):
         """
@@ -1849,7 +1849,7 @@ class AviaryProblem(om.Problem):
             rotation_mass = self.initial_guesses['rotation_mass']
             flight_duration = self.initial_guesses['flight_duration']
 
-        if self.mission_method is HEIGHT_ENERGY:
+        if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
             control_keys = ["mach", "altitude"]
             state_keys = ["mass", Dynamic.Mission.DISTANCE]
         else:
@@ -1874,6 +1874,7 @@ class AviaryProblem(om.Problem):
             guesses["mach"] = ([initial_mach[0], final_mach[0]], "unitless")
             guesses["altitude"] = ([initial_altitude, final_altitude], 'ft')
 
+        if self.mission_method is HEIGHT_ENERGY:
             # if times not in initial guesses, set it to the average of the initial_bounds and the duration_bounds
             if 'times' not in guesses:
                 initial_bounds = wrapped_convert_units(
@@ -1918,6 +1919,9 @@ class AviaryProblem(om.Problem):
                             self.set_val(f'traj.{phase_name}.bspline_controls:{guess_key}', self._process_guess_var(
                                 val, guess_key, phase), units=units)
 
+                    if self.mission_method is SOLVED_2DOF:
+                        continue
+
                 # Set initial guess for state variables
                 elif guess_key in state_keys:
                     self.set_val(f'traj.{phase_name}.states:{guess_key}', self._process_guess_var(
@@ -1931,6 +1935,9 @@ class AviaryProblem(om.Problem):
                     # raise error if the guess key is not recognized
                     raise ValueError(
                         f"Initial guess key {guess_key} in {phase_name} is not recognized.")
+
+        if self.mission_method is SOLVED_2DOF:
+            return
 
         # We need some special logic for these following variables because GASP computes
         # initial guesses using some knowledge of the mission duration and other variables
