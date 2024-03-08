@@ -21,6 +21,7 @@ from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
 from aviary.mission.flops_based.phases.build_landing import Landing
 from aviary.mission.flops_based.phases.build_takeoff import Takeoff
 from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
+from aviary.mission.flops_based.phases.two_dof_phase import TwoDOFPhase
 from aviary.mission.gasp_based.ode.groundroll_ode import GroundrollODE
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_ode import \
@@ -28,6 +29,7 @@ from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_ode import \
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 from aviary.mission.gasp_based.phases.time_integration_phases import SGMCruise
 from aviary.mission.gasp_based.phases.groundroll_phase import GroundrollPhase
+from aviary.mission.flops_based.phases.groundroll_phase import GroundrollPhase as GroundrollPhaseVelocityIntegrated
 from aviary.mission.gasp_based.phases.rotation_phase import RotationPhase
 from aviary.mission.gasp_based.phases.climb_phase import ClimbPhase
 from aviary.mission.gasp_based.phases.cruise_phase import CruisePhase
@@ -69,6 +71,7 @@ GASP = LegacyCode.GASP
 TWO_DEGREES_OF_FREEDOM = EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
 HEIGHT_ENERGY = EquationsOfMotion.HEIGHT_ENERGY
 SOLVED = EquationsOfMotion.SOLVED
+SOLVED_2DOF = EquationsOfMotion.SOLVED_2DOF
 
 
 def wrapped_convert_units(val_unit_tuple, new_units):
@@ -129,6 +132,9 @@ class AviaryGroup(om.Group):
         self.options.declare(
             'aviary_metadata', types=dict,
             desc='metadata dictionary of the full aviary problem.')
+        self.options.declare(
+            'phase_info', types=dict,
+            desc='phase-specific settings.')
 
     def configure(self):
         aviary_options = self.options['aviary_options']
@@ -180,18 +186,46 @@ class AviaryGroup(om.Group):
 
             self.set_input_defaults(key, val=val, units=units)
 
+        # The section below this contains some manipulations of the dymos solver
+        # structure for height energy.
+        if aviary_options.get_val(Settings.EQUATIONS_OF_MOTION) is not HEIGHT_ENERGY:
+            return
+
+        phase_info = self.options['phase_info']
+
         # Set a more appropriate solver for dymos when the phases are linked.
         if MPI and isinstance(self.traj.phases.linear_solver, om.PETScKrylov):
 
             # When any phase is connected with input_initial = True, dymos puts
             # a jacobi solver in the phases group. This is necessary in case
-            # you the phases are cyclic. However, this causes some problems
+            # the phases are cyclic. However, this causes some problems
             # with the newton solvers in Aviary, exacerbating issues with
             # solver tolerances at multiple levels. Since Aviary's phases
             # are basically in series, the jacobi solver is a much better
             # choice and should be able to handle it in a couple of
             # iterations.
             self.traj.phases.linear_solver = om.LinearBlockJac(maxiter=5)
+
+        # Due to recent changes in dymos, there is now a solver in any phase
+        # that has connected initial states. It is not clear that this solver
+        # is necessary except in certain corner cases that do not apply to the
+        # Aviary trajectory. In our case, this solver merely addresses a lag
+        # in the state input component. Since this solver can cause some
+        # numerical problems, and can slow things down, we need to move it down
+        # into the state interp component.
+        # TODO: Future updates to dymos may make this unneccesary.
+        for phase in self.traj.phases.system_iter(recurse=False):
+
+            # Don't move the solvers if we are using solve segements.
+            if phase_info[phase.name]['user_options'].get('solve_for_distance'):
+                continue
+
+            phase.nonlinear_solver = om.NonlinearRunOnce()
+            phase.linear_solver = om.LinearRunOnce()
+            if isinstance(phase.indep_states, om.ImplicitComponent):
+                phase.indep_states.nonlinear_solver = \
+                    om.NewtonSolver(solve_subsystems=True)
+                phase.indep_states.linear_solver = om.DirectSolver()
 
 
 class AviaryProblem(om.Problem):
@@ -333,7 +367,7 @@ class AviaryProblem(om.Problem):
 
         ## PROCESSING ##
         # set up core subsystems
-        if mission_method is HEIGHT_ENERGY:
+        if mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
             everything_else_origin = FLOPS
         elif mission_method in (TWO_DEGREES_OF_FREEDOM, SOLVED):
             everything_else_origin = GASP
@@ -815,10 +849,18 @@ class AviaryProblem(om.Problem):
             else:
                 phase_builder = EnergyPhase
 
+        if self.mission_method is SOLVED_2DOF:
+            if phase_options['user_options']['ground_roll'] and phase_options['user_options']['fix_initial']:
+                phase_builder = GroundrollPhaseVelocityIntegrated
+            else:
+                phase_builder = TwoDOFPhase
+
         phase_object = phase_builder.from_phase_info(
             phase_name, phase_options, default_mission_subsystems, meta_data=self.meta_data)
 
         phase = phase_object.build_phase(aviary_options=self.aviary_inputs)
+
+        self.phase_objects.append(phase_object)
 
         # TODO: add logic to filter which phases get which controls.
         # right now all phases get all controls added from every subsystem.
@@ -875,9 +917,18 @@ class AviaryProblem(om.Problem):
                 units="s",
                 duration_ref=duration_ref,
             )
-        else:
+        elif self.mission_method is HEIGHT_ENERGY:
             input_initial = False
-            user_options.set_val('initial_ref', 10., 'min')
+
+            # Make a good guess for a reasonable intitial time scaler.
+            init_bounds = user_options.get_item('initial_bounds')
+            if init_bounds[0] is not None and init_bounds[0][1] != 0.0:
+                # Upper bound is good for a ref.
+                user_options.set_val('initial_ref', init_bounds[0][1],
+                                     units=init_bounds[1])
+            else:
+                user_options.set_val('initial_ref', 10., 'min')
+
             duration_bounds = user_options.get_val("duration_bounds", 'min')
             user_options.set_val(
                 'duration_ref', (duration_bounds[0] + duration_bounds[1]) / 2., 'min')
@@ -889,6 +940,7 @@ class AviaryProblem(om.Problem):
                     fix_initial=fix_initial, fix_duration=fix_duration, units='s',
                     duration_bounds=user_options.get_val("duration_bounds", 's'),
                     duration_ref=user_options.get_val("duration_ref", 's'),
+                    initial_ref=user_options.get_val("initial_ref", 's'),
                 )
             elif phase_name == 'descent' and self.mission_method is HEIGHT_ENERGY:  # TODO: generalize this logic for all phases
                 phase.set_time_options(
@@ -1172,8 +1224,9 @@ class AviaryProblem(om.Problem):
                 for timeseries in timeseries_to_add:
                     phase.add_timeseries_output(timeseries)
 
-        if self.mission_method is TWO_DEGREES_OF_FREEDOM or self.mission_method is HEIGHT_ENERGY:
+        if self.mission_method in (TWO_DEGREES_OF_FREEDOM, HEIGHT_ENERGY, SOLVED_2DOF):
             if self.analysis_scheme is AnalysisScheme.COLLOCATION:
+                self.phase_objects = []
                 for phase_idx, phase_name in enumerate(phases):
                     phase = traj.add_phase(
                         phase_name, self._get_phase(phase_name, phase_idx))
@@ -1193,7 +1246,7 @@ class AviaryProblem(om.Problem):
                     for parameter in parameter_dict:
                         external_parameters[phase_name][parameter] = parameter_dict[parameter]
 
-            if self.mission_method is HEIGHT_ENERGY:
+            if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
                 traj = setup_trajectory_params(
                     self.model, traj, self.aviary_inputs, phases, meta_data=self.meta_data, external_parameters=external_parameters)
 
@@ -1319,8 +1372,9 @@ class AviaryProblem(om.Problem):
                 self.post_mission.add_subsystem(external_subsystem.name,
                                                 subsystem_postmission)
 
-        if self.mission_method is HEIGHT_ENERGY:
-            # Fuel burn in regular phases
+        # Fuel burn in regular phases
+        if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
+            phases = list(self.phase_info.keys())
             ecomp = om.ExecComp('fuel_burned = initial_mass - mass_final',
                                 initial_mass={'units': 'lbm'},
                                 mass_final={'units': 'lbm'},
@@ -1438,7 +1492,7 @@ class AviaryProblem(om.Problem):
                 ('initial_mass', Mission.Design.GROSS_MASS)],
             promotes_outputs=[("mass_resid", Mission.Constraints.MASS_RESIDUAL)])
 
-        if self.mission_method is not SOLVED:
+        if self.mission_method in (HEIGHT_ENERGY, TWO_DEGREES_OF_FREEDOM):
             self.post_mission.add_constraint(
                 Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.e5)
 
@@ -1447,9 +1501,11 @@ class AviaryProblem(om.Problem):
         # link that phase to the adacent phases passed in via 'phases'
 
         phases_to_link = []
+
         for idx, phase_name in enumerate(phases):
-            if self.phase_info[phase_name]['user_options'][option_name] is True:
-                # get the name of the previous phase if possible
+            if self.phase_info[phase_name]['user_options'].get(option_name, False):
+                # get the name of the previous phase
+
                 if idx > 0:
                     prev_phase_name = phases[idx - 1]
                     phases_to_link.append(prev_phase_name)
@@ -1461,7 +1517,13 @@ class AviaryProblem(om.Problem):
         # if we have more than one phase, link them
         if len(phases_to_link) > 1:
             phases_to_link = list(dict.fromkeys(phases))
-            self.traj.link_phases(phases=phases_to_link, vars=[var], **kwargs)
+            # TODO: implement correct logic to not connect groundroll phases
+            if self.mission_method is SOLVED_2DOF and option_name == 'optimize_altitude':
+                if len(phases_to_link) > 2:
+                    phases_to_link = phases_to_link[1:]
+                    self.traj.link_phases(phases=phases_to_link, vars=[var], **kwargs)
+            else:
+                self.traj.link_phases(phases=phases_to_link, vars=[var], **kwargs)
 
     def link_phases(self):
         """
@@ -1494,6 +1556,15 @@ class AviaryProblem(om.Problem):
         # get unique variable names from lists_to_link
         unique_vars = list(set([var for sublist in lists_to_link for var in sublist]))
 
+        # Phase linking.
+        # If we are under mpi, and traj.phases is running in parallel, then let the
+        # optimizer handle the linkage constraints.  Note that we can technically
+        # paralellize connected phases, but it requires a solver that we would like
+        # to avoid.
+        true_unless_mpi = True
+        if self.comm.size > 1 and self.traj.options['parallel_phases']:
+            true_unless_mpi = False
+
         # loop over unique variable names
         for var in unique_vars:
             phases_to_link = []
@@ -1512,7 +1583,7 @@ class AviaryProblem(om.Problem):
                                                  var_b=var_b,
                                                  loc_a='final',
                                                  loc_b='initial',
-                                                 connected=True)
+                                                 connected=true_unless_mpi)
 
             add_linkage_constraint(self, 'ascent_to_gear_retract',
                                    'ascent_to_flap_retract', 't_init_gear')
@@ -1534,12 +1605,15 @@ class AviaryProblem(om.Problem):
             self.traj.link_phases(phases[:7], vars=["TAS"], units='kn', ref=200.)
 
         elif self.mission_method is HEIGHT_ENERGY:
-
             # connect mass and distance between all phases regardless of reserve / non-reserve status
-            self.traj.link_phases(
-                phases, ["time", Dynamic.Mission.MASS, Dynamic.Mission.DISTANCE], connected=True)
+            self.traj.link_phases(phases, ["time"], ref=1e3,
+                                  connected=true_unless_mpi)
+            self.traj.link_phases(phases, [Dynamic.Mission.MASS], ref=1e6,
+                                  connected=true_unless_mpi)
+            self.traj.link_phases(phases, [Dynamic.Mission.DISTANCE], ref=1e3,
+                                  connected=true_unless_mpi)
 
-            # connect regular phases with each other if your are optimizing alt or mach
+            # connect flight_phases with each other if your are optimizing alt or mach
             self._link_phases_helper_with_options(
                 self.flight_phases, 'optimize_altitude', Dynamic.Mission.ALTITUDE, ref=1.e4)
             self._link_phases_helper_with_options(
@@ -1550,6 +1624,22 @@ class AviaryProblem(om.Problem):
                 self.reserve_phases, 'optimize_altitude', Dynamic.Mission.ALTITUDE, ref=1.e4)
             self._link_phases_helper_with_options(
                 self.reserve_phases, 'optimize_mach', Dynamic.Mission.MACH)
+
+        elif self.mission_method is SOLVED_2DOF:
+            self.traj.link_phases(phases, [Dynamic.Mission.MASS], connected=True)
+            self.traj.link_phases(
+                phases, [Dynamic.Mission.DISTANCE], units='ft', ref=1.e3, connected=False)
+            self.traj.link_phases(phases, ["time"], connected=False)
+
+            if len(phases) > 2:
+                self.traj.link_phases(
+                    phases[1:], ["alpha"], units='rad', connected=False)
+
+            # connect phases with each other if your are optimizing alt or mach
+            self._link_phases_helper_with_options(
+                phases, 'optimize_altitude', Dynamic.Mission.ALTITUDE, ref=1.e4)
+            self._link_phases_helper_with_options(
+                phases, 'optimize_mach', Dynamic.Mission.MACH)
 
         elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
             if self.analysis_scheme is AnalysisScheme.COLLOCATION:
@@ -1797,7 +1887,7 @@ class AviaryProblem(om.Problem):
             for dv_name, dv_dict in dv_dict.items():
                 self.model.add_design_var(dv_name, **dv_dict)
 
-        if self.mission_method is HEIGHT_ENERGY:
+        if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
             optimize_mass = self.pre_mission_info.get('optimize_mass')
             if optimize_mass:
                 self.model.add_design_var(Mission.Design.GROSS_MASS, units='lbm',
@@ -1909,6 +1999,10 @@ class AviaryProblem(om.Problem):
                 last_phase = list(self.traj._phases.items())[-1][1]
                 last_phase.add_objective(
                     Dynamic.Mission.MASS, loc='final', ref=ref)
+            elif objective_type == 'time':
+                final_phase_name = list(self.phase_info.keys())[-1]
+                self.model.add_objective(
+                    f"traj.{final_phase_name}.timeseries.time", index=-1, ref=ref)
             elif objective_type == "hybrid_objective":
                 self._add_hybrid_objective(self.phase_info)
                 self.model.add_objective("obj_comp.obj")
@@ -2007,6 +2101,7 @@ class AviaryProblem(om.Problem):
 
             self.model.options['aviary_options'] = self.aviary_inputs
             self.model.options['aviary_metadata'] = self.meta_data
+            self.model.options['phase_info'] = self.phase_info
 
             warnings.simplefilter("ignore", om.OpenMDAOWarning)
             warnings.simplefilter("ignore", om.PromotionWarning)
@@ -2050,6 +2145,8 @@ class AviaryProblem(om.Problem):
             if self.mission_method is SOLVED:
                 # If so, add solved guesses to the problem
                 self._add_solved_guesses(idx, phase_name, phase)
+            elif self.mission_method is SOLVED_2DOF:
+                self.phase_objects[idx].apply_initial_guesses(self, 'traj', phase)
             else:
                 # If not, fetch the initial guesses specific to the phase
                 # check if guesses exist for this phase

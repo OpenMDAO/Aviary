@@ -1,5 +1,5 @@
 from aviary.mission.phase_builder_base import PhaseBuilderBase
-from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessTime, InitialGuessControl
+from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessIntegrationVariable, InitialGuessControl
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
 from aviary.mission.gasp_based.ode.climb_ode import ClimbODE
@@ -143,7 +143,7 @@ ClimbPhase._add_meta_data('num_segments', val=None, units='unitless')
 ClimbPhase._add_meta_data('order', val=None, units='unitless')
 
 ClimbPhase._add_initial_guess_meta_data(
-    InitialGuessTime(),
+    InitialGuessIntegrationVariable(),
     desc='initial guess for initial time and duration specified as a tuple')
 
 ClimbPhase._add_initial_guess_meta_data(

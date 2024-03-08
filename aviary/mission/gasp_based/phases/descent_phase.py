@@ -1,5 +1,5 @@
 from aviary.mission.phase_builder_base import PhaseBuilderBase
-from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessTime, InitialGuessControl
+from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessIntegrationVariable, InitialGuessControl
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
 from aviary.variable_info.enums import SpeedType
@@ -93,7 +93,7 @@ DescentPhase._add_meta_data('order', val=None, units='unitless')
 
 # Adding initial guess metadata
 DescentPhase._add_initial_guess_meta_data(
-    InitialGuessTime(),
+    InitialGuessIntegrationVariable(),
     desc='initial guess for time options')
 DescentPhase._add_initial_guess_meta_data(
     InitialGuessState('altitude'),
