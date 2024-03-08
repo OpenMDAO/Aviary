@@ -1747,18 +1747,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Engine.INSTALLATION_LOSS_FACTOR,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.FT',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units="unitless",
-    default_value=0.0,
-    desc='fraction of total propeller thrust which is lost due to installation'
-)
-
-add_meta_data(
     Aircraft.Engine.INTERPOLATION_METHOD,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -6101,6 +6089,17 @@ add_meta_data(
     units='unitless',
     desc='Current secondary throttle setting of each individual engine model on the '
          'vehicle, used as an additional degree of control for hybrid engines'
+)
+
+add_meta_data(
+    Dynamic.Mission.INSTALLATION_LOSS_FACTOR,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.FT',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units="unitless",
+    desc='fraction of total propeller thrust which is lost due to installation'
 )
 
 add_meta_data(

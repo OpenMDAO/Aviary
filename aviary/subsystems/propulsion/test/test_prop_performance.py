@@ -121,7 +121,7 @@ class PropPerformanceTest(unittest.TestCase):
         prob = om.Problem()
         pp = prob.model.add_subsystem(
             'pp',
-            PropPerf(aviary_options=options),
+            PropPerf(num_nodes=1, aviary_options=options),
             promotes_inputs=['*'],
             promotes_outputs=["*"],
         )
@@ -156,7 +156,7 @@ class PropPerformanceTest(unittest.TestCase):
         angb = float(p.get_val('ang_blade')[0])
         thrt = float(p.get_val('Thrust')[0])
         peff = float(p.get_val('propeller_efficiency')[0])
-        lfac = float(p.get_val(Aircraft.Engine.INSTALLATION_LOSS_FACTOR)[0])
+        lfac = float(p.get_val(Dynamic.Mission.INSTALLATION_LOSS_FACTOR)[0])
         ieff = float(p.get_val('install_efficiency')[0])
 
         tol = 0.005
@@ -210,7 +210,7 @@ class PropPerformanceTest(unittest.TestCase):
         options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS,
                         val=False, units='unitless')
         prob.setup()
-        prob.set_val(Aircraft.Engine.INSTALLATION_LOSS_FACTOR, 0.0, units="unitless")
+        prob.set_val(Dynamic.Mission.INSTALLATION_LOSS_FACTOR, 0.0, units="unitless")
         prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 12.0, units="ft")
         # prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, 2.4, units='ft')
         prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, 150.0, units="unitless")
@@ -233,7 +233,7 @@ class PropPerformanceTest(unittest.TestCase):
         options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS,
                         val=False, units='unitless')
         prob.setup()
-        prob.set_val(Aircraft.Engine.INSTALLATION_LOSS_FACTOR, 0.05, units="unitless")
+        prob.set_val(Dynamic.Mission.INSTALLATION_LOSS_FACTOR, 0.05, units="unitless")
         prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 12.0, units="ft")
         # prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, 2.4, units='ft')
         prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, 150.0, units="unitless")
@@ -256,7 +256,7 @@ class PropPerformanceTest(unittest.TestCase):
         options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS,
                         val=False, units='unitless')
         prob.setup()
-        prob.set_val(Aircraft.Engine.INSTALLATION_LOSS_FACTOR, 0.05, units="unitless")
+        prob.set_val(Dynamic.Mission.INSTALLATION_LOSS_FACTOR, 0.05, units="unitless")
         prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 12.0, units="ft")
         # prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, 2.4, units='ft')
         prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, 150.0, units="unitless")
@@ -282,7 +282,7 @@ class PropPerformanceTest(unittest.TestCase):
         options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS,
                         val=False, units='unitless')
         prob.setup()
-        prob.set_val(Aircraft.Engine.INSTALLATION_LOSS_FACTOR, 0.0, units="unitless")
+        prob.set_val(Dynamic.Mission.INSTALLATION_LOSS_FACTOR, 0.0, units="unitless")
         prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 12.0, units="ft")
         # prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, 2.4, units='ft')
         prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, 150.0, units="unitless")
@@ -308,7 +308,7 @@ class PropPerformanceTest(unittest.TestCase):
         options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS,
                         val=False, units='unitless')
         prob.setup()
-        prob.set_val(Aircraft.Engine.INSTALLATION_LOSS_FACTOR, 0.05, units="unitless")
+        prob.set_val(Dynamic.Mission.INSTALLATION_LOSS_FACTOR, 0.05, units="unitless")
         prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 12.0, units="ft")
         # prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, 2.4, units='ft')
         prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, 150.0, units="unitless")
@@ -334,7 +334,7 @@ class PropPerformanceTest(unittest.TestCase):
         options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS,
                         val=False, units='unitless')
         prob.setup()
-        prob.set_val(Aircraft.Engine.INSTALLATION_LOSS_FACTOR, 0.05, units="unitless")
+        prob.set_val(Dynamic.Mission.INSTALLATION_LOSS_FACTOR, 0.05, units="unitless")
         prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 12.0, units="ft")
         # prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, 2.4, units='ft')
         prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, 150.0, units="unitless")
