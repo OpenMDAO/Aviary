@@ -1,0 +1,473 @@
+#ifndef __TURBINE_PR_MAP3D__
+#define __TURBINE_PR_MAP3D__
+
+#include <InterpIncludes.ncp>
+
+// Variables that exist in the parent Turbine element
+// and are used in this subelement.
+extern real Np;
+extern real Wp;
+extern real WpCalc;
+extern real NpDes;
+extern real WpDes;
+extern real effDes;
+extern real PRdes;
+
+// Variables that exist in the parent Turbine element
+// and are set by this subelement.
+extern real WpBase;
+extern real effBase;
+extern real PRbase; // set by ind_PRbase
+
+class TurbinePRmap3D extends Subelement {
+
+//------------------------------------------------------------
+//     ******* DOCUMENTATION *******
+//------------------------------------------------------------
+
+  title = "";
+
+  description = isA() + " manages the calculation of turbine performance
+  for an efficiency-based map.  It performs calls to maps that return
+  efficiency and corrected weight flow as a function of correct speed and
+  pressure ratio.";
+
+
+  usageNotes = isA() + 
+" 
+
+- NOTE TO USERS: The turbine subelement architecture has changed as of NPSS
+version 2.4.  What used to be the TurbineNeppMap subelement is now the
+TurbinePRmap subelement, and what used to be the TurbineEfficiencyMap
+subelement has been absorbed by the new TurbinePRmap subelement.  This
+single subelement was created to simplify the operations performed in the
+turbine S_map socket.  Only a few attributes such as S_hum socket, effDes
+and geom-related variables - have been eliminated from the subelement in
+the process, and several variable names have been changed. 
+
+- When used in conjunction with the standard NPSS Turbine element's S_map
+socket, this subelement must ultimately set values for effBase and WpBase,
+which are the allowedValues for the turbine S_map socket.  The variables
+effBase and WpBase reside in the parent turbine element.
+
+- PRbase is not set directly by this element, but it is set by the solver
+variable ind_PRbase, which resides in this subelement.  PRbase resides
+in the parent Turbine element.  During DESIGN, PRdes equals PRbase.
+
+- This subelement manages the turbine performance calculations for an
+efficiency-based map.  It is responsible for matching the unscaled map data
+based on design data supplied by the user.  During DESIGN, scalars are
+calculated (s_effDes, s_PRdes, s_WpDes, s_NpDes) so that the unscaled map
+design point matches the desired design point; the scalars s_effDes,
+s_PRdes, s_WpDes, s_NpDes are held constant during OFFDESIGN.  The scalars
+s_effRe and s_WpRe account for Reynolds effects and are calculated by the
+S_Re socket if it is filled.
+     
+      During DESIGN:
+      s_NpDes = NpDes/NpMapDes;
+      s_effDes = effDes/(effMapDes * s_effRe);
+      s_PRdes = (PRdes - 1)/(PRmapDes - 1);
+      s_WpDes = WpDes/(WpMapDes * s_WpRe);
+
+- The desired design point is set by the user in the turbine parent element
+using effDes.  Design pressure ratio PRdes equals PRbase at DESIGN, and PRbase
+is determined by the solver independent ind_PRbase. The unscaled map design 
+point is specified by setting PRmapDes and NpMapDes in this subelement; this 
+is the point about which the unscaled map is scaled.  PRmapDes and NpMapDes 
+are specific to the map that is being used and are often set in the map
+definition file.  Therefore, these values should not be changed for a given map.
+
+- This subelement is designed to read turbine performance maps.  Two tables
+(or functions) are required: TB_eff for the efficiency map and TB_Wp for
+the corrected flow map.  The maps return the unscaled values for efficiency
+and corrected flow and set effMap and WpMap, respectively.  During DESIGN map 
+scalars are calculated, and during OFFDESIGN those scalars are applied
+to the map values to calculate WpBase and effBase.  The scalars for Reynolds 
+effects also appear in the effBase and WpBase calculations.
+	 
+	 Note: PRbase is determined by solver independent ind_PRbase
+	 
+     NpMap = Np / s_NpDes;
+	 PRmap = 1 + (PRbase - 1)/s_PRdes;
+
+     WpMap = TB_Wp(NpMap, PRmap);
+     effMap = TB_eff(NpMap, PRmap);
+
+     WpBase = s_WpDes * s_WpRe * WpMap;
+     effBase = s_effDes * s_effRe * effMap;
+
+- The S_Re socket is provided for a subelement to calculate Reynolds effects
+corrections for efficiency and corrected flow.  The S_Re socket is allowed
+to set s_effRe and s_WpRe, which are applied to effMap and WpMap (along
+with s_effDes and s_WpDes) to calculate effBase and WpBase, respectively.
+(See the usage notes above).  The s_effRe and s_WpRe scalars are also taken
+into account when calculating the s_effDes and s_WpDes scalars during
+DESIGN.
+
+- If the S_Re socket is not filled, then the values for s_effRe and s_WpRe
+will both be automatically set back to 1.0.
+
+- In order to fill the TB_Wp and TB_eff sockets, the user must declare
+tables (or functions) in the format of TB_Wp(real Np, real PR) and 
+TB_eff( real Np, real PR) at this subelement's scope.  The act of declaring
+these two tables automatically fills the TB_Wp and TB_eff sockets.
+ 
+- The two performance maps TB_Wp and TB_eff are expressed as functions of
+corrected speed (NpMap) and total-to-total pressure ratio (PRmap).  Np is
+obtained from the parent turbine element and converted to NpMap using
+s_NpDes.  PRbase is obtained from the parent turbine element and converted
+to PRmap using s_PRdes.  The solver independent ind_PRbase varies PRbase
+during DESIGN and OFFDESIGN.  Therefore, an initial guess for PRbase is
+required.
+
+- This subelement is also responsible for performing the overall turbine
+mass flow balance.  The turbine default solver independent and dependent
+are located at this level.  During OFFDESIGN, the solver varies PRbase 
+(using ind_PRbase) to drive Wp to equal WpCalc (using dep_errWp).  The
+variables PRbase, Wp, and WpCalc all reside in the parent turbine element.
+The solver independent ind_PRbase is active during DESIGN, but the solver
+dependent dep_errWp is not.
+
+- If you have a map that is but not in the correct format (i.e. Wp and eff 
+are not functions of PR and Np), then this subelement may not be used in its 
+current form.  You will have to write a new subelement that ultimately 
+calculates effBase, PRbase, and WpBase so that they can be passed to the parent
+Turbine element.
+
+- The map arguments are alpha, speed and pressure ratio.  Even though the TB_Wp and 
+TB_eff sockets indicate that the speed argument is corrected speed (Np) the 
+map can also be presented as a fraction of design corrected speed or some other 
+speed parameter.  If this is the case, then the user-specified value for NpMapDes 
+must also be in fraction of design speed.  Note that the subelement will always 
+use NpMap to perform the map lookup.  This scenario would mean NpMapDes and NpMap 
+are in different units, but that is alright because the scalar s_NpDes will take 
+care of the units disparity.  For example, if the map is presented as a fraction 
+of design corrected speed instead of corrected speed, then NpMapDes will most
+likely be set to 1.0 (turbine map design point is at 100% of design speed).
+If NpDes is 4600 rpm (calculated in the turbine parent element during 
+design), then the scalar that relates NpMap to NpDes will be: 
+s_NpDes = NpDes / NpMapDes = 4600 / 1.0 = 4600. 
+";
+
+  background = "";
+
+//------------------------------------------------------------
+//     ******* SETUP VARIABLES ********
+//------------------------------------------------------------
+
+  real alphaMap {
+    value = 0;  IOstatus = OUTPUT;  units = DEG;
+    description = "Map stator vane angle used to read unscaled maps.  Equals alphaMapDes during design.  User input during off-design.";
+  }
+  real alphaMapDes {
+    value = 0;  IOstatus = INPUT;  units = DEG;
+    description = "Map stator vane angle at unscaled map design point.  This is the vane angle about which the unscaled map is scaled.";
+  }
+  real effMap {
+    value = 0;  IOstatus = OUTPUT;  units = NONE;
+    description = "Adiabatic efficiency returned from unscaled map TB_eff.  Used to calculate and set effBase in the parent element.";
+  }
+   real effMapDes {
+    value = 0;  IOstatus = OUTPUT;  units = NONE;
+    description = "Adiabatic efficiency at unscaled map design point, which occurs at NpMapDes and PRmapDes";
+  }
+  real NpMap {
+    value = 0;  IOstatus = OUTPUT;  units = RPM_PER_SQRT_R;
+    description = "Corrected speed used to read unscaled maps.  Equals NpMapDes during design.  Calculated using Np during off-design.";
+  }
+  real NpMapDes {
+    value = 0;  IOstatus = INPUT;  units = RPM_PER_SQRT_R;
+    description = "Corrected speed at unscaled map design point.  This is the speed about which the unscaled map is scaled.";
+  }
+  real PRmap {
+    value = 0;  IOstatus = OUTPUT;  units = NONE;
+    description = "Total-to-total pressure ratio used to read unscaled maps.  Equals PRmapDes during design.  Calculated using PRbase during off-design.";
+  }
+  real PRmapDes {
+    value = 1;  IOstatus = INPUT;  units = NONE;
+    description = "Total-to-total pressure ratio at unscaled map design point.  This is the pressure ratio about which the unscaled map is scaled.";
+  }
+  real s_effDes {
+    value = 1;  IOstatus = OUTPUT;  units = NONE;
+    description = "Adiabatic efficiency map scalar.  Relates actual design efficiency to map design efficiency, effDes / effMapDes";
+  }
+  real s_effRe {
+    value = 1;  IOstatus = OUTPUT;  units = NONE;
+    description = "Scalar on adiabatic efficiency for Reynolds effects, calculated and set by S_Re socket.  Automatically set to 1.0 if S_Re socket is empty.";
+  }
+  real s_NpDes {
+    value = 1;  IOstatus = OUTPUT;  units = NONE;
+    description = "Corrected speed map scalar.  Relates actual design corrected speed to map design corrected speed, NpDes / NpMapDes";
+  }
+  real s_PRdes {
+    value = 1;  IOstatus = OUTPUT;  units = NONE;
+    description = "Pressure ratio map scalar.  Relates actual design pressure ratio to map design pressure ratio, (PRdes - 1)/(PRmapDes - 1)";
+  }
+  real s_WpDes {
+    value = 1;  IOstatus = OUTPUT;  units = NONE;
+    description = "Corrected flow map scalar.  Relates actual design corrected flow to map design corrected flow, WpDes / WpMapDes";
+  }
+  real s_WpRe {
+    value = 1;  IOstatus = OUTPUT;  units = NONE;
+    description = "Scalar for corrected mass flow for Reynolds Effect, calculated and set by S_Re socket.  Automatically set to 1.0 if S_Re socket is empty.";
+  }
+  real WpMap {
+    value = 0;  IOstatus = OUTPUT;  units = "lbm*SQRT_R/(sec*psia)";
+    description = "Corrected flow returned from unscaled map TB_Wp.  Used to calculate and set WpBase in the parent element.";
+  }
+  real WpMapDes {
+    value = 0;  IOstatus = OUTPUT;  units = "lbm*SQRT_R/(sec*psia)";
+    description = "Corrected weight flow at unscaled map design point, which occurs at which occurs at NpMapDes and PRmapDes";
+  }
+
+//------------------------------------------------------------
+//   ******* OPTION VARIABLE SETUP *******
+//------------------------------------------------------------
+
+  Option switchDes {
+    allowedValues = { DESIGN, OFFDESIGN };
+    description = "Determines if the subelement is in design or off-design mode";
+    rewritableValues = FALSE;  // Enables converter optimization.
+  }
+
+
+//------------------------------------------------------------
+// ****** SETUP PORTS, FLOW STATIONS, SOCKETS, TABLES ********
+//------------------------------------------------------------
+
+// FLUID PORTS
+
+// FUEL PORTS
+
+// BLEED PORTS
+
+// THERMAL PORTS
+
+// MECHANICAL PORTS
+
+// FLOW STATIONS
+
+// SOCKETS
+  addInterface("TURBINE_MAP");
+
+  Socket TB_eff {  
+    description = "Efficiency versus corrected speed and pressure ratio.  A function or table with the name TB_eff must be declared at the subelement scope in order to fill this socket.  The format is TB_eff (real Np, real PR).";
+    socketType = "Function";
+    required = TRUE;
+    argTypes = { "real", "real", "real" }
+    returnType = "real";
+  }
+
+  Socket TB_Wp {  
+    description = "Corrected flow versus corrected speed and pressure ratio.  A function or table with the name TB_Wp must be declared at the subelement scope in order to fill this socket.  The format is TB_Wp (real Np, real PR).";
+    socketType = "Function";
+    required = TRUE;
+    argTypes = { "real", "real", "real" }
+    returnType = "real";
+  }
+
+  Socket S_Re {
+    allowedValues = { "s_effRe", "s_WpRe" };
+    description = "Turbine Reynolds effects socket";
+    socketType = "TURBINE_REYNOLDS_EFFECTS";
+  }
+
+// TABLES
+
+
+//------------------------------------------------------------
+// ******* INTERNAL SOLVER SETUP *******
+//------------------------------------------------------------
+
+//------------------------------------------------------------
+//  ******  ADD SOLVER INDEPENDENTS & DEPENDENTS  ******
+//------------------------------------------------------------
+
+  Independent ind_PRbase {
+    varName = "PRbase";
+    description = "Turbine operating point pressure ratio, before audit factors are applied.";
+  }
+
+  Dependent dep_errWp {
+    eq_lhs = "Wp";
+    eq_rhs = "WpCalc";
+    description = "Corrected flow error dependent";
+  }
+
+//------------------------------------------------------------
+// ******* VARIABLE CHANGED METHODOLOGY *******
+//------------------------------------------------------------
+  void variableChanged( string name, any oldVal ) {
+	 
+    if (name =="switchDes") {
+      // variables change IO status depending switchDes status
+      if (switchDes == DESIGN) {
+		
+		s_effDes.IOstatus = OUTPUT;
+		s_NpDes.IOstatus = OUTPUT;
+		s_PRdes.IOstatus = OUTPUT;
+		s_WpDes.IOstatus = OUTPUT;
+		
+		// Set solver variables autoSetup to FALSE
+		ind_PRbase.autoSetup = TRUE;
+		dep_errWp.autoSetup = FALSE;
+      } 
+      else if (switchDes == OFFDESIGN) {
+
+		s_NpDes.IOstatus = INPUT;
+		s_PRdes.IOstatus = INPUT;
+		s_WpDes.IOstatus = INPUT;
+		s_effDes.IOstatus = INPUT;
+		 
+		// Set solver variables autoSetup to TRUE
+		ind_PRbase.autoSetup = TRUE;
+		dep_errWp.autoSetup = TRUE;	  
+      }
+    } 
+  } // end variableChanged() function
+  
+//------------------------------------------------------------
+//   ******* PERFORM ENGINEERING CALCULATIONS *******
+//------------------------------------------------------------
+  
+  void calculate() {
+	 
+	//----------------------------------------------------------------------
+    // Begin design calculations. 
+    // First set Np and PR to the unscaled map design point
+	// (NpMapDes and PRmapDes).
+	// Then lookup the unscaled map design eff and Wp (effMapdes and WpMapDes).
+    // Then calculate scalars (s_NpDes, s_effDes, s_PRdes, s_WpDes) that 
+	// relate the map design point values of Np, Wp, eff, and PR to the 
+	// turbine design point values (NpDes, effDes, PRdes, WpDes).
+    //----------------------------------------------------------------------
+	if ( switchDes == DESIGN ) {
+		
+   		// Set the map alpha argument to the unscaled map design point.
+		// alphaMapDes is a user input, specific to the map that is being used.
+		alphaMap = alphaMapDes;
+
+		// Set the map Np argument to the unscaled map design point.
+		// NpMapDes is a user input, specific to the map that is being used.
+		NpMap = NpMapDes;
+			
+		// Set the map PR argument to the unscaled map design point.
+		// PRmapDes is a user input, specific to the map that is being used.
+		PRmap = PRmapDes;
+		
+		//-------------------------------------------------------------------
+		// execute the efficiency map (function socket)
+		//-------------------------------------------------------------------
+		effMap = TB_eff(alphaMap, NpMap, PRmap);
+		
+		//-------------------------------------------------------------------
+		// execute the corrected flow map (function socket)
+		//-------------------------------------------------------------------
+		WpMap = TB_Wp(alphaMap, NpMap, PRmap);
+		
+		//-------------------------------------------------------------------
+		// Store the map returned values as map design point values
+		//-------------------------------------------------------------------
+		effMapDes = effMap;
+		WpMapDes = WpMap;
+
+		//-------------------------------------------------------------------
+		// execute Reynolds effects socket if not empty 
+		//-------------------------------------------------------------------
+		if (!S_Re.isEmpty()) {
+			// This socket should set s_WpRe and s_effRe
+			S_Re.execute();
+		}
+		else{
+			s_effRe = 1.0;
+			s_WpRe = 1.0;
+		}
+			
+		//-------------------------------------------------------------------
+		// calculate the design scalars
+		//-------------------------------------------------------------------
+		
+		// Corrected speed scalar.  
+		// Note that NpDes is obtained from the parent Turbine element.
+		// NpMapDes is a user input in this subelement, specific to
+		// the map that is being used.
+		s_NpDes = NpDes/NpMapDes;
+
+		// Pressure ratio scalar.  
+		// Note that PRbase is set by the solver variable ind_PRbase.
+		// PRmapDes is a user input in this subelement, specific to
+		// the map that is being used.
+		// During design, PRdes = PRbase (where PRdes and PRbase
+		// both reside in the parent Turbine element)
+		s_PRdes = (PRbase - 1)/(PRmapDes - 1);
+		
+		// Adiabatic efficiency scalar.  
+		// Note that effDes is a user input in the parent Turbine element,
+		// effMapDes came from the TB_eff map lookup, and s_effRe came from the
+		// S_Re socket (if it is being used)
+		s_effDes = effDes/(effMapDes * s_effRe);
+		
+		// Corrected flow scalar.  
+		// Note that WpDes is obtained from the parent Turbine element,
+		// WpMapDes came from the TB_Wp map lookup, and s_WpRe came from the
+		// S_Re socket (if it is being used)
+		s_WpDes = WpDes/(WpMapDes * s_WpRe);
+      
+    } // end (switchDes == DESIGN)
+	
+	//----------------------------------------------------------------------
+    // Continue with off-design calculations.
+	// Note:
+	// Np is obtain from the parent Turbine element and corrected using the 
+	// design point scalar to obtain NpMap.
+	// PRbase is varied by the solver variable ind_PRbase, and it is
+	// corrected using the design point scalar to obtain PRmap.
+	// PRmap and NpMap are used to actually read the maps.
+    //----------------------------------------------------------------------
+    
+    //----------------------------------------------------------------------
+    // correct the map speed using the design point scalar
+    //----------------------------------------------------------------------
+	NpMap = Np / s_NpDes;
+	
+	//----------------------------------------------------------------------
+    // correct the map pressure ratio using the design point scalar
+    //----------------------------------------------------------------------
+	PRmap = (PRbase - 1) / s_PRdes + 1;
+
+    //-------------------------------------------------------------------
+	// execute the efficiency map (function socket)
+	//-------------------------------------------------------------------
+	effMap = TB_eff(alphaMap, NpMap, PRmap);
+		
+	//-------------------------------------------------------------------
+	// execute the corrected flow map (function socket)
+	//-------------------------------------------------------------------
+	WpMap = TB_Wp(alphaMap, NpMap, PRmap);
+	 
+    //----------------------------------------------------------------------
+    // execute Reynolds effects socket if not empty
+    //----------------------------------------------------------------------
+    if (!S_Re.isEmpty()) {
+		S_Re.execute();
+    }
+	else {
+		s_effRe = 1.0;
+		s_WpRe = 1.0;
+    }
+	
+	//----------------------------------------------------------------------
+	// set values in parent Turbine element
+    //----------------------------------------------------------------------
+	effBase = s_effDes * s_effRe * effMap; // adiabatic efficiency base value
+	WpBase =  s_WpDes * s_WpRe * WpMap; // corrected flow base value
+	
+	// Note that PRbase is automatically varied by the solver variable ind_PRbase,
+	// which automatically sets PRbase in the parent Turbine element
+	// PRbase = PRbase;
+
+  } // end calculate() function
+  
+} // end TurbinePRmap subelement class
+
+#endif

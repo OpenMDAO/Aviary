@@ -1,0 +1,161 @@
+#ifndef __PERFORMANCE__
+#define __PERFORMANCE__
+
+#include <InterpIncludes.ncp>
+
+
+class Performance extends Element {
+//------------------------------------------------------------
+//  DOCUMENTATION
+//------------------------------------------------------------
+
+  title = "";
+
+
+  description = isA() + " calculates overall engine performance results.";
+
+  usageNotes = isA() +
+"
+
+- This element calculates uninstalled engine performance.
+
+- This element is primarily used in place of the standard EngPerf
+Element which does not work properly with the multiple engine design
+point (MDP) methodology.
+
+- The element requires that the model consist of a separate flow two-
+spool turbofan with elements of the appropriate type named ambient,
+inlet, fan, LPC, HPC, HPT, LPT, burner, core_nozz, and byp_nozz.  If
+the model is using elements of different types or names then this
+element needs to be modified.
+
+
+";
+
+//------------------------------------------------------------
+//  SETUP VARIABLES
+//------------------------------------------------------------
+real alt {
+   value = 0.0; IOstatus = OUTPUT; units = FT;
+   description = "Altitude";
+}
+real coreSize {
+   value = 1.0; IOstatus = OUTPUT; units = LBM_PER_SEC;
+   description = "Engine core size parameter based on HPC flow";
+}
+real dTs {
+   value = 0.0; IOstatus = OUTPUT; units = RANKINE;
+   description = "Delta temperature from standard atmosphere";
+}
+real EPR {
+   value = 0.0; IOstatus = OUTPUT; units = NONE;
+   description = "Engine pressure ratio, based on fan face to LPT exit";
+}
+real Fg {
+   value = 0.0; IOstatus = OUTPUT; units = LBF;
+   description = "Overall gross thrust";
+}
+real Fn {
+   value = 0.0; IOstatus = OUTPUT; units = LBF;
+   description = "Overall net thrust";
+}
+real Fram {
+   value = 0.0; IOstatus = OUTPUT; units = LBF;
+   description = "Overall ram drag";
+}
+real MN {
+   value = 0.0; IOstatus = OUTPUT; units = NONE;
+   description = "Mach number";
+}
+real NozzleTotalArea {
+   value = 1.0; IOstatus = OUTPUT; units = FT2;
+   description = "Total exit area of the core and bypass nozzles";
+}
+real OPR {
+   value = 0.0; IOstatus = OUTPUT; units = NONE;
+   description = "Engine ideal overall pressure ratio";
+}
+real OPR_actual {
+   value = 0.0; IOstatus = OUTPUT; units = NONE;
+   description = "Ratio of maximum engine pressure to inlet pressure";
+}
+real PowerCode {
+   value = 0.0; IOstatus = INPUT; units = NONE;
+   description = "Engine Power Code or throttle setting";
+}
+real Q {
+   value = 0.0; IOstatus = OUTPUT; units = LBF_PER_FT2;
+   description = "Engine dynamic pressure";
+}
+real SFC {
+   value = 0.0; IOstatus = OUTPUT; units = LBM_PER_HR_LBF;
+   description = "Specific fuel consumption (same as TSFC, output for ARP)";
+}
+real TSFC {
+   value = 0.0; IOstatus = OUTPUT; units = LBM_PER_HR_LBF;
+   description = "Thrust Specific Fuel Consumption";
+}
+real VjetRatio {
+   value = 1.0; IOstatus = OUTPUT; units = NONE;
+   description = "Engine jet velocity ratio (core Vj over bypass Vj)";
+}
+real VTAS {
+   value = 0.0; IOstatus = OUTPUT; units = NONE;
+   description = "True air speed";
+}
+real W {
+   value = 0.0; IOstatus = OUTPUT; units = LBM_PER_SEC;
+   description = "Engine total airflow";
+}
+real WAR {
+   value = 0.0; IOstatus = OUTPUT; units = NONE;
+   description = "Incoming water-to-air ratio";
+}
+real Wfuel {
+   value = 0.0; IOstatus = OUTPUT; units = LBM_PER_SEC;
+   description = "Overall fuel flow (pounds mass per sec)";
+}
+real WfuelHour {
+   value = 0.0; IOstatus = OUTPUT; units = LBM_PER_HR;
+   description = "Overall fuel flow (pounds mass per hour)";
+}
+
+
+//------------------------------------------------------------------------
+//              Calculate the performance
+//------------------------------------------------------------------------
+void calculate(){
+
+   //-------------------------------------------------
+   //  Grab data from the ambient element
+   //-------------------------------------------------
+   MN = ambient.MN;
+   alt = ambient.alt;
+   dTs = ambient.dTs;
+   WAR = ambient.WAR;
+   W = start.W_in;
+   VTAS = ambient.VTAS;
+
+
+   //-------------------------------------------------
+   //  Calculate overall values
+   //-------------------------------------------------
+   NozzleTotalArea = (1./C_FT2toIN2)*(nozzle.Ath);
+   OPR = HPC.PR;
+   OPR_actual = HPC.Fl_O.Pt / ambient.Pt;
+   EPR = HPT.Fl_O.Pt / HPC.Fl_I.Pt;
+
+   Fg = nozzle.Fg;
+   Fram = inlet.Fram;
+   Wfuel = burner.Wfuel;
+   WfuelHour = Wfuel*C_HOURtoSEC;
+   Fn = Fg - Fram;
+   TSFC = WfuelHour / Fn;
+   SFC = TSFC;
+
+}  // end calculate
+
+}  // end Performance
+
+
+#endif
