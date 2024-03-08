@@ -41,17 +41,3 @@ def define_aviary_NPSS_problem():
 
     prob.set_initial_guesses()
     return prob
-
-
-if __name__ == "__main__":
-    prob = define_aviary_NPSS_problem()
-    prob.run_aviary_problem(suppress_solver_print=True)
-    # print(prob.model.list_outputs())
-    print('Design Mass Flow ='+str(prob['aircraft:engine:design_mass_flow'][0]))
-    print('SLS scaled Thrust ='+str(prob['aircraft:engine:scaled_sls_thrust'][0]))
-
-    print('Cruise neg fuel flow rate =' +
-          str(prob['traj.cruise.rhs_all.NPSS_prop_system.fuel_flow_rate_negative'][0]))
-    print('Net Cruise thrust =' +
-          str(prob['traj.cruise.rhs_all.NPSS_prop_system.thrust_net'][0]))
-    print('done')
