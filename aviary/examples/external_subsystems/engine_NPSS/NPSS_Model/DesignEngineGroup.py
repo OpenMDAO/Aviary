@@ -38,8 +38,6 @@ class NPSSExternalCodeComp(om.ExternalCodeComp):
         self.options['external_input_files'] = [self.input_file]
         self.options['external_output_files'] = [self.output_file]
 
-        # self.options['command'] = ['c:/NPSS.nt.ver32_VC14_64/bin/npss.nt.exe','turbojet.run']
-
         run_location = get_path(
             './examples/external_subsystems/engine_NPSS/NPSS_Model/turbojet.run')
         engine_location = get_path(
