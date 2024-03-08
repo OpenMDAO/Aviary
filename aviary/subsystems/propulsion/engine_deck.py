@@ -29,6 +29,7 @@ import numpy as np
 import openmdao.api as om
 
 from openmdao.utils.units import convert_units
+from openmdao.core.component import Component
 
 from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.subsystems.propulsion.engine_scaling import EngineScaling
@@ -1456,15 +1457,19 @@ class TurboPropDeck(EngineDeck):
                                    promotes_inputs=['*'],
                                    promotes_outputs=['*'])
 
-        if self.prop_model:
+        if self.prop_model is True:
+            self._add_HS_prop(engine_group, num_nodes)
+        elif self.prop_model is None:
+            self._add_dummy_prop(engine_group, num_nodes)
+        elif isinstance(self.prop_model, (om.Group, Component)):
             engine_group.add_subsystem(
                 'propeller_model',
                 self.prop_model,
-                promotes_inputs=[Dynamic.Mission.SHAFT_POWER],
+                promotes_inputs=['*'],
                 promotes_outputs=['prop_thrust'],
             )
         else:
-            self._add_dummy_prop(engine_group, num_nodes)
+            raise TypeError(f'{self.prop_model} could not be added as a subsystem')
 
         engine_group.add_subsystem(
             'total_thrust',
@@ -1473,6 +1478,7 @@ class TurboPropDeck(EngineDeck):
                 total_thrust={'units': 'lbf', 'shape': num_nodes},
                 prop_thrust={'units': 'lbf', 'shape': num_nodes},
                 tailpipe_thrust={'val': np.zeros(num_nodes), 'units': 'lbf'},
+                has_diag_partials=True,
             ),
             promotes_inputs=['prop_thrust', 'tailpipe_thrust'],
             promotes_outputs=[('total_thrust', Dynamic.Mission.THRUST)],
@@ -1567,6 +1573,41 @@ class TurboPropDeck(EngineDeck):
             promotes_outputs=[
                 Dynamic.Mission.SHAFT_POWER+suffix
             ],
+        )
+
+    def _add_HS_prop(self, engine_group: om.Group, num_nodes=1):
+        from aviary.subsystems.propulsion.prop_performance import PropPerf
+        from aviary.mission.gasp_based.flight_conditions import FlightConditions
+        from aviary.variable_info.enums import SpeedType
+        prop_group = om.Group()
+
+        prop_group.add_subsystem(
+            "fc",
+            FlightConditions(num_nodes=1, input_speed_type=SpeedType.MACH),
+            promotes_inputs=["rho", Dynamic.Mission.SPEED_OF_SOUND, 'mach'],
+            promotes_outputs=[Dynamic.Mission.DYNAMIC_PRESSURE,
+                              'EAS', ('TAS', 'velocity')],
+        )
+
+        pp = prop_group.add_subsystem(
+            'pp',
+            PropPerf(
+                aviary_options=self.options,
+                num_nodes=num_nodes
+            ),
+            promotes_inputs=['*', ('mach', 'mach_internal')],
+            promotes_outputs=["*", ('mach', 'mach_internal')],
+        )
+
+        pp.set_input_defaults(Aircraft.Engine.PROPELLER_DIAMETER, 10, units="ft")
+        pp.set_input_defaults(Dynamic.Mission.PROPELLER_TIP_SPEED, 800, units="ft/s")
+        pp.set_input_defaults(Dynamic.Mission.VELOCITY, 0, units="knot")
+
+        engine_group.add_subsystem(
+            'propeller_model',
+            prop_group,
+            promotes_inputs=['*'],
+            promotes_outputs=[('Thrust', 'prop_thrust')],
         )
 
     def _add_dummy_prop(self, engine_group: om.Group, num_nodes=1):
