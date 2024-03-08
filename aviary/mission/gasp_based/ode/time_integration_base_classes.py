@@ -81,7 +81,7 @@ class SimuPyProblem(SimulationMixin):
         controls: a dictionary of the form {control_name:unit}
         include_state_outputs : automatically add the state to the input
         works well for auto-parsed naming, does not check for duplication before adding
-        states, parameters, outputs, and controls can also be input as a list of keys for the dictionary 
+        states, parameters, outputs, and controls can also be input as a list of keys for the dictionary
         """
 
         default_om_list_args = dict(prom_name=True, val=False,
@@ -451,13 +451,13 @@ class SGMTrajBase(om.ExplicitComponent):
         API requirements:
             pass ODE's,
             next_problem = f(current_problem, current_result)
-            initial_state/time/etc 
+            initial_state/time/etc
             next_state from last state/output/event information
 
             pass in terminal and integrand output functions with derivatives (components)
             -- anything special for final state, final time?
             declare initial state(s) as parameters to take derivative wrt
-            assume all other inputs are parameters for deriv? 
+            assume all other inputs are parameters for deriv?
         """
         if traj_final_state_output is None:
             traj_final_state_output = []
