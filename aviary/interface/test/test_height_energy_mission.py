@@ -192,14 +192,14 @@ class AircraftMissionTestSuite(unittest.TestCase):
         self.assertFalse(prob.failed)
 
     @require_pyoptsparse(optimizer="IPOPT")
-    def test_mission_solve_for_distance(self):
+    def test_mission_solve_for_distance_IPOPT(self):
         modified_phase_info = self.phase_info.copy()
         for phase in ["climb", "cruise", "descent"]:
             modified_phase_info[phase]["user_options"]["solve_for_distance"] = True
         prob = self.run_mission(modified_phase_info, "IPOPT")
         self.assertFalse(prob.failed)
 
-    def test_mission_solve_for_distance(self):
+    def test_mission_solve_for_distance_SLSQP(self):
         modified_phase_info = self.phase_info.copy()
         for phase in ["climb", "cruise", "descent"]:
             modified_phase_info[phase]["user_options"]["solve_for_distance"] = True
