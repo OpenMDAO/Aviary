@@ -1,16 +1,12 @@
 import unittest
 
 import numpy as np
-import openmdao
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
-from packaging import version
+from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.subsystems.propulsion.engine_deck import TurboPropDeck
-from aviary.subsystems.propulsion.propulsion_mission import (
-    PropulsionMission, PropulsionSum)
+from aviary.subsystems.propulsion.propulsion_mission import PropulsionMission
 from aviary.interface.utils.markdown_utils import round_it
-from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.functions import get_path
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings

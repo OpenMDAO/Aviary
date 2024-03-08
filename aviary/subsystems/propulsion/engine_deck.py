@@ -1583,7 +1583,7 @@ class TurboPropDeck(EngineDeck):
 
         prop_group.add_subsystem(
             "fc",
-            FlightConditions(num_nodes=1, input_speed_type=SpeedType.MACH),
+            FlightConditions(num_nodes=num_nodes, input_speed_type=SpeedType.MACH),
             promotes_inputs=["rho", Dynamic.Mission.SPEED_OF_SOUND, 'mach'],
             promotes_outputs=[Dynamic.Mission.DYNAMIC_PRESSURE,
                               'EAS', ('TAS', 'velocity')],
@@ -1593,15 +1593,16 @@ class TurboPropDeck(EngineDeck):
             'pp',
             PropPerf(
                 aviary_options=self.options,
-                num_nodes=num_nodes
+                num_nodes=num_nodes,
             ),
             promotes_inputs=['*', ('mach', 'mach_internal')],
             promotes_outputs=["*", ('mach', 'mach_internal')],
         )
 
-        pp.set_input_defaults(Aircraft.Engine.PROPELLER_DIAMETER, 10, units="ft")
-        pp.set_input_defaults(Dynamic.Mission.PROPELLER_TIP_SPEED, 800, units="ft/s")
-        pp.set_input_defaults(Dynamic.Mission.VELOCITY, 0, units="knot")
+        pp.set_input_defaults(Dynamic.Mission.PROPELLER_TIP_SPEED,
+                              val=800 * np.ones(num_nodes), units="ft/s")
+        pp.set_input_defaults(Dynamic.Mission.VELOCITY, val=0 *
+                              np.ones(num_nodes), units="knot")
 
         engine_group.add_subsystem(
             'propeller_model',
