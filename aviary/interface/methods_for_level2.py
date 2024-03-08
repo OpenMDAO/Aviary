@@ -1974,9 +1974,11 @@ class AviaryProblem(om.Problem):
                             self.set_val(f'traj.{phase_name}.bspline_controls:{guess_key}', self._process_guess_var(
                                 val, guess_key, phase), units=units)
 
-                    if self.mission_method is SOLVED_2DOF:
-                        continue
+                if self.mission_method is SOLVED_2DOF:
+                    continue
 
+                if guess_key in control_keys:
+                    pass
                 # Set initial guess for state variables
                 elif guess_key in state_keys:
                     self.set_val(f'traj.{phase_name}.states:{guess_key}', self._process_guess_var(
