@@ -2,7 +2,7 @@
 //             Aviary Format DataViewer Specification
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-OutFileStream AviarysheetStream { filename = "./NPSS_Model/Output/RefEngine.outputAviary"; } 
+OutFileStream AviarysheetStream { filename = "$ENG_PATH/Output/RefEngine.outputAviary"; } 
 
 DataViewer CaseRowViewer Aviarysheet { 
   

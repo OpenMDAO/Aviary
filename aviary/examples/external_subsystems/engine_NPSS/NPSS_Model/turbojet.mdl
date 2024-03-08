@@ -14,7 +14,7 @@ Element Inlet inlet {
 
 
 Element Compressor HPC { 
-   #include<./NPSS_Model/Maps_and_Elements/HPC.map>
+   #include<$ENG_PATH/Maps_and_Elements/HPC.map>
    PRdes = 20.;
    effDes = 0.90;
 } 
@@ -35,7 +35,7 @@ Element Burner burner {
 
 
 Element Turbine HPT {
-   #include<./NPSS_Model/Maps_and_Elements/HPT.map> 
+   #include<$ENG_PATH/Maps_and_Elements/HPT.map> 
    effDes = 0.90;
    PRbase = 3;
    // S_map.PRmapDes = 3.000;

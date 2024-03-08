@@ -10,28 +10,29 @@
 
 // declare the thermodynamics package to be used
 setThermoPackage( "GasTbl" );
+#define ENG_PATH
 
 //------------------------------------------------------------------------
 //                          User-Defined Elements
 //------------------------------------------------------------------------
 
-#include<./NPSS_Model/Maps_and_Elements/Performance.int>
-#include<./NPSS_Model/Maps_and_Elements/3Dmaps.int>
+#include<$ENG_PATH/Maps_and_Elements/Performance.int>
+#include<$ENG_PATH/Maps_and_Elements/3Dmaps.int>
 
 //------------------------------------------------------------------------
 //                           Output Data Viewers 
 //------------------------------------------------------------------------
-#include <./NPSS_Model/Maps_and_Elements/npss.view_page> 
-#include <./NPSS_Model/Maps_and_Elements/npss.view_Aviary> 
+#include <$ENG_PATH/Maps_and_Elements/npss.view_page> 
+#include <$ENG_PATH/Maps_and_Elements/npss.view_Aviary> 
 
-OutFileStream DataOutput {filename = "./NPSS_Model/Design_files/output.int";}
+OutFileStream DataOutput {filename = "$ENG_PATH/Design_files/output.int";}
 DataOutput.precision = 20;
 
 //------------------------------------------------------------------------
 //                              Model Files 
 //------------------------------------------------------------------------
-#include<./NPSS_Model/turbojet.mdl>
-#include<./NPSS_Model/turbojet.fnc>
+#include<$ENG_PATH/turbojet.mdl>
+#include<$ENG_PATH/turbojet.fnc>
 
 //------------------------------------------------------------------------
 //                           Run the Design Case
@@ -45,7 +46,7 @@ autoSolverSetup();
 W_DES = 280.; // value if input.int is not called. 
 Alt_DES = 0.0; // value if input.int is not called. 
 MN_DES = 0.0; // value if input.int is not called. 
-#include <./NPSS_Model/Design_files/input.int> 
+#include <$ENG_PATH/Design_files/input.int> 
 
 // solver.addIndependent( "ind_W" );
 // solver.addDependent( "dep_Fn" );
@@ -74,7 +75,7 @@ autoSolverSetup();
 run();
 
 // Run Deck
-#include<./NPSS_Model/engine.case_Aviary_min>
+#include<$ENG_PATH/engine.case_Aviary_min>
 DataOutput << "Wf_training_data = list("<< fuelflow_training_data<<")"<<endl;
 DataOutput << "thrust_training_data = list("<< thrust_training_data<<")"<<endl;
 DataOutput << "thrustmax_training_data = list("<< thrustmax_training_data<<")"<<endl;

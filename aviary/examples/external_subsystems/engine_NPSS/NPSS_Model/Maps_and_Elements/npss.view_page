@@ -2,7 +2,7 @@
 //         General Output DataViewer Specification
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-OutFileStream pageStream { filename = "./NPSS_Model/Output/turbojet.viewOut"; } 
+OutFileStream pageStream { filename = "$ENG_PATH/Output/turbojet.viewOut"; } 
 
 DataViewer PageViewer page { 
 

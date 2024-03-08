@@ -2,7 +2,7 @@
 //             FLOPS Format DataViewer Specification
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-OutFileStream FLOPsheetStream { filename = "./Output/RefEngine.outputFLOPS"; } 
+OutFileStream FLOPsheetStream { filename = "$ENG_PATH/Output/RefEngine.outputFLOPS"; } 
 
 DataViewer CaseRowViewer FLOPsheet { 
   

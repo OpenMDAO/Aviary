@@ -42,7 +42,12 @@ class NPSSExternalCodeComp(om.ExternalCodeComp):
 
         run_location = get_path(
             './examples/external_subsystems/engine_NPSS/NPSS_Model/turbojet.run')
-        self.options['command'] = ['runnpss', run_location]
+        engine_location = get_path(
+            './examples/external_subsystems/engine_NPSS/NPSS_Model/')
+        engine_location = str(engine_location)
+
+        run_command = ['runnpss', run_location, '-D ENG_PATH='+engine_location]
+        self.options['command'] = run_command
 
     def setup_partials(self):
         # this external code does not provide derivatives, use finite difference
