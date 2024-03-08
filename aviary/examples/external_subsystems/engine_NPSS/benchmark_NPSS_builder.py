@@ -3,6 +3,7 @@ Benchmark test for aviary mission with an NPSS defined engine.
 """
 
 import unittest
+import os as os
 
 from openmdao.utils.assert_utils import assert_near_equal
 
@@ -11,7 +12,8 @@ from aviary.examples.external_subsystems.engine_NPSS.define_simple_engine_proble
 
 class BenchAviaryNPSS(unittest.TestCase):
 
-    def benchmark_aviary_NPSS(self):
+    @unittest.skipUnless(os.environ.get('NPSS_TOP', False), 'environemnt does not contain NPSS')
+    def test_bench_aviary_NPSS(self):
         prob = define_aviary_NPSS_problem()
         prob.run_aviary_problem(suppress_solver_print=True)
 
@@ -32,4 +34,4 @@ class BenchAviaryNPSS(unittest.TestCase):
 
 if __name__ == '__main__':
     test = BenchAviaryNPSS()
-    test.benchmark_aviary_NPSS()
+    test.test_bench_aviary_NPSS()
