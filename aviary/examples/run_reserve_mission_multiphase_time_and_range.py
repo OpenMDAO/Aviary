@@ -10,7 +10,9 @@ This performs a coupled design-mission optimization and outputs the results from
 """
 import aviary.api as av
 from example_phase_info import phase_info
+from copy import deepcopy
 
+phase_info = deepcopy(phase_info)
 # Add reserve phase(s)
 phase_info.update({
     "reserve_climb": {
@@ -70,7 +72,7 @@ phase_info.update({
         "user_options": {
             "reserve": True,
             # Time length of this phase
-            "target_time": (45, "min"),
+            "target_duration": (45, "min"),
             "optimize_mach": False,
             "optimize_altitude": False,
             "polynomial_control_order": 1,
@@ -86,9 +88,7 @@ phase_info.update({
             "throttle_enforcement": "boundary_constraint",
             "fix_initial": False,
             "constrain_final": False,
-            "fix_duration": True,  # TBD remove in future
             "initial_bounds": ((149.5, 448.5), "min"),
-            "duration_bounds": ((0, 0), 'min'),  # TBD remove in future
         },
     },
     "reserve_cruise_fixed_range_2": {

@@ -10,6 +10,9 @@ This performs a coupled design-mission optimization and outputs the results from
 """
 import aviary.api as av
 from example_phase_info import phase_info
+from copy import deepcopy
+
+phase_info = deepcopy(phase_info)
 
 # Add reserve phase(s)
 phase_info.update({

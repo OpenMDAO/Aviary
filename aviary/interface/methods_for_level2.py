@@ -231,7 +231,7 @@ class AviaryProblem(om.Problem):
 
         self.analysis_scheme = analysis_scheme
 
-        self.regular_phases = []
+        self.flight_phases = []
         self.reserve_phases = []
 
     def load_inputs(self, aviary_inputs, phase_info=None, engine_builder=None):
@@ -439,7 +439,7 @@ class AviaryProblem(om.Problem):
         """
         This method checks for reserve=True & False
         Returns an error if a non-reserve phase is specified after a reserve phase.
-        return two dictionaries of phases, regular_phases and reserve_phaes
+        return two dictionaries of phases, flight_phases and reserve_phaes
         """
 
         # Check to ensure no non-reserve phases are specified after reserve phases
@@ -450,7 +450,7 @@ class AviaryProblem(om.Problem):
                 if 'reserve' in self.phase_info[phase_name]["user_options"]:
                     if self.phase_info[phase_name]["user_options"]["reserve"] is False:
                         # This is a regular phase
-                        self.regular_phases.append(phase_name)
+                        self.flight_phases.append(phase_name)
                         if start_reserve is True:
                             raise_error = True
                     else:
@@ -459,7 +459,7 @@ class AviaryProblem(om.Problem):
                         start_reserve = True
                 else:
                     # This is a regular phase by default
-                    self.regular_phases.append(phase_name)
+                    self.flight_phases.append(phase_name)
                     if start_reserve is True:
                         raise_error = True
 
@@ -467,7 +467,7 @@ class AviaryProblem(om.Problem):
             raise ValueError(
                 f'In phase_info, reserve=False cannot be specified after a phase where reserve=True. '
                 f'All reserve phases must happen after non-reserve phases. '
-                f'Regular Phases : {self.regular_phases} | '
+                f'Regular Phases : {self.flight_phases} | '
                 f'Reserve Phases : {self.reserve_phases} ')
 
     def check_and_preprocess_inputs(self):
@@ -475,6 +475,55 @@ class AviaryProblem(om.Problem):
         This method checks the user-supplied input values for any potential problems
         and preprocesses the inputs to prepare them for use in the Aviary problem.
         """
+
+        # Target_distance verification for all phases
+        # Checks to make sure target_distance is positive,
+        for idx, phase_name in enumerate(self.phase_info):
+            if 'user_options' in self.phase_info[phase_name]:
+                if 'target_distance' in self.phase_info[phase_name]["user_options"]:
+                    target_distance = self.phase_info[phase_name]["user_options"]["target_distance"]
+                    if target_distance[0] <= 0:
+                        raise ValueError(
+                            f"Invalid target_distance in [{phase_name}].[user_options]. "
+                            f"Current (value: {target_distance[0]}), (units: {target_distance[1]}) <= 0")
+
+        # target_duration verification for all phases
+        # Checks to make sure target_duration is positive,
+        # duration_bounds and initial_guesses for time have not been set,
+        # Then sets duration_bounds, initial_guesses, and fixed_duration
+        for idx, phase_name in enumerate(self.phase_info):
+            if 'user_options' in self.phase_info[phase_name]:
+                if 'target_duration' in self.phase_info[phase_name]["user_options"]:
+                    target_duration = self.phase_info[phase_name]["user_options"]["target_duration"]
+                    if target_duration[0] <= 0:
+                        raise ValueError(
+                            f"Invalid target_duration in phase_info[{phase_name}][user_options]."
+                            f"Current (value: {target_duration[0]}), (units: {target_duration[1]}) <= 0")
+                    if 'duration_bounds' in self.phase_info[phase_name]["user_options"]:
+                        # raise ValueError(
+                        print(
+                            f"When specifying target_duration, duration_bounds for time should be removed. "
+                            f"Unexpected duration_bounds encountered in phase_info[{phase_name}][user_options].")
+                    if 'initial_guesses' in self.phase_info[phase_name]:
+                        if 'times' in self.phase_info[phase_name]['initial_guesses']:
+                            # raise ValueError(
+                            print(
+                                f"When specifying target_duration, initial_guesses for times should be removed. "
+                                f"Unexpected initial_guesses.times encountered in phase_info[{phase_name}][initial_guesses].")
+                    if 'fix_duration' in self.phase_info[phase_name]["user_options"]:
+                        # raise ValueError(
+                        print(
+                            f"When specifying target_duration, fix_duration is assumed to be True. "
+                            f"Unexpected fix_duration encourntered in phase_info[{phase_name}][user_options].")
+                    # Set duartion_bounds and initial_guesses for time:
+                    self.phase_info[phase_name]["user_options"].update({
+                        "duration_bounds": ((target_duration[0], target_duration[0]), target_duration[1])})
+                    self.phase_info[phase_name].update({
+                        "initial_guesses": {"times": ((target_duration[0], target_duration[0]), target_duration[1])}})
+                    # Set Fixed_duration to true:
+                    self.phase_info[phase_name]["user_options"].update({
+                        "fix_duration": True})
+
         check_phase_info(self.phase_info, self.mission_method)
 
         for phase_name in self.phase_info:
@@ -489,54 +538,6 @@ class AviaryProblem(om.Problem):
 
         if self.mission_method is HEIGHT_ENERGY:
             self.phase_separator()
-
-        # Target_distance verification for all phases
-        # Checks to make sure target_distance is positive,
-        for idx, phase_name in enumerate(self.phase_info):
-            if 'user_options' in self.phase_info[phase_name]:
-                if 'target_distance' in self.phase_info[phase_name]["user_options"]:
-                    target_distance = self.phase_info[phase_name]["user_options"]["target_distance"]
-                    if target_distance[0] <= 0:
-                        raise ValueError(
-                            f"Invalid target_distance in [{phase_name}].[user_options]. "
-                            f"Current (value: {target_distance[0]}), (units: {target_distance[1]}) <= 0")
-
-        # Target_time verification for all phases
-        # Checks to make sure target_time is positive,
-        # duration_bounds and initial_guesses for time have not been set,
-        # Then sets duration_bounds, initial_guesses, and fixed_duration
-        for idx, phase_name in enumerate(self.phase_info):
-            if 'user_options' in self.phase_info[phase_name]:
-                if 'target_time' in self.phase_info[phase_name]["user_options"]:
-                    target_time = self.phase_info[phase_name]["user_options"]["target_time"]
-                    if target_time[0] <= 0:
-                        raise ValueError(
-                            f"Invalid target_time in phase_info[{phase_name}][user_options]."
-                            f"Current (value: {target_time[0]}), (units: {target_time[1]}) <= 0")
-                    if 'duration_bounds' in self.phase_info[phase_name]["user_options"]:
-                        # raise ValueError(
-                        print(
-                            f"When specifying target_time, duration_bounds for time should be removed. "
-                            f"Unexpected duration_bounds encountered in phase_info[{phase_name}][user_options].")
-                    if 'initial_guesses' in self.phase_info[phase_name]:
-                        if 'times' in self.phase_info[phase_name]['initial_guesses']:
-                            # raise ValueError(
-                            print(
-                                f"When specifying target_time, initial_guesses for times should be removed. "
-                                f"Unexpected initial_guesses.times encountered in phase_info[{phase_name}][initial_guesses].")
-                    if 'fix_duration' in self.phase_info[phase_name]["user_options"]:
-                        # raise ValueError(
-                        print(
-                            f"When specifying target_time, fix_duration is assumed to be True. "
-                            f"Unexpected fix_duration encourntered in phase_info[{phase_name}][user_options].")
-                    # Set duartion_bounds and initial_guesses for time:
-                    self.phase_info[phase_name]["user_options"].update({
-                        "duration_bounds": ((target_time[0], target_time[0]), target_time[1])})
-                    self.phase_info[phase_name].update({
-                        "initial_guesses": {"times": ((target_time[0], target_time[0]), target_time[1])}})
-                    # Set Fixed_duration to true:
-                    self.phase_info[phase_name]["user_options"].update({
-                        "fix_duration": True})
 
     def add_pre_mission_systems(self):
         """
@@ -1328,9 +1329,9 @@ class AviaryProblem(om.Problem):
             self.post_mission.add_subsystem('fuel_burned', ecomp,
                                             promotes_outputs=[('fuel_burned', Mission.Summary.FUEL_BURNED)])
 
-            self.model.connect(f"traj.{self.regular_phases[0]}.timeseries.mass",
+            self.model.connect(f"traj.{self.flight_phases[0]}.timeseries.mass",
                                "fuel_burned.initial_mass", src_indices=[0])
-            self.model.connect(f"traj.{self.regular_phases[-1]}.states:mass",
+            self.model.connect(f"traj.{self.flight_phases[-1]}.states:mass",
                                "fuel_burned.mass_final", src_indices=[-1])
 
             # Fuel burn in reserve phases
@@ -1355,7 +1356,7 @@ class AviaryProblem(om.Problem):
             # also include the unused fuel, and the hierarchy variable name should be more clear
             ecomp = om.ExecComp('overall_fuel = fuel_burned + reserve_fuel',
                                 overall_fuel={'units': 'lbm', 'shape': 1},
-                                fuel_burned={'units': 'lbm'},  # from regular_phases only
+                                fuel_burned={'units': 'lbm'},  # from flight_phases only
                                 reserve_fuel={'units': 'lbm', 'shape': 1},
                                 )
             self.post_mission.add_subsystem(
@@ -1384,9 +1385,9 @@ class AviaryProblem(om.Problem):
                         ("range_resid", Mission.Constraints.RANGE_RESIDUAL)],
                 )
 
-                # determine distance traveled based on regular_phases
+                # determine distance traveled based on flight_phases
                 self.model.connect(
-                    f"traj.{self.regular_phases[-1]}.timeseries.distance", "range_constraint.actual_range", src_indices=[-1])
+                    f"traj.{self.flight_phases[-1]}.timeseries.distance", "range_constraint.actual_range", src_indices=[-1])
                 self.model.add_constraint(
                     Mission.Constraints.RANGE_RESIDUAL, equals=0.0, ref=1.e2)
 
@@ -1540,9 +1541,9 @@ class AviaryProblem(om.Problem):
 
             # connect regular phases with each other if your are optimizing alt or mach
             self._link_phases_helper_with_options(
-                self.regular_phases, 'optimize_altitude', Dynamic.Mission.ALTITUDE, ref=1.e4)
+                self.flight_phases, 'optimize_altitude', Dynamic.Mission.ALTITUDE, ref=1.e4)
             self._link_phases_helper_with_options(
-                self.regular_phases, 'optimize_mach', Dynamic.Mission.MACH)
+                self.flight_phases, 'optimize_mach', Dynamic.Mission.MACH)
 
             # connect reserve phases with each other if your are optimizing alt or mach
             self._link_phases_helper_with_options(
@@ -2565,10 +2566,10 @@ class AviaryProblem(om.Problem):
         else:
             control_type_string = 'control_values'
 
-        last_regular_phase = self.regular_phases[-1]
-        self.model.connect(f'traj.{last_regular_phase}.states:mass',
+        last_flight_phase = self.flight_phases[-1]
+        self.model.connect(f'traj.{last_flight_phase}.states:mass',
                            Mission.Landing.TOUCHDOWN_MASS, src_indices=[-1])
-        self.model.connect(f'traj.{last_regular_phase}.{control_type_string}:altitude',
+        self.model.connect(f'traj.{last_flight_phase}.{control_type_string}:altitude',
                            Mission.Landing.INITIAL_ALTITUDE,
                            src_indices=[0])
 
