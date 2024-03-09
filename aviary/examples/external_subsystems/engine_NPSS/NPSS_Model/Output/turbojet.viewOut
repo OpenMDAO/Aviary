@@ -1,0 +1,41 @@
+************************************************************************************************************************************
+Model:                                                                    converge = 1   CASE:   0                                   
+Version:            NPSS_3.2          Gas Package: GasTbl        iter/pass/Jacb/Broy=  6/  8/ 1/ 4        Run by:               root 
+                                                                                                                                     
+                                       SUMMARY OUTPUT DATA                                                                           
+    MN       alt    dTamb         W         Fg         Fn      TSFC      Wfuel        T4                                             
+ 0.001       0.0     0.00    350.00    38919.6    38907.5    1.0082   39227.58    3112.0                                             
+
+                                        FLOW STATION DATA                                                                     
+                                W        Pt        Tt       ht     FAR       Wc        Ps        Ts     Aphy      MN      gamt
+station0 start.Fl_O        350.00    14.696    518.67   123.95  0.0000   350.00    14.696    518.67  -----.-  0.0010   1.40052
+station1 inlet.Fl_O        350.00    14.696    518.67   123.95  0.0000   350.00     0.000      0.00      0.0  0.0000   1.40052
+station2 HPC.Fl_O          350.00   293.919   1273.73   310.18  0.0000    27.42     0.000      0.00      0.0  0.0000   1.36352
+station3 duct.Fl_O         350.00   293.919   1273.73   310.18  0.0000    27.42     0.000      0.00      0.0  0.0000   1.36352
+station4 burner.Fl_O       360.90   293.919   3112.02   859.56  0.0311    44.20     0.000      0.00      0.0  0.0000   1.28153
+station5 HPT.Fl_O          360.90   102.322   2525.27   678.95  0.0311   114.37     0.000      0.00      0.0  0.0000   1.29221
+station6 nozzle.Fl_O       360.90   102.322   2525.27   678.95  0.0311   114.37    55.794   2198.55    342.4  1.0000   1.29221
+
+TURBOMACHINERY PERFORMANCE DATA                                                           
+               Wc      PR      eff         Nc       TR   efPoly        pwr     SMN     SMW
+HPC        350.00  20.000   0.9000   3000.001   2.4558   0.9316   -92221.7   18.00   17.98
+HPT         44.20   2.872   0.9000     53.777   1.2323   0.8888    92221.7                
+
+TURBOMACHINERY MAP DATA                                                                           
+            WcMap   PRmap   effMap      NcMap    R/Parm     s_WcDes   s_PRdes  s_effDes    s_NcDes
+HPC        206.00  23.000   0.8520      1.000    2.0000      1.6990    0.8636    1.0563   3000.001
+HPT         30.14   5.000   0.9328    100.000    5.0000      2.2723    0.4681    0.9648      0.538
+
+===INLETS====    eRam       Afs      Fram          ===BURNERS===   TtOut       eff    dPnorm      Wfuel       FAR                     
+inlet                    -----.--      12.1        burner        3112.02    1.0000    0.0000   10.89655   0.03113                     
+                                                                                                                                      
+====DUCTS====  dPnorm        MN      Aphy          ===NOZZLES===     PR     Cfg    CdTh      Cv      Ath      MNth     Vact         Fg
+duct           0.0000    0.0000      0.00          nozzle         6.963  0.9428  1.0000  1.0000    342.4    1.0000  2215.11   38919.63
+                                                                                                                                      
+===SHAFTS====   Nmech    trq in    pwr in                                                                                             
+shaft          3000.0  161452.9   92221.7                                                                                             
+
+
+
+
+

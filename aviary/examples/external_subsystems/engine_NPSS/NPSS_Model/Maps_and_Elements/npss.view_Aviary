@@ -1,0 +1,23 @@
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+//             Aviary Format DataViewer Specification
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+OutFileStream AviarysheetStream { filename = "$ENG_PATH/Output/RefEngine.outputAviary"; } 
+
+DataViewer CaseRowViewer Aviarysheet { 
+  
+  variableList = { "ambient.MN:?.?? = mach", 
+                   "ambient.alt:??????.? = altitude", 
+                   "PERF.throttle:?.??????????????????? = throttle", 
+                   "PERF.Fn:??????.?????????????? = thrust", 
+                   "PERF.Wfuel:??.?????????????????? = fuel_flow_rate (lb/s)", 
+                   "PERF.hybrid_throttle:??.?? = hybrid_throttle"} 
+    
+  showMarks = TRUE; 
+  showHeaders = FALSE; 
+  pageWidth = 104; 
+  pageHeight = 500; 
+  
+  outStreamHandle = "AviarysheetStream"; 
+
+} 
