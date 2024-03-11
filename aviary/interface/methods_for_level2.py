@@ -473,7 +473,7 @@ class AviaryProblem(om.Problem):
         """
         This method checks for reserve=True & False
         Returns an error if a non-reserve phase is specified after a reserve phase.
-        return two dictionaries of phases, regular_phases and reserve_phaes
+        return two dictionaries of phases: regular_phases and reserve_phases
         """
 
         # Check to ensure no non-reserve phases are specified after reserve phases
@@ -531,7 +531,7 @@ class AviaryProblem(om.Problem):
                     target_duration = self.phase_info[phase_name]["user_options"]["target_duration"]
                     if target_duration[0] <= 0:
                         raise ValueError(
-                            f"Invalid target_duration in phase_info[{phase_name}][user_options]."
+                            f"Invalid target_duration in phase_info[{phase_name}][user_options]. "
                             f"Current (value: {target_duration[0]}), (units: {target_duration[1]}) <= 0")
                     if 'duration_bounds' in self.phase_info[phase_name]["user_options"]:
                         # raise ValueError(
@@ -1604,13 +1604,13 @@ class AviaryProblem(om.Problem):
             self.traj.link_phases(phases[:7], vars=["TAS"], units='kn', ref=200.)
 
         elif self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
-            # connect regular_phases with each other if your are optimizing alt or mach
+            # connect regular_phases with each other if you are optimizing alt or mach
             self._link_phases_helper_with_options(
                 self.regular_phases, 'optimize_altitude', Dynamic.Mission.ALTITUDE, ref=1.e4)
             self._link_phases_helper_with_options(
                 self.regular_phases, 'optimize_mach', Dynamic.Mission.MACH)
 
-            # connect reserve phases with each other if your are optimizing alt or mach
+            # connect reserve phases with each other if you are optimizing alt or mach
             self._link_phases_helper_with_options(
                 self.reserve_phases, 'optimize_altitude', Dynamic.Mission.ALTITUDE, ref=1.e4)
             self._link_phases_helper_with_options(
