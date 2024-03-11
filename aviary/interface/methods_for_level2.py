@@ -570,7 +570,7 @@ class AviaryProblem(om.Problem):
         # Fill in anything missing in the options with computed defaults.
         preprocess_crewpayload(self.aviary_inputs)
 
-        if self.mission_method is HEIGHT_ENERGY:
+        if self.mission_method is HEIGHT_ENERGY or SOLVED_2DOF:
             self.phase_separator()
 
     def add_pre_mission_systems(self):
@@ -1604,15 +1604,7 @@ class AviaryProblem(om.Problem):
                 phases, vars=[Dynamic.Mission.DISTANCE], units='m', ref=10.e3)
             self.traj.link_phases(phases[:7], vars=["TAS"], units='kn', ref=200.)
 
-        elif self.mission_method is HEIGHT_ENERGY:
-            # connect mass and distance between all phases regardless of reserve / non-reserve status
-            self.traj.link_phases(phases, ["time"], ref=1e3,
-                                  connected=true_unless_mpi)
-            self.traj.link_phases(phases, [Dynamic.Mission.MASS], ref=1e6,
-                                  connected=true_unless_mpi)
-            self.traj.link_phases(phases, [Dynamic.Mission.DISTANCE], ref=1e3,
-                                  connected=true_unless_mpi)
-
+        elif self.mission_method is HEIGHT_ENERGY or SOLVED_2DOF:
             # connect flight_phases with each other if your are optimizing alt or mach
             self._link_phases_helper_with_options(
                 self.flight_phases, 'optimize_altitude', Dynamic.Mission.ALTITUDE, ref=1.e4)
@@ -1625,21 +1617,24 @@ class AviaryProblem(om.Problem):
             self._link_phases_helper_with_options(
                 self.reserve_phases, 'optimize_mach', Dynamic.Mission.MACH)
 
-        elif self.mission_method is SOLVED_2DOF:
-            self.traj.link_phases(phases, [Dynamic.Mission.MASS], connected=True)
-            self.traj.link_phases(
-                phases, [Dynamic.Mission.DISTANCE], units='ft', ref=1.e3, connected=False)
-            self.traj.link_phases(phases, ["time"], connected=False)
+            if self.mission_method is HEIGHT_ENERGY:
+                # connect mass and distance between all phases regardless of reserve / non-reserve status
+                self.traj.link_phases(phases, ["time"], ref=1e3,
+                                      connected=true_unless_mpi)
+                self.traj.link_phases(phases, [Dynamic.Mission.MASS], ref=1e6,
+                                      connected=true_unless_mpi)
+                self.traj.link_phases(phases, [Dynamic.Mission.DISTANCE], ref=1e3,
+                                      connected=true_unless_mpi)
 
-            if len(phases) > 2:
+            elif self.mission_method is SOLVED_2DOF:
+                self.traj.link_phases(phases, [Dynamic.Mission.MASS], connected=True)
                 self.traj.link_phases(
-                    phases[1:], ["alpha"], units='rad', connected=False)
+                    phases, [Dynamic.Mission.DISTANCE], units='ft', ref=1.e3, connected=False)
+                self.traj.link_phases(phases, ["time"], connected=False)
 
-            # connect phases with each other if your are optimizing alt or mach
-            self._link_phases_helper_with_options(
-                phases, 'optimize_altitude', Dynamic.Mission.ALTITUDE, ref=1.e4)
-            self._link_phases_helper_with_options(
-                phases, 'optimize_mach', Dynamic.Mission.MACH)
+                if len(phases) > 2:
+                    self.traj.link_phases(
+                        phases[1:], ["alpha"], units='rad', connected=False)
 
         elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
             if self.analysis_scheme is AnalysisScheme.COLLOCATION:
