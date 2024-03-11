@@ -828,7 +828,7 @@ class AviaryProblem(om.Problem):
             )
         else:
             # The rest of the phases includes all Height Energy method phases
-            # and any 2DOF phases that do't fall into the naming patterns
+            # and any 2DOF phases that don't fall into the naming patterns
             # above.
             input_initial = False
             time_units = phase.time_options['units']
