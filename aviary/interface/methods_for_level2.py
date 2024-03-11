@@ -570,7 +570,7 @@ class AviaryProblem(om.Problem):
         # Fill in anything missing in the options with computed defaults.
         preprocess_crewpayload(self.aviary_inputs)
 
-        if self.mission_method is HEIGHT_ENERGY or SOLVED_2DOF:
+        if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
             self.phase_separator()
 
     def add_pre_mission_systems(self):
@@ -1604,7 +1604,7 @@ class AviaryProblem(om.Problem):
                 phases, vars=[Dynamic.Mission.DISTANCE], units='m', ref=10.e3)
             self.traj.link_phases(phases[:7], vars=["TAS"], units='kn', ref=200.)
 
-        elif self.mission_method is HEIGHT_ENERGY or SOLVED_2DOF:
+        elif self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
             # connect flight_phases with each other if your are optimizing alt or mach
             self._link_phases_helper_with_options(
                 self.flight_phases, 'optimize_altitude', Dynamic.Mission.ALTITUDE, ref=1.e4)
