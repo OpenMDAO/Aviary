@@ -826,7 +826,7 @@ class AviaryProblem(om.Problem):
                 units="s",
                 duration_ref=duration_ref,
             )
-        elif self.mission_method is HEIGHT_ENERGY:
+        else:
             input_initial = False
 
             # Make a good guess for a reasonable intitial time scaler.
