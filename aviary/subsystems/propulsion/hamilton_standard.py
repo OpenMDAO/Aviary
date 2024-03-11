@@ -5,6 +5,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH, TSLS_DEGR
+import pdb
 
 
 def _unint(xa, ya, x):
@@ -509,7 +510,7 @@ class PreHamiltonStandard(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         outputs['density_ratio'] = inputs[Dynamic.Mission.DENSITY] / RHO_SEA_LEVEL_ENGLISH
-        sqrt_temp_ratio = math.sqrt(TSLS_DEGR / inputs[Dynamic.Mission.TEMPERATURE])
+        sqrt_temp_ratio = np.sqrt(TSLS_DEGR / inputs[Dynamic.Mission.TEMPERATURE])
         # vktas = Dynamic.Mission.VELOCITY*0.5924838739671128
         vktas = inputs[Dynamic.Mission.VELOCITY]
         # at sea level, 1 knot = .00150933 (actually 0.00149984 Mach)
@@ -530,7 +531,7 @@ class PreHamiltonStandard(om.ExplicitComponent):
         diam_prop = inputs[Aircraft.Engine.PROPELLER_DIAMETER][0]
         shp = inputs[Dynamic.Mission.SHAFT_POWER]
         temp = inputs[Dynamic.Mission.TEMPERATURE]
-        sqrt_temp_ratio = math.sqrt(TSLS_DEGR/temp)
+        sqrt_temp_ratio = np.sqrt(TSLS_DEGR/temp)
 
         partials["density_ratio", Dynamic.Mission.DENSITY] = 1 / RHO_SEA_LEVEL_ENGLISH
         partials["tip_mach",
@@ -555,7 +556,6 @@ class PreHamiltonStandard(om.ExplicitComponent):
             (rho * 2.*tipspd**3*diam_prop**3*6966.)
 
 
-# perfm will probably be a group
 class HamiltonStandard(om.ExplicitComponent):
     """
     This is Hamilton Standard component rewritten from Fortran code. 
@@ -614,20 +614,20 @@ class HamiltonStandard(om.ExplicitComponent):
             for k in range(2, 7):
                 AF_adj_CP[k] = AF_adj_CP[1]
                 AF_adj_CT[k] = AF_adj_CT[1]
-            if (inputs['adv_ratio'][0] <= 0.5):
-                AFCTE = 2.*inputs['adv_ratio'][0] * \
+            if (inputs['adv_ratio'][i_node] <= 0.5):
+                AFCTE = 2.*inputs['adv_ratio'][i_node] * \
                     (AF_adj_CT[1] - AF_adj_CT[0]) + AF_adj_CT[0]
             else:
                 AFCTE = AF_adj_CT[1]
 
             # bounding J (advance ratio) for setting up interpolation
-            if (inputs['adv_ratio'][0] <= 1.0):
+            if (inputs['adv_ratio'][i_node] <= 1.0):
                 J_begin = 0
                 J_end = 3
-            elif (inputs['adv_ratio'][0] <= 1.5):
+            elif (inputs['adv_ratio'][i_node] <= 1.5):
                 J_begin = 1
                 J_end = 4
-            elif (inputs['adv_ratio'][0] <= 2.0):
+            elif (inputs['adv_ratio'][i_node] <= 2.0):
                 J_begin = 2
                 J_end = 5
             else:
@@ -640,7 +640,7 @@ class HamiltonStandard(om.ExplicitComponent):
             CL_tab_idx_flg = 0  # NCL_flg
             ifnd = 0
             cli = inputs[Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT][0]
-            power_coefficient = inputs['power_coefficient'][0]
+            power_coefficient = inputs['power_coefficient'][i_node]
             for ii in range(6):
                 cl_idx = ii
                 if (abs(cli - CL_arr[ii]) <= 0.0009):
@@ -697,7 +697,7 @@ class HamiltonStandard(om.ExplicitComponent):
                             if (ichck <= 1):
                                 if (run_flag == 1):
                                     print(
-                                        f"+++warning = Mach,VTMACH,J,power_coefficient,CP_Eff =: {inputs['mach'][0]},{inputs['tip_mach'][0]},{inputs['adv_ratio'][0]},{power_coefficient},{CP_Eff}")
+                                        f"+++warning = Mach,VTMACH,J,power_coefficient,CP_Eff =: {inputs['mach'][i_node]},{inputs['tip_mach'][i_node]},{inputs['adv_ratio'][i_node]},{power_coefficient},{CP_Eff}")
                                 if (kl == 4 and CPE1 < 0.049):
                                     print(
                                         f"Extrapolated data is being used for CLI=.6--CPE1,PXCLI,L= , {CPE1},{PXCLI[kl]},{idx_blade}   Suggest inputting CLI=.5")
@@ -710,7 +710,7 @@ class HamiltonStandard(om.ExplicitComponent):
                         else:
                             if (run_flag == 1):
                                 print(
-                                    f"+++warning = Mach,VTMACH,J,power_coefficient,CP_Eff =: {inputs['mach'][0]},{inputs['tip_mach'][0]},{inputs['adv_ratio'][0]},{power_coefficient},{CP_Eff}")
+                                    f"+++warning = Mach,VTMACH,J,power_coefficient,CP_Eff =: {inputs['mach'][i_node]},{inputs['tip_mach'][i_node]},{inputs['adv_ratio'][i_node]},{power_coefficient},{CP_Eff}")
                             if (kl == 4 and CPE1 < 0.049):
                                 print(
                                     f"Extrapolated data is being used for CLI=.6--CPE1,PXCLI,L= , {CPE1},{PXCLI[kl]},{idx_blade}   Suggest inputting CLI=.5")
@@ -740,17 +740,17 @@ class HamiltonStandard(om.ExplicitComponent):
                             f"ERROR IN PROP. PERF.-- NERPT={NERPT}, run_flag={run_flag}")
 
                 BLLL[ibb], run_flag = _unint(
-                    adv_ratio_array[J_begin:J_begin+4], BLL[J_begin:J_begin+4], inputs['adv_ratio'][0])
+                    adv_ratio_array[J_begin:J_begin+4], BLL[J_begin:J_begin+4], inputs['adv_ratio'][i_node])
                 ang_blade = BLLL[ibb]
                 CTTT[ibb], run_flag = _unint(
-                    adv_ratio_array[J_begin:J_begin+4], CTT[J_begin:J_begin+4], inputs['adv_ratio'][0])
+                    adv_ratio_array[J_begin:J_begin+4], CTT[J_begin:J_begin+4], inputs['adv_ratio'][i_node])
 
                 # make extra correction. CTG is an "error" function, and the iteration (loop counter = "IL") tries to drive CTG/CT to 0
                 # ERR_CT = CTG1[il]/CTTT[ibb], where CTG1 =CT_Eff - CTTT(IBB).
                 CTG[0] = .100
                 CTG[1] = .200
                 TFCLII, run_flag = _unint(
-                    adv_ratio_array, TF_CLI_arr, inputs['adv_ratio'][0])
+                    adv_ratio_array, TF_CLI_arr, inputs['adv_ratio'][i_node])
                 ifnd1 = 0
                 ifnd2 = 0
                 for il in range(5):
@@ -769,13 +769,13 @@ class HamiltonStandard(om.ExplicitComponent):
                             # off lower bound only.
                             print(
                                 f"ERROR IN PROP. PERF.-- NERPT={NERPT}, run_flag={run_flag}, il = {il}, kl = {kl}")
-                        if (inputs['adv_ratio'][0] != 0.0):
+                        if (inputs['adv_ratio'][i_node] != 0.0):
                             ZMCRT, run_flag = _unint(
-                                adv_ratio_array2, mach_corr_table[CL_tab_idx], inputs['adv_ratio'][0])
-                            DMN = inputs['mach'][0] - ZMCRT
+                                adv_ratio_array2, mach_corr_table[CL_tab_idx], inputs['adv_ratio'][i_node])
+                            DMN = inputs['mach'][i_node] - ZMCRT
                         else:
                             ZMCRT = mach_tip_corr_arr[CL_tab_idx]
-                            DMN = inputs['tip_mach'][0] - ZMCRT
+                            DMN = inputs['tip_mach'][i_node] - ZMCRT
                         XFFT[kl] = 1.0  # compressibility tip loss factor
                         if (DMN > 0.0):
                             CTE2 = CT_Eff*TXCLI[kl]*TBL
@@ -944,9 +944,9 @@ class PostHamiltonStandard(om.ExplicitComponent):
             inputs['adv_ratio']*ctx/inputs['power_coefficient']
 
 
-if __name__ == "__main1__":
+if __name__ == "__main__":
     model = om.Group()
-    prehs = model.add_subsystem('prehs', PreHamiltonStandard(), promotes=['*'])
+    prehs = model.add_subsystem('prehs', PreHamiltonStandard(num_nodes=1), promotes=['*'])
     prob = om.Problem(model)
     prob.set_solver_print(level=1)
     # prob.setup(mode='rev')
@@ -969,37 +969,7 @@ if __name__ == "__main1__":
         compact_print=True, show_only_incorrect=True, minimum_step=1e-12)
 
 
-if __name__ == "__main2__":
-    model = om.Group()
-    hs = model.add_subsystem('hs', HamiltonStandard(), promotes=['*'])
-    prob = om.Problem(model)
-    prob.setup()
-
-    prob.set_val('hs.power_coefficient', 0.2352124866909703)  # 0.235239178
-    prob.set_val('hs.adv_ratio', 0.0)
-    prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, 114)
-    prob.set_val(Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT, 0.5)
-    prob.set_val('hs.mach', 0.0)
-    prob.set_val('hs.tip_mach', 0.7154230531595535)  # 0.71542275
-    hs.options.set(num_blades=4)
-    print("Inputs to HamiltonStandard:")
-    print(f"  power_coefficient: {prob.get_val('hs.power_coefficient')}")
-    print(f"  adv_ratio: {prob.get_val('hs.adv_ratio')}")
-    print(f"  act_fac: {prob.get_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR)}")
-    print(f"  cli: {prob.get_val(Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT)}")
-    print(f"  mach: {prob.get_val('hs.mach')}")
-    print(f"  tip_mach: {prob.get_val('hs.tip_mach')}")
-    print(f"  num_blades: {hs.options['num_blades']}")
-
-    prob.run_model()
-    print()
-    print("Outputs:")
-    print(f"  3/4 Blade Angle: {prob['hs.ang_blade'][0]}")
-    print(f"  CT: {prob['hs.thrust_coefficient'][0]}")
-    print(f"  XFT: {prob['hs.comp_tip_loss_factor'][0]}")
-
-
-if __name__ == "__main__":
+if __name__ == "__main3__":
     model = om.Group()
     prehs = model.add_subsystem('posths', PostHamiltonStandard(), promotes=['*'])
     prob = om.Problem(model)
