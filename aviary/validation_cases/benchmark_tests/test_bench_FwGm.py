@@ -7,7 +7,6 @@ from openmdao.core.problem import _clear_problem_names
 
 from aviary.interface.default_phase_info.two_dof import phase_info
 from aviary.interface.methods_for_level1 import run_aviary
-from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variables import Aircraft, Mission
 
 
