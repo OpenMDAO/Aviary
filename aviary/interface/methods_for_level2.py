@@ -265,7 +265,7 @@ class AviaryProblem(om.Problem):
 
         self.analysis_scheme = analysis_scheme
 
-        self.flight_phases = []
+        self.regular_phases = []
         self.reserve_phases = []
 
     def load_inputs(self, aviary_inputs, phase_info=None, engine_builder=None):
@@ -473,7 +473,7 @@ class AviaryProblem(om.Problem):
         """
         This method checks for reserve=True & False
         Returns an error if a non-reserve phase is specified after a reserve phase.
-        return two dictionaries of phases, flight_phases and reserve_phaes
+        return two dictionaries of phases, regular_phases and reserve_phaes
         """
 
         # Check to ensure no non-reserve phases are specified after reserve phases
@@ -484,7 +484,7 @@ class AviaryProblem(om.Problem):
                 if 'reserve' in self.phase_info[phase_name]["user_options"]:
                     if self.phase_info[phase_name]["user_options"]["reserve"] is False:
                         # This is a regular phase
-                        self.flight_phases.append(phase_name)
+                        self.regular_phases.append(phase_name)
                         if start_reserve is True:
                             raise_error = True
                     else:
@@ -493,7 +493,7 @@ class AviaryProblem(om.Problem):
                         start_reserve = True
                 else:
                     # This is a regular phase by default
-                    self.flight_phases.append(phase_name)
+                    self.regular_phases.append(phase_name)
                     if start_reserve is True:
                         raise_error = True
 
@@ -501,7 +501,7 @@ class AviaryProblem(om.Problem):
             raise ValueError(
                 f'In phase_info, reserve=False cannot be specified after a phase where reserve=True. '
                 f'All reserve phases must happen after non-reserve phases. '
-                f'Regular Phases : {self.flight_phases} | '
+                f'Regular Phases : {self.regular_phases} | '
                 f'Reserve Phases : {self.reserve_phases} ')
 
     def check_and_preprocess_inputs(self):
@@ -1374,7 +1374,6 @@ class AviaryProblem(om.Problem):
 
         # Fuel burn in regular phases
         if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
-            phases = list(self.phase_info.keys())
             ecomp = om.ExecComp('fuel_burned = initial_mass - mass_final',
                                 initial_mass={'units': 'lbm'},
                                 mass_final={'units': 'lbm'},
@@ -1383,9 +1382,9 @@ class AviaryProblem(om.Problem):
             self.post_mission.add_subsystem('fuel_burned', ecomp,
                                             promotes_outputs=[('fuel_burned', Mission.Summary.FUEL_BURNED)])
 
-            self.model.connect(f"traj.{self.flight_phases[0]}.timeseries.mass",
+            self.model.connect(f"traj.{self.regular_phases[0]}.timeseries.mass",
                                "fuel_burned.initial_mass", src_indices=[0])
-            self.model.connect(f"traj.{self.flight_phases[-1]}.states:mass",
+            self.model.connect(f"traj.{self.regular_phases[-1]}.states:mass",
                                "fuel_burned.mass_final", src_indices=[-1])
 
             # Fuel burn in reserve phases
@@ -1410,7 +1409,7 @@ class AviaryProblem(om.Problem):
             # also include the unused fuel, and the hierarchy variable name should be more clear
             ecomp = om.ExecComp('overall_fuel = fuel_burned + reserve_fuel',
                                 overall_fuel={'units': 'lbm', 'shape': 1},
-                                fuel_burned={'units': 'lbm'},  # from flight_phases only
+                                fuel_burned={'units': 'lbm'},  # from regular_phases only
                                 reserve_fuel={'units': 'lbm', 'shape': 1},
                                 )
             self.post_mission.add_subsystem(
@@ -1439,9 +1438,9 @@ class AviaryProblem(om.Problem):
                         ("range_resid", Mission.Constraints.RANGE_RESIDUAL)],
                 )
 
-                # determine distance traveled based on flight_phases
+                # determine distance traveled based on regular_phases
                 self.model.connect(
-                    f"traj.{self.flight_phases[-1]}.timeseries.distance", "range_constraint.actual_range", src_indices=[-1])
+                    f"traj.{self.regular_phases[-1]}.timeseries.distance", "range_constraint.actual_range", src_indices=[-1])
                 self.model.add_constraint(
                     Mission.Constraints.RANGE_RESIDUAL, equals=0.0, ref=1.e2)
 
@@ -1605,11 +1604,11 @@ class AviaryProblem(om.Problem):
             self.traj.link_phases(phases[:7], vars=["TAS"], units='kn', ref=200.)
 
         elif self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
-            # connect flight_phases with each other if your are optimizing alt or mach
+            # connect regular_phases with each other if your are optimizing alt or mach
             self._link_phases_helper_with_options(
-                self.flight_phases, 'optimize_altitude', Dynamic.Mission.ALTITUDE, ref=1.e4)
+                self.regular_phases, 'optimize_altitude', Dynamic.Mission.ALTITUDE, ref=1.e4)
             self._link_phases_helper_with_options(
-                self.flight_phases, 'optimize_mach', Dynamic.Mission.MACH)
+                self.regular_phases, 'optimize_mach', Dynamic.Mission.MACH)
 
             # connect reserve phases with each other if your are optimizing alt or mach
             self._link_phases_helper_with_options(
@@ -2658,7 +2657,7 @@ class AviaryProblem(om.Problem):
         else:
             control_type_string = 'control_values'
 
-        last_flight_phase = self.flight_phases[-1]
+        last_flight_phase = self.regular_phases[-1]
         self.model.connect(f'traj.{last_flight_phase}.states:mass',
                            Mission.Landing.TOUCHDOWN_MASS, src_indices=[-1])
         self.model.connect(f'traj.{last_flight_phase}.{control_type_string}:altitude',
