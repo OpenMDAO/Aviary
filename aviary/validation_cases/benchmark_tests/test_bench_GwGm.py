@@ -80,20 +80,23 @@ class ProblemPhaseTestCase(unittest.TestCase):
         rtol = 0.01
 
         # There are no truth values for these.
-        assert_near_equal(prob.get_val(Mission.Design.GROSS_MASS),
+        assert_near_equal(prob.get_val(Mission.Design.GROSS_MASS, units='lbm'),
                           174039., tolerance=rtol)
 
-        assert_near_equal(prob.get_val(Aircraft.Design.OPERATING_MASS),
+        assert_near_equal(prob.get_val(Aircraft.Design.OPERATING_MASS, units='lbm'),
                           95509, tolerance=rtol)
 
-        assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS),
+        assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
                           42529., tolerance=rtol)
 
-        assert_near_equal(prob.get_val('landing.' + Mission.Landing.GROUND_DISTANCE),
+        assert_near_equal(prob.get_val(Mission.Landing.GROUND_DISTANCE, units='ft'),
                           2634.8, tolerance=rtol)
 
-        assert_near_equal(prob.get_val("traj.desc2.timeseries.distance")[-1],
+        assert_near_equal(prob.get_val(Mission.Summary.RANGE, units='NM'),
                           3675.0, tolerance=rtol)
+
+        assert_near_equal(prob.get_val(Mission.Landing.TOUCHDOWN_MASS, units='lbm'),
+                          136823.47, tolerance=rtol)
 
     @require_pyoptsparse(optimizer="IPOPT")
     def test_bench_GwGm_shooting(self):

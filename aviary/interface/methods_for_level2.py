@@ -1372,8 +1372,8 @@ class AviaryProblem(om.Problem):
                 self.post_mission.add_subsystem(external_subsystem.name,
                                                 subsystem_postmission)
 
-        # Fuel burn in regular phases
         if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
+            # Fuel burn in regular phases
             ecomp = om.ExecComp('fuel_burned = initial_mass - mass_final',
                                 initial_mass={'units': 'lbm'},
                                 mass_final={'units': 'lbm'},

@@ -32,8 +32,6 @@ class EnergyPhase(PhaseBuilderBase):
         state/path constraint values and flags
 
         supported options:
-            - reserve : bool (False)
-                Determines if the phase is handled as a reserve phase or a no-reserve phase
             - num_segments : int (5)
                 transcription: number of segments
             - order : int (3)
@@ -48,6 +46,14 @@ class EnergyPhase(PhaseBuilderBase):
                 minimum avaliable climb rate
             - constrain_final : bool (False)
             - input_initial : bool (False)
+            - reserve : bool (False)
+                Determines if the phase is handled as a reserve phase or a regular phase.
+            - target_duration : pair (float, str) (None)
+                Adds a duration constraint to the phase. Can be used with reserve and non-reserve phases.
+                Example: "target_duration": (60, 'min')
+            - target_distance : pair (float, str) (None)
+                Adds a distance constraint on the phase. Can be used with reserve and non-reserve phases.
+                Example: "target_distance": (200, 'km')
 
     initial_guesses : AviaryValues (<empty>)
         state/path beginning values to be set on the problem
