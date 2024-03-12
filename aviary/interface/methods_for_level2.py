@@ -799,7 +799,7 @@ class AviaryProblem(om.Problem):
         try:
             fix_duration = user_options.get_val('fix_duration')
         except KeyError:
-            fix_duration = False d
+            fix_duration = False
 
         if phase_name == 'ascent' and self.mission_method is TWO_DEGREES_OF_FREEDOM:
             phase.set_time_options(
