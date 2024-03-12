@@ -65,6 +65,9 @@ class TurboPropTest(unittest.TestCase):
                        units='unitless')
         self.prob.model.add_subsystem('IVC', IVC, promotes=['*'])
 
+        self.prob.setup(force_alloc_complex=True)
+        self.prob.set_val(Aircraft.Engine.SCALE_FACTOR, 1, units='unitless')
+
     def get_results(self, point_names=None, display_results=False):
         shp = self.prob.get_val('engine_deck.shaft_power_corrected_unscaled', units='hp')
         total_thrust = self.prob.get_val(Dynamic.Mission.THRUST, units='lbf')
@@ -109,9 +112,6 @@ class TurboPropTest(unittest.TestCase):
         truth_vals = [(112, 37.7, 195.8), (1120, 136.3, 644), (1742.5, 21.3, 839.7)]
         self.prepare_model(filename, test_points)
 
-        self.prob.setup(force_alloc_complex=True)
-        self.prob.set_val(Aircraft.Engine.SCALE_FACTOR, 1, units='unitless')
-
         self.prob.run_model()
         results = self.get_results(point_names)
         assert_near_equal(results, truth_vals)
@@ -124,15 +124,12 @@ class TurboPropTest(unittest.TestCase):
         truth_vals = [(112, 0, 195.8), (1120, 0, 644), (1742.5, 0, 839.7)]
         self.prepare_model(filename, test_points)
 
-        self.prob.setup(force_alloc_complex=True)
-        self.prob.set_val(Aircraft.Engine.SCALE_FACTOR, 1, units='unitless')
-
         self.prob.run_model()
         results = self.get_results(point_names)
         assert_near_equal(results, truth_vals)
 
     def test_case_3(self):
-        #test case using GASP-derived engine deck and user specified prop model
+        # test case using GASP-derived engine deck and user specified prop model
         filename = get_path('models/engines/turboprop_1120hp.deck')
         test_points = [(0, 0, 1)]
         point_names = ['SLS',]
@@ -163,8 +160,8 @@ class TurboPropTest(unittest.TestCase):
         pp = prop_group.add_subsystem(
             'pp',
             PropPerf(aviary_options=options),
-            promotes_inputs=['*', ('mach', 'mach_internal')],
-            promotes_outputs=["*", ('mach', 'mach_internal'), ('Thrust', 'prop_thrust')],
+            promotes_inputs=['*'],
+            promotes_outputs=["*", ('Thrust', 'prop_thrust')],
         )
 
         pp.set_input_defaults(Aircraft.Engine.PROPELLER_DIAMETER, 10, units="ft")
@@ -173,9 +170,6 @@ class TurboPropTest(unittest.TestCase):
         pp.options.set(num_nodes=len(test_points))
 
         self.prepare_model(filename, test_points, prop_group)
-
-        self.prob.setup(force_alloc_complex=True)
-        self.prob.set_val(Aircraft.Engine.SCALE_FACTOR, 1, units='unitless')
 
         self.prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 10.5, units="ft")
         self.prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,
@@ -205,9 +199,6 @@ class TurboPropTest(unittest.TestCase):
         # truth_vals = [(112, 0, 195.8), (1120, 0, 644), (1742.5, 0, 839.7)]
 
         self.prepare_model(filename, test_points, True)
-
-        self.prob.setup(force_alloc_complex=True)
-        self.prob.set_val(Aircraft.Engine.SCALE_FACTOR, 1, units='unitless')
 
         self.prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 10.5, units="ft")
         self.prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,

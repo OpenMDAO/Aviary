@@ -1584,7 +1584,8 @@ class TurboPropDeck(EngineDeck):
         prop_group.add_subsystem(
             "fc",
             FlightConditions(num_nodes=num_nodes, input_speed_type=SpeedType.MACH),
-            promotes_inputs=["rho", Dynamic.Mission.SPEED_OF_SOUND, 'mach'],
+            promotes_inputs=[
+                "rho", Dynamic.Mission.SPEED_OF_SOUND, Dynamic.Mission.MACH],
             promotes_outputs=[Dynamic.Mission.DYNAMIC_PRESSURE,
                               'EAS', ('TAS', 'velocity')],
         )
@@ -1595,8 +1596,8 @@ class TurboPropDeck(EngineDeck):
                 aviary_options=self.options,
                 num_nodes=num_nodes
             ),
-            promotes_inputs=['*', ('mach', 'mach_internal')],
-            promotes_outputs=["*", ('mach', 'mach_internal')],
+            promotes_inputs=['*'],
+            promotes_outputs=["*"],
         )
 
         pp.set_input_defaults(Aircraft.Engine.PROPELLER_DIAMETER, 10, units="ft")

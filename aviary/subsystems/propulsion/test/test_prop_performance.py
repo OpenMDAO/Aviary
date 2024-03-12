@@ -35,16 +35,17 @@ class PropPerformanceTest(unittest.TestCase):
                         val=4, units='unitless')
 
         prob = om.Problem()
+
         pp = prob.model.add_subsystem(
             'pp',
-            PropPerf(num_nodes=1, aviary_options=options),
+            PropPerf(num_nodes=1, aviary_options=options, compute_mach_internally=True),
             promotes_inputs=['*'],
             promotes_outputs=["*"],
         )
 
         pp.set_input_defaults(Aircraft.Engine.PROPELLER_DIAMETER, 10, units="ft")
         pp.set_input_defaults(Dynamic.Mission.PROPELLER_TIP_SPEED, 800, units="ft/s")
-        pp.set_input_defaults(Dynamic.Mission.VELOCITY, 0, units="knot")
+        pp.set_input_defaults(Dynamic.Mission.VELOCITY, 100, units="knot")
         num_blades = 4
         options.set_val(Aircraft.Engine.NUM_BLADES,
                         val=num_blades, units='unitless')
