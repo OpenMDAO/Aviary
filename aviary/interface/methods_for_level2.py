@@ -791,9 +791,8 @@ class AviaryProblem(om.Problem):
 
         user_options = AviaryValues(phase_options.get('user_options', ()))
 
-        fix_initial = phase_options.get('fix_initial', False)
-        fix_duration = phase_options.get('fix_duration', False)
-        initial_bounds = phase_options.get('initial_bounds', _unspecified)
+        fix_initial = user_options.get_val('fix_initial')
+        fix_duration = user_options.get_val('fix_duration')
 
         if phase_name == 'ascent' and self.mission_method is TWO_DEGREES_OF_FREEDOM:
             phase.set_time_options(
@@ -834,11 +833,12 @@ class AviaryProblem(om.Problem):
             time_units = phase.time_options['units']
 
             # Make a good guess for a reasonable intitial time scaler.
-            init_bounds = user_options.get_item('initial_bounds')
-            if init_bounds[0] is not None and init_bounds[0][1] != 0.0:
+            initial_bounds = user_options.get_val('initial_bounds', units=time_units)
+
+            if initial_bounds[0] is not None and initial_bounds[1] != 0.0:
                 # Upper bound is good for a ref.
-                user_options.set_val('initial_ref', init_bounds[0][1],
-                                     units=init_bounds[1])
+                user_options.set_val('initial_ref', initial_bounds[1],
+                                     units=time_units)
             else:
                 user_options.set_val('initial_ref', 600., time_units)
 
