@@ -826,8 +826,12 @@ class AviaryProblem(om.Problem):
                 units="s",
                 duration_ref=duration_ref,
             )
-        elif self.mission_method is HEIGHT_ENERGY:
+        else:
+            # The rest of the phases includes all Height Energy method phases
+            # and any 2DOF phases that don't fall into the naming patterns
+            # above.
             input_initial = False
+            time_units = phase.time_options['units']
 
             # Make a good guess for a reasonable intitial time scaler.
             init_bounds = user_options.get_item('initial_bounds')
@@ -836,36 +840,38 @@ class AviaryProblem(om.Problem):
                 user_options.set_val('initial_ref', init_bounds[0][1],
                                      units=init_bounds[1])
             else:
-                user_options.set_val('initial_ref', 10., 'min')
+                user_options.set_val('initial_ref', 600., time_units)
 
-            duration_bounds = user_options.get_val("duration_bounds", 'min')
+            duration_bounds = user_options.get_val("duration_bounds", time_units)
             user_options.set_val(
-                'duration_ref', (duration_bounds[0] + duration_bounds[1]) / 2., 'min')
+                'duration_ref', (duration_bounds[0] + duration_bounds[1]) / 2.,
+                time_units
+            )
             if phase_idx > 0:
                 input_initial = True
 
             if fix_initial or input_initial:
                 phase.set_time_options(
-                    fix_initial=fix_initial, fix_duration=fix_duration, units='s',
-                    duration_bounds=user_options.get_val("duration_bounds", 's'),
-                    duration_ref=user_options.get_val("duration_ref", 's'),
-                    initial_ref=user_options.get_val("initial_ref", 's'),
+                    fix_initial=fix_initial, fix_duration=fix_duration, units=time_units,
+                    duration_bounds=user_options.get_val("duration_bounds", time_units),
+                    duration_ref=user_options.get_val("duration_ref", time_units),
+                    initial_ref=user_options.get_val("initial_ref", time_units),
                 )
             elif phase_name == 'descent' and self.mission_method is HEIGHT_ENERGY:  # TODO: generalize this logic for all phases
                 phase.set_time_options(
-                    fix_initial=False, fix_duration=False, units='s',
-                    duration_bounds=user_options.get_val("duration_bounds", 's'),
-                    duration_ref=user_options.get_val("duration_ref", 's'),
+                    fix_initial=False, fix_duration=False, units=time_units,
+                    duration_bounds=user_options.get_val("duration_bounds", time_units),
+                    duration_ref=user_options.get_val("duration_ref", time_units),
                     initial_bounds=initial_bounds,
-                    initial_ref=user_options.get_val("initial_ref", 's'),
+                    initial_ref=user_options.get_val("initial_ref", time_units),
                 )
             else:  # TODO: figure out how to handle this now that fix_initial is dict
                 phase.set_time_options(
-                    fix_initial=fix_initial, fix_duration=fix_duration, units='s',
-                    duration_bounds=user_options.get_val("duration_bounds", 's'),
-                    duration_ref=user_options.get_val("duration_ref", 's'),
+                    fix_initial=fix_initial, fix_duration=fix_duration, units=time_units,
+                    duration_bounds=user_options.get_val("duration_bounds", time_units),
+                    duration_ref=user_options.get_val("duration_ref", time_units),
                     initial_bounds=initial_bounds,
-                    initial_ref=user_options.get_val("initial_ref", 's'),
+                    initial_ref=user_options.get_val("initial_ref", time_units),
                 )
 
         if 'cruise' not in phase_name and self.mission_method is TWO_DEGREES_OF_FREEDOM:
