@@ -507,7 +507,7 @@ def _read_map(f, is_turbo_prop=False):
         z = vals[1:]
         npts_remaining -= npts_to_read
         while npts_remaining > 0:
-            npts_to_read = min(6, npts_remaining)
+            npts_to_read = min(max_columns, npts_remaining)
             # add remaining vals on warapped line
             line_format = [*_rep(npts_to_read, (float, 10))]
             if is_turbo_prop:

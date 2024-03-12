@@ -163,7 +163,7 @@ def _biquad(T, i, xi, yi):
             jy = jx + nx
             z = cx1*T[jy] + cx2*T[jy+1] + cx3*T[jy+2] + cx4*T[jy+3]
         else:
-            # vibariate table
+            # bivariate table
             y = yi
             j3 = j2 + 1
             j4 = j3 + ny - 1
@@ -561,7 +561,7 @@ class HamiltonStandard(om.ExplicitComponent):
     This is Hamilton Standard component rewritten from Fortran code. 
     The original documentation is available at 
     https://ntrs.nasa.gov/api/citations/19720010354/downloads/19720010354.pdf
-    It compute the thrust coefficient of a propeller.
+    It computes the thrust coefficient of a propeller.
     """
 
     def initialize(self):

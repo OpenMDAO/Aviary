@@ -66,7 +66,6 @@ class TurboPropTest(unittest.TestCase):
         self.prob.model.add_subsystem('IVC', IVC, promotes=['*'])
 
     def get_results(self, point_names=None, display_results=False):
-        # shp = self.prob.get_val(Dynamic.Mission.SHAFT_POWER_CORRECTED, units='hp')
         shp = self.prob.get_val('engine_deck.shaft_power_corrected_unscaled', units='hp')
         total_thrust = self.prob.get_val(Dynamic.Mission.THRUST, units='lbf')
         prop_thrust = self.prob.get_val(
@@ -133,7 +132,7 @@ class TurboPropTest(unittest.TestCase):
         assert_near_equal(results, truth_vals)
 
     def test_case_3(self):
-        # 'clean' test using GASP-derived engine deck
+        #test case using GASP-derived engine deck and user specified prop model
         filename = get_path('models/engines/turboprop_1120hp.deck')
         test_points = [(0, 0, 1)]
         point_names = ['SLS',]
@@ -196,7 +195,7 @@ class TurboPropTest(unittest.TestCase):
         assert_near_equal(results, truth_vals)
 
     def test_case_4(self):
-        # 'clean' test using GASP-derived engine deck
+        # test case using GASP-derived engine deck and default HS prop model.
         filename = get_path('models/engines/turboprop_1120hp.deck')
         test_points = [(0, 0, 1)]
         point_names = ['SLS',]

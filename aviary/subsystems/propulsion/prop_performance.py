@@ -24,7 +24,7 @@ class InstallLoss(om.Group):
         self.add_subsystem(
             name='sqa_comp',
             subsys=om.ExecComp(
-                'sqa = minimum(DiamNac/DiamProp*DiamNac/DiamProp, 0.32)',
+                'sqa = minimum(DiamNac**2/DiamProp**2, 0.32)',
                 DiamNac={'units': 'ft'},
                 DiamProp={'units': 'ft'},
                 sqa={'units': 'unitless'},

@@ -1583,7 +1583,7 @@ class TurboPropDeck(EngineDeck):
 
         prop_group.add_subsystem(
             "fc",
-            FlightConditions(num_nodes=1, input_speed_type=SpeedType.MACH),
+            FlightConditions(num_nodes=num_nodes, input_speed_type=SpeedType.MACH),
             promotes_inputs=["rho", Dynamic.Mission.SPEED_OF_SOUND, 'mach'],
             promotes_outputs=[Dynamic.Mission.DYNAMIC_PRESSURE,
                               'EAS', ('TAS', 'velocity')],

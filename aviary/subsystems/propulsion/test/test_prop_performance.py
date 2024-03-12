@@ -48,7 +48,6 @@ class PropPerformanceTest(unittest.TestCase):
         num_blades = 4
         options.set_val(Aircraft.Engine.NUM_BLADES,
                         val=num_blades, units='unitless')
-        # pp.options.set(compute_installation_loss=True)
         options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS,
                         val=True, units='unitless')
         prob.setup()
