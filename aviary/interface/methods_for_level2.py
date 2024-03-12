@@ -534,19 +534,16 @@ class AviaryProblem(om.Problem):
                             f"Invalid target_duration in phase_info[{phase_name}][user_options]."
                             f"Current (value: {target_duration[0]}), (units: {target_duration[1]}) <= 0")
                     if 'duration_bounds' in self.phase_info[phase_name]["user_options"]:
-                        # raise ValueError(
-                        print(
+                        raise ValueError(
                             f"When specifying target_duration, duration_bounds for time should be removed. "
                             f"Unexpected duration_bounds encountered in phase_info[{phase_name}][user_options].")
                     if 'initial_guesses' in self.phase_info[phase_name]:
                         if 'times' in self.phase_info[phase_name]['initial_guesses']:
-                            # raise ValueError(
-                            print(
+                            raise ValueError(
                                 f"When specifying target_duration, initial_guesses for times should be removed. "
                                 f"Unexpected initial_guesses.times encountered in phase_info[{phase_name}][initial_guesses].")
                     if 'fix_duration' in self.phase_info[phase_name]["user_options"]:
-                        # raise ValueError(
-                        print(
+                        raise ValueError(
                             f"When specifying target_duration, fix_duration is assumed to be True. "
                             f"Unexpected fix_duration encourntered in phase_info[{phase_name}][user_options].")
                     # Set duartion_bounds and initial_guesses for time:
@@ -1373,6 +1370,15 @@ class AviaryProblem(om.Problem):
                                                 subsystem_postmission)
 
         if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
+            # Check if regular_phases[] is accessible
+            try:
+                self.regular_phases[0]
+            except:
+                raise ValueError(
+                    f"regular_phases[] dictionary is not accessible."
+                    f" For HEIGHT_ENERGY and SOLVED_2DOF missions, check_and_preprocess_inputs()"
+                    f" must be called before add_post_mission_systems().")
+
             # Fuel burn in regular phases
             ecomp = om.ExecComp('fuel_burned = initial_mass - mass_final',
                                 initial_mass={'units': 'lbm'},
@@ -2657,10 +2663,10 @@ class AviaryProblem(om.Problem):
         else:
             control_type_string = 'control_values'
 
-        last_flight_phase = self.regular_phases[-1]
-        self.model.connect(f'traj.{last_flight_phase}.states:mass',
+        last_regular_phase = self.regular_phases[-1]
+        self.model.connect(f'traj.{last_regular_phase}.states:mass',
                            Mission.Landing.TOUCHDOWN_MASS, src_indices=[-1])
-        self.model.connect(f'traj.{last_flight_phase}.{control_type_string}:altitude',
+        self.model.connect(f'traj.{last_regular_phase}.{control_type_string}:altitude',
                            Mission.Landing.INITIAL_ALTITUDE,
                            src_indices=[0])
 
