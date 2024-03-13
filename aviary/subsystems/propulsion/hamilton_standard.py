@@ -543,10 +543,11 @@ class PreHamiltonStandard(om.ExplicitComponent):
         partials["adv_ratio", Dynamic.Mission.VELOCITY] = 5.309 / tipspd
         partials["adv_ratio", Dynamic.Mission.PROPELLER_TIP_SPEED] = - \
             5.309 * vktas / (tipspd * tipspd)
-        partials["power_coefficient", Dynamic.Mission.SHAFT_POWER] = 10.E10 * \
-            RHO_SEA_LEVEL_ENGLISH / (rho * 2.*tipspd**3*diam_prop**2*6966.)
-        partials["power_coefficient", Dynamic.Mission.DENSITY] = -10.E10 * shp * \
-            RHO_SEA_LEVEL_ENGLISH / (rho * rho * 2.*tipspd**3*diam_prop**2*6966.)
+        const = 10.E10 / (2 * 6966.)
+        partials["power_coefficient", Dynamic.Mission.SHAFT_POWER] = const * \
+            RHO_SEA_LEVEL_ENGLISH / (rho *tipspd**3*diam_prop**2)
+        partials["power_coefficient", Dynamic.Mission.DENSITY] = -const * shp * \
+            RHO_SEA_LEVEL_ENGLISH / (rho * rho * tipspd**3*diam_prop**2)
         partials["power_coefficient", Dynamic.Mission.PROPELLER_TIP_SPEED] = -3 * \
             10.E10 * shp * RHO_SEA_LEVEL_ENGLISH / \
             (rho * 2.*tipspd**4*diam_prop**2*6966.)
@@ -588,6 +589,8 @@ class HamiltonStandard(om.ExplicitComponent):
         self.add_output('thrust_coefficient', val=np.zeros(nn), units='unitless')
         self.add_output('ang_blade', val=np.zeros(nn), units='deg')
         self.add_output('comp_tip_loss_factor', val=np.zeros(nn), units='unitless')
+
+        self.declare_partials('*', '*', method='fd')
 
     def compute(self, inputs, outputs):
         for i_node in range(self.options['num_nodes']):
@@ -928,7 +931,7 @@ class PostHamiltonStandard(om.ExplicitComponent):
         partials["propeller_efficiency", "comp_tip_loss_factor"] = inputs['adv_ratio'] * \
             inputs['thrust_coefficient']/inputs['power_coefficient']
         partials["propeller_efficiency", "power_coefficient"] = - \
-            2*inputs['adv_ratio']*ctx/inputs['power_coefficient']**2
+            inputs['adv_ratio']*ctx/inputs['power_coefficient']**2
 
         partials["install_efficiency", "adv_ratio"] = ctx / \
             inputs['power_coefficient'] * (1. - install_loss_factor)
@@ -937,62 +940,7 @@ class PostHamiltonStandard(om.ExplicitComponent):
         partials["install_efficiency", "comp_tip_loss_factor"] = inputs['adv_ratio'] * \
             inputs['thrust_coefficient'] / \
             inputs['power_coefficient'] * (1. - install_loss_factor)
-        partials["install_efficiency", "power_coefficient"] = -2*inputs['adv_ratio'] * \
+        partials["install_efficiency", "power_coefficient"] = -inputs['adv_ratio'] * \
             ctx/inputs['power_coefficient']**2 * (1. - install_loss_factor)
         partials["install_efficiency", Dynamic.Mission.INSTALLATION_LOSS_FACTOR] = - \
             inputs['adv_ratio']*ctx/inputs['power_coefficient']
-
-
-if __name__ == "__main1__":
-    model = om.Group()
-    prehs = model.add_subsystem('prehs', PreHamiltonStandard(num_nodes=1), promotes=['*'])
-    prob = om.Problem(model)
-    prob.set_solver_print(level=1)
-    # prob.setup(mode='rev')
-    prob.setup()
-
-    prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED, 785.0, units='ft/s')
-    prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 12.0, units='ft')
-    prob.set_val(Dynamic.Mission.SHAFT_POWER, val=1850.0, units='hp')
-    prob.set_val(Dynamic.Mission.DENSITY, val=RHO_SEA_LEVEL_ENGLISH, units='slug/ft**3')
-    prob.set_val(Dynamic.Mission.VELOCITY, val=0.0, units='knot')
-    prob.set_val(Dynamic.Mission.TEMPERATURE, val=TSLS_DEGR, units='degR')
-    prob.run_model()
-
-    print(f"  density_ratio: {prob.get_val('prehs.density_ratio')}")
-    print(f"  adv_ratio: {prob.get_val('prehs.adv_ratio')}")
-    print(f"  power_coefficient: {prob.get_val('prehs.power_coefficient')}")
-
-    # 10.E10 is causing just a little numerical noise
-    partial_data = prob.check_partials(
-        compact_print=True, show_only_incorrect=True, form='central', method="cs", 
-        minimum_step=1e-12, abs_err_tol=5.0E-5)
-    #partial_data = prob.check_partials(out_stream=None,
-    #    compact_print=True, show_only_incorrect=True, form='central', method="cs", minimum_step=1e-12)
-    #from openmdao.utils.assert_utils import assert_check_partials
-    #assert_check_partials(partial_data, atol=1e-5, rtol=1e-5)
-
-
-if __name__ == "__main__":
-    model = om.Group()
-    prehs = model.add_subsystem('posths', PostHamiltonStandard(num_nodes=1), promotes=['*'])
-    prob = om.Problem(model)
-    prob.set_solver_print(level=1)
-    # prob.setup(mode='rev')
-    prob.setup()
-
-    prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED, 785.0, units='ft/s')
-    prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 12.0, units='ft')
-    prob.set_val('power_coefficient', 0.19062805, units='unitless')
-    prob.set_val('adv_ratio', 0.0, units='unitless')
-    prob.set_val('density_ratio', 1.0, units='unitless')
-    prob.set_val('thrust_coefficient', 0.27650621496575234, units='unitless')
-    prob.set_val('comp_tip_loss_factor', 1.0, units='unitless')
-    prob.set_val(Dynamic.Mission.INSTALLATION_LOSS_FACTOR, 0.05, units='unitless')
-    prob.run_model()
-
-    #data = prob.check_partials(
-    #    compact_print=True, show_only_incorrect=True, minimum_step=1e-12)
-    partial_data = prob.check_partials(
-        compact_print=True, show_only_incorrect=False, form='central', method="cs", 
-        minimum_step=1e-12)
