@@ -148,8 +148,9 @@ class TwoDOFPhase(PhaseBuilderBase):
                                              fix_initial=fix_initial,
                                              units=altitude_bounds[1],
                                              rate_targets=['dh_dr'], rate2_targets=['d2h_dr2'],
-                                             opt=optimize_altitude, lower=altitude_bounds[
-                                                 0][0], upper=altitude_bounds[0][1],
+                                             opt=optimize_altitude,
+                                             lower=altitude_bounds[0][0],
+                                             upper=altitude_bounds[0][1],
                                              ref=(altitude_bounds[0][0] +
                                                   altitude_bounds[0][1]) / 2,
                                              )
@@ -158,8 +159,9 @@ class TwoDOFPhase(PhaseBuilderBase):
                                   fix_initial=fix_initial,
                                   units=altitude_bounds[1],
                                   rate_targets=['dh_dr'], rate2_targets=['d2h_dr2'],
-                                  opt=optimize_altitude, lower=altitude_bounds[
-                                      0][0], upper=altitude_bounds[0][1],
+                                  opt=optimize_altitude,
+                                  lower=altitude_bounds[0][0],
+                                  upper=altitude_bounds[0][1],
                                   ref=(altitude_bounds[0][0] +
                                        altitude_bounds[0][1]) / 2,
                                   )

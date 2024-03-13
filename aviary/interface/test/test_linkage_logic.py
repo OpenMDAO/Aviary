@@ -46,7 +46,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
         cruise_dicts[2]["user_options"]["optimize_altitude"] = True
         cruise_dicts[3]["user_options"]["optimize_altitude"] = True
 
-        # Load the phase_info and other common setup tasks
+        # Create the phase_info
         self.phase_info = {
             "pre_mission": {"include_takeoff": False, "optimize_mass": True},
             "climb": {
