@@ -68,5 +68,5 @@ class SolvedZeroItersTestCase(BaseProblemPhaseTestCase):
 
 if __name__ == "__main__":
     # unittest.main()
-    test = HEZeroItersTestCase()
-    test.test_zero_iters_height_energy()
+    test = SolvedZeroItersTestCase()
+    test.test_zero_iters_solved()

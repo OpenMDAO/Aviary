@@ -384,7 +384,7 @@ class EngineDeck(EngineModel):
 
                 # Engine_variables currently only used to store "valid" engine variables
                 # as defined in EngineModelVariables Enum
-                self.engine_variables[key] = units
+                self.engine_variables[key] = default_units[key]
 
             else:
                 warnings.warn(
