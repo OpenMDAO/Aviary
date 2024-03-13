@@ -785,9 +785,15 @@ class AviaryProblem(om.Problem):
 
         user_options = AviaryValues(phase_options.get('user_options', ()))
 
-        fix_initial = phase_options.get('fix_initial', False)
-        fix_duration = phase_options.get('fix_duration', False)
-        initial_bounds = phase_options.get('initial_bounds', _unspecified)
+        try:
+            fix_initial = user_options.get_val('fix_initial')
+        except KeyError:
+            fix_intial = False
+
+        try:
+            fix_duration = user_options.get_val('fix_duration')
+        except KeyError:
+            fix_duration = False
 
         if phase_name == 'ascent' and self.mission_method is TWO_DEGREES_OF_FREEDOM:
             phase.set_time_options(
@@ -820,46 +826,56 @@ class AviaryProblem(om.Problem):
                 units="s",
                 duration_ref=duration_ref,
             )
-        elif self.mission_method is HEIGHT_ENERGY:
+        else:
+            # The rest of the phases includes all Height Energy method phases
+            # and any 2DOF phases that don't fall into the naming patterns
+            # above.
             input_initial = False
+            time_units = phase.time_options['units']
 
             # Make a good guess for a reasonable intitial time scaler.
-            init_bounds = user_options.get_item('initial_bounds')
-            if init_bounds[0] is not None and init_bounds[0][1] != 0.0:
-                # Upper bound is good for a ref.
-                user_options.set_val('initial_ref', init_bounds[0][1],
-                                     units=init_bounds[1])
-            else:
-                user_options.set_val('initial_ref', 10., 'min')
+            try:
+                initial_bounds = user_options.get_val('initial_bounds', units=time_units)
+            except KeyError:
+                initial_bounds = (None, None)
 
-            duration_bounds = user_options.get_val("duration_bounds", 'min')
+            if initial_bounds[0] is not None and initial_bounds[1] != 0.0:
+                # Upper bound is good for a ref.
+                user_options.set_val('initial_ref', initial_bounds[1],
+                                     units=time_units)
+            else:
+                user_options.set_val('initial_ref', 600., time_units)
+
+            duration_bounds = user_options.get_val("duration_bounds", time_units)
             user_options.set_val(
-                'duration_ref', (duration_bounds[0] + duration_bounds[1]) / 2., 'min')
+                'duration_ref', (duration_bounds[0] + duration_bounds[1]) / 2.,
+                time_units
+            )
             if phase_idx > 0:
                 input_initial = True
 
             if fix_initial or input_initial:
                 phase.set_time_options(
-                    fix_initial=fix_initial, fix_duration=fix_duration, units='s',
-                    duration_bounds=user_options.get_val("duration_bounds", 's'),
-                    duration_ref=user_options.get_val("duration_ref", 's'),
-                    initial_ref=user_options.get_val("initial_ref", 's'),
+                    fix_initial=fix_initial, fix_duration=fix_duration, units=time_units,
+                    duration_bounds=user_options.get_val("duration_bounds", time_units),
+                    duration_ref=user_options.get_val("duration_ref", time_units),
+                    initial_ref=user_options.get_val("initial_ref", time_units),
                 )
             elif phase_name == 'descent' and self.mission_method is HEIGHT_ENERGY:  # TODO: generalize this logic for all phases
                 phase.set_time_options(
-                    fix_initial=False, fix_duration=False, units='s',
-                    duration_bounds=user_options.get_val("duration_bounds", 's'),
-                    duration_ref=user_options.get_val("duration_ref", 's'),
+                    fix_initial=False, fix_duration=False, units=time_units,
+                    duration_bounds=user_options.get_val("duration_bounds", time_units),
+                    duration_ref=user_options.get_val("duration_ref", time_units),
                     initial_bounds=initial_bounds,
-                    initial_ref=user_options.get_val("initial_ref", 's'),
+                    initial_ref=user_options.get_val("initial_ref", time_units),
                 )
             else:  # TODO: figure out how to handle this now that fix_initial is dict
                 phase.set_time_options(
-                    fix_initial=fix_initial, fix_duration=fix_duration, units='s',
-                    duration_bounds=user_options.get_val("duration_bounds", 's'),
-                    duration_ref=user_options.get_val("duration_ref", 's'),
+                    fix_initial=fix_initial, fix_duration=fix_duration, units=time_units,
+                    duration_bounds=user_options.get_val("duration_bounds", time_units),
+                    duration_ref=user_options.get_val("duration_ref", time_units),
                     initial_bounds=initial_bounds,
-                    initial_ref=user_options.get_val("initial_ref", 's'),
+                    initial_ref=user_options.get_val("initial_ref", time_units),
                 )
 
         if 'cruise' not in phase_name and self.mission_method is TWO_DEGREES_OF_FREEDOM:
