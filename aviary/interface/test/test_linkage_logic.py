@@ -7,7 +7,7 @@ from openmdao.core.problem import _clear_problem_names
 from aviary.interface.methods_for_level2 import AviaryProblem
 
 
-# @use_tempdirs
+@use_tempdirs
 class AircraftMissionTestSuite(unittest.TestCase):
 
     def setUp(self):

@@ -236,13 +236,6 @@ phase_info = {
                     'loc': 'final',
                     'ref': 30.e3,
                 },
-                # 'altitude': {
-                #     'equals': 2000.,
-                #     'units': 'ft',
-                #     'type': 'boundary',
-                #     'loc': 'final',
-                #     'ref': 3.e3,
-                # },
             },
         },
         'subsystem_options': subsystem_options,

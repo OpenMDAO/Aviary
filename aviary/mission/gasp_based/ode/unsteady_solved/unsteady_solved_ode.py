@@ -113,13 +113,20 @@ class UnsteadySolvedODE(BaseODE):
                            promotes_inputs=["*"],
                            promotes_outputs=["*"])
 
+        inputs_list = ['*', ('rho', Dynamic.Mission.DENSITY)]
+        outputs_list = ['*']
+        if input_speed_type is SpeedType.TAS:
+            inputs_list.append(('TAS', Dynamic.Mission.VELOCITY))
+        else:
+            outputs_list.append(('TAS', Dynamic.Mission.VELOCITY))
+
         self.add_subsystem(
             "fc",
             UnsteadySolvedFlightConditions(num_nodes=nn,
                                            ground_roll=ground_roll,
                                            input_speed_type=input_speed_type),
-            promotes_inputs=["*", ('rho', Dynamic.Mission.DENSITY)],
-            promotes_outputs=["*", ('TAS', Dynamic.Mission.VELOCITY)],
+            promotes_inputs=inputs_list,
+            promotes_outputs=outputs_list,
         )
 
         control_iter_group = self.add_subsystem("control_iter_group",

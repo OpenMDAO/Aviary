@@ -169,6 +169,3 @@ prob.setup()
 prob.set_initial_guesses()
 
 prob.run_aviary_problem()
-
-# prob.model.list_inputs(units=True, print_arrays=True)
-# prob.model.list_outputs(units=True, print_arrays=True)
