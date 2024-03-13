@@ -196,6 +196,15 @@ class PhaseBuilderBase(ABC):
                 ode_init_kwargs=kwargs
             )
 
+        # self._add_meta_data(
+        #     'reserve', val=False, desc='this phase is part of the reserve mission.')
+
+        # self._add_meta_data(
+        #     'target_distance', val={}, desc='the amount of distance traveled in this phase added as a constraint')
+
+        # self._add_meta_data(
+        #     'target_duration', val={}, desc='the amount of time taken by this phase added as a constraint')
+
         # overrides should add state, controls, etc.
         return phase
 

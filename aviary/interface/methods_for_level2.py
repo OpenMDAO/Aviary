@@ -567,7 +567,7 @@ class AviaryProblem(om.Problem):
         # Fill in anything missing in the options with computed defaults.
         preprocess_crewpayload(self.aviary_inputs)
 
-        if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
+        if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF, TWO_DEGREES_OF_FREEDOM):
             self.phase_separator()
 
     def add_pre_mission_systems(self):
@@ -1385,6 +1385,7 @@ class AviaryProblem(om.Problem):
                 self.post_mission.add_subsystem(external_subsystem.name,
                                                 subsystem_postmission)
 
+        # , TWO_DEGREES_OF_FREEDOM):
         if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
             # Check if regular_phases[] is accessible
             try:

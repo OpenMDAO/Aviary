@@ -178,6 +178,7 @@ def check_phase_info(phase_info, mission_method):
     phase_keys = {}
     if mission_method is TWO_DEGREES_OF_FREEDOM:
         for phase in phase_info:
+            phase = phase.removeprefix('reserve_')
             if phase != 'pre_mission' and phase != 'post_mission':
                 if phase == 'cruise':
                     phase_keys[phase] = {**phase_keys_gasp[phase]}
@@ -201,6 +202,7 @@ def check_phase_info(phase_info, mission_method):
 
     # Check if all phases exist in phase_info
     for phase in phase_info:
+        phase = phase.removeprefix('reserve_')
         if 'user_options' in phase_info[phase]:
             phase_options = phase_info[phase]['user_options']
         else:
