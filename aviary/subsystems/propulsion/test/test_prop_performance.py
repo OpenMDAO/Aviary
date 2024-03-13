@@ -44,8 +44,10 @@ class PropPerformanceTest(unittest.TestCase):
         )
 
         pp.set_input_defaults(Aircraft.Engine.PROPELLER_DIAMETER, 10, units="ft")
-        pp.set_input_defaults(Dynamic.Mission.PROPELLER_TIP_SPEED, 800*np.ones(num_nodes), units="ft/s")
-        pp.set_input_defaults(Dynamic.Mission.VELOCITY, 0*np.ones(num_nodes), units="knot")
+        pp.set_input_defaults(Dynamic.Mission.PROPELLER_TIP_SPEED,
+                              800 * np.ones(num_nodes), units="ft/s")
+        pp.set_input_defaults(Dynamic.Mission.VELOCITY,
+                              0 * np.ones(num_nodes), units="knot")
         num_blades = 4
         options.set_val(Aircraft.Engine.NUM_BLADES,
                         val=num_blades, units='unitless')
@@ -53,7 +55,6 @@ class PropPerformanceTest(unittest.TestCase):
                         val=True, units='unitless')
         prob.setup()
 
-        print()
         prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 10.5, units="ft")
         prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, 114.0, units="unitless")
         prob.set_val(Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT,
@@ -77,30 +78,33 @@ class PropPerformanceTest(unittest.TestCase):
         tol = 0.005
 
         for case_idx in range(case_idx_begin, case_idx_end):
-            assert_near_equal(cthr[case_idx - case_idx_begin], CT[case_idx], tolerance=tol)
-            assert_near_equal(ctlf[case_idx - case_idx_begin], XFT[case_idx], tolerance=tol)
-            assert_near_equal(tccl[case_idx - case_idx_begin], CTX[case_idx], tolerance=tol)
-            assert_near_equal(angb[case_idx - case_idx_begin], three_quart_blade_angle[case_idx], tolerance=tol)
-            assert_near_equal(thrt[case_idx - case_idx_begin], thrust[case_idx], tolerance=tol)
-            assert_near_equal(peff[case_idx - case_idx_begin], prop_eff[case_idx], tolerance=tol)
-            assert_near_equal(lfac[case_idx - case_idx_begin], install_loss[case_idx], tolerance=tol)
-            assert_near_equal(ieff[case_idx - case_idx_begin], install_eff[case_idx], tolerance=tol)
+            idx = case_idx - case_idx_begin
+            assert_near_equal(cthr[idx], CT[case_idx], tolerance=tol)
+            assert_near_equal(ctlf[idx], XFT[case_idx], tolerance=tol)
+            assert_near_equal(tccl[idx], CTX[case_idx], tolerance=tol)
+            assert_near_equal(
+                angb[idx], three_quart_blade_angle[case_idx], tolerance=tol)
+            assert_near_equal(thrt[idx], thrust[case_idx], tolerance=tol)
+            assert_near_equal(peff[idx], prop_eff[case_idx], tolerance=tol)
+            assert_near_equal(lfac[idx], install_loss[case_idx], tolerance=tol)
+            assert_near_equal(ieff[idx], install_eff[case_idx], tolerance=tol)
 
     def test_case_0_1_2(self):
         # Case 0, 1, 2, to test install loss factor computation.
         prob = self.prob
         prob.set_val(Dynamic.Mission.ALTITUDE, [0.0, 0.0, 25000.0], units="ft")
         prob.set_val(Dynamic.Mission.VELOCITY, [0.10, 125.0, 300.0], units="knot")
-        prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED, [800.0, 800.0, 750.0], units="ft/s")
+        prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED,
+                     [800.0, 800.0, 750.0], units="ft/s")
         prob.set_val(Dynamic.Mission.SHAFT_POWER, [1850.0, 1850.0, 900.0], units="hp")
 
         prob.run_model()
         self.compare_results(case_idx_begin=0, case_idx_end=2)
 
-        partial_data = prob.check_partials(#out_stream=None,
-            compact_print=True, show_only_incorrect=True, form='central', method="fd", 
+        partial_data = prob.check_partials(
+            out_stream=None, compact_print=True, show_only_incorrect=True, form='central', method="fd",
             minimum_step=1e-12, abs_err_tol=5.0E-4, rel_err_tol=5.0E-5, excludes=["*atmosphere*"])
-        #assert_check_partials(partial_data, atol=5e-4, rtol=1e-4)
+        assert_check_partials(partial_data, atol=5e-4, rtol=1e-4)
 
     def test_case_3_4_5(self):
         # Case 3, 4, 5, to test normal cases.
@@ -110,22 +114,23 @@ class PropPerformanceTest(unittest.TestCase):
         options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS,
                         val=False, units='unitless')
         prob.setup()
-        prob.set_val(Dynamic.Mission.INSTALLATION_LOSS_FACTOR, [0.0, 0.05, 0.05], units="unitless")
+        prob.set_val(Dynamic.Mission.INSTALLATION_LOSS_FACTOR,
+                     [0.0, 0.05, 0.05], units="unitless")
         prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 12.0, units="ft")
-        # prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, 2.4, units='ft')
         prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, 150.0, units="unitless")
         prob.set_val(Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT,
                      0.5, units="unitless")
         prob.set_val(Dynamic.Mission.ALTITUDE, [10000.0, 10000.0, 0.0], units="ft")
         prob.set_val(Dynamic.Mission.VELOCITY, [200.0, 200.0, 50.0], units="knot")
-        prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED, [750.0, 750.0, 785.0], units="ft/s")
+        prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED,
+                     [750.0, 750.0, 785.0], units="ft/s")
         prob.set_val(Dynamic.Mission.SHAFT_POWER, [1000.0, 1000.0, 1250.0], units="hp")
 
         prob.run_model()
         self.compare_results(case_idx_begin=3, case_idx_end=5)
 
-        partial_data = prob.check_partials(out_stream=None,
-            compact_print=True, show_only_incorrect=True, form='central', method="fd", 
+        partial_data = prob.check_partials(
+            out_stream=None, compact_print=True, show_only_incorrect=True, form='central', method="fd",
             minimum_step=1e-12, abs_err_tol=5.0E-4, rel_err_tol=5.0E-5, excludes=["*atmosphere*"])
         assert_check_partials(partial_data, atol=1.5e-4, rtol=1e-4)
 
@@ -140,23 +145,26 @@ class PropPerformanceTest(unittest.TestCase):
         options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS,
                         val=False, units='unitless')
         prob.setup()
-        prob.set_val(Dynamic.Mission.INSTALLATION_LOSS_FACTOR, [0.0, 0.05, 0.05], units="unitless")
+        prob.set_val(Dynamic.Mission.INSTALLATION_LOSS_FACTOR,
+                     [0.0, 0.05, 0.05], units="unitless")
         prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 12.0, units="ft")
         prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, 150.0, units="unitless")
         prob.set_val(Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT,
                      0.5, units="unitless")
         prob.set_val(Dynamic.Mission.ALTITUDE, [10000.0, 10000.0, 0.0], units="ft")
         prob.set_val(Dynamic.Mission.VELOCITY, [200.0, 200.0, 50.0], units="knot")
-        prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED, [750.0, 750.0, 785.0], units="ft/s")
+        prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED,
+                     [750.0, 750.0, 785.0], units="ft/s")
         prob.set_val(Dynamic.Mission.SHAFT_POWER, [1000.0, 1000.0, 1250.0], units="hp")
 
         prob.run_model()
         self.compare_results(case_idx_begin=6, case_idx_end=8)
 
-        partial_data = prob.check_partials(out_stream=None,
-            compact_print=True, show_only_incorrect=True, form='central', method="fd", 
+        partial_data = prob.check_partials(
+            out_stream=None, compact_print=True, show_only_incorrect=True, form='central', method="fd",
             minimum_step=1e-12, abs_err_tol=5.0E-4, rel_err_tol=5.0E-5, excludes=["*atmosphere*"])
         assert_check_partials(partial_data, atol=1e-4, rtol=1e-4)
+
 
 if __name__ == "__main__":
     unittest.main()

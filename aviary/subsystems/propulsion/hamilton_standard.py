@@ -5,7 +5,8 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH, TSLS_DEGR
-import pdb
+
+const = 10.E10 / (2 * 6966.)
 
 
 def _unint(xa, ya, x):
@@ -520,8 +521,8 @@ class PreHamiltonStandard(om.ExplicitComponent):
         outputs['adv_ratio'] = 5.309 * vktas / tipspd
         diam_prop = inputs[Aircraft.Engine.PROPELLER_DIAMETER][0]
         shp = inputs[Dynamic.Mission.SHAFT_POWER]
-        outputs['power_coefficient'] = shp * 10.E10 / \
-            outputs['density_ratio'] / (2.*tipspd**3*diam_prop**2*6966.)
+        outputs['power_coefficient'] = shp * const / \
+            outputs['density_ratio'] / (tipspd**3*diam_prop**2)
 
     def compute_partials(self, inputs, partials):
         vktas = inputs[Dynamic.Mission.VELOCITY]
@@ -543,17 +544,16 @@ class PreHamiltonStandard(om.ExplicitComponent):
         partials["adv_ratio", Dynamic.Mission.VELOCITY] = 5.309 / tipspd
         partials["adv_ratio", Dynamic.Mission.PROPELLER_TIP_SPEED] = - \
             5.309 * vktas / (tipspd * tipspd)
-        const = 10.E10 / (2 * 6966.)
         partials["power_coefficient", Dynamic.Mission.SHAFT_POWER] = const * \
-            RHO_SEA_LEVEL_ENGLISH / (rho *tipspd**3*diam_prop**2)
+            RHO_SEA_LEVEL_ENGLISH / (rho * tipspd**3*diam_prop**2)
         partials["power_coefficient", Dynamic.Mission.DENSITY] = -const * shp * \
             RHO_SEA_LEVEL_ENGLISH / (rho * rho * tipspd**3*diam_prop**2)
         partials["power_coefficient", Dynamic.Mission.PROPELLER_TIP_SPEED] = -3 * \
-            10.E10 * shp * RHO_SEA_LEVEL_ENGLISH / \
-            (rho * 2.*tipspd**4*diam_prop**2*6966.)
+            const * shp * RHO_SEA_LEVEL_ENGLISH / \
+            (rho * tipspd**4*diam_prop**2)
         partials["power_coefficient", Aircraft.Engine.PROPELLER_DIAMETER] = -2 * \
-            10.E10 * shp * RHO_SEA_LEVEL_ENGLISH / \
-            (rho * 2.*tipspd**3*diam_prop**3*6966.)
+            const * shp * RHO_SEA_LEVEL_ENGLISH / \
+            (rho * tipspd**3*diam_prop**3)
 
 
 class HamiltonStandard(om.ExplicitComponent):
