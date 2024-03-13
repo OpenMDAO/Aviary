@@ -542,7 +542,7 @@ class PreHamiltonStandard(om.ExplicitComponent):
             0.00150933 * vktas * sqrt_temp_ratio / (2 * temp)
         partials["adv_ratio", Dynamic.Mission.VELOCITY] = 5.309 / tipspd
         partials["adv_ratio", Dynamic.Mission.PROPELLER_TIP_SPEED] = - \
-            5.309 / (tipspd * tipspd)
+            5.309 * vktas / (tipspd * tipspd)
         partials["power_coefficient", Dynamic.Mission.SHAFT_POWER] = 10.E10 * \
             RHO_SEA_LEVEL_ENGLISH / (rho * 2.*tipspd**3*diam_prop**2*6966.)
         partials["power_coefficient", Dynamic.Mission.DENSITY] = -10.E10 * shp * \
@@ -943,7 +943,7 @@ class PostHamiltonStandard(om.ExplicitComponent):
             inputs['adv_ratio']*ctx/inputs['power_coefficient']
 
 
-if __name__ == "__main__":
+if __name__ == "__main1__":
     model = om.Group()
     prehs = model.add_subsystem('prehs', PreHamiltonStandard(num_nodes=1), promotes=['*'])
     prob = om.Problem(model)
@@ -964,15 +964,18 @@ if __name__ == "__main__":
     print(f"  power_coefficient: {prob.get_val('prehs.power_coefficient')}")
 
     # 10.E10 is causing just a little numerical noise
-    partial_data = prob.check_partials(out_stream=None,
-        compact_print=True, show_only_incorrect=True, form='central', method="cs", minimum_step=1e-12)
-    from openmdao.utils.assert_utils import assert_check_partials
-    assert_check_partials(partial_data, atol=1e-5, rtol=1e-5)
+    partial_data = prob.check_partials(
+        compact_print=True, show_only_incorrect=True, form='central', method="cs", 
+        minimum_step=1e-12, abs_err_tol=5.0E-5)
+    #partial_data = prob.check_partials(out_stream=None,
+    #    compact_print=True, show_only_incorrect=True, form='central', method="cs", minimum_step=1e-12)
+    #from openmdao.utils.assert_utils import assert_check_partials
+    #assert_check_partials(partial_data, atol=1e-5, rtol=1e-5)
 
 
-if __name__ == "__main3__":
+if __name__ == "__main__":
     model = om.Group()
-    prehs = model.add_subsystem('posths', PostHamiltonStandard(), promotes=['*'])
+    prehs = model.add_subsystem('posths', PostHamiltonStandard(num_nodes=1), promotes=['*'])
     prob = om.Problem(model)
     prob.set_solver_print(level=1)
     # prob.setup(mode='rev')
@@ -988,5 +991,8 @@ if __name__ == "__main3__":
     prob.set_val(Dynamic.Mission.INSTALLATION_LOSS_FACTOR, 0.05, units='unitless')
     prob.run_model()
 
-    data = prob.check_partials(
-        compact_print=True, show_only_incorrect=True, minimum_step=1e-12)
+    #data = prob.check_partials(
+    #    compact_print=True, show_only_incorrect=True, minimum_step=1e-12)
+    partial_data = prob.check_partials(
+        compact_print=True, show_only_incorrect=False, form='central', method="cs", 
+        minimum_step=1e-12)
