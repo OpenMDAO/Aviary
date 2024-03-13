@@ -202,7 +202,7 @@ jobs:
         run: |
           conda info
           conda list
-          conda env export --name ${{ matrix.NAME }}_env --file ${{ matrix.NAME }}_environment.yml
+          conda env export --file ${{ matrix.NAME }}_environment.yml
 
       - name: 'Upload environment artifact'
         uses: actions/upload-artifact@v3
