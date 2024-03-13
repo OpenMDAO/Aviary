@@ -1,6 +1,7 @@
 import openmdao.api as om
 import numpy as np
 from dymos.models.atmosphere import USatm1976Comp
+from aviary.constants import TSLS_DEGR
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.subsystems.propulsion.hamilton_standard import HamiltonStandard, PostHamiltonStandard, PreHamiltonStandard
@@ -24,7 +25,7 @@ class InstallLoss(om.Group):
         self.add_subsystem(
             name='sqa_comp',
             subsys=om.ExecComp(
-                'sqa = minimum(DiamNac/DiamProp*DiamNac/DiamProp, 0.32)',
+                'sqa = minimum(DiamNac**2/DiamProp**2, 0.32)',
                 DiamNac={'units': 'ft'},
                 DiamProp={'units': 'ft'},
                 sqa={'units': 'unitless'},
@@ -133,10 +134,13 @@ class PropPerf(om.Group):
             Aircraft.Design.COMPUTE_INSTALLATION_LOSS, types=bool,
             desc='Flag to compute installation factor')
         self.options.declare(
+            'compute_mach_internally', types=bool, default=False,
+        )
+        self.options.declare(
             'aviary_options', types=AviaryValues,
             desc='collection of Aircraft/Mission specific options')
         self.options.declare(
-            'include_atmosphere', types=bool, default=False,
+            'include_atmosphere_model', types=bool, default=False,
             desc='Flag to include atmosphere in the model')
 
     def setup(self):
@@ -147,7 +151,6 @@ class PropPerf(om.Group):
             Aircraft.Design.COMPUTE_INSTALLATION_LOSS)
         num_blades = aviary_options.get_val(Aircraft.Engine.NUM_BLADES)
 
-        # JK NOTE it looks like tloss can be its own component. Optionally loaded? Or install_loss_factor is an override value? Might need to talk with Ken
         if compute_installation_loss:
             self.add_subsystem(
                 name='loss',
@@ -168,7 +171,7 @@ class PropPerf(om.Group):
             self.add_subsystem('input_install_loss', comp,
                                promotes=[('install_loss_factor', Dynamic.Mission.INSTALLATION_LOSS_FACTOR)])
 
-        if self.options['include_atmosphere']:
+        if self.options['include_atmosphere_model']:
             self.add_subsystem(
                 name='atmosphere',
                 subsys=USatm1976Comp(num_nodes=nn),
@@ -176,6 +179,17 @@ class PropPerf(om.Group):
                 promotes_outputs=[
                     ('sos', Dynamic.Mission.SPEED_OF_SOUND), ('rho', Dynamic.Mission.DENSITY),
                     ('temp', Dynamic.Mission.TEMPERATURE), ('pres', Dynamic.Mission.STATIC_PRESSURE)],
+            )
+
+        if self.options['compute_mach_internally']:
+            self.add_subsystem(
+                'compute_mach',
+                om.ExecComp(f'{Dynamic.Mission.MACH} = 0.00150933 * {Dynamic.Mission.VELOCITY} * ({TSLS_DEGR} / {Dynamic.Mission.TEMPERATURE})**0.5',
+                            mach={'units': 'unitless'},
+                            velocity={'units': 'knot'},
+                            temperature={'units': 'degR'}
+                            ),
+                promotes=['*'],
             )
 
         self.add_subsystem(
@@ -190,7 +204,6 @@ class PropPerf(om.Group):
                 Dynamic.Mission.SHAFT_POWER,
             ],
             promotes_outputs=[
-                Dynamic.Mission.MACH,
                 "power_coefficient",
                 "adv_ratio",
                 "tip_mach",

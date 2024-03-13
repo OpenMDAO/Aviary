@@ -1,0 +1,93 @@
+Element Ambient ambient {
+   alt_in = 0.0;
+   MN_in = 0.0;
+} 
+
+
+Element InletStart start {
+   W_in = 200.;
+} 
+
+
+Element Inlet inlet { 
+} 
+
+
+Element Compressor HPC { 
+   #include<$ENG_PATH/Maps_and_Elements/HPC.map>
+   PRdes = 20.;
+   effDes = 0.90;
+} 
+
+Element Duct duct{
+   dPqP_dmd = 0;
+}
+
+Element FuelStart fuelIn { 
+   LHV = 18500.;
+} 
+
+
+Element Burner burner { 
+   switchBurn = "FAR";
+   FAR = 0.0300;
+} 
+
+
+Element Turbine HPT {
+   #include<$ENG_PATH/Maps_and_Elements/HPT.map> 
+   effDes = 0.90;
+   PRbase = 3;
+   // S_map.PRmapDes = 3.000;
+   // S_map.NpMapDes = 100.0;
+} 
+
+
+Element Nozzle nozzle { 
+   switchType = "CONIC";
+   PsExhName = "ambient.Ps";
+} 
+
+
+Element FlowEnd end { 
+} 
+
+
+Element Shaft shaft { 
+   ShaftInputPort HPClink;
+   ShaftInputPort HPTlink;
+   Nmech = 3000.;
+} 
+
+// Performance Calculations
+Performance PERF {
+   real PC = 50;
+   real PowerExtraction;
+   real hybrid_throttle = 0;
+   real throttle;
+   //Define power code
+   Table PercentPower( real PC ) {
+      PC =      {  50.,  47.,  44.,  38.,  32.,  26.,  21. }
+      PartPwr = { 1.00, 0.90, 0.80, 0.60, 0.40, 0.20, 0.05 }
+   }
+
+   void postexecute() {
+      PowerCode = PC;
+      PowerExtraction = shaft.HPX;
+      throttle = (PercentPower(PC) - 0.05)/(1.0-0.05);
+   }
+}
+
+
+// link the Elements together via their Ports
+linkPorts( "start.Fl_O",   "inlet.Fl_I",    "station0"  );
+linkPorts( "inlet.Fl_O",   "HPC.Fl_I",      "station1"  );
+linkPorts( "HPC.Fl_O",     "duct.Fl_I",     "station2"  );
+linkPorts( "duct.Fl_O",    "burner.Fl_I",   "station3"  );
+linkPorts( "fuelIn.Fu_O",  "burner.Fu_I",   "stationF"  );
+linkPorts( "burner.Fl_O",  "HPT.Fl_I",      "station4"  );
+linkPorts( "HPT.Fl_O",     "nozzle.Fl_I",   "station5"  );
+linkPorts( "nozzle.Fl_O",  "end.Fl_I",      "station6"  );
+
+linkPorts( "HPC.Sh_O",     "shaft.HPClink", "HPCwork"   );
+linkPorts( "HPT.Sh_O",     "shaft.HPTlink", "HPTwork"   );

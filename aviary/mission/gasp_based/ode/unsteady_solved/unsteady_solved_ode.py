@@ -9,11 +9,12 @@ from aviary.mission.gasp_based.ode.unsteady_solved.gamma_comp import GammaComp
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_flight_conditions import \
     UnsteadySolvedFlightConditions
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_eom import UnsteadySolvedEOM
-from aviary.variable_info.enums import SpeedType
+from aviary.variable_info.enums import SpeedType, LegacyCode
 from aviary.variable_info.variables import Dynamic
 from aviary.variable_info.variables_in import VariablesIn
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
+from aviary.variable_info.variable_meta_data import _MetaData
 
 
 class UnsteadySolvedODE(BaseODE):
@@ -61,6 +62,12 @@ class UnsteadySolvedODE(BaseODE):
             default=False,
             desc='Flag if throttle should be solved for to match thrust to drag'
         )
+        self.options.declare(
+            'external_subsystems', default=[],
+            desc='list of external subsystem builder instances to be added to the ODE')
+        self.options.declare(
+            'meta_data', default=_MetaData,
+            desc='metadata associated with the variables to be passed into the ODE')
 
     def setup(self):
         nn = self.options["num_nodes"]
@@ -84,7 +91,7 @@ class UnsteadySolvedODE(BaseODE):
         self.add_subsystem(
             "USatm",
             USatm1976Comp(
-                num_nodes=nn),
+                num_nodes=nn, output_dsos_dh=True),
             promotes_inputs=[
                 ("h",
                  Dynamic.Mission.ALTITUDE)],
@@ -97,7 +104,9 @@ class UnsteadySolvedODE(BaseODE):
                 ("pres",
                  Dynamic.Mission.STATIC_PRESSURE),
                 "viscosity",
-                "drhos_dh"],
+                "drhos_dh",
+                "dsos_dh",
+            ],
         )
 
         self.add_subsystem("flight_path_angle",
@@ -149,19 +158,28 @@ class UnsteadySolvedODE(BaseODE):
             throttle_balance_group.linear_solver = om.DirectSolver(assemble_jac=True)
             throttle_balance_group.nonlinear_solver.options['err_on_non_converge'] = True
 
-        kwargs = {'num_nodes': nn, 'aviary_inputs': aviary_options,
-                  'method': 'low_speed'}
+        kwargs = {
+            'num_nodes': nn,
+            'aviary_inputs': aviary_options,
+            'method': 'low_speed',
+        }
         if self.options['clean']:
             kwargs['method'] = 'cruise'
             kwargs['output_alpha'] = False
         for subsystem in core_subsystems:
+            # check if subsystem_options has entry for a subsystem of this name
+            if subsystem.name in subsystem_options:
+                kwargs.update(subsystem_options[subsystem.name])
             system = subsystem.build_mission(**kwargs)
             if system is not None:
                 if isinstance(subsystem, AerodynamicsBuilderBase):
+                    mission_inputs = subsystem.mission_inputs(**kwargs)
+                    if subsystem.code_origin is LegacyCode.FLOPS:
+                        mission_inputs.remove('angle_of_attack')
+                        mission_inputs.append(('angle_of_attack', 'alpha'))
                     control_iter_group.add_subsystem(subsystem.name,
                                                      system,
-                                                     promotes_inputs=subsystem.mission_inputs(
-                                                         **kwargs),
+                                                     promotes_inputs=mission_inputs,
                                                      promotes_outputs=subsystem.mission_outputs(**kwargs))
                 elif isinstance(subsystem, PropulsionBuilderBase) and balance_throttle:
                     throttle_balance_group.add_subsystem(subsystem.name,
@@ -178,9 +196,11 @@ class UnsteadySolvedODE(BaseODE):
 
         eom_comp = UnsteadySolvedEOM(num_nodes=nn, ground_roll=ground_roll)
 
+        input_list = ['*']
+        if balance_throttle:
+            input_list.append((Dynamic.Mission.THRUST_TOTAL, "thrust_req"))
         control_iter_group.add_subsystem("eom", subsys=eom_comp,
-                                         promotes_inputs=["*",
-                                                          (Dynamic.Mission.THRUST_TOTAL, "thrust_req")],
+                                         promotes_inputs=input_list,
                                          promotes_outputs=["*"])
 
         thrust_alpha_bal = om.BalanceComp()
@@ -191,15 +211,34 @@ class UnsteadySolvedODE(BaseODE):
                                          lhs_name="dgam_dt_approx",
                                          rhs_name="dgam_dt",
                                          eq_units="rad/s",
+                                         lower=-np.pi/12,
+                                         upper=np.pi/12,
                                          normalize=False)
 
-        thrust_alpha_bal.add_balance("thrust_req",
-                                     units="N",
-                                     val=100*np.ones(nn),
-                                     lhs_name="dTAS_dt_approx",
-                                     rhs_name="dTAS_dt",
-                                     eq_units="m/s**2",
-                                     normalize=False)
+        if balance_throttle:
+            thrust_alpha_bal.add_balance("thrust_req",
+                                         units="N",
+                                         val=100*np.ones(nn),
+                                         lhs_name="dTAS_dt_approx",
+                                         rhs_name="dTAS_dt",
+                                         eq_units="m/s**2",
+                                         normalize=False)
+
+        else:
+            # add a kscomp to compute the residual of dTAS_dt_approx - dTAS_dt
+            control_iter_group.add_subsystem("TAS_residual",
+                                             om.ExecComp("TAS_resid = dTAS_dt_approx - dTAS_dt", units="m/s**2", shape=nn,
+                                                         has_diag_partials=True),
+                                             promotes_inputs=[
+                                                 "dTAS_dt_approx", "dTAS_dt"],
+                                             promotes_outputs=["TAS_resid"])
+
+            control_iter_group.add_subsystem("KS_comp",
+                                             om.KSComp(width=nn),
+                                             promotes_inputs=[("g", "TAS_resid")],
+                                             promotes_outputs=[("KS", "ks_TAS_resid")])
+
+            control_iter_group.add_constraint("ks_TAS_resid", equals=0.0, ref=1.e4)
 
         control_iter_group.add_subsystem("thrust_alpha_bal", subsys=thrust_alpha_bal,
                                          promotes_inputs=["*"],
@@ -208,7 +247,7 @@ class UnsteadySolvedODE(BaseODE):
         control_iter_group.nonlinear_solver = om.NewtonSolver(solve_subsystems=True,
                                                               atol=1.0e-10,
                                                               rtol=1.0e-10)
-        # self.nonlinear_solver.linesearch = om.ArmijoGoldsteinLS()
+        # control_iter_group.nonlinear_solver.linesearch = om.BoundsEnforceLS()
         control_iter_group.linear_solver = om.DirectSolver(assemble_jac=True)
 
         self.add_subsystem("mass_rate",

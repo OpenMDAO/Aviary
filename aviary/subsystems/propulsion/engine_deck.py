@@ -384,7 +384,7 @@ class EngineDeck(EngineModel):
 
                 # Engine_variables currently only used to store "valid" engine variables
                 # as defined in EngineModelVariables Enum
-                self.engine_variables[key] = units
+                self.engine_variables[key] = default_units[key]
 
             else:
                 warnings.warn(
@@ -1577,6 +1577,18 @@ class TurboPropDeck(EngineDeck):
 
     def _add_HS_prop(self, engine_group: om.Group, num_nodes=1):
         from aviary.subsystems.propulsion.prop_performance import PropPerf
+        from aviary.mission.gasp_based.flight_conditions import FlightConditions
+        from aviary.variable_info.enums import SpeedType
+        prop_group = om.Group()
+
+        prop_group.add_subsystem(
+            "fc",
+            FlightConditions(num_nodes=num_nodes, input_speed_type=SpeedType.MACH),
+            promotes_inputs=[
+                "rho", Dynamic.Mission.SPEED_OF_SOUND, Dynamic.Mission.MACH],
+            promotes_outputs=[Dynamic.Mission.DYNAMIC_PRESSURE,
+                              'EAS', ('TAS', 'velocity')],
+        )
 
         engine_group.add_subsystem(
             'propeller_model',
@@ -1584,8 +1596,8 @@ class TurboPropDeck(EngineDeck):
                 aviary_options=self.options,
                 num_nodes=num_nodes,
             ),
-            promotes_inputs=['*', ('mach', 'mach_internal')],
-            promotes_outputs=["*", ('mach', 'mach_internal')],
+            promotes_inputs=['*'],
+            promotes_outputs=["*"],
         )
         engine_group.set_input_defaults(
             Aircraft.Engine.PROPELLER_DIAMETER, 10, units="ft")

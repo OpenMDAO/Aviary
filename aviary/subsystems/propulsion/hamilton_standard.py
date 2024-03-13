@@ -92,7 +92,6 @@ def _biquad(T, i, xi, yi):
     ny = int(T[i+1])
     j1 = int(i + 2)
     j2 = j1 + nx - 1
-    x = xi
     # search in x sense
     # jx1 = subscript of 1st x
     # search routine - input j1, j2, xi
@@ -163,7 +162,7 @@ def _biquad(T, i, xi, yi):
             jy = jx + nx
             z = cx1*T[jy] + cx2*T[jy+1] + cx3*T[jy+2] + cx4*T[jy+3]
         else:
-            # vibariate table
+            # bivariate table
             y = yi
             j3 = j2 + 1
             j4 = j3 + ny - 1
@@ -479,7 +478,6 @@ class PreHamiltonStandard(om.ExplicitComponent):
 
         self.add_output('power_coefficient', val=np.zeros(nn), units='unitless')
         self.add_output('adv_ratio', val=np.zeros(nn), units='unitless')
-        self.add_output('mach', val=np.zeros(nn), units='unitless')
         self.add_output('tip_mach', val=np.zeros(nn), units='unitless')
         self.add_output('density_ratio', val=np.zeros(nn), units='unitless')
 
@@ -490,10 +488,6 @@ class PreHamiltonStandard(om.ExplicitComponent):
             'density_ratio', Dynamic.Mission.DENSITY, rows=arange, cols=arange)
         self.declare_partials('tip_mach', [
             Dynamic.Mission.PROPELLER_TIP_SPEED,
-            Dynamic.Mission.TEMPERATURE,
-        ], rows=arange, cols=arange)
-        self.declare_partials('mach', [
-            Dynamic.Mission.VELOCITY,
             Dynamic.Mission.TEMPERATURE,
         ], rows=arange, cols=arange)
         self.declare_partials('adv_ratio', [
@@ -510,10 +504,7 @@ class PreHamiltonStandard(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         outputs['density_ratio'] = inputs[Dynamic.Mission.DENSITY] / RHO_SEA_LEVEL_ENGLISH
         sqrt_temp_ratio = math.sqrt(TSLS_DEGR / inputs[Dynamic.Mission.TEMPERATURE])
-        # vktas = Dynamic.Mission.VELOCITY*0.5924838739671128
         vktas = inputs[Dynamic.Mission.VELOCITY]
-        # at sea level, 1 knot = .00150933 (actually 0.00149984 Mach)
-        outputs['mach'] = 0.00150933 * vktas * sqrt_temp_ratio
         tipspd = inputs[Dynamic.Mission.PROPELLER_TIP_SPEED]
         # 1118.21948771 is speed of sound at sea level
         outputs['tip_mach'] = tipspd * sqrt_temp_ratio / 1118.21948771
@@ -537,12 +528,9 @@ class PreHamiltonStandard(om.ExplicitComponent):
                  Dynamic.Mission.PROPELLER_TIP_SPEED] = sqrt_temp_ratio / 1118.21948771
         partials["tip_mach", Dynamic.Mission.TEMPERATURE] = - \
             tipspd * sqrt_temp_ratio/(1118.21948771*2*temp)
-        partials["mach", Dynamic.Mission.VELOCITY] = 0.00150933 * sqrt_temp_ratio
-        partials["mach", Dynamic.Mission.TEMPERATURE] = - \
-            0.00150933 * vktas * sqrt_temp_ratio / (2 * temp)
         partials["adv_ratio", Dynamic.Mission.VELOCITY] = 5.309 / tipspd
         partials["adv_ratio", Dynamic.Mission.PROPELLER_TIP_SPEED] = - \
-            5.309 / (tipspd * tipspd)
+            5.309 * vktas / (tipspd * tipspd)
         partials["power_coefficient", Dynamic.Mission.SHAFT_POWER] = 10.E10 * \
             RHO_SEA_LEVEL_ENGLISH / (rho * 2.*tipspd**3*diam_prop**2*6966.)
         partials["power_coefficient", Dynamic.Mission.DENSITY] = -10.E10 * shp * \
@@ -561,7 +549,7 @@ class HamiltonStandard(om.ExplicitComponent):
     This is Hamilton Standard component rewritten from Fortran code. 
     The original documentation is available at 
     https://ntrs.nasa.gov/api/citations/19720010354/downloads/19720010354.pdf
-    It compute the thrust coefficient of a propeller.
+    It computes the thrust coefficient of a propeller.
     """
 
     def initialize(self):
@@ -572,14 +560,14 @@ class HamiltonStandard(om.ExplicitComponent):
         self.options.declare(
             'aviary_options', types=AviaryValues,
             desc='collection of Aircraft/Mission specific options')
-        self.options.declare('num_nodes', types=int)
+        self.options.declare('num_nodes', default=1, types=int)
 
     def setup(self):
         nn = self.options['num_nodes']
 
         self.add_input('power_coefficient', val=np.zeros(nn), units='unitless')
         self.add_input('adv_ratio', val=np.zeros(nn), units='unitless')
-        self.add_input('mach', val=np.zeros(nn), units='unitless')
+        self.add_input(Dynamic.Mission.MACH, val=np.zeros(nn), units='unitless')
         self.add_input('tip_mach', val=np.zeros(nn), units='unitless')
         self.add_input(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, val=0.0,
                        units='unitless')  # Actitivty Factor per Blade
@@ -697,7 +685,7 @@ class HamiltonStandard(om.ExplicitComponent):
                             if (ichck <= 1):
                                 if (run_flag == 1):
                                     print(
-                                        f"+++warning = Mach,VTMACH,J,power_coefficient,CP_Eff =: {inputs['mach'][0]},{inputs['tip_mach'][0]},{inputs['adv_ratio'][0]},{power_coefficient},{CP_Eff}")
+                                        f"+++warning = Mach,VTMACH,J,power_coefficient,CP_Eff =: {inputs[Dynamic.Mission.MACH][0]},{inputs['tip_mach'][0]},{inputs['adv_ratio'][0]},{power_coefficient},{CP_Eff}")
                                 if (kl == 4 and CPE1 < 0.049):
                                     print(
                                         f"Extrapolated data is being used for CLI=.6--CPE1,PXCLI,L= , {CPE1},{PXCLI[kl]},{idx_blade}   Suggest inputting CLI=.5")
@@ -710,7 +698,7 @@ class HamiltonStandard(om.ExplicitComponent):
                         else:
                             if (run_flag == 1):
                                 print(
-                                    f"+++warning = Mach,VTMACH,J,power_coefficient,CP_Eff =: {inputs['mach'][0]},{inputs['tip_mach'][0]},{inputs['adv_ratio'][0]},{power_coefficient},{CP_Eff}")
+                                    f"+++warning = Mach,VTMACH,J,power_coefficient,CP_Eff =: {inputs[Dynamic.Mission.MACH][0]},{inputs['tip_mach'][0]},{inputs['adv_ratio'][0]},{power_coefficient},{CP_Eff}")
                             if (kl == 4 and CPE1 < 0.049):
                                 print(
                                     f"Extrapolated data is being used for CLI=.6--CPE1,PXCLI,L= , {CPE1},{PXCLI[kl]},{idx_blade}   Suggest inputting CLI=.5")
@@ -772,7 +760,7 @@ class HamiltonStandard(om.ExplicitComponent):
                         if (inputs['adv_ratio'][0] != 0.0):
                             ZMCRT, run_flag = _unint(
                                 adv_ratio_array2, mach_corr_table[CL_tab_idx], inputs['adv_ratio'][0])
-                            DMN = inputs['mach'][0] - ZMCRT
+                            DMN = inputs[Dynamic.Mission.MACH][0] - ZMCRT
                         else:
                             ZMCRT = mach_tip_corr_arr[CL_tab_idx]
                             DMN = inputs['tip_mach'][0] - ZMCRT
@@ -804,7 +792,7 @@ class HamiltonStandard(om.ExplicitComponent):
                             break
 
                 if (ifnd1 == 0 and ifnd2 == 0):
-                    print(
+                    raise ValueError(
                         f"Integrated design cl adjustment not working properly for ct definition (ibb={ibb})")
                 if (ifnd1 == 0 and ifnd2 == 1):
                     ct = 0.0
@@ -942,80 +930,3 @@ class PostHamiltonStandard(om.ExplicitComponent):
             ctx/inputs['power_coefficient']**2 * (1. - install_loss_factor)
         partials["install_efficiency", Dynamic.Mission.INSTALLATION_LOSS_FACTOR] = - \
             inputs['adv_ratio']*ctx/inputs['power_coefficient']
-
-
-if __name__ == "__main1__":
-    model = om.Group()
-    prehs = model.add_subsystem('prehs', PreHamiltonStandard(), promotes=['*'])
-    prob = om.Problem(model)
-    prob.set_solver_print(level=1)
-    # prob.setup(mode='rev')
-    prob.setup()
-
-    prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED, 785.0, units='ft/s')
-    prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 12.0, units='ft')
-    prob.set_val(Dynamic.Mission.SHAFT_POWER, val=1850.0, units='hp')
-    prob.set_val(Dynamic.Mission.DENSITY, val=RHO_SEA_LEVEL_ENGLISH, units='slug/ft**3')
-    prob.set_val(Dynamic.Mission.VELOCITY, val=0.0, units='knot')
-    prob.set_val(Dynamic.Mission.TEMPERATURE, val=TSLS_DEGR, units='degR')
-    prob.run_model()
-
-    print(f"  density_ratio: {prob.get_val('prehs.density_ratio')}")
-    print(f"  adv_ratio: {prob.get_val('prehs.adv_ratio')}")
-    print(f"  power_coefficient: {prob.get_val('prehs.power_coefficient')}")
-
-    # 10.E10 is causing just a little numerical noise
-    data = prob.check_partials(
-        compact_print=True, show_only_incorrect=True, minimum_step=1e-12)
-
-
-if __name__ == "__main2__":
-    model = om.Group()
-    hs = model.add_subsystem('hs', HamiltonStandard(), promotes=['*'])
-    prob = om.Problem(model)
-    prob.setup()
-
-    prob.set_val('hs.power_coefficient', 0.2352124866909703)  # 0.235239178
-    prob.set_val('hs.adv_ratio', 0.0)
-    prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, 114)
-    prob.set_val(Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT, 0.5)
-    prob.set_val('hs.mach', 0.0)
-    prob.set_val('hs.tip_mach', 0.7154230531595535)  # 0.71542275
-    hs.options.set(num_blades=4)
-    print("Inputs to HamiltonStandard:")
-    print(f"  power_coefficient: {prob.get_val('hs.power_coefficient')}")
-    print(f"  adv_ratio: {prob.get_val('hs.adv_ratio')}")
-    print(f"  act_fac: {prob.get_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR)}")
-    print(f"  cli: {prob.get_val(Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT)}")
-    print(f"  mach: {prob.get_val('hs.mach')}")
-    print(f"  tip_mach: {prob.get_val('hs.tip_mach')}")
-    print(f"  num_blades: {hs.options['num_blades']}")
-
-    prob.run_model()
-    print()
-    print("Outputs:")
-    print(f"  3/4 Blade Angle: {prob['hs.ang_blade'][0]}")
-    print(f"  CT: {prob['hs.thrust_coefficient'][0]}")
-    print(f"  XFT: {prob['hs.comp_tip_loss_factor'][0]}")
-
-
-if __name__ == "__main__":
-    model = om.Group()
-    prehs = model.add_subsystem('posths', PostHamiltonStandard(), promotes=['*'])
-    prob = om.Problem(model)
-    prob.set_solver_print(level=1)
-    # prob.setup(mode='rev')
-    prob.setup()
-
-    prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED, 785.0, units='ft/s')
-    prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 12.0, units='ft')
-    prob.set_val('power_coefficient', 0.19062805, units='unitless')
-    prob.set_val('adv_ratio', 0.0, units='unitless')
-    prob.set_val('density_ratio', 1.0, units='unitless')
-    prob.set_val('thrust_coefficient', 0.27650621496575234, units='unitless')
-    prob.set_val('comp_tip_loss_factor', 1.0, units='unitless')
-    prob.set_val(Dynamic.Mission.INSTALLATION_LOSS_FACTOR, 0.05, units='unitless')
-    prob.run_model()
-
-    data = prob.check_partials(
-        compact_print=True, show_only_incorrect=True, minimum_step=1e-12)
