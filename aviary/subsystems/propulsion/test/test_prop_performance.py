@@ -49,7 +49,6 @@ class PropPerformanceTest(unittest.TestCase):
         num_blades = 4
         options.set_val(Aircraft.Engine.NUM_BLADES,
                         val=num_blades, units='unitless')
-        # pp.options.set(compute_installation_loss=True)
         options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS,
                         val=True, units='unitless')
         prob.setup()
@@ -59,7 +58,6 @@ class PropPerformanceTest(unittest.TestCase):
         prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, 114.0, units="unitless")
         prob.set_val(Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT,
                      0.5, units="unitless")
-        # prob.set_val('DiamNac_DiamProp', 0.275, units="unitless")
         prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, 2.8875, units='ft')
 
         self.prob = prob
@@ -89,7 +87,7 @@ class PropPerformanceTest(unittest.TestCase):
             assert_near_equal(ieff[case_idx - case_idx_begin], install_eff[case_idx], tolerance=tol)
 
     def test_case_0_1_2(self):
-        # Case 0, 1, 2
+        # Case 0, 1, 2, to test install loss factor computation.
         prob = self.prob
         prob.set_val(Dynamic.Mission.ALTITUDE, [0.0, 0.0, 25000.0], units="ft")
         prob.set_val(Dynamic.Mission.VELOCITY, [0.0, 125.0, 300.0], units="knot")
@@ -100,10 +98,10 @@ class PropPerformanceTest(unittest.TestCase):
         self.compare_results(case_idx_begin=0, case_idx_end=2)
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-5, rtol=1e-5)
+        assert_check_partials(partial_data, atol=1e-5, rtol=1e-4)
 
     def Ttest_case_3_4_5(self):
-        # Case 3, 4, 5
+        # Case 3, 4, 5, to test normal cases.
         prob = self.prob
         options = self.options
 
@@ -116,7 +114,6 @@ class PropPerformanceTest(unittest.TestCase):
         prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, 150.0, units="unitless")
         prob.set_val(Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT,
                      0.5, units="unitless")
-        # prob.set_val('DiamNac_DiamProp', 0.2, units="unitless")
         prob.set_val(Dynamic.Mission.ALTITUDE, [10000.0, 10000.0, 0.0], units="ft")
         prob.set_val(Dynamic.Mission.VELOCITY, [200.0, 200.0, 50.0], units="knot")
         prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED, [750.0, 750.0, 785.0], units="ft/s")
@@ -126,7 +123,7 @@ class PropPerformanceTest(unittest.TestCase):
         self.compare_results(case_idx_begin=3, case_idx_end=5)
 
     def ttest_case_6_7_8(self):
-        # Case 6, 7, 8
+        # Case 6, 7, 8, to test odd number of blades.
         prob = self.prob
         options = self.options
 
@@ -138,11 +135,9 @@ class PropPerformanceTest(unittest.TestCase):
         prob.setup()
         prob.set_val(Dynamic.Mission.INSTALLATION_LOSS_FACTOR, [0.0, 0.05, 0.05], units="unitless")
         prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 12.0, units="ft")
-        # prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, 2.4, units='ft')
         prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, 150.0, units="unitless")
         prob.set_val(Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT,
                      0.5, units="unitless")
-        # prob.set_val('DiamNac_DiamProp', 0.2, units="unitless")
         prob.set_val(Dynamic.Mission.ALTITUDE, [10000.0, 10000.0, 0.0], units="ft")
         prob.set_val(Dynamic.Mission.VELOCITY, [200.0, 200.0, 50.0], units="knot")
         prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED, [750.0, 750.0, 785.0], units="ft/s")

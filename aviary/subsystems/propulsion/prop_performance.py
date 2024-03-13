@@ -24,7 +24,7 @@ class InstallLoss(om.Group):
         self.add_subsystem(
             name='sqa_comp',
             subsys=om.ExecComp(
-                'sqa = minimum(DiamNac/DiamProp*DiamNac/DiamProp, 0.32)',
+                'sqa = minimum(DiamNac**2/DiamProp**2, 0.32)',
                 DiamNac={'units': 'ft'},
                 DiamProp={'units': 'ft'},
                 sqa={'units': 'unitless'},
@@ -144,7 +144,6 @@ class PropPerf(om.Group):
             Aircraft.Design.COMPUTE_INSTALLATION_LOSS)
         num_blades = aviary_options.get_val(Aircraft.Engine.NUM_BLADES)
 
-        # JK NOTE it looks like tloss can be its own component. Optionally loaded? Or install_loss_factor is an override value? Might need to talk with Ken
         if compute_installation_loss:
             self.add_subsystem(
                 name='loss',

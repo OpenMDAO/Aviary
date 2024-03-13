@@ -164,7 +164,7 @@ def _biquad(T, i, xi, yi):
             jy = jx + nx
             z = cx1*T[jy] + cx2*T[jy+1] + cx3*T[jy+2] + cx4*T[jy+3]
         else:
-            # vibariate table
+            # bivariate table
             y = yi
             j3 = j2 + 1
             j4 = j3 + ny - 1
@@ -511,7 +511,6 @@ class PreHamiltonStandard(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         outputs['density_ratio'] = inputs[Dynamic.Mission.DENSITY] / RHO_SEA_LEVEL_ENGLISH
         sqrt_temp_ratio = np.sqrt(TSLS_DEGR / inputs[Dynamic.Mission.TEMPERATURE])
-        # vktas = Dynamic.Mission.VELOCITY*0.5924838739671128
         vktas = inputs[Dynamic.Mission.VELOCITY]
         # at sea level, 1 knot = .00150933 (actually 0.00149984 Mach)
         outputs['mach'] = 0.00150933 * vktas * sqrt_temp_ratio
@@ -561,7 +560,7 @@ class HamiltonStandard(om.ExplicitComponent):
     This is Hamilton Standard component rewritten from Fortran code. 
     The original documentation is available at 
     https://ntrs.nasa.gov/api/citations/19720010354/downloads/19720010354.pdf
-    It compute the thrust coefficient of a propeller.
+    It computes the thrust coefficient of a propeller.
     """
 
     def initialize(self):
@@ -572,7 +571,7 @@ class HamiltonStandard(om.ExplicitComponent):
         self.options.declare(
             'aviary_options', types=AviaryValues,
             desc='collection of Aircraft/Mission specific options')
-        self.options.declare('num_nodes', types=int)
+        self.options.declare('num_nodes',  default=1, types=int)
 
     def setup(self):
         nn = self.options['num_nodes']
@@ -804,7 +803,7 @@ class HamiltonStandard(om.ExplicitComponent):
                             break
 
                 if (ifnd1 == 0 and ifnd2 == 0):
-                    print(
+                    raise ValueError(
                         f"Integrated design cl adjustment not working properly for ct definition (ibb={ibb})")
                 if (ifnd1 == 0 and ifnd2 == 1):
                     ct = 0.0
@@ -965,8 +964,10 @@ if __name__ == "__main__":
     print(f"  power_coefficient: {prob.get_val('prehs.power_coefficient')}")
 
     # 10.E10 is causing just a little numerical noise
-    data = prob.check_partials(
-        compact_print=True, show_only_incorrect=True, minimum_step=1e-12)
+    partial_data = prob.check_partials(out_stream=None,
+        compact_print=True, show_only_incorrect=True, form='central', method="cs", minimum_step=1e-12)
+    from openmdao.utils.assert_utils import assert_check_partials
+    assert_check_partials(partial_data, atol=1e-5, rtol=1e-5)
 
 
 if __name__ == "__main3__":
