@@ -9,7 +9,7 @@ We then call the correct methods in order to set up and run an Aviary optimizati
 This performs a coupled design-mission optimization and outputs the results from Aviary into the `reports` folder.
 """
 import aviary.api as av
-from example_phase_info import phase_info
+from aviary.examples.example_phase_info import phase_info
 from copy import deepcopy
 
 phase_info = deepcopy(phase_info)
