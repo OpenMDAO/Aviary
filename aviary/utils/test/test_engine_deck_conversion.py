@@ -19,7 +19,7 @@ class TestEngineDeckConversion(unittest.TestCase):
     def prepare_and_run(self, filename, output_file=None, data_format=EngineDeckType.GASP):
         args = DummyArgs()
 
-        # Specify the input file and the legacy code
+        # Specify the input file
         args.input_file = filepath = get_path('models/engines/'+filename)
 
         # Specify the output file
@@ -28,6 +28,8 @@ class TestEngineDeckConversion(unittest.TestCase):
             args.output_file = Path.cwd() / Path('TEST_'+filename)
         else:
             args.output_file = str(Path(output_file))
+
+        # Specify the legacy code and engine type
         args.data_format = data_format
 
         # Execute the conversion

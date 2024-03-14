@@ -14,7 +14,7 @@ class InstallLoss(om.Group):
 
     def initialize(self):
         self.options.declare(
-            'num_nodes', types=int,
+            'num_nodes', types=int, default=1,
             desc='Number of nodes to be evaluated in the RHS')
         self.options.declare(
             'aviary_options', types=AviaryValues,
@@ -29,6 +29,7 @@ class InstallLoss(om.Group):
                 DiamNac={'units': 'ft'},
                 DiamProp={'units': 'ft'},
                 sqa={'units': 'unitless'},
+                has_diag_partials=True,
             ),
             promotes_inputs=[("DiamNac", Aircraft.Nacelle.AVG_DIAMETER),
                              ("DiamProp", Aircraft.Engine.PROPELLER_DIAMETER)],
@@ -45,6 +46,7 @@ class InstallLoss(om.Group):
                 tipspd={'units': 'ft/s', 'val': np.zeros(nn)},
                 sqa={'units': 'unitless'},
                 equiv_adv_ratio={'units': 'unitless', 'val': np.zeros(nn)},
+                has_diag_partials=True,
             ),
             promotes_inputs=["sqa", ("vktas", Dynamic.Mission.VELOCITY),
                              ("tipspd", Dynamic.Mission.PROPELLER_TIP_SPEED)],
@@ -57,6 +59,7 @@ class InstallLoss(om.Group):
                 'sqa_array = sqa',
                 sqa={'units': 'unitless'},
                 sqa_array={'units': 'unitless', 'shape': (nn,)},
+                has_diag_partials=True,
             ),
             promotes_inputs=["sqa"],
             promotes_outputs=["sqa_array"],
@@ -64,7 +67,7 @@ class InstallLoss(om.Group):
 
         self.blockage_factor_interp = self.add_subsystem(
             "blockage_factor_interp",
-            om.MetaModelStructuredComp(method="scipy_slinear",
+            om.MetaModelStructuredComp(method="2D-slinear",
                                        extrapolate=True, vec_size=nn),
             promotes_inputs=["sqa_array", "equiv_adv_ratio"],
             promotes_outputs=[
@@ -107,11 +110,12 @@ class InstallLoss(om.Group):
         )
 
         self.add_subsystem(
-            name='FT',
+            name='compute_install_loss_factor',
             subsys=om.ExecComp(
                 'install_loss_factor = 1 - blockage_factor',
                 blockage_factor={'units': 'unitless', 'val': np.zeros(nn)},
                 install_loss_factor={'units': 'unitless', 'val': np.zeros(nn)},
+                has_diag_partials=True,
             ),
             promotes_inputs=["blockage_factor"],
             promotes_outputs=["install_loss_factor"],
@@ -126,7 +130,7 @@ class PropPerf(om.Group):
 
     def initialize(self):
         self.options.declare(
-            'num_nodes', types=int,
+            'num_nodes', types=int, default=1,
             desc='Number of nodes to be evaluated in the RHS')
         self.options.declare(Aircraft.Engine.NUM_BLADES, default=2,
                              desc='number of blades per propeller')
@@ -165,11 +169,8 @@ class PropPerf(om.Group):
                     ("install_loss_factor", Dynamic.Mission.INSTALLATION_LOSS_FACTOR)],
             )
         else:
-            comp = om.IndepVarComp()
-            comp.add_output('install_loss_factor',
-                            val=np.ones(nn), units="unitless")
-            self.add_subsystem('input_install_loss', comp,
-                               promotes=[('install_loss_factor', Dynamic.Mission.INSTALLATION_LOSS_FACTOR)])
+            self.set_input_defaults(
+                Dynamic.Mission.INSTALLATION_LOSS_FACTOR, val=np.ones(nn), units="unitless")
 
         if self.options['include_atmosphere_model']:
             self.add_subsystem(
@@ -187,7 +188,8 @@ class PropPerf(om.Group):
                 om.ExecComp(f'{Dynamic.Mission.MACH} = 0.00150933 * {Dynamic.Mission.VELOCITY} * ({TSLS_DEGR} / {Dynamic.Mission.TEMPERATURE})**0.5',
                             mach={'units': 'unitless'},
                             velocity={'units': 'knot'},
-                            temperature={'units': 'degR'}
+                            temperature={'units': 'degR'},
+                            has_diag_partials=True,
                             ),
                 promotes=['*'],
             )
