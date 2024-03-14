@@ -7,8 +7,8 @@ from aviary.mission.flops_based.phases.time_integration_phases import \
     SGMHeightEnergy, SGMDetailedTakeoff, SGMDetailedLanding
 from aviary.subsystems.premission import CorePreMission
 from aviary.utils.functions import set_aviary_initial_values
-from aviary.variable_info.enums import Verbosity
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.enums import Verbosity, EquationsOfMotion
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 from aviary.variable_info.variables_in import VariablesIn
 
 from aviary.interface.default_phase_info.height_energy import aero, prop, geom
@@ -33,6 +33,8 @@ class HE_SGMDescentTestCase(unittest.TestCase):
                               val=0.0175, units="unitless")
         aviary_inputs.set_val(Mission.Takeoff.BRAKING_FRICTION_COEFFICIENT,
                               val=0.35, units="unitless")
+        aviary_inputs.set_val(Settings.EQUATIONS_OF_MOTION,
+                              val=EquationsOfMotion.SOLVED_2DOF)
         ode_args = dict(aviary_options=aviary_inputs, core_subsystems=[prop, geom, aero])
         preprocess_propulsion(aviary_inputs, [EngineDeck(options=aviary_inputs)])
 
