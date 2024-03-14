@@ -3,11 +3,13 @@ import openmdao.api as om
 from dymos.models.atmosphere import USatm1976Comp
 
 from aviary.mission.flops_based.ode.mission_EOM import MissionEOM
+from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs, add_SGM_required_outputs
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import promote_aircraft_and_mission_vars
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.variable_info.variables import Dynamic, Mission
+from aviary.variable_info.variables import Dynamic, Mission, Aircraft
 from aviary.variable_info.variables_in import VariablesIn
+from aviary.variable_info.enums import AnalysisScheme
 
 
 class ExternalSubsystemGroup(om.Group):
@@ -44,14 +46,28 @@ class MissionODE(om.Group):
             values=['path_constraint', 'boundary_constraint', 'bounded', None],
             desc='flag to enforce throttle constraints on the path or at the segment boundaries or using solver bounds'
         )
+        self.options.declare(
+            "analysis_scheme",
+            default=AnalysisScheme.COLLOCATION,
+            types=AnalysisScheme,
+            desc="The analysis method that will be used to close the trajectory; for example collocation or time integration",
+        )
 
     def setup(self):
         options = self.options
         nn = options['num_nodes']
+        analysis_scheme = options['analysis_scheme']
         aviary_options = options['aviary_options']
         core_subsystems = options['core_subsystems']
         subsystem_options = options['subsystem_options']
         engine_count = len(aviary_options.get_val('engine_models'))
+
+        if analysis_scheme is AnalysisScheme.SHOOTING:
+            SGM_required_inputs = {
+                't_curr': {'units': 's'},
+                Dynamic.Mission.DISTANCE: {'units': 'm'},
+            }
+            add_SGM_required_inputs(self, SGM_required_inputs)
 
         self.add_subsystem(
             'input_port',
@@ -169,9 +185,12 @@ class MissionODE(om.Group):
                            promotes_inputs=['*'],
                            promotes_outputs=['*'])
 
+        self.set_input_defaults(Dynamic.Mission.MACH, val=np.ones(nn), units='unitless')
         self.set_input_defaults(Dynamic.Mission.MASS, val=np.ones(nn), units='kg')
         self.set_input_defaults(Dynamic.Mission.VELOCITY, val=np.ones(nn), units='m/s')
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.ones(nn), units='m')
+        self.set_input_defaults(Dynamic.Mission.ALTITUDE_RATE,
+                                val=np.ones(nn), units='m/s')
         self.set_input_defaults(
             Dynamic.Mission.THROTTLE, val=np.ones((nn, engine_count)),
             units='unitless')
@@ -198,6 +217,14 @@ class MissionODE(om.Group):
                            ],
                            promotes_outputs=['initial_mass_residual'])
 
+        if analysis_scheme is AnalysisScheme.SHOOTING:
+            SGM_required_outputs = {
+                Dynamic.Mission.ALTITUDE_RATE: {'units': 'm/s'},
+            }
+            add_SGM_required_outputs(self, SGM_required_outputs)
+
+        print_level = 0 if analysis_scheme is AnalysisScheme.SHOOTING else 2
+
         self.nonlinear_solver = om.NewtonSolver(solve_subsystems=True,
                                                 atol=1.0e-10,
                                                 rtol=1.0e-10,
@@ -205,4 +232,4 @@ class MissionODE(om.Group):
         self.nonlinear_solver.linesearch = om.BoundsEnforceLS()
         self.linear_solver = om.DirectSolver(assemble_jac=True)
         self.nonlinear_solver.options['err_on_non_converge'] = True
-        self.nonlinear_solver.options['iprint'] = 2
+        self.nonlinear_solver.options['iprint'] = print_level

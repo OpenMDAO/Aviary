@@ -216,9 +216,6 @@ class FlightPathODE(BaseODE):
             from aviary.utils.functions import create_printcomp
             dummy_comp = create_printcomp(
                 all_inputs=[
-                    Aircraft.Design.OPERATING_MASS,
-                    Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS,  # should be total
-                    Mission.Design.RESERVE_FUEL,
                     Dynamic.Mission.DISTANCE,
                     Dynamic.Mission.THROTTLE,
                     'required_lift',

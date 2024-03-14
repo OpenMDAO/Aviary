@@ -69,7 +69,7 @@ jobs:
           pip install git+https://github.com/OpenMDAO/OpenMDAO
 
       - name: Checkout Aviary
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Install Aviary
         shell: bash -l {0}
@@ -85,7 +85,7 @@ jobs:
         run: |
           conda info
           conda list
-          conda env export --name ${{ matrix.NAME }}_env --file ${{ matrix.NAME }}_environment.yml
+          conda env export --file ${{ matrix.NAME }}_environment.yml
 
       - name: 'Upload environment artifact'
         uses: actions/upload-artifact@v3

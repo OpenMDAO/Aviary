@@ -692,7 +692,7 @@ class LoadFactorsTestCase1(unittest.TestCase):
 
         tol = 1e-4
         # bug fixed value
-        assert_near_equal(self.prob[Aircraft.Wing.ULTIMATE_LOAD_FACTOR], 3.951, tol)
+        assert_near_equal(self.prob[Aircraft.Wing.ULTIMATE_LOAD_FACTOR], 3.9502, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-7, rtol=5e-7)
@@ -785,7 +785,7 @@ class LoadFactorsTestCase3smooth(unittest.TestCase):
 
         tol = 4e-4
         # bug fixed value
-        assert_near_equal(self.prob[Aircraft.Wing.ULTIMATE_LOAD_FACTOR], 3.951, tol)
+        assert_near_equal(self.prob[Aircraft.Wing.ULTIMATE_LOAD_FACTOR], 3.9502, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-7, rtol=5e-7)

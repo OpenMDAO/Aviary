@@ -599,6 +599,8 @@ class Dynamic:
         MASS_RATE = 'mass_rate'
         NOX_RATE = 'nox_rate'
         NOX_RATE_TOTAL = 'nox_rate_total'
+        SHAFT_POWER = 'shaft_power'
+        SHAFT_POWER_CORRECTED = 'shaft_power_corrected'
         SPECIFIC_ENERGY = 'specific_energy'
         SPECIFIC_ENERGY_RATE = 'specific_energy_rate'
         SPECIFIC_ENERGY_RATE_EXCESS = 'specific_energy_rate_excess'
@@ -623,6 +625,7 @@ class Mission:
         MASS_RESIDUAL = 'mission:constraints:mass_residual'
         MAX_MACH = 'mission:constraints:max_mach'
         RANGE_RESIDUAL = 'mission:constraints:range_residual'
+        RANGE_RESIDUAL_RESERVE = 'mission:constraints:range_residual_reserve'
 
     class Design:
         # These values MAY change in design mission, but in off-design
@@ -688,9 +691,11 @@ class Mission:
         # based on the user-selection.
         CRUISE_MACH = 'mission:summary:cruise_mach'
         CRUISE_MASS_FINAL = 'mission:summary:cruise_mass_final'
+        FUEL_BURNED = 'mission:summary:fuel_burned'
         FUEL_FLOW_SCALER = 'mission:summary:fuel_flow_scaler'
         GROSS_MASS = 'mission:summary:gross_mass'
         RANGE = 'mission:summary:range'
+        RESERVE_FUEL_BURNED = 'mission:summary:reserve_fuel_burned'
         TOTAL_FUEL_MASS = 'mission:summary:total_fuel_mass'
 
     class Takeoff:

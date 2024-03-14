@@ -3,6 +3,7 @@ import unittest
 
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
+from openmdao.core.problem import _clear_problem_names
 
 from aviary.interface.default_phase_info.two_dof import phase_info
 from aviary.interface.methods_for_level1 import run_aviary
@@ -11,6 +12,9 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 @use_tempdirs
 class ProblemPhaseTestCase(unittest.TestCase):
+
+    def setUp(self):
+        _clear_problem_names()  # need to reset these to simulate separate runs
 
     @require_pyoptsparse(optimizer="IPOPT")
     def bench_test_swap_3_FwGm_IPOPT(self):

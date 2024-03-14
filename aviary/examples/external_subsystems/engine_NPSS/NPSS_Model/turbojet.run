@@ -1,0 +1,82 @@
+//------------------------------------------------------------------------
+//                                                                       |
+//   File Name:     turbojet.run                                         |
+//   Date(s):       December 1, 2023                                     |
+//                                                                       |
+//    Description:   File to run the Turbojet Engine Model in NPSS v3.2  |
+//                  using components from NPSS EMI v14.0.2               |
+//                                                                       |
+//------------------------------------------------------------------------
+
+// declare the thermodynamics package to be used
+setThermoPackage( "GasTbl" );
+#define ENG_PATH
+
+//------------------------------------------------------------------------
+//                          User-Defined Elements
+//------------------------------------------------------------------------
+
+#include<$ENG_PATH/Maps_and_Elements/Performance.int>
+#include<$ENG_PATH/Maps_and_Elements/3Dmaps.int>
+
+//------------------------------------------------------------------------
+//                           Output Data Viewers 
+//------------------------------------------------------------------------
+#include <$ENG_PATH/Maps_and_Elements/npss.view_page> 
+#include <$ENG_PATH/Maps_and_Elements/npss.view_Aviary> 
+
+OutFileStream DataOutput {filename = "$ENG_PATH/Design_files/output.int";}
+DataOutput.precision = 20;
+
+//------------------------------------------------------------------------
+//                              Model Files 
+//------------------------------------------------------------------------
+#include<$ENG_PATH/turbojet.mdl>
+#include<$ENG_PATH/turbojet.fnc>
+
+//------------------------------------------------------------------------
+//                           Run the Design Case
+//------------------------------------------------------------------------
+
+setOption( "switchDes", "DESIGN" );
+solver.maxJacobians = 25;
+solver.maxIterations = 50;
+solver.defaultTolerance = 0.000000001;
+autoSolverSetup(); 
+W_DES = 280.; // value if input.int is not called. 
+Alt_DES = 0.0; // value if input.int is not called. 
+MN_DES = 0.0; // value if input.int is not called. 
+#include <$ENG_PATH/Design_files/input.int> 
+
+// solver.addIndependent( "ind_W" );
+// solver.addDependent( "dep_Fn" );
+
+solver.addIndependent( "ind_FAR" );
+solver.addDependent( "dep_T4" );
+
+// execute the DESIGN point
+start.W = W_DES;
+ambient.alt_in = Alt_DES;
+ambient.MN_in = MN_DES;
+PERF.PC = 50;
+run();
+page.display();
+DataOutput << "Fn_SLS = "<< PERF.Fn<<endl;
+
+//------------------------------------------------------------------------
+//                  Run the Engine Off-Design Analyses
+//------------------------------------------------------------------------
+setOption( "switchDes", "OFFDESIGN" );
+solver.maxJacobians = 50;
+solver.maxIterations = 100;
+solver.defaultTolerance = 0.000000001;
+autoSolverSetup(); 
+
+run();
+
+// Run Deck
+#include<$ENG_PATH/engine.case_Aviary_min>
+DataOutput << "Wf_training_data = list("<< fuelflow_training_data<<")"<<endl;
+DataOutput << "thrust_training_data = list("<< thrust_training_data<<")"<<endl;
+DataOutput << "thrustmax_training_data = list("<< thrustmax_training_data<<")"<<endl;
+

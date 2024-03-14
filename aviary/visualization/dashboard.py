@@ -1,5 +1,4 @@
 import argparse
-import glob
 import json
 import os
 from pathlib import Path
@@ -17,11 +16,22 @@ from panel.theme import DefaultTheme
 import openmdao.api as om
 from openmdao.utils.general_utils import env_truthy
 
+# support getting this function from OpenMDAO post movement of the function to utils
+#    but also support it's old location
+try:
+    from openmdao.utils.array_utils import convert_ndarray_to_support_nans_in_json
+except ImportError:
+    from openmdao.visualization.n2_viewer.n2_viewer import (
+        _convert_ndarray_to_support_nans_in_json as convert_ndarray_to_support_nans_in_json,
+    )
+
+import aviary.api as av
+
 pn.extension(sizing_mode="stretch_width")
 
 # Constants - # Can't get using CSS to work with frames and the raw_css for the template so going with
 #    this for now
-aviary_variables_json_file_name = 'aviary_vars.json'
+aviary_variables_json_file_name = "aviary_vars.json"
 
 
 def _dashboard_setup_parser(parser):
@@ -108,11 +118,12 @@ def create_report_frame(format, text_filepath):
         does not exist.
     """
     if os.path.exists(text_filepath):
-        if format == 'html':
+        if format == "html":
             iframe_css = 'width=1200px height=800px overflow-x="scroll" overflow="scroll" margin=0px padding=0px border=20px frameBorder=20px scrolling="yes"'
             report_pane = pn.pane.HTML(
-                f'<iframe {iframe_css} src=/home/{text_filepath}></iframe>')
-        elif format in ['markdown', 'text']:
+                f"<iframe {iframe_css} src=/home/{text_filepath}></iframe>"
+            )
+        elif format in ["markdown", "text"]:
             with open(text_filepath, "rb") as f:
                 file_text = f.read()
                 # need to deal with some encoding errors
@@ -152,15 +163,29 @@ def create_aviary_variables_table_data_nested(script_name, recorder_file):
 
     """
     cr = om.CaseReader(recorder_file)
-    if 'final' not in cr.list_cases():
+    print(f"r.list_c with {cr=}")
+
+    if "final" not in cr.list_cases():
         return None
 
-    case = cr.get_case('final')
-    outputs = case.list_outputs(explicit=True, implicit=True, val=True,
-                                residuals=True, residuals_tol=None,
-                                units=True, shape=True, bounds=True, desc=True,
-                                scaling=False, hierarchical=True, print_arrays=True,
-                                out_stream=None, return_format='dict')
+    print(f"cr.get_case with {cr=}")
+    case = cr.get_case("final")
+    outputs = case.list_outputs(
+        explicit=True,
+        implicit=True,
+        val=True,
+        residuals=True,
+        residuals_tol=None,
+        units=True,
+        shape=True,
+        bounds=True,
+        desc=True,
+        scaling=False,
+        hierarchical=True,
+        print_arrays=True,
+        out_stream=None,
+        return_format="dict",
+    )
 
     sorted_abs_names = sorted(outputs.keys())
 
@@ -177,25 +202,34 @@ def create_aviary_variables_table_data_nested(script_name, recorder_file):
     for group_name in sorted_group_names:
         if len(grouped[group_name]) == 1:  # a list of one var.
             var_info = grouped[group_name][0]
+            prom_name = outputs[var_info]["prom_name"]
+            aviary_metadata = av.CoreMetaData.get(prom_name)
             table_data_nested.append(
                 {
                     "abs_name": group_name,
-                    "prom_name": outputs[var_info]["prom_name"],
-                    "value": str(outputs[var_info]["val"]),
-                    "units": str(outputs[var_info]["units"]),
+                    "prom_name": prom_name,
+                    "value": convert_ndarray_to_support_nans_in_json(
+                        outputs[var_info]["val"]
+                    ),
+                    "units": outputs[var_info]["units"],
+                    "metadata": json.dumps(aviary_metadata),
                 }
             )
         else:
             # create children
             children_list = []
             for children_name in grouped[group_name]:
-                var_info = outputs[children_name]
+                prom_name = outputs[children_name]["prom_name"]
+                aviary_metadata = av.CoreMetaData.get(prom_name)
                 children_list.append(
                     {
                         "abs_name": children_name,
-                        "prom_name": outputs[children_name]["prom_name"],
-                        "value": str(outputs[children_name]["val"]),
-                        "units": str(outputs[children_name]["units"]),
+                        "prom_name": prom_name,
+                        "value": convert_ndarray_to_support_nans_in_json(
+                            outputs[children_name]["val"]
+                        ),
+                        "units": outputs[children_name]["units"],
+                        "metadata": json.dumps(aviary_metadata),
                     }
                 )
             table_data_nested.append(  # not a real var, just a group of vars so no values
@@ -316,30 +350,29 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
     # Inputs
     inputs_pane = create_report_frame("html", f"{reports_dir}/inputs.html")
     if inputs_pane:
-        model_tabs_list.append(('Inputs', inputs_pane))
+        model_tabs_list.append(("Inputs", inputs_pane))
 
     #  Debug Input List
     input_list_pane = create_report_frame("text", "input_list.txt")
     if input_list_pane:
-        model_tabs_list.append(('Debug Input List', input_list_pane))
+        model_tabs_list.append(("Debug Input List", input_list_pane))
 
     #  Debug Output List
     output_list_pane = create_report_frame("text", "output_list.txt")
     if output_list_pane:
-        model_tabs_list.append(('Debug Output List', output_list_pane))
+        model_tabs_list.append(("Debug Output List", output_list_pane))
 
     # N2
     n2_pane = create_report_frame("html", f"{reports_dir}/n2.html")
     if n2_pane:
-        model_tabs_list.append(('N2', n2_pane))
+        model_tabs_list.append(("N2", n2_pane))
 
     # Trajectory Linkage
     traj_linkage_report_pane = create_report_frame(
         "html", f"{reports_dir}/traj_linkage_report.html"
     )
     if traj_linkage_report_pane:
-        model_tabs_list.append(('Trajectory Linkage Report',
-                                traj_linkage_report_pane))
+        model_tabs_list.append(("Trajectory Linkage Report", traj_linkage_report_pane))
 
     ####### Optimization Tab #######
     optimization_tabs_list = []
@@ -441,6 +474,12 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
     ####### Results Tab #######
     results_tabs_list = []
 
+    # Mission Summary
+    mission_summary_pane = create_report_frame(
+        "markdown", f"{reports_dir}/mission_summary.md")
+    if mission_summary_pane:
+        results_tabs_list.append(("Mission Summary", mission_summary_pane))
+
     # Trajectory results
     traj_results_report_pane = create_report_frame(
         "html", f"{reports_dir}/traj_results_report.html"
@@ -485,25 +524,27 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
 
     # Look through subsystems directory for markdown files
     for md_file in Path(f"{reports_dir}subsystems").glob("*.md"):
-        example_subsystems_pane = create_report_frame("markdown", str(md_file))
-        subsystem_tabs_list.append((md_file.stem, example_subsystems_pane))
+        subsystems_pane = create_report_frame("markdown", str(md_file))
+        subsystem_tabs_list.append((md_file.stem, subsystems_pane))
 
-    model_tabs = pn.Tabs(*model_tabs_list, stylesheets=['assets/aviary_styles.css'])
-    optimization_tabs = pn.Tabs(*optimization_tabs_list,
-                                stylesheets=['assets/aviary_styles.css'])
-    results_tabs = pn.Tabs(*results_tabs_list, stylesheets=['assets/aviary_styles.css'])
+    model_tabs = pn.Tabs(*model_tabs_list, stylesheets=["assets/aviary_styles.css"])
+    optimization_tabs = pn.Tabs(
+        *optimization_tabs_list, stylesheets=["assets/aviary_styles.css"]
+    )
+    results_tabs = pn.Tabs(*results_tabs_list, stylesheets=["assets/aviary_styles.css"])
     if subsystem_tabs_list:
-        subsystem_tabs = pn.Tabs(*subsystem_tabs_list,
-                                 stylesheets=['assets/aviary_styles.css'])
+        subsystem_tabs = pn.Tabs(
+            *subsystem_tabs_list, stylesheets=["assets/aviary_styles.css"]
+        )
 
     # Add subtabs to tabs
     high_level_tabs = []
-    high_level_tabs.append(('Model', model_tabs))
-    high_level_tabs.append(('Optimization', optimization_tabs))
-    high_level_tabs.append(('Results', results_tabs))
+    high_level_tabs.append(("Model", model_tabs))
+    high_level_tabs.append(("Optimization", optimization_tabs))
+    high_level_tabs.append(("Results", results_tabs))
     if subsystem_tabs_list:
-        high_level_tabs.append(('Subsystems', subsystem_tabs))
-    tabs = pn.Tabs(*high_level_tabs, stylesheets=['assets/aviary_styles.css'])
+        high_level_tabs.append(("Subsystems", subsystem_tabs))
+    tabs = pn.Tabs(*high_level_tabs, stylesheets=["assets/aviary_styles.css"])
 
     template = pn.template.FastListTemplate(
         title=f"Aviary Dashboard for {script_name}",
@@ -516,7 +557,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
         theme=DefaultTheme,
         theme_toggle=False,
         main_layout=None,
-        css_files=['assets/aviary_styles.css']
+        css_files=["assets/aviary_styles.css"],
     )
 
     if env_truthy("TESTFLO_RUNNING"):
