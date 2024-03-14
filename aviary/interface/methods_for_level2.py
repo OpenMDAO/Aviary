@@ -2027,9 +2027,10 @@ class AviaryProblem(om.Problem):
             elif objective_type == "fuel":
                 self.model.add_objective(Mission.Objectives.FUEL, ref=ref)
 
+        # set objective ref on height-energy missions
         elif self.mission_method is HEIGHT_ENERGY:
             ref = ref if ref is not None else default_ref_values.get(
-                Mission.Summary.FUEL_BURNED, 1)
+                'fuel_burned', 1)
             self.model.add_objective(Mission.Summary.FUEL_BURNED, ref=ref)
 
         else:  # If no 'objective_type' is specified, we handle based on 'problem_type'
