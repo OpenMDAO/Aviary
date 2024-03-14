@@ -17,7 +17,7 @@ from aviary.interface.default_phase_info.two_dof import default_mission_subsyste
 class TestUnsteadySolvedODE(unittest.TestCase):
     """ Test the unsteady solved ODE in steady level flight. """
 
-    def _test_unsteady_solved_ode(self, ground_roll=False, input_speed_type=SpeedType.TAS, clean=True):
+    def _test_unsteady_solved_ode(self, ground_roll=False, input_speed_type=SpeedType.MACH, clean=True):
         nn = 5
 
         p = om.Problem()
@@ -27,8 +27,7 @@ class TestUnsteadySolvedODE(unittest.TestCase):
                                 clean=clean,
                                 ground_roll=ground_roll,
                                 aviary_options=get_option_defaults(),
-                                core_subsystems=default_mission_subsystems,
-                                balance_throttle=True)
+                                core_subsystems=default_mission_subsystems)
 
         p.model.add_subsystem("ode", ode, promotes=["*"])
 
@@ -36,6 +35,7 @@ class TestUnsteadySolvedODE(unittest.TestCase):
         param_port = ParamPort()
         for key, data in param_port.param_data.items():
             p.model.set_input_defaults(key, **data)
+        p.model.set_input_defaults(Dynamic.Mission.MACH, 0.8 * np.ones(nn))
 
         p.setup(force_alloc_complex=True)
 
@@ -43,9 +43,8 @@ class TestUnsteadySolvedODE(unittest.TestCase):
 
         p.set_val(Dynamic.Mission.SPEED_OF_SOUND, 968.076 * np.ones(nn), units="ft/s")
         p.set_val("rho", 0.000659904 * np.ones(nn), units="slug/ft**3")
-        p.set_val("TAS", 487 * np.ones(nn), units="kn")
+        p.set_val("mach", 0.8 * np.ones(nn), units="unitless")
         p.set_val("mass", 170_000 * np.ones(nn), units="lbm")
-        p.set_val("dTAS_dr", 0.0 * np.ones(nn), units="kn/NM")
 
         if not ground_roll:
             p.set_val(Dynamic.Mission.FLIGHT_PATH_ANGLE, 0.0 * np.ones(nn), units="rad")
@@ -67,7 +66,7 @@ class TestUnsteadySolvedODE(unittest.TestCase):
             Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units="lbm/s")
         dmass_dr = p.model.get_val("dmass_dr", units="lbm/ft")
         dt_dr = p.model.get_val("dt_dr", units="s/ft")
-        tas = p.model.get_val("TAS", units="ft/s")
+        tas = p.model.get_val(Dynamic.Mission.VELOCITY, units="ft/s")
         iwing = p.model.get_val(Aircraft.Wing.INCIDENCE, units="deg")
         alpha = p.model.get_val("alpha", units="deg")
 

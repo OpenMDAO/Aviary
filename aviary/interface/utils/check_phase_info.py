@@ -3,7 +3,6 @@ from aviary.variable_info.enums import SpeedType, EquationsOfMotion
 
 TWO_DEGREES_OF_FREEDOM = EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
 HEIGHT_ENERGY = EquationsOfMotion.HEIGHT_ENERGY
-SOLVED = EquationsOfMotion.SOLVED
 SOLVED_2DOF = EquationsOfMotion.SOLVED_2DOF
 
 
@@ -183,8 +182,6 @@ def check_phase_info(phase_info, mission_method):
                     phase_keys[phase] = {**phase_keys_gasp[phase]}
                 else:
                     phase_keys[phase] = {**common_keys, **phase_keys_gasp[phase]}
-    elif mission_method is SOLVED:
-        return
     elif mission_method is SOLVED_2DOF:
         return
     elif mission_method is HEIGHT_ENERGY:

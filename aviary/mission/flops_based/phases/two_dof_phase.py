@@ -77,29 +77,20 @@ class TwoDOFPhase(PhaseBuilderBase):
 
         user_options: AviaryValues = self.user_options
 
-        throttle_setting = user_options.get_val('throttle_setting')
         control_order = user_options.get_val('control_order')
-        opt = user_options.get_val('opt')
 
         fix_initial = user_options.get_val('fix_initial')
         duration_bounds = user_options.get_val('duration_bounds', units='ft')
         duration_ref = user_options.get_val('duration_ref', units='ft')
         ground_roll = user_options.get_val('ground_roll')
-        balance_throttle = user_options.get_val('balance_throttle')
+        throttle_enforcement = user_options.get_val('throttle_enforcement')
         rotation = user_options.get_val('rotation')
         constraints = user_options.get_val('constraints')
         optimize_mach = user_options.get_val('optimize_mach')
         optimize_altitude = user_options.get_val('optimize_altitude')
         mach_bounds = user_options.get_item('mach_bounds')
         altitude_bounds = user_options.get_item('altitude_bounds')
-
-        if not balance_throttle:
-            phase.add_parameter(
-                Dynamic.Mission.THROTTLE,
-                opt=False,
-                units="unitless",
-                val=throttle_setting,
-                static_target=False)
+        use_polynomial_control = user_options.get_val('use_polynomial_control')
 
         initial_kwargs = {}
         if not fix_initial:
@@ -114,19 +105,27 @@ class TwoDOFPhase(PhaseBuilderBase):
                                **initial_kwargs)
 
         phase.set_state_options("time", rate_source="dt_dr",
-                                fix_initial=fix_initial, fix_final=False, ref=100., defect_ref=100. * 1.e2, solve_segments='forward')
+                                fix_initial=fix_initial, fix_final=False, ref=100., defect_ref=100.)
 
         phase.set_state_options("mass", rate_source="dmass_dr",
                                 fix_initial=fix_initial, fix_final=False, ref=170.e3, defect_ref=170.e5,
                                 val=170.e3, units='lbm', lower=10.e3)
 
-        phase.add_polynomial_control(Dynamic.Mission.MACH,
-                                     order=control_order,
-                                     val=0.4, units=mach_bounds[1],
-                                     opt=optimize_mach, lower=mach_bounds[0][0], upper=mach_bounds[0][1],
-                                     fix_initial=fix_initial,
-                                     rate_targets=['dmach_dr'],
-                                     )
+        if use_polynomial_control:
+            phase.add_polynomial_control(Dynamic.Mission.MACH,
+                                         order=control_order,
+                                         val=0.4, units=mach_bounds[1],
+                                         opt=optimize_mach, lower=mach_bounds[0][0], upper=mach_bounds[0][1],
+                                         fix_initial=fix_initial,
+                                         rate_targets=['dmach_dr'],
+                                         )
+        else:
+            phase.add_control(Dynamic.Mission.MACH,
+                              fix_initial=fix_initial,
+                              val=0.4, units=mach_bounds[1],
+                              opt=optimize_mach, lower=mach_bounds[0][0], upper=mach_bounds[0][1],
+                              rate_targets=['dmach_dr'],
+                              )
 
         if rotation:
             phase.add_polynomial_control("alpha",
@@ -135,7 +134,7 @@ class TwoDOFPhase(PhaseBuilderBase):
                                          lower=0, upper=15,
                                          units='deg', ref=10.,
                                          val=0.,
-                                         opt=opt)
+                                         opt=True)
 
         if ground_roll:
             phase.add_polynomial_control(Dynamic.Mission.ALTITUDE,
@@ -143,16 +142,42 @@ class TwoDOFPhase(PhaseBuilderBase):
                                          fix_initial=fix_initial,
                                          rate_targets=['dh_dr'], rate2_targets=['d2h_dr2'])
         else:
-            phase.add_polynomial_control(Dynamic.Mission.ALTITUDE,
-                                         order=control_order,
-                                         fix_initial=fix_initial,
-                                         units=altitude_bounds[1],
-                                         rate_targets=['dh_dr'], rate2_targets=['d2h_dr2'],
-                                         opt=optimize_altitude, lower=altitude_bounds[
-                                             0][0], upper=altitude_bounds[0][1],
-                                         ref=(altitude_bounds[0][0] +
-                                              altitude_bounds[0][1]) / 2,
-                                         )
+            if use_polynomial_control:
+                phase.add_polynomial_control(Dynamic.Mission.ALTITUDE,
+                                             order=control_order,
+                                             fix_initial=fix_initial,
+                                             units=altitude_bounds[1],
+                                             rate_targets=['dh_dr'], rate2_targets=['d2h_dr2'],
+                                             opt=optimize_altitude,
+                                             lower=altitude_bounds[0][0],
+                                             upper=altitude_bounds[0][1],
+                                             ref=(altitude_bounds[0][0] +
+                                                  altitude_bounds[0][1]) / 2,
+                                             )
+            else:
+                phase.add_control(Dynamic.Mission.ALTITUDE,
+                                  fix_initial=fix_initial,
+                                  units=altitude_bounds[1],
+                                  rate_targets=['dh_dr'], rate2_targets=['d2h_dr2'],
+                                  opt=optimize_altitude,
+                                  lower=altitude_bounds[0][0],
+                                  upper=altitude_bounds[0][1],
+                                  ref=(altitude_bounds[0][0] +
+                                       altitude_bounds[0][1]) / 2,
+                                  )
+
+        if not Dynamic.Mission.THROTTLE in constraints:
+            if throttle_enforcement == 'boundary_constraint':
+                phase.add_boundary_constraint(
+                    Dynamic.Mission.THROTTLE, loc='initial', lower=0.0, upper=1.0, units='unitless',
+                )
+                phase.add_boundary_constraint(
+                    Dynamic.Mission.THROTTLE, loc='final', lower=0.0, upper=1.0, units='unitless',
+                )
+            elif throttle_enforcement == 'path_constraint':
+                phase.add_path_constraint(
+                    Dynamic.Mission.THROTTLE, lower=0.0, upper=1.0, units='unitless',
+                )
 
         self._add_user_defined_constraints(phase, constraints)
 
@@ -204,7 +229,7 @@ class TwoDOFPhase(PhaseBuilderBase):
             'input_speed_type': SpeedType.MACH,
             'clean': self.user_options.get_val('clean'),
             'ground_roll': self.user_options.get_val('ground_roll'),
-            'balance_throttle': self.user_options.get_val('balance_throttle'),
+            'throttle_enforcement': self.user_options.get_val('throttle_enforcement'),
         }
 
 
@@ -224,7 +249,6 @@ TwoDOFPhase._add_meta_data('optimize_mach', val=False)
 
 TwoDOFPhase._add_meta_data('optimize_altitude', val=False)
 
-TwoDOFPhase._add_meta_data('throttle_setting', val=None, desc='throttle setting')
 TwoDOFPhase._add_meta_data('initial_bounds', val=(0., 100.),
                            units='s', desc='initial bounds')
 TwoDOFPhase._add_meta_data('duration_bounds', val=(
@@ -233,14 +257,14 @@ TwoDOFPhase._add_meta_data('initial_ref', val=100., units='s', desc='initial ref
 TwoDOFPhase._add_meta_data('duration_ref', val=1000.,
                            units='s', desc='duration reference')
 TwoDOFPhase._add_meta_data('control_order', val=1, desc='control order')
-TwoDOFPhase._add_meta_data('opt', val=True, desc='opt')
 TwoDOFPhase._add_meta_data('ground_roll', val=False)
 TwoDOFPhase._add_meta_data('rotation', val=False)
 TwoDOFPhase._add_meta_data('clean', val=False)
-TwoDOFPhase._add_meta_data('balance_throttle', val=False)
+TwoDOFPhase._add_meta_data('throttle_enforcement', val=None)
 TwoDOFPhase._add_meta_data('constraints', val={})
 TwoDOFPhase._add_meta_data('mach_bounds', val=(0., 2.), units='unitless')
 TwoDOFPhase._add_meta_data('altitude_bounds', val=(0., 60.e3), units='ft')
+TwoDOFPhase._add_meta_data('use_polynomial_control', val=True)
 
 TwoDOFPhase._add_initial_guess_meta_data(
     InitialGuessIntegrationVariable(key='distance'),
