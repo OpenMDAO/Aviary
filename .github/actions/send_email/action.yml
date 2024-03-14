@@ -1,0 +1,36 @@
+name: 'Send Email'
+description: 'Send an email with customizable subject and body'
+inputs:
+  username:
+    description: 'Email username'
+    required: true
+  password:
+    description: 'Email password'
+    required: true
+  to:
+    description: 'Recipient email address'
+    required: true
+  subject:
+    description: 'Email subject'
+    required: true
+  body:
+    description: 'Email body'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Send Email
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: 'smtp.gmail.com'
+        server_port: '465'
+        username: ${{ inputs.username }}
+        password: ${{ inputs.password }}
+        to: ${{ inputs.to }}
+        from: 'GitHub Actions'
+        subject: ${{ inputs.subject }}
+        body: ${{ inputs.body }}
+        ignore_cert: true
+        nodemailerlog: true
+        nodemailerdebug: true
