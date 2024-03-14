@@ -18,25 +18,24 @@ on:
 
       
 jobs:
-  prepare_docs_environment:    
-    uses: ./.github/workflows/prepare_environment.yml
-    with:
-        NAME: 'latest'
-        PY: 3
-        NUMPY: 1
-        SCIPY: 1
-        PYOPTSPARSE: 'v2.9.1'
-        SNOPT: '7.7'
-        OPENMDAO: 'dev'
-        DYMOS: 'latest'
-    secrets: inherit
-
+  
   test_docs:
     runs-on: ubuntu-latest
     timeout-minutes: 90
-    needs: prepare_docs_environment
 
     steps:
+      - name: prepare_docs_environment
+        uses: ./.github/workflows/prepare_environment.yml
+        with:
+            NAME: 'latest'
+            PY: 3
+            NUMPY: 1
+            SCIPY: 1
+            PYOPTSPARSE: 'v2.9.1'
+            SNOPT: '7.7'
+            OPENMDAO: 'dev'
+            DYMOS: 'latest'  
+  
       - name: Build docs
         shell: bash -l {0}
         run: |

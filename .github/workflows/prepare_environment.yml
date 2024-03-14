@@ -32,13 +32,6 @@ on:
         Run_tests:
             required: false
             type: boolean
-    secrets:
-        SSH_PRIVATE_KEY:
-            required: true
-        SSH_KNOWN_HOSTS:
-            required: true
-        SNOPT_LOCATION_77:
-            required: true
 
   # Allow running the workflow manually from the Actions tab
   workflow_dispatch:

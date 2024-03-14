@@ -17,25 +17,23 @@ on:
 
 jobs:
 
-  prepare_benchmarks_environment:    
-    uses: ./.github/workflows/prepare_environment.yml
-    with:
-        NAME: 'latest'
-        PY: 3
-        NUMPY: 1
-        SCIPY: 1
-        PYOPTSPARSE: 'v2.9.1'
-        SNOPT: '7.7'
-        OPENMDAO: 'latest'
-        DYMOS: 'latest'
-    secrets: inherit
-
   test_benchmarks:
     runs-on: ubuntu-latest
     timeout-minutes: 90
-    needs: prepare_benchmarks_environment
 
     steps:
+      - name: prepare_docs_environment
+        uses: ./.github/workflows/prepare_environment.yml
+        with:
+            NAME: 'latest'
+            PY: 3
+            NUMPY: 1
+            SCIPY: 1
+            PYOPTSPARSE: 'v2.9.1'
+            SNOPT: '7.7'
+            OPENMDAO: 'dev'
+            DYMOS: 'latest'  
+  
       - name: Run benchmarks
         shell: bash -l {0}
         run: |
