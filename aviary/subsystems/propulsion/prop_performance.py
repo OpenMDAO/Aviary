@@ -110,7 +110,7 @@ class InstallLoss(om.Group):
         )
 
         self.add_subsystem(
-            name='FT',
+            name='compute_install_loss_factor',
             subsys=om.ExecComp(
                 'install_loss_factor = 1 - blockage_factor',
                 blockage_factor={'units': 'unitless', 'val': np.zeros(nn)},
@@ -166,11 +166,8 @@ class PropPerf(om.Group):
                     ("install_loss_factor", Dynamic.Mission.INSTALLATION_LOSS_FACTOR)],
             )
         else:
-            comp = om.IndepVarComp()
-            comp.add_output('install_loss_factor',
-                            val=np.ones(nn), units="unitless")
-            self.add_subsystem('input_install_loss', comp,
-                               promotes=[('install_loss_factor', Dynamic.Mission.INSTALLATION_LOSS_FACTOR)])
+            self.set_input_defaults(
+                Dynamic.Mission.INSTALLATION_LOSS_FACTOR, val=np.ones(nn), units="unitless")
 
         self.add_subsystem(
             name='atmosphere',

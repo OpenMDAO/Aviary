@@ -898,22 +898,22 @@ class PostHamiltonStandard(om.ExplicitComponent):
         install_loss_factor = inputs[Dynamic.Mission.INSTALLATION_LOSS_FACTOR]
         tipspd = inputs[Dynamic.Mission.PROPELLER_TIP_SPEED]
 
-        fact1 = 364.76 / 1.515E06
+        unit_conversion_factor = 364.76 / 1.515E06
         partials["thrust_coefficient_comp_loss", 'thrust_coefficient'] = XFT
         partials["thrust_coefficient_comp_loss",
                  'comp_tip_loss_factor'] = inputs['thrust_coefficient']
         partials["Thrust", 'thrust_coefficient'] = XFT*tipspd**2*diam_prop**2 * \
-            inputs['density_ratio']*fact1*(1. - install_loss_factor)
+            inputs['density_ratio']*unit_conversion_factor*(1. - install_loss_factor)
         partials["Thrust", 'comp_tip_loss_factor'] = inputs['thrust_coefficient']*tipspd**2*diam_prop**2 * \
-            inputs['density_ratio']*fact1*(1. - install_loss_factor)
+            inputs['density_ratio']*unit_conversion_factor*(1. - install_loss_factor)
         partials["Thrust", Dynamic.Mission.PROPELLER_TIP_SPEED] = 2*ctx*tipspd*diam_prop**2 * \
-            inputs['density_ratio']*fact1*(1. - install_loss_factor)
+            inputs['density_ratio']*unit_conversion_factor*(1. - install_loss_factor)
         partials["Thrust", Aircraft.Engine.PROPELLER_DIAMETER] = 2*ctx*tipspd**2*diam_prop * \
-            inputs['density_ratio']*fact1*(1. - install_loss_factor)
+            inputs['density_ratio']*unit_conversion_factor*(1. - install_loss_factor)
         partials["Thrust", 'density_ratio'] = ctx*tipspd**2 * \
-            diam_prop**2*fact1*(1. - install_loss_factor)
+            diam_prop**2*unit_conversion_factor*(1. - install_loss_factor)
         partials["Thrust", Dynamic.Mission.INSTALLATION_LOSS_FACTOR] = -ctx*tipspd**2*diam_prop**2 * \
-            inputs['density_ratio']*fact1
+            inputs['density_ratio']*unit_conversion_factor
         partials["propeller_efficiency", "adv_ratio"] = ctx/inputs['power_coefficient']
         partials["propeller_efficiency", "thrust_coefficient"] = inputs['adv_ratio'] * \
             XFT/inputs['power_coefficient']
