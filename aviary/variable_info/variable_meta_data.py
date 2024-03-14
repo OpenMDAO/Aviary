@@ -1218,6 +1218,7 @@ add_meta_data(
     option=True,
     units="unitless",
     desc='required fuel reserves: given as a proportion of mission fuel. This value must be nonnegative. '
+          'Mission fuel only includes normal phases and excludes reserve phases. '
           'If it is 0.5, the reserve fuel is half of the mission fuel (one third of the total fuel). Note '
           'it can be greater than 1. If it is 2, there would be twice as much reserve fuel as mission fuel '
           '(the total fuel carried would be 1/3 for the mission and 2/3 for the reserve)',
@@ -6502,7 +6503,8 @@ add_meta_data(
                      "LEAPS1": None
                      },
     units="lbm",
-    desc='the total fuel reserves in lbm available during the mission',
+    desc='the total fuel reserves which is the sum of: '
+         'RESERVE_FUEL_BURNED, RESERVE_FUEL_ADDITIONAL, RESERVE_FUEL_FRACTION',
     default_value=0,
 )
 
@@ -6804,7 +6806,8 @@ add_meta_data(
     units='lbm',
     desc='computed mass of aircraft for landing, is only '
          'required to be equal to Aircraft.Design.TOUCHDOWN_MASS '
-         'when the design case is being run',
+         'when the design case is being run '
+         'for HEIGHT_ENERGY missions this is the mass at the end of the last regular phase (non-reserve phase)',
 )
 
 add_meta_data(
@@ -6897,6 +6900,18 @@ add_meta_data(
     default_value=0.0,
 )
 
+add_meta_data(
+    Mission.Summary.FUEL_BURNED,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='lbm',
+    desc='fuel burned during regular phases, this '
+         'does not include fuel burned in reserve phases'
+)
+
 # NOTE if per-mission level scaling is not best mapping for GASP's 'CKFF', map
 #      to FFFSUB/FFFSUP
 # CKFF is consistent for one aircraft over all missions, once the vehicle is sized
@@ -6940,6 +6955,19 @@ add_meta_data(
 )
 
 add_meta_data(
+    Mission.Summary.RESERVE_FUEL_BURNED,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='lbm',
+    desc='fuel burned during reserve phases, this '
+         'does not include fuel burned in regular phases',
+    default_value=0.,
+)
+
+add_meta_data(
     Mission.Summary.TOTAL_FUEL_MASS,
     meta_data=_MetaData,
     historical_name={"GASP": "INGASP.WFA",
@@ -6951,6 +6979,7 @@ add_meta_data(
          'includes fuel burned in the mission, reserve fuel '
          'and fuel margin',
 )
+
 
 #  _______           _                      __    __
 # |__   __|         | |                    / _|  / _|

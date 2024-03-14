@@ -1,24 +1,21 @@
 import aviary.api as av
 
 
-throttle_max = 1.0
-throttle_climb = 0.956
-throttle_cruise = 0.8
-throttle_idle = 0.0
-
-
 subsystem_options = {'core_aerodynamics':
                      {'method': 'low_speed',
                       'ground_altitude': 0.,  # units='ft'
                       'angles_of_attack': [
+                          -5.0, -4.0, -3.0, -2.0, -1.0,
                           0.0, 1.0, 2.0, 3.0, 4.0, 5.0,
                           6.0, 7.0, 8.0, 9.0, 10.0, 11.0,
                           12.0, 13.0, 14.0, 15.0],  # units='deg'
                       'lift_coefficients': [
+                          0.01, 0.1, 0.2, 0.3, 0.4,
                           0.5178, 0.6, 0.75, 0.85, 0.95, 1.05,
                           1.15, 1.25, 1.35, 1.5, 1.6, 1.7,
                           1.8, 1.85, 1.9, 1.95],
                       'drag_coefficients': [
+                          0.04, 0.02, 0.01, 0.02, 0.04,
                           0.0674, 0.065, 0.065, 0.07, 0.072, 0.076,
                           0.084, 0.09, 0.10, 0.11, 0.12, 0.13,
                           0.15, 0.16, 0.18, 0.20],
@@ -57,7 +54,6 @@ phase_info = {
             'num_segments': 5,
             'order': 3,
             'fix_initial': False,
-            'throttle_setting': throttle_max,
             'ground_roll': True,
             'clean': False,
             'initial_ref': (1.e3, 'ft'),
@@ -66,8 +62,7 @@ phase_info = {
             'duration_bounds': ((200., 2.e3), 'ft'),
             'mach_bounds': ((0.18, 0.2), 'unitless'),
             'control_order': 1,
-            'opt': True,
-            'balance_throttle': False,
+            'throttle_enforcement': 'bounded',
             'optimize_mach': optimize_mach,
             'optimize_altitude': optimize_altitude,
             'rotation': True,
@@ -95,7 +90,6 @@ phase_info = {
             'num_segments': 5,
             'order': 3,
             'fix_initial': False,
-            'throttle_setting': throttle_max,
             'ground_roll': False,
             'clean': False,
             'initial_ref': (1.e3, 'ft'),
@@ -105,8 +99,7 @@ phase_info = {
             'mach_bounds': ((0.2, 0.22), 'unitless'),
             'altitude_bounds': ((0., 250.), 'ft'),
             'control_order': 1,
-            'opt': True,
-            'balance_throttle': False,
+            'throttle_enforcement': 'bounded',
             'optimize_mach': optimize_mach,
             'optimize_altitude': optimize_altitude,
             'rotation': False,
@@ -125,7 +118,6 @@ phase_info = {
             'num_segments': 6,
             'order': 3,
             'fix_initial': False,
-            'throttle_setting': throttle_max,
             'ground_roll': False,
             'clean': False,
             'initial_ref': (1.e3, 'ft'),
@@ -135,8 +127,7 @@ phase_info = {
             'mach_bounds': ((0.22, 0.3), 'unitless'),
             'altitude_bounds': ((0., 985.), 'ft'),
             'control_order': 1,
-            'opt': True,
-            'balance_throttle': False,
+            'throttle_enforcement': 'bounded',
             'optimize_mach': optimize_mach,
             'optimize_altitude': optimize_altitude,
         },
@@ -154,7 +145,6 @@ phase_info = {
             'num_segments': 3,
             'order': 3,
             'fix_initial': False,
-            'throttle_setting': throttle_cruise,
             'ground_roll': False,
             'clean': False,
             'initial_ref': (1.e3, 'ft'),
@@ -164,9 +154,9 @@ phase_info = {
             'mach_bounds': ((0.24, 0.32), 'unitless'),
             'altitude_bounds': ((985., 1.5e3), 'ft'),
             'control_order': 1,
-            'opt': True,
             'optimize_mach': optimize_mach,
             'optimize_altitude': optimize_altitude,
+            'throttle_enforcement': 'bounded',
             'constraints': {
                 'flight_path_angle': {
                     'equals': 4.,
@@ -190,7 +180,6 @@ phase_info = {
             'num_segments': 3,
             'order': 3,
             'fix_initial': False,
-            'throttle_setting': throttle_cruise,
             'ground_roll': False,
             'clean': False,
             'initial_ref': (1.e3, 'ft'),
@@ -202,7 +191,7 @@ phase_info = {
             'control_order': 1,
             'optimize_mach': optimize_mach,
             'optimize_altitude': optimize_altitude,
-            'opt': True,
+            'throttle_enforcement': 'bounded',
             'constraints': {
                 'distance': {
                     'equals': 21325.,
@@ -227,7 +216,6 @@ phase_info = {
             'num_segments': 5,
             'order': 3,
             'fix_initial': False,
-            'throttle_setting': throttle_cruise,
             'ground_roll': False,
             'clean': False,
             'initial_ref': (1.e3, 'ft'),
@@ -239,7 +227,7 @@ phase_info = {
             'control_order': 1,
             'optimize_mach': optimize_mach,
             'optimize_altitude': optimize_altitude,
-            'opt': True,
+            'throttle_enforcement': 'bounded',
             'constraints': {
                 'distance': {
                     'equals': 50.e3,
@@ -247,13 +235,6 @@ phase_info = {
                     'type': 'boundary',
                     'loc': 'final',
                     'ref': 30.e3,
-                },
-                'altitude': {
-                    'equals': 2000.,
-                    'units': 'ft',
-                    'type': 'boundary',
-                    'loc': 'final',
-                    'ref': 3.e3,
                 },
             },
         },
@@ -274,10 +255,6 @@ phase_info = {
 
 
 if not use_full_takeoff:
-    phase_info.pop('CD_to_P2')
-    phase_info.pop('DE')
-    phase_info.pop('EF_to_P1')
-    phase_info.pop('EF_past_P1')
     driver = "SLSQP"
 else:
     driver = "SNOPT"

@@ -223,9 +223,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
         promotes = ['*']
 
         if self.code_origin is FLOPS:
-            promotes = [Dynamic.Mission.DRAG]
-            if method == 'low_speed':
-                promotes.append(Dynamic.Mission.LIFT)
+            promotes = [Dynamic.Mission.DRAG, Dynamic.Mission.LIFT]
 
         elif self.code_origin is GASP:
             if method == 'low_speed':
