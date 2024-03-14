@@ -73,7 +73,7 @@ jobs:
             .github/actions
           path: actions
 
-      - name: prepare_docs_environment
+      - name: prepare_testing_environment
         uses: ./actions/.github/actions/prepare_environment
         with:
           NAME: ${{ matrix.NAME }}
@@ -88,3 +88,10 @@ jobs:
           SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
           SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
           SNOPT_LOCATION_77: ${{ secrets.SNOPT_LOCATION_77 }}
+
+      - name: Checkout actions (again)
+        uses: actions/checkout@v3
+        with:
+          sparse-checkout: |
+            .github/actions
+          path: actions

@@ -29,9 +29,10 @@ jobs:
         with:
           sparse-checkout: |
             .github/actions
+          path: actions
     
       - name: prepare_docs_environment
-        uses: ./.github/actions/prepare_environment
+        uses: ./actions/.github/actions/prepare_environment
         with:
             NAME: 'latest'
             PY: 3
@@ -87,3 +88,10 @@ jobs:
           echo "============================================================="
           cd $GITHUB_WORKSPACE
           python -m bandit -r -ll aviary
+
+      - name: Checkout actions (again)
+        uses: actions/checkout@v3
+        with:
+          sparse-checkout: |
+            .github/actions
+          path: actions

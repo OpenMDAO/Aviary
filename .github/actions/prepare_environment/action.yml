@@ -130,7 +130,6 @@ runs:
 
     - name: Checkout Aviary
       uses: actions/checkout@v4
-      # Default: ${{ github.repository }}
 
     - name: Install Aviary
       shell: bash -l {0}
