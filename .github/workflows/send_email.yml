@@ -1,0 +1,30 @@
+name: Send Email Workflow
+
+on:
+  workflow_call:
+    inputs:
+      subject:
+        required: true
+        type: string
+      body:
+        required: true
+        type: string
+
+jobs:
+  send_email:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Email Notification
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: 'smtp.gmail.com'
+          server_port: '465'
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          to: ${{ secrets.EMAIL_TO }}
+          from: 'GitHub Actions'
+          subject: ${{ inputs.subject }}
+          body: ${{ inputs.body }}
+          ignore_cert: true
+          nodemailerlog: true
+          nodemailerdebug: true
