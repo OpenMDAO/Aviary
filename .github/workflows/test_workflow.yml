@@ -84,10 +84,17 @@ jobs:
           SNOPT: ${{ matrix.SNOPT }}
           OPENMDAO: ${{ matrix.OPENMDAO }}
           DYMOS: ${{ matrix.DYMOS }}
-          Run_tests: true
           SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
           SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
           SNOPT_LOCATION_77: ${{ secrets.SNOPT_LOCATION_77 }}
+
+      - name: Run tests
+        shell: bash -l {0}
+        run: |
+          echo "============================================================="
+          echo "Run Tests"
+          echo "============================================================="
+          testflo . -n 1 --show_skipped --coverage --coverpkg aviary
 
       - name: Checkout actions (again)
         uses: actions/checkout@v3

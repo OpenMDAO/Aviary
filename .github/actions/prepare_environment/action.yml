@@ -25,9 +25,6 @@ inputs:
     DYMOS:
         required: true
         type: string
-    Run_tests:
-        required: false
-        type: boolean
     SSH_PRIVATE_KEY:
         required: true
     SSH_KNOWN_HOSTS:
@@ -152,12 +149,4 @@ runs:
         name: ${{ inputs.NAME }}_environment
         path: ${{ inputs.NAME }}_environment.yml
         retention-days: 5
-
-    - name: Run tests
-      if: inputs.Run_tests
-      shell: bash -l {0}
-      run: |
-        echo "============================================================="
-        echo "Run Tests"
-        echo "============================================================="
-        testflo . -n 1 --show_skipped --coverage --coverpkg aviary
+        
