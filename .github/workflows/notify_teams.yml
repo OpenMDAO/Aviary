@@ -12,6 +12,13 @@ jobs:
     if: github.event.action == 'opened' || github.event.action == 'reopened' || github.event.action == 'ready_for_review'
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout actions
+        uses: actions/checkout@v3
+        with:
+          sparse-checkout: |
+            .github/actions
+          path: actions
+
       - name: Get PR Data
         run: |
           echo "action=${{ github.event.action }}" >> $GITHUB_ENV
@@ -23,8 +30,11 @@ jobs:
           echo "reviewers=${{ join(github.event.pull_request.requested_reviewers.*.login, ',') }}" >> $GITHUB_ENV
 
       - name: Send Email on Opened PR
-        uses: ./.github/workflows/send-email-workflow.yml
+        uses: ./actions/.github/actions/send_email/action.yml
         with:
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          to: ${{ secrets.DESTINATION_EMAIL }}
           subject: "***Notification*** Opened Pull Request: ${{ env.number }}"
           body: |
             {
@@ -48,8 +58,11 @@ jobs:
           echo "title=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
 
       - name: Send Email on Updated Assignees
-        uses: ./.github/workflows/send-email-workflow.yml
+        uses: ./actions/.github/actions/send_email/action.yml
         with:
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          to: ${{ secrets.DESTINATION_EMAIL }}
           subject: "***Notification*** Updated Assignees for Pull Request: ${{ env.number }}"
           body: |
             {
@@ -69,8 +82,11 @@ jobs:
           echo "title=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
 
       - name: Send Email on Reviewer Requested
-        uses: ./.github/workflows/send-email-workflow.yml
+        uses: ./actions/.github/actions/send_email/action.yml
         with:
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          to: ${{ secrets.DESTINATION_EMAIL }}
           subject: "***Notification*** Updated Reviewers for Pull Request: ${{ env.number }}"
           body: |
             {
@@ -89,8 +105,11 @@ jobs:
           echo "title=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
 
       - name: Send Email on Closed PR
-        uses: ./.github/workflows/send-email-workflow.yml
+        uses: ./actions/.github/actions/send_email/action.yml
         with:
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          to: ${{ secrets.DESTINATION_EMAIL }}
           subject: "***Notification*** Closed Pull Request: ${{ env.number }}"
           body: |
             {
