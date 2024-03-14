@@ -1,5 +1,5 @@
+import warnings
 import numpy as np
-import math
 import openmdao.api as om
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
@@ -463,7 +463,7 @@ class PreHamiltonStandard(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare('num_nodes', types=int)
+        self.options.declare('num_nodes', default=1, types=int)
 
     def setup(self):
         nn = self.options['num_nodes']
@@ -503,7 +503,7 @@ class PreHamiltonStandard(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         outputs['density_ratio'] = inputs[Dynamic.Mission.DENSITY] / RHO_SEA_LEVEL_ENGLISH
-        sqrt_temp_ratio = math.sqrt(TSLS_DEGR / inputs[Dynamic.Mission.TEMPERATURE])
+        sqrt_temp_ratio = np.sqrt(TSLS_DEGR / inputs[Dynamic.Mission.TEMPERATURE])
         vktas = inputs[Dynamic.Mission.VELOCITY]
         tipspd = inputs[Dynamic.Mission.PROPELLER_TIP_SPEED]
         # 1118.21948771 is speed of sound at sea level
@@ -521,7 +521,7 @@ class PreHamiltonStandard(om.ExplicitComponent):
         diam_prop = inputs[Aircraft.Engine.PROPELLER_DIAMETER][0]
         shp = inputs[Dynamic.Mission.SHAFT_POWER]
         temp = inputs[Dynamic.Mission.TEMPERATURE]
-        sqrt_temp_ratio = math.sqrt(TSLS_DEGR/temp)
+        sqrt_temp_ratio = np.sqrt(TSLS_DEGR/temp)
 
         partials["density_ratio", Dynamic.Mission.DENSITY] = 1 / RHO_SEA_LEVEL_ENGLISH
         partials["tip_mach",
@@ -577,6 +577,8 @@ class HamiltonStandard(om.ExplicitComponent):
         self.add_output('thrust_coefficient', val=np.zeros(nn), units='unitless')
         self.add_output('ang_blade', val=np.zeros(nn), units='deg')
         self.add_output('comp_tip_loss_factor', val=np.zeros(nn), units='unitless')
+
+        self.declare_partials('*', '*', method='fd')
 
     def compute(self, inputs, outputs):
         for i_node in range(self.options['num_nodes']):
@@ -684,8 +686,8 @@ class HamiltonStandard(om.ExplicitComponent):
                         if (self.options[Settings.VERBOSITY] != Verbosity.DEBUG):
                             if (ichck <= 1):
                                 if (run_flag == 1):
-                                    print(
-                                        f"+++warning = Mach,VTMACH,J,power_coefficient,CP_Eff =: {inputs[Dynamic.Mission.MACH][0]},{inputs['tip_mach'][0]},{inputs['adv_ratio'][0]},{power_coefficient},{CP_Eff}")
+                                    warnings.warn(
+                                        f"Mach,VTMACH,J,power_coefficient,CP_Eff =: {inputs[Dynamic.Mission.MACH][0]},{inputs['tip_mach'][0]},{inputs['adv_ratio'][0]},{power_coefficient},{CP_Eff}")
                                 if (kl == 4 and CPE1 < 0.049):
                                     print(
                                         f"Extrapolated data is being used for CLI=.6--CPE1,PXCLI,L= , {CPE1},{PXCLI[kl]},{idx_blade}   Suggest inputting CLI=.5")
@@ -697,8 +699,8 @@ class HamiltonStandard(om.ExplicitComponent):
                                         f"Extrapolated data is being used for CLI=.8--CPE1,PXCLI,L= , {CPE1},{PXCLI[kl]},{idx_blade}   Suggest inputting CLI=.5")
                         else:
                             if (run_flag == 1):
-                                print(
-                                    f"+++warning = Mach,VTMACH,J,power_coefficient,CP_Eff =: {inputs[Dynamic.Mission.MACH][0]},{inputs['tip_mach'][0]},{inputs['adv_ratio'][0]},{power_coefficient},{CP_Eff}")
+                                warnings.warn(
+                                    f"Mach,VTMACH,J,power_coefficient,CP_Eff =: {inputs[Dynamic.Mission.MACH][0]},{inputs['tip_mach'][0]},{inputs['adv_ratio'][0]},{power_coefficient},{CP_Eff}")
                             if (kl == 4 and CPE1 < 0.049):
                                 print(
                                     f"Extrapolated data is being used for CLI=.6--CPE1,PXCLI,L= , {CPE1},{PXCLI[kl]},{idx_blade}   Suggest inputting CLI=.5")
@@ -822,7 +824,7 @@ class PostHamiltonStandard(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare('num_nodes', types=int)
+        self.options.declare('num_nodes', default=1, types=int)
 
     def setup(self):
         nn = self.options['num_nodes']
@@ -896,21 +898,22 @@ class PostHamiltonStandard(om.ExplicitComponent):
         install_loss_factor = inputs[Dynamic.Mission.INSTALLATION_LOSS_FACTOR]
         tipspd = inputs[Dynamic.Mission.PROPELLER_TIP_SPEED]
 
+        fact1 = 364.76 / 1.515E06
         partials["thrust_coefficient_comp_loss", 'thrust_coefficient'] = XFT
         partials["thrust_coefficient_comp_loss",
                  'comp_tip_loss_factor'] = inputs['thrust_coefficient']
         partials["Thrust", 'thrust_coefficient'] = XFT*tipspd**2*diam_prop**2 * \
-            inputs['density_ratio']/(1.515E06)*364.76*(1. - install_loss_factor)
+            inputs['density_ratio']*fact1*(1. - install_loss_factor)
         partials["Thrust", 'comp_tip_loss_factor'] = inputs['thrust_coefficient']*tipspd**2*diam_prop**2 * \
-            inputs['density_ratio']/(1.515E06)*364.76*(1. - install_loss_factor)
+            inputs['density_ratio']*fact1*(1. - install_loss_factor)
         partials["Thrust", Dynamic.Mission.PROPELLER_TIP_SPEED] = 2*ctx*tipspd*diam_prop**2 * \
-            inputs['density_ratio']/(1.515E06)*364.76*(1. - install_loss_factor)
+            inputs['density_ratio']*fact1*(1. - install_loss_factor)
         partials["Thrust", Aircraft.Engine.PROPELLER_DIAMETER] = 2*ctx*tipspd**2*diam_prop * \
-            inputs['density_ratio']/(1.515E06)*364.76*(1. - install_loss_factor)
+            inputs['density_ratio']*fact1*(1. - install_loss_factor)
         partials["Thrust", 'density_ratio'] = ctx*tipspd**2 * \
-            diam_prop**2/(1.515E06)*364.76*(1. - install_loss_factor)
+            diam_prop**2*fact1*(1. - install_loss_factor)
         partials["Thrust", Dynamic.Mission.INSTALLATION_LOSS_FACTOR] = -ctx*tipspd**2*diam_prop**2 * \
-            inputs['density_ratio']/(1.515E06)*364.76
+            inputs['density_ratio']*fact1
         partials["propeller_efficiency", "adv_ratio"] = ctx/inputs['power_coefficient']
         partials["propeller_efficiency", "thrust_coefficient"] = inputs['adv_ratio'] * \
             XFT/inputs['power_coefficient']

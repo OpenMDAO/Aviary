@@ -29,7 +29,6 @@ import numpy as np
 import openmdao.api as om
 
 from openmdao.utils.units import convert_units
-from openmdao.core.component import Component
 
 from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.subsystems.propulsion.engine_scaling import EngineScaling
@@ -1461,7 +1460,7 @@ class TurboPropDeck(EngineDeck):
             self._add_HS_prop(engine_group, num_nodes)
         elif self.prop_model is None:
             self._add_dummy_prop(engine_group, num_nodes)
-        elif isinstance(self.prop_model, (om.Group, Component)):
+        elif isinstance(self.prop_model, (om.System)):
             engine_group.add_subsystem(
                 'propeller_model',
                 self.prop_model,
