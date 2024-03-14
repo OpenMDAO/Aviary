@@ -6095,7 +6095,7 @@ add_meta_data(
 add_meta_data(
     Dynamic.Mission.INSTALLATION_LOSS_FACTOR,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.FT',
+    historical_name={"GASP": 'FT',
                      "FLOPS": None,
                      "LEAPS1": None
                      },
@@ -6173,12 +6173,12 @@ add_meta_data(
 add_meta_data(
     Dynamic.Mission.PROPELLER_TIP_SPEED,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CLI',
+    historical_name={"GASP": 'INGASP.TSPDMX',
                      "FLOPS": None,
                      "LEAPS1": None
                      },
     units='ft/s',
-    desc='propeller blade integrated design lift coefficient (Range: 0.3 to 0.8)',
+    desc='maximum allowable propeller tip speed',
     default_value=500.0,
 )
 
