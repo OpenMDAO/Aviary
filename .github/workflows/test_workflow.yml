@@ -30,6 +30,7 @@ jobs:
     - uses: pre-commit/action@v3.0.0
 
   test_ubuntu:
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -64,15 +65,26 @@ jobs:
             OPENMDAO: 'dev'
             DYMOS: 'latest'
 
-    uses: ./.github/workflows/prepare_environment.yml
-    with:
-      NAME: ${{ matrix.NAME }}
-      PY: ${{ matrix.PY }}
-      NUMPY: ${{ matrix.NUMPY }}
-      SCIPY: ${{ matrix.SCIPY }}
-      PYOPTSPARSE: ${{ matrix.PYOPTSPARSE }}
-      SNOPT: ${{ matrix.SNOPT }}
-      OPENMDAO: ${{ matrix.OPENMDAO }}
-      DYMOS: ${{ matrix.DYMOS }}
-      Run_tests: true
-    secrets: inherit
+    steps:      
+      - name: Checkout actions
+        uses: actions/checkout@v3
+        with:
+          sparse-checkout: |
+            .github/actions
+          path: actions
+
+      - name: prepare_docs_environment
+        uses: ./actions/.github/actions/prepare_environment
+        with:
+          NAME: ${{ matrix.NAME }}
+          PY: ${{ matrix.PY }}
+          NUMPY: ${{ matrix.NUMPY }}
+          SCIPY: ${{ matrix.SCIPY }}
+          PYOPTSPARSE: ${{ matrix.PYOPTSPARSE }}
+          SNOPT: ${{ matrix.SNOPT }}
+          OPENMDAO: ${{ matrix.OPENMDAO }}
+          DYMOS: ${{ matrix.DYMOS }}
+          Run_tests: true
+          SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+          SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
+          SNOPT_LOCATION_77: ${{ secrets.SNOPT_LOCATION_77 }}

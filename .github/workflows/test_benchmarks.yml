@@ -22,8 +22,15 @@ jobs:
     timeout-minutes: 90
 
     steps:
+      - name: Checkout actions
+        uses: actions/checkout@v3
+        with:
+          sparse-checkout: |
+            .github/actions
+          path: actions
+  
       - name: prepare_docs_environment
-        uses: ./.github/workflows/prepare_environment.yml
+        uses: ./actions/.github/actions/prepare_environment
         with:
             NAME: 'latest'
             PY: 3
@@ -33,6 +40,9 @@ jobs:
             SNOPT: '7.7'
             OPENMDAO: 'dev'
             DYMOS: 'latest'  
+            SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+            SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
+            SNOPT_LOCATION_77: ${{ secrets.SNOPT_LOCATION_77 }}
   
       - name: Run benchmarks
         shell: bash -l {0}

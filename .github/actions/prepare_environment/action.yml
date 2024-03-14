@@ -1,0 +1,162 @@
+name: Prepare Environment
+
+inputs:
+    NAME:
+        required: true
+        type: string
+    PY:
+        required: true
+        type: string
+    NUMPY:
+        required: true
+        type: string
+    SCIPY:
+        required: true
+        type: string
+    PYOPTSPARSE:
+        required: true
+        type: string
+    SNOPT:
+        required: true
+        type: string
+    OPENMDAO:
+        required: true
+        type: string
+    DYMOS:
+        required: true
+        type: string
+    Run_tests:
+        required: false
+        type: boolean
+    SSH_PRIVATE_KEY:
+        required: true
+    SSH_KNOWN_HOSTS:
+        required: true
+    SNOPT_LOCATION_77:
+        required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Display run details
+      run: |
+        echo "============================================================="
+        echo "Run #${GITHUB_RUN_NUMBER}"
+        echo "Run ID: ${GITHUB_RUN_ID}"
+        echo "Testing: ${GITHUB_REPOSITORY}"
+        echo "Triggered by: ${GITHUB_EVENT_NAME}"
+        echo "Initiated by: ${GITHUB_ACTOR}"
+        echo "============================================================="
+
+    - name: Create SSH key
+      shell: bash
+      env:
+        SSH_PRIVATE_KEY: ${{inputs.SSH_PRIVATE_KEY}}
+        SSH_KNOWN_HOSTS: ${{inputs.SSH_KNOWN_HOSTS}}
+      run: |
+        mkdir -p ~/.ssh/
+        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+        sudo chmod 600 ~/.ssh/id_rsa
+        echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+
+    - name: Setup miniconda
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        auto-update-conda: true
+        python-version: ${{ inputs.PY }}
+        channels: conda-forge
+
+    - name: Install dependencies
+      shell: bash -l {0}
+      run: |
+        echo "============================================================="
+        echo "Install dependencies"
+        echo "============================================================="
+        conda install numpy=${{ inputs.NUMPY }} scipy=${{ inputs.SCIPY }} -q -y
+        conda install matplotlib pandas panel hvplot -q -y
+        pip install testflo -q
+
+    - name: Install pyOptSparse
+      if: inputs.PYOPTSPARSE
+      shell: bash -l {0}
+      run: |
+        echo "============================================================="
+        echo "Install pyoptsparse"
+        echo "============================================================="
+        if [[ "${{ inputs.SNOPT }}" == "7.7" && "${{ inputs.SNOPT_LOCATION_77 }}" ]]; then
+          mkdir SNOPT
+          echo "  > Secure copying SNOPT 7.7 over SSH"
+          scp -qr ${{ inputs.SNOPT_LOCATION_77 }} SNOPT
+          SNOPT="-s SNOPT/src"
+        elif [[ "${{ inputs.SNOPT }}" ]]; then
+          echo "SNOPT version ${{ inputs.SNOPT }} was requested but source is not available"
+        fi
+
+        conda config --add channels conda-forge
+
+        pip install git+https://github.com/OpenMDAO/build_pyoptsparse
+        build_pyoptsparse -v -b ${{ inputs.PYOPTSPARSE }} $SNOPT
+
+    - name: Install OpenMDAO
+      if: inputs.OPENMDAO
+      shell: bash -l {0}
+      run: |
+        echo "============================================================="
+        echo "Install OpenMDAO"
+        echo "============================================================="
+        if [[ "${{ inputs.OPENMDAO }}" == "dev" ]]; then
+          pip install git+https://github.com/OpenMDAO/OpenMDAO
+        elif [[ "${{ inputs.OPENMDAO }}" == "latest" ]]; then
+          pip install openmdao
+        else
+          pip install openmdao==${{ inputs.OPENMDAO }}
+        fi
+
+    - name: Install Dymos
+      if: inputs.DYMOS
+      shell: bash -l {0}
+      run: |
+        echo "============================================================="
+        echo "Install Dymos"
+        echo "============================================================="
+        if [[ "${{ inputs.DYMOS }}" == "dev" ]]; then
+          pip install git+https://github.com/OpenMDAO/Dymos
+        elif [[ "${{ inputs.DYMOS }}" == "latest" ]]; then
+          pip install dymos
+        else
+          pip install dymos==${{ inputs.DYMOS }}
+        fi
+
+    - name: Checkout Aviary
+      uses: actions/checkout@v2
+
+    - name: Install Aviary
+      shell: bash -l {0}
+      run: |
+        echo "============================================================="
+        echo "Install Aviary"
+        echo "============================================================="
+        pip install -e .[all]
+
+    - name: Display conda environment info
+      shell: bash -l {0}
+      run: |
+        conda info
+        conda list
+        conda env export --name ${{ inputs.NAME }}_env --file ${{ inputs.NAME }}_environment.yml
+
+    - name: 'Upload environment artifact'
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ inputs.NAME }}_environment
+        path: ${{ inputs.NAME }}_environment.yml
+        retention-days: 5
+
+    - name: Run tests
+      if: inputs.Run_tests
+      shell: bash -l {0}
+      run: |
+        echo "============================================================="
+        echo "Run Tests"
+        echo "============================================================="
+        testflo . -n 1 --show_skipped --coverage --coverpkg aviary
