@@ -100,7 +100,7 @@ class LiftDependentDrag(om.ExplicitComponent):
         dFCDP_dDELCL, deriv = interp_arrdFCDP_dDELCL.interpolate(
             A, compute_derivative=True)  # at A
 
-        return FCDP, dFCDP_dDELM, dFCDP_dDELCL, dFCDP_dA
+        return FCDP[0], dFCDP_dDELM[0], dFCDP_dDELCL[0], dFCDP_dA[0]
 
     def compute(self, inputs, outputs):
         """
