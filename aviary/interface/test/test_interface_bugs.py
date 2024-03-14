@@ -76,7 +76,7 @@ class PreMissionGroupTest(unittest.TestCase):
 
 
 # Preprocess inputs
-        # prob.check_and_preprocess_inputs()
+        prob.check_and_preprocess_inputs()
 
         prob.add_pre_mission_systems()
 
