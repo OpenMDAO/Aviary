@@ -29,10 +29,9 @@ jobs:
         with:
           sparse-checkout: |
             .github/actions
-          path: actions
     
       - name: prepare_docs_environment
-        uses: ./actions/.github/actions/prepare_environment
+        uses: ./.github/actions/prepare_environment
         with:
             NAME: 'latest'
             PY: 3

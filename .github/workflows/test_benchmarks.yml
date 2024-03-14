@@ -29,7 +29,7 @@ jobs:
             .github/actions
           path: actions
   
-      - name: prepare_docs_environment
+      - name: prepare_benchmark_environment
         uses: ./actions/.github/actions/prepare_environment
         with:
             NAME: 'latest'
@@ -51,3 +51,10 @@ jobs:
           echo "Run Benchmarks"
           echo "============================================================="
           testflo . --testmatch=bench_test*
+
+      - name: Checkout actions (again)
+        uses: actions/checkout@v3
+        with:
+          sparse-checkout: |
+            .github/actions
+          path: actions
