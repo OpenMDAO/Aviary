@@ -45,16 +45,6 @@ jobs:
             OPENMDAO: 'dev'
             DYMOS: '1.8.0'
 
-          # development versions of openmdao/dymos
-          - NAME: dev
-            PY: 3
-            NUMPY: 1
-            SCIPY: 1
-            PYOPTSPARSE: 'v2.9.1'
-            SNOPT: '7.7'
-            OPENMDAO: 'dev'
-            DYMOS: 'dev'
-
           # latest versions of openmdao/dymos
           - NAME: latest
             PY: '3.10'
@@ -64,6 +54,16 @@ jobs:
             SNOPT: '7.7'
             OPENMDAO: 'dev'
             DYMOS: 'latest'
+
+          # development versions of openmdao/dymos
+          - NAME: dev
+            PY: 3
+            NUMPY: 1
+            SCIPY: 1
+            PYOPTSPARSE: 'v2.9.1'
+            SNOPT: '7.7'
+            OPENMDAO: 'dev'
+            DYMOS: 'dev'
 
     steps:      
       - name: Checkout actions

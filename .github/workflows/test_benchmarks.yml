@@ -1,6 +1,6 @@
 # Run Tests
 
-name: Aviary Tests
+name: Test Benchmarks
 
 on:
   # Trigger on push or pull request events for the main branch
@@ -17,7 +17,7 @@ on:
 
 jobs:
 
-  test_benchmarks:
+  latest_benchmarks:
     runs-on: ubuntu-latest
     timeout-minutes: 90
 

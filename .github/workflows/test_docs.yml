@@ -1,6 +1,6 @@
 # Run Tests
 
-name: Aviary Tests
+name: Test Docs
 
 on:
   # Trigger on push or pull request events for the main branch
@@ -19,7 +19,7 @@ on:
       
 jobs:
 
-  test_docs:
+  latest_docs:
     runs-on: ubuntu-latest
     timeout-minutes: 90
 
