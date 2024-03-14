@@ -12,6 +12,7 @@ from openmdao.utils.testing_utils import use_tempdirs
 from aviary.subsystems.propulsion.engine_deck import TurboPropDeck
 from aviary.variable_info.options import get_option_defaults
 from aviary.utils.functions import get_path
+from aviary.interface.methods_for_level2 import AviaryProblem
 
 
 class PreMissionEngine(om.Group):
@@ -125,7 +126,6 @@ class SimpleTestEngine(EngineModel):
 @use_tempdirs
 class CustomEngineTest(unittest.TestCase):
     def test_custom_engine(self):
-        from aviary.interface.methods_for_level2 import AviaryProblem
 
         phase_info = {
             'pre_mission': {
@@ -207,11 +207,9 @@ class CustomEngineTest(unittest.TestCase):
         assert_near_equal(float(prob.get_val('traj.cruise.rhs_all.y')), 4., tol)
 
 
-# @use_tempdirs
+@use_tempdirs
 class TurbopropTest(unittest.TestCase):
     def test_turboprop(self):
-        from aviary.interface.methods_for_level2 import AviaryProblem
-
         phase_info = {
             'pre_mission': {
                 'include_takeoff': False,
@@ -227,9 +225,9 @@ class TurbopropTest(unittest.TestCase):
                     "num_segments": 2,
                     "order": 3,
                     "solve_for_distance": False,
-                    "initial_mach": (0.72, "unitless"),
-                    "final_mach": (0.72, "unitless"),
-                    "mach_bounds": ((0.7, 0.74), "unitless"),
+                    "initial_mach": (0.76, "unitless"),
+                    "final_mach": (0.76, "unitless"),
+                    "mach_bounds": ((0.7, 0.78), "unitless"),
                     "initial_altitude": (35000.0, "ft"),
                     "final_altitude": (35000.0, "ft"),
                     "altitude_bounds": ((23000.0, 38000.0), "ft"),
@@ -238,7 +236,7 @@ class TurbopropTest(unittest.TestCase):
                     "constrain_final": False,
                     "fix_duration": False,
                     "initial_bounds": ((0.0, 0.0), "min"),
-                    "duration_bounds": ((10., 30.), "min"),
+                    "duration_bounds": ((30., 60.), "min"),
                 },
                 "initial_guesses": {"times": ([0, 30], "min")},
             },
@@ -248,7 +246,7 @@ class TurbopropTest(unittest.TestCase):
             }
         }
 
-        filename = get_path('models/engines/turboprop_1120hp.deck')
+        filename = get_path('models/engines/turboprop_4465hp.deck')
         options = get_option_defaults()
         options.set_val(Aircraft.Engine.DATA_FILE, filename)
         options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
@@ -280,7 +278,7 @@ class TurbopropTest(unittest.TestCase):
 
         # Load aircraft and options data from user
         # Allow for user overrides here
-        prob.load_inputs("models/test_aircraft/aircraft_for_bench_GwFm.csv",
+        prob.load_inputs("models/test_aircraft/aircraft_for_bench_FwFm.csv",
                          phase_info, engine_builder=engine)
 
         # Preprocess inputs
@@ -295,7 +293,7 @@ class TurbopropTest(unittest.TestCase):
         # Link phases and variables
         prob.link_phases()
 
-        prob.add_driver("SNOPT")
+        prob.add_driver("SLSQP", max_iter=20)
 
         prob.add_design_variables()
 
@@ -305,10 +303,20 @@ class TurbopropTest(unittest.TestCase):
 
         prob.set_initial_guesses()
 
-        prob.final_setup()
+        prob.set_val(
+            f'traj.cruise.rhs_all.{Dynamic.Mission.PROPELLER_TIP_SPEED}', 750., units='ft/s')
+        prob.set_val(
+            f'traj.cruise.rhs_all.{Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR}', 150., units='unitless')
+        prob.set_val(
+            f'traj.cruise.rhs_all.{Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT}', 0.5, units='unitless')
+
+        prob.set_solver_print(level=0)
 
         # and run mission, and dynamics
         dm.run_problem(prob, run_driver=True, simulate=False, make_plots=True)
+
+        # prob.model.list_inputs(print_arrays=True)
+        # prob.model.list_outputs(print_arrays=True)
 
 
 if __name__ == '__main__':

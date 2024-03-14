@@ -244,7 +244,7 @@ class PropPerf(om.Group):
             ],
             promotes_outputs=[
                 "thrust_coefficient_comp_loss",
-                "Thrust",
+                "prop_thrust",
                 "propeller_efficiency",
                 "install_efficiency",
             ])

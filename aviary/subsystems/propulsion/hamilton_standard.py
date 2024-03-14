@@ -722,8 +722,12 @@ class HamiltonStandard(om.ExplicitComponent):
                     ang_len = ang_arr_len[kdx]
                     BLL[kdx], run_flag = _unint(
                         CP_Angle_table[idx_blade][kdx][:ang_len], Blade_angle_table[kdx], CP_Eff)  # blade angle at baseline point for kdx
-                    CTT[kdx], run_flag = _unint(
-                        Blade_angle_table[kdx], CT_Angle_table[idx_blade][kdx][:ang_len], BLL[kdx])  # thrust coeff at baseline point for kdx
+                    try:
+                        CTT[kdx], run_flag = _unint(
+                            Blade_angle_table[kdx], CT_Angle_table[idx_blade][kdx][:ang_len], BLL[kdx])  # thrust coeff at baseline point for kdx
+                    except IndexError:
+                        raise om.AnalysisError(
+                            "interp failed for CTT in hamilton_standard.py")
                     if (run_flag > 1):
                         NERPT = 2
                         print(
@@ -842,7 +846,7 @@ class PostHamiltonStandard(om.ExplicitComponent):
 
         self.add_output('thrust_coefficient_comp_loss',
                         val=np.zeros(nn), units='unitless')
-        self.add_output('Thrust', val=np.zeros(nn), units='lbf')
+        self.add_output('prop_thrust', val=np.zeros(nn), units='lbf')
         # keep them for reporting but don't seem to be required
         self.add_output('propeller_efficiency', val=np.zeros(nn), units='unitless')
         self.add_output('install_efficiency', val=np.zeros(nn), units='unitless')
@@ -854,14 +858,14 @@ class PostHamiltonStandard(om.ExplicitComponent):
             'thrust_coefficient',
             'comp_tip_loss_factor',
         ], rows=arange, cols=arange)
-        self.declare_partials('Thrust', [
+        self.declare_partials('prop_thrust', [
             'thrust_coefficient',
             'comp_tip_loss_factor',
             Dynamic.Mission.PROPELLER_TIP_SPEED,
             'density_ratio',
             Dynamic.Mission.INSTALLATION_LOSS_FACTOR,
         ], rows=arange, cols=arange)
-        self.declare_partials('Thrust', [
+        self.declare_partials('prop_thrust', [
             Aircraft.Engine.PROPELLER_DIAMETER,
         ])
         self.declare_partials('propeller_efficiency', [
@@ -884,7 +888,7 @@ class PostHamiltonStandard(om.ExplicitComponent):
         diam_prop = inputs[Aircraft.Engine.PROPELLER_DIAMETER][0]
         tipspd = inputs[Dynamic.Mission.PROPELLER_TIP_SPEED]
         install_loss_factor = inputs[Dynamic.Mission.INSTALLATION_LOSS_FACTOR]
-        outputs['Thrust'] = ctx*tipspd**2*diam_prop**2 * \
+        outputs['prop_thrust'] = ctx*tipspd**2*diam_prop**2 * \
             inputs['density_ratio']/(1.515E06)*364.76*(1. - install_loss_factor)
         outputs['propeller_efficiency'] = inputs['adv_ratio'] * \
             ctx/inputs['power_coefficient']
@@ -902,17 +906,17 @@ class PostHamiltonStandard(om.ExplicitComponent):
         partials["thrust_coefficient_comp_loss", 'thrust_coefficient'] = XFT
         partials["thrust_coefficient_comp_loss",
                  'comp_tip_loss_factor'] = inputs['thrust_coefficient']
-        partials["Thrust", 'thrust_coefficient'] = XFT*tipspd**2*diam_prop**2 * \
+        partials['prop_thrust', 'thrust_coefficient'] = XFT*tipspd**2*diam_prop**2 * \
             inputs['density_ratio']*unit_conversion_factor*(1. - install_loss_factor)
-        partials["Thrust", 'comp_tip_loss_factor'] = inputs['thrust_coefficient']*tipspd**2*diam_prop**2 * \
+        partials['prop_thrust', 'comp_tip_loss_factor'] = inputs['thrust_coefficient']*tipspd**2*diam_prop**2 * \
             inputs['density_ratio']*unit_conversion_factor*(1. - install_loss_factor)
-        partials["Thrust", Dynamic.Mission.PROPELLER_TIP_SPEED] = 2*ctx*tipspd*diam_prop**2 * \
+        partials['prop_thrust', Dynamic.Mission.PROPELLER_TIP_SPEED] = 2*ctx*tipspd*diam_prop**2 * \
             inputs['density_ratio']*unit_conversion_factor*(1. - install_loss_factor)
-        partials["Thrust", Aircraft.Engine.PROPELLER_DIAMETER] = 2*ctx*tipspd**2*diam_prop * \
+        partials['prop_thrust', Aircraft.Engine.PROPELLER_DIAMETER] = 2*ctx*tipspd**2*diam_prop * \
             inputs['density_ratio']*unit_conversion_factor*(1. - install_loss_factor)
-        partials["Thrust", 'density_ratio'] = ctx*tipspd**2 * \
+        partials['prop_thrust', 'density_ratio'] = ctx*tipspd**2 * \
             diam_prop**2*unit_conversion_factor*(1. - install_loss_factor)
-        partials["Thrust", Dynamic.Mission.INSTALLATION_LOSS_FACTOR] = -ctx*tipspd**2*diam_prop**2 * \
+        partials['prop_thrust', Dynamic.Mission.INSTALLATION_LOSS_FACTOR] = -ctx*tipspd**2*diam_prop**2 * \
             inputs['density_ratio']*unit_conversion_factor
         partials["propeller_efficiency", "adv_ratio"] = ctx/inputs['power_coefficient']
         partials["propeller_efficiency", "thrust_coefficient"] = inputs['adv_ratio'] * \

@@ -1448,7 +1448,7 @@ class TurboPropDeck(EngineDeck):
         for variable in variables_to_scale:
             self.add_scaling_exec_comp(scaling_group, variable, num_nodes=num_nodes)
         self.add_scaling_exec_comp(scaling_group, 'fuel_flow_rate', num_nodes=num_nodes,
-                                   alias=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE)
+                                   alias=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE, sign_scalar=-1.0)
         self.add_scaling_exec_comp(scaling_group, 'thrust_net',
                                    num_nodes=num_nodes, alias='unused')
 
@@ -1486,7 +1486,7 @@ class TurboPropDeck(EngineDeck):
 
         return engine_group
 
-    def add_scaling_exec_comp(self, grp: om.Group, variable: str, units=None, num_nodes=1, alias=None):
+    def add_scaling_exec_comp(self, grp: om.Group, variable: str, units=None, num_nodes=1, alias=None, sign_scalar=1.0):
         if alias is None:
             alias = variable
         if units is None:
@@ -1494,7 +1494,7 @@ class TurboPropDeck(EngineDeck):
         grp.add_subsystem(
             variable+'_scaling',
             om.ExecComp(
-                'scaled_variable = variable_unscaled * scale_factor',
+                f'scaled_variable = {sign_scalar} * variable_unscaled * scale_factor',
                 scaled_variable={'shape': num_nodes, 'units': units},
                 variable_unscaled={'shape': num_nodes, 'units': units},
                 scale_factor={'val': 1, 'units': 'unitless'},
@@ -1569,6 +1569,7 @@ class TurboPropDeck(EngineDeck):
                 Dynamic.Mission.SHAFT_POWER_CORRECTED+suffix,
                 ('freestream_temperature', Dynamic.Mission.TEMPERATURE),
                 ('freestream_pressure', Dynamic.Mission.STATIC_PRESSURE),
+                Dynamic.Mission.MACH,
             ],
             promotes_outputs=[
                 Dynamic.Mission.SHAFT_POWER+suffix
