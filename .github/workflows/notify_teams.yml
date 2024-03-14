@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           sparse-checkout: |
-            .github/workflows
+            .github/actions
           path: actions
 
       - name: Get PR Data
@@ -30,8 +30,11 @@ jobs:
           echo "reviewers=${{ join(github.event.pull_request.requested_reviewers.*.login, ',') }}" >> $GITHUB_ENV
 
       - name: Send Email on Opened PR
-        uses: ./actions/.github/workflows/send-email-workflow.yml
+        uses: ./actions/.github/actions/send_email/action.yml
         with:
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          to: ${{ secrets.DESTINATION_EMAIL }}
           subject: "***Notification*** Opened Pull Request: ${{ env.number }}"
           body: |
             {
@@ -55,8 +58,11 @@ jobs:
           echo "title=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
 
       - name: Send Email on Updated Assignees
-        uses: ./actions/.github/workflows/send-email-workflow.yml
+        uses: ./actions/.github/actions/send_email/action.yml
         with:
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          to: ${{ secrets.DESTINATION_EMAIL }}
           subject: "***Notification*** Updated Assignees for Pull Request: ${{ env.number }}"
           body: |
             {
@@ -76,8 +82,11 @@ jobs:
           echo "title=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
 
       - name: Send Email on Reviewer Requested
-        uses: ./actions/.github/workflows/send-email-workflow.yml
+        uses: ./actions/.github/actions/send_email/action.yml
         with:
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          to: ${{ secrets.DESTINATION_EMAIL }}
           subject: "***Notification*** Updated Reviewers for Pull Request: ${{ env.number }}"
           body: |
             {
@@ -96,8 +105,11 @@ jobs:
           echo "title=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
 
       - name: Send Email on Closed PR
-        uses: ./actions/.github/workflows/send-email-workflow.yml
+        uses: ./actions/.github/actions/send_email/action.yml
         with:
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          to: ${{ secrets.DESTINATION_EMAIL }}
           subject: "***Notification*** Closed Pull Request: ${{ env.number }}"
           body: |
             {
