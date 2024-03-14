@@ -30,7 +30,7 @@ jobs:
           echo "reviewers=${{ join(github.event.pull_request.requested_reviewers.*.login, ',') }}" >> $GITHUB_ENV
 
       - name: Send Email on Opened PR
-        uses: ./actions/.github/actions/send_email/action.yml
+        uses: ./actions/.github/actions/send_email
         with:
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
@@ -58,7 +58,7 @@ jobs:
           echo "title=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
 
       - name: Send Email on Updated Assignees
-        uses: ./actions/.github/actions/send_email/action.yml
+        uses: ./actions/.github/actions/send_email
         with:
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
@@ -82,7 +82,7 @@ jobs:
           echo "title=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
 
       - name: Send Email on Reviewer Requested
-        uses: ./actions/.github/actions/send_email/action.yml
+        uses: ./actions/.github/actions/send_email
         with:
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
@@ -105,7 +105,7 @@ jobs:
           echo "title=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
 
       - name: Send Email on Closed PR
-        uses: ./actions/.github/actions/send_email/action.yml
+        uses: ./actions/.github/actions/send_email
         with:
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
