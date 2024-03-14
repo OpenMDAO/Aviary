@@ -39,6 +39,7 @@ runs:
   using: "composite"
   steps:
     - name: Display run details
+      shell: bash
       run: |
         echo "============================================================="
         echo "Run #${GITHUB_RUN_NUMBER}"
@@ -128,7 +129,7 @@ runs:
         fi
 
     - name: Checkout Aviary
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Install Aviary
       shell: bash -l {0}
