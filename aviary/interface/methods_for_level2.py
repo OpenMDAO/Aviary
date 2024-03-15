@@ -22,10 +22,7 @@ from aviary.mission.flops_based.phases.build_landing import Landing
 from aviary.mission.flops_based.phases.build_takeoff import Takeoff
 from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
 from aviary.mission.flops_based.phases.two_dof_phase import TwoDOFPhase
-from aviary.mission.gasp_based.ode.groundroll_ode import GroundrollODE
 from aviary.mission.gasp_based.ode.params import ParamPort
-from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_ode import \
-    UnsteadySolvedODE
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 from aviary.mission.gasp_based.phases.time_integration_phases import SGMCruise
 from aviary.mission.gasp_based.phases.groundroll_phase import GroundrollPhase
@@ -70,7 +67,6 @@ GASP = LegacyCode.GASP
 
 TWO_DEGREES_OF_FREEDOM = EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
 HEIGHT_ENERGY = EquationsOfMotion.HEIGHT_ENERGY
-SOLVED = EquationsOfMotion.SOLVED
 SOLVED_2DOF = EquationsOfMotion.SOLVED_2DOF
 
 
@@ -336,8 +332,6 @@ class AviaryProblem(om.Problem):
                     from aviary.interface.default_phase_info.two_dof import phase_info
                 elif self.mission_method is HEIGHT_ENERGY:
                     from aviary.interface.default_phase_info.height_energy import phase_info
-                elif self.mission_method is SOLVED:
-                    from aviary.interface.default_phase_info.solved import phase_info
 
                 print('Loaded default phase_info for '
                       f'{self.mission_method.value.lower()} equations of motion')
@@ -369,7 +363,7 @@ class AviaryProblem(om.Problem):
         # set up core subsystems
         if mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
             everything_else_origin = FLOPS
-        elif mission_method in (TWO_DEGREES_OF_FREEDOM, SOLVED):
+        elif mission_method is TWO_DEGREES_OF_FREEDOM:
             everything_else_origin = GASP
         else:
             raise ValueError(f'Unknown mission method {self.mission_method}')
@@ -980,159 +974,6 @@ class AviaryProblem(om.Problem):
 
         return phase
 
-    def _get_solved_phase(self, phase_name):
-        phase_options = self.phase_info[phase_name]
-
-        takeoff_mass = self.aviary_inputs.get_val(
-            Mission.Design.GROSS_MASS, units='lbm')
-        climb_mach = 0.8
-        solve_segments = False
-
-        if phase_name == "groundroll":
-            groundroll_trans = dm.Radau(
-                num_segments=phase_options['num_segments'], order=3, compressed=True, solve_segments="forward",
-            )
-
-            phase = dm.Phase(
-                ode_class=GroundrollODE,
-                ode_init_kwargs=self.ode_args,
-                transcription=groundroll_trans,
-            )
-
-            phase.set_time_options(fix_initial=True, fix_duration=False,
-                                   units="kn", name="TAS",
-                                   duration_bounds=wrapped_convert_units(
-                                       phase_options['duration_bounds'], 'kn'),
-                                   duration_ref=wrapped_convert_units(
-                                       phase_options['duration_ref'], 'kn'),
-                                   initial_ref=wrapped_convert_units(
-                                       phase_options['initial_ref'], 'kn'),
-                                   )
-
-            phase.set_state_options("time", rate_source="dt_dv", units="s",
-                                    fix_initial=True, fix_final=False, ref=1., defect_ref=1.)
-
-            phase.set_state_options("mass", rate_source="dmass_dv",
-                                    fix_initial=True, fix_final=False, lower=1, upper=195_000, ref=takeoff_mass, defect_ref=takeoff_mass)
-
-            phase.set_state_options(Dynamic.Mission.DISTANCE, rate_source="over_a",
-                                    fix_initial=True, fix_final=False, lower=0, upper=2000., ref=1.e2, defect_ref=1.e2)
-
-            phase.add_parameter("t_init_gear", units="s",
-                                static_target=True, opt=False, val=32.3)
-            phase.add_parameter("t_init_flaps", units="s",
-                                static_target=True, opt=False, val=44.0)
-            phase.add_parameter("wing_area", units="ft**2",
-                                static_target=True, opt=False, val=1370)
-
-        else:
-
-            trans = dm.Radau(num_segments=phase_options['num_segments'], order=3,
-                             compressed=True, solve_segments=solve_segments)
-
-            ode_args = dict(
-                input_speed_type=phase_options['input_speed_type'],
-                clean=phase_options['clean'],
-                ground_roll=phase_options['ground_roll'],
-                aviary_options=self.aviary_inputs,
-                core_subsystems=self.ode_args['core_subsystems'],
-                include_param_comp=True,
-                balance_throttle=False
-            )
-
-            phase = dm.Phase(
-                ode_class=UnsteadySolvedODE,
-                ode_init_kwargs=ode_args,
-                transcription=trans,
-            )
-
-            phase.add_parameter(
-                Dynamic.Mission.THROTTLE,
-                opt=False,
-                units="unitless",
-                val=phase_options['throttle_setting'],
-                static_target=False)
-
-            phase.set_time_options(fix_initial=False, fix_duration=False,
-                                   units="distance_units", name=Dynamic.Mission.DISTANCE,
-                                   duration_bounds=wrapped_convert_units(
-                                       phase_options['duration_bounds'], "distance_units"),
-                                   duration_ref=wrapped_convert_units(
-                                       phase_options['duration_ref'], "distance_units"),
-                                   initial_bounds=wrapped_convert_units(
-                                       phase_options['initial_bounds'], "distance_units"),
-                                   initial_ref=wrapped_convert_units(
-                                       phase_options['initial_ref'], "distance_units"),
-                                   )
-
-            if phase_name == "cruise" or phase_name == "descent":
-                time_ref = 1.e4
-            else:
-                time_ref = 100.
-
-            phase.set_state_options("time", rate_source="dt_dr", targets=['t_curr'] if 'retract' in phase_name else [],
-                                    fix_initial=False, fix_final=False, ref=time_ref, defect_ref=time_ref * 1.e2)
-
-            phase.set_state_options("mass", rate_source="dmass_dr",
-                                    fix_initial=False, fix_final=False, ref=170.e3, defect_ref=170.e5,
-                                    val=170.e3, units='lbm', lower=10.e3)
-
-            phase.add_parameter("wing_area", units="ft**2",
-                                static_target=True, opt=False, val=1370)
-
-            if 'climb_at_constant_TAS' in phase_name or 'ascent' in phase_name:
-                phase.add_parameter(
-                    "t_init_gear", units="s", static_target=True, opt=False, val=100)
-                phase.add_parameter(
-                    "t_init_flaps", units="s", static_target=True, opt=False, val=100)
-
-            if 'rotation' in phase_name:
-                phase.add_polynomial_control("TAS",
-                                             order=phase_options['control_order'],
-                                             units="kn", val=200.0,
-                                             opt=phase_options['opt'], lower=1, upper=500, ref=250)
-
-                phase.add_polynomial_control(Dynamic.Mission.ALTITUDE,
-                                             order=phase_options['control_order'],
-                                             fix_initial=False,
-                                             rate_targets=['dh_dr'], rate2_targets=['d2h_dr2'],
-                                             opt=False, upper=40.e3, ref=30.e3, lower=-1.)
-
-                phase.add_polynomial_control("alpha",
-                                             order=phase_options['control_order'],
-                                             lower=-4, upper=15,
-                                             units='deg', ref=10.,
-                                             val=[0., 5.],
-                                             opt=phase_options['opt'])
-            else:
-                if 'constant_EAS' in phase_name:
-                    fixed_EAS = self.phase_info[phase_name]['fixed_EAS']
-                    phase.add_parameter("EAS", units="kn", val=fixed_EAS)
-                elif 'constant_mach' in phase_name:
-                    phase.add_parameter(
-                        Dynamic.Mission.MACH,
-                        units="unitless",
-                        val=climb_mach)
-                elif 'cruise' in phase_name:
-                    self.cruise_mach = self.aviary_inputs.get_val(Mission.Design.MACH)
-                    phase.add_parameter(
-                        Dynamic.Mission.MACH, units="unitless", val=self.cruise_mach)
-                else:
-                    phase.add_polynomial_control("TAS",
-                                                 order=phase_options['control_order'],
-                                                 fix_initial=False,
-                                                 units="kn", val=200.0,
-                                                 opt=True, lower=1, upper=500, ref=250)
-
-                phase.add_polynomial_control(Dynamic.Mission.ALTITUDE,
-                                             order=phase_options['control_order'],
-                                             units="ft", val=0.,
-                                             fix_initial=False,
-                                             rate_targets=['dh_dr'], rate2_targets=['d2h_dr2'],
-                                             opt=phase_options['opt'], upper=40.e3, ref=30.e3, lower=-1.)
-
-        return phase
-
     def add_phases(self, phase_info_parameterization=None):
         """
         Add the mission phases to the problem trajectory based on the user-specified
@@ -1262,81 +1103,6 @@ class AviaryProblem(om.Problem):
             if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
                 traj = setup_trajectory_params(
                     self.model, traj, self.aviary_inputs, phases, meta_data=self.meta_data, external_parameters=external_parameters)
-
-        elif self.mission_method is SOLVED:
-            target_range = self.aviary_inputs.get_val(
-                Mission.Design.RANGE, units='nmi')
-            climb_mach = 0.8
-
-            for idx, phase_name in enumerate(phases):
-                phase = traj.add_phase(phase_name, self._get_solved_phase(phase_name))
-                add_subsystem_timeseries_outputs(phase, phase_name)
-
-                if phase_name in phases[1:3]:
-                    phase.add_path_constraint(
-                        "fuselage_pitch", upper=15., units='deg', ref=15)
-                if phase_name == "rotation":
-                    phase.add_boundary_constraint(
-                        "TAS", loc="final", upper=200., units="kn", ref=200.)
-                    phase.add_boundary_constraint(
-                        "normal_force", loc="final", equals=0., units="lbf", ref=10000.0)
-                elif phase_name == "ascent_to_gear_retract":
-                    phase.add_path_constraint("load_factor", lower=0.0, upper=1.10)
-                elif phase_name == "ascent_to_flap_retract":
-                    phase.add_path_constraint("load_factor", lower=0.0, upper=1.10)
-                elif phase_name == "ascent":
-                    phase.add_path_constraint(
-                        "EAS", upper=250., units="kn", ref=250.)
-                elif phase_name == 'climb_at_constant_TAS':
-                    phase.add_boundary_constraint(
-                        "EAS", loc="final", equals=250., units="kn", ref=250.)
-                elif phase_name == "climb_at_constant_EAS":
-                    pass
-                elif phase_name == "climb_at_constant_EAS_to_mach":
-                    phase.add_boundary_constraint(
-                        Dynamic.Mission.MACH, loc="final", equals=climb_mach, units="unitless")
-                elif phase_name == "climb_at_constant_mach":
-                    pass
-                elif phase_name == "descent":
-                    phase.add_boundary_constraint(
-                        Dynamic.Mission.DISTANCE,
-                        loc="final",
-                        equals=target_range,
-                        units="NM",
-                        ref=1.e3)
-                    phase.add_boundary_constraint(
-                        Dynamic.Mission.ALTITUDE,
-                        loc="final",
-                        equals=10.e3,
-                        units="ft",
-                        ref=10e3)
-                    phase.add_boundary_constraint(
-                        "TAS", loc="final", equals=250., units="kn", ref=250.)
-
-                phase.add_timeseries_output(
-                    Dynamic.Mission.THRUST_TOTAL, units="lbf")
-                phase.add_timeseries_output("thrust_req", units="lbf")
-                phase.add_timeseries_output("normal_force")
-                phase.add_timeseries_output(Dynamic.Mission.MACH)
-                phase.add_timeseries_output("EAS", units="kn")
-                phase.add_timeseries_output("TAS", units="kn")
-                phase.add_timeseries_output(Dynamic.Mission.LIFT)
-                phase.add_timeseries_output("CL")
-                phase.add_timeseries_output("CD")
-                phase.add_timeseries_output("time")
-                phase.add_timeseries_output("mass")
-                phase.add_timeseries_output(Dynamic.Mission.ALTITUDE)
-                phase.add_timeseries_output("gear_factor")
-                phase.add_timeseries_output("flap_factor")
-                phase.add_timeseries_output("alpha")
-                phase.add_timeseries_output(
-                    "fuselage_pitch", output_name="theta", units="deg")
-
-                if 'rotation' in phase_name:
-                    phase.add_parameter("t_init_gear", units="s",
-                                        static_target=True, opt=False, val=100)
-                    phase.add_parameter("t_init_flaps", units="s",
-                                        static_target=True, opt=False, val=100)
 
         self.traj = traj
 
@@ -1519,32 +1285,44 @@ class AviaryProblem(om.Problem):
                 Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.e5)
 
     def _link_phases_helper_with_options(self, phases, option_name, var, **kwargs):
-        # if there is a phase that has 'option_name' of optimize_mach or optimize_altitude = True,
-        # link that phase to the adacent phases passed in via 'phases'
+        # Initialize a list to keep track of indices where option_name is True
+        true_option_indices = []
 
-        phases_to_link = []
-
+        # Loop through phases to find where option_name is True
         for idx, phase_name in enumerate(phases):
             if self.phase_info[phase_name]['user_options'].get(option_name, False):
-                # get the name of the previous phase
+                true_option_indices.append(idx)
 
-                if idx > 0:
-                    prev_phase_name = phases[idx - 1]
-                    phases_to_link.append(prev_phase_name)
-                phases_to_link.append(phase_name)
-                # get the name of the next phase if possible
-                if idx < len(phases) - 1:
-                    next_phase_name = phases[idx + 1]
-                    phases_to_link.append(next_phase_name)
-        # if we have more than one phase, link them
-        if len(phases_to_link) > 1:
-            phases_to_link = list(dict.fromkeys(phases))
-            # TODO: implement correct logic to not connect groundroll phases
-            if self.mission_method is SOLVED_2DOF and option_name == 'optimize_altitude':
-                if len(phases_to_link) > 2:
-                    phases_to_link = phases_to_link[1:]
-                    self.traj.link_phases(phases=phases_to_link, vars=[var], **kwargs)
+        # Determine the groups of phases to link based on consecutive indices
+        groups_to_link = []
+        current_group = []
+
+        for idx in true_option_indices:
+            if not current_group or idx == current_group[-1] + 1:
+                # If the current index is consecutive, add it to the current group
+                current_group.append(idx)
             else:
+                # Otherwise, start a new group and save the previous one
+                groups_to_link.append(current_group)
+                current_group = [idx]
+
+        # Add the last group if it exists
+        if current_group:
+            groups_to_link.append(current_group)
+
+        # Loop through each group and determine the phases to link
+        for group in groups_to_link:
+            # Extend the group to include the phase before the first True option and after the last True option, if applicable
+            if group[0] > 0:
+                group.insert(0, group[0] - 1)
+            if group[-1] < len(phases) - 1:
+                group.append(group[-1] + 1)
+
+            # Extract the phase names for the current group
+            phases_to_link = [phases[idx] for idx in group]
+
+            # Link the phases for the current group
+            if len(phases_to_link) > 1:
                 self.traj.link_phases(phases=phases_to_link, vars=[var], **kwargs)
 
     def link_phases(self):
@@ -1597,36 +1375,7 @@ class AviaryProblem(om.Problem):
             if len(phases_to_link) > 1:  # TODO: hack
                 self.traj.link_phases(phases=phases_to_link, vars=[var], connected=True)
 
-        if self.mission_method is SOLVED:
-            def add_linkage_constraint(self, phase_a, phase_b, var_b):
-                self.traj.add_linkage_constraint(phase_a=phase_a,
-                                                 phase_b=phase_b,
-                                                 var_a='time',
-                                                 var_b=var_b,
-                                                 loc_a='final',
-                                                 loc_b='initial',
-                                                 connected=true_unless_mpi)
-
-            add_linkage_constraint(self, 'ascent_to_gear_retract',
-                                   'ascent_to_flap_retract', 't_init_gear')
-            add_linkage_constraint(self, 'ascent_to_gear_retract',
-                                   'ascent', 't_init_gear')
-            add_linkage_constraint(self, 'ascent_to_gear_retract',
-                                   'climb_at_constant_TAS', 't_init_gear')
-            add_linkage_constraint(self, 'ascent_to_flap_retract',
-                                   'ascent', 't_init_flaps')
-            add_linkage_constraint(self, 'ascent_to_flap_retract',
-                                   'climb_at_constant_TAS', 't_init_flaps')
-
-            self.traj.link_phases(
-                phases[6:], vars=[Dynamic.Mission.ALTITUDE], ref=10.e3)
-            self.traj.link_phases(phases, vars=['time'], ref=100.)
-            self.traj.link_phases(phases, vars=['mass'], ref=10.e3)
-            self.traj.link_phases(
-                phases, vars=[Dynamic.Mission.DISTANCE], units='m', ref=10.e3)
-            self.traj.link_phases(phases[:7], vars=["TAS"], units='kn', ref=200.)
-
-        elif self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
+        if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
             # connect regular_phases with each other if you are optimizing alt or mach
             self._link_phases_helper_with_options(
                 self.regular_phases, 'optimize_altitude', Dynamic.Mission.ALTITUDE, ref=1.e4)
@@ -2028,9 +1777,10 @@ class AviaryProblem(om.Problem):
             elif objective_type == "fuel":
                 self.model.add_objective(Mission.Objectives.FUEL, ref=ref)
 
+        # set objective ref on height-energy missions
         elif self.mission_method is HEIGHT_ENERGY:
             ref = ref if ref is not None else default_ref_values.get(
-                Mission.Summary.FUEL_BURNED, 1)
+                'fuel_burned', 1)
             self.model.add_objective(Mission.Summary.FUEL_BURNED, ref=ref)
 
         else:  # If no 'objective_type' is specified, we handle based on 'problem_type'
@@ -2131,9 +1881,7 @@ class AviaryProblem(om.Problem):
         important for collocation methods.
 
         This method first identifies all phases in the trajectory then
-        loops over each phase. If the mission method is "solved", solved guesses
-        are added to the problem for each phase as those are handled differently
-        than other mission types. If not solved, specific initial guesses
+        loops over each phase. Specific initial guesses
         are added depending on the phase and mission method. Cruise is treated
         as a special phase for GASP-based missions because it is an AnalyticPhase
         in Dymos. For this phase, we handle the initial guesses first separately
@@ -2159,10 +1907,7 @@ class AviaryProblem(om.Problem):
 
         # Loop over each phase and set initial guesses for the state and control variables
         for idx, (phase_name, phase) in enumerate(phase_items):
-            if self.mission_method is SOLVED:
-                # If so, add solved guesses to the problem
-                self._add_solved_guesses(idx, phase_name, phase)
-            elif self.mission_method is SOLVED_2DOF:
+            if self.mission_method is SOLVED_2DOF:
                 self.phase_objects[idx].apply_initial_guesses(self, 'traj', phase)
             else:
                 # If not, fetch the initial guesses specific to the phase
@@ -2445,116 +2190,6 @@ class AviaryProblem(om.Problem):
                     f"traj.{phase_name}.states:distance", phase.interp(
                         Dynamic.Mission.DISTANCE, ys=ys)
                 )
-
-    def _add_solved_guesses(self, idx, phase_name, phase):
-        target_range = self.aviary_inputs.get_val(
-            Mission.Design.RANGE, units='nmi')
-        takeoff_mass = self.aviary_inputs.get_val(
-            Mission.Design.GROSS_MASS, units='lbm')
-        cruise_alt = self.aviary_inputs.get_val(
-            Mission.Design.CRUISE_ALTITUDE, units='ft')
-
-        range_guesses = np.array([  # in meters
-            0.,  # 'groundroll',
-            1000.,  # 'rotation',
-            1500.,  # 'ascent_to_gear_retract',
-            2000.,  # 'ascent_to_flap_retract',
-            2500.,  # 'ascent',
-            3500.,  # 'climb_at_constant_TAS',
-            4500.,  # 'climb_at_constant_EAS',
-            32000.,  # 'climb_at_constant_EAS_to_mach',
-            300.e3,  # 'climb_at_constant_mach',
-            600.e3,  # 'cruise',
-            1700. * target_range,  # 'descent'
-            1700. * target_range + 200000.,
-        ])
-        mass_guesses = np.array([
-            1.0,
-            0.999,
-            0.999,
-            0.999,
-            0.998,
-            0.998,
-            0.998,
-            0.990,
-            0.969,
-            0.951,
-            0.873,
-            0.866,
-        ]) * takeoff_mass
-        alt_guesses = [
-            0.0,
-            0.0,
-            0.0,
-            50.0,
-            400.0,
-            500.0,
-            500.0,
-            10000.,
-            32857.,
-            cruise_alt,
-            cruise_alt,
-            10000.,
-        ]
-        TAS_guesses = np.array([
-            0.0,
-            150.,
-            200.,
-            200.,
-            200.,
-            225.,
-            251.,
-            290.,
-            465. * self.cruise_mach / 0.8,
-            458. * self.cruise_mach / 0.8,
-            483. * self.cruise_mach / 0.8,
-            250.,
-        ])
-
-        mean_TAS = (TAS_guesses[1:] + TAS_guesses[:-1]) / 2. / 1.94
-        range_durations = range_guesses[1:] - range_guesses[:-1]
-        time_guesses = np.hstack((0., np.cumsum(range_durations / mean_TAS)))
-
-        if phase_name != "groundroll":
-            distance_initial = range_guesses[idx]
-            self.set_val(f"traj.{phase_name}.t_initial",
-                         distance_initial, units='distance_units')
-            self.set_val(f"traj.{phase_name}.t_duration",
-                         range_guesses[idx+1] - distance_initial, units='distance_units')
-
-            self.set_val(
-                f"traj.{phase_name}.polynomial_controls:altitude",
-                phase.interp(Dynamic.Mission.ALTITUDE, [
-                    alt_guesses[idx], alt_guesses[idx + 1]]),
-                units="ft",
-            )
-
-            if "constant_EAS" in phase_name or "constant_mach" in phase_name or "cruise" in phase_name:
-                pass
-            else:
-                self.set_val(
-                    f"traj.{phase_name}.polynomial_controls:TAS",
-                    phase.interp(
-                        "TAS", [TAS_guesses[idx], TAS_guesses[idx+1]]),
-                    units="kn",
-                )
-        else:
-            self.set_val(f"traj.{phase_name}.t_initial", 0., units='kn')
-            self.set_val(f"traj.{phase_name}.t_duration", 100., units='kn')
-
-        self.set_val(
-            f"traj.{phase_name}.states:mass",
-            phase.interp("mass", [mass_guesses[idx], mass_guesses[idx+1]]),
-            units="lbm",
-        )
-
-        self.set_val(
-            f"traj.{phase_name}.states:time",
-            phase.interp("time", [time_guesses[idx], time_guesses[idx+1]]),
-            units="s",
-        )
-
-        self.final_setup()
 
     def run_aviary_problem(self,
                            record_filename="aviary_history.db",
