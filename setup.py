@@ -57,6 +57,7 @@ setup(
             "utils/test/*",
             "models/engines/*.deck",
             "models/engines/*.txt",
+            "models/engines/*.eng",
             "models/N3CC/*",
             "models/large_single_aisle_1/*",
             "models/large_single_aisle_2/*",

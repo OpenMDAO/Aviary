@@ -1,0 +1,25 @@
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+//             FLOPS Format DataViewer Specification
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+OutFileStream FLOPsheetStream { filename = "$ENG_PATH/Output/RefEngine.outputFLOPS"; } 
+
+DataViewer CaseRowViewer FLOPsheet { 
+  
+  variableList = { "ambient.MN:?.?? = MN", 
+                   "ambient.alt:??????.? = Alt", 
+                   "PERF.PowerCode:??. = PC", 
+                   "PERF.Fg:??????.? = Thrust", 
+                   "inlet.Fram:??????.? = Ram", 
+                   "PERF.WfuelHour:??????.? = Fuel", 
+                   "PERF.PowerExtraction:?????.?? = HPX", 
+                   "PERF.NozzleTotalArea:????.??? = Exit A" } 
+    
+  showMarks = TRUE; 
+  showHeaders = FALSE; 
+  pageWidth = 104; 
+  pageHeight = 500; 
+  
+  outStreamHandle = "FLOPsheetStream"; 
+
+} 
