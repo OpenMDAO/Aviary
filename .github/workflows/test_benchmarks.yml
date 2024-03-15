@@ -38,7 +38,7 @@ jobs:
             SCIPY: 1
             PYOPTSPARSE: 'v2.9.1'
             SNOPT: '7.7'
-            OPENMDAO: 'dev'
+            OPENMDAO: 'latest'
             DYMOS: 'latest'  
             SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
             SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
