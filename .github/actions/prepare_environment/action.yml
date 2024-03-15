@@ -141,7 +141,7 @@ runs:
       run: |
         conda info
         conda list
-        conda env export --name ${{ inputs.NAME }}_env --file ${{ inputs.NAME }}_environment.yml
+        conda env export --file ${{ inputs.NAME }}_environment.yml
 
     - name: 'Upload environment artifact'
       uses: actions/upload-artifact@v3
