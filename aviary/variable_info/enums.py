@@ -60,7 +60,6 @@ class EquationsOfMotion(Enum):
     HEIGHT_ENERGY = 'height_energy'
     TWO_DEGREES_OF_FREEDOM = '2DOF'
     SOLVED_2DOF = 'solved_2DOF'
-    SOLVED = 'solved'
 
 
 @unique

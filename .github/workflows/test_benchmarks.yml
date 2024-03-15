@@ -1,0 +1,60 @@
+# Run Tests
+
+name: Test Benchmarks
+
+on:
+  # Trigger on push or pull request events for the main branch
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  merge_group:
+    branches: [ main ]
+
+  # Allow running the workflow manually from the Actions tab
+  workflow_dispatch:
+
+
+jobs:
+
+  latest_benchmarks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout actions
+        uses: actions/checkout@v3
+        with:
+          sparse-checkout: |
+            .github/actions
+          path: actions
+  
+      - name: prepare_benchmark_environment
+        uses: ./actions/.github/actions/prepare_environment
+        with:
+            NAME: 'latest'
+            PY: 3
+            NUMPY: 1
+            SCIPY: 1
+            PYOPTSPARSE: 'v2.9.1'
+            SNOPT: '7.7'
+            OPENMDAO: 'latest'
+            DYMOS: 'latest'  
+            SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+            SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
+            SNOPT_LOCATION_77: ${{ secrets.SNOPT_LOCATION_77 }}
+  
+      - name: Run benchmarks
+        shell: bash -l {0}
+        run: |
+          echo "============================================================="
+          echo "Run Benchmarks"
+          echo "============================================================="
+          testflo . --testmatch=bench_test*
+
+      - name: Checkout actions (again)
+        uses: actions/checkout@v3
+        with:
+          sparse-checkout: |
+            .github/actions
+          path: actions
