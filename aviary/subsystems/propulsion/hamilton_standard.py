@@ -90,6 +90,7 @@ def _biquad(T, i, xi, yi):
     T(i+3) = values of x in ascending order
     """
 
+    lmt = 0
     nx = int(T[i])
     ny = int(T[i+1])
     j1 = int(i + 2)
