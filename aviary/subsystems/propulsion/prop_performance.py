@@ -186,9 +186,9 @@ class PropPerf(om.Group):
             self.add_subsystem(
                 'compute_mach',
                 om.ExecComp(f'{Dynamic.Mission.MACH} = 0.00150933 * {Dynamic.Mission.VELOCITY} * ({TSLS_DEGR} / {Dynamic.Mission.TEMPERATURE})**0.5',
-                            mach={'units': 'unitless'},
-                            velocity={'units': 'knot'},
-                            temperature={'units': 'degR'},
+                            mach={'units': 'unitless', 'val': np.zeros(nn)},
+                            velocity={'units': 'knot', 'val': np.zeros(nn)},
+                            temperature={'units': 'degR', 'val': np.zeros(nn)},
                             has_diag_partials=True,
                             ),
                 promotes=['*'],
