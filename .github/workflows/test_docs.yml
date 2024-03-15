@@ -1,0 +1,97 @@
+# Run Tests
+
+name: Test Docs
+
+on:
+  # Trigger on push or pull request events for the main branch
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  pull_request_target:
+    branches: [ main ]
+  merge_group:
+    branches: [ main ]
+
+  # Allow running the workflow manually from the Actions tab
+  workflow_dispatch:
+
+      
+jobs:
+
+  latest_docs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout actions
+        uses: actions/checkout@v3
+        with:
+          sparse-checkout: |
+            .github/actions
+          path: actions
+    
+      - name: prepare_docs_environment
+        uses: ./actions/.github/actions/prepare_environment
+        with:
+            NAME: 'latest'
+            PY: 3
+            NUMPY: 1
+            SCIPY: 1
+            PYOPTSPARSE: 'v2.9.1'
+            SNOPT: '7.7'
+            OPENMDAO: 'latest'
+            DYMOS: 'latest'  
+            SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+            SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
+            SNOPT_LOCATION_77: ${{ secrets.SNOPT_LOCATION_77 }}
+  
+      - name: Build docs
+        shell: bash -l {0}
+        run: |
+          pip install -U jupyter-book
+          cd aviary/docs
+          echo "============================================================="
+          echo "Build the docs"
+          echo "============================================================="
+          bash build_book.sh
+
+      - name: Display doc build reports
+        continue-on-error: True
+        shell: bash -l {0}
+        run: |
+          cd $HOME/work/Aviary/Aviary/aviary/docs
+          find _build/html/reports/ -type f -name '*.log' \
+          -exec echo "#################################################################" \; \
+          -exec echo {} \; \
+          -exec echo "#################################################################" \; \
+          -exec cat {} \;
+
+      - name: Publish docs to github.io
+        if: |
+          github.event_name == 'push' && github.ref == 'refs/heads/main'
+        shell: bash -l {0}
+        run: |
+          echo "============================================================="
+          echo "Publishing Docs to github.io"
+          echo "============================================================="
+          pip install ghp-import
+          cd $HOME/work/Aviary/Aviary/aviary
+          ghp-import -n -p -f docs/_build/html
+
+      - name: Scan for security issues
+        shell: bash -l {0}
+        run: |
+          python -m pip install bandit
+          echo "============================================================="
+          echo "Run bandit scan for medium/high severity issues"
+          echo "============================================================="
+          cd $GITHUB_WORKSPACE
+          python -m bandit -r -ll aviary
+
+      - name: Checkout actions (again)
+        uses: actions/checkout@v3
+        with:
+          sparse-checkout: |
+            .github/actions
+          path: actions
