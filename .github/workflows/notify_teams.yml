@@ -51,6 +51,13 @@ jobs:
     if: github.event.action == 'assigned'
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout actions
+        uses: actions/checkout@v3
+        with:
+          sparse-checkout: |
+            .github/actions
+          path: actions
+          
       - name: Get Updated Assignees
         run: |
           echo "number=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
@@ -75,6 +82,13 @@ jobs:
     if: github.event.action == 'review_requested'
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout actions
+        uses: actions/checkout@v3
+        with:
+          sparse-checkout: |
+            .github/actions
+          path: actions
+          
       - name: Get Reviewers
         run: |
           echo "number=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
@@ -99,6 +113,13 @@ jobs:
     if: github.event.action == 'closed' || github.event.action == 'converted_to_draft'
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout actions
+        uses: actions/checkout@v3
+        with:
+          sparse-checkout: |
+            .github/actions
+          path: actions
+          
       - name: Get PR Data
         run: |
           echo "number=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
