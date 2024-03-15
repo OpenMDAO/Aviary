@@ -52,9 +52,8 @@ class TestFortranToAviary(unittest.TestCase):
         # Open the converted and validation files
         with open('TEST_'+filename, 'r') as f_in, open(validation_data, 'r') as expected:
             for line in f_in:
-                for skip in skip_list:
-                    if skip in line:
-                        break
+                if any(s in line for s in skip_list):
+                    break
                 # Remove whitespace and compare
                 expected_line = ''.join(expected.readline().split())
                 line_no_whitespace = ''.join(line.split())

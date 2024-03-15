@@ -922,6 +922,20 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Design.COMPUTE_INSTALLATION_LOSS,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units="unitless",
+    option=True,
+    default_value=True,
+    types=bool,
+    desc='if true, compute installation loss factor based on blockage factor'
+)
+
+add_meta_data(
     Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -1786,6 +1800,20 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Engine.NUM_BLADES,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.BL',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='unitless',
+    desc='number of blades per propeller',
+    option=True,
+    types=int,
+    default_value=0
+)
+
+add_meta_data(
     Aircraft.Engine.NUM_ENGINES,
     meta_data=_MetaData,
     historical_name={"GASP": "INGASP.ENP",
@@ -1863,6 +1891,42 @@ add_meta_data(
     units="unitless",
     desc='engine position factor',
     default_value=0,
+)
+
+add_meta_data(
+    Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.AF',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units="unitless",
+    desc='propeller actitivty factor per Blade (Range: 80 to 200)',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Engine.PROPELLER_DIAMETER,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.DPROP',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='ft',
+    desc='propeller diameter',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.CLI',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='unitless',
+    desc='propeller blade integrated design lift coefficient (Range: 0.3 to 0.8)',
+    default_value=0.5,
 )
 
 add_meta_data(
@@ -6029,6 +6093,17 @@ add_meta_data(
 )
 
 add_meta_data(
+    Dynamic.Mission.INSTALLATION_LOSS_FACTOR,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'FT',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units="unitless",
+    desc='fraction of total propeller thrust which is lost due to installation'
+)
+
+add_meta_data(
     Dynamic.Mission.LIFT,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -6096,6 +6171,18 @@ add_meta_data(
 )
 
 add_meta_data(
+    Dynamic.Mission.PROPELLER_TIP_SPEED,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.TSPDMX',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='ft/s',
+    desc='maximum allowable propeller tip speed',
+    default_value=500.0,
+)
+
+add_meta_data(
     Dynamic.Mission.SPECIFIC_ENERGY_RATE,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -6110,17 +6197,18 @@ add_meta_data(
 add_meta_data(
     Dynamic.Mission.SHAFT_POWER,
     meta_data=_MetaData,
-    historical_name={"GASP": 'SHPCOR',
+    historical_name={"GASP": 'SHP',
                      "FLOPS": None,
                      "LEAPS1": None
                      },
     units='hp',
     desc='The shaft horsepower'
 )
+
 add_meta_data(
     Dynamic.Mission.SHAFT_POWER_CORRECTED,
     meta_data=_MetaData,
-    historical_name={"GASP": 'SHP',
+    historical_name={"GASP": 'SHPCOR',
                      "FLOPS": None,
                      "LEAPS1": None
                      },
