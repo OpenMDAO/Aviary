@@ -234,6 +234,13 @@ class TwoDOFPhase(PhaseBuilderBase):
 
 
 TwoDOFPhase._add_meta_data(
+    'reserve', val=False, desc='this phase is part of the reserve mission.')
+TwoDOFPhase._add_meta_data(
+    'target_distance', val={}, desc='the amount of distance traveled in this phase added as a constraint')
+TwoDOFPhase._add_meta_data(
+    'target_duration', val={}, desc='the amount of time taken by this phase added as a constraint')
+
+TwoDOFPhase._add_meta_data(
     'num_segments', val=5, desc='transcription: number of segments')
 
 TwoDOFPhase._add_meta_data(

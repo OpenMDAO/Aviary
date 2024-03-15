@@ -79,6 +79,12 @@ class CruisePhase(PhaseBuilderBase):
 # Adding metadata for the CruisePhase
 CruisePhase._add_meta_data('alt_cruise', val=0)
 CruisePhase._add_meta_data('mach_cruise', val=0)
+CruisePhase._add_meta_data(
+    'reserve', val=False, desc='this phase is part of the reserve mission.')
+CruisePhase._add_meta_data(
+    'target_distance', val={}, desc='the amount of distance traveled in this phase added as a constraint')
+CruisePhase._add_meta_data(
+    'target_duration', val={}, desc='the amount of time taken by this phase added as a constraint')
 
 CruisePhase._add_initial_guess_meta_data(
     InitialGuessIntegrationVariable(),

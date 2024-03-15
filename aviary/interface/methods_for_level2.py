@@ -883,14 +883,14 @@ class AviaryProblem(om.Problem):
         except KeyError:
             fix_duration = False
 
-        if phase_name == 'ascent' and self.mission_method is TWO_DEGREES_OF_FREEDOM:
+        if phase_name.removeprefix('reserve_') == 'ascent' and self.mission_method is TWO_DEGREES_OF_FREEDOM:
             phase.set_time_options(
                 units="s",
                 targets="t_curr",
                 input_initial=True,
                 input_duration=True,
             )
-        elif phase_name == 'cruise' and self.mission_method is TWO_DEGREES_OF_FREEDOM:
+        elif phase_name.removeprefix('reserve_') == 'cruise' and self.mission_method is TWO_DEGREES_OF_FREEDOM:
             # Time here is really the independent variable through which we are integrating.
             # In the case of the Breguet Range ODE, it's mass.
             # We rely on mass being monotonically non-increasing across the phase.
@@ -905,7 +905,7 @@ class AviaryProblem(om.Problem):
                 duration_bounds=(-1.e7, -1),
                 duration_ref=50000,
             )
-        elif phase_name == 'descent' and self.mission_method is TWO_DEGREES_OF_FREEDOM:
+        elif phase_name.removeprefix('reserve_') == 'descent' and self.mission_method is TWO_DEGREES_OF_FREEDOM:
             duration_ref = user_options.get_val("duration_ref", 's')
             phase.set_time_options(
                 duration_bounds=duration_bounds,
@@ -1499,7 +1499,7 @@ class AviaryProblem(om.Problem):
                                  ref=10000., add_constraint=True)
                 self.model.connect("taxi.mass", "link_taxi_groundroll.rhs:mass")
                 self.model.connect(
-                    "traj.groundroll.states:mass",
+                    "traj.groundroll.timeseries.mass",
                     "link_taxi_groundroll.lhs:mass",
                     src_indices=[0],
                     flat_src_indices=True,
@@ -1509,8 +1509,7 @@ class AviaryProblem(om.Problem):
                 self.model.connect(
                     "traj.ascent.timeseries.altitude", "h_fit.h_cp")
 
-                last_flight_phase_name = list(self.phase_info.keys())[-1]
-                self.model.connect(f'traj.{last_flight_phase_name}.states:mass',
+                self.model.connect(f'traj.{self.regular_phases[-1]}.timeseries.mass',
                                    Mission.Landing.TOUCHDOWN_MASS, src_indices=[-1])
 
                 connect_map = {

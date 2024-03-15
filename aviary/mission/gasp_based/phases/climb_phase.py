@@ -116,6 +116,12 @@ class ClimbPhase(PhaseBuilderBase):
 
 
 # Adding metadata for the ClimbPhase
+ClimbPhase._add_meta_data(
+    'reserve', val=False, desc='this phase is part of the reserve mission.')
+ClimbPhase._add_meta_data(
+    'target_distance', val={}, desc='the amount of distance traveled in this phase added as a constraint')
+ClimbPhase._add_meta_data(
+    'target_duration', val={}, desc='the amount of time taken by this phase added as a constraint')
 ClimbPhase._add_meta_data('fix_initial', val=False)
 ClimbPhase._add_meta_data('EAS_target', val=0)
 ClimbPhase._add_meta_data('mach_cruise', val=0)
