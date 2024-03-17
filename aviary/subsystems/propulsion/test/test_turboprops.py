@@ -105,7 +105,7 @@ class TurboPropTest(unittest.TestCase):
         filename = get_path('models/engines/turboprop_1120hp.deck')
         test_points = [(0, 0, 0), (0, 0, 1), (.6, 25000, 1)]
         point_names = ['idle', 'SLS', 'TOC']
-        truth_vals = [(112, 37.7, 195.8), (1120, 136.3, 644), (1742.5, 21.3, 839.7)]
+        truth_vals = [(112, 37.7, -195.8), (1120, 136.3, -644), (1742.5, 21.3, -839.7)]
         self.prepare_model(filename, test_points)
 
         self.prob.run_model()
@@ -117,7 +117,7 @@ class TurboPropTest(unittest.TestCase):
         filename = get_path('models/engines/turboprop_1120hp_no_tailpipe.deck')
         test_points = [(0, 0, 0), (0, 0, 1), (.6, 25000, 1)]
         point_names = ['idle', 'SLS', 'TOC']
-        truth_vals = [(112, 0, 195.8), (1120, 0, 644), (1742.5, 0, 839.7)]
+        truth_vals = [(112, 0, -195.8), (1120, 0, -644), (1742.5, 0, -839.7)]
         self.prepare_model(filename, test_points)
 
         self.prob.run_model()
@@ -129,7 +129,7 @@ class TurboPropTest(unittest.TestCase):
         filename = get_path('models/engines/turboprop_1120hp.deck')
         test_points = [(0, 0, 1)]
         point_names = ['SLS',]
-        truth_vals = [(1120, 136.3, 644),]
+        truth_vals = [(1120, 136.3, -644),]
         # test_points = [(0, 0, 0), (0, 0, 1), (.6, 25000, 1)]
         # point_names = ['idle', 'SLS', 'TOC']
         # truth_vals = [(112, 0, 195.8), (1120, 0, 644), (1742.5, 0, 839.7)]
@@ -157,12 +157,13 @@ class TurboPropTest(unittest.TestCase):
             'pp',
             PropPerf(aviary_options=options),
             promotes_inputs=['*'],
-            promotes_outputs=["*", ('Thrust', 'prop_thrust')],
+            promotes_outputs=["*"],
         )
 
         pp.set_input_defaults(Aircraft.Engine.PROPELLER_DIAMETER, 10, units="ft")
         pp.set_input_defaults(Dynamic.Mission.PROPELLER_TIP_SPEED, 800, units="ft/s")
         pp.set_input_defaults(Dynamic.Mission.VELOCITY, 0, units="knot")
+        pp.set_input_defaults(Dynamic.Mission.TEMPERATURE, 500, units="degR")
         pp.options.set(num_nodes=len(test_points))
 
         self.prepare_model(filename, test_points, prop_group)
@@ -189,7 +190,7 @@ class TurboPropTest(unittest.TestCase):
         filename = get_path('models/engines/turboprop_1120hp.deck')
         test_points = [(0, 0, 1)]
         point_names = ['SLS',]
-        truth_vals = [(1120, 136.3, 644),]
+        truth_vals = [(1120, 136.3, -644),]
         # test_points = [(0, 0, 0), (0, 0, 1), (.6, 25000, 1)]
         # point_names = ['idle', 'SLS', 'TOC']
         # truth_vals = [(112, 0, 195.8), (1120, 0, 644), (1742.5, 0, 839.7)]
