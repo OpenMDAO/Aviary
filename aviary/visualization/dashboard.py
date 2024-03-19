@@ -1,10 +1,12 @@
 import argparse
 import json
+import math
 import os
 from pathlib import Path
 import pathlib
 import shutil
 import importlib.util
+from string import Template
 
 import numpy as np
 from bokeh.palettes import Category10
@@ -163,12 +165,10 @@ def create_aviary_variables_table_data_nested(script_name, recorder_file):
 
     """
     cr = om.CaseReader(recorder_file)
-    print(f"r.list_c with {cr=}")
 
     if "final" not in cr.list_cases():
         return None
 
-    print(f"cr.get_case with {cr=}")
     case = cr.get_case("final")
     outputs = case.list_outputs(
         explicit=True,
@@ -186,8 +186,20 @@ def create_aviary_variables_table_data_nested(script_name, recorder_file):
         out_stream=None,
         return_format="dict",
     )
+    
+    
+    
+    
+    
+    
+    
+    
 
     sorted_abs_names = sorted(outputs.keys())
+    
+    # import pprint
+    # pprint.pprint(sorted_abs_names)
+
 
     grouped = {}
     for s in sorted_abs_names:
@@ -321,6 +333,184 @@ def convert_case_recorder_file_to_df(recorder_file_name):
 
     return df
 
+
+
+
+def create_aircraft_3d_file(recorder_file, outfilepath):
+    aviary_dir = pathlib.Path(importlib.util.find_spec("aviary").origin).parent
+    aircraft_3d_template_filepath = aviary_dir.joinpath("visualization/assets/aircraft_3d_file_template.html")
+    
+    # get the values for the aircraft design
+    cr = om.CaseReader(recorder_file)
+
+    if "final" not in cr.list_cases():
+        return None
+
+    case = cr.get_case("final")
+    outputs = case.list_outputs(
+        explicit=True,
+        implicit=True,
+        val=True,
+        residuals=True,
+        residuals_tol=None,
+        units=True,
+        shape=True,
+        bounds=True,
+        desc=True,
+        scaling=False,
+        hierarchical=True,
+        print_arrays=True,
+        out_stream=None,
+        return_format="dict",
+    )
+    
+    
+    print("--------- inputs -----------")
+    
+    inputs = case.list_inputs(
+                val=True,
+        out_stream=None,
+        return_format="dict",
+        
+        prom_name=True,
+
+hierarchical=False
+    )
+    
+    
+    sorted_abs_names = sorted(inputs.keys())
+    
+    import pprint
+    pprint.pprint(sorted_abs_names)
+
+    print("--------- end inputs -----------")
+    
+    
+    fuselage_length = float(case.get_val('aircraft:fuselage:length'))
+    fuselage_radius = float(case.get_val('aircraft:fuselage:avg_diameter')) / 2.0
+
+    wing_span = float(case.get_val('aircraft:wing:span'))
+    wing_taper_ratio = float(case.get_val('aircraft:wing:taper_ratio'))
+    wing_sweep_angle = float(case.get_val('aircraft:wing:sweep'))
+    wing_chord = wing_span/float(case.get_val('aircraft:wing:aspect_ratio'))
+    wing_thickness = float(case.get_val('aircraft:wing:thickness_to_chord')) * wing_chord
+
+    with open(aircraft_3d_template_filepath, 'r', encoding='utf-8') as f:
+        aircraft_3d_template = f.read()
+        
+    # the aspect ratio of a wing is the ratio of its span to its mean chord
+
+    # See https://aerotoolbox.com/intro-wing-design/
+
+    # Vertical tail
+    vertical_tail_aspect_ratio = float(case.get_val('aircraft:vertical_tail:aspect_ratio'))
+    vertical_tail_area = float(case.get_val('aircraft:vertical_tail:area'))
+    vertical_tail_thickness_to_chord = float(case.get_val('aircraft:vertical_tail:thickness_to_chord'))
+    # Calculate the span (b) using the formula b = sqrt(AR * S)
+    vertical_tail_span = (vertical_tail_aspect_ratio * vertical_tail_area) ** 0.5
+    # Calculate the chord (c) using the formula c = S / b
+    vertical_tail_chord = vertical_tail_area / vertical_tail_span
+    vertical_tail_thickness = vertical_tail_thickness_to_chord * vertical_tail_chord
+
+    # Horizontal tail
+    horizontal_tail_aspect_ratio = float(case.get_val('aircraft:horizontal_tail:aspect_ratio'))
+    horizontal_tail_taper_ratio = float(case.get_val('aircraft:horizontal_tail:taper_ratio'))
+    horizontal_tail_area = float(case.get_val('aircraft:horizontal_tail:area'))
+    horizontal_tail_thickness_to_chord = float(case.get_val('aircraft:horizontal_tail:thickness_to_chord'))
+    horizontal_tail_span = (horizontal_tail_aspect_ratio * horizontal_tail_area) ** 0.5
+    horizontal_tail_chord = horizontal_tail_area / horizontal_tail_span
+    horizontal_tail_thickness = horizontal_tail_thickness_to_chord * horizontal_tail_chord
+    # horizontal_tail_sweep_angle = float(case.get_val('aircraft:horizontal_tail:sweep'))
+    horizontal_tail_sweep_angle = 0.0
+
+    
+    # cone
+    cone_height = fuselage_radius * 2. # just a guess for now
+    
+    wing_entities = create_aircraft_horizontal_wing_entity(wing_span, wing_chord, wing_taper_ratio, wing_sweep_angle, 0)
+
+    horizontal_tail_entities = create_aircraft_horizontal_wing_entity(horizontal_tail_span, horizontal_tail_chord, horizontal_tail_taper_ratio, horizontal_tail_sweep_angle, 
+                                                                      -fuselage_length/2. + horizontal_tail_chord/2.)
+    
+    vertical_tail_entities = create_aircraft_vertical_tail_entity(vertical_tail_span, vertical_tail_chord, vertical_tail_taper_ration, 
+                                                                  fuselage_length, fuselage_radius)
+
+    entities = \
+f'''
+
+
+            <!-- fuselage -->
+            <a-cylinder id="cylinder" position="0 0 0" radius="{fuselage_radius}" height="{fuselage_length}" 
+         		material = "src: #logo; repeat: 1 1;"
+                rotation="0 180 0" color="white"></a-cylinder>
+ 
+            {wing_entities}
+
+            {horizontal_tail_entities}
+
+            <!-- vertical tail -->
+            <a-box id="box" position="{fuselage_radius} {-fuselage_length/2. + vertical_tail_chord/2.0} 0" 
+                rotation="0 90 90" color="white" width="{vertical_tail_chord}" 
+                depth="{vertical_tail_span}" height="{vertical_tail_thickness}"></a-box>
+
+           
+
+            <!-- front cone -->
+            <a-sphere color="white" radius="{fuselage_radius}" position="0 {fuselage_length/2.} 0"></a-sphere>
+            
+                <!-- 1 x 1 default plane, default material -->
+    <a-entity faceset></a-entity>
+	<!-- triangle, automatically triangulated -->
+    <a-entity color="red" faceset='vertices: 0 0 0, 10 0 0, 00.5 00.5 0></a-entity>
+
+            
+        <a-entity color="white" position='0 {-fuselage_length/2.} 0' geometry="primitive: example; vertices:
+        0 -{wing_chord/2} 0,
+        0 -{wing_chord}   {wing_span/2.},
+        0 0               {wing_span/2.},
+        0 {wing_chord/2.} 0
+        ">
+        </a-entity>
+        
+        
+        <a-entity color="red" position='20 20 20' geometry="primitive: example; vertices:
+        0 0  0,
+        0 10 0,
+        0 0  10,
+        0 10 10
+        ">
+        </a-entity>
+
+
+        <a-entity color="white" position='0 {-fuselage_length/2.} 0' geometry="primitive: example; vertices:
+        0 -{wing_chord/2} 0,
+        0 -{wing_chord}   {-wing_span/2.},
+        0 0               {-wing_span/2.},
+        0 {wing_chord/2.} 0
+        ">
+        </a-entity>
+
+
+        <a-box custom-material position="-3 3 -5"></a-box>
+
+
+'''
+
+            # <!-- wing -->
+            # <a-box id="box" position="0 0 0" rotation="0 0 90" color="white" depth="{wing_span}" height="{wing_thickness}" width="{wing_chord}"></a-box>
+
+#  <!-- horizontal tail -->
+#             <a-box id="box" position="0 {-fuselage_length/2. + horizontal_tail_chord/2.} 0" 
+#                 rotation="0 0 90" color="white" width="{horizontal_tail_chord}" 
+#                 depth="{horizontal_tail_span}" height="{horizontal_tail_thickness}"></a-box>
+
+    print(f"{outfilepath=}")
+
+    with open(outfilepath, 'w') as f:
+        # s = aircraft_3d_template.format(entities=entities)
+        template = Template(aircraft_3d_template)
+        s = template.substitute(entities=entities)
+        f.write(s)
 
 def dashboard(script_name, problem_recorder, driver_recorder, port):
     """
@@ -518,6 +708,18 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
             )
 
             results_tabs_list.append(("Aviary Variables", aviary_vars_pane))
+
+    # Aircraft 3d model display
+    if problem_recorder:
+        if os.path.exists(problem_recorder):
+
+            create_aircraft_3d_file(problem_recorder, f"{reports_dir}/aircraft_3d.html")
+            aircraft_3d_pane = create_report_frame("html", f"{reports_dir}/aircraft_3d.html")
+            if aircraft_3d_pane:
+                results_tabs_list.append(
+                    ("Aircraft 3d model", aircraft_3d_pane)
+                )
+
 
     ####### Subsystems Tab #######
     subsystem_tabs_list = []
