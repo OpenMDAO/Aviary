@@ -244,5 +244,3 @@ def timeseries_csv(prob, **kwargs):
         writer = csv.writer(csv_file)
         writer.writerow(header)  # Writing the header
         writer.writerows(csv_data)  # Writing the rows of timeseries data
-
-    print(f'Timeseries data successfully saved to {report_file}')
