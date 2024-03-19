@@ -95,7 +95,7 @@ class PropPerformanceTest(unittest.TestCase):
             assert_near_equal(lfac[idx], install_loss[case_idx], tolerance=tol)
             assert_near_equal(ieff[idx], install_eff[case_idx], tolerance=tol)
 
-    def ttest_case_0_1_2(self):
+    def test_case_0_1_2(self):
         # Case 0, 1, 2, to test install loss factor computation.
         prob = self.prob
         prob.set_val(Dynamic.Mission.ALTITUDE, [0.0, 0.0, 25000.0], units="ft")
@@ -112,7 +112,7 @@ class PropPerformanceTest(unittest.TestCase):
             minimum_step=1e-12, abs_err_tol=5.0E-4, rel_err_tol=5.0E-5, excludes=["*atmosphere*"])
         assert_check_partials(partial_data, atol=5e-4, rtol=1e-4)
 
-    def ttest_case_3_4_5(self):
+    def test_case_3_4_5(self):
         # Case 3, 4, 5, to test normal cases.
         prob = self.prob
         options = self.options
@@ -140,7 +140,7 @@ class PropPerformanceTest(unittest.TestCase):
             minimum_step=1e-12, abs_err_tol=5.0E-4, rel_err_tol=5.0E-5, excludes=["*atmosphere*"])
         assert_check_partials(partial_data, atol=1.5e-4, rtol=1e-4)
 
-    def ttest_case_6_7_8(self):
+    def test_case_6_7_8(self):
         # Case 6, 7, 8, to test odd number of blades.
         prob = self.prob
         options = self.options
