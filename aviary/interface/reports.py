@@ -1,4 +1,5 @@
 from pathlib import Path
+import csv
 
 import numpy as np
 
@@ -7,11 +8,12 @@ from openmdao.utils.reports_system import register_report
 
 from aviary.interface.utils.markdown_utils import write_markdown_variable_table
 from aviary.utils.named_values import NamedValues
+from aviary.interface.methods_for_level2 import wrapped_convert_units
 
 
 def register_custom_reports():
     """
-    Registers Aviary reports with openMDAO, so they are automatically generated and
+    Registers Aviary reports with OpenMDAO, so they are automatically generated and
     added to the same reports folder as other default reports
     """
     # TODO top-level aircraft report?
@@ -34,6 +36,13 @@ def register_custom_reports():
     register_report(name='mission',
                     func=mission_report,
                     desc='Generates report for mission results from Aviary problem',
+                    class_name='Problem',
+                    method='run_driver',
+                    pre_or_post='post')
+
+    register_report(name='timeseries_csv',
+                    func=timeseries_csv,
+                    desc='Generates an output .csv file for variables in the timeseries of the trajectory',
                     class_name='Problem',
                     method='run_driver',
                     pre_or_post='post')
@@ -69,7 +78,7 @@ def subsystem_report(prob, **kwargs):
 
 def mission_report(prob, **kwargs):
     """
-    Creates a basic mission summary report that is place in the "reports" folder
+    Creates a basic mission summary report that is placed in the "reports" folder
 
     Parameters
     ----------
@@ -172,3 +181,68 @@ def mission_report(prob, **kwargs):
                                           {'Fuel Burn': {'units': 'lbm'},
                                            'Elapsed Time': {'units': 'min'},
                                            'Ground Distance': {'units': 'nmi'}})
+
+
+def timeseries_csv(prob, **kwargs):
+    timeseries_outputs = prob.model.list_outputs(
+        includes='*timeseries*', out_stream=None, return_format='dict', units=True)
+    phase_names = prob.model.traj._phases.keys()
+
+    timeseries_data = {}
+    for timeseries_output in timeseries_outputs:
+        variable_name = timeseries_output.split('.')[-1]
+        for idx_phase, phase_name in enumerate(phase_names):
+            variable_str = f'traj.phases.{phase_name}.timeseries.timeseries_comp.{variable_name}'
+
+            val = timeseries_outputs[variable_str]['val']
+
+            # grab the units from the first phase; use these units for all others
+            if idx_phase == 0:
+                units = timeseries_outputs[variable_str]['units']
+                val_full_traj = val
+            else:
+                original_units = timeseries_outputs[variable_str]['units']
+
+                if original_units != units:
+                    val = wrapped_convert_units((val, original_units), units)
+
+                val_full_traj = np.vstack((val_full_traj, val))
+
+        timeseries_data[variable_name] = {}
+        timeseries_data[variable_name]['val'] = val_full_traj
+        timeseries_data[variable_name]['units'] = units
+
+    # move 'time' to the beginning of the dictionary
+    timeseries_data = {key: timeseries_data[key] for key in [
+        'time'] + [key for key in timeseries_data if key != 'time']}
+
+    # The path where you want to save the CSV file
+    reports_folder = Path(prob.get_reports_dir())
+    report_file = reports_folder / 'mission_timeseries_data.csv'
+
+    # Preparing the header with variable names and units
+    header = [
+        f'{variable_name} ({timeseries_data[variable_name]["units"]})' for variable_name in timeseries_data]
+
+    # Transposing the timeseries data to match the CSV structure
+    # Assuming all data are numpy arrays of the same length
+    data_length = len(timeseries_data[next(iter(timeseries_data))]['val'])
+    csv_data = []
+    for i in range(data_length):
+        row = [timeseries_data[variable_name]['val'][i][0]
+               for variable_name in timeseries_data]
+        # check if the row is the same as the last one in csv_data
+        # only add the row if it is new
+        if i > 0:
+            if row != csv_data[-1]:
+                csv_data.append(row)
+        else:
+            csv_data.append(row)
+
+    # Writing the header and data to a CSV file
+    with open(report_file, mode='w', newline='') as csv_file:
+        writer = csv.writer(csv_file)
+        writer.writerow(header)  # Writing the header
+        writer.writerows(csv_data)  # Writing the rows of timeseries data
+
+    print(f'Timeseries data successfully saved to {report_file}')
