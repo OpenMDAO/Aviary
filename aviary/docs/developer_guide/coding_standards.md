@@ -16,6 +16,9 @@ To set up pre-commit in your development python environment, there are a few one
 
 The Aviary repository contains a configuration file that defines what is run when commits are made and with what options enabled. Currently this is limited to autopep8 with a max line length restriction.
 
+### Controlling Display Levels
+To make debugging issues easier, it is strongly recommended to make use of the `VERBOSITY` setting. This allows control over how much information is displayed to a user; too much information makes finding relevant information difficult and not enough information can make tracking difficult. `Brief` should be the default in most cases; however, `Quiet` should be the default for tests.
+
 ## Naming Conventions
 ### Variables
 When it comes to variable naming, always be verbose! The Aviary team considers long but clear and descriptive names superior to shortened or vague names. Typing out a long name is only difficult once, as most IDEs will help you auto-complete long variable names, but the readability they add lasts a lifetime!
