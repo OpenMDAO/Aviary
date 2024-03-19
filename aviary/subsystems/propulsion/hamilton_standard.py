@@ -551,7 +551,7 @@ class HamiltonStandard(om.ExplicitComponent):
     This is Hamilton Standard component rewritten from Fortran code. 
     The original documentation is available at 
     https://ntrs.nasa.gov/api/citations/19720010354/downloads/19720010354.pdf
-    It computes the thrust coefficient of a propeller.
+    It computes the thrust coefficient of a propeller blade.
     """
 
     def initialize(self):
