@@ -579,7 +579,7 @@ class HamiltonStandard(om.ExplicitComponent):
         self.add_output('ang_blade', val=np.zeros(nn), units='deg')
         self.add_output('comp_tip_loss_factor', val=np.zeros(nn), units='unitless')
 
-        self.declare_partials('*', '*', method='fd')
+        self.declare_partials('*', '*', method='fd', form='forward')
 
     def compute(self, inputs, outputs):
         for i_node in range(self.options['num_nodes']):
@@ -728,7 +728,7 @@ class HamiltonStandard(om.ExplicitComponent):
                             Blade_angle_table[kdx], CT_Angle_table[idx_blade][kdx][:ang_len], BLL[kdx])  # thrust coeff at baseline point for kdx
                     except IndexError:
                         raise om.AnalysisError(
-                            "interp failed for CTT in hamilton_standard.py")
+                            "interp failed for CTT (thrust coefficient) in hamilton_standard.py")
                     if (run_flag > 1):
                         NERPT = 2
                         print(
