@@ -143,6 +143,9 @@ class PropPerf(om.Group):
         self.options.declare(
             'aviary_options', types=AviaryValues,
             desc='collection of Aircraft/Mission specific options')
+        self.options.declare(
+            'include_atmosphere_model', types=bool, default=False,
+            desc='Flag to include atmosphere in the model')
 
     def setup(self):
         options = self.options
@@ -169,22 +172,23 @@ class PropPerf(om.Group):
             self.set_input_defaults(
                 Dynamic.Mission.INSTALLATION_LOSS_FACTOR, val=np.ones(nn), units="unitless")
 
-        self.add_subsystem(
-            name='atmosphere',
-            subsys=USatm1976Comp(num_nodes=nn),
-            promotes_inputs=[('h', Dynamic.Mission.ALTITUDE)],
-            promotes_outputs=[
-                ('sos', Dynamic.Mission.SPEED_OF_SOUND), ('rho', Dynamic.Mission.DENSITY),
-                ('temp', Dynamic.Mission.TEMPERATURE), ('pres', Dynamic.Mission.STATIC_PRESSURE)],
-        )
+        if self.options['include_atmosphere_model']:
+            self.add_subsystem(
+                name='atmosphere',
+                subsys=USatm1976Comp(num_nodes=nn),
+                promotes_inputs=[('h', Dynamic.Mission.ALTITUDE)],
+                promotes_outputs=[
+                    ('sos', Dynamic.Mission.SPEED_OF_SOUND), ('rho', Dynamic.Mission.DENSITY),
+                    ('temp', Dynamic.Mission.TEMPERATURE), ('pres', Dynamic.Mission.STATIC_PRESSURE)],
+            )
 
         if self.options['compute_mach_internally']:
             self.add_subsystem(
                 'compute_mach',
                 om.ExecComp(f'{Dynamic.Mission.MACH} = 0.00150933 * {Dynamic.Mission.VELOCITY} * ({TSLS_DEGR} / {Dynamic.Mission.TEMPERATURE})**0.5',
-                            mach={'units': 'unitless'},
-                            velocity={'units': 'knot'},
-                            temperature={'units': 'degR'},
+                            mach={'units': 'unitless', 'val': np.zeros(nn)},
+                            velocity={'units': 'knot', 'val': np.zeros(nn)},
+                            temperature={'units': 'degR', 'val': np.zeros(nn)},
                             has_diag_partials=True,
                             ),
                 promotes=['*'],
@@ -240,7 +244,7 @@ class PropPerf(om.Group):
             ],
             promotes_outputs=[
                 "thrust_coefficient_comp_loss",
-                "Thrust",
+                "prop_thrust",
                 "propeller_efficiency",
                 "install_efficiency",
             ])
