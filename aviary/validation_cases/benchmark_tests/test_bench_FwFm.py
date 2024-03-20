@@ -1,15 +1,23 @@
 import unittest
 
 import numpy as np
+
+from openmdao.utils.mpi import MPI
 from openmdao.utils.testing_utils import use_tempdirs
 from openmdao.utils.testing_utils import require_pyoptsparse
+from openmdao.core.problem import _clear_problem_names
 
 from aviary.interface.methods_for_level1 import run_aviary
+from aviary.variable_info.enums import Verbosity
 from aviary.validation_cases.benchmark_utils import \
     compare_against_expected_values
 
+try:
+    from openmdao.vectors.petsc_vector import PETScVector
+except ImportError:
+    PETScVector = None
 
-@use_tempdirs
+
 class ProblemPhaseTestCase(unittest.TestCase):
     def setUp(self):
         expected_dict = {}
@@ -349,22 +357,45 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         self.phase_info = phase_info
 
+        _clear_problem_names()  # need to reset these to simulate separate runs
+
+
+@use_tempdirs
+class TestBenchFwFmSerial(ProblemPhaseTestCase):
+
     @require_pyoptsparse(optimizer="IPOPT")
-    def test_bench_FwFm(self):
-        prob = run_aviary(
-            'models/test_aircraft/aircraft_for_bench_FwFm.csv', self.phase_info, max_iter=50, optimizer='IPOPT')
+    def test_bench_FwFm_IPOPT(self):
+        prob = run_aviary('models/test_aircraft/aircraft_for_bench_FwFm.csv',
+                          self.phase_info, verbosity=Verbosity.QUIET,
+                          max_iter=50, optimizer='IPOPT')
 
         compare_against_expected_values(prob, self.expected_dict)
 
     @require_pyoptsparse(optimizer="SNOPT")
     def test_bench_FwFm_SNOPT(self):
-        prob = run_aviary(
-            'models/test_aircraft/aircraft_for_bench_FwFm.csv', self.phase_info, max_iter=50, optimizer='SNOPT')
+        prob = run_aviary('models/test_aircraft/aircraft_for_bench_FwFm.csv',
+                          self.phase_info, verbosity=Verbosity.QUIET,
+                          max_iter=50, optimizer='SNOPT')
+
+        compare_against_expected_values(prob, self.expected_dict)
+
+
+@use_tempdirs
+@unittest.skipUnless(MPI and PETScVector, "MPI and PETSc are required.")
+class TestBenchFwFmParallel(ProblemPhaseTestCase):
+
+    N_PROCS = 3
+
+    @require_pyoptsparse(optimizer="SNOPT")
+    def test_bench_FwFm_SNOPT_MPI(self):
+        prob = run_aviary('models/test_aircraft/aircraft_for_bench_FwFm.csv',
+                          self.phase_info, verbosity=Verbosity.QUIET,
+                          max_iter=50, optimizer='SNOPT')
 
         compare_against_expected_values(prob, self.expected_dict)
 
 
 if __name__ == '__main__':
-    test = ProblemPhaseTestCase()
+    test = TestBenchFwFmSerial()
     test.setUp()
     test.test_bench_FwFm_SNOPT()

@@ -30,6 +30,7 @@ class EngineModel(SubsystemBuilderBase):
     build_mission
     build_post_mission
     get_val
+    get_item
     set_val
     update
     """
@@ -176,6 +177,26 @@ class EngineModel(SubsystemBuilderBase):
             Value of requested option in desired units.
         """
         return self.options.get_val(key, units)
+
+    def get_item(self, key, default=(None, None)):
+        '''
+        Return the named value and its associated units.
+
+        Note, this method never raises `KeyError` or `TypeError`.
+
+        Parameters
+        ----------
+        key : str
+            the name of the item
+
+        default : OptionalValueAndUnits (None, None)
+            if the item does not exist, return this object
+
+        Returns
+        -------
+        OptionalValueAndUnits
+        '''
+        return self.options.get_item(key, default)
 
     def set_val(self, key, val, units='unitless'):
         """

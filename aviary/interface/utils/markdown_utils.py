@@ -1,13 +1,18 @@
 import numpy as np
 from math import floor, log10
 
-# TODO openMDAO has generate_table() that can eventually replace this
+# TODO openMDAO has generate_table() that might be able to replace this
 
-# TODO this might have other use cases, move to utils if so
+# TODO rounding might have other use cases, move to utils if so
 
 
 def round_it(x, sig=None):
     # default sig figs to 2 decimal places out
+    if isinstance(x, str):
+        try:
+            x = float(x)
+        except ValueError:
+            return x
     if not sig:
         sig = len(str(round(x)))+2
     if x != 0:
@@ -44,6 +49,8 @@ def write_markdown_variable_table(open_file, problem, outputs, metadata):
                     val = problem.aviary_inputs.get_val(var_name, units)
                 else:
                     val, units = problem.aviary_inputs.get_item(var_name)
+                    if (val, units) == (None, None):
+                        raise KeyError
             except KeyError:
                 val = 'Not Found in Model'
                 units = None
@@ -54,11 +61,10 @@ def write_markdown_variable_table(open_file, problem, outputs, metadata):
             if len(val) == 1:
                 val = val[0]
         else:
-            round_it(val)
+            val = round_it(val)
         if not units:
             units = 'unknown'
-        summary_line = f'| {var_name} | {val} |'
-        if units != 'unitless':
-            summary_line = summary_line + f' {units}'
-        summary_line = summary_line + ' |\n'
+        if units == 'unitless':
+            units = '-'
+        summary_line = f'| {var_name} | {val} | {units} |\n'
         open_file.write(summary_line)

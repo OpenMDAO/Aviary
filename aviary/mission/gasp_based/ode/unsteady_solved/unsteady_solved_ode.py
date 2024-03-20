@@ -9,11 +9,12 @@ from aviary.mission.gasp_based.ode.unsteady_solved.gamma_comp import GammaComp
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_flight_conditions import \
     UnsteadySolvedFlightConditions
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_eom import UnsteadySolvedEOM
-from aviary.variable_info.enums import SpeedType
+from aviary.variable_info.enums import SpeedType, LegacyCode
 from aviary.variable_info.variables import Dynamic
 from aviary.variable_info.variables_in import VariablesIn
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
+from aviary.variable_info.variable_meta_data import _MetaData
 
 
 class UnsteadySolvedODE(BaseODE):
@@ -56,11 +57,16 @@ class UnsteadySolvedODE(BaseODE):
             types=SpeedType,
             desc="Airspeed type specified as input.")
         self.options.declare(
-            'balance_throttle',
-            types=bool,
-            default=False,
-            desc='Flag if throttle should be solved for to match thrust to drag'
+            'throttle_enforcement', default='path_constraint',
+            values=['path_constraint', 'boundary_constraint', 'bounded', None],
+            desc='flag to enforce throttle constraints on the path or at the segment boundaries or using solver bounds'
         )
+        self.options.declare(
+            'external_subsystems', default=[],
+            desc='list of external subsystem builder instances to be added to the ODE')
+        self.options.declare(
+            'meta_data', default=_MetaData,
+            desc='metadata associated with the variables to be passed into the ODE')
 
     def setup(self):
         nn = self.options["num_nodes"]
@@ -69,7 +75,7 @@ class UnsteadySolvedODE(BaseODE):
         aviary_options = self.options['aviary_options']
         subsystem_options = self.options['subsystem_options']
         core_subsystems = self.options['core_subsystems']
-        balance_throttle = self.options['balance_throttle']
+        throttle_enforcement = self.options['throttle_enforcement']
 
         if self.options["include_param_comp"]:
             # TODO: paramport
@@ -84,12 +90,12 @@ class UnsteadySolvedODE(BaseODE):
         self.add_subsystem(
             "USatm",
             USatm1976Comp(
-                num_nodes=nn),
+                num_nodes=nn, output_dsos_dh=True),
             promotes_inputs=[
                 ("h",
                  Dynamic.Mission.ALTITUDE)],
             promotes_outputs=[
-                "rho",
+                ("rho", Dynamic.Mission.DENSITY),
                 ("sos",
                  Dynamic.Mission.SPEED_OF_SOUND),
                 ("temp",
@@ -97,7 +103,9 @@ class UnsteadySolvedODE(BaseODE):
                 ("pres",
                  Dynamic.Mission.STATIC_PRESSURE),
                 "viscosity",
-                "drhos_dh"],
+                "drhos_dh",
+                "dsos_dh",
+            ],
         )
 
         self.add_subsystem("flight_path_angle",
@@ -105,13 +113,20 @@ class UnsteadySolvedODE(BaseODE):
                            promotes_inputs=["*"],
                            promotes_outputs=["*"])
 
+        inputs_list = ['*', ('rho', Dynamic.Mission.DENSITY)]
+        outputs_list = ['*']
+        if input_speed_type is SpeedType.TAS:
+            inputs_list.append(('TAS', Dynamic.Mission.VELOCITY))
+        else:
+            outputs_list.append(('TAS', Dynamic.Mission.VELOCITY))
+
         self.add_subsystem(
             "fc",
             UnsteadySolvedFlightConditions(num_nodes=nn,
                                            ground_roll=ground_roll,
                                            input_speed_type=input_speed_type),
-            promotes_inputs=["*"],
-            promotes_outputs=["*"],
+            promotes_inputs=inputs_list,
+            promotes_outputs=outputs_list,
         )
 
         control_iter_group = self.add_subsystem("control_iter_group",
@@ -120,50 +135,58 @@ class UnsteadySolvedODE(BaseODE):
                                                 promotes_outputs=["*"])
 
         # Also need to change the run script and the iter group solver when using this; just testing for now
-        if balance_throttle:
-            throttle_balance_group = self.add_subsystem("throttle_balance_group",
-                                                        om.Group(),
-                                                        promotes=["*"])
+        throttle_balance_group = self.add_subsystem("throttle_balance_group",
+                                                    om.Group(),
+                                                    promotes=["*"])
 
-            throttle_balance_comp = om.BalanceComp()
-            throttle_balance_comp.add_balance(Dynamic.Mission.THROTTLE,
-                                              units="unitless",
-                                              val=np.ones(nn) * 0.5,
-                                              lhs_name=Dynamic.Mission.THRUST_TOTAL,
-                                              rhs_name="thrust_req",
-                                              eq_units="lbf",
-                                              normalize=True,
-                                              lower=0.0,
-                                              upper=1.0,
-                                              )
+        throttle_balance_comp = om.BalanceComp()
+        throttle_balance_comp.add_balance(Dynamic.Mission.THROTTLE,
+                                          units="unitless",
+                                          val=np.ones(nn) * 0.5,
+                                          lhs_name=Dynamic.Mission.THRUST_TOTAL,
+                                          rhs_name="thrust_req",
+                                          eq_units="lbf",
+                                          normalize=False,
+                                          lower=0.0 if throttle_enforcement == 'bounded' else None,
+                                          upper=1.0 if throttle_enforcement == 'bounded' else None,
+                                          res_ref=1.0e6,
+                                          )
 
-            throttle_balance_group.add_subsystem("throttle_balance_comp", subsys=throttle_balance_comp,
-                                                 promotes_inputs=["*"],
-                                                 promotes_outputs=["*"])
+        throttle_balance_group.add_subsystem("throttle_balance_comp", subsys=throttle_balance_comp,
+                                             promotes_inputs=["*"],
+                                             promotes_outputs=["*"])
 
-            throttle_balance_group.nonlinear_solver = om.NewtonSolver(solve_subsystems=True,
-                                                                      atol=1.0e-10,
-                                                                      rtol=1.0e-10,
-                                                                      )
-            throttle_balance_group.nonlinear_solver.linesearch = om.BoundsEnforceLS()
-            throttle_balance_group.linear_solver = om.DirectSolver(assemble_jac=True)
-            throttle_balance_group.nonlinear_solver.options['err_on_non_converge'] = True
+        throttle_balance_group.nonlinear_solver = om.NewtonSolver(solve_subsystems=True,
+                                                                  atol=1.0e-10,
+                                                                  rtol=1.0e-10,
+                                                                  )
+        throttle_balance_group.nonlinear_solver.linesearch = om.BoundsEnforceLS()
+        throttle_balance_group.linear_solver = om.DirectSolver(assemble_jac=True)
+        throttle_balance_group.nonlinear_solver.options['err_on_non_converge'] = True
 
-        kwargs = {'num_nodes': nn, 'aviary_inputs': aviary_options,
-                  'method': 'low_speed'}
+        kwargs = {
+            'num_nodes': nn,
+            'aviary_inputs': aviary_options,
+            'method': 'low_speed',
+        }
         if self.options['clean']:
             kwargs['method'] = 'cruise'
-            kwargs['output_alpha'] = False
         for subsystem in core_subsystems:
+            # check if subsystem_options has entry for a subsystem of this name
+            if subsystem.name in subsystem_options:
+                kwargs.update(subsystem_options[subsystem.name])
             system = subsystem.build_mission(**kwargs)
             if system is not None:
                 if isinstance(subsystem, AerodynamicsBuilderBase):
+                    mission_inputs = subsystem.mission_inputs(**kwargs)
+                    if subsystem.code_origin is LegacyCode.FLOPS and 'angle_of_attack' in mission_inputs:
+                        mission_inputs.remove('angle_of_attack')
+                        mission_inputs.append(('angle_of_attack', 'alpha'))
                     control_iter_group.add_subsystem(subsystem.name,
                                                      system,
-                                                     promotes_inputs=subsystem.mission_inputs(
-                                                         **kwargs),
+                                                     promotes_inputs=mission_inputs,
                                                      promotes_outputs=subsystem.mission_outputs(**kwargs))
-                elif isinstance(subsystem, PropulsionBuilderBase) and balance_throttle:
+                elif isinstance(subsystem, PropulsionBuilderBase):
                     throttle_balance_group.add_subsystem(subsystem.name,
                                                          system,
                                                          promotes_inputs=subsystem.mission_inputs(
@@ -178,9 +201,10 @@ class UnsteadySolvedODE(BaseODE):
 
         eom_comp = UnsteadySolvedEOM(num_nodes=nn, ground_roll=ground_roll)
 
+        input_list = ['*', (Dynamic.Mission.THRUST_TOTAL, "thrust_req"),
+                      ('TAS', Dynamic.Mission.VELOCITY)]
         control_iter_group.add_subsystem("eom", subsys=eom_comp,
-                                         promotes_inputs=["*",
-                                                          (Dynamic.Mission.THRUST_TOTAL, "thrust_req")],
+                                         promotes_inputs=input_list,
                                          promotes_outputs=["*"])
 
         thrust_alpha_bal = om.BalanceComp()
@@ -191,6 +215,8 @@ class UnsteadySolvedODE(BaseODE):
                                          lhs_name="dgam_dt_approx",
                                          rhs_name="dgam_dt",
                                          eq_units="rad/s",
+                                         lower=-np.pi/12,
+                                         upper=np.pi/12,
                                          normalize=False)
 
         thrust_alpha_bal.add_balance("thrust_req",
@@ -208,7 +234,7 @@ class UnsteadySolvedODE(BaseODE):
         control_iter_group.nonlinear_solver = om.NewtonSolver(solve_subsystems=True,
                                                               atol=1.0e-10,
                                                               rtol=1.0e-10)
-        # self.nonlinear_solver.linesearch = om.ArmijoGoldsteinLS()
+        # control_iter_group.nonlinear_solver.linesearch = om.BoundsEnforceLS()
         control_iter_group.linear_solver = om.DirectSolver(assemble_jac=True)
 
         self.add_subsystem("mass_rate",
@@ -228,7 +254,8 @@ class UnsteadySolvedODE(BaseODE):
             ParamPort.set_default_vals(self)
 
         onn = np.ones(nn)
-        self.set_input_defaults(name="rho", val=rho_sl * onn, units="slug/ft**3")
+        self.set_input_defaults(name=Dynamic.Mission.DENSITY,
+                                val=rho_sl * onn, units="slug/ft**3")
         self.set_input_defaults(
             name=Dynamic.Mission.SPEED_OF_SOUND,
             val=1116.4 * onn,
@@ -236,7 +263,7 @@ class UnsteadySolvedODE(BaseODE):
         if not self.options['ground_roll']:
             self.set_input_defaults(
                 name=Dynamic.Mission.FLIGHT_PATH_ANGLE, val=0.0 * onn, units="rad")
-        self.set_input_defaults(name="TAS",
+        self.set_input_defaults(name=Dynamic.Mission.VELOCITY,
                                 val=250. * onn, units="kn")
         self.set_input_defaults(
             name=Dynamic.Mission.ALTITUDE,

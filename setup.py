@@ -14,7 +14,7 @@ with open(Path(__file__).parent / "README.md", encoding="utf-8") as f:
 
 pkgname = "aviary"
 extras_require = {
-    "test": ["testflo", "pre-commit"],
+    "test": ["testflo", "pre-commit", "sphinx_book_theme==1.1.0"],
     "examples": ["openaerostruct", "ambiance", "itables"],
 }
 
@@ -57,6 +57,7 @@ setup(
             "utils/test/*",
             "models/engines/*.deck",
             "models/engines/*.txt",
+            "models/engines/*.eng",
             "models/N3CC/*",
             "models/large_single_aisle_1/*",
             "models/large_single_aisle_2/*",
@@ -81,7 +82,7 @@ setup(
             'aviary=aviary.interface.cmd_entry_points:aviary_cmd',
         ],
         'openmdao_report': [
-            'summary=aviary.interface.reports:register_custom_reports',
+            'aviary_reports=aviary.interface.reports:register_custom_reports',
         ]
     }
 )

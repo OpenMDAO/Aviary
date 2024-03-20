@@ -205,27 +205,27 @@ class MuxComponent(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         # Wing
         outputs['wetted_areas'][0] = inputs[
-            Aircraft.Wing.WETTED_AREA]
+            Aircraft.Wing.WETTED_AREA][0]
         outputs['fineness_ratios'][0] = inputs[
-            Aircraft.Wing.FINENESS]
+            Aircraft.Wing.FINENESS][0]
         outputs['characteristic_lengths'][0] = inputs[
-            Aircraft.Wing.CHARACTERISTIC_LENGTH]
+            Aircraft.Wing.CHARACTERISTIC_LENGTH][0]
         outputs['laminar_fractions_upper'][0] = inputs[
-            Aircraft.Wing.LAMINAR_FLOW_UPPER]
+            Aircraft.Wing.LAMINAR_FLOW_UPPER][0]
         outputs['laminar_fractions_lower'][0] = inputs[
-            Aircraft.Wing.LAMINAR_FLOW_LOWER]
+            Aircraft.Wing.LAMINAR_FLOW_LOWER][0]
 
         # Horizontal Tail
         outputs['wetted_areas'][1] = inputs[
-            Aircraft.HorizontalTail.WETTED_AREA]
+            Aircraft.HorizontalTail.WETTED_AREA][0]
         outputs['fineness_ratios'][1] = inputs[
-            Aircraft.HorizontalTail.FINENESS]
+            Aircraft.HorizontalTail.FINENESS][0]
         outputs['characteristic_lengths'][1] = inputs[
-            Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH]
+            Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH][0]
         outputs['laminar_fractions_upper'][1] = inputs[
-            Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER]
+            Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER][0]
         outputs['laminar_fractions_lower'][1] = inputs[
-            Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER]
+            Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER][0]
 
         ic = 2
 
@@ -233,28 +233,29 @@ class MuxComponent(om.ExplicitComponent):
         if self.num_tails > 0:
             for j in range(self.num_tails):
                 outputs['wetted_areas'][ic + j] = inputs[
-                    Aircraft.VerticalTail.WETTED_AREA]
+                    Aircraft.VerticalTail.WETTED_AREA][0]
                 outputs['fineness_ratios'][ic + j] = inputs[
-                    Aircraft.VerticalTail.FINENESS]
+                    Aircraft.VerticalTail.FINENESS][0]
                 outputs['characteristic_lengths'][ic + j] = inputs[
-                    Aircraft.VerticalTail.CHARACTERISTIC_LENGTH]
+                    Aircraft.VerticalTail.CHARACTERISTIC_LENGTH][0]
                 outputs['laminar_fractions_upper'][ic + j] = inputs[
-                    Aircraft.VerticalTail.LAMINAR_FLOW_UPPER]
+                    Aircraft.VerticalTail.LAMINAR_FLOW_UPPER][0]
                 outputs['laminar_fractions_lower'][ic + j] = inputs[
-                    Aircraft.VerticalTail.LAMINAR_FLOW_LOWER]
+                    Aircraft.VerticalTail.LAMINAR_FLOW_LOWER][0]
             ic += self.num_tails
 
         # Fuselage
         if self.num_fuselages > 0:
             for j in range(self.num_fuselages):
-                outputs['wetted_areas'][ic + j] = inputs[Aircraft.Fuselage.WETTED_AREA]
-                outputs['fineness_ratios'][ic + j] = inputs[Aircraft.Fuselage.FINENESS]
+                outputs['wetted_areas'][ic + j] = inputs[Aircraft.Fuselage.WETTED_AREA][0]
+                outputs['fineness_ratios'][ic +
+                                           j] = inputs[Aircraft.Fuselage.FINENESS][0]
                 outputs['characteristic_lengths'][ic + j] = inputs[
-                    Aircraft.Fuselage.CHARACTERISTIC_LENGTH]
+                    Aircraft.Fuselage.CHARACTERISTIC_LENGTH][0]
                 outputs['laminar_fractions_upper'][ic + j] = inputs[
-                    Aircraft.Fuselage.LAMINAR_FLOW_UPPER]
+                    Aircraft.Fuselage.LAMINAR_FLOW_UPPER][0]
                 outputs['laminar_fractions_lower'][ic + j] = inputs[
-                    Aircraft.Fuselage.LAMINAR_FLOW_LOWER]
+                    Aircraft.Fuselage.LAMINAR_FLOW_LOWER][0]
             ic += self.num_fuselages
 
         # Nacelle

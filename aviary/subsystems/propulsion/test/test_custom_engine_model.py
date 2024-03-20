@@ -7,6 +7,7 @@ from openmdao.utils.assert_utils import assert_near_equal
 from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.enums import Verbosity
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
@@ -179,7 +180,7 @@ class CustomEngineTest(unittest.TestCase):
         # Link phases and variables
         prob.link_phases()
 
-        prob.add_driver("SLSQP")
+        prob.add_driver("SLSQP", verbosity=Verbosity.QUIET)
 
         prob.add_design_variables()
 
