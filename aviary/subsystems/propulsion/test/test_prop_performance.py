@@ -99,7 +99,7 @@ class PropPerformanceTest(unittest.TestCase):
         # Case 0, 1, 2, to test install loss factor computation.
         prob = self.prob
         prob.set_val(Dynamic.Mission.ALTITUDE, [0.0, 0.0, 25000.0], units="ft")
-        prob.set_val(Dynamic.Mission.VELOCITY, [0.1, 125.0, 300.0], units="knot")
+        prob.set_val(Dynamic.Mission.VELOCITY, [0.10, 125.0, 300.0], units="knot")
         prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED,
                      [800.0, 800.0, 750.0], units="ft/s")
         prob.set_val(Dynamic.Mission.SHAFT_POWER, [1850.0, 1850.0, 900.0], units="hp")
