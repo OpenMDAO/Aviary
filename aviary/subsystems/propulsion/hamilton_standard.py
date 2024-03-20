@@ -6,8 +6,6 @@ from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH, TSLS_DEGR
 
-const = 10.E10 / (2 * 6966.)
-
 
 def _unint(xa, ya, x):
     """
@@ -513,7 +511,7 @@ class PreHamiltonStandard(om.ExplicitComponent):
         outputs['adv_ratio'] = 5.309 * vktas / tipspd
         diam_prop = inputs[Aircraft.Engine.PROPELLER_DIAMETER][0]
         shp = inputs[Dynamic.Mission.SHAFT_POWER]
-        outputs['power_coefficient'] = shp * const / \
+        outputs['power_coefficient'] = shp * 10.E10 / (2 * 6966.) / \
             outputs['density_ratio'] / (tipspd**3*diam_prop**2)
 
     def compute_partials(self, inputs, partials):
@@ -525,6 +523,8 @@ class PreHamiltonStandard(om.ExplicitComponent):
         temp = inputs[Dynamic.Mission.TEMPERATURE]
         sqrt_temp_ratio = np.sqrt(TSLS_DEGR/temp)
 
+        unit_conversion_const = 10.E10 / (2 * 6966.)
+
         partials["density_ratio", Dynamic.Mission.DENSITY] = 1 / RHO_SEA_LEVEL_ENGLISH
         partials["tip_mach",
                  Dynamic.Mission.PROPELLER_TIP_SPEED] = sqrt_temp_ratio / 1118.21948771
@@ -533,15 +533,15 @@ class PreHamiltonStandard(om.ExplicitComponent):
         partials["adv_ratio", Dynamic.Mission.VELOCITY] = 5.309 / tipspd
         partials["adv_ratio", Dynamic.Mission.PROPELLER_TIP_SPEED] = - \
             5.309 * vktas / (tipspd * tipspd)
-        partials["power_coefficient", Dynamic.Mission.SHAFT_POWER] = const * \
+        partials["power_coefficient", Dynamic.Mission.SHAFT_POWER] = unit_conversion_const * \
             RHO_SEA_LEVEL_ENGLISH / (rho * tipspd**3*diam_prop**2)
-        partials["power_coefficient", Dynamic.Mission.DENSITY] = -const * shp * \
+        partials["power_coefficient", Dynamic.Mission.DENSITY] = -unit_conversion_const * shp * \
             RHO_SEA_LEVEL_ENGLISH / (rho * rho * tipspd**3*diam_prop**2)
         partials["power_coefficient", Dynamic.Mission.PROPELLER_TIP_SPEED] = -3 * \
-            const * shp * RHO_SEA_LEVEL_ENGLISH / \
+            unit_conversion_const * shp * RHO_SEA_LEVEL_ENGLISH / \
             (rho * tipspd**4*diam_prop**2)
         partials["power_coefficient", Aircraft.Engine.PROPELLER_DIAMETER] = -2 * \
-            const * shp * RHO_SEA_LEVEL_ENGLISH / \
+            unit_conversion_const * shp * RHO_SEA_LEVEL_ENGLISH / \
             (rho * tipspd**3*diam_prop**3)
 
 
@@ -767,7 +767,7 @@ class HamiltonStandard(om.ExplicitComponent):
                         if (inputs['adv_ratio'][i_node] != 0.0):
                             ZMCRT, run_flag = _unint(
                                 adv_ratio_array2, mach_corr_table[CL_tab_idx], inputs['adv_ratio'][i_node])
-                            DMN = inputs['mach'][i_node] - ZMCRT
+                            DMN = inputs[Dynamic.Mission.MACH][i_node] - ZMCRT
                         else:
                             ZMCRT = mach_tip_corr_arr[CL_tab_idx]
                             DMN = inputs['tip_mach'][i_node] - ZMCRT

@@ -1603,7 +1603,7 @@ class TurboPropDeck(EngineDeck):
         engine_group.set_input_defaults(
             Aircraft.Engine.PROPELLER_DIAMETER, 10, units="ft")
         engine_group.set_input_defaults(
-            Dynamic.Mission.TEMPERATURE, 500., units="degR")
+            Dynamic.Mission.TEMPERATURE, np.ones(num_nodes)*500., units="degR")
 
     def _add_dummy_prop(self, engine_group: om.Group, num_nodes=1):
         engine_group.add_subsystem(

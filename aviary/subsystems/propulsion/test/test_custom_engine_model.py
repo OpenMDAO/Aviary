@@ -246,25 +246,10 @@ class TurbopropTest(unittest.TestCase):
             }
         }
 
-        filename = get_path('models/engines/turboprop_4465hp.deck')
+        engine_filepath = get_path('models/engines/turboprop_4465hp.deck')
         options = get_option_defaults()
-        options.set_val(Aircraft.Engine.DATA_FILE, filename)
+        options.set_val(Aircraft.Engine.DATA_FILE, engine_filepath)
         options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
-        options.set_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER, 1.0)
-        options.set_val(Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER, 1.0)
-        options.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM, 0.0)
-        options.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM, 1.0)
-        options.set_val(Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION, 0.0, units='lbm/h')
-        options.set_val(Aircraft.Engine.SCALE_PERFORMANCE, True)
-        options.set_val(Mission.Summary.FUEL_FLOW_SCALER, 1.0)
-        options.set_val(Aircraft.Engine.SCALE_FACTOR, 1.)
-        options.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, False)
-        options.set_val(Aircraft.Engine.IGNORE_NEGATIVE_THRUST, False)
-        options.set_val(Aircraft.Engine.FLIGHT_IDLE_THRUST_FRACTION, 0.0)
-        options.set_val(Aircraft.Engine.FLIGHT_IDLE_MAX_FRACTION, 1.0)
-        options.set_val(Aircraft.Engine.FLIGHT_IDLE_MIN_FRACTION, 0.08)
-        options.set_val(Aircraft.Engine.GEOPOTENTIAL_ALT, False)
-        options.set_val(Aircraft.Engine.INTERPOLATION_METHOD, 'slinear')
         options.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 10, units='ft')
 
         options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS,
@@ -315,11 +300,6 @@ class TurbopropTest(unittest.TestCase):
         # and run mission, and dynamics
         dm.run_problem(prob, run_driver=True, simulate=False, make_plots=True)
 
-        # prob.model.list_inputs(print_arrays=True)
-        # prob.model.list_outputs(print_arrays=True)
-
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = TurbopropTest()
-    test.test_turboprop()
+    unittest.main()
