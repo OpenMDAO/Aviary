@@ -8,7 +8,7 @@ from openmdao.core.problem import _clear_problem_names
 from aviary.interface.default_phase_info.two_dof import phase_info
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.variable_info.variables import Aircraft, Mission
-from aviary.variable_info.enums import AnalysisScheme
+from aviary.variable_info.enums import AnalysisScheme, Verbosity
 
 
 @use_tempdirs
@@ -21,7 +21,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
     def test_bench_GwGm(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwGm.csv',
-                          local_phase_info, optimizer='IPOPT')
+                          local_phase_info, optimizer='IPOPT', verbosity=Verbosity.QUIET)
 
         rtol = 0.01
 
@@ -48,7 +48,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
     def test_bench_GwGm_SNOPT(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwGm.csv',
-                          local_phase_info, optimizer='SNOPT')
+                          local_phase_info, optimizer='SNOPT', verbosity=Verbosity.QUIET)
 
         rtol = 0.01
 
@@ -75,7 +75,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
     def test_bench_GwGm_SNOPT_lbm_s(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwGm_lbm_s.csv',
-                          local_phase_info, optimizer='SNOPT')
+                          local_phase_info, optimizer='SNOPT', verbosity=Verbosity.QUIET)
 
         rtol = 0.01
 
@@ -103,7 +103,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwGm.csv',
                           local_phase_info, optimizer='IPOPT', run_driver=False,
-                          analysis_scheme=AnalysisScheme.SHOOTING)
+                          analysis_scheme=AnalysisScheme.SHOOTING, verbosity=Verbosity.QUIET)
 
         rtol = 0.01
 
