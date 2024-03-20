@@ -3,7 +3,8 @@ from pathlib import Path
 import unittest
 import warnings
 import csv
-from openmdao.utils.testing_utils import use_tempdirs
+from openmdao.utils.testing_utils import use_tempdirs, set_env_vars
+import os
 
 from aviary.interface.default_phase_info.height_energy import phase_info
 from aviary.interface.methods_for_level1 import run_aviary
@@ -120,14 +121,14 @@ class BasicReportTestCase(unittest.TestCase):
 
 @use_tempdirs
 class AviaryMissionTestCase(unittest.TestCase):
-    def setUp(self):
+    @set_env_vars(TESTFLO_RUNNING='0', OPENMDAO_REPORTS='mission,timeseries_csv')
+    def test_outputted_reports(self):
         local_phase_info = deepcopy(phase_info)
         self.prob = run_aviary('models/test_aircraft/aircraft_for_bench_FwFm.csv',
                                local_phase_info,
                                optimizer='IPOPT',
                                max_iter=0)
 
-    def test_outputted_reports(self):
         # Expected header names and units
         expected_header = ["time (s)", "mach (unitless)", "thrust_net_total (lbf)", "drag (lbf)",
                            "specific_energy_rate_excess (m/s)", "fuel_flow_rate_negative_total (lbm/h)",
@@ -141,7 +142,7 @@ class AviaryMissionTestCase(unittest.TestCase):
         ]
 
         report_file_path = Path(self.prob.get_reports_dir()).joinpath(
-            'mission_timeseries_data.csv')
+            'mission_timeseries_data.csv').absolute()
         with open(report_file_path, mode='r') as csvfile:
             csvreader = csv.reader(csvfile)
             header = next(csvreader)  # Read the header row

@@ -8,7 +8,7 @@ from openmdao.utils.reports_system import register_report
 
 from aviary.interface.utils.markdown_utils import write_markdown_variable_table
 from aviary.utils.named_values import NamedValues
-from aviary.interface.methods_for_level2 import wrapped_convert_units
+from aviary.utils.functions import wrapped_convert_units
 
 
 def register_custom_reports():
