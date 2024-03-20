@@ -1591,23 +1591,45 @@ class AviaryProblem(om.Problem):
             driver.declare_coloring()
 
         if driver.options["optimizer"] == "SNOPT":
+            if verbosity == Verbosity.QUIET:
+                isumm = 0
+                iprint = 0
+            elif verbosity == Verbosity.BRIEF:
+                isumm = 6
+                iprint = 0
+            else:
+                isumm = 6
+                iprint = 9
             driver.opt_settings["Major iterations limit"] = max_iter
             driver.opt_settings["Major optimality tolerance"] = 1e-4
             driver.opt_settings["Major feasibility tolerance"] = 1e-7
-            driver.opt_settings["iSumm"] = 6
+            driver.opt_settings["iSumm"] = isumm
+            driver.opt_settings["iPrint"] = iprint
         elif driver.options["optimizer"] == "IPOPT":
+            if verbosity == Verbosity.QUIET:
+                print_level = 0
+            elif verbosity == Verbosity.BRIEF:
+                print_level = 2
+            elif verbosity == Verbosity.VERBOSE:
+                print_level = 5
+            else:
+                print_level = 8
             driver.opt_settings['tol'] = 1.0E-6
             driver.opt_settings['mu_init'] = 1e-5
             driver.opt_settings['max_iter'] = max_iter
-            driver.opt_settings['print_level'] = 5
+            driver.opt_settings['print_level'] = print_level
             # for faster convergence
             driver.opt_settings['nlp_scaling_method'] = 'gradient-based'
             driver.opt_settings['alpha_for_y'] = 'safer-min-dual-infeas'
             driver.opt_settings['mu_strategy'] = 'monotone'
         elif driver.options["optimizer"] == "SLSQP":
+            if verbosity == Verbosity.QUIET:
+                disp = False
+            else:
+                disp = True
             driver.options["tol"] = 1e-9
             driver.options["maxiter"] = max_iter
-            driver.options["disp"] = True
+            driver.options["disp"] = disp
 
         if verbosity != Verbosity.QUIET:
             if isinstance(verbosity, list):
