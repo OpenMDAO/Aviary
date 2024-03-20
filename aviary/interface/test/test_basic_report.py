@@ -2,8 +2,8 @@ from copy import deepcopy
 from pathlib import Path
 import unittest
 import warnings
-import csv
 from openmdao.utils.testing_utils import use_tempdirs, set_env_vars
+import openmdao.api as om
 
 from aviary.interface.default_phase_info.height_energy import phase_info
 from aviary.interface.methods_for_level1 import run_aviary
@@ -121,6 +121,9 @@ class BasicReportTestCase(unittest.TestCase):
 
 @use_tempdirs
 class AviaryMissionSummary(unittest.TestCase):
+    def setUp(self):
+        om.clear_reports()
+
     @set_env_vars(TESTFLO_RUNNING='0', OPENMDAO_REPORTS='mission')
     def test_mission_report(self):
         local_phase_info = deepcopy(phase_info)

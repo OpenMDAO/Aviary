@@ -3,6 +3,7 @@ from pathlib import Path
 import unittest
 import csv
 from openmdao.utils.testing_utils import use_tempdirs, set_env_vars
+import openmdao.api as om
 
 from aviary.interface.default_phase_info.height_energy import phase_info
 from aviary.interface.methods_for_level1 import run_aviary
@@ -10,6 +11,9 @@ from aviary.interface.methods_for_level1 import run_aviary
 
 @use_tempdirs
 class AviaryMissionTimeseries(unittest.TestCase):
+    def setUp(self):
+        om.clear_reports()
+
     @set_env_vars(TESTFLO_RUNNING='0', OPENMDAO_REPORTS='timeseries_csv')
     def test_timeseries_report(self):
         local_phase_info = deepcopy(phase_info)
