@@ -9,6 +9,7 @@ from aviary.interface.methods_for_level1 import run_aviary
 from aviary.subsystems.test.test_dummy_subsystem import ArrayGuessSubsystemBuilder
 from aviary.mission.energy_phase import EnergyPhase
 from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.enums import Verbosity
 
 
 @use_tempdirs
@@ -118,7 +119,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
         return run_aviary(
             self.aircraft_definition_file, phase_info,
             make_plots=self.make_plots, max_iter=self.max_iter, optimizer=optimizer,
-            optimization_history_filename="driver_test.db")
+            optimization_history_filename="driver_test.db", verbosity=Verbosity.QUIET)
 
     def test_mission_basic_and_dashboard(self):
         # We need to remove the TESTFLO_RUNNING environment variable for this test to run.
@@ -220,16 +221,16 @@ class AircraftMissionTestSuite(unittest.TestCase):
         local_phase_info = self.phase_info.copy()
         local_phase_info['climb']['phase_builder'] = EnergyPhase
 
-        run_aviary(self.aircraft_definition_file,
-                   local_phase_info, max_iter=1, optimizer='SLSQP')
+        run_aviary(self.aircraft_definition_file, local_phase_info,
+                   verbosity=Verbosity.QUIET, max_iter=1, optimizer='SLSQP')
 
     def test_custom_phase_builder_error(self):
         local_phase_info = self.phase_info.copy()
         local_phase_info['climb']['phase_builder'] = "fake phase object"
 
         with self.assertRaises(TypeError):
-            run_aviary(self.aircraft_definition_file,
-                       local_phase_info, max_iter=1, optimizer='SLSQP')
+            run_aviary(self.aircraft_definition_file, local_phase_info,
+                       verbosity=Verbosity.QUIET, max_iter=1, optimizer='SLSQP')
 
 
 if __name__ == '__main__':
