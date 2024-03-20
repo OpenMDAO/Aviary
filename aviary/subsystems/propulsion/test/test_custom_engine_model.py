@@ -6,10 +6,14 @@ from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.enums import Verbosity
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
+from aviary.subsystems.propulsion.engine_deck import TurboPropDeck
+from aviary.variable_info.options import get_option_defaults
+from aviary.utils.functions import get_path
+from aviary.interface.methods_for_level2 import AviaryProblem
 
 
 class PreMissionEngine(om.Group):
@@ -123,7 +127,6 @@ class SimpleTestEngine(EngineModel):
 @use_tempdirs
 class CustomEngineTest(unittest.TestCase):
     def test_custom_engine(self):
-        from aviary.interface.methods_for_level2 import AviaryProblem
 
         phase_info = {
             'pre_mission': {
@@ -203,6 +206,100 @@ class CustomEngineTest(unittest.TestCase):
         tol = 1.e-4
 
         assert_near_equal(float(prob.get_val('traj.cruise.rhs_all.y')), 4., tol)
+
+
+@use_tempdirs
+class TurbopropTest(unittest.TestCase):
+    def test_turboprop(self):
+        phase_info = {
+            'pre_mission': {
+                'include_takeoff': False,
+                'external_subsystems': [],
+                'optimize_mass': True,
+            },
+            'cruise': {
+                "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
+                "user_options": {
+                    "optimize_mach": False,
+                    "optimize_altitude": False,
+                    "polynomial_control_order": 1,
+                    "num_segments": 2,
+                    "order": 3,
+                    "solve_for_distance": False,
+                    "initial_mach": (0.76, "unitless"),
+                    "final_mach": (0.76, "unitless"),
+                    "mach_bounds": ((0.7, 0.78), "unitless"),
+                    "initial_altitude": (35000.0, "ft"),
+                    "final_altitude": (35000.0, "ft"),
+                    "altitude_bounds": ((23000.0, 38000.0), "ft"),
+                    "throttle_enforcement": "boundary_constraint",
+                    "fix_initial": False,
+                    "constrain_final": False,
+                    "fix_duration": False,
+                    "initial_bounds": ((0.0, 0.0), "min"),
+                    "duration_bounds": ((30., 60.), "min"),
+                },
+                "initial_guesses": {"times": ([0, 30], "min")},
+            },
+            'post_mission': {
+                'include_landing': False,
+                'external_subsystems': [],
+            }
+        }
+
+        engine_filepath = get_path('models/engines/turboprop_4465hp.deck')
+        options = get_option_defaults()
+        options.set_val(Aircraft.Engine.DATA_FILE, engine_filepath)
+        options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
+        options.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 10, units='ft')
+
+        options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS,
+                        val=True, units='unitless')
+        options.set_val(Aircraft.Engine.NUM_BLADES,
+                        val=4, units='unitless')
+
+        engine = TurboPropDeck(options=options, prop_model=True)
+
+        prob = AviaryProblem(reports=True)
+
+        # Load aircraft and options data from user
+        # Allow for user overrides here
+        prob.load_inputs("models/test_aircraft/aircraft_for_bench_FwFm.csv",
+                         phase_info, engine_builder=engine)
+
+        # Preprocess inputs
+        prob.check_and_preprocess_inputs()
+
+        prob.add_pre_mission_systems()
+
+        prob.add_phases()
+
+        prob.add_post_mission_systems()
+
+        # Link phases and variables
+        prob.link_phases()
+
+        prob.add_driver("SLSQP", max_iter=20)
+
+        prob.add_design_variables()
+
+        prob.add_objective('fuel_burned')
+
+        prob.setup()
+
+        prob.set_initial_guesses()
+
+        prob.set_val(
+            f'traj.cruise.rhs_all.{Dynamic.Mission.PROPELLER_TIP_SPEED}', 750., units='ft/s')
+        prob.set_val(
+            f'traj.cruise.rhs_all.{Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR}', 150., units='unitless')
+        prob.set_val(
+            f'traj.cruise.rhs_all.{Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT}', 0.5, units='unitless')
+
+        prob.set_solver_print(level=0)
+
+        # and run mission, and dynamics
+        dm.run_problem(prob, run_driver=True, simulate=False, make_plots=True)
 
 
 if __name__ == '__main__':

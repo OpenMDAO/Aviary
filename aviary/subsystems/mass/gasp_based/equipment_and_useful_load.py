@@ -287,8 +287,8 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
 
         if engine_type is GASPEngineType.TURBOJET:
             oil_per_eng_wt = 0.0054 * Fn_SLS + 12.0
-        # elif engine_type is GASPEngineType.TURBOSHAFT or engine_type is GASPEngineType.TURBOPROP:
-        #     oil_per_eng_wt = 0.0124 * Fn_SLS + 14
+        elif engine_type is GASPEngineType.TURBOSHAFT or engine_type is GASPEngineType.TURBOPROP:
+            oil_per_eng_wt = 0.0124 * Fn_SLS + 14
         # else:
         #     oil_per_eng_wt = 0.062 * (Fn_SLS - 100) + 11
         else:
@@ -679,8 +679,8 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
 
         if engine_type is GASPEngineType.TURBOJET:
             doil_per_eng_wt_dFn_SLS = 0.0054
-        # elif engine_type is GASPEngineType.TURBOSHAFT or engine_type is GASPEngineType.TURBOPROP:
-        #     doil_per_eng_wt_dFn_SLS = 0.0124
+        elif engine_type is GASPEngineType.TURBOSHAFT or engine_type is GASPEngineType.TURBOPROP:
+            doil_per_eng_wt_dFn_SLS = 0.0124
         # else:
         #     doil_per_eng_wt_dFn_SLS = 0.062
         else:

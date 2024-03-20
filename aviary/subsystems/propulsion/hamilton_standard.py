@@ -511,8 +511,8 @@ class PreHamiltonStandard(om.ExplicitComponent):
         outputs['adv_ratio'] = 5.309 * vktas / tipspd
         diam_prop = inputs[Aircraft.Engine.PROPELLER_DIAMETER][0]
         shp = inputs[Dynamic.Mission.SHAFT_POWER]
-        outputs['power_coefficient'] = shp * 10.E10 / \
-            outputs['density_ratio'] / (2.*tipspd**3*diam_prop**2*6966.)
+        outputs['power_coefficient'] = shp * 10.E10 / (2 * 6966.) / \
+            outputs['density_ratio'] / (tipspd**3*diam_prop**2)
 
     def compute_partials(self, inputs, partials):
         vktas = inputs[Dynamic.Mission.VELOCITY]
@@ -523,6 +523,8 @@ class PreHamiltonStandard(om.ExplicitComponent):
         temp = inputs[Dynamic.Mission.TEMPERATURE]
         sqrt_temp_ratio = np.sqrt(TSLS_DEGR/temp)
 
+        unit_conversion_const = 10.E10 / (2 * 6966.)
+
         partials["density_ratio", Dynamic.Mission.DENSITY] = 1 / RHO_SEA_LEVEL_ENGLISH
         partials["tip_mach",
                  Dynamic.Mission.PROPELLER_TIP_SPEED] = sqrt_temp_ratio / 1118.21948771
@@ -531,19 +533,18 @@ class PreHamiltonStandard(om.ExplicitComponent):
         partials["adv_ratio", Dynamic.Mission.VELOCITY] = 5.309 / tipspd
         partials["adv_ratio", Dynamic.Mission.PROPELLER_TIP_SPEED] = - \
             5.309 * vktas / (tipspd * tipspd)
-        partials["power_coefficient", Dynamic.Mission.SHAFT_POWER] = 10.E10 * \
-            RHO_SEA_LEVEL_ENGLISH / (rho * 2.*tipspd**3*diam_prop**2*6966.)
-        partials["power_coefficient", Dynamic.Mission.DENSITY] = -10.E10 * shp * \
-            RHO_SEA_LEVEL_ENGLISH / (rho * rho * 2.*tipspd**3*diam_prop**2*6966.)
+        partials["power_coefficient", Dynamic.Mission.SHAFT_POWER] = unit_conversion_const * \
+            RHO_SEA_LEVEL_ENGLISH / (rho * tipspd**3*diam_prop**2)
+        partials["power_coefficient", Dynamic.Mission.DENSITY] = -unit_conversion_const * shp * \
+            RHO_SEA_LEVEL_ENGLISH / (rho * rho * tipspd**3*diam_prop**2)
         partials["power_coefficient", Dynamic.Mission.PROPELLER_TIP_SPEED] = -3 * \
-            10.E10 * shp * RHO_SEA_LEVEL_ENGLISH / \
-            (rho * 2.*tipspd**4*diam_prop**2*6966.)
+            unit_conversion_const * shp * RHO_SEA_LEVEL_ENGLISH / \
+            (rho * tipspd**4*diam_prop**2)
         partials["power_coefficient", Aircraft.Engine.PROPELLER_DIAMETER] = -2 * \
-            10.E10 * shp * RHO_SEA_LEVEL_ENGLISH / \
-            (rho * 2.*tipspd**3*diam_prop**3*6966.)
+            unit_conversion_const * shp * RHO_SEA_LEVEL_ENGLISH / \
+            (rho * tipspd**3*diam_prop**3)
 
 
-# perfm will probably be a group
 class HamiltonStandard(om.ExplicitComponent):
     """
     This is Hamilton Standard component rewritten from Fortran code. 
@@ -578,7 +579,7 @@ class HamiltonStandard(om.ExplicitComponent):
         self.add_output('ang_blade', val=np.zeros(nn), units='deg')
         self.add_output('comp_tip_loss_factor', val=np.zeros(nn), units='unitless')
 
-        self.declare_partials('*', '*', method='fd')
+        self.declare_partials('*', '*', method='fd', form='forward')
 
     def compute(self, inputs, outputs):
         for i_node in range(self.options['num_nodes']):
@@ -604,20 +605,20 @@ class HamiltonStandard(om.ExplicitComponent):
             for k in range(2, 7):
                 AF_adj_CP[k] = AF_adj_CP[1]
                 AF_adj_CT[k] = AF_adj_CT[1]
-            if (inputs['adv_ratio'][0] <= 0.5):
-                AFCTE = 2.*inputs['adv_ratio'][0] * \
+            if (inputs['adv_ratio'][i_node] <= 0.5):
+                AFCTE = 2.*inputs['adv_ratio'][i_node] * \
                     (AF_adj_CT[1] - AF_adj_CT[0]) + AF_adj_CT[0]
             else:
                 AFCTE = AF_adj_CT[1]
 
             # bounding J (advance ratio) for setting up interpolation
-            if (inputs['adv_ratio'][0] <= 1.0):
+            if (inputs['adv_ratio'][i_node] <= 1.0):
                 J_begin = 0
                 J_end = 3
-            elif (inputs['adv_ratio'][0] <= 1.5):
+            elif (inputs['adv_ratio'][i_node] <= 1.5):
                 J_begin = 1
                 J_end = 4
-            elif (inputs['adv_ratio'][0] <= 2.0):
+            elif (inputs['adv_ratio'][i_node] <= 2.0):
                 J_begin = 2
                 J_end = 5
             else:
@@ -630,7 +631,7 @@ class HamiltonStandard(om.ExplicitComponent):
             CL_tab_idx_flg = 0  # NCL_flg
             ifnd = 0
             cli = inputs[Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT][0]
-            power_coefficient = inputs['power_coefficient'][0]
+            power_coefficient = inputs['power_coefficient'][i_node]
             for ii in range(6):
                 cl_idx = ii
                 if (abs(cli - CL_arr[ii]) <= 0.0009):
@@ -687,7 +688,7 @@ class HamiltonStandard(om.ExplicitComponent):
                             if (ichck <= 1):
                                 if (run_flag == 1):
                                     warnings.warn(
-                                        f"Mach,VTMACH,J,power_coefficient,CP_Eff =: {inputs[Dynamic.Mission.MACH][0]},{inputs['tip_mach'][0]},{inputs['adv_ratio'][0]},{power_coefficient},{CP_Eff}")
+                                        f"Mach,VTMACH,J,power_coefficient,CP_Eff =: {inputs[Dynamic.Mission.MACH][i_node]},{inputs['tip_mach'][i_node]},{inputs['adv_ratio'][i_node]},{power_coefficient},{CP_Eff}")
                                 if (kl == 4 and CPE1 < 0.049):
                                     print(
                                         f"Extrapolated data is being used for CLI=.6--CPE1,PXCLI,L= , {CPE1},{PXCLI[kl]},{idx_blade}   Suggest inputting CLI=.5")
@@ -700,7 +701,7 @@ class HamiltonStandard(om.ExplicitComponent):
                         else:
                             if (run_flag == 1):
                                 warnings.warn(
-                                    f"Mach,VTMACH,J,power_coefficient,CP_Eff =: {inputs[Dynamic.Mission.MACH][0]},{inputs['tip_mach'][0]},{inputs['adv_ratio'][0]},{power_coefficient},{CP_Eff}")
+                                    f"Mach,VTMACH,J,power_coefficient,CP_Eff =: {inputs[Dynamic.Mission.MACH][i_node]},{inputs['tip_mach'][i_node]},{inputs['adv_ratio'][i_node]},{power_coefficient},{CP_Eff}")
                             if (kl == 4 and CPE1 < 0.049):
                                 print(
                                     f"Extrapolated data is being used for CLI=.6--CPE1,PXCLI,L= , {CPE1},{PXCLI[kl]},{idx_blade}   Suggest inputting CLI=.5")
@@ -722,25 +723,29 @@ class HamiltonStandard(om.ExplicitComponent):
                     ang_len = ang_arr_len[kdx]
                     BLL[kdx], run_flag = _unint(
                         CP_Angle_table[idx_blade][kdx][:ang_len], Blade_angle_table[kdx], CP_Eff)  # blade angle at baseline point for kdx
-                    CTT[kdx], run_flag = _unint(
-                        Blade_angle_table[kdx], CT_Angle_table[idx_blade][kdx][:ang_len], BLL[kdx])  # thrust coeff at baseline point for kdx
+                    try:
+                        CTT[kdx], run_flag = _unint(
+                            Blade_angle_table[kdx], CT_Angle_table[idx_blade][kdx][:ang_len], BLL[kdx])  # thrust coeff at baseline point for kdx
+                    except IndexError:
+                        raise om.AnalysisError(
+                            "interp failed for CTT (thrust coefficient) in hamilton_standard.py")
                     if (run_flag > 1):
                         NERPT = 2
                         print(
                             f"ERROR IN PROP. PERF.-- NERPT={NERPT}, run_flag={run_flag}")
 
                 BLLL[ibb], run_flag = _unint(
-                    adv_ratio_array[J_begin:J_begin+4], BLL[J_begin:J_begin+4], inputs['adv_ratio'][0])
+                    adv_ratio_array[J_begin:J_begin+4], BLL[J_begin:J_begin+4], inputs['adv_ratio'][i_node])
                 ang_blade = BLLL[ibb]
                 CTTT[ibb], run_flag = _unint(
-                    adv_ratio_array[J_begin:J_begin+4], CTT[J_begin:J_begin+4], inputs['adv_ratio'][0])
+                    adv_ratio_array[J_begin:J_begin+4], CTT[J_begin:J_begin+4], inputs['adv_ratio'][i_node])
 
                 # make extra correction. CTG is an "error" function, and the iteration (loop counter = "IL") tries to drive CTG/CT to 0
                 # ERR_CT = CTG1[il]/CTTT[ibb], where CTG1 =CT_Eff - CTTT(IBB).
                 CTG[0] = .100
                 CTG[1] = .200
                 TFCLII, run_flag = _unint(
-                    adv_ratio_array, TF_CLI_arr, inputs['adv_ratio'][0])
+                    adv_ratio_array, TF_CLI_arr, inputs['adv_ratio'][i_node])
                 ifnd1 = 0
                 ifnd2 = 0
                 for il in range(5):
@@ -759,13 +764,13 @@ class HamiltonStandard(om.ExplicitComponent):
                             # off lower bound only.
                             print(
                                 f"ERROR IN PROP. PERF.-- NERPT={NERPT}, run_flag={run_flag}, il = {il}, kl = {kl}")
-                        if (inputs['adv_ratio'][0] != 0.0):
+                        if (inputs['adv_ratio'][i_node] != 0.0):
                             ZMCRT, run_flag = _unint(
-                                adv_ratio_array2, mach_corr_table[CL_tab_idx], inputs['adv_ratio'][0])
-                            DMN = inputs[Dynamic.Mission.MACH][0] - ZMCRT
+                                adv_ratio_array2, mach_corr_table[CL_tab_idx], inputs['adv_ratio'][i_node])
+                            DMN = inputs[Dynamic.Mission.MACH][i_node] - ZMCRT
                         else:
                             ZMCRT = mach_tip_corr_arr[CL_tab_idx]
-                            DMN = inputs['tip_mach'][0] - ZMCRT
+                            DMN = inputs['tip_mach'][i_node] - ZMCRT
                         XFFT[kl] = 1.0  # compressibility tip loss factor
                         if (DMN > 0.0):
                             CTE2 = CT_Eff*TXCLI[kl]*TBL
@@ -842,7 +847,7 @@ class PostHamiltonStandard(om.ExplicitComponent):
 
         self.add_output('thrust_coefficient_comp_loss',
                         val=np.zeros(nn), units='unitless')
-        self.add_output('Thrust', val=np.zeros(nn), units='lbf')
+        self.add_output('prop_thrust', val=np.zeros(nn), units='lbf')
         # keep them for reporting but don't seem to be required
         self.add_output('propeller_efficiency', val=np.zeros(nn), units='unitless')
         self.add_output('install_efficiency', val=np.zeros(nn), units='unitless')
@@ -854,14 +859,14 @@ class PostHamiltonStandard(om.ExplicitComponent):
             'thrust_coefficient',
             'comp_tip_loss_factor',
         ], rows=arange, cols=arange)
-        self.declare_partials('Thrust', [
+        self.declare_partials('prop_thrust', [
             'thrust_coefficient',
             'comp_tip_loss_factor',
             Dynamic.Mission.PROPELLER_TIP_SPEED,
             'density_ratio',
             Dynamic.Mission.INSTALLATION_LOSS_FACTOR,
         ], rows=arange, cols=arange)
-        self.declare_partials('Thrust', [
+        self.declare_partials('prop_thrust', [
             Aircraft.Engine.PROPELLER_DIAMETER,
         ])
         self.declare_partials('propeller_efficiency', [
@@ -884,7 +889,7 @@ class PostHamiltonStandard(om.ExplicitComponent):
         diam_prop = inputs[Aircraft.Engine.PROPELLER_DIAMETER][0]
         tipspd = inputs[Dynamic.Mission.PROPELLER_TIP_SPEED]
         install_loss_factor = inputs[Dynamic.Mission.INSTALLATION_LOSS_FACTOR]
-        outputs['Thrust'] = ctx*tipspd**2*diam_prop**2 * \
+        outputs['prop_thrust'] = ctx*tipspd**2*diam_prop**2 * \
             inputs['density_ratio']/(1.515E06)*364.76*(1. - install_loss_factor)
         outputs['propeller_efficiency'] = inputs['adv_ratio'] * \
             ctx/inputs['power_coefficient']
@@ -902,17 +907,17 @@ class PostHamiltonStandard(om.ExplicitComponent):
         partials["thrust_coefficient_comp_loss", 'thrust_coefficient'] = XFT
         partials["thrust_coefficient_comp_loss",
                  'comp_tip_loss_factor'] = inputs['thrust_coefficient']
-        partials["Thrust", 'thrust_coefficient'] = XFT*tipspd**2*diam_prop**2 * \
+        partials['prop_thrust', 'thrust_coefficient'] = XFT*tipspd**2*diam_prop**2 * \
             inputs['density_ratio']*unit_conversion_factor*(1. - install_loss_factor)
-        partials["Thrust", 'comp_tip_loss_factor'] = inputs['thrust_coefficient']*tipspd**2*diam_prop**2 * \
+        partials['prop_thrust', 'comp_tip_loss_factor'] = inputs['thrust_coefficient']*tipspd**2*diam_prop**2 * \
             inputs['density_ratio']*unit_conversion_factor*(1. - install_loss_factor)
-        partials["Thrust", Dynamic.Mission.PROPELLER_TIP_SPEED] = 2*ctx*tipspd*diam_prop**2 * \
+        partials['prop_thrust', Dynamic.Mission.PROPELLER_TIP_SPEED] = 2*ctx*tipspd*diam_prop**2 * \
             inputs['density_ratio']*unit_conversion_factor*(1. - install_loss_factor)
-        partials["Thrust", Aircraft.Engine.PROPELLER_DIAMETER] = 2*ctx*tipspd**2*diam_prop * \
+        partials['prop_thrust', Aircraft.Engine.PROPELLER_DIAMETER] = 2*ctx*tipspd**2*diam_prop * \
             inputs['density_ratio']*unit_conversion_factor*(1. - install_loss_factor)
-        partials["Thrust", 'density_ratio'] = ctx*tipspd**2 * \
+        partials['prop_thrust', 'density_ratio'] = ctx*tipspd**2 * \
             diam_prop**2*unit_conversion_factor*(1. - install_loss_factor)
-        partials["Thrust", Dynamic.Mission.INSTALLATION_LOSS_FACTOR] = -ctx*tipspd**2*diam_prop**2 * \
+        partials['prop_thrust', Dynamic.Mission.INSTALLATION_LOSS_FACTOR] = -ctx*tipspd**2*diam_prop**2 * \
             inputs['density_ratio']*unit_conversion_factor
         partials["propeller_efficiency", "adv_ratio"] = ctx/inputs['power_coefficient']
         partials["propeller_efficiency", "thrust_coefficient"] = inputs['adv_ratio'] * \
@@ -920,7 +925,7 @@ class PostHamiltonStandard(om.ExplicitComponent):
         partials["propeller_efficiency", "comp_tip_loss_factor"] = inputs['adv_ratio'] * \
             inputs['thrust_coefficient']/inputs['power_coefficient']
         partials["propeller_efficiency", "power_coefficient"] = - \
-            2*inputs['adv_ratio']*ctx/inputs['power_coefficient']**2
+            inputs['adv_ratio']*ctx/inputs['power_coefficient']**2
 
         partials["install_efficiency", "adv_ratio"] = ctx / \
             inputs['power_coefficient'] * (1. - install_loss_factor)
@@ -929,7 +934,7 @@ class PostHamiltonStandard(om.ExplicitComponent):
         partials["install_efficiency", "comp_tip_loss_factor"] = inputs['adv_ratio'] * \
             inputs['thrust_coefficient'] / \
             inputs['power_coefficient'] * (1. - install_loss_factor)
-        partials["install_efficiency", "power_coefficient"] = -2*inputs['adv_ratio'] * \
+        partials["install_efficiency", "power_coefficient"] = -inputs['adv_ratio'] * \
             ctx/inputs['power_coefficient']**2 * (1. - install_loss_factor)
         partials["install_efficiency", Dynamic.Mission.INSTALLATION_LOSS_FACTOR] = - \
             inputs['adv_ratio']*ctx/inputs['power_coefficient']
