@@ -123,7 +123,7 @@ Any value that is included in the timeseries data is included in this file.
 These files are useful for post-processing and inputting the mission outputs into other tools, especially those used for acoustic analysis.
 
 ```{note}
-This feature is under further development. Please let us know if you have any suggestions for functionality or improvements.
+This feature is under further development. Please let us know if you have any suggestions for functionality or improvements. This feature is not currently supported when using the shooting integration method.
 ```
 
 Here is an example of the first few lines of a `mission_timeseries_data.csv` file:

@@ -3,14 +3,13 @@ from pathlib import Path
 import unittest
 import warnings
 import csv
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.interface.default_phase_info.height_energy import phase_info
 from aviary.interface.methods_for_level1 import run_aviary
-from openmdao.utils.testing_utils import use_tempdirs
 
 
 @unittest.skip("Skipping test due to sensitivity in setup. Need tolerances on actual values")
-@use_tempdirs
 class BasicReportTestCase(unittest.TestCase):
     def setUp(self):
         local_phase_info = deepcopy(phase_info)
@@ -141,9 +140,9 @@ class AviaryMissionTestCase(unittest.TestCase):
                 "0.5629169556406933", "68.05737270077049", "0.0", "0.00013276144051166237", "0.0", "79560.101698", "1.0"],
         ]
 
-        reports_folder = Path(self.prob.get_reports_dir())
-        report_file = reports_folder / 'mission_timeseries_data.csv'
-        with open(report_file, mode='r') as csvfile:
+        report_file_path = Path(self.prob.get_reports_dir()).joinpath(
+            'mission_timeseries_data.csv')
+        with open(report_file_path, mode='r') as csvfile:
             csvreader = csv.reader(csvfile)
             header = next(csvreader)  # Read the header row
 
@@ -157,8 +156,8 @@ class AviaryMissionTestCase(unittest.TestCase):
                         output_val), places=7, msg="CSV row value does not match expected value within tolerance")
 
         # Ensure that the mission_summary.md file exists
-        reports_folder = Path(self.prob.get_reports_dir())
-        mission_summary_file = reports_folder / 'mission_summary.md'
+        mission_summary_file = Path(self.prob.get_reports_dir()
+                                    ).joinpath('mission_summary.md')
         self.assertTrue(mission_summary_file.exists(),
                         "Mission summary file does not exist")
 
