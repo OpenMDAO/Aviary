@@ -135,7 +135,7 @@ class AviaryMissionTestCase(unittest.TestCase):
                            "altitude_rate (ft/s)", "throttle (unitless)", "velocity (m/s)", "time_phase (s)",
                            "mach_rate (unitless/s)", "altitude (ft)", "mass (kg)", "distance (m)"]
 
-        # Expected values for the first two rows of the output
+        # Expected values for the first row of output
         expected_rows = [
             ["0.0", "0.2", "28334.271991561804", "21108.418300418845", "12.350271989430475", "-10440.375644236545", "8.16993480071768",
                 "0.5629169556406933", "68.05737270077049", "0.0", "0.00013276144051166237", "0.0", "79560.101698", "1.0"],
@@ -151,7 +151,6 @@ class AviaryMissionTestCase(unittest.TestCase):
             self.assertEqual(expected_header, header,
                              "CSV header does not match expected values")
 
-            # Validate the first two data rows using assertAlmostEqual for numerical values
             for expected_row, output_row in zip(expected_rows, csvreader):
                 for expected_val, output_val in zip(expected_row, output_row):
                     self.assertAlmostEqual(float(expected_val), float(

@@ -184,6 +184,25 @@ def mission_report(prob, **kwargs):
 
 
 def timeseries_csv(prob, **kwargs):
+    """
+    Generates a CSV file containing timeseries data for variables from an Aviary mission.
+
+    This function extracts timeseries data from the provided problem object, processes the data
+    to unify units across different phases of the mission, and then outputs the result to a CSV file.
+    The 'time' variable is moved to the beginning of the dataset so it's always the leftmost column.
+    Duplicate consecutive rows are eliminated.
+
+    Parameters
+    ----------
+    prob : AviaryProblem
+        The AviaryProblem used to generate this report
+    kwargs : dict
+        Additional keyword arguments (unused)
+
+    The output CSV file is named 'mission_timeseries_data.csv' and is saved in the reports directory.
+    The first row of the CSV file contains headers with variable names and units.
+    Each subsequent row represents the mission outputs at a different time step.
+    """
     timeseries_outputs = prob.model.list_outputs(
         includes='*timeseries*', out_stream=None, return_format='dict', units=True)
     phase_names = prob.model.traj._phases.keys()
@@ -193,6 +212,13 @@ def timeseries_csv(prob, **kwargs):
         variable_name = timeseries_output.split('.')[-1]
         for idx_phase, phase_name in enumerate(phase_names):
             variable_str = f'traj.phases.{phase_name}.timeseries.timeseries_comp.{variable_name}'
+            time_str = f'traj.phases.{phase_name}.timeseries.time'
+
+            if variable_str not in timeseries_outputs:
+                Warning(
+                    f'Variable {variable_str} not found in timeseries_outputs for phase {phase_name}.')
+                val = np.zeros_like(timeseries_outputs[time_str]['val'])
+                val_full_traj = np.vstack((val_full_traj, val))
 
             val = timeseries_outputs[variable_str]['val']
 
