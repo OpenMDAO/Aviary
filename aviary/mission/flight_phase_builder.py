@@ -8,6 +8,7 @@ from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.mission.flops_based.phases.phase_utils import add_subsystem_variables_to_phase, get_initial
 from aviary.variable_info.variables import Dynamic
 from aviary.mission.flops_based.ode.mission_ODE import MissionODE
+from aviary.variable_info.enums import EquationsOfMotion
 
 
 # TODO: support/handle the following in the base class
@@ -50,7 +51,7 @@ class FlightPhaseBase(PhaseBuilderBase):
 
         self.meta_data = meta_data
 
-    def build_phase(self, aviary_options: AviaryValues = None, phase_type='height_energy'):
+    def build_phase(self, aviary_options: AviaryValues = None, phase_type=EquationsOfMotion.HEIGHT_ENERGY):
         '''
         Return a new energy phase for analysis using these constraints.
 
@@ -108,7 +109,7 @@ class FlightPhaseBase(PhaseBuilderBase):
             phase.add_constraint('rhs_all.initial_mass_residual', equals=0.0, ref=1e4)
             input_initial_mass = False
 
-        if phase_type == 'height_energy':
+        if phase_type is EquationsOfMotion.HEIGHT_ENERGY:
             rate_source = Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL
         else:
             rate_source = "dmass_dr"
@@ -121,7 +122,7 @@ class FlightPhaseBase(PhaseBuilderBase):
             input_initial=input_initial_mass,
         )
 
-        if phase_type == 'height_energy':
+        if phase_type is EquationsOfMotion.HEIGHT_ENERGY:
             input_initial_distance = get_initial(input_initial, Dynamic.Mission.DISTANCE)
             fix_initial_distance = get_initial(
                 fix_initial, Dynamic.Mission.DISTANCE, True)
@@ -139,7 +140,7 @@ class FlightPhaseBase(PhaseBuilderBase):
         ################
         # Add Controls #
         ################
-        if phase_type == 'height_energy':
+        if phase_type is EquationsOfMotion.HEIGHT_ENERGY:
             rate_targets = [Dynamic.Mission.MACH_RATE]
         else:
             rate_targets = ['dmach_dr']
@@ -162,7 +163,7 @@ class FlightPhaseBase(PhaseBuilderBase):
             )
 
         # Add altitude rate as a control
-        if phase_type == 'height_energy':
+        if phase_type is EquationsOfMotion.HEIGHT_ENERGY:
             rate_targets = [Dynamic.Mission.ALTITUDE_RATE]
             rate2_targets = []
         else:
@@ -236,7 +237,7 @@ class FlightPhaseBase(PhaseBuilderBase):
 
         phase.add_timeseries_output(Dynamic.Mission.ALTITUDE)
 
-        if phase_type == 'two_dof':
+        if phase_type is EquationsOfMotion.SOLVED_2DOF:
             phase.add_timeseries_output(Dynamic.Mission.FLIGHT_PATH_ANGLE)
             phase.add_timeseries_output("alpha")
             phase.add_timeseries_output(

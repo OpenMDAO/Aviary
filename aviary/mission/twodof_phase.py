@@ -7,7 +7,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Dynamic
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_ode import UnsteadySolvedODE
-from aviary.variable_info.enums import SpeedType
+from aviary.variable_info.enums import SpeedType, EquationsOfMotion
 
 # TODO: support/handle the following in the base class
 # - phase.set_time_options()
@@ -41,7 +41,8 @@ class TwoDOFPhase(FlightPhaseBase):
         dymos.Phase
         '''
         self.ode_class = UnsteadySolvedODE
-        phase: dm.Phase = super().build_phase(aviary_options, phase_type='two_dof')
+        phase: dm.Phase = super().build_phase(
+            aviary_options, phase_type=EquationsOfMotion.SOLVED_2DOF)
 
         user_options: AviaryValues = self.user_options
 
@@ -75,6 +76,9 @@ class TwoDOFPhase(FlightPhaseBase):
                                          units='deg', ref=10.,
                                          val=0.,
                                          opt=True)
+
+        phase.add_timeseries_output("EAS", units="kn")
+        phase.add_timeseries_output("TAS", units="kn")
 
         return phase
 
