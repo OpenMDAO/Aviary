@@ -105,7 +105,7 @@ class TurboPropTest(unittest.TestCase):
         filename = get_path('models/engines/turboprop_1120hp.deck')
         test_points = [(0, 0, 0), (0, 0, 1), (.6, 25000, 1)]
         point_names = ['idle', 'SLS', 'TOC']
-        truth_vals = [(112, 37.7, 195.8), (1120, 136.3, 644), (1742.5, 21.3, 839.7)]
+        truth_vals = [(112, 37.7, -195.8), (1120, 136.3, -644), (1742.5, 21.3, -839.7)]
         self.prepare_model(filename, test_points)
 
         self.prob.run_model()
@@ -117,7 +117,7 @@ class TurboPropTest(unittest.TestCase):
         filename = get_path('models/engines/turboprop_1120hp_no_tailpipe.deck')
         test_points = [(0, 0, 0), (0, 0, 1), (.6, 25000, 1)]
         point_names = ['idle', 'SLS', 'TOC']
-        truth_vals = [(112, 0, 195.8), (1120, 0, 644), (1742.5, 0, 839.7)]
+        truth_vals = [(112, 0, -195.8), (1120, 0, -644), (1742.5, 0, -839.7)]
         self.prepare_model(filename, test_points)
 
         self.prob.run_model()
@@ -127,12 +127,9 @@ class TurboPropTest(unittest.TestCase):
     def test_case_3(self):
         # test case using GASP-derived engine deck and user specified prop model
         filename = get_path('models/engines/turboprop_1120hp.deck')
-        test_points = [(0, 0, 1)]
-        point_names = ['SLS',]
-        truth_vals = [(1120, 136.3, 644),]
-        # test_points = [(0, 0, 0), (0, 0, 1), (.6, 25000, 1)]
-        # point_names = ['idle', 'SLS', 'TOC']
-        # truth_vals = [(112, 0, 195.8), (1120, 0, 644), (1742.5, 0, 839.7)]
+        test_points = [(0, 0, 0), (0, 0, 1), (.6, 25000, 1)]
+        point_names = ['idle', 'SLS', 'TOC']
+        truth_vals = [(112, 37.7, -195.8), (1120, 136.3, -644), (1742.5, 21.3, -839.7)]
 
         from aviary.subsystems.propulsion.prop_performance import PropPerf
         from aviary.variable_info.options import get_option_defaults
@@ -145,9 +142,10 @@ class TurboPropTest(unittest.TestCase):
         options.set_val('speed_type', SpeedType.MACH)
         prop_group = om.Group()
 
+        num_nodes = len(test_points)
         prop_group.add_subsystem(
             "fc",
-            FlightConditions(num_nodes=1, input_speed_type=SpeedType.MACH),
+            FlightConditions(num_nodes=num_nodes, input_speed_type=SpeedType.MACH),
             promotes_inputs=["rho", Dynamic.Mission.SPEED_OF_SOUND, 'mach'],
             promotes_outputs=[Dynamic.Mission.DYNAMIC_PRESSURE,
                               'EAS', ('TAS', 'velocity')],
@@ -155,15 +153,18 @@ class TurboPropTest(unittest.TestCase):
 
         pp = prop_group.add_subsystem(
             'pp',
-            PropPerf(aviary_options=options),
+            PropPerf(aviary_options=options, num_nodes=num_nodes),
             promotes_inputs=['*'],
-            promotes_outputs=["*", ('Thrust', 'prop_thrust')],
+            promotes_outputs=["*"],
         )
 
         pp.set_input_defaults(Aircraft.Engine.PROPELLER_DIAMETER, 10, units="ft")
-        pp.set_input_defaults(Dynamic.Mission.PROPELLER_TIP_SPEED, 800, units="ft/s")
-        pp.set_input_defaults(Dynamic.Mission.VELOCITY, 0, units="knot")
-        pp.options.set(num_nodes=len(test_points))
+        pp.set_input_defaults(Dynamic.Mission.PROPELLER_TIP_SPEED,
+                              800.*np.ones(num_nodes), units="ft/s")
+        pp.set_input_defaults(Dynamic.Mission.VELOCITY, 100. *
+                              np.ones(num_nodes), units="knot")
+        pp.set_input_defaults(Dynamic.Mission.TEMPERATURE, 500. *
+                              np.ones(num_nodes), units="degR")
 
         self.prepare_model(filename, test_points, prop_group)
 
@@ -187,12 +188,9 @@ class TurboPropTest(unittest.TestCase):
     def test_case_4(self):
         # test case using GASP-derived engine deck and default HS prop model.
         filename = get_path('models/engines/turboprop_1120hp.deck')
-        test_points = [(0, 0, 1)]
-        point_names = ['SLS',]
-        truth_vals = [(1120, 136.3, 644),]
-        # test_points = [(0, 0, 0), (0, 0, 1), (.6, 25000, 1)]
-        # point_names = ['idle', 'SLS', 'TOC']
-        # truth_vals = [(112, 0, 195.8), (1120, 0, 644), (1742.5, 0, 839.7)]
+        test_points = [(0, 0, 0), (0, 0, 1), (.6, 25000, 1)]
+        point_names = ['idle', 'SLS', 'TOC']
+        truth_vals = [(112, 37.7, -195.8), (1120, 136.3, -644), (1742.5, 21.3, -839.7)]
 
         self.prepare_model(filename, test_points, True)
 

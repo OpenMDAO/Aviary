@@ -96,7 +96,7 @@ class PropPerformanceTest(unittest.TestCase):
             assert_near_equal(ieff[idx], install_eff[case_idx], tolerance=tol)
 
     def test_case_0_1_2(self):
-        # Case 0, 1, 2, to test install loss factor computation.
+        # Case 0, 1, 2, to test installation loss factor computation.
         prob = self.prob
         prob.set_val(Dynamic.Mission.ALTITUDE, [0.0, 0.0, 25000.0], units="ft")
         prob.set_val(Dynamic.Mission.VELOCITY, [0.10, 125.0, 300.0], units="knot")
