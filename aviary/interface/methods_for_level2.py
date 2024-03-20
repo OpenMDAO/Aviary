@@ -1101,7 +1101,10 @@ class AviaryProblem(om.Problem):
                 all_subsystems = self._get_all_subsystems(
                     self.phase_info[phase_name]['external_subsystems'])
                 for subsystem in all_subsystems:
-                    parameter_dict = subsystem.get_parameters()
+                    parameter_dict = subsystem.get_parameters(
+                        phase_info=self.phase_info[phase_name],
+                        aviary_inputs=self.aviary_inputs
+                    )
                     for parameter in parameter_dict:
                         external_parameters[phase_name][parameter] = parameter_dict[parameter]
 
@@ -2319,6 +2322,8 @@ class AviaryProblem(om.Problem):
 
         # if self.engine_builder is not None:
         #     all_subsystems.append(self.engine_builder)
+
+        all_subsystems.append(self.core_subsystems['aerodynamics'])
 
         return all_subsystems
 
