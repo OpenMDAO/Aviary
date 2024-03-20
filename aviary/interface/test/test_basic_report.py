@@ -121,7 +121,7 @@ class BasicReportTestCase(unittest.TestCase):
 
 @use_tempdirs
 class AviaryMissionTestCase(unittest.TestCase):
-    @set_env_vars(TESTFLO_RUNNING='0', OPENMDAO_REPORTS='mission,timeseries_csv')
+    @set_env_vars(TESTFLO_RUNNING='0')
     def test_outputted_reports(self):
         local_phase_info = deepcopy(phase_info)
         self.prob = run_aviary('models/test_aircraft/aircraft_for_bench_FwFm.csv',
