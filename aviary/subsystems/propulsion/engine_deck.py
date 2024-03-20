@@ -1448,7 +1448,7 @@ class TurboPropDeck(EngineDeck):
         for variable in variables_to_scale:
             self.add_scaling_exec_comp(scaling_group, variable, num_nodes=num_nodes)
         self.add_scaling_exec_comp(scaling_group, 'fuel_flow_rate', num_nodes=num_nodes,
-                                   alias=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE)
+                                   alias=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE, sign_scalar=-1.0)
         self.add_scaling_exec_comp(scaling_group, 'thrust_net',
                                    num_nodes=num_nodes, alias='unused')
 
@@ -1486,7 +1486,7 @@ class TurboPropDeck(EngineDeck):
 
         return engine_group
 
-    def add_scaling_exec_comp(self, grp: om.Group, variable: str, units=None, num_nodes=1, alias=None):
+    def add_scaling_exec_comp(self, grp: om.Group, variable: str, units=None, num_nodes=1, alias=None, sign_scalar=1.0):
         if alias is None:
             alias = variable
         if units is None:
@@ -1494,7 +1494,7 @@ class TurboPropDeck(EngineDeck):
         grp.add_subsystem(
             variable+'_scaling',
             om.ExecComp(
-                'scaled_variable = variable_unscaled * scale_factor',
+                f'scaled_variable = {sign_scalar} * variable_unscaled * scale_factor',
                 scaled_variable={'shape': num_nodes, 'units': units},
                 variable_unscaled={'shape': num_nodes, 'units': units},
                 scale_factor={'val': 1, 'units': 'unitless'},
@@ -1569,6 +1569,7 @@ class TurboPropDeck(EngineDeck):
                 Dynamic.Mission.SHAFT_POWER_CORRECTED+suffix,
                 ('freestream_temperature', Dynamic.Mission.TEMPERATURE),
                 ('freestream_pressure', Dynamic.Mission.STATIC_PRESSURE),
+                Dynamic.Mission.MACH,
             ],
             promotes_outputs=[
                 Dynamic.Mission.SHAFT_POWER+suffix
@@ -1590,26 +1591,19 @@ class TurboPropDeck(EngineDeck):
                               'EAS', ('TAS', 'velocity')],
         )
 
-        pp = prop_group.add_subsystem(
-            'pp',
+        engine_group.add_subsystem(
+            'propeller_model',
             PropPerf(
                 aviary_options=self.options,
-                num_nodes=num_nodes
+                num_nodes=num_nodes,
             ),
             promotes_inputs=['*'],
             promotes_outputs=["*"],
         )
-
-        pp.set_input_defaults(Aircraft.Engine.PROPELLER_DIAMETER, 10, units="ft")
-        pp.set_input_defaults(Dynamic.Mission.PROPELLER_TIP_SPEED, 800, units="ft/s")
-        pp.set_input_defaults(Dynamic.Mission.VELOCITY, 0, units="knot")
-
-        engine_group.add_subsystem(
-            'propeller_model',
-            prop_group,
-            promotes_inputs=['*'],
-            promotes_outputs=[('Thrust', 'prop_thrust')],
-        )
+        engine_group.set_input_defaults(
+            Aircraft.Engine.PROPELLER_DIAMETER, 10, units="ft")
+        engine_group.set_input_defaults(
+            Dynamic.Mission.TEMPERATURE, np.ones(num_nodes)*500., units="degR")
 
     def _add_dummy_prop(self, engine_group: om.Group, num_nodes=1):
         engine_group.add_subsystem(
