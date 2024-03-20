@@ -36,6 +36,12 @@ Once you get good results with the simple mission and understand the results, yo
 
 ### Interpreting optimized results
 
+```{note}
+A `VERBOSITY` control has been added to minimize the amount of unnecessary information that will be displayed.
+Currently Quiet, Brief [default], Verbose, and Debug are supported. Quiet will suppress practically everything other than warnings and errors. Verbose will include information such as the progress of the optimization, instead of just a final summary. And Debug will contain detailed information about many of the steps as they happen.
+Some of Aviary's CLI functions, such as `fortran_to_aviary`, allow the verbosity to be set directly with a command line argument. `run_mission` uses the variable `settings:verbosity` to control the print levels.
+```
+
 Once you've built up an understanding of your model and have successfully performed optimization, you can start to interpret the results.
 This is where a mix of aircraft engineering knowledge and optimization knowledge is extremely helpful.
 

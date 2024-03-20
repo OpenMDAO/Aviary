@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 
 import openmdao.api as om
-from aviary.variable_info.enums import AnalysisScheme
+from aviary.variable_info.enums import AnalysisScheme, Verbosity
 from aviary.interface.methods_for_level2 import AviaryProblem
 
 
@@ -13,7 +13,7 @@ def run_aviary(aircraft_filename, phase_info, optimizer=None,
                analysis_scheme=AnalysisScheme.COLLOCATION, objective_type=None,
                record_filename='dymos_solution.db', restart_filename=None, max_iter=50,
                run_driver=True, make_plots=True, phase_info_parameterization=None,
-               optimization_history_filename=None):
+               optimization_history_filename=None, verbosity=Verbosity.BRIEF):
     """
     Run the Aviary optimization problem for a specified aircraft configuration and mission.
 
@@ -79,7 +79,7 @@ def run_aviary(aircraft_filename, phase_info, optimizer=None,
     # Link phases and variables
     prob.link_phases()
 
-    prob.add_driver(optimizer, max_iter=max_iter)
+    prob.add_driver(optimizer, max_iter=max_iter, verbosity=verbosity)
 
     prob.add_design_variables()
 
