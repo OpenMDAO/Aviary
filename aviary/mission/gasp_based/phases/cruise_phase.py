@@ -85,6 +85,10 @@ CruisePhase._add_meta_data(
     'target_distance', val={}, desc='the amount of distance traveled in this phase added as a constraint')
 CruisePhase._add_meta_data(
     'target_duration', val={}, desc='the amount of time taken by this phase added as a constraint')
+CruisePhase._add_meta_data('duration_bounds', val=(
+    0., 3600.), units='s', desc='duration bounds')
+CruisePhase._add_meta_data('fix_duration', val=False)
+CruisePhase._add_meta_data('initial_bounds', val=(0., 100.), units='s')
 
 CruisePhase._add_initial_guess_meta_data(
     InitialGuessIntegrationVariable(),
