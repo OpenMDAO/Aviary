@@ -121,7 +121,7 @@ class BasicReportTestCase(unittest.TestCase):
 
 
 @use_tempdirs
-class AviaryMissionTestCase(unittest.TestCase):
+class AviaryMissionSummary(unittest.TestCase):
     @set_env_vars(TESTFLO_RUNNING='0', OPENMDAO_REPORTS='mission')
     def test_mission_report(self):
         local_phase_info = deepcopy(phase_info)
@@ -173,6 +173,9 @@ class AviaryMissionTestCase(unittest.TestCase):
         for phase, found in phase_found.items():
             self.assertTrue(found, f"Phase {phase} not found in mission summary")
 
+
+@use_tempdirs
+class AviaryMissionTimeseries(unittest.TestCase):
     @set_env_vars(TESTFLO_RUNNING='0', OPENMDAO_REPORTS='timeseries_csv')
     def test_timeseries_report(self):
         local_phase_info = deepcopy(phase_info)
