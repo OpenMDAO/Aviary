@@ -11,37 +11,37 @@ The inputs are grouped in three aspects:
 Geometric inputs:
 - Propeller diameter
 - Activity factor per blade (range: 80 to 200, baseline: 150)
-- Number of Blades (range: 2 to 8)
+- Number of blades (range: 2 to 8)
 
 Power inputs:
-- Shaft Horsepower to Propeller (hp)
-- Installation Loss Factor (0 to 1)
+- Shaft power to propeller (hp)
+- Installation loss factor (0 to 1)
 
 Performance inputs:
-- Operating Altitude, ft
-- True Airspeed, knots
-- Propeller Tip Speed (Usually < 800 ft/s) 
-- Integrated Lift Coefficient (range: 0.3 to 0.8, baseline: 0.5)
+- Operating altitude (ft)
+- True airspeed (knots)
+- Propeller tip speed (Usually < 800 ft/s) 
+- Integrated lift coefficient (range: 0.3 to 0.8, baseline: 0.5)
 
 Note that some of the inputs are good for limited ranges. The Hamilton Standard model can have odd number of blades although the data provided are based on even number of blades. For odd number of blades, interpolations using 2, 4, 6 and 8 blade data are used. The corresponding outputs are:
 
 Geometric outputs:
-- Design Blade Pitch Angle (@0.75 Radius)
+- Design blade pitch angle (at 0.75 Radius)
 
 Power outputs:
-- Installation Loss Factor
-- Tip Compressibility Loss Factor
-- Power Coefficient
-- Thrust Coefficient (rho=const, no losses)
+- Installation loss factor
+- Tip compressibility loss factor
+- Power coefficient
+- Thrust coefficient (rho=const, no losses)
 
 Performance outputs:
 - Flight Mach number
-- Propeller Tip Mach number
-- Advance Ratio
-- Tip Compressibility loss factor
+- Propeller tip Mach number
+- Advance ratio
+- Tip compressibility loss factor
 - Thrust
-- Propeller Efficiency with compressibility losses
-- Propeller Efficiency with compressibility and Installation losses
+- Propeller efficiency with compressibility losses
+- Propeller efficiency with compressibility and installation losses
 
 As shown in the above XDSM diagram, the model is an OpenMDAO group that is composed of four components and one subgroup: 
 
@@ -57,9 +57,9 @@ As shown in the above XDSM diagram, the model is an OpenMDAO group that is compo
 
 HamiltonStandard is the core of the model. Given the power coefficient (CP) and advance ratio (J), it finds the blade angle (BL) by a CP-BL chart by tracing advance ratio and then with the blade angle, it finds the thrust coefficient (CT) using its CT-BL chart by tracing advance ratio again. This algorithm is shown in the above pair of charts. The CP → BL → CT chart matching algorithm is based on baseline data. If user inputs are not on baseline, it will first convert them to those baseline parameters by a sequence of interpolations to do corrections. The newly converted parameters are called “effective parameters” (e.g., CPE and CTE). The outputs are blade angle, thrust coefficient and tip compressibility loss factor.
 
-Finally, the thrust is computed in `PostHamiltonStandard` component based on thrust coefficient and tip compressibility loss factor.
+Finally, the thrust is computed in the `PostHamiltonStandard` component based on thrust coefficient and tip compressibility loss factor.
 
-Hamilton Standard model uses a bunch of wind tunnel test data from un-installed propellers. When a cell is mounted around the propeller, an installation loss factor is introduced. The installation loss factor can be given by user or computed. If it is computed, we need another group of components as shown below:
+The Hamilton Standard model uses wind tunnel test data from un-installed propellers. When a nacelle is mounted behind the propeller, an installation loss factor is introduced. The installation loss factor can be given by the user or computed. If it is computed, we need another group of components as shown below:
 
 ![Installation Loss Factor](images/installation_loss_factor.png)
 
@@ -78,7 +78,7 @@ Dynamic.Mission.SHAFT_POWER
 Dynamic.Mission.INSTALLATION_LOSS_FACTOR
 ```
 
-To build a turboprop engine and an Aviary model, we use `TurboPropDeck` object with a special parameter `prop_model` set to `True`:
+To build a turboprop engine that uses the Hamilton Standard propeller model, we use a `TurboPropDeck` object with `prop_model` set to `True`:
 
 ```
 engine = TurboPropDeck(options=options, prop_model=True)
