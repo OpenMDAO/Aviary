@@ -183,10 +183,10 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
     ##############################
     # Vectorize Engine Variables #
     ##############################
-    # Only vectorize variables user has defined in some way or engine has calculated
+    # Only vectorize variables user has defined in some way or engine model has calculated
     # Combine aviary_options and all engine options into single AviaryValues
     # It is assumed that all EngineModels are up-to-date at this point and will NOT
-    # be changed in the future (otherwise preprocess_propulsion must be run again)
+    # be changed later on (otherwise preprocess_propulsion must be run again)
     complete_options_list = AviaryValues(aviary_options)
     for engine in engine_models:
         complete_options_list.update(engine.options)
@@ -198,7 +198,7 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
     # Vectorize engine variables. Only update variables in update_list that are relevant
     # to engines (defined by _get_engine_variables())
     for var in _get_engine_variables():
-        if var in update_list:
+        if var in update_list or True:
             dtype = _MetaData[var]['types']
             default_value = _MetaData[var]['default_value']
             # if default_value is in an array, pull out first index as default

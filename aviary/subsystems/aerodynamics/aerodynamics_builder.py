@@ -31,6 +31,7 @@ from aviary.subsystems.aerodynamics.flops_based.tabular_aero_group import \
     TabularAeroGroup
 from aviary.utils.named_values import NamedValues
 from aviary.variable_info.enums import LegacyCode
+from aviary.variable_info.variable_meta_data import _MetaData
 
 
 GASP = LegacyCode.GASP
@@ -283,6 +284,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
             - any additional keyword arguments required by OpenMDAO for the fixed
               variable.
         """
+        engine_count = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
         params = {}
         if phase_info is not None and self.code_origin is FLOPS:
 
@@ -324,10 +326,15 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                         drag_opts = {'shape': shape,
                                      'static_target': True}
 
-                    params = {
-                        Aircraft.Design.LIFT_POLAR: lift_opts,
-                        Aircraft.Design.DRAG_POLAR: drag_opts
-                    }
+                    params[Aircraft.Design.LIFT_POLAR] = lift_opts
+                    params[Aircraft.Design.DRAG_POLAR] = drag_opts
+
+                for entry in Aircraft.Nacelle.__dict__:
+                    var = getattr(Aircraft.Nacelle, entry)
+                    if var in aviary_inputs:
+                        if 'total' not in var:
+                            params[var] = {
+                                'shape': (engine_count), 'static_target': True}
 
         return params
 

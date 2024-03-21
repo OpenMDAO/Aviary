@@ -450,7 +450,7 @@ class AviaryProblem(om.Problem):
                 for output in subsystem.get_outputs():
                     variables_to_pop.append(output)
 
-                for parameter in subsystem.get_parameters():
+                for parameter in subsystem.get_parameters(self.aviary_inputs):
                     variables_to_pop.append(parameter)
 
                 self.meta_data = merge_meta_data([self.meta_data, meta_data])

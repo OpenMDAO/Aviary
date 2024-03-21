@@ -7,11 +7,20 @@ PropulsionBuilderBase : the interface for a propulsion subsystem builder.
 
 CorePropulsionBuilder : the interface for Aviary's core propulsion subsystem builder
 """
+
+import numpy as np
+
 from aviary.interface.utils.markdown_utils import write_markdown_variable_table
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.subsystems.propulsion.propulsion_premission import PropulsionPreMission
 from aviary.subsystems.propulsion.propulsion_mission import PropulsionMission
 from aviary.variable_info.variables import Aircraft
+
+# NOTE These are currently needed to get around variable hierarchy being class-based.
+#      Ideally, an alternate solution to loop through the hierarchy will be created and
+#      these can be replaced.
+from aviary.utils.preprocessors import _get_engine_variables
+from aviary.variable_info.variable_meta_data import _MetaData
 
 _default_name = 'propulsion'
 
@@ -43,6 +52,19 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
 
     def build_mission(self, num_nodes, aviary_inputs, **kwargs):
         return PropulsionMission(num_nodes=num_nodes, aviary_options=aviary_inputs)
+
+    def get_parameters(self, aviary_inputs=None, phase_info=None):
+        engine_count = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
+        params = {}
+
+        # add all variables from Engine & Nacelle to params
+        # TODO this assumes that no new categories are added for custom engine models
+        for var in _get_engine_variables():
+            if var in aviary_inputs:
+                # TODO engine_wing_location
+                params[var] = {'shape': (engine_count), 'static_target': True}
+
+        return params
 
     def report(self, prob, reports_folder, **kwargs):
         """

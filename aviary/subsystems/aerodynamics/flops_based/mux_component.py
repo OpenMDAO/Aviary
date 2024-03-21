@@ -72,15 +72,15 @@ class MuxComponent(om.ExplicitComponent):
         num_nacelles = self.num_nacelles = int(sum(num_engines))
         if self.num_nacelles > 0:
             add_aviary_input(self, Aircraft.Nacelle.WETTED_AREA,
-                             np.zeros(num_nacelles))
+                             np.zeros(len(num_engines)))
             add_aviary_input(self, Aircraft.Nacelle.FINENESS,
-                             np.zeros(num_nacelles))
+                             np.zeros(len(num_engines)))
             add_aviary_input(self, Aircraft.Nacelle.CHARACTERISTIC_LENGTH,
-                             np.zeros(num_nacelles))
+                             np.zeros(len(num_engines)))
             add_aviary_input(self, Aircraft.Nacelle.LAMINAR_FLOW_UPPER,
-                             np.zeros(num_nacelles))
+                             np.zeros(len(num_engines)))
             add_aviary_input(self, Aircraft.Nacelle.LAMINAR_FLOW_LOWER,
-                             np.zeros(num_nacelles))
+                             np.zeros(len(num_engines)))
             nc += self.num_nacelles
 
         self.add_output(
