@@ -1,6 +1,5 @@
 from pathlib import Path
-import csv
-
+import pandas as pd
 import numpy as np
 
 from openmdao.utils.mpi import MPI
@@ -251,41 +250,24 @@ def timeseries_csv(prob, **kwargs):
         timeseries_data[variable_name]['units'] = units
         timeseries_data[variable_name]['shape'] = val_full_traj.shape
 
-    # First, ensure 'time' is removed from the sorting process
-    timeseries_keys_sorted = sorted([key for key in timeseries_data if key != 'time'])
+    # Create a DataFrame from timeseries_data
+    df_data = {variable_name: pd.Series(timeseries_data[variable_name]['val'].flatten())
+               for variable_name in timeseries_data}
+    df = pd.DataFrame(df_data)
 
-    # Then, prepend 'time' to the sorted list in the original dictionary
-    if 'time' in timeseries_data:
-        timeseries_keys_sorted = ['time'] + timeseries_keys_sorted
+    # Reorder DataFrame to ensure 'time' is the first column, if present
+    if 'time' in df.columns:
+        columns = ['time'] + [col for col in df.columns if col != 'time']
+        df = df[columns]
 
-    # Finally, reconstruct the dictionary in the desired order
-    timeseries_data = {key: timeseries_data[key] for key in timeseries_keys_sorted}
+    # Add units to column names
+    df.columns = [f'{col} ({timeseries_data[col]["units"]})' for col in df.columns]
+
+    df.drop_duplicates()
 
     # The path where you want to save the CSV file
     reports_folder = Path(prob.get_reports_dir())
     report_file = reports_folder / 'mission_timeseries_data.csv'
 
-    # Preparing the header with variable names and units
-    header = [
-        f'{variable_name} ({timeseries_data[variable_name]["units"]})' for variable_name in timeseries_data]
-
-    # Transposing the timeseries data to match the CSV structure
-    # Assuming all data are numpy arrays of the same length
-    data_length = len(timeseries_data[next(iter(timeseries_data))]['val'])
-    csv_data = []
-    for i in range(data_length):
-        row = [timeseries_data[variable_name]['val'][i][0] if not np.isnan(timeseries_data[variable_name]['val'][i][0]) else ''
-               for variable_name in timeseries_data]
-        # check if the row is the same as the last one in csv_data
-        # only add the row if it is new
-        if i > 0:
-            if row != csv_data[-1]:
-                csv_data.append(row)
-        else:
-            csv_data.append(row)
-
-    # Writing the header and data to a CSV file
-    with open(report_file, mode='w', newline='') as csv_file:
-        writer = csv.writer(csv_file)
-        writer.writerow(header)  # Writing the header
-        writer.writerows(csv_data)  # Writing the rows of timeseries data
+    # Write the DataFrame to a CSV file
+    df.to_csv(report_file, index=False)
