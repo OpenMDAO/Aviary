@@ -639,8 +639,6 @@ class AviaryProblem(om.Problem):
                 Mission.Design.CRUISE_ALTITUDE, ])
         add_opts2vals(self.model, OptionsToValues, self.aviary_inputs)
 
-        self._add_fuel_reserve_component(post_mission=False)
-
         # Add thrust-to-weight ratio subsystem
         self.model.add_subsystem(
             'tw_ratio',
@@ -1016,7 +1014,9 @@ class AviaryProblem(om.Problem):
                 phases=descent_phases,
                 initial_mass=initial_mass,
                 cruise_alt=self.cruise_alt,
-                cruise_mach=self.cruise_mach)
+                cruise_mach=self.cruise_mach,
+                # reserve_fuel=
+            )
 
             estimated_descent_range = descent_estimation['refined_guess']['distance_flown']
             end_of_cruise_range = self.target_range - estimated_descent_range
@@ -1499,7 +1499,7 @@ class AviaryProblem(om.Problem):
                                  ref=10000., add_constraint=True)
                 self.model.connect("taxi.mass", "link_taxi_groundroll.rhs:mass")
                 self.model.connect(
-                    "traj.groundroll.timeseries.mass",
+                    "traj.groundroll.states:mass",
                     "link_taxi_groundroll.lhs:mass",
                     src_indices=[0],
                     flat_src_indices=True,
@@ -1509,7 +1509,7 @@ class AviaryProblem(om.Problem):
                 self.model.connect(
                     "traj.ascent.timeseries.altitude", "h_fit.h_cp")
 
-                self.model.connect(f'traj.{self.regular_phases[-1]}.timeseries.mass',
+                self.model.connect(f'traj.{self.regular_phases[-1]}.states:mass',
                                    Mission.Landing.TOUCHDOWN_MASS, src_indices=[-1])
 
                 connect_map = {
@@ -2412,6 +2412,7 @@ class AviaryProblem(om.Problem):
 
         # TBD Re-organize shooting so that fuel-reserve, etc
         # are calculated in prob.post_mission rather than in prob.model
+        self._add_fuel_reserve_component(post_mission=False)
 
         self.model.add_subsystem(
             "fuel_burn",
@@ -2479,7 +2480,8 @@ class AviaryProblem(om.Problem):
                 ("range_resid", Mission.Constraints.RANGE_RESIDUAL)],
         )
 
-    def _add_fuel_reserve_component(self, post_mission=True):
+    def _add_fuel_reserve_component(self, post_mission=True,
+                                    reserves_name=Mission.Design.RESERVE_FUEL):
         RESERVE_FUEL_FRACTION = self.aviary_inputs.get_val(
             Aircraft.Design.RESERVE_FUEL_FRACTION, units='unitless')
         if RESERVE_FUEL_FRACTION != 0:
@@ -2520,7 +2522,7 @@ class AviaryProblem(om.Problem):
                                                               Aircraft.Design.RESERVE_FUEL_ADDITIONAL),
                                                              ("reserve_fuel_burned", Mission.Summary.RESERVE_FUEL_BURNED)],
                                             promotes_outputs=[
-                                                ("reserve_fuel", Mission.Design.RESERVE_FUEL)]
+                                                ("reserve_fuel", reserves_name)]
                                             )
         else:
             self.model.add_subsystem("reserve_fuel", reserve_fuel,
@@ -2529,5 +2531,5 @@ class AviaryProblem(om.Problem):
                                                        Aircraft.Design.RESERVE_FUEL_ADDITIONAL),
                                                       ("reserve_fuel_burned", Mission.Summary.RESERVE_FUEL_BURNED)],
                                      promotes_outputs=[
-                                         ("reserve_fuel", Mission.Design.RESERVE_FUEL)]
+                                         ("reserve_fuel", reserves_name)]
                                      )
