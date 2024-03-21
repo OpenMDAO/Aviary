@@ -112,7 +112,14 @@ class Aircraft:
     class Design:
         # These variables are values that do not fall into a particular aircraft
         # component.
+
+        AIR_CONDITION_MASS_COEFFICIENT = 'aircraft:design:air_condition_mass_coefficient'
+        ANTI_ICING_MASS = 'aircraft:design:anti_icing_mass'
+        APU_MASS = 'aircraft:design:apu_mass'
+        AVIONICS_MASS = 'aircraft:design:avionics_mass'
+
         BASE_AREA = 'aircraft:design:base_area'
+        CATERING_ITEMS_MASS_PER_PASSENGER = 'aircraft:design:catering_items_mass_per_passenger'
         CG_DELTA = 'aircraft:design:cg_delta'
         CHARACTERISTIC_LENGTHS = 'aircraft:design:characteristic_lengths'
         COCKPIT_CONTROL_MASS_COEFFICIENT = 'aircraft:design:cockpit_control_mass_coefficient'
@@ -122,17 +129,22 @@ class Aircraft:
         DRAG_COEFFICIENT_INCREMENT = 'aircraft:design:drag_increment'
         DRAG_POLAR = 'aircraft:design:drag_polar'
 
+        EMERGENCY_MASS = 'aircraft:design:emergency_mass'
         EMPTY_MASS = 'aircraft:design:empty_mass'
         EMPTY_MASS_MARGIN = 'aircraft:design:empty_mass_margin'
 
         EMPTY_MASS_MARGIN_SCALER = \
             'aircraft:design:empty_mass_margin_scaler'
 
-        EQUIPMENT_MASS_COEFFICIENTS = 'aircraft:design:equipment_mass_coefficients'
+        # EQUIPMENT_MASS_COEFFICIENTS = 'aircraft:design:equipment_mass_coefficients'
         EXTERNAL_SUBSYSTEMS_MASS = 'aircraft:design:external_subsystems_mass'
         FINENESS = 'aircraft:design:fineness'
         FIXED_EQUIPMENT_MASS = 'aircraft:design:fixed_equipment_mass'
         FIXED_USEFUL_LOAD = 'aircraft:design:fixed_useful_load'
+        FURNISHINGS_MASS = 'aircraft:design:furnishings_mass'
+        HYDRAULICS_FC_MASS_COEFFICIENT = 'aircraft:design:hydraulics_fc_mass_coefficient'
+        HYDRAULICS_GEAR_MASS_COEFFICIENT = 'aircraft:design:hydraulics_gear_mass_coefficient'
+        INSTRUMENT_MASS_COEFFICIENT = 'aircraft:design:instrument_mass_coefficient'
         IJEFF = 'ijeff'
         LAMINAR_FLOW_LOWER = 'aircraft:design:laminar_flow_lower'
         LAMINAR_FLOW_UPPER = 'aircraft:design:laminar_flow_upper'
@@ -149,6 +161,7 @@ class Aircraft:
         MAX_STRUCTURAL_SPEED = 'aircraft:design:max_structural_speed'
         OPERATING_MASS = 'aircraft:design:operating_mass'
         PART25_STRUCTURAL_CATEGORY = 'aircraft:design:part25_structural_category'
+        PAX_SERVICE_MASS_PER_PASSENGER = 'aircraft:design:pax_service_mass_per_passenger'
         RESERVE_FUEL_ADDITIONAL = 'aircraft:design:reserve_fuel_additional'
         RESERVE_FUEL_FRACTION = 'aircraft:design:reserve_fuel_fraction'
         SMOOTH_MASS_DISCONTINUITIES = 'aircraft:design:smooth_mass_discontinuities'
@@ -169,8 +182,10 @@ class Aircraft:
         THRUST_TO_WEIGHT_RATIO = 'aircraft:design:thrust_to_weight_ratio'
         TOTAL_WETTED_AREA = 'aircraft:design:total_wetted_area'
         TOUCHDOWN_MASS = 'aircraft:design:touchdown_mass'
+        UNUSABLE_FUEL_MASS_COEFFICIENT = 'aircraft:design:unusable_fuel_mass_coefficient'
         ULF_CALCULATED_FROM_MANEUVER = 'aircraft:design:ulf_calculated_from_maneuver'
         USE_ALT_MASS = 'aircraft:design:use_alt_mass'
+        WATER_MASS_PER_OCCUPANT = 'aircraft:design:water_mass_per_occupant'
         WETTED_AREAS = 'aircraft:design:wetted_areas'
         ZERO_FUEL_MASS = 'aircraft:design:zero_fuel_mass'
         ZERO_LIFT_DRAG_COEFF_FACTOR = \

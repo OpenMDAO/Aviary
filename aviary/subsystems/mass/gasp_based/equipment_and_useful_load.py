@@ -26,6 +26,20 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
 
     def setup(self):
 
+        add_aviary_input(self, Aircraft.Design.AIR_CONDITION_MASS_COEFFICIENT, val=1, units="unitless")
+        add_aviary_input(self, Aircraft.Design.ANTI_ICING_MASS, val=2, units="unitless")
+        add_aviary_input(self, Aircraft.Design.APU_MASS, val=3, units="unitless")
+        add_aviary_input(self, Aircraft.Design.AVIONICS_MASS, val=4, units="unitless")
+        add_aviary_input(self, Aircraft.Design.CATERING_ITEMS_MASS_PER_PASSENGER, val=5, units="unitless")
+        add_aviary_input(self, Aircraft.Design.EMERGENCY_MASS, val=6, units="unitless")
+        add_aviary_input(self, Aircraft.Design.FURNISHINGS_MASS, val=7, units="unitless")
+        add_aviary_input(self, Aircraft.Design.HYDRAULICS_FC_MASS_COEFFICIENT, val=8, units="unitless")
+        add_aviary_input(self, Aircraft.Design.HYDRAULICS_GEAR_MASS_COEFFICIENT, val=9, units="unitless")
+        add_aviary_input(self, Aircraft.Design.INSTRUMENT_MASS_COEFFICIENT, val=10, units="unitless")
+        add_aviary_input(self, Aircraft.Design.PAX_SERVICE_MASS_PER_PASSENGER, val=11, units="unitless")
+        add_aviary_input(self, Aircraft.Design.UNUSABLE_FUEL_MASS_COEFFICIENT, val=12, units="unitless")
+        add_aviary_input(self, Aircraft.Design.WATER_MASS_PER_OCCUPANT, val=13, units="unitless")
+
         add_aviary_input(self, Aircraft.Design.EQUIPMENT_MASS_COEFFICIENTS, val=[
                          1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], units="unitless")
         add_aviary_input(self, Mission.Design.GROSS_MASS, val=175400)
@@ -56,6 +70,11 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
         PAX = options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS, units='unitless')
         smooth = options.get_val(
             Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, units='unitless')
+
+        apu_mass = inputs[Aircraft.Design.APU_MASS]
+        instrument_mass_coeff = inputs[Aircraft.Design.INSTRUMENT_MASS_COEFFICIENT]
+        hydraulic_fc_mass_coeff = inputs[Aircraft.Design.HYDRAULICS_FC_MASS_COEFFICIENT]
+
         mass_coeff = inputs[Aircraft.Design.EQUIPMENT_MASS_COEFFICIENTS]
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         num_engines = self.options['aviary_options'].get_val(
