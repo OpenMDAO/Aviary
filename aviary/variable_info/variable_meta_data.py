@@ -6173,12 +6173,12 @@ add_meta_data(
 add_meta_data(
     Dynamic.Mission.PROPELLER_TIP_SPEED,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.TSPDMX',
+    historical_name={"GASP": None,
                      "FLOPS": None,
                      "LEAPS1": None
                      },
     units='ft/s',
-    desc='maximum allowable propeller tip speed',
+    desc='propeller tip speed',
     default_value=500.0,
 )
 
