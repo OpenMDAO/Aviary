@@ -10,10 +10,10 @@ from openmdao.utils.assert_utils import assert_near_equal
 from aviary.examples.external_subsystems.engine_NPSS.define_simple_engine_problem import define_aviary_NPSS_problem
 
 
-class BenchAviaryNPSS(unittest.TestCase):
+class AviaryNPSSTestCase(unittest.TestCase):
 
     @unittest.skipUnless(os.environ.get('NPSS_TOP', False), 'environemnt does not contain NPSS')
-    def test_bench_aviary_NPSS(self):
+    def bench_test_aviary_NPSS(self):
         prob = define_aviary_NPSS_problem()
         prob.run_aviary_problem(suppress_solver_print=True)
 
