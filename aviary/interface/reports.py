@@ -207,36 +207,49 @@ def timeseries_csv(prob, **kwargs):
         includes='*timeseries*', out_stream=None, return_format='dict', units=True)
     phase_names = prob.model.traj._phases.keys()
 
+    timeseries_outputs = {value['prom_name']: value for key,
+                          value in timeseries_outputs.items()}
+
+    timeseries_outputs = {key: value for key,
+                          value in timeseries_outputs.items() if not key.endswith('_phase')}
+
+    unique_variable_names = set([timeseries_output.split('.')[-1]
+                                for timeseries_output in timeseries_outputs])
+
     timeseries_data = {}
-    for timeseries_output in timeseries_outputs:
-        variable_name = timeseries_output.split('.')[-1]
+    for variable_name in unique_variable_names:
+        timeseries_data[variable_name] = {}
+        val_full_traj = np.zeros((0, 1))
+        units = None
         for idx_phase, phase_name in enumerate(phase_names):
-            variable_str = f'traj.phases.{phase_name}.timeseries.timeseries_comp.{variable_name}'
-            time_str = f'traj.phases.{phase_name}.timeseries.time'
+            variable_str = f'traj.{phase_name}.timeseries.{variable_name}'
+            time_str = f'traj.{phase_name}.timeseries.time'
 
             if variable_str not in timeseries_outputs:
                 Warning(
                     f'Variable {variable_str} not found in timeseries_outputs for phase {phase_name}.')
                 val = np.zeros_like(timeseries_outputs[time_str]['val'])
+                val[:] = np.nan
                 val_full_traj = np.vstack((val_full_traj, val))
 
-            val = timeseries_outputs[variable_str]['val']
-
-            # grab the units from the first phase; use these units for all others
-            if idx_phase == 0:
-                units = timeseries_outputs[variable_str]['units']
-                val_full_traj = val
             else:
-                original_units = timeseries_outputs[variable_str]['units']
+                val = timeseries_outputs[variable_str]['val']
 
-                if original_units != units:
-                    val = wrapped_convert_units((val, original_units), units)
+                # grab the units from the first phase that uses this variable; use these units for all others
+                if units is None:
+                    units = timeseries_outputs[variable_str]['units']
+                    val_full_traj = np.vstack((val_full_traj, val))
+                else:
+                    original_units = timeseries_outputs[variable_str]['units']
 
-                val_full_traj = np.vstack((val_full_traj, val))
+                    if original_units != units:
+                        val = wrapped_convert_units((val, original_units), units)
 
-        timeseries_data[variable_name] = {}
+                    val_full_traj = np.vstack((val_full_traj, val))
+
         timeseries_data[variable_name]['val'] = val_full_traj
         timeseries_data[variable_name]['units'] = units
+        timeseries_data[variable_name]['shape'] = val_full_traj.shape
 
     # First, ensure 'time' is removed from the sorting process
     timeseries_keys_sorted = sorted([key for key in timeseries_data if key != 'time'])
@@ -261,7 +274,7 @@ def timeseries_csv(prob, **kwargs):
     data_length = len(timeseries_data[next(iter(timeseries_data))]['val'])
     csv_data = []
     for i in range(data_length):
-        row = [timeseries_data[variable_name]['val'][i][0]
+        row = [timeseries_data[variable_name]['val'][i][0] if not np.isnan(timeseries_data[variable_name]['val'][i][0]) else ''
                for variable_name in timeseries_data]
         # check if the row is the same as the last one in csv_data
         # only add the row if it is new

@@ -128,7 +128,7 @@ This feature is under further development. Please let us know if you have any su
 
 Here is an example of the first few lines of a `mission_timeseries_data.csv` file:
 
-```csv
+```{code}
 time (s),mach (unitless),thrust_net_total (lbf),drag (lbf),specific_energy_rate_excess (m/s),fuel_flow_rate_negative_total (lbm/h),altitude_rate (ft/s),throttle (unitless),velocity (m/s),time_phase (s),mach_rate (unitless/s),altitude (ft),mass (kg),distance (m)
 0.0,0.2,28478.788920867584,21108.418300418845,12.350271989430475,-10492.593707324704,8.333333333333337,0.565484286063171,68.05737270077049,0.0,0.0001354166666666668,0.0,79560.101698,1.0
 160.16130859524844,0.22168851053893995,24443.964075954416,17707.343638310154,13.681656556939739,-9195.769418149232,8.333333333333341,0.5231597651569796,75.090771635822,160.16130859524844,0.0001354166666666669,1334.6775716270722,79362.06974727994,11458.09964519708
