@@ -19,19 +19,23 @@ class AviaryMissionTimeseries(unittest.TestCase):
         local_phase_info = deepcopy(phase_info)
         self.prob = run_aviary('models/test_aircraft/aircraft_for_bench_FwFm.csv',
                                local_phase_info,
-                               optimizer='IPOPT',
+                               optimizer='SLSQP',
                                max_iter=0)
 
-        # Expected header names and units
-        expected_header = ["time (s)", "mach (unitless)", "thrust_net_total (lbf)", "drag (lbf)",
-                           "specific_energy_rate_excess (m/s)", "fuel_flow_rate_negative_total (lbm/h)",
-                           "altitude_rate (ft/s)", "throttle (unitless)", "velocity (m/s)", "time_phase (s)",
-                           "mach_rate (unitless/s)", "altitude (ft)", "mass (kg)", "distance (m)"]
+        expected_header = [
+            "time (s)", "altitude (ft)", "altitude_rate (ft/s)", "distance (m)", "drag (lbf)",
+            "fuel_flow_rate_negative_total (lbm/h)", "mach (unitless)", "mach_rate (unitless/s)",
+            "mass (kg)", "specific_energy_rate_excess (m/s)", "throttle (unitless)",
+            "thrust_net_total (lbf)", "time_phase (s)", "velocity (m/s)"
+        ]
 
-        # Expected values for the first row of output
         expected_rows = [
-            ["0.0", "0.2", "28334.271991561804", "21108.418300418845", "12.350271989430475", "-10440.375644236545", "8.16993480071768",
-                "0.5629169556406933", "68.05737270077049", "0.0", "0.00013276144051166237", "0.0", "79560.101698", "1.0"],
+            [
+                "0.0", "0.0", "8.333333333333337", "1.0", "21108.418300418845",
+                "-10492.593707324704", "0.2", "0.0001354166666666668", "79560.101698",
+                "12.350271989430475", "0.565484286063171", "28478.788920867584", "0.0",
+                "68.05737270077049"
+            ]
         ]
 
         report_file_path = Path(self.prob.get_reports_dir()).joinpath(

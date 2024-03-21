@@ -238,9 +238,15 @@ def timeseries_csv(prob, **kwargs):
         timeseries_data[variable_name]['val'] = val_full_traj
         timeseries_data[variable_name]['units'] = units
 
-    # move 'time' to the beginning of the dictionary
-    timeseries_data = {key: timeseries_data[key] for key in [
-        'time'] + [key for key in timeseries_data if key != 'time']}
+    # First, ensure 'time' is removed from the sorting process
+    timeseries_keys_sorted = sorted([key for key in timeseries_data if key != 'time'])
+
+    # Then, prepend 'time' to the sorted list in the original dictionary
+    if 'time' in timeseries_data:
+        timeseries_keys_sorted = ['time'] + timeseries_keys_sorted
+
+    # Finally, reconstruct the dictionary in the desired order
+    timeseries_data = {key: timeseries_data[key] for key in timeseries_keys_sorted}
 
     # The path where you want to save the CSV file
     reports_folder = Path(prob.get_reports_dir())
