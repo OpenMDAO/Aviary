@@ -12,7 +12,7 @@ from aviary.examples.external_subsystems.engine_NPSS.define_simple_engine_proble
 
 class AviaryNPSSTestCase(unittest.TestCase):
 
-    @unittest.skipUnless(os.environ.get('NPSS_TOP', False), 'environemnt does not contain NPSS')
+    @unittest.skipUnless(os.environ.get('NPSS_TOP', False), 'environment does not contain NPSS')
     def bench_test_aviary_NPSS(self):
         prob = define_aviary_NPSS_problem()
         prob.run_aviary_problem(suppress_solver_print=True)
