@@ -172,7 +172,7 @@ class TurboPropTest(unittest.TestCase):
         self.prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,
                           114.0, units="unitless")
         self.prob.set_val(
-            Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT, 0.5, units="unitless")
+            Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT, 0.5, units="unitless")
 
         if options.get_val(Settings.VERBOSITY, units='unitless') is Verbosity.DEBUG:
             om.n2(
@@ -198,7 +198,7 @@ class TurboPropTest(unittest.TestCase):
         self.prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,
                           114.0, units="unitless")
         self.prob.set_val(
-            Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT, 0.5, units="unitless")
+            Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT, 0.5, units="unitless")
 
         self.prob.run_model()
         results = self.get_results(point_names)

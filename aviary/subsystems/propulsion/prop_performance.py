@@ -221,7 +221,7 @@ class PropPerf(om.Group):
                 "adv_ratio",
                 "tip_mach",
                 Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,
-                Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT,
+                Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT,
             ],
             promotes_outputs=[
                 "thrust_coefficient",
