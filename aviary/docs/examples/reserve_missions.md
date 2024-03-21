@@ -7,7 +7,7 @@ In this example we add a fixed range cruise to the `run_basic_aviary_example.py`
 This is performed by copying the cruise `phase_info` object from the basic example and adding `"reserve": True,` and `"target_distance": (200, 'km'),`.
 
 The results of this study are shown in the `traj_results_report.html`.
-The first things we review is the altitude plot.
+The first thing we review is the altitude plot.
 This plot clearly shows that a reserve cruise phase was created at the end of the regular mission.
 There is no climb phase in that reserve; we jump to 32,000 ft and cruise for 200 km.
 
@@ -32,7 +32,7 @@ All of these are set automatically when we set `target_duration`.
 
 The last example reserve mission includes five phases: climb, cruise for distance, cruise for time, cruise for distance, descend.
 This example is contained in `run_reserve_mission_multiphase.py`.
-This demonstrates how to create an arbitrarily ordered set of phases for reserve in addition to climb and descent phases.
+This demonstrates how to create an arbitrarily ordered set of phases for reserve, including climb and descent phases.
 All of these reserve phases are tagged with `"reserve": True,`.
 
 Results from this mission can be seen in the figure below.

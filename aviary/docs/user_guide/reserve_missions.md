@@ -9,7 +9,7 @@ Reserve missions are enabled for the following mission types:
 * 2DOF (shooting)    (future work)
 
 Reserve missions can be used to create fixed-time or a fixed-distance phases that are appended to the last phase of your nominal mission.
-To do this, set the `"reserve": True,` flag on within the `user_options` for your reserve phases within `phase_info`.
+To do this, set the `"reserve": True,` flag within the `user_options` for your reserve phases within `phase_info`.
 Additionally, if this is a fixed-time phase add `"target_duration"` and if it's a fixed-distance phase add `"target_distance"`.
 Reserve phases must be added to `phase_info` after the regular phases.
 You are not allowed to intersperse regular and reserve phases.
@@ -31,7 +31,7 @@ Examples of single-phase and multi-phase reserve missions are presented in [Rese
 
 When adding a reserve phase, `check_and_preprocess_inputs()` divides all the phases into two dictionaries: `regular_phases` which contain your nominal phases and `reserve_phases` which contains any phases with the `reserve` flag set to `True`.
 
-Only the final mission mass and range from `regular_phases` is automatically connected to the first point of the `reserve_phases`.
+Only the final mission mass and range from `regular_phases` are automatically connected to the first point of the `reserve_phases`.
 Altitude and other state variables are not automatically connected, allowing you to start the reserve mission at whatever altitude you want.
 
 Setting `optimize_mach` or `optimize_altitude` to `True` on regular or reserve phases will work.
