@@ -5,6 +5,9 @@ on:
   pull_request_target:
     branches: [main]
     types: [opened, reopened, assigned, closed, ready_for_review, converted_to_draft, review_requested]
+  pull_request_review:
+    types: [submitted, edited]
+
 
 
 jobs:
@@ -138,5 +141,40 @@ jobs:
               "title": "${{ env.title }}",
               "action": "${{ env.action }}"
             }
+
+  send_email_on_review:
+    if: (github.event.action == 'submitted' || github.event.action == 'edited') && github.event.review.state == 'APPROVED'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout actions
+        uses: actions/checkout@v3
+        with:
+          sparse-checkout: |
+            .github/actions
+          path: actions
+          
+      - name: Get PR Data
+        run: |
+          echo "number=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
+          echo "title=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
+          echo "user=${{ github.event.review.user.login }}" >> $GITHUB_ENV
+          echo "status=${{ github.event.review.state }}" >> $GITHUB_ENV
+
+      - name: Send Email on PR Review
+        uses: ./actions/.github/actions/send_email
+        with:
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          to: ${{ secrets.DESTINATION_EMAIL }}
+          subject: "***Notification*** Reviewed Pull Request: ${{ env.number }}"
+          body: |
+            {
+              "number": "${{ env.number }}",
+              "title": "${{ env.title }}",
+              "action": "${{ env.action }}",
+              "user": "${{ env.user }}",
+              "status": "${{ env.status }}"
+            }
+          
 
           

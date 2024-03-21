@@ -7,7 +7,7 @@ from openmdao.core.problem import _clear_problem_names
 
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.subsystems.test.test_dummy_subsystem import ArrayGuessSubsystemBuilder
-from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
+from aviary.mission.energy_phase import EnergyPhase
 from aviary.variable_info.variables import Dynamic
 from aviary.variable_info.enums import Verbosity
 
