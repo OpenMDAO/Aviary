@@ -36,4 +36,4 @@ Results from this mission can be seen in the figure below.
 Note that there are three distinct cruise segments, and that the added reserve climb and reserve descent show a more realistic flight profile for a diverted aircraft.
 
 ## More Reading
-For an overview of Reserve missions is presented and some more theory on how they work is presented in [Reserve Mission User Guide](../docs/user_guide/reserve_missions.md).
+For an overview of Reserve missions is presented and some more theory on how they work is presented in [Reserve Mission User Guide](../user_guide/reserve_missions.md).

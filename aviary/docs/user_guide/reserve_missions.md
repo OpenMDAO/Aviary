@@ -20,7 +20,7 @@ An example of this is shown in `run_reserve_mission_multiphase_time_and_range.py
 You cannot create a reserve mission that enforces time or range constraints over multiple phases (i.e specify the total range covered by a climb + cruise+ descent). 
 
 ## Examples
-Examples of single-phase and multi-phase reserve missions are presented in [Reserve Mission Examples](../docs/examples/reserve_missions.md).
+Examples of single-phase and multi-phase reserve missions are presented in [Reserve Mission Examples](../examples/reserve_missions.md).
 
 ## Theory
 When adding a reserve phase, `check_and_preprocess_inputs()` divides all the phases into two dictionaries, `regular_phases` which contain your normal flight, and `reserve_phases` which contains any phases with the `reserve = True` flag.
