@@ -11,19 +11,21 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.variable_info.options import get_option_defaults
 
 # Setting up truth values from GASP
-CT = np.array([0.27651, 0.20518, 0.13093, 0.10236,
-              0.10236, 0.19331, 0.10189, 0.10189, 0.18123])
-XFT = np.array([1.0, 1.0, 0.9976, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0])
-CTX = np.array([0.27651, 0.20518, 0.13062, 0.10236,
-               0.10236, 0.19331, 0.10189, 0.10189, 0.18123])
+CT = np.array([0.27651, 0.20518, 0.13093, 0.10236, 0.10236, 0.19331,
+               0.10189, 0.10189, 0.18123, 0.08523, 0.06463, 0.02800])
+XFT = np.array([1.0, 1.0, 0.9976, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0])
+CTX = np.array([0.27651, 0.20518, 0.13062, 0.10236, 0.10236, 0.19331,
+               0.10189, 0.10189, 0.18123, 0.08523, 0.06463, 0.02800])
 three_quart_blade_angle = np.array(
-    [25.17, 29.67, 44.23, 31.94, 31.94, 17.44, 33.43, 33.43, 20.08])
-thrust = np.array([4634.8, 3415.9, 841.5, 1474.3, 1400.6,
-                  3923.5, 1467.6, 1394.2, 3678.3])
-prop_eff = np.array([0.0, 0.7235, 0.892, 0.9059, 0.9059, 0.5075, 0.9017, 0.9017, 0.4758])
-install_loss = np.array([0.0133, 0.02, 0.034, 0.0, 0.05, 0.05, 0.0, 0.05, 0.05])
-install_eff = np.array([0.0, 0.709, 0.8617, 0.9059, 0.8606,
-                       0.4821, 0.9017, 0.8566, 0.452])
+    [25.17, 29.67, 44.23, 31.94, 31.94, 17.44, 33.43, 33.43, 20.08, 30.28, 29.50, 28.10])
+thrust = np.array([4634.8, 3415.9, 841.5, 1474.3, 1400.6, 3923.5,
+                   1467.6, 1394.2, 3678.3, 1210.4, 917.8, 397.7])
+prop_eff = np.array([0.00078, 0.72352, 0.89202, 0.90586, 0.90586, 0.50750,
+                     0.90172, 0.90172, 0.47579, 0.83809, 0.76259, 0.49565])
+install_loss = np.array([0.0133, 0.02, 0.034, 0.0, 0.05, 0.05,
+                         0.0, 0.05, 0.05, 0.0140, 0.0140, 0.0140])
+install_eff = np.array([0.00077, 0.70904, 0.86171, 0.90586, 0.86056, 0.48213,
+                        0.90172, 0.85664, 0.45200, 0.82635, 0.75190, 0.48871])
 
 
 class PropPerformanceTest(unittest.TestCase):
@@ -168,6 +170,34 @@ class PropPerformanceTest(unittest.TestCase):
             out_stream=None, compact_print=True, show_only_incorrect=True, form='central', method="fd",
             minimum_step=1e-12, abs_err_tol=5.0E-4, rel_err_tol=5.0E-5, excludes=["*atmosphere*"])
         assert_check_partials(partial_data, atol=1e-4, rtol=1e-4)
+
+    def test_case_9_10_11(self):
+        # Case 9, 10, 11, to test CLI > 0.5
+        prob = self.prob
+        prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 12.0, units="ft")
+        prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, 2.4, units='ft')
+        prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, 150.0, units="unitless")
+        prob.set_val(Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT,
+                     0.65, units="unitless")
+        prob.set_val(Dynamic.Mission.ALTITUDE, [10000.0, 10000.0, 10000.0], units="ft")
+        prob.set_val(Dynamic.Mission.VELOCITY, [200.0, 200.0, 200.0], units="knot")
+        prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED,
+                     [750.0, 750.0, 750.0], units="ft/s")
+        prob.set_val(Dynamic.Mission.SHAFT_POWER, [900.0, 750.0, 500.0], units="hp")
+
+        prob.run_model()
+        self.compare_results(case_idx_begin=9, case_idx_end=11)
+
+        partial_data = prob.check_partials(
+            out_stream=None, compact_print=True, show_only_incorrect=True, form='central', method="fd",
+            minimum_step=1e-12, abs_err_tol=5.0E-4, rel_err_tol=5.0E-5, excludes=["*atmosphere*"])
+        # remove partial derivative of 'comp_tip_loss_factor' with respect to
+        # 'aircraft:engine:propeller_integrated_lift_coefficient' from assert_check_partials
+        partial_data_hs = partial_data['pp.hamilton_standard']
+        key_pair = ('comp_tip_loss_factor',
+                    'aircraft:engine:propeller_integrated_lift_coefficient')
+        del partial_data_hs[key_pair]
+        assert_check_partials(partial_data, atol=1.5e-3, rtol=1e-4)
 
 
 if __name__ == "__main__":
