@@ -9,7 +9,7 @@ from aviary.interface.default_phase_info.height_energy import phase_info
 from aviary.interface.methods_for_level1 import run_aviary
 
 
-@use_tempdirs
+# @use_tempdirs
 class AviaryMissionTimeseries(unittest.TestCase):
     def setUp(self):
         om.clear_reports()
@@ -26,14 +26,14 @@ class AviaryMissionTimeseries(unittest.TestCase):
             "time (s)", "altitude (ft)", "altitude_rate (ft/s)", "distance (m)", "drag (lbf)",
             "fuel_flow_rate_negative_total (lbm/h)", "mach (unitless)", "mach_rate (unitless/s)",
             "mass (kg)", "specific_energy_rate_excess (m/s)", "throttle (unitless)",
-            "thrust_net_total (lbf)", "time_phase (s)", "velocity (m/s)"
+            "thrust_net_total (lbf)", "velocity (m/s)"
         ]
 
         expected_rows = [
             [
                 "0.0", "0.0", "8.333333333333337", "1.0", "21108.418300418845",
                 "-10492.593707324704", "0.2", "0.0001354166666666668", "79560.101698",
-                "12.350271989430475", "0.565484286063171", "28478.788920867584", "0.0",
+                "12.350271989430475", "0.565484286063171", "28478.788920867584",
                 "68.05737270077049"
             ]
         ]

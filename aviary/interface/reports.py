@@ -255,10 +255,11 @@ def timeseries_csv(prob, **kwargs):
                for variable_name in timeseries_data}
     df = pd.DataFrame(df_data)
 
-    # Reorder DataFrame to ensure 'time' is the first column, if present
-    if 'time' in df.columns:
-        columns = ['time'] + [col for col in df.columns if col != 'time']
-        df = df[columns]
+    time_column = ['time']  # Isolate the 'time' column
+    # Sort the rest of the columns
+    other_columns = sorted([col for col in df.columns if col != 'time'])
+    columns = time_column + other_columns  # Combine them, keeping 'time' first
+    df = df[columns]
 
     # Add units to column names
     df.columns = [f'{col} ({timeseries_data[col]["units"]})' for col in df.columns]
