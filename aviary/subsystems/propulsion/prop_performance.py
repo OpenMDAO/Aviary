@@ -25,7 +25,7 @@ class InstallLoss(om.Group):
         self.add_subsystem(
             name='sqa_comp',
             subsys=om.ExecComp(
-                'sqa = minimum(DiamNac**2/DiamProp**2, 0.32)',
+                'sqa = minimum(DiamNac**2/DiamProp**2, 0.50)',
                 DiamNac={'units': 'ft'},
                 DiamProp={'units': 'ft'},
                 sqa={'units': 'unitless'},
@@ -78,7 +78,7 @@ class InstallLoss(om.Group):
         self.blockage_factor_interp.add_input(
             "sqa_array",
             0.0,
-            training_data=[0.00, 0.04, 0.08, 0.12, 0.16, 0.20, 0.24, 0.28, 0.32],
+            training_data=[0.00, 0.04, 0.08, 0.12, 0.16, 0.20, 0.24, 0.28, 0.32, 0.50],
             units="unitless",
             desc="square of DiamNac/DiamProp",
         )
@@ -105,7 +105,8 @@ class InstallLoss(om.Group):
                  [0.964, 0.954, 0.943, 0.912, 0.876, 0.834, 0.786],
                  [0.955, 0.943, 0.928, 0.892, 0.848, 0.801, 0.751],
                  [0.948, 0.935, 0.917, 0.872, 0.820, 0.763, 0.706],
-                 [0.940, 0.924, 0.902, 0.848, 0.790, 0.726, 0.662]]
+                 [0.940, 0.924, 0.902, 0.848, 0.790, 0.726, 0.662],
+                 [0.904, 0.875, 0.835, 0.740, 0.655, 0.560, 0.464]]
             ),
         )
 
@@ -221,7 +222,7 @@ class PropPerf(om.Group):
                 "adv_ratio",
                 "tip_mach",
                 Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,
-                Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT,
+                Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT,
             ],
             promotes_outputs=[
                 "thrust_coefficient",
