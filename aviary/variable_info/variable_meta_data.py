@@ -1918,7 +1918,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT,
+    Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.CLI',
                      "FLOPS": None,

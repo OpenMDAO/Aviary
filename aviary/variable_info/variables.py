@@ -216,7 +216,7 @@ class Aircraft:
         POSITION_FACTOR = 'aircraft:engine:position_factor'
         PROPELLER_ACTIVITY_FACTOR = 'aircraft:engine:propeller_activity_factor'
         PROPELLER_DIAMETER = 'aircraft:engine:propeller_diameter'
-        PROPELLER_INTEGRATED_LIFT_COEFFICENT = 'aircraft:engine:propeller_integrated_lift_coefficient'
+        PROPELLER_INTEGRATED_LIFT_COEFFICIENT = 'aircraft:engine:propeller_integrated_lift_coefficient'
         PYLON_FACTOR = 'aircraft:engine:pylon_factor'
         REFERENCE_DIAMETER = 'aircraft:engine:reference_diameter'
         REFERENCE_MASS = 'aircraft:engine:reference_mass'
