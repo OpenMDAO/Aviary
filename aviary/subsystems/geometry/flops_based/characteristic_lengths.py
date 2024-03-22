@@ -14,7 +14,8 @@ class CharacteristicLengths(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        engine_count = len(self.options['aviary_options'].get_val('engine_models'))
+        engine_count = len(self.options['aviary_options'].get_val(
+            Aircraft.Engine.NUM_ENGINES))
 
         self.add_input(Names.CROOT, 0.0, units='unitless')
 

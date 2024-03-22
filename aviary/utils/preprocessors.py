@@ -198,7 +198,7 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
     # Vectorize engine variables. Only update variables in update_list that are relevant
     # to engines (defined by _get_engine_variables())
     for var in _get_engine_variables():
-        if var in update_list or True:
+        if var in update_list:
             dtype = _MetaData[var]['types']
             default_value = _MetaData[var]['default_value']
             # if default_value is in an array, pull out first index as default
