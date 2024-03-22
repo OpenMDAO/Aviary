@@ -329,14 +329,14 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                     params[Aircraft.Design.LIFT_POLAR] = lift_opts
                     params[Aircraft.Design.DRAG_POLAR] = drag_opts
 
-                for entry in Aircraft.Nacelle.__dict__:
-                    var = getattr(Aircraft.Nacelle, entry)
-                    # check var is a string before checking aviary_inputs
-                    if isinstance(var, str):
-                        if var in aviary_inputs:
-                            if 'total' not in var:
-                                params[var] = {
-                                    'shape': (engine_count), 'static_target': True}
+        for entry in Aircraft.Nacelle.__dict__:
+            var = getattr(Aircraft.Nacelle, entry)
+            # check var is a string before checking aviary_inputs
+            if isinstance(var, str):
+                if var in aviary_inputs:
+                    if 'total' not in var:
+                        params[var] = {
+                            'shape': (engine_count), 'static_target': True}
 
         return params
 
