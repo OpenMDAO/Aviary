@@ -17,18 +17,18 @@
  ELODN=1.0,
  ELODT=2.90,	! length of pilot compartment in feet (4.44),length to diameter ratio of nose cone of fuselage (2)length to diameter ratio of tail cone of fuselage (3.2)
  HCK=5.0,	! mean fuselage cabin diameter minus mean fuselage nose diameter in feet (2.47)
- HTG=14.5,	! wing height about ground during ground run in feet (3.0) same for C-130H
+ HTG=14.5,	! wing height about ground during ground run in feet (3.0)
  HWING=1.00,
  IGEAR=0, 
  LCWING=0,     ! wing location on fuselage =0, low wing; =1 high wing, retractable landing gear, and wing location
- PAX=60.,	! number of passenger seats excluding crew C-130H 62 technically
+ PAX=60.,	! number of passenger seats excluding crew 62 technically
  RELR=0.40,     ! fuselage CG location (fraction of fuselage length)
  SAH=0.0, 	! horizontal tail location on vertical tail: 0: low tail, 1: T-tail
  SCFAC=0.0,	! shift in drag divergence Mach number due to supercritical design (0.)
  SF_FAC=1.00,	! Fuselage Wetted Area Adjustment factor (1.); if SF_FAC > 10., input as Fuselage Wetted area (ft^2)
  SLM=.52,
  SLMH=.374,
- SLMV=0.296,	! wing, HT,VT taper ratio C-130H
+ SLMV=0.296,	! wing, HT,VT taper ratio
  TCHT=.150,	! horizontal tail root thickness to chord ratio
  TCR=0.18,	! wing root thickness to chord ratio
  TCT=.12, 	! wing tip thickness to chord ratio
@@ -59,16 +59,16 @@
  ! 2: same as 1, except uses nacelle size inputs DRARN, ELN    
  KNAC=1, 
  BTEOB=0.60, 
- CFOC=0.28,	! ratio of flap span to wing span C-130H,flap chord to wing chord ratio C-130H 
+ CFOC=0.28,	! ratio of flap span to wing span,flap chord to wing chord ratio
  BENGOB=0.05,	! fraction of flap-free wing span due to engines
- DFLPTO=10.,	! takeoff flap deflection, degrees C-130H
- DFLPLD=15., 	! landing flap deflection, degrees max flap def C-130H 36 deg
+ DFLPTO=10.,	! takeoff flap deflection, degrees
+ DFLPLD=15., 	! landing flap deflection, degrees max flap def 36 deg
  FLAPN=2.,  
  JFLTYP = 4,	
  RCLMAX=1.50,! 
  WCFLAP=-1.0, 	! weight trend coefficient in flap weight equation (default is a function of JFLYTYP)
  CATD=3.,       ! design structural category (=3: FAR Part 25 transport)
- VMLFSL=320.0, 	! maximum structural design flight speed, mph C-130H
+ VMLFSL=320.0, 	! maximum structural design flight speed, mph
  DELP=6.55,	! fuselage pressure differential, psi
  DELWST=0.,     ! incremental structural weight, lb. (0.) (Ramp Weight penalty)
  SKB=145.87,	! add 15% for Ramp weight to fuselage weight
@@ -80,14 +80,15 @@
  SKLG=.0337,	! weight trend coefficient of landing gear, fraction gross weight
  SKMG=.916, 	! weight trend coefficient main gear, fraction of landing gear
  SKPES=0.335,	! weight trend coefficient of engine nacelle, fraction dry engine, if KNAC <> 2
- SKWW=131.32, 	! weight trend coefficient of wing without high lift devicesSKWW=130.0, 	! 
+ SKWW=131.32, 	! weight trend coefficient of wing without high lift devices
+ SKWW=130.0, 	! 
  SKY=.2285,	! weight trend coefficient horizontal tail
  SKZ=.2035, 	! weight trend coefficient vertical tail
  UWNAC=3.0, 	! nacelle weight/nacelle surface area; lb per sq ft, if KNAC <> 2
  UWPAX=190,	! weight per passenger - based on 2 PAX & 51050 payload
- WCARGO=31273.,	! weight of cargo, lb C130H scenario
- WG=155000., 	! initial gross weight guess, lb C130H
- WGS=88.846, 	! wing loading, psf  C130H
+ WCARGO=31273.,	! weight of cargo, lb scenario
+ WG=155000., 	! initial gross weight guess, lb
+ WGS=88.846, 	! wing loading, psf
  FVOL_MRG=15,  ! fuel volume margin
  ISWING=0,      ! =0: fix WGS; =1: fix wing area
  WPLX=25000.,	! design payload, lb (default function of PAX)
@@ -179,7 +180,7 @@
  $INPROP 
  AF=167.,       ! proeplller/Q-FAN balse activity factor
  ANCQHP=.03405,  ! nacelle area per horsepower (.12) 
- BL=4.,         ! number of blades - C130H has four blades
+ BL=4.,         ! number of blades - has four blades
  BLANG=0.,      ! balde 3/4 pitch (fixed prop only)
  CLI=.50,       ! propeller integrated design lift coeff
  CTI=0.2,       ! initial estimate of propeller thrust coefficient (.2)
