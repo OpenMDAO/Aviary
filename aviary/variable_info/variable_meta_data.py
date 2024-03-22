@@ -1180,6 +1180,18 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Design.MAX_TIP_SPEED,
+    meta_data=_MetaData,
+    historical_name={"GASP":'INGASP.TSPDMX',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='ft/s',
+    desc='maximum allowable propeller tip speed',
+    default_value=500.0,
+)
+
+add_meta_data(
     Aircraft.Design.OPERATING_MASS,
     meta_data=_MetaData,
     # TODO: check with Aviary and GASPy engineers to ensure these are indeed
@@ -6179,6 +6191,30 @@ add_meta_data(
                      },
     units='ft/s',
     desc='propeller tip speed',
+    default_value=500.0,
+)
+
+add_meta_data(
+    Dynamic.Mission.ROTOR_SPEED,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='rpm',
+    desc='the rotor speed',
+    default_value=500.0,
+)
+
+add_meta_data(
+    Dynamic.Mission.ROTOR_SPEED_CORRECTED,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='rpm',
+    desc='the corrected rotor speed',
     default_value=500.0,
 )
 
