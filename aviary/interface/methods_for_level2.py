@@ -544,7 +544,7 @@ class AviaryProblem(om.Problem):
                             self.phase_info[phase_name]["user_options"]['analytic']:
                         continue
                     else:
-                        # Set duartion_bounds and initial_guesses for time:
+                        # Set duration_bounds and initial_guesses for time:
                         self.phase_info[phase_name]["user_options"].update({
                             "duration_bounds": ((target_duration[0], target_duration[0]), target_duration[1])})
                         self.phase_info[phase_name].update({
@@ -1442,50 +1442,6 @@ class AviaryProblem(om.Problem):
 
         elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
             if self.analysis_scheme is AnalysisScheme.COLLOCATION:
-                self.traj.link_phases(["groundroll", "rotation", "ascent"], [
-                    "time", Dynamic.Mission.VELOCITY, "mass", Dynamic.Mission.DISTANCE], connected=True)
-                self.traj.link_phases(
-                    ["rotation", "ascent"], ["alpha"], connected=False,
-                    ref=5e1,
-                )
-                self.traj.add_linkage_constraint(
-                    "ascent",
-                    "accel",
-                    Dynamic.Mission.DISTANCE,
-                    Dynamic.Mission.DISTANCE,
-                    "final",
-                    "initial",
-                    connected=False,
-                    units="NM",
-                    ref=5000.,
-                )  # we use this because units from the two phases do not match up
-                self.traj.link_phases(
-                    phases=[
-                        "ascent", "accel"], vars=[
-                        "time", "mass", Dynamic.Mission.VELOCITY], connected=True)
-                self.traj.link_phases(
-                    phases=["accel", "climb1", "climb2"],
-                    vars=["time", Dynamic.Mission.ALTITUDE,
-                          "mass", Dynamic.Mission.DISTANCE],
-                    connected=True,
-                )
-
-                self.traj.link_phases(
-                    phases=["desc1", "desc2"],
-                    vars=["time", "mass", Dynamic.Mission.DISTANCE],
-                    connected=True,
-                )
-
-                # add all params and promote them to self.model level
-                ParamPort.promote_params(
-                    self.model,
-                    trajs=["traj"],
-                    phases=[
-                        ["groundroll", "rotation", "ascent",
-                            "accel", "climb1", "climb2"],
-                        ["desc1", "desc2"],
-                    ],
-                )
 
                 def add_linkage_constraint(self, phase_a, phase_b, var_a, var_b, connected,
                                            ref=None):
@@ -1500,20 +1456,73 @@ class AviaryProblem(om.Problem):
                         ref=ref
                     )
 
-                add_linkage_constraint(self, 'climb2', 'cruise',
-                                       'time', 'initial_time', True)
-                add_linkage_constraint(self, 'climb2', 'cruise',
-                                       'distance', 'initial_distance', True)
-                add_linkage_constraint(
-                    self, 'climb2', 'cruise', Dynamic.Mission.ALTITUDE, Dynamic.Mission.ALTITUDE, True)
-                add_linkage_constraint(self, 'climb2', 'cruise', Dynamic.Mission.MASS,
-                                       Dynamic.Mission.MASS, False, ref=1.0e5)
-                add_linkage_constraint(self, 'cruise', 'desc1', 'time', 'time', True)
-                add_linkage_constraint(self, 'cruise', 'desc1',
-                                       'distance', 'distance', True)
-                add_linkage_constraint(
-                    self, 'cruise', 'desc1', Dynamic.Mission.ALTITUDE, Dynamic.Mission.ALTITUDE, True)
-                add_linkage_constraint(self, 'cruise', 'desc1', 'mass', 'mass', True)
+                for ii in range(len(phases)-1):
+                    states_to_link = [
+                        'time', Dynamic.Mission.DISTANCE, Dynamic.Mission.MASS]
+
+                    phase1 = phases[ii]
+                    phase2 = phases[ii+1]
+                    if ((phase1 in self.reserve_phases) == (phase2 in self.reserve_phases)) and \
+                            not ('groundroll' in (phase1, phase2)):
+                        states_to_link.append(Dynamic.Mission.ALTITUDE)
+                    if phase1 == 'rotation' or phase2 == 'rotation':
+                        states_to_link.append(Dynamic.Mission.VELOCITY)
+                        states_to_link.append('alpha')
+
+                    user_options1 = self.phase_info[phase1]['user_options']
+                    user_options2 = self.phase_info[phase2]['user_options']
+                    analytic1, analytic2 = False, False
+                    if 'analytic' in user_options1 and user_options1['analytic']:
+                        analytic1 = True
+                    if 'analytic' in user_options2 and user_options2['analytic']:
+                        analytic2 = True
+
+                    for state in states_to_link:
+                        temp_state = 'times' if state == 'time' else state
+                        initial_guesses1 = self.phase_info[phase1]['initial_guesses']
+                        initial_guesses2 = self.phase_info[phase2]['initial_guesses']
+                        units1, units2 = True, True
+                        if temp_state in initial_guesses1:
+                            units1 = initial_guesses1[temp_state][-1]
+                        if temp_state in initial_guesses2:
+                            units2 = initial_guesses2[temp_state][-1]
+                        else:
+                            units1 = units2 = True
+                        if not (analytic1 or analytic2) and (units1 == units2):
+                            if state == 'alpha':
+                                connected = False
+                            else:
+                                connected = true_unless_mpi
+                            self.traj.link_phases(
+                                [phase1, phase2], [state], connected=connected)
+
+                        else:
+                            if analytic2:
+                                prefix = 'initial_'
+                            else:
+                                prefix = ''
+                            add_linkage_constraint(self, phase1, phase2,
+                                                   'time', prefix+'time', True)
+                            add_linkage_constraint(self, phase1, phase2,
+                                                   'distance', prefix+'distance', True)
+                            add_linkage_constraint(self, phase1, phase2, 'mass',
+                                                   'mass', False, ref=1.0e5)
+
+                self.traj.link_phases(
+                    phases=[
+                        "ascent", "accel"], vars=[
+                        "time", "mass", Dynamic.Mission.VELOCITY], connected=True)
+
+                # add all params and promote them to self.model level
+                ParamPort.promote_params(
+                    self.model,
+                    trajs=["traj"],
+                    phases=[
+                        ["groundroll", "rotation", "ascent",
+                            "accel", "climb1", "climb2",
+                            "desc1", "desc2"],
+                    ],
+                )
 
                 self.model.promotes(
                     "traj",
@@ -1548,71 +1557,6 @@ class AviaryProblem(om.Problem):
                 connect_map = {
                     "traj.desc2.timeseries.distance": Mission.Summary.RANGE,
                 }
-
-                # # # for ii in range(len(phases)-1):
-                # # #     states_to_link = ['time', Dynamic.Mission.DISTANCE, Dynamic.Mission.ALTITUDE]
-                # # #     phase1 = phases_to_link[ii]
-                # # #     phase2 = phases_to_link[ii+1]
-
-                # # #     if not (phase1 in self.reserve_phases or phase2 in self.reserve_phases):
-                # # #         states_to_link.append('mass')
-                # # #     if phase1 == 'rotation' or phase2 == 'rotation':
-                # # #         states_to_link.append('alpha')
-
-                # # #     for state in states_to_link:
-                # # #         if state == 'alpha':
-                # # #             connected = False
-                # # #         else:
-                # # #             connected = True
-
-                # # #         if not analytic:
-                # # #             self.traj.link_phases([phase1,phase2], [state], connected=connected)
-                # # #         else:
-                # # #             add_linkage_constraint(self, phase1, phase2,
-                # # #                                 state, state, False)
-
-                # # # if self.reserve_phases:
-                # # #     phases_to_link = [self.regular_phases[-1]] + self.reserve_phases
-                # # #     self.traj.link_phases(phases_to_link, ["time"], ref=1e3,
-                # # #                         connected=False)
-                # # #     self.traj.link_phases(phases_to_link, [Dynamic.Mission.MASS], ref=1e6,
-                # # #                         connected=true_unless_mpi)
-                # # #     self.traj.link_phases(phases_to_link, [Dynamic.Mission.DISTANCE], ref=1e3,
-                # # #                         connected=true_unless_mpi)
-                if self.reserve_phases:
-                    phases_to_link = [self.regular_phases[-1]] + self.reserve_phases
-                    for ii in range(len(phases_to_link)-1):
-                        user_options1 = self.phase_info[phases_to_link[ii]
-                                                        ]['user_options']
-                        user_options2 = self.phase_info[phases_to_link[ii+1]
-                                                        ]['user_options']
-                        phase1_phase2 = phases_to_link[ii:ii+2]
-
-                        # check if at least one of the phases is analytic
-                        analytic1 = False
-                        analytic2 = False
-                        if 'analytic' in user_options1 and user_options1['analytic']:
-                            analytic1 = True
-                        if 'analytic' in user_options2 and user_options2['analytic']:
-                            analytic2 = True
-
-                        if not analytic1 and not analytic2:
-                            self.traj.link_phases(phase1_phase2, ["time"], ref=1e3,
-                                                  connected=False)
-                            self.traj.link_phases(phase1_phase2, [Dynamic.Mission.MASS], ref=1e6,
-                                                  connected=true_unless_mpi)
-                            self.traj.link_phases(phase1_phase2, [Dynamic.Mission.DISTANCE], ref=1e3,
-                                                  connected=true_unless_mpi)
-                        elif analytic1:
-                            prefix = ''
-                        elif analytic2:
-                            prefix = 'initial_'
-                        add_linkage_constraint(self, *phase1_phase2,
-                                               'time', prefix+'time', True)
-                        add_linkage_constraint(self, *phase1_phase2,
-                                               'distance', prefix+'distance', True)
-                        add_linkage_constraint(self, *phase1_phase2, 'mass',
-                                               'mass', False, ref=1.0e5)
 
             else:
                 connect_map = {
@@ -2051,12 +1995,6 @@ class AviaryProblem(om.Problem):
                                      val[0], units=units)
                         self.set_val(f'traj.{phase_name}.t_duration',
                                      val[1], units=units)
-
-                    # elif 'time' in guess_key:
-                    #     self.set_val(f'traj.{phase_name}.t_initial',
-                    #                  val[0], units=units)
-                    #     self.set_val(f'traj.{phase_name}.t_duration',
-                    #                  val[1], units=units)
 
                     else:
                         # Otherwise, set the value of the parameter in the trajectory phase
