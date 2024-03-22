@@ -177,7 +177,7 @@ class PropPerformanceTest(unittest.TestCase):
         prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 12.0, units="ft")
         prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, 2.4, units='ft')
         prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, 150.0, units="unitless")
-        prob.set_val(Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT,
+        prob.set_val(Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT,
                      0.65, units="unitless")
         prob.set_val(Dynamic.Mission.ALTITUDE, [10000.0, 10000.0, 10000.0], units="ft")
         prob.set_val(Dynamic.Mission.VELOCITY, [200.0, 200.0, 200.0], units="knot")
