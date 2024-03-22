@@ -24,7 +24,7 @@ class AeroReport(om.ExplicitComponent):
 
     def setup(self):
         aviary_options = self.options['aviary_options']
-        count = len(aviary_options.get_val('engine_models'))
+        count = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
 
         add_aviary_input(self, Aircraft.Canard.WETTED_AREA, 0.0)
         add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA, 0.0)

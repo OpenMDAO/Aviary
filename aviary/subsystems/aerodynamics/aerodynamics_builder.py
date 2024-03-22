@@ -331,10 +331,12 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
                 for entry in Aircraft.Nacelle.__dict__:
                     var = getattr(Aircraft.Nacelle, entry)
-                    if var in aviary_inputs:
-                        if 'total' not in var:
-                            params[var] = {
-                                'shape': (engine_count), 'static_target': True}
+                    # check var is a string before checking aviary_inputs
+                    if isinstance(var, str):
+                        if var in aviary_inputs:
+                            if 'total' not in var:
+                                params[var] = {
+                                    'shape': (engine_count), 'static_target': True}
 
         return params
 
