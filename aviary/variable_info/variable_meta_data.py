@@ -1168,6 +1168,18 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Design.MAX_ROTOR_RPM,
+    meta_data=_MetaData,
+    historical_name={"GASP":'INGASP.XNMAX',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='rpm',
+    desc='maximum allowable rotor speed',
+    default_value=500.0,
+)
+
+add_meta_data(
     Aircraft.Design.MAX_STRUCTURAL_SPEED,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.VMLFSL',
@@ -6195,7 +6207,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Mission.ROTOR_SPEED,
+    Dynamic.Mission.ROTOR_RPM,
     meta_data=_MetaData,
     historical_name={"GASP": None,
                      "FLOPS": None,
@@ -6207,7 +6219,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Mission.ROTOR_SPEED_CORRECTED,
+    Dynamic.Mission.ROTOR_RPM_CORRECTED,
     meta_data=_MetaData,
     historical_name={"GASP": None,
                      "FLOPS": None,
