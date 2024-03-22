@@ -146,6 +146,7 @@ class Aircraft:
         LIFT_POLAR = 'aircraft:design:lift_polar'
 
         MAX_FUSELAGE_PITCH_ANGLE = 'aircraft:design:max_fuselage_pitch_angle'
+        MAX_ROTOR_RPM = 'aircraft:design:max_rotor_rpm'
         MAX_STRUCTURAL_SPEED = 'aircraft:design:max_structural_speed'
         MAX_TIP_SPEED = 'aircraft:design:max_tip_speed'
         OPERATING_MASS = 'aircraft:design:operating_mass'
@@ -606,8 +607,8 @@ class Dynamic:
         NOX_RATE = 'nox_rate'
         NOX_RATE_TOTAL = 'nox_rate_total'
         PROPELLER_TIP_SPEED = 'propeller_tip_speed'
-        ROTOR_SPEED = 'rotor_speed'
-        ROTOR_SPEED_CORRECTED = 'rotor_speed_corrected'
+        ROTOR_RPM = 'rotor_rpm'
+        ROTOR_RPM_CORRECTED = 'rotor_rpm_corrected'
         SHAFT_POWER = 'shaft_power'
         SHAFT_POWER_CORRECTED = 'shaft_power_corrected'
         SPECIFIC_ENERGY = 'specific_energy'
