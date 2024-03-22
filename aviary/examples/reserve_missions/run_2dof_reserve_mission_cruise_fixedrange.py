@@ -19,6 +19,7 @@ phase_info.update({
     'reserve_cruise': {
         'user_options': {
             'reserve': True,
+            'analytic': True,
             "target_distance": (200, 'km'),
             'alt_cruise': (37.5e3, 'ft'),
             'mach_cruise': 0.8,

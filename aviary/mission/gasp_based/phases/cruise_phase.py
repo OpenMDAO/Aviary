@@ -71,7 +71,9 @@ class CruisePhase(PhaseBuilderBase):
         phase.add_parameter("initial_time", opt=False, val=0.0,
                             units="s", static_target=True)
 
-        phase.add_timeseries_output("time", units="s")
+        phase.add_timeseries_output("time", units="s", output_name="time")
+        phase.add_timeseries_output(Dynamic.Mission.MASS, units="lbm")
+        phase.add_timeseries_output(Dynamic.Mission.DISTANCE, units="nmi")
 
         return phase
 
@@ -79,6 +81,8 @@ class CruisePhase(PhaseBuilderBase):
 # Adding metadata for the CruisePhase
 CruisePhase._add_meta_data('alt_cruise', val=0)
 CruisePhase._add_meta_data('mach_cruise', val=0)
+CruisePhase._add_meta_data(
+    'analytic', val=False, desc='this is an analytic phase (no states).')
 CruisePhase._add_meta_data(
     'reserve', val=False, desc='this phase is part of the reserve mission.')
 CruisePhase._add_meta_data(

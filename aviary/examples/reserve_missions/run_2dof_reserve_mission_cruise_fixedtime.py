@@ -8,6 +8,7 @@ Here we have climb, cruise, and descent phases.
 We then call the correct methods in order to set up and run an Aviary optimization problem.
 This performs a coupled design-mission optimization and outputs the results from Aviary into the `reports` folder.
 """
+import openmdao.api as om
 import aviary.api as av
 from aviary.interface.default_phase_info.two_dof import phase_info
 from copy import deepcopy
@@ -19,6 +20,7 @@ phase_info.update({
     'reserve_cruise': {
         'user_options': {
             'reserve': True,
+            'analytic': True,
             # 2dof cruise uses mass, not time as the integration variable
             "target_duration": (30, 'min'),
             'alt_cruise': (37.5e3, 'ft'),
@@ -28,8 +30,8 @@ phase_info.update({
         'initial_guesses': {
             # [Initial mass, delta mass] for special cruise phase.
             'mass': ([171481., -35000], 'lbm'),
-            'initial_distance': (200.e3, 'ft'),
-            'initial_time': (1516., 's'),
+            'initial_distance': (4000, 'nmi'),
+            'initial_time': (30e3, 's'),
             'altitude': (37.5e3, 'ft'),
             'mach': (0.8, 'unitless'),
         }
@@ -54,7 +56,7 @@ prob.add_post_mission_systems()
 # Link phases and variables
 prob.link_phases()
 
-prob.add_driver("SNOPT", max_iter=50)
+prob.add_driver("SNOPT", max_iter=20)
 # prob.add_driver("SLSQP", max_iter=100)
 
 prob.add_design_variables()
@@ -68,3 +70,5 @@ prob.setup()
 prob.set_initial_guesses()
 
 prob.run_aviary_problem()
+
+om.n2(prob, 'n2_reserve_time.html', show_browser=False)

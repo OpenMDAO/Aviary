@@ -220,6 +220,7 @@ phase_info = {
         'user_options': {
             'alt_cruise': (37.5e3, 'ft'),
             'mach_cruise': 0.8,
+            'analytic': True,
         },
         'initial_guesses': {
             # [Initial mass, delta mass] for special cruise phase.
