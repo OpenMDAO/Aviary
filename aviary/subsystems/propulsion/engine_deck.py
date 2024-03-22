@@ -887,8 +887,8 @@ class EngineDeck(EngineModel):
         # add created subsystems to engine_group
         engine_group.add_subsystem('interpolation',
                                    engine,
-                                   promotes_inputs=['*'],
-                                   promotes_outputs=['*'])
+                                   promotes_inputs=['*'])
+
         if self.use_thrust:
             if self.global_throttle or (self.global_hybrid_throttle
                                         and self.use_hybrid_throttle):
@@ -906,14 +906,27 @@ class EngineDeck(EngineModel):
             engine_group.add_subsystem(
                 'max_thrust_interpolation',
                 max_thrust_engine,
-                promotes_inputs=['*'],
-                promotes_outputs=['*'])
+                promotes_inputs=['*'])
 
         engine_group.add_subsystem('engine_scaling',
                                    subsys=EngineScaling(num_nodes=num_nodes,
                                                         aviary_options=self.options),
-                                   promotes_inputs=['*'],
+                                   promotes_inputs=[
+                                       Aircraft.Engine.SCALE_FACTOR, Dynamic.Mission.MACH],
                                    promotes_outputs=['*'])
+
+        # manually connect unscaled variables, since we do not want them promoted
+        engine_group.connect('interpolation.thrust_net_unscaled',
+                             'engine_scaling.thrust_net_unscaled')
+        engine_group.connect('interpolation.fuel_flow_rate_unscaled',
+                             'engine_scaling.fuel_flow_rate_unscaled')
+        engine_group.connect('interpolation.electric_power_unscaled',
+                             'engine_scaling.electric_power_unscaled')
+        engine_group.connect('interpolation.nox_rate_unscaled',
+                             'engine_scaling.nox_rate_unscaled')
+        if self.use_thrust:
+            engine_group.connect(
+                'max_thrust_interpolation.thrust_net_max_unscaled', 'engine_scaling.thrust_net_max_unscaled')
 
         return engine_group
 
