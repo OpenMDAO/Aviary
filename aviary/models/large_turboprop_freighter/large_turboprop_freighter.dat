@@ -21,7 +21,7 @@
  HWING=1.00,
  IGEAR=0, 
  LCWING=0,     ! wing location on fuselage =0, low wing; =1 high wing, retractable landing gear, and wing location
- PAX=60.,	! number of passenger seats excluding crew 62 technically
+ PAX=60.,	! number of passenger seats excluding crew, 62 technically
  RELR=0.40,     ! fuselage CG location (fraction of fuselage length)
  SAH=0.0, 	! horizontal tail location on vertical tail: 0: low tail, 1: T-tail
  SCFAC=0.0,	! shift in drag divergence Mach number due to supercritical design (0.)
@@ -38,7 +38,7 @@
  YMG=0.,  	! span fraction location of main gear on wing    0: on fuselage   1: at tip
  YP=0.385,	! span fraction location of engines on wing    0: on fuselage   1: at tip
  XLQDE=0.380,	! nacelle scaling factor for turboprop, KNAC=0 or 1
- XWQLF=0.45,	! Distance from Nose to Wing Aerodynamic Center over Fuselage Length (0.40 
+ XWQLF=0.45,	! Distance from Nose to Wing Aerodynamic Center over Fuselage Length (0.40)
  ALPHL0=-1.0,	! zero lift angle of attack in degrees
  CKF=-1.0,
  CKW=-1.0,
@@ -62,7 +62,7 @@
  CFOC=0.28,	! ratio of flap span to wing span,flap chord to wing chord ratio
  BENGOB=0.05,	! fraction of flap-free wing span due to engines
  DFLPTO=10.,	! takeoff flap deflection, degrees
- DFLPLD=15., 	! landing flap deflection, degrees max flap def 36 deg
+ DFLPLD=15., 	! landing flap deflection, degrees max flap def, 36 deg
  FLAPN=2.,  
  JFLTYP = 4,	
  RCLMAX=1.50,! 
@@ -80,13 +80,12 @@
  SKLG=.0337,	! weight trend coefficient of landing gear, fraction gross weight
  SKMG=.916, 	! weight trend coefficient main gear, fraction of landing gear
  SKPES=0.335,	! weight trend coefficient of engine nacelle, fraction dry engine, if KNAC <> 2
- SKWW=131.32, 	! weight trend coefficient of wing without high lift devices
- SKWW=130.0, 	! 
+ SKWW=131.32, 	! weight trend coefficient of wing without high lift devices !SKWW=130.0,
  SKY=.2285,	! weight trend coefficient horizontal tail
  SKZ=.2035, 	! weight trend coefficient vertical tail
  UWNAC=3.0, 	! nacelle weight/nacelle surface area; lb per sq ft, if KNAC <> 2
  UWPAX=190,	! weight per passenger - based on 2 PAX & 51050 payload
- WCARGO=31273.,	! weight of cargo, lb scenario
+ WCARGO=31273.,	! weight of cargo, lb
  WG=155000., 	! initial gross weight guess, lb
  WGS=88.846, 	! wing loading, psf
  FVOL_MRG=15,  ! fuel volume margin
