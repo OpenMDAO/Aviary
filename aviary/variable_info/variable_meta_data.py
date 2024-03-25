@@ -865,8 +865,8 @@ add_meta_data(
                                 ]
                      },
     units='ft**2',
-    desc='Aircraft base area (total exit cross-section area minus inlet'
-    ' capture areas for internally mounted engines)',
+    desc='Aircraft base area (total exit cross-section area minus inlet '
+         'capture areas for internally mounted engines)',
     default_value=0.0,
 )
 
@@ -878,8 +878,8 @@ add_meta_data(
                      "LEAPS1": None
                      },
     units='unitless',
-    desc='allowable center-of-gravity (cg) travel as a fraction of'
-    ' the mean aerodynamic chord',
+    desc='allowable center-of-gravity (cg) travel as a fraction of '
+         'the mean aerodynamic chord',
 )
 
 add_meta_data(
@@ -919,6 +919,20 @@ add_meta_data(
     types=bool,
     desc='if true, use empirical tail volume coefficient equation. This is '
          'true if VBARHX is 0 in GASP.'
+)
+
+add_meta_data(
+    Aircraft.Design.COMPUTE_INSTALLATION_LOSS,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units="unitless",
+    option=True,
+    default_value=True,
+    types=bool,
+    desc='if true, compute installation loss factor based on blockage factor'
 )
 
 add_meta_data(
@@ -1043,7 +1057,8 @@ add_meta_data(
                      "LEAPS1": None
                      },
     units='lbm',
-    desc='total mass of fixed equipment: APU, Instruments, Hydraulics, Electrical, Avionics, AC, Anti-Icing, Auxilary Equipment, and Furnishings',
+    desc='total mass of fixed equipment: APU, Instruments, Hydraulics, Electrical, '
+         'Avionics, AC, Anti-Icing, Auxilary Equipment, and Furnishings',
 )
 
 add_meta_data(
@@ -1064,9 +1079,9 @@ add_meta_data(
                      "FLOPS": None,
                      "LEAPS1": None
                      },
-    desc="A flag used by Jeff V. Bowles to debug GASP code during his 53 years supporting the development of GASP. \
-        This flag is planted here to thank him for his hard work and dedication, Aviary wouldn't be what it is today \
-        without his help.",
+    desc="A flag used by Jeff V. Bowles to debug GASP code during his 53 years supporting the development of GASP. "
+         "This flag is planted here to thank him for his hard work and dedication, Aviary wouldn't be what it is today "
+         "without his help.",
 )
 
 add_meta_data(
@@ -1216,10 +1231,11 @@ add_meta_data(
                      },
     option=True,
     units="unitless",
-    desc='required fuel reserves: given as a proportion of mission fuel. This value must be nonnegative.\
-          If it is 0.5, the reserve fuel is half of the mission fuel (one third of the total fuel). Note\
-          it can be greater than 1. If it is 2, there would be twice as much reserve fuel as mission fuel\
-          (the total fuel carried would be 1/3 for the mission and 2/3 for the reserve)',
+    desc='required fuel reserves: given as a proportion of mission fuel. This value must be nonnegative. '
+          'Mission fuel only includes normal phases and excludes reserve phases. '
+          'If it is 0.5, the reserve fuel is half of the mission fuel (one third of the total fuel). Note '
+          'it can be greater than 1. If it is 2, there would be twice as much reserve fuel as mission fuel '
+          '(the total fuel carried would be 1/3 for the mission and 2/3 for the reserve)',
     default_value=0,
 )
 
@@ -1295,7 +1311,7 @@ add_meta_data(
                      },
     units='unitless',
     desc='shift in drag divergence Mach number due to '
-    'supercritical design',
+         'supercritical design',
 )
 
 add_meta_data(
@@ -1335,8 +1351,8 @@ add_meta_data(
                      "LEAPS1": None
                      },
     units='lbm',
-    desc='Total systems & equipment group mass without additional 1% of'
-    ' empty mass'
+    desc='Total systems & equipment group mass without additional 1% of '
+         'empty mass'
 )
 
 add_meta_data(
@@ -1535,8 +1551,8 @@ add_meta_data(
                      "LEAPS1": None
                      },
     units='lbm',
-    desc='additional propulsion system mass added to engine control and starter mass, or'
-         ' engine installation mass',
+    desc='additional propulsion system mass added to engine control and starter mass, or '
+         'engine installation mass',
     default_value=0.0
 )
 
@@ -1605,9 +1621,9 @@ add_meta_data(
     option=True,
     default_value=1.0,
     desc='If Aircraft.Engine.GENERATE_FLIGHT_IDLE is True, bounds engine '
-    'performance outputs (other than thrust) at flight idle to be below a '
-    'decimal fraction of the max value of that output produced by the engine '
-    'at each flight condition.'
+         'performance outputs (other than thrust) at flight idle to be below a '
+         'decimal fraction of the max value of that output produced by the engine '
+         'at each flight condition.'
 )
 
 add_meta_data(
@@ -1621,9 +1637,9 @@ add_meta_data(
     option=True,
     default_value=0.08,
     desc='If Aircraft.Engine.GENERATE_FLIGHT_IDLE is True, bounds engine '
-    'performance outputs (other than thrust) at flight idle to be above a '
-    'decimal fraction of the max value of that output produced by the engine '
-    'at each flight condition.'
+         'performance outputs (other than thrust) at flight idle to be above a '
+         'decimal fraction of the max value of that output produced by the engine '
+         'at each flight condition.'
 )
 
 add_meta_data(
@@ -1784,6 +1800,20 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Engine.NUM_BLADES,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.BL',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='unitless',
+    desc='number of blades per propeller',
+    option=True,
+    types=int,
+    default_value=0
+)
+
+add_meta_data(
     Aircraft.Engine.NUM_ENGINES,
     meta_data=_MetaData,
     historical_name={"GASP": "INGASP.ENP",
@@ -1791,8 +1821,8 @@ add_meta_data(
                      "LEAPS1": 'aircraft.outputs.L0_propulsion.total_engine_count'
                      },
     units='unitless',
-    desc='total number of engines per model on the aircraft'
-    ' (fuselage, wing, or otherwise)',
+    desc='total number of engines per model on the aircraft '
+         '(fuselage, wing, or otherwise)',
     types=int,
     option=True,
     default_value=2
@@ -1861,6 +1891,42 @@ add_meta_data(
     units="unitless",
     desc='engine position factor',
     default_value=0,
+)
+
+add_meta_data(
+    Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.AF',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units="unitless",
+    desc='propeller actitivty factor per Blade (Range: 80 to 200)',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Engine.PROPELLER_DIAMETER,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.DPROP',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='ft',
+    desc='propeller diameter',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.CLI',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='unitless',
+    desc='propeller blade integrated design lift coefficient (Range: 0.3 to 0.8)',
+    default_value=0.5,
 )
 
 add_meta_data(
@@ -2208,10 +2274,10 @@ add_meta_data(
                      "LEAPS1": 'aircraft.inputs.L0_fuel.density_ratio'
                      },
     units='unitless',
-    desc='Fuel density ratio for alternate fuels compared to jet fuel (typical'
-    ' density of 6.7 lbm/gal), used in the calculation of wing_capacity (if'
-    ' wing_capacity is not input) and in the calculation of fuel system'
-    ' weight.',
+    desc='Fuel density ratio for alternate fuels compared to jet fuel (typical '
+         'density of 6.7 lbm/gal), used in the calculation of wing_capacity (if '
+         'wing_capacity is not input) and in the calculation of fuel system '
+         'weight.',
     default_value=1.0,
 )
 
@@ -2224,7 +2290,7 @@ add_meta_data(
                      },
     units='unitless',  # percent
     desc='excess fuel volume required, essentially the amount of fuel above '
-    'the design point that there has to be volume to carry',
+         'the design point that there has to be volume to carry',
 )
 
 add_meta_data(
@@ -2307,9 +2373,9 @@ add_meta_data(
                                 ]
                      },
     units='lbm',
-    desc='Total fuel capacity of the aircraft including wing, fuselage and'
-    ' auxiliary tanks. Used in generating payload-range diagram (Default ='
-    ' wing_capacity + fuselage_capacity + aux_capacity)',
+    desc='Total fuel capacity of the aircraft including wing, fuselage and '
+         'auxiliary tanks. Used in generating payload-range diagram (Default = '
+         'wing_capacity + fuselage_capacity + aux_capacity)',
     default_value=None,
 )
 
@@ -2689,9 +2755,9 @@ add_meta_data(
                                 ]
                      },
     units='ft',
-    desc='Define the Fuselage total length. If total_length is not input for a'
-    ' passenger transport, LEAPS will calculate the fuselage length, width and'
-    ' depth and the length of the passenger compartment.',
+    desc='Define the Fuselage total length. If total_length is not input for a '
+         'passenger transport, LEAPS will calculate the fuselage length, width and '
+         'depth and the length of the passenger compartment.',
     default_value=0.0,
 )
 
@@ -3017,8 +3083,8 @@ add_meta_data(
                                 ]
                      },
     units='ft**2',
-    desc='horizontal tail theoretical area; overridden by vol_coeff, if'
-    ' vol_coeff > 0.0',  # this appears to never be calculated in Aviary, need to show users the overriding capability of Aviary
+    desc='horizontal tail theoretical area; overridden by vol_coeff, if '
+         'vol_coeff > 0.0',  # this appears to never be calculated in Aviary, need to show users the overriding capability of Aviary
     default_value=0.0,
 )
 
@@ -3237,10 +3303,10 @@ add_meta_data(
                      "LEAPS1": 'aircraft.inputs.L0_horizontal_tail.vertical_tail_fraction'
                      },
     units='unitless',
-    desc='Define the decimal fraction of vertical tail span where horizontal'
-    ' tail is mounted. Defaults: 0.0 == for body mounted (default for'
-    ' transport with all engines on wing); 1.0 == for T tail'
-    ' (default for transport with multiple engines on fuselage)',
+    desc='Define the decimal fraction of vertical tail span where horizontal '
+         'tail is mounted. Defaults: 0.0 == for body mounted (default for '
+         'transport with all engines on wing); 1.0 == for T tail '
+         '(default for transport with multiple engines on fuselage)',
     default_value=None,
 )
 
@@ -3395,9 +3461,9 @@ add_meta_data(
                      "LEAPS1": 'aircraft.inputs.L0_landing_gear.carrier_based'
                      },
     units='unitless',
-    desc='carrier based aircraft switch, affects mass of flight crew,'
-    ' avionics, and nose gear where true is carrier based and false is land'
-    ' based',
+    desc='carrier based aircraft switch, affects mass of flight crew, '
+         'avionics, and nose gear where true is carrier based and false is land '
+         'based',
     option=True,
     types=bool,
     default_value=False,
@@ -3427,8 +3493,8 @@ add_meta_data(
     default_value=True,
     types=bool,
     units="unitless",
-    desc='Type of landing gear. In GASP, 0 is retractable and 1 is deployed (fixed). Here, \
-          false is retractable and true is deployed (fixed).',
+    desc='Type of landing gear. In GASP, 0 is retractable and 1 is deployed (fixed). Here, '
+          'false is retractable and true is deployed (fixed).',
 )
 
 add_meta_data(
@@ -3749,7 +3815,7 @@ add_meta_data(
                      },
     units='ft**2',
     desc='surface area of the outside of one entire nacelle, '
-    'not just the wetted area',
+         'not just the wetted area',
 )
 
 add_meta_data(
@@ -3870,7 +3936,7 @@ add_meta_data(
                      },
     units='unitless',
     desc='scaler applied to miscellaneous engine mass (sum of engine control, starter, '
-          'and additional mass)',
+         'and additional mass)',
     default_value=1.0,
 )
 
@@ -3947,8 +4013,8 @@ add_meta_data(
                      "LEAPS1": None
                      },
     units='unitless',
-    desc='total number of engines for the aircraft'
-    ' (fuselage, wing, or otherwise)',
+    desc='total number of engines for the aircraft '
+         '(fuselage, wing, or otherwise)',
     types=int,
     option=True,
     default_value=None,
@@ -4210,10 +4276,10 @@ add_meta_data(
                                 ]
                      },
     units='ft**2',
-    desc='vertical tail theoretical area (per tail); overridden by vol_coeff'
+    desc='vertical tail theoretical area (per tail); overridden by vol_coeff '
+         'if vol_coeff > 0.0',
     # this appears to never be calculated in Aviary, need to make user aware
     # of Aviary overriding support
-    ' if vol_coeff > 0.0',
     default_value=0.0,
 )
 
@@ -4501,9 +4567,9 @@ add_meta_data(
                      "LEAPS1": 'aircraft.inputs.L0_wing.aeroelastic_fraction'
                      },
     units='unitless',
-    desc='Define the decimal fraction of amount of aeroelastic tailoring used'
-    ' in design of wing where: 0.0 == no aeroelastic tailoring;'
-    ' 1.0 == maximum aeroelastic tailoring.',
+    desc='Define the decimal fraction of amount of aeroelastic tailoring used '
+         'in design of wing where: 0.0 == no aeroelastic tailoring; '
+         '1.0 == maximum aeroelastic tailoring.',
     default_value=0.0,
 )
 
@@ -4523,9 +4589,9 @@ add_meta_data(
                                 ]
                      },
     units='unitless',
-    desc='Airfoil technology parameter. Limiting values are: 1.0 represents'
-    ' conventional technology wing (Default); 2.0 represents advanced'
-    ' technology wing.',
+    desc='Airfoil technology parameter. Limiting values are: 1.0 represents '
+         'conventional technology wing (Default); 2.0 represents advanced '
+         'technology wing.',
     default_value=1.0,
     option=True,
 )
@@ -4682,7 +4748,7 @@ add_meta_data(
                      },
     units='unitless',
     desc='distance (percent fuselage length) from nose to the wing '
-    'aerodynamic center',
+         'aerodynamic center',
 )
 
 add_meta_data(
@@ -4722,8 +4788,8 @@ add_meta_data(
                      "LEAPS1": 'aircraft.inputs.L0_detailed_wing.wing_station_chord_lengths'
                      },
     units='unitless',
-    desc='chord lengths as fractions of semispan at station locations;'
-    ' overwrites station_chord_lengths',
+    desc='chord lengths as fractions of semispan at station locations; '
+         'overwrites station_chord_lengths',
     default_value=None,
 )
 
@@ -4737,10 +4803,10 @@ add_meta_data(
                      },
     units='unitless',
     desc='Define the decimal fraction of amount of composites used in wing '
-    'structure where: 0.0 == no composites; 1.0 == maximum use of composites,'
-    ' approximately equivalent bending_mat_weight=.6,'
-    ' struct_weights=.83, misc_weight=.7'
-    ' (not necessarily all composite).',
+         'structure where: 0.0 == no composites; 1.0 == maximum use of composites, '
+         'approximately equivalent bending_mat_weight=.6, '
+         'struct_weights=.83, misc_weight=.7 '
+         '(not necessarily all composite).',
     default_value=0.0,
 )
 
@@ -4767,7 +4833,7 @@ add_meta_data(
                      },
     units='unitless',
     desc='Defines the ratio of total moveable wing control surface areas '
-    '(flaps, elevators, spoilers, etc.) to reference wing area.',
+         '(flaps, elevators, spoilers, etc.) to reference wing area.',
     default_value=0.333,
 )
 
@@ -4903,8 +4969,8 @@ add_meta_data(
     types=FlapType,
     option=True,
     desc='Set the flap type. Available choices are: plain, split, single_slotted, '
-    'double_slotted, triple_slotted, fowler, and double_slotted_fowler. '
-    'In GASP this was JFLTYP and was provided as an int from 1-7',
+         'double_slotted, triple_slotted, fowler, and double_slotted_fowler. '
+         'In GASP this was JFLTYP and was provided as an int from 1-7',
 )
 
 add_meta_data(
@@ -5055,7 +5121,7 @@ add_meta_data(
                      },
     units='ft',
     desc='wing height above ground during ground run, measured at roughly '
-    'location of mean aerodynamic chord at the mid plane of the wing',
+         'location of mean aerodynamic chord at the mid plane of the wing',
 )
 
 add_meta_data(
@@ -5102,8 +5168,8 @@ add_meta_data(
                      "LEAPS1": 'aircraft.inputs.L0_detailed_wing.wing_station_locations'
                      },
     units='unitless',
-    desc='wing station locations as fractions of semispan; overwrites'
-    ' station_locations',
+    desc='wing station locations as fractions of semispan; overwrites '
+         'station_locations',
     option=True,
     default_value=None,
 )
@@ -5152,7 +5218,7 @@ add_meta_data(
                      },
     units='unitless',
     desc='controls spatial distribution of integratin stations for detailed'
-    ' wing',
+         ' wing',
     default_value=2.0,
     option=True,
 )
@@ -5177,9 +5243,9 @@ add_meta_data(
                      "LEAPS1": 'aircraft.inputs.L0_detailed_wing.wing_station_load_path_sweeps'
                      },
     units='deg',
-    desc='Define the sweep of load path at station locations. Typically'
-    ' parallel to rear spar tending toward max t/c of airfoil. The Ith value'
-    ' is used between wing stations I and I+1.',
+    desc='Define the sweep of load path at station locations. Typically '
+         'parallel to rear spar tending toward max t/c of airfoil. The Ith value '
+         'is used between wing stations I and I+1.',
     default_value=None,
 )
 
@@ -5538,11 +5604,11 @@ add_meta_data(
                      "LEAPS1": 'aircraft.inputs.L0_aerodynamics.wing_span_efficiency_reduction'
                      },
     units='unitless',
-    desc='Define a switch for span efficiency reduction for extreme taper'
-    ' ratios: True == a span efficiency factor'
-    ' (*wing_span_efficiency_factor0*) is calculated based on wing taper ratio'
-    ' and aspect ratio; False == a span efficiency factor'
-    ' (*wing_span_efficiency_factor0*) is set to 1.0.',
+    desc='Define a switch for span efficiency reduction for extreme taper '
+         'ratios: True == a span efficiency factor '
+         '(*wing_span_efficiency_factor0*) is calculated based on wing taper ratio '
+         'and aspect ratio; False == a span efficiency factor '
+         '(*wing_span_efficiency_factor0*) is set to 1.0.',
     option=True,
     types=bool,
     default_value=False
@@ -5557,8 +5623,8 @@ add_meta_data(
                      "LEAPS1": 'aircraft.inputs.L0_wing.struct_bracing_factor'
                      },
     units='unitless',
-    desc='Define the wing strut-bracing factor where: 0.0 == no wing-strut;'
-    ' 1.0 == full benefit from strut bracing.',
+    desc='Define the wing strut-bracing factor where: 0.0 == no wing-strut; '
+         '1.0 == full benefit from strut bracing.',
     default_value=0.0,
 )
 
@@ -5752,8 +5818,8 @@ add_meta_data(
                      "LEAPS1": 'aircraft.inputs.L0_wing.var_sweep_weight_penalty'
                      },
     units='unitless',
-    desc='Define the fraction of wing variable sweep mass penalty where:'
-    ' 0.0 == fixed-geometry wing; 1.0 == full variable-sweep wing.',
+    desc='Define the fraction of wing variable sweep mass penalty where: '
+         '0.0 == fixed-geometry wing; 1.0 == full variable-sweep wing.',
     default_value=0.0,
 )
 
@@ -5939,7 +6005,7 @@ add_meta_data(
 #                     "LEAPS1": None
 #                     },
 #     units='kW',
-#     desc='Current nozzle exit area of engines, per single instance of each '\
+#     desc='Current nozzle exit area of engines, per single instance of each '
 #          'engine model'
 # )
 
@@ -6027,6 +6093,17 @@ add_meta_data(
 )
 
 add_meta_data(
+    Dynamic.Mission.INSTALLATION_LOSS_FACTOR,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'FT',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units="unitless",
+    desc='fraction of total propeller thrust which is lost due to installation'
+)
+
+add_meta_data(
     Dynamic.Mission.LIFT,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -6105,6 +6182,18 @@ add_meta_data(
 )
 
 add_meta_data(
+    Dynamic.Mission.PROPELLER_TIP_SPEED,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='ft/s',
+    desc='propeller tip speed',
+    default_value=500.0,
+)
+
+add_meta_data(
     Dynamic.Mission.SPECIFIC_ENERGY,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -6126,6 +6215,28 @@ add_meta_data(
     units='m/s',
     desc='Rate of change in specific energy (specific power) of the vehicle at current '
          'flight condition'
+)
+
+add_meta_data(
+    Dynamic.Mission.SHAFT_POWER,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'SHP',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='hp',
+    desc='The shaft horsepower'
+)
+
+add_meta_data(
+    Dynamic.Mission.SHAFT_POWER_CORRECTED,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'SHPCOR',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='hp',
+    desc='The corrected shaft horsepower'
 )
 
 add_meta_data(
@@ -6296,8 +6407,8 @@ add_meta_data(
                      "LEAPS1": None
                      },
     units='lbm',
-    desc='residual to make sure aircraft mass closes on actual'
-         ' gross takeoff mass, value should be zero at convergence '
+    desc='residual to make sure aircraft mass closes on actual '
+         'gross takeoff mass, value should be zero at convergence '
          '(within acceptable tolerance)',
 )
 
@@ -6381,7 +6492,7 @@ add_meta_data(
                      },
     units='lbm',
     desc='fuel carried by the aircraft when it is on the ramp at the '
-    'beginning of the design mission',
+         'beginning of the design mission',
 )
 
 add_meta_data(
@@ -6393,7 +6504,7 @@ add_meta_data(
                      },
     units='lbm',
     desc='fuel carried by the aircraft when it is on the ramp at the '
-    'beginning of the design mission',
+         'beginning of the design mission',
 )
 
 add_meta_data(
@@ -6503,7 +6614,8 @@ add_meta_data(
                      "LEAPS1": None
                      },
     units="lbm",
-    desc='the total fuel reserves in lbm available during the mission',
+    desc='the total fuel reserves which is the sum of: '
+         'RESERVE_FUEL_BURNED, RESERVE_FUEL_ADDITIONAL, RESERVE_FUEL_FRACTION',
     default_value=0,
 )
 
@@ -6753,8 +6865,8 @@ add_meta_data(
     #                  },
     historical_name={'FLOPS': None, 'GASP': None, 'LEAPS1': None},
     units='unitless',
-    desc='coefficient of rolling friction for groundroll'
-    'portion of takeoff',
+    desc='coefficient of rolling friction for groundroll '
+         'portion of takeoff',
     default_value=0.025,
 )
 
@@ -6803,9 +6915,10 @@ add_meta_data(
                      "LEAPS1": '(SimpleLanding)self.weight'
                      },
     units='lbm',
-    desc='computed mass of aircraft for landing, is only'
-         'required to be equal to Aircraft.Design.TOUCHDOWN_MASS'
-         'when the design case is being run',
+    desc='computed mass of aircraft for landing, is only '
+         'required to be equal to Aircraft.Design.TOUCHDOWN_MASS '
+         'when the design case is being run '
+         'for HEIGHT_ENERGY missions this is the mass at the end of the last regular phase (non-reserve phase)',
 )
 
 add_meta_data(
@@ -6898,6 +7011,18 @@ add_meta_data(
     default_value=0.0,
 )
 
+add_meta_data(
+    Mission.Summary.FUEL_BURNED,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='lbm',
+    desc='fuel burned during regular phases, this '
+         'does not include fuel burned in reserve phases'
+)
+
 # NOTE if per-mission level scaling is not best mapping for GASP's 'CKFF', map
 #      to FFFSUB/FFFSUP
 # CKFF is consistent for one aircraft over all missions, once the vehicle is sized
@@ -6923,8 +7048,8 @@ add_meta_data(
                      "LEAPS1": None
                      },
     units='lbm',
-    desc='gross takeoff mass of aircraft for that specific mission, not'
-    'necessarily the value for the aircraft`s design mission'
+    desc='gross takeoff mass of aircraft for that specific mission, not '
+         'necessarily the value for the aircraft`s design mission'
 )
 
 add_meta_data(
@@ -6935,9 +7060,22 @@ add_meta_data(
                      "LEAPS1": None
                      },
     units='NM',
-    desc='actual range that the aircraft flies, whether'
-         'it is a design case or an off design case. Equal'
+    desc='actual range that the aircraft flies, whether '
+         'it is a design case or an off design case. Equal '
          'to Mission.Design.RANGE value in the design case.'
+)
+
+add_meta_data(
+    Mission.Summary.RESERVE_FUEL_BURNED,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='lbm',
+    desc='fuel burned during reserve phases, this '
+         'does not include fuel burned in regular phases',
+    default_value=0.,
 )
 
 add_meta_data(
@@ -6948,10 +7086,11 @@ add_meta_data(
                      "LEAPS1": None
                      },
     units='lbm',
-    desc='total fuel carried at the beginnning of a mission'
-         'includes fuel burned in the mission, reserve fuel'
+    desc='total fuel carried at the beginnning of a mission '
+         'includes fuel burned in the mission, reserve fuel '
          'and fuel margin',
 )
+
 
 #  _______           _                      __    __
 # |__   __|         | |                    / _|  / _|
@@ -7091,7 +7230,7 @@ add_meta_data(
                      },
     units='unitless',
     desc='Mach number of aircraft after taking off and '
-    'clearing a 35 foot obstacle'
+         'clearing a 35 foot obstacle'
 )
 
 add_meta_data(
@@ -7117,7 +7256,7 @@ add_meta_data(
                      },
     units='m/s',
     desc='velocity of aircraft after taking off and '
-    'clearing a 35 foot obstacle'
+         'clearing a 35 foot obstacle'
 )
 
 add_meta_data(
@@ -7214,8 +7353,8 @@ add_meta_data(
                                 ]
                      },
     units='unitless',
-    desc='coefficient of rolling friction for groundroll'
-    'portion of takeoff',
+    desc='coefficient of rolling friction for groundroll '
+         'portion of takeoff',
     default_value=0.025,
 )
 

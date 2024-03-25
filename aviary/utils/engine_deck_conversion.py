@@ -23,6 +23,7 @@ from aviary.utils.named_values import NamedValues
 class EngineDeckType(Enum):
     FLOPS = 'FLOPS'
     GASP = 'GASP'
+    GASP_TP = 'GASP_TP'
 
 
 MACH = EngineModelVariables.MACH
@@ -30,7 +31,9 @@ ALTITUDE = EngineModelVariables.ALTITUDE
 THROTTLE = EngineModelVariables.THROTTLE
 HYBRID_THROTTLE = EngineModelVariables.HYBRID_THROTTLE
 THRUST = EngineModelVariables.THRUST
+TAILPIPE_THRUST = EngineModelVariables.TAILPIPE_THRUST
 GROSS_THRUST = EngineModelVariables.GROSS_THRUST
+SHAFT_POWER_CORRECTED = EngineModelVariables.SHAFT_POWER_CORRECTED
 RAM_DRAG = EngineModelVariables.RAM_DRAG
 FUEL_FLOW = EngineModelVariables.FUEL_FLOW
 ELECTRIC_POWER = EngineModelVariables.ELECTRIC_POWER
@@ -48,7 +51,7 @@ flops_keys = [
     NOX_RATE]  # , EXIT_AREA]
 
 # later code assumes T4 is last item in keys
-gasp_keys = [MACH, ALTITUDE, THROTTLE, THRUST, FUEL_FLOW, TEMPERATURE]
+gasp_keys = [MACH, ALTITUDE, THROTTLE, FUEL_FLOW, TEMPERATURE]
 
 header_names = {
     MACH: 'Mach_Number',
@@ -60,11 +63,13 @@ header_names = {
     FUEL_FLOW: 'Fuel_Flow',
     NOX_RATE: 'NOx_Rate',
     TEMPERATURE: 'T4',
+    SHAFT_POWER_CORRECTED: 'Shaft_Power_Corrected',
+    TAILPIPE_THRUST: 'Tailpipe_Thrust',
     # EXIT_AREA: 'Exit Area',
 }
 
 
-def EngineDeckConverter(input_file=None, output_file=None, data_format=None):
+def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
     '''
     Converts FLOPS- or GASP-formatted engine decks into Aviary csv format.
     FLOPS decks are changed from column-delimited to csv format with added headers.
@@ -120,10 +125,29 @@ def EngineDeckConverter(input_file=None, output_file=None, data_format=None):
                 data[NOX_RATE] = np.append(data[NOX_RATE], line[6])
                 # data[EXIT_AREA].append(line[7])
 
-    elif data_format == EngineDeckType.GASP:
+    elif data_format in (EngineDeckType.GASP, EngineDeckType.GASP_TP):
+        is_turbo_prop = True if data_format == EngineDeckType.GASP_TP else False
+        temperature = gasp_keys.pop()
+        fuelflow = gasp_keys.pop()
+        if is_turbo_prop:
+            gasp_keys.extend((SHAFT_POWER_CORRECTED, TAILPIPE_THRUST))
+        else:
+            gasp_keys.extend((THRUST))
+        gasp_keys.extend((fuelflow, temperature))
+
         data = {key: [] for key in gasp_keys}
 
-        scalars, tables = _read_gasp_engine(data_file)
+        scalars, tables, fields = _read_gasp_engine(data_file, is_turbo_prop)
+        if 'throttle_type' in scalars:
+            throttle_type = scalars.pop('throttle_type')
+        else:
+            throttle_type = 1
+        t4max = scalars['t4max']
+        if t4max <= 100 or throttle_type == 3:
+            throttle_step = 2
+        else:
+            throttle_step = .05
+
         # save scalars as comments
         comments.extend(['# ' + key + ': ' + str(scalars[key])
                         for key in scalars.keys()])
@@ -131,31 +155,38 @@ def EngineDeckConverter(input_file=None, output_file=None, data_format=None):
         # recommended to always generate structured grid
         structure_data = True
         if structure_data:
-            structured_data = _make_structured_grid(tables, method='lagrange3')
+            structured_data = _make_structured_grid(tables, method='lagrange3',
+                                                    fields=fields, throttle_step=throttle_step)
 
-            data[MACH] = structured_data['thrust']['machs']
-            data[ALTITUDE] = structured_data['thrust']['alts']
-            data[THRUST] = structured_data['thrust']['vals']
+            data[MACH] = structured_data['fuelflow']['machs']
+            data[ALTITUDE] = structured_data['fuelflow']['alts']
             data[FUEL_FLOW] = structured_data['fuelflow']['vals']
-            T4T2 = structured_data['thrust']['t4t2s']
+            T4T2 = structured_data['fuelflow']['t4t2s']
+            if is_turbo_prop:
+                data[SHAFT_POWER_CORRECTED] = structured_data['shaft_power_corrected']['vals']
+                data[TAILPIPE_THRUST] = structured_data['tailpipe_thrust']['vals']
+            else:
+                data[THRUST] = structured_data['thrust']['vals']
 
         else:
-            data[MACH] = tables['thrust'][:, 2]
-            data[ALTITUDE] = tables['thrust'][:, 0]
-            data[THRUST] = tables['thrust'][:, 3]
+            data[MACH] = tables['fuelflow'][:, 2]
+            data[ALTITUDE] = tables['fuelflow'][:, 0]
             data[FUEL_FLOW] = tables['fuelflow'][:, 3]
-            T4T2 = tables['thrust'][:, 1]
+            T4T2 = tables['fuelflow'][:, 1]
+            if is_turbo_prop:
+                data[SHAFT_POWER_CORRECTED] = tables['shaft_power_corrected'][:, 3]
+                data[TAILPIPE_THRUST] = tables['tailpipe_thrust'][:, 3]
+            else:
+                data[THRUST] = tables['thrust'][:, 3]
 
         generate_flight_idle = True
-        if generate_flight_idle:
+        if generate_flight_idle and not is_turbo_prop:
             data, T4T2 = _generate_flight_idle(data, T4T2,
                                                ref_sls_airflow=scalars['sls_airflow'],
                                                ref_sfn_idle=scalars['sfn_idle'])
 
-        t4max = scalars['t4max']
-
         # if t4max 100 or less, it is actually throttle. Remove temperature as variable
-        if t4max <= 100:
+        if t4max <= 100 or throttle_type == 3:
             compute_T4 = False
             data.pop(TEMPERATURE)
             # temperature is assumed last in keys
@@ -227,9 +258,13 @@ def EngineDeckConverter(input_file=None, output_file=None, data_format=None):
             data[MACH] = data[MACH][valid_idx]
             data[ALTITUDE] = data[ALTITUDE][valid_idx]
             data[THROTTLE] = data[THROTTLE][valid_idx]
-            data[THRUST] = data[THRUST][valid_idx]
             data[FUEL_FLOW] = data[FUEL_FLOW][valid_idx]
             data[TEMPERATURE] = data[TEMPERATURE][valid_idx]
+            if is_turbo_prop:
+                data[SHAFT_POWER_CORRECTED] = data[SHAFT_POWER_CORRECTED][valid_idx]
+                data[TAILPIPE_THRUST] = data[TAILPIPE_THRUST][valid_idx]
+            else:
+                data[THRUST] = data[THRUST][valid_idx]
 
         else:
             data[THROTTLE] = T4T2
@@ -312,7 +347,7 @@ def _flops_field_convert(arg: str):
 _flops_empty_field = '0'
 
 
-def _read_gasp_engine(fp):
+def _read_gasp_engine(fp, is_turbo_prop=False):
     """Read a GASP engine deck file and parse its scalars and tabular data.
     Scalars (T4 max, SLS airflow, etc.) are read from the first line of the engine deck
     (IREAD=1 is assumed) and returned in a dictionary.
@@ -321,13 +356,48 @@ def _read_gasp_engine(fp):
     Each table consists of both the independent variables and the dependent variable for
     the corresponding field. The table is a "tidy format" 2D array where the first three
     columns are the independent varaiables (altitude, T4/T2, and Mach number) and the
-    final column is the dependent variable (one of thrust, fuelflow, or airflow).
+    final column is the dependent variable (one of thrust, fuelflow, or airflow for TurboFans or 
+    shaft_power_corrected, fuelflow, or tailpipe_thrust for TurboProps).
     """
     with open(fp, "r") as f:
-        scalars = _read_header(f)
-        tables = {k: _read_table(f) for k in ["thrust", "fuelflow", "airflow"]}
+        if is_turbo_prop:
+            table_types = ["shaft_power_corrected", "fuelflow", "tailpipe_thrust"]
+            scalars = _read_tp_header(f)
+        else:
+            table_types = ["thrust", "fuelflow", "airflow"]
+            scalars = _read_header(f)
 
-    return scalars, tables
+        tables = {k: _read_table(f, is_turbo_prop) for k in table_types}
+
+    return scalars, tables, table_types
+
+
+def _read_tp_header(f):
+    """Read GASP engine deck header, returning the engine scalars in a dict"""
+    # file header: FORMAT(2I5,10X,6F10.4)
+    iread, iprint, t4max, t4mcl, t4mc, t4idle, xsfc, cexp = _parse(
+        f, [*_rep(2, (int, 5)), (None, 10), *_rep(6, (float, 10))]
+    )
+    # file header: FORMAT(7F10.4)
+    sls_hp, xncref, prop_rpm, gbx_rat, torque_lim, waslrf = _parse(
+        f, [*_rep(6, (float, 10))]
+    )
+
+    return {
+        "throttle_type": iread,
+        "t4max": t4max,
+        "t4cruise": t4mc,
+        "t4climb": t4mcl,
+        "t4flight_idle": t4idle,
+        "xsfc": xsfc,
+        "cexp": cexp,
+        "sls_horsepower": sls_hp,
+        "freeturbine_rpm": xncref,
+        "propeller_rpm": prop_rpm,
+        "gearbox_ratio": gbx_rat,
+        "torque_limit": torque_lim,
+        "sls_corrected_airflow": waslrf,
+    }
 
 
 def _read_header(f):
@@ -349,11 +419,12 @@ def _read_header(f):
     }
 
 
-def _read_table(f):
+def _read_table(f, is_turbo_prop=False):
     """Read an entire table from a GASP engine deck file.
     The table data is returned as a "tidy format" array with three columns for the
     independent variables (altitude, T4/T2, and Mach number) and the final column for
-    the table field (one of thrust, fuelflow, or airflow).
+    the table field (one of thrust, fuelflow, or airflow for TurboFans or 
+    shaft_power_corrected, fuelflow, or tailpipe_thrust for TurboProps).
     """
     tab_data = None
 
@@ -365,7 +436,7 @@ def _read_table(f):
     f.readline()
 
     for i in range(nmaps):
-        map_data = _read_map(f)
+        map_data = _read_map(f, is_turbo_prop)
 
         # blank line following all but the last map in the table
         if i < nmaps - 1:
@@ -402,7 +473,7 @@ def _strparse(s, fmt):
         p += length
 
 
-def _read_map(f):
+def _read_map(f, is_turbo_prop=False):
     """Read a single map of a table from the engine deck file.
     The map data is returned in the same format as in ``read_table``, except there is a
     single altitude value per map.
@@ -414,24 +485,35 @@ def _read_map(f):
     map_data[:, 0] = amap
 
     # number of points on a single line - wrapped if more than 6
-    nptloc = min(6, npts)
+    max_columns = 6
 
     # point vals: FORMAT(10X,6F10.4,10X)
-    x = list(_parse(f, [(None, 10), *_rep(nptloc, (float, 10))]))
-    if npts > nptloc:
+    x = []
+    npts_remaining = npts
+    while npts_remaining > 0:
+        npts_to_read = min(max_columns, npts_remaining)
         # remaining vals on wrapped line
-        x.extend(list(_parse(f, [(None, 10), *_rep(npts - nptloc, (float, 10))])))
+        x.extend(list(_parse(f, [(None, 10), *_rep(npts_to_read, (float, 10))])))
+        npts_remaining -= npts_to_read
 
     map_data[:, 2] = np.tile(x, nline)
 
     for j in range(nline):
+        npts_remaining = npts
+        npts_to_read = min(max_columns, npts_remaining)
         # line (y) val then z vals: FORMAT(F10.4,6F10.1,10X,/(6F10.1,10X))
-        vals = list(_parse(f, [(float, 10), *_rep(nptloc, (float, 10))]))
+        vals = list(_parse(f, [(float, 10), *_rep(npts_to_read, (float, 10))]))
         y = vals[0]
         z = vals[1:]
-        if npts > nptloc:
-            # ad remaining vals on warapped line
-            z.extend(list(_parse(f, _rep(npts - nptloc, (float, 10)))))
+        npts_remaining -= npts_to_read
+        while npts_remaining > 0:
+            npts_to_read = min(max_columns, npts_remaining)
+            # add remaining vals on warapped line
+            line_format = [*_rep(npts_to_read, (float, 10))]
+            if is_turbo_prop:
+                line_format = [(None, 10), *line_format]
+            z.extend(list(_parse(f, line_format)))
+            npts_remaining -= npts_to_read
 
         sl = slice(j * npts, (j + 1) * npts)
         map_data[sl, 1] = y
@@ -440,19 +522,19 @@ def _read_map(f):
     return map_data
 
 
-def _make_structured_grid(data, method="lagrange3"):
+def _make_structured_grid(data, method="lagrange3", fields=["thrust", "fuelflow", "airflow"], throttle_step=.05):
     """Generate a structured grid of unique mach/T4:T2/alt values in the deck"""
     # step size in t4/t2 ratio used in generating the structured grid
     # t2t2_step = 0.5 # original value
-    t4t2_step = 0.5
+    t4t2_step = throttle_step
     # step size in mach number used in generating the structured grid
     # mach_step = 0.02 # original value
     mach_step = 0.05
 
     structured_data = {}
 
-    tt4 = data['thrust'][:, 1]
-    tma = data['thrust'][:, 2]
+    tt4 = data['fuelflow'][:, 1]
+    tma = data['fuelflow'][:, 2]
     t4t2s = np.arange(min(tt4), max(tt4) + t4t2_step, t4t2_step)
     machs = np.arange(min(tma), max(tma) + mach_step, mach_step)
 
@@ -460,7 +542,7 @@ def _make_structured_grid(data, method="lagrange3"):
     pts = np.dstack(np.meshgrid(t4t2s, machs, indexing="ij")).reshape(-1, 2)
     npts = pts.shape[0]
 
-    for field in ["thrust", "fuelflow", "airflow"]:
+    for field in fields:
         map_data = data[field]
         all_alts = map_data[:, 0]
         alts = np.unique(all_alts)
@@ -684,14 +766,7 @@ class AtmosCalc(om.ExplicitComponent):
         outputs["p2"] = p2
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Converts FLOPS- or GASP-formatted '
-                                     'engine decks into Aviary csv format.\nFLOPS decks '
-                                     'are changed from column-delimited to csv format '
-                                     'with added headers.\nGASP decks are reorganized '
-                                     'into column based csv. T4 is recovered through '
-                                     'calculation. Data points whose T4 exceeds T4max '
-                                     'are removed.')
+def _setup_EDC_parser(parser):
     parser.add_argument('input_file', type=str,
                         help='path to engine deck file to be converted')
     parser.add_argument('output_file', type=str,
@@ -699,6 +774,25 @@ if __name__ == '__main__':
     parser.add_argument('data_format', type=EngineDeckType, choices=list(EngineDeckType),
                         help='data format used by input_file')
 
-    args = parser.parse_args()
 
-    EngineDeckConverter(**vars(args))
+def _exec_EDC(args, user_args):
+    EngineDeckConverter(
+        input_file=args.input_file,
+        output_file=args.output_file,
+        data_format=args.data_format
+    )
+
+
+EDC_description = 'Converts FLOPS- or GASP-formatted ' \
+                  'engine decks into Aviary csv format.\nFLOPS decks ' \
+                  'are changed from column-delimited to csv format ' \
+                  'with added headers.\nGASP decks are reorganized ' \
+                  'into column based csv. T4 is recovered through ' \
+                  'calculation. Data points whose T4 exceeds T4max ' \
+                  'are removed.'
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(EDC_description)
+    _setup_EDC_parser(parser)
+    args = parser.parse_args()
+    _exec_EDC(args, None)

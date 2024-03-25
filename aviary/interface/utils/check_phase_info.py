@@ -3,7 +3,7 @@ from aviary.variable_info.enums import SpeedType, EquationsOfMotion
 
 TWO_DEGREES_OF_FREEDOM = EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
 HEIGHT_ENERGY = EquationsOfMotion.HEIGHT_ENERGY
-SOLVED = EquationsOfMotion.SOLVED
+SOLVED_2DOF = EquationsOfMotion.SOLVED_2DOF
 
 
 def check_phase_info(phase_info, mission_method):
@@ -39,9 +39,9 @@ def check_phase_info(phase_info, mission_method):
     }
 
     common_TAS = {
-        'TAS_lower': tuple,
-        'TAS_upper': tuple,
-        'TAS_ref': tuple,
+        'velocity_lower': tuple,
+        'velocity_upper': tuple,
+        'velocity_ref': tuple,
     }
     common_mass = {
         'mass_lower': tuple,
@@ -95,7 +95,7 @@ def check_phase_info(phase_info, mission_method):
             **common_distance,
             **common_angle,
             'normal_ref': tuple,
-            'TAS_ref0': tuple,
+            'velocity_ref0': tuple,
             'distance_defect_ref': tuple,
         },
         'ascent': {
@@ -103,15 +103,14 @@ def check_phase_info(phase_info, mission_method):
             **common_mass,
             **common_distance,
             **common_alt,
-            'alt_constraint_eq': tuple,
+            'final_altitude': tuple,
             'alt_constraint_ref': tuple,
-            'alt_constraint_ref0': tuple,
             'alt_defect_ref': tuple,
             **common_angle,
             'pitch_constraint_lower': tuple,
             'pitch_constraint_upper': tuple,
             'pitch_constraint_ref': tuple,
-            'TAS_ref0': tuple,
+            'velocity_ref0': tuple,
             'distance_defect_ref': tuple,
         },
         'accel': {
@@ -122,7 +121,7 @@ def check_phase_info(phase_info, mission_method):
             **common_TAS,
             **common_mass,
             **common_distance,
-            'TAS_ref0': tuple,
+            'velocity_ref0': tuple,
             'distance_defect_ref': tuple,
         },
         'climb1': {
@@ -183,7 +182,7 @@ def check_phase_info(phase_info, mission_method):
                     phase_keys[phase] = {**phase_keys_gasp[phase]}
                 else:
                     phase_keys[phase] = {**common_keys, **phase_keys_gasp[phase]}
-    elif mission_method is SOLVED:
+    elif mission_method is SOLVED_2DOF:
         return
     elif mission_method is HEIGHT_ENERGY:
         for phase in phase_info:

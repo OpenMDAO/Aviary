@@ -21,17 +21,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-python@v3
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
       with:
         python-version: '3.11'
-    - uses: pre-commit/action@v3.0.0
+    - uses: pre-commit/action@v3.0.1
 
   test_ubuntu:
     runs-on: ubuntu-latest
-
-    timeout-minutes: 90
-
     strategy:
       fail-fast: false
       matrix:
@@ -43,10 +40,18 @@ jobs:
             SCIPY: '1.6'
             PYOPTSPARSE: 'v2.9.1'
             SNOPT: '7.7'
-            OPENMDAO: 'dev'
+            OPENMDAO: '3.31.0'
             DYMOS: '1.8.0'
-            MAKE_DOCS: 0
-            RUN_BENCHES: 0
+
+          # latest versions of openmdao/dymos
+          - NAME: latest
+            PY: '3.10'
+            NUMPY: 1
+            SCIPY: 1
+            PYOPTSPARSE: 'v2.9.1'
+            SNOPT: '7.7'
+            OPENMDAO: 'latest'
+            DYMOS: 'latest'
 
           # development versions of openmdao/dymos
           - NAME: dev
@@ -57,162 +62,31 @@ jobs:
             SNOPT: '7.7'
             OPENMDAO: 'dev'
             DYMOS: 'dev'
-            MAKE_DOCS: 0
-            RUN_BENCHES: 0
 
-          # latest versions of openmdao/dymos
-          - NAME: latest
-            PY: '3.10'
-            NUMPY: 1
-            SCIPY: 1
-            PYOPTSPARSE: 'v2.9.1'
-            SNOPT: '7.7'
-            OPENMDAO: 'dev'
-            DYMOS: 'latest'
-            MAKE_DOCS: 0
-            RUN_BENCHES: 0
+    steps:      
+      - name: Checkout actions
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .github/actions
+          path: actions
 
-          # latest versions of openmdao/dymos for docs only
-          - NAME: latest_docs
-            PY: 3
-            NUMPY: 1
-            SCIPY: 1
-            PYOPTSPARSE: 'v2.9.1'
-            SNOPT: '7.7'
-            OPENMDAO: 'dev'
-            DYMOS: 'latest'
-            MAKE_DOCS: 1
-            RUN_BENCHES: 0
-
-          # latest versions of openmdao/dymos for benches only
-          - NAME: latest_benches
-            PY: 3
-            NUMPY: 1
-            SCIPY: 1
-            PYOPTSPARSE: 'v2.9.1'
-            SNOPT: '7.7'
-            OPENMDAO: 'latest'
-            DYMOS: 'latest'
-            MAKE_DOCS: 0
-            RUN_BENCHES: 1
-
-    steps:
-      - name: Display run details
-        run: |
-          echo "============================================================="
-          echo "Run #${GITHUB_RUN_NUMBER}"
-          echo "Run ID: ${GITHUB_RUN_ID}"
-          echo "Testing: ${GITHUB_REPOSITORY}"
-          echo "Triggered by: ${GITHUB_EVENT_NAME}"
-          echo "Initiated by: ${GITHUB_ACTOR}"
-          echo "============================================================="
-
-      - name: Create SSH key
-        shell: bash
-        env:
+      - name: prepare_testing_environment
+        uses: ./actions/.github/actions/prepare_environment
+        with:
+          NAME: ${{ matrix.NAME }}
+          PY: ${{ matrix.PY }}
+          NUMPY: ${{ matrix.NUMPY }}
+          SCIPY: ${{ matrix.SCIPY }}
+          PYOPTSPARSE: ${{ matrix.PYOPTSPARSE }}
+          SNOPT: ${{ matrix.SNOPT }}
+          OPENMDAO: ${{ matrix.OPENMDAO }}
+          DYMOS: ${{ matrix.DYMOS }}
           SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
           SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
-        run: |
-          mkdir -p ~/.ssh/
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          sudo chmod 600 ~/.ssh/id_rsa
-          echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
-
-      - name: Setup miniconda
-        uses: conda-incubator/setup-miniconda@v2
-        with:
-          auto-update-conda: true
-          python-version: ${{ matrix.PY }}
-          channels: conda-forge
-
-      - name: Install dependencies
-        shell: bash -l {0}
-        run: |
-          echo "============================================================="
-          echo "Install dependencies"
-          echo "============================================================="
-          conda install numpy=${{ matrix.NUMPY }} scipy=${{ matrix.SCIPY }} -q -y
-          conda install matplotlib pandas panel hvplot -q -y
-          pip install testflo -q
-
-      - name: Install pyOptSparse
-        if: matrix.PYOPTSPARSE
-        shell: bash -l {0}
-        run: |
-          echo "============================================================="
-          echo "Install pyoptsparse"
-          echo "============================================================="
-          if [[ "${{ matrix.SNOPT }}" == "7.7" && "${{ secrets.SNOPT_LOCATION_77 }}" ]]; then
-            mkdir SNOPT
-            echo "  > Secure copying SNOPT 7.7 over SSH"
-            scp -qr ${{ secrets.SNOPT_LOCATION_77 }} SNOPT
-            SNOPT="-s SNOPT/src"
-          elif [[ "${{ matrix.SNOPT }}" ]]; then
-            echo "SNOPT version ${{ matrix.SNOPT }} was requested but source is not available"
-          fi
-
-          conda config --add channels conda-forge
-
-          pip install git+https://github.com/OpenMDAO/build_pyoptsparse
-          build_pyoptsparse -v -b ${{ matrix.PYOPTSPARSE }} $SNOPT
-
-      - name: Install OpenMDAO
-        if: matrix.OPENMDAO
-        shell: bash -l {0}
-        run: |
-          echo "============================================================="
-          echo "Install OpenMDAO"
-          echo "============================================================="
-          if [[ "${{ matrix.OPENMDAO }}" == "dev" ]]; then
-            pip install git+https://github.com/OpenMDAO/OpenMDAO
-          elif [[ "${{ matrix.OPENMDAO }}" == "latest" ]]; then
-            pip install openmdao
-          else
-            pip install openmdao==${{ matrix.OPENMDAO }}
-          fi
-
-      - name: Install Dymos
-        if: matrix.DYMOS
-        shell: bash -l {0}
-        run: |
-          echo "============================================================="
-          echo "Install Dymos"
-          echo "============================================================="
-          if [[ "${{ matrix.DYMOS }}" == "dev" ]]; then
-            pip install git+https://github.com/OpenMDAO/Dymos
-          elif [[ "${{ matrix.DYMOS }}" == "latest" ]]; then
-            pip install dymos
-          else
-            pip install dymos==${{ matrix.DYMOS }}
-          fi
-
-      - name: Checkout Aviary
-        uses: actions/checkout@v2
-
-      - name: Install Aviary
-        shell: bash -l {0}
-        run: |
-          echo "============================================================="
-          echo "Install Aviary"
-          echo "============================================================="
-          pip install -e .[all]
-
-      - name: Display conda environment info
-        shell: bash -l {0}
-        run: |
-          conda info
-          conda list
-          conda env export --name ${{ matrix.NAME }}_env --file ${{ matrix.NAME }}_environment.yml
-
-      - name: 'Upload environment artifact'
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ matrix.NAME }}_environment
-          path: ${{ matrix.NAME }}_environment.yml
-          retention-days: 5
+          SNOPT_LOCATION_77: ${{ secrets.SNOPT_LOCATION_77 }}
 
       - name: Run tests
-        if: matrix.MAKE_DOCS == 0 && matrix.RUN_BENCHES == 0
         shell: bash -l {0}
         run: |
           echo "============================================================="
@@ -220,58 +94,9 @@ jobs:
           echo "============================================================="
           testflo . -n 1 --show_skipped --coverage --coverpkg aviary
 
-      - name: Run benchmarks
-        if: matrix.RUN_BENCHES
-        shell: bash -l {0}
-        run: |
-          echo "============================================================="
-          echo "Run Benchmarks"
-          echo "============================================================="
-          testflo . --testmatch=bench_test*
-
-      - name: Build docs
-        if: matrix.MAKE_DOCS
-        shell: bash -l {0}
-        run: |
-          pip install -U jupyter-book
-          cd aviary/docs
-          echo "============================================================="
-          echo "Build the docs"
-          echo "============================================================="
-          bash build_book.sh
-
-      - name: Display doc build reports
-        continue-on-error: True
-        if: matrix.MAKE_DOCS
-        shell: bash -l {0}
-        run: |
-          cd $HOME/work/om-Aviary/om-Aviary/aviary/docs
-          find _build/html/reports/ -type f -name '*.log' \
-          -exec echo "#################################################################" \; \
-          -exec echo {} \; \
-          -exec echo "#################################################################" \; \
-          -exec cat {} \;
-
-      - name: Publish docs to github.io
-        if: |
-          github.event_name == 'push' && github.ref == 'refs/heads/main' &&
-          matrix.MAKE_DOCS
-        shell: bash -l {0}
-        run: |
-          echo "============================================================="
-          echo "Publishing Docs to github.io"
-          echo "============================================================="
-          pip install ghp-import
-          cd $HOME/work/om-Aviary/om-Aviary/aviary
-          ghp-import -n -p -f docs/_build/html
-
-      - name: Scan for security issues
-        if: matrix.MAKE_DOCS
-        shell: bash -l {0}
-        run: |
-          python -m pip install bandit
-          echo "============================================================="
-          echo "Run bandit scan for medium/high severity issues"
-          echo "============================================================="
-          cd $GITHUB_WORKSPACE
-          python -m bandit -r -ll aviary
+      - name: Checkout actions (again)
+        uses: actions/checkout@v3
+        with:
+          sparse-checkout: |
+            .github/actions
+          path: actions

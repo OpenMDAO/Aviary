@@ -1,24 +1,24 @@
 name: Notify Teams
 
 on:
+  # Could also include pull_request
   pull_request_target:
     branches: [main]
-    types: [opened, reopened, assigned, closed]
+    types: [opened, reopened, assigned, closed, ready_for_review, converted_to_draft, review_requested]
 
-env:
-  SMTP_SERVER: smtp.gmail.com
-  SMTP_PORT: 465
-  EMAIL_USERNAME: ${{ secrets.EMAIL_USERNAME }}
-  EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
-  EMAIL_FROM: GitHub Actions
-  EMAIL_TO: ${{ secrets.DESTINATION_EMAIL }}
-  # Optional priority: 'high', 'normal' (default) or 'low'
 
 jobs:
   send_email_on_opened_pr:
-    if: (github.event_name == 'pull_request' || github.event_name == 'pull_request_target') && (github.event.action == 'opened' || github.event.action == 'reopened')
+    if: github.event.action == 'opened' || github.event.action == 'reopened' || github.event.action == 'ready_for_review'
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout actions
+        uses: actions/checkout@v3
+        with:
+          sparse-checkout: |
+            .github/actions
+          path: actions
+
       - name: Get PR Data
         run: |
           echo "action=${{ github.event.action }}" >> $GITHUB_ENV
@@ -27,16 +27,14 @@ jobs:
           echo "title=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
           echo "url=${{ github.event.pull_request.html_url }}" >> $GITHUB_ENV
           echo "assignees=${{ join(github.event.pull_request.assignees.*.login, ',') }}" >> $GITHUB_ENV
+          echo "reviewers=${{ join(github.event.pull_request.requested_reviewers.*.login, ',') }}" >> $GITHUB_ENV
 
       - name: Send Email on Opened PR
-        uses: dawidd6/action-send-mail@v3
-        with: 
-          server_address: ${{ env.SMTP_SERVER }}
-          server_port: ${{ env.SMTP_PORT }}
-          username: ${{ env.EMAIL_USERNAME }}
-          password: ${{ env.EMAIL_PASSWORD }}
-          to: ${{ env.EMAIL_TO }}
-          from: ${{ env.EMAIL_FROM }}
+        uses: ./actions/.github/actions/send_email
+        with:
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          to: ${{ secrets.DESTINATION_EMAIL }}
           subject: "***Notification*** Opened Pull Request: ${{ env.number }}"
           body: |
             {
@@ -45,16 +43,21 @@ jobs:
               "user": "${{ env.user }}",
               "title": "${{ env.title }}",
               "url": "${{ env.url }}",
-              "assignees": "${{ env.assignees }}"
+              "assignees": "${{ env.assignees }}",
+              "reviewers": "${{ env.reviewers }}"
             }
-          ignore_cert: true
-          nodemailerlog: true
-          nodemailerdebug: true
 
   send_email_on_updated_assignees:
-    if: (github.event_name == 'pull_request' || github.event_name == 'pull_request_target') && github.event.action == 'assigned'
+    if: github.event.action == 'assigned'
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout actions
+        uses: actions/checkout@v3
+        with:
+          sparse-checkout: |
+            .github/actions
+          path: actions
+          
       - name: Get Updated Assignees
         run: |
           echo "number=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
@@ -62,14 +65,11 @@ jobs:
           echo "title=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
 
       - name: Send Email on Updated Assignees
-        uses: dawidd6/action-send-mail@v3
-        with: 
-          server_address: ${{ env.SMTP_SERVER }}
-          server_port: ${{ env.SMTP_PORT }}
-          username: ${{ env.EMAIL_USERNAME }}
-          password: ${{ env.EMAIL_PASSWORD }}
-          to: ${{ env.EMAIL_TO }}
-          from: ${{ env.EMAIL_FROM }}
+        uses: ./actions/.github/actions/send_email
+        with:
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          to: ${{ secrets.DESTINATION_EMAIL }}
           subject: "***Notification*** Updated Assignees for Pull Request: ${{ env.number }}"
           body: |
             {
@@ -77,36 +77,66 @@ jobs:
               "assignees": "${{ env.assignees }}",
               "title": "${{ env.title }}"
             }
-          ignore_cert: true
-          nodemailerlog: true
-          nodemailerdebug: true
 
-  send_email_on_closed_pr:
-    if: (github.event_name == 'pull_request' || github.event_name == 'pull_request_target') && github.event.action == 'closed'
+  send_email_on_review_request:
+    if: github.event.action == 'review_requested'
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout actions
+        uses: actions/checkout@v3
+        with:
+          sparse-checkout: |
+            .github/actions
+          path: actions
+          
+      - name: Get Reviewers
+        run: |
+          echo "number=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
+          echo "reviewers=${{ join(github.event.pull_request.requested_reviewers.*.login, ',') }}" >> $GITHUB_ENV
+          echo "title=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
+
+      - name: Send Email on Reviewer Requested
+        uses: ./actions/.github/actions/send_email
+        with:
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          to: ${{ secrets.DESTINATION_EMAIL }}
+          subject: "***Notification*** Updated Reviewers for Pull Request: ${{ env.number }}"
+          body: |
+            {
+              "number": "${{ env.number }}",
+              "reviewers": "${{ env.reviewers }}",
+              "title": "${{ env.title }}"
+            }
+
+  send_email_on_closed_pr:
+    if: github.event.action == 'closed' || github.event.action == 'converted_to_draft'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout actions
+        uses: actions/checkout@v3
+        with:
+          sparse-checkout: |
+            .github/actions
+          path: actions
+          
       - name: Get PR Data
         run: |
           echo "number=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
           echo "title=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
 
       - name: Send Email on Closed PR
-        uses: dawidd6/action-send-mail@v3
-        with: 
-          server_address: ${{ env.SMTP_SERVER }}
-          server_port: ${{ env.SMTP_PORT }}
-          username: ${{ env.EMAIL_USERNAME }}
-          password: ${{ env.EMAIL_PASSWORD }}
-          to: ${{ env.EMAIL_TO }}
-          from: ${{ env.EMAIL_FROM }}
+        uses: ./actions/.github/actions/send_email
+        with:
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          to: ${{ secrets.DESTINATION_EMAIL }}
           subject: "***Notification*** Closed Pull Request: ${{ env.number }}"
           body: |
             {
               "number": "${{ env.number }}",
-              "title": "${{ env.title }}"
+              "title": "${{ env.title }}",
+              "action": "${{ env.action }}"
             }
-          ignore_cert: true
-          nodemailerlog: true
-          nodemailerdebug: true
 
           

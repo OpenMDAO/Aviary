@@ -1,0 +1,45 @@
+//
+//------------------------------------------------------------------------
+//                                                                       |
+//   File Name:     engine.case_Aviary                                   |
+//   Date(s):       Sept 18, 2023                                        |
+//                                                                       |
+//   Description:   This file runs the engine over a set of flight       |
+//                  conditions representing the entire engine            |
+//                  operational envelope                                 |
+//                                                                       |
+//------------------------------------------------------------------------
+
+
+//------------------------------------------------------------------------
+//                    Run Entire Flight Envelope        
+//------------------------------------------------------------------------
+cout << "------------------------------------\n"; 
+cout << "    Build Deck                      \n"; 
+cout <<"   Design Air flow : " << W_DES << "  \n";
+cout << "------------------------------------\n"; 
+
+CASE = 0; 
+PERF.hybrid_throttle = 0.0;
+ambient.dTs_in = 27.0; 
+
+RunThrottleHook( 0.00,     0. );
+RunThrottleHook( 0.5,     0. );
+
+RunThrottleHook( 0.0,   10000.);
+RunThrottleHook( 0.5,   10000.);
+
+//ambient.MN_in = 0.25; ambient.alt_in = 10000.; RunMaxPower("speed");
+//ambient.MN_in = 0.5; ambient.alt_in = 20000.; RunMaxPower("speed");
+
+ambient.dTs_in =  0.0;
+RunThrottleHook( 0.6,   20000.);
+RunThrottleHook( 0.8,   20000.);
+
+ambient.MN_in = 0.7; ambient.alt_in = 27000.; RunMaxPower();
+
+RunThrottleHook( 0.60, 35000.);
+RunThrottleHook( 0.80, 35000.);
+
+Aviarysheet.display();
+

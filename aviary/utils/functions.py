@@ -9,6 +9,7 @@ from aviary.utils.aviary_values import AviaryValues, get_keys
 from aviary.variable_info.enums import ProblemType, EquationsOfMotion, LegacyCode
 from aviary.variable_info.functions import add_aviary_output, add_aviary_input
 from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.interface.download_models import get_model
 
 
 class Null:
@@ -354,6 +355,14 @@ def get_path(path: [str, Path], verbose: bool = False) -> Path:
             print(
                 f"Unable to locate '{original_path}' as an absolute or relative path. Trying Aviary package path: {aviary_based_path}")
         path = aviary_based_path
+
+    # If the path still doesn't exist, attempt to find it in the models directory.
+    if not path.exists():
+        hangar_based_path = get_model(original_path)
+        if verbose:
+            print(
+                f"Unable to locate '{aviary_based_path}' as an Aviary package path, checking built-in models")
+        path = hangar_based_path
 
     # If the path still doesn't exist in any of the prioritized locations, raise an error.
     if not path.exists():

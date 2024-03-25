@@ -21,7 +21,8 @@ The dashboard assumes these locations for the various reports that are embedded 
 | Optimization | SNOPT Output (similarly for other optimizers) | ./reports/*name_of_run_script*/SNOPT_print.out                                 |
 | Optimization | Desvars, cons, opt plot                       | Derived from Case Recorder file specified by `driver_recorder` command option  |
 | Results      | Trajectory Results Report                     | ./reports/*name_of_run_script*/traj_results_report.html                        |
-| Results      | Aviary Variables                              | Derived from Case Recorder file specified by `problem_recorder` command option |
+| Results      | Subsystem Results                              | ./reports/subsystems/*name_of_subsystem.md (or .html)* |
+| Results      | Mission Results                              | ./reports/subsystems/mission_summary.md |
 
 As an example of the workflow for the dashboard, assume that the user has run an Aviary script, `test_full_mission_solved_level3`, which records both the `Problem` final case and also all the cases of the optimization done by the `Driver`. (To record both the Problem final case and also the Driver optimization iterations, the user must make use of the `optimization_history_filename` option in the call to `run_aviary_problem`.)
 
@@ -77,6 +78,14 @@ OpenMDAO has a reports system which will generate reports when you run your mode
 ### Database Output Files
 
 There is an SQLite database output. By default, it is `aviary_history.db`. It can be used to rerun your case though we do not detail that here. Users can write separate Python script to create user customized outputs and graphs. We will show how to use the this database to create user's customized graph in [the onboarding docs](../getting_started/onboarding.md).
+
+### Report Location
+
+Reports are placed a subdirectory called `reports` under the directory where the script was run. The subdirectory's name for Level 1 runs is based on the name of the CSV file used to define aircraft and mission properties. For Level 2 and Level 3 runs, the name is based on the name of the Python script being run. 
+
+### Warning About the Reports Directory
+
+Repeated runs of the same script (Levels 2 and 3) or the same aircraft defintion CSV file (Level 1) will overwrite existing reports directories. So to preserve reports from previous runs, the user should make copies of the report directory before starting another run.
 
 ### Relevant Reports
 

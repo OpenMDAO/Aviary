@@ -5,6 +5,7 @@ from numpy.testing import assert_almost_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.interface.methods_for_level2 import AviaryProblem
+from aviary.variable_info.enums import Verbosity
 
 from aviary.subsystems.test.test_dummy_subsystem import (
     PostOnlyBuilder, ArrayGuessSubsystemBuilder, AdditionalArrayGuessSubsystemBuilder,
@@ -70,11 +71,11 @@ class TestSubsystemsMission(unittest.TestCase):
         # Link phases and variables
         prob.link_phases()
 
-        prob.add_driver("SLSQP", max_iter=0)
+        prob.add_driver("SLSQP", max_iter=0, verbosity=Verbosity.QUIET)
 
         prob.add_design_variables()
 
-        prob.add_objective('fuel')
+        prob.add_objective('fuel_burned')
 
         prob.setup()
 
