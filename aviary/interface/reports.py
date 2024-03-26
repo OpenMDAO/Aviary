@@ -26,7 +26,7 @@ def register_custom_reports():
                     func=subsystem_report,
                     desc='Generates reports for each subsystem builder in the '
                          'Aviary Problem',
-                    class_name='Problem',
+                    class_name='AviaryProblem',
                     method='run_driver',
                     pre_or_post='post',
                     # **kwargs
@@ -35,14 +35,14 @@ def register_custom_reports():
     register_report(name='mission',
                     func=mission_report,
                     desc='Generates report for mission results from Aviary problem',
-                    class_name='Problem',
+                    class_name='AviaryProblem',
                     method='run_driver',
                     pre_or_post='post')
 
     register_report(name='timeseries_csv',
                     func=timeseries_csv,
                     desc='Generates an output .csv file for variables in the timeseries of the trajectory',
-                    class_name='Problem',
+                    class_name='AviaryProblem',
                     method='run_driver',
                     pre_or_post='post')
 
@@ -249,6 +249,9 @@ def timeseries_csv(prob, **kwargs):
         timeseries_data[variable_name]['val'] = val_full_traj
         timeseries_data[variable_name]['units'] = units
         timeseries_data[variable_name]['shape'] = val_full_traj.shape
+
+    if MPI and MPI.COMM_WORLD.rank != 0:
+        return
 
     # Create a DataFrame from timeseries_data
     df_data = {variable_name: pd.Series(timeseries_data[variable_name]['val'].flatten())

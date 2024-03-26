@@ -41,7 +41,6 @@ from aviary.utils.functions import create_opts2vals, add_opts2vals, promote_airc
 from aviary.utils.process_input_decks import create_vehicle, update_GASP_options, initial_guessing
 from aviary.utils.preprocessors import preprocess_crewpayload
 from aviary.interface.utils.check_phase_info import check_phase_info
-from aviary.interface.reports import register_custom_reports
 from aviary.utils.aviary_values import AviaryValues
 
 from aviary.variable_info.functions import setup_trajectory_params, override_aviary_vars
