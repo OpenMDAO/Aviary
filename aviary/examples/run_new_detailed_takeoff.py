@@ -23,12 +23,12 @@ subsystem_options = {'core_aerodynamics':
                       'drag_coefficient_factor': 1.}}
 
 optimize_mach = True
-optimize_altitude = False
+optimize_altitude = True
 
 # Currently the more complete takeoff trajectory requires SNOPT to converge.
 # If False, the takeoff trajectory will be simplified to a ground roll only
 # to ensure the methods_for_level2 API works.
-use_full_takeoff = False
+use_full_takeoff = True
 
 phase_info = {
     "pre_mission": {"include_takeoff": False, "optimize_mass": False},
@@ -62,9 +62,9 @@ phase_info = {
             'duration_bounds': ((200., 2.e3), 'ft'),
             'mach_bounds': ((0.18, 0.2), 'unitless'),
             'polynomial_control_order': 1,
-            'throttle_enforcement': 'bounded',
+            'throttle_enforcement': 'path_constraint',
             'optimize_mach': optimize_mach,
-            'optimize_altitude': optimize_altitude,
+            'optimize_altitude': False,
             'rotation': True,
             'initial_mach': (0.18, 'unitless'),
             'final_mach': (0.2, 'unitless'),
@@ -106,7 +106,7 @@ phase_info = {
             'initial_altitude': (0., 'ft'),
             'final_altitude': (50., 'ft'),
             'polynomial_control_order': 1,
-            'throttle_enforcement': 'bounded',
+            'throttle_enforcement': 'path_constraint',
             'optimize_mach': optimize_mach,
             'optimize_altitude': optimize_altitude,
             'rotation': False,
@@ -120,7 +120,7 @@ phase_info = {
     },
     'CD_to_P2': {
         'user_options': {
-            'num_segments': 6,
+            'num_segments': 4,
             'order': 3,
             'fix_initial': False,
             'ground_roll': False,
@@ -139,12 +139,58 @@ phase_info = {
             'throttle_enforcement': 'bounded',
             'optimize_mach': optimize_mach,
             'optimize_altitude': optimize_altitude,
+            'constraints': {
+                'altitude': {
+                    'equals': 985.,
+                    'loc': 'final',
+                    'units': 'ft',
+                    'type': 'boundary',
+                },
+            },
         },
         'subsystem_options': subsystem_options,
         'initial_guesses': {
-            'distance': [(4.e3, 14.e3), 'ft'],
-            'time': [(35., 80.), 's'],
-            'mass': [(174.82e3, 174.5e3), 'lbm'],
+            'distance': [(4.e3, 10.e3), 'ft'],
+            'time': [(35., 60.), 's'],
+            'mass': [(174.82e3, 174.8e3), 'lbm'],
+        },
+    },
+    'P2_to_DE': {
+        'user_options': {
+            'num_segments': 4,
+            'order': 3,
+            'fix_initial': False,
+            'ground_roll': False,
+            'clean': False,
+            'initial_ref': (1.e3, 'ft'),
+            'initial_bounds': ((1.e3, 20.e3), 'ft'),
+            'duration_ref': (1.e3, 'ft'),
+            'duration_bounds': ((3.e3, 20.e3), 'ft'),
+            'mach_bounds': ((0.22, 0.3), 'unitless'),
+            'altitude_bounds': ((985., 1100.), 'ft'),
+            'initial_mach': (0.22, 'unitless'),
+            'final_mach': (0.3, 'unitless'),
+            'initial_altitude': (985., 'ft'),
+            'final_altitude': (1100., 'ft'),
+            'polynomial_control_order': 1,
+            'throttle_enforcement': 'bounded',
+            'optimize_mach': optimize_mach,
+            'optimize_altitude': optimize_altitude,
+            'constraints': {
+                'distance': {
+                    'upper': 19.e3,
+                    'ref': 20.e3,
+                    'loc': 'final',
+                    'units': 'ft',
+                    'type': 'boundary',
+                },
+            },
+        },
+        'subsystem_options': subsystem_options,
+        'initial_guesses': {
+            'distance': [(10.e3, 14.e3), 'ft'],
+            'time': [(60., 80.), 's'],
+            'mass': [(174.8e3, 174.5e3), 'lbm'],
         },
     },
     'DE': {
@@ -162,8 +208,8 @@ phase_info = {
             'altitude_bounds': ((985., 1.5e3), 'ft'),
             'initial_mach': (0.3, 'unitless'),
             'final_mach': (0.3, 'unitless'),
-            'initial_altitude': (985., 'ft'),
-            'final_altitude': (1100., 'ft'),
+            'initial_altitude': (1100., 'ft'),
+            'final_altitude': (1200., 'ft'),
             'polynomial_control_order': 1,
             'optimize_mach': optimize_mach,
             'optimize_altitude': optimize_altitude,
@@ -213,6 +259,12 @@ phase_info = {
                     'loc': 'final',
                     'ref': 30.e3,
                 },
+                'flight_path_angle': {
+                    'equals': 4.,
+                    'loc': 'final',
+                    'units': 'deg',
+                    'type': 'boundary',
+                },
             },
         },
         'subsystem_options': subsystem_options,
@@ -242,10 +294,16 @@ phase_info = {
             'polynomial_control_order': 1,
             'optimize_mach': optimize_mach,
             'optimize_altitude': optimize_altitude,
-            'throttle_enforcement': 'bounded',
+            'throttle_enforcement': 'path_constraint',
             'constraints': {
+                'flight_path_angle': {
+                    'equals': 4.,
+                    'loc': 'final',
+                    'units': 'deg',
+                    'type': 'boundary',
+                },
                 'distance': {
-                    'equals': 50.e3,
+                    'equals': 30.e3,
                     'units': 'ft',
                     'type': 'boundary',
                     'loc': 'final',
@@ -255,7 +313,7 @@ phase_info = {
         },
         'subsystem_options': subsystem_options,
         'initial_guesses': {
-            'distance': [(21325., 40.e3), 'ft'],
+            'distance': [(21325., 50.e3), 'ft'],
             'mass': [(174.3e3, 174.2e3), 'lbm'],
             'time': [(90., 180.), 's'],
         },
