@@ -138,7 +138,7 @@ def parse_inputs(vehicle_deck, aircraft_values: AviaryValues(), meta_data=_MetaD
                 initial_guesses[var_name] = float(var_values[0])
                 continue
 
-            if aircraft_values.get_val('verbosity') is not Verbosity.QUIET:
+            if aircraft_values.get_val('verbosity').value >= 2:
                 print('Unused:', var_name, var_values, comment)
 
     return aircraft_values, initial_guesses

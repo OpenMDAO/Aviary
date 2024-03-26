@@ -106,3 +106,133 @@ def descent_range_and_fuel(
     }
 
     return results
+
+
+def add_descent_estimation_as_submodel(
+        main_prob: om.Problem,
+        phases=None,
+        ode_args=None,
+        initial_mass=None,
+        cruise_alt=None,
+        cruise_mach=None,
+):
+
+    if phases is None:
+        phases = create_2dof_based_descent_phases(
+            ode_args,
+            cruise_mach=cruise_mach,
+        )
+
+    traj = FlexibleTraj(
+        Phases=phases,
+        traj_initial_state_input=[
+            Dynamic.Mission.MASS,
+            Dynamic.Mission.DISTANCE,
+            Dynamic.Mission.ALTITUDE,
+        ],
+        traj_final_state_output=[
+            Dynamic.Mission.MASS,
+            Dynamic.Mission.DISTANCE,
+            Dynamic.Mission.ALTITUDE,
+        ],
+    )
+
+    model = om.Group()
+
+    model.add_subsystem(
+        'top_of_descent_mass',
+        om.ExecComp(
+            'mass_initial = empty_mass + payload_mass + 0 + descent_fuel_estimate',
+            mass_initial={'units': 'lbm'},
+            empty_mass={'units': 'lbm'},
+            payload_mass={'units': 'lbm'},
+            # reserve_fuel = {'units':'lbm'},
+            descent_fuel_estimate={'units': 'lbm', 'val': 0},
+        ),
+        promotes_inputs=[
+            ('empty_mass', Aircraft.Design.EMPTY_MASS),
+            ('payload_mass', Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS),
+            # ('reserve_fuel', Aircraft.Design.EMPTY_MASS),
+            ('descent_fuel_estimate', 'descent_fuel'),
+        ],
+        promotes_outputs=['mass_initial'])
+
+    model.add_subsystem(
+        'traj', traj,
+        promotes_inputs=['altitude_initial', 'mass_initial'],
+        promotes_outputs=['mass_final', 'distance_final'],
+    )
+
+    model.add_subsystem(
+        'actual_fuel_burn',
+        om.ExecComp(
+            'actual_fuel_burn = mass_initial - mass_final',
+            actual_fuel_burn={'units': 'lbm'},
+            mass_initial={'units': 'lbm'},
+            mass_final={'units': 'lbm'},
+        ),
+        promotes_inputs=[
+            'mass_initial',
+            'mass_final',
+        ],
+        promotes_outputs=[('actual_fuel_burn', 'descent_fuel')])
+
+    model.add_subsystem(
+        "start_of_descent_mass",
+        om.ExecComp(
+            "start_of_descent_mass = mass_initial",
+            start_of_descent_mass={"units": "lbm"},
+            mass_initial={"units": "lbm"},
+        ),
+        promotes_inputs=["mass_initial"],
+        promotes_outputs=["start_of_descent_mass"],
+    )
+
+    model.add_subsystem(
+        "fuel_obj",
+        om.ExecComp(
+            "reg_objective = overall_fuel/10000",
+            reg_objective={"val": 0.0, "units": "unitless"},
+            overall_fuel={"units": "lbm"},
+        ),
+        promotes_inputs=[
+            ("overall_fuel", 'descent_fuel'),
+        ],
+        promotes_outputs=["reg_objective"],
+    )
+
+    model.add_objective("reg_objective", ref=1e4)
+
+    model.linear_solver = om.DirectSolver(assemble_jac=True)
+    model.nonlinear_solver = om.NewtonSolver(solve_subsystems=False, maxiter=0, iprint=0)
+
+    input_aliases = []
+    # if isinstance(initial_mass, str):
+    #     input_aliases.append(('mass_initial',initial_mass))
+    if isinstance(initial_mass, (int, float)):
+        model.set_input_defaults('mass_initial', initial_mass)
+
+    if isinstance(cruise_alt, str):
+        input_aliases.append(('altitude_initial', cruise_alt))
+    elif isinstance(cruise_alt, (int, float)):
+        model.set_input_defaults('altitude_initial', cruise_alt)
+
+    subprob = om.Problem(model=model)
+    subcomp = om.SubmodelComp(
+        problem=subprob,
+        inputs=[
+            Aircraft.Design.EMPTY_MASS,
+            Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS,
+        ],
+        outputs=['distance_final', 'descent_fuel'])
+
+    main_prob.model.add_subsystem(
+        'idle_descent_estimation',
+        subcomp,
+        promotes_inputs=['aircraft:*']+input_aliases,
+        promotes_outputs=[
+            ('distance_final', 'descent_range'),
+            'descent_fuel',
+        ],
+
+    )

@@ -75,6 +75,12 @@ class AccelPhase(PhaseBuilderBase):
 
 
 # Adding metadata for the AccelPhase
+AccelPhase._add_meta_data(
+    'reserve', val=False, desc='this phase is part of the reserve mission.')
+AccelPhase._add_meta_data(
+    'target_distance', val={}, desc='the amount of distance traveled in this phase added as a constraint')
+AccelPhase._add_meta_data(
+    'target_duration', val={}, desc='the amount of time taken by this phase added as a constraint')
 AccelPhase._add_meta_data('fix_initial', val=False)
 AccelPhase._add_meta_data('EAS_constraint_eq', val=250, units='kn')
 AccelPhase._add_meta_data('duration_bounds', val=(0, 0), units='s')
