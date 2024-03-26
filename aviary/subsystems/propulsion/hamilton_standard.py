@@ -241,19 +241,19 @@ def _biquad(T, i, xi, yi):
 CP_Angle_table = np.array([
     [  # 2 blades
         [0.0158, 0.0165, .0188, .0230, .0369,
-            .0588, .0914, .1340, .1816, .22730],  # adv_ratio = 0.0
+            .0588, .0914, .1340, .1816, .22730],  # advance_ratio = 0.0
         [0.0215, 0.0459, .0829, .1305, .1906,
-            .2554, 0.000, 0.000, 0.000, 0.0000],  # adv_ratio = 0.5
+            .2554, 0.000, 0.000, 0.000, 0.0000],  # advance_ratio = 0.5
         [-.0149, -.0088, .0173, .0744, .1414,
-            .2177, .3011, .3803, 0.000, 0.0000],  # adv_ratio = 1.0
+            .2177, .3011, .3803, 0.000, 0.0000],  # advance_ratio = 1.0
         [-.0670, -.0385, .0285, .1304, .2376,
-            .3536, .4674, .5535, 0.000, 0.0000],  # adv_ratio = 1.5
+            .3536, .4674, .5535, 0.000, 0.0000],  # advance_ratio = 1.5
         [-.1150, -.0281, .1086, .2646, .4213,
-            .5860, .7091, 0.000, 0.000, 0.0000],  # adv_ratio = 2.0
+            .5860, .7091, 0.000, 0.000, 0.0000],  # advance_ratio = 2.0
         [-.1151, 0.0070, .1436, .2910, .4345,
-            .5744, .7142, .8506, .9870, 1.1175],  # adv_ratio = 3.0
+            .5744, .7142, .8506, .9870, 1.1175],  # advance_ratio = 3.0
         [-.2427, 0.0782, .4242, .7770, 1.1164,
-            1.4443, 0.000, 0.000, 0.000, 0.000],  # adv_ratio = 5.0
+            1.4443, 0.000, 0.000, 0.000, 0.000],  # advance_ratio = 5.0
     ],
     [  # 4 blades
         [.0311, .0320, .0360, .0434, .0691, .1074, .1560, .2249, .3108, .4026],
@@ -331,13 +331,13 @@ AFCTC = np.array([
 ])
 Act_Factor_arr = np.array([80., 100., 125., 150., 175., 200.])
 Blade_angle_table = np.array([
-    [0.0, 2.0, 4.0, 6.0, 10.0, 14.0, 18.0, 22.0, 26.0, 30.],  # adv_ratio = 0.0
-    [10.0, 15.0, 20.0, 25.0, 30.0, 35., 0.0, 0.0, 0.0, 0.0],  # adv_ratio = 0.5
-    [10.0, 15.0, 20.0, 25.0, 30.0, 35., 40., 45., 0.0, 0.0],  # adv_ratio = 1.0
-    [20.0, 25.0, 30.0, 35.0, 40.0, 45., 50., 55., 0.0, 0.0],  # adv_ratio = 1.5
-    [30.0, 35.0, 40.0, 45.0, 50.0, 55., 60., 0.0, 0.0, 0.0],  # adv_ratio = 2.0
-    [45., 47.5, 50., 52.5, 55., 57.5, 60., 62.5, 65., 67.5],  # adv_ratio = 3.0
-    [57.5, 60.0, 62.5, 65., 67.5, 70.0, 0.0, 0.0, 0.0, 0.0],  # adv_ratio = 5.0
+    [0.0, 2.0, 4.0, 6.0, 10.0, 14.0, 18.0, 22.0, 26.0, 30.],  # advance_ratio = 0.0
+    [10.0, 15.0, 20.0, 25.0, 30.0, 35., 0.0, 0.0, 0.0, 0.0],  # advance_ratio = 0.5
+    [10.0, 15.0, 20.0, 25.0, 30.0, 35., 40., 45., 0.0, 0.0],  # advance_ratio = 1.0
+    [20.0, 25.0, 30.0, 35.0, 40.0, 45., 50., 55., 0.0, 0.0],  # advance_ratio = 1.5
+    [30.0, 35.0, 40.0, 45.0, 50.0, 55., 60., 0.0, 0.0, 0.0],  # advance_ratio = 2.0
+    [45., 47.5, 50., 52.5, 55., 57.5, 60., 62.5, 65., 67.5],  # advance_ratio = 3.0
+    [57.5, 60.0, 62.5, 65., 67.5, 70.0, 0.0, 0.0, 0.0, 0.0],  # advance_ratio = 5.0
 ])
 BL_P_corr_table = np.array([
     [1.84, 1.775, 1.75, 1.74, 1.76, 1.78, 1.80,
@@ -429,8 +429,8 @@ XTCLI = np.array([
     [0.042, .1852, .442, .565, .635, .681, .716,
         0.769, 0.809, 0.838, 0.855, 0.874, 0.881, 0.881],  # CL = 0.8
 ])
-adv_ratio_array2 = ([0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0])
-adv_ratio_array = np.array([0.0, 0.5, 1.0, 1.5, 2.0, 3.0, 5.0])
+advance_ratio_array2 = ([0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0])
+advance_ratio_array = np.array([0.0, 0.5, 1.0, 1.5, 2.0, 3.0, 5.0])
 mach_tip_corr_arr = np.array([0.928, 0.916, 0.901, 0.884, 0.865, 0.845])
 mach_corr_table = np.array([  # ZMCRL
     [.0, .151, .299, .415, .505, .578, .620, .630, .630, .630, .630],  # CL = 0.3
@@ -478,7 +478,7 @@ class PreHamiltonStandard(om.ExplicitComponent):
         self.add_input(Dynamic.Mission.TEMPERATURE, val=np.zeros(nn), units='degR')
 
         self.add_output('power_coefficient', val=np.zeros(nn), units='unitless')
-        self.add_output('adv_ratio', val=np.zeros(nn), units='unitless')
+        self.add_output('advance_ratio', val=np.zeros(nn), units='unitless')
         self.add_output('tip_mach', val=np.zeros(nn), units='unitless')
         self.add_output('density_ratio', val=np.zeros(nn), units='unitless')
 
@@ -491,7 +491,7 @@ class PreHamiltonStandard(om.ExplicitComponent):
             Dynamic.Mission.PROPELLER_TIP_SPEED,
             Dynamic.Mission.TEMPERATURE,
         ], rows=arange, cols=arange)
-        self.declare_partials('adv_ratio', [
+        self.declare_partials('advance_ratio', [
             Dynamic.Mission.VELOCITY,
             Dynamic.Mission.PROPELLER_TIP_SPEED,
         ], rows=arange, cols=arange)
@@ -509,7 +509,7 @@ class PreHamiltonStandard(om.ExplicitComponent):
         tipspd = inputs[Dynamic.Mission.PROPELLER_TIP_SPEED]
         # 1118.21948771 is speed of sound at sea level
         outputs['tip_mach'] = tipspd * sqrt_temp_ratio / 1118.21948771
-        outputs['adv_ratio'] = 5.309 * vktas / tipspd
+        outputs['advance_ratio'] = 5.309 * vktas / tipspd
         diam_prop = inputs[Aircraft.Engine.PROPELLER_DIAMETER][0]
         shp = inputs[Dynamic.Mission.SHAFT_POWER]
         outputs['power_coefficient'] = shp * 10.E10 / (2 * 6966.) / \
@@ -531,8 +531,8 @@ class PreHamiltonStandard(om.ExplicitComponent):
                  Dynamic.Mission.PROPELLER_TIP_SPEED] = sqrt_temp_ratio / 1118.21948771
         partials["tip_mach", Dynamic.Mission.TEMPERATURE] = - \
             tipspd * sqrt_temp_ratio/(1118.21948771*2*temp)
-        partials["adv_ratio", Dynamic.Mission.VELOCITY] = 5.309 / tipspd
-        partials["adv_ratio", Dynamic.Mission.PROPELLER_TIP_SPEED] = - \
+        partials["advance_ratio", Dynamic.Mission.VELOCITY] = 5.309 / tipspd
+        partials["advance_ratio", Dynamic.Mission.PROPELLER_TIP_SPEED] = - \
             5.309 * vktas / (tipspd * tipspd)
         partials["power_coefficient", Dynamic.Mission.SHAFT_POWER] = unit_conversion_const * \
             RHO_SEA_LEVEL_ENGLISH / (rho * tipspd**3*diam_prop**2)
@@ -568,7 +568,7 @@ class HamiltonStandard(om.ExplicitComponent):
         nn = self.options['num_nodes']
 
         self.add_input('power_coefficient', val=np.zeros(nn), units='unitless')
-        self.add_input('adv_ratio', val=np.zeros(nn), units='unitless')
+        self.add_input('advance_ratio', val=np.zeros(nn), units='unitless')
         self.add_input(Dynamic.Mission.MACH, val=np.zeros(nn), units='unitless')
         self.add_input('tip_mach', val=np.zeros(nn), units='unitless')
         self.add_input(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, val=0.0,
@@ -577,7 +577,7 @@ class HamiltonStandard(om.ExplicitComponent):
                        val=0.0, units='unitless')  # blade integrated lift coeff
 
         self.add_output('thrust_coefficient', val=np.zeros(nn), units='unitless')
-        self.add_output('ang_blade', val=np.zeros(nn), units='deg')
+        self.add_output('blade_angle', val=np.zeros(nn), units='deg')
         # Tip Compressibility loss factor
         self.add_output('comp_tip_loss_factor', val=np.zeros(nn), units='unitless')
 
@@ -607,20 +607,20 @@ class HamiltonStandard(om.ExplicitComponent):
             for k in range(2, 7):
                 AF_adj_CP[k] = AF_adj_CP[1]
                 AF_adj_CT[k] = AF_adj_CT[1]
-            if (inputs['adv_ratio'][i_node] <= 0.5):
-                AFCTE = 2.*inputs['adv_ratio'][i_node] * \
+            if (inputs['advance_ratio'][i_node] <= 0.5):
+                AFCTE = 2.*inputs['advance_ratio'][i_node] * \
                     (AF_adj_CT[1] - AF_adj_CT[0]) + AF_adj_CT[0]
             else:
                 AFCTE = AF_adj_CT[1]
 
             # bounding J (advance ratio) for setting up interpolation
-            if (inputs['adv_ratio'][i_node] <= 1.0):
+            if (inputs['advance_ratio'][i_node] <= 1.0):
                 J_begin = 0
                 J_end = 3
-            elif (inputs['adv_ratio'][i_node] <= 1.5):
+            elif (inputs['advance_ratio'][i_node] <= 1.5):
                 J_begin = 1
                 J_end = 4
-            elif (inputs['adv_ratio'][i_node] <= 2.0):
+            elif (inputs['advance_ratio'][i_node] <= 2.0):
                 J_begin = 2
                 J_end = 5
             else:
@@ -669,7 +669,6 @@ class HamiltonStandard(om.ExplicitComponent):
                 # odd number of blades
                 idx_blade = 0  # start from first blade
 
-            # JK NOTE it's hard to tell, but I don't think this code can be vectorized since there are many if statements that change behavior
             for ibb in range(nbb):
                 # nbb = 1 even number of blades. No interpolation needed
                 # nbb = 4 odd number of blades. So, interpolation done
@@ -693,7 +692,7 @@ class HamiltonStandard(om.ExplicitComponent):
                             if (ichck <= 1):
                                 if (run_flag == 1):
                                     warnings.warn(
-                                        f"Mach,VTMACH,J,power_coefficient,CP_Eff =: {inputs[Dynamic.Mission.MACH][i_node]},{inputs['tip_mach'][i_node]},{inputs['adv_ratio'][i_node]},{power_coefficient},{CP_Eff}")
+                                        f"Mach,VTMACH,J,power_coefficient,CP_Eff =: {inputs[Dynamic.Mission.MACH][i_node]},{inputs['tip_mach'][i_node]},{inputs['advance_ratio'][i_node]},{power_coefficient},{CP_Eff}")
                                 if (kl == 4 and CPE1 < 0.010):
                                     print(
                                         f"Extrapolated data is being used for CLI=.6--CPE1,PXCLI,L= , {CPE1},{PXCLI[kl]},{idx_blade}   Suggest inputting CLI=.5")
@@ -706,7 +705,7 @@ class HamiltonStandard(om.ExplicitComponent):
                         else:
                             if (run_flag == 1):
                                 warnings.warn(
-                                    f"Mach,VTMACH,J,power_coefficient,CP_Eff =: {inputs[Dynamic.Mission.MACH][i_node]},{inputs['tip_mach'][i_node]},{inputs['adv_ratio'][i_node]},{power_coefficient},{CP_Eff}")
+                                    f"Mach,VTMACH,J,power_coefficient,CP_Eff =: {inputs[Dynamic.Mission.MACH][i_node]},{inputs['tip_mach'][i_node]},{inputs['advance_ratio'][i_node]},{power_coefficient},{CP_Eff}")
                             if (kl == 4 and CPE1 < 0.010):
                                 print(
                                     f"Extrapolated data is being used for CLI=.6--CPE1,PXCLI,L= , {CPE1},{PXCLI[kl]},{idx_blade}   Suggest inputting CLI=.5")
@@ -740,17 +739,17 @@ class HamiltonStandard(om.ExplicitComponent):
                             f"ERROR IN PROP. PERF.-- NERPT={NERPT}, run_flag={run_flag}")
 
                 BLLL[ibb], run_flag = _unint(
-                    adv_ratio_array[J_begin:J_begin+4], BLL[J_begin:J_begin+4], inputs['adv_ratio'][i_node])
+                    advance_ratio_array[J_begin:J_begin+4], BLL[J_begin:J_begin+4], inputs['advance_ratio'][i_node])
                 ang_blade = BLLL[ibb]
                 CTTT[ibb], run_flag = _unint(
-                    adv_ratio_array[J_begin:J_begin+4], CTT[J_begin:J_begin+4], inputs['adv_ratio'][i_node])
+                    advance_ratio_array[J_begin:J_begin+4], CTT[J_begin:J_begin+4], inputs['advance_ratio'][i_node])
 
                 # make extra correction. CTG is an "error" function, and the iteration (loop counter = "IL") tries to drive CTG/CT to 0
                 # ERR_CT = CTG1[il]/CTTT[ibb], where CTG1 =CT_Eff - CTTT(IBB).
                 CTG[0] = .100
                 CTG[1] = .200
                 TFCLII, run_flag = _unint(
-                    adv_ratio_array, TF_CLI_arr, inputs['adv_ratio'][i_node])
+                    advance_ratio_array, TF_CLI_arr, inputs['advance_ratio'][i_node])
                 NCTG = 10
                 ifnd1 = 0
                 ifnd2 = 0
@@ -773,9 +772,9 @@ class HamiltonStandard(om.ExplicitComponent):
                             # off lower bound only.
                             print(
                                 f"ERROR IN PROP. PERF.-- NERPT={NERPT}, run_flag={run_flag}, il = {il}, kl = {kl}")
-                        if (inputs['adv_ratio'][i_node] != 0.0):
+                        if (inputs['advance_ratio'][i_node] != 0.0):
                             ZMCRT, run_flag = _unint(
-                                adv_ratio_array2, mach_corr_table[CL_tab_idx], inputs['adv_ratio'][i_node])
+                                advance_ratio_array2, mach_corr_table[CL_tab_idx], inputs['advance_ratio'][i_node])
                             DMN = inputs[Dynamic.Mission.MACH][i_node] - ZMCRT
                         else:
                             ZMCRT = mach_tip_corr_arr[CL_tab_idx]
@@ -823,11 +822,11 @@ class HamiltonStandard(om.ExplicitComponent):
                 ct, run_flag = _unint(num_blades_arr, CTTT, self.options['num_blades'])
                 xft, run_flag = _unint(num_blades_arr, XXXFT, self.options['num_blades'])
 
-            # JK NOTE this should be handled via the metamodel comps (extrapolate flag)
+            # NOTE this could be handled via the metamodel comps (extrapolate flag)
             if ichck > 0:
                 print(f"  table look-up error = {ichck} (if you go outside the tables.)")
 
-            outputs['ang_blade'][i_node] = ang_blade
+            outputs['advance_ratio'][i_node] = ang_blade
             outputs['thrust_coefficient'][i_node] = ct
             outputs['comp_tip_loss_factor'][i_node] = xft
 
@@ -851,12 +850,12 @@ class PostHamiltonStandard(om.ExplicitComponent):
         self.add_input(Dynamic.Mission.PROPELLER_TIP_SPEED,
                        val=np.zeros(nn), units='ft/s')
         self.add_input('density_ratio', val=np.zeros(nn), units='unitless')
-        self.add_input('adv_ratio', val=np.zeros(nn), units='unitless')
+        self.add_input('advance_ratio', val=np.zeros(nn), units='unitless')
         self.add_input('power_coefficient', val=np.zeros(nn), units='unitless')
 
         self.add_output('thrust_coefficient_comp_loss',
                         val=np.zeros(nn), units='unitless')
-        self.add_output('prop_thrust', val=np.zeros(nn), units='lbf')
+        self.add_output('propeller_thrust', val=np.zeros(nn), units='lbf')
         # keep them for reporting but don't seem to be required
         self.add_output('propeller_efficiency', val=np.zeros(nn), units='unitless')
         self.add_output('install_efficiency', val=np.zeros(nn), units='unitless')
@@ -868,24 +867,24 @@ class PostHamiltonStandard(om.ExplicitComponent):
             'thrust_coefficient',
             'comp_tip_loss_factor',
         ], rows=arange, cols=arange)
-        self.declare_partials('prop_thrust', [
+        self.declare_partials('propeller_thrust', [
             'thrust_coefficient',
             'comp_tip_loss_factor',
             Dynamic.Mission.PROPELLER_TIP_SPEED,
             'density_ratio',
             Dynamic.Mission.INSTALLATION_LOSS_FACTOR,
         ], rows=arange, cols=arange)
-        self.declare_partials('prop_thrust', [
+        self.declare_partials('propeller_thrust', [
             Aircraft.Engine.PROPELLER_DIAMETER,
         ])
         self.declare_partials('propeller_efficiency', [
-            'adv_ratio',
+            'advance_ratio',
             'power_coefficient',
             'thrust_coefficient',
             'comp_tip_loss_factor',
         ], rows=arange, cols=arange)
         self.declare_partials('install_efficiency', [
-            'adv_ratio',
+            'advance_ratio',
             'power_coefficient',
             'thrust_coefficient',
             'comp_tip_loss_factor',
@@ -898,9 +897,9 @@ class PostHamiltonStandard(om.ExplicitComponent):
         diam_prop = inputs[Aircraft.Engine.PROPELLER_DIAMETER][0]
         tipspd = inputs[Dynamic.Mission.PROPELLER_TIP_SPEED]
         install_loss_factor = inputs[Dynamic.Mission.INSTALLATION_LOSS_FACTOR]
-        outputs['prop_thrust'] = ctx*tipspd**2*diam_prop**2 * \
+        outputs['propeller_thrust'] = ctx*tipspd**2*diam_prop**2 * \
             inputs['density_ratio']/(1.515E06)*364.76*(1. - install_loss_factor)
-        outputs['propeller_efficiency'] = inputs['adv_ratio'] * \
+        outputs['propeller_efficiency'] = inputs['advance_ratio'] * \
             ctx/inputs['power_coefficient']
         outputs['install_efficiency'] = outputs['propeller_efficiency'] * \
             (1. - install_loss_factor)
@@ -916,34 +915,35 @@ class PostHamiltonStandard(om.ExplicitComponent):
         partials["thrust_coefficient_comp_loss", 'thrust_coefficient'] = XFT
         partials["thrust_coefficient_comp_loss",
                  'comp_tip_loss_factor'] = inputs['thrust_coefficient']
-        partials['prop_thrust', 'thrust_coefficient'] = XFT*tipspd**2*diam_prop**2 * \
+        partials['propeller_thrust', 'thrust_coefficient'] = XFT*tipspd**2*diam_prop**2 * \
             inputs['density_ratio']*unit_conversion_factor*(1. - install_loss_factor)
-        partials['prop_thrust', 'comp_tip_loss_factor'] = inputs['thrust_coefficient']*tipspd**2*diam_prop**2 * \
+        partials['propeller_thrust', 'comp_tip_loss_factor'] = inputs['thrust_coefficient']*tipspd**2*diam_prop**2 * \
             inputs['density_ratio']*unit_conversion_factor*(1. - install_loss_factor)
-        partials['prop_thrust', Dynamic.Mission.PROPELLER_TIP_SPEED] = 2*ctx*tipspd*diam_prop**2 * \
+        partials['propeller_thrust', Dynamic.Mission.PROPELLER_TIP_SPEED] = 2*ctx*tipspd*diam_prop**2 * \
             inputs['density_ratio']*unit_conversion_factor*(1. - install_loss_factor)
-        partials['prop_thrust', Aircraft.Engine.PROPELLER_DIAMETER] = 2*ctx*tipspd**2*diam_prop * \
+        partials['propeller_thrust', Aircraft.Engine.PROPELLER_DIAMETER] = 2*ctx*tipspd**2*diam_prop * \
             inputs['density_ratio']*unit_conversion_factor*(1. - install_loss_factor)
-        partials['prop_thrust', 'density_ratio'] = ctx*tipspd**2 * \
+        partials['propeller_thrust', 'density_ratio'] = ctx*tipspd**2 * \
             diam_prop**2*unit_conversion_factor*(1. - install_loss_factor)
-        partials['prop_thrust', Dynamic.Mission.INSTALLATION_LOSS_FACTOR] = -ctx*tipspd**2*diam_prop**2 * \
+        partials['propeller_thrust', Dynamic.Mission.INSTALLATION_LOSS_FACTOR] = -ctx*tipspd**2*diam_prop**2 * \
             inputs['density_ratio']*unit_conversion_factor
-        partials["propeller_efficiency", "adv_ratio"] = ctx/inputs['power_coefficient']
-        partials["propeller_efficiency", "thrust_coefficient"] = inputs['adv_ratio'] * \
+        partials["propeller_efficiency", "advance_ratio"] = ctx / \
+            inputs['power_coefficient']
+        partials["propeller_efficiency", "thrust_coefficient"] = inputs['advance_ratio'] * \
             XFT/inputs['power_coefficient']
-        partials["propeller_efficiency", "comp_tip_loss_factor"] = inputs['adv_ratio'] * \
+        partials["propeller_efficiency", "comp_tip_loss_factor"] = inputs['advance_ratio'] * \
             inputs['thrust_coefficient']/inputs['power_coefficient']
         partials["propeller_efficiency", "power_coefficient"] = - \
-            inputs['adv_ratio']*ctx/inputs['power_coefficient']**2
+            inputs['advance_ratio']*ctx/inputs['power_coefficient']**2
 
-        partials["install_efficiency", "adv_ratio"] = ctx / \
+        partials["install_efficiency", "advance_ratio"] = ctx / \
             inputs['power_coefficient'] * (1. - install_loss_factor)
-        partials["install_efficiency", "thrust_coefficient"] = inputs['adv_ratio'] * \
+        partials["install_efficiency", "thrust_coefficient"] = inputs['advance_ratio'] * \
             XFT/inputs['power_coefficient'] * (1. - install_loss_factor)
-        partials["install_efficiency", "comp_tip_loss_factor"] = inputs['adv_ratio'] * \
+        partials["install_efficiency", "comp_tip_loss_factor"] = inputs['advance_ratio'] * \
             inputs['thrust_coefficient'] / \
             inputs['power_coefficient'] * (1. - install_loss_factor)
-        partials["install_efficiency", "power_coefficient"] = -inputs['adv_ratio'] * \
+        partials["install_efficiency", "power_coefficient"] = -inputs['advance_ratio'] * \
             ctx/inputs['power_coefficient']**2 * (1. - install_loss_factor)
         partials["install_efficiency", Dynamic.Mission.INSTALLATION_LOSS_FACTOR] = - \
-            inputs['adv_ratio']*ctx/inputs['power_coefficient']
+            inputs['advance_ratio']*ctx/inputs['power_coefficient']

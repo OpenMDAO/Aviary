@@ -5,7 +5,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.variable_info.variables import Aircraft
-from aviary.subsystems.propulsion.prop_performance import PropPerf
+from aviary.subsystems.propulsion.propeller_performance import PropPerf
 
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.variable_info.options import get_option_defaults
@@ -35,6 +35,7 @@ class PropPerformanceTest(unittest.TestCase):
                         val=True, units='unitless')
         options.set_val(Aircraft.Engine.NUM_BLADES,
                         val=4, units='unitless')
+        options.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, False)
 
         prob = om.Problem()
 

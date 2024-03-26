@@ -123,7 +123,7 @@ class InstallLoss(om.Group):
         )
 
 
-class PropPerf(om.Group):
+class PropellerPerformance(om.Group):
     """
     Computation of propeller thrust coefficient based on Hamilton Standard.
     The installation loss factor is either a user input or computed internally.
@@ -135,18 +135,13 @@ class PropPerf(om.Group):
             desc='Number of nodes to be evaluated in the RHS')
         self.options.declare(Aircraft.Engine.NUM_BLADES, default=2,
                              desc='number of blades per propeller')
-        self.options.declare(
-            Aircraft.Design.COMPUTE_INSTALLATION_LOSS, types=bool,
-            desc='Flag to compute installation factor')
-        self.options.declare(
-            'compute_mach_internally', types=bool, default=False,
-        )
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
-        self.options.declare(
-            'include_atmosphere_model', types=bool, default=False,
-            desc='Flag to include atmosphere in the model')
+        self.options.declare(Aircraft.Design.COMPUTE_INSTALLATION_LOSS, types=bool,
+                             desc='Flag to compute installation factor')
+        # self.options.declare('compute_mach_internally', types=bool, default=False,)
+        # self.options.declare('aviary_options', types=AviaryValues,
+        #                      desc='collection of Aircraft/Mission specific options')
+        # self.options.declare('include_atmosphere_model', types=bool, default=False,
+        #                      desc='Flag to include atmosphere in the model')
 
     def setup(self):
         options = self.options
@@ -158,7 +153,7 @@ class PropPerf(om.Group):
 
         if compute_installation_loss:
             self.add_subsystem(
-                name='loss',
+                name='install_loss',
                 subsys=InstallLoss(num_nodes=nn),
                 promotes_inputs=[
                     Aircraft.Nacelle.AVG_DIAMETER,
@@ -173,27 +168,27 @@ class PropPerf(om.Group):
             self.set_input_defaults(
                 Dynamic.Mission.INSTALLATION_LOSS_FACTOR, val=np.ones(nn), units="unitless")
 
-        if self.options['include_atmosphere_model']:
-            self.add_subsystem(
-                name='atmosphere',
-                subsys=USatm1976Comp(num_nodes=nn),
-                promotes_inputs=[('h', Dynamic.Mission.ALTITUDE)],
-                promotes_outputs=[
-                    ('sos', Dynamic.Mission.SPEED_OF_SOUND), ('rho', Dynamic.Mission.DENSITY),
-                    ('temp', Dynamic.Mission.TEMPERATURE), ('pres', Dynamic.Mission.STATIC_PRESSURE)],
-            )
+        # if self.options['include_atmosphere_model']:
+        #     self.add_subsystem(
+        #         name='atmosphere',
+        #         subsys=USatm1976Comp(num_nodes=nn),
+        #         promotes_inputs=[('h', Dynamic.Mission.ALTITUDE)],
+        #         promotes_outputs=[
+        #             ('sos', Dynamic.Mission.SPEED_OF_SOUND), ('rho', Dynamic.Mission.DENSITY),
+        #             ('temp', Dynamic.Mission.TEMPERATURE), ('pres', Dynamic.Mission.STATIC_PRESSURE)],
+        #     )
 
-        if self.options['compute_mach_internally']:
-            self.add_subsystem(
-                'compute_mach',
-                om.ExecComp(f'{Dynamic.Mission.MACH} = 0.00150933 * {Dynamic.Mission.VELOCITY} * ({TSLS_DEGR} / {Dynamic.Mission.TEMPERATURE})**0.5',
-                            mach={'units': 'unitless', 'val': np.zeros(nn)},
-                            velocity={'units': 'knot', 'val': np.zeros(nn)},
-                            temperature={'units': 'degR', 'val': np.zeros(nn)},
-                            has_diag_partials=True,
-                            ),
-                promotes=['*'],
-            )
+        # if self.options['compute_mach_internally']:
+        #     self.add_subsystem(
+        #         'compute_mach',
+        #         om.ExecComp(f'{Dynamic.Mission.MACH} = 0.00150933 * {Dynamic.Mission.VELOCITY} * ({TSLS_DEGR} / {Dynamic.Mission.TEMPERATURE})**0.5',
+        #                     mach={'units': 'unitless', 'val': np.zeros(nn)},
+        #                     velocity={'units': 'knot', 'val': np.zeros(nn)},
+        #                     temperature={'units': 'degR', 'val': np.zeros(nn)},
+        #                     has_diag_partials=True,
+        #                     ),
+        #         promotes=['*'],
+        #     )
 
         self.add_subsystem(
             name='pre_hamilton_standard',
@@ -208,7 +203,7 @@ class PropPerf(om.Group):
             ],
             promotes_outputs=[
                 "power_coefficient",
-                "adv_ratio",
+                "advance_ratio",
                 "tip_mach",
                 "density_ratio",
             ])
@@ -219,14 +214,14 @@ class PropPerf(om.Group):
             promotes_inputs=[
                 Dynamic.Mission.MACH,
                 "power_coefficient",
-                "adv_ratio",
+                "advance_ratio",
                 "tip_mach",
                 Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,
                 Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT,
             ],
             promotes_outputs=[
                 "thrust_coefficient",
-                "ang_blade",
+                "blade_angle",
                 "comp_tip_loss_factor",
             ])
 
@@ -240,12 +235,76 @@ class PropPerf(om.Group):
                 Aircraft.Engine.PROPELLER_DIAMETER,
                 "density_ratio",
                 Dynamic.Mission.INSTALLATION_LOSS_FACTOR,
-                "adv_ratio",
+                "advance_ratio",
                 "power_coefficient",
             ],
             promotes_outputs=[
                 "thrust_coefficient_comp_loss",
-                "prop_thrust",
+                "propeller_thrust",
                 "propeller_efficiency",
                 "install_efficiency",
             ])
+
+
+class UncorrectShaftPower(om.Group):
+    def initialize(self):
+        self.options.declare(
+            'num_nodes', types=int, default=1)
+        self.options.declare(
+            'aviary_options', types=AviaryValues,
+            desc='collection of Aircraft/Mission specific options')
+
+    def setup(self):
+        num_nodes = self.options['num_nodes']
+
+        self.add_subsystem(
+            'pressure_term',
+            om.ExecComp(
+                'delta_T = (P0 * (1 + .2*mach**2)**3.5) / P_amb',
+                delta_T={'units': "unitless", 'shape': num_nodes},
+                P0={'units': 'psi', 'shape': num_nodes},
+                mach={'units': 'unitless', 'shape': num_nodes},
+                P_amb={'val': np.full(num_nodes, 14.696), 'units': 'psi', },
+                has_diag_partials=True,
+            ),
+            promotes_inputs=[
+                ('P0', Dynamic.Mission.STATIC_PRESSURE),
+                ('mach', Dynamic.Mission.MACH),
+            ],
+            promotes_outputs=['delta_T'],
+        )
+
+        self.add_subsystem(
+            'temperature_term',
+            om.ExecComp(
+                'theta_T = T0 * (1 + .2*mach**2)/T_amb',
+                theta_T={'units': "unitless", 'shape': num_nodes},
+                T0={'units': 'degR', 'shape': num_nodes},
+                mach={'units': 'unitless', 'shape': num_nodes},
+                T_amb={'val': np.full(num_nodes, 518.67), 'units': 'degR', },
+                has_diag_partials=True,
+            ),
+            promotes_inputs=[
+                ('T0', Dynamic.Mission.TEMPERATURE),
+                ('mach', Dynamic.Mission.MACH),
+            ],
+            promotes_outputs=['theta_T'],
+        )
+
+        self.add_subsystem(
+            'uncorrection',
+            om.ExecComp(
+                'shaft_power = shaft_power_corrected * (delta_T + theta_T**.5)',
+                shaft_power={'units': "hp", 'shape': num_nodes},
+                delta_T={'units': "unitless", 'shape': num_nodes},
+                theta_T={'units': "unitless", 'shape': num_nodes},
+                shaft_power_corrected={'units': "hp", 'shape': num_nodes},
+                has_diag_partials=True,
+            ),
+            promotes_inputs=[
+                'delta_T',
+                'theta_T',
+                ('shaft_power_corrected', Dynamic.Mission.SHAFT_POWER_CORRECTED),
+            ],
+            promotes_outputs=[('shaft_power', Dynamic.Mission.SHAFT_POWER)],
+        )

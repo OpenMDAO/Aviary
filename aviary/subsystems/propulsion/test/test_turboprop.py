@@ -131,7 +131,7 @@ class TurboPropTest(unittest.TestCase):
         point_names = ['idle', 'SLS', 'TOC']
         truth_vals = [(112, 37.7, -195.8), (1120, 136.3, -644), (1742.5, 21.3, -839.7)]
 
-        from aviary.subsystems.propulsion.prop_performance import PropPerf
+        from aviary.subsystems.propulsion.propeller_performance import PropPerf
         from aviary.variable_info.options import get_option_defaults
         from aviary.mission.gasp_based.flight_conditions import FlightConditions
         options = get_option_defaults()
