@@ -95,6 +95,8 @@ class RotationPhase(PhaseBuilderBase):
 
 # Adding metadata for the RotationPhase
 RotationPhase._add_meta_data(
+    'analytic', val=False, desc='this is an analytic phase (no states).')
+RotationPhase._add_meta_data(
     'reserve', val=False, desc='this phase is part of the reserve mission.')
 RotationPhase._add_meta_data(
     'target_distance', val={}, desc='the amount of distance traveled in this phase added as a constraint')

@@ -76,6 +76,8 @@ class AccelPhase(PhaseBuilderBase):
 
 # Adding metadata for the AccelPhase
 AccelPhase._add_meta_data(
+    'analytic', val=False, desc='this is an analytic phase (no states).')
+AccelPhase._add_meta_data(
     'reserve', val=False, desc='this phase is part of the reserve mission.')
 AccelPhase._add_meta_data(
     'target_distance', val={}, desc='the amount of distance traveled in this phase added as a constraint')

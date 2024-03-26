@@ -20,7 +20,6 @@ phase_info.update({
     'reserve_cruise': {
         'user_options': {
             'reserve': True,
-            'analytic': True,
             # 2dof cruise uses mass, not time as the integration variable
             "target_duration": (30, 'min'),
             'alt_cruise': (37.5e3, 'ft'),

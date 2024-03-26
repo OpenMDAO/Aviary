@@ -522,6 +522,18 @@ class AviaryProblem(om.Problem):
         # Then sets duration_bounds, initial_guesses, and fixed_duration
         for idx, phase_name in enumerate(self.phase_info):
             if 'user_options' in self.phase_info[phase_name]:
+                analytic = False
+                if (self.analysis_scheme is AnalysisScheme.COLLOCATION) and (self.mission_method is EquationsOfMotion.TWO_DEGREES_OF_FREEDOM):
+                    try:
+                        # if the user provided an option, use it
+                        analytic = self.phase_info[phase_name]["user_options"]['analytic']
+                    except KeyError:
+                        # if it isn't specified, only the default 2DOF cruise for collocation is analytic
+                        if 'cruise' in phase_name:
+                            analytic = self.phase_info[phase_name]["user_options"]['analytic'] = True
+                        else:
+                            analytic = self.phase_info[phase_name]["user_options"]['analytic'] = False
+
                 if 'target_duration' in self.phase_info[phase_name]["user_options"]:
                     target_duration = self.phase_info[phase_name]["user_options"]["target_duration"]
                     if target_duration[0] <= 0:
@@ -541,10 +553,9 @@ class AviaryProblem(om.Problem):
                         raise ValueError(
                             f"When specifying target_duration, fix_duration is assumed to be True. "
                             f"Unexpected fix_duration encourntered in phase_info[{phase_name}][user_options].")
-                    if 'analytic' in self.phase_info[phase_name]["user_options"] and \
-                            self.phase_info[phase_name]["user_options"]['analytic']:
-                        continue
-                    else:
+
+                    # Only applies to non-analytic phases (all HE and most 2DOF)
+                    if not analytic:
                         # Set duration_bounds and initial_guesses for time:
                         self.phase_info[phase_name]["user_options"].update({
                             "duration_bounds": ((target_duration[0], target_duration[0]), target_duration[1])})
@@ -839,6 +850,10 @@ class AviaryProblem(om.Problem):
                 phase_builder = CruisePhase
             elif 'desc' in phase_name:
                 phase_builder = DescentPhase
+            else:
+                raise ValueError(
+                    f'{phase_name} does not have an associated phase_builder \n phase_name must '
+                    'include one of: groundroll, rotation, accel, ascent, climb, cruise, or desc')
 
         if self.mission_method is HEIGHT_ENERGY:
             if 'phase_builder' in phase_options:
@@ -1496,13 +1511,8 @@ class AviaryProblem(om.Problem):
                         states_to_link.append(Dynamic.Mission.VELOCITY)
                         states_to_link.append('alpha')
 
-                    user_options1 = self.phase_info[phase1]['user_options']
-                    user_options2 = self.phase_info[phase2]['user_options']
-                    analytic1, analytic2 = False, False
-                    if 'analytic' in user_options1 and user_options1['analytic']:
-                        analytic1 = True
-                    if 'analytic' in user_options2 and user_options2['analytic']:
-                        analytic2 = True
+                    analytic1 = self.phase_info[phase1]['user_options']['analytic']
+                    analytic2 = self.phase_info[phase2]['user_options']['analytic']
 
                     for state in states_to_link:
                         temp_state = 'times' if state == 'time' else state

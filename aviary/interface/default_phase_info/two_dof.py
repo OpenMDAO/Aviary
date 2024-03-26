@@ -218,7 +218,6 @@ phase_info = {
     },
     'cruise': {
         'user_options': {
-            'analytic': True,
             'alt_cruise': (37.5e3, 'ft'),
             'mach_cruise': 0.8,
         },
