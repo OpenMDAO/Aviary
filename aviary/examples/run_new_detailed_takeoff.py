@@ -24,11 +24,7 @@ subsystem_options = {'core_aerodynamics':
 
 optimize_mach = True
 optimize_altitude = True
-
-# Currently the more complete takeoff trajectory requires SNOPT to converge.
-# If False, the takeoff trajectory will be simplified to a ground roll only
-# to ensure the methods_for_level2 API works.
-use_full_takeoff = True
+optimizer = "SNOPT"
 
 phase_info = {
     "pre_mission": {"include_takeoff": False, "optimize_mass": False},
@@ -62,7 +58,7 @@ phase_info = {
             'duration_bounds': ((200., 2.e3), 'ft'),
             'mach_bounds': ((0.18, 0.2), 'unitless'),
             'polynomial_control_order': 1,
-            'throttle_enforcement': 'path_constraint',
+            'throttle_enforcement': 'boundary_constraint',
             'optimize_mach': optimize_mach,
             'optimize_altitude': False,
             'rotation': True,
@@ -106,7 +102,7 @@ phase_info = {
             'initial_altitude': (0., 'ft'),
             'final_altitude': (50., 'ft'),
             'polynomial_control_order': 1,
-            'throttle_enforcement': 'path_constraint',
+            'throttle_enforcement': 'boundary_constraint',
             'optimize_mach': optimize_mach,
             'optimize_altitude': optimize_altitude,
             'rotation': False,
@@ -136,7 +132,7 @@ phase_info = {
             'initial_altitude': (50., 'ft'),
             'final_altitude': (985., 'ft'),
             'polynomial_control_order': 1,
-            'throttle_enforcement': 'bounded',
+            'throttle_enforcement': 'boundary_constraint',
             'optimize_mach': optimize_mach,
             'optimize_altitude': optimize_altitude,
             'constraints': {
@@ -294,7 +290,7 @@ phase_info = {
             'polynomial_control_order': 1,
             'optimize_mach': optimize_mach,
             'optimize_altitude': optimize_altitude,
-            'throttle_enforcement': 'path_constraint',
+            'throttle_enforcement': 'boundary_constraint',
             'constraints': {
                 'flight_path_angle': {
                     'equals': 4.,
@@ -325,11 +321,6 @@ phase_info = {
 }
 
 
-if not use_full_takeoff:
-    driver = "SLSQP"
-else:
-    driver = "SNOPT"
-
 prob = av.AviaryProblem()
 
 # Load aircraft and options data from user
@@ -348,7 +339,7 @@ prob.add_post_mission_systems()
 # Link phases and variables
 prob.link_phases()
 
-prob.add_driver(driver, max_iter=50)
+prob.add_driver(optimizer, max_iter=50)
 
 prob.add_design_variables()
 
