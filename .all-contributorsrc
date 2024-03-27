@@ -1,0 +1,29 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributors": [
+    {
+      "login": "dlcaldwelljr-ama-inc",
+      "name": "dlcaldwelljr-ama-inc",
+      "avatar_url": "https://avatars.githubusercontent.com/u/39774974?v=4",
+      "profile": "https://github.com/dlcaldwelljr-ama-inc",
+      "contributions": [
+        "code",
+        "infra",
+        "mentoring",
+        "review"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "skipCi": true,
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "projectName": "Aviary",
+  "projectOwner": "OpenMDAO"
+}
