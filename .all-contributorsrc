@@ -1,0 +1,27 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributors": [
+    {
+      "login": "chapman178",
+      "name": "Jeff Chapman",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2847218?v=4",
+      "profile": "https://github.com/chapman178",
+      "contributions": [
+        "code",
+        "example"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "skipCi": true,
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "projectName": "Aviary",
+  "projectOwner": "OpenMDAO"
+}
