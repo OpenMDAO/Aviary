@@ -5,7 +5,6 @@ import getpass
 import itertools
 from datetime import datetime
 from enum import Enum
-from pathlib import Path
 
 import numpy as np
 import openmdao.api as om
@@ -24,6 +23,9 @@ class EngineDeckType(Enum):
     FLOPS = 'FLOPS'
     GASP = 'GASP'
     GASP_TP = 'GASP_TP'
+
+    def __str__(self):
+        return self.value
 
 
 MACH = EngineModelVariables.MACH
@@ -98,8 +100,16 @@ def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
     data_file = get_path(input_file)
 
     comments.append(f'# created {timestamp} by {user}')
+    legacy_code = data_format.value
+    engine_type = 'engine'
+    if legacy_code == 'GASP_TP':
+        engine_type = 'turboshaft engine'
+    if legacy_code == 'GASP_TP':
+        legacy_code = 'GASP'
+
     comments.append(
         f'# {data_format.value}-derived engine deck converted from {data_file.name}')
+
     if data_format == EngineDeckType.FLOPS:
         header = {key: default_units[key] for key in flops_keys}
         data = {key: np.array([]) for key in flops_keys}
@@ -771,7 +781,7 @@ def _setup_EDC_parser(parser):
                         help='path to engine deck file to be converted')
     parser.add_argument('output_file', type=str,
                         help='path to file where new converted data will be written')
-    parser.add_argument('data_format', type=EngineDeckType, choices=list(EngineDeckType),
+    parser.add_argument('-f', '--data_format', type=EngineDeckType, choices=list(EngineDeckType),
                         help='data format used by input_file')
 
 

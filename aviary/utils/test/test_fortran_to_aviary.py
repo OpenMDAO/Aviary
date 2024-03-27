@@ -14,8 +14,7 @@ class DummyArgs(object):
         self.legacy_code = None
         self.defaults_deck = False
         self.force = False
-        self.verbose = False
-        self.very_verbose = False
+        self.verbosity = 1
 
 
 @use_tempdirs
