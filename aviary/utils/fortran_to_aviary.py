@@ -99,9 +99,9 @@ def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
     if out_file.is_file():
         if not force:
             raise RuntimeError(f'{out_file} already exists. Choose a new name or enable '
-                               '--force')  
+                               '--force')
         elif verbosity.value >= 1:
-          print(f'Overwriting existing file: {out_file.name}')
+            print(f'Overwriting existing file: {out_file.name}')
 
     else:
         # create any directories defined by the new filename if they don't already exist
