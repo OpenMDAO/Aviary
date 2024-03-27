@@ -52,10 +52,11 @@ parts:
     - file: examples/intro
     - file: examples/simple_mission_example
     - file: examples/more_advanced_example
+    - file: examples/coupled_aircraft_mission_optimization
     - file: examples/additional_flight_phases
     - file: examples/reserve_missions
-    - file: examples/coupled_aircraft_mission_optimization
     - file: examples/OAS_subsystem
+    - file: examples/level_2_detailed_takeoff_and_landing
 
 - caption: Theory Guide
   chapters:
