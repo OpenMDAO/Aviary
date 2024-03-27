@@ -10,37 +10,47 @@ When we say "detailed takeoff and landing," this simply means that we model the 
 This means two main things:
 
 - We model the takeoff portion of flight using a series of phases, such as ground roll, rotation, and multiple climb phases. Similarly, we model the landing portion of flight using a series of phases, such as approach, flare, and touchdown.
-- Instead of using the height-energy approximation for the aircraft equations of motion, we use the full two-degree-of-freedom (2DOF) equations of motion. This means that there is a notion of angle of attack and aircraft pitch within the flight dynamics equations.
+- Instead of using the height-energy approximation for the aircraft equations of motion, we use the full two-degree-of-freedom (2DOF) equations of motion. This means that there is a notion of angle of attack and aircraft pitch within the flight dynamics equations. These mission methods are both detailed in the [Mission Analysis doc page.](../theory_guide/mission.md)
 
 These considerations allow us to model specific parts of the aircraft trajectory in more detail, which is especially useful for certain performance-based disciplinary analyses, such as acoustics and controls.
 
 ## How we define the trajectories
 
-Discuss how we use phase_info to define the phases
-We generally use polynomial controls of order 1
-Any constraints that we need to add we do so in the dictionary
-We optimize mach and altitude using the optimize_mach and optimize_altitude flags
-You can choose how to enforce the throttle; either solver bounded, with boundary constraints, or path constraints
+We use the `phase_info` object to define the trajectories.
+We generally use polynomial controls of order 1 to simplify the optimization problem.
+What this means is that the control variables (Mach and altitude) are linear within one phase.
+You can increase the order of the polynomial control or set `use_polynomial_control` to `False` to have the optimizer control the values at every node.
 
-Initial guesses are important to help the optimizer converge
-These guesses are much more important for the 2DOF model than the height-energy model
+We add any constraints needed for the trajectory in the `constraints` argument passed inside of `user_options`.
+Any arbitrary variable present in the phase ODE can be constrained.
+You can use boundary or path constraints by setting the `type` argument in the constraint dict.
+
+We optimize mach and altitude using the `optimize_mach` and `optimize_altitude` flags.
+You can choose to disable optimization of these variables by setting them to `False` for any phase.
+Aviary internally handles the connections for Mach and altitude between the phases to ensure continuity in the trajectory.
+You can choose how to enforce that the throttle value is between 0 and 1; solver bounded, with boundary constraints, or path constraints.
+
+Initial guesses are important to help the optimizer converge well.
+These guesses are much more important for the 2DOF model than the height-energy model.
 
 ## Defining the takeoff trajectory
 
-We follow roughly this diagram below
+We follow the diagram below to model the takeoff trajectory, which includes the ground roll, rotation, liftoff, and climb phases.
+We add constraints at specific points in the flight to ensure we hit certain altitudes and distances needed for acoustic certification.
+We only model the takeoff portions here, not the entire mission.
+P1 and P2 correspond to microphone locations for acoustic certification.
 
-<!-- add figure -->
+```{note}
+Each of the phases modeled in the takeoff trajectory use the solved 2DOF model *except* for phase AB which uses a specific ground roll model.
+```
 
-We have ground roll, rotation, liftoff, and climb phases
-At certain points we add constraints and requirements
-We don't model the full mission here, just the takeoff portions
+![Takeoff Trajectory](images/takeoff.png)
 
 ## Defining the landing trajectory
 
-We follow roughly this diagram below
+For the landing trajectory, we also follow a diagram that outlines the approach and touchdown phases.
+This trajectory is simpler than the takeoff trajectory.
+Like with takeoff, we only simulate the landing portions, not the entire mission.
+P3 corresponds to the microphone location used for acoustic certification.
 
-<!-- add figure -->
-
-We have approach, flare, and touchdown phases
-This is much simpler than takeoff
-We don't model the full mission here, just the landing portions
+![Landing Trajectory](images/landing.png)
