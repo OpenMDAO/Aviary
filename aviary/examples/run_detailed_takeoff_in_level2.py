@@ -24,7 +24,7 @@ subsystem_options = {'core_aerodynamics':
 
 optimize_mach = True
 optimize_altitude = True
-optimizer = "SNOPT"
+optimizer = "SLSQP"
 
 phase_info = {
     "pre_mission": {"include_takeoff": False, "optimize_mass": False},
@@ -169,7 +169,7 @@ phase_info = {
             'initial_altitude': (985., 'ft'),
             'final_altitude': (1100., 'ft'),
             'polynomial_control_order': 1,
-            'throttle_enforcement': 'bounded',
+            'throttle_enforcement': 'path_constraint',
             'optimize_mach': optimize_mach,
             'optimize_altitude': optimize_altitude,
             'constraints': {
@@ -206,10 +206,10 @@ phase_info = {
             'final_mach': (0.3, 'unitless'),
             'initial_altitude': (1100., 'ft'),
             'final_altitude': (1200., 'ft'),
-            'polynomial_control_order': 1,
+            'polynomial_control_order': 2,
             'optimize_mach': optimize_mach,
             'optimize_altitude': optimize_altitude,
-            'throttle_enforcement': 'bounded',
+            'throttle_enforcement': 'path_constraint',
             'constraints': {
                 'flight_path_angle': {
                     'equals': 4.,
@@ -339,7 +339,7 @@ prob.add_post_mission_systems()
 # Link phases and variables
 prob.link_phases()
 
-prob.add_driver(optimizer, max_iter=50)
+prob.add_driver(optimizer, max_iter=25)
 
 prob.add_design_variables()
 
