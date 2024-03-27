@@ -1168,18 +1168,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.MAX_ROTOR_RPM,
-    meta_data=_MetaData,
-    historical_name={"GASP":'INGASP.XNMAX',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='rpm',
-    desc='maximum allowable rotor speed',
-    default_value=500.0,
-)
-
-add_meta_data(
     Aircraft.Design.MAX_STRUCTURAL_SPEED,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.VMLFSL',
@@ -1200,7 +1188,7 @@ add_meta_data(
                      },
     units='ft/s',
     desc='maximum allowable propeller tip speed',
-    default_value=500.0,
+    default_value=800.0,
 )
 
 add_meta_data(
@@ -1942,7 +1930,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT,
+    Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.CLI',
                      "FLOPS": None,
@@ -6184,7 +6172,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Mission.NOX_RATE_TOTAL,
+    Dynamic.Mission.NOX_RATE_TOTAL, 
     meta_data=_MetaData,
     historical_name={"GASP": None,
                      "FLOPS": None,
@@ -6192,6 +6180,18 @@ add_meta_data(
                      },
     units='lbm/h',
     desc='Current total rate of nitrous oxide (NOx) production by the vehicle'
+)
+
+add_meta_data(
+    Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='unitless',
+    desc='percent of the corrected rotor speed',
+    default_value=0.9,
 )
 
 add_meta_data(
@@ -6215,18 +6215,6 @@ add_meta_data(
                      },
     units='rpm',
     desc='the rotor speed',
-    default_value=500.0,
-)
-
-add_meta_data(
-    Dynamic.Mission.ROTOR_RPM_CORRECTED,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='rpm',
-    desc='the corrected rotor speed',
     default_value=500.0,
 )
 

@@ -573,7 +573,7 @@ class HamiltonStandard(om.ExplicitComponent):
         self.add_input('tip_mach', val=np.zeros(nn), units='unitless')
         self.add_input(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, val=0.0,
                        units='unitless')  # Actitivty Factor per Blade
-        self.add_input(Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT,
+        self.add_input(Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT,
                        val=0.0, units='unitless')  # blade integrated lift coeff
 
         self.add_output('thrust_coefficient', val=np.zeros(nn), units='unitless')
@@ -632,7 +632,7 @@ class HamiltonStandard(om.ExplicitComponent):
             # flag that given lift coeff (cli) does not fall on a node point of CL_arr
             CL_tab_idx_flg = 0  # NCL_flg
             ifnd = 0
-            cli = inputs[Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT][0]
+            cli = inputs[Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT][0]
             power_coefficient = inputs['power_coefficient'][i_node]
             for ii in range(6):
                 cl_idx = ii
@@ -720,7 +720,7 @@ class HamiltonStandard(om.ExplicitComponent):
                         CL_tab_idx = CL_tab_idx+1
                     if (CL_tab_idx_flg != 1):
                         PCLI, run_flag = _unint(
-                            CL_arr[CL_tab_idx_begin:CL_tab_idx_begin+4], PXCLI[CL_tab_idx_begin:CL_tab_idx_begin+4], inputs[Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT][0])
+                            CL_arr[CL_tab_idx_begin:CL_tab_idx_begin+4], PXCLI[CL_tab_idx_begin:CL_tab_idx_begin+4], inputs[Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT][0])
                     else:
                         PCLI = PXCLI[CL_tab_idx_begin]
                         # PCLI = CLI adjustment to power_coefficient
@@ -786,7 +786,7 @@ class HamiltonStandard(om.ExplicitComponent):
                             XFFT[kl], run_flag = _biquad(comp_mach_CT_arr, 1, DMN, CTE2)
                         CL_tab_idx = CL_tab_idx + 1
                     if (CL_tab_idx_flg != 1):
-                        cli = inputs[Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT][0]
+                        cli = inputs[Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT][0]
                         TCLII, run_flag = _unint(
                             CL_arr[CL_tab_idx_begin:CL_tab_idx_begin+4], TXCLI[CL_tab_idx_begin:CL_tab_idx_begin+4], cli)
                         xft, run_flag = _unint(
