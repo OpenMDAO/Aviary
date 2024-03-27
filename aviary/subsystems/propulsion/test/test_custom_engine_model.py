@@ -294,7 +294,7 @@ class TurbopropTest(unittest.TestCase):
         prob.set_val(
             f'traj.cruise.rhs_all.{Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR}', 150., units='unitless')
         prob.set_val(
-            f'traj.cruise.rhs_all.{Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT}', 0.5, units='unitless')
+            f'traj.cruise.rhs_all.{Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT}', 0.5, units='unitless')
 
         prob.set_solver_print(level=0)
 

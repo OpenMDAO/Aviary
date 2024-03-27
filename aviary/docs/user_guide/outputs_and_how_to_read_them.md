@@ -85,7 +85,7 @@ Reports are placed a subdirectory called `reports` under the directory where the
 
 ### Warning About the Reports Directory
 
-Repeated runs of the same script (Levels 2 and 3) or the same aircraft defintion CSV file (Level 1) will overwrite existing reports directories. So to preserve reports from previous runs, the user should make copies of the report directory before starting another run.
+Repeated runs of the same script (Levels 2 and 3) or the same aircraft definition CSV file (Level 1) will overwrite existing reports directories. So to preserve reports from previous runs, the user should make copies of the report directory before starting another run.
 
 ### Relevant Reports
 
@@ -99,7 +99,7 @@ You may notice some warning messages in the Aviary output. Frequently seen warni
 
 - PromotionWarning: Issued when there is ambiguity due to variable promotion (an [OpenMDAO warning](https://openmdao.org/newdocs/versions/latest/features/warning_control/warnings.html)).
 - RuntimeWarning: Issued for warnings about dubious runtime features (a [Python warning](https://docs.python.org/3/library/warnings.html)).
-- UserWarning: Issued for warnings about potential OpenMDAO, dymos, and/or Aviary problems.
+- UserWarning: Issued for warnings about potential OpenMDAO, Dymos, and/or Aviary problems.
 - DerivativesWarning: Issued when the approximated partials or coloring cannot be evaluated as expected (an [OpenMDAO warning](https://openmdao.org/newdocs/versions/latest/features/warning_control/warnings.html)).
 
 Users should pay attention accordingly.
@@ -115,4 +115,24 @@ In addition, users can add their own outputs.
 
 We will cover more details on all those outputs when we show concrete examples in [the onboarding docs](../getting_started/onboarding.md).
 
-Discuss when these reports are relevant and in what situations they would be used.
+### Timeseries Mission Output Report
+
+The outputs of the aircraft trajectory are outputted in a file called `mission_timeseries_data.csv` within the reports directory.
+This file contains a comma-separated list of some outputs from the mission.
+Any value that is included in the timeseries data is included in this file.
+These files are useful for post-processing and inputting the mission outputs into other tools, especially those used for acoustic analysis.
+
+```{note}
+This feature is under further development. Please let us know if you have any suggestions for functionality or improvements. This feature is not currently supported when using the shooting integration method.
+```
+
+Here is an example of the first few lines of a `mission_timeseries_data.csv` file:
+
+```{code}
+time (s),mach (unitless),thrust_net_total (lbf),drag (lbf),specific_energy_rate_excess (m/s),fuel_flow_rate_negative_total (lbm/h),altitude_rate (ft/s),throttle (unitless),velocity (m/s),time_phase (s),mach_rate (unitless/s),altitude (ft),mass (kg),distance (m)
+0.0,0.2,28478.788920867584,21108.418300418845,12.350271989430475,-10492.593707324704,8.333333333333337,0.565484286063171,68.05737270077049,0.0,0.0001354166666666668,0.0,79560.101698,1.0
+160.16130859524844,0.22168851053893995,24443.964075954416,17707.343638310154,13.681656556939739,-9195.769418149232,8.333333333333341,0.5231597651569796,75.090771635822,160.16130859524844,0.0001354166666666669,1334.6775716270722,79362.06974727994,11458.09964519708
+```
+
+If you want to add additional outputs, call `add_timeseries_output` on the phases.
+Please refer to the [Dymos documentation on timeseries outputs](https://openmdao.org/dymos/docs/latest/features/phases/timeseries.html) for more information on how to do this.
