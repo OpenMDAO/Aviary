@@ -1,0 +1,28 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributors": [
+    {
+      "login": "ehariton",
+      "name": "Eliot Aretskin-Hariton",
+      "avatar_url": "https://avatars.githubusercontent.com/u/11527849?v=4",
+      "profile": "https://github.com/ehariton",
+      "contributions": [
+        "code",
+        "fundingFinding",
+        "review"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "skipCi": true,
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "projectName": "Aviary",
+  "projectOwner": "OpenMDAO"
+}
