@@ -1,0 +1,28 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributors": [
+    {
+      "login": "Kenneth-T-Moore",
+      "name": "Kenneth Moore",
+      "avatar_url": "https://avatars.githubusercontent.com/u/867917?v=4",
+      "profile": "http://www.openmdao.org",
+      "contributions": [
+        "code",
+        "infra",
+        "review"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "skipCi": true,
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "projectName": "Aviary",
+  "projectOwner": "OpenMDAO"
+}
