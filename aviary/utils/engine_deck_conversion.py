@@ -104,11 +104,10 @@ def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
     engine_type = 'engine'
     if legacy_code == 'GASP_TP':
         engine_type = 'turboshaft engine'
-    if legacy_code == 'GASP_TP':
         legacy_code = 'GASP'
 
     comments.append(
-        f'# {data_format.value}-derived engine deck converted from {data_file.name}')
+        f'# {data_format.value}-derived {engine_type} deck converted from {data_file.name}')
 
     if data_format == EngineDeckType.FLOPS:
         header = {key: default_units[key] for key in flops_keys}
