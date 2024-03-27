@@ -6446,6 +6446,19 @@ add_meta_data(
          'tolerance)',
 )
 
+add_meta_data(
+    Mission.Constraints.RANGE_RESIDUAL_RESERVE,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='NM',
+    desc='residual to make sure aircraft reserve mission range is equal to the targeted '
+         'range, value should be zero at convergence (within acceptable '
+         'tolerance)',
+)
+
 #  _____                 _
 # |  __ \               (_)
 # | |  | |   ___   ___   _    __ _   _ __
