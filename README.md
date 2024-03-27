@@ -59,6 +59,7 @@ We have also provided a static version of the `environment.yml` at the top level
 
 Aviary is in active development.
 We plan to expand its capabilities and have provided a non-exhaustive [list of future features](https://openmdao.github.io/Aviary/misc_resources/planned_future_features.html).
+
 ## Contributors ✨
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
