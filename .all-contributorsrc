@@ -1,0 +1,30 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributors": [
+    {
+      "login": "johnjasa",
+      "name": "John Jasa",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16373529?v=4",
+      "profile": "https://github.com/johnjasa",
+      "contributions": [
+        "code",
+        "doc",
+        "example",
+        "review",
+        "video"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "skipCi": true,
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "projectName": "Aviary",
+  "projectOwner": "OpenMDAO"
+}
