@@ -215,11 +215,17 @@ def get_names_from_hierarchy(hierarchy):
     keys = list(filter(filter_underscore, list(keys)))
 
     for key in keys:
-        subclass_vars = vars(
-            getattr(hierarchy, key)
-        )  # grab dictionary of variables for the subclass
-        # filter out keys that aren't for relevant variables
-        subclass_keys = list(filter(filter_underscore, list(subclass_vars.keys())))
+        try:
+            # If there are multiple hierarchy levels, dig down one more
+            subclass_vars = vars(
+                getattr(hierarchy, key)
+            )  # grab dictionary of variables for the subclass
+            # filter out keys that aren't for relevant variables
+            subclass_keys = list(filter(filter_underscore, list(subclass_vars.keys())))
+        except TypeError:
+            # Only one hierarchy level
+            subclass_vars = vars(hierarchy)
+            subclass_keys = [key]
 
         for var_name in subclass_keys:
             names.append(
