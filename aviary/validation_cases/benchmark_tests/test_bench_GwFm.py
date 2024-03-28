@@ -360,7 +360,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         _clear_problem_names()  # need to reset these to simulate separate runs
 
     @require_pyoptsparse(optimizer="IPOPT")
-    def bench_test_swap_1_GwFm(self):
+    def bench_test_swap_1_GwFm_IPOPT(self):
         prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwFm.csv', self.phase_info,
                           max_iter=50, optimizer='IPOPT', verbosity=Verbosity.QUIET)
 
@@ -377,4 +377,5 @@ class ProblemPhaseTestCase(unittest.TestCase):
 if __name__ == '__main__':
     test = ProblemPhaseTestCase()
     test.setUp()
+    test.bench_test_swap_1_GwFm_IPOPT()
     test.bench_test_swap_1_GwFm_SNOPT()

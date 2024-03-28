@@ -8,7 +8,6 @@ Here we have climb, cruise, and descent phases.
 We then call the correct methods in order to set up and run an Aviary optimization problem.
 This performs a coupled design-mission optimization and outputs the results from Aviary into the `reports` folder.
 """
-import openmdao.api as om
 import aviary.api as av
 from aviary.interface.default_phase_info.two_dof import phase_info
 from copy import deepcopy
