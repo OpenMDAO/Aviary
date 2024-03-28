@@ -10,6 +10,7 @@ Reserve missions are enabled for the following mission types:
 
 A reserve mission can be created by appending one or more reserve phases to `phase_info` after the last phase of the regular mission. 
 To create a simple reserve mission, copy your current cruise phase which is located in `phase_info`. 
+(Note: You may need to revise some of your assumptions for the copied phase if you are making a reserve phase that is radically different than the original (i.e. original phase was to travel 3000km but reserve phase is 100km)).
 Append that phase to the end of `phase_info`, name it `reserve_cruise` and add `"reserve": True,` to `user_options` for this phase.
 There are two optional flags that can now be added to `user_options`.
 The `"target_duration"` option creates a phase requiring the aircraft to fly for a specific amount of time.
@@ -58,7 +59,7 @@ It is essential that you run `prob.check_and_preprocess_inputs()` after `prob.lo
 
 ### Advanced Users and Target Duration Phases 
 For advanced users, instead of just copying a phase you used before, you might completely specify a new phase from scratch. 
-When creating a `"target_duration"` reserve phase there are a number of values inside of `phase_info['user_options']` that are overwritten in `methods_for_level_2.py`. 
+When creating a `"target_duration"` reserve phase there are a number of values inside of `phase_info['user_options']` that are overwritten in `check_and_preprocess_inputs()`. 
 Specifically, `duration_bounds`, `fixed_duration`, and `"initial_guesses": {"times"}` will be over-written. 
 That is because if `"target_duration"` is specified, Aviary already know what these other three values should be: `target_duration = duration_bounds = "initial_guesses": {"times"}`, and `fixed_duration = True`.
 
