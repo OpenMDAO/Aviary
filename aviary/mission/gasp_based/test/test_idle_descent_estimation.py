@@ -33,29 +33,29 @@ class IdleDescentTestCase(unittest.TestCase):
         self.aviary_inputs = aviary_inputs
         self.tol = 1e-5
 
-    # def test_case1(self):
+    def test_case1(self):
 
-    #     results = descent_range_and_fuel(ode_args=self.ode_args)['refined_guess']
+        results = descent_range_and_fuel(ode_args=self.ode_args)['refined_guess']
 
-    #     # Values obtained by running idle_descent_estimation
-    #     assert_near_equal(results['distance_flown'], 91.8911599691433, self.tol)
-    #     assert_near_equal(results['fuel_burned'], 236.73893823639082, self.tol)
+        # Values obtained by running idle_descent_estimation
+        assert_near_equal(results['distance_flown'], 91.8911599691433, self.tol)
+        assert_near_equal(results['fuel_burned'], 236.73893823639082, self.tol)
 
-    def test_subproblem(self):
-        prob = om.Problem()
-        prob.model = om.Group()
+    # def test_subproblem(self):
+    #     prob = om.Problem()
+    #     prob.model = om.Group()
 
-        descent_phases = create_2dof_based_descent_phases(
-            self.ode_args,
-            cruise_mach=.8)
+    #     descent_phases = create_2dof_based_descent_phases(
+    #         self.ode_args,
+    #         cruise_mach=.8)
 
-        add_descent_estimation_as_submodel(prob, descent_phases)
+    #     add_descent_estimation_as_submodel(prob, descent_phases)
 
-        prob.setup()
-        om.n2(prob, 'idle_descent_n2.html', show_browser=False)
-        prob.run_model()
-        prob.get_val('descent_range', 'NM')
-        prob.get_val('descent_fuel', 'lbm')
+    #     prob.setup()
+    #     om.n2(prob, 'idle_descent_n2.html', show_browser=False)
+    #     prob.run_model()
+    #     prob.get_val('descent_range', 'NM')
+    #     prob.get_val('descent_fuel', 'lbm')
 
 
 if __name__ == "__main__":

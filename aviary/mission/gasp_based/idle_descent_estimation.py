@@ -5,6 +5,9 @@ import openmdao.api as om
 from aviary.interface.default_phase_info.two_dof_fiti import create_2dof_based_descent_phases
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic
+from aviary.utils.functions import promote_aircraft_and_mission_vars, set_aviary_initial_values
+from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
+from aviary.variable_info.variables_in import VariablesIn
 
 
 def descent_range_and_fuel(
@@ -135,6 +138,7 @@ def add_descent_estimation_as_submodel(
             Dynamic.Mission.DISTANCE,
             Dynamic.Mission.ALTITUDE,
         ],
+        promote_all_auto_ivc=True,
     )
 
     model = om.Group()
@@ -159,7 +163,7 @@ def add_descent_estimation_as_submodel(
 
     model.add_subsystem(
         'traj', traj,
-        promotes_inputs=['altitude_initial', 'mass_initial'],
+        promotes_inputs=['altitude_initial', 'mass_initial', 'aircraft:*'],
         promotes_outputs=['mass_final', 'distance_final'],
     )
 
@@ -217,12 +221,25 @@ def add_descent_estimation_as_submodel(
     elif isinstance(cruise_alt, (int, float)):
         model.set_input_defaults('altitude_initial', cruise_alt)
 
+    aviary_inputs = main_prob.aviary_inputs
+
+    model.add_subsystem(
+        'input_sink',
+        VariablesIn(aviary_options=aviary_inputs,
+                    meta_data=BaseMetaData),
+        promotes_inputs=['*'],
+        promotes_outputs=['*'])
+
+    promote_aircraft_and_mission_vars(model)
+    set_aviary_initial_values(model, aviary_inputs, BaseMetaData)
+
     subprob = om.Problem(model=model)
     subcomp = om.SubmodelComp(
         problem=subprob,
         inputs=[
-            Aircraft.Design.EMPTY_MASS,
-            Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS,
+            # Aircraft.Design.EMPTY_MASS,
+            # Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS,
+            'aircraft:*'
         ],
         outputs=['distance_final', 'descent_fuel'])
 
@@ -236,3 +253,4 @@ def add_descent_estimation_as_submodel(
         ],
 
     )
+    set_aviary_initial_values(main_prob.model, aviary_inputs, BaseMetaData)

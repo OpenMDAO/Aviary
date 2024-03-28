@@ -655,11 +655,11 @@ class AviaryProblem(om.Problem):
                 Mission.Design.CRUISE_ALTITUDE, ])
         add_opts2vals(self.model, OptionsToValues, self.aviary_inputs)
 
-        if self.analysis_scheme is AnalysisScheme.SHOOTING:
-            add_descent_estimation_as_submodel(
-                self,
-                ode_args=self.ode_args,
-                initial_mass=Mission.Summary.GROSS_MASS)
+        # if self.analysis_scheme is AnalysisScheme.SHOOTING:
+        #     add_descent_estimation_as_submodel(
+        #         self,
+        #         ode_args=self.ode_args,
+        #         initial_mass=Mission.Summary.GROSS_MASS)
 
         # Add thrust-to-weight ratio subsystem
         self.model.add_subsystem(
@@ -1040,19 +1040,19 @@ class AviaryProblem(om.Problem):
             # add_descent_estimation_as_submodel(self, descent_phases)
             # print('finished idle descent')
 
-            # descent_estimation = descent_range_and_fuel(
-            #     phases=descent_phases,
-            #     initial_mass=initial_mass,
-            #     cruise_alt=self.cruise_alt,
-            #     cruise_mach=self.cruise_mach,
-            #     # reserve_fuel=
-            # )
+            descent_estimation = descent_range_and_fuel(
+                phases=descent_phases,
+                initial_mass=initial_mass,
+                cruise_alt=self.cruise_alt,
+                cruise_mach=self.cruise_mach,
+                # reserve_fuel=
+            )
 
-            # estimated_descent_range = descent_estimation['refined_guess']['distance_flown']
-            # end_of_cruise_range = self.target_range - estimated_descent_range
+            estimated_descent_range = descent_estimation['refined_guess']['distance_flown']
+            end_of_cruise_range = self.target_range - estimated_descent_range
 
             # based on reserve_fuel
-            # estimated_descent_fuel = descent_estimation['refined_guess']['fuel_burned']
+            estimated_descent_fuel = descent_estimation['refined_guess']['fuel_burned']
 
             cruise_kwargs = dict(
                 input_speed_type=SpeedType.MACH,
@@ -1065,7 +1065,7 @@ class AviaryProblem(om.Problem):
             )
             cruise_vals = {
                 'mach': {'val': self.cruise_mach, 'units': cruise_kwargs['input_speed_units']},
-                # 'descent_fuel': {'val': estimated_descent_fuel, 'units': 'lbm'},
+                'descent_fuel': {'val': estimated_descent_fuel, 'units': 'lbm'},
             }
 
             phases = {
@@ -2026,7 +2026,7 @@ class AviaryProblem(om.Problem):
 
             if self.mission_method is TWO_DEGREES_OF_FREEDOM and \
                     'analytic' in self.phase_info[phase_name]["user_options"] and \
-            self.phase_info[phase_name]["user_options"]['analytic']:
+                self.phase_info[phase_name]["user_options"]['analytic']:
                 for guess_key, guess_data in guesses.items():
                     val, units = guess_data
 
@@ -2346,7 +2346,7 @@ class AviaryProblem(om.Problem):
             om.n2(
                 self,
                 outfile='temp_n2.html',
-                show_browser=True,
+                show_browser=False,
             )
 
         if suppress_solver_print:
