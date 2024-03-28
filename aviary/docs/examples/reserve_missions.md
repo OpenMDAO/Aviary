@@ -1,4 +1,8 @@
 # Reserve Mission Examples
+The reserve mission examples are broken up into two sections: height-energy missions, and 2DOF missions. 
+By defualt Aviary uses a height-energy formulation unless you have specified otherwise.
+Single phase reserves for fixed-time and fixed-range will be presented as well as an example of a multiphase reserve mission.
+An overview of how to formulate a reserve mission is presented in [Reserve Mission User Guide](../user_guide/reserve_missions.md). 
 
 ## Fixed Range Reserve
 
@@ -38,7 +42,3 @@ All of these reserve phases are tagged with `"reserve": True,`.
 Results from this mission can be seen in the figure below.
 ![Multiphase](images/multiphase_reserve.png "Distance vs. Time for Multiphase Reserve Example")
 There are three distinct cruise segments and the added reserve climb and reserve descent show a more realistic flight profile for a diverted aircraft.
-
-## More Reading
-
-An overview of reserve missions is presented in [Reserve Mission User Guide](../user_guide/reserve_missions.md).

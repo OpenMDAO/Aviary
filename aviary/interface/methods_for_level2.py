@@ -486,10 +486,8 @@ class AviaryProblem(om.Problem):
                             f"Invalid target_distance in [{phase_name}].[user_options]. "
                             f"Current (value: {target_distance[0]}), (units: {target_distance[1]}) <= 0")
 
-        # target_duration verification for all phases
         # Checks to make sure target_duration is positive,
-        # duration_bounds and initial_guesses for time have not been set,
-        # Then sets duration_bounds, initial_guesses, and fixed_duration
+        # Sets duration_bounds, initial_guesses, and fixed_duration
         for idx, phase_name in enumerate(self.phase_info):
             if 'user_options' in self.phase_info[phase_name]:
                 analytic = False
@@ -510,19 +508,6 @@ class AviaryProblem(om.Problem):
                         raise ValueError(
                             f"Invalid target_duration in phase_info[{phase_name}][user_options]. "
                             f"Current (value: {target_duration[0]}), (units: {target_duration[1]}) <= 0")
-                    if 'duration_bounds' in self.phase_info[phase_name]["user_options"]:
-                        raise ValueError(
-                            f"When specifying target_duration, duration_bounds for time should be removed. "
-                            f"Unexpected duration_bounds encountered in phase_info[{phase_name}][user_options].")
-                    if 'initial_guesses' in self.phase_info[phase_name]:
-                        if 'times' in self.phase_info[phase_name]['initial_guesses']:
-                            raise ValueError(
-                                f"When specifying target_duration, initial_guesses for times should be removed. "
-                                f"Unexpected initial_guesses.times encountered in phase_info[{phase_name}][initial_guesses].")
-                    if 'fix_duration' in self.phase_info[phase_name]["user_options"]:
-                        raise ValueError(
-                            f"When specifying target_duration, fix_duration is assumed to be True. "
-                            f"Unexpected fix_duration encourntered in phase_info[{phase_name}][user_options].")
 
                     # Only applies to non-analytic phases (all HE and most 2DOF)
                     if not analytic:
