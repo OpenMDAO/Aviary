@@ -1502,14 +1502,19 @@ class AviaryProblem(om.Problem):
                     )
 
                 for ii in range(len(phases)-1):
+                    # we always want time, distance, and mass to be continuous
                     states_to_link = [
                         'time', Dynamic.Mission.DISTANCE, Dynamic.Mission.MASS]
 
                     phase1 = phases[ii]
                     phase2 = phases[ii+1]
+                    # if both phases are reserve phases or neither is a reserve phase
+                    # (we are not on the boundary between the regular and reserve missions)
+                    # and neither phase is ground roll: we want altitude to be continous as well
                     if ((phase1 in self.reserve_phases) == (phase2 in self.reserve_phases)) and \
                             not ('groundroll' in (phase1, phase2)):
                         states_to_link.append(Dynamic.Mission.ALTITUDE)
+                    # if either phase is rotation, we need to connect velocity and alpha
                     if phase1 == 'rotation' or phase2 == 'rotation':
                         states_to_link.append(Dynamic.Mission.VELOCITY)
                         states_to_link.append('alpha')
@@ -1518,9 +1523,12 @@ class AviaryProblem(om.Problem):
                     analytic2 = self.phase_info[phase2]['user_options']['analytic']
 
                     for state in states_to_link:
+                        # in initial guesses, all of the states, other than time us the same name
                         temp_state = 'times' if state == 'time' else state
                         initial_guesses1 = self.phase_info[phase1]['initial_guesses']
                         initial_guesses2 = self.phase_info[phase2]['initial_guesses']
+
+                        # if a state is in the initial guesses, get the units of the initial guess
                         units1, units2 = True, True
                         if temp_state in initial_guesses1:
                             units1 = initial_guesses1[temp_state][-1]
@@ -1528,15 +1536,21 @@ class AviaryProblem(om.Problem):
                             units2 = initial_guesses2[temp_state][-1]
                         else:
                             units1 = units2 = True
+
+                        # if neither phase is analytic and the units of the initial guesses match we can use link_phases
                         if not (analytic1 or analytic2) and (units1 == units2):
                             if state == 'alpha':
+                                # alpha is always connected with a constraint
                                 connected = False
                             else:
+                                # we can't use connected=True if we are running in parallel, but we usually want it
                                 connected = true_unless_mpi
                             self.traj.link_phases(
                                 [phase1, phase2], [state], connected=connected)
 
+                        # if either phase is analytic or the units of the intial guesses don't match, we have to use a linkage_constraint
                         else:
+                            # analytic phases use the prefix "initial" for time and distance, but not mass
                             if analytic2:
                                 prefix = 'initial_'
                             else:
