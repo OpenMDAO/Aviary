@@ -477,7 +477,8 @@ class Aircraft:
         AVERAGE_CHORD = 'aircraft:wing:average_chord'
         BENDING_FACTOR = 'aircraft:wing:bending_factor'
         BENDING_MASS = 'aircraft:wing:bending_mass'
-        BENDING_MASS_NO_INERTIA = 'aircraft:wing:bending_mass_no_inertia'
+        # Not defined in metadata!
+        # BENDING_MASS_NO_INERTIA = 'aircraft:wing:bending_mass_no_inertia'
         BENDING_MASS_SCALER = 'aircraft:wing:bending_mass_scaler'
         BWB_AFTBODY_MASS = 'aircraft:wing:bwb_aft_body_mass'
         BWB_AFTBODY_MASS_SCALER = 'aircraft:wing:bwb_aft_body_mass_scaler'
