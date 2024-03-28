@@ -13,7 +13,6 @@ from aviary.examples.example_phase_info import phase_info
 from copy import deepcopy
 
 phase_info = deepcopy(phase_info)
-
 # Add reserve phase(s)
 phase_info.update({
     "reserve_climb": {
