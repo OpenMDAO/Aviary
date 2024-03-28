@@ -14,33 +14,137 @@ from copy import deepcopy
 
 phase_info = deepcopy(phase_info)
 
-# Copy the current climb, cruise, and descent phases, then make them reserve phases
-reserve_phase_0 = deepcopy(phase_info['climb'])
-reserve_phase_0['user_options']['reserve'] = True
-
-reserve_phase_1 = deepcopy(phase_info['cruise'])
-reserve_phase_1['user_options']['reserve'] = True
-reserve_phase_1['user_options']['target_distance'] = (200, 'km')
-
-reserve_phase_2 = deepcopy(phase_info['cruise'])
-reserve_phase_2['user_options']['reserve'] = True
-reserve_phase_2['user_options']['target_duration'] = (45, 'min')
-
-reserve_phase_3 = deepcopy(phase_info['cruise'])
-reserve_phase_3['user_options']['reserve'] = True
-reserve_phase_3['user_options']['target_distance'] = (100, 'km')
-
-reserve_phase_4 = deepcopy(phase_info['descent'])
-reserve_phase_4['user_options']['reserve'] = True
-
-# Add the reserve phase to phase_info
-phase_info.update(
-    {'reserve_climb': reserve_phase_0},
-    {'reserve_cruise_fixed_range': reserve_phase_1},
-    {'reserve_cruise_fixed_time': reserve_phase_2},
-    {'reserve_cruise_fixed_range2': reserve_phase_3},
-    {'reserve_descent': reserve_phase_4}
-)
+# Add reserve phase(s)
+phase_info.update({
+    "reserve_climb": {
+        "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
+        "user_options": {
+            "reserve": True,
+            "optimize_mach": False,
+            "optimize_altitude": False,
+            "polynomial_control_order": 1,
+            "num_segments": 5,
+            "order": 3,
+            "solve_for_distance": False,
+            "initial_mach": (0.36, "unitless"),
+            "final_mach": (0.72, "unitless"),
+            "mach_bounds": ((0.18, 0.74), "unitless"),
+            "initial_altitude": (0.0, "ft"),
+            "final_altitude": (32000.0, "ft"),
+            "altitude_bounds": ((0.0, 32000.0), "ft"),
+            "throttle_enforcement": "path_constraint",
+            "fix_initial": True,
+            "constrain_final": False,
+            "fix_duration": False,
+            "initial_bounds": ((0.0, 0.0), "min"),
+            "duration_bounds": ((64.0, 192.0), "min"),
+        },
+        "initial_guesses": {"times": ([0, 128], "min")},
+    },
+    "reserve_cruise_fixed_range": {
+        "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
+        "user_options": {
+            "reserve": True,
+            # Distance traveled in this phase
+            "target_distance": (200, 'km'),
+            "optimize_mach": False,
+            "optimize_altitude": False,
+            "polynomial_control_order": 1,
+            "num_segments": 5,
+            "order": 3,
+            "solve_for_distance": False,
+            "initial_mach": (0.72, "unitless"),
+            "final_mach": (0.72, "unitless"),
+            "mach_bounds": ((0.7, 0.74), "unitless"),
+            "initial_altitude": (32000.0, "ft"),
+            "final_altitude": (32000.0, "ft"),
+            "altitude_bounds": ((23000.0, 38000.0), "ft"),
+            "throttle_enforcement": "boundary_constraint",
+            "fix_initial": False,
+            "constrain_final": False,
+            "fix_duration": False,
+            "initial_bounds": ((149.5, 448.5), "min"),
+            "duration_bounds": ((0, 300), "min"),
+        },
+        "initial_guesses": {"times": ([30, 120], "min")},
+    },
+    "reserve_cruise_fixed_time": {
+        "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
+        "user_options": {
+            "reserve": True,
+            # Time length of this phase
+            "target_duration": (45, "min"),
+            "optimize_mach": False,
+            "optimize_altitude": False,
+            "polynomial_control_order": 1,
+            "num_segments": 5,
+            "order": 3,
+            "solve_for_distance": False,
+            "initial_mach": (0.72, "unitless"),
+            "final_mach": (0.72, "unitless"),
+            "mach_bounds": ((0.7, 0.74), "unitless"),
+            "initial_altitude": (32000.0, "ft"),
+            "final_altitude": (32000.0, "ft"),
+            "altitude_bounds": ((23000.0, 38000.0), "ft"),
+            "throttle_enforcement": "boundary_constraint",
+            "fix_initial": False,
+            "constrain_final": False,
+            "initial_bounds": ((149.5, 448.5), "min"),
+        },
+    },
+    "reserve_cruise_fixed_range_2": {
+        "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
+        "user_options": {
+            "reserve": True,
+            # Distance traveled in this phase
+            "target_distance": (100, 'km'),
+            "optimize_mach": False,
+            "optimize_altitude": False,
+            "polynomial_control_order": 1,
+            "num_segments": 5,
+            "order": 3,
+            "solve_for_distance": False,
+            "initial_mach": (0.72, "unitless"),
+            "final_mach": (0.72, "unitless"),
+            "mach_bounds": ((0.7, 0.74), "unitless"),
+            "initial_altitude": (32000.0, "ft"),
+            "final_altitude": (32000.0, "ft"),
+            "altitude_bounds": ((23000.0, 38000.0), "ft"),
+            "throttle_enforcement": "boundary_constraint",
+            "fix_initial": False,
+            "constrain_final": False,
+            "fix_duration": False,
+            "initial_bounds": ((149.5, 448.5), "min"),
+            "duration_bounds": ((0, 300), "min"),
+        },
+        "initial_guesses": {"times": ([30, 120], "min")},
+    },
+    "reserve_descent": {
+        "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
+        "user_options": {
+            "reserve": True,
+            "optimize_mach": False,
+            "optimize_altitude": False,
+            "polynomial_control_order": 1,
+            "num_segments": 5,
+            "order": 3,
+            "solve_for_distance": False,
+            "initial_mach": (0.72, "unitless"),
+            "final_mach": (0.36, "unitless"),
+            "mach_bounds": ((0.34, 0.74), "unitless"),
+            "initial_altitude": (32000.0, "ft"),
+            "final_altitude": (500.0, "ft"),
+            "altitude_bounds": ((0.0, 32000.0), "ft"),
+            "throttle_enforcement": "path_constraint",
+            "fix_initial": False,
+            "constrain_final": True,
+            "fix_duration": False,
+            "initial_bounds": ((120.5, 361.5), "min"),
+            "duration_bounds": ((29.0, 87.0), "min"),
+        },
+        "initial_guesses": {"times": ([241, 58], "min")},
+    }
+})
 
 prob = av.AviaryProblem()
 
