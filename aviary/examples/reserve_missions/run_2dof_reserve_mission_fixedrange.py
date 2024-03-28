@@ -15,23 +15,12 @@ from copy import deepcopy
 phase_info = deepcopy(phase_info)
 
 # Add reserve phase(s)
-phase_info.update({
-    'reserve_cruise': {
-        'user_options': {
-            'reserve': True,
-            "target_distance": (200, 'km'),
-            'alt_cruise': (37.5e3, 'ft'),
-            'mach_cruise': 0.8,
-        },
-        'initial_guesses': {
-            # [Initial mass, delta mass] for special cruise phase.
-            'mass': ([171481., -35000], 'lbm'),
-            'initial_distance': (200.e3, 'ft'),
-            'initial_time': (1516., 's'),
-            'altitude': (37.5e3, 'ft'),
-            'mach': (0.8, 'unitless'),
-        }
-    }})
+reserve_cruise = deepcopy(phase_info['cruise'])
+reserve_cruise['user_options']['reserve'] = True
+reserve_cruise['user_options']['target_distance'] = (200, 'km')
+reserve_cruise['initial_guesses']['initial_distance'] = (3700, 'nmi')
+
+phase_info.update({'reserve_cruise': reserve_cruise})
 
 prob = av.AviaryProblem()
 
