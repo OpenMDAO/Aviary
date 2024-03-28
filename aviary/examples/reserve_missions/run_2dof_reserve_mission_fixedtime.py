@@ -56,5 +56,3 @@ prob.setup()
 prob.set_initial_guesses()
 
 prob.run_aviary_problem()
-
-om.n2(prob, 'n2_reserve_time.html', show_browser=False)
