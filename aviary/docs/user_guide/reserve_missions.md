@@ -7,6 +7,7 @@ Reserve missions are enabled for the following mission types:
 * height_energy    (completed)
 * 2ODF (collocation) (complete)
 * 2DOF (shooting)    (in-progress)
+* height_energy (shooting)    (ifuture work)
 
 A reserve mission can be created by appending one or more reserve phases to `phase_info` after the last phase of the regular mission. 
 To create a simple reserve mission, copy your current cruise phase which is located in `phase_info`. 
@@ -19,7 +20,7 @@ Avoid using the optional flag if you have a reserve phase (i.e climb or descent)
 The optional flags should not be combined as they will create overlapping constraints creating an infeasible problem.
 
 You can chain together multiple reserve phases to make a complete reserve mission (i.e. climb to altitude, cruise for range, cruise for time, then descend).
-An example of this is shown in the example file `run_reserve_mission_multiphase_time_and_range.py`.
+Examples of this are shown in `run_reserve_mission_multiphase.py` and `run_2dof_reserve_mission_multiphase.py`.
 
 The reserve phases will start at the same range and mass as the last regular phases, but all other states (i.e. altitude, mach number) are not automatically connected.
 Thus you can fly climb, cruise, descent for regular phases and then immediately jump to an arbitrary altitude for the reserve mission.
@@ -43,13 +44,13 @@ Do not worry about phase naming if you are using Height-Energy EOM as all those 
 
 When adding a reserve phase, `check_and_preprocess_inputs()` divides all the phases into two dictionaries: `regular_phases` which contain your nominal phases and `reserve_phases` which contains any phases with the `reserve` flag set to `True`.
 Additionally, `check_and_preprocess_inputs()` will add the `"analytic"` flag to each phase.
-This is used to indicate if a phase is an analytic phase (i.e. briguet range) or a ordinary differential equation (ODE).
+This is used to indicate if a phase is an analytic phase (i.e. Breguet range) or a ordinary differential equation (ODE).
 
 Only the final mission mass and range from `regular_phases` are automatically connected to the first point of the `reserve_phases`.
 All other state variables (i.e. altitude, mach) are not automatically connected, allowing you to start the reserve mission at whatever altitude you want.
 
-The `"analytic"` flag helps to perly connect phases for 2DOF missions. 
-2DOF `cruise` missions are analytic because they use briguet range calculation instead of integrating an EOM. 
+The `"analytic"` flag helps to properly connect phases for 2DOF missions. 
+2DOF `cruise` missions are analytic because they use a Breguet range calculation instead of integrating an EOM. 
 Analytic phases have a slightly different naming convention in order to access state/timeseries variables like distance, mass, and range compared with their non-analytic counterparts.
 
 You cannot create a reserve mission that enforces time or range constraints over multiple phases (i.e specify the total range covered by a climb + cruise + descent).
@@ -61,7 +62,7 @@ It is essential that you run `prob.check_and_preprocess_inputs()` after `prob.lo
 For advanced users, instead of just copying a phase you used before, you might completely specify a new phase from scratch. 
 When creating a `"target_duration"` reserve phase there are a number of values inside of `phase_info['user_options']` that are overwritten in `check_and_preprocess_inputs()`. 
 Specifically, `duration_bounds`, `fixed_duration`, and `"initial_guesses": {"times"}` will be over-written. 
-That is because if `"target_duration"` is specified, Aviary already know what these other three values should be: `target_duration = duration_bounds = "initial_guesses": {"times"}`, and `fixed_duration = True`.
+That is because if `"target_duration"` is specified, Aviary already knows what these other three values need to be: `target_duration = duration_bounds = "initial_guesses": {"times"}`, and `fixed_duration = True`.
 
 ### Fuel Burn Calculations
 
