@@ -1182,7 +1182,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.MAX_TIP_SPEED,
     meta_data=_MetaData,
-    historical_name={"GASP":'INGASP.TSPDMX',
+    historical_name={"GASP": 'INGASP.TSPDMX',
                      "FLOPS": None,
                      "LEAPS1": None
                      },
@@ -6183,7 +6183,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Mission.NOX_RATE_TOTAL, 
+    Dynamic.Mission.NOX_RATE_TOTAL,
     meta_data=_MetaData,
     historical_name={"GASP": None,
                      "FLOPS": None,
