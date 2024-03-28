@@ -608,7 +608,6 @@ class Dynamic:
         NOX_RATE_TOTAL = 'nox_rate_total'
         PERCENT_ROTOR_RPM_CORRECTED = 'percent_rotor_rpm_corrected'
         PROPELLER_TIP_SPEED = 'propeller_tip_speed'
-        ROTOR_RPM = 'rotor_rpm'
         SHAFT_POWER = 'shaft_power'
         SHAFT_POWER_CORRECTED = 'shaft_power_corrected'
         SPECIFIC_ENERGY = 'specific_energy'
