@@ -56,6 +56,12 @@ This is because each constraint `"target_distance"` or `"target_time"` is only e
 
 It is essential that you run `prob.check_and_preprocess_inputs()` after `prob.load_inputs()` to make sure that regular and reserve phases are separated via `phase_separator()`.
 
+### Advanced Users and Target Duration Phases 
+For advanced users, instead of just copying a phase you used before, you might completely specify a new phase from scratch. 
+When creating a `"target_duration"` reserve phase there are a number of values inside of `phase_info['user_options']` that are overwritten in `methods_for_level_2.py`. 
+Specifically, `duration_bounds`, `fixed_duration`, and `"initial_guesses": {"times"}` will be over-written. 
+That is because if `"target_duration"` is specified, Aviary already know what these other three values should be: `target_duration = duration_bounds = "initial_guesses": {"times"}`, and `fixed_duration = True`.
+
 ### Fuel Burn Calculations
 
 Fuel burn during the regular mission (`Mission.Summary.FUEL_BURNED`) is calculated only based on `regular_phases`.
