@@ -612,7 +612,6 @@ class AviaryProblem(om.Problem):
 
         if self.analysis_scheme is AnalysisScheme.SHOOTING:
             self._add_fuel_reserve_component(post_mission=False)
-        # if self.analysis_scheme is AnalysisScheme.SHOOTING:
         #     add_descent_estimation_as_submodel(
         #         self,
         #         ode_args=self.ode_args,
@@ -1465,7 +1464,7 @@ class AviaryProblem(om.Problem):
                     phase2 = phases[ii+1]
                     # if both phases are reserve phases or neither is a reserve phase
                     # (we are not on the boundary between the regular and reserve missions)
-                    # and neither phase is ground roll: we want altitude to be continous as well
+                    # and neither phase is ground roll (altitude isn't a state): we want altitude to be continous as well
                     if ((phase1 in self.reserve_phases) == (phase2 in self.reserve_phases)) and \
                             not ('groundroll' in (phase1, phase2)):
                         states_to_link.append(Dynamic.Mission.ALTITUDE)
@@ -1478,7 +1477,7 @@ class AviaryProblem(om.Problem):
                     analytic2 = self.phase_info[phase2]['user_options']['analytic']
 
                     for state in states_to_link:
-                        # in initial guesses, all of the states, other than time us the same name
+                        # in initial guesses, all of the states, other than time use the same name
                         temp_state = 'times' if state == 'time' else state
                         initial_guesses1 = self.phase_info[phase1]['initial_guesses']
                         initial_guesses2 = self.phase_info[phase2]['initial_guesses']

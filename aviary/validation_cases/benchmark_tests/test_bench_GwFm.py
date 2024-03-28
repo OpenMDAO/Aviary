@@ -364,6 +364,9 @@ class ProblemPhaseTestCase(unittest.TestCase):
         prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwFm.csv', self.phase_info,
                           max_iter=50, optimizer='IPOPT', verbosity=Verbosity.QUIET)
 
+        # expected_dict['times'][-1] is failing here
+        # the optimization is running out of iterations (both before and after this PR),
+        # so maybe it just isn't converged enough in either case?
         compare_against_expected_values(prob, self.expected_dict)
 
     @require_pyoptsparse(optimizer="SNOPT")
