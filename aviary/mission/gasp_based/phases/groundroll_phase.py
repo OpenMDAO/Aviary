@@ -71,6 +71,7 @@ class GroundrollPhase(PhaseBuilderBase):
         # the final TAS is constrained externally to define the transition to the rotation
         # phase
 
+        phase.add_timeseries_output("time", units="s", output_name="time")
         phase.add_timeseries_output(Dynamic.Mission.THRUST_TOTAL, units="lbf")
 
         phase.add_timeseries_output("normal_force")

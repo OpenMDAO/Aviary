@@ -1918,7 +1918,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT,
+    Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.CLI',
                      "FLOPS": None,
@@ -6126,6 +6126,17 @@ add_meta_data(
 )
 
 add_meta_data(
+    Dynamic.Mission.MACH_RATE,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='unitless',
+    desc='Current rate at which the Mach number of the vehicle is changing'
+)
+
+add_meta_data(
     Dynamic.Mission.MASS,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -6173,13 +6184,25 @@ add_meta_data(
 add_meta_data(
     Dynamic.Mission.PROPELLER_TIP_SPEED,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.TSPDMX',
+    historical_name={"GASP": None,
                      "FLOPS": None,
                      "LEAPS1": None
                      },
     units='ft/s',
-    desc='maximum allowable propeller tip speed',
+    desc='propeller tip speed',
     default_value=500.0,
+)
+
+add_meta_data(
+    Dynamic.Mission.SPECIFIC_ENERGY,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='m/s',
+    desc='Rate of change in specific energy (energy per unit weight) of the vehicle at current '
+         'flight condition'
 )
 
 add_meta_data(
@@ -6419,6 +6442,19 @@ add_meta_data(
                      },
     units='NM',
     desc='residual to make sure aircraft range is equal to the targeted '
+         'range, value should be zero at convergence (within acceptable '
+         'tolerance)',
+)
+
+add_meta_data(
+    Mission.Constraints.RANGE_RESIDUAL_RESERVE,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='NM',
+    desc='residual to make sure aircraft reserve mission range is equal to the targeted '
          'range, value should be zero at convergence (within acceptable '
          'tolerance)',
 )
@@ -7476,7 +7512,7 @@ add_meta_data(
     desc='Sets how much information Aviary outputs when run. Options include:'
          '0. QUIET: All output except errors are suppressed'
          '1. BRIEF: Only important information is output, in human-readable format'
-         '2. VERBOSE: All avaliable informating is output, in human-readable format'
+         '2. VERBOSE: All avaliable information is output, in human-readable format'
          '3. DEBUG: Intermediate status and calculation outputs, no formatting requirement',
     option=True,
     types=Verbosity,

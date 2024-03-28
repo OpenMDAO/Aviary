@@ -3,7 +3,6 @@ from aviary.mission.initial_guess_builders import InitialGuessState, InitialGues
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
 from aviary.mission.gasp_based.ode.breguet_cruise_ode import BreguetCruiseODESolution
-from aviary.variable_info.variable_meta_data import _MetaData
 
 
 class CruisePhase(PhaseBuilderBase):
@@ -11,7 +10,7 @@ class CruisePhase(PhaseBuilderBase):
     A phase builder for a climb phase in a mission simulation.
 
     This class extends the PhaseBuilderBase class, providing specific implementations for
-    the climb phase of a flight mission.
+    the cruise phase of a flight mission.
 
     Attributes
     ----------
@@ -20,7 +19,7 @@ class CruisePhase(PhaseBuilderBase):
     Methods
     -------
     Inherits all methods from PhaseBuilderBase.
-    Additional method overrides and new methods specific to the climb phase are included.
+    Additional method overrides and new methods specific to the cruise phase are included.
     """
     default_name = 'cruise_phase'
     default_ode_class = BreguetCruiseODESolution
@@ -41,9 +40,9 @@ class CruisePhase(PhaseBuilderBase):
 
     def build_phase(self, aviary_options: AviaryValues = None):
         """
-        Return a new climb phase for analysis using these constraints.
+        Return a new cruise phase for analysis using these constraints.
 
-        If ode_class is None, ClimbODE is used as the default.
+        If ode_class is None, BreguetCruiseODESolution is used as the default.
 
         Parameters
         ----------

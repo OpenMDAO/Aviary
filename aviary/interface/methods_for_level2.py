@@ -14,7 +14,6 @@ from dymos.utils.misc import _unspecified
 import openmdao.api as om
 from openmdao.core.component import Component
 from openmdao.utils.mpi import MPI
-from openmdao.utils.units import convert_units
 from openmdao.utils.reports_system import _default_reports
 
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
@@ -38,7 +37,7 @@ from aviary.mission.gasp_based.phases.taxi_group import TaxiSegment
 from aviary.mission.gasp_based.phases.v_rotate_comp import VRotateComp
 from aviary.mission.gasp_based.polynomial_fit import PolynomialFit
 from aviary.subsystems.premission import CorePreMission
-from aviary.utils.functions import create_opts2vals, add_opts2vals, promote_aircraft_and_mission_vars
+from aviary.utils.functions import create_opts2vals, add_opts2vals, promote_aircraft_and_mission_vars, wrapped_convert_units
 from aviary.utils.process_input_decks import create_vehicle, update_GASP_options, initial_guessing
 from aviary.utils.preprocessors import preprocess_crewpayload
 from aviary.interface.utils.check_phase_info import check_phase_info
@@ -68,35 +67,6 @@ GASP = LegacyCode.GASP
 TWO_DEGREES_OF_FREEDOM = EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
 HEIGHT_ENERGY = EquationsOfMotion.HEIGHT_ENERGY
 SOLVED_2DOF = EquationsOfMotion.SOLVED_2DOF
-
-
-def wrapped_convert_units(val_unit_tuple, new_units):
-    """
-    Wrapper for OpenMDAO's convert_units function.
-
-    Parameters
-    ----------
-    val_unit_tuple : tuple
-        Tuple of the form (value, units) where value is a float and units is a
-        string.
-    new_units : string
-        New units to convert to.
-
-    Returns
-    -------
-    float
-        Value converted to new units.
-    """
-    value, units = val_unit_tuple
-
-    # can't convert units on None; return None
-    if value is None:
-        return None
-
-    if isinstance(value, (list, tuple)):
-        return [convert_units(v, units, new_units) for v in value]
-    else:
-        return convert_units(value, units, new_units)
 
 
 class PreMissionGroup(om.Group):
@@ -242,7 +212,7 @@ class AviaryProblem(om.Problem):
 
     def __init__(self, analysis_scheme=AnalysisScheme.COLLOCATION, **kwargs):
         # Modify OpenMDAO's default_reports for this session.
-        new_reports = ['subsystems', 'mission']
+        new_reports = ['subsystems', 'mission', 'timeseries_csv']
         for report in new_reports:
             if report not in _default_reports:
                 _default_reports.append(report)

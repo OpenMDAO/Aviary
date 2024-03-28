@@ -216,7 +216,7 @@ class Aircraft:
         POSITION_FACTOR = 'aircraft:engine:position_factor'
         PROPELLER_ACTIVITY_FACTOR = 'aircraft:engine:propeller_activity_factor'
         PROPELLER_DIAMETER = 'aircraft:engine:propeller_diameter'
-        PROPELLER_INTEGRATED_LIFT_COEFFICENT = 'aircraft:engine:propeller_integrated_lift_coefficient'
+        PROPELLER_INTEGRATED_LIFT_COEFFICIENT = 'aircraft:engine:propeller_integrated_lift_coefficient'
         PYLON_FACTOR = 'aircraft:engine:pylon_factor'
         REFERENCE_DIAMETER = 'aircraft:engine:reference_diameter'
         REFERENCE_MASS = 'aircraft:engine:reference_mass'
@@ -476,7 +476,8 @@ class Aircraft:
         AVERAGE_CHORD = 'aircraft:wing:average_chord'
         BENDING_FACTOR = 'aircraft:wing:bending_factor'
         BENDING_MASS = 'aircraft:wing:bending_mass'
-        BENDING_MASS_NO_INERTIA = 'aircraft:wing:bending_mass_no_inertia'
+        # Not defined in metadata!
+        # BENDING_MASS_NO_INERTIA = 'aircraft:wing:bending_mass_no_inertia'
         BENDING_MASS_SCALER = 'aircraft:wing:bending_mass_scaler'
         BWB_AFTBODY_MASS = 'aircraft:wing:bwb_aft_body_mass'
         BWB_AFTBODY_MASS_SCALER = 'aircraft:wing:bwb_aft_body_mass_scaler'
