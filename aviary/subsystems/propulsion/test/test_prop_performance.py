@@ -95,33 +95,6 @@ class PropPerformanceTest(unittest.TestCase):
             assert_near_equal(lfac[idx], install_loss[case_idx], tolerance=tol)
             assert_near_equal(ieff[idx], install_eff[case_idx], tolerance=tol)
 
-    def ttest_case_0(self):
-        # Case 0, 1, 2, to test installation loss factor computation.
-        prob = self.prob
-        prob.set_val(Dynamic.Mission.ALTITUDE, [0.0], units="ft")
-        prob.set_val(Dynamic.Mission.VELOCITY, [0.10], units="knot")
-        #prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED, [800.00], units="ft/s")
-        prob.set_val(Dynamic.Mission.SHAFT_POWER, [1850.00], units="hp")
-        prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED, [1.0], units="unitless")
-        prob.set_val(Aircraft.Design.MAX_TIP_SPEED, [800.00], units="ft/s")
-
-        prob.run_model()
-
-        prob.model.list_outputs(print_arrays=True)  # redirect to a file
-        prob.model.list_inputs(print_arrays=True)  # redirect to a file
-
-        print(f"DPROP: {prob.get_val(Aircraft.Engine.PROPELLER_DIAMETER)}")
-        print(f"AFT: {prob.get_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR)}")
-        print(f"CLI: {prob.get_val(Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT)}")
-        nace_diam = prob.get_val(Aircraft.Nacelle.AVG_DIAMETER)
-        prop_diam = prob.get_val(Aircraft.Engine.PROPELLER_DIAMETER)
-        r = nace_diam / prop_diam
-        print(f"Nacelle Diam to Prop Diam Ratio: {r}")
-        print(f"ALT: {prob.get_val(Dynamic.Mission.ALTITUDE)}")
-        print(f"VKTAS: {prob.get_val(Dynamic.Mission.VELOCITY)}")
-        print(f"VTIP: {prob.get_val(Dynamic.Mission.PROPELLER_TIP_SPEED)}")
-        print(f"SHP: {prob.get_val(Dynamic.Mission.SHAFT_POWER)}")
-
     def test_case_0_1_2(self):
         # Case 0, 1, 2, to test installation loss factor computation.
         prob = self.prob
@@ -130,8 +103,10 @@ class PropPerformanceTest(unittest.TestCase):
         prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED,
                      [800.0, 800.0, 750.0], units="ft/s")
         prob.set_val(Dynamic.Mission.SHAFT_POWER, [1850.0, 1850.0, 900.0], units="hp")
-        prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED, [1.0], units="unitless")
-        prob.set_val(Aircraft.Design.MAX_TIP_SPEED, [800.00, 800.0, 750.0], units="ft/s")
+        prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
+                     [1.0], units="unitless")
+        prob.set_val(Aircraft.Design.MAX_TIP_SPEED,
+                     [800.00, 800.0, 750.0], units="ft/s")
 
         prob.run_model()
         self.compare_results(case_idx_begin=0, case_idx_end=2)
@@ -140,45 +115,6 @@ class PropPerformanceTest(unittest.TestCase):
             out_stream=None, compact_print=True, show_only_incorrect=True, form='central', method="fd",
             minimum_step=1e-12, abs_err_tol=5.0E-4, rel_err_tol=5.0E-5, excludes=["*atmosphere*"])
         assert_check_partials(partial_data, atol=5e-4, rtol=1e-4)
-
-    def ttest_case_3(self):
-        # Case 3, 4, 5, to test normal cases.
-        prob = self.prob
-        options = self.options
-
-        options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS,
-                        val=False, units='unitless')
-        prob.setup()
-        prob.set_val(Dynamic.Mission.INSTALLATION_LOSS_FACTOR,
-                     [0.0], units="unitless")
-        prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 12.0, units="ft")
-        prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, 150.0, units="unitless")
-        prob.set_val(Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT,
-                     0.5, units="unitless")
-        prob.set_val(Dynamic.Mission.ALTITUDE, [10000.0], units="ft")
-        prob.set_val(Dynamic.Mission.VELOCITY, [200.0], units="knot")
-        prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED,
-                     [750.0], units="ft/s")
-        prob.set_val(Dynamic.Mission.SHAFT_POWER, [1000.0], units="hp")
-        prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED, [1.0], units="unitless")
-        prob.set_val(Aircraft.Design.MAX_TIP_SPEED, [769.70], units="ft/s")
-
-        prob.run_model()
-
-        print(f"DPROP: {prob.get_val(Aircraft.Engine.PROPELLER_DIAMETER)}")
-        print(f"AFT: {prob.get_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR)}")
-        print(f"CLI: {prob.get_val(Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT)}")
-        try:
-            nace_diam = prob.get_val(Aircraft.Nacelle.AVG_DIAMETER)
-            prop_diam = prob.get_val(Aircraft.Engine.PROPELLER_DIAMETER)
-            r = nace_diam / prop_diam
-            print(f"Nacelle Diam to Prop Diam Ratio: {r}")
-        except:
-            pass
-        print(f"ALT: {prob.get_val(Dynamic.Mission.ALTITUDE)}")
-        print(f"VKTAS: {prob.get_val(Dynamic.Mission.VELOCITY)}")
-        print(f"VTIP: {prob.get_val(Dynamic.Mission.PROPELLER_TIP_SPEED)}")
-        print(f"SHP: {prob.get_val(Dynamic.Mission.SHAFT_POWER)}")
 
     def test_case_3_4_5(self):
         # Case 3, 4, 5, to test normal cases.
@@ -199,8 +135,10 @@ class PropPerformanceTest(unittest.TestCase):
         prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED,
                      [750.0, 750.0, 785.0], units="ft/s")
         prob.set_val(Dynamic.Mission.SHAFT_POWER, [1000.0, 1000.0, 1250.0], units="hp")
-        prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED, [1.0], units="unitless")
-        prob.set_val(Aircraft.Design.MAX_TIP_SPEED, [769.70, 769.70, 769.70], units="ft/s")
+        prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
+                     [1.0], units="unitless")
+        prob.set_val(Aircraft.Design.MAX_TIP_SPEED,
+                     [769.70, 769.70, 769.70], units="ft/s")
 
         prob.run_model()
         self.compare_results(case_idx_begin=3, case_idx_end=5)
@@ -232,8 +170,10 @@ class PropPerformanceTest(unittest.TestCase):
         prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED,
                      [750.0, 750.0, 785.0], units="ft/s")
         prob.set_val(Dynamic.Mission.SHAFT_POWER, [1000.0, 1000.0, 1250.0], units="hp")
-        prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED, [1.0], units="unitless")
-        prob.set_val(Aircraft.Design.MAX_TIP_SPEED, [769.70, 769.70, 769.70], units="ft/s")
+        prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
+                     [1.0], units="unitless")
+        prob.set_val(Aircraft.Design.MAX_TIP_SPEED,
+                     [769.70, 769.70, 769.70], units="ft/s")
 
         prob.run_model()
         self.compare_results(case_idx_begin=6, case_idx_end=8)
@@ -256,8 +196,10 @@ class PropPerformanceTest(unittest.TestCase):
         prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED,
                      [750.0, 750.0, 750.0], units="ft/s")
         prob.set_val(Dynamic.Mission.SHAFT_POWER, [900.0, 750.0, 500.0], units="hp")
-        prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED, [1.0], units="unitless")
-        prob.set_val(Aircraft.Design.MAX_TIP_SPEED, [769.70, 769.70, 769.70], units="ft/s")
+        prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
+                     [1.0], units="unitless")
+        prob.set_val(Aircraft.Design.MAX_TIP_SPEED,
+                     [769.70, 769.70, 769.70], units="ft/s")
 
         prob.run_model()
         self.compare_results(case_idx_begin=9, case_idx_end=11)
