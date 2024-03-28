@@ -103,7 +103,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwGm.csv',
                           local_phase_info, optimizer='IPOPT', run_driver=False,
-                          analysis_scheme=AnalysisScheme.SHOOTING, verbosity=Verbosity.DEBUG)
+                          analysis_scheme=AnalysisScheme.SHOOTING, verbosity=Verbosity.DEBUG)  # REVERT #
 
         rtol = 0.01
 

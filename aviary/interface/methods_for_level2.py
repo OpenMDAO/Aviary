@@ -655,6 +655,8 @@ class AviaryProblem(om.Problem):
                 Mission.Design.CRUISE_ALTITUDE, ])
         add_opts2vals(self.model, OptionsToValues, self.aviary_inputs)
 
+        if self.analysis_scheme is AnalysisScheme.SHOOTING:
+            self._add_fuel_reserve_component(post_mission=False)
         # if self.analysis_scheme is AnalysisScheme.SHOOTING:
         #     add_descent_estimation_as_submodel(
         #         self,
@@ -1237,7 +1239,8 @@ class AviaryProblem(om.Problem):
                     self.model.connect(f"traj.{self.reserve_phases[-1]}.timeseries.mass",
                                        "reserve_fuel_burned.mass_final", src_indices=[-1])
 
-            self._add_fuel_reserve_component()
+            if self.analysis_scheme is not AnalysisScheme.SHOOTING:
+                self._add_fuel_reserve_component()
 
             # TODO: need to add some sort of check that this value is less than the fuel capacity
             # TODO: the overall_fuel variable is the burned fuel plus the reserve, but should
@@ -2343,7 +2346,7 @@ class AviaryProblem(om.Problem):
             self.final_setup()
             with open('input_list.txt', 'w') as outfile:
                 self.model.list_inputs(out_stream=outfile)
-            om.n2(
+            om.n2(  # REVERT #
                 self,
                 outfile='temp_n2.html',
                 show_browser=False,
