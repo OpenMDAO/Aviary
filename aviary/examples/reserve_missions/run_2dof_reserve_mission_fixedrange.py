@@ -42,7 +42,6 @@ prob.add_post_mission_systems()
 prob.link_phases()
 
 prob.add_driver("SNOPT", max_iter=50)
-# prob.add_driver("SLSQP", max_iter=100)
 
 prob.add_design_variables()
 
