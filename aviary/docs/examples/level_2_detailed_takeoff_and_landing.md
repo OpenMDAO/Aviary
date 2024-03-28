@@ -33,11 +33,15 @@ You can choose how to enforce that the throttle value is between 0 and 1; solver
 Initial guesses are important to help the optimizer converge well.
 These guesses are much more important for the 2DOF model than the height-energy model.
 
+In these examples we only model the takeoff and landing trajectories individually, not as part of a full mission.
+This is because acoustic certification is typically done for these phases separately.
+However, you can easily combine these phases into a full mission by adding the takeoff and landing phases to the mission.
+The `2DOF` mission method (not the `solved_2DOF` mission method used here) models the entire mission including takeoff and landing phases.
+
 ## Defining the takeoff trajectory
 
 We follow the diagram below to model the takeoff trajectory, which includes the ground roll, rotation, liftoff, and climb phases.
 We add constraints at specific points in the flight to ensure we hit certain altitudes and distances needed for acoustic certification.
-We only model the takeoff portions here, not the entire mission.
 P1 and P2 correspond to microphone locations for acoustic certification.
 
 ```{note}
@@ -50,7 +54,6 @@ Each of the phases modeled in the takeoff trajectory use the solved 2DOF model *
 
 For the landing trajectory, we also follow a diagram that outlines the approach and touchdown phases.
 This trajectory is simpler than the takeoff trajectory.
-Like with takeoff, we only simulate the landing portions, not the entire mission.
 P3 corresponds to the microphone location used for acoustic certification.
 
 ![Landing Trajectory](images/landing.png)
