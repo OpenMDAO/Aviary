@@ -2330,11 +2330,6 @@ class AviaryProblem(om.Problem):
             self.final_setup()
             with open('input_list.txt', 'w') as outfile:
                 self.model.list_inputs(out_stream=outfile)
-            om.n2(  # REVERT #
-                self,
-                outfile='temp_n2.html',
-                show_browser=False,
-            )
 
         if suppress_solver_print:
             self.set_solver_print(level=0)

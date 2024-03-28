@@ -21,7 +21,7 @@ class IdleDescentTestCase(unittest.TestCase):
     def setUp(self):
         input_deck = 'models/large_single_aisle_1/large_single_aisle_1_GwGm.csv'
         aviary_inputs, _ = create_vehicle(input_deck)
-        aviary_inputs.set_val('verbosity', Verbosity.DEBUG)  # REVERT #
+        aviary_inputs.set_val('verbosity', Verbosity.QUIET)
         aviary_inputs.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=28690, units="lbf")
         aviary_inputs.set_val(Dynamic.Mission.THROTTLE, val=0, units="unitless")
         ode_args = dict(aviary_options=aviary_inputs,
