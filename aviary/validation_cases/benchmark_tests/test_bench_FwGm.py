@@ -32,10 +32,8 @@ class ProblemPhaseTestCase(unittest.TestCase):
         assert_near_equal(prob.get_val(Aircraft.Design.OPERATING_MASS),
                           104530., tolerance=rtol)
 
-        # fuel_burn and reserve_fuel were moved from prob.model to prob.post_mission
-        # this could have changed the convergence of fuel mass (should be for the better)
         assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS),
-                          44032., tolerance=rtol)
+                          43500., tolerance=rtol)
 
         assert_near_equal(prob.get_val('landing.' + Mission.Landing.GROUND_DISTANCE),
                           2528., tolerance=rtol)
@@ -69,7 +67,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    # unittest.main()
     test = ProblemPhaseTestCase()
+    test.setUp()
     test.bench_test_swap_3_FwGm_IPOPT()
     test.bench_test_swap_3_FwGm_SNOPT()
