@@ -1562,14 +1562,11 @@ class AviaryProblem(om.Problem):
 
         if driver.options["optimizer"] == "SNOPT":
             if verbosity == Verbosity.QUIET:
-                isumm = 0
-                iprint = 0
+                isumm, iprint = 0, 0
             elif verbosity == Verbosity.BRIEF:
-                isumm = 6
-                iprint = 0
+                isumm, iprint = 6, 0
             else:
-                isumm = 6
-                iprint = 9
+                isumm, iprint = 6, 9
             driver.opt_settings["Major iterations limit"] = max_iter
             driver.opt_settings["Major optimality tolerance"] = 1e-4
             driver.opt_settings["Major feasibility tolerance"] = 1e-7
@@ -1577,13 +1574,16 @@ class AviaryProblem(om.Problem):
             driver.opt_settings["iPrint"] = iprint
         elif driver.options["optimizer"] == "IPOPT":
             if verbosity == Verbosity.QUIET:
-                print_level = 0
+                print_level = 3  # minimum to get exit status
+                driver.opt_settings['print_user_options'] = 'no'
             elif verbosity == Verbosity.BRIEF:
-                print_level = 2
+                print_level = 5
+                driver.opt_settings['print_user_options'] = 'no'
+                driver.opt_settings['print_frequency_iter'] = 10
             elif verbosity == Verbosity.VERBOSE:
                 print_level = 5
             else:
-                print_level = 8
+                print_level = 7
             driver.opt_settings['tol'] = 1.0E-6
             driver.opt_settings['mu_init'] = 1e-5
             driver.opt_settings['max_iter'] = max_iter
@@ -1604,8 +1604,10 @@ class AviaryProblem(om.Problem):
         if verbosity != Verbosity.QUIET:
             if isinstance(verbosity, list):
                 driver.options['debug_print'] = verbosity
-            elif verbosity.value >= 2:
+            elif verbosity.value >= 3:
                 driver.options['debug_print'] = ['desvars', 'ln_cons', 'nl_cons', 'objs']
+        if verbosity.value <= 2:
+            driver.options['print_results'] = False
 
     def add_design_variables(self):
         """
