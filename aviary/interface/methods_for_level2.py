@@ -1604,7 +1604,7 @@ class AviaryProblem(om.Problem):
         if verbosity != Verbosity.QUIET:
             if isinstance(verbosity, list):
                 driver.options['debug_print'] = verbosity
-            elif verbosity.value >= 3:
+            elif verbosity.value > Verbosity.DEBUG.value:
                 driver.options['debug_print'] = ['desvars', 'ln_cons', 'nl_cons', 'objs']
         if verbosity is not Verbosity.DEBUG and optimizer in ("SNOPT", "IPOPT"):
             driver.options['print_results'] = False
