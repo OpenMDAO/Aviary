@@ -362,7 +362,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
     @require_pyoptsparse(optimizer="IPOPT")
     def bench_test_swap_1_GwFm_IPOPT(self):
         prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwFm.csv', self.phase_info,
-                          max_iter=50, optimizer='IPOPT', verbosity=Verbosity.QUIET)
+                          max_iter=100, optimizer='IPOPT', verbosity=Verbosity.QUIET)
 
         # expected_dict['times'][-1] is failing here
         # the optimization is running out of iterations (both before and after this PR),
