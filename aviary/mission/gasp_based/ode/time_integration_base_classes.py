@@ -34,7 +34,7 @@ class event_trigger():
     def __init__(
             self,
             state: str,
-            value: tuple, #[str, float, int],
+            value: tuple[str, float, int],
             units: str,
             channel_name: str = None,
     ):
