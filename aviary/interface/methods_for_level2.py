@@ -1606,7 +1606,7 @@ class AviaryProblem(om.Problem):
                 driver.options['debug_print'] = verbosity
             elif verbosity.value >= 3:
                 driver.options['debug_print'] = ['desvars', 'ln_cons', 'nl_cons', 'objs']
-        if verbosity.value <= 2 and optimizer in ("SNOPT", "IPOPT"):
+        if verbosity is not Verbosity.DEBUG and optimizer in ("SNOPT", "IPOPT"):
             driver.options['print_results'] = False
 
     def add_design_variables(self):
