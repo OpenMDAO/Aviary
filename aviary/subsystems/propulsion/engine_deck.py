@@ -209,9 +209,6 @@ class EngineDeck(EngineModel):
 
         options = self.options
 
-        if Settings.VERBOSITY not in options:
-            self.set_val(Settings.VERBOSITY, Verbosity.BRIEF)
-
         # CHECK FOR REQUIRED OPTIONS
         additional_options = ()
         if self.read_from_file:

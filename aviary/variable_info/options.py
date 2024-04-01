@@ -6,7 +6,7 @@ from aviary.variable_info.variables import Aircraft
 from aviary.subsystems.propulsion.engine_deck import EngineDeck
 
 
-def get_option_defaults(engine=False, meta_data=_MetaData) -> AviaryValues:
+def get_option_defaults(engine=True, meta_data=_MetaData) -> AviaryValues:
     """
     Returns a deep copy of the collection of all options for which default values exist.
 
