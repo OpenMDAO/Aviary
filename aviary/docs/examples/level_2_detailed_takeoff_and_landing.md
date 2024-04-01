@@ -3,6 +3,7 @@
 ```{note}
 Here we discuss how to optimize the takeoff and landing sequences for aircraft using the Level 2 interface in Aviary.
 If you need more precise control over the flight profile and the trajectory definition, please see the Level 3 interface detailed in [FLOPS Based Detailed Takeoff and Landing](../user_guide/FLOPS_based_detailed_takeoff_and_landing.ipynb).
+That other example also computes the balanced field length for the aircraft using branching trajectories, which is not done here.
 ```
 
 This doc page discusses how to use Aviary to perform detailed takeoff and landing simulations for aircraft using the Level 2 interface.
@@ -35,7 +36,7 @@ These guesses are much more important for the 2DOF model than the height-energy 
 
 In these examples we only model the takeoff and landing trajectories individually, not as part of a full mission.
 This is because acoustic certification is typically done for these phases separately.
-However, you can easily combine these phases into a full mission by adding the takeoff and landing phases to the mission.
+However, you can easily combine these phases into a comprehensive mission by adding the takeoff, flight, and landing phases to the mission in that order.
 The `2DOF` mission method (not the `solved_2DOF` mission method used here) models the entire mission including takeoff and landing phases.
 
 ## Defining the takeoff trajectory
