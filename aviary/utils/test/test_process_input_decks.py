@@ -5,7 +5,7 @@ from aviary.utils.process_input_decks import create_vehicle, parse_inputs
 from aviary.utils.functions import get_path
 
 
-# @use_tempdirs
+@use_tempdirs
 class TestCreateVehicle(unittest.TestCase):
 
     def test_load_aircraft_csv(self):

@@ -14,7 +14,6 @@ from dymos.utils.misc import _unspecified
 import openmdao.api as om
 from openmdao.core.component import Component
 from openmdao.utils.mpi import MPI
-from openmdao.utils.units import convert_units
 from openmdao.utils.reports_system import _default_reports
 
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
@@ -38,7 +37,7 @@ from aviary.mission.gasp_based.phases.taxi_group import TaxiSegment
 from aviary.mission.gasp_based.phases.v_rotate_comp import VRotateComp
 from aviary.mission.gasp_based.polynomial_fit import PolynomialFit
 from aviary.subsystems.premission import CorePreMission
-from aviary.utils.functions import create_opts2vals, add_opts2vals, promote_aircraft_and_mission_vars
+from aviary.utils.functions import create_opts2vals, add_opts2vals, promote_aircraft_and_mission_vars, wrapped_convert_units
 from aviary.utils.process_input_decks import create_vehicle, update_GASP_options, initial_guessing
 from aviary.utils.preprocessors import preprocess_crewpayload
 from aviary.interface.utils.check_phase_info import check_phase_info
@@ -68,35 +67,6 @@ GASP = LegacyCode.GASP
 TWO_DEGREES_OF_FREEDOM = EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
 HEIGHT_ENERGY = EquationsOfMotion.HEIGHT_ENERGY
 SOLVED_2DOF = EquationsOfMotion.SOLVED_2DOF
-
-
-def wrapped_convert_units(val_unit_tuple, new_units):
-    """
-    Wrapper for OpenMDAO's convert_units function.
-
-    Parameters
-    ----------
-    val_unit_tuple : tuple
-        Tuple of the form (value, units) where value is a float and units is a
-        string.
-    new_units : string
-        New units to convert to.
-
-    Returns
-    -------
-    float
-        Value converted to new units.
-    """
-    value, units = val_unit_tuple
-
-    # can't convert units on None; return None
-    if value is None:
-        return None
-
-    if isinstance(value, (list, tuple)):
-        return [convert_units(v, units, new_units) for v in value]
-    else:
-        return convert_units(value, units, new_units)
 
 
 class PreMissionGroup(om.Group):
@@ -242,7 +212,7 @@ class AviaryProblem(om.Problem):
 
     def __init__(self, analysis_scheme=AnalysisScheme.COLLOCATION, **kwargs):
         # Modify OpenMDAO's default_reports for this session.
-        new_reports = ['subsystems', 'mission']
+        new_reports = ['subsystems', 'mission', 'timeseries_csv']
         for report in new_reports:
             if report not in _default_reports:
                 _default_reports.append(report)
@@ -1592,14 +1562,11 @@ class AviaryProblem(om.Problem):
 
         if driver.options["optimizer"] == "SNOPT":
             if verbosity == Verbosity.QUIET:
-                isumm = 0
-                iprint = 0
+                isumm, iprint = 0, 0
             elif verbosity == Verbosity.BRIEF:
-                isumm = 6
-                iprint = 0
+                isumm, iprint = 6, 0
             else:
-                isumm = 6
-                iprint = 9
+                isumm, iprint = 6, 9
             driver.opt_settings["Major iterations limit"] = max_iter
             driver.opt_settings["Major optimality tolerance"] = 1e-4
             driver.opt_settings["Major feasibility tolerance"] = 1e-7
@@ -1607,13 +1574,16 @@ class AviaryProblem(om.Problem):
             driver.opt_settings["iPrint"] = iprint
         elif driver.options["optimizer"] == "IPOPT":
             if verbosity == Verbosity.QUIET:
-                print_level = 0
+                print_level = 3  # minimum to get exit status
+                driver.opt_settings['print_user_options'] = 'no'
             elif verbosity == Verbosity.BRIEF:
-                print_level = 2
+                print_level = 5
+                driver.opt_settings['print_user_options'] = 'no'
+                driver.opt_settings['print_frequency_iter'] = 10
             elif verbosity == Verbosity.VERBOSE:
                 print_level = 5
             else:
-                print_level = 8
+                print_level = 7
             driver.opt_settings['tol'] = 1.0E-6
             driver.opt_settings['mu_init'] = 1e-5
             driver.opt_settings['max_iter'] = max_iter
@@ -1634,8 +1604,10 @@ class AviaryProblem(om.Problem):
         if verbosity != Verbosity.QUIET:
             if isinstance(verbosity, list):
                 driver.options['debug_print'] = verbosity
-            elif verbosity.value >= 2:
+            elif verbosity.value > Verbosity.DEBUG.value:
                 driver.options['debug_print'] = ['desvars', 'ln_cons', 'nl_cons', 'objs']
+        if verbosity is not Verbosity.DEBUG and optimizer in ("SNOPT", "IPOPT"):
+            driver.options['print_results'] = False
 
     def add_design_variables(self):
         """
