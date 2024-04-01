@@ -255,7 +255,7 @@ class TurbopropTest(unittest.TestCase):
 
         options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS,
                         val=True, units='unitless')
-        options.set_val(Aircraft.Engine.NUM_BLADES,
+        options.set_val(Aircraft.Engine.NUM_PROPELLER_BLADES,
                         val=4, units='unitless')
 
         engine = TurboPropDeck(options=options, prop_model=True)

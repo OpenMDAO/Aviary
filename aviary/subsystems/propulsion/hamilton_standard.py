@@ -510,7 +510,7 @@ class PreHamiltonStandard(om.ExplicitComponent):
         # 1118.21948771 is speed of sound at sea level
         outputs['tip_mach'] = tipspd * sqrt_temp_ratio / 1118.21948771
         outputs['advance_ratio'] = 5.309 * vktas / tipspd
-        diam_prop = inputs[Aircraft.Engine.PROPELLER_DIAMETER][0]
+        diam_prop = inputs[Aircraft.Engine.PROPELLER_DIAMETER]
         shp = inputs[Dynamic.Mission.SHAFT_POWER]
         outputs['power_coefficient'] = shp * 10.E10 / (2 * 6966.) / \
             outputs['density_ratio'] / (tipspd**3*diam_prop**2)
@@ -555,10 +555,6 @@ class HamiltonStandard(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare('num_blades', default=2,
-                             desc='number of blades per propeller')
-        self.options.declare(Settings.VERBOSITY,
-                             default=Verbosity.QUIET, desc='print control')
         self.options.declare(
             'aviary_options', types=AviaryValues,
             desc='collection of Aircraft/Mission specific options')
@@ -584,6 +580,10 @@ class HamiltonStandard(om.ExplicitComponent):
         self.declare_partials('*', '*', method='fd', form='forward')
 
     def compute(self, inputs, outputs):
+        verbosity = self.options['aviary_options'].get_val(Settings.VERBOSITY)
+        num_blades = self.options['aviary_options'].get_val(
+            Aircraft.Engine.NUM_PROPELLER_BLADES)
+
         for i_node in range(self.options['num_nodes']):
             ichck = 0
             run_flag = 0
@@ -655,10 +655,10 @@ class HamiltonStandard(om.ExplicitComponent):
                 # flag that given lift coeff (cli) falls on a node point of CL_arr
                 CL_tab_idx_flg = 1
 
-            lmod = (self.options['num_blades'] % 2) + 1
+            lmod = (num_blades % 2) + 1
             if (lmod == 1):
                 nbb = 1
-                idx_blade = int(self.options['num_blades']/2.0)
+                idx_blade = int(num_blades/2.0)
                 # even number of blades idx_blade = 1 if 2 blades;
                 #                       idx_blade = 2 if 4 blades;
                 #                       idx_blade = 3 if 6 blades;
@@ -688,7 +688,7 @@ class HamiltonStandard(om.ExplicitComponent):
                             CP_CLi_table[CL_tab_idx][:cli_len], XPCLI[CL_tab_idx], CPE1X)
                         if (run_flag == 1):
                             ichck = ichck + 1
-                        if (self.options[Settings.VERBOSITY] != Verbosity.DEBUG):
+                        if (verbosity != Verbosity.DEBUG):
                             if (ichck <= 1):
                                 if (run_flag == 1):
                                     warnings.warn(
@@ -818,15 +818,15 @@ class HamiltonStandard(om.ExplicitComponent):
             if (nbb != 1):
                 # interpolation by the number of blades if odd number
                 ang_blade, run_flag = _unint(
-                    num_blades_arr, BLLL[:4], self.options['num_blades'])
-                ct, run_flag = _unint(num_blades_arr, CTTT, self.options['num_blades'])
-                xft, run_flag = _unint(num_blades_arr, XXXFT, self.options['num_blades'])
+                    num_blades_arr, BLLL[:4], num_blades)
+                ct, run_flag = _unint(num_blades_arr, CTTT, num_blades)
+                xft, run_flag = _unint(num_blades_arr, XXXFT, num_blades)
 
             # NOTE this could be handled via the metamodel comps (extrapolate flag)
             if ichck > 0:
                 print(f"  table look-up error = {ichck} (if you go outside the tables.)")
 
-            outputs['advance_ratio'][i_node] = ang_blade
+            outputs['blade_angle'][i_node] = ang_blade
             outputs['thrust_coefficient'][i_node] = ct
             outputs['comp_tip_loss_factor'][i_node] = xft
 

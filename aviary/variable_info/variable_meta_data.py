@@ -1800,7 +1800,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Engine.NUM_BLADES,
+    Aircraft.Engine.NUM_PROPELLER_BLADES,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.BL',
                      "FLOPS": None,

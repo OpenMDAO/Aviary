@@ -39,7 +39,7 @@ from aviary.subsystems.propulsion.utils import (EngineModelVariables,
                                                 default_units)
 from aviary.utils.aviary_values import AviaryValues, NamedValues, get_keys, get_items
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 from aviary.utils.csv_data_file import read_data_file
 from aviary.interface.utils.markdown_utils import round_it
 
@@ -122,9 +122,9 @@ class EngineDeck(EngineModel):
     data : NamedVaues (<empty>), optional
         Engine performance data (optional). If provided, used instead of tabular data 
         file.
-    required_variables : list, optional
-        A list of required variables (from EngineModelVariables) for this EngineDeck.
-        Defaults to the required set [ALTITUDE, MACH, THROTTLE, THRUST].
+    required_variables : set, optional
+        A set of required variables (from EngineModelVariables) for this EngineDeck.
+        Defaults to the required set {ALTITUDE, MACH, THROTTLE, THRUST}.
 
     Methods
     -------
@@ -184,7 +184,8 @@ class EngineDeck(EngineModel):
         self.global_throttle = True
         self.global_hybrid_throttle = True
 
-        self.required_variables = required_variables
+        # ensure required variables are a set
+        self.required_variables = {*required_variables}
 
         self._set_variable_flags()
 
@@ -213,7 +214,7 @@ class EngineDeck(EngineModel):
             additional_options = (Aircraft.Engine.DATA_FILE,)
 
         for key in additional_options + required_options:
-            if key not in options:
+            if key not in options and self.options.get_val(Settings.VERBOSITY).value >= 1:
                 warnings.warn(
                     f'<{key}> is a required option for EngineDecks, but has not been '
                     f'specified for EngineDeck <{self.name}>. The default value will be '
@@ -237,7 +238,7 @@ class EngineDeck(EngineModel):
             idle_max = self.get_val(Aircraft.Engine.FLIGHT_IDLE_MAX_FRACTION)
             # Allowing idle fractions to be equal, i.e. fixing flight idle conditions
             # instead of extrapolation
-            if idle_min > idle_max:
+            if idle_min > idle_max and self.options.get_val(Settings.VERBOSITY).value >= 1:
                 warnings.warn(
                     f'EngineDeck <{self.name}>: Minimum flight idle fraction exceeds maximum '
                     f'flight idle fraction. Values for min and max fraction will be flipped.'
@@ -263,7 +264,7 @@ class EngineDeck(EngineModel):
             thrust_provided = True
 
         # user provided target thrust or scale factor, but performance scaling is off
-        if scale_performance and (scale_factor_provided or thrust_provided):
+        if scale_performance and (scale_factor_provided or thrust_provided) and self.options.get_val(Settings.VERBOSITY).value >= 1:
             UserWarning(
                 f'EngineDeck <{self.name}>: Scaling targets are provided, but will be '
                 'ignored because performance scaling is disabled. Set '
@@ -397,8 +398,9 @@ class EngineDeck(EngineModel):
                 self.engine_variables[key] = default_units[key]
 
             else:
-                warnings.warn(
-                    f'{message}: header <{key}> was not recognized, and will be skipped')
+                if self.options.get_val(Settings.VERBOSITY).value >= 1:
+                    warnings.warn(
+                        f'{message}: header <{key}> was not recognized, and will be skipped')
 
             # save all data in self._original_data, including skipped variables
             self._original_data[key] = val
@@ -478,26 +480,28 @@ class EngineDeck(EngineModel):
         if TAILPIPE_THRUST in engine_variables:
             # tailpipe thrust is not bookept separately in Aviary. Add to net thrust.
             if THRUST in engine_variables:
-                engine_variables[THRUST] = engine_variables[THRUST] + \
-                    engine_variables[TAILPIPE_THRUST]
+                self.data[THRUST] = self._original_data[THRUST] + \
+                    self._original_data[TAILPIPE_THRUST]
             else:
-                engine_variables[THRUST] = engine_variables[TAILPIPE_THRUST]
+                self.data[THRUST] = self._original_data[TAILPIPE_THRUST]
 
-        # remove unneeded dependent variables from engine_variables
+        # remove now unneeded dependent variables from engine_variables
         if RAM_DRAG in engine_variables:
             engine_variables.pop(RAM_DRAG)
         if GROSS_THRUST in engine_variables:
             engine_variables.pop(GROSS_THRUST)
+        if TAILPIPE_THRUST in engine_variables:
+            engine_variables.pop(TAILPIPE_THRUST)
 
         # Handle shaft power (corrected and uncorrected). It is not possible to compare
         # them for consistency, as that requires information not avaliable here
         # (freestream air temp and pressure). Instead, we must trust the source and
         # assume either data set is valid and can be used.
-        if SHAFT_POWER in engine_variables and SHAFT_POWER_CORRECTED in engine_variables:
-            raise UserWarning('Both corrected and uncorrectd shaft horsepower are '
-                              f'present in {message}. The two cannot be validated for '
-                              'consistency, and either variable could be utilized if '
-                              'any subsystem requests it as an input.')
+        if SHAFT_POWER in engine_variables and SHAFT_POWER_CORRECTED in engine_variables and self.options.get_val(Settings.VERBOSITY).value >= 1:
+            UserWarning('Both corrected and uncorrected shaft horsepower are '
+                        f'present in {message}. The two cannot be validated for '
+                        'consistency, and either variable could be utilized if '
+                        'any subsystem requests it as an input.')
 
         self._set_variable_flags()
 
@@ -793,14 +797,18 @@ class EngineDeck(EngineModel):
                 shaft_power_data = self.data[SHAFT_POWER]
                 shaft_power_units = units[SHAFT_POWER]
                 desc = 'Current shaft power (unscaled)'
+                engine.add_output('shaft_power_unscaled',
+                                  shaft_power_data,
+                                  units=shaft_power_units,
+                                  desc=desc)
             else:
                 shaft_power_data = self.data[SHAFT_POWER_CORRECTED]
                 shaft_power_units = units[SHAFT_POWER_CORRECTED]
                 desc = 'Current corrected shaft power (unscaled)'
-            engine.add_output('shaft_power_unscaled',
-                              shaft_power_data,
-                              shaft_power_units,
-                              desc=desc)
+                engine.add_output('shaft_power_corrected_unscaled',
+                                  shaft_power_data,
+                                  units=shaft_power_units,
+                                  desc=desc)
         if self.use_t4:
             engine.add_output(Dynamic.Mission.TEMPERATURE_ENGINE_T4,
                               self.data[TEMPERATURE],

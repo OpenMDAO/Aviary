@@ -1,3 +1,4 @@
+import numpy as np
 import openmdao.api as om
 
 from aviary.subsystems.propulsion.engine_model import EngineModel
@@ -55,7 +56,9 @@ class TurbopropModel(EngineModel):
 
         # Initialize turboshaft engine deck. New required variable set w/o thrust
         if shaft_power_model is None:
-            self.shaft_power_model = EngineDeck(name=name + '_engine_deck', options=options, data=data,
+            self.shaft_power_model = EngineDeck(name=name + '_engine_deck',
+                                                options=options,
+                                                data=data,
                                                 required_variables=[EngineModelVariables.ALTITUDE,
                                                                     EngineModelVariables.MACH,
                                                                     EngineModelVariables.THROTTLE])
@@ -81,13 +84,15 @@ class TurbopropModel(EngineModel):
         if type(shp_model) is not EngineDeck:
             shp_model_pre_mission = shp_model.build_pre_mission(aviary_inputs, **kwargs)
             turboprop_group.add_subsystem(shp_model_pre_mission.name,
-                                          subsys=shp_model_pre_mission)
+                                          subsys=shp_model_pre_mission,
+                                          promotes=['*'])
 
         if self.propeller_model is not None:
             prop_model_pre_mission = prop_model.build_pre_mission(
                 aviary_inputs, **kwargs)
             turboprop_group.add_subsystem(prop_model_pre_mission.name,
-                                          subsys=prop_model_pre_mission)
+                                          subsys=prop_model_pre_mission,
+                                          promotes=['*'])
 
         return turboprop_group
 
@@ -97,8 +102,10 @@ class TurbopropModel(EngineModel):
         turboprop_group = om.Group()
 
         shp_model_mission = shp_model.build_mission(num_nodes, aviary_inputs, **kwargs)
-        turboprop_group.add_subsystem(shp_model_mission.name,
-                                      subsys=shp_model_mission)
+        turboprop_group.add_subsystem(shp_model.name,
+                                      subsys=shp_model_mission,
+                                      promotes_inputs=['*'],
+                                      promotes_outputs=['*', (Dynamic.Mission.THRUST, 'turboshaft_thrust')])
 
         # ensure uncorrected shaft horsepower is avaliable
         # TODO also make sure corrected is avaliable
@@ -107,21 +114,24 @@ class TurbopropModel(EngineModel):
             if EngineModelVariables.SHAFT_POWER not in shp_model_mission.engine_variables:
                 turboprop_group.add_subsystem('uncorrect_shaft_power',
                                               subsys=UncorrectShaftPower(num_nodes=num_nodes,
-                                                                         aviary_options=aviary_inputs),
+                                                                         aviary_options=self.options),
                                               promotes_inputs=[Dynamic.Mission.SHAFT_POWER_CORRECTED,
                                                                Dynamic.Mission.TEMPERATURE,
                                                                Dynamic.Mission.STATIC_PRESSURE,
                                                                Dynamic.Mission.MACH],
                                               promotes_outputs=[Dynamic.Mission.SHAFT_POWER]),
 
-        if prop_model is not None:
+        if prop_model is not None:  # must assume user-provide propeller group has everything it needs
             prop_model_mission = prop_model.build_mission(
-                num_nodes, aviary_inputs, **kwargs)
-            turboprop_group.add_subsystem(prop_model_mission.name,
-                                          subsys=shp_model_mission)
+                num_nodes, self.options, **kwargs)
+            turboprop_group.add_subsystem(prop_model.name,
+                                          subsys=prop_model_mission,
+                                          promotes_inputs=['*'],
+                                          promotes_outputs=['*'])
 
         else:  # use the Hamilton Standard model
             # calculate atmospheric properties
+            # TODO these properties should always just be avaliable across Aviary
             turboprop_group.add_subsystem('flight_conditions',
                                           FlightConditions(num_nodes=num_nodes,
                                                            input_speed_type=SpeedType.MACH),
@@ -132,11 +142,36 @@ class TurbopropModel(EngineModel):
                                                             'EAS',
                                                             ('TAS', 'velocity')])
             # Hamilton Standard method
-            self.add_subsystem('propeller_model',
-                               PropellerPerformance(aviary_options=self.options,
-                                                    num_nodes=num_nodes),
-                               promotes_inputs=['*'],
-                               promotes_outputs=['*'])
+            turboprop_group.add_subsystem('propeller_model',
+                                          PropellerPerformance(aviary_options=self.options,
+                                                               num_nodes=num_nodes),
+                                          promotes_inputs=['*'],
+                                          promotes_outputs=['*'])
+
+        thrust_adder = om.ExecComp('turboprop_thrust=turboshaft_thrust+propeller_thrust',
+                                   turboprop_thrust={'val': np.zeros(
+                                       num_nodes), 'units': 'lbf'},
+                                   turboshaft_thrust={'val': np.zeros(
+                                       num_nodes), 'units': 'lbf'},
+                                   propeller_thrust={'val': np.zeros(num_nodes), 'units': 'lbf'})
+
+        turboprop_group.add_subsystem('thrust_adder',
+                                      subsys=thrust_adder,
+                                      promotes_inputs=['*'],
+                                      promotes_outputs=[('turboprop_thrust',
+                                                         Dynamic.Mission.THRUST)])
+
+        # connect shaftpower model and propeller model to thrust adder
+        # turboprop_group.connect('turboshaft_thrust',
+        #                         'thrust_adder.tailpipe_thrust')
+        # if prop_model is not None:
+        #     turboprop_group.connect(prop_model.name + '.' + 'propeller_thrust',
+        #                             'thrust_adder.propeller_thrust')
+        # else:
+        #     turboprop_group.connect('propeller_model.propeller_thrust',
+        #                             'thrust_adder.propeller_thrust')
+
+        return turboprop_group
 
     def build_post_mission(self, aviary_inputs, **kwargs):
         shp_model = self.shaft_power_model

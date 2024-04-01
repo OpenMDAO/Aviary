@@ -97,7 +97,7 @@ The newly added aviary options and variables are:
 Aircraft.Engine.PROPELLER_DIAMETER
 Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT
 Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR
-Aircraft.Engine.NUM_BLADES
+Aircraft.Engine.NUM_PROPELLER_BLADES
 Aircraft.Design.COMPUTE_INSTALLATION_LOSS
 Dynamic.Mission.PROPELLER_TIP_SPEED
 Dynamic.Mission.SHAFT_POWER
@@ -114,7 +114,7 @@ Some inputs are options:
 
 ```python
 options.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 10, units='ft')
-options.set_val(Aircraft.Engine.NUM_BLADES, val=4, units='unitless')
+options.set_val(Aircraft.Engine.NUM_PROPELLER_BLADES, val=4, units='unitless')
 options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS, val=True, units='unitless')
 ```
 

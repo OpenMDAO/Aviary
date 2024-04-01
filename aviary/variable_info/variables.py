@@ -207,7 +207,7 @@ class Aircraft:
         MASS = 'aircraft:engine:mass'
         MASS_SCALER = 'aircraft:engine:mass_scaler'
         MASS_SPECIFIC = 'aircraft:engine:mass_specific'
-        NUM_BLADES = 'aircraft:engine:num_blades'
+        NUM_PROPELLER_BLADES = 'aircraft:engine:num_blades'
         NUM_ENGINES = 'aircraft:engine:num_engines'
         NUM_FUSELAGE_ENGINES = 'aircraft:engine:num_fuselage_engines'
         NUM_WING_ENGINES = 'aircraft:engine:num_wing_engines'
