@@ -7,11 +7,15 @@ Reserve missions are enabled for the following mission types:
 * height_energy    (completed)
 * 2ODF (collocation) (complete)
 * 2DOF (shooting)    (in-progress)
-* height_energy (shooting)    (ifuture work)
+* height_energy (shooting)    (future work)
 
-A reserve mission can be created by appending one or more reserve phases to `phase_info` after the last phase of the regular mission. 
-To create a simple reserve mission, copy your current cruise phase which is located in `phase_info`. 
-(Note: You may need to revise some of your assumptions for the copied phase if you are making a reserve phase that is radically different than the original (i.e. original phase was to travel 3000km but reserve phase is 100km)).
+A reserve mission can be created by appending one or more reserve phases to `phase_info` after the last phase of the regular mission.
+To create a simple reserve mission, copy your current cruise phase which is located in `phase_info`.
+
+```{note}
+You may need to revise some of your assumptions for the copied phase if you are making a reserve phase that is radically different than the original (i.e. original phase was to travel 3000km but reserve phase is 100km).
+```
+
 Append that phase to the end of `phase_info`, name it `reserve_cruise` and add `"reserve": True,` to `user_options` for this phase.
 There are two optional flags that can now be added to `user_options`.
 The `"target_duration"` option creates a phase requiring the aircraft to fly for a specific amount of time.
@@ -22,7 +26,7 @@ The optional flags should not be combined as they will create overlapping constr
 You can chain together multiple reserve phases to make a complete reserve mission (i.e. climb to altitude, cruise for range, cruise for time, then descend).
 Examples of this are shown in `run_reserve_mission_multiphase.py` and `run_2dof_reserve_mission_multiphase.py`.
 
-The reserve phases will start at the same range and mass as the last regular phases, but all other states (i.e. altitude, mach number) are not automatically connected.
+The first reserve phase will start at the same range and mass as the last regular phase, but all other states (i.e. altitude, Mach number) are not automatically connected.
 Thus you can fly climb, cruise, descent for regular phases and then immediately jump to an arbitrary altitude for the reserve mission.
 Or if you wanted to make things more realistic you could attach a climb phase and then add your reserve cruise.
 Make sure both the reserve climb and the reserve cruise phases both have `"reserve": True,` flag.
@@ -49,7 +53,7 @@ This is used to indicate if a phase is an analytic phase (i.e. Breguet range) or
 Only the final mission mass and range from `regular_phases` are automatically connected to the first point of the `reserve_phases`.
 All other state variables (i.e. altitude, mach) are not automatically connected, allowing you to start the reserve mission at whatever altitude you want.
 
-The `"analytic"` flag helps to properly connect phases for 2DOF missions. 
+The `"analytic"` flag helps to properly connect phases for 2DOF missions.
 2DOF `cruise` missions are analytic because they use a Breguet range calculation instead of integrating an EOM. 
 Analytic phases have a slightly different naming convention in order to access state/timeseries variables like distance, mass, and range compared with their non-analytic counterparts.
 
@@ -58,7 +62,8 @@ This is because each constraint `"target_distance"` or `"target_time"` is only e
 
 It is essential that you run `prob.check_and_preprocess_inputs()` after `prob.load_inputs()` to make sure that regular and reserve phases are separated via `phase_separator()`.
 
-### Advanced Users and Target Duration Phases 
+### Advanced Users and Target Duration Phases
+
 For advanced users, instead of just copying a phase you used before, you might completely specify a new phase from scratch. 
 When creating a `"target_duration"` reserve phase there are a number of values inside of `phase_info['user_options']` that are overwritten in `check_and_preprocess_inputs()`. 
 Specifically, `duration_bounds`, `fixed_duration`, and `"initial_guesses": {"times"}` will be over-written. 
