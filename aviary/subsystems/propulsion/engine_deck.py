@@ -40,6 +40,7 @@ from aviary.subsystems.propulsion.utils import (EngineModelVariables,
 from aviary.utils.aviary_values import AviaryValues, NamedValues, get_keys, get_items
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
+from aviary.variable_info.enums import Verbosity
 from aviary.utils.csv_data_file import read_data_file
 from aviary.interface.utils.markdown_utils import round_it
 
@@ -208,13 +209,16 @@ class EngineDeck(EngineModel):
 
         options = self.options
 
+        if Settings.VERBOSITY not in options:
+            self.set_val(Settings.VERBOSITY, Verbosity.BRIEF)
+
         # CHECK FOR REQUIRED OPTIONS
         additional_options = ()
         if self.read_from_file:
             additional_options = (Aircraft.Engine.DATA_FILE,)
 
         for key in additional_options + required_options:
-            if key not in options and self.options.get_val(Settings.VERBOSITY).value >= 1:
+            if key not in options and self.get_val(Settings.VERBOSITY).value >= 1:
                 warnings.warn(
                     f'<{key}> is a required option for EngineDecks, but has not been '
                     f'specified for EngineDeck <{self.name}>. The default value will be '
@@ -238,7 +242,7 @@ class EngineDeck(EngineModel):
             idle_max = self.get_val(Aircraft.Engine.FLIGHT_IDLE_MAX_FRACTION)
             # Allowing idle fractions to be equal, i.e. fixing flight idle conditions
             # instead of extrapolation
-            if idle_min > idle_max and self.options.get_val(Settings.VERBOSITY).value >= 1:
+            if idle_min > idle_max and self.get_val(Settings.VERBOSITY).value >= 1:
                 warnings.warn(
                     f'EngineDeck <{self.name}>: Minimum flight idle fraction exceeds maximum '
                     f'flight idle fraction. Values for min and max fraction will be flipped.'
@@ -264,7 +268,7 @@ class EngineDeck(EngineModel):
             thrust_provided = True
 
         # user provided target thrust or scale factor, but performance scaling is off
-        if scale_performance and (scale_factor_provided or thrust_provided) and self.options.get_val(Settings.VERBOSITY).value >= 1:
+        if scale_performance and (scale_factor_provided or thrust_provided) and self.get_val(Settings.VERBOSITY).value >= 1:
             UserWarning(
                 f'EngineDeck <{self.name}>: Scaling targets are provided, but will be '
                 'ignored because performance scaling is disabled. Set '
@@ -398,7 +402,7 @@ class EngineDeck(EngineModel):
                 self.engine_variables[key] = default_units[key]
 
             else:
-                if self.options.get_val(Settings.VERBOSITY).value >= 1:
+                if self.get_val(Settings.VERBOSITY).value >= 1:
                     warnings.warn(
                         f'{message}: header <{key}> was not recognized, and will be skipped')
 
@@ -497,7 +501,7 @@ class EngineDeck(EngineModel):
         # them for consistency, as that requires information not avaliable here
         # (freestream air temp and pressure). Instead, we must trust the source and
         # assume either data set is valid and can be used.
-        if SHAFT_POWER in engine_variables and SHAFT_POWER_CORRECTED in engine_variables and self.options.get_val(Settings.VERBOSITY).value >= 1:
+        if SHAFT_POWER in engine_variables and SHAFT_POWER_CORRECTED in engine_variables and self.get_val(Settings.VERBOSITY).value >= 1:
             UserWarning('Both corrected and uncorrected shaft horsepower are '
                         f'present in {message}. The two cannot be validated for '
                         'consistency, and either variable could be utilized if '

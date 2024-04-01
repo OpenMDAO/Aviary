@@ -1800,20 +1800,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Engine.NUM_PROPELLER_BLADES,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.BL',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='unitless',
-    desc='number of blades per propeller',
-    option=True,
-    types=int,
-    default_value=0
-)
-
-add_meta_data(
     Aircraft.Engine.NUM_ENGINES,
     meta_data=_MetaData,
     historical_name={"GASP": "INGASP.ENP",
@@ -1837,6 +1823,20 @@ add_meta_data(
                      },
     units='unitless',
     desc='number of fuselage mounted engines per model',
+    option=True,
+    types=int,
+    default_value=0
+)
+
+add_meta_data(
+    Aircraft.Engine.NUM_PROPELLER_BLADES,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.BL',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='unitless',
+    desc='number of blades per propeller',
     option=True,
     types=int,
     default_value=0

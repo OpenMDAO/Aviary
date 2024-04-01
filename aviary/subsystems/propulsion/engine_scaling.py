@@ -238,7 +238,7 @@ class EngineScaling(om.ExplicitComponent):
             rows=r, cols=c,
             val=1.0)
         self.declare_partials(
-            Dynamic.Mission.SHAFT_POWER,
+            Dynamic.Mission.SHAFT_POWER_CORRECTED,
             'shaft_power_corrected_unscaled',
             rows=r, cols=r,
             val=1.0)
