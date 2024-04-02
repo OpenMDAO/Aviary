@@ -210,6 +210,10 @@ def check_phase_info(phase_info, mission_method):
         else:
             phase_options = phase_info[base_phase]
 
+        if phase_options.get('target_range', False) and phase_options.get('target_duration', False):
+            raise ValueError(
+                f"target_range and target_duration have both been set to True for {phase}, please pick one.")
+
         # Check if all required keys exist, if there are no extra keys, and if they are of the correct type
         for key, expected_type in phase_keys[phase].items():
             # Check tuples for (val, units) structure

@@ -1264,8 +1264,7 @@ class AviaryProblem(om.Problem):
 
                 # this is only used for analytic phases with a target duration
                 if 'target_duration' in self.phase_info[phase_name]["user_options"] and \
-                    'analytic' in self.phase_info[phase_name]["user_options"] and \
-                        self.phase_info[phase_name]["user_options"]['analytic']:
+                        self.phase_info[phase_name]["user_options"].get("analytic", False):
                     target_duration = wrapped_convert_units(
                         self.phase_info[phase_name]["user_options"]["target_duration"], 'min')
                     self.post_mission.add_subsystem(
@@ -1472,63 +1471,62 @@ class AviaryProblem(om.Problem):
                     if phase1 == 'rotation' or phase2 == 'rotation':
                         states_to_link.append(Dynamic.Mission.VELOCITY)
                         states_to_link.append('alpha')
+                    if phase1 == 'ascent' and phase2 == 'accel':
+                        states_to_link.append(Dynamic.Mission.VELOCITY)
 
                     analytic1 = self.phase_info[phase1]['user_options']['analytic']
                     analytic2 = self.phase_info[phase2]['user_options']['analytic']
 
-                    for state in states_to_link:
-                        # in initial guesses, all of the states, other than time use the same name
-                        temp_state = 'times' if state == 'time' else state
-                        initial_guesses1 = self.phase_info[phase1]['initial_guesses']
-                        initial_guesses2 = self.phase_info[phase2]['initial_guesses']
+                    if not (analytic1 or analytic2):
+                        for state in states_to_link:
+                            # in initial guesses, all of the states, other than time use the same name
+                            temp_state = 'times' if state == 'time' else state
+                            initial_guesses1 = self.phase_info[phase1]['initial_guesses']
+                            initial_guesses2 = self.phase_info[phase2]['initial_guesses']
 
-                        # if a state is in the initial guesses, get the units of the initial guess
-                        units1, units2 = True, True
-                        if temp_state in initial_guesses1:
-                            units1 = initial_guesses1[temp_state][-1]
-                        if temp_state in initial_guesses2:
-                            units2 = initial_guesses2[temp_state][-1]
-                        else:
-                            units1 = units2 = True
+                            # if a state is in the initial guesses, get the units of the initial guess
+                            units1, units2 = None, None
+                            if temp_state in initial_guesses1:
+                                units1 = initial_guesses1[temp_state][-1]
+                            if temp_state in initial_guesses2:
+                                units2 = initial_guesses2[temp_state][-1]
 
-                        # if neither phase is analytic and the units of the initial guesses match we can use link_phases
-                        if not (analytic1 or analytic2) and (units1 == units2):
-                            if state == 'alpha':
-                                # alpha is always connected with a constraint
-                                connected = False
+                            if (None not in (units1, units2)) and (units1 != units2):
+                                # if the units of the intial guesses are both specified, but don't match, we use a linkage_constraint
+                                add_linkage_constraint(self, phase1, phase2,
+                                                       state, state, True)
                             else:
-                                # we can't use connected=True if we are running in parallel, but we usually want it
-                                connected = true_unless_mpi
-                            self.traj.link_phases(
-                                [phase1, phase2], [state], connected=connected)
+                                # as long as the units of the initial guesses don't conflict, we use link_phases
+                                if state == 'alpha':
+                                    # alpha is always connected with a constraint
+                                    connected = False
+                                else:
+                                    # we can't use connected=True if we are running in parallel, but we usually want it
+                                    connected = true_unless_mpi
+                                self.traj.link_phases(
+                                    [phase1, phase2], [state], connected=connected)
 
-                        # if either phase is analytic or the units of the intial guesses don't match, we have to use a linkage_constraint
+                    # if either phase is analytic we have to use a linkage_constraint
+                    else:
+                        # analytic phases use the prefix "initial" for time and distance, but not mass
+                        if analytic2:
+                            prefix = 'initial_'
                         else:
-                            # analytic phases use the prefix "initial" for time and distance, but not mass
-                            if analytic2:
-                                prefix = 'initial_'
-                            else:
-                                prefix = ''
-                            add_linkage_constraint(self, phase1, phase2,
-                                                   'time', prefix+'time', True)
-                            add_linkage_constraint(self, phase1, phase2,
-                                                   'distance', prefix+'distance', True)
-                            add_linkage_constraint(self, phase1, phase2, 'mass',
-                                                   'mass', False, ref=1.0e5)
-
-                self.traj.link_phases(
-                    phases=[
-                        "ascent", "accel"], vars=[
-                        "time", "mass", Dynamic.Mission.VELOCITY], connected=True)
+                            prefix = ''
+                        add_linkage_constraint(self, phase1, phase2,
+                                               'time', prefix+'time', True)
+                        add_linkage_constraint(self, phase1, phase2,
+                                               'distance', prefix+'distance', True)
+                        add_linkage_constraint(self, phase1, phase2, 'mass',
+                                               'mass', False, ref=1.0e5)
 
                 # add all params and promote them to self.model level
                 ParamPort.promote_params(
                     self.model,
                     trajs=["traj"],
                     phases=[
-                        ["groundroll", "rotation", "ascent",
-                            "accel", "climb1", "climb2",
-                            "desc1", "desc2"],
+                        self.regular_phases,
+                        self.reserve_phases
                     ],
                 )
 
@@ -1998,8 +1996,7 @@ class AviaryProblem(om.Problem):
                 guesses = {}
 
             if self.mission_method is TWO_DEGREES_OF_FREEDOM and \
-                    'analytic' in self.phase_info[phase_name]["user_options"] and \
-                self.phase_info[phase_name]["user_options"]['analytic']:
+                    self.phase_info[phase_name]["user_options"].get("analytic", False):
                 for guess_key, guess_data in guesses.items():
                     val, units = guess_data
 
