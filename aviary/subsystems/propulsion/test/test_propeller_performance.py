@@ -125,6 +125,10 @@ class PropellerPerformanceTest(unittest.TestCase):
         prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED,
                      [800.0, 800.0, 750.0], units="ft/s")
         prob.set_val(Dynamic.Mission.SHAFT_POWER, [1850.0, 1850.0, 900.0], units="hp")
+        prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
+                     [1.0], units="unitless")
+        prob.set_val(Aircraft.Design.MAX_TIP_SPEED,
+                     [800.00, 800.0, 750.0], units="ft/s")
 
         prob.run_model()
         self.compare_results(case_idx_begin=0, case_idx_end=2)
@@ -153,6 +157,10 @@ class PropellerPerformanceTest(unittest.TestCase):
         prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED,
                      [750.0, 750.0, 785.0], units="ft/s")
         prob.set_val(Dynamic.Mission.SHAFT_POWER, [1000.0, 1000.0, 1250.0], units="hp")
+        prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
+                     [1.0], units="unitless")
+        prob.set_val(Aircraft.Design.MAX_TIP_SPEED,
+                     [769.70, 769.70, 769.70], units="ft/s")
 
         prob.run_model()
         self.compare_results(case_idx_begin=3, case_idx_end=5)
@@ -184,6 +192,10 @@ class PropellerPerformanceTest(unittest.TestCase):
         prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED,
                      [750.0, 750.0, 785.0], units="ft/s")
         prob.set_val(Dynamic.Mission.SHAFT_POWER, [1000.0, 1000.0, 1250.0], units="hp")
+        prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
+                     [1.0], units="unitless")
+        prob.set_val(Aircraft.Design.MAX_TIP_SPEED,
+                     [769.70, 769.70, 769.70], units="ft/s")
 
         prob.run_model()
         self.compare_results(case_idx_begin=6, case_idx_end=8)
@@ -206,6 +218,10 @@ class PropellerPerformanceTest(unittest.TestCase):
         prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED,
                      [750.0, 750.0, 750.0], units="ft/s")
         prob.set_val(Dynamic.Mission.SHAFT_POWER, [900.0, 750.0, 500.0], units="hp")
+        prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
+                     [1.0], units="unitless")
+        prob.set_val(Aircraft.Design.MAX_TIP_SPEED,
+                     [769.70, 769.70, 769.70], units="ft/s")
 
         prob.run_model()
         self.compare_results(case_idx_begin=9, case_idx_end=11)
