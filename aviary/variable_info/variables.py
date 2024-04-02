@@ -158,6 +158,7 @@ class Aircraft:
 
         MAX_FUSELAGE_PITCH_ANGLE = 'aircraft:design:max_fuselage_pitch_angle'
         MAX_STRUCTURAL_SPEED = 'aircraft:design:max_structural_speed'
+        MAX_TIP_SPEED = 'aircraft:design:max_tip_speed'
         OPERATING_MASS = 'aircraft:design:operating_mass'
         PART25_STRUCTURAL_CATEGORY = 'aircraft:design:part25_structural_category'
         PAX_SERVICE_MASS_PER_PASSENGER = 'aircraft:design:pax_service_mass_per_passenger'
@@ -619,6 +620,7 @@ class Dynamic:
         MASS_RATE = 'mass_rate'
         NOX_RATE = 'nox_rate'
         NOX_RATE_TOTAL = 'nox_rate_total'
+        PERCENT_ROTOR_RPM_CORRECTED = 'percent_rotor_rpm_corrected'
         PROPELLER_TIP_SPEED = 'propeller_tip_speed'
         SHAFT_POWER = 'shaft_power'
         SHAFT_POWER_CORRECTED = 'shaft_power_corrected'
