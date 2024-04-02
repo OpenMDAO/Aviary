@@ -853,7 +853,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.AIR_CONDITION_MASS_COEFFICIENT,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CW',
+    historical_name={"GASP": 'INGASP.CW(6)',
                      "FLOPS": None,
                      "LEAPS1": None
                      },
@@ -865,7 +865,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.ANTI_ICING_MASS,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CW',
+    historical_name={"GASP": 'INGASP.CW(7)',
                      "FLOPS": None,
                      "LEAPS1": None
                      },
@@ -877,7 +877,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.APU_MASS,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CW',
+    historical_name={"GASP": 'INGASP.CW(1)',
                      "FLOPS": None,
                      "LEAPS1": None
                      },
@@ -889,25 +889,13 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.AVIONICS_MASS,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CW',
+    historical_name={"GASP": 'INGASP.CW(5)',
                      "FLOPS": None,
                      "LEAPS1": None
                      },
     units='lbm',
     desc='mass of avionics',
     default_value=0.0,
-)
-
-add_meta_data(
-    Aircraft.Design.CATERING_ITEMS_MASS_PER_PASSENGER,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CW',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='lbm',
-    desc='mass of catering items per passenger',
-    default_value=0.7,
 )
 
 add_meta_data(
@@ -928,6 +916,18 @@ add_meta_data(
     desc='Aircraft base area (total exit cross-section area minus inlet '
          'capture areas for internally mounted engines)',
     default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Design.CATERING_ITEMS_MASS_PER_PASSENGER,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.CW(12)',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='lbm',
+    desc='mass of catering items per passenger',
+    default_value=0.7,
 )
 
 add_meta_data(
@@ -1035,7 +1035,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.EMERGENCY_MASS,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CW',
+    historical_name={"GASP": 'INGASP.CW(11)',
                      "FLOPS": None,
                      "LEAPS1": None
                      },
@@ -1135,7 +1135,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.FURNISHINGS_MASS,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CW',
+    historical_name={"GASP": 'INGASP.CW(8)',
                      "FLOPS": None,
                      "LEAPS1": None
                      },
@@ -1147,7 +1147,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.HYDRAULICS_FC_MASS_COEFFICIENT,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CW',
+    historical_name={"GASP": 'INGASP.CW(3)',
                      "FLOPS": None,
                      "LEAPS1": None
                      },
@@ -1159,7 +1159,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.HYDRAULICS_GEAR_MASS_COEFFICIENT,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CW',
+    historical_name={"GASP": 'INGASP.CW(4)',
                      "FLOPS": None,
                      "LEAPS1": None
                      },
@@ -1183,7 +1183,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.INSTRUMENT_MASS_COEFFICIENT,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CW',
+    historical_name={"GASP": 'INGASP.CW(2)',
                      "FLOPS": None,
                      "LEAPS1": None
                      },
@@ -1320,7 +1320,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.PAX_SERVICE_MASS_PER_PASSENGER,
     meta_data=_MetaData,
-    historical_name={"GASP": "INGASP.CW",
+    historical_name={"GASP": "INGASP.CW(9)",
                      "FLOPS": None,
                      "LEAPS1": None
                      },
@@ -1536,12 +1536,12 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.UNUSABLE_FUEL_MASS_COEFFICIENT,
     meta_data=_MetaData,
-    historical_name={"GASP": "INGASP.CW",
+    historical_name={"GASP": "INGASP.CW(13)",
                      "FLOPS": None,
                      "LEAPS1": None
                      },
     default_value=6.0,
-    units="lbm/ft",
+    units="unitless",
     desc='mass trend coefficient of trapped fuel factor',
 )
 
@@ -1562,7 +1562,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.WATER_MASS_PER_OCCUPANT,
     meta_data=_MetaData,
-    historical_name={"GASP": "INGASP.CW",
+    historical_name={"GASP": "INGASP.CW(10)",
                      "FLOPS": None,
                      "LEAPS1": None
                      },

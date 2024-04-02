@@ -136,7 +136,6 @@ class Aircraft:
         EMPTY_MASS_MARGIN_SCALER = \
             'aircraft:design:empty_mass_margin_scaler'
 
-        # EQUIPMENT_MASS_COEFFICIENTS = 'aircraft:design:equipment_mass_coefficients'
         EXTERNAL_SUBSYSTEMS_MASS = 'aircraft:design:external_subsystems_mass'
         FINENESS = 'aircraft:design:fineness'
         FIXED_EQUIPMENT_MASS = 'aircraft:design:fixed_equipment_mass'
@@ -144,8 +143,8 @@ class Aircraft:
         FURNISHINGS_MASS = 'aircraft:design:furnishings_mass'
         HYDRAULICS_FC_MASS_COEFFICIENT = 'aircraft:design:hydraulics_fc_mass_coefficient'
         HYDRAULICS_GEAR_MASS_COEFFICIENT = 'aircraft:design:hydraulics_gear_mass_coefficient'
-        INSTRUMENT_MASS_COEFFICIENT = 'aircraft:design:instrument_mass_coefficient'
         IJEFF = 'ijeff'
+        INSTRUMENT_MASS_COEFFICIENT = 'aircraft:design:instrument_mass_coefficient'
         LAMINAR_FLOW_LOWER = 'aircraft:design:laminar_flow_lower'
         LAMINAR_FLOW_UPPER = 'aircraft:design:laminar_flow_upper'
 
@@ -182,8 +181,8 @@ class Aircraft:
         THRUST_TO_WEIGHT_RATIO = 'aircraft:design:thrust_to_weight_ratio'
         TOTAL_WETTED_AREA = 'aircraft:design:total_wetted_area'
         TOUCHDOWN_MASS = 'aircraft:design:touchdown_mass'
-        UNUSABLE_FUEL_MASS_COEFFICIENT = 'aircraft:design:unusable_fuel_mass_coefficient'
         ULF_CALCULATED_FROM_MANEUVER = 'aircraft:design:ulf_calculated_from_maneuver'
+        UNUSABLE_FUEL_MASS_COEFFICIENT = 'aircraft:design:unusable_fuel_mass_coefficient'
         USE_ALT_MASS = 'aircraft:design:use_alt_mass'
         WATER_MASS_PER_OCCUPANT = 'aircraft:design:water_mass_per_occupant'
         WETTED_AREAS = 'aircraft:design:wetted_areas'
