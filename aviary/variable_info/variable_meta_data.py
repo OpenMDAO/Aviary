@@ -1180,7 +1180,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.MAX_TIP_SPEED,
+    Aircraft.Design.MAX_PROPELLER_TIP_SPEED,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.TSPDMX',
                      "FLOPS": None,
