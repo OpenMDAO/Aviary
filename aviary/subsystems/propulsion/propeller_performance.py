@@ -143,6 +143,42 @@ class PropellerPerformance(om.Group):
         compute_installation_loss = aviary_options.get_val(
             Aircraft.Design.COMPUTE_INSTALLATION_LOSS)
 
+        self.add_subsystem(
+            'temperature_term',
+            om.ExecComp(
+                'theta_T = T0 * (1 + .2*mach**2)/T_amb',
+                theta_T={'units': "unitless", 'shape': nn},
+                T0={'units': 'degR', 'shape': nn},
+                mach={'units': 'unitless', 'shape': nn},
+                T_amb={'val': np.full(nn, 518.67), 'units': 'degR'},
+                has_diag_partials=True,
+            ),
+            promotes_inputs=[
+                ('T0', Dynamic.Mission.TEMPERATURE),
+                ('mach', Dynamic.Mission.MACH),
+            ],
+            promotes_outputs=['theta_T'],
+        )
+
+        self.add_subsystem(
+            'prop_tip_speed',
+            om.ExecComp(
+                'prop_tip_speed = minimum(pc_rotor_rpm_corrected * theta_T**.5 * max_prop_tip_spd, max_prop_tip_spd)',
+                prop_tip_speed={'units': "ft/s", 'shape': nn},
+                theta_T={'units': "unitless", 'shape': nn},
+                pc_rotor_rpm_corrected={'units': "unitless", 'shape': nn},
+                max_prop_tip_spd={'units': "ft/s", 'shape': nn},
+                has_diag_partials=True,
+            ),
+            promotes_inputs=[
+                'theta_T',
+                ('pc_rotor_rpm_corrected', Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED),
+                ('max_prop_tip_spd', Aircraft.Design.MAX_PROPELLER_TIP_SPEED),
+            ],
+            promotes_outputs=[
+                ('prop_tip_speed', Dynamic.Mission.PROPELLER_TIP_SPEED)],
+        )
+
         if compute_installation_loss:
             self.add_subsystem(
                 name='install_loss',
