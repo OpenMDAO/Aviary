@@ -59,9 +59,9 @@ class TurbopropModel(EngineModel):
             self.shaft_power_model = EngineDeck(name=name + '_engine_deck',
                                                 options=options,
                                                 data=data,
-                                                required_variables=[EngineModelVariables.ALTITUDE,
+                                                required_variables={EngineModelVariables.ALTITUDE,
                                                                     EngineModelVariables.MACH,
-                                                                    EngineModelVariables.THROTTLE])
+                                                                    EngineModelVariables.THROTTLE})
             # Manually check if shaft horsepower was provided (can't flag as required variable since either version
             # is acceptable)
             if not self.shaft_power_model.use_shaft_power:

@@ -134,7 +134,7 @@ class PropulsionMission(om.Group):
                     self.connect(engine.name + '.' + Dynamic.Mission.TEMPERATURE_T4,
                                  'vectorize_performance.' + Dynamic.Mission.TEMPERATURE_T4 + '_' + str(i))
             except AttributeError:  # engine does not have flag
-                continue
+                pass
 
             try:
                 if engine.use_shp:
@@ -143,7 +143,7 @@ class PropulsionMission(om.Group):
                     self.connect(engine.name + '.' + Dynamic.Mission.SHAFT_POWER_CORRECTED,
                                  'vectorize_performance.' + Dynamic.Mission.SHAFT_POWER_CORRECTED + '_' + str(i))
             except AttributeError:  # engine does not have flag
-                continue
+                pass
 
         self.add_subsystem(
             'propulsion_sum',
