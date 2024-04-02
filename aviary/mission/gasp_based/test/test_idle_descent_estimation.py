@@ -2,7 +2,6 @@ import unittest
 
 import openmdao.api as om
 from aviary.interface.default_phase_info.two_dof_fiti import create_2dof_based_descent_phases
-from aviary.mission.gasp_based.idle_descent_estimation import add_descent_estimation_as_submodel
 
 from openmdao.utils.assert_utils import assert_near_equal
 
