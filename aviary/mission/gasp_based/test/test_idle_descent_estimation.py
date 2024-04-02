@@ -41,22 +41,6 @@ class IdleDescentTestCase(unittest.TestCase):
         assert_near_equal(results['distance_flown'], 91.8911599691433, self.tol)
         assert_near_equal(results['fuel_burned'], 236.73893823639082, self.tol)
 
-    # def test_subproblem(self):
-    #     prob = om.Problem()
-    #     prob.model = om.Group()
-
-    #     descent_phases = create_2dof_based_descent_phases(
-    #         self.ode_args,
-    #         cruise_mach=.8)
-
-    #     add_descent_estimation_as_submodel(prob, descent_phases)
-
-    #     prob.setup()
-    #     om.n2(prob, 'idle_descent_n2.html', show_browser=False)
-    #     prob.run_model()
-    #     prob.get_val('descent_range', 'NM')
-    #     prob.get_val('descent_fuel', 'lbm')
-
 
 if __name__ == "__main__":
     unittest.main()
