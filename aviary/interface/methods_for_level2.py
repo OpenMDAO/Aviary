@@ -1465,15 +1465,15 @@ class AviaryProblem(om.Problem):
                             initial_guesses2 = self.phase_info[phase2]['initial_guesses']
 
                             # if a state is in the initial guesses, get the units of the initial guess
-                            if state in initial_guesses1:
-                                units = initial_guesses1[state][-1]
-                            elif state in initial_guesses2:
-                                units = initial_guesses2[state][-1]
-                            else:
-                                units = None
+                            kwargs = {}
+                            if not connected:
+                                if state in initial_guesses1:
+                                    kwargs = {'units': initial_guesses1[state][-1]}
+                                elif state in initial_guesses2:
+                                    kwargs = {'units': initial_guesses2[state][-1]}
 
                             self.traj.link_phases(
-                                [phase1, phase2], [state], units=units, connected=connected)
+                                [phase1, phase2], [state], connected=connected, **kwargs)
 
                     # if either phase is analytic we have to use a linkage_constraint
                     else:
@@ -2161,7 +2161,7 @@ class AviaryProblem(om.Problem):
             val, units = guess_data
 
             # Set initial guess for time variables
-            if 'time' == guess_key:
+            if 'time' == guess_key and self.mission_method is not SOLVED_2DOF:
                 self.set_val(f'traj.{phase_name}.t_initial',
                              val[0], units=units)
                 self.set_val(f'traj.{phase_name}.t_duration',
