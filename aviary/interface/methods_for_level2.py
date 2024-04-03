@@ -515,7 +515,7 @@ class AviaryProblem(om.Problem):
                         self.phase_info[phase_name]["user_options"].update({
                             "duration_bounds": ((target_duration[0], target_duration[0]), target_duration[1])})
                         self.phase_info[phase_name].update({
-                            "initial_guesses": {"times": ((target_duration[0], target_duration[0]), target_duration[1])}})
+                            "initial_guesses": {"time": ((target_duration[0], target_duration[0]), target_duration[1])}})
                         # Set Fixed_duration to true:
                         self.phase_info[phase_name]["user_options"].update({
                             "fix_duration": True})
@@ -1461,16 +1461,15 @@ class AviaryProblem(om.Problem):
 
                         for state in states_to_link:
                             # in initial guesses, all of the states, other than time use the same name
-                            temp_state = 'times' if state == 'time' else state
                             initial_guesses1 = self.phase_info[phase1]['initial_guesses']
                             initial_guesses2 = self.phase_info[phase2]['initial_guesses']
 
                             # if a state is in the initial guesses, get the units of the initial guess
                             units1, units2 = None, None
-                            if temp_state in initial_guesses1:
-                                units1 = initial_guesses1[temp_state][-1]
-                            if temp_state in initial_guesses2:
-                                units2 = initial_guesses2[temp_state][-1]
+                            if state in initial_guesses1:
+                                units1 = initial_guesses1[state][-1]
+                            if state in initial_guesses2:
+                                units2 = initial_guesses2[state][-1]
 
                             if (units1 == units2) or (None in (units1, units2)):
                                 # as long as the units of the initial guesses don't conflict, we can use a direct connection
@@ -2148,31 +2147,31 @@ class AviaryProblem(om.Problem):
             guesses["altitude"] = ([initial_altitude, final_altitude], 'ft')
 
         if self.mission_method is HEIGHT_ENERGY:
-            # if times not in initial guesses, set it to the average of the initial_bounds and the duration_bounds
-            if 'times' not in guesses:
+            # if time not in initial guesses, set it to the average of the initial_bounds and the duration_bounds
+            if 'time' not in guesses:
                 initial_bounds = wrapped_convert_units(
                     self.phase_info[phase_name]['user_options']['initial_bounds'], 's')
                 duration_bounds = wrapped_convert_units(
                     self.phase_info[phase_name]['user_options']['duration_bounds'], 's')
-                guesses["times"] = ([np.mean(initial_bounds[0]), np.mean(
+                guesses["time"] = ([np.mean(initial_bounds[0]), np.mean(
                     duration_bounds[0])], 's')
 
-            # if times not in initial guesses, set it to the average of the initial_bounds and the duration_bounds
-            if 'times' not in guesses:
+            # if time not in initial guesses, set it to the average of the initial_bounds and the duration_bounds
+            if 'time' not in guesses:
                 initial_bounds = self.phase_info[phase_name]['user_options']['initial_bounds']
                 duration_bounds = self.phase_info[phase_name]['user_options']['duration_bounds']
                 # Add a check for the initial and duration bounds, raise an error if they are not consistent
                 if initial_bounds[1] != duration_bounds[1]:
                     raise ValueError(
                         f"Initial and duration bounds for {phase_name} are not consistent.")
-                guesses["times"] = ([np.mean(initial_bounds[0]), np.mean(
+                guesses["time"] = ([np.mean(initial_bounds[0]), np.mean(
                     duration_bounds[0])], initial_bounds[1])
 
         for guess_key, guess_data in guesses.items():
             val, units = guess_data
 
             # Set initial guess for time variables
-            if 'times' == guess_key:
+            if 'time' == guess_key:
                 self.set_val(f'traj.{phase_name}.t_initial',
                              val[0], units=units)
                 self.set_val(f'traj.{phase_name}.t_duration',
@@ -2238,7 +2237,7 @@ class AviaryProblem(om.Problem):
             self.set_val(f'traj.{phase_name}.states:mass',
                          mass_guess, units='lbm')
 
-        if 'times' not in guesses:
+        if 'time' not in guesses:
             # Determine initial time and duration guesses depending on the phase name
             if 'desc1' == base_phase:
                 t_initial = flight_duration*.9

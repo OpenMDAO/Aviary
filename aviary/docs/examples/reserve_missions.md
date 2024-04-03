@@ -40,7 +40,7 @@ Similar to the fixed-range example, a simple fixed-time reserve mission is also 
 
 Again, we make a copy of the cruise phase from `phase_info` and then modify it by adding `"reserve": True,` and `"target_duration": (30, 'min'),`.
 We have also removed other references to time in the reserve phase definition.
-We do not list `initial_guesses:times`, `user_options:duration_bounds`, or `user_options:fixed_duration`.
+We do not list `initial_guesses:time`, `user_options:duration_bounds`, or `user_options:fixed_duration`.
 All of these are set automatically when we set `target_duration`.
 
 ## Multiphase Reserve Mission

@@ -66,8 +66,8 @@ It is essential that you run `prob.check_and_preprocess_inputs()` after `prob.lo
 
 For advanced users, instead of just copying a phase you used before, you might completely specify a new phase from scratch. 
 When creating a `"target_duration"` reserve phase there are a number of values inside of `phase_info['user_options']` that are overwritten in `check_and_preprocess_inputs()`. 
-Specifically, `duration_bounds`, `fixed_duration`, and `"initial_guesses": {"times"}` will be over-written. 
-That is because if `"target_duration"` is specified, Aviary already knows what these other three values need to be: `target_duration = duration_bounds = "initial_guesses": {"times"}`, and `fixed_duration = True`.
+Specifically, `duration_bounds`, `fixed_duration`, and `"initial_guesses": {"time"}` will be over-written. 
+That is because if `"target_duration"` is specified, Aviary already knows what these other three values need to be: `target_duration = duration_bounds = "initial_guesses": {"time"}`, and `fixed_duration = True`.
 
 ### Fuel Burn Calculations
 

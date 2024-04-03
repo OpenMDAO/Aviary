@@ -42,7 +42,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
                     "initial_bounds": ((0.0, 0.0), "min"),
                     "duration_bounds": ((64.0, 192.0), "min"),
                 },
-                "initial_guesses": {"times": ([0, 128], "min")},
+                "initial_guesses": {"time": ([0, 128], "min")},
             },
             "cruise": {
                 "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
@@ -66,7 +66,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
                     "initial_bounds": ((64.0, 192.0), "min"),
                     "duration_bounds": ((56.5, 169.5), "min"),
                 },
-                "initial_guesses": {"times": ([128, 113], "min")},
+                "initial_guesses": {"time": ([128, 113], "min")},
             },
             "descent": {
                 "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
@@ -90,7 +90,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
                     "initial_bounds": ((120.5, 361.5), "min"),
                     "duration_bounds": ((29.0, 87.0), "min"),
                 },
-                "initial_guesses": {"times": ([241, 58], "min")},
+                "initial_guesses": {"time": ([241, 58], "min")},
             },
             "post_mission": {
                 "include_landing": False,

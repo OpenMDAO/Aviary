@@ -69,7 +69,7 @@ class LandingApproachToMicP3(PhaseBuilderBase):
         state/path beginning values to be set on the problem
 
         supported options:
-            - times
+            - time
             - range
             - velocity
             - mass
@@ -289,7 +289,7 @@ class LandingMicP3ToObstacle(LandingApproachToMicP3):
         state/path beginning values to be set on the problem
 
         supported options:
-            - times
+            - time
             - range
             - velocity
             - mass
@@ -382,7 +382,7 @@ class LandingObstacleToFlare(PhaseBuilderBase):
         state/path beginning values to be set on the problem
 
         supported options:
-            - times
+            - time
             - range
             - velocity
             - mass
@@ -579,7 +579,7 @@ class LandingFlareToTouchdown(PhaseBuilderBase):
         state/path beginning values to be set on the problem
 
         supported options:
-            - times
+            - time
             - range
             - velocity
             - mass
@@ -797,7 +797,7 @@ class LandingTouchdownToNoseDown(PhaseBuilderBase):
         state/path beginning values to be set on the problem
 
         supported options:
-            - times
+            - time
             - range
             - velocity
             - mass
@@ -969,7 +969,7 @@ class LandingNoseDownToStop(PhaseBuilderBase):
         state/path beginning values to be set on the problem
 
         supported options:
-            - times
+            - time
             - range
             - velocity
             - mass
