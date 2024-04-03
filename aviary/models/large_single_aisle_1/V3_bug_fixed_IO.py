@@ -211,31 +211,31 @@ V3_bug_fixed_options.set_val(
     Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15, units="unitless"
 )
 V3_bug_fixed_options.set_val(
-    Aircraft.Design.APU_MASS, val=928.0, units="lbm")
+    Aircraft.APU.MASS, val=928.0, units="lbm")
 V3_bug_fixed_options.set_val(
-    Aircraft.Design.INSTRUMENT_MASS_COEFFICIENT, val=0.0736, units="unitless")
+    Aircraft.Instruments.MASS_COEFFICIENT, val=0.0736, units="unitless")
 V3_bug_fixed_options.set_val(
-    Aircraft.Design.HYDRAULICS_FC_MASS_COEFFICIENT, val=0.112, units="unitless")
+    Aircraft.Hydraulics.FC_MASS_COEFFICIENT, val=0.112, units="unitless")
 V3_bug_fixed_options.set_val(
-    Aircraft.Design.HYDRAULICS_GEAR_MASS_COEFFICIENT, val=0.14, units="unitless")
+    Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.14, units="unitless")
 V3_bug_fixed_options.set_val(
-    Aircraft.Design.AVIONICS_MASS, val=1959.0, units="lbm")
+    Aircraft.Avionics.MASS, val=1959.0, units="lbm")
 V3_bug_fixed_options.set_val(
-    Aircraft.Design.AIR_CONDITION_MASS_COEFFICIENT, val=1.65, units="unitless")
+    Aircraft.AirConditioning.MASS_COEFFICIENT, val=1.65, units="unitless")
 V3_bug_fixed_options.set_val(
-    Aircraft.Design.ANTI_ICING_MASS, val=551.0, units="lbm")
+    Aircraft.AntiIcing.MASS, val=551.0, units="lbm")
 V3_bug_fixed_options.set_val(
-    Aircraft.Design.FURNISHINGS_MASS, val=11192.0, units="lbm")
+    Aircraft.Furnishings.MASS, val=11192.0, units="lbm")
 V3_bug_fixed_options.set_val(
-    Aircraft.Design.PAX_SERVICE_MASS_PER_PASSENGER, val=5.0, units="lbm")
+    Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, val=5.0, units="lbm")
 V3_bug_fixed_options.set_val(
-    Aircraft.Design.WATER_MASS_PER_OCCUPANT, val=3.0, units="lbm")
+    Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units="lbm")
 V3_bug_fixed_options.set_val(
     Aircraft.Design.EMERGENCY_MASS, val=50.0, units="lbm")
 V3_bug_fixed_options.set_val(
-    Aircraft.Design.CATERING_ITEMS_MASS_PER_PASSENGER, val=7.6, units="lbm")
+    Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, val=7.6, units="lbm")
 V3_bug_fixed_options.set_val(
-    Aircraft.Design.UNUSABLE_FUEL_MASS_COEFFICIENT, val=12.0, units="unitless")
+    Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, val=12.0, units="unitless")
 
 V3_bug_fixed_options.set_val(
     Aircraft.Wing.MASS_COEFFICIENT, val=102.5, units="unitless"
