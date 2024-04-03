@@ -1448,7 +1448,8 @@ class AviaryProblem(om.Problem):
                         # and neither phase is ground roll or rotation (altitude isn't a state):
                         # we want altitude to be continous as well
                         if ((phase1 in self.reserve_phases) == (phase2 in self.reserve_phases)) and \
-                                not ({"groundroll", "rotation"} & {phase1, phase2}):
+                                not ({"groundroll", "rotation"} & {phase1, phase2}) and \
+                                not ('accel', 'climb1') == (phase1, phase2):  # required for convergence of FwGm
                             states_to_link[Dynamic.Mission.ALTITUDE] = true_unless_mpi
 
                         # if either phase is rotation, we need to connect velocity
