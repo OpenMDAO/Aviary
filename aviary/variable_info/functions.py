@@ -217,16 +217,11 @@ def setup_trajectory_params(
         # Assuming the kwargs are the same for shared parameters
         kwargs = external_parameters[phases[0]][key]
         targets = {phase: [key] for phase in phases}
-        try:
-            traj.add_parameter(
-                key,
-                **kwargs,
-                targets=targets
-            )
-        except ValueError:
-            if aviary_variables.get_val(Settings.VERBOSITY).value > 2:
-                UserWarning(f'Attempted to add parameter "{key}" to trajectory but '
-                            'trajectory already has a parameter, skipping')
+        traj.add_parameter(
+            key,
+            **kwargs,
+            targets=targets
+        )
 
         model.promotes('traj', inputs=[(f'parameters:{key}', key)])
 

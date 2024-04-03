@@ -431,11 +431,10 @@ class AviaryProblem(om.Problem):
         variables_to_pop = list(set(variables_to_pop))
 
         # NOTE add_params() in SubsystemBuilderBase now causes those variables to get
-        #      popped here, but they are needed later on - disabling the pop for now
-
-        # for variable in variables_to_pop:
-        #     if variable in self.meta_data:
-        #         self.meta_data.pop(variable)
+        #      popped here, but they are needed later on
+        for variable in variables_to_pop:
+            if variable in self.meta_data:
+                self.meta_data.pop(variable)
 
     def phase_separator(self):
         """
