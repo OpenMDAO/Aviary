@@ -50,7 +50,7 @@ class PropulsionPreMissionTest(unittest.TestCase):
 
         sls_thrust = self.prob.get_val(Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST)
 
-        expected_sls_thrust = np.array([54602.])
+        expected_sls_thrust = np.array([51128.6])
 
         assert_near_equal(sls_thrust, expected_sls_thrust, tolerance=1e-10)
 
@@ -85,4 +85,7 @@ class PropulsionPreMissionTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    # unittest.main()
+    test = PropulsionPreMissionTest()
+    test.setUp()
+    test.test_multi_engine()

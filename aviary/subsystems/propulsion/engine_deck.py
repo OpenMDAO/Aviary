@@ -682,7 +682,7 @@ class EngineDeck(EngineModel):
         # Re-normalize throttle since "dummy" idle values were used
         self._normalize_throttle()
 
-    def build_pre_mission(self, aviary_inputs) -> om.ExplicitComponent:
+    def build_pre_mission(self) -> om.ExplicitComponent:
         """
         Build components to be added to pre-mission propulsion subsystem.
 
@@ -692,7 +692,7 @@ class EngineDeck(EngineModel):
             scaling factors.
         """
 
-        return SizeEngine(aviary_options=aviary_inputs)
+        return SizeEngine(aviary_options=self.options)
 
     def build_engine_interpolator(self, num_nodes, aviary_inputs):
         interp_method = self.get_val(Aircraft.Engine.INTERPOLATION_METHOD)
@@ -756,7 +756,7 @@ class EngineDeck(EngineModel):
                           desc='Current turbine exit temperature')
         return engine
 
-    def build_mission(self, num_nodes, aviary_inputs) -> om.Group:
+    def build_mission(self, num_nodes) -> om.Group:
         """
         Creates interpolator objects to be added to mission-level propulsion subsystem.
         Interpolators must be re-generated for each ODE due to potentialy different
@@ -778,7 +778,7 @@ class EngineDeck(EngineModel):
 
         engine_group = om.Group()
 
-        engine = self.build_engine_interpolator(num_nodes, aviary_inputs)
+        engine = self.build_engine_interpolator(num_nodes, self.options)
         units = self.engine_variable_units
 
         # Create copy of interpolation component that computes max thrust for current
