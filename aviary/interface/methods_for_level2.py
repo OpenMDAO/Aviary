@@ -1437,8 +1437,11 @@ class AviaryProblem(om.Problem):
 
                     if not (analytic1 or analytic2):
                         # we always want time, distance, and mass to be continuous
-                        states_to_link = [
-                            'time', Dynamic.Mission.DISTANCE, Dynamic.Mission.MASS]
+                        states_to_link = {
+                            'time': true_unless_mpi,
+                            Dynamic.Mission.DISTANCE: true_unless_mpi,
+                            Dynamic.Mission.MASS: False,
+                        }
 
                         # if both phases are reserve phases or neither is a reserve phase
                         # (we are not on the boundary between the regular and reserve missions)
@@ -1446,47 +1449,29 @@ class AviaryProblem(om.Problem):
                         # we want altitude to be continous as well
                         if ((phase1 in self.reserve_phases) == (phase2 in self.reserve_phases)) and \
                                 not ({"groundroll", "rotation"} & {phase1, phase2}):
-                            states_to_link.append(Dynamic.Mission.ALTITUDE)
+                            states_to_link[Dynamic.Mission.ALTITUDE] = true_unless_mpi
 
                         # if either phase is rotation, we need to connect velocity
-                        if 'rotation' in (phase1, phase2):
-                            states_to_link.append(Dynamic.Mission.VELOCITY)
+                        # ascent to accel also requires velocity
+                        if 'rotation' in (phase1, phase2) or ('ascent', 'accel') == (phase1, phase2):
+                            states_to_link[Dynamic.Mission.VELOCITY] = true_unless_mpi
                             # if the first phase is rotation, we also need alpha
-                            # if phase1 == 'rotation':
-                            states_to_link.append('alpha')
+                            if phase1 == 'rotation':
+                                states_to_link['alpha'] = False
 
-                        # ascent to accel requires velocity
-                        if phase1 == 'ascent' and phase2 == 'accel':
-                            states_to_link.append(Dynamic.Mission.VELOCITY)
-
-                        for state in states_to_link:
+                        for state, connected in states_to_link.items():
                             # in initial guesses, all of the states, other than time use the same name
                             initial_guesses1 = self.phase_info[phase1]['initial_guesses']
                             initial_guesses2 = self.phase_info[phase2]['initial_guesses']
 
                             # if a state is in the initial guesses, get the units of the initial guess
-                            units1, units2 = None, None
                             if state in initial_guesses1:
-                                units1 = initial_guesses1[state][-1]
-                            if state in initial_guesses2:
-                                units2 = initial_guesses2[state][-1]
-
-                            if (units1 == units2):  # or (None in (units1, units2)):
-                                # as long as the units of the initial guesses don't conflict, we can use a direct connection
-                                if state == 'alpha':
-                                    # alpha is always connected with a constraint (it doesn't have an initial guess, but the units differ)
-                                    connected = False
-                                else:
-                                    # we can't use connected=True if we are running in parallel
-                                    connected = true_unless_mpi
+                                units = initial_guesses1[state][-1]
+                            elif state in initial_guesses2:
+                                units = initial_guesses2[state][-1]
                             else:
-                                # if the units of the intial guesses are both specified, but don't match, we use a constraint
-                                connected = False
+                                units = None
 
-                            if units1:
-                                units = units1
-                            else:
-                                units = units2
                             self.traj.link_phases(
                                 [phase1, phase2], [state], units=units, connected=connected)
 
