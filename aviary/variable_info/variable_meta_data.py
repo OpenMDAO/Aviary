@@ -1180,6 +1180,18 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Design.MAX_TIP_SPEED,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.TSPDMX',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='ft/s',
+    desc='maximum allowable propeller tip speed',
+    default_value=800.0,
+)
+
+add_meta_data(
     Aircraft.Design.OPERATING_MASS,
     meta_data=_MetaData,
     # TODO: check with Aviary and GASPy engineers to ensure these are indeed
@@ -1918,7 +1930,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICENT,
+    Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.CLI',
                      "FLOPS": None,
@@ -6127,6 +6139,17 @@ add_meta_data(
 )
 
 add_meta_data(
+    Dynamic.Mission.MACH_RATE,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='unitless',
+    desc='Current rate at which the Mach number of the vehicle is changing'
+)
+
+add_meta_data(
     Dynamic.Mission.MASS,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -6172,15 +6195,39 @@ add_meta_data(
 )
 
 add_meta_data(
+    Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='unitless',
+    desc='percent of the corrected rotor speed',
+    default_value=0.9,
+)
+
+add_meta_data(
     Dynamic.Mission.PROPELLER_TIP_SPEED,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.TSPDMX',
+    historical_name={"GASP": None,
                      "FLOPS": None,
                      "LEAPS1": None
                      },
     units='ft/s',
-    desc='maximum allowable propeller tip speed',
+    desc='propeller tip speed',
     default_value=500.0,
+)
+
+add_meta_data(
+    Dynamic.Mission.SPECIFIC_ENERGY,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='m/s',
+    desc='Rate of change in specific energy (energy per unit weight) of the vehicle at current '
+         'flight condition'
 )
 
 add_meta_data(
@@ -6420,6 +6467,19 @@ add_meta_data(
                      },
     units='NM',
     desc='residual to make sure aircraft range is equal to the targeted '
+         'range, value should be zero at convergence (within acceptable '
+         'tolerance)',
+)
+
+add_meta_data(
+    Mission.Constraints.RANGE_RESIDUAL_RESERVE,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='NM',
+    desc='residual to make sure aircraft reserve mission range is equal to the targeted '
          'range, value should be zero at convergence (within acceptable '
          'tolerance)',
 )

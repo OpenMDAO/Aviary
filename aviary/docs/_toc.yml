@@ -36,6 +36,7 @@ parts:
       - file: user_guide/aerodynamics
       - file: user_guide/external_aero
       - file: user_guide/propulsion
+      - file: user_guide/hamilton_standard
       - file: user_guide/mass
       - file: user_guide/subsystems
       - file: user_guide/using_external_subsystems
@@ -43,6 +44,7 @@ parts:
       - file: user_guide/battery_subsystem_example
       - file: user_guide/features/overriding
       - file: user_guide/FLOPS_based_detailed_takeoff_and_landing
+      - file: user_guide/reserve_missions
     - file: user_guide/troubleshooting
 
 - caption: Examples
@@ -51,6 +53,7 @@ parts:
     - file: examples/simple_mission_example
     - file: examples/more_advanced_example
     - file: examples/additional_flight_phases
+    - file: examples/reserve_missions
     - file: examples/coupled_aircraft_mission_optimization
     - file: examples/OAS_subsystem
 

@@ -179,3 +179,6 @@ class Verbosity(Enum):
     BRIEF = 1
     VERBOSE = 2
     DEBUG = 3
+
+    def __str__(self):
+        return str(self.value)

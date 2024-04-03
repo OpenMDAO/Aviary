@@ -233,8 +233,7 @@ $ pip install -e .
 When it is done, let us run test:
 
 ```
-% cd ../..
-% testflo .
+$ testflo .
 ```
 
 If you run into an MPI error, you can add `--nompi` option to `testflo` command run. If everything runs, you will get something like the following:

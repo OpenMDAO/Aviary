@@ -14,14 +14,13 @@ from dymos.utils.misc import _unspecified
 import openmdao.api as om
 from openmdao.core.component import Component
 from openmdao.utils.mpi import MPI
-from openmdao.utils.units import convert_units
 from openmdao.utils.reports_system import _default_reports
 
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
 from aviary.mission.flops_based.phases.build_landing import Landing
 from aviary.mission.flops_based.phases.build_takeoff import Takeoff
-from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
-from aviary.mission.flops_based.phases.two_dof_phase import TwoDOFPhase
+from aviary.mission.energy_phase import EnergyPhase
+from aviary.mission.twodof_phase import TwoDOFPhase
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 from aviary.mission.gasp_based.phases.time_integration_phases import SGMCruise
@@ -38,7 +37,7 @@ from aviary.mission.gasp_based.phases.taxi_group import TaxiSegment
 from aviary.mission.gasp_based.phases.v_rotate_comp import VRotateComp
 from aviary.mission.gasp_based.polynomial_fit import PolynomialFit
 from aviary.subsystems.premission import CorePreMission
-from aviary.utils.functions import create_opts2vals, add_opts2vals, promote_aircraft_and_mission_vars
+from aviary.utils.functions import create_opts2vals, add_opts2vals, promote_aircraft_and_mission_vars, wrapped_convert_units
 from aviary.utils.process_input_decks import create_vehicle, update_GASP_options, initial_guessing
 from aviary.utils.preprocessors import preprocess_crewpayload
 from aviary.interface.utils.check_phase_info import check_phase_info
@@ -68,35 +67,6 @@ GASP = LegacyCode.GASP
 TWO_DEGREES_OF_FREEDOM = EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
 HEIGHT_ENERGY = EquationsOfMotion.HEIGHT_ENERGY
 SOLVED_2DOF = EquationsOfMotion.SOLVED_2DOF
-
-
-def wrapped_convert_units(val_unit_tuple, new_units):
-    """
-    Wrapper for OpenMDAO's convert_units function.
-
-    Parameters
-    ----------
-    val_unit_tuple : tuple
-        Tuple of the form (value, units) where value is a float and units is a
-        string.
-    new_units : string
-        New units to convert to.
-
-    Returns
-    -------
-    float
-        Value converted to new units.
-    """
-    value, units = val_unit_tuple
-
-    # can't convert units on None; return None
-    if value is None:
-        return None
-
-    if isinstance(value, (list, tuple)):
-        return [convert_units(v, units, new_units) for v in value]
-    else:
-        return convert_units(value, units, new_units)
 
 
 class PreMissionGroup(om.Group):
@@ -242,7 +212,7 @@ class AviaryProblem(om.Problem):
 
     def __init__(self, analysis_scheme=AnalysisScheme.COLLOCATION, **kwargs):
         # Modify OpenMDAO's default_reports for this session.
-        new_reports = ['subsystems', 'mission']
+        new_reports = ['subsystems', 'mission', 'timeseries_csv']
         for report in new_reports:
             if report not in _default_reports:
                 _default_reports.append(report)
@@ -1603,14 +1573,11 @@ class AviaryProblem(om.Problem):
 
         if driver.options["optimizer"] == "SNOPT":
             if verbosity == Verbosity.QUIET:
-                isumm = 0
-                iprint = 0
+                isumm, iprint = 0, 0
             elif verbosity == Verbosity.BRIEF:
-                isumm = 6
-                iprint = 0
+                isumm, iprint = 6, 0
             else:
-                isumm = 6
-                iprint = 9
+                isumm, iprint = 6, 9
             driver.opt_settings["Major iterations limit"] = max_iter
             driver.opt_settings["Major optimality tolerance"] = 1e-4
             driver.opt_settings["Major feasibility tolerance"] = 1e-7
@@ -1618,13 +1585,16 @@ class AviaryProblem(om.Problem):
             driver.opt_settings["iPrint"] = iprint
         elif driver.options["optimizer"] == "IPOPT":
             if verbosity == Verbosity.QUIET:
-                print_level = 0
+                print_level = 3  # minimum to get exit status
+                driver.opt_settings['print_user_options'] = 'no'
             elif verbosity == Verbosity.BRIEF:
-                print_level = 2
+                print_level = 5
+                driver.opt_settings['print_user_options'] = 'no'
+                driver.opt_settings['print_frequency_iter'] = 10
             elif verbosity == Verbosity.VERBOSE:
                 print_level = 5
             else:
-                print_level = 8
+                print_level = 7
             driver.opt_settings['tol'] = 1.0E-6
             driver.opt_settings['mu_init'] = 1e-5
             driver.opt_settings['max_iter'] = max_iter
@@ -1645,8 +1615,10 @@ class AviaryProblem(om.Problem):
         if verbosity != Verbosity.QUIET:
             if isinstance(verbosity, list):
                 driver.options['debug_print'] = verbosity
-            elif verbosity.value >= 2:
+            elif verbosity.value > Verbosity.DEBUG.value:
                 driver.options['debug_print'] = ['desvars', 'ln_cons', 'nl_cons', 'objs']
+        if verbosity is not Verbosity.DEBUG and optimizer in ("SNOPT", "IPOPT"):
+            driver.options['print_results'] = False
 
     def add_design_variables(self):
         """
@@ -1941,37 +1913,39 @@ class AviaryProblem(om.Problem):
         for idx, (phase_name, phase) in enumerate(phase_items):
             if self.mission_method is SOLVED_2DOF:
                 self.phase_objects[idx].apply_initial_guesses(self, 'traj', phase)
-            else:
-                # If not, fetch the initial guesses specific to the phase
-                # check if guesses exist for this phase
-                if "initial_guesses" in self.phase_info[phase_name]:
-                    guesses = self.phase_info[phase_name]['initial_guesses']
-                else:
-                    guesses = {}
-
-                if 'cruise' in phase_name and self.mission_method is TWO_DEGREES_OF_FREEDOM:
-                    for guess_key, guess_data in guesses.items():
-                        val, units = guess_data
-
-                        if 'mass' == guess_key:
-                            # Set initial and duration mass for the analytic cruise phase.
-                            # Note we are integrating over mass, not time for this phase.
-                            self.set_val(f'traj.{phase_name}.t_initial',
-                                         val[0], units=units)
-                            self.set_val(f'traj.{phase_name}.t_duration',
-                                         val[1], units=units)
-                        else:
-                            # Otherwise, set the value of the parameter in the trajectory phase
-                            self.set_val(f'traj.{phase_name}.parameters:{guess_key}',
-                                         val, units=units)
-
+                if self.phase_info[phase_name]['user_options']['ground_roll'] and self.phase_info[phase_name]['user_options']['fix_initial']:
                     continue
 
-                # If not cruise and GASP, add subsystem guesses
-                self._add_subsystem_guesses(phase_name, phase)
+            # If not, fetch the initial guesses specific to the phase
+            # check if guesses exist for this phase
+            if "initial_guesses" in self.phase_info[phase_name]:
+                guesses = self.phase_info[phase_name]['initial_guesses']
+            else:
+                guesses = {}
 
-                # Set initial guesses for states and controls for each phase
-                self._add_guesses(phase_name, phase, guesses)
+            if 'cruise' in phase_name and self.mission_method is TWO_DEGREES_OF_FREEDOM:
+                for guess_key, guess_data in guesses.items():
+                    val, units = guess_data
+
+                    if 'mass' == guess_key:
+                        # Set initial and duration mass for the analytic cruise phase.
+                        # Note we are integrating over mass, not time for this phase.
+                        self.set_val(f'traj.{phase_name}.t_initial',
+                                     val[0], units=units)
+                        self.set_val(f'traj.{phase_name}.t_duration',
+                                     val[1], units=units)
+                    else:
+                        # Otherwise, set the value of the parameter in the trajectory phase
+                        self.set_val(f'traj.{phase_name}.parameters:{guess_key}',
+                                     val, units=units)
+
+                continue
+
+            # If not cruise and GASP, add subsystem guesses
+            self._add_subsystem_guesses(phase_name, phase)
+
+            # Set initial guesses for states and controls for each phase
+            self._add_guesses(phase_name, phase, guesses)
 
     def _process_guess_var(self, val, key, phase):
         """
@@ -2093,7 +2067,7 @@ class AviaryProblem(om.Problem):
             rotation_mass = self.initial_guesses['rotation_mass']
             flight_duration = self.initial_guesses['flight_duration']
 
-        if self.mission_method is HEIGHT_ENERGY:
+        if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
             control_keys = ["mach", "altitude"]
             state_keys = ["mass", Dynamic.Mission.DISTANCE]
         else:
@@ -2107,7 +2081,7 @@ class AviaryProblem(om.Problem):
         prob_keys = ["tau_gear", "tau_flaps"]
 
         # for the simple mission method, use the provided initial and final mach and altitude values from phase_info
-        if self.mission_method is HEIGHT_ENERGY:
+        if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
             initial_altitude = wrapped_convert_units(
                 self.phase_info[phase_name]['user_options']['initial_altitude'], 'ft')
             final_altitude = wrapped_convert_units(
@@ -2118,6 +2092,7 @@ class AviaryProblem(om.Problem):
             guesses["mach"] = ([initial_mach[0], final_mach[0]], "unitless")
             guesses["altitude"] = ([initial_altitude, final_altitude], 'ft')
 
+        if self.mission_method is HEIGHT_ENERGY:
             # if times not in initial guesses, set it to the average of the initial_bounds and the duration_bounds
             if 'times' not in guesses:
                 initial_bounds = wrapped_convert_units(
@@ -2162,6 +2137,11 @@ class AviaryProblem(om.Problem):
                             self.set_val(f'traj.{phase_name}.bspline_controls:{guess_key}', self._process_guess_var(
                                 val, guess_key, phase), units=units)
 
+                if self.mission_method is SOLVED_2DOF:
+                    continue
+
+                if guess_key in control_keys:
+                    pass
                 # Set initial guess for state variables
                 elif guess_key in state_keys:
                     self.set_val(f'traj.{phase_name}.states:{guess_key}', self._process_guess_var(
@@ -2175,6 +2155,9 @@ class AviaryProblem(om.Problem):
                     # raise error if the guess key is not recognized
                     raise ValueError(
                         f"Initial guess key {guess_key} in {phase_name} is not recognized.")
+
+        if self.mission_method is SOLVED_2DOF:
+            return
 
         # We need some special logic for these following variables because GASP computes
         # initial guesses using some knowledge of the mission duration and other variables

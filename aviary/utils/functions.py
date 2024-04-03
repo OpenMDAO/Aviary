@@ -1,10 +1,9 @@
 import numpy as np
 import openmdao.api as om
 from pathlib import Path
-import csv
 import pkg_resources
-import os
 
+from openmdao.utils.units import convert_units
 from aviary.utils.aviary_values import AviaryValues, get_keys
 from aviary.variable_info.enums import ProblemType, EquationsOfMotion, LegacyCode
 from aviary.variable_info.functions import add_aviary_output, add_aviary_input
@@ -375,3 +374,32 @@ def get_path(path: [str, Path], verbose: bool = False) -> Path:
         print(f'Using {path} for file.')
 
     return path
+
+
+def wrapped_convert_units(val_unit_tuple, new_units):
+    """
+    Wrapper for OpenMDAO's convert_units function.
+
+    Parameters
+    ----------
+    val_unit_tuple : tuple
+        Tuple of the form (value, units) where value is a float and units is a
+        string.
+    new_units : string
+        New units to convert to.
+
+    Returns
+    -------
+    float
+        Value converted to new units.
+    """
+    value, units = val_unit_tuple
+
+    # can't convert units on None; return None
+    if value is None:
+        return None
+
+    if isinstance(value, (list, tuple)):
+        return [convert_units(v, units, new_units) for v in value]
+    else:
+        return convert_units(value, units, new_units)

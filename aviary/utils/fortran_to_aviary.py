@@ -19,9 +19,10 @@ pyc_phases = taxi, groundroll, rotation, landing
 
 import csv
 import re
-from enum import Enum
-from pathlib import Path
+import getpass
 
+from datetime import datetime
+from pathlib import Path
 from openmdao.utils.units import valid_units
 
 from aviary.utils.functions import convert_strings_to_data
@@ -53,6 +54,14 @@ def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
                     'initial_guesses': initial_guesses, 'verbosity': verbosity}
 
     fortran_deck: Path = get_path(fortran_deck, verbose=False)
+
+    timestamp = datetime.now().strftime('%m/%d/%y at %H:%M')
+    user = getpass.getuser()
+    comments = []
+
+    comments.append(f'# created {timestamp} by {user}')
+    comments.append(
+        f'# {legacy_code.value}-derived aircraft input deck converted from {fortran_deck.name}')
 
     if out_file:
         out_file = Path(out_file)
@@ -88,15 +97,17 @@ def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
         out_file = fortran_deck.parent / out_file
 
     if out_file.is_file():
-        if force:
-            print(f'Overwriting existing file: {out_file.name}')
-        else:
+        if not force:
             raise RuntimeError(f'{out_file} already exists. Choose a new name or enable '
                                '--force')
+        elif verbosity.value >= 1:
+            print(f'Overwriting existing file: {out_file.name}')
+
     else:
         # create any directories defined by the new filename if they don't already exist
         out_file.parent.mkdir(parents=True, exist_ok=True)
-        print('Writing to:', out_file)
+        if verbosity.value >= 2:
+            print('Writing to:', out_file)
 
     # open the file in write mode
     with open(out_file, 'w', newline='') as f:
@@ -603,16 +614,18 @@ def _setup_F2A_parser(parser):
     )
     parser.add_argument(
         "-v",
-        "--verbose",
-        action="store_true",
-        help="Enable verbose print statements",
+        "--verbosity",
+        type=Verbosity,
+        choices=list(Verbosity),
+        default=1,
+        help="Set level of print statements",
     )
-    parser.add_argument(
-        "-vv",
-        "--very_verbose",
-        action="store_true",
-        help="Enable debug print statements",
-    )
+    # parser.add_argument(
+    #     "-vv",
+    #     "--very_verbose",
+    #     action="store_true",
+    #     help="Enable debug print statements",
+    # )
 
 
 def _exec_F2A(args, user_args):
@@ -621,12 +634,8 @@ def _exec_F2A(args, user_args):
         args.input_deck = args.input_deck[0]
     filepath = args.input_deck
 
-    if args.very_verbose is True:
-        verbosity = Verbosity.DEBUG
-    elif args.verbose is True:
-        verbosity = Verbosity.VERBOSE
-    else:
-        verbosity = Verbosity.BRIEF
+    # convert verbosity from number to enum
+    verbosity = Verbosity(args.verbosity)
 
     create_aviary_deck(filepath, args.legacy_code, args.defaults_deck,
                        args.out_file, args.force, verbosity)
