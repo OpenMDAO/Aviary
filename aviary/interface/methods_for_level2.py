@@ -1452,8 +1452,8 @@ class AviaryProblem(om.Problem):
                         if 'rotation' in (phase1, phase2):
                             states_to_link.append(Dynamic.Mission.VELOCITY)
                             # if the first phase is rotation, we also need alpha
-                            if phase1 == 'rotation':
-                                states_to_link.append('alpha')
+                            # if phase1 == 'rotation':
+                            states_to_link.append('alpha')
 
                         # ascent to accel requires velocity
                         if phase1 == 'ascent' and phase2 == 'accel':
@@ -1471,7 +1471,7 @@ class AviaryProblem(om.Problem):
                             if state in initial_guesses2:
                                 units2 = initial_guesses2[state][-1]
 
-                            if (units1 == units2) or (None in (units1, units2)):
+                            if (units1 == units2):  # or (None in (units1, units2)):
                                 # as long as the units of the initial guesses don't conflict, we can use a direct connection
                                 if state == 'alpha':
                                     # alpha is always connected with a constraint (it doesn't have an initial guess, but the units differ)
@@ -1482,8 +1482,13 @@ class AviaryProblem(om.Problem):
                             else:
                                 # if the units of the intial guesses are both specified, but don't match, we use a constraint
                                 connected = False
+
+                            if units1:
+                                units = units1
+                            else:
+                                units = units2
                             self.traj.link_phases(
-                                [phase1, phase2], [state], connected=connected)
+                                [phase1, phase2], [state], units=units, connected=connected)
 
                     # if either phase is analytic we have to use a linkage_constraint
                     else:
