@@ -4,15 +4,9 @@ from dymos.utils.misc import _unspecified
 from openmdao.core.component import Component
 
 from aviary.utils.aviary_values import AviaryValues
-
-import dymos as dm
-
-from dymos.utils.misc import _unspecified
-
-import openmdao.api as om
-
 from aviary.variable_info.core_promotes import core_mission_inputs
 from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variables import Settings
 
 # ---------------------------
 # Helper functions for setting up inputs/outputs in components
@@ -139,7 +133,7 @@ def override_aviary_vars(group, aviary_inputs: AviaryValues,
             # This variable is not overriden, so the output is promoted.
             comp_promoted_outputs.append(name)
 
-        # note: Always promoting all inputs into the "global" namespace
+        # NOTE Always promoting all inputs into the "global" namespace
         # so its VERY important that we enforce all inputs names exist in the master
         # variable list
         rel_path = comp.pathname[len(group.pathname):].lstrip(".")
@@ -223,11 +217,17 @@ def setup_trajectory_params(
         # Assuming the kwargs are the same for shared parameters
         kwargs = external_parameters[phases[0]][key]
         targets = {phase: [key] for phase in phases}
-        traj.add_parameter(
-            key,
-            **kwargs,
-            targets=targets
-        )
+        try:
+            traj.add_parameter(
+                key,
+                **kwargs,
+                targets=targets
+            )
+        except ValueError:
+            if aviary_variables.get_val(Settings.VERBOSITY).value > 2:
+                UserWarning(f'Attempted to add parameter "{key}" to trajectory but '
+                            'trajectory already has a parameter, skipping')
+
         model.promotes('traj', inputs=[(f'parameters:{key}', key)])
 
     return traj

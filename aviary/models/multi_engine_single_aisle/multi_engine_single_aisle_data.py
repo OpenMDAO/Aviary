@@ -4,7 +4,7 @@ from aviary.subsystems.propulsion.engine_deck import EngineDeck
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.functions import get_path
-from aviary.variable_info.enums import EquationsOfMotion, LegacyCode
+from aviary.variable_info.enums import EquationsOfMotion, LegacyCode, Verbosity
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 MultiEngineSingleAisle = {}

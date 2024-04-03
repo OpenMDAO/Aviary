@@ -170,8 +170,6 @@ class MissionODE(om.Group):
             ])
 
         # add a balance comp to compute throttle based on the altitude rate
-        engine_count = len(self.options['aviary_options'].get_val(
-            Aircraft.Engine.NUM_ENGINES))
         self.add_subsystem(name='throttle_balance',
                            subsys=om.BalanceComp(name=Dynamic.Mission.THROTTLE,
                                                  units="unitless",
@@ -180,8 +178,12 @@ class MissionODE(om.Group):
                                                  rhs_name=Dynamic.Mission.THRUST_TOTAL,
                                                  eq_units="lbf",
                                                  normalize=False,
-                                                 lower=0.0 if options['throttle_enforcement'] == 'bounded' else None,
-                                                 upper=1.0 if options['throttle_enforcement'] == 'bounded' else None,
+                                                 lower=0.0
+                                                 if options['throttle_enforcement'] == 'bounded'
+                                                 else None,
+                                                 upper=1.0
+                                                 if options['throttle_enforcement'] == 'bounded'
+                                                 else None,
                                                  res_ref=1.0e6,
                                                  ),
                            promotes_inputs=['*'],
@@ -193,9 +195,7 @@ class MissionODE(om.Group):
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.ones(nn), units='m')
         self.set_input_defaults(Dynamic.Mission.ALTITUDE_RATE,
                                 val=np.ones(nn), units='m/s')
-        self.set_input_defaults(
-            Dynamic.Mission.THROTTLE, val=np.ones((nn, engine_count)),
-            units='unitless')
+        self.set_input_defaults(Dynamic.Mission.THROTTLE, val=1.0, units='unitless')
 
         if options['use_actual_takeoff_mass']:
             exec_comp_string = 'initial_mass_residual = initial_mass - mass[0]'

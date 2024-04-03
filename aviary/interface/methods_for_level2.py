@@ -457,9 +457,12 @@ class AviaryProblem(om.Problem):
 
         variables_to_pop = list(set(variables_to_pop))
 
-        for variable in variables_to_pop:
-            if variable in self.meta_data:
-                self.meta_data.pop(variable)
+        # NOTE add_params() in SubsystemBuilderBase now causes those variables to get
+        #      popped here, but they are needed later on - disabling the pop for now
+
+        # for variable in variables_to_pop:
+        #     if variable in self.meta_data:
+        #         self.meta_data.pop(variable)
 
     def phase_separator(self):
         """
@@ -2245,7 +2248,7 @@ class AviaryProblem(om.Problem):
             If True (default), Dymos html plots will be generated as part of the output.
         """
 
-        if self.aviary_inputs.get_val('verbosity').value >= 2:
+        if self.aviary_inputs.get_val(Settings.VERBOSITY).value >= 2:
             self.final_setup()
             with open('input_list.txt', 'w') as outfile:
                 self.model.list_inputs(out_stream=outfile)
@@ -2267,7 +2270,7 @@ class AviaryProblem(om.Problem):
             failed = self.run_model()
             warnings.filterwarnings('default', category=UserWarning)
 
-        if self.aviary_inputs.get_val('verbosity').value >= 2:
+        if self.aviary_inputs.get_val(Settings.VERBOSITY).value >= 2:
             with open('output_list.txt', 'w') as outfile:
                 self.model.list_outputs(out_stream=outfile)
 

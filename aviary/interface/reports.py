@@ -17,7 +17,7 @@ def register_custom_reports():
     # TODO top-level aircraft report?
     # TODO add flag to skip registering reports?
 
-    # Note: Due to a possible bug in OpenMDAO, we need to assign Problem as the
+    # NOTE Due to a possible bug in OpenMDAO, we need to assign Problem as the
     # class_name instead of AviaryProblem.
 
     # register per-subsystem report generation
