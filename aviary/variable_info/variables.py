@@ -146,8 +146,8 @@ class Aircraft:
         LIFT_POLAR = 'aircraft:design:lift_polar'
 
         MAX_FUSELAGE_PITCH_ANGLE = 'aircraft:design:max_fuselage_pitch_angle'
-        MAX_STRUCTURAL_SPEED = 'aircraft:design:max_structural_speed'
         MAX_PROPELLER_TIP_SPEED = 'aircraft:design:max_propeller_tip_speed'
+        MAX_STRUCTURAL_SPEED = 'aircraft:design:max_structural_speed'
         OPERATING_MASS = 'aircraft:design:operating_mass'
         PART25_STRUCTURAL_CATEGORY = 'aircraft:design:part25_structural_category'
         RESERVE_FUEL_ADDITIONAL = 'aircraft:design:reserve_fuel_additional'

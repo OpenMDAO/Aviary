@@ -1168,18 +1168,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.MAX_STRUCTURAL_SPEED,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.VMLFSL',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='mi/h',
-    desc='maximum structural design flight speed in miles per hour',
-    default_value=0,
-)
-
-add_meta_data(
     Aircraft.Design.MAX_PROPELLER_TIP_SPEED,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.TSPDMX',
@@ -1189,6 +1177,18 @@ add_meta_data(
     units='ft/s',
     desc='maximum allowable propeller tip speed',
     default_value=800.0,
+)
+
+add_meta_data(
+    Aircraft.Design.MAX_STRUCTURAL_SPEED,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.VMLFSL',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='mi/h',
+    desc='maximum structural design flight speed in miles per hour',
+    default_value=0,
 )
 
 add_meta_data(
