@@ -61,6 +61,18 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.AirConditioning.MASS_COEFFICIENT,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.CW(6)',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='unitless',
+    desc='mass trend coefficient of air conditioning',
+    default_value=1.0,
+)
+
+add_meta_data(
     Aircraft.AirConditioning.MASS_SCALER,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -85,10 +97,10 @@ add_meta_data(
 
 add_meta_data(
     # NOTE user override
-    #    - see also: Aircraft.AntiIcing.MASS_SCALER
+    #    - see also: Aircraft.AntiIcing.MASS_SCALER for FLOPS data
     Aircraft.AntiIcing.MASS,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
+    historical_name={"GASP": 'INGASP.CW(7)',
                      # ['WTS.WSP(24, 2)', '~WEIGHT.WAI', '~WTSTAT.WSP(24, 2)'],
                      "FLOPS": None,
                      "LEAPS1": ['(WeightABC)self._aux_gear_weight',
@@ -123,10 +135,10 @@ add_meta_data(
 
 add_meta_data(
     # Note user override
-    #    - see also: Aircraft.APU.MASS_SCALER
+    #    - see also: Aircraft.APU.MASS_SCALER for FLOPS data
     Aircraft.APU.MASS,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
+    historical_name={"GASP": 'INGASP.CW(1)',
                      # ['WTS.WSP(17, 2)', '~WEIGHT.WAPU', '~WTSTAT.WSP(17, 2)'],
                      "FLOPS": None,
                      "LEAPS1": ['(WeightABC)self._aux_power_weight',
@@ -161,10 +173,10 @@ add_meta_data(
 
 add_meta_data(
     # Note user override
-    #    - see also: Aircraft.Avionics.MASS_SCALER
+    #    - see also: Aircraft.Avionics.MASS_SCALER for FLOPS data
     Aircraft.Avionics.MASS,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
+    historical_name={"GASP": 'INGASP.CW(5)',
                      # ['WTS.WSP(21, 2)', '~WEIGHT.WAVONC', '~WTSTAT.WSP(21, 2)'],
                      "FLOPS": None,
                      "LEAPS1": ['(WeightABC)self._avionics_group_weight',
@@ -558,6 +570,18 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.CW(12)',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='lbm',
+    desc='mass of catering items per passenger',
+    default_value=0.7,
+)
+
+add_meta_data(
     # Note user override
     #    - see also: Aircraft.CrewPayload.FLIGHT_CREW_MASS_SCALER
     Aircraft.CrewPayload.FLIGHT_CREW_MASS,
@@ -805,6 +829,18 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER,
+    meta_data=_MetaData,
+    historical_name={"GASP": "INGASP.CW(9)",
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    default_value=2.0,
+    units="lbm",
+    desc='mass of passenger service items mass per passenger',
+)
+
+add_meta_data(
     Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -826,6 +862,18 @@ add_meta_data(
                      },
     units='lbm',
     desc='total mass of payload, including passengers, passenger baggage, and cargo'
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT,
+    meta_data=_MetaData,
+    historical_name={"GASP": "INGASP.CW(10)",
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    default_value=1.0,
+    units="lbm",
+    desc='mass of water per occupant (passengers, pilots, and flight attendants)',
 )
 
 add_meta_data(
@@ -851,54 +899,6 @@ add_meta_data(
 # =========================================
 
 add_meta_data(
-    Aircraft.Design.AIR_CONDITION_MASS_COEFFICIENT,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CW(6)',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='unitless',
-    desc='mass trend coefficient of air conditioning',
-    default_value=1.0,
-)
-
-add_meta_data(
-    Aircraft.Design.ANTI_ICING_MASS,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CW(7)',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='lbm',
-    desc='mass of anti-icing equipment',
-    default_value=0.0,
-)
-
-add_meta_data(
-    Aircraft.Design.APU_MASS,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CW(1)',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='lbm',
-    desc='mass of APU',
-    default_value=0.0,
-)
-
-add_meta_data(
-    Aircraft.Design.AVIONICS_MASS,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CW(5)',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='lbm',
-    desc='mass of avionics',
-    default_value=0.0,
-)
-
-add_meta_data(
     Aircraft.Design.BASE_AREA,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -916,18 +916,6 @@ add_meta_data(
     desc='Aircraft base area (total exit cross-section area minus inlet '
          'capture areas for internally mounted engines)',
     default_value=0.0,
-)
-
-add_meta_data(
-    Aircraft.Design.CATERING_ITEMS_MASS_PER_PASSENGER,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CW(12)',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='lbm',
-    desc='mass of catering items per passenger',
-    default_value=0.7,
 )
 
 add_meta_data(
@@ -1133,42 +1121,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.FURNISHINGS_MASS,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CW(8)',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='lbm',
-    desc='mass of furnishings',
-    default_value=0.0,
-)
-
-add_meta_data(
-    Aircraft.Design.HYDRAULICS_FC_MASS_COEFFICIENT,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CW(3)',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='unitless',
-    desc='mass trend coefficient of hydraulics for flight control system',
-    default_value=0.10,
-)
-
-add_meta_data(
-    Aircraft.Design.HYDRAULICS_GEAR_MASS_COEFFICIENT,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CW(4)',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='unitless',
-    desc='mass trend coefficient of hydraulics for landing gear',
-    default_value=0.16,
-)
-
-add_meta_data(
     Aircraft.Design.IJEFF,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.IJEFF',
@@ -1178,18 +1130,6 @@ add_meta_data(
     desc="A flag used by Jeff V. Bowles to debug GASP code during his 53 years supporting the development of GASP. "
          "This flag is planted here to thank him for his hard work and dedication, Aviary wouldn't be what it is today "
          "without his help.",
-)
-
-add_meta_data(
-    Aircraft.Design.INSTRUMENT_MASS_COEFFICIENT,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CW(2)',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='unitless',
-    desc='mass trend coefficient of instruments',
-    default_value=0.0862,
 )
 
 add_meta_data(
@@ -1327,18 +1267,6 @@ add_meta_data(
     types=int,
     units="unitless",
     desc='part 25 structural category',
-)
-
-add_meta_data(
-    Aircraft.Design.PAX_SERVICE_MASS_PER_PASSENGER,
-    meta_data=_MetaData,
-    historical_name={"GASP": "INGASP.CW(9)",
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    default_value=2.0,
-    units="lbm",
-    desc='mass of passenger service items mass per passenger',
 )
 
 add_meta_data(
@@ -1546,18 +1474,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.UNUSABLE_FUEL_MASS_COEFFICIENT,
-    meta_data=_MetaData,
-    historical_name={"GASP": "INGASP.CW(13)",
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    default_value=6.0,
-    units="unitless",
-    desc='mass trend coefficient of trapped fuel factor',
-)
-
-add_meta_data(
     Aircraft.Design.USE_ALT_MASS,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -1569,18 +1485,6 @@ add_meta_data(
     option=True,
     types=bool,
     default_value=False,
-)
-
-add_meta_data(
-    Aircraft.Design.WATER_MASS_PER_OCCUPANT,
-    meta_data=_MetaData,
-    historical_name={"GASP": "INGASP.CW(10)",
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    default_value=1.0,
-    units="lbm",
-    desc='mass of water per occupant (passengers, pilots, and flight attendants)',
 )
 
 add_meta_data(
@@ -2568,6 +2472,18 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT,
+    meta_data=_MetaData,
+    historical_name={"GASP": "INGASP.CW(13)",
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    default_value=6.0,
+    units="unitless",
+    desc='mass trend coefficient of trapped fuel factor',
+)
+
+add_meta_data(
     Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -2712,10 +2628,10 @@ add_meta_data(
 
 add_meta_data(
     # Note user override
-    #    - see also: Aircraft.Furnishings.MASS_SCALER
+    #    - see also: Aircraft.Furnishings.MASS_SCALER for FLOPS data
     Aircraft.Furnishings.MASS,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
+    historical_name={"GASP": 'INGASP.CW(8)',
                      # ['WTS.WSP(22, 2)', '~WEIGHT.WFURN', '~WTSTAT.WSP(22, 2)'],
                      "FLOPS": None,
                      "LEAPS1": ['(WeightABC)self._furnishings_group_weight',
@@ -3519,6 +3435,30 @@ add_meta_data(
 # ====================================================================
 
 add_meta_data(
+    Aircraft.Hydraulics.FC_MASS_COEFFICIENT,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.CW(3)',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='unitless',
+    desc='mass trend coefficient of hydraulics for flight control system',
+    default_value=0.10,
+)
+
+add_meta_data(
+    Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.CW(4)',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='unitless',
+    desc='mass trend coefficient of hydraulics for landing gear',
+    default_value=0.16,
+)
+
+add_meta_data(
     # Note user override
     #    - see also: Aircraft.Hydraulics.MASS_SCALER
     Aircraft.Hydraulics.MASS,
@@ -3584,6 +3524,18 @@ add_meta_data(
     units='lbm',
     desc='instrument group mass',
     default_value=None,
+)
+
+add_meta_data(
+    Aircraft.Instruments.MASS_COEFFICIENT,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.CW(2)',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='unitless',
+    desc='mass trend coefficient of instruments',
+    default_value=0.0862,
 )
 
 add_meta_data(
