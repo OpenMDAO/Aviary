@@ -38,10 +38,11 @@ Examples of single-phase and multi-phase reserve missions are presented in [Rese
 ### Caveats when using 2DOF
 
 If you are using 2DOF equations of motion (EOM) in your problem (i.e. `settings:equations_of_motion,2DOF`) there are some additional things you need to be aware of.
-The name of the reserve phase should include one of the keywords to indicate which EOM from 2DOF will be selected.
-Valid keywords include: `accel`, `ascent`, `climb`, `cruise`, `desc`.
+The name of the reserve phase should include one of the keywords to indicate which EOM from 2DOF will be selected and the prefix `reserve_`.
+Valid keywords include: `accel`, `ascent`, `climb1`, `climb2`, `cruise`, `desc1`, `desc2`.
 This is because 2DOF uses different EOMs for different phases and we need to let `methods_for_level2.py` know which method to select.
 This is why in the example in the first paragraph above, the phase was named `reserve_cruise`.
+Cruise phases can have additional information in suffixes, but this isn't necessary.
 Do not worry about phase naming if you are using Height-Energy EOM as all those EOMs are the same for every phase.
 
 ## Theory
