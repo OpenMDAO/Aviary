@@ -9,7 +9,7 @@ We then call the correct methods in order to set up and run an Aviary optimizati
 This performs a coupled design-mission optimization and outputs the results from Aviary into the `reports` folder.
 """
 import aviary.api as av
-from example_phase_info import phase_info
+from aviary.examples.example_phase_info import phase_info
 from copy import deepcopy
 
 phase_info = deepcopy(phase_info)
@@ -38,7 +38,7 @@ phase_info.update({
             "initial_bounds": ((0.0, 0.0), "min"),
             "duration_bounds": ((64.0, 192.0), "min"),
         },
-        "initial_guesses": {"times": ([0, 128], "min")},
+        "initial_guesses": {"time": ([0, 128], "min")},
     },
     "reserve_cruise_fixed_range": {
         "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
@@ -65,7 +65,7 @@ phase_info.update({
             "initial_bounds": ((149.5, 448.5), "min"),
             "duration_bounds": ((0, 300), "min"),
         },
-        "initial_guesses": {"times": ([30, 120], "min")},
+        "initial_guesses": {"time": ([30, 120], "min")},
     },
     "reserve_cruise_fixed_time": {
         "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
@@ -116,7 +116,7 @@ phase_info.update({
             "initial_bounds": ((149.5, 448.5), "min"),
             "duration_bounds": ((0, 300), "min"),
         },
-        "initial_guesses": {"times": ([30, 120], "min")},
+        "initial_guesses": {"time": ([30, 120], "min")},
     },
     "reserve_descent": {
         "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
@@ -141,7 +141,7 @@ phase_info.update({
             "initial_bounds": ((120.5, 361.5), "min"),
             "duration_bounds": ((29.0, 87.0), "min"),
         },
-        "initial_guesses": {"times": ([241, 58], "min")},
+        "initial_guesses": {"time": ([241, 58], "min")},
     }
 })
 

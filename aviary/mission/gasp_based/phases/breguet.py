@@ -80,6 +80,8 @@ class RangeComp(om.ExplicitComponent):
         FF = -inputs[Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL]
         r0 = inputs["cruise_distance_initial"]
         t0 = inputs["cruise_time_initial"]
+        r0 = r0[0]
+        t0 = t0[0]
 
         FF_1 = FF[:-1]  # Initial fuel flow across each two-node pair
         FF_2 = FF[1:]  # Final fuel flow across each two-node pair
