@@ -148,3 +148,6 @@ _srcdocs/
 
 # Coloring files directories
 coloring_files/
+
+# Windows downloads
+*:Zone.Identifier

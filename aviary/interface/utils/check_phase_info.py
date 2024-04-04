@@ -177,11 +177,12 @@ def check_phase_info(phase_info, mission_method):
     phase_keys = {}
     if mission_method is TWO_DEGREES_OF_FREEDOM:
         for phase in phase_info:
-            if phase != 'pre_mission' and phase != 'post_mission':
-                if phase == 'cruise':
-                    phase_keys[phase] = {**phase_keys_gasp[phase]}
+            base_phase = phase.removeprefix('reserve_')
+            if base_phase != 'pre_mission' and base_phase != 'post_mission':
+                if 'cruise' in base_phase:
+                    phase_keys[phase] = {**phase_keys_gasp['cruise']}
                 else:
-                    phase_keys[phase] = {**common_keys, **phase_keys_gasp[phase]}
+                    phase_keys[phase] = {**common_keys, **phase_keys_gasp[base_phase]}
     elif mission_method is SOLVED_2DOF:
         return
     elif mission_method is HEIGHT_ENERGY:
@@ -198,10 +199,20 @@ def check_phase_info(phase_info, mission_method):
 
     # Check if all phases exist in phase_info
     for phase in phase_info:
-        if 'user_options' in phase_info[phase]:
-            phase_options = phase_info[phase]['user_options']
+        if mission_method is TWO_DEGREES_OF_FREEDOM:
+            base_phase = phase.removeprefix('reserve_')
+            if 'cruise' in base_phase:
+                base_phase = 'cruise'
         else:
-            phase_options = phase_info[phase]
+            base_phase = phase
+        if 'user_options' in phase_info[base_phase]:
+            phase_options = phase_info[base_phase]['user_options']
+        else:
+            phase_options = phase_info[base_phase]
+
+        if phase_options.get('target_range', False) and phase_options.get('target_duration', False):
+            raise ValueError(
+                f"target_range and target_duration have both been set to True for {phase}, please pick one.")
 
         # Check if all required keys exist, if there are no extra keys, and if they are of the correct type
         for key, expected_type in phase_keys[phase].items():
