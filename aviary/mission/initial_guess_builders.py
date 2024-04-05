@@ -159,16 +159,16 @@ class InitialGuessIntegrationVariable(InitialGuess):
     for the integration variable, usually time. We might also use this for
     other integration variables, such as velocity or distance.
 
-    The default name for the variable here is "times".
+    The default name for the variable here is "time".
 
     Attributes
     ----------
-    key : str ('times')
+    key : str ('time')
         the group identifier for guesses for initial integration variable value and duration
     '''
     __slots__ = ()
 
-    def __init__(self, key='times'):
+    def __init__(self, key='time'):
         super().__init__(key)
 
     def apply_initial_guess(

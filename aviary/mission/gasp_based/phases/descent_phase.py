@@ -64,6 +64,14 @@ class DescentPhase(PhaseBuilderBase):
 
 
 # Adding metadata for the DescentPhase
+DescentPhase._add_meta_data(
+    'analytic', val=False, desc='this is an analytic phase (no states).')
+DescentPhase._add_meta_data(
+    'reserve', val=False, desc='this phase is part of the reserve mission.')
+DescentPhase._add_meta_data(
+    'target_distance', val={}, desc='the amount of distance traveled in this phase added as a constraint')
+DescentPhase._add_meta_data(
+    'target_duration', val={}, desc='the amount of time taken by this phase added as a constraint')
 DescentPhase._add_meta_data('fix_initial', val=False)
 DescentPhase._add_meta_data('input_initial', val=False)
 DescentPhase._add_meta_data('EAS_limit', val=0, units='kn')

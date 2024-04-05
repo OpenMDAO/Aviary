@@ -1,5 +1,8 @@
 import unittest
 
+import openmdao.api as om
+from aviary.interface.default_phase_info.two_dof_fiti import create_2dof_based_descent_phases
+
 from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.interface.default_phase_info.two_dof import default_mission_subsystems
@@ -14,8 +17,7 @@ import importlib
 
 @unittest.skipUnless(importlib.util.find_spec("pyoptsparse") is not None, "pyoptsparse is not installed")
 class IdleDescentTestCase(unittest.TestCase):
-    def test_case1(self):
-        tol = 1e-5
+    def setUp(self):
         input_deck = 'models/large_single_aisle_1/large_single_aisle_1_GwGm.csv'
         aviary_inputs, _ = create_vehicle(input_deck)
         aviary_inputs.set_val('verbosity', Verbosity.QUIET)
@@ -26,11 +28,17 @@ class IdleDescentTestCase(unittest.TestCase):
         engine = EngineDeck(options=aviary_inputs)
         preprocess_propulsion(aviary_inputs, [engine])
 
-        results = descent_range_and_fuel(ode_args=ode_args)['refined_guess']
+        self.ode_args = ode_args
+        self.aviary_inputs = aviary_inputs
+        self.tol = 1e-5
+
+    def test_case1(self):
+
+        results = descent_range_and_fuel(ode_args=self.ode_args)['refined_guess']
 
         # Values obtained by running idle_descent_estimation
-        assert_near_equal(results['distance_flown'], 91.8911599691433, tol)
-        assert_near_equal(results['fuel_burned'], 236.73893823639082, tol)
+        assert_near_equal(results['distance_flown'], 91.8911599691433, self.tol)
+        assert_near_equal(results['fuel_burned'], 236.73893823639082, self.tol)
 
 
 if __name__ == "__main__":
