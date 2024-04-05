@@ -611,11 +611,11 @@ class AviaryProblem(om.Problem):
         add_opts2vals(self.model, OptionsToValues, self.aviary_inputs)
 
         if self.analysis_scheme is AnalysisScheme.SHOOTING:
-            self._add_fuel_reserve_component(post_mission=False)
-        #     add_descent_estimation_as_submodel(
-        #         self,
-        #         ode_args=self.ode_args,
-        #         initial_mass=Mission.Summary.GROSS_MASS)
+            # self._add_fuel_reserve_component(post_mission=False)
+            add_descent_estimation_as_submodel(
+                self,
+                ode_args=self.ode_args,
+                initial_mass=Mission.Summary.GROSS_MASS)
 
         # Add thrust-to-weight ratio subsystem
         self.model.add_subsystem(
@@ -992,23 +992,19 @@ class AviaryProblem(om.Problem):
                 self.ode_args,
                 cruise_mach=self.cruise_mach)
 
-            # print('starting idle descent')
-            # add_descent_estimation_as_submodel(self, descent_phases)
-            # print('finished idle descent')
+            # descent_estimation = descent_range_and_fuel(
+            #     phases=descent_phases,
+            #     initial_mass=initial_mass,
+            #     cruise_alt=self.cruise_alt,
+            #     cruise_mach=self.cruise_mach,
+            #     # reserve_fuel=
+            # )
 
-            descent_estimation = descent_range_and_fuel(
-                phases=descent_phases,
-                initial_mass=initial_mass,
-                cruise_alt=self.cruise_alt,
-                cruise_mach=self.cruise_mach,
-                # reserve_fuel=
-            )
-
-            estimated_descent_range = descent_estimation['refined_guess']['distance_flown']
-            end_of_cruise_range = self.target_range - estimated_descent_range
+            # estimated_descent_range = descent_estimation['refined_guess']['distance_flown']
+            # end_of_cruise_range = self.target_range - estimated_descent_range
 
             # based on reserve_fuel
-            estimated_descent_fuel = descent_estimation['refined_guess']['fuel_burned']
+            # estimated_descent_fuel = descent_estimation['refined_guess']['fuel_burned']
 
             cruise_kwargs = dict(
                 input_speed_type=SpeedType.MACH,
@@ -1021,7 +1017,7 @@ class AviaryProblem(om.Problem):
             )
             cruise_vals = {
                 'mach': {'val': self.cruise_mach, 'units': cruise_kwargs['input_speed_units']},
-                'descent_fuel': {'val': estimated_descent_fuel, 'units': 'lbm'},
+                # 'descent_fuel': {'val': estimated_descent_fuel, 'units': 'lbm'},
             }
 
             phases = {

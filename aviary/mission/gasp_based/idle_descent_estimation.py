@@ -5,6 +5,9 @@ import openmdao.api as om
 from aviary.interface.default_phase_info.two_dof_fiti import create_2dof_based_descent_phases
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic
+from aviary.utils.functions import set_aviary_initial_values, promote_aircraft_and_mission_vars
+from aviary.variable_info.variables_in import VariablesIn
+from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 
 
 def descent_range_and_fuel(
