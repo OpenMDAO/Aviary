@@ -26,15 +26,17 @@ class NacelleMass(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, val=np.array([0.0]))
+        count = len(self.options['aviary_options'].get_val('engine_models'))
 
-        add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH, val=np.array([0.0]))
+        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, val=np.zeros(count))
 
-        add_aviary_input(self, Aircraft.Nacelle.MASS_SCALER, val=np.array([1.0]))
+        add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH, val=np.zeros(count))
 
-        add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST, val=np.array([0.0]))
+        add_aviary_input(self, Aircraft.Nacelle.MASS_SCALER, val=np.zeros(count))
 
-        add_aviary_output(self, Aircraft.Nacelle.MASS, val=np.array([0.0]))
+        add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST, val=np.zeros(count))
+
+        add_aviary_output(self, Aircraft.Nacelle.MASS, val=np.zeros(count))
 
     def setup_partials(self):
         self.declare_partials("*", "*")
