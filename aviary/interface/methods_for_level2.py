@@ -615,6 +615,8 @@ class AviaryProblem(om.Problem):
             add_descent_estimation_as_submodel(
                 self,
                 ode_args=self.ode_args,
+                cruise_mach=self.cruise_mach,
+                cruise_alt=self.cruise_alt,
                 initial_mass=Mission.Summary.GROSS_MASS)
 
         # Add thrust-to-weight ratio subsystem

@@ -146,20 +146,37 @@ def add_descent_estimation_as_submodel(
     model.add_subsystem(
         'top_of_descent_mass',
         om.ExecComp(
-            'mass_initial = empty_mass + payload_mass + 0 + descent_fuel_estimate',
+            'mass_initial = operating_mass + payload_mass + 0 + descent_fuel_estimate',
             mass_initial={'units': 'lbm'},
-            empty_mass={'units': 'lbm'},
+            operating_mass={'units': 'lbm'},
             payload_mass={'units': 'lbm'},
             # reserve_fuel = {'units':'lbm'},
             descent_fuel_estimate={'units': 'lbm', 'val': 0},
         ),
         promotes_inputs=[
-            ('empty_mass', Aircraft.Design.EMPTY_MASS),
+            ('operating_mass', Aircraft.Design.OPERATING_MASS),
             ('payload_mass', Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS),
             # ('reserve_fuel', Aircraft.Design.EMPTY_MASS),
             ('descent_fuel_estimate', 'descent_fuel'),
         ],
         promotes_outputs=['mass_initial'])
+
+    from aviary.utils.functions import create_printcomp
+    dummy_comp = create_printcomp(
+        all_inputs=[
+            Aircraft.Design.OPERATING_MASS,
+            Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS,
+            'descent_fuel',
+        ],
+        input_units={
+            'descent_fuel': 'lbm',
+        })
+    model.add_subsystem(
+        "dummy_comp",
+        dummy_comp(),
+        promotes_inputs=["*"],)
+    model.set_input_defaults(
+        Aircraft.Design.OPERATING_MASS, val=0, units='lbm')
 
     model.add_subsystem(
         'traj', traj,
@@ -221,17 +238,19 @@ def add_descent_estimation_as_submodel(
     elif isinstance(cruise_alt, (int, float)):
         model.set_input_defaults('altitude_initial', cruise_alt)
 
-    aviary_inputs = main_prob.aviary_inputs
+    model.set_input_defaults(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, 0)
 
-    model.add_subsystem(
-        'input_sink',
-        VariablesIn(aviary_options=aviary_inputs,
-                    meta_data=BaseMetaData),
-        promotes_inputs=['*'],
-        promotes_outputs=['*'])
+    # aviary_inputs = main_prob.aviary_inputs
+
+    # model.add_subsystem(
+    #     'input_sink',
+    #     VariablesIn(aviary_options=aviary_inputs,
+    #                 meta_data=BaseMetaData),
+    #     promotes_inputs=['*'],
+    #     promotes_outputs=['*'])
 
     promote_aircraft_and_mission_vars(model)
-    set_aviary_initial_values(model, aviary_inputs, BaseMetaData)
+    # set_aviary_initial_values(model, aviary_inputs, BaseMetaData)
 
     subprob = om.Problem(model=model)
     subcomp = om.SubmodelComp(
@@ -253,4 +272,7 @@ def add_descent_estimation_as_submodel(
         ],
 
     )
-    set_aviary_initial_values(main_prob.model, aviary_inputs, BaseMetaData)
+    # main_prob.setup()
+    # om.n2(main_prob,show_browser=False)
+    # exit()
+    # set_aviary_initial_values(main_prob.model, aviary_inputs, BaseMetaData)
