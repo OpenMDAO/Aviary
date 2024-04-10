@@ -7,7 +7,8 @@ from aviary.subsystems.propulsion.utils import EngineModelVariables
 from aviary.utils.named_values import NamedValues
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.subsystems.propulsion.propeller_performance import PropellerPerformance, UncorrectShaftPower
+from aviary.subsystems.propulsion.propeller_performance import PropellerPerformance
+from aviary.subsystems.propulsion.utils import UncorrectData
 from aviary.mission.gasp_based.flight_conditions import FlightConditions
 from aviary.variable_info.enums import SpeedType
 
@@ -83,16 +84,18 @@ class TurbopropModel(EngineModel):
         # accept target scaling variable as an option, skipping for now
         if type(shp_model) is not EngineDeck:
             shp_model_pre_mission = shp_model.build_pre_mission(aviary_inputs, **kwargs)
-            turboprop_group.add_subsystem(shp_model_pre_mission.name,
-                                          subsys=shp_model_pre_mission,
-                                          promotes=['*'])
+            if shp_model_pre_mission is not None:
+                turboprop_group.add_subsystem(shp_model_pre_mission.name,
+                                              subsys=shp_model_pre_mission,
+                                              promotes=['*'])
 
         if prop_model is not None:
             prop_model_pre_mission = prop_model.build_pre_mission(
                 aviary_inputs, **kwargs)
-            turboprop_group.add_subsystem(prop_model_pre_mission.name,
-                                          subsys=prop_model_pre_mission,
-                                          promotes=['*'])
+            if prop_model_pre_mission is not None:
+                turboprop_group.add_subsystem(prop_model_pre_mission.name,
+                                              subsys=prop_model_pre_mission,
+                                              promotes=['*'])
 
         return turboprop_group
 
@@ -102,10 +105,11 @@ class TurbopropModel(EngineModel):
         turboprop_group = om.Group()
 
         shp_model_mission = shp_model.build_mission(num_nodes, aviary_inputs, **kwargs)
-        turboprop_group.add_subsystem(shp_model.name,
-                                      subsys=shp_model_mission,
-                                      promotes_inputs=['*'],
-                                      promotes_outputs=['*', (Dynamic.Mission.THRUST, 'turboshaft_thrust')])
+        if shp_model_mission is not None:
+            turboprop_group.add_subsystem(shp_model.name,
+                                          subsys=shp_model_mission,
+                                          promotes_inputs=['*'],
+                                          promotes_outputs=['*', (Dynamic.Mission.THRUST, 'turboshaft_thrust')])
 
         # ensure uncorrected shaft horsepower is avaliable
         # TODO also make sure corrected is avaliable
@@ -113,21 +117,22 @@ class TurbopropModel(EngineModel):
         if type(shp_model_mission) is EngineDeck:
             if EngineModelVariables.SHAFT_POWER not in shp_model_mission.engine_variables:
                 turboprop_group.add_subsystem('uncorrect_shaft_power',
-                                              subsys=UncorrectShaftPower(num_nodes=num_nodes,
-                                                                         aviary_options=self.options),
-                                              promotes_inputs=[Dynamic.Mission.SHAFT_POWER_CORRECTED,
+                                              subsys=UncorrectData(num_nodes=num_nodes,
+                                                                   aviary_options=self.options),
+                                              promotes_inputs=[('data_corrected', Dynamic.Mission.SHAFT_POWER_CORRECTED),
                                                                Dynamic.Mission.TEMPERATURE,
                                                                Dynamic.Mission.STATIC_PRESSURE,
                                                                Dynamic.Mission.MACH],
-                                              promotes_outputs=[Dynamic.Mission.SHAFT_POWER]),
+                                              promotes_outputs=[('data_uncorrected', Dynamic.Mission.SHAFT_POWER)]),
 
         if prop_model is not None:  # must assume user-provide propeller group has everything it needs
             prop_model_mission = prop_model.build_mission(
                 num_nodes, self.options, **kwargs)
-            turboprop_group.add_subsystem(prop_model.name,
-                                          subsys=prop_model_mission,
-                                          promotes_inputs=['*'],
-                                          promotes_outputs=['*'])
+            if prop_model_mission is not None:
+                turboprop_group.add_subsystem(prop_model.name,
+                                              subsys=prop_model_mission,
+                                              promotes_inputs=['*'],
+                                              promotes_outputs=['*'])
 
         else:  # use the Hamilton Standard model
             # calculate atmospheric properties
@@ -161,16 +166,6 @@ class TurbopropModel(EngineModel):
                                       promotes_outputs=[('turboprop_thrust',
                                                          Dynamic.Mission.THRUST)])
 
-        # connect shaftpower model and propeller model to thrust adder
-        # turboprop_group.connect('turboshaft_thrust',
-        #                         'thrust_adder.tailpipe_thrust')
-        # if prop_model is not None:
-        #     turboprop_group.connect(prop_model.name + '.' + 'propeller_thrust',
-        #                             'thrust_adder.propeller_thrust')
-        # else:
-        #     turboprop_group.connect('propeller_model.propeller_thrust',
-        #                             'thrust_adder.propeller_thrust')
-
         return turboprop_group
 
     def build_post_mission(self, aviary_inputs, **kwargs):
@@ -180,14 +175,16 @@ class TurbopropModel(EngineModel):
         if type(shp_model) is not EngineDeck:
             shp_model_post_mission = shp_model.build_post_mission(
                 aviary_inputs, **kwargs)
-            turboprop_group.add_subsystem(shp_model_post_mission.name,
-                                          subsys=shp_model_post_mission,
-                                          aviary_options=aviary_inputs,)
+            if shp_model_post_mission is not None:
+                turboprop_group.add_subsystem(shp_model_post_mission.name,
+                                              subsys=shp_model_post_mission,
+                                              aviary_options=aviary_inputs,)
 
         if self.propeller_model is not None:
             prop_model_post_mission = prop_model.build_mission(aviary_inputs, **kwargs)
-            turboprop_group.add_subsystem(prop_model_post_mission.name,
-                                          subsys=prop_model_post_mission,
-                                          aviary_options=aviary_inputs,)
+            if prop_model_post_mission is not None:
+                turboprop_group.add_subsystem(prop_model_post_mission.name,
+                                              subsys=prop_model_post_mission,
+                                              aviary_options=aviary_inputs,)
 
         return turboprop_group

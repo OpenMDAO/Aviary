@@ -51,9 +51,6 @@ class TurbopropTest(unittest.TestCase):
         engine = TurbopropModel(options=options, propeller_model=prop_model)
         preprocess_propulsion(options, [engine])
 
-        # self.prob.model = PropulsionMission(
-        #     num_nodes=len(test_points), aviary_options=options)
-
         machs, alts, throttles = zip(*test_points)
         IVC = om.IndepVarComp(Dynamic.Mission.MACH,
                               np.array(machs),
@@ -236,6 +233,3 @@ class ExamplePropModel(SubsystemBuilderBase):
 
 if __name__ == "__main__":
     unittest.main()
-    # test = TurbopropTest()
-    # test.setUp()
-    # test.test_case_1()
