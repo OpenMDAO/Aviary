@@ -110,7 +110,7 @@ class InstallLoss(om.Group):
         )
 
         self.add_subsystem(
-            name='install_loss_factor',
+            name='installation_loss_factor',
             subsys=om.ExecComp(
                 'install_loss_factor = 1 - blockage_factor',
                 blockage_factor={'units': 'unitless', 'val': np.zeros(nn)},
