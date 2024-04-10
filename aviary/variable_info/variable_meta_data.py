@@ -189,6 +189,122 @@ add_meta_data(
     default_value=1.0,
 )
 
+#  ____            _     _
+# |  _ \          | |   | |
+# | |_) |   __ _  | |_  | |_    ___   _ __   _   _
+# |  _ <   / _` | | __| | __|  / _ \ | '__| | | | |
+# | |_) | | (_| | | |_  | |_  |  __/ | |    | |_| |
+# |____/   \__,_|  \__|  \__|  \___| |_|     \__, |
+#                                             __/ |
+#                                            |___/
+# =================================================
+add_meta_data(
+    Aircraft.Battery.ADDITIONAL_MASS,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": 'aircraft.inputs.L0_battery.weight_offset'
+                     },
+    units='lbm',
+    desc='mass of non energy-storing parts of the battery',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Battery.DISCHARGE_LIMIT,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": 'aircraft.inputs.L0_battery.depth_of_discharge'
+                     },
+    units='unitless',
+    desc='default constraint on how far the battery can discharge, as a percentage of '
+         'total energy capacity'
+)
+
+add_meta_data(
+    Aircraft.Battery.EFFICIENCY,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='unitless',
+    desc="battery pack efficiency"
+)
+
+add_meta_data(
+    Aircraft.Battery.ENERGY_CAPACITY,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='kJ',
+    desc="total energy the battery can store"
+)
+
+add_meta_data(
+    Aircraft.Battery.MASS,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": 'aircraft.inputs.L0_battery.weight'
+                     },
+    units='lbm',
+    desc='total mass of the battery',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Battery.PACK_ENERGY_DENSITY,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": 'aircraft.inputs.L0_battery.energy_density'
+                     },
+    units='kW*h/kg',
+    desc='specific energy density of the battery pack',
+    default_value=1.0,
+)
+
+
+add_meta_data(
+    Aircraft.Battery.PACK_MASS,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='lbm',
+    desc='mass of the energy-storing components of the battery',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Battery.PACK_VOLUMETRIC_DENSITY,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='kW*h/kg',
+    desc='volumetric density of the battery pack',
+    default_value=0,
+)
+
+add_meta_data(
+    Aircraft.Battery.VOLUME,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='ft*3',
+    desc='total volume of the battery pack',
+    default_value=0.0,
+)
+
 
 #  ____    _                      _              _    __          __  _                     ____                _
 # |  _ \  | |                    | |            | |   \ \        / / (_)                   |  _ \              | |
@@ -5929,6 +6045,17 @@ add_meta_data(
     units='ft/s',
     desc='Current maximum possible rate of altitude change (climb rate) of the vehicle '
          '(at hypothetical maximum thrust condition)'
+)
+
+add_meta_data(
+    Dynamic.Mission.BATTERY_STATE_OF_CHARGE,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='unitless',
+    desc="battery's current state of charge"
 )
 
 add_meta_data(

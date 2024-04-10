@@ -25,6 +25,17 @@ class Aircraft:
         MASS = 'aircraft:avionics:mass'
         MASS_SCALER = 'aircraft:avionics:mass_scaler'
 
+    class Battery:
+        ADDITIONAL_MASS = 'aircraft:battery:additional_mass'
+        DISCHARGE_LIMIT = 'aircraft:battery:discharge_limit'
+        EFFICIENCY = 'aircraft:battery:efficiency'
+        ENERGY_CAPACITY = 'aircraft:battery:energy_capacity'
+        MASS = 'aircraft:battery:mass'
+        PACK_ENERGY_DENSITY = 'aircraft:battery:pack_energy_density'
+        PACK_MASS = 'aircraft:battery:pack_mass'
+        PACK_VOLUMETRIC_DENSITY = 'aircraft:battery:pack_volumetric_density'
+        VOLUME = 'aircraft:battery:volume'
+
     class BWB:
         CABIN_AREA = 'aircraft:blended_wing_body_design:cabin_area'
         NUM_BAYS = 'aircraft:blended_wing_body_design:num_bays'
@@ -583,6 +594,7 @@ class Dynamic:
         ALTITUDE = 'altitude'
         ALTITUDE_RATE = 'altitude_rate'
         ALTITUDE_RATE_MAX = 'altitude_rate_max'
+        BATTERY_STATE_OF_CHARGE = 'battery_state_of_charge'
         DENSITY = 'density'
         DISTANCE = 'distance'
         DISTANCE_RATE = 'distance_rate'
@@ -604,6 +616,7 @@ class Dynamic:
         MACH_RATE = 'mach_rate'
         MASS = 'mass'
         MASS_RATE = 'mass_rate'
+        MISSION_ENERGY = 'mission_energy'
         NOX_RATE = 'nox_rate'
         NOX_RATE_TOTAL = 'nox_rate_total'
         PERCENT_ROTOR_RPM_CORRECTED = 'percent_rotor_rpm_corrected'
