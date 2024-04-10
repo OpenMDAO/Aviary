@@ -107,7 +107,7 @@ class TakeoffBrakeReleaseToDecisionSpeed(PhaseBuilderBase):
         state/path beginning values to be set on the problem
 
         supported options:
-            - times
+            - time
             - range
             - velocity
             - mass
@@ -271,7 +271,7 @@ class TakeoffDecisionSpeedToRotate(PhaseBuilderBase):
         state/path beginning values to be set on the problem
 
         supported options:
-            - times
+            - time
             - range
             - velocity
             - mass
@@ -445,7 +445,7 @@ class TakeoffDecisionSpeedBrakeDelay(TakeoffDecisionSpeedToRotate):
         state/path beginning values to be set on the problem
 
         supported options:
-            - times
+            - time
             - range
             - velocity
             - mass
@@ -546,7 +546,7 @@ class TakeoffRotateToLiftoff(PhaseBuilderBase):
         state/path beginning values to be set on the problem
 
         supported options:
-            - times
+            - time
             - range
             - velocity
             - mass
@@ -729,7 +729,7 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
         state/path beginning values to be set on the problem
 
         supported options:
-            - times
+            - time
             - range
             - velocity
             - mass
@@ -962,7 +962,7 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
         state/path beginning values to be set on the problem
 
         supported options:
-            - times
+            - time
             - range
             - velocity
             - mass
@@ -1191,7 +1191,7 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
         state/path beginning values to be set on the problem
 
         supported options:
-            - times
+            - time
             - range
             - velocity
             - mass
@@ -1418,7 +1418,7 @@ class TakeoffEngineCutback(PhaseBuilderBase):
         state/path beginning values to be set on the problem
 
         supported options:
-            - times
+            - time
             - range
             - velocity
             - mass
@@ -1629,7 +1629,7 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilderBase):
         state/path beginning values to be set on the problem
 
         supported options:
-            - times
+            - time
             - range
             - velocity
             - mass
@@ -1855,7 +1855,7 @@ class TakeoffMicP1ToClimb(PhaseBuilderBase):
         state/path beginning values to be set on the problem
 
         supported options:
-            - times
+            - time
             - range
             - velocity
             - mass
@@ -2074,7 +2074,7 @@ class TakeoffBrakeToAbort(PhaseBuilderBase):
         state/path beginning values to be set on the problem
 
         supported options:
-            - times
+            - time
             - range
             - velocity
             - mass

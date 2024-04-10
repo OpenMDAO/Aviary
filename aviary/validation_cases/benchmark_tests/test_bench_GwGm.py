@@ -107,6 +107,9 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         rtol = 0.01
 
+        assert_near_equal(prob.get_val(Mission.Design.RESERVE_FUEL, units='lbm'),
+                          4998, tolerance=rtol)
+
         assert_near_equal(prob.get_val(Mission.Design.GROSS_MASS, units='lbm'),
                           174039., tolerance=rtol)
 

@@ -9,40 +9,18 @@ We then call the correct methods in order to set up and run an Aviary optimizati
 This performs a coupled design-mission optimization and outputs the results from Aviary into the `reports` folder.
 """
 import aviary.api as av
-from example_phase_info import phase_info
+from aviary.examples.example_phase_info import phase_info
 from copy import deepcopy
 
 phase_info = deepcopy(phase_info)
 
-# Add reserve phase(s)
-phase_info.update({
-    "reserve_cruise": {
-        "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
-        "user_options": {
-            "reserve": True,
-            # Distance traveled in this phase
-            "target_distance": (200, 'km'),
-            "optimize_mach": False,
-            "optimize_altitude": False,
-            "polynomial_control_order": 1,
-            "num_segments": 5,
-            "order": 3,
-            "solve_for_distance": False,
-            "initial_mach": (0.72, "unitless"),
-            "final_mach": (0.72, "unitless"),
-            "mach_bounds": ((0.7, 0.74), "unitless"),
-            "initial_altitude": (32000.0, "ft"),
-            "final_altitude": (32000.0, "ft"),
-            "altitude_bounds": ((23000.0, 38000.0), "ft"),
-            "throttle_enforcement": "boundary_constraint",
-            "fix_initial": False,
-            "constrain_final": False,
-            "fix_duration": False,
-            "initial_bounds": ((149.5, 448.5), "min"),
-            "duration_bounds": ((0, 120), "min"),
-        },
-        "initial_guesses": {"times": ([0, 120], "min")},
-    }})
+# Copy the current cruise phase, then make it a reserve phase
+reserve_phase_0 = deepcopy(phase_info['cruise'])
+reserve_phase_0['user_options']['reserve'] = True
+reserve_phase_0['user_options']['target_duration'] = (30, 'min')
+
+# Add the reserve phase to phase_info
+phase_info.update({'reserve_cruise': reserve_phase_0})
 
 prob = av.AviaryProblem()
 

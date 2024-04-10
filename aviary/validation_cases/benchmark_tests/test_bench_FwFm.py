@@ -296,7 +296,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
                     "no_descent": False,
                     "add_initial_mass_constraint": False,
                 },
-                "initial_guesses": {"times": ([0, 40.0], "min")},
+                "initial_guesses": {"time": ([0, 40.0], "min")},
             },
             "cruise": {
                 "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
@@ -321,7 +321,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
                     "initial_bounds": ((64.0, 192.0), "min"),
                     "duration_bounds": ((60.0, 720.0), "min"),
                 },
-                "initial_guesses": {"times": ([128, 113], "min")},
+                "initial_guesses": {"time": ([128, 113], "min")},
             },
             "descent": {
                 "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
@@ -346,7 +346,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
                     "duration_bounds": ((5.0, 35.0), "min"),
                     "no_climb": True,
                 },
-                "initial_guesses": {"times": ([241, 30], "min")},
+                "initial_guesses": {"time": ([241, 30], "min")},
             },
             "post_mission": {
                 "include_landing": True,

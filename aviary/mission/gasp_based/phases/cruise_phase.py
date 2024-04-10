@@ -71,8 +71,8 @@ class CruisePhase(PhaseBuilderBase):
                             units="s", static_target=True)
 
         phase.add_timeseries_output("time", units="s", output_name="time")
-        phase.add_timeseries_output(Dynamic.Mission.MASS, units="kg")
-        phase.add_timeseries_output(Dynamic.Mission.DISTANCE, units="NM")
+        phase.add_timeseries_output(Dynamic.Mission.MASS, units="lbm")
+        phase.add_timeseries_output(Dynamic.Mission.DISTANCE, units="nmi")
 
         return phase
 
@@ -80,6 +80,18 @@ class CruisePhase(PhaseBuilderBase):
 # Adding metadata for the CruisePhase
 CruisePhase._add_meta_data('alt_cruise', val=0)
 CruisePhase._add_meta_data('mach_cruise', val=0)
+CruisePhase._add_meta_data(
+    'analytic', val=False, desc='this is an analytic phase (no states).')
+CruisePhase._add_meta_data(
+    'reserve', val=False, desc='this phase is part of the reserve mission.')
+CruisePhase._add_meta_data(
+    'target_distance', val={}, desc='the amount of distance traveled in this phase added as a constraint')
+CruisePhase._add_meta_data(
+    'target_duration', val={}, desc='the amount of time taken by this phase added as a constraint')
+CruisePhase._add_meta_data('duration_bounds', val=(
+    0., 3600.), units='s', desc='duration bounds')
+CruisePhase._add_meta_data('fix_duration', val=False)
+CruisePhase._add_meta_data('initial_bounds', val=(0., 100.), units='s')
 
 CruisePhase._add_initial_guess_meta_data(
     InitialGuessIntegrationVariable(),
