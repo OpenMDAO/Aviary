@@ -336,7 +336,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                           Aircraft.Nacelle.LAMINAR_FLOW_UPPER,
                           Aircraft.Nacelle.WETTED_AREA]
             for var in param_vars:
-                params[var] = {'shape': (engine_count), 'static_target': True}
+                params[var] = {'shape': (engine_count, ), 'static_target': True}
 
         return params
 

@@ -433,9 +433,9 @@ class AviaryProblem(om.Problem):
 
         # NOTE add_params() in SubsystemBuilderBase now causes those variables to get
         #      popped here, but they are needed later on
-        for variable in variables_to_pop:
-            if variable in self.meta_data:
-                self.meta_data.pop(variable)
+        #for variable in variables_to_pop:
+        #    if variable in self.meta_data:
+        #        self.meta_data.pop(variable)
 
     def phase_separator(self):
         """
