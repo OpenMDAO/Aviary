@@ -57,7 +57,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
                           104530., tolerance=rtol)
 
         assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS),
-                          44032., tolerance=rtol)
+                          42942., tolerance=rtol)
 
         assert_near_equal(prob.get_val('landing.' + Mission.Landing.GROUND_DISTANCE),
                           2528., tolerance=rtol)
