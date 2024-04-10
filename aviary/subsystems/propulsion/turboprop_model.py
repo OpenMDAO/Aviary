@@ -87,7 +87,7 @@ class TurbopropModel(EngineModel):
                                           subsys=shp_model_pre_mission,
                                           promotes=['*'])
 
-        if self.propeller_model is not None:
+        if prop_model is not None:
             prop_model_pre_mission = prop_model.build_pre_mission(
                 aviary_inputs, **kwargs)
             turboprop_group.add_subsystem(prop_model_pre_mission.name,
