@@ -163,7 +163,7 @@ def create_phase_info(times, altitudes, mach_values,
                 'duration_bounds': (duration_bounds[i], 'min'),
             },
             'initial_guesses': {
-                'times': ([times[i], times[i+1]-times[i]], 'min'),
+                'time': ([times[i], times[i+1]-times[i]], 'min'),
             }
         }
 

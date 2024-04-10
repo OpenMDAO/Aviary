@@ -44,7 +44,7 @@ class TestSubsystemsMission(unittest.TestCase):
                     "initial_bounds": ((0.0, 0.0), "min"),
                     "duration_bounds": ((10., 30.), "min"),
                 },
-                "initial_guesses": {"times": ([0, 30], "min")},
+                "initial_guesses": {"time": ([0, 30], "min")},
             },
             'post_mission': {
                 'include_landing': False,

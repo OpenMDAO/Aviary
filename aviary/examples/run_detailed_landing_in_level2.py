@@ -1,3 +1,4 @@
+import openmdao.api as om
 import aviary.api as av
 
 
@@ -174,4 +175,29 @@ prob.setup()
 
 prob.set_initial_guesses()
 
-prob.run_aviary_problem()
+prob.run_aviary_problem(record_filename='detailed_landing.db')
+
+
+cr = om.CaseReader('detailed_landing.db')
+cases = cr.get_cases('problem')
+case = cases[0]
+
+output_data = {}
+
+point_name = 'P3'
+phase_name = 'GH'
+output_data[point_name] = {}
+output_data[point_name]['thrust_fraction'] = case.get_val(f'traj.{phase_name}.rhs_all.thrust_net', units='N')[
+    -1][0] / case.get_val(f'traj.{phase_name}.rhs_all.thrust_net_max', units='N')[-1][0]
+output_data[point_name]['true_airspeed'] = case.get_val(
+    f'traj.{phase_name}.timeseries.velocity', units='kn')[-1][0]
+output_data[point_name]['angle_of_attack'] = case.get_val(
+    f'traj.{phase_name}.timeseries.alpha', units='deg')[-1][0]
+output_data[point_name]['flight_path_angle'] = case.get_val(
+    f'traj.{phase_name}.timeseries.flight_path_angle', units='deg')[-1][0]
+output_data[point_name]['altitude'] = case.get_val(
+    f'traj.{phase_name}.timeseries.altitude', units='ft')[-1][0]
+output_data[point_name]['distance'] = case.get_val(
+    f'traj.{phase_name}.timeseries.distance', units='ft')[-1][0]
+
+print(output_data)

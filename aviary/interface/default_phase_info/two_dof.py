@@ -42,7 +42,7 @@ phase_info = {
             'distance_defect_ref': (3000, 'ft'),
         },
         'initial_guesses': {
-            'times': ([0.0, 40.0], 's'),
+            'time': ([0.0, 40.0], 's'),
             'velocity': ([0.066, 143.1], 'kn'),
             'distance': ([0.0, 1000.], 'ft'),
             'throttle': ([0.956, 0.956], 'unitless'),
@@ -74,7 +74,7 @@ phase_info = {
             'normal_ref': (10000, 'lbf'),
         },
         'initial_guesses': {
-            'times': ([40.0, 5.0], 's'),
+            'time': ([40.0, 5.0], 's'),
             'alpha': ([0.0, 2.5], 'deg'),
             'velocity': ([143, 150.], 'kn'),
             'distance': ([3680.37217765, 4000], 'ft'),
@@ -113,7 +113,7 @@ phase_info = {
             'pitch_constraint_ref': (1., 'deg'),
         },
         'initial_guesses': {
-            'times': ([45., 25.], 's'),
+            'time': ([45., 25.], 's'),
             'flight_path_angle': ([0.0, 8.], 'deg'),
             'alpha': ([2.5, 1.5], 'deg'),
             'velocity': ([150., 185.], 'kn'),
@@ -147,7 +147,7 @@ phase_info = {
             'distance_defect_ref': (5, 'NM'),
         },
         'initial_guesses': {
-            'times': ([70., 13.], 's'),
+            'time': ([70., 13.], 's'),
             'velocity': ([185., 250.], 'kn'),
             'distance': ([10.e3, 20.e3], 'ft'),
             'throttle': ([0.956, 0.956], 'unitless'),
@@ -177,7 +177,7 @@ phase_info = {
             'distance_ref0': (0, 'NM'),
         },
         'initial_guesses': {
-            'times': ([1., 2.], 'min'),
+            'time': ([1., 2.], 'min'),
             'distance': ([20.e3, 100.e3], 'ft'),
             'altitude': ([500., 10.e3], 'ft'),
             'throttle': ([0.956, 0.956], 'unitless'),
@@ -210,7 +210,7 @@ phase_info = {
             'distance_defect_ref': (500, 'NM'),
         },
         'initial_guesses': {
-            'times': ([216., 1300.], 's'),
+            'time': ([216., 1300.], 's'),
             'distance': ([100.e3, 200.e3], 'ft'),
             'altitude': ([10.e3, 37.5e3], 'ft'),
             'throttle': ([0.956, 0.956], 'unitless'),
@@ -263,7 +263,7 @@ phase_info = {
             'altitude': ([37.5e3, 10.e3], 'ft'),
             'throttle': ([0.0, 0.0], 'unitless'),
             'distance': ([.92*mission_distance, .96*mission_distance], 'NM'),
-            'times': ([28000., 500.], 's'),
+            'time': ([28000., 500.], 's'),
         }
     },
     'desc2': {
@@ -297,7 +297,7 @@ phase_info = {
             'altitude': ([10.e3, 1.e3], 'ft'),
             'throttle': ([0., 0.], 'unitless'),
             'distance': ([.96*mission_distance, mission_distance], 'NM'),
-            'times': ([28500., 500.], 's'),
+            'time': ([28500., 500.], 's'),
         }
     },
 }

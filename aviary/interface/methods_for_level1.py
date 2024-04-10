@@ -65,7 +65,7 @@ def run_aviary(aircraft_filename, phase_info, optimizer=None,
 
     # Load aircraft and options data from user
     # Allow for user overrides here
-    prob.load_inputs(aircraft_filename, phase_info)
+    prob.load_inputs(aircraft_filename, phase_info, verbosity=verbosity)
 
     # Preprocess inputs
     prob.check_and_preprocess_inputs()
