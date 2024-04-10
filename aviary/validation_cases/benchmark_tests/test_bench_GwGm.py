@@ -11,7 +11,7 @@ from aviary.variable_info.variables import Aircraft, Mission
 from aviary.variable_info.enums import AnalysisScheme, Verbosity
 
 
-@use_tempdirs
+# @use_tempdirs
 class ProblemPhaseTestCase(unittest.TestCase):
 
     def setUp(self):
@@ -103,7 +103,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwGm.csv',
                           local_phase_info, optimizer='IPOPT', run_driver=False,
-                          analysis_scheme=AnalysisScheme.SHOOTING, verbosity=Verbosity.QUIET)
+                          analysis_scheme=AnalysisScheme.SHOOTING, verbosity=Verbosity.DEBUG)
 
         rtol = 0.01
 
@@ -132,5 +132,5 @@ class ProblemPhaseTestCase(unittest.TestCase):
 if __name__ == '__main__':
     # unittest.main()
     test = ProblemPhaseTestCase()
-    test.test_bench_GwGm_SNOPT_lbm_s()
+    # test.test_bench_GwGm_SNOPT_lbm_s()
     test.test_bench_GwGm_shooting()

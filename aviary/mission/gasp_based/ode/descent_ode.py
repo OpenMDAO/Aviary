@@ -202,6 +202,27 @@ class DescentODE(BaseODE):
             promotes_outputs=["theta", "TAS_violation"],
         )
 
+        from aviary.utils.functions import create_printcomp
+        dummy_comp = create_printcomp(
+            all_inputs=[
+                Dynamic.Mission.MASS,
+                Dynamic.Mission.VELOCITY,
+                Dynamic.Mission.DRAG,
+                Dynamic.Mission.THRUST_TOTAL,
+                "alpha",
+                Dynamic.Mission.DISTANCE,
+            ],
+            input_units={
+                'required_lift': 'lbf',
+                Dynamic.Mission.FLIGHT_PATH_ANGLE: 'deg',
+            })
+        self.add_subsystem(
+            "dummy_comp",
+            dummy_comp(),
+            promotes_inputs=["*"],)
+        self.set_input_defaults(
+            Dynamic.Mission.DISTANCE, val=0, units='NM')
+
         kwargs = {'num_nodes': nn, 'aviary_inputs': aviary_options,
                   'method': 'cruise'}
         # collect the propulsion group names for later use

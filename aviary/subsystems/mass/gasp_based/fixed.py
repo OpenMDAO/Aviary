@@ -280,6 +280,11 @@ class PayloadMass(om.ExplicitComponent):
 
         outputs[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS] = \
             payload_mass = pax_mass * PAX
+        print('*'*40)
+        print(payload_mass, pax_mass, PAX)
+        print('*'*40)
+        print('exit in fixed')
+        exit()
 
         outputs["payload_mass_des"] = payload_mass
         outputs["payload_mass_max"] = pax_mass * PAX + cargo_mass
