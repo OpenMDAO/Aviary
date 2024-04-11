@@ -3,6 +3,7 @@ import sys
 import numpy as np
 import openmdao.api as om
 
+from aviary.subsystems.propulsion.throttle_allocation import ThrottleAllocator
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 
@@ -35,7 +36,7 @@ class PropulsionMission(om.Group):
         for (i, engine) in enumerate(engine_models):
             self.add_subsystem(
                 engine.name,
-                subsys=engine.build_mission(num_nodes=nn),
+                subsys=engine.build_mission(num_nodes=nn, aviary_inputs=options),
                 promotes_inputs=['*'])
 
             if engine_count > 1:
@@ -59,6 +60,7 @@ class PropulsionMission(om.Group):
                     self.promotes(
                         engine.name,
                         inputs=[Dynamic.Mission.HYBRID_THROTTLE])
+                break
 
         # TODO might be able to avoid hardcoding using propulsion Enums
         # mux component to vectorize individual outputs into 2d arrays
