@@ -1,7 +1,6 @@
 import openmdao.api as om
 import numpy as np
-from dymos.models.atmosphere import USatm1976Comp
-from aviary.constants import TSLS_DEGR
+
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.subsystems.propulsion.hamilton_standard import HamiltonStandard, PostHamiltonStandard, PreHamiltonStandard
@@ -26,8 +25,8 @@ class InstallLoss(om.Group):
             name='sqa_comp',
             subsys=om.ExecComp(
                 'sqa = minimum(DiamNac**2/DiamProp**2, 0.50)',
-                DiamNac={'units': 'ft'},
-                DiamProp={'units': 'ft'},
+                DiamNac={'val': 0, 'units': 'ft'},
+                DiamProp={'val': 0, 'units': 'ft'},
                 sqa={'units': 'unitless'},
                 has_diag_partials=True,
             ),
@@ -111,7 +110,7 @@ class InstallLoss(om.Group):
         )
 
         self.add_subsystem(
-            name='compute_install_loss_factor',
+            name='installation_loss_factor',
             subsys=om.ExecComp(
                 'install_loss_factor = 1 - blockage_factor',
                 blockage_factor={'units': 'unitless', 'val': np.zeros(nn)},
@@ -123,7 +122,7 @@ class InstallLoss(om.Group):
         )
 
 
-class PropPerf(om.Group):
+class PropellerPerformance(om.Group):
     """
     Computation of propeller thrust coefficient based on Hamilton Standard.
     The installation loss factor is either a user input or computed internally.
@@ -133,20 +132,9 @@ class PropPerf(om.Group):
         self.options.declare(
             'num_nodes', types=int, default=1,
             desc='Number of nodes to be evaluated in the RHS')
-        self.options.declare(Aircraft.Engine.NUM_BLADES, default=2,
-                             desc='number of blades per propeller')
-        self.options.declare(
-            Aircraft.Design.COMPUTE_INSTALLATION_LOSS, types=bool,
-            desc='Flag to compute installation factor')
-        self.options.declare(
-            'compute_mach_internally', types=bool, default=False,
-        )
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
-        self.options.declare(
-            'include_atmosphere_model', types=bool, default=False,
-            desc='Flag to include atmosphere in the model')
+
+        self.options.declare('aviary_options', types=AviaryValues,
+                             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
         options = self.options
@@ -154,29 +142,6 @@ class PropPerf(om.Group):
         aviary_options = options['aviary_options']
         compute_installation_loss = aviary_options.get_val(
             Aircraft.Design.COMPUTE_INSTALLATION_LOSS)
-        num_blades = aviary_options.get_val(Aircraft.Engine.NUM_BLADES)
-
-        if self.options['include_atmosphere_model']:
-            self.add_subsystem(
-                name='atmosphere',
-                subsys=USatm1976Comp(num_nodes=nn),
-                promotes_inputs=[('h', Dynamic.Mission.ALTITUDE)],
-                promotes_outputs=[
-                    ('sos', Dynamic.Mission.SPEED_OF_SOUND), ('rho', Dynamic.Mission.DENSITY),
-                    ('temp', Dynamic.Mission.TEMPERATURE), ('pres', Dynamic.Mission.STATIC_PRESSURE)],
-            )
-
-        if self.options['compute_mach_internally']:
-            self.add_subsystem(
-                'compute_mach',
-                om.ExecComp(f'{Dynamic.Mission.MACH} = 0.00150933 * {Dynamic.Mission.VELOCITY} * ({TSLS_DEGR} / {Dynamic.Mission.TEMPERATURE})**0.5',
-                            mach={'units': 'unitless', 'val': np.zeros(nn)},
-                            velocity={'units': 'knot', 'val': np.zeros(nn)},
-                            temperature={'units': 'degR', 'val': np.zeros(nn)},
-                            has_diag_partials=True,
-                            ),
-                promotes=['*'],
-            )
 
         self.add_subsystem(
             'temperature_term',
@@ -196,7 +161,7 @@ class PropPerf(om.Group):
         )
 
         self.add_subsystem(
-            'prop_tip_spd',
+            'prop_tip_speed',
             om.ExecComp(
                 'prop_tip_speed = minimum(pc_rotor_rpm_corrected * theta_T**.5 * max_prop_tip_spd, max_prop_tip_spd)',
                 prop_tip_speed={'units': "ft/s", 'shape': nn},
@@ -208,7 +173,7 @@ class PropPerf(om.Group):
             promotes_inputs=[
                 'theta_T',
                 ('pc_rotor_rpm_corrected', Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED),
-                ('max_prop_tip_spd', Aircraft.Design.MAX_TIP_SPEED),
+                ('max_prop_tip_spd', Aircraft.Design.MAX_PROPELLER_TIP_SPEED),
             ],
             promotes_outputs=[
                 ('prop_tip_speed', Dynamic.Mission.PROPELLER_TIP_SPEED)],
@@ -216,7 +181,7 @@ class PropPerf(om.Group):
 
         if compute_installation_loss:
             self.add_subsystem(
-                name='loss',
+                name='install_loss',
                 subsys=InstallLoss(num_nodes=nn),
                 promotes_inputs=[
                     Aircraft.Nacelle.AVG_DIAMETER,
@@ -244,25 +209,25 @@ class PropPerf(om.Group):
             ],
             promotes_outputs=[
                 "power_coefficient",
-                "adv_ratio",
+                "advance_ratio",
                 "tip_mach",
                 "density_ratio",
             ])
 
         self.add_subsystem(
             name='hamilton_standard',
-            subsys=HamiltonStandard(num_nodes=nn, num_blades=num_blades),
+            subsys=HamiltonStandard(num_nodes=nn, aviary_options=aviary_options),
             promotes_inputs=[
                 Dynamic.Mission.MACH,
                 "power_coefficient",
-                "adv_ratio",
+                "advance_ratio",
                 "tip_mach",
                 Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,
                 Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT,
             ],
             promotes_outputs=[
                 "thrust_coefficient",
-                "ang_blade",
+                "blade_angle",
                 "comp_tip_loss_factor",
             ])
 
@@ -276,12 +241,12 @@ class PropPerf(om.Group):
                 Aircraft.Engine.PROPELLER_DIAMETER,
                 "density_ratio",
                 Dynamic.Mission.INSTALLATION_LOSS_FACTOR,
-                "adv_ratio",
+                "advance_ratio",
                 "power_coefficient",
             ],
             promotes_outputs=[
                 "thrust_coefficient_comp_loss",
-                "prop_thrust",
+                "propeller_thrust",
                 "propeller_efficiency",
                 "install_efficiency",
             ])

@@ -97,6 +97,18 @@ class PropulsionMission(om.Group):
             axis=1,
             units='degR'
         )
+        perf_mux.add_var(
+            Dynamic.Mission.SHAFT_POWER,
+            shape=(nn,),
+            axis=1,
+            units='hp'
+        )
+        perf_mux.add_var(
+            Dynamic.Mission.SHAFT_POWER_CORRECTED,
+            shape=(nn,),
+            axis=1,
+            units='hp'
+        )
         # perf_mux.add_var(
         #     'exit_area_unscaled',
         #     shape=(nn,),
@@ -119,6 +131,22 @@ class PropulsionMission(om.Group):
                          'vectorize_performance.' + Dynamic.Mission.ELECTRIC_POWER + '_' + str(i))
             self.connect(engine.name + '.' + Dynamic.Mission.NOX_RATE,
                          'vectorize_performance.' + Dynamic.Mission.NOX_RATE + '_' + str(i))
+
+            try:
+                if engine.use_t4:
+                    self.connect(engine.name + '.' + Dynamic.Mission.TEMPERATURE_T4,
+                                 'vectorize_performance.' + Dynamic.Mission.TEMPERATURE_T4 + '_' + str(i))
+            except AttributeError:  # engine does not have flag
+                pass
+
+            try:
+                if engine.use_shp:
+                    self.connect(engine.name + '.' + Dynamic.Mission.SHAFT_POWER,
+                                 'vectorize_performance.' + Dynamic.Mission.SHAFT_POWER + '_' + str(i))
+                    self.connect(engine.name + '.' + Dynamic.Mission.SHAFT_POWER_CORRECTED,
+                                 'vectorize_performance.' + Dynamic.Mission.SHAFT_POWER_CORRECTED + '_' + str(i))
+            except AttributeError:  # engine does not have flag
+                pass
 
         self.add_subsystem(
             'propulsion_sum',
