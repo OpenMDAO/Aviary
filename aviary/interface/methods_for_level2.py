@@ -111,7 +111,7 @@ class AviaryGroup(om.Group):
 
         # We can call list_inputs on the groups.
         for system in self.system_iter(recurse=False, typ=om.Group):
-            var_abs = system.list_inputs(out_stream=None)
+            var_abs = system.list_inputs(out_stream=None, val=False)
             var_prom = [v['prom_name'] for k, v in var_abs]
             all_prom_inputs.extend(var_prom)
 
