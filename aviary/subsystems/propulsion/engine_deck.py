@@ -120,7 +120,7 @@ class EngineDeck(EngineModel):
     options : AviaryValues (<empty>)
         Inputs and options related to engine model.
     data : NamedVaues (<empty>)
-        Engine performance data (optional). If provided, used instead of tabular data 
+        Engine performance data (optional). If provided, used instead of tabular data
         file.
 
     Methods
@@ -185,8 +185,8 @@ class EngineDeck(EngineModel):
 
     def _preprocess_inputs(self):
         """
-        Checks that provided options are valid and logically consistent. Raises errors 
-        for non-recoverable issues, issues warnings for minor problems that are fixed at 
+        Checks that provided options are valid and logically consistent. Raises errors
+        for non-recoverable issues, issues warnings for minor problems that are fixed at
         runtime.
 
         Raises
@@ -265,7 +265,7 @@ class EngineDeck(EngineModel):
 
     def _set_variable_flags(self):
         """
-        Sets flags in EngineDeck to communicate which (non-required) variables are 
+        Sets flags in EngineDeck to communicate which (non-required) variables are
         avaliable to greater propulsion module.
         """
         engine_variables = self.engine_variables
@@ -682,7 +682,7 @@ class EngineDeck(EngineModel):
         # Re-normalize throttle since "dummy" idle values were used
         self._normalize_throttle()
 
-    def build_pre_mission(self) -> om.ExplicitComponent:
+    def build_pre_mission(self, aviary_inputs) -> om.ExplicitComponent:
         """
         Build components to be added to pre-mission propulsion subsystem.
 
@@ -756,7 +756,7 @@ class EngineDeck(EngineModel):
                           desc='Current turbine exit temperature')
         return engine
 
-    def build_mission(self, num_nodes) -> om.Group:
+    def build_mission(self, num_nodes, aviary_inputs) -> om.Group:
         """
         Creates interpolator objects to be added to mission-level propulsion subsystem.
         Interpolators must be re-generated for each ODE due to potentialy different
@@ -1644,9 +1644,9 @@ class TurboPropDeck(EngineDeck):
 # UTILITY FUNCTIONS #
 #####################
 """
-Functions that do not directly use attributes of EngineDeck (do not require self) are 
-located here. These functions are currently only used for EngineDecks and are not 
-applicable to other EngineModels. If any of these functions become useful to other 
+Functions that do not directly use attributes of EngineDeck (do not require self) are
+located here. These functions are currently only used for EngineDecks and are not
+applicable to other EngineModels. If any of these functions become useful to other
 EngineModels besides EngineDeck, move them to propulsion utils.
 """
 
@@ -1664,7 +1664,7 @@ def normalize(base_list, maximum=None, minimum=None):
     maximum : float
         Overwritten maximum value of data that will scale to 1 when normalized.
     minimum : float
-        Overwritten minimum value of data that will scale to 0 when normalized. 
+        Overwritten minimum value of data that will scale to 0 when normalized.
 
     Returns
     -------
