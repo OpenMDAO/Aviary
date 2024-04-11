@@ -119,11 +119,11 @@ class TurbopropModel(EngineModel):
                 turboprop_group.add_subsystem('uncorrect_shaft_power',
                                               subsys=UncorrectData(num_nodes=num_nodes,
                                                                    aviary_options=self.options),
-                                              promotes_inputs=[('data_corrected', Dynamic.Mission.SHAFT_POWER_CORRECTED),
+                                              promotes_inputs=[('corrected_data', Dynamic.Mission.SHAFT_POWER_CORRECTED),
                                                                Dynamic.Mission.TEMPERATURE,
                                                                Dynamic.Mission.STATIC_PRESSURE,
                                                                Dynamic.Mission.MACH],
-                                              promotes_outputs=[('data_uncorrected', Dynamic.Mission.SHAFT_POWER)]),
+                                              promotes_outputs=[('uncorrected_data', Dynamic.Mission.SHAFT_POWER)]),
 
         if prop_model is not None:  # must assume user-provide propeller group has everything it needs
             prop_model_mission = prop_model.build_mission(

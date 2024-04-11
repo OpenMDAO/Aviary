@@ -688,21 +688,7 @@ class HamiltonStandard(om.ExplicitComponent):
                             CP_CLi_table[CL_tab_idx][:cli_len], XPCLI[CL_tab_idx], CPE1X)
                         if (run_flag == 1):
                             ichck = ichck + 1
-                        if (verbosity != Verbosity.DEBUG):
-                            if (ichck <= 1):
-                                if (run_flag == 1):
-                                    warnings.warn(
-                                        f"Mach,VTMACH,J,power_coefficient,CP_Eff =: {inputs[Dynamic.Mission.MACH][i_node]},{inputs['tip_mach'][i_node]},{inputs['advance_ratio'][i_node]},{power_coefficient},{CP_Eff}")
-                                if (kl == 4 and CPE1 < 0.010):
-                                    print(
-                                        f"Extrapolated data is being used for CLI=.6--CPE1,PXCLI,L= , {CPE1},{PXCLI[kl]},{idx_blade}   Suggest inputting CLI=.5")
-                                if (kl == 5 and CPE1 < 0.010):
-                                    print(
-                                        f"Extrapolated data is being used for CLI=.7--CPE1,PXCLI,L= , {CPE1},{PXCLI[kl]},{idx_blade}   Suggest inputting CLI=.5")
-                                if (kl == 6 and CPE1 < 0.010):
-                                    print(
-                                        f"Extrapolated data is being used for CLI=.8--CPE1,PXCLI,L= , {CPE1},{PXCLI[kl]},{idx_blade}   Suggest inputting CLI=.5")
-                        else:
+                        if (verbosity == Verbosity.DEBUG and ichck <= 1):
                             if (run_flag == 1):
                                 warnings.warn(
                                     f"Mach,VTMACH,J,power_coefficient,CP_Eff =: {inputs[Dynamic.Mission.MACH][i_node]},{inputs['tip_mach'][i_node]},{inputs['advance_ratio'][i_node]},{power_coefficient},{CP_Eff}")
