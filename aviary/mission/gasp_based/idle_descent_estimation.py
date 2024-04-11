@@ -145,21 +145,24 @@ def add_descent_estimation_as_submodel(
 
     model.add_subsystem(
         'top_of_descent_mass',
-        om.ExecComp(
-            'mass_initial = operating_mass + payload_mass + 0 + descent_fuel_estimate',
-            mass_initial={'units': 'lbm'},
-            operating_mass={'units': 'lbm'},
-            payload_mass={'units': 'lbm'},
-            # reserve_fuel = {'units':'lbm'},
-            descent_fuel_estimate={'units': 'lbm', 'val': 0},
-        ),
-        # promotes_inputs=[
-        #     ('operating_mass', Aircraft.Design.OPERATING_MASS),
-        #     ('payload_mass', Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS),
-        #     # ('reserve_fuel', Aircraft.Design.EMPTY_MASS),
-        #     ('descent_fuel_estimate', 'descent_fuel'),
-        # ],
-        promotes_outputs=['mass_initial'])
+        # om.ExecComp(
+        #     'mass_initial = operating_mass + payload_mass + 0 + descent_fuel_estimate',
+        #     mass_initial={'units': 'lbm'},
+        #     operating_mass={'units': 'lbm'},
+        #     payload_mass={'units': 'lbm'},
+        #     # reserve_fuel = {'units':'lbm'},
+        #     descent_fuel_estimate={'units': 'lbm', 'val': 0},
+        # ),
+        initial_mass_comp(),
+        promotes_inputs=[
+            'aircraft:*',
+            # ('operating_mass', Aircraft.Design.OPERATING_MASS),
+            # ('payload_mass', Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS),
+            # ('reserve_fuel', Aircraft.Design.EMPTY_MASS),
+            ('descent_fuel_estimate', 'descent_fuel'),
+        ],
+        promotes_outputs=['mass_initial']
+    )
 
     from aviary.utils.functions import create_printcomp
     dummy_comp = create_printcomp(
@@ -176,11 +179,10 @@ def add_descent_estimation_as_submodel(
     model.add_subsystem(
         "dummy_comp",
         dummy_comp(),
-        # promotes_inputs=["*"],
+        promotes_inputs=["*"],
     )
     model.set_input_defaults(
         Aircraft.Design.OPERATING_MASS, val=0, units='lbm')
-    model.connect('top_of_descent_mass.mass_initial', 'dummy_comp.mass_initial')
 
     model.add_subsystem(
         'traj', traj,
@@ -261,8 +263,8 @@ def add_descent_estimation_as_submodel(
         problem=subprob,
         inputs=[
             # 'aircraft:*'
-            '*'
-        ],
+            # '*'
+        ] + input_list,
         outputs=['distance_final', 'descent_fuel'],
         do_coloring=False
     )
@@ -273,14 +275,115 @@ def add_descent_estimation_as_submodel(
         promotes_inputs=[
             # 'aircraft:*'
             '*'
-        ]+input_aliases,
+        ] + input_list + input_aliases,
         promotes_outputs=[
             ('distance_final', 'descent_range'),
             'descent_fuel',
         ],
 
     )
-    # main_prob.setup()
-    # om.n2(main_prob,show_browser=False)
+    subprob.setup()
+    om.n2(subprob, 'subprob_n2.html', show_browser=False)
     # exit()
     # set_aviary_initial_values(main_prob.model, aviary_inputs, BaseMetaData)
+
+
+input_list = [
+    # 'traj:EAS',
+    # 'traj:alt_trigger',
+    # 'traj:altitude',
+    # 'traj:distance',
+    # 'traj:distance_initial',
+    # 'traj:mach',
+    # 'traj:mass',
+    # 'traj:mission:design:gross_mass',
+    # 'traj:mission:design:lift_coefficient_max_flaps_up',
+    # 'traj:mission:design:reserve_fuel',
+    # 'traj:mission:landing:airport_altitude',
+    # 'traj:mission:landing:drag_coefficient_flap_increment',
+    # 'traj:mission:landing:lift_coefficient_flap_increment',
+    # 'traj:mission:landing:lift_coefficient_max',
+    # 'traj:mission:summary:fuel_flow_scaler',
+    # 'traj:mission:summary:gross_mass',
+    # 'traj:mission:takeoff:airport_altitude',
+    # 'traj:mission:takeoff:drag_coefficient_flap_increment',
+    # 'traj:mission:takeoff:lift_coefficient_flap_increment',
+    # 'traj:mission:takeoff:lift_coefficient_max',
+    # 'traj:operating_mass',
+    # 'traj:speed_trigger',
+    # 'traj:t_curr',
+    # 'traj:throttle',
+    # 'traj:throttle_max',
+    # 'traj:velocity_rate',
+    Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS,
+    Aircraft.Design.CG_DELTA,
+    Aircraft.Design.DRAG_COEFFICIENT_INCREMENT,
+    Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE,
+    Aircraft.Design.OPERATING_MASS,
+    Aircraft.Design.STATIC_MARGIN,
+    Aircraft.Design.SUPERCRITICAL_DIVERGENCE_SHIFT,
+    Aircraft.Engine.SCALE_FACTOR,
+    Aircraft.Fuselage.AVG_DIAMETER,
+    Aircraft.Fuselage.FLAT_PLATE_AREA_INCREMENT,
+    Aircraft.Fuselage.FORM_FACTOR,
+    Aircraft.Fuselage.LENGTH,
+    Aircraft.Fuselage.WETTED_AREA,
+    Aircraft.HorizontalTail.AREA,
+    Aircraft.HorizontalTail.AVERAGE_CHORD,
+    Aircraft.HorizontalTail.FORM_FACTOR,
+    Aircraft.HorizontalTail.MOMENT_RATIO,
+    Aircraft.HorizontalTail.SPAN,
+    Aircraft.HorizontalTail.SWEEP,
+    Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION,
+    Aircraft.Nacelle.AVG_LENGTH,
+    Aircraft.Nacelle.FORM_FACTOR,
+    Aircraft.Nacelle.SURFACE_AREA,
+    Aircraft.Strut.AREA_RATIO,
+    Aircraft.Strut.CHORD,
+    Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR,
+    Aircraft.VerticalTail.AREA,
+    Aircraft.VerticalTail.AVERAGE_CHORD,
+    Aircraft.VerticalTail.FORM_FACTOR,
+    Aircraft.VerticalTail.SPAN,
+    Aircraft.Wing.AREA,
+    Aircraft.Wing.ASPECT_RATIO,
+    Aircraft.Wing.AVERAGE_CHORD,
+    Aircraft.Wing.CENTER_DISTANCE,
+    Aircraft.Wing.FLAP_CHORD_RATIO,
+    Aircraft.Wing.FLAP_DEFLECTION_LANDING,
+    Aircraft.Wing.FLAP_DEFLECTION_TAKEOFF,
+    Aircraft.Wing.FORM_FACTOR,
+    Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR,
+    Aircraft.Wing.HEIGHT,
+    Aircraft.Wing.INCIDENCE,
+    Aircraft.Wing.MAX_THICKNESS_LOCATION,
+    Aircraft.Wing.MIN_PRESSURE_LOCATION,
+    Aircraft.Wing.MOUNTING_TYPE,
+    Aircraft.Wing.SPAN,
+    Aircraft.Wing.SWEEP,
+    Aircraft.Wing.TAPER_RATIO,
+    Aircraft.Wing.THICKNESS_TO_CHORD_ROOT,
+    Aircraft.Wing.THICKNESS_TO_CHORD_TIP,
+    Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED,
+    Aircraft.Wing.ZERO_LIFT_ANGLE,
+    'altitude_initial',
+]
+
+
+class initial_mass_comp(om.ExplicitComponent):
+
+    def setup(self):
+        self.add_input(Aircraft.Design.OPERATING_MASS, units='lbm')
+        self.add_input(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, units='lbm')
+        self.add_input('descent_fuel_estimate', units='lbm')
+        self.add_output('mass_initial', units='lbm')
+
+    def compute(self, inputs, outputs):
+        oem = inputs[Aircraft.Design.OPERATING_MASS]
+        payload = inputs[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS]
+        fuel = inputs['descent_fuel_estimate']
+        print('oem', 'payload', 'fuel')
+        print(oem, payload, fuel)
+        outputs['mass_initial'] = oem + payload + fuel
+        print('mass_initial')
+        print(outputs['mass_initial'])

@@ -255,6 +255,10 @@ class DescentODE(BaseODE):
         # the last two subsystems will also be used for constraints
         self.add_excess_rate_comps(nn)
 
+        self.add_subsystem(
+            "killer_comp",
+            killer_comp(),)
+
         if analysis_scheme is AnalysisScheme.COLLOCATION:
             fc_loc = ['fc']
             if input_speed_type is SpeedType.MACH:
@@ -279,3 +283,10 @@ class DescentODE(BaseODE):
                                 val=0 * np.ones(nn), units="unitless")
         self.set_input_defaults(Dynamic.Mission.THROTTLE,
                                 val=0 * np.ones(nn), units="unitless")
+
+
+class killer_comp(om.ExplicitComponent):
+
+    def compute(self, inputs, outputs):
+        print('exit in descent ODE')
+        exit()
