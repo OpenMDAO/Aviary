@@ -206,6 +206,10 @@ def timeseries_csv(prob, **kwargs):
         includes='*timeseries*', out_stream=None, return_format='dict', units=True)
     phase_names = prob.model.traj._phases.keys()
 
+    # There are no more collective calls, so we can exit.
+    if MPI and MPI.COMM_WORLD.rank != 0:
+        return
+
     timeseries_outputs = {value['prom_name']: value for key,
                           value in timeseries_outputs.items()}
 
@@ -249,9 +253,6 @@ def timeseries_csv(prob, **kwargs):
         timeseries_data[variable_name]['val'] = val_full_traj
         timeseries_data[variable_name]['units'] = units
         timeseries_data[variable_name]['shape'] = val_full_traj.shape
-
-    if MPI and MPI.COMM_WORLD.rank != 0:
-        return
 
     # Create a DataFrame from timeseries_data
     df_data = {variable_name: pd.Series(timeseries_data[variable_name]['val'].flatten())
