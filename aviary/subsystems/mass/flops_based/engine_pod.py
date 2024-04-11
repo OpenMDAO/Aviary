@@ -29,9 +29,10 @@ class EnginePodMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Instruments.MASS, val=0.0)
         add_aviary_input(self, Aircraft.Nacelle.MASS, val=np.zeros(count))
         add_aviary_input(self, Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Engine.MASS, val=np.zeros(1))
+        add_aviary_input(self, Aircraft.Engine.MASS, val=np.zeros(count))
         add_aviary_input(self, Aircraft.Propulsion.TOTAL_STARTER_MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Engine.THRUST_REVERSERS_MASS, val=np.zeros(count))
+        add_aviary_input(self, Aircraft.Engine.THRUST_REVERSERS_MASS,
+                         val=np.zeros(count))
         add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST, val=np.zeros(count))
         add_aviary_input(self, Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, val=0.0)
 

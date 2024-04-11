@@ -32,7 +32,7 @@ class NacelleMass(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH, val=np.zeros(count))
 
-        add_aviary_input(self, Aircraft.Nacelle.MASS_SCALER, val=np.zeros(count))
+        add_aviary_input(self, Aircraft.Nacelle.MASS_SCALER, val=np.ones(count))
 
         add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST, val=np.zeros(count))
 

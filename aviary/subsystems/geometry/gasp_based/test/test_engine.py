@@ -5,6 +5,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.geometry.gasp_based.engine import EngineSize
 from aviary.variable_info.variables import Aircraft
+from aviary.utils.aviary_values import AviaryValues
 
 
 class TestEngine(
@@ -12,7 +13,11 @@ class TestEngine(
 ):  # this is the GASP test case, input and output values based on large single aisle 1 v3 without bug fix
     def setUp(self):
         self.prob = om.Problem()
-        self.prob.model.add_subsystem("engsz", EngineSize(), promotes=["*"])
+        data = AviaryValues({
+            'engine_models': (['dummyEngine'], 'unitless')
+        })
+        self.prob.model.add_subsystem("engsz", EngineSize(
+            aviary_options=data), promotes=["*"])
 
         self.prob.model.set_input_defaults(
             Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units="ft")

@@ -26,10 +26,12 @@ class MuxComponent(om.ExplicitComponent):
         self.options.declare(
             'aviary_options', types=AviaryValues,
             desc='collection of Aircraft/Mission specific options')
+        self.options.declare('num_engine_models', default=1, types=int)
 
     def setup(self):
         nc = 2
         aviary_options: AviaryValues = self.options['aviary_options']
+        count = self.options['num_engine_models']
 
         # Wing (Always 1)
         add_aviary_input(self, Aircraft.Wing.WETTED_AREA, 1.0)
@@ -73,15 +75,15 @@ class MuxComponent(om.ExplicitComponent):
         self.num_nacelles = int(sum(num))
         if any(num > 0):
             add_aviary_input(self, Aircraft.Nacelle.WETTED_AREA,
-                             np.zeros(len(num)))
+                             np.zeros(len(num * count)))
             add_aviary_input(self, Aircraft.Nacelle.FINENESS,
-                             np.zeros(len(num)))
+                             np.zeros(len(num * count)))
             add_aviary_input(self, Aircraft.Nacelle.CHARACTERISTIC_LENGTH,
-                             np.zeros(len(num)))
+                             np.zeros(len(num * count)))
             add_aviary_input(self, Aircraft.Nacelle.LAMINAR_FLOW_UPPER,
-                             np.zeros(len(num)))
+                             np.zeros(len(num * count)))
             add_aviary_input(self, Aircraft.Nacelle.LAMINAR_FLOW_LOWER,
-                             np.zeros(len(num)))
+                             np.zeros(len(num * count)))
             nc += self.num_nacelles
 
         self.add_output(

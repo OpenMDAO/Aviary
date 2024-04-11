@@ -1551,7 +1551,8 @@ class FixedMassGroupTestCase3(unittest.TestCase):
             Aircraft.LandingGear.MASS_COEFFICIENT: (1.15, 'unitless'),
             Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT: (1.16, 'unitless'),
             Aircraft.Nacelle.CLEARANCE_RATIO: (0.2, 'unitless'),
-            Aircraft.Nacelle.AVG_DIAMETER: (7.5, 'ft')
+            Aircraft.Nacelle.AVG_DIAMETER: (7.5, 'ft'),
+            'engine_models': (['dummyEngine'], 'unitless')
         })
 
         # Try to cover all if-then branches in fixed.py.
@@ -1577,6 +1578,7 @@ class FixedMassGroupTestCase3(unittest.TestCase):
                                 data.set_val(
                                     Aircraft.Engine.HAS_PROPELLERS, [has_prop])
 
+                                self.setUp()
                                 self._run_case(data)
 
 

@@ -25,6 +25,7 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
         )
 
     def setup(self):
+        count = len(self.options['aviary_options'].get_val('engine_models'))
 
         add_aviary_input(self, Aircraft.Design.EQUIPMENT_MASS_COEFFICIENTS, val=[
                          1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], units="unitless")
@@ -38,7 +39,8 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.VerticalTail.AREA, val=150)
         add_aviary_input(self, Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, val=7.5)
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, val=13.1)
-        add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST, val=28690)
+        add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST,
+                         val=np.full(count, 28690))
         add_aviary_input(self, Aircraft.Fuel.WING_FUEL_FRACTION, val=0.5)
         add_aviary_input(self, Aircraft.Design.EXTERNAL_SUBSYSTEMS_MASS, val=0.)
 

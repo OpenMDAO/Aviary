@@ -22,7 +22,7 @@ class Nacelles(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH, val=np.zeros(count))
         add_aviary_input(self, Aircraft.Nacelle.WETTED_AREA_SCALER, val=np.zeros(count))
 
-        add_aviary_output(self, Aircraft.Nacelle.TOTAL_WETTED_AREA, 0.0)
+        add_aviary_output(self, Aircraft.Nacelle.TOTAL_WETTED_AREA, np.zeros(count))
         add_aviary_output(self, Aircraft.Nacelle.WETTED_AREA, val=np.zeros(count))
 
     def setup_partials(self):

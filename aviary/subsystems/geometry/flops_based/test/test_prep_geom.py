@@ -469,7 +469,8 @@ class CharacteristicLengthsTest(unittest.TestCase):
                                                                   keys=[Aircraft.Engine.NUM_ENGINES,
                                                                         Aircraft.Fuselage.NUM_FUSELAGES,
                                                                         Aircraft.VerticalTail.NUM_TAILS,
-                                                                        Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION])),
+                                                                        Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION,
+                                                                        "engine_models"])),
             promotes=['*']
         )
 

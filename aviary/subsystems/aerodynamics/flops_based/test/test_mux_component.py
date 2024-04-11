@@ -20,6 +20,7 @@ class TestMuxComponent(unittest.TestCase):
         aviary_options.set_val(Aircraft.VerticalTail.NUM_TAILS, 1)
         aviary_options.set_val(Aircraft.Fuselage.NUM_FUSELAGES, 1)
         aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
+        aviary_options.set_val('num_engine_models', 1)
 
         model.add_subsystem(
             'mux', MuxComponent(aviary_options=aviary_options),

@@ -28,6 +28,8 @@ class MassParameters(om.ExplicitComponent):
         )
 
     def setup(self):
+        count = len(self.options['aviary_options'].get_val('engine_models'))
+
         add_aviary_input(self, Aircraft.Wing.SWEEP, val=25)
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, val=0.33)
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, val=10.13)
@@ -55,7 +57,7 @@ class MassParameters(om.ExplicitComponent):
             "c_gear_loc", val=0, units="unitless",
             desc="SKGEAR: landing gear location factor"
         )
-        add_aviary_output(self, Aircraft.Engine.POSITION_FACTOR, val=0)
+        add_aviary_output(self, Aircraft.Engine.POSITION_FACTOR, val=np.zeros(count))
         self.add_output(
             "half_sweep", val=0, units="rad", desc="SWC2: wing chord half sweep angle"
         )
@@ -578,16 +580,20 @@ class EngineMass(om.ExplicitComponent):
 
     def setup(self):
         aviary_options: AviaryValues = self.options['aviary_options']
+        count = len(self.options['aviary_options'].get_val('engine_models'))
 
-        add_aviary_input(self, Aircraft.Engine.MASS_SPECIFIC, val=0.21366)
-        add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST, val=4000)
-        add_aviary_input(self, Aircraft.Nacelle.MASS_SPECIFIC, val=3)
-        add_aviary_input(self, Aircraft.Nacelle.SURFACE_AREA, val=5)
-        add_aviary_input(self, Aircraft.Engine.PYLON_FACTOR, val=1.25)
-        add_aviary_input(self, Aircraft.Engine.ADDITIONAL_MASS_FRACTION, val=0.14)
-        add_aviary_input(self, Aircraft.Engine.MASS_SCALER, val=1)
+        add_aviary_input(self, Aircraft.Engine.MASS_SPECIFIC,
+                         val=np.full(count, 0.21366))
+        add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST,
+                         val=np.full(count, 4000))
+        add_aviary_input(self, Aircraft.Nacelle.MASS_SPECIFIC, val=np.full(count, 3))
+        add_aviary_input(self, Aircraft.Nacelle.SURFACE_AREA, val=np.full(count, 5))
+        add_aviary_input(self, Aircraft.Engine.PYLON_FACTOR, val=np.full(count, 1.25))
+        add_aviary_input(self, Aircraft.Engine.ADDITIONAL_MASS_FRACTION,
+                         val=np.full(count, 0.14))
+        add_aviary_input(self, Aircraft.Engine.MASS_SCALER, val=np.full(count, 1.0))
         add_aviary_input(self, Aircraft.Propulsion.MISC_MASS_SCALER, val=1)
-        add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS, val=0.35)
+        add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS, val=np.full(count, 0.35))
 
         self.add_input(
             "main_gear_mass", val=500, units="lbm", desc="WMG: mass of main gear")
@@ -606,10 +612,10 @@ class EngineMass(om.ExplicitComponent):
             )
 
         add_aviary_output(self, Aircraft.Propulsion.TOTAL_ENGINE_MASS, val=0)
-        add_aviary_output(self, Aircraft.Nacelle.MASS, val=0)
+        add_aviary_output(self, Aircraft.Nacelle.MASS, val=np.zeros(count))
         self.add_output('pylon_mass', units='lbm', desc='WPYLON: mass of each pylon')
         add_aviary_output(self, Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS, val=0)
-        add_aviary_output(self, Aircraft.Engine.ADDITIONAL_MASS, val=0)
+        add_aviary_output(self, Aircraft.Engine.ADDITIONAL_MASS, val=np.zeros(count))
         self.add_output(
             "eng_comb_mass",
             val=0,
@@ -2243,14 +2249,16 @@ class GearMass(om.ExplicitComponent):
         )
 
     def setup(self):
+        count = len(self.options['aviary_options'].get_val('engine_models'))
+
         add_aviary_input(self, Aircraft.Wing.MOUNTING_TYPE, val=0)
         add_aviary_input(self, Aircraft.LandingGear.MASS_COEFFICIENT, val=0.04)
         add_aviary_input(self, Mission.Design.GROSS_MASS, val=152000)
         add_aviary_input(
             self, Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT, val=0.85)
         add_aviary_input(self, Aircraft.Nacelle.CLEARANCE_RATIO,
-                         val=0.2, units="unitless")
-        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, val=7.5)
+                         val=np.full(count, 0.2), units="unitless")
+        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, val=np.full(count, 7.5))
 
         add_aviary_output(self, Aircraft.LandingGear.TOTAL_MASS, val=0)
         self.add_output(

@@ -5,13 +5,18 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.geometry.gasp_based.electric import CableSize
 from aviary.variable_info.variables import Aircraft
+from aviary.utils.aviary_values import AviaryValues
 
 
 class ElectricTestCase(unittest.TestCase):
     def setUp(self):
 
         self.prob = om.Problem()
-        self.prob.model.add_subsystem("cable", CableSize(), promotes=["*"])
+        data = AviaryValues({
+            'engine_models': (['dummyEngine'], 'unitless')
+        })
+        self.prob.model.add_subsystem("cable", CableSize(
+            aviary_options=data), promotes=["*"])
 
         self.prob.model.set_input_defaults(
             Aircraft.Engine.WING_LOCATIONS, 0.35, units="unitless"

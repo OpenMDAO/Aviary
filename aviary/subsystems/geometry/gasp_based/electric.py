@@ -1,3 +1,4 @@
+import numpy as np
 import openmdao.api as om
 
 from aviary.utils.aviary_values import AviaryValues
@@ -15,8 +16,9 @@ class CableSize(om.ExplicitComponent):
         )
 
     def setup(self):
+        count = len(self.options['aviary_options'].get_val('engine_models'))
 
-        add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS, val=0.35)
+        add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS, val=np.full(count, 0.35))
 
         add_aviary_input(self, Aircraft.Wing.SPAN, val=128)
 

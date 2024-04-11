@@ -17,14 +17,17 @@ class EngineSize(om.ExplicitComponent):
         )
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Engine.REFERENCE_DIAMETER, 5.8)
-        add_aviary_input(self, Aircraft.Engine.SCALE_FACTOR, 1.0)
-        add_aviary_input(self, Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25)
-        add_aviary_input(self, Aircraft.Nacelle.FINENESS, 2)
+        count = len(self.options['aviary_options'].get_val('engine_models'))
 
-        add_aviary_output(self, Aircraft.Nacelle.AVG_DIAMETER, val=0.0)
-        add_aviary_output(self, Aircraft.Nacelle.AVG_LENGTH, val=0.0)
-        add_aviary_output(self, Aircraft.Nacelle.SURFACE_AREA, val=0.0)
+        add_aviary_input(self, Aircraft.Engine.REFERENCE_DIAMETER, np.full(count, 5.8))
+        add_aviary_input(self, Aircraft.Engine.SCALE_FACTOR, np.ones(count))
+        add_aviary_input(self, Aircraft.Nacelle.CORE_DIAMETER_RATIO,
+                         np.full(count, 1.25))
+        add_aviary_input(self, Aircraft.Nacelle.FINENESS, np.full(count, 2))
+
+        add_aviary_output(self, Aircraft.Nacelle.AVG_DIAMETER, val=np.zeros(count))
+        add_aviary_output(self, Aircraft.Nacelle.AVG_LENGTH, val=np.zeros(count))
+        add_aviary_output(self, Aircraft.Nacelle.SURFACE_AREA, val=np.zeros(count))
 
     def setup_partials(self):
         innames = [
