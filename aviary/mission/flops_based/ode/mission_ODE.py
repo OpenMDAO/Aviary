@@ -173,7 +173,7 @@ class MissionODE(om.Group):
         self.add_subsystem(name='throttle_balance',
                            subsys=om.BalanceComp(name=Dynamic.Mission.THROTTLE,
                                                  units="unitless",
-                                                 val=np.ones((nn, engine_count)),
+                                                 val=np.ones((nn, )),
                                                  lhs_name='thrust_required',
                                                  rhs_name=Dynamic.Mission.THRUST_TOTAL,
                                                  eq_units="lbf",

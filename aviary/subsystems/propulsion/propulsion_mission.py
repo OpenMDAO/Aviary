@@ -33,34 +33,54 @@ class PropulsionMission(om.Group):
         engine_count = len(engine_models)
 
         # TODO what if "engine" is not an EngineModel object? Type is never checked/enforced
-        for (i, engine) in enumerate(engine_models):
-            self.add_subsystem(
-                engine.name,
-                subsys=engine.build_mission(num_nodes=nn, aviary_inputs=options),
-                promotes_inputs=['*'])
 
-            if engine_count > 1:
-                # split vectorized throttles and connect to the correct engine model
-                self.promotes(
+        if engine_count > 1:
+
+            # Multi Engine Model
+
+            self.add_subsystem(
+                'throttle_allocation',
+                ThrottleAllocator(num_nodes=nn, aviary_options=options),
+                promotes_inputs=[Dynamic.Mission.THROTTLE]
+            )
+
+            for (i, engine) in enumerate(engine_models):
+
+                self.add_subsystem(
                     engine.name,
-                    inputs=[Dynamic.Mission.THROTTLE],
-                    src_indices=om.slicer[:, i])
+                    subsys=engine.build_mission(num_nodes=nn, aviary_inputs=options),
+                    promotes_inputs=[Dynamic.Mission.MACH, Dynamic.Mission.ALTITUDE]
+                )
+
                 # TODO if only some engine use hybrid throttle, source vector will have an
                 #      index for that engine that is unused, will this confuse optimizer?
+                # TODO: This code isn't used anywhere, and will not work now.
                 if engine.use_hybrid_throttle:
                     self.promotes(
                         engine.name,
                         inputs=[Dynamic.Mission.HYBRID_THROTTLE],
                         src_indices=om.slicer[:, i])
-            else:
+
+                self.connect(f'throttle_allocation.throttle_{engine.name}',
+                             f'{engine.name}.{Dynamic.Mission.THROTTLE}')
+
+        else:
+
+            # Single Engine Model
+            engine = engine_models[0]
+
+            self.add_subsystem(
+                engine.name,
+                subsys=engine.build_mission(num_nodes=nn, aviary_inputs=options),
+                promotes_inputs=['*']
+            )
+
+            self.promotes(engine.name, inputs=[Dynamic.Mission.THROTTLE])
+            if engine.use_hybrid_throttle:
                 self.promotes(
                     engine.name,
-                    inputs=[Dynamic.Mission.THROTTLE])
-                if engine.use_hybrid_throttle:
-                    self.promotes(
-                        engine.name,
-                        inputs=[Dynamic.Mission.HYBRID_THROTTLE])
-                break
+                    inputs=[Dynamic.Mission.HYBRID_THROTTLE]
+                )
 
         # TODO might be able to avoid hardcoding using propulsion Enums
         # mux component to vectorize individual outputs into 2d arrays

@@ -2368,10 +2368,8 @@ class AviaryProblem(om.Problem):
         else:
             all_subsystems.extend(external_subsystems)
 
-        # if self.engine_builder is not None:
-        #     all_subsystems.append(self.engine_builder)
-
         all_subsystems.append(self.core_subsystems['aerodynamics'])
+        all_subsystems.append(self.core_subsystems['propulsion'])
 
         return all_subsystems
 

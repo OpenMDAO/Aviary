@@ -30,7 +30,7 @@ class PropulsionPreMission(om.Group):
         # each component here
         # Promotions are handled in configure()
         for engine in engine_models:
-            subsys = engine.build_pre_mission()
+            subsys = engine.build_pre_mission(options)
             if subsys:
                 self.add_subsystem(engine.name,
                                    subsys=subsys,

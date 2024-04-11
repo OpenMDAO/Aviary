@@ -17,7 +17,6 @@ class ThrottleAllocator(om.ExplicitComponent):
             types=int,
             lower=0
         )
-
         self.options.declare(
             'aviary_options',
             types=AviaryValues,
@@ -28,7 +27,6 @@ class ThrottleAllocator(om.ExplicitComponent):
         nn = self.options['num_nodes']
         options: AviaryValues = self.options['aviary_options']
         engine_models = options.get_val('engine_models')
-        num_engines = len(engine_models)
 
         self.add_input(
             Dynamic.Mission.THROTTLE,
@@ -36,18 +34,18 @@ class ThrottleAllocator(om.ExplicitComponent):
             desc="Solver-controlled aggregate throttle."
         )
 
-        for j in range(num_engines - 1):
+        for engine in engine_models[:-1]:
             self.add_input(
-                f"throttle_alloc_engine_{j}",
+                f"throttle_alloc_engine_{engine.name}",
                 np.ones(nn),
-                desc=f"Throttle allocation for engine {j}."
+                desc=f"Throttle allocation for engine '{engine.name}'."
             )
 
-        for j in range(num_engines):
+        for engine in engine_models:
             self.add_output(
-                f"throttle_{j}",
+                f"throttle_{engine.name}",
                 np.ones(nn),
-                desc=f"Throttle setting for engine {j}."
+                desc=f"Throttle setting for engine '{engine.name}'."
             )
 
         # TODO: make this scaler if we use static parameters.
@@ -68,15 +66,16 @@ class ThrottleAllocator(om.ExplicitComponent):
         agg_throttle = inputs[Dynamic.Mission.THROTTLE]
 
         sum_alloc = 0.0
-        for j in range(num_engines):
+        for engine in engine_models[:-1]:
+            name = engine.name
 
-            if j < num_engines - 1:
-                allocation = inputs[f"throttle_alloc_engine_{j}"]
-                sum_alloc += allocation
-            else:
-                allocation = 1.0 - sum_alloc
+            allocation = inputs[f"throttle_alloc_engine_{name}"]
+            sum_alloc += allocation
 
-            outputs[f"throttle_{j}"] = allocation * agg_throttle
+            outputs[f"throttle_{name}"] = allocation * agg_throttle
+
+        allocation = 1.0 - sum_alloc
+        outputs[f"throttle_{engine_models[-1].name}"] = allocation * agg_throttle
 
         outputs["throttle_allocation_sum"] = sum_alloc
 
@@ -89,17 +88,20 @@ class ThrottleAllocator(om.ExplicitComponent):
         agg_throttle = inputs[Dynamic.Mission.THROTTLE]
 
         sum_alloc = 0.0
+        last_throttle = f"throttle_{engine_models[-1].name}"
 
-        for j in range(num_engines):
+        for engine in engine_models:
+            name = engine.name
+            input_name = f"throttle_alloc_engine_{name}"
 
             if j < num_engines - 1:
-                allocation = inputs[f"throttle_alloc_engine_{j}"]
+                allocation = inputs[input_name]
                 sum_alloc += allocation
 
-                partials[f"throttle_{j}", f"throttle_alloc_engine_{j}"] = agg_throttle
-                partials[f"throttle_{num_engines - 1}", f"throttle_alloc_engine_{j}"] = -agg_throttle
+                partials[f"throttle_{name}", input_name] = agg_throttle
+                partials[last_throttle, input_name] = -agg_throttle
 
             else:
                 allocation = 1.0 - sum_alloc
 
-            partials[f"throttle_{j}", Dynamic.Mission.THROTTLE] = allocation
+            partials[f"throttle_{name}", Dynamic.Mission.THROTTLE] = allocation
