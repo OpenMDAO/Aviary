@@ -3,6 +3,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.variables import Dynamic
 
 
 class ThrottleAllocator(om.ExplicitComponent):
@@ -28,3 +29,25 @@ class ThrottleAllocator(om.ExplicitComponent):
         options: AviaryValues = self.options['aviary_options']
         engine_models = options.get_val('engine_models')
         num_engines = len(engine_models)
+
+        self.add_input(
+            Dynamic.Mission.THROTTLE,
+            np.ones(nn),
+            desc="Solver-controlled aggregate throttle."
+        )
+
+        for j in range(num_engines - 1):
+            self.add_input(
+                f"throttle_alloc_engine_{j}",
+                1.0,
+                desc=f"Throttle allocation for engine {j}."
+            )
+
+        for j in range(num_engines):
+            self.add_output(
+                f"throttle_{j}",
+                1.0,
+                desc=f"Throttle setting for engine {j}."
+            )
+
+        self.declare_partials(of='*', wrt='*')
