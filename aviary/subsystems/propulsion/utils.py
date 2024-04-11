@@ -6,7 +6,13 @@ default_units : dict
 """
 from enum import Enum, auto
 
+import numpy as np
+import openmdao.api as om
+
 import aviary.constants as constants
+
+from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.variables import Dynamic
 
 
 class EngineModelVariables(Enum):
@@ -96,6 +102,65 @@ def convert_geopotential_altitude(altitude):
         altitude[i] = alt
 
     return altitude
+
+
+class UncorrectData(om.Group):
+    def initialize(self):
+        self.options.declare(
+            'num_nodes', types=int, default=1)
+        self.options.declare(
+            'aviary_options', types=AviaryValues,
+            desc='collection of Aircraft/Mission specific options')
+
+    def setup(self):
+        num_nodes = self.options['num_nodes']
+
+        self.add_subsystem(
+            'pressure_term',
+            om.ExecComp(
+                'delta_T = (P0 * (1 + .2*mach**2)**3.5) / P_amb',
+                delta_T={'units': "unitless", 'shape': num_nodes},
+                P0={'units': 'psi', 'shape': num_nodes},
+                mach={'units': 'unitless', 'shape': num_nodes},
+                P_amb={'val': np.full(num_nodes, 14.696), 'units': 'psi', },
+                has_diag_partials=True,
+            ),
+            promotes_inputs=[
+                ('P0', Dynamic.Mission.STATIC_PRESSURE),
+                ('mach', Dynamic.Mission.MACH),
+            ],
+            promotes_outputs=['delta_T'],
+        )
+
+        self.add_subsystem(
+            'temperature_term',
+            om.ExecComp(
+                'theta_T = T0 * (1 + .2*mach**2)/T_amb',
+                theta_T={'units': "unitless", 'shape': num_nodes},
+                T0={'units': 'degR', 'shape': num_nodes},
+                mach={'units': 'unitless', 'shape': num_nodes},
+                T_amb={'val': np.full(num_nodes, 518.67), 'units': 'degR', },
+                has_diag_partials=True,
+            ),
+            promotes_inputs=[
+                ('T0', Dynamic.Mission.TEMPERATURE),
+                ('mach', Dynamic.Mission.MACH),
+            ],
+            promotes_outputs=['theta_T'],
+        )
+
+        self.add_subsystem(
+            'uncorrection',
+            om.ExecComp(
+                'uncorrected_data = corrected_data * (delta_T + theta_T**.5)',
+                uncorrected_data={'units': "hp", 'shape': num_nodes},
+                delta_T={'units': "unitless", 'shape': num_nodes},
+                theta_T={'units': "unitless", 'shape': num_nodes},
+                corrected_data={'units': "hp", 'shape': num_nodes},
+                has_diag_partials=True,
+            ),
+            promotes=['*']
+        )
 
 
 # class InstallationDragFlag(Enum):
