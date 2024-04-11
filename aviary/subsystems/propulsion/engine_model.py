@@ -11,6 +11,8 @@ import numpy as np
 
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
+from aviary.variable_info.enums import Verbosity
 
 
 class EngineModel(SubsystemBuilderBase):
@@ -121,6 +123,12 @@ class EngineModel(SubsystemBuilderBase):
         if options is None:
             return  # options are allowed to be empty
 
+        # verbosity settings are needed to adjust printouts
+        if Settings.VERBOSITY not in options:
+            self.set_val(Settings.VERBOSITY, Verbosity.BRIEF)
+
+        verbosity = self.get_val(Settings.VERBOSITY).value
+
         if not isinstance(options, AviaryValues):
             raise TypeError('EngineModel options must be an AviaryValues object')
 
@@ -128,7 +136,7 @@ class EngineModel(SubsystemBuilderBase):
             # only perform vector check for variables related to engines and nacelles
             if key.startswith('aircraft:engine:') or key.startswith('aircraft:nacelle'):
                 if type(val) in (list, np.ndarray, tuple):
-                    if self.meta_data[key]['types'] not in (list, np.ndarray, tuple):
+                    if self.meta_data[key]['types'] not in (list, np.ndarray, tuple) and verbosity >= 1:
                         warnings.warn(
                             f'The value of {key} passed to EngineModel <{self.name}> is '
                             f'type {type(val)}. Only the first entry in this iterable will '

@@ -1168,6 +1168,18 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Design.MAX_PROPELLER_TIP_SPEED,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.TSPDMX',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='ft/s',
+    desc='maximum allowable propeller tip speed',
+    default_value=800.0,
+)
+
+add_meta_data(
     Aircraft.Design.MAX_STRUCTURAL_SPEED,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.VMLFSL',
@@ -1177,18 +1189,6 @@ add_meta_data(
     units='mi/h',
     desc='maximum structural design flight speed in miles per hour',
     default_value=0,
-)
-
-add_meta_data(
-    Aircraft.Design.MAX_TIP_SPEED,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.TSPDMX',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='ft/s',
-    desc='maximum allowable propeller tip speed',
-    default_value=800.0,
 )
 
 add_meta_data(
@@ -1812,20 +1812,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Engine.NUM_BLADES,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.BL',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='unitless',
-    desc='number of blades per propeller',
-    option=True,
-    types=int,
-    default_value=0
-)
-
-add_meta_data(
     Aircraft.Engine.NUM_ENGINES,
     meta_data=_MetaData,
     historical_name={"GASP": "INGASP.ENP",
@@ -1849,6 +1835,20 @@ add_meta_data(
                      },
     units='unitless',
     desc='number of fuselage mounted engines per model',
+    option=True,
+    types=int,
+    default_value=0
+)
+
+add_meta_data(
+    Aircraft.Engine.NUM_PROPELLER_BLADES,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.BL',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='unitless',
+    desc='number of blades per propeller',
     option=True,
     types=int,
     default_value=0

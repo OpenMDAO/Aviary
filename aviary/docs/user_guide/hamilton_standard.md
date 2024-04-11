@@ -97,7 +97,7 @@ The newly added aviary options and variables are:
 Aircraft.Engine.PROPELLER_DIAMETER
 Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT
 Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR
-Aircraft.Engine.NUM_BLADES
+Aircraft.Engine.NUM_PROPELLER_BLADES
 Aircraft.Design.COMPUTE_INSTALLATION_LOSS
 Dynamic.Mission.PROPELLER_TIP_SPEED
 Dynamic.Mission.SHAFT_POWER
@@ -114,14 +114,14 @@ Some inputs are options:
 
 ```python
 options.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 10, units='ft')
-options.set_val(Aircraft.Engine.NUM_BLADES, val=4, units='unitless')
+options.set_val(Aircraft.Engine.NUM_PROPELLER_BLADES, val=4, units='unitless')
 options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS, val=True, units='unitless')
 ```
 
 We set the inputs like the following:
 
 ```python
-prob.set_val(f'traj.cruise.rhs_all.{Aircraft.Design.MAX_TIP_SPEED}', 710., units='ft/s')
+prob.set_val(f'traj.cruise.rhs_all.{Aircraft.Design.MAX_PROPELLER_TIP_SPEED}', 710., units='ft/s')
 prob.set_val(f'traj.cruise.rhs_all.{Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED}', 0.915, units='unitless')
 prob.set_val(f'traj.cruise.rhs_all.{Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR}', 150., units='unitless')
 prob.set_val(f'traj.cruise.rhs_all.{Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT}', 0.5, units='unitless')

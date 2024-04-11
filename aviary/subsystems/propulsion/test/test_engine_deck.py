@@ -132,6 +132,4 @@ class EngineDeckTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    # unittest.main()
-    test = EngineDeckTest()
-    test.test_load_from_memory()
+    unittest.main()
