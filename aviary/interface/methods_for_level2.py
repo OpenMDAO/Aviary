@@ -2287,6 +2287,9 @@ class AviaryProblem(om.Problem):
         make_plots : bool, optional
             If True (default), Dymos html plots will be generated as part of the output.
         """
+        self.final_setup()
+        om.n2(self, 'superspecialn2.html', show_browser=False)
+        # exit()
 
         if self.aviary_inputs.get_val('verbosity').value >= 2:
             self.final_setup()

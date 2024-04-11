@@ -153,12 +153,12 @@ def add_descent_estimation_as_submodel(
             # reserve_fuel = {'units':'lbm'},
             descent_fuel_estimate={'units': 'lbm', 'val': 0},
         ),
-        promotes_inputs=[
-            ('operating_mass', Aircraft.Design.OPERATING_MASS),
-            ('payload_mass', Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS),
-            # ('reserve_fuel', Aircraft.Design.EMPTY_MASS),
-            ('descent_fuel_estimate', 'descent_fuel'),
-        ],
+        # promotes_inputs=[
+        #     ('operating_mass', Aircraft.Design.OPERATING_MASS),
+        #     ('payload_mass', Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS),
+        #     # ('reserve_fuel', Aircraft.Design.EMPTY_MASS),
+        #     ('descent_fuel_estimate', 'descent_fuel'),
+        # ],
         promotes_outputs=['mass_initial'])
 
     from aviary.utils.functions import create_printcomp
@@ -167,16 +167,20 @@ def add_descent_estimation_as_submodel(
             Aircraft.Design.OPERATING_MASS,
             Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS,
             'descent_fuel',
+            'mass_initial',
         ],
         input_units={
             'descent_fuel': 'lbm',
+            'mass_initial': 'lbm',
         })
     model.add_subsystem(
         "dummy_comp",
         dummy_comp(),
-        promotes_inputs=["*"],)
+        # promotes_inputs=["*"],
+    )
     model.set_input_defaults(
         Aircraft.Design.OPERATING_MASS, val=0, units='lbm')
+    model.connect('top_of_descent_mass.mass_initial', 'dummy_comp.mass_initial')
 
     model.add_subsystem(
         'traj', traj,
@@ -256,16 +260,20 @@ def add_descent_estimation_as_submodel(
     subcomp = om.SubmodelComp(
         problem=subprob,
         inputs=[
-            # Aircraft.Design.EMPTY_MASS,
-            # Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS,
-            'aircraft:*'
+            # 'aircraft:*'
+            '*'
         ],
-        outputs=['distance_final', 'descent_fuel'])
+        outputs=['distance_final', 'descent_fuel'],
+        do_coloring=False
+    )
 
     main_prob.model.add_subsystem(
         'idle_descent_estimation',
         subcomp,
-        promotes_inputs=['aircraft:*']+input_aliases,
+        promotes_inputs=[
+            # 'aircraft:*'
+            '*'
+        ]+input_aliases,
         promotes_outputs=[
             ('distance_final', 'descent_range'),
             'descent_fuel',

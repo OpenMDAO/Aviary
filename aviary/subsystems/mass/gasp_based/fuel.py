@@ -517,6 +517,10 @@ class FuelAndOEMOutputs(om.ExplicitComponent):
         outputs["OEM_wingfuel_mass"] = OEM_wingfuel_wt / GRAV_ENGLISH_LBM
         outputs["OEM_fuel_vol"] = OEM_fuel_vol
         outputs[Aircraft.Fuel.WING_VOLUME_DESIGN] = design_fuel_vol
+        print('*'*40)
+        print('operating mass')
+        print(OEW / GRAV_ENGLISH_LBM, OEW, GRAV_ENGLISH_LBM)
+        print('*'*40)
         outputs[Aircraft.Design.OPERATING_MASS] = OEW / GRAV_ENGLISH_LBM
         outputs["payload_mass_max_fuel"] = \
             payload_wt_max_fuel / GRAV_ENGLISH_LBM

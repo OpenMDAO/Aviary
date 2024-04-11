@@ -148,7 +148,7 @@ class Aircraft:
         MAX_FUSELAGE_PITCH_ANGLE = 'aircraft:design:max_fuselage_pitch_angle'
         MAX_STRUCTURAL_SPEED = 'aircraft:design:max_structural_speed'
         MAX_TIP_SPEED = 'aircraft:design:max_tip_speed'
-        OPERATING_MASS = 'aircraft:design:operating_mass'
+        OPERATING_MASS = 'operating_mass'
         PART25_STRUCTURAL_CATEGORY = 'aircraft:design:part25_structural_category'
         RESERVE_FUEL_ADDITIONAL = 'aircraft:design:reserve_fuel_additional'
         RESERVE_FUEL_FRACTION = 'aircraft:design:reserve_fuel_fraction'

@@ -116,8 +116,8 @@ class DescentRates(om.ExplicitComponent):
         outputs[Dynamic.Mission.DISTANCE_RATE] = TAS * np.cos(gamma)
         outputs["required_lift"] = weight * np.cos(gamma) - thrust * np.sin(alpha)
         outputs[Dynamic.Mission.FLIGHT_PATH_ANGLE] = gamma
-        print('exit in descent eom')
-        exit()
+        # print('exit in descent eom')
+        # exit()
 
     def compute_partials(self, inputs, J):
 
