@@ -688,7 +688,7 @@ class HamiltonStandard(om.ExplicitComponent):
                             CP_CLi_table[CL_tab_idx][:cli_len], XPCLI[CL_tab_idx], CPE1X)
                         if (run_flag == 1):
                             ichck = ichck + 1
-                        if (verbosity == Verbosity.DEBUG and ichck <= 1):
+                        if (verbosity is Verbosity.DEBUG or ichck <= 1):
                             if (run_flag == 1):
                                 warnings.warn(
                                     f"Mach,VTMACH,J,power_coefficient,CP_Eff =: {inputs[Dynamic.Mission.MACH][i_node]},{inputs['tip_mach'][i_node]},{inputs['advance_ratio'][i_node]},{power_coefficient},{CP_Eff}")
