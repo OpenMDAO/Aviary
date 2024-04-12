@@ -64,6 +64,7 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
                 # TODO engine_wing_location
                 params[var] = {'shape': (engine_count), 'static_target': True}
 
+        #params = {} # For now
         return params
 
     def report(self, prob, reports_folder, **kwargs):
