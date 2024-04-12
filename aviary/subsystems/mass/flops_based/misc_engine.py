@@ -25,6 +25,8 @@ class EngineMiscMass(om.ExplicitComponent):
 
     def setup(self):
         count = len(self.options['aviary_options'].get_val('engine_models'))
+        cshape = np.arange(count)
+        rshape = np.tile(0, count)
 
         add_aviary_input(
             self, Aircraft.Engine.ADDITIONAL_MASS, val=np.zeros(count))
@@ -39,9 +41,14 @@ class EngineMiscMass(om.ExplicitComponent):
             of=Aircraft.Propulsion.TOTAL_MISC_MASS,
             wrt=[Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS,
                  Aircraft.Propulsion.TOTAL_STARTER_MASS,
-                 Aircraft.Engine.ADDITIONAL_MASS,
                  Aircraft.Propulsion.MISC_MASS_SCALER],
             val=1
+        )
+
+        self.declare_partials(
+            Aircraft.Propulsion.TOTAL_MISC_MASS,
+            Aircraft.Engine.ADDITIONAL_MASS,
+            rows=rshape, cols=cshape
         )
 
     def compute(self, inputs, outputs):
@@ -84,4 +91,4 @@ class EngineMiscMass(om.ExplicitComponent):
 
         J[Aircraft.Propulsion.TOTAL_MISC_MASS,
           Aircraft.Propulsion.MISC_MASS_SCALER
-          ] = starter_mass + addtl_mass + ctrl_mass
+          ] = starter_mass + sum(addtl_mass) + ctrl_mass
