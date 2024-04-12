@@ -24,84 +24,63 @@ class ThrottleAllocator(om.ExplicitComponent):
         )
 
     def setup(self):
-        nn = self.options['num_nodes']
         options: AviaryValues = self.options['aviary_options']
+        nn = self.options['num_nodes']
         engine_models = options.get_val('engine_models')
+        num_engines = len(engine_models)
 
         self.add_input(
-            Dynamic.Mission.THROTTLE,
+            "aggregate_throttle",
             np.ones(nn),
+            units="unitless",
             desc="Solver-controlled aggregate throttle."
         )
 
-        for engine in engine_models[:-1]:
-            self.add_input(
-                f"throttle_alloc_engine_{engine.name}",
-                np.ones(nn),
-                desc=f"Throttle allocation for engine '{engine.name}'."
-            )
+        self.add_input(
+            "throttle_allocations",
+            np.ones(num_engines - 1) * 1.0 / num_engines,
+            units="unitless",
+            desc="Throttle allocation for engines."
+        )
 
-        for engine in engine_models:
-            self.add_output(
-                f"throttle_{engine.name}",
-                np.ones(nn),
-                desc=f"Throttle setting for engine '{engine.name}'."
-            )
+        self.add_output(
+            Dynamic.Mission.THROTTLE,
+            np.ones((nn, num_engines)),
+            units="unitless",
+            desc="Throttle setting for all engines."
+        )
 
         # TODO: make this scaler if we use static parameters.
-        self.add_input(
+        self.add_output(
             "throttle_allocation_sum",
-            np.ones(nn),
+            1.0,
             desc="Sum of the optimizer allocation values. Constrain to less than 1.0."
         )
 
-        self.declare_partials(of='*', wrt='*')
+        self.declare_partials(of='*', wrt='*', method='cs')
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
-        nn = self.options['num_nodes']
         options: AviaryValues = self.options['aviary_options']
-        engine_models = options.get_val('engine_models')
-        num_engines = len(engine_models)
+        nn = self.options['num_nodes']
 
-        agg_throttle = inputs[Dynamic.Mission.THROTTLE]
+        agg_throttle = inputs["aggregate_throttle"]
+        allocation = inputs["throttle_allocations"]
 
-        sum_alloc = 0.0
-        for engine in engine_models[:-1]:
-            name = engine.name
+        outputs[Dynamic.Mission.THROTTLE][:-1, :] = np.outer(agg_throttle[:-1], allocation)
 
-            allocation = inputs[f"throttle_alloc_engine_{name}"]
-            sum_alloc += allocation
+        sum_alloc = np.sum(allocation)
 
-            outputs[f"throttle_{name}"] = allocation * agg_throttle
-
-        allocation = 1.0 - sum_alloc
-        outputs[f"throttle_{engine_models[-1].name}"] = allocation * agg_throttle
+        outputs[Dynamic.Mission.THROTTLE][-1, :] = agg_throttle[-1] * (1.0 - sum_alloc)
 
         outputs["throttle_allocation_sum"] = sum_alloc
 
-    def compute_partials(self, inputs, partials, discrete_inputs=None):
-        nn = self.options['num_nodes']
+    def Zcompute_partials(self, inputs, partials, discrete_inputs=None):
         options: AviaryValues = self.options['aviary_options']
-        engine_models = options.get_val('engine_models')
-        num_engines = len(engine_models)
+        nn = self.options['num_nodes']
 
-        agg_throttle = inputs[Dynamic.Mission.THROTTLE]
+        agg_throttle = inputs["aggregate_throttle"]
+        allocation = inputs["throttle_allocations"]
 
-        sum_alloc = 0.0
-        last_throttle = f"throttle_{engine_models[-1].name}"
+        partials[Dynamic.Mission.THROTTLE, "aggregate_throttle"] = allocation
 
-        for engine in engine_models:
-            name = engine.name
-            input_name = f"throttle_alloc_engine_{name}"
-
-            if j < num_engines - 1:
-                allocation = inputs[input_name]
-                sum_alloc += allocation
-
-                partials[f"throttle_{name}", input_name] = agg_throttle
-                partials[last_throttle, input_name] = -agg_throttle
-
-            else:
-                allocation = 1.0 - sum_alloc
-
-            partials[f"throttle_{name}", Dynamic.Mission.THROTTLE] = allocation
+        partials[Dynamic.Mission.THROTTLE, "throttle_allocations"] = agg_throttle

@@ -10,7 +10,6 @@ core_mission_inputs = [
     Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR,
     Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR,
     Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR,
-    Aircraft.Engine.SCALE_FACTOR,
     Aircraft.Fuselage.CHARACTERISTIC_LENGTH,
     Aircraft.Fuselage.CROSS_SECTION,
     Aircraft.Fuselage.DIAMETER_TO_WING_SPAN,

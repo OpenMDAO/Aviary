@@ -36,51 +36,63 @@ class PropulsionMission(om.Group):
 
         if engine_count > 1:
 
-            # Multi Engine Model
-
+            # We need a single component with scale_factor. Dymos can't find it when it is
+            # already sliced across several component.
+            comp = om.ExecComp(
+                "y=x",
+                y={'val': np.ones(engine_count), 'units': 'unitless'},
+                x={'val': np.ones(engine_count), 'units': 'unitless'}
+            )
             self.add_subsystem(
-                'throttle_allocation',
-                ThrottleAllocator(num_nodes=nn, aviary_options=options),
-                promotes_inputs=[Dynamic.Mission.THROTTLE]
+                "scale_passthrough",
+                comp,
+                promotes_inputs=[('x', Aircraft.Engine.SCALE_FACTOR)],
+                promotes_outputs=[('y', 'passthrough_scale_factor')],
             )
 
             for (i, engine) in enumerate(engine_models):
-
                 self.add_subsystem(
                     engine.name,
                     subsys=engine.build_mission(num_nodes=nn, aviary_inputs=options),
-                    promotes_inputs=[Dynamic.Mission.MACH, Dynamic.Mission.ALTITUDE]
+                    promotes_inputs=['*']
                 )
+
+                # split vectorized throttles and connect to the correct engine model
+                self.promotes(
+                    engine.name,
+                    inputs=[Dynamic.Mission.THROTTLE],
+                    src_indices=om.slicer[:, i])
+
+                self.promotes(
+                    engine.name,
+                    inputs=[(Aircraft.Engine.SCALE_FACTOR, 'passthrough_scale_factor')],
+                    src_indices=om.slicer[i])
 
                 # TODO if only some engine use hybrid throttle, source vector will have an
                 #      index for that engine that is unused, will this confuse optimizer?
-                # TODO: This code isn't used anywhere, and will not work now.
                 if engine.use_hybrid_throttle:
                     self.promotes(
                         engine.name,
                         inputs=[Dynamic.Mission.HYBRID_THROTTLE],
                         src_indices=om.slicer[:, i])
-
-                self.connect(f'throttle_allocation.throttle_{engine.name}',
-                             f'{engine.name}.{Dynamic.Mission.THROTTLE}')
-
         else:
 
-            # Single Engine Model
             engine = engine_models[0]
 
-            self.add_subsystem(
-                engine.name,
-                subsys=engine.build_mission(num_nodes=nn, aviary_inputs=options),
-                promotes_inputs=['*']
-            )
+            for (i, engine) in enumerate(engine_models):
+                self.add_subsystem(
+                    engine.name,
+                    subsys=engine.build_mission(num_nodes=nn, aviary_inputs=options),
+                    promotes_inputs=['*']
+                )
 
-            self.promotes(engine.name, inputs=[Dynamic.Mission.THROTTLE])
-            if engine.use_hybrid_throttle:
                 self.promotes(
                     engine.name,
-                    inputs=[Dynamic.Mission.HYBRID_THROTTLE]
-                )
+                    inputs=[Dynamic.Mission.THROTTLE])
+                if engine.use_hybrid_throttle:
+                    self.promotes(
+                        engine.name,
+                        inputs=[Dynamic.Mission.HYBRID_THROTTLE])
 
         # TODO might be able to avoid hardcoding using propulsion Enums
         # mux component to vectorize individual outputs into 2d arrays

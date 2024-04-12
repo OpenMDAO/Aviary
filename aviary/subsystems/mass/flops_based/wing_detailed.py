@@ -196,19 +196,23 @@ class DetailedWingBendingFact(om.ExplicitComponent):
                     * sa**2 + 0.03*caya * (1.0-0.5*faert)*sa))
         outputs[Aircraft.Wing.BENDING_FACTOR] = bt
 
-        eel = np.zeros(len(dy) + 1)
-        loc = np.where(integration_stations < engine_locations[0])[0]
-        eel[loc] = 1.0
+        # The rest of the calculation is done for each engine type.
+        factor_sum = 0.0
+        for j in range(len(num_wing_engines)):
+            eel = np.zeros(len(dy) + 1, dtype=chord.dtype)
+            loc = np.where(integration_stations < engine_locations[j])[0]
+            eel[loc] = 1.0
 
-        delme = dy * eel[1:]
-        delme[loc[-1]] = engine_locations[0] - integration_stations[loc[-1]]
+            delme = dy * eel[1:]
+            delme[loc[-1]] = engine_locations[j] - integration_stations[loc[-1]]
 
-        eem = delme * csw
-        eem = np.cumsum(eem[::-1])[::-1]
+            eem = delme * csw
+            eem = np.cumsum(eem[::-1])[::-1]
 
-        ea = eem * csw / (chord_int_stations[:-1] * tc_int_stations[:-1])
+            ea = eem * csw / (chord_int_stations[:-1] * tc_int_stations[:-1])
 
-        bte = 8 * np.sum((ea[:-1] + ea[1:]) * dy[:-1] * 0.5)
+            bte = 8 * np.sum((ea[:-1] + ea[1:]) * dy[:-1] * 0.5)
 
-        outputs[Aircraft.Wing.ENG_POD_INERTIA_FACTOR] = 1.0 - \
-            bte / bt * pod_mass / gross_mass
+            factor_sum += bte / bt * pod_mass[j] / gross_mass
+
+        outputs[Aircraft.Wing.ENG_POD_INERTIA_FACTOR] = 1.0 - factor_sum

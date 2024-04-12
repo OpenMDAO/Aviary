@@ -62,9 +62,11 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
         for var in _get_engine_variables():
             if var in aviary_inputs:
                 # TODO engine_wing_location
-                params[var] = {'shape': (engine_count), 'static_target': True}
+                params[var] = {'shape': (engine_count, ), 'static_target': True}
 
         params = {} # For now
+        params[Aircraft.Engine.SCALE_FACTOR] = {'shape': (engine_count, ),
+                                                'static_target': True}
         return params
 
     def report(self, prob, reports_folder, **kwargs):

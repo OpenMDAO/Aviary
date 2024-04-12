@@ -297,7 +297,7 @@ class MainGearLength(om.ExplicitComponent):
         options: AviaryValues = self.options['aviary_options']
         # TODO temp using first engine, multi-engine not supported
         num_eng = options.get_val(Aircraft.Engine.NUM_ENGINES)[0]
-        num_wing_eng = options.get_val(Aircraft.Engine.NUM_WING_ENGINES)
+        num_wing_eng = options.get_val(Aircraft.Engine.NUM_WING_ENGINES)[0]
 
         y_eng_fore = inputs[Aircraft.Engine.WING_LOCATIONS][0]
 
@@ -308,7 +308,7 @@ class MainGearLength(om.ExplicitComponent):
             tan_dih = np.tan(inputs[Aircraft.Wing.DIHEDRAL] * DEG2RAD)
             fuse_half_width = inputs[Aircraft.Fuselage.MAX_WIDTH] * 6.0
 
-            d_nacelle = inputs[Aircraft.Nacelle.AVG_DIAMETER]
+            d_nacelle = inputs[Aircraft.Nacelle.AVG_DIAMETER][0]
             # f_nacelle = d_nacelle
             # if num_eng > 4:
             #     f_nacelle = 0.5 * d_nacelle * num_eng ** 0.5
@@ -337,7 +337,7 @@ class MainGearLength(om.ExplicitComponent):
         options: AviaryValues = self.options['aviary_options']
         # TODO temp using first engine, multi-engine not supported
         num_eng = options.get_val(Aircraft.Engine.NUM_ENGINES)[0]
-        num_wing_eng = options.get_val(Aircraft.Engine.NUM_WING_ENGINES)
+        num_wing_eng = options.get_val(Aircraft.Engine.NUM_WING_ENGINES)[0]
 
         y_eng_fore = inputs[Aircraft.Engine.WING_LOCATIONS][0]
         y_eng_aft = 0
@@ -349,7 +349,7 @@ class MainGearLength(om.ExplicitComponent):
             fuse_half_width = inputs[Aircraft.Fuselage.MAX_WIDTH] * 6.0
             dhw_dfuse_wid = 6.0
 
-            d_nacelle = inputs[Aircraft.Nacelle.AVG_DIAMETER]
+            d_nacelle = inputs[Aircraft.Nacelle.AVG_DIAMETER][0]
             # f_nacelle = d_nacelle
             # d_nac = 1.0
             # if num_eng > 4:
@@ -415,7 +415,7 @@ class MainGearLength(om.ExplicitComponent):
 
             partials[
                 Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH,
-                Aircraft.Nacelle.AVG_DIAMETER] = dcmlg_dnac
+                Aircraft.Nacelle.AVG_DIAMETER][:] = dcmlg_dnac
 
             partials[
                 Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH,
