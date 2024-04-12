@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_near_equal
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.engine import EngineMass
@@ -99,6 +99,10 @@ class EngineMassTest(unittest.TestCase):
         assert_near_equal(mass, mass_expected, tolerance=1e-10)
         assert_near_equal(total_mass, total_mass_expected, tolerance=1e-10)
         assert_near_equal(additional_mass, additional_mass_expected, tolerance=1e-10)
+
+        partial_data = prob.check_partials(
+            out_stream=None, compact_print=True, show_only_incorrect=True, form='central', method="fd")
+        assert_check_partials(partial_data, atol=1e-4, rtol=1e-4)
 
     def test_IO(self):
         assert_match_varnames(self.prob.model)
