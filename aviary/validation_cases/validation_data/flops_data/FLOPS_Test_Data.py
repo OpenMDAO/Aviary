@@ -17,4 +17,6 @@ FLOPS_Test_Data['LargeSingleAisle2FLOPS'] = LargeSingleAisle2FLOPS
 FLOPS_Test_Data['LargeSingleAisle2FLOPSdw'] = LargeSingleAisle2FLOPSdw
 FLOPS_Test_Data['LargeSingleAisle2FLOPSalt'] = LargeSingleAisle2FLOPSalt
 FLOPS_Test_Data['N3CC'] = N3CC
-FLOPS_Test_Data['MultiEngineSingleAisle'] = MultiEngineSingleAisle
+
+# Data for this one might not come from a multi-engine FLOPS case.
+# FLOPS_Test_Data['MultiEngineSingleAisle'] = MultiEngineSingleAisle

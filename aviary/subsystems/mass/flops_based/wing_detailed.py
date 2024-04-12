@@ -50,9 +50,9 @@ class DetailedWingBendingFact(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, val=0.0)
 
+        # TODO: What if we have uneven numbers of engines? (3 of x and 2 of y)
         add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS,
-                         val=0.0, shape_by_conn=True)
-        #  val=wing_location_default)
+                         val=np.zeros((count, int(num_wing_engines[0]/2))))
 
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, val=0.0)
 
