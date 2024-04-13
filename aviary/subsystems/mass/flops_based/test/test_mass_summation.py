@@ -1,10 +1,12 @@
 import unittest
 
+import numpy as np
 import openmdao.api as om
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.mass_summation import \
-    MassSummation
+    MassSummation, StructureMass
+from aviary.subsystems.propulsion.engine_deck import EngineDeck
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (Version,
                                                       flops_validation_test,
@@ -12,6 +14,56 @@ from aviary.validation_cases.validation_tests import (Version,
                                                       get_flops_inputs,
                                                       print_case)
 from aviary.variable_info.variables import Aircraft, Mission
+from aviary.utils.functions import get_path
+from aviary.utils.aviary_values import AviaryValues
+from aviary.utils.preprocessors import preprocess_propulsion
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+
+
+class StructureMassTest(unittest.TestCase):
+    def setUp(self):
+        self.prob = om.Problem()
+
+    def test_case_2(self):
+        prob = om.Problem()
+
+        options = AviaryValues()
+
+        options.set_val(Aircraft.Engine.NUM_ENGINES, 4)
+        options.set_val(Aircraft.Engine.DATA_FILE, get_path(
+            'models/engines/turbofan_28k.deck'))
+        engineModel1 = EngineDeck(options=options)
+        options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
+        engineModel2 = EngineDeck(options=options)
+        engineModel3 = EngineDeck(options=options)
+
+        preprocess_propulsion(options, [engineModel1, engineModel2, engineModel3])
+
+        prob.model.add_subsystem('structure_mass', StructureMass(
+            aviary_options=options), promotes=['*'])
+        prob.setup(force_alloc_complex=True)
+
+        prob.set_val(Aircraft.Canard.MASS, val=10.0, units='lbm')
+        prob.set_val(Aircraft.Fins.MASS, val=20.0, units='lbm')
+        prob.set_val(Aircraft.Fuselage.MASS, val=30.0, units='lbm')
+        prob.set_val(Aircraft.HorizontalTail.MASS, val=40.0, units='lbm')
+        prob.set_val(Aircraft.LandingGear.MAIN_GEAR_MASS, val=50.0, units='lbm')
+        prob.set_val(Aircraft.LandingGear.NOSE_GEAR_MASS, val=60.0, units='lbm')
+        prob.set_val(Aircraft.Nacelle.MASS,
+                     val=np.array([1000.0, 500.0, 1500.0]), units='lbm')
+        prob.set_val(Aircraft.Paint.MASS, val=70.0, units='lbm')
+        prob.set_val(Aircraft.VerticalTail.MASS, val=80.0, units='lbm')
+        prob.set_val(Aircraft.Wing.MASS, val=90.0, units='lbm')
+
+        prob.run_model()
+
+        structure_mass = prob.get_val(Aircraft.Design.STRUCTURE_MASS, 'lbm')
+        structure_mass_expected = np.array([3450])
+        assert_near_equal(structure_mass, structure_mass_expected, tolerance=1e-8)
+
+        partial_data = prob.check_partials(
+            out_stream=None, compact_print=True, show_only_incorrect=True, form='central', method="fd")
+        assert_check_partials(partial_data, atol=1e-4, rtol=1e-4)
 
 
 class TotalSummationTest(unittest.TestCase):

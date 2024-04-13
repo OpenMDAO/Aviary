@@ -39,7 +39,9 @@ class NacelleMass(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Nacelle.MASS, val=np.zeros(count))
 
     def setup_partials(self):
-        self.declare_partials("*", "*")
+        count = len(self.options['aviary_options'].get_val('engine_models'))
+        shape = np.arange(count)
+        self.declare_partials("*", "*", rows=shape, cols=shape)
 
     def compute(self, inputs, outputs):
         aviary_options: AviaryValues = self.options['aviary_options']

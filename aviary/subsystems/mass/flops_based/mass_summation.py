@@ -91,7 +91,27 @@ class StructureMass(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Design.STRUCTURE_MASS, val=0.0)
 
     def setup_partials(self):
-        self.declare_partials(Aircraft.Design.STRUCTURE_MASS, '*', val=1)
+        count = len(self.options['aviary_options'].get_val('engine_models'))
+        cshape = np.arange(count)
+        rshape = np.tile(0, count)
+
+        self.declare_partials(
+            of=Aircraft.Design.STRUCTURE_MASS,
+            wrt=[Aircraft.Canard.MASS,
+                 Aircraft.Fins.MASS,
+                 Aircraft.Fuselage.MASS,
+                 Aircraft.HorizontalTail.MASS,
+                 Aircraft.LandingGear.MAIN_GEAR_MASS,
+                 Aircraft.LandingGear.NOSE_GEAR_MASS,
+                 Aircraft.Paint.MASS,
+                 Aircraft.VerticalTail.MASS,
+                 Aircraft.Wing.MASS], val=1)
+
+        self.declare_partials(
+            Aircraft.Design.STRUCTURE_MASS,
+            Aircraft.Nacelle.MASS,
+            rows=rshape, cols=cshape
+        )
 
     def compute(self, inputs, outputs):
         canard_mass = inputs[Aircraft.Canard.MASS]
@@ -107,7 +127,13 @@ class StructureMass(om.ExplicitComponent):
 
         outputs[Aircraft.Design.STRUCTURE_MASS] = \
             wing_mass + htail_mass + vtail_mass + fin_mass + canard_mass + \
-            fus_mass + main_gear_mass + nose_gear_mass + nac_mass + paint_mass
+            fus_mass + main_gear_mass + nose_gear_mass + sum(nac_mass) + paint_mass
+
+    def compute_partials(self, inputs, J):
+        count = len(self.options['aviary_options'].get_val('engine_models'))
+
+        J[Aircraft.Design.STRUCTURE_MASS,
+          Aircraft.Nacelle.MASS] = np.ones(count)
 
 
 class PropulsionMass(om.ExplicitComponent):
