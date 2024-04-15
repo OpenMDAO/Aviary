@@ -18,5 +18,6 @@ FLOPS_Test_Data['LargeSingleAisle2FLOPSdw'] = LargeSingleAisle2FLOPSdw
 FLOPS_Test_Data['LargeSingleAisle2FLOPSalt'] = LargeSingleAisle2FLOPSalt
 FLOPS_Test_Data['N3CC'] = N3CC
 
-# Data for this one might not come from a multi-engine FLOPS case.
-# FLOPS_Test_Data['MultiEngineSingleAisle'] = MultiEngineSingleAisle
+# We don't have full date for this yet, but might still want to run one in a single unit test.
+FLOPS_Lacking_Test_Data = {}
+FLOPS_Lacking_Test_Data['MultiEngineSingleAisle'] = MultiEngineSingleAisle

@@ -32,8 +32,14 @@ class PropulsionPreMission(om.Group):
         for engine in engine_models:
             subsys = engine.build_pre_mission(options)
             if subsys:
+
+                if engine_count > 1:
+                    proms = None
+                else:
+                    proms = ['*']
                 self.add_subsystem(engine.name,
                                    subsys=subsys,
+                                   promotes_outputs = proms,
                                    )
 
         if engine_count > 1:
@@ -112,14 +118,11 @@ class PropulsionPreMission(om.Group):
                 comp.name, inputs=input_dict[comp.name].keys(), src_indices=om.slicer[idx])
 
             # promote all other inputs/outputs for this component normally (handle special outputs later)
-            if engine_count > 1:
-                engine_outputs = [output for output in comp_outputs if output not in output_dict[comp.name]]
-            else:
-                engine_outputs = comp_outputs
             self.promotes(comp.name,
                           inputs=[
                               input for input in comp_inputs if input not in input_dict[comp.name]],
-                          outputs=engine_outputs)
+                          outputs=[
+                              output for output in comp_outputs if output not in output_dict[comp.name]])
 
         # add variables to the mux component and make connections to individual
         # component outputs

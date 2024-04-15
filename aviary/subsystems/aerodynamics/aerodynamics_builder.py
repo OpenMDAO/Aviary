@@ -329,7 +329,8 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                     params[Aircraft.Design.LIFT_POLAR] = lift_opts
                     params[Aircraft.Design.DRAG_POLAR] = drag_opts
 
-        if self.code_origin is FLOPS:
+        method = phase_info['subsystem_options']['core_aerodynamics']['method']
+        if self.code_origin is FLOPS and method is 'computed':
             param_vars = [Aircraft.Nacelle.CHARACTERISTIC_LENGTH,
                           Aircraft.Nacelle.FINENESS,
                           Aircraft.Nacelle.LAMINAR_FLOW_LOWER,
