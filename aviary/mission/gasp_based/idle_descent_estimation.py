@@ -143,6 +143,24 @@ def add_descent_estimation_as_submodel(
 
     model = om.Group()
 
+    from aviary.utils.functions import create_printcomp
+    dummy_comp1 = create_printcomp(
+        all_inputs=[
+            Aircraft.Design.OPERATING_MASS,
+            Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS,
+            'descent_fuel',
+            'mass_initial',
+        ],
+        input_units={
+            'descent_fuel': 'lbm',
+            'mass_initial': 'lbm',
+        })
+    model.add_subsystem(
+        "dummy_comp_pre",
+        dummy_comp1(),
+        promotes_inputs=["*"],
+    )
+
     model.add_subsystem(
         'top_of_descent_mass',
         # om.ExecComp(
@@ -164,8 +182,7 @@ def add_descent_estimation_as_submodel(
         promotes_outputs=['mass_initial']
     )
 
-    from aviary.utils.functions import create_printcomp
-    dummy_comp = create_printcomp(
+    dummy_comp2 = create_printcomp(
         all_inputs=[
             Aircraft.Design.OPERATING_MASS,
             Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS,
@@ -177,8 +194,8 @@ def add_descent_estimation_as_submodel(
             'mass_initial': 'lbm',
         })
     model.add_subsystem(
-        "dummy_comp",
-        dummy_comp(),
+        "dummy_comp_post",
+        dummy_comp2(),
         promotes_inputs=["*"],
     )
     model.set_input_defaults(
@@ -263,9 +280,9 @@ def add_descent_estimation_as_submodel(
         problem=subprob,
         inputs=[
             # 'aircraft:*'
-            # '*'
-        ] + input_list,
-        outputs=['distance_final', 'descent_fuel'],
+            '*'
+        ],
+        outputs=['distance_final', 'descent_fuel', 'mass_initial'],
         do_coloring=False
     )
 
@@ -275,7 +292,7 @@ def add_descent_estimation_as_submodel(
         promotes_inputs=[
             # 'aircraft:*'
             '*'
-        ] + input_list + input_aliases,
+        ] + input_aliases,
         promotes_outputs=[
             ('distance_final', 'descent_range'),
             'descent_fuel',
