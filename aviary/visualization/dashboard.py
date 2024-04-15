@@ -101,6 +101,7 @@ def _dashboard_cmd(options, user_args):
         options.port,
     )
 
+
 def create_csv_frame(csv_filepath):
     if os.path.exists(csv_filepath):
         df = pd.read_csv(csv_filepath)
@@ -116,6 +117,7 @@ def create_csv_frame(csv_filepath):
         df_pane = None
 
     return df_pane
+
 
 def create_report_frame(format, text_filepath):
     """
@@ -536,7 +538,8 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
             results_tabs_list.append(("Aviary Variables", aviary_vars_pane))
 
     # Timeseries Mission Output Report
-    mission_timeseries_pane = create_csv_frame(f"{reports_dir}/mission_timeseries_data.csv" )
+    mission_timeseries_pane = create_csv_frame(
+        f"{reports_dir}/mission_timeseries_data.csv")
     if mission_timeseries_pane:
         results_tabs_list.append(
             ("Timeseries Mission Output Report", mission_timeseries_pane)
