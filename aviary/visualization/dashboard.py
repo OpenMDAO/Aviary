@@ -27,7 +27,9 @@ except ImportError:
 
 import aviary.api as av
 
-pn.extension(sizing_mode="stretch_width")
+# pn.extension(sizing_mode="stretch_width")
+pn.extension('tabulator')
+
 
 # Constants - # Can't get using CSS to work with frames and the raw_css for the template so going with
 #    this for now
@@ -99,6 +101,21 @@ def _dashboard_cmd(options, user_args):
         options.port,
     )
 
+def create_csv_frame(csv_filepath):
+    if os.path.exists(csv_filepath):
+        df = pd.read_csv(csv_filepath)
+        df_pane = pn.widgets.Tabulator(
+            df,
+            show_index=False,
+            sortable=False,
+            layout="fit_data_stretch",
+            max_height=600,
+            sizing_mode='scale_both',
+        )
+    else:
+        df_pane = None
+
+    return df_pane
 
 def create_report_frame(format, text_filepath):
     """
@@ -168,7 +185,6 @@ def create_aviary_variables_table_data_nested(script_name, recorder_file):
     if "final" not in cr.list_cases():
         return None
 
-    print(f"cr.get_case with {cr=}")
     case = cr.get_case("final")
     outputs = case.list_outputs(
         explicit=True,
@@ -518,6 +534,13 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
             )
 
             results_tabs_list.append(("Aviary Variables", aviary_vars_pane))
+
+    # Timeseries Mission Output Report
+    mission_timeseries_pane = create_csv_frame(f"{reports_dir}/mission_timeseries_data.csv" )
+    if mission_timeseries_pane:
+        results_tabs_list.append(
+            ("Timeseries Mission Output Report", mission_timeseries_pane)
+        )
 
     ####### Subsystems Tab #######
     subsystem_tabs_list = []
