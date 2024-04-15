@@ -11,7 +11,7 @@ from aviary.utils.functions import promote_aircraft_and_mission_vars
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.variables_in import VariablesIn
-from aviary.variable_info.enums import AnalysisScheme
+from aviary.variable_info.enums import AnalysisScheme, ThrottleAllocation
 
 
 class ExternalSubsystemGroup(om.Group):
@@ -47,6 +47,11 @@ class MissionODE(om.Group):
             'throttle_enforcement', default='path_constraint',
             values=['path_constraint', 'boundary_constraint', 'bounded', None],
             desc='flag to enforce throttle constraints on the path or at the segment boundaries or using solver bounds'
+        )
+        self.options.declare(
+            'throttle_allocation', default=ThrottleAllocation.FIXED,
+            types=ThrottleAllocation,
+            desc='Flag that determines how to handle throttles for multiple engines.'
         )
         self.options.declare(
             "analysis_scheme",
@@ -192,7 +197,11 @@ class MissionODE(om.Group):
 
             self.add_subsystem(
                 "throttle_allocator",
-                ThrottleAllocator(num_nodes=nn, aviary_options=aviary_options),
+                ThrottleAllocator(
+                    num_nodes=nn,
+                    aviary_options=aviary_options,
+                    throttle_allocation=self.options['throttle_allocation']
+                ),
                 promotes_inputs=['*'],
                 promotes_outputs=['*']
             )
