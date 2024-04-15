@@ -27,7 +27,7 @@ except ImportError:
 
 import aviary.api as av
 
-# pn.extension(sizing_mode="stretch_width")
+pn.extension(sizing_mode="stretch_width")
 pn.extension('tabulator')
 
 
