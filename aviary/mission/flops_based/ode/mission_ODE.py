@@ -135,7 +135,7 @@ class MissionODE(om.Group):
         # Create a lightly modified version of an OM group to add external subsystems
         # to the ODE with a special configure() method that promotes
         # all aircraft:* and mission:* variables to the ODE.
-        external_subsystem_group = ExternalSubsystemGroup()
+        external_subsystem_group = om.Group()
         add_subsystem_group = False
 
         for subsystem in self.options['external_subsystems']:
@@ -143,7 +143,10 @@ class MissionODE(om.Group):
                 num_nodes=nn, aviary_inputs=aviary_options)
             if subsystem_mission is not None:
                 add_subsystem_group = True
-                external_subsystem_group.add_subsystem(subsystem.name, subsystem_mission)
+                external_subsystem_group.add_subsystem(subsystem.name,
+                                                       subsystem_mission,
+                                                       promotes_inputs=['*'],
+                                                       promotes_outputs=['*'])
 
         # Only add the external subsystem group if it has at least one subsystem.
         # Without this logic there'd be an empty OM group added to the ODE.

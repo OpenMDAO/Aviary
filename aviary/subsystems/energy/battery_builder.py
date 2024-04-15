@@ -40,14 +40,16 @@ class BatteryBuilder(SubsystemBuilderBase):
                                                        'defect_ref': 1e6,
                                                        'units': 'kJ',
                                                        'rate_source': Dynamic.Mission.ELECTRIC_POWER_TOTAL,
-                                                       'targets': Dynamic.Mission.MISSION_ENERGY,
                                                        'input_initial': 0.0}}
 
         return state_dict
 
     def get_constraints(self):
         # discharge_limit = aviary_options.get_val(Aircraft.Battery.DISCHARGE_LIMIT)
-        constraint_dict = {f'path_{Dynamic.Mission.BATTERY_STATE_OF_CHARGE} = {Dynamic.Mission.BATTERY_STATE_OF_CHARGE} - {Aircraft.Battery.DISCHARGE_LIMIT}':
+        # constraint_dict = {f'path_{Dynamic.Mission.BATTERY_STATE_OF_CHARGE} = {Dynamic.Mission.BATTERY_STATE_OF_CHARGE} - {Aircraft.Battery.DISCHARGE_LIMIT}':
+        #                    {'type': 'path',
+        #                     'lower': 0.0}}
+        constraint_dict = {Dynamic.Mission.BATTERY_STATE_OF_CHARGE:
                            {'type': 'path',
-                            'lower': 0.0}}
+                            'lower': 0.2}}
         return constraint_dict

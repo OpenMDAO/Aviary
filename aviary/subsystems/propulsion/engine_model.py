@@ -38,9 +38,10 @@ class EngineModel(SubsystemBuilderBase):
     default_name = 'engine_model'
 
     def __init__(
-        self, name: str = None, options: AviaryValues = None, meta_data: dict = None,
+        self, name: str = None, options: AviaryValues = AviaryValues(), meta_data: dict = None,
     ):
         super().__init__(name, meta_data=meta_data)
+
         self.options = options.deepcopy()
 
         # Hybrid throttle is currently the only optional independent variable, requiring
@@ -117,9 +118,6 @@ class EngineModel(SubsystemBuilderBase):
         the first entry in that vector into self.options.
         """
         options = self.options
-
-        if options is None:
-            return  # options are allowed to be empty
 
         if not isinstance(options, AviaryValues):
             raise TypeError('EngineModel options must be an AviaryValues object')

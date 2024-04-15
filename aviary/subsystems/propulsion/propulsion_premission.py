@@ -25,11 +25,13 @@ class PropulsionPreMission(om.Group):
         engine_models = options.get_val('engine_models')
 
         for engine in engine_models:
-            self.add_subsystem(engine.name,
-                               subsys=engine.build_pre_mission(options),
-                               promotes_inputs=['*'],
-                               promotes_outputs=['*'],
-                               )
+            pre_mission_model = engine.build_pre_mission(options)
+            if pre_mission_model is not None:
+                self.add_subsystem(engine.name,
+                                   subsys=pre_mission_model,
+                                   promotes_inputs=['*'],
+                                   promotes_outputs=['*'],
+                                   )
 
         self.add_subsystem(
             'propulsion_sum',

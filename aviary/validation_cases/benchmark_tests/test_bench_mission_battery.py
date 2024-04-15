@@ -9,8 +9,9 @@ from openmdao.utils.testing_utils import use_tempdirs
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.subsystems.energy.battery_builder import BatteryBuilder
+from aviary.utils.preprocessors import preprocess_propulsion
 
 
 @use_tempdirs
@@ -19,7 +20,7 @@ class TestSubsystemsMission(unittest.TestCase):
         self.phase_info = {
             'cruise': {
                 "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
-                'external_subsystems': [DummyPowerComp('power_generator'), BatteryBuilder('battery')],
+                'external_subsystems': [BatteryBuilder('battery')],
                 "user_options": {
                     "optimize_mach": False,
                     "optimize_altitude": False,
@@ -47,7 +48,16 @@ class TestSubsystemsMission(unittest.TestCase):
         prob = AviaryProblem()
 
         prob.load_inputs(
-            "models/test_aircraft/aircraft_for_bench_GwFm.csv", self.phase_info)
+            "models/test_aircraft/aircraft_for_bench_GwFm.csv",
+            self.phase_info)
+
+        aviary_inputs = prob.aviary_inputs
+        engine_models = aviary_inputs.get_val('engine_models')
+        engine_models.append(DummyPowerComp(options=aviary_inputs))
+        aviary_inputs.set_val('engine_models', engine_models)
+        preprocess_propulsion(aviary_inputs, engine_models)
+
+        prob.aviary_inputs.set_val(Aircraft.Battery.DISCHARGE_LIMIT, 0.2)
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
@@ -69,34 +79,29 @@ class TestSubsystemsMission(unittest.TestCase):
 
         prob.setup()
 
-        prob.phase_info['cruise']['initial_guesses'][f'states:{Mission.Dummy.VARIABLE}'] = ([
-            10., 100.], 'm')
         prob.set_initial_guesses()
-
-        # add an assert to see if the initial guesses are correct for Mission.Dummy.VARIABLE
-        assert_almost_equal(prob[f'traj.phases.cruise.states:{Mission.Dummy.VARIABLE}'], [[10.],
-                                                                                          [25.97729616],
-                                                                                          [48.02270384],
-                                                                                          [55.],
-                                                                                          [70.97729616],
-                                                                                          [93.02270384],
-                                                                                          [100.]])
 
         prob.run_aviary_problem()
 
-        # add an assert to see if MoreMission.Dummy.TIMESERIES_VAR was correctly added to the dymos problem
-        assert_almost_equal(prob[f'traj.phases.cruise.timeseries.{MoreMission.Dummy.TIMESERIES_VAR}'], np.array(
-            [[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]]).T)
 
-
-class DummyPowerComp(SubsystemBuilderBase):
+class DummyPowerComp(EngineModel):
+    # A dummy component that adds electric power demand to the otherwise all fuel-burning aircraft
     def build_mission(self, num_nodes=1, aviary_inputs=None):
-        mission_group = om.Group()
-        comp = om.IndepVarComp('power', val=np.ones(num_nodes)*1000, units='kW')
-        mission_group.add_subsystem('dummy_comp', subsys=comp, promotes=[
-                                    ('power', Dynamic.Mission.ELECTRIC_POWER_TOTAL)])
+        comp = om.ExplicitComponent()
+        comp.add_input(Dynamic.Mission.ALTITUDE, val=np.zeros(num_nodes), units='ft')
+        comp.add_input(Dynamic.Mission.MACH, val=np.zeros(num_nodes), units='unitless')
+        comp.add_input(Dynamic.Mission.THROTTLE,
+                       val=np.zeros(num_nodes), units='unitless')
 
-        return mission_group
+        comp.add_output(Dynamic.Mission.ELECTRIC_POWER,
+                        val=np.ones(num_nodes)*10, units='kW')
+        comp.add_output(Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE,
+                        val=np.zeros(num_nodes), units='lbm/h')
+        comp.add_output(Dynamic.Mission.NOX_RATE, val=np.zeros(num_nodes), units='lbm/h')
+        comp.add_output(Dynamic.Mission.THRUST, val=np.zeros(num_nodes), units='lbf')
+        comp.add_output(Dynamic.Mission.THRUST_MAX, val=np.zeros(num_nodes), units='lbf')
+
+        return comp
 
 
 if __name__ == "__main__":
