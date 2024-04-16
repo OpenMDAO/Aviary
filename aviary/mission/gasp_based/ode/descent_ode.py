@@ -211,15 +211,16 @@ class DescentODE(BaseODE):
                 Dynamic.Mission.THRUST_TOTAL,
                 "alpha",
                 Dynamic.Mission.DISTANCE,
+                Dynamic.Mission.ALTITUDE,
             ],
             input_units={
                 'required_lift': 'lbf',
                 Dynamic.Mission.FLIGHT_PATH_ANGLE: 'deg',
             })
-        self.add_subsystem(
-            "dummy_comp",
-            dummy_comp(),
-            promotes_inputs=["*"],)
+        # self.add_subsystem(
+        #     "dummy_comp",
+        #     dummy_comp(),
+        #     promotes_inputs=["*"],)
         self.set_input_defaults(
             Dynamic.Mission.DISTANCE, val=0, units='NM')
 
@@ -255,9 +256,9 @@ class DescentODE(BaseODE):
         # the last two subsystems will also be used for constraints
         self.add_excess_rate_comps(nn)
 
-        self.add_subsystem(
-            "killer_comp",
-            killer_comp(),)
+        # self.add_subsystem(
+        #     "descent_ode",
+        #     killer_comp(),)
 
         if analysis_scheme is AnalysisScheme.COLLOCATION:
             fc_loc = ['fc']
@@ -288,5 +289,7 @@ class DescentODE(BaseODE):
 class killer_comp(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
-        print('exit in descent ODE')
+        # kc = [sys for sys in self.system_iter(include_self=True)][0]
+        # group = str(kc).split()[0].split('.')[-2]
+        print(f'exit in {self.name}')
         exit()

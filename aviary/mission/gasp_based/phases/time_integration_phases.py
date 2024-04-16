@@ -467,6 +467,7 @@ class SGMCruise(SimuPyProblem):
         input_speed_type=SpeedType.MACH,
         input_speed_units="kn",
         distance_trigger_units='ft',
+        mass_trigger=0,
         ode_args={},
         simupy_args={},
     ):
@@ -478,6 +479,7 @@ class SGMCruise(SimuPyProblem):
             **ode_args,)
 
         self.distance_trigger_units = distance_trigger_units
+        self.mass_trigger = mass_trigger
 
         super().__init__(
             ode,
@@ -504,9 +506,18 @@ class SGMCruise(SimuPyProblem):
         )
 
         self.phase_name = phase_name
-        self.add_trigger(Dynamic.Mission.MASS, 'mass_trigger.mass_trigger', units='lbm')
-        self.add_trigger(Dynamic.Mission.DISTANCE, "distance_trigger",
-                         units=self.distance_trigger_units)
+        # self.add_trigger(Dynamic.Mission.MASS, 'mass_trigger', units='lbm')
+        # self.add_trigger(Dynamic.Mission.MASS, 'start_of_descent_mass', units='lbm')
+        # self.add_trigger(Dynamic.Mission.MASS, 'mass_trigger.mass_trigger', units='lbm')
+        # self.add_trigger(Dynamic.Mission.DISTANCE, "distance_trigger",
+        #                  units=self.distance_trigger_units)
+        self.event_channel_names = [Dynamic.Mission.MASS]
+        self.num_events = len(self.event_channel_names)
+
+    def event_equation_function(self, t, x):
+        self.time = t
+        self.state = x
+        return self.get_val(Dynamic.Mission.MASS, units='lbm') - self.mass_trigger
 
 
 class SGMDescent(SimuPyProblem):

@@ -116,11 +116,11 @@ class ProblemPhaseTestCase(unittest.TestCase):
         assert_near_equal(prob.get_val(Aircraft.Design.OPERATING_MASS, units='lbm'),
                           95509, tolerance=rtol)
 
-        assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
+        assert_near_equal(prob.get_val(Mission.Summary.FUEL_BURNED, units='lbm'),
                           43574., tolerance=rtol)
 
         assert_near_equal(prob.get_val(Mission.Landing.GROUND_DISTANCE, units='ft'),
-                          2634.8, tolerance=rtol)
+                          2544.4, tolerance=rtol)
 
         assert_near_equal(prob.get_val(Mission.Summary.RANGE, units='NM'),
                           3774.3, tolerance=rtol)

@@ -611,13 +611,16 @@ class AviaryProblem(om.Problem):
         add_opts2vals(self.model, OptionsToValues, self.aviary_inputs)
 
         if self.analysis_scheme is AnalysisScheme.SHOOTING:
-            # self._add_fuel_reserve_component(post_mission=False)
+            self._add_fuel_reserve_component(
+                post_mission=False, reserves_name='reserve_fuel_estimate')
             add_descent_estimation_as_submodel(
                 self,
                 ode_args=self.ode_args,
                 cruise_mach=self.cruise_mach,
                 cruise_alt=self.cruise_alt,
-                initial_mass=Mission.Summary.GROSS_MASS)
+                initial_mass=Mission.Summary.GROSS_MASS,
+                reserve_fuel='reserve_fuel_estimate',
+            )
 
         # Add thrust-to-weight ratio subsystem
         self.model.add_subsystem(
@@ -983,7 +986,7 @@ class AviaryProblem(om.Problem):
             traj = self.model.add_subsystem('traj', dm.Trajectory())
 
         elif self.analysis_scheme is AnalysisScheme.SHOOTING:
-            initial_mass = self.aviary_inputs.get_val(Mission.Summary.GROSS_MASS, 'lbm')
+            # initial_mass = self.aviary_inputs.get_val(Mission.Summary.GROSS_MASS, 'lbm')
 
             ascent_phases = create_2dof_based_ascent_phases(
                 self.ode_args,
@@ -1020,6 +1023,7 @@ class AviaryProblem(om.Problem):
             cruise_vals = {
                 'mach': {'val': self.cruise_mach, 'units': cruise_kwargs['input_speed_units']},
                 # 'descent_fuel': {'val': estimated_descent_fuel, 'units': 'lbm'},
+                'attr:mass_trigger': {'val': 'SGMCruise_mass_trigger', 'units': 'lbm'},
             }
 
             phases = {
@@ -1051,6 +1055,7 @@ class AviaryProblem(om.Problem):
                 ],
             )
             traj = self.model.add_subsystem('traj', full_traj)
+            self.model.connect('start_of_descent_mass', 'traj.SGMCruise_mass_trigger')
             return traj
 
         def add_subsystem_timeseries_outputs(phase, phase_name):
@@ -1191,8 +1196,8 @@ class AviaryProblem(om.Problem):
                     self.model.connect(f"traj.{self.reserve_phases[-1]}.timeseries.mass",
                                        "reserve_fuel_burned.mass_final", src_indices=[-1])
 
-            if self.analysis_scheme is not AnalysisScheme.SHOOTING:
-                self._add_fuel_reserve_component()
+            # if self.analysis_scheme is not AnalysisScheme.SHOOTING:
+            self._add_fuel_reserve_component()
 
             # TODO: need to add some sort of check that this value is less than the fuel capacity
             # TODO: the overall_fuel variable is the burned fuel plus the reserve, but should

@@ -53,6 +53,7 @@ class FlightPathEOM(om.ExplicitComponent):
 
         if analysis_scheme is AnalysisScheme.SHOOTING:
             self.add_input("t_curr", val=np.ones(nn), desc="time", units="s")
+            self.add_input("mass_trigger", val=0, units="lbm")
             self.add_input("distance_trigger", val=0, units="ft")
             add_aviary_input(self, Dynamic.Mission.ALTITUDE, val=np.ones(nn), units="ft")
             add_aviary_input(self, Dynamic.Mission.DISTANCE, val=np.ones(nn), units="ft")
@@ -189,6 +190,7 @@ class FlightPathEOM(om.ExplicitComponent):
             alpha = inputs[Aircraft.Wing.INCIDENCE]
         else:
             alpha = inputs["alpha"]
+        # print(inputs["mass_trigger"])
 
         thrust_along_flightpath = thrust * np.cos((alpha - i_wing) * np.pi / 180)
         thrust_across_flightpath = thrust * np.sin((alpha - i_wing) * np.pi / 180)
