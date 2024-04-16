@@ -15,7 +15,7 @@ aircraft:crew_and_payload:water_mass_per_occupant,3,lbm
 aircraft:design:cg_delta,0.25,unitless
 aircraft:design:cockpit_control_mass_coefficient,16.5,unitless
 aircraft:design:drag_increment,0.00175,unitless
-aircraft:design:emergency_mass,50,lbm
+aircraft:design:emergency_equipment_mass,50,lbm
 aircraft:design:max_structural_speed,402.5,mi/h
 aircraft:design:part25_structural_category,3,unitless
 aircraft:design:reserves,4998,unitless
@@ -67,7 +67,7 @@ aircraft:horizontal_tail:taper_ratio,0.352,unitless
 aircraft:horizontal_tail:thickness_to_chord,0.12,unitless
 aircraft:horizontal_tail:vertical_tail_fraction,0,unitless
 aircraft:horizontal_tail:volume_coefficient,1.189,unitless
-aircraft:hydraulics:fc_mass_coefficient,0.112,unitless
+aircraft:hydraulics:flight_control_mass_coefficient,0.112,unitless
 aircraft:hydraulics:gear_mass_coefficient,0.14,unitless
 aircraft:instruments:mass_coefficient,0.0736,unitless
 aircraft:landing_gear:fixed_gear,False,unitless

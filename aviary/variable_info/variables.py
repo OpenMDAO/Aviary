@@ -129,7 +129,7 @@ class Aircraft:
         DRAG_COEFFICIENT_INCREMENT = 'aircraft:design:drag_increment'
         DRAG_POLAR = 'aircraft:design:drag_polar'
 
-        EMERGENCY_MASS = 'aircraft:design:emergency_mass'
+        EMERGENCY_EQUIPMENT_MASS = 'aircraft:design:emergency_equipment_mass'
         EMPTY_MASS = 'aircraft:design:empty_mass'
         EMPTY_MASS_MARGIN = 'aircraft:design:empty_mass_margin'
 
@@ -360,7 +360,7 @@ class Aircraft:
         WETTED_AREA_SCALER = 'aircraft:horizontal_tail:wetted_area_scaler'
 
     class Hydraulics:
-        FC_MASS_COEFFICIENT = 'aircraft:hydraulics:fc_mass_coefficient'
+        FLIGHT_CONTROL_MASS_COEFFICIENT = 'aircraft:hydraulics:flight_control_mass_coefficient'
         GEAR_MASS_COEFFICIENT = 'aircraft:hydraulics:gear_mass_coefficient'
         MASS = 'aircraft:hydraulics:mass'
         MASS_SCALER = 'aircraft:hydraulics:mass_scaler'

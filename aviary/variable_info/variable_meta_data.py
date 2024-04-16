@@ -97,7 +97,7 @@ add_meta_data(
 
 add_meta_data(
     # NOTE user override
-    #    - see also: Aircraft.AntiIcing.MASS_SCALER for FLOPS data
+    #    - see also: Aircraft.AntiIcing.MASS_SCALER
     Aircraft.AntiIcing.MASS,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.CW(7)',
@@ -135,7 +135,7 @@ add_meta_data(
 
 add_meta_data(
     # Note user override
-    #    - see also: Aircraft.APU.MASS_SCALER for FLOPS data
+    #    - see also: Aircraft.APU.MASS_SCALER
     Aircraft.APU.MASS,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.CW(1)',
@@ -173,7 +173,7 @@ add_meta_data(
 
 add_meta_data(
     # Note user override
-    #    - see also: Aircraft.Avionics.MASS_SCALER for FLOPS data
+    #    - see also: Aircraft.Avionics.MASS_SCALER
     Aircraft.Avionics.MASS,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.CW(5)',
@@ -1021,7 +1021,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.EMERGENCY_MASS,
+    Aircraft.Design.EMERGENCY_EQUIPMENT_MASS,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.CW(11)',
                      "FLOPS": None,
@@ -2628,7 +2628,7 @@ add_meta_data(
 
 add_meta_data(
     # Note user override
-    #    - see also: Aircraft.Furnishings.MASS_SCALER for FLOPS data
+    #    - see also: Aircraft.Furnishings.MASS_SCALER
     Aircraft.Furnishings.MASS,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.CW(8)',
@@ -3435,7 +3435,7 @@ add_meta_data(
 # ====================================================================
 
 add_meta_data(
-    Aircraft.Hydraulics.FC_MASS_COEFFICIENT,
+    Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.CW(3)',
                      "FLOPS": None,

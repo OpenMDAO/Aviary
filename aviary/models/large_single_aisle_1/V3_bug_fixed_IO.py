@@ -215,7 +215,7 @@ V3_bug_fixed_options.set_val(
 V3_bug_fixed_options.set_val(
     Aircraft.Instruments.MASS_COEFFICIENT, val=0.0736, units="unitless")
 V3_bug_fixed_options.set_val(
-    Aircraft.Hydraulics.FC_MASS_COEFFICIENT, val=0.112, units="unitless")
+    Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT, val=0.112, units="unitless")
 V3_bug_fixed_options.set_val(
     Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.14, units="unitless")
 V3_bug_fixed_options.set_val(
@@ -231,7 +231,7 @@ V3_bug_fixed_options.set_val(
 V3_bug_fixed_options.set_val(
     Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units="lbm")
 V3_bug_fixed_options.set_val(
-    Aircraft.Design.EMERGENCY_MASS, val=50.0, units="lbm")
+    Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=50.0, units="lbm")
 V3_bug_fixed_options.set_val(
     Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, val=7.6, units="lbm")
 V3_bug_fixed_options.set_val(

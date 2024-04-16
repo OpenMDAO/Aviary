@@ -173,7 +173,7 @@ def mass_defaults(prob):
         units="unitless",
     )
     prob.model.set_input_defaults(
-        Aircraft.Hydraulics.FC_MASS_COEFFICIENT,
+        Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT,
         val=0.112,
         units="unitless",
     )
@@ -213,7 +213,7 @@ def mass_defaults(prob):
         units="lbm",
     )
     prob.model.set_input_defaults(
-        Aircraft.Design.EMERGENCY_MASS,
+        Aircraft.Design.EMERGENCY_EQUIPMENT_MASS,
         val=50.0,
         units="lbm",
     )

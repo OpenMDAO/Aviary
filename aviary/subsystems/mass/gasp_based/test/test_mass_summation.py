@@ -373,7 +373,7 @@ class MassSummationTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Instruments.MASS_COEFFICIENT, val=0.0736, units="unitless")
         self.prob.model.set_input_defaults(
-            Aircraft.Hydraulics.FC_MASS_COEFFICIENT, val=0.112, units="unitless")
+            Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT, val=0.112, units="unitless")
         self.prob.model.set_input_defaults(
             Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.14, units="unitless")
         self.prob.model.set_input_defaults(
@@ -389,7 +389,7 @@ class MassSummationTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units="lbm")
         self.prob.model.set_input_defaults(
-            Aircraft.Design.EMERGENCY_MASS, val=50.0, units="lbm")
+            Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=50.0, units="lbm")
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, val=7.6, units="lbm")
         self.prob.model.set_input_defaults(
@@ -763,7 +763,7 @@ class MassSummationTestCase3(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Instruments.MASS_COEFFICIENT, val=0.0736, units="unitless")
         self.prob.model.set_input_defaults(
-            Aircraft.Hydraulics.FC_MASS_COEFFICIENT, val=0.112, units="unitless")
+            Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT, val=0.112, units="unitless")
         self.prob.model.set_input_defaults(
             Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.14, units="unitless")
         self.prob.model.set_input_defaults(
@@ -779,7 +779,7 @@ class MassSummationTestCase3(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units="lbm")
         self.prob.model.set_input_defaults(
-            Aircraft.Design.EMERGENCY_MASS, val=50.0, units="lbm")
+            Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=50.0, units="lbm")
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, val=7.6, units="lbm")
         self.prob.model.set_input_defaults(
@@ -1143,7 +1143,7 @@ class MassSummationTestCase4(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Instruments.MASS_COEFFICIENT, val=0.0736, units="unitless")
         self.prob.model.set_input_defaults(
-            Aircraft.Hydraulics.FC_MASS_COEFFICIENT, val=0.112, units="unitless")
+            Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT, val=0.112, units="unitless")
         self.prob.model.set_input_defaults(
             Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.14, units="unitless")
         self.prob.model.set_input_defaults(
@@ -1159,7 +1159,7 @@ class MassSummationTestCase4(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units="lbm")
         self.prob.model.set_input_defaults(
-            Aircraft.Design.EMERGENCY_MASS, val=50.0, units="lbm")
+            Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=50.0, units="lbm")
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, val=7.6, units="lbm")
         self.prob.model.set_input_defaults(
@@ -1524,7 +1524,7 @@ class MassSummationTestCase5(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Instruments.MASS_COEFFICIENT, val=0.0736, units="unitless")
         self.prob.model.set_input_defaults(
-            Aircraft.Hydraulics.FC_MASS_COEFFICIENT, val=0.112, units="unitless")
+            Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT, val=0.112, units="unitless")
         self.prob.model.set_input_defaults(
             Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.14, units="unitless")
         self.prob.model.set_input_defaults(
@@ -1540,7 +1540,7 @@ class MassSummationTestCase5(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units="lbm")
         self.prob.model.set_input_defaults(
-            Aircraft.Design.EMERGENCY_MASS, val=50.0, units="lbm")
+            Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=50.0, units="lbm")
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, val=7.6, units="lbm")
         self.prob.model.set_input_defaults(
@@ -1903,7 +1903,7 @@ class MassSummationTestCase6(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Instruments.MASS_COEFFICIENT, val=0.0736, units="unitless")
         self.prob.model.set_input_defaults(
-            Aircraft.Hydraulics.FC_MASS_COEFFICIENT, val=0.112, units="unitless")
+            Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT, val=0.112, units="unitless")
         self.prob.model.set_input_defaults(
             Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.14, units="unitless")
         self.prob.model.set_input_defaults(
@@ -1919,7 +1919,7 @@ class MassSummationTestCase6(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units="lbm")
         self.prob.model.set_input_defaults(
-            Aircraft.Design.EMERGENCY_MASS, val=50.0, units="lbm")
+            Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=50.0, units="lbm")
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, val=7.6, units="lbm")
         self.prob.model.set_input_defaults(
@@ -2286,7 +2286,7 @@ class MassSummationTestCase7(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Instruments.MASS_COEFFICIENT, val=0.0736, units="unitless")
         self.prob.model.set_input_defaults(
-            Aircraft.Hydraulics.FC_MASS_COEFFICIENT, val=0.085, units="unitless")
+            Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT, val=0.085, units="unitless")
         self.prob.model.set_input_defaults(
             Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.105, units="unitless")
         self.prob.model.set_input_defaults(
@@ -2302,7 +2302,7 @@ class MassSummationTestCase7(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units="lbm")
         self.prob.model.set_input_defaults(
-            Aircraft.Design.EMERGENCY_MASS, val=0.0, units="lbm")
+            Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=0.0, units="lbm")
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, val=10.0, units="lbm")
         self.prob.model.set_input_defaults(
@@ -2566,7 +2566,7 @@ class MassSummationTestCase8(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Instruments.MASS_COEFFICIENT, val=0.0736, units="unitless")
         self.prob.model.set_input_defaults(
-            Aircraft.Hydraulics.FC_MASS_COEFFICIENT, val=0.085, units="unitless")
+            Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT, val=0.085, units="unitless")
         self.prob.model.set_input_defaults(
             Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.105, units="unitless")
         self.prob.model.set_input_defaults(
@@ -2582,7 +2582,7 @@ class MassSummationTestCase8(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units="lbm")
         self.prob.model.set_input_defaults(
-            Aircraft.Design.EMERGENCY_MASS, val=0.0, units="lbm")
+            Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=0.0, units="lbm")
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, val=10.0, units="lbm")
         self.prob.model.set_input_defaults(
@@ -2961,7 +2961,7 @@ class MassSummationTestCase9(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Instruments.MASS_COEFFICIENT, val=0.0736, units="unitless")
         self.prob.model.set_input_defaults(
-            Aircraft.Hydraulics.FC_MASS_COEFFICIENT, val=0.085, units="unitless")
+            Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT, val=0.085, units="unitless")
         self.prob.model.set_input_defaults(
             Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.105, units="unitless")
         self.prob.model.set_input_defaults(
@@ -2977,7 +2977,7 @@ class MassSummationTestCase9(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units="lbm")
         self.prob.model.set_input_defaults(
-            Aircraft.Design.EMERGENCY_MASS, val=0.0, units="lbm")
+            Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=0.0, units="lbm")
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, val=10.0, units="lbm")
         self.prob.model.set_input_defaults(

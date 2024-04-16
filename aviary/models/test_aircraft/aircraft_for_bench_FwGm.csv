@@ -14,7 +14,7 @@ aircraft:crew_and_payload:water_mass_per_occupant,3,lbm
 aircraft:design:cg_delta,0.25,unitless
 aircraft:design:cockpit_control_mass_coefficient,16.5,unitless
 aircraft:design:drag_increment,0.00175,unitless
-aircraft:design:emergency_mass,50,lbm
+aircraft:design:emergency_equipment_mass,50,lbm
 aircraft:design:max_structural_speed,402.5,mi/h
 aircraft:design:part25_structural_category,3,unitless
 aircraft:design:reserve_fuel_additional,3000.,lbm
@@ -221,7 +221,7 @@ aircraft:fuselage:wetted_area,4158.62,ft**2
 aircraft:horizontal_tail:mass_scaler,1.2,unitless
 aircraft:horizontal_tail:wetted_area_scaler,1.0,unitless
 aircraft:horizontal_tail:wetted_area,592.65,ft**2
-aircraft:hydraulics:fc_mass_coefficient,0.112,unitless
+aircraft:hydraulics:flight_control_mass_coefficient,0.112,unitless
 aircraft:hydraulics:gear_mass_coefficient,0.14,unitless
 aircraft:hydraulics:mass_scaler,1.0,unitless
 aircraft:hydraulics:system_pressure,3000.0,lbf/ft**2

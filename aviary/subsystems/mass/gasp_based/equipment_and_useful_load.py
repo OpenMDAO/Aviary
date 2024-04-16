@@ -33,10 +33,11 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Avionics.MASS, val=4, units="lbm")
         add_aviary_input(
             self, Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, val=5, units="lbm")
-        add_aviary_input(self, Aircraft.Design.EMERGENCY_MASS, val=6, units="lbm")
+        add_aviary_input(self, Aircraft.Design.EMERGENCY_EQUIPMENT_MASS,
+                         val=6, units="lbm")
         add_aviary_input(self, Aircraft.Furnishings.MASS, val=7, units="lbm")
         add_aviary_input(
-            self, Aircraft.Hydraulics.FC_MASS_COEFFICIENT, val=8, units="unitless")
+            self, Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT, val=8, units="unitless")
         add_aviary_input(
             self, Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=9, units="unitless")
         add_aviary_input(
@@ -127,7 +128,7 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
         )
         gear_val = 1 - gear_type
         hydraulic_wt = (
-            inputs[Aircraft.Hydraulics.FC_MASS_COEFFICIENT] * control_wt +
+            inputs[Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT] * control_wt +
             inputs[Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT] *
             landing_gear_wt * gear_val
         )
@@ -350,8 +351,9 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
             emergency_wt = 15.0
         if PAX >= 35.0:
             emergency_wt = 25.0 * num_flight_attendants + 15.0
-        if ~(-1e-5 < inputs[Aircraft.Design.EMERGENCY_MASS] < 1e-5):
-            emergency_wt = inputs[Aircraft.Design.EMERGENCY_MASS] * GRAV_ENGLISH_LBM
+        if ~(-1e-5 < inputs[Aircraft.Design.EMERGENCY_EQUIPMENT_MASS] < 1e-5):
+            emergency_wt = inputs[Aircraft.Design.EMERGENCY_EQUIPMENT_MASS] * \
+                GRAV_ENGLISH_LBM
 
         catering_wt = 0.0
         if PAX > 19.0:
@@ -459,7 +461,7 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
         gear_val = 1 - gear_type
 
         dhydraulic_wt_dmass_coeff_2 = control_wt
-        dhydraulic_wt_dcontrol_wt = inputs[Aircraft.Hydraulics.FC_MASS_COEFFICIENT]
+        dhydraulic_wt_dcontrol_wt = inputs[Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT]
         dhydraulic_wt_dmass_coeff_3 = landing_gear_wt * gear_val
         dhydraulic_wt_dlanding_gear_weight = inputs[Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT] * gear_val
 
@@ -722,7 +724,7 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
                 PAX + num_pilots + num_flight_attendants) * GRAV_ENGLISH_LBM
 
         demergency_wt_dmass_coeff_10 = 0.0
-        if ~(-1e-5 < inputs[Aircraft.Design.EMERGENCY_MASS] < 1e-5):
+        if ~(-1e-5 < inputs[Aircraft.Design.EMERGENCY_EQUIPMENT_MASS] < 1e-5):
             demergency_wt_dmass_coeff_10 = GRAV_ENGLISH_LBM
 
         dcatering_wt_dmass_coeff_11 = 0.0
@@ -766,7 +768,7 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
         partials[Aircraft.Design.FIXED_USEFUL_LOAD,
                  Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT] = duseful_mass_dmass_coeff_9
         partials[Aircraft.Design.FIXED_USEFUL_LOAD,
-                 Aircraft.Design.EMERGENCY_MASS] = duseful_mass_dmass_coeff_10
+                 Aircraft.Design.EMERGENCY_EQUIPMENT_MASS] = duseful_mass_dmass_coeff_10
         partials[Aircraft.Design.FIXED_USEFUL_LOAD,
                  Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER] = duseful_mass_dmass_coeff_11
         partials[Aircraft.Design.FIXED_USEFUL_LOAD,
@@ -783,7 +785,7 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
         partials[Aircraft.Design.FIXED_EQUIPMENT_MASS,
                  Aircraft.Instruments.MASS_COEFFICIENT] = dfixed_equip_mass_dmass_coeff_1
         partials[Aircraft.Design.FIXED_EQUIPMENT_MASS,
-                 Aircraft.Hydraulics.FC_MASS_COEFFICIENT] = dfixed_equip_mass_dmass_coeff_2
+                 Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT] = dfixed_equip_mass_dmass_coeff_2
         partials[Aircraft.Design.FIXED_EQUIPMENT_MASS,
                  Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT] = dfixed_equip_mass_dmass_coeff_3
         partials[Aircraft.Design.FIXED_EQUIPMENT_MASS,
