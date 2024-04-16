@@ -42,3 +42,12 @@ prob.setup()
 prob.set_initial_guesses()
 
 prob.run_aviary_problem()
+
+print(prob.get_val("traj.descent.timeseries.distance", units='nmi')[-1])
+
+
+prob.set_val('target_range', 1000, units='nmi')
+
+prob.run_aviary_problem()
+
+print(prob.get_val("traj.descent.timeseries.distance", units='nmi')[-1])
