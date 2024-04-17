@@ -213,7 +213,7 @@ class FlightPathODE(BaseODE):
 
         # Example of how to use a print_comp
         debug_comp = []
-        if True:
+        if False:
             from aviary.utils.functions import create_printcomp
             dummy_comp = create_printcomp(
                 all_inputs=[
@@ -240,30 +240,12 @@ class FlightPathODE(BaseODE):
             debug_comp = ['dummy_comp']
 
         if analysis_scheme is AnalysisScheme.SHOOTING:
-            # self.add_subsystem('mass_trigger',
-            #                    om.ExecComp(
-            #                        'mass_trigger = OEM + payload + reserve_fuel + descent_fuel',
-            #                        mass_trigger={'val': 0, 'units': 'lbm'},
-            #                        OEM={'val': 0, 'units': 'lbm'},
-            #                        payload={'val': 0, 'units': 'lbm'},
-            #                        reserve_fuel={'val': 0, 'units': 'lbm'},
-            #                        descent_fuel={'val': 0, 'units': 'lbm'},
-            #                    ),
-            #                    promotes_inputs=[
-            #                        ('OEM', Aircraft.Design.OPERATING_MASS),
-            #                        ('payload', Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS),
-            #                        ('reserve_fuel', Mission.Design.RESERVE_FUEL),
-            #                        'descent_fuel',
-            #                    ],
-            #                    )
-
             self.set_order(['params', 'USatm', 'fc',
                             ] + lift_comp + [
                 'core_aerodynamics',
                 'alpha_comp',
                 'prop_group',
                 'flight_path_eom',
-                # 'mass_trigger',
                 'SPECIFIC_ENERGY_RATE_EXCESS',
                 'ALTITUDE_RATE_MAX',
             ] +

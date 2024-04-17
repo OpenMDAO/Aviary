@@ -58,13 +58,15 @@ class FlexibleTraj(TimeIntegrationTrajBase):
             vals_to_set = self.options['Phases'][phase_name]['vals_to_set']
             if vals_to_set:
                 for name, data in vals_to_set.items():
+                    var, units = data['val'], data['units']
                     if name.startswith('attr:'):
-                        setattr(phase, name.replace('attr:', ''), inputs[data['val']])
+                        new_val = (self.convert2units(var, inputs[var], units)[0], units)
+                        setattr(phase, name.replace('attr:', ''), new_val)
                     elif name.startswith('rotation.'):
                         phase.rotation.set_val(name.replace(
-                            'rotation.', ''), data['val'], units=data['units'])
+                            'rotation.', ''), var, units=units)
                     else:
-                        phase.set_val(name, data['val'], units=data['units'])
+                        phase.set_val(name, var, units=units)
 
         ode_index = 0
         sim_gen = self.compute_traj_loop(self.ODEs[0], inputs, outputs)

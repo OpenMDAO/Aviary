@@ -209,7 +209,7 @@ def add_descent_estimation_as_submodel(
 
     model.linear_solver = om.DirectSolver(assemble_jac=True)
     # model.nonlinear_solver = om.NewtonSolver(solve_subsystems=True, maxiter=10, iprint=2, atol=1)
-    model.nonlinear_solver = om.NonlinearBlockGS(iprint=3, rtol=1e-3)
+    model.nonlinear_solver = om.NonlinearBlockGS(iprint=3, rtol=1e-2, maxiter=5)
 
     input_aliases = []
     # if isinstance(initial_mass, str):

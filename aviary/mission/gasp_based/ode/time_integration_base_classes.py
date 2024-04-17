@@ -380,6 +380,8 @@ class SimuPyProblem(SimulationMixin):
         return x
 
     def add_trigger(self, state, value, units=None, channel_name=None):
+        if isinstance(value, tuple):
+            units = value[1]
         if units is None:
             units = self.states[state]['units']
         elif hasattr(self, units):
@@ -410,6 +412,8 @@ class SimuPyProblem(SimulationMixin):
         if isinstance(trigger_value, str):
             if hasattr(self, trigger_value):
                 trigger_value = getattr(self, trigger_value)
+                if isinstance(trigger_value, tuple):
+                    trigger_value, trigger.units = trigger_value
             else:
                 trigger_value = self.get_val(
                     trigger_value, units=trigger.units).squeeze()
