@@ -35,6 +35,8 @@ pn.extension('tabulator')
 aviary_variables_json_file_name = "aviary_vars.json"
 
 # functions for the aviary command line command
+
+
 def _dashboard_setup_parser(parser):
     """
     Set up the aviary subparser for the 'aviary dashboard' command.
@@ -355,6 +357,8 @@ def convert_case_recorder_file_to_df(recorder_file_name):
     return df
 
 # The main script that generates all the tabs in the dashboard
+
+
 def dashboard(script_name, problem_recorder, driver_recorder, port):
     """
     Generate the dashboard app display.
