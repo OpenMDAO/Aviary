@@ -11,6 +11,7 @@ class Aircraft:
 
     class AirConditioning:
         MASS = 'aircraft:air_conditioning:mass'
+        MASS_COEFFICIENT = 'aircraft:air_conditioning:mass_coefficient'
         MASS_SCALER = 'aircraft:air_conditioning:mass_scaler'
 
     class AntiIcing:
@@ -66,6 +67,8 @@ class Aircraft:
             'aircraft:crew_and_payload:cargo_container_mass_scaler'
 
         CARGO_MASS = 'aircraft:crew_and_payload:cargo_mass'
+        CATERING_ITEMS_MASS_PER_PASSENGER = 'aircraft:crew_and_payload:catering_items_mass_per_passenger'
+
         FLIGHT_CREW_MASS = 'aircraft:crew_and_payload:flight_crew_mass'
 
         FLIGHT_CREW_MASS_SCALER = \
@@ -103,15 +106,19 @@ class Aircraft:
         PASSENGER_SERVICE_MASS = \
             'aircraft:crew_and_payload:passenger_service_mass'
 
+        PASSENGER_SERVICE_MASS_PER_PASSENGER = 'aircraft:crew_and_payload:passenger_service_mass_per_passenger'
+
         PASSENGER_SERVICE_MASS_SCALER = \
             'aircraft:crew_and_payload:passenger_service_mass_scaler'
 
         TOTAL_PAYLOAD_MASS = 'aircraft:crew_and_payload:total_payload_mass'
+        WATER_MASS_PER_OCCUPANT = 'aircraft:crew_and_payload:water_mass_per_occupant'
         WING_CARGO = 'aircraft:crew_and_payload:wing_cargo'
 
     class Design:
         # These variables are values that do not fall into a particular aircraft
         # component.
+
         BASE_AREA = 'aircraft:design:base_area'
         CG_DELTA = 'aircraft:design:cg_delta'
         CHARACTERISTIC_LENGTHS = 'aircraft:design:characteristic_lengths'
@@ -122,13 +129,13 @@ class Aircraft:
         DRAG_COEFFICIENT_INCREMENT = 'aircraft:design:drag_increment'
         DRAG_POLAR = 'aircraft:design:drag_polar'
 
+        EMERGENCY_EQUIPMENT_MASS = 'aircraft:design:emergency_equipment_mass'
         EMPTY_MASS = 'aircraft:design:empty_mass'
         EMPTY_MASS_MARGIN = 'aircraft:design:empty_mass_margin'
 
         EMPTY_MASS_MARGIN_SCALER = \
             'aircraft:design:empty_mass_margin_scaler'
 
-        EQUIPMENT_MASS_COEFFICIENTS = 'aircraft:design:equipment_mass_coefficients'
         EXTERNAL_SUBSYSTEMS_MASS = 'aircraft:design:external_subsystems_mass'
         FINENESS = 'aircraft:design:fineness'
         FIXED_EQUIPMENT_MASS = 'aircraft:design:fixed_equipment_mass'
@@ -263,7 +270,7 @@ class Aircraft:
         TOTAL_CAPACITY = 'aircraft:fuel:total_capacity'
         TOTAL_VOLUME = 'aircraft:fuel:total_volume'
         UNUSABLE_FUEL_MASS = 'aircraft:fuel:unusable_fuel_mass'
-
+        UNUSABLE_FUEL_MASS_COEFFICIENT = 'aircraft:fuel:unusable_fuel_mass_coefficient'
         UNUSABLE_FUEL_MASS_SCALER = \
             'aircraft:fuel:unusable_fuel_mass_scaler'
 
@@ -353,12 +360,15 @@ class Aircraft:
         WETTED_AREA_SCALER = 'aircraft:horizontal_tail:wetted_area_scaler'
 
     class Hydraulics:
+        FLIGHT_CONTROL_MASS_COEFFICIENT = 'aircraft:hydraulics:flight_control_mass_coefficient'
+        GEAR_MASS_COEFFICIENT = 'aircraft:hydraulics:gear_mass_coefficient'
         MASS = 'aircraft:hydraulics:mass'
         MASS_SCALER = 'aircraft:hydraulics:mass_scaler'
         SYSTEM_PRESSURE = 'aircraft:hydraulics:system_pressure'
 
     class Instruments:
         MASS = 'aircraft:instruments:mass'
+        MASS_COEFFICIENT = 'aircraft:instruments:mass_coefficient'
         MASS_SCALER = 'aircraft:instruments:mass_scaler'
 
     class LandingGear:

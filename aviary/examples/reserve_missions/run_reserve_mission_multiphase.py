@@ -176,4 +176,4 @@ prob.setup()
 
 prob.set_initial_guesses()
 
-prob.run_aviary_problem()
+prob.run_aviary_problem(record_filename='reserve_mission_multiphase.db')
