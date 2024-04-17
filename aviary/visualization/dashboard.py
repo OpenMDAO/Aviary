@@ -17,7 +17,7 @@ import openmdao.api as om
 from openmdao.utils.general_utils import env_truthy
 
 # support getting this function from OpenMDAO post movement of the function to utils
-#    but also support it's old location
+#    but also support its old location
 try:
     from openmdao.utils.array_utils import convert_ndarray_to_support_nans_in_json
 except ImportError:
@@ -31,11 +31,10 @@ pn.extension(sizing_mode="stretch_width")
 pn.extension('tabulator')
 
 
-# Constants - # Can't get using CSS to work with frames and the raw_css for the template so going with
-#    this for now
+# Constants
 aviary_variables_json_file_name = "aviary_vars.json"
 
-
+# functions for the aviary command line command
 def _dashboard_setup_parser(parser):
     """
     Set up the aviary subparser for the 'aviary dashboard' command.
@@ -102,7 +101,23 @@ def _dashboard_cmd(options, user_args):
     )
 
 
+# functions for creating Panel Panes given different kinds of
+#    data inputs
 def create_csv_frame(csv_filepath):
+    """
+    Create a Panel Pane that contains a tabular display of the data in a CSV file.
+
+    Parameters
+    ----------
+    csv_filepath : str
+        Path to the input CSV file.
+
+    Returns
+    -------
+    pane : Panel.Pane or None
+        A Panel Pane object showing the tabular display of the CSV file contents. 
+        Or None if the CSV file does not exist.
+    """
     if os.path.exists(csv_filepath):
         df = pd.read_csv(csv_filepath)
         df_pane = pn.widgets.Tabulator(
@@ -339,7 +354,7 @@ def convert_case_recorder_file_to_df(recorder_file_name):
 
     return df
 
-
+# The main script that generates all the tabs in the dashboard
 def dashboard(script_name, problem_recorder, driver_recorder, port):
     """
     Generate the dashboard app display.
@@ -352,6 +367,8 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
         Name of the recorder file containing the Problem cases.
     driver_recorder : str
         Name of the recorder file containing the Driver cases.
+    port : int
+        HTTP port used for the dashboard webapp.
     """
     reports_dir = f"reports/{script_name}/"
 
