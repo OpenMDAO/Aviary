@@ -1231,6 +1231,9 @@ class AviaryProblem(om.Problem):
                         target_range={
                             'val': target_range, 'units': 'nmi'},
                     ),
+                    promotes_inputs=[
+                        "target_range",
+                    ],
                     promotes_outputs=[
                         ("range_resid", Mission.Constraints.RANGE_RESIDUAL)],
                 )
