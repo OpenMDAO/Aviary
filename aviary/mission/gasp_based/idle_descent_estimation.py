@@ -144,25 +144,36 @@ def add_descent_estimation_as_submodel(
 
     model = om.Group()
 
-    model.add_subsystem(
-        'top_of_descent_mass',
-        om.ExecComp(
-            'mass_initial = operating_mass + payload_mass + reserve_fuel + descent_fuel_estimate',
-            mass_initial={'units': 'lbm'},
-            operating_mass={'units': 'lbm'},
-            payload_mass={'units': 'lbm'},
-            reserve_fuel={'units': 'lbm', 'val': 0},
-            descent_fuel_estimate={'units': 'lbm', 'val': 0},
-        ),
-        promotes_inputs=[
-            ('operating_mass', Aircraft.Design.OPERATING_MASS),
-            ('payload_mass', Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS),
-            'reserve_fuel',
-            # ('reserve_fuel', Mission.Design.RESERVE_FUEL),
-            ('descent_fuel_estimate', 'descent_fuel'),
-        ],
-        promotes_outputs=['mass_initial']
-    )
+    if isinstance(initial_mass, str):
+        model.add_subsystem(
+            'top_of_descent_mass',
+            om.ExecComp(
+                'mass_initial = top_of_descent_mass',
+                mass_initial={'units': 'lbm'},
+                top_of_descent_mass={'units': 'lbm'},
+            ),
+            promotes_inputs=['top_of_descent_mass'],
+            promotes_outputs=['mass_initial'])
+    else:
+        model.add_subsystem(
+            'top_of_descent_mass',
+            om.ExecComp(
+                'mass_initial = operating_mass + payload_mass + reserve_fuel + descent_fuel_estimate',
+                mass_initial={'units': 'lbm'},
+                operating_mass={'units': 'lbm'},
+                payload_mass={'units': 'lbm'},
+                reserve_fuel={'units': 'lbm', 'val': 0},
+                descent_fuel_estimate={'units': 'lbm', 'val': 0},
+            ),
+            promotes_inputs=[
+                ('operating_mass', Aircraft.Design.OPERATING_MASS),
+                ('payload_mass', Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS),
+                'reserve_fuel',
+                # ('reserve_fuel', Mission.Design.RESERVE_FUEL),
+                ('descent_fuel_estimate', 'descent_fuel'),
+            ],
+            promotes_outputs=['mass_initial']
+        )
 
     model.add_subsystem(
         'traj', traj,
@@ -192,11 +203,13 @@ def add_descent_estimation_as_submodel(
             'descent_fuel',
             'reserve_fuel',
             'mass_initial',
+            'distance_final',
         ],
         input_units={
             'descent_fuel': 'lbm',
             'reserve_fuel': 'lbm',
             'mass_initial': 'lbm',
+            'distance_final': 'nmi',
         })
     model.add_subsystem(
         "dummy_comp",
@@ -204,17 +217,17 @@ def add_descent_estimation_as_submodel(
         promotes_inputs=["*"],
     )
     model.set_input_defaults('reserve_fuel', 0)
+    model.set_input_defaults('mass_initial', 0, 'lbm')
 
     model.add_objective("descent_fuel", ref=1e4)
 
     model.linear_solver = om.DirectSolver(assemble_jac=True)
-    # model.nonlinear_solver = om.NewtonSolver(solve_subsystems=True, maxiter=10, iprint=2, atol=1)
     model.nonlinear_solver = om.NonlinearBlockGS(iprint=3, rtol=1e-2, maxiter=5)
 
     input_aliases = []
-    # if isinstance(initial_mass, str):
-    #     input_aliases.append(('mass_initial',initial_mass))
-    if isinstance(initial_mass, (int, float)):
+    if isinstance(initial_mass, str):
+        input_aliases.append(('top_of_descent_mass', initial_mass))
+    elif isinstance(initial_mass, (int, float)):
         model.set_input_defaults('mass_initial', initial_mass)
 
     if isinstance(cruise_alt, str):
@@ -239,7 +252,6 @@ def add_descent_estimation_as_submodel(
         problem=subprob,
         inputs=[
             'aircraft:*',
-            # '*',
         ],
         outputs=['distance_final', 'descent_fuel', 'mass_initial'],
         do_coloring=False
@@ -250,7 +262,6 @@ def add_descent_estimation_as_submodel(
         subcomp,
         promotes_inputs=[
             'aircraft:*',
-            # '*',
         ] + input_aliases,
         promotes_outputs=[
             ('distance_final', 'descent_range'),
@@ -259,7 +270,3 @@ def add_descent_estimation_as_submodel(
         ],
 
     )
-
-    # temp
-    subprob.setup()
-    om.n2(subprob, 'subprob_n2.html', show_browser=False)

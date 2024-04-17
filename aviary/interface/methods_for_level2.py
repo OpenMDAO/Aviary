@@ -57,7 +57,7 @@ from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.merge_variable_metadata import merge_meta_data
 
 from aviary.interface.default_phase_info.two_dof_fiti import create_2dof_based_ascent_phases, create_2dof_based_descent_phases
-from aviary.mission.gasp_based.idle_descent_estimation import descent_range_and_fuel, add_descent_estimation_as_submodel
+from aviary.mission.gasp_based.idle_descent_estimation import add_descent_estimation_as_submodel
 from aviary.mission.phase_builder_base import PhaseBuilderBase
 
 
@@ -618,7 +618,6 @@ class AviaryProblem(om.Problem):
                 ode_args=self.ode_args,
                 cruise_mach=self.cruise_mach,
                 cruise_alt=self.cruise_alt,
-                initial_mass=Mission.Summary.GROSS_MASS,
                 reserve_fuel='reserve_fuel_estimate',
             )
 
@@ -986,8 +985,6 @@ class AviaryProblem(om.Problem):
             traj = self.model.add_subsystem('traj', dm.Trajectory())
 
         elif self.analysis_scheme is AnalysisScheme.SHOOTING:
-            # initial_mass = self.aviary_inputs.get_val(Mission.Summary.GROSS_MASS, 'lbm')
-
             ascent_phases = create_2dof_based_ascent_phases(
                 self.ode_args,
                 cruise_alt=self.cruise_alt,
@@ -996,20 +993,6 @@ class AviaryProblem(om.Problem):
             descent_phases = create_2dof_based_descent_phases(
                 self.ode_args,
                 cruise_mach=self.cruise_mach)
-
-            # descent_estimation = descent_range_and_fuel(
-            #     phases=descent_phases,
-            #     initial_mass=initial_mass,
-            #     cruise_alt=self.cruise_alt,
-            #     cruise_mach=self.cruise_mach,
-            #     # reserve_fuel=
-            # )
-
-            # estimated_descent_range = descent_estimation['refined_guess']['distance_flown']
-            # end_of_cruise_range = self.target_range - estimated_descent_range
-
-            # based on reserve_fuel
-            # estimated_descent_fuel = descent_estimation['refined_guess']['fuel_burned']
 
             cruise_kwargs = dict(
                 input_speed_type=SpeedType.MACH,
@@ -1022,7 +1005,6 @@ class AviaryProblem(om.Problem):
             )
             cruise_vals = {
                 'mach': {'val': self.cruise_mach, 'units': cruise_kwargs['input_speed_units']},
-                # 'descent_fuel': {'val': estimated_descent_fuel, 'units': 'lbm'},
                 'attr:mass_trigger': {'val': 'SGMCruise_mass_trigger', 'units': 'lbm'},
             }
 
@@ -1196,7 +1178,6 @@ class AviaryProblem(om.Problem):
                     self.model.connect(f"traj.{self.reserve_phases[-1]}.timeseries.mass",
                                        "reserve_fuel_burned.mass_final", src_indices=[-1])
 
-            # if self.analysis_scheme is not AnalysisScheme.SHOOTING:
             self._add_fuel_reserve_component()
 
             # TODO: need to add some sort of check that this value is less than the fuel capacity
@@ -2292,9 +2273,6 @@ class AviaryProblem(om.Problem):
         make_plots : bool, optional
             If True (default), Dymos html plots will be generated as part of the output.
         """
-        self.final_setup()
-        om.n2(self, 'superspecialn2.html', show_browser=False)
-        # exit()
 
         if self.aviary_inputs.get_val('verbosity').value >= 2:
             self.final_setup()

@@ -6,7 +6,7 @@ from aviary.interface.default_phase_info.two_dof_fiti import create_2dof_based_d
 from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.interface.default_phase_info.two_dof import default_mission_subsystems
-from aviary.mission.gasp_based.idle_descent_estimation import descent_range_and_fuel
+from aviary.mission.gasp_based.idle_descent_estimation import descent_range_and_fuel, add_descent_estimation_as_submodel
 from aviary.subsystems.propulsion.engine_deck import EngineDeck
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.variable_info.enums import Verbosity
@@ -40,21 +40,34 @@ class IdleDescentTestCase(unittest.TestCase):
         assert_near_equal(results['distance_flown'], 91.8911599691433, self.tol)
         assert_near_equal(results['fuel_burned'], 236.73893823639082, self.tol)
 
-    # def test_subproblem(self):
-    #     prob = om.Problem()
-    #     prob.model = om.Group()
+    def test_subproblem(self):
+        prob = om.Problem()
+        prob.model = om.Group()
 
-    #     descent_phases = create_2dof_based_descent_phases(
-    #         self.ode_args,
-    #         cruise_mach=.8)
+        ivc = om.IndepVarComp()
+        ivc.add_output(Aircraft.Design.OPERATING_MASS, 97500)
+        ivc.add_output(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, 36000)
+        prob.model.add_subsystem('IVC', ivc, promotes=['*'])
 
-    #     add_descent_estimation_as_submodel(prob, descent_phases)
+        descent_phases = create_2dof_based_descent_phases(
+            self.ode_args,
+            cruise_mach=.8)
 
-    #     prob.setup()
-    #     om.n2(prob, 'idle_descent_n2.html', show_browser=False)
-    #     prob.run_model()
-    #     prob.get_val('descent_range', 'NM')
-    #     prob.get_val('descent_fuel', 'lbm')
+        add_descent_estimation_as_submodel(
+            prob,
+            descent_phases,
+            self.ode_args,
+            cruise_alt=35000,
+            reserve_fuel=4500,
+        )
+
+        prob.setup()
+        om.n2(prob, 'idle_descent_n2.html', show_browser=False)
+        prob.run_model()
+
+        # Values obtained by running idle_descent_estimation
+        # assert_near_equal(prob.get_val('descent_range', 'NM'), 98.4, self.tol)
+        # assert_near_equal(prob.get_val('descent_fuel', 'lbm'), 250.8, self.tol)
 
 
 if __name__ == "__main__":

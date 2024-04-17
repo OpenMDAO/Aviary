@@ -75,7 +75,6 @@ class FlightPathODE(BaseODE):
 
         if analysis_scheme is AnalysisScheme.SHOOTING:
             EOM_inputs.append(Dynamic.Mission.ALTITUDE)
-            EOM_inputs.append('mass_trigger')
             EOM_inputs.append('distance_trigger')
             EOM_inputs.append('distance')
             EOM_inputs.append('t_curr')
@@ -218,14 +217,12 @@ class FlightPathODE(BaseODE):
             dummy_comp = create_printcomp(
                 all_inputs=[
                     Dynamic.Mission.DISTANCE,
-                    Dynamic.Mission.MASS,
+                    Dynamic.Mission.THROTTLE,
+                    'required_lift',
+                    'load_factor',
                     Dynamic.Mission.ALTITUDE,
-                    Dynamic.Mission.THRUST,
-                    # Dynamic.Mission.THROTTLE,
-                    # 'required_lift',
-                    # 'load_factor',
-                    # Dynamic.Mission.ALTITUDE,
-                    # Dynamic.Mission.FLIGHT_PATH_ANGLE,
+                    Dynamic.Mission.FLIGHT_PATH_ANGLE,
+                    Dynamic.Mission.MASS,
                 ],
                 input_units={
                     'required_lift': 'lbf',

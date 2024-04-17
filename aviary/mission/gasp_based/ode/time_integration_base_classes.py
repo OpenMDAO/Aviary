@@ -1083,3 +1083,9 @@ class SGMTrajBase(om.ExplicitComponent):
             for param_deriv_val, param_deriv_name in zip(param_deriv, param_dict):
                 J[output_name, param_deriv_name] = param_deriv_val
         self.costate_reses = costate_reses
+
+
+class killer_comp(om.ExplicitComponent):
+    def compute(self, inputs, outputs):
+        print(f'exit in {self.name}')
+        exit()

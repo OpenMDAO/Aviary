@@ -499,8 +499,7 @@ class SGMCruise(SimuPyProblem):
         )
 
         self.phase_name = phase_name
-        # self.add_trigger(Dynamic.Mission.DISTANCE, "distance_trigger",
-        #                  units=self.distance_trigger_units)
+        # self.add_trigger(Dynamic.Mission.DISTANCE, "distance_trigger")
         self.add_trigger(Dynamic.Mission.MASS, 'mass_trigger')
 
 

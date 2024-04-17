@@ -202,28 +202,6 @@ class DescentODE(BaseODE):
             promotes_outputs=["theta", "TAS_violation"],
         )
 
-        from aviary.utils.functions import create_printcomp
-        dummy_comp = create_printcomp(
-            all_inputs=[
-                Dynamic.Mission.MASS,
-                Dynamic.Mission.VELOCITY,
-                Dynamic.Mission.DRAG,
-                Dynamic.Mission.THRUST_TOTAL,
-                "alpha",
-                Dynamic.Mission.DISTANCE,
-                Dynamic.Mission.ALTITUDE,
-            ],
-            input_units={
-                'required_lift': 'lbf',
-                Dynamic.Mission.FLIGHT_PATH_ANGLE: 'deg',
-            })
-        # self.add_subsystem(
-        #     "dummy_comp",
-        #     dummy_comp(),
-        #     promotes_inputs=["*"],)
-        self.set_input_defaults(
-            Dynamic.Mission.DISTANCE, val=0, units='NM')
-
         kwargs = {'num_nodes': nn, 'aviary_inputs': aviary_options,
                   'method': 'cruise'}
         # collect the propulsion group names for later use
@@ -256,10 +234,6 @@ class DescentODE(BaseODE):
         # the last two subsystems will also be used for constraints
         self.add_excess_rate_comps(nn)
 
-        # self.add_subsystem(
-        #     "descent_ode",
-        #     killer_comp(),)
-
         if analysis_scheme is AnalysisScheme.COLLOCATION:
             fc_loc = ['fc']
             if input_speed_type is SpeedType.MACH:
@@ -284,12 +258,3 @@ class DescentODE(BaseODE):
                                 val=0 * np.ones(nn), units="unitless")
         self.set_input_defaults(Dynamic.Mission.THROTTLE,
                                 val=0 * np.ones(nn), units="unitless")
-
-
-class killer_comp(om.ExplicitComponent):
-
-    def compute(self, inputs, outputs):
-        # kc = [sys for sys in self.system_iter(include_self=True)][0]
-        # group = str(kc).split()[0].split('.')[-2]
-        print(f'exit in {self.name}')
-        exit()
