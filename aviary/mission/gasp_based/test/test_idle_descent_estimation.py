@@ -1,4 +1,5 @@
 import unittest
+import warnings
 
 import openmdao.api as om
 from aviary.interface.default_phase_info.two_dof_fiti import create_2dof_based_descent_phases
@@ -45,14 +46,13 @@ class IdleDescentTestCase(unittest.TestCase):
         prob.model = om.Group()
 
         ivc = om.IndepVarComp()
-        ivc.add_output(Aircraft.Design.OPERATING_MASS, 97500)
-        ivc.add_output(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, 36000)
+        ivc.add_output(Aircraft.Design.OPERATING_MASS, 97500, units='lbm')
+        ivc.add_output(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, 36000, units='lbm')
         prob.model.add_subsystem('IVC', ivc, promotes=['*'])
 
         descent_phases = create_2dof_based_descent_phases(
             self.ode_args,
             cruise_mach=.8)
-
         add_descent_estimation_as_submodel(
             prob,
             descent_phases,
@@ -63,11 +63,13 @@ class IdleDescentTestCase(unittest.TestCase):
 
         prob.setup()
         om.n2(prob, 'idle_descent_n2.html', show_browser=False)
+        warnings.filterwarnings('ignore', category=UserWarning)
         prob.run_model()
+        warnings.filterwarnings('default', category=UserWarning)
 
         # Values obtained by running idle_descent_estimation
-        # assert_near_equal(prob.get_val('descent_range', 'NM'), 98.4, self.tol)
-        # assert_near_equal(prob.get_val('descent_fuel', 'lbm'), 250.8, self.tol)
+        assert_near_equal(prob.get_val('descent_range', 'NM'), 98.38026813, self.tol)
+        assert_near_equal(prob.get_val('descent_fuel', 'lbm'), 250.84809336, self.tol)
 
 
 if __name__ == "__main__":

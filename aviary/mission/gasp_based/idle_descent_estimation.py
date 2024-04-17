@@ -5,6 +5,7 @@ import openmdao.api as om
 from aviary.interface.default_phase_info.two_dof_fiti import create_2dof_based_descent_phases
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic
+from aviary.variable_info.enums import Verbosity
 from aviary.utils.functions import set_aviary_initial_values, promote_aircraft_and_mission_vars
 from aviary.variable_info.variables_in import VariablesIn
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
@@ -195,29 +196,32 @@ def add_descent_estimation_as_submodel(
         ],
         promotes_outputs=[('actual_fuel_burn', 'descent_fuel')])
 
-    from aviary.utils.functions import create_printcomp
-    dummy_comp = create_printcomp(
-        all_inputs=[
-            Aircraft.Design.OPERATING_MASS,
-            Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS,
-            'descent_fuel',
-            'reserve_fuel',
-            'mass_initial',
-            'distance_final',
-        ],
-        input_units={
-            'descent_fuel': 'lbm',
-            'reserve_fuel': 'lbm',
-            'mass_initial': 'lbm',
-            'distance_final': 'nmi',
-        })
-    model.add_subsystem(
-        "dummy_comp",
-        dummy_comp(),
-        promotes_inputs=["*"],
-    )
-    model.set_input_defaults('reserve_fuel', 0)
-    model.set_input_defaults('mass_initial', 0, 'lbm')
+    verbosity = ode_args['aviary_options'].get_item(
+        'verbosity', default=(Verbosity.QUIET))
+    if verbosity[0].value >= 1:
+        from aviary.utils.functions import create_printcomp
+        dummy_comp = create_printcomp(
+            all_inputs=[
+                Aircraft.Design.OPERATING_MASS,
+                Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS,
+                'descent_fuel',
+                'reserve_fuel',
+                'mass_initial',
+                'distance_final',
+            ],
+            input_units={
+                'descent_fuel': 'lbm',
+                'reserve_fuel': 'lbm',
+                'mass_initial': 'lbm',
+                'distance_final': 'nmi',
+            })
+        model.add_subsystem(
+            "dummy_comp",
+            dummy_comp(),
+            promotes_inputs=["*"],
+        )
+        model.set_input_defaults('reserve_fuel', 0, 'lbm')
+        model.set_input_defaults('mass_initial', 0, 'lbm')
 
     model.add_objective("descent_fuel", ref=1e4)
 
