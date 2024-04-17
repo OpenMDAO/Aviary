@@ -1,5 +1,5 @@
 from aviary.mission.phase_builder_base import PhaseBuilderBase
-from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessTime, InitialGuessControl
+from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessIntegrationVariable, InitialGuessControl
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
 from aviary.mission.gasp_based.ode.climb_ode import ClimbODE
@@ -116,6 +116,14 @@ class ClimbPhase(PhaseBuilderBase):
 
 
 # Adding metadata for the ClimbPhase
+ClimbPhase._add_meta_data(
+    'analytic', val=False, desc='this is an analytic phase (no states).')
+ClimbPhase._add_meta_data(
+    'reserve', val=False, desc='this phase is part of the reserve mission.')
+ClimbPhase._add_meta_data(
+    'target_distance', val={}, desc='the amount of distance traveled in this phase added as a constraint')
+ClimbPhase._add_meta_data(
+    'target_duration', val={}, desc='the amount of time taken by this phase added as a constraint')
 ClimbPhase._add_meta_data('fix_initial', val=False)
 ClimbPhase._add_meta_data('EAS_target', val=0)
 ClimbPhase._add_meta_data('mach_cruise', val=0)
@@ -143,7 +151,7 @@ ClimbPhase._add_meta_data('num_segments', val=None, units='unitless')
 ClimbPhase._add_meta_data('order', val=None, units='unitless')
 
 ClimbPhase._add_initial_guess_meta_data(
-    InitialGuessTime(),
+    InitialGuessIntegrationVariable(),
     desc='initial guess for initial time and duration specified as a tuple')
 
 ClimbPhase._add_initial_guess_meta_data(

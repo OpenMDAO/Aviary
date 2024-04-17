@@ -1,0 +1,196 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributors": [
+    {
+      "login": "chapman178",
+      "name": "Jeff Chapman",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2847218?v=4",
+      "profile": "https://github.com/chapman178",
+      "contributions": [
+        "code",
+        "example"
+      ]
+    },
+    {
+      "login": "crecine",
+      "name": "crecine",
+      "avatar_url": "https://avatars.githubusercontent.com/u/51181861?v=4",
+      "profile": "https://github.com/crecine",
+      "contributions": [
+        "code",
+        "data",
+        "review"
+      ]
+    },
+    {
+      "login": "dlcaldwelljr-ama-inc",
+      "name": "dlcaldwelljr-ama-inc",
+      "avatar_url": "https://avatars.githubusercontent.com/u/39774974?v=4",
+      "profile": "https://github.com/dlcaldwelljr-ama-inc",
+      "contributions": [
+        "code",
+        "infra",
+        "mentoring",
+        "review"
+      ]
+    },
+    {
+      "login": "ehariton",
+      "name": "Eliot Aretskin-Hariton",
+      "avatar_url": "https://avatars.githubusercontent.com/u/11527849?v=4",
+      "profile": "https://github.com/ehariton",
+      "contributions": [
+        "code",
+        "fundingFinding",
+        "review"
+      ]
+    },
+    {
+      "login": "erikdolsonva",
+      "name": "Erik Olson",
+      "avatar_url": "https://avatars.githubusercontent.com/u/39806272?v=4",
+      "profile": "https://github.com/erikdolsonva",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "errordynamicist",
+      "name": "DP",
+      "avatar_url": "https://avatars.githubusercontent.com/u/109693657?v=4",
+      "profile": "https://github.com/errordynamicist",
+      "contributions": [
+        "example"
+      ]
+    },
+    {
+      "login": "gawrenn",
+      "name": "gawrenn",
+      "avatar_url": "https://avatars.githubusercontent.com/u/127416371?v=4",
+      "profile": "https://github.com/gawrenn",
+      "contributions": [
+        "code",
+        "example"
+      ]
+    },
+    {
+      "login": "hschilling",
+      "name": "hschilling",
+      "avatar_url": "https://avatars.githubusercontent.com/u/867557?v=4",
+      "profile": "https://github.com/hschilling",
+      "contributions": [
+        "code",
+        "design"
+      ]
+    },
+    {
+      "login": "ixjlyons",
+      "name": "Kenneth Lyons",
+      "avatar_url": "https://avatars.githubusercontent.com/u/943602?v=4",
+      "profile": "https://ixjlyons.com",
+      "contributions": [
+        "code",
+        "review"
+      ]
+    },
+    {
+      "login": "jdgratz10",
+      "name": "Jennifer Gratz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/46534043?v=4",
+      "profile": "https://github.com/jdgratz10",
+      "contributions": [
+        "code",
+        "doc",
+        "projectManagement",
+        "review"
+      ]
+    },
+    {
+      "login": "jkirk5",
+      "name": "Jason Kirk",
+      "avatar_url": "https://avatars.githubusercontent.com/u/110835404?v=4",
+      "profile": "https://github.com/jkirk5",
+      "contributions": [
+        "code",
+        "data",
+        "doc",
+        "review"
+      ]
+    },
+    {
+      "login": "johnjasa",
+      "name": "John Jasa",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16373529?v=4",
+      "profile": "https://github.com/johnjasa",
+      "contributions": [
+        "code",
+        "doc",
+        "example",
+        "review",
+        "video"
+      ]
+    },
+    {
+      "login": "Kenneth-T-Moore",
+      "name": "Kenneth Moore",
+      "avatar_url": "https://avatars.githubusercontent.com/u/867917?v=4",
+      "profile": "http://www.openmdao.org",
+      "contributions": [
+        "code",
+        "infra",
+        "review"
+      ]
+    },
+    {
+      "login": "robfalck",
+      "name": "Rob Falck",
+      "avatar_url": "https://avatars.githubusercontent.com/u/699809?v=4",
+      "profile": "https://github.com/robfalck",
+      "contributions": [
+        "infra",
+        "mentoring"
+      ]
+    },
+    {
+      "login": "sixpearls",
+      "name": "Ben Margolis",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1571853?v=4",
+      "profile": "https://github.com/sixpearls",
+      "contributions": [
+        "code",
+        "infra"
+      ]
+    },
+    {
+      "login": "swryan",
+      "name": "swryan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/881430?v=4",
+      "profile": "https://github.com/swryan",
+      "contributions": [
+        "code",
+        "infra"
+      ]
+    },
+    {
+      "login": "xjjiang",
+      "name": "Xun Jiang",
+      "avatar_url": "https://avatars.githubusercontent.com/u/8505450?v=4",
+      "profile": "https://github.com/xjjiang",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "skipCi": true,
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "projectName": "Aviary",
+  "projectOwner": "OpenMDAO"
+}

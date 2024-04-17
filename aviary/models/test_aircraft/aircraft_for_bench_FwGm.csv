@@ -8,7 +8,6 @@ aircraft:crew_and_payload:passenger_mass_with_bags,200,lbm
 aircraft:design:cg_delta,0.25,unitless
 aircraft:design:cockpit_control_mass_coefficient,16.5,unitless
 aircraft:design:drag_increment,0.00175,unitless
-aircraft:design:equipment_mass_coefficients,928,0.0736,0.112,0.14,1959,1.65,551,11192,5,3,50,7.6,12,unitless
 aircraft:design:max_structural_speed,402.5,mi/h
 aircraft:design:part25_structural_category,3,unitless
 aircraft:design:reserve_fuel_additional,3000.,lbm

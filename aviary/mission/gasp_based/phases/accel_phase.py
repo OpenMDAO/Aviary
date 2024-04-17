@@ -1,5 +1,5 @@
 from aviary.mission.phase_builder_base import PhaseBuilderBase
-from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessTime, InitialGuessControl
+from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessIntegrationVariable, InitialGuessControl
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
 from aviary.mission.gasp_based.ode.accel_ode import AccelODE
@@ -75,6 +75,14 @@ class AccelPhase(PhaseBuilderBase):
 
 
 # Adding metadata for the AccelPhase
+AccelPhase._add_meta_data(
+    'analytic', val=False, desc='this is an analytic phase (no states).')
+AccelPhase._add_meta_data(
+    'reserve', val=False, desc='this phase is part of the reserve mission.')
+AccelPhase._add_meta_data(
+    'target_distance', val={}, desc='the amount of distance traveled in this phase added as a constraint')
+AccelPhase._add_meta_data(
+    'target_duration', val={}, desc='the amount of time taken by this phase added as a constraint')
 AccelPhase._add_meta_data('fix_initial', val=False)
 AccelPhase._add_meta_data('EAS_constraint_eq', val=250, units='kn')
 AccelPhase._add_meta_data('duration_bounds', val=(0, 0), units='s')
@@ -99,7 +107,7 @@ AccelPhase._add_meta_data('num_segments', val=None, units='unitless')
 AccelPhase._add_meta_data('order', val=None, units='unitless')
 
 AccelPhase._add_initial_guess_meta_data(
-    InitialGuessTime(),
+    InitialGuessIntegrationVariable(),
     desc='initial guess for initial time and duration specified as a tuple')
 
 AccelPhase._add_initial_guess_meta_data(

@@ -19,9 +19,10 @@ pyc_phases = taxi, groundroll, rotation, landing
 
 import csv
 import re
-from enum import Enum
-from pathlib import Path
+import getpass
 
+from datetime import datetime
+from pathlib import Path
 from openmdao.utils.units import valid_units
 
 from aviary.utils.functions import convert_strings_to_data
@@ -31,7 +32,6 @@ from aviary.variable_info.variables import Aircraft, Mission
 from aviary.variable_info.enums import LegacyCode, Verbosity
 from aviary.utils.functions import get_path
 from aviary.utils.legacy_code_data.deprecated_vars import flops_deprecated_vars, gasp_deprecated_vars
-
 
 FLOPS = LegacyCode.FLOPS
 GASP = LegacyCode.GASP
@@ -53,6 +53,14 @@ def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
                     'initial_guesses': initial_guesses, 'verbosity': verbosity}
 
     fortran_deck: Path = get_path(fortran_deck, verbose=False)
+
+    timestamp = datetime.now().strftime('%m/%d/%y at %H:%M')
+    user = getpass.getuser()
+    comments = []
+
+    comments.append(f'# created {timestamp} by {user}')
+    comments.append(
+        f'# {legacy_code.value}-derived aircraft input deck converted from {fortran_deck.name}')
 
     if out_file:
         out_file = Path(out_file)
@@ -88,15 +96,17 @@ def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
         out_file = fortran_deck.parent / out_file
 
     if out_file.is_file():
-        if force:
-            print(f'Overwriting existing file: {out_file.name}')
-        else:
+        if not force:
             raise RuntimeError(f'{out_file} already exists. Choose a new name or enable '
                                '--force')
+        elif verbosity.value >= 1:
+            print(f'Overwriting existing file: {out_file.name}')
+
     else:
         # create any directories defined by the new filename if they don't already exist
         out_file.parent.mkdir(parents=True, exist_ok=True)
-        print('Writing to:', out_file)
+        if verbosity.value >= 2:
+            print('Writing to:', out_file)
 
     # open the file in write mode
     with open(out_file, 'w', newline='') as f:
@@ -235,14 +245,14 @@ def process_and_store_data(data, var_name, legacy_code, current_namelist, altern
         skip_variable = True
         var_values = []
 
-    if '(' in var_name:  # some GASP lists are given as individual elements
-        # get the target index (Fortran uses 1 indexing, Python uses 0 indexing)
-        fortran_offset = 1 if current_namelist else 0
-        var_ind = int(var_name.split('(')[1].split(')')[0])-fortran_offset
-        var_name = var_name.split('(')[0]  # remove the index formatting
-
-    list_of_equivalent_aviary_names = update_name(
+    list_of_equivalent_aviary_names, var_ind = update_name(
         alternate_names, current_namelist+var_name, vehicle_data['verbosity'])
+
+    # Fortran uses 1 indexing, Python uses 0 indexing
+    fortran_offset = 1 if current_namelist else 0
+    if var_ind is not None:
+        var_ind -= fortran_offset
+
     for name in list_of_equivalent_aviary_names:
         if not skip_variable:
             if name in guess_names and legacy_code is GASP:
@@ -321,19 +331,34 @@ def generate_aviary_names(code_bases):
 def update_name(alternate_names, var_name, verbosity=Verbosity.BRIEF):
     '''update_name will convert a Fortran name to a list of equivalent Aviary names.'''
 
+    if '(' in var_name:  # some GASP lists are given as individual elements
+        # get the target index
+        var_ind = int(var_name.split('(')[1].split(')')[0])
+        var_name = var_name.split('(')[0]  # remove the index formatting
+    else:
+        var_ind = None
+
     all_equivalent_names = []
     for code_base in alternate_names.keys():
         for key, list_of_names in alternate_names[code_base].items():
             if list_of_names is not None:
-                if any([re.search(var_name+r'\Z', altname, re.IGNORECASE) for altname in list_of_names]):
-                    all_equivalent_names.append(key)
+                for altname in list_of_names:
+                    altname = altname.lower()
+                    if altname.endswith(var_name.lower()):
+                        all_equivalent_names.append(key)
+                        continue
+                    elif var_ind is not None and altname.endswith(f'{var_name.lower()}({var_ind})'):
+                        all_equivalent_names.append(key)
+                        var_ind = None
+                        continue
 
     # if there are no equivalent variable names, return the original name
     if len(all_equivalent_names) == 0:
         if verbosity.value >= 2:
             print('passing: ', var_name)
         all_equivalent_names = [var_name]
-    return all_equivalent_names
+
+    return all_equivalent_names, var_ind
 
 
 def update_gasp_options(vehicle_data):
@@ -603,16 +628,18 @@ def _setup_F2A_parser(parser):
     )
     parser.add_argument(
         "-v",
-        "--verbose",
-        action="store_true",
-        help="Enable verbose print statements",
+        "--verbosity",
+        type=Verbosity,
+        choices=list(Verbosity),
+        default=1,
+        help="Set level of print statements",
     )
-    parser.add_argument(
-        "-vv",
-        "--very_verbose",
-        action="store_true",
-        help="Enable debug print statements",
-    )
+    # parser.add_argument(
+    #     "-vv",
+    #     "--very_verbose",
+    #     action="store_true",
+    #     help="Enable debug print statements",
+    # )
 
 
 def _exec_F2A(args, user_args):
@@ -621,12 +648,8 @@ def _exec_F2A(args, user_args):
         args.input_deck = args.input_deck[0]
     filepath = args.input_deck
 
-    if args.very_verbose is True:
-        verbosity = Verbosity.DEBUG
-    elif args.verbose is True:
-        verbosity = Verbosity.VERBOSE
-    else:
-        verbosity = Verbosity.BRIEF
+    # convert verbosity from number to enum
+    verbosity = Verbosity(args.verbosity)
 
     create_aviary_deck(filepath, args.legacy_code, args.defaults_deck,
                        args.out_file, args.force, verbosity)

@@ -8,6 +8,7 @@ from openmdao.utils.testing_utils import require_pyoptsparse
 from openmdao.core.problem import _clear_problem_names
 
 from aviary.interface.methods_for_level1 import run_aviary
+from aviary.variable_info.enums import Verbosity
 from aviary.validation_cases.benchmark_utils import \
     compare_against_expected_values
 
@@ -293,9 +294,9 @@ class ProblemPhaseTestCase(unittest.TestCase):
                     "initial_bounds": ((0.0, 2.0), "min"),
                     "duration_bounds": ((5.0, 50.0), "min"),
                     "no_descent": False,
-                    "add_initial_mass_constraint": True,
+                    "add_initial_mass_constraint": False,
                 },
-                "initial_guesses": {"times": ([0, 40.0], "min")},
+                "initial_guesses": {"time": ([0, 40.0], "min")},
             },
             "cruise": {
                 "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
@@ -320,7 +321,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
                     "initial_bounds": ((64.0, 192.0), "min"),
                     "duration_bounds": ((60.0, 720.0), "min"),
                 },
-                "initial_guesses": {"times": ([128, 113], "min")},
+                "initial_guesses": {"time": ([128, 113], "min")},
             },
             "descent": {
                 "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
@@ -345,7 +346,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
                     "duration_bounds": ((5.0, 35.0), "min"),
                     "no_climb": True,
                 },
-                "initial_guesses": {"times": ([241, 30], "min")},
+                "initial_guesses": {"time": ([241, 30], "min")},
             },
             "post_mission": {
                 "include_landing": True,
@@ -364,15 +365,17 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
 
     @require_pyoptsparse(optimizer="IPOPT")
     def test_bench_FwFm_IPOPT(self):
-        prob = run_aviary(
-            'models/test_aircraft/aircraft_for_bench_FwFm.csv', self.phase_info, max_iter=50, optimizer='IPOPT')
+        prob = run_aviary('models/test_aircraft/aircraft_for_bench_FwFm.csv',
+                          self.phase_info, verbosity=Verbosity.QUIET,
+                          max_iter=50, optimizer='IPOPT')
 
         compare_against_expected_values(prob, self.expected_dict)
 
     @require_pyoptsparse(optimizer="SNOPT")
     def test_bench_FwFm_SNOPT(self):
-        prob = run_aviary(
-            'models/test_aircraft/aircraft_for_bench_FwFm.csv', self.phase_info, max_iter=50, optimizer='SNOPT')
+        prob = run_aviary('models/test_aircraft/aircraft_for_bench_FwFm.csv',
+                          self.phase_info, verbosity=Verbosity.QUIET,
+                          max_iter=50, optimizer='SNOPT')
 
         compare_against_expected_values(prob, self.expected_dict)
 
@@ -385,8 +388,9 @@ class TestBenchFwFmParallel(ProblemPhaseTestCase):
 
     @require_pyoptsparse(optimizer="SNOPT")
     def test_bench_FwFm_SNOPT_MPI(self):
-        prob = run_aviary(
-            'models/test_aircraft/aircraft_for_bench_FwFm.csv', self.phase_info, max_iter=50, optimizer='SNOPT')
+        prob = run_aviary('models/test_aircraft/aircraft_for_bench_FwFm.csv',
+                          self.phase_info, verbosity=Verbosity.QUIET,
+                          max_iter=50, optimizer='SNOPT')
 
         compare_against_expected_values(prob, self.expected_dict)
 

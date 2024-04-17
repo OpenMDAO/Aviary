@@ -5,7 +5,6 @@ import getpass
 import itertools
 from datetime import datetime
 from enum import Enum
-from pathlib import Path
 
 import numpy as np
 import openmdao.api as om
@@ -24,6 +23,9 @@ class EngineDeckType(Enum):
     FLOPS = 'FLOPS'
     GASP = 'GASP'
     GASP_TP = 'GASP_TP'
+
+    def __str__(self):
+        return self.value
 
 
 MACH = EngineModelVariables.MACH
@@ -69,7 +71,7 @@ header_names = {
 }
 
 
-def EngineDeckConverter(input_file=None, output_file=None, data_format=None):
+def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
     '''
     Converts FLOPS- or GASP-formatted engine decks into Aviary csv format.
     FLOPS decks are changed from column-delimited to csv format with added headers.
@@ -98,8 +100,15 @@ def EngineDeckConverter(input_file=None, output_file=None, data_format=None):
     data_file = get_path(input_file)
 
     comments.append(f'# created {timestamp} by {user}')
+    legacy_code = data_format.value
+    engine_type = 'engine'
+    if legacy_code == 'GASP_TP':
+        engine_type = 'turboshaft engine'
+        legacy_code = 'GASP'
+
     comments.append(
-        f'# {data_format.value}-derived engine deck converted from {data_file.name}')
+        f'# {legacy_code}-derived {engine_type} deck converted from {data_file.name}')
+
     if data_format == EngineDeckType.FLOPS:
         header = {key: default_units[key] for key in flops_keys}
         data = {key: np.array([]) for key in flops_keys}
@@ -163,7 +172,7 @@ def EngineDeckConverter(input_file=None, output_file=None, data_format=None):
             data[FUEL_FLOW] = structured_data['fuelflow']['vals']
             T4T2 = structured_data['fuelflow']['t4t2s']
             if is_turbo_prop:
-                data[SHAFT_POWER_CORRECTED] = structured_data['shaft_power']['vals']
+                data[SHAFT_POWER_CORRECTED] = structured_data['shaft_power_corrected']['vals']
                 data[TAILPIPE_THRUST] = structured_data['tailpipe_thrust']['vals']
             else:
                 data[THRUST] = structured_data['thrust']['vals']
@@ -485,27 +494,35 @@ def _read_map(f, is_turbo_prop=False):
     map_data[:, 0] = amap
 
     # number of points on a single line - wrapped if more than 6
-    nptloc = min(6, npts)
+    max_columns = 6
 
     # point vals: FORMAT(10X,6F10.4,10X)
-    x = list(_parse(f, [(None, 10), *_rep(nptloc, (float, 10))]))
-    if npts > nptloc:
+    x = []
+    npts_remaining = npts
+    while npts_remaining > 0:
+        npts_to_read = min(max_columns, npts_remaining)
         # remaining vals on wrapped line
-        x.extend(list(_parse(f, [(None, 10), *_rep(npts - nptloc, (float, 10))])))
+        x.extend(list(_parse(f, [(None, 10), *_rep(npts_to_read, (float, 10))])))
+        npts_remaining -= npts_to_read
 
     map_data[:, 2] = np.tile(x, nline)
 
     for j in range(nline):
+        npts_remaining = npts
+        npts_to_read = min(max_columns, npts_remaining)
         # line (y) val then z vals: FORMAT(F10.4,6F10.1,10X,/(6F10.1,10X))
-        vals = list(_parse(f, [(float, 10), *_rep(nptloc, (float, 10))]))
+        vals = list(_parse(f, [(float, 10), *_rep(npts_to_read, (float, 10))]))
         y = vals[0]
         z = vals[1:]
-        if npts > nptloc:
+        npts_remaining -= npts_to_read
+        while npts_remaining > 0:
+            npts_to_read = min(max_columns, npts_remaining)
             # add remaining vals on warapped line
-            line_format = [*_rep(npts - nptloc, (float, 10))]
+            line_format = [*_rep(npts_to_read, (float, 10))]
             if is_turbo_prop:
                 line_format = [(None, 10), *line_format]
             z.extend(list(_parse(f, line_format)))
+            npts_remaining -= npts_to_read
 
         sl = slice(j * npts, (j + 1) * npts)
         map_data[sl, 1] = y
@@ -763,7 +780,7 @@ def _setup_EDC_parser(parser):
                         help='path to engine deck file to be converted')
     parser.add_argument('output_file', type=str,
                         help='path to file where new converted data will be written')
-    parser.add_argument('data_format', type=EngineDeckType, choices=list(EngineDeckType),
+    parser.add_argument('-f', '--data_format', type=EngineDeckType, choices=list(EngineDeckType),
                         help='data format used by input_file')
 
 

@@ -15,8 +15,8 @@ control on a problem
 
 InitialGuessState : a utility for setting an initial guess for a state on a problem
 
-InitialGuessTime : a utility for setting guesses for initial time and duration on a
-problem
+InitialGuessIntegrationVariable : a utility for setting guesses for initial value and duration
+of an integration variable in a problem
 '''
 from collections.abc import Sequence
 
@@ -57,7 +57,11 @@ class InitialGuess:
         ):
             val = phase.interp(self.key, val)
 
-        prob.set_val(complete_key, val, units)
+        try:
+            prob.set_val(complete_key, val, units)
+        except KeyError:
+            complete_key = complete_key.replace('polynomial_controls', 'controls')
+            prob.set_val(complete_key, val, units)
 
     def _get_complete_key(self, traj_name, phase_name):
         '''
@@ -149,26 +153,27 @@ class InitialGuessState(InitialGuess):
         return key
 
 
-class InitialGuessTime(InitialGuess):
+class InitialGuessIntegrationVariable(InitialGuess):
     '''
-    Define a utility for setting guesses for initial time and duration on a problem.
+    Define a utility for setting guesses for the initial and duration values
+    for the integration variable, usually time. We might also use this for
+    other integration variables, such as velocity or distance.
+
+    The default name for the variable here is "time".
 
     Attributes
     ----------
-    key : str ('times')
-        the group identifier for guesses for initial time and duration
+    key : str ('time')
+        the group identifier for guesses for initial integration variable value and duration
     '''
     __slots__ = ()
 
-    def __init__(self, key='times'):
+    def __init__(self, key='time'):
         super().__init__(key)
 
     def apply_initial_guess(
         self, prob: om.Problem, traj_name, phase: dm.Phase, phase_name, val, units
     ):
-        '''
-        Set the guesses for initial time and duration on the problem.
-        '''
         _ = phase
 
         name = f'{traj_name}.{phase_name}.t_initial'

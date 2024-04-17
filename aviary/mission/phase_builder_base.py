@@ -150,7 +150,7 @@ class PhaseBuilderBase(ABC):
 
         Parameters
         ----------
-        aviary_options : AviaryValues (emtpy)
+        aviary_options : AviaryValues (empty)
             collection of Aircraft/Mission specific options
 
         Returns
@@ -410,11 +410,6 @@ class PhaseBuilderBase(ABC):
         '''
         meta_data = cls._initial_guesses_meta_data_
         name = initial_guess.key
-
-        if name in meta_data:
-            raise ValueError(
-                f'{cls.__name__}": meta data: repeat initial guess: {name}'
-            )
 
         meta_data[name] = dict(
             apply_initial_guess=initial_guess.apply_initial_guess, desc=desc)

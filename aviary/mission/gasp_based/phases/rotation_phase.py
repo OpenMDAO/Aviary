@@ -1,7 +1,7 @@
 import numpy as np
 
 from aviary.mission.phase_builder_base import PhaseBuilderBase
-from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessTime, InitialGuessControl
+from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessIntegrationVariable, InitialGuessControl
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
 from aviary.mission.gasp_based.ode.rotation_ode import RotationODE
@@ -94,6 +94,14 @@ class RotationPhase(PhaseBuilderBase):
 
 
 # Adding metadata for the RotationPhase
+RotationPhase._add_meta_data(
+    'analytic', val=False, desc='this is an analytic phase (no states).')
+RotationPhase._add_meta_data(
+    'reserve', val=False, desc='this phase is part of the reserve mission.')
+RotationPhase._add_meta_data(
+    'target_distance', val={}, desc='the amount of distance traveled in this phase added as a constraint')
+RotationPhase._add_meta_data(
+    'target_duration', val={}, desc='the amount of time taken by this phase added as a constraint')
 RotationPhase._add_meta_data('fix_initial', val=False)
 RotationPhase._add_meta_data('duration_bounds', val=(1, 100), units='s')
 RotationPhase._add_meta_data('duration_ref', val=1, units='s')
@@ -126,7 +134,7 @@ RotationPhase._add_meta_data('order', val=None, units='unitless')
 
 # Adding initial guess metadata
 RotationPhase._add_initial_guess_meta_data(
-    InitialGuessTime(),
+    InitialGuessIntegrationVariable(),
     desc='initial guess for time options')
 RotationPhase._add_initial_guess_meta_data(
     InitialGuessState('alpha'),

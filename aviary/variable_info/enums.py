@@ -59,7 +59,7 @@ class EquationsOfMotion(Enum):
     """
     HEIGHT_ENERGY = 'height_energy'
     TWO_DEGREES_OF_FREEDOM = '2DOF'
-    SOLVED = 'solved'
+    SOLVED_2DOF = 'solved_2DOF'
 
 
 @unique
@@ -179,3 +179,6 @@ class Verbosity(Enum):
     BRIEF = 1
     VERBOSE = 2
     DEBUG = 3
+
+    def __str__(self):
+        return str(self.value)

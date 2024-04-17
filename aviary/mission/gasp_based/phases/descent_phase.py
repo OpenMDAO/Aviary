@@ -1,5 +1,5 @@
 from aviary.mission.phase_builder_base import PhaseBuilderBase
-from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessTime, InitialGuessControl
+from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessIntegrationVariable, InitialGuessControl
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
 from aviary.variable_info.enums import SpeedType
@@ -64,6 +64,14 @@ class DescentPhase(PhaseBuilderBase):
 
 
 # Adding metadata for the DescentPhase
+DescentPhase._add_meta_data(
+    'analytic', val=False, desc='this is an analytic phase (no states).')
+DescentPhase._add_meta_data(
+    'reserve', val=False, desc='this phase is part of the reserve mission.')
+DescentPhase._add_meta_data(
+    'target_distance', val={}, desc='the amount of distance traveled in this phase added as a constraint')
+DescentPhase._add_meta_data(
+    'target_duration', val={}, desc='the amount of time taken by this phase added as a constraint')
 DescentPhase._add_meta_data('fix_initial', val=False)
 DescentPhase._add_meta_data('input_initial', val=False)
 DescentPhase._add_meta_data('EAS_limit', val=0, units='kn')
@@ -93,7 +101,7 @@ DescentPhase._add_meta_data('order', val=None, units='unitless')
 
 # Adding initial guess metadata
 DescentPhase._add_initial_guess_meta_data(
-    InitialGuessTime(),
+    InitialGuessIntegrationVariable(),
     desc='initial guess for time options')
 DescentPhase._add_initial_guess_meta_data(
     InitialGuessState('altitude'),

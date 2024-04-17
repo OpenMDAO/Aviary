@@ -1,5 +1,5 @@
 from aviary.mission.phase_builder_base import PhaseBuilderBase
-from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessTime, InitialGuessControl
+from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessIntegrationVariable, InitialGuessControl
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
 from aviary.mission.gasp_based.ode.groundroll_ode import GroundrollODE
@@ -71,6 +71,7 @@ class GroundrollPhase(PhaseBuilderBase):
         # the final TAS is constrained externally to define the transition to the rotation
         # phase
 
+        phase.add_timeseries_output("time", units="s", output_name="time")
         phase.add_timeseries_output(Dynamic.Mission.THRUST_TOTAL, units="lbf")
 
         phase.add_timeseries_output("normal_force")
@@ -86,6 +87,8 @@ class GroundrollPhase(PhaseBuilderBase):
 
 
 # Adding metadata for the GroundrollPhase
+GroundrollPhase._add_meta_data(
+    'analytic', val=False, desc='this is an analytic phase (no states).')
 GroundrollPhase._add_meta_data('fix_initial', val=True)
 GroundrollPhase._add_meta_data('fix_initial_mass', val=False)
 GroundrollPhase._add_meta_data('connect_initial_mass', val=True)
@@ -113,7 +116,7 @@ GroundrollPhase._add_meta_data('order', val=None, units='unitless')
 
 # Adding initial guess metadata
 GroundrollPhase._add_initial_guess_meta_data(
-    InitialGuessTime(),
+    InitialGuessIntegrationVariable(),
     desc='initial guess for time options')
 GroundrollPhase._add_initial_guess_meta_data(
     InitialGuessState('velocity'),

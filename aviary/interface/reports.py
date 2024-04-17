@@ -1,5 +1,5 @@
 from pathlib import Path
-
+import pandas as pd
 import numpy as np
 
 from openmdao.utils.mpi import MPI
@@ -7,11 +7,12 @@ from openmdao.utils.reports_system import register_report
 
 from aviary.interface.utils.markdown_utils import write_markdown_variable_table
 from aviary.utils.named_values import NamedValues
+from aviary.utils.functions import wrapped_convert_units
 
 
 def register_custom_reports():
     """
-    Registers Aviary reports with openMDAO, so they are automatically generated and
+    Registers Aviary reports with OpenMDAO, so they are automatically generated and
     added to the same reports folder as other default reports
     """
     # TODO top-level aircraft report?
@@ -25,7 +26,7 @@ def register_custom_reports():
                     func=subsystem_report,
                     desc='Generates reports for each subsystem builder in the '
                          'Aviary Problem',
-                    class_name='Problem',
+                    class_name='AviaryProblem',
                     method='run_driver',
                     pre_or_post='post',
                     # **kwargs
@@ -34,7 +35,14 @@ def register_custom_reports():
     register_report(name='mission',
                     func=mission_report,
                     desc='Generates report for mission results from Aviary problem',
-                    class_name='Problem',
+                    class_name='AviaryProblem',
+                    method='run_driver',
+                    pre_or_post='post')
+
+    register_report(name='timeseries_csv',
+                    func=timeseries_csv,
+                    desc='Generates an output .csv file for variables in the timeseries of the trajectory',
+                    class_name='AviaryProblem',
                     method='run_driver',
                     pre_or_post='post')
 
@@ -69,7 +77,7 @@ def subsystem_report(prob, **kwargs):
 
 def mission_report(prob, **kwargs):
     """
-    Creates a basic mission summary report that is place in the "reports" folder
+    Creates a basic mission summary report that is placed in the "reports" folder
 
     Parameters
     ----------
@@ -172,3 +180,99 @@ def mission_report(prob, **kwargs):
                                           {'Fuel Burn': {'units': 'lbm'},
                                            'Elapsed Time': {'units': 'min'},
                                            'Ground Distance': {'units': 'nmi'}})
+
+
+def timeseries_csv(prob, **kwargs):
+    """
+    Generates a CSV file containing timeseries data for variables from an Aviary mission.
+
+    This function extracts timeseries data from the provided problem object, processes the data
+    to unify units across different phases of the mission, and then outputs the result to a CSV file.
+    The 'time' variable is moved to the beginning of the dataset so it's always the leftmost column.
+    Duplicate consecutive rows are eliminated.
+
+    Parameters
+    ----------
+    prob : AviaryProblem
+        The AviaryProblem used to generate this report
+    kwargs : dict
+        Additional keyword arguments (unused)
+
+    The output CSV file is named 'mission_timeseries_data.csv' and is saved in the reports directory.
+    The first row of the CSV file contains headers with variable names and units.
+    Each subsequent row represents the mission outputs at a different time step.
+    """
+    timeseries_outputs = prob.model.list_outputs(
+        includes='*timeseries*', out_stream=None, return_format='dict', units=True)
+    phase_names = prob.model.traj._phases.keys()
+
+    # There are no more collective calls, so we can exit.
+    if MPI and MPI.COMM_WORLD.rank != 0:
+        return
+
+    timeseries_outputs = {value['prom_name']: value for key,
+                          value in timeseries_outputs.items()}
+
+    timeseries_outputs = {key: value for key,
+                          value in timeseries_outputs.items() if not key.endswith('_phase')}
+
+    unique_variable_names = set([timeseries_output.split('.')[-1]
+                                for timeseries_output in timeseries_outputs])
+
+    timeseries_data = {}
+    for variable_name in unique_variable_names:
+        timeseries_data[variable_name] = {}
+        val_full_traj = np.zeros((0, 1))
+        units = None
+        for idx_phase, phase_name in enumerate(phase_names):
+            variable_str = f'traj.{phase_name}.timeseries.{variable_name}'
+            time_str = f'traj.{phase_name}.timeseries.time'
+
+            if variable_str not in timeseries_outputs:
+                Warning(
+                    f'Variable {variable_str} not found in timeseries_outputs for phase {phase_name}.')
+                val = np.zeros_like(timeseries_outputs[time_str]['val'])
+                val[:] = np.nan
+                val_full_traj = np.vstack((val_full_traj, val))
+
+            else:
+                val = timeseries_outputs[variable_str]['val']
+
+                # grab the units from the first phase that uses this variable; use these units for all others
+                if units is None:
+                    units = timeseries_outputs[variable_str]['units']
+                    val_full_traj = np.vstack((val_full_traj, val))
+                else:
+                    original_units = timeseries_outputs[variable_str]['units']
+
+                    if original_units != units:
+                        val = wrapped_convert_units((val, original_units), units)
+
+                    val_full_traj = np.vstack((val_full_traj, val))
+
+        timeseries_data[variable_name]['val'] = val_full_traj
+        timeseries_data[variable_name]['units'] = units
+        timeseries_data[variable_name]['shape'] = val_full_traj.shape
+
+    # Create a DataFrame from timeseries_data
+    df_data = {variable_name: pd.Series(timeseries_data[variable_name]['val'].flatten())
+               for variable_name in timeseries_data}
+    df = pd.DataFrame(df_data)
+
+    time_column = ['time']  # Isolate the 'time' column
+    # Sort the rest of the columns
+    other_columns = sorted([col for col in df.columns if col != 'time'])
+    columns = time_column + other_columns  # Combine them, keeping 'time' first
+    df = df[columns]
+
+    # Add units to column names
+    df.columns = [f'{col} ({timeseries_data[col]["units"]})' for col in df.columns]
+
+    df.drop_duplicates()
+
+    # The path where you want to save the CSV file
+    reports_folder = Path(prob.get_reports_dir())
+    report_file = reports_folder / 'mission_timeseries_data.csv'
+
+    # Write the DataFrame to a CSV file
+    df.to_csv(report_file, index=False)

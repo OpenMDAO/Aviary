@@ -2,21 +2,20 @@ from copy import deepcopy
 from pathlib import Path
 import unittest
 import warnings
-
-from openmdao.utils.testing_utils import use_tempdirs
+from openmdao.utils.testing_utils import use_tempdirs, set_env_vars
+import openmdao.api as om
 
 from aviary.interface.default_phase_info.height_energy import phase_info
 from aviary.interface.methods_for_level1 import run_aviary
-from openmdao.utils.testing_utils import use_tempdirs
+from aviary.variable_info.enums import Verbosity
 
 
 @unittest.skip("Skipping test due to sensitivity in setup. Need tolerances on actual values")
-@use_tempdirs
 class BasicReportTestCase(unittest.TestCase):
     def setUp(self):
         local_phase_info = deepcopy(phase_info)
         self.prob = run_aviary('models/test_aircraft/aircraft_for_bench_FwFm.csv',
-                               local_phase_info,
+                               local_phase_info, verbosity=Verbosity.QUIET,
                                mission_method="FLOPS", mass_method="FLOPS", optimizer='IPOPT')
 
     def test_text_report(self):

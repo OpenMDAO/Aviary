@@ -4,11 +4,13 @@ import subprocess
 
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 from openmdao.core.problem import _clear_problem_names
+from openmdao.utils.reports_system import clear_reports
 
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.subsystems.test.test_dummy_subsystem import ArrayGuessSubsystemBuilder
-from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
+from aviary.mission.energy_phase import EnergyPhase
 from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.enums import Verbosity
 
 
 @use_tempdirs
@@ -41,7 +43,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
                     "initial_bounds": ((0.0, 0.0), "min"),
                     "duration_bounds": ((64.0, 192.0), "min"),
                 },
-                "initial_guesses": {"times": ([0, 128], "min")},
+                "initial_guesses": {"time": ([0, 128], "min")},
             },
             "cruise": {
                 "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
@@ -65,7 +67,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
                     "initial_bounds": ((64.0, 192.0), "min"),
                     "duration_bounds": ((56.5, 169.5), "min"),
                 },
-                "initial_guesses": {"times": ([128, 113], "min")},
+                "initial_guesses": {"time": ([128, 113], "min")},
             },
             "descent": {
                 "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
@@ -89,7 +91,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
                     "initial_bounds": ((120.5, 361.5), "min"),
                     "duration_bounds": ((29.0, 87.0), "min"),
                 },
-                "initial_guesses": {"times": ([241, 58], "min")},
+                "initial_guesses": {"time": ([241, 58], "min")},
             },
             "post_mission": {
                 "include_landing": False,
@@ -102,7 +104,9 @@ class AircraftMissionTestSuite(unittest.TestCase):
         self.make_plots = False
         self.max_iter = 100
 
-        _clear_problem_names()  # need to reset these to simulate separate runs
+        # need to reset these to simulate separate runs
+        _clear_problem_names()
+        clear_reports()
 
     def add_external_subsystem(self, phase_info, subsystem_builder):
         """
@@ -118,7 +122,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
         return run_aviary(
             self.aircraft_definition_file, phase_info,
             make_plots=self.make_plots, max_iter=self.max_iter, optimizer=optimizer,
-            optimization_history_filename="driver_test.db")
+            optimization_history_filename="driver_test.db", verbosity=Verbosity.QUIET)
 
     def test_mission_basic_and_dashboard(self):
         # We need to remove the TESTFLO_RUNNING environment variable for this test to run.
@@ -220,16 +224,16 @@ class AircraftMissionTestSuite(unittest.TestCase):
         local_phase_info = self.phase_info.copy()
         local_phase_info['climb']['phase_builder'] = EnergyPhase
 
-        run_aviary(self.aircraft_definition_file,
-                   local_phase_info, max_iter=1, optimizer='SLSQP')
+        run_aviary(self.aircraft_definition_file, local_phase_info,
+                   verbosity=Verbosity.QUIET, max_iter=1, optimizer='SLSQP')
 
     def test_custom_phase_builder_error(self):
         local_phase_info = self.phase_info.copy()
         local_phase_info['climb']['phase_builder'] = "fake phase object"
 
         with self.assertRaises(TypeError):
-            run_aviary(self.aircraft_definition_file,
-                       local_phase_info, max_iter=1, optimizer='SLSQP')
+            run_aviary(self.aircraft_definition_file, local_phase_info,
+                       verbosity=Verbosity.QUIET, max_iter=1, optimizer='SLSQP')
 
 
 if __name__ == '__main__':

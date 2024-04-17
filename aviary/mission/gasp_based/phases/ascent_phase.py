@@ -1,7 +1,7 @@
 import numpy as np
 
 from aviary.mission.phase_builder_base import PhaseBuilderBase
-from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessTime, InitialGuessControl
+from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessIntegrationVariable, InitialGuessControl
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
 from aviary.mission.gasp_based.ode.ascent_ode import AscentODE
@@ -82,6 +82,14 @@ class AscentPhase(PhaseBuilderBase):
 
 
 # Adding metadata for the AscentPhase
+AscentPhase._add_meta_data(
+    'analytic', val=False, desc='this is an analytic phase (no states).')
+AscentPhase._add_meta_data(
+    'reserve', val=False, desc='this phase is part of the reserve mission.')
+AscentPhase._add_meta_data(
+    'target_distance', val={}, desc='the amount of distance traveled in this phase added as a constraint')
+AscentPhase._add_meta_data(
+    'target_duration', val={}, desc='the amount of time taken by this phase added as a constraint')
 AscentPhase._add_meta_data('fix_initial', val=False)
 AscentPhase._add_meta_data('angle_lower', val=-15 * np.pi / 180, units='rad')
 AscentPhase._add_meta_data('angle_upper', val=25 * np.pi / 180, units='rad')
@@ -122,7 +130,7 @@ AscentPhase._add_meta_data('order', val=None, units='unitless')
 
 # Adding initial guess metadata
 AscentPhase._add_initial_guess_meta_data(
-    InitialGuessTime(),
+    InitialGuessIntegrationVariable(),
     desc='initial guess for time options')
 
 AscentPhase._add_initial_guess_meta_data(

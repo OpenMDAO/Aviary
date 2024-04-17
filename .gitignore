@@ -148,3 +148,9 @@ _srcdocs/
 
 # Coloring files directories
 coloring_files/
+
+# OpenMDAO N2 diagrams
+n2.html
+
+# Windows downloads
+*:Zone.Identifier

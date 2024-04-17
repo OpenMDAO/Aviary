@@ -1,9 +1,8 @@
 from aviary.mission.phase_builder_base import PhaseBuilderBase
-from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessTime
+from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessIntegrationVariable
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
 from aviary.mission.gasp_based.ode.breguet_cruise_ode import BreguetCruiseODESolution
-from aviary.variable_info.variable_meta_data import _MetaData
 
 
 class CruisePhase(PhaseBuilderBase):
@@ -11,7 +10,7 @@ class CruisePhase(PhaseBuilderBase):
     A phase builder for a climb phase in a mission simulation.
 
     This class extends the PhaseBuilderBase class, providing specific implementations for
-    the climb phase of a flight mission.
+    the cruise phase of a flight mission.
 
     Attributes
     ----------
@@ -20,7 +19,7 @@ class CruisePhase(PhaseBuilderBase):
     Methods
     -------
     Inherits all methods from PhaseBuilderBase.
-    Additional method overrides and new methods specific to the climb phase are included.
+    Additional method overrides and new methods specific to the cruise phase are included.
     """
     default_name = 'cruise_phase'
     default_ode_class = BreguetCruiseODESolution
@@ -41,9 +40,9 @@ class CruisePhase(PhaseBuilderBase):
 
     def build_phase(self, aviary_options: AviaryValues = None):
         """
-        Return a new climb phase for analysis using these constraints.
+        Return a new cruise phase for analysis using these constraints.
 
-        If ode_class is None, ClimbODE is used as the default.
+        If ode_class is None, BreguetCruiseODESolution is used as the default.
 
         Parameters
         ----------
@@ -71,7 +70,9 @@ class CruisePhase(PhaseBuilderBase):
         phase.add_parameter("initial_time", opt=False, val=0.0,
                             units="s", static_target=True)
 
-        phase.add_timeseries_output("time", units="s")
+        phase.add_timeseries_output("time", units="s", output_name="time")
+        phase.add_timeseries_output(Dynamic.Mission.MASS, units="lbm")
+        phase.add_timeseries_output(Dynamic.Mission.DISTANCE, units="nmi")
 
         return phase
 
@@ -79,9 +80,21 @@ class CruisePhase(PhaseBuilderBase):
 # Adding metadata for the CruisePhase
 CruisePhase._add_meta_data('alt_cruise', val=0)
 CruisePhase._add_meta_data('mach_cruise', val=0)
+CruisePhase._add_meta_data(
+    'analytic', val=False, desc='this is an analytic phase (no states).')
+CruisePhase._add_meta_data(
+    'reserve', val=False, desc='this phase is part of the reserve mission.')
+CruisePhase._add_meta_data(
+    'target_distance', val={}, desc='the amount of distance traveled in this phase added as a constraint')
+CruisePhase._add_meta_data(
+    'target_duration', val={}, desc='the amount of time taken by this phase added as a constraint')
+CruisePhase._add_meta_data('duration_bounds', val=(
+    0., 3600.), units='s', desc='duration bounds')
+CruisePhase._add_meta_data('fix_duration', val=False)
+CruisePhase._add_meta_data('initial_bounds', val=(0., 100.), units='s')
 
 CruisePhase._add_initial_guess_meta_data(
-    InitialGuessTime(),
+    InitialGuessIntegrationVariable(),
     desc='initial guess for initial time and duration specified as a tuple')
 
 CruisePhase._add_initial_guess_meta_data(
