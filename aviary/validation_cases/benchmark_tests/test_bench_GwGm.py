@@ -128,7 +128,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         assert_near_equal(prob.get_val(Mission.Landing.TOUCHDOWN_MASS, units='lbm'),
                           136823.47, tolerance=rtol)
 
-        assert_near_equal(prob.get_val('traj.cruise_distance_final',
+        assert_near_equal(prob.get_val('traj.cruise_' + Dynamic.Mission.DISTANCE + '_final',
                                        units='nmi'), 3668.3, tolerance=rtol)
 
 
