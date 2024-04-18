@@ -7,7 +7,11 @@ import shutil
 import importlib.util
 from string import Template
 from dataclasses import dataclass
-from typing import List, Iterator, Tuple  # Use typing.List and typing.Tuple for compatibility
+from typing import (
+    List,
+    Iterator,
+    Tuple,
+)  # Use typing.List and typing.Tuple for compatibility
 
 import numpy as np
 from bokeh.palettes import Category10
@@ -327,6 +331,7 @@ def convert_case_recorder_file_to_df(recorder_file_name):
 
     return df
 
+
 def create_aircraft_3d_file(recorder_file, reports_dir, outfilepath):
     """
     Create the HTML file with the display of the aircraft design
@@ -346,12 +351,12 @@ def create_aircraft_3d_file(recorder_file, reports_dir, outfilepath):
     aircraft_3d_template_filepath = aviary_dir.joinpath(
         "visualization/assets/aircraft_3d_file_template.html"
     )
-   
+
     # texture for the aircraft. Need to copy it to the reports directory
     #  next to the HTML file
     shutil.copy(
         aviary_dir.joinpath("visualization/assets/aviary_airlines.png"),
-        f"{reports_dir}/aviary_airlines.png"
+        f"{reports_dir}/aviary_airlines.png",
     )
 
     aircraft_3d_model = Aircraft3DModel(recorder_file)
@@ -564,14 +569,18 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
         if os.path.exists(problem_recorder):
 
             try:
-                create_aircraft_3d_file(problem_recorder, reports_dir, f"{reports_dir}/aircraft_3d.html")
+                create_aircraft_3d_file(
+                    problem_recorder, reports_dir, f"{reports_dir}/aircraft_3d.html"
+                )
                 aircraft_3d_pane = create_report_frame(
                     "html", f"{reports_dir}/aircraft_3d.html"
                 )
                 if aircraft_3d_pane:
                     results_tabs_list.append(("Aircraft 3d model", aircraft_3d_pane))
             except Exception as e:
-                print(f"Warning: Unable to create aircraft 3D model display due to error {e}")
+                print(
+                    f"Warning: Unable to create aircraft 3D model display due to error {e}"
+                )
 
     ####### Subsystems Tab #######
     subsystem_tabs_list = []
