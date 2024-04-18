@@ -1041,6 +1041,9 @@ class AviaryProblem(om.Problem):
                     (phases['climb3']['ode'], Dynamic.Mission.ALTITUDE, 0,),
                     (phases['cruise']['ode'], Dynamic.Mission.MASS, 0,),
                 ],
+                traj_intermediate_state_output=[
+                    ('cruise', Dynamic.Mission.DISTANCE)
+                ]
             )
             traj = self.model.add_subsystem('traj', full_traj)
             return traj

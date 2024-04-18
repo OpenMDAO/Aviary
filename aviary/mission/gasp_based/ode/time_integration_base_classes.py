@@ -446,6 +446,8 @@ class SGMTrajBase(om.ExplicitComponent):
             traj_promote_initial_input=None,
             traj_initial_state_input=None,
             traj_event_trigger_input=None,
+            traj_intermediate_state_output=None,
+            # traj_promote_intermediate_output=None,
     ):
         """
         API requirements:
@@ -459,16 +461,22 @@ class SGMTrajBase(om.ExplicitComponent):
             declare initial state(s) as parameters to take derivative wrt
             assume all other inputs are parameters for deriv?
         """
-        if traj_final_state_output is None:
-            traj_final_state_output = []
-        if traj_promote_final_output is None:
-            traj_promote_final_output = []
         if traj_promote_initial_input is None:
             traj_promote_initial_input = {}
         if traj_initial_state_input is None:
             traj_initial_state_input = []
+        # if traj_promote_intermediate_output is None:
+        #     traj_promote_intermediate_output = []
+        if traj_intermediate_state_output is None:
+            traj_intermediate_state_output = []
+        if traj_final_state_output is None:
+            traj_final_state_output = []
+        if traj_promote_final_output is None:
+            traj_promote_final_output = []
         if traj_event_trigger_input is None:
             traj_event_trigger_input = []
+
+        self.phase_names = [ode.phase_name for ode in ODEs]
 
         if promote_all_auto_ivc:
             for ode in ODEs:
@@ -500,6 +508,20 @@ class SGMTrajBase(om.ExplicitComponent):
             }
             for final_state_output in traj_final_state_output
         }
+        self.traj_intermediate_state_output = {
+            intermediate_state_output: {
+                **dict(
+                    name=phase_name+'_'+intermediate_state_output,
+                    state_name=intermediate_state_output,
+                ),
+                **self.add_output(
+                    phase_name+'_'+intermediate_state_output+final_suffix,
+                    units=ODEs[self.phase_names.index(
+                        phase_name)].states[intermediate_state_output]['units'],
+                )
+            }
+            for phase_name, intermediate_state_output in traj_intermediate_state_output
+        }
         self.traj_promote_final_output = {
             promoted_final_output: {
                 **dict(
@@ -513,8 +535,23 @@ class SGMTrajBase(om.ExplicitComponent):
             }
             for promoted_final_output in traj_promote_final_output
         }
+        # self.traj_promote_intermediate_output = {
+        #     promoted_intermediate_output: {
+        #         **dict(
+        #             name=phase_name+'_'+promoted_intermediate_output+final_suffix,
+        #             output_name=promoted_intermediate_output,
+        #         ),
+        #         **self.add_output(
+        #             phase_name+'_'+promoted_intermediate_output,
+        #             units=ODEs[-1].outputs[promoted_intermediate_output],
+        #         ),
+        #     }
+        #     for phase_name,promoted_intermediate_output in traj_promote_intermediate_output
+        # }
         self.all_traj_outputs = {
+            **self.traj_intermediate_state_output,
             **self.traj_final_state_output,
+            # **self.traj_promote_intermediate_output,
             **self.traj_promote_final_output,
         }
         initial_suffix = "_initial"
