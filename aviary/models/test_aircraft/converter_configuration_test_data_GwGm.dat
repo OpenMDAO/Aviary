@@ -122,10 +122,10 @@ aircraft:engine:data_file=models/engines/turbofan_23k_1.deck
  WPLX=0.,	! design payload, lb (default function of PAX)
  WPYLON=0, 	! weight of one pylon, lb, if KNAC=2 and NTYPE=7
  ! CW are weight coefficients for various subsytems.  >1 is actual weight in lbsf 
- CW(1)=1014.,   	! APU
+ CW(1)=1014.,   ! APU
  CW(2)=.0736,  	! instruments
  CW(3)=.085,   	! hydraulics for flight controls
- CW(4)=.105,    	! hydraulics for gear
+ CW(4)=.105,   	! hydraulics for gear
  CW(5)=1504.,  	! avionics
  CW(6)=1.65,   	! air conditioning
  CW(7)=126.,   	! anti-icing system
@@ -135,11 +135,11 @@ aircraft:engine:data_file=models/engines/turbofan_23k_1.deck
  CW(11)=0.0,   	! emergency equipment
  CW(12)=10.,   	! catering items lbsf per passenger CW(13)=6.0,
  CW(13)=12.,    ! trapped fuel factor
- CKFF=1.000,     ! factor on installed engine fuel flow
- DCDSE=-1.0,	! delta CD due to engine out (default is zero), -1: program computes increment
- DNQDE=1.2095,	! Nacelle Diamter-to-Engine Diameter Ratio
- ENP=2.		! number of engines
- HBTP=0.472,	! turbofan engine face hub/tip ratio, if NTYE=7 and KNAC <> 2
+ CKFF=1.000,    ! factor on installed engine fuel flow
+ DCDSE=-1.0,    ! delta CD due to engine out (default is zero), -1: program computes increment
+ DNQDE=1.2095,  ! Nacelle Diamter-to-Engine Diameter Ratio
+ ENP=2.	        ! number of engines
+ HBTP=0.472,    ! turbofan engine face hub/tip ratio, if NTYE=7 and KNAC <> 2
  KODETO=5,     	! engine power setting during takeoff segment if NTYE=7
  KODECL=7,     	! engine power setting during climb segment if NTYE=7
  KODETR=6,     	! engine power setting during turn segment if NTYE=7
