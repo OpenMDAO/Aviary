@@ -42,7 +42,7 @@ class IdleDescentTestCase(unittest.TestCase):
         assert_near_equal(results['distance_flown'], 91.8911599691433, self.tol)
         assert_near_equal(results['fuel_burned'], 236.73893823639082, self.tol)
 
-    @unittest.skipUnless(CheckForOMSubmodelFix())
+    @unittest.skipUnless(CheckForOMSubmodelFix(), 'Skipping due to OpenMDAO Submodel Bug')
     def test_subproblem(self):
         prob = om.Problem()
         prob.model = om.Group()
