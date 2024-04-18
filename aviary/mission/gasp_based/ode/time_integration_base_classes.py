@@ -509,9 +509,9 @@ class SGMTrajBase(om.ExplicitComponent):
             for final_state_output in traj_final_state_output
         }
         self.traj_intermediate_state_output = {
-            intermediate_state_output: {
+            phase_name+'_'+intermediate_state_output+final_suffix: {
                 **dict(
-                    name=phase_name+'_'+intermediate_state_output,
+                    phase_name=phase_name,
                     state_name=intermediate_state_output,
                 ),
                 **self.add_output(
@@ -632,6 +632,13 @@ class SGMTrajBase(om.ExplicitComponent):
 
             t = sim_result.t[-1]
             x = sim_result.x[-1, :]
+
+            for output_name, output in self.traj_intermediate_state_output.items():
+                if output['phase_name'] == current_problem.phase_name:
+                    outputs[output_name] = sim_result.x[
+                        -1,
+                        current_problem.state_names.index(output["state_name"])
+                    ]
 
             # TODO: is there a better way to do this? Perhaps don't use for loop -- use
             # while True ?Ij
