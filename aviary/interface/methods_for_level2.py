@@ -1002,6 +1002,15 @@ class AviaryProblem(om.Problem):
                 self.ode_args,
                 cruise_mach=self.cruise_mach)
 
+            cruise_kwargs = dict(
+                input_speed_type=SpeedType.MACH,
+                input_speed_units="unitless",
+                ode_args=self.ode_args,
+                alpha_mode=AlphaModes.REQUIRED_LIFT,
+                simupy_args=dict(
+                    verbosity=Verbosity.DEBUG,
+                ),
+            )
             cruise_vals = {
                 'mach': {'val': self.cruise_mach, 'units': cruise_kwargs['input_speed_units']},
             }
@@ -1028,16 +1037,6 @@ class AviaryProblem(om.Problem):
                 estimated_descent_fuel = descent_estimation['refined_guess']['fuel_burned']
                 cruise_vals['descent_fuel'] = {
                     'val': estimated_descent_fuel, 'units': 'lbm'}
-
-            cruise_kwargs = dict(
-                input_speed_type=SpeedType.MACH,
-                input_speed_units="unitless",
-                ode_args=self.ode_args,
-                alpha_mode=AlphaModes.REQUIRED_LIFT,
-                simupy_args=dict(
-                    verbosity=Verbosity.DEBUG,
-                ),
-            )
 
             phases = {
                 **ascent_phases,

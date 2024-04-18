@@ -199,3 +199,7 @@ def create_2dof_based_descent_phases(
     }
 
     return phases
+
+
+def create_reserve_phases():
+    pass

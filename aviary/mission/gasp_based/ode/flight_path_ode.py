@@ -162,6 +162,27 @@ class FlightPathODE(BaseODE):
                                        promotes_outputs=subsystem.mission_outputs(**kwargs))
 
         if analysis_scheme is AnalysisScheme.SHOOTING:
+            # temporary until a tagged release of OM contains the necessary fix
+            from aviary.utils.test_utils.check_om_version import CheckForOMSubmodelFix
+            self.submodel_fix = CheckForOMSubmodelFix()
+            if not self.submodel_fix:
+                self.add_subsystem('mass_trigger',
+                                   om.ExecComp(
+                                       'mass_trigger = OEM + payload + reserve_fuel + descent_fuel',
+                                       mass_trigger={'val': 0, 'units': 'lbm'},
+                                       OEM={'val': 0, 'units': 'lbm'},
+                                       payload={'val': 0, 'units': 'lbm'},
+                                       reserve_fuel={'val': 0, 'units': 'lbm'},
+                                       descent_fuel={'val': 0, 'units': 'lbm'},
+                                   ),
+                                   promotes_inputs=[
+                                       ('OEM', Aircraft.Design.OPERATING_MASS),
+                                       ('payload', Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS),
+                                       ('reserve_fuel', Mission.Design.RESERVE_FUEL),
+                                       'descent_fuel',
+                                   ],
+                                   )
+
             prop_group.add_subsystem(
                 'calc_thrust',
                 om.ExecComp(
@@ -237,12 +258,16 @@ class FlightPathODE(BaseODE):
             debug_comp = ['dummy_comp']
 
         if analysis_scheme is AnalysisScheme.SHOOTING:
+            if self.submodel_fix:
+                trigger_comp = []
+            else:
+                trigger_comp = ['mass_trigger']
             self.set_order(['params', 'USatm', 'fc',
                             ] + lift_comp + [
                 'core_aerodynamics',
                 'alpha_comp',
                 'prop_group',
-                'flight_path_eom',
+                'flight_path_eom', ] + trigger_comp + [
                 'SPECIFIC_ENERGY_RATE_EXCESS',
                 'ALTITUDE_RATE_MAX',
             ] +

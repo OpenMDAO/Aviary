@@ -14,6 +14,7 @@ from aviary.variable_info.enums import Verbosity
 from aviary.utils.process_input_decks import create_vehicle
 from aviary.utils.preprocessors import preprocess_propulsion
 import importlib
+from aviary.utils.test_utils.check_om_version import CheckForOMSubmodelFix
 
 
 @unittest.skipUnless(importlib.util.find_spec("pyoptsparse") is not None, "pyoptsparse is not installed")
@@ -41,6 +42,7 @@ class IdleDescentTestCase(unittest.TestCase):
         assert_near_equal(results['distance_flown'], 91.8911599691433, self.tol)
         assert_near_equal(results['fuel_burned'], 236.73893823639082, self.tol)
 
+    @unittest.skipUnless(CheckForOMSubmodelFix())
     def test_subproblem(self):
         prob = om.Problem()
         prob.model = om.Group()
