@@ -236,9 +236,7 @@ def _load_gasp_aero_table(filepath: Path):
     return data, comments
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Converts FLOPS- or GASP-formatted '
-                                     'aero data files into Aviary csv format.\n')
+def _setup_ATC_parser(parser):
     parser.add_argument('input_file', type=str,
                         help='path to engine deck file to be converted')
     parser.add_argument('output_file', type=str,
@@ -246,6 +244,14 @@ if __name__ == '__main__':
     parser.add_argument('data_format', type=str, choices=[origin.value for origin in CodeOrigin],
                         help='data format used by input_file')
 
-    args = parser.parse_args()
 
+def _exec_ATC(args, user_args):
     AeroDataConverter(**vars(args))
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Converts FLOPS- or GASP-formatted '
+                                     'aero data files into Aviary csv format.\n')
+    _setup_ATC_parser(parser)
+    args = parser.parse_args()
+    _exec_ATC(args, None)
