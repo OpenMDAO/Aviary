@@ -238,7 +238,7 @@ def _load_gasp_aero_table(filepath: Path):
 
 def _setup_ATC_parser(parser):
     parser.add_argument('input_file', type=str,
-                        help='path to engine deck file to be converted')
+                        help='path to aero data file to be converted')
     parser.add_argument('output_file', type=str,
                         help='path to file where new converted data will be written')
     parser.add_argument('data_format', type=str, choices=[origin.value for origin in CodeOrigin],
