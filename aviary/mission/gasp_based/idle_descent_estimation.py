@@ -196,9 +196,9 @@ def add_descent_estimation_as_submodel(
         ],
         promotes_outputs=[('actual_fuel_burn', 'descent_fuel')])
 
-    verbosity = ode_args['aviary_options'].get_item(
+    verbosity, _ = ode_args['aviary_options'].get_item(
         'verbosity', default=(Verbosity.QUIET))
-    if verbosity[0].value >= 1:
+    if verbosity.value >= 1:
         from aviary.utils.functions import create_printcomp
         dummy_comp = create_printcomp(
             all_inputs=[

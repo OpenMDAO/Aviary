@@ -1548,8 +1548,8 @@ class AviaryProblem(om.Problem):
                     self.model,
                     trajs=["traj"],
                     phases=[
-                        self.regular_phases,
-                        self.reserve_phases
+                        [*self.regular_phases,
+                         *self.reserve_phases]
                     ],
                 )
 
