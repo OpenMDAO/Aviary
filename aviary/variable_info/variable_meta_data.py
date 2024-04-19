@@ -1218,7 +1218,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.MAX_PROPELLER_TIP_SPEED,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.TSPDMX',
+    historical_name={"GASP": 'INPROP.TSPDMX',
                      "FLOPS": None,
                      "LEAPS1": None
                      },
@@ -1891,7 +1891,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Engine.NUM_PROPELLER_BLADES,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.BL',
+    historical_name={"GASP": 'INPROP.BL',
                      "FLOPS": None,
                      "LEAPS1": None
                      },
@@ -1956,7 +1956,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.AF',
+    historical_name={"GASP": 'INPROP.AF',
                      "FLOPS": None,
                      "LEAPS1": None
                      },
@@ -1968,7 +1968,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Engine.PROPELLER_DIAMETER,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.DPROP',
+    historical_name={"GASP": 'INPROP.DPROP',
                      "FLOPS": None,
                      "LEAPS1": None
                      },
@@ -1980,7 +1980,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CLI',
+    historical_name={"GASP": 'INPROP.CLI',
                      "FLOPS": None,
                      "LEAPS1": None
                      },
