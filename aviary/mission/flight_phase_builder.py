@@ -185,11 +185,17 @@ class FlightPhaseBase(PhaseBuilderBase):
                     opt=True, lower=0.0, upper=1.0,
                 )
 
-            elif allocation == ThrottleAllocation.STATIC_PARAMETER:
+            else:
+                if allocation == ThrottleAllocation.STATIC_PARAMETER:
+                    opt = True
+                else:
+                    opt = False
+
                 phase.add_parameter(
                     "throttle_allocations",
                     units="unitless",
-                    opt=True, lower=0.0, upper=1.0,
+                    shape=(num_eng - 1, ),
+                    opt=opt, lower=0.0, upper=1.0,
                 )
 
         ground_roll = user_options.get_val('ground_roll')

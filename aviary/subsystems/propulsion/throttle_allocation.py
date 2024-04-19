@@ -75,6 +75,18 @@ class ThrottleAllocator(om.ExplicitComponent):
 
         self.declare_partials(of='*', wrt='*', method='cs')
 
+        cols = np.repeat(np.arange(nn), num_engines)
+        rows = np.arange(nn * num_engines)
+        self.declare_partials(of=[Dynamic.Mission.THROTTLE], wrt=["aggregate_throttle"],
+                              rows=rows, cols=cols)
+
+        self.declare_partials(of=[Dynamic.Mission.THROTTLE], wrt=["throttle_allocations"])
+        if alloc_mode == ThrottleAllocation.DYNAMIC_PARAMETER:
+            pass
+        else:
+            self.declare_partials(of=["throttle_allocation_sum"], wrt=["throttle_allocations"],
+                                  val=1.0)
+
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
         options: AviaryValues = self.options['aviary_options']
         nn = self.options['num_nodes']
@@ -84,11 +96,11 @@ class ThrottleAllocator(om.ExplicitComponent):
         allocation = inputs["throttle_allocations"]
 
         if alloc_mode == ThrottleAllocation.DYNAMIC_PARAMETER:
-            outputs[Dynamic.Mission.THROTTLE][:, :-1] = np.einsum("i,jk->ik", agg_throttle, allocation)
+            outputs[Dynamic.Mission.THROTTLE][:, :-1] = np.einsum("i,ij->ij", agg_throttle, allocation)
+            sum_alloc = np.sum(allocation, axis=1)
         else:
             outputs[Dynamic.Mission.THROTTLE][:, :-1] = np.einsum("i,j->ij", agg_throttle, allocation)
-
-        sum_alloc = np.sum(allocation)
+            sum_alloc = np.sum(allocation)
 
         outputs[Dynamic.Mission.THROTTLE][:, -1] = agg_throttle * (1.0 - sum_alloc)
 
@@ -97,10 +109,31 @@ class ThrottleAllocator(om.ExplicitComponent):
     def Zcompute_partials(self, inputs, partials, discrete_inputs=None):
         options: AviaryValues = self.options['aviary_options']
         nn = self.options['num_nodes']
+        alloc_mode = self.options['throttle_allocation']
+        engine_models = options.get_val('engine_models')
+        num_engines = len(engine_models)
 
         agg_throttle = inputs["aggregate_throttle"]
         allocation = inputs["throttle_allocations"]
 
-        partials[Dynamic.Mission.THROTTLE, "aggregate_throttle"] = allocation
+        if alloc_mode == ThrottleAllocation.DYNAMIC_PARAMETER:
+            pass
+        else:
+            sum_alloc = np.sum(allocation)
+            allocs = np.hstack((allocation, 1.0 - sum_alloc))
+            partials[Dynamic.Mission.THROTTLE, "aggregate_throttle"] = np.tile(allocs, nn)
 
-        partials[Dynamic.Mission.THROTTLE, "throttle_allocations"] = agg_throttle
+            ne = num_engines - 1
+            mask1 = np.eye(ne)
+            mask2 = - np.ones(ne)
+            mask = np.vstack((mask1, mask2)).ravel()
+
+            deriv = np.outer(agg_throttle, mask).reshape((nn * (ne + 1), ne))
+            partials[Dynamic.Mission.THROTTLE, "throttle_allocations"] = deriv
+
+
+        #sum_alloc = np.sum(allocation)
+
+        #outputs[Dynamic.Mission.THROTTLE][:, -1] = agg_throttle * (1.0 - sum_alloc)
+
+        #outputs["throttle_allocation_sum"] = sum_alloc
