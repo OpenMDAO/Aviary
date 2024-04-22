@@ -17,7 +17,7 @@ import openmdao.api as om
 from openmdao.utils.general_utils import env_truthy
 
 # support getting this function from OpenMDAO post movement of the function to utils
-#    but also support it's old location
+#    but also support its old location
 try:
     from openmdao.utils.array_utils import convert_ndarray_to_support_nans_in_json
 except ImportError:
@@ -28,10 +28,13 @@ except ImportError:
 import aviary.api as av
 
 pn.extension(sizing_mode="stretch_width")
+pn.extension('tabulator')
 
-# Constants - # Can't get using CSS to work with frames and the raw_css for the template so going with
-#    this for now
+
+# Constants
 aviary_variables_json_file_name = "aviary_vars.json"
+
+# functions for the aviary command line command
 
 
 def _dashboard_setup_parser(parser):
@@ -98,6 +101,39 @@ def _dashboard_cmd(options, user_args):
         options.driver_recorder,
         options.port,
     )
+
+
+# functions for creating Panel Panes given different kinds of
+#    data inputs
+def create_csv_frame(csv_filepath):
+    """
+    Create a Panel Pane that contains a tabular display of the data in a CSV file.
+
+    Parameters
+    ----------
+    csv_filepath : str
+        Path to the input CSV file.
+
+    Returns
+    -------
+    pane : Panel.Pane or None
+        A Panel Pane object showing the tabular display of the CSV file contents. 
+        Or None if the CSV file does not exist.
+    """
+    if os.path.exists(csv_filepath):
+        df = pd.read_csv(csv_filepath)
+        df_pane = pn.widgets.Tabulator(
+            df,
+            show_index=False,
+            sortable=False,
+            layout="fit_data_stretch",
+            max_height=600,
+            sizing_mode='scale_both',
+        )
+    else:
+        df_pane = None
+
+    return df_pane
 
 
 def create_report_frame(format, text_filepath):
@@ -168,7 +204,6 @@ def create_aviary_variables_table_data_nested(script_name, recorder_file):
     if "final" not in cr.list_cases():
         return None
 
-    print(f"cr.get_case with {cr=}")
     case = cr.get_case("final")
     outputs = case.list_outputs(
         explicit=True,
@@ -321,6 +356,8 @@ def convert_case_recorder_file_to_df(recorder_file_name):
 
     return df
 
+# The main script that generates all the tabs in the dashboard
+
 
 def dashboard(script_name, problem_recorder, driver_recorder, port):
     """
@@ -334,6 +371,8 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
         Name of the recorder file containing the Problem cases.
     driver_recorder : str
         Name of the recorder file containing the Driver cases.
+    port : int
+        HTTP port used for the dashboard webapp.
     """
     reports_dir = f"reports/{script_name}/"
 
@@ -518,6 +557,14 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
             )
 
             results_tabs_list.append(("Aviary Variables", aviary_vars_pane))
+
+    # Timeseries Mission Output Report
+    mission_timeseries_pane = create_csv_frame(
+        f"{reports_dir}/mission_timeseries_data.csv")
+    if mission_timeseries_pane:
+        results_tabs_list.append(
+            ("Timeseries Mission Output Report", mission_timeseries_pane)
+        )
 
     ####### Subsystems Tab #######
     subsystem_tabs_list = []

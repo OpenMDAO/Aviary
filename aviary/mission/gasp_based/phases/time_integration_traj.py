@@ -24,6 +24,7 @@ class FlexibleTraj(TimeIntegrationTrajBase):
         super().initialize()
         self.options.declare('Phases', default=None)
         self.options.declare('promote_all_auto_ivc', default=False)
+        self.options.declare('traj_intermediate_state_output', default=None)
         self.options.declare('traj_final_state_output', default=None)
         self.options.declare('traj_promote_final_output', default=None)
         self.options.declare('traj_promote_initial_input', default=None)
@@ -47,6 +48,7 @@ class FlexibleTraj(TimeIntegrationTrajBase):
             traj_promote_initial_input=self.options['traj_promote_initial_input'],
             traj_initial_state_input=self.options['traj_initial_state_input'],
             traj_event_trigger_input=self.options['traj_event_trigger_input'],
+            traj_intermediate_state_output=self.options['traj_intermediate_state_output'],
         )
         self.declare_partials(["*"], ["*"],)
 
