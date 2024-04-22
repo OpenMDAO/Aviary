@@ -45,10 +45,11 @@ from aviary.utils.aviary_values import AviaryValues
 
 from aviary.variable_info.functions import setup_trajectory_params, override_aviary_vars
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
-from aviary.variable_info.enums import AnalysisScheme, ProblemType, SpeedType, AlphaModes, EquationsOfMotion, LegacyCode, Verbosity
+from aviary.variable_info.enums import AnalysisScheme, ProblemType, SpeedType, AlphaModes, EquationsOfMotion, LegacyCode, Verbosity, GASPEngineType
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 
 from aviary.subsystems.propulsion.engine_deck import EngineDeck
+from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
 from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
 from aviary.subsystems.mass.mass_builder import CoreMassBuilder
@@ -381,8 +382,12 @@ class AviaryProblem(om.Problem):
         self.ode_args = dict(aviary_options=aviary_inputs,
                              core_subsystems=default_mission_subsystems)
 
+        self.engine_type = aviary_inputs.get_val(Aircraft.Engine.TYPE)
         if engine_builder is None:
-            engine = EngineDeck(options=aviary_inputs)
+            if self.engine_type is GASPEngineType.TURBOPROP:
+                engine = TurbopropModel(options=aviary_inputs)
+            else:
+                engine = EngineDeck(options=aviary_inputs)
         else:
             engine = engine_builder
 

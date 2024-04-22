@@ -17,6 +17,7 @@ Functions:
 
 import warnings
 from operator import eq, ge, gt, le, lt, ne
+from enum import Enum
 
 import numpy as np
 from openmdao.utils.units import valid_units
@@ -209,6 +210,8 @@ def update_dependent_options(aircraft_values: AviaryValues(), dependent_options)
     for var_name, dependency in dependent_options:
         if var_name in get_keys(aircraft_values):
             var_value, var_units = aircraft_values.get_item(var_name)
+            if isinstance(var_value, Enum):
+                var_value = var_value.value
             # dependency is a dictionary that contains the target option, the relationship to the variable and the output values
             if dependency['relation'] in operation_dict:
                 comp = operation_dict[dependency['relation']]
@@ -313,8 +316,13 @@ def initial_guessing(aircraft_values: AviaryValues(), initial_guesses):
         initial_guesses['flight_duration'] = initial_guesses['flight_duration'] * \
             (60 * 60)
 
-    total_thrust = aircraft_values.get_val(
-        Aircraft.Engine.SCALED_SLS_THRUST, 'lbf') * aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)
+    if aircraft_values.get_val(Aircraft.Engine.HAS_PROPELLERS):
+        # For large turboprops, 1 pound of thrust per hp at takeoff seems to be close enough
+        total_thrust = aircraft_values.get_val(
+            Aircraft.Engine.SLS_SHAFT_POWER_MAX, 'hp') * aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)
+    else:
+        total_thrust = aircraft_values.get_val(
+            Aircraft.Engine.SCALED_SLS_THRUST, 'lbf') * aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)
     gamma_guess = np.arcsin(.5*total_thrust / mission_mass)
     avg_speed_guess = (.5 * 667 * cruise_mach)  # kts
 
@@ -371,7 +379,7 @@ dependent_options = [
     [Aircraft.Design.PART25_STRUCTURAL_CATEGORY, {
         'val': 0, 'relation': '<', 'target': Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER, 'result': True, 'alternate': False}],
     [Aircraft.Engine.TYPE, {
-        'val': [1, 2, 3, 4, 11, 12, 13, 14], 'relation': 'in', 'target': Aircraft.Engine.HAS_PROPELLERS, 'result': True, 'alternate': False}],
+        'val': [1, 2, 3, 4, 6, 11, 12, 13, 14], 'relation': 'in', 'target': Aircraft.Engine.HAS_PROPELLERS, 'result': True, 'alternate': False}],
     ['JENGSZ', {
         'val': 4, 'relation': '!=', 'target': Aircraft.Engine.SCALE_PERFORMANCE, 'result': True, 'alternate': False}],
     [Aircraft.HorizontalTail.VOLUME_COEFFICIENT, {

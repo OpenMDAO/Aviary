@@ -2100,6 +2100,18 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Engine.SLS_SHAFT_POWER_MAX,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INPROP.HPMSLS',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='hp',
+    desc='maximum shaft power of a turboprop',
+    default_value=0.0,
+)
+
+add_meta_data(
     Aircraft.Engine.STARTER_MASS,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -3601,8 +3613,8 @@ add_meta_data(
     default_value=True,
     types=bool,
     units="unitless",
-    desc='Type of landing gear. In GASP, 0 is retractable and 1 is deployed (fixed). Here, '
-          'false is retractable and true is deployed (fixed).',
+    desc='Type of landing gear. In GASP, 0 is retractable and 1 is fixed. Here, '
+          'false is retractable and true is fixed.',
 )
 
 add_meta_data(
