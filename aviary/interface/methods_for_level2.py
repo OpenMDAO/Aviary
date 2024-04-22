@@ -1041,8 +1041,33 @@ class AviaryProblem(om.Problem):
                     (phases['climb3']['ode'], Dynamic.Mission.ALTITUDE, 0,),
                     (phases['cruise']['ode'], Dynamic.Mission.MASS, 0,),
                 ],
+                traj_intermediate_state_output=[
+                    ('cruise', Dynamic.Mission.DISTANCE),
+                    ('cruise', Dynamic.Mission.MASS),
+                ]
             )
             traj = self.model.add_subsystem('traj', full_traj)
+
+            self.model.add_subsystem(
+                'actual_descent_fuel',
+                om.ExecComp('actual_descent_fuel = traj_cruise_mass_final - traj_mass_final',
+                            actual_descent_fuel={'units': 'lbm'},
+                            traj_cruise_mass_final={'units': 'lbm'},
+                            traj_mass_final={'units': 'lbm'},
+                            ))
+
+            self.model.connect(
+                'traj.mass_final',
+                'actual_descent_fuel.traj_mass_final',
+                src_indices=[-1],
+                flat_src_indices=True,
+            )
+            self.model.connect(
+                'traj.cruise_mass_final',
+                'actual_descent_fuel.traj_cruise_mass_final',
+                src_indices=[-1],
+                flat_src_indices=True,
+            )
             return traj
 
         def add_subsystem_timeseries_outputs(phase, phase_name):
@@ -1218,6 +1243,9 @@ class AviaryProblem(om.Problem):
                         target_range={
                             'val': target_range, 'units': 'nmi'},
                     ),
+                    promotes_inputs=[
+                        "target_range",
+                    ],
                     promotes_outputs=[
                         ("range_resid", Mission.Constraints.RANGE_RESIDUAL)],
                 )
