@@ -86,8 +86,6 @@ def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
         path to file where new converted data will be written
     data_format : (EngineDeckType)
         data format used by input_file (FLOPS or GASP)
-    readable : (bool)
-        output_file will be organized with consistent column widths for easier reading
     '''
     # TODO rounding for calculated values?
 

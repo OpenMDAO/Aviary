@@ -7,7 +7,7 @@ from openmdao.core.problem import _clear_problem_names
 
 from aviary.interface.default_phase_info.two_dof import phase_info
 from aviary.interface.methods_for_level1 import run_aviary
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 from aviary.variable_info.enums import AnalysisScheme, Verbosity
 
 
@@ -127,6 +127,9 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         assert_near_equal(prob.get_val(Mission.Landing.TOUCHDOWN_MASS, units='lbm'),
                           136823.47, tolerance=rtol)
+
+        assert_near_equal(prob.get_val('traj.cruise_' + Dynamic.Mission.DISTANCE + '_final',
+                                       units='nmi'), 3668.3, tolerance=rtol)
 
 
 if __name__ == '__main__':
