@@ -112,6 +112,11 @@ def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
     with open(out_file, 'w', newline='') as f:
         writer = csv.writer(f)
 
+        # Write header comments
+        for comment in comments:
+            writer.writerow([comment])
+        writer.writerow([])
+
         # Values that have been successfully translated to Aviary variables
         writer.writerow(['# Input Values'])
         for var, (val, units) in sorted(vehicle_data['input_values']):
