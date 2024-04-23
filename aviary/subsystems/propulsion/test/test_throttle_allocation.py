@@ -50,7 +50,7 @@ class ThrottleAllocationTest(unittest.TestCase):
         prob.set_val("aggregate_throttle", val=np.array([0.3, 0.41, 0.52, 0.64]))
         prob.run_model()
 
-        partials = prob.check_partials(method="cs")
+        partials = prob.check_partials(method="cs", out_stream=None)
         assert_check_partials(partials, atol=1e-10, rtol=1e-10)
 
 if __name__ == "__main__":
