@@ -28,8 +28,8 @@ from openmdao.utils.units import valid_units
 from aviary.utils.functions import convert_strings_to_data
 from aviary.utils.named_values import NamedValues, get_items
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.variable_info.variables import Aircraft, Mission
-from aviary.variable_info.enums import LegacyCode, Verbosity
+from aviary.variable_info.variables import Aircraft, Mission, Settings
+from aviary.variable_info.enums import LegacyCode, Verbosity, ProblemType
 from aviary.utils.functions import get_path
 from aviary.utils.legacy_code_data.deprecated_vars import flops_deprecated_vars, gasp_deprecated_vars
 
@@ -374,7 +374,7 @@ def update_gasp_options(vehicle_data):
     # if multiple values of target_range are specified, use the one that corresponds to the problem_type
     design_range, distance_units = input_values.get_item(Mission.Design.RANGE)
     try:
-        problem_type = input_values.get_val('problem_type')[0]
+        problem_type = input_values.get_val(Settings.PROBLEM_TYPE)[0]
     except KeyError:
         problem_type = 'sizing'
 
@@ -382,7 +382,7 @@ def update_gasp_options(vehicle_data):
         # if the design range target_range value is 0, set the problem_type to fallout
         if design_range[0] == 0:
             problem_type = 'fallout'
-            input_values.set_val('problem_type', [problem_type])
+            input_values.set_val(Settings.PROBLEM_TYPE, [problem_type])
             design_range = 0
         if problem_type == 'sizing':
             design_range = design_range[0]
@@ -392,7 +392,7 @@ def update_gasp_options(vehicle_data):
             design_range = 0
     else:
         if design_range == 0:
-            input_values.set_val('problem_type', ['fallout'])
+            input_values.set_val(Settings.PROBLEM_TYPE, ['fallout'])
     input_values.set_val(Mission.Design.RANGE, [design_range], distance_units)
 
     ## STRUT AND FOLD ##
