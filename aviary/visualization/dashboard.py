@@ -560,10 +560,11 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
                 )
             else:
                 optimization_plot_pane = pn.pane.Markdown(
-                            f"# Recorder file '{driver_recorder}' does not have Driver case recordings"
-                        )
+                    f"# Recorder file '{driver_recorder}' does not have Driver case recordings"
+                )
         else:
-            optimization_plot_pane = pn.pane.Markdown(f"# Recorder file '{driver_recorder}' not found")
+            optimization_plot_pane = pn.pane.Markdown(
+                f"# Recorder file '{driver_recorder}' not found")
 
         optimization_plot_pane = pn.Column(
             pn.pane.HTML(f"<p>Plot of design variables, constraints, and objectives</p>",
@@ -573,7 +574,6 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
         optimization_tabs_list.append(
             ("Desvars, cons, opt", optimization_plot_pane)
         )
-
 
     ####### Results Tab #######
     results_tabs_list = []
@@ -650,10 +650,10 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
 
     # Look through subsystems directory for markdown files
     "The subsystems report tab shows selected results for every major subsystem in the Aviary problem."
- 
+
     for md_file in Path(f"{reports_dir}subsystems").glob("*.md"):
         subsystems_pane = create_report_frame("markdown", str(
-            md_file), 
+            md_file),
             f'''
         The subsystems report tab shows selected results for every major subsystem in the Aviary problem.
         This report is for the {md_file.stem} subsystem. Reports available currently are mass, geometry, and propulsion
