@@ -49,7 +49,7 @@ class NacelleMassTest(unittest.TestCase):
     def test_IO(self):
         assert_match_varnames(self.prob.model)
 
-    def test_case_2(self):
+    def test_case_multiengine(self):
         prob = om.Problem()
 
         options = AviaryValues()
@@ -84,7 +84,7 @@ class NacelleMassTest(unittest.TestCase):
 
         partial_data = prob.check_partials(
             out_stream=None, compact_print=True, show_only_incorrect=True, form='central', method="fd")
-        assert_check_partials(partial_data, atol=1e-4, rtol=1e-4)
+        assert_check_partials(partial_data, atol=1e-5, rtol=1e-5)
 
 
 if __name__ == "__main__":

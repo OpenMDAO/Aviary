@@ -69,7 +69,6 @@ class PrepGeomTest(unittest.TestCase):
                                      Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION,
                                      Aircraft.Engine.NUM_ENGINES,
                                      Aircraft.Propulsion.TOTAL_NUM_ENGINES,
-                                     'engine_models'
                                  ])
 
         prob = self.prob

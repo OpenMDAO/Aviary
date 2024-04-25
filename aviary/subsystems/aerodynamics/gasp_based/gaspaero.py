@@ -376,7 +376,6 @@ class AeroGeom(om.ExplicitComponent):
 
     def initialize(self):
         self.options.declare("num_nodes", default=1, types=int)
-        self.options.declare("num_engine_models", default=1, types=int)
         self.options.declare(
             "include_strut",
             default=False,
@@ -386,7 +385,7 @@ class AeroGeom(om.ExplicitComponent):
 
     def setup(self):
         nn = self.options["num_nodes"]
-        count = self.options['num_engine_models']
+        engine_count = len(self.options.get_val(Aircraft.Engine.NUM_ENGINES))
 
         self.add_input(
             Dynamic.Mission.MACH, val=0.0, units="unitless", shape=nn, desc="Current Mach number")
@@ -414,7 +413,8 @@ class AeroGeom(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Fuselage.FORM_FACTOR, val=1.25)
 
-        add_aviary_input(self, Aircraft.Nacelle.FORM_FACTOR, val=np.full(count, 1.5))
+        add_aviary_input(self, Aircraft.Nacelle.FORM_FACTOR,
+                         val=np.full(engine_count, 1.5))
 
         add_aviary_input(self, Aircraft.VerticalTail.FORM_FACTOR, val=1.25)
 
@@ -464,13 +464,13 @@ class AeroGeom(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, val=0.0)
 
-        add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH, val=np.zeros(count))
+        add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH, val=np.zeros(engine_count))
 
         add_aviary_input(self, Aircraft.HorizontalTail.AREA, val=0.0)
 
         add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA, val=0.0)
 
-        add_aviary_input(self, Aircraft.Nacelle.SURFACE_AREA, val=np.zeros(count))
+        add_aviary_input(self, Aircraft.Nacelle.SURFACE_AREA, val=np.zeros(engine_count))
 
         add_aviary_input(self, Aircraft.Wing.AREA, val=1370.3)
 

@@ -11,7 +11,7 @@ from aviary.validation_cases.validation_tests import (flops_validation_test,
                                                       get_flops_case_names,
                                                       get_flops_inputs,
                                                       print_case)
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variables import Aircraft, Settings
 from aviary.utils.functions import get_path
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.preprocessors import preprocess_propulsion
@@ -49,7 +49,7 @@ class MiscEngineMassTest(unittest.TestCase):
     def test_IO(self):
         assert_match_varnames(self.prob.model)
 
-    def test_case_2(self):
+    def test_case_multiengine(self):
         prob = om.Problem()
 
         options = AviaryValues()
@@ -57,6 +57,7 @@ class MiscEngineMassTest(unittest.TestCase):
         options.set_val(Aircraft.Engine.NUM_ENGINES, 4)
         options.set_val(Aircraft.Engine.DATA_FILE, get_path(
             'models/engines/turbofan_28k.deck'))
+        options.set_val(Settings.VERBOSITY, 0)
         engineModel1 = EngineDeck(options=options)
         options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
         engineModel2 = EngineDeck(options=options)
@@ -68,20 +69,22 @@ class MiscEngineMassTest(unittest.TestCase):
             aviary_options=options), promotes=['*'])
         prob.setup(force_alloc_complex=True)
         prob.set_val(Aircraft.Engine.ADDITIONAL_MASS,
-                     np.array([5201.2484, 5400.0, 5232.942]), units='lbm')
-        prob.set_val(Aircraft.Propulsion.MISC_MASS_SCALER, 1.0, units='unitless')
+                     np.array([100, 26, 30]), units='lbm')
+        prob.set_val(Aircraft.Propulsion.MISC_MASS_SCALER, 1.02, units='unitless')
         prob.set_val(Aircraft.Propulsion.TOTAL_STARTER_MASS, 50.0, units='lbm')
         prob.set_val(Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS, 10.0, units='lbm')
 
         prob.run_model()
 
         total_misc_mass = prob.get_val(Aircraft.Propulsion.TOTAL_MISC_MASS, 'lbm')
-        total_misc_mass_expected = np.array([42130.8776])
+        # manual computation of expected misc mass
+        total_misc_mass_expected = (50 + (100*4 + 26*2 + 30*2) + 10)*1.02
         assert_near_equal(total_misc_mass, total_misc_mass_expected, tolerance=1e-10)
 
         partial_data = prob.check_partials(
             out_stream=None, compact_print=True, show_only_incorrect=True, form='central', method="fd")
-        assert_check_partials(partial_data, atol=1e-4, rtol=1e-4)
+        assert_check_partials(partial_data, atol=1e-7, rtol=1e-7)
+
 
 if __name__ == "__main__":
     unittest.main()

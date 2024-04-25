@@ -18,8 +18,15 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         aviary_options: AviaryValues = self.options['aviary_options']
         input_station_dist = aviary_options.get_val(Aircraft.Wing.INPUT_STATION_DIST)
         num_input_stations = len(input_station_dist)
-        num_wing_engines = aviary_options.get_val(Aircraft.Engine.NUM_WING_ENGINES)
-        count = len(aviary_options.get_val('engine_models'))
+        total_num_wing_engines = aviary_options.get_val(
+            Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES)
+        engine_count = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
+
+        # wing locations are different for each engine type - ragged array!
+        # this "tricks" numpy into allowing a ragged array, with limitations (each index
+        # in the numpy array contains a list, instead of being a true 2d matrix)
+        # wing_location_default = np.empty(engine_count, object)
+        # wing_location_default[:] = [np.array([0]*int(num)) for num in num_wing_engines/2]
 
         add_aviary_input(self, Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
                          val=np.zeros(num_input_stations - 1))
@@ -32,7 +39,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
 
         add_aviary_input(self, Mission.Design.GROSS_MASS, val=0.0)
 
-        add_aviary_input(self, Aircraft.Engine.POD_MASS, val=0.0)
+        add_aviary_input(self, Aircraft.Engine.POD_MASS, val=np.zeros(engine_count))
 
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, val=0.0)
 
@@ -43,7 +50,8 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, val=0.0)
 
         add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS,
-                         val=np.zeros((count, int(num_wing_engines[0]/2))))
+                         val=np.zeros(int(sum(total_num_wing_engines)/2)))
+        #  val=np.zeros((engine_count, int(num_wing_engines[0]/2))))
 
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, val=0.0)
 
@@ -64,6 +72,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         num_integration_stations = \
             aviary_options.get_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS)
         num_wing_engines = aviary_options.get_val(Aircraft.Engine.NUM_WING_ENGINES)
+        engine_count = len(num_wing_engines)
 
         # TODO: Support all options for this parameter.
         # 0.0 : input distribution
@@ -80,7 +89,8 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         chord = inputs[Aircraft.Wing.CHORD_PER_SEMISPAN_DIST]
         engine_locations = inputs[Aircraft.Engine.WING_LOCATIONS]
         gross_mass = inputs[Mission.Design.GROSS_MASS]
-        # TODO currently using pod mass of engines even if not mounted on wing
+        # NOTE pod mass assumed the same for wing/non-wing mounted engines, only using
+        #      wing mounted pods here
         pod_mass = inputs[Aircraft.Engine.POD_MASS]
         fstrt = inputs[Aircraft.Wing.STRUT_BRACING_FACTOR]
         faert = inputs[Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR]
@@ -91,16 +101,15 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         tcref = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_REF]
 
         # NOTE look at leaps1 code for examples on multi-engine support
-        #    - will require list of pod masses for each engine
         # Currently implementation only partially addresses issues - odd numbers of wing
         # mounted engines pretend the "odd" engine out is not on the wing and is ignored
         # There are also no checks that number of engine locations is consistent with
         # half of number of wing mounted engines, which should get added to preprocessor
 
-        # flatten engine variables into single lists, sorty by wing location
-        engine_locations = engine_locations.flatten()
-        # there should be a pod mass for every engine location
-        pod_mass = np.repeat(pod_mass.flatten(), (1+num_wing_engines) % 2)
+        # array of every pod mass on one wing (excludes centerline engines), sorted by
+        # position along wing
+        pod_mass = np.array([i for row in [[pod_mass[j]] * int(num_wing_engines[j]/2)
+                            for j in range(engine_count)] for i in row])
         engine_data = np.vstack((pod_mass, engine_locations))
         engine_data = engine_data.transpose()[np.lexsort(engine_data)]
         pod_mass = engine_data[:, 0]
@@ -202,4 +211,4 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         bte = 8 * np.sum((ea[:-1] + ea[1:]) * dy[:-1] * 0.5)
 
         outputs[Aircraft.Wing.ENG_POD_INERTIA_FACTOR] = 1.0 - \
-            bte / bt * pod_mass / gross_mass
+            bte / bt * sum(pod_mass) / gross_mass

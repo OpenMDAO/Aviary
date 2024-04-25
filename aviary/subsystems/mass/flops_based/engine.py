@@ -21,12 +21,15 @@ class EngineMass(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        count = len(self.options['aviary_options'].get_val('engine_models'))
+        engine_count = len(self.options['aviary_options'].get_val(
+            Aircraft.Engine.NUM_ENGINES))
 
-        add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST, val=np.zeros(count))
+        add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST,
+                         val=np.zeros(engine_count))
 
-        add_aviary_output(self, Aircraft.Engine.MASS, val=np.zeros(count))
-        add_aviary_output(self, Aircraft.Engine.ADDITIONAL_MASS, val=np.zeros(count))
+        add_aviary_output(self, Aircraft.Engine.MASS, val=np.zeros(engine_count))
+        add_aviary_output(self, Aircraft.Engine.ADDITIONAL_MASS,
+                          val=np.zeros(engine_count))
         add_aviary_output(self, Aircraft.Propulsion.TOTAL_ENGINE_MASS, val=0.0)
 
     def compute(self, inputs, outputs):
@@ -70,8 +73,9 @@ class EngineMass(om.ExplicitComponent):
         outputs[Aircraft.Engine.ADDITIONAL_MASS] = addtl_mass
 
     def setup_partials(self):
-        count = len(self.options['aviary_options'].get_val('engine_models'))
-        shape = np.arange(count)
+        engine_count = len(self.options['aviary_options'].get_val(
+            Aircraft.Engine.NUM_ENGINES))
+        shape = np.arange(engine_count)
 
         self.declare_partials(Aircraft.Engine.MASS,
                               Aircraft.Engine.SCALED_SLS_THRUST,
@@ -86,8 +90,7 @@ class EngineMass(om.ExplicitComponent):
 
     def compute_partials(self, inputs, J):
         aviary_options: AviaryValues = self.options['aviary_options']
-        engine_models = aviary_options.get_val('engine_models')
-        count = len(engine_models)
+        engine_count = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
 
         num_engines = np.array(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
         scaling_parameter = np.array(aviary_options.get_val(Aircraft.Engine.MASS_SCALER))
@@ -104,7 +107,7 @@ class EngineMass(om.ExplicitComponent):
         thrust_ratio = scaled_sls_thrust / ref_sls_thrust
 
         # if the engine mass is not scaled, derivatives default to zero
-        thrust_deriv = np.zeros(count, dtype=scaled_sls_thrust.dtype)
+        thrust_deriv = np.zeros(engine_count, dtype=scaled_sls_thrust.dtype)
 
         # engine mass derivatives
         # indices where scaling is applied

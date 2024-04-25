@@ -215,11 +215,12 @@ class EngineDeck(EngineModel):
             additional_options = (Aircraft.Engine.DATA_FILE,)
 
         for key in additional_options + required_options:
-            if key not in options and self.get_val(Settings.VERBOSITY).value >= 1:
-                warnings.warn(
-                    f'<{key}> is a required option for EngineDecks, but has not been '
-                    f'specified for EngineDeck <{self.name}>. The default value will be '
-                    'used.')
+            if key not in options:
+                if self.get_val(Settings.VERBOSITY).value >= 1:
+                    warnings.warn(
+                        f'<{key}> is a required option for EngineDecks, but has not been '
+                        f'specified for EngineDeck <{self.name}>. The default value will be '
+                        'used.')
 
                 val = _MetaData[key]['default_value']
                 units = _MetaData[key]['units']
@@ -239,11 +240,12 @@ class EngineDeck(EngineModel):
             idle_max = self.get_val(Aircraft.Engine.FLIGHT_IDLE_MAX_FRACTION)
             # Allowing idle fractions to be equal, i.e. fixing flight idle conditions
             # instead of extrapolation
-            if idle_min > idle_max and self.get_val(Settings.VERBOSITY).value >= 1:
-                warnings.warn(
-                    f'EngineDeck <{self.name}>: Minimum flight idle fraction exceeds maximum '
-                    f'flight idle fraction. Values for min and max fraction will be flipped.'
-                )
+            if idle_min > idle_max:
+                if self.get_val(Settings.VERBOSITY).value >= 1:
+                    warnings.warn(
+                        f'EngineDeck <{self.name}>: Minimum flight idle fraction exceeds maximum '
+                        f'flight idle fraction. Values for min and max fraction will be flipped.'
+                    )
                 self.set_val(Aircraft.Engine.FLIGHT_IDLE_MIN_FRACTION,
                              val=idle_max)
                 self.set_val(Aircraft.Engine.FLIGHT_IDLE_MAX_FRACTION,

@@ -53,7 +53,7 @@ class EngineMassTest(unittest.TestCase):
             rtol=1e-10)
 
     def test_case_2(self):
-        # arbitrary case to trigger both types of scaling equations
+        # arbitrary case to trigger both types of scaling equations, multiengine
         prob = om.Problem()
 
         options = AviaryValues()

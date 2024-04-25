@@ -1583,6 +1583,17 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Engine.AVG_WING_LOCATION,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.YP',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='unitless',
+    desc='Engine wing mount location, averaged, as fraction of semispan'
+)
+
+add_meta_data(
     Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -2138,7 +2149,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Engine.WING_LOCATIONS,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.YP',
+    historical_name={"GASP": None,
                      "FLOPS": 'WTIN.ETAE',  # ['&DEFINE.WTIN.ETAE', 'WDEF.ETAE'],
                      "LEAPS1": 'aircraft.inputs.L0_propulsion.wing_engine_locations'
                      },

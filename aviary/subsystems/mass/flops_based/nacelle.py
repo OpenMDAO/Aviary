@@ -26,22 +26,34 @@ class NacelleMass(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        count = len(self.options['aviary_options'].get_val('engine_models'))
+        engine_count = len(self.options['aviary_options'].get_val(
+            Aircraft.Engine.NUM_ENGINES))
 
-        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, val=np.zeros(count))
+        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, val=np.zeros(engine_count))
 
-        add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH, val=np.zeros(count))
+        add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH, val=np.zeros(engine_count))
 
-        add_aviary_input(self, Aircraft.Nacelle.MASS_SCALER, val=np.ones(count))
+        add_aviary_input(self, Aircraft.Nacelle.MASS_SCALER, val=np.ones(engine_count))
 
-        add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST, val=np.zeros(count))
+        add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST,
+                         val=np.zeros(engine_count))
 
-        add_aviary_output(self, Aircraft.Nacelle.MASS, val=np.zeros(count))
+        add_aviary_output(self, Aircraft.Nacelle.MASS, val=np.zeros(engine_count))
 
     def setup_partials(self):
-        count = len(self.options['aviary_options'].get_val('engine_models'))
-        shape = np.arange(count)
-        self.declare_partials("*", "*", rows=shape, cols=shape)
+        # derivatives w.r.t vectorized engine inputs have known sparsity pattern
+        engine_count = len(self.options['aviary_options'].get_val(
+            Aircraft.Engine.NUM_ENGINES))
+        shape = np.arange(engine_count)
+
+        self.declare_partials(Aircraft.Nacelle.MASS, Aircraft.Nacelle.AVG_DIAMETER,
+                              rows=shape, cols=shape, val=1.0)
+        self.declare_partials(Aircraft.Nacelle.MASS, Aircraft.Nacelle.AVG_LENGTH,
+                              rows=shape, cols=shape, val=1.0)
+        self.declare_partials(Aircraft.Nacelle.MASS, Aircraft.Nacelle.MASS_SCALER,
+                              rows=shape, cols=shape, val=1.0)
+        self.declare_partials(Aircraft.Nacelle.MASS, Aircraft.Engine.SCALED_SLS_THRUST,
+                              rows=shape, cols=shape, val=1.0)
 
     def compute(self, inputs, outputs):
         aviary_options: AviaryValues = self.options['aviary_options']
