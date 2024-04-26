@@ -120,13 +120,8 @@ class EngineDeck(EngineModel):
         Object label.
     options : AviaryValues (<empty>)
         Inputs and options related to engine model.
-<<<<<<< HEAD
-    data : NamedVaues (<empty>)
-        Engine performance data (optional). If provided, used instead of tabular data
-=======
     data : NamedVaues (<empty>), optional
         Engine performance data (optional). If provided, used instead of tabular data
->>>>>>> 8b7bb099e256aee5b59bced9c2ec21f2bd2137c3
         file.
     required_variables : set, optional
         A set of required variables (from EngineModelVariables) for this EngineDeck.

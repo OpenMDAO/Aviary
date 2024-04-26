@@ -427,4 +427,4 @@ engine1 = EngineDeck(name='engine_1',
 engine2 = EngineDeck(name='engine_2',
                      options=engine_2_inputs
                      )
-preprocess_propulsion(inputs, [engine1, engine2])
+preprocess_propulsion(inputs, [engine1])
