@@ -257,10 +257,10 @@ aircraft:wing:wetted_area_scaler,1.0,unitless
 aircraft:wing:wetted_area,2396.56,ft**2
 mission:constraints:max_mach,0.785,unitless
 mission:design:thrust_takeoff_per_eng,28928.1,lbf
-mission:landing:lift_coefficient,2.0,unitless
+mission:landing:lift_coefficient_max,2.0,unitless
 mission:summary:cruise_mach,0.785,unitless
 mission:takeoff:fuel_simple,577,lbm
-mission:takeoff:lift_coefficient,3.0,unitless
+mission:takeoff:lift_coefficient_max,3.0,unitless
 mission:takeoff:lift_over_drag,17.354,unitless
 mission:takeoff:rolling_friction_coefficient,0.0175,unitless
 aircraft:fuel:burn_per_passenger_mile,0.1

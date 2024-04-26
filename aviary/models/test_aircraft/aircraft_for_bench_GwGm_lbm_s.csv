@@ -75,7 +75,7 @@ aircraft:landing_gear:fixed_gear,False,unitless
 aircraft:landing_gear:main_gear_location,0.15,unitless
 aircraft:landing_gear:main_gear_mass_coefficient,0.85,unitless
 aircraft:landing_gear:mass_coefficient,0.04,unitless
-aircraft:landing_gear:tail_hook_mass_scaunitlessler,1,unitless
+aircraft:landing_gear:tail_hook_mass_scaler,1,unitless
 aircraft:landing_gear:total_mass_scaler,1,
 aircraft:nacelle:clearance_ratio,0.2,unitless
 aircraft:nacelle:core_diameter_ratio,1.25,unitless
