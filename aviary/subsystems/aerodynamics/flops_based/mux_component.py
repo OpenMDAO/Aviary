@@ -184,23 +184,32 @@ class MuxComponent(om.ExplicitComponent):
 
         # Nacelle
         if self.num_nacelles > 0:
+            # derivatives w.r.t vectorized engine inputs have known sparsity pattern
+            num_engines = self.options['aviary_options'].get_val(
+                Aircraft.Engine.NUM_ENGINES)
             rows = ic + np.arange(self.num_nacelles)
-            cols = np.zeros(self.num_nacelles)
+            cols = [item for sublist in [[i]*j for i,
+                                         j in enumerate(num_engines)] for item in sublist]
             self.declare_partials(
                 'wetted_areas', Aircraft.Nacelle.WETTED_AREA,
-                rows=rows, cols=cols, val=1.0)
+                rows=rows, cols=cols, val=1.0
+            )
             self.declare_partials(
                 'fineness_ratios', Aircraft.Nacelle.FINENESS,
-                rows=rows, cols=cols, val=1.0)
+                rows=rows, cols=cols, val=1.0
+            )
             self.declare_partials(
                 'characteristic_lengths', Aircraft.Nacelle.CHARACTERISTIC_LENGTH,
-                rows=rows, cols=cols, val=1.0)
+                rows=rows, cols=cols, val=1.0
+            )
             self.declare_partials(
                 'laminar_fractions_upper', Aircraft.Nacelle.LAMINAR_FLOW_UPPER,
-                rows=rows, cols=cols, val=1.0)
+                rows=rows, cols=cols, val=1.0
+            )
             self.declare_partials(
                 'laminar_fractions_lower', Aircraft.Nacelle.LAMINAR_FLOW_LOWER,
-                rows=rows, cols=cols, val=1.0)
+                rows=rows, cols=cols, val=1.0
+            )
 
     def compute(self, inputs, outputs):
         # Wing
