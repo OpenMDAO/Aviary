@@ -18,7 +18,7 @@ aircraft:design:drag_increment,0.00175,unitless
 aircraft:design:emergency_equipment_mass,50,lbm
 aircraft:design:max_structural_speed,402.5,mi/h
 aircraft:design:part25_structural_category,3,unitless
-aircraft:design:reserves,4998,unitless
+aircraft:design:reserve_fuel_additional,4998,lbm
 aircraft:design:static_margin,0.03,unitless
 aircraft:design:structural_mass_increment,0,lbm
 aircraft:design:supercritical_drag_shift,0.033,unitless
@@ -140,7 +140,7 @@ mission:design:cruise_altitude,37500,ft
 mission:design:gross_mass,175400,lbm
 mission:design:mach,0.8,unitless
 mission:design:range,3675,NM
-mission:landing:airport_altitude_landing,0,ft
+mission:landing:airport_altitude,0,ft
 mission:landing:braking_delay,1,s
 mission:landing:glide_to_stall_ratio,1.3,unitless
 mission:landing:maximum_flare_load_factor,1.15,unitless
@@ -151,7 +151,7 @@ mission:summary:fuel_flow_scaler,1,unitless
 mission:takeoff:decision_speed_increment,10,kn
 mission:takeoff:rotation_speed_increment,5,kn
 mission:taxi:duration,0.1677,h
-settings:equations_of_motion,solved
+settings:equations_of_motion,solved_2DOF
 settings:mass_method,GASP
 
 # Initial Guesses
