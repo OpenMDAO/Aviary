@@ -50,7 +50,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, val=0.0)
 
         add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS,
-                         val=np.zeros(int(sum(total_num_wing_engines)/2)))
+                         val=np.zeros(int(total_num_wing_engines/2)))
         #  val=np.zeros((engine_count, int(num_wing_engines[0]/2))))
 
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, val=0.0)

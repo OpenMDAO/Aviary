@@ -186,7 +186,6 @@ class Aircraft:
     class Engine:
         ADDITIONAL_MASS = 'aircraft:engine:additional_mass'
         ADDITIONAL_MASS_FRACTION = 'aircraft:engine:additional_mass_fraction'
-        AVG_WING_LOCATION = 'aircraft:engine:avg_wing_location'
         CONSTANT_FUEL_CONSUMPTION = 'aircraft:engine:constant_fuel_consumption'
         CONTROLS_MASS = 'aircraft:engine:controls_mass'
         DATA_FILE = 'aircraft:engine:data_file'

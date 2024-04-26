@@ -17,11 +17,10 @@ class CableSize(om.ExplicitComponent):
 
     def setup(self):
         aviary_options = self.options['aviary_options']
-        num_wing_engines = aviary_options.get_val(Aircraft.Engine.NUM_WING_ENGINES)
-        engine_count = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
+        total_num_engines = aviary_options.get_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES)
 
         add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS,
-                         val=np.full((engine_count, int(num_wing_engines[0]/2)), 0.35))
+                         val=np.full(int(total_num_engines/2), 0.35))
 
         add_aviary_input(self, Aircraft.Wing.SPAN, val=128)
 
@@ -43,8 +42,7 @@ class CableSize(om.ExplicitComponent):
             val=2.)
 
     def compute(self, inputs, outputs):
-
-        eng_span_frac = inputs[Aircraft.Engine.WING_LOCATIONS]
+        eng_span_frac = np.sum(inputs[Aircraft.Engine.WING_LOCATIONS])
         wingspan = inputs[Aircraft.Wing.SPAN]
         cabin_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
 
@@ -53,7 +51,6 @@ class CableSize(om.ExplicitComponent):
         )
 
     def compute_partials(self, inputs, J):
-
         eng_span_frac = inputs[Aircraft.Engine.WING_LOCATIONS]
         wingspan = inputs[Aircraft.Wing.SPAN]
 
@@ -61,4 +58,5 @@ class CableSize(om.ExplicitComponent):
             Aircraft.Electrical.HYBRID_CABLE_LENGTH,
             Aircraft.Engine.WING_LOCATIONS,
         ] = wingspan
-        J[Aircraft.Electrical.HYBRID_CABLE_LENGTH, Aircraft.Wing.SPAN] = eng_span_frac
+        J[Aircraft.Electrical.HYBRID_CABLE_LENGTH,
+            Aircraft.Wing.SPAN] = np.sum(eng_span_frac)

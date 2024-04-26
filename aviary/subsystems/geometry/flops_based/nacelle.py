@@ -28,6 +28,11 @@ class Nacelles(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Nacelle.WETTED_AREA, val=np.zeros(engine_count))
 
     def setup_partials(self):
+        # derivatives w.r.t vectorized engine inputs have known sparsity pattern
+        engine_count = len(self.options['aviary_options'].get_val(
+            Aircraft.Engine.NUM_ENGINES))
+        shape = np.arange(engine_count)
+
         self.declare_partials(
             Aircraft.Nacelle.TOTAL_WETTED_AREA,
             [
@@ -41,7 +46,8 @@ class Nacelles(om.ExplicitComponent):
             [
                 Aircraft.Nacelle.AVG_DIAMETER, Aircraft.Nacelle.AVG_LENGTH,
                 Aircraft.Nacelle.WETTED_AREA_SCALER,
-            ]
+            ],
+            rows=shape, cols=shape, val=1.0
         )
 
     def compute(

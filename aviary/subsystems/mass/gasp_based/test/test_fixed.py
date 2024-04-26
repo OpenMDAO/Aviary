@@ -445,7 +445,7 @@ class EngineTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3
             Aircraft.Propulsion.MISC_MASS_SCALER, val=1, units="unitless"
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
-            Aircraft.Engine.AVG_WING_LOCATION, val=0.35, units="unitless"
+            Aircraft.Engine.WING_LOCATIONS, val=0.35, units="unitless"
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
             Aircraft.LandingGear.MAIN_GEAR_MASS, val=6384.35, units="lbm"
@@ -525,7 +525,7 @@ class EngineTestCase2(unittest.TestCase):
             "aug_mass", val=0, units="lbm"
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
-            Aircraft.Engine.AVG_WING_LOCATION, val=0.35, units="unitless"
+            Aircraft.Engine.WING_LOCATIONS, val=0.35, units="unitless"
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
             Aircraft.LandingGear.MAIN_GEAR_MASS, val=6384.35, units="lbm"
@@ -573,6 +573,7 @@ class EngineTestCaseMultiEngine(unittest.TestCase):
                         val=False, units='unitless')
 
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2, 4]))
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 6)
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -598,7 +599,7 @@ class EngineTestCaseMultiEngine(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Propulsion.MISC_MASS_SCALER, val=1, units="unitless")
         self.prob.model.set_input_defaults(
-            Aircraft.Engine.AVG_WING_LOCATION, val=[0.35, 0.5], units="unitless")
+            Aircraft.Engine.WING_LOCATIONS, val=[0.35, 0.0, 0.1], units="unitless")
         self.prob.model.set_input_defaults(
             Aircraft.LandingGear.MAIN_GEAR_MASS, val=6384.35, units="lbm")
         self.prob.model.set_input_defaults(
@@ -622,7 +623,7 @@ class EngineTestCaseMultiEngine(unittest.TestCase):
             self.prob["eng_comb_mass"], 26142.7716, tol
         )  # bug fixed value and original value
         assert_near_equal(
-            self.prob["wing_mounted_mass"], 111991.21208459, tol
+            self.prob["wing_mounted_mass"], 41417.49593562, tol
         )  # bug fixed value and original value
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
@@ -1136,7 +1137,7 @@ class FixedMassGroupTestCase1(unittest.TestCase):
             Aircraft.Engine.MASS_SCALER, val=1, units="unitless"
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
-            Aircraft.Engine.AVG_WING_LOCATION, val=0.35, units="unitless"
+            Aircraft.Engine.WING_LOCATIONS, val=0.35, units="unitless"
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
             Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15, units="unitless"
@@ -1439,7 +1440,7 @@ class FixedMassGroupTestCase2(unittest.TestCase):
         #     Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, val=1, units="unitless"
         # )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
-            Aircraft.Engine.AVG_WING_LOCATION, val=0.35, units="unitless"
+            Aircraft.Engine.WING_LOCATIONS, val=0.35, units="unitless"
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
             Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15, units="unitless"
@@ -1604,7 +1605,7 @@ class FixedMassGroupTestCase3(unittest.TestCase):
             Aircraft.Engine.ADDITIONAL_MASS_FRACTION: (0.14, 'unitless'),
             Aircraft.Engine.MASS_SCALER: (1.05, 'unitless'),
             Aircraft.Propulsion.MISC_MASS_SCALER: (1.06, 'unitless'),
-            Aircraft.Engine.AVG_WING_LOCATION: (0.35, 'unitless'),
+            Aircraft.Engine.WING_LOCATIONS: (0.35, 'unitless'),
             'prop_mass': (0.5, 'lbm'),
             Aircraft.VerticalTail.TAPER_RATIO: (0.26, 'unitless'),
             Aircraft.VerticalTail.ASPECT_RATIO: (5.0, 'unitless'),
@@ -1681,5 +1682,6 @@ class FixedMassGroupTestCase3(unittest.TestCase):
 
 if __name__ == "__main__":
     # unittest.main()
-    test = GearTestCaseMultiengine()
-    test.test_case1()
+    # test = GearTestCaseMultiengine()
+    test = EngineTestCaseMultiEngine()
+    test.test_case_1()

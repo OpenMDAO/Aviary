@@ -34,15 +34,24 @@ class EngineSize(om.ExplicitComponent):
                           val=np.zeros(engine_count))
 
     def setup_partials(self):
+        # derivatives w.r.t vectorized engine inputs have known sparsity pattern
+        engine_count = len(self.options['aviary_options'].get_val(
+            Aircraft.Engine.NUM_ENGINES))
+        shape = np.arange(engine_count)
+
         innames = [
             Aircraft.Engine.REFERENCE_DIAMETER,
             Aircraft.Engine.SCALE_FACTOR,
             Aircraft.Nacelle.CORE_DIAMETER_RATIO,
             Aircraft.Nacelle.FINENESS,
         ]
-        self.declare_partials(Aircraft.Nacelle.AVG_DIAMETER, innames[:-1])
-        self.declare_partials(Aircraft.Nacelle.AVG_LENGTH, innames)
-        self.declare_partials(Aircraft.Nacelle.SURFACE_AREA, innames)
+
+        self.declare_partials(Aircraft.Nacelle.AVG_DIAMETER,
+                              innames[:-1], rows=shape, cols=shape, val=1.0)
+        self.declare_partials(Aircraft.Nacelle.AVG_LENGTH, innames,
+                              rows=shape, cols=shape, val=1.0)
+        self.declare_partials(Aircraft.Nacelle.SURFACE_AREA,
+                              innames, rows=shape, cols=shape, val=1.0)
 
     def compute(self, inputs, outputs):
         d_ref = inputs[Aircraft.Engine.REFERENCE_DIAMETER]
