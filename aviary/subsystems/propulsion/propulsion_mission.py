@@ -3,7 +3,6 @@ import sys
 import numpy as np
 import openmdao.api as om
 
-from aviary.subsystems.propulsion.throttle_allocation import ThrottleAllocator
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 

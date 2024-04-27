@@ -100,7 +100,6 @@ class ThrottleAllocator(om.ExplicitComponent):
                                   val=1.0)
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
-        options: AviaryValues = self.options['aviary_options']
         nn = self.options['num_nodes']
         alloc_mode = self.options['throttle_allocation']
 

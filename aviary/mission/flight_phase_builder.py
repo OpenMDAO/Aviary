@@ -1,3 +1,5 @@
+import numpy as np
+
 import dymos as dm
 
 from aviary.mission.phase_builder_base import PhaseBuilderBase, register
@@ -177,10 +179,15 @@ class FlightPhaseBase(PhaseBuilderBase):
         if phase_type is EquationsOfMotion.HEIGHT_ENERGY and num_eng > 1:
             allocation = user_options.get_val('throttle_allocation')
 
+            # Allocation should default to an even split so that we don't start
+            # with an allocation that might not produce enough thrust.
+            val = np.ones(num_eng - 1) * 1.0 / num_eng
+
             if allocation == ThrottleAllocation.DYNAMIC_PARAMETER:
                 phase.add_control(
                     "throttle_allocations",
                     shape=(num_eng - 1, ),
+                    val=val,
                     targets="throttle_allocations", units="unitless",
                     opt=True, lower=0.0, upper=1.0,
                 )
@@ -194,6 +201,7 @@ class FlightPhaseBase(PhaseBuilderBase):
                 phase.add_parameter(
                     "throttle_allocations",
                     units="unitless",
+                    val=val,
                     shape=(num_eng - 1, ),
                     opt=opt, lower=0.0, upper=1.0,
                 )

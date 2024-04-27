@@ -212,56 +212,57 @@ engine_2_inputs.set_val(Aircraft.Engine.INTERPOLATION_METHOD, 'slinear')
 # Vertical Tail
 # ---------------------------
 inputs.set_val(Aircraft.VerticalTail.NUM_TAILS, 1)
-inputs.set_val(Aircraft.VerticalTail.AREA, 284., 'ft**2')
-inputs.set_val(Aircraft.VerticalTail.ASPECT_RATIO, 1.75)
-inputs.set_val(Aircraft.VerticalTail.TAPER_RATIO, 0.33)
-inputs.set_val(Aircraft.VerticalTail.THICKNESS_TO_CHORD, 0.1195)
+inputs.set_val(Aircraft.VerticalTail.AREA, 284.499779284585, 'ft**2')
+inputs.set_val(Aircraft.VerticalTail.ASPECT_RATIO, 2.2262)
+inputs.set_val(Aircraft.VerticalTail.TAPER_RATIO, 0.21082082638898)
+inputs.set_val(Aircraft.VerticalTail.THICKNESS_TO_CHORD, 0.137459440381375)
 inputs.set_val(Aircraft.VerticalTail.MASS_SCALER, 1.0)
-inputs.set_val(Aircraft.VerticalTail.WETTED_AREA, 581.13, 'ft**2')  # Override
+inputs.set_val(Aircraft.VerticalTail.WETTED_AREA, 589.35, 'ft**2')  # Override
 inputs.set_val(Aircraft.VerticalTail.WETTED_AREA_SCALER, 1.0)
 
 # Wing
 # ---------------------------
 inputs.set_val(Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, 0.0)
-inputs.set_val(Aircraft.Wing.AIRFOIL_TECHNOLOGY, 1.92669766647637)
-inputs.set_val(Aircraft.Wing.AREA, 1370.0, 'ft**2')
-inputs.set_val(Aircraft.Wing.ASPECT_RATIO, 11.22091)
+inputs.set_val(Aircraft.Wing.AIRFOIL_TECHNOLOGY, 1.87)
+inputs.set_val(Aircraft.Wing.AREA, 1341.0, 'ft**2')
+inputs.set_val(Aircraft.Wing.ASPECT_RATIO, 9.42519)
 inputs.set_val(Aircraft.Wing.BENDING_MASS_SCALER, 1.0)
-inputs.set_val(Aircraft.Wing.CHORD_PER_SEMISPAN_DIST, np.array([0.31, 0.23, 0.084]))
-inputs.set_val(Aircraft.Wing.COMPOSITE_FRACTION, 0.2)
-inputs.set_val(Aircraft.Wing.CONTROL_SURFACE_AREA, 137, 'ft**2')
-inputs.set_val(Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO, 0.1)
-inputs.set_val(Aircraft.Wing.GLOVE_AND_BAT, 134.0, 'ft**2')
-inputs.set_val(Aircraft.Wing.INPUT_STATION_DIST, np.array([0.0, 0.2759, 0.9367]))
+inputs.set_val(
+    Aircraft.Wing.CHORD_PER_SEMISPAN_DIST, np.array([0.4441, 0.2313, 0.0729]))
+inputs.set_val(Aircraft.Wing.COMPOSITE_FRACTION, 0.0)
+inputs.set_val(Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO, 0.333)
+inputs.set_val(Aircraft.Wing.GLOVE_AND_BAT, 0.0, 'ft**2')
+inputs.set_val(Aircraft.Wing.INPUT_STATION_DIST, np.array([0.0, 0.3238, 1.0]))
 inputs.set_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, 2.0)
 inputs.set_val(Aircraft.Wing.LOAD_FRACTION, 1.0)
 inputs.set_val(Aircraft.Wing.LOAD_PATH_SWEEP_DIST, np.array([0.0, 22.0]), 'deg')
-inputs.set_val(Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN, 0.0)
+inputs.set_val(Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN, 0.015)
 inputs.set_val(Aircraft.Wing.MISC_MASS_SCALER, 1.0)
-inputs.set_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS, 50)
+inputs.set_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS, 100)
 inputs.set_val(Aircraft.Wing.SHEAR_CONTROL_MASS_SCALER, 1.0)
-inputs.set_val(Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO, 0.1)
-inputs.set_val(Aircraft.Wing.SPAN, 117.83, 'ft')
+inputs.set_val(Aircraft.Wing.SPAN, 112.57, 'ft')
+inputs.set_val(Aircraft.Wing.SPAN_EFFICIENCY_FACTOR, 1.35)
 inputs.set_val(Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION, False)
 inputs.set_val(Aircraft.Wing.STRUT_BRACING_FACTOR, 0.0)
 inputs.set_val(Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER, 1.0)
-inputs.set_val(Aircraft.Wing.SWEEP, 25.0, 'deg')
-inputs.set_val(Aircraft.Wing.TAPER_RATIO, 0.27800)
-inputs.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, 0.1300)
+inputs.set_val(Aircraft.Wing.SWEEP, 25.03, 'deg')
+inputs.set_val(Aircraft.Wing.TAPER_RATIO, 0.237343146184852)
+inputs.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, 0.131732727515702)
 inputs.set_val(
     Aircraft.Wing.THICKNESS_TO_CHORD_DIST, np.array([0.145, 0.115, 0.104]))
 inputs.set_val(Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 3.75)
-inputs.set_val(Aircraft.Wing.VAR_SWEEP_MASS_PENALTY, 0.0)
-inputs.set_val(Aircraft.Wing.MASS_SCALER, 1.23)
-inputs.set_val(Aircraft.Wing.WETTED_AREA, 2396.56, 'ft**2')  # Override
+inputs.set_val(Aircraft.Wing.VAR_SWEEP_MASS_PENALTY, 0)
+inputs.set_val(Aircraft.Wing.MASS, 15548, 'lbm')
+inputs.set_val(Aircraft.Wing.WETTED_AREA, 2423.02, 'ft**2')  # Override 2423.02
 inputs.set_val(Aircraft.Wing.WETTED_AREA_SCALER, 1.0)
+
 
 # Mission
 # ---------------------------
-inputs.set_val(Mission.Summary.CRUISE_MACH, 0.785)
+inputs.set_val(Mission.Summary.CRUISE_MACH, 0.785)  # was 0.82
+inputs.set_val(Mission.Design.RANGE, 2960., 'NM')
 inputs.set_val(Mission.Summary.FUEL_FLOW_SCALER, 1.0)
-inputs.set_val(Mission.Design.RANGE, 3500, 'NM')
-inputs.set_val(Mission.Constraints.MAX_MACH, 0.785)
+inputs.set_val(Mission.Constraints.MAX_MACH, 0.82)
 # TODO investigate the origin of these values (taken from benchmark tests)
 # TODO: where should this get connected from?
 inputs.set_val(Mission.Takeoff.FUEL_SIMPLE, 577, 'lbm')
@@ -269,14 +270,14 @@ inputs.set_val(Mission.Takeoff.FUEL_SIMPLE, 577, 'lbm')
 # region TODO: should this come from aero?
 inputs.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, 3)
 inputs.set_val(Mission.Takeoff.LIFT_COEFFICIENT_MAX, 2)
-inputs.set_val(Mission.Takeoff.LIFT_OVER_DRAG, 17.354)
+inputs.set_val(Mission.Takeoff.LIFT_OVER_DRAG, 17.35)
 # endregion TODO: should this come from aero?
 
 # TODO: should this be a user input or should it be hard coded somewhere assuming it will
-# # never change?
+# never change?
 inputs.set_val(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, .0175)
 # lbf TODO: where should this get connected from?
-inputs.set_val(Mission.Design.THRUST_TAKEOFF_PER_ENG, 28928.0, 'lbf')
+inputs.set_val(Mission.Design.THRUST_TAKEOFF_PER_ENG, 24555.5, 'lbf')
 
 # Settings
 # ---------------------------
@@ -427,4 +428,4 @@ engine1 = EngineDeck(name='engine_1',
 engine2 = EngineDeck(name='engine_2',
                      options=engine_2_inputs
                      )
-preprocess_propulsion(inputs, [engine1])
+preprocess_propulsion(inputs, [engine1, engine2])
