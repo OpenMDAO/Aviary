@@ -759,4 +759,5 @@ class Mission:
 class Settings:
     EQUATIONS_OF_MOTION = 'settings:equations_of_motion'
     MASS_METHOD = 'settings:mass_method'
+    PROBLEM_TYPE = 'settings:problem_type'
     VERBOSITY = 'settings:verbosity'
