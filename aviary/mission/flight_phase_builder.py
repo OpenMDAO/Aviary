@@ -181,9 +181,9 @@ class FlightPhaseBase(PhaseBuilderBase):
 
             # Allocation should default to an even split so that we don't start
             # with an allocation that might not produce enough thrust.
-            val = np.ones(num_eng - 1) * 1.0 / num_eng
+            val = np.ones(num_eng - 1) * (1.0 / num_eng)
 
-            if allocation == ThrottleAllocation.DYNAMIC_PARAMETER:
+            if allocation == ThrottleAllocation.DYNAMIC:
                 phase.add_control(
                     "throttle_allocations",
                     shape=(num_eng - 1, ),
@@ -193,7 +193,7 @@ class FlightPhaseBase(PhaseBuilderBase):
                 )
 
             else:
-                if allocation == ThrottleAllocation.STATIC_PARAMETER:
+                if allocation == ThrottleAllocation.STATIC:
                     opt = True
                 else:
                     opt = False

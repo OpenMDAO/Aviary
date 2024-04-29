@@ -173,12 +173,12 @@ class ThrottleAllocation(Enum):
     Specifies how to handle the throttles for multiple engines.
 
     FIXED is a user-specified value.
-    STATIC_PARAMETER is specified by the optimizer as one value for the whole phase.
-    DYNAMIC_PARAMETER is specified by the optimizer at each point in the phase.
+    STATIC is specified by the optimizer as one value for the whole phase.
+    DYNAMIC is specified by the optimizer at each point in the phase.
     """
     FIXED = 1
-    STATIC_PARAMETER = 2
-    DYNAMIC_PARAMETER = 3
+    STATIC = 2
+    DYNAMIC = 3
 
 
 class Verbosity(Enum):

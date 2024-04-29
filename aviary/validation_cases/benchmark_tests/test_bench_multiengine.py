@@ -1,38 +1,159 @@
 from copy import deepcopy
+import unittest
+
+from openmdao.core.problem import _clear_problem_names
+from openmdao.utils.assert_utils import assert_near_equal
+from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.interface.default_phase_info.height_energy import phase_info
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.models.multi_engine_single_aisle.multi_engine_single_aisle_data import inputs
+from aviary.variable_info.enums import ThrottleAllocation
+
 
 # Build problem
 local_phase_info = deepcopy(phase_info)
-prob = AviaryProblem()
 
-prob.load_inputs(inputs, local_phase_info)
+local_phase_info['climb']['user_options']['optimize_mach'] = False
+local_phase_info['climb']['user_options']['optimize_altitude'] = False
+local_phase_info['climb']['user_options']['no_descent'] = True
+local_phase_info['climb']['user_options']['use_polynomial_control'] = True
 
-# Have checks for clashing user inputs
-# Raise warnings or errors depending on how clashing the issues are
-prob.check_and_preprocess_inputs()
+local_phase_info['cruise']['user_options']['optimize_mach'] = False
+local_phase_info['cruise']['user_options']['optimize_altitude'] = False
+local_phase_info['cruise']['user_options']['altitude_bounds'] = ((32000.0, 34000.0), "ft")
+local_phase_info['cruise']['user_options']['throttle_enforcement'] = 'path_constraint'
+local_phase_info['cruise']['user_options']['use_polynomial_control'] = True
 
-prob.add_pre_mission_systems()
+local_phase_info['descent']['user_options']['optimize_mach'] = False
+local_phase_info['descent']['user_options']['optimize_altitude'] = False
+local_phase_info['descent']['user_options']['no_climb'] = True
+local_phase_info['descent']['user_options']['use_polynomial_control'] = True
 
-prob.add_phases()
 
-prob.add_post_mission_systems()
+@use_tempdirs
+class MultiengineTestcase(unittest.TestCase):
 
-# Link phases and variables
-prob.link_phases()
+    def setUp(self):
+        _clear_problem_names()  # need to reset these to simulate separate runs
 
-prob.add_driver("SNOPT", max_iter=50, use_coloring=True)
+    @require_pyoptsparse(optimizer="SNOPT")
+    def test_multiengine_fixed(self):
 
-prob.add_design_variables()
+        test_phase_info = deepcopy(local_phase_info)
+        method = ThrottleAllocation.FIXED
 
-# Load optimization problem formulation
-# Detail which variables the optimizer can control
-prob.add_objective()
+        test_phase_info['climb']['user_options']['throttle_allocation'] = method
+        test_phase_info['cruise']['user_options']['throttle_allocation'] = method
+        test_phase_info['descent']['user_options']['throttle_allocation'] = method
 
-prob.setup()
+        prob = AviaryProblem()
 
-prob.set_initial_guesses()
+        prob.load_inputs(inputs, test_phase_info)
 
-prob.run_aviary_problem("dymos_solution.db")
+        prob.check_and_preprocess_inputs()
+        prob.add_pre_mission_systems()
+        prob.add_phases()
+        prob.add_post_mission_systems()
+        prob.link_phases()
+
+        prob.add_driver("SNOPT", max_iter=50, use_coloring=True)
+
+        prob.add_design_variables()
+        prob.add_objective()
+
+        prob.setup()
+        prob.set_initial_guesses()
+
+        prob.run_aviary_problem("dymos_solution.db", suppress_solver_print=True)
+
+        alloc_climb = prob.get_val('traj.climb.parameter_vals:throttle_allocations')
+        alloc_cruise = prob.get_val('traj.cruise.parameter_vals:throttle_allocations')
+        alloc_descent = prob.get_val('traj.descent.parameter_vals:throttle_allocations')
+
+        assert_near_equal(alloc_climb[0], 0.5, tolerance=1e-3)
+        assert_near_equal(alloc_cruise[0], 0.5, tolerance=1e-3)
+        assert_near_equal(alloc_descent[0], 0.5, tolerance=1e-3)
+
+    @require_pyoptsparse(optimizer="SNOPT")
+    def test_multiengine_static(self):
+
+        test_phase_info = deepcopy(local_phase_info)
+        method = ThrottleAllocation.STATIC
+
+        test_phase_info['climb']['user_options']['throttle_allocation'] = method
+        test_phase_info['cruise']['user_options']['throttle_allocation'] = method
+        test_phase_info['descent']['user_options']['throttle_allocation'] = method
+
+        prob = AviaryProblem()
+
+        prob.load_inputs(inputs, test_phase_info)
+
+        prob.check_and_preprocess_inputs()
+        prob.add_pre_mission_systems()
+        prob.add_phases()
+        prob.add_post_mission_systems()
+        prob.link_phases()
+
+        prob.add_driver("SNOPT", max_iter=50, use_coloring=True)
+
+        prob.add_design_variables()
+        prob.add_objective()
+
+        prob.setup()
+        prob.set_initial_guesses()
+
+        prob.run_aviary_problem("dymos_solution.db", suppress_solver_print=True)
+
+        alloc_climb = prob.get_val('traj.climb.parameter_vals:throttle_allocations')
+        alloc_cruise = prob.get_val('traj.cruise.parameter_vals:throttle_allocations')
+        alloc_descent = prob.get_val('traj.descent.parameter_vals:throttle_allocations')
+
+        assert_near_equal(alloc_climb[0], 0.5, tolerance=1e-2)
+        assert_near_equal(alloc_cruise[0], 0.56, tolerance=1e-2)
+        assert_near_equal(alloc_descent[0], 0.999, tolerance=1e-2)
+
+    @require_pyoptsparse(optimizer="SNOPT")
+    def test_multiengine_dynamic(self):
+
+        test_phase_info = deepcopy(local_phase_info)
+        method = ThrottleAllocation.DYNAMIC
+
+        test_phase_info['climb']['user_options']['throttle_allocation'] = method
+        test_phase_info['cruise']['user_options']['throttle_allocation'] = method
+        test_phase_info['descent']['user_options']['throttle_allocation'] = method
+
+        prob = AviaryProblem()
+
+        prob.load_inputs(inputs, test_phase_info)
+
+        prob.check_and_preprocess_inputs()
+        prob.add_pre_mission_systems()
+        prob.add_phases()
+        prob.add_post_mission_systems()
+        prob.link_phases()
+
+        prob.add_driver("SNOPT", max_iter=50, use_coloring=True)
+
+        prob.add_design_variables()
+        prob.add_objective()
+
+        prob.setup()
+        prob.set_initial_guesses()
+
+        prob.run_aviary_problem("dymos_solution.db", suppress_solver_print=True)
+
+        alloc_climb = prob.get_val('traj.climb.controls:throttle_allocations')
+        alloc_cruise = prob.get_val('traj.cruise.controls:throttle_allocations')
+        alloc_descent = prob.get_val('traj.descent.controls:throttle_allocations')
+
+        # Cruise is pretty constant, check exact value.
+        assert_near_equal(alloc_cruise[0], 0.565, tolerance=1e-2)
+
+        # Check general trend: favors engine 1.
+        self.assertGreater(alloc_climb[2], 0.55)
+        self.assertGreater(alloc_descent[3], 0.65)
+
+
+if __name__ == '__main__':
+    unittest.main()

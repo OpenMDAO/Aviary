@@ -43,7 +43,7 @@ class ThrottleAllocator(om.ExplicitComponent):
             desc="Solver-controlled aggregate throttle."
         )
 
-        if alloc_mode == ThrottleAllocation.DYNAMIC_PARAMETER:
+        if alloc_mode == ThrottleAllocation.DYNAMIC:
             alloc_shape = (nn, num_engines - 1)
         else:
             alloc_shape = (num_engines - 1, )
@@ -62,7 +62,7 @@ class ThrottleAllocator(om.ExplicitComponent):
             desc="Throttle setting for all engines."
         )
 
-        if alloc_mode == ThrottleAllocation.DYNAMIC_PARAMETER:
+        if alloc_mode == ThrottleAllocation.DYNAMIC:
             alloc_shape = nn
         else:
             alloc_shape = 1
@@ -78,7 +78,7 @@ class ThrottleAllocator(om.ExplicitComponent):
         self.declare_partials(of=[Dynamic.Mission.THROTTLE], wrt=["aggregate_throttle"],
                               rows=rows, cols=cols)
 
-        if alloc_mode == ThrottleAllocation.DYNAMIC_PARAMETER:
+        if alloc_mode == ThrottleAllocation.DYNAMIC:
             a = num_engines
             b = a - 1
             row = np.arange(a)
@@ -106,7 +106,7 @@ class ThrottleAllocator(om.ExplicitComponent):
         agg_throttle = inputs["aggregate_throttle"]
         allocation = inputs["throttle_allocations"]
 
-        if alloc_mode == ThrottleAllocation.DYNAMIC_PARAMETER:
+        if alloc_mode == ThrottleAllocation.DYNAMIC:
             outputs[Dynamic.Mission.THROTTLE][:, :-1] = np.einsum("i,ij->ij", agg_throttle, allocation)
             sum_alloc = np.sum(allocation, axis=1)
         else:
@@ -127,7 +127,7 @@ class ThrottleAllocator(om.ExplicitComponent):
         agg_throttle = inputs["aggregate_throttle"]
         allocation = inputs["throttle_allocations"]
 
-        if alloc_mode == ThrottleAllocation.DYNAMIC_PARAMETER:
+        if alloc_mode == ThrottleAllocation.DYNAMIC:
             sum_alloc = np.sum(allocation, axis=1)
             allocs = np.vstack((allocation.T, 1.0 - sum_alloc))
             partials[Dynamic.Mission.THROTTLE, "aggregate_throttle"] = allocs.T.ravel()
