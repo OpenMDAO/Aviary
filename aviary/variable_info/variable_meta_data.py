@@ -2138,7 +2138,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Engine.WING_LOCATIONS,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
+    historical_name={"GASP": 'INGASP.YP',
                      "FLOPS": 'WTIN.ETAE',  # ['&DEFINE.WTIN.ETAE', 'WDEF.ETAE'],
                      "LEAPS1": 'aircraft.inputs.L0_propulsion.wing_engine_locations'
                      },

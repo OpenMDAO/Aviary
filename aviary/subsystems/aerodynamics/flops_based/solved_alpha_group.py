@@ -5,7 +5,7 @@ from pathlib import Path
 
 import aviary.constants as constants
 from aviary.subsystems.aerodynamics.aero_common import DynamicPressure
-from aviary.subsystems.aerodynamics.gasp_based.table_based import CruiseAero as TabularCruiseAero
+from aviary.subsystems.aerodynamics.gasp_based.table_based import TabularCruiseAero
 from aviary.utils.named_values import NamedValues
 from aviary.variable_info.variables import Aircraft, Dynamic
 

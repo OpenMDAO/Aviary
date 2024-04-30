@@ -6,6 +6,7 @@ from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.aerodynamics.gasp_based.common import (AeroForces,
                                                               CLFromLift,
                                                               TanhRampComp)
+from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import add_aviary_input
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
@@ -377,6 +378,9 @@ class AeroGeom(om.ExplicitComponent):
     def initialize(self):
         self.options.declare("num_nodes", default=1, types=int)
         self.options.declare(
+            'aviary_options', types=AviaryValues,
+            desc='collection of Aircraft/Mission specific options')
+        self.options.declare(
             "include_strut",
             default=False,
             types=bool,
@@ -385,7 +389,8 @@ class AeroGeom(om.ExplicitComponent):
 
     def setup(self):
         nn = self.options["num_nodes"]
-        engine_count = len(self.options.get_val(Aircraft.Engine.NUM_ENGINES))
+        engine_count = len(self.options['aviary_options'].get_val(
+            Aircraft.Engine.NUM_ENGINES))
 
         self.add_input(
             Dynamic.Mission.MACH, val=0.0, units="unitless", shape=nn, desc="Current Mach number")
@@ -777,6 +782,12 @@ class AeroSetup(om.Group):
     def initialize(self):
         self.options.declare("num_nodes", default=1, types=int)
         self.options.declare(
+            'aviary_options', types=AviaryValues,
+            desc='collection of Aircraft/Mission specific options')
+        self.options.declare(
+            'aviary_options', types=AviaryValues,
+            desc='collection of Aircraft/Mission specific options')
+        self.options.declare(
             "input_atmos",
             default=False,
             types=bool,
@@ -831,7 +842,8 @@ class AeroSetup(om.Group):
                 promotes=["*"],
             )
 
-        self.add_subsystem("geom", AeroGeom(num_nodes=nn), promotes=["*"])
+        self.add_subsystem("geom", AeroGeom(
+            num_nodes=nn, aviary_options=self.options['aviary_options']), promotes=["*"])
 
 
 class DragCoef(om.ExplicitComponent):
@@ -1272,6 +1284,10 @@ class CruiseAero(om.Group):
     def initialize(self):
         self.options.declare("num_nodes", default=1, types=int)
         self.options.declare(
+            'aviary_options', types=AviaryValues,
+            desc='collection of Aircraft/Mission specific options')
+
+        self.options.declare(
             "output_alpha",
             default=False,
             types=bool,
@@ -1289,7 +1305,8 @@ class CruiseAero(om.Group):
         nn = self.options["num_nodes"]
         self.add_subsystem(
             "aero_setup",
-            AeroSetup(num_nodes=nn, input_atmos=self.options["input_atmos"]),
+            AeroSetup(
+                num_nodes=nn, aviary_options=self.options['aviary_options'], input_atmos=self.options["input_atmos"]),
             promotes=["*"],
         )
         if self.options["output_alpha"]:
@@ -1309,6 +1326,9 @@ class LowSpeedAero(om.Group):
 
     def initialize(self):
         self.options.declare("num_nodes", default=1, types=int)
+        self.options.declare(
+            'aviary_options', types=AviaryValues,
+            desc='collection of Aircraft/Mission specific options')
         self.options.declare(
             "retract_gear",
             default=True,
@@ -1341,7 +1361,8 @@ class LowSpeedAero(om.Group):
 
         self.add_subsystem(
             "aero_setup",
-            AeroSetup(num_nodes=nn, input_atmos=self.options["input_atmos"]),
+            AeroSetup(
+                num_nodes=nn, aviary_options=self.options['aviary_options'], input_atmos=self.options["input_atmos"]),
             promotes=["*"],
         )
 

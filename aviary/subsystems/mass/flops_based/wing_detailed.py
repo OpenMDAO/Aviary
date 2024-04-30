@@ -100,20 +100,19 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         tc = inputs[Aircraft.Wing.THICKNESS_TO_CHORD]
         tcref = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_REF]
 
-        # NOTE look at leaps1 code for examples on multi-engine support
-        # Currently implementation only partially addresses issues - odd numbers of wing
-        # mounted engines pretend the "odd" engine out is not on the wing and is ignored
+        # NOTE changes to FLOPS routines based on LEAPS1 improved multiengine effort
+        # odd numbers of wing mounted engines assume the "odd" engine out is not on the
+        # wing and is ignored
         # There are also no checks that number of engine locations is consistent with
         # half of number of wing mounted engines, which should get added to preprocessor
 
-        # array of every pod mass on one wing (excludes centerline engines), sorted by
-        # position along wing
-        pod_mass = np.array([i for row in [[pod_mass[j]] * int(num_wing_engines[j]/2)
-                            for j in range(engine_count)] for i in row])
-        engine_data = np.vstack((pod_mass, engine_locations))
-        engine_data = engine_data.transpose()[np.lexsort(engine_data)]
-        pod_mass = engine_data[:, 0]
-        engine_locations = engine_data[:, 1]
+        # array of pod masses on one wing (excludes centerline engines)
+        # pod_mass = np.array([i for row in [[pod_mass[j]] * int(num_wing_engines[j]/2)
+        #                     for j in range(engine_count)] for i in row])
+        # engine_data = np.vstack((pod_mass, engine_locations))
+        # engine_data = engine_data.transpose()[np.lexsort(engine_data)]
+        # pod_mass = engine_data[:, 0]
+        # engine_locations = engine_data[:, 1]
 
         target_dy = (inp_stations[-1] - inp_stations[0]) / num_integration_stations
         stations_per_section = np.floor(np.abs(np.diff(inp_stations) / target_dy + 0.5))
@@ -196,19 +195,40 @@ class DetailedWingBendingFact(om.ExplicitComponent):
                     * sa**2 + 0.03*caya * (1.0-0.5*faert)*sa))
         outputs[Aircraft.Wing.BENDING_FACTOR] = bt
 
-        eel = np.zeros(len(dy) + 1)
-        loc = np.where(integration_stations < engine_locations[0])[0]
-        eel[loc] = 1.0
+        inertia_factor = np.zeros(0)
+        # idx is the index where this engine type begins in location list
+        idx = 0
+        # i is the counter for which engine model we are checking
+        for i in range(engine_count):
+            # idx2 is the last index for the range of engines of this type
+            idx2 = idx + int(num_wing_engines[i]/2)
 
-        delme = dy * eel[1:]
-        delme[loc[-1]] = engine_locations[0] - integration_stations[loc[-1]]
+            eel = np.zeros(len(dy) + 1)
+            # BUG this is broken for wing engine locations of zero or above last integration station point (around 0.9-0.95)
+            loc = np.where(integration_stations < engine_locations[idx:idx2][0])[0]
+            eel[loc] = 1.0
 
-        eem = delme * csw
-        eem = np.cumsum(eem[::-1])[::-1]
+            delme = dy * eel[1:]
 
-        ea = eem * csw / (chord_int_stations[:-1] * tc_int_stations[:-1])
+            delme[loc[-1]] = engine_locations[idx:idx2][0] - \
+                integration_stations[loc[-1]]
 
-        bte = 8 * np.sum((ea[:-1] + ea[1:]) * dy[:-1] * 0.5)
+            eem = delme * csw
+            eem = np.cumsum(eem[::-1])[::-1]
 
-        outputs[Aircraft.Wing.ENG_POD_INERTIA_FACTOR] = 1.0 - \
-            bte / bt * sum(pod_mass) / gross_mass
+            ea = eem * csw / (chord_int_stations[:-1] * tc_int_stations[:-1])
+
+            bte = 8 * np.sum((ea[:-1] + ea[1:]) * dy[:-1] * 0.5)
+
+            inertia_factor = np.append(
+                inertia_factor, 1 - bte / bt * pod_mass[i] / gross_mass)
+            # increment idx to next engine set
+            idx = idx2
+
+        # LEAPS updated multiengine routine applies each engine pod's factor
+        # multiplicatively, and enforces a minimum bound of 0.84
+        inertia_factor_prod = np.prod(inertia_factor)
+        if inertia_factor_prod < 0.84:
+            inertia_factor_prod = 0.84
+
+        outputs[Aircraft.Wing.ENG_POD_INERTIA_FACTOR] = inertia_factor_prod
