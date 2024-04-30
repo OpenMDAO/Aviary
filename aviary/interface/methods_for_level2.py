@@ -405,37 +405,7 @@ class AviaryProblem(om.Problem):
                 self.phase_info[phase_name]['external_subsystems'])
             for subsystem in external_subsystems:
                 meta_data = subsystem.meta_data.copy()
-
-                #state_info = subsystem.get_states()
-                #for state in state_info:
-                    #variables_to_pop.append(state)
-                    #variables_to_pop.append(state_info[state]['rate_source'])
-
-                #arg_spec = inspect.getfullargspec(subsystem.get_controls)
-                #if 'phase_name' in arg_spec.args:
-                    #control_dicts = subsystem.get_controls(
-                        #phase_name=phase_name)
-                #else:
-                    #control_dicts = subsystem.get_controls()
-
-                #for control_name, control_dict in control_dicts.items():
-                    #variables_to_pop.append(control_name)
-
-                #for output in subsystem.get_outputs():
-                    #variables_to_pop.append(output)
-
-                ##for parameter in subsystem.get_parameters(self.aviary_inputs):
-                ##    variables_to_pop.append(parameter)
-
                 self.meta_data = merge_meta_data([self.meta_data, meta_data])
-
-        variables_to_pop = list(set(variables_to_pop))
-
-        # NOTE add_params() in SubsystemBuilderBase now causes those variables to get
-        #      popped here, but they are needed later on
-        #for variable in variables_to_pop:
-        #    if variable in self.meta_data:
-        #        self.meta_data.pop(variable)
 
     def phase_separator(self):
         """
