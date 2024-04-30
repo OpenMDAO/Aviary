@@ -83,7 +83,8 @@ class MassSummationTestCase1(unittest.TestCase):
 
         # fixed mass values:
         assert_near_equal(
-            self.prob["total_mass.fixed_mass.main_gear_mass"], 6384.35, tol)
+            self.prob[Aircraft.LandingGear.MAIN_GEAR_MASS], 6384.35, tol)
+        # self.prob["total_mass.fixed_mass.main_gear_mass"], 6384.35, tol)
         assert_near_equal(
             self.prob["total_mass.fixed_mass.tail.loc_MAC_vtail"], 0.44959578484694906, tol
         )
@@ -467,7 +468,8 @@ class MassSummationTestCase2(unittest.TestCase):
 
         # fixed mass values:
         assert_near_equal(
-            self.prob["fixed_mass.main_gear_mass"], 6384.35, tol
+            self.prob[Aircraft.LandingGear.MAIN_GEAR_MASS], 6384.35, tol
+            # self.prob["fixed_mass.main_gear_mass"], 6384.35, tol
         )  # calculated by hand
 
         # note: fixed_mass.tail.loc_MAC_vtail not included in v3.5
@@ -846,7 +848,8 @@ class MassSummationTestCase3(unittest.TestCase):
 
         # fixed mass values:
         assert_near_equal(
-            self.prob["fixed_mass.main_gear_mass"], 6384.349999999999, tol
+            self.prob[Aircraft.LandingGear.MAIN_GEAR_MASS], 6384.349999999999, tol
+            # self.prob["fixed_mass.main_gear_mass"], 6384.349999999999, tol
         )  # calculated by hand
 
         assert_near_equal(self.prob[Aircraft.Propulsion.TOTAL_ENGINE_MASS], 12606, tol)
@@ -1220,7 +1223,8 @@ class MassSummationTestCase4(unittest.TestCase):
 
         # fixed mass values:
         assert_near_equal(
-            self.prob["fixed_mass.main_gear_mass"], 6384.349999999999, tol
+            self.prob[Aircraft.LandingGear.MAIN_GEAR_MASS], 6384.349999999999, tol
+            # self.prob["fixed_mass.main_gear_mass"], 6384.349999999999, tol
         )  # calculated by hand
 
         assert_near_equal(self.prob[Aircraft.Propulsion.TOTAL_ENGINE_MASS], 12606, tol)
@@ -1594,7 +1598,8 @@ class MassSummationTestCase5(unittest.TestCase):
 
         # fixed mass values:
         assert_near_equal(
-            self.prob["fixed_mass.main_gear_mass"], 6384.349999999999, tol
+            self.prob[Aircraft.LandingGear.MAIN_GEAR_MASS], 6384.349999999999, tol
+            # self.prob["fixed_mass.main_gear_mass"], 6384.349999999999, tol
         )  # calculated by hand
 
         assert_near_equal(self.prob[Aircraft.Propulsion.TOTAL_ENGINE_MASS], 12606, tol)
@@ -1966,7 +1971,8 @@ class MassSummationTestCase6(unittest.TestCase):
 
         # fixed mass values:
         assert_near_equal(
-            self.prob["fixed_mass.main_gear_mass"], 6384.349999999999, tol
+            self.prob[Aircraft.LandingGear.MAIN_GEAR_MASS], 6384.349999999999, tol
+            # self.prob["fixed_mass.main_gear_mass"], 6384.349999999999, tol
         )  # calculated by hand
 
         assert_near_equal(self.prob[Aircraft.Propulsion.TOTAL_ENGINE_MASS], 12606, tol)
@@ -2347,7 +2353,8 @@ class MassSummationTestCase7(unittest.TestCase):
 
         # fixed mass values:
         assert_near_equal(
-            self.prob["fixed_mass.main_gear_mass"], 5219.3076, tol
+            self.prob[Aircraft.LandingGear.MAIN_GEAR_MASS], 5219.3076, tol
+            # self.prob["fixed_mass.main_gear_mass"], 5219.3076, tol
         )  # note: value came from running the GASP code on my own and printing it out
 
         assert_near_equal(self.prob[Aircraft.Propulsion.TOTAL_ENGINE_MASS], 8007, tol)
@@ -2736,7 +2743,8 @@ class MassSummationTestCase8(unittest.TestCase):
 
         # fixed mass values:
         assert_near_equal(
-            self.prob["fixed_mass.main_gear_mass"], 4123.4, tol
+            self.prob[Aircraft.LandingGear.MAIN_GEAR_MASS], 4123.4, tol
+            # self.prob["fixed_mass.main_gear_mass"], 4123.4, tol
         )  # note:printed out from GASP code
 
         assert_near_equal(self.prob[Aircraft.Propulsion.TOTAL_ENGINE_MASS], 10453.0, tol)
@@ -3167,7 +3175,8 @@ class MassSummationTestCase9(unittest.TestCase):
 
         # fixed mass values:
         assert_near_equal(
-            self.prob["fixed_mass.main_gear_mass"], 4786.2, tol
+            self.prob[Aircraft.LandingGear.MAIN_GEAR_MASS], 4786.2, tol
+            # self.prob["fixed_mass.main_gear_mass"], 4786.2, tol
         )  # (printed out from GASP code)
 
         assert_near_equal(self.prob[Aircraft.Propulsion.TOTAL_ENGINE_MASS], 13034.0, tol)

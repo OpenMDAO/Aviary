@@ -136,7 +136,8 @@ class EngineModel(SubsystemBuilderBase):
             # only perform vector check for variables related to engines and nacelles
             if key.startswith('aircraft:engine:') or key.startswith('aircraft:nacelle'):
                 if type(val) in (list, np.ndarray, tuple):
-                    if self.meta_data[key]['types'] not in (list, np.ndarray, tuple) and verbosity >= 1:
+                    if self.meta_data[key]['types'] not in (list, np.ndarray, tuple) \
+                            and len(val) > 1 and verbosity >= 1:
                         warnings.warn(
                             f'The value of {key} passed to EngineModel <{self.name}> is '
                             f'type {type(val)}. Only the first entry in this iterable will '
