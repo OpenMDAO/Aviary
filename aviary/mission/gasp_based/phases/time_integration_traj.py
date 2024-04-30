@@ -35,7 +35,8 @@ class FlexibleTraj(TimeIntegrationTrajBase):
 
         ODEs = []
         for phase_name, phase_info in self.options['Phases'].items():
-            next_phase = phase_info['ode']
+            kwargs = phase_info.get('kwargs', {})
+            next_phase = phase_info['builder'](**kwargs)
             next_phase.phase_name = phase_name
             ODEs.append(next_phase)
 
@@ -57,10 +58,10 @@ class FlexibleTraj(TimeIntegrationTrajBase):
 
         for phase in self.ODEs:
             phase_name = phase.phase_name
-            vals_to_set = self.options['Phases'][phase_name]['vals_to_set']
+            vals_to_set = self.options['Phases'][phase_name]['user_options']
             if vals_to_set:
                 for name, data in vals_to_set.items():
-                    var, units = data['val'], data['units']
+                    var, units = data
                     if name.startswith('attr:'):
                         new_val = (self.convert2units(var, inputs[var], units)[0], units)
                         setattr(phase, name.replace('attr:', ''), new_val)

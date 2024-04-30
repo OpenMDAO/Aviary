@@ -112,8 +112,10 @@ class FlightPathODE(BaseODE):
         lift_comp = []
         if alpha_mode is AlphaModes.DEFAULT:
             # alpha as input
+            alpha_comp = []
             pass
         else:
+            alpha_comp = ['alpha_comp']
             if alpha_mode is AlphaModes.REQUIRED_LIFT:
                 self.add_subsystem(
                     "calc_weight",
@@ -265,7 +267,7 @@ class FlightPathODE(BaseODE):
             self.set_order(['params', 'USatm', 'fc',
                             ] + lift_comp + [
                 'core_aerodynamics',
-                'alpha_comp',
+            ] + alpha_comp + [
                 'prop_group',
                 'flight_path_eom', ] + trigger_comp + [
                 'SPECIFIC_ENERGY_RATE_EXCESS',

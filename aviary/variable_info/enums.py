@@ -163,9 +163,12 @@ class SpeedType(Enum):
     TAS is true airspeed.
     MACH is mach
     '''
-    EAS = auto()
-    TAS = auto()
-    MACH = auto()
+    EAS = 'EAS'
+    TAS = 'TAS'
+    MACH = 'mach'
+
+    def __str__(self):
+        return self.value
 
 
 class Verbosity(Enum):

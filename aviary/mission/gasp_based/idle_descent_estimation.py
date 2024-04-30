@@ -114,6 +114,7 @@ def descent_range_and_fuel(
 
 def add_descent_estimation_as_submodel(
         main_prob: om.Problem,
+        subsys_name='idle_descent_estimation',
         phases=None,
         ode_args=None,
         initial_mass=None,
@@ -123,10 +124,18 @@ def add_descent_estimation_as_submodel(
 ):
 
     if phases is None:
-        phases = create_2dof_based_descent_phases(
-            ode_args,
-            cruise_mach=cruise_mach,
-        )
+        from aviary.interface.default_phase_info.two_dof_fiti_copy import descent_phases as phases
+        for name, info in phases.items():
+            if 'kwargs' not in info:
+                info['kwargs'] = {}
+            if 'ode_args' not in info['kwargs']:
+                phases[name]['kwargs']['ode_args'] = ode_args
+            if 'simupy_args' not in info['kwargs']:
+                phases[name]['kwargs']['simupy_args'] = {'verbosity': Verbosity.QUIET}
+        # phases = create_2dof_based_descent_phases(
+        #     ode_args,
+        #     cruise_mach=cruise_mach,
+        # )
 
     traj = FlexibleTraj(
         Phases=phases,
@@ -262,7 +271,7 @@ def add_descent_estimation_as_submodel(
     )
 
     main_prob.model.add_subsystem(
-        'idle_descent_estimation',
+        subsys_name,
         subcomp,
         promotes_inputs=[
             'aircraft:*',

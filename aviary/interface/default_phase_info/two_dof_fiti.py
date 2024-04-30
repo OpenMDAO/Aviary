@@ -12,12 +12,13 @@ def create_2dof_based_ascent_phases(
     ode_args,
     cruise_alt=35e3,
     cruise_mach=.8,
+    simupy_args=dict(
+        verbosity=Verbosity.QUIET,
+    ),
 ):
     groundroll_kwargs = dict(
         ode_args=ode_args,
-        simupy_args=dict(
-            verbosity=Verbosity.QUIET,
-        ),
+        simupy_args=simupy_args,
     )
     groundroll_vals = {
         # special case
@@ -26,17 +27,13 @@ def create_2dof_based_ascent_phases(
 
     rotation_kwargs = dict(
         ode_args=ode_args,
-        simupy_args=dict(
-            verbosity=Verbosity.QUIET,
-        ),
+        simupy_args=simupy_args,
     )
     rotation_vals = {}
 
     ascent_kwargs = dict(
         ode_args=ode_args,
-        simupy_args=dict(
-            verbosity=Verbosity.QUIET,
-        ),
+        simupy_args=simupy_args,
     )
     ascent_vals = {
         't_init_gear': {'val': 10000, 'units': 's'},
@@ -48,9 +45,7 @@ def create_2dof_based_ascent_phases(
 
     accel_kwargs = dict(
         ode_args=ode_args,
-        simupy_args=dict(
-            verbosity=Verbosity.QUIET,
-        ),
+        simupy_args=simupy_args,
     )
     accel_vals = {}
 
@@ -59,9 +54,7 @@ def create_2dof_based_ascent_phases(
         input_speed_type=SpeedType.EAS,
         input_speed_units='kn',
         ode_args=ode_args,
-        simupy_args=dict(
-            verbosity=Verbosity.QUIET,
-        ),
+        simupy_args=simupy_args,
     )
     climb1_vals = {
         'alt_trigger': {'val': 10000, 'units': 'ft'},
@@ -73,9 +66,7 @@ def create_2dof_based_ascent_phases(
         input_speed_type=SpeedType.EAS,
         input_speed_units='kn',
         ode_args=ode_args,
-        simupy_args=dict(
-            verbosity=Verbosity.QUIET,
-        ),
+        simupy_args=simupy_args,
     )
     climb2_vals = {
         'alt_trigger': {'val': cruise_alt, 'units': 'ft'},
@@ -87,9 +78,7 @@ def create_2dof_based_ascent_phases(
         input_speed_type=SpeedType.MACH,
         input_speed_units='unitless',
         ode_args=ode_args,
-        simupy_args=dict(
-            verbosity=Verbosity.QUIET,
-        ),
+        simupy_args=simupy_args,
     )
     climb3_vals = {
         'alt_trigger': {'val': cruise_alt, 'units': 'ft'},
@@ -135,6 +124,9 @@ def create_2dof_based_ascent_phases(
 def create_2dof_based_descent_phases(
     ode_args,
     cruise_mach=.8,
+    simupy_args=dict(
+        verbosity=Verbosity.QUIET,
+    ),
 ):
 
     descent1_kwargs = dict(
@@ -142,9 +134,7 @@ def create_2dof_based_descent_phases(
         input_speed_units="unitless",
         speed_trigger_units='kn',
         ode_args=ode_args,
-        simupy_args=dict(
-            verbosity=Verbosity.QUIET,
-        ),
+        simupy_args=simupy_args,
     )
     descent1_vals = {
         'alt_trigger': {'val': 10000, 'units': 'ft'},
@@ -157,9 +147,7 @@ def create_2dof_based_descent_phases(
         input_speed_units="kn",
         speed_trigger_units='kn',
         ode_args=ode_args,
-        simupy_args=dict(
-            verbosity=Verbosity.QUIET,
-        ),
+        simupy_args=simupy_args,
     )
     descent2_vals = {
         'alt_trigger': {'val': 10000, 'units': 'ft'},
@@ -172,9 +160,7 @@ def create_2dof_based_descent_phases(
         input_speed_units="kn",
         speed_trigger_units='kn',
         ode_args=ode_args,
-        simupy_args=dict(
-            verbosity=Verbosity.QUIET,
-        ),
+        simupy_args=simupy_args,
     )
     descent3_vals = {
         'alt_trigger': {'val': 1000, 'units': 'ft'},

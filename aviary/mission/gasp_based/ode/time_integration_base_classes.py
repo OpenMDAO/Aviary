@@ -575,17 +575,20 @@ class SGMTrajBase(om.ExplicitComponent):
         self.traj_event_trigger_input = {
             event_trigger_input: {
                 **dict(name="_".join([
-                    event_trigger_input[0].__class__.__name__,
+                    ODEs[self.phase_names.index(
+                        event_trigger_input[0])].__class__.__name__,
                     event_trigger_input[1],
                     trigger_suffix
                 ])),
                 **self.add_input(
                     "_".join([
-                        event_trigger_input[0].__class__.__name__,
+                        ODEs[self.phase_names.index(
+                            event_trigger_input[0])].__class__.__name__,
                         event_trigger_input[1],
                         trigger_suffix
                     ]),
-                    units=event_trigger_input[0].states[event_trigger_input[1]]['units'],
+                    units=ODEs[self.phase_names.index(
+                        event_trigger_input[0])].states[event_trigger_input[1]]['units'],
                 )
             }
             for event_trigger_input in traj_event_trigger_input

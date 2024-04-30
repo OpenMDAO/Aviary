@@ -305,7 +305,14 @@ class AviaryProblem(om.Problem):
 
             else:
                 if self.mission_method is TWO_DEGREES_OF_FREEDOM:
+                    # if self.analysis_scheme is AnalysisScheme.COLLOCATION:
                     from aviary.interface.default_phase_info.two_dof import phase_info
+                    # elif self.analysis_scheme is AnalysisScheme.SHOOTING:
+                    #     from aviary.interface.default_phase_info.two_dof_fiti_copy import ascent_phases, descent_phases
+                    #     try:
+                    #         from aviary.interface.default_phase_info.two_dof_fiti_copy import phase_info_parameterization
+                    #     except:
+                    #         phase_info_parameterization = None
                 elif self.mission_method is HEIGHT_ENERGY:
                     from aviary.interface.default_phase_info.height_energy import phase_info
 
@@ -616,6 +623,16 @@ class AviaryProblem(om.Problem):
         add_opts2vals(self.model, OptionsToValues, self.aviary_inputs)
 
         if self.analysis_scheme is AnalysisScheme.SHOOTING:
+            # if any(['cruise' in name for name in self.reserve_phases]):
+            #     add_descent_estimation_as_submodel(
+            #         self,
+            #         subsys_name='reserve_descent',
+            #         ode_args=self.ode_args,
+            #         cruise_mach=self.cruise_mach,
+            #         cruise_alt=self.cruise_alt,
+            #         reserve_fuel='reserve_fuel_estimate',
+            #     )
+
             if self.submodel_fix:
                 self._add_fuel_reserve_component(
                     post_mission=False, reserves_name='reserve_fuel_estimate')
@@ -974,7 +991,7 @@ class AviaryProblem(om.Problem):
         Parameters
         ----------
         phase_info_parameterization (function, optional): A function that takes in the phase_info dictionary
-            and aviary_inputs and returns modified aviary_inputs. Defaults to None.
+            and aviary_inputs and returns modified phase_info. Defaults to None.
 
         Returns
         -------
@@ -987,20 +1004,24 @@ class AviaryProblem(om.Problem):
 
         phase_info = self.phase_info
 
-        phases = list(phase_info.keys())
-
         if self.analysis_scheme is AnalysisScheme.COLLOCATION:
+            phases = list(phase_info.keys())
             traj = self.model.add_subsystem('traj', dm.Trajectory())
 
         elif self.analysis_scheme is AnalysisScheme.SHOOTING:
-            ascent_phases = create_2dof_based_ascent_phases(
-                self.ode_args,
-                cruise_alt=self.cruise_alt,
-                cruise_mach=self.cruise_mach)
+            from aviary.interface.default_phase_info.two_dof_fiti_copy import ascent_phases, descent_phases
+            try:
+                from aviary.interface.default_phase_info.two_dof_fiti_copy import phase_info_parameterization
+            except:
+                phase_info_parameterization = None
+            # ascent_phases = create_2dof_based_ascent_phases(
+            #     self.ode_args,
+            #     cruise_alt=self.cruise_alt,
+            #     cruise_mach=self.cruise_mach)
 
-            descent_phases = create_2dof_based_descent_phases(
-                self.ode_args,
-                cruise_mach=self.cruise_mach)
+            # descent_phases = create_2dof_based_descent_phases(
+            #     self.ode_args,
+            #     cruise_mach=self.cruise_mach)
 
             cruise_kwargs = dict(
                 input_speed_type=SpeedType.MACH,
@@ -1041,11 +1062,49 @@ class AviaryProblem(om.Problem):
             phases = {
                 **ascent_phases,
                 'cruise': {
-                    'ode': SGMCruise(**cruise_kwargs),
-                    'vals_to_set': cruise_vals,
+                    'builder': SGMCruise,
+                    'user_options': {
+                        # 'alt_cruise': (37.5e3, 'ft'),
+                        'mach': (0.8, 'unitless'),
+                        'attr:mass_trigger': ('SGMCruise_mass_trigger', 'lbm')
+                    },
+                    'initial_guesses': {
+                    }
                 },
                 **descent_phases,
             }
+            self.phase_info = {}
+            for name, info in phases.items():
+                if 'kwargs' not in info:
+                    info['kwargs'] = {}
+                if 'ode_args' not in info['kwargs']:
+                    phases[name]['kwargs']['ode_args'] = self.ode_args
+                if 'simupy_args' not in info['kwargs']:
+                    phases[name]['kwargs']['simupy_args'] = {
+                        'verbosity': Verbosity.VERBOSE}
+                if 'external_subsystems' not in info:
+                    phases[name]['external_subsystems'] = []
+
+                if name not in ['pre_mission', 'post_mission']:
+                    self.phase_info[name] = phases[name]
+
+            # pre_mission and post_mission are stored in their own dictionaries.
+            if 'pre_mission' in phase_info:
+                self.pre_mission_info = phase_info['pre_mission']
+            else:
+                self.pre_mission_info = {'include_takeoff': True,
+                                         'external_subsystems': []}
+
+            if 'post_mission' in phase_info:
+                self.post_mission_info = phase_info['post_mission']
+            else:
+                self.post_mission_info = {'include_landing': True,
+                                          'external_subsystems': []}
+
+            if phase_info_parameterization is not None:
+                self.phase_info, self.post_mission_info = phase_info_parameterization(self.phase_info,
+                                                                                      self.post_mission_info,
+                                                                                      self.aviary_inputs)
             full_traj = FlexibleTraj(
                 Phases=phases,
                 traj_final_state_output=[
@@ -1061,14 +1120,15 @@ class AviaryProblem(om.Problem):
                     # specify ODE, output_name, with units that SimuPyProblem expects
                     # assume event function is of form ODE.output_name - value
                     # third key is event_idx associated with input
-                    (phases['groundroll']['ode'], Dynamic.Mission.VELOCITY, 0,),
-                    (phases['climb3']['ode'], Dynamic.Mission.ALTITUDE, 0,),
-                    (phases['cruise']['ode'], Dynamic.Mission.MASS, 0,),
+                    ('groundroll', Dynamic.Mission.VELOCITY, 0,),
+                    ('climb3', Dynamic.Mission.ALTITUDE, 0,),
+                    ('cruise', Dynamic.Mission.MASS, 0,),
                 ],
                 traj_intermediate_state_output=[
                     ('cruise', Dynamic.Mission.DISTANCE),
                     ('cruise', Dynamic.Mission.MASS),
-                ]
+                ],
+                promote_all_auto_ivc=True,
             )
             traj = self.model.add_subsystem('traj', full_traj)
 
@@ -1282,7 +1342,7 @@ class AviaryProblem(om.Problem):
 
             # If a target distance (or time) has been specified for this phase
             # distance (or time) is measured from the start of this phase to the end of this phase
-            for idx, phase_name in enumerate(self.phase_info):
+            for phase_name in self.phase_info:
                 if 'target_distance' in self.phase_info[phase_name]["user_options"]:
                     target_distance = wrapped_convert_units(
                         self.phase_info[phase_name]["user_options"]["target_distance"], 'nmi')
