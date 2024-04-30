@@ -64,7 +64,7 @@ class LandingSegment(BaseODE):
         # alpha input not needed, only used for CL_max
         self.add_subsystem(
             "aero_app",
-            LowSpeedAero(num_nodes=1),
+            LowSpeedAero(num_nodes=1, aviary_options=self.options['aviary_options']),
             promotes_inputs=[
                 "*",
                 (Dynamic.Mission.ALTITUDE, Mission.Landing.INITIAL_ALTITUDE),
@@ -144,7 +144,8 @@ class LandingSegment(BaseODE):
 
         self.add_subsystem(
             "aero_td",
-            LowSpeedAero(num_nodes=1, retract_flaps=True, retract_gear=False),
+            LowSpeedAero(
+                num_nodes=1, aviary_options=self.options['aviary_options'], retract_flaps=True, retract_gear=False),
             promotes_inputs=[
                 "*",
                 (Dynamic.Mission.ALTITUDE, Mission.Landing.AIRPORT_ALTITUDE),

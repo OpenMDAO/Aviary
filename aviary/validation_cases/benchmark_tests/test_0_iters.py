@@ -56,6 +56,6 @@ class HEZeroItersTestCase(BaseProblemPhaseTestCase):
 
 
 if __name__ == "__main__":
-    # unittest.main()
-    test = TwoDOFZeroItersTestCase()
-    test.test_zero_iters_2DOF()
+    unittest.main()
+    # test = TwoDOFZeroItersTestCase()
+    # test.test_zero_iters_2DOF()
