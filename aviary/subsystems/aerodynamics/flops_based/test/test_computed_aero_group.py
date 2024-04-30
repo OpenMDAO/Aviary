@@ -383,6 +383,6 @@ class MissionDragTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    # unittest.main()
-    test = MissionDragTest()
-    test.test_large_single_aisle_2_drag()
+    unittest.main()
+    # test = MissionDragTest()
+    # test.test_large_single_aisle_2_drag()
