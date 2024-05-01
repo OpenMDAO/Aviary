@@ -109,7 +109,8 @@ class AntiIcingMassTest(unittest.TestCase):
 
         assert_near_equal(mass, expected_mass, tolerance=1e-10)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(
+            out_stream=None, method="cs", compact_print=False)
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
 
     def test_IO(self):

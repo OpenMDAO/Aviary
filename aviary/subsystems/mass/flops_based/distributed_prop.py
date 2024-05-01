@@ -84,7 +84,7 @@ def distributed_nacelle_diam_factor_deriv(num_eng: int) -> float:
 
     deriv = 1.0
     if total_num_engines > 4:
-        deriv = 0.5 * total_num_engines ** 0.5
+        deriv = num_eng * (0.5 * total_num_engines ** 0.5)/total_num_engines
 
     return deriv
 
