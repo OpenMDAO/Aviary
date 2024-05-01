@@ -163,7 +163,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
             chord_int_stations[1:] * (3*load_intensity[1:]+load_intensity[:-1])) / 12
 
         load_path_length = np.flip(
-            np.append(np.zeros(1), np.cumsum(np.flip(del_load)[:-1])))
+            np.append(np.zeros(1, chord.dtype), np.cumsum(np.flip(del_load)[:-1])))
         csw = 1. / np.cos(sweep_int_stations[:-1] * np.pi/180.)
         emi = (del_moment + dy * load_path_length) * csw
         # em = np.sum(emi)
@@ -195,7 +195,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
                     * sa**2 + 0.03*caya * (1.0-0.5*faert)*sa))
         outputs[Aircraft.Wing.BENDING_FACTOR] = bt
 
-        inertia_factor = np.zeros(0)
+        inertia_factor = np.zeros(0, chord.dtype)
         # idx is the index where this engine type begins in location list
         idx = 0
         # i is the counter for which engine model we are checking
@@ -203,7 +203,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
             # idx2 is the last index for the range of engines of this type
             idx2 = idx + int(num_wing_engines[i]/2)
 
-            eel = np.zeros(len(dy) + 1)
+            eel = np.zeros(len(dy) + 1, dtype=chord.dtype)
             # BUG this is broken for wing engine locations of zero or above last integration station point (around 0.9-0.95)
             loc = np.where(integration_stations < engine_locations[idx:idx2][0])[0]
             eel[loc] = 1.0

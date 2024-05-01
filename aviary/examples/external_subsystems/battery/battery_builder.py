@@ -179,7 +179,7 @@ class BatteryBuilder(SubsystemBuilderBase):
 
         return DVs
 
-    def get_parameters(self):
+    def get_parameters(self, aviary_inputs=None, phase_info=None):
         '''
         Return a dictionary of fixed values exposed to the phases for the battery subsystem.
 

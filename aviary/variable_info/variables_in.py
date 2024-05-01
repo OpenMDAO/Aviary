@@ -2,6 +2,8 @@
 Dummy explicit component which serves as an input port for all variables in
 the aircraft and mission hierarchy.
 '''
+import numpy as np
+
 import openmdao.api as om
 
 from aviary.utils.aviary_values import AviaryValues
@@ -57,4 +59,10 @@ class VariablesIn(om.ExplicitComponent):
                 val, units = aviary_options.get_item(key, item)
                 if units == 'unitless' and info['units'] != 'unitless':
                     units = info['units']
-                add_aviary_input(self, key, val=val, units=units, meta_data=meta_data)
+                # if type(val) in (np.ndarray, list, tuple):
+                #     shape_by_conn = False
+                # else:
+                #     shape_by_conn = True
+
+                add_aviary_input(self, key, val=val, units=units, meta_data=meta_data,)
+                #  shape_by_conn=shape_by_conn)

@@ -120,7 +120,7 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
     Performs basic sanity checks on inputs that are universal to all EngineModels.
 
     !!! WARNING !!!
-    Values in aviary_options are overwritten with corresponding values in engine_models!
+    Values in aviary_options are overwritten with corresponding values from engine_models!
 
     Parameters
     ----------
@@ -183,10 +183,10 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
     ##############################
     # Vectorize Engine Variables #
     ##############################
-    # Only vectorize variables user has defined in some way or engine has calculated
+    # Only vectorize variables user has defined in some way or engine model has calculated
     # Combine aviary_options and all engine options into single AviaryValues
     # It is assumed that all EngineModels are up-to-date at this point and will NOT
-    # be changed in the future (otherwise preprocess_propulsion must be run again)
+    # be changed later on (otherwise preprocess_propulsion must be run again)
     complete_options_list = AviaryValues(aviary_options)
     for engine in engine_models:
         complete_options_list.update(engine.options)

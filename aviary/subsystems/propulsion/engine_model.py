@@ -184,7 +184,6 @@ class EngineModel(SubsystemBuilderBase):
         -------
         val
             Value of requested option in desired units.
-
         """
         return self.options.get_val(key, units)
 

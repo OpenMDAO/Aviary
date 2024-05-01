@@ -1,8 +1,10 @@
+import sys
+
 import numpy as np
 import openmdao.api as om
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 
 
 class PropulsionMission(om.Group):
@@ -27,22 +29,44 @@ class PropulsionMission(om.Group):
         nn = self.options['num_nodes']
         options: AviaryValues = self.options['aviary_options']
         engine_models = options.get_val('engine_models')
-        count = len(engine_models)
+        engine_count = len(engine_models)
 
         # TODO what if "engine" is not an EngineModel object? Type is never checked/enforced
-        for (i, engine) in enumerate(engine_models):
-            self.add_subsystem(
-                engine.name,
-                subsys=engine.build_mission(
-                    num_nodes=nn, aviary_inputs=options),
-                promotes_inputs=['*'])
 
-            if count > 1:
+        if engine_count > 1:
+
+            # We need a single component with scale_factor. Dymos can't find it when it is
+            # already sliced across several component.
+            comp = om.ExecComp(
+                "y=x",
+                y={'val': np.ones(engine_count), 'units': 'unitless'},
+                x={'val': np.ones(engine_count), 'units': 'unitless'}
+            )
+            self.add_subsystem(
+                "scale_passthrough",
+                comp,
+                promotes_inputs=[('x', Aircraft.Engine.SCALE_FACTOR)],
+                promotes_outputs=[('y', 'passthrough_scale_factor')],
+            )
+
+            for (i, engine) in enumerate(engine_models):
+                self.add_subsystem(
+                    engine.name,
+                    subsys=engine.build_mission(num_nodes=nn, aviary_inputs=options),
+                    promotes_inputs=['*']
+                )
+
                 # split vectorized throttles and connect to the correct engine model
                 self.promotes(
                     engine.name,
                     inputs=[Dynamic.Mission.THROTTLE],
                     src_indices=om.slicer[:, i])
+
+                self.promotes(
+                    engine.name,
+                    inputs=[(Aircraft.Engine.SCALE_FACTOR, 'passthrough_scale_factor')],
+                    src_indices=om.slicer[i])
+
                 # TODO if only some engine use hybrid throttle, source vector will have an
                 #      index for that engine that is unused, will this confuse optimizer?
                 if engine.use_hybrid_throttle:
@@ -50,7 +74,17 @@ class PropulsionMission(om.Group):
                         engine.name,
                         inputs=[Dynamic.Mission.HYBRID_THROTTLE],
                         src_indices=om.slicer[:, i])
-            else:
+        else:
+
+            engine = engine_models[0]
+
+            for (i, engine) in enumerate(engine_models):
+                self.add_subsystem(
+                    engine.name,
+                    subsys=engine.build_mission(num_nodes=nn, aviary_inputs=options),
+                    promotes_inputs=['*']
+                )
+
                 self.promotes(
                     engine.name,
                     inputs=[Dynamic.Mission.THROTTLE])
@@ -59,9 +93,9 @@ class PropulsionMission(om.Group):
                         engine.name,
                         inputs=[Dynamic.Mission.HYBRID_THROTTLE])
 
-        # TODO this might be able to be automated using propulsion Enums
+        # TODO might be able to avoid hardcoding using propulsion Enums
         # mux component to vectorize individual outputs into 2d arrays
-        perf_mux = om.MuxComp(vec_size=count)
+        perf_mux = om.MuxComp(vec_size=engine_count)
         # add each engine data variable to mux component
         perf_mux.add_var(
             Dynamic.Mission.THRUST,
@@ -173,17 +207,18 @@ class PropulsionSum(om.ExplicitComponent):
 
     def setup(self):
         nn = self.options['num_nodes']
-        count = len(self.options['aviary_options'].get_val('engine_models'))
+        engine_count = len(self.options['aviary_options'].get_val('engine_models'))
 
-        self.add_input(Dynamic.Mission.THRUST, val=np.zeros((nn, count)), units='lbf')
+        self.add_input(Dynamic.Mission.THRUST, val=np.zeros(
+            (nn, engine_count)), units='lbf')
         self.add_input(Dynamic.Mission.THRUST_MAX,
-                       val=np.zeros((nn, count)), units='lbf')
-        self.add_input(Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE, val=np.zeros((nn, count)),
+                       val=np.zeros((nn, engine_count)), units='lbf')
+        self.add_input(Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE, val=np.zeros((nn, engine_count)),
                        units='lbm/h')
         self.add_input(Dynamic.Mission.ELECTRIC_POWER,
-                       val=np.zeros((nn, count)), units='kW')
+                       val=np.zeros((nn, engine_count)), units='kW')
         self.add_input(Dynamic.Mission.NOX_RATE,
-                       val=np.zeros((nn, count)), units='lbm/h')
+                       val=np.zeros((nn, engine_count)), units='lbm/h')
 
         self.add_output(Dynamic.Mission.THRUST_TOTAL, val=np.zeros(nn), units='lbf')
         self.add_output(Dynamic.Mission.THRUST_MAX_TOTAL, val=np.zeros(nn), units='lbf')
@@ -196,11 +231,11 @@ class PropulsionSum(om.ExplicitComponent):
     def setup_partials(self):
         nn = self.options['num_nodes']
         num_engines = self.options['aviary_options'].get_val(Aircraft.Engine.NUM_ENGINES)
-        count = len(num_engines)
+        engine_count = len(num_engines)
         deriv = np.tile(num_engines, nn)
 
-        r = np.repeat(np.arange(nn, dtype=int), count)
-        c = np.arange(nn * count, dtype=int)
+        r = np.repeat(np.arange(nn, dtype=int), engine_count)
+        c = np.arange(nn * engine_count, dtype=int)
 
         self.declare_partials(
             Dynamic.Mission.THRUST_TOTAL,

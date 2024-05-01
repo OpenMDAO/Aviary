@@ -2,6 +2,7 @@
 OpenMDAO system for generating the aero tables that were typically printed in FLOPS.
 """
 import numpy as np
+
 import openmdao.api as om
 
 from aviary.utils.aviary_values import AviaryValues
@@ -22,7 +23,8 @@ class AeroReport(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        count = len(self.options['aviary_options'].get_val(Aircraft.Engine.NUM_ENGINES))
+        aviary_options = self.options['aviary_options']
+        count = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
 
         add_aviary_input(self, Aircraft.Canard.WETTED_AREA, 0.0)
         add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA, 0.0)

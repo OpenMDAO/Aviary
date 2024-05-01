@@ -121,7 +121,7 @@ class EngineDeck(EngineModel):
     options : AviaryValues (<empty>)
         Inputs and options related to engine model.
     data : NamedVaues (<empty>), optional
-        Engine performance data (optional). If provided, used instead of tabular data 
+        Engine performance data (optional). If provided, used instead of tabular data
         file.
     required_variables : set, optional
         A set of required variables (from EngineModelVariables) for this EngineDeck.
@@ -194,8 +194,8 @@ class EngineDeck(EngineModel):
 
     def _preprocess_inputs(self):
         """
-        Checks that provided options are valid and logically consistent. Raises errors 
-        for non-recoverable issues, issues warnings for minor problems that are fixed at 
+        Checks that provided options are valid and logically consistent. Raises errors
+        for non-recoverable issues, issues warnings for minor problems that are fixed at
         runtime.
 
         Raises
@@ -276,7 +276,7 @@ class EngineDeck(EngineModel):
 
     def _set_variable_flags(self):
         """
-        Sets flags in EngineDeck to communicate which (non-required) variables are 
+        Sets flags in EngineDeck to communicate which (non-required) variables are
         avaliable to greater propulsion module.
         """
         engine_variables = self.engine_variables
@@ -732,7 +732,7 @@ class EngineDeck(EngineModel):
         # Re-normalize throttle since "dummy" idle values were used
         self._normalize_throttle()
 
-    def build_pre_mission(self, aviary_inputs):
+    def build_pre_mission(self, aviary_inputs) -> om.ExplicitComponent:
         """
         Build components to be added to pre-mission propulsion subsystem.
 
@@ -956,8 +956,8 @@ class EngineDeck(EngineModel):
         # add created subsystems to engine_group
         engine_group.add_subsystem('interpolation',
                                    engine,
-                                   promotes_inputs=['*'],
-                                   promotes_outputs=['*'])
+                                   promotes_inputs=['*'])
+
         if self.use_thrust:
             if self.global_throttle or (self.global_hybrid_throttle
                                         and self.use_hybrid_throttle):
@@ -975,14 +975,27 @@ class EngineDeck(EngineModel):
             engine_group.add_subsystem(
                 'max_thrust_interpolation',
                 max_thrust_engine,
-                promotes_inputs=['*'],
-                promotes_outputs=['*'])
+                promotes_inputs=['*'])
 
         engine_group.add_subsystem('engine_scaling',
                                    subsys=EngineScaling(num_nodes=num_nodes,
                                                         aviary_options=self.options),
-                                   promotes_inputs=['*'],
+                                   promotes_inputs=[
+                                       Aircraft.Engine.SCALE_FACTOR, Dynamic.Mission.MACH],
                                    promotes_outputs=['*'])
+
+        # manually connect unscaled variables, since we do not want them promoted
+        engine_group.connect('interpolation.thrust_net_unscaled',
+                             'engine_scaling.thrust_net_unscaled')
+        engine_group.connect('interpolation.fuel_flow_rate_unscaled',
+                             'engine_scaling.fuel_flow_rate_unscaled')
+        engine_group.connect('interpolation.electric_power_unscaled',
+                             'engine_scaling.electric_power_unscaled')
+        engine_group.connect('interpolation.nox_rate_unscaled',
+                             'engine_scaling.nox_rate_unscaled')
+        if self.use_thrust:
+            engine_group.connect(
+                'max_thrust_interpolation.thrust_net_max_unscaled', 'engine_scaling.thrust_net_max_unscaled')
 
         return engine_group
 
@@ -1077,6 +1090,8 @@ class EngineDeck(EngineModel):
         """
         engine_mapping = get_keys(self.options)
 
+        # Find reference thrust if not provided - assumed user-provided value is "best"
+        # estimate of reference thrust
         if Aircraft.Engine.REFERENCE_SLS_THRUST not in engine_mapping:
             alt_tol = self.alt_tol
             mach_tol = self.mach_tol
@@ -1429,9 +1444,9 @@ class EngineDeck(EngineModel):
 # UTILITY FUNCTIONS #
 #####################
 """
-Functions that do not directly use attributes of EngineDeck (do not require self) are 
-located here. These functions are currently only used for EngineDecks and are not 
-applicable to other EngineModels. If any of these functions become useful to other 
+Functions that do not directly use attributes of EngineDeck (do not require self) are
+located here. These functions are currently only used for EngineDecks and are not
+applicable to other EngineModels. If any of these functions become useful to other
 EngineModels besides EngineDeck, move them to propulsion utils.
 """
 
@@ -1449,7 +1464,7 @@ def normalize(base_list, maximum=None, minimum=None):
     maximum : float
         Overwritten maximum value of data that will scale to 1 when normalized.
     minimum : float
-        Overwritten minimum value of data that will scale to 0 when normalized. 
+        Overwritten minimum value of data that will scale to 0 when normalized.
 
     Returns
     -------

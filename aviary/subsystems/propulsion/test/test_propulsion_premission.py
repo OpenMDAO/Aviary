@@ -36,6 +36,27 @@ class PropulsionPreMissionTest(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
 
+    def test_multi_engine(self):
+        aviary_values = get_flops_inputs('MultiEngineSingleAisle')
+        options = aviary_values
+
+        self.prob.model = PropulsionPreMission(aviary_options=options)
+
+        self.prob.setup(force_alloc_complex=True)
+        self.prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, options.get_val(
+            Aircraft.Engine.SCALED_SLS_THRUST, units='lbf'))
+
+        self.prob.run_model()
+
+        sls_thrust = self.prob.get_val(Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST)
+
+        expected_sls_thrust = np.array([51128.6])
+
+        assert_near_equal(sls_thrust, expected_sls_thrust, tolerance=1e-10)
+
+        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
+
     def test_propulsion_sum(self):
         options = AviaryValues()
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([1, 2, 5]))
@@ -64,4 +85,7 @@ class PropulsionPreMissionTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    # unittest.main()
+    test = PropulsionPreMissionTest()
+    test.setUp()
+    test.test_multi_engine()

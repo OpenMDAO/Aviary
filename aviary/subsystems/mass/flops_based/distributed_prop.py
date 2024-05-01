@@ -93,7 +93,7 @@ def nacelle_count_factor(num_eng):
     """
     Returns the nacelle count factor, which is the number of engines plus
     0.5 if there is a centerline engine. It is assumed there is a centerline
-    engine if the number of engines is odd.
+    engine if the number of engines is odd (for each unique engine type).
 
     If there are multiple engine types, each engine type gets its own nacelle count
     factor. This methodology does not account for potential conflict of engines present 

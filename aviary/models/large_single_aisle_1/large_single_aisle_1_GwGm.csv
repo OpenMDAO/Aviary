@@ -1,15 +1,22 @@
 # Input Values
+aircraft:air_conditioning:mass_coefficient,1.65,unitless
+aircraft:anti_icing:mass,551,lbm
+aircraft:apu:mass,928,lbm
+aircraft:avionics:mass,1959,lbm
 aircraft:controls:cockpit_control_mass_scaler,1,unitless
 aircraft:controls:control_mass_increment,0,lbm
 aircraft:controls:stability_augmentation_system_mass,0,lbm
 aircraft:controls:stability_augmentation_system_mass_scaler,1,unitless
 aircraft:crew_and_payload:cargo_mass,10040,lbm
+aircraft:crew_and_payload:catering_items_mass_per_passenger,7.6,lbm
 aircraft:crew_and_payload:num_passengers,180,unitless
 aircraft:crew_and_payload:passenger_mass_with_bags,200,lbm
+aircraft:crew_and_payload:passenger_service_mass_per_passenger,5,lbm
+aircraft:crew_and_payload:water_mass_per_occupant,3,lbm
 aircraft:design:cg_delta,0.25,unitless
 aircraft:design:cockpit_control_mass_coefficient,16.5,unitless
 aircraft:design:drag_increment,0.00175,unitless
-aircraft:design:equipment_mass_coefficients,928,0.0736,0.112,0.14,1959,1.65,551,11192,5,3,50,7.6,12,unitless
+aircraft:design:emergency_equipment_mass,50,lbm
 aircraft:design:max_structural_speed,402.5,mi/h
 aircraft:design:part25_structural_category,3,unitless
 aircraft:design:reserve_fuel_additional,4998,lbm
@@ -33,7 +40,9 @@ aircraft:fuel:density,6.687,lbm/galUS
 aircraft:fuel:fuel_margin,0,unitless
 aircraft:fuel:fuel_system_mass_coefficient,0.041,unitless
 aircraft:fuel:fuel_system_mass_scaler,1,unitless
+aircraft:fuel:unusable_fuel_mass_coefficient,12,unitless
 aircraft:fuel:wing_fuel_fraction,0.6,unitless
+aircraft:furnishings:mass,11192,lbm
 aircraft:fuselage:aisle_width,24,inch
 aircraft:fuselage:delta_diameter,4.5,ft
 aircraft:fuselage:flat_plate_area_increment,0.25,ft**2
@@ -58,6 +67,9 @@ aircraft:horizontal_tail:taper_ratio,0.352,unitless
 aircraft:horizontal_tail:thickness_to_chord,0.12,unitless
 aircraft:horizontal_tail:vertical_tail_fraction,0,unitless
 aircraft:horizontal_tail:volume_coefficient,1.189,unitless
+aircraft:hydraulics:flight_control_mass_coefficient,0.112,unitless
+aircraft:hydraulics:gear_mass_coefficient,0.14,unitless
+aircraft:instruments:mass_coefficient,0.0736,unitless
 aircraft:landing_gear:fixed_gear,False,unitless
 aircraft:landing_gear:main_gear_location,0.15,unitless
 aircraft:landing_gear:main_gear_mass_coefficient,0.85,unitless

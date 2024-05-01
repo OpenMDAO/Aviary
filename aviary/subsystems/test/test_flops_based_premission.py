@@ -10,7 +10,7 @@ from aviary.utils.aviary_values import get_items
 from aviary.validation_cases.validation_tests import (
     flops_validation_test, get_flops_inputs, get_flops_outputs, get_flops_case_names, print_case
 )
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 from aviary.variable_info.variables_in import VariablesIn
 from aviary.utils.functions import set_aviary_initial_values
 from aviary.interface.default_phase_info.height_energy import default_premission_subsystems
@@ -29,6 +29,7 @@ class PreMissionGroupTest(unittest.TestCase):
         flops_outputs = get_flops_outputs(case_name)
         flops_inputs.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES,
                              flops_outputs.get_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES))
+        flops_inputs.set_val(Settings.VERBOSITY, 0.0)
 
         preprocess_crewpayload(flops_inputs)
 
@@ -101,6 +102,7 @@ class PreMissionGroupTest(unittest.TestCase):
 
         flops_inputs: AviaryValues = LargeSingleAisle2FLOPS['inputs']
         flops_outputs: AviaryValues = LargeSingleAisle2FLOPS['outputs']
+        flops_inputs.set_val(Settings.VERBOSITY, 0.0)
 
         prob.model.add_subsystem(
             "pre_mission",

@@ -1,4 +1,5 @@
 import openmdao.api as om
+import numpy as np
 
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.mass.flops_based.distributed_prop import (
@@ -21,8 +22,9 @@ class TransportStarterMass(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        # TODO nacelle outputs are vectorized
-        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, val=0.0)
+        count = len(self.options['aviary_options'].get_val('engine_models'))
+
+        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, val=np.zeros(count))
 
         add_aviary_output(self, Aircraft.Propulsion.TOTAL_STARTER_MASS, val=0.0)
 

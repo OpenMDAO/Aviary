@@ -18,7 +18,7 @@ def register_custom_reports():
     # TODO top-level aircraft report?
     # TODO add flag to skip registering reports?
 
-    # Note: Due to a possible bug in OpenMDAO, we need to assign Problem as the
+    # NOTE Due to a possible bug in OpenMDAO, we need to assign Problem as the
     # class_name instead of AviaryProblem.
 
     # register per-subsystem report generation
@@ -222,7 +222,7 @@ def timeseries_csv(prob, **kwargs):
     timeseries_data = {}
     for variable_name in unique_variable_names:
         timeseries_data[variable_name] = {}
-        val_full_traj = np.zeros((0, 1))
+        first = True
         units = None
         for idx_phase, phase_name in enumerate(phase_names):
             variable_str = f'traj.{phase_name}.timeseries.{variable_name}'
@@ -233,7 +233,11 @@ def timeseries_csv(prob, **kwargs):
                     f'Variable {variable_str} not found in timeseries_outputs for phase {phase_name}.')
                 val = np.zeros_like(timeseries_outputs[time_str]['val'])
                 val[:] = np.nan
-                val_full_traj = np.vstack((val_full_traj, val))
+                if first:
+                    val_full_traj = val
+                    first = False
+                else:
+                    val_full_traj = np.vstack((val_full_traj, val))
 
             else:
                 val = timeseries_outputs[variable_str]['val']
@@ -241,14 +245,22 @@ def timeseries_csv(prob, **kwargs):
                 # grab the units from the first phase that uses this variable; use these units for all others
                 if units is None:
                     units = timeseries_outputs[variable_str]['units']
-                    val_full_traj = np.vstack((val_full_traj, val))
+                    if first:
+                        val_full_traj = val
+                        first = False
+                    else:
+                        val_full_traj = np.vstack((val_full_traj, val))
                 else:
                     original_units = timeseries_outputs[variable_str]['units']
 
                     if original_units != units:
                         val = wrapped_convert_units((val, original_units), units)
 
-                    val_full_traj = np.vstack((val_full_traj, val))
+                    if first:
+                        val_full_traj = val
+                        first = False
+                    else:
+                        val_full_traj = np.vstack((val_full_traj, val))
 
         timeseries_data[variable_name]['val'] = val_full_traj
         timeseries_data[variable_name]['units'] = units

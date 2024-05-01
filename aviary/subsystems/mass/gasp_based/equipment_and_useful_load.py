@@ -27,8 +27,29 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
     def setup(self):
         count = len(self.options['aviary_options'].get_val('engine_models'))
 
-        add_aviary_input(self, Aircraft.Design.EQUIPMENT_MASS_COEFFICIENTS, val=[
-                         1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], units="unitless")
+        add_aviary_input(
+            self, Aircraft.AirConditioning.MASS_COEFFICIENT, val=1, units="unitless")
+        add_aviary_input(self, Aircraft.AntiIcing.MASS, val=2, units="lbm")
+        add_aviary_input(self, Aircraft.APU.MASS, val=3, units="lbm")
+        add_aviary_input(self, Aircraft.Avionics.MASS, val=4, units="lbm")
+        add_aviary_input(
+            self, Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, val=5, units="lbm")
+        add_aviary_input(self, Aircraft.Design.EMERGENCY_EQUIPMENT_MASS,
+                         val=6, units="lbm")
+        add_aviary_input(self, Aircraft.Furnishings.MASS, val=7, units="lbm")
+        add_aviary_input(
+            self, Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT, val=8, units="unitless")
+        add_aviary_input(
+            self, Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=9, units="unitless")
+        add_aviary_input(
+            self, Aircraft.Instruments.MASS_COEFFICIENT, val=10, units="unitless")
+        add_aviary_input(
+            self, Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, val=11, units="lbm")
+        add_aviary_input(
+            self, Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, val=12, units="unitless")
+        add_aviary_input(
+            self, Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=13, units="lbm")
+
         add_aviary_input(self, Mission.Design.GROSS_MASS, val=175400)
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, val=128)
         add_aviary_input(self, Aircraft.Wing.SPAN, val=117.8)
@@ -58,7 +79,7 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
         PAX = options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS, units='unitless')
         smooth = options.get_val(
             Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, units='unitless')
-        mass_coeff = inputs[Aircraft.Design.EQUIPMENT_MASS_COEFFICIENTS]
+
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         num_engines = self.options['aviary_options'].get_val(
             Aircraft.Propulsion.TOTAL_NUM_ENGINES, units='unitless')
@@ -87,9 +108,9 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
         if PAX > 35.0:
             APU_wt = 26.2 * PAX**0.944 - 13.6 * PAX
         if ~(
-            -1e-5 < mass_coeff[0] < 1e-5
+            -1e-5 < inputs[Aircraft.APU.MASS] < 1e-5
         ):  # note: this technically creates a discontinuity
-            APU_wt = mass_coeff[0] * GRAV_ENGLISH_LBM
+            APU_wt = inputs[Aircraft.APU.MASS] * GRAV_ENGLISH_LBM
 
         num_pilots = 1.0
         if PAX > 9.0:
@@ -100,7 +121,7 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
             num_pilots = 3.0
 
         instrument_wt = (
-            mass_coeff[1]
+            inputs[Aircraft.Instruments.MASS_COEFFICIENT]
             * gross_wt_initial**0.386
             * num_engines**0.687
             * num_pilots**0.31
@@ -109,7 +130,9 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
         )
         gear_val = 1 - gear_type
         hydraulic_wt = (
-            mass_coeff[2] * control_wt + mass_coeff[3] * landing_gear_wt * gear_val
+            inputs[Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT] * control_wt +
+            inputs[Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT] *
+            landing_gear_wt * gear_val
         )
 
         electrical_wt = 16.0 * PAX + 170.0
@@ -151,15 +174,15 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
         if PAX > 100.0:
             avionics_wt = 2.8 * PAX + 1010.0
         if ~(
-            -1e-5 < mass_coeff[4] < 1e-5
+            -1e-5 < inputs[Aircraft.Avionics.MASS] < 1e-5
         ):  # note: this technically creates a discontinuity !WILL NOT CHANGE
-            avionics_wt = mass_coeff[4] * GRAV_ENGLISH_LBM
+            avionics_wt = inputs[Aircraft.Avionics.MASS] * GRAV_ENGLISH_LBM
 
         air_conditioning_wt = 5.0
 
         if gross_wt_initial > 3500.0:  # note: this technically creates a discontinuity
             air_conditioning_wt = (
-                mass_coeff[5]
+                inputs[Aircraft.AirConditioning.MASS_COEFFICIENT]
                 * (1.5 + p_diff_fus)
                 * (0.358 * fus_len * cabin_width**2) ** 0.5
             )
@@ -173,9 +196,9 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
             if icing_wt < 0.0:  # note: this technically creates a discontinuity
                 icing_wt = 0.0
         if ~(
-            -1e-5 < mass_coeff[6] < 1e-5
+            -1e-5 < inputs[Aircraft.AntiIcing.MASS] < 1e-5
         ):  # note: this technically creates a discontinuity !WILL NOT CHANGE
-            icing_wt = mass_coeff[6] * GRAV_ENGLISH_LBM
+            icing_wt = inputs[Aircraft.AntiIcing.MASS] * GRAV_ENGLISH_LBM
 
         aux_wt = 0.0
 
@@ -224,9 +247,9 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
             if furnishing_wt <= 30.0:  # note: this technically creates a discontinuity
                 furnishing_wt = 30.0
         if ~(
-            -1e-5 < mass_coeff[7] < 1e-5
+            -1e-5 < inputs[Aircraft.Furnishings.MASS] < 1e-5
         ):  # note: this technically creates a discontinuity #WONT CHANGE
-            furnishing_wt = mass_coeff[7] * GRAV_ENGLISH_LBM
+            furnishing_wt = inputs[Aircraft.Furnishings.MASS] * GRAV_ENGLISH_LBM
         fixed_equip_wt = (
             APU_wt
             + instrument_wt
@@ -315,13 +338,13 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
 
         service_wt = 0.0
         if PAX > 9.0:
-            service_wt = mass_coeff[8] * PAX * \
+            service_wt = inputs[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER] * PAX * \
                 GRAV_ENGLISH_LBM + 16.0 * lavatories
 
         water_wt = 0.0
         if PAX > 19.0:
-            water_wt = mass_coeff[9] * (PAX + num_pilots +
-                                        num_flight_attendants) * GRAV_ENGLISH_LBM
+            water_wt = inputs[Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT] * \
+                (PAX + num_pilots + num_flight_attendants) * GRAV_ENGLISH_LBM
 
         emergency_wt = 0.0
         if PAX > 5.0:
@@ -330,18 +353,22 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
             emergency_wt = 15.0
         if PAX >= 35.0:
             emergency_wt = 25.0 * num_flight_attendants + 15.0
-        if ~(-1e-5 < mass_coeff[10] < 1e-5):
-            emergency_wt = mass_coeff[10] * GRAV_ENGLISH_LBM
+        if ~(-1e-5 < inputs[Aircraft.Design.EMERGENCY_EQUIPMENT_MASS] < 1e-5):
+            emergency_wt = inputs[Aircraft.Design.EMERGENCY_EQUIPMENT_MASS] * \
+                GRAV_ENGLISH_LBM
 
         catering_wt = 0.0
         if PAX > 19.0:
-            catering_wt = mass_coeff[11] * PAX * GRAV_ENGLISH_LBM
+            catering_wt = inputs[Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER] * \
+                PAX * GRAV_ENGLISH_LBM
 
-        trapped_fuel_wt = mass_coeff[12] * (wing_area**0.5) * fuel_vol_frac / 0.430
+        trapped_fuel_wt = inputs[Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT] * \
+            (wing_area**0.5) * fuel_vol_frac / 0.430
         if (
             fuel_vol_frac <= 0.075
         ):  # note: this technically creates a discontinuity # won't change
-            trapped_fuel_wt = mass_coeff[12] * 0.18 * (wing_area**0.5)
+            trapped_fuel_wt = inputs[Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT] * \
+                0.18 * (wing_area**0.5)
 
         useful_wt = (
             pilot_wt
@@ -363,7 +390,6 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
         PAX = options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS, units='unitless')
         smooth = options.get_val(
             Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, units='unitless')
-        mass_coeff = inputs[Aircraft.Design.EQUIPMENT_MASS_COEFFICIENTS]
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         num_engines = self.options['aviary_options'].get_val(
             Aircraft.Propulsion.TOTAL_NUM_ENGINES, units='unitless')
@@ -387,7 +413,7 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
 
         dAPU_wt_dmass_coeff_0 = 0.0
         if ~(
-            -1e-5 < mass_coeff[0] < 1e-5
+            -1e-5 < inputs[Aircraft.APU.MASS] < 1e-5
         ):  # note: this technically creates a discontinuity
             dAPU_wt_dmass_coeff_0 = GRAV_ENGLISH_LBM
 
@@ -408,7 +434,7 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
         )
         dinstrument_wt_dgross_wt_initial = (
             0.386
-            * mass_coeff[1]
+            * inputs[Aircraft.Instruments.MASS_COEFFICIENT]
             * gross_wt_initial ** (0.386 - 1)
             * num_engines**0.687
             * num_pilots**0.31
@@ -417,7 +443,7 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
         )
         dinstrument_wt_dfus_len = (
             0.05
-            * mass_coeff[1]
+            * inputs[Aircraft.Instruments.MASS_COEFFICIENT]
             * gross_wt_initial**0.386
             * num_engines**0.687
             * num_pilots**0.31
@@ -426,7 +452,7 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
         )
         dinstrument_wt_dwingspan = (
             0.696
-            * mass_coeff[1]
+            * inputs[Aircraft.Instruments.MASS_COEFFICIENT]
             * gross_wt_initial**0.386
             * num_engines**0.687
             * num_pilots**0.31
@@ -437,9 +463,9 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
         gear_val = 1 - gear_type
 
         dhydraulic_wt_dmass_coeff_2 = control_wt
-        dhydraulic_wt_dcontrol_wt = mass_coeff[2]
+        dhydraulic_wt_dcontrol_wt = inputs[Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT]
         dhydraulic_wt_dmass_coeff_3 = landing_gear_wt * gear_val
-        dhydraulic_wt_dlanding_gear_weight = mass_coeff[3] * gear_val
+        dhydraulic_wt_dlanding_gear_weight = inputs[Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT] * gear_val
 
         delectrical_wt_dgross_wt_initial = 0.0
         if PAX <= 12.0:
@@ -482,7 +508,7 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
         if PAX > 100.0:
             davionics_wt_dgross_wt_initial = 0.0
         if ~(
-            -1e-5 < mass_coeff[4] < 1e-5
+            -1e-5 < inputs[Aircraft.Avionics.MASS] < 1e-5
         ):  # note: this technically creates a discontinuity !WILL NOT CHANGE
             davionics_wt_dgross_wt_initial = 0.0
             davionics_wt_dmass_coeff_4 = GRAV_ENGLISH_LBM
@@ -496,11 +522,12 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
                 0.358 * fus_len * cabin_width**2
             ) ** 0.5
             dair_conditioning_wt_dp_diff_fus = (
-                mass_coeff[5] * (0.358 * fus_len * cabin_width**2) ** 0.5
+                inputs[Aircraft.AirConditioning.MASS_COEFFICIENT] *
+                (0.358 * fus_len * cabin_width**2) ** 0.5
             )
             dair_conditioning_wt_dfus_len = (
                 0.5
-                * mass_coeff[5]
+                * inputs[Aircraft.AirConditioning.MASS_COEFFICIENT]
                 * (1.5 + p_diff_fus)
                 * (0.358 * fus_len * cabin_width**2) ** -0.5
                 * 0.358
@@ -508,7 +535,7 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
             )
             dair_conditioning_wt_dcabin_width = (
                 0.5
-                * mass_coeff[5]
+                * inputs[Aircraft.AirConditioning.MASS_COEFFICIENT]
                 * (1.5 + p_diff_fus)
                 * (0.358 * fus_len * cabin_width**2) ** -0.5
                 * 2
@@ -535,9 +562,9 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
                 dicing_weight_dvtail_area = 0.0
                 dicing_weight_dmass_coeff_6 = 0.0
         if ~(
-            -1e-5 < mass_coeff[6] < 1e-5
+            -1e-5 < inputs[Aircraft.AntiIcing.MASS] < 1e-5
         ):  # note: this technically creates a discontinuity !WILL NOT CHANGE
-            icing_wt = mass_coeff[6] * GRAV_ENGLISH_LBM
+            icing_wt = inputs[Aircraft.AntiIcing.MASS] * GRAV_ENGLISH_LBM
             dicing_weight_dwing_area = 0.0
             dicing_weight_dhtail_area = 0.0
             dicing_weight_dvtail_area = 0.0
@@ -626,9 +653,9 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
                 dfurnishing_wt_dcabin_width = 0.0
                 dfurnishing_wt_dmass_coeff_7 = 0.0
         if ~(
-            -1e-5 < mass_coeff[7] < 1e-5
+            -1e-5 < inputs[Aircraft.Furnishings.MASS] < 1e-5
         ):  # note: this technically creates a discontinuity #WONT CHANGE
-            furnishing_wt = mass_coeff[7] * GRAV_ENGLISH_LBM
+            furnishing_wt = inputs[Aircraft.Furnishings.MASS] * GRAV_ENGLISH_LBM
             dfurnishing_wt_dmass_coeff_7 = GRAV_ENGLISH_LBM
             dfurnishing_wt_dcabin_width = 0.0
             dfurnishing_wt_dgross_wt_initial = 0.0
@@ -699,7 +726,7 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
                 PAX + num_pilots + num_flight_attendants) * GRAV_ENGLISH_LBM
 
         demergency_wt_dmass_coeff_10 = 0.0
-        if ~(-1e-5 < mass_coeff[10] < 1e-5):
+        if ~(-1e-5 < inputs[Aircraft.Design.EMERGENCY_EQUIPMENT_MASS] < 1e-5):
             demergency_wt_dmass_coeff_10 = GRAV_ENGLISH_LBM
 
         dcatering_wt_dmass_coeff_11 = 0.0
@@ -708,16 +735,21 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
 
         dtrapped_fuel_wt_dmass_coeff_12 = (wing_area**0.5) * fuel_vol_frac / 0.430
         dtrapped_fuel_wt_dwing_area = (
-            0.5 * mass_coeff[12] * (wing_area**-0.5) * fuel_vol_frac / 0.430
+            0.5 * inputs[Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT] *
+            (wing_area**-0.5) * fuel_vol_frac / 0.430
         )
-        dtrapped_fuel_wt_dfuel_vol_frac = mass_coeff[12] * (wing_area**0.5) / 0.430
+        dtrapped_fuel_wt_dfuel_vol_frac = (
+            inputs[Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT] *
+            (wing_area**0.5) / 0.430
+        )
 
         if (
             fuel_vol_frac <= 0.075
         ):  # note: this technically creates a discontinuity # won't change
             dtrapped_fuel_wt_dmass_coeff_12 = 0.18 * (wing_area**0.5)
             dtrapped_fuel_wt_dwing_area = (
-                0.5 * mass_coeff[12] * 0.18 * (wing_area**-0.5)
+                0.5 * inputs[Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT] *
+                0.18 * (wing_area**-0.5)
             )
             dtrapped_fuel_wt_dfuel_vol_frac = 0.0
 
@@ -731,51 +763,41 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
         duseful_mass_dmass_coeff_12 = dtrapped_fuel_wt_dmass_coeff_12 / GRAV_ENGLISH_LBM
         duseful_mass_dwing_area = dtrapped_fuel_wt_dwing_area / GRAV_ENGLISH_LBM
         duseful_mass_dfuel_vol_frac = dtrapped_fuel_wt_dfuel_vol_frac / GRAV_ENGLISH_LBM
-
         partials[Aircraft.Design.FIXED_USEFUL_LOAD,
                  Aircraft.Engine.SCALED_SLS_THRUST] = duseful_mass_dFn_SLS
-        partials[Aircraft.Design.FIXED_USEFUL_LOAD, Aircraft.Design.EQUIPMENT_MASS_COEFFICIENTS] = np.array(
-            [
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                duseful_mass_dmass_coeff_8,
-                duseful_mass_dmass_coeff_9,
-                duseful_mass_dmass_coeff_10,
-                duseful_mass_dmass_coeff_11,
-                duseful_mass_dmass_coeff_12,
-            ],
-            dtype=object,
-        )
+        partials[Aircraft.Design.FIXED_USEFUL_LOAD,
+                 Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER] = duseful_mass_dmass_coeff_8
+        partials[Aircraft.Design.FIXED_USEFUL_LOAD,
+                 Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT] = duseful_mass_dmass_coeff_9
+        partials[Aircraft.Design.FIXED_USEFUL_LOAD,
+                 Aircraft.Design.EMERGENCY_EQUIPMENT_MASS] = duseful_mass_dmass_coeff_10
+        partials[Aircraft.Design.FIXED_USEFUL_LOAD,
+                 Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER] = duseful_mass_dmass_coeff_11
+        partials[Aircraft.Design.FIXED_USEFUL_LOAD,
+                 Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT] = duseful_mass_dmass_coeff_12
+
         partials[Aircraft.Design.FIXED_USEFUL_LOAD,
                  Aircraft.Wing.AREA] = duseful_mass_dwing_area
         partials[
             Aircraft.Design.FIXED_USEFUL_LOAD, Aircraft.Fuel.WING_FUEL_FRACTION
         ] = duseful_mass_dfuel_vol_frac
 
-        partials[Aircraft.Design.FIXED_EQUIPMENT_MASS, Aircraft.Design.EQUIPMENT_MASS_COEFFICIENTS] = np.array(
-            [
-                dfixed_equip_mass_dmass_coeff_0,
-                dfixed_equip_mass_dmass_coeff_1,
-                dfixed_equip_mass_dmass_coeff_2,
-                dfixed_equip_mass_dmass_coeff_3,
-                dfixed_equip_mass_dmass_coeff_4,
-                dfixed_equip_mass_dmass_coeff_5,
-                dfixed_equip_mass_dmass_coeff_6,
-                dfixed_equip_mass_dmass_coeff_7,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-            ],
-            dtype=object,
-        )
+        partials[Aircraft.Design.FIXED_EQUIPMENT_MASS,
+                 Aircraft.APU.MASS] = dfixed_equip_mass_dmass_coeff_0
+        partials[Aircraft.Design.FIXED_EQUIPMENT_MASS,
+                 Aircraft.Instruments.MASS_COEFFICIENT] = dfixed_equip_mass_dmass_coeff_1
+        partials[Aircraft.Design.FIXED_EQUIPMENT_MASS,
+                 Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT] = dfixed_equip_mass_dmass_coeff_2
+        partials[Aircraft.Design.FIXED_EQUIPMENT_MASS,
+                 Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT] = dfixed_equip_mass_dmass_coeff_3
+        partials[Aircraft.Design.FIXED_EQUIPMENT_MASS,
+                 Aircraft.Avionics.MASS] = dfixed_equip_mass_dmass_coeff_4
+        partials[Aircraft.Design.FIXED_EQUIPMENT_MASS,
+                 Aircraft.AirConditioning.MASS_COEFFICIENT] = dfixed_equip_mass_dmass_coeff_5
+        partials[Aircraft.Design.FIXED_EQUIPMENT_MASS,
+                 Aircraft.AntiIcing.MASS] = dfixed_equip_mass_dmass_coeff_6
+        partials[Aircraft.Design.FIXED_EQUIPMENT_MASS,
+                 Aircraft.Furnishings.MASS] = dfixed_equip_mass_dmass_coeff_7
         partials[
             Aircraft.Design.FIXED_EQUIPMENT_MASS, Mission.Design.GROSS_MASS
         ] = dfixed_equip_wt_dgross_wt_initial

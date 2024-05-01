@@ -69,8 +69,8 @@ class MuxComponent(om.ExplicitComponent):
             nc += num
 
         num_engines = aviary_options.get_val(Aircraft.Engine.NUM_ENGINES)
-        num_nacelles = self.num_nacelles = int(sum(num_engines))
-        if num_nacelles > 0:
+        self.num_nacelles = int(sum(num_engines))
+        if self.num_nacelles > 0:
             add_aviary_input(self, Aircraft.Nacelle.WETTED_AREA,
                              np.zeros(len(num_engines)))
             add_aviary_input(self, Aircraft.Nacelle.FINENESS,

@@ -14,7 +14,9 @@ class CharacteristicLengths(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        count = len(self.options['aviary_options'].get_val(Aircraft.Engine.NUM_ENGINES))
+        engine_count = len(self.options['aviary_options'].get_val(
+            Aircraft.Engine.NUM_ENGINES))
+
         self.add_input(Names.CROOT, 0.0, units='unitless')
 
         add_aviary_input(self, Aircraft.Canard.AREA, 0.0)
@@ -34,8 +36,8 @@ class CharacteristicLengths(om.ExplicitComponent):
         # add_aviary_input(self, Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER, 0.0)
         add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 0.0)
 
-        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, np.zeros(count))
-        add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH, np.zeros(count))
+        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, np.zeros(engine_count))
+        add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH, np.zeros(engine_count))
         # add_aviary_input(self, Aircraft.Nacelle.LAMINAR_FLOW_LOWER, 0.0)
         # add_aviary_input(self, Aircraft.Nacelle.LAMINAR_FLOW_UPPER, 0.0)
 
@@ -65,8 +67,9 @@ class CharacteristicLengths(om.ExplicitComponent):
 
         add_aviary_output(self, Aircraft.HorizontalTail.FINENESS, 0.0)
 
-        add_aviary_output(self, Aircraft.Nacelle.CHARACTERISTIC_LENGTH, np.zeros(count))
-        add_aviary_output(self, Aircraft.Nacelle.FINENESS, np.zeros(count))
+        add_aviary_output(self, Aircraft.Nacelle.CHARACTERISTIC_LENGTH,
+                          np.zeros(engine_count))
+        add_aviary_output(self, Aircraft.Nacelle.FINENESS, np.zeros(engine_count))
 
         add_aviary_output(
             self, Aircraft.VerticalTail.CHARACTERISTIC_LENGTH, 0.0
