@@ -263,6 +263,7 @@ class AviaryProblem(om.Problem):
             initial_guesses = initial_guessing(aviary_inputs, initial_guesses)
         self.aviary_inputs = aviary_inputs
         self.initial_guesses = initial_guesses
+        self.problem_type = aviary_inputs.get_val('problem_type')
 
         if mission_method is TWO_DEGREES_OF_FREEDOM:
             aviary_inputs.set_val(Mission.Summary.CRUISE_MASS_FINAL,
@@ -273,7 +274,7 @@ class AviaryProblem(om.Problem):
             # Commonly referenced values
             self.cruise_alt = aviary_inputs.get_val(
                 Mission.Design.CRUISE_ALTITUDE, units='ft')
-            self.problem_type = aviary_inputs.get_val('problem_type')
+            # self.problem_type = aviary_inputs.get_val('problem_type')
             self.mass_defect = aviary_inputs.get_val('mass_defect', units='lbm')
 
             self.cruise_mass_final = aviary_inputs.get_val(
@@ -1696,11 +1697,32 @@ class AviaryProblem(om.Problem):
             for dv_name, dv_dict in dv_dict.items():
                 self.model.add_design_var(dv_name, **dv_dict)
 
-        if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
+        if self.mission_method is SOLVED_2DOF:
             optimize_mass = self.pre_mission_info.get('optimize_mass')
             if optimize_mass:
                 self.model.add_design_var(Mission.Design.GROSS_MASS, units='lbm',
                                           lower=100.e2, upper=200.e3, ref=135.e3)
+
+        elif self.mission_method is HEIGHT_ENERGY:
+            if self.problem_type is ProblemType.SIZING:
+                self.model.add_design_var(Mission.Design.GROSS_MASS, units='lbm',
+                                          lower=100e2, upper=200e3, ref=135e3)
+
+                self.model.add_design_var(Mission.Summary.GROSS_MASS, units='lbm',
+                                          lower=100e2, upper=200e3, ref=135e3)
+
+                self.model.add_subsystem('gtow_constraint',
+                                         om.EQConstraintComp('GTOW', eq_units='lbm',
+                                                             normalize=True, add_constraint=True),
+                                         promotes_inputs=[('lhs:GTOW', Mission.Design.GROSS_MASS),
+                                                          ('rhs:GTOW', Mission.Summary.GROSS_MASS)])
+
+            elif self.problem_type is ProblemType.ALTERNATE:
+                self.model.add_design_var(Mission.Summary.GROSS_MASS,
+                                          lower=0, upper=None, units='lbm', ref=175e3)
+
+            elif self.problem_type is ProblemType.FALLOUT:
+                print('No design variables for Fallout missions')
 
         elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
             if self.analysis_scheme is AnalysisScheme.COLLOCATION:
