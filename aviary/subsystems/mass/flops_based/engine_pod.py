@@ -43,20 +43,7 @@ class EnginePodMass(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Engine.POD_MASS, val=np.zeros(engine_count))
 
     def setup_partials(self):
-        self.declare_partials(Aircraft.Engine.POD_MASS,
-                              Aircraft.Propulsion.TOTAL_STARTER_MASS, val=1.0)
-        self.declare_partials(Aircraft.Engine.POD_MASS,
-                              Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS, val=1.0)
-        self.declare_partials(Aircraft.Engine.POD_MASS,
-                              Aircraft.Instruments.MASS, val=1.0)
-        self.declare_partials(Aircraft.Engine.POD_MASS,
-                              Aircraft.Electrical.MASS, val=1.0)
-        self.declare_partials(Aircraft.Engine.POD_MASS,
-                              Aircraft.Hydraulics.MASS, val=1.0)
-        self.declare_partials(Aircraft.Engine.POD_MASS,
-                              Aircraft.Fuel.FUEL_SYSTEM_MASS, val=1.0)
-        self.declare_partials(Aircraft.Engine.POD_MASS,
-                              Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, val=1.0)
+        self.declare_partials('*', '*')
 
         # derivatives w.r.t vectorized engine inputs have known sparsity pattern
         engine_count = len(self.options['aviary_options'].get_val(

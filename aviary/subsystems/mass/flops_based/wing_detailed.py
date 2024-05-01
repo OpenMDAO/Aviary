@@ -195,7 +195,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
                     * sa**2 + 0.03*caya * (1.0-0.5*faert)*sa))
         outputs[Aircraft.Wing.BENDING_FACTOR] = bt
 
-        inertia_factor = np.zeros(0, chord.dtype)
+        inertia_factor = np.zeros(engine_count, chord.dtype)
         # idx is the index where this engine type begins in location list
         idx = 0
         # i is the counter for which engine model we are checking
@@ -220,8 +220,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
 
             bte = 8 * np.sum((ea[:-1] + ea[1:]) * dy[:-1] * 0.5)
 
-            inertia_factor = np.append(
-                inertia_factor, 1 - bte / bt * pod_mass[i] / gross_mass)
+            inertia_factor[i] = 1 - bte / bt * pod_mass[i] / gross_mass
             # increment idx to next engine set
             idx = idx2
 
