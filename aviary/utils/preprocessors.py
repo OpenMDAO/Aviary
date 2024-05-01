@@ -201,22 +201,29 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
         if var in update_list:
             dtype = _MetaData[var]['types']
             default_value = _MetaData[var]['default_value']
-            # if default_value is in an array, pull out first index as default
-            if type(default_value) in (list, np.ndarray, tuple):
-                default_value = default_value[0]
             # if dtype has multiple options, use type of default value
             if type(dtype) in (list, tuple):
                 dtype = type(default_value)
-            units = _MetaData[var]['units']
-            vec = [default_value] * count
 
-            # TODO is priority order consistent with expected behavior for overriding?
-            #      EngineModel.options overwrite aviary_options, which overwrite defaults
+            # if default value is an iterable, collapse variable into flat 1d array
+            # instead of 2d to avoid ragged arrays (different lengths for each engine
+            # model can create invalid array shaped like [[x,x,x],[y,y]])
+            if type(default_value) in (list, np.ndarray, tuple):
+                vec = np.zeros([0])
+            else:
+                vec = [default_value] * count
+            units = _MetaData[var]['units']
+
+            # priority order is EngineModel.options overwrite aviary_options,
+            # which overwrite metadata defaults
             for i, engine in enumerate(engine_models):
                 # test to see if engine has this variable - if so, use it
                 try:
                     engine_val = engine.get_val(var, units)
-                    vec[i] = engine_val
+                    if type(engine_val) in (list, np.ndarray, tuple):
+                        vec = np.append(vec, engine_val)
+                    else:
+                        vec[i] = engine_val
                 # if the variable is not in the engine model, pull from aviary options
                 except KeyError:
                     # check if variable is defined in aviary options (for this engine's
@@ -224,8 +231,16 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
                     try:
                         aviary_val = aviary_options.get_val(var, units)
                         if type(aviary_val) in (list, np.ndarray, tuple):
-                            aviary_val = aviary_val[i]
-                        vec[i] = aviary_val
+                            # if len == engine model count, likely intended that a value
+                            # was provided for each engine
+                            if len(aviary_val) == count:
+                                aviary_val = aviary_val[i]
+                            # if aviary_values is length 1, assume this is the default
+                            # per engine value
+                            elif len(aviary_val) == 1:
+                                vec = np.append(vec, aviary_val)
+                            else:
+                                vec[i] = aviary_val
                     # if not, use default value from _MetaData (already in array)
                     except (KeyError, IndexError):
                         continue
