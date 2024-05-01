@@ -75,7 +75,6 @@ class PropulsionMission(om.Group):
                         inputs=[Dynamic.Mission.HYBRID_THROTTLE],
                         src_indices=om.slicer[:, i])
         else:
-
             engine = engine_models[0]
 
             for (i, engine) in enumerate(engine_models):

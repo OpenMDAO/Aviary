@@ -79,7 +79,7 @@ class SizeEngine(om.ExplicitComponent):
 
         # nm = len(engine_models)
 
-        scaled_sls_thrust = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
+        # scaled_sls_thrust = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
         # use dtype to make complex safe
         # deriv_scale_factor = np.zeros(nm, dtype=scaled_sls_thrust.dtype)
 
