@@ -83,6 +83,7 @@ parts:
 
 - caption: Miscellaneous Resources
   chapters:
+    - file: misc_resources/modeling_exercise
     - file: misc_resources/FAQ
     - file: misc_resources/glossary
     - file: misc_resources/resources
