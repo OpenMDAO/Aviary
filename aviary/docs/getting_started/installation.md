@@ -8,7 +8,7 @@ If you do not already have Python installed, we recommend installing [Anaconda](
 
 The simplest way to install Aviary to use pip in a terminal:
 
-```{python}
+```python
 pip install om-aviary
 ```
 
@@ -16,19 +16,19 @@ This will install the latest release of Aviary and all of its dependencies.
 If you want to instead clone the Aviary repository and install from source, follow the instructions below.
 Once you have cloned the Aviary repo, change directories into the top-level Aviary folder (not within the `aviary` folder) and run the following command:
 
-```{python}
+```python
 pip install .
 ```
 
 If you also want to install all packages used for the Aviary tests _and_ external subsystem examples, you can instead run:
 
-```{python}
+```python
 pip install .[all]
 ```
 
 If you are a developer and plan to modify parts of the Aviary code, install in an "editable mode" with ``pip``:
 
-```{python}
+```python
 pip install -e .
 ```
 
@@ -57,7 +57,7 @@ We assume you already have access to the OpenMDAO repos as shown below or that y
 On the Linux system, log in to your account and create your working directory.
 For this doc we will use `workspace`:
 
-```{bash}
+```bash
 $ mkdir ~/workspace
 ```
 

@@ -10,7 +10,7 @@ Please give your best effort for completing each task, but do not worry if you a
 
 ## Task 0: Installation
 
-First, please install Aviary on your local system following the [installation instructions](../docs/installation.md).
+First, please install Aviary on your local system following the [installation instructions](../getting_started/installation.md).
 
 ## Task 1: Run a basic Aviary script
 
@@ -20,7 +20,7 @@ Please copy the contents of this file into a new Python script and run it from y
 
 If the file runs successfully, you should see some output in your terminal that ends with:
 
-```{bash}
+```bash
 Optimization terminated successfully    (Exit mode 0)
             Current function value: 2.420353717703553
             Iterations: 8
@@ -31,7 +31,7 @@ Optimization Complete
 
 Once you have successfully run this script, please open the Aviary dashboard by running the following command in your terminal:
 
-```{bash}
+```bash
 aviary dashboard run_basic_aviary_example
 ```
 
@@ -51,7 +51,7 @@ The survey will ask you to provide a copy of the `phase_info` object you create,
 
 Again open the Aviary dashboard and visually examine the results by running the following command in your terminal:
 
-```{bash}
+```bash
 aviary dashboard <name_of_the_script_you_ran (without .py)>
 ```
 
@@ -64,7 +64,7 @@ Please copy the contents of this file into a new Python script.
 Modify the target distance for the reserve phase to be 300 km and run the script.
 Then open the Aviary dashboard to visually examine the results:
 
-```{bash}
+```bash
 aviary dashboard run_reserve_mission_fixedrange
 ```
 
