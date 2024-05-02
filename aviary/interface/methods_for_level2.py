@@ -1685,8 +1685,10 @@ class AviaryProblem(om.Problem):
             elif verbosity.value > Verbosity.DEBUG.value:
                 driver.options['debug_print'] = ['desvars', 'ln_cons', 'nl_cons', 'objs']
         if optimizer in ("SNOPT", "IPOPT"):
-            if verbosity is not Verbosity.DEBUG:
+            if verbosity is Verbosity.QUIET:
                 driver.options['print_results'] = False
+            elif verbosity is not Verbosity.DEBUG:
+                driver.options['print_results'] = 'minimal'
 
     def add_design_variables(self):
         """
