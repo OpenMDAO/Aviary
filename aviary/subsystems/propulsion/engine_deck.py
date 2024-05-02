@@ -216,15 +216,17 @@ class EngineDeck(EngineModel):
 
         for key in additional_options + required_options:
             if key not in options:
+                val = _MetaData[key]['default_value']
+                units = _MetaData[key]['units']
+
                 if self.get_val(Settings.VERBOSITY).value >= 1:
                     warnings.warn(
                         f'<{key}> is a required option for EngineDecks, but has not been '
-                        f'specified for EngineDeck <{self.name}>. The default value will be '
-                        'used.')
+                        f'specified for EngineDeck <{self.name}>. The default value '
+                        f"{val}{' ' + units if units != 'unitless' else ''} will be used.")
 
-                val = _MetaData[key]['default_value']
-                units = _MetaData[key]['units']
                 self.set_val(key, val, units)
+
         # check dependent options
         for key in dependent_options:
             if self.get_val(key):
@@ -795,6 +797,7 @@ class EngineDeck(EngineModel):
                           desc='Current NOx emission rate (unscaled)')
         # Shaft power and temperature are not summed to system-level totals, so their
         # inclusion in outputs is optional
+        # Summation of shaft power can happen but is not currently implemented
         if self.use_shaft_power:
             if SHAFT_POWER in self.engine_variables:
                 shaft_power_data = self.data[SHAFT_POWER]
@@ -996,6 +999,14 @@ class EngineDeck(EngineModel):
         if self.use_thrust:
             engine_group.connect(
                 'max_thrust_interpolation.thrust_net_max_unscaled', 'engine_scaling.thrust_net_max_unscaled')
+
+        if self.use_shaft_power:
+            if SHAFT_POWER in self.engine_variables:
+                engine_group.connect('interpolation.shaft_power_unscaled',
+                                     'engine_scaling.shaft_power_unscaled')
+            else:
+                engine_group.connect('interpolation.shaft_power_corrected_unscaled',
+                                     'engine_scaling.shaft_power_corrected_unscaled')
 
         return engine_group
 
