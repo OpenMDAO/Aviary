@@ -1179,8 +1179,12 @@ class AviaryProblem(om.Problem):
                 ])
             else:
                 # timeseries has to be used because Breguet cruise phases don't have states
-                self.model.connect(f"traj.{self.regular_phases[0]}.timeseries.mass",
-                                   "fuel_burned.initial_mass", src_indices=[0])
+                #self.model.connect(f"traj.{self.regular_phases[0]}.timeseries.mass",
+                #                   "fuel_burned.initial_mass", src_indices=[0])
+                self.post_mission.promotes('fuel_burned', [
+                    ('initial_mass', Mission.Summary.GROSS_MASS),
+                ])
+                
                 self.model.connect(f"traj.{self.regular_phases[-1]}.timeseries.mass",
                                    "fuel_burned.mass_final", src_indices=[-1])
 
