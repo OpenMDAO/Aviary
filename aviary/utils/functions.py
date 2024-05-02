@@ -109,7 +109,7 @@ def set_value(var_name, var_value, aviary_values: AviaryValues, units=None, is_a
         var_value = var_value[0]
 
     # TODO handle enums in an automated method via checking metadata for enum type
-    if var_name == 'problem_type':
+    if var_name == 'settings:problem_type':
         var_values = ProblemType[var_value]
     if var_name == 'settings:equations_of_motion':
         var_values = EquationsOfMotion(var_value)
