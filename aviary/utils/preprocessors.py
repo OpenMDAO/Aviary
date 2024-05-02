@@ -120,7 +120,8 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
     Performs basic sanity checks on inputs that are universal to all EngineModels.
 
     !!! WARNING !!!
-    Values in aviary_options are overwritten with corresponding values from engine_models!
+    Values in aviary_options can be overwritten with corresponding values from 
+    engine_models!
 
     Parameters
     ----------
@@ -202,39 +203,71 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
             dtype = _MetaData[var]['types']
             default_value = _MetaData[var]['default_value']
             # if default_value is in an array, pull out first index as default
-            if type(default_value) in (list, np.ndarray, tuple):
-                default_value = default_value[0]
+            # if type(default_value) in (list, np.ndarray, tuple):
+            #     default_value = default_value[0]
             # if dtype has multiple options, use type of default value
             if type(dtype) in (list, tuple):
                 dtype = type(default_value)
-            units = _MetaData[var]['units']
-            vec = [default_value] * count
+            # if var is supposed to be a unique array per engine model, assemble flat
+            # vector manually to avoid ragged arrays (such as for wing engine locations)
+            if type(default_value) in (list, np.ndarray):
+                vec = np.zeros(0, dtype=dtype)
+            elif type(default_value) is tuple:
+                vec = ()
+            else:
+                vec = [default_value] * count
 
-            # TODO is priority order consistent with expected behavior for overriding?
-            #      EngineModel.options overwrite aviary_options, which overwrite defaults
+            units = _MetaData[var]['units']
+
+            # priority order is (checked per engine):
+            # 1. EngineModel.options
+            # 2. aviary_options
+            # 3. default value from metadata
             for i, engine in enumerate(engine_models):
+                if var == Aircraft.Nacelle.AVG_DIAMETER:
+                    pass
                 # test to see if engine has this variable - if so, use it
                 try:
+                    # variables in engine models are known to be "safe", will only
+                    # contain data for that engine
                     engine_val = engine.get_val(var, units)
-                    vec[i] = engine_val
+                    if type(default_value) in (list, np.ndarray):
+                        vec = np.append(vec, engine_val)
+                    elif type(default_value) is tuple:
+                        vec = vec + (engine_val,)
+                    else:
+                        vec[i] = engine_val
                 # if the variable is not in the engine model, pull from aviary options
                 except KeyError:
                     # check if variable is defined in aviary options (for this engine's
                     # index) - if so, use it
                     try:
                         aviary_val = aviary_options.get_val(var, units)
-                        if type(aviary_val) in (list, np.ndarray, tuple):
+                        # if aviary_val is an iterable, just grab val for this engine
+                        if isinstance(aviary_val, (list, np.ndarray, tuple)):
                             aviary_val = aviary_val[i]
-                        vec[i] = aviary_val
-                    # if not, use default value from _MetaData (already in array)
+                        if type(default_value) in (list, np.ndarray):
+                            vec = np.append(vec, aviary_val)
+                        elif type(default_value) is tuple:
+                            vec = vec + (aviary_val,)
+                        else:
+                            vec[i] = aviary_val
+                    # if not, use default value from _MetaData
                     except (KeyError, IndexError):
-                        continue
+                        if type(default_value) in (list, np.ndarray):
+                            vec = np.append(vec, default_value)
+                        else:
+                            # default value is aleady in array
+                            continue
                 # TODO update each engine's options with "new" values? Allows each engine
                 #      to have a copy of all options/inputs, beyond what it was
                 #      originally initialized with
+
             # update aviary options and outputs with new vectors
             # if data is numerical, store in a numpy array
-            if type(vec[0]) in (int, float, np.int64, np.float64):
+            # keep tuples as tuples, lists get converted to numpy arrays
+            if type(vec[0]) in (int, float, np.int64, np.float64)\
+               and type(vec) is not tuple:
                 vec = np.array(vec, dtype=dtype)
             aviary_options.set_val(var, vec, units)
 

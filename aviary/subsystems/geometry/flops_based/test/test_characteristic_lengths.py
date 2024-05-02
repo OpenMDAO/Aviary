@@ -32,6 +32,30 @@ class CharacteristicLengthsTest(unittest.TestCase):
 
         prob.setup(check=False, force_alloc_complex=True)
 
+        input_list = [
+            (Aircraft.Canard.AREA, 'ft**2'),
+            (Aircraft.Canard.ASPECT_RATIO, 'unitless'),
+            (Aircraft.Canard.THICKNESS_TO_CHORD, 'unitless'),
+            # (Aircraft.Fuselage.AVG_DIAMETER, 'ft'),
+            (Aircraft.Fuselage.LENGTH, 'ft'),
+            (Aircraft.HorizontalTail.AREA, 'ft**2'),
+            (Aircraft.HorizontalTail.ASPECT_RATIO, 'unitless'),
+            (Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 'unitless'),
+            (Aircraft.VerticalTail.AREA, 'ft**2'),
+            (Aircraft.VerticalTail.ASPECT_RATIO, 'unitless'),
+            (Aircraft.VerticalTail.THICKNESS_TO_CHORD, 'unitless'),
+            (Aircraft.Wing.AREA, 'ft**2'),
+            (Aircraft.Wing.ASPECT_RATIO, 'unitless'),
+            (Aircraft.Wing.GLOVE_AND_BAT, 'ft**2'),
+            (Aircraft.Wing.TAPER_RATIO, 'unitless'),
+            (Aircraft.Wing.THICKNESS_TO_CHORD, 'unitless')
+        ]
+        for var, units in input_list:
+            prob.set_val(var, aviary_options.get_val(var, units))
+
+        # this is another component's output
+        prob.set_val(Aircraft.Fuselage.AVG_DIAMETER, val=12.75)
+
         prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, val=np.array([6, 4.25, 9.6]))
         prob.set_val(Aircraft.Nacelle.AVG_LENGTH, val=np.array([8.4, 5.75, 10]))
 
@@ -55,7 +79,7 @@ class CharacteristicLengthsTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    # unittest.main()
-    test = CharacteristicLengthsTest()
-    test.setUp()
-    test.test_case_multiengine()
+    unittest.main()
+    # test = CharacteristicLengthsTest()
+    # test.setUp()
+    # test.test_case_multiengine()

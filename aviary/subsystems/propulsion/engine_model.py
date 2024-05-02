@@ -135,23 +135,44 @@ class EngineModel(SubsystemBuilderBase):
         for (key, (val, units)) in options:
             # only perform vector check for variables related to engines and nacelles
             if key.startswith('aircraft:engine:') or key.startswith('aircraft:nacelle'):
+                # if val is an iterable...
                 if type(val) in (list, np.ndarray, tuple):
-                    if self.meta_data[key]['types'] not in (list, np.ndarray, tuple) \
-                            and len(val) > 1 and verbosity >= 1:
-                        warnings.warn(
-                            f'The value of {key} passed to EngineModel <{self.name}> is '
-                            f'type {type(val)}. Only the first entry in this iterable will '
-                            'be used.')
+                    # but meta_data says it is not supposed to be, use first item and
+                    # warn user
+                    if not isinstance(self.meta_data[key]['default_value'],
+                                      (list, np.ndarray, tuple)):
+
+                        # if val is multidimensional, raise error
+                        if isinstance(val[0], (list, np.ndarray, tuple)):
+                            raise UserWarning(f'Multidimensional {type(val)} was given '
+                                              f'for variable {key} in EngineModel '
+                                              f'<{self.name}>, but '
+                                              f"{type(self.meta_data[key]['default_value'])} "
+                                              'was expected.')
+
+                        if verbosity >= 1:
+                            warnings.warn(
+                                f'The value of {key} passed to EngineModel '
+                                f'<{self.name}> is {type(val)}. Only the first entry in '
+                                'this iterable will be used.')
+
+                    # if val is supposed to be an iterable...
+                    else:
+                        # but val is multidimensional, use first item and warn user
+                        if isinstance(val[0], (list, np.ndarray, tuple)):
+                            warnings.warn(
+                                f'The value of {key} passed to EngineModel <{self.name}> '
+                                f'is multidimensional {type(val)}. Only the first entry '
+                                'in this iterable will be used.')
+                        # and val is 1-D, then it is ok!
+                        else:
+                            continue
+
                     if isinstance(val, np.ndarray):
                         # "Convert" numpy types to standard Python types. Wrap first
                         # index in numpy array before calling item() to safeguard against
                         # non-standard types, such as objects
-                        val = val.ravel()[0]
-
-                        # Can't setval an int with an int64.
-                        if isinstance(val, np.integer):
-                            val = int(val)
-
+                        val = val[0].item()
                     else:
                         val = val[0]
                     # update options with single value (instead of vector)

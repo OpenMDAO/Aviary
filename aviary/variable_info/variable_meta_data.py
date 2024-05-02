@@ -1,6 +1,8 @@
 '''
 Define meta data associated with variables in the Aviary data hierarchy.
 '''
+import numpy as np
+
 from copy import deepcopy
 from pathlib import Path
 
@@ -2193,7 +2195,7 @@ add_meta_data(
     units='unitless',
     desc='Engine wing mount locations as fractions of semispan; (engines_count)/2 values '
          'are input',
-    # default_value=np.array([0.0])
+    default_value=np.array([0.0])
 )
 
 #  ______   _
