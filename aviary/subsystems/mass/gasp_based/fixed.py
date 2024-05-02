@@ -898,6 +898,8 @@ class EngineMass(om.ExplicitComponent):
         prop_wt = inputs["prop_mass"] * GRAV_ENGLISH_LBM
         # prop_wt_all = sum(num_engines * prop_wt) / GRAV_ENGLISH_LBM
 
+        J["prop_mass_all", "prop_mass"] = num_engines
+
         dPylonWt_dFnSLS = (
             pylon_fac * 0.736 * (dry_wt_eng + nacelle_wt) ** (0.736 - 1) * eng_spec_wt
         )
@@ -919,7 +921,7 @@ class EngineMass(om.ExplicitComponent):
             idx = idx + num_engines[i]
 
         J["wing_mounted_mass", Aircraft.Engine.WING_LOCATIONS] = 0.001 \
-            / (eng_span_frac + 0.001) ** 2 * wing_mass_deriv
+            / (eng_span_frac + 0.001) ** 2 * wing_mass_deriv / GRAV_ENGLISH_LBM
 
         J["wing_mounted_mass", Aircraft.Engine.MASS_SPECIFIC] = span_frac_factor_sum \
             * (Fn_SLS + c_instl * Fn_SLS + dPylonWt_dEngSpecWt) * num_engines
@@ -944,6 +946,8 @@ class EngineMass(om.ExplicitComponent):
 
         J["wing_mounted_mass", Aircraft.LandingGear.MAIN_GEAR_LOCATION] = (
             main_gear_wt / GRAV_ENGLISH_LBM * ((loc_main_gear + 0.001) - loc_main_gear) / (loc_main_gear + 0.001) ** 2)
+
+        J["wing_mounted_mass", "prop_mass"] = span_frac_factor_sum * num_engines
 
         if self.options["aviary_options"].get_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, units='unitless'):
             J["eng_comb_mass", "aug_mass"] = 1
