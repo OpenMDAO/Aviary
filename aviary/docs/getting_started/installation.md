@@ -2,18 +2,35 @@
 
 ## Quick start installation
 
-The simplest installation method for users is to install via pip.
+```{note}
+If you do not already have Python installed, we recommend installing [Anaconda](https://www.anaconda.com/download).
+```
+
+The simplest way to install Aviary to use pip in a terminal:
+
+```{python}
+pip install om-aviary
+```
+
+This will install the latest release of Aviary and all of its dependencies.
+If you want to instead clone the Aviary repository and install from source, follow the instructions below.
 Once you have cloned the Aviary repo, change directories into the top-level Aviary folder (not within the `aviary` folder) and run the following command:
 
-    pip install .
+```{python}
+pip install .
+```
 
 If you also want to install all packages used for the Aviary tests _and_ external subsystem examples, you can instead run:
 
-    pip install .[all]
+```{python}
+pip install .[all]
+```
 
 If you are a developer and plan to modify parts of the Aviary code, install in an "editable mode" with ``pip``:
 
-    pip install -e .
+```{python}
+pip install -e .
+```
 
 This installs the package in the current environment such that changes to the Python code don't require re-installation.
 This command should be performed while in the folder containing ``setup.py``.
@@ -40,7 +57,7 @@ We assume you already have access to the OpenMDAO repos as shown below or that y
 On the Linux system, log in to your account and create your working directory.
 For this doc we will use `workspace`:
 
-```
+```{bash}
 $ mkdir ~/workspace
 ```
 
@@ -157,7 +174,7 @@ $ python -m pip install ./build_pyoptsparse
 ```
 
 ```{note}
-`SNOPT` is a commercial optimizer that is free for academic use and available for puchase for commercial use. Users must obtain it themselves.
+`SNOPT` is a commercial optimizer that is free for academic use and available for purchase for commercial use. Users must obtain it themselves.
 ```
 
 Assuming you have the `SNOPT` source code already, copy it to the `workspace` directory. 
