@@ -1,5 +1,6 @@
 import numpy as np
 import openmdao.api as om
+from openmdao.components.ks_comp import KSfunction
 
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
 from aviary.utils.aviary_values import AviaryValues
@@ -891,12 +892,14 @@ class EngineMass(om.ExplicitComponent):
         dry_wt_eng = eng_spec_wt * Fn_SLS
         nacelle_wt = spec_nacelle_wt * nacelle_area
         pylon_wt = pylon_fac * ((dry_wt_eng + nacelle_wt) ** 0.736)
-        sec_wt = sum((nacelle_wt + pylon_wt) * num_engines)
+        pod_wt = (nacelle_wt + pylon_wt)
+        eng_instl_wt = c_instl * dry_wt_eng
 
-        # prop_wt = np.zeros(engine_count)
         # prop_idx = np.where(aviary_options.get_val(Aircraft.Engine.HAS_PROPELLERS))
         prop_wt = inputs["prop_mass"] * GRAV_ENGLISH_LBM
         # prop_wt_all = sum(num_engines * prop_wt) / GRAV_ENGLISH_LBM
+
+        J["prop_mass_all", "prop_mass"] = num_engines
 
         dPylonWt_dFnSLS = (
             pylon_fac * 0.736 * (dry_wt_eng + nacelle_wt) ** (0.736 - 1) * eng_spec_wt
@@ -908,26 +911,26 @@ class EngineMass(om.ExplicitComponent):
         span_frac_factor = eng_span_frac / (eng_span_frac + 0.001)
         # sum span_frac_factor for each engine type
         span_frac_factor_sum = np.zeros(engine_count, dtype=Fn_SLS.dtype)
+        wing_mass_deriv = np.zeros(len(span_frac_factor), dtype=Fn_SLS.dtype)
         idx = 0
-        wing_mass_deriv = []
-        wing_mass_vec = (eng_spec_wt * Fn_SLS * num_engines *
-                         (1 + c_instl) + sec_wt + prop_wt)
+        # wing_mass_vec = (eng_spec_wt * Fn_SLS * (1 + c_instl) +
+        #                 sec_wt + prop_wt) * num_engines
+        wing_mass_vec = (dry_wt_eng + eng_instl_wt + pod_wt + prop_wt) * num_engines
         for i in range(engine_count):
             span_frac_factor_sum[i] = sum(span_frac_factor[idx:idx+num_engines[i]])
-            wing_mass_deriv = np.concatenate(
-                (wing_mass_deriv, [wing_mass_vec[i]]*int(num_engines[i]/2)))
+            wing_mass_deriv[idx:idx+num_engines[i]] = wing_mass_vec[i]
             idx = idx + num_engines[i]
 
-        J["wing_mounted_mass", Aircraft.Engine.WING_LOCATIONS] = ((span_frac_factor + 0.001) - span_frac_factor) \
-            / (span_frac_factor + 0.001) ** 2 * wing_mass_deriv
+        J["wing_mounted_mass", Aircraft.Engine.WING_LOCATIONS] = 0.001 \
+            / (eng_span_frac + 0.001) ** 2 * wing_mass_deriv / GRAV_ENGLISH_LBM
 
-        J["wing_mounted_mass", Aircraft.Engine.MASS_SPECIFIC] = span_frac_factor_sum / (span_frac_factor_sum + 0.001) \
+        J["wing_mounted_mass", Aircraft.Engine.MASS_SPECIFIC] = span_frac_factor_sum \
             * (Fn_SLS + c_instl * Fn_SLS + dPylonWt_dEngSpecWt) * num_engines
 
-        J["wing_mounted_mass", Aircraft.Engine.SCALED_SLS_THRUST] = span_frac_factor_sum / (span_frac_factor_sum + 0.001) \
+        J["wing_mounted_mass", Aircraft.Engine.SCALED_SLS_THRUST] = span_frac_factor_sum  \
             * (num_engines * eng_spec_wt + c_instl * num_engines * eng_spec_wt + dPylonWt_dFnSLS * num_engines) / GRAV_ENGLISH_LBM
 
-        J["wing_mounted_mass", Aircraft.Engine.ADDITIONAL_MASS_FRACTION] = span_frac_factor_sum / (span_frac_factor_sum + 0.001) \
+        J["wing_mounted_mass", Aircraft.Engine.ADDITIONAL_MASS_FRACTION] = span_frac_factor_sum \
             * (eng_spec_wt * Fn_SLS * num_engines) / GRAV_ENGLISH_LBM
 
         J["wing_mounted_mass", Aircraft.Nacelle.MASS_SPECIFIC] = (span_frac_factor_sum * num_engines
@@ -944,6 +947,8 @@ class EngineMass(om.ExplicitComponent):
 
         J["wing_mounted_mass", Aircraft.LandingGear.MAIN_GEAR_LOCATION] = (
             main_gear_wt / GRAV_ENGLISH_LBM * ((loc_main_gear + 0.001) - loc_main_gear) / (loc_main_gear + 0.001) ** 2)
+
+        J["wing_mounted_mass", "prop_mass"] = span_frac_factor_sum * num_engines
 
         if self.options["aviary_options"].get_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, units='unitless'):
             J["eng_comb_mass", "aug_mass"] = 1
@@ -2311,7 +2316,9 @@ class GearMass(om.ExplicitComponent):
         # When there are multiple engine types, use the largest required clearance
         # TODO this does not match variable description (e.g. clearance ratio of 1.0 is
         #      actually two nacelle diameters above ground)
-        gear_height_temp = max((1.0 + clearance_ratio) * nacelle_diam)
+        # Note: KSFunction for smooth derivatives.
+        gear_height_temp = KSfunction.compute(
+            (1.0 + clearance_ratio) * nacelle_diam, 50.0)
 
         # A minimum gear height of 6 feet is enforced here using a smoothing function to
         # prevent discontinuities in the function and it's derivatives.
@@ -2343,7 +2350,10 @@ class GearMass(om.ExplicitComponent):
         clearance_ratio = inputs[Aircraft.Nacelle.CLEARANCE_RATIO]
         nacelle_diam = inputs[Aircraft.Nacelle.AVG_DIAMETER]
 
-        gear_height_temp = max((1.0 + clearance_ratio) * nacelle_diam)
+        val = (1.0 + clearance_ratio) * nacelle_diam
+        gear_height_temp = KSfunction.compute(val, 50.0)
+        dKS, _ = KSfunction.derivatives(val, 50.0)
+
         gear_height = gear_height_temp * \
             sigX(gear_height_temp-6) + 6 * sigX(6-gear_height_temp)
 
@@ -2356,13 +2366,14 @@ class GearMass(om.ExplicitComponent):
             (
                 sigX(gear_height_temp - 6) * nacelle_diam
                 + gear_height_temp * dSigXdX(gear_height_temp - 6) * nacelle_diam)
-            + (6 * dSigXdX(6 - gear_height_temp) * -nacelle_diam))
+            + (6 * dSigXdX(6 - gear_height_temp) * -nacelle_diam)) * dKS
 
         dGH_dND = (
             (
                 sigX(gear_height_temp - 6) * (1 + clearance_ratio)
                 + gear_height_temp * dSigXdX(gear_height_temp - 6)
-                * (1 + clearance_ratio))
+                * (1 + clearance_ratio)) * dKS
+
             + (6 * dSigXdX(6 - gear_height_temp) * (1 + clearance_ratio)))
 
         c_gear_mass_modified = (
