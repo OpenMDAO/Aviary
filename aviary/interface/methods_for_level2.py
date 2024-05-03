@@ -1182,7 +1182,7 @@ class AviaryProblem(om.Problem):
                 #self.model.connect(f"traj.{self.regular_phases[0]}.timeseries.mass",
                 #                   "fuel_burned.initial_mass", src_indices=[0])
                 self.post_mission.promotes('fuel_burned', [
-                    ('initial_mass', Mission.Summary.GROSS_MASS),
+                    ('initial_mass', Mission.Design.GROSS_MASS),
                 ])
                 
                 self.model.connect(f"traj.{self.regular_phases[-1]}.timeseries.mass",
