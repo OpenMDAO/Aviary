@@ -270,7 +270,7 @@ class EngineDeck(EngineModel):
 
         # user provided target thrust or scale factor, but performance scaling is off
         if scale_performance and (scale_factor_provided or thrust_provided) and self.get_val(Settings.VERBOSITY).value >= 1:
-            UserWarning(
+            warnings.warn(
                 f'EngineDeck <{self.name}>: Scaling targets are provided, but will be '
                 'ignored because performance scaling is disabled. Set '
                 'aircraft:engine:SCALE_PERFORMANCE to True to enable scaling.'
@@ -503,10 +503,10 @@ class EngineDeck(EngineModel):
         # (freestream air temp and pressure). Instead, we must trust the source and
         # assume either data set is valid and can be used.
         if SHAFT_POWER in engine_variables and SHAFT_POWER_CORRECTED in engine_variables and self.get_val(Settings.VERBOSITY).value >= 1:
-            UserWarning('Both corrected and uncorrected shaft horsepower are '
-                        f'present in {message}. The two cannot be validated for '
-                        'consistency, and either variable could be utilized if '
-                        'any subsystem requests it as an input.')
+            warnings.warn('Both corrected and uncorrected shaft horsepower are '
+                          f'present in {message}. The two cannot be validated for '
+                          'consistency, and either variable could be utilized if '
+                          'any subsystem requests it as an input.')
 
         self._set_variable_flags()
 
