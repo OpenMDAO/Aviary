@@ -1,5 +1,6 @@
 import numpy as np
 import openmdao.api as om
+from openmdao.components.ks_comp import KSfunction
 
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
 from aviary.utils.aviary_values import AviaryValues
@@ -2315,7 +2316,8 @@ class GearMass(om.ExplicitComponent):
         # When there are multiple engine types, use the largest required clearance
         # TODO this does not match variable description (e.g. clearance ratio of 1.0 is
         #      actually two nacelle diameters above ground)
-        gear_height_temp = max((1.0 + clearance_ratio) * nacelle_diam)
+        # Note: KSFunction for smooth derivatives.
+        gear_height_temp = KSfunction.compute((1.0 + clearance_ratio) * nacelle_diam, 50.0)
 
         # A minimum gear height of 6 feet is enforced here using a smoothing function to
         # prevent discontinuities in the function and it's derivatives.
@@ -2347,7 +2349,10 @@ class GearMass(om.ExplicitComponent):
         clearance_ratio = inputs[Aircraft.Nacelle.CLEARANCE_RATIO]
         nacelle_diam = inputs[Aircraft.Nacelle.AVG_DIAMETER]
 
-        gear_height_temp = max((1.0 + clearance_ratio) * nacelle_diam)
+        val =  (1.0 + clearance_ratio) * nacelle_diam
+        gear_height_temp = KSfunction.compute(val, 50.0)
+        dKS, _ = KSfunction.derivatives(val, 50.0)
+
         gear_height = gear_height_temp * \
             sigX(gear_height_temp-6) + 6 * sigX(6-gear_height_temp)
 
@@ -2360,13 +2365,14 @@ class GearMass(om.ExplicitComponent):
             (
                 sigX(gear_height_temp - 6) * nacelle_diam
                 + gear_height_temp * dSigXdX(gear_height_temp - 6) * nacelle_diam)
-            + (6 * dSigXdX(6 - gear_height_temp) * -nacelle_diam))
+            + (6 * dSigXdX(6 - gear_height_temp) * -nacelle_diam)) * dKS
 
         dGH_dND = (
             (
                 sigX(gear_height_temp - 6) * (1 + clearance_ratio)
                 + gear_height_temp * dSigXdX(gear_height_temp - 6)
-                * (1 + clearance_ratio))
+                * (1 + clearance_ratio)) * dKS
+
             + (6 * dSigXdX(6 - gear_height_temp) * (1 + clearance_ratio)))
 
         c_gear_mass_modified = (
