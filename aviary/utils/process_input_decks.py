@@ -26,7 +26,7 @@ from aviary.utils.functions import convert_strings_to_data, set_value
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.enums import ProblemType, Verbosity
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 from aviary.utils.functions import get_path
 
 
@@ -57,7 +57,7 @@ def create_vehicle(vehicle_deck='', verbosity=Verbosity.BRIEF):
     aircraft_values.set_val('test_mode', val=False)
     aircraft_values.set_val('use_surrogates', val=True)
     aircraft_values.set_val('mass_defect', val=10000, units='lbm')
-    aircraft_values.set_val('problem_type', val=ProblemType.SIZING)
+    aircraft_values.set_val(Settings.PROBLEM_TYPE, val=ProblemType.SIZING)
     aircraft_values.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False)
 
     if isinstance(vehicle_deck, AviaryValues):
@@ -236,7 +236,7 @@ def initial_guessing(aircraft_values: AviaryValues(), initial_guesses):
     -------
     tuple: Updated aircraft values and initial guesses.
     """
-    problem_type = aircraft_values.get_val('problem_type')
+    problem_type = aircraft_values.get_val(Settings.PROBLEM_TYPE)
     num_pax = aircraft_values.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)
     reserve_val = aircraft_values.get_val(
         Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm')

@@ -75,7 +75,7 @@ aircraft:landing_gear:fixed_gear,False,unitless
 aircraft:landing_gear:main_gear_location,0.15,unitless
 aircraft:landing_gear:main_gear_mass_coefficient,0.85,unitless
 aircraft:landing_gear:mass_coefficient,0.04,unitless
-aircraft:landing_gear:tail_hook_mass_scaunitlessler,1,unitless
+aircraft:landing_gear:tail_hook_mass_scaler,1,unitless
 aircraft:landing_gear:total_mass_scaler,1,
 aircraft:nacelle:clearance_ratio,0.2,unitless
 aircraft:nacelle:core_diameter_ratio,1.25,unitless
@@ -141,7 +141,7 @@ mission:design:cruise_altitude,37500,ft
 mission:design:gross_mass,175400,lbm
 mission:design:mach,0.8,unitless
 mission:design:range,3675,NM
-mission:landing:airport_altitude_landing,0,ft
+mission:landing:airport_altitude,0,ft
 mission:landing:braking_delay,1,s
 mission:landing:glide_to_stall_ratio,1.3,unitless
 mission:landing:maximum_flare_load_factor,1.15,unitless

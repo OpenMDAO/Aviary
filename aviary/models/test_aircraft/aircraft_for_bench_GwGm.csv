@@ -140,7 +140,7 @@ mission:design:cruise_altitude,37500,ft
 mission:design:gross_mass,175400,lbm
 mission:design:mach,0.8,unitless
 mission:design:range,3675,NM
-mission:landing:airport_altitude_landing,0,ft
+mission:landing:airport_altitude,0,ft
 mission:landing:braking_delay,1,s
 mission:landing:glide_to_stall_ratio,1.3,unitless
 mission:landing:maximum_flare_load_factor,1.15,unitless
