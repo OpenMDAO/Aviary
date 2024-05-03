@@ -289,58 +289,62 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
         """
         engine_count = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
         params = {}
-        if phase_info is not None and self.code_origin is FLOPS:
 
-            aero_opt = phase_info['subsystem_options']['core_aerodynamics']
+        if self.code_origin is FLOPS:
+            try:
+                aero_opt = phase_info['subsystem_options'][self.name]
+                method = aero_opt['method']
+            except KeyError:
+                method = 'computed'
 
-            # Only solved_alpha has connectable inputs.
-            if aero_opt['method'] == 'solved_alpha':
-                aero_data = aero_opt['aero_data']
+            if phase_info is not None:
+                # Only solved_alpha has connectable inputs.
+                if method == 'solved_alpha':
+                    aero_data = aero_opt['aero_data']
 
-                if isinstance(aero_data, NamedValues):
-                    altitude = aero_data.get_item('altitude')[0]
-                    mach = aero_data.get_item('mach')[0]
-                    angle_of_attack = aero_data.get_item('angle_of_attack')[0]
+                    if isinstance(aero_data, NamedValues):
+                        altitude = aero_data.get_item('altitude')[0]
+                        mach = aero_data.get_item('mach')[0]
+                        angle_of_attack = aero_data.get_item('angle_of_attack')[0]
 
-                    n1 = altitude.size
-                    n2 = mach.size
-                    n3 = angle_of_attack.size
-                    n1u = np.unique(altitude).size
+                        n1 = altitude.size
+                        n2 = mach.size
+                        n3 = angle_of_attack.size
+                        n1u = np.unique(altitude).size
 
-                    if n1 > n1u:
-                        # Data is free-format instead of pre-formatted.
-                        n1 = n1u
-                        n2 = np.unique(mach).size
-                        n3 = np.unique(angle_of_attack).size
+                        if n1 > n1u:
+                            # Data is free-format instead of pre-formatted.
+                            n1 = n1u
+                            n2 = np.unique(mach).size
+                            n3 = np.unique(angle_of_attack).size
 
-                    shape = (n1, n2, n3)
+                        shape = (n1, n2, n3)
 
-                    if aviary_inputs is not None and Aircraft.Design.LIFT_POLAR in aviary_inputs:
-                        lift_opts = {'val': aviary_inputs.get_val(Aircraft.Design.LIFT_POLAR),
-                                     'static_target': True}
-                    else:
-                        lift_opts = {'shape': shape,
-                                     'static_target': True}
+                        if aviary_inputs is not None and Aircraft.Design.LIFT_POLAR in aviary_inputs:
+                            lift_opts = {'val': aviary_inputs.get_val(Aircraft.Design.LIFT_POLAR),
+                                         'static_target': True}
+                        else:
+                            lift_opts = {'shape': shape,
+                                         'static_target': True}
 
-                    if aviary_inputs is not None and Aircraft.Design.DRAG_POLAR in aviary_inputs:
-                        drag_opts = {'val': aviary_inputs.get_val(Aircraft.Design.DRAG_POLAR),
-                                     'static_target': True}
-                    else:
-                        drag_opts = {'shape': shape,
-                                     'static_target': True}
+                        if aviary_inputs is not None and Aircraft.Design.DRAG_POLAR in aviary_inputs:
+                            drag_opts = {'val': aviary_inputs.get_val(Aircraft.Design.DRAG_POLAR),
+                                         'static_target': True}
+                        else:
+                            drag_opts = {'shape': shape,
+                                         'static_target': True}
 
-                    params[Aircraft.Design.LIFT_POLAR] = lift_opts
-                    params[Aircraft.Design.DRAG_POLAR] = drag_opts
+                        params[Aircraft.Design.LIFT_POLAR] = lift_opts
+                        params[Aircraft.Design.DRAG_POLAR] = drag_opts
 
-        method = phase_info['subsystem_options']['core_aerodynamics']['method']
-        if self.code_origin is FLOPS and method is 'computed':
-            param_vars = [Aircraft.Nacelle.CHARACTERISTIC_LENGTH,
-                          Aircraft.Nacelle.FINENESS,
-                          Aircraft.Nacelle.LAMINAR_FLOW_LOWER,
-                          Aircraft.Nacelle.LAMINAR_FLOW_UPPER,
-                          Aircraft.Nacelle.WETTED_AREA]
-            for var in param_vars:
-                params[var] = {'shape': (engine_count, ), 'static_target': True}
+            if method == 'computed':
+                param_vars = [Aircraft.Nacelle.CHARACTERISTIC_LENGTH,
+                              Aircraft.Nacelle.FINENESS,
+                              Aircraft.Nacelle.LAMINAR_FLOW_LOWER,
+                              Aircraft.Nacelle.LAMINAR_FLOW_UPPER,
+                              Aircraft.Nacelle.WETTED_AREA]
+                for var in param_vars:
+                    params[var] = {'shape': (engine_count, ), 'static_target': True}
 
         return params
 

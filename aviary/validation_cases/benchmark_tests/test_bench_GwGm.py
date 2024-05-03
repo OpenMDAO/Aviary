@@ -133,7 +133,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
-    # test = ProblemPhaseTestCase()
-    # test.test_bench_GwGm_SNOPT_lbm_s()
-    # test.test_bench_GwGm_shooting()
+    # unittest.main()
+    test = ProblemPhaseTestCase()
+    test.test_bench_GwGm_SNOPT_lbm_s()
+    test.test_bench_GwGm_shooting()
