@@ -8,7 +8,7 @@ from aviary.subsystems.propulsion.propulsion_premission import (
     PropulsionPreMission, PropulsionSum)
 from aviary.utils.aviary_values import AviaryValues
 from aviary.validation_cases.validation_tests import get_flops_inputs
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variables import Aircraft, Settings
 
 
 class PropulsionPreMissionTest(unittest.TestCase):
@@ -17,6 +17,7 @@ class PropulsionPreMissionTest(unittest.TestCase):
 
     def test_case(self):
         aviary_values = get_flops_inputs('LargeSingleAisle2FLOPS')
+        aviary_values.set_val(Settings.VERBOSITY, 0)
         options = aviary_values
 
         self.prob.model = PropulsionPreMission(aviary_options=options)
@@ -38,6 +39,8 @@ class PropulsionPreMissionTest(unittest.TestCase):
 
     def test_multi_engine(self):
         aviary_values = get_flops_inputs('MultiEngineSingleAisle')
+        aviary_values.set_val(Settings.VERBOSITY, 0)
+
         options = aviary_values
 
         self.prob.model = PropulsionPreMission(aviary_options=options)
@@ -62,6 +65,7 @@ class PropulsionPreMissionTest(unittest.TestCase):
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([1, 2, 5]))
         # it doesn't matter what goes in engine models, as long as it is length 3
         options.set_val('engine_models', [1, 1, 1])
+        options.set_val(Settings.VERBOSITY, 0)
         self.prob.model = om.Group()
         self.prob.model.add_subsystem('propsum',
                                       PropulsionSum(aviary_options=options),
