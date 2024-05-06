@@ -64,7 +64,7 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
                 # TODO engine_wing_location
                 params[var] = {'shape': (engine_count, ), 'static_target': True}
 
-        params = {} # For now
+        params = {}  # For now
         params[Aircraft.Engine.SCALE_FACTOR] = {'shape': (engine_count, ),
                                                 'static_target': True}
         return params

@@ -39,7 +39,7 @@ class PropulsionPreMission(om.Group):
                     proms = ['*']
                 self.add_subsystem(engine.name,
                                    subsys=subsys,
-                                   promotes_outputs = proms,
+                                   promotes_outputs=proms,
                                    )
 
         if engine_count > 1:
