@@ -315,6 +315,7 @@ inputs.set_val(Mission.Takeoff.FUEL_SIMPLE, 577., 'lbm')
 # ---------------------------
 inputs.set_val(Settings.EQUATIONS_OF_MOTION, EquationsOfMotion.HEIGHT_ENERGY)
 inputs.set_val(Settings.MASS_METHOD, LegacyCode.FLOPS)
+inputs.set_val(Settings.VERBOSITY, 0)
 
 # ---------------------------
 #          OUTPUTS
