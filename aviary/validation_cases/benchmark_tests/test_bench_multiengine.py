@@ -21,7 +21,8 @@ local_phase_info['climb']['user_options']['use_polynomial_control'] = True
 
 local_phase_info['cruise']['user_options']['optimize_mach'] = False
 local_phase_info['cruise']['user_options']['optimize_altitude'] = False
-local_phase_info['cruise']['user_options']['altitude_bounds'] = ((32000.0, 34000.0), "ft")
+local_phase_info['cruise']['user_options']['altitude_bounds'] = (
+    (32000.0, 34000.0), "ft")
 local_phase_info['cruise']['user_options']['throttle_enforcement'] = 'path_constraint'
 local_phase_info['cruise']['user_options']['use_polynomial_control'] = True
 
