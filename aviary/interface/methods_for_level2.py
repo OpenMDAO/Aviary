@@ -1009,7 +1009,7 @@ class AviaryProblem(om.Problem):
             traj = self.model.add_subsystem('traj', dm.Trajectory())
 
         elif self.analysis_scheme is AnalysisScheme.SHOOTING:
-            from aviary.interface.default_phase_info.two_dof_fiti_copy import ascent_phases, descent_phases
+            from aviary.interface.default_phase_info.two_dof_fiti_copy import ascent_phases, cruise_phase, descent_phases
             try:
                 from aviary.interface.default_phase_info.two_dof_fiti_copy import phase_info_parameterization
             except:
@@ -1022,7 +1022,7 @@ class AviaryProblem(om.Problem):
             # descent_phases = create_2dof_based_descent_phases(
             #     self.ode_args,
             #     cruise_mach=self.cruise_mach)
-
+            vb = self.aviary_inputs.get_val('verbosity')
             cruise_kwargs = dict(
                 input_speed_type=SpeedType.MACH,
                 input_speed_units="unitless",
@@ -1061,16 +1061,7 @@ class AviaryProblem(om.Problem):
 
             phases = {
                 **ascent_phases,
-                'cruise': {
-                    'builder': SGMCruise,
-                    'user_options': {
-                        # 'alt_cruise': (37.5e3, 'ft'),
-                        'mach': (0.8, 'unitless'),
-                        'attr:mass_trigger': ('SGMCruise_mass_trigger', 'lbm')
-                    },
-                    'initial_guesses': {
-                    }
-                },
+                **cruise_phase,
                 **descent_phases,
             }
             self.phase_info = {}
@@ -1081,7 +1072,7 @@ class AviaryProblem(om.Problem):
                     phases[name]['kwargs']['ode_args'] = self.ode_args
                 if 'simupy_args' not in info['kwargs']:
                     phases[name]['kwargs']['simupy_args'] = {
-                        'verbosity': Verbosity.VERBOSE}
+                        'verbosity': Verbosity.QUIET}
                 if 'external_subsystems' not in info:
                     phases[name]['external_subsystems'] = []
 
@@ -2391,11 +2382,17 @@ class AviaryProblem(om.Problem):
         make_plots : bool, optional
             If True (default), Dymos html plots will be generated as part of the output.
         """
+        self.final_setup()
+        om.n2(self, 'superduperspecialn2.html', show_browser=False)
+        print('max pitch', self.get_val(
+            Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE, units='deg'))
 
         if self.aviary_inputs.get_val('verbosity').value >= 2:
             self.final_setup()
             with open('input_list.txt', 'w') as outfile:
                 self.model.list_inputs(out_stream=outfile)
+        print('max pitch', self.get_val(
+            Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE, units='deg'))
 
         if suppress_solver_print:
             self.set_solver_print(level=0)

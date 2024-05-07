@@ -186,7 +186,7 @@ def add_descent_estimation_as_submodel(
         )
 
     model.add_subsystem(
-        'traj', traj,
+        'descent_traj', traj,
         promotes_inputs=['altitude_initial', 'mass_initial', 'aircraft:*'],
         promotes_outputs=['mass_final', 'distance_final'],
     )
@@ -256,7 +256,7 @@ def add_descent_estimation_as_submodel(
     model.set_input_defaults(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, 0)
     model.set_input_defaults(
         Aircraft.Design.OPERATING_MASS, val=0, units='lbm')
-    model.set_input_defaults('traj.'+Dynamic.Mission.THROTTLE, 0)
+    model.set_input_defaults('descent_traj.'+Dynamic.Mission.THROTTLE, 0)
 
     promote_aircraft_and_mission_vars(model)
 

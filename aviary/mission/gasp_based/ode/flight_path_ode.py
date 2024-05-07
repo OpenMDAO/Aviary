@@ -235,12 +235,14 @@ class FlightPathODE(BaseODE):
 
         # Example of how to use a print_comp
         debug_comp = []
-        if False:
+        if True:
             from aviary.utils.functions import create_printcomp
             dummy_comp = create_printcomp(
                 all_inputs=[
                     Dynamic.Mission.DISTANCE,
                     Dynamic.Mission.THROTTLE,
+                    Dynamic.Mission.THRUST_TOTAL,
+                    'required_thrust',
                     'required_lift',
                     'load_factor',
                     Dynamic.Mission.ALTITUDE,
@@ -248,6 +250,7 @@ class FlightPathODE(BaseODE):
                     Dynamic.Mission.MASS,
                 ],
                 input_units={
+                    'required_thrust': 'lbf',
                     'required_lift': 'lbf',
                     Dynamic.Mission.FLIGHT_PATH_ANGLE: 'deg',
                 })
@@ -287,3 +290,6 @@ class FlightPathODE(BaseODE):
         self.set_input_defaults(Dynamic.Mission.MACH, val=np.zeros(nn), units="unitless")
         self.set_input_defaults(Dynamic.Mission.MASS, val=np.zeros(nn), units="lbm")
         self.set_input_defaults(Dynamic.Mission.VELOCITY, val=np.zeros(nn), units="kn")
+
+        from aviary.mission.gasp_based.ode.time_integration_base_classes import killer_comp
+        self.add_subsystem('cruise_killer', killer_comp())

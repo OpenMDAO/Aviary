@@ -14,7 +14,6 @@ Individual list elements can be specified by adding an index after the variable 
 Example inputs:
 aircraft:fuselage:pressure_differential = .5, atm !DELP in GASP, but using atmospheres instead of psi
 ARNGE(1) = 3600 !target range in nautical miles
-pyc_phases = taxi, groundroll, rotation, landing
 """
 
 import csv

@@ -1,7 +1,7 @@
 from aviary.utils.aviary_values import AviaryValues
 import numpy as np
 
-from aviary.variable_info.enums import SpeedType, Verbosity
+from aviary.variable_info.enums import SpeedType, Verbosity, AlphaModes
 from aviary.mission.gasp_based.phases.time_integration_phases import SGMGroundroll, \
     SGMRotation, SGMAscentCombined, SGMAccel, SGMClimb, SGMCruise, SGMDescent
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic
@@ -52,6 +52,7 @@ ascent_phases = {
         'kwargs': dict(
             input_speed_type=SpeedType.EAS,
             input_speed_units='kn',
+            speed_trigger_units='unitless',
         ),
         'builder': SGMClimb,
         'user_options': {
@@ -66,6 +67,7 @@ ascent_phases = {
         'kwargs': dict(
             input_speed_type=SpeedType.EAS,
             input_speed_units='kn',
+            speed_trigger_units='unitless',
         ),
         'builder': SGMClimb,
         'user_options': {
@@ -80,12 +82,13 @@ ascent_phases = {
         'kwargs': dict(
             input_speed_type=SpeedType.MACH,
             input_speed_units='unitless',
+            speed_trigger_units='kn',
         ),
         'builder': SGMClimb,
         'user_options': {
             'alt_trigger': (cruise_alt, 'ft'),
             'mach': (cruise_mach, 'unitless'),
-            'speed_trigger': (0, 'unitless'),
+            'speed_trigger': (0, 'kn'),
         },
         'initial_guesses': {
         }
@@ -93,10 +96,14 @@ ascent_phases = {
 }
 cruise_phase = {
     'cruise': {
+        'kwargs': dict(
+            input_speed_type=SpeedType.MACH,
+            input_speed_units="unitless",
+            alpha_mode=AlphaModes.REQUIRED_LIFT,
+        ),
         'builder': SGMCruise,
         'user_options': {
-            'alt_cruise': (cruise_alt, 'ft'),
-            'mach_cruise': (cruise_mach, 'unitless'),
+            'mach': (cruise_mach, 'unitless'),
             'attr:mass_trigger': ('SGMCruise_mass_trigger', 'lbm')
         },
         'initial_guesses': {
@@ -191,8 +198,7 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs: Av
     phase_info['climb3']['user_options']['alt_trigger'] = alt_cruise
     phase_info['climb3']['user_options']['mach'] = mach_cruise
 
-    phase_info['cruise']['user_options']['alt_cruise'] = alt_cruise
-    phase_info['cruise']['user_options']['mach_cruise'] = mach_cruise
+    phase_info['cruise']['user_options']['mach'] = mach_cruise
 
     phase_info['desc1']['user_options']['mach'] = mach_cruise
 
