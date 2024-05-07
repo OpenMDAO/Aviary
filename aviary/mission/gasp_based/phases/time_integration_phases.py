@@ -267,7 +267,6 @@ class SGMAscentCombined(SGMAscent):
                 load_factor_val = ode.get_val("load_factor")
                 fuselage_pitch_val = ode.get_val("fuselage_pitch", units="deg")
                 velocity_rate_val = ode.get_val("velocity_rate")
-                print(fuselage_pitch_val, fuselage_pitch_max)
                 if (
                     (load_factor_val > load_factor_max) and not
                     np.isclose(load_factor_val, load_factor_max)

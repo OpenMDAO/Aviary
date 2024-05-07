@@ -107,32 +107,32 @@ class AscentODE(BaseODE):
         )
 
         self.add_excess_rate_comps(nn)
-        # if analysis_scheme is AnalysisScheme.SHOOTING and alpha_mode is AlphaModes.FUSELAGE_PITCH:
-        #     from aviary.utils.functions import create_printcomp
-        #     dummy_comp = create_printcomp(
-        #         all_inputs=[
-        #             Dynamic.Mission.DISTANCE,
-        #             Dynamic.Mission.THROTTLE,
-        #             Dynamic.Mission.THRUST_TOTAL,
-        #             Dynamic.Mission.DRAG,
-        #             Dynamic.Mission.ALTITUDE,
-        #             Dynamic.Mission.FLIGHT_PATH_ANGLE,
-        #             Dynamic.Mission.LIFT,
-        #             Dynamic.Mission.MASS,
-        #             'alpha',
-        #             Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE, #check where this is coming from
-        #         ],
-        #         input_units={
-        #             Dynamic.Mission.FLIGHT_PATH_ANGLE: 'deg',
-        #             'alpha': 'deg',
-        #             Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE: 'deg',
-        #         })
-        #     self.add_subsystem(
-        #         "dummy_comp",
-        #         dummy_comp(),
-        #         promotes_inputs=["*"],)
-        #     self.set_input_defaults(
-        #         Dynamic.Mission.DISTANCE, val=0, units='NM')
+        if analysis_scheme is AnalysisScheme.SHOOTING and alpha_mode is AlphaModes.FUSELAGE_PITCH:
+            from aviary.utils.functions import create_printcomp
+            dummy_comp = create_printcomp(
+                all_inputs=[
+                    Dynamic.Mission.DISTANCE,
+                    Dynamic.Mission.THROTTLE,
+                    Dynamic.Mission.THRUST_TOTAL,
+                    Dynamic.Mission.DRAG,
+                    Dynamic.Mission.ALTITUDE,
+                    Dynamic.Mission.FLIGHT_PATH_ANGLE,
+                    Dynamic.Mission.LIFT,
+                    Dynamic.Mission.MASS,
+                    'alpha',
+                    Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE,  # check where this is coming from
+                ],
+                input_units={
+                    Dynamic.Mission.FLIGHT_PATH_ANGLE: 'deg',
+                    'alpha': 'deg',
+                    Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE: 'deg',
+                })
+            self.add_subsystem(
+                "dummy_comp",
+                dummy_comp(),
+                promotes_inputs=["*"],)
+            self.set_input_defaults(
+                Dynamic.Mission.DISTANCE, val=0, units='NM')
 
         ParamPort.set_default_vals(self)
         self.set_input_defaults("t_init_flaps", val=47.5)

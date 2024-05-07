@@ -161,7 +161,6 @@ class AscentEOM(om.ExplicitComponent):
         outputs[Dynamic.Mission.ALTITUDE_RATE] = TAS * np.sin(gamma)
         outputs[Dynamic.Mission.DISTANCE_RATE] = TAS * np.cos(gamma)
         outputs["normal_force"] = normal_force
-        print(gamma*180/np.pi, i_wing, alpha)
         outputs["fuselage_pitch"] = gamma * 180 / np.pi - i_wing + alpha
 
         outputs["alpha_rate"] = np.zeros(nn)

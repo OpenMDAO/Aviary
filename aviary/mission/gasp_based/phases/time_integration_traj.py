@@ -2,6 +2,7 @@ import numpy as np
 import openmdao.api as om
 from aviary.mission.gasp_based.ode.time_integration_base_classes import SGMTrajBase
 from aviary.mission.gasp_based.phases.time_integration_phases import SGMGroundroll, SGMRotation
+from aviary.variable_info.enums import Verbosity
 
 
 class TimeIntegrationTrajBase(SGMTrajBase):
@@ -34,9 +35,17 @@ class FlexibleTraj(TimeIntegrationTrajBase):
         ODEs = []
         for phase_name, phase_info in self.options['Phases'].items():
             kwargs = phase_info.get('kwargs', {})
+            # if 'ode_args' not in kwargs:
+            #     kwargs['ode_args'] = self.options['ode_args']
+            # if 'simupy_args' not in kwargs:
+            #     kwargs['simupy_args'] = {'verbosity': Verbosity.QUIET}
+            # if 'external_subsystems' not in phase_info:
+            #     phase_info['external_subsystems'] = []
+
             next_phase = phase_info['builder'](**kwargs)
             next_phase.phase_name = phase_name
             ODEs.append(next_phase)
+        # print(self.options['Phases'])
 
         self.setup_params(
             ODEs=ODEs,
@@ -61,7 +70,10 @@ class FlexibleTraj(TimeIntegrationTrajBase):
                 for name, data in vals_to_set.items():
                     var, units = data
                     if name.startswith('attr:'):
-                        new_val = (self.convert2units(var, inputs[var], units)[0], units)
+                        new_val = (
+                            np.squeeze(self.convert2units(var, inputs[var], units)),
+                            units
+                        )
                         setattr(phase, name.replace('attr:', ''), new_val)
                     elif name.startswith('rotation.'):
                         phase.rotation.set_val(name.replace(

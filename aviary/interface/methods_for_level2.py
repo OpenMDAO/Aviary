@@ -1595,7 +1595,7 @@ class AviaryProblem(om.Problem):
                             phase1, phase2, 'mass', 'mass', connected=False, ref=1.0e5)
 
                 # add all params and promote them to self.model level
-                ParamPort.promote_params(
+                ParamPort.promote_params(  # this
                     self.model,
                     trajs=["traj"],
                     phases=[
