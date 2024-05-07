@@ -93,7 +93,7 @@ class PropulsionPreMission(om.Group):
 
             # pull out all inputs (in dict format) in component
             comp_inputs = comp.list_inputs(
-                return_format='dict', units=True, out_stream=out_stream)
+                return_format='dict', units=True, out_stream=out_stream, all_procs=True)
             # only keep inputs if they contain the pattern
             input_dict[comp.name] = dict((key, comp_inputs[key])
                                          for key in comp_inputs if any([x in key for x in pattern]))
@@ -107,7 +107,7 @@ class PropulsionPreMission(om.Group):
 
             # do the same thing with outputs
             comp_outputs = comp.list_outputs(
-                return_format='dict', units=True, out_stream=out_stream)
+                return_format='dict', units=True, out_stream=out_stream, all_procs=True)
             output_dict[comp.name] = dict((key, comp_outputs[key])
                                           for key in comp_outputs if any([x in key for x in pattern]))
             unique_outputs.update([(key, output_dict[comp.name][key]['units'])
