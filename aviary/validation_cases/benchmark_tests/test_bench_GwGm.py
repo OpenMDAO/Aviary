@@ -100,6 +100,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
     @require_pyoptsparse(optimizer="IPOPT")
     def test_bench_GwGm_shooting(self):
+        from aviary.interface.default_phase_info.two_dof_fiti_copy import phase_info
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwGm.csv',
                           local_phase_info, optimizer='IPOPT', run_driver=False,

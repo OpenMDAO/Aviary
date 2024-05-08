@@ -121,27 +121,13 @@ def add_descent_estimation_as_submodel(
         cruise_alt=None,
         cruise_mach=None,
         reserve_fuel=None,
+        verbosity=Verbosity.QUIET,
 ):
 
     if phases is None:
-        from aviary.interface.default_phase_info.two_dof_fiti_copy import descent_phases as phases
-        for name, info in phases.items():
-            kwargs = info.get('kwargs', {})
-            if 'ode_args' not in kwargs:
-                from copy import deepcopy
-                kwargs['ode_args'] = deepcopy(ode_args)
-            if 'simupy_args' not in kwargs:
-                kwargs['simupy_args'] = {'verbosity': Verbosity.QUIET}
-            # if 'kwargs' not in info:
-            #     info['kwargs'] = {}
-            # if 'ode_args' not in info['kwargs']:
-            #     phases[name]['kwargs']['ode_args'] = ode_args
-            # if 'simupy_args' not in info['kwargs']:
-            #     phases[name]['kwargs']['simupy_args'] = {'verbosity': Verbosity.QUIET}
-        # phases = create_2dof_based_descent_phases(
-        #     ode_args,
-        #     cruise_mach=cruise_mach,
-        # )
+        from aviary.interface.default_phase_info.two_dof_fiti_copy import \
+            descent_phases as phases, add_default_sgm_args
+        add_default_sgm_args(phases, ode_args)
 
     traj = FlexibleTraj(
         Phases=phases,
@@ -211,8 +197,6 @@ def add_descent_estimation_as_submodel(
         ],
         promotes_outputs=[('actual_fuel_burn', 'descent_fuel')])
 
-    verbosity, _ = ode_args['aviary_options'].get_item(
-        'verbosity', default=(Verbosity.QUIET))
     if verbosity.value >= 1:
         from aviary.utils.functions import create_printcomp
         dummy_comp = create_printcomp(

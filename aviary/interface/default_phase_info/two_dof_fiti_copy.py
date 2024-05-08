@@ -1,17 +1,29 @@
 from aviary.utils.aviary_values import AviaryValues
-import numpy as np
-
-from aviary.variable_info.enums import SpeedType, Verbosity, AlphaModes
+from aviary.variable_info.enums import SpeedType, Verbosity, AlphaModes, LegacyCode
 from aviary.mission.gasp_based.phases.time_integration_phases import SGMGroundroll, \
     SGMRotation, SGMAscentCombined, SGMAccel, SGMClimb, SGMCruise, SGMDescent
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic
+from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
+from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
+from aviary.subsystems.mass.mass_builder import CoreMassBuilder
+from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
+from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData, Mission
 
 # defaults for 2DOF based forward in time integeration phases
+
+GASP = LegacyCode.GASP
+
+prop = CorePropulsionBuilder('core_propulsion', BaseMetaData)
+mass = CoreMassBuilder('core_mass', BaseMetaData, GASP)
+aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, GASP)
+geom = CoreGeometryBuilder('core_geometry', BaseMetaData, GASP)
+
+default_premission_subsystems = [prop, geom, aero, mass]
 
 cruise_alt = 35e3,
 cruise_mach = .8,
 
-ascent_phases = {
+takeoff_phases = {
     'groundroll': {
         'builder': SGMGroundroll,
         'user_options': {
@@ -48,6 +60,8 @@ ascent_phases = {
         'initial_guesses': {
         }
     },
+}
+climb_phases = {
     'climb1': {
         'kwargs': dict(
             input_speed_type=SpeedType.EAS,
@@ -94,6 +108,10 @@ ascent_phases = {
         }
     },
 }
+ascent_phases = {
+    **takeoff_phases,
+    **climb_phases
+}
 cruise_phase = {
     'cruise': {
         'kwargs': dict(
@@ -104,7 +122,7 @@ cruise_phase = {
         'builder': SGMCruise,
         'user_options': {
             'mach': (cruise_mach, 'unitless'),
-            'attr:mass_trigger': ('SGMCruise_mass_trigger', 'lbm')
+            # 'attr:mass_trigger': ('SGMCruise_mass_trigger', 'lbm') # temp until submodel fix
         },
         'initial_guesses': {
         }
@@ -124,6 +142,7 @@ descent_phases = {
             'speed_trigger': (350, 'kn'),
             Dynamic.Mission.THROTTLE: (0, 'unitless'),
         },
+        'descent_phase': True,
         'initial_guesses': {
         }
     },
@@ -140,6 +159,7 @@ descent_phases = {
             'speed_trigger': (0, 'kn'),
             Dynamic.Mission.THROTTLE: (0, 'unitless'),
         },
+        'descent_phase': True,
         'initial_guesses': {
         }
     },
@@ -156,6 +176,7 @@ descent_phases = {
             'speed_trigger': (0, 'kn'),
             Dynamic.Mission.THROTTLE: (0, 'unitless'),
         },
+        'descent_phase': True,
         'initial_guesses': {
         }
     },
@@ -206,3 +227,16 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs: Av
     phase_info['desc1']['user_options']['mach'] = mach_cruise
 
     return phase_info, post_mission_info
+
+
+def add_default_sgm_args(phase_info: dict, ode_args: dict, verbosity=None):
+    for name, info in phase_info.items():
+        kwargs = info.get('kwargs', {})
+        if 'ode_args' not in kwargs:
+            kwargs['ode_args'] = ode_args
+        if 'simupy_args' not in kwargs:
+            if verbosity is None:
+                verbosity, _ = ode_args['aviary_options'].get_item(
+                    'verbosity', default=(Verbosity.QUIET))
+            kwargs['simupy_args'] = {'verbosity': verbosity}
+        info['kwargs'] = kwargs
