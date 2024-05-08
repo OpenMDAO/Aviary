@@ -40,7 +40,7 @@ Function and method names, similar to variables, should be formatted in "snake c
 
 ### Import statements
 
-Autopep8 allows both absolate and relative path in `import` statements. Aviary will use absolute path option only. Following autopep8, imports should be grouped in the following order:
+Autopep8 allows both absolute and relative paths in `import` statements. Aviary will use absolute path option only. Following autopep8, imports should be grouped in the following order:
 
     1. Standard library imports.
     2. Related third party imports.
