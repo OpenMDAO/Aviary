@@ -10,6 +10,7 @@ import numpy as np
 
 import dymos as dm
 from dymos.utils.misc import _unspecified
+from copy import deepcopy
 
 import openmdao.api as om
 from openmdao.core.component import Component
@@ -638,7 +639,7 @@ class AviaryProblem(om.Problem):
                     post_mission=False, reserves_name='reserve_fuel_estimate')
                 add_descent_estimation_as_submodel(
                     self,
-                    ode_args=self.ode_args,
+                    ode_args=deepcopy(self.ode_args),
                     cruise_mach=self.cruise_mach,
                     cruise_alt=self.cruise_alt,
                     reserve_fuel='reserve_fuel_estimate',
@@ -1069,7 +1070,7 @@ class AviaryProblem(om.Problem):
                 if 'kwargs' not in info:
                     info['kwargs'] = {}
                 if 'ode_args' not in info['kwargs']:
-                    phases[name]['kwargs']['ode_args'] = self.ode_args
+                    phases[name]['kwargs']['ode_args'] = deepcopy(self.ode_args)
                 if 'simupy_args' not in info['kwargs']:
                     phases[name]['kwargs']['simupy_args'] = {
                         'verbosity': Verbosity.QUIET}
@@ -1595,7 +1596,7 @@ class AviaryProblem(om.Problem):
                             phase1, phase2, 'mass', 'mass', connected=False, ref=1.0e5)
 
                 # add all params and promote them to self.model level
-                ParamPort.promote_params(  # this
+                ParamPort.promote_params(
                     self.model,
                     trajs=["traj"],
                     phases=[
@@ -1651,6 +1652,7 @@ class AviaryProblem(om.Problem):
             self.model.promotes("taxi", inputs=param_list)
             self.model.promotes("landing", inputs=param_list)
             if self.analysis_scheme is AnalysisScheme.SHOOTING:
+                param_list.append(Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE)
                 self.model.promotes("traj", inputs=param_list)
                 # self.model.list_inputs()
                 # self.model.promotes("traj", inputs=['ascent.ODE_group.eoms.'+Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE])

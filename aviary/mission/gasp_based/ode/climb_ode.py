@@ -220,28 +220,6 @@ class ClimbODE(BaseODE):
 
         # the last two subsystems will also be used for constraints
         self.add_excess_rate_comps(nn)
-        if analysis_scheme is AnalysisScheme.SHOOTING:
-            from aviary.utils.functions import create_printcomp
-            dummy_comp = create_printcomp(
-                all_inputs=[
-                    Dynamic.Mission.DISTANCE,
-                    Dynamic.Mission.THROTTLE,
-                    Dynamic.Mission.THRUST_TOTAL,
-                    Dynamic.Mission.DRAG,
-                    Dynamic.Mission.ALTITUDE,
-                    Dynamic.Mission.FLIGHT_PATH_ANGLE,
-                    Dynamic.Mission.LIFT,
-                    Dynamic.Mission.MASS,
-                ],
-                input_units={
-                    Dynamic.Mission.FLIGHT_PATH_ANGLE: 'deg',
-                })
-            self.add_subsystem(
-                "dummy_comp",
-                dummy_comp(),
-                promotes_inputs=["*"],)
-            self.set_input_defaults(
-                Dynamic.Mission.DISTANCE, val=0, units='NM')
 
         if analysis_scheme is AnalysisScheme.COLLOCATION:
             self.set_order(['params', 'USatm', 'mach_balance_group'] + prop_groups +
@@ -255,6 +233,3 @@ class ClimbODE(BaseODE):
                                 val=174000 * np.ones(nn), units='lbm')
         self.set_input_defaults(Dynamic.Mission.MACH,
                                 val=0 * np.ones(nn), units="unitless")
-
-        from aviary.mission.gasp_based.ode.time_integration_base_classes import killer_comp
-        self.add_subsystem('climb_killer', killer_comp())

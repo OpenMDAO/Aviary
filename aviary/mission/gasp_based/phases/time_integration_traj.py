@@ -83,7 +83,7 @@ class FlexibleTraj(TimeIntegrationTrajBase):
 
         ode_index = 0
         sim_gen = self.compute_traj_loop(self.ODEs[0], inputs, outputs)
-        if self.verbosity.value >= 1 or True:
+        if self.verbosity.value >= 1:
             print('*'*40)
             print('Starting: '+self.ODEs[ode_index].phase_name)
         for current_problem, sim_result in sim_gen:
@@ -107,7 +107,7 @@ class FlexibleTraj(TimeIntegrationTrajBase):
                 elif type(current_problem) is SGMRotation:
                     next_problem.rotation.set_val("start_rotation", t_start_rotation)
 
-                if self.verbosity.value >= 1 or True:
+                if self.verbosity.value >= 1:
                     print('Starting: '+next_problem.phase_name)
                 sim_gen.send(next_problem)
             else:

@@ -88,28 +88,6 @@ class AccelODE(BaseODE):
         )
 
         self.add_excess_rate_comps(nn)
-        if analysis_scheme is AnalysisScheme.SHOOTING:
-            from aviary.utils.functions import create_printcomp
-            dummy_comp = create_printcomp(
-                all_inputs=[
-                    Dynamic.Mission.DISTANCE,
-                    Dynamic.Mission.THROTTLE,
-                    Dynamic.Mission.THRUST_TOTAL,
-                    Dynamic.Mission.DRAG,
-                    Dynamic.Mission.ALTITUDE,
-                    Dynamic.Mission.FLIGHT_PATH_ANGLE,
-                    Dynamic.Mission.LIFT,
-                    Dynamic.Mission.MASS,
-                ],
-                input_units={
-                    Dynamic.Mission.FLIGHT_PATH_ANGLE: 'deg',
-                })
-            self.add_subsystem(
-                "dummy_comp",
-                dummy_comp(),
-                promotes_inputs=["*"],)
-            self.set_input_defaults(
-                Dynamic.Mission.DISTANCE, val=0, units='NM')
 
         ParamPort.set_default_vals(self)
         self.set_input_defaults(Dynamic.Mission.MASS, val=14e4 *
@@ -118,5 +96,3 @@ class AccelODE(BaseODE):
                                 val=500 * np.ones(nn), units="ft")
         self.set_input_defaults(Dynamic.Mission.VELOCITY, val=200*np.ones(nn),
                                 units="m/s")  # val here is nominal
-        from aviary.mission.gasp_based.ode.time_integration_base_classes import killer_comp
-        self.add_subsystem('accel_killer', killer_comp())

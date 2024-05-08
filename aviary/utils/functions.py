@@ -257,7 +257,8 @@ def create_printcomp(all_inputs: list, input_units: dict = {}, meta_data=_MetaDa
                 if ':' in variable_name:
                     add_aviary_input(self, variable_name, units=units)
                 else:
-                    self.add_input(variable_name, units=units)
+                    # using an arbitrary number that will stand out for unconnected variables
+                    self.add_input(variable_name, units=units, val=1.23456)
 
         def compute(self, inputs, outputs):
             print_string = ['v'*20]

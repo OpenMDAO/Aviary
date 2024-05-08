@@ -86,7 +86,7 @@ prob.add_post_mission_systems()
 # Link phases and variables
 prob.link_phases()
 
-prob.add_driver("SNOPT", max_iter=50, verbosity=av.Verbosity.DEBUG)
+prob.add_driver("SNOPT", max_iter=50)
 
 prob.add_design_variables()
 

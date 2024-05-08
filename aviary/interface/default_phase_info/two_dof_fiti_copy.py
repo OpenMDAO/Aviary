@@ -122,6 +122,7 @@ descent_phases = {
             'alt_trigger': (10000, 'ft'),
             'mach': (cruise_mach, 'unitless'),
             'speed_trigger': (350, 'kn'),
+            Dynamic.Mission.THROTTLE: (0, 'unitless'),
         },
         'initial_guesses': {
         }
@@ -137,6 +138,7 @@ descent_phases = {
             'alt_trigger': (10000, 'ft'),
             'EAS': (350, 'kn'),
             'speed_trigger': (0, 'kn'),
+            Dynamic.Mission.THROTTLE: (0, 'unitless'),
         },
         'initial_guesses': {
         }
@@ -152,6 +154,7 @@ descent_phases = {
             'alt_trigger': (1000, 'ft'),
             'EAS': (250, 'kn'),
             'speed_trigger': (0, 'kn'),
+            Dynamic.Mission.THROTTLE: (0, 'unitless'),
         },
         'initial_guesses': {
         }

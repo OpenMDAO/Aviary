@@ -34,6 +34,7 @@ class AlphaModes(Enum):
     REQUIRED_LIFT = auto()
     ALTITUDE_RATE = auto()
     CONSTANT_ALTITUDE = auto()
+    FLIGHT_PATH_ANGLE = auto()
 
 
 class AnalysisScheme(Enum):
