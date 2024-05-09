@@ -669,10 +669,10 @@ class Mission:
         AIRPORT_ALTITUDE = 'mission:landing:airport_altitude'
         BRAKING_DELAY = 'mission:landing:braking_delay'
         BRAKING_FRICTION_COEFFICIENT = 'mission:landing:braking_friction_coefficient'
-        DRAG_COEFFICIENT = 'mission:landing:drag_coefficient'
 
         DRAG_COEFFICIENT_FLAP_INCREMENT = \
             'mission:landing:drag_coefficient_flap_increment'
+        DRAG_COEFFICIENT_MIN = 'mission:landing:drag_coefficient_min'
 
         FIELD_LENGTH = 'mission:landing:field_length'
         FLARE_RATE = 'mission:landing:flare_rate'
@@ -759,4 +759,5 @@ class Mission:
 class Settings:
     EQUATIONS_OF_MOTION = 'settings:equations_of_motion'
     MASS_METHOD = 'settings:mass_method'
+    PROBLEM_TYPE = 'settings:problem_type'
     VERBOSITY = 'settings:verbosity'

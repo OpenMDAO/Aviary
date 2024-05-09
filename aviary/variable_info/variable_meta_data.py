@@ -5,7 +5,7 @@ from copy import deepcopy
 from pathlib import Path
 
 from aviary.utils.develop_metadata import add_meta_data
-from aviary.variable_info.enums import EquationsOfMotion, FlapType, GASPEngineType, LegacyCode, Verbosity
+from aviary.variable_info.enums import EquationsOfMotion, FlapType, GASPEngineType, LegacyCode, Verbosity, ProblemType
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 # ---------------------------
@@ -6820,19 +6820,6 @@ add_meta_data(
     desc='landing coefficient of friction, with brakes on')
 
 add_meta_data(
-    # TODO: should this be Mission.Landing.DRAG_COEFFICIENT_MIN ???
-    Mission.Landing.DRAG_COEFFICIENT,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": 'AERIN.CDMLD',  # ['&DEFINE.AERIN.CDMLD', 'LANDG.CDMLD'],
-                     "LEAPS1": None
-                     },
-    units='unitless',
-    desc='Minimum drag coefficient for takeoff. Typically this is CD at zero lift.',
-    default_value=0.0,
-)
-
-add_meta_data(
     Mission.Landing.DRAG_COEFFICIENT_FLAP_INCREMENT,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.DCD',
@@ -6841,6 +6828,18 @@ add_meta_data(
                      },
     units='unitless',
     desc='drag coefficient increment at landing due to flaps',
+)
+
+add_meta_data(
+    Mission.Landing.DRAG_COEFFICIENT_MIN,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": 'AERIN.CDMLD',  # ['&DEFINE.AERIN.CDMLD', 'LANDG.CDMLD'],
+                     "LEAPS1": None
+                     },
+    units='unitless',
+    desc='Minimum drag coefficient for takeoff. Typically this is CD at zero lift.',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -7619,6 +7618,19 @@ add_meta_data(
     desc="Sets which legacy code's methods will be used for mass estimation",
     option=True,
     types=LegacyCode,
+    default_value=None
+)
+
+add_meta_data(
+    Settings.PROBLEM_TYPE,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    desc="Select from Aviary's built in problem types: Sizing, Alternate, and Fallout",
+    option=True,
+    types=ProblemType,
     default_value=None
 )
 

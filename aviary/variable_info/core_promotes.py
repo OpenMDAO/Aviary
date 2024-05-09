@@ -40,6 +40,7 @@ core_mission_inputs = [
     Aircraft.Wing.ASPECT_RATIO,
     Aircraft.Wing.CHARACTERISTIC_LENGTH,
     Aircraft.Wing.FINENESS,
+    Aircraft.Wing.INCIDENCE,
     Aircraft.Wing.LAMINAR_FLOW_LOWER,
     Aircraft.Wing.LAMINAR_FLOW_UPPER,
     Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN,

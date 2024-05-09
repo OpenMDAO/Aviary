@@ -16,8 +16,8 @@ Tarun Huria, Massimo Ceraolo, Javier Gazzarri, Robyn Jackey
 """
 
 from openmdao.api import Group
-from .cell_comp import CellComp
-from .reg_thevenin_interp_group import RegTheveninInterpGroup
+from aviary.examples.external_subsystems.battery.model.cell_comp import CellComp
+from aviary.examples.external_subsystems.battery.model.reg_thevenin_interp_group import RegTheveninInterpGroup
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.examples.external_subsystems.battery.battery_variables import Aircraft, Mission
