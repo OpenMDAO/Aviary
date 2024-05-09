@@ -1,3 +1,5 @@
+# created 04/22/24 at 15:40
+# GASP-derived aircraft input deck converted from large_turboprop_freighter.dat
 # Input Values
 aircraft:air_conditioning:mass_coefficient,2.65,unitless
 aircraft:anti_icing:mass,644,lbm
