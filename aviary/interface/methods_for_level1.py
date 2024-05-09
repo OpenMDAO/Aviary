@@ -185,6 +185,9 @@ def _exec_level1(args, user_args):
     if isinstance(args.input_deck, list):
         args.input_deck = args.input_deck[0]
 
+    file_name_stem = Path(args.input_deck).stem
+    args.outdir = args.outdir + os.sep + file_name_stem
+
     prob = run_level_1(
         input_deck=args.input_deck,
         outdir=args.outdir,
