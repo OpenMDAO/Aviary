@@ -6823,19 +6823,6 @@ add_meta_data(
     desc='landing coefficient of friction, with brakes on')
 
 add_meta_data(
-    # TODO: should this be Mission.Landing.DRAG_COEFFICIENT_MIN ???
-    Mission.Landing.DRAG_COEFFICIENT,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": 'AERIN.CDMLD',  # ['&DEFINE.AERIN.CDMLD', 'LANDG.CDMLD'],
-                     "LEAPS1": None
-                     },
-    units='unitless',
-    desc='Minimum drag coefficient for takeoff. Typically this is CD at zero lift.',
-    default_value=0.0,
-)
-
-add_meta_data(
     Mission.Landing.DRAG_COEFFICIENT_FLAP_INCREMENT,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.DCD',
@@ -6844,6 +6831,18 @@ add_meta_data(
                      },
     units='unitless',
     desc='drag coefficient increment at landing due to flaps',
+)
+
+add_meta_data(
+    Mission.Landing.DRAG_COEFFICIENT_MIN,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": 'AERIN.CDMLD',  # ['&DEFINE.AERIN.CDMLD', 'LANDG.CDMLD'],
+                     "LEAPS1": None
+                     },
+    units='unitless',
+    desc='Minimum drag coefficient for takeoff. Typically this is CD at zero lift.',
+    default_value=0.0,
 )
 
 add_meta_data(
