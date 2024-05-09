@@ -12,7 +12,7 @@ from aviary.utils.named_values import NamedValues
 
 def build_data_interpolator(num_nodes, interpolator_data=None, interpolator_outputs=None,
                             method='slinear', extrapolate=True, structured=None,
-                            training_data=False):
+                            is_training_data=False):
     """
     Builder for openMDAO metamodel components using data provided via data file, directly
     provided as an argument, or training data passed through openMDAO connections.
@@ -31,8 +31,8 @@ def build_data_interpolator(num_nodes, interpolator_data=None, interpolator_outp
 
     interpolator_outputs : dict
         Dictionary describing the names of dependent variables (keys) and their
-        units (values). If training_data is False, these variable names must reference
-        variables in data_file or interpolator_data. If training_data is True, then
+        units (values). If is_training_data is False, these variable names must reference
+        variables in data_file or interpolator_data. If is_training_data is True, then
         this dictionary describes the names and units for training data that will be
         provided via openMDAO connections during model execution.
 
@@ -48,7 +48,7 @@ def build_data_interpolator(num_nodes, interpolator_data=None, interpolator_outp
         structured metamodel component is used, if False, the semistructured metamodel is
         used. If None, the builder chooses based on provided data structure.
 
-    training_data : bool, optional
+    is_training_data : bool, optional
         Flag that sets if dependent data for interpolation will be passed via openMDAO
         connections. If True, any provided values for dependent variables will
         be ignored.
@@ -131,7 +131,7 @@ def build_data_interpolator(num_nodes, interpolator_data=None, interpolator_outp
         # In case structured is still None, set it to False - we know data is unstructured
         structured = False
 
-    if not training_data:
+    if not is_training_data:
         # Sort and format data. Only if not using training data - since we have control
         # over both input and output data they are guarenteed to match after reformatting
 
@@ -194,7 +194,7 @@ def build_data_interpolator(num_nodes, interpolator_data=None, interpolator_outp
             for idx, (var, (val, units)) in enumerate(get_items(interpolator_data)):
                 interpolator_data.set_val(var, structured_data[idx], units)
 
-    if training_data and structured and not data_pre_structured:
+    if is_training_data and structured and not data_pre_structured:
         # User has asked for structured data but not provided it. Use of training data
         # means we can't do any processing on the data including ensuring sorted order,
         # since that might misalign inputs with future connections we can't control here
@@ -210,12 +210,12 @@ def build_data_interpolator(num_nodes, interpolator_data=None, interpolator_outp
         interp_comp = om.MetaModelStructuredComp(method=method,
                                                  extrapolate=extrapolate,
                                                  vec_size=num_nodes,
-                                                 training_data_gradients=training_data)
+                                                 training_data_gradients=is_training_data)
     else:
         interp_comp = om.MetaModelSemiStructuredComp(method=method,
                                                      extrapolate=extrapolate,
                                                      vec_size=num_nodes,
-                                                     training_data_gradients=training_data)
+                                                     training_data_gradients=is_training_data)
 
     # add interpolator inputs
     for key in get_keys(indep_vars):
@@ -227,7 +227,7 @@ def build_data_interpolator(num_nodes, interpolator_data=None, interpolator_outp
     for key in interpolator_outputs:
         if key in interpolator_data:
             values, units = interpolator_data.get_item(key)
-        if training_data:
+        if is_training_data:
             units = interpolator_outputs[key]
             interp_comp.add_output(key,
                                    units=units)
