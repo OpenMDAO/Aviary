@@ -18,17 +18,21 @@ class PropulsionPreMission(om.Group):
         self.options.declare(
             'aviary_options', types=AviaryValues,
             desc='collection of Aircraft/Mission specific options')
+        self.options.declare(
+            'engine_models', types=list,
+            desc='list of EngineModels on aircraft'
+        )
 
     def setup(self):
         options = self.options['aviary_options']
-        engine_models = options.get_val('engine_models')
+        engine_models = self.options['engine_models']
         engine_count = len(engine_models)
 
         # Each engine model pre_mission component only needs to accept and output single
         # value relevant to that variable - this group's configure step will handle
         # promoting/connecting just the relevant index in vectorized inputs/outputs for
         # each component here
-        # Promotions are handled in configure()
+        # Promotions are handled in self.configure()
         for engine in engine_models:
             subsys = engine.build_pre_mission(options)
             if subsys:
@@ -43,8 +47,8 @@ class PropulsionPreMission(om.Group):
                                    )
 
         if engine_count > 1:
-            # Add an empty mux comp, which will be customized to handle all required outputs
-            # in self.configure()
+            # Add an empty mux comp, which will be customized to handle all required
+            # outputs in self.configure()
             self.add_subsystem(
                 'pre_mission_mux',
                 subsys=om.MuxComp(),

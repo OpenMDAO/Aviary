@@ -48,7 +48,7 @@ from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
 from aviary.variable_info.enums import AnalysisScheme, ProblemType, SpeedType, AlphaModes, EquationsOfMotion, LegacyCode, Verbosity
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 
-from aviary.subsystems.propulsion.engine_deck import EngineDeck
+from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
 from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
 from aviary.subsystems.mass.mass_builder import CoreMassBuilder
@@ -234,7 +234,7 @@ class AviaryProblem(om.Problem):
         self.regular_phases = []
         self.reserve_phases = []
 
-    def load_inputs(self, aviary_inputs, phase_info=None, engine_builder=None, verbosity=Verbosity.BRIEF):
+    def load_inputs(self, aviary_inputs, phase_info=None, engine_builders=None, verbosity=Verbosity.BRIEF):
         """
         This method loads the aviary_values inputs and options that the
         user specifies. They could specify files to load and values to
@@ -328,68 +328,9 @@ class AviaryProblem(om.Problem):
             self.post_mission_info = {'include_landing': True,
                                       'external_subsystems': []}
 
-        ## PROCESSING ##
-        # set up core subsystems
-        if mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
-            everything_else_origin = FLOPS
-        elif mission_method is TWO_DEGREES_OF_FREEDOM:
-            everything_else_origin = GASP
-        else:
-            raise ValueError(f'Unknown mission method {self.mission_method}')
-
-        prop = CorePropulsionBuilder('core_propulsion')
-        mass = CoreMassBuilder('core_mass', code_origin=self.mass_method)
-        aero = CoreAerodynamicsBuilder(
-            'core_aerodynamics', code_origin=everything_else_origin)
-
-        # TODO These values are currently hardcoded, in future should come from user
-        both_geom = False
-        code_origin_to_prioritize = None
-
-        # which geometry methods should be used, or both?
-        geom_code_origin = None
-        if (everything_else_origin is FLOPS) and (mass_method is FLOPS):
-            geom_code_origin = FLOPS
-        elif (everything_else_origin is GASP) and (mass_method is GASP):
-            geom_code_origin = GASP
-        else:
-            both_geom = True
-
-        # which geometry method gets prioritized in case of conflicting outputs
-        if not code_origin_to_prioritize:
-            if everything_else_origin is GASP:
-                code_origin_to_prioritize = GASP
-            elif everything_else_origin is FLOPS:
-                code_origin_to_prioritize = FLOPS
-
-        geom = CoreGeometryBuilder('core_geometry',
-                                   code_origin=geom_code_origin,
-                                   use_both_geometries=both_geom,
-                                   code_origin_to_prioritize=code_origin_to_prioritize)
-
-        self.core_subsystems = {'propulsion': prop,
-                                'geometry': geom,
-                                'mass': mass,
-                                'aerodynamics': aero}
-
-        # TODO optionally accept which subsystems to load from phase_info
-        subsystems = self.core_subsystems
-        default_mission_subsystems = [
-            subsystems['aerodynamics'], subsystems['propulsion']]
-        self.ode_args = dict(aviary_options=aviary_inputs,
-                             core_subsystems=default_mission_subsystems)
-
-        if 'engine_models' in aviary_inputs:
-            engine_models = aviary_inputs.get_val('engine_models')
-        else:
-            engine_models = [EngineDeck(options=aviary_inputs)]
-
-        preprocess_propulsion(aviary_inputs, engine_models)
-
-        self._update_metadata_from_subsystems()
-
-        if Settings.VERBOSITY not in aviary_inputs:
-            aviary_inputs.set_val(Settings.VERBOSITY, Verbosity.BRIEF)
+        if engine_builders is None:
+            engine_builders = build_engine_deck(aviary_inputs)
+        self.engine_builders = engine_builders
 
         self.aviary_inputs = aviary_inputs
         return aviary_inputs
@@ -397,7 +338,7 @@ class AviaryProblem(om.Problem):
     def _update_metadata_from_subsystems(self):
         self.meta_data = BaseMetaData.copy()
 
-        variables_to_pop = []
+        # variables_to_pop = []
 
         # loop through phase_info and external subsystems
         for phase_name in self.phase_info:
@@ -447,7 +388,7 @@ class AviaryProblem(om.Problem):
         This method checks the user-supplied input values for any potential problems
         and preprocesses the inputs to prepare them for use in the Aviary problem.
         """
-
+        aviary_inputs = self.aviary_inputs
         # Target_distance verification for all phases
         # Checks to make sure target_distance is positive,
         for idx, phase_name in enumerate(self.phase_info):
@@ -497,13 +438,71 @@ class AviaryProblem(om.Problem):
 
         for phase_name in self.phase_info:
             for external_subsystem in self.phase_info[phase_name]['external_subsystems']:
-                self.aviary_inputs = external_subsystem.preprocess_inputs(
-                    self.aviary_inputs)
+                aviary_inputs = external_subsystem.preprocess_inputs(
+                    aviary_inputs)
 
-        # TODO find preprocessors a permanent home
         # PREPROCESSORS #
         # Fill in anything missing in the options with computed defaults.
-        preprocess_crewpayload(self.aviary_inputs)
+        preprocess_propulsion(aviary_inputs, self.engine_builders)
+        preprocess_crewpayload(aviary_inputs)
+
+        mission_method = aviary_inputs.get_val(Settings.EQUATIONS_OF_MOTION)
+        mass_method = aviary_inputs.get_val(Settings.MASS_METHOD)
+
+        ## Set Up Core Subsystems ##
+        if mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
+            everything_else_origin = FLOPS
+        elif mission_method is TWO_DEGREES_OF_FREEDOM:
+            everything_else_origin = GASP
+        else:
+            raise ValueError(f'Unknown mission method {self.mission_method}')
+
+        if Settings.VERBOSITY not in aviary_inputs:
+            aviary_inputs.set_val(Settings.VERBOSITY, Verbosity.BRIEF)
+        prop = CorePropulsionBuilder(
+            'core_propulsion', engine_models=self.engine_builders)
+        mass = CoreMassBuilder('core_mass', code_origin=self.mass_method)
+        aero = CoreAerodynamicsBuilder(
+            'core_aerodynamics', code_origin=everything_else_origin)
+
+        # TODO These values are currently hardcoded, in future should come from user
+        both_geom = False
+        code_origin_to_prioritize = None
+
+        # which geometry methods should be used, or both?
+        geom_code_origin = None
+        if (everything_else_origin is FLOPS) and (mass_method is FLOPS):
+            geom_code_origin = FLOPS
+        elif (everything_else_origin is GASP) and (mass_method is GASP):
+            geom_code_origin = GASP
+        else:
+            both_geom = True
+
+        # which geometry method gets prioritized in case of conflicting outputs
+        if not code_origin_to_prioritize:
+            if everything_else_origin is GASP:
+                code_origin_to_prioritize = GASP
+            elif everything_else_origin is FLOPS:
+                code_origin_to_prioritize = FLOPS
+
+        geom = CoreGeometryBuilder('core_geometry',
+                                   code_origin=geom_code_origin,
+                                   use_both_geometries=both_geom,
+                                   code_origin_to_prioritize=code_origin_to_prioritize)
+
+        self.core_subsystems = {'propulsion': prop,
+                                'geometry': geom,
+                                'mass': mass,
+                                'aerodynamics': aero}
+
+        # TODO optionally accept which subsystems to load from phase_info
+        subsystems = self.core_subsystems
+        default_mission_subsystems = [
+            subsystems['aerodynamics'], subsystems['propulsion']]
+        self.ode_args = dict(aviary_options=aviary_inputs,
+                             core_subsystems=default_mission_subsystems)
+
+        self._update_metadata_from_subsystems()
 
         if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF, TWO_DEGREES_OF_FREEDOM):
             self.phase_separator()

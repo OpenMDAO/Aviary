@@ -7,6 +7,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from aviary.subsystems.propulsion.propulsion_premission import (
     PropulsionPreMission, PropulsionSum)
 from aviary.utils.aviary_values import AviaryValues
+from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.variable_info.variables import Aircraft, Settings
 
@@ -20,7 +21,8 @@ class PropulsionPreMissionTest(unittest.TestCase):
         aviary_values.set_val(Settings.VERBOSITY, 0)
         options = aviary_values
 
-        self.prob.model = PropulsionPreMission(aviary_options=options)
+        self.prob.model = PropulsionPreMission(aviary_options=options,
+                                               engine_models=build_engine_deck(options))
 
         self.prob.setup(force_alloc_complex=True)
         self.prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, options.get_val(
@@ -43,7 +45,8 @@ class PropulsionPreMissionTest(unittest.TestCase):
 
         options = aviary_values
 
-        self.prob.model = PropulsionPreMission(aviary_options=options)
+        self.prob.model = PropulsionPreMission(aviary_options=options,
+                                               engine_models=options.get_val('engine_models'))
 
         self.prob.setup(force_alloc_complex=True)
         self.prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, options.get_val(
@@ -63,8 +66,6 @@ class PropulsionPreMissionTest(unittest.TestCase):
     def test_propulsion_sum(self):
         options = AviaryValues()
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([1, 2, 5]))
-        # it doesn't matter what goes in engine models, as long as it is length 3
-        options.set_val('engine_models', [1, 1, 1])
         options.set_val(Settings.VERBOSITY, 0)
         self.prob.model = om.Group()
         self.prob.model.add_subsystem('propsum',
@@ -92,4 +93,4 @@ if __name__ == "__main__":
     # unittest.main()
     test = PropulsionPreMissionTest()
     test.setUp()
-    test.test_multi_engine()
+    test.test_case()

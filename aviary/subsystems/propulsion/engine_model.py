@@ -11,7 +11,7 @@ import numpy as np
 
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
+from aviary.variable_info.variables import Settings
 from aviary.variable_info.enums import Verbosity
 
 
@@ -43,7 +43,10 @@ class EngineModel(SubsystemBuilderBase):
         self, name: str = None, options: AviaryValues = None, meta_data: dict = None,
     ):
         super().__init__(name, meta_data=meta_data)
-        self.options = options.deepcopy()
+        if options is not None:
+            self.options = options.deepcopy()
+        else:
+            self.options = AviaryValues()
 
         # Hybrid throttle is currently the only optional independent variable, requiring
         # this flag so Aviary knows how to handle EngineModels during mission
