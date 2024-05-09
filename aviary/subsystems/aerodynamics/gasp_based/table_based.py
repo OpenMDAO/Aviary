@@ -31,7 +31,7 @@ aliases = {Dynamic.Mission.ALTITUDE: ['h', 'alt', 'altitude'],
            }
 
 
-class CruiseAero(om.Group):
+class CruiseAeroUsingTable(om.Group):
     """Free-air lift and drag using a table lookup."""
 
     def initialize(self):
@@ -84,7 +84,7 @@ class CruiseAero(om.Group):
         self.set_input_defaults(Dynamic.Mission.MACH, np.zeros(nn))
 
 
-class LowSpeedAero(om.Group):
+class LowSpeedAeroUsingTable(om.Group):
     """Lift and drag near the ground using a table lookup.
 
     Includes increments due to ground effects, landing gear, and flaps. Retraction or
