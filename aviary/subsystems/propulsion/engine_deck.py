@@ -1010,6 +1010,11 @@ class EngineDeck(EngineModel):
 
         return engine_group
 
+    def get_parameters(self):
+        params = {}
+        params[Aircraft.Engine.SCALE_FACTOR] = {'static_target': True}
+        return params
+
     def report(self, problem, reports_file, **kwargs):
         meta_data = kwargs['meta_data']
 
