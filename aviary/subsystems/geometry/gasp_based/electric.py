@@ -17,10 +17,11 @@ class CableSize(om.ExplicitComponent):
 
     def setup(self):
         aviary_options = self.options['aviary_options']
-        total_num_engines = aviary_options.get_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES)
+        total_num_wing_engines = aviary_options.get_val(
+            Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES)
 
         add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS,
-                         val=np.full(int(total_num_engines/2), 0.35))
+                         val=np.full(int(total_num_wing_engines/2), 0.35))
 
         add_aviary_input(self, Aircraft.Wing.SPAN, val=128)
 

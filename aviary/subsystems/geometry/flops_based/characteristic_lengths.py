@@ -319,7 +319,6 @@ class CharacteristicLengths(om.ExplicitComponent):
 
         calc_idx = np.intersect1d(np.where(avg_diam[num_idx] > 0), num_idx)
 
-        # calc_idx_2 = np.where(0.0 < avg_diam[calc_idx])
         fineness[calc_idx] = avg_length[calc_idx] / avg_diam[calc_idx]
 
         outputs[Aircraft.Nacelle.CHARACTERISTIC_LENGTH] = char_len

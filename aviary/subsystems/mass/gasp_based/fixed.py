@@ -642,7 +642,7 @@ class EngineMass(om.ExplicitComponent):
             " wing",
         )
 
-        # new multiengine implementation needs this to always be avaliable
+        # for multiengine implementation needs this to always be avaliable
         self.add_input(
             "prop_mass",
             # val=np.full(engine_count, 0.000000001),

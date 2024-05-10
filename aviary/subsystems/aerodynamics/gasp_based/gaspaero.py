@@ -785,9 +785,6 @@ class AeroSetup(om.Group):
             'aviary_options', types=AviaryValues,
             desc='collection of Aircraft/Mission specific options')
         self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
-        self.options.declare(
             "input_atmos",
             default=False,
             types=bool,

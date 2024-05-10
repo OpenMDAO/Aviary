@@ -51,7 +51,6 @@ class DetailedWingBendingFact(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS,
                          val=np.zeros(int(total_num_wing_engines/2)))
-        #  val=np.zeros((engine_count, int(num_wing_engines[0]/2))))
 
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, val=0.0)
 
@@ -103,16 +102,8 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         # NOTE changes to FLOPS routines based on LEAPS1 improved multiengine effort
         # odd numbers of wing mounted engines assume the "odd" engine out is not on the
         # wing and is ignored
-        # There are also no checks that number of engine locations is consistent with
+        # TODO There are also no checks that number of engine locations is consistent with
         # half of number of wing mounted engines, which should get added to preprocessor
-
-        # array of pod masses on one wing (excludes centerline engines)
-        # pod_mass = np.array([i for row in [[pod_mass[j]] * int(num_wing_engines[j]/2)
-        #                     for j in range(engine_count)] for i in row])
-        # engine_data = np.vstack((pod_mass, engine_locations))
-        # engine_data = engine_data.transpose()[np.lexsort(engine_data)]
-        # pod_mass = engine_data[:, 0]
-        # engine_locations = engine_data[:, 1]
 
         target_dy = (inp_stations[-1] - inp_stations[0]) / num_integration_stations
         stations_per_section = np.floor(np.abs(np.diff(inp_stations) / target_dy + 0.5))

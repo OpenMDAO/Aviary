@@ -137,8 +137,7 @@ class EngineModel(SubsystemBuilderBase):
             if key.startswith('aircraft:engine:') or key.startswith('aircraft:nacelle'):
                 # if val is an iterable...
                 if type(val) in (list, np.ndarray, tuple):
-                    # but meta_data says it is not supposed to be, use first item and
-                    # warn user
+                    # but meta_data says it is not supposed to be...
                     if not isinstance(self.meta_data[key]['default_value'],
                                       (list, np.ndarray, tuple)):
 
@@ -149,7 +148,7 @@ class EngineModel(SubsystemBuilderBase):
                                               f'<{self.name}>, but '
                                               f"{type(self.meta_data[key]['default_value'])} "
                                               'was expected.')
-
+                        # use first item in val and warn user
                         if verbosity >= 1:
                             warnings.warn(
                                 f'The value of {key} passed to EngineModel '

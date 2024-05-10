@@ -202,9 +202,6 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
         if var in update_list:
             dtype = _MetaData[var]['types']
             default_value = _MetaData[var]['default_value']
-            # if default_value is in an array, pull out first index as default
-            # if type(default_value) in (list, np.ndarray, tuple):
-            #     default_value = default_value[0]
             # if dtype has multiple options, use type of default value
             if type(dtype) in (list, tuple):
                 dtype = type(default_value)
