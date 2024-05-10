@@ -166,7 +166,7 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
                     default_val = aviary_options.get_val(var, units)
                     if type(default_val) in (list, np.ndarray):
                         default_val = default_val[0]
-                    engine_options.set_val(default_val)
+                    engine_options.set_val(default_val, units)
                 # if not, use default value from _MetaData
                 except KeyError:
                     engine_options.set_val(_MetaData[var]['default_value'], units)
