@@ -121,7 +121,7 @@ class PropulsionPreMission(om.Group):
             self.promotes(
                 comp.name, inputs=input_dict[comp.name].keys(), src_indices=om.slicer[idx])
 
-            # promote all other inputs/outputs for this component normally (handle special outputs later)
+            # promote all other inputs/outputs for this component normally (handle vectorized outputs later)
             self.promotes(comp.name,
                           inputs=[
                               comp_inputs[input]['prom_name'] for input in comp_inputs if input not in input_dict[comp.name]],

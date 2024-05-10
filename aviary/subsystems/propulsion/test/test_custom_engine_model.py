@@ -124,8 +124,6 @@ class SimpleTestEngine(EngineModel):
         return initial_guesses_dict
 
 
-@unittest.skip('This test is not compatile with multiengine, requires rework so '
-               'engine-level methods can be called')
 @use_tempdirs
 class CustomEngineTest(unittest.TestCase):
     def test_custom_engine(self):
@@ -308,6 +306,6 @@ class TurbopropTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = CustomEngineTest()
-    test.test_custom_engine()
+    unittest.main()
+    # test = CustomEngineTest()
+    # test.test_custom_engine()

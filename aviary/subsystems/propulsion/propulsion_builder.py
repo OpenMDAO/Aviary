@@ -99,7 +99,7 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
 
         return controls
 
-    # TODO add parameters defined by individual engines, update to correct shape if necessary
+    # NOTE untested!
     def get_parameters(self, aviary_inputs=None, phase_info=None):
         """
         Set expected shape of all variables that need to be vectorized for multiple
@@ -108,12 +108,20 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
         engine_count = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
         params = {}
 
-        # add all variables from Engine & Nacelle to params
-        # TODO this assumes that no new categories are added for custom engine models
-        for var in _get_engine_variables():
-            if var in aviary_inputs:
-                # TODO engine_wing_location
-                params[var] = {'shape': (engine_count, ), 'static_target': True}
+        # collect all the parameters for engines
+        for engine in self.engine_models:
+            engine_params = engine.get_parameters()
+            params.update(engine_params)
+
+        # for any parameters that need to be vectorized for multiple engines, apply
+        # correct shape
+        engine_vars = _get_engine_variables()
+        for var in params:
+            if var in engine_vars:
+                # TODO shape for variables that are supposed to be vectors, like wing
+                #      engine locations
+                params[var]['shape'] = (engine_count,)
+                params[var]['static_target'] = True
 
         # params = {}  # For now
         # params[Aircraft.Engine.SCALE_FACTOR] = {'shape': (engine_count, ),
@@ -149,12 +157,19 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
         """
         Call get_linked_variables() on all engine models and return combined result.
         """
-        linked_vars = {}
+        bus_vars = {}
         for engine in self.engine_models:
-            engine_linked_vars = engine.get_linked_variables()
-            linked_vars.update(engine_linked_vars)
+            engine_bus_vars = engine.get_bus_variables()
+            bus_vars.update(engine_bus_vars)
 
-        return linked_vars
+        # append propulsion group name to all engine-level bus variables
+        # engine models only need to use variable paths starting at that engine group
+        complete_bus_vars = {}
+        for var in bus_vars:
+            info = bus_vars[var]
+            complete_bus_vars[self.name + '.' + var] = info
+
+        return complete_bus_vars
 
     # NOTE untested!
     def define_order(self):
