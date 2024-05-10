@@ -87,7 +87,6 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
 
         return states
 
-    # NOTE untested!
     def get_controls(self):
         """
         Call get_controls() on all engine models and return combined result.
@@ -152,7 +151,6 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
 
         return linked_vars
 
-    # NOTE untested!
     def get_bus_variables(self):
         """
         Call get_linked_variables() on all engine models and return combined result.
@@ -195,7 +193,6 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
 
         return design_vars
 
-    # NOTE untested!
     def get_initial_guesses(self):
         """
         Call get_initial_guesses() on all engine models and return combined result.
