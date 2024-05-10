@@ -597,9 +597,9 @@ AR1table = InterpND(method='lagrange2', points=(
     AR1[1:, 0], AR1[0, 1:]), values=AR1[1:, 1:], extrapolate=True)
 AR2table = InterpND(method='lagrange2', points=(
     AR2[1:, 0], AR2[0, 1:]), values=AR2[1:, 1:], extrapolate=True)
-AR4table = InterpND(method='lagrange3', points=(
+AR4table = InterpND(method='lagrange2', points=(
     AR4[1:, 0], AR4[0, 1:]), values=AR4[1:, 1:], extrapolate=True)
-AR6table = InterpND(method='lagrange3', points=(
+AR6table = InterpND(method='lagrange2', points=(
     AR6[1:, 0], AR6[0, 1:]), values=AR6[1:, 1:], extrapolate=True)
 ARS07table = InterpND(method='lagrange2', points=(
     ARS07[1:, 0], ARS07[0, 1:]), values=ARS07[1:, 1:], extrapolate=True)
