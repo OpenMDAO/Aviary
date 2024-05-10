@@ -124,9 +124,9 @@ class PropulsionPreMission(om.Group):
             # promote all other inputs/outputs for this component normally (handle special outputs later)
             self.promotes(comp.name,
                           inputs=[
-                              input for input in comp_inputs if input not in input_dict[comp.name]],
+                              comp_inputs[input]['prom_name'] for input in comp_inputs if input not in input_dict[comp.name]],
                           outputs=[
-                              output for output in comp_outputs if output not in output_dict[comp.name]])
+                              comp_outputs[output]['prom_name'] for output in comp_outputs if output not in output_dict[comp.name]])
 
         # add variables to the mux component and make connections to individual
         # component outputs
