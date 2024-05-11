@@ -386,9 +386,36 @@ def convert_case_recorder_file_to_df(recorder_file_name):
 
     return df
 
+def create_aircraft_3d_file(recorder_file, reports_dir, outfilepath):
+    """
+    Create the HTML file with the display of the aircraft design
+    in 3D using the A-Frame library.
+
+    Parameters
+    ----------
+    recorder_file : str
+        Name of the case recorder file.
+    reports_dir : str
+        Path of the directory containing the reports from the run.
+    outfilepath : str
+        The path to the location where the file should be created.
+    """
+    # Get the location of the HTML template file for this HTML file
+    aviary_dir = pathlib.Path(importlib.util.find_spec("aviary").origin).parent
+    aircraft_3d_template_filepath = aviary_dir.joinpath(
+        "visualization/assets/aircraft_3d_file_template.html"
+    )
+
+    # texture for the aircraft. Need to copy it to the reports directory
+    #  next to the HTML file
+    shutil.copy(
+        aviary_dir.joinpath("visualization/assets/aviary_airlines.png"),
+        f"{reports_dir}/aviary_airlines.png",
+    )
+
+    aircraft_3d_model = Aircraft3DModel(recorder_file)
+
 # The main script that generates all the tabs in the dashboard
-
-
 def dashboard(script_name, problem_recorder, driver_recorder, port):
     """
     Generate the dashboard app display.
@@ -631,14 +658,18 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
             # copy script.js file to reports/script_name/aviary_vars/index.html.
             # mod the script.js file to point at the json file
             # create the json file and put it in reports/script_name/aviary_vars/aviary_vars.json
-            create_aviary_variables_table_data_nested(
-                script_name, problem_recorder
-            )  # create the json file
-            aviary_vars_pane = create_report_frame(
-                "html", f"{reports_dir}/aviary_vars/index.html", '''
-                A table of outputs of the model with features for filtering, and copying values
-                '''
-            )
+            try:
+                create_aviary_variables_table_data_nested(
+                    script_name, problem_recorder
+                )  # create the json file
+                aviary_vars_pane = create_report_frame(
+                    "html", f"{reports_dir}/aviary_vars/index.html"
+                )
+                results_tabs_list.append(("Aviary Variables", aviary_vars_pane))
+            except Exception as e:
+                issue_warning(
+                    f"Unable do create Aviary Variables tab in dashboard due to the error: {str(e)}"
+                )
 
             results_tabs_list.append(("Aviary Variables", aviary_vars_pane))
 
@@ -653,6 +684,24 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
         results_tabs_list.append(
             ("Timeseries Mission Output Report", mission_timeseries_pane)
         )
+
+    # Aircraft 3d model display
+    if problem_recorder:
+        if os.path.exists(problem_recorder):
+
+            try:
+                create_aircraft_3d_file(
+                    problem_recorder, reports_dir, f"{reports_dir}/aircraft_3d.html"
+                )
+                aircraft_3d_pane = create_report_frame(
+                    "html", f"{reports_dir}/aircraft_3d.html"
+                )
+                if aircraft_3d_pane:
+                    results_tabs_list.append(("Aircraft 3d model", aircraft_3d_pane))
+            except Exception as e:
+                issue_warning(
+                    f"Unable to create aircraft 3D model display due to error {e}"
+                )
 
     ####### Subsystems Tab #######
     subsystem_tabs_list = []
