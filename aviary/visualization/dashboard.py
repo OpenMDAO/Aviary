@@ -663,15 +663,14 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
                     script_name, problem_recorder
                 )  # create the json file
                 aviary_vars_pane = create_report_frame(
-                    "html", f"{reports_dir}/aviary_vars/index.html"
+                    "html", f"{reports_dir}/aviary_vars/index.html",
+                    "Table showing Aviary variables"
                 )
                 results_tabs_list.append(("Aviary Variables", aviary_vars_pane))
             except Exception as e:
                 issue_warning(
                     f"Unable do create Aviary Variables tab in dashboard due to the error: {str(e)}"
                 )
-
-            results_tabs_list.append(("Aviary Variables", aviary_vars_pane))
 
     # Timeseries Mission Output Report
     mission_timeseries_pane = create_csv_frame(
@@ -694,7 +693,8 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
                     problem_recorder, reports_dir, f"{reports_dir}/aircraft_3d.html"
                 )
                 aircraft_3d_pane = create_report_frame(
-                    "html", f"{reports_dir}/aircraft_3d.html"
+                    "html", f"{reports_dir}/aircraft_3d.html",
+                    "3D model view of designed aircraft"
                 )
                 if aircraft_3d_pane:
                     results_tabs_list.append(("Aircraft 3d model", aircraft_3d_pane))
