@@ -22,6 +22,7 @@ from panel.theme import DefaultTheme
 
 import openmdao.api as om
 from openmdao.utils.general_utils import env_truthy
+from openmdao.utils.om_warnings import issue_warning
 
 from aviary.visualization.aircraft_3d_model import Aircraft3DModel
 
@@ -195,9 +196,6 @@ def create_aviary_variables_table_data_nested(script_name, recorder_file):
     )
 
     sorted_abs_names = sorted(outputs.keys())
-
-    # import pprint
-    # pprint.pprint(sorted_abs_names)
 
     grouped = {}
     for s in sorted_abs_names:
@@ -555,15 +553,18 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
             # copy script.js file to reports/script_name/aviary_vars/index.html.
             # mod the script.js file to point at the json file
             # create the json file and put it in reports/script_name/aviary_vars/aviary_vars.json
-            create_aviary_variables_table_data_nested(
-                script_name, problem_recorder
-            )  # create the json file
-            aviary_vars_pane = create_report_frame(
-                "html", f"{reports_dir}/aviary_vars/index.html"
-            )
-
-            results_tabs_list.append(("Aviary Variables", aviary_vars_pane))
-
+            try:
+                create_aviary_variables_table_data_nested(
+                    script_name, problem_recorder
+                )  # create the json file
+                aviary_vars_pane = create_report_frame(
+                    "html", f"{reports_dir}/aviary_vars/index.html"
+                )
+                results_tabs_list.append(("Aviary Variables", aviary_vars_pane))
+            except Exception as e:
+                issue_warning(
+                    f"Unable do create Aviary Variables tab in dashboard due to the error: {str(e)}"
+                )
     # Aircraft 3d model display
     if problem_recorder:
         if os.path.exists(problem_recorder):
@@ -578,8 +579,8 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
                 if aircraft_3d_pane:
                     results_tabs_list.append(("Aircraft 3d model", aircraft_3d_pane))
             except Exception as e:
-                print(
-                    f"Warning: Unable to create aircraft 3D model display due to error {e}"
+                issue_warning(
+                    f"Unable to create aircraft 3D model display due to error {e}"
                 )
 
     ####### Subsystems Tab #######
