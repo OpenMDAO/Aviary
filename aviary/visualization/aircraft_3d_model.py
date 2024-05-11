@@ -205,6 +205,7 @@ class AircraftModelReaderError(Exception):
         super().__init__(msg)
         self.msg = msg
 
+
 class AircraftModelReader(object):
     """
     Class used to read a case recorder file and provide methods to get Aviary variables.
@@ -294,7 +295,8 @@ class AircraftModelReader(object):
                 val = self._final_case.get_val(abs_name, units=units)
                 return float(val)
 
-        raise AircraftModelReaderError(f"Promoted name {var_prom_name} not found in final case")
+        raise AircraftModelReaderError(
+            f"Promoted name {var_prom_name} not found in final case")
 
     def get_variable_from_aviary_options(self, var_prom_name):
         """
@@ -312,8 +314,9 @@ class AircraftModelReader(object):
         """
         item = self.aviary_options.get_item(var_prom_name)
         if item is None:
-            raise AircraftModelReaderError(f"Promoted name {var_prom_name} not found in aviary_options")
-        value, _units = item 
+            raise AircraftModelReaderError(
+                f"Promoted name {var_prom_name} not found in aviary_options")
+        value, _units = item
         return value
 
 
@@ -579,7 +582,8 @@ class HorizontalWing(object):
             self._span = (aspect_ratio * area) ** 0.5
             self._chord = area / self._span
             self._thickness = thickness_to_chord * self._chord
-            self._sweep_angle = self._reader.get_variable_from_case(av.Aircraft.Wing.SWEEP)
+            self._sweep_angle = self._reader.get_variable_from_case(
+                av.Aircraft.Wing.SWEEP)
             self._chord_tip = self._chord * taper_ratio
             if self._wing_type == WingType.WING:
                 try:
@@ -697,6 +701,7 @@ class HorizontalWing(object):
     def vertical_position(self):
         return self._vertical_position
 
+
 class Engines(object):
     """
     Class used to represent the engines of the aircraft.
@@ -784,7 +789,8 @@ class Engines(object):
         for engine_location in self._engine_locations_on_wing:
             distance_from_fuselage = engine_location * wing_span/2.0
             distance_along_fuselage = self._wing.position_along_fuselage + self._wing.chord / 2. - \
-                distance_from_fuselage * math.tan(math.radians(self._wing.sweep_angle)) + self._engine_length/2.
+                distance_from_fuselage * \
+                math.tan(math.radians(self._wing.sweep_angle)) + self._engine_length/2.
             distance_above_fuselage = self._wing.vertical_position - self._engine_diameter / 2.
             entities += f"""
                     <!-- engine -->
@@ -794,7 +800,8 @@ class Engines(object):
                         rotation="0 90 0" color="white"></a-cylinder>
             """
             if self._has_propellers:
-                propeller_blade_radius = self._engine_diameter / 10.0  # arbitrary fraction of engine diameter
+                propeller_blade_radius = self._engine_diameter / \
+                    10.0  # arbitrary fraction of engine diameter
                 propeller_blade_length = self._engine_diameter * 2.0
                 entities += f"""
                         <!-- engine -->

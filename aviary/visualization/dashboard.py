@@ -386,6 +386,7 @@ def convert_case_recorder_file_to_df(recorder_file_name):
 
     return df
 
+
 def create_aircraft_3d_file(recorder_file, reports_dir, outfilepath):
     """
     Create the HTML file with the display of the aircraft design
@@ -416,6 +417,8 @@ def create_aircraft_3d_file(recorder_file, reports_dir, outfilepath):
     aircraft_3d_model = Aircraft3DModel(recorder_file)
 
 # The main script that generates all the tabs in the dashboard
+
+
 def dashboard(script_name, problem_recorder, driver_recorder, port):
     """
     Generate the dashboard app display.
