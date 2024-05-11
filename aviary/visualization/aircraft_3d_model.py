@@ -582,9 +582,12 @@ class HorizontalWing(object):
             self._sweep_angle = self._reader.get_variable_from_case(av.Aircraft.Wing.SWEEP)
             self._chord_tip = self._chord * taper_ratio
             if self._wing_type == WingType.WING:
-                mounting_type = self._reader.get_variable_from_case(
-                    "aircraft:wing:mounting_type"
-                )
+                try:
+                    mounting_type = self._reader.get_variable_from_case(
+                        "aircraft:wing:mounting_type"
+                    )
+                except AircraftModelReaderError:
+                    mounting_type = 0.0
                 self._vertical_position = (
                     2.0 * (mounting_type - 0.5) * self._fuselage.radius
                 )
