@@ -31,7 +31,7 @@ aliases = {Dynamic.Mission.ALTITUDE: ['h', 'alt', 'altitude'],
            }
 
 
-class CruiseAeroUsingTable(om.Group):
+class TabularCruiseAero(om.Group):
     """Free-air lift and drag using a table lookup."""
 
     def initialize(self):
@@ -42,7 +42,7 @@ class CruiseAeroUsingTable(om.Group):
                                   'drag coefficient table as a function of altitude, '
                                   'Mach, and angle of attack')
 
-        self.options.declare('is_training_data', default=False,
+        self.options.declare('connect_training_data', default=False,
                              desc='When True, the aero tables will be passed as '
                                   'OpenMDAO variables')
 
@@ -56,18 +56,18 @@ class CruiseAeroUsingTable(om.Group):
         options = self.options
         nn = options['num_nodes']
         aero_data = options['aero_data']
-        is_training_data = options['is_training_data']
+        connect_training_data = options['connect_training_data']
         structured = options['structured']
         extrapolate = options['extrapolate']
 
         # handle aliasing for training data
         extra_promotes = []
-        if is_training_data:
+        if connect_training_data:
             extra_promotes = [('lift_coefficient_train', Aircraft.Design.LIFT_POLAR),
                               ('drag_coefficient_train', Aircraft.Design.DRAG_POLAR)]
 
         interp_comp = _build_free_aero_interp(num_nodes=nn, aero_data=aero_data,
-                                              is_training_data=is_training_data,
+                                              connect_training_data=connect_training_data,
                                               structured=structured,
                                               extrapolate=extrapolate)
 
@@ -84,7 +84,7 @@ class CruiseAeroUsingTable(om.Group):
         self.set_input_defaults(Dynamic.Mission.MACH, np.zeros(nn))
 
 
-class LowSpeedAeroUsingTable(om.Group):
+class TabularLowSpeedAero(om.Group):
     """Lift and drag near the ground using a table lookup.
 
     Includes increments due to ground effects, landing gear, and flaps. Retraction or
@@ -111,7 +111,7 @@ class LowSpeedAeroUsingTable(om.Group):
                                   'aero lift and drag coefficient table as a function '
                                   'of altitude, Mach, and angle of attack')
 
-        self.options.declare('is_training_data', types=bool, default=False,
+        self.options.declare('connect_training_data', types=bool, default=False,
                              desc='When True, all aero tables will be passed as '
                                   'OpenMDAO variables')
         self.options.declare('structured', types=bool, default=True,
@@ -131,7 +131,7 @@ class LowSpeedAeroUsingTable(om.Group):
         free_aero_data = options['free_aero_data']
         flaps_aero_data = options['flaps_aero_data']
         ground_aero_data = options['ground_aero_data']
-        is_training_data = options['is_training_data']
+        connect_training_data = options['connect_training_data']
         structured = options['structured']
         extrapolate = options['extrapolate']
 
@@ -159,7 +159,7 @@ class LowSpeedAeroUsingTable(om.Group):
         )
 
         free_aero_interp = _build_free_aero_interp(nn, aero_data=free_aero_data,
-                                                   is_training_data=is_training_data,
+                                                   connect_training_data=connect_training_data,
                                                    structured=structured,
                                                    extrapolate=extrapolate)
 
@@ -177,7 +177,7 @@ class LowSpeedAeroUsingTable(om.Group):
         )
 
         flaps_aero_interp = _build_flaps_aero_interp(nn, aero_data=flaps_aero_data,
-                                                     is_training_data=is_training_data,
+                                                     connect_training_data=connect_training_data,
                                                      structured=structured,
                                                      extrapolate=extrapolate)
 
@@ -195,7 +195,7 @@ class LowSpeedAeroUsingTable(om.Group):
         )
 
         ground_aero_interp = _build_ground_aero_interp(nn, aero_data=ground_aero_data,
-                                                       is_training_data=is_training_data,
+                                                       connect_training_data=connect_training_data,
                                                        structured=structured,
                                                        extrapolate=extrapolate)
 
@@ -380,7 +380,7 @@ class GearDragIncrement(om.ExplicitComponent):
         J["dCD", "flap_defl"] = -grcd * 0.454545 / 50
 
 
-def _build_free_aero_interp(num_nodes=0, aero_data=None, is_training_data=False,
+def _build_free_aero_interp(num_nodes=0, aero_data=None, connect_training_data=False,
                             method='lagrange2', structured=True, extrapolate=True):
     """creates interpolation components for cruise aero"""
     # build_data_interpolator normally handles converting to filepath and reading
@@ -403,14 +403,14 @@ def _build_free_aero_interp(num_nodes=0, aero_data=None, is_training_data=False,
     if not required_inputs <= get_keys(interp_data):
         missing_variables.append([key for key in
                                   required_inputs.difference(get_keys(interp_data))])
-    if not is_training_data and not required_outputs <= get_keys(interp_data):
+    if not connect_training_data and not required_outputs <= get_keys(interp_data):
         missing_variables.append([key for key in
                                   required_outputs.difference(get_keys(interp_data))])
     if missing_variables:
         raise KeyError('GASP-based aerodynamics interpolation missing required '
                        f'variables: {missing_variables}')
 
-    if is_training_data:
+    if connect_training_data:
         method = 'lagrange2'
     else:
         method = '3D-lagrange2'
@@ -422,10 +422,10 @@ def _build_free_aero_interp(num_nodes=0, aero_data=None, is_training_data=False,
                                                                 'drag_coefficient': 'unitless'},
                                           method=method,
                                           structured=structured,
-                                          is_training_data=is_training_data,
+                                          connect_training_data=connect_training_data,
                                           extrapolate=extrapolate)
 
-    if is_training_data:
+    if connect_training_data:
         return interp_comp
     else:
         group = om.Group()
@@ -449,7 +449,7 @@ def _build_free_aero_interp(num_nodes=0, aero_data=None, is_training_data=False,
         return group
 
 
-def _build_flaps_aero_interp(num_nodes=0, aero_data=None, is_training_data=False,
+def _build_flaps_aero_interp(num_nodes=0, aero_data=None, connect_training_data=False,
                              method='slinear', structured=True, extrapolate=False):
     """creates interpolation components for cruise aero"""
     # TODO linear method default because standard GASP tables have only two flap
@@ -474,7 +474,7 @@ def _build_flaps_aero_interp(num_nodes=0, aero_data=None, is_training_data=False
     if not required_inputs <= get_keys(interp_data):
         missing_variables.extend([key for key in
                                   required_inputs.difference(get_keys(interp_data))])
-    if not is_training_data and not required_outputs <= get_keys(interp_data):
+    if not connect_training_data and not required_outputs <= get_keys(interp_data):
         missing_variables.extend([key for key in
                                   required_outputs.difference(get_keys(interp_data))])
     if missing_variables:
@@ -504,11 +504,11 @@ def _build_flaps_aero_interp(num_nodes=0, aero_data=None, is_training_data=False
                                                          'delta_lift_coefficient_max': 'unitless'},
                                    method=method,
                                    structured=structured,
-                                   is_training_data=is_training_data,
+                                   connect_training_data=connect_training_data,
                                    extrapolate=extrapolate)
 
 
-def _build_ground_aero_interp(num_nodes=0, aero_data=None, is_training_data=False,
+def _build_ground_aero_interp(num_nodes=0, aero_data=None, connect_training_data=False,
                               method='slinear', structured=True, extrapolate=True):
     """creates interpolation components for cruise aero"""
     # build_data_interpolator normally handles converting to filepath and reading
@@ -528,7 +528,7 @@ def _build_ground_aero_interp(num_nodes=0, aero_data=None, is_training_data=Fals
     if not required_inputs <= get_keys(interp_data):
         missing_variables.append([key for key in
                                   required_inputs.difference(get_keys(interp_data))])
-    if not is_training_data and not required_outputs <= get_keys(interp_data):
+    if not connect_training_data and not required_outputs <= get_keys(interp_data):
         missing_variables.append([key for key in
                                   required_outputs.difference(get_keys(interp_data))])
     if missing_variables:
@@ -558,7 +558,7 @@ def _build_ground_aero_interp(num_nodes=0, aero_data=None, is_training_data=Fals
                                                          'delta_lift_coefficient_max': 'unitless'},
                                    method=method,
                                    structured=structured,
-                                   is_training_data=is_training_data,
+                                   connect_training_data=connect_training_data,
                                    extrapolate=extrapolate)
 
 

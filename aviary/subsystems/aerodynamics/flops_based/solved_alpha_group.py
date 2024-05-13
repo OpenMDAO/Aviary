@@ -5,7 +5,7 @@ from pathlib import Path
 
 import aviary.constants as constants
 from aviary.subsystems.aerodynamics.aero_common import DynamicPressure
-from aviary.subsystems.aerodynamics.gasp_based.table_based import CruiseAeroUsingTable as TabularCruiseAero
+from aviary.subsystems.aerodynamics.gasp_based.table_based import TabularCruiseAero
 from aviary.utils.named_values import NamedValues
 from aviary.variable_info.variables import Aircraft, Dynamic
 
@@ -33,7 +33,7 @@ class SolvedAlphaGroup(om.Group):
                                   'drag coefficient table as a function of altitude, '
                                   'Mach, and angle of attack')
 
-        self.options.declare('is_training_data', default=False,
+        self.options.declare('connect_training_data', default=False,
                              desc='When True, the aero tables will be passed as '
                                   'OpenMDAO variables')
 
@@ -47,7 +47,7 @@ class SolvedAlphaGroup(om.Group):
         options = self.options
         nn = options['num_nodes']
         aero_data = options['aero_data']
-        is_training_data = options['is_training_data']
+        connect_training_data = options['connect_training_data']
         structured = options['structured']
         extrapolate = options['extrapolate']
 
@@ -58,11 +58,11 @@ class SolvedAlphaGroup(om.Group):
 
         aero = TabularCruiseAero(num_nodes=nn,
                                  aero_data=aero_data,
-                                 is_training_data=is_training_data,
+                                 connect_training_data=connect_training_data,
                                  structured=structured,
                                  extrapolate=extrapolate)
 
-        if is_training_data:
+        if connect_training_data:
             extra_promotes = [Aircraft.Design.DRAG_POLAR,
                               Aircraft.Design.LIFT_POLAR]
         else:

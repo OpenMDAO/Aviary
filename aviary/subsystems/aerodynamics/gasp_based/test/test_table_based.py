@@ -9,7 +9,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from packaging import version
 
 from aviary.subsystems.aerodynamics.gasp_based.table_based import (
-    CruiseAeroUsingTable, LowSpeedAeroUsingTable)
+    TabularCruiseAero, TabularLowSpeedAero)
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
 
@@ -22,7 +22,7 @@ class TestCruiseAero(unittest.TestCase):
         prob = om.Problem()
 
         fp = "subsystems/aerodynamics/gasp_based/data/large_single_aisle_1_aero_free.txt"
-        prob.model = CruiseAeroUsingTable(num_nodes=8, aero_data=fp)
+        prob.model = TabularCruiseAero(num_nodes=8, aero_data=fp)
 
         prob.setup(force_alloc_complex=True)
 
@@ -54,7 +54,7 @@ class TestCruiseAero(unittest.TestCase):
         prob = om.Problem()
         fp = pkg_resources.resource_filename(
             "aviary", f"subsystems/aerodynamics/gasp_based/data/large_single_aisle_1_aero_free.txt")
-        prob.model = CruiseAeroUsingTable(num_nodes=2, aero_data=fp)
+        prob.model = TabularCruiseAero(num_nodes=2, aero_data=fp)
         prob.setup(force_alloc_complex=True)
 
         prob.set_val(Dynamic.Mission.MACH, [0.8, 0.8])
@@ -93,7 +93,7 @@ class TestLowSpeedAero(unittest.TestCase):
     def test_groundroll(self):
         # takeoff with flaps applied, gear down, zero alt
         prob = om.Problem()
-        prob.model = LowSpeedAeroUsingTable(
+        prob.model = TabularLowSpeedAero(
             num_nodes=4,
             free_aero_data=self.free_data,
             flaps_aero_data=self.flaps_data,
@@ -129,7 +129,7 @@ class TestLowSpeedAero(unittest.TestCase):
     def test_takeoff(self):
         # takeoff crossing flap retraction and gear retraction points
         prob = om.Problem()
-        prob.model = LowSpeedAeroUsingTable(
+        prob.model = TabularLowSpeedAero(
             num_nodes=8,
             free_aero_data=self.free_data,
             flaps_aero_data=self.flaps_data,
