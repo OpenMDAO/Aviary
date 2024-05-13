@@ -233,17 +233,3 @@ class CellComp(ExplicitComponent):
         partials[Aircraft.Battery.EFFICIENCY,
                  Mission.Battery.VOLTAGE_THEVENIN] = dpack_eta__dU_t
         # partials[Aircraft.Battery.EFFICIENCY,Aircraft.Battery.N_SERIES] = 0.
-
-
-if __name__ == "__main__":
-
-    from openmdao.api import Problem, Group, IndepVarComp
-
-    p = Problem()
-    p.model = Group()
-
-    p.model.add_subsystem('CellComp', CellComp(num_nodes=1), promotes=['*'])
-
-    p.setup(mode='auto', check=True, force_alloc_complex=True)
-
-    p.check_partials(compact_print=True, method='cs', step=1e-50)
