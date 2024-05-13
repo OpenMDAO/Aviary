@@ -4,6 +4,7 @@ from aviary.interface.default_phase_info.two_dof import phase_info
 from openmdao.utils.testing_utils import use_tempdirs
 import unittest
 
+
 @use_tempdirs
 def test_run_aviary():
     input_deck = 'models/large_single_aisle_1/large_single_aisle_1_GwGm.csv'
