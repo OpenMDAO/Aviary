@@ -59,31 +59,7 @@ def create_vehicle(vehicle_deck='', verbosity=Verbosity.BRIEF):
     aircraft_values.set_val('mass_defect', val=10000, units='lbm')
     aircraft_values.set_val(Settings.PROBLEM_TYPE, val=ProblemType.SIZING)
     aircraft_values.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False)
-
-    if isinstance(vehicle_deck, AviaryValues):
-        aircraft_values.update(vehicle_deck)
-        initial_guesses = {}
-    else:
-        vehicle_deck = get_path(vehicle_deck)
-        aircraft_values, initial_guesses = parse_inputs(vehicle_deck, aircraft_values)
-
-    return aircraft_values, initial_guesses
-
-
-def parse_inputs(vehicle_deck, aircraft_values: AviaryValues(), meta_data=_MetaData):
-    """
-    Parses the input files and updates the aircraft values and initial guesses. The function reads the
-    vehicle deck file, processes each line, and updates the aircraft_values object based on the data found.
-
-    Parameters
-    ----------
-    vehicle_deck (str): The vehicle deck file path.
-    aircraft_values (AviaryValues): An instance of AviaryValues to be updated.
-
-    Returns
-    -------
-    tuple: Updated aircraft values and initial guesses.
-    """
+    
     initial_guesses = {
         # initial_guesses is a dictionary that contains values used to initialize the trajectory
         'actual_takeoff_mass': 0,
@@ -96,6 +72,31 @@ def parse_inputs(vehicle_deck, aircraft_values: AviaryValues(), meta_data=_MetaD
         'climb_range': 0,
         'reserves': 0
     }
+    if isinstance(vehicle_deck, AviaryValues):
+        aircraft_values.update(vehicle_deck)
+    else:
+        vehicle_deck = get_path(vehicle_deck)
+        aircraft_values, initial_guesses = parse_inputs(vehicle_deck, aircraft_values, initial_guesses)
+
+    return aircraft_values, initial_guesses
+
+
+def parse_inputs(vehicle_deck, aircraft_values: AviaryValues(), initial_guesses={}, meta_data=_MetaData):
+    """
+    Parses the input files and updates the aircraft values and initial guesses. The function reads the
+    vehicle deck file, processes each line, and updates the aircraft_values object based on the data found.
+
+    Parameters
+    ----------
+    vehicle_deck (str): The vehicle deck file path.
+    aircraft_values (AviaryValues): An instance of AviaryValues to be updated.
+    initial_guesses: An initialized dictionary of trajectory values to be updated.
+    
+    Returns
+    -------
+    tuple: Updated aircraft values and initial guesses.
+    """
+
     guess_names = list(initial_guesses.keys())
 
     with open(vehicle_deck, newline='') as f_in:
