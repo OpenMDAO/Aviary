@@ -143,6 +143,11 @@ def parse_inputs(vehicle_deck, aircraft_values: AviaryValues = None, initial_gue
                 # all initial guesses take only a single value
                 initial_guesses[var_name] = float(var_values[0])
                 continue
+
+            elif var_name.startswith('initial_guesses:'):
+                initial_guesses[var_name[len('initial_guesses:'):]] = float(var_values[0])
+                continue
+
             try:
                 if aircraft_values.get_val('verbosity').value >= 2:
                     print('Unused:', var_name, var_values, comment)
