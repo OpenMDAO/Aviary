@@ -81,7 +81,7 @@ def create_vehicle(vehicle_deck='', verbosity=Verbosity.BRIEF):
     return aircraft_values, initial_guesses
 
 
-def parse_inputs(vehicle_deck, aircraft_values: AviaryValues(), initial_guesses={}, meta_data=_MetaData):
+def parse_inputs(vehicle_deck, aircraft_values: AviaryValues = None, initial_guesses = None, meta_data=_MetaData):
     """
     Parses the input files and updates the aircraft values and initial guesses. The function reads the
     vehicle deck file, processes each line, and updates the aircraft_values object based on the data found.
@@ -96,6 +96,11 @@ def parse_inputs(vehicle_deck, aircraft_values: AviaryValues(), initial_guesses=
     -------
     tuple: Updated aircraft values and initial guesses.
     """
+    if aircraft_values is None:
+        aircraft_values = AviaryValues()
+
+    if initial_guesses is None:
+        initial_guesses = {}
 
     guess_names = list(initial_guesses.keys())
 
@@ -138,9 +143,11 @@ def parse_inputs(vehicle_deck, aircraft_values: AviaryValues(), initial_guesses=
                 # all initial guesses take only a single value
                 initial_guesses[var_name] = float(var_values[0])
                 continue
-
-            if aircraft_values.get_val('verbosity').value >= 2:
-                print('Unused:', var_name, var_values, comment)
+            try:
+                if aircraft_values.get_val('verbosity').value >= 2:
+                    print('Unused:', var_name, var_values, comment)
+            except:
+                continue
 
     return aircraft_values, initial_guesses
 
