@@ -3,6 +3,7 @@ from openmdao.api import Problem, Group
 from openmdao.utils.testing_utils import use_tempdirs
 import unittest
 
+
 class Test_cell_comp(unittest.TestCase):
 
     @use_tempdirs
@@ -13,6 +14,7 @@ class Test_cell_comp(unittest.TestCase):
         p.setup(mode='auto', check=True, force_alloc_complex=True)
 
         p.check_partials(compact_print=True, method='cs', step=1e-50)
+
 
 if __name__ == "__main__":
     unittest.main()
