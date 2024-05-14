@@ -30,13 +30,14 @@ class SimpleDragTest(unittest.TestCase):
         # FCDSUB - 2 digits precision
         # FCDSUP - 2 digits precision
         inputs_keys = (
-                Aircraft.Wing.AREA, Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR,
-                Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR)
+            Aircraft.Wing.AREA, Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR,
+            Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR
+        )
 
         # dynamic pressure = 4 digits precision
         # drag coefficient = 5 digits precision
         dynamics_keys = (Dynamic.Mission.DYNAMIC_PRESSURE,
-                             'CD_prescaled', 'CD', Dynamic.Mission.MACH)
+                         'CD_prescaled', 'CD', Dynamic.Mission.MACH)
 
         # drag = 4 digits precision
         outputs_keys = (Dynamic.Mission.DRAG, )
