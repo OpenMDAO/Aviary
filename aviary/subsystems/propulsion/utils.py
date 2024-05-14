@@ -5,6 +5,7 @@ default_units : dict
     Matches each EngineModelVariables entry with default units (str)
 """
 from enum import Enum, auto
+from pathlib import Path
 
 import numpy as np
 import openmdao.api as om
@@ -150,7 +151,8 @@ def build_engine_deck(aviary_options: AviaryValues):
         except (KeyError, TypeError):
             continue
 
-    return [EngineDeck('engine_deck', options=engine_options)]
+    # name engine deck after filename
+    return [EngineDeck(Path(engine_options.get_val(Aircraft.Engine.DATA_FILE)).stem, options=engine_options)]
 
 
 class UncorrectData(om.Group):

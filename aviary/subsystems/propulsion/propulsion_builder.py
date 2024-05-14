@@ -46,24 +46,19 @@ class PropulsionBuilderBase(SubsystemBuilderBase):
 
 class CorePropulsionBuilder(PropulsionBuilderBase):
     # code_origin is not necessary for this subsystem, catch with kwargs and ignore
-    def __init__(self, name=None, meta_data=None, **kwargs):
+    def __init__(self, name=None, meta_data=None, engine_models=None, **kwargs):
         if name is None:
             name = 'core_propulsion'
 
         super().__init__(name=name, meta_data=meta_data)
 
-        try:
-            engine_models = kwargs['engine_models']
-        except KeyError:
-            engine_models = None
-        else:
-            if not isinstance(engine_models, (list, np.ndarray)):
-                engine_models = [engine_models]
+        if not isinstance(engine_models, (list, np.ndarray)):
+            engine_models = [engine_models]
 
-            for engine in engine_models:
-                if not isinstance(engine, EngineModel):
-                    raise UserWarning('Engine provided to propulsion builder is not an '
-                                      'EngineModel object')
+        for engine in engine_models:
+            if not isinstance(engine, EngineModel):
+                raise UserWarning('Engine provided to propulsion builder is not an '
+                                  'EngineModel object')
 
         self.engine_models = engine_models
 
@@ -264,5 +259,6 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
 
         # each engine can append to this file
         kwargs['meta_data'] = self.meta_data
-        for engine in prob.aviary_inputs.get_val('engine_models'):
+        for idx, engine in enumerate(self.engine_models):
+            kwargs['engine_idx'] = idx
             engine.report(prob, filepath, **kwargs)

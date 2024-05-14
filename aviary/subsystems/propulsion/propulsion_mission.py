@@ -208,7 +208,8 @@ class PropulsionSum(om.ExplicitComponent):
 
     def setup(self):
         nn = self.options['num_nodes']
-        engine_count = len(self.options['aviary_options'].get_val('engine_models'))
+        engine_count = len(self.options['aviary_options'].get_val(
+            Aircraft.Engine.NUM_ENGINES))
 
         self.add_input(Dynamic.Mission.THRUST, val=np.zeros(
             (nn, engine_count)), units='lbf')

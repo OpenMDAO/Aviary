@@ -12,12 +12,18 @@ from aviary.variable_info.options import get_option_defaults
 from aviary.utils.test_utils.IO_test_util import check_prob_outputs
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variables import Dynamic
-from aviary.interface.default_phase_info.two_dof import default_mission_subsystems
+from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 
 
 class DescentODETestCase(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
+
+        aviary_options = get_option_defaults()
+        default_mission_subsystems = get_default_mission_subsystems(
+            'GASP', build_engine_deck(aviary_options))
+
         self.sys = self.prob.model = DescentODE(num_nodes=1,
                                                 mach_cruise=0.8,
                                                 aviary_options=get_option_defaults(),

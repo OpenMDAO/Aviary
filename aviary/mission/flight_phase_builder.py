@@ -11,6 +11,7 @@ from aviary.mission.flops_based.phases.phase_utils import add_subsystem_variable
 from aviary.variable_info.variables import Dynamic
 from aviary.mission.flops_based.ode.mission_ODE import MissionODE
 from aviary.variable_info.enums import EquationsOfMotion, ThrottleAllocation
+from aviary.variable_info.variables import Aircraft
 
 
 # TODO: support/handle the following in the base class
@@ -73,7 +74,7 @@ class FlightPhaseBase(PhaseBuilderBase):
         '''
         phase: dm.Phase = super().build_phase(aviary_options)
 
-        engine_models = aviary_options.get_val('engine_models')
+        engine_models = aviary_options.get_val(Aircraft.Engine.NUM_ENGINES)
         num_eng = len(engine_models)
 
         user_options: AviaryValues = self.user_options

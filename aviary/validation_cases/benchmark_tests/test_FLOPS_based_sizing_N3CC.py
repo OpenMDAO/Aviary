@@ -27,7 +27,8 @@ from aviary.mission.energy_phase import EnergyPhase
 
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.subsystems.premission import CorePreMission
-from aviary.interface.default_phase_info.height_energy import default_premission_subsystems, default_mission_subsystems
+from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.utils.preprocessors import preprocess_crewpayload
 
 try:
@@ -165,6 +166,10 @@ def run_trajectory(sim=True):
         num_segments=num_segments_descent, order=3, compressed=True,
         segment_ends=descent_seg_ends)
 
+    # default subsystems
+    engine = build_engine_deck(aviary_inputs)
+    default_mission_subsystems = get_default_mission_subsystems('FLOPS', engine)
+
     climb_options = EnergyPhase(
         'test_climb',
         user_options=AviaryValues({
@@ -223,7 +228,7 @@ def run_trajectory(sim=True):
     prob.model.add_subsystem(
         'pre_mission',
         CorePreMission(aviary_options=aviary_inputs,
-                       subsystems=default_premission_subsystems),
+                       subsystems=default_mission_subsystems),
         promotes_inputs=['aircraft:*', 'mission:*'],
         promotes_outputs=['aircraft:*', 'mission:*'])
 

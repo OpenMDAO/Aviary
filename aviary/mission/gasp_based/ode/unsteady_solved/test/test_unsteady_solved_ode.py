@@ -11,7 +11,8 @@ from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_ode import \
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-from aviary.interface.default_phase_info.two_dof import default_mission_subsystems
+from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 
 
 class TestUnsteadySolvedODE(unittest.TestCase):
@@ -22,11 +23,15 @@ class TestUnsteadySolvedODE(unittest.TestCase):
 
         p = om.Problem()
 
+        aviary_options = get_option_defaults()
+        default_mission_subsystems = get_default_mission_subsystems(
+            'GASP', build_engine_deck(aviary_options))
+
         ode = UnsteadySolvedODE(num_nodes=nn,
                                 input_speed_type=input_speed_type,
                                 clean=clean,
                                 ground_roll=ground_roll,
-                                aviary_options=get_option_defaults(),
+                                aviary_options=aviary_options,
                                 core_subsystems=default_mission_subsystems)
 
         p.model.add_subsystem("ode", ode, promotes=["*"])

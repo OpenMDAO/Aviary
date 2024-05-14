@@ -2353,8 +2353,6 @@ class AviaryProblem(om.Problem):
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
             for name, value_units in sorted(self.aviary_inputs):
-                if 'engine_models' in name:
-                    continue
                 value, units = value_units
                 writer.writerow({'name': name, 'value': value, 'units': units})
 

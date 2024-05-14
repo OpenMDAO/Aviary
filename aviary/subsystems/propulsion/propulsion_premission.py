@@ -69,7 +69,8 @@ class PropulsionPreMission(om.Group):
         # so vectorized inputs/outputs are a problem. Slice all needed vector inputs and pass
         # pre_mission components only the value they need, then mux all the outputs back together
 
-        engine_count = len(self.options['aviary_options'].get_val('engine_models'))
+        engine_count = len(self.options['aviary_options'].get_val(
+            Aircraft.Engine.NUM_ENGINES))
 
         # determine if openMDAO messages and warnings should be suppressed
         verbosity = self.options['aviary_options'].get_val(Settings.VERBOSITY)
@@ -158,9 +159,11 @@ class PropulsionSum(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        count = len(self.options['aviary_options'].get_val('engine_models'))
+        engine_count = len(self.options['aviary_options'].get_val(
+            Aircraft.Engine.NUM_ENGINES))
 
-        add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST, val=np.zeros(count))
+        add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST,
+                         val=np.zeros(engine_count))
 
         add_aviary_output(
             self, Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, val=0.0)
