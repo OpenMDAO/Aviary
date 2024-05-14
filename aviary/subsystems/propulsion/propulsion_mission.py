@@ -39,6 +39,7 @@ class PropulsionMission(om.Group):
 
             # We need a single component with scale_factor. Dymos can't find it when it is
             # already sliced across several component.
+            # TODO this only works for engine decks. Need to fix problem in generic way
             comp = om.ExecComp(
                 "y=x",
                 y={'val': np.ones(engine_count), 'units': 'unitless'},

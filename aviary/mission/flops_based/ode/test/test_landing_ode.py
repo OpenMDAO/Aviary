@@ -19,7 +19,7 @@ class FlareODETest(unittest.TestCase):
         aviary_options = inputs
 
         default_mission_subsystems = get_default_mission_subsystems(
-            'GASP', build_engine_deck(aviary_options))
+            'FLOPS', build_engine_deck(aviary_options))
 
         prob.model.add_subsystem(
             "landing_flare_ode",

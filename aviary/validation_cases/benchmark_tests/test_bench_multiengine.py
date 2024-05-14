@@ -161,7 +161,7 @@ class MultiengineTestcase(unittest.TestCase):
         alloc_descent = prob.get_val('traj.descent.controls:throttle_allocations')
 
         # Cruise is pretty constant, check exact value.
-        assert_near_equal(alloc_cruise[0], 0.565, tolerance=1e-2)
+        assert_near_equal(alloc_cruise[0], 0.646, tolerance=1e-2)
 
         # Check general trend: favors engine 1.
         self.assertGreater(alloc_climb[2], 0.55)

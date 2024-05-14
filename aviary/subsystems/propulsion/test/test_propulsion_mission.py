@@ -52,7 +52,7 @@ class PropulsionMissionTest(unittest.TestCase):
         preprocess_propulsion(options, [engine])
 
         self.prob.model = PropulsionMission(
-            num_nodes=nn, aviary_options=options, engine_models=engine)
+            num_nodes=nn, aviary_options=options, engine_models=[engine])
 
         IVC = om.IndepVarComp(Dynamic.Mission.MACH,
                               np.linspace(0, 0.8, nn),
@@ -211,7 +211,7 @@ class PropulsionMissionTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    # unittest.main()
-    test = PropulsionMissionTest()
-    test.setUp()
-    test.test_case_multiengine()
+    unittest.main()
+    # test = PropulsionMissionTest()
+    # test.setUp()
+    # test.test_case_multiengine()
