@@ -98,6 +98,7 @@ def parse_inputs(vehicle_deck, aircraft_values: AviaryValues = None, initial_gue
     """
     if aircraft_values is None:
         aircraft_values = AviaryValues()
+        aircraft_values.set_val('verbosity', Verbosity.BRIEF)
 
     if initial_guesses is None:
         initial_guesses = {}
@@ -150,12 +151,8 @@ def parse_inputs(vehicle_deck, aircraft_values: AviaryValues = None, initial_gue
                 initial_guesses[var_name[len('initial_guesses:'):]] = float(var_values[0])
                 continue
 
-            try:
-                # if AviaryValues object not specified then there is no Verbosity parameter
-                if aircraft_values.get_val('verbosity').value >= 2:
-                    print('Unused:', var_name, var_values, comment)
-            except:
-                continue
+            if aircraft_values.get_val('verbosity').value >= 2:
+                print('Unused:', var_name, var_values, comment)
 
     return aircraft_values, initial_guesses
 
