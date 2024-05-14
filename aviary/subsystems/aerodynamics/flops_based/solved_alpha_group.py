@@ -73,7 +73,7 @@ class SolvedAlphaGroup(om.Group):
                                             Aircraft.Wing.AREA, Dynamic.Mission.MACH,
                                             Dynamic.Mission.DYNAMIC_PRESSURE]
                            + extra_promotes,
-                           promotes_outputs=[Dynamic.Mission.LIFT, Dynamic.Mission.DRAG])
+                           promotes_outputs=['CD', Dynamic.Mission.LIFT, Dynamic.Mission.DRAG])
 
         balance = self.add_subsystem('balance', om.BalanceComp())
         balance.add_balance('alpha', val=np.ones(nn), units='deg', res_ref=1.0e6)

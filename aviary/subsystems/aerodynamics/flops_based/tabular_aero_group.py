@@ -113,7 +113,7 @@ class TabularAeroGroup(om.Group):
                 Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR,
                 Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR,
                 ('CDI', 'lift_dependent_drag_coefficient'), ('CD0', 'zero_lift_drag_coefficient'), Dynamic.Mission.MACH, Dynamic.Mission.DYNAMIC_PRESSURE],
-            promotes_outputs=['drag_coefficient', Dynamic.Mission.DRAG])
+            promotes_outputs=['CD', Dynamic.Mission.DRAG])
 
 
 class _DynamicPressure(om.ExplicitComponent):
