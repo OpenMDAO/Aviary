@@ -1375,8 +1375,6 @@ class LowSpeedAero(om.Group):
             )
             warnings.warn("Alpha is NOT an output from LowSpeedAero.")
         else:
-            # TODO this makes "output_alpha" a bit of a misnomer, would computing an
-            # alpha be useful? an issue is ground effects depend on alpha
             self.add_subsystem(
                 "lift_coef",
                 LiftCoeff(num_nodes=nn),
