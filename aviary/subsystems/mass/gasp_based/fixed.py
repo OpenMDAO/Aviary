@@ -123,7 +123,7 @@ class MassParameters(om.ExplicitComponent):
         if aviary_options.get_val(
             Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, units='unitless'
         ):
-            # smooth transition for c_gear_loc from .95 to 1 when gear_location varies
+            # smooth transition for c_gear_loc from 0.95 to 1 when gear_location varies
             # between 0 and 1% of span
             c_gear_loc = .95 * sigX((0.005 - gear_location)*100) + \
                 1 * sigX(100*(gear_location - 0.005))
