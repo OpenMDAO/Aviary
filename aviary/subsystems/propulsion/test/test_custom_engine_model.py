@@ -98,7 +98,7 @@ class SimpleTestEngine(EngineModel):
     def build_mission(self, num_nodes, aviary_inputs):
         return SimpleEngine(num_nodes=num_nodes)
 
-    def get_controls(self):
+    def get_controls(self, **kwargs):
         controls_dict = {
             "different_throttle": {'units': 'unitless', 'lower': 0., 'upper': 0.1},
         }
