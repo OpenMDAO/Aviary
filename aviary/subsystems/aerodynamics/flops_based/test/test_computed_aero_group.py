@@ -32,7 +32,7 @@ class MissionDragTest(unittest.TestCase):
         flops_inputs.set_val(Settings.VERBOSITY, 0)
 
         engine = build_engine_deck(flops_inputs)
-        preprocess_options(flops_inputs, engine)
+        preprocess_options(flops_inputs, engine_models=engine)
 
         # don't need mass subsystem, so we skip it
         default_premission_subsystems = get_default_premission_subsystems(
@@ -172,7 +172,7 @@ class MissionDragTest(unittest.TestCase):
         flops_inputs.set_val(Settings.VERBOSITY, 0)
 
         engine = build_engine_deck(flops_inputs)
-        preprocess_options(flops_inputs, engine)
+        preprocess_options(flops_inputs, engine_models=engine)
 
         # don't need mass subsystem, so we skip it
         default_premission_subsystems = get_default_premission_subsystems(
@@ -294,7 +294,7 @@ class MissionDragTest(unittest.TestCase):
         flops_inputs.set_val(Settings.VERBOSITY, 0)
 
         engine = build_engine_deck(flops_inputs)
-        preprocess_options(flops_inputs, engine)
+        preprocess_options(flops_inputs, engine_models=engine)
 
         # don't need mass subsystem, so we skip it
         default_premission_subsystems = get_default_premission_subsystems(
