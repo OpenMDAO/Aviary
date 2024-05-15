@@ -106,6 +106,46 @@ class AscentODE(BaseODE):
             ],
         )
 
+        if True:
+            from aviary.utils.functions import create_printcomp
+            dummy_comp = create_printcomp(
+                all_inputs=[
+                    Dynamic.Mission.DISTANCE,
+                    Dynamic.Mission.DISTANCE_RATE,
+                    Dynamic.Mission.THROTTLE,
+                    Dynamic.Mission.THRUST_TOTAL,
+                    # 'required_thrust',
+                    Dynamic.Mission.ALTITUDE,
+                    Dynamic.Mission.ALTITUDE_RATE,
+                    'load_factor',
+                    # 'required_lift',
+                    Dynamic.Mission.MASS,
+                    Dynamic.Mission.LIFT,
+                    Dynamic.Mission.DRAG,
+                    Dynamic.Mission.VELOCITY,
+                    Dynamic.Mission.VELOCITY_RATE,
+                    Dynamic.Mission.FLIGHT_PATH_ANGLE,
+                    Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
+                    'alpha',
+                    "alpha_rate",
+                    'fuselage_pitch',
+                ],
+                input_units={
+                    'required_thrust': 'lbf',
+                    'required_lift': 'lbf',
+                    'alpha': 'deg',
+                    'alpha_rate': 'deg/s',
+                    'fuselage_pitch': 'deg',
+                    Dynamic.Mission.FLIGHT_PATH_ANGLE: 'deg',
+                })
+            self.add_subsystem(
+                "dummy_comp",
+                dummy_comp(),
+                promotes_inputs=["*"],)
+            self.set_input_defaults(Dynamic.Mission.DISTANCE, val=0, units='NM')
+            self.set_input_defaults(Dynamic.Mission.MASS, val=0, units='lbm')
+            self.set_input_defaults('throttle', val=1, units='unitless')
+
         self.add_excess_rate_comps(nn)
 
         ParamPort.set_default_vals(self)

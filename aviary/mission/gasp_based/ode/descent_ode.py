@@ -249,6 +249,34 @@ class DescentODE(BaseODE):
                             'SPECIFIC_ENERGY_RATE_EXCESS',
                             'ALTITUDE_RATE_MAX'])
 
+        if False:
+            from aviary.utils.functions import create_printcomp
+            dummy_comp = create_printcomp(
+                all_inputs=[
+                    Dynamic.Mission.DISTANCE,
+                    Dynamic.Mission.THROTTLE,
+                    Dynamic.Mission.THRUST_TOTAL,
+                    'required_thrust',
+                    Dynamic.Mission.ALTITUDE,
+                    'load_factor',
+                    'required_lift',
+                    Dynamic.Mission.MASS,
+                    Dynamic.Mission.FLIGHT_PATH_ANGLE,
+                    'alpha',
+                ],
+                input_units={
+                    'required_thrust': 'lbf',
+                    'required_lift': 'lbf',
+                    'alpha': 'deg',
+                    Dynamic.Mission.FLIGHT_PATH_ANGLE: 'deg',
+                })
+            self.add_subsystem(
+                "dummy_comp",
+                dummy_comp(),
+                promotes_inputs=["*"],)
+            self.set_input_defaults(
+                Dynamic.Mission.DISTANCE, val=0, units='NM')
+            debug_comp = ['dummy_comp']
         ParamPort.set_default_vals(self)
         self.set_input_defaults(Dynamic.Mission.ALTITUDE,
                                 val=37500 * np.ones(nn), units="ft")

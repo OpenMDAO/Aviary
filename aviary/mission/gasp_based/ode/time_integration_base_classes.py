@@ -230,13 +230,15 @@ class SimuPyProblem(SimulationMixin):
         # TODO: add defensive checks to make sure dimensions match in both setup and
         # calls
 
-        if verbosity.value >= 2:
+        if verbosity.value >= 2 or True:
             if problem_name:
                 problem_name = '_'+problem_name
             om.n2(prob, outfile="n2_simupy_problem" +
                   problem_name+".html", show_browser=False)
             with open('input_list_simupy'+problem_name+'.txt', 'w') as outfile:
                 prob.model.list_inputs(out_stream=outfile,)
+            with open('output_list_simupy'+problem_name+'.txt', 'w') as outfile:
+                prob.model.list_outputs(out_stream=outfile,)
             print(states)
 
     @property

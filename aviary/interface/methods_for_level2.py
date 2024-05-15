@@ -2344,11 +2344,6 @@ class AviaryProblem(om.Problem):
         self.final_setup()
         om.n2(self, 'superduperspecialn2.html', show_browser=False)
 
-        if self.aviary_inputs.get_val('verbosity').value >= 2:
-            self.final_setup()
-            with open('input_list.txt', 'w') as outfile:
-                self.model.list_inputs(out_stream=outfile)
-
         if suppress_solver_print:
             self.set_solver_print(level=0)
 
@@ -2366,7 +2361,13 @@ class AviaryProblem(om.Problem):
             failed = self.run_model()
             warnings.filterwarnings('default', category=UserWarning)
 
-        if self.aviary_inputs.get_val('verbosity').value >= 2:
+        if self.aviary_inputs.get_val('verbosity').value >= 2 or True:
+            self.final_setup()
+            with open('input_list.txt', 'w') as outfile:
+                self.model.list_inputs(out_stream=outfile)
+
+        om.n2(self, 'postrunn2.html', show_browser=False)
+        if self.aviary_inputs.get_val('verbosity').value >= 2 or True:
             with open('output_list.txt', 'w') as outfile:
                 self.model.list_outputs(out_stream=outfile)
 

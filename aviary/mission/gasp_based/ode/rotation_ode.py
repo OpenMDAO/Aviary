@@ -63,6 +63,35 @@ class RotationODE(BaseODE):
         self.add_subsystem("rotation_eom", RotationEOM(
             num_nodes=nn, analysis_scheme=analysis_scheme), promotes=["*"])
 
+        if False:
+            from aviary.utils.functions import create_printcomp
+            dummy_comp = create_printcomp(
+                all_inputs=[
+                    Dynamic.Mission.DISTANCE,
+                    Dynamic.Mission.THROTTLE,
+                    Dynamic.Mission.THRUST_TOTAL,
+                    'required_thrust',
+                    Dynamic.Mission.ALTITUDE,
+                    'load_factor',
+                    'required_lift',
+                    Dynamic.Mission.MASS,
+                    Dynamic.Mission.FLIGHT_PATH_ANGLE,
+                    'alpha',
+                ],
+                input_units={
+                    'required_thrust': 'lbf',
+                    'required_lift': 'lbf',
+                    'alpha': 'deg',
+                    Dynamic.Mission.FLIGHT_PATH_ANGLE: 'deg',
+                })
+            self.add_subsystem(
+                "dummy_comp",
+                dummy_comp(),
+                promotes_inputs=["*"],)
+            self.set_input_defaults(Dynamic.Mission.DISTANCE, val=0, units='NM')
+            self.set_input_defaults(Dynamic.Mission.MASS, val=0, units='lbm')
+            self.set_input_defaults('throttle', val=0, units='unitless')
+
         ParamPort.set_default_vals(self)
         self.set_input_defaults("t_init_flaps", val=47.5)
         self.set_input_defaults("t_init_gear", val=37.3)

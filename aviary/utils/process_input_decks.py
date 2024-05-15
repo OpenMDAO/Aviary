@@ -70,7 +70,7 @@ def create_vehicle(vehicle_deck='', verbosity=Verbosity.BRIEF):
     return aircraft_values, initial_guesses
 
 
-def parse_inputs(vehicle_deck, aircraft_values: AviaryValues(), meta_data=_MetaData):
+def parse_inputs(vehicle_deck, aircraft_values: AviaryValues, meta_data=_MetaData):
     """
     Parses the input files and updates the aircraft values and initial guesses. The function reads the
     vehicle deck file, processes each line, and updates the aircraft_values object based on the data found.
@@ -147,7 +147,7 @@ def parse_inputs(vehicle_deck, aircraft_values: AviaryValues(), meta_data=_MetaD
 #      e.g. aero preprocessor, mass preprocessor, 2DOF preprocessor, etc.
 
 
-def update_GASP_options(aircraft_values: AviaryValues()):
+def update_GASP_options(aircraft_values: AviaryValues):
     """
     Updates options based on the current values in aircraft_values. This function also handles special cases 
     and prints debug information if the debug mode is active.
@@ -191,7 +191,7 @@ def update_GASP_options(aircraft_values: AviaryValues()):
     return aircraft_values
 
 
-def update_dependent_options(aircraft_values: AviaryValues(), dependent_options):
+def update_dependent_options(aircraft_values: AviaryValues, dependent_options):
     """
     Updates options that are dependent on the value of an input variable or option. The function iterates 
     through each dependent option and sets its value based on the current aircraft values.
@@ -223,7 +223,7 @@ def update_dependent_options(aircraft_values: AviaryValues(), dependent_options)
     return aircraft_values
 
 
-def initial_guessing(aircraft_values: AviaryValues(), initial_guesses):
+def initial_guessing(aircraft_values: AviaryValues, initial_guesses):
     """
     Sets initial guesses for various aircraft parameters based on the current problem type, aircraft values,
     and other factors. It calculates and sets values like takeoff mass, cruise mass, flight duration, etc.
