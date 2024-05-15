@@ -229,7 +229,7 @@ class SimuPyProblem(SimulationMixin):
         self.dim_parameters = len(parameters)
         # TODO: add defensive checks to make sure dimensions match in both setup and
         # calls
-
+        self.problem_name = problem_name
         if verbosity.value >= 2 or True:
             if problem_name:
                 problem_name = '_'+problem_name
@@ -276,7 +276,10 @@ class SimuPyProblem(SimulationMixin):
             self.prob.set_val(state_name, elem_val,
                               units=self.states[state_name]['units'])
 
-        self.prob.run_model()
+        # self.prob.run_model()
+        # with open('var_list.txt', 'w') as outfile:
+        #     self.prob.model.list_vars(units=True,print_arrays=True,list_autoivcs=True,out_stream=outfile)
+        # exit()
 
     @property
     def control(self):
@@ -368,6 +371,14 @@ class SimuPyProblem(SimulationMixin):
         self.time = t
         self.state = x
         self.compute()
+        problem_name = self.problem_name
+        if problem_name:
+            problem_name = '_'+problem_name
+        with open('var_list'+problem_name+'.txt', 'w') as outfile:
+            self.prob.model.list_vars(
+                units=True, print_arrays=True, list_autoivcs=True, out_stream=outfile)
+        # if 'asc' in problem_name:
+        #     exit()
         return self.output
 
     def prepare_to_integrate(self, t0, x0):

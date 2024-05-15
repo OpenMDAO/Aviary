@@ -45,6 +45,8 @@ takeoff_phases = {
         'user_options': {
             't_init_gear': (10000, 's'),
             't_init_flaps': (10000, 's'),
+            'dt_gear': (7, 's'),
+            'dt_flaps': (3, 's'),
             # special case
             'rotation.start_rotation': (10000, 's'),
             # special case

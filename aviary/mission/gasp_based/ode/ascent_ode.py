@@ -129,6 +129,7 @@ class AscentODE(BaseODE):
                     'alpha',
                     "alpha_rate",
                     'fuselage_pitch',
+                    't_curr',
                 ],
                 input_units={
                     'required_thrust': 'lbf',
@@ -136,6 +137,7 @@ class AscentODE(BaseODE):
                     'alpha': 'deg',
                     'alpha_rate': 'deg/s',
                     'fuselage_pitch': 'deg',
+                    't_curr': 's',
                     Dynamic.Mission.FLIGHT_PATH_ANGLE: 'deg',
                 })
             self.add_subsystem(

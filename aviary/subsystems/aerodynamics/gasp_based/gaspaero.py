@@ -1431,15 +1431,34 @@ class LowSpeedAero(om.Group):
         )
 
         self.add_subsystem("forces", AeroForces(num_nodes=nn), promotes=["*"])
+        if (self.options["retract_gear"] or self.options["retract_flaps"]) and False:
+            all_inputs = []
+            if self.options["retract_gear"]:
+                all_inputs += ['dt_gear']
+            if self.options["retract_flaps"]:
+                all_inputs += ['dt_flaps']
+            from aviary.utils.functions import create_printcomp
+            dummy_comp = create_printcomp(
+                all_inputs=all_inputs,
+                input_units={
+                    'dt_gear': 's',
+                    'dt_flaps': 's',
+                })
+            self.add_subsystem(
+                "dummy_comp",
+                dummy_comp(),
+                promotes_inputs=["*"],)
 
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, np.zeros(nn))
 
         if self.options["retract_gear"]:
+            print('retracting gear')
             # takeoff defaults
             self.set_input_defaults("dt_gear", 7)
         # gear not dynamically extended during landing
 
         if self.options["retract_flaps"]:
+            print('retracting flaps')
             # takeoff defaults
             self.set_input_defaults("flap_defl", 10)
             self.set_input_defaults("dt_flaps", 3)
