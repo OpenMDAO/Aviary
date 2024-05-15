@@ -472,7 +472,7 @@ class PreHamiltonStandard(om.ExplicitComponent):
         self.add_input(Aircraft.Engine.PROPELLER_DIAMETER, val=0.0, units='ft')
         self.add_input(Dynamic.Mission.PROPELLER_TIP_SPEED,
                        val=np.zeros(nn), units='ft/s')
-        self.add_input(Dynamic.Mission.SHAFT_POWER, val=np.zeros(nn), units='hp')
+        self.add_input(Dynamic.Mission.Prop.SHAFT_POWER, val=np.zeros(nn), units='hp')
         self.add_input(Dynamic.Mission.DENSITY, val=np.zeros(nn), units='slug/ft**3')
         self.add_input(Dynamic.Mission.VELOCITY, val=np.zeros(nn), units='knot')
         self.add_input(Dynamic.Mission.TEMPERATURE, val=np.zeros(nn), units='degR')
@@ -496,7 +496,7 @@ class PreHamiltonStandard(om.ExplicitComponent):
             Dynamic.Mission.PROPELLER_TIP_SPEED,
         ], rows=arange, cols=arange)
         self.declare_partials('power_coefficient', [
-            Dynamic.Mission.SHAFT_POWER,
+            Dynamic.Mission.Prop.SHAFT_POWER,
             Dynamic.Mission.DENSITY,
             Dynamic.Mission.PROPELLER_TIP_SPEED,
         ], rows=arange, cols=arange)
@@ -511,7 +511,7 @@ class PreHamiltonStandard(om.ExplicitComponent):
         outputs['tip_mach'] = tipspd * sqrt_temp_ratio / 1118.21948771
         outputs['advance_ratio'] = 5.309 * vktas / tipspd
         diam_prop = inputs[Aircraft.Engine.PROPELLER_DIAMETER]
-        shp = inputs[Dynamic.Mission.SHAFT_POWER]
+        shp = inputs[Dynamic.Mission.Prop.SHAFT_POWER]
         outputs['power_coefficient'] = shp * 10.E10 / (2 * 6966.) / \
             outputs['density_ratio'] / (tipspd**3*diam_prop**2)
 
@@ -520,7 +520,7 @@ class PreHamiltonStandard(om.ExplicitComponent):
         tipspd = inputs[Dynamic.Mission.PROPELLER_TIP_SPEED]
         rho = inputs[Dynamic.Mission.DENSITY]
         diam_prop = inputs[Aircraft.Engine.PROPELLER_DIAMETER][0]
-        shp = inputs[Dynamic.Mission.SHAFT_POWER]
+        shp = inputs[Dynamic.Mission.Prop.SHAFT_POWER]
         temp = inputs[Dynamic.Mission.TEMPERATURE]
         sqrt_temp_ratio = np.sqrt(TSLS_DEGR/temp)
 
@@ -534,7 +534,7 @@ class PreHamiltonStandard(om.ExplicitComponent):
         partials["advance_ratio", Dynamic.Mission.VELOCITY] = 5.309 / tipspd
         partials["advance_ratio", Dynamic.Mission.PROPELLER_TIP_SPEED] = - \
             5.309 * vktas / (tipspd * tipspd)
-        partials["power_coefficient", Dynamic.Mission.SHAFT_POWER] = unit_conversion_const * \
+        partials["power_coefficient", Dynamic.Mission.Prop.SHAFT_POWER] = unit_conversion_const * \
             RHO_SEA_LEVEL_ENGLISH / (rho * tipspd**3*diam_prop**2)
         partials["power_coefficient", Dynamic.Mission.DENSITY] = -unit_conversion_const * shp * \
             RHO_SEA_LEVEL_ENGLISH / (rho * rho * tipspd**3*diam_prop**2)

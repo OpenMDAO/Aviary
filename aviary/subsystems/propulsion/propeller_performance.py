@@ -132,6 +132,9 @@ class PropellerPerformance(om.Group):
         self.options.declare(
             'num_nodes', types=int, default=1,
             desc='Number of nodes to be evaluated in the RHS')
+        self.options.declare(
+            'input_rpm', types=bool, default=False,
+            desc='If True, the input is RPM, otherwise it is percent rotor RPM corrected')
 
         self.options.declare('aviary_options', types=AviaryValues,
                              desc='collection of Aircraft/Mission specific options')
@@ -160,24 +163,44 @@ class PropellerPerformance(om.Group):
             promotes_outputs=['theta_T'],
         )
 
-        self.add_subsystem(
-            'prop_tip_speed',
-            om.ExecComp(
-                'prop_tip_speed = minimum(pc_rotor_rpm_corrected * theta_T**.5 * max_prop_tip_spd, max_prop_tip_spd)',
-                prop_tip_speed={'units': "ft/s", 'shape': nn},
-                theta_T={'units': "unitless", 'shape': nn},
-                pc_rotor_rpm_corrected={'units': "unitless", 'shape': nn},
-                max_prop_tip_spd={'units': "ft/s", 'shape': nn},
-                has_diag_partials=True,
-            ),
-            promotes_inputs=[
-                'theta_T',
-                ('pc_rotor_rpm_corrected', Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED),
-                ('max_prop_tip_spd', Aircraft.Design.MAX_PROPELLER_TIP_SPEED),
-            ],
-            promotes_outputs=[
-                ('prop_tip_speed', Dynamic.Mission.PROPELLER_TIP_SPEED)],
-        )
+        if self.options['input_rpm']:
+            # compute the propeller tip speed based on the input RPM and diameter of the propeller
+            self.add_subsystem(
+                'compute_tip_speed',
+                om.ExecComp(
+                    'prop_tip_speed = diameter * rpm * pi / 60.',
+                    prop_tip_speed={'units': "ft/s", 'shape': nn},
+                    diameter={'val': 0., 'units': "ft"},
+                    rpm={'units': "rpm", 'shape': nn},
+                    has_diag_partials=True,
+                ),
+                promotes_inputs=[
+                    ('rpm', Aircraft.Prop.RPM),
+                    ('diameter', Aircraft.Engine.PROPELLER_DIAMETER),
+                ],
+                promotes_outputs=[
+                    ('prop_tip_speed', Dynamic.Mission.PROPELLER_TIP_SPEED)],
+            )
+
+        else:
+            self.add_subsystem(
+                'prop_tip_speed',
+                om.ExecComp(
+                    'prop_tip_speed = minimum(pc_rotor_rpm_corrected * theta_T**.5 * max_prop_tip_spd, max_prop_tip_spd)',
+                    prop_tip_speed={'units': "ft/s", 'shape': nn},
+                    theta_T={'units': "unitless", 'shape': nn},
+                    pc_rotor_rpm_corrected={'units': "unitless", 'shape': nn},
+                    max_prop_tip_spd={'units': "ft/s", 'shape': nn},
+                    has_diag_partials=True,
+                ),
+                promotes_inputs=[
+                    'theta_T',
+                    ('pc_rotor_rpm_corrected', Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED),
+                    ('max_prop_tip_spd', Aircraft.Design.MAX_PROPELLER_TIP_SPEED),
+                ],
+                promotes_outputs=[
+                    ('prop_tip_speed', Dynamic.Mission.PROPELLER_TIP_SPEED)],
+            )
 
         if compute_installation_loss:
             self.add_subsystem(
