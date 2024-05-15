@@ -82,13 +82,13 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
 
         return states
 
-    def get_controls(self):
+    def get_controls(self, phase_name=None):
         """
         Call get_controls() on all engine models and return combined result.
         """
         controls = {}
         for engine in self.engine_models:
-            engine_controls = engine.get_controls()
+            engine_controls = engine.get_controls(phase_name=phase_name)
             controls.update(engine_controls)
 
         return controls

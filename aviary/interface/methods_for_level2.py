@@ -822,7 +822,8 @@ class AviaryProblem(om.Problem):
                 control_dicts = subsystem.get_controls(
                     phase_name=phase_name)
             else:
-                control_dicts = subsystem.get_controls()
+                control_dicts = subsystem.get_controls(
+                    phase_name=phase_name)
             for control_name, control_dict in control_dicts.items():
                 phase.add_control(control_name, **control_dict)
 
