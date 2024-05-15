@@ -7,6 +7,7 @@ from copy import deepcopy
 import aviary.api as av
 
 from aviary.examples.external_subsystems.engine_NPSS.table_engine_builder import TableEngineBuilder as EngineBuilder
+from aviary.examples.external_subsystems.engine_NPSS.engine_variable_meta_data import ExtendedMetaData
 
 
 def define_aviary_NPSS_problem():
@@ -20,7 +21,7 @@ def define_aviary_NPSS_problem():
     # Allow for user overrides here
     # add engine builder
     prob.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm.csv',
-                     phase_info, engine_builder=EngineBuilder())
+                     phase_info, engine_builder=EngineBuilder(), meta_data=ExtendedMetaData)
 
     prob.check_and_preprocess_inputs()
 
