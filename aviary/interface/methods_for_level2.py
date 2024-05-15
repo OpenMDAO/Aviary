@@ -280,7 +280,7 @@ class AviaryProblem(om.Problem):
             # Commonly referenced values
             self.cruise_alt = aviary_inputs.get_val(
                 Mission.Design.CRUISE_ALTITUDE, units='ft')
-            self.problem_type = aviary_inputs.get_val('problem_type')
+            self.problem_type = aviary_inputs.get_val(Settings.PROBLEM_TYPE)
             self.mass_defect = aviary_inputs.get_val('mass_defect', units='lbm')
 
             self.cruise_mass_final = aviary_inputs.get_val(
