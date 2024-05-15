@@ -75,14 +75,14 @@ class TestFLOPSBalancedFieldLength(unittest.TestCase):
 
         driver.recording_options['record_derivatives'] = False
 
-        default_premission_subsystems = get_default_mission_subsystems('FLOPS', engine)
+        default_mission_subsystems = get_default_mission_subsystems('FLOPS', engine)
 
         # Upstream static analysis for aero
         takeoff.model.add_subsystem(
             'core_subsystems',
             CorePreMission(
                 aviary_options=aviary_options,
-                subsystems=default_premission_subsystems,
+                subsystems=default_mission_subsystems,
             ),
             promotes_inputs=['aircraft:*', 'mission:*'],
             promotes_outputs=['aircraft:*', 'mission:*'])
