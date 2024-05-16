@@ -229,16 +229,13 @@ class SimuPyProblem(SimulationMixin):
         self.dim_parameters = len(parameters)
         # TODO: add defensive checks to make sure dimensions match in both setup and
         # calls
-        self.problem_name = problem_name
-        if verbosity.value >= 2 or True:
+        if verbosity.value >= 2:
             if problem_name:
                 problem_name = '_'+problem_name
             om.n2(prob, outfile="n2_simupy_problem" +
                   problem_name+".html", show_browser=False)
             with open('input_list_simupy'+problem_name+'.txt', 'w') as outfile:
                 prob.model.list_inputs(out_stream=outfile,)
-            with open('output_list_simupy'+problem_name+'.txt', 'w') as outfile:
-                prob.model.list_outputs(out_stream=outfile,)
             print(states)
 
     @property
@@ -275,11 +272,6 @@ class SimuPyProblem(SimulationMixin):
         for state_name, elem_val in zip(self.states.keys(), xs.T):
             self.prob.set_val(state_name, elem_val,
                               units=self.states[state_name]['units'])
-
-        # self.prob.run_model()
-        # with open('var_list.txt', 'w') as outfile:
-        #     self.prob.model.list_vars(units=True,print_arrays=True,list_autoivcs=True,out_stream=outfile)
-        # exit()
 
     @property
     def control(self):
@@ -371,14 +363,6 @@ class SimuPyProblem(SimulationMixin):
         self.time = t
         self.state = x
         self.compute()
-        problem_name = self.problem_name
-        if 'desc' in problem_name:
-            problem_name = '_'+problem_name
-            with open('var_list'+problem_name+'.txt', 'w') as outfile:
-                self.prob.model.list_vars(
-                    units=True, print_arrays=True, list_autoivcs=True, out_stream=outfile)
-        # if 'asc' in problem_name:
-        #     exit()
         return self.output
 
     def prepare_to_integrate(self, t0, x0):

@@ -10,7 +10,6 @@ import numpy as np
 
 import dymos as dm
 from dymos.utils.misc import _unspecified
-from copy import deepcopy
 
 import openmdao.api as om
 from openmdao.core.component import Component
@@ -57,7 +56,6 @@ from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamics
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.merge_variable_metadata import merge_meta_data
 
-from aviary.interface.default_phase_info.two_dof_fiti import create_2dof_based_ascent_phases, create_2dof_based_descent_phases
 from aviary.interface.default_phase_info.two_dof_fiti_copy import add_default_sgm_args
 from aviary.mission.gasp_based.idle_descent_estimation import descent_range_and_fuel, add_descent_estimation_as_submodel
 from aviary.mission.phase_builder_base import PhaseBuilderBase
@@ -1021,15 +1019,6 @@ class AviaryProblem(om.Problem):
             traj = self.model.add_subsystem('traj', dm.Trajectory())
 
         elif self.analysis_scheme is AnalysisScheme.SHOOTING:
-            # ascent_phases = create_2dof_based_ascent_phases(
-            #     self.ode_args,
-            #     cruise_alt=self.cruise_alt,
-            #     cruise_mach=self.cruise_mach)
-
-            # descent_phases = create_2dof_based_descent_phases(
-            #     self.ode_args,
-            #     cruise_mach=self.cruise_mach)
-
             vb = self.aviary_inputs.get_val('verbosity')
             add_default_sgm_args(self.phase_info, self.ode_args, vb)
 
@@ -1080,8 +1069,7 @@ class AviaryProblem(om.Problem):
                 traj_intermediate_state_output=[
                     ('cruise', Dynamic.Mission.DISTANCE),
                     ('cruise', Dynamic.Mission.MASS),
-                ],
-                # promote_all_auto_ivc=True,
+                ]
             )
             traj = self.model.add_subsystem('traj', full_traj)
 
@@ -2345,8 +2333,6 @@ class AviaryProblem(om.Problem):
         make_plots : bool, optional
             If True (default), Dymos html plots will be generated as part of the output.
         """
-        self.final_setup()
-        om.n2(self, 'superduperspecialn2.html', show_browser=False)
 
         if suppress_solver_print:
             self.set_solver_print(level=0)
@@ -2365,13 +2351,7 @@ class AviaryProblem(om.Problem):
             failed = self.run_model()
             warnings.filterwarnings('default', category=UserWarning)
 
-        if self.aviary_inputs.get_val('verbosity').value >= 2 or True:
-            self.final_setup()
-            with open('input_list.txt', 'w') as outfile:
-                self.model.list_inputs(out_stream=outfile)
-
-        om.n2(self, 'postrunn2.html', show_browser=False)
-        if self.aviary_inputs.get_val('verbosity').value >= 2 or True:
+        if self.aviary_inputs.get_val('verbosity').value >= 2:
             with open('output_list.txt', 'w') as outfile:
                 self.model.list_outputs(out_stream=outfile)
 

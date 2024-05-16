@@ -458,7 +458,7 @@ class SGMCruise(SimuPyProblem):
         alpha_mode=AlphaModes.DEFAULT,
         input_speed_type=SpeedType.MACH,
         input_speed_units="kn",
-        distance_trigger=(0, 'ft'),
+        distance_trigger=(-1, 'ft'),
         mass_trigger=(0, 'lbm'),
         ode_args={},
         simupy_args={},
@@ -498,7 +498,7 @@ class SGMCruise(SimuPyProblem):
         )
 
         self.phase_name = phase_name
-        # self.add_trigger(Dynamic.Mission.DISTANCE, "distance_trigger")
+        self.add_trigger(Dynamic.Mission.DISTANCE, "distance_trigger")
         self.add_trigger(Dynamic.Mission.MASS, 'mass_trigger')
 
 

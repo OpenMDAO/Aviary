@@ -110,13 +110,6 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         rtol = 0.01
 
-        # print('cruise range', prob.get_val('traj.cruise_' + Dynamic.Mission.DISTANCE + '_final',
-        #                                units='nmi'))
-        # print('cruise mass', prob.get_val('actual_descent_fuel.traj_cruise_mass_final',
-        #                                    units='lbm'))
-        # print('descent range', prob.get_val('descent_range', units='NM'))
-        # print('descent fuel', prob.get_val('descent_fuel', units='lbm'))
-
         assert_near_equal(prob.get_val(Mission.Design.RESERVE_FUEL, units='lbm'),
                           4998, tolerance=rtol)
 

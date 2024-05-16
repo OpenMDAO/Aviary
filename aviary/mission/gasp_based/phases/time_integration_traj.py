@@ -35,17 +35,9 @@ class FlexibleTraj(TimeIntegrationTrajBase):
         ODEs = []
         for phase_name, phase_info in self.options['Phases'].items():
             kwargs = phase_info.get('kwargs', {})
-            # if 'ode_args' not in kwargs:
-            #     kwargs['ode_args'] = self.options['ode_args']
-            # if 'simupy_args' not in kwargs:
-            #     kwargs['simupy_args'] = {'verbosity': Verbosity.QUIET}
-            # if 'external_subsystems' not in phase_info:
-            #     phase_info['external_subsystems'] = []
-
             next_phase = phase_info['builder'](**kwargs)
             next_phase.phase_name = phase_name
             ODEs.append(next_phase)
-        # print(self.options['Phases'])
 
         self.setup_params(
             ODEs=ODEs,
