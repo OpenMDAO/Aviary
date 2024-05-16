@@ -372,11 +372,11 @@ class SimuPyProblem(SimulationMixin):
         self.state = x
         self.compute()
         problem_name = self.problem_name
-        if problem_name:
+        if 'desc' in problem_name:
             problem_name = '_'+problem_name
-        with open('var_list'+problem_name+'.txt', 'w') as outfile:
-            self.prob.model.list_vars(
-                units=True, print_arrays=True, list_autoivcs=True, out_stream=outfile)
+            with open('var_list'+problem_name+'.txt', 'w') as outfile:
+                self.prob.model.list_vars(
+                    units=True, print_arrays=True, list_autoivcs=True, out_stream=outfile)
         # if 'asc' in problem_name:
         #     exit()
         return self.output

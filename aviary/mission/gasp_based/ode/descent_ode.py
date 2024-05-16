@@ -249,20 +249,33 @@ class DescentODE(BaseODE):
                             'SPECIFIC_ENERGY_RATE_EXCESS',
                             'ALTITUDE_RATE_MAX'])
 
-        if False:
+        if True:
             from aviary.utils.functions import create_printcomp
             dummy_comp = create_printcomp(
                 all_inputs=[
                     Dynamic.Mission.DISTANCE,
+                    Dynamic.Mission.DISTANCE_RATE,
                     Dynamic.Mission.THROTTLE,
                     Dynamic.Mission.THRUST_TOTAL,
                     'required_thrust',
                     Dynamic.Mission.ALTITUDE,
+                    Dynamic.Mission.ALTITUDE_RATE,
                     'load_factor',
                     'required_lift',
                     Dynamic.Mission.MASS,
+                    Dynamic.Mission.LIFT,
+                    Dynamic.Mission.DRAG,
+                    Dynamic.Mission.VELOCITY,
+                    Dynamic.Mission.VELOCITY_RATE,
                     Dynamic.Mission.FLIGHT_PATH_ANGLE,
+                    Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
                     'alpha',
+                    "alpha_rate",
+                    'fuselage_pitch',
+                    'normal_force',
+                    't_init_flaps',
+                    't_init_gear',
+                    't_curr',
                 ],
                 input_units={
                     'required_thrust': 'lbf',
@@ -274,9 +287,11 @@ class DescentODE(BaseODE):
                 "dummy_comp",
                 dummy_comp(),
                 promotes_inputs=["*"],)
-            self.set_input_defaults(
-                Dynamic.Mission.DISTANCE, val=0, units='NM')
+            self.set_input_defaults(Dynamic.Mission.DISTANCE, val=0, units='NM')
+            self.set_input_defaults(Dynamic.Mission.VELOCITY_RATE, val=0, units='m/s**2')
+            self.set_input_defaults('t_curr', val=0, units='s')
             debug_comp = ['dummy_comp']
+
         ParamPort.set_default_vals(self)
         self.set_input_defaults(Dynamic.Mission.ALTITUDE,
                                 val=37500 * np.ones(nn), units="ft")

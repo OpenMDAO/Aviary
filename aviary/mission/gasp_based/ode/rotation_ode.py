@@ -63,7 +63,7 @@ class RotationODE(BaseODE):
         self.add_subsystem("rotation_eom", RotationEOM(
             num_nodes=nn, analysis_scheme=analysis_scheme), promotes=["*"])
 
-        if True:
+        if False:
             from aviary.utils.functions import create_printcomp
             dummy_comp = create_printcomp(
                 all_inputs=[
