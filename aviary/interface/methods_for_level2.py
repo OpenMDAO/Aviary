@@ -1077,7 +1077,7 @@ class AviaryProblem(om.Problem):
                     ('cruise', Dynamic.Mission.DISTANCE),
                     ('cruise', Dynamic.Mission.MASS),
                 ],
-                promote_all_auto_ivc=True,
+                # promote_all_auto_ivc=True,
             )
             traj = self.model.add_subsystem('traj', full_traj)
 
