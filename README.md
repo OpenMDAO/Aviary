@@ -19,6 +19,7 @@ The simplest installation method for users is to install via pip:
     pip install om-aviary
 
 Please see the [installation doc page](https://openmdao.github.io/Aviary/getting_started/installation.html) for more detailed instructions.
+The minimum supported Python version for Aviary is 3.9.
 
 ## Documentation
 
