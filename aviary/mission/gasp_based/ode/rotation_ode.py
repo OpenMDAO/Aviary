@@ -63,20 +63,33 @@ class RotationODE(BaseODE):
         self.add_subsystem("rotation_eom", RotationEOM(
             num_nodes=nn, analysis_scheme=analysis_scheme), promotes=["*"])
 
-        if False:
+        if True:
             from aviary.utils.functions import create_printcomp
             dummy_comp = create_printcomp(
                 all_inputs=[
                     Dynamic.Mission.DISTANCE,
+                    Dynamic.Mission.DISTANCE_RATE,
                     Dynamic.Mission.THROTTLE,
                     Dynamic.Mission.THRUST_TOTAL,
                     'required_thrust',
                     Dynamic.Mission.ALTITUDE,
+                    Dynamic.Mission.ALTITUDE_RATE,
                     'load_factor',
                     'required_lift',
                     Dynamic.Mission.MASS,
+                    Dynamic.Mission.LIFT,
+                    Dynamic.Mission.DRAG,
+                    Dynamic.Mission.VELOCITY,
+                    Dynamic.Mission.VELOCITY_RATE,
                     Dynamic.Mission.FLIGHT_PATH_ANGLE,
+                    Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
                     'alpha',
+                    "alpha_rate",
+                    'fuselage_pitch',
+                    'normal_force',
+                    't_init_flaps',
+                    't_init_gear',
+                    't_curr',
                 ],
                 input_units={
                     'required_thrust': 'lbf',
@@ -90,11 +103,11 @@ class RotationODE(BaseODE):
                 promotes_inputs=["*"],)
             self.set_input_defaults(Dynamic.Mission.DISTANCE, val=0, units='NM')
             self.set_input_defaults(Dynamic.Mission.MASS, val=0, units='lbm')
-            self.set_input_defaults('throttle', val=0, units='unitless')
+            self.set_input_defaults('throttle', val=1, units='unitless')
 
         ParamPort.set_default_vals(self)
-        self.set_input_defaults("t_init_flaps", val=47.5)
-        self.set_input_defaults("t_init_gear", val=37.3)
+        self.set_input_defaults("t_init_flaps", val=47.5, units='s')
+        self.set_input_defaults("t_init_gear", val=37.3, units='s')
         self.set_input_defaults("alpha", val=np.ones(nn), units="deg")
         self.set_input_defaults(Dynamic.Mission.FLIGHT_PATH_ANGLE,
                                 val=np.zeros(nn), units="deg")

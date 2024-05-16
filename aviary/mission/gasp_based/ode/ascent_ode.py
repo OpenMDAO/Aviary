@@ -106,7 +106,7 @@ class AscentODE(BaseODE):
             ],
         )
 
-        if True:
+        if False:
             from aviary.utils.functions import create_printcomp
             dummy_comp = create_printcomp(
                 all_inputs=[
