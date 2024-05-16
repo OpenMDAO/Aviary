@@ -334,8 +334,14 @@ class IntegratedPlottingApp(tk.Tk):
             'button_release_event', self.on_release)
 
         # Done button
-        self.done_button = tk.Button(checkbox_frame, text="Done", command=self.on_done)
+        self.done_button = tk.Button(
+            checkbox_frame, text="Output phase_info object", command=self.on_done)
         self.done_button.pack(side='top', pady=10)
+
+        # add a note that if you don't have the black package installed your phase_info file might be formatted unclearly
+        # wrap text to fit in the window
+        tk.Label(checkbox_frame, text="Note: If 'black' is not installed, the outputted phase_info dict may not be returned in an easy-to-read format.",
+                 wraplength=200, justify='left').pack(side='top', pady=10)
 
         # Help button
         self.help_button = tk.Button(checkbox_frame, text="Help", command=self.show_help)
