@@ -3,6 +3,7 @@ import warnings
 
 import openmdao.api as om
 from aviary.interface.default_phase_info.two_dof_fiti import create_2dof_based_descent_phases
+from aviary.interface.default_phase_info.two_dof_fiti_copy import descent_phases, add_default_sgm_args
 
 from openmdao.utils.assert_utils import assert_near_equal
 
@@ -34,9 +35,12 @@ class IdleDescentTestCase(unittest.TestCase):
         self.aviary_inputs = aviary_inputs
         self.tol = 1e-5
 
+        add_default_sgm_args(descent_phases, self.ode_args)
+        self.phases = descent_phases
+
     def test_case1(self):
 
-        results = descent_range_and_fuel(ode_args=self.ode_args)['refined_guess']
+        results = descent_range_and_fuel(phases=self.phases)['refined_guess']
 
         # Values obtained by running idle_descent_estimation
         assert_near_equal(results['distance_flown'], 91.8911599691433, self.tol)
@@ -52,13 +56,10 @@ class IdleDescentTestCase(unittest.TestCase):
         ivc.add_output(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, 36000, units='lbm')
         prob.model.add_subsystem('IVC', ivc, promotes=['*'])
 
-        descent_phases = create_2dof_based_descent_phases(
-            self.ode_args,
-            cruise_mach=.8)
         add_descent_estimation_as_submodel(
             prob,
-            descent_phases,
-            self.ode_args,
+            phases=self.phases,
+            ode_args=self.ode_args,
             cruise_alt=35000,
             reserve_fuel=4500,
         )

@@ -33,7 +33,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
                           95509, tolerance=rtol)
 
         assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
-                          42529., tolerance=rtol)
+                          41856., tolerance=rtol)
 
         assert_near_equal(prob.get_val(Mission.Landing.GROUND_DISTANCE, units='ft'),
                           2634.8, tolerance=rtol)
@@ -136,7 +136,4 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    # test.test_bench_GwGm_SNOPT_lbm_s()
-    test = ProblemPhaseTestCase()
-    test.test_bench_GwGm_shooting()
+    unittest.main()

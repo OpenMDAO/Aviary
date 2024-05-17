@@ -11,7 +11,7 @@ from aviary.variable_info.enums import Verbosity, EquationsOfMotion
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 from aviary.variable_info.variables_in import VariablesIn
 
-from aviary.interface.default_phase_info.height_energy import aero, prop, geom
+from aviary.interface.default_phase_info.height_energy_fiti import aero, prop, geom, add_default_sgm_args
 from aviary.subsystems.propulsion.engine_deck import EngineDeck
 from aviary.utils.process_input_decks import create_vehicle
 from aviary.utils.preprocessors import preprocess_propulsion
@@ -56,6 +56,8 @@ class HE_SGMDescentTestCase(unittest.TestCase):
 
         aviary_options = self.ode_args['aviary_options']
         subsystems = self.ode_args['core_subsystems']
+
+        add_default_sgm_args(phases, self.ode_args)
 
         traj = FlexibleTraj(
             Phases=phases,
@@ -165,16 +167,13 @@ class HE_SGMDescentTestCase(unittest.TestCase):
             "traj.mach": {'val': .8, 'units': "unitless"},
         }
 
-        SGMCruise = SGMHeightEnergy(
-            self.ode_args,
-            phase_name='cruise',
-            simupy_args=dict(verbosity=Verbosity.QUIET,)
-        )
-        SGMCruise.triggers[0].value = 160000
-
         phases = {'HE': {
-            'ode': SGMCruise,
-            'vals_to_set': {}
+            'kwargs': {
+                'mass_trigger': (160000, 'lbm'),
+            },
+            'builder': SGMHeightEnergy,
+            "user_options": {
+            },
         }}
 
         final_states = self.run_simulation(phases, initial_values_cruise)
