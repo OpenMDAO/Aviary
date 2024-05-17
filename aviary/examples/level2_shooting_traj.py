@@ -61,8 +61,8 @@ def run_aviary(aircraft_filename, phase_info, optimizer=None, analysis_scheme=An
         ),
     )
     cruise_vals = {
-        'mach': {'val': prob.cruise_mach, 'units': cruise_kwargs['input_speed_units']},
-        'distance_trigger': {'val': 300, 'units': 'NM'},
+        'mach': (prob.cruise_mach, cruise_kwargs['input_speed_units']),
+        'distance_trigger': (300, 'NM'),
     }
 
     descent1_kwargs = dict(
@@ -75,9 +75,9 @@ def run_aviary(aircraft_filename, phase_info, optimizer=None, analysis_scheme=An
         ),
     )
     descent1_vals = {
-        'alt_trigger': {'val': 10000, 'units': 'ft'},
-        'mach': {'val': prob.cruise_mach, 'units': None},
-        'speed_trigger': {'val': 350, 'units': 'kn'}}
+        'alt_trigger': (10000, 'ft'),
+        'mach': (prob.cruise_mach, None),
+        'speed_trigger': (350, 'kn')}
 
     phases = {
         **ascent_phases,

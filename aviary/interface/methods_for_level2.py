@@ -1044,8 +1044,7 @@ class AviaryProblem(om.Problem):
 
                 # based on reserve_fuel
                 estimated_descent_fuel = descent_estimation['refined_guess']['fuel_burned']
-                cruise_options['descent_fuel'] = {
-                    'val': estimated_descent_fuel, 'units': 'lbm'}
+                cruise_options['descent_fuel'] = (estimated_descent_fuel, 'lbm')
 
             full_traj = FlexibleTraj(
                 Phases=self.phase_info,
