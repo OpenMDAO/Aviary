@@ -239,7 +239,7 @@ class AviaryProblem(om.Problem):
             from aviary.utils.test_utils.check_om_version import CheckForOMSubmodelFix
             self.submodel_fix = CheckForOMSubmodelFix()
 
-    def load_inputs(self, aviary_inputs, phase_info=None, engine_builder=None, verbosity=Verbosity.BRIEF):
+    def load_inputs(self, aviary_inputs, phase_info=None, engine_builder=None, meta_data=BaseMetaData, verbosity=Verbosity.BRIEF):
         """
         This method loads the aviary_values inputs and options that the
         user specifies. They could specify files to load and values to
@@ -256,7 +256,7 @@ class AviaryProblem(om.Problem):
         # Create AviaryValues object from file (or process existing AviaryValues object
         # with default values from metadata) and generate initial guesses
         aviary_inputs, initial_guesses = create_vehicle(
-            aviary_inputs, verbosity=verbosity)
+            aviary_inputs, verbosity=verbosity, meta_data=meta_data)
 
         # pull which methods will be used for subsystems and mission
         self.mission_method = mission_method = aviary_inputs.get_val(

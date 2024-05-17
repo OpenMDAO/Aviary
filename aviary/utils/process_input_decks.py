@@ -36,7 +36,7 @@ problem_types = {'sizing': ProblemType.SIZING,
                  'alternate': ProblemType.ALTERNATE, 'fallout': ProblemType.FALLOUT}
 
 
-def create_vehicle(vehicle_deck='', verbosity=Verbosity.BRIEF):
+def create_vehicle(vehicle_deck='', verbosity=Verbosity.BRIEF, meta_data=_MetaData):
     """
     Creates and initializes a vehicle with default or specified parameters. It sets up the aircraft values
     and initial guesses based on the input from the vehicle deck.
@@ -65,7 +65,8 @@ def create_vehicle(vehicle_deck='', verbosity=Verbosity.BRIEF):
         initial_guesses = {}
     else:
         vehicle_deck = get_path(vehicle_deck)
-        aircraft_values, initial_guesses = parse_inputs(vehicle_deck, aircraft_values)
+        aircraft_values, initial_guesses = parse_inputs(
+            vehicle_deck, aircraft_values, meta_data=meta_data)
 
     return aircraft_values, initial_guesses
 
