@@ -81,6 +81,9 @@ class FlightPathODE(BaseODE):
                 Dynamic.Mission.ALTITUDE: {'units': 'ft'},
                 Dynamic.Mission.DISTANCE: {'units': 'ft'},
             }
+            if kwargs['method'] == 'cruise':
+                SGM_required_inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE] = {
+                    'val': 0, 'units': 'deg'}
             add_SGM_required_inputs(self, SGM_required_inputs)
             sgm_inputs = ['SGM_required_inputs']
 
@@ -91,14 +94,12 @@ class FlightPathODE(BaseODE):
         core_subsystems = self.options['core_subsystems']
 
         # TODO: paramport
-        from copy import deepcopy
-        flight_path_params = deepcopy(ParamPort)()
+        flight_path_params = ParamPort()
         if analysis_scheme is AnalysisScheme.SHOOTING and kwargs['method'] == 'cruise':
             flight_path_params.add_params({
                 Aircraft.Design.OPERATING_MASS: dict(units='lbm', val=0),
                 Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS: dict(units='lbm', val=0),
                 Mission.Design.RESERVE_FUEL: dict(units='lbm', val=0),
-                Dynamic.Mission.FLIGHT_PATH_ANGLE: dict(units='deg', val=0),
             })
         self.add_subsystem("params", flight_path_params, promotes=["*"])
 

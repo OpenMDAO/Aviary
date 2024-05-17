@@ -60,7 +60,6 @@ class FlexibleTraj(TimeIntegrationTrajBase):
             vals_to_set = self.options['Phases'][phase_name]['user_options']
             if vals_to_set:
                 for name, data in vals_to_set.items():
-                    print(data)
                     var, units = data
                     if name.startswith('attr:'):
                         new_val = (
