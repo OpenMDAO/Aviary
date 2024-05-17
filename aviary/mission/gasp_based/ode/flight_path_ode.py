@@ -92,7 +92,7 @@ class FlightPathODE(BaseODE):
 
         # TODO: paramport
         from copy import deepcopy
-        flight_path_params = deepcopy(ParamPort())
+        flight_path_params = deepcopy(ParamPort)()
         if analysis_scheme is AnalysisScheme.SHOOTING and kwargs['method'] == 'cruise':
             flight_path_params.add_params({
                 Aircraft.Design.OPERATING_MASS: dict(units='lbm', val=0),
