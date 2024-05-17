@@ -175,7 +175,7 @@ class PropellerPerformance(om.Group):
                     has_diag_partials=True,
                 ),
                 promotes_inputs=[
-                    ('rpm', Aircraft.Prop.RPM),
+                    'rpm',  # TODO this should be in dynamic
                     ('diameter', Aircraft.Engine.PROPELLER_DIAMETER),
                 ],
                 promotes_outputs=[
@@ -212,12 +212,11 @@ class PropellerPerformance(om.Group):
                     Dynamic.Mission.VELOCITY,
                     Dynamic.Mission.PROPELLER_TIP_SPEED,
                 ],
-                promotes_outputs=[
-                    ("install_loss_factor", Dynamic.Mission.INSTALLATION_LOSS_FACTOR)],
+                promotes_outputs=['install_loss_factor'],
             )
         else:
             self.set_input_defaults(
-                Dynamic.Mission.INSTALLATION_LOSS_FACTOR, val=np.ones(nn), units="unitless")
+                'install_loss_factor', val=np.ones(nn), units="unitless")
 
         self.add_subsystem(
             name='pre_hamilton_standard',
@@ -263,13 +262,13 @@ class PropellerPerformance(om.Group):
                 Dynamic.Mission.PROPELLER_TIP_SPEED,
                 Aircraft.Engine.PROPELLER_DIAMETER,
                 "density_ratio",
-                Dynamic.Mission.INSTALLATION_LOSS_FACTOR,
+                'install_loss_factor',
                 "advance_ratio",
                 "power_coefficient",
             ],
             promotes_outputs=[
                 "thrust_coefficient_comp_loss",
-                "propeller_thrust",
+                Dynamic.Mission.THRUST,
                 "propeller_efficiency",
                 "install_efficiency",
             ])

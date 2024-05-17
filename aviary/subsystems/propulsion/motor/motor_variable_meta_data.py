@@ -40,22 +40,6 @@ av.add_meta_data(
 )
 
 av.add_meta_data(
-    Dynamic.Mission.ELECTRIC_POWER,
-    units="kW",
-    desc="Power used by all the motors combined",
-    default_value=None,
-    meta_data=ExtendedMetaData
-)
-
-av.add_meta_data(
-    Dynamic.Mission.SHAFT_POWER,
-    units="kW",
-    desc="Power output from a single motor",
-    default_value=None,
-    meta_data=ExtendedMetaData
-)
-
-av.add_meta_data(
     Dynamic.Mission.TORQUE,
     units="N*m",
     desc="Motor torque",
@@ -81,13 +65,13 @@ av.add_meta_data(
     meta_data=ExtendedMetaData
 )
 
-av.add_meta_data(
-    Dynamic.Mission.Prop.TORQUE,
-    units="N*m",
-    desc="Torque output to a single propellar shaft from a motor/turbine/gearbox",
-    default_value=None,
-    meta_data=ExtendedMetaData
-)
+# av.add_meta_data(
+#     Dynamic.Mission.Prop.TORQUE,
+#     units="N*m",
+#     desc="Torque output to a single propellar shaft from a motor/turbine/gearbox",
+#     default_value=None,
+#     meta_data=ExtendedMetaData
+# )
 
 ####### GEARBOX VALUES ######
 av.add_meta_data(

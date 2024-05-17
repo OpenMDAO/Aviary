@@ -79,13 +79,13 @@ class MotorMap(om.Group):
                         units="N*m")
         motor.add_output(Dynamic.Mission.Motor.EFFICIENCY, val=np.ones(n),
                          training_data=motor_map,
-                         units=None)
+                         units='unitless')
 
         self.add_subsystem('throttle_to_torque',
                            om.ExecComp('T_unscaled = T_max * throttle',
                                        T_unscaled={'val': np.ones(n), 'units': 'N*m'},
                                        T_max={'val': torque_vals[-1], 'units': 'N*m'},
-                                       throttle={'val': np.ones(n), 'units': None}),
+                                       throttle={'val': np.ones(n), 'units': 'unitless'}),
                            promotes=["T_unscaled",
                                      ("throttle", Dynamic.Mission.THROTTLE)])
 

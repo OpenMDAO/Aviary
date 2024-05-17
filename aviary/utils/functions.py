@@ -304,7 +304,7 @@ def promote_aircraft_and_mission_vars(group):
     return external_outputs
 
 
-def get_path(path: [str, Path], verbose: bool = False) -> Path:
+def get_path(path: str | Path, verbose: bool = False) -> Path:
     """
     Convert a string or Path object to an absolute Path object, prioritizing different locations.
 

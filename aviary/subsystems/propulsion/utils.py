@@ -33,6 +33,7 @@ class EngineModelVariables(Enum):
     ELECTRIC_POWER = auto()
     NOX_RATE = auto()
     TEMPERATURE_ENGINE_T4 = auto()
+    TORQUE = auto()
     # EXIT_AREA = auto()
 
 
@@ -50,7 +51,8 @@ default_units = {
     EngineModelVariables.FUEL_FLOW: 'lb/h',
     EngineModelVariables.ELECTRIC_POWER: 'kW',
     EngineModelVariables.NOX_RATE: 'lb/h',
-    EngineModelVariables.TEMPERATURE_ENGINE_T4: 'degR'
+    EngineModelVariables.TEMPERATURE_ENGINE_T4: 'degR',
+    EngineModelVariables.TORQUE: 'ft*lbf'
     # EngineModelVariables.EXIT_AREA: 'ft**2',
 }
 

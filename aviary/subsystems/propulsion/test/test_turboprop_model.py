@@ -4,6 +4,7 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 from dymos.models.atmosphere import USatm1976Comp
+from pathlib import Path
 
 from aviary.mission.gasp_based.flight_conditions import FlightConditions
 from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
@@ -11,19 +12,23 @@ from aviary.subsystems.propulsion.propeller_performance import PropellerPerforma
 from aviary.interface.utils.markdown_utils import round_it
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.functions import get_path
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
+from aviary.variable_info.variables import Dynamic, Mission, Settings
+from aviary.subsystems.propulsion.motor.motor_variables import Aircraft
 from aviary.variable_info.enums import SpeedType, Verbosity
 from aviary.variable_info.options import get_option_defaults
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.subsystems.propulsion.motor.motor_builder import MotorBuilder
 
 
 class TurbopropTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    def prepare_model(self, filename, test_points=[(0, 0, 0), (0, 0, 1)], prop_model=None):
+    def prepare_model(self, test_points=[(0, 0, 0), (0, 0, 1)], shp_model=None, prop_model=None, **kwargs):
         options = get_option_defaults()
-        options.set_val(Aircraft.Engine.DATA_FILE, filename)
+        if isinstance(shp_model, Path):
+            options.set_val(Aircraft.Engine.DATA_FILE, shp_model)
+            shp_model = None
         options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
         options.set_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER, 1.0)
         options.set_val(Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER, 1.0)
@@ -48,7 +53,8 @@ class TurbopropTest(unittest.TestCase):
 
         num_nodes = len(test_points)
 
-        engine = TurbopropModel(options=options, propeller_model=prop_model)
+        engine = TurbopropModel(
+            options=options, shaft_power_model=shp_model, propeller_model=prop_model)
         preprocess_propulsion(options, [engine])
 
         machs, alts, throttles = zip(*test_points)
@@ -68,14 +74,25 @@ class TurbopropTest(unittest.TestCase):
             subsys=USatm1976Comp(num_nodes=num_nodes),
             promotes_inputs=[('h', Dynamic.Mission.ALTITUDE)],
             promotes_outputs=[
-                ('sos', Dynamic.Mission.SPEED_OF_SOUND), ('rho', Dynamic.Mission.DENSITY),
-                ('temp', Dynamic.Mission.TEMPERATURE), ('pres', Dynamic.Mission.STATIC_PRESSURE)],
+                ('sos', Dynamic.Mission.SPEED_OF_SOUND),
+                ('rho', Dynamic.Mission.DENSITY),
+                ('temp', Dynamic.Mission.TEMPERATURE),
+                ('pres', Dynamic.Mission.STATIC_PRESSURE)],)
+
+        # calculate atmospheric properties
+        self.prob.model.add_subsystem(
+            "flight_conditions",
+            FlightConditions(num_nodes=num_nodes, input_speed_type=SpeedType.MACH),
+            promotes_inputs=[("rho", Dynamic.Mission.DENSITY),
+                             Dynamic.Mission.SPEED_OF_SOUND, 'mach'],
+            promotes_outputs=[Dynamic.Mission.DYNAMIC_PRESSURE,
+                              'EAS', ('TAS', 'velocity')],
         )
 
         self.prob.model.add_subsystem(
             engine.name,
             subsys=engine.build_mission(
-                num_nodes=num_nodes, aviary_inputs=options),
+                num_nodes=num_nodes, aviary_inputs=options, **kwargs),
             promotes_inputs=['*'],
             promotes_outputs=['*'])
 
@@ -83,8 +100,7 @@ class TurbopropTest(unittest.TestCase):
         self.prob.set_val(Aircraft.Engine.SCALE_FACTOR, 1, units='unitless')
 
     def get_results(self, point_names=None, display_results=False):
-        shp = self.prob.get_val(
-            'turboprop_model.shaft_power_corrected', units='hp')
+        shp = self.prob.get_val(Dynamic.Mission.SHAFT_POWER, units='hp')
         total_thrust = self.prob.get_val(Dynamic.Mission.THRUST, units='lbf')
         prop_thrust = self.prob.get_val(
             'turboprop_model.propeller_thrust', units='lbf')
@@ -93,37 +109,23 @@ class TurbopropTest(unittest.TestCase):
         fuel_flow = self.prob.get_val(
             Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE, units='lbm/h')
 
-        results = {'SHP': shp, 'total_thrust': total_thrust, 'prop_thrust': prop_thrust,
-                   'tailpipe_thrust': tailpipe_thrust, 'fuel_flow': fuel_flow}
-        if display_results:
-            results['names'] = point_names
-            if point_names:
-                for n, name in enumerate(point_names):
-                    print(name,
-                          round_it(shp[n]),
-                          round_it(total_thrust[n]),
-                          round_it(prop_thrust[n]),
-                          round_it(tailpipe_thrust[n]),
-                          round_it(fuel_flow[n]))
-            else:
-                print(shp)
-                print(total_thrust)
-                print(prop_thrust)
-                print(tailpipe_thrust)
-                print(fuel_flow)
         results = []
         for n, _ in enumerate(shp):
             results.append(
-                (round_it(shp[n]),
-                 round_it(tailpipe_thrust[n]),
-                 round_it(fuel_flow[n])))
+                (shp[n],
+                 tailpipe_thrust[n],
+                 prop_thrust[n],
+                 total_thrust[n],
+                 fuel_flow[n]))
         return results
 
     def test_case_1(self):
         # test case using GASP-derived engine deck and "user specified" prop model
         filename = get_path('models/engines/turboprop_1120hp.deck')
+        # Mach, alt, throttle
         test_points = [(0, 0, 0), (0, 0, 1), (.6, 25000, 1)]
         point_names = ['idle', 'SLS', 'TOC']
+        # shp, tailpipe thrust, prop_thrust, total_thrust, fuel flow
         truth_vals = [(112, 37.7, -195.8), (1120, 136.3, -644), (1742.5, 21.3, -839.7)]
 
         options = get_option_defaults()
@@ -135,13 +137,17 @@ class TurbopropTest(unittest.TestCase):
 
         prop_group = ExamplePropModel('custom_prop_model')
 
-        self.prepare_model(filename, test_points, prop_group)
+        self.prepare_model(test_points, filename, prop_group)
 
         self.prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 10.5, units="ft")
         self.prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,
                           114.0, units="unitless")
         self.prob.set_val(
             Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT, 0.5, units="unitless")
+        self.prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
+                          [1.0], units="unitless")
+        self.prob.set_val(Aircraft.Design.MAX_PROPELLER_TIP_SPEED,
+                          [800.00, 800.0, 750.0], units="ft/s")
 
         if options.get_val(Settings.VERBOSITY, units='unitless') is Verbosity.DEBUG:
             om.n2(
@@ -161,17 +167,22 @@ class TurbopropTest(unittest.TestCase):
         point_names = ['idle', 'SLS', 'TOC']
         truth_vals = [(112, 37.7, -195.8), (1120, 136.3, -644), (1742.5, 21.3, -839.7)]
 
-        self.prepare_model(filename, test_points)
+        self.prepare_model(test_points, filename)
 
         num_nodes = len(test_points)
 
         self.prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 10.5, units="ft")
         self.prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,
                           114.0, units="unitless")
+        self.prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
+                          np.ones(num_nodes), units="unitless")
         self.prob.set_val(
             Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT, 0.5, units="unitless")
         self.prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED,
                           800.*np.ones(num_nodes), units="ft/s")
+
+        self.prob.set_val(Aircraft.Design.MAX_PROPELLER_TIP_SPEED,
+                          [800.00, 800.0, 750.0], units="ft/s")
 
         self.prob.run_model()
         results = self.get_results(point_names)
@@ -200,24 +211,69 @@ class TurbopropTest(unittest.TestCase):
         results = self.get_results(point_names)
         assert_near_equal(results, truth_vals)
 
+    def test_electroprop(self):
+        # test case using GASP-derived engine deck and default HS prop model.
+        test_points = [(0, 0, 0), (0, 0, 1), (.6, 25000, 1)]
+        num_nodes = len(test_points)
+
+        motor_model = MotorBuilder()
+
+        self.prepare_model(test_points, motor_model, input_rpm=True)
+        self.prob.set_val(Aircraft.Motor.RPM, np.ones(num_nodes)*2000., units='rpm')
+
+        self.prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 10.5, units="ft")
+        self.prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,
+                          114.0, units="unitless")
+        self.prob.set_val(
+            Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT, 0.5, units="unitless")
+        self.prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED,
+                          800.*np.ones(num_nodes), units="ft/s")
+
+        self.prob.run_model()
+
+        shp_expected = [0., 505.55333, 505.55333]
+        tailpipe_thrust_expected = [0, 0, 0]
+        prop_thrust_expected = total_thrust_expected = [1, 1, 1]
+        fuel_flow_expected = [0, 0, 0]
+        electric_power_expected = [0.0, 408.4409047, 408.4409047]
+
+        shp = self.prob.get_val(Dynamic.Mission.SHAFT_POWER, units='hp')
+        total_thrust = self.prob.get_val(Dynamic.Mission.THRUST, units='lbf')
+        prop_thrust = self.prob.get_val(
+            'turboprop_model.propeller_thrust', units='lbf')
+        tailpipe_thrust = self.prob.get_val(
+            'turboprop_model.turboshaft_thrust', units='lbf')
+        fuel_flow = self.prob.get_val(
+            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE, units='lbm/h')
+        electric_power = self.prob.get_val(Dynamic.Mission.ELECTRIC_POWER, units='kW')
+
+        assert_near_equal(shp, shp_expected, tolerance=1e-8)
+        assert_near_equal(total_thrust, total_thrust_expected, tolerance=1e-8)
+        assert_near_equal(prop_thrust, prop_thrust_expected, tolerance=1e-8)
+        assert_near_equal(tailpipe_thrust, tailpipe_thrust_expected, tolerance=1e-8)
+        assert_near_equal(fuel_flow, fuel_flow_expected, tolerance=1e-8)
+        assert_near_equal(electric_power, electric_power_expected, tolerance=1e-8)
+
 
 class ExamplePropModel(SubsystemBuilderBase):
     def build_mission(self, num_nodes, aviary_inputs, **kwargs):
         prop_group = om.Group()
 
-        prop_group.add_subsystem(
-            "fc",
-            FlightConditions(num_nodes=num_nodes, input_speed_type=SpeedType.MACH),
-            promotes_inputs=["rho", Dynamic.Mission.SPEED_OF_SOUND, 'mach'],
-            promotes_outputs=[Dynamic.Mission.DYNAMIC_PRESSURE,
-                              'EAS', ('TAS', 'velocity')],
-        )
-
         pp = prop_group.add_subsystem(
-            'pp',
+            'propeller_performance',
             PropellerPerformance(aviary_options=aviary_inputs, num_nodes=num_nodes),
-            promotes_inputs=['*'],
-            promotes_outputs=["*"],
+            promotes_inputs=[Dynamic.Mission.TEMPERATURE,
+                             Dynamic.Mission.MACH,
+                             Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
+                             Aircraft.Design.MAX_PROPELLER_TIP_SPEED,
+                             Dynamic.Mission.DENSITY,
+                             Dynamic.Mission.VELOCITY,
+                             Aircraft.Engine.PROPELLER_DIAMETER,
+                             Dynamic.Mission.SHAFT_POWER,
+                             Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,
+                             Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT
+                             ],
+            promotes_outputs=['*'],
         )
 
         pp.set_input_defaults(Aircraft.Engine.PROPELLER_DIAMETER, 10, units="ft")
@@ -235,4 +291,5 @@ if __name__ == "__main__":
     # unittest.main()
     test = TurbopropTest()
     test.setUp()
-    test.test_case_1()
+    # test.test_electroprop()
+    test.test_case_2()

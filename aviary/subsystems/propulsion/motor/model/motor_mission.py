@@ -31,11 +31,12 @@ class MotorMission(om.Group):
         # this is an artifact of allowing the motor and turbine engine
         # to swap easily between the two.
         ivc.add_output(Dynamic.Mission.THRUST, val=np.zeros(n), units='N')
+        ivc.add_output(Dynamic.Mission.THRUST_MAX, val=np.zeros(n), units='N')
         ivc.add_output(Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE,
                        val=np.zeros(n), units='kg/s')
         ivc.add_output(Dynamic.Mission.NOX_RATE, val=np.zeros(n), units='kg/s')
 
-        ivc.add_output('max_throttle', val=np.ones(n), units=None)
+        ivc.add_output('max_throttle', val=np.ones(n), units='unitless')
 
         self.add_subsystem('ivc', ivc, promotes=['*'])
 
@@ -45,7 +46,7 @@ class MotorMission(om.Group):
                                   promotes_inputs=[Dynamic.Mission.THROTTLE,
                                                    Aircraft.Engine.SCALE_FACTOR,
                                                    Aircraft.Motor.RPM],
-                                  promotes_outputs=[Dynamic.Mission.TORQUE,
+                                  promotes_outputs=[(Dynamic.Mission.TORQUE, 'motor_torque'),
                                                     Dynamic.Mission.Motor.EFFICIENCY])
 
         motor_group.add_subsystem('power_comp',
@@ -53,7 +54,7 @@ class MotorMission(om.Group):
                                               P={'val': np.ones(n), 'units': 'kW'},
                                               T={'val': np.ones(n), 'units': 'kN*m'},
                                               RPM={'val': np.ones(n), 'units': 'rpm'}),  # fixed RPM system
-                                  promotes_inputs=[("T", Dynamic.Mission.TORQUE),
+                                  promotes_inputs=[("T", 'motor_torque'),
                                                    ("RPM", Aircraft.Motor.RPM)],
                                   promotes_outputs=[("P", Dynamic.Mission.SHAFT_POWER)])
 
@@ -61,7 +62,7 @@ class MotorMission(om.Group):
                                   om.ExecComp('P_elec = P / eff',
                                               P={'val': np.ones(n), 'units': 'kW'},
                                               P_elec={'val': np.ones(n), 'units': 'kW'},
-                                              eff={'val': np.ones(n), 'units': None}),
+                                              eff={'val': np.ones(n), 'units': 'unitless'}),
                                   promotes_inputs=[("P", Dynamic.Mission.SHAFT_POWER),
                                                    ("eff", Dynamic.Mission.Motor.EFFICIENCY)],
                                   promotes_outputs=[("P_elec", Dynamic.Mission.ELECTRIC_POWER)])
@@ -115,6 +116,6 @@ class MotorMission(om.Group):
                                        P={'val': np.ones(n), 'units': 'kW'},
                                        T={'val': np.ones(n), 'units': 'kN*m'},
                                        RPM={'val': np.ones(n), 'units': 'rpm'}),
-                           promotes_inputs=[("P", Dynamic.Mission.Prop.SHAFT_POWER),
+                           promotes_inputs=[("P", Dynamic.Mission.SHAFT_POWER),
                                             ("RPM", Aircraft.Prop.RPM)],
-                           promotes_outputs=[("T", Dynamic.Mission.Prop.TORQUE),])
+                           promotes_outputs=[("T", Dynamic.Mission.TORQUE),])

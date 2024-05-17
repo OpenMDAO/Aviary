@@ -29,19 +29,10 @@ class Aircraft(av_Aircraft):
 class Dynamic(av_Dynamic):
 
     class Mission(av_Dynamic.Mission):
-
-        # these are all values associated with the motor
         TORQUE = "dynamic:mission:torque"
-        SHAFT_POWER = "dynamic:mission:shaft_power"
-        SHAFT_POWER_MAX = "dynamic:mission:shaft_power_max"
-        ELECTRIC_POWER = "dynamic:mission:electric_power"
 
         class Motor:
             EFFICIENCY = "dynamic:mission:motor:efficiency"
-            # TORQUE_CON = "Dynamic.Mission.Motor.TORQUE_CON"
 
         class Gearbox():
             EFFICIENCY = "dynamic:mission:gearbox:efficiency"
-
-        class Prop(av_Dynamic.Mission.Prop):
-            TORQUE = "dynamic:mission:prop:torque"

@@ -37,7 +37,6 @@ class PropellerPerformanceTest(unittest.TestCase):
                         val=True, units='unitless')
         options.set_val(Aircraft.Engine.NUM_PROPELLER_BLADES,
                         val=4, units='unitless')
-        options.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, False)
 
         prob = om.Problem()
 
@@ -98,9 +97,9 @@ class PropellerPerformanceTest(unittest.TestCase):
         ctlf = p.get_val('comp_tip_loss_factor')
         tccl = p.get_val('thrust_coefficient_comp_loss')
         angb = p.get_val('blade_angle')
-        thrt = p.get_val('propeller_thrust')
+        thrt = p.get_val(Dynamic.Mission.THRUST)
         peff = p.get_val('propeller_efficiency')
-        lfac = p.get_val(Dynamic.Mission.INSTALLATION_LOSS_FACTOR)
+        lfac = p.get_val('install_loss_factor')
         ieff = p.get_val('install_efficiency')
 
         tol = 0.005
@@ -146,7 +145,7 @@ class PropellerPerformanceTest(unittest.TestCase):
         options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS,
                         val=False, units='unitless')
         prob.setup()
-        prob.set_val(Dynamic.Mission.INSTALLATION_LOSS_FACTOR,
+        prob.set_val('install_loss_factor',
                      [0.0, 0.05, 0.05], units="unitless")
         prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 12.0, units="ft")
         prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, 150.0, units="unitless")
@@ -181,7 +180,7 @@ class PropellerPerformanceTest(unittest.TestCase):
         options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS,
                         val=False, units='unitless')
         prob.setup()
-        prob.set_val(Dynamic.Mission.INSTALLATION_LOSS_FACTOR,
+        prob.set_val('install_loss_factor',
                      [0.0, 0.05, 0.05], units="unitless")
         prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 12.0, units="ft")
         prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, 150.0, units="unitless")
