@@ -594,9 +594,6 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
                         ihvplot.panel(),
                     )
                 )
-                optimization_tabs_list.append(
-                    ("Desvars, cons, opt", optimization_plot_pane)
-                )
             else:
                 optimization_plot_pane = pn.pane.Markdown(
                     f"# Recorder file '{driver_recorder}' does not have Driver case recordings"
@@ -605,13 +602,13 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
             optimization_plot_pane = pn.pane.Markdown(
                 f"# Recorder file '{driver_recorder}' not found")
 
-        optimization_plot_pane = pn.Column(
+        optimization_plot_pane_with_doc = pn.Column(
             pn.pane.HTML(f"<p>Plot of design variables, constraints, and objectives</p>",
                          styles={'text-align': documentation_text_align}),
             optimization_plot_pane
         )
         optimization_tabs_list.append(
-            ("Desvars, cons, opt", optimization_plot_pane)
+            ("Desvars, cons, opt", optimization_plot_pane_with_doc)
         )
 
     ####### Results Tab #######
