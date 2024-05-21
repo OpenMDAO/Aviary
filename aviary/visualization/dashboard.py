@@ -415,10 +415,11 @@ def create_aircraft_3d_file(recorder_file, reports_dir, outfilepath):
     )
 
     aircraft_3d_model = Aircraft3DModel(recorder_file)
+    
+    aircraft_3d_model.write_file(aircraft_3d_template_filepath, outfilepath)
+
 
 # The main script that generates all the tabs in the dashboard
-
-
 def dashboard(script_name, problem_recorder, driver_recorder, port):
     """
     Generate the dashboard app display.
@@ -640,6 +641,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
     # Make the Aviary variables table pane
     if problem_recorder:
         if os.path.exists(problem_recorder):
+
             # Make dir reports/script_name/aviary_vars if needed
             aviary_vars_dir = pathlib.Path(f"reports/{script_name}/aviary_vars")
             aviary_vars_dir.mkdir(parents=True, exist_ok=True)
@@ -662,6 +664,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
                 create_aviary_variables_table_data_nested(
                     script_name, problem_recorder
                 )  # create the json file
+
                 aviary_vars_pane = create_report_frame(
                     "html", f"{reports_dir}/aviary_vars/index.html",
                     "Table showing Aviary variables"
