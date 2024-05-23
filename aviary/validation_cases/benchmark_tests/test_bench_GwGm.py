@@ -136,4 +136,6 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = ProblemPhaseTestCase()
+    test.test_bench_GwGm_shooting()

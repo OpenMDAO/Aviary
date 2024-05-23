@@ -20,8 +20,12 @@ def build_submodel():
     p.model.add_subsystem('supModel', supmodel, promotes_inputs=['*'],
                           promotes_outputs=['*'])
 
-    submodel = om.SubmodelComp(problem=subprob1, inputs=[
-                               '*'], outputs=['*'], do_coloring=False)
+    try:
+        submodel = om.SubmodelComp(problem=subprob1, inputs=[
+            '*'], outputs=['*'], do_coloring=False)
+    except KeyError:
+        return False
+
     p.model.add_subsystem('sub1', submodel,
                           promotes_inputs=['*'],
                           promotes_outputs=['*'])
@@ -43,10 +47,17 @@ def build_submodel():
 class CheckForOMSubmodelFix():
     def __bool__(self):
         p = build_submodel()
-        p.run_model()
+        if p:
+            p.run_model()
+        else:
+            return False
 
         if p.get_val('y') != 2.0 * 3.0:
             return False
         else:
             return True
     __nonzero__ = __bool__
+
+
+if __name__ == '__main__':
+    print(bool(CheckForOMSubmodelFix()))

@@ -30,37 +30,27 @@ takeoff_phases = {
             # special case
             'attr:VR_value': ('SGMGroundroll_velocity_trigger', 'kn'),
         },
-        'initial_guesses': {
-        }
     },
     'rotation': {
         'builder': SGMRotation,
         'user_options': {
         },
-        'initial_guesses': {
-        }
     },
     'ascent': {
         'builder': SGMAscentCombined,
         'user_options': {
             't_init_gear': (10000, 's'),
             't_init_flaps': (10000, 's'),
-            'dt_gear': (7, 's'),
-            'dt_flaps': (3, 's'),
             # special case
             'rotation.start_rotation': (10000, 's'),
             # special case
             'attr:fuselage_angle_max': (Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE, 'deg'),
         },
-        'initial_guesses': {
-        }
     },
     'accel': {
         'builder': SGMAccel,
         'user_options': {
         },
-        'initial_guesses': {
-        }
     },
 }
 climb_phases = {
@@ -76,8 +66,6 @@ climb_phases = {
             'EAS': (250, 'kn'),
             'speed_trigger': (cruise_mach, 'unitless'),
         },
-        'initial_guesses': {
-        }
     },
     'climb2': {
         'kwargs': dict(
@@ -91,8 +79,6 @@ climb_phases = {
             'EAS': (270, 'kn'),
             'speed_trigger': (cruise_mach, 'unitless'),
         },
-        'initial_guesses': {
-        }
     },
     'climb3': {
         'kwargs': dict(
@@ -106,8 +92,6 @@ climb_phases = {
             'mach': (cruise_mach, 'unitless'),
             'speed_trigger': (0, 'kn'),
         },
-        'initial_guesses': {
-        }
     },
 }
 ascent_phases = {
@@ -126,8 +110,6 @@ cruise_phase = {
             'mach': (cruise_mach, 'unitless'),
             # 'attr:mass_trigger': ('SGMCruise_mass_trigger', 'lbm') # temp until submodel fix
         },
-        'initial_guesses': {
-        }
     },
 }
 descent_phases = {
@@ -145,8 +127,6 @@ descent_phases = {
             Dynamic.Mission.THROTTLE: (0, 'unitless'),
         },
         'descent_phase': True,
-        'initial_guesses': {
-        }
     },
     'desc2': {
         'kwargs': dict(
@@ -162,8 +142,6 @@ descent_phases = {
             Dynamic.Mission.THROTTLE: (0, 'unitless'),
         },
         'descent_phase': True,
-        'initial_guesses': {
-        }
     },
     'desc3': {
         'kwargs': dict(
@@ -179,8 +157,6 @@ descent_phases = {
             Dynamic.Mission.THROTTLE: (0, 'unitless'),
         },
         'descent_phase': True,
-        'initial_guesses': {
-        }
     },
 }
 
@@ -232,7 +208,7 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs: Av
 
 
 def add_default_sgm_args(phase_info: dict, ode_args: dict, verbosity=None):
-    for name, info in phase_info.items():
+    for phase_name, info in phase_info.items():
         kwargs = info.get('kwargs', {})
         if 'ode_args' not in kwargs:
             kwargs['ode_args'] = ode_args
