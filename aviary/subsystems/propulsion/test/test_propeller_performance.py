@@ -33,7 +33,7 @@ install_eff = np.array([0.00077, 0.70904, 0.86171, 0.90586, 0.86056, 0.48213,
 class PropellerPerformanceTest(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
-        options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS,
+        options.set_val(Aircraft.Engine.COMPUTE_PROPELLER_INSTALLATION_LOSS,
                         val=True, units='unitless')
         options.set_val(Aircraft.Engine.NUM_PROPELLER_BLADES,
                         val=4, units='unitless')
@@ -78,7 +78,7 @@ class PropellerPerformanceTest(unittest.TestCase):
         num_blades = 4
         options.set_val(Aircraft.Engine.NUM_PROPELLER_BLADES,
                         val=num_blades, units='unitless')
-        options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS,
+        options.set_val(Aircraft.Engine.COMPUTE_PROPELLER_INSTALLATION_LOSS,
                         val=True, units='unitless')
         prob.setup()
 
@@ -121,12 +121,14 @@ class PropellerPerformanceTest(unittest.TestCase):
         prob = self.prob
         prob.set_val(Dynamic.Mission.ALTITUDE, [0.0, 0.0, 25000.0], units="ft")
         prob.set_val(Dynamic.Mission.VELOCITY, [0.10, 125.0, 300.0], units="knot")
-        prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED,
-                     [800.0, 800.0, 750.0], units="ft/s")
+        # prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED,
+        #              [800.0, 800.0, 750.0], units="ft/s")
         prob.set_val(Dynamic.Mission.SHAFT_POWER, [1850.0, 1850.0, 900.0], units="hp")
-        prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
-                     [1.0], units="unitless")
-        prob.set_val(Aircraft.Design.MAX_PROPELLER_TIP_SPEED,
+        # prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
+        #              [1.0], units="unitless")
+        prob.set_val('tip_mach_max',
+                     1.0, units="unitless")
+        prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED_MAX,
                      [800.00, 800.0, 750.0], units="ft/s")
 
         prob.run_model()
@@ -142,7 +144,7 @@ class PropellerPerformanceTest(unittest.TestCase):
         prob = self.prob
         options = self.options
 
-        options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS,
+        options.set_val(Aircraft.Engine.COMPUTE_PROPELLER_INSTALLATION_LOSS,
                         val=False, units='unitless')
         prob.setup()
         prob.set_val('install_loss_factor',
@@ -153,13 +155,16 @@ class PropellerPerformanceTest(unittest.TestCase):
                      0.5, units="unitless")
         prob.set_val(Dynamic.Mission.ALTITUDE, [10000.0, 10000.0, 0.0], units="ft")
         prob.set_val(Dynamic.Mission.VELOCITY, [200.0, 200.0, 50.0], units="knot")
-        prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED,
-                     [750.0, 750.0, 785.0], units="ft/s")
+        # propeller tip speed overriding does not work
+        # prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED,
+        #              [750.0, 750.0, 785.0], units="ft/s")
         prob.set_val(Dynamic.Mission.SHAFT_POWER, [1000.0, 1000.0, 1250.0], units="hp")
-        prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
-                     [1.0], units="unitless")
-        prob.set_val(Aircraft.Design.MAX_PROPELLER_TIP_SPEED,
-                     [769.70, 769.70, 769.70], units="ft/s")
+        # prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
+        #              [1.0], units="unitless")
+        # prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED_MAX,
+        #              [769.70, 769.70, 769.70], units="ft/s")
+        prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED_MAX,
+                     [750.0, 750.0, 785.0], units="ft/s")
 
         prob.run_model()
         self.compare_results(case_idx_begin=3, case_idx_end=5)
@@ -177,7 +182,7 @@ class PropellerPerformanceTest(unittest.TestCase):
         num_blades = 3
         options.set_val(Aircraft.Engine.NUM_PROPELLER_BLADES,
                         val=num_blades, units='unitless')
-        options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS,
+        options.set_val(Aircraft.Engine.COMPUTE_PROPELLER_INSTALLATION_LOSS,
                         val=False, units='unitless')
         prob.setup()
         prob.set_val('install_loss_factor',
@@ -188,13 +193,16 @@ class PropellerPerformanceTest(unittest.TestCase):
                      0.5, units="unitless")
         prob.set_val(Dynamic.Mission.ALTITUDE, [10000.0, 10000.0, 0.0], units="ft")
         prob.set_val(Dynamic.Mission.VELOCITY, [200.0, 200.0, 50.0], units="knot")
-        prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED,
-                     [750.0, 750.0, 785.0], units="ft/s")
+        # propeller tip speed overriding does not work
+        # prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED,
+        #              [750.0, 750.0, 785.0], units="ft/s")
         prob.set_val(Dynamic.Mission.SHAFT_POWER, [1000.0, 1000.0, 1250.0], units="hp")
-        prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
-                     [1.0], units="unitless")
-        prob.set_val(Aircraft.Design.MAX_PROPELLER_TIP_SPEED,
-                     [769.70, 769.70, 769.70], units="ft/s")
+        # prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
+        #              [1.0], units="unitless")
+        # prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED_MAX,
+        #              [769.70, 769.70, 769.70], units="ft/s")
+        prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED_MAX,
+                     [750.0, 750.0, 769.70], units="ft/s")
 
         prob.run_model()
         self.compare_results(case_idx_begin=6, case_idx_end=8)
@@ -214,13 +222,16 @@ class PropellerPerformanceTest(unittest.TestCase):
                      0.65, units="unitless")
         prob.set_val(Dynamic.Mission.ALTITUDE, [10000.0, 10000.0, 10000.0], units="ft")
         prob.set_val(Dynamic.Mission.VELOCITY, [200.0, 200.0, 200.0], units="knot")
-        prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED,
-                     [750.0, 750.0, 750.0], units="ft/s")
+        # propeller tip speed overriding does not work
+        # prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED,
+        #              [750.0, 750.0, 750.0], units="ft/s")
         prob.set_val(Dynamic.Mission.SHAFT_POWER, [900.0, 750.0, 500.0], units="hp")
-        prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
-                     [1.0], units="unitless")
-        prob.set_val(Aircraft.Design.MAX_PROPELLER_TIP_SPEED,
-                     [769.70, 769.70, 769.70], units="ft/s")
+        # prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
+        #              [1.0], units="unitless")
+        # prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED_MAX,
+        #              [769.70, 769.70, 769.70], units="ft/s")
+        prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED_MAX,
+                     [750.0, 750.0, 750.0], units="ft/s")
 
         prob.run_model()
         self.compare_results(case_idx_begin=9, case_idx_end=11)
@@ -239,3 +250,6 @@ class PropellerPerformanceTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+    # test = PropellerPerformanceTest()
+    # test.setUp()
+    # test.test_case_3_4_5()

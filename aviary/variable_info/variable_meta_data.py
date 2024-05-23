@@ -972,20 +972,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.COMPUTE_INSTALLATION_LOSS,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units="unitless",
-    option=True,
-    default_value=True,
-    types=bool,
-    desc='if true, compute installation loss factor based on blockage factor'
-)
-
-add_meta_data(
     Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -1215,18 +1201,6 @@ add_meta_data(
     units='deg',
     desc='maximum fuselage pitch allowed',
     default_value=15,
-)
-
-add_meta_data(
-    Aircraft.Design.MAX_PROPELLER_TIP_SPEED,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.TSPDMX',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='ft/s',
-    desc='maximum allowable propeller tip speed',
-    default_value=800.0,
 )
 
 add_meta_data(
@@ -1633,6 +1607,20 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Engine.COMPUTE_PROPELLER_INSTALLATION_LOSS,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units="unitless",
+    option=True,
+    default_value=True,
+    types=bool,
+    desc='if true, compute installation loss factor based on blockage factor'
+)
+
+add_meta_data(
     Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -1989,6 +1977,18 @@ add_meta_data(
     units='unitless',
     desc='propeller blade integrated design lift coefficient (Range: 0.3 to 0.8)',
     default_value=0.5,
+)
+
+add_meta_data(
+    Aircraft.Engine.PROPELLER_TIP_SPEED_MAX,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.TSPDMX',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='ft/s',
+    desc='maximum allowable propeller tip speed',
+    default_value=800.0,
 )
 
 add_meta_data(
@@ -6204,17 +6204,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Mission.INSTALLATION_LOSS_FACTOR,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'FT',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units="unitless",
-    desc='fraction of total propeller thrust which is lost due to installation'
-)
-
-add_meta_data(
     Dynamic.Mission.LIFT,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -6292,17 +6281,17 @@ add_meta_data(
     desc='Current total rate of nitrous oxide (NOx) production by the vehicle'
 )
 
-add_meta_data(
-    Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='unitless',
-    desc='percent of the corrected rotor speed',
-    default_value=0.9,
-)
+# add_meta_data(
+#     Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
+#     meta_data=_MetaData,
+#     historical_name={"GASP": None,
+#                      "FLOPS": None,
+#                      "LEAPS1": None
+#                      },
+#     units='unitless',
+#     desc='percent of the corrected rotor speed',
+#     default_value=0.9,
+# )
 
 add_meta_data(
     Dynamic.Mission.PROPELLER_TIP_SPEED,
@@ -6312,7 +6301,7 @@ add_meta_data(
                      "LEAPS1": None
                      },
     units='ft/s',
-    desc='propeller tip speed',
+    desc='propeller tip speed due to rotation (not airspeed at propeller tip)',
     default_value=500.0,
 )
 
@@ -6359,7 +6348,7 @@ add_meta_data(
                      "LEAPS1": None
                      },
     units='hp',
-    desc='The maximum possible shaft power, per engine'
+    desc='The maximum possible shaft power currently producible, per engine'
 )
 
 add_meta_data(
@@ -6371,6 +6360,17 @@ add_meta_data(
                      },
     units='hp',
     desc='current corrected shaft power avaliable, per engine'
+)
+
+add_meta_data(
+    Dynamic.Mission.SHAFT_POWER_CORRECTED_MAX,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='hp',
+    desc='maximum possible corrected shaft power currently producible, per engine'
 )
 
 add_meta_data(

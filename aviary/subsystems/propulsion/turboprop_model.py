@@ -118,7 +118,9 @@ class TurbopropModel(EngineModel):
                                                              'turboshaft_thrust'),
                                                             (Dynamic.Mission.THRUST_MAX,
                                                              'turboshaft_thrust_max'),
-                                                            (Dynamic.Mission.SHAFT_POWER, 'dummy_shp')])
+                                                            (Dynamic.Mission.SHAFT_POWER,
+                                                             'dummy_shp'),
+                                                            (Dynamic.Mission.SHAFT_POWER_MAX, 'dummy_shp_max')])
 
         # ensure uncorrected shaft horsepower is avaliable
         # TODO also make sure corrected is avaliable
@@ -134,6 +136,15 @@ class TurbopropModel(EngineModel):
                                                                Dynamic.Mission.STATIC_PRESSURE,
                                                                Dynamic.Mission.MACH],
                                               promotes_outputs=[('uncorrected_data', Dynamic.Mission.SHAFT_POWER)]),
+
+                turboprop_group.add_subsystem('uncorrect_shaft_power_max',
+                                              subsys=UncorrectData(num_nodes=num_nodes,
+                                                                   aviary_options=self.options),
+                                              promotes_inputs=[('corrected_data', Dynamic.Mission.SHAFT_POWER_CORRECTED_MAX),
+                                                               Dynamic.Mission.TEMPERATURE,
+                                                               Dynamic.Mission.STATIC_PRESSURE,
+                                                               Dynamic.Mission.MACH],
+                                              promotes_outputs=[('uncorrected_data', Dynamic.Mission.SHAFT_POWER_MAX)]),
 
         try:
             propeller_kwargs = kwargs[propeller_model.name]
@@ -165,13 +176,14 @@ class TurbopropModel(EngineModel):
             # only promote top-level inputs to avoid conflicts with max group
             prop_inputs = [Dynamic.Mission.TEMPERATURE,
                            Dynamic.Mission.MACH,
-                           Aircraft.Design.MAX_PROPELLER_TIP_SPEED,
+                           Aircraft.Engine.PROPELLER_TIP_SPEED_MAX,
                            Dynamic.Mission.DENSITY,
                            Dynamic.Mission.VELOCITY,
                            Aircraft.Engine.PROPELLER_DIAMETER,
                            Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,
                            Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT,
-                           Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED]
+                           Aircraft.Nacelle.AVG_DIAMETER,
+                           Dynamic.Mission.SPEED_OF_SOUND]
             try:
                 propeller_kwargs = kwargs['hamilton_standard']
             except KeyError:

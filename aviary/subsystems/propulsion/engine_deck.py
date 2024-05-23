@@ -27,7 +27,6 @@ import warnings
 
 import numpy as np
 import openmdao.api as om
-from openmdao.core.system import System
 
 from openmdao.utils.units import convert_units
 
@@ -40,7 +39,6 @@ from aviary.subsystems.propulsion.utils import (EngineModelVariables,
 from aviary.utils.aviary_values import AviaryValues, NamedValues, get_keys, get_items
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
-from aviary.variable_info.enums import Verbosity
 from aviary.utils.csv_data_file import read_data_file
 from aviary.interface.utils.markdown_utils import round_it
 
@@ -489,6 +487,7 @@ class EngineDeck(EngineModel):
                     self._original_data[TAILPIPE_THRUST]
             else:
                 self.data[THRUST] = self._original_data[TAILPIPE_THRUST]
+                engine_variables[THRUST] = engine_variables[TAILPIPE_THRUST]
 
         # remove now unneeded dependent variables from engine_variables
         if RAM_DRAG in engine_variables:
@@ -853,14 +852,14 @@ class EngineDeck(EngineModel):
         engine = self._build_engine_interpolator(num_nodes, aviary_inputs)
         units = self.engine_variable_units
 
-        # Create copy of interpolation component that computes max thrust for current
+        # Create copy of interpolation component that computes max thrust/shp for current
         # flight condition
         # NOTE max thrust is assumed to occur at maximum throttle and hybrid throttle
         #      for each flight condition
         # TODO Use solver to find throttle/hybrid throttle for maximum thrust at given flight condition?
         #      Pre-solve max throttle/hybrid throttle for each flight condition, interpolate on
         #      reduced data set?
-        if self.use_thrust:
+        if self.use_thrust or self.use_shaft_power:
             if self.global_throttle or (self.global_hybrid_throttle
                                         and self.use_hybrid_throttle):
                 # create IndepVarComp to pass maximum throttle is to max thrust interpolator
@@ -945,7 +944,19 @@ class EngineDeck(EngineModel):
             max_thrust_engine.add_output('thrust_net_max_unscaled',
                                          self.data[THRUST],
                                          units=units[THRUST],
-                                         desc='Current thrust produced')
+                                         desc='maximum thrust that can currently be produced')
+        if self.use_shaft_power:
+            if SHAFT_POWER in self.engine_variables:
+                max_thrust_engine.add_output('shaft_power_max_unscaled',
+                                             self.data[SHAFT_POWER],
+                                             units=units[SHAFT_POWER],
+                                             desc='maximum shaft power that can currently be produced')
+            else:
+                max_thrust_engine.add_output('shaft_power_corrected_max_unscaled',
+                                             self.data[SHAFT_POWER_CORRECTED],
+                                             units=units[SHAFT_POWER_CORRECTED],
+                                             desc='maximum corrected shaft power that can currently be produced')
+
         else:
             # If engine does not use thrust, a separate component for max thrust is not
             # necessary.
@@ -961,7 +972,7 @@ class EngineDeck(EngineModel):
                                    engine,
                                    promotes_inputs=['*'])
 
-        if self.use_thrust:
+        if self.use_thrust or self.use_shaft_power:
             if self.global_throttle or (self.global_hybrid_throttle
                                         and self.use_hybrid_throttle):
                 engine_group.add_subsystem('fixed_max_throttles',
@@ -1004,9 +1015,13 @@ class EngineDeck(EngineModel):
             if SHAFT_POWER in self.engine_variables:
                 engine_group.connect('interpolation.shaft_power_unscaled',
                                      'engine_scaling.shaft_power_unscaled')
+                engine_group.connect('max_thrust_interpolation.shaft_power_max_unscaled',
+                                     'engine_scaling.shaft_power_max_unscaled')
             else:
                 engine_group.connect('interpolation.shaft_power_corrected_unscaled',
                                      'engine_scaling.shaft_power_corrected_unscaled')
+                engine_group.connect('max_thrust_interpolation.shaft_power_corrected_max_unscaled',
+                                     'engine_scaling.shaft_power_corrected_max_unscaled')
 
         return engine_group
 
