@@ -44,6 +44,7 @@ class DescentODE(BaseODE):
         )
 
     def setup(self):
+        self.options['auto_order'] = True
         nn = self.options["num_nodes"]
         analysis_scheme = self.options["analysis_scheme"]
         aviary_options = self.options['aviary_options']
@@ -94,6 +95,7 @@ class DescentODE(BaseODE):
                     "mach_balance_group", subsys=om.Group(), promotes=["*"]
                 )
 
+                mach_balance_group.options['auto_order'] = True
                 mach_balance_group.nonlinear_solver = om.NewtonSolver()
                 mach_balance_group.nonlinear_solver.options["solve_subsystems"] = True
                 mach_balance_group.nonlinear_solver.options["iprint"] = 0
@@ -205,7 +207,6 @@ class DescentODE(BaseODE):
         kwargs = {'num_nodes': nn, 'aviary_inputs': aviary_options,
                   'method': 'cruise'}
         # collect the propulsion group names for later use
-        prop_groups = []
         for subsystem in core_subsystems:
             system = subsystem.build_mission(**kwargs)
             if system is not None:
@@ -216,9 +217,6 @@ class DescentODE(BaseODE):
                                                          **kwargs),
                                                      promotes_outputs=subsystem.mission_outputs(**kwargs))
                 else:
-                    if isinstance(subsystem, PropulsionBuilderBase):
-                        prop_groups.append(subsystem.name)
-
                     self.add_subsystem(subsystem.name,
                                        system,
                                        promotes_inputs=subsystem.mission_inputs(
@@ -233,21 +231,6 @@ class DescentODE(BaseODE):
 
         # the last two subsystems will also be used for constraints
         self.add_excess_rate_comps(nn)
-
-        if analysis_scheme is AnalysisScheme.COLLOCATION:
-            fc_loc = ['fc']
-            if input_speed_type is SpeedType.MACH:
-                mach_balance_group.set_order(['speed_bal', 'fc', 'speeds', 'ks'])
-                fc_loc = ['mach_balance_group']
-            # TODO this assumes the name of propulsion subsystem, need to pull from
-            #      the subsystem itself
-            self.set_order(['params',
-                            'USatm',] +
-                           fc_loc+prop_groups +
-                           ['lift_balance_group',
-                            'constraints',
-                            'SPECIFIC_ENERGY_RATE_EXCESS',
-                            'ALTITUDE_RATE_MAX'])
 
         ParamPort.set_default_vals(self)
         self.set_input_defaults(Dynamic.Mission.ALTITUDE,
