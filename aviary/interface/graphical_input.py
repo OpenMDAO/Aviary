@@ -313,7 +313,8 @@ class IntegratedPlottingApp(tk.Tk):
 
         # Textbox for Polynomial Control Order
         self.polynomial_order_var = tk.StringVar()
-        tk.Label(checkbox_frame, text="Polynomial Control Order", font=("tahoma", 14)).pack(anchor="w")
+        tk.Label(checkbox_frame, text="Polynomial Control Order",
+                 font=("tahoma", 14)).pack(anchor="w")
         self.polynomial_order_entry = tk.Entry(
             checkbox_frame, textvariable=self.polynomial_order_var, font=("tahoma", 14))
         self.polynomial_order_entry.pack(anchor="w")
@@ -321,7 +322,8 @@ class IntegratedPlottingApp(tk.Tk):
 
         # Textbox for Number of Segments
         self.num_segments_var = tk.StringVar(value="2")  # Default value set to "2"
-        tk.Label(checkbox_frame, text="Number of Segments", font=("tahoma", 14)).pack(anchor="w")
+        tk.Label(checkbox_frame, text="Number of Segments",
+                 font=("tahoma", 14)).pack(anchor="w")
         self.num_segments_entry = tk.Entry(
             checkbox_frame, textvariable=self.num_segments_var, font=("tahoma", 14))
         self.num_segments_entry.pack(anchor="w")
@@ -342,7 +344,8 @@ class IntegratedPlottingApp(tk.Tk):
         self.done_button.pack(side='left', padx=5, pady=10)
 
         # Help button
-        self.help_button = tk.Button(buttons, text="Help", command=self.show_help, font=("tahoma", 14))
+        self.help_button = tk.Button(
+            buttons, text="Help", command=self.show_help, font=("tahoma", 14))
         self.help_button.pack(side='left', pady=10)
 
         # add a note that if you don't have the black package installed your phase_info file might be formatted unclearly
@@ -357,8 +360,10 @@ class IntegratedPlottingApp(tk.Tk):
         self.mach_entries = []
 
         # Column labels
-        tk.Label(self.point_entry_frame, text="Altitude", font=("tahoma", 14)).grid(row=0, column=1)
-        tk.Label(self.point_entry_frame, text="Mach", font=("tahoma", 14)).grid(row=0, column=3)
+        tk.Label(self.point_entry_frame, text="Altitude",
+                 font=("tahoma", 14)).grid(row=0, column=1)
+        tk.Label(self.point_entry_frame, text="Mach",
+                 font=("tahoma", 14)).grid(row=0, column=3)
 
         # Frame for phase-specific checkboxes
         self.phase_option_frame = tk.Frame(checkbox_frame)
