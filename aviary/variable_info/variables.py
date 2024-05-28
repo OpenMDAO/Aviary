@@ -238,6 +238,10 @@ class Aircraft:
         TYPE = 'aircraft:engine:type'
         WING_LOCATIONS = 'aircraft:engine:wing_locations'
 
+        class Motor:
+            MASS = 'aircraft:engine:motor:mass'
+            TORQUE_MAX = 'aircraft:engine:motor:torque_max'
+
     class Fins:
         AREA = 'aircraft:fins:area'
         MASS = 'aircraft:fins:mass'
@@ -607,6 +611,7 @@ class Dynamic:
         NOX_RATE_TOTAL = 'nox_rate_total'
         # PERCENT_ROTOR_RPM_CORRECTED = 'percent_rotor_rpm_corrected'
         PROPELLER_TIP_SPEED = 'propeller_tip_speed'
+        RPM = 'rotations_per_minute'
         SHAFT_POWER = 'shaft_power'
         SHAFT_POWER_CORRECTED = 'shaft_power_corrected'
         SHAFT_POWER_CORRECTED_MAX = 'shaft_power_corrected_max'

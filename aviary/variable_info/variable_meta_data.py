@@ -2198,6 +2198,29 @@ add_meta_data(
     default_value=np.array([0.0])
 )
 
+
+# MOTOR #
+
+add_meta_data(
+    Aircraft.Engine.Motor.MASS,
+    units="kg",
+    desc="Total motor mass (considers number of motors)",
+    default_value=1.0,
+)
+
+# add_meta_data(
+#     Aircraft.Engine.Motor.RPM,
+#     units="rpm",
+#     desc="Motor RPM",
+#     default_value=None,
+# )
+
+add_meta_data(
+    Aircraft.Engine.Motor.TORQUE_MAX,
+    units="N*m",
+    desc="Max torque value that can be output from a single motor. Used to determine motor mass in pre-mission",
+)
+
 #  ______   _
 # |  ____| (_)
 # | |__     _   _ __    ___
