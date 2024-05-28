@@ -9,6 +9,9 @@ class CheckForOMSubmodelFix():
             return False
     __nonzero__ = __bool__
 
+    def __str__(self):
+        return str(bool(self))
+
 
 if __name__ == '__main__':
-    print(bool(CheckForOMSubmodelFix()))
+    print(CheckForOMSubmodelFix())
