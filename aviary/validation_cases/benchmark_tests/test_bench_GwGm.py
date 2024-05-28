@@ -9,6 +9,7 @@ from aviary.interface.default_phase_info.two_dof import phase_info
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 from aviary.variable_info.enums import AnalysisScheme, Verbosity
+from aviary.utils.test_utils.check_om_version import CheckForOMSubmodelFix
 
 
 @use_tempdirs
@@ -110,6 +111,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         rtol = 0.01
 
+        print(CheckForOMSubmodelFix())
         assert_near_equal(prob.get_val(Mission.Design.RESERVE_FUEL, units='lbm'),
                           4998, tolerance=rtol)
 
