@@ -357,11 +357,14 @@ def get_path(path: [str, Path], verbose: bool = False) -> Path:
 
     # If the path still doesn't exist, attempt to find it in the models directory.
     if not path.exists():
-        hangar_based_path = get_model(original_path)
-        if verbose:
-            print(
-                f"Unable to locate '{aviary_based_path}' as an Aviary package path, checking built-in models")
-        path = hangar_based_path
+        try:
+            hangar_based_path = get_model(original_path)
+            if verbose:
+                print(
+                    f"Unable to locate '{aviary_based_path}' as an Aviary package path, checking built-in models")
+            path = hangar_based_path
+        except FileNotFoundError:
+            pass
 
     # If the path still doesn't exist in any of the prioritized locations, raise an error.
     if not path.exists():
