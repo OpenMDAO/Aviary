@@ -2,11 +2,13 @@
 This file contains functions needed to run Aviary using the Level 1 interface.
 """
 import os
+from importlib.machinery import SourceFileLoader
 from pathlib import Path
 
 import openmdao.api as om
 from aviary.variable_info.enums import AnalysisScheme, Verbosity
 from aviary.interface.methods_for_level2 import AviaryProblem
+from aviary.utils.functions import get_path
 
 
 def run_aviary(aircraft_filename, phase_info, optimizer=None,
@@ -121,6 +123,14 @@ def run_level_1(
     #     kwargs['optimizer'] = 'IPOPT'
     # else:
     kwargs['optimizer'] = optimizer
+
+    if isinstance(phase_info, str):
+        phase_info_path = get_path(phase_info)
+        phase_info_file = SourceFileLoader(
+            "phase_info_file", str(phase_info_path)).load_module()
+        phase_info = getattr(phase_info_file, 'phase_info')
+        kwargs['phase_info_parameterization'] = getattr(
+            phase_info_file, 'phase_info_parameterization', None)
 
     prob = run_aviary(input_deck, phase_info, **kwargs)
 
