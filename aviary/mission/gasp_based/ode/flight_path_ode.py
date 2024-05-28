@@ -222,7 +222,7 @@ class FlightPathODE(BaseODE):
             FlightPathEOM(
                 num_nodes=nn,
                 ground_roll=self.options['ground_roll'],
-                analysis_scheme=analysis_scheme),
+            ),
             promotes_inputs=EOM_inputs,
             promotes_outputs=[
                 Dynamic.Mission.VELOCITY_RATE,

@@ -17,7 +17,7 @@ class BaseODE(om.Group):
         self.options.declare(
             "analysis_scheme",
             default=AnalysisScheme.COLLOCATION,
-            types=enum.Enum,
+            types=AnalysisScheme,
             desc="The analysis method that will be used to close the trajectory; for example collocation or time integration",
         )
 
