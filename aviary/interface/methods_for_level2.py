@@ -311,7 +311,7 @@ class AviaryProblem(om.Problem):
                         from aviary.interface.default_phase_info.two_dof_fiti_copy import phase_info, \
                             phase_info_parameterization
                     phase_info, _ = phase_info_parameterization(
-                        phase_info, None, aviary_inputs)
+                        phase_info, None, self.aviary_inputs)
 
                 elif self.mission_method is HEIGHT_ENERGY:
                     from aviary.interface.default_phase_info.height_energy import phase_info
@@ -1070,7 +1070,8 @@ class AviaryProblem(om.Problem):
                     ('cruise', Dynamic.Mission.MASS),
                 ]
             )
-            traj = self.model.add_subsystem('traj', full_traj)
+            traj = self.model.add_subsystem('traj', full_traj, promotes_inputs=[
+                                            ('altitude_initial', Mission.Design.CRUISE_ALTITUDE)])
 
             self.model.add_subsystem(
                 'actual_descent_fuel',

@@ -75,7 +75,7 @@ class FlexibleTraj(TimeIntegrationTrajBase):
 
         ode_index = 0
         sim_gen = self.compute_traj_loop(self.ODEs[0], inputs, outputs)
-        if self.verbosity.value >= 1:
+        if self.verbosity.value >= 1 or True:
             print('*'*40)
             print('Starting: '+self.ODEs[ode_index].phase_name)
         for current_problem, sim_result in sim_gen:
@@ -90,7 +90,7 @@ class FlexibleTraj(TimeIntegrationTrajBase):
             except IndexError:
                 next_problem = None
 
-            if self.verbosity.value >= 1:
+            if self.verbosity.value >= 1 or True:
                 print('Finished: '+current_problem.phase_name)
 
             if next_problem is not None:
@@ -108,7 +108,7 @@ class FlexibleTraj(TimeIntegrationTrajBase):
                 sim_gen.close()
                 break
 
-        if self.verbosity.value >= 1:
+        if self.verbosity.value >= 1 or True:
             print('t_final', t_final)
             print('x_final', x_final)
             print(self.ODEs[-1].states)
