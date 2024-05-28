@@ -1654,7 +1654,7 @@ add_meta_data(
                      "LEAPS1": None
                      },
     units='unitless',
-    types=(str, Path, None),
+    types=(str, Path),
     default_value=None,
     option=True,
     desc='filepath to data file containing engine performance tables'

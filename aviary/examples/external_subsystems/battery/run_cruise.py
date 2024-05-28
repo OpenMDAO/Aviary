@@ -3,6 +3,7 @@ import aviary.api as av
 
 from aviary.examples.external_subsystems.battery.battery_builder import BatteryBuilder
 from aviary.examples.external_subsystems.battery.battery_variables import Aircraft, Mission
+from aviary.examples.external_subsystems.battery.battery_variable_meta_data import ExtendedMetaData
 
 
 battery_builder = BatteryBuilder()
@@ -16,7 +17,8 @@ prob = av.AviaryProblem()
 
 # Load aircraft and options data from user
 # Allow for user overrides here
-prob.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
+prob.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm.csv',
+                 phase_info, meta_data=ExtendedMetaData)
 
 # Preprocess inputs
 prob.check_and_preprocess_inputs()

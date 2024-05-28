@@ -17,14 +17,13 @@ from aviary.mission.flops_based.phases.detailed_takeoff_phases import (
     TakeoffEngineCutback, TakeoffEngineCutbackToMicP1,
     TakeoffLiftoffToObstacle, TakeoffMicP1ToClimb, TakeoffMicP2ToEngineCutback,
     TakeoffObstacleToMicP2, TakeoffRotateToLiftoff, TakeoffTrajectory)
-from aviary.subsystems.propulsion.engine_deck import EngineDeck
+from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.preprocessors import preprocess_propulsion
+from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems, get_default_mission_subsystems
+from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.functions import get_path
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 from aviary.variable_info.enums import EquationsOfMotion, LegacyCode
-from aviary.interface.default_phase_info.height_energy import default_mission_subsystems
-
 
 N3CC = {}
 inputs = N3CC['inputs'] = AviaryValues()
@@ -443,10 +442,12 @@ outputs.set_val(Mission.Design.MACH, 0.779)
 outputs.set_val(Mission.Design.LIFT_COEFFICIENT, 0.583)
 
 # Create engine model
-engine = EngineDeck(name='engine',
-                    options=engine_inputs
-                    )
-preprocess_propulsion(inputs, [engine])
+engine = build_engine_deck(aviary_options=engine_inputs)
+preprocess_options(inputs, engine_models=engine)
+
+# build subsystems
+default_premission_subsystems = get_default_premission_subsystems('FLOPS', engine)
+default_mission_subsystems = get_default_mission_subsystems('FLOPS', engine)
 
 # region - detailed takeoff
 takeoff_trajectory_builder = TakeoffTrajectory('detailed_takeoff')

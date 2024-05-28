@@ -11,8 +11,8 @@ from aviary.variable_info.enums import Verbosity, EquationsOfMotion
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 from aviary.variable_info.variables_in import VariablesIn
 
-from aviary.interface.default_phase_info.height_energy import aero, prop, geom
-from aviary.subsystems.propulsion.engine_deck import EngineDeck
+from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
+from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.process_input_decks import create_vehicle
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
@@ -35,8 +35,12 @@ class HE_SGMDescentTestCase(unittest.TestCase):
                               val=0.35, units="unitless")
         aviary_inputs.set_val(Settings.EQUATIONS_OF_MOTION,
                               val=EquationsOfMotion.SOLVED_2DOF)
-        ode_args = dict(aviary_options=aviary_inputs, core_subsystems=[prop, geom, aero])
-        preprocess_propulsion(aviary_inputs, [EngineDeck(options=aviary_inputs)])
+
+        engines = build_engine_deck(aviary_inputs)
+        # don't need mass
+        core_subsystems = get_default_premission_subsystems('FLOPS', engines)[:-1]
+        ode_args = dict(aviary_options=aviary_inputs, core_subsystems=core_subsystems)
+        preprocess_propulsion(aviary_inputs, engines)
 
         ode_args['num_nodes'] = 1
         ode_args['subsystem_options'] = {'core_aerodynamics': {'method': 'computed'}}

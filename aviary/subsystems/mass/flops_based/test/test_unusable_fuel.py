@@ -37,7 +37,7 @@ class TransportUnusableFuelMassTest(unittest.TestCase):
     def test_case(self, case_name):
 
         prob = self.prob
-        flops_inputs = get_flops_inputs(case_name)
+        flops_inputs = get_flops_inputs(case_name, preprocess=True)
 
         prob.model.add_subsystem(
             'unusable_fuel',

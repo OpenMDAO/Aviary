@@ -124,7 +124,6 @@ class EngineScaling(om.ExplicitComponent):
 
         scale_factor = 1
         fuel_flow_scale_factor = np.ones(nn, dtype=engine_scale_factor.dtype)
-        # scale_idx = np.where(scale_performance)
 
         # if len(scale_idx[0]) > 0:
         if scale_performance:
@@ -142,18 +141,10 @@ class EngineScaling(om.ExplicitComponent):
             supersonic_idx = np.where(mach_number >= 1.0)
             fuel_flow_mach_scaling[supersonic_idx] = supersonic_fuel_factor
 
-            # fuel_flow_scale_factor[:, scale_idx[0]] = engine_scale_factor[scale_idx]\
-            #     * fuel_flow_mach_scaling[:, scale_idx[0]]\
-            #     * fuel_flow_equation_scaling[scale_idx]\
-            #     * mission_fuel_scaler
             fuel_flow_scale_factor = engine_scale_factor * fuel_flow_mach_scaling\
                 * fuel_flow_equation_scaling * mission_fuel_scaler
 
             scale_factor = engine_scale_factor
-
-        # scale factor only applies if engine performance is scaled - default to 1 otherwise
-        # scale_factor = np.ones(count, dtype=engine_scale_factor.dtype)
-        # scale_factor[scale_idx] = engine_scale_factor[scale_idx]
 
         outputs[Dynamic.Mission.THRUST] = unscaled_net_thrust * scale_factor
         outputs[Dynamic.Mission.THRUST_MAX] = unscaled_max_thrust * scale_factor
@@ -173,12 +164,8 @@ class EngineScaling(om.ExplicitComponent):
 
     def setup_partials(self):
         nn = self.options['num_nodes']
-        # options = self.options['aviary_options']
-        # count = len(options.get_val('engine_models'))  # number of unique engine models
 
         # matrix derivatives have known sparsity pattern - specified here
-        # r = np.arange(nn * count, dtype=int)
-        # c = np.tile(np.arange(count, dtype=int), (nn))
         r = np.arange(nn)
         c = np.tile(0, nn)
 
@@ -294,7 +281,6 @@ class EngineScaling(om.ExplicitComponent):
     def compute_partials(self, inputs, J):
         nn = self.options['num_nodes']
         options: AviaryValues = self.options['aviary_options']
-        # count = len(options.get_val('engine_models'))  # number of unique engine models
         scale_performance = options.get_val(Aircraft.Engine.SCALE_PERFORMANCE)
 
         subsonic_fuel_factor = options.get_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER)

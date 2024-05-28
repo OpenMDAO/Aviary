@@ -42,9 +42,8 @@ class MassSummationTestCase1(unittest.TestCase):
         )
 
         for (key, (val, units)) in get_items(V3_bug_fixed_options):
-            if key != 'engine_models':
-                if not is_option(key):
-                    self.prob.model.set_input_defaults(key, val=val, units=units)
+            if not is_option(key):
+                self.prob.model.set_input_defaults(key, val=val, units=units)
 
         for (key, (val, units)) in get_items(V3_bug_fixed_non_metadata):
             self.prob.model.set_input_defaults(key, val=val, units=units)

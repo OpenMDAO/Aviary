@@ -26,6 +26,8 @@ from aviary.validation_cases.validation_tests import (do_validation_test,
                                                       print_case)
 from aviary.variable_info.functions import override_aviary_vars
 from aviary.variable_info.variables import Aircraft
+from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.preprocessors import preprocess_options
 
 unit_data_sets = get_flops_case_names(
     only=['LargeSingleAisle2FLOPS', 'LargeSingleAisle2FLOPSdw', 'LargeSingleAisle2FLOPSalt', 'LargeSingleAisle1FLOPS'])
@@ -61,7 +63,7 @@ class PrepGeomTest(unittest.TestCase):
 
                 override_aviary_vars(self, aviary_options)
 
-        options = get_flops_data(case_name,
+        options = get_flops_data(case_name, preprocess=True,
                                  keys=[
                                      Aircraft.Fuselage.NUM_FUSELAGES,
                                      Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES,
@@ -300,7 +302,7 @@ class _TailTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             'tails',
-            _Tail(aviary_options=get_flops_inputs(case_name,
+            _Tail(aviary_options=get_flops_inputs(case_name, preprocess=True,
                                                   keys=[Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION,
                                                         Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES])),
             promotes=['*'])
@@ -396,10 +398,14 @@ class NacellesTest(unittest.TestCase):
 
         prob = self.prob
 
+        flops_inputs = get_flops_inputs(case_name, preprocess=True,
+                                        keys=[Aircraft.Engine.NUM_ENGINES,
+                                              Aircraft.Fuselage.NUM_FUSELAGES,
+                                              ])
+
         prob.model.add_subsystem(
             'nacelles',
-            Nacelles(aviary_options=get_flops_inputs(case_name,
-                                                     keys=[Aircraft.Engine.NUM_ENGINES])),
+            Nacelles(aviary_options=flops_inputs),
             promotes=['*'])
 
         prob.setup(check=False, force_alloc_complex=True)
@@ -462,14 +468,16 @@ class CharacteristicLengthsTest(unittest.TestCase):
 
         prob = self.prob
 
+        flops_inputs = get_flops_inputs(case_name, preprocess=True,
+                                        keys=[Aircraft.Engine.NUM_ENGINES,
+                                              Aircraft.Fuselage.NUM_FUSELAGES,
+                                              Aircraft.VerticalTail.NUM_TAILS,
+                                              Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION,
+                                              ])
+
         prob.model.add_subsystem(
             'characteristic_lengths',
-            CharacteristicLengths(aviary_options=get_flops_inputs(case_name,
-                                                                  keys=[Aircraft.Engine.NUM_ENGINES,
-                                                                        Aircraft.Fuselage.NUM_FUSELAGES,
-                                                                        Aircraft.VerticalTail.NUM_TAILS,
-                                                                        Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION,
-                                                                        "engine_models"])),
+            CharacteristicLengths(aviary_options=flops_inputs),
             promotes=['*']
         )
 

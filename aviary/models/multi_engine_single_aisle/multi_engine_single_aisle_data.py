@@ -1,8 +1,6 @@
 import numpy as np
 
-from aviary.subsystems.propulsion.engine_deck import EngineDeck
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.functions import get_path
 from aviary.variable_info.enums import EquationsOfMotion, LegacyCode, Verbosity
 from aviary.variable_info.variables import Aircraft, Mission, Settings
@@ -419,15 +417,3 @@ outputs.set_val(Aircraft.Wing.MASS, 18268, 'lbm')
 
 outputs.set_val(Mission.Design.MACH, 0.800)
 outputs.set_val(Mission.Design.LIFT_COEFFICIENT, 0.568)
-
-# Create engine model
-engine_1_inputs.set_val(Settings.VERBOSITY, 0)
-engine1 = EngineDeck(name='engine_1',
-                     options=engine_1_inputs
-                     )
-# Create engine model
-engine_2_inputs.set_val(Settings.VERBOSITY, 0)
-engine2 = EngineDeck(name='engine_2',
-                     options=engine_2_inputs
-                     )
-preprocess_propulsion(inputs, [engine1, engine2])

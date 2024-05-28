@@ -4,6 +4,7 @@ import pkg_resources
 
 from aviary.examples.external_subsystems.battery.battery_builder import BatteryBuilder
 from aviary.examples.external_subsystems.battery.battery_variables import Aircraft
+from aviary.examples.external_subsystems.battery.battery_variable_meta_data import ExtendedMetaData
 from aviary.api import default_height_energy_phase_info as phase_info
 
 
@@ -22,7 +23,7 @@ prob = AviaryProblem()
 
 # Load aircraft and options data from user
 # Allow for user overrides here
-prob.load_inputs(input_file, phase_info)
+prob.load_inputs(input_file, phase_info, meta_data=ExtendedMetaData)
 
 
 # Preprocess inputs

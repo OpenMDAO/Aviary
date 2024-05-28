@@ -1,21 +1,5 @@
 from aviary.variable_info.enums import SpeedType
-from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
-from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
-from aviary.subsystems.mass.mass_builder import CoreMassBuilder
-from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
-from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData, Mission
-from aviary.variable_info.enums import LegacyCode
-
-
-GASP = LegacyCode.GASP
-
-prop = CorePropulsionBuilder('core_propulsion', BaseMetaData)
-mass = CoreMassBuilder('core_mass', BaseMetaData, GASP)
-aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, GASP)
-geom = CoreGeometryBuilder('core_geometry', BaseMetaData, GASP)
-
-default_premission_subsystems = [prop, geom, aero, mass]
-default_mission_subsystems = [aero, prop]
+from aviary.variable_info.variables import Mission
 
 mission_distance = 3675
 
