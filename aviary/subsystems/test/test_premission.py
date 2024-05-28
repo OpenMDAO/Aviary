@@ -150,7 +150,6 @@ class PreMissionTestCase(unittest.TestCase):
 
         # fixed mass values:
         assert_near_equal(
-            # self.prob["fixed_mass.main_gear_mass"], 6384.35, tol)
             self.prob[Aircraft.LandingGear.MAIN_GEAR_MASS], 6384.35, tol)
         assert_near_equal(
             self.prob["fixed_mass.tail.loc_MAC_vtail"], 0.44959578484694906, tol
