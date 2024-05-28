@@ -2198,28 +2198,39 @@ add_meta_data(
     default_value=np.array([0.0])
 )
 
-
 # MOTOR #
-
 add_meta_data(
     Aircraft.Engine.Motor.MASS,
+    meta_data=_MetaData,
     units="kg",
     desc="Total motor mass (considers number of motors)",
-    default_value=1.0,
+    default_value=0.0,
 )
-
-# add_meta_data(
-#     Aircraft.Engine.Motor.RPM,
-#     units="rpm",
-#     desc="Motor RPM",
-#     default_value=None,
-# )
 
 add_meta_data(
     Aircraft.Engine.Motor.TORQUE_MAX,
+    meta_data=_MetaData,
     units="N*m",
     desc="Max torque value that can be output from a single motor. Used to determine motor mass in pre-mission",
 )
+
+# GEARBOX #
+add_meta_data(
+    Aircraft.Engine.Gearbox.GEAR_RATIO,
+    meta_data=_MetaData,
+    units=None,
+    desc="The ratio of the RPM_out divided by the RPM_in for the gearbox.",
+    default_value=1.0,
+)
+
+add_meta_data(
+    Aircraft.Engine.Gearbox.MASS,
+    meta_data=_MetaData,
+    units='kg',
+    desc="The mass of the gearbox.",
+    default_value=0,
+)
+
 
 #  ______   _
 # |  ____| (_)

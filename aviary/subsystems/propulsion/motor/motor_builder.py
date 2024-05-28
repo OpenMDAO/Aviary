@@ -1,8 +1,7 @@
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.subsystems.propulsion.motor.model.motor_premission import MotorPreMission
 from aviary.subsystems.propulsion.motor.model.motor_mission import MotorMission
-from aviary.subsystems.propulsion.motor.motor_variables import Aircraft, Dynamic
-from aviary.subsystems.propulsion.motor.motor_variable_meta_data import ExtendedMetaData
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class MotorBuilder(SubsystemBuilderBase):
@@ -46,7 +45,7 @@ class MotorBuilder(SubsystemBuilderBase):
 
     def __init__(self, name='motor', include_constraints=True):
         self.include_constraints = include_constraints
-        super().__init__(name, meta_data=ExtendedMetaData)
+        super().__init__(name)
 
     def build_pre_mission(self, aviary_inputs):
         return MotorPreMission(aviary_inputs=aviary_inputs)
@@ -75,12 +74,7 @@ class MotorBuilder(SubsystemBuilderBase):
                 'lower': 0.001,
                 'upper': None
             },
-            Aircraft.Motor.RPM: {
-                'units': 'rpm',
-                'lower': 0.1,
-                'upper': 20000
-            },
-            Aircraft.Gearbox.GEAR_RATIO: {
+            Aircraft.EngineGearbox.GEAR_RATIO: {
                 'units': None,
                 'lower': 1.0,
                 'upper': 1.0,
@@ -109,8 +103,8 @@ class MotorBuilder(SubsystemBuilderBase):
         mass_names : list
             A list of names for the motor subsystem.
         '''
-        return [Aircraft.Motor.MASS,
-                Aircraft.Gearbox.MASS]
+        return [Aircraft.Engine.Motor.MASS,
+                Aircraft.Engine.Gearbox.MASS]
 
     def get_outputs(self):
         '''
@@ -125,7 +119,6 @@ class MotorBuilder(SubsystemBuilderBase):
         return [Dynamic.Mission.TORQUE,
                 Dynamic.Mission.SHAFT_POWER,
                 Dynamic.Mission.SHAFT_POWER_MAX,
-                Aircraft.Prop.RPM,
                 Dynamic.Mission.ELECTRIC_POWER,
                 Dynamic.Mission.THRUST,
                 Dynamic.Mission.NOX_RATE,

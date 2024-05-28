@@ -9,11 +9,9 @@ from pathlib import Path
 from aviary.mission.gasp_based.flight_conditions import FlightConditions
 from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
 from aviary.subsystems.propulsion.propeller_performance import PropellerPerformance
-from aviary.interface.utils.markdown_utils import round_it
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.functions import get_path
-from aviary.variable_info.variables import Dynamic, Mission, Settings
-from aviary.subsystems.propulsion.motor.motor_variables import Aircraft
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.options import get_option_defaults
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
@@ -209,14 +207,14 @@ class TurbopropTest(unittest.TestCase):
         assert_near_equal(results, truth_vals)
 
     def test_electroprop(self):
-        # test case using GASP-derived engine deck and default HS prop model.
+        # test case using electric motor and default HS prop model.
         test_points = [(0, 0, 0), (0, 0, 1), (.6, 25000, 1)]
         num_nodes = len(test_points)
 
         motor_model = MotorBuilder()
 
         self.prepare_model(test_points, motor_model, input_rpm=True)
-        self.prob.set_val(Aircraft.Motor.RPM, np.ones(num_nodes)*2000., units='rpm')
+        self.prob.set_val(Dynamic.Mission.RPM, np.ones(num_nodes)*2000., units='rpm')
 
         self.prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 10.5, units="ft")
         self.prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,

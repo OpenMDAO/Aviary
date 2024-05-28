@@ -2,7 +2,7 @@ import numpy as np
 
 import openmdao.api as om
 
-from aviary.subsystems.propulsion.motor.motor_variables import Dynamic, Aircraft
+from aviary.variable_info.variables import Dynamic, Aircraft
 
 
 motor_map = np.array([
@@ -71,36 +71,39 @@ class MotorMap(om.Group):
         motor = om.MetaModelStructuredComp(method="slinear",
                                            vec_size=n,
                                            extrapolate=True)
-        motor.add_input(Aircraft.Motor.RPM, val=np.ones(n),
+        motor.add_input(Dynamic.Mission.RPM, val=np.ones(n),
                         training_data=rpm_vals,
                         units="rpm")
-        motor.add_input("T_unscaled", val=np.ones(n),  # unscaled torque
+        motor.add_input("torque_unscaled", val=np.ones(n),  # unscaled torque
                         training_data=torque_vals,
                         units="N*m")
-        motor.add_output(Dynamic.Mission.Motor.EFFICIENCY, val=np.ones(n),
+        motor.add_output("motor_efficiency", val=np.ones(n),
                          training_data=motor_map,
                          units='unitless')
 
         self.add_subsystem('throttle_to_torque',
-                           om.ExecComp('T_unscaled = T_max * throttle',
-                                       T_unscaled={'val': np.ones(n), 'units': 'N*m'},
-                                       T_max={'val': torque_vals[-1], 'units': 'N*m'},
+                           om.ExecComp('torque_unscaled = torque_max * throttle',
+                                       torque_unscaled={
+                                           'val': np.ones(n), 'units': 'N*m'},
+                                       torque_max={
+                                           'val': torque_vals[-1], 'units': 'N*m'},
                                        throttle={'val': np.ones(n), 'units': 'unitless'}),
-                           promotes=["T_unscaled",
+                           promotes=["torque_unscaled",
                                      ("throttle", Dynamic.Mission.THROTTLE)])
 
         self.add_subsystem(name="motor_efficiency",
                            subsys=motor,
-                           promotes_inputs=[Aircraft.Motor.RPM, "T_unscaled"],
-                           promotes_outputs=[Dynamic.Mission.Motor.EFFICIENCY])
+                           promotes_inputs=[Dynamic.Mission.RPM, "torque_unscaled"],
+                           promotes_outputs=["motor_efficiency"])
 
         # now that we know the efficiency, scale up the torque correctly for the engine size selected
         # Note: This allows the optimizer to optimize the motor size if desired
         self.add_subsystem('scale_motor_torque',
-                           om.ExecComp('T = T_unscaled * scale_factor',
-                                       T={'val': np.ones(n), 'units': 'N*m'},
-                                       T_unscaled={'val': np.ones(n), 'units': 'N*m'},
-                                       scale_factor={'val': 1, 'units': 'unitless'}),
-                           promotes=[("T", Dynamic.Mission.TORQUE),
-                                     "T_unscaled",
+                           om.ExecComp('torque = torque_unscaled * scale_factor',
+                                       torque={'val': np.ones(n), 'units': 'N*m'},
+                                       torque_unscaled={
+                                           'val': np.ones(n), 'units': 'N*m'},
+                                       scale_factor={'val': 1.0, 'units': 'unitless'}),
+                           promotes=[("torque", Dynamic.Mission.TORQUE),
+                                     "torque_unscaled",
                                      ("scale_factor", Aircraft.Engine.SCALE_FACTOR)])
