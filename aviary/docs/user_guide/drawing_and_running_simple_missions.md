@@ -73,6 +73,8 @@ When using the outputted `phase_info` dict in a mission simulation, you can modi
 The `phase_info` dictionary makes some assumptions about different settings which you can also modify.
 For example, the time duration of each phase is controlled by the optimizer if `fix_duration` is False, though this can be changed to True to fix the duration of each phase.
 
+If you don't have the [black](https://pypi.org/project/black/) python autoformatter installed, your output may look slightly different - as long as you see confirmation that your phase info has been saved, your mission profile was successfully created.
+
 ## Running a Mission Simulation
 
 After generating the flight profile, use the `run_mission` command to simulate the mission.
