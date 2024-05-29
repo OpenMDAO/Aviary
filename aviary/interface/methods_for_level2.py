@@ -1028,9 +1028,15 @@ class AviaryProblem(om.Problem):
                 self.model.connect('start_of_descent_mass',
                                    'traj.SGMCruise_mass_trigger')
                 cruise_options['attr:mass_trigger'] = ('SGMCruise_mass_trigger', 'lbm')
+                extra_inputs = []
             else:
                 initial_mass = self.aviary_inputs.get_val(
                     Mission.Summary.GROSS_MASS, 'lbm')
+                extra_inputs = [
+                    Aircraft.Design.OPERATING_MASS,
+                    Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS,
+                    Mission.Design.RESERVE_FUEL,
+                ]
 
                 add_default_sgm_args(self.descent_phases, self.ode_args, vb)
                 descent_estimation = descent_range_and_fuel(
@@ -1070,7 +1076,7 @@ class AviaryProblem(om.Problem):
                     ('cruise', Dynamic.Mission.MASS),
                 ]
             )
-            traj = self.model.add_subsystem('traj', full_traj, promotes_inputs=[
+            traj = self.model.add_subsystem('traj', full_traj, promotes_inputs=extra_inputs+[
                                             ('altitude_initial', Mission.Design.CRUISE_ALTITUDE)])
 
             self.model.add_subsystem(

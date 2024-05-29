@@ -499,7 +499,13 @@ class SGMCruise(SimuPyProblem):
 
         self.phase_name = phase_name
         self.add_trigger(Dynamic.Mission.DISTANCE, "distance_trigger")
-        self.add_trigger(Dynamic.Mission.MASS, 'mass_trigger')
+        from aviary.utils.test_utils.check_om_version import CheckForOMSubmodelFix
+        if CheckForOMSubmodelFix():
+            # using the value of the SGMCruise attribute
+            self.add_trigger(Dynamic.Mission.MASS, 'mass_trigger')
+        else:
+            # using the value of the FlightPathODE mass_trigger subsystem
+            self.add_trigger(Dynamic.Mission.MASS, 'mass_trigger.mass_trigger')
 
 
 class SGMDescent(SimuPyProblem):
