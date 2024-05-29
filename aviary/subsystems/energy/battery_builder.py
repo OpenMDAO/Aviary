@@ -18,9 +18,9 @@ class BatteryBuilder(SubsystemBuilderBase):
         soc = om.ExecComp('state_of_charge = (energy_capacity - (mission_energy/efficiency)) / energy_capacity',
                           state_of_charge={'val': np.zeros(
                               num_nodes), 'units': 'unitless'},
-                          energy_capacity={'val': 0.0, 'units': 'kJ'},
+                          energy_capacity={'val': 10.0, 'units': 'kJ'},
                           mission_energy={'val': np.zeros(num_nodes), 'units': 'kJ'},
-                          efficiency={'val': 0.0, 'units': 'unitless'})
+                          efficiency={'val': 0.95, 'units': 'unitless'})
 
         battery_group.add_subsystem('state_of_charge',
                                     subsys=soc,

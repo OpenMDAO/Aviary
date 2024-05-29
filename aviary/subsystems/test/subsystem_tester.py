@@ -247,7 +247,6 @@ class TestSubsystemBuilderBase(unittest.TestCase):
         prob.final_setup()
 
         inputs = prob.model.list_inputs(out_stream=None, prom_name=True)
-        outputs = prob.model.list_outputs(out_stream=None, prom_name=True)
 
         for key, value in states.items():
             if mission_sys is not None:
