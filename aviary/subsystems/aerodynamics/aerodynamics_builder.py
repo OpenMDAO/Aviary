@@ -17,8 +17,8 @@ from aviary.subsystems.aerodynamics.flops_based.design import Design
 from aviary.subsystems.aerodynamics.gasp_based.premission_aero import PreMissionAero
 from aviary.subsystems.aerodynamics.gasp_based.gaspaero import CruiseAero
 from aviary.subsystems.aerodynamics.gasp_based.gaspaero import LowSpeedAero
-from aviary.subsystems.aerodynamics.gasp_based.table_based import CruiseAero as TabularCruiseAero
-from aviary.subsystems.aerodynamics.gasp_based.table_based import LowSpeedAero as TabularLowSpeedAero
+from aviary.subsystems.aerodynamics.gasp_based.table_based import TabularCruiseAero
+from aviary.subsystems.aerodynamics.gasp_based.table_based import TabularLowSpeedAero as TabularLowSpeedAero
 from aviary.subsystems.aerodynamics.flops_based.computed_aero_group import \
     ComputedAeroGroup
 from aviary.subsystems.aerodynamics.flops_based.takeoff_aero_group import \
@@ -122,15 +122,17 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
         elif self.code_origin is GASP:
             if method is None:
-                aero_group = CruiseAero(num_nodes=num_nodes)
+                aero_group = CruiseAero(num_nodes=num_nodes,
+                                        aviary_options=aviary_inputs)
 
             elif method == 'cruise':
                 if 'aero_data' in kwargs:
                     aero_group = TabularCruiseAero(num_nodes=num_nodes,
+                                                   aviary_options=aviary_inputs,
                                                    aero_data=kwargs.pop('aero_data'),
                                                    **kwargs)
                 else:
-                    aero_group = CruiseAero(num_nodes=num_nodes,
+                    aero_group = CruiseAero(num_nodes=num_nodes, aviary_options=aviary_inputs,
                                             **kwargs)
 
             elif method == 'low_speed':
@@ -147,7 +149,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                                                      **kwargs)
 
                 else:
-                    aero_group = LowSpeedAero(num_nodes=num_nodes,
+                    aero_group = LowSpeedAero(num_nodes=num_nodes, aviary_options=aviary_inputs,
                                               **kwargs)
 
             else:
