@@ -148,7 +148,6 @@ class FlightPathODE(BaseODE):
             self.AddAlphaControl(
                 alpha_mode=alpha_mode,
                 target_load_factor=1,
-                target_flight_path_angle=0,
                 atol=1e-6, rtol=1e-12, num_nodes=nn, print_level=print_level)
 
         for subsystem in core_subsystems:

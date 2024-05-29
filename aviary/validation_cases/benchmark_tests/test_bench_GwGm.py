@@ -99,7 +99,6 @@ class ProblemPhaseTestCase(unittest.TestCase):
         assert_near_equal(prob.get_val(Mission.Landing.TOUCHDOWN_MASS, units='lbm'),
                           136823.47, tolerance=rtol)
 
-    # @unittest.skipUnless(CheckForOMSubmodelFix(), 'Skipping due to OpenMDAO Submodel Bug')
     @require_pyoptsparse(optimizer="IPOPT")
     def test_bench_GwGm_shooting(self):
         from aviary.interface.default_phase_info.two_dof_fiti_copy import phase_info, \
@@ -138,6 +137,4 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = ProblemPhaseTestCase()
-    test.test_bench_GwGm_shooting()
+    unittest.main()

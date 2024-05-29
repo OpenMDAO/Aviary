@@ -632,16 +632,6 @@ class AviaryProblem(om.Problem):
         add_opts2vals(self.model, OptionsToValues, self.aviary_inputs)
 
         if self.analysis_scheme is AnalysisScheme.SHOOTING:
-            # if any(['cruise' in name for name in self.reserve_phases]):
-            #     add_descent_estimation_as_submodel(
-            #         self,
-            #         subsys_name='reserve_descent',
-            #         ode_args=self.ode_args,
-            #         cruise_mach=self.cruise_mach,
-            #         cruise_alt=self.cruise_alt,
-            #         reserve_fuel='reserve_fuel_estimate',
-            #     )
-
             if self.submodel_fix:
                 self._add_fuel_reserve_component(
                     post_mission=False, reserves_name='reserve_fuel_estimate')
