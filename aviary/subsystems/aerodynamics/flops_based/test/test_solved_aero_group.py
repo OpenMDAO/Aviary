@@ -85,7 +85,7 @@ class TestSolvedAero(unittest.TestCase):
 
         subsystem_options = {'method': 'solved_alpha',
                              'aero_data': aero_data,
-                             'training_data': True}
+                             'connect_training_data': True}
         ph_in['pre_mission']['external_subsystems'] = [polar_builder]
 
         ph_in['cruise']['subsystem_options'] = {'core_aerodynamics': subsystem_options}
@@ -166,7 +166,7 @@ class TestSolvedAero(unittest.TestCase):
 
         subsystem_options = {'method': 'solved_alpha',
                              'aero_data': aero_data,
-                             'training_data': True}
+                             'connect_training_data': True}
         ph_in['pre_mission']['external_subsystems'] = [polar_builder]
 
         ph_in['cruise']['subsystem_options'] = {'core_aerodynamics': subsystem_options}
