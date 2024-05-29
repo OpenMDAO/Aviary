@@ -7,13 +7,13 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class BatteryBuilder(SubsystemBuilderBase):
-    def build_pre_mission(self, aviary_options=None):
-        return SizeBattery(aviary_options=aviary_options)
+    def build_pre_mission(self, aviary_inputs=None):
+        return SizeBattery(aviary_inputs=aviary_inputs)
 
     def get_mass_names(self):
         return [Aircraft.Battery.MASS]
 
-    def build_mission(self, num_nodes=1, aviary_inputs=None) -> om.Group:
+    def build_mission(self, num_nodes, aviary_inputs=None) -> om.Group:
         battery_group = om.Group()
         soc = om.ExecComp('state_of_charge = (energy_capacity - (mission_energy/efficiency)) / energy_capacity',
                           state_of_charge={'val': np.zeros(

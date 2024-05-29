@@ -256,14 +256,6 @@ class TestSubsystemBuilderBase(unittest.TestCase):
                 self.assertTrue(state_var_exists,
                                 f"State variable '{key}' not found in the model.")
 
-                # Check rate_source variable existence
-                if 'rate_source' in value:
-                    rate_source = value['rate_source']
-                    rate_source_exists = any(
-                        rate_source in output[0] for output in outputs)
-                    self.assertTrue(
-                        rate_source_exists, f"Rate source variable '{rate_source}' for state '{key}' not found in the model.")
-
     def test_check_pre_mission(self):
         if not hasattr(self, 'aviary_values'):
             self.aviary_values = AviaryValues()

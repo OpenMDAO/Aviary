@@ -14,7 +14,7 @@ class SizeBattery(om.ExplicitComponent):
 
     def initialize(self):
         self.options.declare(
-            'aviary_options', types=AviaryValues,
+            'aviary_inputs', types=AviaryValues,
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
