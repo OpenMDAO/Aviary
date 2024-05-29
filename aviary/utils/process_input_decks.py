@@ -148,7 +148,7 @@ def parse_inputs(vehicle_deck, aircraft_values: AviaryValues = None, initial_gue
 
             elif var_name.startswith('initial_guesses:'):
                 # get values labelled as initial_guesses in .csv input file
-                initial_guesses[var_name[len('initial_guesses:'):]] = float(var_values[0])
+                initial_guesses[var_name.split(':')[-1]] = float(var_values[0])
                 continue
 
             if aircraft_values.get_val('verbosity').value >= 2:
