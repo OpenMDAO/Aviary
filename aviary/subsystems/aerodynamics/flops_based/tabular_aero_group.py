@@ -44,7 +44,7 @@ class TabularAeroGroup(om.Group):
         options.declare('structured', types=bool, default=True,
                         desc='Flag that sets if data is a structured grid.')
 
-        options.declare('training_data', types=bool, default=False,
+        options.declare('connect_training_data', types=bool, default=False,
                         desc='Flag that sets if drag data for interpolation will be '
                              'passed via openMDAO connections. If True, provided values  '
                              'for drag coefficients in data will be ignored.')
@@ -55,7 +55,7 @@ class TabularAeroGroup(om.Group):
         CDI_table = options['CDI_data']
         CD0_table = options['CD0_data']
         structured = options['structured']
-        training_data = options['training_data']
+        connect_training_data = options['connect_training_data']
 
         # if data is from file, read data using alias dict
         if isinstance(CDI_table, str):
@@ -67,7 +67,7 @@ class TabularAeroGroup(om.Group):
         if isinstance(CD0_table, Path):
             CD0_table = read_data_file(CD0_table, aliases=aliases)
 
-        if training_data or not structured:
+        if connect_training_data or not structured:
             method = 'lagrange3'
         else:
             method = '2D-lagrange3'
@@ -76,13 +76,13 @@ class TabularAeroGroup(om.Group):
                                              interpolator_outputs={'zero_lift_drag_coefficient':
                                                                    'unitless'},
                                              method=method, structured=structured,
-                                             training_data=training_data)
+                                             connect_training_data=connect_training_data)
 
         CDI_interp = build_data_interpolator(nn, interpolator_data=CDI_table,
                                              interpolator_outputs={'lift_dependent_drag_coefficient':
                                                                    'unitless'},
                                              method=method, structured=structured,
-                                             training_data=training_data)
+                                             connect_training_data=connect_training_data)
 
         # add subsystems
         self.add_subsystem(
