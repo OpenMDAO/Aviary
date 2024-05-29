@@ -612,7 +612,7 @@ def _setup_F2A_parser(parser):
         "--legacy_code",
         type=LegacyCode,
         help="Name of the legacy code the deck originated from",
-        choices=list(LegacyCode),
+        choices=set(LegacyCode),
         required=True
     )
     parser.add_argument(
@@ -629,8 +629,8 @@ def _setup_F2A_parser(parser):
     parser.add_argument(
         "-v",
         "--verbosity",
-        type=Verbosity,
-        choices=list(Verbosity),
+        type=int,
+        choices=set(Verbosity.list()),
         default=1,
         help="Set level of print statements",
     )
