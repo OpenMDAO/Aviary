@@ -10,8 +10,6 @@ from aviary.mission.gasp_based.ode.flight_path_eom import FlightPathEOM
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
-from aviary.mission.ode.altitude_rate import AltitudeRate
 from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
 
 

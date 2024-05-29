@@ -123,6 +123,7 @@ class BaseODE(om.Group):
             )
             alpha_comp_inputs = ["required_lift", Dynamic.Mission.LIFT]
 
+        # Future controller modes
         # elif alpha_mode is AlphaModes.FLIGHT_PATH_ANGLE:
         #     alpha_comp = om.BalanceComp(
         #         name="alpha",
@@ -137,7 +138,6 @@ class BaseODE(om.Group):
         #     )
         #     alpha_comp_inputs = [Dynamic.Mission.FLIGHT_PATH_ANGLE]
 
-        # Future controller modes
         # elif alpha_mode is AlphaModes.ALTITUDE_RATE:
         #     alpha_comp = om.BalanceComp(
         #         name="alpha",
