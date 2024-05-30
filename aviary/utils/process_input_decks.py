@@ -145,10 +145,6 @@ def parse_inputs(vehicle_deck, aircraft_values: AviaryValues(), meta_data=_MetaD
                     UserWarning)
                 continue
 
-            else:
-                # no warnings in all other cases
-                continue
-
             if aircraft_values.get_val('verbosity').value >= 2:
                 print('Unused:', var_name, var_values, comment)
 
