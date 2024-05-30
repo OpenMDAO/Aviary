@@ -73,12 +73,6 @@ def create_vehicle(vehicle_deck='', verbosity=Verbosity.BRIEF, meta_data=_MetaDa
         'reserves': 0
     }
 
-    # update initial guesses that shouldn't be zero
-    if initial_guesses['rotation_mass'] == 0:
-        initial_guesses['rotation_mass'] = 0.99
-    if initial_guesses['fuel_burn_per_passenger_mile'] == 0:
-        initial_guesses['fuel_burn_per_passenger_mile'] = 0.1
-
     if isinstance(vehicle_deck, AviaryValues):
         aircraft_values.update(vehicle_deck)
     else:
@@ -264,6 +258,9 @@ def initial_guessing(aircraft_values: AviaryValues(), initial_guesses):
     reserve_frac = aircraft_values.get_val(
         Aircraft.Design.RESERVE_FUEL_FRACTION, units='unitless')
 
+    if initial_guesses['fuel_burn_per_passenger_mile'] <= 0:
+        initial_guesses['fuel_burn_per_passenger_mile'] = 0.1
+
     reserves = initial_guesses['reserves']
     if reserves < 0.0:
         raise ValueError(
@@ -318,6 +315,8 @@ def initial_guessing(aircraft_values: AviaryValues(), initial_guesses):
             cruise_mass_final
     initial_guesses['cruise_mass_final'] = cruise_mass_final
 
+    if initial_guesses['rotation_mass'] <= 0:
+        initial_guesses['rotation_mass'] = 0.99
     if initial_guesses['rotation_mass'] <= 1:  # fraction of takeoff mass
         initial_guesses['rotation_mass'] = mission_mass * \
             initial_guesses['rotation_mass']
