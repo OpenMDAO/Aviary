@@ -139,9 +139,14 @@ def parse_inputs(vehicle_deck, aircraft_values: AviaryValues(), meta_data=_MetaD
                 initial_guesses[var_name] = float(var_values[0])
                 continue
 
-            else:
+            elif ":" in var_name:
                 warnings.warn(
-                    f"Variable '{var_name}' is not in meta_data nor in 'guess_names'. It is ignored.")
+                    f"Variable '{var_name}' is not in meta_data nor in 'guess_names'. It is ignored.",
+                    UserWarning)
+                continue
+
+            else:
+                # no warnings in all other cases
                 continue
 
             if aircraft_values.get_val('verbosity').value >= 2:
