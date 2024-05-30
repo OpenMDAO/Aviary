@@ -63,15 +63,22 @@ def create_vehicle(vehicle_deck='', verbosity=Verbosity.BRIEF):
     initial_guesses = {
         # initial_guesses is a dictionary that contains values used to initialize the trajectory
         'actual_takeoff_mass': 0,
-        'rotation_mass': .99,
+        'rotation_mass': 0,
         'operating_empty_mass': 0,
-        'fuel_burn_per_passenger_mile': 0.1,
+        'fuel_burn_per_passenger_mile': 0,
         'cruise_mass_final': 0,
         'flight_duration': 0,
         'time_to_climb': 0,
         'climb_range': 0,
         'reserves': 0
     }
+
+    #update initial guesses that can't be zero
+    if initial_guesses['rotation_mass'] == 0:
+        initial_guesses['rotation_mass'] = 0.99
+    if initial_guesses['fuel_burn_per_passenger_mile'] == 0:
+        initial_guesses['fuel_burn_per_passenger_mile'] = 0.1
+
     if isinstance(vehicle_deck, AviaryValues):
         aircraft_values.update(vehicle_deck)
     else:
