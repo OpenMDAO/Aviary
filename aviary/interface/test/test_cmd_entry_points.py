@@ -34,6 +34,12 @@ class CommandEntryPointsTestCases(unittest.TestCase):
             ' --optimizer IPOPT --max_iter 1 --shooting'
         self.run_and_test_cmd(cmd)
 
+    @require_pyoptsparse(optimizer="IPOPT")
+    def bench_test_phase_info_cmd(self):
+        cmd = 'aviary run_mission models/test_aircraft/aircraft_for_bench_GwGm.csv --optimizer IPOPT --max_iter 1' \
+            ' --phase_info interface/default_phase_info/two_dof.py'
+        self.run_and_test_cmd(cmd)
+
     def test_diff_configuration_conversion(self):
         filepath = pkg_resources.resource_filename('aviary',
                                                    'models/test_aircraft/converter_configuration_test_data_GwGm.dat')
