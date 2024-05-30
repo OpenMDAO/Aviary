@@ -59,7 +59,7 @@ def create_vehicle(vehicle_deck='', verbosity=Verbosity.BRIEF, meta_data=_MetaDa
     aircraft_values.set_val('mass_defect', val=10000, units='lbm')
     aircraft_values.set_val(Settings.PROBLEM_TYPE, val=ProblemType.SIZING)
     aircraft_values.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False)
-    
+
     initial_guesses = {
         # initial_guesses is a dictionary that contains values used to initialize the trajectory
         'actual_takeoff_mass': 0,
@@ -73,7 +73,7 @@ def create_vehicle(vehicle_deck='', verbosity=Verbosity.BRIEF, meta_data=_MetaDa
         'reserves': 0
     }
 
-    #update initial guesses that can't be zero
+    # update initial guesses that shouldn't be zero
     if initial_guesses['rotation_mass'] == 0:
         initial_guesses['rotation_mass'] = 0.99
     if initial_guesses['fuel_burn_per_passenger_mile'] == 0:
@@ -89,7 +89,7 @@ def create_vehicle(vehicle_deck='', verbosity=Verbosity.BRIEF, meta_data=_MetaDa
     return aircraft_values, initial_guesses
 
 
-def parse_inputs(vehicle_deck, aircraft_values: AviaryValues = None, initial_guesses = None, meta_data=_MetaData):
+def parse_inputs(vehicle_deck, aircraft_values: AviaryValues = None, initial_guesses=None, meta_data=_MetaData):
     """
     Parses the input files and updates the aircraft values and initial guesses. The function reads the
     vehicle deck file, processes each line, and updates the aircraft_values object based on the data found.
@@ -99,7 +99,7 @@ def parse_inputs(vehicle_deck, aircraft_values: AviaryValues = None, initial_gue
     vehicle_deck (str): The vehicle deck file path.
     aircraft_values (AviaryValues): An instance of AviaryValues to be updated.
     initial_guesses: An initialized dictionary of trajectory values to be updated.
-    
+
     Returns
     -------
     tuple: Updated aircraft values and initial guesses.
