@@ -38,6 +38,7 @@ class ClimbODE(BaseODE):
         )
 
     def setup(self):
+        self.options['auto_order'] = True
         nn = self.options["num_nodes"]
         analysis_scheme = self.options["analysis_scheme"]
         aviary_options = self.options['aviary_options']
@@ -148,7 +149,6 @@ class ClimbODE(BaseODE):
         kwargs = {'num_nodes': nn, 'aviary_inputs': aviary_options,
                   'method': 'cruise'}
         # collect the propulsion group names for later use with
-        prop_groups = []
         for subsystem in core_subsystems:
             system = subsystem.build_mission(**kwargs)
             if system is not None:
@@ -159,9 +159,6 @@ class ClimbODE(BaseODE):
                                                          **kwargs),
                                                      promotes_outputs=subsystem.mission_outputs(**kwargs))
                 else:
-                    if isinstance(subsystem, PropulsionBuilderBase):
-                        prop_groups.append(subsystem.name)
-
                     self.add_subsystem(subsystem.name,
                                        system,
                                        promotes_inputs=subsystem.mission_inputs(
@@ -220,10 +217,6 @@ class ClimbODE(BaseODE):
 
         # the last two subsystems will also be used for constraints
         self.add_excess_rate_comps(nn)
-
-        if analysis_scheme is AnalysisScheme.COLLOCATION:
-            self.set_order(['params', 'USatm', 'mach_balance_group'] + prop_groups +
-                           ['lift_balance_group', 'constraints', 'SPECIFIC_ENERGY_RATE_EXCESS', 'ALTITUDE_RATE_MAX'])
 
         ParamPort.set_default_vals(self)
         self.set_input_defaults("CL_max", val=5 * np.ones(nn), units="unitless")

@@ -4,6 +4,7 @@
 
 ```{note}
 If you do not already have Python installed, we recommend installing [Anaconda](https://www.anaconda.com/download).
+The minimum supported version of Python is 3.9; we recommend using the latest release of Python.
 ```
 
 The simplest way to install Aviary to use pip in a terminal:
