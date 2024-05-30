@@ -17,21 +17,24 @@ class Nacelles(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        engine_count = len(self.options['aviary_options'].get_val(
+        num_engine_type = len(self.options['aviary_options'].get_val(
             Aircraft.Engine.NUM_ENGINES))
-        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, val=np.zeros(engine_count))
-        add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH, val=np.zeros(engine_count))
+        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER,
+                         val=np.zeros(num_engine_type))
+        add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH,
+                         val=np.zeros(num_engine_type))
         add_aviary_input(self, Aircraft.Nacelle.WETTED_AREA_SCALER,
-                         val=np.zeros(engine_count))
+                         val=np.zeros(num_engine_type))
 
         add_aviary_output(self, Aircraft.Nacelle.TOTAL_WETTED_AREA, 0.0)
-        add_aviary_output(self, Aircraft.Nacelle.WETTED_AREA, val=np.zeros(engine_count))
+        add_aviary_output(self, Aircraft.Nacelle.WETTED_AREA,
+                          val=np.zeros(num_engine_type))
 
     def setup_partials(self):
         # derivatives w.r.t vectorized engine inputs have known sparsity pattern
-        engine_count = len(self.options['aviary_options'].get_val(
+        num_engine_type = len(self.options['aviary_options'].get_val(
             Aircraft.Engine.NUM_ENGINES))
-        shape = np.arange(engine_count)
+        shape = np.arange(num_engine_type)
 
         self.declare_partials(
             Aircraft.Nacelle.TOTAL_WETTED_AREA,
@@ -57,13 +60,13 @@ class Nacelles(om.ExplicitComponent):
         # how many of each unique engine type are on the aircraft (array)
         num_engines = aviary_options.get_val(Aircraft.Engine.NUM_ENGINES)
         # how many unique engine types are there (int)
-        engine_count = len(num_engines)
+        num_engine_type = len(num_engines)
 
         avg_diam = inputs[Aircraft.Nacelle.AVG_DIAMETER]
         avg_length = inputs[Aircraft.Nacelle.AVG_LENGTH]
         scaler = inputs[Aircraft.Nacelle.WETTED_AREA_SCALER]
 
-        wetted_area = np.zeros(engine_count, dtype=avg_diam.dtype)
+        wetted_area = np.zeros(num_engine_type, dtype=avg_diam.dtype)
 
         calc_idx = np.where(num_engines >= 1)
         wetted_area[calc_idx] = scaler[calc_idx] * 2.8 * \

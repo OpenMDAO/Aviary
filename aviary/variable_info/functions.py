@@ -6,7 +6,6 @@ from openmdao.core.component import Component
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.core_promotes import core_mission_inputs
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.variable_info.variables import Settings
 
 # ---------------------------
 # Helper functions for setting up inputs/outputs in components

@@ -29,18 +29,18 @@ class PropulsionMission(om.Group):
         nn = self.options['num_nodes']
         options: AviaryValues = self.options['aviary_options']
         engine_models = options.get_val('engine_models')
-        engine_count = len(engine_models)
+        num_engine_type = len(engine_models)
 
         # TODO what if "engine" is not an EngineModel object? Type is never checked/enforced
 
-        if engine_count > 1:
+        if num_engine_type > 1:
 
             # We need a single component with scale_factor. Dymos can't find it when it is
             # already sliced across several component.
             comp = om.ExecComp(
                 "y=x",
-                y={'val': np.ones(engine_count), 'units': 'unitless'},
-                x={'val': np.ones(engine_count), 'units': 'unitless'}
+                y={'val': np.ones(num_engine_type), 'units': 'unitless'},
+                x={'val': np.ones(num_engine_type), 'units': 'unitless'}
             )
             self.add_subsystem(
                 "scale_passthrough",
@@ -94,7 +94,7 @@ class PropulsionMission(om.Group):
 
         # TODO might be able to avoid hardcoding using propulsion Enums
         # mux component to vectorize individual outputs into 2d arrays
-        perf_mux = om.MuxComp(vec_size=engine_count)
+        perf_mux = om.MuxComp(vec_size=num_engine_type)
         # add each engine data variable to mux component
         perf_mux.add_var(
             Dynamic.Mission.THRUST,
@@ -206,18 +206,18 @@ class PropulsionSum(om.ExplicitComponent):
 
     def setup(self):
         nn = self.options['num_nodes']
-        engine_count = len(self.options['aviary_options'].get_val('engine_models'))
+        num_engine_type = len(self.options['aviary_options'].get_val('engine_models'))
 
         self.add_input(Dynamic.Mission.THRUST, val=np.zeros(
-            (nn, engine_count)), units='lbf')
+            (nn, num_engine_type)), units='lbf')
         self.add_input(Dynamic.Mission.THRUST_MAX,
-                       val=np.zeros((nn, engine_count)), units='lbf')
-        self.add_input(Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE, val=np.zeros((nn, engine_count)),
+                       val=np.zeros((nn, num_engine_type)), units='lbf')
+        self.add_input(Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE, val=np.zeros((nn, num_engine_type)),
                        units='lbm/h')
         self.add_input(Dynamic.Mission.ELECTRIC_POWER,
-                       val=np.zeros((nn, engine_count)), units='kW')
+                       val=np.zeros((nn, num_engine_type)), units='kW')
         self.add_input(Dynamic.Mission.NOX_RATE,
-                       val=np.zeros((nn, engine_count)), units='lbm/h')
+                       val=np.zeros((nn, num_engine_type)), units='lbm/h')
 
         self.add_output(Dynamic.Mission.THRUST_TOTAL, val=np.zeros(nn), units='lbf')
         self.add_output(Dynamic.Mission.THRUST_MAX_TOTAL, val=np.zeros(nn), units='lbf')
@@ -230,11 +230,11 @@ class PropulsionSum(om.ExplicitComponent):
     def setup_partials(self):
         nn = self.options['num_nodes']
         num_engines = self.options['aviary_options'].get_val(Aircraft.Engine.NUM_ENGINES)
-        engine_count = len(num_engines)
+        num_engine_type = len(num_engines)
         deriv = np.tile(num_engines, nn)
 
-        r = np.repeat(np.arange(nn, dtype=int), engine_count)
-        c = np.arange(nn * engine_count, dtype=int)
+        r = np.repeat(np.arange(nn, dtype=int), num_engine_type)
+        c = np.arange(nn * num_engine_type, dtype=int)
 
         self.declare_partials(
             Dynamic.Mission.THRUST_TOTAL,

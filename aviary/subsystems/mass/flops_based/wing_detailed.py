@@ -20,12 +20,12 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         num_input_stations = len(input_station_dist)
         total_num_wing_engines = aviary_options.get_val(
             Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES)
-        engine_count = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
+        num_engine_type = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
 
         # wing locations are different for each engine type - ragged array!
         # this "tricks" numpy into allowing a ragged array, with limitations (each index
         # in the numpy array contains a list, instead of being a true 2d matrix)
-        # wing_location_default = np.empty(engine_count, object)
+        # wing_location_default = np.empty(num_engine_type, object)
         # wing_location_default[:] = [np.array([0]*int(num)) for num in num_wing_engines/2]
 
         add_aviary_input(self, Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
@@ -39,7 +39,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
 
         add_aviary_input(self, Mission.Design.GROSS_MASS, val=0.0)
 
-        add_aviary_input(self, Aircraft.Engine.POD_MASS, val=np.zeros(engine_count))
+        add_aviary_input(self, Aircraft.Engine.POD_MASS, val=np.zeros(num_engine_type))
 
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, val=0.0)
 
@@ -71,7 +71,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         num_integration_stations = \
             aviary_options.get_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS)
         num_wing_engines = aviary_options.get_val(Aircraft.Engine.NUM_WING_ENGINES)
-        engine_count = len(num_wing_engines)
+        num_engine_type = len(num_wing_engines)
 
         # TODO: Support all options for this parameter.
         # 0.0 : input distribution
@@ -186,11 +186,11 @@ class DetailedWingBendingFact(om.ExplicitComponent):
                     * sa**2 + 0.03*caya * (1.0-0.5*faert)*sa))
         outputs[Aircraft.Wing.BENDING_FACTOR] = bt
 
-        inertia_factor = np.zeros(engine_count, chord.dtype)
+        inertia_factor = np.zeros(num_engine_type, chord.dtype)
         # idx is the index where this engine type begins in location list
         idx = 0
         # i is the counter for which engine model we are checking
-        for i in range(engine_count):
+        for i in range(num_engine_type):
             # idx2 is the last index for the range of engines of this type
             idx2 = idx + int(num_wing_engines[i]/2)
 

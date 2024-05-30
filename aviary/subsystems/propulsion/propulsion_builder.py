@@ -54,7 +54,7 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
         return PropulsionMission(num_nodes=num_nodes, aviary_options=aviary_inputs)
 
     def get_parameters(self, aviary_inputs=None, phase_info=None):
-        engine_count = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
+        num_engine_type = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
         params = {}
 
         # add all variables from Engine & Nacelle to params
@@ -62,10 +62,10 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
         for var in _get_engine_variables():
             if var in aviary_inputs:
                 # TODO engine_wing_location
-                params[var] = {'shape': (engine_count, ), 'static_target': True}
+                params[var] = {'shape': (num_engine_type, ), 'static_target': True}
 
         params = {}  # For now
-        params[Aircraft.Engine.SCALE_FACTOR] = {'shape': (engine_count, ),
+        params[Aircraft.Engine.SCALE_FACTOR] = {'shape': (num_engine_type, ),
                                                 'static_target': True}
         return params
 

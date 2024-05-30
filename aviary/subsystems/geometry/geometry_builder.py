@@ -77,14 +77,14 @@ class CoreGeometryBuilder(GeometryBuilderBase):
         super().build_mission(num_nodes, aviary_inputs)
 
     def get_parameters(self, aviary_inputs=None, phase_info=None):
-        engine_count = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
+        num_engine_type = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
         params = {}
 
         for entry in Aircraft.Nacelle.__dict__:
             var = getattr(Aircraft.Nacelle, entry)
             if var in aviary_inputs:
                 if 'total' not in var:
-                    params[var] = {'shape': (engine_count), 'static_target': True}
+                    params[var] = {'shape': (num_engine_type), 'static_target': True}
 
         return params
 
