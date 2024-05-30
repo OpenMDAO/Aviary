@@ -15,7 +15,12 @@ from panel.theme import DefaultTheme
 
 import openmdao.api as om
 from openmdao.utils.general_utils import env_truthy
-from openmdao.utils.gui_testing_utils import get_free_port
+try:
+    from openmdao.utils.gui_testing_utils import get_free_port
+except:
+    # If get_free_port is unavailable, the default port will be used
+    def get_free_port():
+        return 5000
 
 # support getting this function from OpenMDAO post movement of the function to utils
 #    but also support its old location
