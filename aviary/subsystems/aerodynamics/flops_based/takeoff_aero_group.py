@@ -72,6 +72,11 @@ class TakeoffAeroGroup(om.Group):
         )
 
         options.declare(
+            'landing_gear_up', default=False, types=bool,
+            desc='true for retracted landing gear'
+        )
+
+        options.declare(
             'aviary_options', types=AviaryValues,
             desc='collection of Aircraft/Mission specific options')
 
@@ -133,9 +138,11 @@ class TakeoffAeroGroup(om.Group):
             'takeoff_polar.drag_coefficient', 'ground_effect.base_drag_coefficient'
         )
 
-        gear_drag = aviary_options.get_val(Aircraft.LandingGear.DRAG_COEFFICIENT)
+        f = f'climb_drag_coefficient = ground_effect_drag'
 
-        f = f'climb_drag_coefficient = ground_effect_drag + {gear_drag}'
+        if not options['landing_gear_up']:
+            gear_drag = aviary_options.get_val(Aircraft.LandingGear.DRAG_COEFFICIENT)
+            f = f + f' + {gear_drag}'
 
         if options['use_spoilers']:
             spoiler_drag = options['spoiler_drag_coefficient']
