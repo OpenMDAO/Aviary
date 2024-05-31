@@ -56,35 +56,35 @@ class SimpleCD(om.ExplicitComponent):
         FCDSUP = inputs[Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR]
         M = inputs[Dynamic.Mission.MACH]
 
-        CD = inputs['CD_prescaled']
+        CD_prescaled = inputs['CD_prescaled']
 
         idx_sup = np.where(M >= 1.0)
-        CD_scaled = CD * FCDSUB
-        CD_scaled[idx_sup] = CD[idx_sup] * FCDSUP
+        CD_scaled = CD_prescaled * FCDSUB
+        CD_scaled[idx_sup] = CD_prescaled[idx_sup] * FCDSUP
         outputs['CD'] = CD_scaled
 
     def compute_partials(self, inputs, partials):
         FCDSUB = inputs[Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR]
         FCDSUP = inputs[Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR]
         M = inputs[Dynamic.Mission.MACH]
-        CD = inputs['CD_prescaled']
+        CD_prescaled = inputs['CD_prescaled']
 
         idx_sup = np.where(M >= 1.0)
-        CD_scaled = CD * FCDSUB
-        CD_scaled[idx_sup] = CD[idx_sup] * FCDSUP
+        CD_scaled = CD_prescaled * FCDSUB
+        CD_scaled[idx_sup] = CD_prescaled[idx_sup] * FCDSUP
 
         idx_sub = np.where(M < 1.0)
-        dCD = np.ones(CD.shape)
+        dCD = np.ones_like(CD_prescaled)
         dCD[idx_sub] = FCDSUB
         dCD[idx_sup] = FCDSUP
         partials['CD', 'CD_prescaled'] = dCD
 
-        dF = np.zeros(CD.shape)
-        dF[idx_sub] = CD[idx_sub]
+        dF = np.zeros_like(CD_prescaled)
+        dF[idx_sub] = CD_prescaled[idx_sub]
         partials['CD', Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR] = dF
 
-        dF = np.zeros(CD.shape)
-        dF[idx_sup] = CD[idx_sup]
+        dF = np.zeros_like(CD_prescaled)
+        dF[idx_sup] = CD_prescaled[idx_sup]
         partials['CD', Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR] = dF
 
 
