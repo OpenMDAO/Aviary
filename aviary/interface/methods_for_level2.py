@@ -1159,9 +1159,15 @@ class AviaryProblem(om.Problem):
                     ('mass_final', Mission.Landing.TOUCHDOWN_MASS),
                 ])
             else:
-                # timeseries has to be used because Breguet cruise phases don't have states
-                self.model.connect(f"traj.{self.regular_phases[0]}.timeseries.mass",
-                                   "fuel_burned.initial_mass", src_indices=[0])
+                if self.pre_mission_info['include_takeoff']:
+                    self.post_mission.promotes('fuel_burned', [
+                        ('initial_mass', Mission.Design.GROSS_MASS),
+                    ])
+                else:
+                    # timeseries has to be used because Breguet cruise phases don't have states
+                    self.model.connect(f"traj.{self.regular_phases[0]}.timeseries.mass",
+                                       "fuel_burned.initial_mass", src_indices=[0])
+
                 self.model.connect(f"traj.{self.regular_phases[-1]}.timeseries.mass",
                                    "fuel_burned.mass_final", src_indices=[-1])
 

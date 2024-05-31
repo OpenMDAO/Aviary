@@ -9,6 +9,7 @@ from aviary.mission.gasp_based.phases.landing_components import (
 from aviary.subsystems.aerodynamics.gasp_based.gaspaero import LowSpeedAero
 from aviary.subsystems.propulsion.propulsion_mission import PropulsionMission
 from aviary.variable_info.enums import SpeedType
+from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
@@ -144,8 +145,8 @@ class LandingSegment(BaseODE):
 
         self.add_subsystem(
             "aero_td",
-            LowSpeedAero(
-                num_nodes=1, aviary_options=self.options['aviary_options'], retract_flaps=True, retract_gear=False),
+            LowSpeedAero(num_nodes=1, aviary_options=self.options['aviary_options'],
+                         retract_flaps=True, retract_gear=False),
             promotes_inputs=[
                 "*",
                 (Dynamic.Mission.ALTITUDE, Mission.Landing.AIRPORT_ALTITUDE),
