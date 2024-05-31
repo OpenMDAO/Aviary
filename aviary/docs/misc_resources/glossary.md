@@ -75,4 +75,7 @@ state
 trajectory optimization
     The process of determining the optimal trajectory of an aircraft.
     This includes determining the aircraft's flight path, velocity, and acceleration as a function of time.
+
+thrust-specific fuel consumption (TSFC or SFC)
+    The fuel efficiency of an engine design with respect to thrust output.
 ```
