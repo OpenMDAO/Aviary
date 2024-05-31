@@ -132,6 +132,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
             elif method == 'cruise':
                 if 'aero_data' in kwargs:
                     aero_group = TabularCruiseAero(num_nodes=num_nodes,
+                                                   aviary_options=aviary_inputs,
                                                    aero_data=kwargs.pop('aero_data'),
                                                    **kwargs)
                 else:

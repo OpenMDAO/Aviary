@@ -10,6 +10,7 @@ from packaging import version
 
 from aviary.subsystems.aerodynamics.gasp_based.table_based import (
     TabularCruiseAero, TabularLowSpeedAero)
+from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -92,11 +93,12 @@ class TestLowSpeedAero(unittest.TestCase):
     def test_groundroll(self):
         # takeoff with flaps applied, gear down, zero alt
         prob = om.Problem()
-        prob.model = TabularLowSpeedAero(num_nodes=4,
-                                         free_aero_data=self.free_data,
-                                         flaps_aero_data=self.flaps_data,
-                                         ground_aero_data=self.ground_data,
-                                         extrapolate=True)
+        prob.model = TabularLowSpeedAero(
+            num_nodes=4,
+            free_aero_data=self.free_data,
+            flaps_aero_data=self.flaps_data,
+            ground_aero_data=self.ground_data,
+            extrapolate=True)
         prob.setup()
 
         prob.set_val("t_curr", [0.0, 1.0, 2.0, 3.0])
@@ -127,11 +129,12 @@ class TestLowSpeedAero(unittest.TestCase):
     def test_takeoff(self):
         # takeoff crossing flap retraction and gear retraction points
         prob = om.Problem()
-        prob.model = TabularLowSpeedAero(num_nodes=8,
-                                         free_aero_data=self.free_data,
-                                         flaps_aero_data=self.flaps_data,
-                                         ground_aero_data=self.ground_data,
-                                         extrapolate=True)
+        prob.model = TabularLowSpeedAero(
+            num_nodes=8,
+            free_aero_data=self.free_data,
+            flaps_aero_data=self.flaps_data,
+            ground_aero_data=self.ground_data,
+            extrapolate=True)
         prob.setup()
 
         prob.set_val(

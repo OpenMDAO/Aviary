@@ -7,6 +7,7 @@ from openmdao.utils.testing_utils import use_tempdirs
 from openmdao.utils.testing_utils import require_pyoptsparse
 from openmdao.core.problem import _clear_problem_names
 
+from aviary.api import Mission
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.variable_info.enums import Verbosity
 from aviary.validation_cases.benchmark_utils import \
@@ -378,6 +379,12 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
                           max_iter=50, optimizer='SNOPT')
 
         compare_against_expected_values(prob, self.expected_dict)
+
+        # This is one of the few places we test Height Energy + simple takeoff.
+        overall_fuel = prob.get_val(Mission.Summary.TOTAL_FUEL_MASS)
+
+        # Making sure we include the fuel mass consumed in take-off and taxi.
+        self.assertGreater(overall_fuel, 40000.)
 
 
 @use_tempdirs

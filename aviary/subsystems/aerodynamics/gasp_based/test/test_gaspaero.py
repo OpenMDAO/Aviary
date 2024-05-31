@@ -8,6 +8,7 @@ import pandas as pd
 from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.subsystems.aerodynamics.gasp_based.gaspaero import CruiseAero, LowSpeedAero
+from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.utils.aviary_values import AviaryValues
 
@@ -28,7 +29,7 @@ class GASPAeroTest(unittest.TestCase):
     def test_cruise(self):
         prob = om.Problem()
         prob.model.add_subsystem(
-            "aero", CruiseAero(num_nodes=2, aviary_options=self.aviary_options, input_atmos=True), promotes=["*"]
+            "aero", CruiseAero(num_nodes=2, aviary_options=get_option_defaults(), input_atmos=True), promotes=["*"]
         )
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -60,7 +61,7 @@ class GASPAeroTest(unittest.TestCase):
     def test_ground(self):
         prob = om.Problem()
         prob.model.add_subsystem(
-            "aero", LowSpeedAero(num_nodes=2, aviary_options=self.aviary_options, input_atmos=True), promotes=["*"]
+            "aero", LowSpeedAero(num_nodes=2, aviary_options=get_option_defaults(), input_atmos=True), promotes=["*"]
         )
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -114,14 +115,14 @@ class GASPAeroTest(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem(
             "alpha_in",
-            LowSpeedAero(aviary_options=self.aviary_options),
+            LowSpeedAero(aviary_options=get_option_defaults()),
             promotes_inputs=["*", ("alpha", "alpha_in")],
             promotes_outputs=[(Dynamic.Mission.LIFT, "lift_req")],
         )
 
         prob.model.add_subsystem(
             "alpha_out",
-            LowSpeedAero(aviary_options=self.aviary_options, output_alpha=True),
+            LowSpeedAero(aviary_options=get_option_defaults(), output_alpha=True),
             promotes_inputs=["*", "lift_req"],
         )
 

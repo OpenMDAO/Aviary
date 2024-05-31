@@ -38,6 +38,7 @@ class FlightPathODE(BaseODE):
             desc="If true then no flaps or gear are included. Useful for high-speed flight phases.")
 
     def setup(self):
+        self.options['auto_order'] = True
         nn = self.options["num_nodes"]
         aviary_options = self.options['aviary_options']
         alpha_mode = self.options['alpha_mode']
@@ -109,7 +110,6 @@ class FlightPathODE(BaseODE):
             promotes_outputs=[Dynamic.Mission.DYNAMIC_PRESSURE,] + speed_outputs,
         )
 
-        lift_comp = []
         if alpha_mode is AlphaModes.DEFAULT:
             # alpha as input
             pass
@@ -141,7 +141,6 @@ class FlightPathODE(BaseODE):
                     ],
                     promotes_outputs=['required_lift']
                 )
-                lift_comp = ['calc_weight', 'calc_lift']
             self.AddAlphaControl(alpha_mode=alpha_mode, target_load_factor=1,
                                  atol=1e-6, rtol=1e-12, num_nodes=nn, print_level=print_level)
 
@@ -211,7 +210,6 @@ class FlightPathODE(BaseODE):
         self.add_excess_rate_comps(nn)
 
         # Example of how to use a print_comp
-        debug_comp = []
         if False:
             from aviary.utils.functions import create_printcomp
             dummy_comp = create_printcomp(
@@ -252,18 +250,6 @@ class FlightPathODE(BaseODE):
                                    'descent_fuel',
                                ],
                                )
-
-            self.set_order(['params', 'USatm', 'fc',
-                            ] + lift_comp + [
-                'core_aerodynamics',
-                'alpha_comp',
-                'prop_group',
-                'flight_path_eom',
-                'mass_trigger',
-                'SPECIFIC_ENERGY_RATE_EXCESS',
-                'ALTITUDE_RATE_MAX',
-            ] +
-                debug_comp)
 
         ParamPort.set_default_vals(self)
         if not self.options["clean"]:
