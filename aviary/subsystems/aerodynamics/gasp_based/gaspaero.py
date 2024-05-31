@@ -1,4 +1,6 @@
 import numpy as np
+import warnings
+
 import openmdao.api as om
 from openmdao.utils import cs_safe as cs
 
@@ -1389,10 +1391,8 @@ class LowSpeedAero(om.Group):
                 # so ensure this is what's passed to DragCoef
                 promotes_outputs=[("CL", "CL_full_flaps")],
             )
-            # Note: alpha is not an output
+            warnings.warn("Alpha is NOT an output from LowSpeedAero.")
         else:
-            # TODO this makes "output_alpha" a bit of a misnomer, would computing an
-            # alpha be useful? an issue is ground effects depend on alpha
             self.add_subsystem(
                 "lift_coef",
                 LiftCoeff(num_nodes=nn),
