@@ -95,7 +95,7 @@ class TestAviaryCSV(unittest.TestCase):
             file.write("aircraft:anti_icing:mass,551,lbm\n")  # a good variable
         vehicle_deck = get_path(file_name)
 
-        msg = "Variable 'aircraft:wing:mass_scalar' is not in meta_data nor in 'guess_names'. It is ignored."
+        msg = "Variable 'aircraft:wing:mass_scalar' is not in meta_data nor in 'guess_names'. It will be ignored."
         with assert_warning(UserWarning, msg):
             parse_inputs(vehicle_deck, aircraft_values)
 
