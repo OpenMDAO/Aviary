@@ -1,15 +1,17 @@
 import numpy as np
+
 import openmdao.api as om
 from dymos.models.atmosphere import USatm1976Comp
 
 from aviary.mission.flops_based.ode.mission_EOM import MissionEOM
 from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs, add_SGM_required_outputs
+from aviary.subsystems.propulsion.throttle_allocation import ThrottleAllocator
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import promote_aircraft_and_mission_vars
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.variable_info.variables import Dynamic, Mission, Aircraft
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.variables_in import VariablesIn
-from aviary.variable_info.enums import AnalysisScheme
+from aviary.variable_info.enums import AnalysisScheme, ThrottleAllocation
 
 
 class ExternalSubsystemGroup(om.Group):
@@ -47,6 +49,11 @@ class MissionODE(om.Group):
             desc='flag to enforce throttle constraints on the path or at the segment boundaries or using solver bounds'
         )
         self.options.declare(
+            'throttle_allocation', default=ThrottleAllocation.FIXED,
+            types=ThrottleAllocation,
+            desc='Flag that determines how to handle throttles for multiple engines.'
+        )
+        self.options.declare(
             "analysis_scheme",
             default=AnalysisScheme.COLLOCATION,
             types=AnalysisScheme,
@@ -60,7 +67,7 @@ class MissionODE(om.Group):
         aviary_options = options['aviary_options']
         core_subsystems = options['core_subsystems']
         subsystem_options = options['subsystem_options']
-        engine_count = len(aviary_options.get_val('engine_models'))
+        num_engine_type = len(aviary_options.get_val('engine_models'))
 
         if analysis_scheme is AnalysisScheme.SHOOTING:
             SGM_required_inputs = {
@@ -169,21 +176,61 @@ class MissionODE(om.Group):
                 'thrust_required',
             ])
 
-        # add a balance comp to compute throttle based on the altitude rate
-        self.add_subsystem(name='throttle_balance',
-                           subsys=om.BalanceComp(name=Dynamic.Mission.THROTTLE,
-                                                 units="unitless",
-                                                 val=np.ones(nn),
-                                                 lhs_name='thrust_required',
-                                                 rhs_name=Dynamic.Mission.THRUST_TOTAL,
-                                                 eq_units="lbf",
-                                                 normalize=False,
-                                                 lower=0.0 if options['throttle_enforcement'] == 'bounded' else None,
-                                                 upper=1.0 if options['throttle_enforcement'] == 'bounded' else None,
-                                                 res_ref=1.0e6,
-                                                 ),
-                           promotes_inputs=['*'],
-                           promotes_outputs=['*'])
+        # THROTTLE Section
+        # TODO: Split this out into a function that can be used by the other ODEs.
+        if num_engine_type > 1:
+
+            # Multi Engine
+
+            self.add_subsystem(name='throttle_balance',
+                               subsys=om.BalanceComp(name="aggregate_throttle",
+                                                     units="unitless",
+                                                     val=np.ones((nn, )),
+                                                     lhs_name='thrust_required',
+                                                     rhs_name=Dynamic.Mission.THRUST_TOTAL,
+                                                     eq_units="lbf",
+                                                     normalize=False,
+                                                     res_ref=1.0e6,
+                                                     ),
+                               promotes_inputs=['*'],
+                               promotes_outputs=['*'])
+
+            self.add_subsystem(
+                "throttle_allocator",
+                ThrottleAllocator(
+                    num_nodes=nn,
+                    aviary_options=aviary_options,
+                    throttle_allocation=self.options['throttle_allocation']
+                ),
+                promotes_inputs=['*'],
+                promotes_outputs=['*']
+            )
+
+        else:
+
+            # Single Engine
+
+            # Add a balance comp to compute throttle based on the required thrust.
+            self.add_subsystem(name='throttle_balance',
+                               subsys=om.BalanceComp(name=Dynamic.Mission.THROTTLE,
+                                                     units="unitless",
+                                                     val=np.ones((nn, )),
+                                                     lhs_name='thrust_required',
+                                                     rhs_name=Dynamic.Mission.THRUST_TOTAL,
+                                                     eq_units="lbf",
+                                                     normalize=False,
+                                                     lower=0.0
+                                                     if options['throttle_enforcement'] == 'bounded'
+                                                     else None,
+                                                     upper=1.0
+                                                     if options['throttle_enforcement'] == 'bounded'
+                                                     else None,
+                                                     res_ref=1.0e6,
+                                                     ),
+                               promotes_inputs=['*'],
+                               promotes_outputs=['*'])
+
+            self.set_input_defaults(Dynamic.Mission.THROTTLE, val=1.0, units='unitless')
 
         self.set_input_defaults(Dynamic.Mission.MACH, val=np.ones(nn), units='unitless')
         self.set_input_defaults(Dynamic.Mission.MASS, val=np.ones(nn), units='kg')
@@ -191,9 +238,6 @@ class MissionODE(om.Group):
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.ones(nn), units='m')
         self.set_input_defaults(Dynamic.Mission.ALTITUDE_RATE,
                                 val=np.ones(nn), units='m/s')
-        self.set_input_defaults(
-            Dynamic.Mission.THROTTLE, val=np.ones((nn, engine_count)),
-            units='unitless')
 
         if options['use_actual_takeoff_mass']:
             exec_comp_string = 'initial_mass_residual = initial_mass - mass[0]'

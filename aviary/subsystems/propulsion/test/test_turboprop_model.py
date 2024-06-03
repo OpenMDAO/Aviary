@@ -84,7 +84,7 @@ class TurbopropTest(unittest.TestCase):
 
     def get_results(self, point_names=None, display_results=False):
         shp = self.prob.get_val(
-            'turboprop_model.shaft_power_corrected_unscaled', units='hp')
+            'turboprop_model.shaft_power_corrected', units='hp')
         total_thrust = self.prob.get_val(Dynamic.Mission.THRUST, units='lbf')
         prop_thrust = self.prob.get_val(
             'turboprop_model.propeller_thrust', units='lbf')
@@ -232,4 +232,7 @@ class ExamplePropModel(SubsystemBuilderBase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    # unittest.main()
+    test = TurbopropTest()
+    test.setUp()
+    test.test_case_1()
