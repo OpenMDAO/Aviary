@@ -17,25 +17,42 @@ class EngineSize(om.ExplicitComponent):
         )
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Engine.REFERENCE_DIAMETER, 5.8)
-        add_aviary_input(self, Aircraft.Engine.SCALE_FACTOR, 1.0)
-        add_aviary_input(self, Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25)
-        add_aviary_input(self, Aircraft.Nacelle.FINENESS, 2)
+        num_engine_type = len(self.options['aviary_options'].get_val(
+            Aircraft.Engine.NUM_ENGINES))
 
-        add_aviary_output(self, Aircraft.Nacelle.AVG_DIAMETER, val=0.0)
-        add_aviary_output(self, Aircraft.Nacelle.AVG_LENGTH, val=0.0)
-        add_aviary_output(self, Aircraft.Nacelle.SURFACE_AREA, val=0.0)
+        add_aviary_input(self, Aircraft.Engine.REFERENCE_DIAMETER,
+                         np.full(num_engine_type, 5.8))
+        add_aviary_input(self, Aircraft.Engine.SCALE_FACTOR, np.ones(num_engine_type))
+        add_aviary_input(self, Aircraft.Nacelle.CORE_DIAMETER_RATIO,
+                         np.full(num_engine_type, 1.25))
+        add_aviary_input(self, Aircraft.Nacelle.FINENESS, np.full(num_engine_type, 2))
+
+        add_aviary_output(self, Aircraft.Nacelle.AVG_DIAMETER,
+                          val=np.zeros(num_engine_type))
+        add_aviary_output(self, Aircraft.Nacelle.AVG_LENGTH,
+                          val=np.zeros(num_engine_type))
+        add_aviary_output(self, Aircraft.Nacelle.SURFACE_AREA,
+                          val=np.zeros(num_engine_type))
 
     def setup_partials(self):
+        # derivatives w.r.t vectorized engine inputs have known sparsity pattern
+        num_engine_type = len(self.options['aviary_options'].get_val(
+            Aircraft.Engine.NUM_ENGINES))
+        shape = np.arange(num_engine_type)
+
         innames = [
             Aircraft.Engine.REFERENCE_DIAMETER,
             Aircraft.Engine.SCALE_FACTOR,
             Aircraft.Nacelle.CORE_DIAMETER_RATIO,
             Aircraft.Nacelle.FINENESS,
         ]
-        self.declare_partials(Aircraft.Nacelle.AVG_DIAMETER, innames[:-1])
-        self.declare_partials(Aircraft.Nacelle.AVG_LENGTH, innames)
-        self.declare_partials(Aircraft.Nacelle.SURFACE_AREA, innames)
+
+        self.declare_partials(Aircraft.Nacelle.AVG_DIAMETER,
+                              innames[:-1], rows=shape, cols=shape, val=1.0)
+        self.declare_partials(Aircraft.Nacelle.AVG_LENGTH, innames,
+                              rows=shape, cols=shape, val=1.0)
+        self.declare_partials(Aircraft.Nacelle.SURFACE_AREA,
+                              innames, rows=shape, cols=shape, val=1.0)
 
     def compute(self, inputs, outputs):
         d_ref = inputs[Aircraft.Engine.REFERENCE_DIAMETER]

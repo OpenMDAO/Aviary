@@ -14,7 +14,7 @@ class AlphaModes(Enum):
         Alpha is limited to ensure the load factor never exceeds a
         specified maximum.
     FUSELAGE_PITCH
-        Alpha is calculated to set a particular floor angle given the 
+        Alpha is calculated to set a particular floor angle given the
         current flight path angle.
     DECELERATION
         Alpha is calculated to target a specified TAS rate, the default
@@ -166,6 +166,19 @@ class SpeedType(Enum):
     EAS = auto()
     TAS = auto()
     MACH = auto()
+
+
+class ThrottleAllocation(Enum):
+    """
+    Specifies how to handle the throttles for multiple engines.
+
+    FIXED is a user-specified value.
+    STATIC is specified by the optimizer as one value for the whole phase.
+    DYNAMIC is specified by the optimizer at each point in the phase.
+    """
+    FIXED = 1
+    STATIC = 2
+    DYNAMIC = 3
 
 
 class Verbosity(Enum):

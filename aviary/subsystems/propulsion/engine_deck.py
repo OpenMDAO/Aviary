@@ -121,7 +121,7 @@ class EngineDeck(EngineModel):
     options : AviaryValues (<empty>)
         Inputs and options related to engine model.
     data : NamedVaues (<empty>), optional
-        Engine performance data (optional). If provided, used instead of tabular data 
+        Engine performance data (optional). If provided, used instead of tabular data
         file.
     required_variables : set, optional
         A set of required variables (from EngineModelVariables) for this EngineDeck.
@@ -194,8 +194,8 @@ class EngineDeck(EngineModel):
 
     def _preprocess_inputs(self):
         """
-        Checks that provided options are valid and logically consistent. Raises errors 
-        for non-recoverable issues, issues warnings for minor problems that are fixed at 
+        Checks that provided options are valid and logically consistent. Raises errors
+        for non-recoverable issues, issues warnings for minor problems that are fixed at
         runtime.
 
         Raises
@@ -215,15 +215,18 @@ class EngineDeck(EngineModel):
             additional_options = (Aircraft.Engine.DATA_FILE,)
 
         for key in additional_options + required_options:
-            if key not in options and self.get_val(Settings.VERBOSITY).value >= 1:
-                warnings.warn(
-                    f'<{key}> is a required option for EngineDecks, but has not been '
-                    f'specified for EngineDeck <{self.name}>. The default value will be '
-                    'used.')
-
+            if key not in options:
                 val = _MetaData[key]['default_value']
                 units = _MetaData[key]['units']
+
+                if self.get_val(Settings.VERBOSITY).value >= 1:
+                    warnings.warn(
+                        f'<{key}> is a required option for EngineDecks, but has not been '
+                        f'specified for EngineDeck <{self.name}>. The default value '
+                        f"{val}{' ' + units if units != 'unitless' else ''} will be used.")
+
                 self.set_val(key, val, units)
+
         # check dependent options
         for key in dependent_options:
             if self.get_val(key):
@@ -239,11 +242,12 @@ class EngineDeck(EngineModel):
             idle_max = self.get_val(Aircraft.Engine.FLIGHT_IDLE_MAX_FRACTION)
             # Allowing idle fractions to be equal, i.e. fixing flight idle conditions
             # instead of extrapolation
-            if idle_min > idle_max and self.get_val(Settings.VERBOSITY).value >= 1:
-                warnings.warn(
-                    f'EngineDeck <{self.name}>: Minimum flight idle fraction exceeds maximum '
-                    f'flight idle fraction. Values for min and max fraction will be flipped.'
-                )
+            if idle_min > idle_max:
+                if self.get_val(Settings.VERBOSITY).value >= 1:
+                    warnings.warn(
+                        f'EngineDeck <{self.name}>: Minimum flight idle fraction exceeds maximum '
+                        f'flight idle fraction. Values for min and max fraction will be flipped.'
+                    )
                 self.set_val(Aircraft.Engine.FLIGHT_IDLE_MIN_FRACTION,
                              val=idle_max)
                 self.set_val(Aircraft.Engine.FLIGHT_IDLE_MAX_FRACTION,
@@ -266,7 +270,7 @@ class EngineDeck(EngineModel):
 
         # user provided target thrust or scale factor, but performance scaling is off
         if scale_performance and (scale_factor_provided or thrust_provided) and self.get_val(Settings.VERBOSITY).value >= 1:
-            UserWarning(
+            warnings.warn(
                 f'EngineDeck <{self.name}>: Scaling targets are provided, but will be '
                 'ignored because performance scaling is disabled. Set '
                 'aircraft:engine:SCALE_PERFORMANCE to True to enable scaling.'
@@ -274,7 +278,7 @@ class EngineDeck(EngineModel):
 
     def _set_variable_flags(self):
         """
-        Sets flags in EngineDeck to communicate which (non-required) variables are 
+        Sets flags in EngineDeck to communicate which (non-required) variables are
         avaliable to greater propulsion module.
         """
         engine_variables = self.engine_variables
@@ -499,10 +503,10 @@ class EngineDeck(EngineModel):
         # (freestream air temp and pressure). Instead, we must trust the source and
         # assume either data set is valid and can be used.
         if SHAFT_POWER in engine_variables and SHAFT_POWER_CORRECTED in engine_variables and self.get_val(Settings.VERBOSITY).value >= 1:
-            UserWarning('Both corrected and uncorrected shaft horsepower are '
-                        f'present in {message}. The two cannot be validated for '
-                        'consistency, and either variable could be utilized if '
-                        'any subsystem requests it as an input.')
+            warnings.warn('Both corrected and uncorrected shaft horsepower are '
+                          f'present in {message}. The two cannot be validated for '
+                          'consistency, and either variable could be utilized if '
+                          'any subsystem requests it as an input.')
 
         self._set_variable_flags()
 
@@ -730,7 +734,7 @@ class EngineDeck(EngineModel):
         # Re-normalize throttle since "dummy" idle values were used
         self._normalize_throttle()
 
-    def build_pre_mission(self, aviary_inputs):
+    def build_pre_mission(self, aviary_inputs) -> om.ExplicitComponent:
         """
         Build components to be added to pre-mission propulsion subsystem.
 
@@ -793,6 +797,7 @@ class EngineDeck(EngineModel):
                           desc='Current NOx emission rate (unscaled)')
         # Shaft power and temperature are not summed to system-level totals, so their
         # inclusion in outputs is optional
+        # Summation of shaft power can happen but is not currently implemented
         if self.use_shaft_power:
             if SHAFT_POWER in self.engine_variables:
                 shaft_power_data = self.data[SHAFT_POWER]
@@ -954,8 +959,8 @@ class EngineDeck(EngineModel):
         # add created subsystems to engine_group
         engine_group.add_subsystem('interpolation',
                                    engine,
-                                   promotes_inputs=['*'],
-                                   promotes_outputs=['*'])
+                                   promotes_inputs=['*'])
+
         if self.use_thrust:
             if self.global_throttle or (self.global_hybrid_throttle
                                         and self.use_hybrid_throttle):
@@ -973,14 +978,35 @@ class EngineDeck(EngineModel):
             engine_group.add_subsystem(
                 'max_thrust_interpolation',
                 max_thrust_engine,
-                promotes_inputs=['*'],
-                promotes_outputs=['*'])
+                promotes_inputs=['*'])
 
         engine_group.add_subsystem('engine_scaling',
                                    subsys=EngineScaling(num_nodes=num_nodes,
                                                         aviary_options=self.options),
-                                   promotes_inputs=['*'],
+                                   promotes_inputs=[
+                                       Aircraft.Engine.SCALE_FACTOR, Dynamic.Mission.MACH],
                                    promotes_outputs=['*'])
+
+        # manually connect unscaled variables, since we do not want them promoted
+        engine_group.connect('interpolation.thrust_net_unscaled',
+                             'engine_scaling.thrust_net_unscaled')
+        engine_group.connect('interpolation.fuel_flow_rate_unscaled',
+                             'engine_scaling.fuel_flow_rate_unscaled')
+        engine_group.connect('interpolation.electric_power_unscaled',
+                             'engine_scaling.electric_power_unscaled')
+        engine_group.connect('interpolation.nox_rate_unscaled',
+                             'engine_scaling.nox_rate_unscaled')
+        if self.use_thrust:
+            engine_group.connect(
+                'max_thrust_interpolation.thrust_net_max_unscaled', 'engine_scaling.thrust_net_max_unscaled')
+
+        if self.use_shaft_power:
+            if SHAFT_POWER in self.engine_variables:
+                engine_group.connect('interpolation.shaft_power_unscaled',
+                                     'engine_scaling.shaft_power_unscaled')
+            else:
+                engine_group.connect('interpolation.shaft_power_corrected_unscaled',
+                                     'engine_scaling.shaft_power_corrected_unscaled')
 
         return engine_group
 
@@ -1075,6 +1101,8 @@ class EngineDeck(EngineModel):
         """
         engine_mapping = get_keys(self.options)
 
+        # Find reference thrust if not provided - assumed user-provided value is "best"
+        # estimate of reference thrust
         if Aircraft.Engine.REFERENCE_SLS_THRUST not in engine_mapping:
             alt_tol = self.alt_tol
             mach_tol = self.mach_tol
@@ -1427,9 +1455,9 @@ class EngineDeck(EngineModel):
 # UTILITY FUNCTIONS #
 #####################
 """
-Functions that do not directly use attributes of EngineDeck (do not require self) are 
-located here. These functions are currently only used for EngineDecks and are not 
-applicable to other EngineModels. If any of these functions become useful to other 
+Functions that do not directly use attributes of EngineDeck (do not require self) are
+located here. These functions are currently only used for EngineDecks and are not
+applicable to other EngineModels. If any of these functions become useful to other
 EngineModels besides EngineDeck, move them to propulsion utils.
 """
 
@@ -1447,7 +1475,7 @@ def normalize(base_list, maximum=None, minimum=None):
     maximum : float
         Overwritten maximum value of data that will scale to 1 when normalized.
     minimum : float
-        Overwritten minimum value of data that will scale to 0 when normalized. 
+        Overwritten minimum value of data that will scale to 0 when normalized.
 
     Returns
     -------

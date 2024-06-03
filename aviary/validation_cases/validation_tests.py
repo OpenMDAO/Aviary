@@ -10,7 +10,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.options import list_options as list_options_func
 from aviary.utils.preprocessors import preprocess_options
 from aviary.validation_cases.validation_data.flops_data.FLOPS_Test_Data import \
-    FLOPS_Test_Data
+    FLOPS_Test_Data, FLOPS_Lacking_Test_Data
 from aviary.variable_info.variables import Aircraft
 
 Version = Enum('Version', ['ALL', 'TRANSPORT', 'ALTERNATE', 'BWB'])
@@ -296,7 +296,11 @@ def get_flops_inputs(case_name: str, keys: str = None, preprocess: bool = False)
         If true, the input data will be passed through preprocess_options() to
         fill in any missing options before being returned. The default is False.
     """
-    flops_data: dict = FLOPS_Test_Data[case_name]
+    try:
+        flops_data: dict = FLOPS_Test_Data[case_name]
+    except KeyError:
+        flops_data: dict = FLOPS_Lacking_Test_Data[case_name]
+
     flops_inputs_copy: AviaryValues = flops_data['inputs'].deepcopy()
     if preprocess:
         preprocess_options(flops_inputs_copy)

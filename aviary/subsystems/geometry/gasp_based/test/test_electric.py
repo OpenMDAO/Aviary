@@ -1,17 +1,24 @@
 import unittest
 
+import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.geometry.gasp_based.electric import CableSize
 from aviary.variable_info.variables import Aircraft
+from aviary.utils.aviary_values import AviaryValues
 
 
 class ElectricTestCase(unittest.TestCase):
     def setUp(self):
 
         self.prob = om.Problem()
-        self.prob.model.add_subsystem("cable", CableSize(), promotes=["*"])
+
+        aviary_options = AviaryValues()
+        aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 2)
+
+        self.prob.model.add_subsystem("cable", CableSize(
+            aviary_options=aviary_options), promotes=["*"])
 
         self.prob.model.set_input_defaults(
             Aircraft.Engine.WING_LOCATIONS, 0.35, units="unitless"
@@ -35,6 +42,40 @@ class ElectricTestCase(unittest.TestCase):
         )  # not actual GASP value
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
+
+
+class ElectricTestCaseMultiEngine(unittest.TestCase):
+    def test_case_multiengine(self):
+        prob = om.Problem()
+
+        aviary_options = AviaryValues()
+        # aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2, 4]))
+        aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 6)
+
+        prob.model.add_subsystem("cable", CableSize(
+            aviary_options=aviary_options), promotes=["*"])
+
+        prob.model.set_input_defaults(
+            Aircraft.Engine.WING_LOCATIONS, np.array([0.35, 0.2, 0.6]), units="unitless"
+        )
+        prob.model.set_input_defaults(
+            Aircraft.Wing.SPAN, 128, units="ft"
+        )
+        prob.model.set_input_defaults(
+            Aircraft.Fuselage.AVG_DIAMETER, 10, units="ft"
+        )
+
+        prob.setup(check=False, force_alloc_complex=True)
+
+        prob.run_model()
+
+        tol = 1e-4
+        assert_near_equal(
+            prob[Aircraft.Electrical.HYBRID_CABLE_LENGTH], 167.2, tol
+        )
+
+        partial_data = prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
 
