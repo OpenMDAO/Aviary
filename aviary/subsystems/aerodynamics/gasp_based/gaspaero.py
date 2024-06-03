@@ -8,6 +8,7 @@ from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.aerodynamics.gasp_based.common import (AeroForces,
                                                               CLFromLift,
                                                               TanhRampComp)
+from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import add_aviary_input
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.utils.aviary_values import AviaryValues
@@ -386,6 +387,8 @@ class AeroGeom(om.ExplicitComponent):
 
     def setup(self):
         nn = self.options["num_nodes"]
+        num_engine_type = len(self.options['aviary_options'].get_val(
+            Aircraft.Engine.NUM_ENGINES))
 
         self.add_input(
             Dynamic.Mission.MACH, val=0.0, units="unitless", shape=nn, desc="Current Mach number")
@@ -413,7 +416,8 @@ class AeroGeom(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Fuselage.FORM_FACTOR, val=1.25)
 
-        add_aviary_input(self, Aircraft.Nacelle.FORM_FACTOR, val=1.5)
+        add_aviary_input(self, Aircraft.Nacelle.FORM_FACTOR,
+                         val=np.full(num_engine_type, 1.5))
 
         add_aviary_input(self, Aircraft.VerticalTail.FORM_FACTOR, val=1.25)
 
@@ -463,13 +467,15 @@ class AeroGeom(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, val=0.0)
 
-        add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH, val=0.0)
+        add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH,
+                         val=np.zeros(num_engine_type))
 
         add_aviary_input(self, Aircraft.HorizontalTail.AREA, val=0.0)
 
         add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA, val=0.0)
 
-        add_aviary_input(self, Aircraft.Nacelle.SURFACE_AREA, val=0.0)
+        add_aviary_input(self, Aircraft.Nacelle.SURFACE_AREA,
+                         val=np.zeros(num_engine_type))
 
         add_aviary_input(self, Aircraft.Wing.AREA, val=1370.3)
 
@@ -777,6 +783,9 @@ class AeroSetup(om.Group):
 
     def initialize(self):
         self.options.declare("num_nodes", default=1, types=int)
+        self.options.declare(
+            'aviary_options', types=AviaryValues,
+            desc='collection of Aircraft/Mission specific options')
         self.options.declare(
             "input_atmos",
             default=False,
@@ -1279,6 +1288,10 @@ class CruiseAero(om.Group):
     def initialize(self):
         self.options.declare("num_nodes", default=1, types=int)
         self.options.declare(
+            'aviary_options', types=AviaryValues,
+            desc='collection of Aircraft/Mission specific options')
+
+        self.options.declare(
             "output_alpha",
             default=False,
             types=bool,
@@ -1322,6 +1335,9 @@ class LowSpeedAero(om.Group):
 
     def initialize(self):
         self.options.declare("num_nodes", default=1, types=int)
+        self.options.declare(
+            'aviary_options', types=AviaryValues,
+            desc='collection of Aircraft/Mission specific options')
         self.options.declare(
             "retract_gear",
             default=True,

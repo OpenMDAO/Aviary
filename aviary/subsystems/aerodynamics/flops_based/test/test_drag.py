@@ -7,7 +7,7 @@ from openmdao.utils.assert_utils import (assert_check_partials,
 from parameterized import parameterized
 
 from aviary.subsystems.aerodynamics.flops_based.computed_aero_group import ComputedDrag
-from aviary.subsystems.aerodynamics.flops_based.drag import SimpleDrag, TotalDrag
+from aviary.subsystems.aerodynamics.flops_based.drag import SimpleDrag, SimpleCD, TotalDrag
 from aviary.utils.aviary_values import AviaryValues
 from aviary.validation_cases.validation_tests import (get_flops_case_names,
                                                       get_flops_inputs,
@@ -31,15 +31,16 @@ class SimpleDragTest(unittest.TestCase):
         # FCDSUP - 2 digits precision
         inputs_keys = (
             Aircraft.Wing.AREA, Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR,
-            Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR)
+            Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR
+        )
 
         # dynamic pressure = 4 digits precision
         # drag coefficient = 5 digits precision
         dynamics_keys = (Dynamic.Mission.DYNAMIC_PRESSURE,
-                         'drag_coefficient', Dynamic.Mission.MACH)
+                         'CD_prescaled', 'CD', Dynamic.Mission.MACH)
 
         # drag = 4 digits precision
-        outputs_keys = (Dynamic.Mission.DRAG,)
+        outputs_keys = (Dynamic.Mission.DRAG, )
 
         # using lowest precision from all available data should "always" work
         # - will a higher precision comparison work? find a practical tolerance that fits
@@ -52,6 +53,7 @@ class SimpleDragTest(unittest.TestCase):
         q, _ = dynamics_data.get_item(Dynamic.Mission.DYNAMIC_PRESSURE)
         nn = len(q)
         model.add_subsystem('simple_drag', SimpleDrag(num_nodes=nn), promotes=['*'])
+        model.add_subsystem('simple_cd', SimpleCD(num_nodes=nn), promotes=['*'])
 
         prob.setup(force_alloc_complex=True)
 
@@ -104,7 +106,7 @@ class TotalDragTest(unittest.TestCase):
                          Dynamic.Mission.MACH, 'CD0', 'CDI')
 
         # drag = 4 digits precision
-        outputs_keys = ('drag_coefficient', Dynamic.Mission.DRAG)
+        outputs_keys = ('CD_prescaled', 'CD', Dynamic.Mission.DRAG)
 
         # using lowest precision from all available data should "always" work
         # - will a higher precision comparison work? find a practical tolerance that fits
@@ -202,9 +204,11 @@ def _add_drag_coefficients(
     FCDSUP = flops_inputs.get_val(Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR)
 
     idx_sup = np.where(M >= 1.0)
+    dynamics_data.set_val('CD', CD_scaled)
     CD = CD_scaled / FCDSUB
     CD[idx_sup] = CD_scaled[idx_sup] / FCDSUP
-    dynamics_data.set_val('drag_coefficient', CD)
+    dynamics_data.set_val('CD_prescaled', CD)
+    dynamics_data.set_val('CD', CD_scaled)
 
     FCD0 = flops_inputs.get_val(Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR)
     CD0 = CD0_scaled / FCD0

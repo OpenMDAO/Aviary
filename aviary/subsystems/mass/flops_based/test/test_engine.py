@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_near_equal
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.engine import EngineMass
@@ -15,7 +15,7 @@ from aviary.validation_cases.validation_tests import (flops_validation_test,
                                                       get_flops_case_names,
                                                       get_flops_inputs,
                                                       print_case)
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variables import Aircraft, Settings
 
 
 class EngineMassTest(unittest.TestCase):
@@ -53,11 +53,12 @@ class EngineMassTest(unittest.TestCase):
             rtol=1e-10)
 
     def test_case_2(self):
-        # arbitrary case to trigger both types of scaling equations
+        # arbitrary case to trigger both types of scaling equations, multiengine
         prob = om.Problem()
 
         options = AviaryValues()
 
+        options.set_val(Settings.VERBOSITY, 0)
         options.set_val(Aircraft.Engine.REFERENCE_MASS, 6000, units='lbm')
         options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
         options.set_val(Aircraft.Engine.SCALE_MASS, True)
@@ -99,6 +100,10 @@ class EngineMassTest(unittest.TestCase):
         assert_near_equal(mass, mass_expected, tolerance=1e-10)
         assert_near_equal(total_mass, total_mass_expected, tolerance=1e-10)
         assert_near_equal(additional_mass, additional_mass_expected, tolerance=1e-10)
+
+        partial_data = prob.check_partials(
+            out_stream=None, compact_print=True, show_only_incorrect=True, form='central', method="cs")
+        assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
 
     def test_IO(self):
         assert_match_varnames(self.prob.model)
