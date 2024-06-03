@@ -1,3 +1,5 @@
+import numpy as np
+
 import openmdao.api as om
 
 from aviary.subsystems.mass.flops_based.empty_margin import EmptyMassMargin
@@ -74,13 +76,16 @@ class StructureMass(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
+        num_engine_type = len(self.options['aviary_options'].get_val(
+            Aircraft.Engine.NUM_ENGINES))
+
         add_aviary_input(self, Aircraft.Canard.MASS, val=0.0)
         add_aviary_input(self, Aircraft.Fins.MASS, val=0.0)
         add_aviary_input(self, Aircraft.Fuselage.MASS, val=0.0)
         add_aviary_input(self, Aircraft.HorizontalTail.MASS, val=0.0)
         add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_MASS, val=0.0)
         add_aviary_input(self, Aircraft.LandingGear.NOSE_GEAR_MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Nacelle.MASS, val=0.0)
+        add_aviary_input(self, Aircraft.Nacelle.MASS, val=np.zeros(num_engine_type))
         add_aviary_input(self, Aircraft.Paint.MASS, val=0.0)
         add_aviary_input(self, Aircraft.VerticalTail.MASS, val=0.0)
         add_aviary_input(self, Aircraft.Wing.MASS, val=0.0)
@@ -88,7 +93,12 @@ class StructureMass(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Design.STRUCTURE_MASS, val=0.0)
 
     def setup_partials(self):
+        num_engine_type = len(self.options['aviary_options'].get_val(
+            Aircraft.Engine.NUM_ENGINES))
+
         self.declare_partials(Aircraft.Design.STRUCTURE_MASS, '*', val=1)
+        self.declare_partials(Aircraft.Design.STRUCTURE_MASS, Aircraft.Nacelle.MASS,
+                              val=np.ones(num_engine_type))
 
     def compute(self, inputs, outputs):
         canard_mass = inputs[Aircraft.Canard.MASS]
@@ -104,7 +114,7 @@ class StructureMass(om.ExplicitComponent):
 
         outputs[Aircraft.Design.STRUCTURE_MASS] = \
             wing_mass + htail_mass + vtail_mass + fin_mass + canard_mass + \
-            fus_mass + main_gear_mass + nose_gear_mass + nac_mass + paint_mass
+            fus_mass + main_gear_mass + nose_gear_mass + np.sum(nac_mass) + paint_mass
 
 
 class PropulsionMass(om.ExplicitComponent):

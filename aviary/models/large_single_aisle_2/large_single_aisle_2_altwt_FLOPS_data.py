@@ -424,6 +424,7 @@ outputs.set_val(
 #     inputs.set_val(key, outputs[key]
 
 # Create engine model
+engine_inputs.set_val(Settings.VERBOSITY, 0)
 engine = EngineDeck(name='engine',
                     options=engine_inputs
                     )

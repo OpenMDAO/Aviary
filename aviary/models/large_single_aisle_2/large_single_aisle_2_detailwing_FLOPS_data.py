@@ -412,6 +412,7 @@ outputs.set_val(Mission.Design.MACH, 0.799)
 outputs.set_val(Mission.Design.LIFT_COEFFICIENT, 0.523)
 
 # Create engine model
+engine_inputs.set_val(Settings.VERBOSITY, 0)
 engine = EngineDeck(name='engine',
                     options=engine_inputs
                     )
