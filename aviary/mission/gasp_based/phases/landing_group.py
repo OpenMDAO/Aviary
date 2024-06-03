@@ -9,7 +9,6 @@ from aviary.mission.gasp_based.phases.landing_components import (
 from aviary.subsystems.aerodynamics.gasp_based.gaspaero import LowSpeedAero
 from aviary.subsystems.propulsion.propulsion_mission import PropulsionMission
 from aviary.variable_info.enums import SpeedType
-from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 

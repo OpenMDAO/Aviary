@@ -12,17 +12,13 @@ from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_control_iter_group i
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_flight_conditions import \
     UnsteadySolvedFlightConditions
 from aviary.variable_info.enums import SpeedType
-from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.utils.aviary_values import AviaryValues
 
 
 class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
 
     def _test_unsteady_alpha_thrust_iter_group(self, ground_roll=False):
         nn = 5
-        aviary_options = AviaryValues()
-        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
 
         p = om.Problem()
 
