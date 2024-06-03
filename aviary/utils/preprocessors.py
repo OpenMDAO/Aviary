@@ -1,5 +1,6 @@
+import warnings
+
 import numpy as np
-import math
 import openmdao.api as om
 
 from aviary.subsystems.propulsion.engine_deck import EngineDeck
@@ -176,7 +177,7 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
         engine_deck = EngineDeck(engine_options)
         engine_models = [engine_deck]
 
-    count = len(engine_models)
+    num_engine_type = len(engine_models)
     # keys of originally provided aviary_options
     # currently not used but might be useful in the future
     # aviary_mapping = get_keys(aviary_options.deepcopy())
@@ -212,7 +213,7 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
             elif type(default_value) is tuple:
                 vec = ()
             else:
-                vec = [default_value] * count
+                vec = [default_value] * num_engine_type
 
             units = _MetaData[var]['units']
 
@@ -275,16 +276,16 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
     try:
         num_engines_all = aviary_options.get_val(Aircraft.Engine.NUM_ENGINES)
     except KeyError:
-        num_engines_all = np.zeros(count).astype(int)
+        num_engines_all = np.zeros(num_engine_type).astype(int)
     try:
         num_fuse_engines_all = aviary_options.get_val(
             Aircraft.Engine.NUM_FUSELAGE_ENGINES)
     except KeyError:
-        num_fuse_engines_all = np.zeros(count).astype(int)
+        num_fuse_engines_all = np.zeros(num_engine_type).astype(int)
     try:
         num_wing_engines_all = aviary_options.get_val(Aircraft.Engine.NUM_WING_ENGINES)
     except KeyError:
-        num_wing_engines_all = np.zeros(count).astype(int)
+        num_wing_engines_all = np.zeros(num_engine_type).astype(int)
 
     for i, engine in enumerate(engine_models):
         num_engines = num_engines_all[i]
@@ -298,7 +299,7 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
             num_wing_engines_all[i] = num_engines
             # TODO is a warning overkill here? It can be documented wing mounted engines
             # are assumed default
-            UserWarning(
+            warnings.warn(
                 f'Mount location for engines of type <{eng_name}> not specified. '
                 'Wing-mounted engines are assumed.')
 
@@ -307,7 +308,7 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
         elif total_engines_calc != num_engines:
             eng_name = engine.name
             num_engines_all[i] = total_engines_calc
-            UserWarning(
+            warnings.warn(
                 'Sum of aircraft:engine:num_fueslage_engines and '
                 'aircraft:engine:num_wing_engines do not match '
                 f'aircraft:engine:num_engines for EngineModel <{eng_name}>. Overwriting '

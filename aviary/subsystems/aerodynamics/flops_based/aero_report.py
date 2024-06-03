@@ -24,26 +24,27 @@ class AeroReport(om.ExplicitComponent):
 
     def setup(self):
         aviary_options = self.options['aviary_options']
-        count = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
+        num_engine_type = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
 
         add_aviary_input(self, Aircraft.Canard.WETTED_AREA, 0.0)
         add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA, 0.0)
         add_aviary_input(self, Aircraft.HorizontalTail.WETTED_AREA, 0.0)
-        add_aviary_input(self, Aircraft.Nacelle.WETTED_AREA, np.zeros(count))
+        add_aviary_input(self, Aircraft.Nacelle.WETTED_AREA, np.zeros(num_engine_type))
         add_aviary_input(self, Aircraft.VerticalTail.WETTED_AREA, 0.0)
         add_aviary_input(self, Aircraft.Wing.WETTED_AREA, 0.0)
 
         add_aviary_input(self, Aircraft.Canard.FINENESS, 0.0)
         add_aviary_input(self, Aircraft.Fuselage.FINENESS, 0.0)
         add_aviary_input(self, Aircraft.HorizontalTail.FINENESS, 0.0)
-        add_aviary_input(self, Aircraft.Nacelle.FINENESS, np.zeros(count))
+        add_aviary_input(self, Aircraft.Nacelle.FINENESS, np.zeros(num_engine_type))
         add_aviary_input(self, Aircraft.VerticalTail.FINENESS, 0.0)
         add_aviary_input(self, Aircraft.Wing.FINENESS, 0.0)
 
         add_aviary_input(self, Aircraft.Canard.CHARACTERISTIC_LENGTH, 0.0)
         add_aviary_input(self, Aircraft.Fuselage.CHARACTERISTIC_LENGTH, 0.0)
         add_aviary_input(self, Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH, 0.0)
-        add_aviary_input(self, Aircraft.Nacelle.CHARACTERISTIC_LENGTH, np.zeros(count))
+        add_aviary_input(self, Aircraft.Nacelle.CHARACTERISTIC_LENGTH,
+                         np.zeros(num_engine_type))
         add_aviary_input(self, Aircraft.VerticalTail.CHARACTERISTIC_LENGTH, 0.0)
         add_aviary_input(self, Aircraft.Wing.CHARACTERISTIC_LENGTH, 0.0)
 
