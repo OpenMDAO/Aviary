@@ -189,7 +189,7 @@ def update_GASP_options(aircraft_values: AviaryValues()):
         aircraft_values.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=False)
 
-    if aircraft_values.get_val('verbosity').value >= 2:
+    if aircraft_values.get_val('settings:verbosity').value >= 2:
         print('\nOptions')
         for key in get_keys(aircraft_values):
             val, units = aircraft_values.get_item(key)
@@ -339,7 +339,7 @@ def initial_guessing(aircraft_values: AviaryValues(), initial_guesses):
         initial_guesses['climb_range'] = initial_guesses['time_to_climb'] / \
             (60 * 60) * (avg_speed_guess * np.cos(gamma_guess))
 
-    if aircraft_values.get_val('verbosity').value >= 2:
+    if aircraft_values.get_val('settings:verbosity').value >= 2:
         print('\nInitial Guesses')
         for key, value in initial_guesses.items():
             print(key, value)
