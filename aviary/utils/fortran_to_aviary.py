@@ -112,6 +112,11 @@ def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
     with open(out_file, 'w', newline='') as f:
         writer = csv.writer(f)
 
+        # Write header comments
+        for comment in comments:
+            writer.writerow([comment])
+        writer.writerow([])
+
         # Values that have been successfully translated to Aviary variables
         writer.writerow(['# Input Values'])
         for var, (val, units) in sorted(vehicle_data['input_values']):
@@ -292,6 +297,22 @@ def set_value(var_name, var_value, value_dict: NamedValues, var_ind=None, units=
             units = 'unitless'
     if not units:
         units = 'unitless'
+
+    convert_to_bool = False
+    if var_name in _MetaData:
+        var_type = _MetaData[var_name]['types']
+        if isinstance(var_type, (list, tuple)):
+            if bool in var_type:
+                convert_to_bool = True
+        elif var_type is bool:
+            convert_to_bool = True
+    if isinstance(current_value, bool):
+        convert_to_bool = True
+    if convert_to_bool:
+        if isinstance(var_value, (list, tuple)):
+            var_value = [bool(v) for v in var_value]
+        else:
+            var_value = [bool(var_value)]
 
     if var_ind != None:
         # if an index is specified, use it, otherwise store the input as the whole value

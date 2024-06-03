@@ -1,4 +1,5 @@
                                                                           -2                        
+aircraft:engine:data_file=models/engines/turboprop_4465hp.deck
  $INGASP
  AS=1.,
  SAB=6.,
@@ -180,7 +181,7 @@
  AF=167.,       ! proeplller/Q-FAN balse activity factor
  ANCQHP=.03405,  ! nacelle area per horsepower (.12) 
  BL=4.,         ! number of blades - has four blades
- BLANG=0.,      ! balde 3/4 pitch (fixed prop only)
+ BLANG=0.,      ! blade 3/4 pitch (fixed prop only)
  CLI=.50,       ! propeller integrated design lift coeff
  CTI=0.2,       ! initial estimate of propeller thrust coefficient (.2)
  DIST=1000.,    ! slant distance to observer for propeller noise, ft (1000.)

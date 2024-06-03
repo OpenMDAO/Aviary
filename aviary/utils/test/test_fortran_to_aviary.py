@@ -36,7 +36,8 @@ class TestFortranToAviary(unittest.TestCase):
         # Execute the conversion
         _exec_F2A(args, None)
 
-    def compare_files(self, filepath, skip_list=[]):
+    # lines with comments need to be skipped to prevent issues with the variable data in the header
+    def compare_files(self, filepath, skip_list=['#']):
         """
         Compares the converted file with a validation file.
 
