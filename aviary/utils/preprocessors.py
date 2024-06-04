@@ -140,7 +140,7 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
     # Combine aviary_options and all engine options into single AviaryValues
     # It is assumed that all EngineModels are up-to-date at this point and will NOT
     # be changed later on (otherwise preprocess_propulsion must be run again)
-    count = len(engine_models)
+    num_engine_type = len(engine_models)
 
     complete_options_list = AviaryValues(aviary_options)
     for engine in engine_models:
