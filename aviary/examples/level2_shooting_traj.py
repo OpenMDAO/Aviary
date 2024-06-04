@@ -13,10 +13,11 @@ from aviary.api import SGMCruise, SGMDescent
 from aviary.api import Dynamic
 
 
-def run_aviary(aircraft_filename, phase_info, optimizer=None, analysis_scheme=AnalysisScheme.COLLOCATION,
-               objective_type=None, record_filename='dymos_solution.db', restart_filename=None, max_iter=50, run_driver=True, make_plots=True):
+def setup_and_run_aviary(
+        aircraft_filename, phase_info, optimizer=None, analysis_scheme=AnalysisScheme.COLLOCATION,
+        objective_type=None, record_filename='dymos_solution.db', restart_filename=None, max_iter=50, run_driver=True, make_plots=True):
     """
-    This function runs the aviary optimization problem for the specified aircraft configuration and mission.
+    This function sets up and runs the aviary optimization problem for the specified aircraft configuration and mission.
 
     It first creates an instance of the AviaryProblem class using the given phase_info, mission_method, and mass_method.
     It then loads aircraft and options data from the user-provided aircraft_filename and checks for any clashing inputs.
