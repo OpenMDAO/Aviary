@@ -35,7 +35,7 @@ from aviary.interface.default_phase_info.two_dof import phase_info as default_2D
 from aviary.interface.default_phase_info.two_dof_fiti import create_2dof_based_ascent_phases, create_2dof_based_descent_phases
 from aviary.interface.default_phase_info.height_energy import phase_info as default_height_energy_phase_info
 from aviary.interface.methods_for_level1 import run_level_1
-from aviary.interface.methods_for_level1 import setup_and_run_aviary
+from aviary.interface.methods_for_level1 import run_aviary
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.interface.utils.check_phase_info import check_phase_info
 from aviary.utils.engine_deck_conversion import EngineDeckConverter
