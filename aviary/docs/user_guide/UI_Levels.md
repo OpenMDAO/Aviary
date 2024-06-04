@@ -82,5 +82,5 @@ Users should provide the contents described, but can divide them into multiple f
 |:-----------------------------------------------------------:|:--------------------------------------------------------------------------------:|:-----------------------------------------------------:|
 |   csv that defines the aircraft and minimal mission options |   Python that creates an AviaryValues object that contains aircraft information  |   Python/OpenMDAO that creates an AviaryValues object |
 |                                                             |   csv files can be used to initialize this AviaryValues                          |   Python/OpenMDAO to define mission and trajectory    |
-|                                                             |   Python that calls run_aviary                                                   |   Python/OpenMDAO to create and run a problem         |
+|                                                             |   Python that calls setup_and_run_aviary                                          |   Python/OpenMDAO to create and run a problem         |
 |                                                             |   Optional additional files for external subsystems                              |   Optional additional files for external subsystems   |
