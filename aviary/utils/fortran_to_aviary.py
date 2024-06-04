@@ -630,7 +630,7 @@ def _setup_F2A_parser(parser):
         "-v",
         "--verbosity",
         type=int,
-        choices=set(Verbosity.list()),
+        choices=Verbosity.set(),
         default=1,
         help="Set level of print statements",
     )
