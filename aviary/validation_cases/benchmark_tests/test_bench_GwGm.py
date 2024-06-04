@@ -6,7 +6,7 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 from openmdao.core.problem import _clear_problem_names
 
 from aviary.interface.default_phase_info.two_dof import phase_info
-from aviary.interface.methods_for_level1 import run_aviary
+from aviary.interface.methods_for_level1 import setup_and_run_aviary
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 from aviary.variable_info.enums import AnalysisScheme, Verbosity
 
@@ -20,8 +20,8 @@ class ProblemPhaseTestCase(unittest.TestCase):
     @require_pyoptsparse(optimizer="IPOPT")
     def test_bench_GwGm(self):
         local_phase_info = deepcopy(phase_info)
-        prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwGm.csv',
-                          local_phase_info, optimizer='IPOPT', verbosity=Verbosity.QUIET)
+        prob = setup_and_run_aviary('models/test_aircraft/aircraft_for_bench_GwGm.csv',
+                                    local_phase_info, optimizer='IPOPT', verbosity=Verbosity.QUIET)
 
         rtol = 0.01
 
@@ -47,8 +47,8 @@ class ProblemPhaseTestCase(unittest.TestCase):
     @require_pyoptsparse(optimizer="SNOPT")
     def test_bench_GwGm_SNOPT(self):
         local_phase_info = deepcopy(phase_info)
-        prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwGm.csv',
-                          local_phase_info, optimizer='SNOPT', verbosity=Verbosity.QUIET)
+        prob = setup_and_run_aviary('models/test_aircraft/aircraft_for_bench_GwGm.csv',
+                                    local_phase_info, optimizer='SNOPT', verbosity=Verbosity.QUIET)
 
         rtol = 0.01
 
@@ -74,8 +74,8 @@ class ProblemPhaseTestCase(unittest.TestCase):
     @require_pyoptsparse(optimizer="SNOPT")
     def test_bench_GwGm_SNOPT_lbm_s(self):
         local_phase_info = deepcopy(phase_info)
-        prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwGm_lbm_s.csv',
-                          local_phase_info, optimizer='SNOPT', verbosity=Verbosity.QUIET)
+        prob = setup_and_run_aviary('models/test_aircraft/aircraft_for_bench_GwGm_lbm_s.csv',
+                                    local_phase_info, optimizer='SNOPT', verbosity=Verbosity.QUIET)
 
         rtol = 0.01
 
@@ -101,9 +101,9 @@ class ProblemPhaseTestCase(unittest.TestCase):
     @require_pyoptsparse(optimizer="IPOPT")
     def test_bench_GwGm_shooting(self):
         local_phase_info = deepcopy(phase_info)
-        prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwGm.csv',
-                          local_phase_info, optimizer='IPOPT', run_driver=False,
-                          analysis_scheme=AnalysisScheme.SHOOTING, verbosity=Verbosity.QUIET)
+        prob = setup_and_run_aviary('models/test_aircraft/aircraft_for_bench_GwGm.csv',
+                                    local_phase_info, optimizer='IPOPT', run_driver=False,
+                                    analysis_scheme=AnalysisScheme.SHOOTING, verbosity=Verbosity.QUIET)
 
         rtol = 0.01
 

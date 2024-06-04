@@ -8,7 +8,7 @@ from openmdao.utils.testing_utils import require_pyoptsparse
 from openmdao.core.problem import _clear_problem_names
 
 from aviary.api import Mission
-from aviary.interface.methods_for_level1 import run_aviary
+from aviary.interface.methods_for_level1 import setup_and_run_aviary
 from aviary.variable_info.enums import Verbosity
 from aviary.validation_cases.benchmark_utils import \
     compare_against_expected_values
@@ -366,17 +366,17 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
 
     @require_pyoptsparse(optimizer="IPOPT")
     def test_bench_FwFm_IPOPT(self):
-        prob = run_aviary('models/test_aircraft/aircraft_for_bench_FwFm.csv',
-                          self.phase_info, verbosity=Verbosity.QUIET,
-                          max_iter=50, optimizer='IPOPT')
+        prob = setup_and_run_aviary('models/test_aircraft/aircraft_for_bench_FwFm.csv',
+                                    self.phase_info, verbosity=Verbosity.QUIET,
+                                    max_iter=50, optimizer='IPOPT')
 
         compare_against_expected_values(prob, self.expected_dict)
 
     @require_pyoptsparse(optimizer="SNOPT")
     def test_bench_FwFm_SNOPT(self):
-        prob = run_aviary('models/test_aircraft/aircraft_for_bench_FwFm.csv',
-                          self.phase_info, verbosity=Verbosity.QUIET,
-                          max_iter=50, optimizer='SNOPT')
+        prob = setup_and_run_aviary('models/test_aircraft/aircraft_for_bench_FwFm.csv',
+                                    self.phase_info, verbosity=Verbosity.QUIET,
+                                    max_iter=50, optimizer='SNOPT')
 
         compare_against_expected_values(prob, self.expected_dict)
 
@@ -395,9 +395,9 @@ class TestBenchFwFmParallel(ProblemPhaseTestCase):
 
     @require_pyoptsparse(optimizer="SNOPT")
     def test_bench_FwFm_SNOPT_MPI(self):
-        prob = run_aviary('models/test_aircraft/aircraft_for_bench_FwFm.csv',
-                          self.phase_info, verbosity=Verbosity.QUIET,
-                          max_iter=50, optimizer='SNOPT')
+        prob = setup_and_run_aviary('models/test_aircraft/aircraft_for_bench_FwFm.csv',
+                                    self.phase_info, verbosity=Verbosity.QUIET,
+                                    max_iter=50, optimizer='SNOPT')
 
         compare_against_expected_values(prob, self.expected_dict)
 
