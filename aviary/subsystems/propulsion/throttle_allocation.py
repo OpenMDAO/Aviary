@@ -9,7 +9,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 class ThrottleAllocator(om.ExplicitComponent):
     """
-    Component that computes the throttle values for multiplpe engine types based on
+    Component that computes the throttle values for multiple engine types based on
     the settings for the phase.
     """
 
@@ -33,7 +33,7 @@ class ThrottleAllocator(om.ExplicitComponent):
     def setup(self):
         options: AviaryValues = self.options['aviary_options']
         nn = self.options['num_nodes']
-        engine_count = len(options.get_val(Aircraft.Engine.NUM_ENGINES))
+        num_engine_type = len(options.get_val(Aircraft.Engine.NUM_ENGINES))
         alloc_mode = self.options['throttle_allocation']
 
         self.add_input(
@@ -44,20 +44,20 @@ class ThrottleAllocator(om.ExplicitComponent):
         )
 
         if alloc_mode == ThrottleAllocation.DYNAMIC:
-            alloc_shape = (nn, engine_count - 1)
+            alloc_shape = (nn, num_engine_type - 1)
         else:
-            alloc_shape = (engine_count - 1, )
+            alloc_shape = (num_engine_type - 1, )
 
         self.add_input(
             "throttle_allocations",
-            np.ones(alloc_shape) * 1.0 / engine_count,
+            np.ones(alloc_shape) * 1.0 / num_engine_type,
             units="unitless",
             desc="Throttle allocation for engines."
         )
 
         self.add_output(
             Dynamic.Mission.THROTTLE,
-            np.ones((nn, engine_count)),
+            np.ones((nn, num_engine_type)),
             units="unitless",
             desc="Throttle setting for all engines."
         )
@@ -73,18 +73,18 @@ class ThrottleAllocator(om.ExplicitComponent):
             desc="Sum of the optimizer allocation values. Constrain to less than 1.0."
         )
 
-        cols = np.repeat(np.arange(nn), engine_count)
-        rows = np.arange(nn * engine_count)
+        cols = np.repeat(np.arange(nn), num_engine_type)
+        rows = np.arange(nn * num_engine_type)
         self.declare_partials(of=[Dynamic.Mission.THROTTLE], wrt=["aggregate_throttle"],
                               rows=rows, cols=cols)
 
         if alloc_mode == ThrottleAllocation.DYNAMIC:
-            a = engine_count
+            a = num_engine_type
             b = a - 1
             row = np.arange(a)
             col = np.arange(b)
             rows = np.repeat(row, b)
-            cols = np.tile(col, engine_count)
+            cols = np.tile(col, num_engine_type)
             all_rows = np.tile(rows, nn) + a * np.repeat(np.arange(nn), a * b)
             all_cols = np.tile(cols, nn) + b * np.repeat(np.arange(nn), a * b)
             self.declare_partials(of=[Dynamic.Mission.THROTTLE], wrt=["throttle_allocations"],
@@ -124,7 +124,7 @@ class ThrottleAllocator(om.ExplicitComponent):
         options: AviaryValues = self.options['aviary_options']
         nn = self.options['num_nodes']
         alloc_mode = self.options['throttle_allocation']
-        engine_count = len(options.get_val(Aircraft.Engine.NUM_ENGINES))
+        num_engine_type = len(options.get_val(Aircraft.Engine.NUM_ENGINES))
 
         agg_throttle = inputs["aggregate_throttle"]
         allocation = inputs["throttle_allocations"]
@@ -134,7 +134,7 @@ class ThrottleAllocator(om.ExplicitComponent):
             allocs = np.vstack((allocation.T, 1.0 - sum_alloc))
             partials[Dynamic.Mission.THROTTLE, "aggregate_throttle"] = allocs.T.ravel()
 
-            ne = engine_count - 1
+            ne = num_engine_type - 1
             mask1 = np.eye(ne)
             mask2 = - np.ones(ne)
             mask = np.vstack((mask1, mask2)).ravel()
@@ -148,7 +148,7 @@ class ThrottleAllocator(om.ExplicitComponent):
             partials[Dynamic.Mission.THROTTLE,
                      "aggregate_throttle"] = np.tile(allocs, nn)
 
-            ne = engine_count - 1
+            ne = num_engine_type - 1
             mask1 = np.eye(ne)
             mask2 = - np.ones(ne)
             mask = np.vstack((mask1, mask2)).ravel()

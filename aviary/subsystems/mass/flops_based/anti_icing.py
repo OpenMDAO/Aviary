@@ -23,14 +23,15 @@ class AntiIcingMass(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        engine_count = len(self.options['aviary_options'].get_val(
+        num_engine_type = len(self.options['aviary_options'].get_val(
             Aircraft.Engine.NUM_ENGINES))
 
         add_aviary_input(self, Aircraft.AntiIcing.MASS_SCALER, val=1.0)
 
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, val=0.0)
 
-        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, val=np.zeros(engine_count))
+        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER,
+                         val=np.zeros(num_engine_type))
 
         add_aviary_input(self, Aircraft.Wing.SPAN, val=0.0)
 

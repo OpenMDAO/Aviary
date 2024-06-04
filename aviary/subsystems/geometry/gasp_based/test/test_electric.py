@@ -15,7 +15,7 @@ class ElectricTestCase(unittest.TestCase):
         self.prob = om.Problem()
 
         aviary_options = AviaryValues()
-        aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2)
+        aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 2)
 
         self.prob.model.add_subsystem("cable", CableSize(
             aviary_options=aviary_options), promotes=["*"])
@@ -50,8 +50,8 @@ class ElectricTestCaseMultiEngine(unittest.TestCase):
         prob = om.Problem()
 
         aviary_options = AviaryValues()
-        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2, 4]))
-        aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 6)
+        # aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2, 4]))
+        aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 6)
 
         prob.model.add_subsystem("cable", CableSize(
             aviary_options=aviary_options), promotes=["*"])

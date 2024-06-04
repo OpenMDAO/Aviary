@@ -847,7 +847,7 @@ class FuselageAndStructMass(om.ExplicitComponent):
         )
 
     def setup(self):
-        engine_count = len(self.options['aviary_options'].get_val(
+        num_engine_type = len(self.options['aviary_options'].get_val(
             Aircraft.Engine.NUM_ENGINES))
 
         self.add_input(
@@ -887,7 +887,7 @@ class FuselageAndStructMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.LandingGear.TOTAL_MASS_SCALER, val=1)
         add_aviary_input(self, Aircraft.LandingGear.TOTAL_MASS, val=7511)
         add_aviary_input(self, Aircraft.Engine.POD_MASS_SCALER,
-                         val=np.ones(engine_count))
+                         val=np.ones(num_engine_type))
         add_aviary_input(self, Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS, val=3785)
         add_aviary_input(self, Aircraft.Design.STRUCTURAL_MASS_INCREMENT, val=0)
 

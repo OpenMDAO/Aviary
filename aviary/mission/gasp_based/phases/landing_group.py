@@ -7,7 +7,6 @@ from aviary.mission.gasp_based.phases.landing_components import (
     GlideConditionComponent, LandingAltitudeComponent,
     LandingGroundRollComponent)
 from aviary.variable_info.enums import SpeedType
-from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase

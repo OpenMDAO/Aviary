@@ -29,7 +29,7 @@ class MassParameters(om.ExplicitComponent):
         )
 
     def setup(self):
-        engine_count = len(self.options['aviary_options'].get_val(
+        num_engine_type = len(self.options['aviary_options'].get_val(
             Aircraft.Engine.NUM_ENGINES))
 
         add_aviary_input(self, Aircraft.Wing.SWEEP, val=25)
@@ -60,7 +60,7 @@ class MassParameters(om.ExplicitComponent):
             desc="SKGEAR: landing gear location factor"
         )
         add_aviary_output(self, Aircraft.Engine.POSITION_FACTOR,
-                          val=np.zeros(engine_count))
+                          val=np.zeros(num_engine_type))
         self.add_output(
             "half_sweep", val=0, units="rad", desc="SWC2: wing chord half sweep angle"
         )
@@ -583,29 +583,29 @@ class EngineMass(om.ExplicitComponent):
 
     def setup(self):
         aviary_options: AviaryValues = self.options['aviary_options']
-        engine_count = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
+        num_engine_type = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
         total_num_engines = aviary_options.get_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES)
 
         add_aviary_input(self, Aircraft.Engine.MASS_SPECIFIC,
-                         val=np.full(engine_count, 0.21366))
+                         val=np.full(num_engine_type, 0.21366))
         add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST,
-                         val=np.full(engine_count, 4000))
+                         val=np.full(num_engine_type, 4000))
         add_aviary_input(self, Aircraft.Nacelle.MASS_SPECIFIC,
-                         val=np.full(engine_count, 3))
+                         val=np.full(num_engine_type, 3))
         add_aviary_input(self, Aircraft.Nacelle.SURFACE_AREA,
-                         val=np.full(engine_count, 5))
+                         val=np.full(num_engine_type, 5))
         add_aviary_input(self, Aircraft.Engine.PYLON_FACTOR,
-                         val=np.full(engine_count, 1.25))
+                         val=np.full(num_engine_type, 1.25))
         add_aviary_input(self, Aircraft.Engine.ADDITIONAL_MASS_FRACTION,
-                         val=np.full(engine_count, 0.14))
+                         val=np.full(num_engine_type, 0.14))
         add_aviary_input(self, Aircraft.Engine.MASS_SCALER,
-                         val=np.full(engine_count, 1.0))
+                         val=np.full(num_engine_type, 1.0))
         add_aviary_input(self, Aircraft.Propulsion.MISC_MASS_SCALER, val=1)
         add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS,
                          val=np.full(int(total_num_engines/2), 0.35))
 
-        self.add_input(
-            Aircraft.LandingGear.MAIN_GEAR_MASS, val=500, units="lbm", desc="WMG: mass of main gear")
+        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_MASS,
+                         val=500, units="lbm", desc="WMG: mass of main gear")
 
         add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15)
 
@@ -621,12 +621,12 @@ class EngineMass(om.ExplicitComponent):
             )
 
         add_aviary_output(self, Aircraft.Propulsion.TOTAL_ENGINE_MASS, val=0)
-        add_aviary_output(self, Aircraft.Nacelle.MASS, val=np.zeros(engine_count))
+        add_aviary_output(self, Aircraft.Nacelle.MASS, val=np.zeros(num_engine_type))
         self.add_output('pylon_mass', units='lbm',
-                        desc='WPYLON: mass of each pylon', val=np.zeros(engine_count))
+                        desc='WPYLON: mass of each pylon', val=np.zeros(num_engine_type))
         add_aviary_output(self, Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS, val=0)
         add_aviary_output(self, Aircraft.Engine.ADDITIONAL_MASS,
-                          val=np.zeros(engine_count))
+                          val=np.zeros(num_engine_type))
         self.add_output(
             "eng_comb_mass",
             val=0,
@@ -642,11 +642,11 @@ class EngineMass(om.ExplicitComponent):
             " wing",
         )
 
-        # new multiengine implementation needs this to always be avaliable
+        # for multiengine implementation needs this to always be avaliable
         self.add_input(
             "prop_mass",
-            # val=np.full(engine_count, 0.000000001),
-            val=np.zeros(engine_count),
+            # val=np.full(num_engine_type, 0.000000001),
+            val=np.zeros(num_engine_type),
             units="lbm",
             desc="WPROP1: mass of one propeller",
         )
@@ -662,9 +662,9 @@ class EngineMass(om.ExplicitComponent):
         self.declare_partials("wing_mounted_mass", "prop_mass")
 
         # derivatives w.r.t vectorized engine inputs have known sparsity pattern
-        engine_count = len(self.options['aviary_options'].get_val(
+        num_engine_type = len(self.options['aviary_options'].get_val(
             Aircraft.Engine.NUM_ENGINES))
-        shape = np.arange(engine_count)
+        shape = np.arange(num_engine_type)
 
         self.declare_partials(
             Aircraft.Propulsion.TOTAL_ENGINE_MASS, [
@@ -745,7 +745,7 @@ class EngineMass(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         aviary_options = self.options['aviary_options']
-        engine_count = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
+        num_engine_type = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
         eng_spec_wt = inputs[Aircraft.Engine.MASS_SPECIFIC] * GRAV_ENGLISH_LBM
         Fn_SLS = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
         num_engines = aviary_options.get_val(
@@ -786,7 +786,7 @@ class EngineMass(om.ExplicitComponent):
             outputs["eng_comb_mass"] = (sum(CK5 * dry_wt_eng * num_engines) +
                                         CK7 * eng_instl_wt_all + aug_wt) / GRAV_ENGLISH_LBM
 
-        # prop_wt = np.zeros(engine_count)
+        # prop_wt = np.zeros(num_engine_type)
         # prop_idx = np.where(aviary_options.get_val(Aircraft.Engine.HAS_PROPELLERS))
         # prop_wt[prop_idx] = inputs["prop_mass"] * GRAV_ENGLISH_LBM
         prop_wt = inputs["prop_mass"] * GRAV_ENGLISH_LBM
@@ -794,9 +794,9 @@ class EngineMass(om.ExplicitComponent):
 
         span_frac_factor = eng_span_frac / (eng_span_frac + 0.001)
         # sum span_frac_factor for each engine type
-        span_frac_factor_sum = np.zeros(engine_count, dtype=Fn_SLS.dtype)
+        span_frac_factor_sum = np.zeros(num_engine_type, dtype=Fn_SLS.dtype)
         idx = 0
-        for i in range(engine_count):
+        for i in range(num_engine_type):
             span_frac_factor_sum[i] = sum(span_frac_factor[idx:idx+num_engines[i]])
             idx = idx + num_engines[i]
 
@@ -806,7 +806,7 @@ class EngineMass(om.ExplicitComponent):
 
     def compute_partials(self, inputs, J):
         aviary_options: AviaryValues = self.options['aviary_options']
-        engine_count = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
+        num_engine_type = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
 
         eng_spec_wt = inputs[Aircraft.Engine.MASS_SPECIFIC] * GRAV_ENGLISH_LBM
         Fn_SLS = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
@@ -910,13 +910,13 @@ class EngineMass(om.ExplicitComponent):
 
         span_frac_factor = eng_span_frac / (eng_span_frac + 0.001)
         # sum span_frac_factor for each engine type
-        span_frac_factor_sum = np.zeros(engine_count, dtype=Fn_SLS.dtype)
+        span_frac_factor_sum = np.zeros(num_engine_type, dtype=Fn_SLS.dtype)
         wing_mass_deriv = np.zeros(len(span_frac_factor), dtype=Fn_SLS.dtype)
         idx = 0
         # wing_mass_vec = (eng_spec_wt * Fn_SLS * (1 + c_instl) +
         #                 sec_wt + prop_wt) * num_engines
         wing_mass_vec = (dry_wt_eng + eng_instl_wt + pod_wt + prop_wt) * num_engines
-        for i in range(engine_count):
+        for i in range(num_engine_type):
             span_frac_factor_sum[i] = sum(span_frac_factor[idx:idx+num_engines[i]])
             wing_mass_deriv[idx:idx+num_engines[i]] = wing_mass_vec[i]
             idx = idx + num_engines[i]
@@ -2282,7 +2282,7 @@ class GearMass(om.ExplicitComponent):
         )
 
     def setup(self):
-        engine_count = len(self.options['aviary_options'].get_val(
+        num_engine_type = len(self.options['aviary_options'].get_val(
             Aircraft.Engine.NUM_ENGINES))
 
         add_aviary_input(self, Aircraft.Wing.MOUNTING_TYPE, val=0)
@@ -2290,9 +2290,9 @@ class GearMass(om.ExplicitComponent):
         add_aviary_input(self, Mission.Design.GROSS_MASS, val=152000)
         add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT, val=0.85)
         add_aviary_input(self, Aircraft.Nacelle.CLEARANCE_RATIO,
-                         val=np.full(engine_count, 0.2), units="unitless")
+                         val=np.full(num_engine_type, 0.2), units="unitless")
         add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER,
-                         val=np.full(engine_count, 7.5))
+                         val=np.full(num_engine_type, 7.5))
 
         add_aviary_output(self, Aircraft.LandingGear.TOTAL_MASS, val=0)
         add_aviary_output(self, Aircraft.LandingGear.MAIN_GEAR_MASS, val=0, units="lbm",

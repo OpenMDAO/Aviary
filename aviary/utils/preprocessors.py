@@ -156,9 +156,6 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
         if var in update_list:
             dtype = _MetaData[var]['types']
             default_value = _MetaData[var]['default_value']
-            # if default_value is in an array, pull out first index as default
-            # if type(default_value) in (list, np.ndarray, tuple):
-            #     default_value = default_value[0]
             # if dtype has multiple options, use type of default value
             if type(dtype) in (list, tuple):
                 dtype = type(default_value)
@@ -169,7 +166,7 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
             elif type(default_value) is tuple:
                 vec = ()
             else:
-                vec = [default_value] * count
+                vec = [default_value] * num_engine_type
 
             units = _MetaData[var]['units']
 
@@ -232,16 +229,16 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
     try:
         num_engines_all = aviary_options.get_val(Aircraft.Engine.NUM_ENGINES)
     except KeyError:
-        num_engines_all = np.zeros(count).astype(int)
+        num_engines_all = np.zeros(num_engine_type).astype(int)
     try:
         num_fuse_engines_all = aviary_options.get_val(
             Aircraft.Engine.NUM_FUSELAGE_ENGINES)
     except KeyError:
-        num_fuse_engines_all = np.zeros(count).astype(int)
+        num_fuse_engines_all = np.zeros(num_engine_type).astype(int)
     try:
         num_wing_engines_all = aviary_options.get_val(Aircraft.Engine.NUM_WING_ENGINES)
     except KeyError:
-        num_wing_engines_all = np.zeros(count).astype(int)
+        num_wing_engines_all = np.zeros(num_engine_type).astype(int)
 
     for i, engine in enumerate(engine_models):
         num_engines = num_engines_all[i]

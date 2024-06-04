@@ -26,7 +26,7 @@ class PropulsionPreMission(om.Group):
     def setup(self):
         options = self.options['aviary_options']
         engine_models = self.options['engine_models']
-        engine_count = len(engine_models)
+        num_engine_type = len(engine_models)
 
         # Each engine model pre_mission component only needs to accept and output single
         # value relevant to that variable - this group's configure step will handle
@@ -37,7 +37,7 @@ class PropulsionPreMission(om.Group):
             subsys = engine.build_pre_mission(options)
             if subsys:
 
-                if engine_count > 1:
+                if num_engine_type > 1:
                     proms = None
                 else:
                     proms = ['*']
@@ -46,7 +46,7 @@ class PropulsionPreMission(om.Group):
                                    promotes_outputs=proms,
                                    )
 
-        if engine_count > 1:
+        if num_engine_type > 1:
             # Add an empty mux comp, which will be customized to handle all required
             # outputs in self.configure()
             self.add_subsystem(
@@ -69,7 +69,7 @@ class PropulsionPreMission(om.Group):
         # so vectorized inputs/outputs are a problem. Slice all needed vector inputs and pass
         # pre_mission components only the value they need, then mux all the outputs back together
 
-        engine_count = len(self.options['aviary_options'].get_val(
+        num_engine_type = len(self.options['aviary_options'].get_val(
             Aircraft.Engine.NUM_ENGINES))
 
         # determine if openMDAO messages and warnings should be suppressed
@@ -98,7 +98,7 @@ class PropulsionPreMission(om.Group):
 
             # pull out all inputs (in dict format) in component
             comp_inputs = comp.list_inputs(
-                return_format='dict', units=True, out_stream=out_stream)
+                return_format='dict', units=True, out_stream=out_stream, all_procs=True)
             # only keep inputs if they contain the pattern
             input_dict[comp.name] = dict((key, comp_inputs[key])
                                          for key in comp_inputs if any([x in key for x in pattern]))
@@ -112,7 +112,7 @@ class PropulsionPreMission(om.Group):
 
             # do the same thing with outputs
             comp_outputs = comp.list_outputs(
-                return_format='dict', units=True, out_stream=out_stream)
+                return_format='dict', units=True, out_stream=out_stream, all_procs=True)
             output_dict[comp.name] = dict((key, comp_outputs[key])
                                           for key in comp_outputs if any([x in key for x in pattern]))
             unique_outputs.update([(key, output_dict[comp.name][key]['units'])
@@ -131,7 +131,7 @@ class PropulsionPreMission(om.Group):
 
         # add variables to the mux component and make connections to individual
         # component outputs
-        if engine_count > 1:
+        if num_engine_type > 1:
             for output in unique_outputs:
                 self.pre_mission_mux.add_var(output,
                                              units=unique_outputs[output])
@@ -159,11 +159,11 @@ class PropulsionSum(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        engine_count = len(self.options['aviary_options'].get_val(
+        num_engine_type = len(self.options['aviary_options'].get_val(
             Aircraft.Engine.NUM_ENGINES))
 
         add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST,
-                         val=np.zeros(engine_count))
+                         val=np.zeros(num_engine_type))
 
         add_aviary_output(
             self, Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, val=0.0)

@@ -540,8 +540,6 @@ class AviaryProblem(om.Problem):
         # configure() - instead add it now
         pre_mission.add_subsystem('core_propulsion',
                                   subsystems['propulsion'].build_pre_mission(self.aviary_inputs),)
-        #   promotes_inputs=['*'],
-        #   promotes_outputs=['*'])
 
         default_subsystems = [subsystems['geometry'],
                               subsystems['aerodynamics'],

@@ -8,7 +8,7 @@ from aviary.mission.initial_guess_builders import InitialGuessState, InitialGues
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.mission.flops_based.phases.phase_utils import add_subsystem_variables_to_phase, get_initial
-from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.mission.flops_based.ode.mission_ODE import MissionODE
 from aviary.variable_info.enums import EquationsOfMotion, ThrottleAllocation
 from aviary.variable_info.variables import Aircraft
@@ -74,8 +74,7 @@ class FlightPhaseBase(PhaseBuilderBase):
         '''
         phase: dm.Phase = super().build_phase(aviary_options)
 
-        engine_models = aviary_options.get_val(Aircraft.Engine.NUM_ENGINES)
-        num_eng = len(engine_models)
+        num_engine_type = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
 
         user_options: AviaryValues = self.user_options
 
@@ -177,17 +176,17 @@ class FlightPhaseBase(PhaseBuilderBase):
             rate2_targets = ['d2h_dr2']
 
         # For multi-engine cases, we may have throttle allocation control.
-        if phase_type is EquationsOfMotion.HEIGHT_ENERGY and num_eng > 1:
+        if phase_type is EquationsOfMotion.HEIGHT_ENERGY and num_engine_type > 1:
             allocation = user_options.get_val('throttle_allocation')
 
             # Allocation should default to an even split so that we don't start
             # with an allocation that might not produce enough thrust.
-            val = np.ones(num_eng - 1) * (1.0 / num_eng)
+            val = np.ones(num_engine_type - 1) * (1.0 / num_engine_type)
 
             if allocation == ThrottleAllocation.DYNAMIC:
                 phase.add_control(
                     "throttle_allocations",
-                    shape=(num_eng - 1, ),
+                    shape=(num_engine_type - 1, ),
                     val=val,
                     targets="throttle_allocations", units="unitless",
                     opt=True, lower=0.0, upper=1.0,
@@ -203,7 +202,7 @@ class FlightPhaseBase(PhaseBuilderBase):
                     "throttle_allocations",
                     units="unitless",
                     val=val,
-                    shape=(num_eng - 1, ),
+                    shape=(num_engine_type - 1, ),
                     opt=opt, lower=0.0, upper=1.0,
                 )
 

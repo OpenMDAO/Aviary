@@ -23,32 +23,32 @@ class EnginePodMass(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        engine_count = len(self.options['aviary_options'].get_val(
+        num_engine_type = len(self.options['aviary_options'].get_val(
             Aircraft.Engine.NUM_ENGINES))
 
         add_aviary_input(self, Aircraft.Electrical.MASS, val=0.0)
         add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS, val=0.0)
         add_aviary_input(self, Aircraft.Hydraulics.MASS, val=0.0)
         add_aviary_input(self, Aircraft.Instruments.MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Nacelle.MASS, val=np.zeros(engine_count))
+        add_aviary_input(self, Aircraft.Nacelle.MASS, val=np.zeros(num_engine_type))
         add_aviary_input(self, Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Engine.MASS, val=np.zeros(engine_count))
+        add_aviary_input(self, Aircraft.Engine.MASS, val=np.zeros(num_engine_type))
         add_aviary_input(self, Aircraft.Propulsion.TOTAL_STARTER_MASS, val=0.0)
         add_aviary_input(self, Aircraft.Engine.THRUST_REVERSERS_MASS,
-                         val=np.zeros(engine_count))
+                         val=np.zeros(num_engine_type))
         add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST,
-                         val=np.zeros(engine_count))
+                         val=np.zeros(num_engine_type))
         add_aviary_input(self, Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, val=0.0)
 
-        add_aviary_output(self, Aircraft.Engine.POD_MASS, val=np.zeros(engine_count))
+        add_aviary_output(self, Aircraft.Engine.POD_MASS, val=np.zeros(num_engine_type))
 
     def setup_partials(self):
         self.declare_partials('*', '*')
 
         # derivatives w.r.t vectorized engine inputs have known sparsity pattern
-        engine_count = len(self.options['aviary_options'].get_val(
+        num_engine_type = len(self.options['aviary_options'].get_val(
             Aircraft.Engine.NUM_ENGINES))
-        shape = np.arange(engine_count)
+        shape = np.arange(num_engine_type)
 
         self.declare_partials(Aircraft.Engine.POD_MASS,
                               Aircraft.Engine.THRUST_REVERSERS_MASS,

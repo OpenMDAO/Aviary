@@ -12,6 +12,7 @@ from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_flight_condit
     UnsteadySolvedFlightConditions
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.options import get_option_defaults
+from variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.utils.aviary_values import AviaryValues
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
