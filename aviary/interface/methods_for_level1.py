@@ -11,13 +11,14 @@ from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.utils.functions import get_path
 
 
-def run_aviary(aircraft_filename, phase_info, optimizer=None,
-               analysis_scheme=AnalysisScheme.COLLOCATION, objective_type=None,
-               record_filename='dymos_solution.db', restart_filename=None, max_iter=50,
-               run_driver=True, make_plots=True, phase_info_parameterization=None,
-               optimization_history_filename=None, verbosity=Verbosity.BRIEF):
+def setup_and_run_aviary(
+        aircraft_filename, phase_info, optimizer=None,
+        analysis_scheme=AnalysisScheme.COLLOCATION, objective_type=None,
+        record_filename='dymos_solution.db', restart_filename=None, max_iter=50,
+        run_driver=True, make_plots=True, phase_info_parameterization=None,
+        optimization_history_filename=None, verbosity=Verbosity.BRIEF):
     """
-    Run the Aviary optimization problem for a specified aircraft configuration and mission.
+    Setup and run the Aviary optimization problem for a specified aircraft configuration and mission.
 
     This function creates an instance of the AviaryProblem class using provided phase information,
     mission, and mass methods. It processes aircraft and options data from the given aircraft filename,
