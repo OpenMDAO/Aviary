@@ -6,7 +6,7 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.reports_system import clear_reports
 
-from aviary.interface.methods_for_level1 import run_aviary
+from aviary.interface.methods_for_level1 import setup_and_run_aviary
 from aviary.subsystems.test.test_dummy_subsystem import ArrayGuessSubsystemBuilder
 from aviary.mission.energy_phase import EnergyPhase
 from aviary.variable_info.variables import Dynamic
@@ -119,7 +119,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
                 phase_info[phase]['external_subsystems'].append(subsystem_builder)
 
     def run_mission(self, phase_info, optimizer):
-        return run_aviary(
+        return setup_and_run_aviary(
             self.aircraft_definition_file, phase_info,
             make_plots=self.make_plots, max_iter=self.max_iter, optimizer=optimizer,
             optimization_history_filename="driver_test.db", verbosity=Verbosity.QUIET)
@@ -224,16 +224,16 @@ class AircraftMissionTestSuite(unittest.TestCase):
         local_phase_info = self.phase_info.copy()
         local_phase_info['climb']['phase_builder'] = EnergyPhase
 
-        run_aviary(self.aircraft_definition_file, local_phase_info,
-                   verbosity=Verbosity.QUIET, max_iter=1, optimizer='SLSQP')
+        setup_and_run_aviary(self.aircraft_definition_file, local_phase_info,
+                             verbosity=Verbosity.QUIET, max_iter=1, optimizer='SLSQP')
 
     def test_custom_phase_builder_error(self):
         local_phase_info = self.phase_info.copy()
         local_phase_info['climb']['phase_builder'] = "fake phase object"
 
         with self.assertRaises(TypeError):
-            run_aviary(self.aircraft_definition_file, local_phase_info,
-                       verbosity=Verbosity.QUIET, max_iter=1, optimizer='SLSQP')
+            setup_and_run_aviary(self.aircraft_definition_file, local_phase_info,
+                                 verbosity=Verbosity.QUIET, max_iter=1, optimizer='SLSQP')
 
 
 if __name__ == '__main__':
