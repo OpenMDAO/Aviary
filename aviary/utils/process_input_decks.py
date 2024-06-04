@@ -52,7 +52,7 @@ def create_vehicle(vehicle_deck='', verbosity=Verbosity.BRIEF, meta_data=_MetaDa
     aircraft_values = get_option_defaults(engine=False)
 
     # TODO remove all hardcoded GASP values here, find appropriate place for them
-    aircraft_values.set_val('verbosity', val=verbosity)
+    aircraft_values.set_val(Settings.VERBOSITY, val=verbosity)
     aircraft_values.set_val('INGASP.JENGSZ', val=4)
     aircraft_values.set_val('test_mode', val=False)
     aircraft_values.set_val('use_surrogates', val=True)
@@ -139,7 +139,7 @@ def parse_inputs(vehicle_deck, aircraft_values: AviaryValues(), meta_data=_MetaD
                 initial_guesses[var_name] = float(var_values[0])
                 continue
 
-            if aircraft_values.get_val('verbosity').value >= 2:
+            if aircraft_values.get_val('settings:verbosity').value >= 2:
                 print('Unused:', var_name, var_values, comment)
 
     return aircraft_values, initial_guesses
@@ -183,7 +183,7 @@ def update_GASP_options(aircraft_values: AviaryValues()):
         aircraft_values.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=False)
 
-    if aircraft_values.get_val('verbosity').value >= 2:
+    if aircraft_values.get_val('settings:verbosity').value >= 2:
         print('\nOptions')
         for key in get_keys(aircraft_values):
             val, units = aircraft_values.get_item(key)
@@ -333,7 +333,7 @@ def initial_guessing(aircraft_values: AviaryValues(), initial_guesses):
         initial_guesses['climb_range'] = initial_guesses['time_to_climb'] / \
             (60 * 60) * (avg_speed_guess * np.cos(gamma_guess))
 
-    if aircraft_values.get_val('verbosity').value >= 2:
+    if aircraft_values.get_val('settings:verbosity').value >= 2:
         print('\nInitial Guesses')
         for key, value in initial_guesses.items():
             print(key, value)
