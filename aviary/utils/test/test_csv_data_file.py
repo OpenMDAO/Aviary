@@ -1,12 +1,16 @@
+import os
 import unittest
 import warnings
 
-from openmdao.utils.assert_utils import assert_near_equal
+from openmdao.utils.assert_utils import assert_near_equal, assert_warning
+from openmdao.utils.om_warnings import SetupWarning
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.utils.csv_data_file import write_data_file, read_data_file
 from aviary.utils.functions import get_path
 from aviary.utils.named_values import NamedValues, get_items, get_keys
+from aviary.utils.process_input_decks import parse_inputs
+from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variable_meta_data import CoreMetaData, add_meta_data
 
 
@@ -79,6 +83,24 @@ class TestAviaryCSV(unittest.TestCase):
             raise RuntimeError("'fake_var' should be converted to 'Real Var'")
         if 'Real Var' not in get_keys(data):
             raise RuntimeError("'Real Var' is not in data read from csv")
+
+    @use_tempdirs
+    def test_parse_input(self):
+        aircraft_values = get_option_defaults(engine=False)
+        # create a temperary csv file for testing non-existing variable name
+        file_name = "aircraft_for_invalid_var.csv"
+        with open(file_name, "w") as file:
+            file.write("test_string,0\n")  # be ignored
+            file.write("aircraft:wing:mass_scalar,1,unitless\n")  # raise a warning
+            file.write("aircraft:anti_icing:mass,551,lbm\n")  # a good variable
+        vehicle_deck = get_path(file_name)
+
+        msg = "Variable 'aircraft:wing:mass_scalar' is not in meta_data nor in 'guess_names'. It will be ignored."
+        with assert_warning(UserWarning, msg):
+            parse_inputs(vehicle_deck, aircraft_values)
+
+        # remove the temperary csv file
+        os.remove(file_name)
 
     def _compare_csv_results(self, data, comments):
         expected_data = self.data
