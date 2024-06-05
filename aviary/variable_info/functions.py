@@ -4,13 +4,6 @@ from dymos.utils.misc import _unspecified
 from openmdao.core.component import Component
 
 from aviary.utils.aviary_values import AviaryValues
-
-import dymos as dm
-
-from dymos.utils.misc import _unspecified
-
-import openmdao.api as om
-
 from aviary.variable_info.core_promotes import core_mission_inputs
 from aviary.variable_info.variable_meta_data import _MetaData
 
@@ -19,7 +12,7 @@ from aviary.variable_info.variable_meta_data import _MetaData
 # ---------------------------
 
 
-def add_aviary_input(comp, varname, val=None, units=None, desc=None, shape_by_conn=False, meta_data=_MetaData):
+def add_aviary_input(comp, varname, val=None, units=None, desc=None, shape_by_conn=False, meta_data=_MetaData, shape=None):
     '''
     This function provides a clean way to add variables from the
     variable hierarchy into components as Aviary inputs. It takes
@@ -42,7 +35,7 @@ def add_aviary_input(comp, varname, val=None, units=None, desc=None, shape_by_co
     if val is None:
         val = meta['default_value']
     comp.add_input(varname, val=val, units=input_units,
-                   desc=input_desc, shape_by_conn=shape_by_conn)
+                   desc=input_desc, shape_by_conn=shape_by_conn, shape=shape)
 
 
 def add_aviary_output(comp, varname, val, units=None, desc=None, shape_by_conn=False, meta_data=_MetaData):
@@ -139,7 +132,7 @@ def override_aviary_vars(group, aviary_inputs: AviaryValues,
             # This variable is not overriden, so the output is promoted.
             comp_promoted_outputs.append(name)
 
-        # note: Always promoting all inputs into the "global" namespace
+        # NOTE Always promoting all inputs into the "global" namespace
         # so its VERY important that we enforce all inputs names exist in the master
         # variable list
         rel_path = comp.pathname[len(group.pathname):].lstrip(".")
@@ -168,16 +161,49 @@ def setup_trajectory_params(
     model: om.Group, traj: dm.Trajectory, aviary_variables: AviaryValues, phases=['climb', 'cruise', 'descent'],
     variables_to_add=None, meta_data=_MetaData, external_parameters={},
 ):
-    '''
+    """
     This function smoothly sorts through the aviary variables which
     are being used in the trajectory, and for the variables which are
     not options it adds them as a parameter of the trajectory.
-    '''
-    # TODO: make this automated as part of the trajectory subclass
+    """
+    # TODO: variables_to_add might be an unused option.
     if variables_to_add is None:
         variables_to_add = sorted(core_mission_inputs)
 
+    # Step 1: Initialize a dictionary to hold parameters and their associated phases
+    parameters_with_phases = {}
+
+    # Step 2: Loop through external_parameters to populate the dictionary
+    for phase_name, parameter_dict in external_parameters.items():
+        for key in parameter_dict.keys():
+            if key not in parameters_with_phases:
+                parameters_with_phases[key] = []
+            parameters_with_phases[key].append(phase_name)
+
+    # Step 3: Loop through the collected parameters and call traj.add_parameter
+    already_added = []
+    for key, phases in parameters_with_phases.items():
+        # Assuming the kwargs are the same for shared parameters
+        kwargs = external_parameters[phases[0]][key]
+        targets = {phase: [key] for phase in phases}
+        traj.add_parameter(
+            key,
+            **kwargs,
+            targets=targets
+        )
+
+        model.promotes('traj', inputs=[(f'parameters:{key}', key)])
+        already_added.append(key)
+
+    # Process the core mission inputs last, because some of them might have already
+    # been covered by the phase builders.
+    # TODO: As we use more builders, we may reach the point where we don't need
+    # to do these anymore.
     for key in sorted(variables_to_add):
+
+        if key in already_added:
+            continue
+
         meta = meta_data[key]
 
         if not meta['option']:
@@ -192,12 +218,11 @@ def setup_trajectory_params(
                 except TypeError:
                     val = aviary_variables.get_val(key)
 
-                    # TODO temp line to ignore dynamic mission variables, will not work
-                    #      if names change to 'dynamic:mission:*'
+            # TODO temp line to ignore dynamic mission variables, will not work
+            #      if names change to 'dynamic:mission:*'
             if ':' not in key:
                 continue
 
-            # TODO: make a trajectory subclass that does this
             traj.add_parameter(
                 key,
                 opt=False,
@@ -207,28 +232,6 @@ def setup_trajectory_params(
                 targets={phase_name: [key] for phase_name in phases})
 
             model.promotes('traj', inputs=[(f'parameters:{key}', key)])
-
-    # Step 1: Initialize a dictionary to hold parameters and their associated phases
-    parameters_with_phases = {}
-
-    # Step 2: Loop through external_parameters to populate the dictionary
-    for phase_name, parameter_dict in external_parameters.items():
-        for key in parameter_dict.keys():
-            if key not in parameters_with_phases:
-                parameters_with_phases[key] = []
-            parameters_with_phases[key].append(phase_name)
-
-    # Step 3: Loop through the collected parameters and call traj.add_parameter
-    for key, phases in parameters_with_phases.items():
-        # Assuming the kwargs are the same for shared parameters
-        kwargs = external_parameters[phases[0]][key]
-        targets = {phase: [key] for phase in phases}
-        traj.add_parameter(
-            key,
-            **kwargs,
-            targets=targets
-        )
-        model.promotes('traj', inputs=[(f'parameters:{key}', key)])
 
     return traj
 

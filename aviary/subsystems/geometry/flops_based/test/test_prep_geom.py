@@ -69,7 +69,6 @@ class PrepGeomTest(unittest.TestCase):
                                      Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION,
                                      Aircraft.Engine.NUM_ENGINES,
                                      Aircraft.Propulsion.TOTAL_NUM_ENGINES,
-                                     'engine_models'
                                  ])
 
         prob = self.prob
@@ -469,7 +468,8 @@ class CharacteristicLengthsTest(unittest.TestCase):
                                                                   keys=[Aircraft.Engine.NUM_ENGINES,
                                                                         Aircraft.Fuselage.NUM_FUSELAGES,
                                                                         Aircraft.VerticalTail.NUM_TAILS,
-                                                                        Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION])),
+                                                                        Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION,
+                                                                        "engine_models"])),
             promotes=['*']
         )
 

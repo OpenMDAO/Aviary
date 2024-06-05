@@ -2,6 +2,7 @@ import json
 import os
 import unittest
 
+import numpy as np
 import openmdao.api as om
 import pandas as pd
 from openmdao.utils.assert_utils import assert_near_equal
@@ -9,6 +10,7 @@ from openmdao.utils.assert_utils import assert_near_equal
 from aviary.subsystems.aerodynamics.gasp_based.gaspaero import CruiseAero, LowSpeedAero
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.utils.aviary_values import AviaryValues
 
 here = os.path.abspath(os.path.dirname(__file__))
 cruise_data = pd.read_csv(os.path.join(here, "data", "aero_data_cruise.csv"))
@@ -21,6 +23,8 @@ class GASPAeroTest(unittest.TestCase):
 
     cruise_tol = 1.5e-3
     ground_tol = 0.5e-3
+    aviary_options = AviaryValues()
+    aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
 
     def test_cruise(self):
         prob = om.Problem()

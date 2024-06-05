@@ -87,7 +87,7 @@ class SubsystemBuilderBase(ABC):
         """
         return {}
 
-    def get_parameters(self):
+    def get_parameters(self, aviary_inputs=None, phase_info=None):
         """
         Return a dictionary of fixed values for the subsystem.
 
@@ -100,6 +100,13 @@ class SubsystemBuilderBase(ABC):
         An example would be something that occurs in the pre-mission level of the problem.
         Parameters are fixed values that are held constant throughout a phase, but if
         `opt=True`, they are able to change during the optimization.
+
+        Parameters
+        ----------
+        aviary_inputs : dict
+            A dictionary containing the inputs to the subsystem.
+        phase_info : dict
+            The phase_info subdict for this phase.
 
         Returns
         -------
@@ -158,7 +165,7 @@ class SubsystemBuilderBase(ABC):
         -------
         bus_variables : dict
             A dictionary where the keys are the names of the variables
-            output in the pre-mission subsystem and the values are 
+            output in the pre-mission subsystem and the values are
             dictionaries with the following keys:
 
             - 'mission_name': str or list
@@ -169,7 +176,7 @@ class SubsystemBuilderBase(ABC):
                 mission subsystem (optional).
             - 'units' : str
                 This is temporary and will be removed, however, it is
-                currently a requirement. 
+                currently a requirement.
 
         """
         return {}

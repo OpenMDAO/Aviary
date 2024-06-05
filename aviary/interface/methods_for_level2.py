@@ -246,8 +246,6 @@ class AviaryProblem(om.Problem):
         an AviaryValues object and/or phase_info dict of their own.
         """
         ## LOAD INPUT FILE ###
-        self.engine_builder = engine_builder
-
         # Create AviaryValues object from file (or process existing AviaryValues object
         # with default values from metadata) and generate initial guesses
         aviary_inputs, initial_guesses = create_vehicle(
@@ -381,14 +379,17 @@ class AviaryProblem(om.Problem):
         self.ode_args = dict(aviary_options=aviary_inputs,
                              core_subsystems=default_mission_subsystems)
 
-        if engine_builder is None:
-            engine = EngineDeck(options=aviary_inputs)
+        if 'engine_models' in aviary_inputs:
+            engine_models = aviary_inputs.get_val('engine_models')
         else:
-            engine = engine_builder
+            engine_models = [EngineDeck(options=aviary_inputs)]
 
-        preprocess_propulsion(aviary_inputs, [engine])
+        preprocess_propulsion(aviary_inputs, engine_models)
 
         self._update_metadata_from_subsystems()
+
+        if Settings.VERBOSITY not in aviary_inputs:
+            aviary_inputs.set_val(Settings.VERBOSITY, Verbosity.BRIEF)
 
         self.aviary_inputs = aviary_inputs
         return aviary_inputs
@@ -404,35 +405,7 @@ class AviaryProblem(om.Problem):
                 self.phase_info[phase_name]['external_subsystems'])
             for subsystem in external_subsystems:
                 meta_data = subsystem.meta_data.copy()
-
-                state_info = subsystem.get_states()
-                for state in state_info:
-                    variables_to_pop.append(state)
-                    variables_to_pop.append(state_info[state]['rate_source'])
-
-                arg_spec = inspect.getfullargspec(subsystem.get_controls)
-                if 'phase_name' in arg_spec.args:
-                    control_dicts = subsystem.get_controls(
-                        phase_name=phase_name)
-                else:
-                    control_dicts = subsystem.get_controls()
-
-                for control_name, control_dict in control_dicts.items():
-                    variables_to_pop.append(control_name)
-
-                for output in subsystem.get_outputs():
-                    variables_to_pop.append(output)
-
-                for parameter in subsystem.get_parameters():
-                    variables_to_pop.append(parameter)
-
                 self.meta_data = merge_meta_data([self.meta_data, meta_data])
-
-        variables_to_pop = list(set(variables_to_pop))
-
-        for variable in variables_to_pop:
-            if variable in self.meta_data:
-                self.meta_data.pop(variable)
 
     def phase_separator(self):
         """
@@ -563,8 +536,13 @@ class AviaryProblem(om.Problem):
         self._add_premission_external_subsystems()
 
         subsystems = self.core_subsystems
-        default_subsystems = [subsystems['propulsion'],
-                              subsystems['geometry'],
+
+        # Propulsion isn't included in core pre-mission group to avoid override step in
+        # configure() - instead add it now
+        pre_mission.add_subsystem('core_propulsion',
+                                  subsystems['propulsion'].build_pre_mission(self.aviary_inputs),)
+
+        default_subsystems = [subsystems['geometry'],
                               subsystems['aerodynamics'],
                               subsystems['mass'],]
 
@@ -1097,7 +1075,10 @@ class AviaryProblem(om.Problem):
                 all_subsystems = self._get_all_subsystems(
                     self.phase_info[phase_name]['external_subsystems'])
                 for subsystem in all_subsystems:
-                    parameter_dict = subsystem.get_parameters()
+                    parameter_dict = subsystem.get_parameters(
+                        phase_info=self.phase_info[phase_name],
+                        aviary_inputs=self.aviary_inputs
+                    )
                     for parameter in parameter_dict:
                         external_parameters[phase_name][parameter] = parameter_dict[parameter]
 
@@ -2314,7 +2295,7 @@ class AviaryProblem(om.Problem):
             If True (default), Dymos html plots will be generated as part of the output.
         """
 
-        if self.aviary_inputs.get_val('verbosity').value >= 2:
+        if self.aviary_inputs.get_val(Settings.VERBOSITY).value >= 2:
             self.final_setup()
             with open('input_list.txt', 'w') as outfile:
                 self.model.list_inputs(out_stream=outfile)
@@ -2336,7 +2317,7 @@ class AviaryProblem(om.Problem):
             failed = self.run_model()
             warnings.filterwarnings('default', category=UserWarning)
 
-        if self.aviary_inputs.get_val('verbosity').value >= 2:
+        if self.aviary_inputs.get_val(Settings.VERBOSITY).value >= 2:
             with open('output_list.txt', 'w') as outfile:
                 self.model.list_outputs(out_stream=outfile)
 
@@ -2389,8 +2370,8 @@ class AviaryProblem(om.Problem):
         else:
             all_subsystems.extend(external_subsystems)
 
-        if self.engine_builder is not None:
-            all_subsystems.append(self.engine_builder)
+        all_subsystems.append(self.core_subsystems['aerodynamics'])
+        all_subsystems.append(self.core_subsystems['propulsion'])
 
         return all_subsystems
 
