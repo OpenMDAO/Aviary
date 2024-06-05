@@ -47,6 +47,42 @@ class SkinFrictionCoeffTest(unittest.TestCase):
         # TODO: need to test values too
         assert_check_partials(derivs, atol=1e-08, rtol=1e-12)
 
+    def test_derivs_multiengine(self):
+        n = 12
+        nc = 9
+
+        machs = np.array([.2, .3, .4, .5, .6, .7, .75, .775, .8, .825, .85, .875])
+        alts = np.linspace(41000, 41000, n)
+        lens = np.linspace(1, 2, nc)
+        temp = np.ones(n) * 389.97
+        pres = np.ones(n) * 2.60239151
+
+        prob = om.Problem()
+        model = prob.model
+
+        options = {}
+        options[Aircraft.VerticalTail.NUM_TAILS] = (0, 'unitless')
+        options[Aircraft.Fuselage.NUM_FUSELAGES] = (1, 'unitless')
+        options[Aircraft.Engine.NUM_ENGINES] = ([2, 4], 'unitless')
+
+        model.add_subsystem(
+            'cf', SkinFriction(num_nodes=n, aviary_options=AviaryValues(options)))
+
+        prob.setup(force_alloc_complex=True)
+
+        prob.set_val('cf.temperature', temp[:n])
+        prob.set_val('cf.static_pressure', pres[:n])
+        prob.set_val('cf.mach', machs[:n])
+        prob.set_val('cf.characteristic_lengths', lens[:nc])
+
+        prob.run_model()
+
+        derivs = prob.check_partials(method='cs', out_stream=None)
+
+        # Atol set higher because some derivs are on the order 1e7
+        # TODO: need to test values too
+        assert_check_partials(derivs, atol=1e-08, rtol=1e-12)
+
     def test_skin_friction_algorithm(self):
         # Test vs aviary1 algorithm output.
         n = 12
@@ -129,3 +165,5 @@ class SkinFrictionCoeffTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+    # test = SkinFrictionCoeffTest()
+    # test.test_derivs_multiengine()

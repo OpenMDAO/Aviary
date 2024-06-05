@@ -15,7 +15,7 @@ from aviary.subsystems.geometry.flops_based.prep_geom import PrepGeom
 from aviary.subsystems.geometry.gasp_based.size_group import SizeGroup
 from aviary.variable_info.variables import Aircraft
 from aviary.variable_info.enums import LegacyCode
-
+from aviary.variable_info.variable_meta_data import _MetaData
 
 GASP = LegacyCode.GASP
 FLOPS = LegacyCode.FLOPS
@@ -75,6 +75,18 @@ class CoreGeometryBuilder(GeometryBuilderBase):
 
     def build_mission(self, num_nodes, aviary_inputs, **kwargs):
         super().build_mission(num_nodes, aviary_inputs)
+
+    def get_parameters(self, aviary_inputs=None, phase_info=None):
+        num_engine_type = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
+        params = {}
+
+        for entry in Aircraft.Nacelle.__dict__:
+            var = getattr(Aircraft.Nacelle, entry)
+            if var in aviary_inputs:
+                if 'total' not in var:
+                    params[var] = {'shape': (num_engine_type), 'static_target': True}
+
+        return params
 
     def report(self, prob, reports_folder, **kwargs):
         """

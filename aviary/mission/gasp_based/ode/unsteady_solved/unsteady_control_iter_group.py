@@ -6,7 +6,7 @@ from aviary.constants import RHO_SEA_LEVEL_ENGLISH
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
 
-from .unsteady_solved_eom import UnsteadySolvedEOM
+from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_eom import UnsteadySolvedEOM
 
 
 class UnsteadyControlIterGroup(om.Group):

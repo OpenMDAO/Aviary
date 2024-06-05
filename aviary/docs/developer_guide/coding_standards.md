@@ -38,5 +38,15 @@ Class names should be written in "[CamelCase](https://en.wikipedia.org/wiki/Came
 Function and method names, similar to variables, should be formatted in "snake case". Class methods that are not intended to be accessed outside of the class definition can append an underscore at the beginning of the method name to mark it as "private", to help other users avoid using those methods incorrectly. An example of this is:
 *def _private_method(self):*
 
+### Import statements
+
+Autopep8 allows both absolute and relative paths in `import` statements. Aviary will use absolute path option only. Following autopep8, imports should be grouped in the following order:
+
+    1. Standard library imports.
+    2. Related third party imports.
+    3. Local application/library specific imports.
+
+There should be a blank line between each group of imports.
+
 ## Code Re-Use and Utility Functions
 If an identical block of code appears multiple times inside a file, consider moving it to a function to make your code cleaner. Repeated code bloats files and makes them less readable. If that function ends up being useful outside that individual file, move it to a "utils.py" file in the lowest-level directory shared by all files that need that function. If the utility function is useful across all of Aviary and is integral to the tool's operation, the aviary/utils folder is the appropriate place for it.

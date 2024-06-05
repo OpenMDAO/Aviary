@@ -173,13 +173,13 @@ class BatteryBuilder(SubsystemBuilderBase):
             Aircraft.Battery.Cell.DISCHARGE_RATE: {
                 'units': 'A',
                 'lower': 0.0,
-                'upper': 1.0,
+                'upper': 2.0,
             },
         }
 
         return DVs
 
-    def get_parameters(self):
+    def get_parameters(self, aviary_inputs=None, phase_info=None):
         '''
         Return a dictionary of fixed values exposed to the phases for the battery subsystem.
 
@@ -250,7 +250,7 @@ class BatteryBuilder(SubsystemBuilderBase):
         In this case, it sets the values battery performance based on the battery cell type.
         '''
         battery_cell_info_18650 = {
-            Aircraft.Battery.Cell.DISCHARGE_RATE: [10.5, 'A'],
+            Aircraft.Battery.Cell.DISCHARGE_RATE: [2.0, 'A'],
             Aircraft.Battery.Cell.ENERGY_CAPACITY_MAX: [3.5, 'A*h'],
             Aircraft.Battery.Cell.HEAT_CAPACITY: [1020.0, 'J/(kg*K)'],
             Aircraft.Battery.Cell.MASS: [0.045, 'kg'],

@@ -26,7 +26,7 @@ from aviary.utils.functions import convert_strings_to_data, set_value
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.enums import ProblemType, Verbosity
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 from aviary.utils.functions import get_path
 
 
@@ -36,7 +36,7 @@ problem_types = {'sizing': ProblemType.SIZING,
                  'alternate': ProblemType.ALTERNATE, 'fallout': ProblemType.FALLOUT}
 
 
-def create_vehicle(vehicle_deck='', verbosity=Verbosity.BRIEF):
+def create_vehicle(vehicle_deck='', verbosity=Verbosity.BRIEF, meta_data=_MetaData):
     """
     Creates and initializes a vehicle with default or specified parameters. It sets up the aircraft values
     and initial guesses based on the input from the vehicle deck.
@@ -57,7 +57,7 @@ def create_vehicle(vehicle_deck='', verbosity=Verbosity.BRIEF):
     aircraft_values.set_val('test_mode', val=False)
     aircraft_values.set_val('use_surrogates', val=True)
     aircraft_values.set_val('mass_defect', val=10000, units='lbm')
-    aircraft_values.set_val('problem_type', val=ProblemType.SIZING)
+    aircraft_values.set_val(Settings.PROBLEM_TYPE, val=ProblemType.SIZING)
     aircraft_values.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False)
 
     if isinstance(vehicle_deck, AviaryValues):
@@ -65,7 +65,8 @@ def create_vehicle(vehicle_deck='', verbosity=Verbosity.BRIEF):
         initial_guesses = {}
     else:
         vehicle_deck = get_path(vehicle_deck)
-        aircraft_values, initial_guesses = parse_inputs(vehicle_deck, aircraft_values)
+        aircraft_values, initial_guesses = parse_inputs(
+            vehicle_deck, aircraft_values, meta_data=meta_data)
 
     return aircraft_values, initial_guesses
 
@@ -138,7 +139,13 @@ def parse_inputs(vehicle_deck, aircraft_values: AviaryValues(), meta_data=_MetaD
                 initial_guesses[var_name] = float(var_values[0])
                 continue
 
-            if aircraft_values.get_val('verbosity').value >= 2:
+            elif ":" in var_name:
+                warnings.warn(
+                    f"Variable '{var_name}' is not in meta_data nor in 'guess_names'. It will be ignored.",
+                    UserWarning)
+                continue
+
+            if aircraft_values.get_val(Settings.VERBOSITY).value >= 2:
                 print('Unused:', var_name, var_values, comment)
 
     return aircraft_values, initial_guesses
@@ -182,7 +189,7 @@ def update_GASP_options(aircraft_values: AviaryValues()):
         aircraft_values.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=False)
 
-    if aircraft_values.get_val('verbosity').value >= 2:
+    if aircraft_values.get_val(Settings.VERBOSITY).value >= 2:
         print('\nOptions')
         for key in get_keys(aircraft_values):
             val, units = aircraft_values.get_item(key)
@@ -236,7 +243,7 @@ def initial_guessing(aircraft_values: AviaryValues(), initial_guesses):
     -------
     tuple: Updated aircraft values and initial guesses.
     """
-    problem_type = aircraft_values.get_val('problem_type')
+    problem_type = aircraft_values.get_val(Settings.PROBLEM_TYPE)
     num_pax = aircraft_values.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)
     reserve_val = aircraft_values.get_val(
         Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm')
@@ -332,7 +339,7 @@ def initial_guessing(aircraft_values: AviaryValues(), initial_guesses):
         initial_guesses['climb_range'] = initial_guesses['time_to_climb'] / \
             (60 * 60) * (avg_speed_guess * np.cos(gamma_guess))
 
-    if aircraft_values.get_val('verbosity').value >= 2:
+    if aircraft_values.get_val(Settings.VERBOSITY).value >= 2:
         print('\nInitial Guesses')
         for key, value in initial_guesses.items():
             print(key, value)

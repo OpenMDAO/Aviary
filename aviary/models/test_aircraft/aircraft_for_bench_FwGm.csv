@@ -8,7 +8,6 @@ aircraft:crew_and_payload:passenger_mass_with_bags,200,lbm
 aircraft:design:cg_delta,0.25,unitless
 aircraft:design:cockpit_control_mass_coefficient,16.5,unitless
 aircraft:design:drag_increment,0.00175,unitless
-aircraft:design:equipment_mass_coefficients,928,0.0736,0.112,0.14,1959,1.65,551,11192,5,3,50,7.6,12,unitless
 aircraft:design:max_structural_speed,402.5,mi/h
 aircraft:design:part25_structural_category,3,unitless
 aircraft:design:reserve_fuel_additional,3000.,lbm
@@ -144,7 +143,7 @@ mission:design:cruise_altitude,37500,ft
 mission:design:gross_mass,175400.0,lbm
 mission:design:mach,0.8,unitless
 mission:design:range,3675,NM
-mission:landing:airport_altitude_landing,0,ft
+mission:landing:airport_altitude,0,ft
 mission:landing:braking_delay,1,s
 mission:landing:glide_to_stall_ratio,1.3,unitless
 mission:landing:maximum_flare_load_factor,1.15,unitless
@@ -258,10 +257,10 @@ aircraft:wing:wetted_area_scaler,1.0,unitless
 aircraft:wing:wetted_area,2396.56,ft**2
 mission:constraints:max_mach,0.785,unitless
 mission:design:thrust_takeoff_per_eng,28928.1,lbf
-mission:landing:lift_coefficient,2.0,unitless
+mission:landing:lift_coefficient_max,2.0,unitless
 mission:summary:cruise_mach,0.785,unitless
 mission:takeoff:fuel_simple,577,lbm
-mission:takeoff:lift_coefficient,3.0,unitless
+mission:takeoff:lift_coefficient_max,3.0,unitless
 mission:takeoff:lift_over_drag,17.354,unitless
 mission:takeoff:rolling_friction_coefficient,0.0175,unitless
 aircraft:fuel:burn_per_passenger_mile,0.1

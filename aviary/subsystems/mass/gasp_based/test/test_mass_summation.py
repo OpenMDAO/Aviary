@@ -83,7 +83,7 @@ class MassSummationTestCase1(unittest.TestCase):
 
         # fixed mass values:
         assert_near_equal(
-            self.prob["total_mass.fixed_mass.main_gear_mass"], 6384.35, tol)
+            self.prob[Aircraft.LandingGear.MAIN_GEAR_MASS], 6384.35, tol)
         assert_near_equal(
             self.prob["total_mass.fixed_mass.tail.loc_MAC_vtail"], 0.44959578484694906, tol
         )
@@ -369,24 +369,31 @@ class MassSummationTestCase2(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            Aircraft.Design.EQUIPMENT_MASS_COEFFICIENTS,
-            val=[
-                928.0,
-                0.0736,
-                0.112,
-                0.14,
-                1959.0,
-                1.65,
-                551.0,
-                11192.0,
-                5.0,
-                3.0,
-                50.0,
-                7.6,
-                12.0,
-            ],
-            units="unitless",
-        )
+            Aircraft.APU.MASS, val=928.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.Instruments.MASS_COEFFICIENT, val=0.0736, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT, val=0.112, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.14, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.Avionics.MASS, val=1959.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.AirConditioning.MASS_COEFFICIENT, val=1.65, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.AntiIcing.MASS, val=551.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.Furnishings.MASS, val=11192.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, val=5.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=50.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, val=7.6, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, val=12.0, units="unitless")
 
         self.prob.model.set_input_defaults(
             Aircraft.Wing.MASS_COEFFICIENT, val=102.5, units="unitless"
@@ -467,7 +474,7 @@ class MassSummationTestCase2(unittest.TestCase):
 
         # fixed mass values:
         assert_near_equal(
-            self.prob["fixed_mass.main_gear_mass"], 6384.35, tol
+            self.prob[Aircraft.LandingGear.MAIN_GEAR_MASS], 6384.35, tol
         )  # calculated by hand
 
         # note: fixed_mass.tail.loc_MAC_vtail not included in v3.5
@@ -752,24 +759,31 @@ class MassSummationTestCase3(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            Aircraft.Design.EQUIPMENT_MASS_COEFFICIENTS,
-            val=[
-                928.0,
-                0.0736,
-                0.112,
-                0.14,
-                1959.0,
-                1.65,
-                551.0,
-                11192.0,
-                5.0,
-                3.0,
-                50.0,
-                7.6,
-                12.0,
-            ],
-            units="unitless",
-        )
+            Aircraft.APU.MASS, val=928.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.Instruments.MASS_COEFFICIENT, val=0.0736, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT, val=0.112, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.14, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.Avionics.MASS, val=1959.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.AirConditioning.MASS_COEFFICIENT, val=1.65, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.AntiIcing.MASS, val=551.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.Furnishings.MASS, val=11192.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, val=5.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=50.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, val=7.6, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, val=12.0, units="unitless")
 
         self.prob.model.set_input_defaults(
             Aircraft.Wing.MASS_COEFFICIENT, val=102.5, units="unitless"
@@ -846,7 +860,7 @@ class MassSummationTestCase3(unittest.TestCase):
 
         # fixed mass values:
         assert_near_equal(
-            self.prob["fixed_mass.main_gear_mass"], 6384.349999999999, tol
+            self.prob[Aircraft.LandingGear.MAIN_GEAR_MASS], 6384.349999999999, tol
         )  # calculated by hand
 
         assert_near_equal(self.prob[Aircraft.Propulsion.TOTAL_ENGINE_MASS], 12606, tol)
@@ -1125,24 +1139,31 @@ class MassSummationTestCase4(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            Aircraft.Design.EQUIPMENT_MASS_COEFFICIENTS,
-            val=[
-                928.0,
-                0.0736,
-                0.112,
-                0.14,
-                1959.0,
-                1.65,
-                551.0,
-                11192.0,
-                5.0,
-                3.0,
-                50.0,
-                7.6,
-                12.0,
-            ],
-            units="unitless",
-        )
+            Aircraft.APU.MASS, val=928.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.Instruments.MASS_COEFFICIENT, val=0.0736, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT, val=0.112, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.14, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.Avionics.MASS, val=1959.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.AirConditioning.MASS_COEFFICIENT, val=1.65, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.AntiIcing.MASS, val=551.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.Furnishings.MASS, val=11192.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, val=5.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=50.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, val=7.6, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, val=12.0, units="unitless")
 
         self.prob.model.set_input_defaults(
             Aircraft.Wing.MASS_COEFFICIENT, val=102.5, units="unitless"
@@ -1220,7 +1241,7 @@ class MassSummationTestCase4(unittest.TestCase):
 
         # fixed mass values:
         assert_near_equal(
-            self.prob["fixed_mass.main_gear_mass"], 6384.349999999999, tol
+            self.prob[Aircraft.LandingGear.MAIN_GEAR_MASS], 6384.349999999999, tol
         )  # calculated by hand
 
         assert_near_equal(self.prob[Aircraft.Propulsion.TOTAL_ENGINE_MASS], 12606, tol)
@@ -1499,24 +1520,31 @@ class MassSummationTestCase5(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            Aircraft.Design.EQUIPMENT_MASS_COEFFICIENTS,
-            val=[
-                928.0,
-                0.0736,
-                0.112,
-                0.14,
-                1959.0,
-                1.65,
-                551.0,
-                11192.0,
-                5.0,
-                3.0,
-                50.0,
-                7.6,
-                12.0,
-            ],
-            units="unitless",
-        )
+            Aircraft.APU.MASS, val=928.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.Instruments.MASS_COEFFICIENT, val=0.0736, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT, val=0.112, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.14, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.Avionics.MASS, val=1959.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.AirConditioning.MASS_COEFFICIENT, val=1.65, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.AntiIcing.MASS, val=551.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.Furnishings.MASS, val=11192.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, val=5.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=50.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, val=7.6, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, val=12.0, units="unitless")
 
         self.prob.model.set_input_defaults(
             Aircraft.Wing.MASS_COEFFICIENT, val=102.5, units="unitless"
@@ -1594,7 +1622,8 @@ class MassSummationTestCase5(unittest.TestCase):
 
         # fixed mass values:
         assert_near_equal(
-            self.prob["fixed_mass.main_gear_mass"], 6384.349999999999, tol
+            self.prob[Aircraft.LandingGear.MAIN_GEAR_MASS], 6384.349999999999, tol
+            # self.prob["fixed_mass.main_gear_mass"], 6384.349999999999, tol
         )  # calculated by hand
 
         assert_near_equal(self.prob[Aircraft.Propulsion.TOTAL_ENGINE_MASS], 12606, tol)
@@ -1871,24 +1900,31 @@ class MassSummationTestCase6(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            Aircraft.Design.EQUIPMENT_MASS_COEFFICIENTS,
-            val=[
-                928.0,
-                0.0736,
-                0.112,
-                0.14,
-                1959.0,
-                1.65,
-                551.0,
-                11192.0,
-                5.0,
-                3.0,
-                50.0,
-                7.6,
-                12.0,
-            ],
-            units="unitless",
-        )
+            Aircraft.APU.MASS, val=928.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.Instruments.MASS_COEFFICIENT, val=0.0736, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT, val=0.112, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.14, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.Avionics.MASS, val=1959.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.AirConditioning.MASS_COEFFICIENT, val=1.65, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.AntiIcing.MASS, val=551.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.Furnishings.MASS, val=11192.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, val=5.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=50.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, val=7.6, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, val=12.0, units="unitless")
 
         self.prob.model.set_input_defaults(
             Aircraft.Wing.MASS_COEFFICIENT, val=102.5, units="unitless"
@@ -1966,7 +2002,8 @@ class MassSummationTestCase6(unittest.TestCase):
 
         # fixed mass values:
         assert_near_equal(
-            self.prob["fixed_mass.main_gear_mass"], 6384.349999999999, tol
+            self.prob[Aircraft.LandingGear.MAIN_GEAR_MASS], 6384.349999999999, tol
+            # self.prob["fixed_mass.main_gear_mass"], 6384.349999999999, tol
         )  # calculated by hand
 
         assert_near_equal(self.prob[Aircraft.Propulsion.TOTAL_ENGINE_MASS], 12606, tol)
@@ -2247,24 +2284,31 @@ class MassSummationTestCase7(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            Aircraft.Design.EQUIPMENT_MASS_COEFFICIENTS,
-            val=[
-                1014,
-                0.0736,
-                0.085,
-                0.105,
-                1504,
-                1.65,
-                126.0,
-                9114.0,
-                5.0,
-                3.0,
-                0.0,
-                10,
-                12.0,
-            ],
-            units="unitless",
-        )
+            Aircraft.APU.MASS, val=1014.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.Instruments.MASS_COEFFICIENT, val=0.0736, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT, val=0.085, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.105, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.Avionics.MASS, val=1504.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.AirConditioning.MASS_COEFFICIENT, val=1.65, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.AntiIcing.MASS, val=126.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.Furnishings.MASS, val=9114.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, val=5.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=0.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, val=10.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, val=12.0, units="unitless")
 
         self.prob.model.set_input_defaults(
             Aircraft.Wing.MASS_COEFFICIENT, val=85, units="unitless"
@@ -2347,7 +2391,8 @@ class MassSummationTestCase7(unittest.TestCase):
 
         # fixed mass values:
         assert_near_equal(
-            self.prob["fixed_mass.main_gear_mass"], 5219.3076, tol
+            self.prob[Aircraft.LandingGear.MAIN_GEAR_MASS], 5219.3076, tol
+            # self.prob["fixed_mass.main_gear_mass"], 5219.3076, tol
         )  # note: value came from running the GASP code on my own and printing it out
 
         assert_near_equal(self.prob[Aircraft.Propulsion.TOTAL_ENGINE_MASS], 8007, tol)
@@ -2518,25 +2563,34 @@ class MassSummationTestCase8(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units="mi/h"
         )
+
         self.prob.model.set_input_defaults(
-            Aircraft.Design.EQUIPMENT_MASS_COEFFICIENTS,
-            val=[
-                1014,
-                0.0736,
-                0.085,
-                0.105,
-                1504,
-                1.65,
-                126.0,
-                9114.0,
-                5.0,
-                3.0,
-                0.0,
-                10,
-                12.0,
-            ],
-            units="unitless",
-        )
+            Aircraft.APU.MASS, val=1014.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.Instruments.MASS_COEFFICIENT, val=0.0736, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT, val=0.085, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.105, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.Avionics.MASS, val=1504.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.AirConditioning.MASS_COEFFICIENT, val=1.65, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.AntiIcing.MASS, val=126.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.Furnishings.MASS, val=9114.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, val=5.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=0.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, val=10.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, val=12.0, units="unitless")
+
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, val=7.5, units="psi")
         self.prob.model.set_input_defaults(
@@ -2736,7 +2790,8 @@ class MassSummationTestCase8(unittest.TestCase):
 
         # fixed mass values:
         assert_near_equal(
-            self.prob["fixed_mass.main_gear_mass"], 4123.4, tol
+            self.prob[Aircraft.LandingGear.MAIN_GEAR_MASS], 4123.4, tol
+            # self.prob["fixed_mass.main_gear_mass"], 4123.4, tol
         )  # note:printed out from GASP code
 
         assert_near_equal(self.prob[Aircraft.Propulsion.TOTAL_ENGINE_MASS], 10453.0, tol)
@@ -2904,25 +2959,34 @@ class MassSummationTestCase9(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units="mi/h"
         )
+
         self.prob.model.set_input_defaults(
-            Aircraft.Design.EQUIPMENT_MASS_COEFFICIENTS,
-            val=[
-                1014,
-                0.0736,
-                0.085,
-                0.105,
-                1504,
-                1.65,
-                126.0,
-                9114.0,
-                5.0,
-                3.0,
-                0.0,
-                10,
-                12.0,
-            ],
-            units="unitless",
-        )
+            Aircraft.APU.MASS, val=1014.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.Instruments.MASS_COEFFICIENT, val=0.0736, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT, val=0.085, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.105, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.Avionics.MASS, val=1504.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.AirConditioning.MASS_COEFFICIENT, val=1.65, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.AntiIcing.MASS, val=126.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.Furnishings.MASS, val=9114.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, val=5.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=0.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, val=10.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, val=12.0, units="unitless")
+
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, val=7.5, units="psi")
         self.prob.model.set_input_defaults(
@@ -3167,7 +3231,7 @@ class MassSummationTestCase9(unittest.TestCase):
 
         # fixed mass values:
         assert_near_equal(
-            self.prob["fixed_mass.main_gear_mass"], 4786.2, tol
+            self.prob[Aircraft.LandingGear.MAIN_GEAR_MASS], 4786.2, tol
         )  # (printed out from GASP code)
 
         assert_near_equal(self.prob[Aircraft.Propulsion.TOTAL_ENGINE_MASS], 13034.0, tol)
