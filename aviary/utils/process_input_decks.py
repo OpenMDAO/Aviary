@@ -78,7 +78,7 @@ def create_vehicle(vehicle_deck='', verbosity=Verbosity.BRIEF, meta_data=_MetaDa
     else:
         vehicle_deck = get_path(vehicle_deck)
         aircraft_values, initial_guesses = parse_inputs(
-            vehicle_deck, aircraft_values, initial_guesses, meta_data=meta_data)
+            vehicle_deck=vehicle_deck, aircraft_values=aircraft_values, initial_guesses=initial_guesses, meta_data=meta_data)
 
     return aircraft_values, initial_guesses
 
