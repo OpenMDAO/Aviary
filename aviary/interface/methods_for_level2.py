@@ -260,7 +260,7 @@ class AviaryProblem(om.Problem):
 
         if mission_method is TWO_DEGREES_OF_FREEDOM or mass_method is GASP:
             aviary_inputs = update_GASP_options(aviary_inputs)
-            initial_guesses = initial_guessing(aviary_inputs, initial_guesses)
+        initial_guesses = initial_guessing(aviary_inputs, initial_guesses)
         self.aviary_inputs = aviary_inputs
         self.initial_guesses = initial_guesses
         self.problem_type = aviary_inputs.get_val('problem_type')
@@ -282,6 +282,10 @@ class AviaryProblem(om.Problem):
             self.target_range = aviary_inputs.get_val(
                 Mission.Design.RANGE, units='NM')
             self.cruise_mach = aviary_inputs.get_val(Mission.Design.MACH)
+
+        elif mission_method is HEIGHT_ENERGY:
+            aviary_inputs.set_val(Mission.Summary.GROSS_MASS,
+                                  val=self.initial_guesses['actual_takeoff_mass'], units='lbm')
 
         ## LOAD PHASE_INFO ###
         if phase_info is None:
@@ -1278,6 +1282,8 @@ class AviaryProblem(om.Problem):
 
         if self.mission_method is TWO_DEGREES_OF_FREEDOM:
             self._add_two_dof_objectives()
+        elif self.mission_method is HEIGHT_ENERGY:
+            self._add_height_energy_objectives()
 
         ecomp = om.ExecComp(
             'mass_resid = operating_empty_mass + overall_fuel + payload_mass -'
@@ -1299,7 +1305,7 @@ class AviaryProblem(om.Problem):
                 ('operating_empty_mass', Aircraft.Design.OPERATING_MASS),
                 ('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS),
                 ('payload_mass', payload_mass_src),
-                ('initial_mass', Mission.Design.GROSS_MASS)],
+                ('initial_mass', Mission.Summary.GROSS_MASS)],
             promotes_outputs=[("mass_resid", Mission.Constraints.MASS_RESIDUAL)])
 
         if self.mission_method in (HEIGHT_ENERGY, TWO_DEGREES_OF_FREEDOM):
@@ -1418,6 +1424,10 @@ class AviaryProblem(om.Problem):
                                       connected=true_unless_mpi)
                 self.traj.link_phases(phases, [Dynamic.Mission.DISTANCE], ref=1e3,
                                       connected=true_unless_mpi)
+
+                self.model.connect(f'traj.{self.regular_phases[-1]}.timeseries.distance',
+                                   Mission.Summary.RANGE,
+                                   src_indices=[-1], flat_src_indices=True)
 
             elif self.mission_method is SOLVED_2DOF:
                 self.traj.link_phases(phases, [Dynamic.Mission.MASS], connected=True)
@@ -1847,10 +1857,10 @@ class AviaryProblem(om.Problem):
                 self.model.add_objective(Mission.Objectives.FUEL, ref=ref)
 
         # set objective ref on height-energy missions
-        elif self.mission_method is HEIGHT_ENERGY:
-            ref = ref if ref is not None else default_ref_values.get(
-                'fuel_burned', 1)
-            self.model.add_objective(Mission.Summary.FUEL_BURNED, ref=ref)
+        # elif self.mission_method is HEIGHT_ENERGY:
+        #     ref = ref if ref is not None else default_ref_values.get(
+        #         'fuel_burned', 1)
+        #     self.model.add_objective(Mission.Summary.FUEL_BURNED, ref=ref)
 
         else:  # If no 'objective_type' is specified, we handle based on 'problem_type'
             # If 'ref' is not specified, assign a default value
@@ -2462,6 +2472,38 @@ class AviaryProblem(om.Problem):
             promotes_inputs=['aircraft:*', 'mission:*',
                              (Dynamic.Mission.MASS, Mission.Landing.TOUCHDOWN_MASS)],
             promotes_outputs=['mission:*'],
+        )
+
+    def _add_height_energy_objectives(self):
+        self.model.add_subsystem(
+            "fuel_obj",
+            om.ExecComp(
+                "reg_objective = overall_fuel/10000 + ascent_duration/30.",
+                reg_objective={"val": 0.0, "units": "unitless"},
+                ascent_duration={"units": "s", "shape": 1},
+                overall_fuel={"units": "lbm"},
+            ),
+            promotes_inputs=[
+                ("ascent_duration", Mission.Takeoff.ASCENT_DURATION),
+                ("overall_fuel", Mission.Summary.TOTAL_FUEL_MASS),
+            ],
+            promotes_outputs=[("reg_objective", Mission.Objectives.FUEL)],
+        )
+
+        self.model.add_subsystem(
+            "range_obj",
+            om.ExecComp(
+                "reg_objective = -actual_range/1000 + ascent_duration/30.",
+                reg_objective={"val": 0.0, "units": "unitless"},
+                ascent_duration={"units": "s", "shape": 1},
+                actual_range={
+                    "val": 0.0, "units": "NM"},
+            ),
+            promotes_inputs=[
+                ("actual_range", Mission.Summary.RANGE),
+                ("ascent_duration", Mission.Takeoff.ASCENT_DURATION),
+            ],
+            promotes_outputs=[("reg_objective", Mission.Objectives.RANGE)],
         )
 
     def _add_two_dof_objectives(self):
