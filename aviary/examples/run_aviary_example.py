@@ -23,7 +23,7 @@ prob.check_and_preprocess_inputs()
 
 prob.add_pre_mission_systems()
 
-prob.add_phases()
+prob.add_phases(phase_info_parameterization=phase_info_parameterization)
 
 prob.add_post_mission_systems()
 
@@ -43,11 +43,3 @@ prob.setup()
 prob.set_initial_guesses()
 
 prob.run_aviary_problem()
-
-print(f'Range = {prob.get_val(av.Mission.Summary.RANGE)}')
-print(f"Fuel mass = {prob.get_val(av.Mission.Design.FUEL_MASS, units='lbm')}")
-print(f'Total fuel mass = {prob.get_val(av.Mission.Summary.TOTAL_FUEL_MASS)}')
-print(f'Empty mass = {prob.get_val(av.Aircraft.Design.OPERATING_MASS)}')
-print(f'Payload mass = {prob.get_val(av.Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)}')
-print(f'Design Gross mass = {prob.get_val(av.Mission.Design.GROSS_MASS)}')
-print(f'Summary Gross mass = {prob.get_val(av.Mission.Summary.GROSS_MASS)}')

@@ -286,6 +286,8 @@ class AviaryProblem(om.Problem):
         elif mission_method is HEIGHT_ENERGY:
             aviary_inputs.set_val(Mission.Summary.GROSS_MASS,
                                   val=self.initial_guesses['actual_takeoff_mass'], units='lbm')
+            self.target_range = aviary_inputs.get_val(
+                Mission.Design.RANGE, units='NM')
 
         ## LOAD PHASE_INFO ###
         if phase_info is None:
@@ -1209,29 +1211,29 @@ class AviaryProblem(om.Problem):
                 ],
                 promotes_outputs=[('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS)])
 
-            # If a target range has been specified
-            # range is measured from the start of the first phase to the end of the last normal phase
-            if 'target_range' in self.post_mission_info:
-                target_range = wrapped_convert_units(
-                    self.post_mission_info['target_range'], 'nmi')
-                self.post_mission.add_subsystem(
-                    "range_constraint",
-                    om.ExecComp(
-                        "range_resid = target_range - actual_range",
-                        range_resid={'units': 'nmi'},
-                        actual_range={'units': 'nmi'},
-                        target_range={
-                            'val': target_range, 'units': 'nmi'},
-                    ),
-                    promotes_outputs=[
-                        ("range_resid", Mission.Constraints.RANGE_RESIDUAL)],
-                )
-
-                # determine distance traveled based on regular_phases
-                self.model.connect(
-                    f"traj.{self.regular_phases[-1]}.timeseries.distance", "range_constraint.actual_range", src_indices=[-1])
-                self.model.add_constraint(
-                    Mission.Constraints.RANGE_RESIDUAL, equals=0.0, ref=1.e2)
+            # # If a target range has been specified
+            # # range is measured from the start of the first phase to the end of the last normal phase
+            # if 'target_range' in self.post_mission_info:
+            #     target_range = wrapped_convert_units(
+            #         self.post_mission_info['target_range'], 'nmi')
+            #     self.post_mission.add_subsystem(
+            #         "range_constraint",
+            #         om.ExecComp(
+            #             "range_resid = target_range - actual_range",
+            #             range_resid={'units': 'nmi'},
+            #             actual_range={'units': 'nmi'},
+            #             target_range={
+            #                 'val': target_range, 'units': 'nmi'},
+            #         ),
+            #         promotes_outputs=[
+            #             ("range_resid", Mission.Constraints.RANGE_RESIDUAL)],
+            #     )
+            #
+            #     # determine distance traveled based on regular_phases
+            #     self.model.connect(
+            #         f"traj.{self.regular_phases[-1]}.timeseries.distance", "range_constraint.actual_range", src_indices=[-1])
+            #     self.model.add_constraint(
+            #         Mission.Constraints.RANGE_RESIDUAL, equals=0.0, ref=1.e2)
 
             # If a target distance (or time) has been specified for this phase
             # distance (or time) is measured from the start of this phase to the end of this phase
@@ -1727,9 +1729,17 @@ class AviaryProblem(om.Problem):
                                          promotes_inputs=[('lhs:GTOW', Mission.Design.GROSS_MASS),
                                                           ('rhs:GTOW', Mission.Summary.GROSS_MASS)])
 
+                self.model.add_constraint(
+                    Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=10
+                )
+
             elif self.problem_type is ProblemType.ALTERNATE:
                 self.model.add_design_var(Mission.Summary.GROSS_MASS,
                                           lower=0, upper=None, units='lbm', ref=175e3)
+
+                self.model.add_constraint(
+                    Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=10
+                )
 
             elif self.problem_type is ProblemType.FALLOUT:
                 print('No design variables for Fallout missions')
@@ -2504,6 +2514,22 @@ class AviaryProblem(om.Problem):
                 ("ascent_duration", Mission.Takeoff.ASCENT_DURATION),
             ],
             promotes_outputs=[("reg_objective", Mission.Objectives.RANGE)],
+        )
+
+        self.model.add_subsystem(
+            "range_constraint",
+            om.ExecComp(
+                "range_resid = target_range - actual_range",
+                target_range={"val": self.target_range, "units": "NM"},
+                actual_range={"val": self.target_range - 25, "units": "NM"},
+                range_resid={"val": 30, "units": "NM"},
+            ),
+            promotes_inputs=[
+                ("actual_range", Mission.Summary.RANGE),
+                ("target_range", Mission.Design.RANGE),
+            ],
+            promotes_outputs=[
+                ("range_resid", Mission.Constraints.RANGE_RESIDUAL)],
         )
 
     def _add_two_dof_objectives(self):
