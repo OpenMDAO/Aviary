@@ -90,7 +90,8 @@ def assert_structure_alphabetization(variables_file_loc):
                         variable_names_tot.append(variable_names_tot_per_super)
                     variable_names_tot_per_super = []
 
-                elif split_line[0] == "    ":  # this means it is a subclass
+                # elif split_line[0] == "    ":  # this means it is a subclass
+                else:  # this is a subclass
                     subclass_names.append(class_name)
                     if variable_names:  # checkts to see if any variables have been encountered yet in this superclass
                         # appends the variable names in the previous subclass to the total variable names list per superclass
@@ -228,9 +229,14 @@ def get_names_from_hierarchy(hierarchy):
             subclass_keys = [key]
 
         for var_name in subclass_keys:
-            names.append(
-                subclass_vars[var_name]
-            )  # add relevant variables to dictionary
+            # if var_name is actually another hierarchy layer, extract list of names from it
+            if isinstance(subclass_vars[var_name], type):
+                var_list = get_names_from_hierarchy(subclass_vars[var_name])
+                names = names + var_list
+            else:
+                names.append(
+                    subclass_vars[var_name]
+                )  # add relevant variables to dictionary
 
     return names
 

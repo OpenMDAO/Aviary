@@ -17,6 +17,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 # ASCII art from http://patorjk.com/software/taag/#p=display&h=0&f=Big&t=
 # Super categories such as aircraft and mission are in 'Blocks' font
 # Sub categories such as AntiIcing and Wing are in 'Big' font
+# Additional sub categories are in 'Small' font
 # ---------------------------
 _MetaData = {}
 
@@ -2198,28 +2199,39 @@ add_meta_data(
     default_value=np.array([0.0])
 )
 
-# MOTOR #
+#  __  __         _
+# |  \/  |  ___  | |_   ___   _ _
+# | |\/| | / _ \ |  _| / _ \ | '_|
+# |_|  |_| \___/  \__| \___/ |_|
+# ================================
+
 add_meta_data(
     Aircraft.Engine.Motor.MASS,
     meta_data=_MetaData,
-    units="kg",
-    desc="Total motor mass (considers number of motors)",
+    units='kg',
+    desc='Total motor mass (considers number of motors)',
     default_value=0.0,
 )
 
 add_meta_data(
     Aircraft.Engine.Motor.TORQUE_MAX,
     meta_data=_MetaData,
-    units="N*m",
-    desc="Max torque value that can be output from a single motor. Used to determine motor mass in pre-mission",
+    units='N*m',
+    desc='Max torque value that can be output from a single motor. Used to determine '
+         'motor mass in pre-mission',
 )
 
-# GEARBOX #
+#   ___                      _
+#  / __|  ___   __ _   _ _  | |__   ___  __ __
+# | (_ | / -_) / _` | | '_| | '_ \ / _ \ \ \ /
+#  \___| \___| \__,_| |_|   |_.__/ \___/ /_\_\
+# ============================================
+
 add_meta_data(
     Aircraft.Engine.Gearbox.GEAR_RATIO,
     meta_data=_MetaData,
     units=None,
-    desc="The ratio of the RPM_out divided by the RPM_in for the gearbox.",
+    desc='The ratio of the RPM_out divided by the RPM_in for the gearbox.',
     default_value=1.0,
 )
 
@@ -2227,10 +2239,17 @@ add_meta_data(
     Aircraft.Engine.Gearbox.MASS,
     meta_data=_MetaData,
     units='kg',
-    desc="The mass of the gearbox.",
+    desc='The mass of the gearbox.',
     default_value=0,
 )
 
+add_meta_data(
+    Aircraft.Engine.Gearbox.TORQUE_MAX,
+    meta_data=_MetaData,
+    units='N*m',
+    desc='The maximum rated torque of the gearbox.',
+    default_value=0,
+)
 
 #  ______   _
 # |  ____| (_)
@@ -6340,6 +6359,17 @@ add_meta_data(
 )
 
 add_meta_data(
+    Dynamic.Mission.RPM,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='rpm',
+    desc='Rotational rate of shaft, per engine.'
+)
+
+add_meta_data(
     Dynamic.Mission.SPECIFIC_ENERGY,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -6520,6 +6550,17 @@ add_meta_data(
                      },
     units='lbf',
     desc='Current total net thrust produced by the vehicle'
+)
+
+add_meta_data(
+    Dynamic.Mission.TORQUE,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='N*m',
+    desc='Current torque being produced, per engine'
 )
 
 add_meta_data(

@@ -7,6 +7,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.named_values import get_keys
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Mission
+from aviary.utils.test_utils.variable_test import get_names_from_hierarchy
 
 
 def preprocess_options(aviary_options: AviaryValues, **kwargs):
@@ -296,26 +297,31 @@ def _get_engine_variables():
     '''
     Yields all propulsion-related variables in Aircraft that need to be vectorized
     '''
-    for entry in Aircraft.Engine.__dict__:
-        var = getattr(Aircraft.Engine, entry)
-        # does this variable exist, and have useable metadata?
-        try:
-            _MetaData[var]
-        except (TypeError, KeyError):
-            continue
-        # valid variable found, proceed
-        else:
-            yield var
+    for item in get_names_from_hierarchy(Aircraft.Engine):
+        yield item
 
-    for entry in Aircraft.Nacelle.__dict__:
-        var = getattr(Aircraft.Nacelle, entry)
-        # does this variable exist, and have useable metadata?
-        try:
-            _MetaData[var]
-        except (TypeError, KeyError):
-            continue
-        # valid variable found, proceed
-        else:
-            # don't vectorize aircraft-level total values
-            if 'total' not in var:
-                yield var
+    for item in get_names_from_hierarchy(Aircraft.Nacelle):
+        yield item
+    # for entry in Aircraft.Engine.__dict__:
+    #     var = getattr(Aircraft.Engine, entry)
+    #     # does this variable exist, and have useable metadata?
+    #     try:
+    #         _MetaData[var]
+    #     except (TypeError, KeyError):
+    #         continue
+    #     # valid variable found, proceed
+    #     else:
+    #         yield var
+
+    # for entry in Aircraft.Nacelle.__dict__:
+    #     var = getattr(Aircraft.Nacelle, entry)
+    #     # does this variable exist, and have useable metadata?
+    #     try:
+    #         _MetaData[var]
+    #     except (TypeError, KeyError):
+    #         continue
+    #     # valid variable found, proceed
+    #     else:
+    #         # don't vectorize aircraft-level total values
+    #         if 'total' not in var:
+    #             yield var

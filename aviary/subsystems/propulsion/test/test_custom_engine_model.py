@@ -13,7 +13,7 @@ from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
 from aviary.variable_info.options import get_option_defaults
 from aviary.utils.functions import get_path
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.subsystems.propulsion.motor.motor_variables import Aircraft, Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class PreMissionEngine(om.Group):
