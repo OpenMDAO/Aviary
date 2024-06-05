@@ -197,5 +197,5 @@ class Verbosity(Enum):
         return str(self.value)
 
     @classmethod
-    def set(cls):
+    def values(cls):
         return {c.value for c in cls}
