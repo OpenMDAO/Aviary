@@ -14,6 +14,9 @@ class CharacteristicLengths(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
+        num_engine_type = len(self.options['aviary_options'].get_val(
+            Aircraft.Engine.NUM_ENGINES))
+
         self.add_input(Names.CROOT, 0.0, units='unitless')
 
         add_aviary_input(self, Aircraft.Canard.AREA, 0.0)
@@ -33,8 +36,8 @@ class CharacteristicLengths(om.ExplicitComponent):
         # add_aviary_input(self, Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER, 0.0)
         add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 0.0)
 
-        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, 0.0)
-        add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH, 0.0)
+        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, np.zeros(num_engine_type))
+        add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH, np.zeros(num_engine_type))
         # add_aviary_input(self, Aircraft.Nacelle.LAMINAR_FLOW_LOWER, 0.0)
         # add_aviary_input(self, Aircraft.Nacelle.LAMINAR_FLOW_UPPER, 0.0)
 
@@ -64,8 +67,9 @@ class CharacteristicLengths(om.ExplicitComponent):
 
         add_aviary_output(self, Aircraft.HorizontalTail.FINENESS, 0.0)
 
-        add_aviary_output(self, Aircraft.Nacelle.CHARACTERISTIC_LENGTH, 0.0)
-        add_aviary_output(self, Aircraft.Nacelle.FINENESS, 0.0)
+        add_aviary_output(self, Aircraft.Nacelle.CHARACTERISTIC_LENGTH,
+                          np.zeros(num_engine_type))
+        add_aviary_output(self, Aircraft.Nacelle.FINENESS, np.zeros(num_engine_type))
 
         add_aviary_output(
             self, Aircraft.VerticalTail.CHARACTERISTIC_LENGTH, 0.0
@@ -189,18 +193,23 @@ class CharacteristicLengths(om.ExplicitComponent):
         )
 
     def _setup_partials_nacelles(self):
+        # derivatives w.r.t vectorized engine inputs have known sparsity pattern
+        num_engine_type = len(self.options['aviary_options'].get_val(
+            Aircraft.Engine.NUM_ENGINES))
+        shape = np.arange(num_engine_type)
+
         self.declare_partials(
             Aircraft.Nacelle.CHARACTERISTIC_LENGTH,
-            Aircraft.Nacelle.AVG_LENGTH
-        )
+            Aircraft.Nacelle.AVG_LENGTH,
+            rows=shape, cols=shape, val=1.0)
 
         self.declare_partials(
             Aircraft.Nacelle.FINENESS,
             [
                 Aircraft.Nacelle.AVG_DIAMETER,
                 Aircraft.Nacelle.AVG_LENGTH,
-            ]
-        )
+            ],
+            rows=shape, cols=shape, val=1.0)
 
     def _setup_partials_canard(self):
         self.declare_partials(
@@ -310,8 +319,7 @@ class CharacteristicLengths(om.ExplicitComponent):
 
         calc_idx = np.intersect1d(np.where(avg_diam[num_idx] > 0), num_idx)
 
-        if 0.0 < avg_diam[calc_idx]:
-            fineness[calc_idx] = avg_length[calc_idx] / avg_diam[calc_idx]
+        fineness[calc_idx] = avg_length[calc_idx] / avg_diam[calc_idx]
 
         outputs[Aircraft.Nacelle.CHARACTERISTIC_LENGTH] = char_len
         outputs[Aircraft.Nacelle.FINENESS] = fineness

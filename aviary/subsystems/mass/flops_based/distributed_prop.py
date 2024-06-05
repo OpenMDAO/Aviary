@@ -40,6 +40,8 @@ def distributed_thrust_factor(max_sls_thrust: float, total_num_eng: int) -> floa
 def distributed_nacelle_diam_factor(diam_nacelle: list, num_eng: list) -> float:
     """
     Returns the distributed propulsion nacelle average diameter factor.
+    If more than one engine type are present on the aircraft, use the average of all
+    nacelle diameters (accounting for how many of each engine type are present).
 
     Parameters
     ----------
@@ -66,8 +68,8 @@ def distributed_nacelle_diam_factor(diam_nacelle: list, num_eng: list) -> float:
 
 def distributed_nacelle_diam_factor_deriv(num_eng: int) -> float:
     """
-    Returns the derivative of the distributed propulsion nacelle average diameter factor w.r.t.
-    the global nacelle average diameter.
+    Returns the derivative of the distributed propulsion nacelle average diameter factor 
+    w.r.t. the global nacelle average diameter.
 
     Parameters
     ----------
@@ -82,7 +84,7 @@ def distributed_nacelle_diam_factor_deriv(num_eng: int) -> float:
 
     deriv = 1.0
     if total_num_engines > 4:
-        deriv = 0.5 * total_num_engines ** 0.5
+        deriv = num_eng * (0.5 * total_num_engines ** 0.5)/total_num_engines
 
     return deriv
 
@@ -91,7 +93,11 @@ def nacelle_count_factor(num_eng):
     """
     Returns the nacelle count factor, which is the number of engines plus
     0.5 if there is a centerline engine. It is assumed there is a centerline
-    engine if the number of engines is odd.
+    engine if the number of engines is odd (for each unique engine type).
+
+    If there are multiple engine types, each engine type gets its own nacelle count
+    factor. This methodology does not account for potential conflict of engines present 
+    on the aircraft centerline.
 
     Parameters
     ----------

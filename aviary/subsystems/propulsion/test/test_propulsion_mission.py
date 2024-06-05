@@ -145,7 +145,7 @@ class PropulsionMissionTest(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
 
-    def test_case_2(self):
+    def test_case_multiengine(self):
         # takes the large single aisle 2 test case and add a second set of engines to test summation
         nn = 20
 
@@ -209,4 +209,7 @@ class PropulsionMissionTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    # unittest.main()
+    test = PropulsionMissionTest()
+    test.setUp()
+    test.test_case_multiengine()

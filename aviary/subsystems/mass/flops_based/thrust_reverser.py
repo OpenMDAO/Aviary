@@ -28,15 +28,40 @@ class ThrustReverserMass(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Engine.THRUST_REVERSERS_MASS_SCALER, val=0.0)
-        add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST, val=np.zeros(1))
+        num_engine_type = len(self.options['aviary_options'].get_val(
+            Aircraft.Engine.NUM_ENGINES))
+
+        add_aviary_input(
+            self, Aircraft.Engine.THRUST_REVERSERS_MASS_SCALER, val=np.zeros(num_engine_type))
+        add_aviary_input(
+            self, Aircraft.Engine.SCALED_SLS_THRUST, val=np.zeros(num_engine_type))
 
         add_aviary_output(
-            self, Aircraft.Engine.THRUST_REVERSERS_MASS, val=np.zeros(1))
+            self, Aircraft.Engine.THRUST_REVERSERS_MASS, val=np.zeros(num_engine_type))
         add_aviary_output(
             self, Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS, val=0)
 
-        self.declare_partials('*', '*')
+    def setup_partials(self):
+        # derivatives w.r.t vectorized engine inputs have known sparsity pattern
+        num_engine_type = len(self.options['aviary_options'].get_val(
+            Aircraft.Engine.NUM_ENGINES))
+        shape = np.arange(num_engine_type)
+
+        self.declare_partials(Aircraft.Engine.THRUST_REVERSERS_MASS,
+                              Aircraft.Engine.THRUST_REVERSERS_MASS_SCALER,
+                              rows=shape, cols=shape, val=1.0)
+
+        self.declare_partials(Aircraft.Engine.THRUST_REVERSERS_MASS,
+                              Aircraft.Engine.SCALED_SLS_THRUST,
+                              rows=shape, cols=shape, val=1.0)
+
+        self.declare_partials(Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS,
+                              Aircraft.Engine.THRUST_REVERSERS_MASS_SCALER,
+                              val=1.0)
+
+        self.declare_partials(Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS,
+                              Aircraft.Engine.SCALED_SLS_THRUST,
+                              val=1.0)
 
     def compute(self, inputs, outputs):
         aviary_options: AviaryValues = self.options['aviary_options']
