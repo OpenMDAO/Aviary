@@ -12,8 +12,8 @@ from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_control_iter_group i
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_flight_conditions import \
     UnsteadySolvedFlightConditions
 from aviary.variable_info.enums import SpeedType
-from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic
+from variable_info.options import get_option_defaults
 
 
 class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
@@ -99,3 +99,5 @@ class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+    # test = TestUnsteadyAlphaThrustIterGroup()
+    # test._test_unsteady_alpha_thrust_iter_group()

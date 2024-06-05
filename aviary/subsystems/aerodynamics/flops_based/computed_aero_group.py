@@ -126,7 +126,7 @@ class ComputedAeroGroup(om.Group):
                 Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR,
                 Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR,
                 Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR],
-            promotes_outputs=['CDI', 'CD0', 'drag_coefficient', Dynamic.Mission.DRAG])
+            promotes_outputs=['CDI', 'CD0', 'CD', Dynamic.Mission.DRAG])
 
         buf = BuffetLift(num_nodes=num_nodes)
         self.add_subsystem(
@@ -176,7 +176,7 @@ class ComputedDrag(om.Group):
                 Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR,
                 Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR,
                 'CDI', 'CD0', Dynamic.Mission.MACH, Dynamic.Mission.DYNAMIC_PRESSURE],
-            promotes_outputs=['drag_coefficient', Dynamic.Mission.DRAG])
+            promotes_outputs=['CD', Dynamic.Mission.DRAG])
 
         self.set_input_defaults(Aircraft.Wing.AREA, 1., 'ft**2')
 

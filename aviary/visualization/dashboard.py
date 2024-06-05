@@ -15,6 +15,12 @@ from panel.theme import DefaultTheme
 
 import openmdao.api as om
 from openmdao.utils.general_utils import env_truthy
+try:
+    from openmdao.utils.gui_testing_utils import get_free_port
+except:
+    # If get_free_port is unavailable, the default port will be used
+    def get_free_port():
+        return 5000
 
 # support getting this function from OpenMDAO post movement of the function to utils
 #    but also support its old location
@@ -71,8 +77,8 @@ def _dashboard_setup_parser(parser):
         "--port",
         dest="port",
         type=int,
-        default=5000,
-        help="dashboard server port ID (default is 5000)",
+        default=0,
+        help="dashboard server port ID (default is 0, which indicates get any free port)",
     )
 
     # For future use
@@ -393,7 +399,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
     driver_recorder : str
         Name of the recorder file containing the Driver cases.
     port : int
-        HTTP port used for the dashboard webapp.
+        HTTP port used for the dashboard webapp. If 0, use any free port
     """
     reports_dir = f"reports/{script_name}/"
 
@@ -703,6 +709,8 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
         importlib.util.find_spec("aviary").origin
     ).parent.joinpath("visualization/assets/")
     home_dir = "."
+    if port == 0:
+        port = get_free_port()
     server = pn.serve(
         template,
         port=port,

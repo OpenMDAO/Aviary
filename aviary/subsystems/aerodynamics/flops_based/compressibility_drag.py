@@ -71,11 +71,13 @@ class CompressibilityDrag(om.ExplicitComponent):
 
         idx_super = np.where(del_mach > 0.05)
         idx_sub = np.where(del_mach <= 0.05)
-        cdc_super = self._compute_supersonic(inputs, outputs, idx_super)
-        cdc_sub = self._compute_subsonic(inputs, outputs, idx_sub)
 
-        outputs['compress_drag_coeff'][idx_super] = cdc_super
-        outputs['compress_drag_coeff'][idx_sub] = cdc_sub
+        if len(idx_super[0]) > 0:
+            cdc_super = self._compute_supersonic(inputs, outputs, idx_super)
+            outputs['compress_drag_coeff'][idx_super] = cdc_super
+        if len(idx_sub[0]) > 0:
+            cdc_sub = self._compute_subsonic(inputs, outputs, idx_sub)
+            outputs['compress_drag_coeff'][idx_sub] = cdc_sub
 
     def _compute_supersonic(self, inputs, outputs, idx):
         """
@@ -226,8 +228,10 @@ class CompressibilityDrag(om.ExplicitComponent):
 
         idx_super = np.where(del_mach > 0.05)
         idx_sub = np.where(del_mach <= 0.05)
-        self._compute_partials_supersonic(inputs, partials, idx_super)
-        self._compute_partials_subsonic(inputs, partials, idx_sub)
+        if len(idx_super[0]) > 0:
+            self._compute_partials_supersonic(inputs, partials, idx_super)
+        if len(idx_sub[0]) > 0:
+            self._compute_partials_subsonic(inputs, partials, idx_sub)
 
     def _compute_partials_supersonic(self, inputs, partials, idx):
 
@@ -381,6 +385,7 @@ class CompressibilityDrag(om.ExplicitComponent):
         base_area = inputs[Aircraft.Design.BASE_AREA]
         wing_area = inputs[Aircraft.Wing.AREA]
         fuselage_len_to_diam_ratio = inputs[Aircraft.Fuselage.LENGTH_TO_DIAMETER]
+
         CD1 = self.CD1
         CD2 = self.CD2
 

@@ -15,6 +15,8 @@ class WingMassSolve(om.ImplicitComponent):
         )
 
     def setup(self):
+        num_engine_type = len(self.options['aviary_options'].get_val(
+            Aircraft.Engine.NUM_ENGINES))
 
         add_aviary_input(self, Mission.Design.GROSS_MASS, val=175400)
         add_aviary_input(self, Aircraft.Wing.HIGH_LIFT_MASS, val=3645)
@@ -27,7 +29,8 @@ class WingMassSolve(om.ImplicitComponent):
         add_aviary_input(self, Aircraft.Wing.ULTIMATE_LOAD_FACTOR, val=3.75)
         add_aviary_input(self, Aircraft.Wing.MASS_COEFFICIENT, val=102.5)
         add_aviary_input(self, Aircraft.Wing.MATERIAL_FACTOR, val=1.22130632)
-        add_aviary_input(self, Aircraft.Engine.POSITION_FACTOR, val=0.98)
+        add_aviary_input(self, Aircraft.Engine.POSITION_FACTOR,
+                         val=np.full(num_engine_type, 0.98))
         self.add_input(
             "c_gear_loc",
             val=1.000000001,
