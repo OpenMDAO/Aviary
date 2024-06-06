@@ -6,17 +6,23 @@
 This section is under development.
 ```
 
-`initial_guesses` is a dictionary that contains values used to initialize the trajectory. It contains the following keys along with default values:
+`initial_guesses` is a dictionary that contains values used to initialize the trajectory. It contains the following keys along with default initialization values:
 
 - actual_takeoff_mass: 0,
-- rotation_mass: .99,
+- rotation_mass: 0,
 - operating_empty_mass: 0,
-- fuel_burn_per_passenger_mile: 0.1,
+- fuel_burn_per_passenger_mile: 0,
 - cruise_mass_final: 0,
 - flight_duration: 0,
 - time_to_climb: 0,
 - climb_range: 0,
 - reserves: 0
+
+In the example vehicle input .csv files there is a section headed '# Initial Guesses' which contains the above list in the format: "actual_takeoff_mass,0"
+The user can also specify these parameters with the prefix 'initial_guesses:'
+e.g. 'initial_guesses:actual_takeoff_mass,150000' would set actual_takeoff_mass in the initial_guesses dictionary to 150000
+
+If mission_method is TWO_DEGREES_OF_FREEDOM or mass_method is GASP then the initial_guessing() method is called and wherever the initial_guesses values are equal to 0, they are updated with calculated estimates based off the problem type (sizing, alternate, fallout) and mass, speed, range, thrust, and payload data specified in the vehicle input .csv file.
 
 The initial guess of `reserves` is used to define the reserve fuel. Initially, its value can be anything larger than or equal to 0. There are two Aviary variables to control the reserve fuel in the model file (`.csv`):
 - `Aircraft.Design.RESERVE_FUEL_ADDITIONAL`: the required fuel reserves: directly in lbm,
