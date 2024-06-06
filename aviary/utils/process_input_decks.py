@@ -52,7 +52,7 @@ def create_vehicle(vehicle_deck='', verbosity=Verbosity.BRIEF, meta_data=_MetaDa
     aircraft_values = get_option_defaults(engine=False)
 
     # TODO remove all hardcoded GASP values here, find appropriate place for them
-    aircraft_values.set_val('verbosity', val=verbosity)
+    aircraft_values.set_val(Settings.VERBOSITY, val=verbosity)
     aircraft_values.set_val('INGASP.JENGSZ', val=4)
     aircraft_values.set_val('test_mode', val=False)
     aircraft_values.set_val('use_surrogates', val=True)
