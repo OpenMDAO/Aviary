@@ -33,7 +33,7 @@ Make sure both the reserve climb and the reserve cruise phases both have `"reser
 
 ### Examples
 
-Examples of single-phase and multi-phase reserve missions are presented in [Reserve Mission Examples](../examples/reserve_missions.md).
+Examples of single-phase and multi-phase reserve missions are presented in [Reserve Mission Examples](../examples/reserve_missions.ipynb).
 
 ### Caveats when using 2DOF
 

@@ -47,7 +47,7 @@ The theory guide also gives a much deeper understanding of the equations and mod
 
 ## Developer Guide
 
-This [developer guide](developer_guide/codebase_overview.md) walks through each aspect of the code from the perspective of a developer who would like to contribute code.
+This [developer guide](developer_guide/codebase_overview.ipynb) walks through each aspect of the code from the perspective of a developer who would like to contribute code.
 
 The Aviary development team is housed out of NASA but welcomes code input and pull requests from the public.
 We are developing a formal review process, but at the moment each code contribution will be made as a pull request and reviewed by the development team.
