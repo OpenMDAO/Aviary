@@ -136,12 +136,12 @@ class PropulsionMission(om.Group):
             axis=1,
             units='hp'
         )
-        perf_mux.add_var(
-            Dynamic.Mission.SHAFT_POWER_CORRECTED,
-            shape=(nn,),
-            axis=1,
-            units='hp'
-        )
+        # perf_mux.add_var(
+        #     Dynamic.Mission.SHAFT_POWER_CORRECTED,
+        #     shape=(nn,),
+        #     axis=1,
+        #     units='hp'
+        # )
         # perf_mux.add_var(
         #     'exit_area_unscaled',
         #     shape=(nn,),
@@ -176,8 +176,8 @@ class PropulsionMission(om.Group):
                 if engine.use_shp:
                     self.connect(engine.name + '.' + Dynamic.Mission.SHAFT_POWER,
                                  'vectorize_performance.' + Dynamic.Mission.SHAFT_POWER + '_' + str(i))
-                    self.connect(engine.name + '.' + Dynamic.Mission.SHAFT_POWER_CORRECTED,
-                                 'vectorize_performance.' + Dynamic.Mission.SHAFT_POWER_CORRECTED + '_' + str(i))
+                    # self.connect(engine.name + '.' + Dynamic.Mission.SHAFT_POWER_CORRECTED,
+                    #              'vectorize_performance.' + Dynamic.Mission.SHAFT_POWER_CORRECTED + '_' + str(i))
             except AttributeError:  # engine does not have flag
                 pass
 

@@ -50,17 +50,21 @@ class TurbopropModel(EngineModel):
         # also calls _preprocess_inputs() as part of EngineModel __init__
         super().__init__(name, options)
 
+        self.use_shp = True
+
         self.shaft_power_model = shaft_power_model
         self.propeller_model = propeller_model
 
         # Initialize turboshaft engine deck. New required variable set w/o thrust
         if shaft_power_model is None:
-            self.shaft_power_model = EngineDeck(name=name + '_engine_deck',
-                                                options=options,
-                                                data=data,
-                                                required_variables={EngineModelVariables.ALTITUDE,
-                                                                    EngineModelVariables.MACH,
-                                                                    EngineModelVariables.THROTTLE})
+            self.shaft_power_model = EngineDeck(
+                name=name + '_engine_deck',
+                options=options,
+                data=data,
+                required_variables={EngineModelVariables.ALTITUDE,
+                                    EngineModelVariables.MACH,
+                                    EngineModelVariables.THROTTLE}
+            )
             # Manually check if shaft horsepower was provided (can't flag as required variable since either version
             # is acceptable)
             if not self.shaft_power_model.use_shaft_power:
@@ -83,17 +87,22 @@ class TurbopropModel(EngineModel):
         if type(shp_model) is not EngineDeck:
             shp_model_pre_mission = shp_model.build_pre_mission(aviary_inputs, **kwargs)
             if shp_model_pre_mission is not None:
-                turboprop_group.add_subsystem(shp_model_pre_mission.name,
-                                              subsys=shp_model_pre_mission,
-                                              promotes=['*'])
+                turboprop_group.add_subsystem(
+                    shp_model_pre_mission.name,
+                    subsys=shp_model_pre_mission,
+                    promotes=['*']
+                )
 
-        if propeller_model is not None and propeller_model != 'hamilton_standard':
+        if propeller_model is not None:
             propeller_model_pre_mission = propeller_model.build_pre_mission(
-                aviary_inputs, **kwargs)
+                aviary_inputs, **kwargs
+            )
             if propeller_model_pre_mission is not None:
-                turboprop_group.add_subsystem(propeller_model_pre_mission.name,
-                                              subsys=propeller_model_pre_mission,
-                                              promotes=['*'])
+                turboprop_group.add_subsystem(
+                    propeller_model_pre_mission.name,
+                    subsys=propeller_model_pre_mission,
+                    promotes=['*']
+                )
 
         return turboprop_group
 
@@ -110,67 +119,49 @@ class TurbopropModel(EngineModel):
         shp_model_mission = shp_model.build_mission(
             num_nodes, aviary_inputs, **shp_kwargs)
         if shp_model_mission is not None:
-            turboprop_group.add_subsystem(shp_model.name,
-                                          subsys=shp_model_mission,
-                                          promotes_inputs=['*'],
-                                          promotes_outputs=['*',
-                                                            (Dynamic.Mission.THRUST,
-                                                             'turboshaft_thrust'),
-                                                            (Dynamic.Mission.THRUST_MAX,
-                                                             'turboshaft_thrust_max'),
-                                                            (Dynamic.Mission.SHAFT_POWER,
-                                                             'dummy_shp'),
-                                                            (Dynamic.Mission.SHAFT_POWER_MAX, 'dummy_shp_max')])
+            turboprop_group.add_subsystem(
+                shp_model.name,
+                subsys=shp_model_mission,
+                promotes_inputs=['*'],
+                promotes_outputs=[
+                    '*',
+                    (Dynamic.Mission.THRUST, 'turboshaft_thrust'),
+                    (Dynamic.Mission.THRUST_MAX, 'turboshaft_thrust_max'),
+                    (Dynamic.Mission.SHAFT_POWER, 'source_shaft_power'),
+                    (Dynamic.Mission.SHAFT_POWER_MAX, 'source_shaft_power_max')]
+            )
 
-        # ensure uncorrected shaft horsepower is avaliable
-        # TODO also make sure corrected is avaliable
-        # TODO see if this can be done for non-EngineDecks
-        if isinstance(shp_model, EngineDeck):
-            if EngineModelVariables.SHAFT_POWER_CORRECTED in shp_model.engine_variables \
-               and EngineModelVariables.SHAFT_POWER not in shp_model.engine_variables:
-                turboprop_group.add_subsystem('uncorrect_shaft_power',
-                                              subsys=UncorrectData(num_nodes=num_nodes,
-                                                                   aviary_options=self.options),
-                                              promotes_inputs=[('corrected_data', Dynamic.Mission.SHAFT_POWER_CORRECTED),
-                                                               Dynamic.Mission.TEMPERATURE,
-                                                               Dynamic.Mission.STATIC_PRESSURE,
-                                                               Dynamic.Mission.MACH],
-                                              promotes_outputs=[('uncorrected_data', Dynamic.Mission.SHAFT_POWER)]),
-
-                turboprop_group.add_subsystem('uncorrect_shaft_power_max',
-                                              subsys=UncorrectData(num_nodes=num_nodes,
-                                                                   aviary_options=self.options),
-                                              promotes_inputs=[('corrected_data', Dynamic.Mission.SHAFT_POWER_CORRECTED_MAX),
-                                                               Dynamic.Mission.TEMPERATURE,
-                                                               Dynamic.Mission.STATIC_PRESSURE,
-                                                               Dynamic.Mission.MACH],
-                                              promotes_outputs=[('uncorrected_data', Dynamic.Mission.SHAFT_POWER_MAX)]),
+        # Gearbox can go here
 
         try:
             propeller_kwargs = kwargs[propeller_model.name]
         except (AttributeError, KeyError):
             propeller_kwargs = {}
-        if propeller_model is not None and propeller_model != 'hamilton_standard':
+        if propeller_model is not None:
 
-            propeller_model_mission = propeller_model.build_mission(num_nodes, self.options,
-                                                                    **propeller_kwargs)
+            propeller_model_mission = propeller_model.build_mission(
+                num_nodes, self.options, **propeller_kwargs
+            )
             if propeller_model_mission is not None:
-                turboprop_group.add_subsystem(propeller_model.name,
-                                              subsys=propeller_model_mission,
-                                              promotes_inputs=['*'],
-                                              promotes_outputs=['*',
-                                                                (Dynamic.Mission.THRUST,
-                                                                 'propeller_thrust')])
+                turboprop_group.add_subsystem(
+                    propeller_model.name,
+                    subsys=propeller_model_mission,
+                    promotes_inputs=['*',
+                                     (Dynamic.Mission.SHAFT_POWER, 'source_shaft_power')],
+                    promotes_outputs=['*',
+                                      (Dynamic.Mission.THRUST, 'propeller_thrust')]
+                )
 
-                propeller_model_mission_max = propeller_model.build_mission(num_nodes,
-                                                                            self.options, **kwargs)
-                max_thrust_group.add_subsystem(propeller_model.name + '_max',
-                                               subsys=propeller_model_mission_max,
-                                               promotes_inputs=['*',
-                                                                (Dynamic.Mission.SHAFT_POWER,
-                                                                 Dynamic.Mission.SHAFT_POWER_MAX)],
-                                               promotes_outputs=[(Dynamic.Mission.THRUST,
-                                                                 'propeller_thrust_max')])
+                propeller_model_mission_max = propeller_model.build_mission(
+                    num_nodes, self.options, **kwargs
+                )
+                max_thrust_group.add_subsystem(
+                    propeller_model.name + '_max',
+                    subsys=propeller_model_mission_max,
+                    promotes_inputs=['*',
+                                     (Dynamic.Mission.SHAFT_POWER, 'source_shaft_power_max')],
+                    promotes_outputs=[(Dynamic.Mission.THRUST, 'propeller_thrust_max')]
+                )
 
         else:  # use the Hamilton Standard model
             # only promote top-level inputs to avoid conflicts with max group
@@ -189,57 +180,84 @@ class TurbopropModel(EngineModel):
             except KeyError:
                 propeller_kwargs = {}
 
-            turboprop_group.add_subsystem('propeller_model',
-                                          PropellerPerformance(aviary_options=self.options,
-                                                               num_nodes=num_nodes,
-                                                               **propeller_kwargs),
-                                          promotes_inputs=[Dynamic.Mission.SHAFT_POWER,
-                                                           *prop_inputs],
-                                          promotes_outputs=['*',
-                                                            (Dynamic.Mission.THRUST,
-                                                             'propeller_thrust')])
+            turboprop_group.add_subsystem(
+                'propeller_model',
+                PropellerPerformance(aviary_options=self.options,
+                                     num_nodes=num_nodes,
+                                     **propeller_kwargs),
+                promotes_inputs=[*prop_inputs,
+                                 (Dynamic.Mission.SHAFT_POWER, 'source_shaft_power')],
+                promotes_outputs=['*',
+                                  (Dynamic.Mission.THRUST, 'propeller_thrust'),]
+            )
 
-            max_thrust_group.add_subsystem('propeller_model_max',
-                                           PropellerPerformance(aviary_options=self.options,
-                                                                num_nodes=num_nodes,
-                                                                **propeller_kwargs),
-                                           promotes_inputs=[*prop_inputs,
-                                                            (Dynamic.Mission.SHAFT_POWER,
-                                                             Dynamic.Mission.SHAFT_POWER_MAX)],
-                                           promotes_outputs=[(Dynamic.Mission.THRUST,
-                                                              'propeller_thrust_max')])
+            max_thrust_group.add_subsystem(
+                'propeller_model_max',
+                PropellerPerformance(aviary_options=self.options,
+                                     num_nodes=num_nodes,
+                                     **propeller_kwargs),
+                promotes_inputs=[*prop_inputs,
+                                 (Dynamic.Mission.SHAFT_POWER, 'source_shaft_power_max')],
+                promotes_outputs=[(Dynamic.Mission.THRUST, 'propeller_thrust_max')]
+            )
 
-        thrust_adder = om.ExecComp('turboprop_thrust=turboshaft_thrust+propeller_thrust',
-                                   turboprop_thrust={'val': np.zeros(num_nodes),
-                                                     'units': 'lbf'},
-                                   turboshaft_thrust={'val': np.zeros(num_nodes),
-                                                      'units': 'lbf'},
-                                   propeller_thrust={'val': np.zeros(num_nodes),
-                                                     'units': 'lbf'})
+        thrust_adder = om.ExecComp(
+            'turboprop_thrust=turboshaft_thrust+propeller_thrust',
+            turboprop_thrust={'val': np.zeros(num_nodes), 'units': 'lbf'},
+            turboshaft_thrust={'val': np.zeros(num_nodes), 'units': 'lbf'},
+            propeller_thrust={'val': np.zeros(num_nodes), 'units': 'lbf'}
+        )
 
-        max_thrust_adder = om.ExecComp('turboprop_thrust=turboshaft_thrust_max+propeller_thrust_max',
-                                       turboprop_thrust={'val': np.zeros(num_nodes),
-                                                         'units': 'lbf'},
-                                       turboshaft_thrust_max={'val': np.zeros(num_nodes),
-                                                              'units': 'lbf'},
-                                       propeller_thrust_max={'val': np.zeros(num_nodes),
-                                                             'units': 'lbf'})
+        max_thrust_adder = om.ExecComp(
+            'turboprop_thrust=turboshaft_thrust_max+propeller_thrust_max',
+            turboprop_thrust={'val': np.zeros(num_nodes), 'units': 'lbf'},
+            turboshaft_thrust_max={'val': np.zeros(num_nodes), 'units': 'lbf'},
+            propeller_thrust_max={'val': np.zeros(num_nodes), 'units': 'lbf'}
+        )
 
-        turboprop_group.add_subsystem('thrust_adder',
-                                      subsys=thrust_adder,
-                                      promotes_inputs=['*'],
-                                      promotes_outputs=[('turboprop_thrust',
-                                                         Dynamic.Mission.THRUST)])
+        turboprop_group.add_subsystem(
+            'thrust_adder',
+            subsys=thrust_adder,
+            promotes_inputs=['*'],
+            promotes_outputs=[('turboprop_thrust', Dynamic.Mission.THRUST)]
+        )
 
-        max_thrust_group.add_subsystem('max_thrust_adder',
-                                       subsys=max_thrust_adder,
-                                       promotes_inputs=['*'],
-                                       promotes_outputs=[('turboprop_thrust',
-                                                          Dynamic.Mission.THRUST_MAX)])
+        max_thrust_group.add_subsystem(
+            'max_thrust_adder',
+            subsys=max_thrust_adder,
+            promotes_inputs=['*'],
+            promotes_outputs=[('turboprop_thrust', Dynamic.Mission.THRUST_MAX)]
+        )
 
-        turboprop_group.add_subsystem('turboprop_max_group', max_thrust_group,
-                                      promotes_inputs=['*'],
-                                      promotes_outputs=[Dynamic.Mission.THRUST_MAX])
+        turboprop_group.add_subsystem(
+            'turboprop_max_group',
+            max_thrust_group,
+            promotes_inputs=['*'],
+            promotes_outputs=[Dynamic.Mission.THRUST_MAX]
+        )
+
+        #   These components are needed to provide the "expected" standard name for shaft power
+        # to the larger propulsion subsystem for muxing
+        #   This is necessary because we need the shaft power input for the propeller to
+        # not accidentally connect to the muxed output of "SHAFT_POWER", so it must be
+        # aliased, and therefore must also be aliased coming out of shaft power source.
+        turboprop_group.add_subsystem(
+            'shaft_power_promote',
+            om.ExecComp('shaft_power = source_shaft_power',
+                        shaft_power={'val': np.zeros(num_nodes), 'units': 'hp'},
+                        source_shaft_power={'val': np.zeros(num_nodes), 'units': 'hp'}),
+            promotes_inputs=['source_shaft_power'],
+            promotes_outputs=[('shaft_power', Dynamic.Mission.SHAFT_POWER)]
+        )
+
+        turboprop_group.add_subsystem(
+            'shaft_power_max_promote',
+            om.ExecComp('shaft_power_max = source_shaft_power_max',
+                        shaft_power_max={'val': np.zeros(num_nodes), 'units': 'hp'},
+                        source_shaft_power_max={'val': np.zeros(num_nodes), 'units': 'hp'}),
+            promotes_inputs=['source_shaft_power_max'],
+            promotes_outputs=[('shaft_power_max', Dynamic.Mission.SHAFT_POWER_MAX)]
+        )
 
         return turboprop_group
 
@@ -249,18 +267,24 @@ class TurbopropModel(EngineModel):
         turboprop_group = om.Group()
         if type(shp_model) is not EngineDeck:
             shp_model_post_mission = shp_model.build_post_mission(
-                aviary_inputs, **kwargs)
+                aviary_inputs, **kwargs
+            )
             if shp_model_post_mission is not None:
-                turboprop_group.add_subsystem(shp_model_post_mission.name,
-                                              subsys=shp_model_post_mission,
-                                              aviary_options=aviary_inputs,)
+                turboprop_group.add_subsystem(
+                    shp_model_post_mission.name,
+                    subsys=shp_model_post_mission,
+                    aviary_options=aviary_inputs
+                )
 
         if self.propeller_model is not None:
-            propeller_model_post_mission = propeller_model.build_mission(
-                aviary_inputs, **kwargs)
+            propeller_model_post_mission = propeller_model.build_post_mission(
+                aviary_inputs, **kwargs
+            )
             if propeller_model_post_mission is not None:
-                turboprop_group.add_subsystem(propeller_model_post_mission.name,
-                                              subsys=propeller_model_post_mission,
-                                              aviary_options=aviary_inputs,)
+                turboprop_group.add_subsystem(
+                    propeller_model_post_mission.name,
+                    subsys=propeller_model_post_mission,
+                    aviary_options=aviary_inputs
+                )
 
         return turboprop_group

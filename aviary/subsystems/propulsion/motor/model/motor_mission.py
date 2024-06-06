@@ -67,9 +67,12 @@ class MotorMission(om.Group):
                                               power_elec={'val': np.ones(
                                                   n), 'units': 'kW'},
                                               efficiency={'val': np.ones(n), 'units': 'unitless'}),
-                                  promotes_inputs=[('shaft_power', Dynamic.Mission.SHAFT_POWER),
-                                                   ('efficiency', 'motor_efficiency')],
+                                  promotes_inputs=[
+                                      #   ('shaft_power', Dynamic.Mission.SHAFT_POWER),
+                                      ('efficiency', 'motor_efficiency')],
                                   promotes_outputs=[('power_elec', Dynamic.Mission.ELECTRIC_POWER)])
+
+        motor_group.connect(Dynamic.Mission.SHAFT_POWER, 'energy_comp.shaft_power')
 
         # Gearbox goes here in future
 
@@ -116,12 +119,12 @@ class MotorMission(om.Group):
                            promotes_inputs=['*', 'max_throttle'],
                            promotes_outputs=[Dynamic.Mission.SHAFT_POWER_MAX])
 
-        # determine torque available at the prop
-        self.add_subsystem('gearbox_comp',
-                           om.ExecComp('torque = shaft_power / (pi * RPM) * 30',
-                                       shaft_power={'val': np.ones(n), 'units': 'kW'},
-                                       torque={'val': np.ones(n), 'units': 'kN*m'},
-                                       RPM={'val': np.ones(n), 'units': 'rpm'}),
-                           promotes_inputs=[('shaft_power', Dynamic.Mission.SHAFT_POWER),
-                                            ('RPM', Dynamic.Mission.RPM)],
-                           promotes_outputs=[('torque', Dynamic.Mission.TORQUE),])
+        # # determine torque available at the prop
+        # self.add_subsystem('gearbox_comp',
+        #                    om.ExecComp('torque = shaft_power / (pi * RPM) * 30',
+        #                                shaft_power={'val': np.ones(n), 'units': 'kW'},
+        #                                torque={'val': np.ones(n), 'units': 'kN*m'},
+        #                                RPM={'val': np.ones(n), 'units': 'rpm'}),
+        #                    promotes_inputs=[('shaft_power', Dynamic.Mission.SHAFT_POWER),
+        #                                     ('RPM', Dynamic.Mission.RPM)],
+        #                    promotes_outputs=[('torque', Dynamic.Mission.TORQUE),])

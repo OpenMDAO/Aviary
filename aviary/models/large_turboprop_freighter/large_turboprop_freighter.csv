@@ -11,8 +11,8 @@ aircraft:controls:stability_augmentation_system_mass,0,lbm
 aircraft:controls:stability_augmentation_system_mass_scaler,1,unitless
 aircraft:crew_and_payload:cargo_mass,31273,lbm
 aircraft:crew_and_payload:catering_items_mass_per_passenger,0,lbm
-aircraft:crew_and_payload:num_passengers,60,unitless
-aircraft:crew_and_payload:passenger_mass_with_bags,190,lbm
+#aircraft:crew_and_payload:num_passengers,60,unitless
+#aircraft:crew_and_payload:passenger_mass_with_bags,190,lbm
 aircraft:crew_and_payload:passenger_service_mass_per_passenger,0,lbm
 aircraft:crew_and_payload:water_mass_per_occupant,0,lbm
 aircraft:design:cg_delta,0.25,unitless
@@ -26,6 +26,7 @@ aircraft:design:static_margin,0.05,unitless
 aircraft:design:structural_mass_increment,0,lbm
 aircraft:design:supercritical_drag_shift,0,unitless
 aircraft:engine:additional_mass_fraction,0.34,unitless
+aircraft:engine:data_file,models/engines/turboprop_4465hp.deck,unitless
 aircraft:engine:mass_scaler,1,unitless
 aircraft:engine:mass_specific,0.37026,lbm/lbf
 aircraft:engine:num_engines,4,unitless
@@ -35,7 +36,7 @@ aircraft:engine:reference_diameter,5.8,ft
 aircraft:engine:reference_sls_thrust,28690,lbf
 aircraft:engine:scaled_sls_thrust,0,lbf
 aircraft:engine:type,6,unitless
-aircraft:engine:wing_locations,0.385,unitless
+aircraft:engine:wing_locations,[0.145,0.2887],unitless
 aircraft:fuel:density,6.687,lbm/galUS
 aircraft:fuel:fuel_margin,15,unitless
 aircraft:fuel:fuel_system_mass_coefficient,0.065,unitless
@@ -153,7 +154,7 @@ mission:takeoff:decision_speed_increment,5,kn
 mission:takeoff:rotation_speed_increment,5,kn
 mission:taxi:duration,0.15,h
 problem_type,fallout,unitless
-settings:equations_of_motion,2DOF
+settings:equations_of_motion,height_energy
 settings:mass_method,GASP
 
 # Initial Guesses

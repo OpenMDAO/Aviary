@@ -33,6 +33,7 @@ from openmdao.utils.units import convert_units
 from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.subsystems.propulsion.engine_scaling import EngineScaling
 from aviary.subsystems.propulsion.engine_sizing import SizeEngine
+from aviary.subsystems.propulsion.utils import UncorrectData
 from aviary.subsystems.propulsion.utils import (EngineModelVariables,
                                                 convert_geopotential_altitude,
                                                 default_units)
@@ -498,14 +499,14 @@ class EngineDeck(EngineModel):
             engine_variables.pop(TAILPIPE_THRUST)
 
         # Handle shaft power (corrected and uncorrected). It is not possible to compare
-        # them for consistency, as that requires information not avaliable here
+        # them for consistency, as that requires information not avaliable during setup
         # (freestream air temp and pressure). Instead, we must trust the source and
         # assume either data set is valid and can be used.
         if SHAFT_POWER in engine_variables and SHAFT_POWER_CORRECTED in engine_variables and self.get_val(Settings.VERBOSITY).value >= 1:
             warnings.warn('Both corrected and uncorrected shaft horsepower are '
                           f'present in {message}. The two cannot be validated for '
                           'consistency, and either variable could be utilized if '
-                          'any subsystem requests it as an input.')
+                          'a subsystem requests it as an input.')
 
         self._set_variable_flags()
 
@@ -972,6 +973,22 @@ class EngineDeck(EngineModel):
                                    engine,
                                    promotes_inputs=['*'])
 
+        # check if uncorrection component is needed
+        uncorrect_shp = False
+        if SHAFT_POWER_CORRECTED in self.engine_variables\
+           and SHAFT_POWER not in self.engine_variables:
+            uncorrect_shp = True
+            engine_group.add_subsystem('uncorrect_shaft_power',
+                                       subsys=UncorrectData(num_nodes=num_nodes,
+                                                            aviary_options=self.options),
+                                       promotes_inputs=[Dynamic.Mission.TEMPERATURE,
+                                                        Dynamic.Mission.STATIC_PRESSURE,
+                                                        Dynamic.Mission.MACH],)
+            #    promotes_outputs=[('uncorrected_data', 'shaft_power_unscaled')])
+
+            engine_group.connect('interpolation.shaft_power_corrected_unscaled',
+                                 'uncorrect_shaft_power.corrected_data')
+
         if self.use_thrust or self.use_shaft_power:
             if self.global_throttle or (self.global_hybrid_throttle
                                         and self.use_hybrid_throttle):
@@ -987,9 +1004,21 @@ class EngineDeck(EngineModel):
                                            promotes_outputs=['*'])
 
             engine_group.add_subsystem(
-                'max_thrust_interpolation',
+                'max_interpolation',
                 max_thrust_engine,
                 promotes_inputs=['*'])
+
+            if uncorrect_shp:
+                engine_group.add_subsystem('uncorrect_max_shaft_power',
+                                           subsys=UncorrectData(num_nodes=num_nodes,
+                                                                aviary_options=self.options),
+                                           promotes_inputs=[Dynamic.Mission.TEMPERATURE,
+                                                            Dynamic.Mission.STATIC_PRESSURE,
+                                                            Dynamic.Mission.MACH],)
+                #    promotes_outputs=[('uncorrected_data', 'shaft_power_max_unscaled')])
+
+                engine_group.connect('max_interpolation.shaft_power_corrected_max_unscaled',
+                                     'uncorrect_max_shaft_power.corrected_data')
 
         engine_group.add_subsystem('engine_scaling',
                                    subsys=EngineScaling(num_nodes=num_nodes,
@@ -1009,19 +1038,19 @@ class EngineDeck(EngineModel):
                              'engine_scaling.nox_rate_unscaled')
         if self.use_thrust:
             engine_group.connect(
-                'max_thrust_interpolation.thrust_net_max_unscaled', 'engine_scaling.thrust_net_max_unscaled')
+                'max_interpolation.thrust_net_max_unscaled', 'engine_scaling.thrust_net_max_unscaled')
 
         if self.use_shaft_power:
             if SHAFT_POWER in self.engine_variables:
                 engine_group.connect('interpolation.shaft_power_unscaled',
                                      'engine_scaling.shaft_power_unscaled')
-                engine_group.connect('max_thrust_interpolation.shaft_power_max_unscaled',
+                engine_group.connect('max_interpolation.shaft_power_max_unscaled',
                                      'engine_scaling.shaft_power_max_unscaled')
             else:
-                engine_group.connect('interpolation.shaft_power_corrected_unscaled',
-                                     'engine_scaling.shaft_power_corrected_unscaled')
-                engine_group.connect('max_thrust_interpolation.shaft_power_corrected_max_unscaled',
-                                     'engine_scaling.shaft_power_corrected_max_unscaled')
+                engine_group.connect('uncorrect_shaft_power.uncorrected_data',
+                                     'engine_scaling.shaft_power_unscaled')
+                engine_group.connect('uncorrect_max_shaft_power.uncorrected_data',
+                                     'engine_scaling.shaft_power_max_unscaled')
 
         return engine_group
 
