@@ -630,16 +630,10 @@ def _setup_F2A_parser(parser):
         "-v",
         "--verbosity",
         type=int,
-        choices=Verbosity.set(),
+        choices=Verbosity.values(),
         default=1,
         help="Set level of print statements",
     )
-    # parser.add_argument(
-    #     "-vv",
-    #     "--very_verbose",
-    #     action="store_true",
-    #     help="Enable debug print statements",
-    # )
 
 
 def _exec_F2A(args, user_args):
