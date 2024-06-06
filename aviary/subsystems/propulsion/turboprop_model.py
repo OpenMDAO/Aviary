@@ -126,9 +126,7 @@ class TurbopropModel(EngineModel):
                 promotes_outputs=[
                     '*',
                     (Dynamic.Mission.THRUST, 'turboshaft_thrust'),
-                    (Dynamic.Mission.THRUST_MAX, 'turboshaft_thrust_max'),
-                    (Dynamic.Mission.SHAFT_POWER, 'source_shaft_power'),
-                    (Dynamic.Mission.SHAFT_POWER_MAX, 'source_shaft_power_max')]
+                    (Dynamic.Mission.THRUST_MAX, 'turboshaft_thrust_max')]
             )
 
         # Gearbox can go here
@@ -147,10 +145,13 @@ class TurbopropModel(EngineModel):
                     propeller_model.name,
                     subsys=propeller_model_mission,
                     promotes_inputs=['*',
-                                     (Dynamic.Mission.SHAFT_POWER, 'source_shaft_power')],
+                                     (Dynamic.Mission.SHAFT_POWER, 'propeller_shaft_power')],
                     promotes_outputs=['*',
                                       (Dynamic.Mission.THRUST, 'propeller_thrust')]
                 )
+
+                turboprop_group.connect(
+                    Dynamic.Mission.SHAFT_POWER, 'propeller_shaft_power')
 
                 propeller_model_mission_max = propeller_model.build_mission(
                     num_nodes, self.options, **kwargs
@@ -159,9 +160,12 @@ class TurbopropModel(EngineModel):
                     propeller_model.name + '_max',
                     subsys=propeller_model_mission_max,
                     promotes_inputs=['*',
-                                     (Dynamic.Mission.SHAFT_POWER, 'source_shaft_power_max')],
+                                     (Dynamic.Mission.SHAFT_POWER, 'propeller_shaft_power_max')],
                     promotes_outputs=[(Dynamic.Mission.THRUST, 'propeller_thrust_max')]
                 )
+
+                turboprop_group.connect(
+                    Dynamic.Mission.SHAFT_POWER_MAX, 'propeller_shaft_power_max')
 
         else:  # use the Hamilton Standard model
             # only promote top-level inputs to avoid conflicts with max group
@@ -186,10 +190,12 @@ class TurbopropModel(EngineModel):
                                      num_nodes=num_nodes,
                                      **propeller_kwargs),
                 promotes_inputs=[*prop_inputs,
-                                 (Dynamic.Mission.SHAFT_POWER, 'source_shaft_power')],
+                                 (Dynamic.Mission.SHAFT_POWER, 'propeller_shaft_power')],
                 promotes_outputs=['*',
                                   (Dynamic.Mission.THRUST, 'propeller_thrust'),]
             )
+
+            turboprop_group.connect(Dynamic.Mission.SHAFT_POWER, 'propeller_shaft_power')
 
             max_thrust_group.add_subsystem(
                 'propeller_model_max',
@@ -197,9 +203,12 @@ class TurbopropModel(EngineModel):
                                      num_nodes=num_nodes,
                                      **propeller_kwargs),
                 promotes_inputs=[*prop_inputs,
-                                 (Dynamic.Mission.SHAFT_POWER, 'source_shaft_power_max')],
+                                 (Dynamic.Mission.SHAFT_POWER, 'propeller_shaft_power_max')],
                 promotes_outputs=[(Dynamic.Mission.THRUST, 'propeller_thrust_max')]
             )
+
+            turboprop_group.connect(Dynamic.Mission.SHAFT_POWER_MAX,
+                                    'propeller_shaft_power_max')
 
         thrust_adder = om.ExecComp(
             'turboprop_thrust=turboshaft_thrust+propeller_thrust',
@@ -234,29 +243,6 @@ class TurbopropModel(EngineModel):
             max_thrust_group,
             promotes_inputs=['*'],
             promotes_outputs=[Dynamic.Mission.THRUST_MAX]
-        )
-
-        #   These components are needed to provide the "expected" standard name for shaft power
-        # to the larger propulsion subsystem for muxing
-        #   This is necessary because we need the shaft power input for the propeller to
-        # not accidentally connect to the muxed output of "SHAFT_POWER", so it must be
-        # aliased, and therefore must also be aliased coming out of shaft power source.
-        turboprop_group.add_subsystem(
-            'shaft_power_promote',
-            om.ExecComp('shaft_power = source_shaft_power',
-                        shaft_power={'val': np.zeros(num_nodes), 'units': 'hp'},
-                        source_shaft_power={'val': np.zeros(num_nodes), 'units': 'hp'}),
-            promotes_inputs=['source_shaft_power'],
-            promotes_outputs=[('shaft_power', Dynamic.Mission.SHAFT_POWER)]
-        )
-
-        turboprop_group.add_subsystem(
-            'shaft_power_max_promote',
-            om.ExecComp('shaft_power_max = source_shaft_power_max',
-                        shaft_power_max={'val': np.zeros(num_nodes), 'units': 'hp'},
-                        source_shaft_power_max={'val': np.zeros(num_nodes), 'units': 'hp'}),
-            promotes_inputs=['source_shaft_power_max'],
-            promotes_outputs=[('shaft_power_max', Dynamic.Mission.SHAFT_POWER_MAX)]
         )
 
         return turboprop_group
