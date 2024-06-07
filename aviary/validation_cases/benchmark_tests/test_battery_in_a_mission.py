@@ -1,7 +1,5 @@
-import numpy as np
 import unittest
 
-from numpy.testing import assert_almost_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 import aviary.api as av
@@ -9,7 +7,7 @@ import aviary.api as av
 from aviary.subsystems.energy.battery_builder import BatteryBuilder
 
 
-# @use_tempdirs
+@use_tempdirs
 class TestSubsystemsMission(unittest.TestCase):
     def setUp(self):
         self.phase_info = {
