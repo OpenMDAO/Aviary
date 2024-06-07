@@ -401,7 +401,7 @@ class AviaryProblem(om.Problem):
         self._update_metadata_from_subsystems()
 
         if Settings.VERBOSITY not in aviary_inputs:
-            aviary_inputs.set_val(Settings.VERBOSITY, Verbosity.BRIEF)
+            aviary_inputs.set_val(Settings.VERBOSITY, verbosity)
 
         self.aviary_inputs = aviary_inputs
         return aviary_inputs
