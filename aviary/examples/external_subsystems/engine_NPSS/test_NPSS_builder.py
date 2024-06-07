@@ -33,5 +33,5 @@ class AviaryNPSSTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    test = BenchAviaryNPSS()
-    test.test_bench_aviary_NPSS()
+    test = AviaryNPSSTestCase()
+    test.bench_test_aviary_NPSS()
