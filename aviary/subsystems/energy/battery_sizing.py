@@ -1,10 +1,8 @@
 import openmdao.api as om
 
-from openmdao.utils.units import convert_units
-
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.variables import Aircraft
 
 
 class SizeBattery(om.ExplicitComponent):
@@ -18,26 +16,25 @@ class SizeBattery(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Battery.PACK_MASS, val=0.0, units='lbm',
+        add_aviary_input(self, Aircraft.Battery.PACK_MASS, val=0.0, units='kg',
                          desc='mass of energy-storing components of battery')
-        add_aviary_input(self, Aircraft.Battery.ADDITIONAL_MASS, val=0.0, units='lbm',
+        add_aviary_input(self, Aircraft.Battery.ADDITIONAL_MASS, val=0.0, units='kg',
                          desc='mass of non energy-storing components of battery')
-        add_aviary_input(self, Aircraft.Battery.PACK_ENERGY_DENSITY, val=0.0, units='kW*h/kg',
+        add_aviary_input(self, Aircraft.Battery.PACK_ENERGY_DENSITY, val=0.0, units='kJ/kg',
                          desc='energy density of battery pack')
 
         add_aviary_output(self, Aircraft.Battery.MASS, val=0.0,
-                          units='lbm', desc='total battery mass')
+                          units='kg', desc='total battery mass')
         add_aviary_output(self, Aircraft.Battery.ENERGY_CAPACITY, val=0.0,
                           units='kJ', desc='total battery energy storage')
 
     def compute(self, inputs, outputs):
-        energy_density_kj_kg = inputs[Aircraft.Battery.PACK_ENERGY_DENSITY] * 3600
+        energy_density_kj_kg = inputs[Aircraft.Battery.PACK_ENERGY_DENSITY]
         addtl_mass = inputs[Aircraft.Battery.ADDITIONAL_MASS]
-        pack_mass_lbm = inputs[Aircraft.Battery.PACK_MASS]
-        pack_mass_kg = convert_units(pack_mass_lbm, 'lbm', 'kg')
+        pack_mass = inputs[Aircraft.Battery.PACK_MASS]
 
-        total_mass = pack_mass_lbm + addtl_mass
-        total_energy = pack_mass_kg * energy_density_kj_kg
+        total_mass = pack_mass + addtl_mass
+        total_energy = pack_mass * energy_density_kj_kg
 
         outputs[Aircraft.Battery.MASS] = total_mass
         outputs[Aircraft.Battery.ENERGY_CAPACITY] = total_energy
@@ -54,11 +51,10 @@ class SizeBattery(om.ExplicitComponent):
                               Aircraft.Battery.PACK_MASS, val=1.0)
 
     def compute_partials(self, inputs, J):
-        energy_density_kj_kg = inputs[Aircraft.Battery.PACK_ENERGY_DENSITY] * 3600
-        # addtl_mass = inputs[Aircraft.Battery.ADDITIONAL_MASS]
-        pack_mass_kg = convert_units(inputs[Aircraft.Battery.PACK_MASS], 'lbm', 'kg')
+        energy_density_kj_kg = inputs[Aircraft.Battery.PACK_ENERGY_DENSITY]
+        pack_mass = inputs[Aircraft.Battery.PACK_MASS]
 
         J[Aircraft.Battery.ENERGY_CAPACITY,
-            Aircraft.Battery.PACK_ENERGY_DENSITY] = pack_mass_kg * 3600
+            Aircraft.Battery.PACK_ENERGY_DENSITY] = pack_mass
         J[Aircraft.Battery.ENERGY_CAPACITY,
-            Aircraft.Battery.PACK_MASS] = energy_density_kj_kg * convert_units(1, 'lbm', 'kg')
+            Aircraft.Battery.PACK_MASS] = energy_density_kj_kg

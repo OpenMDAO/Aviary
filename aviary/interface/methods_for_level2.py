@@ -2220,7 +2220,7 @@ class AviaryProblem(om.Problem):
             If True (default), Dymos html plots will be generated as part of the output.
         """
 
-        if self.aviary_inputs.get_val('verbosity').value >= 2:
+        if self.aviary_inputs.get_val(Settings.VERBOSITY).value >= 2:
             self.final_setup()
             with open('input_list.txt', 'w') as outfile:
                 self.model.list_inputs(out_stream=outfile)
@@ -2242,7 +2242,7 @@ class AviaryProblem(om.Problem):
             failed = self.run_model()
             warnings.filterwarnings('default', category=UserWarning)
 
-        if self.aviary_inputs.get_val('verbosity').value >= 2:
+        if self.aviary_inputs.get_val(Settings.VERBOSITY).value >= 2:
             with open('output_list.txt', 'w') as outfile:
                 self.model.list_outputs(out_stream=outfile)
 

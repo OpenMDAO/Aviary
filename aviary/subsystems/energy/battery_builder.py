@@ -53,3 +53,7 @@ class BatteryBuilder(SubsystemBuilderBase):
                            {'type': 'path',
                             'lower': 0.2}}
         return constraint_dict
+
+    def get_parameters(self):
+        return {Aircraft.Battery.ENERGY_CAPACITY: {'units': 'kJ', 'val': 1.e4},
+                Aircraft.Battery.EFFICIENCY: {'units': 'unitless', 'val': 0.95}}

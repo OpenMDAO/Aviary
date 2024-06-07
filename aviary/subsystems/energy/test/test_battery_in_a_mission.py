@@ -54,7 +54,8 @@ class TestSubsystemsMission(unittest.TestCase):
 
         prob = av.AviaryProblem()
 
-        prob.load_inputs("models/test_aircraft/aircraft_for_bench_FwFm_with_electric.csv", phase_info)
+        prob.load_inputs(
+            "models/test_aircraft/aircraft_for_bench_FwFm_with_electric.csv", phase_info)
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
@@ -68,7 +69,7 @@ class TestSubsystemsMission(unittest.TestCase):
         # Link phases and variables
         prob.link_phases()
 
-        prob.add_driver("SLSQP", max_iter=100)
+        prob.add_driver('SLSQP')
 
         prob.add_design_variables()
 
@@ -78,10 +79,9 @@ class TestSubsystemsMission(unittest.TestCase):
 
         prob.set_initial_guesses()
 
-        prob.set_val(av.Aircraft.Battery.PACK_ENERGY_DENSITY, 550, units='kW*h/kg')
-        prob.set_val(av.Aircraft.Battery.PACK_MASS, 1200, units='lbm')
+        prob.set_val(av.Aircraft.Battery.PACK_ENERGY_DENSITY, 550, units='kJ/kg')
+        prob.set_val(av.Aircraft.Battery.PACK_MASS, 1000, units='lbm')
         prob.set_val(av.Aircraft.Battery.ADDITIONAL_MASS, 115, units='lbm')
-        prob.set_val("traj.cruise.rhs_all.engine_deck.electric_power", 2., units='kW')
 
         prob.run_aviary_problem()
 
