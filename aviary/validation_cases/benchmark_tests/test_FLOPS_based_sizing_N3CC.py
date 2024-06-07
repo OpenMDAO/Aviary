@@ -283,13 +283,14 @@ def run_trajectory(sim=True):
     externs['cruise'] = {}
     externs['descent'] = {}
     for default_subsys in default_mission_subsystems:
-        params =  default_subsys.get_parameters(aviary_inputs=aviary_inputs,
-                                                phase_info={})
+        params = default_subsys.get_parameters(aviary_inputs=aviary_inputs,
+                                               phase_info={})
         for key, val in params.items():
             for phname in ['climb', 'cruise', 'descent']:
                 externs[phname][key] = val
 
-    traj = setup_trajectory_params(prob.model, traj, aviary_inputs, external_parameters=externs)
+    traj = setup_trajectory_params(prob.model, traj, aviary_inputs,
+                                   external_parameters=externs)
 
     ##################################
     # Connect in Takeoff and Landing #
