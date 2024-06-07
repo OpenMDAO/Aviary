@@ -32,7 +32,7 @@ from aviary.utils.csv_data_file import read_data_file, write_data_file
 from aviary.utils.data_interpolator_builder import build_data_interpolator
 from aviary.variable_info.enums import AlphaModes, AnalysisScheme, ProblemType, SpeedType, GASPEngineType, FlapType, EquationsOfMotion, LegacyCode, Verbosity
 from aviary.interface.default_phase_info.two_dof import phase_info as default_2DOF_phase_info
-from aviary.interface.default_phase_info.two_dof_fiti import create_2dof_based_ascent_phases, create_2dof_based_descent_phases
+from aviary.interface.default_phase_info.two_dof_fiti_deprecated import create_2dof_based_ascent_phases, create_2dof_based_descent_phases
 from aviary.interface.default_phase_info.height_energy import phase_info as default_height_energy_phase_info
 from aviary.interface.methods_for_level1 import run_level_1
 from aviary.interface.methods_for_level1 import run_aviary

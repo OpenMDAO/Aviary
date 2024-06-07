@@ -108,7 +108,7 @@ cruise_phase = {
         'builder': SGMCruise,
         'user_options': {
             'mach': (cruise_mach, 'unitless'),
-            # 'attr:mass_trigger': ('SGMCruise_mass_trigger', 'lbm') # temp until submodel fix
+            'attr:mass_trigger': ('SGMCruise_mass_trigger', 'lbm')
         },
     },
 }

@@ -2,7 +2,7 @@ import unittest
 import warnings
 
 import openmdao.api as om
-from aviary.interface.default_phase_info.two_dof_fiti import create_2dof_based_descent_phases
+from aviary.interface.default_phase_info.two_dof_fiti_deprecated import create_2dof_based_descent_phases
 from aviary.interface.default_phase_info.two_dof_fiti_copy import descent_phases, add_default_sgm_args
 
 from openmdao.utils.assert_utils import assert_near_equal
@@ -15,7 +15,6 @@ from aviary.variable_info.enums import Verbosity
 from aviary.utils.process_input_decks import create_vehicle
 from aviary.utils.preprocessors import preprocess_propulsion
 import importlib
-from aviary.utils.test_utils.check_om_version import CheckForOMSubmodelFix
 
 
 @unittest.skipUnless(importlib.util.find_spec("pyoptsparse") is not None, "pyoptsparse is not installed")
@@ -46,7 +45,6 @@ class IdleDescentTestCase(unittest.TestCase):
         assert_near_equal(results['distance_flown'], 91.8911599691433, self.tol)
         assert_near_equal(results['fuel_burned'], 236.73893823639082, self.tol)
 
-    @unittest.skipUnless(CheckForOMSubmodelFix(), 'Skipping due to OpenMDAO Submodel Bug')
     def test_subproblem(self):
         prob = om.Problem()
         prob.model = om.Group()

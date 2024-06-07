@@ -2,7 +2,7 @@ import warnings
 
 import openmdao.api as om
 
-from aviary.interface.default_phase_info.two_dof_fiti import create_2dof_based_descent_phases
+from aviary.interface.default_phase_info.two_dof_fiti_deprecated import create_2dof_based_descent_phases
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 from aviary.variable_info.enums import Verbosity
@@ -21,6 +21,9 @@ def descent_range_and_fuel(
     payload_weight=30800,
     reserve_fuel=4998,
 ):
+    raise DeprecationWarning("`descent_range_and_fuel` has been replaced with `add_descent_estimation_as_submodel`,"
+                             " due to it's better integration with the other subsystems."
+                             "\ndescent_range_and_fuel will be removed in a future release.")
 
     prob = om.Problem()
     prob.driver = om.pyOptSparseDriver()
