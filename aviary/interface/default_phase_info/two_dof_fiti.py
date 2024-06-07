@@ -8,6 +8,7 @@ from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
 from aviary.subsystems.mass.mass_builder import CoreMassBuilder
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData, Mission
+from aviary.interface.default_phase_info.two_dof_fiti_deprecated import create_2dof_based_ascent_phases, create_2dof_based_descent_phases
 
 # defaults for 2DOF based forward in time integeration phases
 

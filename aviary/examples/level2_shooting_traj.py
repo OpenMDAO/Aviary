@@ -34,7 +34,7 @@ def custom_run_aviary(aircraft_filename, optimizer=None,
     # Build problem
     prob = AviaryProblem(analysis_scheme)
 
-    from aviary.interface.default_phase_info.two_dof_fiti_copy import ascent_phases, \
+    from aviary.interface.default_phase_info.two_dof_fiti import ascent_phases, \
         add_default_sgm_args, phase_info_parameterization
 
     phase_info = {

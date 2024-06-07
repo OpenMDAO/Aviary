@@ -128,7 +128,7 @@ def add_descent_estimation_as_submodel(
 ):
 
     if phases is None:
-        from aviary.interface.default_phase_info.two_dof_fiti_copy import \
+        from aviary.interface.default_phase_info.two_dof_fiti import \
             descent_phases as phases, add_default_sgm_args
         add_default_sgm_args(phases, ode_args)
 

@@ -9,7 +9,7 @@ from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 from aviary.variable_info.variables import Dynamic, Mission
 from aviary.variable_info.enums import SpeedType, Verbosity, AlphaModes, LegacyCode
 
-from aviary.interface.default_phase_info.two_dof_fiti_copy import add_default_sgm_args
+from aviary.interface.default_phase_info.two_dof_fiti import add_default_sgm_args
 
 FLOPS = LegacyCode.FLOPS
 

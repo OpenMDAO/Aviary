@@ -9,7 +9,6 @@ from aviary.interface.default_phase_info.two_dof import phase_info
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 from aviary.variable_info.enums import AnalysisScheme, Verbosity
-from aviary.utils.test_utils.check_om_version import CheckForOMSubmodelFix
 
 
 @use_tempdirs
@@ -101,7 +100,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
     @require_pyoptsparse(optimizer="IPOPT")
     def test_bench_GwGm_shooting(self):
-        from aviary.interface.default_phase_info.two_dof_fiti_copy import phase_info, \
+        from aviary.interface.default_phase_info.two_dof_fiti import phase_info, \
             phase_info_parameterization
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwGm.csv',

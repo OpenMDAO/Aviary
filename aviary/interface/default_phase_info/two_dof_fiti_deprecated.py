@@ -1,5 +1,3 @@
-import numpy as np
-
 from aviary.variable_info.enums import SpeedType, Verbosity
 from aviary.mission.gasp_based.phases.time_integration_phases import SGMGroundroll, \
     SGMRotation, SGMAscentCombined, SGMAccel, SGMClimb, SGMCruise, SGMDescent
@@ -16,6 +14,9 @@ def create_2dof_based_ascent_phases(
         verbosity=Verbosity.QUIET,
     ),
 ):
+    raise DeprecationWarning("`descent_range_and_fuel` has been replaced with `add_descent_estimation_as_submodel`"
+                             "\nThe new methodology uses a phase_info that more closely matches that of collocation")
+
     groundroll_kwargs = dict(
         ode_args=ode_args,
         simupy_args=simupy_args,
@@ -128,6 +129,9 @@ def create_2dof_based_descent_phases(
         verbosity=Verbosity.QUIET,
     ),
 ):
+
+    raise DeprecationWarning("`descent_range_and_fuel` has been replaced with `add_descent_estimation_as_submodel`"
+                             "\nThe new methodology uses a phase_info that more closely matches that of collocation")
 
     descent1_kwargs = dict(
         input_speed_type=SpeedType.MACH,
