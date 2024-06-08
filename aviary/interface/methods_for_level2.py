@@ -979,7 +979,7 @@ class AviaryProblem(om.Problem):
             traj = self.model.add_subsystem('traj', dm.Trajectory())
 
         elif self.analysis_scheme is AnalysisScheme.SHOOTING:
-            vb = self.aviary_inputs.get_val('verbosity')
+            vb = self.aviary_inputs.get_val(Settings.VERBOSITY)
             add_default_sgm_args(self.phase_info, self.ode_args, vb)
 
             full_traj = FlexibleTraj(

@@ -2,7 +2,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import SpeedType, Verbosity, AlphaModes, LegacyCode
 from aviary.mission.gasp_based.phases.time_integration_phases import SGMGroundroll, \
     SGMRotation, SGMAscentCombined, SGMAccel, SGMClimb, SGMCruise, SGMDescent
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic
+from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
 from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
 from aviary.subsystems.mass.mass_builder import CoreMassBuilder
@@ -216,6 +216,6 @@ def add_default_sgm_args(phase_info: dict, ode_args: dict, verbosity=None):
         if 'simupy_args' not in kwargs:
             if verbosity is None:
                 verbosity, _ = ode_args['aviary_options'].get_item(
-                    'verbosity', default=(Verbosity.QUIET))
+                    Settings.VERBOSITY, default=(Verbosity.QUIET, 'unitless'))
             kwargs['simupy_args'] = {'verbosity': verbosity}
         info['kwargs'] = kwargs

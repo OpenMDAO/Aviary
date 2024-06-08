@@ -21,9 +21,9 @@ def descent_range_and_fuel(
     payload_weight=30800,
     reserve_fuel=4998,
 ):
-    raise DeprecationWarning("`descent_range_and_fuel` has been replaced with `add_descent_estimation_as_submodel`,"
-                             " due to it's better integration with the other subsystems."
-                             "\ndescent_range_and_fuel will be removed in a future release.")
+    warnings.warn("`descent_range_and_fuel` has been replaced with `add_descent_estimation_as_submodel`,"
+                  " due to it's better integration with the other subsystems."
+                  "\ndescent_range_and_fuel will be removed in a future release.", DeprecationWarning)
 
     prob = om.Problem()
     prob.driver = om.pyOptSparseDriver()

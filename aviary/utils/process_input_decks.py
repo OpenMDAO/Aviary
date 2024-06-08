@@ -100,7 +100,7 @@ def parse_inputs(vehicle_deck, aircraft_values: AviaryValues = None, initial_gue
     """
     if aircraft_values is None:
         aircraft_values = AviaryValues()
-        aircraft_values.set_val('verbosity', Verbosity.BRIEF)
+        aircraft_values.set_val(Settings.VERBOSITY, Verbosity.BRIEF)
 
     if initial_guesses is None:
         initial_guesses = {}
