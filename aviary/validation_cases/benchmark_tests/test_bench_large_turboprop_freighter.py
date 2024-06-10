@@ -8,6 +8,7 @@ from openmdao.utils.testing_utils import use_tempdirs
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
 from aviary.utils.process_input_decks import create_vehicle
+from aviary.variable_info.variables import Aircraft, Mission
 
 
 @use_tempdirs
@@ -94,15 +95,20 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         # Build problem
         prob = AviaryProblem()
 
-        # being able to load aviary inputs from a .csv needs to be its own util function
+        # load inputs from .csv to build engine
         options, _ = create_vehicle(
             "models/large_turboprop_freighter/large_turboprop_freighter.csv")
+
         turboprop = TurbopropModel('turboprop', options=options)
 
-        # load inputs needs to
+        # load_inputs needs to be updated to accept an already existing aviary options
         prob.load_inputs(
             "models/large_turboprop_freighter/large_turboprop_freighter.csv", phase_info,
             engine_builders=[turboprop])
+
+        # FLOPS aero specific stuff? Best guesses for values here
+        prob.aviary_inputs.set_val(Mission.Constraints.MAX_MACH, 0.5)
+        prob.aviary_inputs.set_val(Aircraft.Fuselage.AVG_DIAMETER, 4.125, 'm')
 
         prob.check_and_preprocess_inputs()
         prob.add_pre_mission_systems()
@@ -113,6 +119,8 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         prob.add_design_variables()
         prob.add_objective()
         prob.setup()
+        import openmdao.api as om
+        om.n2(prob)
         prob.set_initial_guesses()
         prob.run_aviary_problem("dymos_solution.db", make_plots=False)
 
