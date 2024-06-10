@@ -20,8 +20,8 @@ class ProblemPhaseTestCase(unittest.TestCase):
     @require_pyoptsparse(optimizer="IPOPT")
     def bench_test_swap_3_FwGm_IPOPT(self):
         local_phase_info = deepcopy(phase_info)
-        prob = run_aviary('models/test_aircraft/aircraft_for_bench_FwGm.csv',
-                          local_phase_info, verbosity=Verbosity.QUIET, optimizer='IPOPT')
+        prob = run_aviary('models/test_aircraft/aircraft_for_bench_FwGm.csv', local_phase_info,
+                          max_iter=100, verbosity=Verbosity.QUIET, optimizer='IPOPT')
 
         rtol = 1e-2
 
@@ -33,7 +33,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
                           104530., tolerance=rtol)
 
         assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS),
-                          44032., tolerance=rtol)
+                          42935., tolerance=rtol)
 
         assert_near_equal(prob.get_val('landing.' + Mission.Landing.GROUND_DISTANCE),
                           2528., tolerance=rtol)
@@ -57,7 +57,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
                           104530., tolerance=rtol)
 
         assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS),
-                          44032., tolerance=rtol)
+                          42942., tolerance=rtol)
 
         assert_near_equal(prob.get_val('landing.' + Mission.Landing.GROUND_DISTANCE),
                           2528., tolerance=rtol)
@@ -67,6 +67,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    # unittest.main()
     test = ProblemPhaseTestCase()
+    test.setUp()
+    test.bench_test_swap_3_FwGm_IPOPT()
     test.bench_test_swap_3_FwGm_SNOPT()

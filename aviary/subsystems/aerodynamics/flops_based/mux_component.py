@@ -68,20 +68,19 @@ class MuxComponent(om.ExplicitComponent):
             add_aviary_input(self, Aircraft.Fuselage.LAMINAR_FLOW_LOWER, 0.0)
             nc += num
 
-        num, _ = aviary_options.get_item(
-            Aircraft.Engine.NUM_ENGINES, zero_count)
-        self.num_nacelles = int(sum(num))
-        if any(num > 0):
+        num_engines = aviary_options.get_val(Aircraft.Engine.NUM_ENGINES)
+        self.num_nacelles = int(sum(num_engines))
+        if self.num_nacelles > 0:
             add_aviary_input(self, Aircraft.Nacelle.WETTED_AREA,
-                             np.zeros(len(num)))
+                             np.zeros(len(num_engines)))
             add_aviary_input(self, Aircraft.Nacelle.FINENESS,
-                             np.zeros(len(num)))
+                             np.zeros(len(num_engines)))
             add_aviary_input(self, Aircraft.Nacelle.CHARACTERISTIC_LENGTH,
-                             np.zeros(len(num)))
+                             np.zeros(len(num_engines)))
             add_aviary_input(self, Aircraft.Nacelle.LAMINAR_FLOW_UPPER,
-                             np.zeros(len(num)))
+                             np.zeros(len(num_engines)))
             add_aviary_input(self, Aircraft.Nacelle.LAMINAR_FLOW_LOWER,
-                             np.zeros(len(num)))
+                             np.zeros(len(num_engines)))
             nc += self.num_nacelles
 
         self.add_output(
@@ -185,23 +184,32 @@ class MuxComponent(om.ExplicitComponent):
 
         # Nacelle
         if self.num_nacelles > 0:
+            # derivatives w.r.t vectorized engine inputs have known sparsity pattern
+            num_engines = self.options['aviary_options'].get_val(
+                Aircraft.Engine.NUM_ENGINES)
             rows = ic + np.arange(self.num_nacelles)
-            cols = np.zeros(self.num_nacelles)
+            cols = [item for sublist in [[i]*j for i,
+                                         j in enumerate(num_engines)] for item in sublist]
             self.declare_partials(
                 'wetted_areas', Aircraft.Nacelle.WETTED_AREA,
-                rows=rows, cols=cols, val=1.0)
+                rows=rows, cols=cols, val=1.0
+            )
             self.declare_partials(
                 'fineness_ratios', Aircraft.Nacelle.FINENESS,
-                rows=rows, cols=cols, val=1.0)
+                rows=rows, cols=cols, val=1.0
+            )
             self.declare_partials(
                 'characteristic_lengths', Aircraft.Nacelle.CHARACTERISTIC_LENGTH,
-                rows=rows, cols=cols, val=1.0)
+                rows=rows, cols=cols, val=1.0
+            )
             self.declare_partials(
                 'laminar_fractions_upper', Aircraft.Nacelle.LAMINAR_FLOW_UPPER,
-                rows=rows, cols=cols, val=1.0)
+                rows=rows, cols=cols, val=1.0
+            )
             self.declare_partials(
                 'laminar_fractions_lower', Aircraft.Nacelle.LAMINAR_FLOW_LOWER,
-                rows=rows, cols=cols, val=1.0)
+                rows=rows, cols=cols, val=1.0
+            )
 
     def compute(self, inputs, outputs):
         # Wing

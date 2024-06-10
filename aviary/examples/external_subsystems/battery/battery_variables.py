@@ -13,16 +13,13 @@ class Aircraft(AviaryAircraft):
 
     # cell = single cell, battery = one case plus multiple cells
 
-    class Battery:
+    class Battery(AviaryAircraft.Battery):
         CURRENT_MAX = "aircraft:battery:current_max"
-        EFFICIENCY = "aircraft:battery:efficiency"
         ENERGY_REQUIRED = "aircraft:battery:energy_required"
         HEAT_CAPACITY = "aircraft:battery:heat_capacity"
-        MASS = "aircraft:battery:mass"
         N_PARALLEL = "aircraft:battery:n_parallel"
         N_SERIES = "aircraft:battery:n_series"
         VOLTAGE = "aircraft:battery:voltage"
-        VOLUME = "aircraft:battery:volume"
 
         class Case:
             HEAT_CAPACITY = "aircraft:battery:case:heat_capacity"
@@ -44,7 +41,7 @@ class Aircraft(AviaryAircraft):
 
 class Mission(AviaryMission):
 
-    class Battery:
+    class Battery():
         CURRENT = "mission:battery:current"
         HEAT_OUT = "mission:battery:heat_out"
         STATE_OF_CHARGE = "mission:battery:state_of_charge"

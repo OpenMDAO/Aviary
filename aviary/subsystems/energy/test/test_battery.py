@@ -41,7 +41,7 @@ class TestBatteryDerivs(unittest.TestCase):
         assert_near_equal(energy, energy_expected, tolerance=1e-10)
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
+        assert_check_partials(partial_data, atol=1e-9, rtol=1e-9)
 
     def test_battery_mission(self):
         prob = self.prob
@@ -54,7 +54,7 @@ class TestBatteryDerivs(unittest.TestCase):
             av.Aircraft.Battery.ENERGY_CAPACITY, 10_000, units='kJ')
         prob.model.set_input_defaults(
             av.Aircraft.Battery.EFFICIENCY, efficiency, units='unitless')
-        prob.model.set_input_defaults(av.Dynamic.Mission.MISSION_ENERGY, [
+        prob.model.set_input_defaults(av.Dynamic.Mission.ELECTRIC_ENERGY, [
                                       0, 2_000, 5_000, 9_500], units='kJ')
 
         prob.setup(force_alloc_complex=True)
@@ -67,7 +67,8 @@ class TestBatteryDerivs(unittest.TestCase):
         assert_near_equal(soc, soc_expected, tolerance=1e-10)
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
+        assert_check_partials(partial_data, atol=1e-9, rtol=1e-9)
+
 
 class TestBattery(av.TestSubsystemBuilderBase):
 

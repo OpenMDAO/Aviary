@@ -15,32 +15,32 @@ class BatteryBuilder(SubsystemBuilderBase):
 
     def build_mission(self, num_nodes, aviary_inputs=None) -> om.Group:
         battery_group = om.Group()
-        soc = om.ExecComp('state_of_charge = (energy_capacity - (mission_energy/efficiency)) / energy_capacity',
+        soc = om.ExecComp('state_of_charge = (energy_capacity - (electric_energy/efficiency)) / energy_capacity',
                           state_of_charge={'val': np.zeros(
                               num_nodes), 'units': 'unitless'},
                           energy_capacity={'val': 10.0, 'units': 'kJ'},
-                          mission_energy={'val': np.zeros(num_nodes), 'units': 'kJ'},
+                          electric_energy={'val': np.zeros(num_nodes), 'units': 'kJ'},
                           efficiency={'val': 0.95, 'units': 'unitless'})
 
         battery_group.add_subsystem('state_of_charge',
                                     subsys=soc,
                                     promotes_inputs=[('energy_capacity', Aircraft.Battery.ENERGY_CAPACITY),
-                                                     ('mission_energy',
-                                                      Dynamic.Mission.MISSION_ENERGY),
+                                                     ('electric_energy',
+                                                      Dynamic.Mission.ELECTRIC_ENERGY),
                                                      ('efficiency', Aircraft.Battery.EFFICIENCY)],
                                     promotes_outputs=[('state_of_charge', Dynamic.Mission.BATTERY_STATE_OF_CHARGE)])
 
         return battery_group
 
     def get_states(self):
-        state_dict = {Dynamic.Mission.MISSION_ENERGY: {'fix_initial': True,
-                                                       'fix_final': False,
-                                                       'lower': 0.0,
-                                                       'ref': 1e4,
-                                                       'defect_ref': 1e6,
-                                                       'units': 'kJ',
-                                                       'rate_source': Dynamic.Mission.ELECTRIC_POWER_TOTAL,
-                                                       'input_initial': 0.0}}
+        state_dict = {Dynamic.Mission.ELECTRIC_ENERGY: {'fix_initial': True,
+                                                        'fix_final': False,
+                                                        'lower': 0.0,
+                                                        'ref': 1e4,
+                                                        'defect_ref': 1e6,
+                                                        'units': 'kJ',
+                                                        'rate_source': Dynamic.Mission.ELECTRIC_POWER_TOTAL,
+                                                        'input_initial': 0.0}}
 
         return state_dict
 
@@ -54,6 +54,6 @@ class BatteryBuilder(SubsystemBuilderBase):
                             'lower': 0.2}}
         return constraint_dict
 
-    def get_parameters(self):
+    def get_parameters(self, aviary_inputs=None, phase_info=None):
         return {Aircraft.Battery.ENERGY_CAPACITY: {'units': 'kJ', 'val': 1.e4},
                 Aircraft.Battery.EFFICIENCY: {'units': 'unitless', 'val': 0.95}}

@@ -1,12 +1,14 @@
 import unittest
+
 import numpy as np
-
 import openmdao.api as om
+
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from dymos.models.atmosphere import USatm1976Comp
 
+from aviary.constants import TSLS_DEGR
 from aviary.variable_info.variables import Aircraft
-from aviary.subsystems.propulsion.prop_performance import PropPerf
-
+from aviary.subsystems.propulsion.propeller_performance import PropellerPerformance
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.variable_info.options import get_option_defaults
 
@@ -28,21 +30,41 @@ install_eff = np.array([0.00077, 0.70904, 0.86171, 0.90586, 0.86056, 0.48213,
                         0.90172, 0.85664, 0.45200, 0.82635, 0.75190, 0.48871])
 
 
-class PropPerformanceTest(unittest.TestCase):
+class PropellerPerformanceTest(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS,
                         val=True, units='unitless')
-        options.set_val(Aircraft.Engine.NUM_BLADES,
+        options.set_val(Aircraft.Engine.NUM_PROPELLER_BLADES,
                         val=4, units='unitless')
+        options.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, False)
 
         prob = om.Problem()
 
         num_nodes = 3
+        prob.model.add_subsystem(
+            name='atmosphere',
+            subsys=USatm1976Comp(num_nodes=num_nodes),
+            promotes_inputs=[('h', Dynamic.Mission.ALTITUDE)],
+            promotes_outputs=[
+                ('sos', Dynamic.Mission.SPEED_OF_SOUND), ('rho', Dynamic.Mission.DENSITY),
+                ('temp', Dynamic.Mission.TEMPERATURE), ('pres', Dynamic.Mission.STATIC_PRESSURE)],
+        )
+
+        prob.model.add_subsystem(
+            'compute_mach',
+            om.ExecComp(f'{Dynamic.Mission.MACH} = 0.00150933 * {Dynamic.Mission.VELOCITY} * ({TSLS_DEGR} / {Dynamic.Mission.TEMPERATURE})**0.5',
+                        mach={'units': 'unitless', 'val': np.zeros(num_nodes)},
+                        velocity={'units': 'knot', 'val': np.zeros(num_nodes)},
+                        temperature={'units': 'degR', 'val': np.zeros(num_nodes)},
+                        has_diag_partials=True,
+                        ),
+            promotes=['*'],
+        )
+
         pp = prob.model.add_subsystem(
             'pp',
-            PropPerf(num_nodes=num_nodes, aviary_options=options,
-                     compute_mach_internally=True, include_atmosphere_model=True),
+            PropellerPerformance(num_nodes=num_nodes, aviary_options=options),
             promotes_inputs=['*'],
             promotes_outputs=["*"],
         )
@@ -55,7 +77,7 @@ class PropPerformanceTest(unittest.TestCase):
         pp.set_input_defaults(Dynamic.Mission.VELOCITY,
                               100. * np.ones(num_nodes), units="knot")
         num_blades = 4
-        options.set_val(Aircraft.Engine.NUM_BLADES,
+        options.set_val(Aircraft.Engine.NUM_PROPELLER_BLADES,
                         val=num_blades, units='unitless')
         options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS,
                         val=True, units='unitless')
@@ -75,8 +97,8 @@ class PropPerformanceTest(unittest.TestCase):
         cthr = p.get_val('thrust_coefficient')
         ctlf = p.get_val('comp_tip_loss_factor')
         tccl = p.get_val('thrust_coefficient_comp_loss')
-        angb = p.get_val('ang_blade')
-        thrt = p.get_val('prop_thrust')
+        angb = p.get_val('blade_angle')
+        thrt = p.get_val('propeller_thrust')
         peff = p.get_val('propeller_efficiency')
         lfac = p.get_val(Dynamic.Mission.INSTALLATION_LOSS_FACTOR)
         ieff = p.get_val('install_efficiency')
@@ -105,7 +127,7 @@ class PropPerformanceTest(unittest.TestCase):
         prob.set_val(Dynamic.Mission.SHAFT_POWER, [1850.0, 1850.0, 900.0], units="hp")
         prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
                      [1.0], units="unitless")
-        prob.set_val(Aircraft.Design.MAX_TIP_SPEED,
+        prob.set_val(Aircraft.Design.MAX_PROPELLER_TIP_SPEED,
                      [800.00, 800.0, 750.0], units="ft/s")
 
         prob.run_model()
@@ -137,7 +159,7 @@ class PropPerformanceTest(unittest.TestCase):
         prob.set_val(Dynamic.Mission.SHAFT_POWER, [1000.0, 1000.0, 1250.0], units="hp")
         prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
                      [1.0], units="unitless")
-        prob.set_val(Aircraft.Design.MAX_TIP_SPEED,
+        prob.set_val(Aircraft.Design.MAX_PROPELLER_TIP_SPEED,
                      [769.70, 769.70, 769.70], units="ft/s")
 
         prob.run_model()
@@ -154,7 +176,7 @@ class PropPerformanceTest(unittest.TestCase):
         options = self.options
 
         num_blades = 3
-        options.set_val(Aircraft.Engine.NUM_BLADES,
+        options.set_val(Aircraft.Engine.NUM_PROPELLER_BLADES,
                         val=num_blades, units='unitless')
         options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS,
                         val=False, units='unitless')
@@ -172,7 +194,7 @@ class PropPerformanceTest(unittest.TestCase):
         prob.set_val(Dynamic.Mission.SHAFT_POWER, [1000.0, 1000.0, 1250.0], units="hp")
         prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
                      [1.0], units="unitless")
-        prob.set_val(Aircraft.Design.MAX_TIP_SPEED,
+        prob.set_val(Aircraft.Design.MAX_PROPELLER_TIP_SPEED,
                      [769.70, 769.70, 769.70], units="ft/s")
 
         prob.run_model()
@@ -198,7 +220,7 @@ class PropPerformanceTest(unittest.TestCase):
         prob.set_val(Dynamic.Mission.SHAFT_POWER, [900.0, 750.0, 500.0], units="hp")
         prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
                      [1.0], units="unitless")
-        prob.set_val(Aircraft.Design.MAX_TIP_SPEED,
+        prob.set_val(Aircraft.Design.MAX_PROPELLER_TIP_SPEED,
                      [769.70, 769.70, 769.70], units="ft/s")
 
         prob.run_model()

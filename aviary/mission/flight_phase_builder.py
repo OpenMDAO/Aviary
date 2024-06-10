@@ -1,3 +1,5 @@
+import numpy as np
+
 import dymos as dm
 
 from aviary.mission.phase_builder_base import PhaseBuilderBase, register
@@ -6,9 +8,9 @@ from aviary.mission.initial_guess_builders import InitialGuessState, InitialGues
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.mission.flops_based.phases.phase_utils import add_subsystem_variables_to_phase, get_initial
-from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.mission.flops_based.ode.mission_ODE import MissionODE
-from aviary.variable_info.enums import EquationsOfMotion
+from aviary.variable_info.enums import EquationsOfMotion, ThrottleAllocation
 
 
 # TODO: support/handle the following in the base class
@@ -70,6 +72,8 @@ class FlightPhaseBase(PhaseBuilderBase):
         dymos.Phase
         '''
         phase: dm.Phase = super().build_phase(aviary_options)
+
+        num_engine_type = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
 
         user_options: AviaryValues = self.user_options
 
@@ -169,6 +173,37 @@ class FlightPhaseBase(PhaseBuilderBase):
         else:
             rate_targets = ['dh_dr']
             rate2_targets = ['d2h_dr2']
+
+        # For multi-engine cases, we may have throttle allocation control.
+        if phase_type is EquationsOfMotion.HEIGHT_ENERGY and num_engine_type > 1:
+            allocation = user_options.get_val('throttle_allocation')
+
+            # Allocation should default to an even split so that we don't start
+            # with an allocation that might not produce enough thrust.
+            val = np.ones(num_engine_type - 1) * (1.0 / num_engine_type)
+
+            if allocation == ThrottleAllocation.DYNAMIC:
+                phase.add_control(
+                    "throttle_allocations",
+                    shape=(num_engine_type - 1, ),
+                    val=val,
+                    targets="throttle_allocations", units="unitless",
+                    opt=True, lower=0.0, upper=1.0,
+                )
+
+            else:
+                if allocation == ThrottleAllocation.STATIC:
+                    opt = True
+                else:
+                    opt = False
+
+                phase.add_parameter(
+                    "throttle_allocations",
+                    units="unitless",
+                    val=val,
+                    shape=(num_engine_type - 1, ),
+                    opt=opt, lower=0.0, upper=1.0,
+                )
 
         ground_roll = user_options.get_val('ground_roll')
         if ground_roll:
@@ -333,6 +368,7 @@ class FlightPhaseBase(PhaseBuilderBase):
             'meta_data': self.meta_data,
             'subsystem_options': self.subsystem_options,
             'throttle_enforcement': self.user_options.get_val('throttle_enforcement'),
+            'throttle_allocation': self.user_options.get_val('throttle_allocation')
         }
 
 
@@ -396,6 +432,8 @@ FlightPhaseBase._add_meta_data('initial_altitude', val=None, units='ft')
 FlightPhaseBase._add_meta_data('final_altitude', val=None, units='ft')
 
 FlightPhaseBase._add_meta_data('throttle_enforcement', val=None)
+
+FlightPhaseBase._add_meta_data('throttle_allocation', val=ThrottleAllocation.FIXED)
 
 FlightPhaseBase._add_meta_data('mach_bounds', val=(0., 2.), units='unitless')
 

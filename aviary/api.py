@@ -19,7 +19,7 @@ user-facing should be imported to this file.
 # General Imports #
 ###################
 
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic
+from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
 from aviary.variable_info.options import get_option_defaults, is_option
 from aviary.utils.develop_metadata import add_meta_data, update_meta_data
 from aviary.variable_info.variable_meta_data import CoreMetaData

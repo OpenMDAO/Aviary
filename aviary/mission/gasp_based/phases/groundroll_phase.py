@@ -87,6 +87,8 @@ class GroundrollPhase(PhaseBuilderBase):
 
 
 # Adding metadata for the GroundrollPhase
+GroundrollPhase._add_meta_data(
+    'analytic', val=False, desc='this is an analytic phase (no states).')
 GroundrollPhase._add_meta_data('fix_initial', val=True)
 GroundrollPhase._add_meta_data('fix_initial_mass', val=False)
 GroundrollPhase._add_meta_data('connect_initial_mass', val=True)

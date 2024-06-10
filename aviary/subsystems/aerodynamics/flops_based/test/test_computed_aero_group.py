@@ -9,7 +9,7 @@ from aviary.interface.default_phase_info.height_energy import aero, prop, geom
 from aviary.utils.aviary_values import get_items
 from aviary.utils.functions import set_aviary_initial_values
 from aviary.validation_cases.validation_tests import get_flops_inputs, get_flops_outputs
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 from aviary.variable_info.variables_in import VariablesIn
 
 
@@ -27,6 +27,7 @@ class MissionDragTest(unittest.TestCase):
 
         key = Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST
         flops_inputs.set_val(key, *(flops_outputs.get_item(key)))
+        flops_inputs.set_val(Settings.VERBOSITY, 0)
 
         # Design conditions:
         alt = 41000
@@ -159,6 +160,7 @@ class MissionDragTest(unittest.TestCase):
 
         key = Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST
         flops_inputs.set_val(key, *(flops_outputs.get_item(key)))
+        flops_inputs.set_val(Settings.VERBOSITY, 0)
 
         alt = 43000
         Sref = 1220.0
@@ -273,6 +275,7 @@ class MissionDragTest(unittest.TestCase):
 
         key = Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST
         flops_inputs.set_val(key, *(flops_outputs.get_item(key)))
+        flops_inputs.set_val(Settings.VERBOSITY, 0)
 
         alt = 41000
         Sref = 1341.0
@@ -383,6 +386,6 @@ class MissionDragTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    # unittest.main()
-    test = MissionDragTest()
-    test.test_large_single_aisle_2_drag()
+    unittest.main()
+    # test = MissionDragTest()
+    # test.test_large_single_aisle_2_drag()

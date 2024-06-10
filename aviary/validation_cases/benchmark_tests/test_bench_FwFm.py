@@ -7,6 +7,7 @@ from openmdao.utils.testing_utils import use_tempdirs
 from openmdao.utils.testing_utils import require_pyoptsparse
 from openmdao.core.problem import _clear_problem_names
 
+from aviary.api import Mission
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.variable_info.enums import Verbosity
 from aviary.validation_cases.benchmark_utils import \
@@ -296,7 +297,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
                     "no_descent": False,
                     "add_initial_mass_constraint": False,
                 },
-                "initial_guesses": {"times": ([0, 40.0], "min")},
+                "initial_guesses": {"time": ([0, 40.0], "min")},
             },
             "cruise": {
                 "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
@@ -321,7 +322,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
                     "initial_bounds": ((64.0, 192.0), "min"),
                     "duration_bounds": ((60.0, 720.0), "min"),
                 },
-                "initial_guesses": {"times": ([128, 113], "min")},
+                "initial_guesses": {"time": ([128, 113], "min")},
             },
             "descent": {
                 "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
@@ -346,7 +347,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
                     "duration_bounds": ((5.0, 35.0), "min"),
                     "no_climb": True,
                 },
-                "initial_guesses": {"times": ([241, 30], "min")},
+                "initial_guesses": {"time": ([241, 30], "min")},
             },
             "post_mission": {
                 "include_landing": True,
@@ -378,6 +379,12 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
                           max_iter=50, optimizer='SNOPT')
 
         compare_against_expected_values(prob, self.expected_dict)
+
+        # This is one of the few places we test Height Energy + simple takeoff.
+        overall_fuel = prob.get_val(Mission.Summary.TOTAL_FUEL_MASS)
+
+        # Making sure we include the fuel mass consumed in take-off and taxi.
+        self.assertGreater(overall_fuel, 40000.)
 
 
 @use_tempdirs

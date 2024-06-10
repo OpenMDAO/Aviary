@@ -2,11 +2,13 @@
 This file contains functions needed to run Aviary using the Level 1 interface.
 """
 import os
+from importlib.machinery import SourceFileLoader
 from pathlib import Path
 
 import openmdao.api as om
 from aviary.variable_info.enums import AnalysisScheme, Verbosity
 from aviary.interface.methods_for_level2 import AviaryProblem
+from aviary.utils.functions import get_path
 
 
 def run_aviary(aircraft_filename, phase_info, optimizer=None,
@@ -65,7 +67,7 @@ def run_aviary(aircraft_filename, phase_info, optimizer=None,
 
     # Load aircraft and options data from user
     # Allow for user overrides here
-    prob.load_inputs(aircraft_filename, phase_info)
+    prob.load_inputs(aircraft_filename, phase_info, verbosity=verbosity)
 
     # Preprocess inputs
     prob.check_and_preprocess_inputs()
@@ -121,6 +123,14 @@ def run_level_1(
     #     kwargs['optimizer'] = 'IPOPT'
     # else:
     kwargs['optimizer'] = optimizer
+
+    if isinstance(phase_info, str):
+        phase_info_path = get_path(phase_info)
+        phase_info_file = SourceFileLoader(
+            "phase_info_file", str(phase_info_path)).load_module()
+        phase_info = getattr(phase_info_file, 'phase_info')
+        kwargs['phase_info_parameterization'] = getattr(
+            phase_info_file, 'phase_info_parameterization', None)
 
     prob = run_aviary(input_deck, phase_info, **kwargs)
 
@@ -184,6 +194,11 @@ def _exec_level1(args, user_args):
     # check if args.input_deck is a list, if so, use the first element
     if isinstance(args.input_deck, list):
         args.input_deck = args.input_deck[0]
+
+    if args.outdir == os.path.join(os.getcwd(), "output"):
+        # if default outdir, add the input deck name
+        file_name_stem = Path(args.input_deck).stem
+        args.outdir = args.outdir + os.sep + file_name_stem
 
     prob = run_level_1(
         input_deck=args.input_deck,

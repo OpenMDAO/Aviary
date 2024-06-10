@@ -28,11 +28,10 @@ from openmdao.utils.units import valid_units
 from aviary.utils.functions import convert_strings_to_data
 from aviary.utils.named_values import NamedValues, get_items
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.variable_info.variables import Aircraft, Mission
-from aviary.variable_info.enums import LegacyCode, Verbosity
+from aviary.variable_info.variables import Aircraft, Mission, Settings
+from aviary.variable_info.enums import LegacyCode, Verbosity, ProblemType
 from aviary.utils.functions import get_path
 from aviary.utils.legacy_code_data.deprecated_vars import flops_deprecated_vars, gasp_deprecated_vars
-
 
 FLOPS = LegacyCode.FLOPS
 GASP = LegacyCode.GASP
@@ -246,14 +245,14 @@ def process_and_store_data(data, var_name, legacy_code, current_namelist, altern
         skip_variable = True
         var_values = []
 
-    if '(' in var_name:  # some GASP lists are given as individual elements
-        # get the target index (Fortran uses 1 indexing, Python uses 0 indexing)
-        fortran_offset = 1 if current_namelist else 0
-        var_ind = int(var_name.split('(')[1].split(')')[0])-fortran_offset
-        var_name = var_name.split('(')[0]  # remove the index formatting
-
-    list_of_equivalent_aviary_names = update_name(
+    list_of_equivalent_aviary_names, var_ind = update_name(
         alternate_names, current_namelist+var_name, vehicle_data['verbosity'])
+
+    # Fortran uses 1 indexing, Python uses 0 indexing
+    fortran_offset = 1 if current_namelist else 0
+    if var_ind is not None:
+        var_ind -= fortran_offset
+
     for name in list_of_equivalent_aviary_names:
         if not skip_variable:
             if name in guess_names and legacy_code is GASP:
@@ -332,19 +331,34 @@ def generate_aviary_names(code_bases):
 def update_name(alternate_names, var_name, verbosity=Verbosity.BRIEF):
     '''update_name will convert a Fortran name to a list of equivalent Aviary names.'''
 
+    if '(' in var_name:  # some GASP lists are given as individual elements
+        # get the target index
+        var_ind = int(var_name.split('(')[1].split(')')[0])
+        var_name = var_name.split('(')[0]  # remove the index formatting
+    else:
+        var_ind = None
+
     all_equivalent_names = []
     for code_base in alternate_names.keys():
         for key, list_of_names in alternate_names[code_base].items():
             if list_of_names is not None:
-                if any([re.search(var_name+r'\Z', altname, re.IGNORECASE) for altname in list_of_names]):
-                    all_equivalent_names.append(key)
+                for altname in list_of_names:
+                    altname = altname.lower()
+                    if altname.endswith(var_name.lower()):
+                        all_equivalent_names.append(key)
+                        continue
+                    elif var_ind is not None and altname.endswith(f'{var_name.lower()}({var_ind})'):
+                        all_equivalent_names.append(key)
+                        var_ind = None
+                        continue
 
     # if there are no equivalent variable names, return the original name
     if len(all_equivalent_names) == 0:
         if verbosity.value >= 2:
             print('passing: ', var_name)
         all_equivalent_names = [var_name]
-    return all_equivalent_names
+
+    return all_equivalent_names, var_ind
 
 
 def update_gasp_options(vehicle_data):
@@ -360,7 +374,7 @@ def update_gasp_options(vehicle_data):
     # if multiple values of target_range are specified, use the one that corresponds to the problem_type
     design_range, distance_units = input_values.get_item(Mission.Design.RANGE)
     try:
-        problem_type = input_values.get_val('problem_type')[0]
+        problem_type = input_values.get_val(Settings.PROBLEM_TYPE)[0]
     except KeyError:
         problem_type = 'sizing'
 
@@ -368,7 +382,7 @@ def update_gasp_options(vehicle_data):
         # if the design range target_range value is 0, set the problem_type to fallout
         if design_range[0] == 0:
             problem_type = 'fallout'
-            input_values.set_val('problem_type', [problem_type])
+            input_values.set_val(Settings.PROBLEM_TYPE, [problem_type])
             design_range = 0
         if problem_type == 'sizing':
             design_range = design_range[0]
@@ -378,7 +392,7 @@ def update_gasp_options(vehicle_data):
             design_range = 0
     else:
         if design_range == 0:
-            input_values.set_val('problem_type', ['fallout'])
+            input_values.set_val(Settings.PROBLEM_TYPE, ['fallout'])
     input_values.set_val(Mission.Design.RANGE, [design_range], distance_units)
 
     ## STRUT AND FOLD ##
@@ -598,7 +612,7 @@ def _setup_F2A_parser(parser):
         "--legacy_code",
         type=LegacyCode,
         help="Name of the legacy code the deck originated from",
-        choices=list(LegacyCode),
+        choices=set(LegacyCode),
         required=True
     )
     parser.add_argument(
@@ -615,17 +629,11 @@ def _setup_F2A_parser(parser):
     parser.add_argument(
         "-v",
         "--verbosity",
-        type=Verbosity,
-        choices=list(Verbosity),
+        type=int,
+        choices=Verbosity.values(),
         default=1,
         help="Set level of print statements",
     )
-    # parser.add_argument(
-    #     "-vv",
-    #     "--very_verbose",
-    #     action="store_true",
-    #     help="Enable debug print statements",
-    # )
 
 
 def _exec_F2A(args, user_args):
