@@ -174,7 +174,7 @@ class EngineModel(SubsystemBuilderBase):
                         # "Convert" numpy types to standard Python types. Wrap first
                         # index in numpy array before calling item() to safeguard against
                         # non-standard types, such as objects
-                        val = val[0].item()
+                        val = np.array(val[0]).item()
                     else:
                         val = val[0]
                     # update options with single value (instead of vector)

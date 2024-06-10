@@ -169,6 +169,6 @@ class MultiengineTestcase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
-    # test = MultiengineTestcase()
-    # test.test_multiengine_static()
+    # unittest.main()
+    test = MultiengineTestcase()
+    test.test_multiengine_static()

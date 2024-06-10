@@ -338,8 +338,6 @@ class AviaryProblem(om.Problem):
     def _update_metadata_from_subsystems(self):
         self.meta_data = BaseMetaData.copy()
 
-        # variables_to_pop = []
-
         # loop through phase_info and external subsystems
         for phase_name in self.phase_info:
             external_subsystems = self._get_all_subsystems(

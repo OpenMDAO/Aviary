@@ -107,6 +107,7 @@ def convert_geopotential_altitude(altitude):
     return altitude
 
 
+# TODO build test for this function
 def build_engine_deck(aviary_options: AviaryValues):
     '''
     Creates an EngineDeck using avaliable inputs and options in aviary_options.
@@ -126,7 +127,6 @@ def build_engine_deck(aviary_options: AviaryValues):
 
     # Build a single engine deck, currently ignoring vectorization
     # of AviaryValues (use first index)
-    # TODO build test to verify this works as expected
     engine_options = AviaryValues()
     for entry in Aircraft.Engine.__dict__:
         var = getattr(Aircraft.Engine, entry)
@@ -140,11 +140,11 @@ def build_engine_deck(aviary_options: AviaryValues):
                     # "Convert" numpy types to standard Python types. Wrap first
                     # index in numpy array before calling item() to safeguard against
                     # non-standard types, such as objects
-                    aviary_val = aviary_val[0].item()
+                    aviary_val = np.array(aviary_val[0]).item()
                 elif isinstance(aviary_val, (list, tuple)):
                     aviary_val = aviary_val[0]
                 engine_options.set_val(var, aviary_val, units)
-            # if not, use default value from _MetaData
+            # if not, use default value from _MetaData?
             except KeyError:
                 # engine_options.set_val(var, _MetaData[var]['default_value'], units)
                 continue

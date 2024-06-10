@@ -1009,8 +1009,7 @@ class EngineDeck(EngineModel):
         return engine_group
 
     def get_parameters(self):
-        params = {}
-        params[Aircraft.Engine.SCALE_FACTOR] = {'static_target': True}
+        params = {Aircraft.Engine.SCALE_FACTOR: {'static_target': True}}
         return params
 
     def report(self, problem, reports_file, **kwargs):
@@ -1020,18 +1019,6 @@ class EngineDeck(EngineModel):
         outputs = [Aircraft.Engine.NUM_ENGINES,
                    Aircraft.Engine.SCALED_SLS_THRUST,
                    Aircraft.Engine.SCALE_FACTOR]
-
-        # determine which index in problem-level aviary values corresponds to this engine
-        # engine_idx = None
-        # for idx, engine in enumerate(problem.aviary_inputs.get_val('engine_models')):
-        #     if engine.name == self.name:
-        #         engine_idx = idx
-
-        # if engine_idx is None:
-        #     with open(reports_file, mode='a') as f:
-        #         f.write(f'\n### {self.name}')
-        #         f.write(f'\nEngine deck {self.name} not found\n')
-        #     return
 
         # modified version of markdown table util adjusted to handle engine decks
         with open(reports_file, mode='a') as f:
