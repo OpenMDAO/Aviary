@@ -490,17 +490,15 @@ class AviaryProblem(om.Problem):
                                    use_both_geometries=both_geom,
                                    code_origin_to_prioritize=code_origin_to_prioritize)
 
-        self.core_subsystems = {'propulsion': prop,
+        subsystems = self.core_subsystems = {'propulsion': prop,
                                 'geometry': geom,
                                 'mass': mass,
                                 'aerodynamics': aero}
 
         # TODO optionally accept which subsystems to load from phase_info
-        subsystems = self.core_subsystems
-        default_mission_subsystems = [
-            subsystems['aerodynamics'], subsystems['propulsion']]
-        self.ode_args = dict(aviary_options=aviary_inputs,
-                             core_subsystems=default_mission_subsystems)
+        default_mission_subsystems = [subsystems['aerodynamics'], subsystems['propulsion']]
+        self.ode_args = {'aviary_options': aviary_inputs,
+                             'mission_subsystems': default_mission_subsystems}
 
         self._update_metadata_from_subsystems()
 
