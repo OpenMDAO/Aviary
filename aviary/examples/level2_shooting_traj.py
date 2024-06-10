@@ -20,7 +20,7 @@ def custom_run_aviary(aircraft_filename, optimizer=None,
     """
     This function runs the aviary optimization problem for the specified aircraft configuration and mission.
 
-    It first creates an instance of the AviaryProblem class using the given phase_info, mission_method, and mass_method.
+    It first creates an instance of the AviaryProblem class using the given mission_method and mass_method.
     It then loads aircraft and options data from the user-provided aircraft_filename and checks for any clashing inputs.
     Pre-mission systems are added, phases are added and linked, then post-mission systems are added.
     A driver is added using the specified optimizer (The default optimizer depends on the analysis scheme).
@@ -48,7 +48,7 @@ def custom_run_aviary(aircraft_filename, optimizer=None,
             'builder': SGMCruise,
             'user_options': {
                 'mach': (0, 'unitless'),
-                'distance_trigger': (300, 'NM'),
+                'attr:distance_trigger': (500, 'NM'),
             },
         },
         'desc1': {

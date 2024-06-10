@@ -1,5 +1,6 @@
 import unittest
 import warnings
+import importlib
 
 import openmdao.api as om
 from aviary.interface.default_phase_info.two_dof_fiti_deprecated import create_2dof_based_descent_phases
@@ -14,7 +15,6 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 from aviary.variable_info.enums import Verbosity
 from aviary.utils.process_input_decks import create_vehicle
 from aviary.utils.preprocessors import preprocess_propulsion
-import importlib
 
 
 @unittest.skipUnless(importlib.util.find_spec("pyoptsparse") is not None, "pyoptsparse is not installed")
