@@ -278,15 +278,12 @@ def run_trajectory(sim=True):
                      "time", Dynamic.Mission.MASS, Dynamic.Mission.DISTANCE], connected=strong_couple)
 
     # Need to declare dymos parameters for every input that is promoted out of the missions.
-    externs = {}
-    externs['climb'] = {}
-    externs['cruise'] = {}
-    externs['descent'] = {}
+    externs = {'climb': {}, 'cruise': {}, 'descent': {}}
     for default_subsys in default_mission_subsystems:
         params = default_subsys.get_parameters(aviary_inputs=aviary_inputs,
                                                phase_info={})
         for key, val in params.items():
-            for phname in ['climb', 'cruise', 'descent']:
+            for phname in externs:
                 externs[phname][key] = val
 
     traj = setup_trajectory_params(prob.model, traj, aviary_inputs,
