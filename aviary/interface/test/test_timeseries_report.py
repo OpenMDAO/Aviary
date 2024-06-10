@@ -9,7 +9,7 @@ from aviary.interface.default_phase_info.height_energy import phase_info
 from aviary.interface.methods_for_level1 import run_aviary
 
 
-# @use_tempdirs
+@use_tempdirs
 class AviaryMissionTimeseries(unittest.TestCase):
     def setUp(self):
         om.clear_reports()

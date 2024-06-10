@@ -49,11 +49,9 @@ class BatteryBuilder(SubsystemBuilderBase):
         # constraint_dict = {f'path_{Dynamic.Mission.BATTERY_STATE_OF_CHARGE} = {Dynamic.Mission.BATTERY_STATE_OF_CHARGE} - {Aircraft.Battery.DISCHARGE_LIMIT}':
         #                    {'type': 'path',
         #                     'lower': 0.0}}
-        constraint_dict = {Dynamic.Mission.BATTERY_STATE_OF_CHARGE:
-                           {'type': 'path',
-                            'lower': 0.2}}
+        constraint_dict = {
+            # Dynamic.Mission.BATTERY_STATE_OF_CHARGE:
+            #                {'type': 'path',
+            #                 'lower': 0.2},
+        }
         return constraint_dict
-
-    def get_parameters(self, aviary_inputs=None, phase_info=None):
-        return {Aircraft.Battery.ENERGY_CAPACITY: {'units': 'kJ', 'val': 1.e4},
-                Aircraft.Battery.EFFICIENCY: {'units': 'unitless', 'val': 0.95}}

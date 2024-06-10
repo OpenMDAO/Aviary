@@ -7,7 +7,7 @@ import aviary.api as av
 from aviary.subsystems.energy.battery_builder import BatteryBuilder
 
 
-@use_tempdirs
+# @use_tempdirs
 class TestSubsystemsMission(unittest.TestCase):
     def setUp(self):
         self.phase_info = {
@@ -39,7 +39,6 @@ class TestSubsystemsMission(unittest.TestCase):
                     "initial_bounds": ((0.0, 0.0), "min"),
                     "duration_bounds": ((10., 30.), "min"),
                 },
-                "initial_guesses": {"times": ([0, 30], "min")},
             },
             'post_mission': {
                 'include_landing': False,
