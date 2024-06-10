@@ -1,5 +1,4 @@
 import numpy as np
-import openmdao.api as om
 from aviary.mission.gasp_based.ode.time_integration_base_classes import SGMTrajBase
 from aviary.mission.gasp_based.phases.time_integration_phases import SGMGroundroll, SGMRotation
 
@@ -9,8 +8,6 @@ class TimeIntegrationTrajBase(SGMTrajBase):
         super().initialize()
         self.options.declare("cruise_mach", default=0.8)
         self.options.declare("ode_args", types=dict, default=dict())
-        self.options.declare("ode_args_pyc", types=dict, default=dict())
-        self.options.declare("pyc_phases", default=list())
 
 
 class FlexibleTraj(TimeIntegrationTrajBase):
@@ -35,7 +32,8 @@ class FlexibleTraj(TimeIntegrationTrajBase):
 
         ODEs = []
         for phase_name, phase_info in self.options['Phases'].items():
-            next_phase = phase_info['ode']
+            kwargs = phase_info.get('kwargs', {})
+            next_phase = phase_info['builder'](**kwargs)
             next_phase.phase_name = phase_name
             ODEs.append(next_phase)
 
@@ -57,16 +55,20 @@ class FlexibleTraj(TimeIntegrationTrajBase):
 
         for phase in self.ODEs:
             phase_name = phase.phase_name
-            vals_to_set = self.options['Phases'][phase_name]['vals_to_set']
+            vals_to_set = self.options['Phases'][phase_name]['user_options']
             if vals_to_set:
                 for name, data in vals_to_set.items():
+                    var, units = data
                     if name.startswith('attr:'):
-                        setattr(phase, name.replace('attr:', ''), inputs[data['val']])
+                        if isinstance(var, str):
+                            val = np.squeeze(self.convert2units(var, inputs[var], units))
+                            data = (val, units)
+                        setattr(phase, name.replace('attr:', ''), data)
                     elif name.startswith('rotation.'):
                         phase.rotation.set_val(name.replace(
-                            'rotation.', ''), data['val'], units=data['units'])
+                            'rotation.', ''), var, units=units)
                     else:
-                        phase.set_val(name, data['val'], units=data['units'])
+                        phase.set_val(name, var, units=units)
 
         ode_index = 0
         sim_gen = self.compute_traj_loop(self.ODEs[0], inputs, outputs)

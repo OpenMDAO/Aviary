@@ -12,6 +12,7 @@ class SGMHeightEnergy(SimuPyProblem):
         ode_args,
         phase_name='mission',
         simupy_args={},
+        mass_trigger=(150000, 'lbm')
     ):
         super().__init__(MissionODE(
             analysis_scheme=AnalysisScheme.SHOOTING,
@@ -29,7 +30,8 @@ class SGMHeightEnergy(SimuPyProblem):
             **simupy_args)
 
         self.phase_name = phase_name
-        self.add_trigger(Dynamic.Mission.MASS, 150000, units='lbm')
+        self.mass_trigger = mass_trigger
+        self.add_trigger(Dynamic.Mission.MASS, 'mass_trigger')
 
 
 class SGMDetailedTakeoff(SimuPyProblem):

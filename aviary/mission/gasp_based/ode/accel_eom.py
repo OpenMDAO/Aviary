@@ -2,7 +2,6 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_GASP, GRAV_ENGLISH_LBM
-from aviary.variable_info.enums import AnalysisScheme
 from aviary.variable_info.variables import Dynamic
 
 
@@ -16,11 +15,8 @@ class AccelerationRates(om.ExplicitComponent):
 
     def initialize(self):
         self.options.declare("num_nodes", types=int)
-        self.options.declare("analysis_scheme", types=AnalysisScheme, default=AnalysisScheme.COLLOCATION,
-                             desc="The analysis method that will be used to close the trajectory; for example collocation or time integration")
 
     def setup(self):
-        analysis_scheme = self.options["analysis_scheme"]
         nn = self.options["num_nodes"]
         arange = np.arange(nn)
 
@@ -68,16 +64,7 @@ class AccelerationRates(om.ExplicitComponent):
         self.declare_partials(Dynamic.Mission.DISTANCE_RATE, [
                               Dynamic.Mission.VELOCITY], rows=arange, cols=arange, val=1.)
 
-        if analysis_scheme is AnalysisScheme.SHOOTING:
-            self.add_input("t_curr", val=np.ones(nn), desc="time", units="s")
-            self.add_output(Dynamic.Mission.ALTITUDE_RATE, val=np.ones(nn),
-                            desc="altitude rate", units="ft/s")
-            self.add_input(
-                Dynamic.Mission.DISTANCE, val=np.ones(nn), desc="distance traveled", units="ft")
-
     def compute(self, inputs, outputs):
-        analysis_scheme = self.options["analysis_scheme"]
-
         weight = inputs[Dynamic.Mission.MASS] * GRAV_ENGLISH_LBM
         drag = inputs[Dynamic.Mission.DRAG]
         thrust = inputs[Dynamic.Mission.THRUST_TOTAL]
@@ -86,9 +73,6 @@ class AccelerationRates(om.ExplicitComponent):
         outputs[Dynamic.Mission.VELOCITY_RATE] = (
             GRAV_ENGLISH_GASP / weight) * (thrust - drag)
         outputs[Dynamic.Mission.DISTANCE_RATE] = TAS
-
-        if analysis_scheme is AnalysisScheme.SHOOTING:
-            outputs[Dynamic.Mission.ALTITUDE_RATE] = 0
 
     def compute_partials(self, inputs, J):
         weight = inputs[Dynamic.Mission.MASS] * GRAV_ENGLISH_LBM
