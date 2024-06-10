@@ -1129,7 +1129,13 @@ class SGMTrajBase(om.ExplicitComponent):
         self.costate_reses = costate_reses
 
 
-class killer_comp(om.ExplicitComponent):
+class _killer_comp(om.ExplicitComponent):
+    '''
+    This component will stop the execution of the integration during compute,
+    this is useful for debugging trajectories by getting the initial value
+    of variables for a phase and then exiting.
+    '''
+
     def compute(self, inputs, outputs):
         print(f'exit in {self.name}')
         exit()
