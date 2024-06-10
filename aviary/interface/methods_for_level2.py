@@ -2294,23 +2294,6 @@ class AviaryProblem(om.Problem):
             recorder = om.SqliteRecorder(optimization_history_filename)
             self.driver.add_recorder(recorder)
 
-        # import contextlib
-        # import sys
-
-        # @contextlib.contextmanager
-        # def stdout_redirect(where):
-        #     sys.stdout = where
-        #     try:
-        #         yield where
-        #     finally:
-        #         sys.stdout = sys.__stdout__
-
-        # could also modify the print in pyOptSparseDriver.run()
-        # if self.options['print_results']: if not MPI or model.comm.rank == 0: print(sol)
-        if self.driver.options["optimizer"] in ("SNOPT", "IPOPT"):
-            if verbosity is Verbosity.VERBOSE:
-                pass
-
         # and run mission, and dynamics
         if run_driver:
             failed = dm.run_problem(self, run_driver=run_driver, simulate=simulate, make_plots=make_plots,
