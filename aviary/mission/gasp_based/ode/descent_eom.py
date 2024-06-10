@@ -2,18 +2,14 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.variable_info.enums import AnalysisScheme
 from aviary.variable_info.variables import Dynamic
 
 
 class DescentRates(om.ExplicitComponent):
     def initialize(self):
         self.options.declare("num_nodes", types=int)
-        self.options.declare("analysis_scheme", types=AnalysisScheme, default=AnalysisScheme.COLLOCATION,
-                             desc="The analysis method that will be used to close the trajectory; for example collocation or time integration")
 
     def setup(self):
-        analysis_scheme = self.options["analysis_scheme"]
         nn = self.options["num_nodes"]
         arange = np.arange(nn)
 
@@ -95,12 +91,6 @@ class DescentRates(om.ExplicitComponent):
                                Dynamic.Mission.MASS],
                               rows=arange,
                               cols=arange)
-
-        if analysis_scheme is AnalysisScheme.SHOOTING:
-            self.add_input("t_curr", val=np.ones(nn), desc="time", units="s")
-            self.add_input(
-                Dynamic.Mission.DISTANCE, val=np.ones(nn), desc="distance traveled", units="ft"
-            )
 
     def compute(self, inputs, outputs):
 

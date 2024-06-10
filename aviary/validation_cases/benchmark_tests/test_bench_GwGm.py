@@ -33,7 +33,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
                           95509, tolerance=rtol)
 
         assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
-                          42529., tolerance=rtol)
+                          41856., tolerance=rtol)
 
         assert_near_equal(prob.get_val(Mission.Landing.GROUND_DISTANCE, units='ft'),
                           2634.8, tolerance=rtol)
@@ -100,10 +100,13 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
     @require_pyoptsparse(optimizer="IPOPT")
     def test_bench_GwGm_shooting(self):
+        from aviary.interface.default_phase_info.two_dof_fiti import phase_info, \
+            phase_info_parameterization
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwGm.csv',
                           local_phase_info, optimizer='IPOPT', run_driver=False,
-                          analysis_scheme=AnalysisScheme.SHOOTING, verbosity=Verbosity.QUIET)
+                          analysis_scheme=AnalysisScheme.SHOOTING, verbosity=Verbosity.QUIET,
+                          phase_info_parameterization=phase_info_parameterization)
 
         rtol = 0.01
 
@@ -120,7 +123,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
                           43574., tolerance=rtol)
 
         assert_near_equal(prob.get_val(Mission.Landing.GROUND_DISTANCE, units='ft'),
-                          2634.8, tolerance=rtol)
+                          2623.4, tolerance=rtol)
 
         assert_near_equal(prob.get_val(Mission.Summary.RANGE, units='NM'),
                           3774.3, tolerance=rtol)
@@ -133,7 +136,4 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = ProblemPhaseTestCase()
-    test.test_bench_GwGm_SNOPT_lbm_s()
-    test.test_bench_GwGm_shooting()
+    unittest.main()

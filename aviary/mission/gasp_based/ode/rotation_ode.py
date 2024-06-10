@@ -7,6 +7,7 @@ from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.rotation_eom import RotationEOM
 from aviary.variable_info.enums import AnalysisScheme
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
 
 
 class RotationODE(BaseODE):
@@ -21,6 +22,11 @@ class RotationODE(BaseODE):
         analysis_scheme = self.options["analysis_scheme"]
         aviary_options = self.options['aviary_options']
         core_subsystems = self.options['core_subsystems']
+
+        if analysis_scheme is AnalysisScheme.SHOOTING:
+            add_SGM_required_inputs(self, {
+                Dynamic.Mission.DISTANCE: {'units': 'ft'},
+            })
 
         # TODO: paramport
         self.add_subsystem("params", ParamPort(), promotes=["*"])
@@ -60,12 +66,11 @@ class RotationODE(BaseODE):
                                promotes_outputs=["alpha"],
                                )
 
-        self.add_subsystem("rotation_eom", RotationEOM(
-            num_nodes=nn, analysis_scheme=analysis_scheme), promotes=["*"])
+        self.add_subsystem("rotation_eom", RotationEOM(num_nodes=nn), promotes=["*"])
 
         ParamPort.set_default_vals(self)
-        self.set_input_defaults("t_init_flaps", val=47.5)
-        self.set_input_defaults("t_init_gear", val=37.3)
+        self.set_input_defaults("t_init_flaps", val=47.5, units='s')
+        self.set_input_defaults("t_init_gear", val=37.3, units='s')
         self.set_input_defaults("alpha", val=np.ones(nn), units="deg")
         self.set_input_defaults(Dynamic.Mission.FLIGHT_PATH_ANGLE,
                                 val=np.zeros(nn), units="deg")
