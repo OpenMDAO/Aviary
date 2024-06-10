@@ -305,25 +305,27 @@ class IntegratedPlottingApp(tk.Tk):
         self.optimize_mach_var = tk.BooleanVar()
         self.constrain_range_var = tk.BooleanVar()
         tk.Checkbutton(checkbox_frame, text="Constrain Range",
-                       variable=self.constrain_range_var).pack(anchor="w")
+                       variable=self.constrain_range_var, font=("tahoma", 14)).pack(anchor="w")
         self.constrain_range_var.set(True)
         self.solve_for_distance_var = tk.BooleanVar()
         tk.Checkbutton(checkbox_frame, text="Solve for Range",
-                       variable=self.solve_for_distance_var).pack(anchor="w")
+                       variable=self.solve_for_distance_var, font=("tahoma", 14)).pack(anchor="w")
 
         # Textbox for Polynomial Control Order
         self.polynomial_order_var = tk.StringVar()
-        tk.Label(checkbox_frame, text="Polynomial Control Order").pack(anchor="w")
+        tk.Label(checkbox_frame, text="Polynomial Control Order",
+                 font=("tahoma", 14)).pack(anchor="w")
         self.polynomial_order_entry = tk.Entry(
-            checkbox_frame, textvariable=self.polynomial_order_var)
+            checkbox_frame, textvariable=self.polynomial_order_var, font=("tahoma", 14))
         self.polynomial_order_entry.pack(anchor="w")
         self.polynomial_order_entry.insert(0, "1")
 
         # Textbox for Number of Segments
         self.num_segments_var = tk.StringVar(value="2")  # Default value set to "2"
-        tk.Label(checkbox_frame, text="Number of Segments").pack(anchor="w")
+        tk.Label(checkbox_frame, text="Number of Segments",
+                 font=("tahoma", 14)).pack(anchor="w")
         self.num_segments_entry = tk.Entry(
-            checkbox_frame, textvariable=self.num_segments_var)
+            checkbox_frame, textvariable=self.num_segments_var, font=("tahoma", 14))
         self.num_segments_entry.pack(anchor="w")
 
         self.cid_click_altitude = self.fig_altitude.canvas.mpl_connect(
@@ -333,13 +335,23 @@ class IntegratedPlottingApp(tk.Tk):
         self.cid_release_altitude = self.fig_altitude.canvas.mpl_connect(
             'button_release_event', self.on_release)
 
+        # one frame to hold two buttons
+        buttons = tk.Frame(checkbox_frame)
+        buttons.pack(side='top')
         # Done button
-        self.done_button = tk.Button(checkbox_frame, text="Done", command=self.on_done)
-        self.done_button.pack(side='top', pady=10)
+        self.done_button = tk.Button(
+            buttons, text="Output phase_info object", command=self.on_done, font=("tahoma", 14))
+        self.done_button.pack(side='left', padx=5, pady=10)
 
         # Help button
-        self.help_button = tk.Button(checkbox_frame, text="Help", command=self.show_help)
-        self.help_button.pack(side='top', pady=10)
+        self.help_button = tk.Button(
+            buttons, text="Help", command=self.show_help, font=("tahoma", 14))
+        self.help_button.pack(side='left', pady=10)
+
+        # add a note that if you don't have the black package installed your phase_info file might be formatted unclearly
+        # wrap text to fit in the window
+        tk.Label(checkbox_frame, text="Note: If 'black' is not installed, the outputted phase_info dict may not be returned in an easy-to-read format.",
+                 wraplength=400, justify='left', font=("Courier", 11)).pack(side='top', pady=10)
 
         # Frame for point entries
         self.point_entry_frame = tk.Frame(checkbox_frame)
@@ -348,8 +360,10 @@ class IntegratedPlottingApp(tk.Tk):
         self.mach_entries = []
 
         # Column labels
-        tk.Label(self.point_entry_frame, text="Altitude").grid(row=0, column=1)
-        tk.Label(self.point_entry_frame, text="Mach").grid(row=0, column=3)
+        tk.Label(self.point_entry_frame, text="Altitude",
+                 font=("tahoma", 14)).grid(row=0, column=1)
+        tk.Label(self.point_entry_frame, text="Mach",
+                 font=("tahoma", 14)).grid(row=0, column=3)
 
         # Frame for phase-specific checkboxes
         self.phase_option_frame = tk.Frame(checkbox_frame)
@@ -398,20 +412,20 @@ class IntegratedPlottingApp(tk.Tk):
         for i, (alt, mach) in enumerate(zip(self.altitude_data, self.mach_data)):
             # Altitude Entry
             tk.Label(self.point_entry_frame,
-                     text=f"Pt. {i+1}").grid(row=i+1, column=0, sticky="w")
+                     text=f"Pt. {i+1}", font=("tahoma", 14)).grid(row=i+1, column=0, sticky="w")
             alt_var = tk.StringVar(value=str(alt[1]))
             alt_entry = tk.Entry(self.point_entry_frame,
-                                 textvariable=alt_var, width=10)  # Width set to 10
+                                 textvariable=alt_var, width=10, font=("tahoma", 14))  # Width set to 10
             alt_entry.grid(row=i+1, column=1)
             alt_entry.bind("<KeyRelease>", lambda e, i=i,
                            var=alt_var: self.update_point_data(i, 'altitude', var.get()))
 
             # Mach Entry
             tk.Label(self.point_entry_frame,
-                     text=f"Pt. {i+1}").grid(row=i+1, column=2, sticky="w")
+                     text=f"Pt. {i+1}", font=("tahoma", 14)).grid(row=i+1, column=2, sticky="w")
             mach_var = tk.StringVar(value=str(mach[1]))
             mach_entry = tk.Entry(self.point_entry_frame,
-                                  textvariable=mach_var, width=10)  # Width set to 10
+                                  textvariable=mach_var, width=10, font=("tahoma", 14))  # Width set to 10
             mach_entry.grid(row=i+1, column=3)
             mach_entry.bind("<KeyRelease>", lambda e, i=i,
                             var=mach_var: self.update_point_data(i, 'mach', var.get()))
@@ -420,7 +434,7 @@ class IntegratedPlottingApp(tk.Tk):
             self.mach_entries.append(mach_entry)
 
     def update_phase_options(self):
-        tk.Label(self.phase_option_frame, text=f"Optimize:").grid(
+        tk.Label(self.phase_option_frame, text=f"Optimize:", font=("tahoma", 14)).grid(
             row=0, column=0, columnspan=3, sticky="s")
         # Create new checkboxes for each phase
         for i in range(len(self.altitude_data) - 1):
@@ -431,11 +445,11 @@ class IntegratedPlottingApp(tk.Tk):
                 self.optimize_altitude_phase_vars.append(alt_var)
 
             tk.Label(self.phase_option_frame,
-                     text=f"Phase {i + 1}").grid(row=i+1, column=0, sticky="w")
+                     text=f"Phase {i + 1}", font=("tahoma", 14)).grid(row=i+1, column=0, sticky="w")
             tk.Checkbutton(self.phase_option_frame, text="Altitude",
-                           variable=self.optimize_altitude_phase_vars[i]).grid(row=i+1, column=1)
+                           variable=self.optimize_altitude_phase_vars[i], font=("tahoma", 14)).grid(row=i+1, column=1)
             tk.Checkbutton(self.phase_option_frame, text="Mach",
-                           variable=self.optimize_mach_phase_vars[i]).grid(row=i+1, column=2)
+                           variable=self.optimize_mach_phase_vars[i], font=("tahoma", 14)).grid(row=i+1, column=2)
 
     def update_point_data(self, index, point_type, value):
         try:

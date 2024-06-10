@@ -27,13 +27,13 @@ If your subsystem does not need to tell Aviary about any new variables (i.e. all
 
 <!-- TODO: add link to documentation about extending the variable hierarchy -->
 
-1. First, view the [battery_variables.py file](https://github.com/OpenMDAO/Aviary/blob/main/aviary/external_subsystems/battery/battery_variables.py) to see an example of the variable hierarchy we use in Aviary. You can also look at the [core Aviary variables](https://github.com/OpenMDAO/Aviary/blob/main/aviary/variable_info/variables.py) to see what's available already. You can add any arbitrary system as a subclass within here. Items that define aircraft properties should go within `Aircraft` whereas any variables pertaining to the `Mission` should exist there.
+1. First, view the [battery_variables.py file](https://github.com/OpenMDAO/Aviary/blob/main/aviary/examples/external_subsystems/battery/battery_variables.py) to see an example of the variable hierarchy we use in Aviary. You can also look at the [core Aviary variables](https://github.com/OpenMDAO/Aviary/blob/main/aviary/variable_info/variables.py) to see what's available already. You can add any arbitrary system as a subclass within here. Items that define aircraft properties should go within `Aircraft` whereas any variables pertaining to the `Mission` should exist there.
 
     These variable names are what's used within the OpenMDAO system that Aviary uses. This sort of hierarchy is a purposeful design choice to make it clear what values live where, which subsystem they belong to, and that they are named the same between different systems. Additionally, we recommend including the legacy name of any variable you add that so that users of your builder will know how the variable names map to existing analyses.
 
     <!-- TODO: add link to the variable hierarchy doc that includes how to use legacy_name  -->
 
-2. Now, with the variable names defined, we need to define variable metadata. Variable metadata helps Aviary understand your system. It also helps humans understand what units, defaults, and other values your variables use. Check out the [battery metadata example](https://github.com/OpenMDAO/Aviary/blob/main/aviary/external_subsystems/battery/battery_variable_meta_data.py) as well as the [core Aviary metadata](https://github.com/OpenMDAO/Aviary/blob/main/aviary/variable_info/variable_meta_data.py).
+2. Now, with the variable names defined, we need to define variable metadata. Variable metadata helps Aviary understand your system. It also helps humans understand what units, defaults, and other values your variables use. Check out the [battery metadata example](https://github.com/OpenMDAO/Aviary/blob/main/aviary/examples/external_subsystems/battery/battery_variable_meta_data.py) as well as the [core Aviary metadata](https://github.com/OpenMDAO/Aviary/blob/main/aviary/variable_info/variable_meta_data.py).
 
     When you define your variable metadata, you'll use the same names you just defined. With those names, you'll provide units, a brief description, and default values. You're not locking yourself into specific units here, but by providing units then Aviary can convert the values behind-the-scenes to whatever units are actually used in the code. Users can input variables in any units that can be converted to those units prescribed in the metadata.
 
@@ -67,7 +67,7 @@ The methods you should implement depend on what type of subsystem you're buildin
 
 ## Testing your builder and ensuring it's behaving as intended
 
-Okay, now we should test your subsystem builder to make sure it's providing the correct outputs to Aviary. You don't have to put it into Aviary (yet!) to do this. Look at the [`test_battery_builder.py` file](https://github.com/OpenMDAO/Aviary/blob/main/aviary/external_subsystems/battery/test_battery_builder.py) to see how to test your subsystem. This is also detailed in the [battery subsystem example](battery_subsystem_example) doc page.
+Okay, now we should test your subsystem builder to make sure it's providing the correct outputs to Aviary. You don't have to put it into Aviary (yet!) to do this. Look at the [`test_battery_builder.py` file](https://github.com/OpenMDAO/Aviary/blob/main/aviary/examples/external_subsystems/battery/test_battery_builder.py) to see how to test your subsystem. This is also detailed in the [battery subsystem example](battery_subsystem_example) doc page.
 
 If everything goes well then those tests passed. If they didn't, you should get some info about your builder that you can use to fix any bugs or errors.
 
@@ -75,7 +75,7 @@ This test probably won't catch *everything* that could go wrong when interfacing
 
 ## Using your builder within Aviary
 
-Awesome. Let's keep going and start to discuss using these subsystems within Aviary. The overarching idea is that now that you have a subsystem builder, you can pass an instantiation of this builder object to Aviary via the `phase_info` dictionary. Take a look at [`run_cruise.py`](https://github.com/OpenMDAO/Aviary/blob/main/aviary/external_subsystems/battery/run_cruise.py) and [`run_multiphase_mission.py`](https://github.com/OpenMDAO/Aviary/blob/main/aviary/external_subsystems/battery/run_multiphase_mission.py) to see how we do this for the battery model. Specifically, here are the relevant lines of code from the `run_cruise.py` file:
+Awesome. Let's keep going and start to discuss using these subsystems within Aviary. The overarching idea is that now that you have a subsystem builder, you can pass an instantiation of this builder object to Aviary via the `phase_info` dictionary. Take a look at [`run_cruise.py`](https://github.com/OpenMDAO/Aviary/blob/main/aviary/examples/external_subsystems/battery/run_cruise.py) and [`run_multiphase_mission.py`](https://github.com/OpenMDAO/Aviary/blob/main/aviary/examples/external_subsystems/battery/run_multiphase_mission.py) to see how we do this for the battery model. Specifically, here are the relevant lines of code from the `run_cruise.py` file:
 
 ```python
 battery_builder = BatteryBuilder()
@@ -101,7 +101,7 @@ Those additional `'external_subsystems'` entires are where you add your subsyste
 
 2. **Add any `external_subsystems` to your pre- and post-mission phases too.** If you have pre- or post-mission analyses in your subsystem, make sure to add the `external_subsystems` list to the `pre_mission` and `post_mission` sub-dicts within the `phase_info` dict. This means that Aviary will build and use those systems before or after the mission; otherwise Aviary won't know to put the systems there.
 
-3. **Start with a simple mission in Aviary.** To begin, try adapting the [`run_cruise.py`](https://github.com/OpenMDAO/Aviary/blob/main/aviary/external_subsystems/battery/run_cruise.py) script to use your subsystem. Replace the `BatteryBuilder()` instance with your subsystem, for example. You might need other setup or inputs based on the complexity of your model. But in general, it helps to start with the simplest mission you can. In this case, that's probably a steady level cruise flight.
+3. **Start with a simple mission in Aviary.** To begin, try adapting the [`run_cruise.py`](https://github.com/OpenMDAO/Aviary/blob/main/aviary/examples/external_subsystems/battery/run_cruise.py) script to use your subsystem. Replace the `BatteryBuilder()` instance with your subsystem, for example. You might need other setup or inputs based on the complexity of your model. But in general, it helps to start with the simplest mission you can. In this case, that's probably a steady level cruise flight.
 
     Even though this is a "simple" mission, there's still a lot that can go wrong. It turns out that designing an aircraft is challenging sometimes. I don't expect your mission optimization to converge well your first try; it often takes some debugging and digging to get your subsystem integrated well. It's really challenging to write docs to help you do this without knowing more about your system, what it's trying to do while the aircraft is flying, and what you've already checked. That being said, make sure to reach out if you're encountering problems here.
 

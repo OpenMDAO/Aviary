@@ -7,6 +7,8 @@ AerodynamicsBuilderBase : the interface for an aerodynamics subsystem builder.
 
 CoreAerodynamicsBuilder : the interface for Aviary's core aerodynamics subsystem builder
 """
+import numpy as np
+
 import openmdao.api as om
 
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic
@@ -17,8 +19,8 @@ from aviary.subsystems.aerodynamics.flops_based.design import Design
 from aviary.subsystems.aerodynamics.gasp_based.premission_aero import PreMissionAero
 from aviary.subsystems.aerodynamics.gasp_based.gaspaero import CruiseAero
 from aviary.subsystems.aerodynamics.gasp_based.gaspaero import LowSpeedAero
-from aviary.subsystems.aerodynamics.gasp_based.table_based import CruiseAero as TabularCruiseAero
-from aviary.subsystems.aerodynamics.gasp_based.table_based import LowSpeedAero as TabularLowSpeedAero
+from aviary.subsystems.aerodynamics.gasp_based.table_based import TabularCruiseAero
+from aviary.subsystems.aerodynamics.gasp_based.table_based import TabularLowSpeedAero
 from aviary.subsystems.aerodynamics.flops_based.computed_aero_group import \
     ComputedAeroGroup
 from aviary.subsystems.aerodynamics.flops_based.takeoff_aero_group import \
@@ -27,7 +29,9 @@ from aviary.subsystems.aerodynamics.flops_based.solved_alpha_group import \
     SolvedAlphaGroup
 from aviary.subsystems.aerodynamics.flops_based.tabular_aero_group import \
     TabularAeroGroup
+from aviary.utils.named_values import NamedValues
 from aviary.variable_info.enums import LegacyCode
+from aviary.variable_info.variable_meta_data import _MetaData
 
 
 GASP = LegacyCode.GASP
@@ -122,15 +126,18 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
         elif self.code_origin is GASP:
             if method is None:
-                aero_group = CruiseAero(num_nodes=num_nodes)
+                aero_group = CruiseAero(num_nodes=num_nodes,
+                                        aviary_options=aviary_inputs)
 
             elif method == 'cruise':
                 if 'aero_data' in kwargs:
                     aero_group = TabularCruiseAero(num_nodes=num_nodes,
+                                                   aviary_options=aviary_inputs,
                                                    aero_data=kwargs.pop('aero_data'),
                                                    **kwargs)
                 else:
                     aero_group = CruiseAero(num_nodes=num_nodes,
+                                            aviary_options=aviary_inputs,
                                             **kwargs)
 
             elif method == 'low_speed':
@@ -148,6 +155,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
                 else:
                     aero_group = LowSpeedAero(num_nodes=num_nodes,
+                                              aviary_options=aviary_inputs,
                                               **kwargs)
 
             else:
@@ -247,6 +255,99 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                                  '(low_speed, cruise)')
 
         return promotes
+
+    def get_parameters(self, aviary_inputs=None, phase_info=None):
+        """
+        Return a dictionary of fixed values for the subsystem.
+
+        Optional, used if subsystems have fixed values.
+
+        Used in the phase builders (e.g. cruise_phase.py) when other parameters are added to the phase.
+
+        This is distinct from `get_design_vars` in a nuanced way. Design variables
+        are variables that are optimized by the problem that are not at the phase level.
+        An example would be something that occurs in the pre-mission level of the problem.
+        Parameters are fixed values that are held constant throughout a phase, but if
+        `opt=True`, they are able to change during the optimization.
+
+        Parameters
+        ----------
+        phase_info : dict
+            The phase_info subdict for this phase.
+
+        Returns
+        -------
+        fixed_values : dict
+            A dictionary where the keys are the names of the fixed variables
+            and the values are dictionaries with the following keys:
+
+            - 'value': float or array
+                The fixed value for the variable.
+            - 'units': str
+                The units for the fixed value (optional).
+            - any additional keyword arguments required by OpenMDAO for the fixed
+              variable.
+        """
+        num_engine_type = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
+        params = {}
+
+        if self.code_origin is FLOPS:
+            try:
+                aero_opt = phase_info['subsystem_options'][self.name]
+                method = aero_opt['method']
+            except KeyError:
+                method = 'computed'
+
+            if phase_info is not None:
+                # Only solved_alpha has connectable inputs.
+                if method == 'solved_alpha':
+                    aero_data = aero_opt['aero_data']
+
+                    if isinstance(aero_data, NamedValues):
+                        altitude = aero_data.get_item('altitude')[0]
+                        mach = aero_data.get_item('mach')[0]
+                        angle_of_attack = aero_data.get_item('angle_of_attack')[0]
+
+                        n1 = altitude.size
+                        n2 = mach.size
+                        n3 = angle_of_attack.size
+                        n1u = np.unique(altitude).size
+
+                        if n1 > n1u:
+                            # Data is free-format instead of pre-formatted.
+                            n1 = n1u
+                            n2 = np.unique(mach).size
+                            n3 = np.unique(angle_of_attack).size
+
+                        shape = (n1, n2, n3)
+
+                        if aviary_inputs is not None and Aircraft.Design.LIFT_POLAR in aviary_inputs:
+                            lift_opts = {'val': aviary_inputs.get_val(Aircraft.Design.LIFT_POLAR),
+                                         'static_target': True}
+                        else:
+                            lift_opts = {'shape': shape,
+                                         'static_target': True}
+
+                        if aviary_inputs is not None and Aircraft.Design.DRAG_POLAR in aviary_inputs:
+                            drag_opts = {'val': aviary_inputs.get_val(Aircraft.Design.DRAG_POLAR),
+                                         'static_target': True}
+                        else:
+                            drag_opts = {'shape': shape,
+                                         'static_target': True}
+
+                        params[Aircraft.Design.LIFT_POLAR] = lift_opts
+                        params[Aircraft.Design.DRAG_POLAR] = drag_opts
+
+            if method == 'computed':
+                param_vars = [Aircraft.Nacelle.CHARACTERISTIC_LENGTH,
+                              Aircraft.Nacelle.FINENESS,
+                              Aircraft.Nacelle.LAMINAR_FLOW_LOWER,
+                              Aircraft.Nacelle.LAMINAR_FLOW_UPPER,
+                              Aircraft.Nacelle.WETTED_AREA]
+                for var in param_vars:
+                    params[var] = {'shape': (num_engine_type, ), 'static_target': True}
+
+        return params
 
     def report(self, prob, reports_folder, **kwargs):
         """

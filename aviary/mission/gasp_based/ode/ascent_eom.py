@@ -2,7 +2,6 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_GASP, GRAV_ENGLISH_LBM, MU_TAKEOFF
-from aviary.variable_info.enums import AnalysisScheme
 from aviary.variable_info.functions import add_aviary_input
 from aviary.variable_info.variables import Aircraft, Dynamic
 
@@ -10,12 +9,9 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 class AscentEOM(om.ExplicitComponent):
     def initialize(self):
         self.options.declare("num_nodes", types=int)
-        self.options.declare("analysis_scheme", types=AnalysisScheme, default=AnalysisScheme.COLLOCATION,
-                             desc="The analysis method that will be used to close the trajectory; for example collocation or time integration")
 
     def setup(self):
         nn = self.options["num_nodes"]
-        analysis_scheme = self.options["analysis_scheme"]
 
         self.add_input(Dynamic.Mission.MASS, val=np.ones(nn),
                        desc="aircraft mass", units="lbm")
@@ -63,12 +59,6 @@ class AscentEOM(om.ExplicitComponent):
         self.add_output(
             "alpha_rate", val=np.ones(nn), desc="angle of attack rate", units="deg/s"
         )
-
-        if analysis_scheme is AnalysisScheme.SHOOTING:
-            self.add_input(Dynamic.Mission.DISTANCE, val=np.ones(
-                nn), desc="distance traveled", units="ft")
-            self.add_input(Dynamic.Mission.ALTITUDE,
-                           val=np.ones(nn), desc="alt", units="ft")
 
     def setup_partials(self):
         arange = np.arange(self.options["num_nodes"])
@@ -121,8 +111,6 @@ class AscentEOM(om.ExplicitComponent):
         self.declare_partials("fuselage_pitch", Aircraft.Wing.INCIDENCE, val=-1)
 
     def compute(self, inputs, outputs):
-        analysis_scheme = self.options["analysis_scheme"]
-
         weight = inputs[Dynamic.Mission.MASS] * GRAV_ENGLISH_LBM
         thrust = inputs[Dynamic.Mission.THRUST_TOTAL]
         incremented_lift = inputs[Dynamic.Mission.LIFT]

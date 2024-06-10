@@ -15,7 +15,7 @@ from aviary.utils.named_values import NamedValues
 from aviary.validation_cases.validation_tests import (get_flops_inputs,
                                                       get_flops_outputs,
                                                       print_case)
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 from aviary.variable_info.variables_in import VariablesIn
 from aviary.variable_info.enums import LegacyCode
 
@@ -28,6 +28,7 @@ class TabularAeroGroupFileTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
         aviary_options = AviaryValues()
+        aviary_options.set_val(Settings.VERBOSITY, 0)
 
         CDI_table = "subsystems/aerodynamics/flops_based/test/large_single_aisle_1_CDI_polar.csv"
         CD0_table = "subsystems/aerodynamics/flops_based/test/large_single_aisle_1_CD0_polar.csv"
@@ -86,6 +87,7 @@ class TabularAeroGroupDataTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
         aviary_options = AviaryValues()
+        aviary_options.set_val(Settings.VERBOSITY, 0)
 
         CDI_table = _default_CDI_data()
         CDI_values = CDI_table.get_val('lift_dependent_drag_coefficient')
@@ -175,6 +177,8 @@ class ComputedVsTabularTest(unittest.TestCase):
 
         key = Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST
         flops_inputs.set_val(key, *(flops_outputs.get_item(key)))
+
+        flops_inputs.set_val(Settings.VERBOSITY, 0)
 
         mass, units = flops_inputs.get_item(Mission.Design.GROSS_MASS)
         mass = mass * 0.92

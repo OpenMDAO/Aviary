@@ -163,7 +163,7 @@ aircraft:landing_gear:fixed_gear,True,unitless
 aircraft:landing_gear:main_gear_location,0.15,unitless
 aircraft:landing_gear:main_gear_mass_coefficient,0.85,unitless
 aircraft:landing_gear:main_gear_mass_scaler,1.1,unitless
-aircraft:landing_gear:main_gear_mass,6366.615,lbm
+#aircraft:landing_gear:main_gear_mass,6366.615,lbm
 aircraft:landing_gear:main_gear_oleo_length,102.0,inch
 aircraft:landing_gear:mass_coefficient,0.04,unitless
 aircraft:landing_gear:nose_gear_mass_scaler,1.0,unitless

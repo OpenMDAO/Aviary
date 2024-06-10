@@ -2,22 +2,19 @@ import numpy as np
 import openmdao.api as om
 from dymos.models.atmosphere.atmos_1976 import USatm1976Comp
 
-from aviary.variable_info.enums import AnalysisScheme, AlphaModes, SpeedType
-from aviary.variable_info.variables import Mission, Dynamic
-
 from aviary.mission.gasp_based.ode.base_ode import BaseODE
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.descent_eom import DescentRates
 from aviary.mission.gasp_based.flight_conditions import FlightConditions
 from aviary.mission.gasp_based.ode.base_ode import BaseODE
-from aviary.mission.gasp_based.ode.constraints.flight_constraints import \
-    FlightConstraints
+from aviary.mission.gasp_based.ode.constraints.flight_constraints import FlightConstraints
 from aviary.mission.gasp_based.ode.constraints.speed_constraints import SpeedConstraints
 
-from aviary.variable_info.enums import AnalysisScheme, SpeedType
-from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.enums import AnalysisScheme, AlphaModes, SpeedType
+from aviary.variable_info.variables import Mission, Dynamic
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
+from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
 
 
 class DescentODE(BaseODE):
@@ -34,8 +31,10 @@ class DescentODE(BaseODE):
         super().initialize()
         self.options.declare("input_speed_type", types=SpeedType,
                              desc="Whether the speed is given as a equivalent airspeed, true airspeed, or mach number")
-        self.options.declare("alt_trigger_units")
-        self.options.declare("speed_trigger_units")
+        self.options.declare("alt_trigger_units", default='ft',
+                             desc='The units that the altitude trigger is provided in')
+        self.options.declare("speed_trigger_units", default='kn',
+                             desc='The units that the speed trigger is provided in.')
         self.options.declare(
             "mach_cruise", default=0, desc="targeted cruise mach number"
         )
@@ -44,6 +43,7 @@ class DescentODE(BaseODE):
         )
 
     def setup(self):
+        self.options['auto_order'] = True
         nn = self.options["num_nodes"]
         analysis_scheme = self.options["analysis_scheme"]
         aviary_options = self.options['aviary_options']
@@ -59,6 +59,13 @@ class DescentODE(BaseODE):
             speed_inputs = ["mach"]
             speed_outputs = ["EAS", ("TAS", Dynamic.Mission.VELOCITY)]
 
+        if analysis_scheme is AnalysisScheme.SHOOTING:
+            add_SGM_required_inputs(self, {
+                't_curr': {'units': 's'},
+                Dynamic.Mission.DISTANCE: {'units': 'ft'},
+                'alt_trigger': {'units': self.options['alt_trigger_units'], 'val': 10e3},
+                'speed_trigger': {'units': self.options['speed_trigger_units'], 'val': 100},
+            })
         # TODO: paramport
         self.add_subsystem("params", ParamPort(), promotes=["*"])
 
@@ -83,9 +90,6 @@ class DescentODE(BaseODE):
         if analysis_scheme is AnalysisScheme.COLLOCATION:
             EAS_limit = self.options["EAS_limit"]
             mach_cruise = self.options["mach_cruise"]
-            constraint_args = {}
-            integration_states = []
-            constraint_inputs = []
 
             # Add a group to contain the balance
 
@@ -94,6 +98,7 @@ class DescentODE(BaseODE):
                     "mach_balance_group", subsys=om.Group(), promotes=["*"]
                 )
 
+                mach_balance_group.options['auto_order'] = True
                 mach_balance_group.nonlinear_solver = om.NewtonSolver()
                 mach_balance_group.nonlinear_solver.options["solve_subsystems"] = True
                 mach_balance_group.nonlinear_solver.options["iprint"] = 0
@@ -142,12 +147,6 @@ class DescentODE(BaseODE):
             )
 
         elif analysis_scheme is AnalysisScheme.SHOOTING:
-            constraint_args = {'analysis_scheme': AnalysisScheme.SHOOTING,
-                               'alt_trigger_units': self.options["alt_trigger_units"],
-                               'speed_trigger_units': self.options["speed_trigger_units"]}
-            integration_states = ["t_curr", Dynamic.Mission.DISTANCE]
-            constraint_inputs = ["alt_trigger", "speed_trigger"]
-
             lift_balance_group = self
 
         flight_condition_group.add_subsystem(
@@ -168,16 +167,14 @@ class DescentODE(BaseODE):
 
         lift_balance_group.add_subsystem(
             "descent_eom",
-            DescentRates(
-                num_nodes=nn,
-                analysis_scheme=analysis_scheme),
+            DescentRates(num_nodes=nn),
             promotes_inputs=[
                 Dynamic.Mission.MASS,
                 Dynamic.Mission.VELOCITY,
                 Dynamic.Mission.DRAG,
                 Dynamic.Mission.THRUST_TOTAL,
-                "alpha",] +
-            integration_states,
+                "alpha",
+            ],
             promotes_outputs=[
                 Dynamic.Mission.ALTITUDE_RATE,
                 Dynamic.Mission.DISTANCE_RATE,
@@ -188,7 +185,7 @@ class DescentODE(BaseODE):
 
         self.add_subsystem(
             "constraints",
-            FlightConstraints(num_nodes=nn, **constraint_args),
+            FlightConstraints(num_nodes=nn),
             promotes_inputs=[
                 Dynamic.Mission.MASS,
                 "alpha",
@@ -197,15 +194,13 @@ class DescentODE(BaseODE):
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 ("TAS", Dynamic.Mission.VELOCITY),
             ]
-            + ["aircraft:*"]
-            + constraint_inputs,
+            + ["aircraft:*"],
             promotes_outputs=["theta", "TAS_violation"],
         )
 
         kwargs = {'num_nodes': nn, 'aviary_inputs': aviary_options,
                   'method': 'cruise'}
         # collect the propulsion group names for later use
-        prop_groups = []
         for subsystem in core_subsystems:
             system = subsystem.build_mission(**kwargs)
             if system is not None:
@@ -216,9 +211,6 @@ class DescentODE(BaseODE):
                                                          **kwargs),
                                                      promotes_outputs=subsystem.mission_outputs(**kwargs))
                 else:
-                    if isinstance(subsystem, PropulsionBuilderBase):
-                        prop_groups.append(subsystem.name)
-
                     self.add_subsystem(subsystem.name,
                                        system,
                                        promotes_inputs=subsystem.mission_inputs(
@@ -233,21 +225,6 @@ class DescentODE(BaseODE):
 
         # the last two subsystems will also be used for constraints
         self.add_excess_rate_comps(nn)
-
-        if analysis_scheme is AnalysisScheme.COLLOCATION:
-            fc_loc = ['fc']
-            if input_speed_type is SpeedType.MACH:
-                mach_balance_group.set_order(['speed_bal', 'fc', 'speeds', 'ks'])
-                fc_loc = ['mach_balance_group']
-            # TODO this assumes the name of propulsion subsystem, need to pull from
-            #      the subsystem itself
-            self.set_order(['params',
-                            'USatm',] +
-                           fc_loc+prop_groups +
-                           ['lift_balance_group',
-                            'constraints',
-                            'SPECIFIC_ENERGY_RATE_EXCESS',
-                            'ALTITUDE_RATE_MAX'])
 
         ParamPort.set_default_vals(self)
         self.set_input_defaults(Dynamic.Mission.ALTITUDE,

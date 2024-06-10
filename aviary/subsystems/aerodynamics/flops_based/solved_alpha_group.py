@@ -5,7 +5,7 @@ from pathlib import Path
 
 import aviary.constants as constants
 from aviary.subsystems.aerodynamics.aero_common import DynamicPressure
-from aviary.subsystems.aerodynamics.gasp_based.table_based import CruiseAero as TabularCruiseAero
+from aviary.subsystems.aerodynamics.gasp_based.table_based import TabularCruiseAero
 from aviary.utils.named_values import NamedValues
 from aviary.variable_info.variables import Aircraft, Dynamic
 
@@ -33,7 +33,7 @@ class SolvedAlphaGroup(om.Group):
                                   'drag coefficient table as a function of altitude, '
                                   'Mach, and angle of attack')
 
-        self.options.declare('training_data', default=False,
+        self.options.declare('connect_training_data', default=False,
                              desc='When True, the aero tables will be passed as '
                                   'OpenMDAO variables')
 
@@ -47,7 +47,7 @@ class SolvedAlphaGroup(om.Group):
         options = self.options
         nn = options['num_nodes']
         aero_data = options['aero_data']
-        training_data = options['training_data']
+        connect_training_data = options['connect_training_data']
         structured = options['structured']
         extrapolate = options['extrapolate']
 
@@ -58,11 +58,11 @@ class SolvedAlphaGroup(om.Group):
 
         aero = TabularCruiseAero(num_nodes=nn,
                                  aero_data=aero_data,
-                                 training_data=training_data,
+                                 connect_training_data=connect_training_data,
                                  structured=structured,
                                  extrapolate=extrapolate)
 
-        if training_data:
+        if connect_training_data:
             extra_promotes = [Aircraft.Design.DRAG_POLAR,
                               Aircraft.Design.LIFT_POLAR]
         else:
@@ -73,7 +73,7 @@ class SolvedAlphaGroup(om.Group):
                                             Aircraft.Wing.AREA, Dynamic.Mission.MACH,
                                             Dynamic.Mission.DYNAMIC_PRESSURE]
                            + extra_promotes,
-                           promotes_outputs=[Dynamic.Mission.LIFT, Dynamic.Mission.DRAG])
+                           promotes_outputs=['CD', Dynamic.Mission.LIFT, Dynamic.Mission.DRAG])
 
         balance = self.add_subsystem('balance', om.BalanceComp())
         balance.add_balance('alpha', val=np.ones(nn), units='deg', res_ref=1.0e6)

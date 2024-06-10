@@ -1,6 +1,8 @@
 '''
 Define meta data associated with variables in the Aviary data hierarchy.
 '''
+import numpy as np
+
 from copy import deepcopy
 from pathlib import Path
 
@@ -2192,7 +2194,8 @@ add_meta_data(
                      },
     units='unitless',
     desc='Engine wing mount locations as fractions of semispan; (engines_count)/2 values '
-         'are input'
+         'are input',
+    default_value=np.array([0.0])
 )
 
 #  ______   _
@@ -6820,19 +6823,6 @@ add_meta_data(
     desc='landing coefficient of friction, with brakes on')
 
 add_meta_data(
-    # TODO: should this be Mission.Landing.DRAG_COEFFICIENT_MIN ???
-    Mission.Landing.DRAG_COEFFICIENT,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": 'AERIN.CDMLD',  # ['&DEFINE.AERIN.CDMLD', 'LANDG.CDMLD'],
-                     "LEAPS1": None
-                     },
-    units='unitless',
-    desc='Minimum drag coefficient for takeoff. Typically this is CD at zero lift.',
-    default_value=0.0,
-)
-
-add_meta_data(
     Mission.Landing.DRAG_COEFFICIENT_FLAP_INCREMENT,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.DCD',
@@ -6841,6 +6831,18 @@ add_meta_data(
                      },
     units='unitless',
     desc='drag coefficient increment at landing due to flaps',
+)
+
+add_meta_data(
+    Mission.Landing.DRAG_COEFFICIENT_MIN,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": 'AERIN.CDMLD',  # ['&DEFINE.AERIN.CDMLD', 'LANDG.CDMLD'],
+                     "LEAPS1": None
+                     },
+    units='unitless',
+    desc='Minimum drag coefficient for takeoff. Typically this is CD at zero lift.',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -7645,8 +7647,8 @@ add_meta_data(
     desc='Sets how much information Aviary outputs when run. Options include:'
          '0. QUIET: All output except errors are suppressed'
          '1. BRIEF: Only important information is output, in human-readable format'
-         '2. VERBOSE: All avaliable information is output, in human-readable format'
-         '3. DEBUG: Intermediate status and calculation outputs, no formatting requirement',
+         '2. VERBOSE: All user-relevant information is output, in human-readable format'
+         '3. DEBUG: All information is output, including warnings, intermediate calculations, etc., no formatting requirement',
     option=True,
     types=Verbosity,
     default_value=Verbosity.BRIEF

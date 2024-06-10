@@ -290,7 +290,7 @@ inputs.set_val(Mission.Summary.CRUISE_MACH, 0.785)
 inputs.set_val(Mission.Summary.FUEL_FLOW_SCALER, 1.0)
 inputs.set_val(Mission.Design.RANGE, 3500, 'NM')
 inputs.set_val(Mission.Constraints.MAX_MACH, 0.785)
-inputs.set_val(Mission.Landing.DRAG_COEFFICIENT, 0.045, 'unitless')
+inputs.set_val(Mission.Landing.DRAG_COEFFICIENT_MIN, 0.045, 'unitless')
 inputs.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, 2.0, 'unitless')
 inputs.set_val(Mission.Takeoff.AIRPORT_ALTITUDE, 0., 'ft')
 inputs.set_val(Mission.Takeoff.DRAG_COEFFICIENT_MIN, 0.05, 'unitless')
@@ -315,6 +315,7 @@ inputs.set_val(Mission.Takeoff.FUEL_SIMPLE, 577., 'lbm')
 # ---------------------------
 inputs.set_val(Settings.EQUATIONS_OF_MOTION, EquationsOfMotion.HEIGHT_ENERGY)
 inputs.set_val(Settings.MASS_METHOD, LegacyCode.FLOPS)
+inputs.set_val(Settings.VERBOSITY, 0)
 
 # ---------------------------
 #          OUTPUTS

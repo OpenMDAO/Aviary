@@ -79,9 +79,46 @@ class AntiIcingMassTest(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
 
+    def test_case_3(self):
+        # test with multiple engine types
+        prob = self.prob
+
+        aviary_options = get_flops_inputs('LargeSingleAisle1FLOPS')
+        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2, 2, 4]))
+        aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 8)
+
+        prob.model.add_subsystem(
+            "anti_icing",
+            AntiIcingMass(aviary_options=aviary_options),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+
+        prob.setup(check=False, force_alloc_complex=True)
+
+        prob.set_val(Aircraft.AntiIcing.MASS_SCALER, 1.0)
+        prob.set_val(Aircraft.Fuselage.MAX_WIDTH, 12.33, 'ft')
+        prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, np.array([7.94, 8, 5]), 'ft')
+        prob.set_val(Aircraft.Wing.SPAN, 117.83, 'ft')
+        prob.set_val(Aircraft.Wing.SWEEP, 25.0, 'deg')
+
+        prob.run_model()
+
+        mass = prob.get_val(Aircraft.AntiIcing.MASS)
+        expected_mass = 352.5412182
+
+        assert_near_equal(mass, expected_mass, tolerance=1e-10)
+
+        partial_data = self.prob.check_partials(
+            out_stream=None, method="cs", compact_print=False)
+        assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
+
     def test_IO(self):
         assert_match_varnames(self.prob.model)
 
 
 if __name__ == "__main__":
     unittest.main()
+    # test = AntiIcingMassTest()
+    # test.setUp()
+    # test.test_case_3()

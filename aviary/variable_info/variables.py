@@ -191,15 +191,10 @@ class Aircraft:
         MASS_SCALER = 'aircraft:electrical:mass_scaler'
 
     class Engine:
-        ADDITIONAL_MASS = \
-            'aircraft:engine:additional_mass'
-
-        ADDITIONAL_MASS_FRACTION = \
-            'aircraft:engine:additional_mass_fraction'
-
+        ADDITIONAL_MASS = 'aircraft:engine:additional_mass'
+        ADDITIONAL_MASS_FRACTION = 'aircraft:engine:additional_mass_fraction'
         CONSTANT_FUEL_CONSUMPTION = 'aircraft:engine:constant_fuel_consumption'
         CONTROLS_MASS = 'aircraft:engine:controls_mass'
-
         DATA_FILE = 'aircraft:engine:data_file'
         FLIGHT_IDLE_MAX_FRACTION = 'aircraft:engine:flight_idle_max_fraction'
         FLIGHT_IDLE_MIN_FRACTION = 'aircraft:engine:flight_idle_min_fraction'
@@ -224,7 +219,9 @@ class Aircraft:
         POSITION_FACTOR = 'aircraft:engine:position_factor'
         PROPELLER_ACTIVITY_FACTOR = 'aircraft:engine:propeller_activity_factor'
         PROPELLER_DIAMETER = 'aircraft:engine:propeller_diameter'
-        PROPELLER_INTEGRATED_LIFT_COEFFICIENT = 'aircraft:engine:propeller_integrated_lift_coefficient'
+        PROPELLER_INTEGRATED_LIFT_COEFFICIENT = \
+            'aircraft:engine:propeller_integrated_lift_coefficient'
+
         PYLON_FACTOR = 'aircraft:engine:pylon_factor'
         REFERENCE_DIAMETER = 'aircraft:engine:reference_diameter'
         REFERENCE_MASS = 'aircraft:engine:reference_mass'
@@ -236,17 +233,10 @@ class Aircraft:
         STARTER_MASS = 'aircraft:engine:starter_mass'
         SUBSONIC_FUEL_FLOW_SCALER = 'aircraft:engine:subsonic_fuel_flow_scaler'
         SUPERSONIC_FUEL_FLOW_SCALER = 'aircraft:engine:supersonic_fuel_flow_scaler'
-
-        THRUST_REVERSERS_MASS = \
-            'aircraft:engine:thrust_reversers_mass'
-
-        THRUST_REVERSERS_MASS_SCALER = \
-            'aircraft:engine:thrust_reversers_mass_scaler'
-
+        THRUST_REVERSERS_MASS = 'aircraft:engine:thrust_reversers_mass'
+        THRUST_REVERSERS_MASS_SCALER = 'aircraft:engine:thrust_reversers_mass_scaler'
         TYPE = 'aircraft:engine:type'
-
-        WING_LOCATIONS = \
-            'aircraft:engine:wing_locations'
+        WING_LOCATIONS = 'aircraft:engine:wing_locations'
 
     class Fins:
         AREA = 'aircraft:fins:area'
@@ -669,10 +659,10 @@ class Mission:
         AIRPORT_ALTITUDE = 'mission:landing:airport_altitude'
         BRAKING_DELAY = 'mission:landing:braking_delay'
         BRAKING_FRICTION_COEFFICIENT = 'mission:landing:braking_friction_coefficient'
-        DRAG_COEFFICIENT = 'mission:landing:drag_coefficient'
 
         DRAG_COEFFICIENT_FLAP_INCREMENT = \
             'mission:landing:drag_coefficient_flap_increment'
+        DRAG_COEFFICIENT_MIN = 'mission:landing:drag_coefficient_min'
 
         FIELD_LENGTH = 'mission:landing:field_length'
         FLARE_RATE = 'mission:landing:flare_rate'
