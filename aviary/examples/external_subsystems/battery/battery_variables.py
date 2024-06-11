@@ -41,7 +41,7 @@ class Aircraft(AviaryAircraft):
 
 class Mission(AviaryMission):
 
-    class Battery():
+    class Battery:
         CURRENT = "mission:battery:current"
         HEAT_OUT = "mission:battery:heat_out"
         STATE_OF_CHARGE = "mission:battery:state_of_charge"
