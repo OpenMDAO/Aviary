@@ -229,7 +229,6 @@ class SimuPyProblem(SimulationMixin):
         self.dim_parameters = len(parameters)
         # TODO: add defensive checks to make sure dimensions match in both setup and
         # calls
-
         if verbosity.value >= 2:
             if problem_name:
                 problem_name = '_'+problem_name
@@ -273,8 +272,6 @@ class SimuPyProblem(SimulationMixin):
         for state_name, elem_val in zip(self.states.keys(), xs.T):
             self.prob.set_val(state_name, elem_val,
                               units=self.states[state_name]['units'])
-
-        self.prob.run_model()
 
     @property
     def control(self):
@@ -380,6 +377,8 @@ class SimuPyProblem(SimulationMixin):
         return x
 
     def add_trigger(self, state, value, units=None, channel_name=None):
+        if isinstance(value, tuple):
+            units = value[1]
         if units is None:
             units = self.states[state]['units']
         elif hasattr(self, units):
@@ -410,6 +409,8 @@ class SimuPyProblem(SimulationMixin):
         if isinstance(trigger_value, str):
             if hasattr(self, trigger_value):
                 trigger_value = getattr(self, trigger_value)
+                if isinstance(trigger_value, tuple):
+                    trigger_value, trigger.units = trigger_value
             else:
                 trigger_value = self.get_val(
                     trigger_value, units=trigger.units).squeeze()
@@ -571,17 +572,20 @@ class SGMTrajBase(om.ExplicitComponent):
         self.traj_event_trigger_input = {
             event_trigger_input: {
                 **dict(name="_".join([
-                    event_trigger_input[0].__class__.__name__,
+                    ODEs[self.phase_names.index(
+                        event_trigger_input[0])].__class__.__name__,
                     event_trigger_input[1],
                     trigger_suffix
                 ])),
                 **self.add_input(
                     "_".join([
-                        event_trigger_input[0].__class__.__name__,
+                        ODEs[self.phase_names.index(
+                            event_trigger_input[0])].__class__.__name__,
                         event_trigger_input[1],
                         trigger_suffix
                     ]),
-                    units=event_trigger_input[0].states[event_trigger_input[1]]['units'],
+                    units=ODEs[self.phase_names.index(
+                        event_trigger_input[0])].states[event_trigger_input[1]]['units'],
                 )
             }
             for event_trigger_input in traj_event_trigger_input
@@ -1123,3 +1127,15 @@ class SGMTrajBase(om.ExplicitComponent):
             for param_deriv_val, param_deriv_name in zip(param_deriv, param_dict):
                 J[output_name, param_deriv_name] = param_deriv_val
         self.costate_reses = costate_reses
+
+
+class _killer_comp(om.ExplicitComponent):
+    '''
+    This component will stop the execution of the integration during compute,
+    this is useful for debugging trajectories by getting the initial value
+    of variables for a phase and then exiting.
+    '''
+
+    def compute(self, inputs, outputs):
+        print(f'exit in {self.name}')
+        exit()

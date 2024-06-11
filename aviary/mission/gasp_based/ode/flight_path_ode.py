@@ -10,8 +10,7 @@ from aviary.mission.gasp_based.ode.flight_path_eom import FlightPathEOM
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
-from aviary.mission.ode.altitude_rate import AltitudeRate
+from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
 
 
 class FlightPathODE(BaseODE):
@@ -38,6 +37,7 @@ class FlightPathODE(BaseODE):
             desc="If true then no flaps or gear are included. Useful for high-speed flight phases.")
 
     def setup(self):
+        self.options['auto_order'] = True
         nn = self.options["num_nodes"]
         aviary_options = self.options['aviary_options']
         alpha_mode = self.options['alpha_mode']
@@ -74,11 +74,16 @@ class FlightPathODE(BaseODE):
             EOM_inputs.append('alpha')
 
         if analysis_scheme is AnalysisScheme.SHOOTING:
-            EOM_inputs.append(Dynamic.Mission.ALTITUDE)
-            EOM_inputs.append('distance_trigger')
-            EOM_inputs.append('distance')
-            EOM_inputs.append('t_curr')
-
+            SGM_required_inputs = {
+                't_curr': {'units': 's'},
+                'distance_trigger': {'units': 'ft'},
+                Dynamic.Mission.ALTITUDE: {'units': 'ft'},
+                Dynamic.Mission.DISTANCE: {'units': 'ft'},
+            }
+            if kwargs['method'] == 'cruise':
+                SGM_required_inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE] = {
+                    'val': 0, 'units': 'deg'}
+            add_SGM_required_inputs(self, SGM_required_inputs)
             prop_group = om.Group()
         else:
             prop_group = self
@@ -109,7 +114,6 @@ class FlightPathODE(BaseODE):
             promotes_outputs=[Dynamic.Mission.DYNAMIC_PRESSURE,] + speed_outputs,
         )
 
-        lift_comp = []
         if alpha_mode is AlphaModes.DEFAULT:
             # alpha as input
             pass
@@ -141,9 +145,10 @@ class FlightPathODE(BaseODE):
                     ],
                     promotes_outputs=['required_lift']
                 )
-                lift_comp = ['calc_weight', 'calc_lift']
-            self.AddAlphaControl(alpha_mode=alpha_mode, target_load_factor=1,
-                                 atol=1e-6, rtol=1e-12, num_nodes=nn, print_level=print_level)
+            self.AddAlphaControl(
+                alpha_mode=alpha_mode,
+                target_load_factor=1,
+                atol=1e-6, rtol=1e-12, num_nodes=nn, print_level=print_level)
 
         for subsystem in core_subsystems:
             system = subsystem.build_mission(**kwargs)
@@ -193,7 +198,7 @@ class FlightPathODE(BaseODE):
             FlightPathEOM(
                 num_nodes=nn,
                 ground_roll=self.options['ground_roll'],
-                analysis_scheme=analysis_scheme),
+            ),
             promotes_inputs=EOM_inputs,
             promotes_outputs=[
                 Dynamic.Mission.VELOCITY_RATE,
@@ -211,20 +216,25 @@ class FlightPathODE(BaseODE):
         self.add_excess_rate_comps(nn)
 
         # Example of how to use a print_comp
-        debug_comp = []
         if False:
             from aviary.utils.functions import create_printcomp
             dummy_comp = create_printcomp(
                 all_inputs=[
                     Dynamic.Mission.DISTANCE,
                     Dynamic.Mission.THROTTLE,
-                    'required_lift',
-                    'load_factor',
+                    Dynamic.Mission.THRUST_TOTAL,
+                    'required_thrust',
                     Dynamic.Mission.ALTITUDE,
+                    'load_factor',
+                    'required_lift',
+                    Dynamic.Mission.MASS,
                     Dynamic.Mission.FLIGHT_PATH_ANGLE,
+                    'alpha',
                 ],
                 input_units={
+                    'required_thrust': 'lbf',
                     'required_lift': 'lbf',
+                    'alpha': 'deg',
                     Dynamic.Mission.FLIGHT_PATH_ANGLE: 'deg',
                 })
             self.add_subsystem(
@@ -233,37 +243,6 @@ class FlightPathODE(BaseODE):
                 promotes_inputs=["*"],)
             self.set_input_defaults(
                 Dynamic.Mission.DISTANCE, val=0, units='NM')
-            debug_comp = ['dummy_comp']
-
-        if analysis_scheme is AnalysisScheme.SHOOTING:
-            self.add_subsystem('mass_trigger',
-                               om.ExecComp(
-                                   'mass_trigger = OEM + payload + reserve_fuel + descent_fuel',
-                                   mass_trigger={'val': 0, 'units': 'lbm'},
-                                   OEM={'val': 0, 'units': 'lbm'},
-                                   payload={'val': 0, 'units': 'lbm'},
-                                   reserve_fuel={'val': 0, 'units': 'lbm'},
-                                   descent_fuel={'val': 0, 'units': 'lbm'},
-                               ),
-                               promotes_inputs=[
-                                   ('OEM', Aircraft.Design.OPERATING_MASS),
-                                   ('payload', Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS),
-                                   ('reserve_fuel', Mission.Design.RESERVE_FUEL),
-                                   'descent_fuel',
-                               ],
-                               )
-
-            self.set_order(['params', 'USatm', 'fc',
-                            ] + lift_comp + [
-                'core_aerodynamics',
-                'alpha_comp',
-                'prop_group',
-                'flight_path_eom',
-                'mass_trigger',
-                'SPECIFIC_ENERGY_RATE_EXCESS',
-                'ALTITUDE_RATE_MAX',
-            ] +
-                debug_comp)
 
         ParamPort.set_default_vals(self)
         if not self.options["clean"]:

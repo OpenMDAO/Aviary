@@ -5,14 +5,14 @@ from dymos.models.atmosphere.atmos_1976 import USatm1976Comp
 from aviary.mission.gasp_based.flight_conditions import FlightConditions
 from aviary.mission.gasp_based.ode.base_ode import BaseODE
 from aviary.mission.gasp_based.ode.climb_eom import ClimbRates
-from aviary.mission.gasp_based.ode.constraints.flight_constraints import \
-    FlightConstraints
+from aviary.mission.gasp_based.ode.constraints.flight_constraints import FlightConstraints
 from aviary.mission.gasp_based.ode.constraints.speed_constraints import SpeedConstraints
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
 from aviary.variable_info.enums import AnalysisScheme, AlphaModes, SpeedType
 from aviary.variable_info.variables import Dynamic
+from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
 
 
 class ClimbODE(BaseODE):
@@ -38,6 +38,7 @@ class ClimbODE(BaseODE):
         )
 
     def setup(self):
+        self.options['auto_order'] = True
         nn = self.options["num_nodes"]
         analysis_scheme = self.options["analysis_scheme"]
         aviary_options = self.options['aviary_options']
@@ -50,6 +51,14 @@ class ClimbODE(BaseODE):
         elif input_speed_type is SpeedType.MACH:
             speed_inputs = ["mach"]
             speed_outputs = ["EAS", ("TAS", Dynamic.Mission.VELOCITY)]
+
+        if analysis_scheme is AnalysisScheme.SHOOTING:
+            add_SGM_required_inputs(self, {
+                't_curr': {'units': 's'},
+                Dynamic.Mission.DISTANCE: {'units': 'ft'},
+                'alt_trigger': {'units': self.options['alt_trigger_units'], 'val': 10e3},
+                'speed_trigger': {'units': self.options['speed_trigger_units'], 'val': 100},
+            })
 
         # TODO: paramport
         self.add_subsystem("params", ParamPort(), promotes=["*"])
@@ -75,10 +84,6 @@ class ClimbODE(BaseODE):
         if analysis_scheme is AnalysisScheme.COLLOCATION:
             EAS_target = self.options["EAS_target"]
             mach_cruise = self.options["mach_cruise"]
-
-            constraint_args = {}
-            integration_states = []
-            constraint_inputs = []
 
             mach_balance_group = self.add_subsystem(
                 "mach_balance_group", subsys=om.Group(), promotes=["*"]
@@ -128,13 +133,6 @@ class ClimbODE(BaseODE):
             flight_condition_group = mach_balance_group
 
         elif analysis_scheme is AnalysisScheme.SHOOTING:
-            constraint_args = {'analysis_scheme': AnalysisScheme.SHOOTING,
-                               'alt_trigger_units': self.options["alt_trigger_units"],
-                               'speed_trigger_units': self.options["speed_trigger_units"]}
-
-            integration_states = ["t_curr", Dynamic.Mission.DISTANCE]
-            constraint_inputs = ["alt_trigger", "speed_trigger"]
-
             lift_balance_group = self
             flight_condition_group = self
 
@@ -148,7 +146,6 @@ class ClimbODE(BaseODE):
         kwargs = {'num_nodes': nn, 'aviary_inputs': aviary_options,
                   'method': 'cruise'}
         # collect the propulsion group names for later use with
-        prop_groups = []
         for subsystem in core_subsystems:
             system = subsystem.build_mission(**kwargs)
             if system is not None:
@@ -159,9 +156,6 @@ class ClimbODE(BaseODE):
                                                          **kwargs),
                                                      promotes_outputs=subsystem.mission_outputs(**kwargs))
                 else:
-                    if isinstance(subsystem, PropulsionBuilderBase):
-                        prop_groups.append(subsystem.name)
-
                     self.add_subsystem(subsystem.name,
                                        system,
                                        promotes_inputs=subsystem.mission_inputs(
@@ -179,15 +173,13 @@ class ClimbODE(BaseODE):
 
         lift_balance_group.add_subsystem(
             "climb_eom",
-            ClimbRates(
-                num_nodes=nn,
-                analysis_scheme=analysis_scheme),
+            ClimbRates(num_nodes=nn),
             promotes_inputs=[
                 Dynamic.Mission.MASS,
                 Dynamic.Mission.VELOCITY,
                 Dynamic.Mission.DRAG,
-                Dynamic.Mission.THRUST_TOTAL,] +
-            integration_states,
+                Dynamic.Mission.THRUST_TOTAL
+            ],
             promotes_outputs=[
                 Dynamic.Mission.ALTITUDE_RATE,
                 Dynamic.Mission.DISTANCE_RATE,
@@ -204,7 +196,7 @@ class ClimbODE(BaseODE):
 
         self.add_subsystem(
             "constraints",
-            FlightConstraints(num_nodes=nn, **constraint_args),
+            FlightConstraints(num_nodes=nn),
             promotes_inputs=[
                 "alpha",
                 "rho",
@@ -213,17 +205,12 @@ class ClimbODE(BaseODE):
                 Dynamic.Mission.MASS,
                 ("TAS", Dynamic.Mission.VELOCITY),
             ]
-            + ["aircraft:*"]
-            + constraint_inputs,
+            + ["aircraft:*"],
             promotes_outputs=["theta", "TAS_violation"],
         )
 
         # the last two subsystems will also be used for constraints
         self.add_excess_rate_comps(nn)
-
-        if analysis_scheme is AnalysisScheme.COLLOCATION:
-            self.set_order(['params', 'USatm', 'mach_balance_group'] + prop_groups +
-                           ['lift_balance_group', 'constraints', 'SPECIFIC_ENERGY_RATE_EXCESS', 'ALTITUDE_RATE_MAX'])
 
         ParamPort.set_default_vals(self)
         self.set_input_defaults("CL_max", val=5 * np.ones(nn), units="unitless")

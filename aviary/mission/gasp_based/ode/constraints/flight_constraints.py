@@ -2,7 +2,6 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.variable_info.enums import AnalysisScheme
 from aviary.variable_info.functions import add_aviary_input
 from aviary.variable_info.variables import Aircraft, Dynamic
 
@@ -19,22 +18,12 @@ class FlightConstraints(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare("analysis_scheme", types=AnalysisScheme,
-                             default=AnalysisScheme.COLLOCATION)
         self.options.declare("num_nodes", types=int)
-        self.options.declare("alt_trigger_units", default="ft")
-        self.options.declare("speed_trigger_units", default="kn")
 
     def setup(self):
-        analysis_scheme = self.options["analysis_scheme"]
         nn = self.options["num_nodes"]
         arange = np.arange(nn)
 
-        if analysis_scheme is AnalysisScheme.SHOOTING:
-            self.add_input(
-                "alt_trigger", units=self.options["alt_trigger_units"], val=10.e3)
-            self.add_input("speed_trigger",
-                           units=self.options["speed_trigger_units"], val=100)
         self.add_input(
             Dynamic.Mission.MASS,
             val=np.ones(nn),

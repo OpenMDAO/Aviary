@@ -66,6 +66,19 @@ class AviaryValues(NamedValues):
                 else:
                     my_val = self._convert_to_enum(val, expected_types)
 
+        # Special handling if the variable is supposed to be an array
+        if key in _MetaData.keys():
+            default_value = _MetaData[key]['default_value']
+            # if the item is supposed to be an iterable...
+            if self._is_iterable(default_value):
+                # but the provided value is not...
+                if not self._is_iterable(my_val):
+                    # make object the correct iterable
+                    if isinstance(default_value, tuple):
+                        my_val = (my_val,)
+                    else:
+                        my_val = np.array([my_val], dtype=type(default_value[0]))
+
         self._check_type(key, my_val, meta_data=meta_data)
         self._check_units_compatability(key, my_val, units, meta_data=meta_data)
 
@@ -75,9 +88,10 @@ class AviaryValues(NamedValues):
         if key in meta_data.keys():
             expected_types = meta_data[key]['types']
             if expected_types is not None:
-                if isinstance(expected_types, list):
+                if self._is_iterable(expected_types):
                     expected_types = tuple(expected_types)
-                # if val is not iterable, add it to a list (length 1)
+                # if val is not iterable, add it to a list (length 1), checks assume
+                # val is iterable
                 if not self._is_iterable(val):
                     val = [val]
                 # numpy arrays have special typings. Extract item of equivalent built-in python type
@@ -99,7 +113,8 @@ class AviaryValues(NamedValues):
                     if (not isinstance(item, expected_types)) or (
                             (has_bool == False) and (isinstance(item, bool))):
                         raise TypeError(
-                            f'{key} is of type(s) {meta_data[key]["types"]} but you have provided a value of type {type(item)}.')
+                            f'{key} is of type(s) {meta_data[key]["types"]} but you '
+                            f'have provided a value of type {type(item)}.')
 
     def _check_units_compatability(self, key, val, units, meta_data=_MetaData):
         if key in meta_data.keys():
@@ -119,7 +134,7 @@ class AviaryValues(NamedValues):
                 raise KeyError('There is an unknown error with your units.')
 
     def _is_iterable(self, val):
-        return isinstance(val, list) or isinstance(val, np.ndarray) or isinstance(val, tuple)
+        return isinstance(val, _valid_iterables)
 
     def _convert_to_enum(self, val, enum_type):
         if isinstance(val, str):
@@ -131,3 +146,6 @@ class AviaryValues(NamedValues):
                 return enum_type[val.upper()]
         else:
             return enum_type(val)
+
+
+_valid_iterables = (list, np.ndarray, tuple)
