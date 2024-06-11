@@ -5,10 +5,9 @@ from aviary.mission.gasp_based.ode.accel_eom import AccelerationRates
 from aviary.mission.gasp_based.ode.base_ode import BaseODE
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.subsystems.mass.mass_to_weight import MassToWeight
-from aviary.variable_info.enums import AnalysisScheme, SpeedType
+from aviary.variable_info.enums import AnalysisScheme, AnalysisScheme, SpeedType
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
-from aviary.mission.ode.altitude_rate import AltitudeRate
+from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs, add_SGM_required_outputs
 
 
 class AccelODE(BaseODE):
@@ -24,6 +23,15 @@ class AccelODE(BaseODE):
         analysis_scheme = self.options["analysis_scheme"]
         aviary_options = self.options['aviary_options']
         core_subsystems = self.options['core_subsystems']
+
+        if analysis_scheme is AnalysisScheme.SHOOTING:
+            add_SGM_required_inputs(self, {
+                't_curr': {'units': 's'},
+                Dynamic.Mission.DISTANCE: {'units': 'ft'},
+            })
+            add_SGM_required_outputs(self, {
+                Dynamic.Mission.ALTITUDE_RATE: {'units': 'ft/s'},
+            })
 
         # TODO: paramport
         self.add_subsystem("params", ParamPort(), promotes=["*"])
@@ -65,26 +73,17 @@ class AccelODE(BaseODE):
                                    promotes_inputs=subsystem.mission_inputs(**kwargs),
                                    promotes_outputs=subsystem.mission_outputs(**kwargs))
 
-        sgm_inputs = [
-            't_curr', Dynamic.Mission.DISTANCE] if analysis_scheme is AnalysisScheme.SHOOTING else []
-        sgm_outputs = [
-            Dynamic.Mission.ALTITUDE_RATE] if analysis_scheme is AnalysisScheme.SHOOTING else []
-
         self.add_subsystem(
             "accel_eom",
-            AccelerationRates(
-                num_nodes=nn,
-                analysis_scheme=analysis_scheme),
+            AccelerationRates(num_nodes=nn),
             promotes_inputs=[
                 Dynamic.Mission.MASS,
                 Dynamic.Mission.VELOCITY,
                 Dynamic.Mission.DRAG,
-                Dynamic.Mission.THRUST_TOTAL, ]
-            + sgm_inputs,
+                Dynamic.Mission.THRUST_TOTAL, ],
             promotes_outputs=[
                 Dynamic.Mission.VELOCITY_RATE,
-                Dynamic.Mission.DISTANCE_RATE, ]
-            + sgm_outputs,
+                Dynamic.Mission.DISTANCE_RATE, ],
         )
 
         self.add_excess_rate_comps(nn)
