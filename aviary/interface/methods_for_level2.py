@@ -303,8 +303,8 @@ class AviaryProblem(om.Problem):
                     elif self.analysis_scheme is AnalysisScheme.SHOOTING:
                         from aviary.interface.default_phase_info.two_dof_fiti import phase_info, \
                             phase_info_parameterization
-                    phase_info, _ = phase_info_parameterization(
-                        phase_info, None, self.aviary_inputs)
+                        phase_info, _ = phase_info_parameterization(
+                            phase_info, None, self.aviary_inputs)
 
                 elif self.mission_method is HEIGHT_ENERGY:
                     from aviary.interface.default_phase_info.height_energy import phase_info
