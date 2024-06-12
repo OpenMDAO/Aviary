@@ -2255,7 +2255,7 @@ class AviaryProblem(om.Problem):
                 )
 
     def run_aviary_problem(self,
-                           record_filename="aviary_history.db",
+                           record_filename="problem_history.db",
                            optimization_history_filename=None,
                            restart_filename=None, suppress_solver_print=True, run_driver=True, simulate=False, make_plots=True):
         """
@@ -2264,7 +2264,7 @@ class AviaryProblem(om.Problem):
         Parameters
         ----------
         record_filename : str, optional
-            The name of the database file where the solutions are to be recorded. The default is "aviary_history.db".
+            The name of the database file where the solutions are to be recorded. The default is "problem_history.db".
         optimization_history_filename : str, None
             The name of the database file where the driver iterations are to be recorded. The default is None.
         restart_filename : str, optional

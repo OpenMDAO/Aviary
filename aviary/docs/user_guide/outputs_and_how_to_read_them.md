@@ -44,6 +44,8 @@ The resulting dashboard would look something like this:
 The Problem recorder file is required for the Aircraft 3d model tab to be displayed in the dashboard.
 ```
 
+The `problem_recorder` and `driver_recorder` options to the dashboard command are used to indicate the file names for those recorder files, if they are not the standard values of `problem_history.db` and `driver_history.db`, respectively. If `driver_recorder` is set to the string `"None"`, then the driver case recorder file is ignored. This is useful if the user is not interested in seeing dashboard tabs related to driver history. If that file is large, it could unnecessarily be read and slow down the generation of the dashboard significantly. 
+
 ## Accessing Variables
 
 How to get print/access any variable as an output.
@@ -81,7 +83,7 @@ OpenMDAO has a reports system which will generate reports when you run your mode
 
 ### Database Output Files
 
-There is an SQLite database output. By default, it is `aviary_history.db`. It can be used to rerun your case though we do not detail that here. Users can write separate Python script to create user customized outputs and graphs. We will show how to use the this database to create user's customized graph in [the onboarding docs](../getting_started/onboarding.md).
+There is an SQLite database output. By default, it is `problem_history.db`. It can be used to rerun your case though we do not detail that here. Users can write separate Python script to create user customized outputs and graphs. We will show how to use the this database to create user's customized graph in [the onboarding docs](../getting_started/onboarding.md).
 
 ### Report Location
 
