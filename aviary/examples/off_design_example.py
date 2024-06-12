@@ -34,7 +34,7 @@ prob.add_post_mission_systems()
 # Link phases and variables
 prob.link_phases()
 
-prob.add_driver("SLSQP", max_iter=100)
+prob.add_driver('SNOPT', max_iter=100, verbosity=Verbosity.DEBUG)
 
 prob.add_design_variables()
 
@@ -47,16 +47,6 @@ prob.setup()
 prob.set_initial_guesses()
 
 prob.run_aviary_problem()
-
-print(f'Design Range = {prob.get_val(av.Mission.Design.RANGE)}')
-print(f'Summary Range = {prob.get_val(av.Mission.Summary.RANGE)}')
-print(f'Fuel mass = {prob.get_val(av.Mission.Design.FUEL_MASS)}')
-print(f'Total fuel mass = {prob.get_val(av.Mission.Summary.TOTAL_FUEL_MASS)}')
-print(f'Empty mass = {prob.get_val(av.Aircraft.Design.OPERATING_MASS)}')
-print(f'Payload mass = {prob.get_val(av.Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)}')
-print(f'Design Gross mass = {prob.get_val(av.Mission.Design.GROSS_MASS)}')
-print(f'Summary Gross mass = {prob.get_val(av.Mission.Summary.GROSS_MASS)}')
-
 prob_fallout = av.AviaryProblem()
 
 # Load inputs from .csv file
@@ -76,22 +66,66 @@ mission_mass = prob.get_val(Mission.Summary.GROSS_MASS, units='lbm')
 # mission_mass = 162007.6236365
 prob_fallout.aviary_inputs.set_val('mission:design:gross_mass', mission_mass, units='lbm')
 prob_fallout.aviary_inputs.set_val('mission:summary:gross_mass', mission_mass, units='lbm')
-print(prob_fallout.aviary_inputs)
-prob_fallout.load_inputs(prob_fallout.aviary_inputs, phase_info)
-
 
 prob_fallout.check_and_preprocess_inputs()
 prob_fallout.add_pre_mission_systems()
-prob_fallout.add_phases()
+prob_fallout.add_phases(phase_info_parameterization=phase_info_parameterization)
 prob_fallout.add_post_mission_systems()
 prob_fallout.link_phases()
-prob_fallout.add_driver('SLSQP', max_iter=100)
+prob_fallout.add_driver('SNOPT', max_iter=100, verbosity=Verbosity.DEBUG)
 prob_fallout.add_design_variables()
 prob_fallout.add_objective()
 prob_fallout.setup()
 prob_fallout.set_initial_guesses()
 prob_fallout.run_aviary_problem()
 
+prob_alternate = av.AviaryProblem()
+
+# Load inputs from .csv file
+prob_alternate.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
+
+# print the problem type
+print(prob_alternate.problem_type)
+
+# now change the problem type:
+print("Changing problem type to sizing - check:")
+prob_alternate.problem_type = ProblemType.ALTERNATE
+prob_alternate.aviary_inputs.set_val('problem_type', ProblemType.ALTERNATE, units='unitless')
+
+print(prob_alternate.problem_type)
+
+mission_mass = prob.get_val(Mission.Summary.GROSS_MASS, units='lbm')
+# mission_mass = 162007.6236365
+prob_alternate.aviary_inputs.set_val('mission:design:gross_mass', mission_mass, units='lbm')
+prob_alternate.aviary_inputs.set_val('mission:summary:gross_mass', mission_mass, units='lbm')
+
+prob_alternate.check_and_preprocess_inputs()
+prob_alternate.add_pre_mission_systems()
+prob_alternate.add_phases(phase_info_parameterization=phase_info_parameterization)
+prob_alternate.add_post_mission_systems()
+prob_alternate.link_phases()
+prob_alternate.add_driver('SNOPT', max_iter=100, verbosity=Verbosity.DEBUG)
+prob_alternate.add_design_variables()
+prob_alternate.add_objective()
+prob_alternate.setup()
+prob_alternate.set_initial_guesses()
+prob_alternate.run_aviary_problem()
+
+print('--------------')
+print('Sizing Results')
+print('--------------')
+print(f'Design Range = {prob.get_val(av.Mission.Design.RANGE)}')
+print(f'Summary Range = {prob.get_val(av.Mission.Summary.RANGE)}')
+print(f'Fuel mass = {prob.get_val(av.Mission.Design.FUEL_MASS)}')
+print(f'Total fuel mass = {prob.get_val(av.Mission.Summary.TOTAL_FUEL_MASS)}')
+print(f'Empty mass = {prob.get_val(av.Aircraft.Design.OPERATING_MASS)}')
+print(f'Payload mass = {prob.get_val(av.Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)}')
+print(f'Design Gross mass = {prob.get_val(av.Mission.Design.GROSS_MASS)}')
+print(f'Summary Gross mass = {prob.get_val(av.Mission.Summary.GROSS_MASS)}')
+
+print('---------------')
+print('Fallout Results')
+print('---------------')
 print(f'Design Range = {prob_fallout.get_val(av.Mission.Design.RANGE)}')
 print(f'Summary Range = {prob_fallout.get_val(av.Mission.Summary.RANGE)}')
 print(f'Fuel mass = {prob_fallout.get_val(av.Mission.Design.FUEL_MASS)}')
@@ -101,3 +135,20 @@ print(f'Payload mass = {prob_fallout.get_val(av.Aircraft.CrewPayload.TOTAL_PAYLO
 print(f'Design Gross mass = {prob_fallout.get_val(av.Mission.Design.GROSS_MASS)}')
 print(f'Summary Gross mass = {prob_fallout.get_val(av.Mission.Summary.GROSS_MASS)}')
 
+print('---------------')
+print('Alternate Results')
+print('---------------')
+print(f'Design Range = {prob_alternate.get_val(av.Mission.Design.RANGE)}')
+print(f'Summary Range = {prob_alternate.get_val(av.Mission.Summary.RANGE)}')
+print(f'Fuel mass = {prob_alternate.get_val(av.Mission.Design.FUEL_MASS)}')
+print(f'Total fuel mass = {prob_alternate.get_val(av.Mission.Summary.TOTAL_FUEL_MASS)}')
+print(f'Empty mass = {prob_alternate.get_val(av.Aircraft.Design.OPERATING_MASS)}')
+print(f'Payload mass = {prob_alternate.get_val(av.Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)}')
+print(f'Design Gross mass = {prob_alternate.get_val(av.Mission.Design.GROSS_MASS)}')
+print(f'Summary Gross mass = {prob_alternate.get_val(av.Mission.Summary.GROSS_MASS)}')
+
+
+# print('Fallout Mission Vars')
+# prob_fallout.model.list_vars(includes='*mass')
+print('Alternate Mission Vars')
+prob_alternate.model.list_vars(includes='*mass')

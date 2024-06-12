@@ -23,7 +23,7 @@ prob.check_and_preprocess_inputs()
 
 prob.add_pre_mission_systems()
 
-prob.add_phases(phase_info_parameterization=phase_info_parameterization)
+prob.add_phases()
 
 prob.add_post_mission_systems()
 
