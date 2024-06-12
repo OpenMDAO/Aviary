@@ -20,7 +20,7 @@ phase_info = {
             "solve_for_distance": False,
             "initial_mach": (0.2, "unitless"),
             "final_mach": (0.77, "unitless"),
-            "mach_bounds": ((0.18000000000000002, 0.79), "unitless"),
+            "mach_bounds": ((0.18, 0.79), "unitless"),
             "initial_altitude": (0.0, "ft"),
             "final_altitude": (34000.0, "ft"),
             "altitude_bounds": ((0.0, 34500.0), "ft"),
