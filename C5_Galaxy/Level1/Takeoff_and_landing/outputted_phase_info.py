@@ -1,13 +1,5 @@
-#Chris Psenica
-#Aviary Test For A C5 Galaxy
-#Level 1
-
-#---------- Imports ----------
-import aviary.api as av
-
-#---------- Phase Info ----------
 phase_info = {
-    "pre_mission": {"include_takeoff": True, "optimize_mass": True},
+    "pre_mission": {"include_takeoff": False, "optimize_mass": True},
     "climb_1": {
         "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
         "user_options": {
@@ -89,37 +81,3 @@ phase_info = {
         "target_range": (2194, "nmi"),
     },
 }
-
-#---------- Run Aviary ----------
-prob = av.run_aviary('define_C5.csv' , phase_info , optimizer = "SLSQP" , make_plots = True , max_iter = 10000)
-
-#print(prob.get_val(av.Mission.Summary.GROSS_MASS, units='lbm')[0])
-
-#---------- Assumptions/Approximations/Info ----------
-'''
-Engine: CF6-50E for engine mass data
-
-
-'''
-
-#---------- Mission ----------
-'''
-Polynomial control order: 1
-Number of segments: 2
-Duration: 300 minutes
-Optimize Mach: None
-Optimize Altitude: None
-
-----------------------------------------------------
-|| Pt. number ||   1   ||   2   ||   3   ||   4   ||
-----------------------------------------------------
-|| Altitude   ||   0   || 34000 || 34000 || 1000  ||
-----------------------------------------------------
-|| Mach       ||  0.2  ||  0.77 ||  0.77 ||  0.2  ||  
-----------------------------------------------------
-
-Exit: condition: Exit Mode 0
-Error: N/A
-Notes: An unusual amount of drag is being produced with this model. The drag has been reduced by 80% via scalars.
-
-'''

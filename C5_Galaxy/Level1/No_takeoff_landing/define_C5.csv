@@ -42,13 +42,13 @@ aircraft:engine:geopotential_alt,False,unitless
 aircraft:engine:ignore_negative_thrust,False,unitless
 aircraft:engine:interpolation_method,slinear,unitless
 aircraft:engine:mass_scaler,1.0,unitless
-aircraft:engine:mass,8176,lbm
+aircraft:engine:mass,8825,lbm
 aircraft:engine:num_fuselage_engines,0,unitless
-aircraft:engine:reference_mass,8176,lbm
-aircraft:engine:reference_sls_thrust,51250,lbf
+aircraft:engine:reference_mass,8825,lbm
+aircraft:engine:reference_sls_thrust,52500,lbf
 aircraft:engine:scale_mass,True,unitless
 aircraft:engine:scale_performance,True,unitless
-aircraft:engine:scaled_sls_thrust,51250,lbf
+aircraft:engine:scaled_sls_thrust,52500,lbf
 aircraft:engine:subsonic_fuel_flow_scaler,1.0,unitless
 aircraft:engine:supersonic_fuel_flow_scaler,1.0,unitless
 aircraft:engine:thrust_reversers_mass_scaler,1.0,unitless
@@ -87,7 +87,7 @@ aircraft:horizontal_tail:thickness_to_chord,0.16,unitless
 aircraft:horizontal_tail:vertical_tail_fraction,1.0,unitless
 aircraft:horizontal_tail:wetted_area_scaler,1.0,unitless
 aircraft:hydraulics:mass_scaler,1.0,unitless
-aircraft:hydraulics:system_pressure,3000.0,lbf/ft**2
+aircraft:hydraulics:system_pressure,3000.0,PSI
 aircraft:instruments:mass_scaler,1.0,unitless
 aircraft:landing_gear:carrier_based,False,unitless
 aircraft:landing_gear:main_gear_mass_scaler,1.0,unitless
@@ -146,7 +146,7 @@ mission:constraints:max_mach,0.77,unitless
 mission:design:cruise_altitude,34000,ft
 mission:design:gross_mass,840000,lbm
 mission:design:range,2300,NM
-mission:design:thrust_takeoff_per_eng,51250,lbf
+mission:design:thrust_takeoff_per_engine,52500,lbf
 mission:landing:lift_coefficient_max,3.0,unitless
 mission:summary:cruise_mach,0.77,unitless
 mission:summary:fuel_flow_scaler,1.0,unitless
