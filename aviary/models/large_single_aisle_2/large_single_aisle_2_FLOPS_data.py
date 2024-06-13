@@ -122,7 +122,7 @@ inputs.set_val(Aircraft.HorizontalTail.WETTED_AREA_SCALER, 1.0)
 
 # Hydraulics
 # ---------------------------
-inputs.set_val(Aircraft.Hydraulics.SYSTEM_PRESSURE, 3000., 'lbf/ft**2')
+inputs.set_val(Aircraft.Hydraulics.SYSTEM_PRESSURE, 3000., 'psi')
 inputs.set_val(Aircraft.Hydraulics.MASS_SCALER, 1.0)
 
 # Instruments
@@ -331,7 +331,7 @@ outputs.set_val(Aircraft.HorizontalTail.MASS, 1931.8, 'lbm')
 
 outputs.set_val(Aircraft.Hydraulics.MASS, 1075.3, 'lbm')
 
-outputs.set_val(Aircraft.Hydraulics.SYSTEM_PRESSURE, 3000., 'lbf/ft**2')
+outputs.set_val(Aircraft.Hydraulics.SYSTEM_PRESSURE, 3000., 'psi')
 
 outputs.set_val(Aircraft.Instruments.MASS, 484., 'lbm')
 
