@@ -100,3 +100,8 @@ Collocation results are presented as part of a fixed step-size timeseries. To im
 ```{note}
 When using Aviary, the `AnalysisScheme` option is used to select the integration method. The default is `COLLOCATION`, but this can be changed to `SHOOTING` to use the shooting method.
 ```
+```{note}
+Due to limitations in the availability of developer time, there will be limited feature development for the shooting method for the near future from the core team; however, we welcome contributions from users.
+
+For a non-exhaustive list of the currently available key features and how to use them, please see [SGM Capabilities](SGM_capabilities.ipynb)
+```
