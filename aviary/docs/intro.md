@@ -27,7 +27,7 @@ Use the interactive table of contents on the left side of the page to navigate t
 
 ## User Guide
 
-The [Aviary user interface](user_guide/user_interface.md) is under development and employs a 3-tiered approach that is broken up into 3 separate levels.
+The [Aviary user interface](user_guide/user_interface) is under development and employs a 3-tiered approach that is broken up into 3 separate levels.
 The user guide walks through how to use each of these levels in detail.
 
 The actual finer points of aircraft design and what these input values should be set to are beyond the scope of this documentation.
@@ -47,7 +47,7 @@ The theory guide also gives a much deeper understanding of the equations and mod
 
 ## Developer Guide
 
-This [developer guide](developer_guide/codebase_overview.md) walks through each aspect of the code from the perspective of a developer who would like to contribute code.
+This [developer guide](developer_guide/codebase_overview) walks through each aspect of the code from the perspective of a developer who would like to contribute code.
 
 The Aviary development team is housed out of NASA but welcomes code input and pull requests from the public.
 We are developing a formal review process, but at the moment each code contribution will be made as a pull request and reviewed by the development team.
@@ -55,7 +55,7 @@ We are developing a formal review process, but at the moment each code contribut
 ## Miscellaneous Resources
 
 There are some features of the Aviary code which are not addressed in the above documentation.
-The [miscellaneous resources](misc_resources/FAQ.md) section includes documentation on these additional features, as well as other relevant information.
+The [miscellaneous resources](misc_resources/FAQ) section includes documentation on these additional features, as well as other relevant information.
 
 ## Table of contents
 
