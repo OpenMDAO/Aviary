@@ -27,8 +27,8 @@ class IdleDescentTestCase(unittest.TestCase):
         aviary_inputs.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=28690, units="lbf")
         aviary_inputs.set_val(Dynamic.Mission.THROTTLE, val=0, units="unitless")
 
-        engine = build_engine_deck(aviary_options=aviary_inputs)[0]
-        preprocess_propulsion(aviary_inputs, [engine])
+        engine = build_engine_deck(aviary_options=aviary_inputs)
+        preprocess_propulsion(aviary_inputs, engine)
 
         default_mission_subsystems = get_default_mission_subsystems(
             'GASP', build_engine_deck(aviary_inputs))
