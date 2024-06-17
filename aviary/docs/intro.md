@@ -36,13 +36,13 @@ This user guide is simply designed to teach the basics of using Aviary for aircr
 
 ## Examples
 
-The Aviary code includes a [suite of built-in examples](examples/intro.md) which the Aviary team has developed to demonstrate the capability of the Aviary code.
+The Aviary code includes a [suite of built-in examples](examples/intro) which the Aviary team has developed to demonstrate the capability of the Aviary code.
 These examples range in complexity and length from a Level 1 input file of a simple aircraft analysis including only Aviary core subsystems to a Level 3 input script where the user has added several external subsystems and manually controlled what variables are passed where.
 The Aviary team recommends that the examples be used as as starting point for building your first few Aviary models until you have built up examples of your own.
 
 ## Theory Guide
 
-The [theory guide](theory_guide/intro.md) details how the five core subsystems (aerodynamics, propulsion, mass, geometry, and mission analysis) work and how the integration capability combines them together.
+The [theory guide](theory_guide/intro) details how the five core subsystems (aerodynamics, propulsion, mass, geometry, and mission analysis) work and how the integration capability combines them together.
 The theory guide also gives a much deeper understanding of the equations and modeling assumptions behind Aviary.
 
 ## Developer Guide
