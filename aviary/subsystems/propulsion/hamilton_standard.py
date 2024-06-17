@@ -5,6 +5,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH, TSLS_DEGR
+from aviary.utils.functions import add_aviary_input, add_aviary_output
 
 
 def _unint(xa, ya, x):
@@ -469,7 +470,7 @@ class PreHamiltonStandard(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
 
-        self.add_input(Aircraft.Engine.PROPELLER_DIAMETER, val=0.0, units='ft')
+        add_aviary_input(self, Aircraft.Engine.PROPELLER_DIAMETER, val=0.0, units='ft')
         self.add_input(Dynamic.Mission.PROPELLER_TIP_SPEED,
                        val=np.zeros(nn), units='ft/s')
         self.add_input(Dynamic.Mission.SHAFT_POWER, val=np.zeros(nn), units='hp')

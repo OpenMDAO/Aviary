@@ -14,5 +14,5 @@ class TestBattery(av.TestSubsystemBuilderBase):
         self.aviary_values = av.AviaryValues()
 
 
-if __name__ == '__main__':
-    unittest.main()
+# if __name__ == '__main__':
+    # unittest.main()

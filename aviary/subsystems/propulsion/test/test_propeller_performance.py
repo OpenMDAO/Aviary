@@ -126,7 +126,7 @@ class PropellerPerformanceTest(unittest.TestCase):
         prob.set_val(Dynamic.Mission.SHAFT_POWER, [1850.0, 1850.0, 900.0], units="hp")
         # prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
         #              [1.0], units="unitless")
-        prob.set_val('tip_mach_max',
+        prob.set_val(Aircraft.Engine.PROPELLER_TIP_MACH_MAX,
                      1.0, units="unitless")
         prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED_MAX,
                      [800.00, 800.0, 750.0], units="ft/s")

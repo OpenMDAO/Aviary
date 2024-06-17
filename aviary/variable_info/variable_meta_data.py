@@ -1981,6 +1981,18 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Engine.PROPELLER_TIP_MACH_MAX,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,  # TODO this needs verification
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='unitless',
+    desc='maximum allowable Mach number at propeller tip (based on helical speed)',
+    default_value=1.0,
+)
+
+add_meta_data(
     Aircraft.Engine.PROPELLER_TIP_SPEED_MAX,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.TSPDMX',
@@ -1988,7 +2000,7 @@ add_meta_data(
                      "LEAPS1": None
                      },
     units='ft/s',
-    desc='maximum allowable propeller tip speed',
+    desc='maximum allowable propeller linear tip speed',
     default_value=800.0,
 )
 
@@ -6354,7 +6366,7 @@ add_meta_data(
                      "LEAPS1": None
                      },
     units='ft/s',
-    desc='propeller tip speed due to rotation (not airspeed at propeller tip)',
+    desc='linear propeller tip speed due to rotation (not airspeed at propeller tip)',
     default_value=500.0,
 )
 

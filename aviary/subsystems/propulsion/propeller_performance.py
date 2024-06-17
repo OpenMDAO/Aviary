@@ -208,9 +208,10 @@ class PropellerPerformance(om.Group):
                                    tip_speed_mach_limit={'units': 'ft/s', 'shape': nn},
                                    velocity={'units': 'ft/s', 'shape': nn},
                                    sos={'units': 'ft/s', 'shape': nn},
-                                   tip_mach_max={'units': 'unitless', 'val': np.ones(nn)},),
+                                   tip_mach_max={'units': 'unitless', 'val': 1.0},),
                                promotes_inputs=[
-                                   '*', ('sos', Dynamic.Mission.SPEED_OF_SOUND)],
+                                   '*', ('sos', Dynamic.Mission.SPEED_OF_SOUND),
+                                   ('tip_mach_max', Aircraft.Engine.PROPELLER_TIP_MACH_MAX)],
                                promotes_outputs=['*']
                                )
 
@@ -218,7 +219,7 @@ class PropellerPerformance(om.Group):
                                om.ExecComp(
                                    'prop_tip_speed = minimum(max_tip_speed, tip_speed_mach_limit)',
                                    prop_tip_speed={'units': 'ft/s', 'shape': nn},
-                                   max_tip_speed={'units': 'ft/s', 'shape': nn},
+                                   max_tip_speed={'units': 'ft/s', 'val': 0.0},
                                    tip_speed_mach_limit={'units': 'ft/s', 'shape': nn}),
                                promotes_inputs=[
                                    '*', ('max_tip_speed', Aircraft.Engine.PROPELLER_TIP_SPEED_MAX)],

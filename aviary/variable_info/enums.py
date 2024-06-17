@@ -163,9 +163,9 @@ class SpeedType(Enum):
     TAS is true airspeed.
     MACH is mach
     '''
-    EAS = auto()
-    TAS = auto()
-    MACH = auto()
+    EAS = 'EAS'
+    TAS = 'TAS'
+    MACH = 'Mach'
 
 
 class ThrottleAllocation(Enum):

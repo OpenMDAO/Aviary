@@ -65,8 +65,8 @@ class TurbopropModel(EngineModel):
                                     EngineModelVariables.MACH,
                                     EngineModelVariables.THROTTLE}
             )
-            # Manually check if shaft horsepower was provided (can't flag as required variable since either version
-            # is acceptable)
+            # Manually check if shaft horsepower was provided (can't flag as required
+            # variable since either version is acceptable)
             if not self.shaft_power_model.use_shaft_power:
                 # repurpose custom error message code from EngineDeck
                 # custom error messages depending on data type
@@ -272,5 +272,7 @@ class TurbopropModel(EngineModel):
                     subsys=propeller_model_post_mission,
                     aviary_options=aviary_inputs
                 )
+
+        # turboprop_group.set_input_defaults(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, val=0.0)
 
         return turboprop_group
