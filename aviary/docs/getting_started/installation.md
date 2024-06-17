@@ -92,7 +92,7 @@ In the list, we see the popular Python packages for scientific computations: `nu
 
 Since we are going to depend on `OpenMDAO` and `dymos`, we could have included them in the `pip` list. We leave them out because we will install the developer version later. In this way, we will get the latest working copies that Aviary depends on. But we do not intend to make changes to them.
 
-[pre-commit](https://pre-commit.com/) and [autopep8 formatter](https://pypi.org/project/autopep8/) are additionally required for developers who wish to contribute to the Aviary repository. Read our [coding standards](../developer_guide/coding_standards.md) for more information.
+[pre-commit](https://pre-commit.com/) and [autopep8 formatter](https://pypi.org/project/autopep8/) are additionally required for developers who wish to contribute to the Aviary repository. Read our [coding standards](../developer_guide/coding_standards) for more information.
 
 Now, run create your new conda environment using this `.yml` file:
 
