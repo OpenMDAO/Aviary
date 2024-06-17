@@ -6,7 +6,7 @@ from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 from aviary.variable_info.enums import LegacyCode
 
 
-def get_default_premission_subsystems(legacy_code=None, engines=None):
+def get_default_premission_subsystems(legacy_code, engines=None):
     legacy_code = LegacyCode(legacy_code)
     prop = CorePropulsionBuilder('core_propulsion', BaseMetaData, engine_models=engines)
     mass = CoreMassBuilder('core_mass', BaseMetaData, legacy_code)
@@ -16,7 +16,7 @@ def get_default_premission_subsystems(legacy_code=None, engines=None):
     return [prop, geom, aero, mass]
 
 
-def get_default_mission_subsystems(legacy_code=None, engines=None):
+def get_default_mission_subsystems(legacy_code, engines=None):
     legacy_code = LegacyCode(legacy_code)
     prop = CorePropulsionBuilder('core_propulsion', BaseMetaData, engine_models=engines)
     aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, legacy_code)
