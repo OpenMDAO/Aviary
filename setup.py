@@ -31,7 +31,7 @@ setup(
     version=__version__,
     packages=find_packages(),
     install_requires=[
-        "openmdao>=3.27.0",
+        "openmdao>=3.33.0",
         "dymos>=1.8.1",
         "hvplot",
         "numpy",
