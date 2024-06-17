@@ -303,8 +303,8 @@ class AviaryProblem(om.Problem):
                     elif self.analysis_scheme is AnalysisScheme.SHOOTING:
                         from aviary.interface.default_phase_info.two_dof_fiti import phase_info, \
                             phase_info_parameterization
-                    phase_info, _ = phase_info_parameterization(
-                        phase_info, None, self.aviary_inputs)
+                        phase_info, _ = phase_info_parameterization(
+                            phase_info, None, self.aviary_inputs)
 
                 elif self.mission_method is HEIGHT_ENERGY:
                     from aviary.interface.default_phase_info.height_energy import phase_info
@@ -1655,8 +1655,11 @@ class AviaryProblem(om.Problem):
                 driver.options['debug_print'] = verbosity
             elif verbosity.value > Verbosity.DEBUG.value:
                 driver.options['debug_print'] = ['desvars', 'ln_cons', 'nl_cons', 'objs']
-        if verbosity is not Verbosity.DEBUG and optimizer in ("SNOPT", "IPOPT"):
-            driver.options['print_results'] = False
+        if optimizer in ("SNOPT", "IPOPT"):
+            if verbosity is Verbosity.QUIET:
+                driver.options['print_results'] = False
+            elif verbosity is not Verbosity.DEBUG:
+                driver.options['print_results'] = 'minimal'
 
     def add_design_variables(self):
         """
@@ -1699,7 +1702,7 @@ class AviaryProblem(om.Problem):
             optimize_mass = self.pre_mission_info.get('optimize_mass')
             if optimize_mass:
                 self.model.add_design_var(Mission.Design.GROSS_MASS, units='lbm',
-                                          lower=100.e2, upper=200.e3, ref=135.e3)
+                                          lower=100.e2, upper=900.e3, ref=135.e3)
 
         elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
             if self.analysis_scheme is AnalysisScheme.COLLOCATION:
