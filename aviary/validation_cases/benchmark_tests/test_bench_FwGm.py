@@ -27,13 +27,13 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         # There are no truth values for these.
         assert_near_equal(prob.get_val(Mission.Design.GROSS_MASS),
-                          186418., tolerance=rtol)
+                          184533., tolerance=rtol)
 
         assert_near_equal(prob.get_val(Aircraft.Design.OPERATING_MASS),
                           104530., tolerance=rtol)
 
         assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS),
-                          42935., tolerance=rtol)
+                          42444., tolerance=rtol)
 
         assert_near_equal(prob.get_val('landing.' + Mission.Landing.GROUND_DISTANCE),
                           2528., tolerance=rtol)

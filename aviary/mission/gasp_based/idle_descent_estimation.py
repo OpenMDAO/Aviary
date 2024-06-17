@@ -2,9 +2,13 @@ import warnings
 
 import openmdao.api as om
 
-from aviary.interface.default_phase_info.two_dof_fiti import create_2dof_based_descent_phases
+from aviary.interface.default_phase_info.two_dof_fiti_deprecated import create_2dof_based_descent_phases
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic
+from aviary.variable_info.enums import Verbosity
+from aviary.utils.functions import set_aviary_initial_values, promote_aircraft_and_mission_vars
+from aviary.variable_info.variables_in import VariablesIn
+from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 
 
 def descent_range_and_fuel(
@@ -17,6 +21,9 @@ def descent_range_and_fuel(
     payload_weight=30800,
     reserve_fuel=4998,
 ):
+    warnings.warn("`descent_range_and_fuel` has been replaced with `add_descent_estimation_as_submodel`,"
+                  " due to it's better integration with the other subsystems."
+                  "\ndescent_range_and_fuel will be removed in a future release.", DeprecationWarning)
 
     prob = om.Problem()
     prob.driver = om.pyOptSparseDriver()
@@ -106,3 +113,166 @@ def descent_range_and_fuel(
     }
 
     return results
+
+
+def add_descent_estimation_as_submodel(
+        main_prob: om.Problem,
+        subsys_name='idle_descent_estimation',
+        phases=None,
+        ode_args=None,
+        initial_mass=None,
+        cruise_alt=None,
+        cruise_mach=None,
+        reserve_fuel=None,
+        verbosity=Verbosity.QUIET,
+):
+
+    if phases is None:
+        from aviary.interface.default_phase_info.two_dof_fiti import \
+            descent_phases as phases, add_default_sgm_args
+        add_default_sgm_args(phases, ode_args)
+
+    traj = FlexibleTraj(
+        Phases=phases,
+        traj_initial_state_input=[
+            Dynamic.Mission.MASS,
+            Dynamic.Mission.DISTANCE,
+            Dynamic.Mission.ALTITUDE,
+        ],
+        traj_final_state_output=[
+            Dynamic.Mission.MASS,
+            Dynamic.Mission.DISTANCE,
+            Dynamic.Mission.ALTITUDE,
+        ],
+        promote_all_auto_ivc=True,
+    )
+
+    model = om.Group()
+
+    if isinstance(initial_mass, str):
+        model.add_subsystem(
+            'top_of_descent_mass',
+            om.ExecComp(
+                'mass_initial = top_of_descent_mass',
+                mass_initial={'units': 'lbm'},
+                top_of_descent_mass={'units': 'lbm'},
+            ),
+            promotes_inputs=['top_of_descent_mass'],
+            promotes_outputs=['mass_initial'])
+    else:
+        model.add_subsystem(
+            'top_of_descent_mass',
+            om.ExecComp(
+                'mass_initial = operating_mass + payload_mass + reserve_fuel + descent_fuel_estimate',
+                mass_initial={'units': 'lbm'},
+                operating_mass={'units': 'lbm'},
+                payload_mass={'units': 'lbm'},
+                reserve_fuel={'units': 'lbm', 'val': 0},
+                descent_fuel_estimate={'units': 'lbm', 'val': 0},
+            ),
+            promotes_inputs=[
+                ('operating_mass', Aircraft.Design.OPERATING_MASS),
+                ('payload_mass', Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS),
+                'reserve_fuel',
+                # ('reserve_fuel', Mission.Design.RESERVE_FUEL),
+                ('descent_fuel_estimate', 'descent_fuel'),
+            ],
+            promotes_outputs=['mass_initial']
+        )
+
+    model.add_subsystem(
+        'descent_traj', traj,
+        promotes_inputs=['altitude_initial', 'mass_initial', 'aircraft:*'],
+        promotes_outputs=['mass_final', 'distance_final'],
+    )
+
+    model.add_subsystem(
+        'actual_fuel_burn',
+        om.ExecComp(
+            'actual_fuel_burn = mass_initial - mass_final',
+            actual_fuel_burn={'units': 'lbm'},
+            mass_initial={'units': 'lbm'},
+            mass_final={'units': 'lbm'},
+        ),
+        promotes_inputs=[
+            'mass_initial',
+            'mass_final',
+        ],
+        promotes_outputs=[('actual_fuel_burn', 'descent_fuel')])
+
+    if verbosity.value >= 1:
+        from aviary.utils.functions import create_printcomp
+        dummy_comp = create_printcomp(
+            all_inputs=[
+                Aircraft.Design.OPERATING_MASS,
+                Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS,
+                'descent_fuel',
+                'reserve_fuel',
+                'mass_initial',
+                'distance_final',
+            ],
+            input_units={
+                'descent_fuel': 'lbm',
+                'reserve_fuel': 'lbm',
+                'mass_initial': 'lbm',
+                'distance_final': 'nmi',
+            })
+        model.add_subsystem(
+            "dummy_comp",
+            dummy_comp(),
+            promotes_inputs=["*"],
+        )
+        model.set_input_defaults('reserve_fuel', 0, 'lbm')
+        model.set_input_defaults('mass_initial', 0, 'lbm')
+
+    model.add_objective("descent_fuel", ref=1e4)
+
+    model.linear_solver = om.DirectSolver(assemble_jac=True)
+    model.nonlinear_solver = om.NonlinearBlockGS(iprint=3, rtol=1e-2, maxiter=5)
+
+    input_aliases = []
+    if isinstance(initial_mass, str):
+        input_aliases.append(('top_of_descent_mass', initial_mass))
+    elif isinstance(initial_mass, (int, float)):
+        model.set_input_defaults('mass_initial', initial_mass)
+
+    if isinstance(cruise_alt, str):
+        input_aliases.append(('altitude_initial', cruise_alt))
+    elif isinstance(cruise_alt, (int, float)):
+        model.set_input_defaults('altitude_initial', cruise_alt)
+
+    if isinstance(reserve_fuel, str):
+        input_aliases.append(('reserve_fuel', reserve_fuel))
+    elif isinstance(reserve_fuel, (int, float)):
+        model.set_input_defaults('reserve_fuel', reserve_fuel)
+
+    model.set_input_defaults(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, 0)
+    model.set_input_defaults(
+        Aircraft.Design.OPERATING_MASS, val=0, units='lbm')
+    model.set_input_defaults('descent_traj.'+Dynamic.Mission.THROTTLE, 0)
+
+    promote_aircraft_and_mission_vars(model)
+
+    subprob = om.Problem(model=model)
+    subcomp = om.SubmodelComp(
+        problem=subprob,
+        inputs=[
+            'aircraft:*',
+        ],
+        outputs=['distance_final', 'descent_fuel', 'mass_initial'],
+        do_coloring=False
+    )
+
+    main_prob.model.add_subsystem(
+        subsys_name,
+        subcomp,
+        promotes_inputs=[
+            'aircraft:*',
+        ] + input_aliases,
+        promotes_outputs=[
+            ('distance_final', 'descent_range'),
+            'descent_fuel',
+            ('mass_initial', 'start_of_descent_mass'),
+        ],
+
+    )

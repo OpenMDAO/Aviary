@@ -9,6 +9,7 @@ from aviary.mission.gasp_based.ode.base_ode import BaseODE
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.variable_info.enums import AlphaModes
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
 
 
 class AscentODE(BaseODE):
@@ -33,6 +34,11 @@ class AscentODE(BaseODE):
         # TODO: paramport
         ascent_params = ParamPort()
         if analysis_scheme is AnalysisScheme.SHOOTING:
+            add_SGM_required_inputs(self, {
+                Dynamic.Mission.ALTITUDE: {'units': 'ft'},
+                Dynamic.Mission.DISTANCE: {'units': 'ft'},
+            })
+
             ascent_params.add_params({
                 Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE: dict(units='deg', val=0),
             })
@@ -74,15 +80,9 @@ class AscentODE(BaseODE):
         else:
             self.AddAlphaControl(alpha_mode=alpha_mode, num_nodes=nn)
 
-        if analysis_scheme is AnalysisScheme.SHOOTING:
-            shooting_inputs = [Dynamic.Mission.DISTANCE]
-        else:
-            shooting_inputs = []
-
         self.add_subsystem(
             "ascent_eom",
-            AscentEOM(num_nodes=nn,
-                      analysis_scheme=analysis_scheme),
+            AscentEOM(num_nodes=nn),
             promotes_inputs=[
                 Dynamic.Mission.MASS,
                 Dynamic.Mission.THRUST_TOTAL,
@@ -91,9 +91,7 @@ class AscentODE(BaseODE):
                 Dynamic.Mission.VELOCITY,
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 "alpha",
-            ]
-            + shooting_inputs
-            + ["aircraft:*"],
+            ] + ["aircraft:*"],
             promotes_outputs=[
                 Dynamic.Mission.VELOCITY_RATE,
                 Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,

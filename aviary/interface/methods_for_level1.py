@@ -183,7 +183,7 @@ def _setup_level1_parser(parser):
 
 
 def _exec_level1(args, user_args):
-    if args.shooting:  # For future use
+    if args.shooting:
         analysis_scheme = AnalysisScheme.SHOOTING
     else:
         analysis_scheme = AnalysisScheme.COLLOCATION
