@@ -1,7 +1,9 @@
 from aviary.variable_info.enums import SpeedType, AlphaModes
 from aviary.mission.gasp_based.phases.time_integration_phases import SGMGroundroll, \
     SGMRotation, SGMAscentCombined, SGMAccel, SGMClimb, SGMCruise, SGMDescent
-from aviary.variable_info.variables import Aircraft
+from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
+from aviary.variable_info.enums import Verbosity
 
 # defaults for 2DOF based forward in time integeration phases
 cruise_alt = 35e3,
