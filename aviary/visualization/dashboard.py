@@ -456,7 +456,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
     problem_recorder : str
         Name of the recorder file containing the Problem cases.
     driver_recorder : str or None
-        Name of the recorder file containing the Driver cases. If None, ignore this file
+        Name of the recorder file containing the Driver cases. If None, the driver tab will not be added
     port : int
         HTTP port used for the dashboard webapp. If 0, use any free port
     """
