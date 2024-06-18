@@ -128,8 +128,7 @@ def build_engine_deck(aviary_options: AviaryValues):
     # Build a single engine deck, currently ignoring vectorization
     # of AviaryValues (use first index)
     engine_options = AviaryValues()
-    for entry in Aircraft.Engine.__dict__:
-        var = getattr(Aircraft.Engine, entry)
+    for var in Aircraft.Engine.__dict__.values():
         # check if this variable exist with useable metadata
         try:
             units = _MetaData[var]['units']
