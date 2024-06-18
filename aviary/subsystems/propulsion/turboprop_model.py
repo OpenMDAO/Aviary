@@ -8,9 +8,6 @@ from aviary.utils.named_values import NamedValues
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.subsystems.propulsion.propeller_performance import PropellerPerformance
-from aviary.subsystems.propulsion.utils import UncorrectData
-from aviary.mission.gasp_based.flight_conditions import FlightConditions
-from aviary.variable_info.enums import SpeedType
 
 
 class TurbopropModel(EngineModel):
@@ -274,5 +271,11 @@ class TurbopropModel(EngineModel):
                 )
 
         # turboprop_group.set_input_defaults(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, val=0.0)
+        turboprop_group.set_input_default(
+            Aircraft.Engine.PROPELLER_TIP_SPEED_MAX, val=0.0, units='ft/s')
+        # turboprop_group.set_input_defaults(Dynamic.Mission.SPEED_OF_SOUND, units='ft/s', val=0.0)
+        # turboprop_group.set_input_defaults(Dynamic.Mission.VELOCITY, units='ft/s', val=0.0)
+        # turboprop_group.set_input_defaults('velocity', units='ft/s', val=0.0)
+        # turboprop_group.set_input_defaults(Dynamic.Mission.TEMPERATURE, units='f', val=0.0)
 
         return turboprop_group
