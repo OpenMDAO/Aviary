@@ -290,7 +290,7 @@ def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
         formatted_data[key] = data[key].astype(float)
 
     # convert engine_data from dict to list so it can be sorted
-    sorted_values = np.array([formatted_data[key] for key in formatted_data]).transpose()
+    sorted_values = np.array(list(formatted_data.values())).transpose()
 
     # Sort by mach, then altitude, then throttle, then hybrid throttle
     sorted_values = sorted_values[np.lexsort(
@@ -302,7 +302,8 @@ def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
 
     # store formatted data into NamedValues object
     write_data = NamedValues()
-    for idx, key in enumerate(data):
+
+    for key in data:
         write_data.set_val(header_names[key], formatted_data[key], default_units[key])
 
     write_data_file(output_file, write_data, comments, include_timestamp=False)
