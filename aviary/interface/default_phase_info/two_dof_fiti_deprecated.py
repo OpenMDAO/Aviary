@@ -3,7 +3,7 @@ import warnings
 from aviary.variable_info.enums import SpeedType, Verbosity
 from aviary.mission.gasp_based.phases.time_integration_phases import SGMGroundroll, \
     SGMRotation, SGMAscentCombined, SGMAccel, SGMClimb, SGMCruise, SGMDescent
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 
 # defaults for 2DOF based forward in time integeration phases
 

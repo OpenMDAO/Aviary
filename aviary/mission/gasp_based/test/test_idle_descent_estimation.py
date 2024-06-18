@@ -69,7 +69,7 @@ class IdleDescentTestCase(unittest.TestCase):
         )
 
         prob.setup()
-        # om.n2(prob, 'idle_descent_n2.html', show_browser=False)
+
         warnings.filterwarnings('ignore', category=UserWarning)
         prob.run_model()
         warnings.filterwarnings('default', category=UserWarning)

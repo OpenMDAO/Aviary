@@ -1,8 +1,7 @@
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.enums import SpeedType, Verbosity, AlphaModes
+from aviary.variable_info.enums import SpeedType, AlphaModes
 from aviary.mission.gasp_based.phases.time_integration_phases import SGMGroundroll, \
     SGMRotation, SGMAscentCombined, SGMAccel, SGMClimb, SGMCruise, SGMDescent
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
+from aviary.variable_info.variables import Aircraft
 
 # defaults for 2DOF based forward in time integeration phases
 cruise_alt = 35e3,
@@ -171,6 +170,7 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs: Av
         Modified phase_info that has been changed to match the new mission
         parameters
     """
+
     range_cruise = aviary_inputs.get_item(Mission.Design.RANGE)
     alt_cruise = aviary_inputs.get_item(Mission.Design.CRUISE_ALTITUDE)
     gross_mass = aviary_inputs.get_item(Mission.Design.GROSS_MASS)
