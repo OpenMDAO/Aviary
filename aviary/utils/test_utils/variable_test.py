@@ -93,8 +93,7 @@ def assert_structure_alphabetization(file_loc):
             msg = "The variable file is not using proper Python spacing."
             raise ValueError(msg)
 
-        # Note: underscore sorts between upper and lower case letters, which is not ideal.
-        current_line_fix = current_line.replace('_', ' ').casefold()
+        current_line_fix = current_line.casefold()
 
         if current_line_fix < previous_line:
             bad_sort.append(current_line)
