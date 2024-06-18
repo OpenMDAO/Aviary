@@ -3,7 +3,8 @@ from copy import deepcopy
 
 import openmdao.api as om
 
-from aviary.interface.default_phase_info.height_energy import default_mission_subsystems
+from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.mission.flops_based.ode.takeoff_ode import TakeoffODE
 from aviary.models.N3CC.N3CC_data import (
     detailed_takeoff_climbing, detailed_takeoff_ground, takeoff_subsystem_options, inputs)
@@ -69,6 +70,9 @@ class TakeoffODETest(unittest.TestCase):
         time, _ = detailed_takeoff_climbing.get_item('time')
         nn = len(time)
         aviary_options = inputs
+
+        default_mission_subsystems = get_default_mission_subsystems(
+            'FLOPS', build_engine_deck(aviary_options))
 
         prob.model.add_subsystem(
             "takeoff_ode",

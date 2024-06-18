@@ -31,7 +31,7 @@ class EngineMassTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             "engine_mass",
-            EngineMass(aviary_options=get_flops_inputs(case_name)),
+            EngineMass(aviary_options=get_flops_inputs(case_name, preprocess=True)),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )

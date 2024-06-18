@@ -45,7 +45,7 @@ from aviary.utils.functions import set_aviary_initial_values, get_path
 from aviary.utils.options import list_options
 from aviary.constants import GRAV_METRIC_GASP, GRAV_ENGLISH_GASP, GRAV_METRIC_FLOPS, GRAV_ENGLISH_FLOPS, GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH, RHO_SEA_LEVEL_METRIC, MU_TAKEOFF, MU_LANDING, PSLS_PSF, TSLS_DEGR, RADIUS_EARTH_METRIC
 from aviary.subsystems.test.subsystem_tester import TestSubsystemBuilderBase, skipIfMissingDependencies
-from aviary.interface.default_phase_info.height_energy import default_premission_subsystems, default_mission_subsystems
+from aviary.subsystems.propulsion.utils import build_engine_deck
 
 ###################
 # Level 3 Imports #
