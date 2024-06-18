@@ -99,7 +99,7 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
         Set expected shape of all variables that need to be vectorized for multiple
         engine types.
         """
-        engine_count = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
+        num_engine_type = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
         params = {}
 
         # collect all the parameters for engines
@@ -114,11 +114,11 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
             if var in engine_vars:
                 # TODO shape for variables that are supposed to be vectors, like wing
                 #      engine locations
-                params[var]['shape'] = (engine_count,)
+                params[var]['shape'] = (num_engine_type,)
                 params[var]['static_target'] = True
 
         # params = {}  # For now
-        # params[Aircraft.Engine.SCALE_FACTOR] = {'shape': (engine_count, ),
+        # params[Aircraft.Engine.SCALE_FACTOR] = {'shape': (num_engine_type, ),
         #                                         'static_target': True}
         return params
 

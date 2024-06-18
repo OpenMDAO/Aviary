@@ -287,7 +287,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
             - any additional keyword arguments required by OpenMDAO for the fixed
               variable.
         """
-        engine_count = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
+        num_engine_type = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
         params = {}
 
         if self.code_origin is FLOPS:
@@ -344,7 +344,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                               Aircraft.Nacelle.LAMINAR_FLOW_UPPER,
                               Aircraft.Nacelle.WETTED_AREA]
                 for var in param_vars:
-                    params[var] = {'shape': (engine_count, ), 'static_target': True}
+                    params[var] = {'shape': (num_engine_type, ), 'static_target': True}
 
         return params
 

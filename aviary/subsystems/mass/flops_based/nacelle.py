@@ -26,25 +26,28 @@ class NacelleMass(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        engine_count = len(self.options['aviary_options'].get_val(
+        num_engine_type = len(self.options['aviary_options'].get_val(
             Aircraft.Engine.NUM_ENGINES))
 
-        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, val=np.zeros(engine_count))
+        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER,
+                         val=np.zeros(num_engine_type))
 
-        add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH, val=np.zeros(engine_count))
+        add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH,
+                         val=np.zeros(num_engine_type))
 
-        add_aviary_input(self, Aircraft.Nacelle.MASS_SCALER, val=np.ones(engine_count))
+        add_aviary_input(self, Aircraft.Nacelle.MASS_SCALER,
+                         val=np.ones(num_engine_type))
 
         add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST,
-                         val=np.zeros(engine_count))
+                         val=np.zeros(num_engine_type))
 
-        add_aviary_output(self, Aircraft.Nacelle.MASS, val=np.zeros(engine_count))
+        add_aviary_output(self, Aircraft.Nacelle.MASS, val=np.zeros(num_engine_type))
 
     def setup_partials(self):
         # derivatives w.r.t vectorized engine inputs have known sparsity pattern
-        engine_count = len(self.options['aviary_options'].get_val(
+        num_engine_type = len(self.options['aviary_options'].get_val(
             Aircraft.Engine.NUM_ENGINES))
-        shape = np.arange(engine_count)
+        shape = np.arange(num_engine_type)
 
         self.declare_partials(Aircraft.Nacelle.MASS, Aircraft.Nacelle.AVG_DIAMETER,
                               rows=shape, cols=shape, val=1.0)
