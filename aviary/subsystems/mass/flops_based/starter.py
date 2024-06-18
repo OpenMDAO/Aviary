@@ -22,7 +22,8 @@ class TransportStarterMass(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        num_engine_type = len(self.options['aviary_options'].get_val('engine_models'))
+        num_engine_type = len(self.options['aviary_options'].get_val(
+            Aircraft.Engine.NUM_ENGINES))
 
         add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER,
                          val=np.zeros(num_engine_type))

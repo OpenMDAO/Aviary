@@ -8,7 +8,8 @@ from parameterized import parameterized
 
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.premission import CorePreMission
-from aviary.interface.default_phase_info.height_energy import aero, prop, geom
+from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
+from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import AviaryValues, get_items
 from aviary.utils.functions import set_aviary_initial_values
 from aviary.utils.named_values import NamedValues
@@ -164,7 +165,7 @@ class ComputedVsTabularTest(unittest.TestCase):
 
     @parameterized.expand(data_sets, name_func=print_case)
     def test_case(self, case_name):
-        flops_inputs = get_flops_inputs(case_name)
+        flops_inputs = get_flops_inputs(case_name, preprocess=True)
         flops_outputs = get_flops_outputs(case_name)
 
         flops_inputs.set_val(Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, 0.9)
@@ -588,13 +589,16 @@ class _ComputedAeroHarness(om.Group):
         gamma = options['gamma']
         aviary_options: AviaryValues = options['aviary_options']
 
-        core_subsystems = [prop, geom, aero]
+        engine = build_engine_deck(aviary_options)
+        # don't need mass, skip it
+        default_premission_subsystems = get_default_premission_subsystems('FLOPS', engine)[
+            :-1]
 
         # Upstream static analysis for aero
         pre_mission: om.Group = self.add_subsystem(
             'pre_mission',
             CorePreMission(aviary_options=aviary_options,
-                           subsystems=core_subsystems),
+                           subsystems=default_premission_subsystems),
             promotes_inputs=['aircraft:*', 'mission:*'],
             promotes_outputs=['aircraft:*', 'mission:*'])
 

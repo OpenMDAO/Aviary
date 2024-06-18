@@ -1,26 +1,11 @@
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.enums import SpeedType, Verbosity, AlphaModes, LegacyCode
+from aviary.variable_info.enums import SpeedType, AlphaModes
 from aviary.mission.gasp_based.phases.time_integration_phases import SGMGroundroll, \
     SGMRotation, SGMAscentCombined, SGMAccel, SGMClimb, SGMCruise, SGMDescent
+from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
-from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
-from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
-from aviary.subsystems.mass.mass_builder import CoreMassBuilder
-from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
-from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData, Mission
-from aviary.interface.default_phase_info.two_dof_fiti_deprecated import create_2dof_based_ascent_phases, create_2dof_based_descent_phases
+from aviary.variable_info.enums import Verbosity
 
 # defaults for 2DOF based forward in time integeration phases
-
-GASP = LegacyCode.GASP
-
-prop = CorePropulsionBuilder('core_propulsion', BaseMetaData)
-mass = CoreMassBuilder('core_mass', BaseMetaData, GASP)
-aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, GASP)
-geom = CoreGeometryBuilder('core_geometry', BaseMetaData, GASP)
-
-default_premission_subsystems = [prop, geom, aero, mass]
-
 cruise_alt = 35e3,
 cruise_mach = .8,
 

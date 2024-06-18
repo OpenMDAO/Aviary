@@ -7,8 +7,11 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from aviary.subsystems.propulsion.propulsion_premission import (
     PropulsionPreMission, PropulsionSum)
 from aviary.utils.aviary_values import AviaryValues
+from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.validation_cases.validation_tests import get_flops_inputs
+from aviary.models.multi_engine_single_aisle.multi_engine_single_aisle_data import engine_1_inputs, engine_2_inputs
 from aviary.variable_info.variables import Aircraft, Settings
+from aviary.utils.preprocessors import preprocess_options
 
 
 class PropulsionPreMissionTest(unittest.TestCase):
@@ -16,11 +19,12 @@ class PropulsionPreMissionTest(unittest.TestCase):
         self.prob = om.Problem()
 
     def test_case(self):
-        aviary_values = get_flops_inputs('LargeSingleAisle2FLOPS')
-        aviary_values.set_val(Settings.VERBOSITY, 0)
-        options = aviary_values
+        options = get_flops_inputs('LargeSingleAisle2FLOPS')
+        options.set_val(Settings.VERBOSITY, 0)
+        options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
 
-        self.prob.model = PropulsionPreMission(aviary_options=options)
+        self.prob.model = PropulsionPreMission(aviary_options=options,
+                                               engine_models=build_engine_deck(options))
 
         self.prob.setup(force_alloc_complex=True)
         self.prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, options.get_val(
@@ -38,12 +42,17 @@ class PropulsionPreMissionTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
 
     def test_multi_engine(self):
-        aviary_values = get_flops_inputs('MultiEngineSingleAisle')
-        aviary_values.set_val(Settings.VERBOSITY, 0)
+        options = get_flops_inputs('MultiEngineSingleAisle')
+        options.set_val(Settings.VERBOSITY, 0)
 
-        options = aviary_values
+        engine1 = build_engine_deck(engine_1_inputs)[0]
+        engine2 = build_engine_deck(engine_2_inputs)[0]
+        engine_models = [engine1, engine2]
 
-        self.prob.model = PropulsionPreMission(aviary_options=options)
+        preprocess_options(options, engine_models=engine_models)
+
+        self.prob.model = PropulsionPreMission(aviary_options=options,
+                                               engine_models=engine_models)
 
         self.prob.setup(force_alloc_complex=True)
         self.prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, options.get_val(
@@ -63,8 +72,6 @@ class PropulsionPreMissionTest(unittest.TestCase):
     def test_propulsion_sum(self):
         options = AviaryValues()
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([1, 2, 5]))
-        # it doesn't matter what goes in engine models, as long as it is length 3
-        options.set_val('engine_models', [1, 1, 1])
         options.set_val(Settings.VERBOSITY, 0)
         self.prob.model = om.Group()
         self.prob.model.add_subsystem('propsum',
@@ -89,7 +96,7 @@ class PropulsionPreMissionTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    # unittest.main()
-    test = PropulsionPreMissionTest()
-    test.setUp()
-    test.test_multi_engine()
+    unittest.main()
+    # test = PropulsionPreMissionTest()
+    # test.setUp()
+    # test.test_case()

@@ -27,7 +27,8 @@ class TransportStarterMassTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             "starter_test",
-            TransportStarterMass(aviary_options=get_flops_inputs(case_name)),
+            TransportStarterMass(aviary_options=get_flops_inputs(
+                case_name, preprocess=True)),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )
