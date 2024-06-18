@@ -142,8 +142,13 @@ def build_engine_deck(aviary_options: AviaryValues, meta_data=_MetaData):
                 if isinstance(aviary_val, np.ndarray):
                     expected_dim = meta_data[var]['default_value'].ndim
                     val_dim = aviary_val.ndim
+                    # if aviary_values has one more dimension than expected per-engine,
+                    # we know aviary_values is for multi-engine type. Currently only using
+                    # first index
                     if val_dim == expected_dim+1:
                         aviary_val = aviary_val[0]
+                    # if aviary_values has more than one dimension from expected, then
+                    # something is very wrong and cannot be fixed here
                     if val_dim > expected_dim+1:
                         UserWarning(f'Provided vector for {var} has too many dimensions: '
                                     'expecting a {expected_dim+1}D array ({expected_dim}D '
