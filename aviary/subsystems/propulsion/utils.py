@@ -108,7 +108,8 @@ def convert_geopotential_altitude(altitude):
 
 
 # TODO build test for this function
-def build_engine_deck(aviary_options: AviaryValues):
+# TODO upgrade to be able to turn vectorized AviaryValues into multiple engine decks
+def build_engine_deck(aviary_options: AviaryValues, meta_data=_MetaData):
     '''
     Creates an EngineDeck using avaliable inputs and options in aviary_options.
 
@@ -135,13 +136,34 @@ def build_engine_deck(aviary_options: AviaryValues):
             try:
                 # add value from aviary_options to engine_options
                 aviary_val = aviary_options.get_val(var, units)
+                # special handling for iterables - check if they are multidimensional,
+                # which implies multiple engine models, and only use the value intended
+                # for the first engine model
                 if isinstance(aviary_val, np.ndarray):
+                    expected_dim = meta_data[var]['default_value'].ndim
+                    val_dim = aviary_val.ndim
+                    if val_dim == expected_dim+1:
+                        aviary_val = aviary_val[0]
+                    if val_dim > expected_dim+1:
+                        UserWarning(f'Provided vector for {var} has too many dimensions: '
+                                    'expecting a {expected_dim+1}D array ({expected_dim}D '
+                                    'per engine)')
                     # "Convert" numpy types to standard Python types. Wrap first
                     # index in numpy array before calling item() to safeguard against
                     # non-standard types, such as objects
-                    aviary_val = np.array(aviary_val[0]).item()
+                    if aviary_val.ndim == 0:
+                        aviary_val = np.array(aviary_val).item()
                 elif isinstance(aviary_val, (list, tuple)):
-                    aviary_val = aviary_val[0]
+                    # Python lists and tuples do not have to be regular (can be ragged),
+                    # so we cannot check for expected vs. actual provided dimensions in
+                    # a robust way. No raised errors, assumed data is structured correctly
+                    try:
+                        aviary_val_0 = aviary_val[0]
+                        # if item in first index is also iterable, multi-dimensional array
+                        if type(aviary_val_0, (list, tuple)):
+                            aviary_val = aviary_val_0
+                    except TypeError:
+                        pass
                 engine_options.set_val(var, aviary_val, units)
             # if not, use default value from _MetaData?
             except KeyError:
