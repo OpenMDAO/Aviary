@@ -15,7 +15,7 @@ The built docs live at `..Aviary/aviary/docs/_build/html/intro.html`.
 Navigate to this file in your file manager once you have built the docs, and you can open it from there to your favorite internet browser.
 
 One of the powerful features that we use to write docs is automatic formatting of docstrings into documentation.
-[This file](../theory_guide/merging_syntax.ipynb) contains an example of turning docstrings into documentation.
+[This file](../theory_guide/merging_syntax) contains an example of turning docstrings into documentation.
 It is important to note when writing docstrings that the docstrings must be in numpy format.
 [Here](https://numpydoc.readthedocs.io/en/latest/format.html) is a link to instructions on how to write numpy format docstrings.
 
