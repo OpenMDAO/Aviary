@@ -20,7 +20,7 @@ class TestPropellerMapConversion(unittest.TestCase):
         args = DummyArgs()
 
         # Specify the input file
-        args.input_file = filepath = get_path(filename)
+        args.input_file = filepath = get_path('models/propellers/'+filename)
 
         # Specify the output file
         if not output_file:
@@ -45,7 +45,7 @@ class TestPropellerMapConversion(unittest.TestCase):
         """
         filename = filepath.split('.')[0]+'.prop'
 
-        validation_data = get_path(filename)
+        validation_data = get_path('models/propellers/'+filename)
 
         # Open the converted and validation files
         with open('TEST_'+filename, 'r') as f_in, open(validation_data, 'r') as expected:
