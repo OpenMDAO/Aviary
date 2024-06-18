@@ -27,7 +27,8 @@ class AltFuelSystemTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             "alt_fuel_sys_test",
-            AltFuelSystemMass(aviary_options=get_flops_inputs(case_name)),
+            AltFuelSystemMass(aviary_options=get_flops_inputs(
+                case_name, preprocess=True)),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )
@@ -59,7 +60,8 @@ class TransportFuelSystemTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             "transport_fuel_sys_test",
-            TransportFuelSystemMass(aviary_options=get_flops_inputs(case_name)),
+            TransportFuelSystemMass(
+                aviary_options=get_flops_inputs(case_name, preprocess=True)),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )

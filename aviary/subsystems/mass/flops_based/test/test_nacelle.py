@@ -30,7 +30,7 @@ class NacelleMassTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             "nacelle",
-            NacelleMass(aviary_options=get_flops_inputs(case_name)),
+            NacelleMass(aviary_options=get_flops_inputs(case_name, preprocess=True)),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )

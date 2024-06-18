@@ -7,8 +7,9 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.interface.default_phase_info.height_energy import phase_info
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.models.multi_engine_single_aisle.multi_engine_single_aisle_data import inputs
+from aviary.models.multi_engine_single_aisle.multi_engine_single_aisle_data import inputs, engine_1_inputs, engine_2_inputs
 from aviary.variable_info.enums import ThrottleAllocation
+from aviary.subsystems.propulsion.utils import build_engine_deck
 
 
 # Build problem
@@ -48,9 +49,14 @@ class MultiengineTestcase(unittest.TestCase):
         test_phase_info['cruise']['user_options']['throttle_allocation'] = method
         test_phase_info['descent']['user_options']['throttle_allocation'] = method
 
+        engine1 = build_engine_deck(engine_1_inputs)[0]
+        engine1.name = 'engine_1'
+        engine2 = build_engine_deck(engine_2_inputs)[0]
+        engine2.name = 'engine_2'
+
         prob = AviaryProblem()
 
-        prob.load_inputs(inputs, test_phase_info)
+        prob.load_inputs(inputs, test_phase_info, engine_builders=[engine1, engine2])
 
         prob.check_and_preprocess_inputs()
         prob.add_pre_mission_systems()
@@ -86,9 +92,12 @@ class MultiengineTestcase(unittest.TestCase):
         test_phase_info['cruise']['user_options']['throttle_allocation'] = method
         test_phase_info['descent']['user_options']['throttle_allocation'] = method
 
+        engine1 = build_engine_deck(engine_1_inputs)[0]
+        engine2 = build_engine_deck(engine_2_inputs)[0]
+
         prob = AviaryProblem()
 
-        prob.load_inputs(inputs, test_phase_info)
+        prob.load_inputs(inputs, test_phase_info, engine_builders=[engine1, engine2])
 
         prob.check_and_preprocess_inputs()
         prob.add_pre_mission_systems()
@@ -111,7 +120,7 @@ class MultiengineTestcase(unittest.TestCase):
         alloc_descent = prob.get_val('traj.descent.parameter_vals:throttle_allocations')
 
         assert_near_equal(alloc_climb[0], 0.5, tolerance=1e-2)
-        assert_near_equal(alloc_cruise[0], 0.56, tolerance=1e-2)
+        assert_near_equal(alloc_cruise[0], 0.64, tolerance=1e-2)
         assert_near_equal(alloc_descent[0], 0.999, tolerance=1e-2)
 
     @require_pyoptsparse(optimizer="SNOPT")
@@ -126,7 +135,10 @@ class MultiengineTestcase(unittest.TestCase):
 
         prob = AviaryProblem()
 
-        prob.load_inputs(inputs, test_phase_info)
+        engine1 = build_engine_deck(engine_1_inputs)[0]
+        engine2 = build_engine_deck(engine_2_inputs)[0]
+
+        prob.load_inputs(inputs, test_phase_info, engine_builders=[engine1, engine2])
 
         prob.check_and_preprocess_inputs()
         prob.add_pre_mission_systems()
@@ -149,7 +161,7 @@ class MultiengineTestcase(unittest.TestCase):
         alloc_descent = prob.get_val('traj.descent.controls:throttle_allocations')
 
         # Cruise is pretty constant, check exact value.
-        assert_near_equal(alloc_cruise[0], 0.565, tolerance=1e-2)
+        assert_near_equal(alloc_cruise[0], 0.646, tolerance=1e-2)
 
         # Check general trend: favors engine 1.
         self.assertGreater(alloc_climb[2], 0.55)

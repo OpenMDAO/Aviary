@@ -18,17 +18,21 @@ class PropulsionPreMission(om.Group):
         self.options.declare(
             'aviary_options', types=AviaryValues,
             desc='collection of Aircraft/Mission specific options')
+        self.options.declare(
+            'engine_models', types=list,
+            desc='list of EngineModels on aircraft'
+        )
 
     def setup(self):
         options = self.options['aviary_options']
-        engine_models = options.get_val('engine_models')
+        engine_models = self.options['engine_models']
         num_engine_type = len(engine_models)
 
         # Each engine model pre_mission component only needs to accept and output single
         # value relevant to that variable - this group's configure step will handle
         # promoting/connecting just the relevant index in vectorized inputs/outputs for
         # each component here
-        # Promotions are handled in configure()
+        # Promotions are handled in self.configure()
         for engine in engine_models:
             subsys = engine.build_pre_mission(options)
             if subsys:
@@ -43,8 +47,8 @@ class PropulsionPreMission(om.Group):
                                    )
 
         if num_engine_type > 1:
-            # Add an empty mux comp, which will be customized to handle all required outputs
-            # in self.configure()
+            # Add an empty mux comp, which will be customized to handle all required
+            # outputs in self.configure()
             self.add_subsystem(
                 'pre_mission_mux',
                 subsys=om.MuxComp(),
@@ -65,7 +69,8 @@ class PropulsionPreMission(om.Group):
         # so vectorized inputs/outputs are a problem. Slice all needed vector inputs and pass
         # pre_mission components only the value they need, then mux all the outputs back together
 
-        num_engine_type = len(self.options['aviary_options'].get_val('engine_models'))
+        num_engine_type = len(self.options['aviary_options'].get_val(
+            Aircraft.Engine.NUM_ENGINES))
 
         # determine if openMDAO messages and warnings should be suppressed
         verbosity = self.options['aviary_options'].get_val(Settings.VERBOSITY)
@@ -117,12 +122,12 @@ class PropulsionPreMission(om.Group):
             self.promotes(
                 comp.name, inputs=input_dict[comp.name].keys(), src_indices=om.slicer[idx])
 
-            # promote all other inputs/outputs for this component normally (handle special outputs later)
+            # promote all other inputs/outputs for this component normally (handle vectorized outputs later)
             self.promotes(comp.name,
                           inputs=[
-                              input for input in comp_inputs if input not in input_dict[comp.name]],
+                              comp_inputs[input]['prom_name'] for input in comp_inputs if input not in input_dict[comp.name]],
                           outputs=[
-                              output for output in comp_outputs if output not in output_dict[comp.name]])
+                              comp_outputs[output]['prom_name'] for output in comp_outputs if output not in output_dict[comp.name]])
 
         # add variables to the mux component and make connections to individual
         # component outputs
