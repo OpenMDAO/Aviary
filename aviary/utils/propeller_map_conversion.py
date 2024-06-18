@@ -128,9 +128,8 @@ def _read_pm_header(f):
 def _read_pm_table(f, cmts):
     """Read an entire table from a GASP propeller map file.
     The table data is returned as a "tidy format" array with three columns for the
-    independent variables (altitude, T4/T2, and Mach number) and the final column for
-    the table field (one of thrust, fuelflow, or airflow for TurboFans or 
-    shaft_power_corrected, fuelflow, or tailpipe_thrust for TurboProps).
+    independent variables (advanced ratio (J), Mach number and power coefficient) 
+    and the final column for thrust coefficient.
     """
     tab_data = None
 
