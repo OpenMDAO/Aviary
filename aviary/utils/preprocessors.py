@@ -141,7 +141,7 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
     # Combine aviary_options and all engine options into single AviaryValues
     # It is assumed that all EngineModels are up-to-date at this point and will NOT
     # be changed later on (otherwise preprocess_propulsion must be run again)
-    count = len(engine_models)
+    num_engine_type = len(engine_models)
 
     complete_options_list = AviaryValues(aviary_options)
     for engine in engine_models:
@@ -167,7 +167,7 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
             elif type(default_value) is tuple:
                 vec = ()
             else:
-                vec = [default_value] * count
+                vec = [default_value] * num_engine_type
 
             units = _MetaData[var]['units']
 
@@ -230,16 +230,16 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
     try:
         num_engines_all = aviary_options.get_val(Aircraft.Engine.NUM_ENGINES)
     except KeyError:
-        num_engines_all = np.zeros(count).astype(int)
+        num_engines_all = np.zeros(num_engine_type).astype(int)
     try:
         num_fuse_engines_all = aviary_options.get_val(
             Aircraft.Engine.NUM_FUSELAGE_ENGINES)
     except KeyError:
-        num_fuse_engines_all = np.zeros(count).astype(int)
+        num_fuse_engines_all = np.zeros(num_engine_type).astype(int)
     try:
         num_wing_engines_all = aviary_options.get_val(Aircraft.Engine.NUM_WING_ENGINES)
     except KeyError:
-        num_wing_engines_all = np.zeros(count).astype(int)
+        num_wing_engines_all = np.zeros(num_engine_type).astype(int)
 
     for i, engine in enumerate(engine_models):
         num_engines = num_engines_all[i]

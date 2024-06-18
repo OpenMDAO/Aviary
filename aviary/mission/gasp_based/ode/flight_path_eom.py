@@ -1,7 +1,6 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.variable_info.enums import AnalysisScheme
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 
@@ -19,8 +18,6 @@ class FlightPathEOM(om.ExplicitComponent):
 
     def initialize(self):
         self.options.declare("num_nodes", types=int)
-        self.options.declare("analysis_scheme", types=AnalysisScheme, default=AnalysisScheme.COLLOCATION,
-                             desc="The analysis method that will be used to close the trajectory; for example collocation or time integration")
         self.options.declare("ground_roll", types=bool, default=False,
                              desc="True if the aircraft is confined to the ground. Removes altitude rate as an "
                                   "output and adjust the TAS rate equation.")
@@ -28,7 +25,6 @@ class FlightPathEOM(om.ExplicitComponent):
     def setup(self):
         nn = self.options["num_nodes"]
         ground_roll = self.options["ground_roll"]
-        analysis_scheme = self.options["analysis_scheme"]
 
         self.add_input(Dynamic.Mission.MASS, val=np.ones(nn),
                        desc="aircraft mass", units="lbm")
@@ -50,12 +46,6 @@ class FlightPathEOM(om.ExplicitComponent):
                        desc="flight path angle", units="rad")
 
         add_aviary_input(self, Aircraft.Wing.INCIDENCE, val=0)
-
-        if analysis_scheme is AnalysisScheme.SHOOTING:
-            self.add_input("t_curr", val=np.ones(nn), desc="time", units="s")
-            self.add_input("distance_trigger", val=0, units="ft")
-            add_aviary_input(self, Dynamic.Mission.ALTITUDE, val=np.ones(nn), units="ft")
-            add_aviary_input(self, Dynamic.Mission.DISTANCE, val=np.ones(nn), units="ft")
 
         self.add_output(Dynamic.Mission.VELOCITY_RATE, val=np.ones(nn), desc="TAS rate", units="ft/s**2",
                         tags=['dymos.state_rate_source:velocity', 'dymos.state_units:kn'])

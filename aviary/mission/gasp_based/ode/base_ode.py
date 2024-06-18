@@ -17,7 +17,7 @@ class BaseODE(om.Group):
         self.options.declare(
             "analysis_scheme",
             default=AnalysisScheme.COLLOCATION,
-            types=enum.Enum,
+            types=AnalysisScheme,
             desc="The analysis method that will be used to close the trajectory; for example collocation or time integration",
         )
 
@@ -45,6 +45,7 @@ class BaseODE(om.Group):
         target_load_factor=1.1,
         target_tas_rate=0,
         # target_alt_rate=0,
+        # target_flight_path_angle=0,
         atol=1e-7,
         rtol=1e-7,
         add_default_solver=True,
@@ -123,6 +124,20 @@ class BaseODE(om.Group):
             alpha_comp_inputs = ["required_lift", Dynamic.Mission.LIFT]
 
         # Future controller modes
+        # elif alpha_mode is AlphaModes.FLIGHT_PATH_ANGLE:
+        #     alpha_comp = om.BalanceComp(
+        #         name="alpha",
+        #         val=np.full(nn, 1),
+        #         units="deg",
+        #         lhs_name=Dynamic.Mission.FLIGHT_PATH_ANGLE,
+        #         rhs_name='target_flight_path_angle',
+        #         rhs_val=target_flight_path_angle,
+        #         eq_units="deg",
+        #         upper=12.0,
+        #         lower=-2,
+        #     )
+        #     alpha_comp_inputs = [Dynamic.Mission.FLIGHT_PATH_ANGLE]
+
         # elif alpha_mode is AlphaModes.ALTITUDE_RATE:
         #     alpha_comp = om.BalanceComp(
         #         name="alpha",

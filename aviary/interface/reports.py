@@ -222,7 +222,7 @@ def timeseries_csv(prob, **kwargs):
     timeseries_data = {}
     for variable_name in unique_variable_names:
         timeseries_data[variable_name] = {}
-        first = True
+        first = True  # flag to check if this is first iteration in for loop
         units = None
         for idx_phase, phase_name in enumerate(phase_names):
             variable_str = f'traj.{phase_name}.timeseries.{variable_name}'

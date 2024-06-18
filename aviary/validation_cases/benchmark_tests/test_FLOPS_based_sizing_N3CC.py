@@ -282,7 +282,17 @@ def run_trajectory(sim=True):
     traj.link_phases(["climb", "cruise", "descent"], [
                      "time", Dynamic.Mission.MASS, Dynamic.Mission.DISTANCE], connected=strong_couple)
 
-    traj = setup_trajectory_params(prob.model, traj, aviary_inputs)
+    # Need to declare dymos parameters for every input that is promoted out of the missions.
+    externs = {'climb': {}, 'cruise': {}, 'descent': {}}
+    for default_subsys in default_mission_subsystems:
+        params = default_subsys.get_parameters(aviary_inputs=aviary_inputs,
+                                               phase_info={})
+        for key, val in params.items():
+            for phname in externs:
+                externs[phname][key] = val
+
+    traj = setup_trajectory_params(prob.model, traj, aviary_inputs,
+                                   external_parameters=externs)
 
     ##################################
     # Connect in Takeoff and Landing #

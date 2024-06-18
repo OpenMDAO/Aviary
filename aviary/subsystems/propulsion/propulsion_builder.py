@@ -117,9 +117,6 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
                 params[var]['shape'] = (num_engine_type,)
                 params[var]['static_target'] = True
 
-        # params = {}  # For now
-        # params[Aircraft.Engine.SCALE_FACTOR] = {'shape': (num_engine_type, ),
-        #                                         'static_target': True}
         return params
 
     # NOTE untested!

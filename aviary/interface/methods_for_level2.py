@@ -56,8 +56,8 @@ from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamics
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.merge_variable_metadata import merge_meta_data
 
-from aviary.interface.default_phase_info.two_dof_fiti import create_2dof_based_ascent_phases, create_2dof_based_descent_phases
-from aviary.mission.gasp_based.idle_descent_estimation import descent_range_and_fuel
+from aviary.interface.default_phase_info.two_dof_fiti import add_default_sgm_args
+from aviary.mission.gasp_based.idle_descent_estimation import add_descent_estimation_as_submodel
 from aviary.mission.phase_builder_base import PhaseBuilderBase
 
 
@@ -234,7 +234,7 @@ class AviaryProblem(om.Problem):
         self.regular_phases = []
         self.reserve_phases = []
 
-    def load_inputs(self, aviary_inputs, phase_info=None, engine_builders=None, verbosity=Verbosity.BRIEF, meta_data=BaseMetaData):
+    def load_inputs(self, aviary_inputs, phase_info=None, engine_builders=None, meta_data=BaseMetaData, verbosity=None):
         """
         This method loads the aviary_values inputs and options that the
         user specifies. They could specify files to load and values to
@@ -249,7 +249,7 @@ class AviaryProblem(om.Problem):
         # Create AviaryValues object from file (or process existing AviaryValues object
         # with default values from metadata) and generate initial guesses
         aviary_inputs, initial_guesses = create_vehicle(
-            aviary_inputs, verbosity=verbosity, meta_data=meta_data)
+            aviary_inputs, meta_data=meta_data, verbosity=verbosity)
 
         # pull which methods will be used for subsystems and mission
         self.mission_method = mission_method = aviary_inputs.get_val(
@@ -298,7 +298,14 @@ class AviaryProblem(om.Problem):
 
             else:
                 if self.mission_method is TWO_DEGREES_OF_FREEDOM:
-                    from aviary.interface.default_phase_info.two_dof import phase_info
+                    if self.analysis_scheme is AnalysisScheme.COLLOCATION:
+                        from aviary.interface.default_phase_info.two_dof import phase_info
+                    elif self.analysis_scheme is AnalysisScheme.SHOOTING:
+                        from aviary.interface.default_phase_info.two_dof_fiti import phase_info, \
+                            phase_info_parameterization
+                        phase_info, _ = phase_info_parameterization(
+                            phase_info, None, self.aviary_inputs)
+
                 elif self.mission_method is HEIGHT_ENERGY:
                     from aviary.interface.default_phase_info.height_energy import phase_info
 
@@ -338,8 +345,6 @@ class AviaryProblem(om.Problem):
     def _update_metadata_from_subsystems(self):
         self.meta_data = BaseMetaData.copy()
 
-        # variables_to_pop = []
-
         # loop through phase_info and external subsystems
         for phase_name in self.phase_info:
             external_subsystems = self._get_all_subsystems(
@@ -353,6 +358,7 @@ class AviaryProblem(om.Problem):
         This method checks for reserve=True & False
         Returns an error if a non-reserve phase is specified after a reserve phase.
         return two dictionaries of phases: regular_phases and reserve_phases
+        For shooting trajectories, this will also check if a phase is part of the descent
         """
 
         # Check to ensure no non-reserve phases are specified after reserve phases
@@ -382,6 +388,13 @@ class AviaryProblem(om.Problem):
                 f'All reserve phases must happen after non-reserve phases. '
                 f'Regular Phases : {self.regular_phases} | '
                 f'Reserve Phases : {self.reserve_phases} ')
+
+        if self.analysis_scheme is AnalysisScheme.SHOOTING:
+            self.descent_phases = {}
+            for name, info in self.phase_info.items():
+                descent = info.get('descent_phase', False)
+                if descent:
+                    self.descent_phases[name] = info
 
     def check_and_preprocess_inputs(self):
         """
@@ -434,7 +447,8 @@ class AviaryProblem(om.Problem):
                         self.phase_info[phase_name]["user_options"].update({
                             "fix_duration": True})
 
-        check_phase_info(self.phase_info, self.mission_method)
+        if self.analysis_scheme is AnalysisScheme.COLLOCATION:
+            check_phase_info(self.phase_info, self.mission_method)
 
         for phase_name in self.phase_info:
             for external_subsystem in self.phase_info[phase_name]['external_subsystems']:
@@ -457,8 +471,6 @@ class AviaryProblem(om.Problem):
         else:
             raise ValueError(f'Unknown mission method {self.mission_method}')
 
-        if Settings.VERBOSITY not in aviary_inputs:
-            aviary_inputs.set_val(Settings.VERBOSITY, Verbosity.BRIEF)
         prop = CorePropulsionBuilder(
             'core_propulsion', engine_models=self.engine_builders)
         mass = CoreMassBuilder('core_mass', code_origin=self.mass_method)
@@ -490,17 +502,16 @@ class AviaryProblem(om.Problem):
                                    use_both_geometries=both_geom,
                                    code_origin_to_prioritize=code_origin_to_prioritize)
 
-        self.core_subsystems = {'propulsion': prop,
-                                'geometry': geom,
-                                'mass': mass,
-                                'aerodynamics': aero}
+        subsystems = self.core_subsystems = {'propulsion': prop,
+                                             'geometry': geom,
+                                             'mass': mass,
+                                             'aerodynamics': aero}
 
         # TODO optionally accept which subsystems to load from phase_info
-        subsystems = self.core_subsystems
         default_mission_subsystems = [
             subsystems['aerodynamics'], subsystems['propulsion']]
-        self.ode_args = dict(aviary_options=aviary_inputs,
-                             core_subsystems=default_mission_subsystems)
+        self.ode_args = {'aviary_options': aviary_inputs,
+                         'core_subsystems': default_mission_subsystems}
 
         self._update_metadata_from_subsystems()
 
@@ -588,7 +599,16 @@ class AviaryProblem(om.Problem):
         add_opts2vals(self.model, OptionsToValues, self.aviary_inputs)
 
         if self.analysis_scheme is AnalysisScheme.SHOOTING:
-            self._add_fuel_reserve_component(post_mission=False)
+            self._add_fuel_reserve_component(
+                post_mission=False, reserves_name='reserve_fuel_estimate')
+            add_default_sgm_args(self.descent_phases, self.ode_args)
+            add_descent_estimation_as_submodel(
+                self,
+                phases=self.descent_phases,
+                cruise_mach=self.cruise_mach,
+                cruise_alt=self.cruise_alt,
+                reserve_fuel='reserve_fuel_estimate',
+            )
 
         # Add thrust-to-weight ratio subsystem
         self.model.add_subsystem(
@@ -936,7 +956,7 @@ class AviaryProblem(om.Problem):
         Parameters
         ----------
         phase_info_parameterization (function, optional): A function that takes in the phase_info dictionary
-            and aviary_inputs and returns modified aviary_inputs. Defaults to None.
+            and aviary_inputs and returns modified phase_info. Defaults to None.
 
         Returns
         -------
@@ -949,59 +969,16 @@ class AviaryProblem(om.Problem):
 
         phase_info = self.phase_info
 
-        phases = list(phase_info.keys())
-
         if self.analysis_scheme is AnalysisScheme.COLLOCATION:
+            phases = list(phase_info.keys())
             traj = self.model.add_subsystem('traj', dm.Trajectory())
 
         elif self.analysis_scheme is AnalysisScheme.SHOOTING:
-            initial_mass = self.aviary_inputs.get_val(Mission.Summary.GROSS_MASS, 'lbm')
+            vb = self.aviary_inputs.get_val(Settings.VERBOSITY)
+            add_default_sgm_args(self.phase_info, self.ode_args, vb)
 
-            ascent_phases = create_2dof_based_ascent_phases(
-                self.ode_args,
-                cruise_alt=self.cruise_alt,
-                cruise_mach=self.cruise_mach)
-
-            descent_phases = create_2dof_based_descent_phases(
-                self.ode_args,
-                cruise_mach=self.cruise_mach)
-
-            descent_estimation = descent_range_and_fuel(
-                phases=descent_phases,
-                initial_mass=initial_mass,
-                cruise_alt=self.cruise_alt,
-                cruise_mach=self.cruise_mach)
-
-            estimated_descent_range = descent_estimation['refined_guess']['distance_flown']
-            end_of_cruise_range = self.target_range - estimated_descent_range
-
-            # based on reserve_fuel
-            estimated_descent_fuel = descent_estimation['refined_guess']['fuel_burned']
-
-            cruise_kwargs = dict(
-                input_speed_type=SpeedType.MACH,
-                input_speed_units="unitless",
-                ode_args=self.ode_args,
-                alpha_mode=AlphaModes.REQUIRED_LIFT,
-                simupy_args=dict(
-                    verbosity=Verbosity.DEBUG,
-                ),
-            )
-            cruise_vals = {
-                'mach': {'val': self.cruise_mach, 'units': cruise_kwargs['input_speed_units']},
-                'descent_fuel': {'val': estimated_descent_fuel, 'units': 'lbm'},
-            }
-
-            phases = {
-                **ascent_phases,
-                'cruise': {
-                    'ode': SGMCruise(**cruise_kwargs),
-                    'vals_to_set': cruise_vals,
-                },
-                **descent_phases,
-            }
             full_traj = FlexibleTraj(
-                Phases=phases,
+                Phases=self.phase_info,
                 traj_final_state_output=[
                     Dynamic.Mission.MASS,
                     Dynamic.Mission.DISTANCE,
@@ -1015,16 +992,17 @@ class AviaryProblem(om.Problem):
                     # specify ODE, output_name, with units that SimuPyProblem expects
                     # assume event function is of form ODE.output_name - value
                     # third key is event_idx associated with input
-                    (phases['groundroll']['ode'], Dynamic.Mission.VELOCITY, 0,),
-                    (phases['climb3']['ode'], Dynamic.Mission.ALTITUDE, 0,),
-                    (phases['cruise']['ode'], Dynamic.Mission.MASS, 0,),
+                    ('groundroll', Dynamic.Mission.VELOCITY, 0,),
+                    ('climb3', Dynamic.Mission.ALTITUDE, 0,),
+                    ('cruise', Dynamic.Mission.MASS, 0,),
                 ],
                 traj_intermediate_state_output=[
                     ('cruise', Dynamic.Mission.DISTANCE),
                     ('cruise', Dynamic.Mission.MASS),
                 ]
             )
-            traj = self.model.add_subsystem('traj', full_traj)
+            traj = self.model.add_subsystem('traj', full_traj, promotes_inputs=[
+                                            ('altitude_initial', Mission.Design.CRUISE_ALTITUDE)])
 
             self.model.add_subsystem(
                 'actual_descent_fuel',
@@ -1034,6 +1012,7 @@ class AviaryProblem(om.Problem):
                             traj_mass_final={'units': 'lbm'},
                             ))
 
+            self.model.connect('start_of_descent_mass', 'traj.SGMCruise_mass_trigger')
             self.model.connect(
                 'traj.mass_final',
                 'actual_descent_fuel.traj_mass_final',
@@ -1159,9 +1138,15 @@ class AviaryProblem(om.Problem):
                     ('mass_final', Mission.Landing.TOUCHDOWN_MASS),
                 ])
             else:
-                # timeseries has to be used because Breguet cruise phases don't have states
-                self.model.connect(f"traj.{self.regular_phases[0]}.timeseries.mass",
-                                   "fuel_burned.initial_mass", src_indices=[0])
+                if self.pre_mission_info['include_takeoff']:
+                    self.post_mission.promotes('fuel_burned', [
+                        ('initial_mass', Mission.Design.GROSS_MASS),
+                    ])
+                else:
+                    # timeseries has to be used because Breguet cruise phases don't have states
+                    self.model.connect(f"traj.{self.regular_phases[0]}.timeseries.mass",
+                                       "fuel_burned.initial_mass", src_indices=[0])
+
                 self.model.connect(f"traj.{self.regular_phases[-1]}.timeseries.mass",
                                    "fuel_burned.mass_final", src_indices=[-1])
 
@@ -1189,8 +1174,7 @@ class AviaryProblem(om.Problem):
                     self.model.connect(f"traj.{self.reserve_phases[-1]}.timeseries.mass",
                                        "reserve_fuel_burned.mass_final", src_indices=[-1])
 
-            if self.analysis_scheme is not AnalysisScheme.SHOOTING:
-                self._add_fuel_reserve_component()
+            self._add_fuel_reserve_component()
 
             # TODO: need to add some sort of check that this value is less than the fuel capacity
             # TODO: the overall_fuel variable is the burned fuel plus the reserve, but should
@@ -1239,7 +1223,7 @@ class AviaryProblem(om.Problem):
 
             # If a target distance (or time) has been specified for this phase
             # distance (or time) is measured from the start of this phase to the end of this phase
-            for idx, phase_name in enumerate(self.phase_info):
+            for phase_name in self.phase_info:
                 if 'target_distance' in self.phase_info[phase_name]["user_options"]:
                     target_distance = wrapped_convert_units(
                         self.phase_info[phase_name]["user_options"]["target_distance"], 'nmi')
@@ -1505,8 +1489,8 @@ class AviaryProblem(om.Problem):
                     self.model,
                     trajs=["traj"],
                     phases=[
-                        self.regular_phases,
-                        self.reserve_phases
+                        [*self.regular_phases,
+                         *self.reserve_phases]
                     ],
                 )
 
@@ -1557,6 +1541,7 @@ class AviaryProblem(om.Problem):
             self.model.promotes("taxi", inputs=param_list)
             self.model.promotes("landing", inputs=param_list)
             if self.analysis_scheme is AnalysisScheme.SHOOTING:
+                param_list.append(Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE)
                 self.model.promotes("traj", inputs=param_list)
                 # self.model.list_inputs()
                 # self.model.promotes("traj", inputs=['ascent.ODE_group.eoms.'+Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE])
@@ -1668,8 +1653,11 @@ class AviaryProblem(om.Problem):
                 driver.options['debug_print'] = verbosity
             elif verbosity.value > Verbosity.DEBUG.value:
                 driver.options['debug_print'] = ['desvars', 'ln_cons', 'nl_cons', 'objs']
-        if verbosity is not Verbosity.DEBUG and optimizer in ("SNOPT", "IPOPT"):
-            driver.options['print_results'] = False
+        if optimizer in ("SNOPT", "IPOPT"):
+            if verbosity is Verbosity.QUIET:
+                driver.options['print_results'] = False
+            elif verbosity is not Verbosity.DEBUG:
+                driver.options['print_results'] = 'minimal'
 
     def add_design_variables(self):
         """
@@ -1712,7 +1700,7 @@ class AviaryProblem(om.Problem):
             optimize_mass = self.pre_mission_info.get('optimize_mass')
             if optimize_mass:
                 self.model.add_design_var(Mission.Design.GROSS_MASS, units='lbm',
-                                          lower=100.e2, upper=200.e3, ref=135.e3)
+                                          lower=100.e2, upper=900.e3, ref=135.e3)
 
         elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
             if self.analysis_scheme is AnalysisScheme.COLLOCATION:

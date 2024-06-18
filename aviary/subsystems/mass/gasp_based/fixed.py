@@ -285,7 +285,6 @@ class PayloadMass(om.ExplicitComponent):
 
         outputs[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS] = \
             payload_mass = pax_mass * PAX
-
         outputs["payload_mass_des"] = payload_mass
         outputs["payload_mass_max"] = pax_mass * PAX + cargo_mass
 
@@ -604,8 +603,8 @@ class EngineMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS,
                          val=np.full(int(total_num_engines/2), 0.35))
 
-        self.add_input(
-            Aircraft.LandingGear.MAIN_GEAR_MASS, val=500, units="lbm", desc="WMG: mass of main gear")
+        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_MASS,
+                         val=500, units="lbm", desc="WMG: mass of main gear")
 
         add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15)
 

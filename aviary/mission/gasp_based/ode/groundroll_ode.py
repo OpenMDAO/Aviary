@@ -6,9 +6,11 @@ from aviary.mission.gasp_based.ode.base_ode import BaseODE
 from aviary.mission.gasp_based.ode.groundroll_eom import GroundrollEOM
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.enums import AnalysisScheme
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables_in import VariablesIn
+from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
 
 
 class GroundrollODE(BaseODE):
@@ -37,6 +39,11 @@ class GroundrollODE(BaseODE):
         aviary_options = self.options['aviary_options']
         core_subsystems = self.options['core_subsystems']
         subsystem_options = self.options['subsystem_options']
+
+        if analysis_scheme is AnalysisScheme.SHOOTING:
+            add_SGM_required_inputs(self, {
+                Dynamic.Mission.DISTANCE: {'units': 'ft'},
+            })
 
         # TODO: paramport
         self.add_subsystem("params", ParamPort(), promotes=["*"])
@@ -82,8 +89,7 @@ class GroundrollODE(BaseODE):
                     src_indices=np.zeros(nn, dtype=int),
                 )
 
-        self.add_subsystem("groundroll_eom", GroundrollEOM(num_nodes=nn, analysis_scheme=analysis_scheme),
-                           promotes=["*"])
+        self.add_subsystem("groundroll_eom", GroundrollEOM(num_nodes=nn), promotes=["*"])
 
         self.add_subsystem("exec", om.ExecComp(f"over_a = velocity / velocity_rate",
                                                velocity_rate={"units": "kn/s",

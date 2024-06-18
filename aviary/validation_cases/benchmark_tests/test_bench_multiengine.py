@@ -120,7 +120,7 @@ class MultiengineTestcase(unittest.TestCase):
         alloc_descent = prob.get_val('traj.descent.parameter_vals:throttle_allocations')
 
         assert_near_equal(alloc_climb[0], 0.5, tolerance=1e-2)
-        assert_near_equal(alloc_cruise[0], 0.56, tolerance=1e-2)
+        assert_near_equal(alloc_cruise[0], 0.64, tolerance=1e-2)
         assert_near_equal(alloc_descent[0], 0.999, tolerance=1e-2)
 
     @require_pyoptsparse(optimizer="SNOPT")
@@ -170,5 +170,3 @@ class MultiengineTestcase(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-    # test = MultiengineTestcase()
-    # test.test_multiengine_dynamic()

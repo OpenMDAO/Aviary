@@ -9,7 +9,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 class ThrottleAllocator(om.ExplicitComponent):
     """
-    Component that computes the throttle values for multiplpe engine types based on
+    Component that computes the throttle values for multiple engine types based on
     the settings for the phase.
     """
 

@@ -43,7 +43,8 @@ class PropulsionMission(om.Group):
             comp = om.ExecComp(
                 "y=x",
                 y={'val': np.ones(num_engine_type), 'units': 'unitless'},
-                x={'val': np.ones(num_engine_type), 'units': 'unitless'}
+                x={'val': np.ones(num_engine_type), 'units': 'unitless'},
+                has_diag_partials=True
             )
             self.add_subsystem(
                 "scale_passthrough",

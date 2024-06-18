@@ -22,8 +22,7 @@ class SGMGroundroll(SimuPyProblem):
     def __init__(
         self,
         phase_name='groundroll',
-        VR_value=143.1,
-        VR_units="kn",
+        VR_value=(143.1, 'kn'),
         ode_args={},
         simupy_args={},
     ):
@@ -46,15 +45,7 @@ class SGMGroundroll(SimuPyProblem):
 
         self.phase_name = phase_name
         self.VR_value = VR_value
-        # self.VR_units = VR_units
-        self.event_channel_names = [Dynamic.Mission.VELOCITY]
-        self.num_events = len(self.event_channel_names)
-        # self.add_trigger(Dynamic.Mission.VELOCITY, "VR_value", units='ft/s')
-
-    def event_equation_function(self, t, x):
-        self.time = t
-        self.state = x
-        return self.get_val(Dynamic.Mission.VELOCITY, units='ft/s') - self.VR_value
+        self.add_trigger(Dynamic.Mission.VELOCITY, "VR_value")
 
 
 class SGMRotation(SimuPyProblem):
@@ -194,7 +185,7 @@ class SGMAscentCombined(SGMAscent):
     def __init__(
         self,
         phase_name='ascent_combined',
-        fuselage_pitch_max=0,
+        fuselage_pitch_max=(0, 'deg'),
         ode_args={},
         simupy_args={},
     ):
@@ -276,7 +267,6 @@ class SGMAscentCombined(SGMAscent):
                 load_factor_val = ode.get_val("load_factor")
                 fuselage_pitch_val = ode.get_val("fuselage_pitch", units="deg")
                 velocity_rate_val = ode.get_val("velocity_rate")
-
                 if (
                     (load_factor_val > load_factor_max) and not
                     np.isclose(load_factor_val, load_factor_max)
@@ -385,6 +375,7 @@ class SGMAccel(SimuPyProblem):
                 Dynamic.Mission.MASS: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
             **simupy_args,
         )
+
         self.phase_name = phase_name
         self.add_trigger("EAS", VC_value, units=VC_units)
 
@@ -447,6 +438,7 @@ class SGMClimb(SimuPyProblem):
                 Dynamic.Mission.MASS: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
             **simupy_args,
         )
+
         self.phase_name = phase_name
         self.add_trigger(Dynamic.Mission.ALTITUDE, "alt_trigger",
                          units=self.alt_trigger_units)
@@ -466,7 +458,8 @@ class SGMCruise(SimuPyProblem):
         alpha_mode=AlphaModes.DEFAULT,
         input_speed_type=SpeedType.MACH,
         input_speed_units="kn",
-        distance_trigger_units='ft',
+        distance_trigger=(-1, 'ft'),
+        mass_trigger=(0, 'lbm'),
         ode_args={},
         simupy_args={},
     ):
@@ -477,7 +470,8 @@ class SGMCruise(SimuPyProblem):
             clean=True,
             **ode_args,)
 
-        self.distance_trigger_units = distance_trigger_units
+        self.distance_trigger = distance_trigger
+        self.mass_trigger = mass_trigger
 
         super().__init__(
             ode,
@@ -504,9 +498,8 @@ class SGMCruise(SimuPyProblem):
         )
 
         self.phase_name = phase_name
-        self.add_trigger(Dynamic.Mission.MASS, 'mass_trigger.mass_trigger', units='lbm')
-        self.add_trigger(Dynamic.Mission.DISTANCE, "distance_trigger",
-                         units=self.distance_trigger_units)
+        self.add_trigger(Dynamic.Mission.DISTANCE, "distance_trigger")
+        self.add_trigger(Dynamic.Mission.MASS, 'mass_trigger')
 
 
 class SGMDescent(SimuPyProblem):

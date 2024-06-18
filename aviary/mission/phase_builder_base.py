@@ -523,7 +523,6 @@ class PhaseBuilderBase(ABC):
         alt_defect_ref = user_options.get_val('alt_defect_ref', units=units)
         self.phase.add_state(
             Dynamic.Mission.ALTITUDE,
-            fix_initial=True,
             fix_final=False,
             lower=alt_lower,
             upper=alt_upper,

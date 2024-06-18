@@ -257,7 +257,8 @@ def create_printcomp(all_inputs: list, input_units: dict = {}, meta_data=_MetaDa
                 if ':' in variable_name:
                     add_aviary_input(self, variable_name, units=units)
                 else:
-                    self.add_input(variable_name, units=units)
+                    # using an arbitrary number that will stand out for unconnected variables
+                    self.add_input(variable_name, units=units, val=1.23456)
 
         def compute(self, inputs, outputs):
             print_string = ['v'*20]
@@ -357,11 +358,14 @@ def get_path(path: str | Path, verbose: bool = False) -> Path:
 
     # If the path still doesn't exist, attempt to find it in the models directory.
     if not path.exists():
-        hangar_based_path = get_model(original_path)
-        if verbose:
-            print(
-                f"Unable to locate '{aviary_based_path}' as an Aviary package path, checking built-in models")
-        path = hangar_based_path
+        try:
+            hangar_based_path = get_model(original_path)
+            if verbose:
+                print(
+                    f"Unable to locate '{aviary_based_path}' as an Aviary package path, checking built-in models")
+            path = hangar_based_path
+        except FileNotFoundError:
+            pass
 
     # If the path still doesn't exist in any of the prioritized locations, raise an error.
     if not path.exists():

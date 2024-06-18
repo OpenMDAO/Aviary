@@ -34,6 +34,7 @@ class AlphaModes(Enum):
     REQUIRED_LIFT = auto()
     ALTITUDE_RATE = auto()
     CONSTANT_ALTITUDE = auto()
+    FLIGHT_PATH_ANGLE = auto()
 
 
 class AnalysisScheme(Enum):
@@ -165,7 +166,10 @@ class SpeedType(Enum):
     '''
     EAS = 'EAS'
     TAS = 'TAS'
-    MACH = 'Mach'
+    MACH = 'mach'
+
+    def __str__(self):
+        return self.value
 
 
 class ThrottleAllocation(Enum):
@@ -195,3 +199,7 @@ class Verbosity(Enum):
 
     def __str__(self):
         return str(self.value)
+
+    @classmethod
+    def values(cls):
+        return {c.value for c in cls}
