@@ -3,10 +3,20 @@ import unittest
 from copy import deepcopy
 
 from aviary.utils.test_utils.variable_test import (
-    DuplicateHierarchy, assert_metadata_alphabetization, assert_no_duplicates,
+    assert_metadata_alphabetization, assert_no_duplicates,
     assert_structure_alphabetization, get_names_from_hierarchy)
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
+
+
+class DuplicateHierarchy:
+
+    class Design:
+        CRUISE_MACH = 'mission:design:cruise_mach'
+        RANGE = 'mission:design:range'
+
+    class OperatingLimits:
+        MAX_MACH = 'mission:design:cruise_mach'  # this is a duplicate
 
 
 class MetaDataTest(unittest.TestCase):

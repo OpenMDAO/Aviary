@@ -37,115 +37,74 @@ def assert_no_duplicates(
     return duplicates
 
 
-def assert_structure_alphabetization(variables_file_loc):
-    #################################################################################################################
-    # Extract Class and Variable Names from File #
-    #################################################################################################################
+def assert_structure_alphabetization(file_loc):
+    """
+    Assert that an aviary variable hierarchy is properly sorted.
 
-    full_file_loc = os.path.abspath(os.path.join(base_path, variables_file_loc))
+    Parameters:
+    -----------
+    file_loc : str
+        Location of the hierarchy file relative to the aviary top directory.
+    """
+    full_file_loc = os.path.abspath(os.path.join(base_path, file_loc))
+
     with open(full_file_loc) as variable_file:
-        # variable_file = open(full_file_loc, "r")
         lines = variable_file.readlines()
-        variable_file.close()
-        ct = 0
-        superclass_names = []  # comprehensive list of the names of the superclasses
-        subclass_names_tot = []  # comprehensive list of the names of the subclasses
-        subclass_names = []  # list of names of subclasses in each individual superclass, intermediate variable that is overwritten for each superclass
-        variable_names_tot = []  # comprehensive list of the names of the variables
-        variable_names = []  # list of names of variable in each individual subclass, intermediate variable that is overwritten for each subclass
-        # list of names of variables in each individual superclass, intermediate variable that is overwritten for each superclass
-        variable_names_tot_per_super = []
 
-        first_super = True
-        first_sub = True
+    previous_line = ""
+    current_stem = {0: ''}
+    bad_sort = []
+    in_block_comment = False
+    for line in lines:
+        line_ls = line.lstrip()
 
-        for ct, line in enumerate(lines):
-            line_ls = line.lstrip()
-            if line_ls.startswith('#'):
-                # Skip any comments.
-                continue
+        if line_ls.startswith('#'):
+            # Skip any comments.
+            continue
 
-            leading_spaces = len(line) - len(line_ls)
+        leading_spaces = len(line) - len(line_ls)
 
-            # Get Class Names #
-            is_class = line.find("class") != -1 and (line[line.find("class") + 5]) == " "
+        line = line_ls.rstrip()
 
-            if is_class:
-                split_line = line.split("class ")
-                class_name = split_line[1].split(":")
-                class_name = class_name[0]  # name of class on this line
-                if split_line[0] == "":  # this means it is a top level class
-                    superclass_names.append(class_name)
-                    if subclass_names:  # checks to see if any subclasses have been encountered yet
-                        # appends the subclass names in the previous superclass to the total subclass list
-                        subclass_names_tot.append(subclass_names)
-                    subclass_names = []  # resets the list of subclasses in one individual superclass
+        if len(line) == 0:
+            # Skip whitespace-only lines
+            continue
 
-                    if variable_names_tot_per_super:  # checks to see if any arrays of variables need to be added
-                        if variable_names:  # checks to see if any lists of variable names need to be added
-                            # appends the variable names in the previous subclass to the total variable names list per superclass
-                            variable_names_tot_per_super.append(variable_names)
-                        variable_names = []  # resets the list of variable names in one individual subclass
-                        # appends the variable names of the entire previous superclass to the total variable names list
-                        variable_names_tot.append(variable_names_tot_per_super)
-                    variable_names_tot_per_super = []
+        if line.startswith("'''") or line.startswith('"""'):
+            in_block_comment = not in_block_comment
+            continue
+        elif in_block_comment:
+            continue
 
-                elif split_line[0] == "    ":  # this means it is a subclass
-                    subclass_names.append(class_name)
-                    if variable_names:  # checkts to see if any variables have been encountered yet in this superclass
-                        # appends the variable names in the previous subclass to the total variable names list per superclass
-                        variable_names_tot_per_super.append(variable_names)
-                    variable_names = []  # resets the list of variable names in one individual subclass
+        if line.startswith('class'):
+            # Class lines
+            class_name = line.split("class ")[-1]
+            current_line = f"{current_stem[leading_spaces]}{class_name}"
+            current_stem[leading_spaces + 4] = current_line
+        elif "=" in line:
+            # Variable lines
+            var_name = line.split("=")[0].strip()
+            current_line = f"{current_stem[leading_spaces]}{var_name}"
+        else:
+            # Continuations.
+            continue
 
-            # Get Variable Names #
-            if leading_spaces == 8:
-                var_name = line.split()[0]
-                # append variable to variable name list for variables in a single subclass
-                variable_names.append(var_name)
+        if leading_spaces % 4 > 0:
+            msg = "The variable file is not using proper Python spacing."
+            raise ValueError(msg)
 
-        # Append final variable names #
-        if subclass_names:
-            subclass_names_tot.append(subclass_names)
+        # Note: underscore sorts between upper and lower case letters, which is not ideal.
+        current_line_fix = current_line.replace('_', ' ').casefold()
 
-        if variable_names:
-            variable_names_tot_per_super.append(variable_names)
+        if current_line_fix < previous_line:
+            bad_sort.append(current_line)
 
-        if variable_names_tot_per_super:
-            variable_names_tot.append(variable_names_tot_per_super)
+        previous_line = current_line_fix
 
-        #################################################################################################################
-        # Finish Extracting Class and Variable Names from File #
-        #################################################################################################################
-
-        # Check For Alphabetization in Superclasses #
-        sorted_superclass = superclass_names.copy()
-        sorted_superclass.sort(key=str.casefold)
-        superclass_is_sorted = sorted_superclass == superclass_names
-        if not superclass_is_sorted:
-            raise ValueError(
-                f'The list of classes in the "{variables_file_loc}" file is not alphabetical. The class order should be: {sorted_superclass} but instead it is: {superclass_names}.'
-            )
-
-        # Check for Alphabetization in Subclasses #
-        for idx, family in enumerate(subclass_names_tot):
-            sorted_family = family.copy()
-            sorted_family.sort(key=str.casefold)
-            family_is_sorted = sorted_family == family
-            if not family_is_sorted:
-                raise ValueError(
-                    f'The list of classes in "{superclass_names[idx]}" is not alphabetical. The class order should be: {sorted_family} but instead it is: {family}.'
-                )
-
-        # Check for Alphabetization in Variables #
-        for super_cnt, var_per_super in enumerate(variable_names_tot):
-            for sub_cnt, var_per_sub in enumerate(var_per_super):
-                sorted_var_list = var_per_sub.copy()
-                sorted_var_list.sort(key=str.casefold)
-                var_list_is_sorted = sorted_var_list == var_per_sub
-                if not var_list_is_sorted:
-                    raise ValueError(
-                        f'The list of variables in class "{subclass_names_tot[super_cnt][sub_cnt]}" within class "{superclass_names[super_cnt]}" is not alphabetical. The variable order should be: {sorted_var_list} but instead it is: {var_per_sub}.'
-                    )
+    if len(bad_sort) > 0:
+        txt = '\n'.join(bad_sort)
+        msg = f'The following variables are out of order:\n{txt}'
+        raise ValueError(msg)
 
 
 def assert_metadata_alphabetization(metadata_variables_list):
@@ -233,16 +192,6 @@ def get_names_from_hierarchy(hierarchy):
             )  # add relevant variables to dictionary
 
     return names
-
-
-class DuplicateHierarchy:
-
-    class Design:
-        CRUISE_MACH = 'mission:design:cruise_mach'
-        RANGE = 'mission:design:range'
-
-    class OperatingLimits:
-        MAX_MACH = 'mission:design:cruise_mach'  # this is a duplicate
 
 
 def filter_empty(entry):
