@@ -139,7 +139,7 @@ def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
         if is_turbo_prop:
             gasp_keys.extend((SHAFT_POWER_CORRECTED, TAILPIPE_THRUST))
         else:
-            gasp_keys.extend((THRUST))
+            gasp_keys.extend((THRUST,))  # must keep "," here
         gasp_keys.extend((fuelflow, temperature))
 
         data = {key: [] for key in gasp_keys}
