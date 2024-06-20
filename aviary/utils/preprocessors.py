@@ -185,8 +185,6 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
             # 2. aviary_options
             # 3. default value from metadata
             for i, engine in enumerate(engine_models):
-                # if var == Aircraft.Nacelle.AVG_DIAMETER:
-                #     pass
                 # test to see if engine has this variable - if so, use it
                 try:
                     # variables in engine models are known to be "safe", will only
