@@ -24,7 +24,7 @@ Aviary is built and shared with this in mind.
 
 Aviary by itself provides low-fidelity analysis.
 For medium- and high-fidelity analysis, users need to create those models themselves and link them to Aviary.
-Aviary comes with [multiple examples of external subsystems](../user_guide/using_external_subsystems.md) that can be used to create medium- and high-fidelity models.
+Aviary comes with [multiple examples of external subsystems](../user_guide/using_external_subsystems) that can be used to create medium- and high-fidelity models.
 
 ## Are you able to connect high-fidelity analysis to Aviary?
 

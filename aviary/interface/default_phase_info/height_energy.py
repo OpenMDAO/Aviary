@@ -1,20 +1,4 @@
-from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
-from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
-from aviary.subsystems.mass.mass_builder import CoreMassBuilder
-from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
-from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
-from aviary.variable_info.variables import Dynamic, Mission
-from aviary.variable_info.enums import LegacyCode
-
-FLOPS = LegacyCode.FLOPS
-
-prop = CorePropulsionBuilder('core_propulsion', BaseMetaData)
-mass = CoreMassBuilder('core_mass', BaseMetaData, FLOPS)
-aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, FLOPS)
-geom = CoreGeometryBuilder('core_geometry', BaseMetaData, FLOPS)
-
-default_premission_subsystems = [prop, geom, mass, aero]
-default_mission_subsystems = [aero, prop]
+from aviary.variable_info.variables import Mission
 
 
 phase_info = {

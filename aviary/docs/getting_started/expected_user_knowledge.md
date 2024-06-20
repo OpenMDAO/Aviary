@@ -1,7 +1,7 @@
 # Expected User Knowledge
 
 This section details the recommend user knowledge to use Aviary for different purposes.
-We'll reference the [three user interface levels](../user_guide/user_interface.md) throughout.
+We'll reference the [three user interface levels](../user_guide/user_interface) throughout.
 
 A graphical summary of the info presented below is shown in the figure.
 

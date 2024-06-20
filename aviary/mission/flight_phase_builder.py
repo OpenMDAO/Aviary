@@ -11,6 +11,7 @@ from aviary.mission.flops_based.phases.phase_utils import add_subsystem_variable
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.mission.flops_based.ode.mission_ODE import MissionODE
 from aviary.variable_info.enums import EquationsOfMotion, ThrottleAllocation
+from aviary.variable_info.variables import Aircraft
 
 
 # TODO: support/handle the following in the base class

@@ -9,6 +9,7 @@ from aviary.subsystems.propulsion.utils import EngineModelVariables as keys
 from aviary.utils.named_values import NamedValues
 from aviary.validation_cases.validation_data.flops_data.FLOPS_Test_Data import \
     FLOPS_Test_Data
+from aviary.subsystems.propulsion.utils import build_engine_deck
 
 
 class EngineDeckTest(unittest.TestCase):
@@ -17,7 +18,7 @@ class EngineDeckTest(unittest.TestCase):
 
         aviary_values = FLOPS_Test_Data['LargeSingleAisle2FLOPS']['inputs']
 
-        model = aviary_values.get_val('engine_models')[0]
+        model = build_engine_deck(aviary_values)[0]
 
         expected_mach_number = []
         expected_altitude = []
@@ -53,7 +54,7 @@ class EngineDeckTest(unittest.TestCase):
 
         aviary_values = FLOPS_Test_Data['LargeSingleAisle1FLOPS']['inputs']
 
-        model = aviary_values.get_val('engine_models')[0]
+        model = build_engine_deck(aviary_values)[0]
 
         # hardcoded data of processed engine model from LEAPS1 after flight idle
         # point generation, sorted in Aviary order

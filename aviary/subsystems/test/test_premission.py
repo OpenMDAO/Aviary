@@ -18,6 +18,7 @@ from aviary.models.large_single_aisle_1.V3_bug_fixed_IO import V3_bug_fixed_opti
 from aviary.utils.functions import set_aviary_initial_values
 from aviary.variable_info.variables_in import VariablesIn
 from aviary.variable_info.enums import LegacyCode
+from aviary.subsystems.propulsion.utils import build_engine_deck
 
 
 FLOPS = LegacyCode.FLOPS
@@ -67,7 +68,9 @@ class PreMissionTestCase(unittest.TestCase):
         input_options.delete(Aircraft.Fuel.TOTAL_CAPACITY)
         input_options.delete(Aircraft.Nacelle.AVG_LENGTH)
 
-        prop = CorePropulsionBuilder('core_propulsion', BaseMetaData)
+        engine = build_engine_deck(input_options)
+
+        prop = CorePropulsionBuilder('core_propulsion', BaseMetaData, engine)
         mass = CoreMassBuilder('core_mass', BaseMetaData, GASP)
         aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, FLOPS)
         geom = CoreGeometryBuilder('core_geometry',
@@ -271,11 +274,12 @@ class PreMissionTestCase(unittest.TestCase):
         aviary_inputs = setup_options(GASP_input, FLOPS_input)
 
         aviary_inputs.delete(Aircraft.Fuselage.WETTED_AREA)
+        engine = build_engine_deck(aviary_inputs)
 
         prob = om.Problem()
         model = prob.model
 
-        prop = CorePropulsionBuilder('core_propulsion', BaseMetaData)
+        prop = CorePropulsionBuilder('core_propulsion', BaseMetaData, engine)
         mass = CoreMassBuilder('core_mass', BaseMetaData, GASP)
         aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, FLOPS)
         geom = CoreGeometryBuilder('core_geometry',
@@ -351,3 +355,6 @@ class PreMissionTestCase(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+    # test = PreMissionTestCase()
+    # test.setUp()
+    # test.test_GASP_mass_FLOPS_everything_else()

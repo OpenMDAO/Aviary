@@ -11,7 +11,7 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 from aviary.interface.methods_for_level2 import AviaryProblem
 
 from aviary.utils.functions import set_aviary_initial_values
-from aviary.utils.preprocessors import preprocess_crewpayload
+from aviary.utils.preprocessors import preprocess_options
 from aviary.models.N3CC.N3CC_data import \
     balanced_liftoff_user_options as _takeoff_liftoff_user_options
 from aviary.models.N3CC.N3CC_data import \
@@ -20,7 +20,8 @@ from aviary.models.N3CC.N3CC_data import \
     inputs as _inputs
 from aviary.variable_info.variables import Dynamic
 from aviary.variable_info.variables_in import VariablesIn
-from aviary.interface.default_phase_info.height_energy import default_premission_subsystems
+from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.subsystems.premission import CorePreMission
 
 
@@ -57,7 +58,9 @@ class TestFLOPSBalancedFieldLength(unittest.TestCase):
 
     def _do_run(self, driver: Driver, optimizer, *args):
         aviary_options = _inputs.deepcopy()
-        preprocess_crewpayload(aviary_options)
+
+        engine = build_engine_deck(aviary_options)
+        preprocess_options(aviary_options, engine_models=engine)
 
         takeoff_trajectory_builder = copy.deepcopy(_takeoff_trajectory_builder)
         takeoff_liftoff_user_options = _takeoff_liftoff_user_options.deepcopy()
@@ -72,12 +75,14 @@ class TestFLOPSBalancedFieldLength(unittest.TestCase):
 
         driver.recording_options['record_derivatives'] = False
 
+        default_mission_subsystems = get_default_mission_subsystems('FLOPS', engine)
+
         # Upstream static analysis for aero
         takeoff.model.add_subsystem(
             'core_subsystems',
             CorePreMission(
                 aviary_options=aviary_options,
-                subsystems=default_premission_subsystems,
+                subsystems=default_mission_subsystems,
             ),
             promotes_inputs=['aircraft:*', 'mission:*'],
             promotes_outputs=['aircraft:*', 'mission:*'])

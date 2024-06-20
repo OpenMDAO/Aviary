@@ -30,7 +30,8 @@ class ThrustReverserMassTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             "thrust_rev",
-            ThrustReverserMass(aviary_options=get_flops_inputs(case_name)),
+            ThrustReverserMass(aviary_options=get_flops_inputs(
+                case_name, preprocess=True)),
             promotes=['*']
         )
 

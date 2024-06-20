@@ -18,8 +18,9 @@ from aviary.models.N3CC.N3CC_data import (
     landing_fullstop_user_options as _landing_fullstop_user_options)
 
 from aviary.variable_info.variables import Dynamic
-from aviary.interface.default_phase_info.height_energy import default_premission_subsystems
-from aviary.utils.preprocessors import preprocess_crewpayload
+from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
+from aviary.utils.preprocessors import preprocess_options
 from aviary.variable_info.variables_in import VariablesIn
 
 
@@ -67,7 +68,10 @@ class TestFLOPSDetailedLanding(unittest.TestCase):
 
         driver.recording_options['record_derivatives'] = False
 
-        preprocess_crewpayload(aviary_options)
+        engine = build_engine_deck(aviary_options)
+        preprocess_options(aviary_options, engine_models=engine)
+
+        default_premission_subsystems = get_default_mission_subsystems('FLOPS', engine)
 
         # Upstream static analysis for aero
         landing.model.add_subsystem(
