@@ -123,11 +123,11 @@ def build_engine_deck(aviary_options: AviaryValues, meta_data=_MetaData):
     engine_models : <list of EngineDecks>
         List of EngineDecks created using provided aviary_options.
     '''
-    # import locally placed to avoid circular import
+    # local import to avoid circular import
     from aviary.subsystems.propulsion.engine_deck import EngineDeck
 
-    # Build a single engine deck, currently ignoring vectorization
-    # of AviaryValues (use first index)
+    # Build a single engine deck, currently ignoring vectorization of AviaryValues
+    # (use first item in arrays when appropriate)
     engine_options = AviaryValues()
     for var in Aircraft.Engine.__dict__.values():
         # check if this variable exist with useable metadata
@@ -136,11 +136,16 @@ def build_engine_deck(aviary_options: AviaryValues, meta_data=_MetaData):
             try:
                 # add value from aviary_options to engine_options
                 aviary_val = aviary_options.get_val(var, units)
+                default_value = meta_data[var]['default_value']
                 # special handling for iterables - check if they are multidimensional,
                 # which implies multiple engine models, and only use the value intended
                 # for the first engine model
                 if isinstance(aviary_val, np.ndarray):
-                    expected_dim = meta_data[var]['default_value'].ndim
+                    try:
+                        expected_dim = default_value.ndim
+                    except AttributeError:
+                        # metadata is not expecting a numpy array, just a single value
+                        expected_dim = 0
                     val_dim = aviary_val.ndim
                     # if aviary_values has one more dimension than expected per-engine,
                     # we know aviary_values is for multi-engine type. Currently only using
@@ -156,7 +161,7 @@ def build_engine_deck(aviary_options: AviaryValues, meta_data=_MetaData):
                     # "Convert" numpy types to standard Python types. Wrap first
                     # index in numpy array before calling item() to safeguard against
                     # non-standard types, such as objects
-                    if aviary_val.ndim == 0:
+                    if np.array(aviary_val).ndim == 0:
                         aviary_val = np.array(aviary_val).item()
                 elif isinstance(aviary_val, (list, tuple)):
                     # Python lists and tuples do not have to be regular (can be ragged),
@@ -165,7 +170,8 @@ def build_engine_deck(aviary_options: AviaryValues, meta_data=_MetaData):
                     try:
                         aviary_val_0 = aviary_val[0]
                         # if item in first index is also iterable, multi-dimensional array
-                        if type(aviary_val_0, (list, tuple)):
+                        # if array only contains a single value, use that
+                        if isinstance(aviary_val_0, (list, tuple)) or len(aviary_val) == 1:
                             aviary_val = aviary_val_0
                     except TypeError:
                         pass
