@@ -93,6 +93,8 @@ def PropDataConverter(input_file, output_file, data_format: PropMapType):
     for idx, key in enumerate(data):
         write_data.set_val(header_names[key], data[key], default_units[key])
 
+    if output_file is None:
+        output_file = data_file.stem + '.prop'
     write_data_file(output_file, write_data, comments, include_timestamp=False)
 
 
@@ -235,7 +237,7 @@ def _read_map(f):
 def _setup_PMC_parser(parser):
     parser.add_argument('input_file', type=str,
                         help='path to propeller map file to be converted')
-    parser.add_argument('output_file', type=str,
+    parser.add_argument('output_file', type=str, nargs='?',
                         help='path to file where new converted data will be written')
     parser.add_argument('-f', '--data_format', type=PropMapType, choices=list(PropMapType),
                         help='data format used by input_file')
