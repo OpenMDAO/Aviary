@@ -63,6 +63,7 @@ def PropDataConverter(input_file, output_file, data_format: PropMapType):
     data_file = get_path(input_file)
 
     comments.append(f'# created {timestamp} by {user}')
+    comments.append(f'# {data_format} propeller map converted from {input_file}')
 
     if data_format is PropMapType.GASP:
         scalars, tables, fields = _read_gasp_propeller(data_file, comments)
