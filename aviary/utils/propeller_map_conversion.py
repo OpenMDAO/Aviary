@@ -240,6 +240,7 @@ def _setup_PMC_parser(parser):
     parser.add_argument('output_file', type=str, nargs='?',
                         help='path to file where new converted data will be written')
     parser.add_argument('-f', '--data_format', type=PropMapType, choices=list(PropMapType),
+                        nargs='?', default='GASP',
                         help='data format used by input_file')
 
 
