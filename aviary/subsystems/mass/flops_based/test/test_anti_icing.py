@@ -28,7 +28,7 @@ class AntiIcingMassTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             "anti_icing",
-            AntiIcingMass(aviary_options=get_flops_inputs(case_name)),
+            AntiIcingMass(aviary_options=get_flops_inputs(case_name, preprocess=True)),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )

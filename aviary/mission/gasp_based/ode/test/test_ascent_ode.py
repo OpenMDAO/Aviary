@@ -4,7 +4,8 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
 
 from aviary.mission.gasp_based.ode.ascent_ode import AscentODE
-from aviary.interface.default_phase_info.two_dof import default_mission_subsystems
+from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Dynamic
 
@@ -12,8 +13,13 @@ from aviary.variable_info.variables import Dynamic
 class AscentODETestCase(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
+
+        aviary_options = get_option_defaults()
+        default_mission_subsystems = get_default_mission_subsystems(
+            'GASP', build_engine_deck(aviary_options))
+
         self.prob.model = AscentODE(num_nodes=2,
-                                    aviary_options=get_option_defaults(),
+                                    aviary_options=aviary_options,
                                     core_subsystems=default_mission_subsystems)
 
     def test_ascent_partials(self):

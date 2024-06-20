@@ -158,7 +158,10 @@ class TurbopropModel(EngineModel):
                                        num_nodes), 'units': 'lbf'},
                                    turboshaft_thrust={'val': np.zeros(
                                        num_nodes), 'units': 'lbf'},
-                                   propeller_thrust={'val': np.zeros(num_nodes), 'units': 'lbf'})
+                                   propeller_thrust={'val': np.zeros(
+                                       num_nodes), 'units': 'lbf'},
+                                   has_diag_partials=True
+                                   )
 
         turboprop_group.add_subsystem('thrust_adder',
                                       subsys=thrust_adder,

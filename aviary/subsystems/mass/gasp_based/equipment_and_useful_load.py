@@ -25,7 +25,8 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
         )
 
     def setup(self):
-        num_engine_type = len(self.options['aviary_options'].get_val('engine_models'))
+        num_engine_type = len(self.options['aviary_options'].get_val(
+            Aircraft.Engine.NUM_ENGINES))
 
         add_aviary_input(
             self, Aircraft.AirConditioning.MASS_COEFFICIENT, val=1, units="unitless")
