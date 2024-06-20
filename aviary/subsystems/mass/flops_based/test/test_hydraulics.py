@@ -42,7 +42,8 @@ class TransportHydraulicsGroupMassTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             'hydraulics',
-            TransportHydraulicsGroupMass(aviary_options=get_flops_inputs(case_name)),
+            TransportHydraulicsGroupMass(
+                aviary_options=get_flops_inputs(case_name, preprocess=True)),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )
@@ -81,7 +82,8 @@ class AltHydraulicsGroupMassTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             'hydraulics',
-            AltHydraulicsGroupMass(aviary_options=get_flops_inputs(case_name)),
+            AltHydraulicsGroupMass(
+                aviary_options=get_flops_inputs(case_name, preprocess=True)),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )

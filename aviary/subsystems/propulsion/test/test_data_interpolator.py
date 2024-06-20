@@ -13,6 +13,7 @@ from aviary.utils.named_values import NamedValues
 from aviary.variable_info.variables import Dynamic
 from aviary.validation_cases.validation_data.flops_data.FLOPS_Test_Data import \
     FLOPS_Test_Data
+from aviary.subsystems.propulsion.utils import build_engine_deck
 
 
 class DataInterpolationTest(unittest.TestCase):
@@ -21,7 +22,7 @@ class DataInterpolationTest(unittest.TestCase):
 
         aviary_values = FLOPS_Test_Data['LargeSingleAisle2FLOPS']['inputs']
 
-        model = aviary_values.get_val('engine_models')[0]
+        model = build_engine_deck(aviary_values)[0]
 
         mach_number = model.data[keys.MACH]
         altitude = model.data[keys.ALTITUDE]

@@ -289,7 +289,7 @@ class ArrayGuessSubsystemBuilder(SubsystemBuilderBase):
             }
         }
 
-    def get_controls(self):
+    def get_controls(self, **kwargs):
         return {}
 
     def get_parameters(self, aviary_inputs=None, phase_info=None):

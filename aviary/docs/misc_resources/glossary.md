@@ -31,7 +31,7 @@ design variable
     Dymos is built on top of OpenMDAO and uses collocation integration methods to solve optimal control problems.
     Aviary can use Dymos to solve the mission analysis problem.
 
-[external subsystem](../user_guide/using_external_subsystems.md)
+[external subsystem](../user_guide/using_external_subsystems)
     A subsystem that is not included in the Aviary core subsystems.
     External subsystems are added to the Aviary model by the user.
     External subsystems are often used to add more complex models to the Aviary model.

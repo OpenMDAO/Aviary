@@ -5,6 +5,7 @@ default_units : dict
     Matches each EngineModelVariables entry with default units (str)
 """
 from enum import Enum, auto
+from pathlib import Path
 
 import numpy as np
 import openmdao.api as om
@@ -13,6 +14,8 @@ import aviary.constants as constants
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variables import Aircraft
 
 
 class EngineModelVariables(Enum):
@@ -102,6 +105,53 @@ def convert_geopotential_altitude(altitude):
         altitude[i] = alt
 
     return altitude
+
+
+# TODO build test for this function
+def build_engine_deck(aviary_options: AviaryValues):
+    '''
+    Creates an EngineDeck using avaliable inputs and options in aviary_options.
+
+    Parameter
+    ----------
+    aviary_options : AviaryValues
+        Options to use in creation of EngineDecks.
+
+    Returns
+    ----------
+    engine_models : <list of EngineDecks>
+        List of EngineDecks created using provided aviary_options.
+    '''
+    # import locally placed to avoid circular import
+    from aviary.subsystems.propulsion.engine_deck import EngineDeck
+
+    # Build a single engine deck, currently ignoring vectorization
+    # of AviaryValues (use first index)
+    engine_options = AviaryValues()
+    for var in Aircraft.Engine.__dict__.values():
+        # check if this variable exist with useable metadata
+        try:
+            units = _MetaData[var]['units']
+            try:
+                # add value from aviary_options to engine_options
+                aviary_val = aviary_options.get_val(var, units)
+                if isinstance(aviary_val, np.ndarray):
+                    # "Convert" numpy types to standard Python types. Wrap first
+                    # index in numpy array before calling item() to safeguard against
+                    # non-standard types, such as objects
+                    aviary_val = np.array(aviary_val[0]).item()
+                elif isinstance(aviary_val, (list, tuple)):
+                    aviary_val = aviary_val[0]
+                engine_options.set_val(var, aviary_val, units)
+            # if not, use default value from _MetaData?
+            except KeyError:
+                # engine_options.set_val(var, _MetaData[var]['default_value'], units)
+                continue
+        except (KeyError, TypeError):
+            continue
+
+    # name engine deck after filename
+    return [EngineDeck(Path(engine_options.get_val(Aircraft.Engine.DATA_FILE)).stem, options=engine_options)]
 
 
 class UncorrectData(om.Group):

@@ -1,8 +1,6 @@
 import numpy as np
 
-from aviary.subsystems.propulsion.engine_deck import EngineDeck
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.functions import get_path
 from aviary.variable_info.enums import EquationsOfMotion, LegacyCode
 from aviary.variable_info.variables import Aircraft, Mission, Settings
@@ -114,7 +112,7 @@ inputs.set_val(Aircraft.HorizontalTail.WETTED_AREA_SCALER, 1.0)
 
 # Hydraulics
 # ---------------------------
-inputs.set_val(Aircraft.Hydraulics.SYSTEM_PRESSURE, 3000., 'lbf/ft**2')
+inputs.set_val(Aircraft.Hydraulics.SYSTEM_PRESSURE, 3000., 'psi')
 inputs.set_val(Aircraft.Hydraulics.MASS_SCALER, 1.0)
 
 # Instruments
@@ -145,52 +143,34 @@ inputs.set_val(Aircraft.Paint.MASS_PER_UNIT_AREA, 0.037, 'lbm/ft**2')
 inputs.set_val(Aircraft.Propulsion.ENGINE_OIL_MASS_SCALER, 1.0)
 inputs.set_val(Aircraft.Propulsion.MISC_MASS_SCALER, 1.0)
 
-filename = get_path(
-    'models/engines/turbofan_28k.deck')
+filename = get_path('models/engines/turbofan_28k.deck')
 
-engine_inputs = AviaryValues()
-engine_inputs.set_val(Aircraft.Engine.DATA_FILE, filename)
-engine_mass = 7400
-engine_mass_units = 'lbm'
-engine_inputs.set_val(Aircraft.Engine.MASS, engine_mass, engine_mass_units)
-engine_inputs.set_val(
-    Aircraft.Engine.REFERENCE_MASS,
-    engine_mass,
-    engine_mass_units)
-scaled_sls_thrust = 28928.1
-scaled_sls_thrust_units = 'lbf'
-engine_inputs.set_val(
-    Aircraft.Engine.SCALED_SLS_THRUST, scaled_sls_thrust, scaled_sls_thrust_units
-)
-engine_inputs.set_val(
-    Aircraft.Engine.REFERENCE_SLS_THRUST, scaled_sls_thrust, scaled_sls_thrust_units)
-num_engines = 2
-engine_inputs.set_val(Aircraft.Engine.NUM_ENGINES, num_engines)
-num_fuselage_engines = 0
-engine_inputs.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, 0)
-num_wing_engines = num_engines
-engine_inputs.set_val(Aircraft.Engine.NUM_WING_ENGINES, num_wing_engines)
-engine_inputs.set_val(Aircraft.Engine.THRUST_REVERSERS_MASS_SCALER, 0.0)
-engine_inputs.set_val(
-    Aircraft.Engine.WING_LOCATIONS, 15.8300 / (117.83 / 2))
-engine_inputs.set_val(Aircraft.Engine.SCALE_MASS, True)
-engine_inputs.set_val(Aircraft.Engine.MASS_SCALER, 1.15)
-engine_inputs.set_val(Aircraft.Engine.SCALE_PERFORMANCE, True)
-engine_inputs.set_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER, 1.0)
-engine_inputs.set_val(Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER, 1.0)
-engine_inputs.set_val(
-    Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM, 0.0)
-engine_inputs.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM, 0.0)
-engine_inputs.set_val(Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION, 0.0, units='lbm/h')
-engine_inputs.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.0)
-engine_inputs.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, True)
-engine_inputs.set_val(Aircraft.Engine.IGNORE_NEGATIVE_THRUST, False)
-engine_inputs.set_val(Aircraft.Engine.FLIGHT_IDLE_THRUST_FRACTION, 0.0)
-engine_inputs.set_val(Aircraft.Engine.FLIGHT_IDLE_MAX_FRACTION, 1.0)
-engine_inputs.set_val(Aircraft.Engine.FLIGHT_IDLE_MIN_FRACTION, 0.08)
-engine_inputs.set_val(Aircraft.Engine.GEOPOTENTIAL_ALT, False)
-engine_inputs.set_val(Aircraft.Engine.INTERPOLATION_METHOD, 'slinear')
-
+inputs.set_val(Aircraft.Engine.DATA_FILE, filename)
+inputs.set_val(Aircraft.Engine.MASS, 7400, 'lbm')
+inputs.set_val(Aircraft.Engine.REFERENCE_MASS, 7400, 'lbm')
+inputs.set_val(Aircraft.Engine.SCALED_SLS_THRUST, 28928.1, 'lbf')
+inputs.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 28928.1, 'lbf')
+inputs.set_val(Aircraft.Engine.NUM_ENGINES, 2)
+inputs.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, 0)
+inputs.set_val(Aircraft.Engine.NUM_WING_ENGINES, 2)
+inputs.set_val(Aircraft.Engine.THRUST_REVERSERS_MASS_SCALER, 0.0)
+inputs.set_val(Aircraft.Engine.WING_LOCATIONS, 15.8300 / (117.83 / 2))
+inputs.set_val(Aircraft.Engine.SCALE_MASS, True)
+inputs.set_val(Aircraft.Engine.MASS_SCALER, 1.15)
+inputs.set_val(Aircraft.Engine.SCALE_PERFORMANCE, True)
+inputs.set_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER, 1.0)
+inputs.set_val(Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER, 1.0)
+inputs.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM, 0.0)
+inputs.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM, 0.0)
+inputs.set_val(Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION, 0.0, units='lbm/h')
+inputs.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.0)
+inputs.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, True)
+inputs.set_val(Aircraft.Engine.IGNORE_NEGATIVE_THRUST, False)
+inputs.set_val(Aircraft.Engine.FLIGHT_IDLE_THRUST_FRACTION, 0.0)
+inputs.set_val(Aircraft.Engine.FLIGHT_IDLE_MAX_FRACTION, 1.0)
+inputs.set_val(Aircraft.Engine.FLIGHT_IDLE_MIN_FRACTION, 0.08)
+inputs.set_val(Aircraft.Engine.GEOPOTENTIAL_ALT, False)
+inputs.set_val(Aircraft.Engine.INTERPOLATION_METHOD, 'slinear')
 
 # Vertical Tail
 # ---------------------------
@@ -350,11 +330,10 @@ outputs.set_val(
 outputs.set_val(Aircraft.Paint.MASS, 306.2, 'lbm')
 
 outputs.set_val(
-    Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST,
-    scaled_sls_thrust * num_engines, scaled_sls_thrust_units)
+    Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, 28928.1*2, 'lbf')
 
 outputs.set_val(
-    Aircraft.Propulsion.TOTAL_NUM_ENGINES, num_engines)
+    Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2)
 
 engine_ctrls_mass = 88.44
 engine_ctrls_mass_units = 'lbm'
@@ -365,9 +344,9 @@ outputs.set_val(
     engine_ctrls_mass, engine_ctrls_mass_units)
 
 outputs.set_val(Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS, 130.23, 'lbm')
-outputs.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, num_wing_engines)
+outputs.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 2)
 
-outputs.set_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES, num_fuselage_engines)
+outputs.set_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES, 0)
 
 outputs.set_val(Aircraft.Engine.MASS, 14800/2, 'lbm')
 outputs.set_val(Aircraft.Engine.POD_MASS, 9000, 'lbm')
@@ -379,9 +358,7 @@ outputs.set_val(Aircraft.Propulsion.TOTAL_STARTER_MASS, 560.39, 'lbm')
 outputs.set_val(Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS, 0, 'lbm')
 outputs.set_val(Aircraft.Engine.THRUST_REVERSERS_MASS, 0, 'lbm')
 
-outputs.set_val(
-    Aircraft.Propulsion.TOTAL_ENGINE_MASS,
-    engine_mass * num_engines, engine_mass_units)
+outputs.set_val(Aircraft.Propulsion.TOTAL_ENGINE_MASS, 7400 * 2, 'lbm')
 
 outputs.set_val(Aircraft.VerticalTail.CHARACTERISTIC_LENGTH, 12.74, 'ft')
 outputs.set_val(Aircraft.VerticalTail.FINENESS, 0.1195)
@@ -402,10 +379,3 @@ outputs.set_val(Aircraft.Wing.MASS, 18268, 'lbm')
 
 outputs.set_val(Mission.Design.MACH, 0.800)
 outputs.set_val(Mission.Design.LIFT_COEFFICIENT, 0.568)
-
-# Create engine model
-engine_inputs.set_val(Settings.VERBOSITY, 0)
-engine = EngineDeck(name='engine',
-                    options=engine_inputs
-                    )
-preprocess_propulsion(inputs, [engine])
