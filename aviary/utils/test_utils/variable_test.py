@@ -97,7 +97,7 @@ def assert_structure_alphabetization(file_loc):
             current_line_fix = current_line.casefold()
 
             if current_line_fix < previous_line:
-                msg = (current_line, current_line_fix, previous_line, previous_stem)
+                bad_sort.append(current_line)
 
             previous_line = current_line_fix
 
