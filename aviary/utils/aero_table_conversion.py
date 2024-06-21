@@ -246,7 +246,11 @@ def _setup_ATC_parser(parser):
 
 
 def _exec_ATC(args, user_args):
-    AeroDataConverter(**vars(args))
+    AeroDataConverter(
+        input_file=args.input_file,
+        output_file=args.output_file,
+        data_format=args.data_format
+    )
 
 
 if __name__ == '__main__':
