@@ -68,7 +68,6 @@ class TipSpeedLimit(om.ExplicitComponent):
 
         # matrix derivatives have known sparsity pattern - specified here
         r = np.arange(num_nodes)
-        c = np.array([0, 0, 1])
 
         self.declare_partials(
             Dynamic.Mission.PROPELLER_TIP_SPEED,
@@ -77,7 +76,6 @@ class TipSpeedLimit(om.ExplicitComponent):
                 Dynamic.Mission.SPEED_OF_SOUND,
             ],
             rows=r, cols=r,
-            val=0.0
         )
 
         self.declare_partials(
@@ -86,7 +84,6 @@ class TipSpeedLimit(om.ExplicitComponent):
                 Aircraft.Engine.PROPELLER_TIP_MACH_MAX,
                 Aircraft.Engine.PROPELLER_TIP_SPEED_MAX
             ],
-            val=0.0
         )
 
         self.declare_partials(
@@ -96,7 +93,6 @@ class TipSpeedLimit(om.ExplicitComponent):
                 Dynamic.Mission.SPEED_OF_SOUND,
             ],
             rows=r, cols=r,
-            val=0.0
         )
 
         self.declare_partials(
@@ -106,7 +102,6 @@ class TipSpeedLimit(om.ExplicitComponent):
                 Aircraft.Engine.PROPELLER_TIP_SPEED_MAX,
                 Aircraft.Engine.PROPELLER_DIAMETER
             ],
-            val=0.0
         )
 
     def compute(self, inputs, outputs):
@@ -138,50 +133,42 @@ class TipSpeedLimit(om.ExplicitComponent):
         tip_speed_max = inputs[Aircraft.Engine.PROPELLER_TIP_SPEED_MAX]
         diam = inputs[Aircraft.Engine.PROPELLER_DIAMETER]
 
-        # deriv_v = -velocity/(tip_mach_max**2 * sos**2 - velocity**2)**0.5
-        # deriv_s = (tip_mach_max**2 * sos)/(tip_mach_max**2 * sos**2 - velocity**2)**0.5
-        # deriv_m = (tip_mach_max * sos**2)/(tip_mach_max**2 * sos**2 - velocity**2)**0.5
-
         tip_speed_max_nn = np.tile(tip_speed_max, num_nodes)
 
         tip_speed_mach_limit = ((sos*tip_mach_max)**2 - velocity**2)**0.5
         val = -np.stack((tip_speed_max_nn, tip_speed_mach_limit), axis=1)
         prop_tip_speed = -KSfunction.compute(val).flatten()
 
-        # dts_dv = -KSfunction.compute(
-        #     -np.stack((tip_speed_max_nn, deriv_v), axis=1)
-        #     ).flatten()
-        # dts_ds = -KSfunction.compute(
-        #     -np.stack((tip_speed_max_nn, deriv_s), axis=1)
-        #     ).flatten()
-        # dts_dm = -KSfunction.compute(
-        #     -np.stack((tip_speed_max_nn, deriv_m), axis=1)
-        #     ).flatten()
-        # dts_dts = -KSfunction.compute(
-        #     -np.stack((np.ones(num_nodes),
-        #                ((sos*tip_mach_max)**2 - velocity**2)**0.5),
-        #                axis=1)
-        #     ).flatten()
-        dKS = np.concatenate(KSfunction.derivatives(val), axis=1)
+        dKS, _ = KSfunction.derivatives(val)
+
+        dtpml_v = -velocity/tip_speed_mach_limit
+        dtpml_s = (tip_mach_max**2 * sos)/tip_speed_mach_limit
+        dtpml_m = (tip_mach_max * sos**2)/tip_speed_mach_limit
+
+        dspeed_dv =  dKS[:, 1] * dtpml_v
+        dspeed_ds =  dKS[:, 1] * dtpml_s
+        dspeed_dmm =  dKS[:, 1] * dtpml_m
+        dspeed_dsm =  dKS[:, 0]
 
         J[Dynamic.Mission.PROPELLER_TIP_SPEED,
-          Dynamic.Mission.VELOCITY] = dKS
+          Dynamic.Mission.VELOCITY] = dspeed_dv
         J[Dynamic.Mission.PROPELLER_TIP_SPEED,
-          Dynamic.Mission.SPEED_OF_SOUND] = dKS
+          Dynamic.Mission.SPEED_OF_SOUND] = dspeed_ds
         J[Dynamic.Mission.PROPELLER_TIP_SPEED,
-          Aircraft.Engine.PROPELLER_TIP_MACH_MAX] = dKS
+          Aircraft.Engine.PROPELLER_TIP_MACH_MAX] = dspeed_dmm
         J[Dynamic.Mission.PROPELLER_TIP_SPEED,
-          Aircraft.Engine.PROPELLER_TIP_SPEED_MAX] = dKS
+          Aircraft.Engine.PROPELLER_TIP_SPEED_MAX] = dspeed_dsm
 
         rpm_fact = (diam * math.pi / 60)
+
         J['rpm',
-          Dynamic.Mission.VELOCITY] = dKS / rpm_fact
+          Dynamic.Mission.VELOCITY] = dspeed_dv / rpm_fact
         J['rpm',
-          Dynamic.Mission.SPEED_OF_SOUND] = dKS / rpm_fact
+          Dynamic.Mission.SPEED_OF_SOUND] = dspeed_ds / rpm_fact
         J['rpm',
-          Aircraft.Engine.PROPELLER_TIP_MACH_MAX] = dKS / rpm_fact
+          Aircraft.Engine.PROPELLER_TIP_MACH_MAX] = dspeed_dmm / rpm_fact
         J['rpm',
-          Aircraft.Engine.PROPELLER_TIP_SPEED_MAX] = dKS / rpm_fact
+          Aircraft.Engine.PROPELLER_TIP_SPEED_MAX] = dspeed_dsm / rpm_fact
 
         J['rpm', Aircraft.Engine.PROPELLER_DIAMETER] = - \
             60 * prop_tip_speed / (math.pi * diam**2)
