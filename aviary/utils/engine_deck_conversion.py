@@ -10,7 +10,7 @@ import openmdao.api as om
 from dymos.models.atmosphere import USatm1976Comp
 from openmdao.components.interp_util.interp import InterpND
 
-from aviary.utils.conversion_utils import rep, parse, read_map
+from aviary.utils.conversion_utils import _rep, _parse, _read_map
 from aviary.subsystems.propulsion.engine_deck import normalize
 from aviary.subsystems.propulsion.utils import EngineModelVariables, default_units
 from aviary.variable_info.variables import Dynamic
@@ -379,12 +379,12 @@ def _read_gasp_engine(fp, is_turbo_prop=False):
 def _read_tp_header(f):
     """Read GASP engine deck header, returning the engine scalars in a dict"""
     # file header: FORMAT(2I5,10X,6F10.4)
-    iread, iprint, t4max, t4mcl, t4mc, t4idle, xsfc, cexp = parse(
-        f, [*rep(2, (int, 5)), (None, 10), *rep(6, (float, 10))]
+    iread, iprint, t4max, t4mcl, t4mc, t4idle, xsfc, cexp = _parse(
+        f, [*_rep(2, (int, 5)), (None, 10), *_rep(6, (float, 10))]
     )
     # file header: FORMAT(7F10.4)
-    sls_hp, xncref, prop_rpm, gbx_rat, torque_lim, waslrf = parse(
-        f, [*rep(6, (float, 10))]
+    sls_hp, xncref, prop_rpm, gbx_rat, torque_lim, waslrf = _parse(
+        f, [*_rep(6, (float, 10))]
     )
 
     return {
@@ -407,8 +407,8 @@ def _read_tp_header(f):
 def _read_header(f):
     """Read GASP engine deck header, returning the engine scalars in a dict"""
     # file header: FORMAT(2I5,10X,5F10.4)
-    iread, iprint, wamap, t4max, t4mcl, t4mc, sfnidl = parse(
-        f, [*rep(2, (int, 5)), (None, 10), *rep(5, (float, 10))]
+    iread, iprint, wamap, t4max, t4mcl, t4mc, sfnidl = _parse(
+        f, [*_rep(2, (int, 5)), (None, 10), *_rep(5, (float, 10))]
     )
 
     if iread != 1:
@@ -435,12 +435,12 @@ def _read_table(f, is_turbo_prop=False):
     # table title
     title = f.readline().strip()
     # number of maps in the table
-    (nmaps,) = parse(f, [(int, 5)])
+    (nmaps,) = _parse(f, [(int, 5)])
     # blank line
     f.readline()
 
     for i in range(nmaps):
-        map_data = read_map(f, is_turbo_prop)
+        map_data = _read_map(f, is_turbo_prop)
 
         # blank line following all but the last map in the table
         if i < nmaps - 1:

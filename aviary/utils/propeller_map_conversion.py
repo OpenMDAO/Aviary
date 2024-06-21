@@ -5,7 +5,7 @@ import numpy as np
 from datetime import datetime
 from enum import Enum
 
-from aviary.utils.conversion_utils import rep, parse, read_map
+from aviary.utils.conversion_utils import _rep, _parse, _read_map
 from aviary.api import NamedValues
 from aviary.utils.csv_data_file import write_data_file
 from aviary.utils.functions import get_path
@@ -109,7 +109,7 @@ def _read_gasp_propeller(fp, cmts):
 def _read_pm_header(f):
     """Read GASP propeller map header, returning the propeller scalars in a dict"""
     # parameter 2 is IPRINT in GASP and is ignored
-    iread, _ = parse(f, [*rep(2, (int, 5))])
+    iread, _ = _parse(f, [*_rep(2, (int, 5))])
 
     return {
         "iread": iread,
@@ -129,12 +129,12 @@ def _read_pm_table(f, cmts):
     title = f.readline().strip()
     cmts.append(f'# {title}')
     # number of maps in the table
-    (nmaps,) = parse(f, [(int, 5)])
+    (nmaps,) = _parse(f, [(int, 5)])
     # blank line
     f.readline()
 
     for i in range(nmaps):
-        map_data = read_map(f, is_turbo_prop)
+        map_data = _read_map(f, is_turbo_prop)
 
         # blank line following all but the last map in the table
         if i < nmaps - 1:
