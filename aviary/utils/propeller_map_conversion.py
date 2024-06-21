@@ -1,12 +1,11 @@
 #!/usr/bin/python
-
 import argparse
 import getpass
 import numpy as np
 from datetime import datetime
 from enum import Enum
 
-from aviary.utils.conversion_utils import conv_rep, conv_parse, read_map
+from aviary.utils.conversion_utils import rep, parse, read_map
 from aviary.api import NamedValues
 from aviary.utils.csv_data_file import write_data_file
 from aviary.utils.functions import get_path
@@ -22,16 +21,12 @@ class PropMapType(Enum):
 
 class PropModelVariables(Enum):
     '''
-    Define constants that map to supported variable names in an propeller model.
+    Define constants that map to supported variable names in a propeller model.
     '''
     MACH = 'Mach_Number'
     CP = 'CP'  # power coefficient
     CT = 'CT'  # thrust coefficient
     J = 'J'  # advanced ratio
-
-    @classmethod
-    def keys(cls):
-        return [c for c in cls]
 
 
 default_units = {
@@ -45,13 +40,6 @@ MACH = PropModelVariables.MACH
 CP = PropModelVariables.CP
 CT = PropModelVariables.CT
 J = PropModelVariables.J
-
-# gasp_keys = [MACH, CP, CT, J]
-
-header_names = {}
-for k in PropModelVariables.keys():
-    header_names[k] = k.value
-
 
 def PropDataConverter(input_file, output_file, data_format: PropMapType):
     """This is a utility class to convert a propeller map file to Aviary format.
@@ -78,9 +66,6 @@ def PropDataConverter(input_file, output_file, data_format: PropMapType):
         data[CP] = tables['thrust_coefficient'][:, 1]
         data[CT] = tables['thrust_coefficient'][:, 3]
 
-        # define header now that we know what is in the propeller map
-        # header = {key: default_units[key] for key in gasp_keys}
-
         # data needs to be string so column length can be easily found later
         for var in data:
             data[var] = np.array([str(item) for item in data[var]])
@@ -90,8 +75,8 @@ def PropDataConverter(input_file, output_file, data_format: PropMapType):
 
     # store formatted data into NamedValues object
     write_data = NamedValues()
-    for _, key in enumerate(data):
-        write_data.set_val(header_names[key], data[key], default_units[key])
+    for key in data:
+        write_data.set_val(key.value, data[key], default_units[key])
 
     if output_file is None:
         output_file = data_file.stem + '.prop'
@@ -124,9 +109,7 @@ def _read_gasp_propeller(fp, cmts):
 def _read_pm_header(f):
     """Read GASP propeller map header, returning the propeller scalars in a dict"""
     # parameter 2 is IPRINT in GASP and is ignored
-    iread, _ = conv_parse(
-        f, [*conv_rep(2, (int, 5))]
-    )
+    iread, _ = parse(f, [*rep(2, (int, 5))])
 
     return {
         "iread": iread,
@@ -146,7 +129,7 @@ def _read_pm_table(f, cmts):
     title = f.readline().strip()
     cmts.append(f'# {title}')
     # number of maps in the table
-    (nmaps,) = conv_parse(f, [(int, 5)])
+    (nmaps,) = parse(f, [(int, 5)])
     # blank line
     f.readline()
 
