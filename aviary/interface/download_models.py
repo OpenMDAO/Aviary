@@ -91,7 +91,6 @@ def _setup_hangar_parser(parser: argparse.ArgumentParser):
 
 
 def _exec_hangar(args, user_args):
-    # check if args.input_deck is a list, if so, use the first element
     input_decks = []
     for input_deck in args.input_decks:
         input_decks.append(get_model(input_deck, args.verbose))

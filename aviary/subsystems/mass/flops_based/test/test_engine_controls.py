@@ -24,7 +24,7 @@ class BasicTransportEngineCtrlsTest(unittest.TestCase):
     @parameterized.expand(get_flops_case_names(omit='N3CC'),
                           name_func=print_case)
     def test_case(self, case_name):
-        flops_inputs = get_flops_inputs(case_name)
+        flops_inputs = get_flops_inputs(case_name, preprocess=True)
 
         prob = self.prob
 

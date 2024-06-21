@@ -36,29 +36,47 @@ problem_types = {'sizing': ProblemType.SIZING,
                  'alternate': ProblemType.ALTERNATE, 'fallout': ProblemType.FALLOUT}
 
 
-def create_vehicle(vehicle_deck='', verbosity=Verbosity.BRIEF, meta_data=_MetaData):
+def create_vehicle(vehicle_deck='', meta_data=_MetaData, verbosity=None):
     """
     Creates and initializes a vehicle with default or specified parameters. It sets up the aircraft values
     and initial guesses based on the input from the vehicle deck.
 
     Parameters
     ----------
-    vehicle_deck (str): Path to the vehicle deck file. Default is an empty string.
+    vehicle_deck (str):
+        Path to the vehicle deck file. Default is an empty string.
+    meta_data (dict):
+        Variable metadata used when reading input file for unit validation,
+        default values, and other checks
 
     Returns
     -------
-    tuple: Returns a tuple containing aircraft values and initial guesses.
+    (aircraft_values, initial_guesses): (tuple)
+        Returns a tuple containing aircraft values and initial guesses.
     """
     aircraft_values = get_option_defaults(engine=False)
 
     # TODO remove all hardcoded GASP values here, find appropriate place for them
-    aircraft_values.set_val(Settings.VERBOSITY, val=verbosity)
     aircraft_values.set_val('INGASP.JENGSZ', val=4)
     aircraft_values.set_val('test_mode', val=False)
     aircraft_values.set_val('use_surrogates', val=True)
     aircraft_values.set_val('mass_defect', val=10000, units='lbm')
+    # TODO problem_type should get set by get_option_defaults??
     aircraft_values.set_val(Settings.PROBLEM_TYPE, val=ProblemType.SIZING)
     aircraft_values.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False)
+
+    initial_guesses = {
+        # initial_guesses is a dictionary that contains values used to initialize the trajectory
+        'actual_takeoff_mass': 0,
+        'rotation_mass': 0,
+        'operating_empty_mass': 0,
+        'fuel_burn_per_passenger_mile': 0,
+        'cruise_mass_final': 0,
+        'flight_duration': 0,
+        'time_to_climb': 0,
+        'climb_range': 0,
+        'reserves': 0
+    }
 
     initial_guesses = {
         # initial_guesses is a dictionary that contains values used to initialize the trajectory
@@ -79,6 +97,15 @@ def create_vehicle(vehicle_deck='', verbosity=Verbosity.BRIEF, meta_data=_MetaDa
         vehicle_deck = get_path(vehicle_deck)
         aircraft_values, initial_guesses = parse_inputs(
             vehicle_deck=vehicle_deck, aircraft_values=aircraft_values, initial_guesses=initial_guesses, meta_data=meta_data)
+
+    # make sure verbosity is always set
+    # if verbosity set via parameter, use that
+    if verbosity is not None:
+        # Enum conversion here, so user can pass either number or actual Enum as parameter
+        aircraft_values.set_val(Settings.VERBOSITY, Verbosity(verbosity))
+    # else, if verbosity not specified anywhere, use default of BRIEF
+    elif verbosity is None and Settings.VERBOSITY not in aircraft_values:
+        aircraft_values.set_val(Settings.VERBOSITY, Verbosity.BRIEF)
 
     return aircraft_values, initial_guesses
 

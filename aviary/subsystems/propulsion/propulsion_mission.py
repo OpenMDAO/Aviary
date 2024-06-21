@@ -16,31 +16,35 @@ class PropulsionMission(om.Group):
 
     def initialize(self):
         self.options.declare(
-            'num_nodes',
-            types=int,
-            lower=0
+            'num_nodes', types=int, lower=0
         )
 
         self.options.declare(
             'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+            desc='collection of Aircraft/Mission specific options'
+        )
+
+        self.options.declare(
+            'engine_models', types=list,
+            desc='list of EngineModels on aircraft'
+        )
 
     def setup(self):
         nn = self.options['num_nodes']
         options: AviaryValues = self.options['aviary_options']
-        engine_models = options.get_val('engine_models')
+        engine_models = self.options['engine_models']
         num_engine_type = len(engine_models)
-
-        # TODO what if "engine" is not an EngineModel object? Type is never checked/enforced
 
         if num_engine_type > 1:
 
             # We need a single component with scale_factor. Dymos can't find it when it is
             # already sliced across several component.
+            # TODO this only works for engine decks. Need to fix problem in generic way
             comp = om.ExecComp(
                 "y=x",
                 y={'val': np.ones(num_engine_type), 'units': 'unitless'},
-                x={'val': np.ones(num_engine_type), 'units': 'unitless'}
+                x={'val': np.ones(num_engine_type), 'units': 'unitless'},
+                has_diag_partials=True
             )
             self.add_subsystem(
                 "scale_passthrough",
@@ -206,7 +210,8 @@ class PropulsionSum(om.ExplicitComponent):
 
     def setup(self):
         nn = self.options['num_nodes']
-        num_engine_type = len(self.options['aviary_options'].get_val('engine_models'))
+        num_engine_type = len(self.options['aviary_options'].get_val(
+            Aircraft.Engine.NUM_ENGINES))
 
         self.add_input(Dynamic.Mission.THRUST, val=np.zeros(
             (nn, num_engine_type)), units='lbf')

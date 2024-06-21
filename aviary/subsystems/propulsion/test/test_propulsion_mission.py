@@ -14,6 +14,7 @@ from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.functions import get_path
 from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.subsystems.propulsion.utils import build_engine_deck
 
 
 class PropulsionMissionTest(unittest.TestCase):
@@ -50,7 +51,8 @@ class PropulsionMissionTest(unittest.TestCase):
         engine = EngineDeck(options=options)
         preprocess_propulsion(options, [engine])
 
-        self.prob.model = PropulsionMission(num_nodes=nn, aviary_options=options)
+        self.prob.model = PropulsionMission(
+            num_nodes=nn, aviary_options=options, engine_models=[engine])
 
         IVC = om.IndepVarComp(Dynamic.Mission.MACH,
                               np.linspace(0, 0.8, nn),
@@ -99,8 +101,6 @@ class PropulsionMissionTest(unittest.TestCase):
         nn = 2
         options = AviaryValues()
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([3, 2]))
-        # it doesn't matter what goes in engine models, as long as it is length 2
-        options.set_val('engine_models', [1, 1])
         self.prob.model = om.Group()
         self.prob.model.add_subsystem('propsum',
                                       PropulsionSum(num_nodes=nn,
@@ -151,12 +151,14 @@ class PropulsionMissionTest(unittest.TestCase):
 
         options = get_flops_inputs('LargeSingleAisle2FLOPS')
 
-        engine = options.get_val('engine_models')[0]
-        engine2 = options.deepcopy().get_val('engine_models')[0]
+        engine = build_engine_deck(options)[0]
+        engine2 = build_engine_deck(options)[0]
         engine2.name = 'engine2'
-        preprocess_propulsion(options, [engine, engine2])
+        engine_models = [engine, engine2]
+        preprocess_propulsion(options, engine_models=engine_models)
 
-        self.prob.model = PropulsionMission(num_nodes=20, aviary_options=options)
+        self.prob.model = PropulsionMission(
+            num_nodes=20, aviary_options=options, engine_models=engine_models)
 
         self.prob.model.add_subsystem(Dynamic.Mission.MACH,
                                       om.IndepVarComp(Dynamic.Mission.MACH,
@@ -209,7 +211,7 @@ class PropulsionMissionTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    # unittest.main()
-    test = PropulsionMissionTest()
-    test.setUp()
-    test.test_case_multiengine()
+    unittest.main()
+    # test = PropulsionMissionTest()
+    # test.setUp()
+    # test.test_case_multiengine()
