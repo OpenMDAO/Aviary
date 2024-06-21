@@ -58,7 +58,7 @@ def register_custom_reports():
                     method='run_driver',
                     pre_or_post='post',
                     )
-    
+
 
 def run_status(prob):
     """
