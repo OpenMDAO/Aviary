@@ -52,7 +52,8 @@ def assert_structure_alphabetization(file_loc):
         lines = variable_file.readlines()
 
     previous_line = ""
-    current_stem = {0: ''}
+    previous_stem = ""
+    nested_stems = {0: ''}
     bad_sort = []
     in_block_comment = False
     for line in lines:
@@ -79,26 +80,30 @@ def assert_structure_alphabetization(file_loc):
         if line.startswith('class'):
             # Class lines
             class_name = line.split("class ")[-1]
-            current_line = f"{current_stem[leading_spaces]}{class_name}"
-            current_stem[leading_spaces + 4] = current_line
+            current_stem = f"{nested_stems[leading_spaces]}{class_name}"
+            nested_stems[leading_spaces + 4] = current_stem
+            current_stem_fix = current_stem.casefold()
+
+            if current_stem_fix < previous_stem:
+                bad_sort.append(current_stem)
+
+            previous_stem = current_stem_fix
+            previous_line = ""
+
         elif "=" in line:
             # Variable lines
             var_name = line.split("=")[0].strip()
-            current_line = f"{current_stem[leading_spaces]}{var_name}"
-        else:
-            # Continuations.
-            continue
+            current_line = f"{nested_stems[leading_spaces]}{var_name}"
+            current_line_fix = current_line.casefold()
+
+            if current_line_fix < previous_line:
+                msg = (current_line, current_line_fix, previous_line, previous_stem)
+
+            previous_line = current_line_fix
 
         if leading_spaces % 4 > 0:
             msg = "The variable file is not using proper Python spacing."
             raise ValueError(msg)
-
-        current_line_fix = current_line.casefold()
-
-        if current_line_fix < previous_line:
-            bad_sort.append(current_line)
-
-        previous_line = current_line_fix
 
     if len(bad_sort) > 0:
         txt = '\n'.join(bad_sort)
