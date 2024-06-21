@@ -41,6 +41,7 @@ CP = PropModelVariables.CP
 CT = PropModelVariables.CT
 J = PropModelVariables.J
 
+
 def PropDataConverter(input_file, output_file, data_format: PropMapType):
     """This is a utility class to convert a propeller map file to Aviary format.
     Currently, there is only one option: from GASP format to Aviary format.
