@@ -4,7 +4,7 @@ import argparse
 import getpass
 import numpy as np
 from datetime import datetime
-from enum import Enum, auto
+from enum import Enum
 
 from aviary.utils.conversion_utils import conv_rep, conv_parse, read_map
 from aviary.api import NamedValues
@@ -24,10 +24,14 @@ class PropModelVariables(Enum):
     '''
     Define constants that map to supported variable names in an propeller model.
     '''
-    MACH = auto()
-    CP = auto()  # power coefficient
-    CT = auto()  # thrust coefficient
-    J = auto()  # advanced ratio
+    MACH = 'Mach_Number'
+    CP = 'CP'  # power coefficient
+    CT = 'CT'  # thrust coefficient
+    J = 'J'  # advanced ratio
+
+    @classmethod
+    def keys(cls):
+        return [c for c in cls]
 
 
 default_units = {
@@ -44,12 +48,9 @@ J = PropModelVariables.J
 
 # gasp_keys = [MACH, CP, CT, J]
 
-header_names = {
-    MACH: 'Mach_Number',
-    CP: 'CP',
-    CT: 'CT',
-    J: 'J',
-}
+header_names = {}
+for k in PropModelVariables.keys():
+    header_names[k] = k.value
 
 
 def PropDataConverter(input_file, output_file, data_format: PropMapType):
@@ -89,7 +90,7 @@ def PropDataConverter(input_file, output_file, data_format: PropMapType):
 
     # store formatted data into NamedValues object
     write_data = NamedValues()
-    for idx, key in enumerate(data):
+    for _, key in enumerate(data):
         write_data.set_val(header_names[key], data[key], default_units[key])
 
     if output_file is None:
