@@ -42,6 +42,8 @@ CP = PropModelVariables.CP
 CT = PropModelVariables.CT
 J = PropModelVariables.J
 
+# gasp_keys = [MACH, CP, CT, J]
+
 header_names = {
     MACH: 'Mach_Number',
     CP: 'CP',
@@ -74,6 +76,9 @@ def PropDataConverter(input_file, output_file, data_format: PropMapType):
         data[MACH] = tables['thrust_coefficient'][:, 0]
         data[CP] = tables['thrust_coefficient'][:, 1]
         data[CT] = tables['thrust_coefficient'][:, 3]
+
+        # define header now that we know what is in the propeller map
+        # header = {key: default_units[key] for key in gasp_keys}
 
         # data needs to be string so column length can be easily found later
         for var in data:
