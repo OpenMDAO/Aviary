@@ -11,7 +11,6 @@ from pathlib import Path
 from aviary.api import NamedValues
 from aviary.utils.csv_data_file import write_data_file
 from aviary.utils.functions import get_path
-import pdb
 
 
 class CodeOrigin(Enum):
@@ -40,7 +39,6 @@ def AeroDataConverter(input_file=None, output_file=None, data_format=None):
     As an Aviary command, the usage is:
     aviary convert_aero_table -F {FLOPS|GASP} input_file output_file
     """
-    pdb.set_trace()
     data_format = CodeOrigin(data_format)
     data_file = get_path(input_file)
     if not output_file:
