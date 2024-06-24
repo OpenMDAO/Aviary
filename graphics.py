@@ -1,167 +1,4 @@
-# graphics.py
-"""Simple object oriented graphics library  
-
-The library is designed to make it very easy for novice programmers to
-experiment with computer graphics in an object oriented fashion. It is
-written by John Zelle for use with the book "Python Programming: An
-Introduction to Computer Science" (Franklin, Beedle & Associates).
-
-LICENSE: This is open-source software released under the terms of the
-GPL (http://www.gnu.org/licenses/gpl.html).
-
-PLATFORMS: The package is a wrapper around Tkinter and should run on
-any platform where Tkinter is available.
-
-INSTALLATION: Put this file somewhere where Python can see it.
-
-OVERVIEW: There are two kinds of objects in the library. The GraphWin
-class implements a window where drawing can be done and various
-GraphicsObjects are provided that can be drawn into a GraphWin. As a
-simple example, here is a complete program to draw a circle of radius
-10 centered in a 100x100 window:
-
---------------------------------------------------------------------
-from graphics import *
-
-def main():
-    win = GraphWin("My Circle", 100, 100)
-    c = Circle(Point(50,50), 10)
-    c.draw(win)
-    win.getMouse() # Pause to view result
-    win.close()    # Close window when done
-
-main()
---------------------------------------------------------------------
-GraphWin objects support coordinate transformation through the
-setCoords method and mouse and keyboard interaction methods.
-
-The library provides the following graphical objects:
-    Point
-    Line
-    Circle
-    Oval
-    Rectangle
-    Polygon
-    Text
-    Entry (for text-based input)
-    Image
-
-Various attributes of graphical objects can be set such as
-outline-color, fill-color and line-width. Graphical objects also
-support moving and hiding for animation effects.
-
-The library also provides a very simple class for pixel-based image
-manipulation, Pixmap. A pixmap can be loaded from a file and displayed
-using an Image object. Both getPixel and setPixel methods are provided
-for manipulating the image.
-
-DOCUMENTATION: For complete documentation, see Chapter 4 of "Python
-Programming: An Introduction to Computer Science" by John Zelle,
-published by Franklin, Beedle & Associates.  Also see
-http://mcsp.wartburg.edu/zelle/python for a quick reference"""
-
-__version__ = "5.0"
-
-# Version 5 8/26/2016
-#     * update at bottom to fix MacOS issue causing askopenfile() to hang
-#     * update takes an optional parameter specifying update rate
-#     * Entry objects get focus when drawn
-#     * __repr_ for all objects
-#     * fixed offset problem in window, made canvas borderless
-
-# Version 4.3 4/25/2014
-#     * Fixed Image getPixel to work with Python 3.4, TK 8.6 (tuple type handling)
-#     * Added interactive keyboard input (getKey and checkKey) to GraphWin
-#     * Modified setCoords to cause redraw of current objects, thus
-#       changing the view. This supports scrolling around via setCoords.
-#
-# Version 4.2 5/26/2011
-#     * Modified Image to allow multiple undraws like other GraphicsObjects
-# Version 4.1 12/29/2009
-#     * Merged Pixmap and Image class. Old Pixmap removed, use Image.
-# Version 4.0.1 10/08/2009
-#     * Modified the autoflush on GraphWin to default to True
-#     * Autoflush check on close, setBackground
-#     * Fixed getMouse to flush pending clicks at entry
-# Version 4.0 08/2009
-#     * Reverted to non-threaded version. The advantages (robustness,
-#         efficiency, ability to use with other Tk code, etc.) outweigh
-#         the disadvantage that interactive use with IDLE is slightly more
-#         cumbersome.
-#     * Modified to run in either Python 2.x or 3.x (same file).
-#     * Added Image.getPixmap()
-#     * Added update() -- stand alone function to cause any pending
-#           graphics changes to display.
-#
-# Version 3.4 10/16/07
-#     Fixed GraphicsError to avoid "exploded" error messages.
-# Version 3.3 8/8/06
-#     Added checkMouse method to GraphWin
-# Version 3.2.3
-#     Fixed error in Polygon init spotted by Andrew Harrington
-#     Fixed improper threading in Image constructor
-# Version 3.2.2 5/30/05
-#     Cleaned up handling of exceptions in Tk thread. The graphics package
-#     now raises an exception if attempt is made to communicate with
-#     a dead Tk thread.
-# Version 3.2.1 5/22/05
-#     Added shutdown function for tk thread to eliminate race-condition
-#        error "chatter" when main thread terminates
-#     Renamed various private globals with _
-# Version 3.2 5/4/05
-#     Added Pixmap object for simple image manipulation.
-# Version 3.1 4/13/05
-#     Improved the Tk thread communication so that most Tk calls
-#        do not have to wait for synchonization with the Tk thread.
-#        (see _tkCall and _tkExec)
-# Version 3.0 12/30/04
-#     Implemented Tk event loop in separate thread. Should now work
-#        interactively with IDLE. Undocumented autoflush feature is
-#        no longer necessary. Its default is now False (off). It may
-#        be removed in a future version.
-#     Better handling of errors regarding operations on windows that
-#       have been closed.
-#     Addition of an isClosed method to GraphWindow class.
-
-# Version 2.2 8/26/04
-#     Fixed cloning bug reported by Joseph Oldham.
-#     Now implements deep copy of config info.
-# Version 2.1 1/15/04
-#     Added autoflush option to GraphWin. When True (default) updates on
-#        the window are done after each action. This makes some graphics
-#        intensive programs sluggish. Turning off autoflush causes updates
-#        to happen during idle periods or when flush is called.
-# Version 2.0
-#     Updated Documentation
-#     Made Polygon accept a list of Points in constructor
-#     Made all drawing functions call TK update for easier animations
-#          and to make the overall package work better with
-#          Python 2.3 and IDLE 1.0 under Windows (still some issues).
-#     Removed vestigial turtle graphics.
-#     Added ability to configure font for Entry objects (analogous to Text)
-#     Added setTextColor for Text as an alias of setFill
-#     Changed to class-style exceptions
-#     Fixed cloning of Text objects
-
-# Version 1.6
-#     Fixed Entry so StringVar uses _root as master, solves weird
-#            interaction with shell in Idle
-#     Fixed bug in setCoords. X and Y coordinates can increase in
-#           "non-intuitive" direction.
-#     Tweaked wm_protocol so window is not resizable and kill box closes.
-
-# Version 1.5
-#     Fixed bug in Entry. Can now define entry before creating a
-#     GraphWin. All GraphWins are now toplevel windows and share
-#     a fixed root (called _root).
-
-# Version 1.4
-#     Fixed Garbage collection of Tkinter images bug.
-#     Added ability to set text atttributes.
-#     Added Entry boxes.
-
-import time, os
-
+import time, os, math, itertools
 try:  # import as appropriate for 2.x vs. 3.x
    import tkinter as tk
 except:
@@ -211,11 +48,11 @@ class GraphWin(tk.Canvas):
                  width=200, height=200, windowleft = 100, windowtop = 100,autoflush=True,savewindowlocation = False,resizable = (False,False),cursor="arrow"):
         assert type(title) == type(""), "Title must be a string"
         master = tk.Toplevel(_root)
+        master.grab_set()
         self.root = master
         master.protocol("WM_DELETE_WINDOW", self.close)
         tk.Canvas.__init__(self, master, width=width, height=height,
-                           highlightthickness=0, bd=0,cursor=cursor)
-        
+                           highlightthickness=0, bd=0,cursor=cursor)     
 
         # if we want to reuse the user's resized/moved window
         windowlocation = [width,height,windowleft,windowtop] # default window size/location
@@ -259,11 +96,11 @@ class GraphWin(tk.Canvas):
             return "GraphWin('{}', {}, {})".format(self.master.title(),
                                              self.getWidth(),
                                              self.getHeight())
-    def getWinfo(self):
+    def getWinfo(self)->list[float]:
         winfo = self.root.winfo_geometry()
         return [float(i) for i in [winfo.split("x")[0],*winfo.split("x")[1].split("+")]]
 
-    def saveloc(self):
+    def saveloc(self)->None:
         winfo = self.getWinfo()
         with open("windowlocation.txt","w") as fp:
             for i in winfo:
@@ -279,6 +116,19 @@ class GraphWin(tk.Canvas):
     def _onKey(self, evnt):
         self.lastKey = evnt.keysym
 
+    def createMenubar(self,structure:dict)->None:
+        menubar = tk.Menu(self.root)
+        for key,value in structure.items():
+            tab = tk.Menu(menubar,tearoff=False)
+            menubar.add_cascade(label=key,menu = tab)
+            i = 0
+            while i < len(value):
+                if not value[i]:
+                    tab.add_separator()
+                else:
+                    tab.add_command(label=value[i],command = value[i+1])
+                i += 2
+        self.root.config(menu=menubar)
 
     def setBackground(self, color):
         """Set background color of the window"""
@@ -342,7 +192,7 @@ class GraphWin(tk.Canvas):
     def getMouse(self):
         self.update()
         while self.mouseX == None or self.mouseY == None:
-            if self.isClosed(): raise GraphicsError("getMouse in closed window")
+            if self.isClosed(): return None
             self.update()
             time.sleep(0.1)      
         x,y = self.toWorld(self.mouseX,self.mouseY)
@@ -351,7 +201,7 @@ class GraphWin(tk.Canvas):
         return Point(x,y)
     
     def checkMouse(self):
-        if self.isClosed(): raise GraphicsError("checkMouse in closed window")
+        if self.isClosed(): return None
         self.update()
         if self.mouseX and self.mouseY:
             x,y = self.toWorld(self.mouseX,self.mouseY)
@@ -368,7 +218,7 @@ class GraphWin(tk.Canvas):
         self.mouseClickY = None
         while self.mouseClickX == None or self.mouseClickY == None:
             self.update()
-            if self.isClosed(): raise GraphicsError("getMouseClick in closed window")
+            if self.isClosed(): return None
             time.sleep(.1) # give up thread
         x,y = self.toWorld(self.mouseClickX, self.mouseClickY)
         self.mouseClickX = None
@@ -378,8 +228,7 @@ class GraphWin(tk.Canvas):
     def checkMouseClick(self):
         """Return last mouse click or None if mouse has
         not been clicked since last call"""
-        if self.isClosed():
-            raise GraphicsError("checkMouseClick in closed window")
+        if self.isClosed(): return None
         self.update()
         if self.mouseClickX != None and self.mouseClickY != None:
             x,y = self.toWorld(self.mouseClickX, self.mouseClickY)
@@ -452,8 +301,7 @@ class GraphWin(tk.Canvas):
             item.undraw()
             item.draw(self)
         self.update()
-        
-                      
+                          
 class Transform:
 
     """Internal class for 2-D coordinate transformations"""
@@ -480,7 +328,6 @@ class Transform:
         x = xs*self.xscale + self.xbase
         y = self.ybase - ys*self.yscale
         return x,y
-
 
 # Default values for various item configuration options. Only a subset of
 #   keys may be present in the configuration dictionary for a given item
@@ -600,8 +447,7 @@ class GraphicsObject:
     def _move(self, dx, dy):
         """updates internal state of object to move it dx,dy units"""
         pass # must override in subclass
-
-         
+        
 class Point(GraphicsObject):
     def __init__(self, x, y):
         GraphicsObject.__init__(self, ["outline", "fill"])
@@ -651,8 +497,7 @@ class _BBox(GraphicsObject):
         p1 = self.p1
         p2 = self.p2
         return Point((p1.x+p2.x)/2.0, (p1.y+p2.y)/2.0)
-
-    
+  
 class Rectangle(_BBox):
     
     def __init__(self, p1, p2):
@@ -672,7 +517,6 @@ class Rectangle(_BBox):
         other = Rectangle(self.p1, self.p2)
         other.config = self.config.copy()
         return other
-
 
 class Oval(_BBox):
     
@@ -713,8 +557,7 @@ class Circle(Oval):
         
     def getRadius(self):
         return self.radius
-
-                  
+                
 class Line(_BBox):
     
     def __init__(self, p1, p2):
@@ -742,7 +585,6 @@ class Line(_BBox):
             raise GraphicsError(BAD_OPTION)
         self._reconfig("arrow", option)
         
-
 class Polygon(GraphicsObject):
     
     def __init__(self, *points):
@@ -835,7 +677,6 @@ class Text(GraphicsObject):
     def setTextColor(self, color):
         self.setFill(color)
 
-
 class Entry(GraphicsObject):
 
     def __init__(self, p, width):
@@ -926,7 +767,6 @@ class Entry(GraphicsObject):
         if self.entry:
             self.entry.config(fg=color)
 
-
 class Image(GraphicsObject):
 
     idCount = 0
@@ -1011,7 +851,152 @@ class Image(GraphicsObject):
         ext = name.split(".")[-1]
         self.img.write( filename, format=ext)
 
+class EasyPlot(): # generalized class for creating plots
+    def __init__(self,win,size,location=(0,0)):
+        # size is given as a percent of window height/width
+        # location is also a percent of window height/width for top left of plot
+        self.win = win
+        self.winwidth = self.win.width
+        self.winheight = self.win.height
+        self.width = size[0]*self.winwidth
+        self.height = size[1]*self.winheight
+        self.left,self.top = location[0]*self.winwidth,location[1]*self.winheight
+        self.right,self.bottom = self.left + self.width, self.top+self.height
+        self.bg = Rectangle(Point(self.left,self.top),Point(self.right,self.bottom))
+        self.bg.setFill("white") # update to match theme settings
+        self.bg.draw(self.win)
+        self.crossX,self.crossY = None,None
+
+    def drawaxes(self,coords=(0,0,100,100),labels=["X Axis","Y Axis"],fontsizes=(12,11)):
+        # draws axes on the plot, with option to specify a coordinate system
+        # also gives label option, along with font sizes
+        # the function automatically adjusts axes location based on font sizes
+
+        # compute pixel size for axes labels and numbers to ensure readability
+        pix_per_pt = 16/12 # pixels per point (point is font size unit)
+        labelsize = fontsizes[0]*pix_per_pt
+        numsize = fontsizes[1]*pix_per_pt
+        xnumwid = 0.7*pix_per_pt*fontsizes[1]*max(len(str(coords[0])),len(str(coords[2])))
+        ynumwid = 0.7*pix_per_pt*fontsizes[1]*max(len(str(coords[1])),len(str(coords[3])))
+
+        # getting magnitude of plot coordinates to determine rounding scheme
+        # allows tick numbers to be nice even values
+        # e.g., for x from 0 to 500, round each tick to nearest 10
+        xexp, yexp = 0,0
+        for i in range(4):
+            if coords[i]!=0:
+                val = find_exp(coords[i])
+                if i%2==0:
+                    xexp = val if abs(val) > xexp else xexp
+                else:
+                    yexp = val if abs(val) > yexp else yexp
+
+        # draw X and Y axes labels
+        xlabel = Text(Point(self.left+self.width/2,self.bottom-labelsize/2),labels[0])
+        ylabel = Text(Point(self.left + labelsize/2,self.top+self.height/2),labels[1],angle=90)
+        xlabel.setSize(fontsizes[0])
+        xlabel.setFace("courier")
+        ylabel.setSize(fontsizes[0])
+        ylabel.setFace("courier")
+        xlabel.draw(self.win)
+        ylabel.draw(self.win)
+
+        ticksize = 0.5*labelsize # tick size is a percent of label size
+        margin = 2
+
+        # determine origin location based on sizes of axes labels, numbers, ticks
+        gridorigin = (self.left + labelsize + margin + ynumwid + margin + ticksize/2,
+                      self.bottom - labelsize - margin - numsize - margin - ticksize/2)
+        self.gridorigin = gridorigin
         
+        # coordinate transformation variables (pixel coords vs. plot coords)
+        self.gridwidthpix = self.right - gridorigin[0]
+        self.gridheightpix = gridorigin[1] - self.top
+        self.coordscalerX = (coords[2]-coords[0])/self.gridwidthpix # for x coords, there are p pixels
+        self.coordscalerY = (coords[3]-coords[1])/self.gridheightpix
+        self.coords = coords
+        
+        # this currently creates ticks to allow number labels to fit 
+        # however this results in the coordinate based spacing using non even numbers
+        # need to change to pick even spacings
+        xticks = int(math.floor(self.gridwidthpix/xnumwid))
+        yticks = int(math.floor(self.gridheightpix/numsize))
+        tickspacingX = int((self.right - gridorigin[0])/xticks)
+        tickspacingY = int((gridorigin[1]-self.top)/yticks)
+
+        # x, y points for horizontal and vertical ticks
+        xticks_y = gridorigin[1] + ticksize/2    
+        yticks_x = gridorigin[0] - ticksize/2
+
+        # drawing ticks and numbers 
+        for combo in itertools.zip_longest(range(xticks),range(yticks)):
+            xpt = (combo[0]*tickspacingX + gridorigin[0]) if combo[0] else 0
+            ypt = (gridorigin[1] - combo[1]*tickspacingY) if combo[1] else 0
+            xcoord,ycoord = self.pixToCoord(px=xpt,py=ypt)
+
+            if combo[0]: # if drawing x axis ticks
+                num = Text(Point(xpt,self.bottom - labelsize -margin- numsize/2),int(round(xcoord,-xexp+1)))
+                num.setSize(fontsizes[1])
+                num.setFace('courier')
+                num.draw(self.win)
+
+                tick = Line(Point(xpt,xticks_y),Point(xpt,xticks_y - ticksize))
+                tick.draw(self.win)
+
+            if combo[1]: # if drawing y axis ticks
+                y = round(ycoord,-yexp+1)
+                y = int(y) if y > 1 else y
+                num = Text(Point(self.left + labelsize +margin+ ynumwid/2,ypt),y)
+                num.setSize(fontsizes[1])
+                num.setFace('courier')
+                num.draw(self.win)
+
+                tick = Line(Point(yticks_x,ypt),Point(yticks_x+ticksize,ypt))
+                tick.draw(self.win)
+
+        # draw main axis lines
+        xaxis = Line(Point(*gridorigin),Point(self.right,gridorigin[1]))
+        yaxis = Line(Point(*gridorigin),Point(gridorigin[0],self.top))
+        xaxis.draw(self.win)
+        yaxis.draw(self.win)
+
+    def crossHair(self,pt):
+        if pt:
+            if pt.x >= self.gridorigin[0] and pt.x <= self.right and \
+                pt.y >= self.top and pt.y <= self.gridorigin[1]:
+                if self.crossX and self.crossY:
+                    self.crossX.move(0,pt.y - self.crossoldpt.y)
+                    self.crossY.move(pt.x-self.crossoldpt.x,0)
+                else:
+                    self.crossX = Line(Point(self.gridorigin[0],pt.y),Point(self.right,pt.y))
+                    self.crossY = Line(Point(pt.x,self.top),Point(pt.x,self.gridorigin[1]))
+                    self.crossX.setFill("red")
+                    self.crossY.setFill("red")
+                    self.crossX.draw(self.win)
+                    self.crossY.draw(self.win)
+                
+                self.crossoldpt = pt
+
+    def coordToPix(self,cx=0,cy=0): # check the math
+        return ((cx+self.coords[0])/self.coordscalerX+self.gridorigin[0],
+                self.gridorigin[1] - (self.coords[1]-cy)/self.coordscalerY)
+    
+    def pixToCoord(self,px=0,py=0): # convert pixel value to coordinate
+        return ((px-self.gridorigin[0])*self.coordscalerX+self.coords[0],
+                self.coords[1] + (self.gridorigin[1]-py)*self.coordscalerY)
+    
+    def getCoord(self,pt): # get coordinate value if point is inside plot
+        if pt:
+            if pt.x < self.gridorigin[0] or pt.x > self.right or pt.y < self.top or pt.y > self.gridorigin[1]:
+                return None
+            else:
+                return self.pixToCoord(px=pt.x,py=pt.y)
+        else: return None
+
+def find_exp(number):
+    base10 = math.log10(abs(number))
+    return (math.floor(base10))
+
 def color_rgb(r,g,b):
     """r,g,b are intensities of red, green, and blue in range(256)
     Returns color specifier string for the resulting color"""
