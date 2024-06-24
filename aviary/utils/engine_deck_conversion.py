@@ -306,6 +306,13 @@ def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
     for key in data:
         write_data.set_val(header_names[key], formatted_data[key], default_units[key])
 
+    if output_file is None:
+        sfx = data_file.suffix
+        if sfx == '.deck':
+            ext = '_aviary.deck'
+        else:
+            ext = '.deck'
+        output_file = data_file.stem + ext
     write_data_file(output_file, write_data, comments, include_timestamp=False)
 
 
@@ -701,7 +708,7 @@ class AtmosCalc(om.ExplicitComponent):
 def _setup_EDC_parser(parser):
     parser.add_argument('input_file', type=str,
                         help='path to engine deck file to be converted')
-    parser.add_argument('output_file', type=str,
+    parser.add_argument('output_file', type=str, nargs='?',
                         help='path to file where new converted data will be written')
     parser.add_argument('-f', '--data_format', type=EngineDeckType, choices=list(EngineDeckType),
                         help='data format used by input_file')
