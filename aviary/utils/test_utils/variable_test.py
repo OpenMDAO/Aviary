@@ -193,7 +193,7 @@ def get_names_from_hierarchy(hierarchy):
     keys = list(filter(filter_underscore, list(keys)))
 
     for key in keys:
-        leaf =  getattr(hierarchy, key)
+        leaf = getattr(hierarchy, key)
         if isinstance(leaf, str):
             # Variable String.
             names.append(leaf)
