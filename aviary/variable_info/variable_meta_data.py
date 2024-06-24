@@ -6159,6 +6159,17 @@ add_meta_data(
 )
 
 add_meta_data(
+    Dynamic.Mission.CUMULATIVE_ELECTRIC_ENERGY_USED,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='kJ',
+    desc='Total amount of electric energy consumed by the vehicle up until this point in the mission',
+)
+
+add_meta_data(
     Dynamic.Mission.DENSITY,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -6214,17 +6225,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Mission.CUMULATIVE_ELECTRIC_ENERGY_USED,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='kJ',
-    desc='Total amount of electric energy consumed by the vehicle up until this point in the mission',
-)
-
-add_meta_data(
     Dynamic.Mission.ELECTRIC_POWER_IN,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -6232,8 +6232,7 @@ add_meta_data(
                      "LEAPS1": None
                      },
     units='kW',
-    desc='Current electric power consumption of the vehicle, per single instance of '
-         'each engine model'
+    desc='Current electric power consumption of each engine',
 )
 
 add_meta_data(
