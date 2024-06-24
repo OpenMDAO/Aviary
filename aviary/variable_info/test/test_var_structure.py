@@ -11,6 +11,8 @@ from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
 
 class DuplicateHierarchy:
 
+    stuff = 'nothing'
+
     class Design:
         CRUISE_MACH = 'mission:design:cruise_mach'
         RANGE = 'mission:design:range'

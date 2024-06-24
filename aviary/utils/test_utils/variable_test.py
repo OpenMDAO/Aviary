@@ -171,29 +171,37 @@ def assert_match_varnames(system, MetaData=None):
 
 
 def get_names_from_hierarchy(hierarchy):
+    """
+    Return a list of all openmdao variable names in the variable hierarchy.
 
+    This is used for finding duplicates names.
+
+    Parameters:
+    -----------
+    hierarchy: object
+        Instance of a class hierarchy such as Aircraft.
+
+    Returns
+    -------
+    list
+        List of all names in the hiearchy, including duplicates.
+    """
     names = []
-    keys = vars(hierarchy).keys()  # get initial class keys
-    # filter out keys that aren't for relevant variables
+
+    # Keys
+    keys = vars(hierarchy).keys()
     keys = list(filter(filter_underscore, list(keys)))
 
     for key in keys:
-        try:
-            # If there are multiple hierarchy levels, dig down one more
-            subclass_vars = vars(
-                getattr(hierarchy, key)
-            )  # grab dictionary of variables for the subclass
-            # filter out keys that aren't for relevant variables
-            subclass_keys = list(filter(filter_underscore, list(subclass_vars.keys())))
-        except TypeError:
-            # Only one hierarchy level
-            subclass_vars = vars(hierarchy)
-            subclass_keys = [key]
+        leaf =  getattr(hierarchy, key)
+        if isinstance(leaf, str):
+            # Variable Strubg.
+            names.append(leaf)
 
-        for var_name in subclass_keys:
-            names.append(
-                subclass_vars[var_name]
-            )  # add relevant variables to dictionary
+        else:
+            # Subclass.
+            sub_names = get_names_from_hierarchy(leaf)
+            names.extend(sub_names)
 
     return names
 
