@@ -13,10 +13,10 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.variable_info.options import get_option_defaults
 
 # Setting up truth values from GASP
+# test values now are slightly different due to setup - max tip speed was limited to test
+# that it is being properly constrained (and that derivitives work across constraints)
 # CT = np.array([0.27651, 0.20518, 0.13093, 0.10236, 0.10236, 0.19331,
 #                0.10189, 0.10189, 0.18123, 0.08523, 0.06463, 0.02800])
-# test values are slightly different due to setup - reduced max tip speed to test that
-# it is being properly constrained (and that derivitives work across constraint)
 CT = np.array([0.27651, 0.20518, 0.13093, 0.09694, 0.09694, 0.19331,
                0.10189, 0.10189, 0.18123, 0.08523, 0.06463, 0.02800,
                0.27651, 0.20518, 0.13093])
@@ -265,7 +265,4 @@ class PropellerPerformanceTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    # unittest.main()
-    test = PropellerPerformanceTest()
-    test.setUp()
-    test.test_case_12_13_14()
+    unittest.main()
