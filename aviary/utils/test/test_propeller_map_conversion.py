@@ -4,7 +4,7 @@ from pathlib import Path
 from aviary.utils.functions import get_path
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.utils.engine_deck_conversion import EngineDeckType, _exec_EDC
+from aviary.utils.propeller_map_conversion import PropMapType, _exec_PMC
 
 
 class DummyArgs(object):
@@ -15,26 +15,25 @@ class DummyArgs(object):
 
 
 @use_tempdirs
-class TestEngineDeckConversion(unittest.TestCase):
-    def prepare_and_run(self, filename, output_file=None, data_format=EngineDeckType.GASP):
+class TestPropellerMapConversion(unittest.TestCase):
+    def prepare_and_run(self, filename, output_file=None, data_format=PropMapType.GASP):
         args = DummyArgs()
 
         # Specify the input file
-        args.input_file = filepath = get_path('models/engines/'+filename)
+        args.input_file = filepath = get_path('models/propellers/'+filename)
 
         # Specify the output file
         if not output_file:
-            filename = filepath.stem+'.deck'
+            filename = filepath.stem+'.prop'
             args.output_file = Path.cwd() / Path('TEST_'+filename)
         else:
             args.output_file = str(Path(output_file))
 
-        # Specify the legacy code and engine type
+        # Specify the legacy code and propeller map
         args.data_format = data_format
 
         # Execute the conversion
-        _exec_EDC(args, None)
-        return args
+        _exec_PMC(args, None)
 
     def compare_files(self, filepath, skip_list=[]):
         """
@@ -44,9 +43,9 @@ class TestEngineDeckConversion(unittest.TestCase):
         to skip. This is useful for skipping data that Aviary might need but
         Fortran-based tools do not.
         """
-        filename = filepath.split('.')[0]+'.deck'
+        filename = filepath.split('.')[0]+'.prop'
 
-        validation_data = get_path('models/engines/'+filename)
+        validation_data = get_path('models/propellers/'+filename)
 
         # Open the converted and validation files
         with open('TEST_'+filename, 'r') as f_in, open(validation_data, 'r') as expected:
@@ -61,18 +60,13 @@ class TestEngineDeckConversion(unittest.TestCase):
                 try:
                     self.assertEqual(line_no_whitespace.count(expected_line), 1)
 
-                except Exception as error:
+                except:
                     exc_string = f'Error:  {filename}\nFound: {line_no_whitespace}\nExpected:  {expected_line}'
                     raise Exception(exc_string)
 
-    # TODO currently untested!!
-    # def test_TF_conversion(self):
-    #     return
-
-    def test_TP_conversion(self):
-        filename = 'turboprop_4465hp.eng'
-
-        args = self.prepare_and_run(filename, data_format=EngineDeckType.GASP_TP)
+    def test_PM_conversion(self):
+        filename = 'PropFan.map'
+        self.prepare_and_run(filename, data_format=PropMapType.GASP)
         self.compare_files(filename, skip_list=['# created'])
 
 
