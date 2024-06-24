@@ -335,11 +335,12 @@ class TestSubsystemBuilderBase(unittest.TestCase):
 
         inputs = prob.model.list_inputs(out_stream=None, prom_name=True)
         outputs = prob.model.list_outputs(out_stream=None, prom_name=True)
+        name = self.subsystem_builder.default_name
 
         for key, value in constraints.items():
             # Check constraint existence
             constraint_exists = (any(key == output[1]['prom_name'] for output in outputs) or any(
-                key == input[1]['prom_name'] for input in inputs))
+                key == input[1]['prom_name'] for input in inputs) or any(key == f'{name}.{output[1]["prom_name"]}' for output in outputs) or any(key == f'{name}.{input[1]["prom_name"]}' for input in inputs))
             self.assertTrue(constraint_exists,
                             f"Constraint '{key}' not found in the model.")
 
