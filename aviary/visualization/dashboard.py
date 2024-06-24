@@ -53,10 +53,11 @@ documentation_text_align = 'left'
 
 # functions for the aviary command line command
 
+
 def _none_or_str(value):
     """
     Get the value of the argparse option.
-    
+
     If "None", return None. Else, just return the string.
 
     Parameters
@@ -72,6 +73,7 @@ def _none_or_str(value):
     if value == "None":
         return None
     return value
+
 
 def _dashboard_setup_parser(parser):
     """
