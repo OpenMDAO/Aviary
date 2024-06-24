@@ -58,7 +58,7 @@
 # #
 
 import os
-from tkinter import Tk,Canvas,Frame,Scrollbar,Button, Entry
+from tkinter import Tk,Canvas,Frame,Scrollbar,Button, Entry, Label,StringVar
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 
@@ -91,20 +91,37 @@ def close():
         fp.write(last_geometry)
 
 class Table():
-    def __init__(self,window,rows,cols):
-        self.entries = []
-        for i in range(rows):
-            for j in range(cols):
-                entry = Entry(window,width=10)
-                entry.grid(row=i,column=j)
-                self.entries.append(entry)
+    def __init__(self,window,table):
+        self.cells = []
+        numrows = max(10,len(list(table.values())[0]))
+        for i in range(numrows):
+            if i>0:
+                ptlabel = Label(window,text=i)
+                ptlabel.grid(row=i,column=0)
+            if i==0:
+                pth = Label(window,text="Pt")
+                pth.grid(row=0,column=0)
+            for j,column in enumerate(table.keys()):
+                if i==0:
+                    header = Label(window,text=column)
+                    header.grid(row=i,column=j+1)
+                else:
+                    print(len(column))
+                    etxt = StringVar(value="0")
+                    entry = Entry(window,width=len(column),textvariable=etxt)
+                    entry.grid(row=i,column=j+1)
+                    entry.bind("<KeyRelease>",lambda e, i=i,
+                            var=etxt: self.updatePoint(i, var.get()))
+                    self.cells.append(entry)
+    
+    def updatePoint(self,idx,val):
+        print(idx,val)
 
-
-table_data = {"Time (min)":[0,100,200,350],"Altitude (ft)":[0,10000,10000,500],"Mach Number":[0.2,0.5,0.5,0.2]}
+table_data = {"Time (min)":[],"Altitude (ft)":[],"Mach Number":[]}
+phases = {"Mach":[],"Altitude":[]}
 window = Tk()
 window.title('Plotting in Tkinter')
 window.protocol("WM_DELETE_WINDOW",close)
-#window.state('zoomed')   #zooms the screen to maxm whenever executed
 
 # if we want to reuse the user's resized/moved window
 window_geometry = "900x500+10+10" # widthxheight+x+y, x,y are location
@@ -119,7 +136,7 @@ scv = Canvas(window)
 scv.pack(side='right',fill='y')
 
 tablecv.create_text(10,10,text="hi")
-t = Table(tablecv,3,3)
+t = Table(tablecv,table_data)
 
 scroll = Scrollbar(scv)
 scroll.pack(side='left',fill='y')
@@ -128,11 +145,9 @@ cv = Canvas(window,width=100,height=100)
 cv.create_text(50,50,text="Hi")
 cv.pack()
 
-
-# scroll=Scrollbar(tableframe,command=table.yview) ## Adding Vertical Scrollbar
-# scroll.pack(side='left',fill='y')
-# table.configure(yscrollcommand=scroll.set) ## Attach Scrollbar
-
 plot_button = Button(master = window,command = plot, height = 2, width = 10, text = "Plot")
 plot_button.pack()
 window.mainloop()
+
+
+#window.state('zoomed')   #zooms the screen to maxm whenever executed
