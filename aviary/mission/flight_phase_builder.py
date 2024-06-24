@@ -257,8 +257,8 @@ class FlightPhaseBase(PhaseBuilderBase):
         )
 
         phase.add_timeseries_output(
-            Dynamic.Mission.ELECTRIC_POWER_TOTAL,
-            output_name=Dynamic.Mission.ELECTRIC_POWER_TOTAL, units='kW'
+            Dynamic.Mission.ELECTRIC_POWER_IN_TOTAL,
+            output_name=Dynamic.Mission.ELECTRIC_POWER_IN_TOTAL, units='kW'
         )
 
         phase.add_timeseries_output(

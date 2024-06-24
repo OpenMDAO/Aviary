@@ -32,10 +32,10 @@ class TestBatteryDerivs(unittest.TestCase):
         prob.run_model()
 
         mass_expected = 1_315
-        energy_expected = 1_077_735_471.12
+        energy_expected = 1_077_735.47112
 
         mass = prob.get_val(av.Aircraft.Battery.MASS, 'lbm')
-        energy = prob.get_val(av.Aircraft.Battery.ENERGY_CAPACITY, 'kJ')
+        energy = prob.get_val(av.Aircraft.Battery.ENERGY_CAPACITY, 'MJ')
 
         assert_near_equal(mass, mass_expected, tolerance=1e-10)
         assert_near_equal(energy, energy_expected, tolerance=1e-10)
@@ -54,7 +54,7 @@ class TestBatteryDerivs(unittest.TestCase):
             av.Aircraft.Battery.ENERGY_CAPACITY, 10_000, units='kJ')
         prob.model.set_input_defaults(
             av.Aircraft.Battery.EFFICIENCY, efficiency, units='unitless')
-        prob.model.set_input_defaults(av.Dynamic.Mission.ELECTRIC_ENERGY, [
+        prob.model.set_input_defaults(av.Dynamic.Mission.CUMULATIVE_ELECTRIC_ENERGY_USED, [
                                       0, 2_000, 5_000, 9_500], units='kJ')
 
         prob.setup(force_alloc_complex=True)

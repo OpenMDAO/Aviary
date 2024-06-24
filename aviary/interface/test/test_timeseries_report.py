@@ -23,7 +23,7 @@ class AviaryMissionTimeseries(unittest.TestCase):
                                max_iter=0)
 
         expected_header = [
-            "time (s)", "altitude (ft)", "altitude_rate (ft/s)", "distance (m)", "drag (lbf)", "electric_power_total (kW)",
+            "time (s)", "altitude (ft)", "altitude_rate (ft/s)", "distance (m)", "drag (lbf)", "electric_power_in_total (kW)",
             "fuel_flow_rate_negative_total (lbm/h)", "mach (unitless)", "mach_rate (unitless/s)",
             "mass (kg)", "specific_energy_rate_excess (m/s)", "throttle (unitless)",
             "thrust_net_total (lbf)", "velocity (m/s)"

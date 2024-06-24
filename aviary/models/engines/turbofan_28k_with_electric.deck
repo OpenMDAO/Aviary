@@ -1,4 +1,4 @@
-Mach_Number (unitless), Altitude (ft), Throttle (unitless), Gross_Thrust (lbf), Ram_Drag (lbf), Fuel_Flow (lb/h), NOx_Rate (lb/h),electric_power (kW)
+Mach_Number (unitless), Altitude (ft), Throttle (unitless), Gross_Thrust (lbf), Ram_Drag (lbf), Fuel_Flow (lb/h), NOx_Rate (lb/h),electric_power_in (kW)
                  0.0,                 0.0,                21.0,              1446.4,                 0.0,               842.2,              4.7876,              14.464
                  0.0,                 0.0,                22.0,              2314.3,                 0.0,               976.0,              5.1926,              23.143
                  0.0,                 0.0,                24.0,              4049.9,                 0.0,              1281.0,              6.6532,              40.499

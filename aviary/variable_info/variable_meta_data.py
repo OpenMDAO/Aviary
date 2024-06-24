@@ -227,19 +227,20 @@ add_meta_data(
 add_meta_data(
     Aircraft.Battery.DISCHARGE_LIMIT,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
+    historical_name={"GASP": 'INGASP.SOCMIN',
                      "FLOPS": None,
                      "LEAPS1": 'aircraft.inputs.L0_battery.depth_of_discharge'
                      },
     units='unitless',
-    desc='default constraint on how far the battery can discharge, as a percentage of '
-         'total energy capacity'
+    desc='default constraint on how far the battery can discharge, as a proportion of '
+         'total energy capacity',
+    default_value=0.2,
 )
 
 add_meta_data(
     Aircraft.Battery.EFFICIENCY,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
+    historical_name={"GASP": 'INGASP.EFF_BAT',
                      "FLOPS": None,
                      "LEAPS1": None
                      },
@@ -250,7 +251,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Battery.ENERGY_CAPACITY,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
+    historical_name={"GASP": 'EBATTAVL',
                      "FLOPS": None,
                      "LEAPS1": None
                      },
@@ -261,7 +262,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Battery.MASS,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
+    historical_name={"GASP": 'INGASP.WBATTIN',
                      "FLOPS": None,
                      "LEAPS1": 'aircraft.inputs.L0_battery.weight'
                      },
@@ -273,7 +274,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Battery.PACK_ENERGY_DENSITY,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
+    historical_name={"GASP": 'INGASP.ENGYDEN',
                      "FLOPS": None,
                      "LEAPS1": 'aircraft.inputs.L0_battery.energy_density'
                      },
@@ -6213,18 +6214,18 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Mission.ELECTRIC_ENERGY,
+    Dynamic.Mission.CUMULATIVE_ELECTRIC_ENERGY_USED,
     meta_data=_MetaData,
     historical_name={"GASP": None,
                      "FLOPS": None,
                      "LEAPS1": None
                      },
     units='kJ',
-    desc='Total amount of electric energy consumed by the vehicle across the mission',
+    desc='Total amount of electric energy consumed by the vehicle up until this point in the mission',
 )
 
 add_meta_data(
-    Dynamic.Mission.ELECTRIC_POWER,
+    Dynamic.Mission.ELECTRIC_POWER_IN,
     meta_data=_MetaData,
     historical_name={"GASP": None,
                      "FLOPS": None,
@@ -6236,7 +6237,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Mission.ELECTRIC_POWER_TOTAL,
+    Dynamic.Mission.ELECTRIC_POWER_IN_TOTAL,
     meta_data=_MetaData,
     historical_name={"GASP": None,
                      "FLOPS": None,

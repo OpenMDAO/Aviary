@@ -1,13 +1,14 @@
 import unittest
 
 from openmdao.utils.testing_utils import use_tempdirs
+from openmdao.utils.assert_utils import assert_near_equal
 
 import aviary.api as av
 
 from aviary.subsystems.energy.battery_builder import BatteryBuilder
 
 
-# @use_tempdirs
+@use_tempdirs
 class TestSubsystemsMission(unittest.TestCase):
     def setUp(self):
         self.phase_info = {
@@ -81,6 +82,14 @@ class TestSubsystemsMission(unittest.TestCase):
         prob.set_val(av.Aircraft.Battery.ADDITIONAL_MASS, 115, units='lbm')
 
         prob.run_aviary_problem()
+
+        electric_energy_used = prob.get_val(
+            f'traj.cruise.timeseries.{av.Dynamic.Mission.CUMULATIVE_ELECTRIC_ENERGY_USED}', units='kW*h')
+        fuel_burned = prob.get_val(av.Mission.Summary.FUEL_BURNED, units='lbm')
+
+        # Check outputs
+        assert_near_equal(electric_energy_used[-1], 42.5594728, 1.e-7)
+        assert_near_equal(fuel_burned, 805.8963261, 1.e-7)
 
 
 if __name__ == "__main__":
