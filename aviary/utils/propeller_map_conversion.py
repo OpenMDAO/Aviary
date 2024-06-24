@@ -80,7 +80,12 @@ def PropDataConverter(input_file, output_file, data_format: PropMapType):
         write_data.set_val(key.value, data[key], default_units[key])
 
     if output_file is None:
-        output_file = data_file.stem + '.prop'
+        sfx = data_file.suffix
+        if sfx == '.prop':
+            ext = '_aviary.prop'
+        else:
+            ext = '.prop'
+        output_file = data_file.stem + ext
     write_data_file(output_file, write_data, comments, include_timestamp=False)
 
 
