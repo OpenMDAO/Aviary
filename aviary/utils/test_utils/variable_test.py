@@ -195,7 +195,7 @@ def get_names_from_hierarchy(hierarchy):
     for key in keys:
         leaf =  getattr(hierarchy, key)
         if isinstance(leaf, str):
-            # Variable Strubg.
+            # Variable String.
             names.append(leaf)
 
         else:
