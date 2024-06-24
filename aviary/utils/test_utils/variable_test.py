@@ -184,7 +184,7 @@ def get_names_from_hierarchy(hierarchy):
     Returns
     -------
     list
-        List of all names in the hiearchy, including duplicates.
+        List of all names in the hierarchy, including duplicates.
     """
     names = []
 
