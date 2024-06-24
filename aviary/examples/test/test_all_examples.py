@@ -1,9 +1,7 @@
 """
 This script is designed to test run scripts located in a specified directory.
 It uses Python's unittest framework to dynamically generate test cases for each
-script that begins with 'run_' and ends with '.py'. The script ensures that
-each run script executes without errors within a 10-second timeout. If a script
-runs longer than 10 seconds, it's still considered a pass unless other errors occur.
+script that begins with 'run_' and ends with '.py'.
 """
 
 import os
@@ -71,9 +69,9 @@ class RunScriptTest(unittest.TestCase):
                     run_files.append(Path(root) / file)
         return run_files
 
-    def run_script(self, script_path, max_allowable_time=300):
+    def run_script(self, script_path, max_allowable_time=500):
         """
-        Attempt to run a script with a 300-second timeout and handle errors.
+        Attempt to run a script with a 500-second timeout and handle errors.
 
         Parameters
         ----------

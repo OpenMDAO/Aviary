@@ -33,7 +33,8 @@ class DetailedWingBendingTest(unittest.TestCase):
 
         self.prob.model.add_subsystem(
             "wing",
-            DetailedWingBendingFact(aviary_options=get_flops_inputs(case_name)),
+            DetailedWingBendingFact(
+                aviary_options=get_flops_inputs(case_name, preprocess=True)),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -128,8 +129,8 @@ class DetailedWingBendingTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
-    # test = DetailedWingBendingTest()
-    # test.setUp()
+    # unittest.main()
+    test = DetailedWingBendingTest()
+    test.setUp()
     # test.test_case(case_name='LargeSingleAisle1FLOPS')
-    # test.test_case_multiengine()
+    test.test_case_multiengine()

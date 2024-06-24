@@ -7,6 +7,7 @@ from aviary.interface.methods_for_level1 import _exec_level1, _setup_level1_pars
 from aviary.utils.fortran_to_aviary import _exec_F2A, _setup_F2A_parser
 from aviary.utils.engine_deck_conversion import _exec_EDC, _setup_EDC_parser, EDC_description
 from aviary.utils.aero_table_conversion import _exec_ATC, _setup_ATC_parser
+from aviary.utils.propeller_map_conversion import _exec_PMC, _setup_PMC_parser
 from aviary.visualization.dashboard import _dashboard_setup_parser, _dashboard_cmd
 from aviary.interface.graphical_input import _exec_flight_profile, _setup_flight_profile_parser
 from aviary.interface.download_models import _exec_hangar, _setup_hangar_parser
@@ -55,6 +56,8 @@ _command_map = {
     'convert_engine': (_setup_EDC_parser, _exec_EDC, EDC_description),
     'convert_aero_table': (_setup_ATC_parser, _exec_ATC,
                            'Converts FLOPS- or GASP-formatted aero data files into Aviary csv format.'),
+    'convert_prop_table': (_setup_PMC_parser, _exec_PMC,
+                           'Converts GASP-formatted propeller map file into Aviary csv format.'),
 }
 
 

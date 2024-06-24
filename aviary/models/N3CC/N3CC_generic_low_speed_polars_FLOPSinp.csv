@@ -85,7 +85,7 @@ aircraft:horizontal_tail:thickness_to_chord,0.115,unitless
 aircraft:horizontal_tail:vertical_tail_fraction,0,unitless
 aircraft:horizontal_tail:wetted_area_scaler,576.571192,unitless
 aircraft:hydraulics:mass_scaler,0.95543,unitless
-aircraft:hydraulics:system_pressure,5000,lbf/ft**2
+aircraft:hydraulics:system_pressure,5000,psi
 aircraft:instruments:mass_scaler,1.66955,unitless
 aircraft:landing_gear:carrier_based,0,unitless
 aircraft:landing_gear:drag_coefficient,0.024,unitless

@@ -102,7 +102,9 @@ class AviaryValues(NamedValues):
                     if val.dtype == type(None):
                         val = [val[0]]
                     else:
-                        val = [val[0].item()]
+                        # item() gets us native Python equivalent object (i.e. int vs. numpy.int64)
+                        # wrap first index in np array to ensures works on any dtype
+                        val = [np.array(val[0]).item()]
                 for item in val:
                     has_bool = False  # needs some fancy shenanigans because bools will register as ints
                     if (isinstance(expected_types, type)):

@@ -67,7 +67,7 @@ class MissionODE(om.Group):
         aviary_options = options['aviary_options']
         core_subsystems = options['core_subsystems']
         subsystem_options = options['subsystem_options']
-        num_engine_type = len(aviary_options.get_val('engine_models'))
+        num_engine_type = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
 
         if analysis_scheme is AnalysisScheme.SHOOTING:
             SGM_required_inputs = {

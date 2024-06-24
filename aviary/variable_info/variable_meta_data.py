@@ -1782,7 +1782,7 @@ add_meta_data(
                      "LEAPS1": None
                      },
     units='unitless',
-    types=(str, Path, None),
+    types=(str, Path),
     default_value=None,
     option=True,
     desc='filepath to data file containing engine performance tables'
@@ -3614,7 +3614,7 @@ add_meta_data(
                      "FLOPS": 'WTIN.HYDPR',  # ['&DEFINE.WTIN.HYDPR', 'WTS.HYDPR'],
                      "LEAPS1": 'aircraft.inputs.L0_weights.hydraulic_sys_press'
                      },
-    units='lbf/ft**2',
+    units='psi',
     desc='hydraulic system pressure',
     default_value=3000.0,
 )
