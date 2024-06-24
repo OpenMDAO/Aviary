@@ -7,6 +7,8 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class BatteryBuilder(SubsystemBuilderBase):
+    default_name = 'battery'
+
     def build_pre_mission(self, aviary_inputs=None):
         return SizeBattery(aviary_inputs=aviary_inputs)
 
@@ -49,8 +51,9 @@ class BatteryBuilder(SubsystemBuilderBase):
     def get_constraints(self):
         constraint_dict = {
             # Can add constraints here; state of charge is a common one in other battery applications
-            # Dynamic.Mission.BATTERY_STATE_OF_CHARGE:
-            #                {'type': 'path',
-            #                 'lower': 0.2},
+            f'battery.{Dynamic.Mission.BATTERY_STATE_OF_CHARGE}':
+            {'type': 'boundary',
+             'loc': 'final',
+             'lower': 0.2},
         }
         return constraint_dict
