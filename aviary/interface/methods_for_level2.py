@@ -1870,7 +1870,7 @@ class AviaryProblem(om.Problem):
 
                                 targets = mission_var_name
                                 if '.' in mission_var_name:
-                                    # Support for non-hiearchy variables as parameters.
+                                    # Support for non-hierarchy variables as parameters.
                                     mission_var_name = mission_var_name.split('.')[-1]
 
                                 if 'phases' in bus_variables[bus_variable]:
