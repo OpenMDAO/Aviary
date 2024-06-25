@@ -262,13 +262,17 @@ class EngineDeck(EngineModel):
         thrust_provided = False
         # was scale factor originally provided? (Not defaulted)
         if Aircraft.Engine.SCALE_FACTOR in engine_mapping:
-            scale_factor_provided = True
+            # if scale factor is 1, doesn't conflict with performance scaling turned off
+            if self.options.get_val(Aircraft.Engine.SCALE_FACTOR) == 1:
+                scale_factor_provided = False
+            else:
+                scale_factor_provided = True
         # was scaled thrust originally provided? (Not defaulted)
         if Aircraft.Engine.SCALED_SLS_THRUST in engine_mapping:
             thrust_provided = True
 
         # user provided target thrust or scale factor, but performance scaling is off
-        if scale_performance and (scale_factor_provided or thrust_provided) and self.get_val(Settings.VERBOSITY).value >= 1:
+        if not scale_performance and (scale_factor_provided or thrust_provided) and self.get_val(Settings.VERBOSITY).value >= 1:
             warnings.warn(
                 f'EngineDeck <{self.name}>: Scaling targets are provided, but will be '
                 'ignored because performance scaling is disabled. Set '
