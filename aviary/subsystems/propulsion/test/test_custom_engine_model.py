@@ -61,7 +61,7 @@ class SimpleEngine(om.ExplicitComponent):
                         shape=nn,
                         units='lbm/s',
                         desc='Current fuel flow rate (scaled)')
-        self.add_output(Dynamic.Mission.ELECTRIC_POWER,
+        self.add_output(Dynamic.Mission.ELECTRIC_POWER_IN,
                         shape=nn,
                         units='W',
                         desc='Current electric energy rate (scaled)')

@@ -115,7 +115,7 @@ class PropulsionMissionTest(unittest.TestCase):
                           np.array([[602.11, 3554], [100, 9000]]))
         self.prob.set_val(Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE,
                           np.array([[123, -221.44], [-765.2, -1]]))
-        self.prob.set_val(Dynamic.Mission.ELECTRIC_POWER,
+        self.prob.set_val(Dynamic.Mission.ELECTRIC_POWER_IN,
                           np.array([[3.01, -12], [484.2, 8123]]))
         self.prob.set_val(Dynamic.Mission.NOX_RATE,
                           np.array([[322, 4610], [1.54, 2.844]]))
@@ -126,20 +126,20 @@ class PropulsionMissionTest(unittest.TestCase):
         thrust_max = self.prob.get_val(Dynamic.Mission.THRUST_MAX_TOTAL, units='lbf')
         fuel_flow = self.prob.get_val(
             Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units='lb/h')
-        electric_power = self.prob.get_val(
-            Dynamic.Mission.ELECTRIC_POWER_TOTAL, units='kW')
+        electric_power_in = self.prob.get_val(
+            Dynamic.Mission.ELECTRIC_POWER_IN_TOTAL, units='kW')
         nox = self.prob.get_val(Dynamic.Mission.NOX_RATE_TOTAL, units='lb/h')
 
         expected_thrust = np.array([2347.202, 14535])
         expected_thrust_max = np.array([8914.33, 18300])
         expected_fuel_flow = np.array([-73.88, -2297.6])
-        expected_electric_power = np.array([-14.97, 17698.6])
+        expected_electric_power_in = np.array([-14.97, 17698.6])
         expected_nox = np.array([10186, 10.308])
 
         assert_near_equal(thrust, expected_thrust, tolerance=1e-12)
         assert_near_equal(thrust_max, expected_thrust_max, tolerance=1e-12)
         assert_near_equal(fuel_flow, expected_fuel_flow, tolerance=1e-12)
-        assert_near_equal(electric_power, expected_electric_power, tolerance=1e-12)
+        assert_near_equal(electric_power_in, expected_electric_power_in, tolerance=1e-12)
         assert_near_equal(nox, expected_nox, tolerance=1e-12)
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
