@@ -1,3 +1,92 @@
+import os
+from tkinter import Tk,Canvas,Frame,Scrollbar,Button, Entry, Label,StringVar,Menu,Toplevel
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
+from matplotlib.pyplot import xlabel
+from graphicsDefs import interactivePlots, Table
+
+def close():
+    print("Closing")
+    last_geometry = window.winfo_geometry()
+    window.destroy()
+    with open("windowlocation.txt","w") as fp:
+        fp.write(last_geometry)
+
+def upd():
+    window.update()
+
+def createMenu(window):
+    menubar = Menu(window)
+    for key,value in structure.items():
+        tab = Menu(menubar,tearoff=False)
+        menubar.add_cascade(label=key,menu = tab)
+        i = 0
+        while i < len(value):
+            if not value[i]:
+                tab.add_separator()
+            else:
+                tab.add_command(label=value[i],command = value[i+1])
+            i += 2
+    window.config(menu=menubar)
+
+table_data = {"Time (min)":[0],"Altitude (ft)":[0],"Mach Number":[0.2]}
+
+table_data = {"x1":{"Label":"Time (min)","Values":[0]},
+              "y1":{"Label":"Altitude (ft)","Values":[0]},
+              "y2":{"Label":"Mach Number","Values":[0.2]}}
+phases = {"Mach":[],"Altitude":[]}
+window = Tk()
+window.title('Mission Design Utility')
+window.protocol("WM_DELETE_WINDOW",close)
+window.focus_set()
+
+# if we want to reuse the user's resized/moved window
+window_geometry = "900x500+10+10" # widthxheight+x+y, x,y are location
+if os.path.exists("windowlocation.txt"):
+    with open("windowlocation.txt","r") as fp:
+        window_geometry = fp.read().split("\n")[0]
+window.geometry(window_geometry)
+window.minsize(900,500)
+
+def newfunc(): return
+def openfunc(): return
+def savefunc(): return
+def exitfunc(): return
+
+tablecv = Canvas(window)
+tablecv.pack(side="right",fill="y")
+
+scv = Canvas(window)
+scv.pack(side='right',fill='y')
+
+t = Table(tablecv,table_data)
+
+scroll = Scrollbar(scv)
+scroll.pack(side='right',fill='y')
+
+canvas_plotReadouts = Canvas(window)
+canvas_plotReadouts.pack(side='bottom')
+canvas_plots = Canvas(window)
+canvas_plots.pack(side='top')
+fg = interactivePlots(window,canvas_plots,canvas_plotReadouts,
+                      ["Time (minutes)","Altitude (ft)","Time (minutes)","Mach Number"],
+                      [400,50e3,1.0],["Altitude Plot","Mach Plot"])
+
+structure = {"File":["New File",newfunc,"Open",openfunc,"Save",savefunc,None,None,"Exit",exitfunc],
+             "Edit":["Axes Limits",fg.change_axes_popup,"Copy",None,"Paste",None,"Select All",None,None,None],
+             "Help":["Demo",None,"About",None]}
+createMenu(window)
+
+window.mainloop()
+
+#window.state('zoomed')   #zooms the screen to maxm whenever executed
+#plot_button = Button(master = window,command = plot, height = 2, width = 10, text = "Plot")
+#plot_button.pack()
+
+# toolbar = NavigationToolbar2Tk(canvas,window)
+# toolbar.update()
+# canvas.get_tk_widget().pack()
+
 # #from graphics import *
 # #import sv_ttk
 # import tkinter as tk
@@ -56,98 +145,3 @@
 # # functions for crosshair, getting coordinate value
 # #
 # #
-
-import os
-from tkinter import Tk,Canvas,Frame,Scrollbar,Button, Entry, Label,StringVar
-from matplotlib.figure import Figure
-from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
-
-def mouse(e):
-    print(e.xdata,e.ydata)
-def move(e):
-    if e.xdata and e.ydata:
-        print(e.xdata,e.ydata)
-
-def plot():
-    fig = Figure(figsize = (5, 5), dpi = 100)        
-    y = [i**2 for i in range(101)]
-    plot1 = fig.add_subplot(111)
-    plot1.plot(y)
-    fig.canvas.mpl_connect('button_press_event',mouse)
-    fig.canvas.mpl_connect('motion_notify_event',move)
-
-    canvas = FigureCanvasTkAgg(fig,master = window)
-    canvas.draw()
-    canvas.get_tk_widget().pack()
-    toolbar = NavigationToolbar2Tk(canvas,window)
-    toolbar.update()
-    canvas.get_tk_widget().pack()
-
-def close():
-    print("Closing")
-    last_geometry = window.winfo_geometry()
-    window.destroy()
-    with open("windowlocation.txt","w") as fp:
-        fp.write(last_geometry)
-
-class Table():
-    def __init__(self,window,table):
-        self.cells = []
-        numrows = max(10,len(list(table.values())[0]))
-        for i in range(numrows):
-            if i>0:
-                ptlabel = Label(window,text=i)
-                ptlabel.grid(row=i,column=0)
-            if i==0:
-                pth = Label(window,text="Pt")
-                pth.grid(row=0,column=0)
-            for j,column in enumerate(table.keys()):
-                if i==0:
-                    header = Label(window,text=column)
-                    header.grid(row=i,column=j+1)
-                else:
-                    print(len(column))
-                    etxt = StringVar(value="0")
-                    entry = Entry(window,width=len(column),textvariable=etxt)
-                    entry.grid(row=i,column=j+1)
-                    entry.bind("<KeyRelease>",lambda e, i=i,
-                            var=etxt: self.updatePoint(i, var.get()))
-                    self.cells.append(entry)
-    
-    def updatePoint(self,idx,val):
-        print(idx,val)
-
-table_data = {"Time (min)":[],"Altitude (ft)":[],"Mach Number":[]}
-phases = {"Mach":[],"Altitude":[]}
-window = Tk()
-window.title('Plotting in Tkinter')
-window.protocol("WM_DELETE_WINDOW",close)
-
-# if we want to reuse the user's resized/moved window
-window_geometry = "900x500+10+10" # widthxheight+x+y, x,y are location
-if os.path.exists("windowlocation.txt"):
-    with open("windowlocation.txt","r") as fp:
-        window_geometry = fp.read().split("\n")[0]
-window.geometry(window_geometry)
-
-tablecv = Canvas(window)
-tablecv.pack(side="right",fill="y")
-scv = Canvas(window)
-scv.pack(side='right',fill='y')
-
-tablecv.create_text(10,10,text="hi")
-t = Table(tablecv,table_data)
-
-scroll = Scrollbar(scv)
-scroll.pack(side='left',fill='y')
-
-cv = Canvas(window,width=100,height=100)
-cv.create_text(50,50,text="Hi")
-cv.pack()
-
-plot_button = Button(master = window,command = plot, height = 2, width = 10, text = "Plot")
-plot_button.pack()
-window.mainloop()
-
-
-#window.state('zoomed')   #zooms the screen to maxm whenever executed
