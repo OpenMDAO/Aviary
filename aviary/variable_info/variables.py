@@ -616,7 +616,7 @@ class Dynamic:
         SPEED_OF_SOUND = 'speed_of_sound'
         STATIC_PRESSURE = 'static_pressure'
         TEMPERATURE = 'temperature'
-        TEMPERATURE_ENGINE_T4 = 't4'
+        T4_TEMPERATURE = 't4'
         THROTTLE = 'throttle'
         THRUST = 'thrust_net'
         THRUST_MAX = 'thrust_net_max'

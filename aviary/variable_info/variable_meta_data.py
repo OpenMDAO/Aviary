@@ -6397,7 +6397,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Mission.TEMPERATURE_ENGINE_T4,
+    Dynamic.Mission.T4_TEMPERATURE,
     meta_data=_MetaData,
     historical_name={"GASP": None,
                      "FLOPS": None,

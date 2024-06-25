@@ -56,7 +56,7 @@ RAM_DRAG = EngineModelVariables.RAM_DRAG
 FUEL_FLOW = EngineModelVariables.FUEL_FLOW
 ELECTRIC_POWER = EngineModelVariables.ELECTRIC_POWER
 NOX_RATE = EngineModelVariables.NOX_RATE
-TEMPERATURE = EngineModelVariables.TEMPERATURE_ENGINE_T4
+TEMPERATURE = EngineModelVariables.T4_TEMPERATURE
 # EXIT_AREA = EngineModelVariables.EXIT_AREA
 
 # EngineDeck assumes all aliases point to an enum, these are used internally only
@@ -73,7 +73,7 @@ aliases = {
     FUEL_FLOW: ['fuel', 'fuel_flow', 'fuel_flow_rate'],
     ELECTRIC_POWER: 'electric_power',
     NOX_RATE: ['nox', 'nox_rate'],
-    TEMPERATURE: ['t4', 'temp', 'temperature'],
+    TEMPERATURE: ['t4', 'temp', 'temperature', 't4_temperature'],
     SHAFT_POWER: ['shaft_power', 'shp'],
     SHAFT_POWER_CORRECTED: ['shaft_power_corrected', 'shpcor', 'corrected_horsepower'],
     TAILPIPE_THRUST: ['tailpipe_thrust'],
@@ -814,7 +814,7 @@ class EngineDeck(EngineModel):
                                   units=shaft_power_units,
                                   desc=desc)
         if self.use_t4:
-            engine.add_output(Dynamic.Mission.TEMPERATURE_ENGINE_T4,
+            engine.add_output(Dynamic.Mission.T4_TEMPERATURE,
                               self.data[TEMPERATURE],
                               units=units[TEMPERATURE],
                               desc='Current turbine exit temperature')
