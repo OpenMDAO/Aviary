@@ -303,7 +303,7 @@ add_meta_data(
                      "FLOPS": None,
                      "LEAPS1": None
                      },
-    units='kW*h/kg',
+    units='kW*h/L',
     desc='volumetric density of the battery pack',
     default_value=0,
 )
