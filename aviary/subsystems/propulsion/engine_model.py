@@ -40,7 +40,7 @@ class EngineModel(SubsystemBuilderBase):
     default_name = 'engine_model'
 
     def __init__(
-        self, name: str = None, options: AviaryValues = AviaryValues(), meta_data: dict = None,
+        self, name: str = None, options: AviaryValues = None, meta_data: dict = None,
     ):
         super().__init__(name, meta_data=meta_data)
         if options is not None:
