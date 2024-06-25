@@ -79,3 +79,4 @@ class TestBattery(av.TestSubsystemBuilderBase):
 
 if __name__ == '__main__':
     unittest.main()
+
