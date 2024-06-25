@@ -8,7 +8,7 @@ from dymos.models.atmosphere import USatm1976Comp
 
 from aviary.constants import TSLS_DEGR
 from aviary.variable_info.variables import Aircraft
-from aviary.subsystems.propulsion.propeller_performance import PropellerPerformance
+from aviary.subsystems.propulsion.propeller.propeller_performance import PropellerPerformance
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.variable_info.options import get_option_defaults
 

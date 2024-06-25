@@ -7,7 +7,7 @@ from aviary.subsystems.propulsion.utils import EngineModelVariables
 from aviary.utils.named_values import NamedValues
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.subsystems.propulsion.propeller_performance import PropellerPerformance
+from aviary.subsystems.propulsion.propeller.propeller_performance import PropellerPerformance
 
 
 class TurbopropModel(EngineModel):

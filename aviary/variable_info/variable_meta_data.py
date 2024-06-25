@@ -2211,28 +2211,6 @@ add_meta_data(
     default_value=np.array([0.0])
 )
 
-#  __  __         _
-# |  \/  |  ___  | |_   ___   _ _
-# | |\/| | / _ \ |  _| / _ \ | '_|
-# |_|  |_| \___/  \__| \___/ |_|
-# ================================
-
-add_meta_data(
-    Aircraft.Engine.Motor.MASS,
-    meta_data=_MetaData,
-    units='kg',
-    desc='Total motor mass (considers number of motors)',
-    default_value=0.0,
-)
-
-add_meta_data(
-    Aircraft.Engine.Motor.TORQUE_MAX,
-    meta_data=_MetaData,
-    units='N*m',
-    desc='Max torque value that can be output from a single motor. Used to determine '
-         'motor mass in pre-mission',
-)
-
 #   ___                      _
 #  / __|  ___   __ _   _ _  | |__   ___  __ __
 # | (_ | / -_) / _` | | '_| | '_ \ / _ \ \ \ /
@@ -2242,6 +2220,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.Engine.Gearbox.GEAR_RATIO,
     meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
     units=None,
     desc='The ratio of the RPM_out divided by the RPM_in for the gearbox.',
     default_value=1.0,
@@ -2250,6 +2232,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.Engine.Gearbox.MASS,
     meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
     units='kg',
     desc='The mass of the gearbox.',
     default_value=0,
@@ -2258,9 +2244,43 @@ add_meta_data(
 add_meta_data(
     Aircraft.Engine.Gearbox.TORQUE_MAX,
     meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
     units='N*m',
     desc='The maximum rated torque of the gearbox.',
     default_value=0,
+)
+
+#  __  __         _
+# |  \/  |  ___  | |_   ___   _ _
+# | |\/| | / _ \ |  _| / _ \ | '_|
+# |_|  |_| \___/  \__| \___/ |_|
+# ================================
+
+add_meta_data(
+    Aircraft.Engine.Motor.MASS,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='kg',
+    desc='Total motor mass (considers number of motors)',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Engine.Motor.TORQUE_MAX,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='N*m',
+    desc='Max torque value that can be output from a single motor. Used to determine '
+         'motor mass in pre-mission',
 )
 
 #  ______   _

@@ -513,7 +513,7 @@ class PreHamiltonStandard(om.ExplicitComponent):
         sos = inputs[Dynamic.Mission.SPEED_OF_SOUND]
 
         # arbitrarily small number to keep advance ratio nonzero, which allows for static thrust prediction
-        # TODO possible need for static thrust calc method
+        # NOTE need for a separate static thrust calc method?
         vktas[np.where(vktas == 0.0)] = 1e-6
         density_ratio = inputs[Dynamic.Mission.DENSITY] / RHO_SEA_LEVEL_ENGLISH
         sqrt_temp_ratio = np.sqrt(TSLS_DEGR / inputs[Dynamic.Mission.TEMPERATURE])

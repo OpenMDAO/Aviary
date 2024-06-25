@@ -49,6 +49,7 @@ class MotorPreMission(om.Group):
                                ('max_torque', Aircraft.Engine.Motor.TORQUE_MAX)],
                            promotes_outputs=[('motor_mass', Aircraft.Engine.Motor.MASS)])
 
+        # TODO Gearbox needs to be its own component separate from motor
         self.add_subsystem('power_comp',
                            om.ExecComp('power = torque * pi * RPM / 30',
                                        power={'val': 0.0, 'units': 'kW'},

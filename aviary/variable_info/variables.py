@@ -243,14 +243,14 @@ class Aircraft:
         TYPE = 'aircraft:engine:type'
         WING_LOCATIONS = 'aircraft:engine:wing_locations'
 
-        class Motor:
-            MASS = 'aircraft:engine:motor:mass'
-            TORQUE_MAX = 'aircraft:engine:motor:torque_max'
-
         class Gearbox:
             GEAR_RATIO = "aircraft:engine:gearbox:gear_ratio"
             MASS = "aircraft:engine:gearbox:mass"
             TORQUE_MAX = "aircraft:engine:gearbox:torque_max"
+
+        class Motor:
+            MASS = 'aircraft:engine:motor:mass'
+            TORQUE_MAX = 'aircraft:engine:motor:torque_max'
 
     class Fins:
         AREA = 'aircraft:fins:area'

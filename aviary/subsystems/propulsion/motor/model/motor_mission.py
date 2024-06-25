@@ -27,7 +27,7 @@ class MotorMission(om.Group):
 
         ivc = om.IndepVarComp()
 
-        # TBD Remove this
+        # TODO Remove this once engines no longer require all outputs
         # this is an artifact of allowing the motor and turbine engine
         # to swap easily between the two.
         ivc.add_output(Dynamic.Mission.THRUST, val=np.zeros(n), units='N')
@@ -74,8 +74,7 @@ class MotorMission(om.Group):
 
         motor_group.connect(Dynamic.Mission.SHAFT_POWER, 'energy_comp.shaft_power')
 
-        # Gearbox goes here in future
-
+        # TODO Gearbox needs to be its own component separate from motor
         # is this needed???
         # this may be already covered by throttle constraints being from 0 - 1
         # motor_group.add_subsystem('torque_con',
@@ -119,6 +118,10 @@ class MotorMission(om.Group):
                            promotes_inputs=['*', 'max_throttle'],
                            promotes_outputs=[Dynamic.Mission.SHAFT_POWER_MAX])
 
+        # TODO Gearbox needs to be its own component separate from motor
+        # Hamilton Standard model does not utilize torque. This can be added back in if
+        # future prop models desire torque (need to also add support for torque from
+        # turboshaft engine decks)
         # # determine torque available at the prop
         # self.add_subsystem('gearbox_comp',
         #                    om.ExecComp('torque = shaft_power / (pi * RPM) * 30',

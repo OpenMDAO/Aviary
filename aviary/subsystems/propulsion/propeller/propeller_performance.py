@@ -8,7 +8,7 @@ from openmdao.components.ks_comp import KSfunction
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.subsystems.propulsion.hamilton_standard import HamiltonStandard, PostHamiltonStandard, PreHamiltonStandard
+from aviary.subsystems.propulsion.propeller.hamilton_standard import HamiltonStandard, PostHamiltonStandard, PreHamiltonStandard
 
 
 class TipSpeedLimit(om.ExplicitComponent):
@@ -113,7 +113,7 @@ class TipSpeedLimit(om.ExplicitComponent):
         tip_speed_max = inputs[Aircraft.Engine.PROPELLER_TIP_SPEED_MAX]
         diam = inputs[Aircraft.Engine.PROPELLER_DIAMETER]
 
-        tip_speed_mach_limit = ((sos*tip_mach_max)**2 - velocity**2)**0.5
+        tip_speed_mach_limit = ((sos * tip_mach_max)**2 - velocity**2)**0.5
         # use KSfunction for smooth derivitive across minimum
         tip_speed_max_nn = np.tile(tip_speed_max, num_nodes)
         prop_tip_speed = -KSfunction.compute(
@@ -135,20 +135,20 @@ class TipSpeedLimit(om.ExplicitComponent):
 
         tip_speed_max_nn = np.tile(tip_speed_max, num_nodes)
 
-        tip_speed_mach_limit = ((sos*tip_mach_max)**2 - velocity**2)**0.5
+        tip_speed_mach_limit = ((sos * tip_mach_max)**2 - velocity**2)**0.5
         val = -np.stack((tip_speed_max_nn, tip_speed_mach_limit), axis=1)
         prop_tip_speed = -KSfunction.compute(val).flatten()
 
         dKS, _ = KSfunction.derivatives(val)
 
-        dtpml_v = -velocity/tip_speed_mach_limit
-        dtpml_s = (tip_mach_max**2 * sos)/tip_speed_mach_limit
-        dtpml_m = (tip_mach_max * sos**2)/tip_speed_mach_limit
+        dtpml_v = -velocity / tip_speed_mach_limit
+        dtpml_s = (tip_mach_max**2 * sos) / tip_speed_mach_limit
+        dtpml_m = (tip_mach_max * sos**2) / tip_speed_mach_limit
 
-        dspeed_dv =  dKS[:, 1] * dtpml_v
-        dspeed_ds =  dKS[:, 1] * dtpml_s
-        dspeed_dmm =  dKS[:, 1] * dtpml_m
-        dspeed_dsm =  dKS[:, 0]
+        dspeed_dv = dKS[:, 1] * dtpml_v
+        dspeed_ds = dKS[:, 1] * dtpml_s
+        dspeed_dmm = dKS[:, 1] * dtpml_m
+        dspeed_dsm = dKS[:, 0]
 
         J[Dynamic.Mission.PROPELLER_TIP_SPEED,
           Dynamic.Mission.VELOCITY] = dspeed_dv
@@ -206,19 +206,16 @@ class InstallLoss(om.Group):
         # We should update these minimum calls to use a smooth minimum so that the
         # gradient information is C1 continuous.
         self.add_subsystem(
-            name='zje_comp',
-            subsys=om.ExecComp(
+            name='zje_comp', subsys=om.ExecComp(
                 'equiv_adv_ratio = minimum((1.0 - 0.254 * sqa) * 5.309 * vktas/tipspd, 5.0)',
                 vktas={'units': 'knot', 'val': np.zeros(nn)},
                 tipspd={'units': 'ft/s', 'val': np.zeros(nn)},
                 sqa={'units': 'unitless'},
                 equiv_adv_ratio={'units': 'unitless', 'val': np.zeros(nn)},
-                has_diag_partials=True,
-            ),
+                has_diag_partials=True,),
             promotes_inputs=["sqa", ("vktas", Dynamic.Mission.VELOCITY),
                              ("tipspd", Dynamic.Mission.PROPELLER_TIP_SPEED)],
-            promotes_outputs=["equiv_adv_ratio"],
-        )
+            promotes_outputs=["equiv_adv_ratio"],)
 
         self.add_subsystem(
             'convert_sqa',

@@ -8,7 +8,7 @@ from pathlib import Path
 
 from aviary.mission.gasp_based.flight_conditions import FlightConditions
 from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
-from aviary.subsystems.propulsion.propeller_performance import PropellerPerformance
+from aviary.subsystems.propulsion.propeller.propeller_performance import PropellerPerformance
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.functions import get_path
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
