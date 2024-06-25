@@ -108,7 +108,8 @@ def convert_geopotential_altitude(altitude):
 
 
 # TODO build test for this function
-def build_engine_deck(aviary_options: AviaryValues):
+# TODO upgrade to be able to turn vectorized AviaryValues into multiple engine decks
+def build_engine_deck(aviary_options: AviaryValues, meta_data=_MetaData):
     '''
     Creates an EngineDeck using avaliable inputs and options in aviary_options.
 
@@ -122,31 +123,61 @@ def build_engine_deck(aviary_options: AviaryValues):
     engine_models : <list of EngineDecks>
         List of EngineDecks created using provided aviary_options.
     '''
-    # import locally placed to avoid circular import
+    # local import to avoid circular import
     from aviary.subsystems.propulsion.engine_deck import EngineDeck
 
-    # Build a single engine deck, currently ignoring vectorization
-    # of AviaryValues (use first index)
+    # Build a single engine deck, currently ignoring vectorization of AviaryValues
+    # (use first item in arrays when appropriate)
     engine_options = AviaryValues()
     for var in Aircraft.Engine.__dict__.values():
         # check if this variable exist with useable metadata
         try:
             units = _MetaData[var]['units']
             try:
-                # add value from aviary_options to engine_options
                 aviary_val = aviary_options.get_val(var, units)
-                if isinstance(aviary_val, np.ndarray):
-                    # "Convert" numpy types to standard Python types. Wrap first
-                    # index in numpy array before calling item() to safeguard against
-                    # non-standard types, such as objects
-                    aviary_val = np.array(aviary_val[0]).item()
-                elif isinstance(aviary_val, (list, tuple)):
-                    aviary_val = aviary_val[0]
-                engine_options.set_val(var, aviary_val, units)
+                default_value = meta_data[var]['default_value']
             # if not, use default value from _MetaData?
             except KeyError:
                 # engine_options.set_val(var, _MetaData[var]['default_value'], units)
                 continue
+            # add value from aviary_options to engine_options
+            else:
+                # special handling for numpy arrays - check if they are multidimensional,
+                # which implies multiple engine models, and only use the value intended
+                # for the first engine model
+                if isinstance(aviary_val, np.ndarray) and isinstance(default_value, np.ndarray):
+                    expected_dim = default_value.ndim
+                    val_dim = aviary_val.ndim
+                    # if aviary_values has one more dimension than expected per-engine,
+                    # we know aviary_values is for multi-engine type. Currently only using
+                    # first index
+                    if val_dim == expected_dim+1:
+                        aviary_val = aviary_val[0]
+                    # if aviary_values has more than one dimension from expected, then
+                    # something is very wrong and cannot be fixed here
+                    if val_dim > expected_dim+1:
+                        UserWarning(f'Provided vector for {var} has too many dimensions: '
+                                    'expecting a {expected_dim+1}D array ({expected_dim}D '
+                                    'per engine)')
+                # if neither metadata and aviary_val are numpy arrays, cannot check dimensions
+                # in robust way, so a reduced check is done. No raised, errors, must
+                # assume aviary_val data is formatted correctly
+                elif isinstance(aviary_val, (list, tuple, np.ndarray)):
+                    try:
+                        aviary_val_0 = aviary_val[0]
+                    except TypeError:
+                        pass
+                    else:
+                        # if item in first index is also iterable, aviary_val is multi-dimensional array
+                        # if array only contains a single value, use that
+                        if isinstance(aviary_val_0, (list, tuple, np.ndarray)) or len(aviary_val) == 1:
+                            aviary_val = aviary_val_0
+                # "Convert" numpy types to standard Python types. Wrap first
+                # index in numpy array before calling item() to safeguard against
+                # non-standard types, such as objects
+                if np.array(aviary_val).ndim == 0:
+                    aviary_val = np.array(aviary_val).item()
+                engine_options.set_val(var, aviary_val, units)
         except (KeyError, TypeError):
             continue
 
