@@ -2193,7 +2193,7 @@ add_meta_data(
                      "LEAPS1": 'aircraft.inputs.L0_propulsion.wing_engine_locations'
                      },
     units='unitless',
-    desc='Engine wing mount locations as fractions of semispan; (engines_count)/2 values '
+    desc='Engine wing mount locations as fractions of semispan; (NUM_WING_ENGINES)/2 values '
          'are input',
     default_value=np.array([0.0])
 )
