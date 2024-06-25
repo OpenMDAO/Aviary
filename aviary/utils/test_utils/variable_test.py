@@ -127,7 +127,7 @@ def assert_metadata_alphabetization(metadata_variables_list):
             )
         # only compare up to class level, avoid comparing variables to classes
         if len(current_var) > len(previous_var):
-            diff_idx = max(0, diff_idx-1)
+            diff_idx = max(0, diff_idx - 1)
 
         old_to_new = [previous_var[diff_idx], current_var[diff_idx]]
         old_to_new_alphabetical = old_to_new.copy()
@@ -157,7 +157,8 @@ def assert_match_varnames(system, MetaData=None):
     sys_outputs = set([val[1]["prom_name"] for val in sys_outputs])
 
     proper_var_names = set(
-        [key for key in (_MetaData if MetaData is None else MetaData)])
+        [key for key in (_MetaData if MetaData is None else MetaData)]
+    )
 
     input_overlap = sys_inputs.intersection(proper_var_names)
     output_overlap = sys_outputs.intersection(proper_var_names)
