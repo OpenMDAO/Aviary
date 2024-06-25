@@ -49,8 +49,12 @@ class DetailedWingBendingFact(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, val=0.0)
 
-        add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS,
+        if  total_num_wing_engines > 0:
+            add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS,
                          val=np.zeros(int(total_num_wing_engines/2)))
+        else:
+            add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS,
+                         val=[[0.0]])
 
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, val=0.0)
 
@@ -196,13 +200,24 @@ class DetailedWingBendingFact(om.ExplicitComponent):
 
             eel = np.zeros(len(dy) + 1, dtype=chord.dtype)
             # BUG this is broken for wing engine locations of zero or above last integration station point (around 0.9-0.95)
-            loc = np.where(integration_stations < engine_locations[idx:idx2][0])[0]
-            eel[loc] = 1.0
+            
+            if num_wing_engines > 0:
+                loc = np.where(integration_stations < engine_locations[idx:idx2][0])[0]
+                eel[loc] = 1.0
 
-            delme = dy * eel[1:]
+                delme = dy * eel[1:]
 
-            delme[loc[-1]] = engine_locations[idx:idx2][0] - \
-                integration_stations[loc[-1]]
+                delme[loc[-1]] = engine_locations[idx:idx2][0] - \
+                    integration_stations[loc[-1]]
+            else:
+                loc = np.where(integration_stations < engine_locations[idx:idx2])[0]
+                eel[loc] = 1.0
+
+                delme = dy * eel[1:]
+
+                delme[loc] = engine_locations[idx:idx2] - \
+                    integration_stations[loc]
+
 
             eem = delme * csw
             eem = np.cumsum(eem[::-1])[::-1]
