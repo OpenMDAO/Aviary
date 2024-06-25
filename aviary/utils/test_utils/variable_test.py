@@ -125,14 +125,19 @@ def assert_metadata_alphabetization(metadata_variables_list):
             raise ValueError(
                 "There are two variables in the metadata file that have the same string name."
             )
+        # only compare up to class level, avoid comparing variables to classes
+        if len(current_var) > len(previous_var):
+            diff_idx = max(0, diff_idx-1)
+
         old_to_new = [previous_var[diff_idx], current_var[diff_idx]]
         old_to_new_alphabetical = old_to_new.copy()
         old_to_new_alphabetical.sort(key=str.casefold)
         is_alphabetical = old_to_new == old_to_new_alphabetical
-        previous_var = current_var
 
         if not is_alphabetical:
             out_of_order_vars.append(var_name)
+
+        previous_var = current_var
 
     if out_of_order_vars:
         raise ValueError(
