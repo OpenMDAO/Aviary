@@ -1270,10 +1270,8 @@ class AviaryProblem(om.Problem):
                     self.model.add_constraint(
                         f"{phase_name}_duration_constraint.duration_resid", equals=0.0, ref=1e2)
 
-        if self.mission_method is TWO_DEGREES_OF_FREEDOM:
-            self._add_two_dof_objectives()
-        elif self.mission_method is HEIGHT_ENERGY:
-            self._add_height_energy_objectives()
+        if self.mission_method in (TWO_DEGREES_OF_FREEDOM, HEIGHT_ENERGY):
+            self._add_objectives()
 
         ecomp = om.ExecComp(
             'mass_resid = operating_empty_mass + overall_fuel + payload_mass -'
@@ -2466,55 +2464,7 @@ class AviaryProblem(om.Problem):
             promotes_outputs=['mission:*'],
         )
 
-    def _add_height_energy_objectives(self):
-        self.model.add_subsystem(
-            "fuel_obj",
-            om.ExecComp(
-                "reg_objective = overall_fuel/10000 + ascent_duration/30.",
-                reg_objective={"val": 0.0, "units": "unitless"},
-                ascent_duration={"units": "s", "shape": 1},
-                overall_fuel={"units": "lbm"},
-            ),
-            promotes_inputs=[
-                ("ascent_duration", Mission.Takeoff.ASCENT_DURATION),
-                ("overall_fuel", Mission.Summary.TOTAL_FUEL_MASS),
-            ],
-            promotes_outputs=[("reg_objective", Mission.Objectives.FUEL)],
-        )
-
-        self.model.add_subsystem(
-            "range_obj",
-            om.ExecComp(
-                "reg_objective = -actual_range/1000 + ascent_duration/30.",
-                reg_objective={"val": 0.0, "units": "unitless"},
-                ascent_duration={"units": "s", "shape": 1},
-                actual_range={
-                    "val": 0.0, "units": "NM"},
-            ),
-            promotes_inputs=[
-                ("actual_range", Mission.Summary.RANGE),
-                ("ascent_duration", Mission.Takeoff.ASCENT_DURATION),
-            ],
-            promotes_outputs=[("reg_objective", Mission.Objectives.RANGE)],
-        )
-
-        self.model.add_subsystem(
-            "range_constraint",
-            om.ExecComp(
-                "range_resid = target_range - actual_range",
-                target_range={"val": self.target_range, "units": "NM"},
-                actual_range={"val": self.target_range - 25, "units": "NM"},
-                range_resid={"val": 30, "units": "NM"},
-            ),
-            promotes_inputs=[
-                ("actual_range", Mission.Summary.RANGE),
-                ("target_range", Mission.Design.RANGE),
-            ],
-            promotes_outputs=[
-                ("range_resid", Mission.Constraints.RANGE_RESIDUAL)],
-        )
-
-    def _add_two_dof_objectives(self):
+    def _add_objectives(self):
         self.model.add_subsystem(
             "fuel_obj",
             om.ExecComp(
