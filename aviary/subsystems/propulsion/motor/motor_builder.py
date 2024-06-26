@@ -119,7 +119,7 @@ class MotorBuilder(SubsystemBuilderBase):
         return [Dynamic.Mission.TORQUE,
                 Dynamic.Mission.SHAFT_POWER,
                 Dynamic.Mission.SHAFT_POWER_MAX,
-                Dynamic.Mission.ELECTRIC_POWER,
+                Dynamic.Mission.ELECTRIC_POWER_IN,
                 Dynamic.Mission.THRUST,
                 Dynamic.Mission.NOX_RATE,
                 Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE]

@@ -239,7 +239,7 @@ class TurbopropTest(unittest.TestCase):
             'turboprop_model.turboshaft_thrust', units='lbf')
         fuel_flow = self.prob.get_val(
             Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE, units='lbm/h')
-        electric_power = self.prob.get_val(Dynamic.Mission.ELECTRIC_POWER, units='kW')
+        electric_power = self.prob.get_val(Dynamic.Mission.ELECTRIC_POWER_IN, units='kW')
 
         assert_near_equal(shp, shp_expected, tolerance=1e-8)
         assert_near_equal(total_thrust, total_thrust_expected, tolerance=1e-8)

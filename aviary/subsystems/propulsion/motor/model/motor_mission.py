@@ -70,7 +70,7 @@ class MotorMission(om.Group):
                                   promotes_inputs=[
                                       #   ('shaft_power', Dynamic.Mission.SHAFT_POWER),
                                       ('efficiency', 'motor_efficiency')],
-                                  promotes_outputs=[('power_elec', Dynamic.Mission.ELECTRIC_POWER)])
+                                  promotes_outputs=[('power_elec', Dynamic.Mission.ELECTRIC_POWER_IN)])
 
         motor_group.connect(Dynamic.Mission.SHAFT_POWER, 'energy_comp.shaft_power')
 
