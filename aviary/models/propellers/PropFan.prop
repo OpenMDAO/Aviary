@@ -1,6 +1,7 @@
-# created 06/20/24 at 10:14 by xjiang
+# created 06/24/24 at 17:13 by xjiang
 # GASP propeller map converted from PropFan.map
 # Propfan format - CT = f(Mach, Adv Ratio & CP)
+# mach_type = mach
 # Hamilton Standard 10 Bladed Propfan Performance Deck:  Ct Tables
 
   J, Mach_Number,         CP,         CT
