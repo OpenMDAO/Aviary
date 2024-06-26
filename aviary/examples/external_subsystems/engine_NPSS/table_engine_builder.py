@@ -107,7 +107,7 @@ class TableEngineBuilder(EngineModel):
                           -engine_data[:, 4],
                           units='lbm/s',
                           desc='Current fuel flow rate ')
-        engine.add_output(Dynamic.Mission.ELECTRIC_POWER,
+        engine.add_output(Dynamic.Mission.ELECTRIC_POWER_IN,
                           zeros_array,
                           units='kW',
                           desc='Current electric energy rate')

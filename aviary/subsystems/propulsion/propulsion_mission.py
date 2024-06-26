@@ -116,7 +116,7 @@ class PropulsionMission(om.Group):
             axis=1,
             units='lbm/h')
         perf_mux.add_var(
-            Dynamic.Mission.ELECTRIC_POWER,
+            Dynamic.Mission.ELECTRIC_POWER_IN,
             shape=(nn,),
             axis=1,
             units='kW')
@@ -161,8 +161,8 @@ class PropulsionMission(om.Group):
                          'vectorize_performance.' + Dynamic.Mission.THRUST_MAX + '_' + str(i))
             self.connect(engine.name + '.' + Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE,
                          'vectorize_performance.' + Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE + '_' + str(i))
-            self.connect(engine.name + '.' + Dynamic.Mission.ELECTRIC_POWER,
-                         'vectorize_performance.' + Dynamic.Mission.ELECTRIC_POWER + '_' + str(i))
+            self.connect(engine.name + '.' + Dynamic.Mission.ELECTRIC_POWER_IN,
+                         'vectorize_performance.' + Dynamic.Mission.ELECTRIC_POWER_IN + '_' + str(i))
             self.connect(engine.name + '.' + Dynamic.Mission.NOX_RATE,
                          'vectorize_performance.' + Dynamic.Mission.NOX_RATE + '_' + str(i))
 
@@ -219,7 +219,7 @@ class PropulsionSum(om.ExplicitComponent):
                        val=np.zeros((nn, num_engine_type)), units='lbf')
         self.add_input(Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE, val=np.zeros((nn, num_engine_type)),
                        units='lbm/h')
-        self.add_input(Dynamic.Mission.ELECTRIC_POWER,
+        self.add_input(Dynamic.Mission.ELECTRIC_POWER_IN,
                        val=np.zeros((nn, num_engine_type)), units='kW')
         self.add_input(Dynamic.Mission.NOX_RATE,
                        val=np.zeros((nn, num_engine_type)), units='lbm/h')
@@ -228,7 +228,7 @@ class PropulsionSum(om.ExplicitComponent):
         self.add_output(Dynamic.Mission.THRUST_MAX_TOTAL, val=np.zeros(nn), units='lbf')
         self.add_output(Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, val=np.zeros(nn),
                         units='lbm/h')
-        self.add_output(Dynamic.Mission.ELECTRIC_POWER_TOTAL,
+        self.add_output(Dynamic.Mission.ELECTRIC_POWER_IN_TOTAL,
                         val=np.zeros(nn), units='kW')
         self.add_output(Dynamic.Mission.NOX_RATE_TOTAL, val=np.zeros(nn), units='lbm/h')
 
@@ -252,8 +252,8 @@ class PropulsionSum(om.ExplicitComponent):
             Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE, val=deriv, rows=r, cols=c)
         self.declare_partials(
-            Dynamic.Mission.ELECTRIC_POWER_TOTAL,
-            Dynamic.Mission.ELECTRIC_POWER, val=deriv, rows=r, cols=c)
+            Dynamic.Mission.ELECTRIC_POWER_IN_TOTAL,
+            Dynamic.Mission.ELECTRIC_POWER_IN, val=deriv, rows=r, cols=c)
         self.declare_partials(
             Dynamic.Mission.NOX_RATE_TOTAL,
             Dynamic.Mission.NOX_RATE,
@@ -265,12 +265,12 @@ class PropulsionSum(om.ExplicitComponent):
         thrust = inputs[Dynamic.Mission.THRUST]
         thrust_max = inputs[Dynamic.Mission.THRUST_MAX]
         fuel_flow = inputs[Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE]
-        electric = inputs[Dynamic.Mission.ELECTRIC_POWER]
+        electric = inputs[Dynamic.Mission.ELECTRIC_POWER_IN]
         nox = inputs[Dynamic.Mission.NOX_RATE]
 
         outputs[Dynamic.Mission.THRUST_TOTAL] = np.dot(thrust, num_engines)
         outputs[Dynamic.Mission.THRUST_MAX_TOTAL] = np.dot(thrust_max, num_engines)
         outputs[Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL] = np.dot(
             fuel_flow, num_engines)
-        outputs[Dynamic.Mission.ELECTRIC_POWER_TOTAL] = np.dot(electric, num_engines)
+        outputs[Dynamic.Mission.ELECTRIC_POWER_IN_TOTAL] = np.dot(electric, num_engines)
         outputs[Dynamic.Mission.NOX_RATE_TOTAL] = np.dot(nox, num_engines)

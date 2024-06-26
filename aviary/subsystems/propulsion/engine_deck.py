@@ -54,7 +54,7 @@ SHAFT_POWER = EngineModelVariables.SHAFT_POWER
 SHAFT_POWER_CORRECTED = EngineModelVariables.SHAFT_POWER_CORRECTED
 RAM_DRAG = EngineModelVariables.RAM_DRAG
 FUEL_FLOW = EngineModelVariables.FUEL_FLOW
-ELECTRIC_POWER = EngineModelVariables.ELECTRIC_POWER
+ELECTRIC_POWER_IN = EngineModelVariables.ELECTRIC_POWER_IN
 NOX_RATE = EngineModelVariables.NOX_RATE
 TEMPERATURE = EngineModelVariables.T4_TEMPERATURE
 # EXIT_AREA = EngineModelVariables.EXIT_AREA
@@ -71,7 +71,7 @@ aliases = {
     GROSS_THRUST: ['gross_thrust'],
     RAM_DRAG: ['ram_drag'],
     FUEL_FLOW: ['fuel', 'fuel_flow', 'fuel_flow_rate'],
-    ELECTRIC_POWER: 'electric_power',
+    ELECTRIC_POWER_IN: ['electric_power_in', 'electric_power'],
     NOX_RATE: ['nox', 'nox_rate'],
     TEMPERATURE: ['t4', 'temp', 'temperature', 't4_temperature'],
     SHAFT_POWER: ['shaft_power', 'shp'],
@@ -286,7 +286,7 @@ class EngineDeck(EngineModel):
         # requires importing EngineModelVariables)
         self.use_thrust = THRUST in engine_variables or TAILPIPE_THRUST in engine_variables
         self.use_fuel = FUEL_FLOW in engine_variables
-        self.use_electricity = ELECTRIC_POWER in engine_variables
+        self.use_electricity = ELECTRIC_POWER_IN in engine_variables
         self.use_hybrid_throttle = HYBRID_THROTTLE in engine_variables
         self.use_nox = NOX_RATE in engine_variables
         self.use_t4 = TEMPERATURE in engine_variables
@@ -785,9 +785,9 @@ class EngineDeck(EngineModel):
                           self.data[FUEL_FLOW],
                           units=units[FUEL_FLOW],
                           desc='Current fuel flow rate (unscaled)')
-        engine.add_output('electric_power_unscaled',
-                          self.data[ELECTRIC_POWER],
-                          units=units[ELECTRIC_POWER],
+        engine.add_output('electric_power_in_unscaled',
+                          self.data[ELECTRIC_POWER_IN],
+                          units=units[ELECTRIC_POWER_IN],
                           desc='Current electric energy rate (unscaled)')
         engine.add_output('nox_rate_unscaled',
                           self.data[NOX_RATE],
@@ -990,8 +990,8 @@ class EngineDeck(EngineModel):
                              'engine_scaling.thrust_net_unscaled')
         engine_group.connect('interpolation.fuel_flow_rate_unscaled',
                              'engine_scaling.fuel_flow_rate_unscaled')
-        engine_group.connect('interpolation.electric_power_unscaled',
-                             'engine_scaling.electric_power_unscaled')
+        engine_group.connect('interpolation.electric_power_in_unscaled',
+                             'engine_scaling.electric_power_in_unscaled')
         engine_group.connect('interpolation.nox_rate_unscaled',
                              'engine_scaling.nox_rate_unscaled')
         if self.use_thrust:

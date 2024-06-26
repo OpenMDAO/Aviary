@@ -150,7 +150,8 @@ class MissionODE(om.Group):
                 num_nodes=nn, aviary_inputs=aviary_options)
             if subsystem_mission is not None:
                 add_subsystem_group = True
-                external_subsystem_group.add_subsystem(subsystem.name, subsystem_mission)
+                external_subsystem_group.add_subsystem(subsystem.name,
+                                                       subsystem_mission)
 
         # Only add the external subsystem group if it has at least one subsystem.
         # Without this logic there'd be an empty OM group added to the ODE.

@@ -33,7 +33,7 @@ class EngineModelVariables(Enum):
     SHAFT_POWER_CORRECTED = auto()
     RAM_DRAG = auto()
     FUEL_FLOW = auto()
-    ELECTRIC_POWER = auto()
+    ELECTRIC_POWER_IN = auto()
     NOX_RATE = auto()
     T4_TEMPERATURE = auto()
     # EXIT_AREA = auto()
@@ -51,7 +51,7 @@ default_units = {
     EngineModelVariables.SHAFT_POWER_CORRECTED: 'hp',
     EngineModelVariables.RAM_DRAG: 'lbf',
     EngineModelVariables.FUEL_FLOW: 'lb/h',
-    EngineModelVariables.ELECTRIC_POWER: 'kW',
+    EngineModelVariables.ELECTRIC_POWER_IN: 'kW',
     EngineModelVariables.NOX_RATE: 'lb/h',
     EngineModelVariables.T4_TEMPERATURE: 'degR'
     # EngineModelVariables.EXIT_AREA: 'ft**2',
