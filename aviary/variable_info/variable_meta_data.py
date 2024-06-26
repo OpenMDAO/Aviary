@@ -1968,6 +1968,20 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Engine.PROPELLER_DATA_FILE,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='unitless',
+    types=(str, Path),
+    default_value=None,
+    option=True,
+    desc='filepath to data file containing propeller data map',
+)
+
+add_meta_data(
     Aircraft.Engine.PROPELLER_DIAMETER,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.DPROP',
