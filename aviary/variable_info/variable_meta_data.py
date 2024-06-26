@@ -204,6 +204,123 @@ add_meta_data(
     default_value=1.0,
 )
 
+#  ____            _     _
+# |  _ \          | |   | |
+# | |_) |   __ _  | |_  | |_    ___   _ __   _   _
+# |  _ <   / _` | | __| | __|  / _ \ | '__| | | | |
+# | |_) | | (_| | | |_  | |_  |  __/ | |    | |_| |
+# |____/   \__,_|  \__|  \__|  \___| |_|     \__, |
+#                                             __/ |
+#                                            |___/
+# =================================================
+add_meta_data(
+    Aircraft.Battery.ADDITIONAL_MASS,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": 'aircraft.inputs.L0_battery.weight_offset'
+                     },
+    units='lbm',
+    desc='mass of non energy-storing parts of the battery',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Battery.DISCHARGE_LIMIT,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.SOCMIN',
+                     "FLOPS": None,
+                     "LEAPS1": 'aircraft.inputs.L0_battery.depth_of_discharge'
+                     },
+    units='unitless',
+    desc='default constraint on how far the battery can discharge, as a proportion of '
+         'total energy capacity',
+    default_value=0.2,
+)
+
+add_meta_data(
+    Aircraft.Battery.EFFICIENCY,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.EFF_BAT',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='unitless',
+    desc="battery pack efficiency"
+)
+
+add_meta_data(
+    Aircraft.Battery.ENERGY_CAPACITY,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'EBATTAVL',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='kJ',
+    desc="total energy the battery can store"
+)
+
+add_meta_data(
+    Aircraft.Battery.MASS,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.WBATTIN',
+                     "FLOPS": None,
+                     "LEAPS1": 'aircraft.inputs.L0_battery.weight'
+                     },
+    units='lbm',
+    desc='total mass of the battery',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Battery.PACK_ENERGY_DENSITY,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.ENGYDEN',
+                     "FLOPS": None,
+                     "LEAPS1": 'aircraft.inputs.L0_battery.energy_density'
+                     },
+    units='kW*h/kg',
+    desc='specific energy density of the battery pack',
+    default_value=1.0,
+)
+
+
+add_meta_data(
+    Aircraft.Battery.PACK_MASS,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='lbm',
+    desc='mass of the energy-storing components of the battery',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Battery.PACK_VOLUMETRIC_DENSITY,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='kW*h/L',
+    desc='volumetric density of the battery pack',
+    default_value=0,
+)
+
+add_meta_data(
+    Aircraft.Battery.VOLUME,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='ft*3',
+    desc='total volume of the battery pack',
+    default_value=0.0,
+)
+
 
 #  ____    _                      _              _    __          __  _                     ____                _
 # |  _ \  | |                    | |            | |   \ \        / / (_)                   |  _ \              | |
@@ -6116,6 +6233,28 @@ add_meta_data(
 )
 
 add_meta_data(
+    Dynamic.Mission.BATTERY_STATE_OF_CHARGE,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='unitless',
+    desc="battery's current state of charge"
+)
+
+add_meta_data(
+    Dynamic.Mission.CUMULATIVE_ELECTRIC_ENERGY_USED,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='kJ',
+    desc='Total amount of electric energy consumed by the vehicle up until this point in the mission',
+)
+
+add_meta_data(
     Dynamic.Mission.DENSITY,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -6171,19 +6310,18 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Mission.ELECTRIC_POWER,
+    Dynamic.Mission.ELECTRIC_POWER_IN,
     meta_data=_MetaData,
     historical_name={"GASP": None,
                      "FLOPS": None,
                      "LEAPS1": None
                      },
     units='kW',
-    desc='Current electric power consumption of the vehicle, per single instance of '
-         'each engine model'
+    desc='Current electric power consumption of each engine',
 )
 
 add_meta_data(
-    Dynamic.Mission.ELECTRIC_POWER_TOTAL,
+    Dynamic.Mission.ELECTRIC_POWER_IN_TOTAL,
     meta_data=_MetaData,
     historical_name={"GASP": None,
                      "FLOPS": None,

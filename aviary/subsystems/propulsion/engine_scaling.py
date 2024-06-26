@@ -41,7 +41,7 @@ class EngineScaling(om.ExplicitComponent):
         self.add_input('fuel_flow_rate_unscaled', val=np.zeros(nn),
                        units='lbm/h', desc='Current fuel flow rate (unscaled)')
 
-        self.add_input('electric_power_unscaled', val=np.zeros(nn),
+        self.add_input('electric_power_in_unscaled', val=np.zeros(nn),
                        units='kW', desc='Current electric power consumption (unscaled)')
 
         self.add_input('nox_rate_unscaled', val=np.zeros(nn), units='lbm/h',
@@ -62,7 +62,7 @@ class EngineScaling(om.ExplicitComponent):
         self.add_output(Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE, val=np.zeros(nn),
                         units='lbm/h', desc='Current fuel flow rate (negative)')
 
-        self.add_output(Dynamic.Mission.ELECTRIC_POWER, val=np.zeros(nn),
+        self.add_output(Dynamic.Mission.ELECTRIC_POWER_IN, val=np.zeros(nn),
                         units='kW', desc='Current electric power consumption')
 
         self.add_output(Dynamic.Mission.NOX_RATE, val=np.zeros(nn),
@@ -100,7 +100,7 @@ class EngineScaling(om.ExplicitComponent):
         unscaled_net_thrust = inputs['thrust_net_unscaled']
         unscaled_max_thrust = inputs['thrust_net_max_unscaled']
         unscaled_fuel_flow_rate = inputs['fuel_flow_rate_unscaled']
-        unscaled_electric_power = inputs['electric_power_unscaled']
+        unscaled_electric_power_in = inputs['electric_power_in_unscaled']
         unscaled_nox_rate = inputs['nox_rate_unscaled']
         unscaled_shaft_power = inputs['shaft_power_unscaled']
         unscaled_shaft_power_max = inputs['shaft_power_max_unscaled']
@@ -137,7 +137,7 @@ class EngineScaling(om.ExplicitComponent):
             (unscaled_fuel_flow_rate * fuel_flow_scale_factor) - constant_fuel_flow
 
         # all other variables are just linearly scaled
-        outputs[Dynamic.Mission.ELECTRIC_POWER] = unscaled_electric_power * scale_factor
+        outputs[Dynamic.Mission.ELECTRIC_POWER_IN] = unscaled_electric_power_in * scale_factor
         outputs[Dynamic.Mission.NOX_RATE] = unscaled_nox_rate * scale_factor
         outputs[Dynamic.Mission.SHAFT_POWER] = unscaled_shaft_power * scale_factor
         outputs[Dynamic.Mission.SHAFT_POWER_MAX] = unscaled_shaft_power_max * scale_factor
@@ -185,13 +185,13 @@ class EngineScaling(om.ExplicitComponent):
             val=1.0)
 
         self.declare_partials(
-            Dynamic.Mission.ELECTRIC_POWER,
+            Dynamic.Mission.ELECTRIC_POWER_IN,
             Aircraft.Engine.SCALE_FACTOR,
             rows=r, cols=c,
             val=1.0)
         self.declare_partials(
-            Dynamic.Mission.ELECTRIC_POWER,
-            'electric_power_unscaled',
+            Dynamic.Mission.ELECTRIC_POWER_IN,
+            'electric_power_in_unscaled',
             rows=r, cols=r,
             val=1.0)
 
@@ -247,7 +247,7 @@ class EngineScaling(om.ExplicitComponent):
         unscaled_net_thrust = inputs['thrust_net_unscaled']
         unscaled_max_thrust = inputs['thrust_net_max_unscaled']
         unscaled_fuel_flow_rate = inputs['fuel_flow_rate_unscaled']
-        unscaled_electric_power = inputs['electric_power_unscaled']
+        unscaled_electric_power_in = inputs['electric_power_in_unscaled']
         unscaled_nox_rate = inputs['nox_rate_unscaled']
         unscaled_shaft_power = inputs['shaft_power_unscaled']
         unscaled_shaft_power_max = inputs['shaft_power_max_unscaled']
@@ -294,9 +294,9 @@ class EngineScaling(om.ExplicitComponent):
         J[Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE,
             Aircraft.Engine.SCALE_FACTOR] = fuel_flow_scale_deriv
 
-        J[Dynamic.Mission.ELECTRIC_POWER, 'electric_power_unscaled'] = scale_factor
-        J[Dynamic.Mission.ELECTRIC_POWER,
-            Aircraft.Engine.SCALE_FACTOR] = unscaled_electric_power * deriv_factor
+        J[Dynamic.Mission.ELECTRIC_POWER_IN, 'electric_power_in_unscaled'] = scale_factor
+        J[Dynamic.Mission.ELECTRIC_POWER_IN,
+            Aircraft.Engine.SCALE_FACTOR] = unscaled_electric_power_in * deriv_factor
 
         J[Dynamic.Mission.NOX_RATE, 'nox_rate_unscaled'] = scale_factor
         J[Dynamic.Mission.NOX_RATE, Aircraft.Engine.SCALE_FACTOR] = unscaled_nox_rate * deriv_factor
