@@ -102,8 +102,10 @@ def _read_gasp_propeller(fp, cmts):
         scalars = _read_pm_header(f)
         if scalars['iread'] == 1:
             cmts.append('# CT = f(Helical Mach at 75% Radius, Adv ratio & CP)')
+            cmts.append('# mach_type = helical_mach')
         elif scalars['iread'] == 2:
             cmts.append('Propfan format - CT = f(Mach, Adv Ratio & CP)')
+            cmts.append('# mach_type = mach')
         else:
             raise RuntimeError(f"IREAD = 1 or 2 expected, got {scalars['iread']}")
 
