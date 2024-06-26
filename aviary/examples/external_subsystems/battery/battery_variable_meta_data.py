@@ -18,14 +18,6 @@ av.add_meta_data(
 )
 
 av.add_meta_data(
-    Aircraft.Battery.EFFICIENCY,
-    units=None,
-    desc="Battery efficiency (eta)",
-    default_value=0.85,
-    meta_data=ExtendedMetaData
-)
-
-av.add_meta_data(
     Aircraft.Battery.ENERGY_REQUIRED,
     units="kW*h",
     desc="Required battery energy",
@@ -37,14 +29,6 @@ av.add_meta_data(
     Aircraft.Battery.HEAT_CAPACITY,
     units="J/(kg*K)",
     desc="mass-averaged specific heat (cp)",
-    default_value=1.0,
-    meta_data=ExtendedMetaData
-)
-
-av.add_meta_data(
-    Aircraft.Battery.MASS,
-    units="kg",
-    desc="Battery mass",
     default_value=1.0,
     meta_data=ExtendedMetaData
 )
@@ -69,14 +53,6 @@ av.add_meta_data(
     Aircraft.Battery.VOLTAGE,
     units="V",
     desc="Nominal bus voltage",
-    default_value=1.0,
-    meta_data=ExtendedMetaData
-)
-
-av.add_meta_data(
-    Aircraft.Battery.VOLUME,
-    units="inch**3",
-    desc="Battery volume",
     default_value=1.0,
     meta_data=ExtendedMetaData
 )
