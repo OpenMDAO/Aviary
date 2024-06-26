@@ -2,8 +2,7 @@ import os
 from tkinter import Tk,Canvas,Frame,Scrollbar,Button, Entry, Label,StringVar,Menu,Toplevel
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
-from matplotlib.pyplot import xlabel
-from graphicsDefs import interactivePlots, Table
+from graphicsDefs import interactiveFigure, interactiveTable
 
 def close():
     print("Closing")
@@ -59,7 +58,7 @@ tablecv.pack(side="right",fill="y")
 scv = Canvas(window)
 scv.pack(side='right',fill='y')
 
-t = Table(tablecv,table_data)
+t = interactiveTable(tablecv,table_data)
 
 scroll = Scrollbar(scv)
 scroll.pack(side='right',fill='y')
@@ -68,7 +67,7 @@ canvas_plotReadouts = Canvas(window)
 canvas_plotReadouts.pack(side='bottom')
 canvas_plots = Canvas(window)
 canvas_plots.pack(side='top')
-fg = interactivePlots(window,canvas_plots,canvas_plotReadouts,
+fg = interactiveFigure(window,canvas_plots,canvas_plotReadouts,
                       ["Time (minutes)","Altitude (ft)","Time (minutes)","Mach Number"],
                       [400,50e3,1.0],["Altitude Plot","Mach Plot"])
 
