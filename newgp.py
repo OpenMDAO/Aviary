@@ -32,6 +32,9 @@ class myapp(Tk):
         scroll = Scrollbar(scroll_frame)
         scroll.pack(side='right',fill='y')
 
+        self.mousedrag = False
+        self.mousepress = False
+
         self.frame_plotReadouts = Frame(self)
         self.frame_plotReadouts.pack(side='bottom')
         self.frame_plots = Frame(self)
@@ -79,8 +82,9 @@ class myapp(Tk):
         self.plots_info = plots_info
 
         fig.tight_layout(h_pad=2.0)
-        fig.canvas.mpl_connect('button_press_event',self.mouseclick)
+        fig.canvas.mpl_connect('button_press_event',self.onpress)
         fig.canvas.mpl_connect('motion_notify_event',self.mousemove)
+        fig.canvas.mpl_connect('button_release_event',self.onrelease)
         self.figure_canvas = FigureCanvasTkAgg(fig,master=self.frame_plots)
         self.figure_canvas.draw()
 
@@ -145,7 +149,7 @@ class myapp(Tk):
             idx = 0
             self.claplot()
         self.line1 = self.plots[0].plot(self.timelist[idx:],self.altlist[idx:],'bo-',markersize = 5)
-        self.line2 = self.plots[1].plot(self.timelist[idx:],self.machlist[idx:],'ro-',markersize=5)
+        self.line2 = self.plots[1].plot(self.timelist[idx:],self.machlist[idx:],'mo-',markersize=5)
         self.figure_canvas.draw()
 
     # can be used to clear plots when deleting points
@@ -154,6 +158,15 @@ class myapp(Tk):
             for line in plot.lines:
                 if line == self.crossX or line ==self.crossY: continue
                 line.remove()
+
+    def onrelease(self,event):
+        if self.mousepress and not self.mousedrag: # simple click event
+            self.mouseclick(event)
+        else: pass # drag event
+
+        self.mousepress,self.mousedrag = False, False
+    def onpress(self,event): 
+        self.mousepress = True
 
     def mouseclick(self,event):
         if event.xdata and event.ydata:
@@ -166,21 +179,80 @@ class myapp(Tk):
 
     def mousemove(self,event):
         if event.xdata and event.ydata:
-            if event.inaxes == self.plots[0]:
-                near = False
-                if self.crosshair:
-                    self.crossX.remove()
-                    self.crossY.remove()
-                for (x,y) in zip(self.timelist,self.altlist):
-                    if self.getProx(event.xdata,x,"x",0) < self.ptcontainerx and self.getProx(event.ydata,y,"y",0)<self.ptcontainery:
-                        self.figure_canvas.set_cursor(4)
-                        near = True
-                if not near: self.figure_canvas.set_cursor(1)
-                self.crossX = self.plots[0].axhline(y=event.ydata,color='red')
-                self.crossY = self.plots[0].axvline(x=event.xdata,color='red')
-                self.figure_canvas.draw()
-                self.crosshair = True
-                self.mouse_coords_str.set(f"Altitude: {int(event.ydata)} ft, Time: {int(event.xdata)} min")
+            for p,plot in enumerate(self.plots):
+                if event.inaxes == plot:
+                    near = False
+                    if self.crosshair:
+                        self.crossX.remove()
+                        self.crossY.remove()
+                    yls = [self.altlist,self.machlist]
+                    for i,(x,y) in enumerate(zip(self.timelist,yls[p])):
+                        if self.getProx(event.xdata,x,"x",p) < self.ptcontainerx and self.getProx(event.ydata,y,"y",p)<self.ptcontainery:
+                            self.figure_canvas.set_cursor(4)
+                            near = True
+                            self.neari = i
+                    if not near: self.figure_canvas.set_cursor(1)
+                    self.crossX = plot.axhline(y=event.ydata,color='red')
+                    self.crossY = plot.axvline(x=event.xdata,color='red')
+                    self.figure_canvas.draw()
+                    self.crosshair = True
+                    ys = ["Altitude","Mach"]
+                    un = ["ft",""]
+                    yv = int(event.ydata) if p==0 else round(event.ydata,2)
+                    self.mouse_coords_str.set(f"Time: {int(event.xdata)} min, {ys[p]}: {yv} {un[p]}")
+
+                    if self.mousepress: 
+                        self.mousedrag = True
+                        self.timelist[self.neari] = event.xdata
+                        yls[p][self.neari] = event.ydata
+                        self.appendPlot(True)
+            # if event.inaxes == self.plots[0]:
+            #     near = False
+            #     if self.crosshair:
+            #         self.crossX.remove()
+            #         self.crossY.remove()
+            #     for i,(x,y) in enumerate(zip(self.timelist,self.altlist)):
+            #         if self.getProx(event.xdata,x,"x",0) < self.ptcontainerx and self.getProx(event.ydata,y,"y",0)<self.ptcontainery:
+            #             self.figure_canvas.set_cursor(4)
+            #             near = True
+            #             self.neari = i
+            #     if not near: self.figure_canvas.set_cursor(1)
+            #     self.crossX = self.plots[0].axhline(y=event.ydata,color='red')
+            #     self.crossY = self.plots[0].axvline(x=event.xdata,color='red')
+            #     self.figure_canvas.draw()
+            #     self.crosshair = True
+            #     self.mouse_coords_str.set(f"Time: {int(event.xdata)} min, Altitude: {int(event.ydata)} ft")
+
+            #     if self.mousepress: 
+            #         self.mousedrag = True
+            #         self.timelist[self.neari] = event.xdata
+            #         self.altlist[self.neari] = event.ydata
+            #         self.appendPlot(True)
+
+            # elif event.inaxes == self.plots[1]:
+            #     near = False       
+            #     for i,(x,y) in enumerate(zip(self.timelist,self.machlist)):
+            #         if self.getProx(event.xdata,x,"x",1) < self.ptcontainerx and self.getProx(event.ydata,y,"y",1)<self.ptcontainery:
+            #             self.figure_canvas.set_cursor(4)
+            #             self.neari = i
+            #             near = True
+            #     if not near: self.figure_canvas.set_cursor(1)
+            #     self.mouse_coords_str.set(f"Time: {int(event.xdata)} min, Mach: {round(event.ydata,2)}") 
+
+            #     if self.crosshair:
+            #         self.crossX.remove()
+            #         self.crossY.remove()
+            #     self.crossX = self.plots[1].axhline(y=event.ydata,color='blue')
+            #     self.crossY = self.plots[1].axvline(x=event.xdata,color='blue')
+            #     self.figure_canvas.draw()
+            #     self.crosshair = True
+
+            #     if self.mousepress: 
+            #         self.mousedrag = True
+            #         self.timelist[self.neari] = event.xdata
+            #         self.machlist[self.neari] = event.ydata
+            #         self.appendPlot(True)
+                           
 
     def getProx(self,a,b,axis,plt):
         return abs(a-b)/self.plots_info[plt][axis+"lim"][1]
