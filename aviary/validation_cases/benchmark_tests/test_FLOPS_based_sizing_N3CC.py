@@ -37,7 +37,16 @@ except ImportError:
     pyoptsparse = None
 
 
+from dymos.transcriptions.transcription_base import TranscriptionBase
+transcription_base = TranscriptionBase
+if hasattr(transcription_base, 'setup_polynomial_controls'):
+    use_new_dymos_syntax = False
+else:
+    use_new_dymos_syntax = True
+
 # benchmark for simple sizing problem on the N3CC
+
+
 def run_trajectory(sim=True):
     prob = om.Problem(model=om.Group())
     if pyoptsparse:
@@ -393,9 +402,9 @@ def run_trajectory(sim=True):
 
     prob.setup(force_alloc_complex=True)
 
-    ###########################################
-    # Intial Settings for States and Controls #
-    ###########################################
+    ############################################
+    # Initial Settings for States and Controls #
+    ############################################
 
     prob.set_val('traj.climb.t_initial', t_i_climb, units='s')
     prob.set_val('traj.climb.t_duration', t_duration_climb, units='s')
@@ -413,10 +422,15 @@ def run_trajectory(sim=True):
     prob.set_val('traj.cruise.t_initial', t_i_cruise, units='s')
     prob.set_val('traj.cruise.t_duration', t_duration_cruise, units='s')
 
-    prob.set_val('traj.cruise.controls:altitude', cruise.interp(
+    if use_new_dymos_syntax:
+        controls_str = 'controls'
+    else:
+        controls_str = 'polynomial_controls'
+
+    prob.set_val(f'traj.cruise.{controls_str}:altitude', cruise.interp(
         Dynamic.Mission.ALTITUDE, ys=[alt_i_cruise, alt_f_cruise]), units='m')
     prob.set_val(
-        'traj.cruise.controls:mach', cruise.interp(
+        f'traj.cruise.{controls_str}:mach', cruise.interp(
             Dynamic.Mission.MACH, ys=[cruise_mach, cruise_mach]), units='unitless')
     prob.set_val('traj.cruise.states:mass', cruise.interp(
         Dynamic.Mission.MASS, ys=[mass_i_cruise, mass_f_cruise]), units='kg')
