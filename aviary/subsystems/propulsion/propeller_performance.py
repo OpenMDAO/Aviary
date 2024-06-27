@@ -4,6 +4,7 @@ import numpy as np
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.subsystems.propulsion.hamilton_standard import HamiltonStandard, PostHamiltonStandard, PreHamiltonStandard
+from aviary.subsystems.propulsion.propeller_map import PropellerMap
 
 
 class InstallLoss(om.Group):
@@ -142,6 +143,8 @@ class PropellerPerformance(om.Group):
         aviary_options = options['aviary_options']
         compute_installation_loss = aviary_options.get_val(
             Aircraft.Design.COMPUTE_INSTALLATION_LOSS)
+        use_propeller_map = aviary_options.get_val(
+            Aircraft.Engine.aviary.USE_PROPELLER_MAP)
 
         self.add_subsystem(
             'temperature_term',
@@ -214,22 +217,69 @@ class PropellerPerformance(om.Group):
                 "density_ratio",
             ])
 
-        self.add_subsystem(
-            name='hamilton_standard',
-            subsys=HamiltonStandard(num_nodes=nn, aviary_options=aviary_options),
-            promotes_inputs=[
-                Dynamic.Mission.MACH,
-                "power_coefficient",
-                "advance_ratio",
-                "tip_mach",
-                Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,
-                Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT,
-            ],
-            promotes_outputs=[
-                "thrust_coefficient",
-                "blade_angle",
-                "comp_tip_loss_factor",
-            ])
+        if use_propeller_map:
+            prop_model = PropellerMap('prop', aviary_options)
+            mach_type = prop_model.read_and_set_mach_type()
+            if mach_type == 'helical_mach':
+                self.add_subsystem(
+                    name='generic_mach',
+                    subsys=om.ExecComp(
+                        'generic_mach = sqrt(mach * mach + tip_mach * tip_mach)',
+                        mach={'val': 0, 'units': 'unitless'},
+                        tip_mach={'val': 0, 'units': 'unitless'},
+                        generic_mach={'units': 'unitless'},
+                        has_diag_partials=True,
+                    ),
+                    promotes_inputs=[("mach", Dynamic.Mission.MACH),"tip_mach"],
+                    promotes_outputs=["generic_mach"],
+                )
+            else:
+                self.add_subsystem(
+                    name='generic_mach',
+                    subsys=om.ExecComp(
+                        'generic_mach = mach',
+                        mach={'val': 0, 'units': 'unitless'},
+                        generic_mach={'units': 'unitless'},
+                        has_diag_partials=True,
+                    ),
+                    promotes_inputs=[("mach", Dynamic.Mission.MACH),],
+                    promotes_outputs=["generic_mach"],
+                )
+            propeller = prop_model.build_propeller_interpolator(nn, aviary_options)
+            self.add_subsystem(
+                name='propeller_map',
+                subsys=propeller,
+                promotes_inputs=[
+                    "generic_mach",
+                    "power_coefficient",
+                    "advance_ratio",
+                ],
+                promotes_outputs=[
+                    "thrust_coefficient",
+                ])
+            
+            # propeller map has taken compresibility into account.
+            IVC = om.IndepVarComp("comp_tip_loss_factor",
+                        np.linspace(1.0, 1.0, nn),
+                        units='unitless')
+            self.prob.model.add_subsystem('IVC', IVC, promotes=['comp_tip_loss_factor'])
+
+        else:
+            self.add_subsystem(
+                name='hamilton_standard',
+                subsys=HamiltonStandard(num_nodes=nn, aviary_options=aviary_options),
+                promotes_inputs=[
+                    Dynamic.Mission.MACH,
+                    "power_coefficient",
+                    "advance_ratio",
+                    "tip_mach",
+                    Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,
+                    Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT,
+                ],
+                promotes_outputs=[
+                    "thrust_coefficient",
+                    "comp_tip_loss_factor",
+                ])
 
         self.add_subsystem(
             name='post_hamilton_standard',
