@@ -38,8 +38,7 @@ except ImportError:
 
 
 from dymos.transcriptions.transcription_base import TranscriptionBase
-transcription_base = TranscriptionBase
-if hasattr(transcription_base, 'setup_polynomial_controls'):
+if hasattr(TranscriptionBase, 'setup_polynomial_controls'):
     use_new_dymos_syntax = False
 else:
     use_new_dymos_syntax = True
