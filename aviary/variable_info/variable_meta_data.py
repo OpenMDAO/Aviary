@@ -2317,6 +2317,20 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Engine.USE_PROPELLER_MAP,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    option=False,
+    default_value=False,
+    types=bool,
+    units="unitless",
+    desc='flag whether to use propeller map or Hamilton-Standard model.'
+)
+
+add_meta_data(
     Aircraft.Engine.WING_LOCATIONS,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.YP',

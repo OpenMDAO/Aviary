@@ -248,6 +248,7 @@ class Aircraft:
         THRUST_REVERSERS_MASS = 'aircraft:engine:thrust_reversers_mass'
         THRUST_REVERSERS_MASS_SCALER = 'aircraft:engine:thrust_reversers_mass_scaler'
         TYPE = 'aircraft:engine:type'
+        USE_PROPELLER_MAP = 'aircraft:engine:use_propeller_map'
         WING_LOCATIONS = 'aircraft:engine:wing_locations'
 
     class Fins:
