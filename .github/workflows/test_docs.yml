@@ -45,6 +45,7 @@ jobs:
             SNOPT_LOCATION_77: ${{ secrets.SNOPT_LOCATION_77 }}
   
       - name: Build docs
+        id: build_docs
         shell: bash -l {0}
         run: |
           pip install -U jupyter-book
@@ -57,6 +58,7 @@ jobs:
       - name: Display doc build reports
         continue-on-error: True
         shell: bash -l {0}
+        if: failure() && steps.build_docs.outcome == 'failure'
         run: |
           cd $HOME/work/Aviary/Aviary/aviary/docs
           find _build/html/reports/ -type f -name '*.log' \
