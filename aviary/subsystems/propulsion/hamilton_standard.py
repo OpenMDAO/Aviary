@@ -573,7 +573,6 @@ class HamiltonStandard(om.ExplicitComponent):
                        val=0.0, units='unitless')  # blade integrated lift coeff
 
         self.add_output('thrust_coefficient', val=np.zeros(nn), units='unitless')
-        self.add_output('blade_angle', val=np.zeros(nn), units='deg')
         # Tip Compressibility loss factor
         self.add_output('comp_tip_loss_factor', val=np.zeros(nn), units='unitless')
 
@@ -812,7 +811,6 @@ class HamiltonStandard(om.ExplicitComponent):
             if ichck > 0:
                 print(f"  table look-up error = {ichck} (if you go outside the tables.)")
 
-            outputs['blade_angle'][i_node] = ang_blade
             outputs['thrust_coefficient'][i_node] = ct
             outputs['comp_tip_loss_factor'][i_node] = xft
 
