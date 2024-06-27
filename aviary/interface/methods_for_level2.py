@@ -2173,7 +2173,7 @@ class AviaryProblem(om.Problem):
                             val, guess_key, phase), units=units)
                     except KeyError:
                         try:
-                            self.set_val(f'traj.{phase_name}.polynomial_controls:{guess_key}', self._process_guess_var(
+                            self.set_val(f'traj.{phase_name}.controls:{guess_key}', self._process_guess_var(
                                 val, guess_key, phase), units=units)
                         except KeyError:
                             self.set_val(f'traj.{phase_name}.bspline_controls:{guess_key}', self._process_guess_var(
@@ -2370,7 +2370,7 @@ class AviaryProblem(om.Problem):
 
         last_flight_phase_name = list(self.phase_info.keys())[-1]
         if self.phase_info[last_flight_phase_name]['user_options'].get('use_polynomial_control', True):
-            control_type_string = 'polynomial_control_values'
+            control_type_string = 'control_values'
         else:
             control_type_string = 'control_values'
 
@@ -2393,7 +2393,7 @@ class AviaryProblem(om.Problem):
                                f'traj.{first_flight_phase_name}.initial_states:distance')
 
             if self.phase_info[first_flight_phase_name]['user_options'].get('use_polynomial_control', True):
-                control_type_string = 'polynomial_control_values'
+                control_type_string = 'control_values'
             else:
                 control_type_string = 'control_values'
 

@@ -100,7 +100,7 @@ class SimpleTestEngine(EngineModel):
 
     def get_controls(self, **kwargs):
         controls_dict = {
-            "different_throttle": {'units': 'unitless', 'lower': 0., 'upper': 0.1},
+            "different_throttle": {'units': 'unitless', 'lower': 0., 'upper': 0.1, 'control_type': 'polynomial', 'order': 3},
         }
         return controls_dict
 

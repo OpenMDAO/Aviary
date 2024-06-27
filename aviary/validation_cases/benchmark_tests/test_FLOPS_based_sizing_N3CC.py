@@ -413,10 +413,10 @@ def run_trajectory(sim=True):
     prob.set_val('traj.cruise.t_initial', t_i_cruise, units='s')
     prob.set_val('traj.cruise.t_duration', t_duration_cruise, units='s')
 
-    prob.set_val('traj.cruise.polynomial_controls:altitude', cruise.interp(
+    prob.set_val('traj.cruise.controls:altitude', cruise.interp(
         Dynamic.Mission.ALTITUDE, ys=[alt_i_cruise, alt_f_cruise]), units='m')
     prob.set_val(
-        'traj.cruise.polynomial_controls:mach', cruise.interp(
+        'traj.cruise.controls:mach', cruise.interp(
             Dynamic.Mission.MACH, ys=[cruise_mach, cruise_mach]), units='unitless')
     prob.set_val('traj.cruise.states:mass', cruise.interp(
         Dynamic.Mission.MASS, ys=[mass_i_cruise, mass_f_cruise]), units='kg')

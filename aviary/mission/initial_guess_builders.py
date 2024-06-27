@@ -60,7 +60,7 @@ class InitialGuess:
         try:
             prob.set_val(complete_key, val, units)
         except KeyError:
-            complete_key = complete_key.replace('polynomial_controls', 'controls')
+            complete_key = complete_key.replace('controls', 'controls')
             prob.set_val(complete_key, val, units)
 
     def _get_complete_key(self, traj_name, phase_name):
@@ -128,7 +128,7 @@ class InitialGuessPolynomialControl(InitialGuess):
         '''
         Compose the complete key for setting the polynomial control initial guess.
         '''
-        key = f'{traj_name}.{phase_name}.polynomial_controls:{self.key}'
+        key = f'{traj_name}.{phase_name}.controls:{self.key}'
 
         return key
 
