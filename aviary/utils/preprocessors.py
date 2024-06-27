@@ -310,26 +310,3 @@ def _get_engine_variables():
 
     for item in get_names_from_hierarchy(Aircraft.Nacelle):
         yield item
-    # for entry in Aircraft.Engine.__dict__:
-    #     var = getattr(Aircraft.Engine, entry)
-    #     # does this variable exist, and have useable metadata?
-    #     try:
-    #         _MetaData[var]
-    #     except (TypeError, KeyError):
-    #         continue
-    #     # valid variable found, proceed
-    #     else:
-    #         yield var
-
-    # for entry in Aircraft.Nacelle.__dict__:
-    #     var = getattr(Aircraft.Nacelle, entry)
-    #     # does this variable exist, and have useable metadata?
-    #     try:
-    #         _MetaData[var]
-    #     except (TypeError, KeyError):
-    #         continue
-    #     # valid variable found, proceed
-    #     else:
-    #         # don't vectorize aircraft-level total values
-    #         if 'total' not in var:
-    #             yield var

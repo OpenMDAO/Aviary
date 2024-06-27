@@ -30,7 +30,6 @@ class MotorPreMission(om.Group):
         # The max torque is then used in pre-mission to determine weight of the system.
         self.set_input_defaults(Dynamic.Mission.THROTTLE, 1.0, units=None)
 
-        # TBD I'm worried that the above code won't set these in pre-mission correctly
         self.add_subsystem('motor_map', MotorMap(num_nodes=1),
                            promotes_inputs=[Aircraft.Engine.SCALE_FACTOR,
                                             Dynamic.Mission.THROTTLE,
