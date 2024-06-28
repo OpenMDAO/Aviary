@@ -241,8 +241,8 @@ class PropellerPerformanceTest(unittest.TestCase):
                         val=False, units='unitless')
         options.set_val(Aircraft.Engine.USE_PROPELLER_MAP,
                         val=True, units='unitless')
-        #prop_file_path = 'models/propellers/PropFan.prop'
-        prop_file_path = 'models/propellers/general_aviation.prop'
+        prop_file_path = 'models/propellers/PropFan.prop'
+        #prop_file_path = 'models/propellers/general_aviation.prop'
         options.set_val(Aircraft.Engine.PROPELLER_DATA_FILE, val=prop_file_path, units='unitless')
         options.set_val(Aircraft.Engine.INTERPOLATION_METHOD, val='slinear', units='unitless')
 
@@ -250,9 +250,6 @@ class PropellerPerformanceTest(unittest.TestCase):
         prob.set_val(Dynamic.Mission.INSTALLATION_LOSS_FACTOR,
                      [0.0, 0.05, 0.05], units="unitless")
         prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 12.0, units="ft")
-        prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, 150.0, units="unitless")
-        prob.set_val(Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT,
-                     0.5, units="unitless")
         prob.set_val(Dynamic.Mission.ALTITUDE, [10000.0, 10000.0, 0.0], units="ft")
         prob.set_val(Dynamic.Mission.VELOCITY, [200.0, 200.0, 50.0], units="knot")
         prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED,
@@ -266,10 +263,16 @@ class PropellerPerformanceTest(unittest.TestCase):
         prob.run_model()
         cthr = prob.get_val('thrust_coefficient')
         print(f"CT: {cthr}")
-
+        cpow = prob.get_val('power_coefficient')
+        print(f"CP: {cpow}")
+        mach = prob.get_val(Dynamic.Mission.MACH)
+        print(f"M: {mach}")
+        advJ = prob.get_val('advance_ratio')
+        print(f"J: {advJ}")
 
 if __name__ == "__main__":
     #unittest.main()
+    import pdb
     myClass = PropellerPerformanceTest()
     myClass.setUp()
     myClass.new_test()
