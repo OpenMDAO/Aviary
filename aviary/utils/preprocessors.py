@@ -156,12 +156,22 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
         if var in update_list:
             dtype = _MetaData[var]['types']
             default_value = _MetaData[var]['default_value']
+            # type is optionally specified, fall back to type of default value
+            if dtype is None:
+                if isinstance(default_value, np.ndarray):
+                    dtype = default_value.dtype
+                else:
+                    dtype = type(default_value)
             # if dtype has multiple options, use type of default value
-            if type(dtype) in (list, tuple):
-                dtype = type(default_value)
+            if isinstance(dtype, (list, tuple)):
+                # if default value is a list/tuple, find type inside that
+                if isinstance(default_value, (list, tuple)):
+                    dtype = type(default_value[0])
+                else:
+                    dtype = type(default_value)
             # if var is supposed to be a unique array per engine model, assemble flat
             # vector manually to avoid ragged arrays (such as for wing engine locations)
-            if type(default_value) in (list, np.ndarray):
+            if isinstance(default_value, (list, np.ndarray)):
                 vec = np.zeros(0, dtype=dtype)
             elif type(default_value) is tuple:
                 vec = ()
@@ -175,16 +185,14 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
             # 2. aviary_options
             # 3. default value from metadata
             for i, engine in enumerate(engine_models):
-                if var == Aircraft.Nacelle.AVG_DIAMETER:
-                    pass
                 # test to see if engine has this variable - if so, use it
                 try:
                     # variables in engine models are known to be "safe", will only
                     # contain data for that engine
                     engine_val = engine.get_val(var, units)
-                    if type(default_value) in (list, np.ndarray):
+                    if isinstance(default_value, (list, np.ndarray)):
                         vec = np.append(vec, engine_val)
-                    elif type(default_value) is tuple:
+                    elif isinstance(default_value, tuple):
                         vec = vec + (engine_val,)
                     else:
                         vec[i] = engine_val
@@ -197,15 +205,15 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
                         # if aviary_val is an iterable, just grab val for this engine
                         if isinstance(aviary_val, (list, np.ndarray, tuple)):
                             aviary_val = aviary_val[i]
-                        if type(default_value) in (list, np.ndarray):
+                        if isinstance(default_value, (list, np.ndarray)):
                             vec = np.append(vec, aviary_val)
-                        elif type(default_value) is tuple:
+                        elif isinstance(default_value, tuple):
                             vec = vec + (aviary_val,)
                         else:
                             vec[i] = aviary_val
                     # if not, use default value from _MetaData
                     except (KeyError, IndexError):
-                        if type(default_value) in (list, np.ndarray):
+                        if isinstance(default_value, (list, np.ndarray)):
                             vec = np.append(vec, default_value)
                         else:
                             # default value is aleady in array
