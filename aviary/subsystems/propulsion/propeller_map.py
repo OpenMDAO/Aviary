@@ -4,32 +4,18 @@ import warnings
 import openmdao.api as om
 from openmdao.utils.units import convert_units
 
+from aviary.subsystems.propulsion.utils import PropModelVariables, default_prop_units
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 from aviary.utils.aviary_values import AviaryValues, NamedValues, get_keys, get_items
 from aviary.utils.csv_data_file import read_data_file
 from aviary.utils.functions import get_path
 
-class PropModelVariables(Enum):
-    '''
-    Define constants that map to supported variable names in a propeller model.
-    '''
-    MACH = 'Mach_Number'
-    CP = 'CP'  # power coefficient
-    CT = 'CT'  # thrust coefficient
-    J = 'J'  # advanced ratio
 
 MACH = PropModelVariables.MACH
 CP = PropModelVariables.CP
 CT = PropModelVariables.CT
 J = PropModelVariables.J
-
-default_units = {
-    MACH: 'unitless',
-    CP: 'unitless',
-    CT: 'unitless',
-    J: 'unitless',
-}
 
 aliases = {
     # whitespaces are replaced with underscores converted to lowercase before
@@ -82,16 +68,16 @@ class PropellerMap(om.ExplicitComponent):
                 # Convert data to expected units. Required so settings like tolerances
                 # that assume units work as expected
                 try:
-                    val = np.array([convert_units(i, units, default_units[key])
+                    val = np.array([convert_units(i, units, default_prop_units[key])
                                    for i in val])
                 except TypeError:
                     raise TypeError(f"{message}: units of '{units}' provided for "
                                     f'<{key.name}> are not compatible with expected units '
-                                    f'of {default_units[key]}')
+                                    f'of {default_prop_units[key]}')
 
                 # propeller_variables currently only used to store "valid" engine variables
                 # as defined in EngineModelVariables Enum
-                self.propeller_variables[key] = default_units[key]
+                self.propeller_variables[key] = default_prop_units[key]
 
             else:
                 if self.get_val(Settings.VERBOSITY).value >= 1:
@@ -146,44 +132,22 @@ class PropellerMap(om.ExplicitComponent):
             method=interp_method, extrapolate=True, vec_size=num_nodes)
 
         # add inputs and outputs to interpolator
-        # depending on p, generic_mach can be Mach number (Dynamic.Mission.MACH) or helical Mach number
-        propeller.add_input('generic_mach',
+        # depending on p, selected_mach can be Mach number (Dynamic.Mission.MACH) or helical Mach number
+        propeller.add_input('selected_mach',
                          self.data[MACH],
                          units='unitless',
                          desc='Current flight Mach number')
-        propeller.add_input("advance_ratio",
-                         self.data[J],
-                         units='unitless',
-                         desc='Current advance ratio')
         propeller.add_input("power_coefficient",
                          self.data[CP],
                          units='unitless',
                          desc='Current power coefficient')
+        propeller.add_input("advance_ratio",
+                         self.data[J],
+                         units='unitless',
+                         desc='Current advance ratio')
         propeller.add_output('thrust_coefficient',
                           self.data[CT],
                           units='unitless',
                           desc='Current thrust coefficient')
         
         return propeller
-
-if __name__ == "__main__":
-    #unittest.main()
-    aviary_options = get_option_defaults()
-    prop_file_path = 'models/propellers/PropFan.prop'
-    prop_file_path = 'models/propellers/general_aviation.prop'
-    aviary_options.set_val(Aircraft.Engine.PROPELLER_DATA_FILE, val=prop_file_path, units='unitless')
-    aviary_options.set_val(Aircraft.Engine.INTERPOLATION_METHOD, val='slinear', units='unitless')
-    aviary_options.set_val(Aircraft.Engine.USE_PROPELLER_MAP, val=True, units='unitless')
-    prop_model = PropellerMap('prop', aviary_options)
-    prop_model.build_propeller_interpolator(3, aviary_options)
-
-    x1 = prop_model.data[MACH]
-    x2 = prop_model.data[J]
-    x3 = prop_model.data[CP]
-    y = prop_model.data[CT]
-    grid = np.array([x1, x2, x3]).T
-    from openmdao.components.interp_util.interp_semi import InterpNDSemi
-    # Running the following line will generate an error message:
-    # ValueError: The points in dimension 1 must be strictly ascending.
-    interp = InterpNDSemi(grid, y, method='slinear')
-    print("done")
