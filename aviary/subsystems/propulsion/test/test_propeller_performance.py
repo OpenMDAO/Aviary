@@ -272,7 +272,6 @@ class PropellerPerformanceTest(unittest.TestCase):
 
 if __name__ == "__main__":
     #unittest.main()
-    import pdb
     myClass = PropellerPerformanceTest()
     myClass.setUp()
     myClass.new_test()

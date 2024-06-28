@@ -6,7 +6,7 @@ from aviary.variable_info.enums import OutMachType
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.subsystems.propulsion.hamilton_standard import HamiltonStandard, PostHamiltonStandard, PreHamiltonStandard
 from aviary.subsystems.propulsion.propeller_map import PropellerMap
-import pdb
+
 
 class OutMachs(om.ExplicitComponent):
     def initialize(self):
@@ -347,7 +347,6 @@ class PropellerPerformance(om.Group):
                     promotes_outputs=[("helical_mach", "selected_mach")],
                 )
             else:
-                pdb.set_trace()
                 self.add_subsystem(
                     name='selectedMach',
                     subsys=om.ExecComp(
