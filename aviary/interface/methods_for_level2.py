@@ -1701,84 +1701,41 @@ class AviaryProblem(om.Problem):
                 self.model.add_design_var(Mission.Design.GROSS_MASS, units='lbm',
                                           lower=100.e2, upper=200.e3, ref=135.e3)
 
-        elif self.mission_method is HEIGHT_ENERGY:
-            if self.problem_type is ProblemType.SIZING:
-                self.model.add_design_var(Mission.Design.GROSS_MASS, units='lbm',
-                                          lower=100e2, upper=200e3, ref=135e3)
-
-                self.model.add_design_var(Mission.Summary.GROSS_MASS, units='lbm',
-                                          lower=100e2, upper=200e3, ref=135e3)
-
-                self.model.add_subsystem('gtow_constraint',
-                                         om.EQConstraintComp('GTOW', eq_units='lbm',
-                                                             normalize=True, add_constraint=True),
-                                         promotes_inputs=[('lhs:GTOW', Mission.Design.GROSS_MASS),
-                                                          ('rhs:GTOW', Mission.Summary.GROSS_MASS)])
-
-                self.model.add_constraint(
-                    Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=10
-                )
-
-            elif self.problem_type is ProblemType.ALTERNATE:
-                self.model.add_design_var(Mission.Summary.GROSS_MASS,
-                                          lower=100e2, upper=200e3, units='lbm', ref=135e3)
-
-                self.model.add_constraint(
-                    Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=10
-                )
-
-            elif self.problem_type is ProblemType.FALLOUT:
-                print('No design variables for Fallout missions')
-
-        elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
-            if self.analysis_scheme is AnalysisScheme.COLLOCATION:
-                # problem formulation to make the trajectory work
-                self.model.add_design_var(Mission.Takeoff.ASCENT_T_INTIIAL,
-                                          lower=0, upper=100, ref=30.0)
-                self.model.add_design_var(Mission.Takeoff.ASCENT_DURATION,
-                                          lower=1, upper=1000, ref=10.)
-                self.model.add_design_var("tau_gear", lower=0.01,
-                                          upper=1.0, units="unitless", ref=1)
-                self.model.add_design_var("tau_flaps", lower=0.01,
-                                          upper=1.0, units="unitless", ref=1)
-                self.model.add_constraint(
-                    "h_fit.h_init_gear", equals=50.0, units="ft", ref=50.0)
-                self.model.add_constraint("h_fit.h_init_flaps",
-                                          equals=400.0, units="ft", ref=400.0)
-
+        elif self.mission_method in (HEIGHT_ENERGY, TWO_DEGREES_OF_FREEDOM):
             # vehicle sizing problem
             # size the vehicle (via design GTOW) to meet a target range using all fuel capacity
             if self.problem_type is ProblemType.SIZING:
                 self.model.add_design_var(
                     Mission.Design.GROSS_MASS,
-                    lower=10.,
-                    upper=400.e3,
-                    units="lbm",
-                    ref=175_000,
+                    lower=10.0,
+                    upper=400e3,
+                    units='lbm',
+                    ref=175e3,
                 )
                 self.model.add_design_var(
                     Mission.Summary.GROSS_MASS,
-                    lower=10.,
-                    upper=400.e3,
-                    units="lbm",
-                    ref=175_000,
+                    lower=10.0,
+                    upper=400e3,
+                    units='lbm',
+                    ref=175e3,
                 )
 
-                self.model.add_constraint(
-                    Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=10
-                )
                 self.model.add_subsystem(
-                    "gtow_constraint",
+                    'gtow_constraint',
                     om.EQConstraintComp(
-                        "GTOW",
-                        eq_units="lbm",
+                        'GTOW',
+                        eq_units='lbm',
                         normalize=True,
                         add_constraint=True,
                     ),
                     promotes_inputs=[
-                        ("lhs:GTOW", Mission.Design.GROSS_MASS),
-                        ("rhs:GTOW", Mission.Summary.GROSS_MASS),
+                        ('lhs:GTOW', Mission.Design.GROSS_MASS),
+                        ('rhs:GTOW', Mission.Summary.GROSS_MASS),
                     ],
+                )
+
+                self.model.add_constraint(
+                    Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=10
                 )
 
             # target range problem
@@ -1788,15 +1745,32 @@ class AviaryProblem(om.Problem):
                     Mission.Summary.GROSS_MASS,
                     lower=0,
                     upper=None,
-                    units="lbm",
-                    ref=175_000,
+                    units='lbm',
+                    ref=175e3,
                 )
 
                 self.model.add_constraint(
-                    Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=10,
+                    Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=10
                 )
+
             elif self.problem_type is ProblemType.FALLOUT:
                 print('No design variables for Fallout missions')
+
+            if self.mission_method is TWO_DEGREES_OF_FREEDOM:
+                if self.analysis_scheme is AnalysisScheme.COLLOCATION:
+                    # problem formulation to make the trajectory work
+                    self.model.add_design_var(Mission.Takeoff.ASCENT_T_INTIIAL,
+                                              lower=0, upper=100, ref=30.0)
+                    self.model.add_design_var(Mission.Takeoff.ASCENT_DURATION,
+                                              lower=1, upper=1000, ref=10.)
+                    self.model.add_design_var("tau_gear", lower=0.01,
+                                              upper=1.0, units="unitless", ref=1)
+                    self.model.add_design_var("tau_flaps", lower=0.01,
+                                              upper=1.0, units="unitless", ref=1)
+                    self.model.add_constraint(
+                        "h_fit.h_init_gear", equals=50.0, units="ft", ref=50.0)
+                    self.model.add_constraint("h_fit.h_init_flaps",
+                                              equals=400.0, units="ft", ref=400.0)
 
     def add_objective(self, objective_type=None, ref=None):
         """
