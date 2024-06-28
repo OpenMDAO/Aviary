@@ -955,9 +955,14 @@ class EngineDeck(EngineModel):
                               desc='Current max net thrust produced (unscaled)')
 
         # add created subsystems to engine_group
+        outputs = []
+        if getattr(self, 'use_t4', False):
+            outputs.append(Dynamic.Mission.TEMPERATURE_T4)
+
         engine_group.add_subsystem('interpolation',
                                    engine,
-                                   promotes_inputs=['*'])
+                                   promotes_inputs=['*'],
+                                   promotes_outputs=outputs)
 
         if self.use_thrust:
             if self.global_throttle or (self.global_hybrid_throttle
