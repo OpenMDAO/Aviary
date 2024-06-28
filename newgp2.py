@@ -186,7 +186,8 @@ class myapp(Tk):
                         self.crossX.remove()
                         self.crossY.remove()
                     for i,(x,y) in enumerate(zip(self.timelist,self.varlist[p])):
-                        if self.getProx(event.xdata,x,"x",p) < self.ptcontainerx and self.getProx(event.ydata,y,"y",p)<self.ptcontainery:
+                        if self.getProx(event.xdata,x,"x",p) < self.ptcontainerx and \
+                                self.getProx(event.ydata,y,"y",p)<self.ptcontainery:
                             self.figure_canvas.set_cursor(4)
                             near = True
                             self.neari = i
@@ -195,10 +196,11 @@ class myapp(Tk):
                     self.crossY = plot.axvline(x=event.xdata,color='red')
                     self.figure_canvas.draw()
                     self.crosshair = True
-                    ys = ["Altitude","Mach"]
-                    un = ["ft",""]
-                    yv = int(event.ydata) if p==0 else round(event.ydata,2)
-                    self.mouse_coords_str.set(f"Time: {int(event.xdata)} min, {ys[p]}: {yv} {un[p]}")
+                    xlabel = self.plots_info[p]["xlabel"]
+                    xvalue = format(event.xdata,"."+str(self.tableround[0])+"f")
+                    ylabel = self.plots_info[p]["ylabel"]
+                    yvalue = format(event.ydata,"."+str(self.tableround[p+1])+"f")
+                    self.mouse_coords_str.set(f"{xlabel}: {xvalue} | {ylabel}: {yvalue}")
 
                     if self.mousepress and (near or self.mousedrag): 
                         self.mousedrag = True
@@ -244,7 +246,7 @@ class myapp(Tk):
         self.tableelems.append(delsym)
         self.tableelems.append(ptlabel)
         for i,newval in enumerate([self.timelist[-1],self.varlist[0][-1],self.varlist[1][-1]]):
-            newval = round(newval,self.tableround[i]) if self.tableround[i] != 0 else int(newval)
+            newval = format(newval,"."+str(self.tableround[i])+"f")
             etxt = StringVar(value=newval)
             self.tablestrvars[i].append(etxt)
             entry = Entry(self.tablecv,width=self.colwids[i],textvariable=etxt)
@@ -281,13 +283,13 @@ class myapp(Tk):
             self.tableelems.append(delsym)
             self.tableelems.append(ptlabel)
             for i,val in enumerate(zipobj):
-                val = round(val,self.tableround[i]) if self.tableround[i] != 0 else int(val)
+                val = format(val,"."+str(self.tableround[i])+"f")
                 etxt = StringVar(value=val)
                 self.tablestrvars[i].append(etxt)
                 entry = Entry(self.tablecv,width=self.colwids[i],textvariable=etxt)
                 entry.grid(row=row,column=i+1)
                 entry.bind("<KeyRelease>",lambda e,row=row-1,col=i,etxt=etxt: 
-                            self.updateList(row,col,etxt.get())) 
+                        [self.updateList(row,col,etxt.get()),self.redrawPlot()] )
                 self.tableelems.append(entry)
 
     def createTable(self):
