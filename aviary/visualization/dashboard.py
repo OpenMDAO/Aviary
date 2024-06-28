@@ -634,7 +634,6 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
     if coloring_report_pane:
         optimization_tabs_list.append(("Total Coloring", coloring_report_pane))
 
-
     ####### Results Tab #######
     results_tabs_list = []
 
@@ -742,7 +741,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
         This report is for the {md_file.stem} subsystem. Reports available currently are mass, geometry, and propulsion.
             ''')
         subsystem_tabs_list.append((md_file.stem, subsystems_pane))
-        
+
     # Actually make the tabs from the list of Panes
     model_tabs = pn.Tabs(*model_tabs_list, stylesheets=["assets/aviary_styles.css"])
     optimization_tabs = pn.Tabs(
