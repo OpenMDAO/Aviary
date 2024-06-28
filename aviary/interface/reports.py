@@ -66,10 +66,6 @@ def run_status(prob):
     prob : AviaryProblem
         The AviaryProblem used to generate this report
     """
-    from aviary.interface.methods_for_level2 import AviaryProblem
-    if not isinstance(prob, AviaryProblem):
-        return
-
     if MPI and MPI.COMM_WORLD.rank != 0:
         return
 
@@ -111,10 +107,6 @@ def subsystem_report(prob, **kwargs):
     prob : AviaryProblem
         The AviaryProblem used to generate this report
     """
-    from aviary.interface.methods_for_level2 import AviaryProblem
-    if not isinstance(prob, AviaryProblem):
-        return
-
     reports_folder = Path(prob.get_reports_dir() / 'subsystems')
     reports_folder.mkdir(exist_ok=True)
 
@@ -167,10 +159,6 @@ def mission_report(prob, **kwargs):
             return diff
         else:
             return None
-
-    from aviary.interface.methods_for_level2 import AviaryProblem
-    if not isinstance(prob, AviaryProblem):
-        return
 
     reports_folder = Path(prob.get_reports_dir())
     report_file = reports_folder / 'mission_summary.md'
