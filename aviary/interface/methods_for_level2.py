@@ -197,7 +197,7 @@ class AviaryGroup(om.Group):
             if isinstance(phase.indep_states, om.ImplicitComponent):
                 phase.indep_states.nonlinear_solver = \
                     om.NewtonSolver(solve_subsystems=True)
-                phase.indep_states.linear_solver = om.DirectSolver()
+                phase.indep_states.linear_solver = om.DirectSolver(rhs_checking=True)
 
 
 class AviaryProblem(om.Problem):
@@ -927,7 +927,6 @@ class AviaryProblem(om.Problem):
                     fix_initial=fix_initial, fix_duration=fix_duration, units=time_units,
                     duration_bounds=user_options.get_val("duration_bounds", time_units),
                     duration_ref=user_options.get_val("duration_ref", time_units),
-                    initial_ref=user_options.get_val("initial_ref", time_units),
                 )
             elif phase_name == 'descent' and self.mission_method is HEIGHT_ENERGY:  # TODO: generalize this logic for all phases
                 phase.set_time_options(
@@ -1410,11 +1409,14 @@ class AviaryProblem(om.Problem):
 
             if self.mission_method is HEIGHT_ENERGY:
                 # connect mass and distance between all phases regardless of reserve / non-reserve status
-                self.traj.link_phases(phases, ["time"], ref=1e3,
+                self.traj.link_phases(phases, ["time"],
+                                      ref=None if true_unless_mpi else 1e3,
                                       connected=true_unless_mpi)
-                self.traj.link_phases(phases, [Dynamic.Mission.MASS], ref=1e6,
+                self.traj.link_phases(phases, [Dynamic.Mission.MASS],
+                                      ref=None if true_unless_mpi else 1e6,
                                       connected=true_unless_mpi)
-                self.traj.link_phases(phases, [Dynamic.Mission.DISTANCE], ref=1e3,
+                self.traj.link_phases(phases, [Dynamic.Mission.DISTANCE],
+                                      ref=None if true_unless_mpi else 1e3,
                                       connected=true_unless_mpi)
 
             elif self.mission_method is SOLVED_2DOF:
