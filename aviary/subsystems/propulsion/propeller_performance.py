@@ -2,10 +2,124 @@ import openmdao.api as om
 import numpy as np
 
 from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.enums import OutMachType
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.subsystems.propulsion.hamilton_standard import HamiltonStandard, PostHamiltonStandard, PreHamiltonStandard
 from aviary.subsystems.propulsion.propeller_map import PropellerMap
 
+class OutMachs(om.ExplicitComponent):
+    def initialize(self):
+        self.options.declare("num_nodes", types=int)
+        self.options.declare(
+            "output_mach_type",
+            default=OutMachType.HELICAL_MACH,
+            types=OutMachType,
+            desc="get one type of Mach number from the other two",
+        )
+
+    def setup(self):
+        nn = self.options["num_nodes"]
+        out_type = self.options["output_mach_type"]
+        arange = np.arange(self.options["num_nodes"])
+
+        if out_type is OutMachType.HELICAL_MACH:
+            self.add_input(
+                "mach",
+                val=np.zeros(nn),
+                units="unitless",
+                desc="Mach number",
+            )
+            self.add_input(
+                "tip_mach",
+                val=np.zeros(nn),
+                units="unitless",
+                desc="tip Mach number at 3/4 of a blade",
+            )
+            self.add_output(
+                "helical_mach",
+                val=np.zeros(nn),
+                units="unitless",
+                desc="helical Mach number",
+            )
+            self.declare_partials("helical_mach", [
+                                  "tip_mach", "mach"], rows=arange, cols=arange)
+        elif out_type is OutMachType.MACH:
+            self.add_input(
+                "tip_mach",
+                val=np.zeros(nn),
+                units="unitless",
+                desc="tip Mach number at 3/4 of a blade",
+            )
+            self.add_input(
+                "helical_mach",
+                val=np.zeros(nn),
+                units="unitless",
+                desc="helical Mach number",
+            )
+            self.add_output(
+                "mach",
+                val=np.zeros(nn),
+                units="unitless",
+                desc="Mach number",
+            )
+            self.declare_partials("mach", [
+                                  "tip_mach", "helical_mach"], rows=arange, cols=arange)
+        elif out_type is OutMachType.TIP_MACH:
+            self.add_input(
+                "mach",
+                val=np.zeros(nn),
+                units="unitless",
+                desc="Mach number",
+            )
+            self.add_input(
+                "helical_mach",
+                val=np.zeros(nn),
+                units="unitless",
+                desc="helical Mach number",
+            )
+            self.add_output(
+                "tip_mach",
+                val=np.zeros(nn),
+                units="unitless",
+                desc="tip Mach number at 3/4 of a blade",
+            )
+            self.declare_partials("tip_mach", [
+                                  "mach", "helical_mach"], rows=arange, cols=arange)
+
+    def compute(self, inputs, outputs):
+        out_type = self.options["output_mach_type"]
+
+        if out_type is OutMachType.HELICAL_MACH:
+            mach = inputs["mach"]
+            tip_mach = inputs["tip_mach"]
+            outputs["helical_mach"] = np.sqrt(mach * mach + tip_mach * tip_mach)
+        elif out_type is OutMachType.MACH:
+            tip_mach = inputs["tip_mach"]
+            helical_mach = inputs["helical_mach"]
+            outputs["mach"] = np.sqrt(helical_mach * helical_mach - tip_mach * tip_mach)
+        elif out_type is OutMachType.TIP_MACH:
+            mach = inputs["mach"]
+            helical_mach = inputs["helical_mach"]
+            outputs["tip_mach"] = np.sqrt(helical_mach * helical_mach - mach * mach)
+
+    def compute_partials(self, inputs, J):
+        out_type = self.options["output_mach_type"]
+
+        if out_type is OutMachType.HELICAL_MACH:
+            mach = inputs["MACH"]
+            tip_mach = inputs["tip_mach"]
+            J["helical_mach", "MACH"] = -mach/np.sqrt(mach * mach + tip_mach * tip_mach)
+            J["helical_mach", "tip_mach"] = -tip_mach/np.sqrt(mach * mach + tip_mach * tip_mach)
+        elif out_type is OutMachType.MACH:
+            tip_mach = inputs["tip_mach"]
+            helical_mach = inputs["HELICAL_MACH"]
+            J["mach", "helical_mach"] = -helical_mach/np.sqrt(helical_mach * helical_mach - tip_mach * tip_mach)
+            J["mach", "tip_mach"] = tip_mach/np.sqrt(helical_mach * helical_mach - tip_mach * tip_mach)
+        elif out_type is OutMachType.TIP_MACH:
+            mach = inputs["MACH"]
+            helical_mach = inputs["helical_mach"]
+            J["tip_mach", "helical_mach"] = -helical_mach/np.sqrt(helical_mach * helical_mach - mach * mach)
+            J["tip_mach", "MACH"] = mach/np.sqrt(helical_mach * helical_mach - mach * mach)
 
 class InstallLoss(om.Group):
     """
@@ -144,7 +258,7 @@ class PropellerPerformance(om.Group):
         compute_installation_loss = aviary_options.get_val(
             Aircraft.Design.COMPUTE_INSTALLATION_LOSS)
         use_propeller_map = aviary_options.get_val(
-            Aircraft.Engine.aviary.USE_PROPELLER_MAP)
+            Aircraft.Engine.USE_PROPELLER_MAP)
 
         self.add_subsystem(
             'temperature_term',
@@ -219,17 +333,15 @@ class PropellerPerformance(om.Group):
 
         if use_propeller_map:
             prop_model = PropellerMap('prop', aviary_options)
-            mach_type = prop_model.read_and_set_mach_type()
+            prop_file_path = aviary_options.get_val(
+                Aircraft.Engine.PROPELLER_DATA_FILE)
+            print(f"prop_file_path: {prop_file_path}")
+            mach_type = prop_model.read_and_set_mach_type(prop_file_path)
+            print(f"mach type: {mach_type}")
             if mach_type == 'helical_mach':
                 self.add_subsystem(
                     name='generic_mach',
-                    subsys=om.ExecComp(
-                        'generic_mach = sqrt(mach * mach + tip_mach * tip_mach)',
-                        mach={'val': 0, 'units': 'unitless'},
-                        tip_mach={'val': 0, 'units': 'unitless'},
-                        generic_mach={'units': 'unitless'},
-                        has_diag_partials=True,
-                    ),
+                    subsys=OutMachs(num_nodes=nn, output_mach_type=OutMachType.HELICAL_MACH),
                     promotes_inputs=[("mach", Dynamic.Mission.MACH),"tip_mach"],
                     promotes_outputs=["generic_mach"],
                 )
@@ -238,8 +350,8 @@ class PropellerPerformance(om.Group):
                     name='generic_mach',
                     subsys=om.ExecComp(
                         'generic_mach = mach',
-                        mach={'val': 0, 'units': 'unitless'},
-                        generic_mach={'units': 'unitless'},
+                        mach={'val': 0, 'units': 'unitless', 'shape': nn},
+                        generic_mach={'units': 'unitless', 'shape': nn},
                         has_diag_partials=True,
                     ),
                     promotes_inputs=[("mach", Dynamic.Mission.MACH),],
@@ -262,8 +374,7 @@ class PropellerPerformance(om.Group):
             IVC = om.IndepVarComp("comp_tip_loss_factor",
                         np.linspace(1.0, 1.0, nn),
                         units='unitless')
-            self.prob.model.add_subsystem('IVC', IVC, promotes=['comp_tip_loss_factor'])
-
+            self.add_subsystem('IVC', IVC, promotes=['comp_tip_loss_factor'])
         else:
             self.add_subsystem(
                 name='hamilton_standard',
