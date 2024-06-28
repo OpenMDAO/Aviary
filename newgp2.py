@@ -1,7 +1,16 @@
 import os
+from math import sqrt
 from tkinter import Tk,Canvas,Frame,Scrollbar,Button, Entry, Label,StringVar,Menu,Toplevel
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
+from aviary.subsystems.aerodynamics.gasp_based import data
+
+# TODO: Add ability to change units, phase info specifies units and aviary can handle these unit changes.
+#       Makes sense to allow unit changes in GUI based on user preference.
+#       Possible unit changes: Alt -> ft, m, mi, km, nmi; Time -> min, s, hr; Mach -> none
+# TODO: Add button to add new rows to table for anyone only using table
+
 
 class myapp(Tk):
     def __init__(self):
@@ -23,9 +32,6 @@ class myapp(Tk):
 
         self.tablecv = Frame(self)
         self.tablecv.pack(side="right",fill="y")
-        self.tableround = [0,0,2]
-        self.tableelems = []
-        self.tablestrvars = [[],[],[]]
 
         scroll_frame = Frame(self)
         scroll_frame.pack(side='right',fill='y')
@@ -40,47 +46,55 @@ class myapp(Tk):
         self.frame_plots = Frame(self)
         self.frame_plots.pack(side='top',expand=True,fill='both')
         self.crosshair = False
-        self.ptcontainerx = 0.03
-        self.ptcontainery = 0.05
+        self.ptcontainer = 0.04
         self.plotlines = [None,None]
-        plots_info = [{"xlabel":"Time (minutes)",
-                       "ylabel":"Altitude (ft)",
-                       "xlim":(0,400),"ylim":(0,50e3),
-                       "title":"Altitude Plot"},
 
-                      {"xlabel":"Time (minutes)",
-                       "ylabel":"Mach Number",
-                       "xlim":(0,400),"ylim":(0,1.0),
-                       "title":"Mach Plot"}]
-        self.createPlots(plots_info)
+        self.data_info = {"xlabel":"Time","xlim":(0,400),"xunit":"min","xround":0,
+                      "ylabels":["Altitude","Mach Number"],"ylims":[(0,50e3),(0,1.0)],
+                      "yunits":["ft","unitless"],"yrounds":[0,2],
+                      "plot_titles":["Altitude Plot","Mach Plot"]}
+        self.check_data_info()
+        self.data_info["xlabel_unit"] = self.data_info["xlabel"] + f" ({self.data_info['xunit']})"
+        self.data_info["ylabels_units"] = [ self.data_info["ylabels"][i] + 
+                            f" ({self.data_info['yunits'][i]})" for i in range(self.num_dep_vars)]
+
+        self.createPlots()
         self.createTable()
         self.createMenu()
 
     def close(self):
-        print("Closing")
         last_geometry = self.winfo_geometry()
         self.destroy()
         with open("windowlocation.txt","w") as fp:
             fp.write(last_geometry)
 
+    def check_data_info(self):
+        check_keys = ["ylabels","ylims","yunits"]
+        self.num_dep_vars = len(self.data_info["plot_titles"])
+        for key in check_keys:
+            if self.num_dep_vars != len(self.data_info[key]):
+                raise Exception("Check length of lists in data_info, mismatch detected.\n"+
+                                f"Expected {self.num_dep_vars} dependent variables.")
+
+
 # Plot related functions
 
-    def createPlots(self,plots_info):
+    def createPlots(self):
         fig = Figure()
         self.plots = []
-        numplots = len(plots_info)
-        for idx,plot in enumerate(plots_info):
-            self.plots.append(fig.add_subplot(numplots,1,idx+1))
-            self.plots[idx].set_xlabel(plot["xlabel"])
-            self.plots[idx].set_ylabel(plot["ylabel"])
-            self.plots[idx].set_xlim(plot["xlim"])
-            self.plots[idx].set_ylim(plot["ylim"])
-            self.plots[idx].set_title(plot["title"])
-            self.plots[idx].grid(True)
-            plot["limstrvarx"] = StringVar(value=int(plot["xlim"][1]))
-            plot["limstrvary"] = StringVar(value=int(plot["ylim"][1]))
+        self.data_info["ylim_strvars"] = []
+        for i in range(self.num_dep_vars):
+            self.plots.append(fig.add_subplot(self.num_dep_vars,1,i+1))
+            self.plots[i].set_xlabel(self.data_info["xlabel_unit"])
+            self.plots[i].set_ylabel(self.data_info["ylabels_units"][i])
+            self.plots[i].set_xlim(self.data_info["xlim"])
+            self.plots[i].set_ylim(self.data_info["ylims"][i])
+            self.plots[i].set_title(self.data_info["plot_titles"][i])
+            self.plots[i].grid(True)
+            self.data_info["ylim_strvars"].append(
+                StringVar(value = self.data_info["ylims"][i][1]) )
         
-        self.plots_info = plots_info
+        self.data_info["xlim_strvar"] = StringVar(value = self.data_info["xlim"][1])
 
         fig.tight_layout(h_pad=2.0)
         fig.canvas.mpl_connect('button_press_event',self.onpress)
@@ -112,36 +126,23 @@ class myapp(Tk):
             pop.destroy()
         pop.protocol("WM_DELETE_WINDOW",func=lambda:closePopup(self))
 
-        prevlabel = []
-        for plot_idx,plot in enumerate(self.plots_info):
-            for axis_idx,axis in enumerate(["x","y"]):
-                labeltxt = "Max "+plot[axis+"label"]+": "
-                if labeltxt in prevlabel: continue
-                limlabel = Label(pop,text=labeltxt,justify='right')
-                limlabel.grid(row=plot_idx*2+axis_idx,column=0) # 2 is hardcoded b/c it depends on num of widgets
-                limentry = Entry(pop,textvariable=plot["limstrvar"+axis],width = 6)
-                limentry.grid(row=plot_idx*2+axis_idx,column=1)
-                prevlabel.append(labeltxt)
+        labels_w_units = [self.data_info["xlabel_unit"],*self.data_info["ylabels_units"]]
+        limstrs = [self.data_info["xlim_strvar"],*self.data_info["ylim_strvars"]]
+
+        for row,(label,limstr) in enumerate(zip(labels_w_units,limstrs)):
+            limlabel = Label(pop,text=label,justify='right')
+            limlabel.grid(row=row,column=0) 
+            limentry = Entry(pop,textvariable=limstr,width = max(6,len(limstr.get())))
+            limentry.grid(row=row,column=1)
 
         change_button = Button(master=pop,command = lambda:[self.update_axes_lims(),closePopup(self)],
                                text = "Change")
         change_button.grid()
 
     def update_axes_lims(self):
-        prevaxes = []
-        prevlim = []
-        for (plotinfo,plot) in zip(self.plots_info,self.plots):
-            for (axis,func) in zip(["x","y"],[plot.set_xlim,plot.set_ylim]):
-                # check if same axes exist, in which use previously set value
-                # this is to account for change axes popup excluding duplicate axes entries
-                if plotinfo[axis+"label"] in prevaxes: 
-                    idx = prevaxes.index(plotinfo[axis+"label"])
-                    newlim = prevlim[idx]
-                else: newlim = float(plotinfo["limstrvar"+axis].get())
-                func(0,newlim)
-
-                prevaxes.append(plotinfo[axis+"label"])
-                prevlim.append(newlim)
+        for (plot,limstr) in zip(self.plots,self.data_info["ylim_strvars"]):
+            plot.set_xlim(0,float(self.data_info["xlim_strvar"].get()))
+            plot.set_ylim(0,float(limstr.get()))
         self.figure_canvas.draw()
 
     def redrawPlot(self):
@@ -175,7 +176,7 @@ class myapp(Tk):
                     for i,item in enumerate(newpt):
                         self.updateList(len(self.timelist),i,item)
                     self.redrawPlot()
-                    self.appendTable()
+                    self.updateTable()
 
     def mousemove(self,event):
         if event.xdata and event.ydata:
@@ -185,9 +186,9 @@ class myapp(Tk):
                     if self.crosshair:
                         self.crossX.remove()
                         self.crossY.remove()
-                    for i,(x,y) in enumerate(zip(self.timelist,self.varlist[p])):
-                        if self.getProx(event.xdata,x,"x",p) < self.ptcontainerx and \
-                                self.getProx(event.ydata,y,"y",p)<self.ptcontainery:
+                    for i,prevpt in enumerate(zip(self.timelist,self.varlist[p])):
+                        dist = self.getDist((event.xdata,event.ydata),prevpt,p)
+                        if dist < self.ptcontainer:
                             self.figure_canvas.set_cursor(4)
                             near = True
                             self.neari = i
@@ -196,11 +197,11 @@ class myapp(Tk):
                     self.crossY = plot.axvline(x=event.xdata,color='red')
                     self.figure_canvas.draw()
                     self.crosshair = True
-                    xlabel = self.plots_info[p]["xlabel"]
-                    xvalue = format(event.xdata,"."+str(self.tableround[0])+"f")
-                    ylabel = self.plots_info[p]["ylabel"]
-                    yvalue = format(event.ydata,"."+str(self.tableround[p+1])+"f")
-                    self.mouse_coords_str.set(f"{xlabel}: {xvalue} | {ylabel}: {yvalue}")
+                    xvalue = format(event.xdata,"."+str(self.data_info["xround"])+"f")
+                    yvalue = format(event.ydata,"."+str(self.data_info["yrounds"][p])+"f")
+                    self.mouse_coords_str.set(
+                        f"{self.data_info['xlabel']}: {xvalue} {self.data_info['xunit']} | "+
+                        f"{self.data_info['ylabels'][p]}: {yvalue} {self.data_info['yunits'][p]}")
 
                     if self.mousepress and (near or self.mousedrag): 
                         self.mousedrag = True
@@ -209,10 +210,19 @@ class myapp(Tk):
                         self.redrawPlot()
                         self.updatestrvars()
 
-    def getProx(self,a,b,axis,plt):
-        return abs(a-b)/self.plots_info[plt][axis+"lim"][1]
+    def getDist(self,pt1,pt2,plot_idx):
+        lims = (self.plots[plot_idx].get_xlim()[1],self.plots[plot_idx].get_ylim()[1])
+        return sqrt(sum([((pt1[i] - pt2[i])/lims[i])**2 for i in range(2)]))
 
 # Table related functions
+
+# much better for updating existing points
+    def updatestrvars(self):
+        rounding = [self.data_info["xround"],*self.data_info["yrounds"]]
+        for i,vallist in enumerate([self.timelist,*self.varlist]):
+            for j,val in enumerate(vallist):
+                val = format(val,"."+str(rounding[i])+"f")
+                self.tablestrvars[i][j].set(val)
 
     def updateList(self,row,col,txt=None,delete=False):
         try:
@@ -233,80 +243,50 @@ class myapp(Tk):
         self.varlist[0].pop(row)
         self.varlist[1].pop(row)
         self.redrawPlot()
-        self.redrawTable()
+        self.updateTable(overwrite=True)
 
-
-    def appendTable(self):
-        rownum = len(self.timelist)
-        ptlabel = Label(self.tablecv,text = rownum)
-        ptlabel.grid(row = rownum,column = 0)
-        delsym = Button(self.tablecv,text="X")
-        delsym.bind("<Button-1>",lambda e, i=rownum-1:self.deletePoint(i))
-        delsym.grid(row=rownum,column=4)
-        self.tableelems.append(delsym)
-        self.tableelems.append(ptlabel)
-        for i,newval in enumerate([self.timelist[-1],self.varlist[0][-1],self.varlist[1][-1]]):
-            newval = format(newval,"."+str(self.tableround[i])+"f")
-            etxt = StringVar(value=newval)
-            self.tablestrvars[i].append(etxt)
-            entry = Entry(self.tablecv,width=self.colwids[i],textvariable=etxt)
-            entry.grid(row=rownum,column=i+1)
-            entry.bind("<KeyRelease>",lambda e,row=rownum-1,col=i,etxt=etxt: 
-                        [self.updateList(row,col,etxt.get()),self.redrawPlot()] )
-            self.tableelems.append(entry)
-        
-    # much better for updating existing points
-    def updatestrvars(self):
-        for i,vallist in enumerate([self.timelist,*self.varlist]):
-            for j,val in enumerate(vallist):
-                val = round(val,self.tableround[i]) if self.tableround[i] != 0 else int(val)
-                if j >= len(self.tablestrvars[0]):
-                    self.tablestrvars[i].append(val)
-                else:
-                    self.tablestrvars[i][j].set(val)
-
-
-    # works but delete buttons spasms while dragging points
-    def redrawTable(self):
-        if len(self.tableelems) > 0:
+    def updateTable(self,overwrite = False):
+        if overwrite and len(self.tableelems) > 0:
             for item in self.tableelems:
                 item.destroy()
             self.tableelems = []
-            self.tablestrvars = [[],[],[]]
-        for row,zipobj in enumerate(zip(self.timelist,*self.varlist)):
-            row +=1
-            ptlabel = Label(self.tablecv,text = row)
-            ptlabel.grid(row = row,column = 0)
+            self.tablestrvars = [[] for i in range(len(self.tablestrvars))]
+
+        rounding = [self.data_info["xround"],*self.data_info["yrounds"]]
+        timelist,varlist = self.timelist, self.varlist
+        if not rounding: 
+            timelist = self.timelist[-1]
+            varlist = self.varlist[-1]
+        for row,zipobj in enumerate(zip(timelist,*varlist)):
+            ptlabel = Label(self.tablecv,text = row+1)
+            ptlabel.grid(row = row+1,column = 0)
             delsym = Button(self.tablecv,text="X")
-            delsym.bind("<Button-1>",lambda e, i=row-1:self.deletePoint(i))
-            delsym.grid(row=row,column=4)
+            delsym.bind("<Button-1>",lambda e, i=row:self.deletePoint(i))
+            delsym.grid(row=row+1,column=4)
             self.tableelems.append(delsym)
             self.tableelems.append(ptlabel)
-            for i,val in enumerate(zipobj):
-                val = format(val,"."+str(self.tableround[i])+"f")
+            for col,val in enumerate(zipobj):
+                val = format(val,"."+str(rounding[col])+"f")
                 etxt = StringVar(value=val)
-                self.tablestrvars[i].append(etxt)
-                entry = Entry(self.tablecv,width=self.colwids[i],textvariable=etxt)
-                entry.grid(row=row,column=i+1)
-                entry.bind("<KeyRelease>",lambda e,row=row-1,col=i,etxt=etxt: 
+                self.tablestrvars[col].append(etxt)
+                entry = Entry(self.tablecv,width=self.colwids[col],textvariable=etxt)
+                entry.grid(row=row+1,column=col+1)
+                entry.bind("<KeyRelease>",lambda e,row=row,col=col,etxt=etxt: 
                         [self.updateList(row,col,etxt.get()),self.redrawPlot()] )
                 self.tableelems.append(entry)
 
     def createTable(self):
-        prevheaders = []
         self.colwids = []
-        col = 1
-        for plot in self.plots_info:
-            for axis in ["x","y"]:
-                headertxt = plot[axis+"label"]
-                if headertxt in prevheaders: continue
-                
-                header = Label(self.tablecv,text=headertxt)
-                header.grid(row = 0,column = col)
-                col += 1
-                prevheaders.append(headertxt)
-                self.colwids.append(len(headertxt))
-        self.appendTable()
+        self.tablestrvars = [] # list used to hold StringVars 
+        self.tableelems = [] # list used to hold graphical table elements, can be used to modify them
+        labels_w_units = [self.data_info["xlabel_unit"],*self.data_info["ylabels_units"]]
+        for col,label in enumerate(labels_w_units):
+            header = Label(self.tablecv,text=label)
+            header.grid(row = 0,column = col+1)
+            self.colwids.append(len(label))
+            self.tablestrvars.append([])
+
+        self.updateTable()
 
 
 # Menu related functions
