@@ -6,6 +6,7 @@ from aviary.variable_info.enums import OutMachType
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.subsystems.propulsion.hamilton_standard import HamiltonStandard, PostHamiltonStandard, PreHamiltonStandard
 from aviary.subsystems.propulsion.propeller_map import PropellerMap
+import pdb
 
 class OutMachs(om.ExplicitComponent):
     def initialize(self):
@@ -340,29 +341,30 @@ class PropellerPerformance(om.Group):
             print(f"mach type: {mach_type}")
             if mach_type == 'helical_mach':
                 self.add_subsystem(
-                    name='generic_mach',
+                    name='selectedMach',
                     subsys=OutMachs(num_nodes=nn, output_mach_type=OutMachType.HELICAL_MACH),
                     promotes_inputs=[("mach", Dynamic.Mission.MACH),"tip_mach"],
-                    promotes_outputs=["generic_mach"],
+                    promotes_outputs=[("helical_mach", "selected_mach")],
                 )
             else:
+                pdb.set_trace()
                 self.add_subsystem(
-                    name='generic_mach',
+                    name='selectedMach',
                     subsys=om.ExecComp(
-                        'generic_mach = mach',
-                        mach={'val': 0, 'units': 'unitless', 'shape': nn},
-                        generic_mach={'units': 'unitless', 'shape': nn},
+                        'selected_mach = mach',
+                        mach={'units': 'unitless', 'shape': nn},
+                        selected_mach={'units': 'unitless', 'shape': nn},
                         has_diag_partials=True,
                     ),
                     promotes_inputs=[("mach", Dynamic.Mission.MACH),],
-                    promotes_outputs=["generic_mach"],
+                    promotes_outputs=["selected_mach"],
                 )
             propeller = prop_model.build_propeller_interpolator(nn, aviary_options)
             self.add_subsystem(
                 name='propeller_map',
                 subsys=propeller,
                 promotes_inputs=[
-                    "generic_mach",
+                    "selected_mach",
                     "power_coefficient",
                     "advance_ratio",
                 ],
