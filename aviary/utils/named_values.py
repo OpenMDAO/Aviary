@@ -38,7 +38,7 @@ class NamedValues(Collection):
 
         Notes
         -----
-        When intializing from another collection, the following types of
+        When initializing from another collection, the following types of
         collections are supported:
 
             * `NamedValues`

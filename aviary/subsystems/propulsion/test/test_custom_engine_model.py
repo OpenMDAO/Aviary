@@ -16,6 +16,13 @@ from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
+from dymos.transcriptions.transcription_base import TranscriptionBase
+if hasattr(TranscriptionBase, 'setup_polynomial_controls'):
+    use_new_dymos_syntax = False
+else:
+    use_new_dymos_syntax = True
+
+
 class PreMissionEngine(om.Group):
     def setup(self):
         self.add_subsystem('dummy_comp', om.ExecComp(
@@ -102,6 +109,9 @@ class SimpleTestEngine(EngineModel):
         controls_dict = {
             "different_throttle": {'units': 'unitless', 'lower': 0., 'upper': 0.1},
         }
+        if use_new_dymos_syntax:
+            controls_dict['different_throttle']['control_type'] = 'polynomial'
+            controls_dict['different_throttle']['order'] = 3
         return controls_dict
 
     def get_bus_variables(self):

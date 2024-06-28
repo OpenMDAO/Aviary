@@ -14,6 +14,12 @@ pip install om-aviary
 ```
 
 This will install the latest release of Aviary and all of its dependencies.
+
+That's it!
+If you've done that successfully, you can now use Aviary in your Python environment.
+
+## More in-depth installation instructions
+
 If you want to instead clone the Aviary repository and install from source, follow the instructions below.
 Once you have cloned the Aviary repo, change directories into the top-level Aviary folder (not within the `aviary` folder) and run the following command:
 
@@ -41,7 +47,13 @@ You can do this editable installation with any of the `[test]` or `[all]` option
 ```
 
 ```{note}
-You can install the optional package [pyOptSparse by following the instructions here](https://mdolab-pyoptsparse.readthedocs-hosted.com/en/latest/install.html). If you do not need the SNOPT optimizer, installing pyOptSparse is as simple as running `conda install -c conda-forge pyoptsparse`.
+You can install the _optional_ package [pyOptSparse by following the instructions here](https://mdolab-pyoptsparse.readthedocs-hosted.com/en/latest/install.html). If you do not need the SNOPT optimizer, installing pyOptSparse is as simple as running `conda install -c conda-forge pyoptsparse`. This will install pyOptSparse as well as the IPOPT optimizer.
+```
+
+## Installation Troubleshooting
+
+```{note}
+If you encounter issues during pip installation, you may need run `pip install packaging` before you can pip install Aviary.
 ```
 
 ## Installation on Linux for Developers
@@ -108,7 +120,10 @@ $ conda activate av1
 
 ### Installing Additional Dependencies
 
-Aviary can run in MPI. So, let us do:
+Aviary can run in MPI. 
+You do not need the `mpi4py` or `petsc4py` packages to use Aviary.
+They are useful when running large OpenMDAO models in parallel.
+If needed, you can install them with the following command:
 
 ```
 $ conda install -c conda-forge mpi4py petsc4py
