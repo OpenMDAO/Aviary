@@ -252,3 +252,20 @@ class UncorrectData(om.Group):
 #     DELTA_MAX_NOZZLE_AREA = auto()
 #     MAX_NOZZLE_AREA = auto()
 #     REF_NOZZLE_EXIT_AREA = auto()
+
+
+class PropModelVariables(Enum):
+    '''
+    Define constants that map to supported variable names in a propeller model.
+    '''
+    MACH = 'Mach_Number'
+    CP = 'CP'  # power coefficient
+    CT = 'CT'  # thrust coefficient
+    J = 'J'  # advanced ratio
+
+default_prop_units = {
+    PropModelVariables.MACH: 'unitless',
+    PropModelVariables.CP: 'unitless',
+    PropModelVariables.CT: 'unitless',
+    PropModelVariables.J: 'unitless',
+}
