@@ -2,6 +2,7 @@ import inspect
 import subprocess
 import tempfile
 import os
+import numpy as np
 
 
 def check_value(val1, val2):
@@ -24,12 +25,41 @@ def check_value(val1, val2):
     ValueError
         If the values are not equal (or not the same object for non-primitive types).
     """
-    if isinstance(val1, (str, int, float, list, tuple, dict, set)):
+    if isinstance(val1, (str, int, float, list, tuple, dict, set, np.ndarray)):
         if val1 != val2:
             raise ValueError(f"{val1} is not equal to {val2}")
     else:
         if val1 is not val2:
             raise ValueError(f"{val1} is not {val2}")
+
+
+def check_contains(expected_values, actual_values, additional_context="", search_target=None, error_type=RuntimeError):
+    """
+    Checks that all of the expected_values exist in actual_values
+    (It does not check for missing values)
+
+    Args:
+        expected_values : any iterable
+        actual_values : any iterable
+        additional_context : str
+            A string to append to the error message (default is blank)
+        search_target : any
+            The context being searched in (default is actual_values)
+        error_type : Exception
+            The exception to raise (default is RuntimeError)
+
+    Raises:
+        RuntimeError
+            If a value in expected_values is not present in expected_values
+    """
+    # if a single expected item is provided, wrap it
+    if not hasattr(expected_values, '__class_getitem__'):
+        expected_values = [expected_values]
+    if search_target is None:
+        search_target = actual_values
+    for var in expected_values:
+        if var not in actual_values:
+            raise error_type(f"{var} not in {search_target}"+additional_context)
 
 
 def check_args(func, expected_args: list | dict | str, args_to_ignore: list | tuple = ['self'], exact=True):
@@ -38,8 +68,8 @@ def check_args(func, expected_args: list | dict | str, args_to_ignore: list | tu
 
     This method verifies that the provided `expected_args` match the actual arguments
     of the given function `func`. If `exact` is True, the method checks for an exact
-    match. If `exact` is False, it only checks if all provided `expected_args` are
-    included in the actual arguments.
+    match. If `exact` is False, it only checks that the provided `expected_args` are
+    included in the actual arguments (it won't fail if the function has additional arguments).
 
     Parameters
     ----------
@@ -47,7 +77,7 @@ def check_args(func, expected_args: list | dict | str, args_to_ignore: list | tu
         The function whose arguments are being checked.
     expected_args : list, dict, or str
         The expected arguments. If a dict, the values will be compared to the default values.
-        If a string, it will be treated as a single argument of interest.
+        If a string, it will be treated as a single argument of interest. (exact will be set to False)
     args_to_ignore : list or tuple, optional
         Arguments to ignore during the check (default is ['self']).
     exact : bool, optional

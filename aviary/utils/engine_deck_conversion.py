@@ -40,7 +40,7 @@ RAM_DRAG = EngineModelVariables.RAM_DRAG
 FUEL_FLOW = EngineModelVariables.FUEL_FLOW
 ELECTRIC_POWER_IN = EngineModelVariables.ELECTRIC_POWER_IN
 NOX_RATE = EngineModelVariables.NOX_RATE
-TEMPERATURE = EngineModelVariables.T4_TEMPERATURE
+TEMPERATURE = EngineModelVariables.TEMPERATURE_T4
 # EXIT_AREA = EngineModelVariables.EXIT_AREA
 
 flops_keys = [
