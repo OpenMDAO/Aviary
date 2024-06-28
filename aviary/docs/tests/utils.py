@@ -33,33 +33,31 @@ def check_value(val1, val2):
             raise ValueError(f"{val1} is not {val2}")
 
 
-def check_contains(expected_values, actual_values, additional_context="", search_target=None, error_type=RuntimeError):
+def check_contains(expected_values, actual_values, error_string="{var} not in {actual_values}", error_type=RuntimeError):
     """
     Checks that all of the expected_values exist in actual_values
     (It does not check for missing values)
 
     Args:
         expected_values : any iterable
+            This can also be a single value, in which case it will be wrapped into a list
         actual_values : any iterable
-        additional_context : str
-            A string to append to the error message (default is blank)
-        search_target : any
-            The context being searched in (default is actual_values)
+        error_string : str
+            The string to display as the error message,
+            kwarg subsitutions will be made using .format() for "var" and "actual_values"
         error_type : Exception
             The exception to raise (default is RuntimeError)
 
     Raises:
         RuntimeError
-            If a value in expected_values is not present in expected_values
+            If a value in expected_values is not present in actual_values
     """
     # if a single expected item is provided, wrap it
     if not hasattr(expected_values, '__class_getitem__'):
         expected_values = [expected_values]
-    if search_target is None:
-        search_target = actual_values
     for var in expected_values:
         if var not in actual_values:
-            raise error_type(f"{var} not in {search_target}"+additional_context)
+            raise error_type(error_string.format(var=var, actual_values=actual_values))
 
 
 def check_args(func, expected_args: list | dict | str, args_to_ignore: list | tuple = ['self'], exact=True):
