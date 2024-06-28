@@ -9,7 +9,6 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 from aviary.utils.aviary_values import AviaryValues, NamedValues, get_keys, get_items
 from aviary.utils.csv_data_file import read_data_file
 from aviary.utils.functions import get_path
-import pdb
 
 class PropModelVariables(Enum):
     '''
@@ -20,18 +19,17 @@ class PropModelVariables(Enum):
     CT = 'CT'  # thrust coefficient
     J = 'J'  # advanced ratio
 
-
-default_units = {
-    PropModelVariables.MACH: 'unitless',
-    PropModelVariables.CP: 'unitless',
-    PropModelVariables.CT: 'unitless',
-    PropModelVariables.J: 'unitless',
-}
-
 MACH = PropModelVariables.MACH
 CP = PropModelVariables.CP
 CT = PropModelVariables.CT
 J = PropModelVariables.J
+
+default_units = {
+    MACH: 'unitless',
+    CP: 'unitless',
+    CT: 'unitless',
+    J: 'unitless',
+}
 
 aliases = {
     # whitespaces are replaced with underscores converted to lowercase before
@@ -68,23 +66,17 @@ class PropellerMap(om.ExplicitComponent):
         # Create dict for variables present in propeller data with associated units
         self.propeller_variables = {}
 
-        #pdb.set_trace()
         data_file = options.get_val(Aircraft.Engine.PROPELLER_DATA_FILE)
         self._read_data(data_file)
-        # mach_type = self.read_and_set_mach_type(data_file)
-        print(f"mach_type: {mach_type}")
-        pass
 
     def _read_data(self, data_file):
         # read csv file
         raw_data = read_data_file(data_file, aliases=aliases)
-        #pdb.set_trace()
 
         message = f'<{data_file}>'
         # Loop through all variables in provided data. Track which valid variables are
         #    included with the data and save raw data for reference
         for key in get_keys(raw_data):
-            #pdb.set_trace()
             val, units = raw_data.get_item(key)
             if key in aliases:
                 # Convert data to expected units. Required so settings like tolerances
@@ -182,9 +174,16 @@ if __name__ == "__main__":
     aviary_options.set_val(Aircraft.Engine.PROPELLER_DATA_FILE, val=prop_file_path, units='unitless')
     aviary_options.set_val(Aircraft.Engine.INTERPOLATION_METHOD, val='slinear', units='unitless')
     aviary_options.set_val(Aircraft.Engine.USE_PROPELLER_MAP, val=True, units='unitless')
-    pdb.set_trace()
     prop_model = PropellerMap('prop', aviary_options)
-    pdb.set_trace()
     prop_model.build_propeller_interpolator(3, aviary_options)
-    print("done")
 
+    x1 = prop_model.data[MACH]
+    x2 = prop_model.data[J]
+    x3 = prop_model.data[CP]
+    y = prop_model.data[CT]
+    grid = np.array([x1, x2, x3]).T
+    from openmdao.components.interp_util.interp_semi import InterpNDSemi
+    # Running the following line will generate an error message:
+    # ValueError: The points in dimension 1 must be strictly ascending.
+    interp = InterpNDSemi(grid, y, method='slinear')
+    print("done")
