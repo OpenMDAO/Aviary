@@ -23,9 +23,6 @@ def register_custom_reports():
     # TODO top-level aircraft report?
     # TODO add flag to skip registering reports?
 
-    # NOTE Due to a possible bug in OpenMDAO, we need to assign Problem as the
-    # class_name instead of AviaryProblem.
-
     # register per-subsystem report generation
     register_report(name='subsystems',
                     func=subsystem_report,
@@ -69,12 +66,11 @@ def run_status(prob):
     prob : AviaryProblem
         The AviaryProblem used to generate this report
     """
-    # Note: Due to a possible bug in OpenMDAO, we need to assign Problem as the
-    # class_name instead of AviaryProblem. Make sure that we don't try to write
-    # aviary reports without aviary in the model.
-
     from aviary.interface.methods_for_level2 import AviaryProblem
     if not isinstance(prob, AviaryProblem):
+        return
+
+    if MPI and MPI.COMM_WORLD.rank != 0:
         return
 
     reports_folder = Path(prob.get_reports_dir())
@@ -115,10 +111,6 @@ def subsystem_report(prob, **kwargs):
     prob : AviaryProblem
         The AviaryProblem used to generate this report
     """
-
-    # Note: Due to a possible bug in OpenMDAO, we need to assign Problem as the
-    # class_name instead of AviaryProblem. Make sure that we don't try to write
-    # aviary reports without aviary in the model.
     from aviary.interface.methods_for_level2 import AviaryProblem
     if not isinstance(prob, AviaryProblem):
         return
@@ -176,9 +168,6 @@ def mission_report(prob, **kwargs):
         else:
             return None
 
-    # Note: Due to a possible bug in OpenMDAO, we need to assign Problem as the
-    # class_name instead of AviaryProblem. Make sure that we don't try to write
-    # aviary reports without aviary in the model.
     from aviary.interface.methods_for_level2 import AviaryProblem
     if not isinstance(prob, AviaryProblem):
         return
