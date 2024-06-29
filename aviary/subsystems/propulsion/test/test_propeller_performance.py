@@ -269,6 +269,9 @@ class PropellerPerformanceTest(unittest.TestCase):
         print(f"M: {mach}")
         advJ = prob.get_val('advance_ratio')
         print(f"J: {advJ}")
+        thrt = prob.get_val('propeller_thrust')
+        print(f"Thrust: {thrt}")
+
 
 if __name__ == "__main__":
     #unittest.main()
