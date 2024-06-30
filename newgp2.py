@@ -1,7 +1,9 @@
 import os
 from math import sqrt
+
+from numpy import var
 from aviary.interface.graphical_input import create_phase_info
-from tkinter import Tk,Canvas,Frame,Scrollbar,Button, Entry, Label,StringVar,Menu,Toplevel,Checkbutton
+from tkinter import Tk,Canvas,Frame,Scrollbar,Button, Entry, Label,StringVar,BooleanVar,Menu,Toplevel,Checkbutton
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backend_bases import MouseButton
@@ -356,6 +358,7 @@ class myapp(Tk):
                 item.destroy()
             self.table_widgets = []
             self.table_strvars = [[] for i in range(self.num_dep_vars+1)]
+            self.table_boolvars = [[] for i in range(self.num_dep_vars)]
             row = 0 # set row to 0 if overwriting entire table
 
         while row < len(self.x_list):
@@ -366,7 +369,7 @@ class myapp(Tk):
             rownum_label.grid(row = row*2+2,column = 0)
             self.table_widgets.append(rownum_label)
 
-            if row > 0:
+            if row > 0: # have at least 2 points
                 optimize_label = Label(self.frame_table.interior,text="Optimize:")
                 optimize_label.grid(row=row*2+1,column = 1)
                 self.table_widgets.append(optimize_label)
@@ -386,21 +389,21 @@ class myapp(Tk):
                         [self.update_list(row,col,entry_text.get()),self.redraw_plot()] )
                 self.table_widgets.append(entry)
 
-                if col > 0 and row > 0:
+                if col > 0 and row > 0: # have at least 2 points and for dependent var cols only
                     checkbox_label = Label(self.frame_table.interior,text=self.data_info["ylabels"][col-1])
                     checkbox_label.grid(row=row*2+1,column=col+1,sticky='w')
                     self.table_widgets.append(checkbox_label)
 
-                    optimize_checkbox = Checkbutton(self.frame_table.interior)
+                    optimize_variable = BooleanVar()
+                    self.table_boolvars[col-1].append(optimize_variable)
+                    optimize_checkbox = Checkbutton(self.frame_table.interior,variable=optimize_variable)
                     optimize_checkbox.grid(row=row*2+1,column=col+1,sticky='e')
                     self.table_widgets.append(optimize_checkbox)
 
             # delete button for each point
             delete_button = Button(self.frame_table.interior,text="X",borderwidth=2)
             delete_button.bind("<Button-1>",lambda e, row=row:self.delete_point(row))
-            delete_button.grid(row=row*2+2,column=col+2)
-
-            
+            delete_button.grid(row=row*2+2,column=col+2)       
             self.table_widgets.append(delete_button)
         
             row += 1        
@@ -409,6 +412,7 @@ class myapp(Tk):
         """Creates headers for table and sets column widths based on header lengths."""
         self.table_column_widths = []
         self.table_strvars = [] # list used to hold StringVars 
+        self.table_boolvars = []
         self.table_widgets = [] # list used to hold graphical table elements, can be used to modify them
         labels_w_units = [self.data_info["xlabel_unit"],*self.data_info["ylabels_units"]]
         header = Label(self.frame_tableheaders,text="Pt")
@@ -420,6 +424,7 @@ class myapp(Tk):
             header.grid(row = 0,column = col+1)
             self.table_column_widths.append(len(label))
             self.table_strvars.append([])
+            if col > 0: self.table_boolvars.append([])
     
         self.update_table()
 
@@ -439,7 +444,7 @@ class myapp(Tk):
                              "Exit",self.close_window],
                     "Edit":["Axes Limits",self.change_axes_popup,
                             "Units",None,
-                            "Paste",None,],
+                            "Rounding",None,],
                     "View":["Advanced Options",None],
                     "Help":["Instructions",None,
                             "About",None]}
@@ -461,3 +466,113 @@ class myapp(Tk):
 if __name__ == "__main__":
     app = myapp()
     app.mainloop()
+
+    # sample phase info for a 4 phase mission (5 pts)
+    phase_info = {
+    "pre_mission": {"include_takeoff": False, "optimize_mass": True},
+    "climb_1": {
+        "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
+        "user_options": {
+            "optimize_mach": False,
+            "optimize_altitude": False,
+            "polynomial_control_order": 1,
+            "use_polynomial_control": True,
+            "num_segments": 4,
+            "order": 3,
+            "solve_for_distance": False,
+            "initial_mach": (0.3, "unitless"),
+            "final_mach": (0.6, "unitless"),
+            "mach_bounds": ((0.27999999999999997, 0.62), "unitless"),
+            "initial_altitude": (0.0, "ft"),
+            "final_altitude": (24000.0, "ft"),
+            "altitude_bounds": ((0.0, 24500.0), "ft"),
+            "throttle_enforcement": "path_constraint",
+            "fix_initial": True,
+            "constrain_final": False,
+            "fix_duration": False,
+            "initial_bounds": ((0.0, 0.0), "min"),
+            "duration_bounds": ((25.0, 75.0), "min"),
+        },
+        "initial_guesses": {"time": ([0, 50], "min")},
+    },
+    "climb_2": {
+        "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
+        "user_options": {
+            "optimize_mach": False,
+            "optimize_altitude": False,
+            "polynomial_control_order": 1,
+            "use_polynomial_control": True,
+            "num_segments": 4,
+            "order": 3,
+            "solve_for_distance": False,
+            "initial_mach": (0.6, "unitless"),
+            "final_mach": (0.7, "unitless"),
+            "mach_bounds": ((0.58, 0.72), "unitless"),
+            "initial_altitude": (24000.0, "ft"),
+            "final_altitude": (28000.0, "ft"),
+            "altitude_bounds": ((23500.0, 28500.0), "ft"),
+            "throttle_enforcement": "boundary_constraint",
+            "fix_initial": False,
+            "constrain_final": False,
+            "fix_duration": False,
+            "initial_bounds": ((25.0, 75.0), "min"),
+            "duration_bounds": ((15.0, 45.0), "min"),
+        },
+        "initial_guesses": {"time": ([50, 30], "min")},
+    },
+    "cruise_1": {
+        "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
+        "user_options": {
+            "optimize_mach": False,
+            "optimize_altitude": False,
+            "polynomial_control_order": 1,
+            "use_polynomial_control": True,
+            "num_segments": 4,
+            "order": 3,
+            "solve_for_distance": False,
+            "initial_mach": (0.7, "unitless"),
+            "final_mach": (0.7, "unitless"),
+            "mach_bounds": ((0.6799999999999999, 0.72), "unitless"),
+            "initial_altitude": (28000.0, "ft"),
+            "final_altitude": (28000.0, "ft"),
+            "altitude_bounds": ((27500.0, 28500.0), "ft"),
+            "throttle_enforcement": "boundary_constraint",
+            "fix_initial": False,
+            "constrain_final": False,
+            "fix_duration": False,
+            "initial_bounds": ((40.0, 120.0), "min"),
+            "duration_bounds": ((121.0, 363.0), "min"),
+        },
+        "initial_guesses": {"time": ([80, 242], "min")},
+    },
+    "descent_1": {
+        "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
+        "user_options": {
+            "optimize_mach": False,
+            "optimize_altitude": False,
+            "polynomial_control_order": 1,
+            "use_polynomial_control": True,
+            "num_segments": 4,
+            "order": 3,
+            "solve_for_distance": False,
+            "initial_mach": (0.7, "unitless"),
+            "final_mach": (0.3, "unitless"),
+            "mach_bounds": ((0.27999999999999997, 0.72), "unitless"),
+            "initial_altitude": (28000.0, "ft"),
+            "final_altitude": (0.0, "ft"),
+            "altitude_bounds": ((0.0, 28500.0), "ft"),
+            "throttle_enforcement": "path_constraint",
+            "fix_initial": False,
+            "constrain_final": True,
+            "fix_duration": False,
+            "initial_bounds": ((161.0, 483.0), "min"),
+            "duration_bounds": ((6.5, 19.5), "min"),
+        },
+        "initial_guesses": {"time": ([322, 13], "min")},
+    },
+    "post_mission": {
+        "include_landing": False,
+        "constrain_range": True,
+        "target_range": (2421, "nmi"),
+    },
+}
