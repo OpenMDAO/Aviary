@@ -1,9 +1,10 @@
 import os
 from math import sqrt
 from aviary.interface.graphical_input import create_phase_info
-from tkinter import Tk,Canvas,Frame,Scrollbar,Button, Entry, Label,StringVar,Menu,Toplevel
+from tkinter import Tk,Canvas,Frame,Scrollbar,Button, Entry, Label,StringVar,Menu,Toplevel,Checkbutton
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.backend_bases import MouseButton
 
 # TODO: Add ability to change units, phase info specifies units and aviary can handle these unit changes.
 #       Makes sense to allow unit changes in GUI based on user preference.
@@ -92,9 +93,9 @@ class myapp(Tk):
         # independent variable that is applied to each dependent variable. All 
         # y-attributes are in list format to support multiple dependent variables.
         self.data_info = {"xlabel":"Time","xlim":(0,400),"xunit":"min","xround":0,
-                      "ylabels":["Altitude","Mach Number"],"ylims":[(0,50e3),(0,1.0)],
+                      "ylabels":["Altitude","Mach"],"ylims":[(0,50e3),(0,1.0)],
                       "yunits":["ft","unitless"],"yrounds":[0,2],
-                      "plot_titles":["Altitude Plot","Mach Plot"]}
+                      "plot_titles":["Altitude Profile","Mach Profile"]}
         
         # ---------------------------------------------------------------
         # sanity checking of data_info dict and creates convenient labels with units included
@@ -166,7 +167,7 @@ class myapp(Tk):
         self.data_info["xlim_strvar"] = StringVar(
             value = self.display_rounding(self.data_info["xlim"][1],0))
 
-        fig.tight_layout(h_pad=2.0)
+        fig.tight_layout(pad=2)
         fig.canvas.mpl_connect('button_press_event',self.on_mouse_press)
         fig.canvas.mpl_connect('motion_notify_event',self.on_mouse_move)
         fig.canvas.mpl_connect('button_release_event',self.on_mouse_release)
@@ -256,7 +257,7 @@ class myapp(Tk):
         default_y_vals = [float(self.data_info["ylim_strvars"][i].get())/2 for i in range(self.num_dep_vars)]
         valid_click = False
         # if mouse click points are not None
-        if event.xdata and event.ydata: 
+        if event.xdata and event.ydata and event.button == MouseButton.LEFT: 
             # go through each subplot first to check if click is inside a subplot
             for plot_idx,plot in enumerate(self.plots):
                 # checks if mouse is inside subplot and it is the first point or next in time
@@ -362,8 +363,13 @@ class myapp(Tk):
             rowtxt = str(row+1)
             if row+1 <10: rowtxt = "  "+rowtxt
             rownum_label = Label(self.frame_table.interior,text = rowtxt)
-            rownum_label.grid(row = row+1,column = 0)
+            rownum_label.grid(row = row*2+2,column = 0)
             self.table_widgets.append(rownum_label)
+
+            if row > 0:
+                optimize_label = Label(self.frame_table.interior,text="Optimize:")
+                optimize_label.grid(row=row*2+1,column = 1)
+                self.table_widgets.append(optimize_label)
 
             # entries and stringvars for each x,y value
             row_yvals = [self.ys_list[i][row] for i in range(self.num_dep_vars)]
@@ -373,17 +379,28 @@ class myapp(Tk):
                 self.table_strvars[col].append(entry_text)
 
                 entry = Entry(self.frame_table.interior,width=self.table_column_widths[col],
-                              textvariable=entry_text)
-                entry.grid(row=row+1,column=col+1)
+                              textvariable=entry_text,justify='center',relief='raised')
+                entry.grid(row=row*2+2,column=col+1)
                 # binds key release to update list function
                 entry.bind("<KeyRelease>",lambda e,row=row,col=col,entry_text=entry_text: 
                         [self.update_list(row,col,entry_text.get()),self.redraw_plot()] )
                 self.table_widgets.append(entry)
 
+                if col > 0 and row > 0:
+                    checkbox_label = Label(self.frame_table.interior,text=self.data_info["ylabels"][col-1])
+                    checkbox_label.grid(row=row*2+1,column=col+1,sticky='w')
+                    self.table_widgets.append(checkbox_label)
+
+                    optimize_checkbox = Checkbutton(self.frame_table.interior)
+                    optimize_checkbox.grid(row=row*2+1,column=col+1,sticky='e')
+                    self.table_widgets.append(optimize_checkbox)
+
             # delete button for each point
             delete_button = Button(self.frame_table.interior,text="X",borderwidth=2)
             delete_button.bind("<Button-1>",lambda e, row=row:self.delete_point(row))
-            delete_button.grid(row=row+1,column=col+2)
+            delete_button.grid(row=row*2+2,column=col+2)
+
+            
             self.table_widgets.append(delete_button)
         
             row += 1        
@@ -399,7 +416,7 @@ class myapp(Tk):
         for col,label in enumerate(labels_w_units):
             header_text = StringVar(value=label)
             header = Entry(self.frame_tableheaders,textvariable=header_text,width=len(label),
-                           state='readonly',relief='flat') # using entry maintains same col widths
+                           state='readonly',relief='solid',justify='center') # using entry maintains same col widths
             header.grid(row = 0,column = col+1)
             self.table_column_widths.append(len(label))
             self.table_strvars.append([])
@@ -423,6 +440,7 @@ class myapp(Tk):
                     "Edit":["Axes Limits",self.change_axes_popup,
                             "Units",None,
                             "Paste",None,],
+                    "View":["Advanced Options",None],
                     "Help":["Instructions",None,
                             "About",None]}
         menu_bar = Menu(self)

@@ -1,7 +1,7 @@
 import os
 from math import sqrt
 from aviary.interface.graphical_input import create_phase_info
-from tkinter import Tk,Canvas,Frame,Scrollbar,Button, Entry, Label,StringVar,Menu,Toplevel
+from tkinter import Tk,Canvas,Frame,Scrollbar,Button, Entry, Label,StringVar,Menu,Toplevel,Checkbutton
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
@@ -10,6 +10,53 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 #       Possible unit changes: Alt -> ft, m, mi, km, nmi; Time -> min, s, hr; Mach -> none
 # TODO: Add button to add new rows to table for anyone only using table
 
+class VerticalScrolledFrame(Frame):
+    """A pure Tkinter scrollable frame that actually works!
+    * Use the 'interior' attribute to place widgets inside the scrollable frame.
+    * Construct and pack/place/grid normally.
+    * This frame only allows vertical scrolling.
+    ------
+    Taken from https://stackoverflow.com/questions/16188420/tkinter-scrollbar-for-frame
+    """
+    def __init__(self, parent, *args, **kw):
+        Frame.__init__(self, parent, *args, **kw)
+
+        # Create a canvas object and a vertical scrollbar for scrolling it.
+        vscrollbar = Scrollbar(self, orient='vertical')
+        vscrollbar.pack(fill='y', side='left', expand=False)
+        self.freezeframe = Frame(self) # this frame will not scroll, allowing for freeze view functionality
+        self.freezeframe.pack(side='top',fill='x')
+        
+        canvas = Canvas(self, bd=0, highlightthickness=0,
+                           yscrollcommand=vscrollbar.set)
+        canvas.pack(side='right', fill='y', expand=True)
+        vscrollbar.config(command=canvas.yview)
+
+        # Reset the view
+        canvas.xview_moveto(0)
+        canvas.yview_moveto(0)
+
+        # Create a frame inside the canvas which will be scrolled with it.
+        self.interior = interior = Frame(canvas)
+        interior_id = canvas.create_window(0, 0, window=interior,
+                                           anchor='nw')
+
+        # Track changes to the canvas and frame width and sync them,
+        # also updating the scrollbar.
+        def _configure_interior(event):
+            # Update the scrollbars to match the size of the inner frame.
+            size = (interior.winfo_reqwidth(), interior.winfo_reqheight())
+            canvas.config(scrollregion="0 0 %s %s" % size)
+            if interior.winfo_reqwidth() != canvas.winfo_width():
+                # Update the canvas's width to fit the inner frame.
+                canvas.config(width=interior.winfo_reqwidth())
+        interior.bind('<Configure>', _configure_interior)
+
+        def _configure_canvas(event):
+            if interior.winfo_reqwidth() != canvas.winfo_width():
+                # Update the inner frame's width to fill the canvas.
+                canvas.itemconfigure(interior_id, width=canvas.winfo_width())
+        canvas.bind('<Configure>', _configure_canvas)
 
 class myapp(Tk):
     def __init__(self):
@@ -31,15 +78,9 @@ class myapp(Tk):
 
         # ---------------------------------------------------------------
         # create window layout with frames for containing graph, table, and scrollbar
-        frame_scroll = Frame(self)
-        frame_scroll.pack(side='right',fill='y')
-        scroll = Scrollbar(frame_scroll)
-        scroll.pack(side='right',fill='y')
-        
-        self.frame_table = Canvas(self,yscrollcommand=scroll.set)
-        self.frame_table.pack(side="right",fill="y")
-        scroll.config(command=self.frame_table.yview)
-        
+        self.frame_table = VerticalScrolledFrame(self)
+        self.frame_table.pack(side='right',fill='y')
+        self.frame_tableheaders = self.frame_table.freezeframe
 
         self.frame_plotReadouts = Frame(self)
         self.frame_plotReadouts.pack(side='bottom')
@@ -51,9 +92,9 @@ class myapp(Tk):
         # independent variable that is applied to each dependent variable. All 
         # y-attributes are in list format to support multiple dependent variables.
         self.data_info = {"xlabel":"Time","xlim":(0,400),"xunit":"min","xround":0,
-                      "ylabels":["Altitude","Mach Number"],"ylims":[(0,50e3),(0,1.0)],
+                      "ylabels":["Altitude","Mach"],"ylims":[(0,50e3),(0,1.0)],
                       "yunits":["ft","unitless"],"yrounds":[0,2],
-                      "plot_titles":["Altitude Plot","Mach Plot"]}
+                      "plot_titles":["Altitude Profile","Mach Profile"]}
         
         # ---------------------------------------------------------------
         # sanity checking of data_info dict and creates convenient labels with units included
@@ -125,7 +166,7 @@ class myapp(Tk):
         self.data_info["xlim_strvar"] = StringVar(
             value = self.display_rounding(self.data_info["xlim"][1],0))
 
-        fig.tight_layout(h_pad=2.0)
+        fig.tight_layout(pad=2)
         fig.canvas.mpl_connect('button_press_event',self.on_mouse_press)
         fig.canvas.mpl_connect('motion_notify_event',self.on_mouse_move)
         fig.canvas.mpl_connect('button_release_event',self.on_mouse_release)
@@ -318,7 +359,9 @@ class myapp(Tk):
 
         while row < len(self.x_list):
             # numerical label for each point
-            rownum_label = Label(self.frame_table,text = row+1)
+            rowtxt = str(row+1)
+            if row+1 <10: rowtxt = "  "+rowtxt
+            rownum_label = Label(self.frame_table.interior,text = rowtxt)
             rownum_label.grid(row = row+1,column = 0)
             self.table_widgets.append(rownum_label)
 
@@ -329,7 +372,7 @@ class myapp(Tk):
                 entry_text = StringVar(value=val)
                 self.table_strvars[col].append(entry_text)
 
-                entry = Entry(self.frame_table,width=self.table_column_widths[col],
+                entry = Entry(self.frame_table.interior,width=self.table_column_widths[col],
                               textvariable=entry_text)
                 entry.grid(row=row+1,column=col+1)
                 # binds key release to update list function
@@ -338,7 +381,7 @@ class myapp(Tk):
                 self.table_widgets.append(entry)
 
             # delete button for each point
-            delete_button = Button(self.frame_table,text="X")
+            delete_button = Button(self.frame_table.interior,text="X",borderwidth=2)
             delete_button.bind("<Button-1>",lambda e, row=row:self.delete_point(row))
             delete_button.grid(row=row+1,column=col+2)
             self.table_widgets.append(delete_button)
@@ -351,14 +394,16 @@ class myapp(Tk):
         self.table_strvars = [] # list used to hold StringVars 
         self.table_widgets = [] # list used to hold graphical table elements, can be used to modify them
         labels_w_units = [self.data_info["xlabel_unit"],*self.data_info["ylabels_units"]]
-        header = Label(self.frame_table,text="Pt.")
+        header = Label(self.frame_tableheaders,text="Pt")
         header.grid(row = 0,column = 0)
         for col,label in enumerate(labels_w_units):
-            header = Label(self.frame_table,text=label)
+            header_text = StringVar(value=label)
+            header = Entry(self.frame_tableheaders,textvariable=header_text,width=len(label),
+                           state='readonly',relief='flat') # using entry maintains same col widths
             header.grid(row = 0,column = col+1)
             self.table_column_widths.append(len(label))
             self.table_strvars.append([])
-
+    
         self.update_table()
 
     def display_rounding(self,value,col:int):
