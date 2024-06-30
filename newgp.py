@@ -1,10 +1,9 @@
 import os
 from math import sqrt
+from aviary.interface.graphical_input import create_phase_info
 from tkinter import Tk,Canvas,Frame,Scrollbar,Button, Entry, Label,StringVar,Menu,Toplevel
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-
-from aviary.subsystems.aerodynamics.gasp_based import data
 
 # TODO: Add ability to change units, phase info specifies units and aviary can handle these unit changes.
 #       Makes sense to allow unit changes in GUI based on user preference.
@@ -16,63 +15,74 @@ class myapp(Tk):
     def __init__(self):
         super().__init__()
         self.title('Mission Design Utility')
-        self.protocol("WM_DELETE_WINDOW",self.close)
+        self.protocol("WM_DELETE_WINDOW",self.close_window)
         self.focus_set() # focus the window
 
-        # if we want to reuse the user's resized/moved window
-        window_geometry = "900x500+10+10" # widthxheight+x+y, x,y are location
+        # ---------------------------------------------------------------
+        # window geometry definition, allows reuse of user's modified size/location
+        # tkinter size string format:  widthxheight+x+y ;  x,y are location
+        default_win_size = (900,500) # CHANGE THIS TO AFFECT DEFAULT SIZE
+        window_geometry = f"{default_win_size[0]}x{default_win_size[1]}+10+10" 
         if os.path.exists("windowlocation.txt"):
             with open("windowlocation.txt","r") as fp:
                 window_geometry = fp.read().split("\n")[0]
         self.geometry(window_geometry)
-        self.minsize(900,500) # force a minimum size for layout to look correct
+        self.minsize(*default_win_size) # force a minimum size for layout to look correct
 
-        self.timelist = [0]
-        self.varlist = [[0],[0.2]]
-
-        self.tablecv = Frame(self)
-        self.tablecv.pack(side="right",fill="y")
-        self.tableround = [0,0,2]
-        self.tableelems = []
-        self.tablestrvars = [[],[],[]]
-
-        scroll_frame = Frame(self)
-        scroll_frame.pack(side='right',fill='y')
-        scroll = Scrollbar(scroll_frame)
+        # ---------------------------------------------------------------
+        # create window layout with frames for containing graph, table, and scrollbar
+        frame_scroll = Frame(self)
+        frame_scroll.pack(side='right',fill='y')
+        scroll = Scrollbar(frame_scroll)
         scroll.pack(side='right',fill='y')
-
-        self.mousedrag = False
-        self.mousepress = False
+        
+        self.frame_table = Canvas(self,yscrollcommand=scroll.set)
+        self.frame_table.pack(side="right",fill="y")
+        scroll.config(command=self.frame_table.yview)
+        
 
         self.frame_plotReadouts = Frame(self)
         self.frame_plotReadouts.pack(side='bottom')
         self.frame_plots = Frame(self)
         self.frame_plots.pack(side='top',expand=True,fill='both')
-        self.crosshair = False
-        self.ptcontainerx = 0.03
-        self.ptcontainery = 0.05
-        self.plotlines = [None,None]
 
-        self.data_info = {"xlabel":"Time","xlim":(0,400),"xunit":"min",
-                      "ylabels":["Altitude","Mach Number"],"ylims":[(0,50e3),(0,1.0)],"yunits":["ft","unitless"],
+        # ---------------------------------------------------------------
+        # Main definition of data which can be plotted/tabulated. Assumes a singular
+        # independent variable that is applied to each dependent variable. All 
+        # y-attributes are in list format to support multiple dependent variables.
+        self.data_info = {"xlabel":"Time","xlim":(0,400),"xunit":"min","xround":0,
+                      "ylabels":["Altitude","Mach Number"],"ylims":[(0,50e3),(0,1.0)],
+                      "yunits":["ft","unitless"],"yrounds":[0,2],
                       "plot_titles":["Altitude Plot","Mach Plot"]}
+        
+        # ---------------------------------------------------------------
+        # sanity checking of data_info dict and creates convenient labels with units included
+        # thess labels with units are used for plots, table headers, and axes limit entries
         self.check_data_info()
-        self.labels = [self.data_info["xlabel"],*self.data_info["ylabels"]]
-        self.units = [self.data_info["xunit"],*self.data_info["yunits"]]
-        self.labels_w_units = [label+f" ({unit})" for (label,unit) in zip(self.labels,self.units)]
+        self.data_info["xlabel_unit"] = self.data_info["xlabel"] + f" ({self.data_info['xunit']})"
+        self.data_info["ylabels_units"] = [ self.data_info["ylabels"][i] + 
+                            f" ({self.data_info['yunits'][i]})" for i in range(self.num_dep_vars)]
+        self.x_list = [0]
+        self.ys_list = [[0] for i in range(self.num_dep_vars)]
+        self.plot_lines = []
 
-        self.createPlots()
-        self.createTable()
-        self.createMenu()
+        # internal variables to remember mouse state
+        self.mouse_drag,self.mouse_press = False, False
+        self.ptcontainer = 0.04 # percent of plot size, boundary around point where it can be dragged
 
-    def close(self):
-        print("Closing")
+        self.create_plots()
+        self.create_table()
+        self.create_menu()
+
+    def close_window(self):
+        """Closes main window and saves last geometry configuration into a txt """
         last_geometry = self.winfo_geometry()
         self.destroy()
         with open("windowlocation.txt","w") as fp:
             fp.write(last_geometry)
 
     def check_data_info(self):
+        """Verifies data_info dict has consistent number of dependent variables """
         check_keys = ["ylabels","ylims","yunits"]
         self.num_dep_vars = len(self.data_info["plot_titles"])
         for key in check_keys:
@@ -80,30 +90,45 @@ class myapp(Tk):
                 raise Exception("Check length of lists in data_info, mismatch detected.\n"+
                                 f"Expected {self.num_dep_vars} dependent variables.")
 
+    def update_list(self,row:int,col:int,value=None):
+        """Updates internal data lists based on row,col values. col corresponds 
+            to dependent/independent variable. row corresponds to point number."""
+        try:
+            value = float(value)
+        except (ValueError,TypeError):
+            return
+        datalists = [self.x_list,*self.ys_list]
+        if row == len(self.x_list):
+            datalists[col].append(value)
+        else:
+            datalists[col][row] = value
 
+# ----------------------
 # Plot related functions
-
-    def createPlots(self):
+    def create_plots(self):
+        """Creates subplots according to data_info dict. Sets labels and limits. 
+            Ties mouse events to appropriate internal functions."""
         fig = Figure()
         self.plots = []
         self.data_info["ylim_strvars"] = []
         for i in range(self.num_dep_vars):
             self.plots.append(fig.add_subplot(self.num_dep_vars,1,i+1))
-            self.plots[i].set_xlabel(self.labels_w_units[0])
-            self.plots[i].set_ylabel(self.labels_w_units[i+1])
+            self.plots[i].set_xlabel(self.data_info["xlabel_unit"])
+            self.plots[i].set_ylabel(self.data_info["ylabels_units"][i])
             self.plots[i].set_xlim(self.data_info["xlim"])
             self.plots[i].set_ylim(self.data_info["ylims"][i])
             self.plots[i].set_title(self.data_info["plot_titles"][i])
             self.plots[i].grid(True)
             self.data_info["ylim_strvars"].append(
-                StringVar(value = self.data_info["ylims"][i][1]) )
+                StringVar(value = self.display_rounding(self.data_info["ylims"][i][1],i+1)) )
         
-        self.data_info["xlim_strvar"] = StringVar(value = self.data_info["xlim"][1])
+        self.data_info["xlim_strvar"] = StringVar(
+            value = self.display_rounding(self.data_info["xlim"][1],0))
 
         fig.tight_layout(h_pad=2.0)
-        fig.canvas.mpl_connect('button_press_event',self.onpress)
-        fig.canvas.mpl_connect('motion_notify_event',self.mousemove)
-        fig.canvas.mpl_connect('button_release_event',self.onrelease)
+        fig.canvas.mpl_connect('button_press_event',self.on_mouse_press)
+        fig.canvas.mpl_connect('motion_notify_event',self.on_mouse_move)
+        fig.canvas.mpl_connect('button_release_event',self.on_mouse_release)
         self.figure_canvas = FigureCanvasTkAgg(fig,master=self.frame_plots)
         self.figure_canvas.draw()
 
@@ -114,209 +139,251 @@ class myapp(Tk):
         self.figure_canvas.get_tk_widget().pack(expand=True,fill='both')
 
     def change_axes_popup(self):
+        """Creates a popup window that allows user to edit axes limits. This function is triggered
+            by the menu buttons"""
+        # compute middle of window location to place popup into
         win_size,win_left,win_top = self.winfo_geometry().split("+")
         win_wid,win_hei = win_size.split("x")
         win_left,win_top,win_wid,win_hei = int(win_left),int(win_top),int(win_wid),int(win_hei)
-        pop_wid,pop_hei = 200,100
+        pop_wid,pop_hei = 200,100 # hardcoded popup size
         pop_left,pop_top = int(win_left + win_wid/2 - pop_wid/2), int(win_top + win_hei/2 - pop_hei/2)
 
-        pop = Toplevel(self)
-        pop.resizable(False,False)
-        pop.geometry(f"{pop_wid}x{pop_hei}+{pop_left}+{pop_top}")
-        pop.title("Axes Limits")
-        pop.focus_set()
-        def closePopup(self):
+        popup = Toplevel(self)
+        popup.resizable(False,False)
+        popup.geometry(f"{pop_wid}x{pop_hei}+{pop_left}+{pop_top}")
+        popup.title("Axes Limits")
+        popup.focus_set()
+
+        def close_popup(self): # internal function for closing this popup and resetting focus
             self.focus_set()
-            pop.destroy()
-        pop.protocol("WM_DELETE_WINDOW",func=lambda:closePopup(self))
+            popup.destroy()
+        popup.protocol("WM_DELETE_WINDOW",func=lambda:close_popup(self))
 
-        limstrs = [self.data_info["xlim_strvar"],*self.data_info["ylim_strvars"]]
+        labels_w_units = [self.data_info["xlabel_unit"],*self.data_info["ylabels_units"]]
+        lim_strs = [self.data_info["xlim_strvar"],*self.data_info["ylim_strvars"]]
 
-        for row,(label,limstr) in enumerate(zip(self.labels_w_units,limstrs)):
-            limlabel = Label(pop,text=label,justify='right')
-            limlabel.grid(row=row,column=0) 
-            limentry = Entry(pop,textvariable=limstr,width = max(6,len(limstr.get())))
-            limentry.grid(row=row,column=1)
+        for row,(label,lim_str) in enumerate(zip(labels_w_units,lim_strs)):
+            lim_label = Label(popup,text=label,justify='right')
+            lim_label.grid(row=row,column=0) 
+            lim_entry = Entry(popup,textvariable=lim_str,width = max(6,len(lim_str.get())))
+            lim_entry.grid(row=row,column=1)
 
-        change_button = Button(master=pop,command = lambda:[self.update_axes_lims(),closePopup(self)],
+        change_button = Button(master=popup,command = lambda:[self.update_axes_lims(),close_popup(self)],
                                text = "Change")
         change_button.grid()
 
     def update_axes_lims(self):
+        """Goes through each subplot and sets x and y limits based on the StringVar values"""
         for (plot,limstr) in zip(self.plots,self.data_info["ylim_strvars"]):
             plot.set_xlim(0,float(self.data_info["xlim_strvar"].get()))
             plot.set_ylim(0,float(limstr.get()))
         self.figure_canvas.draw()
 
-    def redrawPlot(self):
-        self.claplot()
+    def redraw_plot(self):
+        """Redraws plot, using the new values inside data lists"""
+        self.clear_plot()
         colors = ['bo-','mo-']
         for i,plot in enumerate(self.plots):
-            self.plotlines[i] = plot.plot(self.timelist,self.varlist[i],colors[i],markersize=5)
+            self.plot_lines.append(plot.plot(self.x_list,self.ys_list[i],colors[i],markersize=5))
         self.figure_canvas.draw()
 
-    # can be used to clear plots when deleting points
-    def claplot(self):
+    def clear_plot(self):
+        """Clears all lines from plots except for crosshairs"""
+        self.plot_lines = []
         for plot in self.plots:
             for line in plot.lines:
-                if line == self.crossX or line ==self.crossY: continue
+                if line == self.crossX or line == self.crossY: continue
                 line.remove()
 
-    def onrelease(self,event):
-        if self.mousepress and not self.mousedrag: # simple click event
-            self.mouseclick(event)
-        else: pass # drag event
+# ----------------------
+# Mouse related functions
+    def on_mouse_press(self,event): 
+        """Handles mouse press event, sets internal mouse state"""
+        self.mouse_press = True
 
-        self.mousepress,self.mousedrag = False, False
-    def onpress(self,event): 
-        self.mousepress = True
+    def on_mouse_release(self,event):
+        """Handles release of mouse button. Calls click function if mouse has not been dragged."""
+        if self.mouse_press and not self.mouse_drag: # simple click event
+            self.on_mouse_click(event)
+        # currently no functions operate at the end of drag
+        # else: pass # drag event
+        self.mouse_press,self.mouse_drag = False, False
 
-    def mouseclick(self,event):
+    def on_mouse_click(self,event):
+        """Called when mouse click is determined, adds new point if it is valid"""
+        # this list creates default values for subplots not clicked on, half of ylim
+        default_y_vals = [float(self.data_info["ylim_strvars"][i].get())/2 for i in range(self.num_dep_vars)]
+        valid_click = False
+        # if mouse click points are not None
+        if event.xdata and event.ydata: 
+            # go through each subplot first to check if click is inside a subplot
+            for plot_idx,plot in enumerate(self.plots):
+                # checks if mouse is inside subplot and it is the first point or next in time
+                if event.inaxes == plot and (len(self.x_list) <1 or event.xdata > max(self.x_list)):        
+                    valid_click = True
+                    break
+            # once we know a subplot was clicked inside at a valid location    
+            if valid_click:
+                self.update_list(len(self.x_list),0,event.xdata)
+                for y_idx,default_val in enumerate(default_y_vals):
+                    self.update_list(len(self.x_list),y_idx+1,
+                        event.ydata if plot_idx == y_idx else default_val)
+                valid_click = False
+            # update plots and tables after having changed the lists
+            self.redraw_plot()
+            self.update_table()
+
+    def on_mouse_move(self,event):
+        """Handles functionality related to mouse movement. Creates crosshair if mouse is inside
+            a subplot and updates cursor if near a point that can be dragged. Also handles moving
+            point on graph if it is being dragged."""
         if event.xdata and event.ydata:
-            for j,(plot,deflt) in enumerate(zip(self.plots,[0.7,30000])):
-                if event.inaxes == plot and (len(self.timelist) <1 or event.xdata > self.timelist[-1]):
-                    newpt = (event.xdata,event.ydata,deflt) if j==0 else (event.xdata,deflt,event.ydata)
-                    for i,item in enumerate(newpt):
-                        self.updateList(len(self.timelist),i,item)
-                    self.redrawPlot()
-                    self.appendTable()
-
-    def mousemove(self,event):
-        if event.xdata and event.ydata:
-            for p,plot in enumerate(self.plots):
+            for plot_idx,plot in enumerate(self.plots):
                 if event.inaxes == plot:
-                    near = False
+                    # create crosshair at current point and remove old crosshair
                     if self.crosshair:
                         self.crossX.remove()
                         self.crossY.remove()
-                    for i,prevpt in enumerate(zip(self.timelist,self.varlist[p])):
-                        dist = self.getDist((event.xdata,event.ydata),prevpt,p)
-                        if dist < self.ptcontainerx:
-                            self.figure_canvas.set_cursor(4)
-                            near = True
-                            self.neari = i
-                    if not near: self.figure_canvas.set_cursor(1)
                     self.crossX = plot.axhline(y=event.ydata,color='red')
                     self.crossY = plot.axvline(x=event.xdata,color='red')
                     self.figure_canvas.draw()
                     self.crosshair = True
-                    xvalue = format(event.xdata,"."+str(self.tableround[0])+"f")
-                    yvalue = format(event.ydata,"."+str(self.tableround[p+1])+"f")
+
+                    # update mouse coordinates on screen, rounding is handled based on 
+                    # rounding defined in data_info
+                    xvalue = self.display_rounding(event.xdata,0)
+                    yvalue = self.display_rounding(event.ydata,plot_idx+1)
+                    #xvalue = format(event.xdata,"."+str(self.data_info["xround"])+"f")
+                    #yvalue = format(event.ydata,"."+str(self.data_info["yrounds"][plot_idx])+"f")
                     self.mouse_coords_str.set(
-                        f"{self.labels[0]}: {xvalue} {self.units[0]} | "+
-                        f"{self.labels[p+1]}: {yvalue} {self.units[p+1]}")
+                        f"{self.data_info['xlabel']}: {xvalue} {self.data_info['xunit']} | "+
+                        f"{self.data_info['ylabels'][plot_idx]}: {yvalue} {self.data_info['yunits'][plot_idx]}")
 
-                    if self.mousepress and (near or self.mousedrag): 
-                        self.mousedrag = True
-                        self.updateList(self.neari,0,event.xdata)
-                        self.updateList(self.neari,p+1,event.ydata)
-                        self.redrawPlot()
-                        self.updatestrvars()
+                    # check if mouse is near an existing point
+                    # TODO: only update point closest to mouse
+                    near = False
+                    for pt_idx,prevpt in enumerate(zip(self.x_list,self.ys_list[plot_idx])):
+                        dist = self.get_distance((event.xdata,event.ydata),prevpt,plot_idx)
+                        if dist < self.ptcontainer:
+                            self.figure_canvas.set_cursor(4)
+                            near = True
+                            self.near_idx = pt_idx
+                    if not near: self.figure_canvas.set_cursor(1)
 
-    def getDist(self,pt1,pt2,plot_idx):
+                    # move nearby point (or if previously dragging a point)
+                    if self.mouse_press and (near or self.mouse_drag): 
+                        self.mouse_drag = True
+                        self.update_list(self.near_idx,0,event.xdata)
+                        self.update_list(self.near_idx,plot_idx+1,event.ydata)
+            
+            # redraw plot after looping through subplots
+            self.redraw_plot()
+            self.update_str_vars()
+
+    def get_distance(self,pt1:tuple,pt2:tuple,plot_idx:int):
+        """Returns a normalized distance value between 2 points. Normalization is based on the subplot's
+        x and y limits, subplot specified as plot_idx"""
         lims = (self.plots[plot_idx].get_xlim()[1],self.plots[plot_idx].get_ylim()[1])
         return sqrt(sum([((pt1[i] - pt2[i])/lims[i])**2 for i in range(2)]))
 
+# ----------------------
 # Table related functions
-
-    def updateList(self,row,col,txt=None,delete=False):
-        try:
-            txt = float(txt)
-        except (ValueError,TypeError):
-            return
-        datalists = [self.timelist,*self.varlist]
-        if row == len(self.timelist):
-            datalists[col].append(txt)
-        elif txt:
-            datalists[col][row] = txt
-        elif delete:
-            if col==0: self.timelist.pop(row)
-            else: self.varlist[col].pop(row)
-
-    def deletePoint(self,row):
-        self.timelist.pop(row)
-        self.varlist[0].pop(row)
-        self.varlist[1].pop(row)
-        self.redrawPlot()
-        self.redrawTable()
-
-
-    def appendTable(self):
-        rownum = len(self.timelist)
-        ptlabel = Label(self.tablecv,text = rownum)
-        ptlabel.grid(row = rownum,column = 0)
-        delsym = Button(self.tablecv,text="X")
-        delsym.bind("<Button-1>",lambda e, i=rownum-1:self.deletePoint(i))
-        delsym.grid(row=rownum,column=4)
-        self.tableelems.append(delsym)
-        self.tableelems.append(ptlabel)
-        for i,newval in enumerate([self.timelist[-1],self.varlist[0][-1],self.varlist[1][-1]]):
-            newval = format(newval,"."+str(self.tableround[i])+"f")
-            etxt = StringVar(value=newval)
-            self.tablestrvars[i].append(etxt)
-            entry = Entry(self.tablecv,width=self.colwids[i],textvariable=etxt)
-            entry.grid(row=rownum,column=i+1)
-            entry.bind("<KeyRelease>",lambda e,row=rownum-1,col=i,etxt=etxt: 
-                        [self.updateList(row,col,etxt.get()),self.redrawPlot()] )
-            self.tableelems.append(entry)
-        
-    # much better for updating existing points
-    def updatestrvars(self):
-        for i,vallist in enumerate([self.timelist,*self.varlist]):
+    def update_str_vars(self):
+        """Updates StringVar values for the table. Used when points are dragged on plot"""
+        for i,vallist in enumerate([self.x_list,*self.ys_list]):
             for j,val in enumerate(vallist):
-                val = round(val,self.tableround[i]) if self.tableround[i] != 0 else int(val)
-                if j >= len(self.tablestrvars[0]):
-                    self.tablestrvars[i].append(val)
-                else:
-                    self.tablestrvars[i][j].set(val)
+                val = self.display_rounding(val,i)
+                self.table_strvars[i][j].set(val)
 
+    def delete_point(self,row:int):
+        """When X button next to tabular point is pressed, lists are popped and plot and tables
+        are updated to show the removed point."""
+        self.x_list.pop(row)
+        for i in range(self.num_dep_vars):
+            self.ys_list[i].pop(row)
+        self.redraw_plot()
+        self.update_table(overwrite=True)
 
-    # works but delete buttons spasms while dragging points
-    def redrawTable(self):
-        if len(self.tableelems) > 0:
-            for item in self.tableelems:
+    def update_table(self,overwrite = False):
+        """This function handles both adding a new entry to table and overwriting the whole table.
+        Overwriting causes all table widgets to be destroyed and a new set of widgets to be created.
+        This also resets the StringVars."""
+        row = len(self.x_list)-1 # last row (assumes data lists have been updated with new point)
+        if overwrite and len(self.table_widgets) > 0:
+            for item in self.table_widgets:
                 item.destroy()
-            self.tableelems = []
-            self.tablestrvars = [[],[],[]]
-        for row,zipobj in enumerate(zip(self.timelist,*self.varlist)):
-            row +=1
-            ptlabel = Label(self.tablecv,text = row)
-            ptlabel.grid(row = row,column = 0)
-            delsym = Button(self.tablecv,text="X")
-            delsym.bind("<Button-1>",lambda e, i=row-1:self.deletePoint(i))
-            delsym.grid(row=row,column=4)
-            self.tableelems.append(delsym)
-            self.tableelems.append(ptlabel)
-            for i,val in enumerate(zipobj):
-                val = format(val,"."+str(self.tableround[i])+"f")
-                etxt = StringVar(value=val)
-                self.tablestrvars[i].append(etxt)
-                entry = Entry(self.tablecv,width=self.colwids[i],textvariable=etxt)
-                entry.grid(row=row,column=i+1)
-                entry.bind("<KeyRelease>",lambda e,row=row-1,col=i,etxt=etxt: 
-                        [self.updateList(row,col,etxt.get()),self.redrawPlot()] )
-                self.tableelems.append(entry)
+            self.table_widgets = []
+            self.table_strvars = [[] for i in range(self.num_dep_vars+1)]
+            row = 0 # set row to 0 if overwriting entire table
 
-    def createTable(self):
-        self.colwids = []
-        for col,label in enumerate(self.labels_w_units):
-            header = Label(self.tablecv,text=label)
+        while row < len(self.x_list):
+            # numerical label for each point
+            rownum_label = Label(self.frame_table,text = row+1)
+            rownum_label.grid(row = row+1,column = 0)
+            self.table_widgets.append(rownum_label)
+
+            # entries and stringvars for each x,y value
+            row_yvals = [self.ys_list[i][row] for i in range(self.num_dep_vars)]
+            for col,val in enumerate([self.x_list[row],*row_yvals]):
+                val = self.display_rounding(val,col)
+                entry_text = StringVar(value=val)
+                self.table_strvars[col].append(entry_text)
+
+                entry = Entry(self.frame_table,width=self.table_column_widths[col],
+                              textvariable=entry_text)
+                entry.grid(row=row+1,column=col+1)
+                # binds key release to update list function
+                entry.bind("<KeyRelease>",lambda e,row=row,col=col,entry_text=entry_text: 
+                        [self.update_list(row,col,entry_text.get()),self.redraw_plot()] )
+                self.table_widgets.append(entry)
+
+            # delete button for each point
+            delete_button = Button(self.frame_table,text="X")
+            delete_button.bind("<Button-1>",lambda e, row=row:self.delete_point(row))
+            delete_button.grid(row=row+1,column=col+2)
+            self.table_widgets.append(delete_button)
+        
+            row += 1        
+
+    def create_table(self):
+        """Creates headers for table and sets column widths based on header lengths."""
+        self.table_column_widths = []
+        self.table_strvars = [] # list used to hold StringVars 
+        self.table_widgets = [] # list used to hold graphical table elements, can be used to modify them
+        labels_w_units = [self.data_info["xlabel_unit"],*self.data_info["ylabels_units"]]
+        header = Label(self.frame_table,text="Pt.")
+        header.grid(row = 0,column = 0)
+        for col,label in enumerate(labels_w_units):
+            header = Label(self.frame_table,text=label)
             header.grid(row = 0,column = col+1)
-            self.colwids.append(len(label))
+            self.table_column_widths.append(len(label))
+            self.table_strvars.append([])
 
-        self.appendTable()
+        self.update_table()
 
+    def display_rounding(self,value,col:int):
+        """Returns a rounded value based on which variable the value belongs to.
+        Uses rounding amount specified in data_info"""
+        rounding = [self.data_info["xround"],*self.data_info["yrounds"]]
+        return format(value,"."+str(rounding[col])+"f")
 
+# ----------------------
 # Menu related functions
-
-    def createMenu(self):
-        structure = {"File":["New File",None,"Open",None,"Save",None,None,None,"Exit",None],
-                    "Edit":["Axes Limits",self.change_axes_popup,"Copy",None,"Paste",None,"Select All",None,None,None],
-                    "Help":["Demo",None,"About",None]}
-        menubar = Menu(self)
+    def create_menu(self):
+        structure = {"File":["Open",None,
+                             "Save",None,
+                             "Save as",None,
+                             None,None,
+                             "Exit",self.close_window],
+                    "Edit":["Axes Limits",self.change_axes_popup,
+                            "Units",None,
+                            "Paste",None,],
+                    "Help":["Instructions",None,
+                            "About",None]}
+        menu_bar = Menu(self)
         for key,value in structure.items():
-            tab = Menu(menubar,tearoff=False)
-            menubar.add_cascade(label=key,menu = tab)
+            tab = Menu(menu_bar,tearoff=False)
+            menu_bar.add_cascade(label=key,menu = tab)
             i = 0
             while i < len(value):
                 if not value[i]:
@@ -324,9 +391,10 @@ class myapp(Tk):
                 else:
                     tab.add_command(label=value[i],command = value[i+1])
                 i += 2
-        self.config(menu=menubar)
+        self.config(menu=menu_bar)
     
-
+    def save(self):
+        pass
 if __name__ == "__main__":
     app = myapp()
     app.mainloop()
