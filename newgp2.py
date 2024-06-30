@@ -1,5 +1,6 @@
 import os
 from math import sqrt
+from aviary.interface.graphical_input import create_phase_info
 from tkinter import Tk,Canvas,Frame,Scrollbar,Button, Entry, Label,StringVar,Menu,Toplevel
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -365,13 +366,22 @@ class myapp(Tk):
 # ----------------------
 # Menu related functions
     def create_menu(self):
-        structure = {"File":["New File",None,"Open",None,"Save",None,None,None,"Exit",None],
-                    "Edit":["Axes Limits",self.change_axes_popup,"Copy",None,"Paste",None,"Select All",None,None,None],
-                    "Help":["Demo",None,"About",None]}
-        menubar = Menu(self)
+        structure = {"File":["Open",None,
+                             "Save",None,
+                             "Save as",None,
+                             None,None,
+                             "Exit",self.close_window],
+                    "Edit":["Axes Limits",self.change_axes_popup,
+                            "Units",None,
+                            "Paste",None,
+                            "Select All",None,
+                            None,None],
+                    "Help":["Demo",None,
+                            "About",None]}
+        menu_bar = Menu(self)
         for key,value in structure.items():
-            tab = Menu(menubar,tearoff=False)
-            menubar.add_cascade(label=key,menu = tab)
+            tab = Menu(menu_bar,tearoff=False)
+            menu_bar.add_cascade(label=key,menu = tab)
             i = 0
             while i < len(value):
                 if not value[i]:
@@ -379,7 +389,7 @@ class myapp(Tk):
                 else:
                     tab.add_command(label=value[i],command = value[i+1])
                 i += 2
-        self.config(menu=menubar)
+        self.config(menu=menu_bar)
     
 if __name__ == "__main__":
     app = myapp()
