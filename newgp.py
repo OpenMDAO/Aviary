@@ -1,14 +1,15 @@
 import os
 from math import sqrt
+
 from aviary.interface.graphical_input import create_phase_info
-from tkinter import Tk,Canvas,Frame,Scrollbar,Button, Entry, Label,StringVar,Menu,Toplevel,Checkbutton
+from tkinter import Tk,Canvas,Frame,Scrollbar,Button, Entry, Label,StringVar,BooleanVar,Menu,Toplevel,Checkbutton, filedialog
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.backend_bases import MouseButton
 
 # TODO: Add ability to change units, phase info specifies units and aviary can handle these unit changes.
 #       Makes sense to allow unit changes in GUI based on user preference.
 #       Possible unit changes: Alt -> ft, m, mi, km, nmi; Time -> min, s, hr; Mach -> none
-# TODO: Add button to add new rows to table for anyone only using table
 
 class VerticalScrolledFrame(Frame):
     """A pure Tkinter scrollable frame that actually works!
@@ -58,7 +59,7 @@ class VerticalScrolledFrame(Frame):
                 canvas.itemconfigure(interior_id, width=canvas.winfo_width())
         canvas.bind('<Configure>', _configure_canvas)
 
-class myapp(Tk):
+class AviaryMissionEditor(Tk):
     def __init__(self):
         super().__init__()
         self.title('Mission Design Utility')
@@ -83,7 +84,7 @@ class myapp(Tk):
         self.frame_tableheaders = self.frame_table.freezeframe
 
         self.frame_plotReadouts = Frame(self)
-        self.frame_plotReadouts.pack(side='bottom')
+        self.frame_plotReadouts.pack(side='bottom',fill='x')
         self.frame_plots = Frame(self)
         self.frame_plots.pack(side='top',expand=True,fill='both')
 
@@ -105,22 +106,17 @@ class myapp(Tk):
                             f" ({self.data_info['yunits'][i]})" for i in range(self.num_dep_vars)]
         self.x_list = [0]
         self.ys_list = [[0] for i in range(self.num_dep_vars)]
+        self.bool_list = [[] for i in range(self.num_dep_vars)]
         self.plot_lines = []
 
         # internal variables to remember mouse state
         self.mouse_drag,self.mouse_press = False, False
         self.ptcontainer = 0.04 # percent of plot size, boundary around point where it can be dragged
+        self.show_optimize = BooleanVar(self) # controls display of optimize phase checkboxes
 
         self.create_plots()
         self.create_table()
         self.create_menu()
-
-    def close_window(self):
-        """Closes main window and saves last geometry configuration into a txt """
-        last_geometry = self.winfo_geometry()
-        self.destroy()
-        with open("windowlocation.txt","w") as fp:
-            fp.write(last_geometry)
 
     def check_data_info(self):
         """Verifies data_info dict has consistent number of dependent variables """
@@ -141,6 +137,7 @@ class myapp(Tk):
         datalists = [self.x_list,*self.ys_list]
         if row == len(self.x_list):
             datalists[col].append(value)
+            if row >0: self.bool_list[col-1].append(False)
         else:
             datalists[col][row] = value
 
@@ -175,7 +172,7 @@ class myapp(Tk):
 
         self.mouse_coords_str = StringVar(value = "Mouse Coordinates")
         self.mouse_coords = Label(self.frame_plotReadouts,textvariable=self.mouse_coords_str)
-        self.mouse_coords.grid(row=0,column=0)
+        self.mouse_coords.pack()
         self.crosshair = False
         self.figure_canvas.get_tk_widget().pack(expand=True,fill='both')
 
@@ -256,7 +253,7 @@ class myapp(Tk):
         default_y_vals = [float(self.data_info["ylim_strvars"][i].get())/2 for i in range(self.num_dep_vars)]
         valid_click = False
         # if mouse click points are not None
-        if event.xdata and event.ydata: 
+        if event.xdata and event.ydata and event.button == MouseButton.LEFT: 
             # go through each subplot first to check if click is inside a subplot
             for plot_idx,plot in enumerate(self.plots):
                 # checks if mouse is inside subplot and it is the first point or next in time
@@ -294,8 +291,6 @@ class myapp(Tk):
                     # rounding defined in data_info
                     xvalue = self.display_rounding(event.xdata,0)
                     yvalue = self.display_rounding(event.ydata,plot_idx+1)
-                    #xvalue = format(event.xdata,"."+str(self.data_info["xround"])+"f")
-                    #yvalue = format(event.ydata,"."+str(self.data_info["yrounds"][plot_idx])+"f")
                     self.mouse_coords_str.set(
                         f"{self.data_info['xlabel']}: {xvalue} {self.data_info['xunit']} | "+
                         f"{self.data_info['ylabels'][plot_idx]}: {yvalue} {self.data_info['yunits'][plot_idx]}")
@@ -342,6 +337,8 @@ class myapp(Tk):
         self.x_list.pop(row)
         for i in range(self.num_dep_vars):
             self.ys_list[i].pop(row)
+            if row > 0:
+                self.bool_list[i].pop(row-1)
         self.redraw_plot()
         self.update_table(overwrite=True)
 
@@ -355,6 +352,7 @@ class myapp(Tk):
                 item.destroy()
             self.table_widgets = []
             self.table_strvars = [[] for i in range(self.num_dep_vars+1)]
+            self.table_boolvars = [[] for i in range(self.num_dep_vars)]
             row = 0 # set row to 0 if overwriting entire table
 
         while row < len(self.x_list):
@@ -362,8 +360,13 @@ class myapp(Tk):
             rowtxt = str(row+1)
             if row+1 <10: rowtxt = "  "+rowtxt
             rownum_label = Label(self.frame_table.interior,text = rowtxt)
-            rownum_label.grid(row = row+1,column = 0)
+            rownum_label.grid(row = row*2+2,column = 0)
             self.table_widgets.append(rownum_label)
+
+            if row > 0 and self.show_optimize.get(): # have at least 2 points
+                optimize_label = Label(self.frame_table.interior,text="Optimize:")
+                optimize_label.grid(row=row*2+1,column = 1)
+                self.table_widgets.append(optimize_label)
 
             # entries and stringvars for each x,y value
             row_yvals = [self.ys_list[i][row] for i in range(self.num_dep_vars)]
@@ -373,25 +376,51 @@ class myapp(Tk):
                 self.table_strvars[col].append(entry_text)
 
                 entry = Entry(self.frame_table.interior,width=self.table_column_widths[col],
-                              textvariable=entry_text)
-                entry.grid(row=row+1,column=col+1)
+                              textvariable=entry_text,justify='center',relief='raised')
+                entry.grid(row=row*2+2,column=col+1)
                 # binds key release to update list function
                 entry.bind("<KeyRelease>",lambda e,row=row,col=col,entry_text=entry_text: 
                         [self.update_list(row,col,entry_text.get()),self.redraw_plot()] )
                 self.table_widgets.append(entry)
 
+                if col > 0 and row > 0 and self.show_optimize.get(): # have at least 2 points and for dependent var cols only
+                    checkbox_label = Label(self.frame_table.interior,text=self.data_info["ylabels"][col-1])
+                    checkbox_label.grid(row=row*2+1,column=col+1,sticky='w')
+                    self.table_widgets.append(checkbox_label)
+
+                    optimize_variable = BooleanVar()
+                    self.table_boolvars[col-1].append(optimize_variable)
+                    if row <= len(self.bool_list[0]): # if bool list has already been populated (e.g. opening an existing phase info)
+                        optimize_variable.set(value=self.bool_list[col-1][row-1])
+                    optimize_checkbox = Checkbutton(self.frame_table.interior,variable=optimize_variable)
+                    optimize_checkbox.grid(row=row*2+1,column=col+1,sticky='e')
+                    self.table_widgets.append(optimize_checkbox)
+
             # delete button for each point
             delete_button = Button(self.frame_table.interior,text="X",borderwidth=2)
             delete_button.bind("<Button-1>",lambda e, row=row:self.delete_point(row))
-            delete_button.grid(row=row+1,column=col+2)
+            delete_button.grid(row=row*2+2,column=col+2)       
             self.table_widgets.append(delete_button)
         
             row += 1        
+        # reposition add new point button based on updated table
+        self.table_add_button.grid(row=row*2+3,column=0,columnspan=col+2)
+
+    def add_new_row(self,_):
+        """Updates data lists with a generic new point and runs redraw plot and update table.
+            New point is added at x = halfway between last point and x limit, y = half of y limit"""
+        default_y_vals = [float(self.data_info["ylim_strvars"][i].get())/2 for i in range(self.num_dep_vars)]
+        newx =  (float(self.data_info["xlim_strvar"].get()) - self.x_list[-1])/2 + self.x_list[-1]
+        for col,item in enumerate([newx,*default_y_vals]):
+            self.update_list(row=len(self.x_list),col=col,value=item)
+        self.redraw_plot()
+        self.update_table()
 
     def create_table(self):
         """Creates headers for table and sets column widths based on header lengths."""
         self.table_column_widths = []
         self.table_strvars = [] # list used to hold StringVars 
+        self.table_boolvars = []
         self.table_widgets = [] # list used to hold graphical table elements, can be used to modify them
         labels_w_units = [self.data_info["xlabel_unit"],*self.data_info["ylabels_units"]]
         header = Label(self.frame_tableheaders,text="Pt")
@@ -399,11 +428,15 @@ class myapp(Tk):
         for col,label in enumerate(labels_w_units):
             header_text = StringVar(value=label)
             header = Entry(self.frame_tableheaders,textvariable=header_text,width=len(label),
-                           state='readonly',relief='flat') # using entry maintains same col widths
+                           state='readonly',relief='solid',justify='center') # using entry maintains same col widths
             header.grid(row = 0,column = col+1)
             self.table_column_widths.append(len(label))
             self.table_strvars.append([])
+            if col > 0: self.table_boolvars.append([])
     
+        # button for adding new rows to table
+        self.table_add_button = Button(self.frame_table.interior,text="Add New Point")
+        self.table_add_button.bind("<Button-1>",func=self.add_new_row)
         self.update_table()
 
     def display_rounding(self,value,col:int):
@@ -415,31 +448,96 @@ class myapp(Tk):
 # ----------------------
 # Menu related functions
     def create_menu(self):
-        structure = {"File":["Open",None,
-                             "Save",None,
-                             "Save as",None,
-                             None,None,
-                             "Exit",self.close_window],
-                    "Edit":["Axes Limits",self.change_axes_popup,
-                            "Units",None,
-                            "Paste",None,],
-                    "Help":["Instructions",None,
-                            "About",None]}
+        structure = {"File":[["command","Open",self.open_phase_info],
+                             ["command","Save",self.save],
+                             ["command","Save as",None],
+                             ["separator"],
+                             ["command","Exit",self.close_window]],
+                    "Edit":[["command","Axes Limits",self.change_axes_popup],
+                            ["command","Units",None],
+                            ["command","Rounding",None]],
+                    "View":[["checkbutton","Optimize Phase",self.toggle_optimize_view,self.show_optimize],
+                            ["command","Advanced Options",None]],
+                    "Help":[["command","Instructions",None],
+                            ["command","About",None]]}
+
         menu_bar = Menu(self)
-        for key,value in structure.items():
+        for tab_label,tab_list in structure.items():
             tab = Menu(menu_bar,tearoff=False)
-            menu_bar.add_cascade(label=key,menu = tab)
-            i = 0
-            while i < len(value):
-                if not value[i]:
-                    tab.add_separator()
-                else:
-                    tab.add_command(label=value[i],command = value[i+1])
-                i += 2
+            menu_bar.add_cascade(label=tab_label,menu = tab)
+            for item in tab_list:
+                if item[0] == "separator": tab.add_separator()
+                elif item[0] == "command":
+                    tab.add_command(label=item[1],command=item[2])
+                elif item[0] == "checkbutton":
+                    tab.add_checkbutton(label=item[1],command=item[2],variable=item[3])
+
         self.config(menu=menu_bar)
-    
+
+    def close_window(self):
+        """Closes main window and saves last geometry configuration into a txt """
+        last_geometry = self.winfo_geometry()
+        self.destroy()
+        with open("windowlocation.txt","w") as fp:
+            fp.write(last_geometry)
+
+    def open_phase_info(self):
+        file_dialog = filedialog.Open(self,filetypes = [("Python files","*.py")])
+        filename = file_dialog.show()
+        if filename != "": 
+            phase_info_file = __import__(filename.split("/")[-1].split(".py")[0])
+            phase_info = phase_info_file.phase_info
+        init = False
+        idx = 0
+        ylabs = ["altitude","mach"]
+        for phase_dict in (phase_info.values()):
+            if "initial_guesses" in phase_dict:
+                timevals = phase_dict["initial_guesses"]["time"][0]
+                if not init:
+                    numpts = phase_dict["user_options"]["num_segments"]+1
+                    self.x_list = [0]*numpts
+                    self.ys_list = [[0]*numpts for _ in range(self.num_dep_vars)]
+                    self.bool_list = [[0]*(numpts-1) for _ in range(self.num_dep_vars)]
+                    self.x_list[0] = timevals[0]
+                    for i in range(self.num_dep_vars):
+                        self.ys_list[i][0] = phase_dict["user_options"]["initial_"+ylabs[i]][0]
+                    init = True
+
+                self.x_list[idx+1] = timevals[1] + timevals[0]  
+                for i in range(self.num_dep_vars):
+                    self.ys_list[i][idx+1] = phase_dict["user_options"]["final_"+ylabs[i]][0]
+                    self.bool_list[i][idx] = phase_dict["user_options"]["optimize_"+ylabs[i]]
+                idx +=1
+
+        for boollist in self.bool_list:
+            for boolvar in boollist:
+                if boolvar:
+                    self.show_optimize.set(True)
+                    break
+        self.redraw_plot()
+        self.update_table(overwrite=True)
+
+
+    def toggle_optimize_view(self):
+        """Runs update table with overwrite on to toggle display of optimize checkboxes"""
+        self.update_table(overwrite=True)
+
     def save(self):
-        pass
+        # TODO: checkboxes for solve distance, constrain range, 
+        #       entry for polynomial order
+        # TODO: be able to open a saved phase info
+        # TODO: save phase info as filename with save as command
+        users = {'solve_for_distance':False,'constrain_range':True}
+        if len(self.table_boolvars[0]) != len(self.x_list)-1:
+            for i in range(self.num_dep_vars):
+                self.table_boolvars[i] = [BooleanVar()]*(len(self.x_list)-1)
+        create_phase_info(times = self.x_list, altitudes = self.ys_list[0], mach_values = self.ys_list[1],
+                          polynomial_order = 1, num_segments = len(self.x_list)-1,
+                          optimize_altitude_phase_vars = self.table_boolvars[0],
+                          optimize_mach_phase_vars = self.table_boolvars[1],
+                          user_choices = users)
+        self.close_window()
+
 if __name__ == "__main__":
-    app = myapp()
+    app = AviaryMissionEditor()
     app.mainloop()
