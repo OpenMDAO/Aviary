@@ -1,9 +1,8 @@
 import os
 from math import sqrt
 
-from numpy import var
 from aviary.interface.graphical_input import create_phase_info
-from tkinter import Tk,Canvas,Frame,Scrollbar,Button, Entry, Label,StringVar,BooleanVar,Menu,Toplevel,Checkbutton
+from tkinter import Tk,Canvas,Frame,Scrollbar,Button, Entry, Label,StringVar,BooleanVar,Menu,Toplevel,Checkbutton, filedialog
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backend_bases import MouseButton
@@ -107,11 +106,13 @@ class AviaryMissionEditor(Tk):
                             f" ({self.data_info['yunits'][i]})" for i in range(self.num_dep_vars)]
         self.x_list = [0]
         self.ys_list = [[0] for i in range(self.num_dep_vars)]
+        self.bool_list = [[] for i in range(self.num_dep_vars)]
         self.plot_lines = []
 
         # internal variables to remember mouse state
         self.mouse_drag,self.mouse_press = False, False
         self.ptcontainer = 0.04 # percent of plot size, boundary around point where it can be dragged
+        self.show_optimize = BooleanVar(self) # controls display of optimize phase checkboxes
 
         self.create_plots()
         self.create_table()
@@ -359,7 +360,7 @@ class AviaryMissionEditor(Tk):
             rownum_label.grid(row = row*2+2,column = 0)
             self.table_widgets.append(rownum_label)
 
-            if row > 0: # have at least 2 points
+            if row > 0 and self.show_optimize.get(): # have at least 2 points
                 optimize_label = Label(self.frame_table.interior,text="Optimize:")
                 optimize_label.grid(row=row*2+1,column = 1)
                 self.table_widgets.append(optimize_label)
@@ -379,13 +380,15 @@ class AviaryMissionEditor(Tk):
                         [self.update_list(row,col,entry_text.get()),self.redraw_plot()] )
                 self.table_widgets.append(entry)
 
-                if col > 0 and row > 0: # have at least 2 points and for dependent var cols only
+                if col > 0 and row > 0 and self.show_optimize.get(): # have at least 2 points and for dependent var cols only
                     checkbox_label = Label(self.frame_table.interior,text=self.data_info["ylabels"][col-1])
                     checkbox_label.grid(row=row*2+1,column=col+1,sticky='w')
                     self.table_widgets.append(checkbox_label)
 
                     optimize_variable = BooleanVar()
                     self.table_boolvars[col-1].append(optimize_variable)
+                    if row <= len(self.bool_list[0]):
+                        optimize_variable.set(value=self.bool_list[col-1][row-1])
                     optimize_checkbox = Checkbutton(self.frame_table.interior,variable=optimize_variable)
                     optimize_checkbox.grid(row=row*2+1,column=col+1,sticky='e')
                     self.table_widgets.append(optimize_checkbox)
@@ -442,30 +445,32 @@ class AviaryMissionEditor(Tk):
 # ----------------------
 # Menu related functions
     def create_menu(self):
-        structure = {"File":["Open",None,
-                             "Save",self.save,
-                             "Save as",None,
-                             None,None,
-                             "Exit",self.close_window],
-                    "Edit":["Axes Limits",self.change_axes_popup,
-                            "Units",None,
-                            "Rounding",None,],
-                    "View":["Advanced Options",None],
-                    "Help":["Instructions",None,
-                            "About",None]}
+        structure = {"File":[["command","Open",self.open_phase_info],
+                             ["command","Save",self.save],
+                             ["command","Save as",None],
+                             ["separator"],
+                             ["command","Exit",self.close_window]],
+                    "Edit":[["command","Axes Limits",self.change_axes_popup],
+                            ["command","Units",None],
+                            ["command","Rounding",None]],
+                    "View":[["checkbutton","Optimize Phase",self.toggle_optimize_view,self.show_optimize],
+                            ["command","Advanced Options",None]],
+                    "Help":[["command","Instructions",None],
+                            ["command","About",None]]}
+
         menu_bar = Menu(self)
-        for key,value in structure.items():
+        for tab_label,tab_list in structure.items():
             tab = Menu(menu_bar,tearoff=False)
-            menu_bar.add_cascade(label=key,menu = tab)
-            i = 0
-            while i < len(value):
-                if not value[i]:
-                    tab.add_separator()
-                else:
-                    tab.add_command(label=value[i],command = value[i+1])
-                i += 2
+            menu_bar.add_cascade(label=tab_label,menu = tab)
+            for item in tab_list:
+                if item[0] == "separator": tab.add_separator()
+                elif item[0] == "command":
+                    tab.add_command(label=item[1],command=item[2])
+                elif item[0] == "checkbutton":
+                    tab.add_checkbutton(label=item[1],command=item[2],variable=item[3])
+
         self.config(menu=menu_bar)
-    
+
     def close_window(self):
         """Closes main window and saves last geometry configuration into a txt """
         last_geometry = self.winfo_geometry()
@@ -473,12 +478,58 @@ class AviaryMissionEditor(Tk):
         with open("windowlocation.txt","w") as fp:
             fp.write(last_geometry)
 
+    def open_phase_info(self):
+        file_dialog = filedialog.Open(self,filetypes = [("Python files","*.py")])
+        filename = file_dialog.show()
+        if filename != "": 
+            phase_info_file = __import__(filename.split("/")[-1].split(".py")[0])
+            phase_info = phase_info_file.phase_info
+        init = False
+        idx =0
+        for phase_dict in (phase_info.values()):
+            if "initial_guesses" in phase_dict:
+                timevals = phase_dict["initial_guesses"]["time"][0]
+                if not init:
+                    numpts = phase_dict["user_options"]["num_segments"]+1
+                    self.x_list = [0]*numpts
+                    self.ys_list = [[0]*numpts for _ in range(self.num_dep_vars)]
+                    self.bool_list = [[0]*(numpts-1) for _ in range(self.num_dep_vars)]
+                    self.x_list[0] = timevals[0]
+                    self.ys_list[0][0] = phase_dict["user_options"]["initial_altitude"][0]
+                    self.ys_list[1][0] = phase_dict["user_options"]["initial_mach"][0]
+
+                    init = True
+
+                self.x_list[idx+1] = timevals[1] + timevals[0]    
+                self.ys_list[0][idx+1] = phase_dict["user_options"]["final_altitude"][0]
+                self.ys_list[1][idx+1] = phase_dict["user_options"]["final_mach"][0]
+                self.bool_list[0][idx] = phase_dict["user_options"]["optimize_altitude"]
+                self.bool_list[1][idx] = phase_dict["user_options"]["optimize_mach"]
+                idx +=1
+
+        for boollist in self.bool_list:
+            for boolvar in boollist:
+                if boolvar:
+                    self.show_optimize.set(True)
+                    break
+        self.redraw_plot()
+        self.update_table(overwrite=True)
+
+
+    def toggle_optimize_view(self):
+        """Runs update table with overwrite on to toggle display of optimize checkboxes"""
+        self.update_table(overwrite=True)
+
     def save(self):
         # TODO: checkboxes for solve distance, constrain range, 
         #       entry for polynomial order
         # TODO: be able to open a saved phase info
         # TODO: save phase info as filename with save as command
         users = {'solve_for_distance':False,'constrain_range':True}
+        if len(self.table_boolvars[0]) != len(self.x_list)-1:
+            gg = BooleanVar()
+            self.table_boolvars[0] = [gg]*len(self.x_list)
+            self.table_boolvars[1] = [gg]*len(self.x_list)
         create_phase_info(times = self.x_list, altitudes = self.ys_list[0], mach_values = self.ys_list[1],
                           polynomial_order = 1, num_segments = len(self.x_list)-1,
                           optimize_altitude_phase_vars = self.table_boolvars[0],
