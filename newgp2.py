@@ -60,7 +60,7 @@ class VerticalScrolledFrame(Frame):
                 canvas.itemconfigure(interior_id, width=canvas.winfo_width())
         canvas.bind('<Configure>', _configure_canvas)
 
-class myapp(Tk):
+class AviaryMissionEditor(Tk):
     def __init__(self):
         super().__init__()
         self.title('Mission Design Utility')
@@ -116,13 +116,6 @@ class myapp(Tk):
         self.create_plots()
         self.create_table()
         self.create_menu()
-
-    def close_window(self):
-        """Closes main window and saves last geometry configuration into a txt """
-        last_geometry = self.winfo_geometry()
-        self.destroy()
-        with open("windowlocation.txt","w") as fp:
-            fp.write(last_geometry)
 
     def check_data_info(self):
         """Verifies data_info dict has consistent number of dependent variables """
@@ -408,7 +401,8 @@ class myapp(Tk):
         self.table_add_button.grid(row=row*2+3,column=0,columnspan=col+2)
 
     def add_new_row(self,_):
-        # new point is added at y = half of y axis limit, x = halfway from last point and x limit
+        """Updates data lists with a generic new point and runs redraw plot and update table.
+            New point is added at x = halfway between last point and x limit, y = half of y limit"""
         default_y_vals = [float(self.data_info["ylim_strvars"][i].get())/2 for i in range(self.num_dep_vars)]
         newx =  (float(self.data_info["xlim_strvar"].get()) - self.x_list[-1])/2 + self.x_list[-1]
         for col,item in enumerate([newx,*default_y_vals]):
@@ -472,118 +466,26 @@ class myapp(Tk):
                 i += 2
         self.config(menu=menu_bar)
     
-    def save(self):
-        pass
-if __name__ == "__main__":
-    app = myapp()
-    app.mainloop()
+    def close_window(self):
+        """Closes main window and saves last geometry configuration into a txt """
+        last_geometry = self.winfo_geometry()
+        self.destroy()
+        with open("windowlocation.txt","w") as fp:
+            fp.write(last_geometry)
 
-    # sample phase info for a 4 phase mission (5 pts)
-    phase_info = {
-    "pre_mission": {"include_takeoff": False, "optimize_mass": True},
-    "climb_1": {
-        "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
-        "user_options": {
-            "optimize_mach": False,
-            "optimize_altitude": False,
-            "polynomial_control_order": 1,
-            "use_polynomial_control": True,
-            "num_segments": 4,
-            "order": 3,
-            "solve_for_distance": False,
-            "initial_mach": (0.3, "unitless"),
-            "final_mach": (0.6, "unitless"),
-            "mach_bounds": ((0.27999999999999997, 0.62), "unitless"),
-            "initial_altitude": (0.0, "ft"),
-            "final_altitude": (24000.0, "ft"),
-            "altitude_bounds": ((0.0, 24500.0), "ft"),
-            "throttle_enforcement": "path_constraint",
-            "fix_initial": True,
-            "constrain_final": False,
-            "fix_duration": False,
-            "initial_bounds": ((0.0, 0.0), "min"),
-            "duration_bounds": ((25.0, 75.0), "min"),
-        },
-        "initial_guesses": {"time": ([0, 50], "min")},
-    },
-    "climb_2": {
-        "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
-        "user_options": {
-            "optimize_mach": False,
-            "optimize_altitude": False,
-            "polynomial_control_order": 1,
-            "use_polynomial_control": True,
-            "num_segments": 4,
-            "order": 3,
-            "solve_for_distance": False,
-            "initial_mach": (0.6, "unitless"),
-            "final_mach": (0.7, "unitless"),
-            "mach_bounds": ((0.58, 0.72), "unitless"),
-            "initial_altitude": (24000.0, "ft"),
-            "final_altitude": (28000.0, "ft"),
-            "altitude_bounds": ((23500.0, 28500.0), "ft"),
-            "throttle_enforcement": "boundary_constraint",
-            "fix_initial": False,
-            "constrain_final": False,
-            "fix_duration": False,
-            "initial_bounds": ((25.0, 75.0), "min"),
-            "duration_bounds": ((15.0, 45.0), "min"),
-        },
-        "initial_guesses": {"time": ([50, 30], "min")},
-    },
-    "cruise_1": {
-        "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
-        "user_options": {
-            "optimize_mach": False,
-            "optimize_altitude": False,
-            "polynomial_control_order": 1,
-            "use_polynomial_control": True,
-            "num_segments": 4,
-            "order": 3,
-            "solve_for_distance": False,
-            "initial_mach": (0.7, "unitless"),
-            "final_mach": (0.7, "unitless"),
-            "mach_bounds": ((0.6799999999999999, 0.72), "unitless"),
-            "initial_altitude": (28000.0, "ft"),
-            "final_altitude": (28000.0, "ft"),
-            "altitude_bounds": ((27500.0, 28500.0), "ft"),
-            "throttle_enforcement": "boundary_constraint",
-            "fix_initial": False,
-            "constrain_final": False,
-            "fix_duration": False,
-            "initial_bounds": ((40.0, 120.0), "min"),
-            "duration_bounds": ((121.0, 363.0), "min"),
-        },
-        "initial_guesses": {"time": ([80, 242], "min")},
-    },
-    "descent_1": {
-        "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
-        "user_options": {
-            "optimize_mach": False,
-            "optimize_altitude": False,
-            "polynomial_control_order": 1,
-            "use_polynomial_control": True,
-            "num_segments": 4,
-            "order": 3,
-            "solve_for_distance": False,
-            "initial_mach": (0.7, "unitless"),
-            "final_mach": (0.3, "unitless"),
-            "mach_bounds": ((0.27999999999999997, 0.72), "unitless"),
-            "initial_altitude": (28000.0, "ft"),
-            "final_altitude": (0.0, "ft"),
-            "altitude_bounds": ((0.0, 28500.0), "ft"),
-            "throttle_enforcement": "path_constraint",
-            "fix_initial": False,
-            "constrain_final": True,
-            "fix_duration": False,
-            "initial_bounds": ((161.0, 483.0), "min"),
-            "duration_bounds": ((6.5, 19.5), "min"),
-        },
-        "initial_guesses": {"time": ([322, 13], "min")},
-    },
-    "post_mission": {
-        "include_landing": False,
-        "constrain_range": True,
-        "target_range": (2421, "nmi"),
-    },
-}
+    def save(self):
+        # TODO: checkboxes for solve distance, constrain range, 
+        #       entry for polynomial order
+        # TODO: be able to open a saved phase info
+        # TODO: save phase info as filename with save as command
+        users = {'solve_for_distance':False,'constrain_range':True}
+        create_phase_info(times = self.x_list, altitudes = self.ys_list[0], mach_values = self.ys_list[1],
+                          polynomial_order = 1, num_segments = len(self.x_list)-1,
+                          optimize_altitude_phase_vars = self.table_boolvars[0],
+                          optimize_mach_phase_vars = self.table_boolvars[1],
+                          user_choices = users)
+        self.close_window()
+
+if __name__ == "__main__":
+    app = AviaryMissionEditor()
+    app.mainloop()
