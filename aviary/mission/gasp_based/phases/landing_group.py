@@ -6,14 +6,17 @@ from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.phases.landing_components import (
     GlideConditionComponent, LandingAltitudeComponent,
     LandingGroundRollComponent)
-from aviary.subsystems.aerodynamics.gasp_based.gaspaero import LowSpeedAero
-from aviary.subsystems.propulsion.propulsion_mission import PropulsionMission
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase
+from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
 
 
 class LandingSegment(BaseODE):
     def setup(self):
+        aviary_options = self.options['aviary_options']
+        core_subsystems = self.options['core_subsystems']
+
         # TODO: paramport
         self.add_subsystem("params", ParamPort(), promotes=["*"])
 
@@ -51,44 +54,51 @@ class LandingSegment(BaseODE):
             promotes_outputs=[(Dynamic.Mission.DYNAMIC_PRESSURE, "q_app")],
         )
 
-        propulsion_mission = self.add_subsystem(
-            name='propulsion',
-            subsys=PropulsionMission(
-                num_nodes=1,
-                aviary_options=self.options['aviary_options']),
-            promotes_inputs=["*", (Dynamic.Mission.ALTITUDE, Mission.Landing.INITIAL_ALTITUDE),
-                             (Dynamic.Mission.MACH, Mission.Landing.INITIAL_MACH)],
-            promotes_outputs=[(Dynamic.Mission.THRUST_TOTAL, "thrust_idle")])
-        propulsion_mission.set_input_defaults(Dynamic.Mission.THROTTLE, 0.0)
+        # collect the propulsion group names for later use with
+        for subsystem in core_subsystems:
+            if isinstance(subsystem, AerodynamicsBuilderBase):
+                kwargs = {'method': 'low_speed'}
+                aero_builder = subsystem
+                aero_system = subsystem.build_mission(num_nodes=1,
+                                                      aviary_inputs=aviary_options,
+                                                      **kwargs)
+                self.add_subsystem(subsystem.name,
+                                   aero_system,
+                                   promotes_inputs=[
+                                       "*",
+                                       (Dynamic.Mission.ALTITUDE,
+                                        Mission.Landing.INITIAL_ALTITUDE),
+                                       ("rho", "rho_app"),
+                                       (Dynamic.Mission.SPEED_OF_SOUND, "sos_app"),
+                                       ("viscosity", "viscosity_app"),
+                                       ("airport_alt", Mission.Landing.AIRPORT_ALTITUDE),
+                                       (Dynamic.Mission.MACH, Mission.Landing.INITIAL_MACH),
+                                       (Dynamic.Mission.DYNAMIC_PRESSURE, "q_app"),
+                                       ("flap_defl", Aircraft.Wing.FLAP_DEFLECTION_LANDING),
+                                       ("t_init_flaps", "t_init_flaps_app"),
+                                       ("t_init_gear", "t_init_gear_app"),
+                                       ("CL_max_flaps", Mission.Landing.LIFT_COEFFICIENT_MAX),
+                                       (
+                                           "dCL_flaps_model",
+                                           Mission.Landing.LIFT_COEFFICIENT_FLAP_INCREMENT,
+                                       ),
+                                       (
+                                           "dCD_flaps_model",
+                                           Mission.Landing.DRAG_COEFFICIENT_FLAP_INCREMENT,
+                                       ),
+                                   ],
+                                   promotes_outputs=["CL_max"],
+                                   )
 
-        # alpha input not needed, only used for CL_max
-        self.add_subsystem(
-            "aero_app",
-            LowSpeedAero(num_nodes=1, aviary_options=self.options['aviary_options']),
-            promotes_inputs=[
-                "*",
-                (Dynamic.Mission.ALTITUDE, Mission.Landing.INITIAL_ALTITUDE),
-                ("rho", "rho_app"),
-                (Dynamic.Mission.SPEED_OF_SOUND, "sos_app"),
-                ("viscosity", "viscosity_app"),
-                ("airport_alt", Mission.Landing.AIRPORT_ALTITUDE),
-                (Dynamic.Mission.MACH, Mission.Landing.INITIAL_MACH),
-                (Dynamic.Mission.DYNAMIC_PRESSURE, "q_app"),
-                ("flap_defl", Aircraft.Wing.FLAP_DEFLECTION_LANDING),
-                ("t_init_flaps", "t_init_flaps_app"),
-                ("t_init_gear", "t_init_gear_app"),
-                ("CL_max_flaps", Mission.Landing.LIFT_COEFFICIENT_MAX),
-                (
-                    "dCL_flaps_model",
-                    Mission.Landing.LIFT_COEFFICIENT_FLAP_INCREMENT,
-                ),
-                (
-                    "dCD_flaps_model",
-                    Mission.Landing.DRAG_COEFFICIENT_FLAP_INCREMENT,
-                ),
-            ],
-            promotes_outputs=["CL_max"],
-        )
+            if isinstance(subsystem, PropulsionBuilderBase):
+                propulsion_system = subsystem.build_mission(
+                    num_nodes=1, aviary_inputs=aviary_options)
+                propulsion_mission = self.add_subsystem(subsystem.name,
+                                                        propulsion_system,
+                                                        promotes_inputs=[
+                                                            "*", (Dynamic.Mission.ALTITUDE, Mission.Landing.INITIAL_ALTITUDE), (Dynamic.Mission.MACH, Mission.Landing.INITIAL_MACH)],
+                                                        promotes_outputs=[(Dynamic.Mission.THRUST_TOTAL, "thrust_idle")])
+                propulsion_mission.set_input_defaults(Dynamic.Mission.THROTTLE, 0.0)
 
         self.add_subsystem(
             "glide",
@@ -142,10 +152,14 @@ class LandingSegment(BaseODE):
                               (Dynamic.Mission.MACH, "mach_td")],
         )
 
+        kwargs = {'method': 'low_speed',
+                  'retract_flaps': True,
+                  'retract_gear': False}
+
         self.add_subsystem(
             "aero_td",
-            LowSpeedAero(num_nodes=1, aviary_options=self.options['aviary_options'],
-                         retract_flaps=True, retract_gear=False),
+            aero_builder.build_mission(
+                num_nodes=1, aviary_inputs=aviary_options, **kwargs),
             promotes_inputs=[
                 "*",
                 (Dynamic.Mission.ALTITUDE, Mission.Landing.AIRPORT_ALTITUDE),

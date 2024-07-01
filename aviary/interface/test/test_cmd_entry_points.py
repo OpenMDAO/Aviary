@@ -8,7 +8,6 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 @use_tempdirs
 class CommandEntryPointsTestCases(unittest.TestCase):
-
     def run_and_test_cmd(self, cmd):
         # this only tests that a given command line tool returns a 0 return code. It doesn't
         # check the expected output at all.  The underlying functions that implement the
@@ -18,6 +17,8 @@ class CommandEntryPointsTestCases(unittest.TestCase):
         except subprocess.CalledProcessError as err:
             self.fail(f"Command '{cmd}' failed.  Return code: {err.returncode}")
 
+
+class run_missionTestCases(CommandEntryPointsTestCases):
     @require_pyoptsparse(optimizer="SNOPT")
     def bench_test_SNOPT_cmd(self):
         cmd = 'aviary run_mission models/test_aircraft/aircraft_for_bench_GwGm.csv --optimizer SNOPT --max_iter 1'
@@ -40,6 +41,8 @@ class CommandEntryPointsTestCases(unittest.TestCase):
             ' --phase_info interface/default_phase_info/two_dof.py'
         self.run_and_test_cmd(cmd)
 
+
+class fortran_to_aviaryTestCases(CommandEntryPointsTestCases):
     def test_diff_configuration_conversion(self):
         filepath = pkg_resources.resource_filename('aviary',
                                                    'models/test_aircraft/converter_configuration_test_data_GwGm.dat')
@@ -71,6 +74,79 @@ class CommandEntryPointsTestCases(unittest.TestCase):
                                                    'models/test_aircraft/converter_configuration_test_data_GwGm.dat')
         cmd2 = f'aviary fortran_to_aviary {filepath} -o {outfile} --force -l GASP'
         self.run_and_test_cmd(cmd2)
+
+
+class hangarTestCases(CommandEntryPointsTestCases):
+    def test_copy_folder(self):
+        cmd = f'aviary hangar engines'
+        self.run_and_test_cmd(cmd)
+
+    def test_copy_deck(self):
+        cmd = f'aviary hangar turbofan_22k.txt'
+        self.run_and_test_cmd(cmd)
+
+    def test_copy_n3cc_data(self):
+        cmd = f'aviary hangar N3CC/N3CC_data.py'
+        self.run_and_test_cmd(cmd)
+
+    def test_copy_multiple(self):
+        cmd = f'aviary hangar small_single_aisle_GwGm.dat small_single_aisle_GwGm.csv'
+        self.run_and_test_cmd(cmd)
+
+    def test_copy_to(self):
+        outfile = Path.cwd() / 'example_files'
+        cmd = f'aviary hangar small_single_aisle_GwGm.dat -o {outfile}'
+        self.run_and_test_cmd(cmd)
+
+
+class convert_engineTestCases(CommandEntryPointsTestCases):
+    def get_file(self, filename):
+        filepath = pkg_resources.resource_filename('aviary', filename)
+        if not Path(filepath).exists():
+            self.skipTest(f"couldn't find {filepath}")
+        return filepath
+
+    def test_GASP_conversion(self):
+        # skipped because the original files don't exist any longer
+        filepath = self.get_file('models/engines/GASP_turbofan_23k_1.eng')
+        outfile = Path.cwd() / 'turbofan_23k_1_lbm_s.deck'
+        cmd = f'aviary convert_engine {filepath} {outfile} -f GASP'
+        self.run_and_test_cmd(cmd)
+
+    def test_FLOPS_conversion(self):
+        # skipped because the original files don't exist any longer
+        filepath = self.get_file('models/engines/turbofan_22k.eng')
+        outfile = Path.cwd() / 'turbofan_22k.txt'
+        cmd = f'aviary convert_engine {filepath} {outfile} -f FLOPS'
+        self.run_and_test_cmd(cmd)
+
+    def test_GASP_TP_conversion(self):
+        filepath = self.get_file('models/engines/turboprop_4465hp.eng')
+        outfile = Path.cwd() / 'turboprop_4465hp.eng'
+        cmd = f'aviary convert_engine {filepath} {outfile} --data_format GASP_TP'
+        self.run_and_test_cmd(cmd)
+
+
+class convert_aero_tableTestCases(CommandEntryPointsTestCases):
+    def get_file(self, filename):
+        filepath = pkg_resources.resource_filename('aviary', filename)
+        if not Path(filepath).exists():
+            self.skipTest(f"couldn't find {filepath}")
+        return filepath
+
+    def test_GASP_conversion(self):
+        filepath = self.get_file(
+            'subsystems/aerodynamics/gasp_based/data/GASP_aero_flaps.txt')
+        outfile = Path.cwd() / 'output.dat'
+        cmd = f'aviary fortran_to_aviary {filepath} -o {outfile} -l GASP'
+        self.run_and_test_cmd(cmd)
+
+    def test_FLOPS_conversion(self):
+        filepath = self.get_file(
+            'models/N3CC/N3CC_generic_low_speed_polars_FLOPSinp.txt')
+        outfile = Path.cwd() / 'N3CC' / 'output.dat'
+        cmd = f'aviary fortran_to_aviary {filepath} -o {outfile} -l FLOPS'
+        self.run_and_test_cmd(cmd)
 
 
 if __name__ == "__main__":

@@ -30,7 +30,7 @@ class MiscEngineMassTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             "misc_mass",
-            EngineMiscMass(aviary_options=get_flops_inputs(case_name)),
+            EngineMiscMass(aviary_options=get_flops_inputs(case_name, preprocess=True)),
             promotes_inputs=['*'],
             promotes_outputs=['*']
         )

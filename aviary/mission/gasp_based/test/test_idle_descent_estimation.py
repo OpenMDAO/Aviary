@@ -8,9 +8,10 @@ from aviary.interface.default_phase_info.two_dof_fiti import descent_phases, add
 
 from openmdao.utils.assert_utils import assert_near_equal
 
-from aviary.interface.default_phase_info.two_dof import default_mission_subsystems
+from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.mission.gasp_based.idle_descent_estimation import descent_range_and_fuel, add_descent_estimation_as_submodel
-from aviary.subsystems.propulsion.engine_deck import EngineDeck
+from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 from aviary.variable_info.enums import Verbosity
 from aviary.utils.process_input_decks import create_vehicle
@@ -25,10 +26,15 @@ class IdleDescentTestCase(unittest.TestCase):
         aviary_inputs.set_val(Settings.VERBOSITY, Verbosity.QUIET)
         aviary_inputs.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=28690, units="lbf")
         aviary_inputs.set_val(Dynamic.Mission.THROTTLE, val=0, units="unitless")
+
+        engine = build_engine_deck(aviary_options=aviary_inputs)
+        preprocess_propulsion(aviary_inputs, engine)
+
+        default_mission_subsystems = get_default_mission_subsystems(
+            'GASP', build_engine_deck(aviary_inputs))
+
         ode_args = dict(aviary_options=aviary_inputs,
                         core_subsystems=default_mission_subsystems)
-        engine = EngineDeck(options=aviary_inputs)
-        preprocess_propulsion(aviary_inputs, [engine])
 
         self.ode_args = ode_args
         self.aviary_inputs = aviary_inputs
@@ -63,7 +69,7 @@ class IdleDescentTestCase(unittest.TestCase):
         )
 
         prob.setup()
-        om.n2(prob, 'idle_descent_n2.html', show_browser=False)
+
         warnings.filterwarnings('ignore', category=UserWarning)
         prob.run_model()
         warnings.filterwarnings('default', category=UserWarning)

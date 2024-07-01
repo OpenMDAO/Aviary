@@ -8,6 +8,7 @@ from parameterized import param
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.options import list_options as list_options_func
+from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.preprocessors import preprocess_options
 from aviary.validation_cases.validation_data.flops_data.FLOPS_Test_Data import \
     FLOPS_Test_Data, FLOPS_Lacking_Test_Data
@@ -257,7 +258,7 @@ def flops_validation_test(prob: om.Problem,
                        list_outputs=list_outputs)
 
 
-def get_flops_data(case_name: str, keys: str = None) -> AviaryValues:
+def get_flops_data(case_name: str, keys: str = None, preprocess: bool = False) -> AviaryValues:
     """
     Returns an AviaryValues object containing input and output data for
     the named FLOPS validation case.
@@ -271,7 +272,7 @@ def get_flops_data(case_name: str, keys: str = None) -> AviaryValues:
         List of variables whose values will be transferred from the validation data.
         The default is all variables.
     """
-    flops_data_copy: AviaryValues = get_flops_inputs(case_name)
+    flops_data_copy: AviaryValues = get_flops_inputs(case_name, preprocess=preprocess)
     flops_data_copy.update(get_flops_outputs(case_name))
     if keys is None:
         return flops_data_copy
@@ -303,7 +304,8 @@ def get_flops_inputs(case_name: str, keys: str = None, preprocess: bool = False)
 
     flops_inputs_copy: AviaryValues = flops_data['inputs'].deepcopy()
     if preprocess:
-        preprocess_options(flops_inputs_copy)
+        preprocess_options(flops_inputs_copy,
+                           engine_models=build_engine_deck(flops_inputs_copy))
     if keys is None:
         return flops_inputs_copy
     keys_list = _assure_is_list(keys)

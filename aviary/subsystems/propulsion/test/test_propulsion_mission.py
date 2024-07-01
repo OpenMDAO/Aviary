@@ -14,6 +14,7 @@ from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.functions import get_path
 from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.subsystems.propulsion.utils import build_engine_deck
 
 
 class PropulsionMissionTest(unittest.TestCase):
@@ -50,7 +51,8 @@ class PropulsionMissionTest(unittest.TestCase):
         engine = EngineDeck(options=options)
         preprocess_propulsion(options, [engine])
 
-        self.prob.model = PropulsionMission(num_nodes=nn, aviary_options=options)
+        self.prob.model = PropulsionMission(
+            num_nodes=nn, aviary_options=options, engine_models=[engine])
 
         IVC = om.IndepVarComp(Dynamic.Mission.MACH,
                               np.linspace(0, 0.8, nn),
@@ -99,8 +101,6 @@ class PropulsionMissionTest(unittest.TestCase):
         nn = 2
         options = AviaryValues()
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([3, 2]))
-        # it doesn't matter what goes in engine models, as long as it is length 2
-        options.set_val('engine_models', [1, 1])
         self.prob.model = om.Group()
         self.prob.model.add_subsystem('propsum',
                                       PropulsionSum(num_nodes=nn,
@@ -115,7 +115,7 @@ class PropulsionMissionTest(unittest.TestCase):
                           np.array([[602.11, 3554], [100, 9000]]))
         self.prob.set_val(Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE,
                           np.array([[123, -221.44], [-765.2, -1]]))
-        self.prob.set_val(Dynamic.Mission.ELECTRIC_POWER,
+        self.prob.set_val(Dynamic.Mission.ELECTRIC_POWER_IN,
                           np.array([[3.01, -12], [484.2, 8123]]))
         self.prob.set_val(Dynamic.Mission.NOX_RATE,
                           np.array([[322, 4610], [1.54, 2.844]]))
@@ -126,20 +126,20 @@ class PropulsionMissionTest(unittest.TestCase):
         thrust_max = self.prob.get_val(Dynamic.Mission.THRUST_MAX_TOTAL, units='lbf')
         fuel_flow = self.prob.get_val(
             Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units='lb/h')
-        electric_power = self.prob.get_val(
-            Dynamic.Mission.ELECTRIC_POWER_TOTAL, units='kW')
+        electric_power_in = self.prob.get_val(
+            Dynamic.Mission.ELECTRIC_POWER_IN_TOTAL, units='kW')
         nox = self.prob.get_val(Dynamic.Mission.NOX_RATE_TOTAL, units='lb/h')
 
         expected_thrust = np.array([2347.202, 14535])
         expected_thrust_max = np.array([8914.33, 18300])
         expected_fuel_flow = np.array([-73.88, -2297.6])
-        expected_electric_power = np.array([-14.97, 17698.6])
+        expected_electric_power_in = np.array([-14.97, 17698.6])
         expected_nox = np.array([10186, 10.308])
 
         assert_near_equal(thrust, expected_thrust, tolerance=1e-12)
         assert_near_equal(thrust_max, expected_thrust_max, tolerance=1e-12)
         assert_near_equal(fuel_flow, expected_fuel_flow, tolerance=1e-12)
-        assert_near_equal(electric_power, expected_electric_power, tolerance=1e-12)
+        assert_near_equal(electric_power_in, expected_electric_power_in, tolerance=1e-12)
         assert_near_equal(nox, expected_nox, tolerance=1e-12)
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
@@ -151,12 +151,14 @@ class PropulsionMissionTest(unittest.TestCase):
 
         options = get_flops_inputs('LargeSingleAisle2FLOPS')
 
-        engine = options.get_val('engine_models')[0]
-        engine2 = options.deepcopy().get_val('engine_models')[0]
+        engine = build_engine_deck(options)[0]
+        engine2 = build_engine_deck(options)[0]
         engine2.name = 'engine2'
-        preprocess_propulsion(options, [engine, engine2])
+        engine_models = [engine, engine2]
+        preprocess_propulsion(options, engine_models=engine_models)
 
-        self.prob.model = PropulsionMission(num_nodes=20, aviary_options=options)
+        self.prob.model = PropulsionMission(
+            num_nodes=20, aviary_options=options, engine_models=engine_models)
 
         self.prob.model.add_subsystem(Dynamic.Mission.MACH,
                                       om.IndepVarComp(Dynamic.Mission.MACH,
@@ -209,7 +211,7 @@ class PropulsionMissionTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    # unittest.main()
-    test = PropulsionMissionTest()
-    test.setUp()
-    test.test_case_multiengine()
+    unittest.main()
+    # test = PropulsionMissionTest()
+    # test.setUp()
+    # test.test_case_multiengine()

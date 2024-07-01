@@ -32,7 +32,7 @@ class EnginePodMassTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             'engine_pod',
-            EnginePodMass(aviary_options=get_flops_inputs(case_name)),
+            EnginePodMass(aviary_options=get_flops_inputs(case_name, preprocess=True)),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )
