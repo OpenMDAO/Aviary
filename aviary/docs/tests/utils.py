@@ -3,6 +3,8 @@ import subprocess
 import tempfile
 import os
 import numpy as np
+from myst_nb import glue
+from IPython.display import Markdown
 
 
 def check_value(val1, val2):
@@ -135,3 +137,71 @@ def run_command_no_file_error(command: str):
             else:
                 print(rc.stderr)
                 rc.check_returncode()
+
+
+def get_attribute_name(object: object, attribute) -> str:
+    """
+    Gets the name of an objects attribute based on it's value
+
+    This is intended for use with Enums and other objects that have unique values.
+    This method will return the name of the first atttribute that has a value that
+    matches the value provided.
+
+    Parameters
+    ----------
+    object : any
+        The object whose attributes will be searched
+    attribute : any
+        The value of interest
+
+    Returns
+    -------
+    name : str
+        The name of the attribute
+
+    Raises
+    ------
+    AttributeError
+        If the object has no attributes with the provided value.
+    """
+    for name, val in object.__dict__.items():
+        if val == attribute:
+            return name
+
+    raise AttributeError(
+        f"`{object.__name__}` object has no attribute with a value of `{attribute}`")
+
+
+def glue_variable(name: str, val=None, md_code=False, display=True):
+    """
+    Glue a variable for later use in markdown cells of notebooks
+
+    Parameters
+    ----------
+    name : str
+        The name the value will be glued to
+    val : any
+        The value to be displayed in the markdown cell (default is the value of name)
+    md_code : Bool
+        Whether to wrap the value in markdown code formatting (e.g. `code`)
+    """
+    if val is None:
+        val = name
+    if md_code:
+        val = Markdown('`'+val+'`')
+    glue(name, val, display)
+
+
+def glue_keys(dict_of_dicts: dict, display=True):
+    """
+    Recursively glue all of the keys from a dict of dicts
+
+    Parameters
+    ----------
+    dict_of_dicts : dict
+        The dictionary who's keys will be glued
+    """
+    for key, val in dict_of_dicts.items():
+        glue_variable(key, md_code=True, display=display)
+        if isinstance(val, dict):
+            glue_keys(val, display=display)
