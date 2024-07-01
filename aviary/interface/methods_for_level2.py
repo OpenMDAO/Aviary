@@ -264,7 +264,7 @@ class AviaryProblem(om.Problem):
 
         if mission_method is TWO_DEGREES_OF_FREEDOM or mass_method is GASP:
             aviary_inputs = update_GASP_options(aviary_inputs)
-            initial_guesses = initial_guessing(aviary_inputs, initial_guesses)
+        initial_guesses = initial_guessing(aviary_inputs, initial_guesses)
         self.aviary_inputs = aviary_inputs
         self.initial_guesses = initial_guesses
 
@@ -285,6 +285,13 @@ class AviaryProblem(om.Problem):
             self.target_range = aviary_inputs.get_val(
                 Mission.Design.RANGE, units='NM')
             self.cruise_mach = aviary_inputs.get_val(Mission.Design.MACH)
+
+        elif mission_method is HEIGHT_ENERGY:
+            self.problem_type = aviary_inputs.get_val(Settings.PROBLEM_TYPE)
+            aviary_inputs.set_val(Mission.Summary.GROSS_MASS,
+                                  val=self.initial_guesses['actual_takeoff_mass'], units='lbm')
+            self.target_range = aviary_inputs.get_val(
+                Mission.Design.RANGE, units='NM')
 
         ## LOAD PHASE_INFO ###
         if phase_info is None:
@@ -1146,7 +1153,7 @@ class AviaryProblem(om.Problem):
             else:
                 if self.pre_mission_info['include_takeoff']:
                     self.post_mission.promotes('fuel_burned', [
-                        ('initial_mass', Mission.Design.GROSS_MASS),
+                        ('initial_mass', Mission.Summary.GROSS_MASS),
                     ])
                 else:
                     # timeseries has to be used because Breguet cruise phases don't have states
@@ -1200,33 +1207,6 @@ class AviaryProblem(om.Problem):
                 ],
                 promotes_outputs=[('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS)])
 
-            # If a target range has been specified
-            # range is measured from the start of the first phase to the end of the last normal phase
-            if 'target_range' in self.post_mission_info:
-                target_range = wrapped_convert_units(
-                    self.post_mission_info['target_range'], 'nmi')
-                self.post_mission.add_subsystem(
-                    "range_constraint",
-                    om.ExecComp(
-                        "range_resid = target_range - actual_range",
-                        range_resid={'units': 'nmi'},
-                        actual_range={'units': 'nmi'},
-                        target_range={
-                            'val': target_range, 'units': 'nmi'},
-                    ),
-                    promotes_inputs=[
-                        "target_range",
-                    ],
-                    promotes_outputs=[
-                        ("range_resid", Mission.Constraints.RANGE_RESIDUAL)],
-                )
-
-                # determine distance traveled based on regular_phases
-                self.model.connect(
-                    f"traj.{self.regular_phases[-1]}.timeseries.distance", "range_constraint.actual_range", src_indices=[-1])
-                self.model.add_constraint(
-                    Mission.Constraints.RANGE_RESIDUAL, equals=0.0, ref=1.e2)
-
             # If a target distance (or time) has been specified for this phase
             # distance (or time) is measured from the start of this phase to the end of this phase
             for phase_name in self.phase_info:
@@ -1274,8 +1254,8 @@ class AviaryProblem(om.Problem):
                     self.model.add_constraint(
                         f"{phase_name}_duration_constraint.duration_resid", equals=0.0, ref=1e2)
 
-        if self.mission_method is TWO_DEGREES_OF_FREEDOM:
-            self._add_two_dof_objectives()
+        if self.mission_method in (TWO_DEGREES_OF_FREEDOM, HEIGHT_ENERGY):
+            self._add_objectives()
 
         ecomp = om.ExecComp(
             'mass_resid = operating_empty_mass + overall_fuel + payload_mass -'
@@ -1297,7 +1277,7 @@ class AviaryProblem(om.Problem):
                 ('operating_empty_mass', Aircraft.Design.OPERATING_MASS),
                 ('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS),
                 ('payload_mass', payload_mass_src),
-                ('initial_mass', Mission.Design.GROSS_MASS)],
+                ('initial_mass', Mission.Summary.GROSS_MASS)],
             promotes_outputs=[("mass_resid", Mission.Constraints.MASS_RESIDUAL)])
 
         if self.mission_method in (HEIGHT_ENERGY, TWO_DEGREES_OF_FREEDOM):
@@ -1416,6 +1396,10 @@ class AviaryProblem(om.Problem):
                                       connected=true_unless_mpi)
                 self.traj.link_phases(phases, [Dynamic.Mission.DISTANCE], ref=1e3,
                                       connected=true_unless_mpi)
+
+                self.model.connect(f'traj.{self.regular_phases[-1]}.timeseries.distance',
+                                   Mission.Summary.RANGE,
+                                   src_indices=[-1], flat_src_indices=True)
 
             elif self.mission_method is SOLVED_2DOF:
                 self.traj.link_phases(phases, [Dynamic.Mission.MASS], connected=True)
@@ -1699,61 +1683,47 @@ class AviaryProblem(om.Problem):
             for dv_name, dv_dict in dv_dict.items():
                 self.model.add_design_var(dv_name, **dv_dict)
 
-        if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
+        if self.mission_method is SOLVED_2DOF:
             optimize_mass = self.pre_mission_info.get('optimize_mass')
             if optimize_mass:
                 self.model.add_design_var(Mission.Design.GROSS_MASS, units='lbm',
                                           lower=100.e2, upper=900.e3, ref=135.e3)
 
-        elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
-            if self.analysis_scheme is AnalysisScheme.COLLOCATION:
-                # problem formulation to make the trajectory work
-                self.model.add_design_var(Mission.Takeoff.ASCENT_T_INTIIAL,
-                                          lower=0, upper=100, ref=30.0)
-                self.model.add_design_var(Mission.Takeoff.ASCENT_DURATION,
-                                          lower=1, upper=1000, ref=10.)
-                self.model.add_design_var("tau_gear", lower=0.01,
-                                          upper=1.0, units="unitless", ref=1)
-                self.model.add_design_var("tau_flaps", lower=0.01,
-                                          upper=1.0, units="unitless", ref=1)
-                self.model.add_constraint(
-                    "h_fit.h_init_gear", equals=50.0, units="ft", ref=50.0)
-                self.model.add_constraint("h_fit.h_init_flaps",
-                                          equals=400.0, units="ft", ref=400.0)
-
+        elif self.mission_method in (HEIGHT_ENERGY, TWO_DEGREES_OF_FREEDOM):
             # vehicle sizing problem
             # size the vehicle (via design GTOW) to meet a target range using all fuel capacity
             if self.problem_type is ProblemType.SIZING:
                 self.model.add_design_var(
                     Mission.Design.GROSS_MASS,
-                    lower=10.,
-                    upper=400.e3,
-                    units="lbm",
-                    ref=175_000,
+                    lower=10.0,
+                    upper=400e3,
+                    units='lbm',
+                    ref=175e3,
                 )
                 self.model.add_design_var(
                     Mission.Summary.GROSS_MASS,
-                    lower=10.,
-                    upper=400.e3,
-                    units="lbm",
-                    ref=175_000,
+                    lower=10.0,
+                    upper=400e3,
+                    units='lbm',
+                    ref=175e3,
                 )
 
-                self.model.add_constraint(
-                    Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=10
-                )
                 self.model.add_subsystem(
-                    "gtow_constraint",
+                    'gtow_constraint',
                     om.EQConstraintComp(
-                        "GTOW",
-                        eq_units="lbm",
+                        'GTOW',
+                        eq_units='lbm',
                         normalize=True,
                         add_constraint=True,
                     ),
                     promotes_inputs=[
-                        ("lhs:GTOW", Mission.Design.GROSS_MASS),
-                        ("rhs:GTOW", Mission.Summary.GROSS_MASS),
+                        ('lhs:GTOW', Mission.Design.GROSS_MASS),
+                        ('rhs:GTOW', Mission.Summary.GROSS_MASS),
                     ],
+                )
+
+                self.model.add_constraint(
+                    Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=10
                 )
 
             # target range problem
@@ -1763,15 +1733,32 @@ class AviaryProblem(om.Problem):
                     Mission.Summary.GROSS_MASS,
                     lower=0,
                     upper=None,
-                    units="lbm",
-                    ref=175_000,
+                    units='lbm',
+                    ref=175e3,
                 )
 
                 self.model.add_constraint(
-                    Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=10,
+                    Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=10
                 )
+
             elif self.problem_type is ProblemType.FALLOUT:
                 print('No design variables for Fallout missions')
+
+            if self.mission_method is TWO_DEGREES_OF_FREEDOM:
+                if self.analysis_scheme is AnalysisScheme.COLLOCATION:
+                    # problem formulation to make the trajectory work
+                    self.model.add_design_var(Mission.Takeoff.ASCENT_T_INTIIAL,
+                                              lower=0, upper=100, ref=30.0)
+                    self.model.add_design_var(Mission.Takeoff.ASCENT_DURATION,
+                                              lower=1, upper=1000, ref=10.)
+                    self.model.add_design_var("tau_gear", lower=0.01,
+                                              upper=1.0, units="unitless", ref=1)
+                    self.model.add_design_var("tau_flaps", lower=0.01,
+                                              upper=1.0, units="unitless", ref=1)
+                    self.model.add_constraint(
+                        "h_fit.h_init_gear", equals=50.0, units="ft", ref=50.0)
+                    self.model.add_constraint("h_fit.h_init_flaps",
+                                              equals=400.0, units="ft", ref=400.0)
 
     def add_objective(self, objective_type=None, ref=None):
         """
@@ -1826,12 +1813,6 @@ class AviaryProblem(om.Problem):
                 self.model.add_objective(Mission.Summary.FUEL_BURNED, ref=ref)
             elif objective_type == "fuel":
                 self.model.add_objective(Mission.Objectives.FUEL, ref=ref)
-
-        # set objective ref on height-energy missions
-        elif self.mission_method is HEIGHT_ENERGY:
-            ref = ref if ref is not None else default_ref_values.get(
-                'fuel_burned', 1)
-            self.model.add_objective(Mission.Summary.FUEL_BURNED, ref=ref)
 
         else:  # If no 'objective_type' is specified, we handle based on 'problem_type'
             # If 'ref' is not specified, assign a default value
@@ -2443,7 +2424,7 @@ class AviaryProblem(om.Problem):
             promotes_outputs=['mission:*'],
         )
 
-    def _add_two_dof_objectives(self):
+    def _add_objectives(self):
         self.model.add_subsystem(
             "fuel_obj",
             om.ExecComp(

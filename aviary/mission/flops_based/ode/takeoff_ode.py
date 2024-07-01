@@ -188,6 +188,6 @@ class TakeoffODE(om.Group):
 
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, np.zeros(nn), 'm')
         self.set_input_defaults(Dynamic.Mission.VELOCITY, np.zeros(nn), 'm/s')
-        self.set_input_defaults(Mission.Design.GROSS_MASS, val=1.0, units='kg')
+        self.set_input_defaults(Mission.Summary.GROSS_MASS, val=1.0, units='kg')
 
         set_aviary_initial_values(self, aviary_options)
