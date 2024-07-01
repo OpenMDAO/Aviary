@@ -23,7 +23,7 @@ class AviaryMissionTimeseries(unittest.TestCase):
                                max_iter=0)
 
         expected_header = [
-            "time (s)", "altitude (ft)", "altitude_rate (ft/s)", "distance (m)", "drag (lbf)",
+            "time (s)", "altitude (ft)", "altitude_rate (ft/s)", "distance (m)", "drag (lbf)", "electric_power_in_total (kW)",
             "fuel_flow_rate_negative_total (lbm/h)", "mach (unitless)", "mach_rate (unitless/s)",
             "mass (kg)", "specific_energy_rate_excess (m/s)", "throttle (unitless)",
             "thrust_net_total (lbf)", "velocity (m/s)"
@@ -31,7 +31,7 @@ class AviaryMissionTimeseries(unittest.TestCase):
 
         expected_rows = [
             [
-                "0.0", "0.0", "8.333333333333337", "1.0", "21108.418300418845",
+                "0.0", "0.0", "8.333333333333337", "1.0", "21108.418300418845", "0.0",
                 "-10492.593707324704", "0.2", "0.0001354166666666668", "79560.101698",
                 "12.350271989430475", "0.565484286063171", "28478.788920867584",
                 "68.05737270077049"

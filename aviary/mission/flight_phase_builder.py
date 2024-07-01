@@ -11,6 +11,7 @@ from aviary.mission.flops_based.phases.phase_utils import add_subsystem_variable
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.mission.flops_based.ode.mission_ODE import MissionODE
 from aviary.variable_info.enums import EquationsOfMotion, ThrottleAllocation
+from aviary.variable_info.variables import Aircraft
 
 
 # TODO: support/handle the following in the base class
@@ -253,6 +254,11 @@ class FlightPhaseBase(PhaseBuilderBase):
         phase.add_timeseries_output(
             Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             output_name=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/h'
+        )
+
+        phase.add_timeseries_output(
+            Dynamic.Mission.ELECTRIC_POWER_IN_TOTAL,
+            output_name=Dynamic.Mission.ELECTRIC_POWER_IN_TOTAL, units='kW'
         )
 
         phase.add_timeseries_output(

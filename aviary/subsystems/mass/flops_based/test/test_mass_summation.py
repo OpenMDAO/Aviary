@@ -30,7 +30,7 @@ class TotalSummationTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             "tot",
-            MassSummation(aviary_options=get_flops_inputs(case_name)),
+            MassSummation(aviary_options=get_flops_inputs(case_name, preprocess=True)),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -101,7 +101,7 @@ class AltTotalSummationTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             "tot",
-            MassSummation(aviary_options=get_flops_inputs(case_name)),
+            MassSummation(aviary_options=get_flops_inputs(case_name, preprocess=True)),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )

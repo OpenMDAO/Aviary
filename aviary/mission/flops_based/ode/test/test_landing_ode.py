@@ -2,7 +2,8 @@ import unittest
 
 import openmdao.api as om
 
-from aviary.interface.default_phase_info.height_energy import default_mission_subsystems
+from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.mission.flops_based.ode.landing_ode import FlareODE
 from aviary.models.N3CC.N3CC_data import (
     detailed_landing_flare, inputs, landing_subsystem_options)
@@ -13,10 +14,12 @@ from aviary.variable_info.variables import Dynamic
 class FlareODETest(unittest.TestCase):
     def test_case(self):
         prob = om.Problem()
-
         time, _ = detailed_landing_flare.get_item('time')
         nn = len(time)
         aviary_options = inputs
+
+        default_mission_subsystems = get_default_mission_subsystems(
+            'FLOPS', build_engine_deck(aviary_options))
 
         prob.model.add_subsystem(
             "landing_flare_ode",
