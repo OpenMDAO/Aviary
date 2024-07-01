@@ -11,7 +11,6 @@ from matplotlib.backend_bases import MouseButton
 # TODO: Add ability to change units, phase info specifies units and aviary can handle these unit changes.
 #       Makes sense to allow unit changes in GUI based on user preference.
 #       Possible unit changes: Alt -> ft, m, mi, km, nmi; Time -> min, s, hr; Mach -> none
-# TODO: Add button to add new rows to table for anyone only using table
 
 class VerticalScrolledFrame(Frame):
     """A pure Tkinter scrollable frame that actually works!
@@ -86,7 +85,7 @@ class myapp(Tk):
         self.frame_tableheaders = self.frame_table.freezeframe
 
         self.frame_plotReadouts = Frame(self)
-        self.frame_plotReadouts.pack(side='bottom')
+        self.frame_plotReadouts.pack(side='bottom',fill='x')
         self.frame_plots = Frame(self)
         self.frame_plots.pack(side='top',expand=True,fill='both')
 
@@ -178,7 +177,7 @@ class myapp(Tk):
 
         self.mouse_coords_str = StringVar(value = "Mouse Coordinates")
         self.mouse_coords = Label(self.frame_plotReadouts,textvariable=self.mouse_coords_str)
-        self.mouse_coords.grid(row=0,column=0)
+        self.mouse_coords.pack()
         self.crosshair = False
         self.figure_canvas.get_tk_widget().pack(expand=True,fill='both')
 
@@ -297,8 +296,6 @@ class myapp(Tk):
                     # rounding defined in data_info
                     xvalue = self.display_rounding(event.xdata,0)
                     yvalue = self.display_rounding(event.ydata,plot_idx+1)
-                    #xvalue = format(event.xdata,"."+str(self.data_info["xround"])+"f")
-                    #yvalue = format(event.ydata,"."+str(self.data_info["yrounds"][plot_idx])+"f")
                     self.mouse_coords_str.set(
                         f"{self.data_info['xlabel']}: {xvalue} {self.data_info['xunit']} | "+
                         f"{self.data_info['ylabels'][plot_idx]}: {yvalue} {self.data_info['yunits'][plot_idx]}")
@@ -407,6 +404,17 @@ class myapp(Tk):
             self.table_widgets.append(delete_button)
         
             row += 1        
+        # reposition add new point button based on updated table
+        self.table_add_button.grid(row=row*2+3,column=0,columnspan=col+2)
+
+    def add_new_row(self,_):
+        # new point is added at y = half of y axis limit, x = halfway from last point and x limit
+        default_y_vals = [float(self.data_info["ylim_strvars"][i].get())/2 for i in range(self.num_dep_vars)]
+        newx =  (float(self.data_info["xlim_strvar"].get()) - self.x_list[-1])/2 + self.x_list[-1]
+        for col,item in enumerate([newx,*default_y_vals]):
+            self.update_list(row=len(self.x_list),col=col,value=item)
+        self.redraw_plot()
+        self.update_table()
 
     def create_table(self):
         """Creates headers for table and sets column widths based on header lengths."""
@@ -426,6 +434,9 @@ class myapp(Tk):
             self.table_strvars.append([])
             if col > 0: self.table_boolvars.append([])
     
+        # button for adding new rows to table
+        self.table_add_button = Button(self.frame_table.interior,text="Add New Point")
+        self.table_add_button.bind("<Button-1>",func=self.add_new_row)
         self.update_table()
 
     def display_rounding(self,value,col:int):
@@ -438,7 +449,7 @@ class myapp(Tk):
 # Menu related functions
     def create_menu(self):
         structure = {"File":["Open",None,
-                             "Save",None,
+                             "Save",self.save,
                              "Save as",None,
                              None,None,
                              "Exit",self.close_window],
