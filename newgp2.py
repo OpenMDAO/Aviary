@@ -177,40 +177,6 @@ class AviaryMissionEditor(Tk):
         self.crosshair = False
         self.figure_canvas.get_tk_widget().pack(expand=True,fill='both')
 
-    def change_axes_popup(self):
-        """Creates a popup window that allows user to edit axes limits. This function is triggered
-            by the menu buttons"""
-        # compute middle of window location to place popup into
-        win_size,win_left,win_top = self.winfo_geometry().split("+")
-        win_wid,win_hei = win_size.split("x")
-        win_left,win_top,win_wid,win_hei = int(win_left),int(win_top),int(win_wid),int(win_hei)
-        pop_wid,pop_hei = 200,100 # hardcoded popup size
-        pop_left,pop_top = int(win_left + win_wid/2 - pop_wid/2), int(win_top + win_hei/2 - pop_hei/2)
-
-        popup = Toplevel(self)
-        popup.resizable(False,False)
-        popup.geometry(f"{pop_wid}x{pop_hei}+{pop_left}+{pop_top}")
-        popup.title("Axes Limits")
-        popup.focus_set()
-
-        def close_popup(self): # internal function for closing this popup and resetting focus
-            self.focus_set()
-            popup.destroy()
-        popup.protocol("WM_DELETE_WINDOW",func=lambda:close_popup(self))
-
-        labels_w_units = [self.data_info["xlabel_unit"],*self.data_info["ylabels_units"]]
-        lim_strs = [self.data_info["xlim_strvar"],*self.data_info["ylim_strvars"]]
-
-        for row,(label,lim_str) in enumerate(zip(labels_w_units,lim_strs)):
-            lim_label = Label(popup,text=label,justify='right')
-            lim_label.grid(row=row,column=0) 
-            lim_entry = Entry(popup,textvariable=lim_str,width = max(6,len(lim_str.get())))
-            lim_entry.grid(row=row,column=1)
-
-        change_button = Button(master=popup,command = lambda:[self.update_axes_lims(),close_popup(self)],
-                               text = "Change")
-        change_button.grid()
-
     def update_axes_lims(self):
         """Goes through each subplot and sets x and y limits based on the StringVar values"""
         for (plot,limstr) in zip(self.plots,self.data_info["ylim_strvars"]):
@@ -456,7 +422,7 @@ class AviaryMissionEditor(Tk):
                             ["command","Units",None],
                             ["command","Rounding",None]],
                     "View":[["checkbutton","Optimize Phase",self.toggle_optimize_view,self.show_optimize],
-                            ["command","Advanced Options",None]],
+                            ["command","Advanced Options",self.advanced_options_popup]],
                     "Help":[["command","Instructions",None],
                             ["command","About",None]]}
 
@@ -479,6 +445,64 @@ class AviaryMissionEditor(Tk):
         self.destroy()
         with open("windowlocation.txt","w") as fp:
             fp.write(last_geometry)
+
+    def change_axes_popup(self):
+        """Creates a popup window that allows user to edit axes limits. This function is triggered
+            by the menu buttons"""
+        # compute middle of window location to place popup into
+        win_size,win_left,win_top = self.winfo_geometry().split("+")
+        win_wid,win_hei = win_size.split("x")
+        win_left,win_top,win_wid,win_hei = int(win_left),int(win_top),int(win_wid),int(win_hei)
+        pop_wid,pop_hei = 200,100 # hardcoded popup size
+        pop_left,pop_top = int(win_left + win_wid/2 - pop_wid/2), int(win_top + win_hei/2 - pop_hei/2)
+
+        popup = Toplevel(self)
+        popup.resizable(False,False)
+        popup.geometry(f"{pop_wid}x{pop_hei}+{pop_left}+{pop_top}")
+        popup.title("Axes Limits")
+        popup.focus_set()
+
+        def close_popup(self): # internal function for closing this popup and resetting focus
+            self.focus_set()
+            popup.destroy()
+        popup.protocol("WM_DELETE_WINDOW",func=lambda:close_popup(self))
+
+        labels_w_units = [self.data_info["xlabel_unit"],*self.data_info["ylabels_units"]]
+        lim_strs = [self.data_info["xlim_strvar"],*self.data_info["ylim_strvars"]]
+
+        for row,(label,lim_str) in enumerate(zip(labels_w_units,lim_strs)):
+            lim_label = Label(popup,text=label,justify='right')
+            lim_label.grid(row=row,column=0) 
+            lim_entry = Entry(popup,textvariable=lim_str,width = max(6,len(lim_str.get())))
+            lim_entry.grid(row=row,column=1)
+
+        change_button = Button(master=popup,command = lambda:[self.update_axes_lims(),close_popup(self)],
+                               text = "Change")
+        change_button.grid()
+
+    def advanced_options_popup(self):
+        """Creates a popup window that allows user to edit axes limits. This function is triggered
+            by the menu buttons"""
+        # compute middle of window location to place popup into
+        win_size,win_left,win_top = self.winfo_geometry().split("+")
+        win_wid,win_hei = win_size.split("x")
+        win_left,win_top,win_wid,win_hei = int(win_left),int(win_top),int(win_wid),int(win_hei)
+        pop_wid,pop_hei = 300,300 # hardcoded popup size
+        pop_left,pop_top = int(win_left + win_wid/2 - pop_wid/2), int(win_top + win_hei/2 - pop_hei/2)
+
+        popup = Toplevel(self)
+        popup.resizable(False,False)
+        popup.geometry(f"{pop_wid}x{pop_hei}+{pop_left}+{pop_top}")
+        popup.title("Advanced Options")
+        popup.focus_set()
+
+        def close_popup(self): # internal function for closing this popup and resetting focus
+            self.focus_set()
+            popup.destroy()
+        popup.protocol("WM_DELETE_WINDOW",func=lambda:close_popup(self))
+
+        # advanced options: solve for range, constrain range, polynomial control order, include takeoff, include landing
+        # all checkboxes except poly cont ord
 
     def open_phase_info(self):
         """Opens a dialog box to select a .py file with a phase info dict. File must contain a dict called phase_info. 
