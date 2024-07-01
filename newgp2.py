@@ -3,7 +3,7 @@ from math import sqrt
 
 from aviary.interface.graphical_input import create_phase_info
 
-from tkinter import Tk, Toplevel, Canvas, Frame, BooleanVar, StringVar, filedialog
+from tkinter import Tk, Toplevel, Canvas, Frame, BooleanVar, StringVar, IntVar, filedialog
 from tkinter import Button, Checkbutton, Entry, Label, Menu, Scrollbar
 
 from matplotlib.figure import Figure
@@ -113,12 +113,26 @@ class AviaryMissionEditor(Tk):
 
         # internal variables to remember mouse state
         self.mouse_drag,self.mouse_press = False, False
+        self.popup = None
         self.ptcontainer = 0.04 # percent of plot size, boundary around point where it can be dragged
-        self.show_optimize = BooleanVar(self) # controls display of optimize phase checkboxes
+        self.show_optimize = BooleanVar() # controls display of optimize phase checkboxes
+        
+        self.advanced_options_info = {"constrain_range":BooleanVar(value=True),"solve_for_distance":BooleanVar(),
+                                      "include_takeoff":BooleanVar(),"include_landing":BooleanVar(),
+                                      "polynomial_control_order":IntVar(value=1)}
 
+        self.save_option_defaults()
         self.create_plots()
         self.create_table()
         self.create_menu()
+
+    def save_option_defaults(self):
+        self.advanced_options_info_defaults = {}
+        for key,var in self.advanced_options_info.items():
+            if type(var) == type(BooleanVar()):
+                self.advanced_options_info_defaults[key] = BooleanVar(value=var.get())
+            elif type(var) == type(IntVar()):
+                self.advanced_options_info_defaults[key] = IntVar(value=var.get())
 
     def check_data_info(self):
         """Verifies data_info dict has consistent number of dependent variables """
@@ -446,26 +460,48 @@ class AviaryMissionEditor(Tk):
         with open("windowlocation.txt","w") as fp:
             fp.write(last_geometry)
 
-    def change_axes_popup(self):
-        """Creates a popup window that allows user to edit axes limits. This function is triggered
-            by the menu buttons"""
+    def close_popup(self):
+        """Function to close existing popup"""
+        self.focus_set()
+        self.popup.destroy()
+        self.popup = None
+
+    def generic_popup(self,pop_wid=100,pop_hei=100,pop_title="Popup",apply=False,cancel=False):
+        """Function to create a base window for a popup. Returns popup object to be used for adding widget
+            and configuring settings. Also can include Apply and Cancel buttons and return these for changing
+            location and command."""
         # compute middle of window location to place popup into
         win_size,win_left,win_top = self.winfo_geometry().split("+")
         win_wid,win_hei = win_size.split("x")
         win_left,win_top,win_wid,win_hei = int(win_left),int(win_top),int(win_wid),int(win_hei)
-        pop_wid,pop_hei = 200,100 # hardcoded popup size
         pop_left,pop_top = int(win_left + win_wid/2 - pop_wid/2), int(win_top + win_hei/2 - pop_hei/2)
 
         popup = Toplevel(self)
         popup.resizable(False,False)
         popup.geometry(f"{pop_wid}x{pop_hei}+{pop_left}+{pop_top}")
-        popup.title("Axes Limits")
+        popup.title(pop_title)
         popup.focus_set()
+        self.popup = popup
 
-        def close_popup(self): # internal function for closing this popup and resetting focus
-            self.focus_set()
-            popup.destroy()
-        popup.protocol("WM_DELETE_WINDOW",func=lambda:close_popup(self))
+        popup.protocol("WM_DELETE_WINDOW",func=self.close_popup)
+
+        apply_button,cancel_button = None,None
+        if apply:
+            apply_button = Button(popup,text = "Apply")
+            apply_button.grid(column=0,sticky='e')
+        if cancel:
+            cancel_button = Button(popup,text = "Reset")
+            cancel_button.grid(column=1,sticky='w')
+
+        if apply and cancel: return popup, apply_button, cancel_button
+        elif apply: return popup, apply_button
+        elif cancel: return popup, cancel_button
+        else: return popup
+    
+    def change_axes_popup(self):
+        """Creates a popup window that allows user to edit axes limits. This function is triggered
+            by the menu buttons"""
+        popup,apply_button = self.generic_popup(pop_wid = 200, pop_hei=100, pop_title="Axes Limits",apply=True)
 
         labels_w_units = [self.data_info["xlabel_unit"],*self.data_info["ylabels_units"]]
         lim_strs = [self.data_info["xlim_strvar"],*self.data_info["ylim_strvars"]]
@@ -476,33 +512,36 @@ class AviaryMissionEditor(Tk):
             lim_entry = Entry(popup,textvariable=lim_str,width = max(6,len(lim_str.get())))
             lim_entry.grid(row=row,column=1)
 
-        change_button = Button(master=popup,command = lambda:[self.update_axes_lims(),close_popup(self)],
-                               text = "Change")
-        change_button.grid()
+        apply_button.grid(row=row+1)
+        apply_button.configure(command=lambda:[self.close_popup(),self.update_axes_lims()])
 
     def advanced_options_popup(self):
-        """Creates a popup window that allows user to edit axes limits. This function is triggered
-            by the menu buttons"""
-        # compute middle of window location to place popup into
-        win_size,win_left,win_top = self.winfo_geometry().split("+")
-        win_wid,win_hei = win_size.split("x")
-        win_left,win_top,win_wid,win_hei = int(win_left),int(win_top),int(win_wid),int(win_hei)
-        pop_wid,pop_hei = 300,300 # hardcoded popup size
-        pop_left,pop_top = int(win_left + win_wid/2 - pop_wid/2), int(win_top + win_hei/2 - pop_hei/2)
+        """Creates a popup window that allows user to edit advanced options for phase info. 
+        Options included are specified as a dict in __init__ and include solve/constrain for range,
+        include landing/takeoff, polynomial order, and phase order. This function is triggered by the menu buttons"""
+        def reset_options(self):
+            for key,var in self.advanced_options_info_defaults.items():
+                self.advanced_options_info[key].set(value=var.get())
+        popup,apply_button,cancel_button = self.generic_popup(pop_wid=300,pop_hei=200,pop_title="Advanced Options",apply=True,cancel=True)
+        # TODO: check if this behavior is desired, closing without applying will not set user options
+        # TODO: these options don't populate when opening an existing phase info, add that
+        popup.protocol("WM_DELETE_WINDOW",func=lambda:[self.close_popup(),reset_options(self)])
 
-        popup = Toplevel(self)
-        popup.resizable(False,False)
-        popup.geometry(f"{pop_wid}x{pop_hei}+{pop_left}+{pop_top}")
-        popup.title("Advanced Options")
-        popup.focus_set()
+        for row,(option_label_txt,option_var) in enumerate(self.advanced_options_info.items()):
+            option_label = Label(popup,text=option_label_txt.replace("_"," ").title(),justify='right')
+            option_label.grid(row=row,column=0,sticky='e')
+            if type(BooleanVar()) == type(option_var):
+                option_checkbox = Checkbutton(popup,variable=option_var)
+                option_checkbox.grid(row=row,column=1,sticky='w')
+            elif type(IntVar()) == type(option_var):
+                option_entry = Entry(popup,textvariable=option_var,width = 2)
+                option_entry.grid(row=row,column=1)
 
-        def close_popup(self): # internal function for closing this popup and resetting focus
-            self.focus_set()
-            popup.destroy()
-        popup.protocol("WM_DELETE_WINDOW",func=lambda:close_popup(self))
-
-        # advanced options: solve for range, constrain range, polynomial control order, include takeoff, include landing
-        # all checkboxes except poly cont ord
+        # TODO: phase order (better if editable per phase)
+        apply_button.grid(row=row+1,column=0)
+        apply_button.configure(command=lambda:self.close_popup())
+        cancel_button.grid(row=row+1,column=1)
+        cancel_button.configure(command=lambda:[self.close_popup(),reset_options(self)])
 
     def open_phase_info(self):
         """Opens a dialog box to select a .py file with a phase info dict. File must contain a dict called phase_info. 
@@ -559,12 +598,14 @@ class AviaryMissionEditor(Tk):
         # TODO: checkboxes for solve distance, constrain range, 
         #       entry for polynomial order
         # TODO: save phase info as filename with save as command
-        users = {'solve_for_distance':False,'constrain_range':True}
+        users = {'solve_for_distance':self.advanced_options_info["solve_for_distance"].get(),
+                 'constrain_range':self.advanced_options_info["constrain_range"].get()}
+        polyord = self.advanced_options_info["polynomial_control_order"].get()
         if len(self.table_boolvars[0]) != len(self.x_list)-1:
             for i in range(self.num_dep_vars):
                 self.table_boolvars[i] = [BooleanVar()]*(len(self.x_list)-1)
         create_phase_info(times = self.x_list, altitudes = self.ys_list[0], mach_values = self.ys_list[1],
-                          polynomial_order = 1, num_segments = len(self.x_list)-1,
+                          polynomial_order = polyord, num_segments = len(self.x_list)-1,
                           optimize_altitude_phase_vars = self.table_boolvars[0],
                           optimize_mach_phase_vars = self.table_boolvars[1],
                           user_choices = users)
