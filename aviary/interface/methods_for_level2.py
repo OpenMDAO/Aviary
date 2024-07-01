@@ -1826,6 +1826,9 @@ class AviaryProblem(om.Problem):
                 self.model.add_objective(Mission.Summary.FUEL_BURNED, ref=ref)
             elif objective_type == "fuel":
                 self.model.add_objective(Mission.Objectives.FUEL, ref=ref)
+            else:
+                raise ValueError(f"{objective_type} is not a valid objective.\nobjective_type must"
+                                 " be one of mass, time, hybrid_objective, fuel_burned, or fuel")
 
         # set objective ref on height-energy missions
         elif self.mission_method is HEIGHT_ENERGY:
