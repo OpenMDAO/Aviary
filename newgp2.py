@@ -137,6 +137,7 @@ class AviaryMissionEditor(Tk):
         datalists = [self.x_list,*self.ys_list]
         if row == len(self.x_list):
             datalists[col].append(value)
+            if row >0: self.bool_list[col-1].append(False)
         else:
             datalists[col][row] = value
 
@@ -336,6 +337,8 @@ class AviaryMissionEditor(Tk):
         self.x_list.pop(row)
         for i in range(self.num_dep_vars):
             self.ys_list[i].pop(row)
+            if row > 0:
+                self.bool_list[i].pop(row-1)
         self.redraw_plot()
         self.update_table(overwrite=True)
 
@@ -387,7 +390,7 @@ class AviaryMissionEditor(Tk):
 
                     optimize_variable = BooleanVar()
                     self.table_boolvars[col-1].append(optimize_variable)
-                    if row <= len(self.bool_list[0]):
+                    if row <= len(self.bool_list[0]): # if bool list has already been populated (e.g. opening an existing phase info)
                         optimize_variable.set(value=self.bool_list[col-1][row-1])
                     optimize_checkbox = Checkbutton(self.frame_table.interior,variable=optimize_variable)
                     optimize_checkbox.grid(row=row*2+1,column=col+1,sticky='e')
@@ -485,7 +488,8 @@ class AviaryMissionEditor(Tk):
             phase_info_file = __import__(filename.split("/")[-1].split(".py")[0])
             phase_info = phase_info_file.phase_info
         init = False
-        idx =0
+        idx = 0
+        ylabs = ["altitude","mach"]
         for phase_dict in (phase_info.values()):
             if "initial_guesses" in phase_dict:
                 timevals = phase_dict["initial_guesses"]["time"][0]
@@ -495,16 +499,14 @@ class AviaryMissionEditor(Tk):
                     self.ys_list = [[0]*numpts for _ in range(self.num_dep_vars)]
                     self.bool_list = [[0]*(numpts-1) for _ in range(self.num_dep_vars)]
                     self.x_list[0] = timevals[0]
-                    self.ys_list[0][0] = phase_dict["user_options"]["initial_altitude"][0]
-                    self.ys_list[1][0] = phase_dict["user_options"]["initial_mach"][0]
-
+                    for i in range(self.num_dep_vars):
+                        self.ys_list[i][0] = phase_dict["user_options"]["initial_"+ylabs[i]][0]
                     init = True
 
-                self.x_list[idx+1] = timevals[1] + timevals[0]    
-                self.ys_list[0][idx+1] = phase_dict["user_options"]["final_altitude"][0]
-                self.ys_list[1][idx+1] = phase_dict["user_options"]["final_mach"][0]
-                self.bool_list[0][idx] = phase_dict["user_options"]["optimize_altitude"]
-                self.bool_list[1][idx] = phase_dict["user_options"]["optimize_mach"]
+                self.x_list[idx+1] = timevals[1] + timevals[0]  
+                for i in range(self.num_dep_vars):
+                    self.ys_list[i][idx+1] = phase_dict["user_options"]["final_"+ylabs[i]][0]
+                    self.bool_list[i][idx] = phase_dict["user_options"]["optimize_"+ylabs[i]]
                 idx +=1
 
         for boollist in self.bool_list:
