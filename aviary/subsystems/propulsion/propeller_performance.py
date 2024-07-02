@@ -9,6 +9,10 @@ from aviary.subsystems.propulsion.propeller_map import PropellerMap
 
 
 class OutMachs(om.ExplicitComponent):
+    """This utility sets up relations among helical Mach, free stream Mach and propeller tip Mach.
+    helical_mach = sqrt(mach^2 + tip_mach^2).
+    It compute the value of one from the inputs of the other two,
+    """
     def initialize(self):
         self.options.declare("num_nodes", types=int)
         self.options.declare(
@@ -110,17 +114,23 @@ class OutMachs(om.ExplicitComponent):
             mach = inputs["MACH"]
             tip_mach = inputs["tip_mach"]
             J["helical_mach", "MACH"] = -mach/np.sqrt(mach * mach + tip_mach * tip_mach)
-            J["helical_mach", "tip_mach"] = -tip_mach/np.sqrt(mach * mach + tip_mach * tip_mach)
+            J["helical_mach", "tip_mach"] = -tip_mach / \
+                np.sqrt(mach * mach + tip_mach * tip_mach)
         elif out_type is OutMachType.MACH:
             tip_mach = inputs["tip_mach"]
             helical_mach = inputs["HELICAL_MACH"]
-            J["mach", "helical_mach"] = -helical_mach/np.sqrt(helical_mach * helical_mach - tip_mach * tip_mach)
-            J["mach", "tip_mach"] = tip_mach/np.sqrt(helical_mach * helical_mach - tip_mach * tip_mach)
+            J["mach", "helical_mach"] = -helical_mach / \
+                np.sqrt(helical_mach * helical_mach - tip_mach * tip_mach)
+            J["mach", "tip_mach"] = tip_mach / \
+                np.sqrt(helical_mach * helical_mach - tip_mach * tip_mach)
         elif out_type is OutMachType.TIP_MACH:
             mach = inputs["MACH"]
             helical_mach = inputs["helical_mach"]
-            J["tip_mach", "helical_mach"] = -helical_mach/np.sqrt(helical_mach * helical_mach - mach * mach)
-            J["tip_mach", "MACH"] = mach/np.sqrt(helical_mach * helical_mach - mach * mach)
+            J["tip_mach", "helical_mach"] = -helical_mach / \
+                np.sqrt(helical_mach * helical_mach - mach * mach)
+            J["tip_mach", "MACH"] = mach / \
+                np.sqrt(helical_mach * helical_mach - mach * mach)
+
 
 class InstallLoss(om.Group):
     """
@@ -240,7 +250,10 @@ class InstallLoss(om.Group):
 
 class PropellerPerformance(om.Group):
     """
-    Computation of propeller thrust coefficient based on Hamilton Standard.
+    Computation of propeller thrust coefficient based on Hamilton Standard or a user
+    provided propeller map. Note that a propeller map allows either helical Mach number or
+    free stream Mach number as input. This infomation will be detected automatically when the 
+    propeller map is loaded into memory.
     The installation loss factor is either a user input or computed internally.
     """
 
@@ -342,8 +355,9 @@ class PropellerPerformance(om.Group):
             if mach_type == 'helical_mach':
                 self.add_subsystem(
                     name='selectedMach',
-                    subsys=OutMachs(num_nodes=nn, output_mach_type=OutMachType.HELICAL_MACH),
-                    promotes_inputs=[("mach", Dynamic.Mission.MACH),"tip_mach"],
+                    subsys=OutMachs(
+                        num_nodes=nn, output_mach_type=OutMachType.HELICAL_MACH),
+                    promotes_inputs=[("mach", Dynamic.Mission.MACH), "tip_mach"],
                     promotes_outputs=[("helical_mach", "selected_mach")],
                 )
             else:
@@ -370,11 +384,11 @@ class PropellerPerformance(om.Group):
                 promotes_outputs=[
                     "thrust_coefficient",
                 ])
-            
+
             # propeller map has taken compresibility into account.
             IVC = om.IndepVarComp("comp_tip_loss_factor",
-                        np.linspace(1.0, 1.0, nn),
-                        units='unitless')
+                                  np.linspace(1.0, 1.0, nn),
+                                  units='unitless')
             self.add_subsystem('IVC', IVC, promotes=['comp_tip_loss_factor'])
         else:
             self.add_subsystem(
