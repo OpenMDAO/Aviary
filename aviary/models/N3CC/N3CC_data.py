@@ -180,46 +180,45 @@ inputs.set_val(Aircraft.Propulsion.TOTAL_STARTER_MASS, 0.0, 'lbm')
 
 filename = get_path('models/engines/turbofan_22k.deck')
 
-engine_inputs = AviaryValues()
-engine_inputs.set_val(Aircraft.Engine.DATA_FILE, filename)
+inputs.set_val(Aircraft.Engine.DATA_FILE, filename)
 engine_mass = 6293.8
 engine_mass_units = 'lbm'
-engine_inputs.set_val(Aircraft.Engine.MASS, engine_mass, engine_mass_units)
-engine_inputs.set_val(
+inputs.set_val(Aircraft.Engine.MASS, engine_mass, engine_mass_units)
+inputs.set_val(
     Aircraft.Engine.REFERENCE_MASS,
     engine_mass,
     engine_mass_units)
 scaled_sls_thrust = 22200.5
 scaled_sls_thrust_units = 'lbf'
-engine_inputs.set_val(
+inputs.set_val(
     Aircraft.Engine.SCALED_SLS_THRUST, scaled_sls_thrust, scaled_sls_thrust_units)
-engine_inputs.set_val(
+inputs.set_val(
     Aircraft.Engine.REFERENCE_SLS_THRUST, scaled_sls_thrust, scaled_sls_thrust_units)
-engine_inputs.set_val(Aircraft.Engine.THRUST_REVERSERS_MASS_SCALER, 0.0)
+inputs.set_val(Aircraft.Engine.THRUST_REVERSERS_MASS_SCALER, 0.0)
 num_engines = 2
-engine_inputs.set_val(Aircraft.Engine.NUM_ENGINES, num_engines)
+inputs.set_val(Aircraft.Engine.NUM_ENGINES, num_engines)
 num_fuselage_engines = 0
-engine_inputs.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, num_fuselage_engines)
+inputs.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, num_fuselage_engines)
 num_wing_engines = num_engines
-engine_inputs.set_val(Aircraft.Engine.NUM_WING_ENGINES, num_wing_engines)
-engine_inputs.set_val(Aircraft.Engine.WING_LOCATIONS, 0.289682918)
-engine_inputs.set_val(Aircraft.Engine.SCALE_MASS, True)
-engine_inputs.set_val(Aircraft.Engine.MASS_SCALER, 1.15)
-engine_inputs.set_val(Aircraft.Engine.SCALE_PERFORMANCE, True)
-engine_inputs.set_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER, 1.0)
-engine_inputs.set_val(Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER, 1.0)
-engine_inputs.set_val(
+inputs.set_val(Aircraft.Engine.NUM_WING_ENGINES, num_wing_engines)
+inputs.set_val(Aircraft.Engine.WING_LOCATIONS, 0.289682918)
+inputs.set_val(Aircraft.Engine.SCALE_MASS, True)
+inputs.set_val(Aircraft.Engine.MASS_SCALER, 1.15)
+inputs.set_val(Aircraft.Engine.SCALE_PERFORMANCE, True)
+inputs.set_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER, 1.0)
+inputs.set_val(Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER, 1.0)
+inputs.set_val(
     Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM, 0.0)
-engine_inputs.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM, 1.0)
-engine_inputs.set_val(Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION, 0.0, units='lb/h')
-engine_inputs.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.0)
-engine_inputs.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, True)
-engine_inputs.set_val(Aircraft.Engine.IGNORE_NEGATIVE_THRUST, False)
-engine_inputs.set_val(Aircraft.Engine.FLIGHT_IDLE_THRUST_FRACTION, 0.0)
-engine_inputs.set_val(Aircraft.Engine.FLIGHT_IDLE_MAX_FRACTION, 1.0)
-engine_inputs.set_val(Aircraft.Engine.FLIGHT_IDLE_MIN_FRACTION, 0.08)
-engine_inputs.set_val(Aircraft.Engine.GEOPOTENTIAL_ALT, False)
-engine_inputs.set_val(Aircraft.Engine.INTERPOLATION_METHOD, 'slinear')
+inputs.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM, 1.0)
+inputs.set_val(Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION, 0.0, units='lb/h')
+inputs.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.0)
+inputs.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, True)
+inputs.set_val(Aircraft.Engine.IGNORE_NEGATIVE_THRUST, False)
+inputs.set_val(Aircraft.Engine.FLIGHT_IDLE_THRUST_FRACTION, 0.0)
+inputs.set_val(Aircraft.Engine.FLIGHT_IDLE_MAX_FRACTION, 1.0)
+inputs.set_val(Aircraft.Engine.FLIGHT_IDLE_MIN_FRACTION, 0.08)
+inputs.set_val(Aircraft.Engine.GEOPOTENTIAL_ALT, False)
+inputs.set_val(Aircraft.Engine.INTERPOLATION_METHOD, 'slinear')
 
 
 # Vertical Tail
@@ -442,7 +441,7 @@ outputs.set_val(Mission.Design.MACH, 0.779)
 outputs.set_val(Mission.Design.LIFT_COEFFICIENT, 0.583)
 
 # Create engine model
-engine = build_engine_deck(aviary_options=engine_inputs)
+engine = build_engine_deck(aviary_options=inputs)
 preprocess_options(inputs, engine_models=engine)
 
 # build subsystems
@@ -975,7 +974,7 @@ balanced_decision_speed_user_options.set_val('max_velocity', val=167.85, units='
 
 balanced_decision_speed_initial_guesses = AviaryValues()
 
-num_engines = float(engine_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
+num_engines = float(inputs.get_val(Aircraft.Engine.NUM_ENGINES))
 engine_out_throttle = (num_engines - 1) / num_engines
 
 balanced_decision_speed_initial_guesses.set_val('time', [30., 2.], 's')

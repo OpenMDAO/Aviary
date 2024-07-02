@@ -55,6 +55,27 @@ documentation_text_align = 'left'
 # functions for the aviary command line command
 
 
+def _none_or_str(value):
+    """
+    Get the value of the argparse option.
+
+    If "None", return None. Else, just return the string.
+
+    Parameters
+    ----------
+    value : str
+        The value used by the user on the command line for the argument.
+
+    Returns
+    -------
+    option_value : str or None
+        The value of the option after possibly converting from 'None' to None.
+    """
+    if value == "None":
+        return None
+    return value
+
+
 def _dashboard_setup_parser(parser):
     """
     Set up the aviary subparser for the 'aviary dashboard' command.
@@ -75,14 +96,14 @@ def _dashboard_setup_parser(parser):
         type=str,
         help="Problem case recorder file name",
         dest="problem_recorder",
-        default="aviary_history.db",
+        default="problem_history.db",
     )
     parser.add_argument(
         "--driver_recorder",
-        type=str,
-        help="Driver case recorder file name",
+        type=_none_or_str,
+        help="Driver case recorder file name. Set to None if file is ignored",
         dest="driver_recorder",
-        default=None,
+        default="driver_history.db",
     )
     parser.add_argument(
         "--port",
@@ -469,8 +490,8 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
         Name of the script file whose results will be displayed by this dashboard.
     problem_recorder : str
         Name of the recorder file containing the Problem cases.
-    driver_recorder : str
-        Name of the recorder file containing the Driver cases.
+    driver_recorder : str or None
+        Name of the recorder file containing the Driver cases. If None, the driver tab will not be added
     port : int
         HTTP port used for the dashboard webapp. If 0, use any free port
     """
@@ -682,41 +703,40 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
         )
 
     # Make the Aviary variables table pane
-    if problem_recorder:
-        if os.path.exists(problem_recorder):
+    if os.path.exists(problem_recorder):
 
-            # Make dir reports/script_name/aviary_vars if needed
-            aviary_vars_dir = pathlib.Path(f"reports/{script_name}/aviary_vars")
-            aviary_vars_dir.mkdir(parents=True, exist_ok=True)
+        # Make dir reports/script_name/aviary_vars if needed
+        aviary_vars_dir = pathlib.Path(f"reports/{script_name}/aviary_vars")
+        aviary_vars_dir.mkdir(parents=True, exist_ok=True)
 
-            # copy index.html file to reports/script_name/aviary_vars/index.html
-            aviary_dir = pathlib.Path(importlib.util.find_spec("aviary").origin).parent
+        # copy index.html file to reports/script_name/aviary_vars/index.html
+        aviary_dir = pathlib.Path(importlib.util.find_spec("aviary").origin).parent
 
-            shutil.copy(
-                aviary_dir.joinpath("visualization/assets/aviary_vars/index.html"),
-                aviary_vars_dir.joinpath("index.html"),
+        shutil.copy(
+            aviary_dir.joinpath("visualization/assets/aviary_vars/index.html"),
+            aviary_vars_dir.joinpath("index.html"),
+        )
+        shutil.copy(
+            aviary_dir.joinpath("visualization/assets/aviary_vars/script.js"),
+            aviary_vars_dir.joinpath("script.js"),
+        )
+        # copy script.js file to reports/script_name/aviary_vars/index.html.
+        # mod the script.js file to point at the json file
+        # create the json file and put it in reports/script_name/aviary_vars/aviary_vars.json
+        try:
+            create_aviary_variables_table_data_nested(
+                script_name, problem_recorder
+            )  # create the json file
+
+            aviary_vars_pane = create_report_frame(
+                "html", f"{reports_dir}/aviary_vars/index.html",
+                "Table showing Aviary variables"
             )
-            shutil.copy(
-                aviary_dir.joinpath("visualization/assets/aviary_vars/script.js"),
-                aviary_vars_dir.joinpath("script.js"),
+            results_tabs_list.append(("Aviary Variables", aviary_vars_pane))
+        except Exception as e:
+            issue_warning(
+                f"Unable do create Aviary Variables tab in dashboard due to the error: {str(e)}"
             )
-            # copy script.js file to reports/script_name/aviary_vars/index.html.
-            # mod the script.js file to point at the json file
-            # create the json file and put it in reports/script_name/aviary_vars/aviary_vars.json
-            try:
-                create_aviary_variables_table_data_nested(
-                    script_name, problem_recorder
-                )  # create the json file
-
-                aviary_vars_pane = create_report_frame(
-                    "html", f"{reports_dir}/aviary_vars/index.html",
-                    "Table showing Aviary variables"
-                )
-                results_tabs_list.append(("Aviary Variables", aviary_vars_pane))
-            except Exception as e:
-                issue_warning(
-                    f"Unable do create Aviary Variables tab in dashboard due to the error: {str(e)}"
-                )
 
     # Timeseries Mission Output Report
     mission_timeseries_pane = create_csv_frame(

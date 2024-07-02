@@ -1,3 +1,4 @@
+from dymos.transcriptions.transcription_base import TranscriptionBase
 import csv
 import warnings
 import inspect
@@ -67,6 +68,11 @@ GASP = LegacyCode.GASP
 TWO_DEGREES_OF_FREEDOM = EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
 HEIGHT_ENERGY = EquationsOfMotion.HEIGHT_ENERGY
 SOLVED_2DOF = EquationsOfMotion.SOLVED_2DOF
+
+if hasattr(TranscriptionBase, 'setup_polynomial_controls'):
+    use_new_dymos_syntax = False
+else:
+    use_new_dymos_syntax = True
 
 
 class PreMissionGroup(om.Group):
@@ -850,7 +856,7 @@ class AviaryProblem(om.Problem):
         try:
             fix_initial = user_options.get_val('fix_initial')
         except KeyError:
-            fix_intial = False
+            fix_initial = False
 
         try:
             fix_duration = user_options.get_val('fix_duration')
@@ -1867,7 +1873,7 @@ class AviaryProblem(om.Problem):
 
                                 targets = mission_var_name
                                 if '.' in mission_var_name:
-                                    # Support for non-hiearchy variables as parameters.
+                                    # Support for non-hierarchy variables as parameters.
                                     mission_var_name = mission_var_name.split('.')[-1]
 
                                 if 'phases' in bus_variables[bus_variable]:
@@ -2253,7 +2259,7 @@ class AviaryProblem(om.Problem):
                 )
 
     def run_aviary_problem(self,
-                           record_filename="aviary_history.db",
+                           record_filename="problem_history.db",
                            optimization_history_filename=None,
                            restart_filename=None, suppress_solver_print=True, run_driver=True, simulate=False, make_plots=True):
         """
@@ -2262,7 +2268,7 @@ class AviaryProblem(om.Problem):
         Parameters
         ----------
         record_filename : str, optional
-            The name of the database file where the solutions are to be recorded. The default is "aviary_history.db".
+            The name of the database file where the solutions are to be recorded. The default is "problem_history.db".
         optimization_history_filename : str, None
             The name of the database file where the driver iterations are to be recorded. The default is None.
         restart_filename : str, optional
@@ -2368,10 +2374,10 @@ class AviaryProblem(om.Problem):
             promotes_outputs=['mission:*'])
 
         last_flight_phase_name = list(self.phase_info.keys())[-1]
+        control_type_string = 'control_values'
         if self.phase_info[last_flight_phase_name]['user_options'].get('use_polynomial_control', True):
-            control_type_string = 'polynomial_control_values'
-        else:
-            control_type_string = 'control_values'
+            if not use_new_dymos_syntax:
+                control_type_string = 'polynomial_control_values'
 
         last_regular_phase = self.regular_phases[-1]
         self.model.connect(f'traj.{last_regular_phase}.states:mass',
@@ -2391,10 +2397,10 @@ class AviaryProblem(om.Problem):
             self.model.connect(Mission.Takeoff.GROUND_DISTANCE,
                                f'traj.{first_flight_phase_name}.initial_states:distance')
 
+            control_type_string = 'control_values'
             if self.phase_info[first_flight_phase_name]['user_options'].get('use_polynomial_control', True):
-                control_type_string = 'polynomial_control_values'
-            else:
-                control_type_string = 'control_values'
+                if not use_new_dymos_syntax:
+                    control_type_string = 'polynomial_control_values'
 
             if self.phase_info[first_flight_phase_name]['user_options'].get('optimize_mach', False):
                 # Create an ExecComp to compute the difference in mach
