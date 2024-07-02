@@ -1,0 +1,1169 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>aviary.interface.graphical_input</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=87e54e7c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/aviary/interface/graphical_input';</script>
+    <link rel="icon" href="../../../_static/aviary_logo.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/aviary.png" class="logo__image only-light" alt=" - Home"/>
+    <script>document.write(`<img src="../../../_static/aviary.png" class="logo__image only-dark" alt=" - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../intro.html">
+                    Aviary Documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/what_aviary_does.html">What Aviary Does</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/tools_that_aviary_uses.html">Tools That Aviary is Built Upon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/expected_user_knowledge.html">Expected User Knowledge</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../getting_started/onboarding.html">Onboarding Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started/onboarding_level1.html">Level 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started/onboarding_level2.html">Level 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started/onboarding_level3.html">Level 3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started/onboarding_ext_subsystem.html">Models with External Subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started/input_csv_phase_info.html">Vehicle Input .csv File and Phase_info Dictionary</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/now_what.html">Now What?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../user_guide/user_interface.html">Aviary User Interface</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/UI_Levels.html">User Interface Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/examples_of_the_same_mission_at_different_UI_levels.html">Examples of the same mission at different UI levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/aviary_commands.html">Command Line Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/input_files.html">Input Files</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/drawing_and_running_simple_missions.html">Drawing and running simple missions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/pre_mission_and_mission.html">Pre-Mission and Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/outputs_and_how_to_read_them.html">Outputs and How to Read Them</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/variable_metadata.html">Understanding the Variable Metadata</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../user_guide/features_and_functionalities.html">Features and Functionalities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/aerodynamics.html">Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/external_aero.html">Externally Computed Polars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/propulsion.html">Propulsion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/hamilton_standard.html">Hamilton Standard Propulsion Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/mass.html">Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/subsystems.html">SubsystemBuilderBase</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/using_external_subsystems.html">Using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/step_by_step_external_guide.html">Step-by-step guide for creating, testing, and using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/battery_subsystem_example.html">In-depth look at the battery subsystem as an example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/features/overriding.html">Overriding Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/FLOPS_based_detailed_takeoff_and_landing.html">FLOPS Based Detailed Takeoff and Landing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/reserve_missions.html">Reserve Mission</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/SGM_capabilities.html">Key SGM Capabilities</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/troubleshooting.html">Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/intro.html">Discussing the Aviary Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/simple_mission_example.html">Conventional Aircraft and Simple Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/more_advanced_example.html">Optimizing the Mission Profile of a Conventional Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/coupled_aircraft_mission_optimization.html">Coupled Aircraft-Mission Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/additional_flight_phases.html">Mission Optimization with Many Phases for a Commercial Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/reserve_missions.html">Reserve Mission Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/OAS_subsystem.html">Using Aviary and OpenAeroStruct Together</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/level_2_detailed_takeoff_and_landing.html">Level 2 Detailed Takeoff and Landing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Theory Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../theory_guide/intro.html">Overview of Aviary Functionality</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../theory_guide/underlying_concepts.html">Underlying Concepts</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../theory_guide/assumptions.html">Assumptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../theory_guide/aerodynamics.html">Core Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../theory_guide/geometry.html">Core Geometry Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../theory_guide/mass.html">Core Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../theory_guide/mission.html">Mission Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../theory_guide/propulsion.html">Core Propulsion Subsystem</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory_guide/optimization_algorithms.html">Optimization Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory_guide/validation.html">Validation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/codebase_overview.html">Codebase Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/coding_standards.html">Coding Standards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/unit_tests.html">Unit Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/contributing_guidelines.html">Guidelines for Contributing Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/how_to_contribute_docs.html">How to Contribute Docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/debugging_env_from_github.html">Using Dev Environments from GitHub Actions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Miscellaneous Resources</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/modeling_exercise.html">Modeling Exercise for the Usability Study</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/FAQ.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/externally_supported_subsystems.html">Externally Supported Subsystems</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../misc_resources/feature_comparison.html">Feature Comparison with Legacy Codes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../misc_resources/comparison_to_flops.html">Comparison to FLOPS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/planned_future_features.html">Planned Future Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_srcdocs/index.html">Source Docs</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary/issues/new?title=Issue%20on%20page%20%2F_modules/aviary/interface/graphical_input.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for aviary.interface.graphical_input</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">matplotlib.backends.backend_tkagg</span> <span class="kn">import</span> <span class="n">FigureCanvasTkAgg</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">from</span> <span class="nn">tkinter</span> <span class="kn">import</span> <span class="n">messagebox</span>
+<span class="kn">import</span> <span class="nn">tkinter</span> <span class="k">as</span> <span class="nn">tk</span>
+<span class="kn">from</span> <span class="nn">tkinter</span> <span class="kn">import</span> <span class="n">messagebox</span><span class="p">,</span> <span class="n">font</span> <span class="k">as</span> <span class="n">tkFont</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">matplotlib.backend_bases</span> <span class="kn">import</span> <span class="n">MouseButton</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+
+<div class="viewcode-block" id="DraggablePoints">
+<a class="viewcode-back" href="../../../_srcdocs/packages/interface/graphical_input.html#aviary.interface.graphical_input.DraggablePoints">[docs]</a>
+<span class="k">class</span> <span class="nc">DraggablePoints</span><span class="p">:</span>
+<div class="viewcode-block" id="DraggablePoints.__init__">
+<a class="viewcode-back" href="../../../_srcdocs/packages/interface/graphical_input.html#aviary.interface.graphical_input.DraggablePoints.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">canvas</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">points</span> <span class="o">=</span> <span class="n">points</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span> <span class="o">=</span> <span class="n">ax</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span> <span class="o">=</span> <span class="n">canvas</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_point</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lines</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">points</span><span class="p">],</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">points</span><span class="p">],</span>
+                              <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cid_click</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">mpl_connect</span><span class="p">(</span>
+            <span class="s1">&#39;button_press_event&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_click</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cid_release</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">mpl_connect</span><span class="p">(</span>
+            <span class="s1">&#39;button_release_event&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_release</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cid_motion</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">mpl_connect</span><span class="p">(</span>
+            <span class="s1">&#39;motion_notify_event&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_motion</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DraggablePoints.on_click">
+<a class="viewcode-back" href="../../../_srcdocs/packages/interface/graphical_input.html#aviary.interface.graphical_input.DraggablePoints.on_click">[docs]</a>
+    <span class="k">def</span> <span class="nf">on_click</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">inaxes</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span> <span class="ow">or</span> <span class="n">event</span><span class="o">.</span><span class="n">button</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">MouseButton</span><span class="o">.</span><span class="n">LEFT</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">point</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">event</span><span class="o">.</span><span class="n">xdata</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5.0</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">event</span><span class="o">.</span><span class="n">ydata</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5.0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_point</span> <span class="o">=</span> <span class="n">i</span>
+                <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="DraggablePoints.on_release">
+<a class="viewcode-back" href="../../../_srcdocs/packages/interface/graphical_input.html#aviary.interface.graphical_input.DraggablePoints.on_release">[docs]</a>
+    <span class="k">def</span> <span class="nf">on_release</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_point</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="DraggablePoints.on_motion">
+<a class="viewcode-back" href="../../../_srcdocs/packages/interface/graphical_input.html#aviary.interface.graphical_input.DraggablePoints.on_motion">[docs]</a>
+    <span class="k">def</span> <span class="nf">on_motion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_point</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">event</span><span class="o">.</span><span class="n">xdata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">event</span><span class="o">.</span><span class="n">ydata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_point</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_point</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">event</span><span class="o">.</span><span class="n">ydata</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_points</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DraggablePoints.update_points">
+<a class="viewcode-back" href="../../../_srcdocs/packages/interface/graphical_input.html#aviary.interface.graphical_input.DraggablePoints.update_points">[docs]</a>
+    <span class="k">def</span> <span class="nf">update_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;b&#39;</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;Mach Number&#39;</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">data</span><span class="p">],</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">data</span><span class="p">],</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span>
+                <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">360</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="create_phase_info">
+<a class="viewcode-back" href="../../../_srcdocs/packages/interface/graphical_input.html#aviary.interface.graphical_input.create_phase_info">[docs]</a>
+<span class="k">def</span> <span class="nf">create_phase_info</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">altitudes</span><span class="p">,</span> <span class="n">mach_values</span><span class="p">,</span>
+                      <span class="n">polynomial_order</span><span class="p">,</span> <span class="n">num_segments</span><span class="p">,</span> <span class="n">optimize_mach_phase_vars</span><span class="p">,</span> <span class="n">optimize_altitude_phase_vars</span><span class="p">,</span> <span class="n">user_choices</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a dictionary containing the information about different flight phases</span>
+<span class="sd">    based on input times, altitudes, and Mach values.</span>
+
+<span class="sd">    The information includes details such as duration bounds, initial guesses,</span>
+<span class="sd">    and various options for optimization and control for each phase.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    times : list of float</span>
+<span class="sd">        The times at which phase changes occur, given in minutes.</span>
+<span class="sd">    altitudes : list of float</span>
+<span class="sd">        The altitudes corresponding to each phase, given in feet.</span>
+<span class="sd">    mach_values : list of float</span>
+<span class="sd">        The Mach numbers corresponding to each phase.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        A dictionary with all the phase information, including bounds and initial guesses.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">num_phases</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">times</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>  <span class="c1"># Number of phases is one less than the number of points</span>
+    <span class="n">phase_info</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">times</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">altitudes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">altitudes</span><span class="p">)</span> <span class="o">/</span> <span class="mi">500</span><span class="p">)</span> <span class="o">*</span> <span class="mi">500</span>
+    <span class="n">mach_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mach_values</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="c1"># Utility function to create bounds</span>
+    <span class="k">def</span> <span class="nf">create_bounds</span><span class="p">(</span><span class="n">center</span><span class="p">):</span>
+        <span class="n">lower_bound</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">center</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>  <span class="c1"># Ensuring lower bound is not less than 0.1</span>
+        <span class="n">upper_bound</span> <span class="o">=</span> <span class="n">center</span> <span class="o">*</span> <span class="mf">1.5</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">lower_bound</span><span class="p">,</span> <span class="n">upper_bound</span><span class="p">)</span>
+
+    <span class="c1"># Calculate duration bounds for each phase</span>
+    <span class="n">duration_bounds</span> <span class="o">=</span> <span class="p">[</span><span class="n">create_bounds</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">times</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                       <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_phases</span><span class="p">)]</span>
+
+    <span class="c1"># Initialize the cumulative initial bounds</span>
+    <span class="n">cumulative_initial_bounds</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)]</span>  <span class="c1"># Initial bounds for the first phase</span>
+
+    <span class="c1"># Calculate the cumulative initial bounds for subsequent phases</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_phases</span><span class="p">):</span>
+        <span class="n">previous_duration_bounds</span> <span class="o">=</span> <span class="n">duration_bounds</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">previous_initial_bounds</span> <span class="o">=</span> <span class="n">cumulative_initial_bounds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">new_initial_bound_min</span> <span class="o">=</span> <span class="n">previous_initial_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">previous_duration_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">new_initial_bound_max</span> <span class="o">=</span> <span class="n">previous_initial_bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">previous_duration_bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">cumulative_initial_bounds</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">new_initial_bound_min</span><span class="p">,</span> <span class="n">new_initial_bound_max</span><span class="p">))</span>
+
+    <span class="c1"># Add pre_mission and post_mission phases</span>
+    <span class="n">phase_info</span><span class="p">[</span><span class="s1">&#39;pre_mission&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;include_takeoff&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s1">&#39;optimize_mass&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">climb_count</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">cruise_count</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">descent_count</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_phases</span><span class="p">):</span>
+        <span class="n">initial_altitude</span> <span class="o">=</span> <span class="n">altitudes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">final_altitude</span> <span class="o">=</span> <span class="n">altitudes</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># Determine phase type: climb, cruise, or descent</span>
+        <span class="k">if</span> <span class="n">final_altitude</span> <span class="o">&gt;</span> <span class="n">initial_altitude</span><span class="p">:</span>
+            <span class="n">phase_type</span> <span class="o">=</span> <span class="s1">&#39;climb&#39;</span>
+            <span class="n">phase_count</span> <span class="o">=</span> <span class="n">climb_count</span>
+            <span class="n">climb_count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">final_altitude</span> <span class="o">==</span> <span class="n">initial_altitude</span><span class="p">:</span>
+            <span class="n">phase_type</span> <span class="o">=</span> <span class="s1">&#39;cruise&#39;</span>
+            <span class="n">phase_count</span> <span class="o">=</span> <span class="n">cruise_count</span>
+            <span class="n">cruise_count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">phase_type</span> <span class="o">=</span> <span class="s1">&#39;descent&#39;</span>
+            <span class="n">phase_count</span> <span class="o">=</span> <span class="n">descent_count</span>
+            <span class="n">descent_count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">phase_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">phase_type</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">phase_count</span><span class="si">}</span><span class="s1">&#39;</span>
+
+        <span class="n">phase_info</span><span class="p">[</span><span class="n">phase_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;core_aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;computed&#39;</span><span class="p">}</span>
+            <span class="p">},</span>
+            <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;optimize_mach&#39;</span><span class="p">:</span> <span class="n">optimize_mach_phase_vars</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(),</span>
+                <span class="s1">&#39;optimize_altitude&#39;</span><span class="p">:</span> <span class="n">optimize_altitude_phase_vars</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(),</span>
+                <span class="s1">&#39;polynomial_control_order&#39;</span><span class="p">:</span> <span class="n">polynomial_order</span><span class="p">,</span>
+                <span class="s1">&#39;use_polynomial_control&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="n">num_segments</span><span class="p">,</span>
+                <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+                <span class="s1">&#39;solve_for_distance&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s1">&#39;initial_mach&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">mach_values</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+                <span class="s1">&#39;final_mach&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">mach_values</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+                <span class="s1">&#39;mach_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">mach_values</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">2</span><span class="p">])</span> <span class="o">-</span> <span class="mf">0.02</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">mach_values</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">2</span><span class="p">])</span> <span class="o">+</span> <span class="mf">0.02</span><span class="p">),</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+                <span class="s1">&#39;initial_altitude&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">altitudes</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+                <span class="s1">&#39;final_altitude&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">altitudes</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+                <span class="s1">&#39;altitude_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="nb">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">altitudes</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">2</span><span class="p">])</span> <span class="o">-</span> <span class="mf">500.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">altitudes</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">2</span><span class="p">])</span> <span class="o">+</span> <span class="mf">500.</span><span class="p">),</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+                <span class="s1">&#39;throttle_enforcement&#39;</span><span class="p">:</span> <span class="s1">&#39;path_constraint&#39;</span> <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="p">(</span><span class="n">num_phases</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;boundary_constraint&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;fix_initial&#39;</span><span class="p">:</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s1">&#39;constrain_final&#39;</span><span class="p">:</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="p">(</span><span class="n">num_phases</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="k">else</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s1">&#39;fix_duration&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s1">&#39;initial_bounds&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">cumulative_initial_bounds</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+                <span class="s1">&#39;duration_bounds&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">duration_bounds</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+            <span class="p">},</span>
+            <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="n">times</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">times</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">times</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+    <span class="n">phase_info</span><span class="p">[</span><span class="s1">&#39;post_mission&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;include_landing&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s1">&#39;constrain_range&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s1">&#39;target_range&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="s1">&#39;nmi&#39;</span><span class="p">),</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Apply user choices to each phase</span>
+    <span class="k">for</span> <span class="n">phase_name</span><span class="p">,</span> <span class="n">phase_data</span> <span class="ow">in</span> <span class="n">phase_info</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="s1">&#39;pre_mission&#39;</span> <span class="ow">in</span> <span class="n">phase_name</span> <span class="ow">or</span> <span class="s1">&#39;post_mission&#39;</span> <span class="ow">in</span> <span class="n">phase_name</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">phase_info</span><span class="p">[</span><span class="n">phase_name</span><span class="p">][</span><span class="s1">&#39;user_options&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+            <span class="s1">&#39;solve_for_distance&#39;</span><span class="p">:</span> <span class="n">user_choices</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;solve_for_distance&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="p">})</span>
+
+    <span class="c1"># Apply global settings if required</span>
+    <span class="n">phase_info</span><span class="p">[</span><span class="s1">&#39;post_mission&#39;</span><span class="p">][</span><span class="s1">&#39;constrain_range&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">user_choices</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+        <span class="s1">&#39;constrain_range&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Calculate the total range</span>
+    <span class="n">total_range</span> <span class="o">=</span> <span class="n">estimate_total_range_trapezoidal</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">mach_values</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Total range is estimated to be </span><span class="si">{</span><span class="n">total_range</span><span class="si">}</span><span class="s2"> nautical miles&quot;</span><span class="p">)</span>
+
+    <span class="n">phase_info</span><span class="p">[</span><span class="s1">&#39;post_mission&#39;</span><span class="p">][</span><span class="s1">&#39;target_range&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">total_range</span><span class="p">,</span> <span class="s1">&#39;nmi&#39;</span><span class="p">)</span>
+
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s1">&#39;outputted_phase_info.py&#39;</span><span class="p">)</span>
+
+    <span class="c1"># write a python file with the phase information</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;phase_info = </span><span class="si">{</span><span class="n">phase_info</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Check for &#39;black&#39; and format the file</span>
+    <span class="k">if</span> <span class="n">shutil</span><span class="o">.</span><span class="n">which</span><span class="p">(</span><span class="s1">&#39;black&#39;</span><span class="p">):</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">shutil</span><span class="o">.</span><span class="n">which</span><span class="p">(</span><span class="s1">&#39;autopep8&#39;</span><span class="p">):</span>
+            <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">&#39;autopep8&#39;</span><span class="p">,</span> <span class="s1">&#39;--in-place&#39;</span><span class="p">,</span> <span class="s1">&#39;--aggressive&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="p">])</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;File formatted using &#39;autopep8&#39;&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&#39;black&#39; and &#39;autopep8&#39; are not installed. Please consider installing one of them for better formatting.&quot;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Phase info has been saved and formatted in </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">phase_info</span></div>
+
+
+
+<div class="viewcode-block" id="estimate_total_range_trapezoidal">
+<a class="viewcode-back" href="../../../_srcdocs/packages/interface/graphical_input.html#aviary.interface.graphical_input.estimate_total_range_trapezoidal">[docs]</a>
+<span class="k">def</span> <span class="nf">estimate_total_range_trapezoidal</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">mach_numbers</span><span class="p">):</span>
+    <span class="n">speed_of_sound</span> <span class="o">=</span> <span class="mi">343</span>  <span class="c1"># Speed of sound in meters per second</span>
+
+    <span class="c1"># Convert times to seconds from minutes</span>
+    <span class="n">times_sec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">times</span><span class="p">)</span> <span class="o">*</span> <span class="mi">60</span>
+
+    <span class="c1"># Calculate the speeds at each Mach number</span>
+    <span class="n">speeds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mach_numbers</span><span class="p">)</span> <span class="o">*</span> <span class="n">speed_of_sound</span>
+
+    <span class="c1"># Use numpy&#39;s trapz function to integrate</span>
+    <span class="n">total_range</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">speeds</span><span class="p">,</span> <span class="n">times_sec</span><span class="p">)</span>
+
+    <span class="n">total_range_nautical_miles</span> <span class="o">=</span> <span class="n">total_range</span> <span class="o">/</span> <span class="mi">1000</span> <span class="o">/</span> <span class="mf">1.852</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">total_range_nautical_miles</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="Tooltip">
+<a class="viewcode-back" href="../../../_srcdocs/packages/interface/graphical_input.html#aviary.interface.graphical_input.Tooltip">[docs]</a>
+<span class="k">class</span> <span class="nc">Tooltip</span><span class="p">:</span>
+<div class="viewcode-block" id="Tooltip.__init__">
+<a class="viewcode-back" href="../../../_srcdocs/packages/interface/graphical_input.html#aviary.interface.graphical_input.Tooltip.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">tooltip_func</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span> <span class="o">=</span> <span class="n">ax</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tooltip_func</span> <span class="o">=</span> <span class="n">tooltip_func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tooltip_widget</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_id</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">inaxes</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="p">:</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">xdata</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">ydata</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tooltip_func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">label</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">tooltip_widget</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">tooltip_widget</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Toplevel</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">tooltip_widget</span><span class="o">.</span><span class="n">wm_overrideredirect</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tooltip_widget</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">justify</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span>
+                                          <span class="n">background</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="n">relief</span><span class="o">=</span><span class="s1">&#39;solid&#39;</span><span class="p">,</span> <span class="n">borderwidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                                          <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;tahoma&quot;</span><span class="p">,</span> <span class="s2">&quot;14&quot;</span><span class="p">,</span> <span class="s2">&quot;normal&quot;</span><span class="p">))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">ipadx</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">tooltip_widget</span><span class="o">.</span><span class="n">geometry</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;+</span><span class="si">{</span><span class="n">event</span><span class="o">.</span><span class="n">guiEvent</span><span class="o">.</span><span class="n">x_root</span><span class="o">+</span><span class="mi">10</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="n">event</span><span class="o">.</span><span class="n">guiEvent</span><span class="o">.</span><span class="n">y_root</span><span class="o">+</span><span class="mi">10</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">tooltip_widget</span><span class="o">.</span><span class="n">deiconify</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tooltip_widget</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">tooltip_widget</span><span class="o">.</span><span class="n">withdraw</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tooltip_widget</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">tooltip_widget</span><span class="o">.</span><span class="n">withdraw</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="IntegratedPlottingApp">
+<a class="viewcode-back" href="../../../_srcdocs/packages/interface/graphical_input.html#aviary.interface.graphical_input.IntegratedPlottingApp">[docs]</a>
+<span class="k">class</span> <span class="nc">IntegratedPlottingApp</span><span class="p">(</span><span class="n">tk</span><span class="o">.</span><span class="n">Tk</span><span class="p">):</span>
+
+<div class="viewcode-block" id="IntegratedPlottingApp.__init__">
+<a class="viewcode-back" href="../../../_srcdocs/packages/interface/graphical_input.html#aviary.interface.graphical_input.IntegratedPlottingApp.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Flight Profile Utility&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="p">(</span><span class="s1">&#39;1200x900&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Set default font for the application</span>
+        <span class="n">default_font</span> <span class="o">=</span> <span class="n">tkFont</span><span class="o">.</span><span class="n">nametofont</span><span class="p">(</span><span class="s2">&quot;TkDefaultFont&quot;</span><span class="p">)</span>
+        <span class="n">default_font</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>  <span class="c1"># You can adjust the size as needed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">option_add</span><span class="p">(</span><span class="s2">&quot;*Font&quot;</span><span class="p">,</span> <span class="n">default_font</span><span class="p">)</span>
+
+        <span class="c1"># You might also want to adjust the font of the Matplotlib plots:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;font&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>  <span class="c1"># Adjust the size as needed for Matplotlib plots</span>
+
+        <span class="c1"># Initialize data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">altitude_data</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mach_data</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)]</span>
+
+        <span class="c1"># Frame for plots</span>
+        <span class="n">plot_frame</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Frame</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">plot_frame</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Create Altitude Plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fig_altitude</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax_altitude</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ax_altitude</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">canvas_altitude</span> <span class="o">=</span> <span class="n">FigureCanvasTkAgg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fig_altitude</span><span class="p">,</span> <span class="n">master</span><span class="o">=</span><span class="n">plot_frame</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">canvas_altitude</span><span class="o">.</span><span class="n">get_tk_widget</span><span class="p">()</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s1">&#39;top&#39;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Create Mach Plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fig_mach</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax_mach</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ax_mach</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">canvas_mach</span> <span class="o">=</span> <span class="n">FigureCanvasTkAgg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fig_mach</span><span class="p">,</span> <span class="n">master</span><span class="o">=</span><span class="n">plot_frame</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">canvas_mach</span><span class="o">.</span><span class="n">get_tk_widget</span><span class="p">()</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s1">&#39;top&#39;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">draggable_points_mach</span> <span class="o">=</span> <span class="n">DraggablePoints</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mach_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax_mach</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">canvas_mach</span><span class="p">)</span>
+
+        <span class="c1"># Frame for checkboxes</span>
+        <span class="n">checkbox_frame</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Frame</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">checkbox_frame</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># Checkboxes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimize_mach_var</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">BooleanVar</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">constrain_range_var</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">BooleanVar</span><span class="p">()</span>
+        <span class="n">tk</span><span class="o">.</span><span class="n">Checkbutton</span><span class="p">(</span><span class="n">checkbox_frame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Constrain Range&quot;</span><span class="p">,</span>
+                       <span class="n">variable</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">constrain_range_var</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;tahoma&quot;</span><span class="p">,</span> <span class="mi">14</span><span class="p">))</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">anchor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">constrain_range_var</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">solve_for_distance_var</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">BooleanVar</span><span class="p">()</span>
+        <span class="n">tk</span><span class="o">.</span><span class="n">Checkbutton</span><span class="p">(</span><span class="n">checkbox_frame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Solve for Range&quot;</span><span class="p">,</span>
+                       <span class="n">variable</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solve_for_distance_var</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;tahoma&quot;</span><span class="p">,</span> <span class="mi">14</span><span class="p">))</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">anchor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Textbox for Polynomial Control Order</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">polynomial_order_var</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">StringVar</span><span class="p">()</span>
+        <span class="n">tk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">checkbox_frame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Polynomial Control Order&quot;</span><span class="p">,</span>
+                 <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;tahoma&quot;</span><span class="p">,</span> <span class="mi">14</span><span class="p">))</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">anchor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">polynomial_order_entry</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Entry</span><span class="p">(</span>
+            <span class="n">checkbox_frame</span><span class="p">,</span> <span class="n">textvariable</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">polynomial_order_var</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;tahoma&quot;</span><span class="p">,</span> <span class="mi">14</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">polynomial_order_entry</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">anchor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">polynomial_order_entry</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Textbox for Number of Segments</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_segments_var</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">StringVar</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="s2">&quot;2&quot;</span><span class="p">)</span>  <span class="c1"># Default value set to &quot;2&quot;</span>
+        <span class="n">tk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">checkbox_frame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Number of Segments&quot;</span><span class="p">,</span>
+                 <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;tahoma&quot;</span><span class="p">,</span> <span class="mi">14</span><span class="p">))</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">anchor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_segments_entry</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Entry</span><span class="p">(</span>
+            <span class="n">checkbox_frame</span><span class="p">,</span> <span class="n">textvariable</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_segments_var</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;tahoma&quot;</span><span class="p">,</span> <span class="mi">14</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_segments_entry</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">anchor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cid_click_altitude</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fig_altitude</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">mpl_connect</span><span class="p">(</span>
+            <span class="s1">&#39;button_press_event&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_click</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cid_motion_altitude</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fig_altitude</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">mpl_connect</span><span class="p">(</span>
+            <span class="s1">&#39;motion_notify_event&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_motion</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cid_release_altitude</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fig_altitude</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">mpl_connect</span><span class="p">(</span>
+            <span class="s1">&#39;button_release_event&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_release</span><span class="p">)</span>
+
+        <span class="c1"># one frame to hold two buttons</span>
+        <span class="n">buttons</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Frame</span><span class="p">(</span><span class="n">checkbox_frame</span><span class="p">)</span>
+        <span class="n">buttons</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s1">&#39;top&#39;</span><span class="p">)</span>
+        <span class="c1"># Done button</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">done_button</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span>
+            <span class="n">buttons</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Output phase_info object&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">on_done</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;tahoma&quot;</span><span class="p">,</span> <span class="mi">14</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">done_button</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">padx</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">pady</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+        <span class="c1"># Help button</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">help_button</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span>
+            <span class="n">buttons</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Help&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">show_help</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;tahoma&quot;</span><span class="p">,</span> <span class="mi">14</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">help_button</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">pady</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+        <span class="c1"># add a note that if you don&#39;t have the black package installed your phase_info file might be formatted unclearly</span>
+        <span class="c1"># wrap text to fit in the window</span>
+        <span class="n">tk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">checkbox_frame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Note: If &#39;black&#39; is not installed, the outputted phase_info dict may not be returned in an easy-to-read format.&quot;</span><span class="p">,</span>
+                 <span class="n">wraplength</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">justify</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;Courier&quot;</span><span class="p">,</span> <span class="mi">11</span><span class="p">))</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s1">&#39;top&#39;</span><span class="p">,</span> <span class="n">pady</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+        <span class="c1"># Frame for point entries</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">point_entry_frame</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Frame</span><span class="p">(</span><span class="n">checkbox_frame</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">point_entry_frame</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s1">&#39;top&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">altitude_entries</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mach_entries</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Column labels</span>
+        <span class="n">tk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">point_entry_frame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Altitude&quot;</span><span class="p">,</span>
+                 <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;tahoma&quot;</span><span class="p">,</span> <span class="mi">14</span><span class="p">))</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">tk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">point_entry_frame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Mach&quot;</span><span class="p">,</span>
+                 <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;tahoma&quot;</span><span class="p">,</span> <span class="mi">14</span><span class="p">))</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+        <span class="c1"># Frame for phase-specific checkboxes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phase_option_frame</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Frame</span><span class="p">(</span><span class="n">checkbox_frame</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phase_option_frame</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s1">&#39;top&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimize_mach_phase_vars</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimize_altitude_phase_vars</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Tooltips for both plots</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tooltip_altitude</span> <span class="o">=</span> <span class="n">Tooltip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ax_altitude</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tooltip_func</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tooltip_mach</span> <span class="o">=</span> <span class="n">Tooltip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ax_mach</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tooltip_func</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cid_motion_altitude</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fig_altitude</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">mpl_connect</span><span class="p">(</span>
+            <span class="s1">&#39;motion_notify_event&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tooltip_altitude</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cid_motion_mach</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fig_mach</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">mpl_connect</span><span class="p">(</span>
+            <span class="s1">&#39;motion_notify_event&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tooltip_mach</span><span class="p">)</span>
+
+        <span class="c1"># Bind Enter key to the on_done function</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;Return&gt;&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_done</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_point_entries</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_point</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="IntegratedPlottingApp.tooltip_func">
+<a class="viewcode-back" href="../../../_srcdocs/packages/interface/graphical_input.html#aviary.interface.graphical_input.IntegratedPlottingApp.tooltip_func">[docs]</a>
+    <span class="k">def</span> <span class="nf">tooltip_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="c1"># Function to generate tooltip text</span>
+        <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">altitude_data</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5.0</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1000.0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Time: </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">point</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="si">}</span><span class="s2"> min, Altitude: </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">point</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="si">}</span><span class="s2"> ft&quot;</span>
+        <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mach_data</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5.0</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Time: </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">point</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="si">}</span><span class="s2"> min, Mach: </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">point</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="IntegratedPlottingApp.update_point_entries">
+<a class="viewcode-back" href="../../../_srcdocs/packages/interface/graphical_input.html#aviary.interface.graphical_input.IntegratedPlottingApp.update_point_entries">[docs]</a>
+    <span class="k">def</span> <span class="nf">update_point_entries</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Clear existing entries</span>
+        <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">altitude_entries</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mach_entries</span><span class="p">:</span>
+            <span class="n">entry</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">altitude_entries</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mach_entries</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+        <span class="c1"># Update phase-specific checkboxes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_phase_options</span><span class="p">()</span>
+
+        <span class="c1"># Create new entries for each point</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">alt</span><span class="p">,</span> <span class="n">mach</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">altitude_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mach_data</span><span class="p">)):</span>
+            <span class="c1"># Altitude Entry</span>
+            <span class="n">tk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">point_entry_frame</span><span class="p">,</span>
+                     <span class="n">text</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Pt. </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;tahoma&quot;</span><span class="p">,</span> <span class="mi">14</span><span class="p">))</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sticky</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+            <span class="n">alt_var</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">StringVar</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">alt</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+            <span class="n">alt_entry</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Entry</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">point_entry_frame</span><span class="p">,</span>
+                                 <span class="n">textvariable</span><span class="o">=</span><span class="n">alt_var</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;tahoma&quot;</span><span class="p">,</span> <span class="mi">14</span><span class="p">))</span>  <span class="c1"># Width set to 10</span>
+            <span class="n">alt_entry</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">alt_entry</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;KeyRelease&gt;&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">e</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="p">,</span>
+                           <span class="n">var</span><span class="o">=</span><span class="n">alt_var</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_point_data</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;altitude&#39;</span><span class="p">,</span> <span class="n">var</span><span class="o">.</span><span class="n">get</span><span class="p">()))</span>
+
+            <span class="c1"># Mach Entry</span>
+            <span class="n">tk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">point_entry_frame</span><span class="p">,</span>
+                     <span class="n">text</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Pt. </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;tahoma&quot;</span><span class="p">,</span> <span class="mi">14</span><span class="p">))</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">sticky</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+            <span class="n">mach_var</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">StringVar</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">mach</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+            <span class="n">mach_entry</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Entry</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">point_entry_frame</span><span class="p">,</span>
+                                  <span class="n">textvariable</span><span class="o">=</span><span class="n">mach_var</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;tahoma&quot;</span><span class="p">,</span> <span class="mi">14</span><span class="p">))</span>  <span class="c1"># Width set to 10</span>
+            <span class="n">mach_entry</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+            <span class="n">mach_entry</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;KeyRelease&gt;&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">e</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="p">,</span>
+                            <span class="n">var</span><span class="o">=</span><span class="n">mach_var</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_point_data</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;mach&#39;</span><span class="p">,</span> <span class="n">var</span><span class="o">.</span><span class="n">get</span><span class="p">()))</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">altitude_entries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">alt_entry</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mach_entries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mach_entry</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="IntegratedPlottingApp.update_phase_options">
+<a class="viewcode-back" href="../../../_srcdocs/packages/interface/graphical_input.html#aviary.interface.graphical_input.IntegratedPlottingApp.update_phase_options">[docs]</a>
+    <span class="k">def</span> <span class="nf">update_phase_options</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">tk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phase_option_frame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Optimize:&quot;</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;tahoma&quot;</span><span class="p">,</span> <span class="mi">14</span><span class="p">))</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span>
+            <span class="n">row</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">columnspan</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">sticky</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">)</span>
+        <span class="c1"># Create new checkboxes for each phase</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">altitude_data</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optimize_mach_phase_vars</span><span class="p">):</span>
+                <span class="n">mach_var</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">BooleanVar</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">alt_var</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">BooleanVar</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">optimize_mach_phase_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mach_var</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">optimize_altitude_phase_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">alt_var</span><span class="p">)</span>
+
+            <span class="n">tk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phase_option_frame</span><span class="p">,</span>
+                     <span class="n">text</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Phase </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;tahoma&quot;</span><span class="p">,</span> <span class="mi">14</span><span class="p">))</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sticky</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+            <span class="n">tk</span><span class="o">.</span><span class="n">Checkbutton</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phase_option_frame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Altitude&quot;</span><span class="p">,</span>
+                           <span class="n">variable</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optimize_altitude_phase_vars</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;tahoma&quot;</span><span class="p">,</span> <span class="mi">14</span><span class="p">))</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">tk</span><span class="o">.</span><span class="n">Checkbutton</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phase_option_frame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Mach&quot;</span><span class="p">,</span>
+                           <span class="n">variable</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optimize_mach_phase_vars</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;tahoma&quot;</span><span class="p">,</span> <span class="mi">14</span><span class="p">))</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="IntegratedPlottingApp.update_point_data">
+<a class="viewcode-back" href="../../../_srcdocs/packages/interface/graphical_input.html#aviary.interface.graphical_input.IntegratedPlottingApp.update_point_data">[docs]</a>
+    <span class="k">def</span> <span class="nf">update_point_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">point_type</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">messagebox</span><span class="o">.</span><span class="n">showerror</span><span class="p">(</span><span class="s2">&quot;Input Error&quot;</span><span class="p">,</span> <span class="s2">&quot;Please enter a valid number.&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">point_type</span> <span class="o">==</span> <span class="s1">&#39;altitude&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">altitude_data</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">altitude_data</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">value</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ax_altitude</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">altitude_data</span><span class="p">,</span> <span class="s1">&#39;Altitude&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">point_type</span> <span class="o">==</span> <span class="s1">&#39;mach&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mach_data</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mach_data</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">value</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ax_mach</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mach_data</span><span class="p">,</span> <span class="s1">&#39;Mach Number&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="IntegratedPlottingApp.on_done">
+<a class="viewcode-back" href="../../../_srcdocs/packages/interface/graphical_input.html#aviary.interface.graphical_input.IntegratedPlottingApp.on_done">[docs]</a>
+    <span class="k">def</span> <span class="nf">on_done</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>  <span class="c1"># event=None to handle both button click and keypress</span>
+        <span class="n">times</span><span class="p">,</span> <span class="n">altitudes</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">altitude_data</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">mach_values</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">mach_data</span><span class="p">)</span>
+
+        <span class="c1"># Retrieve user choices from checkboxes</span>
+        <span class="n">user_choices</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;constrain_range&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">constrain_range_var</span><span class="o">.</span><span class="n">get</span><span class="p">(),</span>
+            <span class="s2">&quot;solve_for_distance&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">solve_for_distance_var</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+        <span class="p">}</span>
+
+        <span class="n">polynomial_order</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">polynomial_order_var</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
+        <span class="n">num_segments</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_segments_var</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
+
+        <span class="c1"># Call create_phase_info and close the window</span>
+        <span class="c1"># Modify the phase_info creation to include phase-specific options</span>
+        <span class="n">create_phase_info</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">altitudes</span><span class="p">,</span> <span class="n">mach_values</span><span class="p">,</span> <span class="n">polynomial_order</span><span class="p">,</span> <span class="n">num_segments</span><span class="p">,</span>
+                          <span class="bp">self</span><span class="o">.</span><span class="n">optimize_mach_phase_vars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimize_altitude_phase_vars</span><span class="p">,</span> <span class="n">user_choices</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="IntegratedPlottingApp.show_help">
+<a class="viewcode-back" href="../../../_srcdocs/packages/interface/graphical_input.html#aviary.interface.graphical_input.IntegratedPlottingApp.show_help">[docs]</a>
+    <span class="k">def</span> <span class="nf">show_help</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">help_message</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;How to Use:</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;- Click on the Altitude plot to add points.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;- Drag points in the Mach plot to adjust values vertically.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;- Use the checkboxes on the right to set options for the flight profile:</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;   - Optimize Mach: If checked, the flight profile will optimize for Mach number.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;   - Optimize Altitude: If checked, the flight profile will optimize for altitude efficiency.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;   - Constrain Range: If checked, the flight profile will include constraints on the flight range.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;   - Solve for Range: If checked, the application will calculate the total flight range.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;- Press &#39;Done&#39; or the Enter key to process data and close the application.</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;Note: Dragging points in the plots will only change their vertical position&quot;</span>
+            <span class="s2">&quot;while keeping the time (horizontal position) constant.&quot;</span>
+        <span class="p">)</span>
+        <span class="n">messagebox</span><span class="o">.</span><span class="n">showinfo</span><span class="p">(</span><span class="s2">&quot;Help&quot;</span><span class="p">,</span> <span class="n">help_message</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="IntegratedPlottingApp.setup_plot">
+<a class="viewcode-back" href="../../../_srcdocs/packages/interface/graphical_input.html#aviary.interface.graphical_input.IntegratedPlottingApp.setup_plot">[docs]</a>
+    <span class="k">def</span> <span class="nf">setup_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">ax</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax_altitude</span><span class="p">:</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Altitude Profile&#39;</span>
+            <span class="n">xlabel</span> <span class="o">=</span> <span class="s1">&#39;Time (minutes)&#39;</span>
+            <span class="n">ylabel</span> <span class="o">=</span> <span class="s1">&#39;Altitude (feet)&#39;</span>
+            <span class="n">xlim_min</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">xlim_max</span> <span class="o">=</span> <span class="mi">360</span>
+            <span class="n">ylim_min</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">ylim_max</span> <span class="o">=</span> <span class="mi">50000</span>
+        <span class="k">elif</span> <span class="n">ax</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax_mach</span><span class="p">:</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Mach Profile&#39;</span>
+            <span class="n">xlabel</span> <span class="o">=</span> <span class="s1">&#39;Time (minutes)&#39;</span>
+            <span class="n">ylabel</span> <span class="o">=</span> <span class="s1">&#39;Mach&#39;</span>
+            <span class="n">ylim_min</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">ylim_max</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+        <span class="n">xlim_min</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">xlim_max</span> <span class="o">=</span> <span class="mi">360</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">xlim_min</span><span class="p">,</span> <span class="n">xlim_max</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ylim_min</span><span class="p">,</span> <span class="n">ylim_max</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="IntegratedPlottingApp.on_click">
+<a class="viewcode-back" href="../../../_srcdocs/packages/interface/graphical_input.html#aviary.interface.graphical_input.IntegratedPlottingApp.on_click">[docs]</a>
+    <span class="k">def</span> <span class="nf">on_click</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_point_entries</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">inaxes</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax_altitude</span><span class="p">:</span>
+            <span class="k">return</span>  <span class="c1"># Only interact with the altitude plot</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_point</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># Check if the click is near an existing point</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">point</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">altitude_data</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">event</span><span class="o">.</span><span class="n">xdata</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5.0</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">event</span><span class="o">.</span><span class="n">ydata</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1000.0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_point</span> <span class="o">=</span> <span class="n">i</span>
+                <span class="k">return</span>
+
+        <span class="c1"># Add a new point only if the click is to the right of the last point</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">xdata</span> <span class="o">&gt;</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">altitude_data</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">xdata</span><span class="p">)</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">ydata</span> <span class="o">/</span> <span class="mi">500</span><span class="p">)</span> <span class="o">*</span> \
+                <span class="mi">500</span> <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">inaxes</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax_altitude</span> <span class="k">else</span> <span class="nb">round</span><span class="p">(</span>
+                    <span class="n">event</span><span class="o">.</span><span class="n">ydata</span> <span class="o">/</span> <span class="mf">0.02</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.02</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">altitude_data</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+
+            <span class="c1"># Optionally, add a corresponding point on the Mach plot at the same x</span>
+            <span class="n">default_mach_y</span> <span class="o">=</span> <span class="mf">0.72</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mach_data</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">default_mach_y</span><span class="p">))</span>
+
+            <span class="c1"># Update both plots</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ax_altitude</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">altitude_data</span><span class="p">,</span> <span class="s1">&#39;Altitude&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ax_mach</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mach_data</span><span class="p">,</span> <span class="s1">&#39;Mach Number&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="IntegratedPlottingApp.on_motion">
+<a class="viewcode-back" href="../../../_srcdocs/packages/interface/graphical_input.html#aviary.interface.graphical_input.IntegratedPlottingApp.on_motion">[docs]</a>
+    <span class="k">def</span> <span class="nf">on_motion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_point</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">event</span><span class="o">.</span><span class="n">xdata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">event</span><span class="o">.</span><span class="n">ydata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">altitude_data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_point</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">altitude_data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_point</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">event</span><span class="o">.</span><span class="n">ydata</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ax_altitude</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">altitude_data</span><span class="p">,</span> <span class="s1">&#39;Altitude&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="IntegratedPlottingApp.on_release">
+<a class="viewcode-back" href="../../../_srcdocs/packages/interface/graphical_input.html#aviary.interface.graphical_input.IntegratedPlottingApp.on_release">[docs]</a>
+    <span class="k">def</span> <span class="nf">on_release</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_point_entries</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_point</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="IntegratedPlottingApp.update_plot">
+<a class="viewcode-back" href="../../../_srcdocs/packages/interface/graphical_input.html#aviary.interface.graphical_input.IntegratedPlottingApp.update_plot">[docs]</a>
+    <span class="k">def</span> <span class="nf">update_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">data</span><span class="p">],</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">data</span><span class="p">],</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span>
+                <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_plot</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span></div>
+</div>
+
+
+
+<span class="k">def</span> <span class="nf">_setup_flight_profile_parser</span><span class="p">(</span><span class="n">parser</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set up the command line options for the Flight Profile plotting tool.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    parser : argparse.ArgumentParser</span>
+<span class="sd">        The parser instance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+
+<span class="k">def</span> <span class="nf">_exec_flight_profile</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">user_args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run the Flight Profile plotting tool.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    options : argparse.Namespace</span>
+<span class="sd">        Command line options.</span>
+<span class="sd">    user_args : list of str</span>
+<span class="sd">        Args to be passed to the user script.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="n">IntegratedPlottingApp</span><span class="p">()</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">mainloop</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="n">IntegratedPlottingApp</span><span class="p">()</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">mainloop</span><span class="p">()</span>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Aviary team at NASA
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
