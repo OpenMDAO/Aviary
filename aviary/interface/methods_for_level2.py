@@ -218,7 +218,7 @@ class AviaryProblem(om.Problem):
 
     def __init__(self, analysis_scheme=AnalysisScheme.COLLOCATION, **kwargs):
         # Modify OpenMDAO's default_reports for this session.
-        new_reports = ['subsystems', 'mission', 'timeseries_csv']
+        new_reports = ['subsystems', 'mission', 'timeseries_csv', 'run_status']
         for report in new_reports:
             if report not in _default_reports:
                 _default_reports.append(report)
@@ -1837,6 +1837,9 @@ class AviaryProblem(om.Problem):
                 self.model.add_objective(Mission.Summary.FUEL_BURNED, ref=ref)
             elif objective_type == "fuel":
                 self.model.add_objective(Mission.Objectives.FUEL, ref=ref)
+            else:
+                raise ValueError(f"{objective_type} is not a valid objective.\nobjective_type must"
+                                 " be one of mass, time, hybrid_objective, fuel_burned, or fuel")
 
         # set objective ref on height-energy missions
         elif self.mission_method is HEIGHT_ENERGY:
@@ -2319,7 +2322,6 @@ class AviaryProblem(om.Problem):
         if self.aviary_inputs.get_val(Settings.VERBOSITY).value >= 2:
             with open('output_list.txt', 'w') as outfile:
                 self.model.list_outputs(out_stream=outfile)
-
         return failed
 
     def _add_hybrid_objective(self, phase_info):

@@ -126,7 +126,7 @@ class PropulsionMission(om.Group):
             axis=1,
             units='lb/h')
         perf_mux.add_var(
-            Dynamic.Mission.TEMPERATURE_ENGINE_T4,
+            Dynamic.Mission.TEMPERATURE_T4,
             shape=(nn,),
             axis=1,
             units='degR'
@@ -166,21 +166,15 @@ class PropulsionMission(om.Group):
             self.connect(engine.name + '.' + Dynamic.Mission.NOX_RATE,
                          'vectorize_performance.' + Dynamic.Mission.NOX_RATE + '_' + str(i))
 
-            try:
-                if engine.use_t4:
-                    self.connect(engine.name + '.' + Dynamic.Mission.TEMPERATURE_T4,
-                                 'vectorize_performance.' + Dynamic.Mission.TEMPERATURE_T4 + '_' + str(i))
-            except AttributeError:  # engine does not have flag
-                pass
+            if getattr(engine, 'use_t4', False):
+                self.connect(engine.name + '.' + Dynamic.Mission.TEMPERATURE_T4,
+                             'vectorize_performance.' + Dynamic.Mission.TEMPERATURE_T4 + '_' + str(i))
 
-            try:
-                if engine.use_shp:
-                    self.connect(engine.name + '.' + Dynamic.Mission.SHAFT_POWER,
-                                 'vectorize_performance.' + Dynamic.Mission.SHAFT_POWER + '_' + str(i))
-                    self.connect(engine.name + '.' + Dynamic.Mission.SHAFT_POWER_CORRECTED,
-                                 'vectorize_performance.' + Dynamic.Mission.SHAFT_POWER_CORRECTED + '_' + str(i))
-            except AttributeError:  # engine does not have flag
-                pass
+            if getattr(engine, 'use_shp', False):
+                self.connect(engine.name + '.' + Dynamic.Mission.SHAFT_POWER,
+                             'vectorize_performance.' + Dynamic.Mission.SHAFT_POWER + '_' + str(i))
+                self.connect(engine.name + '.' + Dynamic.Mission.SHAFT_POWER_CORRECTED,
+                             'vectorize_performance.' + Dynamic.Mission.SHAFT_POWER_CORRECTED + '_' + str(i))
 
         self.add_subsystem(
             'propulsion_sum',

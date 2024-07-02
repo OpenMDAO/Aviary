@@ -22,35 +22,35 @@ reserve_phase_0['user_options']['target_duration'] = (30, 'min')
 # Add the reserve phase to phase_info
 phase_info.update({'reserve_cruise': reserve_phase_0})
 
-prob = av.AviaryProblem()
+if __name__ == '__main__':
+    prob = av.AviaryProblem()
 
-# Load aircraft and options data from user
-# Allow for user overrides here
-prob.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
+    # Load aircraft and options data from user
+    # Allow for user overrides here
+    prob.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
 
+    # Preprocess inputs
+    prob.check_and_preprocess_inputs()
 
-# Preprocess inputs
-prob.check_and_preprocess_inputs()
+    prob.add_pre_mission_systems()
 
-prob.add_pre_mission_systems()
+    prob.add_phases()
 
-prob.add_phases()
+    prob.add_post_mission_systems()
 
-prob.add_post_mission_systems()
+    # Link phases and variables
+    prob.link_phases()
 
-# Link phases and variables
-prob.link_phases()
+    prob.add_driver("SLSQP", max_iter=100)
 
-prob.add_driver("SLSQP", max_iter=100)
+    prob.add_design_variables()
 
-prob.add_design_variables()
+    # Load optimization problem formulation
+    # Detail which variables the optimizer can control
+    prob.add_objective()
 
-# Load optimization problem formulation
-# Detail which variables the optimizer can control
-prob.add_objective()
+    prob.setup()
 
-prob.setup()
+    prob.set_initial_guesses()
 
-prob.set_initial_guesses()
-
-prob.run_aviary_problem(record_filename='reserve_mission_fixedtime.db')
+    prob.run_aviary_problem(record_filename='reserve_mission_fixedtime.db')

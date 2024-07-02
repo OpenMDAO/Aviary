@@ -56,7 +56,7 @@ RAM_DRAG = EngineModelVariables.RAM_DRAG
 FUEL_FLOW = EngineModelVariables.FUEL_FLOW
 ELECTRIC_POWER_IN = EngineModelVariables.ELECTRIC_POWER_IN
 NOX_RATE = EngineModelVariables.NOX_RATE
-TEMPERATURE = EngineModelVariables.TEMPERATURE_ENGINE_T4
+TEMPERATURE = EngineModelVariables.TEMPERATURE_T4
 # EXIT_AREA = EngineModelVariables.EXIT_AREA
 
 # EngineDeck assumes all aliases point to an enum, these are used internally only
@@ -73,7 +73,7 @@ aliases = {
     FUEL_FLOW: ['fuel', 'fuel_flow', 'fuel_flow_rate'],
     ELECTRIC_POWER_IN: ['electric_power_in', 'electric_power'],
     NOX_RATE: ['nox', 'nox_rate'],
-    TEMPERATURE: ['t4', 'temp', 'temperature'],
+    TEMPERATURE: ['t4', 'temp', 'temperature', 'temperature_t4', 't4_temperature'],
     SHAFT_POWER: ['shaft_power', 'shp'],
     SHAFT_POWER_CORRECTED: ['shaft_power_corrected', 'shpcor', 'corrected_horsepower'],
     TAILPIPE_THRUST: ['tailpipe_thrust'],
@@ -814,7 +814,7 @@ class EngineDeck(EngineModel):
                                   units=shaft_power_units,
                                   desc=desc)
         if self.use_t4:
-            engine.add_output(Dynamic.Mission.TEMPERATURE_ENGINE_T4,
+            engine.add_output(Dynamic.Mission.TEMPERATURE_T4,
                               self.data[TEMPERATURE],
                               units=units[TEMPERATURE],
                               desc='Current turbine exit temperature')
@@ -955,9 +955,14 @@ class EngineDeck(EngineModel):
                               desc='Current max net thrust produced (unscaled)')
 
         # add created subsystems to engine_group
+        outputs = []
+        if getattr(self, 'use_t4', False):
+            outputs.append(Dynamic.Mission.TEMPERATURE_T4)
+
         engine_group.add_subsystem('interpolation',
                                    engine,
-                                   promotes_inputs=['*'])
+                                   promotes_inputs=['*'],
+                                   promotes_outputs=outputs)
 
         if self.use_thrust:
             if self.global_throttle or (self.global_hybrid_throttle
