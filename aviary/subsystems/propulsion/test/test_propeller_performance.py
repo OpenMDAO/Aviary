@@ -254,7 +254,6 @@ class PropellerPerformanceTest(unittest.TestCase):
         options.set_val(Aircraft.Engine.USE_PROPELLER_MAP,
                         val=True, units='unitless')
         prop_file_path = 'models/propellers/PropFan.prop'
-        #prop_file_path = 'models/propellers/general_aviation.prop'
         options.set_val(Aircraft.Engine.PROPELLER_DATA_FILE,
                         val=prop_file_path, units='unitless')
         options.set_val(Aircraft.Engine.INTERPOLATION_METHOD,
