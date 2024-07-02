@@ -6,174 +6,175 @@ HEIGHT_ENERGY = EquationsOfMotion.HEIGHT_ENERGY
 SOLVED_2DOF = EquationsOfMotion.SOLVED_2DOF
 
 
-def check_phase_info(phase_info, mission_method):
-    # Define common keys for all phases
-    common_keys = {
-        'num_segments': int,
-        'order': int,
-        'fix_initial': (bool, dict),
-    }
+# Define common keys for all phases
+common_keys = {
+    'num_segments': int,
+    'order': int,
+    'fix_initial': (bool, dict),
+}
 
-    # Common key-values for climb, cruise, and descent
-    common_entries = {
-        'optimize_mach': bool,
-        'optimize_altitude': bool,
-        'solve_for_distance': bool,
-        'initial_mach': tuple,
-        'final_mach': tuple,
-        'mach_bounds': tuple,
-        'initial_altitude': tuple,
-        'final_altitude': tuple,
-        'altitude_bounds': tuple,
-        'throttle_enforcement': str,
-        'constrain_final': bool,
-        'fix_duration': bool,
-        'initial_bounds': tuple,
-        'duration_bounds': tuple,
-    }
+# Common key-values for climb, cruise, and descent
+common_entries = {
+    'optimize_mach': bool,
+    'optimize_altitude': bool,
+    'solve_for_distance': bool,
+    'initial_mach': tuple,
+    'final_mach': tuple,
+    'mach_bounds': tuple,
+    'initial_altitude': tuple,
+    'final_altitude': tuple,
+    'altitude_bounds': tuple,
+    'throttle_enforcement': str,
+    'constrain_final': bool,
+    'fix_duration': bool,
+    'initial_bounds': tuple,
+    'duration_bounds': tuple,
+}
 
-    # Combine common and phase-specific entries
-    phase_keys_height_energy = {
-        'pre_mission': {'include_takeoff': bool, 'optimize_mass': bool},
-        'post_mission': {'include_landing': bool}
-    }
+# Combine common and phase-specific entries
+phase_keys_height_energy = {
+    'pre_mission': {'include_takeoff': bool, 'optimize_mass': bool},
+    'post_mission': {'include_landing': bool}
+}
 
-    common_TAS = {
-        'velocity_lower': tuple,
-        'velocity_upper': tuple,
-        'velocity_ref': tuple,
-    }
-    common_mass = {
-        'mass_lower': tuple,
-        'mass_upper': tuple,
-        'mass_ref': tuple,
-        'mass_defect_ref': tuple,
-    }
-    common_distance = {
-        'distance_lower': tuple,
-        'distance_upper': tuple,
-        'distance_ref': tuple,
-    }
-    common_angle = {
-        'angle_lower': tuple,
-        'angle_upper': tuple,
-        'angle_ref': tuple,
-        'angle_defect_ref': tuple,
-    }
-    common_duration = {
-        'duration_bounds': tuple,
-        'duration_ref': tuple,
-    }
-    common_alt = {
-        'alt_lower': tuple,
-        'alt_upper': tuple,
-        'alt_ref': tuple,
-    }
-    common_descent = {
-        'input_initial': (bool, dict),
-        'EAS_limit': tuple,
-        'mach_cruise': float,
-        'input_speed_type': SpeedType,
+common_TAS = {
+    'velocity_lower': tuple,
+    'velocity_upper': tuple,
+    'velocity_ref': tuple,
+}
+common_mass = {
+    'mass_lower': tuple,
+    'mass_upper': tuple,
+    'mass_ref': tuple,
+    'mass_defect_ref': tuple,
+}
+common_distance = {
+    'distance_lower': tuple,
+    'distance_upper': tuple,
+    'distance_ref': tuple,
+}
+common_angle = {
+    'angle_lower': tuple,
+    'angle_upper': tuple,
+    'angle_ref': tuple,
+    'angle_defect_ref': tuple,
+}
+common_duration = {
+    'duration_bounds': tuple,
+    'duration_ref': tuple,
+}
+common_alt = {
+    'alt_lower': tuple,
+    'alt_upper': tuple,
+    'alt_ref': tuple,
+}
+common_descent = {
+    'input_initial': (bool, dict),
+    'EAS_limit': tuple,
+    'mach_cruise': float,
+    'input_speed_type': SpeedType,
+    'final_altitude': tuple,
+    'alt_constraint_ref': tuple,
+}
+
+phase_keys_gasp = {
+    'groundroll': {
+        'connect_initial_mass': bool,
+        'fix_initial_mass': bool,
+        **common_duration,
+        **common_TAS,
+        **common_mass,
+        **common_distance,
+        'distance_defect_ref': tuple,
+    },
+    'rotation': {
+        **common_duration,
+        **common_TAS,
+        **common_mass,
+        **common_distance,
+        **common_angle,
+        'normal_ref': tuple,
+        'velocity_ref0': tuple,
+        'distance_defect_ref': tuple,
+    },
+    'ascent': {
+        **common_TAS,
+        **common_mass,
+        **common_distance,
+        **common_alt,
         'final_altitude': tuple,
         'alt_constraint_ref': tuple,
-    }
+        'alt_defect_ref': tuple,
+        **common_angle,
+        'pitch_constraint_lower': tuple,
+        'pitch_constraint_upper': tuple,
+        'pitch_constraint_ref': tuple,
+        'velocity_ref0': tuple,
+        'distance_defect_ref': tuple,
+    },
+    'accel': {
+        'alt': tuple,
+        'EAS_constraint_eq': tuple,
+        **common_duration,
+        'duration_ref': tuple,
+        **common_TAS,
+        **common_mass,
+        **common_distance,
+        'velocity_ref0': tuple,
+        'distance_defect_ref': tuple,
+    },
+    'climb1': {
+        'EAS_target': tuple,
+        'mach_cruise': float,
+        'target_mach': bool,
+        'final_altitude': tuple,
+        **common_duration,
+        **common_alt,
+        **common_mass,
+        **common_distance,
+        'distance_ref0': tuple,
+    },
+    'climb2': {
+        'EAS_target': tuple,
+        'mach_cruise': float,
+        'target_mach': bool,
+        'final_altitude': tuple,
+        'required_available_climb_rate': tuple,
+        **common_duration,
+        **common_alt,
+        **common_mass,
+        **common_distance,
+        'alt_ref0': tuple,
+        'distance_ref0': tuple,
+        'distance_defect_ref': tuple,
+    },
+    'cruise': {
+        'mach_cruise': float,
+        'alt_cruise': tuple,
+    },
+    'desc1': {
+        **common_descent,
+        **common_duration,
+        **common_alt,
+        **common_mass,
+        **common_distance,
+        'alt_ref0': tuple,
+        'mass_ref0': tuple,
+        'distance_ref0': tuple,
+    },
+    'desc2': {
+        **common_descent,
+        **common_duration,
+        **common_alt,
+        **common_mass,
+        **common_distance,
+        'alt_ref0': tuple,
+        'distance_defect_ref': tuple,
+    },
+}
 
-    phase_keys_gasp = {
-        'groundroll': {
-            'connect_initial_mass': bool,
-            'fix_initial_mass': bool,
-            **common_duration,
-            **common_TAS,
-            **common_mass,
-            **common_distance,
-            'distance_defect_ref': tuple,
-        },
-        'rotation': {
-            **common_duration,
-            **common_TAS,
-            **common_mass,
-            **common_distance,
-            **common_angle,
-            'normal_ref': tuple,
-            'velocity_ref0': tuple,
-            'distance_defect_ref': tuple,
-        },
-        'ascent': {
-            **common_TAS,
-            **common_mass,
-            **common_distance,
-            **common_alt,
-            'final_altitude': tuple,
-            'alt_constraint_ref': tuple,
-            'alt_defect_ref': tuple,
-            **common_angle,
-            'pitch_constraint_lower': tuple,
-            'pitch_constraint_upper': tuple,
-            'pitch_constraint_ref': tuple,
-            'velocity_ref0': tuple,
-            'distance_defect_ref': tuple,
-        },
-        'accel': {
-            'alt': tuple,
-            'EAS_constraint_eq': tuple,
-            **common_duration,
-            'duration_ref': tuple,
-            **common_TAS,
-            **common_mass,
-            **common_distance,
-            'velocity_ref0': tuple,
-            'distance_defect_ref': tuple,
-        },
-        'climb1': {
-            'EAS_target': tuple,
-            'mach_cruise': float,
-            'target_mach': bool,
-            'final_altitude': tuple,
-            **common_duration,
-            **common_alt,
-            **common_mass,
-            **common_distance,
-            'distance_ref0': tuple,
-        },
-        'climb2': {
-            'EAS_target': tuple,
-            'mach_cruise': float,
-            'target_mach': bool,
-            'final_altitude': tuple,
-            'required_available_climb_rate': tuple,
-            **common_duration,
-            **common_alt,
-            **common_mass,
-            **common_distance,
-            'alt_ref0': tuple,
-            'distance_ref0': tuple,
-            'distance_defect_ref': tuple,
-        },
-        'cruise': {
-            'mach_cruise': float,
-            'alt_cruise': tuple,
-        },
-        'desc1': {
-            **common_descent,
-            **common_duration,
-            **common_alt,
-            **common_mass,
-            **common_distance,
-            'alt_ref0': tuple,
-            'mass_ref0': tuple,
-            'distance_ref0': tuple,
-        },
-        'desc2': {
-            **common_descent,
-            **common_duration,
-            **common_alt,
-            **common_mass,
-            **common_distance,
-            'alt_ref0': tuple,
-            'distance_defect_ref': tuple,
-        },
-    }
 
+def check_phase_info(phase_info, mission_method):
     phase_keys = {}
     if mission_method is TWO_DEGREES_OF_FREEDOM:
         for phase in phase_info:
