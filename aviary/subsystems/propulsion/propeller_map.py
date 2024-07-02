@@ -1,15 +1,13 @@
 import numpy as np
-from enum import Enum
 import warnings
 import openmdao.api as om
 from openmdao.utils.units import convert_units
 
 from aviary.subsystems.propulsion.utils import PropModelVariables, default_prop_units
-from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Aircraft, Dynamic, Settings
-from aviary.utils.aviary_values import AviaryValues, NamedValues, get_keys, get_items
+from aviary.utils.aviary_values import AviaryValues, NamedValues, get_keys
 from aviary.utils.csv_data_file import read_data_file
 from aviary.utils.functions import get_path
+from aviary.variable_info.variables import Aircraft, Settings
 
 
 MACH = PropModelVariables.MACH
@@ -26,8 +24,10 @@ aliases = {
     J: ['j', 'advance_ratio'],
 }
 
+
 class PropellerMap(om.ExplicitComponent):
     """
+    This class loads user provided propeller map into memory and build a propeller.
     Attributes
     ----------
     name : str ('propeller')
@@ -39,12 +39,11 @@ class PropellerMap(om.ExplicitComponent):
     mach_type: str ('mach' or 'helical_mach')
     """
 
-    def __init__(self, name='propeller', options = None,
-                 data: NamedValues = None, mach_type = 'mach'):
+    def __init__(self, name='propeller', options=None,
+                 data: NamedValues = None, mach_type='mach'):
         super().__init__()
 
-        # copy of raw data read from data_file or memory, never modified or used outside
-        #     PropellerMap
+        # copy of raw data read from data_file or memory, never modified or used outside PropellerMap
         self._original_data = {key: np.array([]) for key in PropModelVariables}
         # working copy of propeller performance data, is modified during data pre-processing
         self.data = {key: np.array([]) for key in PropModelVariables}
@@ -88,10 +87,8 @@ class PropellerMap(om.ExplicitComponent):
             self._original_data[key] = val
 
         if not self.propeller_variables:
-            raise UserWarning(f'No valid propeller variables found in data for {message}')
-
-        # set flags using updated propeller_variables
-        #self._set_variable_flags()
+            raise UserWarning(
+                f'No valid propeller variables found in data for {message}')
 
         # Copy data from original data (never modified) to working data (changed through
         #    sorting, generating missing data, etc.)
@@ -115,14 +112,8 @@ class PropellerMap(om.ExplicitComponent):
             line = f.readline()  # read 4th line
             mach_type = line.split()[3]  # get token 3
         return mach_type
-       
-    def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
-        self.options.declare('num_nodes', default=1, types=int)
 
-    def build_propeller_interpolator(self, num_nodes, options = None):
+    def build_propeller_interpolator(self, num_nodes, options=None):
         """
         Builds the OpenMDAO metamodel component for the propeller map.
         """
@@ -134,20 +125,19 @@ class PropellerMap(om.ExplicitComponent):
         # add inputs and outputs to interpolator
         # depending on p, selected_mach can be Mach number (Dynamic.Mission.MACH) or helical Mach number
         propeller.add_input('selected_mach',
-                         self.data[MACH],
-                         units='unitless',
-                         desc='Current flight Mach number')
-        propeller.add_input("power_coefficient",
-                         self.data[CP],
-                         units='unitless',
-                         desc='Current power coefficient')
-        propeller.add_input("advance_ratio",
-                         self.data[J],
-                         units='unitless',
-                         desc='Current advance ratio')
+                            self.data[MACH],
+                            units='unitless',
+                            desc='Current flight Mach number')
+        propeller.add_input('power_coefficient',
+                            self.data[CP],
+                            units='unitless',
+                            desc='Current power coefficient')
+        propeller.add_input('advance_ratio',
+                            self.data[J],
+                            units='unitless',
+                            desc='Current advance ratio')
         propeller.add_output('thrust_coefficient',
-                          self.data[CT],
-                          units='unitless',
-                          desc='Current thrust coefficient')
-        
+                             self.data[CT],
+                             units='unitless',
+                             desc='Current thrust coefficient')
         return propeller
