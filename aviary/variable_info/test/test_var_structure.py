@@ -44,23 +44,18 @@ class MetaDataTest(unittest.TestCase):
         """
         Test that all variables inside the metadata exist in the hierarchy, and vice-versa
         """
-        # NOTE: This is messy due to the fact we are dealing with attributes inside nested classes
         var_names = \
-            [(var_name, var) for cat_name, cat in Aircraft.__dict__.items() if not cat_name.startswith('__')
-                for var_name, var in cat.__dict__.items() if not var_name.startswith('__')]\
-            + [(var_name, var) for cat_name, cat in Mission.__dict__.items() if not cat_name.startswith('__')
-                for var_name, var in cat.__dict__.items() if not var_name.startswith('__')]\
-            + [(var_name, var) for cat_name, cat in Dynamic.__dict__.items() if not cat_name.startswith('__')
-                for var_name, var in cat.__dict__.items() if not var_name.startswith('__')]\
-            + [(var_name, var) for var_name, var in Settings.__dict__.items()
-                if not var_name.startswith('__')]
+            get_names_from_hierarchy(Aircraft)\
+            + get_names_from_hierarchy(Mission)\
+            + get_names_from_hierarchy(Dynamic)\
+            + get_names_from_hierarchy(Settings)
 
         metadata_dict = deepcopy(_MetaData)
         for var in var_names:
             try:
-                metadata_dict.pop(var[1])
+                metadata_dict.pop(var)
             except (TypeError, KeyError):
-                raise Exception(f"Variable {var[0]} ('{var[1]}') is present in variables.py but is not "
+                raise Exception(f"Variable {var} is present in variables.py but is not "
                                 'defined in metadata')
         if metadata_dict:
             # This will only happen if a variable in the metadata wasn't using the hierarchy

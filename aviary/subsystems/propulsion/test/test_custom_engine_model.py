@@ -6,7 +6,6 @@ from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.variable_info.enums import Verbosity
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
@@ -14,6 +13,7 @@ from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
 from aviary.variable_info.options import get_option_defaults
 from aviary.utils.functions import get_path
 from aviary.interface.methods_for_level2 import AviaryProblem
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 from dymos.transcriptions.transcription_base import TranscriptionBase

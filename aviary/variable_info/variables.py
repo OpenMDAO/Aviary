@@ -61,8 +61,10 @@ class Aircraft:
     class Controls:
         COCKPIT_CONTROL_MASS_SCALER = 'aircraft:controls:cockpit_control_mass_scaler'
         CONTROL_MASS_INCREMENT = 'aircraft:controls:control_mass_increment'
-        STABILITY_AUGMENTATION_SYSTEM_MASS = 'aircraft:controls:stability_augmentation_system_mass'
-        STABILITY_AUGMENTATION_SYSTEM_MASS_SCALER = 'aircraft:controls:stability_augmentation_system_mass_scaler'
+        STABILITY_AUGMENTATION_SYSTEM_MASS = \
+            'aircraft:controls:stability_augmentation_system_mass'
+        STABILITY_AUGMENTATION_SYSTEM_MASS_SCALER = \
+            'aircraft:controls:stability_augmentation_system_mass_scaler'
         TOTAL_MASS = 'aircraft:controls:total_mass'
 
     class CrewPayload:
@@ -78,7 +80,8 @@ class Aircraft:
             'aircraft:crew_and_payload:cargo_container_mass_scaler'
 
         CARGO_MASS = 'aircraft:crew_and_payload:cargo_mass'
-        CATERING_ITEMS_MASS_PER_PASSENGER = 'aircraft:crew_and_payload:catering_items_mass_per_passenger'
+        CATERING_ITEMS_MASS_PER_PASSENGER = \
+            'aircraft:crew_and_payload:catering_items_mass_per_passenger'
 
         FLIGHT_CREW_MASS = 'aircraft:crew_and_payload:flight_crew_mass'
 
@@ -117,7 +120,8 @@ class Aircraft:
         PASSENGER_SERVICE_MASS = \
             'aircraft:crew_and_payload:passenger_service_mass'
 
-        PASSENGER_SERVICE_MASS_PER_PASSENGER = 'aircraft:crew_and_payload:passenger_service_mass_per_passenger'
+        PASSENGER_SERVICE_MASS_PER_PASSENGER = \
+            'aircraft:crew_and_payload:passenger_service_mass_per_passenger'
 
         PASSENGER_SERVICE_MASS_SCALER = \
             'aircraft:crew_and_payload:passenger_service_mass_scaler'
@@ -133,9 +137,9 @@ class Aircraft:
         BASE_AREA = 'aircraft:design:base_area'
         CG_DELTA = 'aircraft:design:cg_delta'
         CHARACTERISTIC_LENGTHS = 'aircraft:design:characteristic_lengths'
-        COCKPIT_CONTROL_MASS_COEFFICIENT = 'aircraft:design:cockpit_control_mass_coefficient'
+        COCKPIT_CONTROL_MASS_COEFFICIENT = \
+            'aircraft:design:cockpit_control_mass_coefficient'
         COMPUTE_HTAIL_VOLUME_COEFF = 'aircraft:design:compute_htail_volume_coeff'
-        COMPUTE_INSTALLATION_LOSS = 'aircraft:design:compute_installation_loss'
         COMPUTE_VTAIL_VOLUME_COEFF = 'aircraft:design:compute_vtail_volume_coeff'
         DRAG_COEFFICIENT_INCREMENT = 'aircraft:design:drag_increment'
         DRAG_POLAR = 'aircraft:design:drag_polar'
@@ -164,7 +168,6 @@ class Aircraft:
         LIFT_POLAR = 'aircraft:design:lift_polar'
 
         MAX_FUSELAGE_PITCH_ANGLE = 'aircraft:design:max_fuselage_pitch_angle'
-        MAX_PROPELLER_TIP_SPEED = 'aircraft:design:max_propeller_tip_speed'
         MAX_STRUCTURAL_SPEED = 'aircraft:design:max_structural_speed'
         OPERATING_MASS = 'aircraft:design:operating_mass'
         PART25_STRUCTURAL_CATEGORY = 'aircraft:design:part25_structural_category'
@@ -204,6 +207,8 @@ class Aircraft:
     class Engine:
         ADDITIONAL_MASS = 'aircraft:engine:additional_mass'
         ADDITIONAL_MASS_FRACTION = 'aircraft:engine:additional_mass_fraction'
+        COMPUTE_PROPELLER_INSTALLATION_LOSS = \
+            'aircraft:engine:compute_propeller_installation_loss'
         CONSTANT_FUEL_CONSUMPTION = 'aircraft:engine:constant_fuel_consumption'
         CONTROLS_MASS = 'aircraft:engine:controls_mass'
         DATA_FILE = 'aircraft:engine:data_file'
@@ -213,7 +218,6 @@ class Aircraft:
         FUEL_FLOW_SCALER_CONSTANT_TERM = 'aircraft:engine:fuel_flow_scaler_constant_term'
         FUEL_FLOW_SCALER_LINEAR_TERM = 'aircraft:engine:fuel_flow_scaler_linear_term'
         GENERATE_FLIGHT_IDLE = 'aircraft:engine:generate_flight_idle'
-        # GENERATE_STRUCTURED_DATA = 'aircraft:engine:generate_structured_data'
         GEOPOTENTIAL_ALT = 'aircraft:engine:geopotential_alt'
         HAS_PROPELLERS = 'aircraft:engine:has_propellers'
         IGNORE_NEGATIVE_THRUST = 'aircraft:engine:ignore_negative_thrust'
@@ -232,7 +236,8 @@ class Aircraft:
         PROPELLER_DIAMETER = 'aircraft:engine:propeller_diameter'
         PROPELLER_INTEGRATED_LIFT_COEFFICIENT = \
             'aircraft:engine:propeller_integrated_lift_coefficient'
-
+        PROPELLER_TIP_MACH_MAX = 'propeller_tip_mach_max'
+        PROPELLER_TIP_SPEED_MAX = 'aircraft:engine:propeller_tip_speed_max'
         PYLON_FACTOR = 'aircraft:engine:pylon_factor'
         REFERENCE_DIAMETER = 'aircraft:engine:reference_diameter'
         REFERENCE_MASS = 'aircraft:engine:reference_mass'
@@ -248,6 +253,15 @@ class Aircraft:
         THRUST_REVERSERS_MASS_SCALER = 'aircraft:engine:thrust_reversers_mass_scaler'
         TYPE = 'aircraft:engine:type'
         WING_LOCATIONS = 'aircraft:engine:wing_locations'
+
+        class Gearbox:
+            GEAR_RATIO = "aircraft:engine:gearbox:gear_ratio"
+            MASS = "aircraft:engine:gearbox:mass"
+            TORQUE_MAX = "aircraft:engine:gearbox:torque_max"
+
+        class Motor:
+            MASS = 'aircraft:engine:motor:mass'
+            TORQUE_MAX = 'aircraft:engine:motor:torque_max'
 
     class Fins:
         AREA = 'aircraft:fins:area'
@@ -272,9 +286,7 @@ class Aircraft:
         TOTAL_VOLUME = 'aircraft:fuel:total_volume'
         UNUSABLE_FUEL_MASS = 'aircraft:fuel:unusable_fuel_mass'
         UNUSABLE_FUEL_MASS_COEFFICIENT = 'aircraft:fuel:unusable_fuel_mass_coefficient'
-        UNUSABLE_FUEL_MASS_SCALER = \
-            'aircraft:fuel:unusable_fuel_mass_scaler'
-
+        UNUSABLE_FUEL_MASS_SCALER = 'aircraft:fuel:unusable_fuel_mass_scaler'
         WING_FUEL_CAPACITY = 'aircraft:fuel:wing_fuel_capacity'
         WING_FUEL_FRACTION = 'aircraft:fuel:wing_fuel_fraction'
         WING_REF_CAPACITY = 'aircraft:fuel:wing_ref_capacity'
@@ -361,7 +373,8 @@ class Aircraft:
         WETTED_AREA_SCALER = 'aircraft:horizontal_tail:wetted_area_scaler'
 
     class Hydraulics:
-        FLIGHT_CONTROL_MASS_COEFFICIENT = 'aircraft:hydraulics:flight_control_mass_coefficient'
+        FLIGHT_CONTROL_MASS_COEFFICIENT = \
+            'aircraft:hydraulics:flight_control_mass_coefficient'
         GEAR_MASS_COEFFICIENT = 'aircraft:hydraulics:gear_mass_coefficient'
         MASS = 'aircraft:hydraulics:mass'
         MASS_SCALER = 'aircraft:hydraulics:mass_scaler'
@@ -441,7 +454,8 @@ class Aircraft:
         AREA = 'aircraft:strut:area'
         AREA_RATIO = 'aircraft:strut:area_ratio'
         ATTACHMENT_LOCATION = 'aircraft:strut:attachment_location'
-        ATTACHMENT_LOCATION_DIMENSIONLESS = 'aircraft:strut:attachment_location_dimensionless'
+        ATTACHMENT_LOCATION_DIMENSIONLESS = \
+            'aircraft:strut:attachment_location_dimensionless'
         CHORD = 'aircraft:strut:chord'
         DIMENSIONAL_LOCATION_SPECIFIED = 'aircraft:strut:dimensional_location_specified'
         FUSELAGE_INTERFERENCE_FACTOR = 'aircraft:strut:fuselage_interference_factor'
@@ -512,7 +526,8 @@ class Aircraft:
         FLAP_LIFT_INCREMENT_OPTIMUM = 'aircraft:wing:flap_lift_increment_optimum'
         FLAP_SPAN_RATIO = 'aircraft:wing:flap_span_ratio'
         FLAP_TYPE = 'aircraft:wing:flap_type'
-        FOLD_DIMENSIONAL_LOCATION_SPECIFIED = 'aircraft:wing:fold_dimensional_location_specified'
+        FOLD_DIMENSIONAL_LOCATION_SPECIFIED = \
+            'aircraft:wing:fold_dimensional_location_specified'
         FOLD_MASS = 'aircraft:wing:fold_mass'
         FOLD_MASS_COEFFICIENT = 'aircraft:wing:fold_mass_coefficient'
         FOLDED_SPAN = 'aircraft:wing:folded_span'
@@ -611,7 +626,6 @@ class Dynamic:
         FUEL_FLOW_RATE_NEGATIVE_TOTAL = 'fuel_flow_rate_negative_total'
         FUEL_FLOW_RATE_TOTAL = 'fuel_flow_rate_total'
         HYBRID_THROTTLE = 'hybrid_throttle'
-        INSTALLATION_LOSS_FACTOR = 'installation_loss_factor'
         LIFT = 'lift'
         MACH = 'mach'
         MACH_RATE = 'mach_rate'
@@ -619,10 +633,13 @@ class Dynamic:
         MASS_RATE = 'mass_rate'
         NOX_RATE = 'nox_rate'
         NOX_RATE_TOTAL = 'nox_rate_total'
-        PERCENT_ROTOR_RPM_CORRECTED = 'percent_rotor_rpm_corrected'
+        # PERCENT_ROTOR_RPM_CORRECTED = 'percent_rotor_rpm_corrected'
         PROPELLER_TIP_SPEED = 'propeller_tip_speed'
+        RPM = 'rotations_per_minute'
         SHAFT_POWER = 'shaft_power'
         SHAFT_POWER_CORRECTED = 'shaft_power_corrected'
+        SHAFT_POWER_CORRECTED_MAX = 'shaft_power_corrected_max'
+        SHAFT_POWER_MAX = 'shaft_power_max'
         SPECIFIC_ENERGY = 'specific_energy'
         SPECIFIC_ENERGY_RATE = 'specific_energy_rate'
         SPECIFIC_ENERGY_RATE_EXCESS = 'specific_energy_rate_excess'
@@ -635,6 +652,7 @@ class Dynamic:
         THRUST_MAX = 'thrust_net_max'
         THRUST_MAX_TOTAL = 'thrust_net_max_total'
         THRUST_TOTAL = 'thrust_net_total'
+        TORQUE = 'torque'
         VELOCITY = 'velocity'
         VELOCITY_RATE = 'velocity_rate'
 

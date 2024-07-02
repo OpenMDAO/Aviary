@@ -1,3 +1,4 @@
+from typing import Union
 import numpy as np
 import openmdao.api as om
 from pathlib import Path
@@ -110,7 +111,7 @@ def set_value(var_name, var_value, aviary_values: AviaryValues, units=None, is_a
 
     # TODO handle enums in an automated method via checking metadata for enum type
     if var_name == 'settings:problem_type':
-        var_values = ProblemType[var_value]
+        var_values = ProblemType(var_value)
     if var_name == 'settings:equations_of_motion':
         var_values = EquationsOfMotion(var_value)
     if var_name == 'settings:mass_method':
@@ -305,7 +306,11 @@ def promote_aircraft_and_mission_vars(group):
     return external_outputs
 
 
-def get_path(path: [str, Path], verbose: bool = False) -> Path:
+# Python 3.10 adds the ability to specify multiple types using type hints like so:
+# "str | Path" which is cleaner but Aviary still supports older versions
+
+
+def get_path(path: Union[str, Path], verbose: bool = False) -> Path:
     """
     Convert a string or Path object to an absolute Path object, prioritizing different locations.
 
