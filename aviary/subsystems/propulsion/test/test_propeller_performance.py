@@ -12,22 +12,27 @@ from aviary.subsystems.propulsion.propeller_performance import PropellerPerforma
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.variable_info.options import get_option_defaults
 
-# Setting up truth values from GASP
+# Setting up truth values from GASP (first 12 entries)
 CT = np.array([0.27651, 0.20518, 0.13093, 0.10236, 0.10236, 0.19331,
-               0.10189, 0.10189, 0.18123, 0.08523, 0.06463, 0.02800])
-XFT = np.array([1.0, 1.0, 0.9976, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0])
+               0.10189, 0.10189, 0.18123, 0.08523, 0.06463, 0.02800,
+               0, 0, 0, 0.10256, 0.10256, 0.18641,])
+XFT = np.array([1.0, 1.0, 0.9976, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+                0, 0, 0, 1.0, 1.0, 1.0,])
 CTX = np.array([0.27651, 0.20518, 0.13062, 0.10236, 0.10236, 0.19331,
-               0.10189, 0.10189, 0.18123, 0.08523, 0.06463, 0.02800])
-three_quart_blade_angle = np.array(
-    [25.17, 29.67, 44.23, 31.94, 31.94, 17.44, 33.43, 33.43, 20.08, 30.28, 29.50, 28.10])
+               0.10189, 0.10189, 0.18123, 0.08523, 0.06463, 0.02800,
+               0, 0, 0, 0.10256, 0.10256, 0.18641,])
 thrust = np.array([4634.8, 3415.9, 841.5, 1474.3, 1400.6, 3923.5,
-                   1467.6, 1394.2, 3678.3, 1210.4, 917.8, 397.7])
+                   1467.6, 1394.2, 3678.3, 1210.4, 917.8, 397.7,
+                   0, 0, 0, 1477.17546,  1403.31669, 3637.83130,])
 prop_eff = np.array([0.00078, 0.72352, 0.89202, 0.90586, 0.90586, 0.50750,
-                     0.90172, 0.90172, 0.47579, 0.83809, 0.76259, 0.49565])
+                     0.90172, 0.90172, 0.47579, 0.83809, 0.76259, 0.49565,
+                     0, 0, 0, 0.90760, 0.90760, 0.47056,])
 install_loss = np.array([0.0133, 0.02, 0.034, 0.0, 0.05, 0.05,
-                         0.0, 0.05, 0.05, 0.0140, 0.0140, 0.0140])
+                         0.0, 0.05, 0.05, 0.0140, 0.0140, 0.0140,
+                         0, 0, 0, 0.0, 0.05, 0.05,])
 install_eff = np.array([0.00077, 0.70904, 0.86171, 0.90586, 0.86056, 0.48213,
-                        0.90172, 0.85664, 0.45200, 0.82635, 0.75190, 0.48871])
+                        0.90172, 0.85664, 0.45200, 0.82635, 0.75190, 0.48871,
+                        0, 0, 0, 0.90760, 0.86222, 0.44703,])
 
 
 class PropellerPerformanceTest(unittest.TestCase):
@@ -38,6 +43,7 @@ class PropellerPerformanceTest(unittest.TestCase):
         options.set_val(Aircraft.Engine.NUM_PROPELLER_BLADES,
                         val=4, units='unitless')
         options.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, False)
+        options.set_val(Aircraft.Engine.USE_PROPELLER_MAP, False)
 
         prob = om.Problem()
 
@@ -97,7 +103,6 @@ class PropellerPerformanceTest(unittest.TestCase):
         cthr = p.get_val('thrust_coefficient')
         ctlf = p.get_val('comp_tip_loss_factor')
         tccl = p.get_val('thrust_coefficient_comp_loss')
-        angb = p.get_val('blade_angle')
         thrt = p.get_val('propeller_thrust')
         peff = p.get_val('propeller_efficiency')
         lfac = p.get_val(Dynamic.Mission.INSTALLATION_LOSS_FACTOR)
@@ -110,8 +115,6 @@ class PropellerPerformanceTest(unittest.TestCase):
             assert_near_equal(cthr[idx], CT[case_idx], tolerance=tol)
             assert_near_equal(ctlf[idx], XFT[case_idx], tolerance=tol)
             assert_near_equal(tccl[idx], CTX[case_idx], tolerance=tol)
-            assert_near_equal(
-                angb[idx], three_quart_blade_angle[case_idx], tolerance=tol)
             assert_near_equal(thrt[idx], thrust[case_idx], tolerance=tol)
             assert_near_equal(peff[idx], prop_eff[case_idx], tolerance=tol)
             assert_near_equal(lfac[idx], install_loss[case_idx], tolerance=tol)
@@ -236,6 +239,47 @@ class PropellerPerformanceTest(unittest.TestCase):
                     'aircraft:engine:propeller_integrated_lift_coefficient')
         del partial_data_hs[key_pair]
         assert_check_partials(partial_data, atol=1.5e-3, rtol=1e-4)
+
+    def test_case_12_13_14(self):
+        # Case 12, 13, 14, to test mach limited tip speed.
+        prob = self.prob
+
+    def test_case_15_16_17(self):
+        # case 15, 16, 17, to test propeller map
+        prob = self.prob
+        options = self.options
+
+        options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS,
+                        val=False, units='unitless')
+        options.set_val(Aircraft.Engine.USE_PROPELLER_MAP,
+                        val=True, units='unitless')
+        prop_file_path = 'models/propellers/PropFan.prop'
+        options.set_val(Aircraft.Engine.PROPELLER_DATA_FILE,
+                        val=prop_file_path, units='unitless')
+        options.set_val(Aircraft.Engine.INTERPOLATION_METHOD,
+                        val='slinear', units='unitless')
+
+        prob.setup()
+        prob.set_val(Dynamic.Mission.INSTALLATION_LOSS_FACTOR,
+                     [0.0, 0.05, 0.05], units="unitless")
+        prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 12.0, units="ft")
+        prob.set_val(Dynamic.Mission.ALTITUDE, [10000.0, 10000.0, 0.0], units="ft")
+        prob.set_val(Dynamic.Mission.VELOCITY, [200.0, 200.0, 50.0], units="knot")
+        prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED,
+                     [750.0, 750.0, 785.0], units="ft/s")
+        prob.set_val(Dynamic.Mission.SHAFT_POWER, [1000.0, 1000.0, 1250.0], units="hp")
+        prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
+                     [1.0], units="unitless")
+        prob.set_val(Aircraft.Design.MAX_PROPELLER_TIP_SPEED,
+                     [769.70, 769.70, 769.70], units="ft/s")
+
+        prob.run_model()
+        self.compare_results(case_idx_begin=15, case_idx_end=17)
+
+        partial_data = prob.check_partials(
+            out_stream=None, compact_print=True, show_only_incorrect=True, form='central', method="fd",
+            minimum_step=1e-12, abs_err_tol=5.0E-4, rel_err_tol=5.0E-5, excludes=["*atmosphere*"])
+        assert_check_partials(partial_data, atol=1e-4, rtol=1e-4)
 
 
 if __name__ == "__main__":

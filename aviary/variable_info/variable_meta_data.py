@@ -2085,6 +2085,20 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Engine.PROPELLER_DATA_FILE,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='unitless',
+    types=(str, Path),
+    default_value=None,
+    option=True,
+    desc='filepath to data file containing propeller data map',
+)
+
+add_meta_data(
     Aircraft.Engine.PROPELLER_DIAMETER,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.DPROP',
@@ -2300,6 +2314,20 @@ add_meta_data(
     types=GASPEngineType,
     units="unitless",
     desc='specifies engine type used for engine mass calculation',
+)
+
+add_meta_data(
+    Aircraft.Engine.USE_PROPELLER_MAP,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    option=False,
+    default_value=False,
+    types=bool,
+    units="unitless",
+    desc='flag whether to use propeller map or Hamilton-Standard model.'
 )
 
 add_meta_data(
