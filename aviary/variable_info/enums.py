@@ -204,6 +204,7 @@ class Verbosity(Enum):
     def values(cls):
         return {c.value for c in cls}
 
+
 class OutMachType(Enum):
     '''
     OutMachType is an indicator which mach number to output.
