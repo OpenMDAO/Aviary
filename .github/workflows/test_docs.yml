@@ -44,6 +44,14 @@ jobs:
             SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
             SNOPT_LOCATION_77: ${{ secrets.SNOPT_LOCATION_77 }}
   
+      - name: Check docs linting
+        shell: bash -l {0}
+        run: |
+          echo "============================================================="
+          echo "Lint the docs"
+          echo "============================================================="
+          python aviary/docs/tests/check_jupyter_output_linting.py
+  
       - name: Build docs
         id: build_docs
         shell: bash -l {0}
