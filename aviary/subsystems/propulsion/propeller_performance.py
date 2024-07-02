@@ -11,8 +11,9 @@ from aviary.subsystems.propulsion.propeller_map import PropellerMap
 class OutMachs(om.ExplicitComponent):
     """This utility sets up relations among helical Mach, free stream Mach and propeller tip Mach.
     helical_mach = sqrt(mach^2 + tip_mach^2).
-    It compute the value of one from the inputs of the other two,
+    It compute the value of one from the inputs of the other two.
     """
+
     def initialize(self):
         self.options.declare("num_nodes", types=int)
         self.options.declare(
