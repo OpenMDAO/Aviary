@@ -67,7 +67,7 @@ class MotorPreMission(om.Group):
                                             ('gear_ratio', Aircraft.Engine.Gearbox.GEAR_RATIO)],
                            promotes_outputs=['RPM_out'])
 
-        # Gearbox mass from "An N+3 Technolgoy Level Reference Propulsion System" by Schtt Jones, William Haller, and Michael Tong
+        # Gearbox mass from "An N+3 Technolgoy Level Reference Propulsion System" by Scott Jones, William Haller, and Michael Tong
         # NASA TM 2017-219501
         self.add_subsystem('gearbox_mass',
                            om.ExecComp('gearbox_mass = (power / RPM_out)^(0.75) * (RPM_in / RPM_out)^(0.15)',

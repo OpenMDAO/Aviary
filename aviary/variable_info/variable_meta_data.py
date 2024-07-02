@@ -6588,7 +6588,7 @@ add_meta_data(
 add_meta_data(
     Dynamic.Mission.SHAFT_POWER_CORRECTED,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
+    historical_name={"GASP": 'SHPCOR',
                      "FLOPS": None,
                      "LEAPS1": None
                      },

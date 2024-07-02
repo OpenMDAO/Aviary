@@ -215,8 +215,8 @@ class TurbopropModel(EngineModel):
         )
 
         max_thrust_adder = om.ExecComp(
-            'turboprop_thrust=turboshaft_thrust_max+propeller_thrust_max',
-            turboprop_thrust={'val': np.zeros(num_nodes), 'units': 'lbf'},
+            'turboprop_thrust_max=turboshaft_thrust_max+propeller_thrust_max',
+            turboprop_thrust_max={'val': np.zeros(num_nodes), 'units': 'lbf'},
             turboshaft_thrust_max={'val': np.zeros(num_nodes), 'units': 'lbf'},
             propeller_thrust_max={'val': np.zeros(num_nodes), 'units': 'lbf'}
         )
@@ -232,7 +232,7 @@ class TurbopropModel(EngineModel):
             'max_thrust_adder',
             subsys=max_thrust_adder,
             promotes_inputs=['*'],
-            promotes_outputs=[('turboprop_thrust', Dynamic.Mission.THRUST_MAX)]
+            promotes_outputs=[('turboprop_thrust_max', Dynamic.Mission.THRUST_MAX)]
         )
 
         turboprop_group.add_subsystem(

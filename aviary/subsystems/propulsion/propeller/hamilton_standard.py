@@ -471,13 +471,22 @@ class PreHamiltonStandard(om.ExplicitComponent):
         nn = self.options['num_nodes']
 
         add_aviary_input(self, Aircraft.Engine.PROPELLER_DIAMETER, val=0.0, units='ft')
-        self.add_input(Dynamic.Mission.PROPELLER_TIP_SPEED,
-                       val=np.zeros(nn), units='ft/s')
-        self.add_input(Dynamic.Mission.SHAFT_POWER, val=np.zeros(nn), units='hp')
-        self.add_input(Dynamic.Mission.DENSITY, val=np.zeros(nn), units='slug/ft**3')
-        self.add_input(Dynamic.Mission.VELOCITY, val=np.zeros(nn), units='knot')
-        self.add_input(Dynamic.Mission.TEMPERATURE, val=np.zeros(nn), units='degR')
-        self.add_input(Dynamic.Mission.SPEED_OF_SOUND, val=np.zeros(nn), units='knot')
+        add_aviary_input(
+            self, Dynamic.Mission.PROPELLER_TIP_SPEED, val=np.zeros(nn), units='ft/s'
+        )
+        add_aviary_input(
+            self, Dynamic.Mission.SHAFT_POWER, val=np.zeros(nn), units='hp'
+        )
+        add_aviary_input(
+            self, Dynamic.Mission.DENSITY, val=np.zeros(nn), units='slug/ft**3'
+        )
+        add_aviary_input(self, Dynamic.Mission.VELOCITY, val=np.zeros(nn), units='knot')
+        add_aviary_input(
+            self, Dynamic.Mission.TEMPERATURE, val=np.zeros(nn), units='degR'
+        )
+        add_aviary_input(
+            self, Dynamic.Mission.SPEED_OF_SOUND, val=np.zeros(nn), units='knot'
+        )
 
         self.add_output('power_coefficient', val=np.zeros(nn), units='unitless')
         self.add_output('advance_ratio', val=np.zeros(nn), units='unitless')
@@ -577,12 +586,17 @@ class HamiltonStandard(om.ExplicitComponent):
 
         self.add_input('power_coefficient', val=np.zeros(nn), units='unitless')
         self.add_input('advance_ratio', val=np.zeros(nn), units='unitless')
-        self.add_input(Dynamic.Mission.MACH, val=np.zeros(nn), units='unitless')
+        add_aviary_input(self, Dynamic.Mission.MACH, val=np.zeros(nn), units='unitless')
         self.add_input('tip_mach', val=np.zeros(nn), units='unitless')
-        self.add_input(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, val=0.0,
-                       units='unitless')  # Actitivty Factor per Blade
-        self.add_input(Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT,
-                       val=0.0, units='unitless')  # blade integrated lift coeff
+        add_aviary_input(
+            self, Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, val=0.0, units='unitless'
+        )  # Actitivty Factor per Blade
+        add_aviary_input(
+            self,
+            Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT,
+            val=0.0,
+            units='unitless',
+        )  # blade integrated lift coeff
 
         self.add_output('thrust_coefficient', val=np.zeros(nn), units='unitless')
         self.add_output('blade_angle', val=np.zeros(nn), units='deg')
@@ -806,7 +820,9 @@ class HamiltonStandard(om.ExplicitComponent):
 
                 if (ifnd1 == 0 and ifnd2 == 0):
                     raise ValueError(
-                        f"Integrated design cl adjustment not working properly for ct definition (ibb={ibb})")
+                        "Integrated design cl adjustment not working properly for ct "
+                        f"definition (ibb={ibb})"
+                    )
                 if (ifnd1 == 0 and ifnd2 == 1):
                     ct = 0.0
                 CTTT[ibb] = ct
@@ -840,20 +856,21 @@ class PostHamiltonStandard(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
 
-        self.add_input(Aircraft.Engine.PROPELLER_DIAMETER, val=0.0, units='ft')
+        add_aviary_input(self, Aircraft.Engine.PROPELLER_DIAMETER, val=0.0, units='ft')
         self.add_input('install_loss_factor',
                        val=np.zeros(nn), units='unitless')
         self.add_input('thrust_coefficient', val=np.zeros(nn), units='unitless')
         self.add_input('comp_tip_loss_factor', val=np.zeros(nn), units='unitless')
-        self.add_input(Dynamic.Mission.PROPELLER_TIP_SPEED,
-                       val=np.zeros(nn), units='ft/s')
+        add_aviary_input(
+            self, Dynamic.Mission.PROPELLER_TIP_SPEED, val=np.zeros(nn), units='ft/s'
+        )
         self.add_input('density_ratio', val=np.zeros(nn), units='unitless')
         self.add_input('advance_ratio', val=np.zeros(nn), units='unitless')
         self.add_input('power_coefficient', val=np.zeros(nn), units='unitless')
 
         self.add_output('thrust_coefficient_comp_loss',
                         val=np.zeros(nn), units='unitless')
-        self.add_output(Dynamic.Mission.THRUST, val=np.zeros(nn), units='lbf')
+        add_aviary_output(self, Dynamic.Mission.THRUST, val=np.zeros(nn), units='lbf')
         # keep them for reporting but don't seem to be required
         self.add_output('propeller_efficiency', val=np.zeros(nn), units='unitless')
         self.add_output('install_efficiency', val=np.zeros(nn), units='unitless')
