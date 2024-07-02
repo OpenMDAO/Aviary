@@ -13,7 +13,7 @@ import openmdao.api as om
 import aviary.constants as constants
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.variables import Dynamic, Mission
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft
 
@@ -110,7 +110,7 @@ def convert_geopotential_altitude(altitude):
 # TODO build test for this function
 # TODO upgrade to be able to turn vectorized AviaryValues into multiple engine decks
 def build_engine_deck(aviary_options: AviaryValues, meta_data=_MetaData):
-    '''
+    """
     Creates an EngineDeck using avaliable inputs and options in aviary_options.
 
     Parameter
@@ -122,14 +122,16 @@ def build_engine_deck(aviary_options: AviaryValues, meta_data=_MetaData):
     ----------
     engine_models : <list of EngineDecks>
         List of EngineDecks created using provided aviary_options.
-    '''
-    # local import to avoid circular import
-    from aviary.subsystems.propulsion.engine_deck import EngineDeck
+    """
+
+    # Required engine vars include one setting from Mission.Summary.
+    engine_vars = [item for item in Aircraft.Engine.__dict__.values()]
+    engine_vars.append(Mission.Summary.FUEL_FLOW_SCALER)
 
     # Build a single engine deck, currently ignoring vectorization of AviaryValues
     # (use first item in arrays when appropriate)
     engine_options = AviaryValues()
-    for var in Aircraft.Engine.__dict__.values():
+    for var in engine_vars:
         # check if this variable exist with useable metadata
         try:
             units = _MetaData[var]['units']
@@ -159,7 +161,7 @@ def build_engine_deck(aviary_options: AviaryValues, meta_data=_MetaData):
                         UserWarning(f'Provided vector for {var} has too many dimensions: '
                                     'expecting a {expected_dim+1}D array ({expected_dim}D '
                                     'per engine)')
-                # if neither metadata and aviary_val are numpy arrays, cannot check dimensions
+                # if neither metadata nor aviary_val are numpy arrays, cannot check dimensions
                 # in robust way, so a reduced check is done. No raised, errors, must
                 # assume aviary_val data is formatted correctly
                 elif isinstance(aviary_val, (list, tuple, np.ndarray)):
@@ -178,11 +180,16 @@ def build_engine_deck(aviary_options: AviaryValues, meta_data=_MetaData):
                 if np.array(aviary_val).ndim == 0:
                     aviary_val = np.array(aviary_val).item()
                 engine_options.set_val(var, aviary_val, units)
+
         except (KeyError, TypeError):
             continue
 
+    # local import to avoid circular import
+    from aviary.subsystems.propulsion.engine_deck import EngineDeck
+
     # name engine deck after filename
-    return [EngineDeck(Path(engine_options.get_val(Aircraft.Engine.DATA_FILE)).stem, options=engine_options)]
+    return [EngineDeck(Path(engine_options.get_val(Aircraft.Engine.DATA_FILE)).stem,
+                       options=engine_options)]
 
 
 class UncorrectData(om.Group):
