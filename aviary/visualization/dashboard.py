@@ -11,7 +11,8 @@ from typing import (
     List,
     Iterator,
     Tuple,
-)  # Use typing.List and typing.Tuple for compatibility
+)
+import warnings  # Use typing.List and typing.Tuple for compatibility
 
 import numpy as np
 from bokeh.palettes import Category10
@@ -141,6 +142,26 @@ def _dashboard_cmd(options, user_args):
     )
 
 
+def create_table_pane_from_json(json_filepath):
+    try:
+        with open(json_filepath) as json_file:
+            parsed_json = json.load(json_file)
+
+        # Convert the dictionary to a DataFrame
+        df = pd.DataFrame(list(parsed_json.items()), columns=['Name', 'Value'])
+        table_pane = pn.widgets.Tabulator(df, show_index=False, selectable=False,
+                                          sortable=False,
+                                          disabled=True,  # disables editing of the table
+                                          titles={
+                                              'Name': '',
+                                              'Value': '',
+                                          })
+    except Exception as err:
+        warnings.warn(f"Unable to generate table due to: {err}.")
+        table_pane = None
+    return table_pane
+
+
 # functions for creating Panel Panes given different kinds of
 #    data inputs
 def create_csv_frame(csv_filepath, documentation):
@@ -179,6 +200,18 @@ def create_csv_frame(csv_filepath, documentation):
         report_pane = None
 
     return report_pane
+
+
+def get_run_status(status_filepath):
+    try:
+        with open(status_filepath) as f:
+            status_dct = json.load(f)
+            if status_dct['Exit status'] == 'SUCCESS':
+                return '✅ Success'
+            else:
+                return f"❌ {status_dct['Exit status']}"
+    except Exception as err:
+        return 'Unknown'
 
 
 def create_report_frame(format, text_filepath, documentation):
@@ -642,6 +675,10 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
     ####### Results Tab #######
     results_tabs_list = []
 
+    status_pane = create_table_pane_from_json(f"{reports_dir}/status.json")
+    if status_pane:
+        results_tabs_list.append(("Run status pane", status_pane))
+
     # Mission Summary
     mission_summary_pane = create_report_frame(
         "markdown", f"{reports_dir}/mission_summary.md", "A report of mission results from an Aviary problem")
@@ -764,9 +801,13 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
     if subsystem_tabs_list:
         high_level_tabs.append(("Subsystems", subsystem_tabs))
     tabs = pn.Tabs(*high_level_tabs, stylesheets=["assets/aviary_styles.css"])
+    tabs.active = 2  # make the Results tab active initially
+
+    # get status of run for display in the header of each page
+    status_string_for_header = get_run_status(f"{reports_dir}/status.json")
 
     template = pn.template.FastListTemplate(
-        title=f"Aviary Dashboard for {script_name}",
+        title=f"Aviary Dashboard for {script_name}:  {status_string_for_header}",
         logo="assets/aviary_logo.png",
         favicon="assets/aviary_logo.png",
         main=[tabs],

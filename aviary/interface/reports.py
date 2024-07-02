@@ -1,9 +1,14 @@
+import datetime
+import json
 from pathlib import Path
+import sys
+import time
 import pandas as pd
 import numpy as np
 
 from openmdao.utils.mpi import MPI
 from openmdao.utils.reports_system import register_report
+from openmdao.visualization.tables.table_builder import generate_table
 
 from aviary.interface.utils.markdown_utils import write_markdown_variable_table
 from aviary.utils.named_values import NamedValues
@@ -17,9 +22,6 @@ def register_custom_reports():
     """
     # TODO top-level aircraft report?
     # TODO add flag to skip registering reports?
-
-    # NOTE Due to a possible bug in OpenMDAO, we need to assign Problem as the
-    # class_name instead of AviaryProblem.
 
     # register per-subsystem report generation
     register_report(name='subsystems',
@@ -46,6 +48,54 @@ def register_custom_reports():
                     method='run_driver',
                     pre_or_post='post')
 
+    register_report(name='run_status',
+                    func=run_status,
+                    desc='Generates a report on the status of the run',
+                    class_name='AviaryProblem',
+                    method='run_driver',
+                    pre_or_post='post',
+                    )
+
+
+def run_status(prob):
+    """
+    Creates a JSON file that containts high level overview of the run
+
+    Parameters
+    ----------
+    prob : AviaryProblem
+        The AviaryProblem used to generate this report
+    """
+    if MPI and MPI.COMM_WORLD.rank != 0:
+        return
+
+    reports_folder = Path(prob.get_reports_dir())
+    report_file = reports_folder / 'status.json'
+
+    runtime = prob.driver.result.runtime
+    runtime_ms = (runtime * 1000.0) % 1000.0
+    runtime_formatted = \
+        f"{time.strftime('%H hours %M minutes %S seconds', time.gmtime(runtime))} " \
+        f"{runtime_ms:.1f} milliseconds"
+
+    t = datetime.datetime.now()
+    time_stamp = t.strftime("%Y-%m-%d %H:%M:%S %Z")
+
+    status = {}
+    status['Problem'] = prob._name
+    status['Script'] = sys.argv[0]
+    status['Optimizer'] = prob.driver._get_name()
+    status['Number of driver iterations'] = prob.driver.result.iter_count
+    status['Number of model evals'] = prob.driver.result.model_evals
+    status['Number of deriv evals'] = prob.driver.result.deriv_evals
+    status['Wall clock run time'] = runtime_formatted
+    status['Exit status'] = prob.driver.result.exit_status
+    status['Report generation date and time'] = time_stamp
+
+    with open(report_file, 'w') as f:
+        json.dump(status, f, indent=1, ensure_ascii=False)
+        print(file=f)  # avoid 'no newline at end of file' message
+
 
 def subsystem_report(prob, **kwargs):
     """
@@ -57,14 +107,6 @@ def subsystem_report(prob, **kwargs):
     prob : AviaryProblem
         The AviaryProblem used to generate this report
     """
-
-    # Note: Due to a possible bug in OpenMDAO, we need to assign Problem as the
-    # class_name instead of AviaryProblem. Make sure that we don't try to write
-    # aviary reports without aviary in the model.
-    from aviary.interface.methods_for_level2 import AviaryProblem
-    if not isinstance(prob, AviaryProblem):
-        return
-
     reports_folder = Path(prob.get_reports_dir() / 'subsystems')
     reports_folder.mkdir(exist_ok=True)
 
@@ -117,13 +159,6 @@ def mission_report(prob, **kwargs):
             return diff
         else:
             return None
-
-    # Note: Due to a possible bug in OpenMDAO, we need to assign Problem as the
-    # class_name instead of AviaryProblem. Make sure that we don't try to write
-    # aviary reports without aviary in the model.
-    from aviary.interface.methods_for_level2 import AviaryProblem
-    if not isinstance(prob, AviaryProblem):
-        return
 
     reports_folder = Path(prob.get_reports_dir())
     report_file = reports_folder / 'mission_summary.md'
