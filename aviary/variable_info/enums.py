@@ -212,6 +212,3 @@ class OutMachType(Enum):
     MACH = 'mach'
     TIP_MACH = 'tip_mach'
     HELICAL_MACH = 'helical_mach'
-
-    #def __str__(self):
-    #    return self.value
