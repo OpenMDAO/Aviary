@@ -735,7 +735,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
             results_tabs_list.append(("Aviary Variables", aviary_vars_pane))
         except Exception as e:
             issue_warning(
-                f"Unable do create Aviary Variables tab in dashboard due to the error: {str(e)}"
+                f"Unable to create Aviary Variables tab in dashboard due to the error: {str(e)}"
             )
 
     # Timeseries Mission Output Report
