@@ -430,7 +430,7 @@ class AviaryMissionEditor(Tk):
     def create_menu(self):
         structure = {"File":[["command","Open",self.open_phase_info],
                              ["command","Save",self.save],
-                             ["command","Save as",None],
+                             ["command","Save as",self.save_as],
                              ["separator"],
                              ["command","Exit",self.close_window]],
                     "Edit":[["command","Axes Limits",self.change_axes_popup],
@@ -610,15 +610,28 @@ class AviaryMissionEditor(Tk):
                         if bool_var:
                             self.show_optimize.set(True)
                             break
+                lim_margin = 1.2
+                lims = [max(ys)*lim_margin for ys in self.ys_list]
+                lims = [max(self.x_list)*lim_margin,*lims]
+                lim_strs = [self.data_info["xlim_strvar"],*self.data_info["ylim_strvars"]]
+                for var,lim in zip(lim_strs,lims):
+                    var.set(value = lim)
+
                 self.redraw_plot()
+                self.update_axes_lims()
                 self.update_table(overwrite=True,bool_list=bool_list)
 
     def toggle_optimize_view(self):
         """Runs update table with overwrite on to toggle display of optimize checkboxes"""
         self.update_table(overwrite=True)
 
-    def save(self):
-        # TODO: save phase info as filename with save as command
+    def save_as(self):
+        filename = filedialog.asksaveasfilename(defaultextension='.py',confirmoverwrite=True,
+                                                filetypes=[("Python files","*.py")],initialfile='outputted_phase_info')
+        if not filename: return
+        self.save(filename=filename)
+
+    def save(self,filename=None):
         users = {'solve_for_distance':self.advanced_options_info["solve_for_distance"].get(),
                  'constrain_range':self.advanced_options_info["constrain_range"].get(),
                  'include_takeoff':self.advanced_options_info["include_takeoff"].get(),
@@ -627,15 +640,17 @@ class AviaryMissionEditor(Tk):
         if len(self.table_boolvars[0]) != len(self.x_list)-1:
             for i in range(self.num_dep_vars):
                 self.table_boolvars[i] = [BooleanVar()]*(len(self.x_list)-1)
+        if not filename: filename = os.path.join(os.getcwd(), 'outputted_phase_info.py')
         create_phase_info(times = self.x_list, altitudes = self.ys_list[0], mach_values = self.ys_list[1],
                           polynomial_order = polyord, num_segments = len(self.x_list)-1,
                           optimize_altitude_phase_vars = self.table_boolvars[0],
                           optimize_mach_phase_vars = self.table_boolvars[1],
-                          user_choices = users)
+                          user_choices = users,filename=filename)
         self.close_window()
 
 def create_phase_info(times, altitudes, mach_values,
-                      polynomial_order, num_segments, optimize_mach_phase_vars, optimize_altitude_phase_vars, user_choices):
+                      polynomial_order, num_segments, optimize_mach_phase_vars, optimize_altitude_phase_vars, user_choices,
+                      filename='outputted_phase_info.py'):
     """
     Creates a dictionary containing the information about different flight phases
     based on input times, altitudes, and Mach values.
@@ -769,8 +784,6 @@ def create_phase_info(times, altitudes, mach_values,
         f"Total range is estimated to be {total_range} nautical miles")
 
     phase_info['post_mission']['target_range'] = (total_range, 'nmi')
-
-    filename = os.path.join(os.getcwd(), 'outputted_phase_info.py')
 
     # write a python file with the phase information
     with open(filename, 'w') as f:
