@@ -263,6 +263,7 @@ class PropModelVariables(Enum):
     CT = 'CT'  # thrust coefficient
     J = 'J'  # advanced ratio
 
+
 default_prop_units = {
     PropModelVariables.MACH: 'unitless',
     PropModelVariables.CP: 'unitless',
