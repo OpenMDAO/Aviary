@@ -1,7 +1,7 @@
-import os, importlib.util
+import os, importlib.util, subprocess
 from math import sqrt
-
-from aviary.interface.graphical_input import create_phase_info
+import numpy as np
+import shutil
 
 from tkinter import Tk, Toplevel, Canvas, Frame, BooleanVar, StringVar, IntVar, filedialog
 from tkinter import Button, Checkbutton, Entry, Label, Menu, Scrollbar
@@ -113,6 +113,7 @@ class AviaryMissionEditor(Tk):
 
         # internal variables to remember mouse state
         self.mouse_drag,self.mouse_press = False, False
+        self.popup = None
         self.ptcontainer = 0.04 # percent of plot size, boundary around point where it can be dragged
         self.show_optimize = BooleanVar() # controls display of optimize phase checkboxes
         
@@ -128,11 +129,10 @@ class AviaryMissionEditor(Tk):
     def save_option_defaults(self):
         self.advanced_options_info_defaults = {}
         for key,var in self.advanced_options_info.items():
-            if type(var) == type(BooleanVar()):
-                self.advanced_options_info_defaults[key] = BooleanVar(value=var.get())
-            elif type(var) == type(IntVar()):
-                self.advanced_options_info_defaults[key] = IntVar(value=var.get())
-
+            self.advanced_options_info_defaults[key] = var.get()
+        self.axes_lim_defaults = [item[1] for item in self.data_info["ylims"]]
+        self.axes_lim_defaults = [self.data_info["xlim"][1],*self.axes_lim_defaults]
+        
     def check_data_info(self):
         """Verifies data_info dict has consistent number of dependent variables """
         check_keys = ["ylabels","ylims","yunits"]
@@ -275,15 +275,17 @@ class AviaryMissionEditor(Tk):
                         f"{self.data_info['xlabel']}: {xvalue} {self.data_info['xunit']} | "+
                         f"{self.data_info['ylabels'][plot_idx]}: {yvalue} {self.data_info['yunits'][plot_idx]}")
 
-                    # check if mouse is near an existing point
-                    # TODO: only update point closest to mouse
+                    # check if mouse is near an existing point, use closest point for dragging
                     near = False
-                    for pt_idx,prevpt in enumerate(zip(self.x_list,self.ys_list[plot_idx])):
-                        dist = self.get_distance((event.xdata,event.ydata),prevpt,plot_idx)
-                        if dist < self.ptcontainer:
-                            self.figure_canvas.set_cursor(4)
-                            near = True
-                            self.near_idx = pt_idx
+                    dists = []
+                    for existing_pt in zip(self.x_list,self.ys_list[plot_idx]):
+                        dists.append(self.get_distance((event.xdata,event.ydata),existing_pt,plot_idx))
+                    min_dist = min(dists)
+                    if min_dist < self.ptcontainer:
+                        self.figure_canvas.set_cursor(4)
+                        near = True
+                        self.near_idx = dists.index(min_dist)
+                    
                     if not near: self.figure_canvas.set_cursor(1)
 
                     # move nearby point (or if previously dragging a point)
@@ -459,29 +461,54 @@ class AviaryMissionEditor(Tk):
         with open("windowlocation.txt","w") as fp:
             fp.write(last_geometry)
 
-    def change_axes_popup(self):
-        """Creates a popup window that allows user to edit axes limits. This function is triggered
-            by the menu buttons"""
+    def close_popup(self):
+        """Function to close existing popup"""
+        self.focus_set()
+        self.popup.destroy()
+        self.popup = None
+
+    def generic_popup(self,pop_wid=100,pop_hei=100,pop_title="Popup",buttons_text = []):
+        """Function to create a base window for a popup. Returns popup object to be used for adding widget
+            and configuring settings. Also can include Apply and Cancel buttons and return these for changing
+            location and command."""
         # compute middle of window location to place popup into
         win_size,win_left,win_top = self.winfo_geometry().split("+")
         win_wid,win_hei = win_size.split("x")
         win_left,win_top,win_wid,win_hei = int(win_left),int(win_top),int(win_wid),int(win_hei)
-        pop_wid,pop_hei = 200,100 # hardcoded popup size
         pop_left,pop_top = int(win_left + win_wid/2 - pop_wid/2), int(win_top + win_hei/2 - pop_hei/2)
 
         popup = Toplevel(self)
         popup.resizable(False,False)
         popup.geometry(f"{pop_wid}x{pop_hei}+{pop_left}+{pop_top}")
-        popup.title("Axes Limits")
+        popup.title(pop_title)
         popup.focus_set()
+        self.popup = popup
 
-        def close_popup(self): # internal function for closing this popup and resetting focus
-            self.focus_set()
-            popup.destroy()
-        popup.protocol("WM_DELETE_WINDOW",func=lambda:close_popup(self))
+        popup.protocol("WM_DELETE_WINDOW",func=self.close_popup)
 
+        buttons = {}
+        for col,button_txt in enumerate(buttons_text):
+            button = Button(popup,text=button_txt.title())
+            button.grid(column=col)
+            buttons[button_txt] = button
+
+        return popup,buttons
+    
+    def change_axes_popup(self):
+        """Creates a popup window that allows user to edit axes limits. This function is triggered
+            by the menu buttons"""
         labels_w_units = [self.data_info["xlabel_unit"],*self.data_info["ylabels_units"]]
         lim_strs = [self.data_info["xlim_strvar"],*self.data_info["ylim_strvars"]]
+
+        def reset_options(old_list):
+            for value,lim_str in zip(old_list,lim_strs):
+                lim_str.set(value=value)
+        
+        current_lims = [var.get() for var in lim_strs]
+
+        popup,buttons = self.generic_popup(pop_wid = 200, pop_hei=100, pop_title="Axes Limits",
+                                           buttons_text=["apply","reset","cancel"])
+        popup.protocol("WM_DELETE_WINDOW",func=lambda:[self.close_popup(),reset_options(current_lims)])
 
         for row,(label,lim_str) in enumerate(zip(labels_w_units,lim_strs)):
             lim_label = Label(popup,text=label,justify='right')
@@ -489,37 +516,27 @@ class AviaryMissionEditor(Tk):
             lim_entry = Entry(popup,textvariable=lim_str,width = max(6,len(lim_str.get())))
             lim_entry.grid(row=row,column=1)
 
-        apply_button = Button(master=popup,command = lambda:[self.update_axes_lims(),close_popup(self)],
-                               text = "Apply")
-        apply_button.grid()
+        for col,button in enumerate(buttons.values()):
+            button.grid(row=row+1,column = col)
+        buttons["apply"].configure(command=lambda:[self.close_popup(),self.update_axes_lims()])
+        buttons["reset"].configure(command=lambda:[self.close_popup(),reset_options(self.axes_lim_defaults),self.update_axes_lims()])
+        buttons["cancel"].configure(command=lambda:[self.close_popup(),reset_options(current_lims),self.update_axes_lims()])
 
     def advanced_options_popup(self):
         """Creates a popup window that allows user to edit advanced options for phase info. 
         Options included are specified as a dict in __init__ and include solve/constrain for range,
         include landing/takeoff, polynomial order, and phase order. This function is triggered by the menu buttons"""
-        # compute middle of window location to place popup into
-        win_size,win_left,win_top = self.winfo_geometry().split("+")
-        win_wid,win_hei = win_size.split("x")
-        win_left,win_top,win_wid,win_hei = int(win_left),int(win_top),int(win_wid),int(win_hei)
-        pop_wid,pop_hei = 300,300 # hardcoded popup size
-        pop_left,pop_top = int(win_left + win_wid/2 - pop_wid/2), int(win_top + win_hei/2 - pop_hei/2)
+        def reset_options(self,old_dict = self.advanced_options_info_defaults):
+            for key,value in old_dict.items():
+                self.advanced_options_info[key].set(value=value)
 
-        popup = Toplevel(self)
-        popup.resizable(False,False)
-        popup.geometry(f"{pop_wid}x{pop_hei}+{pop_left}+{pop_top}")
-        popup.title("Advanced Options")
-        popup.focus_set()
+        current_info = {} # this stores option values as they are before user edits inside popup
+        for key,var in self.advanced_options_info.items():
+            current_info[key] = var.get()
 
-        def reset_options(self):
-            for key,var in self.advanced_options_info_defaults.items():
-                print(self.advanced_options_info[key].get())
-                self.advanced_options_info[key].set(value=var.get())
-                print(var.get())
-
-        def close_popup(self): # internal function for closing this popup and resetting focus
-            self.focus_set()
-            popup.destroy()
-        popup.protocol("WM_DELETE_WINDOW",func=lambda:[reset_options(self),close_popup(self)])
+        popup,buttons = self.generic_popup(pop_wid=300,pop_hei=200,pop_title="Advanced Options",
+                                           buttons_text=["apply","reset","cancel"])
+        popup.protocol("WM_DELETE_WINDOW",func=lambda:[self.close_popup(),reset_options(self,current_info)])
 
         for row,(option_label_txt,option_var) in enumerate(self.advanced_options_info.items()):
             option_label = Label(popup,text=option_label_txt.replace("_"," ").title(),justify='right')
@@ -532,10 +549,13 @@ class AviaryMissionEditor(Tk):
                 option_entry.grid(row=row,column=1)
 
         # TODO: phase order (better if editable per phase)
-        apply_button = Button(popup,command=lambda:close_popup(self),text = "Apply")
-        cancel_button = Button(popup,command=lambda:[reset_options(self),close_popup(self)],text = "Reset")
-        apply_button.grid(row=row+1,column=0)
-        cancel_button.grid(row=row+1,column=1)
+        for col,button in enumerate(buttons.values()):
+            button.grid(row=row+1,column = col)
+        # apply maintains user options as set by user in popup, reset reverts them to default values, cancel reverts to 
+        # values as they were at the start of the popup
+        buttons["apply"].configure(command=lambda:self.close_popup())
+        buttons["reset"].configure(command=lambda:[self.close_popup(),reset_options(self)])
+        buttons["cancel"].configure(command=lambda:[self.close_popup(),reset_options(self,current_info)])
 
     def open_phase_info(self):
         """Opens a dialog box to select a .py file with a phase info dict. File must contain a dict called phase_info. 
@@ -557,8 +577,12 @@ class AviaryMissionEditor(Tk):
                 ylabs = ["altitude","mach"]
                 for phase_dict in (phase_info.values()):
                     if "initial_guesses" in phase_dict: # not a pre/post mission dict
+                        self.advanced_options_info["solve_for_distance"].set(
+                            value = phase_dict["user_options"]["solve_for_distance"])
+                        self.advanced_options_info["polynomial_control_order"].set(
+                            value = phase_dict["user_options"]["polynomial_control_order"])
+                        
                         timevals = phase_dict["initial_guesses"]["time"][0]
-
                         if not init: # for first run initialize internal lists with correct num of elements
                             numpts = phase_dict["user_options"]["num_segments"]+1
                             self.x_list = [0]*numpts
@@ -573,7 +597,12 @@ class AviaryMissionEditor(Tk):
                         for i in range(self.num_dep_vars):
                             self.ys_list[i][idx+1] = phase_dict["user_options"]["final_"+ylabs[i]][0]
                             bool_list[i][idx] = phase_dict["user_options"]["optimize_"+ylabs[i]]
+                        
                         idx +=1
+
+                self.advanced_options_info["constrain_range"].set(value = phase_info["post_mission"]["constrain_range"])
+                self.advanced_options_info["include_landing"].set(value = phase_info["post_mission"]["include_landing"])
+                self.advanced_options_info["include_takeoff"].set(value = phase_info["pre_mission"]["include_takeoff"])
 
                 # checks if any optimize values are true, in which case checkboxes are shown
                 for axis_list in bool_list:
@@ -589,11 +618,11 @@ class AviaryMissionEditor(Tk):
         self.update_table(overwrite=True)
 
     def save(self):
-        # TODO: checkboxes for solve distance, constrain range, 
-        #       entry for polynomial order
         # TODO: save phase info as filename with save as command
         users = {'solve_for_distance':self.advanced_options_info["solve_for_distance"].get(),
-                 'constrain_range':self.advanced_options_info["constrain_range"].get()}
+                 'constrain_range':self.advanced_options_info["constrain_range"].get(),
+                 'include_takeoff':self.advanced_options_info["include_takeoff"].get(),
+                 'include_landing':self.advanced_options_info["include_landing"].get()}
         polyord = self.advanced_options_info["polynomial_control_order"].get()
         if len(self.table_boolvars[0]) != len(self.x_list)-1:
             for i in range(self.num_dep_vars):
@@ -604,6 +633,177 @@ class AviaryMissionEditor(Tk):
                           optimize_mach_phase_vars = self.table_boolvars[1],
                           user_choices = users)
         self.close_window()
+
+def create_phase_info(times, altitudes, mach_values,
+                      polynomial_order, num_segments, optimize_mach_phase_vars, optimize_altitude_phase_vars, user_choices):
+    """
+    Creates a dictionary containing the information about different flight phases
+    based on input times, altitudes, and Mach values.
+
+    The information includes details such as duration bounds, initial guesses,
+    and various options for optimization and control for each phase.
+
+    Parameters
+    ----------
+    times : list of float
+        The times at which phase changes occur, given in minutes.
+    altitudes : list of float
+        The altitudes corresponding to each phase, given in feet.
+    mach_values : list of float
+        The Mach numbers corresponding to each phase.
+
+    Returns
+    -------
+    dict
+        A dictionary with all the phase information, including bounds and initial guesses.
+    """
+    num_phases = len(times) - 1  # Number of phases is one less than the number of points
+    phase_info = {}
+
+    times = np.round(np.array(times)).astype(int)
+    altitudes = np.round(np.array(altitudes) / 500) * 500
+    mach_values = np.round(np.array(mach_values), 2)
+
+    # Utility function to create bounds
+    def create_bounds(center):
+        lower_bound = max(center / 2, 0.1)  # Ensuring lower bound is not less than 0.1
+        upper_bound = center * 1.5
+        return (lower_bound, upper_bound)
+
+    # Calculate duration bounds for each phase
+    duration_bounds = [create_bounds(times[i+1] - times[i])
+                       for i in range(num_phases)]
+
+    # Initialize the cumulative initial bounds
+    cumulative_initial_bounds = [(0., 0.)]  # Initial bounds for the first phase
+
+    # Calculate the cumulative initial bounds for subsequent phases
+    for i in range(1, num_phases):
+        previous_duration_bounds = duration_bounds[i-1]
+        previous_initial_bounds = cumulative_initial_bounds[-1]
+        new_initial_bound_min = previous_initial_bounds[0] + previous_duration_bounds[0]
+        new_initial_bound_max = previous_initial_bounds[1] + previous_duration_bounds[1]
+        cumulative_initial_bounds.append((new_initial_bound_min, new_initial_bound_max))
+
+    # Add pre_mission and post_mission phases
+    phase_info['pre_mission'] = {
+        'include_takeoff': user_choices["include_takeoff"],
+        'optimize_mass': True,
+    }
+
+    climb_count = 1
+    cruise_count = 1
+    descent_count = 1
+
+    for i in range(num_phases):
+        initial_altitude = altitudes[i]
+        final_altitude = altitudes[i+1]
+
+        # Determine phase type: climb, cruise, or descent
+        if final_altitude > initial_altitude:
+            phase_type = 'climb'
+            phase_count = climb_count
+            climb_count += 1
+        elif final_altitude == initial_altitude:
+            phase_type = 'cruise'
+            phase_count = cruise_count
+            cruise_count += 1
+        else:
+            phase_type = 'descent'
+            phase_count = descent_count
+            descent_count += 1
+
+        phase_name = f'{phase_type}_{phase_count}'
+
+        phase_info[phase_name] = {
+            'subsystem_options': {
+                'core_aerodynamics': {'method': 'computed'}
+            },
+            'user_options': {
+                'optimize_mach': optimize_mach_phase_vars[i].get(),
+                'optimize_altitude': optimize_altitude_phase_vars[i].get(),
+                'polynomial_control_order': polynomial_order,
+                'use_polynomial_control': True,
+                'num_segments': num_segments,
+                'order': 3,
+                'solve_for_distance': False,
+                'initial_mach': (mach_values[i], 'unitless'),
+                'final_mach': (mach_values[i+1], 'unitless'),
+                'mach_bounds': ((np.min(mach_values[i:i+2]) - 0.02, np.max(mach_values[i:i+2]) + 0.02), 'unitless'),
+                'initial_altitude': (altitudes[i], 'ft'),
+                'final_altitude': (altitudes[i+1], 'ft'),
+                'altitude_bounds': ((max(np.min(altitudes[i:i+2]) - 500., 0.), np.max(altitudes[i:i+2]) + 500.), 'ft'),
+                'throttle_enforcement': 'path_constraint' if (i == (num_phases - 1) or i == 0) else 'boundary_constraint',
+                'fix_initial': True if i == 0 else False,
+                'constrain_final': True if i == (num_phases - 1) else False,
+                'fix_duration': False,
+                'initial_bounds': (cumulative_initial_bounds[i], 'min'),
+                'duration_bounds': (duration_bounds[i], 'min'),
+            },
+            'initial_guesses': {
+                'time': ([times[i], times[i+1]-times[i]], 'min'),
+            }
+        }
+
+    phase_info['post_mission'] = {
+        'include_landing': user_choices["include_landing"],
+        'constrain_range': True,
+        'target_range': (0., 'nmi'),
+    }
+
+    # Apply user choices to each phase
+    for phase_name, _ in phase_info.items():
+        if 'pre_mission' in phase_name or 'post_mission' in phase_name:
+            continue
+        phase_info[phase_name]['user_options'].update({
+            'solve_for_distance': user_choices.get('solve_for_distance', False),
+        })
+
+    # Apply global settings if required
+    phase_info['post_mission']['constrain_range'] = user_choices.get(
+        'constrain_range', True)
+
+    # Calculate the total range
+    total_range = estimate_total_range_trapezoidal(times, mach_values)
+    print(
+        f"Total range is estimated to be {total_range} nautical miles")
+
+    phase_info['post_mission']['target_range'] = (total_range, 'nmi')
+
+    filename = os.path.join(os.getcwd(), 'outputted_phase_info.py')
+
+    # write a python file with the phase information
+    with open(filename, 'w') as f:
+        f.write(f'phase_info = {phase_info}')
+
+    # Check for 'black' and format the file
+    if shutil.which('black'):
+        subprocess.run(['black', filename])
+    else:
+        if shutil.which('autopep8'):
+            subprocess.run(['autopep8', '--in-place', '--aggressive', filename])
+            print("File formatted using 'autopep8'")
+        else:
+            print("'black' and 'autopep8' are not installed. Please consider installing one of them for better formatting.")
+
+    print(f"Phase info has been saved and formatted in {filename}")
+
+    return phase_info
+
+def estimate_total_range_trapezoidal(times, mach_numbers):
+    speed_of_sound = 343  # Speed of sound in meters per second
+
+    # Convert times to seconds from minutes
+    times_sec = np.array(times) * 60
+
+    # Calculate the speeds at each Mach number
+    speeds = np.array(mach_numbers) * speed_of_sound
+
+    # Use numpy's trapz function to integrate
+    total_range = np.trapz(speeds, times_sec)
+
+    total_range_nautical_miles = total_range / 1000 / 1.852
+    return int(round(total_range_nautical_miles))
 
 if __name__ == "__main__":
     app = AviaryMissionEditor()
