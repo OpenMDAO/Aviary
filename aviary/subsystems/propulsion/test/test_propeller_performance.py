@@ -12,20 +12,27 @@ from aviary.subsystems.propulsion.propeller_performance import PropellerPerforma
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.variable_info.options import get_option_defaults
 
-# Setting up truth values from GASP
+# Setting up truth values from GASP (first 12 entries)
 CT = np.array([0.27651, 0.20518, 0.13093, 0.10236, 0.10236, 0.19331,
-               0.10189, 0.10189, 0.18123, 0.08523, 0.06463, 0.02800])
-XFT = np.array([1.0, 1.0, 0.9976, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0])
+               0.10189, 0.10189, 0.18123, 0.08523, 0.06463, 0.02800,
+               0, 0, 0, 0.10256, 0.10256, 0.18641,])
+XFT = np.array([1.0, 1.0, 0.9976, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+                0, 0, 0, 1.0, 1.0, 1.0,])
 CTX = np.array([0.27651, 0.20518, 0.13062, 0.10236, 0.10236, 0.19331,
-               0.10189, 0.10189, 0.18123, 0.08523, 0.06463, 0.02800])
+               0.10189, 0.10189, 0.18123, 0.08523, 0.06463, 0.02800,
+               0, 0, 0, 0.10256, 0.10256, 0.18641,])
 thrust = np.array([4634.8, 3415.9, 841.5, 1474.3, 1400.6, 3923.5,
-                   1467.6, 1394.2, 3678.3, 1210.4, 917.8, 397.7])
+                   1467.6, 1394.2, 3678.3, 1210.4, 917.8, 397.7,
+                   0, 0, 0, 1477.17546,  1403.31669, 3637.83130,])
 prop_eff = np.array([0.00078, 0.72352, 0.89202, 0.90586, 0.90586, 0.50750,
-                     0.90172, 0.90172, 0.47579, 0.83809, 0.76259, 0.49565])
+                     0.90172, 0.90172, 0.47579, 0.83809, 0.76259, 0.49565,
+                     0, 0, 0, 0.90760, 0.90760, 0.47056,])
 install_loss = np.array([0.0133, 0.02, 0.034, 0.0, 0.05, 0.05,
-                         0.0, 0.05, 0.05, 0.0140, 0.0140, 0.0140])
+                         0.0, 0.05, 0.05, 0.0140, 0.0140, 0.0140,
+                         0, 0, 0, 0.0, 0.05, 0.05,])
 install_eff = np.array([0.00077, 0.70904, 0.86171, 0.90586, 0.86056, 0.48213,
-                        0.90172, 0.85664, 0.45200, 0.82635, 0.75190, 0.48871])
+                        0.90172, 0.85664, 0.45200, 0.82635, 0.75190, 0.48871,
+                        0, 0, 0, 0.90760, 0.86222, 0.44703,])
 
 
 class PropellerPerformanceTest(unittest.TestCase):
@@ -233,7 +240,12 @@ class PropellerPerformanceTest(unittest.TestCase):
         del partial_data_hs[key_pair]
         assert_check_partials(partial_data, atol=1.5e-3, rtol=1e-4)
 
-    def new_test(self):
+    def test_case_12_13_14(self):
+        # Case 12, 13, 14, to test mach limited tip speed.
+        prob = self.prob
+
+    def test_case_15_16_17(self):
+        # case 15, 16, 17, to test propeller map
         prob = self.prob
         options = self.options
 
@@ -261,20 +273,16 @@ class PropellerPerformanceTest(unittest.TestCase):
                      [769.70, 769.70, 769.70], units="ft/s")
 
         prob.run_model()
-        cthr = prob.get_val('thrust_coefficient')
-        print(f"CT: {cthr}")
-        cpow = prob.get_val('power_coefficient')
-        print(f"CP: {cpow}")
-        mach = prob.get_val(Dynamic.Mission.MACH)
-        print(f"M: {mach}")
-        advJ = prob.get_val('advance_ratio')
-        print(f"J: {advJ}")
-        thrt = prob.get_val('propeller_thrust')
-        print(f"Thrust: {thrt}")
+        self.compare_results(case_idx_begin=15, case_idx_end=17)
+
+        partial_data = prob.check_partials(
+            out_stream=None, compact_print=True, show_only_incorrect=True, form='central', method="fd",
+            minimum_step=1e-12, abs_err_tol=5.0E-4, rel_err_tol=5.0E-5, excludes=["*atmosphere*"])
+        assert_check_partials(partial_data, atol=1e-4, rtol=1e-4)
 
 
 if __name__ == "__main__":
     #unittest.main()
     myClass = PropellerPerformanceTest()
     myClass.setUp()
-    myClass.new_test()
+    myClass.test_case_15_16_17()
