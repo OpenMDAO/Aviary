@@ -255,8 +255,10 @@ class PropellerPerformanceTest(unittest.TestCase):
                         val=True, units='unitless')
         prop_file_path = 'models/propellers/PropFan.prop'
         #prop_file_path = 'models/propellers/general_aviation.prop'
-        options.set_val(Aircraft.Engine.PROPELLER_DATA_FILE, val=prop_file_path, units='unitless')
-        options.set_val(Aircraft.Engine.INTERPOLATION_METHOD, val='slinear', units='unitless')
+        options.set_val(Aircraft.Engine.PROPELLER_DATA_FILE,
+                        val=prop_file_path, units='unitless')
+        options.set_val(Aircraft.Engine.INTERPOLATION_METHOD,
+                        val='slinear', units='unitless')
 
         prob.setup()
         prob.set_val(Dynamic.Mission.INSTALLATION_LOSS_FACTOR,
@@ -282,7 +284,4 @@ class PropellerPerformanceTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    #unittest.main()
-    myClass = PropellerPerformanceTest()
-    myClass.setUp()
-    myClass.test_case_15_16_17()
+    unittest.main()
