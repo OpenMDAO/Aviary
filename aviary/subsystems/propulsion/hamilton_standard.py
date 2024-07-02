@@ -573,7 +573,7 @@ class HamiltonStandard(om.ExplicitComponent):
                        val=0.0, units='unitless')  # blade integrated lift coeff
 
         self.add_output('thrust_coefficient', val=np.zeros(nn), units='unitless')
-        # Tip Compressibility loss factor
+        # propeller tip compressibility loss factor
         self.add_output('comp_tip_loss_factor', val=np.zeros(nn), units='unitless')
 
         self.declare_partials('*', '*', method='fd', form='forward')
