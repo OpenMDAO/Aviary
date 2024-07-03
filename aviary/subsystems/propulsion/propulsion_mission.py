@@ -155,7 +155,7 @@ class PropulsionMission(om.Group):
                 'vectorize_performance.' + Dynamic.Mission.NOX_RATE + '_' + str(i),
             )
 
-            if getattr(engine, 'use_t4', False):
+            if getattr(engine, 'use_t4', True):
                 self.connect(
                     engine.name + '.' + Dynamic.Mission.TEMPERATURE_T4,
                     'vectorize_performance.'
@@ -164,7 +164,7 @@ class PropulsionMission(om.Group):
                     + str(i),
                 )
 
-            if getattr(engine, 'use_shp', False):
+            if getattr(engine, 'use_shp', True):
                 self.connect(
                     engine.name + '.' + Dynamic.Mission.SHAFT_POWER,
                     'vectorize_performance.'
