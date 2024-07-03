@@ -10,7 +10,6 @@ This performs a coupled design-mission optimization and outputs the results from
 """
 import aviary.api as av
 from example_phase_info import phase_info
-# phase_info['pre_mission']['include_takeoff'] = True
 
 prob = av.AviaryProblem()
 
