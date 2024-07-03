@@ -16,6 +16,7 @@ import openmdao.api as om
 from openmdao.core.component import Component
 from openmdao.utils.mpi import MPI
 from openmdao.utils.reports_system import _default_reports
+from openmdao.utils.om_warnings import issue_warning, OMDeprecationWarning
 
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
 from aviary.mission.flops_based.phases.build_landing import Landing
@@ -290,6 +291,14 @@ class AviaryProblem(om.Problem):
             self.problem_type = aviary_inputs.get_val(Settings.PROBLEM_TYPE)
             aviary_inputs.set_val(Mission.Summary.GROSS_MASS,
                                   val=self.initial_guesses['actual_takeoff_mass'], units='lbm')
+            if 'post_mission' in phase_info:
+                if 'target_range' in phase_info['post_mission']:
+                    aviary_inputs.set_val(Mission.Design.RANGE, wrapped_convert_units(
+                        phase_info['post_mission']['target_range'], 'NM'), units='NM')
+                    issue_warning(msg='Using post_mission from phase info is deprecated.'
+                                      'To mimic the same behavior, set `Mission.Design.RANGE`'
+                                      'in the input file.', category=OMDeprecationWarning)
+
             self.target_range = aviary_inputs.get_val(
                 Mission.Design.RANGE, units='NM')
 
