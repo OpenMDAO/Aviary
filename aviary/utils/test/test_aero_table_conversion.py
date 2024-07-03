@@ -1,12 +1,14 @@
 import unittest
+import tempfile
 
 import numpy as np
+from pathlib import Path
 
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.utils.functions import get_path
-from aviary.utils.aero_table_conversion import _load_flops_aero_table, _load_gasp_aero_table
+from aviary.utils.aero_table_conversion import _load_flops_aero_table, _load_gasp_aero_table, _exec_ATC
 
 
 @use_tempdirs
@@ -130,6 +132,43 @@ class TestAeroTableConversion(unittest.TestCase):
         assert_near_equal(cd0_data.get_val('Mach'), expected_cd0_mach)
         assert_near_equal(cd0_data.get_val('Altitude', 'ft'), expected_cd0_alt)
         assert_near_equal(cd0_data.get_val('Zero-Lift Drag Coefficient'), expected_cd0)
+
+    def test_GASP_file(self):
+        def args(): return None
+        args.input_file = 'subsystems/aerodynamics/gasp_based/data/GASP_aero_flaps.txt'
+        args.output_file = str(Path.cwd() / Path('TEST_'+Path(args.input_file).name))
+        args.data_format = 'GASP'
+        _exec_ATC(args, None)
+
+        validation_data = get_path(
+            'subsystems/aerodynamics/gasp_based/data/large_single_aisle_1_aero_flaps.txt')
+
+        # Open the converted and validation files
+        with open(args.output_file, 'r') as f_in, open(validation_data, 'r') as expected:
+            for line in f_in:
+                if any(s in line for s in ['created']):
+                    break
+                # Remove whitespace and compare
+                expected_line = ''.join(expected.readline().split())
+                line_no_whitespace = ''.join(line.split())
+
+                # Assert that the lines are equal
+                try:
+                    self.assertEqual(line_no_whitespace.count(expected_line), 1)
+
+                except Exception as error:
+                    exc_string = f'Error:  {args.output_file}\nFound: {line_no_whitespace}\nExpected:  {expected_line}'
+                    raise Exception(exc_string)
+
+    def test_FLOPS_file(self):
+        tempdir = tempfile.mkdtemp(prefix='testdir-')
+        def args(): return None
+        args.input_file = 'utils/test/flops_test_polar.txt'
+        args.output_file = str(Path(tempdir, 'TEST_'+Path(args.input_file).name))
+        args.data_format = 'FLOPS'
+        _exec_ATC(args, None)
+
+        # Only testing that this runs without an error, not comparing the resulting data
 
 
 if __name__ == '__main__':

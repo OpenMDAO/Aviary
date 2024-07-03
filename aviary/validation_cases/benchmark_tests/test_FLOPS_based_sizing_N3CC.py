@@ -27,7 +27,8 @@ from aviary.mission.energy_phase import EnergyPhase
 
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.subsystems.premission import CorePreMission
-from aviary.interface.default_phase_info.height_energy import default_premission_subsystems, default_mission_subsystems
+from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.utils.preprocessors import preprocess_crewpayload
 
 try:
@@ -36,7 +37,15 @@ except ImportError:
     pyoptsparse = None
 
 
+from dymos.transcriptions.transcription_base import TranscriptionBase
+if hasattr(TranscriptionBase, 'setup_polynomial_controls'):
+    use_new_dymos_syntax = False
+else:
+    use_new_dymos_syntax = True
+
 # benchmark for simple sizing problem on the N3CC
+
+
 def run_trajectory(sim=True):
     prob = om.Problem(model=om.Group())
     if pyoptsparse:
@@ -165,6 +174,10 @@ def run_trajectory(sim=True):
         num_segments=num_segments_descent, order=3, compressed=True,
         segment_ends=descent_seg_ends)
 
+    # default subsystems
+    engine = build_engine_deck(aviary_inputs)
+    default_mission_subsystems = get_default_mission_subsystems('FLOPS', engine)
+
     climb_options = EnergyPhase(
         'test_climb',
         user_options=AviaryValues({
@@ -223,7 +236,7 @@ def run_trajectory(sim=True):
     prob.model.add_subsystem(
         'pre_mission',
         CorePreMission(aviary_options=aviary_inputs,
-                       subsystems=default_premission_subsystems),
+                       subsystems=default_mission_subsystems),
         promotes_inputs=['aircraft:*', 'mission:*'],
         promotes_outputs=['aircraft:*', 'mission:*'])
 
@@ -277,7 +290,17 @@ def run_trajectory(sim=True):
     traj.link_phases(["climb", "cruise", "descent"], [
                      "time", Dynamic.Mission.MASS, Dynamic.Mission.DISTANCE], connected=strong_couple)
 
-    traj = setup_trajectory_params(prob.model, traj, aviary_inputs)
+    # Need to declare dymos parameters for every input that is promoted out of the missions.
+    externs = {'climb': {}, 'cruise': {}, 'descent': {}}
+    for default_subsys in default_mission_subsystems:
+        params = default_subsys.get_parameters(aviary_inputs=aviary_inputs,
+                                               phase_info={})
+        for key, val in params.items():
+            for phname in externs:
+                externs[phname][key] = val
+
+    traj = setup_trajectory_params(prob.model, traj, aviary_inputs,
+                                   external_parameters=externs)
 
     ##################################
     # Connect in Takeoff and Landing #
@@ -378,9 +401,9 @@ def run_trajectory(sim=True):
 
     prob.setup(force_alloc_complex=True)
 
-    ###########################################
-    # Intial Settings for States and Controls #
-    ###########################################
+    ############################################
+    # Initial Settings for States and Controls #
+    ############################################
 
     prob.set_val('traj.climb.t_initial', t_i_climb, units='s')
     prob.set_val('traj.climb.t_duration', t_duration_climb, units='s')
@@ -398,10 +421,15 @@ def run_trajectory(sim=True):
     prob.set_val('traj.cruise.t_initial', t_i_cruise, units='s')
     prob.set_val('traj.cruise.t_duration', t_duration_cruise, units='s')
 
-    prob.set_val('traj.cruise.polynomial_controls:altitude', cruise.interp(
+    if use_new_dymos_syntax:
+        controls_str = 'controls'
+    else:
+        controls_str = 'polynomial_controls'
+
+    prob.set_val(f'traj.cruise.{controls_str}:altitude', cruise.interp(
         Dynamic.Mission.ALTITUDE, ys=[alt_i_cruise, alt_f_cruise]), units='m')
     prob.set_val(
-        'traj.cruise.polynomial_controls:mach', cruise.interp(
+        f'traj.cruise.{controls_str}:mach', cruise.interp(
             Dynamic.Mission.MACH, ys=[cruise_mach, cruise_mach]), units='unitless')
     prob.set_val('traj.cruise.states:mass', cruise.interp(
         Dynamic.Mission.MASS, ys=[mass_i_cruise, mass_f_cruise]), units='kg')

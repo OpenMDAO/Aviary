@@ -1,8 +1,6 @@
 import numpy as np
 
-from aviary.subsystems.propulsion.engine_deck import EngineDeck
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.functions import get_path
 from aviary.variable_info.enums import EquationsOfMotion, LegacyCode, Verbosity
 from aviary.variable_info.variables import Aircraft, Mission, Settings
@@ -115,7 +113,7 @@ inputs.set_val(Aircraft.HorizontalTail.WETTED_AREA_SCALER, 1.0)
 
 # Hydraulics
 # ---------------------------
-inputs.set_val(Aircraft.Hydraulics.SYSTEM_PRESSURE, 3000., 'lbf/ft**2')
+inputs.set_val(Aircraft.Hydraulics.SYSTEM_PRESSURE, 3000., 'psi')
 inputs.set_val(Aircraft.Hydraulics.MASS_SCALER, 1.0)
 
 # Instruments
@@ -177,6 +175,7 @@ engine_1_inputs.set_val(Aircraft.Engine.FLIGHT_IDLE_MAX_FRACTION, 1.0)
 engine_1_inputs.set_val(Aircraft.Engine.FLIGHT_IDLE_MIN_FRACTION, 0.08)
 engine_1_inputs.set_val(Aircraft.Engine.GEOPOTENTIAL_ALT, False)
 engine_1_inputs.set_val(Aircraft.Engine.INTERPOLATION_METHOD, 'slinear')
+engine_1_inputs.set_val(Mission.Summary.FUEL_FLOW_SCALER, 1.0)
 
 # Engine 2:
 filename = get_path('models/engines/turbofan_22k.deck')
@@ -208,6 +207,7 @@ engine_2_inputs.set_val(Aircraft.Engine.FLIGHT_IDLE_MAX_FRACTION, 1.0)
 engine_2_inputs.set_val(Aircraft.Engine.FLIGHT_IDLE_MIN_FRACTION, 0.08)
 engine_2_inputs.set_val(Aircraft.Engine.GEOPOTENTIAL_ALT, False)
 engine_2_inputs.set_val(Aircraft.Engine.INTERPOLATION_METHOD, 'slinear')
+engine_2_inputs.set_val(Mission.Summary.FUEL_FLOW_SCALER, 1.0)
 
 # Vertical Tail
 # ---------------------------
@@ -419,15 +419,3 @@ outputs.set_val(Aircraft.Wing.MASS, 18268, 'lbm')
 
 outputs.set_val(Mission.Design.MACH, 0.800)
 outputs.set_val(Mission.Design.LIFT_COEFFICIENT, 0.568)
-
-# Create engine model
-engine_1_inputs.set_val(Settings.VERBOSITY, 0)
-engine1 = EngineDeck(name='engine_1',
-                     options=engine_1_inputs
-                     )
-# Create engine model
-engine_2_inputs.set_val(Settings.VERBOSITY, 0)
-engine2 = EngineDeck(name='engine_2',
-                     options=engine_2_inputs
-                     )
-preprocess_propulsion(inputs, [engine1, engine2])

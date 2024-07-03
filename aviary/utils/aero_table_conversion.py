@@ -34,22 +34,32 @@ allowed_headers = {
 
 
 def AeroDataConverter(input_file=None, output_file=None, data_format=None):
+    """This is a utility class to convert a legacy aero data file to Aviary format.
+    There are two options for the legacy aero data file format: FLOPS and GASP.
+    As an Aviary command, the usage is:
+    aviary convert_aero_table -F {FLOPS|GASP} input_file output_file
+    """
     data_format = CodeOrigin(data_format)
     data_file = get_path(input_file)
+    if isinstance(output_file, str):
+        output_file = Path(output_file)
+    elif isinstance(output_file, list):
+        for ii, file in enumerate(output_file):
+            output_file[ii] = Path(file)
     if not output_file:
         if data_format is CodeOrigin.GASP:
             # Default output file name is same location and name as input file, with
             # '_aviary' appended to filename
-            path = input_file.parents[0]
-            name = input_file.name
-            suffix = input_file.suffix
+            path = data_file.parents[0]
+            name = data_file.stem
+            suffix = data_file.suffix
             output_file = path / (name + '_aviary' + suffix)
         elif data_format is CodeOrigin.FLOPS:
             # Default output file name is same location and name as input file, with
             # '_aviary' appended to filename
-            path = input_file.parents[0]
-            name = input_file.stem
-            suffix = input_file.suffix
+            path = data_file.parents[0]
+            name = data_file.stem
+            suffix = data_file.suffix
             file1 = path / name + '_aviary_CDI' + suffix
             file2 = path / name + '_aviary_CD0' + suffix
             output_file = [file1, file2]
@@ -239,14 +249,18 @@ def _load_gasp_aero_table(filepath: Path):
 def _setup_ATC_parser(parser):
     parser.add_argument('input_file', type=str,
                         help='path to aero data file to be converted')
-    parser.add_argument('output_file', type=str,
+    parser.add_argument('output_file', type=str, nargs='?',
                         help='path to file where new converted data will be written')
-    parser.add_argument('data_format', type=str, choices=[origin.value for origin in CodeOrigin],
+    parser.add_argument('-f', '--data_format', type=str, choices=[origin.value for origin in CodeOrigin],
                         help='data format used by input_file')
 
 
 def _exec_ATC(args, user_args):
-    AeroDataConverter(**vars(args))
+    AeroDataConverter(
+        input_file=args.input_file,
+        output_file=args.output_file,
+        data_format=args.data_format
+    )
 
 
 if __name__ == '__main__':

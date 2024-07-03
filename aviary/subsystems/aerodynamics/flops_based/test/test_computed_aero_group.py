@@ -5,12 +5,14 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.subsystems.premission import CorePreMission
-from aviary.interface.default_phase_info.height_energy import aero, prop, geom
 from aviary.utils.aviary_values import get_items
 from aviary.utils.functions import set_aviary_initial_values
 from aviary.validation_cases.validation_tests import get_flops_inputs, get_flops_outputs
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 from aviary.variable_info.variables_in import VariablesIn
+from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
+from aviary.utils.preprocessors import preprocess_options
 
 
 class MissionDragTest(unittest.TestCase):
@@ -28,6 +30,15 @@ class MissionDragTest(unittest.TestCase):
         key = Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST
         flops_inputs.set_val(key, *(flops_outputs.get_item(key)))
         flops_inputs.set_val(Settings.VERBOSITY, 0)
+
+        engine = build_engine_deck(flops_inputs)
+        preprocess_options(flops_inputs, engine_models=engine)
+
+        # don't need mass subsystem, so we skip it
+        default_premission_subsystems = get_default_premission_subsystems(
+            'FLOPS', engine)[:-1]
+        # we just want aero for mission, make a copy by itself
+        aero = default_premission_subsystems[-1]
 
         # Design conditions:
         alt = 41000
@@ -56,13 +67,11 @@ class MissionDragTest(unittest.TestCase):
         prob = om.Problem()
         model = prob.model
 
-        core_subsystems = [prop, geom, aero]
-
         # Upstream static analysis for aero
         prob.model.add_subsystem(
             'pre_mission',
             CorePreMission(aviary_options=flops_inputs,
-                           subsystems=core_subsystems),
+                           subsystems=default_premission_subsystems),
             promotes_inputs=['aircraft:*', 'mission:*'],
             promotes_outputs=['aircraft:*', 'mission:*'])
 
@@ -162,6 +171,15 @@ class MissionDragTest(unittest.TestCase):
         flops_inputs.set_val(key, *(flops_outputs.get_item(key)))
         flops_inputs.set_val(Settings.VERBOSITY, 0)
 
+        engine = build_engine_deck(flops_inputs)
+        preprocess_options(flops_inputs, engine_models=engine)
+
+        # don't need mass subsystem, so we skip it
+        default_premission_subsystems = get_default_premission_subsystems(
+            'FLOPS', engine)[:-1]
+        # we just want aero for mission, make a copy by itself
+        aero = default_premission_subsystems[-1]
+
         alt = 43000
         Sref = 1220.0
 
@@ -185,13 +203,11 @@ class MissionDragTest(unittest.TestCase):
         prob = om.Problem()
         model = prob.model
 
-        core_subsystems = [prop, geom, aero]
-
         # Upstream static analysis for aero
         prob.model.add_subsystem(
             'pre_mission',
             CorePreMission(aviary_options=flops_inputs,
-                           subsystems=core_subsystems),
+                           subsystems=default_premission_subsystems),
             promotes_inputs=['aircraft:*', 'mission:*'],
             promotes_outputs=['aircraft:*', 'mission:*'])
 
@@ -277,6 +293,15 @@ class MissionDragTest(unittest.TestCase):
         flops_inputs.set_val(key, *(flops_outputs.get_item(key)))
         flops_inputs.set_val(Settings.VERBOSITY, 0)
 
+        engine = build_engine_deck(flops_inputs)
+        preprocess_options(flops_inputs, engine_models=engine)
+
+        # don't need mass subsystem, so we skip it
+        default_premission_subsystems = get_default_premission_subsystems(
+            'FLOPS', engine)[:-1]
+        # we just want aero for mission, make a copy by itself
+        aero = default_premission_subsystems[-1]
+
         alt = 41000
         Sref = 1341.0
 
@@ -302,13 +327,11 @@ class MissionDragTest(unittest.TestCase):
         prob = om.Problem()
         model = prob.model
 
-        core_subsystems = [prop, geom, aero]
-
         # Upstream static analysis for aero
         prob.model.add_subsystem(
             'pre_mission',
             CorePreMission(aviary_options=flops_inputs,
-                           subsystems=core_subsystems),
+                           subsystems=default_premission_subsystems),
             promotes_inputs=['aircraft:*', 'mission:*'],
             promotes_outputs=['aircraft:*', 'mission:*'])
 

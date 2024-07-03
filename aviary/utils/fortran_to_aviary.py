@@ -14,7 +14,6 @@ Individual list elements can be specified by adding an index after the variable 
 Example inputs:
 aircraft:fuselage:pressure_differential = .5, atm !DELP in GASP, but using atmospheres instead of psi
 ARNGE(1) = 3600 !target range in nautical miles
-pyc_phases = taxi, groundroll, rotation, landing
 """
 
 import csv
@@ -630,16 +629,10 @@ def _setup_F2A_parser(parser):
         "-v",
         "--verbosity",
         type=int,
-        choices=Verbosity.set(),
+        choices=Verbosity.values(),
         default=1,
         help="Set level of print statements",
     )
-    # parser.add_argument(
-    #     "-vv",
-    #     "--very_verbose",
-    #     action="store_true",
-    #     help="Enable debug print statements",
-    # )
 
 
 def _exec_F2A(args, user_args):

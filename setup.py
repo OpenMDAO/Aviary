@@ -31,7 +31,7 @@ setup(
     version=__version__,
     packages=find_packages(),
     install_requires=[
-        "openmdao>=3.27.0",
+        "openmdao>=3.33.0",
         "dymos>=1.8.1",
         "hvplot",
         "numpy",
@@ -59,6 +59,8 @@ setup(
             "models/engines/*.txt",
             "models/engines/*.eng",
             "models/N3CC/*",
+            "models/propellers/*.map",
+            "models/propellers/*.prop",
             "models/large_single_aisle_1/*",
             "models/large_single_aisle_2/*",
             "models/small_single_aisle/*",

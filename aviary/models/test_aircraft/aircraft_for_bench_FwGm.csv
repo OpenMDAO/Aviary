@@ -171,7 +171,6 @@ aircraft:crew_and_payload:num_first_class,11,unitless
 aircraft:crew_and_payload:num_flight_attendants,3,unitless
 aircraft:crew_and_payload:num_flight_crew,2,unitless
 aircraft:crew_and_payload:num_galley_crew,0,unitless
-aircraft:crew_and_payload:num_non_flight_crew,3,unitless
 aircraft:crew_and_payload:num_tourist_class,158,unitless
 aircraft:crew_and_payload:passenger_service_mass_scaler,1.0,unitless
 aircraft:crew_and_payload:wing_cargo,0.0,lbm
@@ -212,14 +211,13 @@ aircraft:horizontal_tail:mass_scaler,1.2,unitless
 aircraft:horizontal_tail:wetted_area_scaler,1.0,unitless
 aircraft:horizontal_tail:wetted_area,592.65,ft**2
 aircraft:hydraulics:mass_scaler,1.0,unitless
-aircraft:hydraulics:system_pressure,3000.0,lbf/ft**2
+aircraft:hydraulics:system_pressure,3000.0,psi
 aircraft:instruments:mass_scaler,1.25,unitless
 aircraft:landing_gear:carrier_based,False,unitless
 aircraft:landing_gear:main_gear_mass_scaler,1.1,unitless
 aircraft:landing_gear:main_gear_oleo_length,102.0,inch
 aircraft:landing_gear:nose_gear_mass_scaler,1.0,unitless
 aircraft:landing_gear:nose_gear_oleo_length,67.0,inch
-aircraft:nacelle:count_factor,2,unitless
 aircraft:nacelle:mass_scaler,1.0,unitless
 aircraft:nacelle:wetted_area_scaler,1.0,unitless
 aircraft:paint:mass_per_unit_area,0.037,lbm/ft**2

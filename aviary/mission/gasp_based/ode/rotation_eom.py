@@ -56,10 +56,6 @@ class RotationEOM(om.ExplicitComponent):
             )
 
             self.declare_partials("alpha_rate", ["*"], val=0)
-        elif analysis_scheme is AnalysisScheme.SHOOTING:
-            self.add_input(
-                Dynamic.Mission.DISTANCE, val=np.ones(nn), desc="distance traveled", units="ft"
-            )
 
     def setup_partials(self):
         arange = np.arange(self.options["num_nodes"])

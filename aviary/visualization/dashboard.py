@@ -5,6 +5,14 @@ from pathlib import Path
 import pathlib
 import shutil
 import importlib.util
+from string import Template
+from dataclasses import dataclass
+from typing import (
+    List,
+    Iterator,
+    Tuple,
+)
+import warnings  # Use typing.List and typing.Tuple for compatibility
 
 import numpy as np
 from bokeh.palettes import Category10
@@ -21,6 +29,9 @@ except:
     # If get_free_port is unavailable, the default port will be used
     def get_free_port():
         return 5000
+from openmdao.utils.om_warnings import issue_warning
+
+from aviary.visualization.aircraft_3d_model import Aircraft3DModel
 
 # support getting this function from OpenMDAO post movement of the function to utils
 #    but also support its old location
@@ -44,6 +55,27 @@ documentation_text_align = 'left'
 # functions for the aviary command line command
 
 
+def _none_or_str(value):
+    """
+    Get the value of the argparse option.
+
+    If "None", return None. Else, just return the string.
+
+    Parameters
+    ----------
+    value : str
+        The value used by the user on the command line for the argument.
+
+    Returns
+    -------
+    option_value : str or None
+        The value of the option after possibly converting from 'None' to None.
+    """
+    if value == "None":
+        return None
+    return value
+
+
 def _dashboard_setup_parser(parser):
     """
     Set up the aviary subparser for the 'aviary dashboard' command.
@@ -64,14 +96,14 @@ def _dashboard_setup_parser(parser):
         type=str,
         help="Problem case recorder file name",
         dest="problem_recorder",
-        default="aviary_history.db",
+        default="problem_history.db",
     )
     parser.add_argument(
         "--driver_recorder",
-        type=str,
-        help="Driver case recorder file name",
+        type=_none_or_str,
+        help="Driver case recorder file name. Set to None if file is ignored",
         dest="driver_recorder",
-        default=None,
+        default="driver_history.db",
     )
     parser.add_argument(
         "--port",
@@ -108,6 +140,26 @@ def _dashboard_cmd(options, user_args):
         options.driver_recorder,
         options.port,
     )
+
+
+def create_table_pane_from_json(json_filepath):
+    try:
+        with open(json_filepath) as json_file:
+            parsed_json = json.load(json_file)
+
+        # Convert the dictionary to a DataFrame
+        df = pd.DataFrame(list(parsed_json.items()), columns=['Name', 'Value'])
+        table_pane = pn.widgets.Tabulator(df, show_index=False, selectable=False,
+                                          sortable=False,
+                                          disabled=True,  # disables editing of the table
+                                          titles={
+                                              'Name': '',
+                                              'Value': '',
+                                          })
+    except Exception as err:
+        warnings.warn(f"Unable to generate table due to: {err}.")
+        table_pane = None
+    return table_pane
 
 
 # functions for creating Panel Panes given different kinds of
@@ -148,6 +200,18 @@ def create_csv_frame(csv_filepath, documentation):
         report_pane = None
 
     return report_pane
+
+
+def get_run_status(status_filepath):
+    try:
+        with open(status_filepath) as f:
+            status_dct = json.load(f)
+            if status_dct['Exit status'] == 'SUCCESS':
+                return '✅ Success'
+            else:
+                return f"❌ {status_dct['Exit status']}"
+    except Exception as err:
+        return 'Unknown'
 
 
 def create_report_frame(format, text_filepath, documentation):
@@ -226,7 +290,6 @@ def create_aviary_variables_table_data_nested(script_name, recorder_file):
 
     """
     cr = om.CaseReader(recorder_file)
-    print(f"r.list_c with {cr=}")
 
     if "final" not in cr.list_cases():
         return None
@@ -383,9 +446,40 @@ def convert_case_recorder_file_to_df(recorder_file_name):
 
     return df
 
+
+def create_aircraft_3d_file(recorder_file, reports_dir, outfilepath):
+    """
+    Create the HTML file with the display of the aircraft design
+    in 3D using the A-Frame library.
+
+    Parameters
+    ----------
+    recorder_file : str
+        Name of the case recorder file.
+    reports_dir : str
+        Path of the directory containing the reports from the run.
+    outfilepath : str
+        The path to the location where the file should be created.
+    """
+    # Get the location of the HTML template file for this HTML file
+    aviary_dir = pathlib.Path(importlib.util.find_spec("aviary").origin).parent
+    aircraft_3d_template_filepath = aviary_dir.joinpath(
+        "visualization/assets/aircraft_3d_file_template.html"
+    )
+
+    # texture for the aircraft. Need to copy it to the reports directory
+    #  next to the HTML file
+    shutil.copy(
+        aviary_dir.joinpath("visualization/assets/aviary_airlines.png"),
+        f"{reports_dir}/aviary_airlines.png",
+    )
+
+    aircraft_3d_model = Aircraft3DModel(recorder_file)
+
+    aircraft_3d_model.write_file(aircraft_3d_template_filepath, outfilepath)
+
+
 # The main script that generates all the tabs in the dashboard
-
-
 def dashboard(script_name, problem_recorder, driver_recorder, port):
     """
     Generate the dashboard app display.
@@ -396,8 +490,8 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
         Name of the script file whose results will be displayed by this dashboard.
     problem_recorder : str
         Name of the recorder file containing the Problem cases.
-    driver_recorder : str
-        Name of the recorder file containing the Driver cases.
+    driver_recorder : str or None
+        Name of the recorder file containing the Driver cases. If None, the driver tab will not be added
     port : int
         HTTP port used for the dashboard webapp. If 0, use any free port
     """
@@ -561,9 +655,6 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
                         ihvplot.panel(),
                     )
                 )
-                optimization_tabs_list.append(
-                    ("Desvars, cons, opt", optimization_plot_pane)
-                )
             else:
                 optimization_plot_pane = pn.pane.Markdown(
                     f"# Recorder file '{driver_recorder}' does not have Driver case recordings"
@@ -572,17 +663,21 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
             optimization_plot_pane = pn.pane.Markdown(
                 f"# Recorder file '{driver_recorder}' not found")
 
-        optimization_plot_pane = pn.Column(
+        optimization_plot_pane_with_doc = pn.Column(
             pn.pane.HTML(f"<p>Plot of design variables, constraints, and objectives</p>",
                          styles={'text-align': documentation_text_align}),
             optimization_plot_pane
         )
         optimization_tabs_list.append(
-            ("Desvars, cons, opt", optimization_plot_pane)
+            ("Desvars, cons, opt", optimization_plot_pane_with_doc)
         )
 
     ####### Results Tab #######
     results_tabs_list = []
+
+    status_pane = create_table_pane_from_json(f"{reports_dir}/status.json")
+    if status_pane:
+        results_tabs_list.append(("Run status pane", status_pane))
 
     # Mission Summary
     mission_summary_pane = create_report_frame(
@@ -608,36 +703,40 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
         )
 
     # Make the Aviary variables table pane
-    if problem_recorder:
-        if os.path.exists(problem_recorder):
-            # Make dir reports/script_name/aviary_vars if needed
-            aviary_vars_dir = pathlib.Path(f"reports/{script_name}/aviary_vars")
-            aviary_vars_dir.mkdir(parents=True, exist_ok=True)
+    if os.path.exists(problem_recorder):
 
-            # copy index.html file to reports/script_name/aviary_vars/index.html
-            aviary_dir = pathlib.Path(importlib.util.find_spec("aviary").origin).parent
+        # Make dir reports/script_name/aviary_vars if needed
+        aviary_vars_dir = pathlib.Path(f"reports/{script_name}/aviary_vars")
+        aviary_vars_dir.mkdir(parents=True, exist_ok=True)
 
-            shutil.copy(
-                aviary_dir.joinpath("visualization/assets/aviary_vars/index.html"),
-                aviary_vars_dir.joinpath("index.html"),
-            )
-            shutil.copy(
-                aviary_dir.joinpath("visualization/assets/aviary_vars/script.js"),
-                aviary_vars_dir.joinpath("script.js"),
-            )
-            # copy script.js file to reports/script_name/aviary_vars/index.html.
-            # mod the script.js file to point at the json file
-            # create the json file and put it in reports/script_name/aviary_vars/aviary_vars.json
+        # copy index.html file to reports/script_name/aviary_vars/index.html
+        aviary_dir = pathlib.Path(importlib.util.find_spec("aviary").origin).parent
+
+        shutil.copy(
+            aviary_dir.joinpath("visualization/assets/aviary_vars/index.html"),
+            aviary_vars_dir.joinpath("index.html"),
+        )
+        shutil.copy(
+            aviary_dir.joinpath("visualization/assets/aviary_vars/script.js"),
+            aviary_vars_dir.joinpath("script.js"),
+        )
+        # copy script.js file to reports/script_name/aviary_vars/index.html.
+        # mod the script.js file to point at the json file
+        # create the json file and put it in reports/script_name/aviary_vars/aviary_vars.json
+        try:
             create_aviary_variables_table_data_nested(
                 script_name, problem_recorder
             )  # create the json file
-            aviary_vars_pane = create_report_frame(
-                "html", f"{reports_dir}/aviary_vars/index.html", '''
-                A table of outputs of the model with features for filtering, and copying values
-                '''
-            )
 
+            aviary_vars_pane = create_report_frame(
+                "html", f"{reports_dir}/aviary_vars/index.html",
+                "Table showing Aviary variables"
+            )
             results_tabs_list.append(("Aviary Variables", aviary_vars_pane))
+        except Exception as e:
+            issue_warning(
+                f"Unable to create Aviary Variables tab in dashboard due to the error: {str(e)}"
+            )
 
     # Timeseries Mission Output Report
     mission_timeseries_pane = create_csv_frame(
@@ -650,6 +749,25 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
         results_tabs_list.append(
             ("Timeseries Mission Output Report", mission_timeseries_pane)
         )
+
+    # Aircraft 3d model display
+    if problem_recorder:
+        if os.path.exists(problem_recorder):
+
+            try:
+                create_aircraft_3d_file(
+                    problem_recorder, reports_dir, f"{reports_dir}/aircraft_3d.html"
+                )
+                aircraft_3d_pane = create_report_frame(
+                    "html", f"{reports_dir}/aircraft_3d.html",
+                    "3D model view of designed aircraft"
+                )
+                if aircraft_3d_pane:
+                    results_tabs_list.append(("Aircraft 3d model", aircraft_3d_pane))
+            except Exception as e:
+                issue_warning(
+                    f"Unable to create aircraft 3D model display due to error {e}"
+                )
 
     ####### Subsystems Tab #######
     subsystem_tabs_list = []
@@ -683,9 +801,13 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
     if subsystem_tabs_list:
         high_level_tabs.append(("Subsystems", subsystem_tabs))
     tabs = pn.Tabs(*high_level_tabs, stylesheets=["assets/aviary_styles.css"])
+    tabs.active = 2  # make the Results tab active initially
+
+    # get status of run for display in the header of each page
+    status_string_for_header = get_run_status(f"{reports_dir}/status.json")
 
     template = pn.template.FastListTemplate(
-        title=f"Aviary Dashboard for {script_name}",
+        title=f"Aviary Dashboard for {script_name}:  {status_string_for_header}",
         logo="assets/aviary_logo.png",
         favicon="assets/aviary_logo.png",
         main=[tabs],

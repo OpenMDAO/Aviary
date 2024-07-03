@@ -27,7 +27,6 @@ import warnings
 
 import numpy as np
 import openmdao.api as om
-from openmdao.core.system import System
 
 from openmdao.utils.units import convert_units
 
@@ -40,7 +39,6 @@ from aviary.subsystems.propulsion.utils import (EngineModelVariables,
 from aviary.utils.aviary_values import AviaryValues, NamedValues, get_keys, get_items
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
-from aviary.variable_info.enums import Verbosity
 from aviary.utils.csv_data_file import read_data_file
 from aviary.interface.utils.markdown_utils import round_it
 
@@ -56,9 +54,9 @@ SHAFT_POWER = EngineModelVariables.SHAFT_POWER
 SHAFT_POWER_CORRECTED = EngineModelVariables.SHAFT_POWER_CORRECTED
 RAM_DRAG = EngineModelVariables.RAM_DRAG
 FUEL_FLOW = EngineModelVariables.FUEL_FLOW
-ELECTRIC_POWER = EngineModelVariables.ELECTRIC_POWER
+ELECTRIC_POWER_IN = EngineModelVariables.ELECTRIC_POWER_IN
 NOX_RATE = EngineModelVariables.NOX_RATE
-TEMPERATURE = EngineModelVariables.TEMPERATURE_ENGINE_T4
+TEMPERATURE = EngineModelVariables.TEMPERATURE_T4
 # EXIT_AREA = EngineModelVariables.EXIT_AREA
 
 # EngineDeck assumes all aliases point to an enum, these are used internally only
@@ -73,9 +71,9 @@ aliases = {
     GROSS_THRUST: ['gross_thrust'],
     RAM_DRAG: ['ram_drag'],
     FUEL_FLOW: ['fuel', 'fuel_flow', 'fuel_flow_rate'],
-    ELECTRIC_POWER: 'electric_power',
+    ELECTRIC_POWER_IN: ['electric_power_in', 'electric_power'],
     NOX_RATE: ['nox', 'nox_rate'],
-    TEMPERATURE: ['t4', 'temp', 'temperature'],
+    TEMPERATURE: ['t4', 'temp', 'temperature', 'temperature_t4', 't4_temperature'],
     SHAFT_POWER: ['shaft_power', 'shp'],
     SHAFT_POWER_CORRECTED: ['shaft_power_corrected', 'shpcor', 'corrected_horsepower'],
     TAILPIPE_THRUST: ['tailpipe_thrust'],
@@ -288,7 +286,7 @@ class EngineDeck(EngineModel):
         # requires importing EngineModelVariables)
         self.use_thrust = THRUST in engine_variables or TAILPIPE_THRUST in engine_variables
         self.use_fuel = FUEL_FLOW in engine_variables
-        self.use_electricity = ELECTRIC_POWER in engine_variables
+        self.use_electricity = ELECTRIC_POWER_IN in engine_variables
         self.use_hybrid_throttle = HYBRID_THROTTLE in engine_variables
         self.use_nox = NOX_RATE in engine_variables
         self.use_t4 = TEMPERATURE in engine_variables
@@ -787,9 +785,9 @@ class EngineDeck(EngineModel):
                           self.data[FUEL_FLOW],
                           units=units[FUEL_FLOW],
                           desc='Current fuel flow rate (unscaled)')
-        engine.add_output('electric_power_unscaled',
-                          self.data[ELECTRIC_POWER],
-                          units=units[ELECTRIC_POWER],
+        engine.add_output('electric_power_in_unscaled',
+                          self.data[ELECTRIC_POWER_IN],
+                          units=units[ELECTRIC_POWER_IN],
                           desc='Current electric energy rate (unscaled)')
         engine.add_output('nox_rate_unscaled',
                           self.data[NOX_RATE],
@@ -816,7 +814,7 @@ class EngineDeck(EngineModel):
                                   units=shaft_power_units,
                                   desc=desc)
         if self.use_t4:
-            engine.add_output(Dynamic.Mission.TEMPERATURE_ENGINE_T4,
+            engine.add_output(Dynamic.Mission.TEMPERATURE_T4,
                               self.data[TEMPERATURE],
                               units=units[TEMPERATURE],
                               desc='Current turbine exit temperature')
@@ -957,9 +955,14 @@ class EngineDeck(EngineModel):
                               desc='Current max net thrust produced (unscaled)')
 
         # add created subsystems to engine_group
+        outputs = []
+        if getattr(self, 'use_t4', False):
+            outputs.append(Dynamic.Mission.TEMPERATURE_T4)
+
         engine_group.add_subsystem('interpolation',
                                    engine,
-                                   promotes_inputs=['*'])
+                                   promotes_inputs=['*'],
+                                   promotes_outputs=outputs)
 
         if self.use_thrust:
             if self.global_throttle or (self.global_hybrid_throttle
@@ -992,8 +995,8 @@ class EngineDeck(EngineModel):
                              'engine_scaling.thrust_net_unscaled')
         engine_group.connect('interpolation.fuel_flow_rate_unscaled',
                              'engine_scaling.fuel_flow_rate_unscaled')
-        engine_group.connect('interpolation.electric_power_unscaled',
-                             'engine_scaling.electric_power_unscaled')
+        engine_group.connect('interpolation.electric_power_in_unscaled',
+                             'engine_scaling.electric_power_in_unscaled')
         engine_group.connect('interpolation.nox_rate_unscaled',
                              'engine_scaling.nox_rate_unscaled')
         if self.use_thrust:
@@ -1010,24 +1013,17 @@ class EngineDeck(EngineModel):
 
         return engine_group
 
+    def get_parameters(self):
+        params = {Aircraft.Engine.SCALE_FACTOR: {'static_target': True}}
+        return params
+
     def report(self, problem, reports_file, **kwargs):
         meta_data = kwargs['meta_data']
+        engine_idx = kwargs['engine_idx']
 
         outputs = [Aircraft.Engine.NUM_ENGINES,
                    Aircraft.Engine.SCALED_SLS_THRUST,
                    Aircraft.Engine.SCALE_FACTOR]
-
-        # determine which index in problem-level aviary values corresponds to this engine
-        engine_idx = None
-        for idx, engine in enumerate(problem.aviary_inputs.get_val('engine_models')):
-            if engine.name == self.name:
-                engine_idx = idx
-
-        if engine_idx is None:
-            with open(reports_file, mode='a') as f:
-                f.write(f'\n### {self.name}')
-                f.write(f'\nEngine deck {self.name} not found\n')
-            return
 
         # modified version of markdown table util adjusted to handle engine decks
         with open(reports_file, mode='a') as f:
@@ -1145,8 +1141,8 @@ class EngineDeck(EngineModel):
             # both scale factor and target thrust provided:
             if thrust_provided:
                 scaled_thrust = self.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf')
-                if scale_performance:
-                    if not math.isclose(scaled_thrust/ref_thrust, scale_factor):
+                if scale_performance:  # using very rough tolerance
+                    if not math.isclose(scaled_thrust/ref_thrust, scale_factor, abs_tol=1e-2):
                         # user wants scaling but provided conflicting inputs,
                         # cannot be resolved
                         raise AttributeError(
@@ -1154,6 +1150,11 @@ class EngineDeck(EngineModel):
                             'aircraft:engine:scale_factor and '
                             'aircraft:engine:scaled_sls_thrust'
                         )
+                    # get thrust target & scale factor matching exactly. Scale factor is
+                    # design variable, so don't touch it!! Instead change output thrust
+                    else:
+                        self.set_val(Aircraft.Engine.SCALED_SLS_THRUST,
+                                     ref_thrust*scale_factor, 'lbf')
                 else:
                     # engine is not scaled: just make sure scaled thrust = ref thrust
                     self.set_val(
