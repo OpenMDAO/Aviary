@@ -1724,10 +1724,12 @@ add_meta_data(
     default_value=0.0,
 )
 
+# NOTE if FT < 0, this bool is true, if >= 0, this is false and the value of FT is used
+# as the installation loss factor
 add_meta_data(
     Aircraft.Engine.COMPUTE_PROPELLER_INSTALLATION_LOSS,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
+    historical_name={"GASP": 'INPROP.FT',
                      "FLOPS": None,
                      "LEAPS1": None
                      },
@@ -1735,7 +1737,7 @@ add_meta_data(
     option=True,
     default_value=True,
     types=bool,
-    desc='if true, compute installation loss factor based on blockage factor'
+    desc='if true, compute installation loss factor based on blockage factor',
 )
 
 add_meta_data(
