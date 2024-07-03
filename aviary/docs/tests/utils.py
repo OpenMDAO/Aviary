@@ -192,6 +192,29 @@ def glue_variable(name: str, val=None, md_code=False, display=True):
     glue(name, val, display)
 
 
+def get_all_keys(dict_of_dicts, all_keys=None):
+    """
+    Recursively get all of the keys from a dict of dicts
+    Note: this will not add duplicates of keys, but will
+    continue deeper even if a key is duplicated
+
+    Parameters
+    ----------
+    dict_of_dicts : dict
+        The dictionary who's keys will are to be gathered
+    all_keys : list
+        A list of the keys that have been found so far
+    """
+    if all_keys is None:
+        all_keys = []
+    for key, val in dict_of_dicts.items():
+        if key not in all_keys:
+            all_keys.append(key)
+        if isinstance(val, dict):
+            all_keys = get_all_keys(val, all_keys=all_keys)
+    return all_keys
+
+
 def glue_keys(dict_of_dicts: dict, display=True):
     """
     Recursively glue all of the keys from a dict of dicts
@@ -201,7 +224,7 @@ def glue_keys(dict_of_dicts: dict, display=True):
     dict_of_dicts : dict
         The dictionary who's keys will be glued
     """
-    for key, val in dict_of_dicts.items():
+    all_keys = get_all_keys(dict_of_dicts)
+    for key in all_keys:
         glue_variable(key, md_code=True, display=display)
-        if isinstance(val, dict):
-            glue_keys(val, display=display)
+    return all_keys
