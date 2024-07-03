@@ -256,27 +256,26 @@ class ExamplePropModel(SubsystemBuilderBase):
         pp = prop_group.add_subsystem(
             'propeller_performance',
             PropellerPerformance(aviary_options=aviary_inputs, num_nodes=num_nodes),
-            promotes_inputs=[Dynamic.Mission.TEMPERATURE,
-                             Dynamic.Mission.MACH,
-                             Dynamic.Mission.SPEED_OF_SOUND,
-                             Aircraft.Engine.PROPELLER_TIP_SPEED_MAX,
-                             Dynamic.Mission.DENSITY,
-                             Dynamic.Mission.VELOCITY,
-                             Aircraft.Engine.PROPELLER_DIAMETER,
-                             Dynamic.Mission.SHAFT_POWER,
-                             Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,
-                             Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT
-                             ],
+            promotes_inputs=[
+                Dynamic.Mission.MACH,
+                Dynamic.Mission.SPEED_OF_SOUND,
+                Aircraft.Engine.PROPELLER_TIP_SPEED_MAX,
+                Dynamic.Mission.DENSITY,
+                Dynamic.Mission.VELOCITY,
+                Aircraft.Engine.PROPELLER_DIAMETER,
+                Dynamic.Mission.SHAFT_POWER,
+                Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,
+                Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT,
+            ],
             promotes_outputs=['*'],
         )
 
         pp.set_input_defaults(Aircraft.Engine.PROPELLER_DIAMETER, 10, units="ft")
         pp.set_input_defaults(Dynamic.Mission.PROPELLER_TIP_SPEED,
                               800.*np.ones(num_nodes), units="ft/s")
-        pp.set_input_defaults(Dynamic.Mission.VELOCITY, 100. *
-                              np.ones(num_nodes), units="knot")
-        pp.set_input_defaults(Dynamic.Mission.TEMPERATURE, 500. *
-                              np.ones(num_nodes), units="degR")
+        pp.set_input_defaults(
+            Dynamic.Mission.VELOCITY, 100.0 * np.ones(num_nodes), units="knot"
+        )
 
         return prop_group
 

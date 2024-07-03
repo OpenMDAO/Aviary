@@ -166,16 +166,17 @@ class TurbopropModel(EngineModel):
 
         else:  # use the Hamilton Standard model
             # only promote top-level inputs to avoid conflicts with max group
-            prop_inputs = [Dynamic.Mission.TEMPERATURE,
-                           Dynamic.Mission.MACH,
-                           Aircraft.Engine.PROPELLER_TIP_SPEED_MAX,
-                           Dynamic.Mission.DENSITY,
-                           Dynamic.Mission.VELOCITY,
-                           Aircraft.Engine.PROPELLER_DIAMETER,
-                           Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,
-                           Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT,
-                           Aircraft.Nacelle.AVG_DIAMETER,
-                           Dynamic.Mission.SPEED_OF_SOUND]
+            prop_inputs = [
+                Dynamic.Mission.MACH,
+                Aircraft.Engine.PROPELLER_TIP_SPEED_MAX,
+                Dynamic.Mission.DENSITY,
+                Dynamic.Mission.VELOCITY,
+                Aircraft.Engine.PROPELLER_DIAMETER,
+                Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,
+                Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT,
+                Aircraft.Nacelle.AVG_DIAMETER,
+                Dynamic.Mission.SPEED_OF_SOUND,
+            ]
             try:
                 propeller_kwargs = kwargs['hamilton_standard']
             except KeyError:
@@ -276,6 +277,5 @@ class TurbopropModel(EngineModel):
         # turboprop_group.set_input_defaults(Dynamic.Mission.SPEED_OF_SOUND, units='ft/s', val=0.0)
         # turboprop_group.set_input_defaults(Dynamic.Mission.VELOCITY, units='ft/s', val=0.0)
         # turboprop_group.set_input_defaults('velocity', units='ft/s', val=0.0)
-        # turboprop_group.set_input_defaults(Dynamic.Mission.TEMPERATURE, units='f', val=0.0)
 
         return turboprop_group

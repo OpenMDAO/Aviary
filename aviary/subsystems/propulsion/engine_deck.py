@@ -974,7 +974,7 @@ class EngineDeck(EngineModel):
 
         # add created subsystems to engine_group
         outputs = []
-        if getattr(self, 'use_t4', False):
+        if getattr(self, 'use_t4', True):
             outputs.append(Dynamic.Mission.TEMPERATURE_T4)
 
         engine_group.add_subsystem('interpolation',
