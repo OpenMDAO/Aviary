@@ -5,7 +5,7 @@ from openmdao.components.interp_util.interp_semi import InterpNDSemi
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.propulsion.propeller_map import PropellerMap
-from aviary.subsystems.propulsion.utils import PropModelVariables as keys
+from aviary.subsystems.propulsion.utils import PropellerModelVariables as keys
 from aviary.variable_info.enums import OutMachType
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft
@@ -66,7 +66,6 @@ class PropellerMapTest(unittest.TestCase):
         assert_near_equal(f, 0.095985, tolerance=tol)
 
     def test_mach_type(self):
-        tol = 0.005
         aviary_options = get_option_defaults()
         prop_file_path = 'models/propellers/general_aviation.prop'
         aviary_options.set_val(
@@ -81,6 +80,4 @@ class PropellerMapTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    #unittest.main()
-    thisClass = PropellerMapTest()
-    thisClass.test_general_aviation()
+    unittest.main()
