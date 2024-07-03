@@ -8,11 +8,12 @@ from dymos.models.atmosphere import USatm1976Comp
 
 from aviary.constants import TSLS_DEGR
 from aviary.variable_info.variables import Aircraft
-from aviary.subsystems.propulsion.propeller_performance import PropellerPerformance
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.subsystems.propulsion.propeller_performance import OutMachs, PropellerPerformance
+from aviary.variable_info.enums import OutMachType
 from aviary.variable_info.options import get_option_defaults
+from aviary.variable_info.variables import Aircraft, Dynamic
 
-# Setting up truth values from GASP (first 12 entries)
+# Setting up truth values from GASP (first 12 entries). The rest entries are intelligent guesses.
 CT = np.array([0.27651, 0.20518, 0.13093, 0.10236, 0.10236, 0.19331,
                0.10189, 0.10189, 0.18123, 0.08523, 0.06463, 0.02800,
                0, 0, 0, 0.10256, 0.10256, 0.18641,])
@@ -279,6 +280,74 @@ class PropellerPerformanceTest(unittest.TestCase):
         partial_data = prob.check_partials(
             out_stream=None, compact_print=True, show_only_incorrect=True, form='central', method="fd",
             minimum_step=1e-12, abs_err_tol=5.0E-4, rel_err_tol=5.0E-5, excludes=["*atmosphere*"])
+        assert_check_partials(partial_data, atol=1e-4, rtol=1e-4)
+
+
+class OutMachsTest(unittest.TestCase):
+    def test_helical_mach(self):
+        tol = 1e-5
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "group",
+            OutMachs(num_nodes=2, output_mach_type=OutMachType.HELICAL_MACH),
+            promotes=["*"],
+        )
+        prob.setup()
+        prob.set_val("mach", val=[0.5, 0.7], units="unitless")
+        prob.set_val("tip_mach", val=[0.5, 0.7], units="unitless")
+        prob.run_model()
+        y = prob.get_val("helical_mach")
+        y_exact = np.sqrt([0.5*0.5 + 0.5*0.5, 0.7*0.7 + 0.7*0.7])
+
+        assert_near_equal(y, y_exact, tolerance=tol)
+
+        partial_data = prob.check_partials(
+            out_stream=None, compact_print=True, show_only_incorrect=True, form='central', method="fd",
+            minimum_step=1e-12, abs_err_tol=5.0E-4, rel_err_tol=5.0E-5)
+        assert_check_partials(partial_data, atol=1e-4, rtol=1e-4)
+
+    def test_mach(self):
+        tol = 1e-5
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "group",
+            OutMachs(num_nodes=2, output_mach_type=OutMachType.MACH),
+            promotes=["*"],
+        )
+        prob.setup()
+        prob.set_val("helical_mach", val=[0.7, 0.8], units="unitless")
+        prob.set_val("tip_mach", val=[0.5, 0.4], units="unitless")
+        prob.run_model()
+        y = prob.get_val("mach")
+        y_exact = np.sqrt([0.7*0.7 - 0.5*0.5, 0.8*0.8 - 0.4*0.4])
+
+        assert_near_equal(y, y_exact, tolerance=tol)
+
+        partial_data = prob.check_partials(
+            out_stream=None, compact_print=True, show_only_incorrect=True, form='central', method="fd",
+            minimum_step=1e-12, abs_err_tol=5.0E-4, rel_err_tol=5.0E-5)
+        assert_check_partials(partial_data, atol=1e-4, rtol=1e-4)
+
+    def test_tip_mach(self):
+        tol = 1e-5
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "group",
+            OutMachs(num_nodes=2, output_mach_type=OutMachType.TIP_MACH),
+            promotes=["*"],
+        )
+        prob.setup()
+        prob.set_val("helical_mach", val=[0.7, 0.8], units="unitless")
+        prob.set_val("mach", val=[0.5, 0.4], units="unitless")
+        prob.run_model()
+        y = prob.get_val("tip_mach")
+        y_exact = np.sqrt([0.7*0.7 - 0.5*0.5, 0.8*0.8 - 0.4*0.4])
+
+        assert_near_equal(y, y_exact, tolerance=tol)
+
+        partial_data = prob.check_partials(
+            out_stream=None, compact_print=True, show_only_incorrect=True, form='central', method="fd",
+            minimum_step=1e-12, abs_err_tol=5.0E-4, rel_err_tol=5.0E-5)
         assert_check_partials(partial_data, atol=1e-4, rtol=1e-4)
 
 
