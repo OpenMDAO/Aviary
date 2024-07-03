@@ -34,12 +34,7 @@ class PropellerMapTest(unittest.TestCase):
         # Mach, CP, J from general_aviation, expected CT: 0.0934
         x = np.array([0.8, 0.1, 0.75])
         f, df_dx = interp.interpolate(x, compute_derivative=True)
-        print("partials:")
-        print(df_dx)
-        #y = interp.gradient(grid)
-        #print(f"y = {y}")
         assert_near_equal(f, 0.0934, tolerance=tol)
-        #assert_check_partials(df_dx, atol=5e-4, rtol=1e-4)
 
     def test_propfan(self):
         tol = 0.005
