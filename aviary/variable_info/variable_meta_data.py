@@ -2323,7 +2323,7 @@ add_meta_data(
                      "FLOPS": None,
                      "LEAPS1": None
                      },
-    option=False,
+    option=True,
     default_value=False,
     types=bool,
     units="unitless",
