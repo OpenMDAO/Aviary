@@ -350,7 +350,6 @@ class PropellerPerformance(om.Group):
             prop_model = PropellerMap('prop', aviary_options)
             prop_file_path = aviary_options.get_val(
                 Aircraft.Engine.PROPELLER_DATA_FILE)
-            print(f"prop_file_path: {prop_file_path}")
             mach_type = prop_model.read_and_set_mach_type(prop_file_path)
             if mach_type == OutMachType.HELICAL_MACH:
                 self.add_subsystem(
@@ -386,11 +385,8 @@ class PropellerPerformance(om.Group):
                 ])
 
             # propeller map has taken compresibility into account.
-            #IVC = om.IndepVarComp("comp_tip_loss_factor",
-            #                      np.linspace(1.0, 1.0, nn),
-            #                      units='unitless')
-            #self.add_subsystem('IVC', IVC, promotes=['comp_tip_loss_factor'])
-            self.set_input_defaults('comp_tip_loss_factor', np.linspace(1.0, 1.0, nn), units='unitless')
+            self.set_input_defaults('comp_tip_loss_factor',
+                                    np.linspace(1.0, 1.0, nn), units='unitless')
         else:
             self.add_subsystem(
                 name='hamilton_standard',
