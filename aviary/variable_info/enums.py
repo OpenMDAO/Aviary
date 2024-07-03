@@ -213,3 +213,7 @@ class OutMachType(Enum):
     MACH = 'mach'
     TIP_MACH = 'tip_mach'
     HELICAL_MACH = 'helical_mach'
+
+    @classmethod
+    def get_element_by_value(cls, val: str):
+        return next((c for c in cls if c.value == val), None)
