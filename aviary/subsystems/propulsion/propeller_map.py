@@ -3,7 +3,7 @@ import warnings
 import openmdao.api as om
 from openmdao.utils.units import convert_units
 
-from aviary.subsystems.propulsion.utils import PropModelVariables, default_prop_units
+from aviary.subsystems.propulsion.utils import PropellerModelVariables, default_propeller_units
 from aviary.utils.aviary_values import AviaryValues, NamedValues, get_keys
 from aviary.utils.csv_data_file import read_data_file
 from aviary.utils.functions import get_path
@@ -11,10 +11,10 @@ from aviary.variable_info.enums import OutMachType
 from aviary.variable_info.variables import Aircraft, Settings
 
 
-MACH = PropModelVariables.MACH
-CP = PropModelVariables.CP
-CT = PropModelVariables.CT
-J = PropModelVariables.J
+MACH = PropellerModelVariables.MACH
+CP = PropellerModelVariables.CP
+CT = PropellerModelVariables.CT
+J = PropellerModelVariables.J
 
 aliases = {
     # whitespaces are replaced with underscores converted to lowercase before
@@ -41,13 +41,13 @@ class PropellerMap(om.ExplicitComponent):
     """
 
     def __init__(self, name='propeller', options: AviaryValues = None,
-                 data: NamedValues = None, mach_type=OutMachType.MACH):
+                 data: NamedValues = None):
         super().__init__()
 
         # copy of raw data read from data_file or memory, never modified or used outside PropellerMap
-        self._original_data = {key: np.array([]) for key in PropModelVariables}
+        self._original_data = {key: np.array([]) for key in PropellerModelVariables}
         # working copy of propeller performance data, is modified during data pre-processing
-        self.data = {key: np.array([]) for key in PropModelVariables}
+        self.data = {key: np.array([]) for key in PropellerModelVariables}
 
         # Create dict for variables present in propeller data with associated units
         self.propeller_variables = {}
@@ -68,16 +68,16 @@ class PropellerMap(om.ExplicitComponent):
                 # Convert data to expected units. Required so settings like tolerances
                 # that assume units work as expected
                 try:
-                    val = np.array([convert_units(i, units, default_prop_units[key])
+                    val = np.array([convert_units(i, units, default_propeller_units[key])
                                    for i in val])
                 except TypeError:
                     raise TypeError(f"{message}: units of '{units}' provided for "
                                     f'<{key.name}> are not compatible with expected units '
-                                    f'of {default_prop_units[key]}')
+                                    f'of {default_propeller_units[key]}')
 
                 # propeller_variables currently only used to store "valid" engine variables
-                # as defined in EngineModelVariables Enum
-                self.propeller_variables[key] = default_prop_units[key]
+                # as defined in PropellerModelVariables Enum
+                self.propeller_variables[key] = default_propeller_units[key]
 
             else:
                 if self.get_val(Settings.VERBOSITY).value >= 1:
