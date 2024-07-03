@@ -45,7 +45,6 @@ class TurbopropTest(unittest.TestCase):
                         val=True, units='unitless')
         options.set_val(Aircraft.Engine.NUM_PROPELLER_BLADES,
                         val=4, units='unitless')
-        options.set_val(Aircraft.Engine.USE_PROPELLER_MAP, val=False, units='unitless')
 
         num_nodes = len(test_points)
 
