@@ -9,7 +9,7 @@ from aviary.utils.conversion_utils import _rep, _parse, _read_map
 from aviary.api import NamedValues
 from aviary.utils.csv_data_file import write_data_file
 from aviary.utils.functions import get_path
-from aviary.subsystems.propulsion.utils import PropModelVariables, default_prop_units
+from aviary.subsystems.propulsion.utils import PropellerModelVariables, default_propeller_units
 
 
 class PropMapType(Enum):
@@ -19,10 +19,10 @@ class PropMapType(Enum):
         return self.value
 
 
-MACH = PropModelVariables.MACH
-CP = PropModelVariables.CP
-CT = PropModelVariables.CT
-J = PropModelVariables.J
+MACH = PropellerModelVariables.MACH
+CP = PropellerModelVariables.CP
+CT = PropellerModelVariables.CT
+J = PropellerModelVariables.J
 
 
 def PropDataConverter(input_file, output_file, data_format: PropMapType):
@@ -60,7 +60,7 @@ def PropDataConverter(input_file, output_file, data_format: PropMapType):
     # store formatted data into NamedValues object
     write_data = NamedValues()
     for key in data:
-        write_data.set_val(key.value, data[key], default_prop_units[key])
+        write_data.set_val(key.value, data[key], default_propeller_units[key])
 
     if output_file is None:
         sfx = data_file.suffix
