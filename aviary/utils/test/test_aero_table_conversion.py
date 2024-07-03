@@ -1,4 +1,5 @@
 import unittest
+import tempfile
 
 import numpy as np
 from pathlib import Path
@@ -158,6 +159,16 @@ class TestAeroTableConversion(unittest.TestCase):
                 except Exception as error:
                     exc_string = f'Error:  {args.output_file}\nFound: {line_no_whitespace}\nExpected:  {expected_line}'
                     raise Exception(exc_string)
+
+    def test_FLOPS_file(self):
+        tempdir = tempfile.mkdtemp(prefix='testdir-')
+        def args(): return None
+        args.input_file = 'utils/test/flops_test_polar.txt'
+        args.output_file = str(Path(tempdir, 'TEST_'+Path(args.input_file).name))
+        args.data_format = 'FLOPS'
+        _exec_ATC(args, None)
+
+        # Only testing that this runs without an error, not comparing the resulting data
 
 
 if __name__ == '__main__':

@@ -197,7 +197,7 @@ class AviaryGroup(om.Group):
             if isinstance(phase.indep_states, om.ImplicitComponent):
                 phase.indep_states.nonlinear_solver = \
                     om.NewtonSolver(solve_subsystems=True)
-                phase.indep_states.linear_solver = om.DirectSolver()
+                phase.indep_states.linear_solver = om.DirectSolver(rhs_checking=True)
 
 
 class AviaryProblem(om.Problem):
@@ -218,7 +218,7 @@ class AviaryProblem(om.Problem):
 
     def __init__(self, analysis_scheme=AnalysisScheme.COLLOCATION, **kwargs):
         # Modify OpenMDAO's default_reports for this session.
-        new_reports = ['subsystems', 'mission', 'timeseries_csv']
+        new_reports = ['subsystems', 'mission', 'timeseries_csv', 'run_status']
         for report in new_reports:
             if report not in _default_reports:
                 _default_reports.append(report)
@@ -923,11 +923,19 @@ class AviaryProblem(om.Problem):
                 input_initial = True
 
             if fix_initial or input_initial:
+
+                if self.comm.size > 1:
+                    # Phases are disconnected to run in parallel, so initial ref is valid.
+                    initial_ref = user_options.get_val("initial_ref", time_units)
+                else:
+                    # Redundant on a fixed input; raises a warning if specified.
+                    initial_ref = None
+
                 phase.set_time_options(
                     fix_initial=fix_initial, fix_duration=fix_duration, units=time_units,
                     duration_bounds=user_options.get_val("duration_bounds", time_units),
                     duration_ref=user_options.get_val("duration_ref", time_units),
-                    initial_ref=user_options.get_val("initial_ref", time_units),
+                    initial_ref=initial_ref,
                 )
             elif phase_name == 'descent' and self.mission_method is HEIGHT_ENERGY:  # TODO: generalize this logic for all phases
                 phase.set_time_options(
@@ -1410,11 +1418,14 @@ class AviaryProblem(om.Problem):
 
             if self.mission_method is HEIGHT_ENERGY:
                 # connect mass and distance between all phases regardless of reserve / non-reserve status
-                self.traj.link_phases(phases, ["time"], ref=1e3,
+                self.traj.link_phases(phases, ["time"],
+                                      ref=None if true_unless_mpi else 1e3,
                                       connected=true_unless_mpi)
-                self.traj.link_phases(phases, [Dynamic.Mission.MASS], ref=1e6,
+                self.traj.link_phases(phases, [Dynamic.Mission.MASS],
+                                      ref=None if true_unless_mpi else 1e6,
                                       connected=true_unless_mpi)
-                self.traj.link_phases(phases, [Dynamic.Mission.DISTANCE], ref=1e3,
+                self.traj.link_phases(phases, [Dynamic.Mission.DISTANCE],
+                                      ref=None if true_unless_mpi else 1e3,
                                       connected=true_unless_mpi)
 
             elif self.mission_method is SOLVED_2DOF:
@@ -1829,6 +1840,9 @@ class AviaryProblem(om.Problem):
                 self.model.add_objective(Mission.Summary.FUEL_BURNED, ref=ref)
             elif objective_type == "fuel":
                 self.model.add_objective(Mission.Objectives.FUEL, ref=ref)
+            else:
+                raise ValueError(f"{objective_type} is not a valid objective.\nobjective_type must"
+                                 " be one of mass, time, hybrid_objective, fuel_burned, or fuel")
 
         # set objective ref on height-energy missions
         elif self.mission_method is HEIGHT_ENERGY:
@@ -2311,7 +2325,6 @@ class AviaryProblem(om.Problem):
         if self.aviary_inputs.get_val(Settings.VERBOSITY).value >= 2:
             with open('output_list.txt', 'w') as outfile:
                 self.model.list_outputs(out_stream=outfile)
-
         return failed
 
     def _add_hybrid_objective(self, phase_info):

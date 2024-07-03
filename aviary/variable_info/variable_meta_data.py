@@ -6642,18 +6642,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Mission.TEMPERATURE_ENGINE_T4,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='degR',
-    desc='Current turbine exit temperature (T4) of turbine engines on vehicle, per '
-         'single instance of each engine model'
-)
-
-add_meta_data(
     Dynamic.Mission.TEMPERATURE,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -6662,6 +6650,18 @@ add_meta_data(
                      },
     units='degR',
     desc="Atmospheric temperature at vehicle's current flight condition"
+)
+
+add_meta_data(
+    Dynamic.Mission.TEMPERATURE_T4,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='degR',
+    desc='Current turbine exit temperature (T4) of turbine engines on vehicle, per '
+         'single instance of each engine model'
 )
 
 add_meta_data(
