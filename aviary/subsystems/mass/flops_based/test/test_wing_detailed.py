@@ -184,8 +184,8 @@ class DetailedWingBendingTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    # unittest.main()
-    test = DetailedWingBendingTest()
-    test.setUp()
+    unittest.main()
+    # test = DetailedWingBendingTest()
+    # test.setUp()
     # test.test_case(case_name='LargeSingleAisle1FLOPS')
-    test.test_extreme_engine_loc()
+    # test.test_extreme_engine_loc()
