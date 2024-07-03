@@ -360,7 +360,6 @@ class PropellerPerformance(om.Group):
             promotes_inputs=[
                 Dynamic.Mission.DENSITY,
                 Dynamic.Mission.SPEED_OF_SOUND,
-                Dynamic.Mission.TEMPERATURE,
                 Dynamic.Mission.VELOCITY,
                 Dynamic.Mission.PROPELLER_TIP_SPEED,
                 Aircraft.Engine.PROPELLER_DIAMETER,
@@ -371,7 +370,8 @@ class PropellerPerformance(om.Group):
                 "advance_ratio",
                 "tip_mach",
                 "density_ratio",
-            ])
+            ],
+        )
 
         self.add_subsystem(
             name='hamilton_standard',

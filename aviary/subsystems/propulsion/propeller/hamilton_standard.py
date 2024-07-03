@@ -482,9 +482,6 @@ class PreHamiltonStandard(om.ExplicitComponent):
         )
         add_aviary_input(self, Dynamic.Mission.VELOCITY, val=np.zeros(nn), units='knot')
         add_aviary_input(
-            self, Dynamic.Mission.TEMPERATURE, val=np.zeros(nn), units='degR'
-        )
-        add_aviary_input(
             self, Dynamic.Mission.SPEED_OF_SOUND, val=np.zeros(nn), units='knot'
         )
 
@@ -498,11 +495,15 @@ class PreHamiltonStandard(om.ExplicitComponent):
 
         self.declare_partials(
             'density_ratio', Dynamic.Mission.DENSITY, rows=arange, cols=arange)
-        self.declare_partials('tip_mach', [
-            Dynamic.Mission.PROPELLER_TIP_SPEED,
-            Dynamic.Mission.TEMPERATURE,
-            Dynamic.Mission.SPEED_OF_SOUND,
-        ], rows=arange, cols=arange)
+        self.declare_partials(
+            'tip_mach',
+            [
+                Dynamic.Mission.PROPELLER_TIP_SPEED,
+                Dynamic.Mission.SPEED_OF_SOUND,
+            ],
+            rows=arange,
+            cols=arange,
+        )
         self.declare_partials('advance_ratio', [
             Dynamic.Mission.VELOCITY,
             Dynamic.Mission.PROPELLER_TIP_SPEED,
@@ -525,11 +526,11 @@ class PreHamiltonStandard(om.ExplicitComponent):
         # NOTE need for a separate static thrust calc method?
         vktas[np.where(vktas == 0.0)] = 1e-6
         density_ratio = inputs[Dynamic.Mission.DENSITY] / RHO_SEA_LEVEL_ENGLISH
-        sqrt_temp_ratio = np.sqrt(TSLS_DEGR / inputs[Dynamic.Mission.TEMPERATURE])
 
         outputs['density_ratio'] = density_ratio
         # 1118.21948771 is speed of sound at sea level
-        outputs['tip_mach'] = tipspd * sqrt_temp_ratio / sos  # 1118.21948771
+        # TODO tip mach was already calculated, revisit this
+        outputs['tip_mach'] = tipspd / sos
         outputs['advance_ratio'] = 5.309 * vktas / tipspd
         outputs['power_coefficient'] = shp * 10.E10 / (2 * 6966.) / density_ratio \
             / (tipspd**3 * diam_prop**2)
@@ -540,18 +541,13 @@ class PreHamiltonStandard(om.ExplicitComponent):
         rho = inputs[Dynamic.Mission.DENSITY]
         diam_prop = inputs[Aircraft.Engine.PROPELLER_DIAMETER]
         shp = inputs[Dynamic.Mission.SHAFT_POWER]
-        temp = inputs[Dynamic.Mission.TEMPERATURE]
         sos = inputs[Dynamic.Mission.SPEED_OF_SOUND]
-        sqrt_temp_ratio = np.sqrt(TSLS_DEGR/temp)
 
         unit_conversion_const = 10.E10 / (2 * 6966.)
 
         partials["density_ratio", Dynamic.Mission.DENSITY] = 1 / RHO_SEA_LEVEL_ENGLISH
-        partials["tip_mach", Dynamic.Mission.PROPELLER_TIP_SPEED] = sqrt_temp_ratio / sos
-        partials["tip_mach", Dynamic.Mission.TEMPERATURE] = \
-            - tipspd * sqrt_temp_ratio/(sos*2*temp)
-        partials["tip_mach", Dynamic.Mission.SPEED_OF_SOUND] = \
-            - tipspd * sqrt_temp_ratio / sos**2
+        partials["tip_mach", Dynamic.Mission.PROPELLER_TIP_SPEED] = 1 / sos
+        partials["tip_mach", Dynamic.Mission.SPEED_OF_SOUND] = -tipspd / sos**2
         partials["advance_ratio", Dynamic.Mission.VELOCITY] = 5.309 / tipspd
         partials["advance_ratio", Dynamic.Mission.PROPELLER_TIP_SPEED] = - \
             5.309 * vktas / (tipspd * tipspd)

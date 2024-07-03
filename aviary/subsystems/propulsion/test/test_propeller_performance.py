@@ -213,9 +213,6 @@ class PropellerPerformanceTest(unittest.TestCase):
 
         pp.set_input_defaults(Aircraft.Engine.PROPELLER_DIAMETER, 10, units="ft")
         pp.set_input_defaults(
-            Dynamic.Mission.TEMPERATURE, 650.0 * np.ones(num_nodes), units="degR"
-        )
-        pp.set_input_defaults(
             Dynamic.Mission.PROPELLER_TIP_SPEED, 800 * np.ones(num_nodes), units="ft/s"
         )
         pp.set_input_defaults(
