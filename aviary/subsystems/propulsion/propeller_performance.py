@@ -39,7 +39,7 @@ class OutMachs(om.ExplicitComponent):
                 "tip_mach",
                 val=np.zeros(nn),
                 units="unitless",
-                desc="tip Mach number at 3/4 of radius of a blade",
+                desc="tip Mach number of a blade",
             )
             self.add_output(
                 "helical_mach",
@@ -54,7 +54,7 @@ class OutMachs(om.ExplicitComponent):
                 "tip_mach",
                 val=np.zeros(nn),
                 units="unitless",
-                desc="tip Mach number at 3/4 of a blade",
+                desc="tip Mach number of a blade",
             )
             self.add_input(
                 "helical_mach",
@@ -87,7 +87,7 @@ class OutMachs(om.ExplicitComponent):
                 "tip_mach",
                 val=np.zeros(nn),
                 units="unitless",
-                desc="tip Mach number at 3/4 of a blade",
+                desc="tip Mach number of a blade",
             )
             self.declare_partials("tip_mach", [
                                   "mach", "helical_mach"], rows=arange, cols=arange)
