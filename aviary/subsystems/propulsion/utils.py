@@ -19,9 +19,9 @@ from aviary.variable_info.variables import Aircraft
 
 
 class EngineModelVariables(Enum):
-    '''
+    """
     Define constants that map to supported variable names in an engine model.
-    '''
+    """
     MACH = auto()
     ALTITUDE = auto()
     THROTTLE = auto()
@@ -110,7 +110,7 @@ def convert_geopotential_altitude(altitude):
 # TODO build test for this function
 # TODO upgrade to be able to turn vectorized AviaryValues into multiple engine decks
 def build_engine_deck(aviary_options: AviaryValues, meta_data=_MetaData):
-    '''
+    """
     Creates an EngineDeck using avaliable inputs and options in aviary_options.
 
     Parameter
@@ -122,7 +122,7 @@ def build_engine_deck(aviary_options: AviaryValues, meta_data=_MetaData):
     ----------
     engine_models : <list of EngineDecks>
         List of EngineDecks created using provided aviary_options.
-    '''
+    """
     # local import to avoid circular import
     from aviary.subsystems.propulsion.engine_deck import EngineDeck
 
@@ -245,9 +245,9 @@ class UncorrectData(om.Group):
 
 
 # class InstallationDragFlag(Enum):
-#     '''
+#     """
 #     Define constants that map to supported options for scaling of installation drag.
-#     '''
+#     """
 #     OFF = auto()
 #     DELTA_MAX_NOZZLE_AREA = auto()
 #     MAX_NOZZLE_AREA = auto()
@@ -255,9 +255,9 @@ class UncorrectData(om.Group):
 
 
 class PropModelVariables(Enum):
-    '''
+    """
     Define constants that map to supported variable names in a propeller model.
-    '''
+    """
     MACH = 'Mach_Number'
     CP = 'CP'  # power coefficient
     CT = 'CT'  # thrust coefficient
