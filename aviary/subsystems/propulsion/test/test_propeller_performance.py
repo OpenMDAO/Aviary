@@ -83,11 +83,6 @@ class PropellerPerformanceTest(unittest.TestCase):
                               800 * np.ones(num_nodes), units="ft/s")
         pp.set_input_defaults(Dynamic.Mission.VELOCITY,
                               100. * np.ones(num_nodes), units="knot")
-        num_blades = 4
-        options.set_val(Aircraft.Engine.NUM_PROPELLER_BLADES,
-                        val=num_blades, units='unitless')
-        options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS,
-                        val=True, units='unitless')
         prob.setup()
 
         prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 10.5, units="ft")
