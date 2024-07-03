@@ -2,10 +2,11 @@ import numpy as np
 import unittest
 
 from openmdao.components.interp_util.interp_semi import InterpNDSemi
-from openmdao.utils.assert_utils import assert_near_equal
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.propulsion.propeller_map import PropellerMap
 from aviary.subsystems.propulsion.utils import PropModelVariables as keys
+from aviary.variable_info.enums import OutMachType
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft
 
@@ -30,10 +31,15 @@ class PropellerMapTest(unittest.TestCase):
         y = prop_model.data[keys.CT]
         grid = np.array([x1, x2, x3]).T
         interp = InterpNDSemi(grid, y, method='slinear')
-        # Mach, CP, J from general_aviation, expected CT: 0.0318
-        x = np.array([0.8, 0.025, 0.5])
+        # Mach, CP, J from general_aviation, expected CT: 0.0934
+        x = np.array([0.8, 0.1, 0.75])
         f, df_dx = interp.interpolate(x, compute_derivative=True)
-        assert_near_equal(f, 0.0318, tolerance=tol)
+        print("partials:")
+        print(df_dx)
+        #y = interp.gradient(grid)
+        #print(f"y = {y}")
+        assert_near_equal(f, 0.0934, tolerance=tol)
+        #assert_check_partials(df_dx, atol=5e-4, rtol=1e-4)
 
     def test_propfan(self):
         tol = 0.005
@@ -59,6 +65,22 @@ class PropellerMapTest(unittest.TestCase):
         f, df_dx = interp.interpolate(x, compute_derivative=True)
         assert_near_equal(f, 0.095985, tolerance=tol)
 
+    def test_mach_type(self):
+        tol = 0.005
+        aviary_options = get_option_defaults()
+        prop_file_path = 'models/propellers/general_aviation.prop'
+        aviary_options.set_val(
+            Aircraft.Engine.PROPELLER_DATA_FILE, val=prop_file_path, units='unitless')
+        aviary_options.set_val(
+            Aircraft.Engine.INTERPOLATION_METHOD, val='slinear', units='unitless')
+        aviary_options.set_val(
+            Aircraft.Engine.USE_PROPELLER_MAP, val=True, units='unitless')
+        prop_model = PropellerMap('prop', aviary_options)
+        out_mach_type = prop_model.read_and_set_mach_type(prop_file_path)
+        self.assertEqual(out_mach_type, OutMachType.HELICAL_MACH)
+
 
 if __name__ == "__main__":
-    unittest.main()
+    #unittest.main()
+    thisClass = PropellerMapTest()
+    thisClass.test_general_aviation()
