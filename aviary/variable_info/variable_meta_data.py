@@ -2112,10 +2112,11 @@ add_meta_data(
 add_meta_data(
     Aircraft.Engine.PROPELLER_TIP_SPEED_MAX,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INPROP.TSPDMX',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={
+        "GASP": ['INPROP.TSPDMX', 'INPROP.TPSPDMXe'],
+        "FLOPS": None,
+        "LEAPS1": None,
+    },
     units='ft/s',
     desc='maximum allowable propeller linear tip speed',
     default_value=800.0,
@@ -2337,10 +2338,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Engine.Gearbox.GEAR_RATIO,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={"GASP": 'INPROP.GR', "FLOPS": None, "LEAPS1": None},
     units=None,
     desc='The ratio of the RPM_out divided by the RPM_in for the gearbox.',
     default_value=1.0,
@@ -2379,10 +2377,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Engine.Motor.MASS,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={"GASP": 'WMOTOR', "FLOPS": None, "LEAPS1": None},
     units='kg',
     desc='Total motor mass (considers number of motors)',
     default_value=0.0,
@@ -6531,12 +6526,9 @@ add_meta_data(
 add_meta_data(
     Dynamic.Mission.RPM,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={"GASP": ['RPM', 'RPMe'], "FLOPS": None, "LEAPS1": None},
     units='rpm',
-    desc='Rotational rate of shaft, per engine.'
+    desc='Rotational rate of shaft, per engine.',
 )
 
 add_meta_data(
@@ -6566,12 +6558,9 @@ add_meta_data(
 add_meta_data(
     Dynamic.Mission.SHAFT_POWER,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={"GASP": ['SHP, EHP'], "FLOPS": None, "LEAPS1": None},
     units='hp',
-    desc='current shaft power, per engine'
+    desc='current shaft power, per engine',
 )
 
 add_meta_data(
@@ -6725,12 +6714,9 @@ add_meta_data(
 add_meta_data(
     Dynamic.Mission.TORQUE,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={"GASP": 'TORQUE', "FLOPS": None, "LEAPS1": None},
     units='N*m',
-    desc='Current torque being produced, per engine'
+    desc='Current torque being produced, per engine',
 )
 
 add_meta_data(
