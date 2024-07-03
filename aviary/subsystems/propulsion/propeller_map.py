@@ -7,6 +7,7 @@ from aviary.subsystems.propulsion.utils import PropModelVariables, default_prop_
 from aviary.utils.aviary_values import AviaryValues, NamedValues, get_keys
 from aviary.utils.csv_data_file import read_data_file
 from aviary.utils.functions import get_path
+from aviary.variable_info.enums import OutMachType
 from aviary.variable_info.variables import Aircraft, Settings
 
 
@@ -27,7 +28,7 @@ aliases = {
 
 class PropellerMap(om.ExplicitComponent):
     """
-    This class loads user provided propeller map into memory and build a propeller.
+    This class loads a user provided propeller map into memory and builds a propeller.
     Attributes
     ----------
     name : str ('propeller')
@@ -36,11 +37,11 @@ class PropellerMap(om.ExplicitComponent):
         Inputs and options related to propeller model.
     data : NamedVaues (<empty>), optional
         propeller map data.
-    mach_type: str ('mach' or 'helical_mach')
+    mach_type: OutMachType (MACH or HELICAL_MACH)
     """
 
-    def __init__(self, name='propeller', options=None,
-                 data: NamedValues = None, mach_type='mach'):
+    def __init__(self, name='propeller', options: AviaryValues = None,
+                 data: NamedValues = None, mach_type=OutMachType.MACH):
         super().__init__()
 
         # copy of raw data read from data_file or memory, never modified or used outside PropellerMap
@@ -110,8 +111,8 @@ class PropellerMap(om.ExplicitComponent):
             line = f.readline()
             line = f.readline()
             line = f.readline()  # read 4th line
-            mach_type = line.split()[3]  # get token 3
-        return mach_type
+            m_type = line.split()[3]  # get token 3
+        return OutMachType.get_element_by_value(m_type)
 
     def build_propeller_interpolator(self, num_nodes, options=None):
         """
@@ -127,7 +128,7 @@ class PropellerMap(om.ExplicitComponent):
         propeller.add_input('selected_mach',
                             self.data[MACH],
                             units='unitless',
-                            desc='Current flight Mach number')
+                            desc='Current Mach number (flight or helical)')
         propeller.add_input('power_coefficient',
                             self.data[CP],
                             units='unitless',
