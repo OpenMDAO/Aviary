@@ -261,7 +261,7 @@ class UncorrectData(om.Group):
 #     REF_NOZZLE_EXIT_AREA = auto()
 
 
-class PropModelVariables(Enum):
+class PropellerModelVariables(Enum):
     """
     Define constants that map to supported variable names in a propeller model.
     """
@@ -271,9 +271,9 @@ class PropModelVariables(Enum):
     J = 'J'  # advanced ratio
 
 
-default_prop_units = {
-    PropModelVariables.MACH: 'unitless',
-    PropModelVariables.CP: 'unitless',
-    PropModelVariables.CT: 'unitless',
-    PropModelVariables.J: 'unitless',
+default_propeller_units = {
+    PropellerModelVariables.MACH: 'unitless',
+    PropellerModelVariables.CP: 'unitless',
+    PropellerModelVariables.CT: 'unitless',
+    PropellerModelVariables.J: 'unitless',
 }
