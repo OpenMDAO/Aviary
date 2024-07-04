@@ -16,7 +16,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
 
-# Setting up truth values from GASP
+# Setting up truth values from GASP (The first 12 are actual truth values, the rest are intelligent guesses)
 # test values now are slightly different due to setup - max tip speed was limited to test
 # that it is being properly constrained (and that derivitives work across constraints)
 # CT = np.array([0.27651, 0.20518, 0.13093, 0.10236, 0.10236, 0.19331,
@@ -38,13 +38,13 @@ CT = np.array(
         0.27651,
         0.20518,
         0.13093,
-        0.10256,
-        0.10256,
+        0.09877,
+        0.09877,
         0.18641,
     ]
 )
 XFT = np.array(
-    [1.0, 1.0, 0.9976, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.9976]
+    [1.0, 1.0, 0.9976, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.9976,  1.0, 1.0, 1.0,]
 )
 # CTX = np.array([0.27651, 0.20518, 0.13062, 0.10236, 0.10236, 0.19331,
 #                0.10189, 0.10189, 0.18123, 0.08523, 0.06463, 0.02800])
@@ -65,8 +65,8 @@ CTX = np.array(
         0.27651,
         0.20518,
         0.13062,
-        0.10256,
-        0.10256,
+        0.09877,
+        0.09877,
         0.18641,
     ]
 )
@@ -89,8 +89,8 @@ thrust = np.array(
         4634.8,
         3415.9,
         841.5,
-        1477.17546,
-        1403.31669,
+        1498.29,
+        1423.38,
         3637.83130,
     ]
 )
@@ -113,8 +113,8 @@ prop_eff = np.array(
         0.00078,
         0.72354,
         0.8865,
-        0.90760,
-        0.90760,
+        0.92057,
+        0.92057,
         0.47056,
     ]
 )
@@ -159,8 +159,8 @@ install_eff = np.array(
         0.00077,
         0.70904,
         0.86171,
-        0.90760,
-        0.86222,
+        0.92057,
+        0.87454,
         0.44703,
     ]
 )
@@ -453,7 +453,7 @@ class PropellerPerformanceTest(unittest.TestCase):
         prob.set_val(Dynamic.Mission.ALTITUDE, [10000.0, 10000.0, 0.0], units="ft")
         prob.set_val(Dynamic.Mission.VELOCITY, [200.0, 200.0, 50.0], units="knot")
         prob.set_val(Dynamic.Mission.SHAFT_POWER, [1000.0, 1000.0, 1250.0], units="hp")
-        prob.set_val(Aircraft.Design.PROPELLER_TIP_SPEED_MAX, 769.70, units="ft/s")
+        prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED_MAX, 769.70, units="ft/s")
 
         prob.run_model()
         self.compare_results(case_idx_begin=15, case_idx_end=17)
