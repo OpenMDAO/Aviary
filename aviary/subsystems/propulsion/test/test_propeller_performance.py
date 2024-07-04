@@ -437,7 +437,7 @@ class PropellerPerformanceTest(unittest.TestCase):
         prob = self.prob
         options = self.options
 
-        options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS,
+        options.set_val(Aircraft.Engine.COMPUTE_PROPELLER_INSTALLATION_LOSS,
                         val=False, units='unitless')
         options.set_val(Aircraft.Engine.USE_PROPELLER_MAP,
                         val=True, units='unitless')
