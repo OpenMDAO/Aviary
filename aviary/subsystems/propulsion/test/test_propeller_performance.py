@@ -11,6 +11,7 @@ from aviary.variable_info.variables import Aircraft
 from aviary.subsystems.propulsion.propeller.propeller_performance import (
     OutMachs, PropellerPerformance,
 )
+from aviary.variable_info.enums import OutMachType
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
@@ -67,30 +68,6 @@ CTX = np.array(
         0.10256,
         0.10256,
         0.18641,
-    ]
-)
-# three_quart_blade_angle = np.array(
-#     [25.17, 29.67, 44.23, 31.94, 31.94, 17.44, 33.43, 33.43, 20.08, 30.28, 29.50, 28.10])
-three_quart_blade_angle = np.array(
-    [
-        25.17,
-        29.67,
-        44.23,
-        31.095,
-        31.095,
-        17.44,
-        33.43,
-        33.43,
-        20.08,
-        30.28,
-        29.50,
-        28.10,
-        25.17,
-        29.67,
-        44.23,
-        0,
-        0,
-        0,
     ]
 )
 # thrust = np.array([4634.8, 3415.9, 841.5, 1474.3, 1400.6, 3923.5,
@@ -471,26 +448,94 @@ class PropellerPerformanceTest(unittest.TestCase):
                         val='slinear', units='unitless')
 
         prob.setup(force_alloc_complex=True)
-        prob.set_val(Dynamic.Mission.INSTALLATION_LOSS_FACTOR,
-                     [0.0, 0.05, 0.05], units="unitless")
+        prob.set_val('install_loss_factor', [0.0, 0.05, 0.05], units="unitless")
         prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 12.0, units="ft")
         prob.set_val(Dynamic.Mission.ALTITUDE, [10000.0, 10000.0, 0.0], units="ft")
         prob.set_val(Dynamic.Mission.VELOCITY, [200.0, 200.0, 50.0], units="knot")
-        prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED,
-                     [750.0, 750.0, 785.0], units="ft/s")
         prob.set_val(Dynamic.Mission.SHAFT_POWER, [1000.0, 1000.0, 1250.0], units="hp")
-        prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
-                     [1.0], units="unitless")
-        prob.set_val(Aircraft.Design.MAX_PROPELLER_TIP_SPEED,
-                     [769.70, 769.70, 769.70], units="ft/s")
+        prob.set_val(Aircraft.Design.PROPELLER_TIP_SPEED_MAX, 769.70, units="ft/s")
 
         prob.run_model()
         self.compare_results(case_idx_begin=15, case_idx_end=17)
 
         partial_data = prob.check_partials(
-            out_stream=None, compact_print=True, show_only_incorrect=True, form='central', method="fd",
-            minimum_step=1e-12, abs_err_tol=5.0E-4, rel_err_tol=5.0E-5, includes=["*selectedMach*"])
+            out_stream=None,
+            compact_print=True,
+            show_only_incorrect=True,
+            form='central', method="fd",
+            minimum_step=1e-12,
+            abs_err_tol=5.0E-4,
+            rel_err_tol=5.0E-5,
+            includes=["*selectedMach*"])
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
+class OutMachsTest(unittest.TestCase):
+    def test_helical_mach(self):
+        tol = 1e-5
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "group",
+            OutMachs(num_nodes=2, output_mach_type=OutMachType.HELICAL_MACH),
+            promotes=["*"],
+        )
+        prob.setup()
+        prob.set_val("mach", val=[0.5, 0.7], units="unitless")
+        prob.set_val("tip_mach", val=[0.5, 0.7], units="unitless")
+        prob.run_model()
+        y = prob.get_val("helical_mach")
+        y_exact = np.sqrt([0.5*0.5 + 0.5*0.5, 0.7*0.7 + 0.7*0.7])
+
+        assert_near_equal(y, y_exact, tolerance=tol)
+
+        partial_data = prob.check_partials(
+            out_stream=None, compact_print=True, show_only_incorrect=True, form='central', method="fd",
+            minimum_step=1e-12, abs_err_tol=5.0E-4, rel_err_tol=5.0E-5)
+        assert_check_partials(partial_data, atol=1e-4, rtol=1e-4)
+
+    def test_mach(self):
+        tol = 1e-5
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "group",
+            OutMachs(num_nodes=2, output_mach_type=OutMachType.MACH),
+            promotes=["*"],
+        )
+        prob.setup()
+        prob.set_val("helical_mach", val=[0.7, 0.8], units="unitless")
+        prob.set_val("tip_mach", val=[0.5, 0.4], units="unitless")
+        prob.run_model()
+        y = prob.get_val("mach")
+        y_exact = np.sqrt([0.7*0.7 - 0.5*0.5, 0.8*0.8 - 0.4*0.4])
+
+        assert_near_equal(y, y_exact, tolerance=tol)
+
+        partial_data = prob.check_partials(
+            out_stream=None, compact_print=True, show_only_incorrect=True, form='central', method="fd",
+            minimum_step=1e-12, abs_err_tol=5.0E-4, rel_err_tol=5.0E-5)
+        assert_check_partials(partial_data, atol=1e-4, rtol=1e-4)
+
+    def test_tip_mach(self):
+        tol = 1e-5
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "group",
+            OutMachs(num_nodes=2, output_mach_type=OutMachType.TIP_MACH),
+            promotes=["*"],
+        )
+        prob.setup()
+        prob.set_val("helical_mach", val=[0.7, 0.8], units="unitless")
+        prob.set_val("mach", val=[0.5, 0.4], units="unitless")
+        prob.run_model()
+        y = prob.get_val("tip_mach")
+        y_exact = np.sqrt([0.7*0.7 - 0.5*0.5, 0.8*0.8 - 0.4*0.4])
+
+        assert_near_equal(y, y_exact, tolerance=tol)
+
+        partial_data = prob.check_partials(
+            out_stream=None, compact_print=True, show_only_incorrect=True, form='central', method="fd",
+            minimum_step=1e-12, abs_err_tol=5.0E-4, rel_err_tol=5.0E-5)
+        assert_check_partials(partial_data, atol=1e-4, rtol=1e-4)
 
 
 if __name__ == "__main__":
