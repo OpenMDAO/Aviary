@@ -6,10 +6,174 @@ import numpy as np
 from openmdao.components.ks_comp import KSfunction
 
 from aviary.utils.aviary_values import AviaryValues
+from aviary.utils.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.enums import OutMachType
 from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.subsystems.propulsion.hamilton_standard import HamiltonStandard, PostHamiltonStandard, PreHamiltonStandard
+from aviary.subsystems.propulsion.propeller.hamilton_standard import HamiltonStandard, PostHamiltonStandard, PreHamiltonStandard
 from aviary.subsystems.propulsion.propeller_map import PropellerMap
+
+
+class TipSpeedLimit(om.ExplicitComponent):
+    def initialize(self):
+        self.options.declare(
+            'num_nodes', types=int, default=1,
+            desc='Number of nodes to be evaluated in the RHS')
+
+    def setup(self):
+        num_nodes = self.options['num_nodes']
+
+        add_aviary_input(
+            self,
+            Dynamic.Mission.VELOCITY,
+            val=np.zeros(num_nodes),
+            units='ft/s'
+        )
+        add_aviary_input(
+            self,
+            Dynamic.Mission.SPEED_OF_SOUND,
+            val=np.zeros(num_nodes),
+            units='ft/s'
+        )
+        add_aviary_input(
+            self,
+            Aircraft.Engine.PROPELLER_TIP_MACH_MAX,
+            val=1.0,
+            units='unitless'
+        )
+        add_aviary_input(
+            self,
+            Aircraft.Engine.PROPELLER_TIP_SPEED_MAX,
+            val=0.0,
+            units='ft/s'
+        )
+        add_aviary_input(
+            self,
+            Aircraft.Engine.PROPELLER_DIAMETER,
+            val=0.0,
+            units='ft'
+        )
+
+        add_aviary_output(
+            self,
+            Dynamic.Mission.PROPELLER_TIP_SPEED,
+            val=np.zeros(num_nodes),
+            units='ft/s'
+        )
+        self.add_output(
+            'rpm',
+            val=np.zeros(num_nodes),
+            units='rpm'
+        )
+
+    def setup_partials(self):
+        num_nodes = self.options['num_nodes']
+
+        # matrix derivatives have known sparsity pattern - specified here
+        r = np.arange(num_nodes)
+
+        self.declare_partials(
+            Dynamic.Mission.PROPELLER_TIP_SPEED,
+            [
+                Dynamic.Mission.VELOCITY,
+                Dynamic.Mission.SPEED_OF_SOUND,
+            ],
+            rows=r, cols=r,
+        )
+
+        self.declare_partials(
+            Dynamic.Mission.PROPELLER_TIP_SPEED,
+            [
+                Aircraft.Engine.PROPELLER_TIP_MACH_MAX,
+                Aircraft.Engine.PROPELLER_TIP_SPEED_MAX
+            ],
+        )
+
+        self.declare_partials(
+            'rpm',
+            [
+                Dynamic.Mission.VELOCITY,
+                Dynamic.Mission.SPEED_OF_SOUND,
+            ],
+            rows=r, cols=r,
+        )
+
+        self.declare_partials(
+            'rpm',
+            [
+                Aircraft.Engine.PROPELLER_TIP_MACH_MAX,
+                Aircraft.Engine.PROPELLER_TIP_SPEED_MAX,
+                Aircraft.Engine.PROPELLER_DIAMETER
+            ],
+        )
+
+    def compute(self, inputs, outputs):
+        num_nodes = self.options['num_nodes']
+
+        velocity = inputs[Dynamic.Mission.VELOCITY]
+        sos = inputs[Dynamic.Mission.SPEED_OF_SOUND]
+        tip_mach_max = inputs[Aircraft.Engine.PROPELLER_TIP_MACH_MAX]
+        tip_speed_max = inputs[Aircraft.Engine.PROPELLER_TIP_SPEED_MAX]
+        diam = inputs[Aircraft.Engine.PROPELLER_DIAMETER]
+
+        tip_speed_mach_limit = ((sos * tip_mach_max)**2 - velocity**2)**0.5
+        # use KSfunction for smooth derivitive across minimum
+        tip_speed_max_nn = np.tile(tip_speed_max, num_nodes)
+        prop_tip_speed = -KSfunction.compute(
+            -np.stack((tip_speed_max_nn, tip_speed_mach_limit), axis=1)
+        ).flatten()
+        rpm = prop_tip_speed / (diam * math.pi / 60)
+
+        outputs[Dynamic.Mission.PROPELLER_TIP_SPEED] = prop_tip_speed
+        outputs['rpm'] = rpm
+
+    def compute_partials(self, inputs, J):
+        num_nodes = self.options['num_nodes']
+
+        velocity = inputs[Dynamic.Mission.VELOCITY]
+        sos = inputs[Dynamic.Mission.SPEED_OF_SOUND]
+        tip_mach_max = inputs[Aircraft.Engine.PROPELLER_TIP_MACH_MAX]
+        tip_speed_max = inputs[Aircraft.Engine.PROPELLER_TIP_SPEED_MAX]
+        diam = inputs[Aircraft.Engine.PROPELLER_DIAMETER]
+
+        tip_speed_max_nn = np.tile(tip_speed_max, num_nodes)
+
+        tip_speed_mach_limit = ((sos * tip_mach_max)**2 - velocity**2)**0.5
+        val = -np.stack((tip_speed_max_nn, tip_speed_mach_limit), axis=1)
+        prop_tip_speed = -KSfunction.compute(val).flatten()
+
+        dKS, _ = KSfunction.derivatives(val)
+
+        dtpml_v = -velocity / tip_speed_mach_limit
+        dtpml_s = (tip_mach_max**2 * sos) / tip_speed_mach_limit
+        dtpml_m = (tip_mach_max * sos**2) / tip_speed_mach_limit
+
+        dspeed_dv = dKS[:, 1] * dtpml_v
+        dspeed_ds = dKS[:, 1] * dtpml_s
+        dspeed_dmm = dKS[:, 1] * dtpml_m
+        dspeed_dsm = dKS[:, 0]
+
+        J[Dynamic.Mission.PROPELLER_TIP_SPEED,
+          Dynamic.Mission.VELOCITY] = dspeed_dv
+        J[Dynamic.Mission.PROPELLER_TIP_SPEED,
+          Dynamic.Mission.SPEED_OF_SOUND] = dspeed_ds
+        J[Dynamic.Mission.PROPELLER_TIP_SPEED,
+          Aircraft.Engine.PROPELLER_TIP_MACH_MAX] = dspeed_dmm
+        J[Dynamic.Mission.PROPELLER_TIP_SPEED,
+          Aircraft.Engine.PROPELLER_TIP_SPEED_MAX] = dspeed_dsm
+
+        rpm_fact = (diam * math.pi / 60)
+
+        J['rpm',
+          Dynamic.Mission.VELOCITY] = dspeed_dv / rpm_fact
+        J['rpm',
+          Dynamic.Mission.SPEED_OF_SOUND] = dspeed_ds / rpm_fact
+        J['rpm',
+          Aircraft.Engine.PROPELLER_TIP_MACH_MAX] = dspeed_dmm / rpm_fact
+        J['rpm',
+          Aircraft.Engine.PROPELLER_TIP_SPEED_MAX] = dspeed_dsm / rpm_fact
+
+        J['rpm', Aircraft.Engine.PROPELLER_DIAMETER] = - \
+            60 * prop_tip_speed / (math.pi * diam**2)
 
 
 class OutMachs(om.ExplicitComponent):
