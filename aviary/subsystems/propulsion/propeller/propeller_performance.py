@@ -439,7 +439,7 @@ class PropellerPerformance(om.Group):
         nn = options['num_nodes']
         aviary_options = options['aviary_options']
         compute_installation_loss = aviary_options.get_val(
-            Aircraft.Design.COMPUTE_INSTALLATION_LOSS)
+            Aircraft.Engine.COMPUTE_PROPELLER_INSTALLATION_LOSS)
         use_propeller_map = aviary_options.get_val(
             Aircraft.Engine.USE_PROPELLER_MAP)
 
