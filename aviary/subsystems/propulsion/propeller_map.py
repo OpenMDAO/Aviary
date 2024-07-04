@@ -105,13 +105,26 @@ class PropellerMap(om.ExplicitComponent):
         # mach_type = mach
         # Hamilton Standard 10 Bladed Propfan Performance Deck:  Ct Tables
 
+        m_type = 'mach'  # default to freestream Mach number
+        m_type_define = False
         fp = get_path(data_file)
         with open(fp, "r") as f:
             line = f.readline()
-            line = f.readline()
-            line = f.readline()
-            line = f.readline()  # read 4th line
-            m_type = line.split()[3]  # get token 3
+            while len(line.split('#')[0].strip())==0:
+                line = f.readline()
+                try:
+                    substr = line.split('#')[1].split('=')[0].strip()
+                    if substr == 'mach_type':
+                        m_type = line.split('#')[1].split('=')[-1].strip()
+                        m_type_define = True
+                        break
+                except:
+                    pass
+        if not m_type_define:
+            if self.get_val(Settings.VERBOSITY).value >= 1:
+                warnings.warn(
+                    f"String 'mach_type' is not defined. Assume freestream Mach in the table.")
+
         return OutMachType.get_element_by_value(m_type)
 
     def build_propeller_interpolator(self, num_nodes, options=None):
