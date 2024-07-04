@@ -192,7 +192,7 @@ def glue_variable(name: str, val=None, md_code=False, display=True):
     glue(name, val, display)
 
 
-def get_all_keys(dict_of_dicts, all_keys=None):
+def get_all_keys(dict_of_dicts: dict, all_keys=None, track_layers=False):
     """
     Recursively get all of the keys from a dict of dicts
     Note: this will not add duplicates of keys, but will
@@ -204,15 +204,56 @@ def get_all_keys(dict_of_dicts, all_keys=None):
         The dictionary who's keys will are to be gathered
     all_keys : list
         A list of the keys that have been found so far
+    track_layers : Bool
+        Whether or not to track where keys inside the dict of dicts
+        came from. This will get every key, by ensuring that all keys
+        have a unique name by tracking the path it took to get there.
+
+    Returns
+    -------
+    all_keys : list
+        A list of all the keys in the dict_of_dicts
     """
     if all_keys is None:
         all_keys = []
     for key, val in dict_of_dicts.items():
+        if track_layers is True:
+            current_layer = ''
+        elif track_layers:
+            current_layer = track_layers
+        if track_layers and current_layer:
+            key = current_layer+'.'+key
         if key not in all_keys:
             all_keys.append(key)
         if isinstance(val, dict):
-            all_keys = get_all_keys(val, all_keys=all_keys)
+            if track_layers:
+                current_layer = key
+            else:
+                current_layer = False
+            all_keys = get_all_keys(val, all_keys=all_keys, track_layers=current_layer)
     return all_keys
+
+
+def get_value(dict_of_dicts: dict, comlpete_key: str):
+    """
+    Recursively get a value from a dict of dicts
+
+    Parameters
+    ----------
+    dict_of_dicts : dict
+    complete_key : str
+        A string that contains the full path through the dict_of_dicts
+        (i.e. dictkey1.dictkey2.keyofinterest)
+
+    Returns
+    -------
+    val : any
+        The value found
+    """
+
+    for key in comlpete_key.split('.'):
+        dict_of_dicts = dict_of_dicts[key]
+    return dict_of_dicts
 
 
 def glue_keys(dict_of_dicts: dict, display=True):
@@ -223,6 +264,11 @@ def glue_keys(dict_of_dicts: dict, display=True):
     ----------
     dict_of_dicts : dict
         The dictionary who's keys will be glued
+
+    Returns
+    -------
+    all_keys : list
+        A list of all the keys that were glued
     """
     all_keys = get_all_keys(dict_of_dicts)
     for key in all_keys:
