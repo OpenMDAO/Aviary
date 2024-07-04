@@ -110,7 +110,7 @@ class PropellerMap(om.ExplicitComponent):
         fp = get_path(data_file)
         with open(fp, "r") as f:
             line = f.readline()
-            while len(line.split('#')[0].strip())==0:
+            while len(line.split('#')[0].strip()) == 0:
                 line = f.readline()
                 try:
                     substr = line.split('#')[1].split('=')[0].strip()
