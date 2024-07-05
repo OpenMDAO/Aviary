@@ -96,7 +96,7 @@ class AviaryMissionEditor(tk.Tk):
         self.protocol("WM_DELETE_WINDOW",self.close_window)
         self.focus_set() # focus the window
         # stores/retrieves persistant settings in source directory
-        self.persist_filename = os.path.join(source_directory,"windowlocation.pickle")
+        self.persist_filename = os.path.join(source_directory,"persist_settings.pickle")
 
         # ---------------------------------------------------------------
         # window geometry definition, allows reuse of user's modified size/location
