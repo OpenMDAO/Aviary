@@ -1,26 +1,22 @@
 import os, shutil, subprocess, pickle
 import importlib.util
-from sysconfig import get_path_names
 import numpy as np
 
 import tkinter as tk # base tkinter
-import tkinter.ttk as ttk # themed tkinter
+import tkinter.ttk as ttk
 from tkinter import filedialog, messagebox
 
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backend_bases import MouseButton
 
+# TODO: When resetting axes limit, reset to view current points instead of default 50e3 value
 # TODO: Add ability to change units, phase info specifies units and aviary can handle these unit changes.
 #       Makes sense to allow unit changes in GUI based on user preference.
 #       Possible unit changes: Alt -> ft, m, mi, km, nmi; Time -> min, s, hr; Mach -> none
 # TODO: tooltip/another format for displaying climb/descent rates -> useful for verifying profile
 
-# dark2 = '#252526'
-# dark3 = '#2d2d30'
-# dark4 = '#3e3e42'
-# vsblue = '#007acc'
-# fgg = '#FFFFFF'
+# dark2 = '#252526' # dark3 = '#2d2d30' # dark4 = '#3e3e42' # vsblue = '#007acc' # fgg = '#FFFFFF'
        
 class VerticalScrolledFrame(tk.Frame):
     """A pure Tkinter scrollable frame that actually works!
@@ -73,24 +69,36 @@ class VerticalScrolledFrame(tk.Frame):
 class AviaryMissionEditor(tk.Tk):
     def __init__(self):
         super().__init__()
-        #self.app_style = tk.Style()
-        self.theme_toggle = True
+        self.theme_toggle = True # switches between True/False to toggle theme setting
         self.theme = "light"
-        self.pallete = {"dark":{'background_primary':'#1e1e1e',
-                                'foreground_primary':'#FEFEFE',
-                                'foreground_secondary':'#CCCCCC',
-                                'crosshair':'#EE0000',
-                                'lines':['#00b6f2','#ffff00']},
-                        "light":{'background_primary':'#ffffff',
+        self.pallete = {"light":{'background_primary':'#ffffff',
                                  'foreground_primary':'#000000',
                                  'foreground_secondary':'#999999',
                                  'crosshair':'#EE0000',
-                                 'lines':['#0209c6','#ff00ff']}}
+                                 'lines':['#0209c6','#ff00ff'],
+                                 'image':'dark_mode.png',
+                                 'drop_arrow':'#63ebeb'},
+                        "dark":{'background_primary':'#1e1e1e',
+                                'foreground_primary':'#FEFEFE',
+                                'foreground_secondary':'#CCCCCC',
+                                'crosshair':'#EE0000',
+                                'lines':['#00b6f2','#ffff00'],
+                                'image':'light_mode.png',
+                                'drop_arrow':'#007acc'}}
         
+        self.style_combobox = ttk.Style()
+        self.style_combobox.theme_use("alt")
+
+        # updates image object inside pallete with PhotoImage object using absolute filepath
+        source_directory = os.path.abspath(os.path.dirname(__file__))
+        for theme_info in self.pallete.values():
+            theme_info["image"] = tk.PhotoImage(file = os.path.join(source_directory,theme_info["image"]))
+
         self.title('Mission Design Utility')
         self.protocol("WM_DELETE_WINDOW",self.close_window)
         self.focus_set() # focus the window
-        self.persist_filename = "windowlocation.pickle"
+        # stores/retrieves persistant settings in source directory
+        self.persist_filename = os.path.join(source_directory,"windowlocation.pickle")
 
         # ---------------------------------------------------------------
         # window geometry definition, allows reuse of user's modified size/location
@@ -155,6 +163,8 @@ class AviaryMissionEditor(tk.Tk):
         self.update_theme()
 
     def save_option_defaults(self):
+        """Saves default values for advanced options and axes limits, these will be referenced
+        if user chooses to reset advanced options or axes limits"""
         self.advanced_options_info_defaults = {}
         for key,var in self.advanced_options_info.items():
             self.advanced_options_info_defaults[key] = var.get()
@@ -186,47 +196,66 @@ class AviaryMissionEditor(tk.Tk):
             datalists[col][row] = value
 
     def update_theme(self):
-        
+        """Called by theme toggle button and start of app, changes color settings for widgets 
+        based on current theme."""
         self.theme = 'light' if self.theme_toggle else 'dark'
         self.theme_toggle = not self.theme_toggle
-        background_primary = self.pallete[self.theme]["background_primary"]
-        foreground_primary = self.pallete[self.theme]["foreground_primary"]
-        self.bgpri = background_primary
-        self.fgpri = foreground_primary
+        
+        self.create_menu() # recreating menu b/c tkinter menus cannot be reconfigured with new colors
+        # update frames' background color
+        frames = [self,self.frame_plotReadouts,self.frame_tableheaders,self.frame_table.interior,
+                  self.frame_table.vscroll_canvas]
+        for frame in frames:
+            frame.configure(background = self.pallete[self.theme]["background_primary"])       
+        
+        # update table widgets' colors
+        for widget in [*self.header_widgets,*self.table_widgets,self.table_add_button]:
+            widget.configure(background=self.pallete[self.theme]["background_primary"],
+                             foreground=self.pallete[self.theme]["foreground_primary"])
+            
+            if isinstance(widget,tk.Entry): # extra settings for entry
+                widget.configure(readonlybackground=self.pallete[self.theme]["background_primary"])
 
-        self.create_menu()
-        #self.theme_button.configure(bg=background_primary,image=tk.PhotoImage(file=files[self.theme=="light"]))
-        #self.theme_button.image = self.imgfiles[self.theme=="light"]
-        self.configure(background=background_primary)
-        self.frame_plotReadouts.configure(background=background_primary)
-        self.mouse_coords.configure(background=background_primary,foreground=foreground_primary)
-        self.fig.set_facecolor(background_primary)
-
-        self.frame_table.vscroll_canvas.configure(background=background_primary)
-        self.frame_table.interior.configure(background=background_primary)
-        self.frame_tableheaders.configure(bg=background_primary)
-        for widget in self.table_widgets:
-            widget.configure(background=background_primary,foreground=foreground_primary)
-            if isinstance(widget,tk.Checkbutton):
-                widget.configure(activebackground=background_primary,activeforeground=foreground_primary,
-                                 highlightbackground=background_primary,
-                                 highlightcolor=background_primary,selectcolor=background_primary)
-        for widget in self.header_widgets:
-            widget.configure(bg=background_primary,fg=foreground_primary)
-            if isinstance(widget,tk.Entry):
-                widget.configure(readonlybackground=background_primary)
-
+            if isinstance(widget,tk.Checkbutton): # extra settings for checkboxes
+                widget.configure(activebackground=self.pallete[self.theme]["background_primary"],
+                                 activeforeground=self.pallete[self.theme]["foreground_primary"],
+                                 highlightbackground=self.pallete[self.theme]["background_primary"],
+                                 highlightcolor=self.pallete[self.theme]["background_primary"],
+                                 selectcolor=self.pallete[self.theme]["background_primary"])
+            
+        # update mouse coordinate readout label colors
+        self.mouse_coords.configure(background=self.pallete[self.theme]["background_primary"],
+                                    foreground=self.pallete[self.theme]["foreground_primary"])
+        # update figure/subplot colors
+        self.fig.set_facecolor(self.pallete[self.theme]["background_primary"])
         for plot in self.plots:
-            plot.set_facecolor(background_primary)
-            plot.yaxis.label.set_color(foreground_primary)
-            plot.xaxis.label.set_color(foreground_primary)
-            plot.title.set_color(foreground_primary)
+            plot.set_facecolor(self.pallete[self.theme]["background_primary"])
+            plot.yaxis.label.set_color(self.pallete[self.theme]["foreground_primary"])
+            plot.xaxis.label.set_color(self.pallete[self.theme]["foreground_primary"])
+            plot.title.set_color(self.pallete[self.theme]["foreground_primary"])
             plot.grid(True,color=self.pallete[self.theme]['foreground_secondary'])
-            for axis in ['x','y']: plot.tick_params(axis=axis,colors=foreground_primary)
-            for spine in ['left','top','right','bottom']: plot.spines[spine].set_color(self.pallete[self.theme]['foreground_secondary'])
+            for axis in ['x','y']: 
+                plot.tick_params(axis=axis,colors=self.pallete[self.theme]["foreground_primary"])
+            for spine in ['left','top','right','bottom']: 
+                plot.spines[spine].set_color(self.pallete[self.theme]['foreground_secondary'])
         self.figure_canvas.draw()
         self.redraw_plot()
-        self.table_add_button.configure(background=background_primary,foreground=foreground_primary)
+
+        # updating combobox colors
+        self.option_add("*TCombobox*Listbox*Background", self.pallete[self.theme]["background_primary"])
+        self.option_add("*TCombobox*Listbox*Foreground", self.pallete[self.theme]["foreground_primary"])
+        self.option_add('*TCombobox*Listbox*selectBackground', self.pallete[self.theme]["drop_arrow"])
+        self.option_add('*TCombobox*Listbox*selectForeground', self.pallete[self.theme]["foreground_primary"])
+        self.style_combobox.map('TCombobox', fieldbackground = 
+                                [('readonly', self.pallete[self.theme]["background_primary"])])
+        self.style_combobox.map('TCombobox', selectbackground = 
+                                [('readonly', self.pallete[self.theme]["background_primary"])])
+        self.style_combobox.map('TCombobox', selectforeground = 
+                                [('readonly', self.pallete[self.theme]["foreground_primary"])])
+        self.style_combobox.map('TCombobox', background = 
+                                [('readonly', self.pallete[self.theme]["drop_arrow"])])
+        self.style_combobox.map('TCombobox', foreground = 
+                                [('readonly', self.pallete[self.theme]["foreground_primary"])])
         
 # ----------------------
 # Plot related functions
@@ -401,16 +430,7 @@ class AviaryMissionEditor(tk.Tk):
     def update_table(self,overwrite = False,bool_list=None):
         """This function handles both adding a new entry to table and overwriting the whole table.
         Overwriting causes all table widgets to be destroyed and a new set of widgets to be created.
-        This also resets the StringVars."""
-        try:
-            self.bgpri
-        except AttributeError:
-            self.bgpri = self.pallete[self.theme]["background_primary"]
-        try:
-            self.fgpri
-        except AttributeError:
-            self.fgpri = self.pallete[self.theme]["foreground_primary"]
-        
+        This also resets the StringVars."""        
         row = len(self.x_list)-1 # last row (assumes data lists have been updated with new point)
         if overwrite and len(self.table_widgets) > 0:
             for item in self.table_widgets:
@@ -424,12 +444,16 @@ class AviaryMissionEditor(tk.Tk):
             # numerical label for each point
             rowtxt = str(row+1)
             if row+1 <10: rowtxt = "  "+rowtxt
-            rownum_label = tk.Label(self.frame_table.interior,text = rowtxt,bg=self.bgpri,fg=self.fgpri)
+            rownum_label = tk.Label(self.frame_table.interior,text = rowtxt,
+                                    background=self.pallete[self.theme]["background_primary"],
+                                    foreground=self.pallete[self.theme]["foreground_primary"])
             rownum_label.grid(row = row*2+2,column = 0)
             self.table_widgets.append(rownum_label)
 
             if row > 0 and self.show_optimize.get(): # have at least 2 points
-                optimize_label = tk.Label(self.frame_table.interior,text="Optimize:",bg=self.bgpri,fg=self.fgpri)
+                optimize_label = tk.Label(self.frame_table.interior,text="Optimize:",
+                                          background=self.pallete[self.theme]["background_primary"],
+                                          foreground=self.pallete[self.theme]["foreground_primary"])
                 optimize_label.grid(row=row*2+1,column = 1)
                 self.table_widgets.append(optimize_label)
 
@@ -441,7 +465,9 @@ class AviaryMissionEditor(tk.Tk):
                 self.table_strvars[col].append(entry_text)
 
                 entry = tk.Entry(self.frame_table.interior,width=self.table_column_widths[col],
-                              textvariable=entry_text,justify='center',bg=self.bgpri,fg=self.fgpri)
+                              textvariable=entry_text,justify='center',
+                              background=self.pallete[self.theme]["background_primary"],
+                              foreground=self.pallete[self.theme]["foreground_primary"])
                 entry.grid(row=row*2+2,column=col+1)
                 # binds key release to update list function
                 entry.bind("<KeyRelease>",lambda e,row=row,col=col,entry_text=entry_text: 
@@ -450,7 +476,8 @@ class AviaryMissionEditor(tk.Tk):
 
                 if col > 0 and row > 0 and self.show_optimize.get(): # have at least 2 points and for dependent var cols only
                     checkbox_label = tk.Label(self.frame_table.interior,text=self.data_info["ylabels"][col-1],
-                                              bg=self.bgpri,fg=self.fgpri)
+                                              background=self.pallete[self.theme]["background_primary"],
+                                              foreground=self.pallete[self.theme]["foreground_primary"])
                     checkbox_label.grid(row=row*2+1,column=col+1,sticky='w')
                     self.table_widgets.append(checkbox_label)
 
@@ -458,14 +485,21 @@ class AviaryMissionEditor(tk.Tk):
                     self.table_boolvars[col-1].append(optimize_variable)
                     if bool_list: # if bool list has already been populated (e.g. opening an existing phase info)
                         optimize_variable.set(value=bool_list[col-1][row-1])
-                    optimize_checkbox = tk.Checkbutton(self.frame_table.interior,variable=optimize_variable,bg=self.bgpri,fg=self.fgpri,
-                                                       activebackground=self.bgpri,activeforeground=self.fgpri,selectcolor=self.bgpri,
-                                                       highlightbackground=self.bgpri,highlightcolor=self.bgpri)
+                    optimize_checkbox = tk.Checkbutton(self.frame_table.interior,variable=optimize_variable,
+                                                       background=self.pallete[self.theme]["background_primary"],
+                                                       foreground=self.pallete[self.theme]["foreground_primary"],
+                                                       activebackground=self.pallete[self.theme]["background_primary"],
+                                                       activeforeground=self.pallete[self.theme]["foreground_primary"],
+                                                       selectcolor=self.pallete[self.theme]["background_primary"],
+                                                       highlightbackground=self.pallete[self.theme]["background_primary"],
+                                                       highlightcolor=self.pallete[self.theme]["background_primary"])
                     optimize_checkbox.grid(row=row*2+1,column=col+1,sticky='e')
                     self.table_widgets.append(optimize_checkbox)
 
             # delete button for each point
-            delete_button = tk.Button(self.frame_table.interior,text="X",width=4,bg=self.bgpri,fg=self.fgpri)
+            delete_button = tk.Button(self.frame_table.interior,text="X",width=4,
+                                      background=self.pallete[self.theme]["background_primary"],
+                                      foreground=self.pallete[self.theme]["foreground_primary"])
             delete_button.bind("<Button-1>",lambda e, row=row:self.delete_point(row))
             delete_button.grid(row=row*2+2,column=col+2)       
             self.table_widgets.append(delete_button)
@@ -493,15 +527,15 @@ class AviaryMissionEditor(tk.Tk):
         self.table_strvars = [] # list used to hold StringVars 
         self.table_boolvars = []
         self.table_widgets = [] # list used to hold graphical table elements, can be used to modify them
-        self.header_widgets = []
+        self.header_widgets = [] # list used to hold header widgets, referenced for theme changes
         labels_w_units = [self.data_info["xlabel_unit"],*self.data_info["ylabels_units"]]
         header = tk.Label(self.frame_tableheaders,text="Pt")
         header.grid(row = 0,column = 0)
         self.header_widgets.append(header)
         for col,label in enumerate(labels_w_units):
             header_text = tk.StringVar(value=label)
-            header = tk.Entry(self.frame_tableheaders,textvariable=header_text,state='readonly',width=len(label),
-                              justify='center')
+            header = tk.Entry(self.frame_tableheaders,textvariable=header_text,state='readonly',
+                              width=len(label),justify='center')
             header.grid(row = 0,column = col+1)
             self.table_column_widths.append(len(label))
             self.table_strvars.append([])
@@ -520,61 +554,18 @@ class AviaryMissionEditor(tk.Tk):
         return format(value,"."+str(rounding[col])+"f")
 
 # ----------------------
-# Menu related functions
-    def create_menu(self):
-        structure = {"File":[["command","Open",self.open_phase_info],
-                             ["command","Save",self.save],
-                             ["command","Save as",self.save_as],
-                             ["separator"],
-                             ["command","Exit",self.close_window]],
-                    "Edit":[["command","Axes Limits",self.change_axes_popup],
-                            ["command","Units",None],
-                            ["command","Rounding",None]],
-                    "View":[["checkbutton","Optimize Phase",self.toggle_optimize_view,self.show_optimize],
-                            ["command","Advanced Options",self.advanced_options_popup]],
-                    "Help":[["command","Instructions",None],
-                            ["command","About",None]]}
-        
-        names = ["dark_mode.png","light_mode.png"]
-        imgfiles = []
-        dirname = os.path.abspath(os.path.dirname(__file__))
-        for name in names:
-            imgfiles.append(tk.PhotoImage(file=os.path.join(dirname,name)))
-        menu_bar = tk.Menu(self)
-        for tab_label,tab_list in structure.items():
-            tab = tk.Menu(menu_bar,tearoff=False,background=self.pallete[self.theme]['background_primary'],foreground=self.pallete[self.theme]['foreground_primary'])
-            menu_bar.add_cascade(label=tab_label,menu = tab)
-            for item in tab_list:
-                if item[0] == "separator": tab.add_separator()
-                elif item[0] == "command":
-                    tab.add_command(label=item[1],command=item[2])
-                elif item[0] == "checkbutton":
-                    tab.add_checkbutton(label=item[1],command=item[2],variable=item[3],selectcolor=self.pallete[self.theme]['foreground_primary'])
-        self.config(menu=menu_bar)
-        self.theme_button = tk.Button(self,command=self.update_theme,image=imgfiles[self.theme!="light"],
-                                      bg=self.bgpri)
-        self.theme_button.image = imgfiles[self.theme=="light"]
-        self.imgfiles = imgfiles
-        self.theme_button.place(anchor='nw',relx=0,rely=0)
-
-    def close_window(self):
-        """Closes main window and saves last geometry configuration into a txt """
-        last_geometry = self.winfo_geometry()
-        last_theme = not self.theme_toggle
-        self.destroy()
-        with open(self.persist_filename,"wb") as fp:
-            pickle.dump({'window_geometry':last_geometry,'theme_toggle':last_theme},fp)
+# Popup related functions
 
     def close_popup(self):
-        """Function to close existing popup"""
+        """Function to close existing popup and refocus main window"""
         self.focus_set()
         self.popup.destroy()
         self.popup = None
 
     def generic_popup(self,pop_wid=100,pop_hei=100,pop_title="Popup",buttons_text = []):
         """Function to create a base window for a popup. Returns popup object to be used for adding widget
-            and configuring settings. Also can include Apply and Cancel buttons and return these for changing
-            location and command."""
+            and configuring settings. Buttons_text can be used to specify any number of buttons. These button
+            objects are returned for configuring commands and location."""
         # compute middle of window location to place popup into
         win_size,win_left,win_top = self.winfo_geometry().split("+")
         win_wid,win_hei = win_size.split("x")
@@ -586,22 +577,23 @@ class AviaryMissionEditor(tk.Tk):
         popup.geometry(f"{pop_wid}x{pop_hei}+{pop_left}+{pop_top}")
         popup.title(pop_title)
         popup.focus_set()
-        popup.configure(background=self.bgpri)
+        popup.configure(background=self.pallete[self.theme]["background_primary"])
         self.popup = popup
 
         popup.protocol("WM_DELETE_WINDOW",func=self.close_popup)
 
-        popup_content_frame = tk.Frame(popup,background=self.bgpri)
+        popup_content_frame = tk.Frame(popup,background=self.pallete[self.theme]["background_primary"])
         popup_content_frame.pack(side='top',fill='x')
-        button_frame = tk.Frame(popup,bg=self.bgpri)
+        button_frame = tk.Frame(popup,bg=self.pallete[self.theme]["background_primary"])
         button_frame.pack(side='bottom',pady=5)
 
         buttons = {}
-        bwid = len(max(buttons_text,key=len))+5
+        button_width = len(max(buttons_text,key=len))+5 # button width based on longest button string
 
         for button_txt in buttons_text:
-            button = tk.Button(button_frame,text=button_txt.title(),width=bwid,
-                               background=self.bgpri,foreground=self.fgpri)
+            button = tk.Button(button_frame,text=button_txt.title(),width=button_width,
+                               background=self.pallete[self.theme]["background_primary"],
+                               foreground=self.pallete[self.theme]["foreground_primary"])
             button.pack(side='left',padx=5)
             buttons[button_txt] = button
         
@@ -622,20 +614,32 @@ class AviaryMissionEditor(tk.Tk):
         popup,content_frame,buttons = self.generic_popup(pop_wid = 300, pop_hei=100, pop_title="Axes Limits",
                                            buttons_text=["apply","reset","cancel"])
         popup.protocol("WM_DELETE_WINDOW",func=lambda:[self.close_popup(),reset_options(current_lims)])
-        for i in range(2): content_frame.columnconfigure(i,weight=1)
+        for i in range(2): content_frame.columnconfigure(i,weight=1) # allow columns to expand in frame
 
         for row,(label,lim_str) in enumerate(zip(labels_w_units,lim_strs)):
-            lim_label = tk.Label(content_frame,text=label,justify='right',bg=self.bgpri,fg=self.fgpri)
+            lim_label = tk.Label(content_frame,text=label,justify='right',
+                                 background=self.pallete[self.theme]["background_primary"],
+                                 foreground=self.pallete[self.theme]["foreground_primary"])
             lim_label.grid(row=row,column=0,sticky='e') 
             lim_entry = tk.Entry(content_frame,textvariable=lim_str,width = max(6,len(lim_str.get())),
-                                 bg=self.bgpri,fg=self.fgpri)
+                                 background=self.pallete[self.theme]["background_primary"],
+                                 foreground=self.pallete[self.theme]["foreground_primary"])
             lim_entry.grid(row=row,column=1,sticky='w')
 
-        buttons["apply"].configure(command=lambda:[self.close_popup(),self.update_axes_lims()])
-        buttons["reset"].configure(command=lambda:[self.close_popup(),reset_options(self.axes_lim_defaults),self.update_axes_lims()])
-        buttons["cancel"].configure(command=lambda:[self.close_popup(),reset_options(current_lims),self.update_axes_lims()])
+        # apply uses values in entry boxes, reset defaults to original limits, cancel uses previously set limits
+        buttons["apply"].configure(command=lambda:[self.close_popup(),
+                                                   self.update_axes_lims()])
+        buttons["reset"].configure(command=lambda:[self.close_popup(),
+                                                   reset_options(self.axes_lim_defaults),
+                                                   self.update_axes_lims()])
+        buttons["cancel"].configure(command=lambda:[self.close_popup(),
+                                                    reset_options(current_lims),
+                                                    self.update_axes_lims()])
 
     def get_phase_names(self):
+        """Returns a list of phase names, these are decided based on final and starting altitudes.
+        These names are only used for the dropdown menu in advanced options, and are not connected to
+        phase info phase names."""
         names = ["Climb ","Cruise ","Descent "]
         counters = [1,1,1]
         phase_name_list = []
@@ -670,14 +674,25 @@ class AviaryMissionEditor(tk.Tk):
         for i in range(3): content_frame.columnconfigure(i,weight=1)
 
         for row,(option_label_txt,option_var) in enumerate(self.advanced_options_info.items()):
-            option_label = tk.Label(content_frame,text=option_label_txt.replace("_"," ").title(),justify='right',
-                                    bg=self.bgpri,fg=self.fgpri)
+            option_label = tk.Label(content_frame,text=option_label_txt.replace("_"," ").title(),
+                                    justify='right',
+                                    background=self.pallete[self.theme]["background_primary"],
+                                    foreground=self.pallete[self.theme]["foreground_primary"])
             option_label.grid(row=row,column=0,sticky='e')
             if type(tk.BooleanVar()) == type(option_var):
-                option_checkbox = tk.Checkbutton(content_frame,variable=option_var,bg=self.bgpri,fg=self.fgpri)
+                option_checkbox = tk.Checkbutton(content_frame,variable=option_var,
+                                                 background=self.pallete[self.theme]["background_primary"],
+                                                 foreground=self.pallete[self.theme]["foreground_primary"],
+                                                 activebackground=self.pallete[self.theme]["background_primary"],
+                                                 activeforeground=self.pallete[self.theme]["foreground_primary"],
+                                                 selectcolor=self.pallete[self.theme]["background_primary"],
+                                                 highlightbackground=self.pallete[self.theme]["background_primary"],
+                                                 highlightcolor=self.pallete[self.theme]["background_primary"])
                 option_checkbox.grid(row=row,column=1,sticky='w')
             elif type(tk.IntVar()) == type(option_var):
-                option_entry = tk.Entry(content_frame,textvariable=option_var,width = 3,bg=self.bgpri,fg=self.fgpri)
+                option_entry = tk.Entry(content_frame,textvariable=option_var,width = 3,
+                                        background=self.pallete[self.theme]["background_primary"],
+                                        foreground=self.pallete[self.theme]["foreground_primary"])
                 option_entry.grid(row=row,column=1,sticky='w')
 
         def set_var(_):
@@ -689,19 +704,24 @@ class AviaryMissionEditor(tk.Tk):
             try: newval = int(order_var.get())
             except ValueError: return
             if newval < self.phase_order_default:
-                messagebox.showwarning(title="Error",message=f"Phase transcription order must be at least {self.phase_order_default}!")
+                messagebox.showwarning(title="Error",message=f"Phase transcription order must be "+
+                                       "at least {self.phase_order_default}!")
                 newval = self.phase_order_default
             self.phase_order_list[phase_idx] = newval
 
         if len(self.x_list) > 1:
-            order_label = tk.Label(content_frame,text="Phase Transcription Order: ",bg=self.bgpri,fg=self.fgpri)
+            order_label = tk.Label(content_frame,text="Phase Transcription Order: ",
+                                   background=self.pallete[self.theme]["background_primary"],
+                                   foreground=self.pallete[self.theme]["foreground_primary"])
             order_label.grid(row=row+1,column=0,sticky='e')
             order_combo = ttk.Combobox(content_frame,state='readonly',values = self.get_phase_names(),width=9)
             order_combo.bind("<<ComboboxSelected>>",set_var)
             order_combo.current(0)
             order_combo.grid(row=row+1,column=1,sticky='w')
             order_var = tk.StringVar(value = self.phase_order_default)
-            order_entry = tk.Entry(content_frame,width = 3,textvariable=order_var,bg=self.bgpri,fg=self.fgpri)
+            order_entry = tk.Entry(content_frame,width = 3,textvariable=order_var,
+                                   background=self.pallete[self.theme]["background_primary"],
+                                   foreground=self.pallete[self.theme]["foreground_primary"])
             order_entry.bind("<KeyRelease>",func=change_var)
             order_entry.grid(row=row+1,column=2,sticky='w')
 
@@ -711,12 +731,59 @@ class AviaryMissionEditor(tk.Tk):
         buttons["reset"].configure(command=lambda:[self.close_popup(),reset_options(self)])
         buttons["cancel"].configure(command=lambda:[self.close_popup(),reset_options(self,current_info)])
 
+# ----------------------
+# Menu related functions
+    def create_menu(self):
+        """Creates menu. Structure is specified as a dictionary, can add commands, 
+        separators, and checkbuttons."""
+        structure = {"File":[["command","Open",self.open_phase_info],
+                             ["command","Save",self.save],
+                             ["command","Save as",self.save_as],
+                             ["separator"],
+                             ["command","Exit",self.close_window]],
+                    "Edit":[["command","Axes Limits",self.change_axes_popup],
+                            ["command","Units",None],
+                            ["command","Rounding",None]],
+                    "View":[["checkbutton","Optimize Phase",self.toggle_optimize_view,self.show_optimize],
+                            ["command","Advanced Options",self.advanced_options_popup]],
+                    "Help":[["command","Instructions",None],
+                            ["command","About",None]]}
+        
+        menu_bar = tk.Menu(self)
+        for tab_label,tab_list in structure.items():
+            tab = tk.Menu(menu_bar,tearoff=False,background=self.pallete[self.theme]['background_primary'],
+                          foreground=self.pallete[self.theme]['foreground_primary'])
+            menu_bar.add_cascade(label=tab_label,menu = tab)
+            for item in tab_list:
+                if item[0] == "separator": tab.add_separator()
+                elif item[0] == "command":
+                    tab.add_command(label=item[1],command=item[2])
+                elif item[0] == "checkbutton":
+                    tab.add_checkbutton(label=item[1],command=item[2],variable=item[3],
+                                        selectcolor=self.pallete[self.theme]['foreground_primary'])
+        self.config(menu=menu_bar)
+
+        image_object = self.pallete[self.theme]["image"]
+        self.theme_button = tk.Button(self,command=self.update_theme,image=image_object,
+                                      bg=self.pallete[self.theme]["background_primary"])
+        self.theme_button.image = image_object # to prevent lose of image reference from garbage collector
+        self.theme_button.place(anchor='nw',relx=0,rely=0)
+
+    def close_window(self):
+        """Closes main window and saves persistent settings into a binary pickle file."""
+        last_geometry = self.winfo_geometry()
+        last_theme = not self.theme_toggle
+        self.destroy()
+        with open(self.persist_filename,"wb") as fp:
+            pickle.dump({'window_geometry':last_geometry,'theme_toggle':last_theme},fp)
+
     def open_phase_info(self):
         """Opens a dialog box to select a .py file with a phase info dict. File must contain a dict called phase_info. 
             File can be placed in any directory."""
         file_dialog = filedialog.Open(self,filetypes = [("Python files","*.py")])
         filename = file_dialog.show()
         if filename != "": 
+            # imports file similar to how a module is imported, allowing direct access to variables
             spec = importlib.util.spec_from_file_location("module_name",filename)
             module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(module)
@@ -724,7 +791,7 @@ class AviaryMissionEditor(tk.Tk):
             try:
                 phase_info = module.phase_info
             except AttributeError:
-                raise Exception("Python File does not contain a dict called phase_info!")
+                raise Exception("Python File does not contain a global dictionary called phase_info!")
             if phase_info:
                 init = False
                 idx = 0
@@ -756,9 +823,12 @@ class AviaryMissionEditor(tk.Tk):
                         
                         idx +=1
 
-                self.advanced_options_info["constrain_range"].set(value = phase_info["post_mission"]["constrain_range"])
-                self.advanced_options_info["include_landing"].set(value = phase_info["post_mission"]["include_landing"])
-                self.advanced_options_info["include_takeoff"].set(value = phase_info["pre_mission"]["include_takeoff"])
+                self.advanced_options_info["constrain_range"].set(
+                    value = phase_info["post_mission"]["constrain_range"])
+                self.advanced_options_info["include_landing"].set(
+                    value = phase_info["post_mission"]["include_landing"])
+                self.advanced_options_info["include_takeoff"].set(
+                    value = phase_info["pre_mission"]["include_takeoff"])
 
                 # checks if any optimize values are true, in which case checkboxes are shown
                 for axis_list in bool_list:
@@ -782,15 +852,20 @@ class AviaryMissionEditor(tk.Tk):
         self.update_table(overwrite=True)
 
     def show_instructions(self):
+        """Shows a messagebox with instructions to use this utility."""
         messagebox.showinfo()
 
     def save_as(self):
+        """Creates a file dialog that saves as a phase info. User can specify filename and location."""
         filename = filedialog.asksaveasfilename(defaultextension='.py',confirmoverwrite=True,
-                                                filetypes=[("Python files","*.py")],initialfile='outputted_phase_info')
+                                                filetypes=[("Python files","*.py")],
+                                                initialfile='outputted_phase_info')
         if not filename: return
         self.save(filename=filename)
 
     def save(self,filename=None):
+        """Saves mission into a file as a phase info dictionary which can be used by Aviary.
+        This function is also called by the save as function with a non-default filename. """
         users = {'solve_for_distance':self.advanced_options_info["solve_for_distance"].get(),
                  'constrain_range':self.advanced_options_info["constrain_range"].get(),
                  'include_takeoff':self.advanced_options_info["include_takeoff"].get(),
@@ -809,7 +884,8 @@ class AviaryMissionEditor(tk.Tk):
         self.close_window()
 
 def create_phase_info(times, altitudes, mach_values,
-                      polynomial_order, num_segments, optimize_mach_phase_vars, optimize_altitude_phase_vars, user_choices,
+                      polynomial_order, num_segments, optimize_mach_phase_vars, 
+                      optimize_altitude_phase_vars, user_choices,
                       orders, filename='outputted_phase_info.py'):
     """
     Creates a dictionary containing the information about different flight phases
@@ -964,6 +1040,7 @@ def create_phase_info(times, altitudes, mach_values,
     return phase_info
 
 def estimate_total_range_trapezoidal(times, mach_numbers):
+    """Source: original Aviary graphical_input.py."""
     speed_of_sound = 343  # Speed of sound in meters per second
 
     # Convert times to seconds from minutes
