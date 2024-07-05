@@ -3,7 +3,7 @@ import importlib.util
 import numpy as np
 
 import tkinter as tk # base tkinter
-import tkinter.ttk as ttk
+import tkinter.ttk as ttk # used for combobox
 from tkinter import filedialog, messagebox
 
 from matplotlib.figure import Figure
@@ -15,8 +15,6 @@ from matplotlib.backend_bases import MouseButton
 #       Makes sense to allow unit changes in GUI based on user preference.
 #       Possible unit changes: Alt -> ft, m, mi, km, nmi; Time -> min, s, hr; Mach -> none
 # TODO: tooltip/another format for displaying climb/descent rates -> useful for verifying profile
-
-# dark2 = '#252526' # dark3 = '#2d2d30' # dark4 = '#3e3e42' # vsblue = '#007acc' # fgg = '#FFFFFF'
        
 class VerticalScrolledFrame(tk.Frame):
     """A pure Tkinter scrollable frame that actually works!
@@ -75,16 +73,16 @@ class AviaryMissionEditor(tk.Tk):
                                  'foreground_primary':'#000000',
                                  'foreground_secondary':'#999999',
                                  'crosshair':'#EE0000',
-                                 'lines':['#0209c6','#ff00ff'],
+                                 'lines':['#0209c6','#aa00aa'],
                                  'image':'dark_mode.png',
-                                 'drop_arrow':'#63ebeb'},
+                                 'hover':'#63ebeb'},
                         "dark":{'background_primary':'#1e1e1e',
                                 'foreground_primary':'#FEFEFE',
                                 'foreground_secondary':'#CCCCCC',
                                 'crosshair':'#EE0000',
                                 'lines':['#00b6f2','#ffff00'],
                                 'image':'light_mode.png',
-                                'drop_arrow':'#007acc'}}
+                                'hover':'#007acc'}}
         
         self.style_combobox = ttk.Style()
         self.style_combobox.theme_use("alt")
@@ -203,13 +201,19 @@ class AviaryMissionEditor(tk.Tk):
         
         self.create_menu() # recreating menu b/c tkinter menus cannot be reconfigured with new colors
         # update frames' background color
-        frames = [self,self.frame_plotReadouts,self.frame_tableheaders,self.frame_table.interior,
-                  self.frame_table.vscroll_canvas]
+        frames = [self,self.frame_plotReadouts,self.frame_table.interior,
+                  self.frame_table.vscroll_canvas,self.frame_table]
         for frame in frames:
-            frame.configure(background = self.pallete[self.theme]["background_primary"])       
-        
+            frame.configure(background = self.pallete[self.theme]["background_primary"])
+        # update table header color, different from background         
+        self.frame_tableheaders.configure(background=self.pallete[self.theme]["hover"])  
+        for widget in self.header_widgets:
+            widget.configure(background=self.pallete[self.theme]["hover"])
+            widget.configure(foreground=self.pallete[self.theme]["foreground_primary"])
+            if isinstance(widget,tk.Entry): 
+                widget.configure(readonlybackground=self.pallete[self.theme]["hover"])
         # update table widgets' colors
-        for widget in [*self.header_widgets,*self.table_widgets,self.table_add_button]:
+        for widget in [*self.table_widgets,self.table_add_button]:
             widget.configure(background=self.pallete[self.theme]["background_primary"],
                              foreground=self.pallete[self.theme]["foreground_primary"])
             
@@ -222,7 +226,7 @@ class AviaryMissionEditor(tk.Tk):
                                  highlightbackground=self.pallete[self.theme]["background_primary"],
                                  highlightcolor=self.pallete[self.theme]["background_primary"],
                                  selectcolor=self.pallete[self.theme]["background_primary"])
-            
+        #self.table_add_button.configure(highlightbackground="gray")
         # update mouse coordinate readout label colors
         self.mouse_coords.configure(background=self.pallete[self.theme]["background_primary"],
                                     foreground=self.pallete[self.theme]["foreground_primary"])
@@ -244,7 +248,7 @@ class AviaryMissionEditor(tk.Tk):
         # updating combobox colors
         self.option_add("*TCombobox*Listbox*Background", self.pallete[self.theme]["background_primary"])
         self.option_add("*TCombobox*Listbox*Foreground", self.pallete[self.theme]["foreground_primary"])
-        self.option_add('*TCombobox*Listbox*selectBackground', self.pallete[self.theme]["drop_arrow"])
+        self.option_add('*TCombobox*Listbox*selectBackground', self.pallete[self.theme]["hover"])
         self.option_add('*TCombobox*Listbox*selectForeground', self.pallete[self.theme]["foreground_primary"])
         self.style_combobox.map('TCombobox', fieldbackground = 
                                 [('readonly', self.pallete[self.theme]["background_primary"])])
@@ -253,7 +257,7 @@ class AviaryMissionEditor(tk.Tk):
         self.style_combobox.map('TCombobox', selectforeground = 
                                 [('readonly', self.pallete[self.theme]["foreground_primary"])])
         self.style_combobox.map('TCombobox', background = 
-                                [('readonly', self.pallete[self.theme]["drop_arrow"])])
+                                [('readonly', self.pallete[self.theme]["hover"])])
         self.style_combobox.map('TCombobox', foreground = 
                                 [('readonly', self.pallete[self.theme]["foreground_primary"])])
         
@@ -497,10 +501,12 @@ class AviaryMissionEditor(tk.Tk):
                     self.table_widgets.append(optimize_checkbox)
 
             # delete button for each point
-            delete_button = tk.Button(self.frame_table.interior,text="X",width=4,
+            delete_button = tk.Button(self.frame_table.interior,text="X",width=4,font=('Arial',8),
                                       background=self.pallete[self.theme]["background_primary"],
                                       foreground=self.pallete[self.theme]["foreground_primary"])
             delete_button.bind("<Button-1>",lambda e, row=row:self.delete_point(row))
+            delete_button.bind("<Enter>",func=self.on_enter)
+            delete_button.bind("<Leave>",func=self.on_leave)
             delete_button.grid(row=row*2+2,column=col+2)       
             self.table_widgets.append(delete_button)
         
@@ -535,7 +541,7 @@ class AviaryMissionEditor(tk.Tk):
         for col,label in enumerate(labels_w_units):
             header_text = tk.StringVar(value=label)
             header = tk.Entry(self.frame_tableheaders,textvariable=header_text,state='readonly',
-                              width=len(label),justify='center')
+                              width=len(label),justify='center',relief='groove')
             header.grid(row = 0,column = col+1)
             self.table_column_widths.append(len(label))
             self.table_strvars.append([])
@@ -545,6 +551,9 @@ class AviaryMissionEditor(tk.Tk):
         # button for adding new rows to table
         self.table_add_button = tk.Button(self.frame_table.interior,text="Add New Point")
         self.table_add_button.bind("<Button-1>",func=self.add_new_row)
+        self.table_add_button.bind("<Enter>",func=self.on_enter)
+        self.table_add_button.bind("<Leave>",func=self.on_leave)
+        self.buttonstat = True
         self.update_table()
 
     def display_rounding(self,value,col:int):
@@ -594,6 +603,8 @@ class AviaryMissionEditor(tk.Tk):
             button = tk.Button(button_frame,text=button_txt.title(),width=button_width,
                                background=self.pallete[self.theme]["background_primary"],
                                foreground=self.pallete[self.theme]["foreground_primary"])
+            button.bind("<Enter>",func=self.on_enter)
+            button.bind("<Leave>",func=self.on_leave)
             button.pack(side='left',padx=5)
             buttons[button_txt] = button
         
@@ -742,12 +753,11 @@ class AviaryMissionEditor(tk.Tk):
                              ["separator"],
                              ["command","Exit",self.close_window]],
                     "Edit":[["command","Axes Limits",self.change_axes_popup],
-                            ["command","Units",None],
-                            ["command","Rounding",None]],
+                            ["command","Units",self.temporary_notice],
+                            ["command","Rounding",self.temporary_notice]],
                     "View":[["checkbutton","Optimize Phase",self.toggle_optimize_view,self.show_optimize],
                             ["command","Advanced Options",self.advanced_options_popup]],
-                    "Help":[["command","Instructions",None],
-                            ["command","About",None]]}
+                    "Help":[["command","Instructions",self.show_instructions]]}
         
         menu_bar = tk.Menu(self)
         for tab_label,tab_list in structure.items():
@@ -767,7 +777,12 @@ class AviaryMissionEditor(tk.Tk):
         self.theme_button = tk.Button(self,command=self.update_theme,image=image_object,
                                       bg=self.pallete[self.theme]["background_primary"])
         self.theme_button.image = image_object # to prevent lose of image reference from garbage collector
+        self.theme_button.bind("<Enter>",func=self.on_enter)
+        self.theme_button.bind("<Leave>",func=self.on_leave)
         self.theme_button.place(anchor='nw',relx=0,rely=0)
+
+    def temporary_notice(self):
+        messagebox.showinfo(title="Under Development",message="This section is currently under development!")
 
     def close_window(self):
         """Closes main window and saves persistent settings into a binary pickle file."""
@@ -853,7 +868,14 @@ class AviaryMissionEditor(tk.Tk):
 
     def show_instructions(self):
         """Shows a messagebox with instructions to use this utility."""
-        messagebox.showinfo()
+        message = "This tool can be used to design a mission which can be used by Aviary for modelling "+\
+                  "and optimization.\n\nTo begin, start by adding points to the Altitude Plot, Mach Plot, "+\
+                  "or the table on the right.\n\nPoints can be edited by dragging points on the plot or "+\
+                  "editing the table values. Points can be deleted with the 'X' button adjacent to each "+\
+                  "point on the table.\n\nUse 'Edit'->'Axes Limits' to change the axes limits.\n\nUse "+\
+                  "'View'->'Optimize Phase' to add the option to optimize any mission phase.\n\nUse 'View'"+\
+                  "->'Advanced Options' to edit additional options related to the mission and optimization."
+        messagebox.showinfo(title="Mission Design Instructions",message=message)        
 
     def save_as(self):
         """Creates a file dialog that saves as a phase info. User can specify filename and location."""
@@ -882,6 +904,10 @@ class AviaryMissionEditor(tk.Tk):
                           user_choices = users, orders=self.phase_order_list,
                           filename=filename)
         self.close_window()
+
+    # button hover color functions
+    def on_enter(self,event): event.widget["background"] = self.pallete[self.theme]["hover"]
+    def on_leave(self,event): event.widget["background"] = self.pallete[self.theme]["background_primary"]
 
 def create_phase_info(times, altitudes, mach_values,
                       polynomial_order, num_segments, optimize_mach_phase_vars, 
