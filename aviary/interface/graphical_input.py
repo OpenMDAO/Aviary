@@ -1,5 +1,6 @@
 import os, shutil, subprocess, pickle
 import importlib.util
+from sysconfig import get_path_names
 import numpy as np
 
 import tkinter as tk # base tkinter
@@ -14,24 +15,14 @@ from matplotlib.backend_bases import MouseButton
 #       Makes sense to allow unit changes in GUI based on user preference.
 #       Possible unit changes: Alt -> ft, m, mi, km, nmi; Time -> min, s, hr; Mach -> none
 # TODO: tooltip/another format for displaying climb/descent rates -> useful for verifying profile
-# TODO: dark mode/light mode option -> general touch ups to appearance
 
-dark2 = '#252526'
-dark3 = '#2d2d30'
-dark4 = '#3e3e42'
-vsblue = '#007acc'
-fgg = '#FFFFFF'
-
-pallete = {"dark":{'bgpri':'#1e1e1e','fgpri':'#FEFEFE','fgsec':'#CCCCCC','crosshair':'#EE0000','lines':['#00b6f2','#ffff00']},
-           "light":{'bgpri':'#ffffff','fgpri':'#000000','fgsec':'#999999','crosshair':'#EE0000','lines':['#0209c6','#ff00ff']}}
-theme = 'dark'
-
-class ImageButton(ttk.Button):
-    def __init__(self,parent,image_file,command=None,*args,**kwargs):
-        self.image = tk.PhotoImage(file=image_file)
-        super().__init__(parent,image=self.image,command=command,*args,*kwargs)
-
-class VerticalScrolledFrame(ttk.Frame):
+# dark2 = '#252526'
+# dark3 = '#2d2d30'
+# dark4 = '#3e3e42'
+# vsblue = '#007acc'
+# fgg = '#FFFFFF'
+       
+class VerticalScrolledFrame(tk.Frame):
     """A pure Tkinter scrollable frame that actually works!
     * Use the 'interior' attribute to place widgets inside the scrollable frame.
     * Construct and pack/place/grid normally.
@@ -40,11 +31,11 @@ class VerticalScrolledFrame(ttk.Frame):
     Taken from https://stackoverflow.com/questions/16188420/tkinter-scrollbar-for-frame
     """
     def __init__(self, parent, *args, **kw):
-        ttk.Frame.__init__(self, parent, *args, **kw)
+        tk.Frame.__init__(self, parent, *args, **kw)
         # Create a canvas object and a vertical scrollbar for scrolling it.
-        vscrollbar = ttk.Scrollbar(self, orient='vertical')
+        vscrollbar = tk.Scrollbar(self, orient='vertical')
         vscrollbar.pack(fill='y', side='left', expand=False)
-        self.freezeframe = ttk.Frame(self) # this frame will not scroll, allowing for freeze view functionality
+        self.freezeframe = tk.Frame(self) # this frame will not scroll, allowing for freeze view functionality
         self.freezeframe.pack(side='top',fill='x')
 
         canvas = tk.Canvas(self, bd=0, highlightthickness=0,
@@ -58,7 +49,7 @@ class VerticalScrolledFrame(ttk.Frame):
         canvas.yview_moveto(0)
 
         # Create a frame inside the canvas which will be scrolled with it.
-        self.interior = interior = ttk.Frame(canvas)
+        self.interior = interior = tk.Frame(canvas)
         interior_id = canvas.create_window(0, 0, window=interior,
                                            anchor='nw')
 
@@ -82,25 +73,35 @@ class VerticalScrolledFrame(ttk.Frame):
 class AviaryMissionEditor(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.app_style = ttk.Style()
-        self.light_mode = True
+        #self.app_style = tk.Style()
+        self.theme_toggle = True
         self.theme = "light"
+        self.pallete = {"dark":{'background_primary':'#1e1e1e',
+                                'foreground_primary':'#FEFEFE',
+                                'foreground_secondary':'#CCCCCC',
+                                'crosshair':'#EE0000',
+                                'lines':['#00b6f2','#ffff00']},
+                        "light":{'background_primary':'#ffffff',
+                                 'foreground_primary':'#000000',
+                                 'foreground_secondary':'#999999',
+                                 'crosshair':'#EE0000',
+                                 'lines':['#0209c6','#ff00ff']}}
         
         self.title('Mission Design Utility')
         self.protocol("WM_DELETE_WINDOW",self.close_window)
         self.focus_set() # focus the window
-        self.winloc_filename = "windowlocation.pickle"
+        self.persist_filename = "windowlocation.pickle"
 
         # ---------------------------------------------------------------
         # window geometry definition, allows reuse of user's modified size/location
         # tkinter size string format:  widthxheight+x+y ;  x,y are location
         default_win_size = (900,500) # CHANGE THIS TO AFFECT DEFAULT SIZE
         window_geometry = f"{default_win_size[0]}x{default_win_size[1]}+10+10" 
-        if os.path.exists(self.winloc_filename):
-            with open(self.winloc_filename,"rb") as fp:
-                savedict = pickle.load(fp)
-                window_geometry = savedict['window_geometry']
-                self.light_mode = savedict['light_mode']
+        if os.path.exists(self.persist_filename):
+            with open(self.persist_filename,"rb") as fp:
+                persist_settings = pickle.load(fp)
+                window_geometry = persist_settings['window_geometry']
+                self.theme_toggle = persist_settings['theme_toggle']
         self.geometry(window_geometry)
         self.minsize(*default_win_size) # force a minimum size for layout to look correct
 
@@ -110,9 +111,9 @@ class AviaryMissionEditor(tk.Tk):
         self.frame_table.pack(side='right',fill='y')
         self.frame_tableheaders = self.frame_table.freezeframe
 
-        self.frame_plotReadouts = ttk.Frame(self)
+        self.frame_plotReadouts = tk.Frame(self)
         self.frame_plotReadouts.pack(side='bottom',fill='x')
-        self.frame_plots = ttk.Frame(self)
+        self.frame_plots = tk.Frame(self)
         self.frame_plots.pack(side='top',expand=True,fill='both')
 
         # ---------------------------------------------------------------
@@ -185,35 +186,48 @@ class AviaryMissionEditor(tk.Tk):
             datalists[col][row] = value
 
     def update_theme(self):
-        self.theme = 'light' if self.light_mode else 'dark'
-        self.light_mode = not self.light_mode
-        bgpri = pallete[self.theme]["bgpri"]
-        fgpri = pallete[self.theme]["fgpri"]
+        
+        self.theme = 'light' if self.theme_toggle else 'dark'
+        self.theme_toggle = not self.theme_toggle
+        background_primary = self.pallete[self.theme]["background_primary"]
+        foreground_primary = self.pallete[self.theme]["foreground_primary"]
+        self.bgpri = background_primary
+        self.fgpri = foreground_primary
 
         self.create_menu()
+        #self.theme_button.configure(bg=background_primary,image=tk.PhotoImage(file=files[self.theme=="light"]))
+        #self.theme_button.image = self.imgfiles[self.theme=="light"]
+        self.configure(background=background_primary)
+        self.frame_plotReadouts.configure(background=background_primary)
+        self.mouse_coords.configure(background=background_primary,foreground=foreground_primary)
+        self.fig.set_facecolor(background_primary)
 
-        self.configure(background=bgpri)
-        self.frame_table.vscroll_canvas.configure(background=bgpri)
-        self.app_style.configure('TFrame',background=bgpri)
-        self.app_style.configure('TLabel',background=bgpri,foreground=fgpri)
-        self.app_style.configure('TEntry',fieldbackground=bgpri,foreground='blue')
-        self.app_style.configure('TButton',background=bgpri,foreground='blue')
-        self.app_style.configure('TCheckbutton',background=bgpri,foreground=fgpri)
-        self.app_style.configure('TCombobox',background=bgpri,foreground='blue')
-        self.fig.set_facecolor(bgpri)
+        self.frame_table.vscroll_canvas.configure(background=background_primary)
+        self.frame_table.interior.configure(background=background_primary)
+        self.frame_tableheaders.configure(bg=background_primary)
+        for widget in self.table_widgets:
+            widget.configure(background=background_primary,foreground=foreground_primary)
+            if isinstance(widget,tk.Checkbutton):
+                widget.configure(activebackground=background_primary,activeforeground=foreground_primary,
+                                 highlightbackground=background_primary,
+                                 highlightcolor=background_primary,selectcolor=background_primary)
+        for widget in self.header_widgets:
+            widget.configure(bg=background_primary,fg=foreground_primary)
+            if isinstance(widget,tk.Entry):
+                widget.configure(readonlybackground=background_primary)
 
         for plot in self.plots:
-            plot.set_facecolor(bgpri)
-            plot.yaxis.label.set_color(fgpri)
-            plot.xaxis.label.set_color(fgpri)
-            plot.title.set_color(fgpri)
-            plot.grid(True,color=pallete[self.theme]['fgsec'])
-            for axis in ['x','y']: plot.tick_params(axis=axis,colors=fgpri)
-            for spine in ['left','top','right','bottom']: plot.spines[spine].set_color(pallete[self.theme]['fgsec'])
+            plot.set_facecolor(background_primary)
+            plot.yaxis.label.set_color(foreground_primary)
+            plot.xaxis.label.set_color(foreground_primary)
+            plot.title.set_color(foreground_primary)
+            plot.grid(True,color=self.pallete[self.theme]['foreground_secondary'])
+            for axis in ['x','y']: plot.tick_params(axis=axis,colors=foreground_primary)
+            for spine in ['left','top','right','bottom']: plot.spines[spine].set_color(self.pallete[self.theme]['foreground_secondary'])
         self.figure_canvas.draw()
         self.redraw_plot()
+        self.table_add_button.configure(background=background_primary,foreground=foreground_primary)
         
-
 # ----------------------
 # Plot related functions
     def create_plots(self):
@@ -229,7 +243,6 @@ class AviaryMissionEditor(tk.Tk):
             self.plots[i].set_xlim(self.data_info["xlim"])
             self.plots[i].set_ylim(self.data_info["ylims"][i])
             self.plots[i].set_title(self.data_info["plot_titles"][i])
-            #self.plots[i].grid(True,color=pallete[self.theme]['fgsec'])
             self.data_info["ylim_strvars"].append(
                 tk.StringVar(value = self.display_rounding(self.data_info["ylims"][i][1],i+1)) )
             self.crossX = self.plots[i].axhline(y=0)
@@ -247,7 +260,7 @@ class AviaryMissionEditor(tk.Tk):
         self.figure_canvas.draw()
 
         self.mouse_coords_str = tk.StringVar(value = "Mouse Coordinates")
-        self.mouse_coords = ttk.Label(self.frame_plotReadouts,textvariable=self.mouse_coords_str)
+        self.mouse_coords = tk.Label(self.frame_plotReadouts,textvariable=self.mouse_coords_str)
         self.mouse_coords.pack()
         self.crosshair = False
         self.figure_canvas.get_tk_widget().pack(expand=True,fill='both')
@@ -263,7 +276,7 @@ class AviaryMissionEditor(tk.Tk):
         """Redraws plot, using the new values inside data lists"""
         self.clear_plot()
         for i,plot in enumerate(self.plots):
-            self.plot_lines.append(plot.plot(self.x_list,self.ys_list[i],color=pallete[self.theme]['lines'][i],marker='o',markersize=5))
+            self.plot_lines.append(plot.plot(self.x_list,self.ys_list[i],color=self.pallete[self.theme]['lines'][i],marker='o',markersize=5))
         self.figure_canvas.draw()
 
     def clear_plot(self):
@@ -323,8 +336,8 @@ class AviaryMissionEditor(tk.Tk):
                     if self.crosshair:
                         self.crossX.remove()
                         self.crossY.remove()
-                    self.crossX = plot.axhline(y=event.ydata,color=pallete[self.theme]['crosshair'])
-                    self.crossY = plot.axvline(x=event.xdata,color=pallete[self.theme]['crosshair'])
+                    self.crossX = plot.axhline(y=event.ydata,color=self.pallete[self.theme]['crosshair'])
+                    self.crossY = plot.axvline(x=event.xdata,color=self.pallete[self.theme]['crosshair'])
                     self.figure_canvas.draw()
                     self.crosshair = True
 
@@ -389,6 +402,15 @@ class AviaryMissionEditor(tk.Tk):
         """This function handles both adding a new entry to table and overwriting the whole table.
         Overwriting causes all table widgets to be destroyed and a new set of widgets to be created.
         This also resets the StringVars."""
+        try:
+            self.bgpri
+        except AttributeError:
+            self.bgpri = self.pallete[self.theme]["background_primary"]
+        try:
+            self.fgpri
+        except AttributeError:
+            self.fgpri = self.pallete[self.theme]["foreground_primary"]
+        
         row = len(self.x_list)-1 # last row (assumes data lists have been updated with new point)
         if overwrite and len(self.table_widgets) > 0:
             for item in self.table_widgets:
@@ -402,12 +424,12 @@ class AviaryMissionEditor(tk.Tk):
             # numerical label for each point
             rowtxt = str(row+1)
             if row+1 <10: rowtxt = "  "+rowtxt
-            rownum_label = ttk.Label(self.frame_table.interior,text = rowtxt)
+            rownum_label = tk.Label(self.frame_table.interior,text = rowtxt,bg=self.bgpri,fg=self.fgpri)
             rownum_label.grid(row = row*2+2,column = 0)
             self.table_widgets.append(rownum_label)
 
             if row > 0 and self.show_optimize.get(): # have at least 2 points
-                optimize_label = ttk.Label(self.frame_table.interior,text="Optimize:")
+                optimize_label = tk.Label(self.frame_table.interior,text="Optimize:",bg=self.bgpri,fg=self.fgpri)
                 optimize_label.grid(row=row*2+1,column = 1)
                 self.table_widgets.append(optimize_label)
 
@@ -418,8 +440,8 @@ class AviaryMissionEditor(tk.Tk):
                 entry_text = tk.StringVar(value=val)
                 self.table_strvars[col].append(entry_text)
 
-                entry = ttk.Entry(self.frame_table.interior,width=self.table_column_widths[col],
-                              textvariable=entry_text,justify='center')
+                entry = tk.Entry(self.frame_table.interior,width=self.table_column_widths[col],
+                              textvariable=entry_text,justify='center',bg=self.bgpri,fg=self.fgpri)
                 entry.grid(row=row*2+2,column=col+1)
                 # binds key release to update list function
                 entry.bind("<KeyRelease>",lambda e,row=row,col=col,entry_text=entry_text: 
@@ -427,7 +449,8 @@ class AviaryMissionEditor(tk.Tk):
                 self.table_widgets.append(entry)
 
                 if col > 0 and row > 0 and self.show_optimize.get(): # have at least 2 points and for dependent var cols only
-                    checkbox_label = ttk.Label(self.frame_table.interior,text=self.data_info["ylabels"][col-1])
+                    checkbox_label = tk.Label(self.frame_table.interior,text=self.data_info["ylabels"][col-1],
+                                              bg=self.bgpri,fg=self.fgpri)
                     checkbox_label.grid(row=row*2+1,column=col+1,sticky='w')
                     self.table_widgets.append(checkbox_label)
 
@@ -435,12 +458,14 @@ class AviaryMissionEditor(tk.Tk):
                     self.table_boolvars[col-1].append(optimize_variable)
                     if bool_list: # if bool list has already been populated (e.g. opening an existing phase info)
                         optimize_variable.set(value=bool_list[col-1][row-1])
-                    optimize_checkbox = ttk.Checkbutton(self.frame_table.interior,variable=optimize_variable)
+                    optimize_checkbox = tk.Checkbutton(self.frame_table.interior,variable=optimize_variable,bg=self.bgpri,fg=self.fgpri,
+                                                       activebackground=self.bgpri,activeforeground=self.fgpri,selectcolor=self.bgpri,
+                                                       highlightbackground=self.bgpri,highlightcolor=self.bgpri)
                     optimize_checkbox.grid(row=row*2+1,column=col+1,sticky='e')
                     self.table_widgets.append(optimize_checkbox)
 
             # delete button for each point
-            delete_button = ttk.Button(self.frame_table.interior,text="X",width=4)
+            delete_button = tk.Button(self.frame_table.interior,text="X",width=4,bg=self.bgpri,fg=self.fgpri)
             delete_button.bind("<Button-1>",lambda e, row=row:self.delete_point(row))
             delete_button.grid(row=row*2+2,column=col+2)       
             self.table_widgets.append(delete_button)
@@ -468,18 +493,23 @@ class AviaryMissionEditor(tk.Tk):
         self.table_strvars = [] # list used to hold StringVars 
         self.table_boolvars = []
         self.table_widgets = [] # list used to hold graphical table elements, can be used to modify them
+        self.header_widgets = []
         labels_w_units = [self.data_info["xlabel_unit"],*self.data_info["ylabels_units"]]
-        header = ttk.Label(self.frame_tableheaders,text="Pt")
+        header = tk.Label(self.frame_tableheaders,text="Pt")
         header.grid(row = 0,column = 0)
+        self.header_widgets.append(header)
         for col,label in enumerate(labels_w_units):
-            header = ttk.Label(self.frame_tableheaders,text=label,width=len(label),justify='center',anchor='center',borderwidth=2)
-            header.grid(row = 0,column = col+1,padx=1)
+            header_text = tk.StringVar(value=label)
+            header = tk.Entry(self.frame_tableheaders,textvariable=header_text,state='readonly',width=len(label),
+                              justify='center')
+            header.grid(row = 0,column = col+1)
             self.table_column_widths.append(len(label))
             self.table_strvars.append([])
             if col > 0: self.table_boolvars.append([])
+            self.header_widgets.append(header)
     
         # button for adding new rows to table
-        self.table_add_button = ttk.Button(self.frame_table.interior,text="Add New Point")
+        self.table_add_button = tk.Button(self.frame_table.interior,text="Add New Point")
         self.table_add_button.bind("<Button-1>",func=self.add_new_row)
         self.update_table()
 
@@ -503,29 +533,37 @@ class AviaryMissionEditor(tk.Tk):
                     "View":[["checkbutton","Optimize Phase",self.toggle_optimize_view,self.show_optimize],
                             ["command","Advanced Options",self.advanced_options_popup]],
                     "Help":[["command","Instructions",None],
-                            ["command","About",self.update_theme]]}
+                            ["command","About",None]]}
         
+        names = ["dark_mode.png","light_mode.png"]
+        imgfiles = []
+        dirname = os.path.abspath(os.path.dirname(__file__))
+        for name in names:
+            imgfiles.append(tk.PhotoImage(file=os.path.join(dirname,name)))
         menu_bar = tk.Menu(self)
         for tab_label,tab_list in structure.items():
-            tab = tk.Menu(menu_bar,tearoff=False,background=pallete[self.theme]['bgpri'],foreground=pallete[self.theme]['fgpri'])
+            tab = tk.Menu(menu_bar,tearoff=False,background=self.pallete[self.theme]['background_primary'],foreground=self.pallete[self.theme]['foreground_primary'])
             menu_bar.add_cascade(label=tab_label,menu = tab)
             for item in tab_list:
                 if item[0] == "separator": tab.add_separator()
                 elif item[0] == "command":
                     tab.add_command(label=item[1],command=item[2])
                 elif item[0] == "checkbutton":
-                    tab.add_checkbutton(label=item[1],command=item[2],variable=item[3],selectcolor=pallete[self.theme]['fgpri'])
+                    tab.add_checkbutton(label=item[1],command=item[2],variable=item[3],selectcolor=self.pallete[self.theme]['foreground_primary'])
         self.config(menu=menu_bar)
-        theme_button = ImageButton(parent=self,image_file='dark_mode.png',command=self.update_theme)
-        theme_button.place(anchor='nw',relx=0,rely=0)
+        self.theme_button = tk.Button(self,command=self.update_theme,image=imgfiles[self.theme!="light"],
+                                      bg=self.bgpri)
+        self.theme_button.image = imgfiles[self.theme=="light"]
+        self.imgfiles = imgfiles
+        self.theme_button.place(anchor='nw',relx=0,rely=0)
 
     def close_window(self):
         """Closes main window and saves last geometry configuration into a txt """
         last_geometry = self.winfo_geometry()
-        last_theme = not self.light_mode
+        last_theme = not self.theme_toggle
         self.destroy()
-        with open(self.winloc_filename,"wb") as fp:
-            pickle.dump({'window_geometry':last_geometry,'light_mode':last_theme},fp)
+        with open(self.persist_filename,"wb") as fp:
+            pickle.dump({'window_geometry':last_geometry,'theme_toggle':last_theme},fp)
 
     def close_popup(self):
         """Function to close existing popup"""
@@ -548,21 +586,22 @@ class AviaryMissionEditor(tk.Tk):
         popup.geometry(f"{pop_wid}x{pop_hei}+{pop_left}+{pop_top}")
         popup.title(pop_title)
         popup.focus_set()
-        popup.configure(background=pallete[self.theme]['bgpri'])
+        popup.configure(background=self.bgpri)
         self.popup = popup
 
         popup.protocol("WM_DELETE_WINDOW",func=self.close_popup)
 
-        popup_content_frame = ttk.Frame(popup)
+        popup_content_frame = tk.Frame(popup,background=self.bgpri)
         popup_content_frame.pack(side='top',fill='x')
-        button_frame = ttk.Frame(popup)
+        button_frame = tk.Frame(popup,bg=self.bgpri)
         button_frame.pack(side='bottom',pady=5)
 
         buttons = {}
         bwid = len(max(buttons_text,key=len))+5
 
         for button_txt in buttons_text:
-            button = ttk.Button(button_frame,text=button_txt.title(),width=bwid)
+            button = tk.Button(button_frame,text=button_txt.title(),width=bwid,
+                               background=self.bgpri,foreground=self.fgpri)
             button.pack(side='left',padx=5)
             buttons[button_txt] = button
         
@@ -586,9 +625,10 @@ class AviaryMissionEditor(tk.Tk):
         for i in range(2): content_frame.columnconfigure(i,weight=1)
 
         for row,(label,lim_str) in enumerate(zip(labels_w_units,lim_strs)):
-            lim_label = ttk.Label(content_frame,text=label,justify='right')
+            lim_label = tk.Label(content_frame,text=label,justify='right',bg=self.bgpri,fg=self.fgpri)
             lim_label.grid(row=row,column=0,sticky='e') 
-            lim_entry = ttk.Entry(content_frame,textvariable=lim_str,width = max(6,len(lim_str.get())))
+            lim_entry = tk.Entry(content_frame,textvariable=lim_str,width = max(6,len(lim_str.get())),
+                                 bg=self.bgpri,fg=self.fgpri)
             lim_entry.grid(row=row,column=1,sticky='w')
 
         buttons["apply"].configure(command=lambda:[self.close_popup(),self.update_axes_lims()])
@@ -630,13 +670,14 @@ class AviaryMissionEditor(tk.Tk):
         for i in range(3): content_frame.columnconfigure(i,weight=1)
 
         for row,(option_label_txt,option_var) in enumerate(self.advanced_options_info.items()):
-            option_label = ttk.Label(content_frame,text=option_label_txt.replace("_"," ").title(),justify='right')
+            option_label = tk.Label(content_frame,text=option_label_txt.replace("_"," ").title(),justify='right',
+                                    bg=self.bgpri,fg=self.fgpri)
             option_label.grid(row=row,column=0,sticky='e')
             if type(tk.BooleanVar()) == type(option_var):
-                option_checkbox = ttk.Checkbutton(content_frame,variable=option_var)
+                option_checkbox = tk.Checkbutton(content_frame,variable=option_var,bg=self.bgpri,fg=self.fgpri)
                 option_checkbox.grid(row=row,column=1,sticky='w')
             elif type(tk.IntVar()) == type(option_var):
-                option_entry = ttk.Entry(content_frame,textvariable=option_var,width = 3)
+                option_entry = tk.Entry(content_frame,textvariable=option_var,width = 3,bg=self.bgpri,fg=self.fgpri)
                 option_entry.grid(row=row,column=1,sticky='w')
 
         def set_var(_):
@@ -653,14 +694,14 @@ class AviaryMissionEditor(tk.Tk):
             self.phase_order_list[phase_idx] = newval
 
         if len(self.x_list) > 1:
-            order_label = ttk.Label(content_frame,text="Phase Transcription Order: ")
+            order_label = tk.Label(content_frame,text="Phase Transcription Order: ",bg=self.bgpri,fg=self.fgpri)
             order_label.grid(row=row+1,column=0,sticky='e')
             order_combo = ttk.Combobox(content_frame,state='readonly',values = self.get_phase_names(),width=9)
             order_combo.bind("<<ComboboxSelected>>",set_var)
             order_combo.current(0)
             order_combo.grid(row=row+1,column=1,sticky='w')
             order_var = tk.StringVar(value = self.phase_order_default)
-            order_entry = ttk.Entry(content_frame,width = 3,textvariable=order_var)
+            order_entry = tk.Entry(content_frame,width = 3,textvariable=order_var,bg=self.bgpri,fg=self.fgpri)
             order_entry.bind("<KeyRelease>",func=change_var)
             order_entry.grid(row=row+1,column=2,sticky='w')
 
@@ -739,6 +780,9 @@ class AviaryMissionEditor(tk.Tk):
     def toggle_optimize_view(self):
         """Runs update table with overwrite on to toggle display of optimize checkboxes"""
         self.update_table(overwrite=True)
+
+    def show_instructions(self):
+        messagebox.showinfo()
 
     def save_as(self):
         filename = filedialog.asksaveasfilename(defaultextension='.py',confirmoverwrite=True,
