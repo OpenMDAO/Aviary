@@ -41,6 +41,11 @@ def AeroDataConverter(input_file=None, output_file=None, data_format=None):
     """
     data_format = CodeOrigin(data_format)
     data_file = get_path(input_file)
+    if isinstance(output_file, str):
+        output_file = Path(output_file)
+    elif isinstance(output_file, list):
+        for ii, file in enumerate(output_file):
+            output_file[ii] = Path(file)
     if not output_file:
         if data_format is CodeOrigin.GASP:
             # Default output file name is same location and name as input file, with
