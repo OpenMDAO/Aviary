@@ -2,7 +2,7 @@ import numpy as np
 import unittest
 
 from openmdao.components.interp_util.interp_semi import InterpNDSemi
-from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.subsystems.propulsion.propeller_map import PropellerMap
 from aviary.subsystems.propulsion.utils import PropellerModelVariables as keys
