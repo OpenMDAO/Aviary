@@ -4,7 +4,7 @@ import unittest
 from openmdao.components.interp_util.interp_semi import InterpNDSemi
 from openmdao.utils.assert_utils import assert_near_equal
 
-from aviary.subsystems.propulsion.propeller_map import PropellerMap
+from aviary.subsystems.propulsion.propeller.propeller_map import PropellerMap
 from aviary.subsystems.propulsion.utils import PropellerModelVariables as keys
 from aviary.variable_info.enums import OutMachType
 from aviary.variable_info.options import get_option_defaults
