@@ -1605,6 +1605,9 @@ class AviaryProblem(om.Problem):
         -------
         None
         """
+        if not isinstance(verbosity, Verbosity):
+            verbosity = Verbosity(verbosity)
+
         # Set defaults for optimizer and use_coloring based on analysis scheme
         if optimizer is None:
             optimizer = 'IPOPT' if self.analysis_scheme is AnalysisScheme.SHOOTING else 'SNOPT'
