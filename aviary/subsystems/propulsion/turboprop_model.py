@@ -47,8 +47,6 @@ class TurbopropModel(EngineModel):
         # also calls _preprocess_inputs() as part of EngineModel __init__
         super().__init__(name, options)
 
-        self.use_shp = True
-
         self.shaft_power_model = shaft_power_model
         self.propeller_model = propeller_model
 
@@ -64,15 +62,15 @@ class TurbopropModel(EngineModel):
             )
             # Manually check if shaft horsepower was provided (can't flag as required
             # variable since either version is acceptable)
-            if not self.shaft_power_model.use_shaft_power:
-                # repurpose custom error message code from EngineDeck
-                # custom error messages depending on data type
-                if self.shaft_power_model.read_from_file:
-                    message = f'<{self.shaft_power_model.get_val(Aircraft.Engine.DATA_FILE)}>'
-                else:
-                    message = f'EngineDeck for <{self.name}>'
-                raise UserWarning(
-                    f'No shaft horsepower variable was provided in {message}')
+            # if not self.shaft_power_model.use_shaft_power:
+            # repurpose custom error message code from EngineDeck
+            # custom error messages depending on data type
+            # if self.shaft_power_model.read_from_file:
+            #     message = f'<{self.shaft_power_model.get_val(Aircraft.Engine.DATA_FILE)}>'
+            # else:
+            #     message = f'EngineDeck for <{self.name}>'
+            # raise UserWarning(
+            #     f'No shaft horsepower variable was provided in {message}')
 
     # BUG if using both custom subsystems that happen to share a kwarg but need different values, this breaks
     def build_pre_mission(self, aviary_inputs, **kwargs) -> om.Group:

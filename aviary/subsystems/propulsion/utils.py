@@ -25,21 +25,21 @@ class EngineModelVariables(Enum):
     Define constants that map to supported variable names in an engine model.
     '''
 
-    MACH = auto()
-    ALTITUDE = auto()
-    THROTTLE = auto()
-    HYBRID_THROTTLE = auto()
-    THRUST = auto()
-    TAILPIPE_THRUST = auto()
-    GROSS_THRUST = auto()
-    SHAFT_POWER = auto()
-    SHAFT_POWER_CORRECTED = auto()
-    RAM_DRAG = auto()
-    FUEL_FLOW = auto()
-    ELECTRIC_POWER_IN = auto()
-    NOX_RATE = auto()
-    TEMPERATURE_T4 = auto()
-    TORQUE = auto()
+    MACH = Dynamic.Mission.MACH
+    ALTITUDE = Dynamic.Mission.ALTITUDE
+    THROTTLE = Dynamic.Mission.THROTTLE
+    HYBRID_THROTTLE = Dynamic.Mission.HYBRID_THROTTLE
+    THRUST = Dynamic.Mission.THRUST
+    TAILPIPE_THRUST = 'tailpipe_thrust'
+    GROSS_THRUST = 'gross_thrust'
+    SHAFT_POWER = Dynamic.Mission.SHAFT_POWER
+    SHAFT_POWER_CORRECTED = 'shaft_power_corrected'
+    RAM_DRAG = 'ram_drag'
+    FUEL_FLOW = Dynamic.Mission.FUEL_FLOW_RATE
+    ELECTRIC_POWER = Dynamic.Mission.ELECTRIC_POWER_IN
+    NOX_RATE = Dynamic.Mission.NOX_RATE
+    TEMPERATURE_T4 = Dynamic.Mission.TEMPERATURE_T4
+    TORQUE = Dynamic.Mission.TORQUE
     # EXIT_AREA = auto()
 
 
@@ -55,7 +55,7 @@ default_units = {
     EngineModelVariables.SHAFT_POWER_CORRECTED: 'hp',
     EngineModelVariables.RAM_DRAG: 'lbf',
     EngineModelVariables.FUEL_FLOW: 'lb/h',
-    EngineModelVariables.ELECTRIC_POWER_IN: 'kW',
+    EngineModelVariables.ELECTRIC_POWER: 'kW',
     EngineModelVariables.NOX_RATE: 'lb/h',
     EngineModelVariables.TEMPERATURE_T4: 'degR',
     EngineModelVariables.TORQUE: 'ft*lbf',
