@@ -448,8 +448,10 @@ class TipSpeedLimitTest(unittest.TestCase):
             promotes=["*"],
         )
         prob.setup()
-        prob.set_val(Dynamic.Mission.VELOCITY, val=[0.16878, 210.97623, 506.34296], units='ft/s')
-        prob.set_val(Dynamic.Mission.SPEED_OF_SOUND, val=[1116.42671, 1116.42671, 1015.95467], units='ft/s')
+        prob.set_val(Dynamic.Mission.VELOCITY,
+                     val=[0.16878, 210.97623, 506.34296], units='ft/s')
+        prob.set_val(Dynamic.Mission.SPEED_OF_SOUND,
+                     val=[1116.42671, 1116.42671, 1015.95467], units='ft/s')
         prob.set_val(Aircraft.Engine.PROPELLER_TIP_MACH_MAX, val=[0.8], units='unitless')
         prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED_MAX, val=[800], units='ft/s')
         prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, val=[10.5], units='ft')
