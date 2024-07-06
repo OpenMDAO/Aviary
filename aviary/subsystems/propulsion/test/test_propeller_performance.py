@@ -9,7 +9,7 @@ from dymos.models.atmosphere import USatm1976Comp
 from aviary.constants import TSLS_DEGR
 from aviary.variable_info.variables import Aircraft
 from aviary.subsystems.propulsion.propeller.propeller_performance import (
-    PropellerPerformance,
+    PropellerPerformance, TipSpeedLimit,
 )
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.variable_info.options import get_option_defaults
@@ -432,6 +432,44 @@ class PropellerPerformanceTest(unittest.TestCase):
             abs_err_tol=5.0e-4,
             rel_err_tol=5.0e-5,
             excludes=["*atmosphere*"],
+        )
+        assert_check_partials(partial_data, atol=5e-4, rtol=1e-4)
+
+
+class TipSpeedLimitTest(unittest.TestCase):
+    def test_tipspeed(self):
+        tol = 1e-5
+        #options = get_option_defaults()
+
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "group",
+            TipSpeedLimit(num_nodes=3),
+            promotes=["*"],
+        )
+        prob.setup()
+        prob.set_val(Dynamic.Mission.VELOCITY, val=[0.16878, 210.97623, 506.34296], units='ft/s')
+        prob.set_val(Dynamic.Mission.SPEED_OF_SOUND, val=[1116.42671, 1116.42671, 1015.95467], units='ft/s')
+        prob.set_val(Aircraft.Engine.PROPELLER_TIP_MACH_MAX, val=[0.8], units='unitless')
+        prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED_MAX, val=[800], units='ft/s')
+        prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, val=[10.5], units='ft')
+
+        prob.run_model()
+
+        tip_speed = prob.get_val(Dynamic.Mission.PROPELLER_TIP_SPEED, units='ft/s')
+        rpm = prob.get_val('rpm', units='rpm')
+        assert_near_equal(tip_speed, [800, 800, 635.7686], tolerance=tol)
+        assert_near_equal(rpm, [1455.1309, 1455.1309, 1156.4082], tolerance=tol)
+
+        partial_data = prob.check_partials(
+            out_stream=None,
+            compact_print=True,
+            show_only_incorrect=True,
+            form='central',
+            method="fd",
+            minimum_step=1e-12,
+            abs_err_tol=5.0e-4,
+            rel_err_tol=5.0e-5,
         )
         assert_check_partials(partial_data, atol=5e-4, rtol=1e-4)
 
