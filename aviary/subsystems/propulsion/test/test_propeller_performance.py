@@ -439,7 +439,6 @@ class PropellerPerformanceTest(unittest.TestCase):
 class TipSpeedLimitTest(unittest.TestCase):
     def test_tipspeed(self):
         tol = 1e-5
-        #options = get_option_defaults()
 
         prob = om.Problem()
         prob.model.add_subsystem(
