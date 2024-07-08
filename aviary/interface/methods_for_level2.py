@@ -267,39 +267,6 @@ class AviaryProblem(om.Problem):
         initial_guesses = initial_guessing(aviary_inputs, initial_guesses)
         self.aviary_inputs = aviary_inputs
         self.initial_guesses = initial_guesses
-        self.require_range_residual = False
-
-        if mission_method is TWO_DEGREES_OF_FREEDOM:
-            aviary_inputs.set_val(Mission.Summary.CRUISE_MASS_FINAL,
-                                  val=self.initial_guesses['cruise_mass_final'], units='lbm')
-            aviary_inputs.set_val(Mission.Summary.GROSS_MASS,
-                                  val=self.initial_guesses['actual_takeoff_mass'], units='lbm')
-
-            # Commonly referenced values
-            self.cruise_alt = aviary_inputs.get_val(
-                Mission.Design.CRUISE_ALTITUDE, units='ft')
-            self.problem_type = aviary_inputs.get_val(Settings.PROBLEM_TYPE)
-            self.mass_defect = aviary_inputs.get_val('mass_defect', units='lbm')
-
-            self.cruise_mass_final = aviary_inputs.get_val(
-                Mission.Summary.CRUISE_MASS_FINAL, units='lbm')
-            self.target_range = aviary_inputs.get_val(
-                Mission.Design.RANGE, units='NM')
-            self.cruise_mach = aviary_inputs.get_val(Mission.Design.MACH)
-            self.require_range_residual = True
-
-        elif mission_method is HEIGHT_ENERGY:
-            self.problem_type = aviary_inputs.get_val(Settings.PROBLEM_TYPE)
-            aviary_inputs.set_val(Mission.Summary.GROSS_MASS,
-                                  val=self.initial_guesses['actual_takeoff_mass'], units='lbm')
-            if 'post_mission' in phase_info:
-                if 'target_range' in phase_info['post_mission']:
-                    aviary_inputs.set_val(Mission.Design.RANGE, wrapped_convert_units(
-                        phase_info['post_mission']['target_range'], 'NM'), units='NM')
-                    self.require_range_residual = True
-
-            self.target_range = aviary_inputs.get_val(
-                Mission.Design.RANGE, units='NM')
 
         ## LOAD PHASE_INFO ###
         if phase_info is None:
@@ -361,6 +328,40 @@ class AviaryProblem(om.Problem):
         self.engine_builders = engine_builders
 
         self.aviary_inputs = aviary_inputs
+
+        if mission_method is TWO_DEGREES_OF_FREEDOM:
+            aviary_inputs.set_val(Mission.Summary.CRUISE_MASS_FINAL,
+                                  val=self.initial_guesses['cruise_mass_final'], units='lbm')
+            aviary_inputs.set_val(Mission.Summary.GROSS_MASS,
+                                  val=self.initial_guesses['actual_takeoff_mass'], units='lbm')
+
+            # Commonly referenced values
+            self.cruise_alt = aviary_inputs.get_val(
+                Mission.Design.CRUISE_ALTITUDE, units='ft')
+            self.problem_type = aviary_inputs.get_val(Settings.PROBLEM_TYPE)
+            self.mass_defect = aviary_inputs.get_val('mass_defect', units='lbm')
+
+            self.cruise_mass_final = aviary_inputs.get_val(
+                Mission.Summary.CRUISE_MASS_FINAL, units='lbm')
+            self.target_range = aviary_inputs.get_val(
+                Mission.Design.RANGE, units='NM')
+            self.cruise_mach = aviary_inputs.get_val(Mission.Design.MACH)
+            self.require_range_residual = True
+
+        elif mission_method is HEIGHT_ENERGY:
+            self.problem_type = aviary_inputs.get_val(Settings.PROBLEM_TYPE)
+            aviary_inputs.set_val(Mission.Summary.GROSS_MASS,
+                                  val=self.initial_guesses['actual_takeoff_mass'], units='lbm')
+            if 'target_range' in self.post_mission_info:
+                aviary_inputs.set_val(Mission.Design.RANGE, wrapped_convert_units(
+                    phase_info['post_mission']['target_range'], 'NM'), units='NM')
+                self.require_range_residual = True
+            else:
+                self.require_range_residual = False
+
+            self.target_range = aviary_inputs.get_val(
+                Mission.Design.RANGE, units='NM')
+
         return aviary_inputs
 
     def _update_metadata_from_subsystems(self):
