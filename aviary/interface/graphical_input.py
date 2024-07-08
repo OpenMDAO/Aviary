@@ -1,4 +1,4 @@
-import os, shutil, subprocess, pickle
+import os, shutil, subprocess, json
 import importlib.util
 import numpy as np
 
@@ -10,7 +10,6 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backend_bases import MouseButton
 
-# TODO: When resetting axes limit, reset to view current points instead of default 50e3 value
 # TODO: Add ability to change units, phase info specifies units and aviary can handle these unit changes.
 #       Makes sense to allow unit changes in GUI based on user preference.
 #       Possible unit changes: Alt -> ft, m, mi, km, nmi; Time -> min, s, hr; Mach -> none
@@ -96,7 +95,7 @@ class AviaryMissionEditor(tk.Tk):
         self.protocol("WM_DELETE_WINDOW",self.close_window)
         self.focus_set() # focus the window
         # stores/retrieves persistant settings in source directory
-        self.persist_filename = os.path.join(source_directory,"persist_settings.pickle")
+        self.persist_filename = os.path.join(source_directory,"persist_settings.json")
 
         # ---------------------------------------------------------------
         # window geometry definition, allows reuse of user's modified size/location
@@ -104,8 +103,8 @@ class AviaryMissionEditor(tk.Tk):
         default_win_size = (900,500) # CHANGE THIS TO AFFECT DEFAULT SIZE
         window_geometry = f"{default_win_size[0]}x{default_win_size[1]}+10+10" 
         if os.path.exists(self.persist_filename):
-            with open(self.persist_filename,"rb") as fp:
-                persist_settings = pickle.load(fp)
+            with open(self.persist_filename,"r") as fp:
+                persist_settings = json.load(fp)
                 window_geometry = persist_settings['window_geometry']
                 self.theme_toggle = persist_settings['theme_toggle']
         self.geometry(window_geometry)
@@ -149,6 +148,7 @@ class AviaryMissionEditor(tk.Tk):
         self.popup = None
         self.ptcontainer = 0.04 # percent of plot size, boundary around point where it can be dragged
         self.show_optimize = tk.BooleanVar() # controls display of optimize phase checkboxes
+        self.show_phase_slope = tk.BooleanVar() # controls display of phase info (climb/descent rates)
         
         self.advanced_options_info = {"constrain_range":tk.BooleanVar(value=True),"solve_for_distance":tk.BooleanVar(),
                                       "include_takeoff":tk.BooleanVar(),"include_landing":tk.BooleanVar(),
@@ -242,7 +242,10 @@ class AviaryMissionEditor(tk.Tk):
                 plot.tick_params(axis=axis,colors=self.pallete[self.theme]["foreground_primary"])
             for spine in ['left','top','right','bottom']: 
                 plot.spines[spine].set_color(self.pallete[self.theme]['foreground_secondary'])
-        self.figure_canvas.draw()
+        for text_list in self.plot_texts:
+            for text in text_list:
+                text.set(color=self.pallete[self.theme]["foreground_primary"])
+
         self.redraw_plot()
 
         # updating combobox colors
@@ -269,6 +272,7 @@ class AviaryMissionEditor(tk.Tk):
         self.fig = Figure()
         self.plots = []
         self.data_info["ylim_strvars"] = []
+        self.plot_texts = [[] for _ in range(self.num_dep_vars)]
         for i in range(self.num_dep_vars):
             self.plots.append(self.fig.add_subplot(self.num_dep_vars,1,i+1))
             self.plots[i].set_xlabel(self.data_info["xlabel_unit"])
@@ -310,8 +314,10 @@ class AviaryMissionEditor(tk.Tk):
         self.clear_plot()
         for i,plot in enumerate(self.plots):
             self.plot_lines.append(plot.plot(self.x_list,self.ys_list[i],color=self.pallete[self.theme]['lines'][i],marker='o',markersize=5))
+        
+        if self.show_phase_slope.get(): self.toggle_phase_slope(redraw=False)
         self.figure_canvas.draw()
-
+        
     def clear_plot(self):
         """Clears all lines from plots except for crosshairs"""
         self.plot_lines = []
@@ -424,8 +430,12 @@ class AviaryMissionEditor(tk.Tk):
     def delete_point(self,row:int):
         """When X button next to tabular point is pressed, lists are popped and plot and tables
         are updated to show the removed point."""
+        if row < len(self.x_list)-1: 
+            self.phase_order_list.pop(row)
+            for i in range(self.num_dep_vars): 
+                self.plot_texts[i][row].remove()
+                self.plot_texts[i].pop(row)
         self.x_list.pop(row)
-        if row < len(self.x_list)-1: self.phase_order_list.pop(row)
         for i in range(self.num_dep_vars):
             self.ys_list[i].pop(row)
         self.redraw_plot()
@@ -442,9 +452,9 @@ class AviaryMissionEditor(tk.Tk):
             self.table_widgets = []
             self.table_strvars = [[] for i in range(self.num_dep_vars+1)]
             self.table_boolvars = [[] for i in range(self.num_dep_vars)]
-            row = 0 # set row to 0 if overwriting entire table
+            if len(self.x_list) > 0: row = 0 # set row to 0 if overwriting entire table
 
-        while row < len(self.x_list):
+        while row < len(self.x_list) and row >= 0:
             # numerical label for each point
             rowtxt = str(row+1)
             if row+1 <10: rowtxt = "  "+rowtxt
@@ -501,13 +511,13 @@ class AviaryMissionEditor(tk.Tk):
                     self.table_widgets.append(optimize_checkbox)
 
             # delete button for each point
-            delete_button = tk.Button(self.frame_table.interior,text="X",width=4,font=('Arial',8),
+            delete_button = tk.Button(self.frame_table.interior,text="X",width=self.delete_button_width,font=('Arial',8),
                                       background=self.pallete[self.theme]["background_primary"],
                                       foreground=self.pallete[self.theme]["foreground_primary"])
             delete_button.bind("<Button-1>",lambda e, row=row:self.delete_point(row))
             delete_button.bind("<Enter>",func=self.on_enter)
             delete_button.bind("<Leave>",func=self.on_leave)
-            delete_button.grid(row=row*2+2,column=col+2)       
+            delete_button.grid(row=row*2+2,column=col+2)
             self.table_widgets.append(delete_button)
         
             row += 1        
@@ -548,19 +558,24 @@ class AviaryMissionEditor(tk.Tk):
             if col > 0: self.table_boolvars.append([])
             self.header_widgets.append(header)
     
+        # this spacer prevents invisbility of delete buttons after all of them have been deleted and a new point is added
+        self.delete_button_width = 4
+        delete_button_spacer = tk.Label(self.frame_tableheaders,width=self.delete_button_width)
+        delete_button_spacer.grid(row=0,column=col+2)
+        self.header_widgets.append(delete_button_spacer)
+
         # button for adding new rows to table
         self.table_add_button = tk.Button(self.frame_table.interior,text="Add New Point")
         self.table_add_button.bind("<Button-1>",func=self.add_new_row)
         self.table_add_button.bind("<Enter>",func=self.on_enter)
         self.table_add_button.bind("<Leave>",func=self.on_leave)
-        self.buttonstat = True
         self.update_table()
 
-    def display_rounding(self,value,col:int):
+    def display_rounding(self,value,col:int,extra=0):
         """Returns a rounded value based on which variable the value belongs to.
         Uses rounding amount specified in data_info"""
         rounding = [self.data_info["xround"],*self.data_info["yrounds"]]
-        return format(value,"."+str(rounding[col])+"f")
+        return format(value,"."+str(rounding[col]+extra)+"f")
 
 # ----------------------
 # Popup related functions
@@ -616,9 +631,13 @@ class AviaryMissionEditor(tk.Tk):
         labels_w_units = [self.data_info["xlabel_unit"],*self.data_info["ylabels_units"]]
         lim_strs = [self.data_info["xlim_strvar"],*self.data_info["ylim_strvars"]]
 
-        def reset_options(old_list):
-            for value,lim_str in zip(old_list,lim_strs):
-                lim_str.set(value=value)
+        def reset_options(old_list,resize=False):
+            if len(self.x_list) > 0:
+                vals = [self.x_list,*self.ys_list]
+                for i,val_list in enumerate(vals):
+                    old_list[i] = max(val_list)*1.2
+            for i,(value,lim_str) in enumerate(zip(old_list,lim_strs)):
+                lim_str.set(value=self.display_rounding(value,col=i))
         
         current_lims = [var.get() for var in lim_strs]
 
@@ -641,7 +660,7 @@ class AviaryMissionEditor(tk.Tk):
         buttons["apply"].configure(command=lambda:[self.close_popup(),
                                                    self.update_axes_lims()])
         buttons["reset"].configure(command=lambda:[self.close_popup(),
-                                                   reset_options(self.axes_lim_defaults),
+                                                   reset_options(self.axes_lim_defaults,resize=True),
                                                    self.update_axes_lims()])
         buttons["cancel"].configure(command=lambda:[self.close_popup(),
                                                     reset_options(current_lims),
@@ -756,6 +775,7 @@ class AviaryMissionEditor(tk.Tk):
                             ["command","Units",self.temporary_notice],
                             ["command","Rounding",self.temporary_notice]],
                     "View":[["checkbutton","Optimize Phase",self.toggle_optimize_view,self.show_optimize],
+                            ["checkbutton","Phase Slopes",self.toggle_phase_slope,self.show_phase_slope],
                             ["command","Advanced Options",self.advanced_options_popup]],
                     "Help":[["command","Instructions",self.show_instructions]]}
         
@@ -789,8 +809,8 @@ class AviaryMissionEditor(tk.Tk):
         last_geometry = self.winfo_geometry()
         last_theme = not self.theme_toggle
         self.destroy()
-        with open(self.persist_filename,"wb") as fp:
-            pickle.dump({'window_geometry':last_geometry,'theme_toggle':last_theme},fp)
+        with open(self.persist_filename,"w") as fp:
+            json.dump({'window_geometry':last_geometry,'theme_toggle':last_theme},fp)
 
     def open_phase_info(self):
         """Opens a dialog box to select a .py file with a phase info dict. File must contain a dict called phase_info. 
@@ -865,6 +885,42 @@ class AviaryMissionEditor(tk.Tk):
     def toggle_optimize_view(self):
         """Runs update table with overwrite on to toggle display of optimize checkboxes"""
         self.update_table(overwrite=True)
+
+    def toggle_phase_slope(self,redraw=True):
+        if len(self.x_list) > 1 and self.show_phase_slope.get():
+            y_lims = [float(var.get()) for var in self.data_info["ylim_strvars"]]
+            for i in range(len(self.x_list)-1):
+                for j in range(self.num_dep_vars):
+                    xs = self.x_list[i:i+2]
+                    ys = self.ys_list[j][i:i+2]
+                    text_position = (np.mean(xs), np.mean(ys)+y_lims[j]*0.1) # offset from line by 8% of y limit
+
+                    # find slope and attach units if either unit is not unitless
+                    slope = self.display_rounding((ys[1]-ys[0])/(xs[1]-xs[0]),j+1,extra=1)
+                    xunit,yunit = self.data_info["xunit"], self.data_info["yunits"][j]
+                    if yunit != "unitless" and xunit != "unitless":
+                        slope = f"{slope} {yunit}/{xunit}"
+
+                    # matplotlib text angle is in display units, so use transform to find angle
+                    scaled_pt1,scaled_pt2 = [self.plots[j].transData.transform_point(pt) for pt in zip(xs,ys)]
+                    line_angle = np.rad2deg(np.arctan2(scaled_pt2[1]-scaled_pt1[1],scaled_pt2[0]-scaled_pt1[0]))
+
+                    if i < len(self.plot_texts[j]):
+                        self.plot_texts[j][i].set(text=slope,position=text_position,rotation=line_angle)
+                    else:
+                        self.plot_texts[j].append(self.plots[j].annotate(slope,xy=text_position,rotation=line_angle,
+                                                                         verticalalignment='center',horizontalalignment='center',
+                                                                         rotation_mode='anchor',color=self.pallete[self.theme]["foreground_primary"]))
+                    self.plot_texts[j][i].set_bbox(dict(facecolor=self.pallete[self.theme]["background_primary"],
+                                                        alpha = 0.5, linewidth=0))
+
+        if not self.show_phase_slope.get() and len(self.plot_texts) > 0:
+            for text_list in self.plot_texts:
+                for text in text_list:
+                    text.remove()
+            self.plot_texts = [[] for _ in range(self.num_dep_vars)]
+        
+        if redraw: self.figure_canvas.draw()
 
     def show_instructions(self):
         """Shows a messagebox with instructions to use this utility."""
