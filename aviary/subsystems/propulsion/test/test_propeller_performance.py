@@ -434,5 +434,112 @@ class PropellerPerformanceTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=5e-4, rtol=1e-4)
 
 
+class OutMachsTest(unittest.TestCase):
+    def test_helical_mach(self):
+        tol = 1e-5
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "group",
+            OutMachs(num_nodes=2, output_mach_type=OutMachType.HELICAL_MACH),
+            promotes=["*"],
+        )
+        prob.setup()
+        prob.set_val("mach", val=[0.5, 0.7], units="unitless")
+        prob.set_val("tip_mach", val=[0.5, 0.7], units="unitless")
+        prob.run_model()
+        y = prob.get_val("helical_mach")
+        y_exact = np.sqrt([0.5*0.5 + 0.5*0.5, 0.7*0.7 + 0.7*0.7])
+
+        assert_near_equal(y, y_exact, tolerance=tol)
+
+        partial_data = prob.check_partials(
+            out_stream=None, compact_print=True, show_only_incorrect=True, form='central', method="fd",
+            minimum_step=1e-12, abs_err_tol=5.0E-4, rel_err_tol=5.0E-5)
+        assert_check_partials(partial_data, atol=1e-4, rtol=1e-4)
+
+    def test_mach(self):
+        tol = 1e-5
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "group",
+            OutMachs(num_nodes=2, output_mach_type=OutMachType.MACH),
+            promotes=["*"],
+        )
+        prob.setup()
+        prob.set_val("helical_mach", val=[0.7, 0.8], units="unitless")
+        prob.set_val("tip_mach", val=[0.5, 0.4], units="unitless")
+        prob.run_model()
+        y = prob.get_val("mach")
+        y_exact = np.sqrt([0.7*0.7 - 0.5*0.5, 0.8*0.8 - 0.4*0.4])
+
+        assert_near_equal(y, y_exact, tolerance=tol)
+
+        partial_data = prob.check_partials(
+            out_stream=None, compact_print=True, show_only_incorrect=True, form='central', method="fd",
+            minimum_step=1e-12, abs_err_tol=5.0E-4, rel_err_tol=5.0E-5)
+        assert_check_partials(partial_data, atol=1e-4, rtol=1e-4)
+
+    def test_tip_mach(self):
+        tol = 1e-5
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "group",
+            OutMachs(num_nodes=2, output_mach_type=OutMachType.TIP_MACH),
+            promotes=["*"],
+        )
+        prob.setup()
+        prob.set_val("helical_mach", val=[0.7, 0.8], units="unitless")
+        prob.set_val("mach", val=[0.5, 0.4], units="unitless")
+        prob.run_model()
+        y = prob.get_val("tip_mach")
+        y_exact = np.sqrt([0.7*0.7 - 0.5*0.5, 0.8*0.8 - 0.4*0.4])
+
+        assert_near_equal(y, y_exact, tolerance=tol)
+
+        partial_data = prob.check_partials(
+            out_stream=None, compact_print=True, show_only_incorrect=True, form='central', method="fd",
+            minimum_step=1e-12, abs_err_tol=5.0E-4, rel_err_tol=5.0E-5)
+        assert_check_partials(partial_data, atol=1e-4, rtol=1e-4)
+
+
+class TipSpeedLimitTest(unittest.TestCase):
+    def test_tipspeed(self):
+        tol = 1e-5
+
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "group",
+            TipSpeedLimit(num_nodes=3),
+            promotes=["*"],
+        )
+        prob.setup()
+        prob.set_val(Dynamic.Mission.VELOCITY,
+                     val=[0.16878, 210.97623, 506.34296], units='ft/s')
+        prob.set_val(Dynamic.Mission.SPEED_OF_SOUND,
+                     val=[1116.42671, 1116.42671, 1015.95467], units='ft/s')
+        prob.set_val(Aircraft.Engine.PROPELLER_TIP_MACH_MAX, val=[0.8], units='unitless')
+        prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED_MAX, val=[800], units='ft/s')
+        prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, val=[10.5], units='ft')
+
+        prob.run_model()
+
+        tip_speed = prob.get_val(Dynamic.Mission.PROPELLER_TIP_SPEED, units='ft/s')
+        rpm = prob.get_val('rpm', units='rpm')
+        assert_near_equal(tip_speed, [800, 800, 635.7686], tolerance=tol)
+        assert_near_equal(rpm, [1455.1309, 1455.1309, 1156.4082], tolerance=tol)
+
+        partial_data = prob.check_partials(
+            out_stream=None,
+            compact_print=True,
+            show_only_incorrect=True,
+            form='central',
+            method="fd",
+            minimum_step=1e-12,
+            abs_err_tol=5.0e-4,
+            rel_err_tol=5.0e-5,
+        )
+        assert_check_partials(partial_data, atol=5e-4, rtol=1e-4)
+
+
 if __name__ == "__main__":
     unittest.main()
