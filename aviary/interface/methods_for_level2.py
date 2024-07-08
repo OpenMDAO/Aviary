@@ -16,7 +16,6 @@ import openmdao.api as om
 from openmdao.core.component import Component
 from openmdao.utils.mpi import MPI
 from openmdao.utils.reports_system import _default_reports
-from openmdao.utils.om_warnings import issue_warning, OMDeprecationWarning
 
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
 from aviary.mission.flops_based.phases.build_landing import Landing
@@ -268,6 +267,7 @@ class AviaryProblem(om.Problem):
         initial_guesses = initial_guessing(aviary_inputs, initial_guesses)
         self.aviary_inputs = aviary_inputs
         self.initial_guesses = initial_guesses
+        self.require_range_residual = False
 
         if mission_method is TWO_DEGREES_OF_FREEDOM:
             aviary_inputs.set_val(Mission.Summary.CRUISE_MASS_FINAL,
@@ -286,6 +286,7 @@ class AviaryProblem(om.Problem):
             self.target_range = aviary_inputs.get_val(
                 Mission.Design.RANGE, units='NM')
             self.cruise_mach = aviary_inputs.get_val(Mission.Design.MACH)
+            self.require_range_residual = True
 
         elif mission_method is HEIGHT_ENERGY:
             self.problem_type = aviary_inputs.get_val(Settings.PROBLEM_TYPE)
@@ -295,9 +296,7 @@ class AviaryProblem(om.Problem):
                 if 'target_range' in phase_info['post_mission']:
                     aviary_inputs.set_val(Mission.Design.RANGE, wrapped_convert_units(
                         phase_info['post_mission']['target_range'], 'NM'), units='NM')
-                    issue_warning(msg='Using post_mission from phase info is deprecated.'
-                                      'To mimic the same behavior, set `Mission.Design.RANGE`'
-                                      'in the input file.', category=OMDeprecationWarning)
+                    self.require_range_residual = True
 
             self.target_range = aviary_inputs.get_val(
                 Mission.Design.RANGE, units='NM')
@@ -1742,9 +1741,10 @@ class AviaryProblem(om.Problem):
                     ],
                 )
 
-                self.model.add_constraint(
-                    Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=10
-                )
+                if self.require_range_residual:
+                    self.model.add_constraint(
+                        Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=10
+                    )
 
             # target range problem
             # fixed vehicle (design GTOW) but variable actual GTOW for off-design mission range
