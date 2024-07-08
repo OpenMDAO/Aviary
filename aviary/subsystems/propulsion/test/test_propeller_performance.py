@@ -433,6 +433,43 @@ class PropellerPerformanceTest(unittest.TestCase):
         )
         assert_check_partials(partial_data, atol=5e-4, rtol=1e-4)
 
+    def test_case_15_16_17(self):
+        # case 15, 16, 17, to test propeller map
+        prob = self.prob
+        options = self.options
+
+        options.set_val(Aircraft.Engine.COMPUTE_PROPELLER_INSTALLATION_LOSS,
+                        val=False, units='unitless')
+        options.set_val(Aircraft.Engine.USE_PROPELLER_MAP,
+                        val=True, units='unitless')
+        prop_file_path = 'models/propellers/PropFan.prop'
+        options.set_val(Aircraft.Engine.PROPELLER_DATA_FILE,
+                        val=prop_file_path, units='unitless')
+        options.set_val(Aircraft.Engine.INTERPOLATION_METHOD,
+                        val='slinear', units='unitless')
+
+        prob.setup(force_alloc_complex=True)
+        prob.set_val('install_loss_factor', [0.0, 0.05, 0.05], units="unitless")
+        prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 12.0, units="ft")
+        prob.set_val(Dynamic.Mission.ALTITUDE, [10000.0, 10000.0, 0.0], units="ft")
+        prob.set_val(Dynamic.Mission.VELOCITY, [200.0, 200.0, 50.0], units="knot")
+        prob.set_val(Dynamic.Mission.SHAFT_POWER, [1000.0, 1000.0, 1250.0], units="hp")
+        prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED_MAX, 769.70, units="ft/s")
+
+        prob.run_model()
+        self.compare_results(case_idx_begin=15, case_idx_end=17)
+
+        partial_data = prob.check_partials(
+            out_stream=None,
+            compact_print=True,
+            show_only_incorrect=True,
+            form='central', method="fd",
+            minimum_step=1e-12,
+            abs_err_tol=5.0E-4,
+            rel_err_tol=5.0E-5,
+            includes=["*selectedMach*"])
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
 
 class OutMachsTest(unittest.TestCase):
     def test_helical_mach(self):
