@@ -44,8 +44,6 @@ class PropellerMap(om.ExplicitComponent):
                  data: NamedValues = None):
         super().__init__()
 
-        # copy of raw data read from data_file or memory, never modified or used outside PropellerMap
-        self._original_data = {key: np.array([]) for key in PropellerModelVariables}
         # working copy of propeller performance data, is modified during data pre-processing
         self.data = {key: np.array([]) for key in PropellerModelVariables}
 
@@ -84,18 +82,11 @@ class PropellerMap(om.ExplicitComponent):
                     warnings.warn(
                         f'{message}: header <{key}> was not recognized, and will be skipped')
 
-            # save all data in self._original_data, including skipped variables
-            self._original_data[key] = val
+            self.data[key] = val
 
         if not self.propeller_variables:
             raise UserWarning(
                 f'No valid propeller variables found in data for {message}')
-
-        # Copy data from original data (never modified) to working data (changed through
-        #    sorting, generating missing data, etc.)
-        # self.data contains all keys in PropellerModelVariables
-        for key in self.data:
-            self.data[key] = self._original_data[key]
 
     def read_and_set_mach_type(self, data_file):
         # sample header:
