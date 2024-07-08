@@ -1,5 +1,5 @@
 import os, shutil, subprocess, json
-import importlib.util
+import importlib.util # used for opening existing phase info file
 import numpy as np
 
 import tkinter as tk # base tkinter
@@ -13,8 +13,7 @@ from matplotlib.backend_bases import MouseButton
 # TODO: Add ability to change units, phase info specifies units and aviary can handle these unit changes.
 #       Makes sense to allow unit changes in GUI based on user preference.
 #       Possible unit changes: Alt -> ft, m, mi, km, nmi; Time -> min, s, hr; Mach -> none
-# TODO: tooltip/another format for displaying climb/descent rates -> useful for verifying profile
-       
+
 class VerticalScrolledFrame(tk.Frame):
     """A pure Tkinter scrollable frame that actually works!
     * Use the 'interior' attribute to place widgets inside the scrollable frame.
@@ -66,6 +65,7 @@ class VerticalScrolledFrame(tk.Frame):
 class AviaryMissionEditor(tk.Tk):
     def __init__(self):
         super().__init__()
+        self.units = [{"m":1.0,"km":1e3,"ft":0.3048,"mi":1609.34,"nmi":1852},{"s":1.0,"min":60.0,"hr":3600.0}]
         self.theme_toggle = True # switches between True/False to toggle theme setting
         self.theme = "light"
         self.pallete = {"light":{'background_primary':'#ffffff',
@@ -102,7 +102,9 @@ class AviaryMissionEditor(tk.Tk):
         # tkinter size string format:  widthxheight+x+y ;  x,y are location
         default_win_size = (900,500) # CHANGE THIS TO AFFECT DEFAULT SIZE
         window_geometry = f"{default_win_size[0]}x{default_win_size[1]}+10+10" 
+        self.store_settings = tk.BooleanVar() # tracks if user wants to store settings or not
         if os.path.exists(self.persist_filename):
+            self.store_settings.set(True) # a file will only exist if at a previous point user wanted to store settings
             with open(self.persist_filename,"r") as fp:
                 persist_settings = json.load(fp)
                 window_geometry = persist_settings['window_geometry']
@@ -772,8 +774,9 @@ class AviaryMissionEditor(tk.Tk):
                              ["separator"],
                              ["command","Exit",self.close_window]],
                     "Edit":[["command","Axes Limits",self.change_axes_popup],
-                            ["command","Units",self.temporary_notice],
-                            ["command","Rounding",self.temporary_notice]],
+                            ["command","Units",self.change_units],
+                            ["command","Rounding",self.temporary_notice],
+                            ["checkbutton","Store Settings?",self.remind_store_settings,self.store_settings]],
                     "View":[["checkbutton","Optimize Phase",self.toggle_optimize_view,self.show_optimize],
                             ["checkbutton","Phase Slopes",self.toggle_phase_slope,self.show_phase_slope],
                             ["command","Advanced Options",self.advanced_options_popup]],
@@ -809,8 +812,11 @@ class AviaryMissionEditor(tk.Tk):
         last_geometry = self.winfo_geometry()
         last_theme = not self.theme_toggle
         self.destroy()
-        with open(self.persist_filename,"w") as fp:
-            json.dump({'window_geometry':last_geometry,'theme_toggle':last_theme},fp)
+        if self.store_settings.get(): # if user wants to store settings
+            with open(self.persist_filename,"w") as fp:
+                json.dump({'window_geometry':last_geometry,'theme_toggle':last_theme},fp)
+        elif os.path.exists(self.persist_filename): # if user doesn't want to store settings and file exists
+            os.remove(self.persist_filename) # remove file
 
     def open_phase_info(self):
         """Opens a dialog box to select a .py file with a phase info dict. File must contain a dict called phase_info. 
@@ -924,14 +930,48 @@ class AviaryMissionEditor(tk.Tk):
 
     def show_instructions(self):
         """Shows a messagebox with instructions to use this utility."""
-        message = "This tool can be used to design a mission which can be used by Aviary for modelling "+\
-                  "and optimization.\n\nTo begin, start by adding points to the Altitude Plot, Mach Plot, "+\
-                  "or the table on the right.\n\nPoints can be edited by dragging points on the plot or "+\
-                  "editing the table values. Points can be deleted with the 'X' button adjacent to each "+\
-                  "point on the table.\n\nUse 'Edit'->'Axes Limits' to change the axes limits.\n\nUse "+\
-                  "'View'->'Optimize Phase' to add the option to optimize any mission phase.\n\nUse 'View'"+\
-                  "->'Advanced Options' to edit additional options related to the mission and optimization."
+        message = "This tool can be used to design a mission which can be used by Aviary for modelling and optimization.\n\n"+\
+                  "To begin, start by adding points to the Altitude Plot, Mach Plot, or the table on the right.\n\n"+\
+                  "Points can be edited by dragging points on the plot or editing the table values. Points can be deleted "+\
+                  "with the 'X' button adjacent to each point on the table.\n\n"+\
+                  "Use 'Edit'->'Axes Limits' to change the axes limits.\n\n"+\
+                  "Use 'View'->'Optimize Phase' to add the option to optimize any mission phase.\n\n"+\
+                  "Use 'View'->'Phase Slopes' to toggle climb/descent rate information on the plots.\n\n"+\
+                  "Use 'View'->'Advanced Options' to edit additional options related to the mission and optimization.\n\n"+\
+                  "If you would like to save window size, location, and theme information for subsequent runs, toggle 'Edit'->'Store Settings?'"
         messagebox.showinfo(title="Mission Design Instructions",message=message)        
+
+    def remind_store_settings(self):
+        status = "be" if self.store_settings.get() else "not be"
+        messagebox.showinfo(title="Store Settings",message=f"Settings related to window location, size, and theme will {status} stored!")
+
+    def change_units(self):
+        popup,content_frame,buttons = self.generic_popup(pop_wid = 300, pop_hei=150, pop_title="Change Units",
+                                           buttons_text=["apply","reset","cancel"])
+        popup.protocol("WM_DELETE_WINDOW",func=lambda:[self.close_popup()])
+        for i in range(2): content_frame.columnconfigure(i,weight=1)
+
+        def set_var(row):
+            new_unit = unit_combo.get()
+            current_units[row] = new_unit
+            print(self.data_info)
+        current_units = [self.data_info["xunit"],*self.data_info["yunits"]]
+        labels = [self.data_info["xlabel"],*self.data_info["ylabels"]]
+        for row,(var_label,var_unit) in enumerate(zip(labels,current_units)):
+            if var_unit != "unitless":    
+                for unit_type in self.units:
+                    if var_unit in unit_type.keys(): unit_list = list(unit_type.keys())
+
+                tk.Label(content_frame,text=var_label,justify='right',
+                        background=self.pallete[self.theme]["background_primary"],
+                        foreground=self.pallete[self.theme]["foreground_primary"]).grid(
+                            row=row,column=0,sticky='e')
+                unit_combo = ttk.Combobox(content_frame,values=unit_list,state='readonly',width=10)
+                unit_combo.current(unit_list.index(var_unit))
+                unit_combo.bind("<<ComboboxSelected>>",lambda e, row=row:set_var(row))
+                unit_combo.grid(row=row,column=1,sticky='w')
+
+        # os.execv(__file__) # restart script to load new units
 
     def save_as(self):
         """Creates a file dialog that saves as a phase info. User can specify filename and location."""
@@ -964,6 +1004,12 @@ class AviaryMissionEditor(tk.Tk):
     # button hover color functions
     def on_enter(self,event): event.widget["background"] = self.pallete[self.theme]["hover"]
     def on_leave(self,event): event.widget["background"] = self.pallete[self.theme]["background_primary"]
+
+    def unit_conversion(self,value,last_unit,new_unit):
+        for unit_type in self.units:
+            if last_unit in unit_type.keys():
+                base_unit_value = unit_type[last_unit]*float(value)
+                return base_unit_value / unit_type[new_unit]
 
 def create_phase_info(times, altitudes, mach_values,
                       polynomial_order, num_segments, optimize_mach_phase_vars, 
