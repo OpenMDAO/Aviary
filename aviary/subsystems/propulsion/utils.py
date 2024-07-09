@@ -36,7 +36,7 @@ class EngineModelVariables(Enum):
     SHAFT_POWER_CORRECTED = 'shaft_power_corrected'
     RAM_DRAG = 'ram_drag'
     FUEL_FLOW = Dynamic.Mission.FUEL_FLOW_RATE
-    ELECTRIC_POWER = Dynamic.Mission.ELECTRIC_POWER_IN
+    ELECTRIC_POWER_IN = Dynamic.Mission.ELECTRIC_POWER_IN
     NOX_RATE = Dynamic.Mission.NOX_RATE
     TEMPERATURE_T4 = Dynamic.Mission.TEMPERATURE_T4
     TORQUE = Dynamic.Mission.TORQUE
@@ -55,7 +55,7 @@ default_units = {
     EngineModelVariables.SHAFT_POWER_CORRECTED: 'hp',
     EngineModelVariables.RAM_DRAG: 'lbf',
     EngineModelVariables.FUEL_FLOW: 'lb/h',
-    EngineModelVariables.ELECTRIC_POWER: 'kW',
+    EngineModelVariables.ELECTRIC_POWER_IN: 'kW',
     EngineModelVariables.NOX_RATE: 'lb/h',
     EngineModelVariables.TEMPERATURE_T4: 'degR',
     EngineModelVariables.TORQUE: 'ft*lbf',
