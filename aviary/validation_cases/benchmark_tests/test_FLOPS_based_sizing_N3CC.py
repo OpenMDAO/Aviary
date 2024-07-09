@@ -382,10 +382,9 @@ def run_trajectory(sim=True):
             reg_objective=0.0,
             fuel_mass={"units": "lbm", "shape": 1},
         ),
+        promotes_inputs=[('fuel_mass', Mission.Design.FUEL_MASS)],
         promotes_outputs=['reg_objective']
     )
-    # connect the final mass from cruise into the objective
-    prob.model.connect(Mission.Design.FUEL_MASS, "regularization.fuel_mass")
 
     prob.model.add_objective('reg_objective', ref=1)
 
