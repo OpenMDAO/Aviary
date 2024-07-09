@@ -1768,7 +1768,8 @@ class AviaryProblem(om.Problem):
             elif self.problem_type is ProblemType.FALLOUT:
                 print('No design variables for Fallout missions')
 
-            if (self.mission_method is TWO_DEGREES_OF_FREEDOM) and (self.analysis_scheme is AnalysisScheme.COLLOCATION):
+            if (self.mission_method is TWO_DEGREES_OF_FREEDOM) and \
+                    (self.analysis_scheme is AnalysisScheme.COLLOCATION):
                 # problem formulation to make the trajectory work
                 self.model.add_design_var(Mission.Takeoff.ASCENT_T_INTIIAL,
                                           lower=0, upper=100, ref=30.0)
