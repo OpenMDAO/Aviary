@@ -1768,21 +1768,21 @@ class AviaryProblem(om.Problem):
             elif self.problem_type is ProblemType.FALLOUT:
                 print('No design variables for Fallout missions')
 
-            if (self.mission_method is TWO_DEGREES_OF_FREEDOM) and \
-                    (self.analysis_scheme is AnalysisScheme.COLLOCATION):
-                # problem formulation to make the trajectory work
-                self.model.add_design_var(Mission.Takeoff.ASCENT_T_INTIIAL,
-                                          lower=0, upper=100, ref=30.0)
-                self.model.add_design_var(Mission.Takeoff.ASCENT_DURATION,
-                                          lower=1, upper=1000, ref=10.)
-                self.model.add_design_var("tau_gear", lower=0.01,
-                                          upper=1.0, units="unitless", ref=1)
-                self.model.add_design_var("tau_flaps", lower=0.01,
-                                          upper=1.0, units="unitless", ref=1)
-                self.model.add_constraint(
-                    "h_fit.h_init_gear", equals=50.0, units="ft", ref=50.0)
-                self.model.add_constraint("h_fit.h_init_flaps",
-                                          equals=400.0, units="ft", ref=400.0)
+            if self.mission_method is TWO_DEGREES_OF_FREEDOM:
+                if self.analysis_scheme is AnalysisScheme.COLLOCATION:
+                    # problem formulation to make the trajectory work
+                    self.model.add_design_var(Mission.Takeoff.ASCENT_T_INTIIAL,
+                                              lower=0, upper=100, ref=30.0)
+                    self.model.add_design_var(Mission.Takeoff.ASCENT_DURATION,
+                                              lower=1, upper=1000, ref=10.)
+                    self.model.add_design_var("tau_gear", lower=0.01,
+                                              upper=1.0, units="unitless", ref=1)
+                    self.model.add_design_var("tau_flaps", lower=0.01,
+                                              upper=1.0, units="unitless", ref=1)
+                    self.model.add_constraint(
+                        "h_fit.h_init_gear", equals=50.0, units="ft", ref=50.0)
+                    self.model.add_constraint("h_fit.h_init_flaps",
+                                              equals=400.0, units="ft", ref=400.0)
 
     def add_objective(self, objective_type=None, ref=None):
         """
