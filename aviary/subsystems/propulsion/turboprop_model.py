@@ -56,21 +56,12 @@ class TurbopropModel(EngineModel):
                 name=name + '_engine_deck',
                 options=options,
                 data=data,
-                required_variables={EngineModelVariables.ALTITUDE,
-                                    EngineModelVariables.MACH,
-                                    EngineModelVariables.THROTTLE}
+                required_variables={
+                    EngineModelVariables.ALTITUDE,
+                    EngineModelVariables.MACH,
+                    EngineModelVariables.THROTTLE,
+                },
             )
-            # Manually check if shaft horsepower was provided (can't flag as required
-            # variable since either version is acceptable)
-            # if not self.shaft_power_model.use_shaft_power:
-            # repurpose custom error message code from EngineDeck
-            # custom error messages depending on data type
-            # if self.shaft_power_model.read_from_file:
-            #     message = f'<{self.shaft_power_model.get_val(Aircraft.Engine.DATA_FILE)}>'
-            # else:
-            #     message = f'EngineDeck for <{self.name}>'
-            # raise UserWarning(
-            #     f'No shaft horsepower variable was provided in {message}')
 
     # BUG if using both custom subsystems that happen to share a kwarg but need different values, this breaks
     def build_pre_mission(self, aviary_inputs, **kwargs) -> om.Group:
@@ -181,9 +172,6 @@ class TurbopropMission(om.Group):
                 shp_model.name,
                 subsys=shp_model_mission,
                 promotes_inputs=['*'],
-                # promotes_outputs=['*'],
-                # (Dynamic.Mission.THRUST, 'turboshaft_thrust'),
-                # (Dynamic.Mission.THRUST_MAX, 'turboshaft_thrust_max')]
             )
 
         # Gearbox can go here
