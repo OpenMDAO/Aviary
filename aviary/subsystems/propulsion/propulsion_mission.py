@@ -97,21 +97,33 @@ class PropulsionMission(om.Group):
         # mux component to vectorize individual engine outputs into 2d arrays
         perf_mux = om.MuxComp(vec_size=num_engine_type)
         # add each engine data variable to mux component
-        perf_mux.add_var(Dynamic.Mission.THRUST, shape=(nn,), axis=1, units='lbf')
-        perf_mux.add_var(Dynamic.Mission.THRUST_MAX, shape=(nn,), axis=1, units='lbf')
         perf_mux.add_var(
-            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE, shape=(nn,), axis=1, units='lbm/h'
+            Dynamic.Mission.THRUST, val=0, shape=(nn,), axis=1, units='lbf'
         )
         perf_mux.add_var(
-            Dynamic.Mission.ELECTRIC_POWER_IN, shape=(nn,), axis=1, units='kW'
+            Dynamic.Mission.THRUST_MAX, val=0, shape=(nn,), axis=1, units='lbf'
         )
-        perf_mux.add_var(Dynamic.Mission.NOX_RATE, shape=(nn,), axis=1, units='lb/h')
         perf_mux.add_var(
-            Dynamic.Mission.TEMPERATURE_T4, shape=(nn,), axis=1, units='degR'
+            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE,
+            val=0,
+            shape=(nn,),
+            axis=1,
+            units='lbm/h',
         )
-        perf_mux.add_var(Dynamic.Mission.SHAFT_POWER, shape=(nn,), axis=1, units='hp')
         perf_mux.add_var(
-            Dynamic.Mission.SHAFT_POWER_MAX, shape=(nn,), axis=1, units='hp'
+            Dynamic.Mission.ELECTRIC_POWER_IN, val=0, shape=(nn,), axis=1, units='kW'
+        )
+        perf_mux.add_var(
+            Dynamic.Mission.NOX_RATE, val=0, shape=(nn,), axis=1, units='lb/h'
+        )
+        perf_mux.add_var(
+            Dynamic.Mission.TEMPERATURE_T4, val=0, shape=(nn,), axis=1, units='degR'
+        )
+        perf_mux.add_var(
+            Dynamic.Mission.SHAFT_POWER, val=0, shape=(nn,), axis=1, units='hp'
+        )
+        perf_mux.add_var(
+            Dynamic.Mission.SHAFT_POWER_MAX, val=0, shape=(nn,), axis=1, units='hp'
         )
         # perf_mux.add_var(
         #     'exit_area_unscaled',

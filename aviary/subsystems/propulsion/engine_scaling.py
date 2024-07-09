@@ -23,7 +23,9 @@ NOX_RATE = EngineModelVariables.NOX_RATE
 TEMPERATURE = EngineModelVariables.TEMPERATURE_T4
 # EXIT_AREA = EngineModelVariables.EXIT_AREA
 
+# these variables are not outputs or are variables that should not get scaled
 skip_variables = [MACH, ALTITUDE, THROTTLE, HYBRID_THROTTLE, TEMPERATURE]
+# these variables have a 'max' counterpart that should be added if they are present
 max_variables = {
     THRUST: Dynamic.Mission.THRUST_MAX,
     SHAFT_POWER: Dynamic.Mission.SHAFT_POWER_MAX,
@@ -62,6 +64,8 @@ class EngineScaling(om.ExplicitComponent):
         self.add_input(Dynamic.Mission.MACH, val=np.zeros(nn),
                        desc='current Mach number', units='unitless')
 
+        # loop through all variables, special handling for fuel flow to output negative version
+        # add outputs for 'max' counterpart of variables that have them
         for variable in engine_variables:
             if variable not in skip_variables:
                 self.add_input(
@@ -116,8 +120,6 @@ class EngineScaling(om.ExplicitComponent):
         engine_scale_factor = inputs[Aircraft.Engine.SCALE_FACTOR]
         mach_number = inputs[Dynamic.Mission.MACH]
 
-        independent_variables = [MACH, ALTITUDE, THROTTLE, HYBRID_THROTTLE]
-
         scale_factor = 1
         fuel_flow_scale_factor = np.ones(nn, dtype=engine_scale_factor.dtype)
 
@@ -142,8 +144,10 @@ class EngineScaling(om.ExplicitComponent):
 
             scale_factor = engine_scale_factor
 
+        # loop through all variables, singling out fuel flow to have special scaling
+        # compute 'max' counterpart of variables that have them
         for variable in engine_variables:
-            if variable not in independent_variables:
+            if variable not in skip_variables:
                 if variable is FUEL_FLOW:
                     outputs[Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE] = (
                         -(inputs['fuel_flow_rate_unscaled'] * fuel_flow_scale_factor)
@@ -153,6 +157,11 @@ class EngineScaling(om.ExplicitComponent):
                     outputs[variable.value] = (
                         inputs[variable.value + '_unscaled'] * scale_factor
                     )
+
+                    if variable in max_variables:
+                        outputs[variable.value + '_max'] = (
+                            inputs[variable.value + '_max_unscaled'] * scale_factor
+                        )
 
     def setup_partials(self):
         nn = self.options['num_nodes']
@@ -195,6 +204,22 @@ class EngineScaling(om.ExplicitComponent):
                         val=1.0,
                     )
 
+                    if variable in max_variables:
+                        self.declare_partials(
+                            variable.value + '_max',
+                            Aircraft.Engine.SCALE_FACTOR,
+                            rows=r,
+                            cols=c,
+                            val=1.0,
+                        )
+                        self.declare_partials(
+                            variable.value + '_max',
+                            variable.value + '_max_unscaled',
+                            rows=r,
+                            cols=r,
+                            val=1.0,
+                        )
+
     def compute_partials(self, inputs, J):
         nn = self.options['num_nodes']
         options: AviaryValues = self.options['aviary_options']
@@ -207,8 +232,6 @@ class EngineScaling(om.ExplicitComponent):
         constant_fuel_term = options.get_val(
             Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM, units='unitless')
         linear_fuel_term = options.get_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM)
-        # constant_fuel_flow = options.get_val(
-        #     Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION, units='lbm/h')
         mission_fuel_scaler = options.get_val(Mission.Summary.FUEL_FLOW_SCALER)
 
         mach_number = inputs[Dynamic.Mission.MACH]
@@ -270,3 +293,11 @@ class EngineScaling(om.ExplicitComponent):
                     J[variable.value, Aircraft.Engine.SCALE_FACTOR] = (
                         inputs[variable.value + '_unscaled'] * deriv_factor
                     )
+
+                    if variable in max_variables:
+                        J[variable.value + '_max', variable.value + '_max_unscaled'] = (
+                            scale_factor
+                        )
+                        J[variable.value + '_max', Aircraft.Engine.SCALE_FACTOR] = (
+                            inputs[variable.value + '_max_unscaled'] * deriv_factor
+                        )

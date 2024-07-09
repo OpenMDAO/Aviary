@@ -779,6 +779,7 @@ class EngineDeck(EngineModel):
 
         # add inputs and outputs to interpolator
         independent_variables = [MACH, ALTITUDE, THROTTLE, HYBRID_THROTTLE]
+        no_scale_variables = [TEMPERATURE]
         for variable in self.engine_variables:
             if variable in independent_variables:
                 engine.add_input(
@@ -787,8 +788,13 @@ class EngineDeck(EngineModel):
                     units=default_units[variable],
                 )
             else:
+                # don't append 'unscaled' to variables that will not be passed to scaling
+                if variable in no_scale_variables:
+                    var_name = variable.value
+                else:
+                    var_name = variable.value + '_unscaled'
                 engine.add_output(
-                    variable.value + '_unscaled',
+                    var_name,
                     self.data[variable],
                     units=default_units[variable],
                 )
@@ -925,16 +931,6 @@ class EngineDeck(EngineModel):
                                              units=units[SHAFT_POWER_CORRECTED],
                                              desc='maximum corrected shaft power that can currently be produced')
 
-        # else:
-        # If engine does not use thrust, a separate component for max thrust is not
-        # necessary.
-        # Add unscaled max thrust as output of interpolator, which will have a
-        # default value of zero at every flight condition
-        # engine.add_output('thrust_net_max_unscaled',
-        #                   self.data[THRUST],
-        #                   units=units[THRUST],
-        #                   desc='Current max net thrust produced (unscaled)')
-
         # add created subsystems to engine_group
         outputs = []
         if self.use_t4:
@@ -992,18 +988,24 @@ class EngineDeck(EngineModel):
                 engine_group.connect('max_interpolation.shaft_power_corrected_max_unscaled',
                                      'uncorrect_max_shaft_power.corrected_data')
 
+        engine_outputs = self.engine_variables.copy()
+        if SHAFT_POWER_CORRECTED in engine_outputs:
+            shp_units = engine_outputs.pop(SHAFT_POWER_CORRECTED)
+            engine_outputs[SHAFT_POWER] = shp_units
+
         engine_group.add_subsystem(
             'engine_scaling',
             subsys=EngineScaling(
                 num_nodes=num_nodes,
                 aviary_options=self.options,
-                engine_variables=self.engine_variables,
+                engine_variables=engine_outputs,
             ),
             promotes_inputs=[Aircraft.Engine.SCALE_FACTOR, Dynamic.Mission.MACH],
             promotes_outputs=['*'],
         )
 
         # manually connect unscaled variables, since we do not want them promoted
+        # skip variables that are not outputs of scaling component
         skipped_variables = [
             MACH,
             ALTITUDE,

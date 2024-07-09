@@ -49,11 +49,11 @@ class EngineScalingTest(unittest.TestCase):
         preprocess_propulsion(options, [engine1])
 
         options.set_val(Mission.Summary.FUEL_FLOW_SCALER, 10.)
-        engine_variables = [
-            EngineModelVariables.THRUST,
-            EngineModelVariables.FUEL_FLOW,
-            EngineModelVariables.NOX_RATE,
-        ]
+        engine_variables = {
+            EngineModelVariables.THRUST: 'lbf',
+            EngineModelVariables.FUEL_FLOW: 'lbm/h',
+            EngineModelVariables.NOX_RATE: 'lbm/h',
+        }
 
         self.prob.model.add_subsystem(
             'engine',
