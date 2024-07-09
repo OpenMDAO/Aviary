@@ -2,7 +2,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.subsystems.propulsion.utils import EngineModelVariables, default_units
+from aviary.subsystems.propulsion.utils import EngineModelVariables
 from aviary.variable_info.functions import add_aviary_input
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
@@ -23,7 +23,11 @@ NOX_RATE = EngineModelVariables.NOX_RATE
 TEMPERATURE = EngineModelVariables.TEMPERATURE_T4
 # EXIT_AREA = EngineModelVariables.EXIT_AREA
 
-independent_variables = [MACH, ALTITUDE, THROTTLE, HYBRID_THROTTLE]
+skip_variables = [MACH, ALTITUDE, THROTTLE, HYBRID_THROTTLE, TEMPERATURE]
+max_variables = {
+    THRUST: Dynamic.Mission.THRUST_MAX,
+    SHAFT_POWER: Dynamic.Mission.SHAFT_POWER_MAX,
+}
 
 
 class EngineScaling(om.ExplicitComponent):
@@ -44,8 +48,8 @@ class EngineScaling(om.ExplicitComponent):
 
         self.options.declare(
             'engine_variables',
-            types=list,
-            desc='list of variables to be scaled for this engine',
+            types=dict,
+            desc='dict of variables to be scaled for this engine with units',
         )
 
     def setup(self):
@@ -59,21 +63,37 @@ class EngineScaling(om.ExplicitComponent):
                        desc='current Mach number', units='unitless')
 
         for variable in engine_variables:
-            if variable not in independent_variables:
+            if variable not in skip_variables:
                 self.add_input(
                     variable.value + '_unscaled',
                     val=np.zeros(nn),
-                    units=default_units[variable],
+                    units=engine_variables[variable],
                 )
+
                 if variable is FUEL_FLOW:
                     self.add_output(
                         Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE,
                         val=np.zeros(nn),
-                        units=default_units[variable],
+                        units=engine_variables[variable],
                     )
                 else:
                     self.add_output(
-                        variable.value, val=np.zeros(nn), units=default_units[variable]
+                        variable.value,
+                        val=np.zeros(nn),
+                        units=engine_variables[variable],
+                    )
+
+                if variable in max_variables:
+                    self.add_input(
+                        max_variables[variable] + '_unscaled',
+                        val=np.zeros(nn),
+                        units=engine_variables[variable],
+                    )
+
+                    self.add_output(
+                        max_variables[variable],
+                        val=np.zeros(nn),
+                        units=engine_variables[variable],
                     )
 
     def compute(self, inputs, outputs):
@@ -142,10 +162,8 @@ class EngineScaling(om.ExplicitComponent):
         r = np.arange(nn)
         c = np.tile(0, nn)
 
-        independent_variables = [MACH, ALTITUDE, THROTTLE, HYBRID_THROTTLE]
-
         for variable in engine_variables:
-            if variable not in independent_variables:
+            if variable not in skip_variables:
                 if variable is FUEL_FLOW:
                     self.declare_partials(
                         Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE,
@@ -237,7 +255,7 @@ class EngineScaling(om.ExplicitComponent):
             deriv_factor = 1.0
 
         for variable in engine_variables:
-            if variable not in independent_variables:
+            if variable not in skip_variables:
                 if variable is FUEL_FLOW:
                     J[
                         Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE,

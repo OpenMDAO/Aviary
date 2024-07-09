@@ -792,70 +792,6 @@ class EngineDeck(EngineModel):
                     self.data[variable],
                     units=default_units[variable],
                 )
-        # add inputs and outputs to interpolator
-        # engine.add_input(Dynamic.Mission.MACH,
-        #                  self.data[MACH],
-        #                  units='unitless',
-        #                  desc='Current flight Mach number')
-        # engine.add_input(Dynamic.Mission.ALTITUDE,
-        #                  self.data[ALTITUDE],
-        #                  units=units[ALTITUDE],
-        #                  desc='Current flight altitude')
-        # engine.add_input(Dynamic.Mission.THROTTLE,
-        #                  self.data[THROTTLE],
-        #                  units='unitless',
-        #                  desc='Current engine throttle')
-        # if self.use_hybrid_throttle:
-        #     engine.add_input(Dynamic.Mission.HYBRID_THROTTLE,
-        #                      self.data[HYBRID_THROTTLE],
-        #                      units='unitless',
-        #                      desc='Current engine hybrid throttle')
-        # engine.add_output('thrust_net_unscaled',
-        #                   self.data[THRUST],
-        #                   units=units[THRUST],
-        #                   desc='Current net thrust produced (unscaled)')
-        # engine.add_output('fuel_flow_rate_unscaled',
-        #                   self.data[FUEL_FLOW],
-        #                   units=units[FUEL_FLOW],
-        #                   desc='Current fuel flow rate (unscaled)')
-        # engine.add_output('electric_power_in_unscaled',
-        #                   self.data[ELECTRIC_POWER],
-        #                   units=units[ELECTRIC_POWER],
-        #                   desc='Current electric energy rate (unscaled)')
-        # engine.add_output('nox_rate_unscaled',
-        #                   self.data[NOX_RATE],
-        #                   units=units[NOX_RATE],
-        #                   desc='Current NOx emission rate (unscaled)')
-        # Shaft power and temperature are not summed to system-level totals, so their
-        # inclusion in outputs is optional
-        # Summation of shaft power can happen but is not currently implemented
-        # if self.use_shaft_power:
-        #     if SHAFT_POWER in self.engine_variables:
-        #         shaft_power_data = self.data[SHAFT_POWER]
-        #         shaft_power_units = units[SHAFT_POWER]
-        #         desc = 'Current shaft power (unscaled)'
-        #         engine.add_output('shaft_power_unscaled',
-        #                           shaft_power_data,
-        #                           units=shaft_power_units,
-        #                           desc=desc)
-        #     else:
-        #         shaft_power_data = self.data[SHAFT_POWER_CORRECTED]
-        #         shaft_power_units = units[SHAFT_POWER_CORRECTED]
-        #         desc = 'Current corrected shaft power (unscaled)'
-        #         engine.add_output('shaft_power_corrected_unscaled',
-        #                           shaft_power_data,
-        #                           units=shaft_power_units,
-        #                           desc=desc)
-        # if self.use_t4:
-        #     engine.add_output(Dynamic.Mission.TEMPERATURE_T4,
-        #                       self.data[TEMPERATURE],
-        #                       units=units[TEMPERATURE],
-        #                       desc='Current turbine exit temperature')
-        # if self.use_exit_area:
-        # engine.add_output('exit_area_unscaled',
-        #                   self.data[EXIT_AREA],
-        #                   units='ft**2',
-        #                   desc='Current exit area (unscaled)')
 
         return engine
 
@@ -989,15 +925,15 @@ class EngineDeck(EngineModel):
                                              units=units[SHAFT_POWER_CORRECTED],
                                              desc='maximum corrected shaft power that can currently be produced')
 
-        else:
-            # If engine does not use thrust, a separate component for max thrust is not
-            # necessary.
-            # Add unscaled max thrust as output of interpolator, which will have a
-            # default value of zero at every flight condition
-            engine.add_output('thrust_net_max_unscaled',
-                              self.data[THRUST],
-                              units=units[THRUST],
-                              desc='Current max net thrust produced (unscaled)')
+        # else:
+        # If engine does not use thrust, a separate component for max thrust is not
+        # necessary.
+        # Add unscaled max thrust as output of interpolator, which will have a
+        # default value of zero at every flight condition
+        # engine.add_output('thrust_net_max_unscaled',
+        #                   self.data[THRUST],
+        #                   units=units[THRUST],
+        #                   desc='Current max net thrust produced (unscaled)')
 
         # add created subsystems to engine_group
         outputs = []
@@ -1056,12 +992,16 @@ class EngineDeck(EngineModel):
                 engine_group.connect('max_interpolation.shaft_power_corrected_max_unscaled',
                                      'uncorrect_max_shaft_power.corrected_data')
 
-        engine_group.add_subsystem('engine_scaling',
-                                   subsys=EngineScaling(num_nodes=num_nodes,
-                                                        aviary_options=self.options),
-                                   promotes_inputs=[
-                                       Aircraft.Engine.SCALE_FACTOR, Dynamic.Mission.MACH],
-                                   promotes_outputs=['*'])
+        engine_group.add_subsystem(
+            'engine_scaling',
+            subsys=EngineScaling(
+                num_nodes=num_nodes,
+                aviary_options=self.options,
+                engine_variables=self.engine_variables,
+            ),
+            promotes_inputs=[Aircraft.Engine.SCALE_FACTOR, Dynamic.Mission.MACH],
+            promotes_outputs=['*'],
+        )
 
         # manually connect unscaled variables, since we do not want them promoted
         skipped_variables = [
@@ -1086,18 +1026,6 @@ class EngineDeck(EngineModel):
                     'max_interpolation.' + variable.value + '_max_unscaled',
                     'engine_scaling.' + variable.value + '_max_unscaled',
                 )
-
-        # engine_group.connect('interpolation.thrust_net_unscaled',
-        #                      'engine_scaling.thrust_net_unscaled')
-        # engine_group.connect('interpolation.fuel_flow_rate_unscaled',
-        #                      'engine_scaling.fuel_flow_rate_unscaled')
-        # engine_group.connect('interpolation.electric_power_in_unscaled',
-        #                      'engine_scaling.electric_power_in_unscaled')
-        # engine_group.connect('interpolation.nox_rate_unscaled',
-        #                      'engine_scaling.nox_rate_unscaled')
-        # if self.use_thrust:
-        #     engine_group.connect(
-        #         'max_interpolation.thrust_net_max_unscaled', 'engine_scaling.thrust_net_max_unscaled')
 
         if self.use_shaft_power and SHAFT_POWER not in self.engine_variables:
             engine_group.connect(

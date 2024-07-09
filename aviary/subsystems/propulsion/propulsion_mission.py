@@ -123,53 +123,6 @@ class PropulsionMission(om.Group):
             'vectorize_performance', subsys=perf_mux, promotes_outputs=['*']
         )
 
-        # # connect engine outputs to mux component inputs
-        # for i, engine in enumerate(engine_models):
-        #     self.connect(
-        #         engine.name + '.' + Dynamic.Mission.THRUST,
-        #         'vectorize_performance.' + Dynamic.Mission.THRUST + '_' + str(i),
-        #     )
-        #     self.connect(
-        #         engine.name + '.' + Dynamic.Mission.THRUST_MAX,
-        #         'vectorize_performance.' + Dynamic.Mission.THRUST_MAX + '_' + str(i),
-        #     )
-        #     self.connect(
-        #         engine.name + '.' + Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE,
-        #         'vectorize_performance.'
-        #         + Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE
-        #         + '_'
-        #         + str(i),
-        #     )
-        #     self.connect(
-        #         engine.name + '.' + Dynamic.Mission.ELECTRIC_POWER_IN,
-        #         'vectorize_performance.'
-        #         + Dynamic.Mission.ELECTRIC_POWER_IN
-        #         + '_'
-        #         + str(i),
-        #     )
-        #     self.connect(
-        #         engine.name + '.' + Dynamic.Mission.NOX_RATE,
-        #         'vectorize_performance.' + Dynamic.Mission.NOX_RATE + '_' + str(i),
-        #     )
-
-        #     if getattr(engine, 'use_t4', False):
-        #         self.connect(
-        #             engine.name + '.' + Dynamic.Mission.TEMPERATURE_T4,
-        #             'vectorize_performance.'
-        #             + Dynamic.Mission.TEMPERATURE_T4
-        #             + '_'
-        #             + str(i),
-        #         )
-
-        #     if getattr(engine, 'use_shp', False):
-        #         self.connect(
-        #             engine.name + '.' + Dynamic.Mission.SHAFT_POWER,
-        #             'vectorize_performance.'
-        #             + Dynamic.Mission.SHAFT_POWER
-        #             + '_'
-        #             + str(i),
-        #         )
-
         self.add_subsystem(
             'propulsion_sum',
             subsys=PropulsionSum(num_nodes=nn, aviary_options=options),
