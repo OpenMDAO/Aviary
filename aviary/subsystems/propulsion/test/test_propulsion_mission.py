@@ -184,7 +184,6 @@ class PropulsionMissionTest(unittest.TestCase):
         self.prob.set_val(Aircraft.Engine.SCALE_FACTOR, [0.975], units='unitless')
 
         self.prob.run_model()
-        om.n2(self.prob)
 
         thrust = self.prob.get_val(Dynamic.Mission.THRUST_TOTAL, units='lbf')
         fuel_flow = self.prob.get_val(
@@ -215,7 +214,4 @@ class PropulsionMissionTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    # unittest.main()
-    test = PropulsionMissionTest()
-    test.setUp()
-    test.test_case_multiengine()
+    unittest.main()
