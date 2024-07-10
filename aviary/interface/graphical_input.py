@@ -644,14 +644,18 @@ class AviaryMissionEditor(tk.Tk):
     def change_axes_popup(self):
         """Creates a popup window that allows user to edit axes limits. This function is triggered
             by the menu buttons"""
-        def reset_options(old_list):
-            if len(self.data[0]) > 0:
-                for i,val_list in enumerate(self.data):
-                    old_list[i] = max(val_list)*1.2
+        def reset_options(old_list = None):
+            if not old_list:
+                if len(self.data[0]) > 0: # if resetting to bring data into view
+                    old_list = []
+                    for val_list in self.data:
+                        old_list.append(max(val_list)*1.2)
+                else:
+                    old_list = [float(item.get()) for item in self.data_info_defaults["limits"]]
             for i,(value,lim_str) in enumerate(zip(old_list,self.data_info["limits"])):
                 lim_str.set(value=self.display_rounding(value,col=i))
         
-        current_lims = [lim.get() for lim in self.data_info["limits"]]
+        current_lims = [float(lim.get()) for lim in self.data_info["limits"]]
 
         popup,content_frame,buttons = self.generic_popup(pop_wid = 300, pop_hei=100, pop_title="Axes Limits",
                                            buttons_text=["apply","reset","cancel"])
@@ -672,7 +676,7 @@ class AviaryMissionEditor(tk.Tk):
         # apply uses values in entry boxes, reset defaults to original limits, cancel uses previously set limits
         buttons["apply"].configure(command=lambda:[self.close_popup(),
                                                    self.update_axes(limits=True,refresh=True)])
-        buttons["reset"].configure(command=lambda:[self.close_popup(),reset_options(self.axes_lim_defaults),
+        buttons["reset"].configure(command=lambda:[self.close_popup(),reset_options(),
                                                    self.update_axes(limits=True,refresh=True)])
         buttons["cancel"].configure(command=lambda:[self.close_popup(),reset_options(current_lims),
                                                     self.update_axes(limits=True,refresh=True)])
@@ -906,7 +910,10 @@ class AviaryMissionEditor(tk.Tk):
                     text_position = (np.mean(xs), np.mean(ys)+y_lims[j]*0.1) # offset from line by 8% of y limit
 
                     # find slope and attach units if either unit is not unitless
-                    slope = self.display_rounding((ys[1]-ys[0])/(xs[1]-xs[0]),j+1,extra=1)
+                    try:
+                        slope = self.display_rounding((ys[1]-ys[0])/(xs[1]-xs[0]),j+1,extra=1)
+                    except ZeroDivisionError:
+                        slope = "undefined"
                     xunit,yunit = self.data_info["units"][0].get(),self.data_info["units"][j+1].get()
                     if yunit != "unitless" and xunit != "unitless":
                         slope = f"{slope} {yunit}/{xunit}"
@@ -951,12 +958,16 @@ class AviaryMissionEditor(tk.Tk):
 
     def change_units(self):
         popup,content_frame,buttons = self.generic_popup(pop_wid = 300, pop_hei=150, pop_title="Change Units",
-                                           buttons_text=["apply","reset","cancel"])
+                                           buttons_text=["apply","cancel"])
         popup.protocol("WM_DELETE_WINDOW",func=lambda:[self.close_popup()])
         for i in range(2): content_frame.columnconfigure(i,weight=1)
 
         def set_var(row):
             self.data_info["units"][row].set(unit_combos[row].get())
+
+        def reset_units_strvar():
+            for i,unit in enumerate(old_units):
+                self.data_info["units"][i].set(unit)
 
         old_units = [item.get() for item in self.data_info["units"]] # this creates a copy instead of a reference
         unit_combos = [None]*(self.num_dep_vars+1)
@@ -1001,6 +1012,7 @@ class AviaryMissionEditor(tk.Tk):
                 self.toggle_phase_slope()
 
         buttons["apply"].configure(command=lambda:[self.close_popup(),apply_units()])
+        buttons["cancel"].configure(command=lambda:[self.close_popup(),reset_units_strvar()])
 
     def save_as(self):
         """Creates a file dialog that saves as a phase info. User can specify filename and location."""
