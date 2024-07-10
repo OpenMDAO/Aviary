@@ -4,9 +4,34 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
-from aviary.subsystems.aerodynamics.gasp_based.common import (CLFromLift,
+from aviary.subsystems.aerodynamics.gasp_based.common import (AeroForces, CLFromLift,
                                                               TanhRampComp,
                                                               TimeRamp)
+from aviary.variable_info.variables import Aircraft, Dynamic
+
+
+class TestAeroForces(unittest.TestCase):
+    def testAeroForces(self):
+        nn = 3
+        af = AeroForces(num_nodes=nn)
+        prob = om.Problem()
+        prob.model.add_subsystem("comp", af, promotes=["*"])
+        prob.setup(force_alloc_complex=True)
+
+        prob.set_val("CL", 1.0)
+        prob.set_val("CD", 1.0)
+        prob.set_val(Dynamic.Mission.DYNAMIC_PRESSURE, 1, units="psf")
+        prob.set_val(Aircraft.Wing.AREA, 1370.3, units="ft**2")
+
+        prob.run_model()
+
+        lift = prob.get_val(Dynamic.Mission.LIFT)
+        drag = prob.get_val(Dynamic.Mission.DRAG)
+        assert_near_equal(lift, 0)
+        assert_near_equal(drag, 0)
+
+        partial_data = prob.check_partials(method="cs", out_stream=None)
+        assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
 
 class TestTimeRamp(unittest.TestCase):
