@@ -11,11 +11,9 @@ from aviary.interface.methods_for_level1 import run_aviary
 
 @use_tempdirs
 class AviaryMissionTimeseries(unittest.TestCase):
-    def setUp(self):
-        om.clear_reports()
-
     @set_env_vars(TESTFLO_RUNNING='0', OPENMDAO_REPORTS='timeseries_csv')
     def test_timeseries_report(self):
+        om.clear_reports()
         local_phase_info = deepcopy(phase_info)
         self.prob = run_aviary('models/test_aircraft/aircraft_for_bench_FwFm.csv',
                                local_phase_info,
