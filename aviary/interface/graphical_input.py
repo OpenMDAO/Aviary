@@ -139,7 +139,7 @@ class AviaryMissionEditor(tk.Tk):
         for key in ["units","limits","rounding"]:
             self.data_info[key] = [tk.StringVar(value=item) for item in self.data_info[key]]
         
-        self.data = [[0] for _ in range(self.num_dep_vars + 1)]
+        self.data = [[0],[0],[0.3]] # starting mach is hardcoded as 0.3 b/c Aviary models are not suitable for very low mach
         self.phase_order_default = 3
         self.phase_order_list = []
 
@@ -153,12 +153,19 @@ class AviaryMissionEditor(tk.Tk):
         
         self.theme_button = tk.Button(self,
                                       image=self.pallete[self.theme]["image"],
-                                      bg=self.pallete[self.theme]["background_primary"])
+                                      bg=self.pallete[self.theme]["background_primary"],font=('Arial',8))
         self.theme_button.image = self.pallete[self.theme]["image"] # to prevent lose of image reference from garbage collector
         self.theme_button.bind("<Button-1>",lambda e:self.update_theme(toggle=True))
         self.theme_button.bind("<Enter>",func=self.on_enter)
         self.theme_button.bind("<Leave>",func=self.on_leave)
-        self.theme_button.place(anchor='nw',relx=0,rely=0)
+        self.theme_button.place(anchor='sw',relx=0,rely=1.0)
+
+        self.output_phase_info_button = tk.Button(self,text="Output Phase Info",command=self.save,
+                                                  bg=self.pallete[self.theme]["background_primary"],
+                                                  fg=self.pallete[self.theme]["foreground_primary"])
+        self.output_phase_info_button.bind("<Enter>",func=self.on_enter)
+        self.output_phase_info_button.bind("<Leave>",func=self.on_leave)
+        self.output_phase_info_button.place(relx=0,rely=0,anchor='nw')
 
         self.save_option_defaults()
 
@@ -277,6 +284,8 @@ class AviaryMissionEditor(tk.Tk):
         self.theme_button.configure(image=self.pallete[self.theme]["image"],
                                       bg=self.pallete[self.theme]["background_primary"])
         self.theme_button.image = self.pallete[self.theme]["image"]
+        self.output_phase_info_button.configure(bg = self.pallete[self.theme]["background_primary"],
+                                                fg = self.pallete[self.theme]["foreground_primary"])
         
 # ----------------------
 # Plot related functions
@@ -786,9 +795,9 @@ class AviaryMissionEditor(tk.Tk):
     def create_menu(self):
         """Creates menu. Structure is specified as a dictionary, can add commands, 
         separators, and checkbuttons."""
-        structure = {"File":[["command","Open",self.open_phase_info],
-                             ["command","Save",self.save],
-                             ["command","Save as",self.save_as],
+        structure = {"File":[["command","Open Phase Info..",self.open_phase_info],
+                             ["command","Save Phase Info",self.save],
+                             ["command","Save Phase Info as..",self.save_as],
                              ["separator"],
                              ["command","Exit",self.close_window]],
                     "Edit":[["command","Axes Limits",self.change_axes_popup],
@@ -1050,6 +1059,11 @@ class AviaryMissionEditor(tk.Tk):
     def save(self,filename=None):
         """Saves mission into a file as a phase info dictionary which can be used by Aviary.
         This function is also called by the save as function with a non-default filename. """
+        for i in range(len(self.data[0])-1):
+            if self.data[0][i] > self.data[0][i+1]: # going backwards in time
+                messagebox.showerror(title="Time Travel Error",
+                                     message="All mission points must go forwards in time! Edit points and try again.")
+                return
         users = {'solve_for_distance':self.advanced_options["solve_for_distance"].get(),
                  'constrain_range':self.advanced_options["constrain_range"].get(),
                  'include_takeoff':self.advanced_options["include_takeoff"].get(),
