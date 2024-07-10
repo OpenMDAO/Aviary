@@ -245,11 +245,11 @@ def run_trajectory(sim=True):
     mass = CoreMassBuilder('core_mass', BaseMetaData, FLOPS)
     aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, FLOPS)
     geom = CoreGeometryBuilder('core_geometry',
-                                BaseMetaData,
-                                code_origin=FLOPS)
+                               BaseMetaData,
+                               code_origin=FLOPS)
 
     core_subsystems = [prop, geom, mass, aero]
-    
+
     # Upstream static analysis for aero
     prob.model.add_subsystem(
         'pre_mission',
