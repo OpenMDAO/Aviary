@@ -548,6 +548,10 @@ class WingGroupTestCase4(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
+    def test_case1(self):
+        self.prob.run_model()
+        tol = 5e-4
+
 
 class WingGroupTestCase5(unittest.TestCase):
     def setUp(self):
