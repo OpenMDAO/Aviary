@@ -7,6 +7,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from aviary.subsystems.mass.gasp_based.design_load import (DesignLoadGroup,
                                                            LoadFactors,
                                                            LoadParameters,
+                                                           LiftCurveSlopeAtCruise,
                                                            LoadSpeeds)
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission
@@ -653,6 +654,36 @@ class LoadParametersTestCase6smooth(unittest.TestCase):
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-8, rtol=6e-8)
+
+
+class LiftCurveSlopeAtCruiseTest(unittest.TestCase):
+    def setUp(self):
+
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem(
+            "factors", LiftCurveSlopeAtCruise(aviary_options=get_option_defaults()), promotes=["*"]
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.ASPECT_RATIO, val=10.13, units="unitless"
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.SWEEP, val=0.436, units="rad"
+        )
+        self.prob.model.set_input_defaults(
+            Mission.Design.MACH, val=0.8, units="unitless"
+        )
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_slope(self):
+        self.prob.run_model()
+        x = self.prob.get_val(self.prob[Aircraft.Design.LIFT_CURVE_SLOPE])
+        print(f"x = {x}")
+        tol = 1e-4
+        assert_near_equal(self.prob[Aircraft.Design.LIFT_CURVE_SLOPE], 7.1765, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-7, rtol=5e-7)
 
 
 # this is the large single aisle 1 V3 test case
