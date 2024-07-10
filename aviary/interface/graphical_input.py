@@ -12,8 +12,6 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backend_bases import MouseButton
 
-# TODO: let user change rounding options (separate from unit changes)
-
 class VerticalScrolledFrame(tk.Frame):
     """A pure Tkinter scrollable frame that actually works!
     * Use the 'interior' attribute to place widgets inside the scrollable frame.
@@ -220,7 +218,7 @@ class AviaryMissionEditor(tk.Tk):
             frame.configure(background = self.pallete[self.theme]["background_primary"])
         # update table header color, different from background         
         self.frame_tableheaders.configure(background=self.pallete[self.theme]["hover"])  
-        for widget in self.header_widgets:
+        for widget in self.table_header_widgets:
             widget.configure(background=self.pallete[self.theme]["hover"])
             widget.configure(foreground=self.pallete[self.theme]["foreground_primary"])
             if isinstance(widget,tk.Entry): 
@@ -541,6 +539,13 @@ class AviaryMissionEditor(tk.Tk):
         if len(self.data[0])>0:
             self.table_add_button.grid(row=row*2+3,column=0,columnspan=col+2)
 
+    def update_header(self,new_headers):
+        i = 0
+        for widget in self.table_header_widgets:
+            if isinstance(widget,tk.Entry):
+                widget.configure(textvariable = tk.StringVar(value = new_headers[i]))
+                i += 1
+
     def add_new_row(self,_):
         """Updates data lists with a generic new point and runs redraw plot and update table.
             New point is added at x = halfway between last point and x limit, y = half of y limit"""
@@ -560,10 +565,10 @@ class AviaryMissionEditor(tk.Tk):
         self.table_strvars = [] # list used to hold StringVars 
         self.table_boolvars = []
         self.table_widgets = [] # list used to hold graphical table elements, can be used to modify them
-        self.header_widgets = [] # list used to hold header widgets, referenced for theme changes
+        self.table_header_widgets = [] # list used to hold header widgets, referenced for theme changes
         header = tk.Label(self.frame_tableheaders,text="Pt")
         header.grid(row = 0,column = 0)
-        self.header_widgets.append(header)
+        self.table_header_widgets.append(header)
         for col,(label,unit) in enumerate(zip(self.data_info["labels"],self.data_info["units"])):
             header_str = f"{label} ({unit.get()})"
             header_text = tk.StringVar(value=header_str)
@@ -573,13 +578,13 @@ class AviaryMissionEditor(tk.Tk):
             self.table_column_widths.append(len(header_str))
             self.table_strvars.append([])
             if col > 0: self.table_boolvars.append([])
-            self.header_widgets.append(header)
+            self.table_header_widgets.append(header)
     
         # this spacer prevents invisbility of delete buttons after all of them have been deleted and a new point is added
         self.delete_button_width = 4
         delete_button_spacer = tk.Label(self.frame_tableheaders,width=self.delete_button_width)
         delete_button_spacer.grid(row=0,column=col+2)
-        self.header_widgets.append(delete_button_spacer)
+        self.table_header_widgets.append(delete_button_spacer)
 
         # button for adding new rows to table
         self.table_add_button = tk.Button(self.frame_table.interior,text="Add New Point")
@@ -788,7 +793,7 @@ class AviaryMissionEditor(tk.Tk):
                              ["command","Exit",self.close_window]],
                     "Edit":[["command","Axes Limits",self.change_axes_popup],
                             ["command","Units",self.change_units],
-                            ["command","Rounding",self.temporary_notice],
+                            ["command","Rounding",self.change_rounding],
                             ["checkbutton","Store Settings?",self.remind_store_settings,self.store_settings]],
                     "View":[["checkbutton","Optimize Phase",self.toggle_optimize_view,self.show_optimize],
                             ["checkbutton","Phase Slopes",self.toggle_phase_slope,self.show_phase_slope],
@@ -820,81 +825,6 @@ class AviaryMissionEditor(tk.Tk):
                 json.dump({'window_geometry':self.winfo_geometry(),'theme':self.theme},fp)
         elif os.path.exists(self.persist_filename): # if user doesn't want to store settings and file exists
             os.remove(self.persist_filename) # remove file
-
-    def open_phase_info(self):
-        """Opens a dialog box to select a .py file with a phase info dict. File must contain a dict called phase_info. 
-            File can be placed in any directory."""
-        file_dialog = filedialog.Open(self,filetypes = [("Python files","*.py")])
-        filename = file_dialog.show()
-        if filename != "": 
-            # imports file similar to how a module is imported, allowing direct access to variables
-            spec = importlib.util.spec_from_file_location("module_name",filename)
-            module = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(module)
-            phase_info = None
-            try:
-                phase_info = module.phase_info
-            except AttributeError:
-                raise Exception("Python File does not contain a global dictionary called phase_info!")
-            if phase_info:
-                init = False
-                idx = 0
-                ylabs = ["altitude","mach"]
-                self.phase_order_list = []
-                units = [None]*3
-                for phase_dict in (phase_info.values()):
-                    if "initial_guesses" in phase_dict: # not a pre/post mission dict
-                        self.advanced_options["solve_for_distance"].set(
-                            value = phase_dict["user_options"]["solve_for_distance"])
-                        self.advanced_options["polynomial_control_order"].set(
-                            value = phase_dict["user_options"]["polynomial_control_order"])
-                        self.phase_order_list.append(phase_dict["user_options"]["order"])
-                        
-                        timevals,units[0] = phase_dict["initial_guesses"]["time"]
-                        if not init: # for first run initialize internal lists with correct num of elements
-                            numpts = phase_dict["user_options"]["num_segments"]+1
-                            self.data = [[0]*numpts for _ in range(self.num_dep_vars+1)]
-                            bool_list = [[0]*(numpts-1) for _ in range(self.num_dep_vars)]
-                            self.data[0][0] = timevals[0]
-                            for i in range(self.num_dep_vars):
-                                self.data[i+1][0],units[i+1] = phase_dict["user_options"]["initial_"+ylabs[i]]
-                            init = True
-
-                        self.data[0][idx+1] = timevals[1] + timevals[0]  
-                        for i in range(self.num_dep_vars):
-                            self.data[i+1][idx+1] = phase_dict["user_options"]["final_"+ylabs[i]][0]
-                            bool_list[i][idx] = phase_dict["user_options"]["optimize_"+ylabs[i]]
-                        
-                        idx +=1
-
-                self.advanced_options["constrain_range"].set(
-                    value = phase_info["post_mission"]["constrain_range"])
-                self.advanced_options["include_landing"].set(
-                    value = phase_info["post_mission"]["include_landing"])
-                self.advanced_options["include_takeoff"].set(
-                    value = phase_info["pre_mission"]["include_takeoff"])
-
-                # checks if any optimize values are true, in which case checkboxes are shown
-                for axis_list in bool_list:
-                    for bool_var in axis_list:
-                        if bool_var:
-                            self.show_optimize.set(True)
-                            break
-                lim_margin = 1.2
-                limits = [max(axis)*lim_margin for axis in self.data]
-                for var,lim in zip(self.data_info["limits"],limits):
-                    var.set(value = lim)
-                for str_var,unit in zip(self.data_info["units"],units):
-                    str_var.set(unit)
-                self.update_axes(limits=True,units=True)
-                self.redraw_plot()
-                i = 0
-                for widget in self.header_widgets:
-                    if isinstance(widget,tk.Entry):
-                        widget.configure(textvariable=tk.StringVar(value=
-                                            f"{self.data_info['labels'][i]} ({self.data_info['units'][i].get()})"))
-                        i += 1
-                self.update_table(overwrite=True,bool_list=bool_list)
 
     def toggle_optimize_view(self):
         """Runs update table with overwrite on to toggle display of optimize checkboxes"""
@@ -987,12 +917,9 @@ class AviaryMissionEditor(tk.Tk):
                 unit_combos[row].grid(row=row,column=1,sticky='w')
 
         def apply_units():
-            i = 0
-            for widget in self.header_widgets:
-                if isinstance(widget,tk.Entry):
-                    label_txt = f"{self.data_info['labels'][i]} ({self.data_info['units'][i].get()})"
-                    widget.configure(textvariable=tk.StringVar(value=label_txt))
-                    i += 1
+            new_headers = [f"{label} ({unit.get()})" for label,unit in zip(self.data_info["labels"],self.data_info["units"])]
+            self.update_header(new_headers)
+
             for col,(old_unit,new_unit,limit,rounding) in enumerate(zip(old_units,self.data_info["units"],
                                                     self.data_info["limits"],self.data_info["rounding"])):
                 new_lim = convert_units(val=float(limit.get()),old_units=old_unit,new_units=new_unit.get())
@@ -1009,10 +936,108 @@ class AviaryMissionEditor(tk.Tk):
             self.update_table(overwrite=True,bool_list=bool_list)
             for i in range(2):
                 self.show_phase_slope.set(not self.show_phase_slope.get())
-                self.toggle_phase_slope()
+                self.toggle_phase_slope(redraw=i==1)
 
         buttons["apply"].configure(command=lambda:[self.close_popup(),apply_units()])
         buttons["cancel"].configure(command=lambda:[self.close_popup(),reset_units_strvar()])
+
+    def change_rounding(self):
+        popup,content_frame,buttons = self.generic_popup(pop_wid = 300, pop_hei=100, pop_title="Rounding Options",
+                                           buttons_text=["apply","cancel"])
+        popup.protocol("WM_DELETE_WINDOW",func=lambda:[self.close_popup()])
+        for i in range(2): content_frame.columnconfigure(i,weight=1) # allow columns to expand in frame
+
+        def apply_rounding():
+            self.update_table(overwrite=True)
+        def cancel_rounding():
+            for changed,old in zip(self.data_info["rounding"],current_rounding):
+                changed.set(old.get())
+
+        current_rounding = [item for item in self.data_info["rounding"]]
+
+        for row,(label,unit,round_str) in enumerate(zip(self.data_info["labels"],self.data_info["units"],self.data_info["rounding"])):
+            round_label = tk.Label(content_frame,text=f"{label} ({unit.get()})",justify='right',
+                                 background=self.pallete[self.theme]["background_primary"],
+                                 foreground=self.pallete[self.theme]["foreground_primary"])
+            round_label.grid(row=row,column=0,sticky='e') 
+            round_entry = tk.Entry(content_frame,textvariable=round_str,width = max(4,len(round_str.get())),
+                                 background=self.pallete[self.theme]["background_primary"],
+                                 foreground=self.pallete[self.theme]["foreground_primary"])
+            round_entry.grid(row=row,column=1,sticky='w')
+
+        buttons["apply"].configure(command=lambda:[self.close_popup(),apply_rounding()])
+        buttons["cancel"].configure(command=lambda:[self.close_popup(),cancel_rounding()])
+
+    def open_phase_info(self):
+        """Opens a dialog box to select a .py file with a phase info dict. File must contain a dict called phase_info. 
+            File can be placed in any directory."""
+        file_dialog = filedialog.Open(self,filetypes = [("Python files","*.py")])
+        filename = file_dialog.show()
+        if filename != "": 
+            # imports file similar to how a module is imported, allowing direct access to variables
+            spec = importlib.util.spec_from_file_location("module_name",filename)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            phase_info = None
+            try:
+                phase_info = module.phase_info
+            except AttributeError:
+                raise Exception("Python File does not contain a global dictionary called phase_info!")
+            if phase_info:
+                init = False
+                idx = 0
+                ylabs = ["altitude","mach"]
+                self.phase_order_list = []
+                units = [None]*3
+                for phase_dict in (phase_info.values()):
+                    if "initial_guesses" in phase_dict: # not a pre/post mission dict
+                        self.advanced_options["solve_for_distance"].set(
+                            value = phase_dict["user_options"]["solve_for_distance"])
+                        self.advanced_options["polynomial_control_order"].set(
+                            value = phase_dict["user_options"]["polynomial_control_order"])
+                        self.phase_order_list.append(phase_dict["user_options"]["order"])
+                        
+                        timevals,units[0] = phase_dict["initial_guesses"]["time"]
+                        if not init: # for first run initialize internal lists with correct num of elements
+                            numpts = phase_dict["user_options"]["num_segments"]+1
+                            self.data = [[0]*numpts for _ in range(self.num_dep_vars+1)]
+                            bool_list = [[0]*(numpts-1) for _ in range(self.num_dep_vars)]
+                            self.data[0][0] = timevals[0]
+                            for i in range(self.num_dep_vars):
+                                self.data[i+1][0],units[i+1] = phase_dict["user_options"]["initial_"+ylabs[i]]
+                            init = True
+
+                        self.data[0][idx+1] = timevals[1] + timevals[0]  
+                        for i in range(self.num_dep_vars):
+                            self.data[i+1][idx+1] = phase_dict["user_options"]["final_"+ylabs[i]][0]
+                            bool_list[i][idx] = phase_dict["user_options"]["optimize_"+ylabs[i]]
+                        
+                        idx +=1
+
+                self.advanced_options["constrain_range"].set(
+                    value = phase_info["post_mission"]["constrain_range"])
+                self.advanced_options["include_landing"].set(
+                    value = phase_info["post_mission"]["include_landing"])
+                self.advanced_options["include_takeoff"].set(
+                    value = phase_info["pre_mission"]["include_takeoff"])
+
+                # checks if any optimize values are true, in which case checkboxes are shown
+                for axis_list in bool_list:
+                    for bool_var in axis_list:
+                        if bool_var:
+                            self.show_optimize.set(True)
+                            break
+                lim_margin = 1.2
+                limits = [max(axis)*lim_margin for axis in self.data]
+                for var,lim in zip(self.data_info["limits"],limits):
+                    var.set(value = lim)
+                for str_var,unit in zip(self.data_info["units"],units):
+                    str_var.set(unit)
+                self.update_axes(limits=True,units=True)
+                self.redraw_plot()
+                new_headers = [f"{label} ({unit.get()})" for label,unit in zip(self.data_info["labels"],self.data_info["units"])]
+                self.update_header(new_headers)
+                self.update_table(overwrite=True,bool_list=bool_list)
 
     def save_as(self):
         """Creates a file dialog that saves as a phase info. User can specify filename and location."""
