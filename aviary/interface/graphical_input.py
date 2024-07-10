@@ -2,6 +2,8 @@ import os, shutil, subprocess, json
 import importlib.util # used for opening existing phase info file
 import numpy as np
 
+from openmdao.utils.units import convert_units # used for unit conversion of numerical data
+
 import tkinter as tk # base tkinter
 import tkinter.ttk as ttk # used for combobox
 from tkinter import filedialog, messagebox
@@ -10,9 +12,7 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backend_bases import MouseButton
 
-# TODO: Add ability to change units, phase info specifies units and aviary can handle these unit changes.
-#       Makes sense to allow unit changes in GUI based on user preference.
-#       Possible unit changes: Alt -> ft, m, mi, km, nmi; Time -> min, s, hr; Mach -> none
+# TODO: let user change rounding options (separate from unit changes)
 
 class VerticalScrolledFrame(tk.Frame):
     """A pure Tkinter scrollable frame that actually works!
@@ -65,8 +65,6 @@ class VerticalScrolledFrame(tk.Frame):
 class AviaryMissionEditor(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.units = [{"m":1.0,"km":1e3,"ft":0.3048,"mi":1609.34,"nmi":1852},{"s":1.0,"min":60.0,"hr":3600.0}]
-        self.theme_toggle = True # switches between True/False to toggle theme setting
         self.theme = "light"
         self.pallete = {"light":{'background_primary':'#ffffff',
                                  'foreground_primary':'#000000',
@@ -124,39 +122,48 @@ class AviaryMissionEditor(tk.Tk):
         self.frame_plots.pack(side='top',expand=True,fill='both')
 
         # ---------------------------------------------------------------
-        # Main definition of data which can be plotted/tabulated. Assumes a singular
-        # independent variable that is applied to each dependent variable. All 
-        # y-attributes are in list format to support multiple dependent variables.
-        self.data_info = {"xlabel":"Time","xlim":(0,400),"xunit":"min","xround":0,
-                      "ylabels":["Altitude","Mach"],"ylims":[(0,50e3),(0,1.0)],
-                      "yunits":["ft","unitless"],"yrounds":[0,2],
-                      "plot_titles":["Altitude Profile","Mach Profile"]}
+        # Main definition of data which can be plotted/tabulated. Assumes single
+        # independent variable followed by any number of dependent variables. 
+        # Plot titles inform the program of number of dependent variables.
+        self.data_info = {"plot_titles":["Altitude Profile","Mach Profile"],
+                          "labels":["Time","Altitude","Mach"],
+                          "units":["min","ft","unitless"],
+                          "limits":[400,50e3,1.0],
+                          "rounding":[0,0,2]}
         
+        self.advanced_options = {"constrain_range":tk.BooleanVar(value=True),"solve_for_distance":tk.BooleanVar(),
+                                      "include_takeoff":tk.BooleanVar(),"include_landing":tk.BooleanVar(),
+                                      "polynomial_control_order":tk.IntVar(value=1)}
         # ---------------------------------------------------------------
-        # sanity checking of data_info dict and creates convenient labels with units included
-        # thess labels with units are used for plots, table headers, and axes limit entries
+        # sanity checking of data_info dict
         self.check_data_info()
-        self.data_info["xlabel_unit"] = self.data_info["xlabel"] + f" ({self.data_info['xunit']})"
-        self.data_info["ylabels_units"] = [ self.data_info["ylabels"][i] + 
-                            f" ({self.data_info['yunits'][i]})" for i in range(self.num_dep_vars)]
-        self.x_list = [0]
-        self.ys_list = [[0] for i in range(self.num_dep_vars)]
+        # replace constants with stringvars which can be updated within the GUI by the user
+        for key in ["units","limits","rounding"]:
+            self.data_info[key] = [tk.StringVar(value=item) for item in self.data_info[key]]
+        
+        self.data = [[0] for _ in range(self.num_dep_vars + 1)]
         self.phase_order_default = 3
         self.phase_order_list = []
-        self.plot_lines = []
 
         # internal variables to remember mouse state
         self.mouse_drag,self.mouse_press = False, False
-        self.popup = None
         self.ptcontainer = 0.04 # percent of plot size, boundary around point where it can be dragged
+
+        self.popup = None
         self.show_optimize = tk.BooleanVar() # controls display of optimize phase checkboxes
         self.show_phase_slope = tk.BooleanVar() # controls display of phase info (climb/descent rates)
         
-        self.advanced_options_info = {"constrain_range":tk.BooleanVar(value=True),"solve_for_distance":tk.BooleanVar(),
-                                      "include_takeoff":tk.BooleanVar(),"include_landing":tk.BooleanVar(),
-                                      "polynomial_control_order":tk.IntVar(value=1)}
+        self.theme_button = tk.Button(self,
+                                      image=self.pallete[self.theme]["image"],
+                                      bg=self.pallete[self.theme]["background_primary"])
+        self.theme_button.image = self.pallete[self.theme]["image"] # to prevent lose of image reference from garbage collector
+        self.theme_button.bind("<Button-1>",lambda e:self.update_theme(toggle=True))
+        self.theme_button.bind("<Enter>",func=self.on_enter)
+        self.theme_button.bind("<Leave>",func=self.on_leave)
+        self.theme_button.place(anchor='nw',relx=0,rely=0)
 
         self.save_option_defaults()
+
         self.create_plots()
         self.create_table()
         self.create_menu()
@@ -165,42 +172,46 @@ class AviaryMissionEditor(tk.Tk):
     def save_option_defaults(self):
         """Saves default values for advanced options and axes limits, these will be referenced
         if user chooses to reset advanced options or axes limits"""
-        self.advanced_options_info_defaults = {}
-        for key,var in self.advanced_options_info.items():
-            self.advanced_options_info_defaults[key] = var.get()
-        self.axes_lim_defaults = [item[1] for item in self.data_info["ylims"]]
-        self.axes_lim_defaults = [self.data_info["xlim"][1],*self.axes_lim_defaults]
+
+        self.advanced_options_defaults = {}
+        for key,item in self.advanced_options.items():
+            if isinstance(item,tk.BooleanVar):
+                self.advanced_options_defaults[key] = tk.BooleanVar(value=item.get())
+            elif isinstance(item,tk.IntVar):
+                self.advanced_options_defaults[key] = tk.IntVar(value=item.get())
+
+        self.data_info_defaults = {}
+        for key,item in self.data_info.items():
+            if key == "units" or key == "limits" or key == "rounding":
+                self.data_info_defaults[key] = [element for element in item]
         
     def check_data_info(self):
         """Verifies data_info dict has consistent number of dependent variables """
-        check_keys = ["ylabels","ylims","yunits"]
         self.num_dep_vars = len(self.data_info["plot_titles"])
-        for key in check_keys:
-            if self.num_dep_vars != len(self.data_info[key]):
-                raise Exception("Check length of lists in data_info, mismatch detected.\n"+
-                                f"Expected {self.num_dep_vars} dependent variables.")
+        for key,item in self.data_info.items():
+            if key != "plot_titles":
+                if len(item) != self.num_dep_vars + 1:
+                    raise Exception(f"Check data_info dictionary, expected {self.num_dep_vars+1} elements inside {key}.")
 
-    def update_list(self,row:int,col:int,value=None):
+    def update_list(self,value,index,axis):
         """Updates internal data lists based on row,col values. col corresponds 
             to dependent/independent variable. row corresponds to point number."""
         try:
             value = float(value)
         except (ValueError,TypeError):
-            return
-        datalists = [self.x_list,*self.ys_list]
-        if row == len(self.x_list):
-            datalists[col].append(value)
-            if len(self.phase_order_list) < len(self.x_list) -1: 
+            return # skip updating if value is not convertible to a float
+        if index == len(self.data[0]):
+            self.data[axis].append(value)
+            if len(self.phase_order_list) < len(self.data[0]) - 1: 
                 self.phase_order_list.append(self.phase_order_default) # default lowest dymos phase transcription order value
         else:
-            datalists[col][row] = value
+            self.data[axis][index] = value
 
-    def update_theme(self):
+    def update_theme(self,toggle=False):
         """Called by theme toggle button and start of app, changes color settings for widgets 
         based on current theme."""
-        self.theme = 'light' if self.theme_toggle else 'dark'
-        self.theme_toggle = not self.theme_toggle
-        
+        if toggle:
+            self.theme = "light" if self.theme == "dark" else "dark"
         self.create_menu() # recreating menu b/c tkinter menus cannot be reconfigured with new colors
         # update frames' background color
         frames = [self,self.frame_plotReadouts,self.frame_table.interior,
@@ -228,7 +239,6 @@ class AviaryMissionEditor(tk.Tk):
                                  highlightbackground=self.pallete[self.theme]["background_primary"],
                                  highlightcolor=self.pallete[self.theme]["background_primary"],
                                  selectcolor=self.pallete[self.theme]["background_primary"])
-        #self.table_add_button.configure(highlightbackground="gray")
         # update mouse coordinate readout label colors
         self.mouse_coords.configure(background=self.pallete[self.theme]["background_primary"],
                                     foreground=self.pallete[self.theme]["foreground_primary"])
@@ -266,6 +276,10 @@ class AviaryMissionEditor(tk.Tk):
         self.style_combobox.map('TCombobox', foreground = 
                                 [('readonly', self.pallete[self.theme]["foreground_primary"])])
         
+        self.theme_button.configure(image=self.pallete[self.theme]["image"],
+                                      bg=self.pallete[self.theme]["background_primary"])
+        self.theme_button.image = self.pallete[self.theme]["image"]
+        
 # ----------------------
 # Plot related functions
     def create_plots(self):
@@ -273,23 +287,16 @@ class AviaryMissionEditor(tk.Tk):
             Ties mouse events to appropriate internal functions."""
         self.fig = Figure()
         self.plots = []
-        self.data_info["ylim_strvars"] = []
         self.plot_texts = [[] for _ in range(self.num_dep_vars)]
         for i in range(self.num_dep_vars):
-            self.plots.append(self.fig.add_subplot(self.num_dep_vars,1,i+1))
-            self.plots[i].set_xlabel(self.data_info["xlabel_unit"])
-            self.plots[i].set_ylabel(self.data_info["ylabels_units"][i])
-            self.plots[i].set_xlim(self.data_info["xlim"])
-            self.plots[i].set_ylim(self.data_info["ylims"][i])
-            self.plots[i].set_title(self.data_info["plot_titles"][i])
-            self.data_info["ylim_strvars"].append(
-                tk.StringVar(value = self.display_rounding(self.data_info["ylims"][i][1],i+1)) )
-            self.crossX = self.plots[i].axhline(y=0)
-            self.crossY = self.plots[i].axvline(x=0)
-            self.crosshair =True
-
-        self.data_info["xlim_strvar"] = tk.StringVar(
-            value = self.display_rounding(self.data_info["xlim"][1],0))
+            self.plots.append(self.fig.add_subplot(
+                self.num_dep_vars, 1, i+1,
+                title = self.data_info["plot_titles"][i]))
+        for plot in self.plots:
+            self.crossX = plot.axhline(y=0)
+            self.crossY = plot.axvline(x=0)
+        self.crosshair = True
+        self.update_axes(units=True,limits=True)
 
         self.fig.tight_layout(pad=2)
         self.fig.canvas.mpl_connect('button_press_event',self.on_mouse_press)
@@ -304,25 +311,31 @@ class AviaryMissionEditor(tk.Tk):
         self.crosshair = False
         self.figure_canvas.get_tk_widget().pack(expand=True,fill='both')
 
-    def update_axes_lims(self):
-        """Goes through each subplot and sets x and y limits based on the StringVar values"""
-        for (plot,limstr) in zip(self.plots,self.data_info["ylim_strvars"]):
-            plot.set_xlim(0,float(self.data_info["xlim_strvar"].get()))
-            plot.set_ylim(0,float(limstr.get()))
-        self.figure_canvas.draw()
+    def update_axes(self,units=False,limits=False,refresh=False):
+        for i,plot in enumerate(self.plots):
+            if units:
+                xlabel = f"{self.data_info['labels'][0]} ({self.data_info['units'][0].get()})"
+                ylabel = f"{self.data_info['labels'][i+1]} ({self.data_info['units'][i+1].get()})"
+                plot.set(xlabel = xlabel, ylabel = ylabel)
+            if limits:
+                xlim = (0,float(self.data_info["limits"][0].get()))
+                ylim = (0,float(self.data_info["limits"][i+1].get()))
+                plot.set(xlim = xlim, ylim = ylim)
+        if refresh: self.figure_canvas.draw()
 
     def redraw_plot(self):
         """Redraws plot, using the new values inside data lists"""
         self.clear_plot()
         for i,plot in enumerate(self.plots):
-            self.plot_lines.append(plot.plot(self.x_list,self.ys_list[i],color=self.pallete[self.theme]['lines'][i],marker='o',markersize=5))
+            plot.plot(self.data[0], self.data[i+1],
+                      color = self.pallete[self.theme]['lines'][i],
+                      marker = 'o', markersize = 5)
         
         if self.show_phase_slope.get(): self.toggle_phase_slope(redraw=False)
         self.figure_canvas.draw()
         
     def clear_plot(self):
         """Clears all lines from plots except for crosshairs"""
-        self.plot_lines = []
         for plot in self.plots:
             for line in plot.lines:
                 if line == self.crossX or line == self.crossY: continue
@@ -345,22 +358,22 @@ class AviaryMissionEditor(tk.Tk):
     def on_mouse_click(self,event):
         """Called when mouse click is determined, adds new point if it is valid"""
         # this list creates default values for subplots not clicked on, half of ylim
-        default_y_vals = [float(self.data_info["ylim_strvars"][i].get())/2 for i in range(self.num_dep_vars)]
+        default_y_vals = [float(lim.get())/2 for lim in self.data_info["limits"][1:]]
         valid_click = False
         # if mouse click points are not None
         if event.xdata and event.ydata and event.button == MouseButton.LEFT: 
             # go through each subplot first to check if click is inside a subplot
             for plot_idx,plot in enumerate(self.plots):
                 # checks if mouse is inside subplot and it is the first point or next in time
-                if event.inaxes == plot and (len(self.x_list) <1 or event.xdata > max(self.x_list)):        
+                if event.inaxes == plot and (len(self.data[0]) <1 or event.xdata > max(self.data[0])):        
                     valid_click = True
                     break
             # once we know a subplot was clicked inside at a valid location    
             if valid_click:
-                self.update_list(len(self.x_list),0,event.xdata)
+                self.update_list(value = event.xdata, index = len(self.data[0]), axis = 0)
                 for y_idx,default_val in enumerate(default_y_vals):
-                    self.update_list(len(self.x_list),y_idx+1,
-                        event.ydata if plot_idx == y_idx else default_val)
+                    self.update_list(index = len(self.data[0]), axis = y_idx+1,
+                        value = event.ydata if plot_idx == y_idx else default_val)
                 valid_click = False
             # update plots and tables after having changed the lists
             self.redraw_plot()
@@ -387,14 +400,14 @@ class AviaryMissionEditor(tk.Tk):
                     xvalue = self.display_rounding(event.xdata,0)
                     yvalue = self.display_rounding(event.ydata,plot_idx+1)
                     self.mouse_coords_str.set(
-                        f"{self.data_info['xlabel']}: {xvalue} {self.data_info['xunit']} | "+
-                        f"{self.data_info['ylabels'][plot_idx]}: {yvalue} {self.data_info['yunits'][plot_idx]}")
+                        f"{self.data_info['labels'][0]}: {xvalue} {self.data_info['units'][0].get()} | "+
+                        f"{self.data_info['labels'][plot_idx+1]}: {yvalue} {self.data_info['units'][plot_idx+1].get()}")
 
                     # check if mouse is near an existing point, use closest point for dragging
                     near = False
                     dists = []
-                    if len(self.x_list) > 0:
-                        for existing_pt in zip(self.x_list,self.ys_list[plot_idx]):
+                    if len(self.data[0]) > 0:
+                        for existing_pt in zip(self.data[0],self.data[plot_idx+1]):
                             dists.append(self.get_distance((event.xdata,event.ydata),existing_pt,plot_idx))
                         min_dist = min(dists)
                         if min_dist < self.ptcontainer:
@@ -407,8 +420,8 @@ class AviaryMissionEditor(tk.Tk):
                     # move nearby point (or if previously dragging a point)
                     if self.mouse_press and (near or self.mouse_drag): 
                         self.mouse_drag = True
-                        self.update_list(self.near_idx,0,event.xdata)
-                        self.update_list(self.near_idx,plot_idx+1,event.ydata)
+                        self.update_list(index=self.near_idx,axis=0,value=event.xdata)
+                        self.update_list(index=self.near_idx,axis=plot_idx+1,value=event.ydata)
             
             # redraw plot after looping through subplots
             self.redraw_plot()
@@ -424,7 +437,7 @@ class AviaryMissionEditor(tk.Tk):
 # Table related functions
     def update_str_vars(self):
         """Updates StringVar values for the table. Used when points are dragged on plot"""
-        for i,vallist in enumerate([self.x_list,*self.ys_list]):
+        for i,vallist in enumerate(self.data):
             for j,val in enumerate(vallist):
                 val = self.display_rounding(val,i)
                 self.table_strvars[i][j].set(val)
@@ -432,14 +445,16 @@ class AviaryMissionEditor(tk.Tk):
     def delete_point(self,row:int):
         """When X button next to tabular point is pressed, lists are popped and plot and tables
         are updated to show the removed point."""
-        if row < len(self.x_list)-1: 
-            self.phase_order_list.pop(row)
-            for i in range(self.num_dep_vars): 
-                self.plot_texts[i][row].remove()
-                self.plot_texts[i].pop(row)
-        self.x_list.pop(row)
-        for i in range(self.num_dep_vars):
-            self.ys_list[i].pop(row)
+        if row < len(self.data[0]) and row > 0: 
+            self.phase_order_list.pop(row-1)
+            if len(self.plot_texts[0]) > 0:
+                for i in range(self.num_dep_vars): 
+                    self.plot_texts[i][row-1].remove()
+                    self.plot_texts[i].pop(row-1)
+                self.figure_canvas.draw()
+        
+        for i in range(len(self.data)): self.data[i].pop(row)
+        
         self.redraw_plot()
         self.update_table(overwrite=True)
 
@@ -447,16 +462,16 @@ class AviaryMissionEditor(tk.Tk):
         """This function handles both adding a new entry to table and overwriting the whole table.
         Overwriting causes all table widgets to be destroyed and a new set of widgets to be created.
         This also resets the StringVars."""        
-        row = len(self.x_list)-1 # last row (assumes data lists have been updated with new point)
+        row = len(self.data[0])-1 # last row (assumes data lists have been updated with new point)
         if overwrite and len(self.table_widgets) > 0:
             for item in self.table_widgets:
                 item.destroy()
             self.table_widgets = []
             self.table_strvars = [[] for i in range(self.num_dep_vars+1)]
             self.table_boolvars = [[] for i in range(self.num_dep_vars)]
-            if len(self.x_list) > 0: row = 0 # set row to 0 if overwriting entire table
+            if len(self.data[0]) > 0: row = 0 # set row to 0 if overwriting entire table
 
-        while row < len(self.x_list) and row >= 0:
+        while row < len(self.data[0]) and row >= 0:
             # numerical label for each point
             rowtxt = str(row+1)
             if row+1 <10: rowtxt = "  "+rowtxt
@@ -474,8 +489,7 @@ class AviaryMissionEditor(tk.Tk):
                 self.table_widgets.append(optimize_label)
 
             # entries and stringvars for each x,y value
-            row_yvals = [self.ys_list[i][row] for i in range(self.num_dep_vars)]
-            for col,val in enumerate([self.x_list[row],*row_yvals]):
+            for col,val in enumerate([data_axis[row] for data_axis in self.data]):
                 val = self.display_rounding(val,col)
                 entry_text = tk.StringVar(value=val)
                 self.table_strvars[col].append(entry_text)
@@ -487,11 +501,11 @@ class AviaryMissionEditor(tk.Tk):
                 entry.grid(row=row*2+2,column=col+1)
                 # binds key release to update list function
                 entry.bind("<KeyRelease>",lambda e,row=row,col=col,entry_text=entry_text: 
-                        [self.update_list(row,col,entry_text.get()),self.redraw_plot()] )
+                        [self.update_list(index=row,axis=col,value=entry_text.get()),self.redraw_plot()] )
                 self.table_widgets.append(entry)
 
                 if col > 0 and row > 0 and self.show_optimize.get(): # have at least 2 points and for dependent var cols only
-                    checkbox_label = tk.Label(self.frame_table.interior,text=self.data_info["ylabels"][col-1],
+                    checkbox_label = tk.Label(self.frame_table.interior,text=self.data_info["labels"][col],
                                               background=self.pallete[self.theme]["background_primary"],
                                               foreground=self.pallete[self.theme]["foreground_primary"])
                     checkbox_label.grid(row=row*2+1,column=col+1,sticky='w')
@@ -524,18 +538,19 @@ class AviaryMissionEditor(tk.Tk):
         
             row += 1        
         # reposition add new point button based on updated table
-        if len(self.x_list)>0:
+        if len(self.data[0])>0:
             self.table_add_button.grid(row=row*2+3,column=0,columnspan=col+2)
 
     def add_new_row(self,_):
         """Updates data lists with a generic new point and runs redraw plot and update table.
             New point is added at x = halfway between last point and x limit, y = half of y limit"""
-        default_y_vals = [float(self.data_info["ylim_strvars"][i].get())/2 for i in range(self.num_dep_vars)]
+        default_y_vals = [float(lim.get())/2 for lim in self.data_info["limits"][1:]]
         newx = 0
-        if len(self.x_list) > 0:
-            newx =  (float(self.data_info["xlim_strvar"].get()) - self.x_list[-1])/2 + self.x_list[-1]
+        if len(self.data[0]) > 0:
+            newx = ( float(self.data_info["limits"][0].get()) - self.data[0][-1] ) / 2 + self.data[0][-1]
         for col,item in enumerate([newx,*default_y_vals]):
-            self.update_list(row=len(self.x_list),col=col,value=item)
+            self.update_list(index=len(self.data[0]),axis=col,value=item)
+
         self.redraw_plot()
         self.update_table()
 
@@ -546,16 +561,16 @@ class AviaryMissionEditor(tk.Tk):
         self.table_boolvars = []
         self.table_widgets = [] # list used to hold graphical table elements, can be used to modify them
         self.header_widgets = [] # list used to hold header widgets, referenced for theme changes
-        labels_w_units = [self.data_info["xlabel_unit"],*self.data_info["ylabels_units"]]
         header = tk.Label(self.frame_tableheaders,text="Pt")
         header.grid(row = 0,column = 0)
         self.header_widgets.append(header)
-        for col,label in enumerate(labels_w_units):
-            header_text = tk.StringVar(value=label)
+        for col,(label,unit) in enumerate(zip(self.data_info["labels"],self.data_info["units"])):
+            header_str = f"{label} ({unit.get()})"
+            header_text = tk.StringVar(value=header_str)
             header = tk.Entry(self.frame_tableheaders,textvariable=header_text,state='readonly',
-                              width=len(label),justify='center',relief='groove')
+                              width=len(header_str),justify='center',relief='groove')
             header.grid(row = 0,column = col+1)
-            self.table_column_widths.append(len(label))
+            self.table_column_widths.append(len(header_str))
             self.table_strvars.append([])
             if col > 0: self.table_boolvars.append([])
             self.header_widgets.append(header)
@@ -576,8 +591,7 @@ class AviaryMissionEditor(tk.Tk):
     def display_rounding(self,value,col:int,extra=0):
         """Returns a rounded value based on which variable the value belongs to.
         Uses rounding amount specified in data_info"""
-        rounding = [self.data_info["xround"],*self.data_info["yrounds"]]
-        return format(value,"."+str(rounding[col]+extra)+"f")
+        return format(value,"."+str(int(self.data_info["rounding"][col].get())+extra)+"f")
 
 # ----------------------
 # Popup related functions
@@ -630,26 +644,23 @@ class AviaryMissionEditor(tk.Tk):
     def change_axes_popup(self):
         """Creates a popup window that allows user to edit axes limits. This function is triggered
             by the menu buttons"""
-        labels_w_units = [self.data_info["xlabel_unit"],*self.data_info["ylabels_units"]]
-        lim_strs = [self.data_info["xlim_strvar"],*self.data_info["ylim_strvars"]]
-
-        def reset_options(old_list,resize=False):
-            if len(self.x_list) > 0:
-                vals = [self.x_list,*self.ys_list]
-                for i,val_list in enumerate(vals):
+        def reset_options(old_list):
+            if len(self.data[0]) > 0:
+                for i,val_list in enumerate(self.data):
                     old_list[i] = max(val_list)*1.2
-            for i,(value,lim_str) in enumerate(zip(old_list,lim_strs)):
+            for i,(value,lim_str) in enumerate(zip(old_list,self.data_info["limits"])):
                 lim_str.set(value=self.display_rounding(value,col=i))
         
-        current_lims = [var.get() for var in lim_strs]
+        current_lims = [lim.get() for lim in self.data_info["limits"]]
 
         popup,content_frame,buttons = self.generic_popup(pop_wid = 300, pop_hei=100, pop_title="Axes Limits",
                                            buttons_text=["apply","reset","cancel"])
         popup.protocol("WM_DELETE_WINDOW",func=lambda:[self.close_popup(),reset_options(current_lims)])
         for i in range(2): content_frame.columnconfigure(i,weight=1) # allow columns to expand in frame
 
-        for row,(label,lim_str) in enumerate(zip(labels_w_units,lim_strs)):
-            lim_label = tk.Label(content_frame,text=label,justify='right',
+        for row,(label,unit,lim_str) in enumerate(zip(self.data_info["labels"],self.data_info["units"],self.data_info["limits"])):
+            lim_str.set(value = self.display_rounding(float(lim_str.get()),col = row))
+            lim_label = tk.Label(content_frame,text=f"{label} ({unit.get()})",justify='right',
                                  background=self.pallete[self.theme]["background_primary"],
                                  foreground=self.pallete[self.theme]["foreground_primary"])
             lim_label.grid(row=row,column=0,sticky='e') 
@@ -660,13 +671,11 @@ class AviaryMissionEditor(tk.Tk):
 
         # apply uses values in entry boxes, reset defaults to original limits, cancel uses previously set limits
         buttons["apply"].configure(command=lambda:[self.close_popup(),
-                                                   self.update_axes_lims()])
-        buttons["reset"].configure(command=lambda:[self.close_popup(),
-                                                   reset_options(self.axes_lim_defaults,resize=True),
-                                                   self.update_axes_lims()])
-        buttons["cancel"].configure(command=lambda:[self.close_popup(),
-                                                    reset_options(current_lims),
-                                                    self.update_axes_lims()])
+                                                   self.update_axes(limits=True,refresh=True)])
+        buttons["reset"].configure(command=lambda:[self.close_popup(),reset_options(self.axes_lim_defaults),
+                                                   self.update_axes(limits=True,refresh=True)])
+        buttons["cancel"].configure(command=lambda:[self.close_popup(),reset_options(current_lims),
+                                                    self.update_axes(limits=True,refresh=True)])
 
     def get_phase_names(self):
         """Returns a list of phase names, these are decided based on final and starting altitudes.
@@ -675,9 +684,9 @@ class AviaryMissionEditor(tk.Tk):
         names = ["Climb ","Cruise ","Descent "]
         counters = [1,1,1]
         phase_name_list = []
-        for i in range(len(self.x_list)-1):
-            nextpt = round(self.ys_list[0][i+1],self.data_info["yrounds"][0])
-            nowpt = round(self.ys_list[0][i],self.data_info["yrounds"][0]) 
+        for i in range(len(self.data[0])-1):
+            nextpt = round(self.data[1][i+1],int(self.data_info["rounding"][1].get()))
+            nowpt = round(self.data[1][i],int(self.data_info["rounding"][1].get())) 
             if nextpt > nowpt: j = 0
             elif nextpt < nowpt: j = 2
             else: j = 1
@@ -690,13 +699,13 @@ class AviaryMissionEditor(tk.Tk):
         """Creates a popup window that allows user to edit advanced options for phase info. 
         Options included are specified as a dict in __init__ and include solve/constrain for range,
         include landing/takeoff, polynomial order, and phase order. This function is triggered by the menu buttons"""
-        def reset_options(self,old_dict = self.advanced_options_info_defaults):
+        def reset_options(self,old_dict = self.advanced_options_defaults):
             for key,value in old_dict.items():
-                self.advanced_options_info[key].set(value=value)
-            self.phase_order_list = [self.phase_order_default]*(len(self.x_list)-1)
+                self.advanced_options[key].set(value=value)
+            self.phase_order_list = [self.phase_order_default]*(len(self.data[0])-1)
 
         current_info = {} # this stores option values as they are before user edits inside popup
-        for key,var in self.advanced_options_info.items():
+        for key,var in self.advanced_options.items():
             current_info[key] = var.get()
 
         popup,content_frame,buttons = self.generic_popup(pop_wid=300,pop_hei=175,pop_title="Advanced Options",
@@ -705,7 +714,7 @@ class AviaryMissionEditor(tk.Tk):
         
         for i in range(3): content_frame.columnconfigure(i,weight=1)
 
-        for row,(option_label_txt,option_var) in enumerate(self.advanced_options_info.items()):
+        for row,(option_label_txt,option_var) in enumerate(self.advanced_options.items()):
             option_label = tk.Label(content_frame,text=option_label_txt.replace("_"," ").title(),
                                     justify='right',
                                     background=self.pallete[self.theme]["background_primary"],
@@ -741,7 +750,7 @@ class AviaryMissionEditor(tk.Tk):
                 newval = self.phase_order_default
             self.phase_order_list[phase_idx] = newval
 
-        if len(self.x_list) > 1:
+        if len(self.data[0]) > 1:
             order_label = tk.Label(content_frame,text="Phase Transcription Order: ",
                                    background=self.pallete[self.theme]["background_primary"],
                                    foreground=self.pallete[self.theme]["foreground_primary"])
@@ -796,25 +805,15 @@ class AviaryMissionEditor(tk.Tk):
                                         selectcolor=self.pallete[self.theme]['foreground_primary'])
         self.config(menu=menu_bar)
 
-        image_object = self.pallete[self.theme]["image"]
-        self.theme_button = tk.Button(self,command=self.update_theme,image=image_object,
-                                      bg=self.pallete[self.theme]["background_primary"])
-        self.theme_button.image = image_object # to prevent lose of image reference from garbage collector
-        self.theme_button.bind("<Enter>",func=self.on_enter)
-        self.theme_button.bind("<Leave>",func=self.on_leave)
-        self.theme_button.place(anchor='nw',relx=0,rely=0)
-
     def temporary_notice(self):
         messagebox.showinfo(title="Under Development",message="This section is currently under development!")
 
     def close_window(self):
         """Closes main window and saves persistent settings into a binary pickle file."""
-        last_geometry = self.winfo_geometry()
-        last_theme = not self.theme_toggle
         self.destroy()
         if self.store_settings.get(): # if user wants to store settings
             with open(self.persist_filename,"w") as fp:
-                json.dump({'window_geometry':last_geometry,'theme_toggle':last_theme},fp)
+                json.dump({'window_geometry':self.winfo_geometry(),'theme':self.theme},fp)
         elif os.path.exists(self.persist_filename): # if user doesn't want to store settings and file exists
             os.remove(self.persist_filename) # remove file
 
@@ -838,37 +837,37 @@ class AviaryMissionEditor(tk.Tk):
                 idx = 0
                 ylabs = ["altitude","mach"]
                 self.phase_order_list = []
+                units = [None]*3
                 for phase_dict in (phase_info.values()):
                     if "initial_guesses" in phase_dict: # not a pre/post mission dict
-                        self.advanced_options_info["solve_for_distance"].set(
+                        self.advanced_options["solve_for_distance"].set(
                             value = phase_dict["user_options"]["solve_for_distance"])
-                        self.advanced_options_info["polynomial_control_order"].set(
+                        self.advanced_options["polynomial_control_order"].set(
                             value = phase_dict["user_options"]["polynomial_control_order"])
                         self.phase_order_list.append(phase_dict["user_options"]["order"])
                         
-                        timevals = phase_dict["initial_guesses"]["time"][0]
+                        timevals,units[0] = phase_dict["initial_guesses"]["time"]
                         if not init: # for first run initialize internal lists with correct num of elements
                             numpts = phase_dict["user_options"]["num_segments"]+1
-                            self.x_list = [0]*numpts
-                            self.ys_list = [[0]*numpts for _ in range(self.num_dep_vars)]
+                            self.data = [[0]*numpts for _ in range(self.num_dep_vars+1)]
                             bool_list = [[0]*(numpts-1) for _ in range(self.num_dep_vars)]
-                            self.x_list[0] = timevals[0]
+                            self.data[0][0] = timevals[0]
                             for i in range(self.num_dep_vars):
-                                self.ys_list[i][0] = phase_dict["user_options"]["initial_"+ylabs[i]][0]
+                                self.data[i+1][0],units[i+1] = phase_dict["user_options"]["initial_"+ylabs[i]]
                             init = True
 
-                        self.x_list[idx+1] = timevals[1] + timevals[0]  
+                        self.data[0][idx+1] = timevals[1] + timevals[0]  
                         for i in range(self.num_dep_vars):
-                            self.ys_list[i][idx+1] = phase_dict["user_options"]["final_"+ylabs[i]][0]
+                            self.data[i+1][idx+1] = phase_dict["user_options"]["final_"+ylabs[i]][0]
                             bool_list[i][idx] = phase_dict["user_options"]["optimize_"+ylabs[i]]
                         
                         idx +=1
 
-                self.advanced_options_info["constrain_range"].set(
+                self.advanced_options["constrain_range"].set(
                     value = phase_info["post_mission"]["constrain_range"])
-                self.advanced_options_info["include_landing"].set(
+                self.advanced_options["include_landing"].set(
                     value = phase_info["post_mission"]["include_landing"])
-                self.advanced_options_info["include_takeoff"].set(
+                self.advanced_options["include_takeoff"].set(
                     value = phase_info["pre_mission"]["include_takeoff"])
 
                 # checks if any optimize values are true, in which case checkboxes are shown
@@ -878,14 +877,19 @@ class AviaryMissionEditor(tk.Tk):
                             self.show_optimize.set(True)
                             break
                 lim_margin = 1.2
-                lims = [max(ys)*lim_margin for ys in self.ys_list]
-                lims = [max(self.x_list)*lim_margin,*lims]
-                lim_strs = [self.data_info["xlim_strvar"],*self.data_info["ylim_strvars"]]
-                for var,lim in zip(lim_strs,lims):
+                limits = [max(axis)*lim_margin for axis in self.data]
+                for var,lim in zip(self.data_info["limits"],limits):
                     var.set(value = lim)
-
+                for str_var,unit in zip(self.data_info["units"],units):
+                    str_var.set(unit)
+                self.update_axes(limits=True,units=True)
                 self.redraw_plot()
-                self.update_axes_lims()
+                i = 0
+                for widget in self.header_widgets:
+                    if isinstance(widget,tk.Entry):
+                        widget.configure(textvariable=tk.StringVar(value=
+                                            f"{self.data_info['labels'][i]} ({self.data_info['units'][i].get()})"))
+                        i += 1
                 self.update_table(overwrite=True,bool_list=bool_list)
 
     def toggle_optimize_view(self):
@@ -893,17 +897,17 @@ class AviaryMissionEditor(tk.Tk):
         self.update_table(overwrite=True)
 
     def toggle_phase_slope(self,redraw=True):
-        if len(self.x_list) > 1 and self.show_phase_slope.get():
-            y_lims = [float(var.get()) for var in self.data_info["ylim_strvars"]]
-            for i in range(len(self.x_list)-1):
+        if len(self.data[0]) > 1 and self.show_phase_slope.get():
+            y_lims = [float(item.get()) for item in self.data_info["limits"][1:]]
+            for i in range(len(self.data[0])-1):
                 for j in range(self.num_dep_vars):
-                    xs = self.x_list[i:i+2]
-                    ys = self.ys_list[j][i:i+2]
+                    xs = self.data[0][i:i+2]
+                    ys = self.data[j+1][i:i+2]
                     text_position = (np.mean(xs), np.mean(ys)+y_lims[j]*0.1) # offset from line by 8% of y limit
 
                     # find slope and attach units if either unit is not unitless
                     slope = self.display_rounding((ys[1]-ys[0])/(xs[1]-xs[0]),j+1,extra=1)
-                    xunit,yunit = self.data_info["xunit"], self.data_info["yunits"][j]
+                    xunit,yunit = self.data_info["units"][0].get(),self.data_info["units"][j+1].get()
                     if yunit != "unitless" and xunit != "unitless":
                         slope = f"{slope} {yunit}/{xunit}"
 
@@ -952,26 +956,51 @@ class AviaryMissionEditor(tk.Tk):
         for i in range(2): content_frame.columnconfigure(i,weight=1)
 
         def set_var(row):
-            new_unit = unit_combo.get()
-            current_units[row] = new_unit
-            print(self.data_info)
-        current_units = [self.data_info["xunit"],*self.data_info["yunits"]]
-        labels = [self.data_info["xlabel"],*self.data_info["ylabels"]]
-        for row,(var_label,var_unit) in enumerate(zip(labels,current_units)):
-            if var_unit != "unitless":    
-                for unit_type in self.units:
-                    if var_unit in unit_type.keys(): unit_list = list(unit_type.keys())
+            self.data_info["units"][row].set(unit_combos[row].get())
+
+        old_units = [item.get() for item in self.data_info["units"]] # this creates a copy instead of a reference
+        unit_combos = [None]*(self.num_dep_vars+1)
+        avail_units = [["s","min","h"],["m","km","ft","mi","nmi"]]
+        for row,(var_label,var_unit) in enumerate(zip(self.data_info["labels"],self.data_info["units"])):
+            if var_unit.get() != "unitless":    
+                for unit_type in avail_units:
+                    if var_unit.get() in unit_type: unit_list = unit_type
 
                 tk.Label(content_frame,text=var_label,justify='right',
                         background=self.pallete[self.theme]["background_primary"],
                         foreground=self.pallete[self.theme]["foreground_primary"]).grid(
                             row=row,column=0,sticky='e')
-                unit_combo = ttk.Combobox(content_frame,values=unit_list,state='readonly',width=10)
-                unit_combo.current(unit_list.index(var_unit))
-                unit_combo.bind("<<ComboboxSelected>>",lambda e, row=row:set_var(row))
-                unit_combo.grid(row=row,column=1,sticky='w')
+                unit_combos[row] = ttk.Combobox(content_frame,values=unit_list,state='readonly',width=10)
+                unit_combos[row].current(unit_list.index(var_unit.get()))
+                unit_combos[row].bind("<<ComboboxSelected>>",lambda e, row=row:set_var(row))
+                unit_combos[row].grid(row=row,column=1,sticky='w')
 
-        # os.execv(__file__) # restart script to load new units
+        def apply_units():
+            i = 0
+            for widget in self.header_widgets:
+                if isinstance(widget,tk.Entry):
+                    label_txt = f"{self.data_info['labels'][i]} ({self.data_info['units'][i].get()})"
+                    widget.configure(textvariable=tk.StringVar(value=label_txt))
+                    i += 1
+            for col,(old_unit,new_unit,limit,rounding) in enumerate(zip(old_units,self.data_info["units"],
+                                                    self.data_info["limits"],self.data_info["rounding"])):
+                new_lim = convert_units(val=float(limit.get()),old_units=old_unit,new_units=new_unit.get())
+                limit.set(value=new_lim)
+                for row,val in enumerate(self.data[col]):
+                    new_val = convert_units(val=val,old_units=old_unit,new_units=new_unit.get())
+                    self.update_list(index = row,axis=col,value=new_val)
+                num_digs = np.floor(np.log10(new_lim))+1
+                rounding.set(value = 0 if num_digs >= 3 else 2)
+
+            self.update_axes(limits=True,units=True)
+            self.redraw_plot()
+            bool_list = [[item.get() for item in axis] for axis in self.table_boolvars]
+            self.update_table(overwrite=True,bool_list=bool_list)
+            for i in range(2):
+                self.show_phase_slope.set(not self.show_phase_slope.get())
+                self.toggle_phase_slope()
+
+        buttons["apply"].configure(command=lambda:[self.close_popup(),apply_units()])
 
     def save_as(self):
         """Creates a file dialog that saves as a phase info. User can specify filename and location."""
@@ -984,17 +1013,23 @@ class AviaryMissionEditor(tk.Tk):
     def save(self,filename=None):
         """Saves mission into a file as a phase info dictionary which can be used by Aviary.
         This function is also called by the save as function with a non-default filename. """
-        users = {'solve_for_distance':self.advanced_options_info["solve_for_distance"].get(),
-                 'constrain_range':self.advanced_options_info["constrain_range"].get(),
-                 'include_takeoff':self.advanced_options_info["include_takeoff"].get(),
-                 'include_landing':self.advanced_options_info["include_landing"].get()}
-        polyord = self.advanced_options_info["polynomial_control_order"].get()
-        if len(self.table_boolvars[0]) != len(self.x_list)-1:
+        users = {'solve_for_distance':self.advanced_options["solve_for_distance"].get(),
+                 'constrain_range':self.advanced_options["constrain_range"].get(),
+                 'include_takeoff':self.advanced_options["include_takeoff"].get(),
+                 'include_landing':self.advanced_options["include_landing"].get()}
+        polyord = self.advanced_options["polynomial_control_order"].get()
+        if len(self.table_boolvars[0]) != len(self.data[0])-1:
             for i in range(self.num_dep_vars):
-                self.table_boolvars[i] = [tk.BooleanVar()]*(len(self.x_list)-1)
+                self.table_boolvars[i] = [tk.BooleanVar()]*(len(self.data[0])-1)
         if not filename: filename = os.path.join(os.getcwd(), 'outputted_phase_info.py')
-        create_phase_info(times = self.x_list, altitudes = self.ys_list[0], mach_values = self.ys_list[1],
-                          polynomial_order = polyord, num_segments = len(self.x_list)-1,
+
+        for j,axis in enumerate(self.data):
+            for i,value in enumerate(axis):
+                self.data[j][i] = float(self.display_rounding(value,col=j))
+
+        create_phase_info(times = self.data[0], altitudes = self.data[1], mach_values = self.data[2],
+                          units=[item.get() for item in self.data_info["units"]],
+                          polynomial_order = polyord, num_segments = len(self.data[0])-1,
                           optimize_altitude_phase_vars = self.table_boolvars[0],
                           optimize_mach_phase_vars = self.table_boolvars[1],
                           user_choices = users, orders=self.phase_order_list,
@@ -1005,13 +1040,7 @@ class AviaryMissionEditor(tk.Tk):
     def on_enter(self,event): event.widget["background"] = self.pallete[self.theme]["hover"]
     def on_leave(self,event): event.widget["background"] = self.pallete[self.theme]["background_primary"]
 
-    def unit_conversion(self,value,last_unit,new_unit):
-        for unit_type in self.units:
-            if last_unit in unit_type.keys():
-                base_unit_value = unit_type[last_unit]*float(value)
-                return base_unit_value / unit_type[new_unit]
-
-def create_phase_info(times, altitudes, mach_values,
+def create_phase_info(times, altitudes, mach_values, units,
                       polynomial_order, num_segments, optimize_mach_phase_vars, 
                       optimize_altitude_phase_vars, user_choices,
                       orders, filename='outputted_phase_info.py'):
@@ -1039,9 +1068,10 @@ def create_phase_info(times, altitudes, mach_values,
     num_phases = len(times) - 1  # Number of phases is one less than the number of points
     phase_info = {}
 
-    times = np.round(np.array(times)).astype(int)
-    altitudes = np.round(np.array(altitudes) / 500) * 500
-    mach_values = np.round(np.array(mach_values), 2)
+    #times = np.round(np.array(times)).astype(int)
+    #altitudes = np.round(np.array(altitudes) / 500) * 500
+    #mach_values = np.round(np.array(mach_values), 2)
+    times,altitudes,mach_values = np.array(times),np.array(altitudes),np.array(mach_values)
 
     # Utility function to create bounds
     def create_bounds(center):
@@ -1073,7 +1103,7 @@ def create_phase_info(times, altitudes, mach_values,
     climb_count = 1
     cruise_count = 1
     descent_count = 1
-
+    alt_margin = convert_units(500,"ft",units[1])
     for i in range(num_phases):
         initial_altitude = altitudes[i]
         final_altitude = altitudes[i+1]
@@ -1106,21 +1136,21 @@ def create_phase_info(times, altitudes, mach_values,
                 'num_segments': num_segments,
                 'order': orders[i],
                 'solve_for_distance': False,
-                'initial_mach': (mach_values[i], 'unitless'),
-                'final_mach': (mach_values[i+1], 'unitless'),
-                'mach_bounds': ((np.min(mach_values[i:i+2]) - 0.02, np.max(mach_values[i:i+2]) + 0.02), 'unitless'),
-                'initial_altitude': (altitudes[i], 'ft'),
-                'final_altitude': (altitudes[i+1], 'ft'),
-                'altitude_bounds': ((max(np.min(altitudes[i:i+2]) - 500., 0.), np.max(altitudes[i:i+2]) + 500.), 'ft'),
+                'initial_mach': (mach_values[i], units[2]),
+                'final_mach': (mach_values[i+1], units[2]),
+                'mach_bounds': ((np.min(mach_values[i:i+2]) - 0.02, np.max(mach_values[i:i+2]) + 0.02), units[2]),
+                'initial_altitude': (altitudes[i], units[1]),
+                'final_altitude': (altitudes[i+1], units[1]),
+                'altitude_bounds': ((max(np.min(altitudes[i:i+2]) - alt_margin, 0.), np.max(altitudes[i:i+2]) + alt_margin), units[1]),
                 'throttle_enforcement': 'path_constraint' if (i == (num_phases - 1) or i == 0) else 'boundary_constraint',
                 'fix_initial': True if i == 0 else False,
                 'constrain_final': True if i == (num_phases - 1) else False,
                 'fix_duration': False,
-                'initial_bounds': (cumulative_initial_bounds[i], 'min'),
-                'duration_bounds': (duration_bounds[i], 'min'),
+                'initial_bounds': (cumulative_initial_bounds[i], units[0]),
+                'duration_bounds': (duration_bounds[i], units[0]),
             },
             'initial_guesses': {
-                'time': ([times[i], times[i+1]-times[i]], 'min'),
+                'time': ([times[i], times[i+1]-times[i]], units[0]),
             }
         }
 
@@ -1143,7 +1173,8 @@ def create_phase_info(times, altitudes, mach_values,
         'constrain_range', True)
 
     # Calculate the total range
-    total_range = estimate_total_range_trapezoidal(times, mach_values)
+    times_sec = [convert_units(time,units[0],"s") for time in times]
+    total_range = estimate_total_range_trapezoidal(times_sec, mach_values)
     print(
         f"Total range is estimated to be {total_range} nautical miles")
 
@@ -1172,7 +1203,7 @@ def estimate_total_range_trapezoidal(times, mach_numbers):
     speed_of_sound = 343  # Speed of sound in meters per second
 
     # Convert times to seconds from minutes
-    times_sec = np.array(times) * 60
+    times_sec = np.array(times)
 
     # Calculate the speeds at each Mach number
     speeds = np.array(mach_numbers) * speed_of_sound
