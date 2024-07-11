@@ -18,8 +18,8 @@ class TestAeroForces(unittest.TestCase):
         prob.model.add_subsystem("comp", af, promotes=["*"])
         prob.setup(force_alloc_complex=True)
 
-        prob.set_val("CL", 1.0)
-        prob.set_val("CD", 1.0)
+        prob.set_val("CL", [1.0, 0.9, 0.8])
+        prob.set_val("CD", [1.0, 0.95, 0.85])
         prob.set_val(Dynamic.Mission.DYNAMIC_PRESSURE, 1, units="psf")
         prob.set_val(Aircraft.Wing.AREA, 1370.3, units="ft**2")
 
@@ -27,11 +27,11 @@ class TestAeroForces(unittest.TestCase):
 
         lift = prob.get_val(Dynamic.Mission.LIFT)
         drag = prob.get_val(Dynamic.Mission.DRAG)
-        assert_near_equal(lift, 0)
-        assert_near_equal(drag, 0)
+        assert_near_equal(lift, [1370.3, 1233.27, 1096.24])
+        assert_near_equal(drag, [1370.3, 1301.785, 1164.755])
 
         partial_data = prob.check_partials(method="cs", out_stream=None)
-        assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
+        assert_check_partials(partial_data, atol=1e-11, rtol=1e-15)
 
 
 class TestTimeRamp(unittest.TestCase):
