@@ -107,8 +107,8 @@ class PropellerMap(om.ExplicitComponent):
                         break
 
         if not m_type_define:
-                warnings.warn(
-                    f"String 'mach_type' is not defined. Assume freestream Mach in the table.")
+            warnings.warn(
+                f"String 'mach_type' is not defined. Assume freestream Mach in the table.")
 
         return OutMachType.get_element_by_value(m_type)
 
