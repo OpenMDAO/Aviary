@@ -19,7 +19,7 @@ J = PropellerModelVariables.J
 aliases = {
     # whitespaces are replaced with underscores converted to lowercase before
     # comparison with keys
-    MACH: ['m', 'mn', 'mach', 'mach_number'],
+    MACH: ['m', 'mn', 'mach', 'mach_number', 'helical_mach'],
     CP: ['cp', 'power_coefficient'],
     CT: ['ct', 'thrust_coefficient'],
     J: ['j', 'advance_ratio'],
@@ -89,30 +89,24 @@ class PropellerMap(om.ExplicitComponent):
                 f'No valid propeller variables found in data for {message}')
 
     def read_and_set_mach_type(self, data_file):
+        # read the mach type from header.
         # sample header:
-        # created 06/24/24 at 17:13
-        # GASP propeller map converted from PropFan.map
-        # Propfan format - CT = f(Mach, Adv Ratio & CP)
-        # mach_type = mach
-        # Hamilton Standard 10 Bladed Propfan Performance Deck:  Ct Tables
+        #     J, Helical_Mach,         CP,         CT
 
         m_type = 'mach'  # default to freestream Mach number
         m_type_define = False
         fp = get_path(data_file)
         with open(fp, "r") as f:
-            line = f.readline()
-            while len(line.split('#')[0].strip()) == 0:
-                line = f.readline()
-                try:
-                    substr = line.split('#')[1].split('=')[0].strip()
-                    if substr == 'mach_type':
-                        m_type = line.split('#')[1].split('=')[-1].strip()
+            for line in f:
+                tokens = line.split(',')
+                if len(tokens) > 1:
+                    s = tokens[1].strip().lower()
+                    if s == 'mach' or s == 'helical_mach':
+                        m_type = s
                         m_type_define = True
                         break
-                except:
-                    pass
+
         if not m_type_define:
-            if self.get_val(Settings.VERBOSITY).value >= 1:
                 warnings.warn(
                     f"String 'mach_type' is not defined. Assume freestream Mach in the table.")
 
