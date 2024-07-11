@@ -100,9 +100,10 @@ def _read_gasp_propeller(fp, cmts):
 
 
 def _read_pm_header(f):
-    """Read GASP propeller map header, returning the propeller scalars in a dict"""
-    # parameter 1 is Mach type. It is either 1 or 2. 
-    # parameter 2 is IPRINT in GASP and is ignored in Aviary
+    """Read GASP propeller map header (first line), returning the propeller scalars in a dict
+    parameter 1 is Mach type. It is either 1 or 2. 
+    parameter 2 is IPRINT in GASP and is ignored in Aviary
+    """
     iread, _ = _parse(f, [*_rep(2, (int, 5))])
 
     return {
