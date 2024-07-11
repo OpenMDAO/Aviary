@@ -420,13 +420,15 @@ class PropellerModelVariables(Enum):
     """
     Define constants that map to supported variable names in a propeller model.
     """
-    MACH = 'Mach_Number'
+    HELICAL_MACH = 'Helical_Mach'
+    MACH = 'Mach'
     CP = 'CP'  # power coefficient
     CT = 'CT'  # thrust coefficient
     J = 'J'  # advanced ratio
 
 
 default_propeller_units = {
+    PropellerModelVariables.HELICAL_MACH: 'unitless',
     PropellerModelVariables.MACH: 'unitless',
     PropellerModelVariables.CP: 'unitless',
     PropellerModelVariables.CT: 'unitless',
