@@ -4,7 +4,7 @@
 # mach_type = helical_mach
 # No. Blades =  3. CLi = 0.62  AF = 104.0
 
-    J, Mach_Number,         CP,         CT
+    J, Helical_Mach,         CP,         CT
 0.001,         0.7,      0.025,     0.1442
   0.5,         0.7,      0.025,     0.0368
  0.75,         0.7,      0.025,     0.0254
