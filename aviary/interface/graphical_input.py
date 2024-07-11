@@ -24,13 +24,13 @@ class VerticalScrolledFrame(tk.Frame):
         tk.Frame.__init__(self, parent, *args, **kw)
         # Create a canvas object and a vertical scrollbar for scrolling it.
         vscrollbar = tk.Scrollbar(self, orient='vertical')
-        vscrollbar.pack(fill='y', side='left', expand=False)
+        vscrollbar.pack(fill='y', side='right', expand=False)
         self.freezeframe = tk.Frame(self) # this frame will not scroll, allowing for freeze view functionality
         self.freezeframe.pack(side='top',fill='x')
 
         canvas = tk.Canvas(self, bd=0, highlightthickness=0,
                            yscrollcommand=vscrollbar.set)
-        canvas.pack(side='right', fill='y', expand=True)
+        canvas.pack(side='left', fill='y', expand=True)
         self.vscroll_canvas = canvas
         vscrollbar.config(command=canvas.yview)
 
@@ -113,6 +113,9 @@ class AviaryMissionEditor(tk.Tk):
         self.frame_table = VerticalScrolledFrame(self)
         self.frame_table.pack(side='right',fill='y')
         self.frame_tableheaders = self.frame_table.freezeframe
+
+        self.frame_plot_table_border = tk.Frame(self,highlightthickness=1)
+        self.frame_plot_table_border.pack(side='right',fill='y')
 
         self.frame_plotReadouts = tk.Frame(self)
         self.frame_plotReadouts.pack(side='bottom',fill='x')
@@ -224,7 +227,8 @@ class AviaryMissionEditor(tk.Tk):
         for frame in frames:
             frame.configure(background = self.pallete[self.theme]["background_primary"])
         # update table header color, different from background         
-        self.frame_tableheaders.configure(background=self.pallete[self.theme]["hover"])  
+        self.frame_tableheaders.configure(background=self.pallete[self.theme]["hover"])
+        self.frame_plot_table_border.configure(highlightbackground=self.pallete[self.theme]["foreground_primary"])  
         for widget in self.table_header_widgets:
             widget.configure(background=self.pallete[self.theme]["hover"])
             widget.configure(foreground=self.pallete[self.theme]["foreground_primary"])
