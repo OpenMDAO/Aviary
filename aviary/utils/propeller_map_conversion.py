@@ -1,6 +1,5 @@
 #!/usr/bin/python
 import argparse
-import getpass
 import numpy as np
 from datetime import datetime
 from enum import Enum
@@ -19,6 +18,7 @@ class PropMapType(Enum):
         return self.value
 
 
+HELICAL_MACH = PropellerModelVariables.HELICAL_MACH
 MACH = PropellerModelVariables.MACH
 CP = PropellerModelVariables.CP
 CT = PropellerModelVariables.CT
@@ -32,21 +32,23 @@ def PropDataConverter(input_file, output_file, data_format: PropMapType):
     aviary convert_prop_table -F GASP input_file output_file
     """
     timestamp = datetime.now().strftime('%m/%d/%y at %H:%M')
-    user = getpass.getuser()
     comments = []
     header = {}
     data = {}
 
     data_file = get_path(input_file)
 
-    comments.append(f'# created {timestamp} by {user}')
+    comments.append(f'# created {timestamp}')
     comments.append(f'# {data_format} propeller map converted from {input_file}')
 
     if data_format is PropMapType.GASP:
         scalars, tables, fields = _read_gasp_propeller(data_file, comments)
 
         data[J] = tables['thrust_coefficient'][:, 2]
-        data[MACH] = tables['thrust_coefficient'][:, 0]
+        if scalars['iread'] == 1:
+            data[HELICAL_MACH] = tables['thrust_coefficient'][:, 0]
+        else:
+            data[MACH] = tables['thrust_coefficient'][:, 0]
         data[CP] = tables['thrust_coefficient'][:, 1]
         data[CT] = tables['thrust_coefficient'][:, 3]
 
