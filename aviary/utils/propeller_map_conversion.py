@@ -1,6 +1,5 @@
 #!/usr/bin/python
 import argparse
-import getpass
 import numpy as np
 from datetime import datetime
 from enum import Enum
@@ -9,7 +8,7 @@ from aviary.utils.conversion_utils import _rep, _parse, _read_map
 from aviary.api import NamedValues
 from aviary.utils.csv_data_file import write_data_file
 from aviary.utils.functions import get_path
-from aviary.subsystems.propulsion.utils import default_units
+from aviary.subsystems.propulsion.utils import PropellerModelVariables, default_propeller_units
 
 
 class PropMapType(Enum):
@@ -19,27 +18,11 @@ class PropMapType(Enum):
         return self.value
 
 
-class PropModelVariables(Enum):
-    '''
-    Define constants that map to supported variable names in a propeller model.
-    '''
-    MACH = 'Mach_Number'
-    CP = 'CP'  # power coefficient
-    CT = 'CT'  # thrust coefficient
-    J = 'J'  # advanced ratio
-
-
-default_units = {
-    PropModelVariables.MACH: 'unitless',
-    PropModelVariables.CP: 'unitless',
-    PropModelVariables.CT: 'unitless',
-    PropModelVariables.J: 'unitless',
-}
-
-MACH = PropModelVariables.MACH
-CP = PropModelVariables.CP
-CT = PropModelVariables.CT
-J = PropModelVariables.J
+HELICAL_MACH = PropellerModelVariables.HELICAL_MACH
+MACH = PropellerModelVariables.MACH
+CP = PropellerModelVariables.CP
+CT = PropellerModelVariables.CT
+J = PropellerModelVariables.J
 
 
 def PropDataConverter(input_file, output_file, data_format: PropMapType):
@@ -49,21 +32,23 @@ def PropDataConverter(input_file, output_file, data_format: PropMapType):
     aviary convert_prop_table -F GASP input_file output_file
     """
     timestamp = datetime.now().strftime('%m/%d/%y at %H:%M')
-    user = getpass.getuser()
     comments = []
     header = {}
     data = {}
 
     data_file = get_path(input_file)
 
-    comments.append(f'# created {timestamp} by {user}')
+    comments.append(f'# created {timestamp}')
     comments.append(f'# {data_format} propeller map converted from {input_file}')
 
     if data_format is PropMapType.GASP:
         scalars, tables, fields = _read_gasp_propeller(data_file, comments)
 
         data[J] = tables['thrust_coefficient'][:, 2]
-        data[MACH] = tables['thrust_coefficient'][:, 0]
+        if scalars['iread'] == 1:
+            data[HELICAL_MACH] = tables['thrust_coefficient'][:, 0]
+        else:
+            data[MACH] = tables['thrust_coefficient'][:, 0]
         data[CP] = tables['thrust_coefficient'][:, 1]
         data[CT] = tables['thrust_coefficient'][:, 3]
 
@@ -77,7 +62,7 @@ def PropDataConverter(input_file, output_file, data_format: PropMapType):
     # store formatted data into NamedValues object
     write_data = NamedValues()
     for key in data:
-        write_data.set_val(key.value, data[key], default_units[key])
+        write_data.set_val(key.value, data[key], default_propeller_units[key])
 
     if output_file is None:
         sfx = data_file.suffix
@@ -102,8 +87,10 @@ def _read_gasp_propeller(fp, cmts):
         scalars = _read_pm_header(f)
         if scalars['iread'] == 1:
             cmts.append('# CT = f(Helical Mach at 75% Radius, Adv ratio & CP)')
+            cmts.append('# mach_type = helical_mach')
         elif scalars['iread'] == 2:
             cmts.append('Propfan format - CT = f(Mach, Adv Ratio & CP)')
+            cmts.append('# mach_type = mach')
         else:
             raise RuntimeError(f"IREAD = 1 or 2 expected, got {scalars['iread']}")
 
@@ -113,8 +100,10 @@ def _read_gasp_propeller(fp, cmts):
 
 
 def _read_pm_header(f):
-    """Read GASP propeller map header, returning the propeller scalars in a dict"""
-    # parameter 2 is IPRINT in GASP and is ignored
+    """Read GASP propeller map header (first line), returning the propeller scalars in a dict
+    parameter 1 is Mach type. It is either 1 or 2. 
+    parameter 2 is IPRINT in GASP and is ignored in Aviary
+    """
     iread, _ = _parse(f, [*_rep(2, (int, 5))])
 
     return {
