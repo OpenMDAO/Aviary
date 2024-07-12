@@ -577,7 +577,7 @@ class WingGroupTestCase4(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Strut.CHORD], 10.62132, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=3e-12, rtol=1e-12)
+        assert_check_partials(partial_data, atol=3e-12, rtol=1e-13)
 
 
 class WingGroupTestCase5(unittest.TestCase):
