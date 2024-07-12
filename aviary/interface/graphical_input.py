@@ -12,6 +12,19 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backend_bases import MouseButton
 
+def get_screen_geometry():
+    """
+    Taken from: https://stackoverflow.com/questions/3129322/how-do-i-get-monitor-resolution-in-python/56913005#56913005
+    Workaround to get the size of the current screen in a multi-screen setup.
+    """
+    root = tk.Tk()
+    root.update_idletasks()
+    root.attributes('-fullscreen', True)
+    root.withdraw()
+    geometry = root.winfo_geometry()
+    root.destroy()
+    return geometry
+
 class VerticalScrolledFrame(tk.Frame):
     """A pure Tkinter scrollable frame that actually works!
     * Use the 'interior' attribute to place widgets inside the scrollable frame.
@@ -27,6 +40,8 @@ class VerticalScrolledFrame(tk.Frame):
         vscrollbar.pack(fill='y', side='right', expand=False)
         self.freezeframe = tk.Frame(self) # this frame will not scroll, allowing for freeze view functionality
         self.freezeframe.pack(side='top',fill='x')
+        self.freezeframe_bottom = tk.Frame(self) # another freeze frame at bottom for warnings
+        self.freezeframe_bottom.pack(side='bottom',fill='x')
 
         canvas = tk.Canvas(self, bd=0, highlightthickness=0,
                            yscrollcommand=vscrollbar.set)
@@ -62,7 +77,15 @@ class VerticalScrolledFrame(tk.Frame):
 
 class AviaryMissionEditor(tk.Tk):
     def __init__(self):
+        screen_width,screen_height = \
+            [int(x) for x in get_screen_geometry().split("+")[0].split("x")]
+
         super().__init__()
+        self.title('Mission Design Utility')
+        self.protocol("WM_DELETE_WINDOW",self.close_window)
+
+        # ------
+        # theme related initializations
         self.theme = "light"
         self.pallete = {"light":{'background_primary':'#ffffff',
                                  'foreground_primary':'#000000',
@@ -77,43 +100,52 @@ class AviaryMissionEditor(tk.Tk):
                                 'crosshair':'#EE0000',
                                 'lines':['#00b6f2','#ffff00'],
                                 'image':'light_mode.png',
-                                'hover':'#007acc'}}
-        
+                                'hover':'#007acc'}}     
         self.style_combobox = ttk.Style()
         self.style_combobox.theme_use("alt")
-
         # updates image object inside pallete with PhotoImage object using absolute filepath
-        source_directory = os.path.abspath(os.path.dirname(__file__))
+        self.source_directory = os.path.abspath(os.path.dirname(__file__))
         for theme_info in self.pallete.values():
-            theme_info["image"] = tk.PhotoImage(file = os.path.join(source_directory,theme_info["image"]))
+            theme_info["image"] = tk.PhotoImage(file = 
+                                os.path.join(self.source_directory,theme_info["image"]))
+        # stores/retrieves persistent settings in source directory
+        self.persist_filename = os.path.join(self.source_directory,"persist_settings.json")
 
-        self.title('Mission Design Utility')
-        self.protocol("WM_DELETE_WINDOW",self.close_window)
-        self.focus_set() # focus the window
-        # stores/retrieves persistant settings in source directory
-        self.persist_filename = os.path.join(source_directory,"persist_settings.json")
-
-        # ---------------------------------------------------------------
-        # window geometry definition, allows reuse of user's modified size/location
+        # ------
+        # window geometry definition 
         # tkinter size string format:  widthxheight+x+y ;  x,y are location
-        default_win_size = (900,500) # CHANGE THIS TO AFFECT DEFAULT SIZE
-        window_geometry = f"{default_win_size[0]}x{default_win_size[1]}+10+10" 
+        # Based on subplots, matplotlib will make window 500 in height regardless of initial size
+        # A width of 800 is the minimum required to see the axes labels properly
+        # The minimum sized is used unless the screen is large enough in which case 50% of width/height of 
+        # the screen is used as the size. If user saves settings then their last saved geometry is used.
+        min_win_size = (800,500)
+        self.minsize(*min_win_size) # force a minimum size for layout to look correct
+
         self.store_settings = tk.BooleanVar() # tracks if user wants to store settings or not
         if os.path.exists(self.persist_filename):
             self.store_settings.set(True) # a file will only exist if at a previous point user wanted to store settings
             with open(self.persist_filename,"r") as fp:
                 persist_settings = json.load(fp)
                 window_geometry = persist_settings['window_geometry']
-                self.theme_toggle = persist_settings['theme_toggle']
+                self.theme = persist_settings['theme']
+        else:
+            default_win_size = (max(min_win_size[0],int(screen_width/2)), 
+                                max(min_win_size[1],int(screen_height/2)))
+            default_location = (int((screen_width-default_win_size[0])/2),0)
+            window_geometry = f"{default_win_size[0]}x{default_win_size[1]}+"+\
+                            f"{default_location[0]}+{default_location[1]}" 
         self.geometry(window_geometry)
-        self.minsize(*default_win_size) # force a minimum size for layout to look correct
 
-        # ---------------------------------------------------------------
-        # create window layout with frames for containing graph, table, and scrollbar
+        # Set the window icon, provides 2 sizes of logos to prevent blurry icons
+        self.iconphoto(False, 
+            tk.PhotoImage(file = os.path.join(self.source_directory,"aviary_logo_16.png")),
+            tk.PhotoImage(file = os.path.join(self.source_directory,"aviary_logo_32.png")))
+
+        # ------
+        # create window layout with frames for containing graph, table, and scrollbar       
         self.frame_table = VerticalScrolledFrame(self)
         self.frame_table.pack(side='right',fill='y')
         self.frame_tableheaders = self.frame_table.freezeframe
-
         self.frame_plot_table_border = tk.Frame(self,highlightthickness=1)
         self.frame_plot_table_border.pack(side='right',fill='y')
 
@@ -122,7 +154,7 @@ class AviaryMissionEditor(tk.Tk):
         self.frame_plots = tk.Frame(self)
         self.frame_plots.pack(side='top',expand=True,fill='both')
 
-        # ---------------------------------------------------------------
+        # ------
         # Main definition of data which can be plotted/tabulated. Assumes single
         # independent variable followed by any number of dependent variables. 
         # Plot titles inform the program of number of dependent variables.
@@ -135,9 +167,8 @@ class AviaryMissionEditor(tk.Tk):
         self.advanced_options = {"constrain_range":tk.BooleanVar(value=True),"solve_for_distance":tk.BooleanVar(),
                                       "include_takeoff":tk.BooleanVar(),"include_landing":tk.BooleanVar(),
                                       "polynomial_control_order":tk.IntVar(value=1)}
-        # ---------------------------------------------------------------
-        # sanity checking of data_info dict
-        self.check_data_info()
+
+        self.check_data_info() # sanity checking of data_info dict
         # replace constants with stringvars which can be updated within the GUI by the user
         for key in ["units","limits","rounding"]:
             self.data_info[key] = [tk.StringVar(value=item) for item in self.data_info[key]]
@@ -176,6 +207,7 @@ class AviaryMissionEditor(tk.Tk):
         self.create_table()
         self.create_menu()
         self.update_theme()
+        self.focus_force() # focus the window
 
     def save_option_defaults(self):
         """Saves default values for advanced options and axes limits, these will be referenced
@@ -207,13 +239,18 @@ class AviaryMissionEditor(tk.Tk):
         try:
             value = float(value)
         except (ValueError,TypeError):
+            self.point_warning_strvar.set("Invalid table entry!")
             return # skip updating if value is not convertible to a float
+        if value < 0: 
+            self.point_warning_strvar.set("Table entries must be positive values!")
+            return # skip updating negative values
         if index == len(self.data[0]):
             self.data[axis].append(value)
             if len(self.phase_order_list) < len(self.data[0]) - 1: 
                 self.phase_order_list.append(self.phase_order_default) # default lowest dymos phase transcription order value
         else:
             self.data[axis][index] = value
+        self.point_warning_strvar.set("")
 
     def update_theme(self,toggle=False):
         """Called by theme toggle button and start of app, changes color settings for widgets 
@@ -223,12 +260,14 @@ class AviaryMissionEditor(tk.Tk):
         self.create_menu() # recreating menu b/c tkinter menus cannot be reconfigured with new colors
         # update frames' background color
         frames = [self,self.frame_plotReadouts,self.frame_table.interior,
-                  self.frame_table.vscroll_canvas,self.frame_table]
+                  self.frame_table.vscroll_canvas,self.frame_table,self.frame_table.freezeframe_bottom]
         for frame in frames:
             frame.configure(background = self.pallete[self.theme]["background_primary"])
         # update table header color, different from background         
         self.frame_tableheaders.configure(background=self.pallete[self.theme]["hover"])
         self.frame_plot_table_border.configure(highlightbackground=self.pallete[self.theme]["foreground_primary"])  
+        self.point_warning.configure(background=self.pallete[self.theme]["background_primary"],
+                                     foreground=self.pallete[self.theme]["crosshair"])
         for widget in self.table_header_widgets:
             widget.configure(background=self.pallete[self.theme]["hover"])
             widget.configure(foreground=self.pallete[self.theme]["foreground_primary"])
@@ -237,11 +276,10 @@ class AviaryMissionEditor(tk.Tk):
         # update table widgets' colors
         for widget in [*self.table_widgets,self.table_add_button]:
             widget.configure(background=self.pallete[self.theme]["background_primary"],
-                             foreground=self.pallete[self.theme]["foreground_primary"])
-            
+                             foreground=self.pallete[self.theme]["foreground_primary"])         
             if isinstance(widget,tk.Entry): # extra settings for entry
-                widget.configure(readonlybackground=self.pallete[self.theme]["background_primary"])
-
+                widget.configure(readonlybackground=self.pallete[self.theme]["background_primary"],
+                                 insertbackground=self.pallete[self.theme]["foreground_primary"])
             if isinstance(widget,tk.Checkbutton): # extra settings for checkboxes
                 widget.configure(activebackground=self.pallete[self.theme]["background_primary"],
                                  activeforeground=self.pallete[self.theme]["foreground_primary"],
@@ -604,6 +642,12 @@ class AviaryMissionEditor(tk.Tk):
         self.table_add_button.bind("<Button-1>",func=self.add_new_row)
         self.table_add_button.bind("<Enter>",func=self.on_enter)
         self.table_add_button.bind("<Leave>",func=self.on_leave)
+
+        self.point_warning_strvar = tk.StringVar()
+        self.point_warning = tk.Label(self.frame_table.freezeframe_bottom,
+                                      textvariable=self.point_warning_strvar)
+        self.point_warning.pack()
+
         self.update_table()
 
     def display_rounding(self,value,col:int,extra=0):
@@ -631,6 +675,10 @@ class AviaryMissionEditor(tk.Tk):
         pop_left,pop_top = int(win_left + win_wid/2 - pop_wid/2), int(win_top + win_hei/2 - pop_hei/2)
 
         popup = tk.Toplevel(self)
+        # Set the window icon, provides 2 sizes of logos to prevent blurry icons
+        popup.iconphoto(False, 
+            tk.PhotoImage(file = os.path.join(self.source_directory,"aviary_logo_16.png")),
+            tk.PhotoImage(file = os.path.join(self.source_directory,"aviary_logo_32.png")))
         popup.resizable(False,False)
         popup.geometry(f"{pop_wid}x{pop_hei}+{pop_left}+{pop_top}")
         popup.title(pop_title)
@@ -832,12 +880,12 @@ class AviaryMissionEditor(tk.Tk):
 
     def close_window(self):
         """Closes main window and saves persistent settings into a binary pickle file."""
-        self.destroy()
         if self.store_settings.get(): # if user wants to store settings
             with open(self.persist_filename,"w") as fp:
                 json.dump({'window_geometry':self.winfo_geometry(),'theme':self.theme},fp)
         elif os.path.exists(self.persist_filename): # if user doesn't want to store settings and file exists
             os.remove(self.persist_filename) # remove file
+        self.destroy()
 
     def toggle_optimize_view(self):
         """Runs update table with overwrite on to toggle display of optimize checkboxes"""
@@ -1228,12 +1276,11 @@ def create_phase_info(times, altitudes, mach_values, units,
         'constrain_range', True)
 
     # Calculate the total range
-    times_sec = [convert_units(time,units[0],"s") for time in times]
-    total_range = estimate_total_range_trapezoidal(times_sec, mach_values)
+    total_range = estimate_total_range_trapezoidal(times, mach_values,units)
     print(
-        f"Total range is estimated to be {total_range} nautical miles")
+        f"Total range is estimated to be {total_range} {units[1]}")
 
-    phase_info['post_mission']['target_range'] = (total_range, 'nmi')
+    phase_info['post_mission']['target_range'] = (total_range, units[1])
 
     # write a python file with the phase information
     with open(filename, 'w') as f:
@@ -1253,21 +1300,21 @@ def create_phase_info(times, altitudes, mach_values, units,
 
     return phase_info
 
-def estimate_total_range_trapezoidal(times, mach_numbers):
+def estimate_total_range_trapezoidal(times, mach_numbers, units):
     """Source: original Aviary graphical_input.py."""
     speed_of_sound = 343  # Speed of sound in meters per second
 
-    # Convert times to seconds from minutes
-    times_sec = np.array(times)
+    # convert time list into np array with units of seconds
+    times_sec = np.array([convert_units(time,units[0],"s") for time in times])
 
     # Calculate the speeds at each Mach number
     speeds = np.array(mach_numbers) * speed_of_sound
 
     # Use numpy's trapz function to integrate
-    total_range = np.trapz(speeds, times_sec)
+    total_range = np.trapz(speeds, times_sec) # in meters
 
-    total_range_nautical_miles = total_range / 1000 / 1.852
-    return int(round(total_range_nautical_miles))
+    # return range in the same units as altitude units
+    return round(convert_units(total_range,"m",units[1]),2)
 
 def _setup_flight_profile_parser(parser):
     """
