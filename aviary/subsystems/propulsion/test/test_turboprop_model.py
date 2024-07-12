@@ -145,7 +145,7 @@ class TurbopropTest(unittest.TestCase):
         self.prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,
                           114.0, units="unitless")
         # self.prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
-        #                   np.array([1,1,0.7]), units="unitless")
+        #                   np.array([1, 1, 0.7]), units="unitless")
         self.prob.set_val(
             Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT, 0.5, units="unitless")
 
@@ -156,8 +156,9 @@ class TurbopropTest(unittest.TestCase):
         assert_near_equal(results, truth_vals)
 
         # because Hamilton Standard model uses fd method, the following may not be accurate.
+        # atol has to be 45 to pass the test.
         partial_data = self.prob.check_partials(out_stream=None, method="fd")
-        assert_check_partials(partial_data, atol=45, rtol=0.003)
+        assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
     def test_case_2(self):
         # test case using GASP-derived engine deck and default HS prop model.
@@ -285,7 +286,7 @@ class ExamplePropModel(SubsystemBuilderBase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    #unittest.main()
     test = TurbopropTest()
     test.setUp()
     # test.test_electroprop()
