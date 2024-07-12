@@ -156,9 +156,8 @@ class TurbopropTest(unittest.TestCase):
         assert_near_equal(results, truth_vals)
 
         # because Hamilton Standard model uses fd method, the following may not be accurate.
-        # atol has to be 45 to pass the test.
-        partial_data = self.prob.check_partials(out_stream=None, method="fd")
-        assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
+        partial_data = self.prob.check_partials(out_stream=None, form="central")
+        assert_check_partials(partial_data, atol=0.2, rtol=0.2)
 
     def test_case_2(self):
         # test case using GASP-derived engine deck and default HS prop model.
@@ -186,6 +185,9 @@ class TurbopropTest(unittest.TestCase):
         results = self.get_results()
         assert_near_equal(results, truth_vals)
 
+        partial_data = self.prob.check_partials(out_stream=None, form="central")
+        assert_check_partials(partial_data, atol=0.15, rtol=0.15)
+
     def test_case_3(self):
         # test case using GASP-derived engine deck w/o tailpipe thrust and default HS prop model.
         filename = get_path('models/engines/turboprop_1120hp_no_tailpipe.deck')
@@ -208,6 +210,9 @@ class TurbopropTest(unittest.TestCase):
 
         results = self.get_results()
         assert_near_equal(results, truth_vals)
+
+        partial_data = self.prob.check_partials(out_stream=None, form="central")
+        assert_check_partials(partial_data, atol=0.15, rtol=0.15)
 
     def test_electroprop(self):
         # test case using electric motor and default HS prop model.
@@ -253,6 +258,9 @@ class TurbopropTest(unittest.TestCase):
         assert_near_equal(fuel_flow, fuel_flow_expected, tolerance=1e-8)
         assert_near_equal(electric_power, electric_power_expected, tolerance=1e-8)
 
+        partial_data = self.prob.check_partials(out_stream=None, form="central")
+        assert_check_partials(partial_data, atol=0.15, rtol=0.15)
+
 
 class ExamplePropModel(SubsystemBuilderBase):
     def build_mission(self, num_nodes, aviary_inputs, **kwargs):
@@ -286,9 +294,8 @@ class ExamplePropModel(SubsystemBuilderBase):
 
 
 if __name__ == "__main__":
-    #unittest.main()
-    test = TurbopropTest()
-    test.setUp()
+    unittest.main()
+    # test = TurbopropTest()
+    # test.setUp()
     # test.test_electroprop()
     # test.test_case_2()
-    test.test_case_1()
