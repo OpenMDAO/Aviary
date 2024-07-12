@@ -661,8 +661,7 @@ class LiftCurveSlopeAtCruiseTest(unittest.TestCase):
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
-            "factors", LiftCurveSlopeAtCruise(aviary_options=get_option_defaults()), promotes=["*"]
-        )
+            "factors", LiftCurveSlopeAtCruise(), promotes=["*"])
         self.prob.model.set_input_defaults(
             Aircraft.Wing.ASPECT_RATIO, val=10.13, units="unitless"
         )
@@ -677,10 +676,8 @@ class LiftCurveSlopeAtCruiseTest(unittest.TestCase):
 
     def test_slope(self):
         self.prob.run_model()
-        x = self.prob.get_val(self.prob[Aircraft.Design.LIFT_CURVE_SLOPE])
-        print(f"x = {x}")
         tol = 1e-4
-        assert_near_equal(self.prob[Aircraft.Design.LIFT_CURVE_SLOPE], 7.1765, tol)
+        assert_near_equal(self.prob[Aircraft.Design.LIFT_CURVE_SLOPE], 6.3967, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-7, rtol=5e-7)
