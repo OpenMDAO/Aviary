@@ -1116,6 +1116,13 @@ class AviaryMissionEditor(tk.Tk):
                 messagebox.showerror(title="Time Travel Error",
                                      message="All mission points must go forwards in time! Edit points and try again.")
                 return
+        low_mach = 0.25
+        if min(self.data[2]) < low_mach: # low mach value in mission
+            message = f"Low mach values (below {low_mach}) can cause issues with FLOPS based models.\n"+\
+                       "Would you like to continue saving this mission?"
+            continue_saving = messagebox.askyesno(title="Low Mach Values",
+                                message = message)
+            if not continue_saving: return
         users = {'solve_for_distance':self.advanced_options["solve_for_distance"].get(),
                  'constrain_range':self.advanced_options["constrain_range"].get(),
                  'include_takeoff':self.advanced_options["include_takeoff"].get(),
