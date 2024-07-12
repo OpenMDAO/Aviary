@@ -41,7 +41,7 @@ class LoadSpeedsTestCase1(unittest.TestCase):
         assert_near_equal(self.prob["min_dive_vel"], 420, tol)  # bug fixed value
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-7, rtol=1e-7)
+        assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
 
 class LoadSpeedsTestCase2(unittest.TestCase):
@@ -84,7 +84,7 @@ class LoadSpeedsTestCase2(unittest.TestCase):
         )  # not actual GASP value
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-7, rtol=1e-7)
+        assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
 
 class LoadSpeedsTestCase3(unittest.TestCase):
@@ -128,7 +128,7 @@ class LoadSpeedsTestCase3(unittest.TestCase):
         )  # not actual GASP value
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-7, rtol=1e-7)
+        assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
 
 class LoadSpeedsTestCase4(unittest.TestCase):
@@ -171,7 +171,7 @@ class LoadSpeedsTestCase4(unittest.TestCase):
         )  # not actual GASP value
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-7, rtol=1e-6)
+        assert_check_partials(partial_data, atol=1e-15, rtol=1e-14)
 
 
 class LoadSpeedsTestCase5(unittest.TestCase):
@@ -208,7 +208,7 @@ class LoadSpeedsTestCase5(unittest.TestCase):
         assert_near_equal(self.prob["min_dive_vel"], 420, tol)  # not actual GASP value
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-7, rtol=1e-7)
+        assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
 
 class LoadSpeedsTestCase6smooth(
@@ -246,7 +246,7 @@ class LoadSpeedsTestCase6smooth(
         assert_near_equal(self.prob["min_dive_vel"], 420, tol)  # bug fixed value
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-7, rtol=1e-7)
+        assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
 
 class LoadSpeedsTestCase7smooth(unittest.TestCase):  # TestCase2 with smooth functions
@@ -293,7 +293,7 @@ class LoadSpeedsTestCase7smooth(unittest.TestCase):  # TestCase2 with smooth fun
         )  # not actual GASP value
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+        assert_check_partials(partial_data, atol=1e-15, rtol=1e-14)
 
 
 class LoadSpeedsTestCase8smooth(unittest.TestCase):  # TestCase3 with smooth functions
@@ -341,7 +341,7 @@ class LoadSpeedsTestCase8smooth(unittest.TestCase):  # TestCase3 with smooth fun
         )  # not actual GASP value
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-5, rtol=1e-5)
+        assert_check_partials(partial_data, atol=5e-7, rtol=1e-6)
 
 
 class LoadSpeedsTestCase9smooth(unittest.TestCase):  # TestCase4 with smooth functions
@@ -388,7 +388,7 @@ class LoadSpeedsTestCase9smooth(unittest.TestCase):  # TestCase4 with smooth fun
         )  # not actual GASP value
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-5, rtol=1e-5)
+        assert_check_partials(partial_data, atol=1e-15, rtol=2e-14)
 
 
 class LoadSpeedsTestCase10smooth(unittest.TestCase):  # TestCase5 with smooth functions
@@ -429,7 +429,7 @@ class LoadSpeedsTestCase10smooth(unittest.TestCase):  # TestCase5 with smooth fu
         assert_near_equal(self.prob["min_dive_vel"], 420, tol)  # not actual GASP value
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-7, rtol=1e-7)
+        assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
 
 # this is the large single aisle 1 V3 test case
@@ -463,7 +463,7 @@ class LoadParametersTestCase1(unittest.TestCase):
         assert_near_equal(self.prob["V9"], 350, tol)  # bug fixed value
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+        assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
 
 class LoadParametersTestCase2(unittest.TestCase):
@@ -499,7 +499,7 @@ class LoadParametersTestCase2(unittest.TestCase):
         assert_near_equal(self.prob["V9"], 304.14, tol)  # not actual GASP value
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-8, rtol=3e-8)
+        assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
 
 class LoadParametersTestCase3(unittest.TestCase):
@@ -535,7 +535,7 @@ class LoadParametersTestCase3(unittest.TestCase):
         assert_near_equal(self.prob["V9"], 304.14, tol)  # not actual GASP value
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-8, rtol=6e-8)
+        assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
 
 # this is the large single aisle 1 V3 test case
@@ -573,7 +573,7 @@ class LoadParametersTestCase4smooth(unittest.TestCase):
         assert_near_equal(self.prob["V9"], 350, tol)  # bug fixed value
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+        assert_check_partials(partial_data, atol=1e-15, rtol=1e-14)
 
 
 class LoadParametersTestCase5smooth(unittest.TestCase):
@@ -613,7 +613,7 @@ class LoadParametersTestCase5smooth(unittest.TestCase):
         assert_near_equal(self.prob["V9"], 304.14, tol)  # not actual GASP value
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-8, rtol=3e-8)
+        assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
 
 class LoadParametersTestCase6smooth(unittest.TestCase):
@@ -653,7 +653,7 @@ class LoadParametersTestCase6smooth(unittest.TestCase):
         assert_near_equal(self.prob["V9"], 304.14, tol)  # not actual GASP value
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-8, rtol=6e-8)
+        assert_check_partials(partial_data, atol=1e-15, rtol=1e-8)
 
 
 class LiftCurveSlopeAtCruiseTest(unittest.TestCase):
@@ -680,7 +680,7 @@ class LiftCurveSlopeAtCruiseTest(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Design.LIFT_CURVE_SLOPE], 6.3967, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-7, rtol=5e-7)
+        assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
 
 # this is the large single aisle 1 V3 test case
@@ -723,7 +723,7 @@ class LoadFactorsTestCase1(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Wing.ULTIMATE_LOAD_FACTOR], 3.9502, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-7, rtol=5e-7)
+        assert_check_partials(partial_data, atol=1e-15, rtol=1e-14)
 
 
 class LoadFactorsTestCase2(unittest.TestCase):
@@ -767,7 +767,7 @@ class LoadFactorsTestCase2(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Wing.ULTIMATE_LOAD_FACTOR], 3.75, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+        assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
 
 # this is the large single aisle 1 V3 test case
@@ -816,7 +816,7 @@ class LoadFactorsTestCase3smooth(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Wing.ULTIMATE_LOAD_FACTOR], 3.9502, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-7, rtol=5e-7)
+        assert_check_partials(partial_data, atol=5e-14, rtol=2e-13)
 
 
 class LoadFactorsTestCase4smooth(unittest.TestCase):
@@ -862,7 +862,7 @@ class LoadFactorsTestCase4smooth(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Wing.ULTIMATE_LOAD_FACTOR], 3.75, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
+        assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
 
 # this is the large single aisle 1 V3 test case
@@ -905,7 +905,7 @@ class DesignLoadGroupTestCase1(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Wing.ULTIMATE_LOAD_FACTOR], 3.75, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-7, rtol=2e-7)
+        assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
 
 # this is the large single aisle 1 V3 test case
@@ -950,7 +950,7 @@ class DesignLoadGroupTestCase2smooth(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Wing.ULTIMATE_LOAD_FACTOR], 3.7397, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-7, rtol=2e-7)
+        assert_check_partials(partial_data, atol=2e-14, rtol=2e-12)
 
 
 if __name__ == "__main__":
