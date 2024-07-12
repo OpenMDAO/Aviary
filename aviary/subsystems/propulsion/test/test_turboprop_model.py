@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_near_equal
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from dymos.models.atmosphere import USatm1976Comp
 from pathlib import Path
 
@@ -94,7 +94,7 @@ class TurbopropTest(unittest.TestCase):
             promotes_inputs=['*'],
             promotes_outputs=['*'])
 
-        self.prob.setup(force_alloc_complex=True)
+        self.prob.setup(force_alloc_complex=False)
         self.prob.set_val(Aircraft.Engine.SCALE_FACTOR, 1, units='unitless')
 
     def get_results(self, point_names=None, display_results=False):
@@ -154,6 +154,10 @@ class TurbopropTest(unittest.TestCase):
         self.prob.run_model()
         results = self.get_results()
         assert_near_equal(results, truth_vals)
+
+        # because Hamilton Standard model uses fd method, the following may not be accurate.
+        partial_data = self.prob.check_partials(out_stream=None, method="fd")
+        assert_check_partials(partial_data, atol=45, rtol=0.003)
 
     def test_case_2(self):
         # test case using GASP-derived engine deck and default HS prop model.
@@ -282,7 +286,8 @@ class ExamplePropModel(SubsystemBuilderBase):
 
 if __name__ == "__main__":
     unittest.main()
-    # test = TurbopropTest()
-    # test.setUp()
+    test = TurbopropTest()
+    test.setUp()
     # test.test_electroprop()
     # test.test_case_2()
+    test.test_case_1()
