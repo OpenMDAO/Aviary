@@ -31,7 +31,7 @@ class TestAeroForces(unittest.TestCase):
         assert_near_equal(drag, [1370.3, 1301.785, 1164.755])
 
         partial_data = prob.check_partials(method="cs", out_stream=None)
-        assert_check_partials(partial_data, atol=1e-11, rtol=1e-15)
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-15)
 
 
 class TestTimeRamp(unittest.TestCase):
@@ -121,7 +121,7 @@ class TestTanhRampComp(unittest.TestCase):
 
         p.run_model()
 
-        cpd = p.check_partials(compact_print=True, method='cs')
+        cpd = p.check_partials(compact_print=True, method='cs', out_stream=None)
 
         thruput = p.get_val('tanh_ramp.thruput')
 
