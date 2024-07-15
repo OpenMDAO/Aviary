@@ -160,7 +160,7 @@ def _load_flops_aero_table(filepath: Path):
     zero_lift_machs = _read_line(5 + offset, zero_lift_drag_comments)
     altitudes = _read_line(6 + offset, zero_lift_drag_comments)
     for i in range(len(zero_lift_machs)):
-        drag = _read_line(7 + i+ offset, zero_lift_drag_comments)
+        drag = _read_line(7 + i + offset, zero_lift_drag_comments)
         if len(drag) == len(altitudes):
             zero_lift_drag.append(drag)
         else:
