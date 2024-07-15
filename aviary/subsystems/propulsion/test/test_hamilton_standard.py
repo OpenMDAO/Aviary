@@ -13,6 +13,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
 
+
 class PreHamiltonStandardTest(unittest.TestCase):
     def setUp(self):
         prob = om.Problem()
@@ -32,19 +33,26 @@ class PreHamiltonStandardTest(unittest.TestCase):
     def test_preHS(self):
         prob = self.prob
         prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 10, units="ft")
-        prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED, [700.0, 750.0, 800.0], units="ft/s")
+        prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED,
+                     [700.0, 750.0, 800.0], units="ft/s")
         prob.set_val(Dynamic.Mission.SHAFT_POWER, [1850.0, 1850.0, 900.0], units="hp")
-        prob.set_val(Dynamic.Mission.DENSITY, [0.00237717, 0.00237717, 0.00106526], units="slug/ft**3")
+        prob.set_val(Dynamic.Mission.DENSITY,
+                     [0.00237717, 0.00237717, 0.00106526], units="slug/ft**3")
         prob.set_val(Dynamic.Mission.VELOCITY, [100.0, 100, 100], units="ft/s")
-        prob.set_val(Dynamic.Mission.SPEED_OF_SOUND, [661.46474547, 661.46474547, 601.93668333], units="knot")
+        prob.set_val(Dynamic.Mission.SPEED_OF_SOUND,
+                     [661.46474547, 661.46474547, 601.93668333], units="knot")
 
         prob.run_model()
-        
+
         tol = 5e-4
-        assert_near_equal(prob.get_val("power_coefficient"), [0.3871, 0.3147, 0.2815], tolerance=tol)
-        assert_near_equal(prob.get_val("advance_ratio"), [0.4494, 0.4194, 0.3932], tolerance=tol)
-        assert_near_equal(prob.get_val("tip_mach"), [1.05826, 1.1338, 1.3290], tolerance=tol)
-        assert_near_equal(prob.get_val("density_ratio"), [1.0001, 1.0001, 0.4482], tolerance=tol)
+        assert_near_equal(prob.get_val("power_coefficient"),
+                          [0.3871, 0.3147, 0.2815], tolerance=tol)
+        assert_near_equal(prob.get_val("advance_ratio"),
+                          [0.4494, 0.4194, 0.3932], tolerance=tol)
+        assert_near_equal(prob.get_val("tip_mach"),
+                          [1.05826, 1.1338, 1.3290], tolerance=tol)
+        assert_near_equal(prob.get_val("density_ratio"),
+                          [1.0001, 1.0001, 0.4482], tolerance=tol)
 
         partial_data = prob.check_partials(
             out_stream=None,
@@ -85,13 +93,16 @@ class HamiltonStandardTest(unittest.TestCase):
         prob.set_val(Dynamic.Mission.MACH, [0.001509, 0.1887, 0.4976], units="unitless")
         prob.set_val("tip_mach", [1.2094, 1.2094, 1.3290], units="unitless")
         prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, 114.0, units="unitless")
-        prob.set_val(Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT, 0.5, units="unitless")
+        prob.set_val(Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT,
+                     0.5, units="unitless")
 
         prob.run_model()
-        
+
         tol = 5e-4
-        assert_near_equal(prob.get_val("thrust_coefficient"), [0.2763, 0.2052, 0.1158], tolerance=tol)
-        assert_near_equal(prob.get_val("comp_tip_loss_factor"), [1.0, 1.0, 0.9818], tolerance=tol)
+        assert_near_equal(prob.get_val("thrust_coefficient"),
+                          [0.2763, 0.2052, 0.1158], tolerance=tol)
+        assert_near_equal(prob.get_val("comp_tip_loss_factor"),
+                          [1.0, 1.0, 0.9818], tolerance=tol)
 
         partial_data = prob.check_partials(
             out_stream=None,
@@ -126,7 +137,8 @@ class PostHamiltonStandardTest(unittest.TestCase):
         prob = self.prob
         prob.set_val("power_coefficient", [0.3871, 0.3147, 0.2815], units="unitless")
         prob.set_val("advance_ratio", [0.4494, 0.4194, 0.3932], units="unitless")
-        prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED, [700.0, 750.0, 800.0], units="ft/s")
+        prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED,
+                     [700.0, 750.0, 800.0], units="ft/s")
         prob.set_val("density_ratio", [1.0001, 1.0001, 0.4482], units="unitless")
         prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 10.0, units="ft")
         prob.set_val("thrust_coefficient", [0.2765, 0.2052, 0.1158], units="unitless")
@@ -134,12 +146,16 @@ class PostHamiltonStandardTest(unittest.TestCase):
         prob.set_val("comp_tip_loss_factor", [1.0, 1.0, 0.9819], units="unitless")
 
         prob.run_model()
-        
+
         tol = 5e-4
-        assert_near_equal(prob.get_val("thrust_coefficient_comp_loss"), [0.2765, 0.2052, 0.1137], tolerance=tol)
-        assert_near_equal(prob.get_val(Dynamic.Mission.THRUST), [3218.9508, 2723.7294, 759.7543], tolerance=tol)
-        assert_near_equal(prob.get_val("propeller_efficiency"), [0.321, 0.2735, 0.1588], tolerance=tol)
-        assert_near_equal(prob.get_val("install_efficiency"), [0.3167, 0.2680, 0.15378], tolerance=tol)
+        assert_near_equal(prob.get_val("thrust_coefficient_comp_loss"),
+                          [0.2765, 0.2052, 0.1137], tolerance=tol)
+        assert_near_equal(prob.get_val(Dynamic.Mission.THRUST),
+                          [3218.9508, 2723.7294, 759.7543], tolerance=tol)
+        assert_near_equal(prob.get_val("propeller_efficiency"),
+                          [0.321, 0.2735, 0.1588], tolerance=tol)
+        assert_near_equal(prob.get_val("install_efficiency"),
+                          [0.3167, 0.2680, 0.15378], tolerance=tol)
 
         partial_data = prob.check_partials(
             out_stream=None,
