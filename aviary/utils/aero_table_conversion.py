@@ -160,7 +160,7 @@ def _load_flops_aero_table(filepath: Path):
     zero_lift_machs = _read_line(5 + offset, zero_lift_drag_comments)
     altitudes = _read_line(6 + offset, zero_lift_drag_comments)
     for i in range(len(zero_lift_machs)):
-        drag = _read_line(7+ i+ offset, zero_lift_drag_comments)
+        drag = _read_line(7 + i+ offset, zero_lift_drag_comments)
         if len(drag) == len(altitudes):
             zero_lift_drag.append(drag)
         else:
@@ -179,7 +179,7 @@ def _load_flops_aero_table(filepath: Path):
     lift_drag_data.set_val('Lift-Dependent Drag Coefficient',
                            np.array(lift_drag).flatten(), 'unitless')
 
-    altitude, mach= np.meshgrid(altitudes, zero_lift_machs)
+    altitude, mach = np.meshgrid(altitudes, zero_lift_machs)
     zero_lift_drag_data.set_val('Altitude', altitude.flatten(), 'ft')
     zero_lift_drag_data.set_val('Mach', mach.flatten(), 'unitless')
     zero_lift_drag_data.set_val('Zero-Lift Drag Coefficient',
