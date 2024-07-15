@@ -295,8 +295,8 @@ class ExamplePropModel(SubsystemBuilderBase):
 
 
 if __name__ == "__main__":
-    #unittest.main()
-    test = TurbopropTest()
-    test.setUp()
-    test.test_electroprop()
+    unittest.main()
+    # test = TurbopropTest()
+    # test.setUp()
+    # test.test_electroprop()
     # test.test_case_2()
