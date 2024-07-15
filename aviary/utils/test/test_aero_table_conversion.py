@@ -167,3 +167,9 @@ class TestAeroTableConversion(unittest.TestCase):
         args.output_file = str(Path(tempdir, 'TEST_'+Path(args.input_file).name))
         args.data_format = 'FLOPS'
         _exec_ATC(args, None)
+
+        # Only testing that this runs without an error, not comparing the resulting data
+
+
+if __name__ == '__main__':
+    unittest.main()
