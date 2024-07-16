@@ -58,7 +58,7 @@ class TestMuxComponent(unittest.TestCase):
         prob.set_val(Aircraft.Nacelle.LAMINAR_FLOW_LOWER, np.array([0.10]))
 
         prob.run_model()
-        prob.check_partials(compact_print=True, method="cs")
+        # prob.check_partials(compact_print=True, method="cs")
 
         derivs = prob.check_partials(out_stream=None, method="cs")
 
@@ -133,7 +133,7 @@ class TestMuxComponent(unittest.TestCase):
         prob.set_val(Aircraft.Nacelle.LAMINAR_FLOW_LOWER, np.array([0.10, 0.04]))
 
         prob.run_model()
-        prob.check_partials(compact_print=True, method="cs")
+        # prob.check_partials(compact_print=True, method="cs")
 
         derivs = prob.check_partials(out_stream=None, method="cs")
 
