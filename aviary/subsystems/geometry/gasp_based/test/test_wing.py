@@ -333,6 +333,7 @@ class WingGroupTestCase1(
 class WingGroupTestCase2(unittest.TestCase):
     """
     Wing with both folds and struts which has fold dimensional location and strut dimensional location specified
+    with the fold at the strut connection
     """
 
     def setUp(self):
