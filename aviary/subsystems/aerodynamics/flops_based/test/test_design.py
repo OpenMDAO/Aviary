@@ -41,7 +41,6 @@ class DesignMCLTest(unittest.TestCase):
         assert_near_equal(
             prob.get_val(Mission.Design.LIFT_COEFFICIENT), [0.683078], 1e-6)
 
-
     def test_derivs_subsonic(self):
         prob = om.Problem()
         model = prob.model
