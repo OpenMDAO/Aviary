@@ -143,6 +143,7 @@ class SimpleDrag(om.ExplicitComponent):
         partials[Dynamic.Mission.DRAG, 'CD'] = q * S
 
 
+# This class is not used anywhere in Aviary. If we use it, need to add test.
 class TotalDragCoeff(om.ExplicitComponent):
     '''
     Calculate the total drag coefficient from lift-dependent and lift-independent drag
