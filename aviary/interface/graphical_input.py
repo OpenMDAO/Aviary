@@ -257,39 +257,26 @@ class AviaryMissionEditor(tk.Tk):
         based on current theme."""
         if toggle:
             self.theme = "light" if self.theme == "dark" else "dark"
+
+        # this command sets options for all the widgets    
+        self.tk_setPalette(background = self.pallete[self.theme]["background_primary"],
+                           foreground = self.pallete[self.theme]["foreground_primary"],
+                           insertBackground = self.pallete[self.theme]["foreground_primary"],
+                           highlightBackground = self.pallete[self.theme]["background_primary"],
+                           highlightColor = self.pallete[self.theme]["background_primary"],
+                           activeForeground = self.pallete[self.theme]["foreground_primary"],
+                           activeBackground = self.pallete[self.theme]["background_primary"],
+                           selectColor = self.pallete[self.theme]["background_primary"])
         self.create_menu() # recreating menu b/c tkinter menus cannot be reconfigured with new colors
-        # update frames' background color
-        frames = [self,self.frame_plotReadouts,self.frame_table.interior,
-                  self.frame_table.vscroll_canvas,self.frame_table,self.frame_table.freezeframe_bottom]
-        for frame in frames:
-            frame.configure(background = self.pallete[self.theme]["background_primary"])
+    
         # update table header color, different from background         
-        self.frame_tableheaders.configure(background=self.pallete[self.theme]["hover"])
-        self.frame_plot_table_border.configure(highlightbackground=self.pallete[self.theme]["foreground_primary"])  
-        self.point_warning.configure(background=self.pallete[self.theme]["background_primary"],
-                                     foreground=self.pallete[self.theme]["crosshair"])
+        self.frame_tableheaders.configure(background=self.pallete[self.theme]["hover"])    
         for widget in self.table_header_widgets:
             widget.configure(background=self.pallete[self.theme]["hover"])
             widget.configure(foreground=self.pallete[self.theme]["foreground_primary"])
             if isinstance(widget,tk.Entry): 
                 widget.configure(readonlybackground=self.pallete[self.theme]["hover"])
-        # update table widgets' colors
-        for widget in [*self.table_widgets,self.table_add_button]:
-            widget.configure(background=self.pallete[self.theme]["background_primary"],
-                             foreground=self.pallete[self.theme]["foreground_primary"])         
-            if isinstance(widget,tk.Entry): # extra settings for entry
-                widget.configure(readonlybackground=self.pallete[self.theme]["background_primary"],
-                                 insertbackground=self.pallete[self.theme]["foreground_primary"])
-            if isinstance(widget,tk.Checkbutton): # extra settings for checkboxes
-                widget.configure(activebackground=self.pallete[self.theme]["background_primary"],
-                                 activeforeground=self.pallete[self.theme]["foreground_primary"],
-                                 highlightbackground=self.pallete[self.theme]["background_primary"],
-                                 highlightcolor=self.pallete[self.theme]["background_primary"],
-                                 selectcolor=self.pallete[self.theme]["background_primary"])
-        # update mouse coordinate readout label colors
-        self.mouse_coords.configure(background=self.pallete[self.theme]["background_primary"],
-                                    foreground=self.pallete[self.theme]["foreground_primary"])
-        # update figure/subplot colors
+        
         self.fig.set_facecolor(self.pallete[self.theme]["background_primary"])
         for plot in self.plots:
             plot.set_facecolor(self.pallete[self.theme]["background_primary"])
@@ -864,7 +851,8 @@ class AviaryMissionEditor(tk.Tk):
         menu_bar = tk.Menu(self)
         for tab_label,tab_list in structure.items():
             tab = tk.Menu(menu_bar,tearoff=False,background=self.pallete[self.theme]['background_primary'],
-                          foreground=self.pallete[self.theme]['foreground_primary'])
+                          foreground=self.pallete[self.theme]['foreground_primary'],
+                          activebackground=self.pallete[self.theme]['hover'])
             menu_bar.add_cascade(label=tab_label,menu = tab)
             for item in tab_list:
                 if item[0] == "separator": tab.add_separator()
