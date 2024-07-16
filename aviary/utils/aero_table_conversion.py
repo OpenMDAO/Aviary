@@ -157,20 +157,20 @@ def _load_flops_aero_table(filepath: Path):
     # these are not needed, we can determine the length of data vectors directly
     altitude_count, zero_lift_mach_count = _read_line(
         4 + offset, zero_lift_drag_comments)
-    altitudes = _read_line(5 + offset, zero_lift_drag_comments)
-    zero_lift_machs = _read_line(6 + offset, zero_lift_drag_comments)
-    for i in range(len(altitudes)):
+    zero_lift_machs = _read_line(5 + offset, zero_lift_drag_comments)
+    altitudes = _read_line(6 + offset, zero_lift_drag_comments)
+    for i in range(len(zero_lift_machs)):
         drag = _read_line(7 + i + offset, zero_lift_drag_comments)
-        if len(drag) == len(zero_lift_machs):
+        if len(drag) == len(altitudes):
             zero_lift_drag.append(drag)
         else:
             raise ValueError('Number of data points provided for '
-                             f'zero-lift drag at altitude {altitudes[i]} '
-                             'does not match number of Machs provided '
+                             f'zero-lift drag at Mach {zero_lift_machs[i]} '
+                             'does not match number of Altitudes provided '
                              f'(FLOPS aero data file {filepath.name})')
-    if len(zero_lift_drag) != len(altitudes):
+    if len(zero_lift_drag) != len(zero_lift_machs):
         raise ValueError('Number of data rows provided for zero-lift drag does '
-                         'not match number of altitudes provided (FLOPS aero data '
+                         'not match number of Mach numbers provided (FLOPS aero data '
                          f'file {filepath.name})')
 
     cl, mach = np.meshgrid(cls, lift_drag_machs)
@@ -179,7 +179,7 @@ def _load_flops_aero_table(filepath: Path):
     lift_drag_data.set_val('Lift-Dependent Drag Coefficient',
                            np.array(lift_drag).flatten(), 'unitless')
 
-    mach, altitude = np.meshgrid(zero_lift_machs, altitudes)
+    altitude, mach = np.meshgrid(altitudes, zero_lift_machs)
     zero_lift_drag_data.set_val('Altitude', altitude.flatten(), 'ft')
     zero_lift_drag_data.set_val('Mach', mach.flatten(), 'unitless')
     zero_lift_drag_data.set_val('Zero-Lift Drag Coefficient',
