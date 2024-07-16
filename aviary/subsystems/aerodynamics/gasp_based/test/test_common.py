@@ -4,7 +4,8 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
-from aviary.subsystems.aerodynamics.gasp_based.common import (AeroForces, CLFromLift,
+from aviary.subsystems.aerodynamics.gasp_based.common import (AeroForces,
+                                                              CLFromLift,
                                                               TanhRampComp,
                                                               TimeRamp)
 from aviary.variable_info.variables import Aircraft, Dynamic
