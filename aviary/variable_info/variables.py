@@ -155,7 +155,7 @@ class Aircraft:
         FINENESS = 'aircraft:design:fineness'
         FIXED_EQUIPMENT_MASS = 'aircraft:design:fixed_equipment_mass'
         FIXED_USEFUL_LOAD = 'aircraft:design:fixed_useful_load'
-        IJEFF = 'ijeff'
+        IJEFF = 'aircraft:design:ijeff'
         LAMINAR_FLOW_LOWER = 'aircraft:design:laminar_flow_lower'
         LAMINAR_FLOW_UPPER = 'aircraft:design:laminar_flow_upper'
 
@@ -237,7 +237,7 @@ class Aircraft:
         PROPELLER_DIAMETER = 'aircraft:engine:propeller_diameter'
         PROPELLER_INTEGRATED_LIFT_COEFFICIENT = \
             'aircraft:engine:propeller_integrated_lift_coefficient'
-        PROPELLER_TIP_MACH_MAX = 'propeller_tip_mach_max'
+        PROPELLER_TIP_MACH_MAX = 'aircraft:engine:propeller_tip_mach_max'
         PROPELLER_TIP_SPEED_MAX = 'aircraft:engine:propeller_tip_speed_max'
         PYLON_FACTOR = 'aircraft:engine:pylon_factor'
         REFERENCE_DIAMETER = 'aircraft:engine:reference_diameter'
