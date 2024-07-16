@@ -163,7 +163,11 @@ class ComputedDragTest(unittest.TestCase):
         model = prob.model
 
         model.add_subsystem(
-            'computed_drag', ComputedDrag(num_nodes=nn), promotes_inputs=['*'])
+            'computed_drag',
+            ComputedDrag(num_nodes=nn),
+            promotes_inputs=['*'],
+            promotes_outputs=['CD', Dynamic.Mission.DRAG],
+        )
 
         prob.setup(force_alloc_complex=True)
 
@@ -180,9 +184,15 @@ class ComputedDragTest(unittest.TestCase):
         prob.set_val(Aircraft.Wing.AREA, 13.7)
 
         derivs = prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(derivs, atol=1e-12, rtol=1e-12)
 
         # TODO: need to test outputs too
-        assert_check_partials(derivs, atol=1e-12, rtol=1e-12)
+        print(f"CD = {prob.get_val('CD')}")
+        print(f"Dynamic.Mission.DRAG = {prob.get_val(Dynamic.Mission.DRAG)}")
+        assert_near_equal(
+            prob.get_val("CD"), [1.0, 1.0], 1e-6)
+        assert_near_equal(
+            prob.get_val(Dynamic.Mission.DRAG), [1.0, 1.0], 1e-6)
 
 
 # region - dynamic test data taken from the baseline FLOPS output for each case
