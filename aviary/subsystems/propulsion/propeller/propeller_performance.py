@@ -439,9 +439,9 @@ class PropellerPerformance(om.Group):
         nn = options['num_nodes']
         aviary_options = options['aviary_options']
         compute_installation_loss = aviary_options.get_val(
-            Aircraft.Engine.COMPUTE_PROPELLER_INSTALLATION_LOSS)
-        use_propeller_map = aviary_options.get_val(
-            Aircraft.Engine.USE_PROPELLER_MAP)
+            Aircraft.Engine.COMPUTE_PROPELLER_INSTALLATION_LOSS
+        )[0]
+        use_propeller_map = aviary_options.get_val(Aircraft.Engine.USE_PROPELLER_MAP)[0]
 
         if self.options['input_rpm']:
             # compute the propeller tip speed based on the input RPM and diameter of the propeller
