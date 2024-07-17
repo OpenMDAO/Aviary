@@ -1270,11 +1270,11 @@ def create_phase_info(times, altitudes, mach_values, units,
         'constrain_range', True)
 
     # Calculate the total range
-    total_range = estimate_total_range_trapezoidal(times, mach_values,units)
+    total_range,range_unit = estimate_total_range_trapezoidal(times, mach_values,units)
     print(
-        f"Total range is estimated to be {total_range} {units[1]}")
+        f"Total range is estimated to be {total_range} {range_unit}")
 
-    phase_info['post_mission']['target_range'] = (total_range, units[1])
+    phase_info['post_mission']['target_range'] = (total_range, range_unit)
 
     # write a python file with the phase information
     with open(filename, 'w') as f:
@@ -1306,9 +1306,13 @@ def estimate_total_range_trapezoidal(times, mach_numbers, units):
 
     # Use numpy's trapz function to integrate
     total_range = np.trapz(speeds, times_sec) # in meters
+    range_unit = units[1]
+    # m and ft are small units for range, change to larger ones
+    if range_unit == "m": range_unit = "km"
+    if range_unit == "ft": range_unit = "nmi"
 
     # return range in the same units as altitude units
-    return round(convert_units(total_range,"m",units[1]),2)
+    return round(convert_units(total_range,"m",range_unit),2),range_unit
 
 def _setup_flight_profile_parser(parser):
     """
