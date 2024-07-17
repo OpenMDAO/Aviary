@@ -331,6 +331,11 @@ class WingGroupTestCase1(
 
 
 class WingGroupTestCase2(unittest.TestCase):
+    """
+    Wing with both folds and struts which has fold dimensional location and strut dimensional location specified
+    with the fold at the strut connection
+    """
+
     def setUp(self):
 
         options = get_option_defaults()
@@ -433,6 +438,10 @@ class WingGroupTestCase2(unittest.TestCase):
 
 
 class WingGroupTestCase3(unittest.TestCase):
+    """
+    Wing with folds which has dimensional location specified
+    """
+
     def setUp(self):
 
         options = get_option_defaults()
@@ -520,6 +529,10 @@ class WingGroupTestCase3(unittest.TestCase):
 
 
 class WingGroupTestCase4(unittest.TestCase):
+    """
+    Wing with both folds and struts which has fold dimensional location and strut dimensional location specified
+    """
+
     def setUp(self):
 
         options = get_option_defaults()
@@ -548,8 +561,36 @@ class WingGroupTestCase4(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
+    def test_case1(self):
+        self.prob.run_model()
+        tol = 5e-4
+
+        assert_near_equal(self.prob[Aircraft.Wing.AREA], 1187.5, tol)
+        assert_near_equal(self.prob[Aircraft.Wing.SPAN], 109.6785, tol)
+        assert_near_equal(self.prob[Aircraft.Wing.CENTER_CHORD], 16.2814, tol)
+        assert_near_equal(self.prob[Aircraft.Wing.AVERAGE_CHORD], 11.7430, tol)
+        assert_near_equal(self.prob[Aircraft.Wing.ROOT_CHORD], 15.4789, tol)
+        assert_near_equal(
+            self.prob[Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED], 0.1067, tol)
+        assert_near_equal(self.prob["fold.nonfolded_taper_ratio"], 0.9939, tol)
+        assert_near_equal(self.prob[Aircraft.Wing.FOLDING_AREA], 1171.2684, tol)
+        assert_near_equal(self.prob["fold.nonfolded_wing_area"], 16.2316, tol)
+        assert_near_equal(self.prob["fold.tc_ratio_mean_folded"], 0.10995, tol)
+        assert_near_equal(self.prob["fold.nonfolded_AR"], 0.06161, tol)
+        assert_near_equal(
+            self.prob[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX], 11.61131, tol)
+        assert_near_equal(self.prob[Aircraft.Strut.LENGTH], 11.18034, tol)
+        assert_near_equal(self.prob[Aircraft.Strut.CHORD], 10.62132, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=3e-12, rtol=1e-13)
+
 
 class WingGroupTestCase5(unittest.TestCase):
+    """
+    Wing with struts which has dimentional location specified
+    """
+
     def setUp(self):
 
         options = get_option_defaults()

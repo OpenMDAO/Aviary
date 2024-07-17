@@ -56,7 +56,7 @@ class LoadSpeeds(om.ExplicitComponent):
         )
         self.add_output("min_dive_vel", val=0, units="kn", desc="VDMIN: dive velocity")
 
-        self.declare_partials("*", "*", val=0.0)
+        self.declare_partials("*", "*")
 
     def compute(self, inputs, outputs):
 
@@ -405,9 +405,9 @@ class LoadParameters(om.ExplicitComponent):
             "V9", val=0, units="kn", desc="V9: intermediate value. Typically it is maximum flight speed."
         )
 
-        self.declare_partials("max_mach", "max_airspeed", val=0.0)
-        self.declare_partials("density_ratio", "max_airspeed", val=0.0)
-        self.declare_partials("V9", "*", val=0.0)
+        self.declare_partials("max_mach", "max_airspeed")
+        self.declare_partials("density_ratio", "max_airspeed")
+        self.declare_partials("V9", "*")
 
     def compute(self, inputs, outputs):
 
@@ -707,7 +707,7 @@ class LoadFactors(om.ExplicitComponent):
 
         add_aviary_output(self, Aircraft.Wing.ULTIMATE_LOAD_FACTOR, val=3.5)
 
-        self.declare_partials(Aircraft.Wing.ULTIMATE_LOAD_FACTOR, "*", val=0.0)
+        self.declare_partials(Aircraft.Wing.ULTIMATE_LOAD_FACTOR, "*")
 
     def compute(self, inputs, outputs):
 

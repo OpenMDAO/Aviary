@@ -184,6 +184,9 @@ class TestEmpennageGroup(
             self.prob[Aircraft.VerticalTail.MOMENT_ARM], 49.87526, tol
         )  # note: slightly different from GASP output value, likely numerical diff.s, this value is from Kenny
 
+        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, **partial_tols)
+
     def test_large_sinle_aisle_1_calc_volcoefs(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF,
@@ -206,6 +209,9 @@ class TestEmpennageGroup(
         assert_near_equal(
             self.prob[Aircraft.VerticalTail.VOLUME_COEFFICIENT], 0.11623, tol
         )  # not actual GASP value
+
+        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, **partial_tols)
 
 
 if __name__ == "__main__":
