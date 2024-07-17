@@ -1,5 +1,5 @@
 """
-Define an aviary mission with an NPSS defined engine. During pre-mission the engine is designed and an engine deck is made.  
+Define an aviary mission with an NPSS defined engine. During pre-mission the engine is designed and an engine deck is made.
 During the mission the deck is used for performance. Weight is estimated using the default Aviary method.
 The engine model was developed using NPSS v3.2.
 """
@@ -21,7 +21,7 @@ def define_aviary_NPSS_problem():
     # Allow for user overrides here
     # add engine builder
     prob.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm.csv',
-                     phase_info, engine_builder=EngineBuilder(), meta_data=ExtendedMetaData)
+                     phase_info, engine_builders=[EngineBuilder()], meta_data=ExtendedMetaData)
 
     prob.check_and_preprocess_inputs()
 

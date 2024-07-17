@@ -11,7 +11,8 @@ from typing import (
     List,
     Iterator,
     Tuple,
-)  # Use typing.List and typing.Tuple for compatibility
+)
+import warnings  # Use typing.List and typing.Tuple for compatibility
 
 import numpy as np
 from bokeh.palettes import Category10
@@ -141,6 +142,26 @@ def _dashboard_cmd(options, user_args):
     )
 
 
+def create_table_pane_from_json(json_filepath):
+    try:
+        with open(json_filepath) as json_file:
+            parsed_json = json.load(json_file)
+
+        # Convert the dictionary to a DataFrame
+        df = pd.DataFrame(list(parsed_json.items()), columns=['Name', 'Value'])
+        table_pane = pn.widgets.Tabulator(df, show_index=False, selectable=False,
+                                          sortable=False,
+                                          disabled=True,  # disables editing of the table
+                                          titles={
+                                              'Name': '',
+                                              'Value': '',
+                                          })
+    except Exception as err:
+        warnings.warn(f"Unable to generate table due to: {err}.")
+        table_pane = None
+    return table_pane
+
+
 # functions for creating Panel Panes given different kinds of
 #    data inputs
 def create_csv_frame(csv_filepath, documentation):
@@ -179,6 +200,18 @@ def create_csv_frame(csv_filepath, documentation):
         report_pane = None
 
     return report_pane
+
+
+def get_run_status(status_filepath):
+    try:
+        with open(status_filepath) as f:
+            status_dct = json.load(f)
+            if status_dct['Exit status'] == 'SUCCESS':
+                return '✅ Success'
+            else:
+                return f"❌ {status_dct['Exit status']}"
+    except Exception as err:
+        return 'Unknown'
 
 
 def create_report_frame(format, text_filepath, documentation):
@@ -636,11 +669,10 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
 
     ####### Results Tab #######
     results_tabs_list = []
-
+    
     # Aircraft 3d model display
     if problem_recorder:
         if os.path.exists(problem_recorder):
-
             try:
                 create_aircraft_3d_file(
                     problem_recorder, reports_dir, f"{reports_dir}/aircraft_3d.html"
@@ -689,14 +721,34 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
             results_tabs_list.append(("Aviary Variables", aviary_vars_pane))
         except Exception as e:
             issue_warning(
-                f"Unable do create Aviary Variables tab in dashboard due to the error: {str(e)}"
+                f"Unable to create Aviary Variables tab in dashboard due to the error: {str(e)}"
             )
 
     # Mission Summary
     mission_summary_pane = create_report_frame(
-        "markdown", f"{reports_dir}/mission_summary.md", "A report of mission results from an Aviary problem.")
+        "markdown", f"{reports_dir}/mission_summary.md", "A report of mission results from an Aviary problem")
     if mission_summary_pane:
         results_tabs_list.append(("Mission Summary", mission_summary_pane))
+
+    # Run status pane
+    status_pane = create_table_pane_from_json(f"{reports_dir}/status.json")
+    if status_pane:
+        results_tabs_list.append(("Run status pane", status_pane))
+        run_status_pane_tab_number = len(results_tabs_list) - 1
+    else:
+        run_status_pane_tab_number = None
+    
+    # Timeseries Mission Output Report
+    mission_timeseries_pane = create_csv_frame(
+        f"{reports_dir}/mission_timeseries_data.csv", '''
+        The outputs of the aircraft trajectory.
+        Any value that is included in the timeseries data is included in this report.
+        This data is useful for post-processing, especially those used for acoustic analysis.
+        ''')
+    if mission_timeseries_pane:
+        results_tabs_list.append(
+            ("Timeseries Mission Output", mission_timeseries_pane)
+        )
 
     # Trajectory results
     traj_results_report_pane = create_report_frame(
@@ -713,18 +765,6 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
     if traj_results_report_pane:
         results_tabs_list.append(
             ("Trajectory Results", traj_results_report_pane)
-        )
-
-    # Timeseries Mission Output Report
-    mission_timeseries_pane = create_csv_frame(
-        f"{reports_dir}/mission_timeseries_data.csv", '''
-        The outputs of the aircraft trajectory.
-        Any value that is included in the timeseries data is included in this report.
-        This data is useful for post-processing, especially those used for acoustic analysis.
-        ''')
-    if mission_timeseries_pane:
-        results_tabs_list.append(
-            ("Timeseries Mission Output", mission_timeseries_pane)
         )
 
     ####### Subsystems Tab #######
@@ -748,7 +788,8 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
         *optimization_tabs_list, stylesheets=["assets/aviary_styles.css"]
     )
     results_tabs = pn.Tabs(*results_tabs_list, stylesheets=["assets/aviary_styles.css"])
-    results_tabs.active = 2  # make the Results tab active initially
+    if run_status_pane_tab_number:
+        results_tabs.active = run_status_pane_tab_number  # make the run status tab active initially
     if subsystem_tabs_list:
         subsystem_tabs = pn.Tabs(
             *subsystem_tabs_list, stylesheets=["assets/aviary_styles.css"]
@@ -764,8 +805,11 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
     tabs = pn.Tabs(*high_level_tabs, stylesheets=["assets/aviary_styles.css"])
     tabs.active = 0  # make the Results tab active initially
 
+    # get status of run for display in the header of each page
+    status_string_for_header = get_run_status(f"{reports_dir}/status.json")
+
     template = pn.template.FastListTemplate(
-        title=f"Aviary Dashboard for {script_name}",
+        title=f"Aviary Dashboard for {script_name}:  {status_string_for_header}",
         logo="assets/aviary_logo.png",
         favicon="assets/aviary_logo.png",
         main=[tabs],
