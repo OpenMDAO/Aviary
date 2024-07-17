@@ -22,11 +22,12 @@ class TestOffDesign(TwoDOFTestCase):
     def test_off_design_IPOPT(self):
         # Fallout Mission
         prob_fallout = av.AviaryProblem()
-        prob_fallout.load_inputs('models/test_aircraft/aircraft_for_bench_GwGm.csv', self.phase_info,
-                                 verbosity=Verbosity.QUIET)
+        prob_fallout.load_inputs('models/test_aircraft/aircraft_for_bench_GwGm.csv',
+                                 self.phase_info, verbosity=Verbosity.QUIET)
 
         prob_fallout.problem_type = ProblemType.FALLOUT
-        prob_fallout.aviary_inputs.set_val('problem_type', ProblemType.FALLOUT, units='unitless')
+        prob_fallout.aviary_inputs.set_val('problem_type', ProblemType.FALLOUT,
+                                           units='unitless')
         prob_fallout.aviary_inputs.set_val(
             'mission:design:gross_mass', self.sized_mass, units='lbm')
         prob_fallout.aviary_inputs.set_val(
@@ -79,11 +80,12 @@ class TestOffDesign(TwoDOFTestCase):
     def test_off_design_SNOPT(self):
         # Fallout Mission
         prob_fallout = av.AviaryProblem()
-        prob_fallout.load_inputs('models/test_aircraft/aircraft_for_bench_GwGm.csv', self.phase_info,
-                                 verbosity=Verbosity.QUIET)
+        prob_fallout.load_inputs('models/test_aircraft/aircraft_for_bench_GwGm.csv',
+                                 self.phase_info, verbosity=Verbosity.QUIET)
 
         prob_fallout.problem_type = ProblemType.FALLOUT
-        prob_fallout.aviary_inputs.set_val('problem_type', ProblemType.FALLOUT, units='unitless')
+        prob_fallout.aviary_inputs.set_val('problem_type', ProblemType.FALLOUT,
+                                           units='unitless')
         prob_fallout.aviary_inputs.set_val(
             'mission:design:gross_mass', self.sized_mass, units='lbm')
         prob_fallout.aviary_inputs.set_val(
