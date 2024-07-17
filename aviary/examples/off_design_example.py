@@ -101,9 +101,9 @@ phase_info = {
     },
 }
 
-################
-# Sizing Mission
-################
+##################
+# Sizing Mission #
+##################
 prob = av.AviaryProblem()
 
 # Load aircraft and options data from user
@@ -136,9 +136,9 @@ prob.set_initial_guesses()
 
 prob.run_aviary_problem()
 
-#################
-# Fallout Mission
-#################
+###################
+# Fallout Mission #
+###################
 prob_fallout = av.AviaryProblem()
 
 # Load inputs from .csv file
@@ -166,9 +166,9 @@ prob_fallout.setup()
 prob_fallout.set_initial_guesses()
 prob_fallout.run_aviary_problem()
 
-###################
-# Alternate Mission
-###################
+#####################
+# Alternate Mission #
+#####################
 prob_alternate = av.AviaryProblem()
 # Load inputs from .csv file
 prob_alternate.load_inputs(
