@@ -82,6 +82,11 @@ class SimpleDragTest(unittest.TestCase):
         data = prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(data, atol=2.5e-10, rtol=1e-12)
 
+        assert_near_equal(
+            prob.get_val("CD"), dynamics_simple_CD[case_name], 1e-6)
+        assert_near_equal(
+            prob.get_val(Dynamic.Mission.DRAG), dynamics_simple_drag[case_name], 1e-6)
+
 
 class TotalDragTest(unittest.TestCase):
 
@@ -147,6 +152,11 @@ class TotalDragTest(unittest.TestCase):
         data = prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(data, atol=2.5e-10, rtol=1e-12)
 
+        assert_near_equal(
+            prob.get_val("CD"), dynamics_total_CD[case_name], 1e-6)
+        assert_near_equal(
+            prob.get_val(Dynamic.Mission.DRAG), dynamics_total_drag[case_name], 1e-6)
+
 
 class ComputedDragTest(unittest.TestCase):
 
@@ -183,16 +193,15 @@ class ComputedDragTest(unittest.TestCase):
         prob.set_val(Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR, 1.1)
         prob.set_val(Aircraft.Wing.AREA, 13.7)
 
+        prob.run_model()
+
         derivs = prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(derivs, atol=1e-12, rtol=1e-12)
 
-        # TODO: need to test outputs too
-        print(f"CD = {prob.get_val('CD')}")
-        print(f"Dynamic.Mission.DRAG = {prob.get_val(Dynamic.Mission.DRAG)}")
         assert_near_equal(
-            prob.get_val("CD"), [1.0, 1.0], 1e-6)
+            prob.get_val("CD"), [2.49732, 2.97451], 1e-6)
         assert_near_equal(
-            prob.get_val(Dynamic.Mission.DRAG), [1.0, 1.0], 1e-6)
+            prob.get_val(Dynamic.Mission.DRAG), [3.17852, 3.78587], 1e-6)
 
 
 # region - dynamic test data taken from the baseline FLOPS output for each case
@@ -230,6 +239,10 @@ def _add_drag_coefficients(
 
 
 dynamics_test_data = {}
+dynamics_simple_CD = {}
+dynamics_simple_drag = {}
+dynamics_total_CD = {}
+dynamics_total_drag = {}
 
 key = 'LargeSingleAisle1FLOPS'
 dynamics_test_data[key] = _dynamics_data = AviaryValues()
@@ -247,6 +260,11 @@ CDI_scaled = np.array([0.01301, 0.01301, 0.01300])
 _dynamics_data.set_val(Dynamic.Mission.MACH, M)
 _add_drag_coefficients(key, _dynamics_data, M, CD_scaled, CD0_scaled, CDI_scaled)
 
+dynamics_simple_CD[key] = np.array([0.03313, 0.03313, 0.03313])
+dynamics_simple_drag[key] = np.array([41590.643508, 41509.884977, 41469.505712])
+dynamics_total_CD[key] = np.array([0.03313, 0.03314, 0.03313])
+dynamics_total_drag[key] = np.array([41590.64350841, 41522.41437213, 41469.50571178])
+
 key = 'LargeSingleAisle2FLOPS'
 dynamics_test_data[key] = _dynamics_data = AviaryValues()
 _dynamics_data.set_val(Dynamic.Mission.DYNAMIC_PRESSURE, [
@@ -261,6 +279,11 @@ CDI_scaled = np.array([0.01288, 0.01277, 0.01242])
 
 _dynamics_data.set_val(Dynamic.Mission.MACH, M)
 _add_drag_coefficients(key, _dynamics_data, M, CD_scaled, CD0_scaled, CDI_scaled)
+
+dynamics_simple_CD[key] = np.array([0.03304, 0.03293, 0.03258])
+dynamics_simple_drag[key] = np.array([42452.271402, 42310.935148, 41861.228883])
+dynamics_total_CD[key] = np.array([0.03304, 0.03293, 0.03258])
+dynamics_total_drag[key] = np.array([42452.27140246, 42310.93514779, 41861.22888293])
 
 key = 'N3CC'
 dynamics_test_data[key] = _dynamics_data = AviaryValues()
@@ -277,6 +300,11 @@ CDI_scaled = np.array([0.00806, 0.00390, 0.00237])
 _dynamics_data.set_val(Dynamic.Mission.MACH, M)
 _add_drag_coefficients(key, _dynamics_data, M, CD_scaled, CD0_scaled, CDI_scaled)
 # endregion - dynamic test data taken from the baseline FLOPS output for each case
+
+dynamics_simple_CD[key] = np.array([0.02296, 0.01861, 0.01704])
+dynamics_simple_drag[key] = np.array([25966.645302, 29136.570888, 33660.241019])
+dynamics_total_CD[key] = np.array([0.0229615, 0.0186105, 0.0170335])
+dynamics_total_drag[key] = np.array([25968.341729, 29137.353709, 33647.401139])
 
 
 if __name__ == "__main__":
