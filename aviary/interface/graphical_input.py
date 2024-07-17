@@ -187,9 +187,9 @@ class AviaryMissionEditor(tk.Tk):
         
         self.theme_button = tk.Button(self,
                                       image=self.pallete[self.theme]["image"],
-                                      bg=self.pallete[self.theme]["background_primary"],font=('Arial',8))
+                                      bg=self.pallete[self.theme]["background_primary"],font=('Arial',8),
+                                      command=lambda:self.update_theme(toggle=True))
         self.theme_button.image = self.pallete[self.theme]["image"] # to prevent lose of image reference from garbage collector
-        self.theme_button.bind("<Button-1>",lambda e:self.update_theme(toggle=True))
         self.theme_button.bind("<Enter>",func=self.on_enter)
         self.theme_button.bind("<Leave>",func=self.on_leave)
         self.theme_button.place(anchor='sw',relx=0,rely=1.0)
@@ -584,7 +584,7 @@ class AviaryMissionEditor(tk.Tk):
                 widget.configure(textvariable = tk.StringVar(value = new_headers[i]))
                 i += 1
 
-    def add_new_row(self,_):
+    def add_new_row(self):
         """Updates data lists with a generic new point and runs redraw plot and update table.
             New point is added at x = halfway between last point and x limit, y = half of y limit"""
         default_y_vals = [float(lim.get())/2 for lim in self.data_info["limits"][1:]]
@@ -625,8 +625,7 @@ class AviaryMissionEditor(tk.Tk):
         self.table_header_widgets.append(delete_button_spacer)
 
         # button for adding new rows to table
-        self.table_add_button = tk.Button(self.frame_table.interior,text="Add New Point")
-        self.table_add_button.bind("<Button-1>",func=self.add_new_row)
+        self.table_add_button = tk.Button(self.frame_table.interior,text="Add New Point",command=self.add_new_row)
         self.table_add_button.bind("<Enter>",func=self.on_enter)
         self.table_add_button.bind("<Leave>",func=self.on_leave)
 
