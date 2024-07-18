@@ -1,4 +1,4 @@
-import os, shutil, subprocess, json
+import os, shutil, subprocess, json, platform
 import importlib.util # used for opening existing phase info file
 import numpy as np
 
@@ -6,7 +6,7 @@ from openmdao.utils.units import convert_units # used for unit conversion of num
 
 import tkinter as tk # base tkinter
 import tkinter.ttk as ttk # used for combobox
-from tkinter import filedialog, messagebox
+from tkinter import filedialog, messagebox, font
 
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -83,6 +83,10 @@ class AviaryMissionEditor(tk.Tk):
         super().__init__()
         self.title('Mission Design Utility')
         self.protocol("WM_DELETE_WINDOW",self.close_window)
+        self.macOS = platform.system() == "Darwin"
+        self.default_font = font.nametofont("TkDefaultFont")
+        self.default_font.configure(size=12 if self.macOS else 10) # used by labels, buttons
+        font.nametofont("TkTextFont").configure(size=12 if self.macOS else 10) # used by entries
 
         # ------
         # theme related initializations
@@ -107,7 +111,8 @@ class AviaryMissionEditor(tk.Tk):
         self.source_directory = os.path.abspath(os.path.dirname(__file__))
         for theme_info in self.pallete.values():
             theme_info["image"] = tk.PhotoImage(file = 
-                                os.path.join(self.source_directory,theme_info["image"]))
+                                os.path.join(self.source_directory,
+                                             "mac_theme.png" if self.macOS else theme_info["image"]))
         # stores/retrieves persistent settings in source directory
         self.persist_filename = os.path.join(self.source_directory,"persist_settings.json")
 
@@ -118,7 +123,7 @@ class AviaryMissionEditor(tk.Tk):
         # A width of 800 is the minimum required to see the axes labels properly
         # The minimum sized is used unless the screen is large enough in which case 50% of width/height of 
         # the screen is used as the size. If user saves settings then their last saved geometry is used.
-        min_win_size = (800,500)
+        min_win_size = (900,500) if self.macOS else (800,500)
         self.minsize(*min_win_size) # force a minimum size for layout to look correct
 
         self.store_settings = tk.BooleanVar() # tracks if user wants to store settings or not
@@ -186,17 +191,14 @@ class AviaryMissionEditor(tk.Tk):
         self.show_phase_slope = tk.BooleanVar() # controls display of phase info (climb/descent rates)
         
         self.theme_button = tk.Button(self,
-                                      image=self.pallete[self.theme]["image"],
-                                      bg=self.pallete[self.theme]["background_primary"],font=('Arial',8),
+                                      image=self.pallete[self.theme]["image"],font=('Arial',8),
                                       command=lambda:self.update_theme(toggle=True))
         self.theme_button.image = self.pallete[self.theme]["image"] # to prevent lose of image reference from garbage collector
         self.theme_button.bind("<Enter>",func=self.on_enter)
         self.theme_button.bind("<Leave>",func=self.on_leave)
         self.theme_button.place(anchor='sw',relx=0,rely=1.0)
 
-        self.output_phase_info_button = tk.Button(self,text="Output Phase Info",command=self.save,
-                                                  bg=self.pallete[self.theme]["background_primary"],
-                                                  fg=self.pallete[self.theme]["foreground_primary"])
+        self.output_phase_info_button = tk.Button(self,text="Output Phase Info",command=self.save)
         self.output_phase_info_button.bind("<Enter>",func=self.on_enter)
         self.output_phase_info_button.bind("<Leave>",func=self.on_leave)
         self.output_phase_info_button.place(relx=0,rely=0,anchor='nw')
@@ -215,10 +217,7 @@ class AviaryMissionEditor(tk.Tk):
 
         self.advanced_options_defaults = {}
         for key,item in self.advanced_options.items():
-            if isinstance(item,tk.BooleanVar):
-                self.advanced_options_defaults[key] = tk.BooleanVar(value=item.get())
-            elif isinstance(item,tk.IntVar):
-                self.advanced_options_defaults[key] = tk.IntVar(value=item.get())
+            self.advanced_options_defaults[key] = item.get()
 
         self.data_info_defaults = {}
         for key,item in self.data_info.items():
@@ -267,10 +266,11 @@ class AviaryMissionEditor(tk.Tk):
                            activeForeground = self.pallete[self.theme]["foreground_primary"],
                            activeBackground = self.pallete[self.theme]["background_primary"],
                            selectColor = self.pallete[self.theme]["background_primary"])
-        self.create_menu() # recreating menu b/c tkinter menus cannot be reconfigured with new colors
+        if not self.macOS: self.create_menu() # recreating menu b/c tkinter menus cannot be reconfigured with new colors
     
         # update table header color, different from background         
-        self.frame_tableheaders.configure(background=self.pallete[self.theme]["hover"])    
+        self.frame_tableheaders.configure(background=self.pallete[self.theme]["hover"])
+        self.frame_plot_table_border.configure(highlightbackground=self.pallete[self.theme]["foreground_primary"])    
         for widget in self.table_header_widgets:
             widget.configure(background=self.pallete[self.theme]["hover"])
             widget.configure(foreground=self.pallete[self.theme]["foreground_primary"])
@@ -314,7 +314,13 @@ class AviaryMissionEditor(tk.Tk):
                                       bg=self.pallete[self.theme]["background_primary"])
         self.theme_button.image = self.pallete[self.theme]["image"]
         self.output_phase_info_button.configure(bg = self.pallete[self.theme]["background_primary"],
-                                                fg = self.pallete[self.theme]["foreground_primary"])
+                                                fg = self.pallete["light" if self.macOS else self.theme]["foreground_primary"])
+        
+        if self.macOS: # macOS does not support button background color change with Tkinter, so maintain foreground color
+            self.table_add_button.configure(foreground=self.pallete["light"]["foreground_primary"])
+            for widget in self.table_widgets:
+                if isinstance(widget,tk.Button):
+                    widget.configure(foreground=self.pallete["light"]["foreground_primary"])
         
 # ----------------------
 # Plot related functions
@@ -563,9 +569,10 @@ class AviaryMissionEditor(tk.Tk):
                     self.table_widgets.append(optimize_checkbox)
 
             # delete button for each point
-            delete_button = tk.Button(self.frame_table.interior,text="X",width=self.delete_button_width,font=('Arial',8),
+            delete_button = tk.Button(self.frame_table.interior,text="X",width=self.delete_button_width,
+                                      font=('Arial',self.default_font.actual()["size"]-2),
                                       background=self.pallete[self.theme]["background_primary"],
-                                      foreground=self.pallete[self.theme]["foreground_primary"])
+                                      foreground=self.pallete["light" if self.macOS else self.theme]["foreground_primary"])
             delete_button.bind("<Button-1>",lambda e, row=row:self.delete_point(row))
             delete_button.bind("<Enter>",func=self.on_enter)
             delete_button.bind("<Leave>",func=self.on_leave)
@@ -610,16 +617,17 @@ class AviaryMissionEditor(tk.Tk):
         for col,(label,unit) in enumerate(zip(self.data_info["labels"],self.data_info["units"])):
             header_str = f"{label} ({unit.get()})"
             header_text = tk.StringVar(value=header_str)
+            header_width = int(len(header_str) * (0.75 if self.macOS else 1))
             header = tk.Entry(self.frame_tableheaders,textvariable=header_text,state='readonly',
-                              width=len(header_str),justify='center',relief='groove')
+                              width=header_width,justify='center',relief='groove')
             header.grid(row = 0,column = col+1)
-            self.table_column_widths.append(len(header_str))
+            self.table_column_widths.append(header_width)
             self.table_strvars.append([])
             if col > 0: self.table_boolvars.append([])
             self.table_header_widgets.append(header)
     
         # this spacer prevents invisbility of delete buttons after all of them have been deleted and a new point is added
-        self.delete_button_width = 4
+        self.delete_button_width = 1 if self.macOS else 4
         delete_button_spacer = tk.Label(self.frame_tableheaders,width=self.delete_button_width)
         delete_button_spacer.grid(row=0,column=col+2)
         self.table_header_widgets.append(delete_button_spacer)
@@ -678,7 +686,7 @@ class AviaryMissionEditor(tk.Tk):
         for button_txt in buttons_text:
             button = tk.Button(button_frame,text=button_txt.title(),width=button_width,
                                background=self.pallete[self.theme]["background_primary"],
-                               foreground=self.pallete[self.theme]["foreground_primary"])
+                               foreground=self.pallete["light" if self.macOS else self.theme]["foreground_primary"])
             button.bind("<Enter>",func=self.on_enter)
             button.bind("<Leave>",func=self.on_leave)
             button.pack(side='left',padx=5)
