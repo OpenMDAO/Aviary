@@ -669,7 +669,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
 
     ####### Results Tab #######
     results_tabs_list = []
-    
+
     # Aircraft 3d model display
     if problem_recorder:
         if os.path.exists(problem_recorder):
@@ -737,7 +737,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
         run_status_pane_tab_number = len(results_tabs_list) - 1
     else:
         run_status_pane_tab_number = None
-    
+
     # Timeseries Mission Output Report
     mission_timeseries_pane = create_csv_frame(
         f"{reports_dir}/mission_timeseries_data.csv", '''
@@ -789,7 +789,8 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
     )
     results_tabs = pn.Tabs(*results_tabs_list, stylesheets=["assets/aviary_styles.css"])
     if run_status_pane_tab_number:
-        results_tabs.active = run_status_pane_tab_number  # make the run status tab active initially
+        # make the run status tab active initially
+        results_tabs.active = run_status_pane_tab_number
     if subsystem_tabs_list:
         subsystem_tabs = pn.Tabs(
             *subsystem_tabs_list, stylesheets=["assets/aviary_styles.css"]
