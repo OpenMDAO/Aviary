@@ -650,23 +650,16 @@ class AviaryMissionEditor(tk.Tk):
         self.popup.destroy()
         self.popup = None
 
-    def generic_popup(self,pop_wid=100,pop_hei=100,pop_title="Popup",buttons_text = []):
+    def generic_popup(self,pop_title="Popup",buttons_text = []):
         """Function to create a base window for a popup. Returns popup object to be used for adding widget
             and configuring settings. Buttons_text can be used to specify any number of buttons. These button
             objects are returned for configuring commands and location."""
-        # compute middle of window location to place popup into
-        win_size,win_left,win_top = self.winfo_geometry().split("+")
-        win_wid,win_hei = win_size.split("x")
-        win_left,win_top,win_wid,win_hei = int(win_left),int(win_top),int(win_wid),int(win_hei)
-        pop_left,pop_top = int(win_left + win_wid/2 - pop_wid/2), int(win_top + win_hei/2 - pop_hei/2)
-
         popup = tk.Toplevel(self)
         # Set the window icon, provides 2 sizes of logos to prevent blurry icons
         popup.iconphoto(False, 
             tk.PhotoImage(file = os.path.join(self.source_directory,"aviary_logo_16.png")),
             tk.PhotoImage(file = os.path.join(self.source_directory,"aviary_logo_32.png")))
         popup.resizable(False,False)
-        popup.geometry(f"{pop_wid}x{pop_hei}+{pop_left}+{pop_top}")
         popup.title(pop_title)
         popup.focus_set()
         popup.configure(background=self.pallete[self.theme]["background_primary"])
@@ -692,7 +685,19 @@ class AviaryMissionEditor(tk.Tk):
             buttons[button_txt] = button
         
         return popup,popup_content_frame,buttons
-    
+
+    def place_popup(self):
+        """Generic popup lets Tkinter automatically size the popup to fit all contents.
+            This function uses that size and main GUI window size/location to compute a 
+            location for the popup that is central to the GUI."""
+        self.popup.update_idletasks()
+        pop_wid,pop_hei = [int(x) for x in self.popup.winfo_geometry().split("+")[0].split("x")]
+        win_size,win_left,win_top = self.winfo_geometry().split("+")
+        win_wid,win_hei = win_size.split("x")
+        win_left,win_top,win_wid,win_hei = int(win_left),int(win_top),int(win_wid),int(win_hei)
+        pop_left,pop_top = int(win_left + win_wid/2 - pop_wid/2), int(win_top + win_hei/2 - pop_hei/2)
+        self.popup.geometry(f"+{pop_left}+{pop_top}")
+
     def change_axes_popup(self):
         """Creates a popup window that allows user to edit axes limits. This function is triggered
             by the menu buttons"""
@@ -709,7 +714,7 @@ class AviaryMissionEditor(tk.Tk):
         
         current_lims = [float(lim.get()) for lim in self.data_info["limits"]]
 
-        popup,content_frame,buttons = self.generic_popup(pop_wid = 300, pop_hei=100, pop_title="Axes Limits",
+        popup,content_frame,buttons = self.generic_popup(pop_title="Axes Limits",
                                            buttons_text=["apply","reset","cancel"])
         popup.protocol("WM_DELETE_WINDOW",func=lambda:[self.close_popup(),reset_options(current_lims)])
         for i in range(2): content_frame.columnconfigure(i,weight=1) # allow columns to expand in frame
@@ -732,6 +737,7 @@ class AviaryMissionEditor(tk.Tk):
                                                    self.update_axes(limits=True,refresh=True)])
         buttons["cancel"].configure(command=lambda:[self.close_popup(),reset_options(current_lims),
                                                     self.update_axes(limits=True,refresh=True)])
+        self.place_popup()
 
     def get_phase_names(self):
         """Returns a list of phase names, these are decided based on final and starting altitudes.
@@ -764,7 +770,7 @@ class AviaryMissionEditor(tk.Tk):
         for key,var in self.advanced_options.items():
             current_info[key] = var.get()
 
-        popup,content_frame,buttons = self.generic_popup(pop_wid=300,pop_hei=175,pop_title="Advanced Options",
+        popup,content_frame,buttons = self.generic_popup(pop_title="Advanced Options",
                                            buttons_text=["apply","reset","cancel"])
         popup.protocol("WM_DELETE_WINDOW",func=lambda:[self.close_popup(),reset_options(self,current_info)])
         
@@ -827,6 +833,7 @@ class AviaryMissionEditor(tk.Tk):
         buttons["apply"].configure(command=lambda:self.close_popup())
         buttons["reset"].configure(command=lambda:[self.close_popup(),reset_options(self)])
         buttons["cancel"].configure(command=lambda:[self.close_popup(),reset_options(self,current_info)])
+        self.place_popup()
 
 # ----------------------
 # Menu related functions
@@ -935,7 +942,7 @@ class AviaryMissionEditor(tk.Tk):
         messagebox.showinfo(title="Store Settings",message=f"Settings related to window location, size, and theme will {status} stored!")
 
     def change_units(self):
-        popup,content_frame,buttons = self.generic_popup(pop_wid = 300, pop_hei=150, pop_title="Change Units",
+        popup,content_frame,buttons = self.generic_popup(pop_title="Change Units",
                                            buttons_text=["apply","cancel"])
         popup.protocol("WM_DELETE_WINDOW",func=lambda:[self.close_popup()])
         for i in range(2): content_frame.columnconfigure(i,weight=1)
@@ -988,9 +995,10 @@ class AviaryMissionEditor(tk.Tk):
 
         buttons["apply"].configure(command=lambda:[self.close_popup(),apply_units()])
         buttons["cancel"].configure(command=lambda:[self.close_popup(),reset_units_strvar()])
+        self.place_popup()
 
     def change_rounding(self):
-        popup,content_frame,buttons = self.generic_popup(pop_wid = 300, pop_hei=100, pop_title="Rounding Options",
+        popup,content_frame,buttons = self.generic_popup(pop_title="Rounding Options",
                                            buttons_text=["apply","cancel"])
         popup.protocol("WM_DELETE_WINDOW",func=lambda:[self.close_popup()])
         for i in range(2): content_frame.columnconfigure(i,weight=1) # allow columns to expand in frame
@@ -1015,6 +1023,7 @@ class AviaryMissionEditor(tk.Tk):
 
         buttons["apply"].configure(command=lambda:[self.close_popup(),apply_rounding()])
         buttons["cancel"].configure(command=lambda:[self.close_popup(),cancel_rounding()])
+        self.place_popup()
 
     def open_phase_info(self):
         """Opens a dialog box to select a .py file with a phase info dict. File must contain a dict called phase_info. 
