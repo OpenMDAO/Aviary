@@ -63,7 +63,7 @@ class FinalConditionsTest(unittest.TestCase):
             "v_stall", val=100, units="m/s"
         )  # not actual value
         self.prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, val=181200.0, units="lbm"
+            Mission.Summary.GROSS_MASS, val=181200.0, units="lbm"
         )  # check
         self.prob.model.set_input_defaults(
             Mission.Takeoff.FUEL_SIMPLE, val=577, units="lbm"
@@ -112,7 +112,7 @@ class TakeoffGroupTest(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, val=181200.0, units="lbm"
+            Mission.Summary.GROSS_MASS, val=181200.0, units="lbm"
         )  # check
         self.prob.model.set_input_defaults(
             Mission.Takeoff.FUEL_SIMPLE, val=577, units="lbm"
