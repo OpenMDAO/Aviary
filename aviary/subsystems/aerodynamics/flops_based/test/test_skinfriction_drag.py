@@ -105,7 +105,6 @@ class SkinFrictionDragTest(unittest.TestCase):
         # atol is low because Re magnitude is 1e8.
         assert_check_partials(derivs, atol=1e-7, rtol=1e-12)
 
-        print(f"skin_friction_drag_coeff: {prob.get_val('skin_friction_drag_coeff')}")
         assert_near_equal(
             prob.get_val('skin_friction_drag_coeff'), [24.27078, 19.82677], 1e-6)
 
