@@ -141,9 +141,7 @@ class SkinFrictionCoeffTest(unittest.TestCase):
         prob.run_model()
 
         derivs = prob.check_partials(method='cs', out_stream=None)
-
         # Atol set higher because some derivs are on the order 1e7
-        # TODO: need to test values too
         assert_check_partials(derivs, atol=1e-08, rtol=1e-12)
 
         expected_ct_iter = np.array([
