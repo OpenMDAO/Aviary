@@ -82,9 +82,10 @@ class InducedDragTest(unittest.TestCase):
         prob.run_model()
 
         derivs = prob.check_partials(out_stream=None, method="cs")
-
-        # TODO: need to test outputs too
         assert_check_partials(derivs, atol=1e-12, rtol=8e-12)
+
+        assert_near_equal(
+            prob.get_val("induced_drag_coeff"), [0.00216084, 0.00294208, 0.00384454, 0.00486925, 0.00601801, 0.00748097], 1e-6)
 
         # Low factor.
 
