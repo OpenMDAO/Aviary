@@ -138,7 +138,7 @@ class AviaryMissionEditor(tk.Tk):
         # A width of 800 is the minimum required to see the axes labels properly
         # The minimum sized is used unless the screen is large enough in which case 50% of width/height of
         # the screen is used as the size. If user saves settings then their last saved geometry is used.
-        min_win_size = (900, 500) if self.macOS else (800, 500)
+        min_win_size = (900, 500)
         self.minsize(*min_win_size)  # force a minimum size for layout to look correct
 
         self.store_settings = tk.BooleanVar()  # tracks if user wants to store settings or not
