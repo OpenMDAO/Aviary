@@ -37,9 +37,10 @@ class DesignMCLTest(unittest.TestCase):
 
         prob.run_model()
 
-        # prob.check_partials(compact_print=True, method="cs")
+        prob.check_partials(compact_print=True, method="cs")
         derivs = prob.check_partials(out_stream=None, method="cs")
         # assert_check_partials(derivs, atol=1e-12, rtol=1e-12)
+        # TODO 
         # mission:design:mach wrt aircraft:wing:thickness_to_chord seems to be wrong.
         # need further investigation
         assert_check_partials(derivs, atol=0.05, rtol=0.02)
