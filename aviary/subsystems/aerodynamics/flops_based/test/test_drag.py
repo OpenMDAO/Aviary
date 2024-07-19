@@ -200,6 +200,7 @@ class ComputedDragTest(unittest.TestCase):
 
         assert_near_equal(
             prob.get_val("CD"), [0.0249732, 0.0297451], 1e-6)
+        # TODO: need to investigate: the value of DRAG is too small.
         assert_near_equal(
             prob.get_val(Dynamic.Mission.DRAG), [3.17851809, 3.78587199], 1e-6)
 
