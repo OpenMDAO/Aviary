@@ -40,7 +40,6 @@ class MachNumberTest(unittest.TestCase):
             partial_data, atol=1e-6, rtol=1e-6
         )  # check the partial derivatives
 
-        print(self.prob.get_val(Dynamic.Mission.MACH))
         assert_near_equal(
             self.prob.get_val(Dynamic.Mission.MACH), [0.3320574], 1e-6)
 
