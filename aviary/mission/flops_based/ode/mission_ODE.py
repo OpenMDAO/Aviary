@@ -245,7 +245,7 @@ class MissionODE(om.Group):
             initial_mass_string = Mission.Takeoff.FINAL_MASS
         else:
             exec_comp_string = 'initial_mass_residual = initial_mass - mass[0] - 100.'
-            initial_mass_string = Mission.Design.GROSS_MASS
+            initial_mass_string = Mission.Summary.GROSS_MASS
 
         # Experimental: Add a component to constrain the initial mass to be equal to design gross weight.
         initial_mass_residual_constraint = om.ExecComp(
