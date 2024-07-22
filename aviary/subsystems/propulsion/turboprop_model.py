@@ -129,13 +129,9 @@ class TurbopropModel(EngineModel):
                     aviary_options=aviary_inputs,
                 )
 
-        # turboprop_group.set_input_defaults(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, val=0.0)
-        turboprop_group.set_input_default(
-            Aircraft.Engine.PROPELLER_TIP_SPEED_MAX, val=0.0, units='ft/s'
-        )
-        # turboprop_group.set_input_defaults(Dynamic.Mission.SPEED_OF_SOUND, units='ft/s', val=0.0)
-        # turboprop_group.set_input_defaults(Dynamic.Mission.VELOCITY, units='ft/s', val=0.0)
-        # turboprop_group.set_input_defaults('velocity', units='ft/s', val=0.0)
+        # turboprop_group.set_input_default(
+        #     Aircraft.Engine.PROPELLER_TIP_SPEED_MAX, val=0.0, units='ft/s'
+        # )
 
         return turboprop_group
 

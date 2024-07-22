@@ -49,10 +49,10 @@ class MotorMission(om.Group):
         motor_group.add_subsystem(
             'power_comp',
             om.ExecComp(
-                'shaft_power = torque * pi * RPM / 30',
+                'shaft_power = torque * RPM',
                 shaft_power={'val': np.ones(nn), 'units': 'kW'},
                 torque={'val': np.ones(nn), 'units': 'kN*m'},
-                RPM={'val': np.ones(nn), 'units': 'rpm'},
+                RPM={'val': np.ones(nn), 'units': 'rad/s'},
             ),  # fixed RPM system
             promotes_inputs=[('torque', 'motor_torque'), ('RPM', Dynamic.Mission.RPM)],
             promotes_outputs=[('shaft_power', Dynamic.Mission.SHAFT_POWER)],
@@ -129,6 +129,8 @@ class MotorMission(om.Group):
         self.add_subsystem('motor_group_max', motor_group_max,
                            promotes_inputs=['*', 'max_throttle'],
                            promotes_outputs=[Dynamic.Mission.SHAFT_POWER_MAX])
+
+        self.set_input_defaults(Dynamic.Mission.RPM, val=np.ones(nn), units='rpm')
 
         # TODO Gearbox needs to be its own component separate from motor
         # Hamilton Standard model does not utilize torque. This can be added back in if

@@ -2,7 +2,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.subsystems.propulsion.utils import EngineModelVariables
+from aviary.subsystems.propulsion.utils import EngineModelVariables, max_variables
 from aviary.variable_info.functions import add_aviary_input
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
@@ -25,11 +25,6 @@ TEMPERATURE = EngineModelVariables.TEMPERATURE_T4
 
 # these variables are not outputs or are variables that should not get scaled
 skip_variables = [MACH, ALTITUDE, THROTTLE, HYBRID_THROTTLE, TEMPERATURE]
-# these variables have a 'max' counterpart that should be added if they are present
-max_variables = {
-    THRUST: Dynamic.Mission.THRUST_MAX,
-    SHAFT_POWER: Dynamic.Mission.SHAFT_POWER_MAX,
-}
 
 
 class EngineScaling(om.ExplicitComponent):
@@ -149,9 +144,9 @@ class EngineScaling(om.ExplicitComponent):
         for variable in engine_variables:
             if variable not in skip_variables:
                 if variable is FUEL_FLOW:
-                    outputs[Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE] = (
-                        -(inputs['fuel_flow_rate_unscaled'] * fuel_flow_scale_factor)
-                        - constant_fuel_flow
+                    outputs[Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE] = -(
+                        inputs['fuel_flow_rate_unscaled'] * fuel_flow_scale_factor
+                        + constant_fuel_flow
                     )
                 else:
                     outputs[variable.value] = (
@@ -179,14 +174,12 @@ class EngineScaling(om.ExplicitComponent):
                         Aircraft.Engine.SCALE_FACTOR,
                         rows=r,
                         cols=c,
-                        val=1.0,
                     )
                     self.declare_partials(
                         Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE,
                         'fuel_flow_rate_unscaled',
                         rows=r,
                         cols=r,
-                        val=1.0,
                     )
                 else:
                     self.declare_partials(
@@ -194,14 +187,12 @@ class EngineScaling(om.ExplicitComponent):
                         Aircraft.Engine.SCALE_FACTOR,
                         rows=r,
                         cols=c,
-                        val=1.0,
                     )
                     self.declare_partials(
                         variable.value,
                         variable.value + '_unscaled',
                         rows=r,
                         cols=r,
-                        val=1.0,
                     )
 
                     if variable in max_variables:
@@ -210,14 +201,12 @@ class EngineScaling(om.ExplicitComponent):
                             Aircraft.Engine.SCALE_FACTOR,
                             rows=r,
                             cols=c,
-                            val=1.0,
                         )
                         self.declare_partials(
                             variable.value + '_max',
                             variable.value + '_max_unscaled',
                             rows=r,
                             cols=r,
-                            val=1.0,
                         )
 
     def compute_partials(self, inputs, J):

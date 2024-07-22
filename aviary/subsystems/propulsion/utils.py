@@ -62,6 +62,12 @@ default_units = {
     # EngineModelVariables.EXIT_AREA: 'ft**2',
 }
 
+# variables that have an accompanying max value
+max_variables = {
+    EngineModelVariables.THRUST: Dynamic.Mission.THRUST_MAX,
+    EngineModelVariables.SHAFT_POWER: Dynamic.Mission.SHAFT_POWER_MAX,
+}
+
 
 def convert_geopotential_altitude(altitude):
     """
