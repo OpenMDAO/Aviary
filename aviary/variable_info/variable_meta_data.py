@@ -2366,6 +2366,17 @@ add_meta_data(
 # ============================================
 
 add_meta_data(
+    Aircraft.Engine.Gearbox.EFFICIENCY,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units=None,
+    desc='The efficiency of the gearbox.',
+    default_value=0.98,
+)
+add_meta_data(
     Aircraft.Engine.Gearbox.GEAR_RATIO,
     meta_data=_MetaData,
     historical_name={"GASP": 'INPROP.GR', "FLOPS": None, "LEAPS1": None},
@@ -2384,18 +2395,6 @@ add_meta_data(
     units='kg',
     desc='The mass of the gearbox.',
     default_value=0,
-)
-
-add_meta_data(
-    Aircraft.Engine.Gearbox.EFFICIENCY,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units=None,
-    desc='The efficiency of the gearbox.',
-    default_value=0.98,
 )
 
 add_meta_data(

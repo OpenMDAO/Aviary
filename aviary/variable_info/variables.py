@@ -257,9 +257,9 @@ class Aircraft:
         WING_LOCATIONS = 'aircraft:engine:wing_locations'
 
         class Gearbox:
+            EFFICIENCY = "aircraft:engine:gearbox:efficiency"
             GEAR_RATIO = "aircraft:engine:gearbox:gear_ratio"
             MASS = "aircraft:engine:gearbox:mass"
-            EFFICIENCY = "aircraft:engine:gearbox:efficiency"
             SPECIFIC_TORQUE = "aircraft:engine:gearbox:specific_torque"
 
         class Motor:
