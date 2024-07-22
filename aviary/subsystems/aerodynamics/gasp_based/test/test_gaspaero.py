@@ -5,7 +5,7 @@ import unittest
 import numpy as np
 import openmdao.api as om
 import pandas as pd
-from openmdao.utils.assert_utils import assert_near_equal
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.aerodynamics.gasp_based.gaspaero import CruiseAero, LowSpeedAero
 from aviary.variable_info.options import get_option_defaults
@@ -57,6 +57,10 @@ class GASPAeroTest(unittest.TestCase):
 
                 assert_near_equal(prob["CL"][0], row["cl"], tolerance=self.cruise_tol)
                 assert_near_equal(prob["CD"][0], row["cd"], tolerance=self.cruise_tol)
+
+                # some partials are computed using "cs" method. So, use "fd" here. computation is not as good as "cs".
+                partial_data = prob.check_partials(method="fd", out_stream=None)
+                assert_check_partials(partial_data, atol=0.8, rtol=0.002)
 
     def test_ground(self):
         prob = om.Problem()
@@ -110,6 +114,9 @@ class GASPAeroTest(unittest.TestCase):
                 assert_near_equal(prob["CL"][0], row["cl"], tolerance=self.ground_tol)
                 assert_near_equal(prob["CD"][0], row["cd"], tolerance=self.ground_tol)
 
+                partial_data = prob.check_partials(method="fd", out_stream=None)
+                assert_check_partials(partial_data, atol=4.5, rtol=5e-3)
+
     def test_ground_alpha_out(self):
         """Test that drag output matches between alpha in/out cases"""
         prob = om.Problem()
@@ -143,6 +150,9 @@ class GASPAeroTest(unittest.TestCase):
         prob.run_model()
 
         assert_near_equal(prob["alpha_in.drag"], prob["alpha_out.drag"], tolerance=1e-6)
+
+        partial_data = prob.check_partials(method="fd", out_stream=None)
+        assert_check_partials(partial_data, atol=0.02, rtol=1e-4)
 
 
 def _init_geom(prob):

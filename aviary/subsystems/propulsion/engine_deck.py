@@ -33,6 +33,7 @@ from openmdao.utils.units import convert_units
 from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.subsystems.propulsion.engine_scaling import EngineScaling
 from aviary.subsystems.propulsion.engine_sizing import SizeEngine
+from aviary.subsystems.propulsion.utils import UncorrectData
 from aviary.subsystems.propulsion.utils import (EngineModelVariables,
                                                 convert_geopotential_altitude,
                                                 default_units)
@@ -56,7 +57,7 @@ RAM_DRAG = EngineModelVariables.RAM_DRAG
 FUEL_FLOW = EngineModelVariables.FUEL_FLOW
 ELECTRIC_POWER_IN = EngineModelVariables.ELECTRIC_POWER_IN
 NOX_RATE = EngineModelVariables.NOX_RATE
-TEMPERATURE = EngineModelVariables.TEMPERATURE_ENGINE_T4
+TEMPERATURE = EngineModelVariables.TEMPERATURE_T4
 # EXIT_AREA = EngineModelVariables.EXIT_AREA
 
 # EngineDeck assumes all aliases point to an enum, these are used internally only
@@ -73,7 +74,7 @@ aliases = {
     FUEL_FLOW: ['fuel', 'fuel_flow', 'fuel_flow_rate'],
     ELECTRIC_POWER_IN: ['electric_power_in', 'electric_power'],
     NOX_RATE: ['nox', 'nox_rate'],
-    TEMPERATURE: ['t4', 'temp', 'temperature'],
+    TEMPERATURE: ['t4', 'temp', 'temperature', 'temperature_t4', 't4_temperature'],
     SHAFT_POWER: ['shaft_power', 'shp'],
     SHAFT_POWER_CORRECTED: ['shaft_power_corrected', 'shpcor', 'corrected_horsepower'],
     TAILPIPE_THRUST: ['tailpipe_thrust'],
@@ -261,13 +262,17 @@ class EngineDeck(EngineModel):
         thrust_provided = False
         # was scale factor originally provided? (Not defaulted)
         if Aircraft.Engine.SCALE_FACTOR in engine_mapping:
-            scale_factor_provided = True
+            # if scale factor is 1, doesn't conflict with performance scaling turned off
+            if self.options.get_val(Aircraft.Engine.SCALE_FACTOR) == 1:
+                scale_factor_provided = False
+            else:
+                scale_factor_provided = True
         # was scaled thrust originally provided? (Not defaulted)
         if Aircraft.Engine.SCALED_SLS_THRUST in engine_mapping:
             thrust_provided = True
 
         # user provided target thrust or scale factor, but performance scaling is off
-        if scale_performance and (scale_factor_provided or thrust_provided) and self.get_val(Settings.VERBOSITY).value >= 1:
+        if not scale_performance and (scale_factor_provided or thrust_provided) and self.get_val(Settings.VERBOSITY).value >= 1:
             warnings.warn(
                 f'EngineDeck <{self.name}>: Scaling targets are provided, but will be '
                 'ignored because performance scaling is disabled. Set '
@@ -487,6 +492,7 @@ class EngineDeck(EngineModel):
                     self._original_data[TAILPIPE_THRUST]
             else:
                 self.data[THRUST] = self._original_data[TAILPIPE_THRUST]
+                engine_variables[THRUST] = engine_variables[TAILPIPE_THRUST]
 
         # remove now unneeded dependent variables from engine_variables
         if RAM_DRAG in engine_variables:
@@ -497,14 +503,14 @@ class EngineDeck(EngineModel):
             engine_variables.pop(TAILPIPE_THRUST)
 
         # Handle shaft power (corrected and uncorrected). It is not possible to compare
-        # them for consistency, as that requires information not avaliable here
+        # them for consistency, as that requires information not avaliable during setup
         # (freestream air temp and pressure). Instead, we must trust the source and
         # assume either data set is valid and can be used.
         if SHAFT_POWER in engine_variables and SHAFT_POWER_CORRECTED in engine_variables and self.get_val(Settings.VERBOSITY).value >= 1:
             warnings.warn('Both corrected and uncorrected shaft horsepower are '
                           f'present in {message}. The two cannot be validated for '
                           'consistency, and either variable could be utilized if '
-                          'any subsystem requests it as an input.')
+                          'a subsystem requests it as an input.')
 
         self._set_variable_flags()
 
@@ -814,7 +820,7 @@ class EngineDeck(EngineModel):
                                   units=shaft_power_units,
                                   desc=desc)
         if self.use_t4:
-            engine.add_output(Dynamic.Mission.TEMPERATURE_ENGINE_T4,
+            engine.add_output(Dynamic.Mission.TEMPERATURE_T4,
                               self.data[TEMPERATURE],
                               units=units[TEMPERATURE],
                               desc='Current turbine exit temperature')
@@ -851,14 +857,14 @@ class EngineDeck(EngineModel):
         engine = self._build_engine_interpolator(num_nodes, aviary_inputs)
         units = self.engine_variable_units
 
-        # Create copy of interpolation component that computes max thrust for current
+        # Create copy of interpolation component that computes max thrust/shp for current
         # flight condition
         # NOTE max thrust is assumed to occur at maximum throttle and hybrid throttle
         #      for each flight condition
         # TODO Use solver to find throttle/hybrid throttle for maximum thrust at given flight condition?
         #      Pre-solve max throttle/hybrid throttle for each flight condition, interpolate on
         #      reduced data set?
-        if self.use_thrust:
+        if self.use_thrust or self.use_shaft_power:
             if self.global_throttle or (self.global_hybrid_throttle
                                         and self.use_hybrid_throttle):
                 # create IndepVarComp to pass maximum throttle is to max thrust interpolator
@@ -943,7 +949,19 @@ class EngineDeck(EngineModel):
             max_thrust_engine.add_output('thrust_net_max_unscaled',
                                          self.data[THRUST],
                                          units=units[THRUST],
-                                         desc='Current thrust produced')
+                                         desc='maximum thrust that can currently be produced')
+        if self.use_shaft_power:
+            if SHAFT_POWER in self.engine_variables:
+                max_thrust_engine.add_output('shaft_power_max_unscaled',
+                                             self.data[SHAFT_POWER],
+                                             units=units[SHAFT_POWER],
+                                             desc='maximum shaft power that can currently be produced')
+            else:
+                max_thrust_engine.add_output('shaft_power_corrected_max_unscaled',
+                                             self.data[SHAFT_POWER_CORRECTED],
+                                             units=units[SHAFT_POWER_CORRECTED],
+                                             desc='maximum corrected shaft power that can currently be produced')
+
         else:
             # If engine does not use thrust, a separate component for max thrust is not
             # necessary.
@@ -955,11 +973,32 @@ class EngineDeck(EngineModel):
                               desc='Current max net thrust produced (unscaled)')
 
         # add created subsystems to engine_group
+        outputs = []
+        if getattr(self, 'use_t4', False):
+            outputs.append(Dynamic.Mission.TEMPERATURE_T4)
+
         engine_group.add_subsystem('interpolation',
                                    engine,
-                                   promotes_inputs=['*'])
+                                   promotes_inputs=['*'],
+                                   promotes_outputs=outputs)
 
-        if self.use_thrust:
+        # check if uncorrection component is needed
+        uncorrect_shp = False
+        if SHAFT_POWER_CORRECTED in self.engine_variables\
+           and SHAFT_POWER not in self.engine_variables:
+            uncorrect_shp = True
+            engine_group.add_subsystem('uncorrect_shaft_power',
+                                       subsys=UncorrectData(num_nodes=num_nodes,
+                                                            aviary_options=self.options),
+                                       promotes_inputs=[Dynamic.Mission.TEMPERATURE,
+                                                        Dynamic.Mission.STATIC_PRESSURE,
+                                                        Dynamic.Mission.MACH],)
+            #    promotes_outputs=[('uncorrected_data', 'shaft_power_unscaled')])
+
+            engine_group.connect('interpolation.shaft_power_corrected_unscaled',
+                                 'uncorrect_shaft_power.corrected_data')
+
+        if self.use_thrust or self.use_shaft_power:
             if self.global_throttle or (self.global_hybrid_throttle
                                         and self.use_hybrid_throttle):
                 engine_group.add_subsystem('fixed_max_throttles',
@@ -974,9 +1013,21 @@ class EngineDeck(EngineModel):
                                            promotes_outputs=['*'])
 
             engine_group.add_subsystem(
-                'max_thrust_interpolation',
+                'max_interpolation',
                 max_thrust_engine,
                 promotes_inputs=['*'])
+
+            if uncorrect_shp:
+                engine_group.add_subsystem('uncorrect_max_shaft_power',
+                                           subsys=UncorrectData(num_nodes=num_nodes,
+                                                                aviary_options=self.options),
+                                           promotes_inputs=[Dynamic.Mission.TEMPERATURE,
+                                                            Dynamic.Mission.STATIC_PRESSURE,
+                                                            Dynamic.Mission.MACH],)
+                #    promotes_outputs=[('uncorrected_data', 'shaft_power_max_unscaled')])
+
+                engine_group.connect('max_interpolation.shaft_power_corrected_max_unscaled',
+                                     'uncorrect_max_shaft_power.corrected_data')
 
         engine_group.add_subsystem('engine_scaling',
                                    subsys=EngineScaling(num_nodes=num_nodes,
@@ -996,15 +1047,19 @@ class EngineDeck(EngineModel):
                              'engine_scaling.nox_rate_unscaled')
         if self.use_thrust:
             engine_group.connect(
-                'max_thrust_interpolation.thrust_net_max_unscaled', 'engine_scaling.thrust_net_max_unscaled')
+                'max_interpolation.thrust_net_max_unscaled', 'engine_scaling.thrust_net_max_unscaled')
 
         if self.use_shaft_power:
             if SHAFT_POWER in self.engine_variables:
                 engine_group.connect('interpolation.shaft_power_unscaled',
                                      'engine_scaling.shaft_power_unscaled')
+                engine_group.connect('max_interpolation.shaft_power_max_unscaled',
+                                     'engine_scaling.shaft_power_max_unscaled')
             else:
-                engine_group.connect('interpolation.shaft_power_corrected_unscaled',
-                                     'engine_scaling.shaft_power_corrected_unscaled')
+                engine_group.connect('uncorrect_shaft_power.uncorrected_data',
+                                     'engine_scaling.shaft_power_unscaled')
+                engine_group.connect('uncorrect_max_shaft_power.uncorrected_data',
+                                     'engine_scaling.shaft_power_max_unscaled')
 
         return engine_group
 
