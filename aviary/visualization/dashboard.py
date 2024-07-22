@@ -11,7 +11,8 @@ from typing import (
     List,
     Iterator,
     Tuple,
-)  # Use typing.List and typing.Tuple for compatibility
+)
+import zipfile  # Use typing.List and typing.Tuple for compatibility
 
 import numpy as np
 from bokeh.palettes import Category10
@@ -121,6 +122,26 @@ def _dashboard_setup_parser(parser):
         help="show debugging output",
     )
 
+    # parser.add_argument(
+    #     "--save",
+    #     type=_none_or_str,
+    #     help="Name of zip file in which dashboard files are saved",
+    #     dest="saved_dashboard_filename",
+    #     default=None,
+    # )
+
+    parser.add_argument("--save", 
+                        nargs='?', 
+                        const=True, 
+                        default=False,
+                        help="Name of zip file in which dashboard files are saved",
+                        )
+
+    parser.add_argument("--force", 
+                        action='store_true',
+                        help="When displaying data from a shared zip file, if the directory in the reports directory exists, overrite if this is True",
+                        )
+
 
 def _dashboard_cmd(options, user_args):
     """
@@ -133,6 +154,37 @@ def _dashboard_cmd(options, user_args):
     user_args : list of str
         Args to be passed to the user script.
     """
+    
+    # check to see if options.script_name is a zip file
+    # if yes, then unzip into reports directory and run dashboard on it
+    if zipfile.is_zipfile(options.script_name):
+        report_dir_name = Path(options.script_name).stem
+        report_dir_path = Path("reports") / report_dir_name
+        # need to check to see if that directory already exists
+        if not options.force and report_dir_path.is_dir():
+            raise RuntimeError(f"The reports directory {report_dir_name} already exists. If you wish to overrite the existing directory, use the --force option")
+        if report_dir_path.is_dir():  # need to delete it. The unpacking will just add to what is there, not do a clean unpack
+            shutil.rmtree(report_dir_path)
+
+        shutil.unpack_archive(options.script_name, f"reports/{report_dir_name}")
+        dashboard(
+            report_dir_name,
+            options.problem_recorder,
+            options.driver_recorder,
+            options.port,
+        )
+        return
+    
+    # Save the dashboard files to a zip file that can be shared with others
+    if options.save is not False:
+        if options.save is True:
+            save_filename_stem = options.script_name
+        else:
+            save_filename_stem = options.save
+        print(f"Saving to {save_filename_stem}")
+        shutil.make_archive(save_filename_stem, "zip", f"reports/{options.script_name}")
+        return
+
     dashboard(
         options.script_name,
         options.problem_recorder,
@@ -765,6 +817,93 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
         high_level_tabs.append(("Subsystems", subsystem_tabs))
     tabs = pn.Tabs(*high_level_tabs, stylesheets=["assets/aviary_styles.css"])
 
+
+#     pn.config.raw_css.append("""
+#     .reload {
+#       background: transparent;
+#       border: none;
+#       font-size: 28pt;
+#     }
+#     .logout .bk-btn {
+#       background: transparent;
+#       font-size: 16pt;
+#       border: none;
+#       color: white;
+#     }
+#     #header .bk.reload .bk.bk-btn {
+#       color: white;
+#     }
+#     .reload .bk-btn.bk-btn-default {
+#         font-size: 8pt
+#     }
+    
+#     .bk-panel-models-widgets-Button.solid.reload > #shadow-root > div.bk-btn-group > button.bk-btn {
+#                 font-size: 8pt
+#     }
+
+
+
+#    """)
+
+
+
+#     css = """
+#     .reload {
+#      style='font-weight:bold;'
+#     }
+    
+#     .reload .bk-btn.bk-btn-default {
+#         font-size: 8pt
+#     }
+    
+
+    
+#     """
+#     pn.extension(raw_css=[css])
+
+    
+    outer_style = {
+        # 'background': '#f9f900',
+        # 'border-radius': '5px',
+        # 'border': '20px solid black',
+        # 'padding': '50px',
+        # 'box-shadow': '5px 5px 5px #bcbcff',
+        # 'margin': "10px",
+        # 'font-size': '8pt!important'
+    }
+
+
+
+
+    save_dashboard_button = pn.widgets.Button(name='Save Dashboard',
+                                            #   button_type='primary',
+                                            #   button_style='solid',
+                                            #   margin=(0,0),
+                                            #   width=5,
+                                              width_policy="min",
+                                            #   sizing_mode="fixed",
+                                                css_classes=['save-button'],
+                                                # styles={'font-size': '28pt'}
+                                                    # styles=outer_style,
+
+                                            #   max_width=6,
+                                            button_type='success',
+                                            button_style='solid',
+                                            stylesheets=["assets/aviary_styles.css"]
+                                              )
+    header = pn.Row(
+        save_dashboard_button, 
+        pn.HSpacer(), 
+        pn.HSpacer(), 
+        pn.HSpacer())
+    
+    def save_dashboard(event):
+        print(f"Saving dashboard files to {script_name}.zip")
+        shutil.make_archive(script_name, "zip", f"reports/{script_name}")
+    
+    save_dashboard_button.on_click(save_dashboard)
+
+
     template = pn.template.FastListTemplate(
         title=f"Aviary Dashboard for {script_name}",
         logo="assets/aviary_logo.png",
@@ -772,6 +911,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
         main=[tabs],
         accent_base_color="black",
         header_background="rgb(0, 212, 169)",
+        header=header,
         background_color="white",
         theme=DefaultTheme,
         theme_toggle=False,
