@@ -10,7 +10,7 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 class DesignMCLTest(unittest.TestCase):
 
-    def test_derivs_supersonic(self):
+    def test_derivs_supersonic1(self):
         """
         Case: THICKNESS_TO_CHORD < 0.065 and MAX_MACH > 1
         """
@@ -85,7 +85,7 @@ class DesignMCLTest(unittest.TestCase):
         assert_near_equal(
             prob.get_val(Mission.Design.LIFT_COEFFICIENT), [0.683002], 1e-6)
 
-    def test_derivs_subsonic2(self):
+    def test_derivs_supersonic2(self):
         """
         Case: THICKNESS_TO_CHORD > 0.065 and MAX_MACH > 1
         """
@@ -120,7 +120,7 @@ class DesignMCLTest(unittest.TestCase):
         assert_near_equal(
             prob.get_val(Mission.Design.LIFT_COEFFICIENT), [0.683002], 1e-6)
 
-    def test_derivs_subsonic3(self):
+    def test_derivs_subsonic2(self):
         """
         Case: THICKNESS_TO_CHORD <= 0.065 and MAX_MACH < 1
         """

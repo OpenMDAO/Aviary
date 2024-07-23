@@ -16,7 +16,6 @@ class SkinFrictionCoeffTest(unittest.TestCase):
         nc = 3
 
         machs = np.array([.2, .3, .4, .5, .6, .7, .75, .775, .8, .825, .85, .875])
-        # alts = np.linspace(41000, 41000, n)
         lens = np.linspace(1, 2, nc)
         temp = np.ones(n) * 389.97
         pres = np.ones(n) * 2.60239151
@@ -115,7 +114,6 @@ class SkinFrictionCoeffTest(unittest.TestCase):
         nc = 9
 
         machs = np.array([.2, .3, .4, .5, .6, .7, .75, .775, .8, .825, .85, .875])
-        # alts = np.linspace(41000, 41000, n)
         lens = np.linspace(1, 2, nc)
         temp = np.ones(n) * 389.97
         pres = np.ones(n) * 2.60239151
@@ -275,7 +273,6 @@ class SkinFrictionCoeffTest(unittest.TestCase):
         nc = 3
 
         machs = np.array([.2, .3, .4, .5, .6, .7, .75, .775, .8, .825, .85, .875])
-        # alts = np.linspace(41000, 41000, n)
         lens = np.linspace(1, 2, nc)
         temp = np.ones(n) * 389.97
         pres = np.ones(n) * 374.74437747
