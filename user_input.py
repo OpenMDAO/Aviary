@@ -149,16 +149,12 @@ class DoubleScrolledFrame:
         self.outer.columnconfigure(0, weight=1)
         self.canvas['yscrollcommand'] = self.vsb.set
         self.canvas['xscrollcommand'] = self.hsb.set
-        # mouse scroll does not seem to work with just "bind"; You have
-        # to use "bind_all". Therefore to use multiple windows you have
-        # to bind_all in the current widget
         self.canvas.bind("<Enter>", self._bind_mouse)
         self.canvas.bind("<Leave>", self._unbind_mouse)
         self.vsb['command'] = self.canvas.yview
         self.hsb['command'] = self.canvas.xview
 
         self.inner = tk.Frame(self.canvas)
-        # pack the inner Frame into the Canvas with the topleft corner 4 pixels offset
         self.canvas.create_window(4, 4, window=self.inner, anchor='nw')
         self.inner.bind("<Configure>", self._on_frame_configure)
 
@@ -166,10 +162,8 @@ class DoubleScrolledFrame:
 
     def __getattr__(self, item):
         if item in self.outer_attr:
-            # geometry attributes etc (eg pack, destroy, tkraise) are passed on to self.outer
             return getattr(self.outer, item)
         else:
-            # all other attributes (_w, children, etc) are passed to self.inner
             return getattr(self.inner, item)
 
     def _on_frame_configure(self, event=None):
