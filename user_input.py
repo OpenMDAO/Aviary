@@ -1,11 +1,14 @@
-import numpy as np
 import csv
-from tkinter import *
-import aviary.api as av
-from copy import deepcopy
 import math
+from tkinter import *
 import tkinter as tk
 import tkinter.ttk as ttk
+from tkinter import messagebox
+from tkinter import filedialog
+import aviary.api as av
+from copy import deepcopy
+
+
 data = deepcopy(av.CoreMetaData)
 list_values = list(data.values())
 list_keys = list(data.keys())
@@ -39,7 +42,7 @@ rows_per_subhead=[]
 compound_subheaders=[]
 v=0
 for num in entries_per_subhead:
-    rows = math.ceil(num/4)
+    rows = math.ceil(num/3)
     rows_per_subhead.append(rows)
     compound_subheaders.append(v)
     v+=1
@@ -63,6 +66,69 @@ for num in compound_data_entries:
             mini_list.append(number)
     index_list.append(mini_list)
     mini_list=[]
+    
+file_contents={}
+file_name=StringVar(value='Aircraft_Model.csv')
+file_data=[]
+def Open():
+    file_ = filedialog.askopenfilename(title = "Select a Model",
+                                          filetypes = (('All files', '*'),))
+    file_name.set(file_)
+    file = open(file_)
+    for line in file:
+        line = line.strip()
+        for i in range(len(list_keys)):
+            if ',' in line:
+                name = line.split(',')[0]
+                numbers = line.split(',')[1:]
+                if len(numbers) > 1:
+                    fixed = numbers[:-1][0]
+                else:
+                    fixed = numbers[0]
+                if "[" in fixed and "]" in fixed:
+                    temp = fixed.replace("[","").replace("]","")
+                    fixed = [float(num) for num in temp.split(",")]
+                elif "," in fixed:
+                    for num in fixed.split(","):
+                        num = float(num)
+                elif "FALSE" in fixed.upper() or "TRUE" in fixed.upper():
+                    fixed = fixed
+                else:
+                    try: fixed = float(fixed)
+                    except ValueError: pass
+
+                variable = StringVar(value=name)
+                if variable.get() == list_keys[i]:
+                    file_contents[variable.get()]=fixed
+                else: pass
+
+    for i in range(len(list_keys)):   
+        check=0
+        for key in file_contents:
+            if list_keys[i] == key:
+                check+=1
+                file_data.append(file_contents[key])
+            else: pass
+        if check != 1:
+            file_data.append(list_values[i]["default_value"])
+    return file_contents, file_name, file_data
+
+filesaveas=StringVar(value='Aircraft_Model.csv')
+checksaveas=IntVar(value=0)
+def Saveas():
+    files = [('CSV', '*.csv'),
+             ('Text Document', '*.txt'),
+             ('All Files', '*.*')]
+    file__ = filedialog.asksaveasfile(filetypes = files, defaultextension = files)
+    rename = str(file__).split("'")[1]
+    filesaveas.set(value=rename)
+    checksaveas.set(value=1)
+    info(file_contents,file_name,file_data,checksaveas,filesaveas)
+    return filesaveas, checksaveas
+
+def About():
+    messagebox.showinfo(title='About', message='v1.0 - 2024')
+
 
 class DoubleScrolledFrame:
     """
@@ -135,37 +201,57 @@ class DoubleScrolledFrame:
 myframe = DoubleScrolledFrame(root)
 myframe.pack()
 
-notebook=ttk.Notebook(myframe)
+notebook=ttk.Notebook(myframe.inner)
 notebook.pack(fill='both', expand=True, anchor='center')
 frame1=ttk.Frame(notebook)
 frame2=ttk.Frame(notebook)
 frame3=ttk.Frame(notebook)
 frame4=ttk.Frame(notebook)
+frame5=ttk.Frame(notebook)
 notebook.add(frame1,text="Aircraft")
 notebook.add(frame2,text="Dynamic")
 notebook.add(frame3,text="Mission")
 notebook.add(frame4,text="Settings")
+notebook.add(frame5,text="Search")
 
-
-# list_of_inputs = []
 tempdict = {}
-def info():
-    list_of_lists = []
+def info(file_contents=file_contents, file_name=file_name, file_data=file_data, checksaveas=checksaveas, filesaveas=filesaveas):
+    print(checksaveas.get())
+    list_of_lists = [] 
     for i,(key,value) in enumerate(zip(data.keys(),data.values())):
-        unit = value["units"]
-        if key in tempdict.keys():
-            list_of_lists.append([f'{key},{tempdict[key].get()},{unit}'])
-        else:
-            list_of_lists.append([f'{key},{value["default_value"]},{unit}'])
-        # if list_of_inputs[i].get() != "":  
-        #     list_of_lists.append([f'{key},{list_of_inputs[i].get()},{unit}'])
-        # else:    
-        #     list_of_lists.append([f'{key},{value["default_value"]},{unit}'])
-        
-    with open('Aircraft_Model.csv', 'w', newline='') as i:
-        writer = csv.writer(i,delimiter=';',quoting=csv.QUOTE_MINIMAL)
-        for sublist in list_of_lists:
-            writer.writerow(sublist)
+            unit = value["units"]
+            if file_name.get() == 'Aircraft_Model.csv':  
+                if key in tempdict.keys():
+                    list_of_lists.append([f'{key},{tempdict[key].get()},{unit}'])
+                else:
+                    list_of_lists.append([f'{key},{value["default_value"]},{unit}'])
+            else:
+                if key in tempdict.keys():
+                    list_of_lists.append([f'{key},{tempdict[key].get()},{unit}'])                
+                elif key in file_contents.keys():
+                    list_of_lists.append([f'{key},{file_data[i]},{unit}'])
+                else:
+                    list_of_lists.append([f'{key},{value["default_value"]},{unit}'])
+    if file_name.get() == 'Aircraft_Model.csv' and checksaveas.get() != 1:
+        with open('Aircraft_Model.csv', 'w', newline='') as i:
+            writer = csv.writer(i,delimiter=';',quoting=csv.QUOTE_MINIMAL)
+            for sublist in list_of_lists:
+                writer.writerow(sublist)
+    elif file_name.get() == 'Aircraft_Model.csv' and checksaveas.get() == 1:
+        with open(filesaveas.get(), 'w', newline='') as i:
+            writer = csv.writer(i,delimiter=';',quoting=csv.QUOTE_MINIMAL)
+            for sublist in list_of_lists:
+                writer.writerow(sublist)
+    elif file_name.get() != 'Aircraft_Model.csv' and checksaveas.get() == 1:
+        with open(filesaveas.get(), 'w', newline='') as i:
+            writer = csv.writer(i,delimiter=';',quoting=csv.QUOTE_MINIMAL)
+            for sublist in list_of_lists:
+                writer.writerow(sublist)
+    else:
+        with open(file_name.get(), 'w', newline='') as i:
+            writer = csv.writer(i,delimiter=';',quoting=csv.QUOTE_MINIMAL)
+            for sublist in list_of_lists:
+                writer.writerow(sublist)
 
 
 for i in range(len(name_each_subhead)):
@@ -190,8 +276,7 @@ for i in range(len(name_each_subhead)):
         subhead.grid(row=compound_data_rows[i]+compound_subheaders[i],columnspan=1,sticky='n',pady=10)
         button.grid(row=compound_data_rows[i]+compound_subheaders[i],column=2,sticky='n',pady=10)
 
-rows = math.ceil(list_len/4)
-def fxn(x,frame):
+def fxn(x,frame,file_name=file_name,file_contents=file_contents,file_data=file_data):
     num_rows = rows_per_subhead[x]
     num=0
     for row in range(num_rows):
@@ -199,27 +284,104 @@ def fxn(x,frame):
             for col in range(3):
                 print(x, num)
                 i = index_list[x][num]
-                user_input = StringVar(value=f'{list_values[i]["default_value"]}')  
-                
-                input_title = ttk.Label(frame,justify='left', text=f'{list_keys[i]}')
+                user_input = StringVar(value=f'{list_values[i]["default_value"]}')
+                if file_name.get() != 'Aircraft_Model.csv':
+                    for key in list_keys:
+                        if key in file_contents.keys():
+                            user_input = StringVar(value=f'{file_data[i]}')
+
+                input_title = ttk.Label(frame,justify='left',font=('TkDefaultFont',12), text=f'{list_keys[i]}')
                 input_title.grid(row = (row+compound_subheaders[x]+compound_data_rows[x]+1),column=col,pady=10,padx=1,sticky='nw')   
 
                 user_input_entry = ttk.Entry(frame,width='10',textvariable=user_input)
                 user_input_entry.grid(row = (row+compound_subheaders[x]+compound_data_rows[x]+1),column=col,pady=30,padx=1,sticky='w')   
 
-                input_unit = ttk.Label(frame,justify='left', text=f'{list_values[i]["units"]}')
+                input_unit = ttk.Label(frame,justify='left',font=('TkDefaultFont',10), text=f'{list_values[i]["units"]}')
                 input_unit.grid(row = (row+compound_subheaders[x]+compound_data_rows[x]+1),column=col,pady=30,padx=75,sticky='w')   
 
-                input_desc = ttk.Label(frame,wraplength=120,justify='left', text=f'{list_values[i]["desc"]}')
+                input_desc = ttk.Label(frame,wraplength=120,justify='left',font=('TkDefaultFont',10), text=f'{list_values[i]["desc"]}')
                 input_desc.grid(row = (row+compound_subheaders[x]+compound_data_rows[x]+1),column=col,pady=30,padx=150,sticky='w')   
 
-                # list_of_inputs.append(user_input)
                 tempdict[list_keys[i]] = user_input
                 num+=1
                 if num == entries_per_subhead[x]:
                     break
-        else:
-            break
+        else: break
+
+def Searchfxn(x,y,add_row,frame,file_name=file_name,file_contents=file_contents,file_data=file_data):
+    i = index_list[x][y]
+    user_input = StringVar(value=f'{list_values[i]["default_value"]}')
+    if file_name.get() != 'Aircraft_Model.csv':
+        for key in list_keys:
+            if key in file_contents.keys():
+                user_input = StringVar(value=f'{file_data[i]}')
+
+    input_title = ttk.Label(frame,justify='left',font=('TkDefaultFont',12), text=f'{list_keys[i]}')
+    input_title.grid(row = 4+add_row,column=0,pady=10,padx=1,sticky='nw')   
+
+    user_input_entry = ttk.Entry(frame,width='10',textvariable=user_input)
+    user_input_entry.grid(row = 5+add_row,column=0,pady=10,padx=1,sticky='w')   
+
+    input_unit = ttk.Label(frame,justify='left',font=('TkDefaultFont',10), text=f'{list_values[i]["units"]}')
+    input_unit.grid(row = 5+add_row,column=1,pady=10,padx=20,sticky='w')   
+
+    input_desc = ttk.Label(frame,wraplength=120,justify='left',font=('TkDefaultFont',10), text=f'{list_values[i]["desc"]}')
+    input_desc.grid(row = 5+add_row,column=3,pady=10,padx=20,sticky='w')   
+
+    tempdict[list_keys[i]] = user_input
+
+searcheader=ttk.Frame(frame5)
+searcheader.pack()
+searchcontents=ttk.Frame(frame5)
+searchcontents.pack(after=searcheader)
+
+def Clear(frame=searchcontents):
+    frame.destroy()
+
+def Search(keyword):
+    searchcontents=ttk.Frame(frame5)
+    searchcontents.pack(after=searcheader)
+    add_row=0
+    for i, key in enumerate(list_keys):
+        var = key.split(':')[-1]
+        if var == keyword:
+            add_row+=2
+            count=0
+            for row in index_list:
+                count2=0
+                for col in row:
+                    if i == col:
+                        Searchfxn(count,count2,add_row,searchcontents)
+                    count2+=1
+                count+=1
+    return searchcontents
+
+Search_input = StringVar(value='Enter Variable Name')
+Search_label = ttk.Label(searcheader,justify='center', text='Search variable name',font=('TkDefaultFont',15,'bold'))  
+Search_label.grid(row=2,column=0)
+Search_entry = ttk.Entry(searcheader,width='30',textvariable=Search_input)
+Search_entry.grid(row=3, column=0)
+Search_button = ttk.Button(searcheader, text = 'Search', width = "10", command = lambda i=i:Search(Search_input.get()))
+Search_button.grid(row=3, column=1)
+Clear_button = ttk.Button(searcheader, text = 'Clear', width = "10", command = lambda:Clear(searchcontents))
+Clear_button.grid(row=3, column=2)
+
+
+menubar = Menu(root)
+filemenu = Menu(menubar, tearoff=0)
+filemenu.add_command(label='Open', command=Open)
+filemenu.add_command(label='Save', command=info)
+filemenu.add_command(label='Save as...', command=Saveas)
+filemenu.add_separator()
+filemenu.add_command(label="Exit", command=root.quit)
+menubar.add_cascade(label="File", menu=filemenu)
+helpmenu = Menu(menubar, tearoff=0)
+helpmenu.add_command(label="About...", command=About)
+menubar.add_cascade(label="Help", menu=helpmenu)
+root.config(menu=menubar)
+
+
+
 button_main = ttk.Button(root,text = "Submit", width = "20", command = info)
-button_main.pack(before=notebook,pady=10)       
+button_main.pack(before=notebook,pady=10)
 root.mainloop()
