@@ -87,10 +87,10 @@ def _dashboard_setup_parser(parser):
         The parser we're adding options to.
     """
     parser.add_argument(
-                        "script_name",
-                        type=str,
-                        nargs="*",
-                        help="Name of aviary script that was run (not including .py).",
+        "script_name",
+        type=str,
+        nargs="*",
+        help="Name of aviary script that was run (not including .py).",
     )
 
     parser.add_argument(
@@ -124,17 +124,18 @@ def _dashboard_setup_parser(parser):
         help="show debugging output",
     )
 
-    parser.add_argument("--save", 
-                        nargs='?', 
-                        const=True, 
+    parser.add_argument("--save",
+                        nargs='?',
+                        const=True,
                         default=False,
                         help="Name of zip file in which dashboard files are saved. If no argument given, use the script name to name the zip file",
                         )
 
-    parser.add_argument("--force", 
+    parser.add_argument("--force",
                         action='store_true',
                         help="When displaying data from a shared zip file, if the directory in the reports directory exists, overrite if this is True",
                         )
+
 
 def _dashboard_cmd(options, user_args):
     """
@@ -147,18 +148,18 @@ def _dashboard_cmd(options, user_args):
     user_args : list of str
         Args to be passed to the user script.
     """
-    
+
     if options.save and not options.script_name:
         if options.save is not True:
             options.script_name = options.save
-            options.save  = True
+            options.save = True
 
     if not options.script_name:
         raise argparse.ArgumentError("script_name argument missing")
 
     if isinstance(options.script_name, list):
-         options.script_name = options.script_name[0]
-    
+        options.script_name = options.script_name[0]
+
     # check to see if options.script_name is a zip file
     # if yes, then unzip into reports directory and run dashboard on it
     if zipfile.is_zipfile(options.script_name):
@@ -166,7 +167,8 @@ def _dashboard_cmd(options, user_args):
         report_dir_path = Path("reports") / report_dir_name
         # need to check to see if that directory already exists
         if not options.force and report_dir_path.is_dir():
-            raise RuntimeError(f"The reports directory {report_dir_name} already exists. If you wish to overrite the existing directory, use the --force option")
+            raise RuntimeError(
+                f"The reports directory {report_dir_name} already exists. If you wish to overrite the existing directory, use the --force option")
         if report_dir_path.is_dir():  # need to delete it. The unpacking will just add to what is there, not do a clean unpack
             shutil.rmtree(report_dir_path)
 
@@ -178,13 +180,13 @@ def _dashboard_cmd(options, user_args):
             options.port,
         )
         return
-    
+
     # Save the dashboard files to a zip file that can be shared with others
     if options.save is not False:
         if options.save is True:
             save_filename_stem = options.script_name
         else:
-            save_filename_stem = options.save
+            save_filename_stem = Path(options.save).stem
         print(f"Saving to {save_filename_stem}.zip")
         shutil.make_archive(save_filename_stem, "zip", f"reports/{options.script_name}")
         return
@@ -345,7 +347,7 @@ def create_aviary_variables_table_data_nested(script_name, recorder_file):
 
     """
     cr = om.CaseReader(recorder_file)
-    
+
     if "final" not in cr.list_cases():
         return None
 
