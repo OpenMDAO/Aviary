@@ -186,8 +186,6 @@ class EngineDeck(EngineModel):
         # ensure required variables are a set
         self.required_variables = {*required_variables}
 
-        # self._set_variable_flags()
-
         self._setup(data)
 
     def _preprocess_inputs(self):
@@ -949,13 +947,15 @@ class EngineDeck(EngineModel):
         if SHAFT_POWER_CORRECTED in self.engine_variables\
            and SHAFT_POWER not in self.engine_variables:
             uncorrect_shp = True
-            engine_group.add_subsystem('uncorrect_shaft_power',
-                                       subsys=UncorrectData(num_nodes=num_nodes,
-                                                            aviary_options=self.options),
-                                       promotes_inputs=[Dynamic.Mission.TEMPERATURE,
-                                                        Dynamic.Mission.STATIC_PRESSURE,
-                                                        Dynamic.Mission.MACH],)
-            #    promotes_outputs=[('uncorrected_data', 'shaft_power_unscaled')])
+            engine_group.add_subsystem(
+                'uncorrect_shaft_power',
+                subsys=UncorrectData(num_nodes=num_nodes, aviary_options=self.options),
+                promotes_inputs=[
+                    Dynamic.Mission.TEMPERATURE,
+                    Dynamic.Mission.STATIC_PRESSURE,
+                    Dynamic.Mission.MACH,
+                ],
+            )
 
             engine_group.connect('interpolation.shaft_power_corrected_unscaled',
                                  'uncorrect_shaft_power.corrected_data')
@@ -980,13 +980,17 @@ class EngineDeck(EngineModel):
                 promotes_inputs=['*'])
 
             if uncorrect_shp:
-                engine_group.add_subsystem('uncorrect_max_shaft_power',
-                                           subsys=UncorrectData(num_nodes=num_nodes,
-                                                                aviary_options=self.options),
-                                           promotes_inputs=[Dynamic.Mission.TEMPERATURE,
-                                                            Dynamic.Mission.STATIC_PRESSURE,
-                                                            Dynamic.Mission.MACH],)
-                #    promotes_outputs=[('uncorrected_data', 'shaft_power_max_unscaled')])
+                engine_group.add_subsystem(
+                    'uncorrect_max_shaft_power',
+                    subsys=UncorrectData(
+                        num_nodes=num_nodes, aviary_options=self.options
+                    ),
+                    promotes_inputs=[
+                        Dynamic.Mission.TEMPERATURE,
+                        Dynamic.Mission.STATIC_PRESSURE,
+                        Dynamic.Mission.MACH,
+                    ],
+                )
 
                 engine_group.connect('max_interpolation.shaft_power_corrected_max_unscaled',
                                      'uncorrect_max_shaft_power.corrected_data')
