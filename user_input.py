@@ -210,7 +210,6 @@ notebook.add(frame5,text="Search")
 
 tempdict = {}
 def info(file_contents=file_contents, file_name=file_name, file_data=file_data, checksaveas=checksaveas, filesaveas=filesaveas):
-    print(checksaveas.get())
     list_of_lists = [] 
     for i,(key,value) in enumerate(zip(data.keys(),data.values())):
             unit = value["units"]
@@ -276,7 +275,6 @@ def fxn(x,frame,file_name=file_name,file_contents=file_contents,file_data=file_d
     for row in range(num_rows):
         if num < entries_per_subhead[x]:
             for col in range(3):
-                print(x, num)
                 i = index_list[x][num]
                 user_input = StringVar(value=f'{list_values[i]["default_value"]}')
                 if file_name.get() != 'Aircraft_Model.csv':
