@@ -1,6 +1,6 @@
 # Run Tests
 
-name: Aviary Tests
+name: Test with Pre-Release OpenMDAO/Dymos
 
 on:
 
