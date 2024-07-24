@@ -9,7 +9,6 @@ import openmdao.api as om
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import add_aviary_input
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.variable_info.functions import add_aviary_input
 from aviary.variable_info.core_promotes import core_mission_inputs
 
 
@@ -27,20 +26,12 @@ class VariablesIn(om.ExplicitComponent):
             'meta_data', types=dict, default=_MetaData,
             desc='variable metadata associated with the variables to be passed through this port'
         )
-        self.options.declare(
-            'context', default='full', values=['full', 'mission'],
-            desc='Limit to a subset of the aircraft and mission variables.'
-        )
 
     def setup(self):
         aviary_options: AviaryValues = self.options['aviary_options']
         meta_data = self.options['meta_data']
-        context = self.options['context']
 
-        if context == 'mission':
-            inputs = core_mission_inputs
-        else:
-            inputs = meta_data
+        inputs = core_mission_inputs
 
         for key in inputs:
             # TODO temp line to ignore dynamic mission variables, will not work

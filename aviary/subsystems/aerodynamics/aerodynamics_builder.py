@@ -10,6 +10,7 @@ CoreAerodynamicsBuilder : the interface for Aviary's core aerodynamics subsystem
 import numpy as np
 
 import openmdao.api as om
+from dymos.utils.misc import _unspecified
 
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 
@@ -339,12 +340,75 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                         params[Aircraft.Design.DRAG_POLAR] = drag_opts
 
             if method == 'computed':
-                param_vars = [Aircraft.Nacelle.CHARACTERISTIC_LENGTH,
-                              Aircraft.Nacelle.FINENESS,
-                              Aircraft.Nacelle.LAMINAR_FLOW_LOWER,
-                              Aircraft.Nacelle.LAMINAR_FLOW_UPPER,
-                              Aircraft.Nacelle.WETTED_AREA]
-                for var in param_vars:
+
+                # Parameters for drag computation.
+                core_inputs = [
+                    Aircraft.Design.BASE_AREA,
+                    Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR,
+                    Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR,
+                    Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR,
+                    Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR,
+                    Aircraft.Fuselage.CHARACTERISTIC_LENGTH,
+                    Aircraft.Fuselage.CROSS_SECTION,
+                    Aircraft.Fuselage.DIAMETER_TO_WING_SPAN,
+                    Aircraft.Fuselage.FINENESS,
+                    Aircraft.Fuselage.LAMINAR_FLOW_LOWER,
+                    Aircraft.Fuselage.LAMINAR_FLOW_UPPER,
+                    Aircraft.Fuselage.LENGTH_TO_DIAMETER,
+                    Aircraft.Fuselage.WETTED_AREA,
+                    Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH,
+                    Aircraft.HorizontalTail.FINENESS,
+                    Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER,
+                    Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER,
+                    Aircraft.HorizontalTail.WETTED_AREA,
+                    Aircraft.VerticalTail.CHARACTERISTIC_LENGTH,
+                    Aircraft.VerticalTail.FINENESS,
+                    Aircraft.VerticalTail.LAMINAR_FLOW_LOWER,
+                    Aircraft.VerticalTail.LAMINAR_FLOW_UPPER,
+                    Aircraft.VerticalTail.WETTED_AREA,
+                    Aircraft.Wing.AREA,
+                    Aircraft.Wing.ASPECT_RATIO,
+                    Aircraft.Wing.CHARACTERISTIC_LENGTH,
+                    Aircraft.Wing.FINENESS,
+                    Aircraft.Wing.LAMINAR_FLOW_LOWER,
+                    Aircraft.Wing.LAMINAR_FLOW_UPPER,
+                    Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN,
+                    Aircraft.Wing.SPAN_EFFICIENCY_FACTOR,
+                    Aircraft.Wing.SWEEP,
+                    Aircraft.Wing.TAPER_RATIO,
+                    Aircraft.Wing.THICKNESS_TO_CHORD,
+                    Aircraft.Wing.WETTED_AREA,
+                    Mission.Design.GROSS_MASS,
+                    Mission.Design.LIFT_COEFFICIENT,
+                    Mission.Design.MACH,
+                ]
+
+                for var in core_inputs:
+
+                    meta = _MetaData[var]
+
+                    val = meta['default_value']
+                    if val is None:
+                        val = _unspecified
+                    units = meta['units']
+
+                    if var in aviary_inputs:
+                        try:
+                            val = aviary_inputs.get_val(var, units)
+                        except TypeError:
+                            val = aviary_inputs.get_val(var)
+
+                    params[var] = {'val': val,
+                                   'static_target': True}
+
+                # These parameters are sized by number of engine models.
+                engine_sized_vars = [Aircraft.Nacelle.CHARACTERISTIC_LENGTH,
+                                     Aircraft.Nacelle.FINENESS,
+                                     Aircraft.Nacelle.LAMINAR_FLOW_LOWER,
+                                     Aircraft.Nacelle.LAMINAR_FLOW_UPPER,
+                                     Aircraft.Nacelle.WETTED_AREA]
+
+                for var in engine_sized_vars:
                     params[var] = {'shape': (num_engine_type, ), 'static_target': True}
 
         return params

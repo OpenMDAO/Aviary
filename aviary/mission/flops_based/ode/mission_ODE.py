@@ -79,8 +79,7 @@ class MissionODE(om.Group):
         self.add_subsystem(
             'input_port',
             VariablesIn(aviary_options=aviary_options,
-                        meta_data=self.options['meta_data'],
-                        context='mission'),
+                        meta_data=self.options['meta_data']),
             promotes_inputs=['*'],
             promotes_outputs=['*'])
         self.add_subsystem(
