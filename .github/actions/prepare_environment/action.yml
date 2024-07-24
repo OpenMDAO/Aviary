@@ -78,7 +78,7 @@ runs:
       if: inputs.PYOPTSPARSE
       shell: bash -l {0}
       run: |
-        if [[ "${{ inputs.PYOPTSPARSE }}" == "latest"]]; then
+        if [[ "${{ inputs.PYOPTSPARSE }}" == "latest" ]]; then
           echo "============================================================="
           echo "Determine which branch/version of pyoptsparse to install"
           echo "============================================================="
@@ -172,4 +172,3 @@ runs:
         name: ${{ inputs.NAME }}_environment
         path: ${{ inputs.NAME }}_environment.yml
         retention-days: 5
-        
