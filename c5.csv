@@ -145,10 +145,10 @@ aircraft:wing:detailed_wing,False,unitless
 mission:constraints:max_mach,0.77,unitless
 mission:design:cruise_altitude,34000,ft
 mission:design:gross_mass,840000,lbm
-mission:design:range,2300,NM
+mission:design:range,7000,NM
 mission:design:thrust_takeoff_per_eng,51250,lbf
 mission:landing:lift_coefficient_max,3.0,unitless
-mission:summary:cruise_mach,0.77,unitless
+mission:design:mach,0.77,unitless
 #mission:summary:fuel_flow_scaler,1.0,unitless
 mission:takeoff:fuel_simple,6.32,lbm
 mission:takeoff:lift_coefficient_max,3.62,unitless

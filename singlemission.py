@@ -20,7 +20,7 @@ if __name__ == '__main__':
     # Link phases and variables
     prob.link_phases()
 
-    prob.add_driver("SLSQP", max_iter=50)
+    prob.add_driver("SLSQP", max_iter=100)
 
     prob.add_design_variables()
 
