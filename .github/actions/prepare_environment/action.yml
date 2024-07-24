@@ -78,24 +78,16 @@ runs:
       if: inputs.PYOPTSPARSE
       shell: bash -l {0}
       run: |
+        echo "============================================================="
+        echo "Determine which branch/version of pyoptsparse to install"
+        echo "============================================================="
         if [[ "${{ inputs.PYOPTSPARSE }}" == "latest" ]]; then
-          echo "============================================================="
-          echo "Determine which branch/version of pyoptsparse to install"
-          echo "============================================================="
           function latest_version() {
             local REPO_URL=$1/releases/latest
             local LATEST_URL=`curl -fsSLI -o /dev/null -w %{url_effective} $REPO_URL`
             local LATEST_VER=`echo $LATEST_URL | awk '{split($0,a,"/tag/"); print a[2]}'`
             echo $LATEST_VER
           }
-          function latest_branch() {
-            local LATEST_VER=$(latest_version $1)
-            echo git+$1@$LATEST_VER
-          }
-
-          echo "============================================================="
-          echo "Install latest pyoptsparse"
-          echo "============================================================="
           BRANCH="-b $(latest_version https://github.com/mdolab/pyoptsparse)"
         else
           BRANCH="-b ${{ inputs.PYOPTSPARSE }}"
