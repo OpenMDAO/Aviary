@@ -376,8 +376,9 @@ def get_path(path: Union[str, Path], verbose: bool = False) -> Path:
     # If the path still doesn't exist in any of the prioritized locations, raise an error.
     if not path.exists():
         raise FileNotFoundError(
-            f'File not found in absolute path: {original_path}, relative path: {
-                relative_path}, or Aviary-based path: {Path(pkg_resources.resource_filename("aviary", original_path))}'
+            f'File not found in absolute path: {original_path}, relative path: '
+            f'{relative_path}, or Aviary-based path: '
+            f'{Path(pkg_resources.resource_filename("aviary", original_path))}'
         )
 
     # If verbose is True, print the path being used.
