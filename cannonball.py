@@ -160,8 +160,11 @@ p.driver = om.ScipyOptimizeDriver()
 p.driver.options['optimizer'] = 'SLSQP'
 p.driver.declare_coloring()
 
-kes = [4e5, 5e5]
-weights = [2, 1.01]
+kes = [4e5, 5e5, 6e5]
+# 2:1 ratio (or 1:2) causes results that essentially don't optimize the 1 mission,
+# 1.01 works, 1.009 doesn't
+# 2:1:1 works?! - may be related some normalization/bounds issue
+weights = [2.1, 1.5, 1.1]
 num_trajs = len(kes)
 
 p.model.add_subsystem(f"sizing_comp", CannonballSizing(),
@@ -232,21 +235,21 @@ def plotstuff():
     print("\n\n=================================================")
     print(
         f"Optimized {num_trajs} trajectories with weights: {', '.join(map(str,weights))}")
-    rad = p.get_val('radius', units='m')[0]
+    rad = p.get_val('radius', units='cm')[0]
     mass = p.get_val('sizing_comp.mass', units='kg')[0]
     price = p.get_val('sizing_comp.price', units='USD')[0]
     area = p.get_val('sizing_comp.S', units='cm**2')[0]
-    print("Optimal Cannonball Description:")
+    print("\nOptimal Cannonball Description:")
     print(
-        f"Radius: {rad:.2f} m, Mass: {mass:.2f} kg, Price: ${price:.2f}, Area: {area} sqcm")
+        f"\tRadius: {rad:.2f} cm, Mass: {mass:.2f} kg, Price: ${price:.2f}, Area: {area:.2f} sqcm")
 
-    print("Optimal Trajectory Descriptions:")
+    print("\nOptimal Trajectory Descriptions:")
     for i, ke in enumerate(kes):
         angle = p.get_val(f'traj_{i}.ascent.timeseries.gam', units='deg')[0, 0]
         max_range = p.get_val(f'traj_{i}.descent.timeseries.r')[-1, 0]
 
         print(
-            f"KE: {ke/1e3:.2f} KJ, Launch Angle: {angle:.2f} deg, Max Range: {max_range:.2f} m")
+            f"\tKE: {ke/1e3:.2f} KJ, Launch Angle: {angle:.2f} deg, Max Range: {max_range:.2f} m")
 
     # fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(10, 6))
     # time_imp = {'ascent': p.get_val('traj_0.ascent.timeseries.time'),

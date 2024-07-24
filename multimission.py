@@ -11,8 +11,8 @@ from copy import deepcopy
 import openmdao.api as om
 
 # TODO: modify one of these to represent a different mission (e.g. change cruise length)
-phase_info1 = phase_info
-phase_info2 = phase_info
+phase_info1 = deepcopy(phase_info)
+phase_info2 = deepcopy(phase_info)
 
 if __name__ == '__main__':
     super_prob = om.Problem.model()
@@ -21,8 +21,9 @@ if __name__ == '__main__':
 
     # Load aircraft and options data from user
     # Allow for user overrides here
+    # TODO: modify one of these to represent a different payload case
     prob1.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info1)
-    prob2.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info1)
+    prob2.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info2)
 
     # Preprocess inputs
     prob1.check_and_preprocess_inputs()
@@ -62,3 +63,31 @@ if __name__ == '__main__':
     # remove all plots and extras
     super_prob.run_aviary_problem(record_filename='reserve_mission_fixedrange.db')
     super_prob.get_val()  # look at final fuel burn
+
+
+"""
+Example phase info mission:
+Times (min):   0,   128,   241,  299
+   Alt (ft):   0, 32000, 34000,  500
+       Mach: 0.2,  0.72,  0.72, 0.36
+
+
+Hard to find multiple payload/range values for FwFm (737), so use C-5 instead
+Based on: 
+    https://en.wikipedia.org/wiki/Lockheed_C-5_Galaxy#Specifications_(C-5M), 
+    https://www.af.mil/About-Us/Fact-Sheets/Display/Article/1529718/c-5-abc-galaxy-and-c-5m-super-galaxy/ 
+
+MTOW: 840,000 lb
+Max Payload: 281,000 lb
+Max Fuel: 341,446 lb
+Empty Weight: 380,000 lb -> leaves 460,000 lb for fuel+payload (max fuel + max payload = 622,446 lb)
+
+Payload/range:
+    281,000 lb payload -> 2,150 nmi range (AF.mil) [max payload case]
+    120,000 lb payload -> 4,800 nmi range (AF.mil) [intermediate case]
+          0 lb payload -> 7,000 nmi range (AF.mil) [ferry case]
+
+Flight characteristics: 
+    Cruise at M0.77 at 33k ft 
+    Max rate of climb: 2100 ft/min
+"""
