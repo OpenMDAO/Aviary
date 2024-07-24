@@ -14,7 +14,7 @@ on:
 jobs:
 
   pre_commit:
-    # run pre-commit checks
+
     runs-on: ubuntu-latest
 
     steps:
@@ -81,9 +81,9 @@ jobs:
           subject: "***Notification*** Tests failed with development versions of OpenMDAO/Dymos: ${{ env.number }}"
           body: |
             {
-              "number": "${{ env.number }}",
-              "title": "${{ env.title }}",
-              "action": "${{ env.action }}"
+              "number": "${{ github.event.pull_request.number }}",
+              "title": "${{ github.event.pull_request.title }}",
+              "action": "${{ github.event.action }}"
             }
 
       - name: Checkout actions (again)
