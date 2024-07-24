@@ -1719,14 +1719,14 @@ class AviaryProblem(om.Problem):
                 self.model.add_design_var(
                     Mission.Design.GROSS_MASS,
                     lower=10.0,
-                    upper=400e3,
+                    upper=900e3,
                     units='lbm',
                     ref=175e3,
                 )
                 self.model.add_design_var(
                     Mission.Summary.GROSS_MASS,
                     lower=10.0,
-                    upper=400e3,
+                    upper=900e3,
                     units='lbm',
                     ref=175e3,
                 )
