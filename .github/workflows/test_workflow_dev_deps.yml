@@ -19,7 +19,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # latest release of pyoptsparse
+          # latest released version of pyoptsparse
           # development versions of openmdao/dymos
           - NAME: dev
             PY: 3
