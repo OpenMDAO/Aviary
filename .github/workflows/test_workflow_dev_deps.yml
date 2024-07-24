@@ -13,16 +13,6 @@ on:
 
 jobs:
 
-  pre_commit:
-
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-
   test_ubuntu:
     runs-on: ubuntu-latest
     strategy:
