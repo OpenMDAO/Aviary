@@ -6,24 +6,24 @@ Aircraft csv: defines plane, but also defines payload (passengers, cargo) which 
 Phase info: defines a particular mission, will have multiple phase infos
 """
 import aviary.api as av
-from aviary.examples.example_phase_info import phase_info
-from copy import deepcopy
 import openmdao.api as om
+import dymos as dm
+from c5_ferry_phase_info import phase_info as c5_ferry_phase_info
+from c5_intermediate_phase_info import phase_info as c5_intermediate_phase_info
+from c5_maxpayload_phase_info import phase_info as c5_maxpayload_phase_info
 
-# TODO: modify one of these to represent a different mission (e.g. change cruise length)
-phase_info1 = deepcopy(phase_info)
-phase_info2 = deepcopy(phase_info)
+planes = ['c5_maxpayload.csv', 'c5_intermediate.csv']
+phase_infos = [c5_maxpayload_phase_info, c5_intermediate_phase_info]
 
 if __name__ == '__main__':
-    super_prob = om.Problem.model()
+    super_prob = om.Problem()
     prob1 = av.AviaryProblem()
     prob2 = av.AviaryProblem()
 
     # Load aircraft and options data from user
     # Allow for user overrides here
-    # TODO: modify one of these to represent a different payload case
-    prob1.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info1)
-    prob2.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info2)
+    prob1.load_inputs(planes[0], phase_infos[0])
+    prob2.load_inputs(planes[1], phase_infos[1])
 
     # Preprocess inputs
     prob1.check_and_preprocess_inputs()
@@ -42,18 +42,27 @@ if __name__ == '__main__':
     prob1.link_phases()
     prob2.link_phases()
 
+    super_prob.model.add_subsystem('prob1', prob1)
+    super_prob.model.add_subsystem('prob2', prob2)
+    super_prob.model.add_subsystem('compound',
+                                   om.ExecComp('compound = a + b'),
+                                   promotes=['compound', 'a', 'b'])
+    super_prob.model.connect('prob1.mission.design.gross_mass', 'a')
+    super_prob.model.connect('prob2.mission.design.gross_mass', 'b')
+    super_prob.model.connect('prob1.mission.design.gross_mass',
+                             'prob2.mission.design.gross_mass')
     super_prob.add_driver("SLSQP", max_iter=100)
 
-    super_prob.add_parameter('mission.design.gross_mass')
+    # super_prob.add_parameter('mission.design.gross_mass')
 
     # use submodelcomp to instantiate both problems inside of the super problem
     # https://openmdao.org/newdocs/versions/latest/features/building_blocks/components/submodel_comp.html?highlight=subproblem
     # promote the correct inputs and outputs from the submodels
-    # add and execComp that sums the fuel burn output
+    # add an execComp that sums the fuel burn output
 
     # Load optimization problem formulation
     # Detail which variables the optimizer can control
-    super_prob.add_objective()  # output from execcomp goes here)
+    super_prob.model.add_objective('compound')  # output from execcomp goes here)
 
     super_prob.setup()
 
@@ -61,16 +70,30 @@ if __name__ == '__main__':
     prob2.set_initial_guesses()
 
     # remove all plots and extras
-    super_prob.run_aviary_problem(record_filename='reserve_mission_fixedrange.db')
-    super_prob.get_val()  # look at final fuel burn
+    dm.run_problem(super_prob)
+    # super_prob.run_aviary_problem(record_filename='reserve_mission_fixedrange.db')
+    # super_prob.get_val()  # look at final fuel burn
 
 
 """
 Ferry mission phase info:
-Times (min):   0,    30,   810, 835
-   Alt (ft):   0, 32000, 32000,   0
+Times (min):   0,    50,   812, 843
+   Alt (ft):   0, 29500, 32000,   0
        Mach: 0.3,  0.77,  0.77, 0.3
+Est. Range: 7001 nmi
+Notes: 32k in 30 mins too fast for aviary, climb to low alt then slow rise 
 
+Intermediate mission phase info:
+Times (min):   0,    50,   560, 590
+   Alt (ft):   0, 29500, 32000,   0
+       Mach: 0.3,  0.77,  0.77, 0.3
+Est. Range: 4839 nmi
+
+Max Payload mission phase info:
+Times (min):   0,    50,   260, 290
+   Alt (ft):   0, 29500, 32000,   0
+       Mach: 0.3,  0.77,  0.77, 0.3
+Est. Range: 2272 nmi
 
 Hard to find multiple payload/range values for FwFm (737), so use C-5 instead
 Based on: 

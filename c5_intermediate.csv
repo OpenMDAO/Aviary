@@ -11,7 +11,7 @@ aircraft:crew_and_payload:baggage_mass_per_passenger,0.0,lbm
 #aircraft:crew_and_payload:flight_crew_mass_scaler,1.0,unitless
 aircraft:crew_and_payload:mass_per_passenger,180.0,lbm
 
-aircraft:crew_and_payload:cargo_mass,281000,lbm
+aircraft:crew_and_payload:cargo_mass,120000.0,lbm
 #aircraft:crew_and_payload:num_passengers,82,unitless
 
 #aircraft:crew_and_payload:non_flight_crew_mass_scaler,1.0,unitless
@@ -144,7 +144,7 @@ aircraft:wing:detailed_wing,False,unitless
 mission:constraints:max_mach,0.77,unitless
 mission:design:cruise_altitude,34000,ft
 mission:design:gross_mass,840000,lbm
-mission:design:range,7000,NM
+mission:design:range,4800.0,NM
 mission:design:thrust_takeoff_per_eng,51250,lbf
 mission:landing:lift_coefficient_max,3.0,unitless
 mission:design:mach,0.77,unitless
