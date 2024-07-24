@@ -841,9 +841,9 @@ class AeroSetup(om.Group):
                     viscosity={"units": "lbf*s/ft**2", "shape": nn},
                     rho={"units": "slug/ft**3", "shape": nn},
                     nu={"units": "ft**2/s", "shape": nn},
-                    has_diag_partials=True
+                    has_diag_partials=True,
                 ),
-                promotes=["*"],
+                promotes=["*", ('rho', Dynamic.Mission.DENSITY)],
             )
 
         self.add_subsystem("geom", AeroGeom(

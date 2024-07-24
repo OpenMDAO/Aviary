@@ -1,6 +1,6 @@
 import numpy as np
 import openmdao.api as om
-from dymos.models.atmosphere.atmos_1976 import USatm1976Comp
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH as rho_sl
 from aviary.mission.gasp_based.ode.base_ode import BaseODE
@@ -88,20 +88,14 @@ class UnsteadySolvedODE(BaseODE):
                 promotes_outputs=['*'])
 
         self.add_subsystem(
-            "USatm",
-            USatm1976Comp(
-                num_nodes=nn, output_dsos_dh=True),
-            promotes_inputs=[
-                ("h",
-                 Dynamic.Mission.ALTITUDE)],
+            name='atmosphere',
+            subsys=Atmosphere(num_nodes=nn, output_dsos_dh=True),
+            promotes_inputs=[Dynamic.Mission.ALTITUDE],
             promotes_outputs=[
-                ("rho", Dynamic.Mission.DENSITY),
-                ("sos",
-                 Dynamic.Mission.SPEED_OF_SOUND),
-                ("temp",
-                 Dynamic.Mission.TEMPERATURE),
-                ("pres",
-                 Dynamic.Mission.STATIC_PRESSURE),
+                Dynamic.Mission.DENSITY,
+                Dynamic.Mission.SPEED_OF_SOUND,
+                Dynamic.Mission.TEMPERATURE,
+                Dynamic.Mission.STATIC_PRESSURE,
                 "viscosity",
                 "drhos_dh",
                 "dsos_dh",
@@ -113,12 +107,12 @@ class UnsteadySolvedODE(BaseODE):
                            promotes_inputs=["*"],
                            promotes_outputs=["*"])
 
-        inputs_list = ['*', ('rho', Dynamic.Mission.DENSITY)]
+        inputs_list = ['*', Dynamic.Mission.DENSITY]
         outputs_list = ['*']
         if input_speed_type is SpeedType.TAS:
-            inputs_list.append(('TAS', Dynamic.Mission.VELOCITY))
+            inputs_list.append(Dynamic.Mission.VELOCITY)
         else:
-            outputs_list.append(('TAS', Dynamic.Mission.VELOCITY))
+            outputs_list.append(Dynamic.Mission.VELOCITY)
 
         self.add_subsystem(
             "fc",

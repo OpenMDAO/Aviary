@@ -5,7 +5,7 @@ the dynamic aero.
 """
 
 import openmdao.api as om
-from dymos.models.atmosphere.atmos_1976 import USatm1976Comp
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
 from aviary.subsystems.aerodynamics.gasp_based.flaps_model import FlapsGroup
 from aviary.utils.aviary_values import AviaryValues
@@ -29,21 +29,9 @@ class PreMissionAero(om.Group):
         aviary_options = self.options['aviary_options']
 
         self.add_subsystem(
-            "atmos",
-            USatm1976Comp(
-                num_nodes=1),
-            promotes_inputs=[
-                ("h",
-                 "alt_flaps")],
-            promotes_outputs=[
-                ("temp",
-                 Dynamic.Mission.TEMPERATURE),
-                ("pres",
-                 Dynamic.Mission.STATIC_PRESSURE),
-                ("sos",
-                 Dynamic.Mission.SPEED_OF_SOUND),
-                "rho",
-                "viscosity"],
+            name='atmosphere',
+            subsys=Atmosphere(num_nodes=1),
+            promotes_inputs=['*', (Dynamic.Mission.ALTITUDE, "alt_flaps")],
         )
 
         self.add_subsystem(

@@ -28,7 +28,7 @@ class StallSpeedTest(unittest.TestCase):
 
         self.prob.model.set_input_defaults("mass", val=181200.0, units="lbm")  # check
         self.prob.model.set_input_defaults(
-            "rho", val=constants.RHO_SEA_LEVEL_METRIC, units="kg/m**3"
+            Dynamic.Mission.DENSITY, val=constants.RHO_SEA_LEVEL_METRIC, units="kg/m**3"
         )  # check
         self.prob.model.set_input_defaults(
             "planform_area", val=1370.0, units="ft**2"
@@ -69,7 +69,9 @@ class FinalConditionsTest(unittest.TestCase):
             Mission.Takeoff.FUEL_SIMPLE, val=577, units="lbm"
         )  # check
         self.prob.model.set_input_defaults(
-            "rho", val=constants.RHO_SEA_LEVEL_ENGLISH, units="slug/ft**3"
+            Dynamic.Mission.DENSITY,
+            val=constants.RHO_SEA_LEVEL_ENGLISH,
+            units="slug/ft**3",
         )  # check
         self.prob.model.set_input_defaults(
             Aircraft.Wing.AREA, val=1370.0, units="ft**2"

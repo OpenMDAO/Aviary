@@ -62,6 +62,7 @@ class DescentODETestCase(unittest.TestCase):
             Dynamic.Mission.MACH: np.array([0.8, 0.696]),
             Dynamic.Mission.FLIGHT_PATH_ANGLE: np.deg2rad([-2.94, -3.98]),
         }
+
         check_prob_outputs(self.prob, testvals, rtol=1e-1)  # TODO tighten
 
         partial_data = self.prob.check_partials(
