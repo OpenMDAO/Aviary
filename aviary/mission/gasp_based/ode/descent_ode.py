@@ -144,11 +144,13 @@ class DescentODE(BaseODE):
         elif analysis_scheme is AnalysisScheme.SHOOTING:
             lift_balance_group = self
 
-        self.add_subsystem(
+        flight_condition_group.add_subsystem(
             name='flight_conditions',
             subsys=FlightConditions(num_nodes=nn, input_speed_type=input_speed_type),
             promotes_inputs=['*'],  # + speed_inputs,
-            promotes_outputs=['*']  # [Dynamic.Mission.DYNAMIC_PRESSURE] + speed_outputs,
+            promotes_outputs=[
+                '*'
+            ],  # [Dynamic.Mission.DYNAMIC_PRESSURE] + speed_outputs,
         )
 
         # maybe replace this with the solver in AddAlphaControl?
