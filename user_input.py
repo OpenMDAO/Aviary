@@ -126,6 +126,24 @@ def Saveas():
     info(file_contents,file_name,file_data,checksaveas,filesaveas)
     return filesaveas, checksaveas
 
+def Instructions():
+    message =   'This tool can be used to help input information about an aircraft model.\n\n'+\
+                'Enter in the desired values for your model and press "Submit" to generate '+\
+                'a CSV named "Aircraft_Model" which can be used at Levels 1 and 2 of Aviary.\n\n'+\
+                'Use "Edit"->"Open" to continue editing a previously defined model.\n'+\
+                'Use "Edit"->"Save" to submit your entries to a CSV file (this has the same effect '+\
+                'as the "Submit" button).\n'+\
+                'Use "Edit"->"Save as..." to save the file and all new commits to a new file name/location.\n'+\
+                '*this will change where all new inforamtion is Submitted\n'+\
+                'Use "Edit"->"Exit" to end the program.\n'+\
+                '*make sure all progress is saved before exiting\n\n'+\
+                'The "Search" tab can be used to quickly search and edit values\n'+\
+                'Use the "Search" button to find a variable name and "Clear" to clear searched results\n'+\
+                '*When searching for a variable, the name must be the last term in the string '+\
+                'i.e: "*:*:variable_name" (when applicable)\n'+\
+                '*Values entered in for a variable and then cleared using the "Clear" button WILL save'
+    messagebox.showinfo(title='Instructions', message=message)
+
 def About():
     messagebox.showinfo(title='About', message='v1.0 - 2024')
 
@@ -282,7 +300,7 @@ def fxn(x,frame,file_name=file_name,file_contents=file_contents,file_data=file_d
                         if key in file_contents.keys():
                             user_input = StringVar(value=f'{file_data[i]}')
 
-                input_title = ttk.Label(frame,justify='left',font=('TkDefaultFont',12), text=f'{list_keys[i]}')
+                input_title = ttk.Label(frame,justify='left',font=('TkDefaultFont',10,'bold'), text=f'{list_keys[i]}')
                 input_title.grid(row = (row+compound_subheaders[x]+compound_data_rows[x]+1),column=col,pady=10,padx=1,sticky='nw')   
 
                 user_input_entry = ttk.Entry(frame,width='10',textvariable=user_input)
@@ -308,17 +326,21 @@ def Searchfxn(x,y,add_row,frame,file_name=file_name,file_contents=file_contents,
             if key in file_contents.keys():
                 user_input = StringVar(value=f'{file_data[i]}')
 
-    input_title = ttk.Label(frame,justify='left',font=('TkDefaultFont',12), text=f'{list_keys[i]}')
+    input_title = ttk.Label(frame,justify='left',font=('TkDefaultFont',10,'bold'), text=f'{list_keys[i]}')
     input_title.grid(row = 4+add_row,column=0,pady=10,padx=1,sticky='nw')   
+    searchwidgets.append(input_title)
 
     user_input_entry = ttk.Entry(frame,width='10',textvariable=user_input)
-    user_input_entry.grid(row = 5+add_row,column=0,pady=10,padx=1,sticky='w')   
+    user_input_entry.grid(row = 5+add_row,column=0,pady=10,padx=1,sticky='w') 
+    searchwidgets.append(user_input_entry)  
 
     input_unit = ttk.Label(frame,justify='left',font=('TkDefaultFont',10), text=f'{list_values[i]["units"]}')
     input_unit.grid(row = 5+add_row,column=1,pady=10,padx=20,sticky='w')   
+    searchwidgets.append(input_unit)
 
     input_desc = ttk.Label(frame,wraplength=120,justify='left',font=('TkDefaultFont',10), text=f'{list_values[i]["desc"]}')
     input_desc.grid(row = 5+add_row,column=3,pady=10,padx=20,sticky='w')   
+    searchwidgets.append(input_desc)
 
     tempdict[list_keys[i]] = user_input
 
@@ -326,10 +348,7 @@ searcheader=ttk.Frame(frame5)
 searcheader.pack()
 searchcontents=ttk.Frame(frame5)
 searchcontents.pack(after=searcheader)
-
-def Clear(frame=searchcontents):
-    frame.destroy()
-
+searchwidgets = []
 def Search(keyword):
     searchcontents=ttk.Frame(frame5)
     searchcontents.pack(after=searcheader)
@@ -346,7 +365,9 @@ def Search(keyword):
                         Searchfxn(count,count2,add_row,searchcontents)
                     count2+=1
                 count+=1
-    return searchcontents
+def Clear():
+    for widget in searchwidgets:
+        widget.destroy()
 
 Search_input = StringVar(value='Enter Variable Name')
 Search_label = ttk.Label(searcheader,justify='center', text='Search variable name',font=('TkDefaultFont',15,'bold'))  
@@ -355,7 +376,7 @@ Search_entry = ttk.Entry(searcheader,width='30',textvariable=Search_input)
 Search_entry.grid(row=3, column=0)
 Search_button = ttk.Button(searcheader, text = 'Search', width = "10", command = lambda i=i:Search(Search_input.get()))
 Search_button.grid(row=3, column=1)
-Clear_button = ttk.Button(searcheader, text = 'Clear', width = "10", command = lambda:Clear(searchcontents))
+Clear_button = ttk.Button(searcheader, text = 'Clear', width = "10", command = lambda : Clear())
 Clear_button.grid(row=3, column=2)
 
 
@@ -368,10 +389,10 @@ filemenu.add_separator()
 filemenu.add_command(label="Exit", command=root.quit)
 menubar.add_cascade(label="File", menu=filemenu)
 helpmenu = Menu(menubar, tearoff=0)
+helpmenu.add_command(label="Instructions", command=Instructions)
 helpmenu.add_command(label="About...", command=About)
 menubar.add_cascade(label="Help", menu=helpmenu)
 root.config(menu=menubar)
-
 
 
 button_main = ttk.Button(root,text = "Submit", width = "20", command = info)
