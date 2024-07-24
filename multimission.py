@@ -66,10 +66,10 @@ if __name__ == '__main__':
 
 
 """
-Example phase info mission:
-Times (min):   0,   128,   241,  299
-   Alt (ft):   0, 32000, 34000,  500
-       Mach: 0.2,  0.72,  0.72, 0.36
+Ferry mission phase info:
+Times (min):   0,    30,   810, 835
+   Alt (ft):   0, 32000, 32000,   0
+       Mach: 0.3,  0.77,  0.77, 0.3
 
 
 Hard to find multiple payload/range values for FwFm (737), so use C-5 instead
