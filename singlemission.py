@@ -77,9 +77,11 @@ if __name__ == '__main__':
     prob.set_initial_guesses()
 
     # remove all plots and extras
-    prob.run_aviary_problem(record_filename=f'{plane_file.split(".csv")[0]}.db')
+    prob.run_aviary_problem(
+        record_filename=f'{plane_file.split(".csv")[0]}.db', suppress_solver_print=True)
     # prob.get_val()  # look at final fuel burn
-    prob.get_val('mission.summary.fuel_burned')
+    print(
+        f"Fuel burned: {prob.get_val(av.Mission.Summary.FUEL_BURNED,units='lbm')[0]:.3f} lbm")
 
 """
 Ferry mission phase info:

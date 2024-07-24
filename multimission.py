@@ -1,5 +1,5 @@
 """
-Goal: use single aircraft description but optimize it for multiple missions simultaneously, 
+Goal: use single aircraft description but optimize it for multiple missions simultaneously,
 i.e. all missions are on the range-payload line instead of having excess performance
 Aircraft csv: defines plane, but also defines payload (passengers, cargo) which can vary with mission
     These will have to be specified in some alternate way such as a list correspond to mission #
@@ -14,65 +14,66 @@ from c5_maxpayload_phase_info import phase_info as c5_maxpayload_phase_info
 
 planes = ['c5_maxpayload.csv', 'c5_intermediate.csv']
 phase_infos = [c5_maxpayload_phase_info, c5_intermediate_phase_info]
+weights = [1, 1]
+num_missions = len(weights)
 
 if __name__ == '__main__':
     super_prob = om.Problem()
-    prob1 = av.AviaryProblem()
-    prob2 = av.AviaryProblem()
+    probs = []
 
-    # Load aircraft and options data from user
-    # Allow for user overrides here
-    prob1.load_inputs(planes[0], phase_infos[0])
-    prob2.load_inputs(planes[1], phase_infos[1])
+    # define individual aviary problems
+    for i, (plane, phase_info) in enumerate(zip(planes, phase_infos)):
+        prob = av.AviaryProblem()
+        prob.load_inputs(plane, phase_info)
+        prob.check_and_preprocess_inputs()
+        prob.add_pre_mission_systems()
+        prob.add_phases()
+        prob.add_post_mission_systems()
+        prob.link_phases()
+        probs.append(prob)
 
-    # Preprocess inputs
-    prob1.check_and_preprocess_inputs()
-    prob2.check_and_preprocess_inputs()
+        subcomp = om.SubmodelComp(problem=prob,
+                                  inputs=['mission:design:gross_mass'],
+                                  outputs=['mission:summary:fuel_burned'])
+        super_prob.model.add_subsystem(f'subcomp_{i}', subcomp)
 
-    prob1.add_pre_mission_systems()
-    prob2.add_pre_mission_systems()
+    # creating variable strings that will represent fuel burn from each mission
+    fuel_burned_vars = [f"fuel_{i}" for i in range(num_missions)]
+    weighted_str = "+".join([f"{fuel}*{weight}"
+                             for fuel, weight in zip(fuel_burned_vars, weights)])
+    # weighted_str looks like: fuel_0 * weight[0] + fuel_1 * weight[1]
 
-    prob1.add_phases()
-    prob2.add_phases()
+    # adding compound execComp to super problem
+    super_prob.model.add_subsystem('compound', om.ExecComp(
+        "compound = "+weighted_str), promotes=["compound", *fuel_burned_vars])
 
-    prob1.add_post_mission_systems()
-    prob2.add_post_mission_systems()
+    # connecting each subcomponent's fuel burn to super problem's unique fuel variables
+    for i in range(num_missions):
+        super_prob.model.connect(f"subcomp_{i}.mission:summary:fuel_burned", f"fuel_{i}")
 
-    # Link phases and variables
-    prob1.link_phases()
-    prob2.link_phases()
+    # create an output within superprob that connects to each subcomponents gross mass input
+    IVC = super_prob.model.add_subsystem('IVC', om.IndepVarComp(), promotes=['*'])
+    IVC.add_output('gross_mass', val=500e3, units='lbm')
 
-    super_prob.model.add_subsystem('prob1', prob1)
-    super_prob.model.add_subsystem('prob2', prob2)
-    super_prob.model.add_subsystem('compound',
-                                   om.ExecComp('compound = a + b'),
-                                   promotes=['compound', 'a', 'b'])
-    super_prob.model.connect('prob1.mission.design.gross_mass', 'a')
-    super_prob.model.connect('prob2.mission.design.gross_mass', 'b')
-    super_prob.model.connect('prob1.mission.design.gross_mass',
-                             'prob2.mission.design.gross_mass')
-    super_prob.add_driver("SLSQP", max_iter=100)
+    # specify gross mass as a design var
+    super_prob.model.add_design_var('gross_mass', lower=100e3, upper=1000e3, units='lbm')
 
-    # super_prob.add_parameter('mission.design.gross_mass')
+    # connect gross mass output of super problem to each subcomponent's input gross mass
+    for i in range(num_missions):
+        super_prob.model.connect('gross_mass', f"subcomp_{i}.mission:design:gross_mass")
 
-    # use submodelcomp to instantiate both problems inside of the super problem
-    # https://openmdao.org/newdocs/versions/latest/features/building_blocks/components/submodel_comp.html?highlight=subproblem
-    # promote the correct inputs and outputs from the submodels
-    # add an execComp that sums the fuel burn output
+    super_prob.driver = om.ScipyOptimizeDriver()
+    super_prob.driver.options['optimizer'] = 'SLSQP'
 
-    # Load optimization problem formulation
-    # Detail which variables the optimizer can control
-    super_prob.model.add_objective('compound')  # output from execcomp goes here)
+    super_prob.model.add_objective('compound')  # output from execcomp goes here
 
     super_prob.setup()
 
-    prob1.set_initial_guesses()
-    prob2.set_initial_guesses()
+    # set initial guesses for each aviary problem
+    for prob in probs:
+        prob.set_initial_guesses()
 
-    # remove all plots and extras
     dm.run_problem(super_prob)
-    # super_prob.run_aviary_problem(record_filename='reserve_mission_fixedrange.db')
-    # super_prob.get_val()  # look at final fuel burn
 
 
 """
@@ -81,7 +82,7 @@ Times (min):   0,    50,   812, 843
    Alt (ft):   0, 29500, 32000,   0
        Mach: 0.3,  0.77,  0.77, 0.3
 Est. Range: 7001 nmi
-Notes: 32k in 30 mins too fast for aviary, climb to low alt then slow rise 
+Notes: 32k in 30 mins too fast for aviary, climb to low alt then slow rise
 
 Intermediate mission phase info:
 Times (min):   0,    50,   560, 590
@@ -96,9 +97,9 @@ Times (min):   0,    50,   260, 290
 Est. Range: 2272 nmi
 
 Hard to find multiple payload/range values for FwFm (737), so use C-5 instead
-Based on: 
-    https://en.wikipedia.org/wiki/Lockheed_C-5_Galaxy#Specifications_(C-5M), 
-    https://www.af.mil/About-Us/Fact-Sheets/Display/Article/1529718/c-5-abc-galaxy-and-c-5m-super-galaxy/ 
+Based on:
+    https://en.wikipedia.org/wiki/Lockheed_C-5_Galaxy#Specifications_(C-5M),
+    https://www.af.mil/About-Us/Fact-Sheets/Display/Article/1529718/c-5-abc-galaxy-and-c-5m-super-galaxy/
 
 MTOW: 840,000 lb
 Max Payload: 281,000 lb
@@ -110,7 +111,7 @@ Payload/range:
     120,000 lb payload -> 4,800 nmi range (AF.mil) [intermediate case]
           0 lb payload -> 7,000 nmi range (AF.mil) [ferry case]
 
-Flight characteristics: 
-    Cruise at M0.77 at 33k ft 
+Flight characteristics:
+    Cruise at M0.77 at 33k ft
     Max rate of climb: 2100 ft/min
 """
