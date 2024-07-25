@@ -11,13 +11,21 @@ from aviary.mission.gasp_based.phases.landing_group import LandingSegment
 from aviary.variable_info.options import get_option_defaults
 from aviary.utils.test_utils.IO_test_util import check_prob_outputs
 from aviary.variable_info.variables import Dynamic, Mission
+from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 
 
 class DLandTestCase(unittest.TestCase):
     def setUp(self):
 
         self.prob = om.Problem()
-        self.prob.model = LandingSegment(aviary_options=get_option_defaults())
+
+        options = get_option_defaults()
+        default_mission_subsystems = get_default_mission_subsystems(
+            'GASP', build_engine_deck(options))
+
+        self.prob.model = LandingSegment(
+            aviary_options=options, core_subsystems=default_mission_subsystems)
 
     @unittest.skipIf(version.parse(openmdao.__version__) < version.parse("3.26"), "Skipping due to OpenMDAO version being too low (<3.26)")
     def test_dland(self):

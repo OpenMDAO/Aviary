@@ -28,9 +28,12 @@ class TransportEngineOilMassTest(unittest.TestCase):
 
         prob = self.prob
 
+        options = get_flops_inputs(case_name)
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2)
+
         prob.model.add_subsystem(
             'engine_oil',
-            TransportEngineOilMass(aviary_options=get_flops_inputs(case_name)),
+            TransportEngineOilMass(aviary_options=options),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )
@@ -64,9 +67,12 @@ class AltEngineOilMassTest(unittest.TestCase):
 
         prob = self.prob
 
+        options = get_flops_inputs(case_name)
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2)
+
         prob.model.add_subsystem(
             'engine_oil',
-            AltEngineOilMass(aviary_options=get_flops_inputs(case_name)),
+            AltEngineOilMass(aviary_options=options),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )
@@ -76,7 +82,7 @@ class AltEngineOilMassTest(unittest.TestCase):
         flops_validation_test(
             prob,
             case_name,
-            input_keys=[Aircraft.Propulsion.ENGINE_OIL_MASS_SCALER],
+            input_keys=[Aircraft.Propulsion.ENGINE_OIL_MASS_SCALER,],
             output_keys=[Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS],
             version=Version.ALTERNATE)
 

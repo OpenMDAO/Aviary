@@ -14,7 +14,7 @@ class FlexibleTraj(TimeIntegrationTrajBase):
     '''
     A traj that can be given a list of phases to build flexible trajectories.
     This is useful for simulating/testing phases one at a time as well as
-    allowing users to quickly redefine the phase order during the tracjectory.
+    allowing users to quickly redefine the phase order of the tracjectory.
     '''
 
     def initialize(self):

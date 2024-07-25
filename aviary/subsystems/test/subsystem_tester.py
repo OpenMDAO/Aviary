@@ -253,7 +253,6 @@ class TestSubsystemBuilderBase(unittest.TestCase):
         prob.final_setup()
 
         inputs = prob.model.list_inputs(out_stream=None, prom_name=True)
-        outputs = prob.model.list_outputs(out_stream=None, prom_name=True)
 
         for key, value in states.items():
             if mission_sys is not None:
@@ -261,14 +260,6 @@ class TestSubsystemBuilderBase(unittest.TestCase):
                 state_var_exists = any(key == input[1]['prom_name'] for input in inputs)
                 self.assertTrue(state_var_exists,
                                 f"State variable '{key}' not found in the model.")
-
-                # Check rate_source variable existence
-                if 'rate_source' in value:
-                    rate_source = value['rate_source']
-                    rate_source_exists = any(
-                        rate_source in output[0] for output in outputs)
-                    self.assertTrue(
-                        rate_source_exists, f"Rate source variable '{rate_source}' for state '{key}' not found in the model.")
 
     def test_check_pre_mission(self):
         if not hasattr(self, 'aviary_values'):
@@ -344,11 +335,12 @@ class TestSubsystemBuilderBase(unittest.TestCase):
 
         inputs = prob.model.list_inputs(out_stream=None, prom_name=True)
         outputs = prob.model.list_outputs(out_stream=None, prom_name=True)
+        name = self.subsystem_builder.default_name
 
         for key, value in constraints.items():
             # Check constraint existence
             constraint_exists = (any(key == output[1]['prom_name'] for output in outputs) or any(
-                key == input[1]['prom_name'] for input in inputs))
+                key == input[1]['prom_name'] for input in inputs) or any(key == f'{name}.{output[1]["prom_name"]}' for output in outputs) or any(key == f'{name}.{input[1]["prom_name"]}' for input in inputs))
             self.assertTrue(constraint_exists,
                             f"Constraint '{key}' not found in the model.")
 

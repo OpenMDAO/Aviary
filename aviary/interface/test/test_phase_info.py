@@ -157,5 +157,5 @@ class TestParameterizePhaseInfo(unittest.TestCase):
 # To run the tests
 if __name__ == '__main__':
     unittest.main()
-    # test = TestPhaseInfo()
-    # test.test_default_phase_height_energy()
+    # test = TestParameterizePhaseInfo()
+    # test.test_phase_info_parameterization_two_dof()

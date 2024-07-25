@@ -9,7 +9,7 @@ You could start with one of these sections and then move to another, or you coul
 ## Starting Simple
 
 If you just want to start from an existing example and run it, you can do that!
-Look at the [Examples docs section](../examples/intro.md), start with a simple one, and modify it as you please.
+Look at the [Examples docs section](../examples/intro), start with a simple one, and modify it as you please.
 
 We generally recommend starting by running cases using only the `"simple"` mission.
 This mission is designed to be more robust and easier to run than other mission types.

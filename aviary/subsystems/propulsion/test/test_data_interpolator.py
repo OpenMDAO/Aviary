@@ -7,12 +7,12 @@ import openmdao.api as om
 
 from openmdao.utils.assert_utils import assert_near_equal
 
-from aviary.subsystems.propulsion.data_interpolator import DataInterpolator
-from aviary.subsystems.propulsion.utils import EngineModelVariables as keys
+from aviary.subsystems.propulsion.utils import EngineDataInterpolator, EngineModelVariables as keys
 from aviary.utils.named_values import NamedValues
 from aviary.variable_info.variables import Dynamic
 from aviary.validation_cases.validation_data.flops_data.FLOPS_Test_Data import \
     FLOPS_Test_Data
+from aviary.subsystems.propulsion.utils import build_engine_deck
 
 
 class DataInterpolationTest(unittest.TestCase):
@@ -21,7 +21,7 @@ class DataInterpolationTest(unittest.TestCase):
 
         aviary_values = FLOPS_Test_Data['LargeSingleAisle2FLOPS']['inputs']
 
-        model = aviary_values.get_val('engine_models')[0]
+        model = build_engine_deck(aviary_values)[0]
 
         mach_number = model.data[keys.MACH]
         altitude = model.data[keys.ALTITUDE]
@@ -63,10 +63,10 @@ class DataInterpolationTest(unittest.TestCase):
                                val=np.array(fuel_flow_rate),
                                units='lbm/h')
 
-        engine_interpolator = DataInterpolator(num_nodes=num_nodes,
-                                               interpolator_inputs=inputs,
-                                               interpolator_outputs=outputs,
-                                               interpolation_method='slinear')
+        engine_interpolator = EngineDataInterpolator(num_nodes=num_nodes,
+                                                     interpolator_inputs=inputs,
+                                                     interpolator_outputs=outputs,
+                                                     interpolation_method='slinear')
 
         prob = om.Problem()
         prob.model.add_subsystem('engine_data', engine_data, promotes=['*'])

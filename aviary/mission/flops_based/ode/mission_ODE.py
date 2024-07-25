@@ -67,7 +67,7 @@ class MissionODE(om.Group):
         aviary_options = options['aviary_options']
         core_subsystems = options['core_subsystems']
         subsystem_options = options['subsystem_options']
-        num_engine_type = len(aviary_options.get_val('engine_models'))
+        num_engine_type = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
 
         if analysis_scheme is AnalysisScheme.SHOOTING:
             SGM_required_inputs = {
@@ -150,7 +150,8 @@ class MissionODE(om.Group):
                 num_nodes=nn, aviary_inputs=aviary_options)
             if subsystem_mission is not None:
                 add_subsystem_group = True
-                external_subsystem_group.add_subsystem(subsystem.name, subsystem_mission)
+                external_subsystem_group.add_subsystem(subsystem.name,
+                                                       subsystem_mission)
 
         # Only add the external subsystem group if it has at least one subsystem.
         # Without this logic there'd be an empty OM group added to the ODE.
@@ -244,7 +245,7 @@ class MissionODE(om.Group):
             initial_mass_string = Mission.Takeoff.FINAL_MASS
         else:
             exec_comp_string = 'initial_mass_residual = initial_mass - mass[0] - 100.'
-            initial_mass_string = Mission.Design.GROSS_MASS
+            initial_mass_string = Mission.Summary.GROSS_MASS
 
         # Experimental: Add a component to constrain the initial mass to be equal to design gross weight.
         initial_mass_residual_constraint = om.ExecComp(

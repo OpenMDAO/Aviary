@@ -13,8 +13,9 @@ from aviary.validation_cases.validation_tests import (
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 from aviary.variable_info.variables_in import VariablesIn
 from aviary.utils.functions import set_aviary_initial_values
-from aviary.interface.default_phase_info.height_energy import default_premission_subsystems
-from aviary.utils.preprocessors import preprocess_crewpayload
+from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
+from aviary.utils.preprocessors import preprocess_options
 
 
 class PreMissionGroupTest(unittest.TestCase):
@@ -31,7 +32,10 @@ class PreMissionGroupTest(unittest.TestCase):
                              flops_outputs.get_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES))
         flops_inputs.set_val(Settings.VERBOSITY, 0.0)
 
-        preprocess_crewpayload(flops_inputs)
+        engine = build_engine_deck(flops_inputs)
+        preprocess_options(flops_inputs, engine_models=engine)
+        default_premission_subsystems = get_default_premission_subsystems(
+            'FLOPS', engine)
 
         prob = self.prob
 
@@ -104,6 +108,11 @@ class PreMissionGroupTest(unittest.TestCase):
         flops_outputs: AviaryValues = LargeSingleAisle2FLOPS['outputs']
         flops_inputs.set_val(Settings.VERBOSITY, 0.0)
 
+        engine = build_engine_deck(flops_inputs)
+        preprocess_options(flops_inputs, engine_models=engine)
+        default_premission_subsystems = get_default_premission_subsystems(
+            'FLOPS', engine)
+
         prob.model.add_subsystem(
             "pre_mission",
             CorePreMission(aviary_options=flops_inputs,
@@ -130,8 +139,6 @@ class PreMissionGroupTest(unittest.TestCase):
             except KeyError:
                 # This is an option, not a variable
                 continue
-
-        prob.run_model()
 
         flops_validation_test(
             prob,

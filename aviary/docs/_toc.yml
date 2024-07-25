@@ -45,6 +45,7 @@ parts:
       - file: user_guide/features/overriding
       - file: user_guide/FLOPS_based_detailed_takeoff_and_landing
       - file: user_guide/reserve_missions
+      - file: user_guide/SGM_capabilities
     - file: user_guide/troubleshooting
 
 - caption: Examples

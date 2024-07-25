@@ -6,7 +6,6 @@ from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.variable_info.enums import Verbosity
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
@@ -14,6 +13,14 @@ from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
 from aviary.variable_info.options import get_option_defaults
 from aviary.utils.functions import get_path
 from aviary.interface.methods_for_level2 import AviaryProblem
+from aviary.variable_info.variables import Aircraft, Dynamic
+
+
+from dymos.transcriptions.transcription_base import TranscriptionBase
+if hasattr(TranscriptionBase, 'setup_polynomial_controls'):
+    use_new_dymos_syntax = False
+else:
+    use_new_dymos_syntax = True
 
 
 class PreMissionEngine(om.Group):
@@ -61,7 +68,7 @@ class SimpleEngine(om.ExplicitComponent):
                         shape=nn,
                         units='lbm/s',
                         desc='Current fuel flow rate (scaled)')
-        self.add_output(Dynamic.Mission.ELECTRIC_POWER,
+        self.add_output(Dynamic.Mission.ELECTRIC_POWER_IN,
                         shape=nn,
                         units='W',
                         desc='Current electric energy rate (scaled)')
@@ -69,7 +76,7 @@ class SimpleEngine(om.ExplicitComponent):
                         shape=nn,
                         units='lbm/s',
                         desc='Current NOx emission rate (scaled)')
-        self.add_output(Dynamic.Mission.TEMPERATURE_ENGINE_T4,
+        self.add_output(Dynamic.Mission.TEMPERATURE_T4,
                         shape=nn,
                         units='degR',
                         desc='Current turbine exit temperature')
@@ -84,7 +91,7 @@ class SimpleEngine(om.ExplicitComponent):
         outputs[Dynamic.Mission.THRUST] = 10000. * combined_throttle
         outputs[Dynamic.Mission.THRUST_MAX] = 10000.
         outputs[Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE] = -10. * combined_throttle
-        outputs[Dynamic.Mission.TEMPERATURE_ENGINE_T4] = 2800.
+        outputs[Dynamic.Mission.TEMPERATURE_T4] = 2800.
 
 
 class SimpleTestEngine(EngineModel):
@@ -98,10 +105,13 @@ class SimpleTestEngine(EngineModel):
     def build_mission(self, num_nodes, aviary_inputs):
         return SimpleEngine(num_nodes=num_nodes)
 
-    def get_controls(self):
+    def get_controls(self, **kwargs):
         controls_dict = {
             "different_throttle": {'units': 'unitless', 'lower': 0., 'upper': 0.1},
         }
+        if use_new_dymos_syntax:
+            controls_dict['different_throttle']['control_type'] = 'polynomial'
+            controls_dict['different_throttle']['order'] = 3
         return controls_dict
 
     def get_bus_variables(self):
@@ -124,8 +134,6 @@ class SimpleTestEngine(EngineModel):
         return initial_guesses_dict
 
 
-@unittest.skip('This test is not compatile with multiengine, requires rework so '
-               'engine-level methods can be called')
 @use_tempdirs
 class CustomEngineTest(unittest.TestCase):
     def test_custom_engine(self):
@@ -171,7 +179,7 @@ class CustomEngineTest(unittest.TestCase):
         # Load aircraft and options data from user
         # Allow for user overrides here
         prob.load_inputs("models/test_aircraft/aircraft_for_bench_GwFm.csv",
-                         phase_info, engine_builder=SimpleTestEngine())
+                         phase_info, engine_builders=[SimpleTestEngine()])
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
@@ -268,7 +276,7 @@ class TurbopropTest(unittest.TestCase):
         # Load aircraft and options data from user
         # Allow for user overrides here
         prob.load_inputs("models/test_aircraft/aircraft_for_bench_FwFm.csv",
-                         phase_info, engine_builder=engine)
+                         phase_info, engine_builders=[engine])
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
@@ -293,7 +301,7 @@ class TurbopropTest(unittest.TestCase):
         prob.set_initial_guesses()
 
         prob.set_val(
-            f'traj.cruise.rhs_all.{Aircraft.Design.MAX_TIP_SPEED}', 710., units='ft/s')
+            f'traj.cruise.rhs_all.{Aircraft.Design.MAX_PROPELLER_TIP_SPEED}', 710., units='ft/s')
         prob.set_val(
             f'traj.cruise.rhs_all.{Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED}', 0.915, units='unitless')
         prob.set_val(
@@ -309,3 +317,5 @@ class TurbopropTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+    # test = CustomEngineTest()
+    # test.test_custom_engine()

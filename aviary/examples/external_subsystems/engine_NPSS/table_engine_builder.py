@@ -107,7 +107,7 @@ class TableEngineBuilder(EngineModel):
                           -engine_data[:, 4],
                           units='lbm/s',
                           desc='Current fuel flow rate ')
-        engine.add_output(Dynamic.Mission.ELECTRIC_POWER,
+        engine.add_output(Dynamic.Mission.ELECTRIC_POWER_IN,
                           zeros_array,
                           units='kW',
                           desc='Current electric energy rate')
@@ -115,7 +115,7 @@ class TableEngineBuilder(EngineModel):
                           zeros_array,
                           units='lb/h',
                           desc='Current NOx emission rate')
-        engine.add_output(Dynamic.Mission.TEMPERATURE_ENGINE_T4,
+        engine.add_output(Dynamic.Mission.TEMPERATURE_T4,
                           zeros_array,
                           units='degR',
                           desc='Current turbine exit temperature')

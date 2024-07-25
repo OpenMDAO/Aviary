@@ -34,22 +34,32 @@ allowed_headers = {
 
 
 def AeroDataConverter(input_file=None, output_file=None, data_format=None):
+    """This is a utility class to convert a legacy aero data file to Aviary format.
+    There are two options for the legacy aero data file format: FLOPS and GASP.
+    As an Aviary command, the usage is:
+    aviary convert_aero_table -F {FLOPS|GASP} input_file output_file
+    """
     data_format = CodeOrigin(data_format)
     data_file = get_path(input_file)
+    if isinstance(output_file, str):
+        output_file = Path(output_file)
+    elif isinstance(output_file, list):
+        for ii, file in enumerate(output_file):
+            output_file[ii] = Path(file)
     if not output_file:
         if data_format is CodeOrigin.GASP:
             # Default output file name is same location and name as input file, with
             # '_aviary' appended to filename
-            path = input_file.parents[0]
-            name = input_file.name
-            suffix = input_file.suffix
+            path = data_file.parents[0]
+            name = data_file.stem
+            suffix = data_file.suffix
             output_file = path / (name + '_aviary' + suffix)
         elif data_format is CodeOrigin.FLOPS:
             # Default output file name is same location and name as input file, with
             # '_aviary' appended to filename
-            path = input_file.parents[0]
-            name = input_file.stem
-            suffix = input_file.suffix
+            path = data_file.parents[0]
+            name = data_file.stem
+            suffix = data_file.suffix
             file1 = path / name + '_aviary_CDI' + suffix
             file2 = path / name + '_aviary_CD0' + suffix
             output_file = [file1, file2]
@@ -147,20 +157,20 @@ def _load_flops_aero_table(filepath: Path):
     # these are not needed, we can determine the length of data vectors directly
     altitude_count, zero_lift_mach_count = _read_line(
         4 + offset, zero_lift_drag_comments)
-    altitudes = _read_line(5 + offset, zero_lift_drag_comments)
-    zero_lift_machs = _read_line(6 + offset, zero_lift_drag_comments)
-    for i in range(len(altitudes)):
+    zero_lift_machs = _read_line(5 + offset, zero_lift_drag_comments)
+    altitudes = _read_line(6 + offset, zero_lift_drag_comments)
+    for i in range(len(zero_lift_machs)):
         drag = _read_line(7 + i + offset, zero_lift_drag_comments)
-        if len(drag) == len(zero_lift_machs):
+        if len(drag) == len(altitudes):
             zero_lift_drag.append(drag)
         else:
             raise ValueError('Number of data points provided for '
-                             f'zero-lift drag at altitude {altitudes[i]} '
-                             'does not match number of Machs provided '
+                             f'zero-lift drag at Mach {zero_lift_machs[i]} '
+                             'does not match number of Altitudes provided '
                              f'(FLOPS aero data file {filepath.name})')
-    if len(zero_lift_drag) != len(altitudes):
+    if len(zero_lift_drag) != len(zero_lift_machs):
         raise ValueError('Number of data rows provided for zero-lift drag does '
-                         'not match number of altitudes provided (FLOPS aero data '
+                         'not match number of Mach numbers provided (FLOPS aero data '
                          f'file {filepath.name})')
 
     cl, mach = np.meshgrid(cls, lift_drag_machs)
@@ -169,7 +179,7 @@ def _load_flops_aero_table(filepath: Path):
     lift_drag_data.set_val('Lift-Dependent Drag Coefficient',
                            np.array(lift_drag).flatten(), 'unitless')
 
-    mach, altitude = np.meshgrid(zero_lift_machs, altitudes)
+    altitude, mach = np.meshgrid(altitudes, zero_lift_machs)
     zero_lift_drag_data.set_val('Altitude', altitude.flatten(), 'ft')
     zero_lift_drag_data.set_val('Mach', mach.flatten(), 'unitless')
     zero_lift_drag_data.set_val('Zero-Lift Drag Coefficient',
@@ -239,14 +249,18 @@ def _load_gasp_aero_table(filepath: Path):
 def _setup_ATC_parser(parser):
     parser.add_argument('input_file', type=str,
                         help='path to aero data file to be converted')
-    parser.add_argument('output_file', type=str,
+    parser.add_argument('output_file', type=str, nargs='?',
                         help='path to file where new converted data will be written')
-    parser.add_argument('data_format', type=str, choices=[origin.value for origin in CodeOrigin],
+    parser.add_argument('-f', '--data_format', type=str, choices=[origin.value for origin in CodeOrigin],
                         help='data format used by input_file')
 
 
 def _exec_ATC(args, user_args):
-    AeroDataConverter(**vars(args))
+    AeroDataConverter(
+        input_file=args.input_file,
+        output_file=args.output_file,
+        data_format=args.data_format
+    )
 
 
 if __name__ == '__main__':

@@ -1,4 +1,5 @@
 import numpy as np
+
 import openmdao.api as om
 from openmdao.components.interp_util.interp import InterpND
 
@@ -190,43 +191,49 @@ class DetailedWingBendingFact(om.ExplicitComponent):
                     * sa**2 + 0.03*caya * (1.0-0.5*faert)*sa))
         outputs[Aircraft.Wing.BENDING_FACTOR] = bt
 
-        inertia_factor = np.zeros(num_engine_type, chord.dtype)
+        inertia_factor = np.zeros(num_engine_type, dtype=chord.dtype)
+        eel = np.zeros(len(dy) + 1, dtype=chord.dtype)
+
         # idx is the index where this engine type begins in location list
         idx = 0
         # i is the counter for which engine model we are checking
         for i in range(num_engine_type):
             # idx2 is the last index for the range of engines of this type
             idx2 = idx + int(num_wing_engines[i]/2)
-
-            eel = np.zeros(len(dy) + 1, dtype=chord.dtype)
-            # BUG this is broken for wing engine locations of zero or above last integration station point (around 0.9-0.95)
-            
-            if num_wing_engines > 0:
-                loc = np.where(integration_stations < engine_locations[idx:idx2][0])[0]
-                eel[loc] = 1.0
-
-                delme = dy * eel[1:]
-
-                delme[loc[-1]] = engine_locations[idx:idx2][0] - \
-                    integration_stations[loc[-1]]
+            if num_wing_engines>0:
+                eng_loc = engine_locations[idx:idx2][0]
             else:
-                loc = np.where(integration_stations < engine_locations[idx:idx2])[0]
+                eng_loc = engine_locations[idx:idx2]
+
+            if eng_loc <= integration_stations[0]:
+                inertia_factor[i] = 1.0
+
+            elif eng_loc >= integration_stations[-1]:
+                inertia_factor[i] = 0.84
+
+            else:
+                eel[:] = 0.0
+                loc = np.where(integration_stations < eng_loc)[0]
                 eel[loc] = 1.0
 
                 delme = dy * eel[1:]
 
-                delme[loc] = engine_locations[idx:idx2] - \
-                    integration_stations[loc]
+                if num_wing_engines>0:
+                    delme[loc[-1]] = engine_locations[idx:idx2][0] - \
+                        integration_stations[loc[-1]]
+                else:
+                    delme[loc] = engine_locations[idx:idx2] - \
+                        integration_stations[loc]
 
+                eem = delme * csw
+                eem = np.cumsum(eem[::-1])[::-1]
 
-            eem = delme * csw
-            eem = np.cumsum(eem[::-1])[::-1]
+                ea = eem * csw / (chord_int_stations[:-1] * tc_int_stations[:-1])
 
-            ea = eem * csw / (chord_int_stations[:-1] * tc_int_stations[:-1])
+                bte = 8 * np.sum((ea[:-1] + ea[1:]) * dy[:-1] * 0.5)
 
-            bte = 8 * np.sum((ea[:-1] + ea[1:]) * dy[:-1] * 0.5)
+                inertia_factor[i] = 1 - bte / bt * pod_mass[i] / gross_mass
 
-            inertia_factor[i] = 1 - bte / bt * pod_mass[i] / gross_mass
             # increment idx to next engine set
             idx = idx2
 

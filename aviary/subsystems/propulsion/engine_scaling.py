@@ -41,7 +41,7 @@ class EngineScaling(om.ExplicitComponent):
         self.add_input('fuel_flow_rate_unscaled', val=np.zeros(nn),
                        units='lbm/h', desc='Current fuel flow rate (unscaled)')
 
-        self.add_input('electric_power_unscaled', val=np.zeros(nn),
+        self.add_input('electric_power_in_unscaled', val=np.zeros(nn),
                        units='kW', desc='Current electric power consumption (unscaled)')
 
         self.add_input('nox_rate_unscaled', val=np.zeros(nn), units='lbm/h',
@@ -50,11 +50,8 @@ class EngineScaling(om.ExplicitComponent):
         self.add_input('shaft_power_unscaled', val=np.zeros(nn),
                        units='hp', desc='Current shaft power produced (unscaled)')
 
-        self.add_input('shaft_power_corrected_unscaled', val=np.zeros(nn),
-                       units='hp', desc='Current shaft power produced, corrected (unscaled)')
-
-        # self.add_input('exit_area_unscaled', val=np.zeros(nn), units='ft**2',
-        #                desc='Current engine nozzle exit area')
+        self.add_input('shaft_power_max_unscaled', val=np.zeros(nn),
+                       units='hp', desc='Current maximum possible shaft power produced (unscaled)')
 
         self.add_output(Dynamic.Mission.THRUST, val=np.zeros(nn), units='lbf',
                         desc='Current net thrust produced')
@@ -65,7 +62,7 @@ class EngineScaling(om.ExplicitComponent):
         self.add_output(Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE, val=np.zeros(nn),
                         units='lbm/h', desc='Current fuel flow rate (negative)')
 
-        self.add_output(Dynamic.Mission.ELECTRIC_POWER, val=np.zeros(nn),
+        self.add_output(Dynamic.Mission.ELECTRIC_POWER_IN, val=np.zeros(nn),
                         units='kW', desc='Current electric power consumption')
 
         self.add_output(Dynamic.Mission.NOX_RATE, val=np.zeros(nn),
@@ -74,8 +71,8 @@ class EngineScaling(om.ExplicitComponent):
         self.add_output(Dynamic.Mission.SHAFT_POWER, val=np.zeros(nn),
                         units='hp', desc='Current shaft power produced')
 
-        self.add_output(Dynamic.Mission.SHAFT_POWER_CORRECTED, val=np.zeros(nn),
-                        units='hp', desc='Current shaft power produced, corrected')
+        self.add_output(Dynamic.Mission.SHAFT_POWER_MAX, val=np.zeros(nn),
+                        units='hp', desc='Current maximum possible shaft power produced')
 
         # self.add_output(Dynamic.Mission.EXIT_AREA, val=np.zeros(nn),
         #                 units='ft**2', desc='Current engine nozzle exit area')
@@ -103,15 +100,14 @@ class EngineScaling(om.ExplicitComponent):
         unscaled_net_thrust = inputs['thrust_net_unscaled']
         unscaled_max_thrust = inputs['thrust_net_max_unscaled']
         unscaled_fuel_flow_rate = inputs['fuel_flow_rate_unscaled']
-        unscaled_electric_power = inputs['electric_power_unscaled']
+        unscaled_electric_power_in = inputs['electric_power_in_unscaled']
         unscaled_nox_rate = inputs['nox_rate_unscaled']
         unscaled_shaft_power = inputs['shaft_power_unscaled']
-        unscaled_shaft_power_corrected = inputs['shaft_power_corrected_unscaled']
+        unscaled_shaft_power_max = inputs['shaft_power_max_unscaled']
         # unscaled_exit_area = inputs['exit_area_unscaled']
 
         scale_factor = 1
         fuel_flow_scale_factor = np.ones(nn, dtype=engine_scale_factor.dtype)
-        # scale_idx = np.where(scale_performance)
 
         # if len(scale_idx[0]) > 0:
         if scale_performance:
@@ -129,18 +125,10 @@ class EngineScaling(om.ExplicitComponent):
             supersonic_idx = np.where(mach_number >= 1.0)
             fuel_flow_mach_scaling[supersonic_idx] = supersonic_fuel_factor
 
-            # fuel_flow_scale_factor[:, scale_idx[0]] = engine_scale_factor[scale_idx]\
-            #     * fuel_flow_mach_scaling[:, scale_idx[0]]\
-            #     * fuel_flow_equation_scaling[scale_idx]\
-            #     * mission_fuel_scaler
             fuel_flow_scale_factor = engine_scale_factor * fuel_flow_mach_scaling\
                 * fuel_flow_equation_scaling * mission_fuel_scaler
 
             scale_factor = engine_scale_factor
-
-        # scale factor only applies if engine performance is scaled - default to 1 otherwise
-        # scale_factor = np.ones(count, dtype=engine_scale_factor.dtype)
-        # scale_factor[scale_idx] = engine_scale_factor[scale_idx]
 
         outputs[Dynamic.Mission.THRUST] = unscaled_net_thrust * scale_factor
         outputs[Dynamic.Mission.THRUST_MAX] = unscaled_max_thrust * scale_factor
@@ -149,20 +137,17 @@ class EngineScaling(om.ExplicitComponent):
             (unscaled_fuel_flow_rate * fuel_flow_scale_factor) - constant_fuel_flow
 
         # all other variables are just linearly scaled
-        outputs[Dynamic.Mission.ELECTRIC_POWER] = unscaled_electric_power * scale_factor
+        outputs[Dynamic.Mission.ELECTRIC_POWER_IN] = unscaled_electric_power_in * scale_factor
         outputs[Dynamic.Mission.NOX_RATE] = unscaled_nox_rate * scale_factor
         outputs[Dynamic.Mission.SHAFT_POWER] = unscaled_shaft_power * scale_factor
-        outputs[Dynamic.Mission.SHAFT_POWER_CORRECTED] = unscaled_shaft_power_corrected * scale_factor
+        outputs[Dynamic.Mission.SHAFT_POWER_MAX] = unscaled_shaft_power_max * scale_factor
+
         # outputs[Dynamic.Mission.EXIT_AREA] = unscaled_exit_area * scale_factor
 
     def setup_partials(self):
         nn = self.options['num_nodes']
-        # options = self.options['aviary_options']
-        # count = len(options.get_val('engine_models'))  # number of unique engine models
 
         # matrix derivatives have known sparsity pattern - specified here
-        # r = np.arange(nn * count, dtype=int)
-        # c = np.tile(np.arange(count, dtype=int), (nn))
         r = np.arange(nn)
         c = np.tile(0, nn)
 
@@ -200,13 +185,13 @@ class EngineScaling(om.ExplicitComponent):
             val=1.0)
 
         self.declare_partials(
-            Dynamic.Mission.ELECTRIC_POWER,
+            Dynamic.Mission.ELECTRIC_POWER_IN,
             Aircraft.Engine.SCALE_FACTOR,
             rows=r, cols=c,
             val=1.0)
         self.declare_partials(
-            Dynamic.Mission.ELECTRIC_POWER,
-            'electric_power_unscaled',
+            Dynamic.Mission.ELECTRIC_POWER_IN,
+            'electric_power_in_unscaled',
             rows=r, cols=r,
             val=1.0)
 
@@ -233,31 +218,19 @@ class EngineScaling(om.ExplicitComponent):
             val=1.0)
 
         self.declare_partials(
-            Dynamic.Mission.SHAFT_POWER_CORRECTED,
+            Dynamic.Mission.SHAFT_POWER_MAX,
             Aircraft.Engine.SCALE_FACTOR,
             rows=r, cols=c,
             val=1.0)
         self.declare_partials(
-            Dynamic.Mission.SHAFT_POWER_CORRECTED,
-            'shaft_power_corrected_unscaled',
+            Dynamic.Mission.SHAFT_POWER_MAX,
+            'shaft_power_max_unscaled',
             rows=r, cols=r,
             val=1.0)
-
-        # self.declare_partials(
-        #     Dynamic.Mission.EXIT_AREA,
-        #     Aircraft.Engine.SCALE_FACTOR,
-        #     rows=r, cols=c,
-        #     val=1.0)
-        # self.declare_partials(
-        #     Dynamic.Mission.EXIT_AREA,
-        #     'exit_area_unscaled',
-        #     rows=r, cols=r,
-        #     val=1.0)
 
     def compute_partials(self, inputs, J):
         nn = self.options['num_nodes']
         options: AviaryValues = self.options['aviary_options']
-        # count = len(options.get_val('engine_models'))  # number of unique engine models
         scale_performance = options.get_val(Aircraft.Engine.SCALE_PERFORMANCE)
 
         subsonic_fuel_factor = options.get_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER)
@@ -274,10 +247,10 @@ class EngineScaling(om.ExplicitComponent):
         unscaled_net_thrust = inputs['thrust_net_unscaled']
         unscaled_max_thrust = inputs['thrust_net_max_unscaled']
         unscaled_fuel_flow_rate = inputs['fuel_flow_rate_unscaled']
-        unscaled_electric_power = inputs['electric_power_unscaled']
+        unscaled_electric_power_in = inputs['electric_power_in_unscaled']
         unscaled_nox_rate = inputs['nox_rate_unscaled']
         unscaled_shaft_power = inputs['shaft_power_unscaled']
-        unscaled_shaft_power_corrected = inputs['shaft_power_corrected_unscaled']
+        unscaled_shaft_power_max = inputs['shaft_power_max_unscaled']
         # unscaled_exit_area = inputs['exit_area_unscaled']
 
         engine_scale_factor = inputs[Aircraft.Engine.SCALE_FACTOR]
@@ -288,18 +261,9 @@ class EngineScaling(om.ExplicitComponent):
 
         fuel_flow_deriv = np.ones(nn, dtype=engine_scale_factor.dtype)
         fuel_flow_scale_deriv = np.zeros(nn, dtype=engine_scale_factor.dtype)
-
-        # scale factor only applies if engine performance is scaled - default to 1 otherwise
-        # scale_factor = np.ones(count, dtype=engine_scale_factor.dtype)
-        # scale_factor[scale_idx] = engine_scale_factor[scale_idx]
         scale_factor = 1
-
-        # deriv_factor = np.zeros(nn)
-        # deriv_factor[:, scale_idx[0]] = 1.0
         deriv_factor = 0
 
-        # scale_idx = np.where(scale_performance)
-        # if len(scale_idx[0]) > 0:
         if scale_performance:
             # Calculate fuel flow rate scaling factor using FLOPS-derived equation
             fuel_flow_equation_scaling = (
@@ -310,18 +274,6 @@ class EngineScaling(om.ExplicitComponent):
             fuel_flow_deriv = -engine_scale_factor * fuel_flow_mach_scaling\
                 * fuel_flow_equation_scaling * mission_fuel_scaler
 
-            # fuel_flow_scale_deriv = fuel_flow_mach_scaling[:, scale_idx[0]]\
-            #     * mission_fuel_scaler\
-            #     * (unscaled_fuel_flow_rate[:, scale_idx[0]]
-            #        + constant_fuel_flow[scale_idx]
-            #        )\
-            #     * (1 + linear_fuel_term[scale_idx]
-            #        + constant_fuel_term[scale_idx]
-            #        - (2 * linear_fuel_term[scale_idx]
-            #           * engine_scale_factor[scale_idx]
-            #           )
-            #        )
-
             fuel_flow_scale_deriv = -fuel_flow_mach_scaling * mission_fuel_scaler\
                 * unscaled_fuel_flow_rate \
                 * (1 + linear_fuel_term + constant_fuel_term - (2 * linear_fuel_term
@@ -329,36 +281,6 @@ class EngineScaling(om.ExplicitComponent):
 
             scale_factor = engine_scale_factor
             deriv_factor = 1.0
-
-        # J[Dynamic.THRUST, 'thrust_net_unscaled'] = np.tile(
-        #     scale_factor, nn)
-        # J[Dynamic.THRUST, Aircraft.Engine.SCALE_FACTOR] = np.ravel(
-        #     unscaled_net_thrust * deriv_factor)
-
-        # J[Dynamic.THRUST_MAX, 'thrust_net_max_unscaled'] = np.tile(
-        #     scale_factor, nn)
-        # J[Dynamic.THRUST_MAX, Aircraft.Engine.SCALE_FACTOR] = np.ravel(
-        #     unscaled_max_thrust * deriv_factor)
-
-        # J[Dynamic.FUEL_FLOW_RATE_NEGATIVE, 'fuel_flow_rate_unscaled'] = -np.ravel(
-        #     fuel_flow_deriv)
-        # J[Dynamic.FUEL_FLOW_RATE_NEGATIVE, Aircraft.Engine.SCALE_FACTOR] = -np.ravel(
-        #     fuel_flow_scale_deriv)
-
-        # J[Dynamic.ELECTRIC_POWER, 'electric_power_unscaled'] = np.tile(
-        #     scale_factor, nn)
-        # J[Dynamic.ELECTRIC_POWER, Aircraft.Engine.SCALE_FACTOR] = np.ravel(
-        #     unscaled_electric_power * deriv_factor)
-
-        # J[Dynamic.NOX_RATE, 'nox_rate_unscaled'] = np.tile(
-        #     scale_factor, nn)
-        # J[Dynamic.NOX_RATE, Aircraft.Engine.SCALE_FACTOR] = np.ravel(
-        #     unscaled_nox_rate * deriv_factor)
-
-        # J[Dynamic.EXIT_AREA, 'exit_area_unscaled'] = np.tile(
-        #     scale_factor, nn)
-        # J[Dynamic.EXIT_AREA, Aircraft.Engine.SCALE_FACTOR] = np.ravel(
-        #     unscaled_exit_area * deriv_factor)
 
         J[Dynamic.Mission.THRUST, 'thrust_net_unscaled'] = scale_factor
         J[Dynamic.Mission.THRUST, Aircraft.Engine.SCALE_FACTOR] = unscaled_net_thrust * deriv_factor
@@ -372,9 +294,9 @@ class EngineScaling(om.ExplicitComponent):
         J[Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE,
             Aircraft.Engine.SCALE_FACTOR] = fuel_flow_scale_deriv
 
-        J[Dynamic.Mission.ELECTRIC_POWER, 'electric_power_unscaled'] = scale_factor
-        J[Dynamic.Mission.ELECTRIC_POWER,
-            Aircraft.Engine.SCALE_FACTOR] = unscaled_electric_power * deriv_factor
+        J[Dynamic.Mission.ELECTRIC_POWER_IN, 'electric_power_in_unscaled'] = scale_factor
+        J[Dynamic.Mission.ELECTRIC_POWER_IN,
+            Aircraft.Engine.SCALE_FACTOR] = unscaled_electric_power_in * deriv_factor
 
         J[Dynamic.Mission.NOX_RATE, 'nox_rate_unscaled'] = scale_factor
         J[Dynamic.Mission.NOX_RATE, Aircraft.Engine.SCALE_FACTOR] = unscaled_nox_rate * deriv_factor
@@ -383,10 +305,6 @@ class EngineScaling(om.ExplicitComponent):
         J[Dynamic.Mission.SHAFT_POWER,
             Aircraft.Engine.SCALE_FACTOR] = unscaled_shaft_power * deriv_factor
 
-        J[Dynamic.Mission.SHAFT_POWER_CORRECTED,
-            'shaft_power_corrected_unscaled'] = scale_factor
-        J[Dynamic.Mission.SHAFT_POWER_CORRECTED,
-            Aircraft.Engine.SCALE_FACTOR] = unscaled_shaft_power_corrected * deriv_factor
-
-        # J[Dynamic.Mission.EXIT_AREA, 'exit_area_unscaled'] = scale_factor
-        # J[Dynamic.Mission.EXIT_AREA, Aircraft.Engine.SCALE_FACTOR] = unscaled_exit_area * deriv_factor
+        J[Dynamic.Mission.SHAFT_POWER_MAX, 'shaft_power_max_unscaled'] = scale_factor
+        J[Dynamic.Mission.SHAFT_POWER_MAX,
+            Aircraft.Engine.SCALE_FACTOR] = unscaled_shaft_power_max * deriv_factor

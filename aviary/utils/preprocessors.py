@@ -3,14 +3,14 @@ import warnings
 import numpy as np
 import openmdao.api as om
 
-from aviary.subsystems.propulsion.engine_deck import EngineDeck
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.named_values import get_keys
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Mission
+from aviary.utils.test_utils.variable_test import get_names_from_hierarchy
 
 
-def preprocess_options(aviary_options: AviaryValues):
+def preprocess_options(aviary_options: AviaryValues, **kwargs):
     """
     Run all preprocessors on provided AviaryValues object
 
@@ -19,14 +19,13 @@ def preprocess_options(aviary_options: AviaryValues):
     aviary_options : AviaryValues
         Options to be updated
     """
-    preprocess_crewpayload(aviary_options)
     try:
-        engine_models = aviary_options.get_val('engine_models')
+        engine_models = kwargs['engine_models']
     except KeyError:
-        preprocess_propulsion(aviary_options)
-    else:
-        # don't catch stray exceptions in preprocess_propulsion
-        preprocess_propulsion(aviary_options, engine_models)
+        engine_models = None
+
+    preprocess_crewpayload(aviary_options)
+    preprocess_propulsion(aviary_options, engine_models)
 
 
 def preprocess_crewpayload(aviary_options: AviaryValues):
@@ -134,54 +133,7 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
         EngineModel objects to be added to aviary_options. Replaced existing EngineModels
         in aviary_options
     '''
-    ########################
-    # Create Engine Models #
-    ########################
-    # Check if EngineModels are provided, either as an argument or in aviary_options
-    # Build new engines if no engine models provided by the user in any capacity, such as
-    # from an input deck
-    build_engines = False
-    if not engine_models:
-        try:
-            engine_models = aviary_options.get_val('engine_models')
-        except KeyError:
-            build_engines = True
-    else:
-        # Add engine models to aviary options for component access
-        # TODO this overwrites any engine models already in aviary_options without
-        #      warning - should they get combined into the engine_models list instead?
-        aviary_options.set_val('engine_models', engine_models)
-
-    # If engine models are not provided, build a single engine deck, ignore vectorization
-    # of AviaryValues (use first index)
-    # TODO build test to verify this works as expected
-    if build_engines:
-        engine_options = AviaryValues()
-        for entry in Aircraft.Engine.__dict__:
-            var = getattr(Aircraft.Engine, entry)
-            # check if this variable exist with useable metadata
-            try:
-                units = _MetaData[var]['units']
-                try:
-                    # add value from aviary_options to engine_options
-                    default_val = aviary_options.get_val(var, units)
-                    if type(default_val) in (list, np.ndarray):
-                        default_val = default_val[0]
-                    engine_options.set_val(default_val, units)
-                # if not, use default value from _MetaData
-                except KeyError:
-                    engine_options.set_val(_MetaData[var]['default_value'], units)
-            except KeyError:
-                continue
-
-        engine_deck = EngineDeck(engine_options)
-        engine_models = [engine_deck]
-
-    num_engine_type = len(engine_models)
-    # keys of originally provided aviary_options
-    # currently not used but might be useful in the future
-    # aviary_mapping = get_keys(aviary_options.deepcopy())
-
+    # TODO add verbosity check to warnings
     ##############################
     # Vectorize Engine Variables #
     ##############################
@@ -189,6 +141,8 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
     # Combine aviary_options and all engine options into single AviaryValues
     # It is assumed that all EngineModels are up-to-date at this point and will NOT
     # be changed later on (otherwise preprocess_propulsion must be run again)
+    num_engine_type = len(engine_models)
+
     complete_options_list = AviaryValues(aviary_options)
     for engine in engine_models:
         complete_options_list.update(engine.options)
@@ -203,12 +157,22 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
         if var in update_list:
             dtype = _MetaData[var]['types']
             default_value = _MetaData[var]['default_value']
+            # type is optionally specified, fall back to type of default value
+            if dtype is None:
+                if isinstance(default_value, np.ndarray):
+                    dtype = default_value.dtype
+                else:
+                    dtype = type(default_value)
             # if dtype has multiple options, use type of default value
-            if type(dtype) in (list, tuple):
-                dtype = type(default_value)
+            if isinstance(dtype, (list, tuple)):
+                # if default value is a list/tuple, find type inside that
+                if isinstance(default_value, (list, tuple)):
+                    dtype = type(default_value[0])
+                else:
+                    dtype = type(default_value)
             # if var is supposed to be a unique array per engine model, assemble flat
             # vector manually to avoid ragged arrays (such as for wing engine locations)
-            if type(default_value) in (list, np.ndarray):
+            if isinstance(default_value, (list, np.ndarray)):
                 vec = np.zeros(0, dtype=dtype)
             elif type(default_value) is tuple:
                 vec = ()
@@ -222,16 +186,14 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
             # 2. aviary_options
             # 3. default value from metadata
             for i, engine in enumerate(engine_models):
-                if var == Aircraft.Nacelle.AVG_DIAMETER:
-                    pass
                 # test to see if engine has this variable - if so, use it
                 try:
                     # variables in engine models are known to be "safe", will only
                     # contain data for that engine
                     engine_val = engine.get_val(var, units)
-                    if type(default_value) in (list, np.ndarray):
+                    if isinstance(default_value, (list, np.ndarray)):
                         vec = np.append(vec, engine_val)
-                    elif type(default_value) is tuple:
+                    elif isinstance(default_value, tuple):
                         vec = vec + (engine_val,)
                     else:
                         vec[i] = engine_val
@@ -244,15 +206,15 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
                         # if aviary_val is an iterable, just grab val for this engine
                         if isinstance(aviary_val, (list, np.ndarray, tuple)):
                             aviary_val = aviary_val[i]
-                        if type(default_value) in (list, np.ndarray):
+                        if isinstance(default_value, (list, np.ndarray)):
                             vec = np.append(vec, aviary_val)
-                        elif type(default_value) is tuple:
+                        elif isinstance(default_value, tuple):
                             vec = vec + (aviary_val,)
                         else:
                             vec[i] = aviary_val
                     # if not, use default value from _MetaData
                     except (KeyError, IndexError):
-                        if type(default_value) in (list, np.ndarray):
+                        if isinstance(default_value, (list, np.ndarray)):
                             vec = np.append(vec, default_value)
                         else:
                             # default value is aleady in array
@@ -303,9 +265,9 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
                 f'Mount location for engines of type <{eng_name}> not specified. '
                 'Wing-mounted engines are assumed.')
 
-        # If wing mount type are specified but inconsistent, default num_engines to sum
-        # of specified mounted engines
-        elif total_engines_calc != num_engines:
+        # If wing mount type are specified but inconsistent, handle it
+        elif total_engines_calc > num_engines:
+            # more defined engine locations than number of engines - increase num engines
             eng_name = engine.name
             num_engines_all[i] = total_engines_calc
             warnings.warn(
@@ -313,10 +275,20 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
                 'aircraft:engine:num_wing_engines do not match '
                 f'aircraft:engine:num_engines for EngineModel <{eng_name}>. Overwriting '
                 'with the sum of wing and fuselage mounted engines.')
+        elif total_engines_calc < num_engines:
+            # fewer defined locations than num_engines - assume rest are wing mounted
+            eng_name = engine.name
+            num_wing_engines_all[i] = num_engines - num_fuse_engines
+            warnings.warn(
+                'Mount location was not defined for all engines of EngineModel '
+                f'<{eng_name}> - unspecified engines are assumed wing-mounted.')
 
     aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, num_engines_all)
     aviary_options.set_val(Aircraft.Engine.NUM_WING_ENGINES, num_wing_engines_all)
     aviary_options.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, num_fuse_engines_all)
+
+    if Mission.Summary.FUEL_FLOW_SCALER not in aviary_options:
+        aviary_options.set_val(Mission.Summary.FUEL_FLOW_SCALER, 1.0)
 
     num_engines = aviary_options.get_val(Aircraft.Engine.NUM_ENGINES)
     total_num_engines = int(sum(num_engines_all))
@@ -336,26 +308,8 @@ def _get_engine_variables():
     '''
     Yields all propulsion-related variables in Aircraft that need to be vectorized
     '''
-    for entry in Aircraft.Engine.__dict__:
-        var = getattr(Aircraft.Engine, entry)
-        # does this variable exist, and have useable metadata?
-        try:
-            _MetaData[var]
-        except (TypeError, KeyError):
-            continue
-        # valid variable found, proceed
-        else:
-            yield var
+    for item in get_names_from_hierarchy(Aircraft.Engine):
+        yield item
 
-    for entry in Aircraft.Nacelle.__dict__:
-        var = getattr(Aircraft.Nacelle, entry)
-        # does this variable exist, and have useable metadata?
-        try:
-            _MetaData[var]
-        except (TypeError, KeyError):
-            continue
-        # valid variable found, proceed
-        else:
-            # don't vectorize aircraft-level total values
-            if 'total' not in var:
-                yield var
+    for item in get_names_from_hierarchy(Aircraft.Nacelle):
+        yield item
