@@ -195,8 +195,11 @@ class UnsteadySolvedODE(BaseODE):
 
         eom_comp = UnsteadySolvedEOM(num_nodes=nn, ground_roll=ground_roll)
 
-        input_list = ['*', (Dynamic.Mission.THRUST_TOTAL, "thrust_req"),
-                      ('TAS', Dynamic.Mission.VELOCITY)]
+        input_list = [
+            '*',
+            (Dynamic.Mission.THRUST_TOTAL, "thrust_req"),
+            Dynamic.Mission.VELOCITY,
+        ]
         control_iter_group.add_subsystem("eom", subsys=eom_comp,
                                          promotes_inputs=input_list,
                                          promotes_outputs=["*"])

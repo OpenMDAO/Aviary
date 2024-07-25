@@ -41,8 +41,6 @@ class TestTakeoffAeroGroup(unittest.TestCase):
 
         prob.run_model()
 
-        om.n2(prob)
-
         tol = 1e-12
 
         for (key, (desired, units)) in get_items(_regression_data_spoiler):

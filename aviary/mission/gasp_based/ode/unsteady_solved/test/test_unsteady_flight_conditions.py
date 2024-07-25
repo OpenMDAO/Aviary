@@ -20,9 +20,9 @@ class TestUnsteadyFlightConditions(unittest.TestCase):
 
         p = om.Problem()
 
-        self.add_subsystem(
+        p.model.add_subsystem(
             name='atmosphere',
-            subsys=Atmosphere(num_nodes=nn),
+            subsys=Atmosphere(num_nodes=nn, output_dsos_dh=True),
             promotes_inputs=[Dynamic.Mission.ALTITUDE],
             promotes_outputs=[
                 Dynamic.Mission.DENSITY,
@@ -86,3 +86,7 @@ class TestUnsteadyFlightConditions(unittest.TestCase):
                 with self.subTest(msg=f"ground_roll={ground_roll} in_type={in_type}"):
                     self._test_unsteady_flight_conditions(
                         ground_roll=ground_roll, input_speed_type=in_type)
+
+
+if __name__ == '__main__':
+    unittest.main()

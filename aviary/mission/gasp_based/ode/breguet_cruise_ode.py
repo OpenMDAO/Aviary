@@ -23,7 +23,9 @@ class BreguetCruiseODESolution(BaseODE):
         self.add_subsystem("params", ParamPort(), promotes=["*"])
 
         self.add_subsystem(
-            name='atmosphere', subsys=Atmosphere(num_nodes=nn), promotes=['*']
+            name='atmosphere',
+            subsys=Atmosphere(num_nodes=nn, input_speed_type=SpeedType.MACH),
+            promotes=['*'],
         )
 
         self.add_subsystem(
