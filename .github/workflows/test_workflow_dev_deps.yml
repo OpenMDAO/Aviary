@@ -1,31 +1,17 @@
 # Run Tests
 
-name: Aviary Tests
+name: Test with Pre-Release OpenMDAO/Dymos
 
 on:
-  # Trigger on push or pull request events for the main branch
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-  merge_group:
-    branches: [ main ]
+
+  # Run the workflow every Tuesday at 0400 UTC
+  schedule:
+    - cron: '1 4 * * 1,4'
 
   # Allow running the workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
-
-  pre_commit:
-    # run pre-commit checks
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-    - uses: pre-commit/action@v3.0.1
 
   test_ubuntu:
     runs-on: ubuntu-latest
@@ -33,25 +19,16 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # oldest versions of openmdao/dymos
-          - NAME: oldest
-            PY: '3.9'
-            NUMPY: '1.20'
-            SCIPY: '1.6'
-            PYOPTSPARSE: 'v2.9.1'
-            SNOPT: '7.7'
-            OPENMDAO: '3.33.0'
-            DYMOS: '1.8.0'
-
-          # latest versions of openmdao/dymos
-          - NAME: latest
-            PY: '3.10'
+          # latest released version of pyoptsparse
+          # development versions of openmdao/dymos
+          - NAME: dev
+            PY: 3
             NUMPY: 1
             SCIPY: 1
-            PYOPTSPARSE: 'v2.9.1'
+            PYOPTSPARSE: 'latest'
             SNOPT: '7.7'
-            OPENMDAO: 'latest'
-            DYMOS: 'latest'
+            OPENMDAO: 'dev'
+            DYMOS: 'dev'
 
     steps:
       - name: Checkout actions
@@ -83,6 +60,21 @@ jobs:
           echo "Run Tests"
           echo "============================================================="
           testflo . -n 1 --timeout=200 --show_skipped --coverage --coverpkg aviary
+
+      - name: Send Email on failed tests
+        if: failure()
+        uses: ./actions/.github/actions/send_email
+        with:
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          to: ${{ secrets.DESTINATION_EMAIL }}
+          subject: "***Notification*** Tests failed with development versions of OpenMDAO/Dymos: ${{ env.number }}"
+          body: |
+            {
+              "number": "${{ github.event.pull_request.number }}",
+              "title": "${{ github.event.pull_request.title }}",
+              "action": "${{ github.event.action }}"
+            }
 
       - name: Checkout actions (again)
         uses: actions/checkout@v3
