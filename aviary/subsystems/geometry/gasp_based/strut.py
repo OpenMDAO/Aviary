@@ -34,7 +34,7 @@ class StrutGeom(om.ExplicitComponent):
     def setup_partials(self):
 
         self.declare_partials(
-            "strut_y", [Aircraft.Strut.ATTACHMENT_LOCATION], val=0
+            "strut_y", [Aircraft.Strut.ATTACHMENT_LOCATION],
         )
         self.declare_partials(
             Aircraft.Strut.LENGTH,
@@ -42,7 +42,6 @@ class StrutGeom(om.ExplicitComponent):
                 Aircraft.Strut.ATTACHMENT_LOCATION,
                 Aircraft.Fuselage.AVG_DIAMETER,
             ],
-            val=0,
         )
         self.declare_partials(
             Aircraft.Strut.CHORD,
@@ -52,7 +51,6 @@ class StrutGeom(om.ExplicitComponent):
                 Aircraft.Strut.ATTACHMENT_LOCATION,
                 Aircraft.Fuselage.AVG_DIAMETER,
             ],
-            val=0,
         )
         self.declare_partials(
             Aircraft.Strut.AREA,
@@ -60,7 +58,6 @@ class StrutGeom(om.ExplicitComponent):
                 Aircraft.Wing.AREA,
                 Aircraft.Strut.AREA_RATIO
             ],
-            val=0,
         )
 
     def compute(self, inputs, outputs):
