@@ -120,7 +120,7 @@ def custom_run_aviary(aircraft_filename, optimizer=None,
 
     prob.set_initial_guesses()
 
-    prob.failed = prob.run_aviary_problem(
+    prob.run_aviary_problem(
         record_filename, restart_filename=restart_filename, run_driver=run_driver, make_plots=make_plots)
 
     return prob
