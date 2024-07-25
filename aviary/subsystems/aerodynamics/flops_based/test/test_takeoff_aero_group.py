@@ -213,5 +213,3 @@ def _generate_regression_data(subsystem_options={}):
 
 if __name__ == "__main__":
     unittest.main()
-    test = TestTakeoffAeroGroup()
-    test.test_takeoff_aero_group()
