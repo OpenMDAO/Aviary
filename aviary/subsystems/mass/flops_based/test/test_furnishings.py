@@ -100,7 +100,9 @@ class BWBFurnishingsGroupMassTest(unittest.TestCase):
             output_keys=Aircraft.AirConditioning.MASS,
             version=Version.BWB,
             tol=1.0e-3,
-            atol=1e-11)
+            atol=1e-11,
+            check_values=False,  # Currently no BWB validation data.
+        )
 
     def test_IO(self):
         assert_match_varnames(self.prob.model)

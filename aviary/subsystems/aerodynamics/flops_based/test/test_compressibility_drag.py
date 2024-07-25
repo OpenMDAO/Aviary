@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_check_partials
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.aerodynamics.flops_based.compressibility_drag import \
     CompressibilityDrag
@@ -36,7 +36,8 @@ class CompressibilityDragTest(unittest.TestCase):
                                              Aircraft.Fuselage.CROSS_SECTION,
                                              Aircraft.Fuselage.DIAMETER_TO_WING_SPAN,
                                              Aircraft.Fuselage.LENGTH_TO_DIAMETER,
-                                             Mission.Design.MACH])
+                                             Mission.Design.MACH],
+                            promotes_outputs=["compress_drag_coeff"])
 
         prob.setup(force_alloc_complex=True)
 
@@ -54,9 +55,34 @@ class CompressibilityDragTest(unittest.TestCase):
         prob.set_val(Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN, 0.)
 
         prob.run_model()
-        derivs = prob.check_partials(out_stream=None, method="cs")
 
-        # TODO: need to test outputs too
+        expected_compress_drag_coeff = [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.00018641,
+            0.00079348,
+            0.00119559,
+            0.00155455,
+            0.00214888,
+            0.00339369,
+            0.01738419,
+            0.02046643,
+            0.02259292,
+            0.03716558,
+            0.04926635,
+            0.04841961,
+        ]
+        assert_near_equal(
+            prob.get_val("compress_drag_coeff"),
+            expected_compress_drag_coeff, 1e-6)
+
+        derivs = prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(derivs, atol=1e-12, rtol=1e-12)
 
 
