@@ -17,7 +17,6 @@ aside from each mission optimizing for max range. Could for example assign $/kg 
 
 Could also add a "fuel" parameter which can then be minimized.
 """
-# Working version
 
 
 class CannonballSizing(om.ExplicitComponent):
@@ -119,6 +118,7 @@ class CannonballODE(om.ExplicitComponent):
         outputs['ke'] = 0.5*m*v**2
 
 
+# ODEs are unique to each traj created
 def createTrajectory(ke_max):
     traj = dm.Trajectory()
     transcription = dm.Radau(num_segments=5, order=3, compressed=True)
@@ -142,7 +142,7 @@ def createTrajectory(ke_max):
         phase.add_parameter('price', units='USD', static_target=True, val=10)
         phase.add_parameter('CD', units=None, static_target=True, val=0.5)
 
-    descent.add_objective('r', loc='final', scaler=-1.0)  # negative means to maximize
+    # descent.add_objective('r', loc='final', scaler=-1.0)  # negative means to maximize
     for param in ('CD', 'm', 'S', 'price'):
         traj.add_parameter(param, static_target=True)
 
@@ -160,28 +160,43 @@ p.driver = om.ScipyOptimizeDriver()
 p.driver.options['optimizer'] = 'SLSQP'
 p.driver.declare_coloring()
 
-p.model.add_subsystem('size_comp', CannonballSizing(),
+kes = [4e5, 5e5, 6e5]
+# 2:1 ratio (or 1:2) causes results that essentially don't optimize the 1 mission,
+# 1.01 works, 1.009 doesn't
+# 2:1:1 works?! - may be related some normalization/bounds issue
+weights = [2.1, 1.5, 1.1]
+num_trajs = len(kes)
+
+p.model.add_subsystem(f"sizing_comp", CannonballSizing(),
                       promotes_inputs=['radius', 'dens'])
+
 p.model.set_input_defaults('dens', val=7.87, units='g/cm**3')
 p.model.add_design_var('radius', lower=0.01, upper=0.10,
                        ref0=0.01, ref=0.10, units='m')
 
-kes = [4e5, 5e5]
 trajs, ascents, descents = [], [], []
-for ke in kes:
-    a, b, c = createTrajectory(ke)
-    trajs.append(a)
-    ascents.append(b)
-    descents.append(c)
-# traj, ascent, descent = createTrajectory(4e5)
-p.model.add_subsystem('traj', trajs[1])
-ascent = ascents[1]
-descent = descents[1]
+for i, ke in enumerate(kes):
+    traj, ascent, descent = createTrajectory(ke)
+    p.model.add_subsystem(f"traj_{i}", traj)
 
-# Issue Connections
-p.model.connect('size_comp.mass', 'traj.parameters:m')
-p.model.connect('size_comp.price', 'traj.parameters:price')
-p.model.connect('size_comp.S', 'traj.parameters:S')
+    # Issue Connections
+    p.model.connect(f"sizing_comp.mass", f"traj_{i}.parameters:m")
+    p.model.connect(f"sizing_comp.S", f"traj_{i}.parameters:S")
+    p.model.connect(f"sizing_comp.price", f"traj_{i}.parameters:price")
+    trajs.append(traj)
+    ascents.append(ascent)
+    descents.append(descent)
+
+ranges = [f"r{i}" for i in range(num_trajs)]
+weighted_sum_str = "+".join([f"{weight}*{r}" for r, weight in zip(ranges, weights)])
+p.model.add_subsystem('compoundComp', om.ExecComp("compound_range="+weighted_sum_str),
+                      promotes=['compound_range', *ranges])
+
+for i in range(num_trajs):
+    p.model.connect(f"traj_{i}.descent.states:r", ranges[i], src_indices=-1)
+
+p.model.add_objective('compound_range', scaler=-1)
+
 
 # A linear solver at the top level can improve performance.
 p.model.linear_solver = om.DirectSolver()
@@ -190,23 +205,25 @@ p.setup()
 p.set_val('radius', 0.05, units='m')
 p.set_val('dens', 7.87, units='g/cm**3')
 
-p.set_val('traj.parameters:CD', 0.5)
+for i, (ascent, descent) in enumerate(zip(ascents, descents)):
+    p.set_val(f"traj_{i}.parameters:CD", 0.5)
 
-p.set_val('traj.ascent.t_initial', 0.0)
-p.set_val('traj.ascent.t_duration', 10.0)
-# list is initial and final, based on phase info some are fixed others are not
-p.set_val('traj.ascent.states:r', ascent.interp('r', [0, 100]))
-p.set_val('traj.ascent.states:h', ascent.interp('h', [0, 100]))
-p.set_val('traj.ascent.states:v', ascent.interp('v', [200, 150]))
-p.set_val('traj.ascent.states:gam', ascent.interp('gam', [25, 0]), units='deg')
+    p.set_val(f"traj_{i}.ascent.t_initial", 0.0)
+    p.set_val(f"traj_{i}.ascent.t_duration", 10.0)
+    # list is initial and final, based on phase info some are fixed others are not
+    p.set_val(f"traj_{i}.ascent.states:r", ascent.interp('r', [0, 100]))
+    p.set_val(f'traj_{i}.ascent.states:h', ascent.interp('h', [0, 100]))
+    p.set_val(f'traj_{i}.ascent.states:v', ascent.interp('v', [200, 150]))
+    p.set_val(f'traj_{i}.ascent.states:gam', ascent.interp('gam', [25, 0]), units='deg')
 
-p.set_val('traj.descent.t_initial', 10.0)
-p.set_val('traj.descent.t_duration', 10.0)
+    p.set_val(f'traj_{i}.descent.t_initial', 10.0)
+    p.set_val(f'traj_{i}.descent.t_duration', 10.0)
 
-p.set_val('traj.descent.states:r', descent.interp('r', [100, 200]))
-p.set_val('traj.descent.states:h', descent.interp('h', [100, 0]))
-p.set_val('traj.descent.states:v', descent.interp('v', [150, 200]))
-p.set_val('traj.descent.states:gam', descent.interp('gam', [0, -45]), units='deg')
+    p.set_val(f'traj_{i}.descent.states:r', descent.interp('r', [100, 200]))
+    p.set_val(f'traj_{i}.descent.states:h', descent.interp('h', [100, 0]))
+    p.set_val(f'traj_{i}.descent.states:v', descent.interp('v', [150, 200]))
+    p.set_val(f'traj_{i}.descent.states:gam',
+              descent.interp('gam', [0, -45]), units='deg')
 
 
 dm.run_problem(p, simulate=True)
@@ -215,60 +232,66 @@ sim = om.CaseReader('dymos_simulation.db').get_case('final')
 
 
 def plotstuff():
-    rad = p.get_val('radius', units='m')[0]
-    print(f'optimal radius: {rad} m ')
-    mass = p.get_val('size_comp.mass', units='kg')[0]
-    print(f'cannonball mass: {mass} kg ')
-    price = p.get_val('size_comp.price', units='USD')[0]
-    print(f'cannonball price: ${price:.2f}')
-    area = p.get_val('size_comp.S', units='cm**2')[0]
-    print(f'cannonball aerodynamic reference area: {area} cm**2 ')
-    angle = p.get_val('traj.ascent.timeseries.gam', units='deg')[0, 0]
-    print(f'launch angle: {angle} deg')
-    max_range = p.get_val('traj.descent.timeseries.r')[-1, 0]
-    print(f'maximum range: {max_range} m')
+    print("\n\n=================================================")
+    print(
+        f"Optimized {num_trajs} trajectories with weights: {', '.join(map(str,weights))}")
+    rad = p.get_val('radius', units='cm')[0]
+    mass = p.get_val('sizing_comp.mass', units='kg')[0]
+    price = p.get_val('sizing_comp.price', units='USD')[0]
+    area = p.get_val('sizing_comp.S', units='cm**2')[0]
+    print("\nOptimal Cannonball Description:")
+    print(
+        f"\tRadius: {rad:.2f} cm, Mass: {mass:.2f} kg, Price: ${price:.2f}, Area: {area:.2f} sqcm")
 
-    fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(10, 6))
-    time_imp = {'ascent': p.get_val('traj.ascent.timeseries.time'),
-                'descent': p.get_val('traj.descent.timeseries.time')}
-    time_exp = {'ascent': sim.get_val('traj.ascent.timeseries.time'),
-                'descent': sim.get_val('traj.descent.timeseries.time')}
-    r_imp = {'ascent': p.get_val('traj.ascent.timeseries.r'),
-             'descent': p.get_val('traj.descent.timeseries.r')}
-    r_exp = {'ascent': sim.get_val('traj.ascent.timeseries.r'),
-             'descent': sim.get_val('traj.descent.timeseries.r')}
-    h_imp = {'ascent': p.get_val('traj.ascent.timeseries.h'),
-             'descent': p.get_val('traj.descent.timeseries.h')}
-    h_exp = {'ascent': sim.get_val('traj.ascent.timeseries.h'),
-             'descent': sim.get_val('traj.descent.timeseries.h')}
+    print("\nOptimal Trajectory Descriptions:")
+    for i, ke in enumerate(kes):
+        angle = p.get_val(f'traj_{i}.ascent.timeseries.gam', units='deg')[0, 0]
+        max_range = p.get_val(f'traj_{i}.descent.timeseries.r')[-1, 0]
 
-    axes.plot(r_imp['ascent'], h_imp['ascent'], 'bo')
-    axes.plot(r_imp['descent'], h_imp['descent'], 'ro')
-    axes.plot(r_exp['ascent'], h_exp['ascent'], 'b--')
-    axes.plot(r_exp['descent'], h_exp['descent'], 'r--')
+        print(
+            f"\tKE: {ke/1e3:.2f} KJ, Launch Angle: {angle:.2f} deg, Max Range: {max_range:.2f} m")
 
-    axes.set_xlabel('range (m)')
-    axes.set_ylabel('altitude (m)')
-    axes.grid(True)
+    # fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(10, 6))
+    # time_imp = {'ascent': p.get_val('traj_0.ascent.timeseries.time'),
+    #             'descent': p.get_val('traj_0.descent.timeseries.time')}
+    # time_exp = {'ascent': sim.get_val('traj_0.ascent.timeseries.time'),
+    #             'descent': sim.get_val('traj_0.descent.timeseries.time')}
+    # r_imp = {'ascent': p.get_val('traj_0.ascent.timeseries.r'),
+    #          'descent': p.get_val('traj_0.descent.timeseries.r')}
+    # r_exp = {'ascent': sim.get_val('traj_0.ascent.timeseries.r'),
+    #          'descent': sim.get_val('traj_0.descent.timeseries.r')}
+    # h_imp = {'ascent': p.get_val('traj_0.ascent.timeseries.h'),
+    #          'descent': p.get_val('traj_0.descent.timeseries.h')}
+    # h_exp = {'ascent': sim.get_val('traj_0.ascent.timeseries.h'),
+    #          'descent': sim.get_val('traj_0.descent.timeseries.h')}
 
-    fig, axes = plt.subplots(nrows=4, ncols=1, figsize=(10, 6))
-    states = ['r', 'h', 'v', 'gam']
-    for i, state in enumerate(states):
-        x_imp = {'ascent': sol.get_val(f'traj.ascent.timeseries.{state}'),
-                 'descent': sol.get_val(f'traj.descent.timeseries.{state}')}
+    # axes.plot(r_imp['ascent'], h_imp['ascent'], 'bo')
+    # axes.plot(r_imp['descent'], h_imp['descent'], 'ro')
+    # axes.plot(r_exp['ascent'], h_exp['ascent'], 'b--')
+    # axes.plot(r_exp['descent'], h_exp['descent'], 'r--')
 
-        x_exp = {'ascent': sim.get_val(f'traj.ascent.timeseries.{state}'),
-                 'descent': sim.get_val(f'traj.descent.timeseries.{state}')}
+    # axes.set_xlabel('range (m)')
+    # axes.set_ylabel('altitude (m)')
+    # axes.grid(True)
 
-        axes[i].set_ylabel(state)
-        axes[i].grid(True)
+    # fig, axes = plt.subplots(nrows=4, ncols=1, figsize=(10, 6))
+    # states = ['r', 'h', 'v', 'gam']
+    # for i, state in enumerate(states):
+    #     x_imp = {'ascent': sol.get_val(f'traj_0.ascent.timeseries.{state}'),
+    #              'descent': sol.get_val(f'traj_0.descent.timeseries.{state}')}
 
-        axes[i].plot(time_imp['ascent'], x_imp['ascent'], 'bo')
-        axes[i].plot(time_imp['descent'], x_imp['descent'], 'ro')
-        axes[i].plot(time_exp['ascent'], x_exp['ascent'], 'b--')
-        axes[i].plot(time_exp['descent'], x_exp['descent'], 'r--')
+    #     x_exp = {'ascent': sim.get_val(f'traj_0.ascent.timeseries.{state}'),
+    #              'descent': sim.get_val(f'traj_0.descent.timeseries.{state}')}
 
-    plt.show()
+    #     axes[i].set_ylabel(state)
+    #     axes[i].grid(True)
+
+    #     axes[i].plot(time_imp['ascent'], x_imp['ascent'], 'bo')
+    #     axes[i].plot(time_imp['descent'], x_imp['descent'], 'ro')
+    #     axes[i].plot(time_exp['ascent'], x_exp['ascent'], 'b--')
+    #     axes[i].plot(time_exp['descent'], x_exp['descent'], 'r--')
+
+    # plt.show()
 
 
 plotstuff()

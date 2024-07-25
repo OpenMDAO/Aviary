@@ -5,21 +5,38 @@ Aircraft csv: defines plane, but also defines payload (passengers, cargo) which 
     These will have to be specified in some alternate way such as a list correspond to mission #
 Phase info: defines a particular mission, will have multiple phase infos
 """
+import warnings
 import aviary.api as av
 import openmdao.api as om
 import dymos as dm
+from aviary.variable_info.enums import ProblemType
 from c5_ferry_phase_info import phase_info as c5_ferry_phase_info
 from c5_intermediate_phase_info import phase_info as c5_intermediate_phase_info
 from c5_maxpayload_phase_info import phase_info as c5_maxpayload_phase_info
+from aviary.variable_info.variable_meta_data import _MetaData as MetaData
 
 planes = ['c5_maxpayload.csv', 'c5_intermediate.csv']
 phase_infos = [c5_maxpayload_phase_info, c5_intermediate_phase_info]
 weights = [1, 1]
 num_missions = len(weights)
 
+# "comp?.a can be used to reference multiple comp1.a comp2.a etc"
+
+
+def setupprob(super_prob):
+    # Aviary's problem setup wrapper uses these ignored warnings to suppress
+    # some warnings related to variable promotion. Replicating that here with
+    # setup for the super problem
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", om.OpenMDAOWarning)
+        warnings.simplefilter("ignore", om.PromotionWarning)
+        super_prob.setup()
+
+
 if __name__ == '__main__':
     super_prob = om.Problem()
     probs = []
+    prefix = "problem_"
 
     # define individual aviary problems
     for i, (plane, phase_info) in enumerate(zip(planes, phase_infos)):
@@ -27,18 +44,50 @@ if __name__ == '__main__':
         prob.load_inputs(plane, phase_info)
         prob.check_and_preprocess_inputs()
         prob.add_pre_mission_systems()
-        prob.add_phases()
+        traj = prob.add_phases()  # save dymos traj to add to super problem as a subsystem
         prob.add_post_mission_systems()
         prob.link_phases()
+        prob.problem_type = ProblemType.ALTERNATE  # adds summary gross mass as design var
+        prob.add_design_variables()
         probs.append(prob)
 
-        subcomp = om.SubmodelComp(
-            problem=prob, inputs=['mission:design:gross_mass', 'aircraft:wing:span'],
-            outputs=['mission:summary:fuel_burned'])
-        # promoting gross mass to be used as a design var
-        # all problems have same name for gross mass so they are connected
-        super_prob.model.add_subsystem(f'subcomp_{i}', subcomp, promotes_inputs=[
-                                       'mission:design:gross_mass', 'aircraft:wing:span'])
+        group = om.Group()  # this group will contain all the promoted aviary vars
+        group.add_subsystem("pre", prob.pre_mission)
+        group.add_subsystem("traj", traj)
+        group.add_subsystem("post", prob.post_mission)
+
+        # setting defaults for these variables to suppress errors
+        longlst = [
+            'mission:summary:gross_mass', 'aircraft:wing:sweep',
+            'aircraft:wing:thickness_to_chord', 'aircraft:wing:area',
+            'aircraft:wing:taper_ratio', 'mission:design:gross_mass']
+        for var in longlst:
+            group.set_input_defaults(
+                var, val=MetaData[var]['default_value'],
+                units=MetaData[var]['units'])
+
+        # add group and promote design gross mass (common input amongst multiple missions)
+        # in this way it represents the MTOW
+        super_prob.model.add_subsystem(prefix+f'{i}', group, promotes=[
+                                       'mission:design:gross_mass'])
+
+    # add design gross mass as a design var
+    super_prob.model.add_design_var(
+        'mission:design:gross_mass', lower=100e3, upper=1000e3)
+
+    for i in range(num_missions):
+        # connecting each subcomponent's fuel burn to super problem's unique fuel variables
+        super_prob.model.connect(
+            prefix+f"{i}.mission:summary:fuel_burned", f"fuel_{i}")
+
+        # create constraint to force each mission's summary gross mass to not
+        # exceed the common mission design gross mass (aka MTOW)
+        super_prob.model.add_subsystem(f'MTOW_constraint{i}', om.ExecComp(
+            'mtow_resid = design_gross_mass - summary_gross_mass'),
+            promotes=[('summary_gross_mass', prefix+f'{i}.mission:summary:gross_mass'),
+                      ('design_gross_mass', 'mission:design:gross_mass')])
+
+        super_prob.model.add_constraint(f'MTOW_constraint{i}.mtow_resid', lower=0.)
 
     # creating variable strings that will represent fuel burn from each mission
     fuel_burned_vars = [f"fuel_{i}" for i in range(num_missions)]
@@ -47,34 +96,20 @@ if __name__ == '__main__':
     # weighted_str looks like: fuel_0 * weight[0] + fuel_1 * weight[1]
 
     # adding compound execComp to super problem
-    super_prob.model.add_subsystem('compound', om.ExecComp(
+    super_prob.model.add_subsystem('compound_fuel_burn_objective', om.ExecComp(
         "compound = "+weighted_str), promotes=["compound", *fuel_burned_vars])
-
-    # connecting each subcomponent's fuel burn to super problem's unique fuel variables
-    # fuel_0, fuel_1, ... don't have units assigned, #TODO find a solution to specify units
-    for i in range(num_missions):
-        super_prob.model.connect(f"subcomp_{i}.mission:summary:fuel_burned", f"fuel_{i}")
-
-    # specify gross mass as a design var
-    super_prob.model.add_design_var(
-        'mission:design:gross_mass', lower=100e3, upper=1000e3, units='lbm')
-
-    # this throws error: output not found for this design var
-    # super_prob.model.add_design_var(
-    #     'aircraft:design:span', lower=100., upper=300., units='ft')
 
     super_prob.driver = om.ScipyOptimizeDriver()
     super_prob.driver.options['optimizer'] = 'SLSQP'
-
     super_prob.model.add_objective('compound')  # output from execcomp goes here
 
-    super_prob.setup()
+    setupprob(super_prob)
+    om.n2(super_prob, outfile="multi_mission_importTraj_N2.html")  # create N2 diagram
+    # for prob in probs:
+    #     # prob.setup()
+    #     prob.set_initial_guesses()
 
-    # set initial guesses for each aviary problem
-    for prob in probs:
-        prob.set_initial_guesses()
-
-    dm.run_problem(super_prob)
+    # dm.run_problem(super_prob)
 
 
 """
