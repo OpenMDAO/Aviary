@@ -192,7 +192,7 @@ class ComputedDragTest(unittest.TestCase):
         prob.set_val(Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, 1.4)
         prob.set_val(Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR, 1.1)
         prob.set_val(Aircraft.Wing.AREA, 1370, units="ft**2")
-        prob.set_val(Dynamic.Mission.DYNAMIC_PRESSURE, [206. , 205.6], 'lbf/ft**2')
+        prob.set_val(Dynamic.Mission.DYNAMIC_PRESSURE, [206., 205.6], 'lbf/ft**2')
 
         prob.run_model()
 
