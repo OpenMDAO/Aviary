@@ -31,7 +31,7 @@ class LandingSegment(BaseODE):
 
         self.add_subsystem(
             name='atmosphere',
-            subsys=Atmosphere(num_nodes=1),
+            subsys=Atmosphere(num_nodes=1, input_speed_type=SpeedType.MACH),
             promotes_inputs=[
                 (Dynamic.Mission.ALTITUDE, Mission.Landing.INITIAL_ALTITUDE)
             ],

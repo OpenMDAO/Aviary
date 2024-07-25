@@ -51,16 +51,6 @@ class FlightPathODE(BaseODE):
             kwargs['method'] = 'cruise'
             kwargs['output_alpha'] = False
 
-        if input_speed_type is SpeedType.EAS:
-            speed_inputs = ["EAS"]
-            speed_outputs = ["mach", Dynamic.Mission.VELOCITY]
-        elif input_speed_type is SpeedType.TAS:
-            speed_inputs = [Dynamic.Mission.VELOCITY]
-            speed_outputs = ["mach", "EAS"]
-        elif input_speed_type is SpeedType.MACH:
-            speed_inputs = ["mach"]
-            speed_outputs = ["EAS", Dynamic.Mission.VELOCITY]
-
         EOM_inputs = [
             Dynamic.Mission.MASS,
             Dynamic.Mission.THRUST_TOTAL,
@@ -99,7 +89,9 @@ class FlightPathODE(BaseODE):
         self.add_subsystem("params", flight_path_params, promotes=["*"])
 
         self.add_subsystem(
-            name='atmosphere', subsys=Atmosphere(num_nodes=nn), promotes=['*']
+            name='atmosphere',
+            subsys=Atmosphere(num_nodes=nn, input_speed_type=input_speed_type),
+            promotes=['*'],
         )
 
         if alpha_mode is AlphaModes.DEFAULT:
