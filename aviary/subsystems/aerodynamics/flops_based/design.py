@@ -51,17 +51,19 @@ class Design(om.ExplicitComponent):
 
         AR, CAM, SW25, TC = inputs.values()
 
-        if TC.real > 0.065:  # subsonic
+        # design lift coefficient equation is selected based on thickness/chord ratio
+        if TC.real > 0.065:
             a, b, c, d = self.sub_sonic_coeff
             CLDES = (a + b*AR) * np.cos(SW25/c) * (1.0 + d*CAM) / np.sqrt(AR)
 
-        else:  # supersonic
+        else:
             a, b, c, d, e = self.super_sonic_coeff
             FAR = AR * TC**e
             CLDES = a + b*FAR + c*FAR**2.0 + d*FAR**3.0
 
         outputs[Mission.Design.LIFT_COEFFICIENT] = CLDES
 
+        # design mach equation selected based on thickness/chord ratio or maximum mach number
         if TC.real > 0.065 or VMAX < 1.0:  # subsonic
             TC23 = TC ** (2.0 / 3.0)
 

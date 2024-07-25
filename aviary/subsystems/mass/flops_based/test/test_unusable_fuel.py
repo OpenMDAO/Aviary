@@ -13,16 +13,6 @@ from aviary.validation_cases.validation_tests import (Version,
                                                       print_case)
 from aviary.variable_info.variables import Aircraft
 
-# TODO: update non-transport tests to remove these variables
-_wing_ref_area = 'aircraft:wing:dimensions:area'
-_engine_count_factor = 'aircraft:propulsion:control:engine_count_factor'
-_max_scaled_thrust = 'aircraft:propulsion:dimensions:max_scaled_thrust'
-_total_fuel_capacity = 'aircraft:fuel:mass:total_capacity'
-_density_ratio = 'aircraft:fuel:mass:density_ratio'
-_tank_count = 'aircraft:fuel:control:tank_count'
-_total_fuel_vol = 'TBD:total_fuel_vol:'
-_unusable_fuel_mass = 'TBD:unusable_fuel'
-
 
 class TransportUnusableFuelMassTest(unittest.TestCase):
     '''
