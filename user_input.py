@@ -70,6 +70,7 @@ for num in compound_data_entries:
 file_contents={}
 file_name=StringVar(value='Aircraft_Model.csv')
 file_data=[]
+box=[]
 def Open():
     file_ = filedialog.askopenfilename(title = "Select a Model",
                                           filetypes = (('All files', '*'),))
@@ -108,9 +109,12 @@ def Open():
             if list_keys[i] == key:
                 check+=1
                 file_data.append(file_contents[key])
+                box.append(1)
             else: pass
         if check != 1:
             file_data.append(list_values[i]["default_value"])
+            box.append(1)
+    
     return file_contents, file_name, file_data
 
 filesaveas=StringVar(value='Aircraft_Model.csv')
