@@ -4,6 +4,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.aerodynamics.flops_based.mach_number import MachNumber
+from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.variable_info.variables import Dynamic
 
 
@@ -39,9 +40,11 @@ class MachNumberTest(unittest.TestCase):
             partial_data, atol=1e-6, rtol=1e-6
         )  # check the partial derivatives
 
-    # TODO IO test will fail until mission variable hirerarchy implemented
-    # def test_IO(self):
-    #     assert_match_varnames(self.prob.model)
+        assert_near_equal(
+            self.prob.get_val(Dynamic.Mission.MACH), [0.3320574], 1e-6)
+
+    def test_IO(self):
+        assert_match_varnames(self.prob.model)
 
 
 if __name__ == "__main__":

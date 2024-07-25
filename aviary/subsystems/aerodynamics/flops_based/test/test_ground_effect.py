@@ -38,6 +38,11 @@ class TestGroundEffect(unittest.TestCase):
         partials = prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partials, atol=1e-10, rtol=1e-12)
 
+        assert_near_equal(
+            prob.get_val("lift_coefficient"), [0.558234, 1.200676, 2.0], 1e-6)
+        assert_near_equal(
+            prob.get_val("drag_coefficient"), [0.02036, 0.0223957, 0.08], 1e-6)
+
 
 def make_problem():
     '''
