@@ -28,7 +28,7 @@ jobs:
           sparse-checkout: |
             .github/actions
           path: actions
-  
+
       - name: prepare_benchmark_environment
         uses: ./actions/.github/actions/prepare_environment
         with:
@@ -39,18 +39,18 @@ jobs:
             PYOPTSPARSE: 'v2.9.1'
             SNOPT: '7.7'
             OPENMDAO: 'latest'
-            DYMOS: 'latest'  
+            DYMOS: 'latest'
             SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
             SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
             SNOPT_LOCATION_77: ${{ secrets.SNOPT_LOCATION_77 }}
-  
+
       - name: Run benchmarks
         shell: bash -l {0}
         run: |
           echo "============================================================="
           echo "Run Benchmarks"
           echo "============================================================="
-          testflo . --testmatch=bench_test*
+          testflo . --timeout=900 --testmatch=bench_test*
 
       - name: Checkout actions (again)
         uses: actions/checkout@v3

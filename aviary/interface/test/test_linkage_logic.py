@@ -145,7 +145,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
 
         prob.set_initial_guesses()
 
-        prob.failed = prob.run_aviary_problem(run_driver=False, make_plots=False)
+        prob.run_aviary_problem(run_driver=False, make_plots=False)
 
         constraints = prob.model.get_constraints()
 
