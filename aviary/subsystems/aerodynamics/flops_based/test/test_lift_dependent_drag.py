@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_check_partials
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.aerodynamics.flops_based.lift_dependent_drag import \
     LiftDependentDrag
@@ -43,9 +43,10 @@ class LiftDependentDragTest(unittest.TestCase):
         prob.run_model()
 
         derivs = prob.check_partials(out_stream=None, method="cs")
-
-        # TODO: need to test outputs too
         assert_check_partials(derivs, atol=1e-12, rtol=1e-12)
+
+        assert_near_equal(
+            prob.get_val("CD"), [0.01445345, 0.01278088, 0.01124887, 0.00982434, 0.00844742, 0.0], 1e-6)
 
     def test_derivs_inner_interp(self):
 
@@ -79,9 +80,10 @@ class LiftDependentDragTest(unittest.TestCase):
         prob.run_model()
 
         derivs = prob.check_partials(out_stream=None, method="cs")
-
-        # TODO: need to test outputs too
         assert_check_partials(derivs, atol=1e-12, rtol=1e-12)
+
+        assert_near_equal(
+            prob.get_val("CD"), [0.01333307, 0.02305564, 0.0465636, 0.51400999, 0.79391369, 0.82316212], 1e-6)
 
 
 if __name__ == "__main__":

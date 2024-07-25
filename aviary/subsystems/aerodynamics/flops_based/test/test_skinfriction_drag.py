@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_check_partials
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.aerodynamics.flops_based.skin_friction_drag import \
     SkinFrictionDrag
@@ -36,7 +36,8 @@ class SkinFrictionDragTest(unittest.TestCase):
 
         model.add_subsystem(
             'CDf', SkinFrictionDrag(num_nodes=nn, aviary_options=options),
-            promotes_inputs=[Aircraft.Wing.AREA])
+            promotes_inputs=[Aircraft.Wing.AREA],
+            promotes_outputs=['skin_friction_drag_coeff'])
 
         prob.setup(force_alloc_complex=True)
 
@@ -48,11 +49,15 @@ class SkinFrictionDragTest(unittest.TestCase):
         prob.set_val('CDf.laminar_fractions_lower', lam_low)
         prob.set_val(Aircraft.Wing.AREA, 198.0)
 
+        prob.run_model()
+
         derivs = prob.check_partials(out_stream=None, method="cs")
 
         # atol is low because Re magnitude is 1e8.
-        # TODO: need to test outputs too
         assert_check_partials(derivs, atol=1e-7, rtol=1e-12)
+
+        assert_near_equal(
+            prob.get_val('skin_friction_drag_coeff'), [14.91229, 15.01284], 1e-6)
 
     def test_derivs_multiengine(self):
         nn = 2
@@ -80,7 +85,8 @@ class SkinFrictionDragTest(unittest.TestCase):
 
         model.add_subsystem(
             'CDf', SkinFrictionDrag(num_nodes=nn, aviary_options=options),
-            promotes_inputs=[Aircraft.Wing.AREA])
+            promotes_inputs=[Aircraft.Wing.AREA],
+            promotes_outputs=['skin_friction_drag_coeff'])
 
         prob.setup(force_alloc_complex=True)
 
@@ -92,11 +98,15 @@ class SkinFrictionDragTest(unittest.TestCase):
         prob.set_val('CDf.laminar_fractions_lower', lam_low)
         prob.set_val(Aircraft.Wing.AREA, 198.0)
 
+        prob.run_model()
+
         derivs = prob.check_partials(out_stream=None, method="cs")
 
         # atol is low because Re magnitude is 1e8.
-        # TODO: need to test outputs too
         assert_check_partials(derivs, atol=1e-7, rtol=1e-12)
+
+        assert_near_equal(
+            prob.get_val('skin_friction_drag_coeff'), [24.27078, 19.82677], 1e-6)
 
 
 if __name__ == "__main__":
