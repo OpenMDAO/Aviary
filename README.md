@@ -5,7 +5,7 @@
 
 **Check out the Aviary [documentation](https://openmdao.github.io/Aviary/intro.html).**
 
-**[NASA's Aviary Takes Flight](https://ntrs.nasa.gov/citations/20240009217) (Presented at EAA Airventure 2024)**
+**[NASA's Aviary Takes Flight](https://ntrs.nasa.gov/citations/20240009217) (Presented at EAA AirVenture 2024)**
 
 ## Description
 
