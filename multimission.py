@@ -35,7 +35,10 @@ if __name__ == '__main__':
         subcomp = om.SubmodelComp(problem=prob,
                                   inputs=['mission:design:gross_mass'],
                                   outputs=['mission:summary:fuel_burned'])
-        super_prob.model.add_subsystem(f'subcomp_{i}', subcomp)
+        # promoting gross mass to be used as a design var
+        # all problems have same name for gross mass so they are connected
+        super_prob.model.add_subsystem(f'subcomp_{i}', subcomp, promotes_inputs=[
+                                       'mission:design:gross_mass'])
 
     # creating variable strings that will represent fuel burn from each mission
     fuel_burned_vars = [f"fuel_{i}" for i in range(num_missions)]
@@ -48,19 +51,13 @@ if __name__ == '__main__':
         "compound = "+weighted_str), promotes=["compound", *fuel_burned_vars])
 
     # connecting each subcomponent's fuel burn to super problem's unique fuel variables
+    # fuel_0, fuel_1, ... don't have units assigned, #TODO find a solution to specify units
     for i in range(num_missions):
         super_prob.model.connect(f"subcomp_{i}.mission:summary:fuel_burned", f"fuel_{i}")
 
-    # create an output within superprob that connects to each subcomponents gross mass input
-    IVC = super_prob.model.add_subsystem('IVC', om.IndepVarComp(), promotes=['*'])
-    IVC.add_output('gross_mass', val=500e3, units='lbm')
-
     # specify gross mass as a design var
-    super_prob.model.add_design_var('gross_mass', lower=100e3, upper=1000e3, units='lbm')
-
-    # connect gross mass output of super problem to each subcomponent's input gross mass
-    for i in range(num_missions):
-        super_prob.model.connect('gross_mass', f"subcomp_{i}.mission:design:gross_mass")
+    super_prob.model.add_design_var(
+        'mission:design:gross_mass', lower=100e3, upper=1000e3, units='lbm')
 
     super_prob.driver = om.ScipyOptimizeDriver()
     super_prob.driver.options['optimizer'] = 'SLSQP'
@@ -82,7 +79,7 @@ Times (min):   0,    50,   812, 843
    Alt (ft):   0, 29500, 32000,   0
        Mach: 0.3,  0.77,  0.77, 0.3
 Est. Range: 7001 nmi
-Notes: 32k in 30 mins too fast for aviary, climb to low alt then slow rise
+Notes: 32k in 30 mins too fast for aviary, climb to low alt then slow rise through cruise
 
 Intermediate mission phase info:
 Times (min):   0,    50,   560, 590
