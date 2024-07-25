@@ -1,6 +1,6 @@
 # Run Tests
 
-name: Aviary Tests
+name: Test "no dev" install
 
 on:
   # Trigger on push or pull request events for the main branch

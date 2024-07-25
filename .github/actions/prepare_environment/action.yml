@@ -79,6 +79,21 @@ runs:
       shell: bash -l {0}
       run: |
         echo "============================================================="
+        echo "Determine which branch/version of pyoptsparse to install"
+        echo "============================================================="
+        if [[ "${{ inputs.PYOPTSPARSE }}" == "latest" ]]; then
+          function latest_version() {
+            local REPO_URL=$1/releases/latest
+            local LATEST_URL=`curl -fsSLI -o /dev/null -w %{url_effective} $REPO_URL`
+            local LATEST_VER=`echo $LATEST_URL | awk '{split($0,a,"/tag/"); print a[2]}'`
+            echo $LATEST_VER
+          }
+          BRANCH="-b $(latest_version https://github.com/mdolab/pyoptsparse)"
+        else
+          BRANCH="-b ${{ inputs.PYOPTSPARSE }}"
+        fi
+
+        echo "============================================================="
         echo "Install pyoptsparse"
         echo "============================================================="
         if [[ "${{ inputs.SNOPT }}" == "7.7" && "${{ inputs.SNOPT_LOCATION_77 }}" ]]; then
@@ -93,7 +108,7 @@ runs:
         conda config --add channels conda-forge
 
         pip install git+https://github.com/OpenMDAO/build_pyoptsparse
-        build_pyoptsparse -v -b ${{ inputs.PYOPTSPARSE }} $SNOPT
+        build_pyoptsparse -v $BRANCH $SNOPT
 
     - name: Install OpenMDAO
       if: inputs.OPENMDAO
@@ -149,4 +164,3 @@ runs:
         name: ${{ inputs.NAME }}_environment
         path: ${{ inputs.NAME }}_environment.yml
         retention-days: 5
-        
