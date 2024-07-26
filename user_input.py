@@ -97,24 +97,91 @@ def Open():
                 else:
                     try: fixed = float(fixed)
                     except ValueError: pass
-
                 variable = StringVar(value=name)
                 if variable.get() == list_keys[i]:
                     file_contents[variable.get()]=fixed
                 else: pass
-
     for i in range(len(list_keys)):   
         check=0
-        for key in file_contents:
+        for key in file_contents.keys():
             if list_keys[i] == key:
                 check+=1
                 file_data.append(file_contents[key])
-                box.append(1)
             else: pass
         if check != 1:
             file_data.append(list_values[i]["default_value"])
-            box.append(1)
-    
+def Openextra():
+    file_ = filedialog.askopenfilename(title = "Select a Model",
+                                          filetypes = (('All files', '*'),))
+    file_name.set(file_)
+    file = open(file_)
+    for line in file:
+        line = line.strip()
+        for i in range(len(list_keys)):
+            if ',' in line:
+                name = line.split(',')[0]
+                numbers = line.split(',')[1:]
+                if len(numbers) > 1:
+                    fixed = numbers[:-1][0]
+                else:
+                    fixed = numbers[0]
+                if "[" in fixed and "]" in fixed:
+                    temp = fixed.replace("[","").replace("]","")
+                    fixed = [float(num) for num in temp.split(",")]
+                elif "," in fixed:
+                    for num in fixed.split(","):
+                        num = float(num)
+                elif "FALSE" in fixed.upper() or "TRUE" in fixed.upper():
+                    fixed = fixed
+                else:
+                    try: fixed = float(fixed)
+                    except ValueError: pass
+                variable = StringVar(value=name)
+                if variable.get() == list_keys[i]:
+                    file_contents[variable.get()]=fixed
+                else: pass
+    for i in range(len(list_keys)):   
+        check=0
+        for key in file_contents.keys():
+            if list_keys[i] == key:
+                check+=1
+                file_data.append(file_contents[key])
+            else: pass
+        if check != 1:
+            file_data.append(list_values[i]["default_value"])
+    cont=[]
+    x=[]
+    old=''
+    for k in file_contents.keys():
+        if ':' in k:
+            name=k.split(':')[1]
+            if old==name:
+                continue
+            else:
+                cont.append(name)
+        else:
+            name=k
+            if old==name:
+                continue
+            else:
+                cont.append(name)
+        old=name
+    for n in name_each_subhead:
+        for i in cont:
+            if n==i:
+                x.append('y')
+                break
+        else:
+            x.append('n')
+    for i in range(len(name_each_subhead)):
+        if headers[i] == 'aircraft' and x[i]=='y':
+            fxn(i,frame1)
+        elif headers[i] == 'dynamic'and x[i]=='y':
+            fxn(i,frame2)
+        elif headers[i] == 'mission'and x[i]=='y':
+            fxn(i,frame3)
+        elif headers[i] == "settings"and x[i]=='y':
+            fxn(i,frame4)
     return file_contents, file_name, file_data
 
 filesaveas=StringVar(value='Aircraft_Model.csv')
@@ -134,7 +201,10 @@ def Instructions():
     message =   'This tool can be used to help input information about an aircraft model.\n\n'+\
                 'Enter in the desired values for your model and press "Submit" to generate '+\
                 'a CSV named "Aircraft_Model" which can be used at Levels 1 and 2 of Aviary.\n\n'+\
-                'Use "Edit"->"Open" to continue editing a previously defined model.\n'+\
+                '**Not all values are required to successfully optimize a given model**\n\n'+\
+                'Use "Edit"->"Open" to open a previously defined model to continue editing.\n'+\
+                'Use "Edit"->"Open & Display" to open a previously defined model and all instances where edits were made\n'+\
+                '*Larger files may cause the interface to run slower\n'+\
                 'Use "Edit"->"Save" to submit your entries to a CSV file (this has the same effect '+\
                 'as the "Submit" button).\n'+\
                 'Use "Edit"->"Save as..." to save the file and all new commits to a new file name/location.\n'+\
@@ -145,7 +215,7 @@ def Instructions():
                 'Use the "Search" button to find a variable name and "Clear" to clear searched results\n'+\
                 '*When searching for a variable, the name must be the last term in the string '+\
                 'i.e: "*:*:variable_name" (when applicable)\n'+\
-                '*Values entered in for a variable and then cleared using the "Clear" button WILL save'
+                '*Values entered in for a variable and then cleared using the "Clear" button will still save'
     messagebox.showinfo(title='Instructions', message=message)
 
 def About():
@@ -387,6 +457,7 @@ Clear_button.grid(row=3, column=2)
 menubar = Menu(root)
 filemenu = Menu(menubar, tearoff=0)
 filemenu.add_command(label='Open', command=Open)
+filemenu.add_command(label='Open & Display', command=Openextra)
 filemenu.add_command(label='Save', command=info)
 filemenu.add_command(label='Save as...', command=Saveas)
 filemenu.add_separator()
