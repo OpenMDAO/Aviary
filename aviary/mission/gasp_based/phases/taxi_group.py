@@ -17,7 +17,12 @@ class TaxiSegment(BaseODE):
         self.add_subsystem("params", ParamPort(), promotes=["*"])
 
         self.add_subsystem(
-            name='atmosphere', subsys=Atmosphere(num_nodes=1), promotes=['*']
+            name='atmosphere',
+            subsys=Atmosphere(num_nodes=1),
+            promotes=[
+                '*',
+                (Dynamic.Mission.ALTITUDE, Mission.Takeoff.AIRPORT_ALTITUDE),
+            ],
         )
 
         add_opts2vals(self, create_opts2vals(

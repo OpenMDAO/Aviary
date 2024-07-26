@@ -1350,6 +1350,9 @@ class LowSpeedAero(om.Group):
             types=bool,
             desc="True to start with flaps applied, False for reverse",
         )
+        # TODO this option does not really exist for LowSpeed and should be renamed
+        # (the value of having identical option set to cruise aero not worth the added
+        #  confusion of having a mislabeled option here)
         self.options.declare(
             "output_alpha",
             default=False,

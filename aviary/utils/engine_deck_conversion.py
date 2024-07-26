@@ -231,7 +231,7 @@ def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
 
             prob.model.add_subsystem(
                 name='atmosphere',
-                subsys=Atmosphere(len(data[MACH])),
+                subsys=Atmosphere(num_nodes=len(data[MACH])),
                 promotes_inputs=[Dynamic.Mission.ALTITUDE],
                 promotes_outputs=[Dynamic.Mission.TEMPERATURE],
             )

@@ -33,7 +33,8 @@ class LandingSegment(BaseODE):
             name='atmosphere',
             subsys=Atmosphere(num_nodes=1, input_speed_type=SpeedType.MACH),
             promotes_inputs=[
-                (Dynamic.Mission.ALTITUDE, Mission.Landing.INITIAL_ALTITUDE)
+                (Dynamic.Mission.ALTITUDE, Mission.Landing.INITIAL_ALTITUDE),
+                (Dynamic.Mission.MACH, Mission.Landing.INITIAL_MACH),
             ],
             promotes_outputs=[
                 (Dynamic.Mission.DENSITY, "rho_app"),
