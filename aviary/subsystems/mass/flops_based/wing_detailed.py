@@ -49,7 +49,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.STRUT_BRACING_FACTOR, val=0.0)
 
         add_aviary_input(self, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, val=0.0)
-
+        
         if  total_num_wing_engines > 0:
             add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS,
                          val=np.zeros(int(total_num_wing_engines/2)))
