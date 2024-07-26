@@ -159,11 +159,11 @@ p.driver = om.ScipyOptimizeDriver()
 p.driver.options['optimizer'] = 'SLSQP'
 p.driver.declare_coloring()
 
-kes = [4e5, 5e5, 6e5]
+kes = [4e5, 5e5]
 # 2:1 ratio (or 1:2) causes results that essentially don't optimize the 1 mission,
 # 1.01 works, 1.009 doesn't
 # 2:1:1 works?! - may be related some normalization/bounds issue
-weights = [2.1, 1.5, 1.1]
+weights = [1, 1]
 num_trajs = len(kes)
 
 p.model.add_subsystem(f"sizing_comp", CannonballSizing(),
