@@ -232,10 +232,11 @@ def flops_validation_test(prob: om.Problem,
 
     # TODO: Currently no BWB validation data.
     # For BWBs, skip the validation test, but do check the partials.
+    check_values_in = check_values
     check_values = (
         check_values and version is not Version.BWB
     )
-    if not check_values:
+    if not check_values and check_values_in:
         warnings.warn('Not checking values because validation data not available.')
 
     do_validation_test(prob=prob,
