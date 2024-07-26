@@ -71,8 +71,9 @@ class CharacteristicLengthsTest(unittest.TestCase):
         assert_near_equal(fineness, expected_fineness, tolerance=1e-10)
 
         # getting nan for undefined partials?
-        # partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        # assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
+        # don't see nan anymore.
+        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
 
     def test_IO(self):
         assert_match_varnames(self.prob.model)

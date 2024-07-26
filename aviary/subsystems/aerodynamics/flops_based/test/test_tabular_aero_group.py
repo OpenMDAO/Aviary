@@ -266,6 +266,12 @@ class ComputedVsTabularTest(unittest.TestCase):
 
         assert_near_equal(tabular_drag, computed_drag, 0.005)
 
+        partial_data = prob.check_partials(
+            out_stream=None, method="cs", step=1.1e-40)
+        assert_check_partials(
+            partial_data, atol=1e-9, rtol=1e-12
+        )
+
 
 # region - hardcoded data from large_single_aisle_1 (fixed alt cruise variant) FLOPS model
 def _default_CD0_data():
