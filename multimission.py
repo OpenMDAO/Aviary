@@ -75,7 +75,8 @@ if __name__ == '__main__':
         prob.set_initial_guesses()
 
     dm.run_problem(super_prob)
-
+    print(super_prob.check_partials())
+    # om.n2(super_prob)
 
 """
 Ferry mission phase info:

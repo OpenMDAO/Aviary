@@ -1,4 +1,3 @@
-from os import stat
 import numpy as np
 from scipy.interpolate import interp1d
 import matplotlib.pyplot as plt
@@ -191,9 +190,18 @@ ranges = [f"r{i}" for i in range(num_trajs)]
 weighted_sum_str = "+".join([f"{weight}*{r}" for r, weight in zip(ranges, weights)])
 p.model.add_subsystem('compoundComp', om.ExecComp("compound_range="+weighted_sum_str),
                       promotes=['compound_range', *ranges])
-
 for i in range(num_trajs):
-    p.model.connect(f"traj_{i}.descent.states:r", ranges[i], src_indices=-1)
+    p.model.connect(f"traj_{i}.descent.states:r", f'r{i}', src_indices=-1)
+# p.model.add_subsystem('compoundComp',
+#                       om.ExecComp("compound_range=dot(ranges,weights)",
+#                                   weights={'val': weights},
+#                                   ranges={'val': np.ones(num_trajs), 'units': 'm'}),
+#                       promotes=['compound_range', 'ranges', 'weights'])
+
+# gg = [f'traj_{i}.descent.states:r' for i in range(num_trajs)]
+# p.model.connect(gg, 'ranges', src_indices=-1)
+# for i in range(num_trajs):
+#     p.model.connect(f"traj_{i}.descent.states:r", f'ranges[{i}]', src_indices=-1)
 
 p.model.add_objective('compound_range', scaler=-1)
 
