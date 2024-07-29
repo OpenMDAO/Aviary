@@ -216,14 +216,15 @@ def get_run_status(status_filepath):
 
 def create_report_frame(format, text_filepath, documentation):
     """
-    Create a Panel Pane that contains an embedded external file in HTML, Markdown, or text format.
+    Create a Panel Pane that contains an embedded external file in HTML, Markdown, or text format,
+    or a simple message in HTML format.
 
     Parameters
     ----------
     format : str
-        Format of the file to be embedded. Options are 'html', 'text', 'markdown'.
-    text_file_name : str
-        Name of the report text file.
+        Format of the file to be embedded. Options are 'html', 'text', 'markdown', 'simple_message'.
+    text_filepath : str
+        Path to the report text file or message if format is 'simple_message'.
     documentation : str
         Explanation of what this tab is showing.
 
@@ -233,15 +234,16 @@ def create_report_frame(format, text_filepath, documentation):
         A Panel Pane object to be displayed in the dashboard. Or None if the file
         does not exist.
     """
-    if os.path.exists(text_filepath):
+    if format == "simple_message":
+        report_pane = pn.Column(
+            pn.pane.HTML(f"<p>{documentation}</p>", styles={'text-align': 'left'}),
+            pn.pane.HTML(f"<p>{text_filepath}</p>", styles={'text-align': 'left'})
+        )
+    elif os.path.exists(text_filepath):
         if format == "html":
             iframe_css = 'width=1200px height=800px overflow-x="scroll" overflow="scroll" margin=0px padding=0px border=20px frameBorder=20px scrolling="yes"'
-            report_pane = pn.pane.HTML(
-                f"<p>{documentation}</p><iframe {iframe_css} src=/home/{text_filepath}></iframe>"
-            )
             report_pane = pn.Column(
-                pn.pane.HTML(f"<p>{documentation}</p>",
-                             styles={'text-align': documentation_text_align}),
+                pn.pane.HTML(f"<p>{documentation}</p>", styles={'text-align': 'left'}),
                 pn.pane.HTML(f"<iframe {iframe_css} src=/home/{text_filepath}></iframe>")
             )
         elif format in ["markdown", "text"]:
@@ -254,11 +256,9 @@ def create_report_frame(format, text_filepath, documentation):
             elif format == "text":
                 report_pane = pn.pane.Markdown(f"```\n{file_text}\n```\n")
             report_pane = pn.Column(
-                pn.pane.HTML(f"<p>{documentation}</p>",
-                             styles={'text-align': documentation_text_align}),
+                pn.pane.HTML(f"<p>{documentation}</p>", styles={'text-align': 'left'}),
                 report_pane
             )
-
         else:
             raise RuntimeError(f"Report format of {format} is not supported.")
     else:
@@ -688,6 +688,12 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
                 issue_warning(
                     f'Unable to create aircraft 3D model display due to error {e}'
                 )
+                error_pane = create_report_frame(
+                    "simple_message", f"Unable to create aircraft 3D model display due to error: {e}",
+                    "Error"
+                )
+                if error_pane:
+                    results_tabs_list.append(("Aircraft 3d model", error_pane))
 
     # Make the Aviary variables table pane
     if os.path.exists(problem_recorder):
