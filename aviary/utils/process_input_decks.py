@@ -376,7 +376,7 @@ def initial_guessing(aircraft_values: AviaryValues, initial_guesses, engine_buil
 
     try:
         total_thrust = aircraft_values.get_val(
-        Aircraft.Engine.SCALED_SLS_THRUST, 'lbf') * aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)
+            Aircraft.Engine.SCALED_SLS_THRUST, 'lbf') * aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)
     except KeyError:
         # Multi-engine-model case. Get thrust from the engine decks instead.
         total_thrust = 0
