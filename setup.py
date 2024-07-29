@@ -55,6 +55,7 @@ setup(
             "validation_cases/validation_data/flops_data/engine_only/*.deck",
             "utils/legacy_code_data/*default_values*",
             "utils/test/*",
+            "utils/test/data/*",
             "models/engines/*.deck",
             "models/engines/*.txt",
             "models/engines/*.eng",

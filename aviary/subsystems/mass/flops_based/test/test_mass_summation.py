@@ -11,7 +11,7 @@ from aviary.validation_cases.validation_tests import (Version,
                                                       get_flops_case_names,
                                                       get_flops_inputs,
                                                       print_case)
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.preprocessors import preprocess_propulsion
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
@@ -171,6 +171,8 @@ class StructureMassTest(unittest.TestCase):
 
         options.set_val(Aircraft.Engine.NUM_ENGINES, 4)
         options.set_val(Aircraft.Engine.DATA_FILE, 'models/engines/turbofan_28k.deck')
+        # suppress some warning messages about required option for EngineDecks
+        options.set_val(Settings.VERBOSITY, 0)
         engineModel1 = EngineDeck(options=options)
         options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
         engineModel2 = EngineDeck(options=options)
