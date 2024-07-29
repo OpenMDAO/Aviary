@@ -61,6 +61,14 @@ jobs:
           echo "============================================================="
           testflo . -n 1 --timeout=200 --show_skipped --coverage --coverpkg aviary
 
+      - name: Checkout actions (again)
+        if: failure()
+        uses: actions/checkout@v3
+        with:
+          sparse-checkout: |
+            .github/actions
+          path: actions
+
       - name: Send Email on failed tests
         if: failure()
         uses: ./actions/.github/actions/send_email
@@ -75,10 +83,3 @@ jobs:
               "title": "${{ github.event.pull_request.title }}",
               "action": "${{ github.event.action }}"
             }
-
-      - name: Checkout actions (again)
-        uses: actions/checkout@v3
-        with:
-          sparse-checkout: |
-            .github/actions
-          path: actions

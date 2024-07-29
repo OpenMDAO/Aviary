@@ -5,13 +5,6 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission
 
-_fuse_count = 'TBD:option:fuselage_count'
-_fuse_total_length = 'aircraft:fuselage:dimensions:total_length'
-_fuse_max_depth = 'aircraft:fuselage:dimensions:max_depth'
-_max_mach = 'aircraft:design:dimensions:max_mach'
-_carrier_based = 'carrier_based'  # TODO: options can't use : in the name
-_avionics_group_mass = 'TBD:avionics'
-
 
 class TransportAvionicsMass(om.ExplicitComponent):
     '''
