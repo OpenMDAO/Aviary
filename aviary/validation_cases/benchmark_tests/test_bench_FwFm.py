@@ -404,3 +404,6 @@ class TestBenchFwFmParallel(ProblemPhaseTestCase):
 
 if __name__ == '__main__':
     unittest.main()
+    # test = TestBenchFwFmSerial()
+    # test.setUp()
+    # test.test_bench_FwFm_SNOPT()

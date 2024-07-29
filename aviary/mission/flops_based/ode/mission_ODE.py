@@ -90,21 +90,6 @@ class MissionODE(om.Group):
             promotes=['*'],
         )
 
-        # add an execcomp to compute velocity based off mach and sos
-        # self.add_subsystem(
-        #     name='velocity_comp',
-        #     subsys=om.ExecComp(
-        #         'velocity = mach * sos',
-        #         mach={'units': 'unitless', 'shape': (nn,)},
-        #         sos={'units': 'm/s', 'shape': (nn,)},
-        #         velocity={'units': 'm/s', 'shape': (nn,)},
-        #         has_diag_partials=True,
-        #     ),
-        #     promotes_inputs=[('mach', Dynamic.Mission.MACH),
-        #                      ('sos', Dynamic.Mission.SPEED_OF_SOUND)],
-        #     promotes_outputs=[('velocity', Dynamic.Mission.VELOCITY)],
-        # )
-
         # add execcomp to compute velocity_rate based off mach_rate and sos
         self.add_subsystem(
             name='velocity_rate_comp',
