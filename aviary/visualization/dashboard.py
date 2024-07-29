@@ -475,7 +475,8 @@ def create_aircraft_3d_file(recorder_file, reports_dir, outfilepath):
     )
 
     aircraft_3d_model = Aircraft3DModel(recorder_file)
-
+    aircraft_3d_model.read_variables()
+    aircraft_3d_model.get_aframe_markup()
     aircraft_3d_model.write_file(aircraft_3d_template_filepath, outfilepath)
 
 
