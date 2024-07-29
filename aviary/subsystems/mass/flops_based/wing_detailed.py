@@ -49,13 +49,13 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.STRUT_BRACING_FACTOR, val=0.0)
 
         add_aviary_input(self, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, val=0.0)
-        
-        if  total_num_wing_engines > 0:
+
+        if total_num_wing_engines > 0:
             add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS,
-                            val=np.zeros(int(total_num_wing_engines/2)))
+                             val=np.zeros(int(total_num_wing_engines / 2)))
         else:
             add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS,
-                            val=[[0.0]])
+                             val=[[0.0]])
 
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, val=0.0)
 
@@ -149,18 +149,18 @@ class DetailedWingBendingFact(om.ExplicitComponent):
             chord_int_stations *= arref / ar
 
         del_load = dy * (
-            chord_int_stations[:-1] * (2*load_intensity[:-1] + load_intensity[1:]) +
-            chord_int_stations[1:] * (2*load_intensity[1:] + load_intensity[:-1])) / 6
+            chord_int_stations[:-1] * (2 * load_intensity[:-1] + load_intensity[1:]) +
+            chord_int_stations[1:] * (2 * load_intensity[1:] + load_intensity[:-1])) / 6
 
         el = np.sum(del_load)
 
         del_moment = dy**2 * (
-            chord_int_stations[:-1] * (load_intensity[:-1]+load_intensity[1:]) +
-            chord_int_stations[1:] * (3*load_intensity[1:]+load_intensity[:-1])) / 12
+            chord_int_stations[:-1] * (load_intensity[:-1] + load_intensity[1:]) +
+            chord_int_stations[1:] * (3 * load_intensity[1:] + load_intensity[:-1])) / 12
 
         load_path_length = np.flip(
             np.append(np.zeros(1, chord.dtype), np.cumsum(np.flip(del_load)[:-1])))
-        csw = 1. / np.cos(sweep_int_stations[:-1] * np.pi/180.)
+        csw = 1. / np.cos(sweep_int_stations[:-1] * np.pi / 180.)
         emi = (del_moment + dy * load_path_length) * csw
         # em = np.sum(emi)
 
@@ -187,8 +187,8 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         else:
             caya = ar - 5.0
 
-        bt = btb / (ar**(0.25*fstrt) * (1.0 + (0.5*faert - 0.16*fstrt)
-                    * sa**2 + 0.03*caya * (1.0-0.5*faert)*sa))
+        bt = btb / (ar**(0.25 * fstrt) * (1.0 + (0.5 * faert - 0.16 * fstrt)
+                    * sa**2 + 0.03 * caya * (1.0 - 0.5 * faert) * sa))
         outputs[Aircraft.Wing.BENDING_FACTOR] = bt
 
         inertia_factor = np.zeros(num_engine_type, dtype=chord.dtype)
@@ -199,7 +199,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         # i is the counter for which engine model we are checking
         for i in range(num_engine_type):
             # idx2 is the last index for the range of engines of this type
-            idx2 = idx + int(num_wing_engines[i]/2)
+            idx2 = idx + int(num_wing_engines[i] / 2)
             if num_wing_engines > 0:
                 eng_loc = engine_locations[idx:idx2][0]
             else:
@@ -244,4 +244,3 @@ class DetailedWingBendingFact(om.ExplicitComponent):
             inertia_factor_prod = 0.84
 
         outputs[Aircraft.Wing.ENG_POD_INERTIA_FACTOR] = inertia_factor_prod
-        
