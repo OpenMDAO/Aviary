@@ -3,7 +3,9 @@
 [![All Contributors](https://img.shields.io/badge/all_contributors-17-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-**Check out the Aviary documentation [here](https://openmdao.github.io/Aviary/intro.html).**
+**Check out the Aviary [documentation](https://openmdao.github.io/Aviary/intro.html).**
+
+**[NASA's Aviary Takes Flight](https://ntrs.nasa.gov/citations/20240009217) (Presented at EAA AirVenture 2024)**
 
 ## Description
 
