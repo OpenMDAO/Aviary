@@ -5,6 +5,7 @@ Aircraft csv: defines plane, but also defines payload (passengers, cargo) which 
     These will have to be specified in some alternate way such as a list correspond to mission #
 Phase info: defines a particular mission, will have multiple phase infos
 """
+import sys
 import warnings
 import aviary.api as av
 import openmdao.api as om
@@ -38,6 +39,11 @@ if __name__ == '__main__':
     probs = []
     prefix = "problem_"
 
+    makeN2 = False
+    if len(sys.argv) > 1:
+        if "n2" in sys.argv:
+            makeN2 = True
+
     # define individual aviary problems
     for i, (plane, phase_info) in enumerate(zip(planes, phase_infos)):
         prob = av.AviaryProblem()
@@ -46,7 +52,7 @@ if __name__ == '__main__':
         prob.add_pre_mission_systems()
         traj = prob.add_phases()  # save dymos traj to add to super problem as a subsystem
         prob.add_post_mission_systems()
-        prob.link_phases()
+        prob.link_phases()  # this is half working / connect statements from outside of traj to inside are failing
         prob.problem_type = ProblemType.ALTERNATE  # adds summary gross mass as design var
         prob.add_design_variables()
         probs.append(prob)
@@ -104,7 +110,10 @@ if __name__ == '__main__':
     super_prob.model.add_objective('compound')  # output from execcomp goes here
 
     setupprob(super_prob)
-    om.n2(super_prob, outfile="multi_mission_importTraj_N2.html")  # create N2 diagram
+    if makeN2:
+        om.n2(super_prob, outfile="multi_mission_importTraj_N2.html")  # create N2 diagram
+
+    # cannot use this b/c initial guesses (i.e. setval func) has to be called on super prob level
     # for prob in probs:
     #     # prob.setup()
     #     prob.set_initial_guesses()

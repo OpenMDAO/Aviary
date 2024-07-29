@@ -208,14 +208,7 @@ class CannonballSizing(om.ExplicitComponent):
         partials['price', 'radius'] = 4. * density * np.pi * radius ** 2 * 10
 
 
-# if run as python avcannonball.py n2, it will create an N2
-makeN2 = False
-if len(sys.argv) > 1:
-    if "n2" in sys.argv[1].lower():
-        makeN2 = True
-
-
-def runAvCannonball(kes=[4e3], weights=[1]):
+def runAvCannonball(kes=[4e3], weights=[1], makeN2=False):
     # handling of multiple KEs
     # if fewer weights present than KEs, use same weight
     if len(kes) > len(weights):
@@ -397,41 +390,90 @@ def plotOutput(super_prob, prefix, num_trajs, kes, weights, show=True):
     return timevals, rvals, hvals
 
 
-if __name__ == '__main__':
-    testing_weights = [[3, 2, 2], [2, 2, 3]]
-    kes = [4e5, 5e5, 6e5]
+def multiTestCase(makeN2=False):
+    testing_weights = [[2, 1.2], [1.2, 2]]
+    kes = [1e5, 6e5]
     legendlst = []
     rs, hs = [], []
-    for i, weighting in enumerate(testing_weights):
+    for weighting in testing_weights:
         super_prob, prefix, num_trajs, kes, weights = runAvCannonball(
-            kes=kes, weights=weighting)
+            kes=kes, weights=weighting, makeN2=makeN2)
         printOutput(super_prob, prefix, num_trajs, kes, weights)
         tvals, rvals, hvals = plotOutput(
             super_prob, prefix, num_trajs, kes, weights, show=False)
 
-        for r, h, weight in zip(rvals, hvals, weighting):
+        for r, h, weight, ke in zip(rvals, hvals, weighting, kes):
             rs.append(r)
             hs.append(h)
-            legendlst.append(f"Group: {weighting}, Weight: {weight}")
+            legendlst.append(f"KE: {ke/1e3} kJ, Weight: {weight} of {weighting}")
 
     _, ax = plt.subplots()
     for r, h in zip(rs, hs):
         ax.plot(r, h)
     plt.grid()
-    plt.legend(legendlst)
-    plt.title(f"Cannonballs With KEs: {kes} J")
+    plt.legend(legendlst, loc='upper left')
+    titlestr = ", ".join([str(ke/1e3) for ke in kes])
+    plt.title(f"Cannonballs With KEs: {titlestr} kJ")
     plt.show()
+
+
+if __name__ == '__main__':
+    # if run as python avcannonball.py n2, it will create an N2
+    makeN2 = False
+    singlerun = True
+    if len(sys.argv) > 1:
+        if "n2" in sys.argv:
+            makeN2 = True
+        if "multi" in sys.argv:
+            # runs multiple weightings to see what impact system optimization makes
+            multiTestCase(makeN2)
+            singlerun = False
+
+    if singlerun:
+        # singular weighting run
+        super_prob, prefix, num_trajs, kes, weights = runAvCannonball(
+            kes=[4e5, 6e5], weights=[2, 1.5], makeN2=makeN2)
+        printOutput(super_prob, prefix, num_trajs, kes, weights)
+        plotOutput(super_prob, prefix, num_trajs, kes, weights)
 
 
 """
 Findings:
-- connections between trajectory parameters and pre-mission parameters have to be made at
-  super problem level, running the cannonballproblem method to form those connections has seemingly
-  no effect, causing divide by zero errors b/c the trajectory value is not set 
+- connections between trajectory parameters and pre-mission parameters (and post-mission for aviary)
+  have to be made at super problem level, running the cannonballproblem method to form those connections
+  has seemingly no effect, causing divide by zero errors b/c the trajectory value is not set 
 
 - design var has to be set in super problem, cannonballproblem design var is not manipulated by optimizer,
   giving a result with the default value for ball radius
 
 - initial values have to be set at super problem level, running cannonballproblem's initial value function
   throws error that setval cannot run before setup (even though superproblem setup was run). 
-"""
+
+What works:
+- copying instances of pre, traj, and post mission subsystems and adding to a super problem
+- internal linkages between trajectory phases works without super problem references
+- compound objective between multiple trajectories works
+- connections between 2 problems to maintain same physical size of cannonball (i.e. airplane)
+- optimization runs, gives sensible results
+  
+To apply to Aviary:
+- link_phases (includes connections to post/pre and traj)
+- add_design_vars - sizing components, subsystem level variables 
+  (aviary currently adds aero, prop des vars along with any external subsystem)
+- set_initial_guesses 
+
+Next setps:
+- multi_mission specific add des var that adds them at super prob level
+  - aviary's design var can still be run at the aviaryProblem level it just won't have any effect
+
+- multi_mission link phases that does post/pre to traj connection
+  - aviary's link phases can still be run it just won't create trajectory to pre mission var connections
+  - be careful with connections vs. promotions
+
+- initial guesses, what's the best solution?
+  - possible ideas:
+    - use aviary's existing functions to create initial values, but use set val outside on super prob
+       - would require minimal mods to aviary to not run set val when a flag is passed
+    - write a fully seperate initial guesses function
+       - would be problematic to maintain with changes/new additions
+  """
