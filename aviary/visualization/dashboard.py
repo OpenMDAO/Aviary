@@ -686,7 +686,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
                     results_tabs_list.append(("Aircraft 3d model", aircraft_3d_pane))
             except Exception as e:
                 issue_warning(
-                    f"Unable to create aircraft 3D model display due to error {e}"
+                    f'Unable to create aircraft 3D model display due to error "{e}"'
                 )
 
     # Make the Aviary variables table pane
@@ -722,7 +722,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
             results_tabs_list.append(("Aviary Variables", aviary_vars_pane))
         except Exception as e:
             issue_warning(
-                f"Unable to create Aviary Variables tab in dashboard due to the error: {str(e)}"
+                f'Unable to create Aviary Variables tab in dashboard due to the error: "{e}"'
             )
 
     # Mission Summary
