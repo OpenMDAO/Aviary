@@ -151,7 +151,7 @@ class TakeoffGroupTest(unittest.TestCase):
             self.prob[Mission.Takeoff.FINAL_ALTITUDE], 35, tol)  # ft
 
         partial_data = self.prob.check_partials(
-            out_stream=None, excludes=['*.USatm'], method="cs")
+            out_stream=None, excludes=['*.standard_atmosphere'], method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
