@@ -1,3 +1,5 @@
+# Cannonball Multi Mission Example with Aviary-esque setup
+# Each mission is defined as a "CannonballProblem", akin to AviaryProblem
 from dymos.models.atmosphere.atmos_1976 import USatm1976Data
 from scipy.interpolate import interp1d
 import matplotlib.pyplot as plt

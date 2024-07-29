@@ -24,6 +24,25 @@ num_missions = len(weights)
 # "comp?.a can be used to reference multiple comp1.a comp2.a etc"
 
 
+class MultiMissionProblem(om.Problem):
+    def __init__(self):
+        super().__init__()
+        self.model.add_subsystem()
+
+    def add_design_variable():
+        pass
+
+    def link_pre_post_traj():
+        pass
+
+    def set_initial_values():
+        pass
+
+
+def add_design_var():
+    pass
+
+
 def setupprob(super_prob):
     # Aviary's problem setup wrapper uses these ignored warnings to suppress
     # some warnings related to variable promotion. Replicating that here with

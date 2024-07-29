@@ -1,3 +1,6 @@
+# Cannonball Multi Mission Example
+# A single openMDAO problem is populated with Sizing (pre-mission)
+# and Trajectory subsystems (any number of missions)
 import numpy as np
 from scipy.interpolate import interp1d
 import matplotlib.pyplot as plt
