@@ -52,10 +52,10 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         
         if  total_num_wing_engines > 0:
             add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS,
-                         val=np.zeros(int(total_num_wing_engines/2)))
+                            val=np.zeros(int(total_num_wing_engines/2)))
         else:
             add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS,
-                         val=[[0.0]])
+                            val=[[0.0]])
 
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, val=0.0)
 
@@ -200,7 +200,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         for i in range(num_engine_type):
             # idx2 is the last index for the range of engines of this type
             idx2 = idx + int(num_wing_engines[i]/2)
-            if num_wing_engines>0:
+            if num_wing_engines > 0:
                 eng_loc = engine_locations[idx:idx2][0]
             else:
                 eng_loc = engine_locations[idx:idx2]
@@ -218,7 +218,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
 
                 delme = dy * eel[1:]
 
-                if num_wing_engines>0:
+                if num_wing_engines > 0:
                     delme[loc[-1]] = engine_locations[idx:idx2][0] - \
                         integration_stations[loc[-1]]
                 else:
@@ -244,3 +244,4 @@ class DetailedWingBendingFact(om.ExplicitComponent):
             inertia_factor_prod = 0.84
 
         outputs[Aircraft.Wing.ENG_POD_INERTIA_FACTOR] = inertia_factor_prod
+        
