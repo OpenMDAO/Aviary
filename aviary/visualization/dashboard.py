@@ -12,7 +12,8 @@ from typing import (
     Iterator,
     Tuple,
 )
-import warnings  # Use typing.List and typing.Tuple for compatibility
+import warnings
+import zipfile  # Use typing.List and typing.Tuple for compatibility
 
 import numpy as np
 from bokeh.palettes import Category10
@@ -88,6 +89,7 @@ def _dashboard_setup_parser(parser):
     parser.add_argument(
         "script_name",
         type=str,
+        nargs="*",
         help="Name of aviary script that was run (not including .py).",
     )
 
@@ -122,6 +124,18 @@ def _dashboard_setup_parser(parser):
         help="show debugging output",
     )
 
+    parser.add_argument("--save",
+                        nargs='?',
+                        const=True,
+                        default=False,
+                        help="Name of zip file in which dashboard files are saved. If no argument given, use the script name to name the zip file",
+                        )
+
+    parser.add_argument("--force",
+                        action='store_true',
+                        help="When displaying data from a shared zip file, if the directory in the reports directory exists, overrite if this is True",
+                        )
+
 
 def _dashboard_cmd(options, user_args):
     """
@@ -134,6 +148,49 @@ def _dashboard_cmd(options, user_args):
     user_args : list of str
         Args to be passed to the user script.
     """
+
+    if options.save and not options.script_name:
+        if options.save is not True:
+            options.script_name = options.save
+            options.save = True
+
+    if not options.script_name:
+        raise argparse.ArgumentError("script_name argument missing")
+
+    if isinstance(options.script_name, list):
+        options.script_name = options.script_name[0]
+
+    # check to see if options.script_name is a zip file
+    # if yes, then unzip into reports directory and run dashboard on it
+    if zipfile.is_zipfile(options.script_name):
+        report_dir_name = Path(options.script_name).stem
+        report_dir_path = Path("reports") / report_dir_name
+        # need to check to see if that directory already exists
+        if not options.force and report_dir_path.is_dir():
+            raise RuntimeError(
+                f"The reports directory {report_dir_name} already exists. If you wish to overrite the existing directory, use the --force option")
+        if report_dir_path.is_dir():  # need to delete it. The unpacking will just add to what is there, not do a clean unpack
+            shutil.rmtree(report_dir_path)
+
+        shutil.unpack_archive(options.script_name, f"reports/{report_dir_name}")
+        dashboard(
+            report_dir_name,
+            options.problem_recorder,
+            options.driver_recorder,
+            options.port,
+        )
+        return
+
+    # Save the dashboard files to a zip file that can be shared with others
+    if options.save is not False:
+        if options.save is True:
+            save_filename_stem = options.script_name
+        else:
+            save_filename_stem = Path(options.save).stem
+        print(f"Saving to {save_filename_stem}.zip")
+        shutil.make_archive(save_filename_stem, "zip", f"reports/{options.script_name}")
+        return
+
     dashboard(
         options.script_name,
         options.problem_recorder,
@@ -299,19 +356,18 @@ def create_aviary_variables_table_data_nested(script_name, recorder_file):
         explicit=True,
         implicit=True,
         val=True,
-        residuals=True,
+        residuals=False,
         residuals_tol=None,
         units=True,
-        shape=True,
-        bounds=True,
-        desc=True,
+        shape=False,
+        bounds=False,
+        desc=False,
         scaling=False,
-        hierarchical=True,
-        print_arrays=True,
+        hierarchical=False,
+        print_arrays=False,
         out_stream=None,
         return_format="dict",
     )
-
     sorted_abs_names = sorted(outputs.keys())
 
     grouped = {}
@@ -804,6 +860,23 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
     high_level_tabs.append(("Model", model_tabs))
     high_level_tabs.append(("Optimization", optimization_tabs))
     tabs = pn.Tabs(*high_level_tabs, stylesheets=["assets/aviary_styles.css"])
+
+    save_dashboard_button = pn.widgets.Button(
+        name="Save Dashboard",
+        width_policy="min",
+        css_classes=["save-button"],
+        button_type="success",
+        button_style="solid",
+        stylesheets=["assets/aviary_styles.css"],
+    )
+    header = pn.Row(save_dashboard_button, pn.HSpacer(), pn.HSpacer(), pn.HSpacer())
+
+    def save_dashboard(event):
+        print(f"Saving dashboard files to {script_name}.zip")
+        shutil.make_archive(script_name, "zip", f"reports/{script_name}")
+
+    save_dashboard_button.on_click(save_dashboard)
+
     tabs.active = 0  # make the Results tab active initially
 
     # get status of run for display in the header of each page
@@ -816,6 +889,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
         main=[tabs],
         accent_base_color="black",
         header_background="rgb(0, 212, 169)",
+        header=header,
         background_color="white",
         theme=DefaultTheme,
         theme_toggle=False,
