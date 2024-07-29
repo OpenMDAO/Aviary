@@ -11,7 +11,7 @@ from aviary.validation_cases.validation_tests import (flops_validation_test,
                                                       get_flops_case_names,
                                                       get_flops_inputs,
                                                       print_case)
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variables import Aircraft, Settings
 from aviary.utils.functions import get_path
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.preprocessors import preprocess_propulsion
@@ -57,6 +57,8 @@ class NacelleMassTest(unittest.TestCase):
         options.set_val(Aircraft.Engine.NUM_ENGINES, 4)
         options.set_val(Aircraft.Engine.DATA_FILE, get_path(
             'models/engines/turbofan_28k.deck'))
+        # suppress some warning messages about required option for EngineDecks
+        options.set_val(Settings.VERBOSITY, 0)
         engineModel1 = EngineDeck(options=options)
         options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
         engineModel2 = EngineDeck(options=options)

@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_check_partials
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.aerodynamics.flops_based.induced_drag import InducedDrag
 from aviary.utils.aviary_values import AviaryValues
@@ -43,9 +43,10 @@ class InducedDragTest(unittest.TestCase):
         prob.run_model()
 
         derivs = prob.check_partials(out_stream=None, method="cs")
-
-        # TODO: need to test outputs too
         assert_check_partials(derivs, atol=1e-12, rtol=8e-12)
+
+        assert_near_equal(
+            prob.get_val("induced_drag_coeff"), [0.00370367, 0.00504111, 0.0065843, 0.00833326, 0.01028797, 0.01244845], 1e-6)
 
     def test_derivs_span_eff_redux(self):
         P = 2.60239151
@@ -81,9 +82,10 @@ class InducedDragTest(unittest.TestCase):
         prob.run_model()
 
         derivs = prob.check_partials(out_stream=None, method="cs")
-
-        # TODO: need to test outputs too
         assert_check_partials(derivs, atol=1e-12, rtol=8e-12)
+
+        assert_near_equal(
+            prob.get_val("induced_drag_coeff"), [0.00216084, 0.00294208, 0.00384454, 0.00486925, 0.00601801, 0.00748097], 1e-6)
 
         # Low factor.
 
@@ -109,9 +111,10 @@ class InducedDragTest(unittest.TestCase):
         prob.run_model()
 
         derivs = prob.check_partials(out_stream=None, method="cs")
-
-        # TODO: need to test outputs too
         assert_check_partials(derivs, atol=1e-12, rtol=8e-12)
+
+        assert_near_equal(
+            prob.get_val("induced_drag_coeff"), [0.00216084, 0.00294208, 0.00384454, 0.00486925, 0.00601801, 0.00748097], 1e-6)
 
 
 if __name__ == "__main__":
