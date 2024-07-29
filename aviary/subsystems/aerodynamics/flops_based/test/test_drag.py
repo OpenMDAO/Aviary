@@ -192,6 +192,7 @@ class ComputedDragTest(unittest.TestCase):
         prob.set_val(Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, 1.4)
         prob.set_val(Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR, 1.1)
         prob.set_val(Aircraft.Wing.AREA, 1370, units="ft**2")
+        prob.set_val(Dynamic.Mission.DYNAMIC_PRESSURE, [206., 205.6], 'lbf/ft**2')
 
         prob.run_model()
 
@@ -200,9 +201,8 @@ class ComputedDragTest(unittest.TestCase):
 
         assert_near_equal(
             prob.get_val("CD"), [0.0249732, 0.0297451], 1e-6)
-        # TODO: need to investigate: the value of DRAG is too small.
         assert_near_equal(
-            prob.get_val(Dynamic.Mission.DRAG), [3.17851809, 3.78587199], 1e-6)
+            prob.get_val(Dynamic.Mission.DRAG), [31350.8, 37268.8], 1e-6)
 
 
 # region - dynamic test data taken from the baseline FLOPS output for each case
