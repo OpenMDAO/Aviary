@@ -1,6 +1,7 @@
 from copy import deepcopy
 import unittest
 
+import openmdao.api as om
 from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
@@ -37,6 +38,7 @@ local_phase_info['descent']['user_options']['use_polynomial_control'] = True
 class MultiengineTestcase(unittest.TestCase):
 
     def setUp(self):
+        om.clear_reports()
         _clear_problem_names()  # need to reset these to simulate separate runs
 
     @require_pyoptsparse(optimizer="SNOPT")
