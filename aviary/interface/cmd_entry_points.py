@@ -11,6 +11,7 @@ from aviary.utils.propeller_map_conversion import _exec_PMC, _setup_PMC_parser
 from aviary.visualization.dashboard import _dashboard_setup_parser, _dashboard_cmd
 from aviary.interface.graphical_input import _exec_flight_profile, _setup_flight_profile_parser
 from aviary.interface.download_models import _exec_hangar, _setup_hangar_parser
+from aviary.interface.build_model import _exec_build_model, _setup_build_model_parser
 
 
 def _load_and_exec(script_name, user_args):
@@ -58,6 +59,8 @@ _command_map = {
                            'Converts FLOPS- or GASP-formatted aero data files into Aviary csv format.'),
     'convert_prop_table': (_setup_PMC_parser, _exec_PMC,
                            'Converts GASP-formatted propeller map file into Aviary csv format.'),
+    'build_model': (_setup_build_model_parser, _exec_build_model,
+                    'Build or edit an aircraft model.'),
 }
 
 
@@ -97,10 +100,11 @@ def aviary_cmd():
     cmdargs = [a for a in sys.argv[1:] if a not in ('-h',)]
 
     if len(args) == 1 and len(user_args) == 0:
-        if args[0] != 'draw_mission' and args[0] != 'run_mission':
+        if args[0] != 'draw_mission' and args[0] != 'run_mission' and args[0] != 'build_model':
             parser.parse_args([args[0], '-h'])
 
-    if not set(args).intersection(subs.choices) and len(args) == 1 and os.path.isfile(cmdargs[0]):
+    if not set(args).intersection(subs.choices) and len(
+            args) == 1 and os.path.isfile(cmdargs[0]):
         _load_and_exec(args[0], user_args)
     else:
         options, unknown = parser.parse_known_args()
