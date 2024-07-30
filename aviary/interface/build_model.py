@@ -12,7 +12,6 @@ class build_model():
         data = deepcopy(api.CoreMetaData)
         list_values = list(data.values())
         list_keys = list(data.keys())
-        # list_len = len(list_values)
         root = tk.Tk()
         source_directory = os.path.abspath(os.path.dirname(__file__))
         root.iconphoto(
@@ -673,17 +672,6 @@ def _setup_build_model_parser(parser):
     parser : argparse subparser
         The parser we're adding options to.
     """
-    # parser.add_argument(
-    #     "--open",
-    #     type=str,
-    #     help="Open a file to continue editing.",
-    # )
-
-    # parser.add_argument(
-    #     "--open_display",
-    #     type=str,
-    #     help="Open a file and all instances that have been modified to continue editing.",
-    # )
     pass
 
 
@@ -702,8 +690,4 @@ def _exec_build_model(options, user_args):
 
 
 if __name__ == "__main__":
-    # parser = argparse.ArgumentParser()
-    # _build_model_setup_parser(parser)
-    # args = parser.parse_args()
-    # _exec_build_model(args, None)
     build_model()
