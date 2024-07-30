@@ -393,7 +393,7 @@ def plotOutput(super_prob, prefix, num_trajs, kes, weights, show=True):
 
 
 def multiTestCase(makeN2=False):
-    testing_weights = [[2, 1.2], [1.2, 2]]
+    testing_weights = [[2, 1.2], [1.2, 2], [1, 1]]
     kes = [1e5, 6e5]
     legendlst = []
     rs, hs = [], []
@@ -410,8 +410,9 @@ def multiTestCase(makeN2=False):
             legendlst.append(f"KE: {ke/1e3} kJ, Weight: {weight} of {weighting}")
 
     _, ax = plt.subplots()
-    for r, h in zip(rs, hs):
-        ax.plot(r, h)
+    colors = ['r--', 'r-', 'b--', 'b-', 'g--', 'g-']  # same color for each cannonball
+    for r, h, col in zip(rs, hs, colors):
+        ax.plot(r, h, col)
     plt.grid()
     plt.legend(legendlst, loc='upper left')
     titlestr = ", ".join([str(ke/1e3) for ke in kes])
