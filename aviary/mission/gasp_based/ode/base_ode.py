@@ -234,22 +234,20 @@ class BaseODE(om.Group):
             )
 
     def add_flight_conditions(self, nn, input_speed_type=SpeedType.TAS):
-        if input_speed_type is SpeedType.TAS:
-            promotes_inputs = [Dynamic.Mission.VELOCITY]
-            promotes_outputs = ["EAS", Dynamic.Mission.MACH]
-        elif input_speed_type is SpeedType.EAS:
-            promotes_inputs = ["EAS"]
-            promotes_outputs = [Dynamic.Mission.VELOCITY, Dynamic.Mission.MACH]
-        elif input_speed_type is SpeedType.MACH:
-            promotes_inputs = [Dynamic.Mission.MACH]
-            promotes_outputs = ["EAS", Dynamic.Mission.VELOCITY]
+        # if input_speed_type is SpeedType.TAS:
+        #     promotes_inputs = [Dynamic.Mission.VELOCITY]
+        #     promotes_outputs = ["EAS", Dynamic.Mission.MACH]
+        # elif input_speed_type is SpeedType.EAS:
+        #     promotes_inputs = ["EAS"]
+        #     promotes_outputs = [Dynamic.Mission.VELOCITY, Dynamic.Mission.MACH]
+        # elif input_speed_type is SpeedType.MACH:
+        #     promotes_inputs = [Dynamic.Mission.MACH]
+        #     promotes_outputs = ["EAS", Dynamic.Mission.VELOCITY]
 
         self.add_subsystem(
             name='atmosphere',
             subsys=Atmosphere(num_nodes=nn, input_speed_type=input_speed_type),
-            promotes_inputs=[Dynamic.Mission.DENSITY, Dynamic.Mission.SPEED_OF_SOUND]
-            + promotes_inputs,
-            promotes_outputs=[Dynamic.Mission.DYNAMIC_PRESSURE] + promotes_outputs,
+            promotes=['*'],
         )
 
     def add_excess_rate_comps(self, nn):
