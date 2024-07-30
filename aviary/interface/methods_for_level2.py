@@ -266,7 +266,8 @@ class AviaryProblem(om.Problem):
 
         if mission_method is TWO_DEGREES_OF_FREEDOM or mass_method is GASP:
             aviary_inputs = update_GASP_options(aviary_inputs)
-        initial_guesses = initial_guessing(aviary_inputs, initial_guesses)
+        initial_guesses = initial_guessing(aviary_inputs, initial_guesses,
+                                           engine_builders)
         self.aviary_inputs = aviary_inputs
         self.initial_guesses = initial_guesses
 
