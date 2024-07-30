@@ -20,3 +20,9 @@ nav#header {
 .bk-header .bk-tab {
     height: 25px;;
 }
+
+:host(.save-button) .bk-btn {
+    background: #989898;
+    border: 2px solid black;
+    font-size: 10pt;
+}
