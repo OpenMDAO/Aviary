@@ -89,7 +89,7 @@ class UnsteadySolvedODE(BaseODE):
 
         self.add_subsystem(
             name='atmosphere',
-            subsys=Atmosphere(num_nodes=nn, output_dsos_dh=True),
+            subsys=Atmosphere(num_nodes=nn),  # , output_dsos_dh=True),
             promotes_inputs=[Dynamic.Mission.ALTITUDE],
             promotes_outputs=[
                 Dynamic.Mission.DENSITY,
@@ -98,7 +98,7 @@ class UnsteadySolvedODE(BaseODE):
                 Dynamic.Mission.STATIC_PRESSURE,
                 "viscosity",
                 "drhos_dh",
-                "dsos_dh",
+                # "dsos_dh",
             ],
         )
 
@@ -107,20 +107,20 @@ class UnsteadySolvedODE(BaseODE):
                            promotes_inputs=["*"],
                            promotes_outputs=["*"])
 
-        inputs_list = ['*', Dynamic.Mission.DENSITY]
-        outputs_list = ['*']
-        if input_speed_type is SpeedType.TAS:
-            inputs_list.append(Dynamic.Mission.VELOCITY)
-        else:
-            outputs_list.append(Dynamic.Mission.VELOCITY)
+        # inputs_list = ['*']
+        # outputs_list = ['*']
+        # if input_speed_type is SpeedType.TAS:
+        #     inputs_list.append(Dynamic.Mission.VELOCITY)
+        # else:
+        #     outputs_list.append(Dynamic.Mission.VELOCITY)
 
         self.add_subsystem(
             "fc",
-            UnsteadySolvedFlightConditions(num_nodes=nn,
-                                           ground_roll=ground_roll,
-                                           input_speed_type=input_speed_type),
-            promotes_inputs=inputs_list,
-            promotes_outputs=outputs_list,
+            UnsteadySolvedFlightConditions(
+                num_nodes=nn, ground_roll=ground_roll, input_speed_type=input_speed_type
+            ),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         control_iter_group = self.add_subsystem("control_iter_group",
