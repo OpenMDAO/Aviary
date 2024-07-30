@@ -7,10 +7,7 @@ from aviary.variable_info.variables import Dynamic, Aircraft
 
 
 class GearboxMission(om.Group):
-
-    '''
-    Calculates the mission performance (ODE) of a single gearbox.
-    '''
+    """Calculates the mission performance (ODE) of a single gearbox."""
 
     def initialize(self):
         self.options.declare("num_nodes", types=int)
@@ -63,5 +60,17 @@ class GearboxMission(om.Group):
                            promotes_inputs=[('shaft_power_in', Dynamic.Mission.SHAFT_POWER_MAX),
                                             ('eff', Aircraft.Engine.Gearbox.EFFICIENCY)],
                            promotes_outputs=[('shaft_power_out', Dynamic.Mission.SHAFT_POWER_MAX_GEAR)])
+
+        # We must ensure the maximum shaft power guess that we provided to pre-mission is enforced
+        # residual needs to be 0 or larger for all cases
+        self.add_subsystem('shaft_power_residual',
+                           om.ExecComp('shaft_power_resid = shaft_power_design - shaft_power_max',
+                                       shaft_power_max={
+                                           'val': np.ones(n), 'units': 'kW'},
+                                       shaft_power_design={'val': 1.0, 'units': 'kW'},
+                                       shaft_power_resid={'val': np.ones(n), 'units': 'kW'}),
+                           promotes_inputs=[('shaft_power_max', Dynamic.Mission.SHAFT_POWER_MAX),
+                                            ('shaft_power_design', Aircraft.Engine.SHAFT_POWER_DESIGN)],
+                           promotes_outputs=['shaft_power_resid'])
 
         # TODO max thrust from the props will depend on this max shaft power from the gearbox and the new gearbox RPM value

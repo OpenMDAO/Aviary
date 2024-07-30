@@ -7,7 +7,10 @@ from aviary.utils.aviary_values import AviaryValues
 
 class GearboxPreMission(om.Group):
     """
-    Calculate gearbox mass for a single gearbox
+    Calculate gearbox mass for a single gearbox.
+
+    Gearbox design assumes collective control which means that RPM coming into the 
+    gearbox is fixed and RPM going out of the gearbox is fixed over the whole mission.
     """
 
     def initialize(self):
@@ -25,7 +28,7 @@ class GearboxPreMission(om.Group):
                                        RPM_out={'val': 0.0, 'units': 'rpm'},
                                        gear_ratio={'val': 1.0, 'units': None},
                                        RPM_in={'val': 0.0, 'units': 'rpm'}),
-                           promotes_inputs=[('RPM_in', Dynamic.Mission.RPM),
+                           promotes_inputs=[('RPM_in', Aircraft.Engine.RPM_DESIGN),
                                             ('gear_ratio', Aircraft.Engine.Gearbox.GEAR_RATIO)],
                            promotes_outputs=[('RPM_out', Dynamic.Mission.RPM_GEAR)])
 
@@ -35,7 +38,7 @@ class GearboxPreMission(om.Group):
                                        shaft_power={'val': 1.0, 'units': 'kW'},
                                        torque_max={'val': 1.0, 'units': 'kN*m'},
                                        RPM_out={'val': 1.0, 'units': 'rpm'}),
-                           promotes_inputs=[('shaft_power', Dynamic.Mission.SHAFT_POWER_MAX),
+                           promotes_inputs=[('shaft_power', Aircraft.Engine.SHAFT_POWER_DESIGN),
                                             ('RPM_out', Dynamic.Mission.RPM_GEAR)],
                            promotes_outputs=['torque_max'])
 
@@ -59,6 +62,6 @@ class GearboxPreMission(om.Group):
         #                                shaftpower={'val': 0.0, 'units': 'hp'},
         #                                RPM_out={'val': 0.0, 'units': 'rpm'},
         #                                RPM_in={'val': 0.0, 'units': 'rpm'},),
-        #                    promotes_inputs=[('shaftpower', Dynamic.Mission.SHAFT_POWER_MAX),
-        #                                     'RPM_out', ('RPM_in', Dynamic.Mission.RPM)],
+        #                    promotes_inputs=[('shaftpower', Aircraft.Engine.SHAFT_POWER_DESIGN),
+        #                                     'RPM_out', ('RPM_in', Aircraft.Engine.RPM_DESIGN)],
         #                    promotes_outputs=[('gearbox_mass', Aircraft.Engine.Gearbox.MASS)])

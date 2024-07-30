@@ -2249,6 +2249,19 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Engine.SHAFT_POWER_DESIGN,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None,
+                     },
+    units='Hp',
+    desc='A guess for the maximum power that will be transmitted through the gearbox during the mission.',
+    default_value=1.0,
+    option=True
+)
+
+add_meta_data(
     Aircraft.Engine.STARTER_MASS,
     meta_data=_MetaData,
     historical_name={"GASP": None,
