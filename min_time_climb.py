@@ -15,7 +15,7 @@ def min_time_climb(height=20e3,
 
     p.driver = om.ScipyOptimizeDriver()
     p.driver.options['optimizer'] = optimizer
-    p.driver.declare_coloring()
+    # p.driver.declare_coloring()
 
     if optimizer == 'SNOPT':
         p.driver.opt_settings['Major iterations limit'] = 1000
@@ -117,7 +117,7 @@ def min_time_climb(height=20e3,
 
 
 def checkDeviation(filenum=0):
-    heights = [16e3]*2
+    heights = [10e3]*2
     times_to_climb = []
     timeseries_pts = {'h': [], 'r': [], 'thrust': [], 'v': []}
     prefix = 'traj.phase0.timeseries.'
@@ -209,6 +209,7 @@ But when the script itself is run again, these values can differ very largely,
 optimization takes a very different number of iterations, and the profile looks very 
 different. Time to climb is also different."""
 if __name__ == '__main__':
+    np.random.seed(0)
     if len(sys.argv) > 1 and 'filenum' in sys.argv[1]:
         checkDeviation(filenum=sys.argv[1].split('filenum=')[1])
     # multiHeightTest()
