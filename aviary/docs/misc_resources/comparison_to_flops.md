@@ -94,7 +94,7 @@ complex than for a traditional tube-and-wing configuration.
 FLOPS allows for the input of a maximum of two engine types, each with its own
 engine deck, whereas in Aviary an unlimited number of engine types may be
 defined. This means that Aviary supports arbitrary numbers of heterogenous
-engines Aviary retains many of the relations used by FLOPS to scale engine mass and
+engines, each of which has unique characteristics and can use different methodologies for sizing and performance estimation. Aviary retains many of the relations used by FLOPS to scale engine mass and
 performance as a function of change in target thrust. Aviary introduces the
 capability to define these scaling relations on a per-engine-type basis, instead
 of using the same scaling relations for all engine types.

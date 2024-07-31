@@ -115,7 +115,7 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
     aviary_options.
 
     Vectorizes variables in aviary_options in the correct order for vehicles with
-    multiple heterogeneous engines.
+    heterogeneous engines.
 
     Performs basic sanity checks on inputs that are universal to all EngineModels.
 

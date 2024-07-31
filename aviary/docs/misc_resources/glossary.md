@@ -40,14 +40,15 @@ flight envelope
     The limits of speed, altitude, and load factor that an aircraft can safely operate within. Understanding the flight envelope is critical for aircraft design and operation.
 
 homogeneous engines
-    Engines that are assumed to have the same performance characteristics.
+    An individual engine or set of engines that all have identical performance characteristics.
     E.g. you might have four engines on an aircraft, but they are all assumed to have the same thrust, fuel consumption, etc.
-    Each of these engines would use the same `EngineModel` object in Aviary.
+    All engines in a homogenous set use the same `EngineModel` object in Aviary.
     See also; heterogeneous engines.
 
 heterogeneous engines
-    Engines that are assumed to have different performance characteristics.
+    Multiple sets of homogenous engines, with each set having unique performance characteristics.
     This is useful if you are modeling an aircraft with engines of different sizes or types.
+    Each set of unique engines uses a different `EngineModel` object in Aviary.
     See also; homogeneous engines.
 
 mission analysis
