@@ -1970,29 +1970,18 @@ class AviaryProblem(om.Problem):
             warnings.simplefilter("ignore", om.PromotionWarning)
             super().setup(**kwargs)
 
-    def set_initial_guesses(self):
-        """
-        Call `set_val` on the trajectory for states and controls to seed
-        the problem with reasonable initial guesses. This is especially
-        important for collocation methods.
-
-        This method first identifies all phases in the trajectory then
-        loops over each phase. Specific initial guesses
-        are added depending on the phase and mission method. Cruise is treated
-        as a special phase for GASP-based missions because it is an AnalyticPhase
-        in Dymos. For this phase, we handle the initial guesses first separately
-        and continue to the next phase after that. For other phases, we set the initial
-        guesses for states and controls according to the information available
-        in the 'initial_guesses' attribute of the phase.
-        """
+    def set_initial_guesses(self, parent_prob=None, parent_prefix=""):
+        setvalprob = self
+        if parent_prob is not None and parent_prefix != "":
+            setvalprob = parent_prob
         # Grab the trajectory object from the model
         if self.analysis_scheme is AnalysisScheme.SHOOTING:
             if self.problem_type is ProblemType.SIZING:
-                self.set_val(Mission.Summary.GROSS_MASS,
-                             self.get_val(Mission.Design.GROSS_MASS))
+                setvalprob.set_val(parent_prefix+Mission.Summary.GROSS_MASS,
+                                   self.get_val(Mission.Design.GROSS_MASS))
 
-            self.set_val("traj.SGMClimb_"+Dynamic.Mission.ALTITUDE +
-                         "_trigger", val=self.cruise_alt, units="ft")
+            setvalprob.set_val(parent_prefix+"traj.SGMClimb_"+Dynamic.Mission.ALTITUDE +
+                               "_trigger", val=self.cruise_alt, units="ft")
 
             return
 
@@ -2023,52 +2012,26 @@ class AviaryProblem(om.Problem):
                     if 'mass' == guess_key:
                         # Set initial and duration mass for the analytic cruise phase.
                         # Note we are integrating over mass, not time for this phase.
-                        self.set_val(f'traj.{phase_name}.t_initial',
-                                     val[0], units=units)
-                        self.set_val(f'traj.{phase_name}.t_duration',
-                                     val[1], units=units)
+                        setvalprob.set_val(parent_prefix+f'traj.{phase_name}.t_initial',
+                                           val[0], units=units)
+                        setvalprob.set_val(parent_prefix+f'traj.{phase_name}.t_duration',
+                                           val[1], units=units)
 
                     else:
                         # Otherwise, set the value of the parameter in the trajectory phase
-                        self.set_val(f'traj.{phase_name}.parameters:{guess_key}',
-                                     val, units=units)
+                        setvalprob.set_val(
+                            parent_prefix + f'traj.{phase_name}.parameters:{guess_key}',
+                            val, units=units)
 
                 continue
 
             # If not cruise and GASP, add subsystem guesses
-            self._add_subsystem_guesses(phase_name, phase)
+            self._add_subsystem_guesses(phase_name, phase, setvalprob, parent_prefix)
 
             # Set initial guesses for states and controls for each phase
-            self._add_guesses(phase_name, phase, guesses)
+            self._add_guesses(phase_name, phase, guesses, setvalprob, parent_prefix)
 
     def _process_guess_var(self, val, key, phase):
-        """
-        Process the guess variable, which can either be a float or an array of floats.
-
-        This method is responsible for interpolating initial guesses when the user
-        provides a list or array of values rather than a single float. It interpolates
-        the guess values across the phase's domain for a given variable, be it a control
-        or a state variable. The interpolation is performed between -1 and 1 (representing
-        the normalized phase time domain), using the numpy linspace function.
-
-        The result of this method is a single value or an array of interpolated values
-        that can be used to seed the optimization problem with initial guesses.
-
-        Parameters
-        ----------
-        val : float or list/array of floats
-            The initial guess value(s) for a particular variable.
-        key : str
-            The key identifying the variable for which the initial guess is provided.
-        phase : Phase
-            The phase for which the variable is being set.
-
-        Returns
-        -------
-        val : float or array of floats
-            The processed guess value(s) to be used in the optimization problem.
-        """
-
         # Check if val is not a single float
         if not isinstance(val, float):
             # If val is an array of values
@@ -2094,24 +2057,7 @@ class AviaryProblem(om.Problem):
         # Return the processed guess value(s)
         return val
 
-    def _add_subsystem_guesses(self, phase_name, phase):
-        """
-        Adds the initial guesses for each subsystem of a given phase to the problem.
-
-        This method first fetches all subsystems associated with the given phase.
-        It then loops over each subsystem and fetches its initial guesses. For each
-        guess, it identifies whether the guess corresponds to a state or a control
-        variable and then processes the guess variable. After this, the initial
-        guess is set in the problem using the `set_val` method.
-
-        Parameters
-        ----------
-        phase_name : str
-            The name of the phase for which the subsystem guesses are being added.
-        phase : Phase
-            The phase object for which the subsystem guesses are being added.
-        """
-
+    def _add_subsystem_guesses(self, phase_name, phase, setvalprob, parent_prefix):
         # Get all subsystems associated with the phase
         all_subsystems = self._get_all_subsystems(
             self.phase_info[phase_name]['external_subsystems'])
@@ -2134,28 +2080,10 @@ class AviaryProblem(om.Problem):
                 val['val'] = self._process_guess_var(val['val'], key, phase)
 
                 # Set the initial guess in the problem
-                self.set_val(f'traj.{phase_name}.{path_string}:{key}', **val)
+                setvalprob.set_val(
+                    parent_prefix+f'traj.{phase_name}.{path_string}:{key}', **val)
 
-    def _add_guesses(self, phase_name, phase, guesses):
-        """
-        Adds the initial guesses for each variable of a given phase to the problem.
-
-        This method sets the initial guesses for time, control, state, and problem-specific
-        variables for a given phase. If using the GASP model, it also handles some special
-        cases that are not covered in the `phase_info` object. These include initial guesses
-        for mass, time, and distance, which are determined based on the phase name and other
-        mission-related variables.
-
-        Parameters
-        ----------
-        phase_name : str
-            The name of the phase for which the guesses are being added.
-        phase : Phase
-            The phase object for which the guesses are being added.
-        guesses : dict
-            A dictionary containing the initial guesses for the phase.
-        """
-
+    def _add_guesses(self, phase_name, phase, guesses, setvalprob, parent_prefix):
         # If using the GASP model, set initial guesses for the rotation mass and flight duration
         if self.mission_method is TWO_DEGREES_OF_FREEDOM:
             rotation_mass = self.initial_guesses['rotation_mass']
@@ -2214,30 +2142,32 @@ class AviaryProblem(om.Problem):
 
             # Set initial guess for time variables
             if 'time' == guess_key and self.mission_method is not SOLVED_2DOF:
-                self.set_val(f'traj.{phase_name}.t_initial',
-                             val[0], units=units)
-                self.set_val(f'traj.{phase_name}.t_duration',
-                             val[1], units=units)
+                setvalprob.set_val(parent_prefix+f'traj.{phase_name}.t_initial',
+                                   val[0], units=units)
+                setvalprob.set_val(parent_prefix+f'traj.{phase_name}.t_duration',
+                                   val[1], units=units)
 
             else:
                 # Set initial guess for control variables
                 if guess_key in control_keys:
                     try:
-                        self.set_val(f'traj.{phase_name}.controls:{guess_key}', self._process_guess_var(
-                            val, guess_key, phase), units=units)
+                        setvalprob.set_val(
+                            parent_prefix + f'traj.{phase_name}.controls:{guess_key}',
+                            self._process_guess_var(val, guess_key, phase),
+                            units=units)
                     except KeyError:
                         try:
-                            self.set_val(
+                            setvalprob.set_val(
+                                parent_prefix +
                                 f'traj.{phase_name}.polynomial_controls:{guess_key}',
-                                self._process_guess_var(
-                                    val, guess_key, phase),
+                                self._process_guess_var(val, guess_key, phase),
                                 units=units)
                         except KeyError:
-                            self.set_val(
-                                f'traj.{phase_name}.bspline_controls:{guess_key}',
-                                self._process_guess_var(
-                                    val, guess_key, phase),
-                                units=units)
+                            setvalprob.set_val(parent_prefix +
+                                               f'traj.{phase_name}.bspline_controls:{guess_key}',
+                                               self._process_guess_var(
+                                                   val, guess_key, phase),
+                                               units=units)
 
                 if self.mission_method is SOLVED_2DOF:
                     continue
@@ -2246,15 +2176,17 @@ class AviaryProblem(om.Problem):
                     pass
                 # Set initial guess for state variables
                 elif guess_key in state_keys:
-                    self.set_val(f'traj.{phase_name}.states:{guess_key}', self._process_guess_var(
-                        val, guess_key, phase), units=units)
+                    setvalprob.set_val(parent_prefix +
+                                       f'traj.{phase_name}.states:{guess_key}', self.
+                                       _process_guess_var(val, guess_key, phase),
+                                       units=units)
                 elif guess_key in prob_keys:
-                    self.set_val(guess_key, val, units=units)
+                    setvalprob.set_val(parent_prefix+guess_key, val, units=units)
                 elif ":" in guess_key:
-                    self.set_val(
-                        f'traj.{phase_name}.{guess_key}', self._process_guess_var(
-                            val, guess_key, phase),
-                        units=units)
+                    setvalprob.set_val(parent_prefix +
+                                       f'traj.{phase_name}.{guess_key}', self._process_guess_var(
+                                           val, guess_key, phase),
+                                       units=units)
                 else:
                     # raise error if the guess key is not recognized
                     raise ValueError(
@@ -2284,8 +2216,8 @@ class AviaryProblem(om.Problem):
                 mass_guess = self.aviary_inputs.get_val(
                     Mission.Design.GROSS_MASS, units='lbm')
             # Set the mass guess as the initial value for the mass state variable
-            self.set_val(f'traj.{phase_name}.states:mass',
-                         mass_guess, units='lbm')
+            setvalprob.set_val(parent_prefix+f'traj.{phase_name}.states:mass',
+                               mass_guess, units='lbm')
 
         if 'time' not in guesses:
             # Determine initial time and duration guesses depending on the phase name
@@ -2296,10 +2228,10 @@ class AviaryProblem(om.Problem):
                 t_initial = flight_duration*.94
                 t_duration = 5000
             # Set the time guesses as the initial values for the time-related trajectory variables
-            self.set_val(f"traj.{phase_name}.t_initial",
-                         t_initial, units='s')
-            self.set_val(f"traj.{phase_name}.t_duration",
-                         t_duration, units='s')
+            setvalprob.set_val(parent_prefix+f"traj.{phase_name}.t_initial",
+                               t_initial, units='s')
+            setvalprob.set_val(parent_prefix+f"traj.{phase_name}.t_duration",
+                               t_duration, units='s')
 
         if self.mission_method is TWO_DEGREES_OF_FREEDOM:
             if 'distance' not in guesses:
@@ -2309,10 +2241,10 @@ class AviaryProblem(om.Problem):
                 elif 'desc2' in base_phase:
                     ys = [self.target_range*.99, self.target_range]
                 # Set the distance guesses as the initial values for the distance state variable
-                self.set_val(
-                    f"traj.{phase_name}.states:distance", phase.interp(
-                        Dynamic.Mission.DISTANCE, ys=ys)
-                )
+                setvalprob.set_val(parent_prefix +
+                                   f"traj.{phase_name}.states:distance", phase.interp(
+                                       Dynamic.Mission.DISTANCE, ys=ys)
+                                   )
 
     def run_aviary_problem(self, record_filename="problem_history.db",
                            optimization_history_filename=None, restart_filename=None,

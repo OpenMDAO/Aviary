@@ -1,4 +1,5 @@
 import aviary.api as av
+import openmdao.api as om
 import sys
 from c5_ferry_phase_info import phase_info as c5_ferry_phase_info
 from c5_intermediate_phase_info import phase_info as c5_intermediate_phase_info
@@ -37,6 +38,7 @@ def modify_plane(orig_filename, payloads, ranges):
 
 
 if __name__ == '__main__':
+    makeN2 = True if len(sys.argv) > 2 and "n2" in sys.argv else False
     prob = av.AviaryProblem()
     plane_file = 'c5.csv'
     payloads = {"ferry": 0, "intermediate": 120e3, "maxpayload": 281e3}
@@ -73,6 +75,9 @@ if __name__ == '__main__':
     prob.add_objective()  # output from execcomp goes here)
 
     prob.setup()
+
+    if makeN2:
+        om.n2(prob, outfile='single_aviary.html')
 
     prob.set_initial_guesses()
 
