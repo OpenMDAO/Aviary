@@ -103,15 +103,18 @@ class PreMissionTestCase(unittest.TestCase):
         for (key, (val, units)) in get_items(V3_bug_fixed_non_metadata):
             self.prob.model.set_input_defaults(key, val=val, units=units)
 
-        self.prob.model.add_subsystem(
-            'input_sink',
-            VariablesIn(aviary_options=input_options),
-            promotes_inputs=['*'],
-            promotes_outputs=['*']
-        )
+        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=1.0, units='ft')
 
-        set_aviary_initial_values(self.prob.model, input_options)
         self.prob.setup(check=False, force_alloc_complex=True)
+
+        for (key, (val, units)) in get_items(input_options):
+            try:
+                prob.set_val(key, val, units)
+
+            except:
+                # Should be an option or an overridden output.
+                continue
+
         self.prob.set_solver_print(2)
 
         # Initial guess for gross mass.
@@ -310,15 +313,6 @@ class PreMissionTestCase(unittest.TestCase):
 
         for (key, (val, units)) in get_items(V3_bug_fixed_non_metadata):
             prob.model.set_input_defaults(key, val=val, units=units)
-
-        prob.model.add_subsystem(
-            'input_sink',
-            VariablesIn(aviary_options=aviary_inputs),
-            promotes_inputs=['*'],
-            promotes_outputs=['*']
-        )
-
-        set_aviary_initial_values(prob.model, aviary_inputs)
 
         prob.setup()
 

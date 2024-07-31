@@ -1,23 +1,22 @@
+from parameterized import parameterized
 import unittest
 
 import numpy as np
+
 import openmdao.api as om
 from dymos.models.atmosphere import USatm1976Comp
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
-from parameterized import parameterized
 
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.premission import CorePreMission
 from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import AviaryValues, get_items
-from aviary.utils.functions import set_aviary_initial_values
 from aviary.utils.named_values import NamedValues
 from aviary.validation_cases.validation_tests import (get_flops_inputs,
                                                       get_flops_outputs,
                                                       print_case)
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
-from aviary.variable_info.variables_in import VariablesIn
 from aviary.variable_info.enums import LegacyCode
 
 FLOPS = LegacyCode.FLOPS
@@ -623,15 +622,6 @@ class _ComputedAeroHarness(om.Group):
         key = Aircraft.Engine.SCALED_SLS_THRUST
         val, units = aviary_options.get_item(key)
         pre_mission.set_input_defaults(key, val, units)
-
-        self.add_subsystem(
-            'input_sink',
-            VariablesIn(aviary_options=aviary_options),
-            promotes_inputs=['*'],
-            promotes_outputs=['*']
-        )
-
-        set_aviary_initial_values(self, aviary_options)
 
 
 _design_altitudes = AviaryValues({

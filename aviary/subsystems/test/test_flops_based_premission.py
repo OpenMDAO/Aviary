@@ -47,14 +47,6 @@ class PreMissionGroupTest(unittest.TestCase):
             promotes_outputs=['*'],
         )
 
-        prob.model.add_subsystem(
-            'input_sink',
-            VariablesIn(aviary_options=flops_inputs),
-            promotes_inputs=['*'],
-            promotes_outputs=['*']
-        )
-
-        set_aviary_initial_values(prob.model, flops_inputs)
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_solver_print(2)
 

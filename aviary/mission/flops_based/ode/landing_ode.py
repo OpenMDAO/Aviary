@@ -6,6 +6,7 @@ Classes
 FlareODE : the ODE for the flare phase of landing
 '''
 import numpy as np
+
 import openmdao.api as om
 from dymos.models.atmosphere.atmos_1976 import USatm1976Comp
 
@@ -194,5 +195,3 @@ class FlareODE(om.Group):
 
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, np.zeros(nn), 'm')
         self.set_input_defaults(Dynamic.Mission.VELOCITY, np.zeros(nn), 'm/s')
-
-        set_aviary_initial_values(self, aviary_options)

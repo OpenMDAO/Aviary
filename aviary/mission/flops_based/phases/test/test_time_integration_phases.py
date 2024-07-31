@@ -104,18 +104,7 @@ class HE_SGMDescentTestCase(unittest.TestCase):
 
         prob.model.add_objective(Mission.Objectives.FUEL, ref=1e4)
 
-        prob.model.add_subsystem(
-            'input_sink',
-            VariablesIn(aviary_options=self.aviary_inputs,
-                        meta_data=BaseMetaData),
-            promotes_inputs=['*'],
-            promotes_outputs=['*'])
-
         with warnings.catch_warnings():
-
-            # Set initial default values for all LEAPS aircraft variables.
-            set_aviary_initial_values(
-                prob.model, self.aviary_inputs, meta_data=BaseMetaData)
 
             warnings.simplefilter("ignore", om.PromotionWarning)
 
