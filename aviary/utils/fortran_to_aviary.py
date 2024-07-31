@@ -80,6 +80,7 @@ def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
             'legacy_code_data', defaults_filename)
 
     # create dictionary to convert legacy code variables to Aviary variables
+    # key: variable name, value: either None or relevant historical_name
     aviary_variable_dict = generate_aviary_names([legacy_code.value])
 
     if defaults_deck:  # If defaults are specified, initialize the vehicle with them
@@ -303,6 +304,14 @@ def set_value(var_name, var_value, value_dict: NamedValues, var_ind=None, units=
         current_value[var_ind] = var_value[0]
         value_dict.set_val(var_name, current_value, units)
     else:
+        if current_value != None and type(current_value[0]) == type(True):
+            # if a variable is defined as boolean but is read in as number, set as boolean
+            if var_value[0] == 1:
+                var_value = ['True']
+            elif var_value[0] == 0:
+                var_value = ['False']
+            else:
+                ValueError(f"{var_name} allows 0 and 1 only, but it is {var_value[0]}")
         value_dict.set_val(var_name, var_value, units)
     return value_dict
 
