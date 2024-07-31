@@ -7,15 +7,15 @@ import sys
 
 
 def min_time_climb(height=20e3,
-                   optimizer='SLSQP', num_seg=3, transcription='gauss-lobatto',
-                   transcription_order=5, force_alloc_complex=False, add_rate=False,
+                   optimizer='SLSQP', num_seg=9, transcription='gauss-lobatto',
+                   transcription_order=3, force_alloc_complex=False, add_rate=False,
                    time_name='time'):
 
     p = om.Problem(model=om.Group())
 
     p.driver = om.ScipyOptimizeDriver()
     p.driver.options['optimizer'] = optimizer
-    # p.driver.declare_coloring()
+    p.driver.declare_coloring()
 
     if optimizer == 'SNOPT':
         p.driver.opt_settings['Major iterations limit'] = 1000
@@ -50,7 +50,7 @@ def min_time_climb(height=20e3,
                     ref=1.0E3, defect_ref=1.0E3, units='m',
                     rate_source='flight_dynamics.r_dot')
 
-    phase.add_state('h', fix_initial=True, lower=1, upper=height,
+    phase.add_state('h', fix_initial=True, lower=0, upper=height,
                     ref=height, defect_ref=height, units='m',
                     rate_source='flight_dynamics.h_dot', targets=['h'])
 
@@ -74,7 +74,7 @@ def min_time_climb(height=20e3,
     phase.add_parameter('Isp', val=1600.0, units='s', opt=False, targets=['Isp'])
     phase.add_parameter('throttle', val=1.0, opt=False, targets=['throttle'])
 
-    phase.add_boundary_constraint('h', loc='final', equals=height, scaler=1.0E-3)
+    phase.add_boundary_constraint('h', loc='final', equals=height)  # , scaler=1.0E-3)
     phase.add_boundary_constraint('aero.mach', loc='final', equals=1.0)
     phase.add_boundary_constraint('gam', loc='final', equals=0.0)
 
@@ -105,7 +105,7 @@ def min_time_climb(height=20e3,
     p['traj.phase0.t_duration'] = 350.0
 
     p['traj.phase0.states:r'] = phase.interp('r', [0.0, 111319.54])
-    p['traj.phase0.states:h'] = phase.interp('h', [100.0, 20000.0])
+    p['traj.phase0.states:h'] = phase.interp('h', [100.0, height])
     p['traj.phase0.states:v'] = phase.interp('v', [135.964, 283.159])
     p['traj.phase0.states:gam'] = phase.interp('gam', [0.0, 0.0])
     p['traj.phase0.states:m'] = phase.interp('m', [19030.468, 16841.431])
@@ -117,6 +117,8 @@ def min_time_climb(height=20e3,
 
 
 def checkDeviation(filenum=0):
+    """Function to run min time climb problem multiple times for the same height and report any deviation in results.
+       Made to check for random results in outputs, fixed 7/31, seems to be caused by transcription order being 5 not 3"""
     heights = [10e3]*2
     times_to_climb = []
     timeseries_pts = {'h': [], 'r': [], 'thrust': [], 'v': []}
@@ -150,7 +152,7 @@ def checkDeviation(filenum=0):
 
 
 def multiHeightTest():
-    heights = [8e3, 10e3]
+    heights = [6e3, 10e3]
     prefix = 'traj.phase0.timeseries.'
     plotvars = {'r': ['h'], 'time': ['v', 'thrust', 'm_dot', 'alpha']}
     varnames = {prefix+x: [prefix+y for y in ylst] for x, ylst in plotvars.items()}
@@ -209,10 +211,10 @@ But when the script itself is run again, these values can differ very largely,
 optimization takes a very different number of iterations, and the profile looks very 
 different. Time to climb is also different."""
 if __name__ == '__main__':
-    np.random.seed(0)
     if len(sys.argv) > 1 and 'filenum' in sys.argv[1]:
         checkDeviation(filenum=sys.argv[1].split('filenum=')[1])
-    # multiHeightTest()
+    else:
+        multiHeightTest()
 
 
 """

@@ -108,6 +108,7 @@ class MultiMissionProblem(om.Problem):
         om.n2(self, outfile=outfile)
 
     def initvals(self):
+        """attempting to copy over aviary code for setting initial values and changing references"""
         for i, prob in enumerate(self.probs):
             self.set_val(self.group_prefix +
                          f'_{i}.aircraft:design:landing_to_takeoff_mass_ratio', 0.5)
