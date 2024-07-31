@@ -1,10 +1,10 @@
 """
-This module, process_input_decks.py, is responsible for reading vehicle input decks, initializing options, 
+This module, process_input_decks.py, is responsible for reading vehicle input decks, initializing options,
 and setting initial guesses for aircraft design parameters. It works primarily with .csv files,
-allowing for the specification of units, comments, and lists within these files. 
+allowing for the specification of units, comments, and lists within these files.
 
 The module supports various functions like creating a vehicle, parsing input files, updating options based
-on inputs, and handling initial guesses for different aircraft design aspects. It heavily relies on the 
+on inputs, and handling initial guesses for different aircraft design aspects. It heavily relies on the
 aviary and openMDAO libraries for processing and interpreting the aircraft design parameters.
 
 Functions:
@@ -197,7 +197,7 @@ def parse_inputs(vehicle_deck, aircraft_values: AviaryValues = None, initial_gue
 
 def update_GASP_options(aircraft_values: AviaryValues):
     """
-    Updates options based on the current values in aircraft_values. This function also handles special cases 
+    Updates options based on the current values in aircraft_values. This function also handles special cases
     and prints debug information if the debug mode is active.
 
     Parameters
@@ -241,7 +241,7 @@ def update_GASP_options(aircraft_values: AviaryValues):
 
 def update_dependent_options(aircraft_values: AviaryValues, dependent_options):
     """
-    Updates options that are dependent on the value of an input variable or option. The function iterates 
+    Updates options that are dependent on the value of an input variable or option. The function iterates
     through each dependent option and sets its value based on the current aircraft values.
 
     Parameters
@@ -271,18 +271,26 @@ def update_dependent_options(aircraft_values: AviaryValues, dependent_options):
     return aircraft_values
 
 
-def initial_guessing(aircraft_values: AviaryValues, initial_guesses):
+def initial_guessing(aircraft_values: AviaryValues, initial_guesses, engine_builders):
     """
     Sets initial guesses for various aircraft parameters based on the current problem type, aircraft values,
     and other factors. It calculates and sets values like takeoff mass, cruise mass, flight duration, etc.
 
     Parameters
     ----------
-    aircraft_values (AviaryValues): An instance of AviaryValues containing current aircraft values.
+    aircraft_values : AviaryValues
+        An instance of AviaryValues containing current aircraft values.
+
+    initial_guesses : dict
+        Initial guesses.
+
+    engine_builders : list or None
+        List of engine builders. This is needed if there are multiple engine models.
 
     Returns
     -------
-    tuple: Updated aircraft values and initial guesses.
+    tuple
+        Updated aircraft values and initial guesses.
     """
     problem_type = aircraft_values.get_val(Settings.PROBLEM_TYPE)
     num_pax = aircraft_values.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)
@@ -366,8 +374,17 @@ def initial_guessing(aircraft_values: AviaryValues, initial_guesses):
         initial_guesses['flight_duration'] = initial_guesses['flight_duration'] * \
             (60 * 60)
 
-    total_thrust = aircraft_values.get_val(
-        Aircraft.Engine.SCALED_SLS_THRUST, 'lbf') * aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)
+    try:
+        total_thrust = aircraft_values.get_val(
+            Aircraft.Engine.SCALED_SLS_THRUST, 'lbf') * aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)
+    except KeyError:
+        # Multi-engine-model case. Get thrust from the engine decks instead.
+        total_thrust = 0
+        for model in engine_builders:
+            thrust = model.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf')
+            num_engines = model.get_val(Aircraft.Engine.NUM_ENGINES)
+            total_thrust += thrust * num_engines
+
     gamma_guess = np.arcsin(.5*total_thrust / mission_mass)
     avg_speed_guess = (.5 * 667 * cruise_mach)  # kts
 

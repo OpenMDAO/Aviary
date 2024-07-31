@@ -349,7 +349,8 @@ def get_path(path: Union[str, Path], verbose: bool = False) -> Path:
     # Check if the path exists as an absolute path.
     if not path.exists():
         # If not, try finding the path relative to the current working directory.
-        path = Path.cwd() / path
+        relative_path = Path.cwd() / path
+        path = relative_path
 
     # If the path still doesn't exist, attempt to find it relative to the Aviary package.
     if not path.exists():
@@ -375,7 +376,9 @@ def get_path(path: Union[str, Path], verbose: bool = False) -> Path:
     # If the path still doesn't exist in any of the prioritized locations, raise an error.
     if not path.exists():
         raise FileNotFoundError(
-            f'File not found in absolute path: {original_path}, relative path:{Path.cwd() / path}, or Aviary-based path: {Path(pkg_resources.resource_filename("aviary", original_path))}'
+            f'File not found in absolute path: {original_path}, relative path: '
+            f'{relative_path}, or Aviary-based path: '
+            f'{Path(pkg_resources.resource_filename("aviary", original_path))}'
         )
 
     # If verbose is True, print the path being used.
