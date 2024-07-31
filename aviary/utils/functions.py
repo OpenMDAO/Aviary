@@ -11,7 +11,6 @@ from aviary.utils.aviary_values import AviaryValues, get_keys
 from aviary.variable_info.enums import ProblemType, EquationsOfMotion, LegacyCode
 from aviary.variable_info.functions import add_aviary_output, add_aviary_input
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.interface.download_models import get_model
 
 
 class Null:
@@ -329,6 +328,51 @@ def promote_aircraft_and_mission_vars(group):
 
 # Python 3.10 adds the ability to specify multiple types using type hints like so:
 # "str | Path" which is cleaner but Aviary still supports older versions
+
+
+def get_model(file_name: str, verbose=False) -> Path:
+    '''
+    This function attempts to find the path to a file or folder in aviary/models
+    If the path cannot be found in any of the locations, a FileNotFoundError is raised.
+
+    Parameters
+    ----------
+    path : str or Path
+        The input path, either as a string or a Path object.
+
+    Returns
+    -------
+    aviary_path
+        The absolute path to the file.
+
+    Raises
+    ------
+    FileNotFoundError
+        If the path is not found.
+    '''
+
+    # Get the path to Aviary's models
+    path = Path('models', file_name)
+    aviary_path = Path(get_aviary_resource_path(str(path)))
+
+    # If the file name was provided without a path, check in the subfolders
+    if not aviary_path.exists():
+        sub_dirs = [x[0] for x in os.walk(get_aviary_resource_path('models'))]
+        for sub_dir in sub_dirs:
+            temp_path = Path(sub_dir, file_name)
+            if temp_path.exists():
+                # only return the first matching file
+                aviary_path = temp_path
+                continue
+
+    # If the path still doesn't exist, raise an error.
+    if not aviary_path.exists():
+        raise FileNotFoundError(
+            f"File or Folder not found in Aviary's hangar"
+        )
+    if verbose:
+        print('found', aviary_path, '\n')
+    return aviary_path
 
 
 def get_path(path: Union[str, Path], verbose: bool = False) -> Path:
