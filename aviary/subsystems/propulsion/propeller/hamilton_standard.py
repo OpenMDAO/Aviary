@@ -528,9 +528,11 @@ class PreHamiltonStandard(om.ExplicitComponent):
         density_ratio = inputs[Dynamic.Mission.DENSITY] / RHO_SEA_LEVEL_ENGLISH
 
         if diam_prop <= 0.0:
-            raise om.AnalysisError("Aircraft.Engine.PROPELLER_DIAMETER must be positive.")
+            raise om.AnalysisError(
+                "Aircraft.Engine.PROPELLER_DIAMETER must be positive.")
         if any(tipspd) <= 0.0:
-            raise om.AnalysisError("Dynamic.Mission.PROPELLER_TIP_SPEED must be positive.")
+            raise om.AnalysisError(
+                "Dynamic.Mission.PROPELLER_TIP_SPEED must be positive.")
         if any(sos) <= 0.0:
             raise om.AnalysisError("Dynamic.Mission.SPEED_OF_SOUND must be positive.")
         if any(density_ratio) <= 0.0:
