@@ -70,7 +70,7 @@ def min_time_climb(height=20e3,
                       rate_continuity=True, rate_continuity_scaler=100.0,
                       rate2_continuity=False, targets=['alpha'])
 
-    phase.add_parameter('S', val=49.2386, units='m**2', opt=False, targets=['S'])
+    phase.add_parameter('S', val=49.2386, units='m**2', opt=True, targets=['S'])
     phase.add_parameter('Isp', val=1600.0, units='s', opt=False, targets=['Isp'])
     phase.add_parameter('throttle', val=1.0, opt=False, targets=['throttle'])
 
@@ -152,9 +152,10 @@ def checkDeviation(filenum=0):
 
 
 def multiHeightTest():
-    heights = [6e3, 10e3]
+    heights = [12e3, 20e3]
     prefix = 'traj.phase0.timeseries.'
     plotvars = {'r': ['h'], 'time': ['v', 'thrust', 'm_dot', 'alpha']}
+    plotunits = {'r': ['km', 'km'], 'time': ['s', 'm/s', 'kN', 'kg/s', 'deg']}
     varnames = {prefix+x: [prefix+y for y in ylst] for x, ylst in plotvars.items()}
     numplots = sum([len(item) for item in plotvars.values()])
     data = {f'h{i}': {} for i in range(len(heights))}
@@ -170,37 +171,41 @@ def multiHeightTest():
               f"{p.get_val('traj.phase0.timeseries.time',units='s')[-1][0]:.2f}" +
               f" s with wing area: {wing_area} sqm")
 
-        for xname in varnames.keys():
-            xsol = sol.get_val(xname)
-            xsim = sim.get_val(xname)
+        for xname, unitkey in zip(varnames.keys(), plotunits.keys()):
+            xsol = sol.get_val(xname, units=plotunits[unitkey][0])
+            xsim = sim.get_val(xname, units=plotunits[unitkey][0])
             if not xname in data.keys():
                 data[f'h{j}'][xname] = {'x': (xsol, xsim), 'y': []}
-            for yname in varnames[xname]:
+            for i, yname in enumerate(varnames[xname]):
                 if not 'yname' in data[f'h{j}'][xname].keys():
                     data[f'h{j}'][xname]['yname'] = [yname]
                 else:
                     data[f'h{j}'][xname]['yname'].append(yname)
-                ysol = sol.get_val(yname)
-                ysim = sim.get_val(yname)
+                ysol = sol.get_val(yname, units=plotunits[unitkey][i+1])
+                ysim = sim.get_val(yname, units=plotunits[unitkey][i+1])
                 data[f'h{j}'][xname]['y'].append((ysol, ysim))
 
     colors = ['r', 'b']
+    legendlst = []
     for j in range(len(heights)):
         datadict = data[f'h{j}']
         i = 1
-        for xname in datadict.keys():
+        for xname, unitkey in zip(datadict.keys(), plotunits.keys()):
             xsol, xsim = datadict[xname]['x']
-            for (ysol, ysim), yname in zip(datadict[xname]['y'], datadict[xname]['yname']):
-                ax = plt.subplot(int(numplots/2), numplots-int(numplots/2), i)
-                if max(ysim) > 1e3:
-                    ysol, ysim = ysol/1e3, ysim/1e3
+            for (ysol, ysim), yname, yunit in zip(datadict[xname]['y'], datadict[xname]['yname'], plotunits[unitkey][1:]):
+                plt.subplot(int(numplots/2), numplots-int(numplots/2), i)
+                # if max(ysim) > 1e3:
+                #     ysol, ysim = ysol/1e3, ysim/1e3
                 plt.plot(xsol, ysol, f'{colors[j]}o', fillstyle='none')
                 plt.plot(xsim, ysim, colors[j])
-                plt.xlabel(xname.split(prefix)[1])
-                plt.ylabel(yname.split(prefix)[1])
+                plt.xlabel(f"{xname.split(prefix)[1]} ({plotunits[unitkey][0]})")
+                plt.ylabel(f"{yname.split(prefix)[1]} ({yunit})")
                 if j == 0:
                     plt.grid(visible=True)
                 i += 1
+        for datatype in ('Solution', 'Simulation'):
+            legendlst.append(f"{datatype} @ h = {heights[j]/1e3} km")
+    plt.figlegend(legendlst)
     plt.show()
 
 
