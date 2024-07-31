@@ -534,7 +534,8 @@ class PreHamiltonStandard(om.ExplicitComponent):
             raise om.AnalysisError(
                 "Dynamic.Mission.PROPELLER_TIP_SPEED must be positive.")
         if any(sos) <= 0.0:
-            raise om.AnalysisError("Dynamic.Mission.SPEED_OF_SOUND must be positive.")
+            raise om.AnalysisError(
+                "Dynamic.Mission.SPEED_OF_SOUND must be positive.")
         if any(density_ratio) <= 0.0:
             raise om.AnalysisError("Dynamic.Mission.DENSITY must be positive.")
         if any(shp) < 0.0:
