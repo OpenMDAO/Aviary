@@ -2,7 +2,9 @@ from typing import Union
 import numpy as np
 import openmdao.api as om
 from pathlib import Path
-import pkg_resources
+import importlib_resources
+from contextlib import ExitStack
+import atexit
 
 from openmdao.utils.units import convert_units
 from aviary.utils.aviary_values import AviaryValues, get_keys
@@ -22,6 +24,25 @@ class Null:
 
     def flush(self, *args, **kwargs):
         pass
+
+
+def get_aviary_resource_path(resource_name: str) -> str:
+    """
+    Get the file path of a resource in the Aviary package.
+
+    Args:
+        resource_name (str): The name of the resource.
+
+    Returns:
+        str: The file path of the resource.
+
+    """
+    file_manager = ExitStack()
+    atexit.register(file_manager.close)
+    ref = importlib_resources.files('aviary') / resource_name
+    path = file_manager.enter_context(
+        importlib_resources.as_file(ref))
+    return path
 
 
 def set_aviary_initial_values(model, inputs, meta_data=_MetaData):
@@ -356,7 +377,7 @@ def get_path(path: Union[str, Path], verbose: bool = False) -> Path:
     if not path.exists():
         # Determine the path relative to the Aviary package.
         aviary_based_path = Path(
-            pkg_resources.resource_filename('aviary', original_path))
+            get_aviary_resource_path(original_path))
         if verbose:
             print(
                 f"Unable to locate '{original_path}' as an absolute or relative path. Trying Aviary package path: {aviary_based_path}")
@@ -378,7 +399,7 @@ def get_path(path: Union[str, Path], verbose: bool = False) -> Path:
         raise FileNotFoundError(
             f'File not found in absolute path: {original_path}, relative path: '
             f'{relative_path}, or Aviary-based path: '
-            f'{Path(pkg_resources.resource_filename("aviary", original_path))}'
+            f'{Path(get_aviary_resource_path(original_path))}'
         )
 
     # If verbose is True, print the path being used.

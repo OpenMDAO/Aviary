@@ -1,12 +1,8 @@
 import os
 from pathlib import Path
 import argparse
-import pkg_resources
 import shutil
-
-
-def aviary_resource(resource_name: str) -> str:
-    return pkg_resources.resource_filename("aviary", resource_name)
+from aviary.utils.functions import get_aviary_resource_path
 
 
 def get_model(file_name: str, verbose=False) -> Path:
@@ -32,11 +28,11 @@ def get_model(file_name: str, verbose=False) -> Path:
 
     # Get the path to Aviary's models
     path = Path('models', file_name)
-    aviary_path = Path(aviary_resource(str(path)))
+    aviary_path = Path(get_aviary_resource_path(str(path)))
 
     # If the file name was provided without a path, check in the subfolders
     if not aviary_path.exists():
-        sub_dirs = [x[0] for x in os.walk(aviary_resource('models'))]
+        sub_dirs = [x[0] for x in os.walk(get_aviary_resource_path('models'))]
         for sub_dir in sub_dirs:
             temp_path = Path(sub_dir, file_name)
             if temp_path.exists():
