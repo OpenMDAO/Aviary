@@ -5,6 +5,7 @@ Aircraft csv: defines plane, but also defines payload (passengers, cargo) which 
     These will have to be specified in some alternate way such as a list correspond to mission #
 Phase info: defines a particular mission, will have multiple phase infos
 """
+import sys
 import aviary.api as av
 import openmdao.api as om
 import dymos as dm
@@ -18,6 +19,7 @@ weights = [1, 1]
 num_missions = len(weights)
 
 if __name__ == '__main__':
+    makeN2 = True if len(sys.argv) > 1 and sys.argv[1] == "n2" else False
     super_prob = om.Problem()
     probs = []
 
@@ -74,9 +76,12 @@ if __name__ == '__main__':
     for prob in probs:
         prob.set_initial_guesses()
 
+    if makeN2:
+        om.n2(super_prob, outfile='multi_aviary_submodel.html')
+
     dm.run_problem(super_prob)
     print(super_prob.check_partials())
-    # om.n2(super_prob)
+
 
 """
 Ferry mission phase info:

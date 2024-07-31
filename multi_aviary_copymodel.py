@@ -104,7 +104,7 @@ class MultiMissionProblem(om.Problem):
             warnings.simplefilter("ignore", om.PromotionWarning)
             self.setup()
 
-    def create_N2(self, outfile='aviary_multi_traj.html'):
+    def create_N2(self, outfile='multi_aviary_copymodel.html'):
         om.n2(self, outfile=outfile)
 
     def initvals(self):
@@ -310,7 +310,7 @@ if __name__ == '__main__':
     super_prob.add_design_variables()
     super_prob.add_objective()
     super_prob.setup_wrapper()
-    super_prob.initvals()
+    # super_prob.initvals()
     if makeN2:
         super_prob.create_N2()
     super_prob.run()

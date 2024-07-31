@@ -271,7 +271,7 @@ def runAvCannonball(kes=[4e3], weights=[1], makeN2=False):
         prob.setInitialVals(super_prob, subprefix)
 
     if makeN2:
-        om.n2(super_prob, outfile='multi_cannonball_modelcopy.html')
+        om.n2(super_prob, outfile='multi_cannonball_copymodel.html')
 
     dm.run_problem(super_prob)
     return super_prob, prefix, num_trajs, kes, weights
