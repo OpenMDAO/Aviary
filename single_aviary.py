@@ -1,9 +1,9 @@
+from c5_models.c5_ferry_phase_info import phase_info as c5_ferry_phase_info
+from c5_models.c5_intermediate_phase_info import phase_info as c5_intermediate_phase_info
+from c5_models.c5_maxpayload_phase_info import phase_info as c5_maxpayload_phase_info
 import aviary.api as av
 import openmdao.api as om
 import sys
-from c5_ferry_phase_info import phase_info as c5_ferry_phase_info
-from c5_intermediate_phase_info import phase_info as c5_intermediate_phase_info
-from c5_maxpayload_phase_info import phase_info as c5_maxpayload_phase_info
 
 
 def modify_plane(orig_filename, payloads, ranges):

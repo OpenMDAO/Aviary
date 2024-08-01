@@ -68,33 +68,30 @@ class CannonballProblem(om.Problem):
         self.model.connect('S', 'traj.parameters:S')
         self.model.connect('price', 'traj.parameters:price')
 
-    def setInitialVals(self, super_problem=None, prefix=""):
-        ref = self
-        if super_problem is not None and prefix != "":
-            ref = super_problem
+    def setInitialVals(self):
+        self.set_val('radius', 0.05, units='m')
+        self.set_val('density', 7.87, units='g/cm**3')
 
-        ref.set_val(prefix+'radius', 0.05, units='m')
-        ref.set_val(prefix+'density', 7.87, units='g/cm**3')
+        self.set_val("traj.parameters:CD", 0.5)
 
-        ref.set_val(prefix+"traj.parameters:CD", 0.5)
-        ref.set_val(prefix+"traj.ascent.t_initial", 0.0)
-        ref.set_val(prefix+"traj.ascent.t_duration", 10.0)
-
+        self.set_val("traj.ascent.t_initial", 0.0)
+        self.set_val("traj.ascent.t_duration", 10.0)
         # list is initial and final, based on phase info some are fixed others are not
         ascent, descent = self.phases
-        ref.set_val(prefix+"traj.ascent.states:r", ascent.interp('r', [0, 100]))
-        ref.set_val(prefix+'traj.ascent.states:h', ascent.interp('h', [0, 100]))
-        ref.set_val(prefix+'traj.ascent.states:v', ascent.interp('v', [200, 150]))
-        ref.set_val(prefix+'traj.ascent.states:gam',
-                    ascent.interp('gam', [25, 0]), units='deg')
+        self.set_val("traj.ascent.states:r", ascent.interp('r', [0, 100]))
+        self.set_val('traj.ascent.states:h', ascent.interp('h', [0, 100]))
+        self.set_val('traj.ascent.states:v', ascent.interp('v', [200, 150]))
+        self.set_val('traj.ascent.states:gam',
+                     ascent.interp('gam', [25, 0]), units='deg')
 
-        ref.set_val(prefix+'traj.descent.t_initial', 10.0)
-        ref.set_val(prefix+'traj.descent.t_duration', 10.0)
-        ref.set_val(prefix+'traj.descent.states:r', descent.interp('r', [100, 200]))
-        ref.set_val(prefix+'traj.descent.states:h', descent.interp('h', [100, 0]))
-        ref.set_val(prefix+'traj.descent.states:v', descent.interp('v', [150, 200]))
-        ref.set_val(prefix+'traj.descent.states:gam',
-                    descent.interp('gam', [0, -45]), units='deg')
+        self.set_val('traj.descent.t_initial', 10.0)
+        self.set_val('traj.descent.t_duration', 10.0)
+
+        self.set_val('traj.descent.states:r', descent.interp('r', [100, 200]))
+        self.set_val('traj.descent.states:h', descent.interp('h', [100, 0]))
+        self.set_val('traj.descent.states:v', descent.interp('v', [150, 200]))
+        self.set_val('traj.descent.states:gam',
+                     descent.interp('gam', [0, -45]), units='deg')
 
 
 class CannonballGroup(om.Group):
@@ -233,9 +230,14 @@ def runAvCannonball(kes=[4e3], weights=[1], makeN2=False):
         prob.add_trajectory(ke_max=ke)
         prob.setDefaults()
         prob.addDesVar()  # doesn't seem to do anything
-        prob.connectPreTraj()
+        prob.connectPreTraj()  # doesn't seem to actually do anything
 
-        super_prob.model.add_subsystem(prefix+f'_{i}', prob.model,
+        group = om.Group()
+        group.add_subsystem('pre_mission', prob.pre_mission)
+        group.add_subsystem('traj', prob.traj)
+        group.add_subsystem('post_mission', prob.post_mission)
+        # promoting radius and density keeps it constant for all missions
+        super_prob.model.add_subsystem(prefix+f'_{i}', group,
                                        promotes_inputs=['radius', 'density'])
         probs.append(prob)
 
@@ -258,6 +260,17 @@ def runAvCannonball(kes=[4e3], weights=[1], makeN2=False):
             prefix+f'_{i}.traj.descent.states:r', ranges[i],
             src_indices=-1)
 
+        # connect pre-mission parameters to trajectory counter parts
+        # this connection would happen within each problem's internal function,
+        # but since we're extracting the components into a larger problem,
+        # these connections have to be made at the super problem level
+        super_prob.model.connect(
+            prefix+f'_{i}.mass', prefix+f'_{i}.traj.parameters:m')
+        super_prob.model.connect(
+            prefix+f'_{i}.S', prefix+f'_{i}.traj.parameters:S')
+        super_prob.model.connect(
+            prefix+f'_{i}.price', prefix+f'_{i}.traj.parameters:price')
+
     super_prob.model.add_objective('compound_range', scaler=-1)  # maximize range
 
     super_prob.driver = om.ScipyOptimizeDriver()
@@ -267,11 +280,41 @@ def runAvCannonball(kes=[4e3], weights=[1], makeN2=False):
     super_prob.setup()
 
     for i, prob in enumerate(probs):
-        subprefix = prefix+f"_{i}."
-        prob.setInitialVals(super_prob, subprefix)
+        reference = prefix+f"_{i}"
+        super_prob.set_val(reference+'.radius', 0.05, units='m')
+        super_prob.set_val(reference+'.density', 7.87, units='g/cm**3')
+
+        super_prob.set_val(reference+".traj.parameters:CD", 0.5)
+
+        super_prob.set_val(reference+".traj.ascent.t_initial", 0.0)
+        super_prob.set_val(reference+".traj.ascent.t_duration", 10.0)
+        # list is initial and final, based on phase info some are fixed others are not
+        ascent, descent = prob.phases
+        super_prob.set_val(reference+".traj.ascent.states:r",
+                           ascent.interp('r', [0, 100]))
+        super_prob.set_val(reference+'.traj.ascent.states:h',
+                           ascent.interp('h', [0, 100]))
+        super_prob.set_val(reference+'.traj.ascent.states:v',
+                           ascent.interp('v', [200, 150]))
+        super_prob.set_val(reference+'.traj.ascent.states:gam',
+                           ascent.interp('gam', [25, 0]), units='deg')
+
+        super_prob.set_val(reference+'.traj.descent.t_initial', 10.0)
+        super_prob.set_val(reference+'.traj.descent.t_duration', 10.0)
+
+        super_prob.set_val(reference+'.traj.descent.states:r',
+                           descent.interp('r', [100, 200]))
+        super_prob.set_val(reference+'.traj.descent.states:h',
+                           descent.interp('h', [100, 0]))
+        super_prob.set_val(reference+'.traj.descent.states:v',
+                           descent.interp('v', [150, 200]))
+        super_prob.set_val(reference+'.traj.descent.states:gam',
+                           descent.interp('gam', [0, -45]), units='deg')
 
     if makeN2:
-        om.n2(super_prob, outfile='multi_cannonball_copymodel.html')
+        sys.path.append('../')
+        from createN2 import createN2
+        createN2(__file__, super_prob)
 
     dm.run_problem(super_prob)
     return super_prob, prefix, num_trajs, kes, weights
@@ -380,7 +423,7 @@ def multiTestCase(makeN2=False):
 
 
 if __name__ == '__main__':
-    # if run as python avcannonball.py n2, it will create an N2
+    # if run as python multi_cannonball_copyparts.py n2, it will create an N2
     makeN2 = False
     singlerun = True
     if len(sys.argv) > 1:
@@ -401,7 +444,41 @@ if __name__ == '__main__':
 
 """
 Findings:
-- importing prob.model solves the issue of connecting traj to pre/post mission (at least in cannonball)
-- initial values can be set with the internal function as long as set_val gets called on the super problem instance
-  and as such the variable name passed in contains the unique reference
+- connections between trajectory parameters and pre-mission parameters (and post-mission for aviary)
+  have to be made at super problem level, running the cannonballproblem method to form those connections
+  has seemingly no effect, causing divide by zero errors b/c the trajectory value is not set 
+
+- design var has to be set in super problem, cannonballproblem design var is not manipulated by optimizer,
+  giving a result with the default value for ball radius
+
+- initial values have to be set at super problem level, running cannonballproblem's initial value function
+  throws error that setval cannot run before setup (even though superproblem setup was run). 
+
+What works:
+- copying instances of pre, traj, and post mission subsystems and adding to a super problem
+- internal linkages between trajectory phases works without super problem references
+- compound objective between multiple trajectories works
+- connections between 2 problems to maintain same physical size of cannonball (i.e. airplane)
+- optimization runs, gives sensible results
+  
+To apply to Aviary:
+- link_phases (includes connections to post/pre and traj)
+- add_design_vars - sizing components, subsystem level variables 
+  (aviary currently adds aero, prop des vars along with any external subsystem)
+- set_initial_guesses 
+
+Next setps:
+- multi_mission specific add des var that adds them at super prob level
+  - aviary's design var can still be run at the aviaryProblem level it just won't have any effect
+
+- multi_mission link phases that does post/pre to traj connection
+  - aviary's link phases can still be run it just won't create trajectory to pre mission var connections
+  - be careful with connections vs. promotions
+
+- initial guesses, what's the best solution?
+  - possible ideas:
+    - use aviary's existing functions to create initial values, but use set val outside on super prob
+       - would require minimal mods to aviary to not run set val when a flag is passed
+    - write a fully seperate initial guesses function
+       - would be problematic to maintain with changes/new additions
   """

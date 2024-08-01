@@ -9,11 +9,11 @@ import sys
 import aviary.api as av
 import openmdao.api as om
 import dymos as dm
-from c5_ferry_phase_info import phase_info as c5_ferry_phase_info
-from c5_intermediate_phase_info import phase_info as c5_intermediate_phase_info
-from c5_maxpayload_phase_info import phase_info as c5_maxpayload_phase_info
+from c5_models.c5_ferry_phase_info import phase_info as c5_ferry_phase_info
+from c5_models.c5_intermediate_phase_info import phase_info as c5_intermediate_phase_info
+from c5_models.c5_maxpayload_phase_info import phase_info as c5_maxpayload_phase_info
 
-planes = ['c5_maxpayload.csv', 'c5_intermediate.csv']
+planes = ['c5_models/c5_maxpayload.csv', 'c5_models/c5_intermediate.csv']
 phase_infos = [c5_maxpayload_phase_info, c5_intermediate_phase_info]
 weights = [1, 1]
 num_missions = len(weights)
@@ -77,7 +77,8 @@ if __name__ == '__main__':
         prob.set_initial_guesses()
 
     if makeN2:
-        om.n2(super_prob, outfile='multi_aviary_submodel.html')
+        from createN2 import createN2
+        createN2(__file__, super_prob)
 
     dm.run_problem(super_prob)
     print(super_prob.check_partials())

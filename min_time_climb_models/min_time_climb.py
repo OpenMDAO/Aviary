@@ -4,6 +4,7 @@ from dymos.examples.min_time_climb.min_time_climb_ode import MinTimeClimbODE
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
+from createN2 import createN2
 
 
 def min_time_climb(height=20e3,
@@ -104,11 +105,11 @@ def min_time_climb(height=20e3,
     p['traj.phase0.t_initial'] = 0.0
     p['traj.phase0.t_duration'] = 350.0
 
-    p['traj.phase0.states:r'] = phase.interp('r', [0.0, 111319.54])
+    p['traj.phase0.states:r'] = phase.interp('r', [0.0, 100e3])
     p['traj.phase0.states:h'] = phase.interp('h', [100.0, height])
     p['traj.phase0.states:v'] = phase.interp('v', [135.964, 283.159])
     p['traj.phase0.states:gam'] = phase.interp('gam', [0.0, 0.0])
-    p['traj.phase0.states:m'] = phase.interp('m', [19030.468, 16841.431])
+    p['traj.phase0.states:m'] = phase.interp('m', [30e3, 16e3])
     p['traj.phase0.controls:alpha'] = phase.interp('alpha', [0.0, 0.0])
 
     dm.run_problem(p, simulate=True)
@@ -152,28 +153,34 @@ def checkDeviation(filenum=0):
 
 
 def multiHeightTest():
-    heights = [12e3, 20e3]
+    heights = [6e3, 18e3]
     prefix = 'traj.phase0.timeseries.'
-    plotvars = {'r': ['h'], 'time': ['v', 'thrust', 'm_dot', 'alpha']}
-    plotunits = {'r': ['km', 'km'], 'time': ['s', 'm/s', 'kN', 'kg/s', 'deg']}
+    # these dictionaries are defined with the x-variable and its units as the key,
+    # with corresponding y-variables and units in a list as the key's value
+    # allows for multiple y vars to be plotted against same x var
+    plotvars = {'r': ['h'],   'time': ['h',  'v', 'thrust', 'm_dot', 'alpha']}
+    plotunits = {'km': ['km'],   's': ['km', 'm/s', 'kN',    'kg/s',  'deg']}
     varnames = {prefix+x: [prefix+y for y in ylst] for x, ylst in plotvars.items()}
-    numplots = sum([len(item) for item in plotvars.values()])
+    numplots = sum([len(yvars) for yvars in plotvars.values()])
     data = {f'h{i}': {} for i in range(len(heights))}
+    times = []
 
     for j, height in enumerate(heights):
         p = min_time_climb(height=height)
         wing_area = p.get_val('traj.phase0.parameters:S', units='m**2')[0]
         sol = om.CaseReader('dymos_solution.db').get_case('final')
         sim = om.CaseReader('dymos_simulation.db').get_case('final')
+        timetoclimb = p.get_val('traj.phase0.timeseries.time', units='s')[-1][0]
+        times.append(timetoclimb)
 
         print("\n\n=======================================")
         print(f"Time to climb {height/1e3} km: " +
-              f"{p.get_val('traj.phase0.timeseries.time',units='s')[-1][0]:.2f}" +
+              f"{timetoclimb:.2f}" +
               f" s with wing area: {wing_area} sqm")
 
-        for xname, unitkey in zip(varnames.keys(), plotunits.keys()):
-            xsol = sol.get_val(xname, units=plotunits[unitkey][0])
-            xsim = sim.get_val(xname, units=plotunits[unitkey][0])
+        for xname, xunit in zip(varnames.keys(), plotunits.keys()):
+            xsol = sol.get_val(xname, units=xunit)
+            xsim = sim.get_val(xname, units=xunit)
             if not xname in data.keys():
                 data[f'h{j}'][xname] = {'x': (xsol, xsim), 'y': []}
             for i, yname in enumerate(varnames[xname]):
@@ -181,31 +188,34 @@ def multiHeightTest():
                     data[f'h{j}'][xname]['yname'] = [yname]
                 else:
                     data[f'h{j}'][xname]['yname'].append(yname)
-                ysol = sol.get_val(yname, units=plotunits[unitkey][i+1])
-                ysim = sim.get_val(yname, units=plotunits[unitkey][i+1])
+                ysol = sol.get_val(yname, units=plotunits[xunit][i])
+                ysim = sim.get_val(yname, units=plotunits[xunit][i])
                 data[f'h{j}'][xname]['y'].append((ysol, ysim))
 
-    colors = ['r', 'b']
+    colors = ['r', 'b', 'g', 'm', 'k']
     legendlst = []
     for j in range(len(heights)):
         datadict = data[f'h{j}']
-        i = 1
-        for xname, unitkey in zip(datadict.keys(), plotunits.keys()):
+        plot_idx = 1
+        for xname, xunit in zip(datadict.keys(), plotunits.keys()):
             xsol, xsim = datadict[xname]['x']
-            for (ysol, ysim), yname, yunit in zip(datadict[xname]['y'], datadict[xname]['yname'], plotunits[unitkey][1:]):
-                plt.subplot(int(numplots/2), numplots-int(numplots/2), i)
-                # if max(ysim) > 1e3:
-                #     ysol, ysim = ysol/1e3, ysim/1e3
+            for (ysol, ysim), yname, yunit in zip(datadict[xname]['y'], datadict[xname]['yname'], plotunits[xunit]):
+                plt.subplot(2, int(numplots/2), plot_idx)
                 plt.plot(xsol, ysol, f'{colors[j]}o', fillstyle='none')
                 plt.plot(xsim, ysim, colors[j])
-                plt.xlabel(f"{xname.split(prefix)[1]} ({plotunits[unitkey][0]})")
+                plt.xlabel(f"{xname.split(prefix)[1]} ({xunit})")
                 plt.ylabel(f"{yname.split(prefix)[1]} ({yunit})")
-                if j == 0:
-                    plt.grid(visible=True)
-                i += 1
+                plt.grid(visible=True)
+                plot_idx += 1
+
         for datatype in ('Solution', 'Simulation'):
-            legendlst.append(f"{datatype} @ h = {heights[j]/1e3} km")
-    plt.figlegend(legendlst)
+            legendlst.append(f"h = {heights[j]/1e3} km, {datatype} ")
+    plt.figlegend(legendlst, ncols=2, loc='lower center')
+    plt.tight_layout(pad=2)
+    titlestr = ", ".join(
+        [f"{time:.1f} s to h = {height/1e3:.1f} km" for time, height
+         in zip(times, heights)])
+    plt.suptitle(f"Minimum Time to Climb: "+titlestr)
     plt.show()
 
 
@@ -216,7 +226,7 @@ But when the script itself is run again, these values can differ very largely,
 optimization takes a very different number of iterations, and the profile looks very 
 different. Time to climb is also different."""
 if __name__ == '__main__':
-    if len(sys.argv) > 1 and 'filenum' in sys.argv[1]:
+    if 'filenum' in sys.argv[1]:
         checkDeviation(filenum=sys.argv[1].split('filenum=')[1])
     else:
         multiHeightTest()

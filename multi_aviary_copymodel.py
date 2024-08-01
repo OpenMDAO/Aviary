@@ -12,9 +12,9 @@ import openmdao.api as om
 import dymos as dm
 import numpy as np
 from aviary.variable_info.enums import ProblemType, AnalysisScheme
-from c5_ferry_phase_info import phase_info as c5_ferry_phase_info
-from c5_intermediate_phase_info import phase_info as c5_intermediate_phase_info
-from c5_maxpayload_phase_info import phase_info as c5_maxpayload_phase_info
+from c5_models.c5_ferry_phase_info import phase_info as c5_ferry_phase_info
+from c5_models.c5_intermediate_phase_info import phase_info as c5_intermediate_phase_info
+from c5_models.c5_maxpayload_phase_info import phase_info as c5_maxpayload_phase_info
 from aviary.variable_info.variable_meta_data import _MetaData as MetaData
 from aviary.variable_info.variables import Mission, Dynamic
 from aviary.interface.methods_for_level2 import wrapped_convert_units
@@ -102,10 +102,7 @@ class MultiMissionProblem(om.Problem):
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", om.OpenMDAOWarning)
             warnings.simplefilter("ignore", om.PromotionWarning)
-            self.setup()
-
-    def create_N2(self, outfile='multi_aviary_copymodel.html'):
-        om.n2(self, outfile=outfile)
+            self.setup(check='all')
 
     def run(self):
         self.run_model()
@@ -115,7 +112,7 @@ class MultiMissionProblem(om.Problem):
 
 if __name__ == '__main__':
     makeN2 = True if (len(sys.argv) > 1 and "n2" in sys.argv[1]) else False
-    planes = ['c5_maxpayload.csv', 'c5_intermediate.csv']
+    planes = ['c5_models/c5_maxpayload.csv', 'c5_models/c5_intermediate.csv']
     phase_infos = [c5_maxpayload_phase_info, c5_intermediate_phase_info]
     weights = [1, 1]
     super_prob = MultiMissionProblem(planes, phase_infos, weights)
@@ -133,7 +130,8 @@ if __name__ == '__main__':
         print(super_prob.get_val(super_prob.group_prefix +
                                  f"_{i}.mission:summary:range"))
     if makeN2:
-        super_prob.create_N2()
+        from createN2 import createN2
+        createN2(__file__, super_prob)
     super_prob.run()
 
     # def initvals(self):
