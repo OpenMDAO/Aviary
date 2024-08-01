@@ -39,6 +39,18 @@ design variable
 flight envelope
     The limits of speed, altitude, and load factor that an aircraft can safely operate within. Understanding the flight envelope is critical for aircraft design and operation.
 
+homogeneous engines
+    An individual engine or set of engines that all have identical performance characteristics.
+    E.g. you might have four engines on an aircraft, but they are all assumed to have the same thrust, fuel consumption, etc.
+    All engines in a homogenous set use the same `EngineModel` object in Aviary.
+    See also; heterogeneous engines.
+
+heterogeneous engines
+    Multiple sets of homogenous engines, with each set having unique performance characteristics.
+    This is useful if you are modeling an aircraft with engines of different sizes or types.
+    Each set of unique engines uses a different `EngineModel` object in Aviary.
+    See also; homogeneous engines.
+
 mission analysis
     The process of determining the trajectory of an aircraft.
     This includes determining the aircraft's flight path, velocity, and acceleration as a function of time.
