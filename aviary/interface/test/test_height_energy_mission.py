@@ -137,7 +137,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
             os.environ['TESTFLO_RUNNING'] = testflo_running
 
         self.assertIsNotNone(prob)
-        self.assertFalse(prob.failed)
+        self.assertTrue(prob.problem_ran_successfully)
 
         cmd = f'aviary dashboard --problem_recorder dymos_solution.db --driver_recorder driver_test.db {prob.driver._problem()._name}'
         # this only tests that a given command line tool returns a 0 return code. It doesn't
@@ -152,7 +152,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
     def test_mission_basic_pyopt(self):
         prob = self.run_mission(self.phase_info, "IPOPT")
         self.assertIsNotNone(prob)
-        self.assertFalse(prob.failed)
+        self.assertTrue(prob.problem_ran_successfully)
 
     @require_pyoptsparse(optimizer="IPOPT")
     def test_mission_optimize_mach_only(self):
@@ -161,7 +161,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
         for phase in ["climb", "cruise", "descent"]:
             modified_phase_info[phase]["user_options"]["optimize_mach"] = True
         prob = self.run_mission(modified_phase_info, "IPOPT")
-        self.assertFalse(prob.failed)
+        self.assertTrue(prob.problem_ran_successfully)
 
     @require_pyoptsparse(optimizer="IPOPT")
     def test_mission_optimize_altitude_and_mach(self):
@@ -178,7 +178,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
             },
         }
         prob = self.run_mission(modified_phase_info, "IPOPT")
-        self.assertFalse(prob.failed)
+        self.assertTrue(prob.problem_ran_successfully)
 
         constraints = prob.driver._cons
         for name, meta in constraints.items():
@@ -193,7 +193,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
         for phase in ["climb", "cruise", "descent"]:
             modified_phase_info[phase]["user_options"]["optimize_altitude"] = True
         prob = self.run_mission(modified_phase_info, "IPOPT")
-        self.assertFalse(prob.failed)
+        self.assertTrue(prob.problem_ran_successfully)
 
     @require_pyoptsparse(optimizer="IPOPT")
     def test_mission_solve_for_distance_IPOPT(self):
@@ -201,14 +201,14 @@ class AircraftMissionTestSuite(unittest.TestCase):
         for phase in ["climb", "cruise", "descent"]:
             modified_phase_info[phase]["user_options"]["solve_for_distance"] = True
         prob = self.run_mission(modified_phase_info, "IPOPT")
-        self.assertFalse(prob.failed)
+        self.assertTrue(prob.problem_ran_successfully)
 
     def test_mission_solve_for_distance_SLSQP(self):
         modified_phase_info = self.phase_info.copy()
         for phase in ["climb", "cruise", "descent"]:
             modified_phase_info[phase]["user_options"]["solve_for_distance"] = True
         prob = self.run_mission(modified_phase_info, "SLSQP")
-        self.assertFalse(prob.failed)
+        self.assertTrue(prob.problem_ran_successfully)
 
     @require_pyoptsparse(optimizer="IPOPT")
     def test_mission_with_external_subsystem(self):
@@ -218,7 +218,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
         self.add_external_subsystem(modified_phase_info, dummy_subsystem_builder)
 
         prob = self.run_mission(modified_phase_info, "IPOPT")
-        self.assertFalse(prob.failed)
+        self.assertTrue(prob.problem_ran_successfully)
 
     def test_custom_phase_builder(self):
         local_phase_info = self.phase_info.copy()

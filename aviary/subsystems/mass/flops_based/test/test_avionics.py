@@ -12,13 +12,6 @@ from aviary.validation_cases.validation_tests import (flops_validation_test,
                                                       print_case)
 from aviary.variable_info.variables import Aircraft, Mission
 
-_fuse_count = 'TBD:option:fuselage_count'
-_fuse_total_length = 'aircraft:fuselage:dimensions:total_length'
-_fuse_max_depth = 'aircraft:fuselage:dimensions:max_depth'
-_max_mach = 'aircraft:design:dimensions:max_mach'
-# _carrier_based = 'aircraft:landing_gear:control:carrier_based'
-_avionics_group_mass = 'TBD:avionics'
-
 
 class TransportAvionicsMassTest(unittest.TestCase):
     '''

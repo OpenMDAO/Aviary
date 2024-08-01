@@ -524,8 +524,22 @@ class PreHamiltonStandard(om.ExplicitComponent):
 
         # arbitrarily small number to keep advance ratio nonzero, which allows for static thrust prediction
         # NOTE need for a separate static thrust calc method?
-        vktas[np.where(vktas == 0.0)] = 1e-6
+        vktas[np.where(vktas <= 1e-6)] = 1e-6
         density_ratio = inputs[Dynamic.Mission.DENSITY] / RHO_SEA_LEVEL_ENGLISH
+
+        if diam_prop <= 0.0:
+            raise om.AnalysisError(
+                "Aircraft.Engine.PROPELLER_DIAMETER must be positive.")
+        if any(tipspd) <= 0.0:
+            raise om.AnalysisError(
+                "Dynamic.Mission.PROPELLER_TIP_SPEED must be positive.")
+        if any(sos) <= 0.0:
+            raise om.AnalysisError(
+                "Dynamic.Mission.SPEED_OF_SOUND must be positive.")
+        if any(density_ratio) <= 0.0:
+            raise om.AnalysisError("Dynamic.Mission.DENSITY must be positive.")
+        if any(shp) < 0.0:
+            raise om.AnalysisError("Dynamic.Mission.SHAFT_POWER must be non-negative.")
 
         outputs['density_ratio'] = density_ratio
         # 1118.21948771 is speed of sound at sea level
@@ -908,8 +922,9 @@ class PostHamiltonStandard(om.ExplicitComponent):
         install_loss_factor = inputs['install_loss_factor']
         outputs[Dynamic.Mission.THRUST] = ctx*tipspd**2*diam_prop**2 * \
             inputs['density_ratio']/(1.515E06)*364.76*(1. - install_loss_factor)
-        # avoid divide by zero when shaft power is also zero
-        calc_idx = np.where(inputs['power_coefficient'] != 0)
+
+        # avoid divide by zero when shaft power is zero
+        calc_idx = np.where(inputs['power_coefficient'] > 1e-6)  # index where CP > 1e-5
         prop_eff = np.zeros(self.options['num_nodes'])
         prop_eff[calc_idx] = inputs['advance_ratio'][calc_idx] * ctx[calc_idx] \
             / inputs['power_coefficient'][calc_idx]
@@ -918,6 +933,7 @@ class PostHamiltonStandard(om.ExplicitComponent):
             (1. - install_loss_factor)
 
     def compute_partials(self, inputs, partials):
+        nn = self.options['num_nodes']
         XFT = inputs['comp_tip_loss_factor']
         ctx = inputs['thrust_coefficient']*XFT
         diam_prop = inputs[Aircraft.Engine.PROPELLER_DIAMETER]
@@ -940,23 +956,49 @@ class PostHamiltonStandard(om.ExplicitComponent):
             diam_prop**2*unit_conversion_factor*(1. - install_loss_factor)
         partials[Dynamic.Mission.THRUST, 'install_loss_factor'] = -ctx*tipspd**2*diam_prop**2 * \
             inputs['density_ratio']*unit_conversion_factor
-        partials["propeller_efficiency", "advance_ratio"] = ctx / \
-            inputs['power_coefficient']
-        partials["propeller_efficiency", "thrust_coefficient"] = inputs['advance_ratio'] * \
-            XFT/inputs['power_coefficient']
-        partials["propeller_efficiency", "comp_tip_loss_factor"] = inputs['advance_ratio'] * \
-            inputs['thrust_coefficient']/inputs['power_coefficient']
-        partials["propeller_efficiency", "power_coefficient"] = - \
-            inputs['advance_ratio']*ctx/inputs['power_coefficient']**2
 
-        partials["install_efficiency", "advance_ratio"] = ctx / \
-            inputs['power_coefficient'] * (1. - install_loss_factor)
-        partials["install_efficiency", "thrust_coefficient"] = inputs['advance_ratio'] * \
-            XFT/inputs['power_coefficient'] * (1. - install_loss_factor)
-        partials["install_efficiency", "comp_tip_loss_factor"] = inputs['advance_ratio'] * \
-            inputs['thrust_coefficient'] / \
-            inputs['power_coefficient'] * (1. - install_loss_factor)
-        partials["install_efficiency", "power_coefficient"] = -inputs['advance_ratio'] * \
-            ctx/inputs['power_coefficient']**2 * (1. - install_loss_factor)
-        partials["install_efficiency", 'install_loss_factor'] = - \
-            inputs['advance_ratio']*ctx/inputs['power_coefficient']
+        calc_idx = np.where(inputs['power_coefficient'] > 1e-6)
+        pow_coeff = inputs['power_coefficient']
+        adv_ratio = inputs['advance_ratio']
+
+        deriv_propeff_adv = np.zeros(nn, dtype=pow_coeff.dtype)
+        deriv_propeff_ct = np.zeros(nn, dtype=pow_coeff.dtype)
+        deriv_propeff_tip = np.zeros(nn, dtype=pow_coeff.dtype)
+        deriv_propeff_cp = np.zeros(nn, dtype=pow_coeff.dtype)
+
+        deriv_propeff_adv[calc_idx] = ctx[calc_idx] / pow_coeff[calc_idx]
+        deriv_propeff_ct[calc_idx] = adv_ratio[calc_idx] * \
+            XFT[calc_idx]/pow_coeff[calc_idx]
+        deriv_propeff_tip[calc_idx] = adv_ratio[calc_idx] * \
+            inputs['thrust_coefficient'][calc_idx]/pow_coeff[calc_idx]
+        deriv_propeff_cp[calc_idx] = - \
+            adv_ratio[calc_idx]*ctx[calc_idx]/pow_coeff[calc_idx]**2
+
+        partials["propeller_efficiency", "advance_ratio"] = deriv_propeff_adv
+        partials["propeller_efficiency", "thrust_coefficient"] = deriv_propeff_ct
+        partials["propeller_efficiency", "comp_tip_loss_factor"] = deriv_propeff_tip
+        partials["propeller_efficiency", "power_coefficient"] = deriv_propeff_cp
+
+        deriv_insteff_adv = np.zeros(nn, dtype=pow_coeff.dtype)
+        deriv_insteff_ct = np.zeros(nn, dtype=pow_coeff.dtype)
+        deriv_insteff_tip = np.zeros(nn, dtype=pow_coeff.dtype)
+        deriv_insteff_cp = np.zeros(nn, dtype=pow_coeff.dtype)
+        deriv_insteff_lf = np.zeros(nn, dtype=pow_coeff.dtype)
+
+        deriv_insteff_adv[calc_idx] = ctx[calc_idx] / \
+            pow_coeff[calc_idx] * (1. - install_loss_factor[calc_idx])
+        deriv_insteff_ct[calc_idx] = adv_ratio[calc_idx] * \
+            XFT[calc_idx]/pow_coeff[calc_idx] * (1. - install_loss_factor[calc_idx])
+        deriv_insteff_tip[calc_idx] = adv_ratio[calc_idx] * \
+            inputs['thrust_coefficient'][calc_idx] / \
+            pow_coeff[calc_idx] * (1. - install_loss_factor[calc_idx])
+        deriv_insteff_cp[calc_idx] = -adv_ratio[calc_idx] * \
+            ctx[calc_idx]/pow_coeff[calc_idx]**2 * (1. - install_loss_factor[calc_idx])
+        deriv_insteff_lf[calc_idx] = - \
+            adv_ratio[calc_idx]*ctx[calc_idx]/pow_coeff[calc_idx]
+
+        partials["install_efficiency", "advance_ratio"] = deriv_insteff_adv
+        partials["install_efficiency", "thrust_coefficient"] = deriv_insteff_ct
+        partials["install_efficiency", "comp_tip_loss_factor"] = deriv_insteff_tip
+        partials["install_efficiency", "power_coefficient"] = deriv_insteff_cp
+        partials["install_efficiency", 'install_loss_factor'] = deriv_insteff_lf
