@@ -215,10 +215,11 @@ class build_model():
         def Instructions():
             message = 'This tool can be used to help input information about an aircraft model.\n\n' +\
                 'Enter in the desired values for your model and press "Submit" to generate ' +\
-                'a CSV named "Aircraft_Model" which can be used at Levels 1 and 2 of Aviary.\n' +\
-                '*"Sumbit" will save "Aircraft_Model.csv" to the main "Aviary" folder unless otherwise specified.' +\
-                '   if a file is opened "Submit" will automatically save to the specified file.' +\
-                '**Not all values are required to successfully optimize a given model**\n\n' +\
+                'a CSV named "Aircraft_Model" which can be used at Levels 1, 2, and 3 of Aviary.\n' +\
+                '*"Sumbit" will save "Aircraft_Model.csv" to the main "Aviary" folder unless otherwise specified.\n' +\
+                'If a file is opened "Submit" will automatically save to the specified file.\n\n' +\
+                '*Not all values are required to successfully optimize a given model*\n' +\
+                'Default values will be used where there is no user input.\n\n' +\
                 'Use "Edit"->"Open" to open a previously defined model to continue editing.\n' +\
                 'Use "Edit"->"Open & Display" to open a previously defined model and all instances where edits were made.\n' +\
                 '*Larger files may cause the interface to run slower.\n' +\
@@ -231,7 +232,7 @@ class build_model():
                 'The "Search" tab can be used to quickly search and edit values.\n' +\
                 'Use the "Search" button to find a variable name and "Clear" to clear searched results.\n' +\
                 '*When searching for a variable, the name must be the last term in the string ' +\
-                'i.e: "*:*:variable_name" (when applicable).\n' +\
+                'i.e: "*:*:variable_name".\n' +\
                 '*Values entered in for a variable and then cleared using the "Clear" button will still save.'
             tk.messagebox.showinfo(title='Instructions', message=message)
 
