@@ -4,7 +4,6 @@ from dymos.examples.min_time_climb.min_time_climb_ode import MinTimeClimbODE
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
-from createN2 import createN2
 
 
 def min_time_climb(height=20e3,
