@@ -1,6 +1,7 @@
 import openmdao.api as om
 import dymos as dm
 from dymos.examples.min_time_climb.min_time_climb_ode import MinTimeClimbODE
+from plot_helper import make_min_time_climb_plot
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
@@ -34,7 +35,7 @@ class MinTimeClimbProblem(om.Problem):
 
         self.model.linear_solver = om.DirectSolver()
 
-    def addTrajectory(self, num_seg=9, transcription='gauss-lobatto',
+    def addTrajectory(self, num_seg=15, transcription='gauss-lobatto',
                       transcription_order=3):
         t = {'gauss-lobatto': dm.GaussLobatto(
             num_segments=num_seg, order=transcription_order),
@@ -85,6 +86,7 @@ class MinTimeClimbProblem(om.Problem):
 
         phase.add_path_constraint(name='h', lower=100.0, upper=height, ref=height)
         phase.add_path_constraint(name='aero.mach', lower=0.1, upper=1.8)
+        # phase.add_path_constraint(name='gam', lower=-23, upper=23, units='deg')
 
         # Unnecessary but included to test capability
         phase.add_path_constraint(name='alpha', lower=-8, upper=8)
@@ -109,16 +111,19 @@ class MinTimeClimbProblem(om.Problem):
         ref = self
         if super_prob is not None and prefix != "":
             ref = super_prob
-        ref[prefix+'traj.phase0.t_initial'] = 0.0
-        ref[prefix+'traj.phase0.t_duration'] = 350.0
-        ref[prefix+'traj.phase0.states:r'] = self.phase.interp('r', [0.0, 100e3])
-        ref[prefix+'traj.phase0.states:h'] = self.phase.interp(
-            'h', [100.0, self.target_height])
-        ref[prefix+'traj.phase0.states:v'] = self.phase.interp('v', [135.964, 283.159])
-        ref[prefix+'traj.phase0.states:gam'] = self.phase.interp('gam', [0.0, 0.0])
-        ref[prefix+'traj.phase0.states:m'] = self.phase.interp(
-            'm', [self.initial_mass, 10e3])
-        ref[prefix+'traj.phase0.controls:alpha'] = self.phase.interp('alpha', [0.0, 0.0])
+        phase = self.phase
+        ref.set_val(prefix+'traj.phase0.t_initial', 0.0)
+        ref.set_val(prefix+'traj.phase0.t_duration', 350.0)
+
+        ref.set_val(prefix+'traj.phase0.states:r', phase.interp('r', [0.0, 100e3]))
+        ref.set_val(prefix+'traj.phase0.states:h', phase.interp(
+            'h', [100.0, self.target_height]))
+        ref.set_val(prefix+'traj.phase0.states:v', phase.interp('v', [135.964, 283.159]))
+        ref.set_val(prefix+'traj.phase0.states:gam', phase.interp('gam', [0.0, 0.0]))
+        ref.set_val(prefix+'traj.phase0.states:m',
+                    phase.interp('m', [self.initial_mass, 16e3]))
+        ref.set_val(prefix+'traj.phase0.controls:alpha',
+                    phase.interp('alpha', [0.0, 0.0]))
 
 
 if __name__ == '__main__':
@@ -126,11 +131,11 @@ if __name__ == '__main__':
     heights = [6e3, 18e3]
     weights = [1, 1]
     num_missions = len(heights)
+
     super_prob = om.Problem()
     probs = []
     for i, height in enumerate(heights):
         prob = MinTimeClimbProblem(height, 30e3)
-        # prob.setOptimizer()
         prob.addTrajectory()
         super_prob.model.add_subsystem(
             f"group_{i}", prob.model, promotes=[('phase0.parameters:S', 'S')])
@@ -146,11 +151,14 @@ if __name__ == '__main__':
         promotes=['compound_time', *times])
 
     for i in range(num_missions):
-        super_prob.model.connect(f"group_{i}.phase0.t", times[i], src_indices=-1)
+        super_prob.model.connect(
+            f"group_{i}.phase0.t", times[i],
+            src_indices=-1)
     super_prob.model.add_objective('compound_time')
 
-    super_prob.driver = om.ScipyOptimizeDriver()
-    super_prob.driver.options['optimizer'] = 'SLSQP'
+    # super_prob.driver = om.ScipyOptimizeDriver()
+    super_prob.driver = om.pyOptSparseDriver()
+    super_prob.driver.options['optimizer'] = 'SLSQP'  # 'IPOPT'
     super_prob.driver.declare_coloring()
     super_prob.model.linear_solver = om.DirectSolver()
 
@@ -159,20 +167,19 @@ if __name__ == '__main__':
         sys.path.append('../')
         from createN2 import createN2
         createN2(__file__, super_prob)
+
     for i, prob in enumerate(probs):
         prob.setInitialConditions(super_prob, f"group_{i}.")
 
-    dm.run_problem(super_prob)
+    dm.run_problem(super_prob, simulate=True)
+
     wing_area = super_prob.get_val('S', units='m**2')[0]
-    # sol = om.CaseReader('dymos_solution.db').get_case('final')
-    # sim = om.CaseReader('dymos_simulation.db').get_case('final')
     print("\n\n=====================================")
     for i in range(num_missions):
         timetoclimb = super_prob.get_val(f'group_{i}.phase0.t', units='s')[-1]
         print(f"TtoC: {timetoclimb}, S: {wing_area}")
-        xsol = super_prob.get_val(f"group_{i}.phase0.timeseries.r")
-        ysol = super_prob.get_val(f"group_{i}.phase0.timeseries.h")
-        plt.plot(xsol, ysol)
 
-    plt.grid()
-    plt.show()
+    make_min_time_climb_plot(
+        solfile='dymos_solution.db',
+        simfile=['dymos_simulation.db', 'dymos_simulation_1.db'],
+        solprefix='group', omitpromote='traj')
