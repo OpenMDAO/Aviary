@@ -287,6 +287,10 @@ class AviaryProblem(om.Problem):
                 # Access the phase_info variable from the loaded module
                 phase_info = outputted_phase_info.phase_info
 
+                # if verbosity level is BRIEF or higher, print that we're using the outputted phase info
+                if verbosity is not None and verbosity.value >= 1:
+                    print('Using outputted phase_info from current working directory')
+
             else:
                 if self.mission_method is TWO_DEGREES_OF_FREEDOM:
                     if self.analysis_scheme is AnalysisScheme.COLLOCATION:
@@ -300,8 +304,9 @@ class AviaryProblem(om.Problem):
                 elif self.mission_method is HEIGHT_ENERGY:
                     from aviary.interface.default_phase_info.height_energy import phase_info
 
-                print('Loaded default phase_info for '
-                      f'{self.mission_method.value.lower()} equations of motion')
+                if verbosity is not None and verbosity.value >= 1:
+                    print('Loaded default phase_info for '
+                          f'{self.mission_method.value.lower()} equations of motion')
 
         # create a new dictionary that only contains the phases from phase_info
         self.phase_info = {}
