@@ -79,7 +79,6 @@ jobs:
           subject: "***Notification*** Tests failed with development versions of OpenMDAO/Dymos: ${{ github.run_id }}"
           body: |
             {
-              "number": "${GITHUB_RUN_ID}",
               "title": "Test with Pre-Release OpenMDAO/Dymos",
               "action": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
             }
