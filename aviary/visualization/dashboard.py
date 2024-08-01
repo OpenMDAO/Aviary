@@ -551,7 +551,10 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
     port : int
         HTTP port used for the dashboard webapp. If 0, use any free port
     """
-    reports_dir = f"reports/{script_name}/"
+    if "reports/" not in script_name:
+        reports_dir = f"reports/{script_name}/"
+    else:
+        reports_dir = script_name
 
     if not Path(reports_dir).is_dir():
         raise ValueError(
