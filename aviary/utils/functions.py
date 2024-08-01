@@ -1,15 +1,18 @@
 from typing import Union
-import numpy as np
-import openmdao.api as om
 from pathlib import Path
-import pkg_resources
+import importlib_resources
+from contextlib import ExitStack
+import atexit
+import os
 
+import openmdao.api as om
+import numpy as np
 from openmdao.utils.units import convert_units
+
 from aviary.utils.aviary_values import AviaryValues, get_keys
 from aviary.variable_info.enums import ProblemType, EquationsOfMotion, LegacyCode
 from aviary.variable_info.functions import add_aviary_output, add_aviary_input
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.interface.download_models import get_model
 
 
 class Null:
@@ -22,6 +25,25 @@ class Null:
 
     def flush(self, *args, **kwargs):
         pass
+
+
+def get_aviary_resource_path(resource_name: str) -> str:
+    """
+    Get the file path of a resource in the Aviary package.
+
+    Args:
+        resource_name (str): The name of the resource.
+
+    Returns:
+        str: The file path of the resource.
+
+    """
+    file_manager = ExitStack()
+    atexit.register(file_manager.close)
+    ref = importlib_resources.files('aviary') / resource_name
+    path = file_manager.enter_context(
+        importlib_resources.as_file(ref))
+    return path
 
 
 def set_aviary_initial_values(model, inputs, meta_data=_MetaData):
@@ -310,6 +332,51 @@ def promote_aircraft_and_mission_vars(group):
 # "str | Path" which is cleaner but Aviary still supports older versions
 
 
+def get_model(file_name: str, verbose=False) -> Path:
+    '''
+    This function attempts to find the path to a file or folder in aviary/models
+    If the path cannot be found in any of the locations, a FileNotFoundError is raised.
+
+    Parameters
+    ----------
+    path : str or Path
+        The input path, either as a string or a Path object.
+
+    Returns
+    -------
+    aviary_path
+        The absolute path to the file.
+
+    Raises
+    ------
+    FileNotFoundError
+        If the path is not found.
+    '''
+
+    # Get the path to Aviary's models
+    path = Path('models', file_name)
+    aviary_path = Path(get_aviary_resource_path(str(path)))
+
+    # If the file name was provided without a path, check in the subfolders
+    if not aviary_path.exists():
+        sub_dirs = [x[0] for x in os.walk(get_aviary_resource_path('models'))]
+        for sub_dir in sub_dirs:
+            temp_path = Path(sub_dir, file_name)
+            if temp_path.exists():
+                # only return the first matching file
+                aviary_path = temp_path
+                continue
+
+    # If the path still doesn't exist, raise an error.
+    if not aviary_path.exists():
+        raise FileNotFoundError(
+            f"File or Folder not found in Aviary's hangar"
+        )
+    if verbose:
+        print('found', aviary_path, '\n')
+    return aviary_path
+
+
 def get_path(path: Union[str, Path], verbose: bool = False) -> Path:
     """
     Convert a string or Path object to an absolute Path object, prioritizing different locations.
@@ -356,7 +423,7 @@ def get_path(path: Union[str, Path], verbose: bool = False) -> Path:
     if not path.exists():
         # Determine the path relative to the Aviary package.
         aviary_based_path = Path(
-            pkg_resources.resource_filename('aviary', original_path))
+            get_aviary_resource_path(original_path))
         if verbose:
             print(
                 f"Unable to locate '{original_path}' as an absolute or relative path. Trying Aviary package path: {aviary_based_path}")
@@ -378,7 +445,7 @@ def get_path(path: Union[str, Path], verbose: bool = False) -> Path:
         raise FileNotFoundError(
             f'File not found in absolute path: {original_path}, relative path: '
             f'{relative_path}, or Aviary-based path: '
-            f'{Path(pkg_resources.resource_filename("aviary", original_path))}'
+            f'{Path(get_aviary_resource_path(original_path))}'
         )
 
     # If verbose is True, print the path being used.
