@@ -175,7 +175,7 @@ class FlightPhaseBase(PhaseBuilderBase):
             rate_targets = ['dh_dr']
             rate2_targets = ['d2h_dr2']
 
-        # For multi-engine cases, we may have throttle allocation control.
+        # For heterogeneous-engine cases, we may have throttle allocation control.
         if phase_type is EquationsOfMotion.HEIGHT_ENERGY and num_engine_type > 1:
             allocation = user_options.get_val('throttle_allocation')
 
