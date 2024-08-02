@@ -25,7 +25,6 @@ aircraft:design:landing_to_takeoff_mass_ratio,0.84,unitless
 aircraft:design:lift_dependent_drag_coeff_factor,0.93,unitless
 aircraft:design:subsonic_drag_coeff_factor,0.95,unitless
 aircraft:design:supersonic_drag_coeff_factor,1,unitless
-aircraft:design:thrust_to_weight_ratio,0,unitless
 aircraft:design:touchdown_mass,0,lbm
 aircraft:design:use_alt_mass,False,unitless
 aircraft:design:zero_lift_drag_coeff_factor,0.96,unitless
