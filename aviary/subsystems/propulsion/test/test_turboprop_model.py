@@ -258,9 +258,9 @@ class TurbopropTest(unittest.TestCase):
         assert_near_equal(fuel_flow, fuel_flow_expected, tolerance=1e-8)
         assert_near_equal(electric_power, electric_power_expected, tolerance=1e-8)
 
-        # TODO: need further test
-        # partial_data = self.prob.check_partials(out_stream=None, method="fd", form="central")
-        # assert_check_partials(partial_data, atol=0.15, rtol=0.15)
+        partial_data = self.prob.check_partials(
+            out_stream=None, method="fd", form="central")
+        assert_check_partials(partial_data, atol=0.17, rtol=0.15)
 
 
 class ExamplePropModel(SubsystemBuilderBase):
