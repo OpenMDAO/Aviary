@@ -68,12 +68,12 @@ class MultiMissionProblem(om.Problem):
 
     def add_driver(self):
         self.driver = om.pyOptSparseDriver()
-        self.driver.options['optimizer'] = 'IPOPT'
+        self.driver.options['optimizer'] = 'SLSQP'
         self.driver.declare_coloring()
         # self.model.linear_solver = om.DirectSolver()
 
     def add_objective(self):
-        weights = self.weights
+        weights = [float(weight/sum(self.weights)) for weight in self.weights]
         fuel_burned_vars = [f"fuel_{i}" for i in range(self.num_missions)]
         weighted_str = "+".join([f"{fuel}*{weight}"
                                 for fuel, weight in zip(fuel_burned_vars, weights)])
@@ -87,7 +87,7 @@ class MultiMissionProblem(om.Problem):
             # connecting each subcomponent's fuel burn to super problem's unique fuel variables
             self.model.connect(
                 self.group_prefix+f"_{i}.mission:summary:fuel_burned", f"fuel_{i}")
-        self.model.add_objective('compound')
+        self.model.add_objective('compound', scaler=1.)
 
     def setup_wrapper(self):
         """Wrapper for om.Problem setup with warning ignoring and setting options"""

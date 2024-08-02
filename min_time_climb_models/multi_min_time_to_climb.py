@@ -31,7 +31,7 @@ class MultiMinTime(om.Problem):
 
     def addCompoundObj(self):
         num_missions = self.num_missions
-        weights = self.weights
+        weights = [float(weight/sum(self.weights)) for weight in self.weights]
         times = [f"time_{i}" for i in range(num_missions)]
         weighted_sum_str = "+".join([f"{time}*{weight}" for time,
                                     weight in zip(times, weights)])
@@ -59,6 +59,7 @@ class MultiMinTime(om.Problem):
 
 
 def multiExample():
+    """Example of multi mission min time to climb problem."""
     makeN2 = True if "n2" in sys.argv else False
     super_prob = MultiMinTime(heights=[6e3, 18e3], weights=[1, 1],
                               optWing=True, modelinfo={'m_initial': 20e3})
@@ -84,7 +85,43 @@ def multiExample():
         solprefix='group', omitpromote='traj')
 
 
+def weightCompare():
+    """Runs the multi mission min time to climb problem for different weights. Shows
+    impact of changing weights on 1 figure."""
+    heights = [10e3, 15e3]
+    weights_to_test = [[1, 3], [3, 1]]
+    modelinfo = {'m_initial': 18e3, 'S': 49.24, 'v_initial': 104, 'h_initial': 100,
+                 'mach_final': 1.0}
+    solfiles, simfiles = [], []
+    for i, weights in enumerate(weights_to_test):
+        super_prob = MultiMinTime(heights=heights, weights=weights,
+                                  optWing=True, modelinfo=modelinfo)
+        super_prob.addCompoundObj()
+        super_prob.addDriver(driver='scipy')
+        super_prob.setup()
+        super_prob.setICs()
+        solfiles.append(f'weightsSol_{i}.db')
+        simfiles.append(f'weightsSim_{i}.db')
+        dm.run_problem(super_prob, simulate=True,
+                       solution_record_file=solfiles[-1],
+                       simulation_record_file=simfiles[-1])
+
+    fig = plt.figure()
+    colores = [['r', 'b'], ['g', 'm']]
+    for i, (solfile, simfile, colors) in enumerate(zip(solfiles, simfiles, colores)):
+        make_min_time_climb_plot(
+            solfile=solfile,
+            simfile=[simfile, simfile.replace(".db", "_1.db")],
+            solprefix='group', omitpromote='traj', show=False, fig=fig,
+            extratitle=", ".join([str(w) for w in weights_to_test[i]]),
+            colors=colors)
+
+    plt.show()
+
+
 def comparison():
+    """Runs min time to climb problem for 2 heights individually, as well as with the
+    multi mission approach. Creates 2 figures showing the differences between the 2."""
     heights = [10e3, 15e3]
     weights = [1, 1]
     optimize_wing = True
@@ -130,5 +167,7 @@ def comparison():
 if __name__ == '__main__':
     if "comparison" in sys.argv:
         comparison()
+    elif "weights" in sys.argv:
+        weightCompare()
     else:
         multiExample()

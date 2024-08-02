@@ -4,7 +4,7 @@ from openmdao.api import CaseReader
 
 def make_min_time_climb_plot(
         solfile='dymos_solution.db', simfile='dymos_simulation.db', solprefix='',
-        omitpromote=None, show=True, fig=None, extratitle=''):
+        omitpromote=None, show=True, fig=None, extratitle='', colors=['r', 'b', 'g', 'm']):
 
     singleprob, multiprob, multitraj = True, False, False
     if isinstance(solfile, list) and isinstance(simfile, list):
@@ -23,6 +23,8 @@ def make_min_time_climb_plot(
     if singleprob:
         solfile, simfile = [solfile], [simfile]
 
+    if fig is None:
+        fig = plt.figure()
     plotvars = [('r', 'h'),
                 ('time', 'h'),
                 ('time', 'v'),
@@ -38,18 +40,18 @@ def make_min_time_climb_plot(
         ('s', 'deg')]
 
     numplots = len(plotvars)
-    axes = [None]*numplots
+    axes = fig.axes
+    if len(axes) == 0:
+        axes = [None]*len(plotvars)
     tsprefix = 'traj.phase0.timeseries.'
 
     sols = [CaseReader(file).get_case('final') for file in solfile]
     sims = [CaseReader(file).get_case('final') for file in simfile]
-    colors = ['r', 'b', 'g', 'm']
+
     legend = []
     areas = []
     heights = [None]*len(simfile)
 
-    if fig is None:
-        fig = plt.figure()
     for i, (solf, simf) in enumerate(zip(sols, sims)):
         for j, ((xvar, yvar), (xunit, yunit)) in enumerate(zip(plotvars, plotunits)):
             if axes[j] is None:
