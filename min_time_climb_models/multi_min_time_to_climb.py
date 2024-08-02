@@ -1,181 +1,80 @@
 import openmdao.api as om
 import dymos as dm
-from dymos.examples.min_time_climb.min_time_climb_ode import MinTimeClimbODE
 from plot_helper import make_min_time_climb_plot
+from min_time_climb import MinTimeClimbProblem
 import matplotlib.pyplot as plt
-import numpy as np
 import sys
 
 
-class MinTimeClimbProblem(om.Problem):
-    def __init__(self, target_height=20e3, initial_mass=20e3):
+class MultiMinTime(om.Problem):
+    def __init__(
+            self, heights, weights, optWing=False, modelinfo={}):
         super().__init__()
-        self.model = om.Group()
-        self.target_height = target_height
-        self.initial_mass = initial_mass
+        if len(weights) > len(heights):
+            raise Exception("Can't have more weights than heights!")
+        elif len(weights) < len(heights):
+            weights = [1]*len(heights)
 
-    def setOptimizer(self, driver='scipy', optimizer='SLSQP'):
-        self.driver = om.pyOptSparseDriver() if driver == "pyoptsparse" else om.ScipyOptimizeDriver()
-        self.driver.options['optimizer'] = optimizer
+        self.weights = weights
+        self.num_missions = len(heights)
+        self.probs = []
+
+        for i, height in enumerate(heights):
+            prob = MinTimeClimbProblem(
+                target_height=height, modelinfo=modelinfo)
+            prob.addTrajectory(optWing=optWing)
+            self.model.add_subsystem(
+                f"group_{i}", prob.model, promotes=[('phase0.parameters:S', 'S')])
+            self.probs.append(prob)
+        if optWing:
+            self.model.add_design_var('S', lower=1, upper=100, units='m**2')
+
+    def addCompoundObj(self):
+        num_missions = self.num_missions
+        weights = self.weights
+        times = [f"time_{i}" for i in range(num_missions)]
+        weighted_sum_str = "+".join([f"{time}*{weight}" for time,
+                                    weight in zip(times, weights)])
+        self.model.add_subsystem('compoundComp', om.ExecComp(
+            "compound_time=" + weighted_sum_str),
+            promotes=['compound_time', *times])
+
+        for i in range(num_missions):
+            self.model.connect(
+                f"group_{i}.phase0.t", times[i],
+                src_indices=-1)
+        self.model.add_objective('compound_time')
+
+    def addDriver(self, driver='pyoptsparse', optimizer='SLSQP'):
+        self.driver = om.pyOptSparseDriver() \
+            if driver == 'pyoptsparse' else \
+            om.ScipyOptimizeDriver()
+        self.driver.options['optimizer'] = optimizer  # 'IPOPT'
         self.driver.declare_coloring()
-        if optimizer == 'SNOPT':
-            self.driver.opt_settings['Major iterations limit'] = 1000
-            self.driver.opt_settings['iSumm'] = 6
-            self.driver.opt_settings['Major feasibility tolerance'] = 1.0E-6
-            self.driver.opt_settings['Major optimality tolerance'] = 1.0E-6
-            self.driver.opt_settings['Function precision'] = 1.0E-12
-            self.driver.opt_settings['Linesearch tolerance'] = 0.1
-            self.driver.opt_settings['Major step limit'] = 0.5
-        elif optimizer == 'IPOPT':
-            self.driver.opt_settings['tol'] = 1.0E-5
-            self.driver.opt_settings['print_level'] = 0
-            self.driver.opt_settings['mu_strategy'] = 'monotone'
-            self.driver.opt_settings['bound_mult_init_method'] = 'mu-based'
-            self.driver.opt_settings['mu_init'] = 0.01
-
         self.model.linear_solver = om.DirectSolver()
 
-    def addTrajectory(self, num_seg=15, transcription='gauss-lobatto',
-                      transcription_order=3):
-        t = {'gauss-lobatto': dm.GaussLobatto(
-            num_segments=num_seg, order=transcription_order),
-            'radau-ps': dm.Radau(num_segments=num_seg, order=transcription_order)}
-
-        traj = dm.Trajectory()
-        phase = dm.Phase(ode_class=MinTimeClimbODE, transcription=t[transcription])
-        traj.add_phase('phase0', phase)
-
-        height = self.target_height
-        time_name = 'time'
-        add_rate = False
-        phase.set_time_options(fix_initial=True, duration_bounds=(50, 600),
-                               duration_ref=100.0, name=time_name)
-
-        phase.add_state('r', fix_initial=True, lower=0, upper=1.0E6,
-                        ref=1.0E3, defect_ref=1.0E3, units='m',
-                        rate_source='flight_dynamics.r_dot')
-
-        phase.add_state('h', fix_initial=True, lower=0, upper=height,
-                        ref=height, defect_ref=height, units='m',
-                        rate_source='flight_dynamics.h_dot', targets=['h'])
-
-        phase.add_state('v', fix_initial=True, lower=10.0,
-                        ref=1.0E2, defect_ref=1.0E2, units='m/s',
-                        rate_source='flight_dynamics.v_dot', targets=['v'])
-
-        phase.add_state('gam', fix_initial=True, lower=-1.5, upper=1.5,
-                        ref=1.0, defect_ref=1.0, units='rad',
-                        rate_source='flight_dynamics.gam_dot', targets=['gam'])
-
-        phase.add_state('m', fix_initial=True, lower=10.0, upper=1.0E5,
-                        ref=10_000, defect_ref=10_000, units='kg',
-                        rate_source='prop.m_dot', targets=['m'])
-
-        phase.add_control('alpha', units='deg', lower=-8.0, upper=8.0, scaler=1.0,
-                          rate_continuity=True, rate_continuity_scaler=100.0,
-                          rate2_continuity=False, targets=['alpha'])
-
-        phase.add_parameter('S', val=49.2386, units='m**2', opt=True, targets=['S'])
-        phase.add_parameter('Isp', val=1600.0, units='s', opt=False, targets=['Isp'])
-        phase.add_parameter('throttle', val=1.0, opt=False, targets=['throttle'])
-
-        phase.add_boundary_constraint(
-            'h', loc='final', equals=height)  # , scaler=1.0E-3)
-        phase.add_boundary_constraint('aero.mach', loc='final', equals=1.0)
-        phase.add_boundary_constraint('gam', loc='final', equals=0.0)
-
-        phase.add_path_constraint(name='h', lower=100.0, upper=height, ref=height)
-        phase.add_path_constraint(name='aero.mach', lower=0.1, upper=1.8)
-        # phase.add_path_constraint(name='gam', lower=-23, upper=23, units='deg')
-
-        # Unnecessary but included to test capability
-        phase.add_path_constraint(name='alpha', lower=-8, upper=8)
-        phase.add_path_constraint(name=f'{time_name}', lower=0, upper=400)
-        phase.add_path_constraint(name=f'{time_name}_phase', lower=0, upper=400)
-
-        # Minimize time at the end of the phase
-        # phase.add_objective(time_name, loc='final', ref=1.0)
-
-        # test mixing wildcard ODE variable expansion and unit overrides
-        phase.add_timeseries_output(['aero.*', 'prop.thrust', 'prop.m_dot'],
-                                    units={'aero.f_lift': 'lbf', 'prop.thrust': 'lbf'})
-
-        # test adding rate as timeseries output
-        if add_rate:
-            phase.add_timeseries_rate_output('aero.mach')
-
-        self.phase = phase
-        self.model.add_subsystem('traj', traj, promotes=['*'])
-
-    def setInitialConditions(self, super_prob=None, prefix=""):
-        ref = self
-        if super_prob is not None and prefix != "":
-            ref = super_prob
-        phase = self.phase
-        ref.set_val(prefix+'traj.phase0.t_initial', 0.0)
-        ref.set_val(prefix+'traj.phase0.t_duration', 350.0)
-
-        ref.set_val(prefix+'traj.phase0.states:r', phase.interp('r', [0.0, 100e3]))
-        ref.set_val(prefix+'traj.phase0.states:h', phase.interp(
-            'h', [100.0, self.target_height]))
-        ref.set_val(prefix+'traj.phase0.states:v', phase.interp('v', [135.964, 283.159]))
-        ref.set_val(prefix+'traj.phase0.states:gam', phase.interp('gam', [0.0, 0.0]))
-        ref.set_val(prefix+'traj.phase0.states:m',
-                    phase.interp('m', [self.initial_mass, 16e3]))
-        ref.set_val(prefix+'traj.phase0.controls:alpha',
-                    phase.interp('alpha', [0.0, 0.0]))
+    def setICs(self):
+        for i, prob in enumerate(self.probs):
+            prob.setInitialConditions(self, f"group_{i}.")
 
 
-if __name__ == '__main__':
+def multiExample():
     makeN2 = True if "n2" in sys.argv else False
-    heights = [6e3, 18e3]
-    weights = [1, 1]
-    num_missions = len(heights)
-
-    super_prob = om.Problem()
-    probs = []
-    for i, height in enumerate(heights):
-        prob = MinTimeClimbProblem(height, 30e3)
-        prob.addTrajectory()
-        super_prob.model.add_subsystem(
-            f"group_{i}", prob.model, promotes=[('phase0.parameters:S', 'S')])
-        probs.append(prob)
-
-    super_prob.model.add_design_var('S', lower=1, upper=100, units='m**2')
-
-    times = [f"time_{i}" for i in range(num_missions)]
-    weighted_sum_str = "+".join([f"{time}*{weight}" for time,
-                                weight in zip(times, weights)])
-    super_prob.model.add_subsystem('compoundComp', om.ExecComp(
-        "compound_time=" + weighted_sum_str),
-        promotes=['compound_time', *times])
-
-    for i in range(num_missions):
-        super_prob.model.connect(
-            f"group_{i}.phase0.t", times[i],
-            src_indices=-1)
-    super_prob.model.add_objective('compound_time')
-
-    # super_prob.driver = om.ScipyOptimizeDriver()
-    super_prob.driver = om.pyOptSparseDriver()
-    super_prob.driver.options['optimizer'] = 'SLSQP'  # 'IPOPT'
-    super_prob.driver.declare_coloring()
-    super_prob.model.linear_solver = om.DirectSolver()
-
+    super_prob = MultiMinTime(heights=[6e3, 18e3], weights=[1, 1],
+                              optWing=True, modelinfo={'m_initial': 20e3})
+    super_prob.addCompoundObj()
+    super_prob.addDriver()
     super_prob.setup()
+    super_prob.setICs()
     if makeN2:
         sys.path.append('../')
         from createN2 import createN2
         createN2(__file__, super_prob)
-
-    for i, prob in enumerate(probs):
-        prob.setInitialConditions(super_prob, f"group_{i}.")
-
     dm.run_problem(super_prob, simulate=True)
 
     wing_area = super_prob.get_val('S', units='m**2')[0]
     print("\n\n=====================================")
-    for i in range(num_missions):
+    for i in range(super_prob.num_missions):
         timetoclimb = super_prob.get_val(f'group_{i}.phase0.t', units='s')[-1]
         print(f"TtoC: {timetoclimb}, S: {wing_area}")
 
@@ -183,3 +82,53 @@ if __name__ == '__main__':
         solfile='dymos_solution.db',
         simfile=['dymos_simulation.db', 'dymos_simulation_1.db'],
         solprefix='group', omitpromote='traj')
+
+
+def comparison():
+    heights = [10e3, 15e3]
+    weights = [1, 1]
+    optimize_wing = True
+    m_0 = 23e3
+    modelinfo = {'m_initial': m_0, 'S': 49.24, 'v_initial': 104, 'h_initial': 100,
+                 'mach_final': 1.0}
+
+    solfiles, simfiles = [], []
+    for i, height in enumerate(heights):
+        p = MinTimeClimbProblem(target_height=height, modelinfo=modelinfo)
+        p.addTrajectory(optWing=optimize_wing)
+        p.addObjective()
+        p.setOptimizer(driver='pyoptsparse')
+        p.setup()
+        p.setInitialConditions()
+        solfile, simfile = f'Sol_Comp_{i}.db', f'Sim_Comp_{i}.db'
+        solfiles.append(solfile)
+        simfiles.append(simfile)
+        dm.run_problem(
+            p, simulate=True, solution_record_file=solfile,
+            simulation_record_file=simfile)
+
+    super_prob = MultiMinTime(heights=heights, weights=weights,
+                              optWing=optimize_wing, modelinfo=modelinfo)
+    super_prob.addCompoundObj()
+    super_prob.addDriver()
+    super_prob.setup()
+    super_prob.setICs()
+    dm.run_problem(super_prob, simulate=True)
+
+    fig1, fig2 = plt.figure(1), plt.figure(2)
+    make_min_time_climb_plot(
+        solfile=solfiles, simfile=simfiles, omitpromote='traj', show=False, fig=fig1,
+        extratitle=f"{m_0} kg")
+    make_min_time_climb_plot(
+        solfile='dymos_solution.db',
+        simfile=['dymos_simulation.db', 'dymos_simulation_1.db'],
+        solprefix='group', omitpromote='traj', show=False, fig=fig2,
+        extratitle=f"{m_0} kg")
+    plt.show()
+
+
+if __name__ == '__main__':
+    if "comparison" in sys.argv:
+        comparison()
+    else:
+        multiExample()

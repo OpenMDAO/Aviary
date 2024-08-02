@@ -67,10 +67,10 @@ class MultiMissionProblem(om.Problem):
         self.model.add_design_var('mission:design:gross_mass', lower=10., upper=900e3)
 
     def add_driver(self):
-        self.driver = om.ScipyOptimizeDriver()
-        self.driver.options['optimizer'] = 'SLSQP'
-        # self.driver.declare_coloring()
-        self.model.linear_solver = om.DirectSolver()
+        self.driver = om.pyOptSparseDriver()
+        self.driver.options['optimizer'] = 'IPOPT'
+        self.driver.declare_coloring()
+        # self.model.linear_solver = om.DirectSolver()
 
     def add_objective(self):
         weights = self.weights
@@ -105,9 +105,10 @@ class MultiMissionProblem(om.Problem):
             self.setup(check='all')
 
     def run(self):
-        self.run_model()
-        self.check_totals(method='fd')
-        # dm.run_problem(self)
+        # self.run_model()
+        # self.check_totals(method='fd', compact_print=True)
+        self.model.set_solver_print(0)
+        dm.run_problem(self, make_plots=True)
 
 
 if __name__ == '__main__':

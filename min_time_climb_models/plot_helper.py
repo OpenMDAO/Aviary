@@ -4,7 +4,7 @@ from openmdao.api import CaseReader
 
 def make_min_time_climb_plot(
         solfile='dymos_solution.db', simfile='dymos_simulation.db', solprefix='',
-        omitpromote=None):
+        omitpromote=None, show=True, fig=None, extratitle=''):
 
     singleprob, multiprob, multitraj = True, False, False
     if isinstance(solfile, list) and isinstance(simfile, list):
@@ -38,6 +38,7 @@ def make_min_time_climb_plot(
         ('s', 'deg')]
 
     numplots = len(plotvars)
+    axes = [None]*numplots
     tsprefix = 'traj.phase0.timeseries.'
 
     sols = [CaseReader(file).get_case('final') for file in solfile]
@@ -47,9 +48,17 @@ def make_min_time_climb_plot(
     areas = []
     heights = [None]*len(simfile)
 
+    if fig is None:
+        fig = plt.figure()
     for i, (solf, simf) in enumerate(zip(sols, sims)):
         for j, ((xvar, yvar), (xunit, yunit)) in enumerate(zip(plotvars, plotunits)):
-            plt.subplot(2, int(numplots/2), j+1)
+            if axes[j] is None:
+                ax = fig.add_subplot(2, int(numplots/2), j+1,
+                                     xlabel=f"{xvar} ({xunit})",
+                                     ylabel=f"{yvar} ({yunit})")
+                axes[j] = ax
+            else:
+                ax = axes[j]
             xname, yname = addPrefix(tsprefix, (xvar, yvar))
             xsim = simf.get_val(xname, units=xunit)
             ysim = simf.get_val(yname, units=yunit)
@@ -61,22 +70,21 @@ def make_min_time_climb_plot(
             xsol = solf.get_val(xname, units=xunit)
             ysol = solf.get_val(yname, units=yunit)
             if yvar == "h" and not heights[i]:
-                heights[i] = ysol[-1][0]
-            plt.plot(xsol, ysol, f"{colors[i]}o", fillstyle='none')
-            plt.plot(xsim, ysim, colors[i])
-            plt.xlabel(f"{xvar} ({xunit})")
-            plt.ylabel(f"{yvar} ({yunit})")
-            plt.grid(visible=True)
+                heights[i] = round(ysol[-1][0])
+            ax.plot(xsol, ysol, f"{colors[i]}o", fillstyle='none')
+            ax.plot(xsim, ysim, colors[i])
+            ax.grid(visible=True)
         legend.append(f"{heights[i]} {plotunits[0][1]} solution")
         legend.append(f"{heights[i]} {plotunits[0][1]} simulation")
         try:
             areas.append(round(solf.get_val('S')[0], 2))
         except KeyError:
             areas.append(round(solf.get_val('phase0.parameters:S')[0], 2))
-    plt.figlegend(legend, ncols=len(simfile))
-    plt.suptitle(f"Min Time to Climb, wing areas: {areas}")
-    plt.tight_layout(pad=1)
-    plt.show()
+    fig.legend(legend, ncols=len(simfile), loc='lower center')
+    fig.suptitle(f"Min Time to Climb, wing areas: {areas}, {extratitle}")
+    fig.tight_layout(pad=1)
+    if show:
+        plt.show()
 
 
 def addPrefix(prefix, iterable):
