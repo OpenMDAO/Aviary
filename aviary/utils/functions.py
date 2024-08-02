@@ -9,7 +9,7 @@ import openmdao.api as om
 import numpy as np
 from openmdao.utils.units import convert_units
 
-from aviary.utils.aviary_values import AviaryValues, get_keys
+from aviary.utils.aviary_values import AviaryValues, get_keys, get_items
 from aviary.variable_info.enums import ProblemType, EquationsOfMotion, LegacyCode
 from aviary.variable_info.functions import add_aviary_output, add_aviary_input
 from aviary.variable_info.variable_meta_data import _MetaData
@@ -46,8 +46,30 @@ def get_aviary_resource_path(resource_name: str) -> str:
     return path
 
 
-def set_aviary_initial_values(model, inputs, meta_data=_MetaData):
-    '''
+def set_aviary_initial_values(prob, flops_inputs: AviaryValues):
+    """
+    Sets initial values for all inputs in the aviary inputs.
+
+    This method is mostly used in tests and level 3 scripts.
+
+    Parameters
+    ----------
+    prob : Problem
+        OpenMDAO problem after setup.
+    flops_inputs : AviaryValues
+        Instance of AviaryValues containing all initial values.
+    """
+    for (key, (val, units)) in get_items(flops_inputs):
+        try:
+            prob.set_val(key, val, units)
+
+        except:
+            # Should be an option or an overridden output.
+            continue
+
+
+def set_aviary_input_defaults(model, inputs, meta_data=_MetaData):
+    """
     This function sorts through all the input
     variables to an Aviary model, and for those
     which are not options it sets the input
@@ -57,7 +79,7 @@ def set_aviary_initial_values(model, inputs, meta_data=_MetaData):
 
     In the case when the value is not input nor
     present in the default, nothing is set.
-    '''
+    """
     for key in meta_data:
         if ':' not in key or key.startswith('dynamic:'):
             continue
@@ -73,16 +95,6 @@ def set_aviary_initial_values(model, inputs, meta_data=_MetaData):
                     continue
 
             model.set_input_defaults(key, val=val, units=units)
-
-
-def apply_all_values(aircraft_values: AviaryValues, prob):
-    for var_name in get_keys(aircraft_values):
-        var_data, var_units = aircraft_values.get_item(var_name)
-        try:
-            prob.set_val(var_name, val=var_data, units=var_units)
-        except KeyError:
-            pass
-    return prob
 
 
 def convert_strings_to_data(string_list):

@@ -15,7 +15,7 @@ from aviary.mission.flops_based.ode.takeoff_ode import TakeoffODE as _TakeoffODE
 from aviary.mission.gasp_based.flight_conditions import FlightConditions
 from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.functions import set_aviary_initial_values, promote_aircraft_and_mission_vars
+from aviary.utils.functions import set_aviary_input_defaults, promote_aircraft_and_mission_vars
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.variables_in import VariablesIn
 from aviary.variable_info.enums import AnalysisScheme

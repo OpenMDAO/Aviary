@@ -10,7 +10,7 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.subsystems.premission import CorePreMission
 
-from aviary.utils.functions import set_aviary_initial_values
+from aviary.utils.functions import set_aviary_input_defaults
 
 from aviary.models.N3CC.N3CC_data import (
     inputs as _inputs, outputs as _outputs,
@@ -120,7 +120,7 @@ class TestFLOPSDetailedTakeoff(unittest.TestCase):
         # "input variable '...' promoted using '*' was already promoted using 'aircraft:*'
         with warnings.catch_warnings():
             # Set initial default values for all aircraft variables.
-            set_aviary_initial_values(takeoff.model, aviary_options)
+            set_aviary_input_defaults(takeoff.model, aviary_options)
 
             warnings.simplefilter("ignore", om.PromotionWarning)
             takeoff.setup(check=True)

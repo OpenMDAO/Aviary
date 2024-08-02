@@ -10,7 +10,7 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.interface.methods_for_level2 import AviaryProblem
 
-from aviary.utils.functions import set_aviary_initial_values
+from aviary.utils.functions import set_aviary_input_defaults, set_aviary_initial_values
 from aviary.utils.preprocessors import preprocess_options
 from aviary.models.N3CC.N3CC_data import \
     balanced_liftoff_user_options as _takeoff_liftoff_user_options
@@ -18,7 +18,7 @@ from aviary.models.N3CC.N3CC_data import \
     balanced_trajectory_builder as _takeoff_trajectory_builder
 from aviary.models.N3CC.N3CC_data import \
     inputs as _inputs
-from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.variables import Dynamic, Aircraft
 from aviary.variable_info.variables_in import VariablesIn
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
@@ -100,21 +100,14 @@ class TestFLOPSBalancedFieldLength(unittest.TestCase):
         liftoff.add_objective(
             Dynamic.Mission.DISTANCE, loc='final', ref=distance_max, units=units)
 
-        takeoff.model.add_subsystem(
-            'input_sink',
-            VariablesIn(aviary_options=aviary_options),
-            promotes_inputs=['*'],
-            promotes_outputs=['*']
-        )
-
         # suppress warnings:
         # "input variable '...' promoted using '*' was already promoted using 'aircraft:*'
         with warnings.catch_warnings():
-            # Set initial default values for all aircraft variables.
-            set_aviary_initial_values(takeoff.model, aviary_options)
 
             warnings.simplefilter("ignore", om.PromotionWarning)
             takeoff.setup(check=True)
+
+        set_aviary_initial_values(takeoff, aviary_options)
 
         # Turn off solver printing so that the SNOPT output is readable.
         takeoff.set_solver_print(level=0)

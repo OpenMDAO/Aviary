@@ -17,7 +17,7 @@ from openmdao.utils.testing_utils import require_pyoptsparse
 
 from aviary.mission.flops_based.phases.build_landing import Landing
 from aviary.mission.flops_based.phases.build_takeoff import Takeoff
-from aviary.utils.functions import set_aviary_initial_values
+from aviary.utils.functions import set_aviary_input_defaults
 from aviary.utils.test_utils.assert_utils import warn_timeseries_near_equal
 from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.variable_info.functions import setup_trajectory_params
@@ -407,7 +407,7 @@ def run_trajectory(sim=True):
     prob.model.add_objective('reg_objective', ref=1)
 
     # Set initial default values for all LEAPS aircraft variables.
-    set_aviary_initial_values(prob.model, aviary_inputs)
+    set_aviary_input_defaults(prob.model, aviary_inputs)
 
     prob.model.add_subsystem(
         'input_sink',

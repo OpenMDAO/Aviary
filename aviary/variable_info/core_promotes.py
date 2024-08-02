@@ -5,6 +5,6 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 
 core_mission_inputs = [
-    Aircraft.Wing.INCIDENCE,
-    Mission.Takeoff.FINAL_MASS,
+    #Aircraft.Wing.INCIDENCE,
+    #Mission.Takeoff.FINAL_MASS,
 ]

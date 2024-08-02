@@ -4,6 +4,7 @@ import openmdao.api as om
 
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import get_items
+from aviary.utils.functions import set_aviary_initial_values
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.mission.flops_based.ode.landing_ode import FlareODE
 from aviary.models.N3CC.N3CC_data import (
@@ -36,13 +37,7 @@ class FlareODETest(unittest.TestCase):
 
         prob.setup(check=False, force_alloc_complex=True)
 
-        for (key, (val, units)) in get_items(aviary_options):
-            try:
-                prob.set_val(key, val, units)
-
-            except:
-                # Should be an option or an overridden output.
-                continue
+        set_aviary_initial_values(prob, aviary_options)
 
         do_validation_test(
             prob,
