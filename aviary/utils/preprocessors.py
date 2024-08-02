@@ -114,8 +114,8 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
     aviary_options, an EngineDeck is created using avaliable inputs and options in
     aviary_options.
 
-    Vectorizes variables in aviary_options in the correct order for multi-engine
-    vehicles.
+    Vectorizes variables in aviary_options in the correct order for vehicles with
+    heterogeneous engines.
 
     Performs basic sanity checks on inputs that are universal to all EngineModels.
 
