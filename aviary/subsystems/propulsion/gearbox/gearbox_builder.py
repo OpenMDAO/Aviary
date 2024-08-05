@@ -43,6 +43,12 @@ class GearboxBuilder(SubsystemBuilderBase):
                 'upper': 20.0,
                 'val':  10  # initial value
             },
+            # This var appears in both mission and pre-mission
+            Aircraft.Engine.SHAFT_POWER_DESIGN: {
+                'val': 10000,
+                'units': 'kW',
+                'lower': 1.0,
+            }
         }
         return DVs
 
