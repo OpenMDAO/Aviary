@@ -2199,7 +2199,7 @@ add_meta_data(
                      "FLOPS": None,
                      "LEAPS1": None
                      },
-    units='RPM',
+    units='rpm',
     desc='the designed output RPM from the engine for fixed-RPM shafts',
     default_value=None,
 )
@@ -2267,7 +2267,7 @@ add_meta_data(
                      "FLOPS": None,
                      "LEAPS1": None,
                      },
-    units='Hp',
+    units='kW',
     desc='A guess for the maximum power that will be transmitted through the gearbox during the mission.',
     default_value=1.0,
     option=True
@@ -6652,7 +6652,7 @@ add_meta_data(
     Dynamic.Mission.SHAFT_POWER_GEAR,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='hp',
+    units='kW',
     desc='current shaft power coming out of the gearbox, per gearbox',
 )
 

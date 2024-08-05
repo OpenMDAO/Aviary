@@ -25,7 +25,8 @@ class GearboxMission(om.Group):
                            om.ExecComp('RPM_out = RPM_in / gear_ratio',
                                        RPM_out={'val': np.ones(n), 'units': 'rpm'},
                                        gear_ratio={'val': 1.0, 'units': None},
-                                       RPM_in={'val': np.ones(n), 'units': 'rpm'}),
+                                       RPM_in={'val': np.ones(n), 'units': 'rpm'},
+                                       has_diag_partials=True),
                            promotes_inputs=[('RPM_in', Aircraft.Engine.RPM_DESIGN),
                                             ('gear_ratio', Aircraft.Engine.Gearbox.GEAR_RATIO)],
                            promotes_outputs=[('RPM_out', Dynamic.Mission.RPM_GEAR)])
@@ -35,7 +36,8 @@ class GearboxMission(om.Group):
                                        shaft_power_in={'val': np.ones(n), 'units': 'kW'},
                                        shaft_power_out={
                                            'val': np.ones(n), 'units': 'kW'},
-                                       eff={'val': 0.98, 'units': None}),
+                                       eff={'val': 0.98, 'units': None},
+                                       has_diag_partials=True),
                            promotes_inputs=[('shaft_power_in', Dynamic.Mission.SHAFT_POWER),
                                             ('eff', Aircraft.Engine.Gearbox.EFFICIENCY)],
                            promotes_outputs=[('shaft_power_out', Dynamic.Mission.SHAFT_POWER_GEAR)])
@@ -44,7 +46,8 @@ class GearboxMission(om.Group):
                            om.ExecComp('torque = shaft_power / (pi * RPM_out) * 30',
                                        shaft_power={'val': np.ones(n), 'units': 'kW'},
                                        torque={'val': np.ones(n), 'units': 'kN*m'},
-                                       RPM_out={'val': np.ones(n), 'units': 'rpm'}),
+                                       RPM_out={'val': np.ones(n), 'units': 'rpm'},
+                                       has_diag_partials=True),
                            promotes_inputs=[('shaft_power', Dynamic.Mission.SHAFT_POWER_GEAR),
                                             ('RPM_out', Dynamic.Mission.RPM_GEAR)],
                            promotes_outputs=[('torque', Dynamic.Mission.TORQUE_GEAR)])
@@ -56,19 +59,24 @@ class GearboxMission(om.Group):
                                        shaft_power_in={'val': np.ones(n), 'units': 'kW'},
                                        shaft_power_out={
                                            'val': np.ones(n), 'units': 'kW'},
-                                       eff={'val': 0.98, 'units': None}),
+                                       eff={'val': 0.98, 'units': None},
+                                       has_diag_partials=True),
                            promotes_inputs=[('shaft_power_in', Dynamic.Mission.SHAFT_POWER_MAX),
                                             ('eff', Aircraft.Engine.Gearbox.EFFICIENCY)],
                            promotes_outputs=[('shaft_power_out', Dynamic.Mission.SHAFT_POWER_MAX_GEAR)])
 
-        # We must ensure the maximum shaft power guess that we provided to pre-mission is enforced
-        # residual needs to be 0 or larger for all cases
+        # We must ensure the design shaft power that was provided to pre-mission is
+        # # larger than the maximum shaft power that could be drawn by the mission.
+        # Note this is a larger value than the actual maximum shaft power drawn during the mission
+        # because the aircraft might need to climb to avoid obstacles at anytime during the mission
         self.add_subsystem('shaft_power_residual',
                            om.ExecComp('shaft_power_resid = shaft_power_design - shaft_power_max',
                                        shaft_power_max={
                                            'val': np.ones(n), 'units': 'kW'},
                                        shaft_power_design={'val': 1.0, 'units': 'kW'},
-                                       shaft_power_resid={'val': np.ones(n), 'units': 'kW'}),
+                                       shaft_power_resid={
+                                           'val': np.ones(n), 'units': 'kW'},
+                                       has_diag_partials=True),
                            promotes_inputs=[('shaft_power_max', Dynamic.Mission.SHAFT_POWER_MAX),
                                             ('shaft_power_design', Aircraft.Engine.SHAFT_POWER_DESIGN)],
                            promotes_outputs=[('shaft_power_resid', Dynamic.Mission.SHAFT_POWER_CON)])

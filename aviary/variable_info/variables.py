@@ -243,7 +243,7 @@ class Aircraft:
         REFERENCE_DIAMETER = 'aircraft:engine:reference_diameter'
         REFERENCE_MASS = 'aircraft:engine:reference_mass'
         REFERENCE_SLS_THRUST = 'aircraft:engine:reference_sls_thrust'
-        RPM_DESIGN = ' aircraft:engine:rpm_design'
+        RPM_DESIGN = 'aircraft:engine:rpm_design'
         SCALE_FACTOR = 'aircraft:engine:scale_factor'
         SCALE_MASS = 'aircraft:engine:scale_mass'
         SCALE_PERFORMANCE = 'aircraft:engine:scale_performance'
