@@ -6,7 +6,7 @@ from aviary.interface.default_phase_info.two_dof_fiti_deprecated import create_2
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 from aviary.variable_info.enums import Verbosity
-from aviary.utils.functions import set_aviary_input_defaults, promote_aircraft_and_mission_vars
+from aviary.utils.functions import promote_aircraft_and_mission_vars
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 
 

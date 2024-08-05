@@ -46,7 +46,7 @@ def get_aviary_resource_path(resource_name: str) -> str:
     return path
 
 
-def set_aviary_initial_values(prob, flops_inputs: AviaryValues):
+def set_aviary_initial_values(prob, aviary_inputs: AviaryValues):
     """
     Sets initial values for all inputs in the aviary inputs.
 
@@ -56,10 +56,10 @@ def set_aviary_initial_values(prob, flops_inputs: AviaryValues):
     ----------
     prob : Problem
         OpenMDAO problem after setup.
-    flops_inputs : AviaryValues
+    aviary_inputs : AviaryValues
         Instance of AviaryValues containing all initial values.
     """
-    for (key, (val, units)) in get_items(flops_inputs):
+    for (key, (val, units)) in get_items(aviary_inputs):
         try:
             prob.set_val(key, val, units)
 
@@ -68,33 +68,36 @@ def set_aviary_initial_values(prob, flops_inputs: AviaryValues):
             continue
 
 
-def set_aviary_input_defaults(model, inputs, meta_data=_MetaData):
+def set_aviary_input_defaults(model, inputs, aviary_inputs: AviaryValues,
+                              meta_data=_MetaData):
     """
-    This function sorts through all the input
-    variables to an Aviary model, and for those
-    which are not options it sets the input
-    value to be the value in the inputs, or
-    to be the default if the value is not in the
-    inputs.
+    This function sets the default values and units for any inputs prior to
+    setup. This is needed to resolve ambiguities when inputs are promoted
+    with the same name, but different units or values.
 
-    In the case when the value is not input nor
-    present in the default, nothing is set.
+    This method is mostly used in tests and level 3 scripts.
+
+    Parameters
+    ----------
+    model : System
+        Top level aviary model.
+    inputs : list
+        List of varibles that are causing promotion problems. This needs to
+        be crafted based on the openmdao exception messages.
+    aviary_inputs : AviaryValues
+        Instance of AviaryValues containing all initial values.
+    meta_data : dict
+        (Optional) Dictionary of aircraft metadata. Uses Aviary's built-in
+        metadata by default.
     """
-    for key in meta_data:
-        if ':' not in key or key.startswith('dynamic:'):
-            continue
-        if not meta_data[key]['option']:
-            if key in inputs:
-                val, units = inputs.get_item(key)
-            else:
-                val = meta_data[key]['default_value']
-                units = meta_data[key]['units']
+    for key in inputs:
+        if key in aviary_inputs:
+            val, units = aviary_inputs.get_item(key)
+        else:
+            val = meta_data[key]['default_value']
+            units = meta_data[key]['units']
 
-                if val is None:
-                    # optional, but no default value
-                    continue
-
-            model.set_input_defaults(key, val=val, units=units)
+        model.set_input_defaults(key, val=val, units=units)
 
 
 def convert_strings_to_data(string_list):

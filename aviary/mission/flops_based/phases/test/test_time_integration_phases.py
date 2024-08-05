@@ -6,7 +6,6 @@ from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 from aviary.mission.flops_based.phases.time_integration_phases import \
     SGMHeightEnergy, SGMDetailedTakeoff, SGMDetailedLanding
 from aviary.subsystems.premission import CorePreMission
-from aviary.utils.functions import set_aviary_input_defaults
 from aviary.variable_info.enums import EquationsOfMotion
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 

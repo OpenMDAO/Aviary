@@ -411,6 +411,35 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                 for var in engine_sized_vars:
                     params[var] = {'shape': (num_engine_type, ), 'static_target': True}
 
+            elif method == "low_speed":
+
+                # Parameters for low speed aero.
+                core_inputs = [
+                    Aircraft.Wing.AREA,
+                    Aircraft.Wing.ASPECT_RATIO,
+                    Aircraft.Wing.HEIGHT,
+                    Aircraft.Wing.SPAN,
+                    Mission.Takeoff.DRAG_COEFFICIENT_MIN,
+                ]
+
+                for var in core_inputs:
+
+                    meta = _MetaData[var]
+
+                    val = meta['default_value']
+                    if val is None:
+                        val = _unspecified
+                    units = meta['units']
+
+                    if var in aviary_inputs:
+                        try:
+                            val = aviary_inputs.get_val(var, units)
+                        except TypeError:
+                            val = aviary_inputs.get_val(var)
+
+                    params[var] = {'val': val,
+                                   'static_target': True}
+
         return params
 
     def report(self, prob, reports_folder, **kwargs):
