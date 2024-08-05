@@ -5,7 +5,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.subsystems.premission import CorePreMission
-from aviary.utils.aviary_values import get_items
+from aviary.utils.functions import set_aviary_initial_values
 from aviary.validation_cases.validation_tests import get_flops_inputs, get_flops_outputs
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 from aviary.subsystems.propulsion.utils import build_engine_deck
@@ -89,13 +89,7 @@ class MissionDragTest(unittest.TestCase):
         prob.set_val(Dynamic.Mission.TEMPERATURE, val=T, units='degR')
         prob.set_val(Dynamic.Mission.MASS, val=mass, units='lbm')
 
-        for (key, (val, units)) in get_items(flops_inputs):
-            try:
-                prob.set_val(key, val, units)
-
-            except:
-                # Should be an option or an overridden output.
-                continue
+        set_aviary_initial_values(prob, flops_inputs)
 
         prob.run_model()
 
@@ -204,13 +198,7 @@ class MissionDragTest(unittest.TestCase):
         prob.set_val(Dynamic.Mission.TEMPERATURE, val=T, units='degR')
         prob.set_val(Dynamic.Mission.MASS, val=mass, units='lbm')
 
-        for (key, (val, units)) in get_items(flops_inputs):
-            try:
-                prob.set_val(key, val, units)
-
-            except:
-                # Should be an option or an overridden output.
-                continue
+        set_aviary_initial_values(prob, flops_inputs)
 
         prob.run_model()
 
@@ -319,13 +307,7 @@ class MissionDragTest(unittest.TestCase):
         prob.set_val(Dynamic.Mission.TEMPERATURE, val=T, units='degR')
         prob.set_val(Dynamic.Mission.MASS, val=mass, units='lbm')
 
-        for (key, (val, units)) in get_items(flops_inputs):
-            try:
-                prob.set_val(key, val, units)
-
-            except:
-                # Should be an option or an overridden output.
-                continue
+        set_aviary_initial_values(prob, flops_inputs)
 
         prob.run_model()
 

@@ -545,13 +545,7 @@ def _run_computed_aero_harness(flops_inputs, dynamic_inputs, num_nodes):
 
     prob.setup()
 
-    for (key, (val, units)) in get_items(dynamic_inputs):
-        try:
-            prob.set_val(key, val, units)
-
-        except:
-            pass  # unused variable
-
+    set_aviary_initial_values(prob, dynamic_inputs)
     set_aviary_initial_values(prob, flops_inputs)
 
     prob.run_model()

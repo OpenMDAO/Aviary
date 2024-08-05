@@ -6,7 +6,7 @@ from openmdao.utils.assert_utils import assert_near_equal, assert_check_partials
 
 from aviary.subsystems.premission import CorePreMission
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.aviary_values import get_items
+from aviary.utils.functions import set_aviary_initial_values
 from aviary.validation_cases.validation_tests import (
     flops_validation_test, get_flops_inputs, get_flops_outputs, get_flops_case_names, print_case
 )
@@ -52,14 +52,7 @@ class PreMissionGroupTest(unittest.TestCase):
         # We set it to an unconverged value to test convergence.
         prob.set_val(Mission.Design.GROSS_MASS, val=1000.0)
 
-        # Set inital values for all variables.
-        for (key, (val, units)) in get_items(flops_inputs):
-            try:
-                prob.set_val(key, val, units)
-
-            except KeyError:
-                # This is an option, not a variable
-                continue
+        set_aviary_initial_values(prob, flops_inputs)
 
         if case_name in ['LargeSingleAisle1FLOPS', 'LargeSingleAisle2FLOPSdw']:
             # We set these so that their derivatives are defined.
@@ -113,14 +106,7 @@ class PreMissionGroupTest(unittest.TestCase):
 
         prob.setup(check=False)
 
-        # Set inital values for all variables.
-        for (key, (val, units)) in get_items(flops_inputs):
-            try:
-                prob.set_val(key, val, units)
-
-            except KeyError:
-                # This is an option, not a variable
-                continue
+        set_aviary_initial_values(prob, flops_inputs)
 
         flops_validation_test(
             prob,
