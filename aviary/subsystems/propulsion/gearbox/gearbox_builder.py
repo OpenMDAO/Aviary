@@ -36,13 +36,6 @@ class GearboxBuilder(SubsystemBuilderBase):
         """
 
         DVs = {
-            Aircraft.Engine.RPM_DESIGN: {
-                # TODO: Add a constraint that forces this to equal Dynamic.Mission.SHAFT_POWER_MAX wherever it is max in the mission
-                'opt': True,
-                'units': 'rpm',
-                'lower': 1.0,
-                'val': 2000,
-            },
             Aircraft.Engine.Gearbox.GEAR_RATIO: {
                 'opt': True,
                 'units': None,
@@ -82,7 +75,18 @@ class GearboxBuilder(SubsystemBuilderBase):
     def get_outputs(self):
         return [
             Dynamic.Mission.RPM_GEAR,
+            Dynamic.Mission.SHAFT_POWER_CON,
             Dynamic.Mission.SHAFT_POWER_GEAR,
             Dynamic.Mission.SHAFT_POWER_MAX_GEAR,
             Dynamic.Mission.TORQUE_GEAR,
         ]
+
+    def get_constraints(self):
+        constraints = {
+            Dynamic.Mission.SHAFT_POWER_CON: {
+                'lower': 0.0,
+                'type': 'path',
+                'units': 'kW',
+            }
+        }
+        return constraints

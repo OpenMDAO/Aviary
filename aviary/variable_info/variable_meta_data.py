@@ -2193,6 +2193,18 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Engine.RPM_DESIGN,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='RPM',
+    desc='the designed output RPM from the engine for fixed-RPM shafts',
+    default_value=None,
+)
+
+add_meta_data(
     Aircraft.Engine.SCALE_FACTOR,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -6626,6 +6638,15 @@ add_meta_data(
     units='hp',
     desc='current shaft power, per engine',
 )
+
+add_meta_data(
+    Dynamic.Mission.SHAFT_POWER_CON,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='kW',
+    desc='Must be positive to ensure that Aircraft.Engine.SHAFT_POWER_DESIGN is larger or equal to Dynamic.Mission.SHAFT_POWER_MAX',
+)
+
 
 add_meta_data(
     Dynamic.Mission.SHAFT_POWER_GEAR,

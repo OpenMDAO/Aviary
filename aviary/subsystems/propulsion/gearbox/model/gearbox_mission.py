@@ -26,7 +26,7 @@ class GearboxMission(om.Group):
                                        RPM_out={'val': np.ones(n), 'units': 'rpm'},
                                        gear_ratio={'val': 1.0, 'units': None},
                                        RPM_in={'val': np.ones(n), 'units': 'rpm'}),
-                           promotes_inputs=[('RPM_in', Dynamic.Mission.RPM),
+                           promotes_inputs=[('RPM_in', Aircraft.Engine.RPM_DESIGN),
                                             ('gear_ratio', Aircraft.Engine.Gearbox.GEAR_RATIO)],
                            promotes_outputs=[('RPM_out', Dynamic.Mission.RPM_GEAR)])
 
@@ -71,6 +71,6 @@ class GearboxMission(om.Group):
                                        shaft_power_resid={'val': np.ones(n), 'units': 'kW'}),
                            promotes_inputs=[('shaft_power_max', Dynamic.Mission.SHAFT_POWER_MAX),
                                             ('shaft_power_design', Aircraft.Engine.SHAFT_POWER_DESIGN)],
-                           promotes_outputs=['shaft_power_resid'])
+                           promotes_outputs=[('shaft_power_resid', Dynamic.Mission.SHAFT_POWER_CON)])
 
         # TODO max thrust from the props will depend on this max shaft power from the gearbox and the new gearbox RPM value

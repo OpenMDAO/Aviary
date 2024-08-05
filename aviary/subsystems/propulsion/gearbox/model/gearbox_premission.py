@@ -30,7 +30,7 @@ class GearboxPreMission(om.Group):
                                        RPM_in={'val': 0.0, 'units': 'rpm'}),
                            promotes_inputs=[('RPM_in', Aircraft.Engine.RPM_DESIGN),
                                             ('gear_ratio', Aircraft.Engine.Gearbox.GEAR_RATIO)],
-                           promotes_outputs=[('RPM_out', Dynamic.Mission.RPM_GEAR)])
+                           promotes_outputs=['RPM_out'])
 
         # max torque is calculated based on input shaft power and output RPM
         self.add_subsystem('torque_comp',
@@ -39,7 +39,7 @@ class GearboxPreMission(om.Group):
                                        torque_max={'val': 1.0, 'units': 'kN*m'},
                                        RPM_out={'val': 1.0, 'units': 'rpm'}),
                            promotes_inputs=[('shaft_power', Aircraft.Engine.SHAFT_POWER_DESIGN),
-                                            ('RPM_out', Dynamic.Mission.RPM_GEAR)],
+                                            'RPM_out'],
                            promotes_outputs=['torque_max'])
 
         # Simple gearbox mass will always produce positive values for mass based on a fixed specific torque

@@ -243,10 +243,12 @@ class Aircraft:
         REFERENCE_DIAMETER = 'aircraft:engine:reference_diameter'
         REFERENCE_MASS = 'aircraft:engine:reference_mass'
         REFERENCE_SLS_THRUST = 'aircraft:engine:reference_sls_thrust'
+        RPM_DESIGN = ' aircraft:engine:rpm_design'
         SCALE_FACTOR = 'aircraft:engine:scale_factor'
         SCALE_MASS = 'aircraft:engine:scale_mass'
         SCALE_PERFORMANCE = 'aircraft:engine:scale_performance'
         SCALED_SLS_THRUST = 'aircraft:engine:scaled_sls_thrust'
+        SHAFT_POWER_DESIGN = 'aircraft:engine:shaft_power_design'
         STARTER_MASS = 'aircraft:engine:starter_mass'
         SUBSONIC_FUEL_FLOW_SCALER = 'aircraft:engine:subsonic_fuel_flow_scaler'
         SUPERSONIC_FUEL_FLOW_SCALER = 'aircraft:engine:supersonic_fuel_flow_scaler'
@@ -260,6 +262,7 @@ class Aircraft:
             EFFICIENCY = "aircraft:engine:gearbox:efficiency"
             GEAR_RATIO = "aircraft:engine:gearbox:gear_ratio"
             MASS = "aircraft:engine:gearbox:mass"
+            SHAFT_POWER_DESIGN = "aircraft:engine:gearbox:shaft_power_design"
             SPECIFIC_TORQUE = "aircraft:engine:gearbox:specific_torque"
 
         class Motor:
@@ -641,6 +644,7 @@ class Dynamic:
         RPM = 'rotations_per_minute'
         RPM_GEAR = 'rotations_per_minute_gearbox'
         SHAFT_POWER = 'shaft_power'
+        SHAFT_POWER_CON = 'shaft_power_con'
         SHAFT_POWER_GEAR = 'shaft_power_gearbox'
         SHAFT_POWER_MAX = 'shaft_power_max'
         SHAFT_POWER_MAX_GEAR = 'shaft_power_max_gearbox'
