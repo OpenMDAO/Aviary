@@ -477,6 +477,7 @@ def create_aircraft_3d_file(recorder_file, reports_dir, outfilepath):
     aircraft_3d_model = Aircraft3DModel(recorder_file)
     aircraft_3d_model.read_variables()
     aircraft_3d_model.get_aframe_markup()
+    aircraft_3d_model.get_camera_entity(aircraft_3d_model.fuselage.length)
     aircraft_3d_model.write_file(aircraft_3d_template_filepath, outfilepath)
 
 
@@ -503,6 +504,9 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
             f"The script name, '{script_name}', does not have a reports folder associated with it. "
             f"The directory '{reports_dir}' does not exist."
         )
+
+    if not os.path.exists(problem_recorder):
+        issue_warning(f"Given Problem case recorder file {problem_recorder} does not exist.")
 
     # TODO - use lists and functions to do this with a lot less code
     ####### Model Tab #######
