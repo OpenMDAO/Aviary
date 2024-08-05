@@ -262,7 +262,6 @@ class Aircraft:
             EFFICIENCY = "aircraft:engine:gearbox:efficiency"
             GEAR_RATIO = "aircraft:engine:gearbox:gear_ratio"
             MASS = "aircraft:engine:gearbox:mass"
-            SHAFT_POWER_DESIGN = "aircraft:engine:gearbox:shaft_power_design"
             SPECIFIC_TORQUE = "aircraft:engine:gearbox:specific_torque"
 
         class Motor:
