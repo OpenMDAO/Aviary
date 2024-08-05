@@ -240,7 +240,8 @@ class AviaryProblem(om.Problem):
         self.regular_phases = []
         self.reserve_phases = []
 
-    def load_inputs(self, aviary_inputs, phase_info=None, engine_builders=None, meta_data=BaseMetaData, verbosity=None):
+    def load_inputs(self, aviary_inputs, phase_info=None, engine_builders=None, meta_data=BaseMetaData,
+                    verbosity=None):
         """
         This method loads the aviary_values inputs and options that the
         user specifies. They could specify files to load and values to
@@ -264,7 +265,8 @@ class AviaryProblem(om.Problem):
 
         if mission_method is TWO_DEGREES_OF_FREEDOM or mass_method is GASP:
             aviary_inputs = update_GASP_options(aviary_inputs)
-        initial_guesses = initial_guessing(aviary_inputs, initial_guesses)
+        initial_guesses = initial_guessing(aviary_inputs, initial_guesses,
+                                           engine_builders)
         self.aviary_inputs = aviary_inputs
         self.initial_guesses = initial_guesses
 
@@ -284,6 +286,10 @@ class AviaryProblem(om.Problem):
                 # Access the phase_info variable from the loaded module
                 phase_info = outputted_phase_info.phase_info
 
+                # if verbosity level is BRIEF or higher, print that we're using the outputted phase info
+                if verbosity is not None and verbosity.value >= 1:
+                    print('Using outputted phase_info from current working directory')
+
             else:
                 if self.mission_method is TWO_DEGREES_OF_FREEDOM:
                     if self.analysis_scheme is AnalysisScheme.COLLOCATION:
@@ -297,8 +303,9 @@ class AviaryProblem(om.Problem):
                 elif self.mission_method is HEIGHT_ENERGY:
                     from aviary.interface.default_phase_info.height_energy import phase_info
 
-                print('Loaded default phase_info for '
-                      f'{self.mission_method.value.lower()} equations of motion')
+                if verbosity is not None and verbosity.value >= 1:
+                    print('Loaded default phase_info for '
+                          f'{self.mission_method.value.lower()} equations of motion')
 
         # create a new dictionary that only contains the phases from phase_info
         self.phase_info = {}
@@ -2315,7 +2322,8 @@ class AviaryProblem(om.Problem):
         if self.aviary_inputs.get_val(Settings.VERBOSITY).value >= 2:
             with open('output_list.txt', 'w') as outfile:
                 self.model.list_outputs(out_stream=outfile)
-        return failed
+
+        self.problem_ran_successfully = not failed
 
     def _add_hybrid_objective(self, phase_info):
         phases = list(phase_info.keys())

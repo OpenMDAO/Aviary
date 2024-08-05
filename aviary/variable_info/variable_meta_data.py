@@ -4299,7 +4299,7 @@ add_meta_data(
     desc='Total propulsion group mass'
 )
 
-# TODO clash with per-engine scaling, need to resolve w/ multi-engine
+# TODO clash with per-engine scaling, need to resolve w/ heterogeneous engine
 add_meta_data(
     Aircraft.Propulsion.MISC_MASS_SCALER,
     meta_data=_MetaData,

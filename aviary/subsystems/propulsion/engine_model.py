@@ -153,10 +153,11 @@ class EngineModel(SubsystemBuilderBase):
                                               'was expected.')
                         # use first item in val and warn user
                         if verbosity >= 1:
-                            warnings.warn(
-                                f'The value of {key} passed to EngineModel '
-                                f'<{self.name}> is {type(val)}. Only the first entry in '
-                                'this iterable will be used.')
+                            if len(val) > 1:
+                                warnings.warn(
+                                    f'The value of {key} passed to EngineModel '
+                                    f'<{self.name}> is {type(val)}. Only the first entry in '
+                                    'this iterable will be used.')
 
                     # if val is supposed to be an iterable...
                     else:
