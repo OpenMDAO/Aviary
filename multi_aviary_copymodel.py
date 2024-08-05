@@ -11,18 +11,11 @@ import aviary.api as av
 import openmdao.api as om
 import dymos as dm
 import numpy as np
-from aviary.variable_info.enums import ProblemType, AnalysisScheme
 from c5_models.c5_ferry_phase_info import phase_info as c5_ferry_phase_info
 from c5_models.c5_intermediate_phase_info import phase_info as c5_intermediate_phase_info
 from c5_models.c5_maxpayload_phase_info import phase_info as c5_maxpayload_phase_info
-from aviary.variable_info.variable_meta_data import _MetaData as MetaData
-from aviary.variable_info.variables import Mission, Dynamic
-from aviary.interface.methods_for_level2 import wrapped_convert_units
-from aviary.variable_info.enums import EquationsOfMotion
-
-TWO_DEGREES_OF_FREEDOM = EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
-HEIGHT_ENERGY = EquationsOfMotion.HEIGHT_ENERGY
-SOLVED_2DOF = EquationsOfMotion.SOLVED_2DOF
+from easy_phase_info_inter import phase_info as easy_inter
+from easy_phase_info_max import phase_info as easy_max
 
 # "comp?.a can be used to reference multiple comp1.a comp2.a etc"
 
@@ -67,10 +60,23 @@ class MultiMissionProblem(om.Problem):
         self.model.add_design_var('mission:design:gross_mass', lower=10., upper=900e3)
 
     def add_driver(self):
+        # pyoptsparse SLSQP errors out w pos directional derivative line search (obj scaler = 1) and
+        # inequality constraints incompatible (obj scaler = -1) - fuel burn obj
+        # pyoptsparse IPOPT keeps iterating (seen upto 1000+ iters) in the IPOPT.out file but no result
+        # scipy SLSQP reaches iter limit and fails optimization
         self.driver = om.pyOptSparseDriver()
         self.driver.options['optimizer'] = 'SLSQP'
-        self.driver.declare_coloring()
+        # self.driver.options['maxiter'] = 1e3
+        # self.driver.declare_coloring()
         # self.model.linear_solver = om.DirectSolver()
+        """scipy SLSQP results
+            Iteration limit reached    (Exit mode 9)
+            Current function value: -43.71865402878029
+            Iterations: 200
+            Function evaluations: 1018
+            Gradient evaluations: 200
+            Optimization FAILED.
+            Iteration limit reached"""
 
     def add_objective(self):
         weights = [float(weight/sum(self.weights)) for weight in self.weights]
@@ -87,7 +93,7 @@ class MultiMissionProblem(om.Problem):
             # connecting each subcomponent's fuel burn to super problem's unique fuel variables
             self.model.connect(
                 self.group_prefix+f"_{i}.mission:summary:fuel_burned", f"fuel_{i}")
-        self.model.add_objective('compound', scaler=1.)
+        self.model.add_objective('compound', scaler=-1.)
 
     def setup_wrapper(self):
         """Wrapper for om.Problem setup with warning ignoring and setting options"""
@@ -114,7 +120,8 @@ class MultiMissionProblem(om.Problem):
 if __name__ == '__main__':
     makeN2 = True if (len(sys.argv) > 1 and "n2" in sys.argv[1]) else False
     planes = ['c5_models/c5_maxpayload.csv', 'c5_models/c5_intermediate.csv']
-    phase_infos = [c5_maxpayload_phase_info, c5_intermediate_phase_info]
+    # phase_infos = [c5_maxpayload_phase_info, c5_intermediate_phase_info]
+    phase_infos = [easy_max, easy_inter]
     weights = [1, 1]
     super_prob = MultiMissionProblem(planes, phase_infos, weights)
     super_prob.add_driver()

@@ -61,8 +61,8 @@ class MultiMinTime(om.Problem):
 def multiExample():
     """Example of multi mission min time to climb problem."""
     makeN2 = True if "n2" in sys.argv else False
-    super_prob = MultiMinTime(heights=[6e3, 18e3], weights=[1, 1],
-                              optWing=True, modelinfo={'m_initial': 20e3})
+    super_prob = MultiMinTime(heights=[10e3, 15e3], weights=[1, 1],
+                              optWing=True, modelinfo={'m_initial': 23e3})
     super_prob.addCompoundObj()
     super_prob.addDriver()
     super_prob.setup()
