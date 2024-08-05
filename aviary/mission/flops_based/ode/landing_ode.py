@@ -195,3 +195,4 @@ class FlareODE(om.Group):
 
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, np.zeros(nn), 'm')
         self.set_input_defaults(Dynamic.Mission.VELOCITY, np.zeros(nn), 'm/s')
+        self.set_input_defaults(Aircraft.Wing.AREA, 1.0, 'm**2')
