@@ -48,6 +48,7 @@ class GearboxBuilder(SubsystemBuilderBase):
                 'val': 10000,
                 'units': 'kW',
                 'lower': 1.0,
+                'upper': None,
             }
         }
         return DVs
