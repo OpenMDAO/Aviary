@@ -1,6 +1,8 @@
 import aviary.api as av
 from easy_phase_info_max import phase_info as max_phase_info
 from easy_phase_info_inter import phase_info as inter_phase_info
+# from c5_models.c5_maxpayload_phase_info import phase_info as max_phase_info
+# from c5_models.c5_intermediate_phase_info import phase_info as inter_phase_info
 from aviary.variable_info.variables import Mission, Aircraft
 
 

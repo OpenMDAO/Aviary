@@ -17,6 +17,7 @@ from c5_models.c5_maxpayload_phase_info import phase_info as c5_maxpayload_phase
 from easy_phase_info_inter import phase_info as easy_inter
 from easy_phase_info_max import phase_info as easy_max
 from aviary.variable_info.variables import Mission, Aircraft
+from aviary.variable_info.enums import ProblemType
 
 # "comp?.a can be used to reference multiple comp1.a comp2.a etc"
 
@@ -50,12 +51,13 @@ class MultiMissionProblem(om.Problem):
             prob.add_phases()
             prob.add_post_mission_systems()
             prob.link_phases()
+            prob.problem_type = ProblemType.ALTERNATE
             prob.add_design_variables()  # should not work at super prob level
             self.probs.append(prob)
 
             self.model.add_subsystem(
                 self.group_prefix + f'_{i}', prob.model,
-                promotes=['mission:design:gross_mass'])
+                promotes=[Mission.Design.GROSS_MASS])
 
     def add_design_variables(self):
         self.model.add_design_var('mission:design:gross_mass', lower=10., upper=900e3)
