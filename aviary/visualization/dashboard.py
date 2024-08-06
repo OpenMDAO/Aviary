@@ -565,7 +565,8 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
         )
 
     if not os.path.exists(problem_recorder):
-        issue_warning(f"Given Problem case recorder file {problem_recorder} does not exist.")
+        issue_warning(
+            f"Given Problem case recorder file {problem_recorder} does not exist.")
 
     # TODO - use lists and functions to do this with a lot less code
     ####### Model Tab #######

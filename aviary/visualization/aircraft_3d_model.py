@@ -251,9 +251,10 @@ class AircraftModelReader(object):
         try:
             self.aviary_options = model_options["root"]["aviary_options"]
         except KeyError as e:
-            issue_warning(f"The case recorder file {self._case_recorder_file} does not have any metadata for the root system")
+            issue_warning(
+                f"The case recorder file {self._case_recorder_file} does not have any metadata for the root system")
             self.aviary_options = av.AviaryValues()
-            
+
             # <class 'aviary.utils.aviary_values.AviaryValues'>
 
         if "final" not in cr.list_cases():
@@ -803,7 +804,8 @@ class Engines(object):
                 distance_from_fuselage = engine_location * wing_span/2.0
                 distance_along_fuselage = self._wing.position_along_fuselage + self._wing.chord / 2. - \
                     distance_from_fuselage * \
-                    math.tan(math.radians(self._wing.sweep_angle)) + self._engine_length/2.
+                    math.tan(math.radians(self._wing.sweep_angle)) + \
+                    self._engine_length/2.
                 distance_above_fuselage = self._wing.vertical_position - self._engine_diameter / 2.
                 entities += f"""
                         <!-- engine -->
