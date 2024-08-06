@@ -7,6 +7,27 @@ from myst_nb import glue
 from IPython.display import Markdown
 
 
+"""
+# DocTAPE #
+------------
+Documentation Testing and Automated Placement of Expressions
+
+A collection of utility functions (and wrappers for Glue) that are useful
+for automating the process of building and testing documentation to ensure that
+documentation doesn't get stale.
+
+check_value is a simple function for comparing two values
+check_contains confirms that all the elements of one iterable are contained in the other
+check_args gets the signature of a function and compares it to the arguments you are expecting
+run_command_no_file_error executes a CLI command but won't fail if a FileNotFoundError is raised
+get_attribute_name gets the name of an object's attribute based on it's value
+get_all_keys recursively get all of the keys from a dict of dicts
+get_value recursively get a value from a dict of dicts
+glue_variable Glue a variable for later use in markdown cells of notebooks (can auto format for code)
+glue_keys recursively glue all of the keys from a dict of dicts
+"""
+
+
 def check_value(val1, val2):
     """
     Compares two values and raises a ValueError if they are not equal.
@@ -141,10 +162,10 @@ def run_command_no_file_error(command: str):
 
 def get_attribute_name(object: object, attribute) -> str:
     """
-    Gets the name of an objects attribute based on it's value
+    Gets the name of an object's attribute based on it's value
 
     This is intended for use with Enums and other objects that have unique values.
-    This method will return the name of the first atttribute that has a value that
+    This method will return the name of the first attribute that has a value that
     matches the value provided.
 
     Parameters
@@ -170,26 +191,6 @@ def get_attribute_name(object: object, attribute) -> str:
 
     raise AttributeError(
         f"`{object.__name__}` object has no attribute with a value of `{attribute}`")
-
-
-def glue_variable(name: str, val=None, md_code=False, display=True):
-    """
-    Glue a variable for later use in markdown cells of notebooks
-
-    Parameters
-    ----------
-    name : str
-        The name the value will be glued to
-    val : any
-        The value to be displayed in the markdown cell (default is the value of name)
-    md_code : Bool
-        Whether to wrap the value in markdown code formatting (e.g. `code`)
-    """
-    if val is None:
-        val = name
-    if md_code:
-        val = Markdown('`'+val+'`')
-    glue(name, val, display)
 
 
 def get_all_keys(dict_of_dicts: dict, all_keys=None, track_layers=False):
@@ -254,6 +255,26 @@ def get_value(dict_of_dicts: dict, comlpete_key: str):
     for key in comlpete_key.split('.'):
         dict_of_dicts = dict_of_dicts[key]
     return dict_of_dicts
+
+
+def glue_variable(name: str, val=None, md_code=False, display=True):
+    """
+    Glue a variable for later use in markdown cells of notebooks
+
+    Parameters
+    ----------
+    name : str
+        The name the value will be glued to
+    val : any
+        The value to be displayed in the markdown cell (default is the value of name)
+    md_code : Bool
+        Whether to wrap the value in markdown code formatting (e.g. `code`)
+    """
+    if val is None:
+        val = name
+    if md_code:
+        val = Markdown('`'+val+'`')
+    glue(name, val, display)
 
 
 def glue_keys(dict_of_dicts: dict, display=True):
