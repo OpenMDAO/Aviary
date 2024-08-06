@@ -68,16 +68,10 @@ class MultiMissionProblem(om.Problem):
     def add_driver(self):
         self.driver = om.pyOptSparseDriver()
 
-        self.driver.options["optimizer"] = "SNOPT"
+        self.driver.options["optimizer"] = "SLSQP"
         # driver.declare_coloring(True) # do we need this anymore of we're specifying the below?
         # maybe we're getting matrixes that are too sparse, decrease tolerance to avoid missing corellatiton
         # set coloring at this value. 1e-45 didn't seem to make much difference
-        self.driver.declare_coloring(tol=1e-25, orders=None)
-        self.driver.opt_settings["Major iterations limit"] = 60
-        self.driver.opt_settings["Major optimality tolerance"] = 1e-6
-        self.driver.opt_settings["Major feasibility tolerance"] = 1e-6
-        self.driver.opt_settings["iSumm"] = 6
-        self.driver.opt_settings['Verify level'] = -1
         # self.driver.options['maxiter'] = 1e3
         # self.driver.declare_coloring()
         # self.model.linear_solver = om.DirectSolver()
@@ -105,8 +99,7 @@ class MultiMissionProblem(om.Problem):
             # connecting each subcomponent's fuel burn to super problem's unique fuel variables
             self.model.connect(
                 self.group_prefix+f"_{i}.{Mission.Objectives.FUEL}", f"fuel_{i}")
-        self.model.add_objective('compound', ref=1)
-        self.model.add_objective('compound', ref=1)
+        self.model.add_objective('compound')
 
     def setup_wrapper(self):
         """Wrapper for om.Problem setup with warning ignoring and setting options"""
@@ -173,13 +166,6 @@ if __name__ == '__main__':
         val2 = super_prob.get_val(f'group_1.{key}', units='lbm')[0]
         print(f"Variable: {key}")
         print(f"Values: {val1}, {val2} (lbm)")
-
-    comps = ['vertical_tail', 'horizontal_tail', 'wing', 'fuselage']
-    print("\nmass comparisons")
-    for comp in comps:
-        v1 = super_prob.get_val(f'group_0.aircraft:{comp}:mass')
-        v2 = super_prob.get_val(f'group_1.aircraft:{comp}:mass')
-        print(f'{comp}: {v1} vs. {v2}')
 
     sol = CaseReader('res.db').get_case('final')
     # super_prob.model.list_vars()
