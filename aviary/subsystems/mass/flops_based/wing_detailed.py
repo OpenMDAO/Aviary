@@ -203,7 +203,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
             if num_wing_engines[i] > 0:
                 eng_loc = engine_locations[idx:idx2][0]
             else:
-                eng_loc = engine_locations[idx:idx2]
+                continue
 
             if eng_loc <= integration_stations[0]:
                 inertia_factor[i] = 1.0
