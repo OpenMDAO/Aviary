@@ -1,5 +1,4 @@
 import unittest
-import os
 
 import numpy as np
 import openmdao
@@ -7,6 +6,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
 from packaging import version
 
+from aviary.constants import KNOT_TO_FT_PER_SEC
 from aviary.mission.gasp_based.ode.descent_ode import DescentODE
 from aviary.variable_info.options import get_option_defaults
 from aviary.utils.test_utils.IO_test_util import check_prob_outputs
@@ -53,16 +53,16 @@ class DescentODETestCase(unittest.TestCase):
             Dynamic.Mission.ALTITUDE_RATE: np.array([-2385, -3076]) / 60,
             # TAS (ft/s) * cos(gamma)
             Dynamic.Mission.DISTANCE_RATE: [
-                (459 * 1.68781) * np.cos(np.deg2rad(-2.94)),
-                (437 * 1.68781) * np.cos(np.deg2rad(-3.98)),
+                (459 * KNOT_TO_FT_PER_SEC) * np.cos(np.deg2rad(-2.94)),
+                (437 * KNOT_TO_FT_PER_SEC) * np.cos(np.deg2rad(-3.98)),
             ],
             # lbm/h
             Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: np.array([-452, -996]),
-            "EAS": np.array([249, 350]) * 1.68781,  # kts -> ft/s
+            "EAS": np.array([249, 350]) * KNOT_TO_FT_PER_SEC,  # kts -> ft/s
             Dynamic.Mission.MACH: np.array([0.8, 0.696]),
             Dynamic.Mission.FLIGHT_PATH_ANGLE: np.deg2rad([-2.94, -3.98]),
         }
-        check_prob_outputs(self.prob, testvals, rtol=1e-1)  # TODO tighten
+        check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
         partial_data = self.prob.check_partials(
             method="cs", out_stream=None, excludes=["*USatm*", "*params*", "*aero*"]
@@ -84,16 +84,16 @@ class DescentODETestCase(unittest.TestCase):
         self.prob.run_model()
 
         testvals = {
-            "alpha": 4.21,
-            "CL": 0.5063,
-            "CD": 0.0271,
-            Dynamic.Mission.ALTITUDE_RATE: -1158 / 60,
+            "alpha": 4.19956,
+            "CL": 0.507578,
+            "CD": 0.0268404,
+            Dynamic.Mission.ALTITUDE_RATE: -1138.583 / 60,
             # TAS (ft/s) * cos(gamma)
-            Dynamic.Mission.DISTANCE_RATE: (255 * 1.68781) * np.cos(np.deg2rad(-2.56)),
-            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: -1294,
-            Dynamic.Mission.FLIGHT_PATH_ANGLE: np.deg2rad(-2.56),
+            Dynamic.Mission.DISTANCE_RATE: (255.5613 * KNOT_TO_FT_PER_SEC) * np.cos(np.deg2rad(-2.52149)),
+            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: -1295.11,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE: np.deg2rad(-2.52149),
         }
-        check_prob_outputs(self.prob, testvals, rtol=1e-1)  # TODO tighten
+        check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
         partial_data = self.prob.check_partials(
             out_stream=None, method="cs", excludes=["*USatm*", "*params*", "*aero*"]
