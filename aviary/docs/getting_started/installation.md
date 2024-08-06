@@ -3,7 +3,7 @@
 ## Quick start installation
 
 ```{note}
-If you do not already have Python installed, we recommend installing [Anaconda](https://www.anaconda.com/download).
+If you do not already have Python installed, we recommend installing [miniconda](https://docs.anaconda.com/miniconda/miniconda-install/).
 The minimum supported version of Python is 3.9; we recommend using the latest release of Python.
 ```
 
@@ -20,7 +20,7 @@ If you've done that successfully, you can now use Aviary in your Python environm
 
 ## More in-depth installation instructions
 
-If you want to instead clone the Aviary repository and install from source, follow the instructions below.
+If you want to instead clone the Aviary repository and install from source (this is useful if you modify any of Aviary's internal code), follow the instructions below.
 Once you have cloned the Aviary repo, change directories into the top-level Aviary folder (not within the `aviary` folder) and run the following command:
 
 ```python
