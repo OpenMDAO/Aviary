@@ -71,8 +71,8 @@ class MultiMissionProblem(om.Problem):
         # set coloring at this value. 1e-45 didn't seem to make much difference
         self.driver.declare_coloring(tol=1e-25, orders=None)
         self.driver.opt_settings["Major iterations limit"] = 60
-        self.driver.opt_settings["Major optimality tolerance"] = 5e-4
-        self.driver.opt_settings["Major feasibility tolerance"] = 4e-5
+        self.driver.opt_settings["Major optimality tolerance"] = 1e-6
+        self.driver.opt_settings["Major feasibility tolerance"] = 1e-6
         self.driver.opt_settings["iSumm"] = 6
         self.driver.opt_settings['Verify level'] = -1
         # self.driver.options['maxiter'] = 1e3
@@ -102,7 +102,7 @@ class MultiMissionProblem(om.Problem):
             # connecting each subcomponent's fuel burn to super problem's unique fuel variables
             self.model.connect(
                 self.group_prefix+f"_{i}.{Mission.Objectives.FUEL}", f"fuel_{i}")
-        self.model.add_objective('compound', ref=1e4)
+        self.model.add_objective('compound', ref=1)
 
     def setup_wrapper(self):
         """Wrapper for om.Problem setup with warning ignoring and setting options"""
@@ -160,3 +160,6 @@ if __name__ == '__main__':
     print("Fuel burned")
     print(super_prob.get_val(f'group_0.{Mission.Summary.FUEL_BURNED}'))
     print(super_prob.get_val(f'group_1.{Mission.Summary.FUEL_BURNED}'))
+    print("Summary Gross Mass")
+    print(super_prob.get_val(f'group_0.{Mission.Summary.GROSS_MASS}'))
+    print(super_prob.get_val(f'group_1.{Mission.Summary.GROSS_MASS}'))
