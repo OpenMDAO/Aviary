@@ -1,7 +1,5 @@
 # Now What?
 
-Now that you've gone through the Getting Started section, you'll probably ask: "Now what?"
-
 We want to provide a few different avenues and suggested paths forward based on your use cases and background.
 These are not the only ways to use Aviary and explicitly do not build on each other.
 You could start with one of these sections and then move to another, or you could start with one and never use the others.
