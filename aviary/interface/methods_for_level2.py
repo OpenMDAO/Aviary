@@ -1446,7 +1446,7 @@ class AviaryProblem(om.Problem):
                                       connected=true_unless_mpi)
 
                 self.model.connect(f'traj.{self.regular_phases[-1]}.timeseries.distance',
-                                   "actual_range",
+                                   'actual_range',
                                    src_indices=[-1], flat_src_indices=True)
 
             elif self.mission_method is SOLVED_2DOF:

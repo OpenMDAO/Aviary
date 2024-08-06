@@ -66,12 +66,18 @@ class MultiMissionProblem(om.Problem):
         self.model.add_design_var('mission:design:gross_mass', lower=10., upper=900e3)
 
     def add_driver(self):
-        # pyoptsparse SLSQP errors out w pos directional derivative line search (obj scaler = 1) and
-        # inequality constraints incompatible (obj scaler = -1) - fuel burn obj
-        # pyoptsparse IPOPT keeps iterating (seen upto 1000+ iters) in the IPOPT.out file but no result
-        # scipy SLSQP reaches iter limit and fails optimization
         self.driver = om.pyOptSparseDriver()
-        self.driver.options['optimizer'] = 'SLSQP'
+
+        self.driver.options["optimizer"] = "SNOPT"
+        # driver.declare_coloring(True) # do we need this anymore of we're specifying the below?
+        # maybe we're getting matrixes that are too sparse, decrease tolerance to avoid missing corellatiton
+        # set coloring at this value. 1e-45 didn't seem to make much difference
+        self.driver.declare_coloring(tol=1e-25, orders=None)
+        self.driver.opt_settings["Major iterations limit"] = 60
+        self.driver.opt_settings["Major optimality tolerance"] = 1e-6
+        self.driver.opt_settings["Major feasibility tolerance"] = 1e-6
+        self.driver.opt_settings["iSumm"] = 6
+        self.driver.opt_settings['Verify level'] = -1
         # self.driver.options['maxiter'] = 1e3
         # self.driver.declare_coloring()
         # self.model.linear_solver = om.DirectSolver()
@@ -100,6 +106,7 @@ class MultiMissionProblem(om.Problem):
             self.model.connect(
                 self.group_prefix+f"_{i}.{Mission.Objectives.FUEL}", f"fuel_{i}")
         self.model.add_objective('compound', ref=1)
+        self.model.add_objective('compound', ref=1)
 
     def setup_wrapper(self):
         """Wrapper for om.Problem setup with warning ignoring and setting options"""
@@ -122,7 +129,15 @@ class MultiMissionProblem(om.Problem):
         self.model.set_solver_print(0)
 
         # self.run_driver()
-        dm.run_problem(self, solution_record_file='res.db')
+        dm.run_problem(self, make_plots=True, solution_record_file='res.db')
+
+    def get_design_range(self, phase_infos):
+        design_range = 0
+        for phase_info in phase_infos:
+            get_range = phase_info['post_mission']['target_range'][0]  # TBD add units
+            if get_range > design_range:
+                design_range = get_range
+        return design_range
 
 
 if __name__ == '__main__':
@@ -136,16 +151,12 @@ if __name__ == '__main__':
     super_prob.add_driver()
     super_prob.add_design_variables()
     super_prob.add_objective()
+    super_prob.model.set_input_defaults('mission:design:range', val=4000)
     super_prob.setup_wrapper()
+    super_prob.set_val('mission:design:range', super_prob.get_design_range(phase_infos))
     for i, prob in enumerate(super_prob.probs):
-        super_prob.set_val(
-            super_prob.group_prefix +
-            f"_{i}.aircraft:design:landing_to_takeoff_mass_ratio", 0.5)
         prob.set_initial_guesses(super_prob, super_prob.group_prefix+f"_{i}.")
-        print(super_prob.get_val(super_prob.group_prefix +
-                                 f"_{i}.aircraft:design:landing_to_takeoff_mass_ratio"))
-        print(super_prob.get_val(super_prob.group_prefix +
-                                 f"_{i}.mission:summary:range"))
+
     # super_prob.final_setup()
     if makeN2:
         from createN2 import createN2
