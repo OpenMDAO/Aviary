@@ -155,7 +155,6 @@ class Aircraft:
         FINENESS = 'aircraft:design:fineness'
         FIXED_EQUIPMENT_MASS = 'aircraft:design:fixed_equipment_mass'
         FIXED_USEFUL_LOAD = 'aircraft:design:fixed_useful_load'
-        IJEFF = 'aircraft:design:ijeff'
         LAMINAR_FLOW_LOWER = 'aircraft:design:laminar_flow_lower'
         LAMINAR_FLOW_UPPER = 'aircraft:design:laminar_flow_upper'
 
@@ -197,6 +196,7 @@ class Aircraft:
         ZERO_FUEL_MASS = 'aircraft:design:zero_fuel_mass'
         ZERO_LIFT_DRAG_COEFF_FACTOR = \
             'aircraft:design:zero_lift_drag_coeff_factor'
+        IJEFF = 'ijeff'
 
     class Electrical:
         HAS_HYBRID_SYSTEM = 'aircraft:electrical:has_hybrid_system'
