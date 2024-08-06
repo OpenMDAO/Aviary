@@ -100,7 +100,7 @@ def aviary_cmd():
     cmdargs = [a for a in sys.argv[1:] if a not in ('-h',)]
 
     if len(args) == 1 and len(user_args) == 0:
-        if args[0] != 'draw_mission' and args[0] != 'run_mission' and args[0] != 'build_model':
+        if args[0] not in ('draw_mission', 'run_mission', 'build_model'):
             parser.parse_args([args[0], '-h'])
 
     if not set(args).intersection(subs.choices) and len(
