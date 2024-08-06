@@ -1568,14 +1568,14 @@ class AviaryProblem(om.Problem):
                                    Mission.Landing.TOUCHDOWN_MASS, src_indices=[-1])
 
                 connect_map = {
-                    f"traj.{self.regular_phases[-1]}.timeseries.distance": Mission.Summary.RANGE,
+                    f"traj.{self.regular_phases[-1]}.timeseries.distance": 'actual_range',
                 }
 
             else:
                 connect_map = {
                     "taxi.mass": "traj.mass_initial",
                     Mission.Takeoff.ROTATION_VELOCITY: "traj.SGMGroundroll_velocity_trigger",
-                    "traj.distance_final": Mission.Summary.RANGE,
+                    "traj.distance_final": 'actual_range',
                     "traj.mass_final": Mission.Landing.TOUCHDOWN_MASS,
                 }
 
