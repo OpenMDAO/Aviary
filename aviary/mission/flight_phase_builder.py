@@ -121,7 +121,7 @@ class FlightPhaseBase(PhaseBuilderBase):
 
         phase.add_state(
             Dynamic.Mission.MASS, fix_initial=fix_initial_mass, fix_final=False,
-            lower=0.0, ref=1e4, defect_ref=1e6, units='kg',
+            lower=0.0, ref=1e4, defect_ref=1e4, units='kg',
             rate_source=rate_source,
             targets=Dynamic.Mission.MASS,
             input_initial=input_initial_mass,
@@ -133,7 +133,7 @@ class FlightPhaseBase(PhaseBuilderBase):
                 fix_initial, Dynamic.Mission.DISTANCE, True)
             phase.add_state(
                 Dynamic.Mission.DISTANCE, fix_initial=fix_initial_distance, fix_final=False,
-                lower=0.0, ref=1e6, defect_ref=1e8, units='m',
+                lower=0.0, ref=1e6, defect_ref=1e6, units='m',
                 rate_source=Dynamic.Mission.DISTANCE_RATE,
                 input_initial=input_initial_distance,
                 solve_segments='forward' if solve_for_distance else None,
