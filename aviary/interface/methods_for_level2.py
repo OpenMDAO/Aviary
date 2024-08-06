@@ -367,14 +367,14 @@ class AviaryProblem(om.Problem):
                 ['actual_takeoff_mass'],
                 units='lbm')
             if 'target_range' in self.post_mission_info:
-                aviary_inputs.set_val(Mission.Design.RANGE, wrapped_convert_units(
+                aviary_inputs.set_val(Mission.Summary.RANGE, wrapped_convert_units(
                     phase_info['post_mission']['target_range'], 'NM'), units='NM')
                 self.require_range_residual = True
             else:
                 self.require_range_residual = False
 
             self.target_range = aviary_inputs.get_val(
-                Mission.Design.RANGE, units='NM')
+                Mission.Summary.RANGE, units='NM')
 
         return aviary_inputs
 
@@ -1446,7 +1446,7 @@ class AviaryProblem(om.Problem):
                                       connected=true_unless_mpi)
 
                 self.model.connect(f'traj.{self.regular_phases[-1]}.timeseries.distance',
-                                   Mission.Summary.RANGE,
+                                   "actual_range",
                                    src_indices=[-1], flat_src_indices=True)
 
             elif self.mission_method is SOLVED_2DOF:
@@ -2472,7 +2472,7 @@ class AviaryProblem(om.Problem):
                     "val": self.target_range, "units": "NM"},
             ),
             promotes_inputs=[
-                ("actual_range", Mission.Summary.RANGE),
+                "actual_range",
                 ("ascent_duration", Mission.Takeoff.ASCENT_DURATION),
             ],
             promotes_outputs=[("reg_objective", Mission.Objectives.RANGE)],
@@ -2487,8 +2487,8 @@ class AviaryProblem(om.Problem):
                 range_resid={"val": 30, "units": "NM"},
             ),
             promotes_inputs=[
-                ("actual_range", Mission.Summary.RANGE),
-                ("target_range", Mission.Design.RANGE),
+                "actual_range",
+                ("target_range", Mission.Summary.RANGE),
             ],
             promotes_outputs=[
                 ("range_resid", Mission.Constraints.RANGE_RESIDUAL)],
