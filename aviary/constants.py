@@ -16,3 +16,4 @@ PSLS_PSF = 2116.22
 # sea level standard temperature in deg R
 TSLS_DEGR = 518.67
 RADIUS_EARTH_METRIC = 6367533.0  # m (meridional)
+KNOT_TO_FT_PER_SEC = 1.68781  # ft/s
