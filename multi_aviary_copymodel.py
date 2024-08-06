@@ -16,6 +16,7 @@ from c5_models.c5_intermediate_phase_info import phase_info as c5_intermediate_p
 from c5_models.c5_maxpayload_phase_info import phase_info as c5_maxpayload_phase_info
 from easy_phase_info_inter import phase_info as easy_inter
 from easy_phase_info_max import phase_info as easy_max
+from aviary.variable_info.variables import Mission, Aircraft
 
 # "comp?.a can be used to reference multiple comp1.a comp2.a etc"
 
@@ -92,8 +93,8 @@ class MultiMissionProblem(om.Problem):
         for i in range(self.num_missions):
             # connecting each subcomponent's fuel burn to super problem's unique fuel variables
             self.model.connect(
-                self.group_prefix+f"_{i}.mission:summary:fuel_burned", f"fuel_{i}")
-        self.model.add_objective('compound', scaler=1.)
+                self.group_prefix+f"_{i}.{Mission.Objectives.FUEL}", f"fuel_{i}")
+        self.model.add_objective('compound', ref=1e4)
 
     def setup_wrapper(self):
         """Wrapper for om.Problem setup with warning ignoring and setting options"""
@@ -115,8 +116,8 @@ class MultiMissionProblem(om.Problem):
         # self.check_totals(method='fd', compact_print=True)
         self.model.set_solver_print(0)
 
-        self.run_driver()
-        # dm.run_problem(self, make_plots=True)
+        # self.run_driver()
+        dm.run_problem(self, make_plots=True)
 
 
 if __name__ == '__main__':
@@ -145,6 +146,12 @@ if __name__ == '__main__':
         createN2(__file__, super_prob)
     super_prob.run()
 
+    print("\n\n=========================\nEmpty masses:")
+    print(super_prob.get_val(f'group_0.{Aircraft.Design.EMPTY_MASS}'))
+    print(super_prob.get_val(f'group_1.{Aircraft.Design.EMPTY_MASS}'))
+    print("Fuel burned")
+    print(super_prob.get_val(f'group_0.{Mission.Summary.FUEL_BURNED}'))
+    print(super_prob.get_val(f'group_1.{Mission.Summary.FUEL_BURNED}'))
     # def initvals(self):
     #     """attempting to copy over aviary code for setting initial values and changing references"""
     #     for i, prob in enumerate(self.probs):
