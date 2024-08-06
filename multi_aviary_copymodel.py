@@ -57,7 +57,7 @@ class MultiMissionProblem(om.Problem):
 
             self.model.add_subsystem(
                 self.group_prefix + f'_{i}', prob.model,
-                promotes=['mission:design:gross_mass'])
+                promotes=['mission:design:gross_mass', 'mission:design:range'])
 
     def add_design_variables(self):
         self.model.add_design_var('mission:design:gross_mass', lower=10., upper=900e3)
@@ -127,6 +127,14 @@ class MultiMissionProblem(om.Problem):
         # self.run_driver()
         dm.run_problem(self, make_plots=True)
 
+    def get_design_range(self, phase_infos):
+        design_range = 0
+        for phase_info in phase_infos:
+            get_range = phase_info['post_mission']['target_range'][0]  # TBD add units
+            if get_range > design_range:
+                design_range = get_range
+        return design_range
+
 
 if __name__ == '__main__':
     makeN2 = True if (len(sys.argv) > 1 and "n2" in sys.argv[1]) else False
@@ -138,16 +146,12 @@ if __name__ == '__main__':
     super_prob.add_driver()
     super_prob.add_design_variables()
     super_prob.add_objective()
+    super_prob.model.set_input_defaults('mission:design:range', val=4000)
     super_prob.setup_wrapper()
+    super_prob.set_val('mission:design:range', super_prob.get_design_range(phase_infos))
     for i, prob in enumerate(super_prob.probs):
-        super_prob.set_val(
-            super_prob.group_prefix +
-            f"_{i}.aircraft:design:landing_to_takeoff_mass_ratio", 0.5)
         prob.set_initial_guesses(super_prob, super_prob.group_prefix+f"_{i}.")
-        print(super_prob.get_val(super_prob.group_prefix +
-                                 f"_{i}.aircraft:design:landing_to_takeoff_mass_ratio"))
-        print(super_prob.get_val(super_prob.group_prefix +
-                                 f"_{i}.mission:summary:range"))
+
     # super_prob.final_setup()
     if makeN2:
         from createN2 import createN2
@@ -163,3 +167,4 @@ if __name__ == '__main__':
     print("Summary Gross Mass")
     print(super_prob.get_val(f'group_0.{Mission.Summary.GROSS_MASS}'))
     print(super_prob.get_val(f'group_1.{Mission.Summary.GROSS_MASS}'))
+    # super_prob.model.group_1.list_vars(units=True, print_arrays=True)

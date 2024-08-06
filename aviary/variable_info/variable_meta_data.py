@@ -3880,7 +3880,8 @@ add_meta_data(
                      "LEAPS1": 'aircraft.inputs.L0_overrides.landing_gear_main_weight'
                      },
     units='unitless',
-    desc='mass scaler of the main landing gear structure'
+    desc='mass scaler of the main landing gear structure',
+    default_value=1.0,
 )
 
 add_meta_data(
