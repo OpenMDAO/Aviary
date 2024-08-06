@@ -146,284 +146,295 @@ if __name__ == '__main__':
         createN2(__file__, super_prob)
     super_prob.run()
 
-    print("\n\n=========================\nEmpty masses:")
-    print(super_prob.get_val(f'group_0.{Aircraft.Design.EMPTY_MASS}'))
-    print(super_prob.get_val(f'group_1.{Aircraft.Design.EMPTY_MASS}'))
-    print("Fuel burned")
-    print(super_prob.get_val(f'group_0.{Mission.Summary.FUEL_BURNED}'))
-    print(super_prob.get_val(f'group_1.{Mission.Summary.FUEL_BURNED}'))
-    # def initvals(self):
-    #     """attempting to copy over aviary code for setting initial values and changing references"""
-    #     for i, prob in enumerate(self.probs):
-    #         setvalprob.set_val(parent_prefix+self.group_prefix +
-    #                      f'_{i}.aircraft:design:landing_to_takeoff_mass_ratio', 0.5)
-    #         # Grab the trajectory object from the model
-    #         traj = prob.model.traj
+    outputs = {Mission.Summary.FUEL_BURNED: [],
+               Aircraft.Design.EMPTY_MASS: []}
 
-    #         # Determine which phases to loop over, fetching them from the trajectory
-    #         phase_items = traj._phases.items()
+    print("\n\n=========================\n")
+    for key in outputs.keys():
+        val1 = super_prob.get_val(f'group_0.{key}')[0]
+        val2 = super_prob.get_val(f'group_1.{key}')[0]
+        print(f"Variable: {key}")
+        print(f"Values: {val1}, {val2}")
 
-    #         # Loop over each phase and set initial guesses for the state and control variables
-    #         for idx, (phase_name, phase) in enumerate(phase_items):
-    #             # If not, fetch the initial guesses specific to the phase
-    #             # check if guesses exist for this phase
-    #             if "initial_guesses" in prob.phase_info[phase_name]:
-    #                 guesses = prob.phase_info[phase_name]['initial_guesses']
-    #             else:
-    #                 guesses = {}
+"""
+Variable: mission:summary:fuel_burned
+Values: 13730.910584707046, 15740.545749454643
+Variable: aircraft:design:empty_mass
+Values: 336859.7179064408, 337047.85745526763
+"""
 
-    # # ||||||||||||| _add_subsystem_guesses
-    #             # Get all subsystems associated with the phase
-    #             all_subsystems = prob._get_all_subsystems(
-    #                 prob.phase_info[phase_name]['external_subsystems'])
+# def initvals(self):
+#     """attempting to copy over aviary code for setting initial values and changing references"""
+#     for i, prob in enumerate(self.probs):
+#         setvalprob.set_val(parent_prefix+self.group_prefix +
+#                      f'_{i}.aircraft:design:landing_to_takeoff_mass_ratio', 0.5)
+#         # Grab the trajectory object from the model
+#         traj = prob.model.traj
 
-    #             # Loop over each subsystem
-    #             for subsystem in all_subsystems:
-    #                 # Fetch the initial guesses for the subsystem
-    #                 initial_guesses = subsystem.get_initial_guesses()
+#         # Determine which phases to loop over, fetching them from the trajectory
+#         phase_items = traj._phases.items()
 
-    #                 # Loop over each guess
-    #                 for key, val in initial_guesses.items():
-    #                     # Identify the type of the guess (state or control)
-    #                     type = val.pop('type')
-    #                     if 'state' in type:
-    #                         path_string = 'states'
-    #                     elif 'control' in type:
-    #                         path_string = 'controls'
+#         # Loop over each phase and set initial guesses for the state and control variables
+#         for idx, (phase_name, phase) in enumerate(phase_items):
+#             # If not, fetch the initial guesses specific to the phase
+#             # check if guesses exist for this phase
+#             if "initial_guesses" in prob.phase_info[phase_name]:
+#                 guesses = prob.phase_info[phase_name]['initial_guesses']
+#             else:
+#                 guesses = {}
 
-    #                     # Process the guess variable (handles array interpolation)
-    #                     val['val'] = prob._process_guess_var(val['val'], key, phase)
+# # ||||||||||||| _add_subsystem_guesses
+#             # Get all subsystems associated with the phase
+#             all_subsystems = prob._get_all_subsystems(
+#                 prob.phase_info[phase_name]['external_subsystems'])
 
-    #                     # Set the initial guess in the problem
-    #                     setvalprob.set_val(parent_prefix+
-    #                         self.group_prefix +
-    #                         f'_{i}.traj.{phase_name}.{path_string}:{key}', **val)
+#             # Loop over each subsystem
+#             for subsystem in all_subsystems:
+#                 # Fetch the initial guesses for the subsystem
+#                 initial_guesses = subsystem.get_initial_guesses()
 
-    #             # Set initial guesses for states and controls for each phase
+#                 # Loop over each guess
+#                 for key, val in initial_guesses.items():
+#                     # Identify the type of the guess (state or control)
+#                     type = val.pop('type')
+#                     if 'state' in type:
+#                         path_string = 'states'
+#                     elif 'control' in type:
+#                         path_string = 'controls'
 
-    # # |||||||||||||||||||||| _add_guesses
-    #             # If using the GASP model, set initial guesses for the rotation mass and flight duration
-    #             if prob.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
-    #                 control_keys = ["mach", "altitude"]
-    #                 state_keys = ["mass", Dynamic.Mission.DISTANCE]
-    #             prob_keys = ["tau_gear", "tau_flaps"]
+#                     # Process the guess variable (handles array interpolation)
+#                     val['val'] = prob._process_guess_var(val['val'], key, phase)
 
-    #             # for the simple mission method, use the provided initial and final mach and altitude values from phase_info
-    #             if prob.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
-    #                 initial_altitude = wrapped_convert_units(
-    #                     prob.phase_info[phase_name]['user_options']
-    #                     ['initial_altitude'],
-    #                     'ft')
-    #                 final_altitude = wrapped_convert_units(
-    #                     prob.phase_info[phase_name]['user_options']['final_altitude'], 'ft')
-    #                 initial_mach = prob.phase_info[phase_name]['user_options'][
-    #                     'initial_mach']
-    #                 final_mach = prob.phase_info[phase_name]['user_options'][
-    #                     'final_mach']
+#                     # Set the initial guess in the problem
+#                     setvalprob.set_val(parent_prefix+
+#                         self.group_prefix +
+#                         f'_{i}.traj.{phase_name}.{path_string}:{key}', **val)
 
-    #                 guesses["mach"] = ([initial_mach[0], final_mach[0]], "unitless")
-    #                 guesses["altitude"] = ([initial_altitude, final_altitude], 'ft')
+#             # Set initial guesses for states and controls for each phase
 
-    #             if prob.mission_method is HEIGHT_ENERGY:
-    #                 # if time not in initial guesses, set it to the average of the initial_bounds and the duration_bounds
-    #                 if 'time' not in guesses:
-    #                     initial_bounds = wrapped_convert_units(
-    #                         prob.phase_info[phase_name]['user_options']['initial_bounds'], 's')
-    #                     duration_bounds = wrapped_convert_units(
-    #                         prob.phase_info[phase_name]['user_options']['duration_bounds'], 's')
-    #                     guesses["time"] = ([np.mean(initial_bounds[0]), np.mean(
-    #                         duration_bounds[0])], 's')
+# # |||||||||||||||||||||| _add_guesses
+#             # If using the GASP model, set initial guesses for the rotation mass and flight duration
+#             if prob.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
+#                 control_keys = ["mach", "altitude"]
+#                 state_keys = ["mass", Dynamic.Mission.DISTANCE]
+#             prob_keys = ["tau_gear", "tau_flaps"]
 
-    #                 # if time not in initial guesses, set it to the average of the initial_bounds and the duration_bounds
-    #                 if 'time' not in guesses:
-    #                     initial_bounds = prob.phase_info[phase_name]['user_options'][
-    #                         'initial_bounds']
-    #                     duration_bounds = prob.phase_info[phase_name]['user_options'][
-    #                         'duration_bounds']
-    #                     # Add a check for the initial and duration bounds, raise an error if they are not consistent
-    #                     if initial_bounds[1] != duration_bounds[1]:
-    #                         raise ValueError(
-    #                             f"Initial and duration bounds for {phase_name} are not consistent.")
-    #                     guesses["time"] = ([np.mean(initial_bounds[0]), np.mean(
-    #                         duration_bounds[0])], initial_bounds[1])
+#             # for the simple mission method, use the provided initial and final mach and altitude values from phase_info
+#             if prob.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
+#                 initial_altitude = wrapped_convert_units(
+#                     prob.phase_info[phase_name]['user_options']
+#                     ['initial_altitude'],
+#                     'ft')
+#                 final_altitude = wrapped_convert_units(
+#                     prob.phase_info[phase_name]['user_options']['final_altitude'], 'ft')
+#                 initial_mach = prob.phase_info[phase_name]['user_options'][
+#                     'initial_mach']
+#                 final_mach = prob.phase_info[phase_name]['user_options'][
+#                     'final_mach']
 
-    #             for guess_key, guess_data in guesses.items():
-    #                 val, units = guess_data
+#                 guesses["mach"] = ([initial_mach[0], final_mach[0]], "unitless")
+#                 guesses["altitude"] = ([initial_altitude, final_altitude], 'ft')
 
-    #                 # Set initial guess for time variables
-    #                 if 'time' == guess_key and prob.mission_method is not SOLVED_2DOF:
-    #                     setvalprob.set_val(parent_prefix+
-    #                         self.group_prefix + f'_{i}.traj.{phase_name}.t_initial',
-    #                         val[0],
-    #                         units=units)
-    #                     setvalprob.set_val(parent_prefix+
-    #                         self.group_prefix + f'_{i}.traj.{phase_name}.t_duration',
-    #                         val[1],
-    #                         units=units)
+#             if prob.mission_method is HEIGHT_ENERGY:
+#                 # if time not in initial guesses, set it to the average of the initial_bounds and the duration_bounds
+#                 if 'time' not in guesses:
+#                     initial_bounds = wrapped_convert_units(
+#                         prob.phase_info[phase_name]['user_options']['initial_bounds'], 's')
+#                     duration_bounds = wrapped_convert_units(
+#                         prob.phase_info[phase_name]['user_options']['duration_bounds'], 's')
+#                     guesses["time"] = ([np.mean(initial_bounds[0]), np.mean(
+#                         duration_bounds[0])], 's')
 
-    #                 else:
-    #                     # Set initial guess for control variables
-    #                     if guess_key in control_keys:
-    #                         try:
-    #                             setvalprob.set_val(parent_prefix+self.group_prefix +
-    #                                          f'_{i}.traj.{phase_name}.controls:{guess_key}',
-    #                                          prob._process_guess_var(
-    #                                              val, guess_key, phase),
-    #                                          units=units)
-    #                         except KeyError:
-    #                             try:
-    #                                 setvalprob.set_val(parent_prefix+
-    #                                     self.group_prefix +
-    #                                     f'_{i}.traj.{phase_name}.polynomial_controls:{guess_key}',
-    #                                     prob._process_guess_var(val, guess_key, phase),
-    #                                     units=units)
-    #                             except KeyError:
-    #                                 setvalprob.set_val(parent_prefix+
-    #                                     self.group_prefix +
-    #                                     f'_{i}.traj.{phase_name}.bspline_controls:{guess_key}',
-    #                                     prob._process_guess_var(val, guess_key, phase),
-    #                                     units=units)
+#                 # if time not in initial guesses, set it to the average of the initial_bounds and the duration_bounds
+#                 if 'time' not in guesses:
+#                     initial_bounds = prob.phase_info[phase_name]['user_options'][
+#                         'initial_bounds']
+#                     duration_bounds = prob.phase_info[phase_name]['user_options'][
+#                         'duration_bounds']
+#                     # Add a check for the initial and duration bounds, raise an error if they are not consistent
+#                     if initial_bounds[1] != duration_bounds[1]:
+#                         raise ValueError(
+#                             f"Initial and duration bounds for {phase_name} are not consistent.")
+#                     guesses["time"] = ([np.mean(initial_bounds[0]), np.mean(
+#                         duration_bounds[0])], initial_bounds[1])
 
-    #                     if guess_key in control_keys:
-    #                         pass
-    #                     # Set initial guess for state variables
-    #                     elif guess_key in state_keys:
-    #                         setvalprob.set_val(parent_prefix+self.group_prefix +
-    #                                      f'_{i}.traj.{phase_name}.states:{guess_key}',
-    #                                      prob._process_guess_var(
-    #                                          val, guess_key, phase),
-    #                                      units=units)
-    #                     elif guess_key in prob_keys:
-    #                         setvalprob.set_val(parent_prefix+
-    #                             self.group_prefix+f'_{i}.'+guess_key, val, units=units)
-    #                     elif ":" in guess_key:
-    #                         setvalprob.set_val(parent_prefix+
-    #                             self.group_prefix + f'_{i}.traj.{phase_name}.{guess_key}',
-    #                             prob._process_guess_var(val, guess_key, phase),
-    #                             units=units)
-    #                     else:
-    #                         # raise error if the guess key is not recognized
-    #                         raise ValueError(
-    #                             f"Initial guess key {guess_key} in {phase_name} is not recognized.")
+#             for guess_key, guess_data in guesses.items():
+#                 val, units = guess_data
 
-    #             # We need some special logic for these following variables because GASP computes
-    #             # initial guesses using some knowledge of the mission duration and other variables
-    #             # that are only available after calling `create_vehicle`. Thus these initial guess
-    #             # values are not included in the `phase_info` object.
+#                 # Set initial guess for time variables
+#                 if 'time' == guess_key and prob.mission_method is not SOLVED_2DOF:
+#                     setvalprob.set_val(parent_prefix+
+#                         self.group_prefix + f'_{i}.traj.{phase_name}.t_initial',
+#                         val[0],
+#                         units=units)
+#                     setvalprob.set_val(parent_prefix+
+#                         self.group_prefix + f'_{i}.traj.{phase_name}.t_duration',
+#                         val[1],
+#                         units=units)
 
-    #             base_phase = phase_name
-    #             if 'mass' not in guesses:
-    #                 mass_guess = prob.aviary_inputs.get_val(
-    #                     Mission.Design.GROSS_MASS, units='lbm')
-    #                 # Set the mass guess as the initial value for the mass state variable
-    #                 setvalprob.set_val(parent_prefix+self.group_prefix+f'_{i}.traj.{phase_name}.states:mass',
-    #                              mass_guess, units='lbm')
+#                 else:
+#                     # Set initial guess for control variables
+#                     if guess_key in control_keys:
+#                         try:
+#                             setvalprob.set_val(parent_prefix+self.group_prefix +
+#                                          f'_{i}.traj.{phase_name}.controls:{guess_key}',
+#                                          prob._process_guess_var(
+#                                              val, guess_key, phase),
+#                                          units=units)
+#                         except KeyError:
+#                             try:
+#                                 setvalprob.set_val(parent_prefix+
+#                                     self.group_prefix +
+#                                     f'_{i}.traj.{phase_name}.polynomial_controls:{guess_key}',
+#                                     prob._process_guess_var(val, guess_key, phase),
+#                                     units=units)
+#                             except KeyError:
+#                                 setvalprob.set_val(parent_prefix+
+#                                     self.group_prefix +
+#                                     f'_{i}.traj.{phase_name}.bspline_controls:{guess_key}',
+#                                     prob._process_guess_var(val, guess_key, phase),
+#                                     units=units)
 
-    #             # if 'time' not in guesses:
-    #             #     # Determine initial time and duration guesses depending on the phase name
-    #             #     if 'desc1' == base_phase:
-    #             #         t_initial = flight_duration*.9
-    #             #         t_duration = flight_duration*.04
-    #             #     elif 'desc2' in base_phase:
-    #             #         t_initial = flight_duration*.94
-    #             #         t_duration = 5000
-    #             #     # Set the time guesses as the initial values for the time-related trajectory variables
-    #             #     setvalprob.set_val(parent_prefix+f"traj.{phase_name}.t_initial",
-    #             #                  t_initial, units='s')
-    #             #     setvalprob.set_val(parent_prefix+f"traj.{phase_name}.t_duration",
-    #             #                  t_duration, units='s')
+#                     if guess_key in control_keys:
+#                         pass
+#                     # Set initial guess for state variables
+#                     elif guess_key in state_keys:
+#                         setvalprob.set_val(parent_prefix+self.group_prefix +
+#                                      f'_{i}.traj.{phase_name}.states:{guess_key}',
+#                                      prob._process_guess_var(
+#                                          val, guess_key, phase),
+#                                      units=units)
+#                     elif guess_key in prob_keys:
+#                         setvalprob.set_val(parent_prefix+
+#                             self.group_prefix+f'_{i}.'+guess_key, val, units=units)
+#                     elif ":" in guess_key:
+#                         setvalprob.set_val(parent_prefix+
+#                             self.group_prefix + f'_{i}.traj.{phase_name}.{guess_key}',
+#                             prob._process_guess_var(val, guess_key, phase),
+#                             units=units)
+#                     else:
+#                         # raise error if the guess key is not recognized
+#                         raise ValueError(
+#                             f"Initial guess key {guess_key} in {phase_name} is not recognized.")
+
+#             # We need some special logic for these following variables because GASP computes
+#             # initial guesses using some knowledge of the mission duration and other variables
+#             # that are only available after calling `create_vehicle`. Thus these initial guess
+#             # values are not included in the `phase_info` object.
+
+#             base_phase = phase_name
+#             if 'mass' not in guesses:
+#                 mass_guess = prob.aviary_inputs.get_val(
+#                     Mission.Design.GROSS_MASS, units='lbm')
+#                 # Set the mass guess as the initial value for the mass state variable
+#                 setvalprob.set_val(parent_prefix+self.group_prefix+f'_{i}.traj.{phase_name}.states:mass',
+#                              mass_guess, units='lbm')
+
+#             # if 'time' not in guesses:
+#             #     # Determine initial time and duration guesses depending on the phase name
+#             #     if 'desc1' == base_phase:
+#             #         t_initial = flight_duration*.9
+#             #         t_duration = flight_duration*.04
+#             #     elif 'desc2' in base_phase:
+#             #         t_initial = flight_duration*.94
+#             #         t_duration = 5000
+#             #     # Set the time guesses as the initial values for the time-related trajectory variables
+#             #     setvalprob.set_val(parent_prefix+f"traj.{phase_name}.t_initial",
+#             #                  t_initial, units='s')
+#             #     setvalprob.set_val(parent_prefix+f"traj.{phase_name}.t_duration",
+#             #                  t_duration, units='s')
 
 
 # ========================================================================= old code
-    # super_prob = om.Problem()
-    # num_missions = len(weights)
-    # probs = []
-    # prefix = "problem_"
+# super_prob = om.Problem()
+# num_missions = len(weights)
+# probs = []
+# prefix = "problem_"
 
-    # makeN2 = False
-    # if len(sys.argv) > 1:
-    #     if "n2" in sys.argv:
-    #         makeN2 = True
+# makeN2 = False
+# if len(sys.argv) > 1:
+#     if "n2" in sys.argv:
+#         makeN2 = True
 
-    # # define individual aviary problems
-    # for i, (plane, phase_info) in enumerate(zip(planes, phase_infos)):
-    #     prob = av.AviaryProblem()
-    #     prob.load_inputs(plane, phase_info)
-    #     prob.check_and_preprocess_inputs()
-    #     prob.add_pre_mission_systems()
-    #     traj = prob.add_phases()  # save dymos traj to add to super problem as a subsystem
-    #     prob.add_post_mission_systems()
-    #     prob.link_phases()  # this is half working / connect statements from outside of traj to inside are failing
-    #     prob.problem_type = ProblemType.ALTERNATE  # adds summary gross mass as design var
-    #     prob.add_design_variables()
-    #     probs.append(prob)
+# # define individual aviary problems
+# for i, (plane, phase_info) in enumerate(zip(planes, phase_infos)):
+#     prob = av.AviaryProblem()
+#     prob.load_inputs(plane, phase_info)
+#     prob.check_and_preprocess_inputs()
+#     prob.add_pre_mission_systems()
+#     traj = prob.add_phases()  # save dymos traj to add to super problem as a subsystem
+#     prob.add_post_mission_systems()
+#     prob.link_phases()  # this is half working / connect statements from outside of traj to inside are failing
+#     prob.problem_type = ProblemType.ALTERNATE  # adds summary gross mass as design var
+#     prob.add_design_variables()
+#     probs.append(prob)
 
-    #     group = om.Group()  # this group will contain all the promoted aviary vars
-    #     group.add_subsystem("pre", prob.pre_mission)
-    #     group.add_subsystem("traj", traj)
-    #     group.add_subsystem("post", prob.post_mission)
+#     group = om.Group()  # this group will contain all the promoted aviary vars
+#     group.add_subsystem("pre", prob.pre_mission)
+#     group.add_subsystem("traj", traj)
+#     group.add_subsystem("post", prob.post_mission)
 
-    #     # setting defaults for these variables to suppress errors
-    #     longlst = [
-    #         'mission:summary:gross_mass', 'aircraft:wing:sweep',
-    #         'aircraft:wing:thickness_to_chord', 'aircraft:wing:area',
-    #         'aircraft:wing:taper_ratio', 'mission:design:gross_mass']
-    #     for var in longlst:
-    #         group.set_input_defaults(
-    #             var, val=MetaData[var]['default_value'],
-    #             units=MetaData[var]['units'])
+#     # setting defaults for these variables to suppress errors
+#     longlst = [
+#         'mission:summary:gross_mass', 'aircraft:wing:sweep',
+#         'aircraft:wing:thickness_to_chord', 'aircraft:wing:area',
+#         'aircraft:wing:taper_ratio', 'mission:design:gross_mass']
+#     for var in longlst:
+#         group.set_input_defaults(
+#             var, val=MetaData[var]['default_value'],
+#             units=MetaData[var]['units'])
 
-    #     # add group and promote design gross mass (common input amongst multiple missions)
-    #     # in this way it represents the MTOW
-    #     super_prob.model.add_subsystem(prefix+f'{i}', group, promotes=[
-    #                                    'mission:design:gross_mass'])
+#     # add group and promote design gross mass (common input amongst multiple missions)
+#     # in this way it represents the MTOW
+#     super_prob.model.add_subsystem(prefix+f'{i}', group, promotes=[
+#                                    'mission:design:gross_mass'])
 
-    # # add design gross mass as a design var
-    # super_prob.model.add_design_var(
-    #     'mission:design:gross_mass', lower=100e3, upper=1000e3)
+# # add design gross mass as a design var
+# super_prob.model.add_design_var(
+#     'mission:design:gross_mass', lower=100e3, upper=1000e3)
 
-    # for i in range(num_missions):
-    #     # connecting each subcomponent's fuel burn to super problem's unique fuel variables
-    #     super_prob.model.connect(
-    #         prefix+f"{i}.mission:summary:fuel_burned", f"fuel_{i}")
+# for i in range(num_missions):
+#     # connecting each subcomponent's fuel burn to super problem's unique fuel variables
+#     super_prob.model.connect(
+#         prefix+f"{i}.mission:summary:fuel_burned", f"fuel_{i}")
 
-    #     # create constraint to force each mission's summary gross mass to not
-    #     # exceed the common mission design gross mass (aka MTOW)
-    #     super_prob.model.add_subsystem(f'MTOW_constraint{i}', om.ExecComp(
-    #         'mtow_resid = design_gross_mass - summary_gross_mass'),
-    #         promotes=[('summary_gross_mass', prefix+f'{i}.mission:summary:gross_mass'),
-    #                   ('design_gross_mass', 'mission:design:gross_mass')])
+#     # create constraint to force each mission's summary gross mass to not
+#     # exceed the common mission design gross mass (aka MTOW)
+#     super_prob.model.add_subsystem(f'MTOW_constraint{i}', om.ExecComp(
+#         'mtow_resid = design_gross_mass - summary_gross_mass'),
+#         promotes=[('summary_gross_mass', prefix+f'{i}.mission:summary:gross_mass'),
+#                   ('design_gross_mass', 'mission:design:gross_mass')])
 
-    #     super_prob.model.add_constraint(f'MTOW_constraint{i}.mtow_resid', lower=0.)
+#     super_prob.model.add_constraint(f'MTOW_constraint{i}.mtow_resid', lower=0.)
 
-    # # creating variable strings that will represent fuel burn from each mission
-    # fuel_burned_vars = [f"fuel_{i}" for i in range(num_missions)]
-    # weighted_str = "+".join([f"{fuel}*{weight}"
-    #                          for fuel, weight in zip(fuel_burned_vars, weights)])
-    # # weighted_str looks like: fuel_0 * weight[0] + fuel_1 * weight[1]
+# # creating variable strings that will represent fuel burn from each mission
+# fuel_burned_vars = [f"fuel_{i}" for i in range(num_missions)]
+# weighted_str = "+".join([f"{fuel}*{weight}"
+#                          for fuel, weight in zip(fuel_burned_vars, weights)])
+# # weighted_str looks like: fuel_0 * weight[0] + fuel_1 * weight[1]
 
-    # # adding compound execComp to super problem
-    # super_prob.model.add_subsystem('compound_fuel_burn_objective', om.ExecComp(
-    #     "compound = "+weighted_str), promotes=["compound", *fuel_burned_vars])
+# # adding compound execComp to super problem
+# super_prob.model.add_subsystem('compound_fuel_burn_objective', om.ExecComp(
+#     "compound = "+weighted_str), promotes=["compound", *fuel_burned_vars])
 
-    # super_prob.driver = om.ScipyOptimizeDriver()
-    # super_prob.driver.options['optimizer'] = 'SLSQP'
-    # super_prob.model.add_objective('compound')  # output from execcomp goes here
+# super_prob.driver = om.ScipyOptimizeDriver()
+# super_prob.driver.options['optimizer'] = 'SLSQP'
+# super_prob.model.add_objective('compound')  # output from execcomp goes here
 
-    # with warnings.catch_warnings():
-    #     warnings.simplefilter("ignore", om.OpenMDAOWarning)
-    #     warnings.simplefilter("ignore", om.PromotionWarning)
-    #     super_prob.setup()
+# with warnings.catch_warnings():
+#     warnings.simplefilter("ignore", om.OpenMDAOWarning)
+#     warnings.simplefilter("ignore", om.PromotionWarning)
+#     super_prob.setup()
 
-    # if makeN2:
-    #     om.n2(super_prob, outfile="multi_mission_importTraj_N2.html")  # create N2 diagram
+# if makeN2:
+#     om.n2(super_prob, outfile="multi_mission_importTraj_N2.html")  # create N2 diagram
 
-    # # cannot use this b/c initial guesses (i.e. setval func) has to be called on super prob level
-    # # for prob in probs:
-    # #     # prob.setup()
-    # #     prob.set_initial_guesses()
+# # cannot use this b/c initial guesses (i.e. setval func) has to be called on super prob level
+# # for prob in probs:
+# #     # prob.setup()
+# #     prob.set_initial_guesses()
 
-    # # dm.run_problem(super_prob)
+# # dm.run_problem(super_prob)
 
 
 """
