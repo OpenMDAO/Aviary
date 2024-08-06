@@ -26,7 +26,14 @@ from aviary.variable_info.variables_in import VariablesIn
 from aviary.mission.energy_phase import EnergyPhase
 
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
+from aviary.variable_info.enums import LegacyCode
+
 from aviary.subsystems.premission import CorePreMission
+from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
+from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
+from aviary.subsystems.mass.mass_builder import CoreMassBuilder
+from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.utils.preprocessors import preprocess_crewpayload
@@ -42,6 +49,8 @@ if hasattr(TranscriptionBase, 'setup_polynomial_controls'):
     use_new_dymos_syntax = False
 else:
     use_new_dymos_syntax = True
+
+FLOPS = LegacyCode.FLOPS
 
 # benchmark for simple sizing problem on the N3CC
 
@@ -232,11 +241,20 @@ def run_trajectory(sim=True):
 
     preprocess_crewpayload(aviary_inputs)
 
+    prop = CorePropulsionBuilder('core_propulsion', BaseMetaData, engine)
+    mass = CoreMassBuilder('core_mass', BaseMetaData, FLOPS)
+    aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, FLOPS)
+    geom = CoreGeometryBuilder('core_geometry',
+                               BaseMetaData,
+                               code_origin=FLOPS)
+
+    core_subsystems = [prop, geom, mass, aero]
+
     # Upstream static analysis for aero
     prob.model.add_subsystem(
         'pre_mission',
         CorePreMission(aviary_options=aviary_inputs,
-                       subsystems=default_mission_subsystems),
+                       subsystems=core_subsystems),
         promotes_inputs=['aircraft:*', 'mission:*'],
         promotes_outputs=['aircraft:*', 'mission:*'])
 
@@ -382,10 +400,9 @@ def run_trajectory(sim=True):
             reg_objective=0.0,
             fuel_mass={"units": "lbm", "shape": 1},
         ),
+        promotes_inputs=[('fuel_mass', Mission.Design.FUEL_MASS)],
         promotes_outputs=['reg_objective']
     )
-    # connect the final mass from cruise into the objective
-    prob.model.connect(Mission.Design.FUEL_MASS, "regularization.fuel_mass")
 
     prob.model.add_objective('reg_objective', ref=1)
 

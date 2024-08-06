@@ -71,6 +71,9 @@ class SimpleLiftTest(unittest.TestCase):
         data = prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(data, atol=2.5e-10, rtol=1e-12)
 
+        assert_near_equal(
+            prob.get_val(Dynamic.Mission.LIFT), dynamics_simple_data[case_name], 1e-6)
+
 
 class LiftEqualsWeightTest(unittest.TestCase):
 
@@ -130,12 +133,17 @@ class LiftEqualsWeightTest(unittest.TestCase):
         data = prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(data, atol=2.5e-10, rtol=1e-12)
 
+        assert_near_equal(
+            prob.get_val(Dynamic.Mission.LIFT), dynamics_equal_data[case_name], 1e-6)
+
 
 # dynamic test data taken from the baseline FLOPS output for each case
 #    - first: # DETAILED FLIGHT SEGMENT SUMMARY
 #        - first: SEGMENT... CRUISE
 #            - first three points
 dynamics_test_data = {}
+dynamics_simple_data = {}
+dynamics_equal_data = {}
 
 dynamics_test_data['LargeSingleAisle1FLOPS'] = _dynamics_data = AviaryValues()
 _dynamics_data.set_val(Dynamic.Mission.DYNAMIC_PRESSURE, [
@@ -143,6 +151,8 @@ _dynamics_data.set_val(Dynamic.Mission.DYNAMIC_PRESSURE, [
 _dynamics_data.set_val('cl', [0.62630, 0.62623, 0.62619])
 _dynamics_data.set_val(Dynamic.Mission.LIFT, [176751., 176400., 176185.], 'lbf')
 _dynamics_data.set_val(Dynamic.Mission.MASS, [176751., 176400., 176185.], 'lbm')
+dynamics_simple_data['LargeSingleAisle1FLOPS'] = [786242.68, 784628.29, 783814.96]
+dynamics_equal_data['LargeSingleAisle1FLOPS'] = [786227.62, 784666.29, 783709.93]
 
 dynamics_test_data['LargeSingleAisle2FLOPS'] = _dynamics_data = AviaryValues()
 _dynamics_data.set_val(Dynamic.Mission.DYNAMIC_PRESSURE, [
@@ -150,6 +160,8 @@ _dynamics_data.set_val(Dynamic.Mission.DYNAMIC_PRESSURE, [
 _dynamics_data.set_val('cl', [0.58761, 0.58578, 0.57954])
 _dynamics_data.set_val(Dynamic.Mission.LIFT, [169730., 169200., 167400.], 'lbf')
 _dynamics_data.set_val(Dynamic.Mission.MASS, [169730., 169200., 167400.], 'lbm')
+dynamics_simple_data['LargeSingleAisle2FLOPS'] = [755005.42, 752654.10, 744636.48]
+dynamics_equal_data['LargeSingleAisle2FLOPS'] = [754996.65, 752639.10, 744632.30]
 
 dynamics_test_data['N3CC'] = _dynamics_data = AviaryValues()
 _dynamics_data.set_val(Dynamic.Mission.DYNAMIC_PRESSURE, [
@@ -157,6 +169,8 @@ _dynamics_data.set_val(Dynamic.Mission.DYNAMIC_PRESSURE, [
 _dynamics_data.set_val('cl', [0.50651, 0.36573, 0.28970])
 _dynamics_data.set_val(Dynamic.Mission.LIFT, [128777., 128721., 128667.], 'lbf')
 _dynamics_data.set_val(Dynamic.Mission.MASS, [128777., 128721., 128667.], 'lbm')
+dynamics_simple_data['N3CC'] = [572838.22, 572601.72, 572263.60]
+dynamics_equal_data['N3CC'] = [572828.63, 572579.53, 572339.33]
 
 
 if __name__ == "__main__":

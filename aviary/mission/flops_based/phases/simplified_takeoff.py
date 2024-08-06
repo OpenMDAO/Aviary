@@ -89,7 +89,7 @@ class FinalTakeoffConditions(om.ExplicitComponent):
             desc="stall speed of the aircraft",
         )
 
-        add_aviary_input(self, Mission.Design.GROSS_MASS, val=150_000)
+        add_aviary_input(self, Mission.Summary.GROSS_MASS, val=150_000)
 
         add_aviary_input(self, Mission.Takeoff.FUEL_SIMPLE, val=10.e3)
 
@@ -122,7 +122,7 @@ class FinalTakeoffConditions(om.ExplicitComponent):
         self.declare_partials(
             Mission.Takeoff.GROUND_DISTANCE,
             [
-                Mission.Design.GROSS_MASS,
+                Mission.Summary.GROSS_MASS,
                 "rho",
                 Aircraft.Wing.AREA,
                 Mission.Takeoff.LIFT_COEFFICIENT_MAX,
@@ -132,7 +132,7 @@ class FinalTakeoffConditions(om.ExplicitComponent):
         )
         self.declare_partials(
             Mission.Takeoff.FINAL_MASS,
-            Mission.Design.GROSS_MASS,
+            Mission.Summary.GROSS_MASS,
             val=1.0,
         )
         self.declare_partials(
@@ -146,7 +146,7 @@ class FinalTakeoffConditions(om.ExplicitComponent):
         rho_SL = RHO_SEA_LEVEL_METRIC
 
         v_stall = inputs["v_stall"]
-        gross_mass = inputs[Mission.Design.GROSS_MASS]
+        gross_mass = inputs[Mission.Summary.GROSS_MASS]
         ramp_weight = gross_mass * GRAV_ENGLISH_LBM
         rho = inputs["rho"]
         S = inputs[Aircraft.Wing.AREA]
@@ -199,7 +199,7 @@ class FinalTakeoffConditions(om.ExplicitComponent):
     def compute_partials(self, inputs, J):
         rho_SL = RHO_SEA_LEVEL_METRIC
 
-        ramp_weight = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        ramp_weight = inputs[Mission.Summary.GROSS_MASS] * GRAV_ENGLISH_LBM
         rho = inputs["rho"]
         S = inputs[Aircraft.Wing.AREA]
         Cl_max = inputs[Mission.Takeoff.LIFT_COEFFICIENT_MAX]
@@ -341,7 +341,7 @@ class FinalTakeoffConditions(om.ExplicitComponent):
         dCout_dRho = 0
 
         J[Mission.Takeoff.GROUND_DISTANCE,
-            Mission.Design.GROSS_MASS] = dRD_dM + dRot_dM + dCout_dM
+            Mission.Summary.GROSS_MASS] = dRD_dM + dRot_dM + dCout_dM
         J[Mission.Takeoff.GROUND_DISTANCE, "rho"] = \
             dRD_dRho + dRot_dRho + dCout_dRho
         J[Mission.Takeoff.GROUND_DISTANCE,
@@ -378,7 +378,7 @@ class TakeoffGroup(om.Group):
                 "v_stall",
             ],
             promotes_inputs=[
-                ("mass", Mission.Design.GROSS_MASS),
+                ("mass", Mission.Summary.GROSS_MASS),
                 "rho",
                 ('planform_area', Aircraft.Wing.AREA),
                 ("Cl_max", Mission.Takeoff.LIFT_COEFFICIENT_MAX),
@@ -390,7 +390,7 @@ class TakeoffGroup(om.Group):
             FinalTakeoffConditions(num_engines=self.options["num_engines"]),
             promotes_inputs=[
                 "v_stall",
-                Mission.Design.GROSS_MASS,
+                Mission.Summary.GROSS_MASS,
                 "rho",
                 Aircraft.Wing.AREA,
                 Mission.Takeoff.FUEL_SIMPLE,
