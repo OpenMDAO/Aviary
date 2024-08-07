@@ -47,20 +47,20 @@ class DescentODETestCase(unittest.TestCase):
         self.prob.run_model()
 
         testvals = {
-            "alpha": np.array([3.2, 1.21]),
-            "CL": np.array([0.5123, 0.2583]),
-            "CD": np.array([0.0279, 0.0197]),
-            Dynamic.Mission.ALTITUDE_RATE: np.array([-2385, -3076]) / 60,
+            "alpha": np.array([3.23388, 1.203234]),
+            "CL": np.array([0.51849367, 0.25908653]),
+            "CD": np.array([0.02794324, 0.01862946]),
+            Dynamic.Mission.ALTITUDE_RATE: np.array([-2356.7705, -2877.9606]) / 60,
             # TAS (ft/s) * cos(gamma)
             Dynamic.Mission.DISTANCE_RATE: [
-                (459 * KNOT_TO_FT_PER_SEC) * np.cos(np.deg2rad(-2.94)),
-                (437 * KNOT_TO_FT_PER_SEC) * np.cos(np.deg2rad(-3.98)),
+                (458.67774 * KNOT_TO_FT_PER_SEC) * np.cos(np.deg2rad(-2.908332)),
+                (437.62297 * KNOT_TO_FT_PER_SEC) * np.cos(np.deg2rad(-3.723388)),
             ],
             # lbm/h
-            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: np.array([-452, -996]),
-            "EAS": np.array([249, 350]) * KNOT_TO_FT_PER_SEC,  # kts -> ft/s
-            Dynamic.Mission.MACH: np.array([0.8, 0.696]),
-            Dynamic.Mission.FLIGHT_PATH_ANGLE: np.deg2rad([-2.94, -3.98]),
+            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: np.array([-451.0239, -997.1514]),
+            "EAS": np.array([247.58367, 349.99997]) * KNOT_TO_FT_PER_SEC,  # kts -> ft/s
+            Dynamic.Mission.MACH: np.array([0.8, 0.697266]),
+            Dynamic.Mission.FLIGHT_PATH_ANGLE: np.deg2rad([-2.908332, -3.723388]),
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
