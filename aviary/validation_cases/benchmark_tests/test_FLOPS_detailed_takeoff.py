@@ -11,7 +11,7 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 from aviary.subsystems.premission import CorePreMission
 
 from aviary.utils.functions import \
-     set_aviary_initial_values, set_aviary_input_defaults
+    set_aviary_initial_values, set_aviary_input_defaults
 
 from aviary.models.N3CC.N3CC_data import (
     inputs as _inputs, outputs as _outputs,
