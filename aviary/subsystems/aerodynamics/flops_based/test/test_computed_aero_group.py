@@ -5,11 +5,9 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.subsystems.premission import CorePreMission
-from aviary.utils.aviary_values import get_items
 from aviary.utils.functions import set_aviary_initial_values
 from aviary.validation_cases.validation_tests import get_flops_inputs, get_flops_outputs
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
-from aviary.variable_info.variables_in import VariablesIn
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
 from aviary.utils.preprocessors import preprocess_options
@@ -82,26 +80,6 @@ class MissionDragTest(unittest.TestCase):
             promotes=['*']
         )
 
-        prob.model.add_subsystem(
-            'input_sink',
-            VariablesIn(aviary_options=flops_inputs),
-            promotes_inputs=['*'],
-            promotes_outputs=['*']
-        )
-
-        # keys = [Aircraft.Engine.SCALED_SLS_THRUST, Aircraft.Nacelle.WETTED_AREA,
-        #         Aircraft.Nacelle.FINENESS, Aircraft.Nacelle.CHARACTERISTIC_LENGTH]
-
-        # for key in keys:
-        #     val, units = flops_inputs.get_item(key)
-        #     # TODO temp line to ignore dynamic mission variables, will not work
-        #     #      if names change to 'dynamic:mission:*'
-        #     if ':' not in key:
-        #         continue
-        #     prob.model.pre_mission.set_input_defaults(key, val, units)
-
-        set_aviary_initial_values(prob.model, flops_inputs)
-
         prob.setup(force_alloc_complex=True)
         prob.set_solver_print(level=2)
 
@@ -111,13 +89,7 @@ class MissionDragTest(unittest.TestCase):
         prob.set_val(Dynamic.Mission.TEMPERATURE, val=T, units='degR')
         prob.set_val(Dynamic.Mission.MASS, val=mass, units='lbm')
 
-        for (key, (val, units)) in get_items(flops_inputs):
-            try:
-                prob.set_val(key, val, units)
-
-            except:
-                # Should be an option or an overridden output.
-                continue
+        set_aviary_initial_values(prob, flops_inputs)
 
         prob.run_model()
 
@@ -218,15 +190,6 @@ class MissionDragTest(unittest.TestCase):
             promotes=['*']
         )
 
-        prob.model.add_subsystem(
-            'input_sink',
-            VariablesIn(aviary_options=flops_inputs),
-            promotes_inputs=['*'],
-            promotes_outputs=['*']
-        )
-
-        set_aviary_initial_values(prob.model, flops_inputs)
-
         prob.setup()
 
         # Mission params
@@ -235,13 +198,7 @@ class MissionDragTest(unittest.TestCase):
         prob.set_val(Dynamic.Mission.TEMPERATURE, val=T, units='degR')
         prob.set_val(Dynamic.Mission.MASS, val=mass, units='lbm')
 
-        for (key, (val, units)) in get_items(flops_inputs):
-            try:
-                prob.set_val(key, val, units)
-
-            except:
-                # Should be an option or an overridden output.
-                continue
+        set_aviary_initial_values(prob, flops_inputs)
 
         prob.run_model()
 
@@ -342,19 +299,6 @@ class MissionDragTest(unittest.TestCase):
             promotes=['*']
         )
 
-        prob.model.add_subsystem(
-            'input_sink',
-            VariablesIn(aviary_options=flops_inputs),
-            promotes_inputs=['*'],
-            promotes_outputs=['*']
-        )
-
-        set_aviary_initial_values(prob.model, flops_inputs)
-
-        # key = Aircraft.Engine.SCALED_SLS_THRUST
-        # val, units = flops_inputs.get_item(key)
-        # prob.model.pre_mission.set_input_defaults(key, val, units)
-
         prob.setup()
 
         # Mission params
@@ -363,13 +307,7 @@ class MissionDragTest(unittest.TestCase):
         prob.set_val(Dynamic.Mission.TEMPERATURE, val=T, units='degR')
         prob.set_val(Dynamic.Mission.MASS, val=mass, units='lbm')
 
-        for (key, (val, units)) in get_items(flops_inputs):
-            try:
-                prob.set_val(key, val, units)
-
-            except:
-                # Should be an option or an overridden output.
-                continue
+        set_aviary_initial_values(prob, flops_inputs)
 
         prob.run_model()
 

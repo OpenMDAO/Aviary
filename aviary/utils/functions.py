@@ -9,7 +9,7 @@ import openmdao.api as om
 import numpy as np
 from openmdao.utils.units import convert_units
 
-from aviary.utils.aviary_values import AviaryValues, get_keys
+from aviary.utils.aviary_values import AviaryValues, get_keys, get_items
 from aviary.variable_info.enums import ProblemType, EquationsOfMotion, LegacyCode
 from aviary.variable_info.functions import add_aviary_output, add_aviary_input
 from aviary.variable_info.variable_meta_data import _MetaData
@@ -46,43 +46,58 @@ def get_aviary_resource_path(resource_name: str) -> str:
     return path
 
 
-def set_aviary_initial_values(model, inputs, meta_data=_MetaData):
-    '''
-    This function sorts through all the input
-    variables to an Aviary model, and for those
-    which are not options it sets the input
-    value to be the value in the inputs, or
-    to be the default if the value is not in the
-    inputs.
+def set_aviary_initial_values(prob, aviary_inputs: AviaryValues):
+    """
+    Sets initial values for all inputs in the aviary inputs.
 
-    In the case when the value is not input nor
-    present in the default, nothing is set.
-    '''
-    for key in meta_data:
-        if ':' not in key or key.startswith('dynamic:'):
-            continue
-        if not meta_data[key]['option']:
-            if key in inputs:
-                val, units = inputs.get_item(key)
-            else:
-                val = meta_data[key]['default_value']
-                units = meta_data[key]['units']
+    This method is mostly used in tests and level 3 scripts.
 
-                if val is None:
-                    # optional, but no default value
-                    continue
-
-            model.set_input_defaults(key, val=val, units=units)
-
-
-def apply_all_values(aircraft_values: AviaryValues, prob):
-    for var_name in get_keys(aircraft_values):
-        var_data, var_units = aircraft_values.get_item(var_name)
+    Parameters
+    ----------
+    prob : Problem
+        OpenMDAO problem after setup.
+    aviary_inputs : AviaryValues
+        Instance of AviaryValues containing all initial values.
+    """
+    for (key, (val, units)) in get_items(aviary_inputs):
         try:
-            prob.set_val(var_name, val=var_data, units=var_units)
-        except KeyError:
-            pass
-    return prob
+            prob.set_val(key, val, units)
+
+        except:
+            # Should be an option or an overridden output.
+            continue
+
+
+def set_aviary_input_defaults(model, inputs, aviary_inputs: AviaryValues,
+                              meta_data=_MetaData):
+    """
+    This function sets the default values and units for any inputs prior to
+    setup. This is needed to resolve ambiguities when inputs are promoted
+    with the same name, but different units or values.
+
+    This method is mostly used in tests and level 3 scripts.
+
+    Parameters
+    ----------
+    model : System
+        Top level aviary model.
+    inputs : list
+        List of varibles that are causing promotion problems. This needs to
+        be crafted based on the openmdao exception messages.
+    aviary_inputs : AviaryValues
+        Instance of AviaryValues containing all initial values.
+    meta_data : dict
+        (Optional) Dictionary of aircraft metadata. Uses Aviary's built-in
+        metadata by default.
+    """
+    for key in inputs:
+        if key in aviary_inputs:
+            val, units = aviary_inputs.get_item(key)
+        else:
+            val = meta_data[key]['default_value']
+            units = meta_data[key]['units']
+
+        model.set_input_defaults(key, val=val, units=units)
 
 
 def convert_strings_to_data(string_list):

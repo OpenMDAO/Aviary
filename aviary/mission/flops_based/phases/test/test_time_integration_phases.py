@@ -6,10 +6,8 @@ from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 from aviary.mission.flops_based.phases.time_integration_phases import \
     SGMHeightEnergy, SGMDetailedTakeoff, SGMDetailedLanding
 from aviary.subsystems.premission import CorePreMission
-from aviary.utils.functions import set_aviary_initial_values
 from aviary.variable_info.enums import EquationsOfMotion
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
-from aviary.variable_info.variables_in import VariablesIn
 
 from aviary.interface.default_phase_info.height_energy_fiti import add_default_sgm_args
 from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
@@ -104,18 +102,7 @@ class HE_SGMDescentTestCase(unittest.TestCase):
 
         prob.model.add_objective(Mission.Objectives.FUEL, ref=1e4)
 
-        prob.model.add_subsystem(
-            'input_sink',
-            VariablesIn(aviary_options=self.aviary_inputs,
-                        meta_data=BaseMetaData),
-            promotes_inputs=['*'],
-            promotes_outputs=['*'])
-
         with warnings.catch_warnings():
-
-            # Set initial default values for all LEAPS aircraft variables.
-            set_aviary_initial_values(
-                prob.model, self.aviary_inputs, meta_data=BaseMetaData)
 
             warnings.simplefilter("ignore", om.PromotionWarning)
 

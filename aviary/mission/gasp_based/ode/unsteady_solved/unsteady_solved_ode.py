@@ -11,7 +11,6 @@ from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_flight_condit
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_eom import UnsteadySolvedEOM
 from aviary.variable_info.enums import SpeedType, LegacyCode
 from aviary.variable_info.variables import Dynamic
-from aviary.variable_info.variables_in import VariablesIn
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
 from aviary.variable_info.variable_meta_data import _MetaData
@@ -80,12 +79,6 @@ class UnsteadySolvedODE(BaseODE):
         if self.options["include_param_comp"]:
             # TODO: paramport
             self.add_subsystem("params", ParamPort(), promotes=["*"])
-
-            self.add_subsystem(
-                'input_port',
-                VariablesIn(aviary_options=aviary_options),
-                promotes_inputs=['*'],
-                promotes_outputs=['*'])
 
         self.add_subsystem(
             name='atmosphere',
