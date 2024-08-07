@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 import shutil
 
-import pkg_resources
+from aviary.utils.functions import get_aviary_resource_path
 from openmdao.utils.testing_utils import use_tempdirs
 from aviary.interface.download_models import get_model, save_file
 
@@ -54,12 +54,11 @@ class CommandEntryPointsTestCases(unittest.TestCase):
         shutil.rmtree(out_dir)
 
     def test_expected_path(self):
-        filename = f'test_aircraft/converter_configuration_test_data_GwGm.dat'
         aviary_path = get_model('converter_configuration_test_data_GwGm.dat')
 
-        expected_path = pkg_resources.resource_filename('aviary',
-                                                        'models/test_aircraft/converter_configuration_test_data_GwGm.dat')
-        self.assertTrue(str(aviary_path) == expected_path)
+        expected_path = get_aviary_resource_path(
+            'models/test_aircraft/converter_configuration_test_data_GwGm.dat')
+        self.assertTrue(str(aviary_path) == str(expected_path))
 
 
 if __name__ == "__main__":

@@ -158,7 +158,7 @@ def build_engine_deck(aviary_options: AviaryValues, meta_data=_MetaData):
                     expected_dim = default_value.ndim
                     val_dim = aviary_val.ndim
                     # if aviary_values has one more dimension than expected per-engine,
-                    # we know aviary_values is for multi-engine type. Currently only using
+                    # we know aviary_values is for heterogeneous engine type. Currently only using
                     # first index
                     if val_dim == expected_dim + 1:
                         aviary_val = aviary_val[0]

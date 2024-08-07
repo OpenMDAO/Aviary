@@ -7,7 +7,7 @@ from aviary.examples.external_subsystems.engine_NPSS.NPSS_Model.DesignEngineGrou
 from aviary.examples.external_subsystems.engine_NPSS.engine_variable_meta_data import ExtendedMetaData
 from aviary.examples.external_subsystems.engine_NPSS.engine_variables import Aircraft, Dynamic
 from aviary.examples.external_subsystems.engine_NPSS.table_engine_connected_variables import vars_to_connect
-import pkg_resources
+from aviary.utils.functions import get_aviary_resource_path
 import os
 import numpy as np
 
@@ -57,12 +57,9 @@ class TableEngineBuilder(EngineModel):
         engine = om.MetaModelSemiStructuredComp(
             method=interp_method, extrapolate=True, vec_size=num_nodes, training_data_gradients=True)
 
-        csv_path = pkg_resources.resource_filename(
-            "aviary",
-            os.path.join("examples", "external_subsystems", "engine_NPSS",
-                         "NPSS_Model", "Output",  "RefEngine.outputAviary")
-        )
-
+        ref = os.path.join("examples", "external_subsystems", "engine_NPSS",
+                           "NPSS_Model", "Output",  "RefEngine.outputAviary")
+        csv_path = get_aviary_resource_path(ref)
         engine_data = np.genfromtxt(csv_path, skip_header=0)
 
         # Sort the data by Mach, then altitude, then throttle

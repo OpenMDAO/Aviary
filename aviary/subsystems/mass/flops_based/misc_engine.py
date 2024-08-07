@@ -16,7 +16,7 @@ class EngineMiscMass(om.ExplicitComponent):
     Calculates total sum of all misc engine mass on the aircraft
 
     Currently using engine-level additional mass (scaled by num_engines)
-    and propulsion-level starter and controls mass, not multi-engine safe!
+    and propulsion-level starter and controls mass, not heterogeneous engine safe!
     '''
 
     def initialize(self):
