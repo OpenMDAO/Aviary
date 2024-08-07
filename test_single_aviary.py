@@ -1,8 +1,8 @@
 import aviary.api as av
-from easy_phase_info_max import phase_info as max_phase_info
-from easy_phase_info_inter import phase_info as inter_phase_info
-# from c5_models.c5_maxpayload_phase_info import phase_info as max_phase_info
-# from c5_models.c5_intermediate_phase_info import phase_info as inter_phase_info
+# from easy_phase_info_max import phase_info as max_phase_info
+# from easy_phase_info_inter import phase_info as inter_phase_info
+from c5_models.c5_maxpayload_phase_info import phase_info as max_phase_info
+from c5_models.c5_intermediate_phase_info import phase_info as inter_phase_info
 from aviary.variable_info.variables import Mission, Aircraft
 
 
@@ -43,7 +43,7 @@ for key, item in outputs.items():
 """
 Current output:
 Variable: mission:summary:fuel_burned
-Values: [140116.12301917037, 276762.7974282048]
+Values: [164988.61692553537, 306345.04738212295]
 Variable: aircraft:design:empty_mass
-Values: [302105.1606792437, 315604.5402712884]
+Values: [339001.4003946201, 355540.377187145]
 """
