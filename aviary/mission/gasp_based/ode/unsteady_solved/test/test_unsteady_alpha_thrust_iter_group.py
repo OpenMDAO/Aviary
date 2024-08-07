@@ -59,8 +59,10 @@ class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
         p.final_setup()
 
         p.set_val(Dynamic.Mission.SPEED_OF_SOUND, 968.076 * np.ones(nn), units="ft/s")
-        p.set_val("rho", 0.000659904 * np.ones(nn), units="slug/ft**3")
-        p.set_val("TAS", 487 * np.ones(nn), units="kn")
+        p.set_val(
+            Dynamic.Mission.DENSITY, 0.000659904 * np.ones(nn), units="slug/ft**3"
+        )
+        p.set_val(Dynamic.Mission.VELOCITY, 487 * np.ones(nn), units="kn")
         p.set_val("mass", 170_000 * np.ones(nn), units="lbm")
         p.set_val("dTAS_dr", 0.0 * np.ones(nn), units="kn/NM")
 

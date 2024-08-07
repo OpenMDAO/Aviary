@@ -5,11 +5,12 @@ the dynamic aero.
 """
 
 import openmdao.api as om
-from dymos.models.atmosphere.atmos_1976 import USatm1976Comp
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
 from aviary.subsystems.aerodynamics.gasp_based.flaps_model import FlapsGroup
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.enums import SpeedType
 
 # TODO: add subsystems to compute CLMXFU, CLMXTO, CLMXLD using dynamic aero components
 # with alpha > alpha_stall
@@ -28,22 +29,12 @@ class PreMissionAero(om.Group):
 
         aviary_options = self.options['aviary_options']
 
+        # speeds weren't originally computed here, speedtype of Mach is intended
+        # to avoid multiple sources for computed Mach (gets calculated somewhere upstream)
         self.add_subsystem(
-            "atmos",
-            USatm1976Comp(
-                num_nodes=1),
-            promotes_inputs=[
-                ("h",
-                 "alt_flaps")],
-            promotes_outputs=[
-                ("temp",
-                 Dynamic.Mission.TEMPERATURE),
-                ("pres",
-                 Dynamic.Mission.STATIC_PRESSURE),
-                ("sos",
-                 Dynamic.Mission.SPEED_OF_SOUND),
-                "rho",
-                "viscosity"],
+            name='atmosphere',
+            subsys=Atmosphere(num_nodes=1, input_speed_type=SpeedType.MACH),
+            promotes=['*', (Dynamic.Mission.ALTITUDE, "alt_flaps")],
         )
 
         self.add_subsystem(
@@ -54,7 +45,8 @@ class PreMissionAero(om.Group):
                 rho={"units": "slug/ft**3"},
                 kinematic_viscosity={"units": "ft**2/s"},
             ),
-            promotes=["*"],
+            promotes=["viscosity", "kinematic_viscosity",
+                      ("rho", Dynamic.Mission.DENSITY)],
         )
 
         self.add_subsystem(
