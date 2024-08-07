@@ -58,7 +58,7 @@ SHAFT_POWER = EngineModelVariables.SHAFT_POWER
 SHAFT_POWER_CORRECTED = EngineModelVariables.SHAFT_POWER_CORRECTED
 RAM_DRAG = EngineModelVariables.RAM_DRAG
 FUEL_FLOW = EngineModelVariables.FUEL_FLOW
-ELECTRIC_POWER = EngineModelVariables.ELECTRIC_POWER_IN
+ELECTRIC_POWER_IN = EngineModelVariables.ELECTRIC_POWER_IN
 NOX_RATE = EngineModelVariables.NOX_RATE
 TEMPERATURE = EngineModelVariables.TEMPERATURE_T4
 # EXIT_AREA = EngineModelVariables.EXIT_AREA
@@ -80,7 +80,7 @@ aliases = {
     GROSS_THRUST: ['gross_thrust'],
     RAM_DRAG: ['ram_drag'],
     FUEL_FLOW: ['fuel', 'fuel_flow', 'fuel_flow_rate'],
-    ELECTRIC_POWER: ['electric_power_in', 'electric_power'],
+    ELECTRIC_POWER_IN: ['electric_power_in', 'electric_power'],
     NOX_RATE: ['nox', 'nox_rate'],
     TEMPERATURE: ['t4', 'temp', 'temperature', 'temperature_t4', 't4_temperature'],
     SHAFT_POWER: ['shaft_power', 'shp'],

@@ -56,6 +56,7 @@ class MotorMission(om.Group):
             ),  # fixed RPM system
             promotes_inputs=[('torque', 'motor_torque'), ('RPM', Dynamic.Mission.RPM)],
             promotes_outputs=[('shaft_power', Dynamic.Mission.SHAFT_POWER)],
+            has_diag_partials=True,
         )
 
         motor_group.add_subsystem(
@@ -71,22 +72,10 @@ class MotorMission(om.Group):
                 ('efficiency', 'motor_efficiency')
             ],
             promotes_outputs=[('power_elec', Dynamic.Mission.ELECTRIC_POWER_IN)],
+            has_diag_partials=True,
         )
 
         motor_group.connect(Dynamic.Mission.SHAFT_POWER, 'energy_comp.shaft_power')
-
-        # TODO Gearbox needs to be its own component separate from motor
-        # is this needed???
-        # this may be already covered by throttle constraints being from 0 - 1
-        # motor_group.add_subsystem('torque_con',
-        #                           om.ExecComp('torque_con = torque_max - torque_mission',
-        #                                       torque_con={'val': np.ones(
-        #                                           n), 'units': 'kN*m'},
-        #                                       torque_max={'val': 1.0, 'units': 'kN*m'},
-        #                                       torque_mission={'val': np.ones(n), 'units': 'kN*m'}),
-        #                           promotes_inputs=[('torque_mission', Dynamic.Mission.TORQUE),
-        #                                            ('torque_max', Aircraft.Motor.TORQUE_MAX)],
-        #                           promotes_outputs=[('torque_con', Dynamic.Mission.Motor.TORQUE_CON)])
 
         self.add_subsystem('motor_group', motor_group,
                            promotes_inputs=['*'],
@@ -124,6 +113,7 @@ class MotorMission(om.Group):
                 ('RPM', Dynamic.Mission.RPM),
             ],
             promotes_outputs=[('max_power', Dynamic.Mission.SHAFT_POWER_MAX)],
+            has_diag_partials=True,
         )
 
         self.add_subsystem('motor_group_max', motor_group_max,
@@ -131,17 +121,3 @@ class MotorMission(om.Group):
                            promotes_outputs=[Dynamic.Mission.SHAFT_POWER_MAX])
 
         self.set_input_defaults(Dynamic.Mission.RPM, val=np.ones(nn), units='rpm')
-
-        # TODO Gearbox needs to be its own component separate from motor
-        # Hamilton Standard model does not utilize torque. This can be added back in if
-        # future prop models desire torque (need to also add support for torque from
-        # turboshaft engine decks)
-        # # determine torque available at the prop
-        # self.add_subsystem('gearbox_comp',
-        #                    om.ExecComp('torque = shaft_power / (pi * RPM) * 30',
-        #                                shaft_power={'val': np.ones(n), 'units': 'kW'},
-        #                                torque={'val': np.ones(n), 'units': 'kN*m'},
-        #                                RPM={'val': np.ones(n), 'units': 'rpm'}),
-        #                    promotes_inputs=[('shaft_power', Dynamic.Mission.SHAFT_POWER),
-        #                                     ('RPM', Dynamic.Mission.RPM)],
-        #                    promotes_outputs=[('torque', Dynamic.Mission.TORQUE),])
