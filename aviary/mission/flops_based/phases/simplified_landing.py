@@ -1,9 +1,9 @@
 import openmdao.api as om
-from dymos.models.atmosphere.atmos_1976 import USatm1976Comp
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_METRIC
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 
 
 class LandingCalc(om.ExplicitComponent):
@@ -11,7 +11,13 @@ class LandingCalc(om.ExplicitComponent):
 
         add_aviary_input(self, Mission.Landing.TOUCHDOWN_MASS, val=150_000)
 
-        self.add_input("rho", val=1.225, units="kg/m**3", desc="atmospheric density")
+        add_aviary_input(
+            self,
+            Dynamic.Mission.DENSITY,
+            val=1.225,
+            units="kg/m**3",
+            desc="atmospheric density",
+        )
 
         add_aviary_input(self, Aircraft.Wing.AREA, val=700)
 
@@ -30,7 +36,7 @@ class LandingCalc(om.ExplicitComponent):
         rho_SL = RHO_SEA_LEVEL_METRIC
         landing_weight = inputs[Mission.Landing.TOUCHDOWN_MASS] * \
             GRAV_ENGLISH_LBM
-        rho = inputs["rho"]
+        rho = inputs[Dynamic.Mission.DENSITY]
         planform_area = inputs[Aircraft.Wing.AREA]
         Cl_ldg_max = inputs[Mission.Landing.LIFT_COEFFICIENT_MAX]
 
@@ -53,7 +59,7 @@ class LandingCalc(om.ExplicitComponent):
         rho_SL = RHO_SEA_LEVEL_METRIC
         landing_weight = inputs[Mission.Landing.TOUCHDOWN_MASS] * \
             GRAV_ENGLISH_LBM
-        rho = inputs["rho"]
+        rho = inputs[Dynamic.Mission.DENSITY]
         planform_area = inputs[Aircraft.Wing.AREA]
         Cl_ldg_max = inputs[Mission.Landing.LIFT_COEFFICIENT_MAX]
 
@@ -96,10 +102,10 @@ class LandingCalc(om.ExplicitComponent):
             / (planform_area * rho_ratio * Cl_app ** 2 * 1.69)
             / 1.3 ** 2
         )
-        J[Mission.Landing.GROUND_DISTANCE, "rho"] = (
+        J[Mission.Landing.GROUND_DISTANCE, Dynamic.Mission.DENSITY] = (
             -105
             * landing_weight
-            / (planform_area * rho_ratio ** 2 * Cl_app * 1.69)
+            / (planform_area * rho_ratio**2 * Cl_app * 1.69)
             / rho_SL
         )
 
@@ -108,17 +114,23 @@ class LandingGroup(om.Group):
     def setup(self):
 
         self.add_subsystem(
-            "USatm",
-            USatm1976Comp(num_nodes=1),
-            promotes_inputs=[("h", Mission.Landing.INITIAL_ALTITUDE)],
-            promotes_outputs=["rho"],
+            name='atmosphere',
+            subsys=Atmosphere(num_nodes=1),
+            promotes=[
+                '*',
+                (Dynamic.Mission.ALTITUDE, Mission.Landing.INITIAL_ALTITUDE),
+            ],
         )
 
         self.add_subsystem(
             "calcs",
             LandingCalc(),
-            promotes_inputs=[Mission.Landing.TOUCHDOWN_MASS, "rho",
-                             Aircraft.Wing.AREA, Mission.Landing.LIFT_COEFFICIENT_MAX],
+            promotes_inputs=[
+                Mission.Landing.TOUCHDOWN_MASS,
+                Dynamic.Mission.DENSITY,
+                Aircraft.Wing.AREA,
+                Mission.Landing.LIFT_COEFFICIENT_MAX,
+            ],
             promotes_outputs=[
                 Mission.Landing.GROUND_DISTANCE,
                 Mission.Landing.INITIAL_VELOCITY,
