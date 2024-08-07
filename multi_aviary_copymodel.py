@@ -2,19 +2,17 @@
 authors: Jatin Soni, Eliot Aretskin
 Multi Mission Optimization Example using Aviary
 """
-from os.path import join
 import sys
 import warnings
 import dymos as dm
 import numpy as np
+from os.path import join
 import matplotlib.pyplot as plt
 
+import openmdao.api as om
 import aviary.api as av
 from aviary.variable_info.enums import ProblemType
 from aviary.variable_info.variables import Mission, Aircraft
-
-import openmdao.api as om
-from openmdao.api import CaseReader
 
 from c5_models.c5_ferry_phase_info import phase_info as c5_ferry_phase_info
 from c5_models.c5_intermediate_phase_info import phase_info as c5_intermediate_phase_info
@@ -125,13 +123,78 @@ class MultiMissionProblem(om.Problem):
                 design_range = get_range
         return design_range
 
+    def create_timeseries_plots(self, plotvars=[], show=True):
+        """Creates timeseries plots for any variables within timeseries. Specify variables
+        and units by setting plotvars = [('altitude','ft')]. Any number of vars can be added."""
+        plt.figure()
+        for plotidx, (var, unit) in enumerate(plotvars):
+            plt.subplot(int(np.ceil(len(plotvars)/2)), 2, plotidx+1)
+            for i in range(self.num_missions):
+                time = np.array([])
+                yvar = np.array([])
+                # this loop concatenates data from all phases
+                for phase in self.phases[f"{self.group_prefix}_{i}"]:
+                    rawt = self.get_val(
+                        f"{self.group_prefix}_{i}.traj.{phase}.timeseries.time",
+                        units='s')
+                    rawy = self.get_val(
+                        f"{self.group_prefix}_{i}.traj.{phase}.timeseries.{var}",
+                        units=unit)
+                    time = np.hstack([time, np.ndarray.flatten(rawt)])
+                    yvar = np.hstack([yvar, np.ndarray.flatten(rawy)])
+                plt.plot(time, yvar, 'o')
+            plt.xlabel("Time (s)")
+            plt.ylabel(f"{var.title()} ({unit})")
+            plt.grid()
+        plt.figlegend([f"Plane {i}" for i in range(self.num_missions)])
+        if show:
+            plt.show()
 
-def C5_example():
+    def create_payload_range_plot(self, show=True):
+        """Creates payload range diagram for the super problem. Appends a point for max payload
+            and 0 range. """
+        payloads = []
+        ranges = []
+        for i in range(self.num_missions):
+            ref = f"{self.group_prefix}_{i}"
+            payloads.append(
+                self.get_val(
+                    f"{ref}.{Aircraft.CrewPayload.CARGO_MASS}", units='lbm'))
+            lastphase = self.phases[ref][-1]
+            ranges.append(
+                self.get_val(
+                    f"{ref}.traj.{lastphase}.timeseries.distance",
+                    units='nmi', indices=-1)[0])
+        payloads, ranges = zip(*sorted(zip(payloads, ranges)))
+        payloads, ranges = list(payloads), list(ranges)
+        payloads.append(payloads[-1])
+        ranges.append(0)
+        plt.figure()
+        plt.plot(ranges, payloads)
+        plt.xlabel("Range (nmi)")
+        plt.ylabel("Payload (lbm)")
+        plt.grid()
+        if show:
+            plt.show()
+
+    def print_vars(self, vars=[]):
+        """Specify vars with name and unit in a tuple, e.g. vars = [ (Mission.Summary.FUEL_BURNED, 'lbm') ]"""
+
+        print("\n\n=========================\n")
+        for var, unit in vars:
+            print(f"Variable: {var}")
+            for i in range(self.num_missions):
+                val = self.get_val(f'group_{i}.{var}', units=unit)[0]
+                print(f"\tPlane {i}: {val} ({unit})")
+
+
+def C5_example(makeN2=False):
     plane_dir = 'c5_models'
-    planes = ['c5_maxpayload.csv', 'c5_intermediate.csv']
+    planes = ['c5_maxpayload.csv', 'c5_intermediate.csv', 'c5_ferry.csv']
     planes = [join(plane_dir, plane) for plane in planes]
-    phase_infos = [c5_maxpayload_phase_info, c5_intermediate_phase_info]
-    weights = [1, 1]
+    phase_infos = [c5_maxpayload_phase_info,
+                   c5_intermediate_phase_info, c5_ferry_phase_info]
+    weights = [1, 1, 1]
 
     super_prob = MultiMissionProblem(planes, phase_infos, weights)
     super_prob.add_driver()
@@ -150,53 +213,28 @@ def C5_example():
         createN2(__file__, super_prob)
 
     super_prob.run()
-    return super_prob
+    printoutputs = [(Aircraft.Design.EMPTY_MASS, 'lbm'),
+                    (Mission.Summary.FUEL_BURNED, 'lbm'),
+                    (Mission.Summary.GROSS_MASS, 'lbm')]
+    super_prob.print_vars(vars=printoutputs)
 
-
-def createTimeseriesPlots(super_prob, plotvars):
-    for plotidx, (var, unit) in enumerate(plotvars):
-        plt.subplot(int(np.ceil(len(plotvars)/2)), 2, plotidx+1)
-        for i in range(super_prob.num_missions):
-            time = np.array([])
-            yvar = np.array([])
-            for phase in super_prob.phases[f"{super_prob.group_prefix}_{i}"]:
-                rawt = super_prob.get_val(
-                    f"{super_prob.group_prefix}_{i}.traj.{phase}.timeseries.time")
-                rawy = super_prob.get_val(
-                    f"{super_prob.group_prefix}_{i}.traj.{phase}.timeseries.{var}",
-                    units=unit)
-                time = np.hstack([time, np.ndarray.flatten(rawt)])
-                yvar = np.hstack([yvar, np.ndarray.flatten(rawy)])
-            plt.plot(time, yvar, 'o')
-        plt.xlabel("Time (s)")
-        plt.ylabel(f"{var.title()} ({unit})")
-        plt.grid()
-    plt.figlegend([f"Plane {i}" for i in range(super_prob.num_missions)])
-    plt.show()
-
-
-if __name__ == '__main__':
-    makeN2 = True if (len(sys.argv) > 1 and "n2" in sys.argv[1]) else False
-
-    super_prob = C5_example()
     plotvars = [('altitude', 'ft'),
                 ('mass', 'lbm'),
                 ('drag', 'lbf'),
                 ('distance', 'nmi'),
                 ('throttle', 'unitless')]
-    createTimeseriesPlots(super_prob, plotvars)
+    super_prob.create_timeseries_plots(plotvars=plotvars, show=False)
 
-    outputs = {Aircraft.Design.EMPTY_MASS: [],
-               Mission.Summary.FUEL_BURNED: [],
-               Mission.Summary.GROSS_MASS: []}
+    super_prob.create_payload_range_plot(show=False)
+    plt.show()
 
-    print("\n\n=========================\n")
-    for key in outputs.keys():
-        print(f"Variable: {key}")
-        for i in range(super_prob.num_missions):
-            val = super_prob.get_val(f'group_{i}.{key}', units='lbm')[0]
-            print(f"\tPlane {i}: {val} (lbm)")
+    return super_prob
 
+
+if __name__ == '__main__':
+    makeN2 = True if (len(sys.argv) > 1 and "n2" in sys.argv[1]) else False
+
+    super_prob = C5_example(makeN2=makeN2)
 
 """
 1:1
