@@ -1,11 +1,10 @@
 import numpy as np
-from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
 from aviary.mission.gasp_based.ode.accel_eom import AccelerationRates
 from aviary.mission.gasp_based.ode.base_ode import BaseODE
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.subsystems.mass.mass_to_weight import MassToWeight
-from aviary.variable_info.enums import AnalysisScheme, AnalysisScheme, SpeedType
+from aviary.variable_info.enums import AnalysisScheme, AnalysisScheme
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs, add_SGM_required_outputs
 
@@ -36,7 +35,7 @@ class AccelODE(BaseODE):
         # TODO: paramport
         self.add_subsystem("params", ParamPort(), promotes=["*"])
 
-        self.add_flight_conditions(nn)
+        self.add_atmosphere(nn)
 
         self.add_subsystem(
             "calc_weight",

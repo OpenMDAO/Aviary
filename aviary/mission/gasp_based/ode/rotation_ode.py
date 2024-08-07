@@ -1,6 +1,5 @@
 import numpy as np
 import openmdao.api as om
-from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
 from aviary.mission.gasp_based.ode.base_ode import BaseODE
 from aviary.mission.gasp_based.ode.params import ParamPort
@@ -31,7 +30,7 @@ class RotationODE(BaseODE):
         # TODO: paramport
         self.add_subsystem("params", ParamPort(), promotes=["*"])
 
-        self.add_flight_conditions(nn)
+        self.add_atmosphere(nn)
 
         kwargs = {'num_nodes': nn, 'aviary_inputs': aviary_options,
                   'method': 'low_speed'}

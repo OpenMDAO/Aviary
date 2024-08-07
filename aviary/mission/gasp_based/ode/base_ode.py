@@ -1,4 +1,3 @@
-import enum
 import numpy as np
 
 import openmdao.api as om
@@ -233,17 +232,7 @@ class BaseODE(om.Group):
                 promotes=['*']
             )
 
-    def add_flight_conditions(self, nn, input_speed_type=SpeedType.TAS):
-        # if input_speed_type is SpeedType.TAS:
-        #     promotes_inputs = [Dynamic.Mission.VELOCITY]
-        #     promotes_outputs = ["EAS", Dynamic.Mission.MACH]
-        # elif input_speed_type is SpeedType.EAS:
-        #     promotes_inputs = ["EAS"]
-        #     promotes_outputs = [Dynamic.Mission.VELOCITY, Dynamic.Mission.MACH]
-        # elif input_speed_type is SpeedType.MACH:
-        #     promotes_inputs = [Dynamic.Mission.MACH]
-        #     promotes_outputs = ["EAS", Dynamic.Mission.VELOCITY]
-
+    def add_atmosphere(self, nn, input_speed_type=SpeedType.TAS):
         self.add_subsystem(
             name='atmosphere',
             subsys=Atmosphere(num_nodes=nn, input_speed_type=input_speed_type),

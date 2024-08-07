@@ -9,7 +9,6 @@ from aviary.mission.gasp_based.ode.constraints.flight_constraints import FlightC
 from aviary.mission.gasp_based.ode.constraints.speed_constraints import SpeedConstraints
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase
-from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
 from aviary.variable_info.enums import AnalysisScheme, AlphaModes, SpeedType
 from aviary.variable_info.variables import Dynamic
 from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
@@ -131,12 +130,6 @@ class ClimbODE(BaseODE):
             lift_balance_group = self
             flight_condition_group = self
 
-        # flight_condition_group.add_subsystem(
-        #     "fc",
-        #     FlightConditions(num_nodes=nn, input_speed_type=input_speed_type),
-        #     promotes_inputs=[Dynamic.Mission.DENSITY, Dynamic.Mission.SPEED_OF_SOUND] + speed_inputs,
-        #     promotes_outputs=[Dynamic.Mission.DYNAMIC_PRESSURE,] + speed_outputs,
-        # )
         flight_condition_group.add_subsystem(
             name='flight_conditions',
             subsys=FlightConditions(num_nodes=nn, input_speed_type=input_speed_type),
