@@ -47,7 +47,7 @@ class SkinFriction(om.ImplicitComponent):
             Aircraft.VerticalTail.NUM_TAILS, zero_count)
         num_fuselages, _ = aviary_options.get_item(
             Aircraft.Fuselage.NUM_FUSELAGES, zero_count)
-        # TODO does not used vectorized multi-engine. Temp using single engine
+        # TODO does not used vectorized heterogeneous engines. Temp using single engine
         num_engines, _ = aviary_options.get_item(
             Aircraft.Engine.NUM_ENGINES, zero_count)
         self.nc = nc = 2 + num_tails + num_fuselages + int(sum(num_engines))

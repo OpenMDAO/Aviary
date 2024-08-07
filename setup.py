@@ -34,6 +34,7 @@ setup(
         "openmdao>=3.33.0",
         "dymos>=1.8.1",
         "hvplot",
+        "importlib_resources",
         "numpy",
         "matplotlib",
         "pandas",
