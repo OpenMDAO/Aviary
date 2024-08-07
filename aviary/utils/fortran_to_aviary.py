@@ -307,7 +307,7 @@ def set_value(var_name, var_value, value_dict: NamedValues, var_ind=None, units=
         current_value[var_ind] = var_value[0]
         value_dict.set_val(var_name, current_value, units)
     else:
-        if current_value != None and type(current_value[0]) == type(True):
+        if current_value != None and isinstance(current_value[0], bool):
             # if a variable is defined as boolean but is read in as number, set as boolean
             if var_value[0] == 1:
                 var_value = ['True']
