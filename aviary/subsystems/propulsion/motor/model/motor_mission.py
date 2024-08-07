@@ -53,10 +53,10 @@ class MotorMission(om.Group):
                 shaft_power={'val': np.ones(nn), 'units': 'kW'},
                 torque={'val': np.ones(nn), 'units': 'kN*m'},
                 RPM={'val': np.ones(nn), 'units': 'rad/s'},
+                has_diag_partials=True,
             ),  # fixed RPM system
             promotes_inputs=[('torque', 'motor_torque'), ('RPM', Dynamic.Mission.RPM)],
             promotes_outputs=[('shaft_power', Dynamic.Mission.SHAFT_POWER)],
-            has_diag_partials=True,
         )
 
         motor_group.add_subsystem(
@@ -66,13 +66,13 @@ class MotorMission(om.Group):
                 shaft_power={'val': np.ones(nn), 'units': 'kW'},
                 power_elec={'val': np.ones(nn), 'units': 'kW'},
                 efficiency={'val': np.ones(nn), 'units': 'unitless'},
+                has_diag_partials=True,
             ),
             promotes_inputs=[
                 #   ('shaft_power', Dynamic.Mission.SHAFT_POWER),
                 ('efficiency', 'motor_efficiency')
             ],
             promotes_outputs=[('power_elec', Dynamic.Mission.ELECTRIC_POWER_IN)],
-            has_diag_partials=True,
         )
 
         motor_group.connect(Dynamic.Mission.SHAFT_POWER, 'energy_comp.shaft_power')
@@ -107,13 +107,13 @@ class MotorMission(om.Group):
                 max_power={'val': np.ones(nn), 'units': 'kW'},
                 max_torque={'val': np.ones(nn), 'units': 'kN*m'},
                 RPM={'val': np.ones(nn), 'units': 'rpm'},
+                has_diag_partials=True,
             ),
             promotes_inputs=[
                 ('max_torque', Aircraft.Engine.Motor.TORQUE_MAX),
                 ('RPM', Dynamic.Mission.RPM),
             ],
             promotes_outputs=[('max_power', Dynamic.Mission.SHAFT_POWER_MAX)],
-            has_diag_partials=True,
         )
 
         self.add_subsystem('motor_group_max', motor_group_max,
