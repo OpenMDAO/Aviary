@@ -12,7 +12,7 @@ from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.utils.functions import \
-     set_aviary_initial_values, set_aviary_input_defaults
+    set_aviary_initial_values, set_aviary_input_defaults
 from aviary.utils.preprocessors import preprocess_options
 from aviary.models.N3CC.N3CC_data import \
     balanced_liftoff_user_options as _takeoff_liftoff_user_options
