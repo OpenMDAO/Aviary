@@ -98,13 +98,14 @@ class TakeoffAeroGroup(om.Group):
         drag_coefficients = \
             np.array(options['drag_coefficients']) * drag_coefficient_factor
 
-        type_ = om.MetaModelSemiStructuredComp
         inputs = ['angle_of_attack']
 
-        takeoff_polar: type_ = self.add_subsystem(
+        takeoff_polar: om.MetaModelSemiStructuredComp = self.add_subsystem(
             'takeoff_polar',
-            type_(method='slinear', extrapolate=False, vec_size=nn),
-            promotes_inputs=inputs
+            om.MetaModelSemiStructuredComp(
+                method='slinear', extrapolate=False, vec_size=nn
+            ),
+            promotes_inputs=inputs,
         )
 
         takeoff_polar.add_input('angle_of_attack', angles_of_attack, units='rad')
