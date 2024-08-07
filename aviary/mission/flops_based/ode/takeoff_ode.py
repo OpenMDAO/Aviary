@@ -11,7 +11,6 @@ from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import promote_aircraft_and_mission_vars
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-from aviary.variable_info.variables_in import VariablesIn
 from aviary.variable_info.enums import AnalysisScheme
 
 
@@ -82,10 +81,6 @@ class TakeoffODE(om.Group):
                 Dynamic.Mission.DISTANCE: {'units': 'm'},
             }
             add_SGM_required_inputs(self, SGM_required_inputs)
-
-        self.add_subsystem(
-            'input_port', VariablesIn(aviary_options=aviary_options),
-            promotes_inputs=['*'], promotes_outputs=['*'])
 
         self.add_subsystem(
             "USatm",

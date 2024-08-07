@@ -59,7 +59,6 @@ from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.utils.preprocessors import preprocess_options, preprocess_propulsion
 from aviary.utils.process_input_decks import create_vehicle
 from aviary.utils.functions import create_opts2vals, add_opts2vals, Null
-from aviary.variable_info.variables_in import VariablesIn
 from aviary.utils.preprocessors import preprocess_crewpayload
 
 # ODEs

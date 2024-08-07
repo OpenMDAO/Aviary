@@ -24,7 +24,6 @@ from aviary.utils.test_utils.assert_utils import warn_timeseries_near_equal
 from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.variable_info.functions import setup_trajectory_params
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables_in import VariablesIn
 from aviary.mission.energy_phase import EnergyPhase
 
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
