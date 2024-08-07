@@ -24,21 +24,22 @@ class EngineModelVariables(Enum):
     """
     Define constants that map to supported variable names in an engine model.
     """
-    MACH = auto()
-    ALTITUDE = auto()
-    THROTTLE = auto()
-    HYBRID_THROTTLE = auto()
-    THRUST = auto()
-    TAILPIPE_THRUST = auto()
-    GROSS_THRUST = auto()
-    SHAFT_POWER = auto()
-    SHAFT_POWER_CORRECTED = auto()
-    RAM_DRAG = auto()
-    FUEL_FLOW = auto()
-    ELECTRIC_POWER_IN = auto()
-    NOX_RATE = auto()
-    TEMPERATURE_T4 = auto()
-    TORQUE = auto()
+
+    MACH = Dynamic.Mission.MACH
+    ALTITUDE = Dynamic.Mission.ALTITUDE
+    THROTTLE = Dynamic.Mission.THROTTLE
+    HYBRID_THROTTLE = Dynamic.Mission.HYBRID_THROTTLE
+    THRUST = Dynamic.Mission.THRUST
+    TAILPIPE_THRUST = 'tailpipe_thrust'
+    GROSS_THRUST = 'gross_thrust'
+    SHAFT_POWER = Dynamic.Mission.SHAFT_POWER
+    SHAFT_POWER_CORRECTED = 'shaft_power_corrected'
+    RAM_DRAG = 'ram_drag'
+    FUEL_FLOW = Dynamic.Mission.FUEL_FLOW_RATE
+    ELECTRIC_POWER_IN = Dynamic.Mission.ELECTRIC_POWER_IN
+    NOX_RATE = Dynamic.Mission.NOX_RATE
+    TEMPERATURE_T4 = Dynamic.Mission.TEMPERATURE_T4
+    TORQUE = Dynamic.Mission.TORQUE
     # EXIT_AREA = auto()
 
 
@@ -59,6 +60,12 @@ default_units = {
     EngineModelVariables.TEMPERATURE_T4: 'degR',
     EngineModelVariables.TORQUE: 'ft*lbf',
     # EngineModelVariables.EXIT_AREA: 'ft**2',
+}
+
+# variables that have an accompanying max value
+max_variables = {
+    EngineModelVariables.THRUST: Dynamic.Mission.THRUST_MAX,
+    EngineModelVariables.SHAFT_POWER: Dynamic.Mission.SHAFT_POWER_MAX,
 }
 
 
@@ -420,6 +427,7 @@ class PropellerModelVariables(Enum):
     """
     Define constants that map to supported variable names in a propeller model.
     """
+
     HELICAL_MACH = 'Helical_Mach'
     MACH = 'Mach'
     CP = 'CP'  # power coefficient

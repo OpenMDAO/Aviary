@@ -94,28 +94,37 @@ class PropulsionMission(om.Group):
                     self.promotes(engine.name, inputs=[Dynamic.Mission.HYBRID_THROTTLE])
 
         # TODO might be able to avoid hardcoding using propulsion Enums
-        # mux component to vectorize individual outputs into 2d arrays
+        # mux component to vectorize individual engine outputs into 2d arrays
         perf_mux = om.MuxComp(vec_size=num_engine_type)
         # add each engine data variable to mux component
-        perf_mux.add_var(Dynamic.Mission.THRUST, shape=(nn,), axis=1, units='lbf')
-        perf_mux.add_var(Dynamic.Mission.THRUST_MAX, shape=(nn,), axis=1, units='lbf')
         perf_mux.add_var(
-            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE, shape=(nn,), axis=1, units='lbm/h'
+            Dynamic.Mission.THRUST, val=0, shape=(nn,), axis=1, units='lbf'
         )
         perf_mux.add_var(
-            Dynamic.Mission.ELECTRIC_POWER_IN, shape=(nn,), axis=1, units='kW'
+            Dynamic.Mission.THRUST_MAX, val=0, shape=(nn,), axis=1, units='lbf'
         )
-        perf_mux.add_var(Dynamic.Mission.NOX_RATE, shape=(nn,), axis=1, units='lb/h')
         perf_mux.add_var(
-            Dynamic.Mission.TEMPERATURE_T4, shape=(nn,), axis=1, units='degR'
+            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE,
+            val=0,
+            shape=(nn,),
+            axis=1,
+            units='lbm/h',
         )
-        perf_mux.add_var(Dynamic.Mission.SHAFT_POWER, shape=(nn,), axis=1, units='hp')
-        # perf_mux.add_var(
-        #     Dynamic.Mission.SHAFT_POWER_CORRECTED,
-        #     shape=(nn,),
-        #     axis=1,
-        #     units='hp'
-        # )
+        perf_mux.add_var(
+            Dynamic.Mission.ELECTRIC_POWER_IN, val=0, shape=(nn,), axis=1, units='kW'
+        )
+        perf_mux.add_var(
+            Dynamic.Mission.NOX_RATE, val=0, shape=(nn,), axis=1, units='lb/h'
+        )
+        perf_mux.add_var(
+            Dynamic.Mission.TEMPERATURE_T4, val=0, shape=(nn,), axis=1, units='degR'
+        )
+        perf_mux.add_var(
+            Dynamic.Mission.SHAFT_POWER, val=0, shape=(nn,), axis=1, units='hp'
+        )
+        perf_mux.add_var(
+            Dynamic.Mission.SHAFT_POWER_MAX, val=0, shape=(nn,), axis=1, units='hp'
+        )
         # perf_mux.add_var(
         #     'exit_area_unscaled',
         #     shape=(nn,),
@@ -126,61 +135,88 @@ class PropulsionMission(om.Group):
             'vectorize_performance', subsys=perf_mux, promotes_outputs=['*']
         )
 
-        # connect engine outputs to mux component inputs
-        for i, engine in enumerate(engine_models):
-            self.connect(
-                engine.name + '.' + Dynamic.Mission.THRUST,
-                'vectorize_performance.' + Dynamic.Mission.THRUST + '_' + str(i),
-            )
-            self.connect(
-                engine.name + '.' + Dynamic.Mission.THRUST_MAX,
-                'vectorize_performance.' + Dynamic.Mission.THRUST_MAX + '_' + str(i),
-            )
-            self.connect(
-                engine.name + '.' + Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE,
-                'vectorize_performance.'
-                + Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE
-                + '_'
-                + str(i),
-            )
-            self.connect(
-                engine.name + '.' + Dynamic.Mission.ELECTRIC_POWER_IN,
-                'vectorize_performance.'
-                + Dynamic.Mission.ELECTRIC_POWER_IN
-                + '_'
-                + str(i),
-            )
-            self.connect(
-                engine.name + '.' + Dynamic.Mission.NOX_RATE,
-                'vectorize_performance.' + Dynamic.Mission.NOX_RATE + '_' + str(i),
-            )
-
-            if getattr(engine, 'use_t4', False):
-                self.connect(
-                    engine.name + '.' + Dynamic.Mission.TEMPERATURE_T4,
-                    'vectorize_performance.'
-                    + Dynamic.Mission.TEMPERATURE_T4
-                    + '_'
-                    + str(i),
-                )
-
-            if getattr(engine, 'use_shp', False):
-                self.connect(
-                    engine.name + '.' + Dynamic.Mission.SHAFT_POWER,
-                    'vectorize_performance.'
-                    + Dynamic.Mission.SHAFT_POWER
-                    + '_'
-                    + str(i),
-                )
-                # self.connect(engine.name + '.' + Dynamic.Mission.SHAFT_POWER_CORRECTED,
-                #              'vectorize_performance.' + Dynamic.Mission.SHAFT_POWER_CORRECTED + '_' + str(i))
-
         self.add_subsystem(
             'propulsion_sum',
             subsys=PropulsionSum(num_nodes=nn, aviary_options=options),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+    def configure(self):
+        # Special configure step needed to handle multiple, unique engine models.
+        # Handle checking each EngineModel for compatible outputs with
+        # vectorize_performance component and connecting those outputs
+
+        # TODO this list shouldn't be hardcoded so it can be extended by users
+        supported_outputs = [
+            Dynamic.Mission.ELECTRIC_POWER_IN,
+            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE,
+            Dynamic.Mission.NOX_RATE,
+            Dynamic.Mission.SHAFT_POWER,
+            Dynamic.Mission.SHAFT_POWER_MAX,
+            Dynamic.Mission.TEMPERATURE_T4,
+            Dynamic.Mission.THRUST,
+            Dynamic.Mission.THRUST_MAX,
+        ]
+
+        engine_models = self.options['engine_models']
+        engine_names = [engine.name for engine in engine_models]
+        # num_engine_type = len(engine_models)
+
+        # determine if openMDAO messages and warnings should be suppressed
+        verbosity = self.options['aviary_options'].get_val(Settings.VERBOSITY)
+        out_stream = None
+        # DEBUG
+        if verbosity.value > 2:
+            out_stream = sys.stdout
+
+        comp_list = [self._get_subsystem(engine) for engine in engine_names]
+
+        # dictionaries of outputs for each engine in prop mission
+        output_dict = {}
+        # Dictionary of all unique inputs/outputs from all new components, keys are
+        # units for each var
+        unique_outputs = {}
+
+        # idx to be used for slicing inputs in next round of improvements
+        for idx, comp in enumerate(comp_list):
+            # identify outputs to connect to muxcomp
+            comp_outputs = comp.list_outputs(
+                return_format='dict', units=True, out_stream=out_stream, all_procs=True
+            )
+            # grab only outputs that have been promoted out of component
+            promoted_outputs = [
+                key for key in comp_outputs if '.' not in comp_outputs[key]['prom_name']
+            ]
+            output_dict[comp.name] = dict(
+                (comp_outputs[key]['prom_name'], comp_outputs[key])
+                for key in promoted_outputs
+            )
+            unique_outputs.update(
+                [
+                    (
+                        comp_outputs[key]['prom_name'],
+                        comp_outputs[key]['units'],
+                    )
+                    for key in promoted_outputs
+                ]
+            )
+
+        # add variables to the mux component and make connections to individual
+        # component outputs
+        # if num_engine_type > 1:
+        for output in unique_outputs:
+            if output in supported_outputs:
+                # self.vectorize_performance.add_var(output, units=unique_outputs[output])
+                # promote/alias outputs for each comp that has relevant outputs
+                for i, comp in enumerate(output_dict):
+                    if output in output_dict[comp]:
+                        # if this component provides the output, connect it to the correct mux input
+                        self.connect(
+                            comp + '.' + output,
+                            'vectorize_performance.' + output + '_' + str(i),
+                        )
+            # TODO handle setting of other variables from engine outputs (e.g. Aircraft.Engine.****)
 
 
 class PropulsionSum(om.ExplicitComponent):

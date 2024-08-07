@@ -639,8 +639,6 @@ class Dynamic:
         PROPELLER_TIP_SPEED = 'propeller_tip_speed'
         RPM = 'rotations_per_minute'
         SHAFT_POWER = 'shaft_power'
-        SHAFT_POWER_CORRECTED = 'shaft_power_corrected'
-        SHAFT_POWER_CORRECTED_MAX = 'shaft_power_corrected_max'
         SHAFT_POWER_MAX = 'shaft_power_max'
         SPECIFIC_ENERGY = 'specific_energy'
         SPECIFIC_ENERGY_RATE = 'specific_energy_rate'

@@ -11,6 +11,7 @@ from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.functions import get_path
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.enums import Verbosity
+from aviary.subsystems.propulsion.utils import EngineModelVariables
 
 
 class EngineScalingTest(unittest.TestCase):
@@ -48,11 +49,19 @@ class EngineScalingTest(unittest.TestCase):
         preprocess_propulsion(options, [engine1])
 
         options.set_val(Mission.Summary.FUEL_FLOW_SCALER, 10.)
+        engine_variables = {
+            EngineModelVariables.THRUST: 'lbf',
+            EngineModelVariables.FUEL_FLOW: 'lbm/h',
+            EngineModelVariables.NOX_RATE: 'lbm/h',
+        }
 
-        self.prob.model.add_subsystem('engine', EngineScaling(
-            num_nodes=nn,
-            aviary_options=options),
-            promotes=['*'])
+        self.prob.model.add_subsystem(
+            'engine',
+            EngineScaling(
+                num_nodes=nn, aviary_options=options, engine_variables=engine_variables
+            ),
+            promotes=['*'],
+        )
         self.prob.setup(force_alloc_complex=True)
         self.prob.set_val('thrust_net_unscaled', np.ones(
             [nn, count]) * 1000, units='lbf')

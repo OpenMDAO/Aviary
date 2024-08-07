@@ -13,6 +13,7 @@ from aviary.utils.functions import get_path
 from aviary.utils.named_values import NamedValues
 
 
+# multiple type annotation uses "typeA | typeB" syntax, but requires Python 3.10+
 def read_data_file(filename: (str, Path), metadata=None, aliases=None,
                    save_comments=False):
     """
@@ -173,6 +174,7 @@ def read_data_file(filename: (str, Path), metadata=None, aliases=None,
         return data
 
 
+# multiple type annotation uses "typeA | typeB" syntax, but requires Python 3.10+
 def write_data_file(filename: (str, Path) = None, data: NamedValues = None,
                     comments: (str, list) = [], include_timestamp: bool = False):
     """

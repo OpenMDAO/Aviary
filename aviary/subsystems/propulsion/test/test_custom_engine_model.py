@@ -218,7 +218,6 @@ class CustomEngineTest(unittest.TestCase):
         assert_near_equal(float(prob.get_val('traj.cruise.rhs_all.y')), 4., tol)
 
 
-@unittest.skip("Skipping until engines are no longer required to always output all values")
 @use_tempdirs
 class TurbopropTest(unittest.TestCase):
     def test_turboprop(self):
@@ -264,8 +263,11 @@ class TurbopropTest(unittest.TestCase):
         options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
         options.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 10, units='ft')
 
-        options.set_val(Aircraft.Design.COMPUTE_INSTALLATION_LOSS,
-                        val=True, units='unitless')
+        options.set_val(
+            Aircraft.Engine.COMPUTE_PROPELLER_INSTALLATION_LOSS,
+            val=True,
+            units='unitless',
+        )
         options.set_val(Aircraft.Engine.NUM_PROPELLER_BLADES,
                         val=4, units='unitless')
 
@@ -301,13 +303,23 @@ class TurbopropTest(unittest.TestCase):
         prob.set_initial_guesses()
 
         prob.set_val(
-            f'traj.cruise.rhs_all.{Aircraft.Design.MAX_PROPELLER_TIP_SPEED}', 710., units='ft/s')
+            f'traj.cruise.rhs_all.{Aircraft.Engine.PROPELLER_TIP_SPEED_MAX}',
+            710.0,
+            units='ft/s',
+        )
         prob.set_val(
-            f'traj.cruise.rhs_all.{Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED}', 0.915, units='unitless')
+            f'traj.cruise.rhs_all.{Aircraft.Engine.PROPELLER_DIAMETER}', 10, units='ft'
+        )
         prob.set_val(
-            f'traj.cruise.rhs_all.{Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR}', 150., units='unitless')
+            f'traj.cruise.rhs_all.{Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR}',
+            150.0,
+            units='unitless',
+        )
         prob.set_val(
-            f'traj.cruise.rhs_all.{Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT}', 0.5, units='unitless')
+            f'traj.cruise.rhs_all.{Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT}',
+            0.5,
+            units='unitless',
+        )
 
         prob.set_solver_print(level=0)
 
@@ -317,5 +329,3 @@ class TurbopropTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-    # test = CustomEngineTest()
-    # test.test_custom_engine()
