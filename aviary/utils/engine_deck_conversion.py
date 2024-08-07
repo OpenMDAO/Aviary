@@ -7,7 +7,7 @@ from enum import Enum
 
 import numpy as np
 import openmdao.api as om
-from dymos.models.atmosphere import USatm1976Comp
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from openmdao.components.interp_util.interp import InterpND
 
 from aviary.utils.conversion_utils import _rep, _parse, _read_map
@@ -231,9 +231,10 @@ def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
 
             prob.model.add_subsystem(
                 name='atmosphere',
-                subsys=USatm1976Comp(num_nodes=len(data[MACH])),
-                promotes_inputs=[('h', Dynamic.Mission.ALTITUDE)],
-                promotes_outputs=[('temp', Dynamic.Mission.TEMPERATURE)])
+                subsys=Atmosphere(num_nodes=len(data[MACH])),
+                promotes_inputs=[Dynamic.Mission.ALTITUDE],
+                promotes_outputs=[Dynamic.Mission.TEMPERATURE],
+            )
 
             prob.model.add_subsystem(
                 name='conversion',
@@ -548,10 +549,11 @@ def _generate_flight_idle(data, T4T2, ref_sls_airflow, ref_sfn_idle):
         promotes=['*'])
 
     prob.model.add_subsystem(
-        name='atmosphere', subsys=USatm1976Comp(
-            num_nodes=nn), promotes_inputs=[
-            ('h', Dynamic.Mission.ALTITUDE)], promotes_outputs=[
-                ('temp', Dynamic.Mission.TEMPERATURE), ('pres', Dynamic.Mission.STATIC_PRESSURE)])
+        name='atmosphere',
+        subsys=Atmosphere(num_nodes=nn),
+        promotes_inputs=[Dynamic.Mission.ALTITUDE],
+        promotes_outputs=[Dynamic.Mission.TEMPERATURE, Dynamic.Mission.STATIC_PRESSURE],
+    )
 
     prob.model.add_subsystem(
         name='conversion',
