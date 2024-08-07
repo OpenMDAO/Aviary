@@ -167,7 +167,7 @@ def setup_trajectory_params(
     """
     # TODO: variables_to_add is required, so should be an arg, not a kwarg.
     if variables_to_add is None:
-        return traj
+        variables_to_add = []
 
     # Step 1: Initialize a dictionary to hold parameters and their associated phases
     parameters_with_phases = {}
