@@ -1,6 +1,6 @@
 import numpy as np
 import openmdao.api as om
-from dymos.models.atmosphere.atmos_1976 import USatm1976Comp
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH as rho_sl
 from aviary.mission.gasp_based.ode.base_ode import BaseODE
@@ -88,20 +88,14 @@ class UnsteadySolvedODE(BaseODE):
                 promotes_outputs=['*'])
 
         self.add_subsystem(
-            "USatm",
-            USatm1976Comp(
-                num_nodes=nn, output_dsos_dh=True),
-            promotes_inputs=[
-                ("h",
-                 Dynamic.Mission.ALTITUDE)],
+            name='atmosphere',
+            subsys=Atmosphere(num_nodes=nn, output_dsos_dh=True),
+            promotes_inputs=[Dynamic.Mission.ALTITUDE],
             promotes_outputs=[
-                ("rho", Dynamic.Mission.DENSITY),
-                ("sos",
-                 Dynamic.Mission.SPEED_OF_SOUND),
-                ("temp",
-                 Dynamic.Mission.TEMPERATURE),
-                ("pres",
-                 Dynamic.Mission.STATIC_PRESSURE),
+                Dynamic.Mission.DENSITY,
+                Dynamic.Mission.SPEED_OF_SOUND,
+                Dynamic.Mission.TEMPERATURE,
+                Dynamic.Mission.STATIC_PRESSURE,
                 "viscosity",
                 "drhos_dh",
                 "dsos_dh",
@@ -113,20 +107,13 @@ class UnsteadySolvedODE(BaseODE):
                            promotes_inputs=["*"],
                            promotes_outputs=["*"])
 
-        inputs_list = ['*', ('rho', Dynamic.Mission.DENSITY)]
-        outputs_list = ['*']
-        if input_speed_type is SpeedType.TAS:
-            inputs_list.append(('TAS', Dynamic.Mission.VELOCITY))
-        else:
-            outputs_list.append(('TAS', Dynamic.Mission.VELOCITY))
-
         self.add_subsystem(
             "fc",
-            UnsteadySolvedFlightConditions(num_nodes=nn,
-                                           ground_roll=ground_roll,
-                                           input_speed_type=input_speed_type),
-            promotes_inputs=inputs_list,
-            promotes_outputs=outputs_list,
+            UnsteadySolvedFlightConditions(
+                num_nodes=nn, ground_roll=ground_roll, input_speed_type=input_speed_type
+            ),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         control_iter_group = self.add_subsystem("control_iter_group",
@@ -201,8 +188,11 @@ class UnsteadySolvedODE(BaseODE):
 
         eom_comp = UnsteadySolvedEOM(num_nodes=nn, ground_roll=ground_roll)
 
-        input_list = ['*', (Dynamic.Mission.THRUST_TOTAL, "thrust_req"),
-                      ('TAS', Dynamic.Mission.VELOCITY)]
+        input_list = [
+            '*',
+            (Dynamic.Mission.THRUST_TOTAL, "thrust_req"),
+            Dynamic.Mission.VELOCITY,
+        ]
         control_iter_group.add_subsystem("eom", subsys=eom_comp,
                                          promotes_inputs=input_list,
                                          promotes_outputs=["*"])

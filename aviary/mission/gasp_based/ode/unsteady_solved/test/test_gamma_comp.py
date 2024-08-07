@@ -23,7 +23,7 @@ class TestUnsteadyFlightEOM(unittest.TestCase):
 
         p.setup(force_alloc_complex=True)
 
-        p.set_val("TAS", 250, units="kn")
+        p.set_val(Dynamic.Mission.VELOCITY, 250, units="kn")
         p.set_val(Dynamic.Mission.MASS, 175_000, units="lbm")
         p.set_val(Dynamic.Mission.THRUST_TOTAL, 20_000, units="lbf")
         p.set_val(Dynamic.Mission.LIFT, 175_000, units="lbf")
@@ -66,7 +66,7 @@ class TestUnsteadyFlightEOM(unittest.TestCase):
             assert_near_equal(dgam_dt, np.zeros(nn), tolerance=1.0E-12)
             assert_near_equal(dgam_dt_approx, np.zeros(nn), tolerance=1.0E-12)
 
-        p.set_val("TAS", 250 + 10 * np.random.rand(nn), units="kn")
+        p.set_val(Dynamic.Mission.VELOCITY, 250 + 10 * np.random.rand(nn), units="kn")
         p.set_val(Dynamic.Mission.MASS, 175_000 + 1000 * np.random.rand(nn), units="lbm")
         p.set_val(Dynamic.Mission.THRUST_TOTAL, 20_000 +
                   100 * np.random.rand(nn), units="lbf")

@@ -45,7 +45,7 @@ class AccelerationODETestCase(unittest.TestCase):
         check_prob_outputs(self.prob, testvals, rtol=1e-2)
 
         partial_data = self.prob.check_partials(
-            method="cs", out_stream=None, excludes=["*USatm*", "*params*", "*aero*"]
+            method="cs", out_stream=None, excludes=["*params*", "*aero*"]
         )
         assert_check_partials(partial_data, rtol=1e-10)
 
