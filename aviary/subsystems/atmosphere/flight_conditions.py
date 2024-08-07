@@ -194,7 +194,7 @@ class FlightConditions(om.ExplicitComponent):
         elif in_type is SpeedType.MACH:
             mach = inputs[Dynamic.Mission.MACH]
             outputs[Dynamic.Mission.VELOCITY] = TAS = sos * mach
-            outputs["EAS"] = EAS = TAS * (rho / constants.RHO_SEA_LEVEL_ENGLISH) ** 0.5
+            outputs["EAS"] = TAS * (rho / constants.RHO_SEA_LEVEL_ENGLISH) ** 0.5
             outputs[Dynamic.Mission.DYNAMIC_PRESSURE] = 0.5 * rho * sos**2 * mach**2
 
     def compute_partials(self, inputs, J):
