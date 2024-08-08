@@ -93,7 +93,6 @@ def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
         vehicle_data = update_gasp_options(vehicle_data)
     elif legacy_code is FLOPS:
         vehicle_data = update_flops_options(vehicle_data)
-        # this function was missing. should we add it here?
 
     if not out_file.is_file():  # default outputted file to be in same directory as input
         out_file = fortran_deck.parent / out_file
