@@ -273,14 +273,15 @@ def get_run_status(status_filepath):
 
 def create_report_frame(format, text_filepath, documentation):
     """
-    Create a Panel Pane that contains an embedded external file in HTML, Markdown, or text format.
+    Create a Panel Pane that contains an embedded external file in HTML, Markdown, or text format,
+    or a simple message in HTML format.
 
     Parameters
     ----------
     format : str
-        Format of the file to be embedded. Options are 'html', 'text', 'markdown'.
-    text_file_name : str
-        Name of the report text file.
+        Format of the file to be embedded. Options are 'html', 'text', 'markdown', 'simple_message'.
+    text_filepath : str
+        Path to the report text file or message if format is 'simple_message'.
     documentation : str
         Explanation of what this tab is showing.
 
@@ -290,15 +291,16 @@ def create_report_frame(format, text_filepath, documentation):
         A Panel Pane object to be displayed in the dashboard. Or None if the file
         does not exist.
     """
-    if os.path.exists(text_filepath):
+    if format == "simple_message":
+        report_pane = pn.Column(
+            pn.pane.HTML(f"<p>{documentation}</p>", styles={'text-align': 'left'}),
+            pn.pane.HTML(f"<p>{text_filepath}</p>", styles={'text-align': 'left'})
+        )
+    elif os.path.exists(text_filepath):
         if format == "html":
             iframe_css = 'width=1200px height=800px overflow-x="scroll" overflow="scroll" margin=0px padding=0px border=20px frameBorder=20px scrolling="yes"'
-            report_pane = pn.pane.HTML(
-                f"<p>{documentation}</p><iframe {iframe_css} src=/home/{text_filepath}></iframe>"
-            )
             report_pane = pn.Column(
-                pn.pane.HTML(f"<p>{documentation}</p>",
-                             styles={'text-align': documentation_text_align}),
+                pn.pane.HTML(f"<p>{documentation}</p>", styles={'text-align': 'left'}),
                 pn.pane.HTML(f"<iframe {iframe_css} src=/home/{text_filepath}></iframe>")
             )
         elif format in ["markdown", "text"]:
@@ -311,11 +313,9 @@ def create_report_frame(format, text_filepath, documentation):
             elif format == "text":
                 report_pane = pn.pane.Markdown(f"```\n{file_text}\n```\n")
             report_pane = pn.Column(
-                pn.pane.HTML(f"<p>{documentation}</p>",
-                             styles={'text-align': documentation_text_align}),
+                pn.pane.HTML(f"<p>{documentation}</p>", styles={'text-align': 'left'}),
                 report_pane
             )
-
         else:
             raise RuntimeError(f"Report format of {format} is not supported.")
     else:
@@ -531,7 +531,9 @@ def create_aircraft_3d_file(recorder_file, reports_dir, outfilepath):
     )
 
     aircraft_3d_model = Aircraft3DModel(recorder_file)
-
+    aircraft_3d_model.read_variables()
+    aircraft_3d_model.get_aframe_markup()
+    aircraft_3d_model.get_camera_entity(aircraft_3d_model.fuselage.length)
     aircraft_3d_model.write_file(aircraft_3d_template_filepath, outfilepath)
 
 
@@ -561,6 +563,10 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
             f"The script name, '{script_name}', does not have a reports folder associated with it. "
             f"The directory '{reports_dir}' does not exist."
         )
+
+    if not os.path.exists(problem_recorder):
+        issue_warning(
+            f"Given Problem case recorder file {problem_recorder} does not exist.")
 
     # TODO - use lists and functions to do this with a lot less code
     ####### Model Tab #######
@@ -744,8 +750,14 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
                     results_tabs_list.append(("Aircraft 3d model", aircraft_3d_pane))
             except Exception as e:
                 issue_warning(
-                    f"Unable to create aircraft 3D model display due to error {e}"
+                    f'Unable to create aircraft 3D model display due to error {e}'
                 )
+                error_pane = create_report_frame(
+                    "simple_message", f"Unable to create aircraft 3D model display due to error: {e}",
+                    "Error"
+                )
+                if error_pane:
+                    results_tabs_list.append(("Aircraft 3d model", error_pane))
 
     # Make the Aviary variables table pane
     if os.path.exists(problem_recorder):
@@ -780,7 +792,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
             results_tabs_list.append(("Aviary Variables", aviary_vars_pane))
         except Exception as e:
             issue_warning(
-                f"Unable to create Aviary Variables tab in dashboard due to the error: {str(e)}"
+                f'Unable to create Aviary Variables tab in dashboard due to the error: {e}'
             )
 
     # Mission Summary
