@@ -37,8 +37,6 @@ class AscentEOMTestCase(unittest.TestCase):
         tol = 1e-6
         self.prob.run_model()
 
-        print(self.prob[Dynamic.Mission.VELOCITY_RATE])
-        print(self.prob[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE])
         assert_near_equal(
             self.prob[Dynamic.Mission.VELOCITY_RATE], np.array(
                 [2.202965, 2.202965]), tol

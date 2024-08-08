@@ -35,39 +35,31 @@ class AscentODETestCase(unittest.TestCase):
         tol = tol = 1e-6
         assert_near_equal(
             self.prob[Dynamic.Mission.VELOCITY_RATE], np.array(
-                [641174.75, 641174.75]), tol
-        )
+                [641174.75, 641174.75]), tol)
         assert_near_equal(
             self.prob[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE], np.array(
-                [2260.644, 2260.644]), tol
-        )
+                [2260.644, 2260.644]), tol)
         assert_near_equal(
             self.prob[Dynamic.Mission.ALTITUDE_RATE], np.array(
-                [0.0, 0.0]), tol
-        )
+                [0.0, 0.0]), tol)
         assert_near_equal(
             self.prob[Dynamic.Mission.DISTANCE_RATE], np.array(
-                [168.781, 168.781]), tol
-        )
+                [168.781, 168.781]), tol)
         assert_near_equal(
             self.prob["alpha_rate"], np.array(
-                [0.0, 0.0]), tol
-        )
+                [0.0, 0.0]), tol)
         assert_near_equal(
             self.prob["normal_force"], np.array(
-                [0.0, 0.0]), tol
-        )
+                [0.0, 0.0]), tol)
         assert_near_equal(
             self.prob["fuselage_pitch"], np.array(
-                [0.0, 0.0]), tol
-        )
+                [0.0, 0.0]), tol)
         assert_near_equal(
             self.prob["load_factor"], np.array(
-                [11850.494, 11850.494]), tol
-        )
+                [11850.494, 11850.494]), tol)
 
         partial_data = self.prob.check_partials(
-            out_stream=None, method="cs", excludes=["*USatm*", "*params*", "*aero*"]
+            out_stream=None, method="cs", excludes=["*params*", "*aero*"]
         )
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 

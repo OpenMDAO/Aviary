@@ -56,7 +56,7 @@ class RotationODETestCase(unittest.TestCase):
                 [0.0, 0.0]), tol)
 
         partial_data = self.prob.check_partials(
-            out_stream=None, method="cs", excludes=["*USatm*", "*params*", "*aero*"]
+            out_stream=None, method="cs", excludes=["*params*", "*aero*"]
         )
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
