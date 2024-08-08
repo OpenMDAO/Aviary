@@ -243,10 +243,12 @@ class Aircraft:
         REFERENCE_DIAMETER = 'aircraft:engine:reference_diameter'
         REFERENCE_MASS = 'aircraft:engine:reference_mass'
         REFERENCE_SLS_THRUST = 'aircraft:engine:reference_sls_thrust'
+        RPM_DESIGN = 'aircraft:engine:rpm_design'
         SCALE_FACTOR = 'aircraft:engine:scale_factor'
         SCALE_MASS = 'aircraft:engine:scale_mass'
         SCALE_PERFORMANCE = 'aircraft:engine:scale_performance'
         SCALED_SLS_THRUST = 'aircraft:engine:scaled_sls_thrust'
+        SHAFT_POWER_DESIGN = 'aircraft:engine:shaft_power_design'
         STARTER_MASS = 'aircraft:engine:starter_mass'
         SUBSONIC_FUEL_FLOW_SCALER = 'aircraft:engine:subsonic_fuel_flow_scaler'
         SUPERSONIC_FUEL_FLOW_SCALER = 'aircraft:engine:supersonic_fuel_flow_scaler'
@@ -257,9 +259,10 @@ class Aircraft:
         WING_LOCATIONS = 'aircraft:engine:wing_locations'
 
         class Gearbox:
+            EFFICIENCY = "aircraft:engine:gearbox:efficiency"
             GEAR_RATIO = "aircraft:engine:gearbox:gear_ratio"
             MASS = "aircraft:engine:gearbox:mass"
-            TORQUE_MAX = "aircraft:engine:gearbox:torque_max"
+            SPECIFIC_TORQUE = "aircraft:engine:gearbox:specific_torque"
 
         class Motor:
             MASS = 'aircraft:engine:motor:mass'
@@ -638,10 +641,12 @@ class Dynamic:
         # PERCENT_ROTOR_RPM_CORRECTED = 'percent_rotor_rpm_corrected'
         PROPELLER_TIP_SPEED = 'propeller_tip_speed'
         RPM = 'rotations_per_minute'
+        RPM_GEAR = 'rotations_per_minute_gearbox'
         SHAFT_POWER = 'shaft_power'
-        SHAFT_POWER_CORRECTED = 'shaft_power_corrected'
-        SHAFT_POWER_CORRECTED_MAX = 'shaft_power_corrected_max'
+        SHAFT_POWER_CONSTRAINT = 'shaft_power_constraint'
+        SHAFT_POWER_GEAR = 'shaft_power_gearbox'
         SHAFT_POWER_MAX = 'shaft_power_max'
+        SHAFT_POWER_MAX_GEAR = 'shaft_power_max_gearbox'
         SPECIFIC_ENERGY = 'specific_energy'
         SPECIFIC_ENERGY_RATE = 'specific_energy_rate'
         SPECIFIC_ENERGY_RATE_EXCESS = 'specific_energy_rate_excess'
@@ -655,6 +660,7 @@ class Dynamic:
         THRUST_MAX_TOTAL = 'thrust_net_max_total'
         THRUST_TOTAL = 'thrust_net_total'
         TORQUE = 'torque'
+        TORQUE_GEAR = 'torque_gear'
         VELOCITY = 'velocity'
         VELOCITY_RATE = 'velocity_rate'
 

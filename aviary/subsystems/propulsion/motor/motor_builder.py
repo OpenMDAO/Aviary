@@ -48,7 +48,7 @@ class MotorBuilder(SubsystemBuilderBase):
         super().__init__(name)
 
     def build_pre_mission(self, aviary_inputs):
-        return MotorPreMission(aviary_inputs=aviary_inputs)
+        return MotorPreMission(aviary_inputs=aviary_inputs, simple_mass=True)
 
     def build_mission(self, num_nodes, aviary_inputs):
         return MotorMission(num_nodes=num_nodes, aviary_inputs=aviary_inputs)
