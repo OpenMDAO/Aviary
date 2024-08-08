@@ -47,9 +47,9 @@ class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
                                      core_subsystems=[aero])
 
         ig = p.model.add_subsystem("iter_group",
-                              subsys=g,
-                              promotes_inputs=["*"],
-                              promotes_outputs=["*"])
+                                    subsys=g,
+                                    promotes_inputs=["*"],
+                                    promotes_outputs=["*"])
 
         for key, data in param_port.param_data.items():
             p.model.set_input_defaults(key, **data)
