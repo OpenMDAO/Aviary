@@ -1,6 +1,5 @@
 import numpy as np
 import openmdao.api as om
-from dymos.models.atmosphere.atmos_1976 import USatm1976Comp
 
 from aviary.mission.gasp_based.ode.base_ode import BaseODE
 from aviary.mission.gasp_based.ode.groundroll_eom import GroundrollEOM
@@ -54,13 +53,7 @@ class GroundrollODE(BaseODE):
             promotes_inputs=['*'],
             promotes_outputs=['*'])
 
-        self.add_subsystem(
-            "USatm", USatm1976Comp(
-                num_nodes=nn), promotes_inputs=[
-                ("h", Dynamic.Mission.ALTITUDE)], promotes_outputs=[
-                "rho", ("sos", Dynamic.Mission.SPEED_OF_SOUND), ("temp", Dynamic.Mission.TEMPERATURE), ("pres", Dynamic.Mission.STATIC_PRESSURE), "viscosity"], )
-
-        self.add_flight_conditions(nn)
+        self.add_atmosphere(nn)
 
         # broadcast scalar i_wing to alpha for aero
         self.add_subsystem("init_alpha",
