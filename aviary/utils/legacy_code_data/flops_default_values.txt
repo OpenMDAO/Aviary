@@ -1,5 +1,16 @@
 Default Values from FLOPS
 
   &WTIN
-  EEXP=1.15,
+  EEXP=1.15,unitless
+  IALTWT=False,unitless
+  CARGF=False,unitless
+  CARBAS=False,unitless
+ \
+  &ENGDIN
+  IDLE=False,unitless
+  IGEO=False,unitless
+  NONEG=False,unitless
+ \
+  &AERIN
+  MIKE=False,unitless
  \
