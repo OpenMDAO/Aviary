@@ -218,12 +218,8 @@ class DetailedWingBendingFact(om.ExplicitComponent):
 
                 delme = dy * eel[1:]
 
-                if num_wing_engines[i] > 0:
-                    delme[loc[-1]] = engine_locations[idx:idx2][0] - \
-                        integration_stations[loc[-1]]
-                else:
-                    delme[loc] = engine_locations[idx:idx2] - \
-                        integration_stations[loc]
+                delme[loc[-1]] = engine_locations[idx:idx2][0] - \
+                    integration_stations[loc[-1]]
 
                 eem = delme * csw
                 eem = np.cumsum(eem[::-1])[::-1]
