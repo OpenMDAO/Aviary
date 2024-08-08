@@ -128,6 +128,8 @@ class MultiMissionProblem(om.Problem):
         dm.run_problem(self, make_plots=True)
 
     def get_design_range(self, phase_infos):
+        # Take the largest range from all the phase_infos and sets that as design_range
+        # this affects how large the avionics mass and landing gear mass
         design_range = 0
         for phase_info in phase_infos:
             get_range = phase_info['post_mission']['target_range'][0]  # TBD add units
