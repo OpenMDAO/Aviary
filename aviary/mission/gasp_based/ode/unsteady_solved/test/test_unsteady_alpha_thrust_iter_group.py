@@ -99,9 +99,8 @@ class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
         # 2. Test that forces balance normal to the velocity axis
         assert_near_equal(lift + thrust_req * s_alphai, weight * c_gamma)
 
-        with np.printoptions(linewidth=1024):
-            cpd = p.check_partials(out_stream=None, form='central', method="fd",
-                                   excludes=["*params*", "*aero*"])
+        cpd = p.check_partials(out_stream=None, form='central', method="fd",
+                               excludes=["*params*", "*aero*"])
         assert_check_partials(cpd, atol=1.5e-4, rtol=1e-4)
 
     def test_iter_group(self):
@@ -113,5 +112,3 @@ class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-    # test = TestUnsteadyAlphaThrustIterGroup()
-    # test._test_unsteady_alpha_thrust_iter_group()
