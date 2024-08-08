@@ -62,10 +62,11 @@ class DescentODETestCase(unittest.TestCase):
             Dynamic.Mission.MACH: np.array([0.8, 0.696]),
             Dynamic.Mission.FLIGHT_PATH_ANGLE: np.deg2rad([-2.94, -3.98]),
         }
+
         check_prob_outputs(self.prob, testvals, rtol=1e-1)  # TODO tighten
 
         partial_data = self.prob.check_partials(
-            method="cs", out_stream=None, excludes=["*USatm*", "*params*", "*aero*"]
+            method="cs", out_stream=None, excludes=["*params*", "*aero*"]
         )
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
@@ -96,7 +97,7 @@ class DescentODETestCase(unittest.TestCase):
         check_prob_outputs(self.prob, testvals, rtol=1e-1)  # TODO tighten
 
         partial_data = self.prob.check_partials(
-            out_stream=None, method="cs", excludes=["*USatm*", "*params*", "*aero*"]
+            out_stream=None, method="cs", excludes=["*params*", "*aero*"]
         )
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 

@@ -53,7 +53,6 @@ from aviary.subsystems.propulsion.utils import build_engine_deck
 
 # Miscellaneous
 from aviary.interface.methods_for_level2 import PreMissionGroup, PostMissionGroup
-from aviary.mission.gasp_based.flight_conditions import FlightConditions
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.utils.preprocessors import preprocess_options, preprocess_propulsion
@@ -129,6 +128,9 @@ from aviary.mission.gasp_based.phases.time_integration_traj import TimeIntegrati
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.aerodynamics.flops_based.tabular_aero_group import TabularAeroGroup
+
+# Atmosphere
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
 # Geometry
 from aviary.subsystems.geometry.geometry_builder import GeometryBuilderBase

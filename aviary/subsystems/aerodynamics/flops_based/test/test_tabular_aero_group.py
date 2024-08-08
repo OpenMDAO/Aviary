@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 import openmdao.api as om
-from dymos.models.atmosphere import USatm1976Comp
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from parameterized import parameterized
 
@@ -530,11 +530,8 @@ def _get_computed_aero_data_at_altitude(altitude, units):
     prob = om.Problem()
 
     prob.model.add_subsystem(
-        'atm', USatm1976Comp(num_nodes=1),
-        promotes_inputs=[('h', Dynamic.Mission.ALTITUDE)],
-        promotes_outputs=[
-            ('sos', Dynamic.Mission.SPEED_OF_SOUND), ('rho', Dynamic.Mission.DENSITY),
-            ('temp', Dynamic.Mission.TEMPERATURE), ('pres', Dynamic.Mission.STATIC_PRESSURE)])
+        name='atmosphere', subsys=Atmosphere(num_nodes=1), promotes=['*']
+    )
 
     prob.setup()
 

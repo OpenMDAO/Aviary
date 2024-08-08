@@ -47,7 +47,9 @@ class TestUnsteadySolvedODE(unittest.TestCase):
         p.final_setup()
 
         p.set_val(Dynamic.Mission.SPEED_OF_SOUND, 968.076 * np.ones(nn), units="ft/s")
-        p.set_val("rho", 0.000659904 * np.ones(nn), units="slug/ft**3")
+        p.set_val(
+            Dynamic.Mission.DENSITY, 0.000659904 * np.ones(nn), units="slug/ft**3"
+        )
         p.set_val("mach", 0.8 * np.ones(nn), units="unitless")
         p.set_val("mass", 170_000 * np.ones(nn), units="lbm")
 
