@@ -2195,7 +2195,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Engine.RPM_DESIGN,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INPROP.XNMAX', # maximum engine speed, rpm
+    historical_name={"GASP": 'INPROP.XNMAX',  # maximum engine speed, rpm
                      "FLOPS": None,
                      "LEAPS1": None
                      },
