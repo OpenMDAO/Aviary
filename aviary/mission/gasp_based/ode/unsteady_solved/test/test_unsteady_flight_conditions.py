@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 import openmdao.api as om
-from dymos.models.atmosphere.atmos_1976 import USatm1976Comp
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from openmdao.utils.assert_utils import (assert_check_partials,
                                          assert_near_equal)
 
@@ -20,23 +20,35 @@ class TestUnsteadyFlightConditions(unittest.TestCase):
 
         p = om.Problem()
 
-        p.model.add_subsystem("atmos",
-                              USatm1976Comp(num_nodes=nn),
-                              promotes_inputs=["*", ("h", Dynamic.Mission.ALTITUDE)],
-                              promotes_outputs=["*", ("sos", Dynamic.Mission.SPEED_OF_SOUND)])
+        p.model.add_subsystem(
+            name='atmosphere',
+            subsys=Atmosphere(num_nodes=nn, output_dsos_dh=True),
+            promotes_inputs=[Dynamic.Mission.ALTITUDE],
+            promotes_outputs=[
+                Dynamic.Mission.DENSITY,
+                Dynamic.Mission.SPEED_OF_SOUND,
+                Dynamic.Mission.TEMPERATURE,
+                Dynamic.Mission.STATIC_PRESSURE,
+                "viscosity",
+                "drhos_dh",
+                "dsos_dh",
+            ],
+        )
 
-        p.model.add_subsystem("fc",
-                              UnsteadySolvedFlightConditions(num_nodes=nn,
-                                                             ground_roll=ground_roll,
-                                                             input_speed_type=input_speed_type),
-                              promotes_inputs=["*"],
-                              promotes_outputs=["*"])
+        p.model.add_subsystem(
+            "flight_conditions",
+            UnsteadySolvedFlightConditions(
+                num_nodes=nn, ground_roll=ground_roll, input_speed_type=input_speed_type
+            ),
+            promotes_inputs=["*"],
+            promotes_outputs=["*"],
+        )
 
         p.setup(force_alloc_complex=True)
 
         if input_speed_type is SpeedType.TAS:
             p.set_val(Dynamic.Mission.ALTITUDE, 37500, units="ft")
-            p.set_val("TAS", 250, units="kn")
+            p.set_val(Dynamic.Mission.VELOCITY, 250, units="kn")
             p.set_val("dTAS_dr", np.zeros(nn), units="kn/km")
         elif input_speed_type is SpeedType.EAS:
             p.set_val(Dynamic.Mission.ALTITUDE, 37500, units="ft")
@@ -51,9 +63,9 @@ class TestUnsteadyFlightConditions(unittest.TestCase):
 
         mach = p.get_val(Dynamic.Mission.MACH)
         eas = p.get_val("EAS")
-        tas = p.get_val("TAS", units="m/s")
+        tas = p.get_val(Dynamic.Mission.VELOCITY, units="m/s")
         sos = p.get_val(Dynamic.Mission.SPEED_OF_SOUND, units="m/s")
-        rho = p.get_val("rho", units="kg/m**3")
+        rho = p.get_val(Dynamic.Mission.DENSITY, units="kg/m**3")
         rho_sl = RHO_SEA_LEVEL_METRIC
         dTAS_dt_approx = p.get_val("dTAS_dt_approx")
 
@@ -74,3 +86,7 @@ class TestUnsteadyFlightConditions(unittest.TestCase):
                 with self.subTest(msg=f"ground_roll={ground_roll} in_type={in_type}"):
                     self._test_unsteady_flight_conditions(
                         ground_roll=ground_roll, input_speed_type=in_type)
+
+
+if __name__ == '__main__':
+    unittest.main()

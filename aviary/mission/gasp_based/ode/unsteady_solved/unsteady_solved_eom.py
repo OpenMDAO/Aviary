@@ -26,8 +26,9 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
 
         # Inputs
 
-        self.add_input("TAS", shape=nn,
-                       desc="true air speed", units="m/s")
+        self.add_input(
+            Dynamic.Mission.VELOCITY, shape=nn, desc="true air speed", units="m/s"
+        )
 
         # TODO: This should probably be declared in Newtons, but the weight variable
         # is really a mass. This should be resolved with an adapter component that
@@ -76,8 +77,9 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
         ar = np.arange(nn, dtype=int)
         ground_roll = self.options["ground_roll"]
 
-        self.declare_partials(of="dt_dr", wrt="TAS",
-                              rows=ar, cols=ar)
+        self.declare_partials(
+            of="dt_dr", wrt=Dynamic.Mission.VELOCITY, rows=ar, cols=ar
+        )
 
         self.declare_partials(of=["normal_force", "dTAS_dt"],
                               wrt=[Dynamic.Mission.THRUST_TOTAL, Dynamic.Mission.DRAG,
@@ -124,8 +126,9 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
                                   wrt=[Dynamic.Mission.FLIGHT_PATH_ANGLE],
                                   rows=ar, cols=ar)
 
-            self.declare_partials(of=["dgam_dt"], wrt=[
-                                  "TAS"], rows=ar, cols=ar)
+            self.declare_partials(
+                of=["dgam_dt"], wrt=[Dynamic.Mission.VELOCITY], rows=ar, cols=ar
+            )
 
             self.declare_partials(of="load_factor", wrt=[Dynamic.Mission.FLIGHT_PATH_ANGLE],
                                   rows=ar, cols=ar)
@@ -139,15 +142,18 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
                                   wrt=[Dynamic.Mission.FLIGHT_PATH_ANGLE],
                                   rows=ar, cols=ar, val=1.0)
 
-            self.declare_partials(of=["dgam_dt_approx"],
-                                  wrt=["dh_dr", "d2h_dr2", "TAS"],
-                                  rows=ar, cols=ar)
+            self.declare_partials(
+                of=["dgam_dt_approx"],
+                wrt=["dh_dr", "d2h_dr2", Dynamic.Mission.VELOCITY],
+                rows=ar,
+                cols=ar,
+            )
 
             self.declare_partials(of=["dgam_dt_approx", "dgam_dt"],
                                   wrt=[Aircraft.Wing.INCIDENCE])
 
     def compute(self, inputs, outputs):
-        tas = inputs["TAS"]
+        tas = inputs[Dynamic.Mission.VELOCITY]
         thrust = inputs[Dynamic.Mission.THRUST_TOTAL]
         # convert to newtons  # TODO: change this to use the units conversion
         weight = inputs["mass"] * GRAV_ENGLISH_LBM * LBF_TO_N
@@ -210,7 +216,7 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
         weight = inputs["mass"] * GRAV_ENGLISH_LBM * LBF_TO_N
         drag = inputs[Dynamic.Mission.DRAG]
         lift = inputs[Dynamic.Mission.LIFT]
-        tas = inputs["TAS"]
+        tas = inputs[Dynamic.Mission.VELOCITY]
         i_wing = inputs[Aircraft.Wing.INCIDENCE]
         alpha = inputs["alpha"]
 
@@ -247,7 +253,7 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
 
         _f = tcai - drag - weight * sgam - mu * (weight - lift - tsai)
 
-        partials["dt_dr", "TAS"] = -cgam / dr_dt**2
+        partials["dt_dr", Dynamic.Mission.VELOCITY] = -cgam / dr_dt**2
 
         partials["dTAS_dt", Dynamic.Mission.THRUST_TOTAL] = calpha_i / \
             m + salpha_i / m * mu
@@ -287,8 +293,9 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
             partials["dgam_dt", Dynamic.Mission.FLIGHT_PATH_ANGLE] = m * \
                 tas * weight * sgam / mtas2
             partials["dgam_dt", "alpha"] = m * tas * tcai / mtas2
-            partials["dgam_dt", "TAS"] = - \
-                m * (tsai + lift - weight * cgam) / mtas2
+            partials["dgam_dt", Dynamic.Mission.VELOCITY] = (
+                -m * (tsai + lift - weight * cgam) / mtas2
+            )
             partials["dgam_dt", Aircraft.Wing.INCIDENCE] = -m * tas * tcai / mtas2
 
             dgam_dr = d2h_dr2 / (dh_dr ** 2 + 1)
@@ -297,7 +304,7 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
 
             partials["dgam_dt_approx", "dh_dr"] = dr_dt * ddgam_dr_ddh_dr
             partials["dgam_dt_approx", "d2h_dr2"] = dr_dt * ddgam_dr_dd2h_dr2
-            partials["dgam_dt_approx", "TAS"] = dgam_dr * drdot_dtas
+            partials["dgam_dt_approx", Dynamic.Mission.VELOCITY] = dgam_dr * drdot_dtas
             partials["dgam_dt_approx",
                      Dynamic.Mission.FLIGHT_PATH_ANGLE] = dgam_dr * drdot_dgam
             partials["load_factor", Dynamic.Mission.FLIGHT_PATH_ANGLE] = (

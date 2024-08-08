@@ -4,9 +4,8 @@ import numpy as np
 import openmdao.api as om
 
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
-from dymos.models.atmosphere import USatm1976Comp
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
-from aviary.constants import TSLS_DEGR
 from aviary.variable_info.variables import Aircraft
 from aviary.subsystems.propulsion.propeller.propeller_performance import (
     OutMachs, PropellerPerformance, TipSpeedLimit,
@@ -182,27 +181,10 @@ class PropellerPerformanceTest(unittest.TestCase):
         prob = om.Problem()
 
         num_nodes = 3
-        prob.model.add_subsystem(
-            name='atmosphere',
-            subsys=USatm1976Comp(num_nodes=num_nodes),
-            promotes_inputs=[('h', Dynamic.Mission.ALTITUDE)],
-            promotes_outputs=[
-                ('sos', Dynamic.Mission.SPEED_OF_SOUND),
-                ('rho', Dynamic.Mission.DENSITY),
-                ('temp', Dynamic.Mission.TEMPERATURE),
-                ('pres', Dynamic.Mission.STATIC_PRESSURE),
-            ],
-        )
 
         prob.model.add_subsystem(
-            'compute_mach',
-            om.ExecComp(
-                f'{Dynamic.Mission.MACH} = 0.00150933 * {Dynamic.Mission.VELOCITY} * ({TSLS_DEGR} / {Dynamic.Mission.TEMPERATURE})**0.5',
-                mach={'units': 'unitless', 'val': np.zeros(num_nodes)},
-                velocity={'units': 'knot', 'val': np.zeros(num_nodes)},
-                temperature={'units': 'degR', 'val': np.zeros(num_nodes)},
-                has_diag_partials=True,
-            ),
+            name='atmosphere',
+            subsys=Atmosphere(num_nodes=num_nodes),
             promotes=['*'],
         )
 
