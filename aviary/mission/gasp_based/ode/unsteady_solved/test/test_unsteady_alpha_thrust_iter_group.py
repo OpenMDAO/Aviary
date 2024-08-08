@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_near_equal
+from openmdao.utils.assert_utils import assert_near_equal, assert_check_partials
 
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.mission.gasp_based.ode.params import ParamPort
@@ -46,21 +46,25 @@ class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
                                      aviary_options=get_option_defaults(),
                                      core_subsystems=[aero])
 
-        p.model.add_subsystem("iter_group",
+        ig = p.model.add_subsystem("iter_group",
                               subsys=g,
                               promotes_inputs=["*"],
                               promotes_outputs=["*"])
 
         for key, data in param_port.param_data.items():
             p.model.set_input_defaults(key, **data)
+        if ground_roll:
+            ig.set_input_defaults("alpha", np.zeros(nn), units="deg")
 
         p.setup(force_alloc_complex=True)
 
         p.final_setup()
 
         p.set_val(Dynamic.Mission.SPEED_OF_SOUND, 968.076 * np.ones(nn), units="ft/s")
-        p.set_val("rho", 0.000659904 * np.ones(nn), units="slug/ft**3")
-        p.set_val("TAS", 487 * np.ones(nn), units="kn")
+        p.set_val(
+            Dynamic.Mission.DENSITY, 0.000659904 * np.ones(nn), units="slug/ft**3"
+        )
+        p.set_val(Dynamic.Mission.VELOCITY, 487 * np.ones(nn), units="kn")
         p.set_val("mass", 170_000 * np.ones(nn), units="lbm")
         p.set_val("dTAS_dr", 0.0 * np.ones(nn), units="kn/NM")
 
@@ -95,7 +99,13 @@ class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
         # 2. Test that forces balance normal to the velocity axis
         assert_near_equal(lift + thrust_req * s_alphai, weight * c_gamma)
 
+        with np.printoptions(linewidth=1024):
+            cpd = p.check_partials(out_stream=None, form='central', method="fd",
+                                   excludes=["*params*", "*aero*"])
+        assert_check_partials(cpd, atol=1.5e-4, rtol=1e-4)
+
     def test_iter_group(self):
+        # TODO: why not ground_roll in [True] ?
         for ground_roll in [False]:
             with self.subTest(msg=f"ground_roll={ground_roll}"):
                 self._test_unsteady_alpha_thrust_iter_group(ground_roll=ground_roll)
