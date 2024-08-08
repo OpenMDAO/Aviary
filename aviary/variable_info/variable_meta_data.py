@@ -2195,7 +2195,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Engine.RPM_DESIGN,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
+    historical_name={"GASP": 'INPROP.XNMAX', # maximum engine speed, rpm
                      "FLOPS": None,
                      "LEAPS1": None
                      },
@@ -2263,7 +2263,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Engine.SHAFT_POWER_DESIGN,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
+    historical_name={"GASP": 'INPROP.HPMSLS',  # max sea level static horsepower, hp
                      "FLOPS": None,
                      "LEAPS1": None,
                      },
@@ -2397,7 +2397,7 @@ add_meta_data(
                      "FLOPS": None,
                      "LEAPS1": None
                      },
-    units=None,
+    units='unitless',
     desc='The efficiency of the gearbox.',
     default_value=0.98,
 )
@@ -2405,7 +2405,7 @@ add_meta_data(
     Aircraft.Engine.Gearbox.GEAR_RATIO,
     meta_data=_MetaData,
     historical_name={"GASP": 'INPROP.GR', "FLOPS": None, "LEAPS1": None},
-    units=None,
+    units='unitless',
     desc='The ratio of the RPM_in divided by the RPM_out for the gearbox.',
     default_value=1.0,
 )
@@ -6640,11 +6640,11 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Mission.SHAFT_POWER_CON,
+    Dynamic.Mission.SHAFT_POWER_CONSTRAINT,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='kW',
-    desc='Must be positive to ensure that Aircraft.Engine.SHAFT_POWER_DESIGN is larger or equal to Dynamic.Mission.SHAFT_POWER_MAX',
+    desc='Must be zero or positive to ensure that the gearbox is sized large enough to handle the maximum shaft power the engine could output during any part of the mission',
 )
 
 

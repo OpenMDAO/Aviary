@@ -20,7 +20,7 @@ class GearboxBuilder(SubsystemBuilderBase):
 
     def build_pre_mission(self, aviary_inputs):
         """Builds an OpenMDAO system for the pre-mission computations of the subsystem."""
-        return GearboxPreMission(aviary_inputs=aviary_inputs)
+        return GearboxPreMission(aviary_inputs=aviary_inputs, simple_mass=True)
 
     def build_mission(self, num_nodes, aviary_inputs):
         """Builds an OpenMDAO system for the mission computations of the subsystem."""
@@ -38,7 +38,7 @@ class GearboxBuilder(SubsystemBuilderBase):
         DVs = {
             Aircraft.Engine.Gearbox.GEAR_RATIO: {
                 'opt': True,
-                'units': None,
+                'units': 'unitless',
                 'lower': 1.0,
                 'upper': 20.0,
                 'val':  10  # initial value
@@ -70,7 +70,7 @@ class GearboxBuilder(SubsystemBuilderBase):
         parameters = {
             Aircraft.Engine.Gearbox.EFFICIENCY: {
                 'val': 0.98,
-                'units': None,
+                'units': 'unitless',
             },
         }
 
@@ -82,18 +82,21 @@ class GearboxBuilder(SubsystemBuilderBase):
     def get_outputs(self):
         return [
             Dynamic.Mission.RPM_GEAR,
-            Dynamic.Mission.SHAFT_POWER_CON,
+            Dynamic.Mission.SHAFT_POWER_CONSTRAINT,
             Dynamic.Mission.SHAFT_POWER_GEAR,
             Dynamic.Mission.SHAFT_POWER_MAX_GEAR,
             Dynamic.Mission.TORQUE_GEAR,
         ]
 
     def get_constraints(self):
-        constraints = {
-            Dynamic.Mission.SHAFT_POWER_CON: {
-                'lower': 0.0,
-                'type': 'path',
-                'units': 'kW',
+        if self.include_constraints:
+            constraints = {
+                Dynamic.Mission.SHAFT_POWER_CONSTRAINT: {
+                    'lower': 0.0,
+                    'type': 'path',
+                    'units': 'kW',
+                }
             }
-        }
+        else:
+            constraints = {}
         return constraints

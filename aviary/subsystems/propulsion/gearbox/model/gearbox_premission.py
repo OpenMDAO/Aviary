@@ -13,7 +13,8 @@ class GearboxPreMission(om.Group):
     gearbox is fixed and RPM going out of the gearbox is fixed over the whole mission.
     """
 
-    def initialize(self):
+    def initialize(self, ):
+        self.options.declare("simple_mass", types=bool, default=True)
         self.options.declare(
             "aviary_inputs", types=AviaryValues,
             desc="collection of Aircraft/Mission specific options",
@@ -22,11 +23,10 @@ class GearboxPreMission(om.Group):
         self.name = 'gearbox_premission'
 
     def setup(self):
-
         self.add_subsystem('gearbox_PRM',
                            om.ExecComp('RPM_out = RPM_in / gear_ratio',
                                        RPM_out={'val': 0.0, 'units': 'rpm'},
-                                       gear_ratio={'val': 1.0, 'units': None},
+                                       gear_ratio={'val': 1.0, 'units': 'unitless'},
                                        RPM_in={'val': 0.0, 'units': 'rpm'},
                                        has_diag_partials=True),
                            promotes_inputs=[('RPM_in', Aircraft.Engine.RPM_DESIGN),
@@ -35,10 +35,10 @@ class GearboxPreMission(om.Group):
 
         # max torque is calculated based on input shaft power and output RPM
         self.add_subsystem('torque_comp',
-                           om.ExecComp('torque_max = shaft_power / (pi * RPM_out) * 30',
+                           om.ExecComp('torque_max = shaft_power / RPM_out',
                                        shaft_power={'val': 1.0, 'units': 'kW'},
                                        torque_max={'val': 1.0, 'units': 'kN*m'},
-                                       RPM_out={'val': 1.0, 'units': 'rpm'},
+                                       RPM_out={'val': 1.0, 'units': 'rad/s'},
                                        has_diag_partials=True),
                            promotes_inputs=[('shaft_power', Aircraft.Engine.SHAFT_POWER_DESIGN),
                                             'RPM_out'],
@@ -55,17 +55,17 @@ class GearboxPreMission(om.Group):
                                             ('specific_torque', Aircraft.Engine.Gearbox.SPECIFIC_TORQUE)],
                            promotes_outputs=[('gearbox_mass', Aircraft.Engine.Gearbox.MASS)])
 
-        # This gearbox can work for large systems but can produce negative weights for some inputs
-        # # Gearbox mass from "An N+3 Technolgoy Level Reference Propulsion System" by Scott Jones, William Haller, and Michael Tong
-        # # NASA TM 2017-219501
-
-        # self.add_subsystem('gearbox_mass',
-        #                    om.ExecComp('gearbox_mass = (shaftpower / RPM_out)**(0.75) * (RPM_in / RPM_out)**(0.15)',
-        #                                gearbox_mass={'val': 0.0, 'units': 'lb'},
-        #                                shaftpower={'val': 0.0, 'units': 'hp'},
-        #                                RPM_out={'val': 0.0, 'units': 'rpm'},
-        #                                RPM_in={'val': 0.0, 'units': 'rpm'},
-        #                                has_diag_partials=True),
-        #                    promotes_inputs=[('shaftpower', Aircraft.Engine.SHAFT_POWER_DESIGN),
-        #                                     'RPM_out', ('RPM_in', Aircraft.Engine.RPM_DESIGN)],
-        #                    promotes_outputs=[('gearbox_mass', Aircraft.Engine.Gearbox.MASS)])
+        if self.options["simple_mass"] is False:
+            # This gearbox mass calc can work for large systems but can produce negative weights for some inputs
+            # Gearbox mass from "An N+3 Technolgoy Level Reference Propulsion System" by Scott Jones, William Haller, and Michael Tong
+            # NASA TM 2017-219501
+            self.add_subsystem('gearbox_mass',
+                               om.ExecComp('gearbox_mass = (shaftpower / RPM_out)**(0.75) * (RPM_in / RPM_out)**(0.15)',
+                                           gearbox_mass={'val': 0.0, 'units': 'lb'},
+                                           shaftpower={'val': 0.0, 'units': 'hp'},
+                                           RPM_out={'val': 0.0, 'units': 'rpm'},
+                                           RPM_in={'val': 0.0, 'units': 'rpm'},
+                                           has_diag_partials=True),
+                               promotes_inputs=[('shaftpower', Aircraft.Engine.SHAFT_POWER_DESIGN),
+                                                'RPM_out', ('RPM_in', Aircraft.Engine.RPM_DESIGN)],
+                               promotes_outputs=[('gearbox_mass', Aircraft.Engine.Gearbox.MASS)])

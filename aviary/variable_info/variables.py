@@ -643,7 +643,7 @@ class Dynamic:
         RPM = 'rotations_per_minute'
         RPM_GEAR = 'rotations_per_minute_gearbox'
         SHAFT_POWER = 'shaft_power'
-        SHAFT_POWER_CON = 'shaft_power_con'
+        SHAFT_POWER_CONSTRAINT = 'shaft_power_constraint'
         SHAFT_POWER_GEAR = 'shaft_power_gearbox'
         SHAFT_POWER_MAX = 'shaft_power_max'
         SHAFT_POWER_MAX_GEAR = 'shaft_power_max_gearbox'

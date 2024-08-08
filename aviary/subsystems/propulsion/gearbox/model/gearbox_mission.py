@@ -24,7 +24,7 @@ class GearboxMission(om.Group):
         self.add_subsystem('RPM_comp',
                            om.ExecComp('RPM_out = RPM_in / gear_ratio',
                                        RPM_out={'val': np.ones(n), 'units': 'rpm'},
-                                       gear_ratio={'val': 1.0, 'units': None},
+                                       gear_ratio={'val': 1.0, 'units': 'unitless'},
                                        RPM_in={'val': np.ones(n), 'units': 'rpm'},
                                        has_diag_partials=True),
                            promotes_inputs=[('RPM_in', Aircraft.Engine.RPM_DESIGN),
@@ -36,17 +36,17 @@ class GearboxMission(om.Group):
                                        shaft_power_in={'val': np.ones(n), 'units': 'kW'},
                                        shaft_power_out={
                                            'val': np.ones(n), 'units': 'kW'},
-                                       eff={'val': 0.98, 'units': None},
+                                       eff={'val': 0.98, 'units': 'unitless'},
                                        has_diag_partials=True),
                            promotes_inputs=[('shaft_power_in', Dynamic.Mission.SHAFT_POWER),
                                             ('eff', Aircraft.Engine.Gearbox.EFFICIENCY)],
                            promotes_outputs=[('shaft_power_out', Dynamic.Mission.SHAFT_POWER_GEAR)])
 
         self.add_subsystem('torque_comp',
-                           om.ExecComp('torque = shaft_power / (pi * RPM_out) * 30',
+                           om.ExecComp('torque = shaft_power / RPM_out',
                                        shaft_power={'val': np.ones(n), 'units': 'kW'},
                                        torque={'val': np.ones(n), 'units': 'kN*m'},
-                                       RPM_out={'val': np.ones(n), 'units': 'rpm'},
+                                       RPM_out={'val': np.ones(n), 'units': 'rad/s'},
                                        has_diag_partials=True),
                            promotes_inputs=[('shaft_power', Dynamic.Mission.SHAFT_POWER_GEAR),
                                             ('RPM_out', Dynamic.Mission.RPM_GEAR)],
@@ -59,14 +59,14 @@ class GearboxMission(om.Group):
                                        shaft_power_in={'val': np.ones(n), 'units': 'kW'},
                                        shaft_power_out={
                                            'val': np.ones(n), 'units': 'kW'},
-                                       eff={'val': 0.98, 'units': None},
+                                       eff={'val': 0.98, 'units': 'unitless'},
                                        has_diag_partials=True),
                            promotes_inputs=[('shaft_power_in', Dynamic.Mission.SHAFT_POWER_MAX),
                                             ('eff', Aircraft.Engine.Gearbox.EFFICIENCY)],
                            promotes_outputs=[('shaft_power_out', Dynamic.Mission.SHAFT_POWER_MAX_GEAR)])
 
         # We must ensure the design shaft power that was provided to pre-mission is
-        # # larger than the maximum shaft power that could be drawn by the mission.
+        # larger than the maximum shaft power that could be drawn by the mission.
         # Note this is a larger value than the actual maximum shaft power drawn during the mission
         # because the aircraft might need to climb to avoid obstacles at anytime during the mission
         self.add_subsystem('shaft_power_residual',
@@ -79,6 +79,6 @@ class GearboxMission(om.Group):
                                        has_diag_partials=True),
                            promotes_inputs=[('shaft_power_max', Dynamic.Mission.SHAFT_POWER_MAX),
                                             ('shaft_power_design', Aircraft.Engine.SHAFT_POWER_DESIGN)],
-                           promotes_outputs=[('shaft_power_resid', Dynamic.Mission.SHAFT_POWER_CON)])
+                           promotes_outputs=[('shaft_power_resid', Dynamic.Mission.SHAFT_POWER_CONSTRAINT)])
 
         # TODO max thrust from the props will depend on this max shaft power from the gearbox and the new gearbox RPM value
