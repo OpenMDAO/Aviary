@@ -1,8 +1,7 @@
 import numpy as np
 import openmdao.api as om
-from dymos.models.atmosphere.atmos_1976 import USatm1976Comp
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
-from aviary.mission.gasp_based.flight_conditions import FlightConditions
 from aviary.mission.gasp_based.ode.base_ode import BaseODE
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.phases.breguet import RangeComp
@@ -24,36 +23,9 @@ class BreguetCruiseODESolution(BaseODE):
         self.add_subsystem("params", ParamPort(), promotes=["*"])
 
         self.add_subsystem(
-            "USatm",
-            USatm1976Comp(
-                num_nodes=nn),
-            promotes_inputs=[
-                ("h",
-                 Dynamic.Mission.ALTITUDE)],
-            promotes_outputs=[
-                "rho",
-                ("sos",
-                 Dynamic.Mission.SPEED_OF_SOUND),
-                ("temp",
-                 Dynamic.Mission.TEMPERATURE),
-                ("pres",
-                 Dynamic.Mission.STATIC_PRESSURE),
-                "viscosity"],
-        )
-
-        self.add_subsystem(
-            "fc",
-            FlightConditions(
-                num_nodes=nn,
-                input_speed_type=SpeedType.MACH),
-            promotes_inputs=[
-                "rho",
-                Dynamic.Mission.SPEED_OF_SOUND,
-                Dynamic.Mission.MACH],
-            promotes_outputs=[
-                Dynamic.Mission.DYNAMIC_PRESSURE,
-                "EAS",
-                ("TAS", Dynamic.Mission.VELOCITY)],
+            name='atmosphere',
+            subsys=Atmosphere(num_nodes=nn, input_speed_type=SpeedType.MACH),
+            promotes=['*'],
         )
 
         self.add_subsystem(
