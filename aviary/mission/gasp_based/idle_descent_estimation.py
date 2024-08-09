@@ -6,11 +6,10 @@ from aviary.interface.default_phase_info.two_dof_fiti_deprecated import create_2
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 from aviary.variable_info.enums import Verbosity
-from aviary.utils.functions import set_aviary_initial_values, promote_aircraft_and_mission_vars
-from aviary.variable_info.variables_in import VariablesIn
-from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
+from aviary.utils.functions import promote_aircraft_and_mission_vars
 
 
+# TODO: This function is deprecated. It should be removed.
 def descent_range_and_fuel(
     phases=None,
     ode_args=None,
