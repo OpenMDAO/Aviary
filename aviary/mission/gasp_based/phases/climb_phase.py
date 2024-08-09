@@ -96,7 +96,9 @@ class ClimbPhase(PhaseBuilderBase):
                                     output_name=Dynamic.Mission.FLIGHT_PATH_ANGLE, units="deg")
         phase.add_timeseries_output(
             "TAS_violation", output_name="TAS_violation", units="kn")
-        phase.add_timeseries_output("TAS", output_name="TAS", units="kn")
+        phase.add_timeseries_output(
+            Dynamic.Mission.VELOCITY, output_name=Dynamic.Mission.VELOCITY, units="kn"
+        )
         phase.add_timeseries_output("aero.CL", output_name="CL", units="unitless")
         phase.add_timeseries_output(
             Dynamic.Mission.THRUST_TOTAL, output_name=Dynamic.Mission.THRUST_TOTAL, units="lbf")
