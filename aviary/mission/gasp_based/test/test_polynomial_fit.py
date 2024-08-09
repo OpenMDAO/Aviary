@@ -47,7 +47,8 @@ class PolynomialFitTest(unittest.TestCase):
         assert_near_equal(self.prob["h_init_gear"], -600, tol)
         assert_near_equal(self.prob["h_init_flaps"], -250, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, form="central", method="fd")
+        partial_data = self.prob.check_partials(
+            out_stream=None, form="central", method="fd")
         assert_check_partials(partial_data, atol=0.6, rtol=1e-5)
 
 
