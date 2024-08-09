@@ -53,7 +53,4 @@ class PolynomialFitTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    #unittest.main()
-    thisClass = PolynomialFitTest()
-    thisClass.setUp()
-    thisClass.test_case1()
+    unittest.main()
