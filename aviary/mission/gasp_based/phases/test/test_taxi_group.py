@@ -1,5 +1,4 @@
 import unittest
-import os
 
 import numpy as np
 import openmdao
@@ -7,6 +6,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
 from packaging import version
 
+from aviary.constants import KNOT_TO_FT_PER_SEC
 from aviary.mission.gasp_based.phases.landing_group import LandingSegment
 from aviary.variable_info.options import get_option_defaults
 from aviary.utils.test_utils.IO_test_util import check_prob_outputs
@@ -46,8 +46,8 @@ class DLandTestCase(unittest.TestCase):
         self.prob.run_model()
 
         testvals = {
-            Mission.Landing.INITIAL_VELOCITY: 142.74 * 1.68781,
-            "TAS_touchdown": 126.27 * 1.68781,
+            Mission.Landing.INITIAL_VELOCITY: 142.74 * KNOT_TO_FT_PER_SEC,
+            "TAS_touchdown": 126.27 * KNOT_TO_FT_PER_SEC,
             "theta": np.deg2rad(3.57),
             "flare_alt": 20.8,
             "ground_roll_distance": 1798,

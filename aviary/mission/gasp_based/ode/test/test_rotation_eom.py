@@ -3,7 +3,7 @@ import os
 
 import numpy as np
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_check_partials
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.mission.gasp_based.ode.rotation_eom import RotationEOM
 from aviary.variable_info.variables import Aircraft, Dynamic
@@ -37,6 +37,25 @@ class RotationEOMTestCase(unittest.TestCase):
 
         tol = 1e-6
         self.prob.run_model()
+
+        assert_near_equal(
+            self.prob[Dynamic.Mission.VELOCITY_RATE], np.array(
+                [1.5597, 1.5597]), tol)
+        assert_near_equal(
+            self.prob[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE], np.array(
+                [0.0, 0.0]), tol)
+        assert_near_equal(
+            self.prob[Dynamic.Mission.ALTITUDE_RATE], np.array(
+                [0.0, 0.0]), tol)
+        assert_near_equal(
+            self.prob[Dynamic.Mission.DISTANCE_RATE], np.array(
+                [10., 10.]), tol)
+        assert_near_equal(
+            self.prob["normal_force"], np.array(
+                [175200., 175200.]), tol)
+        assert_near_equal(
+            self.prob["fuselage_pitch"], np.array(
+                [0.0, 0.0]), tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)

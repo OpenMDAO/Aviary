@@ -1,8 +1,8 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic
+from aviary.variable_info.functions import add_aviary_input
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 from aviary.constants import GRAV_ENGLISH_GASP, GRAV_ENGLISH_LBM, MU_TAKEOFF
 from aviary.variable_info.functions import add_aviary_input

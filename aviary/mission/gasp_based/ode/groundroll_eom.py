@@ -84,7 +84,7 @@ class GroundrollEOM(om.ExplicitComponent):
                 "alpha_rate", val=np.ones(nn), desc="angle of attack rate", units="deg/s"
             )
 
-            self.declare_partials("alpha_rate", ["*"], val=0.0)
+            self.declare_partials("alpha_rate", ["*"])
 
     def compute(self, inputs, outputs):
         analysis_scheme = self.options["analysis_scheme"]
