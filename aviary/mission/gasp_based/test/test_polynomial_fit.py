@@ -48,9 +48,11 @@ class PolynomialFitTest(unittest.TestCase):
         assert_near_equal(self.prob["h_init_gear"], -600, tol)
         assert_near_equal(self.prob["h_init_flaps"], -250, tol)
 
+        # TODO: The errors are high (about 0.000488). Need further investigation.
+        # It might be right on a discontinuity or something.
         partial_data = self.prob.check_partials(
-            out_stream=None, form="central", method="fd")
-        assert_check_partials(partial_data, atol=0.6, rtol=1e-5)
+            out_stream=None, method="cs", step=1.01e-40)
+        assert_check_partials(partial_data, atol=0.0005, rtol=1e-9)
 
 
 if __name__ == "__main__":
