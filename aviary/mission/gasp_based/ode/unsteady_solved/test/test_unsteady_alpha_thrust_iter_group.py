@@ -99,9 +99,9 @@ class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
         # 2. Test that forces balance normal to the velocity axis
         assert_near_equal(lift + thrust_req * s_alphai, weight * c_gamma)
 
-        cpd = p.check_partials(out_stream=None, form='central', method="fd",
+        cpd = p.check_partials(out_stream=None, method="cs", step=1.01e-40,
                                excludes=["*params*", "*aero*"])
-        assert_check_partials(cpd, atol=1.5e-4, rtol=1e-4)
+        assert_check_partials(cpd, atol=1e-10, rtol=1e-10)
 
     def test_iter_group(self):
         # TODO: why not ground_roll in [True] ?
