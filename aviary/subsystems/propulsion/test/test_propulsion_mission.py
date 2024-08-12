@@ -13,13 +13,15 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.functions import get_path
 from aviary.validation_cases.validation_tests import get_flops_inputs
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 from aviary.subsystems.propulsion.utils import build_engine_deck
 
 
 class PropulsionMissionTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
+        self.options = AviaryValues()
+        self.options.set_val(Settings.VERBOSITY, 0)
 
     @unittest.skipIf(version.parse(openmdao.__version__) < version.parse("3.26"), "Skipping due to OpenMDAO version being too low (<3.26)")
     def test_case_1(self):
@@ -29,7 +31,7 @@ class PropulsionMissionTest(unittest.TestCase):
         filename = get_path(
             'models/engines/turbofan_24k_1.deck')
 
-        options = AviaryValues()
+        options = self.options
         options.set_val(Aircraft.Engine.DATA_FILE, filename)
         options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
         options.set_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER, 1.0)
@@ -99,7 +101,7 @@ class PropulsionMissionTest(unittest.TestCase):
 
     def test_propulsion_sum(self):
         nn = 2
-        options = AviaryValues()
+        options = self.options
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([3, 2]))
         self.prob.model = om.Group()
         self.prob.model.add_subsystem('propsum',
@@ -150,6 +152,7 @@ class PropulsionMissionTest(unittest.TestCase):
         nn = 20
 
         options = get_flops_inputs('LargeSingleAisle2FLOPS')
+        options.set_val(Settings.VERBOSITY, 0)
 
         engine = build_engine_deck(options)[0]
         engine2 = build_engine_deck(options)[0]
@@ -212,6 +215,3 @@ class PropulsionMissionTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-    # test = PropulsionMissionTest()
-    # test.setUp()
-    # test.test_case_multiengine()
