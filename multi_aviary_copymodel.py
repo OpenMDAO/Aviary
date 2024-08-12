@@ -94,10 +94,12 @@ class MultiMissionProblem(om.Problem):
         weighted_str = "+".join([f"{fuelobj}*{weight}"
                                 for fuelobj, weight in zip(self.fuel_vars, weights)])
         # weighted_str looks like: fuel_0 * weight[0] + fuel_1 * weight[1]
+        # note that the fuel objective itself is the base aviary fuel objective
+        # which is also a function of climb time becuse climb is not very sensitive to fuel
 
         # adding compound execComp to super problem
         self.model.add_subsystem('compound_fuel_burn_objective', om.ExecComp(
-            "compound = "+weighted_str), promotes=["compound"])
+            "compound = "+weighted_str, has_diag_partials=True), promotes=["compound"])
         self.model.add_objective('compound')
 
     def setup_wrapper(self):
