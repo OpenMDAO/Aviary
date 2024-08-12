@@ -2,14 +2,14 @@
 import aviary.api as av
 from aviary.variable_info.enums import AlphaModes, AnalysisScheme, EquationsOfMotion, GASPEngineType, FlapType, LegacyCode, ProblemType, SpeedType, ThrottleAllocation, Verbosity
 from aviary.variable_info.variables import Mission, Aircraft, Settings
-from aviary.interface.default_phase_info.two_dof import phase_info
-from aviary.interface.save_sizing import save_sizing_json, load_off_design
+from aviary.interface.default_phase_info.height_energy import phase_info
+from aviary.interface.save_sizing_flops_gasp import save_sizing_json, load_off_design
 
 # Initialize an aviary problem for sizing mission
 prob = av.AviaryProblem()
 
 # Load inputs
-prob.load_inputs('reports/sizing_aircraft_for_bench_GwGm.csv', phase_info)
+prob.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
 
 # Run problem setup
 prob.check_and_preprocess_inputs()
@@ -43,17 +43,13 @@ print("Sizing Mission.Summary.GROSS_MASS                     ",
 print("Operating + Payload + Fuel =                          ", prob.get_val(Aircraft.Design.OPERATING_MASS, units='lbm') +
       prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm')+prob.get_val(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, units='lbm'))
 print()
-print("Sizing Landing Ground Distance                        ",
-      prob.get_val(Mission.Landing.GROUND_DISTANCE, units='ft'))
-print("Sizing Mission.Landing.TOUCHDOWN_MASS                 ",
-      prob.get_val(Mission.Landing.TOUCHDOWN_MASS, units='lbm'))
 
 ################################################################################
 # Save the aviary inputs to a json file
-save_sizing_json(prob, 'test_json_from_function.json')
+save_sizing_json(prob, 'test_json_from_function_FwFm.json')
 
 prob_json_alt = load_off_design(
-    'test_json_from_function.json', ProblemType.ALTERNATE, phase_info, 30000, 3000, 150000)
+    'test_json_from_function_FwFm.json', ProblemType.ALTERNATE, phase_info, 30000, 3000, 150000)
 
 # run problem setup
 prob_json_alt.check_and_preprocess_inputs()
@@ -88,14 +84,10 @@ print("Operating + Payload + Fuel =                            ", prob_json_alt.
 print()
 print("Alternate Mission.Objectives.FUEL                       ",
       prob_json_alt.get_val(Mission.Objectives.FUEL, units='unitless'))
-print("Alternate Landing Ground Distance                       ",
-      prob_json_alt.get_val(Mission.Landing.GROUND_DISTANCE, units='ft'))
-print("Alternate Mission.Landing.TOUCHDOWN_MASS                ",
-      prob_json_alt.get_val(Mission.Landing.TOUCHDOWN_MASS, units='lbm'))
 
 
 prob_json_fall = load_off_design(
-    'test_json_from_function.json', ProblemType.FALLOUT, phase_info, 30000, 1000, 150000)
+    'test_json_from_function_FwFm.json', ProblemType.FALLOUT, phase_info, 30000, 1000, 150000)
 
 # run problem setup
 prob_json_fall.check_and_preprocess_inputs()
@@ -130,7 +122,3 @@ print("Operating + Payload + Fuel =                          ", prob_json_fall.g
 print()
 print("Fallout Mission.Objectives.FUEL                       ",
       prob_json_fall.get_val(Mission.Objectives.FUEL, units='unitless'))
-print("Fallout Landing Ground Distance                       ",
-      prob_json_fall.get_val(Mission.Landing.GROUND_DISTANCE, units='ft'))
-print("Fallout Mission.Landing.TOUCHDOWN_MASS                ",
-      prob_json_fall.get_val(Mission.Landing.TOUCHDOWN_MASS, units='lbm'))
