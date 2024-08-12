@@ -36,7 +36,6 @@ class PropulsionPreMission(om.Group):
         for engine in engine_models:
             subsys = engine.build_pre_mission(options)
             if subsys:
-
                 if num_engine_type > 1:
                     proms = None
                 else:
@@ -79,8 +78,12 @@ class PropulsionPreMission(om.Group):
         if verbosity.value > 2:
             out_stream = sys.stdout
 
-        comp_list = [self._get_subsystem(group) for group in dir(self) if self._get_subsystem(
-            group) and group not in ['pre_mission_mux', 'propulsion_sum']]
+        comp_list = [
+            self._get_subsystem(group)
+            for group in dir(self)
+            if self._get_subsystem(group)
+            and group not in ['pre_mission_mux', 'propulsion_sum']
+        ]
 
         # Dictionary of all unique inputs/outputs from all new components, keys are
         # units for each var
@@ -98,10 +101,14 @@ class PropulsionPreMission(om.Group):
 
             # pull out all inputs (in dict format) in component
             comp_inputs = comp.list_inputs(
-                return_format='dict', units=True, out_stream=out_stream, all_procs=True)
+                return_format='dict', units=True, out_stream=out_stream, all_procs=True
+            )
             # only keep inputs if they contain the pattern
-            input_dict[comp.name] = dict((key, comp_inputs[key])
-                                         for key in comp_inputs if any([x in key for x in pattern]))
+            input_dict[comp.name] = dict(
+                (key, comp_inputs[key])
+                for key in comp_inputs
+                if any([x in key for x in pattern])
+            )
             # Track list of ALL inputs present in prop pre-mission in a "flat" dict.
             # Repeating inputs will just override what's already in the dict - we don't
             # care if units get overridden, if they differ openMDAO will convert
@@ -112,40 +119,60 @@ class PropulsionPreMission(om.Group):
 
             # do the same thing with outputs
             comp_outputs = comp.list_outputs(
-                return_format='dict', units=True, out_stream=out_stream, all_procs=True)
-            output_dict[comp.name] = dict((key, comp_outputs[key])
-                                          for key in comp_outputs if any([x in key for x in pattern]))
-            unique_outputs.update([(key, output_dict[comp.name][key]['units'])
-                                  for key in output_dict[comp.name]])
+                return_format='dict', units=True, out_stream=out_stream, all_procs=True
+            )
+            output_dict[comp.name] = dict(
+                (key, comp_outputs[key])
+                for key in comp_outputs
+                if any([x in key for x in pattern])
+            )
+            unique_outputs.update(
+                [
+                    (key, output_dict[comp.name][key]['units'])
+                    for key in output_dict[comp.name]
+                ]
+            )
 
             # slice incoming inputs for this component, so it only gets the correct index
             self.promotes(
                 comp.name, inputs=input_dict[comp.name].keys(), src_indices=om.slicer[idx])
 
             # promote all other inputs/outputs for this component normally (handle vectorized outputs later)
-            self.promotes(comp.name,
-                          inputs=[
-                              comp_inputs[input]['prom_name'] for input in comp_inputs if input not in input_dict[comp.name]],
-                          outputs=[
-                              comp_outputs[output]['prom_name'] for output in comp_outputs if output not in output_dict[comp.name]])
+            self.promotes(
+                comp.name,
+                inputs=[
+                    comp_inputs[input]['prom_name']
+                    for input in comp_inputs
+                    if input not in input_dict[comp.name]
+                ],
+                outputs=[
+                    comp_outputs[output]['prom_name']
+                    for output in comp_outputs
+                    if output not in output_dict[comp.name]
+                ],
+            )
 
         # add variables to the mux component and make connections to individual
         # component outputs
         if num_engine_type > 1:
             for output in unique_outputs:
-                self.pre_mission_mux.add_var(output,
-                                             units=unique_outputs[output])
+                self.pre_mission_mux.add_var(output, units=unique_outputs[output])
                 # promote/alias outputs for each comp that has relevant outputs
                 for i, comp in enumerate(output_dict):
                     if output in output_dict[comp]:
                         # if this component provides the output, connect it to the correct mux input
-                        self.connect(comp + '.' + output, 'pre_mission_mux.' +
-                                     output + '_' + str(i))
+                        self.connect(
+                            comp + '.' + output,
+                            'pre_mission_mux.' + output + '_' + str(i),
+                        )
                     else:
                         # If this component does not provide the output, pass the existing
                         # value for that index to the mux
-                        self.connect(output, 'pre_mission_mux.' + output +
-                                     '_' + str(i), src_indices=om.slicer[i])
+                        self.connect(
+                            output,
+                            'pre_mission_mux.' + output + '_' + str(i),
+                            src_indices=om.slicer[i],
+                        )
 
 
 class PropulsionSum(om.ExplicitComponent):
