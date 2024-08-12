@@ -30,9 +30,13 @@ class StallSpeed(om.ExplicitComponent):
         self.add_input(
             'mass', val=np.ones(nn), units='kg', desc='current mass of the aircraft')
 
-        self.add_input(
-            'density', val=np.ones(nn), units='kg/m**3',
-            desc='current atmospheric density')
+        add_aviary_input(
+            self,
+            Dynamic.Mission.DENSITY,
+            val=np.ones(nn),
+            units='kg/m**3',
+            desc='current atmospheric density',
+        )
 
         self.add_input(
             'area', val=1., units='m**2', desc='surface area contributing to lift')
@@ -52,13 +56,17 @@ class StallSpeed(om.ExplicitComponent):
         rows_cols = np.arange(nn)
 
         self.declare_partials(
-            'stall_speed', ['mass', 'density'], rows=rows_cols, cols=rows_cols)
+            'stall_speed',
+            ['mass', Dynamic.Mission.DENSITY],
+            rows=rows_cols,
+            cols=rows_cols,
+        )
 
         self.declare_partials('stall_speed', ['area', 'lift_coefficient_max'])
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
         mass = inputs['mass']
-        density = inputs['density']
+        density = inputs[Dynamic.Mission.DENSITY]
         area = inputs['area']
         lift_coefficient_max = inputs['lift_coefficient_max']
 
@@ -69,7 +77,7 @@ class StallSpeed(om.ExplicitComponent):
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
         mass = inputs['mass']
-        density = inputs['density']
+        density = inputs[Dynamic.Mission.DENSITY]
         area = inputs['area']
         lift_coefficient_max = inputs['lift_coefficient_max']
 
@@ -80,8 +88,9 @@ class StallSpeed(om.ExplicitComponent):
         J['stall_speed', 'mass'] = \
             grav_metric / (stall_speed * density * area * lift_coefficient_max)
 
-        J['stall_speed', 'density'] = \
-            -weight / (stall_speed * density**2 * area * lift_coefficient_max)
+        J['stall_speed', Dynamic.Mission.DENSITY] = -weight / (
+            stall_speed * density**2 * area * lift_coefficient_max
+        )
 
         J['stall_speed', 'area'] = \
             -weight / (stall_speed * density * area**2 * lift_coefficient_max)

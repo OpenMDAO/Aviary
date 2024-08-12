@@ -299,7 +299,7 @@ class MainGearLength(om.ExplicitComponent):
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
         options: AviaryValues = self.options['aviary_options']
-        # TODO temp using first engine, multi-engine not supported
+        # TODO temp using first engine, heterogeneous engines not supported
         num_eng = options.get_val(Aircraft.Engine.NUM_ENGINES)[0]
         num_wing_eng = options.get_val(Aircraft.Engine.NUM_WING_ENGINES)[0]
 
@@ -339,7 +339,7 @@ class MainGearLength(om.ExplicitComponent):
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
         options: AviaryValues = self.options['aviary_options']
-        # TODO temp using first engine, multi-engine not supported
+        # TODO temp using first engine, heterogeneous engines not supported
         num_eng = options.get_val(Aircraft.Engine.NUM_ENGINES)[0]
         num_wing_eng = options.get_val(Aircraft.Engine.NUM_WING_ENGINES)[0]
 
