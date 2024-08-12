@@ -1,11 +1,11 @@
 import numpy as np
 import openmdao.api as om
-from dymos.models.atmosphere.atmos_1976 import USatm1976Comp
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
 from aviary.mission.gasp_based.ode.base_ode import BaseODE
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.descent_eom import DescentRates
-from aviary.mission.gasp_based.flight_conditions import FlightConditions
+from aviary.subsystems.atmosphere.flight_conditions import FlightConditions
 from aviary.mission.gasp_based.ode.base_ode import BaseODE
 from aviary.mission.gasp_based.ode.constraints.flight_constraints import FlightConstraints
 from aviary.mission.gasp_based.ode.constraints.speed_constraints import SpeedConstraints
@@ -54,10 +54,10 @@ class DescentODE(BaseODE):
 
         if input_speed_type is SpeedType.EAS:
             speed_inputs = ["EAS"]
-            speed_outputs = ["mach", ("TAS", Dynamic.Mission.VELOCITY)]
+            speed_outputs = ["mach", Dynamic.Mission.VELOCITY]
         elif input_speed_type is SpeedType.MACH:
             speed_inputs = ["mach"]
-            speed_outputs = ["EAS", ("TAS", Dynamic.Mission.VELOCITY)]
+            speed_outputs = ["EAS", Dynamic.Mission.VELOCITY]
 
         if analysis_scheme is AnalysisScheme.SHOOTING:
             add_SGM_required_inputs(self, {
@@ -70,21 +70,16 @@ class DescentODE(BaseODE):
         self.add_subsystem("params", ParamPort(), promotes=["*"])
 
         self.add_subsystem(
-            "USatm",
-            USatm1976Comp(
-                num_nodes=nn),
-            promotes_inputs=[
-                ("h",
-                 Dynamic.Mission.ALTITUDE)],
+            name='atmosphere',
+            subsys=Atmosphere(num_nodes=nn),
+            promotes_inputs=[Dynamic.Mission.ALTITUDE],
             promotes_outputs=[
-                "rho",
-                ("sos",
-                 Dynamic.Mission.SPEED_OF_SOUND),
-                ("temp",
-                 Dynamic.Mission.TEMPERATURE),
-                ("pres",
-                 Dynamic.Mission.STATIC_PRESSURE),
-                "viscosity"],
+                Dynamic.Mission.DENSITY,
+                Dynamic.Mission.SPEED_OF_SOUND,
+                Dynamic.Mission.TEMPERATURE,
+                Dynamic.Mission.STATIC_PRESSURE,
+                "viscosity",
+            ],
         )
 
         if analysis_scheme is AnalysisScheme.COLLOCATION:
@@ -150,10 +145,12 @@ class DescentODE(BaseODE):
             lift_balance_group = self
 
         flight_condition_group.add_subsystem(
-            "fc",
-            FlightConditions(num_nodes=nn, input_speed_type=input_speed_type),
-            promotes_inputs=["rho", Dynamic.Mission.SPEED_OF_SOUND] + speed_inputs,
-            promotes_outputs=[Dynamic.Mission.DYNAMIC_PRESSURE,] + speed_outputs,
+            name='flight_conditions',
+            subsys=FlightConditions(num_nodes=nn, input_speed_type=input_speed_type),
+            promotes_inputs=['*'],  # + speed_inputs,
+            promotes_outputs=[
+                '*'
+            ],  # [Dynamic.Mission.DYNAMIC_PRESSURE] + speed_outputs,
         )
 
         # maybe replace this with the solver in AddAlphaControl?
@@ -189,10 +186,10 @@ class DescentODE(BaseODE):
             promotes_inputs=[
                 Dynamic.Mission.MASS,
                 "alpha",
-                "rho",
+                Dynamic.Mission.DENSITY,
                 "CL_max",
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
-                ("TAS", Dynamic.Mission.VELOCITY),
+                Dynamic.Mission.VELOCITY,
             ]
             + ["aircraft:*"],
             promotes_outputs=["theta", "TAS_violation"],
