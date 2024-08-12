@@ -121,17 +121,23 @@ class MultiMissionProblem(om.Problem):
 
     def get_design_range(self):
         """Finds the longest mission and sets its range as the design range for all
-            Aviary problems. Used within Aviary for sizing subsystems (avionics and landing gear)."""
-        design_range = 0
+            Aviary problems. Used within Aviary for sizing subsystems (avionics and AC).
+            Landing gear decreases in size as range increases, 
+            so that should be sized of minimum range mission!"""
+        design_range = []
         for phase_info in self.phase_infos:
-            get_range = phase_info['post_mission']['target_range'][0]  # TBD add units
-            if get_range > design_range:
-                design_range = get_range
-        return design_range
+            design_range.append(phase_info['post_mission']
+                                ['target_range'][0])  # TBD add units
+        design_range_min = np.min(design_range)
+        design_range_max = np.max(design_range)
+        return design_range_max,  # design_range_min
 
     def create_timeseries_plots(self, plotvars=[], show=True):
-        """Creates timeseries plots for any variables within timeseries. Specify variables
-        and units by setting plotvars = [('altitude','ft')]. Any number of vars can be added."""
+        """
+        Temporary create plots manually because graphing won't work for dual-trajectories.
+        Creates timeseries plots for any variables within timeseries. Specify variables
+        and units by setting plotvars = [('altitude','ft')]. Any number of vars can be added.
+        """
         plt.figure()
         for plotidx, (var, unit) in enumerate(plotvars):
             plt.subplot(int(np.ceil(len(plotvars)/2)), 2, plotidx+1)
