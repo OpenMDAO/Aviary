@@ -1259,7 +1259,9 @@ class LandingTrajectory:
                                            BaseMetaData,
                                            LegacyCode('FLOPS'))
 
-            phase_info = {'subsystem_options':{'core_aerodynamics':{'method':'low_speed'}}}
+            phase_info = {'subsystem_options':{
+                'core_aerodynamics':{'method':'low_speed'}}
+            }
 
             params = aero.get_parameters(aviary_options, phase_info)
 
