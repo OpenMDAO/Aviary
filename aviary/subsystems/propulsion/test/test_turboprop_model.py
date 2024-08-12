@@ -3,10 +3,9 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
-from dymos.models.atmosphere import USatm1976Comp
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from pathlib import Path
 
-from aviary.mission.gasp_based.flight_conditions import FlightConditions
 from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
 from aviary.subsystems.propulsion.propeller.propeller_performance import PropellerPerformance
 from aviary.utils.preprocessors import preprocess_propulsion
@@ -67,24 +66,11 @@ class TurbopropTest(unittest.TestCase):
                        units='unitless')
         self.prob.model.add_subsystem('IVC', IVC, promotes=['*'])
 
-        self.prob.model.add_subsystem(
-            name='atmosphere',
-            subsys=USatm1976Comp(num_nodes=num_nodes),
-            promotes_inputs=[('h', Dynamic.Mission.ALTITUDE)],
-            promotes_outputs=[
-                ('sos', Dynamic.Mission.SPEED_OF_SOUND),
-                ('rho', Dynamic.Mission.DENSITY),
-                ('temp', Dynamic.Mission.TEMPERATURE),
-                ('pres', Dynamic.Mission.STATIC_PRESSURE)],)
-
         # calculate atmospheric properties
         self.prob.model.add_subsystem(
-            "flight_conditions",
-            FlightConditions(num_nodes=num_nodes, input_speed_type=SpeedType.MACH),
-            promotes_inputs=[("rho", Dynamic.Mission.DENSITY),
-                             Dynamic.Mission.SPEED_OF_SOUND, 'mach'],
-            promotes_outputs=[Dynamic.Mission.DYNAMIC_PRESSURE,
-                              'EAS', ('TAS', 'velocity')],
+            name='atmosphere',
+            subsys=Atmosphere(num_nodes=num_nodes, input_speed_type=SpeedType.MACH),
+            promotes=['*'],
         )
 
         self.prob.model.add_subsystem(
@@ -258,9 +244,9 @@ class TurbopropTest(unittest.TestCase):
         assert_near_equal(fuel_flow, fuel_flow_expected, tolerance=1e-8)
         assert_near_equal(electric_power, electric_power_expected, tolerance=1e-8)
 
-        # TODO: need further test
-        # partial_data = self.prob.check_partials(out_stream=None, method="fd", form="central")
-        # assert_check_partials(partial_data, atol=0.15, rtol=0.15)
+        partial_data = self.prob.check_partials(
+            out_stream=None, method="fd", form="central")
+        assert_check_partials(partial_data, atol=0.17, rtol=0.15)
 
 
 class ExamplePropModel(SubsystemBuilderBase):

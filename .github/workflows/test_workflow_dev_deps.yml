@@ -76,10 +76,9 @@ jobs:
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
           to: ${{ secrets.DESTINATION_EMAIL }}
-          subject: "***Notification*** Tests failed with development versions of OpenMDAO/Dymos: ${{ env.number }}"
+          subject: "***Notification*** Tests failed with development versions of OpenMDAO/Dymos: ${{ github.run_id }}"
           body: |
             {
-              "number": "${{ github.event.pull_request.number }}",
-              "title": "${{ github.event.pull_request.title }}",
-              "action": "${{ github.event.action }}"
+              "title": "Test with Pre-Release OpenMDAO/Dymos",
+              "action": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
             }

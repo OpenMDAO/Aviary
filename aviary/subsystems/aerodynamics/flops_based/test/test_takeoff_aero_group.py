@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 import openmdao.api as om
-from dymos.models.atmosphere.atmos_1976 import USatm1976Comp
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
@@ -74,21 +74,22 @@ def make_problem(subsystem_options={}):
 
     aviary_inputs = AviaryValues(N3CC['inputs'])
 
-    dynamic_inputs = AviaryValues({
-        'angle_of_attack': (np.array([0., 2., 6.]), 'deg'),
-        Dynamic.Mission.ALTITUDE: (np.array([0., 32., 55.]), 'm'),
-        Dynamic.Mission.FLIGHT_PATH_ANGLE: (np.array([0., 0.5, 1.]), 'deg')})
+    dynamic_inputs = AviaryValues(
+        {
+            'angle_of_attack': (np.array([0.0, 2.0, 6.0]), 'deg'),
+            Dynamic.Mission.ALTITUDE: (np.array([0.0, 32.0, 55.0]), 'm'),
+            Dynamic.Mission.FLIGHT_PATH_ANGLE: (np.array([0.0, 0.5, 1.0]), 'deg'),
+        }
+    )
 
     prob = om.Problem()
 
+    # regression testing values assume defaulted dynamic pressure (value of 1 psf)
     prob.model.add_subsystem(
-        "USatm",
-        USatm1976Comp(num_nodes=nn),
-        promotes_inputs=[("h", Dynamic.Mission.ALTITUDE)],
-        promotes_outputs=[
-            "rho", ("sos", Dynamic.Mission.SPEED_OF_SOUND), ("temp",
-                                                             Dynamic.Mission.TEMPERATURE),
-            ("pres", Dynamic.Mission.STATIC_PRESSURE), "viscosity"])
+        name='atmosphere',
+        subsys=Atmosphere(num_nodes=nn),
+        promotes=['*', (Dynamic.Mission.DYNAMIC_PRESSURE, 'skip')],
+    )
 
     aero_builder = CoreAerodynamicsBuilder(code_origin=LegacyCode.FLOPS)
 
@@ -212,5 +213,3 @@ def _generate_regression_data(subsystem_options={}):
 
 if __name__ == "__main__":
     unittest.main()
-    # test = TestTakeoffAeroGroup()
-    # test.test_takeoff_aero_group()
