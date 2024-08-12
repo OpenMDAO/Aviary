@@ -29,7 +29,7 @@ parts:
       - file: user_guide/input_files
     - file: user_guide/drawing_and_running_simple_missions
     - file: user_guide/pre_mission_and_mission
-    - file: user_guide/outputs_and_how_to_read_them
+    - file: user_guide/postprocessing_and_visualizing_results
     - file: user_guide/variable_metadata
     - file: user_guide/features_and_functionalities
       sections:

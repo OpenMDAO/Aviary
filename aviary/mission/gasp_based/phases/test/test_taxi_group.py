@@ -57,7 +57,7 @@ class DLandTestCase(unittest.TestCase):
         check_prob_outputs(self.prob, testvals, rtol=1e-2)
 
         partial_data = self.prob.check_partials(
-            out_stream=None, method="cs", excludes=["*USatm*", "*params*", "*aero*"]
+            out_stream=None, method="cs", excludes=["*params*", "*aero*"]
         )
         assert_check_partials(partial_data, atol=1e-6, rtol=1e-6)
 
