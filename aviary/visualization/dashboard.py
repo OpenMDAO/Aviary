@@ -1,8 +1,10 @@
 import argparse
+from collections import defaultdict
 import json
 import os
 from pathlib import Path
 import pathlib
+import re
 import shutil
 import importlib.util
 from string import Template
@@ -15,9 +17,14 @@ from typing import (
 import warnings
 import zipfile  # Use typing.List and typing.Tuple for compatibility
 
+import bokeh.palettes as bp
 from bokeh.models import Legend
+from bokeh.models import HoverTool
 import numpy as np
 from bokeh.palettes import Category10
+from bokeh.plotting import figure
+from bokeh.models import ColumnDataSource
+
 import hvplot.pandas  # noqa # need this ! Otherwise hvplot using DataFrames does not work
 import pandas as pd
 import panel as pn
@@ -842,39 +849,16 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
     # Interactive XY plot of mission variables
     if problem_recorder:
         if os.path.exists(problem_recorder):
-            
             cr = om.CaseReader(problem_recorder)
             case = cr.get_case("final")
             outputs = case.list_outputs(out_stream=None, units=True)
             ts_outputs = {op: meta for op, meta in outputs}
 
-
-            from collections import defaultdict
-
             data_by_phase_and_varname = defaultdict(dict)
             data_by_varname_and_phase = defaultdict(dict)
-
-            
-            import re
+          
             
             pattern = r"traj\.phases\.([a-zA-Z0-9_]+)\.timeseries\.timeseries_comp\.([a-zA-Z0-9_]+)"
-            # pattern = r"traj\.phases\.[a-zA-Z0-9_]+\.timeseries\.timeseries_comp\.[a-zA-Z0-9_]+"
-
-            def extract_values(test_string):
-                match = re.match(pattern, test_string)
-                if match:
-                    print(f"{match.groups()=}")
-                    return match.group(1), match.group(2)
-                else:
-                    return None
-            # test_string1 = "traj.phases.A1.timeseries.timeseries_comp.XYZ"
-            test_string1 = "traj.phases.GH.timeseries.timeseries_comp.EAS"
-            
-            print(extract_values(test_string1))  # ('A1', 'XYZ')
-            
-
-            # pattern = r"traj\.phases\.[a-zA-Z0-9_]+\.timeseries\.timeseries_comp\.[a-zA-Z0-9_]+"
-
             phases = set()
             varnames = set()
             units_by_varname = {}
@@ -889,37 +873,9 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
                     val = case.get_val(varname)
                     data_by_phase_and_varname[phase][name] = val
                     data_by_varname_and_phase[name][phase] = val
-                    # print(varname, len(val))
-            
-            # phase_param_data['val'].append(source_case.get_val(param_path, units=units))
-
-
-            # from dymos.visualization.timeseries.bokeh_timeseries_report import _load_data_sources
-            
-            # data_dict = _load_data_sources(solution_record_file=problem_recorder)
-
-            from bokeh.plotting import figure
-            from bokeh.models import ColumnDataSource, Select
 
             # Enable Panel extensions
             pn.extension()
-
-
-            # Want the data_dict to look like this
-            # top level keys are variable name
-            #   under that is another dict where the keys are the phases
-
-            # data_dict = {key: value for key, value in data_by_phase_and_varname['HI'].items()}
-            # Generate fake data
-            # np.random.seed(42)
-            # data_dict = {
-            #     "Array 1": np.linspace(0, 10, 100),
-            #     "Array 2": np.sin(np.linspace(0, 10, 100)),
-            #     "Array 3": np.cos(np.linspace(0, 10, 100)),
-            #     "Array 4": np.tan(np.linspace(0, 10, 100)),
-            #     "Array 5": np.linspace(0, 10, 100) ** 2,
-            #     "Array 6": np.random.rand(100)
-            # }
 
             # need to create sources for each phase
             sources = {}
@@ -929,21 +885,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
                     y=data_by_varname_and_phase["mach"][phase]))
 
 
-            # Create a ColumnDataSource
-            # source = ColumnDataSource(data=dict(x=data_dict["distance"], y=data_dict["mach"]))
-            # source = ColumnDataSource(data=dict(x=data_dict["Array 1"], y=data_dict["Array 2"]))
-
-            from bokeh.models import HoverTool
-
             tool_tips = [('distance', '$x'), (f'', '$y')]
-
-            # h_line = HoverTool()
-            # h_line.mode = 'vline'
-            # h_line.tooltips = [
-            #                         ('x','$x'),                         
-            #                         ('y','$y'),   
-            #                 ]
-
 
             # Create the figure
             p = figure(x_axis_label="X", y_axis_label="Y", width=800, height=400,
@@ -955,9 +897,6 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
                             ],
                       )
 
-
-            # p.add_tools(h_line)
-            import bokeh.palettes as bp
             colors = bp.d3['Category20'][20][0::2] + bp.d3['Category20'][20][1::2]
             legend_data = []
 
@@ -970,17 +909,12 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
                 scatter_plot = p.scatter('x', 'y', source=sources[phase], line_width=2, 
                           color=color,
                           size=5,
-                        #   legend_label=phase,
                           )
                 legend_items.append(scatter_plot)
                 legend_data.append((phase, legend_items))
 
-
-
             # need to do this?
                         # Find the "largest" unit used for any timeseries output across all phases
-
-
 
             legend = Legend(items=legend_data, location='center', label_text_font_size='8pt')
             legend.click_policy = "hide"
@@ -988,23 +922,16 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
 
             # Create dropdown menus for X and Y axis selection
             array_options = list(sorted(varnames, key=str.casefold))
-            # x_select = pn.widgets.Select(name="X-Axis", value="Array 1", options=array_options)
-            # y_select = pn.widgets.Select(name="Y-Axis", value="Array 2", options=array_options)
             x_select = pn.widgets.Select(name="X-Axis", value="distance", options=array_options)
             y_select = pn.widgets.Select(name="Y-Axis", value="mach", options=array_options)
 
             # Callback function to update the plot
             @pn.depends(x_select, y_select)
             def update_plot(x_array, y_array):
-                # x = data_dict[x_array]
-                # y = data_dict[y_array]
-                # source.data = dict(x=x, y=y)
                 for phase in phases:
                     x = data_by_varname_and_phase[x_array][phase]
                     y = data_by_varname_and_phase[y_array][phase]
                     sources[phase].data = dict(x=x, y=y)
-                # p.tool_tips = [('distance', '$x'), ('mach', '$y')]
-                
                 
                 x_axis_label=f'{x_array} ({units_by_varname[x_array]})'
                 y_axis_label=f'{y_array} ({units_by_varname[y_array]})'
@@ -1012,17 +939,6 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
                 p.xaxis.axis_label = x_axis_label
                 p.yaxis.axis_label = y_axis_label
 
-
-                # h_line = HoverTool()
-                # h_line.mode = 'vline'
-                # h_line.tooltips = [
-                #                         (x_array,'$x'),                         
-                #                         (y_array,'$y'),   
-                #                 ]
-                # p.add_tools(h_line)
-
-                
-                
                 return p
 
             # Create the dashboard
@@ -1032,9 +948,6 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
                 pn.Row(pn.HSpacer(), update_plot, pn.HSpacer())
                 # update_plot
             )
-
-
-
 
         else:
             interactive_mission_var_plot_pane = pn.pane.Markdown(
