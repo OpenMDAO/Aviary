@@ -1,27 +1,19 @@
 import argparse
 from collections import defaultdict
+from dataclasses import dataclass
+import importlib.util
 import json
 import os
-from pathlib import Path
 import pathlib
 import re
 import shutil
-import importlib.util
-from string import Template
-from dataclasses import dataclass
-from typing import (
-    List,
-    Iterator,
-    Tuple,
-)
 import warnings
-import zipfile  # Use typing.List and typing.Tuple for compatibility
+import zipfile
+
+import numpy as np
 
 import bokeh.palettes as bp
 from bokeh.models import Legend
-from bokeh.models import HoverTool
-import numpy as np
-from bokeh.palettes import Category10
 from bokeh.plotting import figure
 from bokeh.models import ColumnDataSource
 
@@ -53,17 +45,16 @@ except ImportError:
 
 import aviary.api as av
 
+# Enable Panel extensions
 pn.extension(sizing_mode="stretch_width")
+# Initialize any custom extensions
 pn.extension('tabulator')
-
 
 # Constants
 aviary_variables_json_file_name = "aviary_vars.json"
 documentation_text_align = 'left'
 
 # functions for the aviary command line command
-
-
 def _none_or_str(value):
     """
     Get the value of the argparse option.
@@ -566,7 +557,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
     else:
         reports_dir = script_name
 
-    if not Path(reports_dir).is_dir():
+    if not pathlib.Path(reports_dir).is_dir():
         raise ValueError(
             f"The script name, '{script_name}', does not have a reports folder associated with it. "
             f"The directory '{reports_dir}' does not exist."
@@ -664,7 +655,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
                     y=variables,
                     responsive=True,
                     min_height=400,
-                    color=list(Category10[10]),
+                    color=list(bp.Category10[10]),
                     yformatter="%.0f",
                     title="Model Optimization using OpenMDAO",
                 )
@@ -854,59 +845,63 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
             outputs = case.list_outputs(out_stream=None, units=True)
             ts_outputs = {op: meta for op, meta in outputs}
 
-            data_by_phase_and_varname = defaultdict(dict)
             data_by_varname_and_phase = defaultdict(dict)
           
-            
             pattern = r"traj\.phases\.([a-zA-Z0-9_]+)\.timeseries\.timeseries_comp\.([a-zA-Z0-9_]+)"
             phases = set()
             varnames = set()
             units_by_varname = {}
             for varname, meta in ts_outputs.items():
                 match = re.match(pattern, varname)
-                # Units are meta['units']
                 if match:
                     phase, name = match.group(1), match.group(2)
-                    units_by_varname[name] = ts_outputs[varname]['units']
+                    units_by_varname[name] = meta['units']
                     phases.add(phase)
                     varnames.add(name)
                     val = case.get_val(varname)
-                    data_by_phase_and_varname[phase][name] = val
                     data_by_varname_and_phase[name][phase] = val
+                    
+                    
+            # determine the initial variables used for X and Y
+            array_options = list(sorted(varnames, key=str.casefold))
+            if "distance" in array_options:
+                x_varname_default = "distance"
+            elif "time" in array_options:
+                x_varname_default = "time"
+            else: 
+                x_varname_default =  array_options[0]
 
-            # Enable Panel extensions
-            pn.extension()
+            if "altitude" in array_options:
+                y_varname_default = "altitude"
+            else:
+                y_varname_default = array_options[-1]
 
-            # need to create sources for each phase
+            # need to create ColumnDataSource for each phase
             sources = {}
             for phase in phases:
                 sources[phase] = ColumnDataSource(data=dict(
-                    x=data_by_varname_and_phase["distance"][phase], 
-                    y=data_by_varname_and_phase["mach"][phase]))
-
-
-            tool_tips = [('distance', '$x'), (f'', '$y')]
+                    x=data_by_varname_and_phase[x_varname_default][phase], 
+                    y=data_by_varname_and_phase[y_varname_default][phase]))
 
             # Create the figure
-            p = figure(x_axis_label="X", y_axis_label="Y", width=800, height=400,
+            p = figure(
+                       width=800, height=400,
                        tools='pan,box_zoom,xwheel_zoom,hover,undo,reset,save',
-                            #   sizing_mode='stretch_both',
                             tooltips=[
-                                    ('x','$x'),                         
-                                    ('y','$y'),   
+                                    ('x','@x'),                         
+                                    ('y','@y'),   
                             ],
                       )
 
             colors = bp.d3['Category20'][20][0::2] + bp.d3['Category20'][20][1::2]
             legend_data = []
-
             phases = sorted(phases, key=str.casefold)
             for i, phase in enumerate(phases):
                 legend_items = []
 
                 color = colors[i % 20]
 
-                scatter_plot = p.scatter('x', 'y', source=sources[phase], line_width=2, 
+                scatter_plot = p.scatter('x', 'y', source=sources[phase], 
                           color=color,
                           size=5,
                           )
@@ -916,14 +911,14 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
             # need to do this?
                         # Find the "largest" unit used for any timeseries output across all phases
 
+            # Make the Legend
             legend = Legend(items=legend_data, location='center', label_text_font_size='8pt')
             legend.click_policy = "hide"
             p.add_layout(legend, 'right')
 
             # Create dropdown menus for X and Y axis selection
-            array_options = list(sorted(varnames, key=str.casefold))
-            x_select = pn.widgets.Select(name="X-Axis", value="distance", options=array_options)
-            y_select = pn.widgets.Select(name="Y-Axis", value="mach", options=array_options)
+            x_select = pn.widgets.Select(name="X-Axis", value=x_varname_default, options=array_options)
+            y_select = pn.widgets.Select(name="Y-Axis", value=y_varname_default, options=array_options)
 
             # Callback function to update the plot
             @pn.depends(x_select, y_select)
@@ -933,20 +928,21 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
                     y = data_by_varname_and_phase[y_array][phase]
                     sources[phase].data = dict(x=x, y=y)
                 
-                x_axis_label=f'{x_array} ({units_by_varname[x_array]})'
-                y_axis_label=f'{y_array} ({units_by_varname[y_array]})'
+                p.xaxis.axis_label = f'{x_array} ({units_by_varname[x_array]})'
+                p.yaxis.axis_label = f'{y_array} ({units_by_varname[y_array]})'
 
-                p.xaxis.axis_label = x_axis_label
-                p.yaxis.axis_label = y_axis_label
+                p.hover.tooltips = [
+                    (x_array, "@x"),
+                    (y_array, "@y")
+                ]
 
                 return p
 
-            # Create the dashboard
+            # Create the dashboard pane for this plot
             interactive_mission_var_plot_pane = pn.Column(
                 pn.pane.Markdown("# Interactive XY Plot"),
                 pn.Row(x_select, y_select),
                 pn.Row(pn.HSpacer(), update_plot, pn.HSpacer())
-                # update_plot
             )
 
         else:
@@ -968,7 +964,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
     # Look through subsystems directory for markdown files
     # The subsystems report tab shows selected results for every major subsystem in the Aviary problem
 
-    for md_file in sorted(Path(f"{reports_dir}subsystems").glob("*.md"), key=str):
+    for md_file in sorted(pathlib.Path(f"{reports_dir}subsystems").glob("*.md"), key=str):
         subsystems_pane = create_report_frame("markdown", str(
             md_file),
             f'''
