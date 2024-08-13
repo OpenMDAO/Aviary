@@ -1,10 +1,9 @@
 import numpy as np
 import openmdao.api as om
-from dymos.models.atmosphere.atmos_1976 import USatm1976Comp
 from aviary.subsystems.mass.mass_to_weight import MassToWeight
 
 from aviary.variable_info.enums import AlphaModes, AnalysisScheme, SpeedType
-from aviary.mission.gasp_based.flight_conditions import FlightConditions
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.mission.gasp_based.ode.base_ode import BaseODE
 from aviary.mission.gasp_based.ode.flight_path_eom import FlightPathEOM
 from aviary.mission.gasp_based.ode.params import ParamPort
@@ -52,16 +51,6 @@ class FlightPathODE(BaseODE):
             kwargs['method'] = 'cruise'
             kwargs['output_alpha'] = False
 
-        if input_speed_type is SpeedType.EAS:
-            speed_inputs = ["EAS"]
-            speed_outputs = ["mach", ("TAS", Dynamic.Mission.VELOCITY)]
-        elif input_speed_type is SpeedType.TAS:
-            speed_inputs = [("TAS", Dynamic.Mission.VELOCITY)]
-            speed_outputs = ["mach", "EAS"]
-        elif input_speed_type is SpeedType.MACH:
-            speed_inputs = ["mach"]
-            speed_outputs = ["EAS", ("TAS", Dynamic.Mission.VELOCITY)]
-
         EOM_inputs = [
             Dynamic.Mission.MASS,
             Dynamic.Mission.THRUST_TOTAL,
@@ -100,18 +89,9 @@ class FlightPathODE(BaseODE):
         self.add_subsystem("params", flight_path_params, promotes=["*"])
 
         self.add_subsystem(
-            "USatm",
-            USatm1976Comp(num_nodes=nn),
-            promotes_inputs=[("h", Dynamic.Mission.ALTITUDE)],
-            promotes_outputs=["rho", ("sos", Dynamic.Mission.SPEED_OF_SOUND),
-                              ("temp", Dynamic.Mission.TEMPERATURE), ("pres", Dynamic.Mission.STATIC_PRESSURE), "viscosity", "drhos_dh"],
-        )
-
-        self.add_subsystem(
-            "fc",
-            FlightConditions(num_nodes=nn, input_speed_type=input_speed_type),
-            promotes_inputs=["rho", Dynamic.Mission.SPEED_OF_SOUND] + speed_inputs,
-            promotes_outputs=[Dynamic.Mission.DYNAMIC_PRESSURE,] + speed_outputs,
+            name='atmosphere',
+            subsys=Atmosphere(num_nodes=nn, input_speed_type=input_speed_type),
+            promotes=['*'],
         )
 
         if alpha_mode is AlphaModes.DEFAULT:
@@ -214,35 +194,6 @@ class FlightPathODE(BaseODE):
                           Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE])
 
         self.add_excess_rate_comps(nn)
-
-        # Example of how to use a print_comp
-        if False:
-            from aviary.utils.functions import create_printcomp
-            dummy_comp = create_printcomp(
-                all_inputs=[
-                    Dynamic.Mission.DISTANCE,
-                    Dynamic.Mission.THROTTLE,
-                    Dynamic.Mission.THRUST_TOTAL,
-                    'required_thrust',
-                    Dynamic.Mission.ALTITUDE,
-                    'load_factor',
-                    'required_lift',
-                    Dynamic.Mission.MASS,
-                    Dynamic.Mission.FLIGHT_PATH_ANGLE,
-                    'alpha',
-                ],
-                input_units={
-                    'required_thrust': 'lbf',
-                    'required_lift': 'lbf',
-                    'alpha': 'deg',
-                    Dynamic.Mission.FLIGHT_PATH_ANGLE: 'deg',
-                })
-            self.add_subsystem(
-                "dummy_comp",
-                dummy_comp(),
-                promotes_inputs=["*"],)
-            self.set_input_defaults(
-                Dynamic.Mission.DISTANCE, val=0, units='NM')
 
         ParamPort.set_default_vals(self)
         if not self.options["clean"]:

@@ -12,9 +12,15 @@ class VRotateComp(om.ExplicitComponent):
 
     def setup(self):
         # Temporarily set this to shape (1, 1) to avoid OpenMDAO bug
-        self.add_input(Dynamic.Mission.MASS, shape=(1, 1), units="lbm")
-        self.add_input("rho", shape=(1,), units="slug/ft**3",
-                       val=RHO_SEA_LEVEL_ENGLISH, desc="sea-level atmospheric density")
+        add_aviary_input(self, Dynamic.Mission.MASS, shape=(1, 1), units="lbm")
+        add_aviary_input(
+            self,
+            Dynamic.Mission.DENSITY,
+            shape=(1,),
+            units="slug/ft**3",
+            val=RHO_SEA_LEVEL_ENGLISH,
+            desc="sea-level atmospheric density",
+        )
         add_aviary_input(self, Aircraft.Wing.AREA, val=1.0)
         self.add_input("CL_max", shape=(1,), units="unitless",
                        desc="Maximum lift coefficient")
@@ -30,7 +36,14 @@ class VRotateComp(om.ExplicitComponent):
         self.declare_partials(of="Vrot", wrt=["dV1", "dVR"], val=1.0)
         # Partials of nonlinear terms
         self.declare_partials(
-            of="Vrot", wrt=[Dynamic.Mission.MASS, "rho", Aircraft.Wing.AREA, "CL_max"])
+            of="Vrot",
+            wrt=[
+                Dynamic.Mission.MASS,
+                Dynamic.Mission.DENSITY,
+                Aircraft.Wing.AREA,
+                "CL_max",
+            ],
+        )
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
         mass, rho, wing_area, CL_max, dV1, dVR = inputs.values()
@@ -43,6 +56,6 @@ class VRotateComp(om.ExplicitComponent):
                    (rho * wing_area * CL_max)) ** 0.5
 
         partials["Vrot", Dynamic.Mission.MASS] = K / mass
-        partials["Vrot", "rho"] = -K / rho
+        partials["Vrot", Dynamic.Mission.DENSITY] = -K / rho
         partials["Vrot", Aircraft.Wing.AREA] = -K / wing_area
         partials["Vrot", "CL_max"] = -K / CL_max
