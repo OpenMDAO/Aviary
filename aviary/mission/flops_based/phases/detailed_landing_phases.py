@@ -1259,7 +1259,7 @@ class LandingTrajectory:
                                            BaseMetaData,
                                            LegacyCode('FLOPS'))
 
-            phase_info = {'subsystem_options':{
+            phase_info = {'subsystem_options': {
                 'core_aerodynamics':{'method': 'low_speed'}}
             }
 
