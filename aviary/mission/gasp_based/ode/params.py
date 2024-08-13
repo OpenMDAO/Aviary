@@ -58,9 +58,13 @@ class ParamPort(om.ExplicitComponent):
         Aircraft.Wing.MAX_THICKNESS_LOCATION: dict(units="unitless", val=0.4),
         Aircraft.Strut.AREA_RATIO: dict(units="unitless", val=0),
         Aircraft.Wing.ZERO_LIFT_ANGLE: dict(units="deg", val=-1.2),
-        Aircraft.Design.SUPERCRITICAL_DIVERGENCE_SHIFT: dict(units="unitless", val=0.033),
+        Aircraft.Design.SUPERCRITICAL_DIVERGENCE_SHIFT: dict(
+            units="unitless", val=0.033
+        ),
         Aircraft.Wing.FLAP_CHORD_RATIO: dict(units="unitless", val=0.3),
-        Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP: dict(units="unitless", val=1.2596),
+        Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP: dict(
+            units="unitless", val=1.2596
+        ),
         Mission.Takeoff.LIFT_COEFFICIENT_MAX: dict(units="unitless", val=2.1886),
         Mission.Landing.LIFT_COEFFICIENT_MAX: dict(units="unitless", val=2.8155),
         Mission.Takeoff.LIFT_COEFFICIENT_FLAP_INCREMENT: dict(
@@ -75,6 +79,13 @@ class ParamPort(om.ExplicitComponent):
         Mission.Landing.DRAG_COEFFICIENT_FLAP_INCREMENT: dict(
             units="unitless", val=0.0406
         ),
+        # BUG these are required specifically for large regional turboprop model
+        Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR: dict(units="unitless", val=0),
+        Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT: dict(
+            units="unitless", val=0
+        ),
+        Aircraft.Engine.PROPELLER_DIAMETER: dict(units="ft", val=0),
+        Aircraft.Engine.PROPELLER_TIP_SPEED_MAX: dict(units="ft/s", val=0),
     }
 
     def setup(self):
