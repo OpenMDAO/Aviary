@@ -1,6 +1,9 @@
+import math
 import warnings
+
 import numpy as np
 import openmdao.api as om
+
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
@@ -480,9 +483,9 @@ class PreHamiltonStandard(om.ExplicitComponent):
         add_aviary_input(
             self, Dynamic.Mission.DENSITY, val=np.zeros(nn), units='slug/ft**3'
         )
-        add_aviary_input(self, Dynamic.Mission.VELOCITY, val=np.zeros(nn), units='knot')
+        add_aviary_input(self, Dynamic.Mission.VELOCITY, val=np.zeros(nn), units='ft/s')
         add_aviary_input(
-            self, Dynamic.Mission.SPEED_OF_SOUND, val=np.zeros(nn), units='knot'
+            self, Dynamic.Mission.SPEED_OF_SOUND, val=np.zeros(nn), units='ft/s'
         )
 
         self.add_output('power_coefficient', val=np.zeros(nn), units='unitless')
@@ -518,13 +521,13 @@ class PreHamiltonStandard(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         diam_prop = inputs[Aircraft.Engine.PROPELLER_DIAMETER]
         shp = inputs[Dynamic.Mission.SHAFT_POWER]
-        vktas = inputs[Dynamic.Mission.VELOCITY]
+        vtas = inputs[Dynamic.Mission.VELOCITY]
         tipspd = inputs[Dynamic.Mission.PROPELLER_TIP_SPEED]
         sos = inputs[Dynamic.Mission.SPEED_OF_SOUND]
 
         # arbitrarily small number to keep advance ratio nonzero, which allows for static thrust prediction
         # NOTE need for a separate static thrust calc method?
-        vktas[np.where(vktas <= 1e-6)] = 1e-6
+        vtas[np.where(vtas <= 1e-6)] = 1e-6
         density_ratio = inputs[Dynamic.Mission.DENSITY] / RHO_SEA_LEVEL_ENGLISH
 
         if diam_prop <= 0.0:
@@ -542,15 +545,21 @@ class PreHamiltonStandard(om.ExplicitComponent):
             raise om.AnalysisError("Dynamic.Mission.SHAFT_POWER must be non-negative.")
 
         outputs['density_ratio'] = density_ratio
-        # 1118.21948771 is speed of sound at sea level
         # TODO tip mach was already calculated, revisit this
         outputs['tip_mach'] = tipspd / sos
-        outputs['advance_ratio'] = 5.309 * vktas / tipspd
-        outputs['power_coefficient'] = shp * 10.E10 / (2 * 6966.) / density_ratio \
+        # BUG this is not pure advance ratio, why is pi being used here???
+        outputs['advance_ratio'] = math.pi * vtas / tipspd
+        # TODO back out what is going on with unit conversion factor 10e10/(2*6966)
+        outputs['power_coefficient'] = (
+            shp
+            * 10.0e10
+            / (2 * 6966.0)
+            / density_ratio
             / (tipspd**3 * diam_prop**2)
+        )
 
     def compute_partials(self, inputs, partials):
-        vktas = inputs[Dynamic.Mission.VELOCITY]
+        vtas = inputs[Dynamic.Mission.VELOCITY]
         tipspd = inputs[Dynamic.Mission.PROPELLER_TIP_SPEED]
         rho = inputs[Dynamic.Mission.DENSITY]
         diam_prop = inputs[Aircraft.Engine.PROPELLER_DIAMETER]
@@ -562,9 +571,10 @@ class PreHamiltonStandard(om.ExplicitComponent):
         partials["density_ratio", Dynamic.Mission.DENSITY] = 1 / RHO_SEA_LEVEL_ENGLISH
         partials["tip_mach", Dynamic.Mission.PROPELLER_TIP_SPEED] = 1 / sos
         partials["tip_mach", Dynamic.Mission.SPEED_OF_SOUND] = -tipspd / sos**2
-        partials["advance_ratio", Dynamic.Mission.VELOCITY] = 5.309 / tipspd
-        partials["advance_ratio", Dynamic.Mission.PROPELLER_TIP_SPEED] = - \
-            5.309 * vktas / (tipspd * tipspd)
+        partials["advance_ratio", Dynamic.Mission.VELOCITY] = math.pi / tipspd
+        partials["advance_ratio", Dynamic.Mission.PROPELLER_TIP_SPEED] = (
+            -math.pi * vtas / (tipspd * tipspd)
+        )
         partials["power_coefficient", Dynamic.Mission.SHAFT_POWER] = unit_conversion_const * \
             RHO_SEA_LEVEL_ENGLISH / (rho * tipspd**3*diam_prop**2)
         partials["power_coefficient", Dynamic.Mission.DENSITY] = -unit_conversion_const * shp * \

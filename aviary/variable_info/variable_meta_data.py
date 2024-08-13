@@ -2116,12 +2116,13 @@ add_meta_data(
 add_meta_data(
     Aircraft.Engine.PROPELLER_TIP_MACH_MAX,
     meta_data=_MetaData,
-    historical_name={"GASP": None,  # TODO this needs verification
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={
+        "GASP": None,  # TODO this needs verification
+        "FLOPS": None,
+        "LEAPS1": None,
+    },
     units='unitless',
-    desc='maximum allowable Mach number at propeller tip (based on helical speed)',
+    desc='maximum allowable Mach number at propeller tip (based on helical airspeed)',
     default_value=1.0,
 )
 
@@ -2134,7 +2135,7 @@ add_meta_data(
         "LEAPS1": None,
     },
     units='ft/s',
-    desc='maximum allowable propeller linear tip speed',
+    desc='maximum allowable linear propeller tip speed due to rotation',
     default_value=800.0,
 )
 

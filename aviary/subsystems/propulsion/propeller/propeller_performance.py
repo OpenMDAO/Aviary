@@ -333,16 +333,22 @@ class InstallLoss(om.Group):
         # We should update these minimum calls to use a smooth minimum so that the
         # gradient information is C1 continuous.
         self.add_subsystem(
-            name='zje_comp', subsys=om.ExecComp(
-                'equiv_adv_ratio = minimum((1.0 - 0.254 * sqa) * 5.309 * vktas/tipspd, 5.0)',
-                vktas={'units': 'knot', 'val': np.zeros(nn)},
+            name='zje_comp',
+            subsys=om.ExecComp(
+                'equiv_adv_ratio = minimum((1.0 - 0.254 * sqa) * pi * vtas/tipspd, 5.0)',
+                vtas={'units': 'ft/s', 'val': np.zeros(nn)},
                 tipspd={'units': 'ft/s', 'val': np.zeros(nn)},
                 sqa={'units': 'unitless'},
                 equiv_adv_ratio={'units': 'unitless', 'val': np.zeros(nn)},
-                has_diag_partials=True,),
-            promotes_inputs=["sqa", ("vktas", Dynamic.Mission.VELOCITY),
-                             ("tipspd", Dynamic.Mission.PROPELLER_TIP_SPEED)],
-            promotes_outputs=["equiv_adv_ratio"],)
+                has_diag_partials=True,
+            ),
+            promotes_inputs=[
+                "sqa",
+                ("vtas", Dynamic.Mission.VELOCITY),
+                ("tipspd", Dynamic.Mission.PROPELLER_TIP_SPEED),
+            ],
+            promotes_outputs=["equiv_adv_ratio"],
+        )
 
         self.add_subsystem(
             'convert_sqa',
