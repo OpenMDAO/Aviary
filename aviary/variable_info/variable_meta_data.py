@@ -6605,28 +6605,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Mission.SHAFT_POWER_CORRECTED,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'SHPCOR',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='hp',
-    desc='current corrected shaft power avaliable, per engine'
-)
-
-add_meta_data(
-    Dynamic.Mission.SHAFT_POWER_CORRECTED_MAX,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='hp',
-    desc='maximum possible corrected shaft power currently producible, per engine'
-)
-
-add_meta_data(
     Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
     meta_data=_MetaData,
     historical_name={"GASP": None,

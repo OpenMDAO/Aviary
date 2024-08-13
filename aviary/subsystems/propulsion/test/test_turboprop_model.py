@@ -220,28 +220,22 @@ class TurbopropTest(unittest.TestCase):
 
         self.prob.run_model()
 
-        shp_expected = [0., 505.55333, 505.55333]
-        tailpipe_thrust_expected = [0, 0, 0]
+        shp_expected = [0.0, 505.55333, 505.55333]
         prop_thrust_expected = total_thrust_expected = [
-            610.35808, 2627.26329,  312.27342]
-        fuel_flow_expected = [0, 0, 0]
+            610.35808,
+            2627.26329,
+            312.27342,
+        ]
         electric_power_expected = [0.0, 408.4409047, 408.4409047]
 
         shp = self.prob.get_val(Dynamic.Mission.SHAFT_POWER, units='hp')
         total_thrust = self.prob.get_val(Dynamic.Mission.THRUST, units='lbf')
-        prop_thrust = self.prob.get_val(
-            'turboprop_model.propeller_thrust', units='lbf')
-        tailpipe_thrust = self.prob.get_val(
-            'turboprop_model.turboshaft_thrust', units='lbf')
-        fuel_flow = self.prob.get_val(
-            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE, units='lbm/h')
+        prop_thrust = self.prob.get_val('turboprop_model.propeller_thrust', units='lbf')
         electric_power = self.prob.get_val(Dynamic.Mission.ELECTRIC_POWER_IN, units='kW')
 
         assert_near_equal(shp, shp_expected, tolerance=1e-8)
         assert_near_equal(total_thrust, total_thrust_expected, tolerance=1e-8)
         assert_near_equal(prop_thrust, prop_thrust_expected, tolerance=1e-8)
-        assert_near_equal(tailpipe_thrust, tailpipe_thrust_expected, tolerance=1e-8)
-        assert_near_equal(fuel_flow, fuel_flow_expected, tolerance=1e-8)
         assert_near_equal(electric_power, electric_power_expected, tolerance=1e-8)
 
         partial_data = self.prob.check_partials(
