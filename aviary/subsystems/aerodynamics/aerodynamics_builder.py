@@ -364,7 +364,6 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
             elif method == "low_speed":
 
-
                 for var in LOW_SPEED_CORE_INPUTS:
 
                     meta = _MetaData[var]
