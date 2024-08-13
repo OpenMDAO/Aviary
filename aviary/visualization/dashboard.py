@@ -24,6 +24,7 @@ from panel.theme import DefaultTheme
 
 import openmdao.api as om
 from openmdao.utils.general_utils import env_truthy
+from openmdao.utils.units import conversion_to_base_units
 try:
     from openmdao.utils.gui_testing_utils import get_free_port
 except:
@@ -846,22 +847,34 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
             ts_outputs = {op: meta for op, meta in outputs}
 
             data_by_varname_and_phase = defaultdict(dict)
-          
+
+            # Find the "largest" unit used for any timeseries output across all phases
             pattern = r"traj\.phases\.([a-zA-Z0-9_]+)\.timeseries\.timeseries_comp\.([a-zA-Z0-9_]+)"
+            units_by_varname = {}
             phases = set()
             varnames = set()
-            units_by_varname = {}
             for varname, meta in ts_outputs.items():
                 match = re.match(pattern, varname)
                 if match:
                     phase, name = match.group(1), match.group(2)
-                    units_by_varname[name] = meta['units']
                     phases.add(phase)
                     varnames.add(name)
-                    val = case.get_val(varname)
+                    if name not in units_by_varname:
+                        units_by_varname[name] = meta['units']
+                    else:
+                        _, new_conv_factor = conversion_to_base_units(meta['units'])
+                        _, old_conv_factor = conversion_to_base_units(units_by_varname[name])
+                        if new_conv_factor < old_conv_factor:
+                            units_by_varname[name] = meta['units']
+          
+            # Now get the values using those units
+            for varname, meta in ts_outputs.items():
+                match = re.match(pattern, varname)
+                if match:
+                    phase, name = match.group(1), match.group(2)
+                    val = case.get_val(varname, units=units_by_varname[name])
                     data_by_varname_and_phase[name][phase] = val
-                    
-                    
+                  
             # determine the initial variables used for X and Y
             array_options = list(sorted(varnames, key=str.casefold))
             if "distance" in array_options:
