@@ -13,7 +13,7 @@ import zipfile
 import numpy as np
 
 import bokeh.palettes as bp
-from bokeh.models import Legend
+from bokeh.models import Legend, CheckboxGroup, CustomJS
 from bokeh.plotting import figure
 from bokeh.models import ColumnDataSource
 
@@ -540,6 +540,13 @@ def create_aircraft_3d_file(recorder_file, reports_dir, outfilepath):
     aircraft_3d_model.get_camera_entity(aircraft_3d_model.fuselage.length)
     aircraft_3d_model.write_file(aircraft_3d_template_filepath, outfilepath)
 
+def _get_interactive_plot_sources(data_by_varname_and_phase, x_varname, y_varname, phase):
+    x = data_by_varname_and_phase[x_varname][phase]
+    y = data_by_varname_and_phase[y_varname][phase]
+    if len(x) > 0 and len(x) == len(y):
+        return x,y
+    else:
+        return [], []
 
 # The main script that generates all the tabs in the dashboard
 def dashboard(script_name, problem_recorder, driver_recorder, port):
@@ -850,18 +857,21 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
             # determine what trajectories there are
             traj_nodes = [n for n in _meta_tree_subsys_iter(
                 cr.problem_metadata['tree'], cls='dymos.trajectory.trajectory:Trajectory')]
-            
+
             if len(traj_nodes) == 0:
                 raise ValueError("No trajectories available in case recorder file for use "
                                  "in generating interactive XY plot of mission variables")
             traj_name = traj_nodes[0]["name"]
             if len(traj_nodes) > 1:
                 issue_warning("More than one trajectory found in problem case recorder file. Only using "
-                             f'the first one, "{traj_name}", for the interactive XY plot of mission variables')
+                              f'the first one, "{traj_name}", for the interactive XY plot of mission variables')
             case = cr.get_case("final")
+            with open("outs.txt", "w") as f:
+                outputs = case.list_outputs(out_stream=f, units=False, hierarchical=False, prom_name=False, val=False)
             outputs = case.list_outputs(out_stream=None, units=True)
 
-            data_by_varname_and_phase = defaultdict(dict)
+            # data_by_varname_and_phase = defaultdict(dict)
+            data_by_varname_and_phase = defaultdict(lambda: defaultdict(list))
 
             # Find the "largest" unit used for any timeseries output across all phases
             units_by_varname = {}
@@ -909,9 +919,11 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
             # need to create ColumnDataSource for each phase
             sources = {}
             for phase in phases:
+                x,y = _get_interactive_plot_sources(data_by_varname_and_phase, 
+                                                    x_varname_default, y_varname_default, phase)
                 sources[phase] = ColumnDataSource(data=dict(
-                    x=data_by_varname_and_phase[x_varname_default][phase],
-                    y=data_by_varname_and_phase[y_varname_default][phase]))
+                    x=x,
+                    y=y))
 
             # Create the figure
             p = figure(
@@ -926,13 +938,19 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
             colors = bp.d3['Category20'][20][0::2] + bp.d3['Category20'][20][1::2]
             legend_data = []
             phases = sorted(phases, key=str.casefold)
+            line_plots = []
             for i, phase in enumerate(phases):
                 color = colors[i % 20]
                 scatter_plot = p.scatter('x', 'y', source=sources[phase],
                                          color=color,
                                          size=5,
                                          )
-                legend_data.append((phase, [scatter_plot,]))
+                line_plot = p.line('x', 'y', source=sources[phase],
+                                         color=color,
+                                         line_width=1,
+                                         )
+                line_plots.append(line_plot)
+                legend_data.append((phase, [scatter_plot, line_plot]))
 
             # Make the Legend
             legend = Legend(items=legend_data, location='center',
@@ -953,6 +971,8 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
                 for phase in phases:
                     x = data_by_varname_and_phase[x_varname][phase]
                     y = data_by_varname_and_phase[y_varname][phase]
+                    x,y = _get_interactive_plot_sources(data_by_varname_and_phase, 
+                                                        x_varname, y_varname, phase)
                     sources[phase].data = dict(x=x, y=y)
 
                 p.xaxis.axis_label = f'{x_varname} ({units_by_varname[x_varname]})'
@@ -964,9 +984,12 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
                 ]
                 return p
 
+
+
             # Create the dashboard pane for this plot
             interactive_mission_var_plot_pane = pn.Column(
-                pn.pane.Markdown(f"# Interactive Mission Variable Plot for Trajectory, {traj_name}"),
+                pn.pane.Markdown(
+                    f"# Interactive Mission Variable Plot for Trajectory, {traj_name}"),
                 pn.Row(x_select, y_select),
                 pn.Row(pn.HSpacer(), update_plot, pn.HSpacer())
             )
