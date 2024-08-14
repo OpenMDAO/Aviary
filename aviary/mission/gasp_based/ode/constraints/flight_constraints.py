@@ -33,8 +33,9 @@ class FlightConstraints(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.AREA, val=2)
 
-        self.add_input(
-            "rho",
+        add_aviary_input(
+            self,
+            Dynamic.Mission.DENSITY,
             val=np.ones(nn),
             units="slug/ft**3",
             desc="density of air",
@@ -60,8 +61,9 @@ class FlightConstraints(om.ExplicitComponent):
             units="rad",
             desc="angle of attack",
         )
-        self.add_input(
-            "TAS",
+        add_aviary_input(
+            self,
+            Dynamic.Mission.VELOCITY,
             val=np.ones(nn),
             units="ft/s",
             desc="true airspeed",
@@ -92,7 +94,12 @@ class FlightConstraints(om.ExplicitComponent):
         )
         self.declare_partials(
             "TAS_violation",
-            [Dynamic.Mission.MASS, "rho", "CL_max", "TAS"],
+            [
+                Dynamic.Mission.MASS,
+                Dynamic.Mission.DENSITY,
+                "CL_max",
+                Dynamic.Mission.VELOCITY,
+            ],
             rows=arange,
             cols=arange,
         )
@@ -103,7 +110,10 @@ class FlightConstraints(om.ExplicitComponent):
             ],
         )
         self.declare_partials(
-            "TAS_min", [Dynamic.Mission.MASS, "rho", "CL_max"], rows=arange, cols=arange
+            "TAS_min",
+            [Dynamic.Mission.MASS, Dynamic.Mission.DENSITY, "CL_max"],
+            rows=arange,
+            cols=arange,
         )
         self.declare_partials(
             "TAS_min",
@@ -116,12 +126,12 @@ class FlightConstraints(om.ExplicitComponent):
 
         weight = inputs[Dynamic.Mission.MASS] * GRAV_ENGLISH_LBM
         wing_area = inputs[Aircraft.Wing.AREA]
-        rho = inputs["rho"]
+        rho = inputs[Dynamic.Mission.DENSITY]
         CL_max = inputs["CL_max"]
         gamma = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
         i_wing = inputs[Aircraft.Wing.INCIDENCE]
         alpha = inputs["alpha"]
-        TAS = inputs["TAS"]
+        TAS = inputs[Dynamic.Mission.VELOCITY]
 
         V_stall = (2 * weight / (wing_area * rho * CL_max)) ** 0.5  # stall speed
         TAS_min = (
@@ -136,12 +146,12 @@ class FlightConstraints(om.ExplicitComponent):
 
         weight = inputs[Dynamic.Mission.MASS] * GRAV_ENGLISH_LBM
         wing_area = inputs[Aircraft.Wing.AREA]
-        rho = inputs["rho"]
+        rho = inputs[Dynamic.Mission.DENSITY]
         CL_max = inputs["CL_max"]
         gamma = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
         i_wing = inputs[Aircraft.Wing.INCIDENCE]
         alpha = inputs["alpha"]
-        TAS = inputs["TAS"]
+        TAS = inputs[Dynamic.Mission.VELOCITY]
 
         J["theta", Dynamic.Mission.FLIGHT_PATH_ANGLE] = 1
         J["theta", "alpha"] = 1
@@ -151,13 +161,13 @@ class FlightConstraints(om.ExplicitComponent):
             1.1 * 0.5 * (2 / (wing_area * rho * CL_max)) ** 0.5 *
             weight ** (-0.5) * GRAV_ENGLISH_LBM
         )
-        J["TAS_violation", "rho"] = (
+        J["TAS_violation", Dynamic.Mission.DENSITY] = (
             1.1 * (2 * weight / (wing_area * CL_max)) ** 0.5 * (-0.5) * rho ** (-1.5)
         )
         J["TAS_violation", "CL_max"] = (
             1.1 * (2 * weight / (wing_area * rho)) ** 0.5 * (-0.5) * CL_max ** (-1.5)
         )
-        J["TAS_violation", "TAS"] = -1
+        J["TAS_violation", Dynamic.Mission.VELOCITY] = -1
         J["TAS_violation", Aircraft.Wing.AREA] = (
             1.1 * (2 * weight / (rho * CL_max)) ** 0.5 * (-0.5) * wing_area ** (-1.5)
         )
@@ -166,7 +176,7 @@ class FlightConstraints(om.ExplicitComponent):
             0.5 * (2 / (wing_area * rho * CL_max)) ** 0.5 *
             weight ** (-0.5) * GRAV_ENGLISH_LBM
         )
-        J["TAS_min", "rho"] = 1.1 * (
+        J["TAS_min", Dynamic.Mission.DENSITY] = 1.1 * (
             (2 * weight / (wing_area * CL_max)) ** 0.5 * (-0.5) * rho ** (-1.5)
         )
         J["TAS_min", "CL_max"] = 1.1 * (
@@ -179,18 +189,21 @@ class FlightConstraints(om.ExplicitComponent):
 
 class ClimbAtTopOfClimb(om.ExplicitComponent):
     def setup(self):
-        self.add_input("TAS", units="ft/s", val=-200)
+        self.add_input(Dynamic.Mission.VELOCITY, units="ft/s", val=-200)
         self.add_input(
             Dynamic.Mission.FLIGHT_PATH_ANGLE, units="rad", val=0.)
         self.add_output("ROC", units="ft/s")
         self.declare_partials("*", "*")
 
     def compute(self, inputs, outputs):
-        outputs["ROC"] = inputs["TAS"] * \
-            np.sin(inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE])
+        outputs["ROC"] = inputs[Dynamic.Mission.VELOCITY] * np.sin(
+            inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
+        )
 
     def compute_partials(self, inputs, J):
-        J["ROC", "TAS"] = np.sin(
-            inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE])
-        J["ROC", Dynamic.Mission.FLIGHT_PATH_ANGLE] = inputs["TAS"] * \
-            np.cos(inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE])
+        J["ROC", Dynamic.Mission.VELOCITY] = np.sin(
+            inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
+        )
+        J["ROC", Dynamic.Mission.FLIGHT_PATH_ANGLE] = inputs[
+            Dynamic.Mission.VELOCITY
+        ] * np.cos(inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE])

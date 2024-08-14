@@ -1,7 +1,7 @@
 import numpy as np
 
 import openmdao.api as om
-from dymos.models.atmosphere import USatm1976Comp
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
 from aviary.mission.flops_based.ode.mission_EOM import MissionEOM
 from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs, add_SGM_required_outputs
@@ -11,7 +11,7 @@ from aviary.utils.functions import promote_aircraft_and_mission_vars
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.variables_in import VariablesIn
-from aviary.variable_info.enums import AnalysisScheme, ThrottleAllocation
+from aviary.variable_info.enums import AnalysisScheme, ThrottleAllocation, SpeedType
 
 
 class ExternalSubsystemGroup(om.Group):
@@ -83,27 +83,11 @@ class MissionODE(om.Group):
                         context='mission'),
             promotes_inputs=['*'],
             promotes_outputs=['*'])
+
         self.add_subsystem(
             name='atmosphere',
-            subsys=USatm1976Comp(num_nodes=nn),
-            promotes_inputs=[('h', Dynamic.Mission.ALTITUDE)],
-            promotes_outputs=[
-                ('sos', Dynamic.Mission.SPEED_OF_SOUND), ('rho', Dynamic.Mission.DENSITY),
-                ('temp', Dynamic.Mission.TEMPERATURE), ('pres', Dynamic.Mission.STATIC_PRESSURE)])
-
-        # add an execcomp to compute velocity based off mach and sos
-        self.add_subsystem(
-            name='velocity_comp',
-            subsys=om.ExecComp(
-                'velocity = mach * sos',
-                mach={'units': 'unitless', 'shape': (nn,)},
-                sos={'units': 'm/s', 'shape': (nn,)},
-                velocity={'units': 'm/s', 'shape': (nn,)},
-                has_diag_partials=True,
-            ),
-            promotes_inputs=[('mach', Dynamic.Mission.MACH),
-                             ('sos', Dynamic.Mission.SPEED_OF_SOUND)],
-            promotes_outputs=[('velocity', Dynamic.Mission.VELOCITY)],
+            subsys=Atmosphere(num_nodes=nn, input_speed_type=SpeedType.MACH),
+            promotes=['*'],
         )
 
         # add execcomp to compute velocity_rate based off mach_rate and sos

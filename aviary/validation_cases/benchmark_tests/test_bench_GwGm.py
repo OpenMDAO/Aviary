@@ -74,8 +74,12 @@ class ProblemPhaseTestCase(unittest.TestCase):
     @require_pyoptsparse(optimizer="SNOPT")
     def test_bench_GwGm_SNOPT_lbm_s(self):
         local_phase_info = deepcopy(phase_info)
-        prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwGm_lbm_s.csv',
-                          local_phase_info, optimizer='SNOPT', verbosity=Verbosity.QUIET)
+        prob = run_aviary(
+            'models/test_aircraft/aircraft_for_bench_GwGm_lbm_s.csv',
+            local_phase_info,
+            optimizer='SNOPT',
+            verbosity=Verbosity.QUIET,
+        )
 
         rtol = 0.01
 
@@ -136,4 +140,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = ProblemPhaseTestCase()
+    test.setUp()
+    test.test_bench_GwGm_shooting()

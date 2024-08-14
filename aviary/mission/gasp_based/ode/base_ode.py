@@ -1,9 +1,8 @@
-import enum
 import numpy as np
 
 import openmdao.api as om
 
-from aviary.mission.gasp_based.flight_conditions import FlightConditions
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import AnalysisScheme, AlphaModes, SpeedType
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic
@@ -233,22 +232,11 @@ class BaseODE(om.Group):
                 promotes=['*']
             )
 
-    def add_flight_conditions(self, nn, input_speed_type=SpeedType.TAS):
-        if input_speed_type is SpeedType.TAS:
-            promotes_inputs = [("TAS", Dynamic.Mission.VELOCITY)]
-            promotes_outputs = ["EAS", Dynamic.Mission.MACH]
-        elif input_speed_type is SpeedType.EAS:
-            promotes_inputs = ["EAS"]
-            promotes_outputs = [("TAS", Dynamic.Mission.VELOCITY), Dynamic.Mission.MACH]
-        elif input_speed_type is SpeedType.MACH:
-            promotes_inputs = [Dynamic.Mission.MACH]
-            promotes_outputs = ["EAS", ("TAS", Dynamic.Mission.VELOCITY)]
-
+    def add_atmosphere(self, nn, input_speed_type=SpeedType.TAS):
         self.add_subsystem(
-            "flight_conditions",
-            FlightConditions(num_nodes=nn, input_speed_type=input_speed_type),
-            promotes_inputs=["rho", Dynamic.Mission.SPEED_OF_SOUND] + promotes_inputs,
-            promotes_outputs=[Dynamic.Mission.DYNAMIC_PRESSURE] + promotes_outputs,
+            name='atmosphere',
+            subsys=Atmosphere(num_nodes=nn, input_speed_type=input_speed_type),
+            promotes=['*'],
         )
 
     def add_excess_rate_comps(self, nn):
