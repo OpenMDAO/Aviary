@@ -33,6 +33,8 @@ except:
         return 5000
 from openmdao.utils.om_warnings import issue_warning
 
+from dymos.visualization.timeseries.bokeh_timeseries_report import _meta_tree_subsys_iter
+
 from aviary.visualization.aircraft_3d_model import Aircraft3DModel
 
 # support getting this function from OpenMDAO post movement of the function to utils
@@ -56,6 +58,8 @@ aviary_variables_json_file_name = "aviary_vars.json"
 documentation_text_align = 'left'
 
 # functions for the aviary command line command
+
+
 def _none_or_str(value):
     """
     Get the value of the argparse option.
@@ -842,14 +846,18 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
     if problem_recorder:
         if os.path.exists(problem_recorder):
             cr = om.CaseReader(problem_recorder)
-            
-            
-            from dymos.visualization.timeseries.bokeh_timeseries_report import _meta_tree_subsys_iter
-            traj_cls = 'dymos.trajectory.trajectory:Trajectory'
-            traj_nodes = [n for n in _meta_tree_subsys_iter(cr.problem_metadata['tree'], cls=traj_cls)]
 
+            # determine what trajectories there are
+            traj_nodes = [n for n in _meta_tree_subsys_iter(
+                cr.problem_metadata['tree'], cls='dymos.trajectory.trajectory:Trajectory')]
             
-            
+            if len(traj_nodes) == 0:
+                raise ValueError("No trajectories available in case recorder file for use "
+                                 "in generating interactive XY plot of mission variables")
+            traj_name = traj_nodes[0]["name"]
+            if len(traj_nodes) > 1:
+                issue_warning("More than one trajectory found in problem case recorder file. Only using "
+                             f'the first one, "{traj_name}", for the interactive XY plot of mission variables')
             case = cr.get_case("final")
             outputs = case.list_outputs(out_stream=None, units=True)
 
@@ -860,7 +868,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
             phases = set()
             varnames = set()
             # pattern used to parse out the phase names and variable names
-            pattern = r"traj\.phases\.([a-zA-Z0-9_]+)\.timeseries\.timeseries_comp\.([a-zA-Z0-9_]+)"
+            pattern = fr"{traj_name}\.phases\.([a-zA-Z0-9_]+)\.timeseries\.timeseries_comp\.([a-zA-Z0-9_]+)"
             for varname, meta in outputs:
                 match = re.match(pattern, varname)
                 if match:
@@ -871,10 +879,11 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
                         units_by_varname[name] = meta['units']
                     else:
                         _, new_conv_factor = conversion_to_base_units(meta['units'])
-                        _, old_conv_factor = conversion_to_base_units(units_by_varname[name])
+                        _, old_conv_factor = conversion_to_base_units(
+                            units_by_varname[name])
                         if new_conv_factor < old_conv_factor:
                             units_by_varname[name] = meta['units']
-          
+
             # Now get the values using those units
             for varname, meta in outputs:
                 match = re.match(pattern, varname)
@@ -882,15 +891,15 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
                     phase, name = match.group(1), match.group(2)
                     val = case.get_val(varname, units=units_by_varname[name])
                     data_by_varname_and_phase[name][phase] = val
-                  
+
             # determine the initial variables used for X and Y
             varname_options = list(sorted(varnames, key=str.casefold))
             if "distance" in varname_options:
                 x_varname_default = "distance"
             elif "time" in varname_options:
                 x_varname_default = "time"
-            else: 
-                x_varname_default =  varname_options[0]
+            else:
+                x_varname_default = varname_options[0]
 
             if "altitude" in varname_options:
                 y_varname_default = "altitude"
@@ -901,38 +910,42 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
             sources = {}
             for phase in phases:
                 sources[phase] = ColumnDataSource(data=dict(
-                    x = data_by_varname_and_phase[x_varname_default][phase], 
-                    y = data_by_varname_and_phase[y_varname_default][phase]))
+                    x=data_by_varname_and_phase[x_varname_default][phase],
+                    y=data_by_varname_and_phase[y_varname_default][phase]))
 
             # Create the figure
             p = figure(
-                       width=800, height=400,
-                       tools='pan,box_zoom,xwheel_zoom,hover,undo,reset,save',
-                            tooltips=[
-                                    ('x','@x'),                         
-                                    ('y','@y'),   
-                            ],
-                      )
+                width=800, height=400,
+                tools='pan,box_zoom,xwheel_zoom,hover,undo,reset,save',
+                tooltips=[
+                    ('x', '@x'),
+                    ('y', '@y'),
+                ],
+            )
 
             colors = bp.d3['Category20'][20][0::2] + bp.d3['Category20'][20][1::2]
             legend_data = []
             phases = sorted(phases, key=str.casefold)
             for i, phase in enumerate(phases):
                 color = colors[i % 20]
-                scatter_plot = p.scatter('x', 'y', source=sources[phase], 
-                          color=color,
-                          size=5,
-                          )
+                scatter_plot = p.scatter('x', 'y', source=sources[phase],
+                                         color=color,
+                                         size=5,
+                                         )
                 legend_data.append((phase, [scatter_plot,]))
 
             # Make the Legend
-            legend = Legend(items=legend_data, location='center', label_text_font_size='8pt')
-            legend.click_policy = "hide"  # so users can click on the dot in the legend to turn off/on that phase in the plot
+            legend = Legend(items=legend_data, location='center',
+                            label_text_font_size='8pt')
+            # so users can click on the dot in the legend to turn off/on that phase in the plot
+            legend.click_policy = "hide"
             p.add_layout(legend, 'right')
 
             # Create dropdown menus for X and Y axis selection
-            x_select = pn.widgets.Select(name="X-Axis", value=x_varname_default, options=varname_options)
-            y_select = pn.widgets.Select(name="Y-Axis", value=y_varname_default, options=varname_options)
+            x_select = pn.widgets.Select(
+                name="X-Axis", value=x_varname_default, options=varname_options)
+            y_select = pn.widgets.Select(
+                name="Y-Axis", value=y_varname_default, options=varname_options)
 
             # Callback function to update the plot
             @pn.depends(x_select, y_select)
@@ -941,7 +954,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
                     x = data_by_varname_and_phase[x_varname][phase]
                     y = data_by_varname_and_phase[y_varname][phase]
                     sources[phase].data = dict(x=x, y=y)
-                
+
                 p.xaxis.axis_label = f'{x_varname} ({units_by_varname[x_varname]})'
                 p.yaxis.axis_label = f'{y_varname} ({units_by_varname[y_varname]})'
 
@@ -953,7 +966,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
 
             # Create the dashboard pane for this plot
             interactive_mission_var_plot_pane = pn.Column(
-                pn.pane.Markdown("# Interactive Mission Variable Plot"),
+                pn.pane.Markdown(f"# Interactive Mission Variable Plot for Trajectory, {traj_name}"),
                 pn.Row(x_select, y_select),
                 pn.Row(pn.HSpacer(), update_plot, pn.HSpacer())
             )
