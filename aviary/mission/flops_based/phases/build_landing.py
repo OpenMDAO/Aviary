@@ -49,7 +49,7 @@ class Landing:
             a group in OpenMDAO
         """
 
-        if use_detailed:
+        if use_detailed:  # TODO
             raise om.AnalysisError(
                 "Must set landing method to `use_detailed=False`, detailed landing is"
                 " not currently enabled."
@@ -64,22 +64,6 @@ class Landing:
             Aircraft.Wing.AREA, val=self.ref_wing_area, units="ft**2"
         )
         landing.set_input_defaults(
-            Mission.Landing.LIFT_COEFFICIENT_MAX, val=self.Cl_max_ldg,
-            units='unitless')
+            Mission.Landing.LIFT_COEFFICIENT_MAX, val=self.Cl_max_ldg, units='unitless')
 
         return landing
-
-
-if __name__ == "__main__":
-    landing_options = Landing(
-        ref_wing_area=1370.0,  # ft**2
-        Cl_max_ldg=3,  # no units
-    )
-
-    landing = landing_options.build_phase(False)
-
-    prob = om.Problem()
-    prob.model = landing
-    prob.setup(force_alloc_complex=True)
-    prob.run_model()
-    prob.check_partials(method="cs", compact_print=True)
