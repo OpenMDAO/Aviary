@@ -51,5 +51,4 @@ class MissionEOM(om.Group):
                 Dynamic.Mission.VELOCITY_RATE,
                 Dynamic.Mission.VELOCITY],
             promotes_outputs=[
-                (Dynamic.Mission.ALTITUDE_RATE,
-                 Dynamic.Mission.ALTITUDE_RATE_MAX)])
+                (Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.ALTITUDE_RATE_MAX)])
