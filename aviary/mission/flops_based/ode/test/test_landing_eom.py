@@ -9,13 +9,14 @@ from aviary.mission.flops_based.ode.landing_eom import (
     FlareEOM, GlideSlopeForces, FlareSumForces, GroundSumForces)
 from aviary.models.N3CC.N3CC_data import (
     detailed_landing_flare, inputs)
+from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import do_validation_test
 from aviary.variable_info.variables import Dynamic
 
 
 class FlareEOMTest(unittest.TestCase):
-    def test_case(self):
-        prob = om.Problem()
+    def setUp(self):
+        prob = self.prob = om.Problem()
 
         time, _ = detailed_landing_flare.get_item('time')
         nn = len(time)
@@ -29,8 +30,10 @@ class FlareEOMTest(unittest.TestCase):
 
         prob.setup(check=False, force_alloc_complex=True)
 
+    def test_case(self):
+
         do_validation_test(
-            prob,
+            self.prob,
             'landing_flare_eom',
             input_validation_data=detailed_landing_flare,
             output_validation_data=detailed_landing_flare,
@@ -46,6 +49,12 @@ class FlareEOMTest(unittest.TestCase):
                 Dynamic.Mission.DISTANCE_RATE,
                 Dynamic.Mission.ALTITUDE_RATE],
             tol=1e-2, atol=1e-8, rtol=5e-10)
+
+    # def test_IO(self):
+    #    assert_match_varnames(self.prob.model)
+
+
+class OtherTest(unittest.TestCase):
 
     def test_GlideSlopeForces(self):
         """
