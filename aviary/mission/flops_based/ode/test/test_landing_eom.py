@@ -15,6 +15,10 @@ from aviary.variable_info.variables import Dynamic
 
 
 class FlareEOMTest(unittest.TestCase):
+    """
+    Test against data of detailed_landing_flare from models/N3CC/N3CC_data.py
+    """
+
     def setUp(self):
         prob = self.prob = om.Problem()
 
@@ -64,6 +68,8 @@ class OtherTest(unittest.TestCase):
         tol = 1e-6
         aviary_options = inputs
         prob = om.Problem()
+
+        # use data from detailed_landing_flare in models/N3CC/N3CC_data.py
         prob.model.add_subsystem(
             "glide", GlideSlopeForces(num_nodes=2, aviary_options=aviary_options), promotes=["*"]
         )
@@ -108,6 +114,8 @@ class OtherTest(unittest.TestCase):
         prob.model.add_subsystem(
             "flare", FlareSumForces(num_nodes=2, aviary_options=aviary_options), promotes=["*"]
         )
+
+        # use data from detailed_landing_flare in models/N3CC/N3CC_data.py
         prob.model.set_input_defaults(
             Dynamic.Mission.MASS, np.array([106292, 106292]), units="lbm"
         )
@@ -151,6 +159,8 @@ class OtherTest(unittest.TestCase):
         prob.model.add_subsystem(
             "ground", GroundSumForces(num_nodes=2, friction_coefficient=0.025), promotes=["*"]
         )
+
+        # use data from detailed_landing_flare in models/N3CC/N3CC_data.py
         prob.model.set_input_defaults(
             Dynamic.Mission.MASS, np.array([106292, 106292]), units="lbm"
         )

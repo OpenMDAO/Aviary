@@ -13,7 +13,7 @@ from aviary.variable_info.variables import Dynamic
 class MissionEOMTest(unittest.TestCase):
     def test_case(self):
         """
-        test on mission EOM using data from validation_cases/validation_data/full_mission_test_data.py
+        test on mission EOM using data from validation_cases/validation_data/flops_data/full_mission_test_data.py
         """
 
         tol = 1e-6

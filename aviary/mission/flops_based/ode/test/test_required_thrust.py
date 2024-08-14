@@ -15,7 +15,7 @@ class RequiredThrustTest(unittest.TestCase):
     def setUp(self):
         prob = self.prob = om.Problem()
         prob.model.add_subsystem(
-            "range_rate", RequiredThrust(num_nodes=2), promotes=["*"]
+            "req_thrust", RequiredThrust(num_nodes=2), promotes=["*"]
         )
         prob.model.set_input_defaults(
             Dynamic.Mission.DRAG, np.array([47447.13138523, 44343.01567596]), units="N"
