@@ -43,6 +43,7 @@ from aviary.utils.process_input_decks import create_vehicle, update_GASP_options
 from aviary.utils.preprocessors import preprocess_crewpayload
 from aviary.interface.utils.check_phase_info import check_phase_info
 from aviary.utils.aviary_values import AviaryValues
+from aviary.interface.save_sizing import save_sizing_json, read_sizing_json, load_off_design
 
 from aviary.variable_info.functions import setup_trajectory_params, override_aviary_vars
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
@@ -2324,6 +2325,75 @@ class AviaryProblem(om.Problem):
                 self.model.list_outputs(out_stream=outfile)
 
         self.problem_ran_successfully = not failed
+
+    def run_alternate_mission(self, payload_mass=None, mission_range=None,
+                              phase_info=None, optimizer=None, max_iter=50,
+                              verbosity=Verbosity.BRIEF):
+        save_sizing_json(self, json_filename='sizing_mission.json')
+
+        if phase_info is None:
+            phase_info = self.phase_info
+        if mission_range is None:
+            design_range = self.get_val(Mission.Design.RANGE)
+        if payload_mass is None:
+            if self.mission_method is HEIGHT_ENERGY:
+                payload_mass = self.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)
+            elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
+                payload_mass = self.get_val(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS)
+        if optimizer is None:
+            optimizer = self.driver.options["optimizer"]
+
+        mission_mass = self.get_val(Mission.Design.GROSS_MASS)
+
+        prob_alternate = load_off_design('sizing_mission.json', ProblemType.ALTERNATE,
+                                         phase_info, payload_mass, design_range, mission_mass)
+
+        prob_alternate.check_and_preprocess_inputs()
+        prob_alternate.add_pre_mission_systems()
+        prob_alternate.add_phases()
+        prob_alternate.add_post_mission_systems()
+        prob_alternate.link_phases()
+        prob_alternate.add_driver(optimizer, max_iter=max_iter, verbosity=verbosity)
+        prob_alternate.add_design_variables()
+        prob_alternate.add_objective()
+        prob_alternate.setup()
+        prob_alternate.set_initial_guesses()
+        prob_alternate.run_aviary_problem(record_filename='alternate_problem_history.db')
+        return prob_alternate
+
+    def run_fallout_mission(self, mission_mass=None, payload_mass=None, phase_info=None,
+                            optimizer=None, max_iter=50, verbosity=Verbosity.BRIEF):
+        save_sizing_json(self, json_filename='sizing_mission.json')
+
+        if phase_info is None:
+            phase_info = self.phase_info
+        if mission_mass is None:
+            mission_mass = self.get_val(Mission.Design.GROSS_MASS)
+        if payload_mass is None:
+            if self.mission_method is HEIGHT_ENERGY:
+                payload_mass = self.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)
+            elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
+                payload_mass = self.get_val(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS)
+        if optimizer is None:
+            optimizer = self.driver.options["optimizer"]
+
+        design_range = self.get_val(Mission.Design.RANGE)
+
+        prob_fallout = load_off_design('sizing_mission.json', ProblemType.FALLOUT, phase_info,
+                                       payload_mass, design_range, mission_mass)
+
+        prob_fallout.check_and_preprocess_inputs()
+        prob_fallout.add_pre_mission_systems()
+        prob_fallout.add_phases()
+        prob_fallout.add_post_mission_systems()
+        prob_fallout.link_phases()
+        prob_fallout.add_driver(optimizer, max_iter=max_iter, verbosity=verbosity)
+        prob_fallout.add_design_variables()
+        prob_fallout.add_objective()
+        prob_fallout.setup()
+        prob_fallout.set_initial_guesses()
+        prob_fallout.run_aviary_problem(record_filename='fallout_problem_history.db')
+        return prob_fallout
 
     def _add_hybrid_objective(self, phase_info):
         phases = list(phase_info.keys())

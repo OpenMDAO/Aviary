@@ -9,7 +9,7 @@ from aviary.interface.save_sizing import save_sizing_json, load_off_design
 prob = av.AviaryProblem()
 
 # Load inputs
-prob.load_inputs('reports/sizing_aircraft_for_bench_GwGm.csv', phase_info)
+prob.load_inputs('models/test_aircraft/aircraft_for_bench_GwGm.csv', phase_info)
 
 # Run problem setup
 prob.check_and_preprocess_inputs()

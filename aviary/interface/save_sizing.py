@@ -49,6 +49,9 @@ def save_sizing_json(aviary_problem, json_filename):
                 elif type(type(value)) == enum.EnumType:
                     value = str([value])
 
+                print(name)
+                print(value)
+
             # Append the data to the list
             aviary_input_list.append([name, value, units])
 
@@ -95,8 +98,11 @@ def read_sizing_json(aviary_problem, json_filename):
                 is_array = True
                 # Process enums and keep chunk after the ':'
                 tmp_var_values = var_values.split(':')[-1]
+                print(var_name)
+                print(tmp_var_values)
                 var_values = tmp_var_values.replace(">", "").replace(
                     "]", "").replace("'", "").replace(" ", "")
+                print(var_values)
 
             # Convert the strings to data
             var_values = convert_strings_to_data([var_values])
