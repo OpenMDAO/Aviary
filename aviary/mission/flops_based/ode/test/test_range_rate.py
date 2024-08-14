@@ -13,7 +13,7 @@ from aviary.variable_info.variables import Dynamic
 class RangeRateTest(unittest.TestCase):
     def setUp(self):
         """
-        test using data from validation_cases/validation_data/full_mission_test_data.py
+        test using data from validation_cases/validation_data/flops_data/full_mission_test_data.py
         """
 
         prob = self.prob = om.Problem()
