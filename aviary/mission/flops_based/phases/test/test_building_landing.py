@@ -21,9 +21,8 @@ class LandingPhaseTest(unittest.TestCase):
         prob.model = landing
         prob.setup(force_alloc_complex=True)
         prob.run_model()
-        #prob.check_partials(method="cs", compact_print=True)
         partial_data = prob.check_partials(
-            out_stream=None, method="cs", excludes=["*atmosphere*"])
+            out_stream=None, method="cs", compact_print=False, excludes=["*atmosphere*"])
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
         tol = 1e-6
