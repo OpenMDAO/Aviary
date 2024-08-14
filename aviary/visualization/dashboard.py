@@ -574,7 +574,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
 
     #  Debug Input List
     input_list_pane = create_report_frame("text", "input_list.txt", '''
-       A plain text display of the model inputs. Recommended for beginners. Only created if debug_mode is set to True in the input deck.
+       A plain text display of the model inputs. Recommended for beginners. Only created if Settings.VERBOSITY is set to at least 2 in the input deck.
         The variables are listed in a tree structure. There are three columns. The left column is a list of variable names,
         the middle column is the value, and the right column is the 
         promoted variable name. The hierarchy is phase, subgroups, components, and variables. An input variable can appear under 
@@ -586,7 +586,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
 
     #  Debug Output List
     output_list_pane = create_report_frame("text", "output_list.txt", '''
-       A plain text display of the model outputs. Recommended for beginners. Only created if debug_mode is set to True in the input deck.
+       A plain text display of the model outputs. Recommended for beginners. Only created if Settings.VERBOSITY is set to at least 2 in the input deck.
         The variables are listed in a tree structure. There are three columns. The left column is a list of variable names,
         the middle column is the value, and the right column is the 
         promoted variable name. The hierarchy is phase, subgroups, components, and variables. An output variable can appear under 
