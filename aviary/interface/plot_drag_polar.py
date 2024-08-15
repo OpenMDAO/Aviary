@@ -91,7 +91,7 @@ def plot_drag_polar(input_file=None):
                 index = (altitude == fix_value) & (mach == val)
 
                 CD = np.array(CD_values[index])
-    
+
                 CL = CL_values[index]
 
                 alpha = alpha_values[index]
@@ -144,14 +144,14 @@ def plot_drag_polar(input_file=None):
     set_x_label = Label(master=window, text="x-axis")
     set_x_label.pack()
     set_x_combobox = Combobox(master=window,textvariable=set_x_var,values=[
-    'CD', 'CL', 'Alpha', 'CL/CD'])
+        'CD', 'CL', 'Alpha', 'CL/CD'])
     
     set_x_combobox.pack()
     set_y_var = StringVar(value='CL')
     set_y_label = Label(master=window, text="y-axis")
     set_y_label.pack()
     set_y_combobox = Combobox(master=window,textvariable=set_y_var,values=[
-    'CL', 'CD', 'Alpha', 'CL/CD'])
+        'CL', 'CD', 'Alpha', 'CL/CD'])
     set_y_combobox.pack()
     fix_variable_var = StringVar(value='Mach')
     fix_value_var = StringVar(value=float(mach_values[0]))
