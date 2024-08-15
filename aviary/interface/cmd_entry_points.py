@@ -12,6 +12,7 @@ from aviary.interface.graphical_input import _exec_flight_profile, _setup_flight
 from aviary.interface.download_models import _exec_hangar, _setup_hangar_parser
 from aviary.interface.plot_drag_polar import _exec_plot_drag_polar, _setup_plot_drag_polar_parser
 
+
 def _load_and_exec(script_name, user_args):
     """
     Load and exec the given script as __main__.
