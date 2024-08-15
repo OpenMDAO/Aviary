@@ -6,7 +6,6 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
 from packaging import version
 
-from aviary.constants import KNOT_TO_FT_PER_SEC
 from aviary.mission.gasp_based.ode.descent_ode import DescentODE
 from aviary.variable_info.options import get_option_defaults
 from aviary.utils.test_utils.IO_test_util import check_prob_outputs
@@ -50,17 +49,16 @@ class DescentODETestCase(unittest.TestCase):
             "alpha": np.array([3.23388, 1.203234]),
             "CL": np.array([0.51849367, 0.25908653]),
             "CD": np.array([0.02794324, 0.01862946]),
+            # ft/s
             Dynamic.Mission.ALTITUDE_RATE: np.array([-2356.7705, -2877.9606]) / 60,
-            # TAS (ft/s) * cos(gamma)
-            Dynamic.Mission.DISTANCE_RATE: [
-                (458.67774 * KNOT_TO_FT_PER_SEC) * np.cos(np.deg2rad(-2.908332)),
-                (437.62297 * KNOT_TO_FT_PER_SEC) * np.cos(np.deg2rad(-3.723388)),
-            ],
+            # TAS (ft/s) * cos(gamma), [458.67774, 437.62297] kts
+            Dynamic.Mission.DISTANCE_RATE: [773.1637, 737.0653],  # ft/s
             # lbm/h
             Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: np.array([-451.0239, -997.1514]),
-            "EAS": np.array([247.58367, 349.99997]) * KNOT_TO_FT_PER_SEC,  # kts -> ft/s
-            Dynamic.Mission.MACH: np.array([0.8, 0.697266]),
-            Dynamic.Mission.FLIGHT_PATH_ANGLE: np.deg2rad([-2.908332, -3.723388]),
+            "EAS": [417.87419406, 590.73344937],  # ft/s ([247.58367, 349.99997] kts)
+            Dynamic.Mission.MACH: [0.8, 0.697266],
+            # gamma, rad ([-2.908332, -3.723388] deg)
+            Dynamic.Mission.FLIGHT_PATH_ANGLE: [-0.05075997, -0.06498538],
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
@@ -88,10 +86,10 @@ class DescentODETestCase(unittest.TestCase):
             "CL": 0.507578,
             "CD": 0.0268404,
             Dynamic.Mission.ALTITUDE_RATE: -1138.583 / 60,
-            # TAS (ft/s) * cos(gamma)
-            Dynamic.Mission.DISTANCE_RATE: (255.5613 * KNOT_TO_FT_PER_SEC) * np.cos(np.deg2rad(-2.52149)),
+            # TAS (ft/s) * cos(gamma) = 255.5613 * 1.68781 * cos(-0.0440083)
+            Dynamic.Mission.DISTANCE_RATE: 430.9213,
             Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: -1295.11,
-            Dynamic.Mission.FLIGHT_PATH_ANGLE: np.deg2rad(-2.52149),
+            Dynamic.Mission.FLIGHT_PATH_ANGLE: -0.0440083,  # rad (-2.52149 deg)
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
