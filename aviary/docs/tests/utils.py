@@ -16,6 +16,9 @@ A collection of utility functions (and wrappers for Glue) that are useful
 for automating the process of building and testing documentation to ensure that
 documentation doesn't get stale.
 
+expected_error is an execption that can be used in try/except blocks to allow desired errors to
+pass while still raising unexpected errors.
+
 check_value is a simple function for comparing two values
 check_contains confirms that all the elements of one iterable are contained in the other
 check_args gets the signature of a function and compares it to the arguments you are expecting
@@ -26,6 +29,10 @@ get_value recursively get a value from a dict of dicts
 glue_variable Glue a variable for later use in markdown cells of notebooks (can auto format for code)
 glue_keys recursively glue all of the keys from a dict of dicts
 """
+
+
+class expected_error(Exception):
+    ...
 
 
 def check_value(val1, val2):
@@ -67,7 +74,7 @@ def check_contains(expected_values, actual_values, error_string="{var} not in {a
         actual_values : any iterable
         error_string : str
             The string to display as the error message,
-            kwarg subsitutions will be made using .format() for "var" and "actual_values"
+            kwarg substitutions will be made using .format() for "var" and "actual_values"
         error_type : Exception
             The exception to raise (default is RuntimeError)
 
@@ -193,7 +200,7 @@ def get_attribute_name(object: object, attribute) -> str:
         f"`{object.__name__}` object has no attribute with a value of `{attribute}`")
 
 
-def get_all_keys(dict_of_dicts: dict, all_keys=None, track_layers=False):
+def get_all_keys(dict_of_dicts: dict, track_layers=False, all_keys=None):
     """
     Recursively get all of the keys from a dict of dicts
     Note: this will not add duplicates of keys, but will
@@ -203,12 +210,12 @@ def get_all_keys(dict_of_dicts: dict, all_keys=None, track_layers=False):
     ----------
     dict_of_dicts : dict
         The dictionary who's keys will are to be gathered
-    all_keys : list
-        A list of the keys that have been found so far
     track_layers : Bool
         Whether or not to track where keys inside the dict of dicts
         came from. This will get every key, by ensuring that all keys
         have a unique name by tracking the path it took to get there.
+    all_keys : list
+        A list of the keys that have been found so far
 
     Returns
     -------
@@ -231,7 +238,7 @@ def get_all_keys(dict_of_dicts: dict, all_keys=None, track_layers=False):
                 current_layer = key
             else:
                 current_layer = False
-            all_keys = get_all_keys(val, all_keys=all_keys, track_layers=current_layer)
+            all_keys = get_all_keys(val, track_layers=current_layer, all_keys=all_keys)
     return all_keys
 
 
