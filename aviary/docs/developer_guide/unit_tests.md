@@ -27,6 +27,50 @@ Ran 888 tests using 16 processes
 Wall clock time:   00:00:54.15
 ```
 
+## Current Unit Tests
+
+### assert_near_equal
+
+The unit test that Aviary uses most is `assert_near_equal` from the OpenMDAO utility [assert_near_equal](https://openmdao.org/newdocs/versions/latest/_srcdocs/packages/utils/assert_utils.html). This assertion takes about 80% of all the assertions. It has the following format:
+
+```
+assert_near_equal(actual_value, expected_value, tolerance=1e-15, tol_type='rel')z
+```
+
+where the `actual_value` is the value from Aviary and `expected_value` is what the developer expects. Ideally, the `expected_value` should come from computation by another tool (e.g. GASP, FLOPS or LEAPS1) or hand computation. When it is not possible, one can accept an Aviary computed value as expected. This guarantees that future development will not alter the outputs by mistake. As for the tolerance, it is good practice to take 1.e-6. By default, it checks relative error. If the `expected_value` is 0.0, it checks the absolute error.
+
+One can find examples mostly in `subsystems` and `mission` The purpose is to make sure that a variable in an object (namely a component and/or a group) is computed as expected. It is advised that `assert_near_equal` test is carried for all outputs both in components and groups.
+
+### assert_almost_equal
+
+A similar unit test is NumPy's utility is `assert_almost_equal`. It checks whether the absolute difference of `actual_value` from `expected_value` is within certain tolerance. As [documented](https://numpy.org/doc/stable/reference/generated/numpy.testing.assert_almost_equal.html) by NumPy, it is not recommented.
+
+### assert_check_partials
+
+The second most used assertion is `assert_check_partials` from the OpenMDAO utility. This is critical important because it checks whether the partial derivatives coded by develops are correct. It is the key in optimization. To use this test, you fitst prepare the partial derivative `data` by calling `check_partials` on an object. Then call `assert_check_partials` function with the `data`.
+
+```
+data = prob.check_partials(out_stream=None)
+assert_check_partials(data, atol=1e-06, rtol=1e-06)
+```
+
+It makes sure that the computed derivatives in the code match with the computed derivatives by using numerical differentiation in the given absolute tolerance and relative tolerance.
+
+Apparently, it is important that we prepare good data. In Aviary, there are two ways to compute derivatives: analytically or numerically. If It is computed numerically, you must make sure that the computation in `check_partials` is different. Otherwise, you use exactly the same methods and the comparing result is not meaningful. For example, if the partial derivatives are computed using `cs` method, you need to use `fd` method, or use `cs` method but with a different stepsize (e.g. `step=1.01e-40`):
+
+```
+data = prob.check_partials(out_stream=None, method="cs", step=1.01e-40)
+assert_check_partials(data, atol=1e-06, rtol=1e-06)
+```
+
+Although the default method is `fd` (finite difference), we prefer `cs` ([complex step](https://openmdao.org/newdocs/versions/latest/advanced_user_guide/complex_step.html) because it usally gives more accurate results.
+
+`check_partials` allows you to exclude some components in a group. For example `excludes=["*atmosphere*"]` means that atmosphere component will not be included.
+
+Sometimes, you may need to exclude a particular partial derivative. You need to write your own code to do so. One example is in `subsystems/propulsion/test/test_propeller_performance.py`.
+
+Some of the partials in Aviary use table look up and interpolations. In the openmdao interpolation, the derivatives aren't always continuous if you interpolate right on one of the table points. You may need to tune the points you choose. For example, if 0.04 is a point in your test, you can change it to 0.04000001 and try again.
+
 ## Adding Unit Tests
 
 Whenever you add to Aviary, you should add a unit test to check its functionality.
