@@ -6,7 +6,6 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
 from packaging import version
 
-from aviary.constants import KNOT_TO_FT_PER_SEC
 from aviary.mission.gasp_based.phases.landing_group import LandingSegment
 from aviary.variable_info.options import get_option_defaults
 from aviary.utils.test_utils.IO_test_util import check_prob_outputs
