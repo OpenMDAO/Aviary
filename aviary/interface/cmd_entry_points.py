@@ -58,6 +58,7 @@ _command_map = {
     'convert_prop_table': (_setup_PMC_parser, _exec_PMC,
                            'Converts GASP-formatted propeller map file into Aviary csv format.'),
     'plot_drag_polar': (_setup_plot_drag_polar_parser, _exec_plot_drag_polar, 'Plot a Drag Polar Graph using a provided polar data csv input'),                          
+
 }
 
 
