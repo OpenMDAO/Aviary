@@ -99,7 +99,7 @@ def plot_drag_polar(input_file=None):
             ax.set_xlabel(f'{x_var}')
             ax.set_ylabel(f'{y_var}')
             ax.legend(loc='center left', bbox_to_anchor=(1, 0.5), title=fixed_label)
-            ax.set_title(f'{x_var} vs {y_var} for fixed {fix_variable} = {fix_value}')      
+            ax.set_title(f'{y_var} vs {x_var} for fixed {fix_variable} = {fix_value}')      
             canvas.draw()
             toolbar.update()
 
