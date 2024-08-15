@@ -80,7 +80,7 @@ def plot_drag_polar(input_file=None):
         for i, val in enumerate(fixed_values):
             if fix_variable == 'Mach':
                 indices = (mach == fix_value) & (altitude == val)
-                
+
                 CD = np.array(CD_values[indices])
 
                 CL = CL_values[indices]
@@ -93,7 +93,7 @@ def plot_drag_polar(input_file=None):
                 CD = np.array(CD_values[index])
     
                 CL = CL_values[index]
-                
+
                 alpha = alpha_values[index]
 
             if x_var == 'CD':
@@ -127,7 +127,6 @@ def plot_drag_polar(input_file=None):
             ax.legend(loc='center left', bbox_to_anchor=(1, 0.5), title=fixed_label)
             ax.set_title(f'{y_var} vs {x_var} for fixed {fix_variable} = {fix_value}')
 
-
             canvas.draw()
             toolbar.update()
 
@@ -145,20 +144,20 @@ def plot_drag_polar(input_file=None):
     set_x_label = Label(master=window, text="x-axis")
     set_x_label.pack()
     set_x_combobox = Combobox(master=window,textvariable=set_x_var,values=[
-                             'CD', 'CL', 'Alpha', 'CL/CD'])
+    'CD', 'CL', 'Alpha', 'CL/CD'])
     
     set_x_combobox.pack()
     set_y_var = StringVar(value='CL')
     set_y_label = Label(master=window, text="y-axis")
     set_y_label.pack()
     set_y_combobox = Combobox(master=window,textvariable=set_y_var,values=[
-                             'CL', 'CD', 'Alpha', 'CL/CD'])
+    'CL', 'CD', 'Alpha', 'CL/CD'])
     set_y_combobox.pack()
     fix_variable_var = StringVar(value='Mach')
     fix_value_var = StringVar(value=float(mach_values[0]))
     fix_variable_label = Label(master=window, text="Fix Variable:")
     fix_variable_label.pack()
-    
+
     fix_variable_combobox = Combobox(
         master=window, textvariable=fix_variable_var, values=['Mach', 'Altitude'])
     fix_variable_combobox.pack()
