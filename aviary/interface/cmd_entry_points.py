@@ -1,7 +1,6 @@
 import argparse
 import os
 import sys
-
 import aviary
 from aviary.interface.methods_for_level1 import _exec_level1, _setup_level1_parser
 from aviary.utils.fortran_to_aviary import _exec_F2A, _setup_F2A_parser
