@@ -6,6 +6,8 @@ from pathlib import Path
 from datetime import datetime
 import importlib.util
 import sys
+import json
+import enum
 
 import numpy as np
 
@@ -24,7 +26,6 @@ from aviary.mission.energy_phase import EnergyPhase
 from aviary.mission.twodof_phase import TwoDOFPhase
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
-from aviary.mission.gasp_based.phases.time_integration_phases import SGMCruise
 from aviary.mission.gasp_based.phases.groundroll_phase import GroundrollPhase
 from aviary.mission.flops_based.phases.groundroll_phase import GroundrollPhase as GroundrollPhaseVelocityIntegrated
 from aviary.mission.gasp_based.phases.rotation_phase import RotationPhase
@@ -43,11 +44,11 @@ from aviary.utils.process_input_decks import create_vehicle, update_GASP_options
 from aviary.utils.preprocessors import preprocess_crewpayload
 from aviary.interface.utils.check_phase_info import check_phase_info
 from aviary.utils.aviary_values import AviaryValues
-from aviary.interface.save_sizing import save_sizing_json, read_sizing_json, load_off_design
+from aviary.utils.save_sizing import load_off_design
 
 from aviary.variable_info.functions import setup_trajectory_params, override_aviary_vars
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
-from aviary.variable_info.enums import AnalysisScheme, ProblemType, SpeedType, AlphaModes, EquationsOfMotion, LegacyCode, Verbosity
+from aviary.variable_info.enums import AnalysisScheme, ProblemType, EquationsOfMotion, LegacyCode, Verbosity
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 
 from aviary.subsystems.propulsion.utils import build_engine_deck
@@ -2326,11 +2327,10 @@ class AviaryProblem(om.Problem):
 
         self.problem_ran_successfully = not failed
 
-    def run_alternate_mission(self, payload_mass=None, mission_range=None,
+    def run_alternate_mission(self, json_filename='sizing_problem.json',
+                              payload_mass=None, mission_range=None,
                               phase_info=None, optimizer=None, max_iter=50,
                               verbosity=Verbosity.BRIEF):
-        save_sizing_json(self, json_filename='sizing_mission.json')
-
         if phase_info is None:
             phase_info = self.phase_info
         if mission_range is None:
@@ -2345,7 +2345,7 @@ class AviaryProblem(om.Problem):
 
         mission_mass = self.get_val(Mission.Design.GROSS_MASS)
 
-        prob_alternate = load_off_design('sizing_mission.json', ProblemType.ALTERNATE,
+        prob_alternate = load_off_design(json_filename, ProblemType.ALTERNATE,
                                          phase_info, payload_mass, design_range, mission_mass)
 
         prob_alternate.check_and_preprocess_inputs()
@@ -2361,10 +2361,9 @@ class AviaryProblem(om.Problem):
         prob_alternate.run_aviary_problem(record_filename='alternate_problem_history.db')
         return prob_alternate
 
-    def run_fallout_mission(self, mission_mass=None, payload_mass=None, phase_info=None,
+    def run_fallout_mission(self, json_filename='sizing_problem.json',
+                            mission_mass=None, payload_mass=None, phase_info=None,
                             optimizer=None, max_iter=50, verbosity=Verbosity.BRIEF):
-        save_sizing_json(self, json_filename='sizing_mission.json')
-
         if phase_info is None:
             phase_info = self.phase_info
         if mission_mass is None:
@@ -2379,7 +2378,7 @@ class AviaryProblem(om.Problem):
 
         design_range = self.get_val(Mission.Design.RANGE)
 
-        prob_fallout = load_off_design('sizing_mission.json', ProblemType.FALLOUT, phase_info,
+        prob_fallout = load_off_design(json_filename, ProblemType.FALLOUT, phase_info,
                                        payload_mass, design_range, mission_mass)
 
         prob_fallout.check_and_preprocess_inputs()
@@ -2394,6 +2393,60 @@ class AviaryProblem(om.Problem):
         prob_fallout.set_initial_guesses()
         prob_fallout.run_aviary_problem(record_filename='fallout_problem_history.db')
         return prob_fallout
+
+    def save_json(self, json_filename='sizing_problem.json'):
+        """
+        This function saves an aviary problem object into a json file.
+
+        Parameters
+        ----------
+        aviary_problem: OpenMDAO Aviary Problem
+            Aviary problem object optimized for the aircraft design/sizing mission.
+            Assumed to contain aviary_inputs and Mission.Summary.GROSS_MASS
+        json_filename:   string
+            User specified name and relative path of json file to save the data into
+        """
+
+        aviary_input_list = []
+        with open(json_filename, 'w') as jsonfile:
+            # Loop through aviary input datastructure and create a list
+            for data in self.aviary_inputs:
+                (name, (value, units)) = data
+                type_value = type(value)
+
+                # Get the gross mass value from the sizing problem and add it to input list
+                if name == Mission.Summary.GROSS_MASS or name == Mission.Design.GROSS_MASS:
+                    Mission_Summary_GROSS_MASS_val = self.get_val(
+                        Mission.Summary.GROSS_MASS, units=units)
+                    Mission_Summary_GROSS_MASS_val_list = Mission_Summary_GROSS_MASS_val.tolist()
+                    value = Mission_Summary_GROSS_MASS_val_list[0]
+
+                else:
+                    # there are different data types we need to handle for conversion to json format
+                    # int, bool, float doesn't need anything special
+
+                    # Convert numpy arrays to lists
+                    if type_value == np.ndarray:
+                        value = value.tolist()
+
+                    # Lists are fine except if they contain enums
+                    if type_value == list:
+                        if type(type(value[0])) == enum.EnumType:
+                            for i in range(len(value)):
+                                value[i] = str([value[i]])
+
+                    # Enums need converting to a string
+                    if type(type(value)) == enum.EnumType:
+                        value = str([value])
+
+                # Append the data to the list
+                aviary_input_list.append([name, value, units, str(type_value)])
+
+            # Write the list to a json file
+            json.dump(aviary_input_list, jsonfile, sort_keys=True,
+                      indent=4, ensure_ascii=False)
+
+            jsonfile.close()
 
     def _add_hybrid_objective(self, phase_info):
         phases = list(phase_info.keys())

@@ -112,88 +112,28 @@ prob.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
 
 # Preprocess inputs
 prob.check_and_preprocess_inputs()
-
 prob.add_pre_mission_systems()
-
 prob.add_phases(phase_info_parameterization=phase_info_parameterization)
-
 prob.add_post_mission_systems()
 
 # Link phases and variables
 prob.link_phases()
-
 prob.add_driver('SNOPT', max_iter=100)
-
 prob.add_design_variables()
 
 # Load optimization problem formulation
 # Detail which variables the optimizer can control
 prob.add_objective()
-
 prob.setup()
-
 prob.set_initial_guesses()
-
 prob.run_aviary_problem()
+prob.save_json()
 
-###################
-# Fallout Mission #
-###################
-prob_fallout = av.AviaryProblem()
+# Fallout Mission
+prob_fallout = prob.run_fallout_mission()
 
-# Load inputs from .csv file
-prob_fallout.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
-
-prob_fallout.problem_type = ProblemType.FALLOUT
-prob_fallout.aviary_inputs.set_val('problem_type', ProblemType.FALLOUT, units='unitless')
-
-
-mission_mass = prob.get_val(Mission.Summary.GROSS_MASS, units='lbm')
-prob_fallout.aviary_inputs.set_val(
-    'mission:design:gross_mass', mission_mass, units='lbm')
-prob_fallout.aviary_inputs.set_val(
-    'mission:summary:gross_mass', mission_mass, units='lbm')
-
-prob_fallout.check_and_preprocess_inputs()
-prob_fallout.add_pre_mission_systems()
-prob_fallout.add_phases(phase_info_parameterization=phase_info_parameterization)
-prob_fallout.add_post_mission_systems()
-prob_fallout.link_phases()
-prob_fallout.add_driver('SNOPT', max_iter=100)
-prob_fallout.add_design_variables()
-prob_fallout.add_objective()
-prob_fallout.setup()
-prob_fallout.set_initial_guesses()
-prob_fallout.run_aviary_problem()
-
-#####################
-# Alternate Mission #
-#####################
-prob_alternate = av.AviaryProblem()
-# Load inputs from .csv file
-prob_alternate.load_inputs(
-    'models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
-prob_alternate.problem_type = ProblemType.ALTERNATE
-prob_alternate.aviary_inputs.set_val(
-    'problem_type', ProblemType.ALTERNATE, units='unitless')
-
-mission_mass = prob.get_val(Mission.Summary.GROSS_MASS, units='lbm')
-prob_alternate.aviary_inputs.set_val(
-    'mission:design:gross_mass', mission_mass, units='lbm')
-prob_alternate.aviary_inputs.set_val(
-    'mission:summary:gross_mass', mission_mass, units='lbm')
-
-prob_alternate.check_and_preprocess_inputs()
-prob_alternate.add_pre_mission_systems()
-prob_alternate.add_phases(phase_info_parameterization=phase_info_parameterization)
-prob_alternate.add_post_mission_systems()
-prob_alternate.link_phases()
-prob_alternate.add_driver('SNOPT', max_iter=100)
-prob_alternate.add_design_variables()
-prob_alternate.add_objective()
-prob_alternate.setup()
-prob_alternate.set_initial_guesses()
-prob_alternate.run_aviary_problem()
+# Alternate Mission
+prob_alternate = prob.run_alternate_mission()
 
 print('--------------')
 print('Sizing Results')

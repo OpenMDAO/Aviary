@@ -3,10 +3,9 @@ Define the ODE for takeoff.
 '''
 import numpy as np
 import openmdao.api as om
-from dymos.models.atmosphere.atmos_1976 import USatm1976Comp
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
 from aviary.mission.flops_based.ode.takeoff_eom import StallSpeed, TakeoffEOM
-from aviary.mission.gasp_based.flight_conditions import FlightConditions
 from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import set_aviary_initial_values, promote_aircraft_and_mission_vars
@@ -88,20 +87,8 @@ class TakeoffODE(om.Group):
             promotes_inputs=['*'], promotes_outputs=['*'])
 
         self.add_subsystem(
-            "USatm",
-            USatm1976Comp(num_nodes=nn),
-            promotes_inputs=[("h", Dynamic.Mission.ALTITUDE)],
-            promotes_outputs=[
-                "rho", ("sos", Dynamic.Mission.SPEED_OF_SOUND), ("temp",
-                                                                 Dynamic.Mission.TEMPERATURE),
-                ("pres", Dynamic.Mission.STATIC_PRESSURE), "viscosity"])
-
-        self.add_subsystem(
-            "fc",
-            FlightConditions(num_nodes=nn),
-            promotes_inputs=["rho", Dynamic.Mission.SPEED_OF_SOUND,
-                             ("TAS", Dynamic.Mission.VELOCITY)],
-            promotes_outputs=[Dynamic.Mission.DYNAMIC_PRESSURE, Dynamic.Mission.MACH, "EAS"])
+            name='atmosphere', subsys=Atmosphere(num_nodes=nn), promotes=['*']
+        )
 
         # NOTE: the following are potentially signficant differences in implementation
         # between FLOPS and Aviary:
@@ -111,14 +98,16 @@ class TakeoffODE(om.Group):
         #      mass to vary as needed as a function of time and variation in related
         #      optimization control variables.
         self.add_subsystem(
-            "stall_speed", StallSpeed(num_nodes=nn),
+            "stall_speed",
+            StallSpeed(num_nodes=nn),
             promotes_inputs=[
                 "mass",
-                ("density", "rho"),
+                Dynamic.Mission.DENSITY,
                 ('area', Aircraft.Wing.AREA),
                 ("lift_coefficient_max", self.stall_speed_lift_coefficient_name),
             ],
-            promotes_outputs=[("stall_speed", "v_stall")])
+            promotes_outputs=[("stall_speed", "v_stall")],
+        )
 
         base_options = {'num_nodes': nn, 'aviary_inputs': aviary_options}
 
