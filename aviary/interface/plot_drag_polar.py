@@ -67,14 +67,14 @@ def plot_drag_polar(input_file=None):
 
         if fix_variable == 'Mach':
 
+            
             indices = mach == fix_value 
 
-        
             fixed_values = altitude_values
             fixed_label = 'Altitude'
         else:
-            
-            index= altitude == fix_value
+
+            index = altitude == fix_value
             fixed_values = mach_values
             fixed_label = 'Mach'
 
@@ -87,8 +87,10 @@ def plot_drag_polar(input_file=None):
 
                 CL = CL_values[indices]
 
+                
                 alpha = alpha_values[indices] 
 
+            
             else:
                 index = (altitude == fix_value) & (mach == val)
 
@@ -161,14 +163,14 @@ def plot_drag_polar(input_file=None):
     fix_variable_label = Label(master=window, text="Fix Variable:")
     fix_variable_label.pack()
     
-    fix_variable_combobox = Combobox(master=window, textvariable=fix_variable_var, values=['Mach', 'Altitude'])
+    fix_variable_combobox = Combobox(
+        master=window, textvariable=fix_variable_var, values=['Mach', 'Altitude'])
     fix_variable_combobox.pack()
     fix_variable_combobox.bind("<<ComboboxSelected>>", update_fix_value_combobox)
     fix_variable_combobox.current(0)
     fix_value_label = Label(master=window, text="Fix Value:")
     fix_value_label.pack()
 
-    
     fix_value_combobox = Combobox(master=window, textvariable=fix_value_var)
     fix_value_combobox.pack()
     update_fix_value_combobox()
