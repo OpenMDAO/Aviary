@@ -80,6 +80,7 @@ def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
             'legacy_code_data', defaults_filename)
 
     # create dictionary to convert legacy code variables to Aviary variables
+    # key: variable name, value: either None or relevant historical_name
     aviary_variable_dict = generate_aviary_names([legacy_code.value])
 
     if defaults_deck:  # If defaults are specified, initialize the vehicle with them
@@ -90,6 +91,8 @@ def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
                                 aviary_variable_dict, deprecated_vars, legacy_code)
     if legacy_code is GASP:
         vehicle_data = update_gasp_options(vehicle_data)
+    elif legacy_code is FLOPS:
+        vehicle_data = update_flops_options(vehicle_data)
 
     if not out_file.is_file():  # default outputted file to be in same directory as input
         out_file = fortran_deck.parent / out_file
@@ -303,6 +306,14 @@ def set_value(var_name, var_value, value_dict: NamedValues, var_ind=None, units=
         current_value[var_ind] = var_value[0]
         value_dict.set_val(var_name, current_value, units)
     else:
+        if current_value != None and isinstance(current_value[0], bool):
+            # if a variable is defined as boolean but is read in as number, set as boolean
+            if var_value[0] == 1:
+                var_value = ['True']
+            elif var_value[0] == 0:
+                var_value = ['False']
+            else:
+                ValueError(f"{var_name} allows 0 and 1 only, but it is {var_value[0]}")
         value_dict.set_val(var_name, var_value, units)
     return value_dict
 
@@ -478,33 +489,33 @@ def update_flops_options(vehicle_data):
     """
     input_values: NamedValues = vehicle_data['input_values']
 
-    for var_name in flops_scalar_variables.items():
+    for var_name in flops_scalar_variables:
         update_flops_scalar_variables(var_name, input_values)
 
     # TWR <= 0 is not valid in Aviary (parametric variation)
     if Aircraft.Design.THRUST_TO_WEIGHT_RATIO in input_values:
-        if input_values.get_val(Aircraft.Design.THRUST_TO_WEIGHT_RATIO) <= 0:
+        if input_values.get_val(Aircraft.Design.THRUST_TO_WEIGHT_RATIO)[0] <= 0:
             input_values.delete(Aircraft.Design.THRUST_TO_WEIGHT_RATIO)
 
     # WSR
 
     # Additional mass fraction scalar set to zero to not add mass twice
     if Aircraft.Engine.ADDITIONAL_MASS_FRACTION in input_values:
-        if input_values.get_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION) >= 1:
+        if input_values.get_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION)[0] >= 1:
             input_values.set_val(Aircraft.Engine.ADDITIONAL_MASS,
                                  input_values.get_val(
                                      Aircraft.Engine.ADDITIONAL_MASS_FRACTION),
                                  'lbm')
-            input_values.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.0)
+            input_values.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, [0.0])
 
     # Miscellaneous propulsion mass trigger point 1 instead of 5
     if Aircraft.Propulsion.MISC_MASS_SCALER in input_values:
-        if input_values.get_val(Aircraft.Propulsion.MISC_MASS_SCALER) >= 1:
+        if input_values.get_val(Aircraft.Propulsion.MISC_MASS_SCALER)[0] >= 1:
             input_values.set_val(Aircraft.Propulsion.TOTAL_MISC_MASS,
                                  input_values.get_val(
                                      Aircraft.Propulsion.MISC_MASS_SCALER),
                                  'lbm')
-            input_values.set_val(Aircraft.Propulsion.MISC_MASS_SCALER, 0.0)
+            input_values.set_val(Aircraft.Propulsion.MISC_MASS_SCALER, [0.0])
 
     vehicle_data['input_values'] = input_values
     return vehicle_data
@@ -524,14 +535,14 @@ def update_flops_scalar_variables(var_name, input_values: NamedValues):
     scalar_name = var_name + '_scaler'
     if scalar_name not in input_values:
         return
-    scalar_value = input_values[scalar_name]
+    scalar_value = input_values.get_val(scalar_name)[0]
     if scalar_value <= 0:
         input_values.delete(scalar_name)
     elif scalar_value < 5:
         return
     elif scalar_value > 5:
-        input_values.set_val(var_name, scalar_value, 'lbm')
-        input_values.set_val(scalar_name, 1.0)
+        input_values.set_val(var_name, [scalar_value], 'lbm')
+        input_values.set_val(scalar_name, [1.0])
 
 
 # list storing information on Aviary variables that are split from single
