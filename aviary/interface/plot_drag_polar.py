@@ -54,7 +54,6 @@ def plot_drag_polar(input_file=None):
 
     toolbar = NavigationToolbar2Tk(canvas, window)
 
-
     def plot_polar(ax, CD, CL, color, label=None, marker='o'):
         ax.plot(CD, CL, color=color, label=label, marker='o')
 
@@ -67,8 +66,7 @@ def plot_drag_polar(input_file=None):
 
         if fix_variable == 'Mach':
 
-            
-            indices = mach == fix_value 
+            indices = mach == fix_value
 
             fixed_values = altitude_values
             fixed_label = 'Altitude'
@@ -87,20 +85,18 @@ def plot_drag_polar(input_file=None):
 
                 CL = CL_values[indices]
 
-                
-                alpha = alpha_values[indices] 
+                alpha = alpha_values[indices]
 
-            
             else:
                 index = (altitude == fix_value) & (mach == val)
 
                 CD = np.array(CD_values[index])
-                
+    
                 CL = CL_values[index]
                 
                 alpha = alpha_values[index]
 
-            if x_var == 'CD': 
+            if x_var == 'CD':
                 x_val = CD
 
             elif x_var == 'CL':
@@ -117,21 +113,19 @@ def plot_drag_polar(input_file=None):
 
             elif y_var == 'CL':
                 y_val = CL
-                
+
             elif y_var == 'Alpha':
                 y_val = alpha
-                
+
             elif y_var == 'CL/CD':
                 y_val = np.array(CL)/np.array(CD)
-      
+
             plot_polar(ax, x_val, y_val, color=colors[i], label=f'{fixed_label} {val}')
 
-            
             ax.set_xlabel(f'{x_var}')
             ax.set_ylabel(f'{y_var}')
             ax.legend(loc='center left', bbox_to_anchor=(1, 0.5), title=fixed_label)
-
-            ax.set_title(f'{y_var} vs {x_var} for fixed {fix_variable} = {fix_value}')      
+            ax.set_title(f'{y_var} vs {x_var} for fixed {fix_variable} = {fix_value}')
 
 
             canvas.draw()
@@ -147,16 +141,18 @@ def plot_drag_polar(input_file=None):
             fix_value_var.set(str(altitude_values[0]))
 
     set_x_var = StringVar(value='CD')
-    
+
     set_x_label = Label(master=window, text="x-axis")
     set_x_label.pack()
-    set_x_combobox = Combobox(master=window,textvariable=set_x_var,values=['CD', 'CL', 'Alpha', 'CL/CD'])
+    set_x_combobox = Combobox(master=window,textvariable=set_x_var,values=[
+                             'CD', 'CL', 'Alpha', 'CL/CD'])
     
     set_x_combobox.pack()
     set_y_var = StringVar(value='CL')
     set_y_label = Label(master=window, text="y-axis")
     set_y_label.pack()
-    set_y_combobox = Combobox(master=window,textvariable=set_y_var,values=['CL', 'CD', 'Alpha', 'CL/CD'])
+    set_y_combobox = Combobox(master=window,textvariable=set_y_var,values=[
+                             'CL', 'CD', 'Alpha', 'CL/CD'])
     set_y_combobox.pack()
     fix_variable_var = StringVar(value='Mach')
     fix_value_var = StringVar(value=float(mach_values[0]))
