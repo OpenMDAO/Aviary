@@ -48,7 +48,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
     def test_bench_GwGm_SNOPT(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwGm.csv',
-                          local_phase_info, optimizer='SNOPT', verbosity=Verbosity.QUIET)
+                          local_phase_info, optimizer='SNOPT', verbosity=Verbosity.DEBUG)
 
         rtol = 0.01
 
@@ -143,4 +143,4 @@ if __name__ == '__main__':
     # unittest.main()
     test = ProblemPhaseTestCase()
     test.setUp()
-    test.test_bench_GwGm_shooting()
+    test.test_bench_GwGm_SNOPT()
