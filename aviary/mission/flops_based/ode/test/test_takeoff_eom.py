@@ -84,15 +84,15 @@ class TakeoffEOMTest(unittest.TestCase):
 
     def test_IO(self):
         prob = self._make_prob(climbing=False)
-        exclude_inputs =  {
+        exclude_inputs = {
             'angle_of_attack', 'acceleration_horizontal',
             'acceleration_vertical', 'forces_vertical', 'forces_horizontal'}
         exclude_outputs = {
             'acceleration_horizontal', 'acceleration_vertical',
             'climb_gradient_forces_vertical', 'forces_horizontal',
             'forces_vertical', 'climb_gradient_forces_horizontal'}
-        assert_match_varnames(prob.model, 
-                              exclude_inputs=exclude_inputs, 
+        assert_match_varnames(prob.model,
+                              exclude_inputs=exclude_inputs,
                               exclude_outputs=exclude_outputs)
 
     def test_StallSpeed(self):
