@@ -142,36 +142,36 @@ def plot_drag_polar(input_file=None):
     set_x_var = StringVar(value='CD')
 
     set_x_label = Label(master=window, text="x-axis")
-    set_x_label.pack()
+    set_x_label.pack(side='left', padx=5, pady=5)
     set_x_combobox = Combobox(master=window, textvariable=set_x_var, values=[
         'CD', 'CL', 'Alpha', 'CL/CD'])
 
-    set_x_combobox.pack()
+    set_x_combobox.pack(side='left', padx=5, pady=5)
     set_y_var = StringVar(value='CL')
     set_y_label = Label(master=window, text="y-axis")
-    set_y_label.pack()
+    set_y_label.pack(side='left', padx=5, pady=5)
     set_y_combobox = Combobox(master=window, textvariable=set_y_var, values=[
         'CL', 'CD', 'Alpha', 'CL/CD'])
-    set_y_combobox.pack()
+    set_y_combobox.pack(side='left', padx=5, pady=5)
     fix_variable_var = StringVar(value='Mach')
     fix_value_var = StringVar(value=float(mach_values[0]))
     fix_variable_label = Label(master=window, text="Fix Variable:")
-    fix_variable_label.pack()
+    fix_variable_label.pack(side='left', padx=5, pady=5)
 
     fix_variable_combobox = Combobox(
         master=window, textvariable=fix_variable_var, values=['Mach', 'Altitude'])
-    fix_variable_combobox.pack()
+    fix_variable_combobox.pack(side='left', padx=5, pady=5)
     fix_variable_combobox.bind("<<ComboboxSelected>>", update_fix_value_combobox)
     fix_variable_combobox.current(0)
     fix_value_label = Label(master=window, text="Fix Value:")
-    fix_value_label.pack()
+    fix_value_label.pack(side='left', padx=5, pady=5)
 
     fix_value_combobox = Combobox(master=window, textvariable=fix_value_var)
-    fix_value_combobox.pack()
+    fix_value_combobox.pack(side='left', padx=5, pady=5)
     update_fix_value_combobox()
 
     plot_button = Button(master=window, text="Plot", command=update_plot)
-    plot_button.pack()
+    plot_button.pack(side='right', padx=5, pady=5)
     window.mainloop()
 
 
