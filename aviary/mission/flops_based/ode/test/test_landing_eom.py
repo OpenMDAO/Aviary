@@ -59,7 +59,14 @@ class FlareEOMTest(unittest.TestCase):
             'angle_of_attack', 'acceleration_vertical',
             'forces_vertical', 'angle_of_attack_rate',
             'acceleration_horizontal', 'forces_horizontal'}
-        assert_match_varnames(self.prob.model, exclude_inputs=exclude_inputs)
+        exclude_outputs = {
+            'forces_vertical', 'acceleration_horizontal',
+            'forces_perpendicular', 'acceleration_vertical',
+            'net_alpha_rate', 'forces_horizontal', 'required_thrust'
+        }
+        assert_match_varnames(self.prob.model,
+                              exclude_inputs=exclude_inputs,
+                              exclude_outputs=exclude_outputs)
 
 
 class OtherTest(unittest.TestCase):
