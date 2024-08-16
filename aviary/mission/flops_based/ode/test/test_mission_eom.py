@@ -11,13 +11,8 @@ from aviary.variable_info.variables import Dynamic
 
 
 class MissionEOMTest(unittest.TestCase):
-    def test_case(self):
-        """
-        test on mission EOM using data from validation_cases/validation_data/flops_data/full_mission_test_data.py
-        """
-
-        tol = 1e-6
-        prob = om.Problem()
+    def setUp(self):
+        self.prob = prob = om.Problem()
         prob.model.add_subsystem(
             "mission", MissionEOM(num_nodes=3), promotes=["*"]
         )
@@ -39,9 +34,15 @@ class MissionEOMTest(unittest.TestCase):
         prob.model.set_input_defaults(
             Dynamic.Mission.THRUST_MAX_TOTAL, np.array([40799.6009633346, 11500.32, 42308.2709683461]), units="lbf"
         )
-
         prob.setup(check=False, force_alloc_complex=True)
-        prob.run_model()
+
+    def test_case(self):
+        """
+        test on mission EOM using data from validation_cases/validation_data/flops_data/full_mission_test_data.py
+        """
+
+        tol = 1e-6
+        self.prob.run_model()
 
         # TODO: actual [3679.05255448, 760.55416759, 6557.07891847]
         #       differ from N3CC from full_mission_test_data
@@ -51,25 +52,11 @@ class MissionEOMTest(unittest.TestCase):
         # assert_near_equal(prob.get_val(Dynamic.Mission.ALTITUDE_RATE_MAX, units='ft/min'),
         #                   np.array([3679.0525544843, 3.86361517135375, 6557.07891846677]), tol)
 
-        partial_data = prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-12)
 
     def test_IO(self):
-        prob = om.Problem()
-        prob.model.add_subsystem("mission", MissionEOM(num_nodes=2), promotes=["*"])
-        prob.model.set_input_defaults(Dynamic.Mission.MASS, np.zeros(2), units="lbm")
-        prob.model.set_input_defaults(Dynamic.Mission.DRAG, np.zeros(2), units="N")
-        prob.model.set_input_defaults(
-            Dynamic.Mission.ALTITUDE_RATE, np.zeros(2), units="m/s")
-        prob.model.set_input_defaults(
-            Dynamic.Mission.VELOCITY_RATE, np.zeros(2), units="m/s**2")
-        prob.model.set_input_defaults(Dynamic.Mission.VELOCITY, np.zeros(2), units="m/s")
-        prob.model.set_input_defaults(
-            Dynamic.Mission.THRUST_MAX_TOTAL, np.zeros(2), units="lbf")
-        prob.setup(check=False, force_alloc_complex=True)
-
-        # TODO: this test fails: The outputs {'thrust_required'} in the provided subsystem are not found in the provided variable structure.
-        # assert_match_varnames(prob.model)
+        assert_match_varnames(self.prob.model, exclude_outputs={'thrust_required'})
 
 
 if __name__ == "__main__":

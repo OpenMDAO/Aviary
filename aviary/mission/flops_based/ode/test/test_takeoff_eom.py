@@ -10,6 +10,7 @@ from aviary.mission.flops_based.ode.takeoff_eom import (
     FlightPathAngleRate, SumForces, ClimbGradientForces)
 from aviary.models.N3CC.N3CC_data import (
     detailed_takeoff_climbing, detailed_takeoff_ground, inputs)
+from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import do_validation_test
 from aviary.variable_info.variables import Dynamic, Mission
 
@@ -80,6 +81,19 @@ class TakeoffEOMTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         return prob
+
+    def test_IO(self):
+        prob = self._make_prob(climbing=False)
+        exclude_inputs =  {
+            'angle_of_attack', 'acceleration_horizontal',
+            'acceleration_vertical', 'forces_vertical', 'forces_horizontal'}
+        exclude_outputs = {
+            'acceleration_horizontal', 'acceleration_vertical',
+            'climb_gradient_forces_vertical', 'forces_horizontal',
+            'forces_vertical', 'climb_gradient_forces_horizontal'}
+        assert_match_varnames(prob.model, 
+                              exclude_inputs=exclude_inputs, 
+                              exclude_outputs=exclude_outputs)
 
     def test_StallSpeed(self):
         tol = 1e-6

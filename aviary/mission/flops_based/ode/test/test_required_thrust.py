@@ -48,9 +48,8 @@ class RequiredThrustTest(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
 
-    # TODO: this test fails: The outputs {'thrust_required'} in the provided subsystem are not found in the provided variable structure.
-    # def test_IO(self):
-    #     assert_match_varnames(self.prob.model)
+    def test_IO(self):
+        assert_match_varnames(self.prob.model, exclude_outputs={'thrust_required'})
 
 
 if __name__ == "__main__":

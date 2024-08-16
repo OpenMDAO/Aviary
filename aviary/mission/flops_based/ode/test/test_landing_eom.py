@@ -54,8 +54,12 @@ class FlareEOMTest(unittest.TestCase):
                 Dynamic.Mission.ALTITUDE_RATE],
             tol=1e-2, atol=1e-8, rtol=5e-10)
 
-    # def test_IO(self):
-    #    assert_match_varnames(self.prob.model)
+    def test_IO(self):
+        exclude_inputs = {
+            'angle_of_attack', 'acceleration_vertical',
+            'forces_vertical', 'angle_of_attack_rate',
+            'acceleration_horizontal', 'forces_horizontal'}
+        assert_match_varnames(self.prob.model, exclude_inputs=exclude_inputs)
 
 
 class OtherTest(unittest.TestCase):
