@@ -93,7 +93,7 @@ class TakeoffODETest(unittest.TestCase):
 
     def test_IO(self):
         prob = self._make_prob(climbing=False)
-        exclude_inputs =  {
+        exclude_inputs = {
             'engine_scaling.thrust_net_max_unscaled',
             'vectorize_performance.fuel_flow_rate_negative_0',
             'takeoff_eom.forces_vertical',
