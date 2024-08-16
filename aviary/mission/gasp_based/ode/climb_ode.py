@@ -215,3 +215,6 @@ class ClimbODE(BaseODE):
                                 val=174000 * np.ones(nn), units='lbm')
         self.set_input_defaults(Dynamic.Mission.MACH,
                                 val=0 * np.ones(nn), units="unitless")
+
+        from aviary.variable_info.variables import Aircraft
+        self.set_input_defaults(Aircraft.Wing.AREA, val=1.0, units="ft**2")

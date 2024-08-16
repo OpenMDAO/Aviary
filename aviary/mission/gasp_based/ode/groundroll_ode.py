@@ -136,3 +136,5 @@ class GroundrollODE(BaseODE):
         self.set_input_defaults(Dynamic.Mission.VELOCITY, val=np.zeros(nn), units="kn")
         self.set_input_defaults(Dynamic.Mission.VELOCITY_RATE,
                                 val=np.zeros(nn), units="kn/s")
+
+        self.set_input_defaults(Aircraft.Wing.INCIDENCE, val=1.0, units="deg")

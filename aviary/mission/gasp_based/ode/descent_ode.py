@@ -232,3 +232,6 @@ class DescentODE(BaseODE):
                                 val=0 * np.ones(nn), units="unitless")
         self.set_input_defaults(Dynamic.Mission.THROTTLE,
                                 val=0 * np.ones(nn), units="unitless")
+
+        from aviary.variable_info.variables import Aircraft
+        self.set_input_defaults(Aircraft.Wing.AREA, val=1.0, units="ft**2")
