@@ -40,7 +40,7 @@ class GearboxPreMission(om.Group):
                                        torque_max={'val': 1.0, 'units': 'kN*m'},
                                        RPM_out={'val': 1.0, 'units': 'rad/s'},
                                        has_diag_partials=True),
-                           promotes_inputs=[('shaft_power', Aircraft.Engine.SHAFT_POWER_DESIGN),
+                           promotes_inputs=[('shaft_power', Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN),
                                             'RPM_out'],
                            promotes_outputs=['torque_max'])
 
@@ -66,6 +66,6 @@ class GearboxPreMission(om.Group):
                                            RPM_out={'val': 0.0, 'units': 'rpm'},
                                            RPM_in={'val': 0.0, 'units': 'rpm'},
                                            has_diag_partials=True),
-                               promotes_inputs=[('shaftpower', Aircraft.Engine.SHAFT_POWER_DESIGN),
+                               promotes_inputs=[('shaftpower', Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN),
                                                 'RPM_out', ('RPM_in', Aircraft.Engine.RPM_DESIGN)],
                                promotes_outputs=[('gearbox_mass', Aircraft.Engine.Gearbox.MASS)])

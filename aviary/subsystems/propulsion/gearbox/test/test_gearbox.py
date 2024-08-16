@@ -9,7 +9,7 @@ from aviary.subsystems.propulsion.gearbox.gearbox_builder import GearboxBuilder
 import aviary.api as av
 
 
-class TestGearboxDerivs(unittest.TestCase):
+class TestGearbox(unittest.TestCase):
     def setUp(self):
         self.prob = prob = om.Problem()
 
@@ -26,7 +26,7 @@ class TestGearboxDerivs(unittest.TestCase):
         prob.setup(force_alloc_complex=True)
 
         prob.set_val(av.Aircraft.Engine.RPM_DESIGN, 6195, units='rpm')
-        prob.set_val(av.Aircraft.Engine.SHAFT_POWER_DESIGN, 375, units='hp')
+        prob.set_val(av.Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN, 375, units='hp')
         prob.set_val(av.Aircraft.Engine.Gearbox.GEAR_RATIO, 12.6, units=None)
         prob.set_val(av.Aircraft.Engine.Gearbox.SPECIFIC_TORQUE, 103, units='N*m/kg')
 
@@ -61,28 +61,29 @@ class TestGearboxDerivs(unittest.TestCase):
 
         prob.run_model()
 
-        SHAFT_POWER_GEAR = prob.get_val(av.Dynamic.Mission.SHAFT_POWER_GEAR, 'hp')
-        RPM_GEAR = prob.get_val(av.Dynamic.Mission.RPM_GEAR, 'rpm')
-        TORQUE_GEAR = prob.get_val(av.Dynamic.Mission.TORQUE_GEAR, 'ft*lbf')
-        SHAFT_POWER_MAX_GEAR = prob.get_val(
-            av.Dynamic.Mission.SHAFT_POWER_MAX_GEAR, 'hp')
+        SHAFT_POWER_GEARBOX = prob.get_val(av.Dynamic.Mission.SHAFT_POWER_GEARBOX, 'hp')
+        RPM_GEARBOX = prob.get_val(av.Dynamic.Mission.RPM_GEARBOX, 'rpm')
+        TORQUE_GEARBOX = prob.get_val(av.Dynamic.Mission.TORQUE_GEARBOX, 'ft*lbf')
+        SHAFT_POWER_MAX_GEARBOX = prob.get_val(
+            av.Dynamic.Mission.SHAFT_POWER_MAX_GEARBOX, 'hp')
 
-        SHAFT_POWER_GEAR_expected = [98.,  196.,  367.5]
-        RPM_GEAR_expected = [396.82539683, 491.66666667, 491.66666667]
-        TORQUE_GEAR_expected = [1297.0620786,  2093.72409783, 3925.73268342]
-        SHAFT_POWER_MAX_GEAR_expected = [367.5, 294.,  367.5]
+        SHAFT_POWER_GEARBOX_expected = [98.,  196.,  367.5]
+        RPM_GEARBOX_expected = [396.82539683, 491.66666667, 491.66666667]
+        TORQUE_GEARBOX_expected = [1297.0620786,  2093.72409783, 3925.73268342]
+        SHAFT_POWER_MAX_GEARBOX_expected = [367.5, 294.,  367.5]
 
-        assert_near_equal(SHAFT_POWER_GEAR, SHAFT_POWER_GEAR_expected, tolerance=1e-6)
-        assert_near_equal(RPM_GEAR, RPM_GEAR_expected, tolerance=1e-6)
-        assert_near_equal(TORQUE_GEAR, TORQUE_GEAR_expected, tolerance=1e-6)
-        assert_near_equal(SHAFT_POWER_MAX_GEAR,
-                          SHAFT_POWER_MAX_GEAR_expected, tolerance=1e-6)
+        assert_near_equal(SHAFT_POWER_GEARBOX,
+                          SHAFT_POWER_GEARBOX_expected, tolerance=1e-6)
+        assert_near_equal(RPM_GEARBOX, RPM_GEARBOX_expected, tolerance=1e-6)
+        assert_near_equal(TORQUE_GEARBOX, TORQUE_GEARBOX_expected, tolerance=1e-6)
+        assert_near_equal(SHAFT_POWER_MAX_GEARBOX,
+                          SHAFT_POWER_MAX_GEARBOX_expected, tolerance=1e-6)
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-9, rtol=1e-9)
 
 
-class TestGearbox(av.TestSubsystemBuilderBase):
+class TestGearboxBuilder(av.TestSubsystemBuilderBase):
 
     def setUp(self):
         self.subsystem_builder = GearboxBuilder()

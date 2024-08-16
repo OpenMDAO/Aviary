@@ -1,16 +1,22 @@
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.subsystems.propulsion.gearbox.model.gearbox_premission import GearboxPreMission
 from aviary.subsystems.propulsion.gearbox.model.gearbox_mission import GearboxMission
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class GearboxBuilder(SubsystemBuilderBase):
     """
-    Define the builder for a single gearbox subsystem that provides methods to define the gearbox subsystem's states, design variables, fixed values, initial guesses, and mass names.
+    Define the builder for a single gearbox subsystem that provides methods 
+    to define the gearbox subsystem's states, design variables, fixed values, 
+    initial guesses, and mass names. It also provides methods to build OpenMDAO 
+    systems for the pre-mission and mission computations of the subsystem, 
+    to get the constraints for the subsystem, and to preprocess the inputs for
+    the subsystem. 
 
-    It also provides methods to build OpenMDAO systems for the pre-mission and mission computations of the subsystem, to get the constraints for the subsystem, and to preprocess the inputs for the subsystem.
+    This is meant to be computations for a single gearbox, so there is no notion 
+    of "num_gearboxs" in this code.
 
-    This is meant to be computations for a single gearbox, so there is no notion of "num_gearboxs" in this code.
+    This is a reduction gearbox, so gear ratio is input_RPM/output_RPM.
     """
 
     def __init__(self, name='gearbox', include_constraints=True):
@@ -44,7 +50,7 @@ class GearboxBuilder(SubsystemBuilderBase):
                 'val':  10  # initial value
             },
             # This var appears in both mission and pre-mission
-            Aircraft.Engine.SHAFT_POWER_DESIGN: {
+            Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN: {
                 'val': 10000,
                 'units': 'kW',
                 'lower': 1.0,
@@ -81,17 +87,17 @@ class GearboxBuilder(SubsystemBuilderBase):
 
     def get_outputs(self):
         return [
-            Dynamic.Mission.RPM_GEAR,
-            Dynamic.Mission.SHAFT_POWER_CONSTRAINT,
-            Dynamic.Mission.SHAFT_POWER_GEAR,
-            Dynamic.Mission.SHAFT_POWER_MAX_GEAR,
-            Dynamic.Mission.TORQUE_GEAR,
+            Dynamic.Mission.RPM_GEARBOX,
+            Dynamic.Mission.SHAFT_POWER_GEARBOX,
+            Dynamic.Mission.SHAFT_POWER_MAX_GEARBOX,
+            Dynamic.Mission.TORQUE_GEARBOX,
+            Mission.Constraints.SHAFT_POWER_RESIDUAL,
         ]
 
     def get_constraints(self):
         if self.include_constraints:
             constraints = {
-                Dynamic.Mission.SHAFT_POWER_CONSTRAINT: {
+                Mission.Constraints.SHAFT_POWER_RESIDUAL: {
                     'lower': 0.0,
                     'type': 'path',
                     'units': 'kW',
