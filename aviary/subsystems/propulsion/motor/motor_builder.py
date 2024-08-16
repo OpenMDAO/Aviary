@@ -54,18 +54,18 @@ class MotorBuilder(SubsystemBuilderBase):
         return MotorMission(num_nodes=num_nodes, aviary_inputs=aviary_inputs)
 
     # def get_constraints(self):
-        # if self.include_constraints:
-        #     constraints = {
-        # Dynamic.Mission.Motor.TORQUE_CON: {
-        #     'upper': 0.0,
-        #     'type': 'path'
-        # }
-        # # TBD Gearbox torque constraint
-        #     }
-        # else:
-        #     constraints = {}
+    #     if self.include_constraints:
+    #         constraints = {
+    #     Dynamic.Mission.Motor.TORQUE_CON: {
+    #         'upper': 0.0,
+    #         'type': 'path'
+    #     }
+    #     TBD Gearbox torque constraint
+    #         }
+    #     else:
+    #         constraints = {}
 
-        # return constraints
+    #     return constraints
 
     def get_design_vars(self):
         DVs = {
@@ -84,15 +84,15 @@ class MotorBuilder(SubsystemBuilderBase):
         return DVs
 
     # def get_initial_guesses(self):
-        # initial_guess_dict = {
-        # Aircraft.Motor.RPM: {
-        #     'units': 'rpm',
-        #     'type': 'parameter',
-        #     'val': 4000.0,  # based on our map
-        # },
-        # }
+    #     initial_guess_dict = {
+    #         Aircraft.Motor.RPM: {
+    #             'units': 'rpm',
+    #             'type': 'parameter',
+    #             'val': 4000.0,  # based on our map
+    #         },
+    #     }
 
-        # return initial_guess_dict
+    # return initial_guess_dict
 
     def get_mass_names(self):
         '''
@@ -116,10 +116,9 @@ class MotorBuilder(SubsystemBuilderBase):
             A list of variable names for the motor subsystem.
         '''
 
-        return [Dynamic.Mission.TORQUE,
-                Dynamic.Mission.SHAFT_POWER,
-                Dynamic.Mission.SHAFT_POWER_MAX,
-                Dynamic.Mission.ELECTRIC_POWER_IN,
-                Dynamic.Mission.THRUST,
-                Dynamic.Mission.NOX_RATE,
-                Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE]
+        return [
+            Dynamic.Mission.TORQUE,
+            Dynamic.Mission.SHAFT_POWER,
+            Dynamic.Mission.SHAFT_POWER_MAX,
+            Dynamic.Mission.ELECTRIC_POWER_IN,
+        ]

@@ -6650,6 +6650,7 @@ add_meta_data(
 )
 
 add_meta_data(
+<<<<<<< HEAD
     Dynamic.Mission.SHAFT_POWER_MAX,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -6672,6 +6673,8 @@ add_meta_data(
 )
 
 add_meta_data(
+=======
+>>>>>>> 8c7e9a428d22814951505904e761d1b23d8b368a
     Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
     meta_data=_MetaData,
     historical_name={"GASP": None,
