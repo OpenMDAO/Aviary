@@ -111,6 +111,7 @@ class TakeoffODETest(unittest.TestCase):
             'vectorize_performance.thrust_net_max_0',
             'core_aerodynamics.aero_forces.CD',
             'vectorize_performance.shaft_power_0',
+            'vectorize_performance.shaft_power_max_0',
             'engine_scaling.electric_power_in_unscaled',
             'core_aerodynamics.ground_effect.base_drag_coefficient',
             'engine_scaling.shaft_power_unscaled',
