@@ -63,13 +63,39 @@ data = prob.check_partials(out_stream=None, method="cs", step=1.01e-40)
 assert_check_partials(data, atol=1e-06, rtol=1e-06)
 ```
 
-Although the default method is `fd` (finite difference), we prefer `cs` ([complex step](https://openmdao.org/newdocs/versions/latest/advanced_user_guide/complex_step.html) because it usally gives more accurate results.
+Although the default method of `check_partials` is `fd` (finite difference), we prefer `cs` ([complex step](https://openmdao.org/newdocs/versions/latest/advanced_user_guide/complex_step.html) because it usally gives more accurate results.
+
+````{margin}
+```{note}
+In general, we really don't have to check partials that are computed with complex step, since you expect that you should already be getting cs level of accuracy from them. Checks are primarily for analytic derivatives, where you can make mistakes. 
+```
+````
 
 `check_partials` allows you to exclude some components in a group. For example `excludes=["*atmosphere*"]` means that atmosphere component will not be included.
 
 Sometimes, you may need to exclude a particular partial derivative. You need to write your own code to do so. One example is in `subsystems/propulsion/test/test_propeller_performance.py`.
 
+````{margin}
+```{note}
 Some of the partials in Aviary use table look up and interpolations. In the openmdao interpolation, the derivatives aren't always continuous if you interpolate right on one of the table points. You may need to tune the points you choose. For example, if 0.04 is a point in your test, you can change it to 0.04000001 and try again.
+```
+````
+
+### assert_warning
+
+This assertion checks that a warning is issued as expected. Currently, there is only one usage in Aviary but we should add more.
+
+### assert_match_varnames
+
+The third most used assertion is `assert_match_varnames` from Aviary (about 5%). All of them are in `test_IO()` functions. It tests that all of the variables in an object (component or group) that are declared as inputs or outputs exist in the Aviary variable hierarchy.
+
+### Other Assertions
+
+Aviary has built several utility functions for unit tests:
+
+- `assert_no_duplicates`
+- `assert_structure_alphabetization`
+- `assert_metadata_alphabetization`
 
 ## Adding Unit Tests
 
