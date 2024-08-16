@@ -49,6 +49,7 @@ class RequiredThrustTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
 
     def test_IO(self):
+        # TODO should thrust_required be an Aviary variable?
         assert_match_varnames(self.prob.model, exclude_outputs={'thrust_required'})
 
 

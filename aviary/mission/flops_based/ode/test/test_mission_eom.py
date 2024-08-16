@@ -47,7 +47,7 @@ class MissionEOMTest(unittest.TestCase):
         # TODO: actual [3679.05255448, 760.55416759, 6557.07891847]
         #       differ from N3CC from full_mission_test_data
         #       note: 760.55416759 ft/min = 3.86361517135375 m/s
-        #       My guess is that the N3CC blessed data has a mix of different units.
+        #       My guess is that the full_mission_test_data has a mix of different units.
         #       3.86361517135375 should be replaced by 760.55416759.
         # assert_near_equal(prob.get_val(Dynamic.Mission.ALTITUDE_RATE_MAX, units='ft/min'),
         #                   np.array([3679.0525544843, 3.86361517135375, 6557.07891846677]), tol)

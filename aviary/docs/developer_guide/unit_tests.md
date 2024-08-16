@@ -87,7 +87,7 @@ This assertion checks that a warning is issued as expected. Currently, there is 
 
 ### assert_match_varnames
 
-The third most used assertion is `assert_match_varnames` from Aviary (about 5%). All of them are in `test_IO()` functions. It tests that all of the variables in an object (component or group) that are declared as inputs or outputs exist in the Aviary variable hierarchy.
+The third most used assertion is `assert_match_varnames` from Aviary (about 5%). All of them are in `test_IO()` functions. It tests that all of the variables in an object (component or group) that are declared as inputs or outputs exist in the Aviary variable hierarchy. Exceptions are allowed by specifying `exclude_inputs` and `exclude_outputs`. For details, see [assert_utils.py](https://github.com/OpenMDAO/Aviary/blob/main/aviary/utils/test_utils/assert_utils.py).
 
 ### Other Assertions
 
