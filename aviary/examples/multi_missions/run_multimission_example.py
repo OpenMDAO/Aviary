@@ -246,7 +246,11 @@ def C5_example(makeN2=False):
                     (Mission.Summary.FUEL_BURNED, 'lbm'),
                     (Mission.Summary.GROSS_MASS, 'lbm'),
                     (Aircraft.Wing.SPAN, 'ft'),
-                    (Aircraft.Wing.AREA, 'ft**2')]
+                    (Aircraft.Wing.AREA, 'ft**2'),
+                    (Aircraft.LandingGear.MAIN_GEAR_MASS, 'lbm'),
+                    (Aircraft.LandingGear.NOSE_GEAR_MASS, 'lbm'),
+                    (Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, 'unitless'),
+                    (Mission.Summary.CRUISE_MACH, 'unitless')]
     super_prob.print_vars(vars=printoutputs)
 
     plotvars = [('altitude', 'ft'),
