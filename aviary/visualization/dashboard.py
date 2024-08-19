@@ -254,7 +254,11 @@ def create_csv_frame(csv_filepath, documentation):
             df_pane
         )
     else:
-        report_pane = None
+        report_pane = pn.Column(
+            pn.pane.HTML(f"<p>{documentation}</p>",
+                         styles={'text-align': documentation_text_align}),
+            pn.pane.Markdown(f"# Report not shown because data source CSV file, '{csv_filepath}', not found.")
+        )
 
     return report_pane
 
@@ -269,7 +273,6 @@ def get_run_status(status_filepath):
                 return f"❌ {status_dct['Exit status']}"
     except Exception as err:
         return 'Unknown'
-
 
 def create_report_frame(format, text_filepath, documentation):
     """
@@ -319,7 +322,10 @@ def create_report_frame(format, text_filepath, documentation):
         else:
             raise RuntimeError(f"Report format of {format} is not supported.")
     else:
-        report_pane = None
+        report_pane = pn.Column(
+            pn.pane.HTML(f"<p>{documentation}</p>", styles={'text-align': 'left'}),
+            pn.pane.Markdown(f"# Report not shown because report file, '{text_filepath}', not found.")
+            )
     return report_pane
 
 
@@ -536,7 +542,6 @@ def create_aircraft_3d_file(recorder_file, reports_dir, outfilepath):
     aircraft_3d_model.get_camera_entity(aircraft_3d_model.fuselage.length)
     aircraft_3d_model.write_file(aircraft_3d_template_filepath, outfilepath)
 
-
 # The main script that generates all the tabs in the dashboard
 def dashboard(script_name, problem_recorder, driver_recorder, port):
     """
@@ -554,7 +559,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
         HTTP port used for the dashboard webapp. If 0, use any free port
     """
     if "reports/" not in script_name:
-        reports_dir = f"reports/{script_name}/"
+        reports_dir = f"reports/{script_name}"
     else:
         reports_dir = script_name
 
@@ -581,8 +586,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
         different phases and within different components. Its values can be different because its value has 
         been updated during the computation. On the top-left corner is the total number of inputs. 
         That number counts the duplicates because one variable can appear in different phases.''')
-    if input_list_pane:
-        model_tabs_list.append(("Debug Input List", input_list_pane))
+    model_tabs_list.append(("Debug Input List", input_list_pane))
 
     #  Debug Output List
     output_list_pane = create_report_frame("text", "output_list.txt", '''
@@ -593,14 +597,12 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
         different phases and within different components. Its values can be different because its value has 
         been updated during the computation. On the top-left corner is the total number of outputs. 
         That number counts the duplicates because one variable can appear in different phases.''')
-    if output_list_pane:
-        model_tabs_list.append(("Debug Output List", output_list_pane))
+    model_tabs_list.append(("Debug Output List", output_list_pane))
 
     # Inputs
     inputs_pane = create_report_frame(
         "html", f"{reports_dir}/inputs.html", "Detailed report on the model inputs.")
-    if inputs_pane:
-        model_tabs_list.append(("Inputs", inputs_pane))
+    model_tabs_list.append(("Inputs", inputs_pane))
 
     # N2
     n2_pane = create_report_frame("html", f"{reports_dir}/n2.html", '''
@@ -609,8 +611,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
         shape of a matrix representing functional or physical interfaces between system elements. 
         It can be used to systematically identify, define, tabulate, design, and analyze functional 
         and physical interfaces.''')
-    if n2_pane:
-        model_tabs_list.append(("N2", n2_pane))
+    model_tabs_list.append(("N2", n2_pane))
 
     # Trajectory Linkage
     traj_linkage_report_pane = create_report_frame(
@@ -620,8 +621,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
         It can be used to identify errant linkages between fixed quantities.
         '''
     )
-    if traj_linkage_report_pane:
-        model_tabs_list.append(("Trajectory Linkage", traj_linkage_report_pane))
+    model_tabs_list.append(("Trajectory Linkage", traj_linkage_report_pane))
 
     ####### Optimization Tab #######
     optimization_tabs_list = []
@@ -635,10 +635,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
             design variables (DV).
         '''
     )
-    if driver_scaling_report_pane:
-        optimization_tabs_list.append(
-            ("Driver Scaling", driver_scaling_report_pane)
-        )
+    model_tabs_list.append(("Driver Scaling", driver_scaling_report_pane))
 
     # Desvars, cons, opt interactive plot
     if driver_recorder:
@@ -692,16 +689,14 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
     ipopt_pane = create_report_frame("text", f"{reports_dir}/IPOPT.out", '''
         This report is generated by the IPOPT optimizer.
                                      ''')
-    if ipopt_pane:
-        optimization_tabs_list.append(("IPOPT Output", ipopt_pane))
+    optimization_tabs_list.append(("IPOPT Output", ipopt_pane))
 
     # Optimization report
     opt_report_pane = create_report_frame("html", f"{reports_dir}/opt_report.html", '''
         This report is an OpenMDAO optimization report. All values are in unscaled, physical units. 
         On the top is a summary of the optimization, followed by the objective, design variables, constraints, 
         and optimizer settings. This report is important when dissecting optimal results produced by Aviary.''')
-    if opt_report_pane:
-        optimization_tabs_list.append(("Summary", opt_report_pane))
+    optimization_tabs_list.append(("Summary", opt_report_pane))
 
     # PyOpt report
     pyopt_solution_pane = create_report_frame(
@@ -709,28 +704,24 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
          This report is generated by the pyOptSparse optimizer.
        '''
     )
-    if pyopt_solution_pane:
-        optimization_tabs_list.append(("PyOpt Solution", pyopt_solution_pane))
+    optimization_tabs_list.append(("PyOpt Solution", pyopt_solution_pane))
 
     # SNOPT report
     snopt_pane = create_report_frame("text", f"{reports_dir}/SNOPT_print.out", '''
         This report is generated by the SNOPT optimizer.
                                      ''')
-    if snopt_pane:
-        optimization_tabs_list.append(("SNOPT Output", snopt_pane))
+    optimization_tabs_list.append(("SNOPT Output", snopt_pane))
 
     # SNOPT summary
     snopt_summary_pane = create_report_frame("text", f"{reports_dir}/SNOPT_summary.out", '''
         This is a report generated by the SNOPT optimizer that summarizes the optimization results.''')
-    if snopt_summary_pane:
-        optimization_tabs_list.append(("SNOPT Summary", snopt_summary_pane))
+    optimization_tabs_list.append(("SNOPT Summary", snopt_summary_pane))
 
     # Coloring report
     coloring_report_pane = create_report_frame(
         "html", f"{reports_dir}/total_coloring.html", "The report shows metadata associated with the creation of the coloring."
     )
-    if coloring_report_pane:
-        optimization_tabs_list.append(("Total Coloring", coloring_report_pane))
+    optimization_tabs_list.append(("Total Coloring", coloring_report_pane))
 
     ####### Results Tab #######
     results_tabs_list = []
@@ -746,18 +737,12 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
                     "html", f"{reports_dir}/aircraft_3d.html",
                     "3D model view of designed aircraft."
                 )
-                if aircraft_3d_pane:
-                    results_tabs_list.append(("Aircraft 3d model", aircraft_3d_pane))
             except Exception as e:
-                issue_warning(
-                    f'Unable to create aircraft 3D model display due to error {e}'
-                )
-                error_pane = create_report_frame(
+                aircraft_3d_pane = create_report_frame(
                     "simple_message", f"Unable to create aircraft 3D model display due to error: {e}",
-                    "Error"
+                    "3D model view of designed aircraft."
                 )
-                if error_pane:
-                    results_tabs_list.append(("Aircraft 3d model", error_pane))
+            results_tabs_list.append(("Aircraft 3d model", aircraft_3d_pane))
 
     # Make the Aviary variables table pane
     if os.path.exists(problem_recorder):
@@ -798,16 +783,12 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
     # Mission Summary
     mission_summary_pane = create_report_frame(
         "markdown", f"{reports_dir}/mission_summary.md", "A report of mission results from an Aviary problem")
-    if mission_summary_pane:
-        results_tabs_list.append(("Mission Summary", mission_summary_pane))
+    results_tabs_list.append(("Mission Summary", mission_summary_pane))
 
     # Run status pane
     status_pane = create_table_pane_from_json(f"{reports_dir}/status.json")
-    if status_pane:
-        results_tabs_list.append(("Run status pane", status_pane))
-        run_status_pane_tab_number = len(results_tabs_list) - 1
-    else:
-        run_status_pane_tab_number = None
+    results_tabs_list.append(("Run status pane", status_pane))
+    run_status_pane_tab_number = len(results_tabs_list) - 1
 
     # Timeseries Mission Output Report
     mission_timeseries_pane = create_csv_frame(
@@ -816,10 +797,9 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
         Any value that is included in the timeseries data is included in this report.
         This data is useful for post-processing, especially those used for acoustic analysis.
         ''')
-    if mission_timeseries_pane:
-        results_tabs_list.append(
-            ("Timeseries Mission Output", mission_timeseries_pane)
-        )
+    results_tabs_list.append(
+        ("Timeseries Mission Output", mission_timeseries_pane)
+    )
 
     # Trajectory results
     traj_results_report_pane = create_report_frame(
@@ -833,10 +813,9 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
             zooming into a particular region for details, etc.
         '''
     )
-    if traj_results_report_pane:
-        results_tabs_list.append(
-            ("Trajectory Results", traj_results_report_pane)
-        )
+    results_tabs_list.append(
+        ("Trajectory Results", traj_results_report_pane)
+    )
 
     ####### Subsystems Tab #######
     subsystem_tabs_list = []
@@ -844,7 +823,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
     # Look through subsystems directory for markdown files
     # The subsystems report tab shows selected results for every major subsystem in the Aviary problem
 
-    for md_file in sorted(Path(f"{reports_dir}subsystems").glob("*.md"), key=str):
+    for md_file in sorted(Path(f"{reports_dir}/subsystems").glob("*.md"), key=str):
         subsystems_pane = create_report_frame("markdown", str(
             md_file),
             f'''
