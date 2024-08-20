@@ -33,6 +33,7 @@ def _read_map(f, is_turbo_prop=False):
     """
     # map dimensions: FORMAT(/2I5,F10.1,10X))
     npts, nline, amap = _parse(f, [*_rep(2, (int, 5)), (float, 10)])
+
     map_data = np.empty((npts * nline, 4))
     map_data[:, 0] = amap
 
