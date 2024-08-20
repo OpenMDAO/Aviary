@@ -243,6 +243,7 @@ class Aircraft:
         REFERENCE_DIAMETER = 'aircraft:engine:reference_diameter'
         REFERENCE_MASS = 'aircraft:engine:reference_mass'
         REFERENCE_SLS_THRUST = 'aircraft:engine:reference_sls_thrust'
+        RPM_DESIGN = 'aircraft:engine:rpm_design'
         SCALE_FACTOR = 'aircraft:engine:scale_factor'
         SCALE_MASS = 'aircraft:engine:scale_mass'
         SCALE_PERFORMANCE = 'aircraft:engine:scale_performance'
@@ -257,9 +258,11 @@ class Aircraft:
         WING_LOCATIONS = 'aircraft:engine:wing_locations'
 
         class Gearbox:
+            EFFICIENCY = "aircraft:engine:gearbox:efficiency"
             GEAR_RATIO = "aircraft:engine:gearbox:gear_ratio"
             MASS = "aircraft:engine:gearbox:mass"
-            TORQUE_MAX = "aircraft:engine:gearbox:torque_max"
+            SHAFT_POWER_DESIGN = 'aircraft:engine:shaft_power_design'
+            SPECIFIC_TORQUE = "aircraft:engine:gearbox:specific_torque"
 
         class Motor:
             MASS = 'aircraft:engine:motor:mass'
@@ -638,8 +641,11 @@ class Dynamic:
         # PERCENT_ROTOR_RPM_CORRECTED = 'percent_rotor_rpm_corrected'
         PROPELLER_TIP_SPEED = 'propeller_tip_speed'
         RPM = 'rotations_per_minute'
+        RPM_GEARBOX = 'rotations_per_minute_gearbox'
         SHAFT_POWER = 'shaft_power'
+        SHAFT_POWER_GEARBOX = 'shaft_power_gearbox'
         SHAFT_POWER_MAX = 'shaft_power_max'
+        SHAFT_POWER_MAX_GEARBOX = 'shaft_power_max_gearbox'
         SPECIFIC_ENERGY = 'specific_energy'
         SPECIFIC_ENERGY_RATE = 'specific_energy_rate'
         SPECIFIC_ENERGY_RATE_EXCESS = 'specific_energy_rate_excess'
@@ -653,6 +659,7 @@ class Dynamic:
         THRUST_MAX_TOTAL = 'thrust_net_max_total'
         THRUST_TOTAL = 'thrust_net_total'
         TORQUE = 'torque'
+        TORQUE_GEARBOX = 'torque_gearbox'
         VELOCITY = 'velocity'
         VELOCITY_RATE = 'velocity_rate'
 
@@ -666,6 +673,7 @@ class Mission:
         MAX_MACH = 'mission:constraints:max_mach'
         RANGE_RESIDUAL = 'mission:constraints:range_residual'
         RANGE_RESIDUAL_RESERVE = 'mission:constraints:range_residual_reserve'
+        SHAFT_POWER_RESIDUAL = 'shaft_power_residual'
 
     class Design:
         # These values MAY change in design mission, but in off-design

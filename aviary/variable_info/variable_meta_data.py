@@ -2194,6 +2194,18 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Engine.RPM_DESIGN,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INPROP.XNMAX',  # maximum engine speed, rpm
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='rpm',
+    desc='the designed output RPM from the engine for fixed-RPM shafts',
+    default_value=None,
+)
+
+add_meta_data(
     Aircraft.Engine.SCALE_FACTOR,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -2367,11 +2379,24 @@ add_meta_data(
 # ============================================
 
 add_meta_data(
+    Aircraft.Engine.Gearbox.EFFICIENCY,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='unitless',
+    desc='The efficiency of the gearbox.',
+    default_value=0.98,
+)
+add_meta_data(
     Aircraft.Engine.Gearbox.GEAR_RATIO,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INPROP.GR', "FLOPS": None, "LEAPS1": None},
-    units=None,
-    desc='The ratio of the RPM_out divided by the RPM_in for the gearbox.',
+    historical_name={"GASP": None,  # 1 / INPROP.GR
+                     "FLOPS": None,
+                     "LEAPS1": None},
+    units='unitless',
+    desc='Reduction gear ratio, or the ratio of the RPM_in divided by the RPM_out for the gearbox.',
     default_value=1.0,
 )
 
@@ -2388,15 +2413,28 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Engine.Gearbox.TORQUE_MAX,
+    Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INPROP.HPMSLS',  # max sea level static horsepower, hp
+                     "FLOPS": None,
+                     "LEAPS1": None,
+                     },
+    units='kW',
+    desc='A guess for the maximum power that will be transmitted through the gearbox during the mission.',
+    default_value=1.0,
+    option=True
+)
+
+add_meta_data(
+    Aircraft.Engine.Gearbox.SPECIFIC_TORQUE,
     meta_data=_MetaData,
     historical_name={"GASP": None,
                      "FLOPS": None,
                      "LEAPS1": None
                      },
-    units='N*m',
-    desc='The maximum rated torque of the gearbox.',
-    default_value=0,
+    units='N*m/kg',
+    desc='The specific torque of the gearbox, used to calculate gearbox mass. ',
+    default_value=100,
 )
 
 #  __  __         _
@@ -6563,6 +6601,16 @@ add_meta_data(
 )
 
 add_meta_data(
+    Dynamic.Mission.RPM_GEARBOX,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None},
+    units='rpm',
+    desc='Rotational rate of shaft coming out of the gearbox and into the prop.',
+)
+
+add_meta_data(
     Dynamic.Mission.SPECIFIC_ENERGY,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -6595,6 +6643,14 @@ add_meta_data(
 )
 
 add_meta_data(
+    Dynamic.Mission.SHAFT_POWER_GEARBOX,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='kW',
+    desc='current shaft power coming out of the gearbox, per gearbox',
+)
+
+add_meta_data(
     Dynamic.Mission.SHAFT_POWER_MAX,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -6603,6 +6659,17 @@ add_meta_data(
                      },
     units='hp',
     desc='The maximum possible shaft power currently producible, per engine'
+)
+
+add_meta_data(
+    Dynamic.Mission.SHAFT_POWER_MAX_GEARBOX,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='hp',
+    desc='The maximum possible shaft power the gearbox can currently produce, per gearbox'
 )
 
 add_meta_data(
@@ -6729,6 +6796,14 @@ add_meta_data(
 )
 
 add_meta_data(
+    Dynamic.Mission.TORQUE_GEARBOX,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='N*m',
+    desc='Current torque being produced, per gearbox',
+)
+
+add_meta_data(
     Dynamic.Mission.VELOCITY,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -6831,6 +6906,14 @@ add_meta_data(
     desc='residual to make sure aircraft reserve mission range is equal to the targeted '
          'range, value should be zero at convergence (within acceptable '
          'tolerance)',
+)
+
+add_meta_data(
+    Mission.Constraints.SHAFT_POWER_RESIDUAL,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='kW',
+    desc='Must be zero or positive to ensure that the gearbox is sized large enough to handle the maximum shaft power the engine could output during any part of the mission',
 )
 
 #  _____                 _
