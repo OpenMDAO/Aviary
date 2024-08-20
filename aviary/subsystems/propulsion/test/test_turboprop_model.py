@@ -161,18 +161,9 @@ class TurbopropTest(unittest.TestCase):
 
         self.prob.run_model()
         results = self.get_results()
-        # shp
         assert_near_equal(results[0], truth_vals[0])
-        # tailpipe thrust
         assert_near_equal(results[1], truth_vals[1])
-        # prop_thrust
         assert_near_equal(results[2], truth_vals[2])
-        # total_thrust
-        # assert_near_equal(results[3], truth_vals[3])
-        # max_thrust
-        # assert_near_equal(results[4], truth_vals[4])
-        # fuel flow
-        # assert_near_equal(results[5], truth_vals[5])
 
         # because Hamilton Standard model uses fd method, the following may not be accurate.
         partial_data = self.prob.check_partials(out_stream=None, form="central")
@@ -224,18 +215,9 @@ class TurbopropTest(unittest.TestCase):
         self.prob.run_model()
 
         results = self.get_results()
-        # shp
         assert_near_equal(results[0], truth_vals[0])
-        # tailpipe thrust
         assert_near_equal(results[1], truth_vals[1])
-        # prop_thrust
         assert_near_equal(results[2], truth_vals[2])
-        # total_thrust
-        # assert_near_equal(results[3], truth_vals[3])
-        # max_thrust
-        # assert_near_equal(results[4], truth_vals[4])
-        # fuel flow
-        # assert_near_equal(results[5], truth_vals[5])
 
         partial_data = self.prob.check_partials(out_stream=None, form="central")
         assert_check_partials(partial_data, atol=0.15, rtol=0.15)
@@ -283,18 +265,10 @@ class TurbopropTest(unittest.TestCase):
         self.prob.run_model()
 
         results = self.get_results()
-        # shp
         assert_near_equal(results[0], truth_vals[0])
-        # tailpipe thrust
         assert_near_equal(results[1], truth_vals[1])
-        # prop_thrust
         assert_near_equal(results[2], truth_vals[2])
-        # total_thrust
-        # assert_near_equal(results[3], truth_vals[3])
-        # max_thrust
-        # assert_near_equal(results[4], truth_vals[4])
-        # fuel flow
-        # assert_near_equal(results[5], truth_vals[5])
+
         partial_data = self.prob.check_partials(out_stream=None, form="central")
         assert_check_partials(partial_data, atol=0.15, rtol=0.15)
 
@@ -376,5 +350,5 @@ if __name__ == "__main__":
     # unittest.main()
     test = TurbopropTest()
     test.setUp()
-    test.test_electroprop()
-    # test.test_case_3()
+    # test.test_electroprop()
+    test.test_case_2()

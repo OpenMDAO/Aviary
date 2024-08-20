@@ -7,7 +7,7 @@ import openmdao.api as om
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
-from aviary.constants import RHO_SEA_LEVEL_ENGLISH, TSLS_DEGR
+from aviary.constants import RHO_SEA_LEVEL_ENGLISH
 from aviary.utils.functions import add_aviary_input, add_aviary_output
 
 
@@ -526,7 +526,7 @@ class PreHamiltonStandard(om.ExplicitComponent):
         sos = inputs[Dynamic.Mission.SPEED_OF_SOUND]
 
         # arbitrarily small number to keep advance ratio nonzero, which allows for static thrust prediction
-        # NOTE need for a separate static thrust calc method?
+        # NOTE do we need a separate static thrust calc method, or is this sufficient?
         vtas[np.where(vtas <= 1e-6)] = 1e-6
         density_ratio = inputs[Dynamic.Mission.DENSITY] / RHO_SEA_LEVEL_ENGLISH
 
@@ -547,7 +547,7 @@ class PreHamiltonStandard(om.ExplicitComponent):
         outputs['density_ratio'] = density_ratio
         # TODO tip mach was already calculated, revisit this
         outputs['tip_mach'] = tipspd / sos
-        # BUG this is not pure advance ratio, why is pi being used here???
+        # BUG this is not typical advance ratio, why is pi being used here???
         outputs['advance_ratio'] = math.pi * vtas / tipspd
         # TODO back out what is going on with unit conversion factor 10e10/(2*6966)
         outputs['power_coefficient'] = (

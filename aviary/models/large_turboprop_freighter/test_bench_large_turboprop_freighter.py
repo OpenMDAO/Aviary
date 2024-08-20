@@ -408,9 +408,9 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         prob.set_initial_guesses()
         import openmdao.api as om
 
-        om.n2(prob)
-        prob.run_aviary_problem("dymos_solution.db", make_plots=False)
         # om.n2(prob)
+        prob.run_aviary_problem("dymos_solution.db", make_plots=False)
+        om.n2(prob)
 
 
 if __name__ == '__main__':
