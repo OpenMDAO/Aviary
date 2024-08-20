@@ -505,9 +505,9 @@ def _make_structured_grid(data, method="lagrange3", fields=["thrust", "fuelflow"
             # For GASP_TP engine deck, try to provide at least 4 advanced ratios
             # avoid devide-by-zero RuntimeWarning
             if len(mach) == 3 and method == "lagrange3":
-                method="lagrange2"
+                method = "lagrange2"
             elif len(mach) == 2:
-                method="slinear"
+                method = "slinear"
             interp = InterpND(
                 method="2D-" + method, points=(t4t2, mach), values=f, extrapolate=True
             )
