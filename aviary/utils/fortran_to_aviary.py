@@ -255,6 +255,12 @@ def process_and_store_data(data, var_name, legacy_code, current_namelist, altern
     if var_ind is not None:
         var_ind -= fortran_offset
 
+    # Aviary has a reduction gearbox which is 1/gear ratio of GASP gearbox
+    if current_namelist+var_name == 'INPROP.GR':
+        var_values = [1/var for var in var_values]
+        vehicle_data['input_values'] = set_value(Aircraft.Engine.Gearbox.GEAR_RATIO, var_values,
+                                                 vehicle_data['input_values'], var_id=var_ind, units=data_units)
+
     for name in list_of_equivalent_aviary_names:
         if not skip_variable:
             if name in guess_names and legacy_code is GASP:
