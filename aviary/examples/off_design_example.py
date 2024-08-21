@@ -127,7 +127,7 @@ prob.add_objective()
 prob.setup()
 prob.set_initial_guesses()
 prob.run_aviary_problem()
-prob.save_json()
+prob.save_sizing_to_json()
 
 # Fallout Mission
 prob_fallout = prob.run_fallout_mission()

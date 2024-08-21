@@ -44,7 +44,7 @@ from aviary.utils.process_input_decks import create_vehicle, update_GASP_options
 from aviary.utils.preprocessors import preprocess_crewpayload
 from aviary.interface.utils.check_phase_info import check_phase_info
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.save_sizing import load_off_design
+from aviary.utils.load_sizing import load_off_design
 
 from aviary.variable_info.functions import setup_trajectory_params, override_aviary_vars
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
@@ -2331,6 +2331,27 @@ class AviaryProblem(om.Problem):
                               payload_mass=None, mission_range=None,
                               phase_info=None, optimizer=None, max_iter=50,
                               verbosity=Verbosity.BRIEF):
+        """
+        This function runs a fallout mission based on a sizing mission output.
+
+        Parameters
+        ----------
+        json_filename : str
+            Name of the file that the sizing mission has been saved to.
+        mission_range : float, optional
+            Target range for the fallout mission.
+        payload_mass : float, optional
+            Mass of the payload for the mission.
+        phase_info : dict, optional
+            Dictionary containing the phases and their required parameters.
+        optimizer : str, optional
+            Optimizer to be used for solving the fallout mission.
+        max_iter : int, optional
+            Max number of iterations allowed for the optimizer.
+        verbosity : Verbosity or list, optional
+            If Verbosity.DEBUG, debug print options ['desvars','ln_cons','nl_cons','objs'] will be set.
+            If a list is provided, it will be used as the debug print options.
+        """
         if phase_info is None:
             phase_info = self.phase_info
         if mission_range is None:
@@ -2364,6 +2385,27 @@ class AviaryProblem(om.Problem):
     def run_fallout_mission(self, json_filename='sizing_problem.json',
                             mission_mass=None, payload_mass=None, phase_info=None,
                             optimizer=None, max_iter=50, verbosity=Verbosity.BRIEF):
+        """
+        This function runs a fallout mission based on a sizing mission output.
+
+        Parameters
+        ----------
+        json_filename : str
+            Name of the file that the sizing mission has been saved to.
+        mission_mass : float, optional
+            Takeoff mass for the fallout mission.
+        payload_mass : float, optional
+            Mass of the payload for the mission.
+        phase_info : dict, optional
+            Dictionary containing the phases and their required parameters.
+        optimizer : str, optional
+            Optimizer to be used for solving the fallout mission.
+        max_iter : int, optional
+            Max number of iterations allowed for the optimizer.
+        verbosity : Verbosity or list, optional
+            If Verbosity.DEBUG, debug print options ['desvars','ln_cons','nl_cons','objs'] will be set.
+            If a list is provided, it will be used as the debug print options.
+        """
         if phase_info is None:
             phase_info = self.phase_info
         if mission_mass is None:
@@ -2394,7 +2436,7 @@ class AviaryProblem(om.Problem):
         prob_fallout.run_aviary_problem(record_filename='fallout_problem_history.db')
         return prob_fallout
 
-    def save_json(self, json_filename='sizing_problem.json'):
+    def save_sizing_to_json(self, json_filename='sizing_problem.json'):
         """
         This function saves an aviary problem object into a json file.
 
@@ -2404,7 +2446,7 @@ class AviaryProblem(om.Problem):
             Aviary problem object optimized for the aircraft design/sizing mission.
             Assumed to contain aviary_inputs and Mission.Summary.GROSS_MASS
         json_filename:   string
-            User specified name and relative path of json file to save the data into
+            User specified name and relative path of json file to save the data into.
         """
 
         aviary_input_list = []
