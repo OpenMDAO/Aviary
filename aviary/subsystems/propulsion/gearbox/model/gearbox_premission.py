@@ -44,18 +44,25 @@ class GearboxPreMission(om.Group):
                                             'RPM_out'],
                            promotes_outputs=['torque_max'])
 
-        # Simple gearbox mass will always produce positive values for mass based on a fixed specific torque
-        self.add_subsystem('mass_comp',
-                           om.ExecComp('gearbox_mass = torque_max / specific_torque',
-                                       gearbox_mass={'val': 0.0, 'units': 'kg'},
-                                       torque_max={'val': 0.0, 'units': 'N*m'},
-                                       specific_torque={'val': 0.0, 'units': 'N*m/kg'},
-                                       has_diag_partials=True),
-                           promotes_inputs=['torque_max',
-                                            ('specific_torque', Aircraft.Engine.Gearbox.SPECIFIC_TORQUE)],
-                           promotes_outputs=[('gearbox_mass', Aircraft.Engine.Gearbox.MASS)])
+        if self.options["simple_mass"]:
+            # Simple gearbox mass will always produce positive values for mass based on a fixed specific torque
+            self.add_subsystem(
+                'mass_comp',
+                om.ExecComp(
+                    'gearbox_mass = torque_max / specific_torque',
+                    gearbox_mass={'val': 0.0, 'units': 'kg'},
+                    torque_max={'val': 0.0, 'units': 'N*m'},
+                    specific_torque={'val': 0.0, 'units': 'N*m/kg'},
+                    has_diag_partials=True,
+                ),
+                promotes_inputs=[
+                    'torque_max',
+                    ('specific_torque', Aircraft.Engine.Gearbox.SPECIFIC_TORQUE),
+                ],
+                promotes_outputs=[('gearbox_mass', Aircraft.Engine.Gearbox.MASS)],
+            )
 
-        if self.options["simple_mass"] is False:
+        else:
             # This gearbox mass calc can work for large systems but can produce negative weights for some inputs
             # Gearbox mass from "An N+3 Technolgoy Level Reference Propulsion System" by Scott Jones, William Haller, and Michael Tong
             # NASA TM 2017-219501

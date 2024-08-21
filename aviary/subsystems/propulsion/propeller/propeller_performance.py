@@ -59,11 +59,7 @@ class TipSpeedLimit(om.ExplicitComponent):
             val=np.zeros(num_nodes),
             units='ft/s'
         )
-        self.add_output(
-            'rpm',
-            val=np.zeros(num_nodes),
-            units='rpm'
-        )
+        self.add_output(Dynamic.Mission.RPM, val=np.zeros(num_nodes), units='rpm')
 
     def setup_partials(self):
         num_nodes = self.options['num_nodes']
@@ -89,20 +85,21 @@ class TipSpeedLimit(om.ExplicitComponent):
         )
 
         self.declare_partials(
-            'rpm',
+            Dynamic.Mission.RPM,
             [
                 Dynamic.Mission.VELOCITY,
                 Dynamic.Mission.SPEED_OF_SOUND,
             ],
-            rows=r, cols=r,
+            rows=r,
+            cols=r,
         )
 
         self.declare_partials(
-            'rpm',
+            Dynamic.Mission.RPM,
             [
                 Aircraft.Engine.PROPELLER_TIP_MACH_MAX,
                 Aircraft.Engine.PROPELLER_TIP_SPEED_MAX,
-                Aircraft.Engine.PROPELLER_DIAMETER
+                Aircraft.Engine.PROPELLER_DIAMETER,
             ],
         )
 
@@ -124,7 +121,7 @@ class TipSpeedLimit(om.ExplicitComponent):
         rpm = prop_tip_speed / (diam * math.pi / 60)
 
         outputs[Dynamic.Mission.PROPELLER_TIP_SPEED] = prop_tip_speed
-        outputs['rpm'] = rpm
+        outputs[Dynamic.Mission.RPM] = rpm
 
     def compute_partials(self, inputs, J):
         num_nodes = self.options['num_nodes']
@@ -163,21 +160,23 @@ class TipSpeedLimit(om.ExplicitComponent):
 
         rpm_fact = (diam * math.pi / 60)
 
-        J['rpm',
-          Dynamic.Mission.VELOCITY] = dspeed_dv / rpm_fact
-        J['rpm',
-          Dynamic.Mission.SPEED_OF_SOUND] = dspeed_ds / rpm_fact
-        J['rpm',
-          Aircraft.Engine.PROPELLER_TIP_MACH_MAX] = dspeed_dmm / rpm_fact
-        J['rpm',
-          Aircraft.Engine.PROPELLER_TIP_SPEED_MAX] = dspeed_dsm / rpm_fact
+        J[Dynamic.Mission.RPM, Dynamic.Mission.VELOCITY] = dspeed_dv / rpm_fact
+        J[Dynamic.Mission.RPM, Dynamic.Mission.SPEED_OF_SOUND] = dspeed_ds / rpm_fact
+        J[Dynamic.Mission.RPM, Aircraft.Engine.PROPELLER_TIP_MACH_MAX] = (
+            dspeed_dmm / rpm_fact
+        )
+        J[Dynamic.Mission.RPM, Aircraft.Engine.PROPELLER_TIP_SPEED_MAX] = (
+            dspeed_dsm / rpm_fact
+        )
 
-        J['rpm', Aircraft.Engine.PROPELLER_DIAMETER] = - \
-            60 * prop_tip_speed / (math.pi * diam**2)
+        J[Dynamic.Mission.RPM, Aircraft.Engine.PROPELLER_DIAMETER] = (
+            -60 * prop_tip_speed / (math.pi * diam**2)
+        )
 
 
 class OutMachs(om.ExplicitComponent):
-    """This utility sets up relations among helical Mach, free stream Mach and propeller tip Mach.
+    """
+    This utility sets up relations among helical Mach, free stream Mach and propeller tip Mach.
     helical_mach = sqrt(mach^2 + tip_mach^2).
     It computes the value of one from the inputs of the other two.
     """
@@ -464,16 +463,17 @@ class PropellerPerformance(om.Group):
                 om.ExecComp(
                     'prop_tip_speed = diameter * rpm * pi / 60.',
                     prop_tip_speed={'units': "ft/s", 'shape': nn},
-                    diameter={'val': 0., 'units': "ft"},
+                    diameter={'val': 0.0, 'units': "ft"},
                     rpm={'units': "rpm", 'shape': nn},
                     has_diag_partials=True,
                 ),
                 promotes_inputs=[
-                    'rpm',  # TODO this should be in dynamic
+                    (Dynamic.Mission.RPM, Dynamic.Mission.RPM),
                     ('diameter', Aircraft.Engine.PROPELLER_DIAMETER),
                 ],
                 promotes_outputs=[
-                    ('prop_tip_speed', Dynamic.Mission.PROPELLER_TIP_SPEED)],
+                    ('prop_tip_speed', Dynamic.Mission.PROPELLER_TIP_SPEED)
+                ],
             )
 
         else:

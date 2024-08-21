@@ -201,18 +201,19 @@ class TurbopropTest(unittest.TestCase):
         ]
 
         self.prepare_model(test_points, filename)
+        om.n2(self.prob)
 
         self.prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 10.5, units="ft")
         self.prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,
                           114.0, units="unitless")
-        # self.prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
-        #                   np.array([1,1,0.7]), units="unitless")
+
         self.prob.set_val(
             Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT, 0.5, units="unitless")
 
         self.prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED_MAX, 800, units="ft/s")
 
         self.prob.run_model()
+        om.n2(self.prob)
 
         results = self.get_results()
         assert_near_equal(results[0], truth_vals[0])
