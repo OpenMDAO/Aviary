@@ -43,15 +43,6 @@ class IdleDescentTestCase(unittest.TestCase):
         add_default_sgm_args(descent_phases, self.ode_args)
         self.phases = descent_phases
 
-    # TODO: this test should be removed when descent_range_and_fuel is removed.
-    def test_case1(self):
-
-        results = descent_range_and_fuel(phases=self.phases)['refined_guess']
-
-        # Values obtained by running idle_descent_estimation
-        assert_near_equal(results['distance_flown'], 91.8911599691433, self.tol)
-        assert_near_equal(results['fuel_burned'], 236.73893823639082, self.tol)
-
     def test_subproblem(self):
         prob = om.Problem()
         prob.model = om.Group()
