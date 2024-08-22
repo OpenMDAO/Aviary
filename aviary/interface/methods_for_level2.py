@@ -2713,6 +2713,7 @@ class AviaryProblem(om.Problem):
                                                 ("reserve_fuel", reserves_name)]
                                             )
 
+
 def _read_sizing_json(aviary_problem, json_filename):
     """
     This function reads in an aviary problem object from a json file.
@@ -2796,16 +2797,19 @@ def _read_sizing_json(aviary_problem, json_filename):
     return aviary_problem
 
 
-def _load_off_design(json_filename, ProblemType, phase_info, payload, mission_range, mission_gross_mass):
+def _load_off_design(json_filename, ProblemType, phase_info,
+                     payload, mission_range, mission_gross_mass):
     """
-    This function loads a sized aircraft, and sets up an aviary problem to run a specified off design mission.
+    This function loads a sized aircraft, and sets up an aviary problem
+    to run a specified off design mission.
 
     Parameters
     ----------
     json_filename:      string
         User specified name and relative path of json file containing the sized aircraft data
     ProblemType:        enum
-        Alternate or Fallout. Alternate requires mission_range input and Fallout requires mission_fuel input
+        Alternate or Fallout. Alternate requires mission_range input and
+         Fallout requires mission_fuel input
     phase_info:     phase_info dictionary for off design mission
     payload:            float
         Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS
