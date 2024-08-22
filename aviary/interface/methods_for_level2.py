@@ -2848,6 +2848,4 @@ def _load_off_design(json_filename, ProblemType, phase_info,
 
     # Load inputs
     prob.load_inputs(prob.aviary_inputs, phase_info)
-
     return prob
-
