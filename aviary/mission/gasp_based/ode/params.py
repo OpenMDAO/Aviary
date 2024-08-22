@@ -7,7 +7,7 @@ class ParamPort(om.ExplicitComponent):
 
     param_data = {
         #Aircraft.Wing.AREA: dict(units="ft**2", val=1370.3),
-        #Aircraft.Wing.INCIDENCE: dict(units="deg", val=0),
+        Aircraft.Wing.INCIDENCE: dict(units="deg", val=0),
         #Aircraft.Wing.HEIGHT: dict(units="ft", val=8),
         #Aircraft.Wing.SPAN: dict(units="ft", val=117.8),
         #Mission.Design.GROSS_MASS: dict(units="lbm", val=175400),

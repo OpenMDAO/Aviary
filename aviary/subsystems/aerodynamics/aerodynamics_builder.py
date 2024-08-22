@@ -7,6 +7,8 @@ AerodynamicsBuilderBase : the interface for an aerodynamics subsystem builder.
 
 CoreAerodynamicsBuilder : the interface for Aviary's core aerodynamics subsystem builder
 """
+from itertools import chain
+
 import numpy as np
 
 import openmdao.api as om
@@ -383,7 +385,16 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                                    'static_target': True}
 
         else:
-            for var in AERO_2DOF_INPUTS:
+
+            # TODO: 2DOF/Gasp decided on phases based on phase names. We used
+            # a saved phase_name to determine the correct aero variables to
+            # promote. Ideally, this should all be refactored.
+            if phase_info['phase_type'] in ['ascent', 'groundroll', 'rotation']:
+                all_vars = (AERO_2DOF_INPUTS, AERO_LS_2DOF_INPUTS)
+            else:
+                all_vars = (AERO_2DOF_INPUTS, AERO_CLEAN_2DOF_INPUTS)
+
+            for var in chain.from_iterable(all_vars):
 
                 meta = _MetaData[var]
 
@@ -486,7 +497,6 @@ AERO_2DOF_INPUTS = [
     Aircraft.Design.CG_DELTA,
     Aircraft.Design.DRAG_COEFFICIENT_INCREMENT,   # drag increment?
     Aircraft.Design.STATIC_MARGIN,
-    Aircraft.Design.SUPERCRITICAL_DIVERGENCE_SHIFT,  # super drag shift?
     Aircraft.Fuselage.AVG_DIAMETER,
     Aircraft.Fuselage.FLAT_PLATE_AREA_INCREMENT,
     Aircraft.Fuselage.FORM_FACTOR,
@@ -525,5 +535,15 @@ AERO_2DOF_INPUTS = [
     Aircraft.Wing.THICKNESS_TO_CHORD_ROOT,
     Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED,
     Aircraft.Wing.ZERO_LIFT_ANGLE,
-    Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP
+]
+
+AERO_LS_2DOF_INPUTS = [
+    Mission.Takeoff.DRAG_COEFFICIENT_FLAP_INCREMENT,
+    Mission.Takeoff.LIFT_COEFFICIENT_FLAP_INCREMENT,
+    Mission.Takeoff.LIFT_COEFFICIENT_MAX,
+]
+
+AERO_CLEAN_2DOF_INPUTS = [
+    Aircraft.Design.SUPERCRITICAL_DIVERGENCE_SHIFT,  # super drag shift?
+    Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP,
 ]
