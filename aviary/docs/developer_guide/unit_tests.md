@@ -34,7 +34,7 @@ Wall clock time:   00:00:54.15
 The unit test that Aviary uses most is `assert_near_equal` from the OpenMDAO utility [assert_near_equal](https://openmdao.org/newdocs/versions/latest/_srcdocs/packages/utils/assert_utils.html). This assertion takes about 80% of all the assertions. It has the following format:
 
 ```
-assert_near_equal(actual_value, expected_value, tolerance=1e-15, tol_type='rel')z
+assert_near_equal(actual_value, expected_value, tolerance=1e-15, tol_type='rel')
 ```
 
 where the `actual_value` is the value from Aviary and `expected_value` is what the developer expects. Ideally, the `expected_value` should come from computation by another tool (e.g. GASP, FLOPS or LEAPS1) or hand computation. When it is not possible, one can accept an Aviary computed value as expected. This guarantees that future development will not alter the outputs by mistake. As for the tolerance, it is good practice to take 1.e-6. By default, it checks relative error. If the `expected_value` is 0.0, it checks the absolute error.
@@ -43,11 +43,11 @@ One can find examples mostly in `subsystems` and `mission` The purpose is to mak
 
 ### assert_almost_equal
 
-A similar unit test is NumPy's utility is `assert_almost_equal`. It checks whether the absolute difference of `actual_value` from `expected_value` is within certain tolerance. As [documented](https://numpy.org/doc/stable/reference/generated/numpy.testing.assert_almost_equal.html) by NumPy, it is not recommented.
+A similar unit test is NumPy's utility is `assert_almost_equal`. It checks whether the absolute difference of `actual_value` from `expected_value` is within certain tolerance. As [documented](https://numpy.org/doc/stable/reference/generated/numpy.testing.assert_almost_equal.html) by NumPy, it is not recommended.
 
 ### assert_check_partials
 
-The second most used assertion is `assert_check_partials` from the OpenMDAO utility. This is critical important because it checks whether the partial derivatives coded by develops are correct. It is the key in optimization. To use this test, you fitst prepare the partial derivative `data` by calling `check_partials` on an object. Then call `assert_check_partials` function with the `data`.
+The second most used assertion is `assert_check_partials` from the OpenMDAO utility. This is critically important because it checks whether the partial derivatives coded by develops are correct. It is the key in optimization. To use this test, you first prepare the partial derivative `data` by calling `check_partials` on an object. Then call `assert_check_partials` function with the `data`.
 
 ```
 data = prob.check_partials(out_stream=None)
