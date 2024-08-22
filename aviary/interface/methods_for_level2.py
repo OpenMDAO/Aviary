@@ -2707,7 +2707,8 @@ class AviaryProblem(om.Problem):
                                             promotes_inputs=["reserve_fuel_frac_mass",
                                                              ("reserve_fuel_additional",
                                                               Aircraft.Design.RESERVE_FUEL_ADDITIONAL),
-                                                             ("reserve_fuel_burned", Mission.Summary.RESERVE_FUEL_BURNED)],
+                                                             ("reserve_fuel_burned",
+                                                              Mission.Summary.RESERVE_FUEL_BURNED)],
                                             promotes_outputs=[
                                                 ("reserve_fuel", reserves_name)]
                                             )
