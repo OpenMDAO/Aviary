@@ -114,6 +114,12 @@ def _dashboard_setup_parser(parser):
         default=0,
         help="dashboard server port ID (default is 0, which indicates get any free port)",
     )
+    parser.add_argument(
+        "-b",
+        "--background",
+        dest="run_in_background",
+        help="Run the server in the background (don't automatically open the browser)",
+    )
 
     # For future use
     parser.add_argument(
@@ -178,6 +184,7 @@ def _dashboard_cmd(options, user_args):
             options.problem_recorder,
             options.driver_recorder,
             options.port,
+            options.run_in_background
         )
         return
 
@@ -538,7 +545,7 @@ def create_aircraft_3d_file(recorder_file, reports_dir, outfilepath):
 
 
 # The main script that generates all the tabs in the dashboard
-def dashboard(script_name, problem_recorder, driver_recorder, port):
+def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_background=False):
     """
     Generate the dashboard app display.
 
@@ -918,6 +925,10 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
     else:
         show = True
         threaded = False
+
+    # override `show` without changing `threaded`
+    if run_in_background:
+        show = False
 
     assets_dir = pathlib.Path(
         importlib.util.find_spec("aviary").origin
