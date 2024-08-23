@@ -4,10 +4,11 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
 
 from aviary.mission.gasp_based.ode.groundroll_ode import GroundrollODE
-from aviary.variable_info.options import get_option_defaults
+from aviary.mission.gasp_based.ode.params import set_params_for_unit_tests
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.options import get_option_defaults
 
 
 class GroundrollODETestCase(unittest.TestCase):
@@ -28,6 +29,8 @@ class GroundrollODETestCase(unittest.TestCase):
 
         self.prob.set_val(Dynamic.Mission.VELOCITY, [100, 100], units="kn")
         self.prob.set_val("t_curr", [1, 2], units="s")
+
+        set_params_for_unit_tests(self.prob)
 
         self.prob.run_model()
 

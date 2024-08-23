@@ -1,16 +1,16 @@
 import unittest
-import os
 
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
 
 from aviary.mission.gasp_based.ode.climb_ode import ClimbODE
+from aviary.mission.gasp_based.ode.params import set_params_for_unit_tests
+from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.IO_test_util import check_prob_outputs
+from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 
 
 class ClimbODETestCase(unittest.TestCase):
@@ -43,6 +43,8 @@ class ClimbODETestCase(unittest.TestCase):
         self.prob.set_val("EAS", 250, units="kn")
         # slightly greater than zero to help check partials
         self.prob.set_val(Aircraft.Wing.INCIDENCE, 0.0000001, units="deg")
+
+        set_params_for_unit_tests(self.prob)
 
         self.prob.run_model()
 
@@ -79,6 +81,8 @@ class ClimbODETestCase(unittest.TestCase):
         self.prob.set_val(Dynamic.Mission.ALTITUDE, np.array([11000, 37000]), units="ft")
         self.prob.set_val(Dynamic.Mission.MASS, np.array([174149, 171592]), units="lbm")
         self.prob.set_val("EAS", np.array([270, 270]), units="kn")
+
+        set_params_for_unit_tests(self.prob)
 
         self.prob.run_model()
 

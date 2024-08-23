@@ -1,15 +1,15 @@
 import unittest
-import os
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
 
 from aviary.mission.gasp_based.ode.accel_ode import AccelODE
-from aviary.variable_info.options import get_option_defaults
-from aviary.utils.test_utils.IO_test_util import check_prob_outputs
-from aviary.variable_info.variables import Dynamic
+from aviary.mission.gasp_based.ode.params import set_params_for_unit_tests
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
+from aviary.utils.test_utils.IO_test_util import check_prob_outputs
+from aviary.variable_info.options import get_option_defaults
+from aviary.variable_info.variables import Dynamic
 
 
 class AccelerationODETestCase(unittest.TestCase):
@@ -35,6 +35,8 @@ class AccelerationODETestCase(unittest.TestCase):
                 throttle_climb, throttle_climb], units='unitless')
         self.prob.set_val(Dynamic.Mission.VELOCITY, [185, 252], units="kn")
         self.prob.set_val(Dynamic.Mission.MASS, [174974, 174878], units="lbm")
+
+        set_params_for_unit_tests(self.prob)
 
         self.prob.run_model()
         testvals = {

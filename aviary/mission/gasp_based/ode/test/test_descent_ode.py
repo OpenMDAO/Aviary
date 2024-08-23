@@ -1,5 +1,4 @@
 import unittest
-import os
 
 import numpy as np
 import openmdao
@@ -8,12 +7,13 @@ from openmdao.utils.assert_utils import assert_check_partials
 from packaging import version
 
 from aviary.mission.gasp_based.ode.descent_ode import DescentODE
-from aviary.variable_info.options import get_option_defaults
-from aviary.utils.test_utils.IO_test_util import check_prob_outputs
-from aviary.variable_info.enums import SpeedType
-from aviary.variable_info.variables import Dynamic
+from aviary.mission.gasp_based.ode.params import set_params_for_unit_tests
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
+from aviary.utils.test_utils.IO_test_util import check_prob_outputs
+from aviary.variable_info.enums import SpeedType
+from aviary.variable_info.options import get_option_defaults
+from aviary.variable_info.variables import Dynamic
 
 
 class DescentODETestCase(unittest.TestCase):
@@ -43,6 +43,8 @@ class DescentODETestCase(unittest.TestCase):
                 0, 0]), units='unitless')
         self.prob.set_val(Dynamic.Mission.ALTITUDE, np.array([36500, 14500]), units="ft")
         self.prob.set_val(Dynamic.Mission.MASS, np.array([147661, 147572]), units="lbm")
+
+        set_params_for_unit_tests(self.prob)
 
         self.prob.run_model()
 
@@ -81,6 +83,8 @@ class DescentODETestCase(unittest.TestCase):
         self.prob.set_val(Dynamic.Mission.ALTITUDE, 1500, units="ft")
         self.prob.set_val(Dynamic.Mission.MASS, 147410, units="lbm")
         self.prob.set_val("EAS", 250, units="kn")
+
+        set_params_for_unit_tests(self.prob)
 
         self.prob.run_model()
 
