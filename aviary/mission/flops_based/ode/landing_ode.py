@@ -6,6 +6,7 @@ Classes
 FlareODE : the ODE for the flare phase of landing
 '''
 import numpy as np
+
 import openmdao.api as om
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
@@ -13,9 +14,8 @@ from aviary.mission.flops_based.ode.landing_eom import FlareEOM, StallSpeed
 from aviary.mission.flops_based.ode.takeoff_ode import TakeoffODE as _TakeoffODE
 from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.functions import set_aviary_initial_values, promote_aircraft_and_mission_vars
+from aviary.utils.functions import promote_aircraft_and_mission_vars
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-from aviary.variable_info.variables_in import VariablesIn
 from aviary.variable_info.enums import AnalysisScheme
 
 
@@ -83,10 +83,6 @@ class FlareODE(om.Group):
                 Dynamic.Mission.DISTANCE: {'units': 'm'},
             }
             add_SGM_required_inputs(self, SGM_required_inputs)
-
-        self.add_subsystem(
-            'input_port', VariablesIn(aviary_options=aviary_options),
-            promotes_inputs=['*'], promotes_outputs=['*'])
 
         self.add_subsystem(
             name='atmosphere', subsys=Atmosphere(num_nodes=nn), promotes=['*']
@@ -183,5 +179,4 @@ class FlareODE(om.Group):
 
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, np.zeros(nn), 'm')
         self.set_input_defaults(Dynamic.Mission.VELOCITY, np.zeros(nn), 'm/s')
-
-        set_aviary_initial_values(self, aviary_options)
+        self.set_input_defaults(Aircraft.Wing.AREA, 1.0, 'm**2')

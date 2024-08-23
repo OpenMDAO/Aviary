@@ -10,18 +10,18 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.subsystems.premission import CorePreMission
 
-from aviary.utils.functions import set_aviary_initial_values
+from aviary.utils.functions import \
+    set_aviary_initial_values, set_aviary_input_defaults
 
 from aviary.models.N3CC.N3CC_data import (
     inputs as _inputs, outputs as _outputs,
     landing_trajectory_builder as _landing_trajectory_builder,
     landing_fullstop_user_options as _landing_fullstop_user_options)
 
-from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.utils.preprocessors import preprocess_options
-from aviary.variable_info.variables_in import VariablesIn
 
 
 @use_tempdirs
@@ -94,21 +94,17 @@ class TestFLOPSDetailedLanding(unittest.TestCase):
         fullstop.add_objective(Dynamic.Mission.DISTANCE, loc='final',
                                ref=distance_max, units=units)
 
-        landing.model.add_subsystem(
-            'input_sink',
-            VariablesIn(aviary_options=aviary_options),
-            promotes_inputs=['*'],
-            promotes_outputs=['*']
-        )
+        varnames = [Aircraft.Wing.ASPECT_RATIO]
+        set_aviary_input_defaults(landing.model, varnames, aviary_options)
 
         # suppress warnings:
         # "input variable '...' promoted using '*' was already promoted using 'aircraft:*'
         with warnings.catch_warnings():
-            # Set initial default values for all aircraft variables.
-            set_aviary_initial_values(landing.model, aviary_options)
 
             warnings.simplefilter("ignore", om.PromotionWarning)
             landing.setup(check=True)
+
+        set_aviary_initial_values(landing, aviary_options)
 
         # Turn off solver printing so that the SNOPT output is readable.
         landing.set_solver_print(level=0)
