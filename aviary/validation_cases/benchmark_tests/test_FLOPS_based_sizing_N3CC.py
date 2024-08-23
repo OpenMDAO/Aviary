@@ -159,6 +159,8 @@ def run_trajectory(sim=True):
 
     prob.model.add_design_var(Mission.Design.GROSS_MASS, units='lbm',
                               lower=100000.0, upper=200000.0, ref=135000)
+    prob.model.add_design_var(Mission.Summary.GROSS_MASS, units='lbm',
+                              lower=100000.0, upper=200000.0, ref=135000)
 
     takeoff_options = Takeoff(
         airport_altitude=alt_airport,  # ft
@@ -385,6 +387,20 @@ def run_trajectory(sim=True):
         promotes_outputs=['mass_resid'])
 
     prob.model.add_constraint('mass_resid', equals=0.0, ref=1.0)
+
+    prob.model.add_subsystem(
+        'gtow_constraint',
+        om.EQConstraintComp(
+            'GTOW',
+            eq_units='lbm',
+            normalize=True,
+            add_constraint=True,
+        ),
+        promotes_inputs=[
+            ('lhs:GTOW', Mission.Design.GROSS_MASS),
+            ('rhs:GTOW', Mission.Summary.GROSS_MASS),
+        ],
+    )
 
     ##########################
     # Add Objective Function #
