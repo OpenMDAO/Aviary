@@ -31,7 +31,7 @@ Wall clock time:   00:00:54.15
 
 ### assert_near_equal
 
-The unit test that Aviary uses most is `assert_near_equal` from the OpenMDAO utility [assert_near_equal](https://openmdao.org/newdocs/versions/latest/_srcdocs/packages/utils/assert_utils.html). This assertion takes about 80% of all the assertions. It has the following format:
+The unit test that Aviary uses most is `assert_near_equal` from the OpenMDAO utility [assert_near_equal](https://openmdao.org/newdocs/versions/latest/_srcdocs/packages/utils/assert_utils.html). It has the following format:
 
 ```
 assert_near_equal(actual_value, expected_value, tolerance=1e-15, tol_type='rel')
@@ -47,7 +47,7 @@ A similar unit test is NumPy's utility is `assert_almost_equal`. It checks wheth
 
 ### assert_check_partials
 
-The second most used assertion is `assert_check_partials` from the OpenMDAO utility. This is critically important because it checks whether the partial derivatives coded by develops are correct. It is the key in optimization. To use this test, you first prepare the partial derivative `data` by calling `check_partials` on an object. Then call `assert_check_partials` function with the `data`.
+The next frequently used assertion is `assert_check_partials` from the OpenMDAO utility. This is critically important because it checks whether the partial derivatives coded by develops are correct. It is the key in optimization. To use this test, you first prepare the partial derivative `data` by calling `check_partials` on an object. Then call `assert_check_partials` function with the `data`.
 
 ```
 data = prob.check_partials(out_stream=None)
@@ -92,7 +92,7 @@ This assertion checks that a warning is issued as expected. Currently, there is 
 
 ### assert_match_varnames
 
-The third most used assertion is `assert_match_varnames` from Aviary (about 5%). All of them are in `test_IO()` functions. It tests that all of the variables in an object (component or group) that are declared as inputs or outputs exist in the Aviary variable hierarchy. Exceptions are allowed by specifying `exclude_inputs` and `exclude_outputs`. For details, see [assert_utils.py](https://github.com/OpenMDAO/Aviary/blob/main/aviary/utils/test_utils/assert_utils.py).
+Another frequently used assertion is `assert_match_varnames` from Aviary. All of them are in `test_IO()` functions. It tests that all of the variables in an object (component or group) that are declared as inputs or outputs exist in the Aviary variable hierarchy. Exceptions are allowed by specifying `exclude_inputs` and `exclude_outputs`. For details, see [assert_utils.py](https://github.com/OpenMDAO/Aviary/blob/main/aviary/utils/test_utils/assert_utils.py).
 
 ### Other Assertions
 
