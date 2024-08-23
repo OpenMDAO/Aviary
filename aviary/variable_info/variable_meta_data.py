@@ -1781,6 +1781,17 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Engine.FIXED_RPM,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='rpm',
+    default_value=1.0,
+    desc='Fixed RPM the engine is assumed to be running at if the engine does not '
+    'provide RPM as an output. Typically used when pairing a motor or turboshaft '
+    'with a propeller.',
+)
+
+add_meta_data(
     Aircraft.Engine.FLIGHT_IDLE_MAX_FRACTION,
     meta_data=_MetaData,
     historical_name={"GASP": None,

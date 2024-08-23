@@ -212,6 +212,7 @@ class Aircraft:
         CONSTANT_FUEL_CONSUMPTION = 'aircraft:engine:constant_fuel_consumption'
         CONTROLS_MASS = 'aircraft:engine:controls_mass'
         DATA_FILE = 'aircraft:engine:data_file'
+        FIXED_RPM = 'aircraft:engine:fixed_rpm'
         FLIGHT_IDLE_MAX_FRACTION = 'aircraft:engine:flight_idle_max_fraction'
         FLIGHT_IDLE_MIN_FRACTION = 'aircraft:engine:flight_idle_min_fraction'
         FLIGHT_IDLE_THRUST_FRACTION = 'aircraft:engine:flight_idle_thrust_fraction'

@@ -77,7 +77,7 @@ class TurbopropModel(EngineModel):
             )
 
         if gearbox_model is None:
-            # TODO where can we sneak in include_constraints? kwargs in init is an option,
+            # TODO where can we bring in include_constraints? kwargs in init is an option,
             # but that still requires the L2 interface
             self.gearbox_model = GearboxBuilder(
                 name=name + '_gearbox', include_constraints=True
@@ -376,3 +376,9 @@ class TurbopropMission(om.Group):
             outputs.append((Dynamic.Mission.THRUST_MAX, 'turboshaft_thrust_max'))
 
         self.promotes(shp_model.name, outputs=outputs)
+
+        # if RPM is not provided by the shaft power model, used fixed RPM
+        if Dynamic.Mission.RPM in [
+            output_dict[key]['prom_name'] for key in output_dict
+        ]:
+            self.set_val(Dynamic.Mission.RPM, Aircraft.Engine.FIXED_RPM)
