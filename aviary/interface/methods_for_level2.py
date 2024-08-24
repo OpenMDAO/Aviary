@@ -73,10 +73,13 @@ class PreMissionGroup(om.Group):
     def configure(self):
         external_outputs = promote_aircraft_and_mission_vars(self)
 
-        statics = self.core_subsystems
-        override_aviary_vars(statics, statics.options["aviary_options"],
-                             external_overrides=external_outputs,
-                             manual_overrides=statics.manual_overrides)
+        pre_mission = self.core_subsystems
+        override_aviary_vars(
+            pre_mission,
+            pre_mission.options["aviary_options"],
+            external_overrides=external_outputs,
+            manual_overrides=pre_mission.manual_overrides,
+        )
 
 
 class PostMissionGroup(om.Group):
@@ -433,7 +436,8 @@ class AviaryProblem(om.Problem):
                     target_duration = self.phase_info[phase_name]["user_options"]["target_duration"]
                     if target_duration[0] <= 0:
                         raise ValueError(
-                            f"Invalid target_duration in phase_info[{phase_name}][user_options]. "
+                            f"Invalid target_duration in phase_info[{
+                                phase_name}][user_options]. "
                             f"Current (value: {target_duration[0]}), (units: {target_duration[1]}) <= 0")
 
                     # Only applies to non-analytic phases (all HE and most 2DOF)
@@ -520,8 +524,7 @@ class AviaryProblem(om.Problem):
 
     def add_pre_mission_systems(self):
         """
-        Add pre-mission systems to the Aviary problem. These systems are executed before the mission
-        and are also known as the "pre_mission" group.
+        Add pre-mission systems to the Aviary problem. These systems are executed before the mission.
 
         Depending on the mission model specified (`FLOPS` or `GASP`), this method adds various subsystems
         to the aircraft model. For the `FLOPS` mission model, a takeoff phase is added using the Takeoff class
@@ -1071,7 +1074,7 @@ class AviaryProblem(om.Problem):
 
     def add_post_mission_systems(self, include_landing=True):
         """
-        Add post-mission systems to the aircraft model. This is akin to the statics group
+        Add post-mission systems to the aircraft model. This is akin to the pre-mission group
         or the "premission_systems", but occurs after the mission in the execution order.
 
         Depending on the mission model specified (`FLOPS` or `GASP`), this method adds various subsystems

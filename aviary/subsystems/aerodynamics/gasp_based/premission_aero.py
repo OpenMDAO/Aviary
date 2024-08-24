@@ -1,6 +1,6 @@
-"""Group containing all static aero calculations.
+"""Group containing all pre-mission aero calculations.
 
-Flaps modeling occurs as a static calculation to provide CL max and CL/CD increments to
+Flaps modeling occurs as a pre-mission calculation to provide CL max and CL/CD increments to
 the dynamic aero.
 """
 

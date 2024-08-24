@@ -19,7 +19,7 @@ setup_data = json.load(open(os.path.join(here, "data", "aero_data_setup.json")))
 
 
 class GASPAeroTest(unittest.TestCase):
-    """Test overall static and dynamic aero systems in cruise and near-ground flight"""
+    """Test overall pre-mission and mission aero systems in cruise and near-ground flight"""
 
     cruise_tol = 1.5e-3
     ground_tol = 0.5e-3
@@ -160,14 +160,14 @@ def _init_geom(prob):
     prob.set_val(Aircraft.HorizontalTail.AREA, setup_data["sht"])
     prob.set_val(Aircraft.HorizontalTail.AVERAGE_CHORD, setup_data["cbarht"])
     prob.set_val(Aircraft.Fuselage.AVG_DIAMETER, setup_data["swf"])
-    # ground & cruise, dynamic: mach
+    # ground & cruise, mission: mach
     prob.set_val(Aircraft.Design.STATIC_MARGIN, setup_data["stmarg"])
     prob.set_val(Aircraft.Design.CG_DELTA, setup_data["delcg"])
     prob.set_val(Aircraft.Wing.ASPECT_RATIO, setup_data["ar"])
     prob.set_val(Aircraft.Wing.SWEEP, setup_data["dlmc4"])
     prob.set_val(Aircraft.HorizontalTail.SWEEP, setup_data["dwpqch"])
     prob.set_val(Aircraft.HorizontalTail.MOMENT_RATIO, setup_data["coelth"])
-    # ground & cruise, dynamic: alt
+    # ground & cruise, mission: alt
     prob.set_val(Aircraft.Wing.FORM_FACTOR, setup_data["ckw"])
     prob.set_val(Aircraft.Fuselage.FORM_FACTOR, setup_data["ckf"])
     prob.set_val(Aircraft.Nacelle.FORM_FACTOR, setup_data["ckn"])
@@ -192,7 +192,7 @@ def _init_geom(prob):
     prob.set_val(Aircraft.VerticalTail.AREA, setup_data["svt"])
     prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED, setup_data["tc"])
     prob.set_val(Aircraft.Strut.CHORD, 0)  # not defined in standalone aero
-    # ground & cruise, dynamic: alpha
+    # ground & cruise, mission: alpha
     prob.set_val(Aircraft.Wing.ZERO_LIFT_ANGLE, setup_data["alphl0"])
     # ground & cruise, config-specific: CL_max_flaps
     # ground: wing_height
@@ -208,7 +208,7 @@ def _init_geom(prob):
     # ground: dCD_flaps_model
     # ground: t_init_gear
     # ground: dt_gear
-    # ground & cruise, dynamic: q
+    # ground & cruise, mission: q
 
 
 if __name__ == "__main__":

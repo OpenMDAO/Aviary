@@ -22,14 +22,14 @@ class SimpleLiftTest(unittest.TestCase):
     def test_case(self, case_name):
         flops_inputs = get_flops_inputs(case_name)
 
-        dynamics_data: AviaryValues = dynamics_test_data[case_name]
+        mission_data: AviaryValues = mission_test_data[case_name]
 
         # area = 4 digits precision
         inputs_keys = (Aircraft.Wing.AREA,)
 
         # dynamic pressure = 4 digits precision
         # lift coefficient = 5 digits precision
-        dynamics_keys = (Dynamic.Mission.DYNAMIC_PRESSURE, 'cl')
+        mission_keys = (Dynamic.Mission.DYNAMIC_PRESSURE, 'cl')
 
         # lift = 6 digits precision
         outputs_keys = (Dynamic.Mission.LIFT,)
@@ -40,7 +40,7 @@ class SimpleLiftTest(unittest.TestCase):
         prob = om.Problem()
         model = prob.model
 
-        q, _ = dynamics_data.get_item(Dynamic.Mission.DYNAMIC_PRESSURE)
+        q, _ = mission_data.get_item(Dynamic.Mission.DYNAMIC_PRESSURE)
         nn = len(q)
         model.add_subsystem('simple_lift', SimpleLift(num_nodes=nn), promotes=['*'])
 
@@ -50,15 +50,15 @@ class SimpleLiftTest(unittest.TestCase):
             val, units = flops_inputs.get_item(key)
             prob.set_val(key, val, units)
 
-        for key in dynamics_keys:
-            val, units = dynamics_data.get_item(key)
+        for key in mission_keys:
+            val, units = mission_data.get_item(key)
             prob.set_val(key, val, units)
 
         prob.run_model()
 
         for key in outputs_keys:
             try:
-                desired, units = dynamics_data.get_item(key)
+                desired, units = mission_data.get_item(key)
                 actual = prob.get_val(key, units)
 
                 assert_near_equal(actual, desired, tol)
@@ -78,14 +78,14 @@ class LiftEqualsWeightTest(unittest.TestCase):
     def test_case(self, case_name):
         flops_inputs = get_flops_inputs(case_name)
 
-        dynamics_data: AviaryValues = dynamics_test_data[case_name]
+        mission_data: AviaryValues = mission_test_data[case_name]
 
         # area = 4 digits precision
         inputs_keys = (Aircraft.Wing.AREA,)
 
         # dynamic pressure = 4 digits precision
         # mass = 6 digits precision
-        dynamics_keys = (Dynamic.Mission.DYNAMIC_PRESSURE, Dynamic.Mission.MASS)
+        mission_keys = (Dynamic.Mission.DYNAMIC_PRESSURE, Dynamic.Mission.MASS)
 
         # lift coefficient = 5 digits precision
         # lift = 6 digits precision
@@ -97,7 +97,7 @@ class LiftEqualsWeightTest(unittest.TestCase):
         prob = om.Problem()
         model = prob.model
 
-        q, _ = dynamics_data.get_item(Dynamic.Mission.DYNAMIC_PRESSURE)
+        q, _ = mission_data.get_item(Dynamic.Mission.DYNAMIC_PRESSURE)
         nn = len(q)
 
         model.add_subsystem(
@@ -109,15 +109,15 @@ class LiftEqualsWeightTest(unittest.TestCase):
             val, units = flops_inputs.get_item(key)
             prob.set_val(key, val, units)
 
-        for key in dynamics_keys:
-            val, units = dynamics_data.get_item(key)
+        for key in mission_keys:
+            val, units = mission_data.get_item(key)
             prob.set_val(key, val, units)
 
         prob.run_model()
 
         for key in outputs_keys:
             try:
-                desired, units = dynamics_data.get_item(key)
+                desired, units = mission_data.get_item(key)
                 actual = prob.get_val(key, units)
 
                 assert_near_equal(actual, desired, tol)
@@ -135,28 +135,31 @@ class LiftEqualsWeightTest(unittest.TestCase):
 #    - first: # DETAILED FLIGHT SEGMENT SUMMARY
 #        - first: SEGMENT... CRUISE
 #            - first three points
-dynamics_test_data = {}
+mission_test_data = {}
 
-dynamics_test_data['LargeSingleAisle1FLOPS'] = _dynamics_data = AviaryValues()
-_dynamics_data.set_val(Dynamic.Mission.DYNAMIC_PRESSURE, [
-                       206.0, 205.6, 205.4], 'lbf/ft**2')
-_dynamics_data.set_val('cl', [0.62630, 0.62623, 0.62619])
-_dynamics_data.set_val(Dynamic.Mission.LIFT, [176751., 176400., 176185.], 'lbf')
-_dynamics_data.set_val(Dynamic.Mission.MASS, [176751., 176400., 176185.], 'lbm')
+mission_test_data['LargeSingleAisle1FLOPS'] = _mission_data = AviaryValues()
+_mission_data.set_val(
+    Dynamic.Mission.DYNAMIC_PRESSURE, [206.0, 205.6, 205.4], 'lbf/ft**2'
+)
+_mission_data.set_val('cl', [0.62630, 0.62623, 0.62619])
+_mission_data.set_val(Dynamic.Mission.LIFT, [176751.0, 176400.0, 176185.0], 'lbf')
+_mission_data.set_val(Dynamic.Mission.MASS, [176751.0, 176400.0, 176185.0], 'lbm')
 
-dynamics_test_data['LargeSingleAisle2FLOPS'] = _dynamics_data = AviaryValues()
-_dynamics_data.set_val(Dynamic.Mission.DYNAMIC_PRESSURE, [
-                       215.4, 215.4, 215.4], 'lbf/ft**2')
-_dynamics_data.set_val('cl', [0.58761, 0.58578, 0.57954])
-_dynamics_data.set_val(Dynamic.Mission.LIFT, [169730., 169200., 167400.], 'lbf')
-_dynamics_data.set_val(Dynamic.Mission.MASS, [169730., 169200., 167400.], 'lbm')
+mission_test_data['LargeSingleAisle2FLOPS'] = _mission_data = AviaryValues()
+_mission_data.set_val(
+    Dynamic.Mission.DYNAMIC_PRESSURE, [215.4, 215.4, 215.4], 'lbf/ft**2'
+)
+_mission_data.set_val('cl', [0.58761, 0.58578, 0.57954])
+_mission_data.set_val(Dynamic.Mission.LIFT, [169730.0, 169200.0, 167400.0], 'lbf')
+_mission_data.set_val(Dynamic.Mission.MASS, [169730.0, 169200.0, 167400.0], 'lbm')
 
-dynamics_test_data['N3CC'] = _dynamics_data = AviaryValues()
-_dynamics_data.set_val(Dynamic.Mission.DYNAMIC_PRESSURE, [
-                       208.4, 288.5, 364.0], 'lbf/ft**2')
-_dynamics_data.set_val('cl', [0.50651, 0.36573, 0.28970])
-_dynamics_data.set_val(Dynamic.Mission.LIFT, [128777., 128721., 128667.], 'lbf')
-_dynamics_data.set_val(Dynamic.Mission.MASS, [128777., 128721., 128667.], 'lbm')
+mission_test_data['N3CC'] = _mission_data = AviaryValues()
+_mission_data.set_val(
+    Dynamic.Mission.DYNAMIC_PRESSURE, [208.4, 288.5, 364.0], 'lbf/ft**2'
+)
+_mission_data.set_val('cl', [0.50651, 0.36573, 0.28970])
+_mission_data.set_val(Dynamic.Mission.LIFT, [128777.0, 128721.0, 128667.0], 'lbf')
+_mission_data.set_val(Dynamic.Mission.MASS, [128777.0, 128721.0, 128667.0], 'lbm')
 
 
 if __name__ == "__main__":

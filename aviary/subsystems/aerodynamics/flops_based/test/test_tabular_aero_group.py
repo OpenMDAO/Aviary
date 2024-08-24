@@ -594,7 +594,7 @@ class _ComputedAeroHarness(om.Group):
         default_premission_subsystems = get_default_premission_subsystems('FLOPS', engine)[
             :-1]
 
-        # Upstream static analysis for aero
+        # Upstream pre-mission analysis for aero
         pre_mission: om.Group = self.add_subsystem(
             'pre_mission',
             CorePreMission(aviary_options=aviary_options,

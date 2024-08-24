@@ -200,7 +200,7 @@ class CustomEngineTest(unittest.TestCase):
             'traj.phases.cruise.controls:different_throttle')[0]
         assert_near_equal(float(initial_guesses), 0.05)
 
-        # and run mission, and dynamics
+        # and run mission
         dm.run_problem(prob, run_driver=True, simulate=False, make_plots=False)
 
         tol = 1.e-4
@@ -301,7 +301,7 @@ class TurbopropTest(unittest.TestCase):
 
         prob.set_solver_print(level=0)
 
-        # and run mission, and dynamics
+        # and run mission
         dm.run_problem(prob, run_driver=True, simulate=False, make_plots=True)
 
 
