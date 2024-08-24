@@ -1786,9 +1786,9 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='rpm',
     default_value=1.0,
-    desc='Fixed RPM the engine is assumed to be running at if the engine does not '
-    'provide RPM as an output. Typically used when pairing a motor or turboshaft '
-    'with a propeller.',
+    desc='Fixed RPM the engine is assumed to be running at. Replaces RPM provided by '
+    'engine model or chosen by optimizer. Typically used when pairing a motor or '
+    'turboshaft with a propeller.',
 )
 
 add_meta_data(
@@ -6578,18 +6578,6 @@ add_meta_data(
     units='lbm/h',
     desc='Current total rate of nitrous oxide (NOx) production by the vehicle'
 )
-
-# add_meta_data(
-#     Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
-#     meta_data=_MetaData,
-#     historical_name={"GASP": None,
-#                      "FLOPS": None,
-#                      "LEAPS1": None
-#                      },
-#     units='unitless',
-#     desc='percent of the corrected rotor speed',
-#     default_value=0.9,
-# )
 
 add_meta_data(
     Dynamic.Mission.PROPELLER_TIP_SPEED,

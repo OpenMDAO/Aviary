@@ -42,6 +42,11 @@ class TurbopropTest(unittest.TestCase):
         options.set_val(Aircraft.Engine.FLIGHT_IDLE_MIN_FRACTION, 0.08)
         options.set_val(Aircraft.Engine.GEOPOTENTIAL_ALT, False)
         options.set_val(Aircraft.Engine.INTERPOLATION_METHOD, 'slinear')
+        options.set_val(
+            Aircraft.Engine.FIXED_RPM,
+            1455.13090827,
+            units='rpm',
+        )
 
         options.set_val(Aircraft.Engine.COMPUTE_PROPELLER_INSTALLATION_LOSS,
                         val=True, units='unitless')
@@ -144,6 +149,7 @@ class TurbopropTest(unittest.TestCase):
         options.set_val(Aircraft.Engine.NUM_PROPELLER_BLADES,
                         val=4, units='unitless')
         options.set_val('speed_type', SpeedType.MACH)
+        options.set_val(Aircraft.Engine.FIXED_RPM, 1455.13090827, units='rpm')
 
         prop_group = ExamplePropModel('custom_prop_model')
 
@@ -152,8 +158,7 @@ class TurbopropTest(unittest.TestCase):
         self.prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 10.5, units="ft")
         self.prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,
                           114.0, units="unitless")
-        # self.prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
-        #                   np.array([1, 1, 0.7]), units="unitless")
+
         self.prob.set_val(
             Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT, 0.5, units="unitless")
 
@@ -201,7 +206,6 @@ class TurbopropTest(unittest.TestCase):
         ]
 
         self.prepare_model(test_points, filename)
-        om.n2(self.prob)
 
         self.prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 10.5, units="ft")
         self.prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,
@@ -262,6 +266,11 @@ class TurbopropTest(unittest.TestCase):
         self.prob.set_val(
             Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT, 0.5, units="unitless")
         self.prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED_MAX, 800, units="ft/s")
+        self.prob.set_val(
+            Aircraft.Engine.FIXED_RPM,
+            [1455.13090827, 1455.13090827, 1455.13090827],
+            units='rpm',
+        )
 
         self.prob.run_model()
 
@@ -290,6 +299,11 @@ class TurbopropTest(unittest.TestCase):
             Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT, 0.5, units="unitless")
 
         self.prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED_MAX, 800, units="ft/s")
+        self.prob.set_val(
+            Aircraft.Engine.FIXED_RPM,
+            [1455.13090827, 1455.13090827, 1455.13090827],
+            units='rpm',
+        )
 
         self.prob.run_model()
 

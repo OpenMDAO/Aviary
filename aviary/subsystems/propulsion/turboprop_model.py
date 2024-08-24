@@ -188,12 +188,14 @@ class TurbopropMission(om.Group):
         )
 
     def setup(self):
-        num_nodes = self.options['num_nodes']
+        # save num_nodes for use in configure()
+        self.num_nodes = num_nodes = self.options['num_nodes']
         shp_model = self.options['shaft_power_model']
         propeller_model = self.options['propeller_model']
         gearbox_model = self.options['gearbox_model']
         kwargs = self.options['kwargs']
-        aviary_inputs = self.options['aviary_inputs']
+        # save aviary_inputs for use in configure()
+        self.aviary_inputs = aviary_inputs = self.options['aviary_inputs']
 
         max_thrust_group = om.Group()
 
@@ -377,8 +379,18 @@ class TurbopropMission(om.Group):
 
         self.promotes(shp_model.name, outputs=outputs)
 
-        # if RPM is not provided by the shaft power model, used fixed RPM
-        if Dynamic.Mission.RPM in [
-            output_dict[key]['prom_name'] for key in output_dict
-        ]:
-            self.set_val(Dynamic.Mission.RPM, Aircraft.Engine.FIXED_RPM)
+        # if fixed RPM is requested by the user, use that value. "Overwrite" RPM
+        # output from shaft power model if present
+        if Aircraft.Engine.FIXED_RPM in self.aviary_inputs:
+            if Dynamic.Mission.RPM in [
+                output_dict[key]['prom_name'] for key in output_dict
+            ]:
+                self.promotes(
+                    shp_model.name,
+                    (Dynamic.Mission.RPM, 'AUTO_OVERRIDE:' + Dynamic.Mission.RPM),
+                )
+
+            fixed_rpm = np.ones(self.num_nodes) * self.aviary_inputs.get_val(
+                Aircraft.Engine.FIXED_RPM, units='rpm'
+            )
+            self.set_val(Dynamic.Mission.RPM, fixed_rpm, units='rpm')
