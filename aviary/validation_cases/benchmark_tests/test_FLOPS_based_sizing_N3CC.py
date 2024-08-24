@@ -1,28 +1,29 @@
-'''
-NOTES:
+"""
+Sizing the N3CC using the level 3 API.
+
 Includes:
-Takeoff, Climb, Cruise, Descent, Landing
-Computed Aero
-N3CC data
-'''
+  Takeoff, Climb, Cruise, Descent, Landing
+  Computed Aero
+  N3CC data
+"""
 import unittest
 
-import dymos as dm
 import numpy as np
-import openmdao.api as om
 import scipy.constants as _units
+
+import dymos as dm
+import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 from openmdao.utils.testing_utils import require_pyoptsparse
 
 from aviary.mission.flops_based.phases.build_landing import Landing
 from aviary.mission.flops_based.phases.build_takeoff import Takeoff
-from aviary.utils.functions import set_aviary_initial_values
+from aviary.utils.functions import set_aviary_input_defaults
 from aviary.utils.test_utils.assert_utils import warn_timeseries_near_equal
 from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.variable_info.functions import setup_trajectory_params
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables_in import VariablesIn
 from aviary.mission.energy_phase import EnergyPhase
 
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
@@ -35,8 +36,9 @@ from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
 from aviary.subsystems.mass.mass_builder import CoreMassBuilder
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
+from aviary.utils.functions import set_aviary_initial_values
 from aviary.utils.preprocessors import preprocess_crewpayload
+from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 
 try:
     import pyoptsparse
@@ -422,17 +424,19 @@ def run_trajectory(sim=True):
 
     prob.model.add_objective('reg_objective', ref=1)
 
-    # Set initial default values for all LEAPS aircraft variables.
-    set_aviary_initial_values(prob.model, aviary_inputs)
-
-    prob.model.add_subsystem(
-        'input_sink',
-        VariablesIn(aviary_options=aviary_inputs),
-        promotes_inputs=['*'],
-        promotes_outputs=['*']
-    )
+    varnames = [
+        Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN,
+        Aircraft.Wing.SWEEP,
+        Aircraft.Wing.TAPER_RATIO,
+        Aircraft.Wing.THICKNESS_TO_CHORD,
+        Mission.Design.GROSS_MASS,
+        Mission.Summary.GROSS_MASS,
+    ]
+    set_aviary_input_defaults(prob.model, varnames, aviary_inputs)
 
     prob.setup(force_alloc_complex=True)
+
+    set_aviary_initial_values(prob, aviary_inputs)
 
     ############################################
     # Initial Settings for States and Controls #
