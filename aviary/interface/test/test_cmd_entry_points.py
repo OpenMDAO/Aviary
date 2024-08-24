@@ -120,10 +120,10 @@ class convert_engineTestCases(CommandEntryPointsTestCases):
         cmd = f'aviary convert_engine {filepath} {outfile} -f FLOPS'
         self.run_and_test_cmd(cmd)
 
-    def test_GASP_TP_conversion(self):
-        filepath = self.get_file('models/engines/turboprop_4465hp.eng')
-        outfile = Path.cwd() / 'turboprop_4465hp.eng'
-        cmd = f'aviary convert_engine {filepath} {outfile} --data_format GASP_TP'
+    def test_GASP_TS_conversion(self):
+        filepath = self.get_file('models/engines/turboshaft_4465hp.eng')
+        outfile = Path.cwd() / 'turboshaft_4465hp.eng'
+        cmd = f'aviary convert_engine {filepath} {outfile} --data_format GASP_TS'
         self.run_and_test_cmd(cmd)
 
 

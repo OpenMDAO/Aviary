@@ -22,7 +22,7 @@ from aviary.utils.named_values import NamedValues
 class EngineDeckType(Enum):
     FLOPS = 'FLOPS'
     GASP = 'GASP'
-    GASP_TP = 'GASP_TP'
+    GASP_TS = 'GASP_TS'
 
     def __str__(self):
         return self.value
@@ -100,7 +100,7 @@ def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
     comments.append(f'# created {timestamp} by {user}')
     legacy_code = data_format.value
     engine_type = 'engine'
-    if legacy_code == 'GASP_TP':
+    if legacy_code == 'GASP_TS':
         engine_type = 'turboshaft engine'
         legacy_code = 'GASP'
 
@@ -132,8 +132,8 @@ def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
                 data[NOX_RATE] = np.append(data[NOX_RATE], line[6])
                 # data[EXIT_AREA].append(line[7])
 
-    elif data_format in (EngineDeckType.GASP, EngineDeckType.GASP_TP):
-        is_turbo_prop = True if data_format == EngineDeckType.GASP_TP else False
+    elif data_format in (EngineDeckType.GASP, EngineDeckType.GASP_TS):
+        is_turbo_prop = True if data_format == EngineDeckType.GASP_TS else False
         temperature = gasp_keys.pop()
         fuelflow = gasp_keys.pop()
         if is_turbo_prop:
@@ -367,8 +367,8 @@ def _read_gasp_engine(fp, is_turbo_prop=False):
     Each table consists of both the independent variables and the dependent variable for
     the corresponding field. The table is a "tidy format" 2D array where the first three
     columns are the independent varaiables (altitude, T4/T2, and Mach number) and the
-    final column is the dependent variable (one of thrust, fuelflow, or airflow for TurboFans or 
-    shaft_power_corrected, fuelflow, or tailpipe_thrust for TurboProps).
+    final column is the dependent variable (one of thrust, fuelflow, or airflow for
+    turbofans or shaft_power_corrected, fuelflow, or tailpipe_thrust for turboshafts).
     """
     with open(fp, "r") as f:
         if is_turbo_prop:
@@ -434,8 +434,8 @@ def _read_table(f, is_turbo_prop=False):
     """Read an entire table from a GASP engine deck file.
     The table data is returned as a "tidy format" array with three columns for the
     independent variables (altitude, T4/T2, and Mach number) and the final column for
-    the table field (one of thrust, fuelflow, or airflow for TurboFans or 
-    shaft_power_corrected, fuelflow, or tailpipe_thrust for TurboProps).
+    the table field (one of thrust, fuelflow, or airflow for turbofans or
+    shaft_power_corrected, fuelflow, or tailpipe_thrust for turboshafts).
     """
     tab_data = None
 
