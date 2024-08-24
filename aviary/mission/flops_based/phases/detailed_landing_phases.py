@@ -34,9 +34,12 @@ from aviary.mission.flops_based.phases.detailed_takeoff_phases import \
     _init_initial_guess_meta_data
 from aviary.mission.phase_builder_base import PhaseBuilderBase
 from aviary.mission.initial_guess_builders import InitialGuessControl, InitialGuessParameter, InitialGuessPolynomialControl, InitialGuessState, InitialGuessIntegrationVariable
+from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.functions import setup_trajectory_params
 from aviary.variable_info.variables import Dynamic, Mission
+from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 
 
 @_init_initial_guess_meta_data
@@ -1248,7 +1251,32 @@ class LandingTrajectory:
         if model is not None:
             phase_names = self.get_phase_names()
 
-            setup_trajectory_params(model, traj, aviary_options, phase_names)
+            # This is a level 3 method that uses the default subsystems.
+            # We need to create parameters for just the inputs we have.
+            # They mostly come from the low-speed aero subsystem.
+
+            aero = CoreAerodynamicsBuilder('core_aerodynamics',
+                                           BaseMetaData,
+                                           LegacyCode('FLOPS'))
+
+            phase_info = {'subsystem_options': {
+                'core_aerodynamics': {'method': 'low_speed'}}
+            }
+
+            params = aero.get_parameters(aviary_options, phase_info)
+
+            # takeoff introduces this one.
+            params[Mission.Landing.LIFT_COEFFICIENT_MAX] = {
+                'shape': (1, ),
+                'static_target': True,
+            }
+
+            ext_params = {}
+            for phase in self._phases.keys():
+                ext_params[phase] = params
+
+            setup_trajectory_params(model, traj, aviary_options,
+                                    phase_names, external_parameters=ext_params)
 
         return traj
 
