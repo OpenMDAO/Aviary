@@ -1,7 +1,8 @@
 import unittest
 
+import numpy as np
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_check_partials
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.mission.gasp_based.ode.rotation_ode import RotationODE
 from aviary.variable_info.options import get_option_defaults
@@ -33,6 +34,26 @@ class RotationODETestCase(unittest.TestCase):
         self.prob.set_val("t_curr", [1, 2], units="s")
 
         self.prob.run_model()
+
+        tol = 1e-6
+        assert_near_equal(
+            self.prob[Dynamic.Mission.VELOCITY_RATE], np.array(
+                [13.66655, 13.66655]), tol)
+        assert_near_equal(
+            self.prob[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE], np.array(
+                [0.0, 0.0]), tol)
+        assert_near_equal(
+            self.prob[Dynamic.Mission.ALTITUDE_RATE], np.array(
+                [0.0, 0.0]), tol)
+        assert_near_equal(
+            self.prob[Dynamic.Mission.DISTANCE_RATE], np.array(
+                [168.781, 168.781]), tol)
+        assert_near_equal(
+            self.prob["normal_force"], np.array(
+                [66932.7, 66932.7]), tol)
+        assert_near_equal(
+            self.prob["fuselage_pitch"], np.array(
+                [0.0, 0.0]), tol)
 
         partial_data = self.prob.check_partials(
             out_stream=None, method="cs", excludes=["*params*", "*aero*"]
