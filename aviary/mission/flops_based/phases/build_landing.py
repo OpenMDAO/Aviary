@@ -49,7 +49,7 @@ class Landing:
             a group in OpenMDAO
         """
 
-        if use_detailed:  # TODO
+        if use_detailed:
             raise om.AnalysisError(
                 "Must set landing method to `use_detailed=False`, detailed landing is"
                 " not currently enabled."
