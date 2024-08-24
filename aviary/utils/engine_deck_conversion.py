@@ -501,6 +501,13 @@ def _make_structured_grid(data, method="lagrange3", fields=["thrust", "fuelflow"
 
             # would explicitly use lagrange3 here to mimic GASP, but some engine
             # decks may not have enough points per dimension
+            # For GASP engine deck, try to provide at least 4 Mach numbers.
+            # For GASP_TP engine deck, try to provide at least 4 Mach numbers
+            # avoid devide-by-zero RuntimeWarning
+            if len(mach) == 3 and method == "lagrange3":
+                method = "lagrange2"
+            elif len(mach) == 2:
+                method = "slinear"
             interp = InterpND(
                 method="2D-" + method, points=(t4t2, mach), values=f, extrapolate=True
             )
