@@ -93,11 +93,9 @@ class TurbopropTest(unittest.TestCase):
     def get_results(self, point_names=None, display_results=False):
         shp = self.prob.get_val(Dynamic.Mission.SHAFT_POWER, units='hp')
         total_thrust = self.prob.get_val(Dynamic.Mission.THRUST, units='lbf')
-        prop_thrust = self.prob.get_val(
-            'turboshaft_model.propeller_thrust', units='lbf'
-        )
+        prop_thrust = self.prob.get_val('turboprop_model.propeller_thrust', units='lbf')
         tailpipe_thrust = self.prob.get_val(
-            'turboshaft_model.turboshaft_thrust', units='lbf'
+            'turboprop_model.turboshaft_thrust', units='lbf'
         )
         max_thrust = self.prob.get_val(Dynamic.Mission.THRUST_MAX, units='lbf')
         fuel_flow = self.prob.get_val(

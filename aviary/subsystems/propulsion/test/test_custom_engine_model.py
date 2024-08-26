@@ -246,6 +246,10 @@ class CustomEngineTest(unittest.TestCase):
 
 @use_tempdirs
 class TurbopropTest(unittest.TestCase):
+    """
+    Test integrating turboprop component with full AviaryProblem
+    """
+
     def test_turboprop(self):
         phase_info = {
             'pre_mission': {
@@ -358,3 +362,5 @@ class TurbopropTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+    # test = TurbopropTest()
+    # test.test_turboprop()
