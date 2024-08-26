@@ -143,8 +143,10 @@ class AircraftMissionTestSuite(unittest.TestCase):
         self.assertIsNotNone(prob)
         self.assertTrue(prob.problem_ran_successfully)
 
-        cmd = f'aviary dashboard --problem_recorder dymos_solution.db --driver_recorder driver_test.db {
-            prob.driver._problem()._name}'
+        cmd = (
+            'aviary dashboard --problem_recorder dymos_solution.db --driver_recorder '
+            f'driver_test.db {prob.driver._problem()._name}'
+        )
         # this only tests that a given command line tool returns a 0 return code. It doesn't
         # check the expected output at all.  The underlying functions that implement the
         # commands should be tested seperately.
