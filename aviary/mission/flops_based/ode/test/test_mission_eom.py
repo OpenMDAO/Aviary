@@ -44,7 +44,7 @@ class MissionEOMTest(unittest.TestCase):
         tol = 1e-6
         self.prob.run_model()
 
-        assert_near_equal(prob.get_val(Dynamic.Mission.ALTITUDE_RATE_MAX, units='ft/min'),
+        assert_near_equal(self.prob.get_val(Dynamic.Mission.ALTITUDE_RATE_MAX, units='ft/min'),
                           np.array([3679.0525544843, 760.55416759, 6557.07891846677]), tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
