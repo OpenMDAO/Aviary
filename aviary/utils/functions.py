@@ -1,14 +1,18 @@
-import numpy as np
-import openmdao.api as om
+from typing import Union
 from pathlib import Path
-import pkg_resources
+import importlib_resources
+from contextlib import ExitStack
+import atexit
+import os
 
+import openmdao.api as om
+import numpy as np
 from openmdao.utils.units import convert_units
-from aviary.utils.aviary_values import AviaryValues, get_keys
+
+from aviary.utils.aviary_values import AviaryValues, get_keys, get_items
 from aviary.variable_info.enums import ProblemType, EquationsOfMotion, LegacyCode
 from aviary.variable_info.functions import add_aviary_output, add_aviary_input
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.interface.download_models import get_model
 
 
 class Null:
@@ -23,43 +27,77 @@ class Null:
         pass
 
 
-def set_aviary_initial_values(model, inputs, meta_data=_MetaData):
-    '''
-    This function sorts through all the input
-    variables to an Aviary model, and for those
-    which are not options it sets the input
-    value to be the value in the inputs, or
-    to be the default if the value is not in the
-    inputs.
+def get_aviary_resource_path(resource_name: str) -> str:
+    """
+    Get the file path of a resource in the Aviary package.
 
-    In the case when the value is not input nor
-    present in the default, nothing is set.
-    '''
-    for key in meta_data:
-        if ':' not in key or key.startswith('dynamic:'):
-            continue
-        if not meta_data[key]['option']:
-            if key in inputs:
-                val, units = inputs.get_item(key)
-            else:
-                val = meta_data[key]['default_value']
-                units = meta_data[key]['units']
+    Args:
+        resource_name (str): The name of the resource.
 
-                if val is None:
-                    # optional, but no default value
-                    continue
+    Returns:
+        str: The file path of the resource.
 
-            model.set_input_defaults(key, val=val, units=units)
+    """
+    file_manager = ExitStack()
+    atexit.register(file_manager.close)
+    ref = importlib_resources.files('aviary') / resource_name
+    path = file_manager.enter_context(
+        importlib_resources.as_file(ref))
+    return path
 
 
-def apply_all_values(aircraft_values: AviaryValues, prob):
-    for var_name in get_keys(aircraft_values):
-        var_data, var_units = aircraft_values.get_item(var_name)
+def set_aviary_initial_values(prob, aviary_inputs: AviaryValues):
+    """
+    Sets initial values for all inputs in the aviary inputs.
+
+    This method is mostly used in tests and level 3 scripts.
+
+    Parameters
+    ----------
+    prob : Problem
+        OpenMDAO problem after setup.
+    aviary_inputs : AviaryValues
+        Instance of AviaryValues containing all initial values.
+    """
+    for (key, (val, units)) in get_items(aviary_inputs):
         try:
-            prob.set_val(var_name, val=var_data, units=var_units)
-        except KeyError:
-            pass
-    return prob
+            prob.set_val(key, val, units)
+
+        except:
+            # Should be an option or an overridden output.
+            continue
+
+
+def set_aviary_input_defaults(model, inputs, aviary_inputs: AviaryValues,
+                              meta_data=_MetaData):
+    """
+    This function sets the default values and units for any inputs prior to
+    setup. This is needed to resolve ambiguities when inputs are promoted
+    with the same name, but different units or values.
+
+    This method is mostly used in tests and level 3 scripts.
+
+    Parameters
+    ----------
+    model : System
+        Top level aviary model.
+    inputs : list
+        List of varibles that are causing promotion problems. This needs to
+        be crafted based on the openmdao exception messages.
+    aviary_inputs : AviaryValues
+        Instance of AviaryValues containing all initial values.
+    meta_data : dict
+        (Optional) Dictionary of aircraft metadata. Uses Aviary's built-in
+        metadata by default.
+    """
+    for key in inputs:
+        if key in aviary_inputs:
+            val, units = aviary_inputs.get_item(key)
+        else:
+            val = meta_data[key]['default_value']
+            units = meta_data[key]['units']
+
+        model.set_input_defaults(key, val=val, units=units)
 
 
 def convert_strings_to_data(string_list):
@@ -110,7 +148,7 @@ def set_value(var_name, var_value, aviary_values: AviaryValues, units=None, is_a
 
     # TODO handle enums in an automated method via checking metadata for enum type
     if var_name == 'settings:problem_type':
-        var_values = ProblemType[var_value]
+        var_values = ProblemType(var_value)
     if var_name == 'settings:equations_of_motion':
         var_values = EquationsOfMotion(var_value)
     if var_name == 'settings:mass_method':
@@ -305,7 +343,56 @@ def promote_aircraft_and_mission_vars(group):
     return external_outputs
 
 
-def get_path(path: [str, Path], verbose: bool = False) -> Path:
+# Python 3.10 adds the ability to specify multiple types using type hints like so:
+# "str | Path" which is cleaner but Aviary still supports older versions
+
+
+def get_model(file_name: str, verbose=False) -> Path:
+    '''
+    This function attempts to find the path to a file or folder in aviary/models
+    If the path cannot be found in any of the locations, a FileNotFoundError is raised.
+
+    Parameters
+    ----------
+    path : str or Path
+        The input path, either as a string or a Path object.
+
+    Returns
+    -------
+    aviary_path
+        The absolute path to the file.
+
+    Raises
+    ------
+    FileNotFoundError
+        If the path is not found.
+    '''
+
+    # Get the path to Aviary's models
+    path = Path('models', file_name)
+    aviary_path = Path(get_aviary_resource_path(str(path)))
+
+    # If the file name was provided without a path, check in the subfolders
+    if not aviary_path.exists():
+        sub_dirs = [x[0] for x in os.walk(get_aviary_resource_path('models'))]
+        for sub_dir in sub_dirs:
+            temp_path = Path(sub_dir, file_name)
+            if temp_path.exists():
+                # only return the first matching file
+                aviary_path = temp_path
+                continue
+
+    # If the path still doesn't exist, raise an error.
+    if not aviary_path.exists():
+        raise FileNotFoundError(
+            f"File or Folder not found in Aviary's hangar"
+        )
+    if verbose:
+        print('found', aviary_path, '\n')
+    return aviary_path
+
+
+def get_path(path: Union[str, Path], verbose: bool = False) -> Path:
     """
     Convert a string or Path object to an absolute Path object, prioritizing different locations.
 
@@ -344,13 +431,14 @@ def get_path(path: [str, Path], verbose: bool = False) -> Path:
     # Check if the path exists as an absolute path.
     if not path.exists():
         # If not, try finding the path relative to the current working directory.
-        path = Path.cwd() / path
+        relative_path = Path.cwd() / path
+        path = relative_path
 
     # If the path still doesn't exist, attempt to find it relative to the Aviary package.
     if not path.exists():
         # Determine the path relative to the Aviary package.
         aviary_based_path = Path(
-            pkg_resources.resource_filename('aviary', original_path))
+            get_aviary_resource_path(original_path))
         if verbose:
             print(
                 f"Unable to locate '{original_path}' as an absolute or relative path. Trying Aviary package path: {aviary_based_path}")
@@ -370,7 +458,9 @@ def get_path(path: [str, Path], verbose: bool = False) -> Path:
     # If the path still doesn't exist in any of the prioritized locations, raise an error.
     if not path.exists():
         raise FileNotFoundError(
-            f'File not found in absolute path: {original_path}, relative path:{Path.cwd() / path}, or Aviary-based path: {Path(pkg_resources.resource_filename("aviary", original_path))}'
+            f'File not found in absolute path: {original_path}, relative path: '
+            f'{relative_path}, or Aviary-based path: '
+            f'{Path(get_aviary_resource_path(original_path))}'
         )
 
     # If verbose is True, print the path being used.

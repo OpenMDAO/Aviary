@@ -23,24 +23,24 @@ reserve_cruise['initial_guesses']['initial_distance'] = (3700, 'nmi')
 
 phase_info.update({'reserve_cruise': reserve_cruise})
 
-prob = av.AviaryProblem()
+if __name__ == '__main__':
+    prob = av.AviaryProblem()
 
-# Load aircraft and options data from user
-# Allow for user overrides here
-prob.load_inputs('models/test_aircraft/aircraft_for_bench_GwGm.csv', phase_info)
+    # Load aircraft and options data from user
+    # Allow for user overrides here
+    prob.load_inputs('models/test_aircraft/aircraft_for_bench_GwGm.csv', phase_info)
 
+    # Preprocess inputs
+    prob.check_and_preprocess_inputs()
 
-# Preprocess inputs
-prob.check_and_preprocess_inputs()
+    prob.add_pre_mission_systems()
 
-prob.add_pre_mission_systems()
+    prob.add_phases()
 
-prob.add_phases()
+    prob.add_post_mission_systems()
 
-prob.add_post_mission_systems()
-
-# Link phases and variables
-prob.link_phases()
+    # Link phases and variables
+    prob.link_phases()
 
 prob.add_driver("SNOPT", max_iter=50, verbosity=2)
 

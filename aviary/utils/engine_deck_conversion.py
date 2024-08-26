@@ -7,7 +7,7 @@ from enum import Enum
 
 import numpy as np
 import openmdao.api as om
-from dymos.models.atmosphere import USatm1976Comp
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from openmdao.components.interp_util.interp import InterpND
 
 from aviary.utils.conversion_utils import _rep, _parse, _read_map
@@ -38,9 +38,9 @@ GROSS_THRUST = EngineModelVariables.GROSS_THRUST
 SHAFT_POWER_CORRECTED = EngineModelVariables.SHAFT_POWER_CORRECTED
 RAM_DRAG = EngineModelVariables.RAM_DRAG
 FUEL_FLOW = EngineModelVariables.FUEL_FLOW
-ELECTRIC_POWER = EngineModelVariables.ELECTRIC_POWER
+ELECTRIC_POWER_IN = EngineModelVariables.ELECTRIC_POWER_IN
 NOX_RATE = EngineModelVariables.NOX_RATE
-TEMPERATURE = EngineModelVariables.TEMPERATURE_ENGINE_T4
+TEMPERATURE = EngineModelVariables.TEMPERATURE_T4
 # EXIT_AREA = EngineModelVariables.EXIT_AREA
 
 flops_keys = [
@@ -231,9 +231,10 @@ def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
 
             prob.model.add_subsystem(
                 name='atmosphere',
-                subsys=USatm1976Comp(num_nodes=len(data[MACH])),
-                promotes_inputs=[('h', Dynamic.Mission.ALTITUDE)],
-                promotes_outputs=[('temp', Dynamic.Mission.TEMPERATURE)])
+                subsys=Atmosphere(num_nodes=len(data[MACH])),
+                promotes_inputs=[Dynamic.Mission.ALTITUDE],
+                promotes_outputs=[Dynamic.Mission.TEMPERATURE],
+            )
 
             prob.model.add_subsystem(
                 name='conversion',
@@ -500,6 +501,13 @@ def _make_structured_grid(data, method="lagrange3", fields=["thrust", "fuelflow"
 
             # would explicitly use lagrange3 here to mimic GASP, but some engine
             # decks may not have enough points per dimension
+            # For GASP engine deck, try to provide at least 4 Mach numbers.
+            # For GASP_TP engine deck, try to provide at least 4 Mach numbers
+            # avoid devide-by-zero RuntimeWarning
+            if len(mach) == 3 and method == "lagrange3":
+                method = "lagrange2"
+            elif len(mach) == 2:
+                method = "slinear"
             interp = InterpND(
                 method="2D-" + method, points=(t4t2, mach), values=f, extrapolate=True
             )
@@ -548,10 +556,11 @@ def _generate_flight_idle(data, T4T2, ref_sls_airflow, ref_sfn_idle):
         promotes=['*'])
 
     prob.model.add_subsystem(
-        name='atmosphere', subsys=USatm1976Comp(
-            num_nodes=nn), promotes_inputs=[
-            ('h', Dynamic.Mission.ALTITUDE)], promotes_outputs=[
-                ('temp', Dynamic.Mission.TEMPERATURE), ('pres', Dynamic.Mission.STATIC_PRESSURE)])
+        name='atmosphere',
+        subsys=Atmosphere(num_nodes=nn),
+        promotes_inputs=[Dynamic.Mission.ALTITUDE],
+        promotes_outputs=[Dynamic.Mission.TEMPERATURE, Dynamic.Mission.STATIC_PRESSURE],
+    )
 
     prob.model.add_subsystem(
         name='conversion',

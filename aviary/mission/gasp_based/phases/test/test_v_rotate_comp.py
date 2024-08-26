@@ -4,7 +4,7 @@ import openmdao.api as om
 
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH
 from aviary.mission.gasp_based.phases.v_rotate_comp import VRotateComp
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class TestVRotateComp(unittest.TestCase):
@@ -20,7 +20,9 @@ class TestVRotateComp(unittest.TestCase):
         prob.set_val("dV1", val=10, units="kn")
         prob.set_val("dVR", val=5, units="kn")
         prob.set_val(Aircraft.Wing.AREA, val=1370, units="ft**2")
-        prob.set_val("rho", val=RHO_SEA_LEVEL_ENGLISH, units="slug/ft**3")
+        prob.set_val(
+            Dynamic.Mission.DENSITY, val=RHO_SEA_LEVEL_ENGLISH, units="slug/ft**3"
+        )
         prob.set_val("CL_max", val=2.1886, units="unitless")
         prob.set_val("mass", val=175_000, units="lbm")
 

@@ -841,9 +841,9 @@ class AeroSetup(om.Group):
                     viscosity={"units": "lbf*s/ft**2", "shape": nn},
                     rho={"units": "slug/ft**3", "shape": nn},
                     nu={"units": "ft**2/s", "shape": nn},
-                    has_diag_partials=True
+                    has_diag_partials=True,
                 ),
-                promotes=["*"],
+                promotes=["*", ('rho', Dynamic.Mission.DENSITY)],
             )
 
         self.add_subsystem("geom", AeroGeom(
@@ -1350,6 +1350,9 @@ class LowSpeedAero(om.Group):
             types=bool,
             desc="True to start with flaps applied, False for reverse",
         )
+        # TODO this option does not really exist for LowSpeed and should be renamed
+        # (the value of having identical option set to cruise aero not worth the added
+        #  confusion of having a mislabeled option here)
         self.options.declare(
             "output_alpha",
             default=False,

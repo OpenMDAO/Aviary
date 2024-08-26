@@ -1,10 +1,11 @@
+from parameterized import parameterized
 import unittest
 
 import numpy as np
+
 import openmdao.api as om
-from dymos.models.atmosphere import USatm1976Comp
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
-from parameterized import parameterized
 
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.premission import CorePreMission
@@ -17,7 +18,6 @@ from aviary.validation_cases.validation_tests import (get_flops_inputs,
                                                       get_flops_outputs,
                                                       print_case)
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
-from aviary.variable_info.variables_in import VariablesIn
 from aviary.variable_info.enums import LegacyCode
 
 FLOPS = LegacyCode.FLOPS
@@ -252,19 +252,19 @@ class ComputedVsTabularTest(unittest.TestCase):
             except:
                 pass  # unused variable
 
-        for (key, (val, units)) in get_items(flops_inputs):
-            try:
-                prob.set_val(key, val, units)
-
-            except:
-                # Should be an option or an overridden output.
-                continue
+        set_aviary_initial_values(prob, flops_inputs)
 
         prob.run_model()
 
         tabular_drag = prob.get_val(Dynamic.Mission.DRAG, 'N')
 
         assert_near_equal(tabular_drag, computed_drag, 0.005)
+
+        partial_data = prob.check_partials(
+            out_stream=None, method="cs", step=1.1e-40)
+        assert_check_partials(
+            partial_data, atol=1e-9, rtol=1e-12
+        )
 
 
 # region - hardcoded data from large_single_aisle_1 (fixed alt cruise variant) FLOPS model
@@ -524,11 +524,8 @@ def _get_computed_aero_data_at_altitude(altitude, units):
     prob = om.Problem()
 
     prob.model.add_subsystem(
-        'atm', USatm1976Comp(num_nodes=1),
-        promotes_inputs=[('h', Dynamic.Mission.ALTITUDE)],
-        promotes_outputs=[
-            ('sos', Dynamic.Mission.SPEED_OF_SOUND), ('rho', Dynamic.Mission.DENSITY),
-            ('temp', Dynamic.Mission.TEMPERATURE), ('pres', Dynamic.Mission.STATIC_PRESSURE)])
+        name='atmosphere', subsys=Atmosphere(num_nodes=1), promotes=['*']
+    )
 
     prob.setup()
 
@@ -545,20 +542,8 @@ def _run_computed_aero_harness(flops_inputs, dynamic_inputs, num_nodes):
 
     prob.setup()
 
-    for (key, (val, units)) in get_items(dynamic_inputs):
-        try:
-            prob.set_val(key, val, units)
-
-        except:
-            pass  # unused variable
-
-    for (key, (val, units)) in get_items(flops_inputs):
-        try:
-            prob.set_val(key, val, units)
-
-        except:
-            # Should be an option or an overridden output.
-            continue
+    set_aviary_initial_values(prob, dynamic_inputs)
+    set_aviary_initial_values(prob, flops_inputs)
 
     prob.run_model()
 
@@ -617,15 +602,6 @@ class _ComputedAeroHarness(om.Group):
         key = Aircraft.Engine.SCALED_SLS_THRUST
         val, units = aviary_options.get_item(key)
         pre_mission.set_input_defaults(key, val, units)
-
-        self.add_subsystem(
-            'input_sink',
-            VariablesIn(aviary_options=aviary_options),
-            promotes_inputs=['*'],
-            promotes_outputs=['*']
-        )
-
-        set_aviary_initial_values(self, aviary_options)
 
 
 _design_altitudes = AviaryValues({

@@ -7,6 +7,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.named_values import get_keys
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Mission
+from aviary.utils.test_utils.variable_test import get_names_from_hierarchy
 
 
 def preprocess_options(aviary_options: AviaryValues, **kwargs):
@@ -113,8 +114,8 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
     aviary_options, an EngineDeck is created using avaliable inputs and options in
     aviary_options.
 
-    Vectorizes variables in aviary_options in the correct order for multi-engine
-    vehicles.
+    Vectorizes variables in aviary_options in the correct order for vehicles with
+    heterogeneous engines.
 
     Performs basic sanity checks on inputs that are universal to all EngineModels.
 
@@ -286,6 +287,9 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
     aviary_options.set_val(Aircraft.Engine.NUM_WING_ENGINES, num_wing_engines_all)
     aviary_options.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, num_fuse_engines_all)
 
+    if Mission.Summary.FUEL_FLOW_SCALER not in aviary_options:
+        aviary_options.set_val(Mission.Summary.FUEL_FLOW_SCALER, 1.0)
+
     num_engines = aviary_options.get_val(Aircraft.Engine.NUM_ENGINES)
     total_num_engines = int(sum(num_engines_all))
     total_num_fuse_engines = int(sum(num_fuse_engines_all))
@@ -304,26 +308,8 @@ def _get_engine_variables():
     '''
     Yields all propulsion-related variables in Aircraft that need to be vectorized
     '''
-    for entry in Aircraft.Engine.__dict__:
-        var = getattr(Aircraft.Engine, entry)
-        # does this variable exist, and have useable metadata?
-        try:
-            _MetaData[var]
-        except (TypeError, KeyError):
-            continue
-        # valid variable found, proceed
-        else:
-            yield var
+    for item in get_names_from_hierarchy(Aircraft.Engine):
+        yield item
 
-    for entry in Aircraft.Nacelle.__dict__:
-        var = getattr(Aircraft.Nacelle, entry)
-        # does this variable exist, and have useable metadata?
-        try:
-            _MetaData[var]
-        except (TypeError, KeyError):
-            continue
-        # valid variable found, proceed
-        else:
-            # don't vectorize aircraft-level total values
-            if 'total' not in var:
-                yield var
+    for item in get_names_from_hierarchy(Aircraft.Nacelle):
+        yield item

@@ -10,6 +10,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.functions import get_path
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.subsystems.propulsion.utils import EngineModelVariables
 
 
 class EngineScalingTest(unittest.TestCase):
@@ -46,22 +47,34 @@ class EngineScalingTest(unittest.TestCase):
 
         preprocess_propulsion(options, [engine1])
 
-        options.set_val(Mission.Summary.FUEL_FLOW_SCALER, 10.)
+        options.set_val(Mission.Summary.FUEL_FLOW_SCALER, 10.0)
+        engine_variables = {
+            EngineModelVariables.THRUST: 'lbf',
+            EngineModelVariables.FUEL_FLOW: 'lbm/h',
+            EngineModelVariables.NOX_RATE: 'lbm/h',
+        }
 
-        self.prob.model.add_subsystem('engine', EngineScaling(
-            num_nodes=nn,
-            aviary_options=options),
-            promotes=['*'])
+        self.prob.model.add_subsystem(
+            'engine',
+            EngineScaling(
+                num_nodes=nn, aviary_options=options, engine_variables=engine_variables
+            ),
+            promotes=['*'],
+        )
         self.prob.setup(force_alloc_complex=True)
-        self.prob.set_val('thrust_net_unscaled', np.ones(
-            [nn, count]) * 1000, units='lbf')
-        self.prob.set_val('fuel_flow_rate_unscaled', np.ones(
-            [nn, count]) * 100, units='lbm/h')
+        self.prob.set_val(
+            'thrust_net_unscaled', np.ones([nn, count]) * 1000, units='lbf'
+        )
+        self.prob.set_val(
+            'fuel_flow_rate_unscaled', np.ones([nn, count]) * 100, units='lbm/h'
+        )
         self.prob.set_val('nox_rate_unscaled', np.ones([nn, count]) * 10, units='lbm/h')
-        self.prob.set_val(Dynamic.Mission.MACH, np.linspace(
-            0, 0.75, nn), units='unitless')
-        self.prob.set_val(Aircraft.Engine.SCALE_FACTOR,
-                          options.get_val(Aircraft.Engine.SCALE_FACTOR))
+        self.prob.set_val(
+            Dynamic.Mission.MACH, np.linspace(0, 0.75, nn), units='unitless'
+        )
+        self.prob.set_val(
+            Aircraft.Engine.SCALE_FACTOR, options.get_val(Aircraft.Engine.SCALE_FACTOR)
+        )
 
         self.prob.run_model()
 
@@ -70,11 +83,11 @@ class EngineScalingTest(unittest.TestCase):
         nox_rate = self.prob.get_val(Dynamic.Mission.NOX_RATE)
         # exit_area = self.prob.get_val(Dynamic.Mission.EXIT_AREA)
 
-        thrust_expected = np.array([900., 900., 900., 900])
+        thrust_expected = np.array([900.0, 900.0, 900.0, 900])
 
         fuel_flow_expected = np.array([-1836.55, -1836.55, -1836.55, -1836.55])
 
-        nox_rate_expected = np.array([9., 9., 9., 9])
+        nox_rate_expected = np.array([9.0, 9.0, 9.0, 9])
 
         assert_near_equal(thrust, thrust_expected, tolerance=1e-10)
         assert_near_equal(fuel_flow, fuel_flow_expected, tolerance=1e-10)

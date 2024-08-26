@@ -1,5 +1,4 @@
 from copy import deepcopy
-import pkg_resources
 import unittest
 
 import openmdao.api as om
@@ -8,6 +7,7 @@ from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.interface.default_phase_info.height_energy import phase_info as ph_in
 from aviary.variable_info.variables import Aircraft
+from aviary.utils.functions import get_aviary_resource_path
 from openmdao.utils.testing_utils import use_tempdirs
 
 
@@ -19,8 +19,9 @@ class WingWeightSubsys(om.ExplicitComponent):
         self.add_output(Aircraft.Canard.ASPECT_RATIO, 1.0, units='unitless')
         self.add_output('Tail', 1.0, units='unitless')
 
-        self.declare_partials(Aircraft.Canard.ASPECT_RATIO,
-                              Aircraft.Engine.MASS, val=2.0)
+        self.declare_partials(
+            Aircraft.Canard.ASPECT_RATIO, Aircraft.Engine.MASS, val=2.0
+        )
         self.declare_partials('Tail', Aircraft.Engine.MASS, val=0.7)
 
     def compute(self, inputs, outputs):
@@ -48,11 +49,15 @@ class WingWeightBuilder(SubsystemBuilderBase):
             includes sizing, design, and other non-mission parameters.
         '''
         wing_group = om.Group()
-        wing_group.add_subsystem("aerostructures", WingWeightSubsys(),
-                                 promotes_inputs=["aircraft:*"],
-                                 promotes_outputs=[Aircraft.Canard.ASPECT_RATIO,
-                                                   ('Tail',
-                                                    Aircraft.Canard.WETTED_AREA_SCALER)])
+        wing_group.add_subsystem(
+            "aerostructures",
+            WingWeightSubsys(),
+            promotes_inputs=["aircraft:*"],
+            promotes_outputs=[
+                Aircraft.Canard.ASPECT_RATIO,
+                ('Tail', Aircraft.Canard.WETTED_AREA_SCALER),
+            ],
+        )
         return wing_group
 
 
@@ -69,9 +74,9 @@ class PreMissionGroupTest(unittest.TestCase):
 
         prob = AviaryProblem()
 
-        csv_path = pkg_resources.resource_filename(
-            "aviary", "models/test_aircraft/aircraft_for_bench_GwFm.csv")
-
+        csv_path = get_aviary_resource_path(
+            'models/test_aircraft/aircraft_for_bench_GwFm.csv'
+        )
         prob.load_inputs(csv_path, phase_info)
 
         # Preprocess inputs

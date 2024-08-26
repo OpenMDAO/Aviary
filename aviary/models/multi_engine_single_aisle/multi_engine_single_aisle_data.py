@@ -175,6 +175,7 @@ engine_1_inputs.set_val(Aircraft.Engine.FLIGHT_IDLE_MAX_FRACTION, 1.0)
 engine_1_inputs.set_val(Aircraft.Engine.FLIGHT_IDLE_MIN_FRACTION, 0.08)
 engine_1_inputs.set_val(Aircraft.Engine.GEOPOTENTIAL_ALT, False)
 engine_1_inputs.set_val(Aircraft.Engine.INTERPOLATION_METHOD, 'slinear')
+engine_1_inputs.set_val(Mission.Summary.FUEL_FLOW_SCALER, 1.0)
 
 # Engine 2:
 filename = get_path('models/engines/turbofan_22k.deck')
@@ -206,6 +207,7 @@ engine_2_inputs.set_val(Aircraft.Engine.FLIGHT_IDLE_MAX_FRACTION, 1.0)
 engine_2_inputs.set_val(Aircraft.Engine.FLIGHT_IDLE_MIN_FRACTION, 0.08)
 engine_2_inputs.set_val(Aircraft.Engine.GEOPOTENTIAL_ALT, False)
 engine_2_inputs.set_val(Aircraft.Engine.INTERPOLATION_METHOD, 'slinear')
+engine_2_inputs.set_val(Mission.Summary.FUEL_FLOW_SCALER, 1.0)
 
 # Vertical Tail
 # ---------------------------

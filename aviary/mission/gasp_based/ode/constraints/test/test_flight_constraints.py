@@ -23,7 +23,7 @@ class FlightConstraintTestCase(unittest.TestCase):
         )
         self.prob.model.set_input_defaults(Aircraft.Wing.AREA, 1370.3, units="ft**2")
         self.prob.model.set_input_defaults(
-            "rho", 0.0023081 * np.ones(2), units="slug/ft**3"
+            Dynamic.Mission.DENSITY, 0.0023081 * np.ones(2), units="slug/ft**3"
         )
         self.prob.model.set_input_defaults(
             "CL_max", 1.2596 * np.ones(2), units="unitless")
@@ -31,7 +31,9 @@ class FlightConstraintTestCase(unittest.TestCase):
             Dynamic.Mission.FLIGHT_PATH_ANGLE, 7.76 * np.ones(2), units="deg")
         self.prob.model.set_input_defaults(Aircraft.Wing.INCIDENCE, 0.0, units="deg")
         self.prob.model.set_input_defaults("alpha", 5.19 * np.ones(2), units="deg")
-        self.prob.model.set_input_defaults("TAS", 252 * np.ones(2), units="kn")
+        self.prob.model.set_input_defaults(
+            Dynamic.Mission.VELOCITY, 252 * np.ones(2), units="kn"
+        )
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -45,6 +47,9 @@ class FlightConstraintTestCase(unittest.TestCase):
         assert_near_equal(
             self.prob["TAS_violation"], np.array([-99.39848181, -99.39848181]), tol
         )  # note: output value isn't in GASP
+        assert_near_equal(
+            self.prob["TAS_min"], np.array([325.9296, 325.9296]), tol
+        )
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=3e-11, rtol=1e-12)

@@ -13,7 +13,7 @@ from aviary.utils.functions import get_path
 
 def run_aviary(aircraft_filename, phase_info, optimizer=None,
                analysis_scheme=AnalysisScheme.COLLOCATION, objective_type=None,
-               record_filename='dymos_solution.db', restart_filename=None, max_iter=50,
+               record_filename='problem_history.db', restart_filename=None, max_iter=50,
                run_driver=True, make_plots=True, phase_info_parameterization=None,
                optimization_history_filename=None, verbosity=Verbosity.BRIEF):
     """
@@ -100,7 +100,7 @@ def run_aviary(aircraft_filename, phase_info, optimizer=None,
 
     prob.set_initial_guesses()
 
-    prob.failed = prob.run_aviary_problem(
+    prob.run_aviary_problem(
         record_filename, restart_filename=restart_filename, run_driver=run_driver, make_plots=make_plots, optimization_history_filename=optimization_history_filename)
 
     return prob

@@ -2,7 +2,7 @@ import subprocess
 import unittest
 from pathlib import Path
 
-import pkg_resources
+from aviary.utils.functions import get_aviary_resource_path
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 
@@ -16,6 +16,12 @@ class CommandEntryPointsTestCases(unittest.TestCase):
             output = subprocess.check_output(cmd.split())
         except subprocess.CalledProcessError as err:
             self.fail(f"Command '{cmd}' failed.  Return code: {err.returncode}")
+
+    def get_file(self, filename):
+        filepath = get_aviary_resource_path(filename)
+        if not Path(filepath).exists():
+            self.skipTest(f"couldn't find {filepath}")
+        return filepath
 
 
 class run_missionTestCases(CommandEntryPointsTestCases):
@@ -44,34 +50,34 @@ class run_missionTestCases(CommandEntryPointsTestCases):
 
 class fortran_to_aviaryTestCases(CommandEntryPointsTestCases):
     def test_diff_configuration_conversion(self):
-        filepath = pkg_resources.resource_filename('aviary',
-                                                   'models/test_aircraft/converter_configuration_test_data_GwGm.dat')
+        filepath = get_aviary_resource_path(
+            'models/test_aircraft/converter_configuration_test_data_GwGm.dat')
         outfile = Path.cwd() / 'test_aircraft/converter_configuration_test_data_GwGm' / 'output.dat'
         cmd = f'aviary fortran_to_aviary {filepath} -o {outfile} -l GASP'
         self.run_and_test_cmd(cmd)
 
     def test_small_single_aisle_conversion(self):
-        filepath = pkg_resources.resource_filename('aviary',
-                                                   'models/small_single_aisle/small_single_aisle_GwGm.dat')
+        filepath = get_aviary_resource_path(
+            'models/small_single_aisle/small_single_aisle_GwGm.dat')
         outfile = Path.cwd() / 'small_single_aisle' / 'output.dat'
         cmd = f'aviary fortran_to_aviary {filepath} -o {outfile} -l GASP'
         self.run_and_test_cmd(cmd)
 
     def test_FLOPS_conversion(self):
-        filepath = pkg_resources.resource_filename('aviary',
-                                                   'models/N3CC/N3CC_generic_low_speed_polars_FLOPSinp.txt')
+        filepath = get_aviary_resource_path(
+            'models/N3CC/N3CC_generic_low_speed_polars_FLOPSinp.txt')
         outfile = Path.cwd() / 'N3CC' / 'output.dat'
         cmd = f'aviary fortran_to_aviary {filepath} -o {outfile} -l FLOPS'
         self.run_and_test_cmd(cmd)
 
     def test_force_conversion(self):
-        filepath = pkg_resources.resource_filename('aviary',
-                                                   'models/test_aircraft/converter_configuration_test_data_GwGm.dat')
+        filepath = get_aviary_resource_path(
+            'models/test_aircraft/converter_configuration_test_data_GwGm.dat')
         outfile = Path.cwd() / 'output.dat'
         cmd1 = f'aviary fortran_to_aviary {filepath} -o {outfile} -l GASP'
         self.run_and_test_cmd(cmd1)
-        filepath = pkg_resources.resource_filename('aviary',
-                                                   'models/test_aircraft/converter_configuration_test_data_GwGm.dat')
+        filepath = get_aviary_resource_path(
+            'models/test_aircraft/converter_configuration_test_data_GwGm.dat')
         cmd2 = f'aviary fortran_to_aviary {filepath} -o {outfile} --force -l GASP'
         self.run_and_test_cmd(cmd2)
 
@@ -100,22 +106,14 @@ class hangarTestCases(CommandEntryPointsTestCases):
 
 
 class convert_engineTestCases(CommandEntryPointsTestCases):
-    def get_file(self, filename):
-        filepath = pkg_resources.resource_filename('aviary', filename)
-        if not Path(filepath).exists():
-            self.skipTest(f"couldn't find {filepath}")
-        return filepath
-
     def test_GASP_conversion(self):
-        # skipped because the original files don't exist any longer
-        filepath = self.get_file('models/engines/GASP_turbofan_23k_1.eng')
+        filepath = self.get_file('utils/test/data/GASP_turbofan_23k_1.eng')
         outfile = Path.cwd() / 'turbofan_23k_1_lbm_s.deck'
         cmd = f'aviary convert_engine {filepath} {outfile} -f GASP'
         self.run_and_test_cmd(cmd)
 
     def test_FLOPS_conversion(self):
-        # skipped because the original files don't exist any longer
-        filepath = self.get_file('models/engines/turbofan_22k.eng')
+        filepath = self.get_file('utils/test/data/FLOPS_turbofan_22k.txt')
         outfile = Path.cwd() / 'turbofan_22k.txt'
         cmd = f'aviary convert_engine {filepath} {outfile} -f FLOPS'
         self.run_and_test_cmd(cmd)
@@ -128,12 +126,6 @@ class convert_engineTestCases(CommandEntryPointsTestCases):
 
 
 class convert_aero_tableTestCases(CommandEntryPointsTestCases):
-    def get_file(self, filename):
-        filepath = pkg_resources.resource_filename('aviary', filename)
-        if not Path(filepath).exists():
-            self.skipTest(f"couldn't find {filepath}")
-        return filepath
-
     def test_GASP_conversion(self):
         filepath = self.get_file(
             'subsystems/aerodynamics/gasp_based/data/GASP_aero_flaps.txt')
@@ -146,6 +138,19 @@ class convert_aero_tableTestCases(CommandEntryPointsTestCases):
             'models/N3CC/N3CC_generic_low_speed_polars_FLOPSinp.txt')
         outfile = Path.cwd() / 'N3CC' / 'output.dat'
         cmd = f'aviary fortran_to_aviary {filepath} -o {outfile} -l FLOPS'
+        self.run_and_test_cmd(cmd)
+
+
+class convert_propeller_tableTestCases(CommandEntryPointsTestCases):
+    """
+    aviary convert_prop_table test. The only option is from GASP propeller map to Aviary table.
+    """
+
+    def test_GASP_conversion(self):
+        filepath = self.get_file(
+            'models/propellers/PropFan.map')
+        outfile = Path.cwd() / 'output.dat'
+        cmd = f'aviary convert_prop_table {filepath} {outfile} -f GASP'
         self.run_and_test_cmd(cmd)
 
 

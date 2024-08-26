@@ -5,6 +5,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH, TSLS_DEGR
+from aviary.utils.functions import add_aviary_input, add_aviary_output
 
 
 def _unint(xa, ya, x):
@@ -469,13 +470,20 @@ class PreHamiltonStandard(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
 
-        self.add_input(Aircraft.Engine.PROPELLER_DIAMETER, val=0.0, units='ft')
-        self.add_input(Dynamic.Mission.PROPELLER_TIP_SPEED,
-                       val=np.zeros(nn), units='ft/s')
-        self.add_input(Dynamic.Mission.SHAFT_POWER, val=np.zeros(nn), units='hp')
-        self.add_input(Dynamic.Mission.DENSITY, val=np.zeros(nn), units='slug/ft**3')
-        self.add_input(Dynamic.Mission.VELOCITY, val=np.zeros(nn), units='knot')
-        self.add_input(Dynamic.Mission.TEMPERATURE, val=np.zeros(nn), units='degR')
+        add_aviary_input(self, Aircraft.Engine.PROPELLER_DIAMETER, val=0.0, units='ft')
+        add_aviary_input(
+            self, Dynamic.Mission.PROPELLER_TIP_SPEED, val=np.zeros(nn), units='ft/s'
+        )
+        add_aviary_input(
+            self, Dynamic.Mission.SHAFT_POWER, val=np.zeros(nn), units='hp'
+        )
+        add_aviary_input(
+            self, Dynamic.Mission.DENSITY, val=np.zeros(nn), units='slug/ft**3'
+        )
+        add_aviary_input(self, Dynamic.Mission.VELOCITY, val=np.zeros(nn), units='knot')
+        add_aviary_input(
+            self, Dynamic.Mission.SPEED_OF_SOUND, val=np.zeros(nn), units='knot'
+        )
 
         self.add_output('power_coefficient', val=np.zeros(nn), units='unitless')
         self.add_output('advance_ratio', val=np.zeros(nn), units='unitless')
@@ -487,10 +495,15 @@ class PreHamiltonStandard(om.ExplicitComponent):
 
         self.declare_partials(
             'density_ratio', Dynamic.Mission.DENSITY, rows=arange, cols=arange)
-        self.declare_partials('tip_mach', [
-            Dynamic.Mission.PROPELLER_TIP_SPEED,
-            Dynamic.Mission.TEMPERATURE,
-        ], rows=arange, cols=arange)
+        self.declare_partials(
+            'tip_mach',
+            [
+                Dynamic.Mission.PROPELLER_TIP_SPEED,
+                Dynamic.Mission.SPEED_OF_SOUND,
+            ],
+            rows=arange,
+            cols=arange,
+        )
         self.declare_partials('advance_ratio', [
             Dynamic.Mission.VELOCITY,
             Dynamic.Mission.PROPELLER_TIP_SPEED,
@@ -503,34 +516,52 @@ class PreHamiltonStandard(om.ExplicitComponent):
         self.declare_partials('power_coefficient', Aircraft.Engine.PROPELLER_DIAMETER)
 
     def compute(self, inputs, outputs):
-        outputs['density_ratio'] = inputs[Dynamic.Mission.DENSITY] / RHO_SEA_LEVEL_ENGLISH
-        sqrt_temp_ratio = np.sqrt(TSLS_DEGR / inputs[Dynamic.Mission.TEMPERATURE])
-        vktas = inputs[Dynamic.Mission.VELOCITY]
-        tipspd = inputs[Dynamic.Mission.PROPELLER_TIP_SPEED]
-        # 1118.21948771 is speed of sound at sea level
-        outputs['tip_mach'] = tipspd * sqrt_temp_ratio / 1118.21948771
-        outputs['advance_ratio'] = 5.309 * vktas / tipspd
         diam_prop = inputs[Aircraft.Engine.PROPELLER_DIAMETER]
         shp = inputs[Dynamic.Mission.SHAFT_POWER]
-        outputs['power_coefficient'] = shp * 10.E10 / (2 * 6966.) / \
-            outputs['density_ratio'] / (tipspd**3*diam_prop**2)
+        vktas = inputs[Dynamic.Mission.VELOCITY]
+        tipspd = inputs[Dynamic.Mission.PROPELLER_TIP_SPEED]
+        sos = inputs[Dynamic.Mission.SPEED_OF_SOUND]
+
+        # arbitrarily small number to keep advance ratio nonzero, which allows for static thrust prediction
+        # NOTE need for a separate static thrust calc method?
+        vktas[np.where(vktas <= 1e-6)] = 1e-6
+        density_ratio = inputs[Dynamic.Mission.DENSITY] / RHO_SEA_LEVEL_ENGLISH
+
+        if diam_prop <= 0.0:
+            raise om.AnalysisError(
+                "Aircraft.Engine.PROPELLER_DIAMETER must be positive.")
+        if any(tipspd) <= 0.0:
+            raise om.AnalysisError(
+                "Dynamic.Mission.PROPELLER_TIP_SPEED must be positive.")
+        if any(sos) <= 0.0:
+            raise om.AnalysisError(
+                "Dynamic.Mission.SPEED_OF_SOUND must be positive.")
+        if any(density_ratio) <= 0.0:
+            raise om.AnalysisError("Dynamic.Mission.DENSITY must be positive.")
+        if any(shp) < 0.0:
+            raise om.AnalysisError("Dynamic.Mission.SHAFT_POWER must be non-negative.")
+
+        outputs['density_ratio'] = density_ratio
+        # 1118.21948771 is speed of sound at sea level
+        # TODO tip mach was already calculated, revisit this
+        outputs['tip_mach'] = tipspd / sos
+        outputs['advance_ratio'] = 5.309 * vktas / tipspd
+        outputs['power_coefficient'] = shp * 10.E10 / (2 * 6966.) / density_ratio \
+            / (tipspd**3 * diam_prop**2)
 
     def compute_partials(self, inputs, partials):
         vktas = inputs[Dynamic.Mission.VELOCITY]
         tipspd = inputs[Dynamic.Mission.PROPELLER_TIP_SPEED]
         rho = inputs[Dynamic.Mission.DENSITY]
-        diam_prop = inputs[Aircraft.Engine.PROPELLER_DIAMETER][0]
+        diam_prop = inputs[Aircraft.Engine.PROPELLER_DIAMETER]
         shp = inputs[Dynamic.Mission.SHAFT_POWER]
-        temp = inputs[Dynamic.Mission.TEMPERATURE]
-        sqrt_temp_ratio = np.sqrt(TSLS_DEGR/temp)
+        sos = inputs[Dynamic.Mission.SPEED_OF_SOUND]
 
         unit_conversion_const = 10.E10 / (2 * 6966.)
 
         partials["density_ratio", Dynamic.Mission.DENSITY] = 1 / RHO_SEA_LEVEL_ENGLISH
-        partials["tip_mach",
-                 Dynamic.Mission.PROPELLER_TIP_SPEED] = sqrt_temp_ratio / 1118.21948771
-        partials["tip_mach", Dynamic.Mission.TEMPERATURE] = - \
-            tipspd * sqrt_temp_ratio/(1118.21948771*2*temp)
+        partials["tip_mach", Dynamic.Mission.PROPELLER_TIP_SPEED] = 1 / sos
+        partials["tip_mach", Dynamic.Mission.SPEED_OF_SOUND] = -tipspd / sos**2
         partials["advance_ratio", Dynamic.Mission.VELOCITY] = 5.309 / tipspd
         partials["advance_ratio", Dynamic.Mission.PROPELLER_TIP_SPEED] = - \
             5.309 * vktas / (tipspd * tipspd)
@@ -565,16 +596,20 @@ class HamiltonStandard(om.ExplicitComponent):
 
         self.add_input('power_coefficient', val=np.zeros(nn), units='unitless')
         self.add_input('advance_ratio', val=np.zeros(nn), units='unitless')
-        self.add_input(Dynamic.Mission.MACH, val=np.zeros(nn), units='unitless')
+        add_aviary_input(self, Dynamic.Mission.MACH, val=np.zeros(nn), units='unitless')
         self.add_input('tip_mach', val=np.zeros(nn), units='unitless')
-        self.add_input(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, val=0.0,
-                       units='unitless')  # Actitivty Factor per Blade
-        self.add_input(Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT,
-                       val=0.0, units='unitless')  # blade integrated lift coeff
+        add_aviary_input(
+            self, Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, val=0.0, units='unitless'
+        )  # Actitivty Factor per Blade
+        add_aviary_input(
+            self,
+            Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT,
+            val=0.0,
+            units='unitless',
+        )  # blade integrated lift coeff
 
         self.add_output('thrust_coefficient', val=np.zeros(nn), units='unitless')
-        self.add_output('blade_angle', val=np.zeros(nn), units='deg')
-        # Tip Compressibility loss factor
+        # propeller tip compressibility loss factor
         self.add_output('comp_tip_loss_factor', val=np.zeros(nn), units='unitless')
 
         self.declare_partials('*', '*', method='fd', form='forward')
@@ -600,7 +635,7 @@ class HamiltonStandard(om.ExplicitComponent):
             TXCLI = np.zeros(6)
             CTTT = np.zeros(4)
             XXXFT = np.zeros(4)
-            act_factor = inputs[Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR][0]
+            act_factor = inputs[Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR]
             for k in range(2):
                 AF_adj_CP[k], run_flag = _unint(Act_Factor_arr, AFCPC[k], act_factor)
                 AF_adj_CT[k], run_flag = _unint(Act_Factor_arr, AFCTC[k], act_factor)
@@ -632,7 +667,7 @@ class HamiltonStandard(om.ExplicitComponent):
             # flag that given lift coeff (cli) does not fall on a node point of CL_arr
             CL_tab_idx_flg = 0  # NCL_flg
             ifnd = 0
-            cli = inputs[Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT][0]
+            cli = inputs[Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT]
             power_coefficient = inputs['power_coefficient'][i_node]
             for ii in range(6):
                 cl_idx = ii
@@ -705,7 +740,7 @@ class HamiltonStandard(om.ExplicitComponent):
                         CL_tab_idx = CL_tab_idx+1
                     if (CL_tab_idx_flg != 1):
                         PCLI, run_flag = _unint(
-                            CL_arr[CL_tab_idx_begin:CL_tab_idx_begin+4], PXCLI[CL_tab_idx_begin:CL_tab_idx_begin+4], inputs[Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT][0])
+                            CL_arr[CL_tab_idx_begin:CL_tab_idx_begin+4], PXCLI[CL_tab_idx_begin:CL_tab_idx_begin+4], inputs[Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT])
                     else:
                         PCLI = PXCLI[CL_tab_idx_begin]
                         # PCLI = CLI adjustment to power_coefficient
@@ -773,7 +808,7 @@ class HamiltonStandard(om.ExplicitComponent):
                             XFFT[kl], run_flag = _biquad(comp_mach_CT_arr, 1, DMN, CTE2)
                         CL_tab_idx = CL_tab_idx + 1
                     if (CL_tab_idx_flg != 1):
-                        cli = inputs[Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT][0]
+                        cli = inputs[Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT]
                         TCLII, run_flag = _unint(
                             CL_arr[CL_tab_idx_begin:CL_tab_idx_begin+4], TXCLI[CL_tab_idx_begin:CL_tab_idx_begin+4], cli)
                         xft, run_flag = _unint(
@@ -796,7 +831,9 @@ class HamiltonStandard(om.ExplicitComponent):
 
                 if (ifnd1 == 0 and ifnd2 == 0):
                     raise ValueError(
-                        f"Integrated design cl adjustment not working properly for ct definition (ibb={ibb})")
+                        "Integrated design cl adjustment not working properly for ct "
+                        f"definition (ibb={ibb})"
+                    )
                 if (ifnd1 == 0 and ifnd2 == 1):
                     ct = 0.0
                 CTTT[ibb] = ct
@@ -814,7 +851,6 @@ class HamiltonStandard(om.ExplicitComponent):
             if ichck > 0:
                 print(f"  table look-up error = {ichck} (if you go outside the tables.)")
 
-            outputs['blade_angle'][i_node] = ang_blade
             outputs['thrust_coefficient'][i_node] = ct
             outputs['comp_tip_loss_factor'][i_node] = xft
 
@@ -830,20 +866,21 @@ class PostHamiltonStandard(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
 
-        self.add_input(Aircraft.Engine.PROPELLER_DIAMETER, val=0.0, units='ft')
-        self.add_input(Dynamic.Mission.INSTALLATION_LOSS_FACTOR,
+        add_aviary_input(self, Aircraft.Engine.PROPELLER_DIAMETER, val=0.0, units='ft')
+        self.add_input('install_loss_factor',
                        val=np.zeros(nn), units='unitless')
         self.add_input('thrust_coefficient', val=np.zeros(nn), units='unitless')
         self.add_input('comp_tip_loss_factor', val=np.zeros(nn), units='unitless')
-        self.add_input(Dynamic.Mission.PROPELLER_TIP_SPEED,
-                       val=np.zeros(nn), units='ft/s')
+        add_aviary_input(
+            self, Dynamic.Mission.PROPELLER_TIP_SPEED, val=np.zeros(nn), units='ft/s'
+        )
         self.add_input('density_ratio', val=np.zeros(nn), units='unitless')
         self.add_input('advance_ratio', val=np.zeros(nn), units='unitless')
         self.add_input('power_coefficient', val=np.zeros(nn), units='unitless')
 
         self.add_output('thrust_coefficient_comp_loss',
                         val=np.zeros(nn), units='unitless')
-        self.add_output('propeller_thrust', val=np.zeros(nn), units='lbf')
+        add_aviary_output(self, Dynamic.Mission.THRUST, val=np.zeros(nn), units='lbf')
         # keep them for reporting but don't seem to be required
         self.add_output('propeller_efficiency', val=np.zeros(nn), units='unitless')
         self.add_output('install_efficiency', val=np.zeros(nn), units='unitless')
@@ -855,14 +892,14 @@ class PostHamiltonStandard(om.ExplicitComponent):
             'thrust_coefficient',
             'comp_tip_loss_factor',
         ], rows=arange, cols=arange)
-        self.declare_partials('propeller_thrust', [
+        self.declare_partials(Dynamic.Mission.THRUST, [
             'thrust_coefficient',
             'comp_tip_loss_factor',
             Dynamic.Mission.PROPELLER_TIP_SPEED,
             'density_ratio',
-            Dynamic.Mission.INSTALLATION_LOSS_FACTOR,
+            'install_loss_factor',
         ], rows=arange, cols=arange)
-        self.declare_partials('propeller_thrust', [
+        self.declare_partials(Dynamic.Mission.THRUST, [
             Aircraft.Engine.PROPELLER_DIAMETER,
         ])
         self.declare_partials('propeller_efficiency', [
@@ -876,62 +913,94 @@ class PostHamiltonStandard(om.ExplicitComponent):
             'power_coefficient',
             'thrust_coefficient',
             'comp_tip_loss_factor',
-            Dynamic.Mission.INSTALLATION_LOSS_FACTOR,
+            'install_loss_factor',
         ], rows=arange, cols=arange)
 
     def compute(self, inputs, outputs):
         ctx = inputs['thrust_coefficient']*inputs['comp_tip_loss_factor']
         outputs['thrust_coefficient_comp_loss'] = ctx
-        diam_prop = inputs[Aircraft.Engine.PROPELLER_DIAMETER][0]
+        diam_prop = inputs[Aircraft.Engine.PROPELLER_DIAMETER]
         tipspd = inputs[Dynamic.Mission.PROPELLER_TIP_SPEED]
-        install_loss_factor = inputs[Dynamic.Mission.INSTALLATION_LOSS_FACTOR]
-        outputs['propeller_thrust'] = ctx*tipspd**2*diam_prop**2 * \
+        install_loss_factor = inputs['install_loss_factor']
+        outputs[Dynamic.Mission.THRUST] = ctx*tipspd**2*diam_prop**2 * \
             inputs['density_ratio']/(1.515E06)*364.76*(1. - install_loss_factor)
-        outputs['propeller_efficiency'] = inputs['advance_ratio'] * \
-            ctx/inputs['power_coefficient']
+
+        # avoid divide by zero when shaft power is zero
+        calc_idx = np.where(inputs['power_coefficient'] > 1e-6)  # index where CP > 1e-5
+        prop_eff = np.zeros(self.options['num_nodes'])
+        prop_eff[calc_idx] = inputs['advance_ratio'][calc_idx] * ctx[calc_idx] \
+            / inputs['power_coefficient'][calc_idx]
+        outputs['propeller_efficiency'] = prop_eff
         outputs['install_efficiency'] = outputs['propeller_efficiency'] * \
             (1. - install_loss_factor)
 
     def compute_partials(self, inputs, partials):
+        nn = self.options['num_nodes']
         XFT = inputs['comp_tip_loss_factor']
         ctx = inputs['thrust_coefficient']*XFT
-        diam_prop = inputs[Aircraft.Engine.PROPELLER_DIAMETER][0]
-        install_loss_factor = inputs[Dynamic.Mission.INSTALLATION_LOSS_FACTOR]
+        diam_prop = inputs[Aircraft.Engine.PROPELLER_DIAMETER]
+        install_loss_factor = inputs['install_loss_factor']
         tipspd = inputs[Dynamic.Mission.PROPELLER_TIP_SPEED]
 
         unit_conversion_factor = 364.76 / 1.515E06
         partials["thrust_coefficient_comp_loss", 'thrust_coefficient'] = XFT
         partials["thrust_coefficient_comp_loss",
                  'comp_tip_loss_factor'] = inputs['thrust_coefficient']
-        partials['propeller_thrust', 'thrust_coefficient'] = XFT*tipspd**2*diam_prop**2 * \
+        partials[Dynamic.Mission.THRUST, 'thrust_coefficient'] = XFT*tipspd**2*diam_prop**2 * \
             inputs['density_ratio']*unit_conversion_factor*(1. - install_loss_factor)
-        partials['propeller_thrust', 'comp_tip_loss_factor'] = inputs['thrust_coefficient']*tipspd**2*diam_prop**2 * \
+        partials[Dynamic.Mission.THRUST, 'comp_tip_loss_factor'] = inputs['thrust_coefficient']*tipspd**2*diam_prop**2 * \
             inputs['density_ratio']*unit_conversion_factor*(1. - install_loss_factor)
-        partials['propeller_thrust', Dynamic.Mission.PROPELLER_TIP_SPEED] = 2*ctx*tipspd*diam_prop**2 * \
+        partials[Dynamic.Mission.THRUST, Dynamic.Mission.PROPELLER_TIP_SPEED] = 2*ctx*tipspd*diam_prop**2 * \
             inputs['density_ratio']*unit_conversion_factor*(1. - install_loss_factor)
-        partials['propeller_thrust', Aircraft.Engine.PROPELLER_DIAMETER] = 2*ctx*tipspd**2*diam_prop * \
+        partials[Dynamic.Mission.THRUST, Aircraft.Engine.PROPELLER_DIAMETER] = 2*ctx*tipspd**2*diam_prop * \
             inputs['density_ratio']*unit_conversion_factor*(1. - install_loss_factor)
-        partials['propeller_thrust', 'density_ratio'] = ctx*tipspd**2 * \
+        partials[Dynamic.Mission.THRUST, 'density_ratio'] = ctx*tipspd**2 * \
             diam_prop**2*unit_conversion_factor*(1. - install_loss_factor)
-        partials['propeller_thrust', Dynamic.Mission.INSTALLATION_LOSS_FACTOR] = -ctx*tipspd**2*diam_prop**2 * \
+        partials[Dynamic.Mission.THRUST, 'install_loss_factor'] = -ctx*tipspd**2*diam_prop**2 * \
             inputs['density_ratio']*unit_conversion_factor
-        partials["propeller_efficiency", "advance_ratio"] = ctx / \
-            inputs['power_coefficient']
-        partials["propeller_efficiency", "thrust_coefficient"] = inputs['advance_ratio'] * \
-            XFT/inputs['power_coefficient']
-        partials["propeller_efficiency", "comp_tip_loss_factor"] = inputs['advance_ratio'] * \
-            inputs['thrust_coefficient']/inputs['power_coefficient']
-        partials["propeller_efficiency", "power_coefficient"] = - \
-            inputs['advance_ratio']*ctx/inputs['power_coefficient']**2
 
-        partials["install_efficiency", "advance_ratio"] = ctx / \
-            inputs['power_coefficient'] * (1. - install_loss_factor)
-        partials["install_efficiency", "thrust_coefficient"] = inputs['advance_ratio'] * \
-            XFT/inputs['power_coefficient'] * (1. - install_loss_factor)
-        partials["install_efficiency", "comp_tip_loss_factor"] = inputs['advance_ratio'] * \
-            inputs['thrust_coefficient'] / \
-            inputs['power_coefficient'] * (1. - install_loss_factor)
-        partials["install_efficiency", "power_coefficient"] = -inputs['advance_ratio'] * \
-            ctx/inputs['power_coefficient']**2 * (1. - install_loss_factor)
-        partials["install_efficiency", Dynamic.Mission.INSTALLATION_LOSS_FACTOR] = - \
-            inputs['advance_ratio']*ctx/inputs['power_coefficient']
+        calc_idx = np.where(inputs['power_coefficient'] > 1e-6)
+        pow_coeff = inputs['power_coefficient']
+        adv_ratio = inputs['advance_ratio']
+
+        deriv_propeff_adv = np.zeros(nn, dtype=pow_coeff.dtype)
+        deriv_propeff_ct = np.zeros(nn, dtype=pow_coeff.dtype)
+        deriv_propeff_tip = np.zeros(nn, dtype=pow_coeff.dtype)
+        deriv_propeff_cp = np.zeros(nn, dtype=pow_coeff.dtype)
+
+        deriv_propeff_adv[calc_idx] = ctx[calc_idx] / pow_coeff[calc_idx]
+        deriv_propeff_ct[calc_idx] = adv_ratio[calc_idx] * \
+            XFT[calc_idx]/pow_coeff[calc_idx]
+        deriv_propeff_tip[calc_idx] = adv_ratio[calc_idx] * \
+            inputs['thrust_coefficient'][calc_idx]/pow_coeff[calc_idx]
+        deriv_propeff_cp[calc_idx] = - \
+            adv_ratio[calc_idx]*ctx[calc_idx]/pow_coeff[calc_idx]**2
+
+        partials["propeller_efficiency", "advance_ratio"] = deriv_propeff_adv
+        partials["propeller_efficiency", "thrust_coefficient"] = deriv_propeff_ct
+        partials["propeller_efficiency", "comp_tip_loss_factor"] = deriv_propeff_tip
+        partials["propeller_efficiency", "power_coefficient"] = deriv_propeff_cp
+
+        deriv_insteff_adv = np.zeros(nn, dtype=pow_coeff.dtype)
+        deriv_insteff_ct = np.zeros(nn, dtype=pow_coeff.dtype)
+        deriv_insteff_tip = np.zeros(nn, dtype=pow_coeff.dtype)
+        deriv_insteff_cp = np.zeros(nn, dtype=pow_coeff.dtype)
+        deriv_insteff_lf = np.zeros(nn, dtype=pow_coeff.dtype)
+
+        deriv_insteff_adv[calc_idx] = ctx[calc_idx] / \
+            pow_coeff[calc_idx] * (1. - install_loss_factor[calc_idx])
+        deriv_insteff_ct[calc_idx] = adv_ratio[calc_idx] * \
+            XFT[calc_idx]/pow_coeff[calc_idx] * (1. - install_loss_factor[calc_idx])
+        deriv_insteff_tip[calc_idx] = adv_ratio[calc_idx] * \
+            inputs['thrust_coefficient'][calc_idx] / \
+            pow_coeff[calc_idx] * (1. - install_loss_factor[calc_idx])
+        deriv_insteff_cp[calc_idx] = -adv_ratio[calc_idx] * \
+            ctx[calc_idx]/pow_coeff[calc_idx]**2 * (1. - install_loss_factor[calc_idx])
+        deriv_insteff_lf[calc_idx] = - \
+            adv_ratio[calc_idx]*ctx[calc_idx]/pow_coeff[calc_idx]
+
+        partials["install_efficiency", "advance_ratio"] = deriv_insteff_adv
+        partials["install_efficiency", "thrust_coefficient"] = deriv_insteff_ct
+        partials["install_efficiency", "comp_tip_loss_factor"] = deriv_insteff_tip
+        partials["install_efficiency", "power_coefficient"] = deriv_insteff_cp
+        partials["install_efficiency", 'install_loss_factor'] = deriv_insteff_lf

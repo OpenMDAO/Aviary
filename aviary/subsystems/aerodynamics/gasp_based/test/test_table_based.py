@@ -1,16 +1,14 @@
 import unittest
-import os
 
 import numpy as np
 import openmdao
 import openmdao.api as om
-import pkg_resources
+from aviary.utils.functions import get_aviary_resource_path
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from packaging import version
 
 from aviary.subsystems.aerodynamics.gasp_based.table_based import (
     TabularCruiseAero, TabularLowSpeedAero)
-from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -52,8 +50,8 @@ class TestCruiseAero(unittest.TestCase):
                      "Older version of OpenMDAO does not properly skip Metamodel.")
     def test_cruise(self):
         prob = om.Problem()
-        fp = pkg_resources.resource_filename(
-            "aviary", f"subsystems/aerodynamics/gasp_based/data/large_single_aisle_1_aero_free.txt")
+        ref = 'subsystems/aerodynamics/gasp_based/data/large_single_aisle_1_aero_free.txt'
+        fp = get_aviary_resource_path(ref)
         prob.model = TabularCruiseAero(num_nodes=2, aero_data=fp)
         prob.setup(force_alloc_complex=True)
 
@@ -81,12 +79,12 @@ class TestLowSpeedAero(unittest.TestCase):
     # takeoff flap deflection (deg)
     flap_defl_to = 10
 
-    free_data = pkg_resources.resource_filename(
-        "aviary", f"subsystems/aerodynamics/gasp_based/data/large_single_aisle_1_aero_free.txt")
-    flaps_data = pkg_resources.resource_filename(
-        "aviary", f"subsystems/aerodynamics/gasp_based/data/large_single_aisle_1_aero_flaps.txt")
-    ground_data = pkg_resources.resource_filename(
-        "aviary", f"subsystems/aerodynamics/gasp_based/data/large_single_aisle_1_aero_ground.txt")
+    free_data = get_aviary_resource_path(
+        "subsystems/aerodynamics/gasp_based/data/large_single_aisle_1_aero_free.txt")
+    flaps_data = get_aviary_resource_path(
+        "subsystems/aerodynamics/gasp_based/data/large_single_aisle_1_aero_flaps.txt")
+    ground_data = get_aviary_resource_path(
+        "subsystems/aerodynamics/gasp_based/data/large_single_aisle_1_aero_ground.txt")
 
     @unittest.skipIf(version.parse(openmdao.__version__) < version.parse("3.26"),
                      "Older version of OpenMDAO does not properly skip Metamodel.")

@@ -6,9 +6,7 @@ aircraft:avionics:mass_scaler,1.123226,unitless
 aircraft:canard:laminar_flow_lower,0,unitless
 aircraft:canard:laminar_flow_upper,0,unitless
 aircraft:canard:mass_scaler,1,unitless
-aircraft:canard:wetted_area_scaler,0,unitless
 aircraft:crew_and_payload:baggage_mass_per_passenger,35,lbm
-aircraft:crew_and_payload:cargo_container_mass_scaler,0,unitless
 aircraft:crew_and_payload:flight_crew_mass_scaler,1,unitless
 aircraft:crew_and_payload:mass_per_passenger,165,lbm
 aircraft:crew_and_payload:misc_cargo,0,lbm
@@ -27,9 +25,8 @@ aircraft:design:landing_to_takeoff_mass_ratio,0.84,unitless
 aircraft:design:lift_dependent_drag_coeff_factor,0.93,unitless
 aircraft:design:subsonic_drag_coeff_factor,0.95,unitless
 aircraft:design:supersonic_drag_coeff_factor,1,unitless
-aircraft:design:thrust_to_weight_ratio,0,unitless
 aircraft:design:touchdown_mass,0,lbm
-aircraft:design:use_alt_mass,0,unitless
+aircraft:design:use_alt_mass,False,unitless
 aircraft:design:zero_lift_drag_coeff_factor,0.96,unitless
 aircraft:electrical:mass_scaler,1.1976,unitless
 aircraft:engine:additional_mass_fraction,0,unitless
@@ -38,9 +35,9 @@ aircraft:engine:flight_idle_max_fraction,1,unitless
 aircraft:engine:flight_idle_min_fraction,0.08,unitless
 aircraft:engine:fuel_flow_scaler_constant_term,0,unitless
 aircraft:engine:fuel_flow_scaler_linear_term,0,unitless
-aircraft:engine:generate_flight_idle,1,unitless
-aircraft:engine:geopotential_alt,0,unitless
-aircraft:engine:ignore_negative_thrust,0,unitless
+aircraft:engine:generate_flight_idle,True,unitless
+aircraft:engine:geopotential_alt,False,unitless
+aircraft:engine:ignore_negative_thrust,False,unitless
 aircraft:engine:mass_scaler,1.15,unitless
 aircraft:engine:num_fuselage_engines,0,unitless
 aircraft:engine:num_wing_engines,2,unitless
@@ -49,7 +46,6 @@ aircraft:engine:reference_sls_thrust,22200.5,lbf
 aircraft:engine:scaled_sls_thrust,22200,0,0,0,0,0,lbf
 aircraft:engine:subsonic_fuel_flow_scaler,1,unitless
 aircraft:engine:supersonic_fuel_flow_scaler,1,unitless
-aircraft:engine:thrust_reversers_mass_scaler,0,unitless
 aircraft:engine:wing_locations,0.289682918,unitless
 aircraft:fins:area,0,ft**2
 aircraft:fins:mass_scaler,1,unitless
@@ -70,10 +66,11 @@ aircraft:fuselage:length,125,ft
 aircraft:fuselage:mass_scaler,0.69981,unitless
 aircraft:fuselage:max_height,13,ft
 aircraft:fuselage:max_width,12.3,ft
-aircraft:fuselage:military_cargo_floor,0,unitless
+aircraft:fuselage:military_cargo_floor,False,unitless
 aircraft:fuselage:num_fuselages,1,unitless
 aircraft:fuselage:passenger_compartment_length,97.5,ft
-aircraft:fuselage:wetted_area_scaler,4235.082096,unitless
+aircraft:fuselage:wetted_area,4235.082096,lbm
+aircraft:fuselage:wetted_area_scaler,1.0,unitless
 aircraft:horizontal_tail:area,349.522730527158,ft**2
 aircraft:horizontal_tail:aspect_ratio,5.22699386503068,unitless
 aircraft:horizontal_tail:laminar_flow_lower,0,unitless
@@ -83,11 +80,12 @@ aircraft:horizontal_tail:sweep,30.5853213018973,deg
 aircraft:horizontal_tail:taper_ratio,0.2734375,unitless
 aircraft:horizontal_tail:thickness_to_chord,0.115,unitless
 aircraft:horizontal_tail:vertical_tail_fraction,0,unitless
-aircraft:horizontal_tail:wetted_area_scaler,576.571192,unitless
+aircraft:horizontal_tail:wetted_area,576.571192,lbm
+aircraft:horizontal_tail:wetted_area_scaler,1.0,unitless
 aircraft:hydraulics:mass_scaler,0.95543,unitless
 aircraft:hydraulics:system_pressure,5000,psi
 aircraft:instruments:mass_scaler,1.66955,unitless
-aircraft:landing_gear:carrier_based,0,unitless
+aircraft:landing_gear:carrier_based,False,unitless
 aircraft:landing_gear:drag_coefficient,0.024,unitless
 aircraft:landing_gear:main_gear_mass_scaler,0.8846,unitless
 aircraft:landing_gear:main_gear_oleo_length,0,inch
@@ -97,7 +95,6 @@ aircraft:nacelle:avg_diameter,7.2,ft
 aircraft:nacelle:avg_length,35,ft
 aircraft:nacelle:laminar_flow_lower,0,unitless
 aircraft:nacelle:laminar_flow_upper,0,unitless
-aircraft:nacelle:mass_scaler,0,unitless
 aircraft:nacelle:wetted_area_scaler,244.468282,unitless
 aircraft:paint:mass_per_unit_area,0,lbm/ft**2
 aircraft:propulsion:engine_oil_mass_scaler,1,unitless
@@ -137,6 +134,7 @@ aircraft:wing:num_integration_stations,100,unitless
 aircraft:wing:shear_control_mass_scaler,0.749,unitless
 aircraft:wing:span,118.7505278165,ft
 aircraft:wing:span_efficiency_factor,0.95,unitless
+aircraft:wing:span_efficiency_reduction,False,unitless
 aircraft:wing:strut_bracing_factor,0,unitless
 aircraft:wing:surface_ctrl_mass_scaler,1.77696,unitless
 aircraft:wing:sweep,23.6286942529271,0,0,0,0,0,deg
@@ -146,7 +144,8 @@ aircraft:wing:thickness_to_chord_dist,0.14233,0.12233,0.1108,0.1058,unitless
 aircraft:wing:thickness_to_chord_reference,0.116565,unitless
 aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:wing:var_sweep_mass_penalty,0,unitless
-aircraft:wing:wetted_area_scaler,2210.280228,unitless
+aircraft:wing:wetted_area,2210.280228,lbm
+aircraft:wing:wetted_area_scaler,1.0,unitless
 mission:constraints:max_mach,0.785,unitless
 mission:design:gross_mass,1,lbm
 mission:design:lift_coefficient,-1,unitless
@@ -314,7 +313,7 @@ PCONIN.conalt,43000
 PCONIN.conaux,2
 PCONIN.confm,1
 PCONIN.conlim,300
-PCONIN.conmch,0.78
+PCONIN.conmch,0.785
 PCONIN.connz,1
 PCONIN.conpc,1
 PCONIN.conwt,0

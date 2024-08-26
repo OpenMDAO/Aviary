@@ -28,7 +28,7 @@ class StallSpeedTest(unittest.TestCase):
 
         self.prob.model.set_input_defaults("mass", val=181200.0, units="lbm")  # check
         self.prob.model.set_input_defaults(
-            "rho", val=constants.RHO_SEA_LEVEL_METRIC, units="kg/m**3"
+            Dynamic.Mission.DENSITY, val=constants.RHO_SEA_LEVEL_METRIC, units="kg/m**3"
         )  # check
         self.prob.model.set_input_defaults(
             "planform_area", val=1370.0, units="ft**2"
@@ -63,13 +63,15 @@ class FinalConditionsTest(unittest.TestCase):
             "v_stall", val=100, units="m/s"
         )  # not actual value
         self.prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, val=181200.0, units="lbm"
+            Mission.Summary.GROSS_MASS, val=181200.0, units="lbm"
         )  # check
         self.prob.model.set_input_defaults(
             Mission.Takeoff.FUEL_SIMPLE, val=577, units="lbm"
         )  # check
         self.prob.model.set_input_defaults(
-            "rho", val=constants.RHO_SEA_LEVEL_ENGLISH, units="slug/ft**3"
+            Dynamic.Mission.DENSITY,
+            val=constants.RHO_SEA_LEVEL_ENGLISH,
+            units="slug/ft**3",
         )  # check
         self.prob.model.set_input_defaults(
             Aircraft.Wing.AREA, val=1370.0, units="ft**2"
@@ -112,7 +114,7 @@ class TakeoffGroupTest(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, val=181200.0, units="lbm"
+            Mission.Summary.GROSS_MASS, val=181200.0, units="lbm"
         )  # check
         self.prob.model.set_input_defaults(
             Mission.Takeoff.FUEL_SIMPLE, val=577, units="lbm"
@@ -149,7 +151,7 @@ class TakeoffGroupTest(unittest.TestCase):
             self.prob[Mission.Takeoff.FINAL_ALTITUDE], 35, tol)  # ft
 
         partial_data = self.prob.check_partials(
-            out_stream=None, excludes=['*.USatm'], method="cs")
+            out_stream=None, excludes=['*.standard_atmosphere'], method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 

@@ -5,6 +5,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import (assert_check_partials,
                                          assert_near_equal)
 
+from aviary.mission.gasp_based.ode.unsteady_solved.gamma_comp import GammaComp
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_eom import \
     UnsteadySolvedEOM
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
@@ -23,7 +24,7 @@ class TestUnsteadyFlightEOM(unittest.TestCase):
 
         p.setup(force_alloc_complex=True)
 
-        p.set_val("TAS", 250, units="kn")
+        p.set_val(Dynamic.Mission.VELOCITY, 250, units="kn")
         p.set_val(Dynamic.Mission.MASS, 175_000, units="lbm")
         p.set_val(Dynamic.Mission.THRUST_TOTAL, 20_000, units="lbf")
         p.set_val(Dynamic.Mission.LIFT, 175_000, units="lbf")
@@ -66,7 +67,7 @@ class TestUnsteadyFlightEOM(unittest.TestCase):
             assert_near_equal(dgam_dt, np.zeros(nn), tolerance=1.0E-12)
             assert_near_equal(dgam_dt_approx, np.zeros(nn), tolerance=1.0E-12)
 
-        p.set_val("TAS", 250 + 10 * np.random.rand(nn), units="kn")
+        p.set_val(Dynamic.Mission.VELOCITY, 250 + 10 * np.random.rand(nn), units="kn")
         p.set_val(Dynamic.Mission.MASS, 175_000 + 1000 * np.random.rand(nn), units="lbm")
         p.set_val(Dynamic.Mission.THRUST_TOTAL, 20_000 +
                   100 * np.random.rand(nn), units="lbf")
@@ -91,6 +92,31 @@ class TestUnsteadyFlightEOM(unittest.TestCase):
         for ground_roll in True, False:
             with self.subTest(msg=f"ground_roll={ground_roll}"):
                 self._test_unsteady_flight_eom(ground_roll=ground_roll)
+
+    def test_gamma_comp(self):
+        nn = 2
+
+        p = om.Problem()
+        p.model.add_subsystem("gamma",
+                              GammaComp(num_nodes=nn),
+                              promotes_inputs=[
+                                  "dh_dr",
+                                  "d2h_dr2"],
+                              promotes_outputs=[
+                                  Dynamic.Mission.FLIGHT_PATH_ANGLE,
+                                  "dgam_dr"])
+        p.setup(force_alloc_complex=True)
+        p.run_model()
+
+        assert_near_equal(
+            p[Dynamic.Mission.FLIGHT_PATH_ANGLE], [0.78539816, 0.78539816],
+            tolerance=1.0E-6)
+        assert_near_equal(
+            p["dgam_dr"], [0.5, 0.5],
+            tolerance=1.0E-6)
+
+        partial_data = p.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
 if __name__ == '__main__':
