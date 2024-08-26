@@ -243,9 +243,9 @@ class EngineDeck(EngineModel):
             if idle_min > idle_max:
                 if self.get_val(Settings.VERBOSITY).value >= 1:
                     warnings.warn(
-                        f'EngineDeck <{
-                            self.name}>: Minimum flight idle fraction exceeds maximum '
-                        f'flight idle fraction. Values for min and max fraction will be flipped.'
+                        f'EngineDeck <{self.name}>: Minimum flight idle fraction '
+                        'exceeds maximum flight idle fraction. Values for min and max '
+                        'fraction will be flipped.'
                     )
                 self.set_val(Aircraft.Engine.FLIGHT_IDLE_MIN_FRACTION,
                              val=idle_max)
@@ -398,9 +398,11 @@ class EngineDeck(EngineModel):
                     val = np.array([convert_units(i, units, default_units[key])
                                    for i in val])
                 except TypeError:
-                    raise TypeError(f"{message}: units of '{units}' provided for "
-                                    f'<{key.name}> are not compatible with expected units '
-                                    f'of {default_units[key]}')
+                    raise TypeError(
+                        f"{message}: units of '{units}' provided for "
+                        f'<{key.name}> are not compatible with expected '
+                        f'units of {default_units[key]}'
+                    )
 
                 # Engine_variables currently only used to store "valid" engine variables
                 # as defined in EngineModelVariables Enum
@@ -1152,12 +1154,13 @@ class EngineDeck(EngineModel):
             sls_idx = np.intersect1d(sea_level_idx, static_idx)
 
             if sls_idx.size == 0:
-                raise UserWarning('Could not find sea-level static max thrust point for '
-                                  f'EngineDeck <{
-                                      self.name}>. Please review the data file '
-                                  f'<{self.get_val(Aircraft.Engine.DATA_FILE)}> or '
-                                  'manually specify Aircraft.Engine.REFERENCE_SLS_THRUST '
-                                  'in EngineDeck options')
+                raise UserWarning(
+                    'Could not find sea-level static max thrust point for '
+                    f'EngineDeck <{self.name}>. Please review the data '
+                    f'file <{self.get_val(Aircraft.Engine.DATA_FILE)}> or '
+                    'manually specify Aircraft.Engine.REFERENCE_SLS_THRUST '
+                    'in EngineDeck options'
+                )
 
             reference_sls_thrust = max(self.data[THRUST][sls_idx])
 
@@ -1187,9 +1190,8 @@ class EngineDeck(EngineModel):
                         # user wants scaling but provided conflicting inputs,
                         # cannot be resolved
                         raise AttributeError(
-                            f'EngineModel <{
-                                self.name}>: Conflicting values provided for '
-                            'aircraft:engine:scale_factor and '
+                            f'EngineModel <{self.name}>: Conflicting values provided '
+                            'for aircraft:engine:scale_factor and '
                             'aircraft:engine:scaled_sls_thrust'
                         )
                     # get thrust target & scale factor matching exactly. Scale factor is
@@ -1464,11 +1466,12 @@ class EngineDeck(EngineModel):
                 # new Mach number
                 # if there are less than two altitudes for this Mach number, quit
                 if alt_count < 2 and mach_count > 0:
-                    raise UserWarning('Only one altitude provided for Mach number '
-                                      f'{mach_numbers[mach_count]
-                                          :6.3f} in engine data file '
-                                      f'<{self.get_val(Aircraft.Engine.DATA_FILE).name}>'
-                                      )
+                    raise UserWarning(
+                        'Only one altitude provided for Mach number '
+                        f'{mach_numbers[mach_count]:6.3f} in engine data '
+                        'file '
+                        f'<{self.get_val(Aircraft.Engine.DATA_FILE).name}>'
+                    )
 
                 # record and count mach numbers
                 curr_mach = mach_num
