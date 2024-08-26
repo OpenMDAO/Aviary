@@ -1105,7 +1105,6 @@ class AviaryProblem(om.Problem):
                     for parameter in parameter_dict:
                         external_parameters[phase_name][parameter] = parameter_dict[parameter]
 
-            #if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
             traj = setup_trajectory_params(
                 self.model, traj, self.aviary_inputs, phases, meta_data=self.meta_data, external_parameters=external_parameters)
 
