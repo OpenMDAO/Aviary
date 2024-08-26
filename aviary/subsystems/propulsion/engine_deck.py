@@ -145,7 +145,8 @@ class EngineDeck(EngineModel):
     """
 
     def __init__(self, name='engine_deck', options: AviaryValues = None,
-                 data: NamedValues = None, required_variables=default_required_variables):
+                 data: NamedValues = None,
+                 required_variables: set = default_required_variables):
         if data is not None:
             self.read_from_file = False
         else:
