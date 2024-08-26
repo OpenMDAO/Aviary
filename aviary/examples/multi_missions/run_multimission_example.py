@@ -19,6 +19,10 @@ from c5_models.c5_intermediate_phase_info import phase_info as c5_intermediate_p
 from c5_models.c5_maxpayload_phase_info import phase_info as c5_maxpayload_phase_info
 
 
+# Usage:
+# For the landing gear mass (MAIN_GEAR_MASS & NOSE_GEAR_MASS) to be designed consistently 
+# between missions, the Aircraft.Design.TOUCHDOWN_MASS must be set to the same value for all missions.
+
 class MultiMissionProblem(om.Problem):
     def __init__(self, planes, phase_infos, weights):
         super().__init__()
@@ -102,9 +106,17 @@ class MultiMissionProblem(om.Problem):
             "compound = "+weighted_str, has_diag_partials=True), promotes=["compound"])
         self.model.add_objective('compound')
 
-    def setup_wrapper(self):
+    def setup_wrapper(self,LANDING_TO_TAKEOFF_MASS_RATIO=[None,'unitless'], TOUCHDOWN_MASS=[None,'lbm']):
         """Wrapper for om.Problem setup with warning ignoring and setting options"""
         for prob in self.probs:
+            if LANDING_TO_TAKEOFF_MASS_RATIO[0] is not None:
+                prob.aviary_inputs.set_val(Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, LANDING_TO_TAKEOFF_MASS_RATIO[0], units=LANDING_TO_TAKEOFF_MASS_RATIO[1])
+            elif TOUCHDOWN_MASS[0] is not None:
+                prob.aviary_inputs.set_val(Aircraft.Design.TOUCHDOWN_MASS, TOUCHDOWN_MASS[0], units=TOUCHDOWN_MASS[1])
+            else:
+                print('User must specify LANDING_TO_TAKEOFF_MASS_RATIO or TOUCHDOWN_MASS in MultiMissionProblem.setup_wrapper().')
+                exit()
+
             prob.model.options['aviary_options'] = prob.aviary_inputs
             prob.model.options['aviary_metadata'] = prob.meta_data
             prob.model.options['phase_info'] = prob.phase_info
@@ -123,16 +135,14 @@ class MultiMissionProblem(om.Problem):
 
     def get_design_range(self):
         """Finds the longest mission and sets its range as the design range for all
-            Aviary problems. Used within Aviary for sizing subsystems (avionics and AC).
-            Landing gear decreases in size as range increases, 
-            so that should be sized of minimum range mission!"""
+            Aviary problems. Used within Aviary for sizing subsystems (avionics and AC)."""
         design_range = []
         for phase_info in self.phase_infos:
             design_range.append(phase_info['post_mission']
                                 ['target_range'][0])  # TBD add units
         design_range_min = np.min(design_range)
         design_range_max = np.max(design_range)
-        return design_range_max,  # design_range_min
+        return design_range_max, design_range_min # design_range_min
 
     def create_timeseries_plots(self, plotvars=[], show=True):
         """
@@ -231,11 +241,20 @@ def C5_example(makeN2=False):
     super_prob.add_objective()
     # set input default to prevent error, value doesn't matter since set val is used later
     super_prob.model.set_input_defaults(Mission.Design.RANGE, val=1.)
-    super_prob.setup_wrapper()
-    super_prob.set_val(Mission.Design.RANGE, super_prob.get_design_range())
+    # Setqup aviary problem and user must specify LANDING_TO_TAKEOFF_MASS_RATIO or TOUCHDOWN_MASS
+    super_prob.setup_wrapper(LANDING_TO_TAKEOFF_MASS_RATIO = [0.91,'unitless'])
+    #super_prob.setup_wrapper(TOUCHDOWN_MASS = [700000,'lbm'])
+
+    # All the design ranges must be the same to make sure Air Conditioning and Avionics are designed the same for all missions,
+    super_prob.set_val(Mission.Design.RANGE, super_prob.get_design_range()[0])
 
     for i, prob in enumerate(super_prob.probs):
         prob.set_initial_guesses(super_prob, super_prob.group_prefix+f"_{i}.")
+
+
+        
+    # this does not work:
+    # super_prob.set_val("group_0."+Aircraft.Design.TOUCHDOWN_MASS, 498554, units='lbm')
 
     if makeN2:
         from createN2 import createN2
@@ -243,6 +262,7 @@ def C5_example(makeN2=False):
 
     super_prob.run()
     printoutputs = [(Aircraft.Design.EMPTY_MASS, 'lbm'),
+                    (Mission.Design.GROSS_MASS, 'lbm'),
                     (Mission.Summary.FUEL_BURNED, 'lbm'),
                     (Mission.Summary.GROSS_MASS, 'lbm'),
                     (Aircraft.Wing.SPAN, 'ft'),
@@ -250,7 +270,8 @@ def C5_example(makeN2=False):
                     (Aircraft.LandingGear.MAIN_GEAR_MASS, 'lbm'),
                     (Aircraft.LandingGear.NOSE_GEAR_MASS, 'lbm'),
                     (Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, 'unitless'),
-                    (Mission.Summary.CRUISE_MACH, 'unitless')]
+                    (Mission.Summary.CRUISE_MACH, 'unitless'),
+                    (Aircraft.Design.TOUCHDOWN_MASS, 'lbm')]
     super_prob.print_vars(vars=printoutputs)
 
     plotvars = [('altitude', 'ft'),
