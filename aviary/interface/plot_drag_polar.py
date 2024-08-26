@@ -13,7 +13,8 @@ def plot_drag_polar(input_file=None):
     if input_file is None:
         input_file = filedialog.askopenfilename(filetypes=[("CSV files", "*.csv")])
         if not input_file:
-            messagebox.showerror("Error", "No file selected.")
+            messagebox.showerror("Error", "No file selected, using default data in test_drag_polar.csv")
+            input_file= get_path(aviary/utils/test/n3cc_polar_data.csv)
             return
 
     try:
