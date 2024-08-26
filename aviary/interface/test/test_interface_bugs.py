@@ -8,7 +8,6 @@ from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.interface.default_phase_info.height_energy import phase_info as ph_in
 from aviary.variable_info.variables import Aircraft
-from aviary.variable_info.enums import Verbosity
 from openmdao.utils.testing_utils import use_tempdirs
 
 
@@ -75,8 +74,7 @@ class PreMissionGroupTest(unittest.TestCase):
 
         prob.load_inputs(csv_path, phase_info)
 
-
-# Preprocess inputs
+        # Preprocess inputs
         prob.check_and_preprocess_inputs()
 
         prob.add_pre_mission_systems()
@@ -88,7 +86,7 @@ class PreMissionGroupTest(unittest.TestCase):
         # Link phases and variables
         prob.link_phases()
 
-        prob.add_driver("SLSQP", verbosity=Verbosity.QUIET)
+        prob.add_driver("SLSQP", verbosity=0)
 
         prob.add_design_variables()
 

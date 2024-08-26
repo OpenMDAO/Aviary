@@ -46,6 +46,9 @@ def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
     If an invalid filepath is given, pre-packaged resources will be checked for
     input decks with a matching name.
     '''
+    # compatibility with being passed int for verbosity
+    verbosity = Verbosity(verbosity)
+
     # TODO generate both an Aviary input file and a phase_info file
 
     vehicle_data = {'input_values': NamedValues(), 'unused_values': NamedValues(),
@@ -98,13 +101,13 @@ def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
         if not force:
             raise RuntimeError(f'{out_file} already exists. Choose a new name or enable '
                                '--force')
-        elif verbosity.value >= 1:
+        elif verbosity >= Verbosity.BRIEF:
             print(f'Overwriting existing file: {out_file.name}')
 
     else:
         # create any directories defined by the new filename if they don't already exist
         out_file.parent.mkdir(parents=True, exist_ok=True)
-        if verbosity.value >= 2:
+        if verbosity >= Verbosity.VERBOSE:
             print('Writing to:', out_file)
 
     # open the file in write mode
@@ -266,7 +269,7 @@ def process_and_store_data(data, var_name, legacy_code, current_namelist, altern
 
         vehicle_data['unused_values'] = set_value(name, var_values, vehicle_data['unused_values'],
                                                   var_ind=var_ind, units=data_units)
-        if vehicle_data['verbosity'].value >= 2:
+        if vehicle_data['verbosity'].value >= Verbosity.VERBOSE:
             print('Unused:', name, var_values, comment)
 
     return vehicle_data
@@ -353,7 +356,7 @@ def update_name(alternate_names, var_name, verbosity=Verbosity.BRIEF):
 
     # if there are no equivalent variable names, return the original name
     if len(all_equivalent_names) == 0:
-        if verbosity.value >= 2:
+        if verbosity >= Verbosity.VERBOSE:
             print('passing: ', var_name)
         all_equivalent_names = [var_name]
 
@@ -641,7 +644,7 @@ def _exec_F2A(args, user_args):
         args.input_deck = args.input_deck[0]
     filepath = args.input_deck
 
-    # convert verbosity from number to enum
+    # convert verbosity from int to enum
     verbosity = Verbosity(args.verbosity)
 
     create_aviary_deck(filepath, args.legacy_code, args.defaults_deck,

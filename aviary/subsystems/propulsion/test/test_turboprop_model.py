@@ -12,7 +12,7 @@ from aviary.interface.utils.markdown_utils import round_it
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.functions import get_path
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
-from aviary.variable_info.enums import SpeedType, Verbosity
+from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.options import get_option_defaults
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 
@@ -142,13 +142,6 @@ class TurbopropTest(unittest.TestCase):
                           114.0, units="unitless")
         self.prob.set_val(
             Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT, 0.5, units="unitless")
-
-        if options.get_val(Settings.VERBOSITY, units='unitless') is Verbosity.DEBUG:
-            om.n2(
-                self.prob,
-                outfile="n2.html",
-                show_browser=False,
-            )
 
         self.prob.run_model()
         results = self.get_results(point_names)

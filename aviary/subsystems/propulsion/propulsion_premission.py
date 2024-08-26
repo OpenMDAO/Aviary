@@ -6,6 +6,7 @@ import openmdao.api as om
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Settings
+from aviary.variable_info.enums import Verbosity
 
 
 class PropulsionPreMission(om.Group):
@@ -75,8 +76,8 @@ class PropulsionPreMission(om.Group):
         # determine if openMDAO messages and warnings should be suppressed
         verbosity = self.options['aviary_options'].get_val(Settings.VERBOSITY)
         out_stream = None
-        # DEBUG
-        if verbosity.value > 2:
+
+        if verbosity > Verbosity.VERBOSE:
             out_stream = sys.stdout
 
         comp_list = [self._get_subsystem(group) for group in dir(self) if self._get_subsystem(

@@ -2,7 +2,7 @@ import numpy as np
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import get_path
-from aviary.variable_info.enums import EquationsOfMotion, LegacyCode, Verbosity
+from aviary.variable_info.enums import EquationsOfMotion, LegacyCode
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 MultiEngineSingleAisle = {}
@@ -281,7 +281,7 @@ inputs.set_val(Mission.Design.THRUST_TAKEOFF_PER_ENG, 24555.5, 'lbf')
 # ---------------------------
 inputs.set_val(Settings.EQUATIONS_OF_MOTION, EquationsOfMotion.HEIGHT_ENERGY)
 inputs.set_val(Settings.MASS_METHOD, LegacyCode.FLOPS)
-inputs.set_val(Settings.VERBOSITY, Verbosity.BRIEF)
+inputs.set_val(Settings.VERBOSITY, 0)
 
 # ---------------------------
 #          OUTPUTS

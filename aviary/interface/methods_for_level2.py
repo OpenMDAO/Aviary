@@ -237,7 +237,7 @@ class AviaryProblem(om.Problem):
         self.regular_phases = []
         self.reserve_phases = []
 
-    def load_inputs(self, aviary_inputs, phase_info=None, engine_builders=None, meta_data=BaseMetaData, verbosity=None):
+    def load_inputs(self, aviary_inputs, phase_info=None, engine_builders=None, meta_data=BaseMetaData, verbosity=Verbosity.BRIEF):
         """
         This method loads the aviary_values inputs and options that the
         user specifies. They could specify files to load and values to
@@ -248,6 +248,8 @@ class AviaryProblem(om.Problem):
         This method is not strictly necessary; a user could also supply
         an AviaryValues object and/or phase_info dict of their own.
         """
+        # compatibility with being passed int for verbosity
+        verbosity = Verbosity(verbosity)
         ## LOAD INPUT FILE ###
         # Create AviaryValues object from file (or process existing AviaryValues object
         # with default values from metadata) and generate initial guesses
@@ -1583,7 +1585,7 @@ class AviaryProblem(om.Problem):
             The maximum number of iterations allowed for the optimization process. Default is 50. This option is
             applicable to "SNOPT", "IPOPT", and "SLSQP" optimizers.
 
-        verbosity : Verbosity or list, optional
+        verbosity : Verbosity, int or list, optional
             If Verbosity.DEBUG, debug print options ['desvars','ln_cons','nl_cons','objs'] will be set. If a list is
             provided, it will be used as the debug print options.
 
@@ -1591,6 +1593,9 @@ class AviaryProblem(om.Problem):
         -------
         None
         """
+        # compatibility with being passed int for verbosity
+        verbosity = Verbosity(verbosity)
+
         # Set defaults for optimizer and use_coloring based on analysis scheme
         if optimizer is None:
             optimizer = 'IPOPT' if self.analysis_scheme is AnalysisScheme.SHOOTING else 'SNOPT'
@@ -1612,7 +1617,7 @@ class AviaryProblem(om.Problem):
                 isumm, iprint = 0, 0
             elif verbosity == Verbosity.BRIEF:
                 isumm, iprint = 6, 0
-            else:
+            elif verbosity > Verbosity.BRIEF:
                 isumm, iprint = 6, 9
             driver.opt_settings["Major iterations limit"] = max_iter
             driver.opt_settings["Major optimality tolerance"] = 1e-4
@@ -1629,7 +1634,7 @@ class AviaryProblem(om.Problem):
                 driver.opt_settings['print_frequency_iter'] = 10
             elif verbosity == Verbosity.VERBOSE:
                 print_level = 5
-            else:
+            else:  # DEBUG
                 print_level = 7
             driver.opt_settings['tol'] = 1.0E-6
             driver.opt_settings['mu_init'] = 1e-5
@@ -1648,15 +1653,15 @@ class AviaryProblem(om.Problem):
             driver.options["maxiter"] = max_iter
             driver.options["disp"] = disp
 
-        if verbosity != Verbosity.QUIET:
+        if verbosity > Verbosity.QUIET:
             if isinstance(verbosity, list):
                 driver.options['debug_print'] = verbosity
-            elif verbosity.value > Verbosity.DEBUG.value:
+            elif verbosity == Verbosity.DEBUG:
                 driver.options['debug_print'] = ['desvars', 'ln_cons', 'nl_cons', 'objs']
         if optimizer in ("SNOPT", "IPOPT"):
-            if verbosity is Verbosity.QUIET:
+            if verbosity == Verbosity.QUIET:
                 driver.options['print_results'] = False
-            elif verbosity is not Verbosity.DEBUG:
+            elif verbosity < Verbosity.DEBUG:
                 driver.options['print_results'] = 'minimal'
 
     def add_design_variables(self):

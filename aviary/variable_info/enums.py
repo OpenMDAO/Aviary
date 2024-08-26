@@ -1,4 +1,4 @@
-from enum import Enum, auto, unique
+from enum import Enum, IntEnum, auto, unique
 
 
 class AlphaModes(Enum):
@@ -185,7 +185,7 @@ class ThrottleAllocation(Enum):
     DYNAMIC = 3
 
 
-class Verbosity(Enum):
+class Verbosity(IntEnum):
     """
     Sets how much information Aviary outputs when run
 

@@ -10,7 +10,6 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.functions import get_path
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-from aviary.variable_info.enums import Verbosity
 
 
 class EngineScalingTest(unittest.TestCase):

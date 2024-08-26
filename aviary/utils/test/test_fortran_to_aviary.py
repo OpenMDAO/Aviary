@@ -14,7 +14,7 @@ class DummyArgs(object):
         self.legacy_code = None
         self.defaults_deck = False
         self.force = False
-        self.verbosity = 1
+        self.verbosity = 0
 
 
 @use_tempdirs
@@ -62,7 +62,8 @@ class TestFortranToAviary(unittest.TestCase):
                     self.assertEqual(line_no_whitespace.count(expected_line), 1)
 
                 except Exception as error:
-                    exc_string = f'Error:  {filename}\nFound: {line_no_whitespace}\nExpected:  {expected_line}'
+                    exc_string = f'Error:  {filename}\nFound: {
+                        line_no_whitespace}\nExpected:  {expected_line}'
                     raise Exception(exc_string)
 
     def test_large_single_aisle(self):
