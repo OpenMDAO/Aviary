@@ -93,9 +93,11 @@ class TurbopropTest(unittest.TestCase):
     def get_results(self, point_names=None, display_results=False):
         shp = self.prob.get_val(Dynamic.Mission.SHAFT_POWER, units='hp')
         total_thrust = self.prob.get_val(Dynamic.Mission.THRUST, units='lbf')
-        prop_thrust = self.prob.get_val('turboprop_model.propeller_thrust', units='lbf')
+        prop_thrust = self.prob.get_val(
+            'turboshaft_model.propeller_thrust', units='lbf'
+        )
         tailpipe_thrust = self.prob.get_val(
-            'turboprop_model.turboshaft_thrust', units='lbf'
+            'turboshaft_model.turboshaft_thrust', units='lbf'
         )
         max_thrust = self.prob.get_val(Dynamic.Mission.THRUST_MAX, units='lbf')
         fuel_flow = self.prob.get_val(
@@ -118,7 +120,7 @@ class TurbopropTest(unittest.TestCase):
 
     def test_case_1(self):
         # test case using GASP-derived engine deck and "user specified" prop model
-        filename = get_path('models/engines/turboprop_1120hp.deck')
+        filename = get_path('models/engines/turboshaft_1120hp.deck')
         # Mach, alt, throttle @ idle, SLS, TOC
         test_points = [(0, 0, 0), (0, 0, 1), (0.6, 25000, 1)]
         # shp, tailpipe thrust, prop_thrust, total_thrust, max_thrust, fuel flow
@@ -184,7 +186,7 @@ class TurbopropTest(unittest.TestCase):
 
     def test_case_2(self):
         # test case using GASP-derived engine deck and default HS prop model.
-        filename = get_path('models/engines/turboprop_1120hp.deck')
+        filename = get_path('models/engines/turboshaft_1120hp.deck')
         test_points = [(0.001, 0, 0), (0, 0, 1), (0.6, 25000, 1)]
         truth_vals = [
             (
@@ -237,7 +239,7 @@ class TurbopropTest(unittest.TestCase):
 
     def test_case_3(self):
         # test case using GASP-derived engine deck w/o tailpipe thrust and default HS prop model.
-        filename = get_path('models/engines/turboprop_1120hp_no_tailpipe.deck')
+        filename = get_path('models/engines/turboshaft_1120hp_no_tailpipe.deck')
         test_points = [(0, 0, 0), (0, 0, 1), (0.6, 25000, 1)]
         truth_vals = [
             (

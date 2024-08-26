@@ -283,7 +283,7 @@ class TurbopropTest(unittest.TestCase):
             },
         }
 
-        engine_filepath = get_path('models/engines/turboprop_4465hp.deck')
+        engine_filepath = get_path('models/engines/turboshaft_4465hp.deck')
         options = get_option_defaults()
         options.set_val(Aircraft.Engine.DATA_FILE, engine_filepath)
         options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
