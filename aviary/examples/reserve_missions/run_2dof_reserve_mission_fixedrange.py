@@ -42,16 +42,16 @@ if __name__ == '__main__':
     # Link phases and variables
     prob.link_phases()
 
-prob.add_driver("SNOPT", max_iter=50, verbosity=2)
+    prob.add_driver("SNOPT", max_iter=50, verbosity=2)
 
-prob.add_design_variables()
+    prob.add_design_variables()
 
-# Load optimization problem formulation
-# Detail which variables the optimizer can control
-prob.add_objective()
+    # Load optimization problem formulation
+    # Detail which variables the optimizer can control
+    prob.add_objective()
 
-prob.setup()
+    prob.setup()
 
-prob.set_initial_guesses()
+    prob.set_initial_guesses()
 
-prob.run_aviary_problem(record_filename='2dof_reserve_mission_fixedrange.db')
+    prob.run_aviary_problem(record_filename='2dof_reserve_mission_fixedrange.db')

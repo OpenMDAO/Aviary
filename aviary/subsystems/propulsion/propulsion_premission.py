@@ -76,6 +76,7 @@ class PropulsionPreMission(om.Group):
         verbosity = self.options['aviary_options'].get_val(Settings.VERBOSITY)
         out_stream = None
 
+        # DEBUG
         if verbosity > Verbosity.VERBOSE:
             out_stream = sys.stdout
 
