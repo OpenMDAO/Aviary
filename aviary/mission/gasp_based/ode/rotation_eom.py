@@ -55,7 +55,7 @@ class RotationEOM(om.ExplicitComponent):
                 "alpha_rate", val=np.ones(nn), desc="angle of attack rate", units="deg/s"
             )
 
-            self.declare_partials("alpha_rate", ["*"], val=0)
+            self.declare_partials("alpha_rate", ["*"])
 
     def setup_partials(self):
         arange = np.arange(self.options["num_nodes"])

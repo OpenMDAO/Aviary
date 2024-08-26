@@ -1,5 +1,4 @@
 import unittest
-import os
 
 import numpy as np
 import openmdao
@@ -47,23 +46,21 @@ class DescentODETestCase(unittest.TestCase):
         self.prob.run_model()
 
         testvals = {
-            "alpha": np.array([3.2, 1.21]),
-            "CL": np.array([0.5123, 0.2583]),
-            "CD": np.array([0.0279, 0.0197]),
-            Dynamic.Mission.ALTITUDE_RATE: np.array([-2385, -3076]) / 60,
-            # TAS (ft/s) * cos(gamma)
-            Dynamic.Mission.DISTANCE_RATE: [
-                (459 * 1.68781) * np.cos(np.deg2rad(-2.94)),
-                (437 * 1.68781) * np.cos(np.deg2rad(-3.98)),
-            ],
+            "alpha": np.array([3.23388, 1.203234]),
+            "CL": np.array([0.51849367, 0.25908653]),
+            "CD": np.array([0.02794324, 0.01862946]),
+            # ft/s
+            Dynamic.Mission.ALTITUDE_RATE: np.array([-2356.7705, -2877.9606]) / 60,
+            # TAS (ft/s) * cos(gamma), [458.67774, 437.62297] kts
+            Dynamic.Mission.DISTANCE_RATE: [773.1637, 737.0653],  # ft/s
             # lbm/h
-            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: np.array([-452, -996]),
-            "EAS": np.array([249, 350]) * 1.68781,  # kts -> ft/s
-            Dynamic.Mission.MACH: np.array([0.8, 0.696]),
-            Dynamic.Mission.FLIGHT_PATH_ANGLE: np.deg2rad([-2.94, -3.98]),
+            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: np.array([-451.0239, -997.1514]),
+            "EAS": [417.87419406, 590.73344937],  # ft/s ([247.58367, 349.99997] kts)
+            Dynamic.Mission.MACH: [0.8, 0.697266],
+            # gamma, rad ([-2.908332, -3.723388] deg)
+            Dynamic.Mission.FLIGHT_PATH_ANGLE: [-0.05075997, -0.06498538],
         }
-
-        check_prob_outputs(self.prob, testvals, rtol=1e-1)  # TODO tighten
+        check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
         partial_data = self.prob.check_partials(
             method="cs", out_stream=None, excludes=["*params*", "*aero*"]
@@ -85,16 +82,16 @@ class DescentODETestCase(unittest.TestCase):
         self.prob.run_model()
 
         testvals = {
-            "alpha": 4.21,
-            "CL": 0.5063,
-            "CD": 0.0271,
-            Dynamic.Mission.ALTITUDE_RATE: -1158 / 60,
-            # TAS (ft/s) * cos(gamma)
-            Dynamic.Mission.DISTANCE_RATE: (255 * 1.68781) * np.cos(np.deg2rad(-2.56)),
-            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: -1294,
-            Dynamic.Mission.FLIGHT_PATH_ANGLE: np.deg2rad(-2.56),
+            "alpha": 4.19956,
+            "CL": 0.507578,
+            "CD": 0.0268404,
+            Dynamic.Mission.ALTITUDE_RATE: -1138.583 / 60,
+            # TAS (ft/s) * cos(gamma) = 255.5613 * 1.68781 * cos(-0.0440083)
+            Dynamic.Mission.DISTANCE_RATE: 430.9213,
+            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: -1295.11,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE: -0.0440083,  # rad (-2.52149 deg)
         }
-        check_prob_outputs(self.prob, testvals, rtol=1e-1)  # TODO tighten
+        check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
         partial_data = self.prob.check_partials(
             out_stream=None, method="cs", excludes=["*params*", "*aero*"]
