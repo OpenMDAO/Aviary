@@ -62,7 +62,9 @@ def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
 
     comments.append(f'# created {timestamp} by {user}')
     comments.append(
-        f'# {legacy_code.value}-derived aircraft input deck converted from {fortran_deck.name}')
+        f'# {legacy_code.value}-derived aircraft input deck converted from '
+        f'{fortran_deck.name}'
+    )
 
     if out_file:
         out_file = Path(out_file)
@@ -366,7 +368,9 @@ def update_name(alternate_names, var_name, verbosity=Verbosity.BRIEF):
                     if altname.endswith(var_name.lower()):
                         all_equivalent_names.append(key)
                         continue
-                    elif var_ind is not None and altname.endswith(f'{var_name.lower()}({var_ind})'):
+                    elif var_ind is not None and altname.endswith(
+                        f'{var_name.lower()}({var_ind})'
+                    ):
                         all_equivalent_names.append(key)
                         var_ind = None
                         continue

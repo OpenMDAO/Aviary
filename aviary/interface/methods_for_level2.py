@@ -444,7 +444,9 @@ class AviaryProblem(om.Problem):
                     if target_distance[0] <= 0:
                         raise ValueError(
                             f"Invalid target_distance in [{phase_name}].[user_options]. "
-                            f"Current (value: {target_distance[0]}), (units: {target_distance[1]}) <= 0")
+                            f"Current (value: {target_distance[0]}), "
+                            f"(units: {target_distance[1]}) <= 0"
+                        )
 
         # Checks to make sure target_duration is positive,
         # Sets duration_bounds, initial_guesses, and fixed_duration
@@ -466,9 +468,10 @@ class AviaryProblem(om.Problem):
                     target_duration = self.phase_info[phase_name]["user_options"]["target_duration"]
                     if target_duration[0] <= 0:
                         raise ValueError(
-                            f"Invalid target_duration in phase_info[{
-                                phase_name}][user_options]. "
-                            f"Current (value: {target_duration[0]}), (units: {target_duration[1]}) <= 0")
+                            f'Invalid target_duration in phase_info[{phase_name}]'
+                            f'[user_options]. Current (value: {target_duration[0]}), '
+                            f'(units: {target_duration[1]}) <= 0")'
+                        )
 
                     # Only applies to non-analytic phases (all HE and most 2DOF)
                     if not analytic:
