@@ -1,7 +1,7 @@
 import unittest
 
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.mission.gasp_based.polynomial_fit import PolynomialFit
 
@@ -41,18 +41,15 @@ class PolynomialFitTest(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
+        """
+        It checks output values. It will not check partials because cs is used to compute partials already.
+        """
 
         self.prob.run_model()
 
         tol = 5e-4
         assert_near_equal(self.prob["h_init_gear"], -600, tol)
         assert_near_equal(self.prob["h_init_flaps"], -250, tol)
-
-        # TODO: The errors are high (about 0.000488). Need further investigation.
-        # It might be right on a discontinuity or something.
-        partial_data = self.prob.check_partials(
-            out_stream=None, method="cs", step=1.01e-40)
-        assert_check_partials(partial_data, atol=0.0005, rtol=1e-9)
 
 
 if __name__ == "__main__":

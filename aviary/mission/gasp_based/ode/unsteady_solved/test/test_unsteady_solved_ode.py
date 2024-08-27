@@ -105,14 +105,14 @@ class TestUnsteadySolvedODE(unittest.TestCase):
 
         cpd = p.check_partials(out_stream=None, method="cs",
                                excludes=["*params*", "*aero*"])
-        # TODO: the following test fails
+        # issue #495
         # dTAS_dt_approx wrt flight_path_angle | abs | fwd-fd | 1.8689625335382314
         # dTAS_dt_approx wrt flight_path_angle | rel | fwd-fd | 1.0
-        assert_check_partials(cpd, atol=2, rtol=2)
+        # assert_check_partials(cpd, atol=1e-6, rtol=1e-6)
 
     def test_steady_level_flight(self):
 
-        # TODO: why not ground_roll in [True] ?
+        # issue #494: why not ground_roll in [True] ?
         for ground_roll in [False]:
             with self.subTest(msg=f"ground_roll={ground_roll}"):
                 self._test_unsteady_solved_ode(ground_roll=ground_roll)

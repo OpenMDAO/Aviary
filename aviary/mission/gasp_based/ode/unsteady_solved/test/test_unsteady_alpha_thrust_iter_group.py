@@ -104,7 +104,7 @@ class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
         assert_check_partials(cpd, atol=1e-10, rtol=1e-10)
 
     def test_iter_group(self):
-        # TODO: why not ground_roll in [True] ?
+        # issue #494: why not ground_roll in [True] ?
         for ground_roll in [False]:
             with self.subTest(msg=f"ground_roll={ground_roll}"):
                 self._test_unsteady_alpha_thrust_iter_group(ground_roll=ground_roll)
