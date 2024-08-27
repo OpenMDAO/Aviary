@@ -145,7 +145,22 @@ def assert_metadata_alphabetization(metadata_variables_list):
         )
 
 
-def assert_match_varnames(system, MetaData=None):
+def assert_match_varnames(system, MetaData=None, exclude_inputs=None, exclude_outputs=None):
+    """
+    Assert that the inputs and outputs of the system match with those in MetaData
+
+    Parameters:
+    -----------
+    exclude_inputs: set
+        The inputs that are excluded from comparison with MetaData.
+    exclude_outputs: set
+        The outputs that are excluded from comparison with MetaData.
+
+    Returns
+    -------
+    list
+        List of all names in the hierarchy, including duplicates.
+    """
 
     prob = om.Problem()
     prob.model = system
@@ -165,15 +180,21 @@ def assert_match_varnames(system, MetaData=None):
 
     if input_overlap != sys_inputs:
         diff = sys_inputs - input_overlap
-        raise ValueError(
-            f"The inputs {diff} in the provided subsystem are not found in the provided variable structure."
-        )
+        if not exclude_inputs is None:
+            diff = diff - exclude_inputs
+        if len(diff) > 0:
+            raise ValueError(
+                f"The inputs {diff} in the provided subsystem are not found in the provided variable structure."
+            )
 
     if output_overlap != sys_outputs:
         diff = sys_outputs - output_overlap
-        raise ValueError(
-            f"The outputs {diff} in the provided subsystem are not found in the provided variable structure."
-        )
+        if not exclude_outputs is None:
+            diff = diff - exclude_outputs
+        if len(diff) > 0:
+            raise ValueError(
+                f"The outputs {diff} in the provided subsystem are not found in the provided variable structure."
+            )
 
 
 def get_names_from_hierarchy(hierarchy):

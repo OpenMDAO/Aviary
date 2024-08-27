@@ -38,7 +38,6 @@ class SpecificEnergyRateTest(unittest.TestCase):
                            output_keys=Dynamic.Mission.SPECIFIC_ENERGY_RATE,
                            tol=1e-12)
 
-    # TODO IO test will fail until mission variable hirerarchy implemented
     def test_IO(self):
         assert_match_varnames(self.prob.model)
 
