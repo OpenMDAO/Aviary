@@ -20,6 +20,9 @@ from aviary.variable_info.enums import AnalysisScheme
 
 
 class ExternalSubsystemGroup(om.Group):
+    """
+    For external subsystem group, promote relevant aircraft and mission variables.
+    """
     def configure(self):
         promote_aircraft_and_mission_vars(self)
 
