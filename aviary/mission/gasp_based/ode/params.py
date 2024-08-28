@@ -156,7 +156,10 @@ params_for_unit_tests = {
 
 def set_params_for_unit_tests(prob):
     """
-    Helper function to set parameters for several ode tests for heigh energy.
+    Helper function to set parameters for several ode tests with the 2DOF method.
+
+    This is needed because the Paramport used to contain default values for some
+    variables.
 
     Parameters
     ----------

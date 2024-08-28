@@ -1,7 +1,9 @@
 import numpy as np
+from scipy import interpolate
+
 import openmdao.api as om
 from openmdao.utils import units
-from scipy import interpolate
+
 from simupy.block_diagram import DEFAULT_INTEGRATOR_OPTIONS, SimulationMixin
 from simupy.systems import DynamicalSystem
 
@@ -108,6 +110,15 @@ class SimuPyProblem(SimulationMixin):
 
         self.prob = prob
         prob.setup(check=False, force_alloc_complex=True)
+
+        # TODO - This is a hack to mimic the behavior of the old paramport, which
+        # contains some initial default values. It is unclear how actual "parameter"
+        # values are supposed to propagate from the pre-mission and top ivcs into
+        # the SGM phases.
+        from aviary.mission.gasp_based.ode.params import set_params_for_unit_tests
+        set_params_for_unit_tests(prob)
+        # set_aviary_initial_values(prob, ode.options['aviary_options'])
+
         prob.final_setup()
 
         if triggers is None:
