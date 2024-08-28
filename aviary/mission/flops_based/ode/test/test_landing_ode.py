@@ -14,6 +14,10 @@ from aviary.variable_info.variables import Dynamic, Aircraft
 
 
 class FlareODETest(unittest.TestCase):
+    """
+    Test against data of detailed_landing_flare from models/N3CC/N3CC_data.py
+    """
+
     def test_case(self):
         prob = om.Problem()
         time, _ = detailed_landing_flare.get_item('time')
