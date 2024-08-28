@@ -479,7 +479,7 @@ def wrapped_convert_units(val_unit_tuple, new_units):
     val_unit_tuple : tuple
         Tuple of the form (value, units) where value is a float and units is a
         string.
-    new_units : string
+    new_units : str
         New units to convert to.
 
     Returns
