@@ -33,6 +33,7 @@ class GroundrollODETestCase(unittest.TestCase):
 
         self.prob.set_val(Dynamic.Mission.VELOCITY, [100, 100], units="kn")
         self.prob.set_val("t_curr", [1, 2], units="s")
+        self.prob.set_val("aircraft:wing:incidence", 0, units="deg")
 
         self.prob.run_model()
 
