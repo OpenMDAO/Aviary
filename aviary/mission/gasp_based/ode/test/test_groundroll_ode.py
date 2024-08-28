@@ -29,10 +29,10 @@ class GroundrollODETestCase(unittest.TestCase):
         """Check partial derivatives"""
         self.prob.setup(check=False, force_alloc_complex=True)
 
+        set_params_for_unit_tests(self.prob)
+
         self.prob.set_val(Dynamic.Mission.VELOCITY, [100, 100], units="kn")
         self.prob.set_val("t_curr", [1, 2], units="s")
-
-        set_params_for_unit_tests(self.prob)
 
         self.prob.run_model()
 

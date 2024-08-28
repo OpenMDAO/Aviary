@@ -410,7 +410,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                         val = aviary_inputs.get_val(var)
 
                 params[var] = {'val': val,
-                                'static_target': True}
+                               'static_target': True}
 
         return params
 

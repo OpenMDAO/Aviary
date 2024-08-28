@@ -154,6 +154,7 @@ params_for_unit_tests = {
     ),
 }
 
+
 def set_params_for_unit_tests(prob):
     """
     Helper function to set parameters for several ode tests with the 2DOF method.
