@@ -56,14 +56,16 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs: Av
     ----------
     phase_info : dict
         Dictionary of phase settings for a mission profile
+    post_mission_info : dict
+        Dictionary of phase settings for a post mission profile
     aviary_inputs : <AviaryValues>
         Object containing values and units for all aviary inputs and options
 
     Returns
     -------
     dict
-        Modified phase_info that has been changed to match the new mission
-        parameters
+        Modified phase_info and post_mission_info that have been changed to match
+        the new mission parameters
     """
 
     range_cruise = aviary_inputs.get_item(Mission.Design.RANGE)

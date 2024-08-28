@@ -656,6 +656,7 @@ class AviaryMissionEditor(tk.Tk):
             self.table_add_button.grid(row=row*2+3, column=0, columnspan=col+2)
 
     def update_header(self, new_headers):
+        """Update header"""
         i = 0
         for widget in self.table_header_widgets:
             if isinstance(widget, tk.Entry):
