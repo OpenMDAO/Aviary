@@ -420,6 +420,14 @@ class AviaryMissionEditor(tk.Tk):
         if self.show_phase_slope.get():
             self.toggle_phase_slope(redraw=False)
         self.figure_canvas.draw()
+        if len(self.data[0]) > 1:
+            units = [
+                self.data_info["units"][i].get()
+                for i in range(len(self.data_info["units"]))]
+            est_range, range_unit = estimate_total_range_trapezoidal(
+                times=self.data[0], mach_numbers=self.data[2], units=units)
+            self.mouse_coords_str.set(self.mouse_coords_str.get().split(" | Est")[0] +
+                                      f" | Estimated Range: {est_range} {range_unit}")
 
     def clear_plot(self):
         """Clears all lines from plots except for crosshairs"""
