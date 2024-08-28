@@ -14,8 +14,8 @@ def plot_drag_polar(input_file=None):
         input_file = filedialog.askopenfilename(filetypes=[("CSV files", "*.csv")])
         if not input_file:
             messagebox.showerror(
-                "Error", "No file selected, using default data in test_drag_polar_data.csv")
-            input_file = get_path('utils/test/test_drag_polar_data.csv')
+                "Error", "No file selected")
+        return
 
     try:
         input_path = get_path(input_file)
