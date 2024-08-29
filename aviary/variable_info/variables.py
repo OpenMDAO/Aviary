@@ -639,14 +639,11 @@ class Dynamic:
         MASS_RATE = 'mass_rate'
         NOX_RATE = 'nox_rate'
         NOX_RATE_TOTAL = 'nox_rate_total'
-        # PERCENT_ROTOR_RPM_CORRECTED = 'percent_rotor_rpm_corrected'
         PROPELLER_TIP_SPEED = 'propeller_tip_speed'
         RPM = 'rotations_per_minute'
         RPM_GEARBOX = 'rotations_per_minute_gearbox'
         SHAFT_POWER = 'shaft_power'
-        SHAFT_POWER_GEARBOX = 'shaft_power_gearbox'
         SHAFT_POWER_MAX = 'shaft_power_max'
-        SHAFT_POWER_MAX_GEARBOX = 'shaft_power_max_gearbox'
         SPECIFIC_ENERGY = 'specific_energy'
         SPECIFIC_ENERGY_RATE = 'specific_energy_rate'
         SPECIFIC_ENERGY_RATE_EXCESS = 'specific_energy_rate_excess'
@@ -660,7 +657,6 @@ class Dynamic:
         THRUST_MAX_TOTAL = 'thrust_net_max_total'
         THRUST_TOTAL = 'thrust_net_total'
         TORQUE = 'torque'
-        TORQUE_GEARBOX = 'torque_gearbox'
         VELOCITY = 'velocity'
         VELOCITY_RATE = 'velocity_rate'
 
@@ -674,7 +670,9 @@ class Mission:
         MAX_MACH = 'mission:constraints:max_mach'
         RANGE_RESIDUAL = 'mission:constraints:range_residual'
         RANGE_RESIDUAL_RESERVE = 'mission:constraints:range_residual_reserve'
-        SHAFT_POWER_RESIDUAL = 'shaft_power_residual'
+        GEARBOX_SHAFT_POWER_RESIDUAL = (
+            'mission:constraints:gearbox_shaft_power_residual'
+        )
 
     class Design:
         # These values MAY change in design mission, but in off-design

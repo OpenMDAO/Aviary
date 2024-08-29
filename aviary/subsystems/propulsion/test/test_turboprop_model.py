@@ -149,7 +149,6 @@ class TurbopropTest(unittest.TestCase):
         options.set_val(Aircraft.Engine.NUM_PROPELLER_BLADES,
                         val=4, units='unitless')
         options.set_val('speed_type', SpeedType.MACH)
-        options.set_val(Aircraft.Engine.FIXED_RPM, 1455.13090827, units='rpm')
 
         prop_group = ExamplePropModel('custom_prop_model')
 
@@ -166,9 +165,9 @@ class TurbopropTest(unittest.TestCase):
 
         self.prob.run_model()
         results = self.get_results()
-        assert_near_equal(results[0], truth_vals[0])
-        assert_near_equal(results[1], truth_vals[1])
-        assert_near_equal(results[2], truth_vals[2])
+        assert_near_equal(results[0], truth_vals[0], tolerance=1.5e-12)
+        assert_near_equal(results[1], truth_vals[1], tolerance=1.5e-12)
+        assert_near_equal(results[2], truth_vals[2], tolerance=1.5e-12)
 
         # because Hamilton Standard model uses fd method, the following may not be accurate.
         partial_data = self.prob.check_partials(out_stream=None, form="central")
@@ -217,12 +216,11 @@ class TurbopropTest(unittest.TestCase):
         self.prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED_MAX, 800, units="ft/s")
 
         self.prob.run_model()
-        om.n2(self.prob)
 
         results = self.get_results()
-        assert_near_equal(results[0], truth_vals[0])
-        assert_near_equal(results[1], truth_vals[1])
-        assert_near_equal(results[2], truth_vals[2])
+        assert_near_equal(results[0], truth_vals[0], tolerance=1.5e-12)
+        assert_near_equal(results[1], truth_vals[1], tolerance=1.5e-12)
+        assert_near_equal(results[2], truth_vals[2], tolerance=1.5e-12)
 
         partial_data = self.prob.check_partials(out_stream=None, form="central")
         assert_check_partials(partial_data, atol=0.15, rtol=0.15)
@@ -266,18 +264,13 @@ class TurbopropTest(unittest.TestCase):
         self.prob.set_val(
             Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT, 0.5, units="unitless")
         self.prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED_MAX, 800, units="ft/s")
-        self.prob.set_val(
-            Aircraft.Engine.FIXED_RPM,
-            [1455.13090827, 1455.13090827, 1455.13090827],
-            units='rpm',
-        )
 
         self.prob.run_model()
 
         results = self.get_results()
-        assert_near_equal(results[0], truth_vals[0])
-        assert_near_equal(results[1], truth_vals[1])
-        assert_near_equal(results[2], truth_vals[2])
+        assert_near_equal(results[0], truth_vals[0], tolerance=1.5e-12)
+        assert_near_equal(results[1], truth_vals[1], tolerance=1.5e-12)
+        assert_near_equal(results[2], truth_vals[2], tolerance=1.5e-12)
 
         partial_data = self.prob.check_partials(out_stream=None, form="central")
         assert_check_partials(partial_data, atol=0.15, rtol=0.15)
@@ -299,11 +292,6 @@ class TurbopropTest(unittest.TestCase):
             Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT, 0.5, units="unitless")
 
         self.prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED_MAX, 800, units="ft/s")
-        self.prob.set_val(
-            Aircraft.Engine.FIXED_RPM,
-            [1455.13090827, 1455.13090827, 1455.13090827],
-            units='rpm',
-        )
 
         self.prob.run_model()
 
@@ -339,14 +327,17 @@ class ExamplePropModel(SubsystemBuilderBase):
             PropellerPerformance(aviary_options=aviary_inputs, num_nodes=num_nodes),
             promotes_inputs=[
                 Dynamic.Mission.MACH,
-                Dynamic.Mission.SPEED_OF_SOUND,
                 Aircraft.Engine.PROPELLER_TIP_SPEED_MAX,
+                Aircraft.Engine.PROPELLER_TIP_MACH_MAX,
                 Dynamic.Mission.DENSITY,
                 Dynamic.Mission.VELOCITY,
                 Aircraft.Engine.PROPELLER_DIAMETER,
-                Dynamic.Mission.SHAFT_POWER,
                 Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,
                 Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT,
+                Aircraft.Nacelle.AVG_DIAMETER,
+                Dynamic.Mission.SPEED_OF_SOUND,
+                Dynamic.Mission.RPM,
+                Dynamic.Mission.SHAFT_POWER,
             ],
             promotes_outputs=['*'],
         )
@@ -362,8 +353,8 @@ class ExamplePropModel(SubsystemBuilderBase):
 
 
 if __name__ == "__main__":
-    # unittest.main()
-    test = TurbopropTest()
-    test.setUp()
+    unittest.main()
+    # test = TurbopropTest()
+    # test.setUp()
     # test.test_electroprop()
-    test.test_case_2()
+    # test.test_case_3()
