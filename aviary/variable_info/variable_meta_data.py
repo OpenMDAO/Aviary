@@ -4215,7 +4215,8 @@ add_meta_data(
                                 ]
                      },
     units='ft**2',
-    desc='wetted area of a single nacelle for each engine model'
+    desc='wetted area of a single nacelle for each engine model',
+    default_value=None,
 )
 
 add_meta_data(
