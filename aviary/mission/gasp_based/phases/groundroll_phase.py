@@ -6,6 +6,22 @@ from aviary.mission.gasp_based.ode.groundroll_ode import GroundrollODE
 
 
 class GroundrollPhase(PhaseBuilderBase):
+    """
+    A phase builder for a groundroll phase in a mission simulation.
+
+    This class extends the PhaseBuilderBase class, providing specific implementations for
+    the groundroll phase of a flight mission.
+
+    Attributes
+    ----------
+    Inherits all attributes from PhaseBuilderBase.
+
+    Methods
+    -------
+    Inherits all methods from PhaseBuilderBase.
+    Additional method overrides and new methods specific to the groundroll phase are included.
+    """
+
     default_name = 'groundroll_phase'
     default_ode_class = GroundrollODE
 

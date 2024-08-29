@@ -11,6 +11,7 @@ from aviary.variable_info.variable_meta_data import _MetaData
 
 
 def add_SGM_required_inputs(group: om.Group, inputs_to_add: dict):
+    """TODO: docstring"""
     blank_component = om.ExplicitComponent()
     for input, details in inputs_to_add.items():
         blank_component.add_input(input, **details)
@@ -21,6 +22,7 @@ def add_SGM_required_inputs(group: om.Group, inputs_to_add: dict):
 
 
 def add_SGM_required_outputs(group: om.Group, outputs_to_add: dict):
+    """TODO: docstring"""
     iv_comp = om.IndepVarComp()
     for output, details in outputs_to_add.items():
         iv_comp.add_output(output, **details)
@@ -31,6 +33,8 @@ def add_SGM_required_outputs(group: om.Group, outputs_to_add: dict):
 
 
 class event_trigger():
+    """TODO: docstring"""
+
     def __init__(
             self,
             state: str,
@@ -47,7 +51,10 @@ class event_trigger():
 
 
 class SimuPyProblem(SimulationMixin):
-    # Subproblem used as a basis for forward in time integration phases.
+    """
+    Subproblem used as a basis for forward in time integration phases.
+    """
+
     def __init__(
         self,
         ode,

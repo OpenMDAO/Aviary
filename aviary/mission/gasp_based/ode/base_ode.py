@@ -11,6 +11,10 @@ from aviary.mission.ode.altitude_rate import AltitudeRate
 
 
 class BaseODE(om.Group):
+    """
+    The base class for all GASP based ODE components.
+    """
+
     def initialize(self):
         self.options.declare("num_nodes", default=1, types=int)
         self.options.declare(
@@ -233,6 +237,7 @@ class BaseODE(om.Group):
             )
 
     def add_atmosphere(self, nn, input_speed_type=SpeedType.TAS):
+        """Add atmosphere component"""
         self.add_subsystem(
             name='atmosphere',
             subsys=Atmosphere(num_nodes=nn, input_speed_type=input_speed_type),
@@ -240,6 +245,7 @@ class BaseODE(om.Group):
         )
 
     def add_excess_rate_comps(self, nn):
+        """Add SpecificEnergyRate and AltitudeRate components"""
         self.add_subsystem(
             name='SPECIFIC_ENERGY_RATE_EXCESS',
             subsys=SpecificEnergyRate(num_nodes=nn),

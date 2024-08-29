@@ -7,6 +7,23 @@ from aviary.mission.gasp_based.ode.descent_ode import DescentODE
 
 
 class DescentPhase(PhaseBuilderBase):
+    """
+    A phase builder for an descent phase in a mission simulation.
+
+    This class extends the PhaseBuilderBase class, providing specific implementations for
+    the descent phase of a flight mission.
+
+    Attributes
+    ----------
+    Inherits all attributes from PhaseBuilderBase.
+
+    Methods
+    -------
+    Inherits all methods from PhaseBuilderBase.
+    Additional method overrides and new methods specific to the descent phase are included.
+  
+    """
+
     default_name = 'descent_phase'
     default_ode_class = DescentODE
 

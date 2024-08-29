@@ -8,6 +8,22 @@ from aviary.mission.gasp_based.ode.rotation_ode import RotationODE
 
 
 class RotationPhase(PhaseBuilderBase):
+    """
+    A phase builder for a rotation phase in a mission simulation.
+
+    This class extends the PhaseBuilderBase class, providing specific implementations for
+    the rotation phase of a flight mission.
+
+    Attributes
+    ----------
+    Inherits all attributes from PhaseBuilderBase.
+
+    Methods
+    -------
+    Inherits all methods from PhaseBuilderBase.
+    Additional method overrides and new methods specific to the rotation phase are included.
+    """
+
     default_name = 'rotation_phase'
     default_ode_class = RotationODE
 

@@ -32,6 +32,10 @@ class PolynomialFit(om.ImplicitComponent):
         self.linear_solver = om.DirectSolver()
 
     def solve_nonlinear(self, inputs, outputs):
+        """
+        Compute the outputs, given the inputs using the numpy fitting function.
+        """
+
         X_cp = inputs["time_cp"]
         Y_cp = inputs["h_cp"]
 
@@ -65,6 +69,10 @@ class PolynomialFit(om.ImplicitComponent):
             a2,
             a3,
         ) = outputs["A"]
+        """
+        Compute the residuals
+        """
+
         X_cp = inputs["time_cp"]
         Y_cp = inputs["h_cp"]
 

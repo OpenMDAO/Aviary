@@ -14,6 +14,8 @@ from aviary.mission.ode.altitude_rate import AltitudeRate
 
 
 class BreguetCruiseODESolution(BaseODE):
+    """The GASP based cruise ODE"""
+
     def setup(self):
         nn = self.options["num_nodes"]
         aviary_options = self.options['aviary_options']

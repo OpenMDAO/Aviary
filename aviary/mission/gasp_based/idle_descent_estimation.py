@@ -19,7 +19,9 @@ def add_descent_estimation_as_submodel(
         reserve_fuel=None,
         verbosity=Verbosity.QUIET,
 ):
-
+    """
+    Add descent estimation
+    """
     if phases is None:
         from aviary.interface.default_phase_info.two_dof_fiti import \
             descent_phases as phases, add_default_sgm_args

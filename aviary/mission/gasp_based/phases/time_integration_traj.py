@@ -4,6 +4,8 @@ from aviary.mission.gasp_based.phases.time_integration_phases import SGMGroundro
 
 
 class TimeIntegrationTrajBase(SGMTrajBase):
+    """TODO: docstring"""
+
     def initialize(self):
         super().initialize()
         self.options.declare("cruise_mach", default=0.8)
