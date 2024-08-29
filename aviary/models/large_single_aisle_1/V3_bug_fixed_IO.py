@@ -117,7 +117,10 @@ V3_bug_fixed_options.set_val(
     Aircraft.Fuselage.TAIL_FINENESS, 3, units="unitless"
 )
 V3_bug_fixed_options.set_val(
-    Aircraft.Fuselage.WETTED_AREA_FACTOR, 4000, units="unitless"
+    Aircraft.Fuselage.WETTED_AREA, 4000, units="ft**2"
+)
+V3_bug_fixed_options.set_val(
+    Aircraft.Fuselage.WETTED_AREA_SCALER, 1, units="unitless"
 )
 V3_bug_fixed_options.set_val(
     Aircraft.VerticalTail.MOMENT_RATIO, 2.362, units="unitless"
