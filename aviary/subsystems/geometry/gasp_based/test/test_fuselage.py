@@ -109,8 +109,10 @@ class FuselageSizeTestCase1(
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.TAIL_FINENESS, 3, units="unitless")
         self.prob.model.set_input_defaults("cabin_height", 13.1, units="ft")
+        # self.prob.model.set_input_defaults(
+        #     Aircraft.Fuselage.WETTED_AREA, 4000, units="ft**2")
         self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.WETTED_AREA_FACTOR, 4000, units="unitless")
+            Aircraft.Fuselage.WETTED_AREA_SCALER, 1, units="unitless")
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -155,7 +157,7 @@ class FuselageSizeTestCase2(
             Aircraft.Fuselage.TAIL_FINENESS, 3, units="unitless")
         self.prob.model.set_input_defaults("cabin_height", 13.1, units="ft")
         self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.WETTED_AREA_FACTOR, 1, units="unitless")
+            Aircraft.Fuselage.WETTED_AREA_SCALER, 1, units="unitless")
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -206,7 +208,9 @@ class FuselageGroupTestCase1(
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.TAIL_FINENESS, 3, units="unitless")
         self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.WETTED_AREA_FACTOR, 4000, units="unitless")
+            Aircraft.Fuselage.WETTED_AREA, 4000, units="ft**2")
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuselage.WETTED_AREA_SCALER, 1, units="unitless")
 
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, 9.5, units="ft")
@@ -265,7 +269,10 @@ class FuselageGroupTestCase2(unittest.TestCase):
             Aircraft.Fuselage.TAIL_FINENESS, 3, units="unitless"
         )  # not actual GASP value
         self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.WETTED_AREA_FACTOR, 4000, units="unitless"
+            Aircraft.Fuselage.WETTED_AREA, 4000, units="ft**2"
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuselage.WETTED_AREA_SCALER, 1, units="unitless"
         )  # not actual GASP value
 
         self.prob.model.set_input_defaults(
@@ -330,7 +337,7 @@ class FuselageGroupTestCase3(unittest.TestCase):
             Aircraft.Fuselage.TAIL_FINENESS, 3, units="unitless"
         )  # not actual GASP value
         self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.WETTED_AREA_FACTOR, 4000, units="unitless"
+            Aircraft.Fuselage.WETTED_AREA_SCALER, 1, units="unitless"
         )  # not actual GASP value
 
         self.prob.model.set_input_defaults(
@@ -393,7 +400,7 @@ class FuselageGroupTestCase4(unittest.TestCase):
             Aircraft.Fuselage.TAIL_FINENESS, 3, units="unitless"
         )  # not actual GASP value
         self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.WETTED_AREA_FACTOR, 4000, units="unitless"
+            Aircraft.Fuselage.WETTED_AREA_SCALER, 1, units="unitless"
         )  # not actual GASP value
 
         self.prob.model.set_input_defaults(
@@ -425,4 +432,7 @@ class FuselageGroupTestCase4(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    #unittest.main()
+    thisClass = FuselageSizeTestCase1()
+    thisClass.setUp()
+    thisClass.test_case1()
