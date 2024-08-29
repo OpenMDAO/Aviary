@@ -474,7 +474,10 @@ class TurbopropMission(om.Group):
                 self.promotes('fixed_rpm_source', ['*'])
         else:
             if has_gearbox:
-                shp_outputs((Dynamic.Mission.RPM, Dynamic.Mission.RPM + '_gearbox'))
+                if Dynamic.Mission.RPM in shp_output_set:
+                    shp_outputs.append(
+                        (Dynamic.Mission.RPM, Dynamic.Mission.RPM + '_gearbox')
+                    )
                 gearbox_inputs(
                     (Dynamic.Mission.RPM + '_in', Dynamic.Mission.RPM + '_gearbox')
                 )
