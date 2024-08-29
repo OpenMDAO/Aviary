@@ -9,6 +9,7 @@ from aviary.variable_info.variables import Dynamic
 
 class MissionEOM(om.Group):
     """Define the mission equation of motion"""
+
     def initialize(self):
         self.options.declare('num_nodes', types=int,
                              desc='Number of nodes to be evaluated in the RHS')

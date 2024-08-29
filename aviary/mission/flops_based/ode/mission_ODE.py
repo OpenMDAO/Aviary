@@ -17,12 +17,14 @@ class ExternalSubsystemGroup(om.Group):
     """
     For external subsystem group, promote relevant aircraft and mission variables.
     """
+
     def configure(self):
         promote_aircraft_and_mission_vars(self)
 
 
 class MissionODE(om.Group):
     """Define the ODE of motion"""
+
     def initialize(self):
         self.options.declare(
             'num_nodes', types=int,

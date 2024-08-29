@@ -8,6 +8,7 @@ from aviary.variable_info.variables import Dynamic
 
 class SGMHeightEnergy(SimuPyProblem):
     """TODO: docstring"""
+
     def __init__(
         self,
         ode_args,
@@ -37,6 +38,7 @@ class SGMHeightEnergy(SimuPyProblem):
 
 class SGMDetailedTakeoff(SimuPyProblem):
     """TODO: docstring"""
+
     def __init__(
         self,
         ode_args,
@@ -64,6 +66,7 @@ class SGMDetailedTakeoff(SimuPyProblem):
 
 class SGMDetailedLanding(SimuPyProblem):
     """TODO: docstring"""
+
     def __init__(
         self,
         ode_args,

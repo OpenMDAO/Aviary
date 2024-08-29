@@ -11,6 +11,7 @@ class StallSpeed(om.ExplicitComponent):
     Calculates the stall speed of the aircraft using
     v_stall = (2 * weight / (density * planform_area * Cl_max)) ** 0.5
     """
+
     def setup(self):
         """
         setup the inputs and output to calculates the stall speed of the aircraft.
@@ -90,6 +91,7 @@ class FinalTakeoffConditions(om.ExplicitComponent):
     Calculate the final takeoff condition including ground distance, final velocity,
     final mass, and final altitude.
     """
+
     def initialize(self):
         self.options.declare("num_engines", desc="number of engines on aircraft")
 
@@ -382,6 +384,7 @@ class TakeoffGroup(om.Group):
     Calculate the final takeoff condition including ground distance, final velocity,
     final mass, and final altitude with atmosphere is included. 
     """
+
     def initialize(self):
         self.options.declare("num_engines", desc="number of engines on aircraft")
 
