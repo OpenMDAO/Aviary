@@ -265,7 +265,7 @@ class FuselageGroupTestCase2(unittest.TestCase):
             Aircraft.Fuselage.TAIL_FINENESS, 3, units="unitless"
         )  # not actual GASP value
         self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.WETTED_AREA_FACTOR, 4000, units="unitless"
+            Aircraft.Fuselage.WETTED_AREA_FACTOR, 1.0, units="unitless"
         )  # not actual GASP value
 
         self.prob.model.set_input_defaults(
@@ -286,7 +286,7 @@ class FuselageGroupTestCase2(unittest.TestCase):
             self.prob[Aircraft.Fuselage.LENGTH], 129.5, tol
         )  # not actual GASP value
         assert_near_equal(
-            self.prob[Aircraft.Fuselage.WETTED_AREA], 18558260.55555555, tol
+            self.prob[Aircraft.Fuselage.WETTED_AREA], 4639.565, tol
         )  # not actual GASP value
         assert_near_equal(
             self.prob[Aircraft.TailBoom.LENGTH], 129.5, tol
@@ -330,7 +330,7 @@ class FuselageGroupTestCase3(unittest.TestCase):
             Aircraft.Fuselage.TAIL_FINENESS, 3, units="unitless"
         )  # not actual GASP value
         self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.WETTED_AREA_FACTOR, 4000, units="unitless"
+            Aircraft.Fuselage.WETTED_AREA_FACTOR, 1.0, units="unitless"
         )  # not actual GASP value
 
         self.prob.model.set_input_defaults(
@@ -351,7 +351,7 @@ class FuselageGroupTestCase3(unittest.TestCase):
             self.prob[Aircraft.Fuselage.LENGTH], 114.23, tol
         )  # not actual GASP value
         assert_near_equal(
-            self.prob[Aircraft.Fuselage.WETTED_AREA], 1.1790053e7, tol
+            self.prob[Aircraft.Fuselage.WETTED_AREA], 2947.513, tol
         )  # not actual GASP value
         assert_near_equal(
             self.prob[Aircraft.TailBoom.LENGTH], 114.23, tol
