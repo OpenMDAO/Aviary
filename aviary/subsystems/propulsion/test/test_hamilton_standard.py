@@ -12,6 +12,7 @@ from aviary.subsystems.propulsion.propeller.hamilton_standard import (
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.constants import RHO_SEA_LEVEL_ENGLISH
 
 
 class PreHamiltonStandardTest(unittest.TestCase):
@@ -51,8 +52,8 @@ class PreHamiltonStandardTest(unittest.TestCase):
                           [0.4494, 0.4194, 0.3932], tolerance=tol)
         assert_near_equal(prob.get_val("tip_mach"),
                           [1.05826, 1.1338, 1.3290], tolerance=tol)
-        assert_near_equal(prob.get_val("density_ratio"),
-                          [1.0001, 1.0001, 0.4482], tolerance=tol)
+        # assert_near_equal(prob.get_val("density_ratio"),
+        #                   [1.0001, 1.0001, 0.4482], tolerance=tol)
 
         partial_data = prob.check_partials(
             out_stream=None,
@@ -139,7 +140,11 @@ class PostHamiltonStandardTest(unittest.TestCase):
         prob.set_val("advance_ratio", [0.4494, 0.4194, 0.3932], units="unitless")
         prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED,
                      [700.0, 750.0, 800.0], units="ft/s")
-        prob.set_val("density_ratio", [1.0001, 1.0001, 0.4482], units="unitless")
+        prob.set_val(
+            Dynamic.Mission.DENSITY,
+            np.array([1.0001, 1.0001, 0.4482]) * RHO_SEA_LEVEL_ENGLISH,
+            units="slug/ft**3",
+        )
         prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 10.0, units="ft")
         prob.set_val("thrust_coefficient", [0.2765, 0.2052, 0.1158], units="unitless")
         prob.set_val("install_loss_factor", [0.0133, 0.0200, 0.0325], units="unitless")

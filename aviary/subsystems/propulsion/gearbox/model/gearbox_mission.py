@@ -24,7 +24,7 @@ class GearboxMission(om.Group):
         n = self.options["num_nodes"]
 
         self.add_subsystem(
-            'RPM_comp',
+            'rpm_comp',
             om.ExecComp(
                 'rpm_out = rpm_in / gear_ratio',
                 rpm_out={'val': np.ones(n), 'units': 'rpm'},
@@ -66,11 +66,20 @@ class GearboxMission(om.Group):
                 rpm_out={'val': np.ones(n), 'units': 'rad/s'},
                 has_diag_partials=True,
             ),
-            promotes_inputs=[
-                ('shaft_power_out', Dynamic.Mission.SHAFT_POWER + '_out'),
-                ('rpm_out', Dynamic.Mission.RPM + '_out'),
-            ],
+            # promotes_inputs=[
+            #     ('shaft_power_out', Dynamic.Mission.SHAFT_POWER + '_out'),
+            #     ('rpm_out', Dynamic.Mission.RPM + '_out'),
+            # ],
             promotes_outputs=[('torque_out', Dynamic.Mission.TORQUE + '_out')],
+        )
+        self.connect(
+            f'{Dynamic.Mission.SHAFT_POWER}_out',
+            f'torque_comp.shaft_power_out',
+        )
+
+        self.connect(
+            f'{Dynamic.Mission.RPM}_out',
+            f'torque_comp.rpm_out',
         )
 
         # Determine the maximum power available at this flight condition

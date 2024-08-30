@@ -347,47 +347,82 @@ class TurbopropMission(om.Group):
     def configure(self):
         """
         Correctly connect variables between shaft power model, gearbox, and propeller,
-        aliasing names if they are present in both sets of connections
+        aliasing names if they are present in both sets of connections.
+
+        If a gearbox is present, inputs to the gearbox are usually done via connection,
+        while outputs from the gearbox are promoted. This prevents intermediate values
+        from "leaking" out of the model and getting incorrectly connected to outside
+        components. It is assumed only the gearbox has variables like this.
 
         Set up fixed RPM value if requested by user, which overrides any RPM defined by
         shaft powerm model
         """
         has_gearbox = self.options['gearbox_model'] is not None
 
+        # TODO this list shouldn't be hardcoded - it should mirror propulsion_mission list
+        # Don't promote inputs that are in this list - shaft power should be an output
+        #   of this system, also having it as an input causes feedback loop problem at
+        #   the propulsion level
+        skipped_inputs = [
+            Dynamic.Mission.ELECTRIC_POWER_IN,
+            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE,
+            Dynamic.Mission.NOX_RATE,
+            Dynamic.Mission.SHAFT_POWER,
+            Dynamic.Mission.SHAFT_POWER_MAX,
+            Dynamic.Mission.TEMPERATURE_T4,
+            Dynamic.Mission.THRUST,
+            Dynamic.Mission.THRUST_MAX,
+        ]
+
         # build lists of inputs/outputs for each component as needed
+        # "_input_list" or "_output_list" are all variables that need to be connected
+        #   or promoted. This list is pared down as each variable is handled
+        # "_inputs" or "_outputs" is a list that tracks all the pomotions needed for a
+        #   given component, which is done at the end as a bulk promote.
+
         shp_model = self._get_subsystem(self.options['shaft_power_model'].name)
         shp_output_dict = shp_model.list_outputs(
             return_format='dict', units=True, out_stream=None, all_procs=True
         )
-        shp_output_set = set(
-            shp_output_dict[key]['prom_name']
-            for key in shp_output_dict
-            if '.' not in shp_output_dict[key]['prom_name']
+        shp_output_list = list(
+            set(
+                shp_output_dict[key]['prom_name']
+                for key in shp_output_dict
+                if '.' not in shp_output_dict[key]['prom_name']
+            )
         )
         # always promote all shaft power model inputs w/o aliasing
         shp_inputs = ['*']
-        shp_outputs = ['*']
+        shp_outputs = []
 
         if has_gearbox:
             gearbox_model = self._get_subsystem(self.options['gearbox_model'].name)
             gearbox_input_dict = gearbox_model.list_inputs(
                 return_format='dict', units=True, out_stream=None, all_procs=True
             )
-            gearbox_input_set = set(
-                gearbox_input_dict[key]['prom_name']
-                for key in gearbox_input_dict
-                if '.' not in gearbox_input_dict[key]['prom_name']
+            # Assumption is made that '_out' is never in an input name. This is necessary
+            #   because default gearbox uses things like shp_out for postprocessing like
+            #   computing torque output
+            gearbox_input_list = list(
+                set(
+                    gearbox_input_dict[key]['prom_name']
+                    for key in gearbox_input_dict
+                    if '.' not in gearbox_input_dict[key]['prom_name']
+                    and '_out' not in gearbox_input_dict[key]['prom_name']
+                )
             )
-            gearbox_inputs = ['*']
+            gearbox_inputs = []
             gearbox_output_dict = gearbox_model.list_outputs(
                 return_format='dict', units=True, out_stream=None, all_procs=True
             )
-            gearbox_output_set = set(
-                gearbox_output_dict[key]['prom_name']
-                for key in gearbox_output_dict
-                if '.' not in gearbox_output_dict[key]['prom_name']
+            gearbox_output_list = list(
+                set(
+                    gearbox_output_dict[key]['prom_name']
+                    for key in gearbox_output_dict
+                    if '.' not in gearbox_output_dict[key]['prom_name']
+                )
             )
-            gearbox_outputs = ['*']
+            gearbox_outputs = []
 
         if self.options['propeller_model'] is None:
             propeller_model_name = 'propeller_model'
@@ -397,12 +432,14 @@ class TurbopropMission(om.Group):
         propeller_input_dict = propeller_model.list_inputs(
             return_format='dict', units=True, out_stream=None, all_procs=True
         )
-        propeller_input_set = set(
-            propeller_input_dict[key]['prom_name']
-            for key in propeller_input_dict
-            if '.' not in propeller_input_dict[key]['prom_name']
+        propeller_input_list = list(
+            set(
+                propeller_input_dict[key]['prom_name']
+                for key in propeller_input_dict
+                if '.' not in propeller_input_dict[key]['prom_name']
+            )
         )
-        propeller_inputs = ['*']
+        propeller_inputs = []
         # always promote all propeller model outputs w/o aliasing except thrust
         propeller_outputs = [
             '*',
@@ -410,49 +447,63 @@ class TurbopropMission(om.Group):
             (Dynamic.Mission.THRUST_MAX, 'propeller_thrust_max'),
         ]
 
-        #############
-        # SHP MODEL #
-        #############
-        # thrust outputs are directly promoted, no connections
-        if Dynamic.Mission.THRUST in shp_output_set:
+        #########################
+        # SHP MODEL CONNECTIONS #
+        #########################
+        # Everything not explicitly handled is assumed to be promoted at end
+        # Thrust outputs are directly promoted with alias
+        if Dynamic.Mission.THRUST in shp_output_list:
             shp_outputs.append((Dynamic.Mission.THRUST, 'turboshaft_thrust'))
+            shp_output_list.remove(Dynamic.Mission.THRUST)
 
-        if Dynamic.Mission.THRUST_MAX in shp_output_set:
+        if Dynamic.Mission.THRUST_MAX in shp_output_list:
             shp_outputs.append((Dynamic.Mission.THRUST_MAX, 'turboshaft_thrust_max'))
+            shp_output_list.remove(Dynamic.Mission.THRUST_MAX)
 
-        ##################
-        # SHP -> GEARBOX #
-        ##################
+        # Gearbox connections
         if has_gearbox:
-            # Gearbox is handled with some special handling - we keep the generic
-            #   checks for aliasing common outputs/inputs between shp model and gearbox
-            # We assume gearbox uses "x_in" and "x_out" for some variables which we check
-            #   for as well
             # RPM has special handling
-            for var in shp_output_set:
+            for var in shp_output_list.copy():
                 if (
-                    var in shp_output_set
-                    and var in gearbox_input_set
+                    var in shp_output_list
+                    and var in gearbox_input_list
                     and var != Dynamic.Mission.RPM
                 ):
-                    shp_outputs.append((var, var + '_gearbox'))
-                    gearbox_inputs.append((var, var + '_gearbox'))
+                    # if var is in gearbox input and output, connect on shp -> gearbox side
+                    if var in gearbox_output_list:
+                        self.connect(
+                            shp_model.name + var + '_gearbox', gearbox_model.name + var
+                        )
+                        shp_outputs.remove(var)
+                        gearbox_inputs.append((var, var + '_gearbox'))
+                        gearbox_input_list.remove(var)
+
+                # same thing, but check for '_in'
                 elif (
-                    var in shp_output_set
-                    and var + '_in' in gearbox_input_set
+                    var in shp_output_list
+                    and var + '_in' in gearbox_input_list
                     and var != Dynamic.Mission.RPM
                 ):
-                    shp_outputs.append((var, var + '_gearbox'))
-                    gearbox_inputs.append((var + '_in', var + '_gearbox'))
+                    # if var is in gearbox input and output, connect on shp -> gearbox side
+                    if (
+                        var in gearbox_output_list
+                        or var + '_out' in gearbox_output_list
+                    ):
+                        shp_outputs.append((var, var + '_gearbox'))
+                        shp_output_list.remove(var)
+                        gearbox_inputs.append((var + '_in', var + '_gearbox'))
+                        gearbox_input_list.remove(var + '_in')
 
         # If fixed RPM is requested by the user, use that value. Override RPM output
         #   from shaft power model if present, warning user
+        rpm_ivc = self._get_subsystem('fixed_rpm_source')
+
         if Aircraft.Engine.FIXED_RPM in self.aviary_inputs:
             fixed_rpm = self.aviary_inputs.get_val(
                 Aircraft.Engine.FIXED_RPM, units='rpm'
             )
 
-            if Dynamic.Mission.RPM in shp_output_set:
+            if Dynamic.Mission.RPM in shp_output_list:
                 if self.aviary_inputs.get_val(Settings.VERBOSITY) >= Verbosity.BRIEF:
                     warnings.warn(
                         'Overriding RPM value outputted by EngineModel'
@@ -462,36 +513,83 @@ class TurbopropMission(om.Group):
                 shp_outputs.append(
                     (Dynamic.Mission.RPM, 'AUTO_OVERRIDE:' + Dynamic.Mission.RPM)
                 )
+                shp_output_list.remove(Dynamic.Mission.RPM)
 
             fixed_rpm_nn = np.ones(self.num_nodes) * fixed_rpm
 
-            rpm_ivc = self._get_subsystem('fixed_rpm_source')
             rpm_ivc.add_output(Dynamic.Mission.RPM, fixed_rpm_nn, units='rpm')
             if has_gearbox:
                 self.promotes('fixed_rpm_source', [(Dynamic.Mission.RPM, 'fixed_rpm')])
                 gearbox_inputs.append((Dynamic.Mission.RPM + '_in', 'fixed_rpm'))
+                gearbox_input_list.remove(Dynamic.Mission.RPM + '_in')
             else:
                 self.promotes('fixed_rpm_source', ['*'])
         else:
+            rpm_ivc.add_output('AUTO_OVERRIDE:' + Dynamic.Mission.RPM, 1.0, units='rpm')
             if has_gearbox:
-                if Dynamic.Mission.RPM in shp_output_set:
+                if Dynamic.Mission.RPM in shp_output_list:
                     shp_outputs.append(
                         (Dynamic.Mission.RPM, Dynamic.Mission.RPM + '_gearbox')
                     )
-                gearbox_inputs(
+                    shp_output_list.remove(Dynamic.Mission.RPM)
+                gearbox_inputs.append(
                     (Dynamic.Mission.RPM + '_in', Dynamic.Mission.RPM + '_gearbox')
                 )
+                gearbox_input_list.remove(Dynamic.Mission.RPM + '_in')
 
-        ########################
-        # GEARBOX -> PROPELLER #
-        ########################
-        # Direct gearbox -> propeller connections don't alias, as these variables get
-        #   promoted beyond this group
-        # Gearbox variables using '_out' are aliased if they have a match with propeller
+        # Promote all other shp model outputs that don't interact with the gearbox
+        for var in shp_output_list:
+            shp_outputs.append(var)
+
+        #############################
+        # GEARBOX MODEL CONNECTIONS #
+        #############################
         if has_gearbox:
-            for var in propeller_input_set:
-                if var + '_out' in gearbox_output_set and var in propeller_input_set:
+            # Promote all inputs which don't come from shp model, except skipped ones
+            for var in gearbox_input_list.copy():
+                if var not in skipped_inputs:
+                    gearbox_inputs.append(var)
+                # DO NOT promote inputs in skip list - always skip
+                gearbox_input_list.remove(var)
+
+            # Gearbox outputs can always get promoted. Alias matches with propeller
+            for var in propeller_input_list.copy():
+                if var in gearbox_output_list and var in propeller_input_list:
+                    gearbox_outputs.append((var, var))
+                    gearbox_output_list.remove(var)
+                    # connect variables in skip list to propeller
+                    if var in skipped_inputs:
+                        self.connect(
+                            var,
+                            propeller_model.name + '.' + var,
+                        )
+
+                # alias outputs with 'out' to match with propeller
+                if var + '_out' in gearbox_output_list and var in propeller_input_list:
                     gearbox_outputs.append((var + '_out', var))
+                    gearbox_output_list.remove(var + '_out')
+                    # connect variables in skip list to propeller
+                    if var in skipped_inputs:
+                        self.connect(
+                            var,
+                            propeller_model.name + '.' + var,
+                        )
+
+        # Make sure any inputs/outputs that didn't need special handling get promoted
+        for var in gearbox_input_list:
+            gearbox_inputs.append(var)
+        for var in gearbox_output_list:
+            gearbox_outputs.append(var)
+
+        ###############################
+        # PROPELLER MODEL CONNECTIONS #
+        ###############################
+        # Promote all inputs not in skip list
+        for var in propeller_input_list.copy():
+            if var not in skipped_inputs:
+                propeller_inputs.append(var)
+            # DO NOT promote inputs in skip list - always skip
+            propeller_input_list.remove(var)
 
         ##############
         # PROMOTIONS #

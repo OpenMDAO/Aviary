@@ -1786,9 +1786,9 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='rpm',
     default_value=1.0,
-    desc='Fixed RPM the engine is assumed to be running at. Replaces RPM provided by '
+    desc='RPM the engine is set to be running at. Overrides RPM provided by '
     'engine model or chosen by optimizer. Typically used when pairing a motor or '
-    'turboshaft with a propeller.',
+    'turboshaft using a fixed operating RPM with a propeller.',
 )
 
 add_meta_data(
