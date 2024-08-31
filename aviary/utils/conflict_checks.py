@@ -4,6 +4,9 @@ from aviary.variable_info.variables import Aircraft
 
 
 def check_fold_location_definition(inputs, options: AviaryValues):
+    """
+    If there is no strut, then CHOOSE_FOLD_LOCATION must be true.
+    """
     choose_fold_location = options.get_val(
         Aircraft.Wing.CHOOSE_FOLD_LOCATION, units='unitless')
     has_strut = options.get_val(Aircraft.Wing.HAS_STRUT, units='unitless')

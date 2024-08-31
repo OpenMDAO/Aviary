@@ -528,16 +528,16 @@ def update_flops_options(vehicle_data):
 
 
 def update_flops_scalar_variables(var_name, input_values: NamedValues):
-    # The following parameters are used to modify or override
-    # internally computed weights for various components as follows:
-    # < 0., negative of starting weight which will be modified
-    #   as appropriate during optimization or parametric
-    #   variation, lb
-    # = 0., no weight for that component
-    # > 0. but < 5., scale factor applied to internally
-    #   computed weight
-    # > 5., actual fixed weight for component, lb
-    # Same rules also applied to various other FLOPS scalar parameters
+    """
+    The following parameters are used to modify or override
+    internally computed weights for various components as follows:
+    < 0., negative of starting weight which will be modified
+      as appropriate during optimization or parametric variation, lb
+    = 0., no weight for that component
+    > 0. but < 5., scale factor applied to internally computed weight
+    > 5., actual fixed weight for component, lb
+    Same rules also applied to various other FLOPS scalar parameters
+    """
     scalar_name = var_name + '_scaler'
     if scalar_name not in input_values:
         return
