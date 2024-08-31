@@ -21,7 +21,6 @@ class DescentPhase(PhaseBuilderBase):
     -------
     Inherits all methods from PhaseBuilderBase.
     Additional method overrides and new methods specific to the descent phase are included.
-  
     """
 
     default_name = 'descent_phase'
