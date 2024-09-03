@@ -577,9 +577,7 @@ class TipSpeedLimitTest(unittest.TestCase):
         prob.run_model()
 
         tip_speed = prob.get_val('propeller_tip_speed_limit', units='ft/s')
-        # rpm = prob.get_val('rpm', units='rpm')
         assert_near_equal(tip_speed, [800, 800, 635.7686], tolerance=tol)
-        # assert_near_equal(rpm, [1455.1309, 1455.1309, 1156.4082], tolerance=tol)
 
         partial_data = prob.check_partials(
             out_stream=None,

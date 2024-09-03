@@ -66,10 +66,6 @@ class GearboxMission(om.Group):
                 rpm_out={'val': np.ones(n), 'units': 'rad/s'},
                 has_diag_partials=True,
             ),
-            # promotes_inputs=[
-            #     ('shaft_power_out', Dynamic.Mission.SHAFT_POWER + '_out'),
-            #     ('rpm_out', Dynamic.Mission.RPM + '_out'),
-            # ],
             promotes_outputs=[('torque_out', Dynamic.Mission.TORQUE + '_out')],
         )
         self.connect(
