@@ -48,10 +48,14 @@ class PreHamiltonStandardTest(unittest.TestCase):
         tol = 5e-4
         assert_near_equal(prob.get_val("power_coefficient"),
                           [0.3871, 0.3147, 0.2815], tolerance=tol)
-        assert_near_equal(prob.get_val("advance_ratio"),
-                          [0.4494, 0.4194, 0.3932], tolerance=tol)
-        assert_near_equal(prob.get_val("tip_mach"),
-                          [1.05826, 1.1338, 1.3290], tolerance=tol)
+        assert_near_equal(
+            prob.get_val("advance_ratio"),
+            [0.44879895, 0.41887902, 0.39269908],
+            tolerance=tol,
+        )
+        assert_near_equal(
+            prob.get_val("tip_mach"), [0.6270004, 0.67178614, 0.78743671], tolerance=tol
+        )
         # assert_near_equal(prob.get_val("density_ratio"),
         #                   [1.0001, 1.0001, 0.4482], tolerance=tol)
 

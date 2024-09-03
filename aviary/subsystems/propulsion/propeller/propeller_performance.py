@@ -491,7 +491,7 @@ class PropellerPerformance(om.Group):
                 "power_coefficient",
                 "advance_ratio",
                 "tip_mach",
-                "density_ratio",
+                # "density_ratio",
             ],
         )
 
@@ -561,7 +561,7 @@ class PropellerPerformance(om.Group):
                 "comp_tip_loss_factor",
                 Dynamic.Mission.PROPELLER_TIP_SPEED,
                 Aircraft.Engine.PROPELLER_DIAMETER,
-                "density_ratio",
+                # "density_ratio",
                 'install_loss_factor',
                 "advance_ratio",
                 "power_coefficient",
@@ -571,4 +571,5 @@ class PropellerPerformance(om.Group):
                 Dynamic.Mission.THRUST,
                 "propeller_efficiency",
                 "install_efficiency",
-            ])
+            ],
+        )
