@@ -41,6 +41,7 @@ aircraft:engine:propeller_diameter, 13.5, ft
 aircraft:engine:num_propeller_blades, 4, unitless
 aircraft:engine:propeller_activity_factor, 167, unitless
 aircraft:engine:propeller_tip_speed_max, 720, ft/s
+aircraft:engine:gearbox:gear_ratio, 13.53, unitless
 aircraft:engine:fixed_rpm, 1019, rpm
 aircraft:fuel:density, 6.687, lbm/galUS
 aircraft:fuel:fuel_margin, 15, unitless

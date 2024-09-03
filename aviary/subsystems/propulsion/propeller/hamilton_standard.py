@@ -634,6 +634,7 @@ class HamiltonStandard(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         verbosity = self.options['aviary_options'].get_val(Settings.VERBOSITY)
         act_factor = inputs[Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR]
+        cli = inputs[Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT]
         num_blades = self.options['aviary_options'].get_val(
             Aircraft.Engine.NUM_PROPELLER_BLADES
         )
@@ -695,7 +696,6 @@ class HamiltonStandard(om.ExplicitComponent):
             # flag that given lift coeff (cli) does not fall on a node point of CL_arr
             CL_tab_idx_flg = 0  # NCL_flg
             ifnd = 0
-            cli = inputs[Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT]
             power_coefficient = inputs['power_coefficient'][i_node]
             for ii in range(6):
                 cl_idx = ii
