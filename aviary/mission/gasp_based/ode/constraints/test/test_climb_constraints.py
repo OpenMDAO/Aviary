@@ -12,6 +12,10 @@ from aviary.variable_info.variables import Dynamic
 
 
 class SpeedConstraintTestCase1(unittest.TestCase):
+    """
+    MACH = 0.6
+    """
+
     def setUp(self):
 
         self.prob = om.Problem()
@@ -44,6 +48,10 @@ class SpeedConstraintTestCase1(unittest.TestCase):
 
 
 class SpeedConstraintTestCase2(unittest.TestCase):
+    """
+    MACH = 0.9
+    """
+
     def setUp(self):
 
         self.prob = om.Problem()

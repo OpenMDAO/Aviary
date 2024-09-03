@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_near_equal
+from openmdao.utils.assert_utils import assert_near_equal, assert_check_partials
 
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.mission.gasp_based.ode.params import ParamPort
@@ -46,13 +46,15 @@ class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
                                      aviary_options=get_option_defaults(),
                                      core_subsystems=[aero])
 
-        p.model.add_subsystem("iter_group",
-                              subsys=g,
-                              promotes_inputs=["*"],
-                              promotes_outputs=["*"])
+        ig = p.model.add_subsystem("iter_group",
+                                   subsys=g,
+                                   promotes_inputs=["*"],
+                                   promotes_outputs=["*"])
 
         for key, data in param_port.param_data.items():
             p.model.set_input_defaults(key, **data)
+        if ground_roll:
+            ig.set_input_defaults("alpha", np.zeros(nn), units="deg")
 
         p.setup(force_alloc_complex=True)
 
@@ -97,7 +99,12 @@ class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
         # 2. Test that forces balance normal to the velocity axis
         assert_near_equal(lift + thrust_req * s_alphai, weight * c_gamma)
 
+        cpd = p.check_partials(out_stream=None, method="cs", step=1.01e-40,
+                               excludes=["*params*", "*aero*"])
+        assert_check_partials(cpd, atol=1e-10, rtol=1e-10)
+
     def test_iter_group(self):
+        # issue #494: why not ground_roll in [True] ?
         for ground_roll in [False]:
             with self.subTest(msg=f"ground_roll={ground_roll}"):
                 self._test_unsteady_alpha_thrust_iter_group(ground_roll=ground_roll)
@@ -105,5 +112,3 @@ class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-    # test = TestUnsteadyAlphaThrustIterGroup()
-    # test._test_unsteady_alpha_thrust_iter_group()

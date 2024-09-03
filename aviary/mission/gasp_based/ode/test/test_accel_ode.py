@@ -1,5 +1,4 @@
 import unittest
-import os
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
@@ -40,9 +39,9 @@ class AccelerationODETestCase(unittest.TestCase):
         testvals = {
             Dynamic.Mission.LIFT: [174974, 174878],
             Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: [
-                -13189.24129984, -13490.78047417]  # lbm/h
+                -13262.73, -13567.53]  # lbm/h
         }
-        check_prob_outputs(self.prob, testvals, rtol=1e-2)
+        check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
         partial_data = self.prob.check_partials(
             method="cs", out_stream=None, excludes=["*params*", "*aero*"]
