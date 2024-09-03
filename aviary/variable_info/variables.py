@@ -641,7 +641,6 @@ class Dynamic:
         NOX_RATE_TOTAL = 'nox_rate_total'
         PROPELLER_TIP_SPEED = 'propeller_tip_speed'
         RPM = 'rotations_per_minute'
-        RPM_GEARBOX = 'rotations_per_minute_gearbox'
         SHAFT_POWER = 'shaft_power'
         SHAFT_POWER_MAX = 'shaft_power_max'
         SPECIFIC_ENERGY = 'specific_energy'
@@ -666,13 +665,13 @@ class Mission:
     class Constraints:
         # these can be residuals (for equality constraints),
         # upper bounds, or lower bounds
+        GEARBOX_SHAFT_POWER_RESIDUAL = (
+            'mission:constraints:gearbox_shaft_power_residual'
+        )
         MASS_RESIDUAL = 'mission:constraints:mass_residual'
         MAX_MACH = 'mission:constraints:max_mach'
         RANGE_RESIDUAL = 'mission:constraints:range_residual'
         RANGE_RESIDUAL_RESERVE = 'mission:constraints:range_residual_reserve'
-        GEARBOX_SHAFT_POWER_RESIDUAL = (
-            'mission:constraints:gearbox_shaft_power_residual'
-        )
 
     class Design:
         # These values MAY change in design mission, but in off-design

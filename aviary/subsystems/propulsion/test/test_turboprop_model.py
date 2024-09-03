@@ -214,7 +214,7 @@ class TurbopropTest(unittest.TestCase):
             Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT, 0.5, units="unitless")
 
         self.prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED_MAX, 800, units="ft/s")
-        om.n2(self.prob)
+
         self.prob.run_model()
 
         results = self.get_results()

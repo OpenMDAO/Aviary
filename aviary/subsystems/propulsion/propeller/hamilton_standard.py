@@ -70,11 +70,18 @@ def _unint(xa, ya, x):
             d2 = x - xa[jx1+1]
             d3 = x - xa[jx1+2]
             d4 = x - xa[jx1+3]
-            c1 = ra/p1*d2/p4*d3
-            c2 = -ra/p1*d1/p2*d3 + rb/p2*d3/p5*d4
-            c3 = ra/p2*d1/p4*d2 - rb/p2*d2/p3*d4
-            c4 = rb/p5*d2/p3*d3
+            c1 = ra / p1 * d2 / p4 * d3
+            c2 = -ra / p1 * d1 / p2 * d3 + rb / p2 * d3 / p5 * d4
+            c3 = ra / p2 * d1 / p4 * d2 - rb / p2 * d2 / p3 * d4
+            c4 = rb / p5 * d2 / p3 * d3
             y = ya[jx1]*c1 + ya[jx1+1]*c2 + ya[jx1+2]*c3 + ya[jx1+3]*c4
+
+            # we don't want y to be an array
+            try:
+                y = y[0]
+            # floats/ints will give TypeError, numpy versions give IndexError
+            except (TypeError, IndexError):
+                pass
 
     return y, Lmt
 
@@ -626,8 +633,19 @@ class HamiltonStandard(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         verbosity = self.options['aviary_options'].get_val(Settings.VERBOSITY)
+        act_factor = inputs[Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR]
         num_blades = self.options['aviary_options'].get_val(
-            Aircraft.Engine.NUM_PROPELLER_BLADES)
+            Aircraft.Engine.NUM_PROPELLER_BLADES
+        )
+        # TODO verify this works with multiple engine models (i.e. prop mission is
+        #      properly slicing these inputs)
+        # ensure num_blades is an int, so it can be used as array index later
+        try:
+            len(num_blades)
+        except TypeError:
+            num_blades = int(num_blades)
+        else:
+            num_blades = int(num_blades[0])
 
         for i_node in range(self.options['num_nodes']):
             ichck = 0
@@ -645,7 +663,7 @@ class HamiltonStandard(om.ExplicitComponent):
             TXCLI = np.zeros(6)
             CTTT = np.zeros(4)
             XXXFT = np.zeros(4)
-            act_factor = inputs[Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR]
+
             for k in range(2):
                 AF_adj_CP[k], run_flag = _unint(Act_Factor_arr, AFCPC[k], act_factor)
                 AF_adj_CT[k], run_flag = _unint(Act_Factor_arr, AFCTC[k], act_factor)
@@ -703,7 +721,7 @@ class HamiltonStandard(om.ExplicitComponent):
             lmod = (num_blades % 2) + 1
             if (lmod == 1):
                 nbb = 1
-                idx_blade = int(num_blades/2.0)
+                idx_blade = int(num_blades / 2)
                 # even number of blades idx_blade = 1 if 2 blades;
                 #                       idx_blade = 2 if 4 blades;
                 #                       idx_blade = 3 if 6 blades;

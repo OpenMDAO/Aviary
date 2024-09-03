@@ -56,8 +56,6 @@ class PreHamiltonStandardTest(unittest.TestCase):
         assert_near_equal(
             prob.get_val("tip_mach"), [0.6270004, 0.67178614, 0.78743671], tolerance=tol
         )
-        # assert_near_equal(prob.get_val("density_ratio"),
-        #                   [1.0001, 1.0001, 0.4482], tolerance=tol)
 
         partial_data = prob.check_partials(
             out_stream=None,
@@ -180,4 +178,7 @@ class PostHamiltonStandardTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    # unittest.main()
+    test = HamiltonStandardTest()
+    test.setUp()
+    test.test_HS()

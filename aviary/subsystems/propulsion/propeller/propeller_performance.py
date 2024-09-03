@@ -428,11 +428,11 @@ class PropellerPerformance(om.Group):
 
     def initialize(self):
         self.options.declare(
-            'num_nodes', types=int, default=1,
-            desc='Number of nodes to be evaluated in the RHS')
-        # self.options.declare(
-        #     'input_rpm', types=bool, default=False,
-        #     desc='If True, the input is RPM, otherwise RPM is set by propeller limits')
+            'num_nodes',
+            types=int,
+            default=1,
+            desc='Number of nodes to be evaluated in the RHS',
+        )
 
         self.options.declare('aviary_options', types=AviaryValues,
                              desc='collection of Aircraft/Mission specific options')
@@ -561,7 +561,7 @@ class PropellerPerformance(om.Group):
                 "comp_tip_loss_factor",
                 Dynamic.Mission.PROPELLER_TIP_SPEED,
                 Aircraft.Engine.PROPELLER_DIAMETER,
-                # "density_ratio",
+                Dynamic.Mission.DENSITY,
                 'install_loss_factor',
                 "advance_ratio",
                 "power_coefficient",
