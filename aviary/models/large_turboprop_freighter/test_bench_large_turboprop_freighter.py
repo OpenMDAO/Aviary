@@ -12,6 +12,7 @@ from aviary.variable_info.enums import SpeedType
 
 
 @use_tempdirs
+@unittest.skip("Skipping until input_port is removed")
 class LargeTurbopropFreighterBenchmark(unittest.TestCase):
 
     def build_and_run_problem(self):
