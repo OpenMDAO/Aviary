@@ -5,6 +5,7 @@ from numpy.polynomial import Polynomial
 
 class PolynomialFit(om.ImplicitComponent):
     def initialize(self):
+
         self.options.declare("N_cp", types=int)
 
     def setup(self):
@@ -24,8 +25,8 @@ class PolynomialFit(om.ImplicitComponent):
         # these are the coefficients of the polynomial function you are fitting
         self.add_output("A", np.zeros(4))  # assuming a 5th order polynomial
 
-        # analytic derivatives are left as an exercize for the Daniel
         # using CS here will give accurate partials, but will miss the sparsity pattern
+        # issue #497
         self.declare_partials("*", "*", method="cs")
 
         self.linear_solver = om.DirectSolver()

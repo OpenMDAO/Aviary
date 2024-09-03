@@ -6,7 +6,6 @@ import openmdao.api as om
 
 from aviary.variable_info.variables import Aircraft, Mission
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables_in import VariablesIn
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.functions import override_aviary_vars
 
