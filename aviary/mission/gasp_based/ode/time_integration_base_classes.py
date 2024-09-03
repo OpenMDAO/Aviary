@@ -117,7 +117,6 @@ class SimuPyProblem(SimulationMixin):
         # the SGM phases.
         from aviary.mission.gasp_based.ode.params import set_params_for_unit_tests
         set_params_for_unit_tests(prob)
-        # set_aviary_initial_values(prob, ode.options['aviary_options'])
 
         prob.final_setup()
 
@@ -506,9 +505,10 @@ class SGMTrajBase(om.ExplicitComponent):
             # values are supposed to propagate from the pre-mission and top ivcs into
             # the SGM phases.
             from aviary.mission.gasp_based.ode.params import params_for_unit_tests
-            for key, val in params_for_unit_tests.items():
-                if True or key not in traj_promote_initial_input:
-                    traj_promote_initial_input[key] = val
+            traj_promote_initial_input = {
+                **params_for_unit_tests,
+                **traj_promote_initial_input
+            }
 
         self.traj_promote_initial_input = {
             **self.options["param_dict"], **traj_promote_initial_input}
