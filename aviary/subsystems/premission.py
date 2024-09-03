@@ -13,6 +13,9 @@ use_new_openmdao_syntax = version.parse(openmdao.__version__) >= version.parse("
 
 
 class CorePreMission(om.Group):
+    """
+    Builder of core pre-mission subsystems.
+    """
 
     def initialize(self):
         self.options.declare(
