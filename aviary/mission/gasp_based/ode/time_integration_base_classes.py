@@ -501,6 +501,15 @@ class SGMTrajBase(om.ExplicitComponent):
                         continue
                     traj_promote_initial_input[prom_name] = data
 
+            # TODO - This is a hack to mimic the behavior of the old paramport, which
+            # contains some initial default values. It is unclear how actual "parameter"
+            # values are supposed to propagate from the pre-mission and top ivcs into
+            # the SGM phases.
+            from aviary.mission.gasp_based.ode.params import params_for_unit_tests
+            for key, val in params_for_unit_tests.items():
+                if True or key not in traj_promote_initial_input:
+                    traj_promote_initial_input[key] = val
+
         self.traj_promote_initial_input = {
             **self.options["param_dict"], **traj_promote_initial_input}
         for name, kwargs in self.traj_promote_initial_input.items():
