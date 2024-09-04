@@ -9,10 +9,9 @@ We then call the correct methods in order to set up and run an Aviary optimizati
 This performs a coupled design-mission optimization and outputs the results from Aviary into the `reports` folder.
 """
 import aviary.api as av
-from example_phase_info import phase_info
 
 from aviary.interface.default_phase_info.height_energy import phase_info_parameterization
-from aviary.variable_info.enums import ProblemType, Verbosity
+from aviary.variable_info.enums import ProblemType
 from aviary.variable_info.variables import Mission
 
 phase_info = {
