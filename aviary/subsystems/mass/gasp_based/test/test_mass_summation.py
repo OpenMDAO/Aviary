@@ -52,12 +52,17 @@ class MassSummationTestCase1(unittest.TestCase):
             Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units="mi/h"
         )
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=0.0, units="ft")
+        # Adjust WETTED_AREA_SCALER such that WETTED_AREA = 4000.0
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.86215, units="unitless")
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
 
         self.prob.run_model()
+
+        # print(f"wetted_area: {self.prob[Aircraft.Fuselage.WETTED_AREA]}")
 
         tol = 5e-4
         # size values:
@@ -262,9 +267,9 @@ class MassSummationTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.TAIL_FINENESS, 3, units="unitless"
         )
+        # Adjust WETTED_AREA_SCALER such that WETTED_AREA = 4000.0
         self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.WETTED_AREA_FACTOR, 4000, units="unitless"
-        )
+            Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.86215, units="unitless")
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.12, units="unitless"
         )
@@ -651,9 +656,9 @@ class MassSummationTestCase3(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.TAIL_FINENESS, 3, units="unitless"
         )
+        # Adjust WETTED_AREA_SCALER such that WETTED_AREA = 4000.0
         self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.WETTED_AREA_FACTOR, 4000, units="unitless"
-        )
+            Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.86215, units="unitless")
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.12, units="unitless"
         )
@@ -1031,9 +1036,9 @@ class MassSummationTestCase4(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.TAIL_FINENESS, 3, units="unitless"
         )
+        # Adjust WETTED_AREA_SCALER such that WETTED_AREA = 4000.0
         self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.WETTED_AREA_FACTOR, 4000, units="unitless"
-        )
+            Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.86215, units="unitless")
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.12, units="unitless"
         )
@@ -1412,9 +1417,9 @@ class MassSummationTestCase5(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.TAIL_FINENESS, 3, units="unitless"
         )
+        # Adjust WETTED_AREA_SCALER such that WETTED_AREA = 4000.0
         self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.WETTED_AREA_FACTOR, 4000, units="unitless"
-        )
+            Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.86215, units="unitless")
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.12, units="unitless"
         )
@@ -1792,9 +1797,9 @@ class MassSummationTestCase6(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.TAIL_FINENESS, 3, units="unitless"
         )
+        # Adjust WETTED_AREA_SCALER such that WETTED_AREA = 4000.0
         self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.WETTED_AREA_FACTOR, 4000, units="unitless"
-        )
+            Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.86215, units="unitless")
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.12, units="unitless"
         )
@@ -2078,8 +2083,6 @@ class MassSummationTestCase7(unittest.TestCase):
     def setUp(self):
 
         options = get_option_defaults()
-        options.set_val(Aircraft.Fuselage.PROVIDE_SURFACE_AREA,
-                        val=False, units='unitless')
         options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM,
                         val=False, units='unitless')
@@ -2176,7 +2179,7 @@ class MassSummationTestCase7(unittest.TestCase):
             Aircraft.Fuselage.TAIL_FINENESS, 3, units="unitless"
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.WETTED_AREA_FACTOR, 1, units="unitless"
+            Aircraft.Fuselage.WETTED_AREA_SCALER, 1, units="unitless"
         )
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.1, units="unitless"
@@ -2467,8 +2470,6 @@ class MassSummationTestCase8(unittest.TestCase):
     def setUp(self):
 
         options = get_option_defaults()
-        options.set_val(Aircraft.Fuselage.PROVIDE_SURFACE_AREA,
-                        val=False, units='unitless')
         options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')
         options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM,
@@ -2551,7 +2552,7 @@ class MassSummationTestCase8(unittest.TestCase):
             Aircraft.Fuselage.TAIL_FINENESS, 1.18, units="unitless"
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.WETTED_AREA_FACTOR, 1.0, units="unitless"
+            Aircraft.Fuselage.WETTED_AREA_SCALER, 1.0, units="unitless"
         )
         self.prob.model.set_input_defaults(
             Aircraft.Wing.LOADING, val=87.5, units="lbf/ft**2"
@@ -2865,8 +2866,6 @@ class MassSummationTestCase9(unittest.TestCase):
     def setUp(self):
 
         options = get_option_defaults()
-        options.set_val(Aircraft.Fuselage.PROVIDE_SURFACE_AREA,
-                        val=False, units='unitless')
         options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')
         options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=154, units='unitless')
@@ -2947,7 +2946,7 @@ class MassSummationTestCase9(unittest.TestCase):
             Aircraft.Fuselage.TAIL_FINENESS, 1.18, units="unitless"
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.WETTED_AREA_FACTOR, 1, units="unitless"
+            Aircraft.Fuselage.WETTED_AREA_SCALER, 1, units="unitless"
         )
         self.prob.model.set_input_defaults(
             Aircraft.Wing.LOADING, val=96.10, units="lbf/ft**2"
@@ -3304,3 +3303,6 @@ class MassSummationTestCase9(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+    #thisClass = MassSummationTestCase2()
+    #thisClass.setUp()
+    #thisClass.test_case1()

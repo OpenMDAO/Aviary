@@ -141,8 +141,6 @@ class FuselageSizeTestCase2(unittest.TestCase):
     def setUp(self):
 
         options = get_option_defaults()
-        options.set_val(Aircraft.Fuselage.PROVIDE_SURFACE_AREA,
-                        val=False, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -237,8 +235,6 @@ class FuselageGroupTestCase2(unittest.TestCase):
     def setUp(self):
 
         options = get_option_defaults()
-        options.set_val(Aircraft.Fuselage.PROVIDE_SURFACE_AREA,
-                        val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24,
                         units="inch")  # not actual GASP value
@@ -299,8 +295,6 @@ class FuselageGroupTestCase3(unittest.TestCase):
     def setUp(self):
 
         options = get_option_defaults()
-        options.set_val(Aircraft.Fuselage.PROVIDE_SURFACE_AREA,
-                        val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=30, units='unitless')
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24,
                         units="inch")  # not actual GASP value
