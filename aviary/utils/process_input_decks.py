@@ -426,8 +426,6 @@ dependent_options = [
 
     # [Aircraft.Engine.WING_LOCATIONS, {
     #     'val': 0, 'relation': '==', 'target': Aircraft.Engine.FUSELAGE_MOUNTED, 'result': True, 'alternate': False}],
-    [Aircraft.Fuselage.WETTED_AREA_FACTOR, {
-        'val': 10, 'relation': '>', 'target': Aircraft.Fuselage.PROVIDE_SURFACE_AREA, 'result': True, 'alternate': False}],
     [Aircraft.Wing.LOADING, {'val': 20, 'relation': '>',
                              'target': Aircraft.Wing.LOADING_ABOVE_20, 'result': True, 'alternate': False}],
     [Aircraft.Strut.ATTACHMENT_LOCATION, {
