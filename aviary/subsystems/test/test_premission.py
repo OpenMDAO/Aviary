@@ -103,6 +103,9 @@ class PreMissionTestCase(unittest.TestCase):
             self.prob.model.set_input_defaults(key, val=val, units=units)
 
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=1.0, units='ft')
+        # Adjust WETTED_AREA_SCALER such that WETTED_AREA = 4000.0
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.86215, units="unitless")
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -335,7 +338,7 @@ class PreMissionTestCase(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
-    # test = PreMissionTestCase()
-    # test.setUp()
-    # test.test_GASP_mass_FLOPS_everything_else()
+    #unittest.main()
+    test = PreMissionTestCase()
+    test.setUp()
+    test.test_GASP_mass_FLOPS_everything_else()
