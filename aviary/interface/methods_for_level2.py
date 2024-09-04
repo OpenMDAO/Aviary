@@ -2327,15 +2327,17 @@ class AviaryProblem(om.Problem):
 
         self.problem_ran_successfully = not failed
 
-    def run_alternate_mission(self, json_filename='sizing_problem.json',
-                              payload_mass=None, mission_range=None,
-                              phase_info=None, optimizer=None, max_iter=50,
-                              verbosity=Verbosity.BRIEF):
+    def alternate_mission(self, run_mission=True,
+                          json_filename='sizing_problem.json',
+                          payload_mass=None, mission_range=None,
+                          phase_info=None, verbosity=Verbosity.BRIEF):
         """
-        This function runs a fallout mission based on a sizing mission output.
+        This function runs an alternate mission based on a sizing mission output.
 
         Parameters
         ----------
+        run_mission : bool
+            Flag to determine whether to run the mission before returning the problem object.
         json_filename : str
             Name of the file that the sizing mission has been saved to.
         mission_range : float, optional
@@ -2344,10 +2346,6 @@ class AviaryProblem(om.Problem):
             Mass of the payload for the mission.
         phase_info : dict, optional
             Dictionary containing the phases and their required parameters.
-        optimizer : str, optional
-            Optimizer to be used for solving the fallout mission.
-        max_iter : int, optional
-            Max number of iterations allowed for the optimizer.
         verbosity : Verbosity or list, optional
             If Verbosity.DEBUG, debug print options ['desvars','ln_cons','nl_cons','objs'] will be set.
             If a list is provided, it will be used as the debug print options.
@@ -2361,10 +2359,9 @@ class AviaryProblem(om.Problem):
                 payload_mass = self.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)
             elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
                 payload_mass = self.get_val(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS)
-        if optimizer is None:
-            optimizer = self.driver.options["optimizer"]
 
         mission_mass = self.get_val(Mission.Design.GROSS_MASS)
+        optimizer = self.driver.options["optimizer"]
 
         prob_alternate = _load_off_design(json_filename, ProblemType.ALTERNATE,
                                           phase_info, payload_mass, design_range, mission_mass)
@@ -2374,22 +2371,26 @@ class AviaryProblem(om.Problem):
         prob_alternate.add_phases()
         prob_alternate.add_post_mission_systems()
         prob_alternate.link_phases()
-        prob_alternate.add_driver(optimizer, max_iter=max_iter, verbosity=verbosity)
+        prob_alternate.add_driver(optimizer, verbosity=verbosity)
         prob_alternate.add_design_variables()
         prob_alternate.add_objective()
         prob_alternate.setup()
         prob_alternate.set_initial_guesses()
-        prob_alternate.run_aviary_problem(record_filename='alternate_problem_history.db')
+        if run_mission:
+            prob_alternate.run_aviary_problem(record_filename='alternate_problem_history.db')
         return prob_alternate
 
-    def run_fallout_mission(self, json_filename='sizing_problem.json',
-                            mission_mass=None, payload_mass=None, phase_info=None,
-                            optimizer=None, max_iter=50, verbosity=Verbosity.BRIEF):
+    def fallout_mission(self, run_mission=True,
+                        json_filename='sizing_problem.json',
+                        mission_mass=None, payload_mass=None,
+                        phase_info=None, verbosity=Verbosity.BRIEF):
         """
         This function runs a fallout mission based on a sizing mission output.
 
         Parameters
         ----------
+        run_mission : bool
+            Flag to determine whether to run the mission before returning the problem object.
         json_filename : str
             Name of the file that the sizing mission has been saved to.
         mission_mass : float, optional
@@ -2398,10 +2399,6 @@ class AviaryProblem(om.Problem):
             Mass of the payload for the mission.
         phase_info : dict, optional
             Dictionary containing the phases and their required parameters.
-        optimizer : str, optional
-            Optimizer to be used for solving the fallout mission.
-        max_iter : int, optional
-            Max number of iterations allowed for the optimizer.
         verbosity : Verbosity or list, optional
             If Verbosity.DEBUG, debug print options ['desvars','ln_cons','nl_cons','objs'] will be set.
             If a list is provided, it will be used as the debug print options.
@@ -2415,10 +2412,9 @@ class AviaryProblem(om.Problem):
                 payload_mass = self.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)
             elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
                 payload_mass = self.get_val(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS)
-        if optimizer is None:
-            optimizer = self.driver.options["optimizer"]
 
         design_range = self.get_val(Mission.Design.RANGE)
+        optimizer = self.driver.options["optimizer"]
 
         prob_fallout = _load_off_design(json_filename, ProblemType.FALLOUT, phase_info,
                                         payload_mass, design_range, mission_mass)
@@ -2428,12 +2424,13 @@ class AviaryProblem(om.Problem):
         prob_fallout.add_phases()
         prob_fallout.add_post_mission_systems()
         prob_fallout.link_phases()
-        prob_fallout.add_driver(optimizer, max_iter=max_iter, verbosity=verbosity)
+        prob_fallout.add_driver(optimizer, verbosity=verbosity)
         prob_fallout.add_design_variables()
         prob_fallout.add_objective()
         prob_fallout.setup()
         prob_fallout.set_initial_guesses()
-        prob_fallout.run_aviary_problem(record_filename='fallout_problem_history.db')
+        if run_mission:
+            prob_fallout.run_aviary_problem(record_filename='fallout_problem_history.db')
         return prob_fallout
 
     def save_sizing_to_json(self, json_filename='sizing_problem.json'):
@@ -2801,7 +2798,7 @@ def _load_off_design(json_filename, ProblemType, phase_info,
                      payload, mission_range, mission_gross_mass):
     """
     This function loads a sized aircraft, and sets up an aviary problem
-    to run a specified off design mission.
+    for a specified off design mission.
 
     Parameters
     ----------

@@ -130,10 +130,10 @@ prob.run_aviary_problem()
 prob.save_sizing_to_json()
 
 # Fallout Mission
-prob_fallout = prob.run_fallout_mission()
+prob_fallout = prob.fallout_mission()
 
 # Alternate Mission
-prob_alternate = prob.run_alternate_mission()
+prob_alternate = prob.alternate_mission()
 
 print('--------------')
 print('Sizing Results')
