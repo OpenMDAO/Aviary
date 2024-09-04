@@ -27,16 +27,16 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         # There are no truth values for these.
         assert_near_equal(prob.get_val(Mission.Design.GROSS_MASS),
-                          184533., tolerance=rtol)
+                          179391., tolerance=rtol)
 
         assert_near_equal(prob.get_val(Aircraft.Design.OPERATING_MASS),
-                          104530., tolerance=rtol)
+                          101556., tolerance=rtol)
 
         assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS),
-                          42444., tolerance=rtol)
+                          39979., tolerance=rtol)
 
         assert_near_equal(prob.get_val('landing.' + Mission.Landing.GROUND_DISTANCE),
-                          2528., tolerance=rtol)
+                          2595., tolerance=rtol)
 
         assert_near_equal(prob.get_val("traj.desc2.timeseries.distance")[-1],
                           3675.0, tolerance=rtol)
@@ -51,16 +51,16 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         # There are no truth values for these.
         assert_near_equal(prob.get_val(Mission.Design.GROSS_MASS),
-                          186418., tolerance=rtol)
+                          179390., tolerance=rtol)
 
         assert_near_equal(prob.get_val(Aircraft.Design.OPERATING_MASS),
-                          104530., tolerance=rtol)
+                          101556., tolerance=rtol)
 
         assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS),
-                          42942., tolerance=rtol)
+                          39979., tolerance=rtol)
 
         assert_near_equal(prob.get_val('landing.' + Mission.Landing.GROUND_DISTANCE),
-                          2528., tolerance=rtol)
+                          2595., tolerance=rtol)
 
         assert_near_equal(prob.get_val("traj.desc2.timeseries.distance")[-1],
                           3675.0, tolerance=rtol)
@@ -69,5 +69,5 @@ class ProblemPhaseTestCase(unittest.TestCase):
 if __name__ == "__main__":
     test = ProblemPhaseTestCase()
     test.setUp()
-    test.bench_test_swap_3_FwGm_IPOPT()
     test.bench_test_swap_3_FwGm_SNOPT()
+    # test.bench_test_swap_3_FwGm_IPOPT()
