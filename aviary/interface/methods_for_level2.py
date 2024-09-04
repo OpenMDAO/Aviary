@@ -2377,7 +2377,8 @@ class AviaryProblem(om.Problem):
         prob_alternate.setup()
         prob_alternate.set_initial_guesses()
         if run_mission:
-            prob_alternate.run_aviary_problem(record_filename='alternate_problem_history.db')
+            prob_alternate.run_aviary_problem(
+                record_filename='alternate_problem_history.db')
         return prob_alternate
 
     def fallout_mission(self, run_mission=True,
