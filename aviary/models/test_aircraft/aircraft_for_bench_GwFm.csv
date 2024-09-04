@@ -129,7 +129,6 @@ aircraft:fuselage:passenger_compartment_length,85.5,ft
 aircraft:fuselage:pilot_compartment_length,9.5,ft
 aircraft:fuselage:planform_area,1578.24,ft**2
 aircraft:fuselage:pressure_differential,7.5,psi
-aircraft:fuselage:provide_surface_area,True,unitless
 aircraft:fuselage:seat_pitch,29,inch
 aircraft:fuselage:seat_width,20.2,inch
 aircraft:fuselage:tail_fineness,3,unitless
