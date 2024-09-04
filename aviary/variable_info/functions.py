@@ -4,7 +4,6 @@ from dymos.utils.misc import _unspecified
 from openmdao.core.component import Component
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.core_promotes import core_mission_inputs
 from aviary.variable_info.variable_meta_data import _MetaData
 
 # ---------------------------
@@ -166,9 +165,9 @@ def setup_trajectory_params(
     are being used in the trajectory, and for the variables which are
     not options it adds them as a parameter of the trajectory.
     """
-    # TODO: variables_to_add might be an unused option.
+    # TODO: variables_to_add is required, so should be an arg, not a kwarg.
     if variables_to_add is None:
-        variables_to_add = sorted(core_mission_inputs)
+        variables_to_add = []
 
     # Step 1: Initialize a dictionary to hold parameters and their associated phases
     parameters_with_phases = {}

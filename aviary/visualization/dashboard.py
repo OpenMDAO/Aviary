@@ -114,6 +114,12 @@ def _dashboard_setup_parser(parser):
         default=0,
         help="dashboard server port ID (default is 0, which indicates get any free port)",
     )
+    parser.add_argument(
+        "-b",
+        "--background",
+        dest="run_in_background",
+        help="Run the server in the background (don't automatically open the browser)",
+    )
 
     # For future use
     parser.add_argument(
@@ -178,6 +184,7 @@ def _dashboard_cmd(options, user_args):
             options.problem_recorder,
             options.driver_recorder,
             options.port,
+            options.run_in_background
         )
         return
 
@@ -235,7 +242,7 @@ def create_csv_frame(csv_filepath, documentation):
     Returns
     -------
     pane : Panel.Pane or None
-        A Panel Pane object showing the tabular display of the CSV file contents. 
+        A Panel Pane object showing the tabular display of the CSV file contents.
         Or None if the CSV file does not exist.
     """
     if os.path.isfile(csv_filepath):
@@ -545,10 +552,9 @@ def create_aircraft_3d_file(recorder_file, reports_dir, outfilepath):
     aircraft_3d_model.get_camera_entity(aircraft_3d_model.fuselage.length)
     aircraft_3d_model.write_file(aircraft_3d_template_filepath, outfilepath)
 
+
 # The main script that generates all the tabs in the dashboard
-
-
-def dashboard(script_name, problem_recorder, driver_recorder, port):
+def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_background=False):
     """
     Generate the dashboard app display.
 
@@ -586,10 +592,10 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
     input_list_pane = create_report_frame("text", "input_list.txt", '''
        A plain text display of the model inputs. Recommended for beginners. Only created if Settings.VERBOSITY is set to at least 2 in the input deck.
         The variables are listed in a tree structure. There are three columns. The left column is a list of variable names,
-        the middle column is the value, and the right column is the 
-        promoted variable name. The hierarchy is phase, subgroups, components, and variables. An input variable can appear under 
-        different phases and within different components. Its values can be different because its value has 
-        been updated during the computation. On the top-left corner is the total number of inputs. 
+        the middle column is the value, and the right column is the
+        promoted variable name. The hierarchy is phase, subgroups, components, and variables. An input variable can appear under
+        different phases and within different components. Its values can be different because its value has
+        been updated during the computation. On the top-left corner is the total number of inputs.
         That number counts the duplicates because one variable can appear in different phases.''')
     model_tabs_list.append(("Debug Input List", input_list_pane))
 
@@ -597,10 +603,10 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
     output_list_pane = create_report_frame("text", "output_list.txt", '''
        A plain text display of the model outputs. Recommended for beginners. Only created if Settings.VERBOSITY is set to at least 2 in the input deck.
         The variables are listed in a tree structure. There are three columns. The left column is a list of variable names,
-        the middle column is the value, and the right column is the 
-        promoted variable name. The hierarchy is phase, subgroups, components, and variables. An output variable can appear under 
-        different phases and within different components. Its values can be different because its value has 
-        been updated during the computation. On the top-left corner is the total number of outputs. 
+        the middle column is the value, and the right column is the
+        promoted variable name. The hierarchy is phase, subgroups, components, and variables. An output variable can appear under
+        different phases and within different components. Its values can be different because its value has
+        been updated during the computation. On the top-left corner is the total number of outputs.
         That number counts the duplicates because one variable can appear in different phases.''')
     model_tabs_list.append(("Debug Output List", output_list_pane))
 
@@ -611,17 +617,17 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
 
     # N2
     n2_pane = create_report_frame("html", f"{reports_dir}/n2.html", '''
-        The N2 diagram, sometimes referred to as an eXtended Design Structure Matrix (XDSM), is a 
-        powerful tool for understanding your model in OpenMDAO. It is an N-squared diagram in the 
-        shape of a matrix representing functional or physical interfaces between system elements. 
-        It can be used to systematically identify, define, tabulate, design, and analyze functional 
+        The N2 diagram, sometimes referred to as an eXtended Design Structure Matrix (XDSM), is a
+        powerful tool for understanding your model in OpenMDAO. It is an N-squared diagram in the
+        shape of a matrix representing functional or physical interfaces between system elements.
+        It can be used to systematically identify, define, tabulate, design, and analyze functional
         and physical interfaces.''')
     model_tabs_list.append(("N2", n2_pane))
 
     # Trajectory Linkage
     traj_linkage_report_pane = create_report_frame(
         "html", f"{reports_dir}/traj_linkage_report.html", '''
-        This is a Dymos linkage report in a customized N2 diagram. It provides a report detailing how phases 
+        This is a Dymos linkage report in a customized N2 diagram. It provides a report detailing how phases
         are linked together via constraint or connection. The diagram clearly shows how mission phases are linked.
         It can be used to identify errant linkages between fixed quantities.
         '''
@@ -634,9 +640,9 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
     # Driver scaling
     driver_scaling_report_pane = create_report_frame(
         "html", f"{reports_dir}/driver_scaling_report.html", '''
-            This report is a summary of driver scaling information. After all design variables, objectives, and constraints 
-            are declared and the problem has been set up, this report presents all the design variables and constraints 
-            in all phases as well as the objectives. It also shows Jacobian information showing responses with respect to 
+            This report is a summary of driver scaling information. After all design variables, objectives, and constraints
+            are declared and the problem has been set up, this report presents all the design variables and constraints
+            in all phases as well as the objectives. It also shows Jacobian information showing responses with respect to
             design variables (DV).
         '''
     )
@@ -699,8 +705,8 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
 
     # Optimization report
     opt_report_pane = create_report_frame("html", f"{reports_dir}/opt_report.html", '''
-        This report is an OpenMDAO optimization report. All values are in unscaled, physical units. 
-        On the top is a summary of the optimization, followed by the objective, design variables, constraints, 
+        This report is an OpenMDAO optimization report. All values are in unscaled, physical units.
+        On the top is a summary of the optimization, followed by the objective, design variables, constraints,
         and optimizer settings. This report is important when dissecting optimal results produced by Aviary.''')
     optimization_tabs_list.append(("Summary", opt_report_pane))
 
@@ -813,12 +819,12 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
     # Trajectory results
     traj_results_report_pane = create_report_frame(
         "html", f"{reports_dir}/traj_results_report.html", '''
-            This is one of the most important reports produced by Aviary. It will help you visualize and 
+            This is one of the most important reports produced by Aviary. It will help you visualize and
             understand the optimal trajectory produced by Aviary.
-            Users should play with it and try to grasp all possible features. 
-            This report contains timeseries and phase parameters in different tabs. 
-            On the timeseries tab, users can select which phases to view. 
-            Other features include hovering the mouse over the solution points to see solution value and 
+            Users should play with it and try to grasp all possible features.
+            This report contains timeseries and phase parameters in different tabs.
+            On the timeseries tab, users can select which phases to view.
+            Other features include hovering the mouse over the solution points to see solution value and
             zooming into a particular region for details, etc.
         '''
     )
@@ -906,6 +912,10 @@ def dashboard(script_name, problem_recorder, driver_recorder, port):
     else:
         show = True
         threaded = False
+
+    # override `show` without changing `threaded`
+    if run_in_background:
+        show = False
 
     assets_dir = pathlib.Path(
         importlib.util.find_spec("aviary").origin

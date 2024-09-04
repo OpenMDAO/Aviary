@@ -47,5 +47,5 @@ class GammaComp(om.ExplicitComponent):
         d2h_dr2 = inputs["d2h_dr2"]
 
         partials[Dynamic.Mission.FLIGHT_PATH_ANGLE, "dh_dr"] = 1. / (dh_dr**2 + 1)
-        partials["dgam_dr", "dh_dr"] = -d2h_dr2 * dh_dr**2 / (dh_dr**2 + 1)**2
+        partials["dgam_dr", "dh_dr"] = -d2h_dr2 * dh_dr * 2 / (dh_dr**2 + 1)**2
         partials["dgam_dr", "d2h_dr2"] = 1. / (dh_dr**2 + 1)
