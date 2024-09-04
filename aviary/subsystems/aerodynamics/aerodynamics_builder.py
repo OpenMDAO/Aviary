@@ -10,6 +10,7 @@ CoreAerodynamicsBuilder : the interface for Aviary's core aerodynamics subsystem
 import numpy as np
 
 import openmdao.api as om
+from dymos.utils.misc import _unspecified
 
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 
@@ -339,13 +340,47 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                         params[Aircraft.Design.DRAG_POLAR] = drag_opts
 
             if method == 'computed':
-                param_vars = [Aircraft.Nacelle.CHARACTERISTIC_LENGTH,
-                              Aircraft.Nacelle.FINENESS,
-                              Aircraft.Nacelle.LAMINAR_FLOW_LOWER,
-                              Aircraft.Nacelle.LAMINAR_FLOW_UPPER,
-                              Aircraft.Nacelle.WETTED_AREA]
-                for var in param_vars:
+
+                for var in COMPUTED_CORE_INPUTS:
+
+                    meta = _MetaData[var]
+
+                    val = meta['default_value']
+                    if val is None:
+                        val = _unspecified
+                    units = meta['units']
+
+                    if var in aviary_inputs:
+                        try:
+                            val = aviary_inputs.get_val(var, units)
+                        except TypeError:
+                            val = aviary_inputs.get_val(var)
+
+                    params[var] = {'val': val,
+                                   'static_target': True}
+
+                for var in ENGINE_SIZED_INPUTS:
                     params[var] = {'shape': (num_engine_type, ), 'static_target': True}
+
+            elif method == "low_speed":
+
+                for var in LOW_SPEED_CORE_INPUTS:
+
+                    meta = _MetaData[var]
+
+                    val = meta['default_value']
+                    if val is None:
+                        val = _unspecified
+                    units = meta['units']
+
+                    if var in aviary_inputs:
+                        try:
+                            val = aviary_inputs.get_val(var, units)
+                        except TypeError:
+                            val = aviary_inputs.get_val(var)
+
+                    params[var] = {'val': val,
+                                   'static_target': True}
 
         return params
 
@@ -366,3 +401,64 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
         elif self.code_origin is GASP:
             # GASP aero report goes here
             return
+
+
+# Parameters for drag computation.
+COMPUTED_CORE_INPUTS = [
+    Aircraft.Design.BASE_AREA,
+    Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR,
+    Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR,
+    Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR,
+    Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR,
+    Aircraft.Fuselage.CHARACTERISTIC_LENGTH,
+    Aircraft.Fuselage.CROSS_SECTION,
+    Aircraft.Fuselage.DIAMETER_TO_WING_SPAN,
+    Aircraft.Fuselage.FINENESS,
+    Aircraft.Fuselage.LAMINAR_FLOW_LOWER,
+    Aircraft.Fuselage.LAMINAR_FLOW_UPPER,
+    Aircraft.Fuselage.LENGTH_TO_DIAMETER,
+    Aircraft.Fuselage.WETTED_AREA,
+    Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH,
+    Aircraft.HorizontalTail.FINENESS,
+    Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER,
+    Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER,
+    Aircraft.HorizontalTail.WETTED_AREA,
+    Aircraft.VerticalTail.CHARACTERISTIC_LENGTH,
+    Aircraft.VerticalTail.FINENESS,
+    Aircraft.VerticalTail.LAMINAR_FLOW_LOWER,
+    Aircraft.VerticalTail.LAMINAR_FLOW_UPPER,
+    Aircraft.VerticalTail.WETTED_AREA,
+    Aircraft.Wing.AREA,
+    Aircraft.Wing.ASPECT_RATIO,
+    Aircraft.Wing.CHARACTERISTIC_LENGTH,
+    Aircraft.Wing.FINENESS,
+    Aircraft.Wing.LAMINAR_FLOW_LOWER,
+    Aircraft.Wing.LAMINAR_FLOW_UPPER,
+    Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN,
+    Aircraft.Wing.SPAN_EFFICIENCY_FACTOR,
+    Aircraft.Wing.SWEEP,
+    Aircraft.Wing.TAPER_RATIO,
+    Aircraft.Wing.THICKNESS_TO_CHORD,
+    Aircraft.Wing.WETTED_AREA,
+    Mission.Summary.GROSS_MASS,
+    Mission.Design.LIFT_COEFFICIENT,
+    Mission.Design.MACH,
+]
+
+# Parameters for low speed aero.
+LOW_SPEED_CORE_INPUTS = [
+    Aircraft.Wing.AREA,
+    Aircraft.Wing.ASPECT_RATIO,
+    Aircraft.Wing.HEIGHT,
+    Aircraft.Wing.SPAN,
+    Mission.Takeoff.DRAG_COEFFICIENT_MIN,
+]
+
+# These parameters are sized by number of engine models.
+ENGINE_SIZED_INPUTS = [
+    Aircraft.Nacelle.CHARACTERISTIC_LENGTH,
+    Aircraft.Nacelle.FINENESS,
+    Aircraft.Nacelle.LAMINAR_FLOW_LOWER,
+    Aircraft.Nacelle.LAMINAR_FLOW_UPPER,
+    Aircraft.Nacelle.WETTED_AREA
+]

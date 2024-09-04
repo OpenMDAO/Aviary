@@ -1,5 +1,4 @@
 import unittest
-import os
 
 import numpy as np
 import openmdao
@@ -46,9 +45,9 @@ class DLandTestCase(unittest.TestCase):
         self.prob.run_model()
 
         testvals = {
-            Mission.Landing.INITIAL_VELOCITY: 142.74 * 1.68781,
-            "TAS_touchdown": 126.27 * 1.68781,
-            "theta": np.deg2rad(3.57),
+            Mission.Landing.INITIAL_VELOCITY: 240.9179994,  # ft/s (142.74 knot)
+            "TAS_touchdown": 213.1197687,  # ft/s (126.27 knot)
+            "theta": 0.06230825,  # rad (3.57 deg)
             "flare_alt": 20.8,
             "ground_roll_distance": 1798,
             Mission.Landing.GROUND_DISTANCE: 2980,
