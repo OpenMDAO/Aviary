@@ -204,9 +204,13 @@ class PreMissionTestCase(unittest.TestCase):
         )
         assert_near_equal(
             self.prob["fuel_mass.max_wingfuel_mass"], 57066.3, tol)
-        assert_near_equal(
-            self.prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 0, tol
-        )  # always zero when no body tank
+
+        # This is not in the model because it has been overridden, but is not an
+        # input to any other component in the GASP premission model.
+        # assert_near_equal(
+        #   self.prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 0, tol
+        # )  # always zero when no body tank
+
         assert_near_equal(
             self.prob["fuel_mass.body_tank.extra_fuel_volume"], 0, tol
         )  # always zero when no body tank
