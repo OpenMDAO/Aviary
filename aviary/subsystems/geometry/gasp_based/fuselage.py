@@ -114,7 +114,8 @@ class FuselageSize(om.ExplicitComponent):
         self.add_input("cabin_len", val=0, units="ft", desc="LC: length of cabin")
         add_aviary_input(self, Aircraft.Fuselage.TAIL_FINENESS, val=3)
         self.add_input("cabin_height", val=0, units="ft", desc="HC: height of cabin")
-        add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA_SCALER, val=1, units="unitless")
+        add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA_SCALER,
+                         val=1, units="unitless")
 
         add_aviary_output(self, Aircraft.Fuselage.LENGTH, val=0)
         add_aviary_output(self, Aircraft.Fuselage.WETTED_AREA, val=0)
@@ -135,7 +136,7 @@ class FuselageSize(om.ExplicitComponent):
         self.declare_partials(
             Aircraft.Fuselage.WETTED_AREA,
             [
-            Aircraft.Fuselage.WETTED_AREA_SCALER,
+                Aircraft.Fuselage.WETTED_AREA_SCALER,
                 "cabin_height",
                 Aircraft.Fuselage.NOSE_FINENESS,
                 "nose_height",
@@ -225,10 +226,10 @@ class FuselageSize(om.ExplicitComponent):
             fus_SA_factor * 2.1 * cabin_height**2
         )
         J[Aircraft.Fuselage.WETTED_AREA, Aircraft.Fuselage.WETTED_AREA_SCALER] = cabin_height * (
-                2.5 * (LoverD_nose * nose_height + cockpit_len)
-                + 3.14 * cabin_len
-                + 2.1 * LoverD_tail * cabin_height
-            )
+            2.5 * (LoverD_nose * nose_height + cockpit_len)
+            + 3.14 * cabin_len
+            + 2.1 * LoverD_tail * cabin_height
+        )
 
         J[Aircraft.TailBoom.LENGTH, Aircraft.Fuselage.NOSE_FINENESS] = nose_height
         J[Aircraft.TailBoom.LENGTH, "nose_height"] = LoverD_nose
