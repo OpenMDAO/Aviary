@@ -110,9 +110,9 @@ class MultiMissionProblem(om.Problem):
         """Wrapper for om.Problem setup with warning ignoring and setting options"""
         for prob in self.probs:
             if LANDING_TO_TAKEOFF_MASS_RATIO[0] is not None:
-                prob.aviary_inputs.set_val(Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, LANDING_TO_TAKEOFF_MASS_RATIO[0], units=LANDING_TO_TAKEOFF_MASS_RATIO[1])
-            elif TOUCHDOWN_MASS[0] is not None:
                 prob.aviary_inputs.set_val(Aircraft.Design.TOUCHDOWN_MASS, TOUCHDOWN_MASS[0], units=TOUCHDOWN_MASS[1])
+            elif TOUCHDOWN_MASS[0] is not None:
+                prob.aviary_inputs.set_val(Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, LANDING_TO_TAKEOFF_MASS_RATIO[0], units=LANDING_TO_TAKEOFF_MASS_RATIO[1])
             else:
                 print('User must specify LANDING_TO_TAKEOFF_MASS_RATIO or TOUCHDOWN_MASS in MultiMissionProblem.setup_wrapper().')
                 exit()
@@ -233,7 +233,7 @@ def C5_example(makeN2=False):
                 phaseinfo[key]["user_options"]["optimize_mach"] = optmach
                 phaseinfo[key]["user_options"]["optimize_altitude"] = optalt
 
-    weights = [1, 1, 1]
+    weights = [1, 1, 1] 
 
     super_prob = MultiMissionProblem(planes, phase_infos, weights)
     super_prob.add_driver()
@@ -250,11 +250,6 @@ def C5_example(makeN2=False):
 
     for i, prob in enumerate(super_prob.probs):
         prob.set_initial_guesses(super_prob, super_prob.group_prefix+f"_{i}.")
-
-
-        
-    # this does not work:
-    # super_prob.set_val("group_0."+Aircraft.Design.TOUCHDOWN_MASS, 498554, units='lbm')
 
     if makeN2:
         from createN2 import createN2
