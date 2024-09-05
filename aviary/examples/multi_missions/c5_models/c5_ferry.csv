@@ -20,7 +20,7 @@ aircraft:crew_and_payload:num_flight_crew,7,unitless
 #aircraft:crew_and_payload:wing_cargo,0.0,lbm
 #aircraft:design:base_area,0.0,ft**2
 #aircraft:design:empty_mass_margin_scaler,1.0,unitless
-aircraft:design:landing_to_takeoff_mass_ration,0.91, unitless
+aircraft:design:landing_to_takeoff_mass_ratio,0.91, unitless
 #aircraft:design:lift_dependent_drag_coeff_factor,1.0,unitless
 #aircraft:design:touchdown_mass,498554,lbm
 aircraft:design:reserve_fuel_additional,0,lbm

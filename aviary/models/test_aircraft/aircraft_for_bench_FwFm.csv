@@ -17,6 +17,10 @@ aircraft:crew_and_payload:num_flight_attendants,3,unitless
 aircraft:crew_and_payload:num_flight_crew,2,unitless
 aircraft:crew_and_payload:num_galley_crew,0,unitless
 aircraft:crew_and_payload:num_passengers,169,unitless
+aircraft:crew_and_payload:design:num_passengers,169,unitless
+aircraft:crew_and_payload:design:num_tourist_class,158,unitless
+aircraft:crew_and_payload:design:num_business_class,0,unitless
+aircraft:crew_and_payload:design:num_first_class,11,unitless
 aircraft:crew_and_payload:num_tourist_class,158,unitless
 aircraft:crew_and_payload:passenger_service_mass_scaler,1.0,unitless
 aircraft:crew_and_payload:wing_cargo,0.0,lbm
