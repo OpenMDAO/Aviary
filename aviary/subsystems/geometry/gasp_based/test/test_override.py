@@ -48,7 +48,8 @@ class GASPOverrideTestCase(unittest.TestCase):
         """Test override: expect the given value"""
         prob = self.prob
 
-        self.aviary_inputs.set_val(Aircraft.Fuselage.WETTED_AREA, val=4000.0, units="ft**2")
+        self.aviary_inputs.set_val(
+            Aircraft.Fuselage.WETTED_AREA, val=4000.0, units="ft**2")
 
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", om.PromotionWarning)
@@ -62,7 +63,7 @@ class GASPOverrideTestCase(unittest.TestCase):
         """Test override: expect the computed value"""
         prob = self.prob
 
-        #self.aviary_inputs.set_val(Aircraft.Fuselage.WETTED_AREA, val=4000, units="ft**2")
+        # self.aviary_inputs.set_val(Aircraft.Fuselage.WETTED_AREA, val=4000, units="ft**2")
 
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", om.PromotionWarning)
@@ -77,7 +78,8 @@ class GASPOverrideTestCase(unittest.TestCase):
         prob = self.prob
 
         # self.aviary_inputs.set_val(Aircraft.Fuselage.WETTED_AREA, val=4000, units="ft**2")
-        self.aviary_inputs.set_val(Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.5, units="unitless")
+        self.aviary_inputs.set_val(
+            Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.5, units="unitless")
 
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", om.PromotionWarning)
@@ -91,8 +93,10 @@ class GASPOverrideTestCase(unittest.TestCase):
         """Test WETTED_AREA_SCALER: expect no effect"""
         prob = self.prob
 
-        self.aviary_inputs.set_val(Aircraft.Fuselage.WETTED_AREA, val=4000, units="ft**2")
-        self.aviary_inputs.set_val(Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.5, units="unitless")
+        self.aviary_inputs.set_val(
+            Aircraft.Fuselage.WETTED_AREA, val=4000, units="ft**2")
+        self.aviary_inputs.set_val(
+            Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.5, units="unitless")
 
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", om.PromotionWarning)
