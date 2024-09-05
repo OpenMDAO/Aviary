@@ -33,7 +33,7 @@ class GearboxPreMission(om.Group):
                 has_diag_partials=True,
             ),
             promotes_inputs=[
-                ('RPM_in', Aircraft.Engine.GEARBOX.RPM_DESIGN),
+                ('RPM_in', Aircraft.Engine.RPM_DESIGN),
                 ('gear_ratio', Aircraft.Engine.Gearbox.GEAR_RATIO),
             ],
             promotes_outputs=['RPM_out'],
@@ -78,7 +78,7 @@ class GearboxPreMission(om.Group):
                 promotes_inputs=[
                     ('shaftpower', Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN),
                     'RPM_out',
-                    ('RPM_in', Aircraft.Engine.GEARBOX.RPM_DESIGN),
+                    ('RPM_in', Aircraft.Engine.RPM_DESIGN),
                 ],
                 promotes_outputs=[('gearbox_mass', Aircraft.Engine.Gearbox.MASS)],
             )

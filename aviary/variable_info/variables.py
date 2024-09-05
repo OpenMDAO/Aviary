@@ -258,17 +258,17 @@ class Aircraft:
             TORQUE_MAX = 'aircraft:engine:motor:torque_max'
 
         class Propeller:
+            ACTIVITY_FACTOR = 'aircraft:engine:propeller:activity_factor'
             COMPUTE_INSTALLATION_LOSS = (
                 'aircraft:engine:propeller:compute_installation_loss'
             )
-            NUM_BLADES = 'aircraft:engine:propeller:num_blades'
-            ACTIVITY_FACTOR = 'aircraft:engine:propeller:activity_factor'
             DATA_FILE = 'aircraft:engine:propeller:data_file'
             DIAMETER = 'aircraft:engine:propeller:diameter'
             INTEGRATED_LIFT_COEFFICIENT = (
                 'aircraft:engine:propeller:integrated_lift_coefficient'
             )
-            TIP_MACH_MAX = 'propeller:tip_mach_max'
+            NUM_BLADES = 'aircraft:engine:propeller:num_blades'
+            TIP_MACH_MAX = 'aircraft:engine:propeller:tip_mach_max'
             TIP_SPEED_MAX = 'aircraft:engine:propeller:tip_speed_max'
 
     class Fins:

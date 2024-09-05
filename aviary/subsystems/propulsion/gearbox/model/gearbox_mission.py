@@ -31,7 +31,7 @@ class GearboxMission(om.Group):
                 has_diag_partials=True,
             ),
             promotes_inputs=[
-                ('RPM_in', Aircraft.Engine.GEARBOX.RPM_DESIGN),
+                ('RPM_in', Aircraft.Engine.RPM_DESIGN),
                 ('gear_ratio', Aircraft.Engine.Gearbox.GEAR_RATIO),
             ],
             promotes_outputs=[('RPM_out', Dynamic.Mission.RPM_GEARBOX)],

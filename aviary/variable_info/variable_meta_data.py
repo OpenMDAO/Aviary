@@ -2352,6 +2352,15 @@ add_meta_data(
 #                    |_|
 # ===================================================
 
+add_meta_data(
+    Aircraft.Engine.Propeller.ACTIVITY_FACTOR,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INPROP.AF', "FLOPS": None, "LEAPS1": None},
+    units="unitless",
+    desc='propeller actitivty factor per Blade (Range: 80 to 200)',
+    default_value=0.0,
+)
+
 # NOTE if FT < 0, this bool is true, if >= 0, this is false and the value of FT is used
 # as the installation loss factor
 add_meta_data(
@@ -2363,27 +2372,6 @@ add_meta_data(
     default_value=True,
     types=bool,
     desc='if true, compute installation loss factor based on blockage factor',
-)
-
-add_meta_data(
-    Aircraft.Engine.Propeller.NUM_BLADES,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INPROP.BL', "FLOPS": None, "LEAPS1": None},
-    units='unitless',
-    desc='number of blades per propeller',
-    option=True,
-    types=int,
-    default_value=0,
-)
-
-
-add_meta_data(
-    Aircraft.Engine.Propeller.ACTIVITY_FACTOR,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INPROP.AF', "FLOPS": None, "LEAPS1": None},
-    units="unitless",
-    desc='propeller actitivty factor per Blade (Range: 80 to 200)',
-    default_value=0.0,
 )
 
 add_meta_data(
@@ -2413,6 +2401,17 @@ add_meta_data(
     units='unitless',
     desc='propeller blade integrated design lift coefficient (Range: 0.3 to 0.8)',
     default_value=0.5,
+)
+
+add_meta_data(
+    Aircraft.Engine.Propeller.NUM_BLADES,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INPROP.BL', "FLOPS": None, "LEAPS1": None},
+    units='unitless',
+    desc='number of blades per propeller',
+    option=True,
+    types=int,
+    default_value=0,
 )
 
 add_meta_data(
