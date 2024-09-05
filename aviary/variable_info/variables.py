@@ -627,6 +627,11 @@ class Dynamic:
         VELOCITY = 'velocity'
         VELOCITY_RATE = 'velocity_rate'
 
+    class Mission:
+        CUMULATIVE_ELECTRIC_ENERGY_USED = 'cumulative_electric_energy_used'
+        DISTANCE = 'distance'
+        DISTANCE_RATE = 'distance_rate'
+
     class Vehicle:
         # variables that define the vehicle state
         ALTITUDE_RATE_MAX = 'altitude_rate_max'
@@ -643,14 +648,14 @@ class Dynamic:
 
         class Propulsion:
             # variables specific to the propulsion subsystem
-            TEMPERATURE_T4 = 't4'
-            THROTTLE = 'throttle'
-            THRUST = 'thrust_net'
-            THRUST_MAX = 'thrust_net_max'
-            THRUST_MAX_TOTAL = 'thrust_net_max_total'
-            THRUST_TOTAL = 'thrust_net_total'
-            TORQUE = 'torque'
-            TORQUE_GEARBOX = 'torque_gearbox'
+            ELECTRIC_POWER_IN = 'electric_power_in'
+            ELECTRIC_POWER_IN_TOTAL = 'electric_power_in_total'
+            # EXIT_AREA = 'exit_area'
+            FUEL_FLOW_RATE = 'fuel_flow_rate'
+            FUEL_FLOW_RATE_NEGATIVE = 'fuel_flow_rate_negative'
+            FUEL_FLOW_RATE_NEGATIVE_TOTAL = 'fuel_flow_rate_negative_total'
+            FUEL_FLOW_RATE_TOTAL = 'fuel_flow_rate_total'
+            HYBRID_THROTTLE = 'hybrid_throttle'
             NOX_RATE = 'nox_rate'
             NOX_RATE_TOTAL = 'nox_rate_total'
             PROPELLER_TIP_SPEED = 'propeller_tip_speed'
@@ -660,19 +665,14 @@ class Dynamic:
             SHAFT_POWER_GEARBOX = 'shaft_power_gearbox'
             SHAFT_POWER_MAX = 'shaft_power_max'
             SHAFT_POWER_MAX_GEARBOX = 'shaft_power_max_gearbox'
-            ELECTRIC_POWER_IN = 'electric_power_in'
-            ELECTRIC_POWER_IN_TOTAL = 'electric_power_in_total'
-            # EXIT_AREA = 'exit_area'
-            FUEL_FLOW_RATE = 'fuel_flow_rate'
-            FUEL_FLOW_RATE_NEGATIVE = 'fuel_flow_rate_negative'
-            FUEL_FLOW_RATE_NEGATIVE_TOTAL = 'fuel_flow_rate_negative_total'
-            FUEL_FLOW_RATE_TOTAL = 'fuel_flow_rate_total'
-            HYBRID_THROTTLE = 'hybrid_throttle'
-
-    class Mission:
-        DISTANCE = 'distance'
-        DISTANCE_RATE = 'distance_rate'
-        CUMULATIVE_ELECTRIC_ENERGY_USED = 'cumulative_electric_energy_used'
+            TEMPERATURE_T4 = 't4'
+            THROTTLE = 'throttle'
+            THRUST = 'thrust_net'
+            THRUST_MAX = 'thrust_net_max'
+            THRUST_MAX_TOTAL = 'thrust_net_max_total'
+            THRUST_TOTAL = 'thrust_net_total'
+            TORQUE = 'torque'
+            TORQUE_GEARBOX = 'torque_gearbox'
 
 
 class Mission:

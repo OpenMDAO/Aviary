@@ -392,11 +392,11 @@ class PropellerPerformanceTest(unittest.TestCase):
             excludes=["*atmosphere*"],
         )
         # remove partial derivative of 'comp_tip_loss_factor' with respect to
-        # 'aircraft:engine:Propeller.INTEGRATED_LIFT_COEFFICIENT' from assert_check_partials
+        # integrated lift coefficient from assert_check_partials
         partial_data_hs = partial_data['pp.hamilton_standard']
         key_pair = (
             'comp_tip_loss_factor',
-            'aircraft:engine:Propeller.INTEGRATED_LIFT_COEFFICIENT',
+            Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT,
         )
         del partial_data_hs[key_pair]
         assert_check_partials(partial_data, atol=1.5e-3, rtol=1e-4)
