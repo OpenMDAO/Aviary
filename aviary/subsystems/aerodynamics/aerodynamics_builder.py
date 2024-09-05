@@ -192,7 +192,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
             elif method == 'low_speed':
                 promotes = [
                     'angle_of_attack',
-                    Dynamic.Atmosphere.ALTITUDEUDE,
+                    Dynamic.Atmosphere.ALTITUDE,
                     Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
                     Mission.Takeoff.DRAG_COEFFICIENT_MIN,
                     Aircraft.Wing.ASPECT_RATIO,
@@ -204,7 +204,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
             elif method == 'tabular':
                 promotes = [
-                    Dynamic.Atmosphere.ALTITUDEUDE,
+                    Dynamic.Atmosphere.ALTITUDE,
                     Dynamic.Mission.MACH,
                     Dynamic.Vehicle.MASS,
                     Dynamic.Atmosphere.VELOCITY,

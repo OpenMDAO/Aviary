@@ -38,7 +38,7 @@ class EngineModelVariables(Enum):
     FUEL_FLOW = Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE
     ELECTRIC_POWER_IN = Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN
     NOX_RATE = Dynamic.Vehicle.Propulsion.NOX_RATE
-    TEMPERATURE_T4 = Dynamic.Atmosphere.TEMPERATURE_T4
+    TEMPERATURE_T4 = Dynamic.Vehicle.Propulsion.TEMPERATURE_T4
     TORQUE = Dynamic.Vehicle.Propulsion.TORQUE
     # EXIT_AREA = auto()
 

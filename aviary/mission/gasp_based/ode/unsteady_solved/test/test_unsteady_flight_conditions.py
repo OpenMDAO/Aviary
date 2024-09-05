@@ -47,15 +47,15 @@ class TestUnsteadyFlightConditions(unittest.TestCase):
         p.setup(force_alloc_complex=True)
 
         if input_speed_type is SpeedType.TAS:
-            p.set_val(Dynamic.Atmosphere.ALTITUDEUDE, 37500, units="ft")
+            p.set_val(Dynamic.Atmosphere.ALTITUDE, 37500, units="ft")
             p.set_val(Dynamic.Atmosphere.VELOCITY, 250, units="kn")
             p.set_val("dTAS_dr", np.zeros(nn), units="kn/km")
         elif input_speed_type is SpeedType.EAS:
-            p.set_val(Dynamic.Atmosphere.ALTITUDEUDE, 37500, units="ft")
+            p.set_val(Dynamic.Atmosphere.ALTITUDE, 37500, units="ft")
             p.set_val("EAS", 250, units="kn")
             p.set_val("dEAS_dr", np.zeros(nn), units="kn/km")
         else:
-            p.set_val(Dynamic.Atmosphere.ALTITUDEUDE, 37500, units="ft")
+            p.set_val(Dynamic.Atmosphere.ALTITUDE, 37500, units="ft")
             p.set_val(Dynamic.Mission.MACH, 0.78, units="unitless")
             p.set_val("dmach_dr", np.zeros(nn), units="unitless/km")
 

@@ -102,7 +102,7 @@ def custom_run_aviary(aircraft_filename, optimizer=None,
             ),
             (
                 'climb3',
-                Dynamic.Atmosphere.ALTITUDEUDE,
+                Dynamic.Atmosphere.ALTITUDE,
                 0,
             ),
             (

@@ -815,9 +815,15 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
         altitude_ref, units = user_options.get_item('altitude_ref')
 
         phase.add_state(
-            Dynamic.Atmosphere.ALTITUDE, fix_initial=True, lower=0, ref=altitude_ref,
-            defect_ref=altitude_ref, units=units, upper=altitude_ref,
-            rate_source=Dynamic.Atmosphere.ALTITUDEUDE_RATE)
+            Dynamic.Atmosphere.ALTITUDE,
+            fix_initial=True,
+            lower=0,
+            ref=altitude_ref,
+            defect_ref=altitude_ref,
+            units=units,
+            upper=altitude_ref,
+            rate_source=Dynamic.Atmosphere.ALTITUDE_RATE,
+        )
 
         max_velocity, units = user_options.get_item('max_velocity')
 
@@ -1048,9 +1054,14 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
         altitude_ref, units = user_options.get_item('altitude_ref')
 
         phase.add_state(
-            Dynamic.Atmosphere.ALTITUDE, fix_initial=False, lower=0, ref=altitude_ref,
-            defect_ref=altitude_ref, units=units,
-            rate_source=Dynamic.Atmosphere.ALTITUDEUDE_RATE)
+            Dynamic.Atmosphere.ALTITUDE,
+            fix_initial=False,
+            lower=0,
+            ref=altitude_ref,
+            defect_ref=altitude_ref,
+            units=units,
+            rate_source=Dynamic.Atmosphere.ALTITUDE_RATE,
+        )
 
         max_velocity, units = user_options.get_item('max_velocity')
 
@@ -1277,9 +1288,14 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
         altitude_ref, units = user_options.get_item('altitude_ref')
 
         phase.add_state(
-            Dynamic.Atmosphere.ALTITUDE, fix_initial=False, lower=0, ref=altitude_ref,
-            defect_ref=altitude_ref, units=units,
-            rate_source=Dynamic.Atmosphere.ALTITUDEUDE_RATE)
+            Dynamic.Atmosphere.ALTITUDE,
+            fix_initial=False,
+            lower=0,
+            ref=altitude_ref,
+            defect_ref=altitude_ref,
+            units=units,
+            rate_source=Dynamic.Atmosphere.ALTITUDE_RATE,
+        )
 
         max_velocity, units = user_options.get_item('max_velocity')
 
@@ -1502,9 +1518,14 @@ class TakeoffEngineCutback(PhaseBuilderBase):
         altitude_ref, units = user_options.get_item('altitude_ref')
 
         phase.add_state(
-            Dynamic.Atmosphere.ALTITUDE, fix_initial=False, lower=0, ref=altitude_ref,
-            defect_ref=altitude_ref, units=units,
-            rate_source=Dynamic.Atmosphere.ALTITUDEUDE_RATE)
+            Dynamic.Atmosphere.ALTITUDE,
+            fix_initial=False,
+            lower=0,
+            ref=altitude_ref,
+            defect_ref=altitude_ref,
+            units=units,
+            rate_source=Dynamic.Atmosphere.ALTITUDE_RATE,
+        )
 
         max_velocity, units = user_options.get_item('max_velocity')
 
@@ -1715,9 +1736,14 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilderBase):
         altitude_ref, units = user_options.get_item('altitude_ref')
 
         phase.add_state(
-            Dynamic.Atmosphere.ALTITUDE, fix_initial=False, lower=0, ref=altitude_ref,
-            defect_ref=altitude_ref, units=units,
-            rate_source=Dynamic.Atmosphere.ALTITUDEUDE_RATE)
+            Dynamic.Atmosphere.ALTITUDE,
+            fix_initial=False,
+            lower=0,
+            ref=altitude_ref,
+            defect_ref=altitude_ref,
+            units=units,
+            rate_source=Dynamic.Atmosphere.ALTITUDE_RATE,
+        )
 
         max_velocity, units = user_options.get_item('max_velocity')
 
@@ -1941,9 +1967,14 @@ class TakeoffMicP1ToClimb(PhaseBuilderBase):
         altitude_ref, units = user_options.get_item('altitude_ref')
 
         phase.add_state(
-            Dynamic.Atmosphere.ALTITUDE, fix_initial=False, lower=0, ref=altitude_ref,
-            defect_ref=altitude_ref, units=units,
-            rate_source=Dynamic.Atmosphere.ALTITUDEUDE_RATE)
+            Dynamic.Atmosphere.ALTITUDE,
+            fix_initial=False,
+            lower=0,
+            ref=altitude_ref,
+            defect_ref=altitude_ref,
+            units=units,
+            rate_source=Dynamic.Atmosphere.ALTITUDE_RATE,
+        )
 
         max_velocity, units = user_options.get_item('max_velocity')
 

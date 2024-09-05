@@ -9,7 +9,7 @@ vars_to_connect = {
     },
     "Fn_max_train": {
         "mission_name": [
-            Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_MAX + "_train",
+            Dynamic.Vehicle.Propulsion.THRUST_MAX + "_train",
         ],
         "units": "lbf",
     },

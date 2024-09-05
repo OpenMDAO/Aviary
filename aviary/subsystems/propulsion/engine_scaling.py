@@ -144,7 +144,7 @@ class EngineScaling(om.ExplicitComponent):
         for variable in engine_variables:
             if variable not in skip_variables:
                 if variable is FUEL_FLOW:
-                    outputs[Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATEL_FLOW_RATE_NEGATIVE] = -(
+                    outputs[Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE] = -(
                         inputs['fuel_flow_rate_unscaled'] * fuel_flow_scale_factor
                         + constant_fuel_flow
                     )
@@ -170,13 +170,13 @@ class EngineScaling(om.ExplicitComponent):
             if variable not in skip_variables:
                 if variable is FUEL_FLOW:
                     self.declare_partials(
-                        Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATEL_FLOW_RATE_NEGATIVE,
+                        Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE,
                         Aircraft.Engine.SCALE_FACTOR,
                         rows=r,
                         cols=c,
                     )
                     self.declare_partials(
-                        Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATEL_FLOW_RATE_NEGATIVE,
+                        Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE,
                         'fuel_flow_rate_unscaled',
                         rows=r,
                         cols=r,
@@ -270,11 +270,11 @@ class EngineScaling(om.ExplicitComponent):
             if variable not in skip_variables:
                 if variable is FUEL_FLOW:
                     J[
-                        Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATEL_FLOW_RATE_NEGATIVE,
+                        Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE,
                         'fuel_flow_rate_unscaled',
                     ] = fuel_flow_deriv
                     J[
-                        Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATEL_FLOW_RATE_NEGATIVE,
+                        Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE,
                         Aircraft.Engine.SCALE_FACTOR,
                     ] = fuel_flow_scale_deriv
                 else:

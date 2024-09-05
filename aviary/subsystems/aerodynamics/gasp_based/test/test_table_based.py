@@ -57,7 +57,7 @@ class TestCruiseAero(unittest.TestCase):
 
         prob.set_val(Dynamic.Mission.MACH, [0.8, 0.8])
         prob.set_val("alpha", [4.216, 3.146])
-        prob.set_val(Dynamic.Atmosphere.ALTITUDEUDE, [37500, 37500])
+        prob.set_val(Dynamic.Atmosphere.ALTITUDE, [37500, 37500])
         prob.run_model()
 
         cl_exp = np.array([0.6304, 0.5059])
@@ -100,7 +100,7 @@ class TestLowSpeedAero(unittest.TestCase):
         prob.setup()
 
         prob.set_val("t_curr", [0.0, 1.0, 2.0, 3.0])
-        prob.set_val(Dynamic.Atmosphere.ALTITUDEUDE, 0)
+        prob.set_val(Dynamic.Atmosphere.ALTITUDE, 0)
         prob.set_val(Dynamic.Mission.MACH, [0.0, 0.009, 0.018, 0.026])
         prob.set_val("alpha", 0)
         # TODO set q if we want to test lift/drag forces
@@ -141,7 +141,7 @@ class TestLowSpeedAero(unittest.TestCase):
         )
 
         alts = [44.2, 62.7, 84.6, 109.7, 373.0, 419.4, 465.3, 507.8]
-        prob.set_val(Dynamic.Atmosphere.ALTITUDEUDE, alts)
+        prob.set_val(Dynamic.Atmosphere.ALTITUDE, alts)
         prob.set_val(
             Dynamic.Mission.MACH, [
                 0.257, 0.260, 0.263, 0.265, 0.276, 0.277, 0.279, 0.280])

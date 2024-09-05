@@ -60,7 +60,7 @@ class TakeoffEOMTest(unittest.TestCase):
             ],
             output_keys=[
                 Dynamic.Mission.DISTANCE_RATE,
-                Dynamic.Atmosphere.ALTITUDEUDE_RATE,
+                Dynamic.Atmosphere.ALTITUDE_RATE,
                 Dynamic.Atmosphere.VELOCITYITY_RATE,
             ],
             tol=1e-2,
@@ -155,7 +155,7 @@ class TakeoffEOMTest(unittest.TestCase):
                 [4.280758, -1.56085]), tol
         )
         assert_near_equal(
-            prob[Dynamic.Atmosphere.ALTITUDEUDE_RATE],
+            prob[Dynamic.Atmosphere.ALTITUDE_RATE],
             np.array([3.004664, -2.203122]),
             tol,
         )
@@ -186,7 +186,7 @@ class TakeoffEOMTest(unittest.TestCase):
         assert_near_equal(
             prob[Dynamic.Mission.DISTANCE_RATE], np.array([1.0, 2.0]), tol)
         assert_near_equal(
-            prob[Dynamic.Atmosphere.ALTITUDEUDE_RATE], np.array([0.0, 0.0]), tol
+            prob[Dynamic.Atmosphere.ALTITUDE_RATE], np.array([0.0, 0.0]), tol
         )
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
@@ -236,7 +236,7 @@ class TakeoffEOMTest(unittest.TestCase):
             Dynamic.Mission.DISTANCE_RATE, [160.98, 166.25], units="m/s"
         )
         prob.model.set_input_defaults(
-            Dynamic.Atmosphere.ALTITUDEUDE_RATE, [1.72, 11.91], units="m/s"
+            Dynamic.Atmosphere.ALTITUDE_RATE, [1.72, 11.91], units="m/s"
         )
 
         prob.setup(check=False, force_alloc_complex=True)
@@ -267,7 +267,7 @@ class TakeoffEOMTest(unittest.TestCase):
             Dynamic.Mission.DISTANCE_RATE, [160.98, 166.25], units="m/s"
         )
         prob.model.set_input_defaults(
-            Dynamic.Atmosphere.ALTITUDEUDE_RATE, [1.72, 11.91], units="m/s"
+            Dynamic.Atmosphere.ALTITUDE_RATE, [1.72, 11.91], units="m/s"
         )
 
         prob.setup(check=False, force_alloc_complex=True)

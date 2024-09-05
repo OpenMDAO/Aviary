@@ -132,7 +132,7 @@ class TabularAeroGroupDataTest(unittest.TestCase):
             Dynamic.Atmosphere.VELOCITY,
             val=115,
             units='m/s')  # convert from knots to ft/s
-        self.prob.set_val(Dynamic.Atmosphere.ALTITUDEUDE, val=10582, units='m')
+        self.prob.set_val(Dynamic.Atmosphere.ALTITUDE, val=10582, units='m')
         self.prob.set_val(Dynamic.Vehicle.MASS, val=80442, units='kg')
         self.prob.set_val(Dynamic.Mission.MACH, val=0.3876, units='unitless')
         # 1344.5? 'reference' vs 'calculated'?
@@ -193,7 +193,7 @@ class ComputedVsTabularTest(unittest.TestCase):
         dynamic_inputs = AviaryValues()
 
         dynamic_inputs.set_val(Dynamic.Atmosphere.VELOCITY, val=vel, units=vel_units)
-        dynamic_inputs.set_val(Dynamic.Atmosphere.ALTITUDEUDE, val=alt, units=alt_units)
+        dynamic_inputs.set_val(Dynamic.Atmosphere.ALTITUDE, val=alt, units=alt_units)
         dynamic_inputs.set_val(Dynamic.Vehicle.MASS, val=mass, units=units)
 
         prob = _get_computed_aero_data_at_altitude(alt, alt_units)
@@ -333,7 +333,7 @@ def _default_CD0_data():
     # alt_list = np.array(alt_list).flatten()
 
     CD0_data = NamedValues()
-    CD0_data.set_val(Dynamic.Atmosphere.ALTITUDEUDE, alt_range, 'ft')
+    CD0_data.set_val(Dynamic.Atmosphere.ALTITUDE, alt_range, 'ft')
     CD0_data.set_val(Dynamic.Mission.MACH, mach_range)
     CD0_data.set_val('zero_lift_drag_coefficient', CD0)
 
@@ -514,7 +514,7 @@ def _computed_aero_drag_data(flops_inputs: AviaryValues, design_altitude, units)
     CD0 = np.array(CD0)
 
     CD0_data = NamedValues()
-    CD0_data.set_val(Dynamic.Atmosphere.ALTITUDEUDE, alt, 'ft')
+    CD0_data.set_val(Dynamic.Atmosphere.ALTITUDE, alt, 'ft')
     CD0_data.set_val(Dynamic.Mission.MACH, seed)
     CD0_data.set_val('zero_lift_drag_coefficient', CD0)
 
@@ -530,7 +530,7 @@ def _get_computed_aero_data_at_altitude(altitude, units):
 
     prob.setup()
 
-    prob.set_val(Dynamic.Atmosphere.ALTITUDEUDE, altitude, units)
+    prob.set_val(Dynamic.Atmosphere.ALTITUDE, altitude, units)
 
     prob.run_model()
 

@@ -909,10 +909,12 @@ class EngineDeck(EngineModel):
                                         self.data[MACH],
                                         units='unitless',
                                         desc='Current flight Mach number')
-            max_thrust_engine.add_input(Dynamic.Atmosphere.ALTITUDEUDE,
-                                        self.data[ALTITUDE],
-                                        units=units[ALTITUDE],
-                                        desc='Current flight altitude')
+            max_thrust_engine.add_input(
+                Dynamic.Atmosphere.ALTITUDE,
+                self.data[ALTITUDE],
+                units=units[ALTITUDE],
+                desc='Current flight altitude',
+            )
             # replace throttle coming from mission with max value based on flight condition
             max_thrust_engine.add_input('throttle_max',
                                         self.data[THROTTLE],
@@ -944,7 +946,7 @@ class EngineDeck(EngineModel):
         # add created subsystems to engine_group
         outputs = []
         if getattr(self, 'use_t4', False):
-            outputs.append(Dynamic.Atmosphere.TEMPERATURE_T4)
+            outputs.append(Dynamic.Vehicle.Propulsion.TEMPERATURE_T4)
 
         engine_group.add_subsystem('interpolation',
                                    engine,

@@ -64,12 +64,14 @@ class TestGearbox(unittest.TestCase):
         prob.run_model()
 
         SHAFT_POWER_GEARBOX = prob.get_val(
-            av.Dynamic.Vehicle.Propulsion.SHAFT_POWERSHAFT_POWER_GEARBOX, 'hp')
+            av.Dynamic.Vehicle.Propulsion.SHAFT_POWER_GEARBOX, 'hp'
+        )
         RPM_GEARBOX = prob.get_val(av.Dynamic.Vehicle.Propulsion.RPM_GEARBOX, 'rpm')
         TORQUE_GEARBOX = prob.get_val(
             av.Dynamic.Vehicle.Propulsion.TORQUE_GEARBOX, 'ft*lbf')
         SHAFT_POWER_MAX_GEARBOX = prob.get_val(
-            av.Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAXT_POWER_MAX_GEARBOX, 'hp')
+            av.Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX_GEARBOX, 'hp'
+        )
 
         SHAFT_POWER_GEARBOX_expected = [98.,  196.,  367.5]
         RPM_GEARBOX_expected = [396.82539683, 491.66666667, 491.66666667]

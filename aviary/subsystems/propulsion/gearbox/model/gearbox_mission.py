@@ -37,40 +37,61 @@ class GearboxMission(om.Group):
             promotes_outputs=[('RPM_out', Dynamic.Vehicle.Propulsion.RPM_GEARBOX)],
         )
 
-        self.add_subsystem('shaft_power_comp',
-                           om.ExecComp('shaft_power_out = shaft_power_in * eff',
-                                       shaft_power_in={'val': np.ones(n), 'units': 'kW'},
-                                       shaft_power_out={
-                                           'val': np.ones(n), 'units': 'kW'},
-                                       eff={'val': 0.98, 'units': 'unitless'},
-                                       has_diag_partials=True),
-                           promotes_inputs=[('shaft_power_in', Dynamic.Vehicle.Propulsion.SHAFT_POWER),
-                                            ('eff', Aircraft.Engine.Gearbox.EFFICIENCY)],
-                           promotes_outputs=[('shaft_power_out', Dynamic.Vehicle.Propulsion.SHAFT_POWERSHAFT_POWER_GEARBOX)])
+        self.add_subsystem(
+            'shaft_power_comp',
+            om.ExecComp(
+                'shaft_power_out = shaft_power_in * eff',
+                shaft_power_in={'val': np.ones(n), 'units': 'kW'},
+                shaft_power_out={'val': np.ones(n), 'units': 'kW'},
+                eff={'val': 0.98, 'units': 'unitless'},
+                has_diag_partials=True,
+            ),
+            promotes_inputs=[
+                ('shaft_power_in', Dynamic.Vehicle.Propulsion.SHAFT_POWER),
+                ('eff', Aircraft.Engine.Gearbox.EFFICIENCY),
+            ],
+            promotes_outputs=[
+                ('shaft_power_out', Dynamic.Vehicle.Propulsion.SHAFT_POWER_GEARBOX)
+            ],
+        )
 
-        self.add_subsystem('torque_comp',
-                           om.ExecComp('torque_out = shaft_power_out / RPM_out',
-                                       shaft_power_out={
-                                           'val': np.ones(n), 'units': 'kW'},
-                                       torque_out={'val': np.ones(n), 'units': 'kN*m'},
-                                       RPM_out={'val': np.ones(n), 'units': 'rad/s'},
-                                       has_diag_partials=True),
-                           promotes_inputs=[('shaft_power_out', Dynamic.Vehicle.Propulsion.SHAFT_POWERSHAFT_POWER_GEARBOX),
-                                            ('RPM_out', Dynamic.Vehicle.Propulsion.RPM_GEARBOX)],
-                           promotes_outputs=[('torque_out', Dynamic.Vehicle.Propulsion.TORQUE_GEARBOX)])
+        self.add_subsystem(
+            'torque_comp',
+            om.ExecComp(
+                'torque_out = shaft_power_out / RPM_out',
+                shaft_power_out={'val': np.ones(n), 'units': 'kW'},
+                torque_out={'val': np.ones(n), 'units': 'kN*m'},
+                RPM_out={'val': np.ones(n), 'units': 'rad/s'},
+                has_diag_partials=True,
+            ),
+            promotes_inputs=[
+                ('shaft_power_out', Dynamic.Vehicle.Propulsion.SHAFT_POWER_GEARBOX),
+                ('RPM_out', Dynamic.Vehicle.Propulsion.RPM_GEARBOX),
+            ],
+            promotes_outputs=[
+                ('torque_out', Dynamic.Vehicle.Propulsion.TORQUE_GEARBOX)
+            ],
+        )
 
         # Determine the maximum power available at this flight condition
         # this is used for excess power constraints
-        self.add_subsystem('shaft_power_max_comp',
-                           om.ExecComp('shaft_power_out = shaft_power_in * eff',
-                                       shaft_power_in={'val': np.ones(n), 'units': 'kW'},
-                                       shaft_power_out={
-                                           'val': np.ones(n), 'units': 'kW'},
-                                       eff={'val': 0.98, 'units': 'unitless'},
-                                       has_diag_partials=True),
-                           promotes_inputs=[('shaft_power_in', Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX),
-                                            ('eff', Aircraft.Engine.Gearbox.EFFICIENCY)],
-                           promotes_outputs=[('shaft_power_out', Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAXT_POWER_MAX_GEARBOX)])
+        self.add_subsystem(
+            'shaft_power_max_comp',
+            om.ExecComp(
+                'shaft_power_out = shaft_power_in * eff',
+                shaft_power_in={'val': np.ones(n), 'units': 'kW'},
+                shaft_power_out={'val': np.ones(n), 'units': 'kW'},
+                eff={'val': 0.98, 'units': 'unitless'},
+                has_diag_partials=True,
+            ),
+            promotes_inputs=[
+                ('shaft_power_in', Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX),
+                ('eff', Aircraft.Engine.Gearbox.EFFICIENCY),
+            ],
+            promotes_outputs=[
+                ('shaft_power_out', Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX_GEARBOX)
+            ],
+        )
 
         # We must ensure the design shaft power that was provided to pre-mission is
         # larger than the maximum shaft power that could be drawn by the mission.

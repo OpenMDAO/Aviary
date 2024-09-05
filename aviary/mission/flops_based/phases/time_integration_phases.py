@@ -49,7 +49,7 @@ class SGMDetailedTakeoff(SimuPyProblem):
             states=[
                 Dynamic.Vehicle.MASS,
                 Dynamic.Mission.DISTANCE,
-                Dynamic.Atmosphere.ALTITUDEUDE,
+                Dynamic.Atmosphere.ALTITUDE,
             ],
             alternate_state_rate_names={
                 Dynamic.Vehicle.MASS: Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL
@@ -59,7 +59,7 @@ class SGMDetailedTakeoff(SimuPyProblem):
         )
 
         self.phase_name = phase_name
-        self.add_trigger(Dynamic.Atmosphere.ALTITUDEUDE, 50, units='ft')
+        self.add_trigger(Dynamic.Atmosphere.ALTITUDE, 50, units='ft')
 
 
 class SGMDetailedLanding(SimuPyProblem):
@@ -76,7 +76,7 @@ class SGMDetailedLanding(SimuPyProblem):
             states=[
                 Dynamic.Vehicle.MASS,
                 Dynamic.Mission.DISTANCE,
-                Dynamic.Atmosphere.ALTITUDEUDE,
+                Dynamic.Atmosphere.ALTITUDE,
             ],
             alternate_state_rate_names={
                 Dynamic.Vehicle.MASS: Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL
@@ -86,4 +86,4 @@ class SGMDetailedLanding(SimuPyProblem):
         )
 
         self.phase_name = phase_name
-        self.add_trigger(Dynamic.Atmosphere.ALTITUDEUDE, 0, units='ft')
+        self.add_trigger(Dynamic.Atmosphere.ALTITUDE, 0, units='ft')

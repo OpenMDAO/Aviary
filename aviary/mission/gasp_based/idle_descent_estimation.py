@@ -36,7 +36,7 @@ def add_descent_estimation_as_submodel(
         traj_final_state_output=[
             Dynamic.Vehicle.MASS,
             Dynamic.Mission.DISTANCE,
-            Dynamic.Atmosphere.ALTITUDEUDE,
+            Dynamic.Atmosphere.ALTITUDE,
         ],
         promote_all_auto_ivc=True,
     )

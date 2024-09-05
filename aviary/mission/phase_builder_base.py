@@ -537,7 +537,7 @@ class PhaseBuilderBase(ABC):
         final_altitude = user_options.get_val('final_altitude', units='ft')
         alt_constraint_ref = user_options.get_val('alt_constraint_ref', units='ft')
         self.phase.add_boundary_constraint(
-            Dynamic.Atmosphere.ALTITUDEUDE,
+            Dynamic.Atmosphere.ALTITUDE,
             loc="final",
             equals=final_altitude,
             units="ft",

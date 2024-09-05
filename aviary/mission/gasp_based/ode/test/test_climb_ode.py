@@ -49,7 +49,7 @@ class ClimbODETestCase(unittest.TestCase):
             "alpha": 5.16398,
             "CL": 0.59766664,
             "CD": 0.03070836,
-            Dynamic.Atmosphere.ALTITUDEUDE_RATE: 3414.63 / 60,  # ft/s
+            Dynamic.Atmosphere.ALTITUDE_RATE: 3414.63 / 60,  # ft/s
             # TAS (kts -> ft/s) * cos(gamma), 253.6827 * 1.68781 * cos(0.13331060446181708)
             Dynamic.Mission.DISTANCE_RATE: 424.36918705874785,  # ft/s
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL: -13448.29,  # lbm/h
@@ -86,10 +86,13 @@ class ClimbODETestCase(unittest.TestCase):
             "alpha": [4.05559, 4.08245],
             "CL": [0.512629, 0.617725],
             "CD": [0.02692764, 0.03311237],
-            Dynamic.Atmosphere.ALTITUDEUDE_RATE: [3053.754 / 60, 429.665 / 60],  # ft/s
+            Dynamic.Atmosphere.ALTITUDE_RATE: [3053.754 / 60, 429.665 / 60],  # ft/s
             # TAS (kts -> ft/s) * cos(gamma), [319, 459] kts
             Dynamic.Mission.DISTANCE_RATE: [536.2835, 774.4118],  # ft/s
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL: [-11420.05,  -6050.26],
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL: [
+                -11420.05,
+                -6050.26,
+            ],
             "theta": [0.16540479, 0.08049912],  # rad ([9.47699, 4.61226] deg),
             Dynamic.Vehicle.FLIGHT_PATH_ANGLE: [0.09462135, 0.00924686],  # rad, gamma
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL: [25560.51, 10784.25],

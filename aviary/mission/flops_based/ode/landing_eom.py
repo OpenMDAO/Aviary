@@ -74,8 +74,11 @@ class FlareEOM(om.Group):
             promotes_outputs=outputs)
 
         inputs = [
-            'acceleration_horizontal', 'acceleration_vertical',
-            Dynamic.Mission.DISTANCE_RATE, Dynamic.Atmosphere.ALTITUDEUDE_RATE]
+            'acceleration_horizontal',
+            'acceleration_vertical',
+            Dynamic.Mission.DISTANCE_RATE,
+            Dynamic.Atmosphere.ALTITUDE_RATE,
+        ]
 
         outputs = [Dynamic.Atmosphere.VELOCITYITY_RATE,]
 
@@ -86,8 +89,11 @@ class FlareEOM(om.Group):
             promotes_outputs=outputs)
 
         inputs = [
-            Dynamic.Mission.DISTANCE_RATE, Dynamic.Atmosphere.ALTITUDEUDE_RATE,
-            'acceleration_horizontal', 'acceleration_vertical']
+            Dynamic.Mission.DISTANCE_RATE,
+            Dynamic.Atmosphere.ALTITUDE_RATE,
+            'acceleration_horizontal',
+            'acceleration_vertical',
+        ]
 
         outputs = [Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE]
 

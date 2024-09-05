@@ -57,7 +57,7 @@ class MissionEOMTest(unittest.TestCase):
         self.prob.run_model()
 
         assert_near_equal(
-            self.prob.get_val(Dynamic.Atmosphere.ALTITUDEUDE_RATE_MAX, units='ft/min'),
+            self.prob.get_val(Dynamic.Vehicle.ALTITUDE_RATE_MAX, units='ft/min'),
             np.array([3679.0525544843, 760.55416759, 6557.07891846677]),
             tol,
         )

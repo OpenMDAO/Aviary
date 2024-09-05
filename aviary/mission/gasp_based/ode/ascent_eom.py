@@ -126,7 +126,7 @@ class AscentEOM(om.ExplicitComponent):
             Dynamic.Atmosphere.VELOCITYITY_RATE, [Aircraft.Wing.INCIDENCE]
         )
         self.declare_partials(
-            Dynamic.Atmosphere.ALTITUDEUDE_RATE,
+            Dynamic.Atmosphere.ALTITUDE_RATE,
             [Dynamic.Atmosphere.VELOCITY, Dynamic.Vehicle.FLIGHT_PATH_ANGLE],
             rows=arange,
             cols=arange,
@@ -195,7 +195,7 @@ class AscentEOM(om.ExplicitComponent):
             / (TAS * weight)
         )
 
-        outputs[Dynamic.Atmosphere.ALTITUDEUDE_RATE] = TAS * np.sin(gamma)
+        outputs[Dynamic.Atmosphere.ALTITUDE_RATE] = TAS * np.sin(gamma)
         outputs[Dynamic.Mission.DISTANCE_RATE] = TAS * np.cos(gamma)
         outputs["normal_force"] = normal_force
         outputs["fuselage_pitch"] = gamma * 180 / np.pi - i_wing + alpha
@@ -329,10 +329,8 @@ class AscentEOM(om.ExplicitComponent):
             GRAV_ENGLISH_GASP * (-mu * dNF_dLift) / weight
         )
 
-        J[Dynamic.Atmosphere.ALTITUDEUDE_RATE, Dynamic.Atmosphere.VELOCITY] = np.sin(
-            gamma
-        )
-        J[Dynamic.Atmosphere.ALTITUDEUDE_RATE, Dynamic.Vehicle.FLIGHT_PATH_ANGLE] = (
+        J[Dynamic.Atmosphere.ALTITUDE_RATE, Dynamic.Atmosphere.VELOCITY] = np.sin(gamma)
+        J[Dynamic.Atmosphere.ALTITUDE_RATE, Dynamic.Vehicle.FLIGHT_PATH_ANGLE] = (
             TAS * np.cos(gamma)
         )
 

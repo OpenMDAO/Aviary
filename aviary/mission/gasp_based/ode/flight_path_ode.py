@@ -212,7 +212,7 @@ class FlightPathODE(BaseODE):
             Dynamic.Vehicle.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units="deg"
         )
         self.set_input_defaults(
-            Dynamic.Atmosphere.ALTITUDEUDE, val=np.zeros(nn), units="ft"
+            Dynamic.Atmosphere.ALTITUDE, val=np.zeros(nn), units="ft"
         )
         self.set_input_defaults(Dynamic.Mission.MACH, val=np.zeros(nn), units="unitless")
         self.set_input_defaults(Dynamic.Vehicle.MASS, val=np.zeros(nn), units="lbm")

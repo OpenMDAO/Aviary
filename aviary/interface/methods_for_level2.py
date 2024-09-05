@@ -1043,7 +1043,7 @@ class AviaryProblem(om.Problem):
                     ),
                     (
                         'climb3',
-                        Dynamic.Atmosphere.ALTITUDEUDE,
+                        Dynamic.Atmosphere.ALTITUDE,
                         0,
                     ),
                     (
@@ -1423,7 +1423,7 @@ class AviaryProblem(om.Problem):
             self._link_phases_helper_with_options(
                 self.regular_phases,
                 'optimize_altitude',
-                Dynamic.Atmosphere.ALTITUDEUDE,
+                Dynamic.Atmosphere.ALTITUDE,
                 ref=1.0e4,
             )
             self._link_phases_helper_with_options(
@@ -1433,7 +1433,7 @@ class AviaryProblem(om.Problem):
             self._link_phases_helper_with_options(
                 self.reserve_phases,
                 'optimize_altitude',
-                Dynamic.Atmosphere.ALTITUDEUDE,
+                Dynamic.Atmosphere.ALTITUDE,
                 ref=1.0e4,
             )
             self._link_phases_helper_with_options(
@@ -1487,7 +1487,7 @@ class AviaryProblem(om.Problem):
                         if ((phase1 in self.reserve_phases) == (phase2 in self.reserve_phases)) and \
                                 not ({"groundroll", "rotation"} & {phase1, phase2}) and \
                                 not ('accel', 'climb1') == (phase1, phase2):  # required for convergence of FwGm
-                            states_to_link[Dynamic.Atmosphere.ALTITUDEUDE] = (
+                            states_to_link[Dynamic.Atmosphere.ALTITUDE] = (
                                 true_unless_mpi
                             )
 
@@ -1987,7 +1987,7 @@ class AviaryProblem(om.Problem):
                              self.get_val(Mission.Design.GROSS_MASS))
 
             self.set_val(
-                "traj.SGMClimb_" + Dynamic.Atmosphere.ALTITUDEUDE + "_trigger",
+                "traj.SGMClimb_" + Dynamic.Atmosphere.ALTITUDE + "_trigger",
                 val=self.cruise_alt,
                 units="ft",
             )

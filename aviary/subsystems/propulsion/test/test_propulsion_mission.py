@@ -137,7 +137,8 @@ class PropulsionMissionTest(unittest.TestCase):
         fuel_flow = self.prob.get_val(
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL, units='lb/h')
         electric_power_in = self.prob.get_val(
-            Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_INIC_POWER_IN_TOTAL, units='kW')
+            Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL, units='kW'
+        )
         nox = self.prob.get_val(Dynamic.Vehicle.Propulsion.NOX_RATE_TOTAL, units='lb/h')
 
         expected_thrust = np.array([2347.202, 14535])
@@ -178,9 +179,9 @@ class PropulsionMissionTest(unittest.TestCase):
                                       promotes=['*'])
 
         self.prob.model.add_subsystem(
-            Dynamic.Atmosphere.ALTITUDEUDE,
+            Dynamic.Atmosphere.ALTITUDE,
             om.IndepVarComp(
-                Dynamic.Atmosphere.ALTITUDEUDE, np.linspace(0, 40000, nn), units='ft'
+                Dynamic.Atmosphere.ALTITUDE, np.linspace(0, 40000, nn), units='ft'
             ),
             promotes=['*'],
         )

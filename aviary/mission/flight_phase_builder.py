@@ -220,8 +220,8 @@ class FlightPhaseBase(PhaseBuilderBase):
         else:
             if use_polynomial_control:
                 phase.add_polynomial_control(
-                    Dynamic.Atmosphere.ALTITUDEUDE,
-                    targets=Dynamic.Atmosphere.ALTITUDEUDE,
+                    Dynamic.Atmosphere.ALTITUDE,
+                    targets=Dynamic.Atmosphere.ALTITUDE,
                     units=altitude_bounds[1],
                     opt=optimize_altitude,
                     lower=altitude_bounds[0][0],
@@ -233,8 +233,8 @@ class FlightPhaseBase(PhaseBuilderBase):
                 )
             else:
                 phase.add_control(
-                    Dynamic.Atmosphere.ALTITUDEUDE,
-                    targets=Dynamic.Atmosphere.ALTITUDEUDE,
+                    Dynamic.Atmosphere.ALTITUDE,
+                    targets=Dynamic.Atmosphere.ALTITUDE,
                     units=altitude_bounds[1],
                     opt=optimize_altitude,
                     lower=altitude_bounds[0][0],
@@ -272,7 +272,8 @@ class FlightPhaseBase(PhaseBuilderBase):
 
         phase.add_timeseries_output(
             Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL,
-            output_name=Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_INIC_POWER_IN_TOTAL, units='kW'
+            output_name=Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL,
+            units='kW',
         )
 
         phase.add_timeseries_output(
@@ -292,7 +293,7 @@ class FlightPhaseBase(PhaseBuilderBase):
             units='m/s',
         )
 
-        phase.add_timeseries_output(Dynamic.Atmosphere.ALTITUDEUDE)
+        phase.add_timeseries_output(Dynamic.Atmosphere.ALTITUDE)
 
         if phase_type is EquationsOfMotion.SOLVED_2DOF:
             phase.add_timeseries_output(Dynamic.Vehicle.FLIGHT_PATH_ANGLE)
@@ -319,10 +320,10 @@ class FlightPhaseBase(PhaseBuilderBase):
         if (
             optimize_altitude
             and fix_initial
-            and not Dynamic.Atmosphere.ALTITUDEUDE in constraints
+            and not Dynamic.Atmosphere.ALTITUDE in constraints
         ):
             phase.add_boundary_constraint(
-                Dynamic.Atmosphere.ALTITUDEUDE,
+                Dynamic.Atmosphere.ALTITUDE,
                 loc='initial',
                 equals=initial_altitude,
                 units=altitude_bounds[1],
@@ -332,10 +333,10 @@ class FlightPhaseBase(PhaseBuilderBase):
         if (
             optimize_altitude
             and constrain_final
-            and not Dynamic.Atmosphere.ALTITUDEUDE in constraints
+            and not Dynamic.Atmosphere.ALTITUDE in constraints
         ):
             phase.add_boundary_constraint(
-                Dynamic.Atmosphere.ALTITUDEUDE,
+                Dynamic.Atmosphere.ALTITUDE,
                 loc='final',
                 equals=final_altitude,
                 units=altitude_bounds[1],
@@ -353,10 +354,10 @@ class FlightPhaseBase(PhaseBuilderBase):
 
         if (
             required_available_climb_rate is not None
-            and not Dynamic.Atmosphere.ALTITUDE_RATE_MAX in constraints
+            and not Dynamic.Vehicle.ALTITUDE_RATE_MAX in constraints
         ):
             phase.add_path_constraint(
-                Dynamic.Atmosphere.ALTITUDE_RATE_MAX,
+                Dynamic.Vehicle.ALTITUDE_RATE_MAX,
                 lower=required_available_climb_rate,
                 units=units,
             )

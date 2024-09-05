@@ -32,13 +32,19 @@ class TakeoffODETest(unittest.TestCase):
                 Dynamic.Vehicle.MASS,
                 Dynamic.Vehicle.LIFT,
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-                Dynamic.Vehicle.DRAG],
+                Dynamic.Vehicle.DRAG,
+            ],
             output_keys=[
                 Dynamic.Mission.DISTANCE_RATE,
-                Dynamic.Atmosphere.ALTITUDEUDE_RATE,
-                Dynamic.Atmosphere.VELOCITYITY_RATE],
-            tol=1e-2, atol=1e-9, rtol=1e-11,
-            check_values=False, check_partials=True)
+                Dynamic.Atmosphere.ALTITUDE_RATE,
+                Dynamic.Atmosphere.VELOCITYITY_RATE,
+            ],
+            tol=1e-2,
+            atol=1e-9,
+            rtol=1e-11,
+            check_values=False,
+            check_partials=True,
+        )
 
     def test_case_climbing(self):
         prob = self._make_prob(climbing=True)
@@ -56,13 +62,19 @@ class TakeoffODETest(unittest.TestCase):
                 Dynamic.Vehicle.MASS,
                 Dynamic.Vehicle.LIFT,
                 Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL,
-                Dynamic.Vehicle.DRAG],
+                Dynamic.Vehicle.DRAG,
+            ],
             output_keys=[
                 Dynamic.Mission.DISTANCE_RATE,
-                Dynamic.Atmosphere.ALTITUDEUDE_RATE,
-                Dynamic.Atmosphere.VELOCITYITY_RATE],
-            tol=1e-2, atol=1e-9, rtol=1e-11,
-            check_values=False, check_partials=True)
+                Dynamic.Atmosphere.ALTITUDE_RATE,
+                Dynamic.Atmosphere.VELOCITYITY_RATE,
+            ],
+            tol=1e-2,
+            atol=1e-9,
+            rtol=1e-11,
+            check_values=False,
+            check_partials=True,
+        )
 
     @staticmethod
     def _make_prob(climbing):

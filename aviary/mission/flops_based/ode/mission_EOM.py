@@ -29,9 +29,11 @@ class MissionEOM(om.Group):
             name='groundspeed',
             subsys=RangeRate(num_nodes=nn),
             promotes_inputs=[
-                Dynamic.Atmosphere.ALTITUDEUDE_RATE,
-                Dynamic.Atmosphere.VELOCITY],
-            promotes_outputs=[Dynamic.Mission.DISTANCE_RATE])
+                Dynamic.Atmosphere.ALTITUDE_RATE,
+                Dynamic.Atmosphere.VELOCITY,
+            ],
+            promotes_outputs=[Dynamic.Mission.DISTANCE_RATE],
+        )
 
         self.add_subsystem(
             name='excess_specific_power',
@@ -43,13 +45,19 @@ class MissionEOM(om.Group):
                 Dynamic.Vehicle.MASS, Dynamic.Vehicle.DRAG],
             promotes_outputs=[(Dynamic.Vehicle.SPECIFIC_ENERGY_RATE, Dynamic.Vehicle.SPECIFIC_ENERGY_RATE_EXCESS)])
         self.add_subsystem(
-            name=Dynamic.Atmosphere.ALTITUDEUDE_RATE_MAX,
-            subsys=AltitudeRate(
-                num_nodes=nn),
+            name=Dynamic.Vehicle.ALTITUDE_RATE_MAX,
+            subsys=AltitudeRate(num_nodes=nn),
             promotes_inputs=[
-                (Dynamic.Vehicle.SPECIFIC_ENERGY_RATE,
-                 Dynamic.Vehicle.SPECIFIC_ENERGY_RATE_EXCESS),
+                (
+                    Dynamic.Vehicle.SPECIFIC_ENERGY_RATE,
+                    Dynamic.Vehicle.SPECIFIC_ENERGY_RATE_EXCESS,
+                ),
                 Dynamic.Atmosphere.VELOCITYITY_RATE,
-                Dynamic.Atmosphere.VELOCITY],
+                Dynamic.Atmosphere.VELOCITY,
+            ],
             promotes_outputs=[
-                (Dynamic.Atmosphere.ALTITUDEUDE_RATDynamic.Atmosphere.ALTITUDETITUDE_RATE_MAX)])
+                (
+                    Dynamic.Atmosphere.ALTITUDE_RATDynamic.Atmosphere.ALTITUDETITUDE_RATE_MAX
+                )
+            ],
+        )

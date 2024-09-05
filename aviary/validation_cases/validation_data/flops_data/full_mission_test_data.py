@@ -72,7 +72,7 @@ data.set_val(
 
 data.set_val(
     # outputs
-    Dynamic.Atmosphere.ALTITUDEUDE_RATE,
+    Dynamic.Atmosphere.ALTITUDE_RATE,
     val=[
         29.8463233754212,
         -5.69941245767868e-09,
@@ -83,7 +83,7 @@ data.set_val(
 
 data.set_val(
     # outputs
-    Dynamic.Atmosphere.ALTITUDEUDE_RATE_MAX,
+    Dynamic.Vehicle.ALTITUDE_RATE_MAX,
     val=[
         3679.0525544843,
         3.86361517135375,

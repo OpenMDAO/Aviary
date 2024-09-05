@@ -224,15 +224,15 @@ def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
             prob.model.add_subsystem(
                 Dynamic.Atmosphere.ALTITUDE,
                 om.IndepVarComp(
-                    Dynamic.Atmosphere.ALTITUDEUDE,
-                    data[ALTITUDE],
-                    units='ft'),
-                promotes=['*'])
+                    Dynamic.Atmosphere.ALTITUDE, data[ALTITUDE], units='ft'
+                ),
+                promotes=['*'],
+            )
 
             prob.model.add_subsystem(
                 name='atmosphere',
                 subsys=Atmosphere(num_nodes=len(data[MACH])),
-                promotes_inputs=[Dynamic.Atmosphere.ALTITUDEUDE],
+                promotes_inputs=[Dynamic.Atmosphere.ALTITUDE],
                 promotes_outputs=[Dynamic.Atmosphere.TEMPERATURE],
             )
 
@@ -548,19 +548,19 @@ def _generate_flight_idle(data, T4T2, ref_sls_airflow, ref_sfn_idle):
         promotes=['*'])
 
     prob.model.add_subsystem(
-        Dynamic.Atmosphere.ALTITUDEUDE,
-        om.IndepVarComp(
-            Dynamic.Atmosphere.ALTITUDEUDE,
-            alt_list,
-            units='ft'),
-        promotes=['*'])
+        Dynamic.Atmosphere.ALTITUDE,
+        om.IndepVarComp(Dynamic.Atmosphere.ALTITUDE, alt_list, units='ft'),
+        promotes=['*'],
+    )
 
     prob.model.add_subsystem(
         name='atmosphere',
         subsys=Atmosphere(num_nodes=nn),
-        promotes_inputs=[Dynamic.Atmosphere.ALTITUDEUDE],
-        promotes_outputs=[Dynamic.Atmosphere.TEMPERATURE,
-                          Dynamic.Atmosphere.STATIC_PRESSURE],
+        promotes_inputs=[Dynamic.Atmosphere.ALTITUDE],
+        promotes_outputs=[
+            Dynamic.Atmosphere.TEMPERATURE,
+            Dynamic.Atmosphere.STATIC_PRESSURE,
+        ],
     )
 
     prob.model.add_subsystem(

@@ -225,7 +225,7 @@ class DescentODE(BaseODE):
 
         ParamPort.set_default_vals(self)
         self.set_input_defaults(
-            Dynamic.Atmosphere.ALTITUDEUDE, val=37500 * np.ones(nn), units="ft"
+            Dynamic.Atmosphere.ALTITUDE, val=37500 * np.ones(nn), units="ft"
         )
         self.set_input_defaults(
             Dynamic.Vehicle.MASS, val=147000 * np.ones(nn), units="lbm"

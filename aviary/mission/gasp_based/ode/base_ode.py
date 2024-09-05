@@ -163,7 +163,7 @@ class BaseODE(om.Group):
         #         upper=12.0,
         #         lower=-2,
         #     )
-        #     alpha_comp_inputs = [Dynamic.Atmosphere.ALTITUDEUDE]
+        #     alpha_comp_inputs = [Dynamic.Atmosphere.ALTITUDE]
 
         if alpha_mode is not AlphaModes.DEFAULT:
             alpha_group.add_subsystem("alpha_comp",
@@ -277,6 +277,6 @@ class BaseODE(om.Group):
                 Dynamic.Atmosphere.VELOCITY,
             ],
             promotes_outputs=[
-                (Dynamic.Atmosphere.ALTITUDE_RATE, Dynamic.Atmosphere.ALTITUDE_RATE_MAX)
+                (Dynamic.Atmosphere.ALTITUDE_RATE, Dynamic.Vehicle.ALTITUDE_RATE_MAX)
             ],
         )

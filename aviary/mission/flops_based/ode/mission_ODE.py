@@ -152,7 +152,7 @@ class MissionODE(om.Group):
             ],
             promotes_outputs=[
                 Dynamic.Vehicle.SPECIFIC_ENERGY_RATE_EXCESS,
-                Dynamic.Atmosphere.ALTITUDEUDE_RATE_MAX,
+                Dynamic.Vehicle.ALTITUDE_RATE_MAX,
                 Dynamic.Mission.DISTANCE_RATE,
                 'thrust_required',
             ],
@@ -225,7 +225,7 @@ class MissionODE(om.Group):
         )
         self.set_input_defaults(Dynamic.Atmosphere.ALTITUDE, val=np.ones(nn), units='m')
         self.set_input_defaults(
-            Dynamic.Atmosphere.ALTITUDEUDE_RATE, val=np.ones(nn), units='m/s'
+            Dynamic.Atmosphere.ALTITUDE_RATE, val=np.ones(nn), units='m/s'
         )
 
         if options['use_actual_takeoff_mass']:
@@ -255,7 +255,7 @@ class MissionODE(om.Group):
 
         if analysis_scheme is AnalysisScheme.SHOOTING:
             SGM_required_outputs = {
-                Dynamic.Atmosphere.ALTITUDEUDE_RATE: {'units': 'm/s'},
+                Dynamic.Atmosphere.ALTITUDE_RATE: {'units': 'm/s'},
             }
             add_SGM_required_outputs(self, SGM_required_outputs)
 

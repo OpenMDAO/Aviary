@@ -96,7 +96,7 @@ class SimpleEngine(om.ExplicitComponent):
             desc='Current NOx emission rate (scaled)',
         )
         self.add_output(
-            Dynamic.Atmosphere.TEMPERATURE_T4,
+            Dynamic.Vehicle.Propulsion.TEMPERATURE_T4,
             shape=nn,
             units='degR',
             desc='Current turbine exit temperature',
@@ -114,7 +114,7 @@ class SimpleEngine(om.ExplicitComponent):
         outputs[Dynamic.Vehicle.Propulsion.THRUST_MAX] = 10000.0
         outputs[Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE] = - \
             10.0 * combined_throttle
-        outputs[Dynamic.Atmosphere.TEMPERATURE_T4] = 2800.0
+        outputs[Dynamic.Vehicle.Propulsion.TEMPERATURE_T4] = 2800.0
 
 
 class SimpleTestEngine(EngineModel):

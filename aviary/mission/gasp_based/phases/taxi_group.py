@@ -32,11 +32,16 @@ class TaxiSegment(BaseODE):
             if isinstance(subsystem, PropulsionBuilderBase):
                 system = subsystem.build_mission(num_nodes=1, aviary_inputs=options)
 
-                self.add_subsystem(subsystem.name,
-                                   system,
-                                   promotes_inputs=['*', (Dynamic.Atmosphere.ALTITUDEUDE, Mission.Takeoff.AIRPORT_ALTITUDE),
-                                                    (Dynamic.Mission.MACH, Mission.Taxi.MACH)],
-                                   promotes_outputs=['*'])
+                self.add_subsystem(
+                    subsystem.name,
+                    system,
+                    promotes_inputs=[
+                        '*',
+                        (Dynamic.Atmosphere.ALTITUDE, Mission.Takeoff.AIRPORT_ALTITUDE),
+                        (Dynamic.Mission.MACH, Mission.Taxi.MACH),
+                    ],
+                    promotes_outputs=['*'],
+                )
 
         self.add_subsystem("taxifuel", TaxiFuelComponent(
             aviary_options=options), promotes=["*"])

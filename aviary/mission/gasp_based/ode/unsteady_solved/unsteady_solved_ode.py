@@ -270,7 +270,7 @@ class UnsteadySolvedODE(BaseODE):
             name=Dynamic.Atmosphere.VELOCITY, val=250.0 * onn, units="kn"
         )
         self.set_input_defaults(
-            name=Dynamic.Atmosphere.ALTITUDEUDE, val=10000.0 * onn, units="ft"
+            name=Dynamic.Atmosphere.ALTITUDE, val=10000.0 * onn, units="ft"
         )
         self.set_input_defaults(name="dh_dr", val=0. * onn, units="ft/distance_units")
         self.set_input_defaults(name="d2h_dr2", val=0. * onn,

@@ -131,7 +131,11 @@ class PropulsionMission(om.Group):
             units='lb/h',
         )
         perf_mux.add_var(
-            Dynamic.Atmosphere.TEMPERATURE_T4, val=0, shape=(nn,), axis=1, units='degR'
+            Dynamic.Vehicle.Propulsion.TEMPERATURE_T4,
+            val=0,
+            shape=(nn,),
+            axis=1,
+            units='degR',
         )
         perf_mux.add_var(
             Dynamic.Vehicle.Propulsion.SHAFT_POWER,
@@ -172,11 +176,11 @@ class PropulsionMission(om.Group):
         # TODO this list shouldn't be hardcoded so it can be extended by users
         supported_outputs = [
             Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN,
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATEL_FLOW_RATE_NEGATIVE,
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE,
             Dynamic.Vehicle.Propulsion.NOX_RATE,
             Dynamic.Vehicle.Propulsion.SHAFT_POWER,
             Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX,
-            Dynamic.Atmosphere.TEMPERATURE_T4,
+            Dynamic.Vehicle.Propulsion.TEMPERATURE_T4,
             Dynamic.Vehicle.Propulsion.THRUST,
             Dynamic.Vehicle.Propulsion.THRUST_MAX,
         ]
@@ -272,7 +276,7 @@ class PropulsionSum(om.ExplicitComponent):
             units='lbf',
         )
         self.add_input(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATEL_FLOW_RATE_NEGATIVE,
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE,
             val=np.zeros((nn, num_engine_type)),
             units='lbm/h',
         )
@@ -336,7 +340,7 @@ class PropulsionSum(om.ExplicitComponent):
         )
         self.declare_partials(
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATEL_FLOW_RATE_NEGATIVE,
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE,
             val=deriv,
             rows=r,
             cols=c,
@@ -363,9 +367,7 @@ class PropulsionSum(om.ExplicitComponent):
 
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST]
         thrust_max = inputs[Dynamic.Vehicle.Propulsion.THRUST_MAX]
-        fuel_flow = inputs[
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATEL_FLOW_RATE_NEGATIVE
-        ]
+        fuel_flow = inputs[Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE]
         electric = inputs[Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN]
         nox = inputs[Dynamic.Vehicle.Propulsion.NOX_RATE]
 

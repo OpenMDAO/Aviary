@@ -6261,7 +6261,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Atmosphere.ALTITUDEUDE_RATE,
+    Dynamic.Atmosphere.ALTITUDE_RATE,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='ft/s',
@@ -6269,7 +6269,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Atmosphere.ALTITUDEUDE_RATE_MAX,
+    Dynamic.Vehicle.ALTITUDE_RATE_MAX,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='ft/s',
@@ -6351,7 +6351,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_INIC_POWER_IN_TOTAL,
+    Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='kW',
@@ -6397,7 +6397,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATEL_FLOW_RATE_NEGATIVE,
+    Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='lbm/h',
@@ -6449,7 +6449,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Atmosphere.MACHACH_RATE,
+    Dynamic.Atmosphere.MACH_RATE,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='unitless',
@@ -6482,7 +6482,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Vehicle.Propulsion.NOX_RATEon.NOX_RATE_TOTAL,
+    Dynamic.Vehicle.Propulsion.NOX_RATE_TOTAL,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='lbm/h',
@@ -6502,12 +6502,9 @@ add_meta_data(
 # )
 
 add_meta_data(
-    Dynamic.Mission.PROPELLER_TIP_SPEED,
+    Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='ft/s',
     desc='linear propeller tip speed due to rotation (not airspeed at propeller tip)',
     default_value=500.0,
@@ -6522,7 +6519,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Vehicle.Propulsion.RPMpulsion.RPM_GEARBOX,
+    Dynamic.Vehicle.Propulsion.RPM_GEARBOX,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='rpm',
@@ -6556,7 +6553,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Vehicle.Propulsion.SHAFT_POWERSHAFT_POWER_GEARBOX,
+    Dynamic.Vehicle.Propulsion.SHAFT_POWER_GEARBOX,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='kW',
@@ -6572,7 +6569,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAXT_POWER_MAX_GEARBOX,
+    Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX_GEARBOX,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='hp',
@@ -6613,7 +6610,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Atmosphere.TEMPERATURE_T4,
+    Dynamic.Vehicle.Propulsion.TEMPERATURE_T4,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='degR',
@@ -6639,7 +6636,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_MAX,
+    Dynamic.Vehicle.Propulsion.THRUST_MAX,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='lbf',
@@ -6673,7 +6670,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Vehicle.Propulsion.TORQUEsion.TORQUE_GEARBOX,
+    Dynamic.Vehicle.Propulsion.TORQUE_GEARBOX,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='N*m',

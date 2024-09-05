@@ -316,7 +316,7 @@ class TurbopropMission(om.Group):
             promotes_outputs=[
                 (
                     'turboprop_thrust_max',
-                    Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_MAX,
+                    Dynamic.Vehicle.Propulsion.THRUST_MAX,
                 )
             ],
         )
@@ -325,7 +325,7 @@ class TurbopropMission(om.Group):
             'turboprop_max_group',
             max_thrust_group,
             promotes_inputs=['*'],
-            promotes_outputs=[Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_MAX],
+            promotes_outputs=[Dynamic.Vehicle.Propulsion.THRUST_MAX],
         )
 
     def configure(self):
@@ -342,12 +342,12 @@ class TurbopropMission(om.Group):
         ]:
             outputs.append((Dynamic.Vehicle.Propulsion.THRUST, 'turboshaft_thrust'))
 
-        if Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_MAX in [
+        if Dynamic.Vehicle.Propulsion.THRUST_MAX in [
             output_dict[key]['prom_name'] for key in output_dict
         ]:
             outputs.append(
                 (
-                    Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_MAX,
+                    Dynamic.Vehicle.Propulsion.THRUST_MAX,
                     'turboshaft_thrust_max',
                 )
             )

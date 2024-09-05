@@ -213,7 +213,7 @@ class ClimbODE(BaseODE):
         ParamPort.set_default_vals(self)
         self.set_input_defaults("CL_max", val=5 * np.ones(nn), units="unitless")
         self.set_input_defaults(
-            Dynamic.Atmosphere.ALTITUDEUDE, val=500 * np.ones(nn), units='ft'
+            Dynamic.Atmosphere.ALTITUDE, val=500 * np.ones(nn), units='ft'
         )
         self.set_input_defaults(
             Dynamic.Vehicle.MASS, val=174000 * np.ones(nn), units='lbm'

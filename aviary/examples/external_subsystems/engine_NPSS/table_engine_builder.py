@@ -116,7 +116,7 @@ class TableEngineBuilder(EngineModel):
                           units='lb/h',
                           desc='Current NOx emission rate')
         engine.add_output(
-            Dynamic.Atmosphere.TEMPERATURE_T4,
+            Dynamic.Vehicle.Propulsion.TEMPERATURE_T4,
             zeros_array,
             units='degR',
             desc='Current turbine exit temperature',

@@ -143,7 +143,7 @@ class BreguetCruiseODESolution(BaseODE):
                 Dynamic.Atmosphere.VELOCITY,
             ],
             promotes_outputs=[
-                (Dynamic.Atmosphere.ALTITUDE_RATE, Dynamic.Atmosphere.ALTITUDE_RATE_MAX)
+                (Dynamic.Atmosphere.ALTITUDE_RATE, Dynamic.Vehicle.ALTITUDE_RATE_MAX)
             ],
         )
 

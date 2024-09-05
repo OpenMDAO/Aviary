@@ -891,7 +891,7 @@ range_rate = np.array([4.74, 157.58, 160.98, 166.25])
 detailed_takeoff.set_val(Dynamic.Mission.DISTANCE_RATE, range_rate, 'kn')
 # ALTITUDE_RATE = VELOCITY * sin(flight_path_angle)
 altitude_rate = np.array([0.00, 0.00, 1.72, 11.91])
-detailed_takeoff.set_val(Dynamic.Atmosphere.ALTITUDEUDE_RATE, altitude_rate, 'kn')
+detailed_takeoff.set_val(Dynamic.Atmosphere.ALTITUDE_RATE, altitude_rate, 'kn')
 
 # NOTE FLOPS output is horizontal acceleration only
 #    - divide the FLOPS values by the cos(flight_path_angle)
@@ -1259,7 +1259,7 @@ range_rate = velocity * np.cos(-flight_path_angle)
 detailed_landing.set_val(Dynamic.Mission.DISTANCE_RATE, range_rate, 'kn')
 # ALTITUDE_RATE = VELOCITY * sin(flight_path_angle)
 altitude_rate = velocity * np.sin(flight_path_angle)
-detailed_landing.set_val(Dynamic.Atmosphere.ALTITUDEUDE_RATE, altitude_rate, 'kn')
+detailed_landing.set_val(Dynamic.Atmosphere.ALTITUDE_RATE, altitude_rate, 'kn')
 
 # NOTE FLOPS output is horizontal acceleration only, and virtually no acceleration while
 # airborne

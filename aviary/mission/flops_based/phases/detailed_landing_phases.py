@@ -161,7 +161,7 @@ class LandingApproachToMicP3(PhaseBuilderBase):
             ref=altitude_ref,
             defect_ref=altitude_ref,
             units=units,
-            rate_source=Dynamic.Atmosphere.ALTITUDEUDE_RATE,
+            rate_source=Dynamic.Atmosphere.ALTITUDE_RATE,
         )
 
         max_velocity, units = user_options.get_item('max_velocity')
@@ -493,7 +493,7 @@ class LandingObstacleToFlare(PhaseBuilderBase):
             ref=altitude_ref,
             defect_ref=altitude_ref,
             units=units,
-            rate_source=Dynamic.Atmosphere.ALTITUDEUDE_RATE,
+            rate_source=Dynamic.Atmosphere.ALTITUDE_RATE,
         )
 
         max_velocity, units = user_options.get_item('max_velocity')
@@ -717,7 +717,7 @@ class LandingFlareToTouchdown(PhaseBuilderBase):
             ref=altitude_ref,
             defect_ref=altitude_ref,
             units=units,
-            rate_source=Dynamic.Atmosphere.ALTITUDEUDE_RATE,
+            rate_source=Dynamic.Atmosphere.ALTITUDE_RATE,
         )
 
         max_velocity, units = user_options.get_item('max_velocity')
