@@ -1,7 +1,7 @@
 '''
 This module is the API for Aviary aircraft analysis code
 
-For users: All built-in Aviary functions, code, and objects 
+For users: All built-in Aviary functions, code, and objects
 should be imported from this file.
 
 For developers: All Aviary code which is intended to be
@@ -41,7 +41,7 @@ from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.interface.utils.check_phase_info import check_phase_info
 from aviary.utils.engine_deck_conversion import EngineDeckConverter
 from aviary.utils.fortran_to_aviary import create_aviary_deck
-from aviary.utils.functions import set_aviary_initial_values, get_path
+from aviary.utils.functions import set_aviary_input_defaults, set_aviary_initial_values, get_path
 from aviary.utils.options import list_options
 from aviary.constants import GRAV_METRIC_GASP, GRAV_ENGLISH_GASP, GRAV_METRIC_FLOPS, GRAV_ENGLISH_FLOPS, GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH, RHO_SEA_LEVEL_METRIC, MU_TAKEOFF, MU_LANDING, PSLS_PSF, TSLS_DEGR, RADIUS_EARTH_METRIC
 from aviary.subsystems.test.subsystem_tester import TestSubsystemBuilderBase, skipIfMissingDependencies
@@ -58,7 +58,6 @@ from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.utils.preprocessors import preprocess_options, preprocess_propulsion
 from aviary.utils.process_input_decks import create_vehicle
 from aviary.utils.functions import create_opts2vals, add_opts2vals, Null
-from aviary.variable_info.variables_in import VariablesIn
 from aviary.utils.preprocessors import preprocess_crewpayload
 
 # ODEs

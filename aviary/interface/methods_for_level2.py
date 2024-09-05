@@ -1958,10 +1958,6 @@ class AviaryProblem(om.Problem):
     def setup(self, **kwargs):
         """
         Lightly wrappd setup() method for the problem.
-
-        Allows us to do pre- and post-setup changes, like adding
-        calls to `set_input_defaults` and do some simple `set_vals`
-        if needed.
         """
         # suppress warnings:
         # "input variable '...' promoted using '*' was already promoted using 'aircraft:*'
