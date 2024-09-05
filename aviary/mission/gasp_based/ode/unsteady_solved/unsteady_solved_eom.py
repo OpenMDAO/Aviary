@@ -34,8 +34,12 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
         # is really a mass. This should be resolved with an adapter component that
         # uses gravity.
         self.add_input("mass", shape=nn, desc="aircraft mass", units="lbm")
-        self.add_input(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, shape=nn,
-                       desc=Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL, units="N")
+        self.add_input(
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            shape=nn,
+            desc=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            units="N",
+        )
         self.add_input(Dynamic.Vehicle.LIFT, shape=nn,
                        desc=Dynamic.Vehicle.LIFT, units="N")
         self.add_input(Dynamic.Vehicle.DRAG, shape=nn,
@@ -81,10 +85,17 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
             of="dt_dr", wrt=Dynamic.Atmosphere.VELOCITY, rows=ar, cols=ar
         )
 
-        self.declare_partials(of=["normal_force", "dTAS_dt"],
-                              wrt=[Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL, Dynamic.Vehicle.DRAG,
-                                   "mass", Dynamic.Vehicle.LIFT],
-                              rows=ar, cols=ar)
+        self.declare_partials(
+            of=["normal_force", "dTAS_dt"],
+            wrt=[
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                Dynamic.Vehicle.DRAG,
+                "mass",
+                Dynamic.Vehicle.LIFT,
+            ],
+            rows=ar,
+            cols=ar,
+        )
 
         self.declare_partials(of="normal_force", wrt="mass",
                               rows=ar, cols=ar, val=LBF_TO_N * GRAV_ENGLISH_LBM)
@@ -92,8 +103,12 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
         self.declare_partials(of="normal_force", wrt=Dynamic.Vehicle.LIFT,
                               rows=ar, cols=ar, val=-1.0)
 
-        self.declare_partials(of="load_factor", wrt=[Dynamic.Vehicle.LIFT, "mass", Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL],
-                              rows=ar, cols=ar)
+        self.declare_partials(
+            of="load_factor",
+            wrt=[Dynamic.Vehicle.LIFT, "mass", Dynamic.Vehicle.Propulsion.THRUST_TOTAL],
+            rows=ar,
+            cols=ar,
+        )
 
         self.declare_partials(of=["dTAS_dt", "normal_force", "load_factor"],
                               wrt=[Aircraft.Wing.INCIDENCE])
@@ -117,10 +132,19 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
             self.declare_partials(of="dt_dr", wrt=Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
                                   rows=ar, cols=ar)
 
-            self.declare_partials(of=["dgam_dt", "dgam_dt_approx"],
-                                  wrt=[Dynamic.Vehicle.LIFT, "mass", Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL,
-                                       Dynamic.Vehicle.DRAG, "alpha", Dynamic.Vehicle.FLIGHT_PATH_ANGLE],
-                                  rows=ar, cols=ar)
+            self.declare_partials(
+                of=["dgam_dt", "dgam_dt_approx"],
+                wrt=[
+                    Dynamic.Vehicle.LIFT,
+                    "mass",
+                    Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                    Dynamic.Vehicle.DRAG,
+                    "alpha",
+                    Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+                ],
+                rows=ar,
+                cols=ar,
+            )
 
             self.declare_partials(of=["normal_force", "dTAS_dt"],
                                   wrt=[Dynamic.Vehicle.FLIGHT_PATH_ANGLE],
@@ -133,10 +157,18 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
             self.declare_partials(of="load_factor", wrt=[Dynamic.Vehicle.FLIGHT_PATH_ANGLE],
                                   rows=ar, cols=ar)
 
-            self.declare_partials(of=["dgam_dt", "dgam_dt_approx"],
-                                  wrt=[Dynamic.Vehicle.LIFT, "mass",
-                                       Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL, "alpha", Dynamic.Vehicle.FLIGHT_PATH_ANGLE],
-                                  rows=ar, cols=ar)
+            self.declare_partials(
+                of=["dgam_dt", "dgam_dt_approx"],
+                wrt=[
+                    Dynamic.Vehicle.LIFT,
+                    "mass",
+                    Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                    "alpha",
+                    Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+                ],
+                rows=ar,
+                cols=ar,
+            )
 
             self.declare_partials(of="fuselage_pitch",
                                   wrt=[Dynamic.Vehicle.FLIGHT_PATH_ANGLE],
@@ -154,7 +186,7 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         tas = inputs[Dynamic.Atmosphere.VELOCITY]
-        thrust = inputs[Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL]
+        thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
         # convert to newtons  # TODO: change this to use the units conversion
         weight = inputs["mass"] * GRAV_ENGLISH_LBM * LBF_TO_N
         drag = inputs[Dynamic.Vehicle.DRAG]
@@ -211,7 +243,7 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
     def compute_partials(self, inputs, partials):
         ground_roll = self.options["ground_roll"]
 
-        thrust = inputs[Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL]
+        thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
         # convert to newtons  # TODO: change this to use the units conversion
         weight = inputs["mass"] * GRAV_ENGLISH_LBM * LBF_TO_N
         drag = inputs[Dynamic.Vehicle.DRAG]
@@ -255,8 +287,9 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
 
         partials["dt_dr", Dynamic.Atmosphere.VELOCITY] = -cgam / dr_dt**2
 
-        partials["dTAS_dt", Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL] = calpha_i / \
-            m + salpha_i / m * mu
+        partials["dTAS_dt", Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = (
+            calpha_i / m + salpha_i / m * mu
+        )
         partials["dTAS_dt", Dynamic.Vehicle.DRAG] = -1. / m
 
         partials["dTAS_dt", "mass"] = \
@@ -266,12 +299,12 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
         partials["dTAS_dt", "alpha"] = -tsai / m + mu * tcai / m
         partials["dTAS_dt", Aircraft.Wing.INCIDENCE] = tsai / m - mu * tcai / m
 
-        partials["normal_force",
-                 Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL] = -salpha_i
+        partials["normal_force", Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = -salpha_i
 
         partials["load_factor", Dynamic.Vehicle.LIFT] = 1 / (weight * cgam)
-        partials["load_factor", Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL] = salpha_i / \
-            (weight * cgam)
+        partials["load_factor", Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = salpha_i / (
+            weight * cgam
+        )
         partials["load_factor", "mass"] = \
             - (lift + tsai) / (weight**2/LBF_TO_N * cgam) * GRAV_ENGLISH_LBM
 
@@ -286,8 +319,9 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
 
             partials["dTAS_dt", Dynamic.Vehicle.FLIGHT_PATH_ANGLE] = -weight * cgam / m
 
-            partials["dgam_dt",
-                     Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL] = salpha_i / mtas
+            partials["dgam_dt", Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = (
+                salpha_i / mtas
+            )
             partials["dgam_dt", Dynamic.Vehicle.LIFT] = 1. / mtas
             partials["dgam_dt", "mass"] = \
                 GRAV_ENGLISH_LBM * (LBF_TO_N*cgam / (mtas) - (tsai +

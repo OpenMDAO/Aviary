@@ -43,7 +43,7 @@ class RotationEOMTestCase(unittest.TestCase):
         self.prob.run_model()
 
         assert_near_equal(
-            self.prob[Dynamic.Atmosphere.VELOCITYITY_RATE],
+            self.prob[Dynamic.Atmosphere.VELOCITY_RATE],
             np.array([1.5597, 1.5597]),
             tol,
         )

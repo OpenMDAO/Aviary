@@ -36,7 +36,7 @@ class FlightPathODETestCase(unittest.TestCase):
 
         self.prob.run_model()
         testvals = {
-            Dynamic.Atmosphere.VELOCITYITY_RATE: [14.0673, 14.0673],
+            Dynamic.Atmosphere.VELOCITY_RATE: [14.0673, 14.0673],
             Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE: [-0.1429133, -0.1429133],
             Dynamic.Atmosphere.ALTITUDE_RATE: [0.0, 0.0],
             Dynamic.Mission.DISTANCE_RATE: [168.781, 168.781],
@@ -71,7 +71,7 @@ class FlightPathODETestCase(unittest.TestCase):
 
         self.prob.run_model()
         testvals = {
-            Dynamic.Atmosphere.VELOCITYITY_RATE: [13.58489, 13.58489],
+            Dynamic.Atmosphere.VELOCITY_RATE: [13.58489, 13.58489],
             Dynamic.Mission.DISTANCE_RATE: [168.781, 168.781],
             "normal_force": [74910.12, 74910.12],
             "fuselage_pitch": [0.0, 0.0],

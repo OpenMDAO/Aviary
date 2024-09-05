@@ -92,7 +92,7 @@ class DescentODETestCase(unittest.TestCase):
             Dynamic.Atmosphere.ALTITUDE_RATE: -1138.583 / 60,
             # TAS (ft/s) * cos(gamma) = 255.5613 * 1.68781 * cos(-0.0440083)
             Dynamic.Mission.DISTANCE_RATE: 430.9213,
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL: -1295.11,
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL: -1295.11,
             Dynamic.Vehicle.FLIGHT_PATH_ANGLE: -0.0440083,  # rad (-2.52149 deg)
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)

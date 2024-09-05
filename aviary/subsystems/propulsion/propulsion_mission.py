@@ -295,7 +295,7 @@ class PropulsionSum(om.ExplicitComponent):
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL, val=np.zeros(nn), units='lbf'
         )
         self.add_output(
-            Dynamic.Vehicle.Propulsion.THRUST_MAX.THRUST_MAX_TOTAL,
+            Dynamic.Vehicle.Propulsion.THRUST_MAX_TOTAL,
             val=np.zeros(nn),
             units='lbf',
         )
@@ -332,7 +332,7 @@ class PropulsionSum(om.ExplicitComponent):
             cols=c,
         )
         self.declare_partials(
-            Dynamic.Vehicle.Propulsion.THRUST_MAX.THRUST_MAX_TOTAL,
+            Dynamic.Vehicle.Propulsion.THRUST_MAX_TOTAL,
             Dynamic.Vehicle.Propulsion.THRUST_MAX,
             val=deriv,
             rows=r,
@@ -372,7 +372,7 @@ class PropulsionSum(om.ExplicitComponent):
         nox = inputs[Dynamic.Vehicle.Propulsion.NOX_RATE]
 
         outputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = np.dot(thrust, num_engines)
-        outputs[Dynamic.Vehicle.Propulsion.THRUST_MAX.THRUST_MAX_TOTAL] = np.dot(
+        outputs[Dynamic.Vehicle.Propulsion.THRUST_MAX_TOTAL] = np.dot(
             thrust_max, num_engines
         )
         outputs[Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL] = np.dot(

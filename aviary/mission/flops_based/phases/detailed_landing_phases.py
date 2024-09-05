@@ -174,7 +174,7 @@ class LandingApproachToMicP3(PhaseBuilderBase):
             ref=max_velocity,
             defect_ref=max_velocity,
             units=units,
-            rate_source=Dynamic.Atmosphere.VELOCITYITY_RATE,
+            rate_source=Dynamic.Atmosphere.VELOCITY_RATE,
         )
 
         phase.add_control(
@@ -505,7 +505,7 @@ class LandingObstacleToFlare(PhaseBuilderBase):
             ref=max_velocity,
             defect_ref=max_velocity,
             units=units,
-            rate_source=Dynamic.Atmosphere.VELOCITYITY_RATE,
+            rate_source=Dynamic.Atmosphere.VELOCITY_RATE,
         )
 
         phase.add_control(
@@ -520,7 +520,7 @@ class LandingObstacleToFlare(PhaseBuilderBase):
             ref=5e4,
             defect_ref=5e4,
             units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -729,7 +729,7 @@ class LandingFlareToTouchdown(PhaseBuilderBase):
             ref=max_velocity,
             defect_ref=max_velocity,
             units=units,
-            rate_source=Dynamic.Atmosphere.VELOCITYITY_RATE,
+            rate_source=Dynamic.Atmosphere.VELOCITY_RATE,
         )
 
         phase.add_control(
@@ -744,7 +744,7 @@ class LandingFlareToTouchdown(PhaseBuilderBase):
             ref=5e4,
             defect_ref=5e4,
             units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -949,7 +949,7 @@ class LandingTouchdownToNoseDown(PhaseBuilderBase):
             ref=max_velocity,
             defect_ref=max_velocity,
             units=units,
-            rate_source=Dynamic.Atmosphere.VELOCITYITY_RATE,
+            rate_source=Dynamic.Atmosphere.VELOCITY_RATE,
         )
 
         phase.add_state(
@@ -960,7 +960,7 @@ class LandingTouchdownToNoseDown(PhaseBuilderBase):
             ref=5e4,
             defect_ref=5e4,
             units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -1133,7 +1133,7 @@ class LandingNoseDownToStop(PhaseBuilderBase):
             ref=max_velocity,
             defect_ref=max_velocity,
             units=units,
-            rate_source=Dynamic.Atmosphere.VELOCITYITY_RATE,
+            rate_source=Dynamic.Atmosphere.VELOCITY_RATE,
         )
 
         phase.add_state(
@@ -1144,7 +1144,7 @@ class LandingNoseDownToStop(PhaseBuilderBase):
             ref=5e4,
             defect_ref=5e4,
             units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 

@@ -284,7 +284,7 @@ class TurbopropMission(om.Group):
             )
 
             self.connect(
-                Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAXT_POWER_MAX,
+                Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX,
                 'propeller_shaft_power_max',
             )
 

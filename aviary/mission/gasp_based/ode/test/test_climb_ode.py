@@ -89,7 +89,7 @@ class ClimbODETestCase(unittest.TestCase):
             Dynamic.Atmosphere.ALTITUDE_RATE: [3053.754 / 60, 429.665 / 60],  # ft/s
             # TAS (kts -> ft/s) * cos(gamma), [319, 459] kts
             Dynamic.Mission.DISTANCE_RATE: [536.2835, 774.4118],  # ft/s
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL: [
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL: [
                 -11420.05,
                 -6050.26,
             ],

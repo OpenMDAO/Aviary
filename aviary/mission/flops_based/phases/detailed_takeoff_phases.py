@@ -188,9 +188,15 @@ class TakeoffBrakeReleaseToDecisionSpeed(PhaseBuilderBase):
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.Atmosphere.VELOCITY, fix_initial=True, lower=0, ref=max_velocity,
-            defect_ref=max_velocity, units=units, upper=max_velocity,
-            rate_source=Dynamic.Atmosphere.VELOCITYITY_RATE)
+            Dynamic.Atmosphere.VELOCITY,
+            fix_initial=True,
+            lower=0,
+            ref=max_velocity,
+            defect_ref=max_velocity,
+            units=units,
+            upper=max_velocity,
+            rate_source=Dynamic.Atmosphere.VELOCITY_RATE,
+        )
 
         phase.add_state(
             Dynamic.Vehicle.MASS, fix_initial=True, fix_final=False,
@@ -355,14 +361,26 @@ class TakeoffDecisionSpeedToRotate(PhaseBuilderBase):
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.Atmosphere.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
-            defect_ref=max_velocity, units=units, upper=max_velocity,
-            rate_source=Dynamic.Atmosphere.VELOCITYITY_RATE)
+            Dynamic.Atmosphere.VELOCITY,
+            fix_initial=False,
+            lower=0,
+            ref=max_velocity,
+            defect_ref=max_velocity,
+            units=units,
+            upper=max_velocity,
+            rate_source=Dynamic.Atmosphere.VELOCITY_RATE,
+        )
 
         phase.add_state(
-            Dynamic.Vehicle.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.MASS,
+            fix_initial=False,
+            fix_final=False,
+            lower=0.0,
+            upper=1e9,
+            ref=5e4,
+            defect_ref=5e4,
+            units='kg',
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -630,16 +648,28 @@ class TakeoffRotateToLiftoff(PhaseBuilderBase):
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.Atmosphere.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
-            defect_ref=max_velocity, units=units, upper=max_velocity,
-            rate_source=Dynamic.Atmosphere.VELOCITYITY_RATE)
+            Dynamic.Atmosphere.VELOCITY,
+            fix_initial=False,
+            lower=0,
+            ref=max_velocity,
+            defect_ref=max_velocity,
+            units=units,
+            upper=max_velocity,
+            rate_source=Dynamic.Atmosphere.VELOCITY_RATE,
+        )
 
         max_angle_of_attack, units = user_options.get_item('max_angle_of_attack')
 
         phase.add_state(
-            Dynamic.Vehicle.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.MASS,
+            fix_initial=False,
+            fix_final=False,
+            lower=0.0,
+            upper=1e9,
+            ref=5e4,
+            defect_ref=5e4,
+            units='kg',
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -828,9 +858,15 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.Atmosphere.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
-            defect_ref=max_velocity, units=units, upper=max_velocity,
-            rate_source=Dynamic.Atmosphere.VELOCITYITY_RATE)
+            Dynamic.Atmosphere.VELOCITY,
+            fix_initial=False,
+            lower=0,
+            ref=max_velocity,
+            defect_ref=max_velocity,
+            units=units,
+            upper=max_velocity,
+            rate_source=Dynamic.Atmosphere.VELOCITY_RATE,
+        )
 
         flight_path_angle_ref, units = user_options.get_item('flight_path_angle_ref')
 
@@ -841,9 +877,15 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
             rate_source=Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE)
 
         phase.add_state(
-            Dynamic.Vehicle.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.MASS,
+            fix_initial=False,
+            fix_final=False,
+            lower=0.0,
+            upper=1e9,
+            ref=5e4,
+            defect_ref=5e4,
+            units='kg',
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -1066,9 +1108,15 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.Atmosphere.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
-            defect_ref=max_velocity, units=units, upper=max_velocity,
-            rate_source=Dynamic.Atmosphere.VELOCITYITY_RATE)
+            Dynamic.Atmosphere.VELOCITY,
+            fix_initial=False,
+            lower=0,
+            ref=max_velocity,
+            defect_ref=max_velocity,
+            units=units,
+            upper=max_velocity,
+            rate_source=Dynamic.Atmosphere.VELOCITY_RATE,
+        )
 
         flight_path_angle_ref, units = user_options.get_item('flight_path_angle_ref')
 
@@ -1079,9 +1127,15 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
             rate_source=Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE)
 
         phase.add_state(
-            Dynamic.Vehicle.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.MASS,
+            fix_initial=False,
+            fix_final=False,
+            lower=0.0,
+            upper=1e9,
+            ref=5e4,
+            defect_ref=5e4,
+            units='kg',
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -1300,9 +1354,15 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.Atmosphere.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
-            defect_ref=max_velocity, units=units, upper=max_velocity,
-            rate_source=Dynamic.Atmosphere.VELOCITYITY_RATE)
+            Dynamic.Atmosphere.VELOCITY,
+            fix_initial=False,
+            lower=0,
+            ref=max_velocity,
+            defect_ref=max_velocity,
+            units=units,
+            upper=max_velocity,
+            rate_source=Dynamic.Atmosphere.VELOCITY_RATE,
+        )
 
         flight_path_angle_ref, units = user_options.get_item('flight_path_angle_ref')
 
@@ -1313,9 +1373,15 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
             rate_source=Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE)
 
         phase.add_state(
-            Dynamic.Vehicle.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.MASS,
+            fix_initial=False,
+            fix_final=False,
+            lower=0.0,
+            upper=1e9,
+            ref=5e4,
+            defect_ref=5e4,
+            units='kg',
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -1530,9 +1596,15 @@ class TakeoffEngineCutback(PhaseBuilderBase):
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.Atmosphere.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
-            defect_ref=max_velocity, units=units, upper=max_velocity,
-            rate_source=Dynamic.Atmosphere.VELOCITYITY_RATE)
+            Dynamic.Atmosphere.VELOCITY,
+            fix_initial=False,
+            lower=0,
+            ref=max_velocity,
+            defect_ref=max_velocity,
+            units=units,
+            upper=max_velocity,
+            rate_source=Dynamic.Atmosphere.VELOCITY_RATE,
+        )
 
         flight_path_angle_ref, units = user_options.get_item('flight_path_angle_ref')
 
@@ -1543,9 +1615,15 @@ class TakeoffEngineCutback(PhaseBuilderBase):
             rate_source=Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE)
 
         phase.add_state(
-            Dynamic.Vehicle.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.MASS,
+            fix_initial=False,
+            fix_final=False,
+            lower=0.0,
+            upper=1e9,
+            ref=5e4,
+            defect_ref=5e4,
+            units='kg',
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -1748,9 +1826,15 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilderBase):
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.Atmosphere.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
-            defect_ref=max_velocity, units=units, upper=max_velocity,
-            rate_source=Dynamic.Atmosphere.VELOCITYITY_RATE)
+            Dynamic.Atmosphere.VELOCITY,
+            fix_initial=False,
+            lower=0,
+            ref=max_velocity,
+            defect_ref=max_velocity,
+            units=units,
+            upper=max_velocity,
+            rate_source=Dynamic.Atmosphere.VELOCITY_RATE,
+        )
 
         flight_path_angle_ref, units = user_options.get_item('flight_path_angle_ref')
 
@@ -1761,9 +1845,15 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilderBase):
             rate_source=Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE)
 
         phase.add_state(
-            Dynamic.Vehicle.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.MASS,
+            fix_initial=False,
+            fix_final=False,
+            lower=0.0,
+            upper=1e9,
+            ref=5e4,
+            defect_ref=5e4,
+            units='kg',
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -1979,9 +2069,15 @@ class TakeoffMicP1ToClimb(PhaseBuilderBase):
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.Atmosphere.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
-            defect_ref=max_velocity, units=units, upper=max_velocity,
-            rate_source=Dynamic.Atmosphere.VELOCITYITY_RATE)
+            Dynamic.Atmosphere.VELOCITY,
+            fix_initial=False,
+            lower=0,
+            ref=max_velocity,
+            defect_ref=max_velocity,
+            units=units,
+            upper=max_velocity,
+            rate_source=Dynamic.Atmosphere.VELOCITY_RATE,
+        )
 
         flight_path_angle_ref, units = user_options.get_item('flight_path_angle_ref')
 
@@ -1992,9 +2088,15 @@ class TakeoffMicP1ToClimb(PhaseBuilderBase):
             rate_source=Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE)
 
         phase.add_state(
-            Dynamic.Vehicle.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.MASS,
+            fix_initial=False,
+            fix_final=False,
+            lower=0.0,
+            upper=1e9,
+            ref=5e4,
+            defect_ref=5e4,
+            units='kg',
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -2189,15 +2291,27 @@ class TakeoffBrakeToAbort(PhaseBuilderBase):
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.Atmosphere.VELOCITY, fix_initial=False, fix_final=True,
-            lower=0, ref=max_velocity, upper=max_velocity,
-            defect_ref=max_velocity, units=units,
-            rate_source=Dynamic.Atmosphere.VELOCITYITY_RATE)
+            Dynamic.Atmosphere.VELOCITY,
+            fix_initial=False,
+            fix_final=True,
+            lower=0,
+            ref=max_velocity,
+            upper=max_velocity,
+            defect_ref=max_velocity,
+            units=units,
+            rate_source=Dynamic.Atmosphere.VELOCITY_RATE,
+        )
 
         phase.add_state(
-            Dynamic.Vehicle.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.MASS,
+            fix_initial=False,
+            fix_final=False,
+            lower=0.0,
+            upper=1e9,
+            ref=5e4,
+            defect_ref=5e4,
+            units='kg',
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 

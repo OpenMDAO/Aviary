@@ -36,7 +36,7 @@ class TakeoffEOMTest(unittest.TestCase):
             output_keys=[
                 Dynamic.Mission.DISTANCE_RATE,
                 Dynamic.Atmosphere.ALTITUDE_RATE,
-                Dynamic.Atmosphere.VELOCITYITY_RATE,
+                Dynamic.Atmosphere.VELOCITY_RATE,
             ],
             tol=1e-2,
         )
@@ -55,13 +55,13 @@ class TakeoffEOMTest(unittest.TestCase):
                 Dynamic.Atmosphere.VELOCITY,
                 Dynamic.Vehicle.MASS,
                 Dynamic.Vehicle.LIFT,
-                Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL,
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                 Dynamic.Vehicle.DRAG,
             ],
             output_keys=[
                 Dynamic.Mission.DISTANCE_RATE,
                 Dynamic.Atmosphere.ALTITUDE_RATE,
-                Dynamic.Atmosphere.VELOCITYITY_RATE,
+                Dynamic.Atmosphere.VELOCITY_RATE,
             ],
             tol=1e-2,
             atol=1e-9,
@@ -243,7 +243,7 @@ class TakeoffEOMTest(unittest.TestCase):
         prob.run_model()
 
         assert_near_equal(
-            prob[Dynamic.Atmosphere.VELOCITYITY_RATE],
+            prob[Dynamic.Atmosphere.VELOCITY_RATE],
             np.array([100.5284, 206.6343]),
             tol,
         )
@@ -305,7 +305,7 @@ class TakeoffEOMTest(unittest.TestCase):
             units="N",
         )
         prob.model.set_input_defaults(
-            Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL, np.array([4980.3, 4102]), units="N"
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL, np.array([4980.3, 4102]), units="N"
         )
 
         prob.setup(check=False, force_alloc_complex=True)
@@ -346,7 +346,7 @@ class TakeoffEOMTest(unittest.TestCase):
             units="N",
         )
         prob.model.set_input_defaults(
-            Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL, np.array([4980.3, 4102]), units="N"
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL, np.array([4980.3, 4102]), units="N"
         )
 
         prob.setup(check=False, force_alloc_complex=True)
@@ -385,7 +385,7 @@ class TakeoffEOMTest(unittest.TestCase):
             units="N",
         )
         prob.model.set_input_defaults(
-            Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL, np.array([4980.3, 4102]), units="N"
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL, np.array([4980.3, 4102]), units="N"
         )
         prob.model.set_input_defaults(
             Dynamic.Vehicle.FLIGHT_PATH_ANGLE, np.array([0.612, 4.096]), units="rad"

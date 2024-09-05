@@ -146,7 +146,7 @@ class OtherTest(unittest.TestCase):
             units="N",
         )
         prob.model.set_input_defaults(
-            Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL, np.array([4980.3, 4102]), units="N"
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL, np.array([4980.3, 4102]), units="N"
         )
         prob.model.set_input_defaults(
             "angle_of_attack", np.array([5.086, 6.834]), units="deg"
@@ -193,7 +193,7 @@ class OtherTest(unittest.TestCase):
             units="N",
         )
         prob.model.set_input_defaults(
-            Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL, np.array([4980.3, 4102]), units="N"
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL, np.array([4980.3, 4102]), units="N"
         )
         prob.setup(check=False, force_alloc_complex=True)
         prob.run_model()

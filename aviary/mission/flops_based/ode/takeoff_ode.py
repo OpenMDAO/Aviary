@@ -165,7 +165,7 @@ class TakeoffODE(om.Group):
             promotes_outputs=[
                 Dynamic.Mission.DISTANCE_RATE,
                 Dynamic.Atmosphere.ALTITUDE_RATE,
-                Dynamic.Atmosphere.VELOCITYITY_RATE,
+                Dynamic.Atmosphere.VELOCITY_RATE,
                 Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE,
             ],
         )

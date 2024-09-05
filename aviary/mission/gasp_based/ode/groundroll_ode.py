@@ -135,5 +135,5 @@ class GroundrollODE(BaseODE):
             Dynamic.Atmosphere.VELOCITY, val=np.zeros(nn), units="kn"
         )
         self.set_input_defaults(
-            Dynamic.Atmosphere.VELOCITYITY_RATE, val=np.zeros(nn), units="kn/s"
+            Dynamic.Atmosphere.VELOCITY_RATE, val=np.zeros(nn), units="kn/s"
         )

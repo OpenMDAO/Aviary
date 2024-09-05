@@ -67,7 +67,7 @@ class AccelODE(BaseODE):
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
             ],
             promotes_outputs=[
-                Dynamic.Atmosphere.VELOCITYITY_RATE,
+                Dynamic.Atmosphere.VELOCITY_RATE,
                 Dynamic.Mission.DISTANCE_RATE,
             ],
         )

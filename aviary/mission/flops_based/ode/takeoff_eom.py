@@ -398,7 +398,7 @@ class VelocityRate(om.ExplicitComponent):
         )
 
         add_aviary_output(
-            self, Dynamic.Atmosphere.VELOCITYITY_RATE, val=np.ones(nn), units='m/s**2'
+            self, Dynamic.Atmosphere.VELOCITY_RATE, val=np.ones(nn), units='m/s**2'
         )
 
         rows_cols = np.arange(nn)
@@ -412,7 +412,7 @@ class VelocityRate(om.ExplicitComponent):
         v_v = inputs[Dynamic.Atmosphere.ALTITUDE_RATE]
 
         v_mag = np.sqrt(v_h**2 + v_v**2)
-        outputs[Dynamic.Atmosphere.VELOCITYITY_RATE] = (a_h * v_h + a_v * v_v) / v_mag
+        outputs[Dynamic.Atmosphere.VELOCITY_RATE] = (a_h * v_h + a_v * v_v) / v_mag
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
         a_h = inputs['acceleration_horizontal']
@@ -424,14 +424,14 @@ class VelocityRate(om.ExplicitComponent):
         fact = v_h**2 + v_v**2
         den = np.sqrt(fact)
 
-        J[Dynamic.Atmosphere.VELOCITYITY_RATE, 'acceleration_horizontal'] = v_h / den
-        J[Dynamic.Atmosphere.VELOCITYITY_RATE, 'acceleration_vertical'] = v_v / den
+        J[Dynamic.Atmosphere.VELOCITY_RATE, 'acceleration_horizontal'] = v_h / den
+        J[Dynamic.Atmosphere.VELOCITY_RATE, 'acceleration_vertical'] = v_v / den
 
-        J[Dynamic.Atmosphere.VELOCITYITY_RATE, Dynamic.Mission.DISTANCE_RATE] = (
+        J[Dynamic.Atmosphere.VELOCITY_RATE, Dynamic.Mission.DISTANCE_RATE] = (
             a_h / den - 0.5 * num / fact ** (3 / 2) * 2.0 * v_h
         )
 
-        J[Dynamic.Atmosphere.VELOCITYITY_RATE, Dynamic.Atmosphere.ALTITUDE_RATE] = (
+        J[Dynamic.Atmosphere.VELOCITY_RATE, Dynamic.Atmosphere.ALTITUDE_RATE] = (
             a_v / den - 0.5 * num / fact ** (3 / 2) * 2.0 * v_v
         )
 
@@ -587,7 +587,7 @@ class SumForces(om.ExplicitComponent):
             )
 
             wrt = [
-                Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL,
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                 Dynamic.Vehicle.LIFT,
                 Dynamic.Vehicle.DRAG,
                 'angle_of_attack',
@@ -622,8 +622,12 @@ class SumForces(om.ExplicitComponent):
             val = np.cos(t_inc) + np.sin(t_inc) * mu
 
             self.declare_partials(
-                'forces_horizontal', Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL, val=val, rows=rows_cols,
-                cols=rows_cols)
+                'forces_horizontal',
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                val=val,
+                rows=rows_cols,
+                cols=rows_cols,
+            )
 
             self.declare_partials(
                 'forces_horizontal',
@@ -651,7 +655,7 @@ class SumForces(om.ExplicitComponent):
 
         mass = inputs[Dynamic.Vehicle.MASS]
         lift = inputs[Dynamic.Vehicle.LIFT]
-        thrust = inputs[Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL]
+        thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
         drag = inputs[Dynamic.Vehicle.DRAG]
 
         weight = mass * grav_metric
@@ -710,7 +714,7 @@ class SumForces(om.ExplicitComponent):
         t_inc = aviary_options.get_val(Mission.Takeoff.THRUST_INCIDENCE, 'rad')
 
         lift = inputs[Dynamic.Vehicle.LIFT]
-        thrust = inputs[Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL]
+        thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
         drag = inputs[Dynamic.Vehicle.DRAG]
 
         alpha = inputs['angle_of_attack']
@@ -724,8 +728,8 @@ class SumForces(om.ExplicitComponent):
         c_gamma = np.cos(gamma)
         s_gamma = np.sin(gamma)
 
-        J['forces_horizontal', Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL] = c_angle
-        J['forces_vertical', Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL] = s_angle
+        J['forces_horizontal', Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = c_angle
+        J['forces_vertical', Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = s_angle
 
         J['forces_horizontal', Dynamic.Vehicle.LIFT] = -s_gamma
         J['forces_vertical', Dynamic.Vehicle.LIFT] = c_gamma
@@ -768,7 +772,8 @@ class ClimbGradientForces(om.ExplicitComponent):
         add_aviary_input(self, Dynamic.Vehicle.MASS, val=np.ones(nn), units='kg')
         add_aviary_input(self, Dynamic.Vehicle.LIFT, val=np.ones(nn), units='N')
         add_aviary_input(
-            self, Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL, val=np.ones(nn), units='N')
+            self, Dynamic.Vehicle.Propulsion.THRUST_TOTAL, val=np.ones(nn), units='N'
+        )
         add_aviary_input(self, Dynamic.Vehicle.DRAG, val=np.ones(nn), units='N')
 
         self.add_input('angle_of_attack', val=np.zeros(nn), units='rad')
@@ -798,7 +803,7 @@ class ClimbGradientForces(om.ExplicitComponent):
             '*',
             [
                 Dynamic.Vehicle.MASS,
-                Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL,
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                 'angle_of_attack',
                 Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
             ],
@@ -840,7 +845,7 @@ class ClimbGradientForces(om.ExplicitComponent):
 
         mass = inputs[Dynamic.Vehicle.MASS]
         lift = inputs[Dynamic.Vehicle.LIFT]
-        thrust = inputs[Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL]
+        thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
         drag = inputs[Dynamic.Vehicle.DRAG]
 
         weight = mass * grav_metric
@@ -874,7 +879,7 @@ class ClimbGradientForces(om.ExplicitComponent):
 
         mass = inputs[Dynamic.Vehicle.MASS]
         lift = inputs[Dynamic.Vehicle.LIFT]
-        thrust = inputs[Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL]
+        thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
         drag = inputs[Dynamic.Vehicle.DRAG]
 
         weight = mass * grav_metric
@@ -896,8 +901,8 @@ class ClimbGradientForces(om.ExplicitComponent):
         J[f_h_key, Dynamic.Vehicle.MASS] = -grav_metric * s_gamma
         J[f_v_key, Dynamic.Vehicle.MASS] = -grav_metric * c_gamma
 
-        J[f_h_key, Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL] = c_angle
-        J[f_v_key, Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL] = s_angle
+        J[f_h_key, Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = c_angle
+        J[f_v_key, Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = s_angle
 
         J[f_h_key, 'angle_of_attack'] = -thrust * s_angle
         J[f_v_key, 'angle_of_attack'] = thrust * c_angle

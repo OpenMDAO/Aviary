@@ -34,7 +34,7 @@ class GroundrollODETestCase(unittest.TestCase):
         self.prob.run_model()
 
         testvals = {
-            Dynamic.Atmosphere.VELOCITYITY_RATE: [1413548.36, 1413548.36],
+            Dynamic.Atmosphere.VELOCITY_RATE: [1413548.36, 1413548.36],
             Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE: [0.0, 0.0],
             Dynamic.Atmosphere.ALTITUDE_RATE: [0.0, 0.0],
             Dynamic.Mission.DISTANCE_RATE: [168.781, 168.781],

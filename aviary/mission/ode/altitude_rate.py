@@ -35,7 +35,7 @@ class AltitudeRate(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         gravity = constants.GRAV_METRIC_FLOPS
         specific_power = inputs[Dynamic.Vehicle.SPECIFIC_ENERGY_RATE]
-        acceleration = inputs[Dynamic.Atmosphere.VELOCITYITY_RATE]
+        acceleration = inputs[Dynamic.Atmosphere.VELOCITY_RATE]
         velocity = inputs[Dynamic.Atmosphere.VELOCITY]
 
         outputs[Dynamic.Atmosphere.ALTITUDE_RATE] = (
@@ -48,7 +48,7 @@ class AltitudeRate(om.ExplicitComponent):
             Dynamic.Atmosphere.ALTITUDE_RATE,
             [
                 Dynamic.Vehicle.SPECIFIC_ENERGY_RATE,
-                Dynamic.Atmosphere.VELOCITYITY_RATE,
+                Dynamic.Atmosphere.VELOCITY_RATE,
                 Dynamic.Atmosphere.VELOCITY,
             ],
             rows=arange,
@@ -58,10 +58,10 @@ class AltitudeRate(om.ExplicitComponent):
 
     def compute_partials(self, inputs, J):
         gravity = constants.GRAV_METRIC_FLOPS
-        acceleration = inputs[Dynamic.Atmosphere.VELOCITYITY_RATE]
+        acceleration = inputs[Dynamic.Atmosphere.VELOCITY_RATE]
         velocity = inputs[Dynamic.Atmosphere.VELOCITY]
 
-        J[Dynamic.Atmosphere.ALTITUDE_RATE, Dynamic.Atmosphere.VELOCITYITY_RATE] = (
+        J[Dynamic.Atmosphere.ALTITUDE_RATE, Dynamic.Atmosphere.VELOCITY_RATE] = (
             -velocity / gravity
         )
         J[Dynamic.Atmosphere.ALTITUDE_RATE, Dynamic.Atmosphere.VELOCITY] = (

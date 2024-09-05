@@ -139,7 +139,7 @@ class BreguetCruiseODESolution(BaseODE):
                     Dynamic.Vehicle.SPECIFIC_ENERGY_RATE,
                     Dynamic.Vehicle.SPECIFIC_ENERGY_RATE_EXCESS,
                 ),
-                Dynamic.Atmosphere.VELOCITYITY_RATE,
+                Dynamic.Atmosphere.VELOCITY_RATE,
                 Dynamic.Atmosphere.VELOCITY,
             ],
             promotes_outputs=[

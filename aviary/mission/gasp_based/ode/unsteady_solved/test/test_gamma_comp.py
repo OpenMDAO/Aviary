@@ -73,8 +73,11 @@ class TestUnsteadyFlightEOM(unittest.TestCase):
         p.set_val(
             Dynamic.Vehicle.MASS, 175_000 + 1000 * np.random.rand(nn), units="lbm"
         )
-        p.set_val(Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL, 20_000 +
-                  100 * np.random.rand(nn), units="lbf")
+        p.set_val(
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            20_000 + 100 * np.random.rand(nn),
+            units="lbf",
+        )
         p.set_val(
             Dynamic.Vehicle.LIFT, 175_000 + 1000 * np.random.rand(nn), units="lbf"
         )

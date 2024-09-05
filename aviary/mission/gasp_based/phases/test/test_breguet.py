@@ -58,7 +58,13 @@ class TestBreguetPartials(unittest.TestCase):
         self.prob.model.set_input_defaults(
             "mass", np.linspace(171481, 171481 - 10000, nn), units="lbm")
         self.prob.model.set_input_defaults(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL, -5870 * np.ones(nn,), units="lbm/h")
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            -5870
+            * np.ones(
+                nn,
+            ),
+            units="lbm/h",
+        )
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -94,8 +100,14 @@ class TestBreguetResults(unittest.TestCase):
 
         self.prob.set_val("TAS_cruise", 458.8, units="kn")
         self.prob.set_val("mass", np.linspace(171481, 171481 - 10000, nn), units="lbm")
-        self.prob.set_val(Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL, -
-                          5870 * np.ones(nn,), units="lbm/h")
+        self.prob.set_val(
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            -5870
+            * np.ones(
+                nn,
+            ),
+            units="lbm/h",
+        )
 
     def test_results(self):
         self.prob.run_model()
@@ -104,9 +116,9 @@ class TestBreguetResults(unittest.TestCase):
         V = self.prob.get_val("TAS_cruise", units="kn")
         r = self.prob.get_val("cruise_range", units="NM")
         t = self.prob.get_val("cruise_time", units="h")
-        fuel_flow = - \
-            self.prob.get_val(
-                Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL, units="lbm/h")
+        fuel_flow = -self.prob.get_val(
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units="lbm/h"
+        )
 
         v_avg = (V[:-1] + V[1:])/2
         fuel_flow_avg = (fuel_flow[:-1] + fuel_flow[1:])/2

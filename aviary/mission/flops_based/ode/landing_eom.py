@@ -80,7 +80,9 @@ class FlareEOM(om.Group):
             Dynamic.Atmosphere.ALTITUDE_RATE,
         ]
 
-        outputs = [Dynamic.Atmosphere.VELOCITYITY_RATE,]
+        outputs = [
+            Dynamic.Atmosphere.VELOCITY_RATE,
+        ]
 
         self.add_subsystem(
             'velocity_rate',

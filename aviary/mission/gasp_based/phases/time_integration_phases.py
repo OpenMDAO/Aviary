@@ -74,7 +74,7 @@ class SGMRotation(SimuPyProblem):
             ],
             # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
-                Dynamic.Vehicle.MASS: Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL
+                Dynamic.Vehicle.MASS: Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL
             },
             **simupy_args,
         )
@@ -132,7 +132,7 @@ class SGMAscent(SimuPyProblem):
             ],
             # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
-                Dynamic.Vehicle.MASS: Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL
+                Dynamic.Vehicle.MASS: Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL
             },
             controls=controls,
             **simupy_args,
@@ -378,7 +378,7 @@ class SGMAccel(SimuPyProblem):
             ],
             # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
-                Dynamic.Vehicle.MASS: Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL
+                Dynamic.Vehicle.MASS: Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL
             },
             **simupy_args,
         )
@@ -442,7 +442,7 @@ class SGMClimb(SimuPyProblem):
             ],
             # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
-                Dynamic.Vehicle.MASS: Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL
+                Dynamic.Vehicle.MASS: Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL
             },
             **simupy_args,
         )
@@ -490,7 +490,7 @@ class SGMCruise(SimuPyProblem):
                 "lift",
                 "EAS",
                 Dynamic.Atmosphere.VELOCITY,
-                Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL,
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                 "drag",
                 Dynamic.Atmosphere.ALTITUDE_RATE,
             ],
@@ -502,7 +502,7 @@ class SGMCruise(SimuPyProblem):
             ],
             # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
-                Dynamic.Vehicle.MASS: Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL
+                Dynamic.Vehicle.MASS: Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL
             },
             **simupy_args,
         )
@@ -554,7 +554,7 @@ class SGMDescent(SimuPyProblem):
                 "lift",
                 "EAS",
                 Dynamic.Atmosphere.VELOCITY,
-                Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL,
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                 "drag",
                 Dynamic.Atmosphere.ALTITUDE_RATE,
             ],
@@ -565,7 +565,7 @@ class SGMDescent(SimuPyProblem):
             ],
             # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
-                Dynamic.Vehicle.MASS: Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL
+                Dynamic.Vehicle.MASS: Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL
             },
             **simupy_args,
         )

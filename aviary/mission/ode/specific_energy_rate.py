@@ -39,7 +39,7 @@ class SpecificEnergyRate(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         velocity = inputs[Dynamic.Atmosphere.VELOCITY]
-        thrust = inputs[Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL]
+        thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
         drag = inputs[Dynamic.Vehicle.DRAG]
         weight = inputs[Dynamic.Vehicle.MASS] * gravity
         outputs[Dynamic.Vehicle.SPECIFIC_ENERGY_RATE] = velocity * \
@@ -52,7 +52,7 @@ class SpecificEnergyRate(om.ExplicitComponent):
             [
                 Dynamic.Atmosphere.VELOCITY,
                 Dynamic.Vehicle.MASS,
-                Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL,
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                 Dynamic.Vehicle.DRAG,
             ],
             rows=arange,
@@ -61,15 +61,19 @@ class SpecificEnergyRate(om.ExplicitComponent):
 
     def compute_partials(self, inputs, J):
         velocity = inputs[Dynamic.Atmosphere.VELOCITY]
-        thrust = inputs[Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL]
+        thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
         drag = inputs[Dynamic.Vehicle.DRAG]
         weight = inputs[Dynamic.Vehicle.MASS] * gravity
 
         J[Dynamic.Vehicle.SPECIFIC_ENERGY_RATE, Dynamic.Atmosphere.VELOCITY] = (
             thrust - drag
         ) / weight
-        J[Dynamic.Vehicle.SPECIFIC_ENERGY_RATE,
-          Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL] = velocity / weight
+        J[
+            Dynamic.Vehicle.SPECIFIC_ENERGY_RATE,
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+        ] = (
+            velocity / weight
+        )
         J[Dynamic.Vehicle.SPECIFIC_ENERGY_RATE, Dynamic.Vehicle.DRAG] = -velocity / weight
         J[Dynamic.Vehicle.SPECIFIC_ENERGY_RATE, Dynamic.Vehicle.MASS] = -gravity\
             * velocity * (thrust - drag) / (weight)**2

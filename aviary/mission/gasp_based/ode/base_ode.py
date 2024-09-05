@@ -109,7 +109,7 @@ class BaseODE(om.Group):
                 upper=25.0,
                 lower=-2.0,
             )
-            alpha_comp_inputs = [Dynamic.Atmosphere.VELOCITYITY_RATE]
+            alpha_comp_inputs = [Dynamic.Atmosphere.VELOCITY_RATE]
 
         elif alpha_mode is AlphaModes.REQUIRED_LIFT:
             alpha_comp = om.BalanceComp(
@@ -273,7 +273,7 @@ class BaseODE(om.Group):
                     Dynamic.Vehicle.SPECIFIC_ENERGY_RATE,
                     Dynamic.Vehicle.SPECIFIC_ENERGY_RATE_EXCESS,
                 ),
-                Dynamic.Atmosphere.VELOCITYITY_RATE,
+                Dynamic.Atmosphere.VELOCITY_RATE,
                 Dynamic.Atmosphere.VELOCITY,
             ],
             promotes_outputs=[

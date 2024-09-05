@@ -35,7 +35,7 @@ class AltitudeRateTest(unittest.TestCase):
             input_keys=[
                 Dynamic.Vehicle.SPECIFIC_ENERGY_RATE,
                 Dynamic.Atmosphere.VELOCITY,
-                Dynamic.Atmosphere.VELOCITYITY_RATE,
+                Dynamic.Atmosphere.VELOCITY_RATE,
             ],
             output_keys=Dynamic.Atmosphere.ALTITUDE_RATE,
             tol=1e-9,

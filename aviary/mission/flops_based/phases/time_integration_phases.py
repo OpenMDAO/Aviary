@@ -52,7 +52,7 @@ class SGMDetailedTakeoff(SimuPyProblem):
                 Dynamic.Atmosphere.ALTITUDE,
             ],
             alternate_state_rate_names={
-                Dynamic.Vehicle.MASS: Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL
+                Dynamic.Vehicle.MASS: Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL
             },
             aviary_options=ode_args['aviary_options'],
             **simupy_args
@@ -79,7 +79,7 @@ class SGMDetailedLanding(SimuPyProblem):
                 Dynamic.Atmosphere.ALTITUDE,
             ],
             alternate_state_rate_names={
-                Dynamic.Vehicle.MASS: Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL
+                Dynamic.Vehicle.MASS: Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL
             },
             aviary_options=ode_args['aviary_options'],
             **simupy_args

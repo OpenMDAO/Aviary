@@ -20,8 +20,12 @@ class RotationEOM(om.ExplicitComponent):
         self.add_input(
             Dynamic.Vehicle.MASS, val=np.ones(nn), desc="aircraft mass", units="lbm"
         )
-        self.add_input(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, val=np.ones(
-            nn), desc=Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL, units="lbf")
+        self.add_input(
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            val=np.ones(nn),
+            desc=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            units="lbf",
+        )
         self.add_input(
             Dynamic.Vehicle.LIFT,
             val=np.ones(nn),
@@ -51,7 +55,7 @@ class RotationEOM(om.ExplicitComponent):
         self.add_input("alpha", val=np.ones(nn), desc="angle of attack", units="deg")
 
         self.add_output(
-            Dynamic.Atmosphere.VELOCITYITY_RATE,
+            Dynamic.Atmosphere.VELOCITY_RATE,
             val=np.ones(nn),
             desc="TAS rate",
             units="ft/s**2",
@@ -90,9 +94,9 @@ class RotationEOM(om.ExplicitComponent):
 
         self.declare_partials(Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE, "*")
         self.declare_partials(
-            Dynamic.Atmosphere.VELOCITYITY_RATE,
+            Dynamic.Atmosphere.VELOCITY_RATE,
             [
-                Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL,
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                 "alpha",
                 Dynamic.Vehicle.DRAG,
                 Dynamic.Vehicle.MASS,
@@ -103,7 +107,7 @@ class RotationEOM(om.ExplicitComponent):
             cols=arange,
         )
         self.declare_partials(
-            Dynamic.Atmosphere.VELOCITYITY_RATE, [Aircraft.Wing.INCIDENCE]
+            Dynamic.Atmosphere.VELOCITY_RATE, [Aircraft.Wing.INCIDENCE]
         )
         self.declare_partials(
             Dynamic.Atmosphere.ALTITUDE_RATE,
@@ -123,7 +127,7 @@ class RotationEOM(om.ExplicitComponent):
             [
                 Dynamic.Vehicle.MASS,
                 Dynamic.Vehicle.LIFT,
-                Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL,
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                 "alpha",
             ],
             rows=arange,
@@ -144,7 +148,7 @@ class RotationEOM(om.ExplicitComponent):
         analysis_scheme = self.options["analysis_scheme"]
 
         weight = inputs[Dynamic.Vehicle.MASS] * GRAV_ENGLISH_LBM
-        thrust = inputs[Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL]
+        thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
         incremented_lift = inputs[Dynamic.Vehicle.LIFT]
         incremented_drag = inputs[Dynamic.Vehicle.DRAG]
         TAS = inputs[Dynamic.Atmosphere.VELOCITY]
@@ -161,7 +165,7 @@ class RotationEOM(om.ExplicitComponent):
         normal_force = np.clip(weight - incremented_lift - thrust_across_flightpath,
                                a_min=0., a_max=None)
 
-        outputs[Dynamic.Atmosphere.VELOCITYITY_RATE] = (
+        outputs[Dynamic.Atmosphere.VELOCITY_RATE] = (
             (
                 thrust_along_flightpath
                 - incremented_drag
@@ -187,7 +191,7 @@ class RotationEOM(om.ExplicitComponent):
         mu = MU_TAKEOFF
 
         weight = inputs[Dynamic.Vehicle.MASS] * GRAV_ENGLISH_LBM
-        thrust = inputs[Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL]
+        thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
         incremented_lift = inputs[Dynamic.Vehicle.LIFT]
         incremented_drag = inputs[Dynamic.Vehicle.DRAG]
         TAS = inputs[Dynamic.Atmosphere.VELOCITY]
@@ -226,19 +230,19 @@ class RotationEOM(om.ExplicitComponent):
         dNF_dIwing = -np.ones(nn) * dTAcF_dIwing
         dNF_dIwing[normal_force < 0] = 0
 
-        J[Dynamic.Atmosphere.VELOCITYITY_RATE, Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL] = (
+        J[Dynamic.Atmosphere.VELOCITY_RATE, Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = (
             (dTAlF_dThrust - mu * dNF_dThrust) * GRAV_ENGLISH_GASP / weight
         )
-        J[Dynamic.Atmosphere.VELOCITYITY_RATE, "alpha"] = (
+        J[Dynamic.Atmosphere.VELOCITY_RATE, "alpha"] = (
             (dTAlF_dAlpha - mu * dNF_dAlpha) * GRAV_ENGLISH_GASP / weight
         )
-        J[Dynamic.Atmosphere.VELOCITYITY_RATE, Aircraft.Wing.INCIDENCE] = (
+        J[Dynamic.Atmosphere.VELOCITY_RATE, Aircraft.Wing.INCIDENCE] = (
             (dTAlF_dIwing - mu * dNF_dIwing) * GRAV_ENGLISH_GASP / weight
         )
-        J[Dynamic.Atmosphere.VELOCITYITY_RATE, Dynamic.Vehicle.DRAG] = (
+        J[Dynamic.Atmosphere.VELOCITY_RATE, Dynamic.Vehicle.DRAG] = (
             -GRAV_ENGLISH_GASP / weight
         )
-        J[Dynamic.Atmosphere.VELOCITYITY_RATE, Dynamic.Vehicle.MASS] = (
+        J[Dynamic.Atmosphere.VELOCITY_RATE, Dynamic.Vehicle.MASS] = (
             GRAV_ENGLISH_GASP
             * GRAV_ENGLISH_LBM
             * (
@@ -252,10 +256,10 @@ class RotationEOM(om.ExplicitComponent):
             )
             / weight**2
         )
-        J[Dynamic.Atmosphere.VELOCITYITY_RATE, Dynamic.Vehicle.FLIGHT_PATH_ANGLE] = (
+        J[Dynamic.Atmosphere.VELOCITY_RATE, Dynamic.Vehicle.FLIGHT_PATH_ANGLE] = (
             -np.cos(gamma) * GRAV_ENGLISH_GASP
         )
-        J[Dynamic.Atmosphere.VELOCITYITY_RATE, Dynamic.Vehicle.LIFT] = (
+        J[Dynamic.Atmosphere.VELOCITY_RATE, Dynamic.Vehicle.LIFT] = (
             GRAV_ENGLISH_GASP * (-mu * dNF_dLift) / weight
         )
 
@@ -271,6 +275,6 @@ class RotationEOM(om.ExplicitComponent):
 
         J["normal_force", Dynamic.Vehicle.MASS] = dNF_dWeight * GRAV_ENGLISH_LBM
         J["normal_force", Dynamic.Vehicle.LIFT] = dNF_dLift
-        J["normal_force", Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL] = dNF_dThrust
+        J["normal_force", Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = dNF_dThrust
         J["normal_force", "alpha"] = dNF_dAlpha
         J["normal_force", Aircraft.Wing.INCIDENCE] = dNF_dIwing

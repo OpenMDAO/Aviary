@@ -450,7 +450,7 @@ class PhaseBuilderBase(ABC):
             lower=velocity_lower,
             upper=velocity_upper,
             units="kn",
-            rate_source=Dynamic.Atmosphere.VELOCITYITY_RATE,
+            rate_source=Dynamic.Atmosphere.VELOCITY_RATE,
             targets=Dynamic.Atmosphere.VELOCITY,
             ref=velocity_ref,
             ref0=velocity_ref0,

@@ -71,7 +71,7 @@ class ClimbRates(om.ExplicitComponent):
             Dynamic.Atmosphere.ALTITUDE_RATE,
             [
                 Dynamic.Atmosphere.VELOCITY,
-                Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL,
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                 Dynamic.Vehicle.DRAG,
                 Dynamic.Vehicle.MASS,
             ],
@@ -80,28 +80,40 @@ class ClimbRates(om.ExplicitComponent):
         )
         self.declare_partials(
             Dynamic.Mission.DISTANCE_RATE,
-            [Dynamic.Atmosphere.VELOCITY, Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL,
-                Dynamic.Vehicle.DRAG, Dynamic.Vehicle.MASS],
+            [
+                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                Dynamic.Vehicle.DRAG,
+                Dynamic.Vehicle.MASS,
+            ],
             rows=arange,
             cols=arange,
         )
-        self.declare_partials("required_lift",
-                              [Dynamic.Vehicle.MASS,
-                               Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL,
-                               Dynamic.Vehicle.DRAG],
-                              rows=arange,
-                              cols=arange)
-        self.declare_partials(Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
-                              [Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL,
-                               Dynamic.Vehicle.DRAG,
-                               Dynamic.Vehicle.MASS],
-                              rows=arange,
-                              cols=arange)
+        self.declare_partials(
+            "required_lift",
+            [
+                Dynamic.Vehicle.MASS,
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                Dynamic.Vehicle.DRAG,
+            ],
+            rows=arange,
+            cols=arange,
+        )
+        self.declare_partials(
+            Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+            [
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                Dynamic.Vehicle.DRAG,
+                Dynamic.Vehicle.MASS,
+            ],
+            rows=arange,
+            cols=arange,
+        )
 
     def compute(self, inputs, outputs):
 
         TAS = inputs[Dynamic.Atmosphere.VELOCITY]
-        thrust = inputs[Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL]
+        thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
         drag = inputs[Dynamic.Vehicle.DRAG]
         weight = inputs[Dynamic.Vehicle.MASS] * GRAV_ENGLISH_LBM
 
@@ -115,7 +127,7 @@ class ClimbRates(om.ExplicitComponent):
     def compute_partials(self, inputs, J):
 
         TAS = inputs[Dynamic.Atmosphere.VELOCITY]
-        thrust = inputs[Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL]
+        thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
         drag = inputs[Dynamic.Vehicle.DRAG]
         weight = inputs[Dynamic.Vehicle.MASS] * GRAV_ENGLISH_LBM
 
@@ -130,7 +142,7 @@ class ClimbRates(om.ExplicitComponent):
         )
 
         J[Dynamic.Atmosphere.ALTITUDE_RATE, Dynamic.Atmosphere.VELOCITY] = np.sin(gamma)
-        J[Dynamic.Atmosphere.ALTITUDE_RATE, Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL] = (
+        J[Dynamic.Atmosphere.ALTITUDE_RATE, Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = (
             TAS * np.cos(gamma) * dGamma_dThrust
         )
         J[Dynamic.Atmosphere.ALTITUDE_RATE, Dynamic.Vehicle.DRAG] = (
@@ -141,8 +153,9 @@ class ClimbRates(om.ExplicitComponent):
         )
 
         J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Atmosphere.VELOCITY] = np.cos(gamma)
-        J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL] = - \
-            TAS * np.sin(gamma) * dGamma_dThrust
+        J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = (
+            -TAS * np.sin(gamma) * dGamma_dThrust
+        )
         J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Vehicle.DRAG] = - \
             TAS * np.sin(gamma) * dGamma_dDrag
         J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Vehicle.MASS] = \
@@ -151,12 +164,14 @@ class ClimbRates(om.ExplicitComponent):
         J["required_lift", Dynamic.Vehicle.MASS] = (
             np.cos(gamma) - weight * np.sin(gamma) * dGamma_dWeight
         ) * GRAV_ENGLISH_LBM
-        J["required_lift", Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL] = - \
-            weight * np.sin(gamma) * dGamma_dThrust
+        J["required_lift", Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = (
+            -weight * np.sin(gamma) * dGamma_dThrust
+        )
         J["required_lift", Dynamic.Vehicle.DRAG] = -weight * np.sin(gamma) * dGamma_dDrag
 
-        J[Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
-            Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL] = dGamma_dThrust
+        J[
+            Dynamic.Vehicle.FLIGHT_PATH_ANGLE, Dynamic.Vehicle.Propulsion.THRUST_TOTAL
+        ] = dGamma_dThrust
         J[Dynamic.Vehicle.FLIGHT_PATH_ANGLE, Dynamic.Vehicle.DRAG] = dGamma_dDrag
         J[Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
             Dynamic.Vehicle.MASS] = dGamma_dWeight * GRAV_ENGLISH_LBM

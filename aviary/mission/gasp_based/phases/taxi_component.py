@@ -35,10 +35,12 @@ class TaxiFuelComponent(om.ExplicitComponent):
         )
 
         self.declare_partials(
-            "taxi_fuel_consumed", [
-                Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL])
+            "taxi_fuel_consumed",
+            [Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL],
+        )
         self.declare_partials(
-            Dynamic.Vehicle.MASS, Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL
+            Dynamic.Vehicle.MASS,
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
         )
         self.declare_partials(Dynamic.Vehicle.MASS, Mission.Summary.GROSS_MASS, val=1)
 
@@ -51,8 +53,12 @@ class TaxiFuelComponent(om.ExplicitComponent):
     def compute_partials(self, inputs, J):
         dt_taxi = self.options['aviary_options'].get_val(Mission.Taxi.DURATION, 's')
 
-        J["taxi_fuel_consumed",
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL] = -dt_taxi
+        J[
+            "taxi_fuel_consumed",
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+        ] = -dt_taxi
 
-        J[Dynamic.Vehicle.MASS,
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL] = dt_taxi
+        J[
+            Dynamic.Vehicle.MASS,
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+        ] = dt_taxi

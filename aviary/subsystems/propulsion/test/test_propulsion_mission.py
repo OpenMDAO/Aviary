@@ -132,10 +132,11 @@ class PropulsionMissionTest(unittest.TestCase):
 
         thrust = self.prob.get_val(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
         thrust_max = self.prob.get_val(
-            Dynamic.Vehicle.Propulsion.THRUST_MAX.THRUST_MAX_TOTAL, units='lbf'
+            Dynamic.Vehicle.Propulsion.THRUST_MAX_TOTAL, units='lbf'
         )
         fuel_flow = self.prob.get_val(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL, units='lb/h')
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units='lb/h'
+        )
         electric_power_in = self.prob.get_val(
             Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL, units='kW'
         )
@@ -205,7 +206,8 @@ class PropulsionMissionTest(unittest.TestCase):
 
         thrust = self.prob.get_val(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
         fuel_flow = self.prob.get_val(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL, units='lbm/h')
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/h'
+        )
         nox_rate = self.prob.get_val(
             Dynamic.Vehicle.Propulsion.NOX_RATE_TOTAL, units='lbm/h'
         )

@@ -69,7 +69,7 @@ class DescentRates(om.ExplicitComponent):
             Dynamic.Atmosphere.ALTITUDE_RATE,
             [
                 Dynamic.Atmosphere.VELOCITY,
-                Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL,
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                 Dynamic.Vehicle.DRAG,
                 Dynamic.Vehicle.MASS,
             ],
@@ -78,29 +78,41 @@ class DescentRates(om.ExplicitComponent):
         )
         self.declare_partials(
             Dynamic.Mission.DISTANCE_RATE,
-            [Dynamic.Atmosphere.VELOCITY, Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL,
-                Dynamic.Vehicle.DRAG, Dynamic.Vehicle.MASS],
+            [
+                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                Dynamic.Vehicle.DRAG,
+                Dynamic.Vehicle.MASS,
+            ],
             rows=arange,
             cols=arange,
         )
         self.declare_partials(
             "required_lift",
-            [Dynamic.Vehicle.MASS, Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL,
-                Dynamic.Vehicle.DRAG, "alpha"],
+            [
+                Dynamic.Vehicle.MASS,
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                Dynamic.Vehicle.DRAG,
+                "alpha",
+            ],
             rows=arange,
             cols=arange,
         )
-        self.declare_partials(Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
-                              [Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL,
-                               Dynamic.Vehicle.DRAG,
-                               Dynamic.Vehicle.MASS],
-                              rows=arange,
-                              cols=arange)
+        self.declare_partials(
+            Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+            [
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                Dynamic.Vehicle.DRAG,
+                Dynamic.Vehicle.MASS,
+            ],
+            rows=arange,
+            cols=arange,
+        )
 
     def compute(self, inputs, outputs):
 
         TAS = inputs[Dynamic.Atmosphere.VELOCITY]
-        thrust = inputs[Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL]
+        thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
         drag = inputs[Dynamic.Vehicle.DRAG]
         weight = inputs[Dynamic.Vehicle.MASS] * GRAV_ENGLISH_LBM
         alpha = inputs["alpha"]
@@ -115,7 +127,7 @@ class DescentRates(om.ExplicitComponent):
     def compute_partials(self, inputs, J):
 
         TAS = inputs[Dynamic.Atmosphere.VELOCITY]
-        thrust = inputs[Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL]
+        thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
         drag = inputs[Dynamic.Vehicle.DRAG]
         weight = inputs[Dynamic.Vehicle.MASS] * GRAV_ENGLISH_LBM
         alpha = inputs["alpha"]
@@ -123,7 +135,7 @@ class DescentRates(om.ExplicitComponent):
         gamma = (thrust - drag) / weight
 
         J[Dynamic.Atmosphere.ALTITUDE_RATE, Dynamic.Atmosphere.VELOCITY] = np.sin(gamma)
-        J[Dynamic.Atmosphere.ALTITUDE_RATE, Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL] = (
+        J[Dynamic.Atmosphere.ALTITUDE_RATE, Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = (
             TAS * np.cos(gamma) / weight
         )
         J[Dynamic.Atmosphere.ALTITUDE_RATE, Dynamic.Vehicle.DRAG] = (
@@ -134,8 +146,9 @@ class DescentRates(om.ExplicitComponent):
         )
 
         J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Atmosphere.VELOCITY] = np.cos(gamma)
-        J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL] = - \
-            TAS * np.sin(gamma) / weight
+        J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = (
+            -TAS * np.sin(gamma) / weight
+        )
         J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Vehicle.DRAG] = - \
             TAS * np.sin(gamma) * (-1 / weight)
         J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Vehicle.MASS] = (
@@ -147,14 +160,16 @@ class DescentRates(om.ExplicitComponent):
                 (thrust - drag) / weight
             ) * (-(thrust - drag) / weight**2)
         ) * GRAV_ENGLISH_LBM
-        J["required_lift", Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL] = - \
-            weight * np.sin(gamma) / weight - np.sin(alpha)
+        J["required_lift", Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = -weight * np.sin(
+            gamma
+        ) / weight - np.sin(alpha)
         J["required_lift", Dynamic.Vehicle.DRAG] = - \
             weight * np.sin(gamma) * (-1 / weight)
         J["required_lift", "alpha"] = -thrust * np.cos(alpha)
 
-        J[Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
-            Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL] = 1 / weight
+        J[
+            Dynamic.Vehicle.FLIGHT_PATH_ANGLE, Dynamic.Vehicle.Propulsion.THRUST_TOTAL
+        ] = (1 / weight)
         J[Dynamic.Vehicle.FLIGHT_PATH_ANGLE, Dynamic.Vehicle.DRAG] = -1 / weight
         J[Dynamic.Vehicle.FLIGHT_PATH_ANGLE, Dynamic.Vehicle.MASS] = - \
             (thrust - drag) / weight**2 * GRAV_ENGLISH_LBM

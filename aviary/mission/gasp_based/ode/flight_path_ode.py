@@ -120,7 +120,7 @@ class FlightPathODE(BaseODE):
                     ),
                     promotes_inputs=[
                         'weight',
-                        ('thrust', Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL),
+                        ('thrust', Dynamic.Vehicle.Propulsion.THRUST_TOTAL),
                         'alpha',
                         ('gamma', Dynamic.Vehicle.FLIGHT_PATH_ANGLE),
                         ('i_wing', Aircraft.Wing.INCIDENCE),
@@ -183,7 +183,7 @@ class FlightPathODE(BaseODE):
             ),
             promotes_inputs=EOM_inputs,
             promotes_outputs=[
-                Dynamic.Atmosphere.VELOCITYITY_RATE,
+                Dynamic.Atmosphere.VELOCITY_RATE,
                 Dynamic.Mission.DISTANCE_RATE,
                 "normal_force",
                 "fuselage_pitch",

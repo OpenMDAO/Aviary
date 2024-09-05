@@ -22,8 +22,12 @@ class RequiredThrust(om.ExplicitComponent):
                        units='m/s', desc='rate of change of altitude')
         self.add_input(Dynamic.Atmosphere.VELOCITY, val=np.zeros(nn),
                        units='m/s', desc=Dynamic.Atmosphere.VELOCITY)
-        self.add_input(Dynamic.Atmosphere.VELOCITYITY_RATE, val=np.zeros(
-            nn), units='m/s**2', desc='rate of change of velocity')
+        self.add_input(
+            Dynamic.Atmosphere.VELOCITY_RATE,
+            val=np.zeros(nn),
+            units='m/s**2',
+            desc='rate of change of velocity',
+        )
         self.add_input(Dynamic.Vehicle.MASS, val=np.zeros(
             nn), units='kg', desc='mass of the aircraft')
         self.add_output('thrust_required', val=np.zeros(
@@ -37,14 +41,15 @@ class RequiredThrust(om.ExplicitComponent):
         self.declare_partials(
             'thrust_required', Dynamic.Atmosphere.VELOCITY, rows=ar, cols=ar)
         self.declare_partials(
-            'thrust_required', Dynamic.Atmosphere.VELOCITYITY_RATE, rows=ar, cols=ar)
+            'thrust_required', Dynamic.Atmosphere.VELOCITY_RATE, rows=ar, cols=ar
+        )
         self.declare_partials('thrust_required', Dynamic.Vehicle.MASS, rows=ar, cols=ar)
 
     def compute(self, inputs, outputs):
         drag = inputs[Dynamic.Vehicle.DRAG]
         altitude_rate = inputs[Dynamic.Atmosphere.ALTITUDE_RATE]
         velocity = inputs[Dynamic.Atmosphere.VELOCITY]
-        velocity_rate = inputs[Dynamic.Atmosphere.VELOCITYITY_RATE]
+        velocity_rate = inputs[Dynamic.Atmosphere.VELOCITY_RATE]
         mass = inputs[Dynamic.Vehicle.MASS]
 
         thrust_required = drag + (altitude_rate*gravity/velocity + velocity_rate) * mass
@@ -54,7 +59,7 @@ class RequiredThrust(om.ExplicitComponent):
     def compute_partials(self, inputs, partials):
         altitude_rate = inputs[Dynamic.Atmosphere.ALTITUDE_RATE]
         velocity = inputs[Dynamic.Atmosphere.VELOCITY]
-        velocity_rate = inputs[Dynamic.Atmosphere.VELOCITYITY_RATE]
+        velocity_rate = inputs[Dynamic.Atmosphere.VELOCITY_RATE]
         mass = inputs[Dynamic.Vehicle.MASS]
 
         partials['thrust_required', Dynamic.Vehicle.DRAG] = 1.0
@@ -63,6 +68,6 @@ class RequiredThrust(om.ExplicitComponent):
         )
         partials['thrust_required', Dynamic.Atmosphere.VELOCITY] = - \
             altitude_rate*gravity/velocity**2 * mass
-        partials['thrust_required', Dynamic.Atmosphere.VELOCITYITY_RATE] = mass
+        partials['thrust_required', Dynamic.Atmosphere.VELOCITY_RATE] = mass
         partials['thrust_required', Dynamic.Vehicle.MASS] = altitude_rate * \
             gravity/velocity + velocity_rate

@@ -18,12 +18,15 @@ class MissionEOM(om.Group):
         self.add_subsystem(
             name='required_thrust',
             subsys=RequiredThrust(num_nodes=nn),
-            promotes_inputs=[Dynamic.Vehicle.DRAG,
-                             Dynamic.Atmosphere.ALTITUDE_RATE,
-                             Dynamic.Atmosphere.VELOCITY,
-                             Dynamic.Atmosphere.VELOCITYITY_RATE,
-                             Dynamic.Vehicle.MASS],
-            promotes_outputs=['thrust_required'])
+            promotes_inputs=[
+                Dynamic.Vehicle.DRAG,
+                Dynamic.Atmosphere.ALTITUDE_RATE,
+                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Atmosphere.VELOCITY_RATE,
+                Dynamic.Vehicle.MASS,
+            ],
+            promotes_outputs=['thrust_required'],
+        )
 
         self.add_subsystem(
             name='groundspeed',
@@ -39,11 +42,21 @@ class MissionEOM(om.Group):
             name='excess_specific_power',
             subsys=SpecificEnergyRate(num_nodes=nn),
             promotes_inputs=[
-                (Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-                 Dynamic.Vehicle.Propulsion.THRUST_MAX_TOTAL),
+                (
+                    Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                    Dynamic.Vehicle.Propulsion.THRUST_MAX_TOTAL,
+                ),
                 Dynamic.Atmosphere.VELOCITY,
-                Dynamic.Vehicle.MASS, Dynamic.Vehicle.DRAG],
-            promotes_outputs=[(Dynamic.Vehicle.SPECIFIC_ENERGY_RATE, Dynamic.Vehicle.SPECIFIC_ENERGY_RATE_EXCESS)])
+                Dynamic.Vehicle.MASS,
+                Dynamic.Vehicle.DRAG,
+            ],
+            promotes_outputs=[
+                (
+                    Dynamic.Vehicle.SPECIFIC_ENERGY_RATE,
+                    Dynamic.Vehicle.SPECIFIC_ENERGY_RATE_EXCESS,
+                )
+            ],
+        )
         self.add_subsystem(
             name=Dynamic.Vehicle.ALTITUDE_RATE_MAX,
             subsys=AltitudeRate(num_nodes=nn),
@@ -52,12 +65,10 @@ class MissionEOM(om.Group):
                     Dynamic.Vehicle.SPECIFIC_ENERGY_RATE,
                     Dynamic.Vehicle.SPECIFIC_ENERGY_RATE_EXCESS,
                 ),
-                Dynamic.Atmosphere.VELOCITYITY_RATE,
+                Dynamic.Atmosphere.VELOCITY_RATE,
                 Dynamic.Atmosphere.VELOCITY,
             ],
             promotes_outputs=[
-                (
-                    Dynamic.Atmosphere.ALTITUDE_RATDynamic.Atmosphere.ALTITUDETITUDE_RATE_MAX
-                )
+                (Dynamic.Atmosphere.ALTITUDE_RATE, Dynamic.Vehicle.ALTITUDE_RATE_MAX)
             ],
         )

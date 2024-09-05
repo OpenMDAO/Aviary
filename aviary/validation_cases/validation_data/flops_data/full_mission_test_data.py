@@ -224,7 +224,7 @@ data.set_val(
 
 data.set_val(
     # state_rates:velocity
-    Dynamic.Atmosphere.VELOCITYITY_RATE,
+    Dynamic.Atmosphere.VELOCITY_RATE,
     val=[
         0.558739800813549,
         3.33665416459715e-17,

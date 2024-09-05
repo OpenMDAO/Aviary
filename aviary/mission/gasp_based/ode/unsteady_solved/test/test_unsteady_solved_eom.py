@@ -68,8 +68,11 @@ class TestUnsteadySolvedEOM(unittest.TestCase):
 
         p.set_val(Dynamic.Atmosphere.VELOCITY, 250 + 10 * np.random.rand(nn), units="kn")
         p.set_val("mass", 175_000 + 1000 * np.random.rand(nn), units="lbm")
-        p.set_val(Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL, 20_000 +
-                  100 * np.random.rand(nn), units="lbf")
+        p.set_val(
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            20_000 + 100 * np.random.rand(nn),
+            units="lbf",
+        )
         p.set_val(Dynamic.Vehicle.LIFT, 175_000 + 1000 * np.random.rand(nn), units="lbf")
         p.set_val(Dynamic.Vehicle.DRAG, 20_000 + 100 * np.random.rand(nn), units="lbf")
         p.set_val(Aircraft.Wing.INCIDENCE, np.random.rand(1), units="deg")

@@ -895,9 +895,9 @@ detailed_takeoff.set_val(Dynamic.Atmosphere.ALTITUDE_RATE, altitude_rate, 'kn')
 
 # NOTE FLOPS output is horizontal acceleration only
 #    - divide the FLOPS values by the cos(flight_path_angle)
-# detailed_takeoff.set_val(Dynamic.Atmosphere.VELOCITYITY_RATE, [10.36, 6.20, 5.23, 2.69], 'ft/s**2')
+# detailed_takeoff.set_val(Dynamic.Atmosphere.VELOCITY_RATE, [10.36, 6.20, 5.23, 2.69], 'ft/s**2')
 velocity_rate = [10.36, 6.20, 5.23, 2.70]
-detailed_takeoff.set_val(Dynamic.Atmosphere.VELOCITYITY_RATE, velocity_rate, 'ft/s**2')
+detailed_takeoff.set_val(Dynamic.Atmosphere.VELOCITY_RATE, velocity_rate, 'ft/s**2')
 
 # NOTE FLOPS output is based on "constant" takeoff mass - assume gross weight
 #    - currently neglecting taxi
@@ -1280,16 +1280,81 @@ detailed_landing.set_val(
 )
 
 detailed_landing.set_val(
-    Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL,
+    Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
     [
-        7614, 7614, 7607.7, 7601, 7593.9, 7586.4, 7578.5, 7570.2, 7561.3, 7551.8,
-        7541.8, 7531.1, 7519.7, 7507.6, 7494.6, 7480.6, 7465.7, 7449.7, 7432.5, 7414,
-        7394, 7372.3, 7348.9, 7323.5, 7295.9, 7265.8, 7233, 7197.1, 7157.7, 7114.3,
-        7066.6, 7013.8, 6955.3, 6890.2, 6817.7, 6736.7, 6645.8, 6543.5, 6428.2, 6297.6,
-        6149.5, 5980.9, 5788.7, 5569.3, 5318.5, 5032, 4980.3, 4102, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    'lbf')
+        7614,
+        7614,
+        7607.7,
+        7601,
+        7593.9,
+        7586.4,
+        7578.5,
+        7570.2,
+        7561.3,
+        7551.8,
+        7541.8,
+        7531.1,
+        7519.7,
+        7507.6,
+        7494.6,
+        7480.6,
+        7465.7,
+        7449.7,
+        7432.5,
+        7414,
+        7394,
+        7372.3,
+        7348.9,
+        7323.5,
+        7295.9,
+        7265.8,
+        7233,
+        7197.1,
+        7157.7,
+        7114.3,
+        7066.6,
+        7013.8,
+        6955.3,
+        6890.2,
+        6817.7,
+        6736.7,
+        6645.8,
+        6543.5,
+        6428.2,
+        6297.6,
+        6149.5,
+        5980.9,
+        5788.7,
+        5569.3,
+        5318.5,
+        5032,
+        4980.3,
+        4102,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+    ],
+    'lbf',
+)
 
 detailed_landing.set_val(
     'angle_of_attack',
