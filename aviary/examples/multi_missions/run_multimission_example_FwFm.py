@@ -283,3 +283,6 @@ if __name__ == '__main__':
     makeN2 = True if (len(sys.argv) > 1 and "n2" in sys.argv[1]) else False
 
     super_prob = FwFm_example(makeN2=makeN2)
+
+    super_prob.model.list_vars(val=True, units=True, print_arrays=True)
+    # https://openmdao.org/newdocs/versions/latest/features/debugging/listing_variables.html?highlight=list_driver_vars
