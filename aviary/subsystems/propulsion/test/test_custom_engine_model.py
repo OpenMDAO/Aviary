@@ -291,14 +291,14 @@ class TurbopropTest(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.Engine.DATA_FILE, engine_filepath)
         options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
-        options.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 10, units='ft')
+        options.set_val(Aircraft.Engine.Propeller.DIAMETER, 10, units='ft')
 
         options.set_val(
-            Aircraft.Engine.COMPUTE_PROPELLER_INSTALLATION_LOSS,
+            Aircraft.Engine.Propeller.COMPUTE_INSTALLATION_LOSS,
             val=True,
             units='unitless',
         )
-        options.set_val(Aircraft.Engine.NUM_PROPELLER_BLADES, val=4, units='unitless')
+        options.set_val(Aircraft.Engine.Propeller.NUM_BLADES, val=4, units='unitless')
 
         engine = TurbopropModel(options=options)
 
@@ -335,22 +335,22 @@ class TurbopropTest(unittest.TestCase):
         prob.set_initial_guesses()
 
         prob.set_val(
-            f'traj.cruise.rhs_all.{Aircraft.Engine.PROPELLER_TIP_SPEED_MAX}',
+            f'traj.cruise.rhs_all.{Aircraft.Engine.Propeller.TIP_SPEED_MAX}',
             710.0,
             units='ft/s',
         )
         prob.set_val(
-            f'traj.cruise.rhs_all.{Aircraft.Engine.PROPELLER_DIAMETER}', 10, units='ft'
+            f'traj.cruise.rhs_all.{Aircraft.Engine.Propeller.DIAMETER}', 10, units='ft'
         )
         prob.set_val(
-            f'traj.cruise.rhs_all.{Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR}',
+            f'traj.cruise.rhs_all.{Aircraft.Engine.Propeller.ACTIVITY_FACTOR}',
             150.0,
             units='unitless',
         )
         prob.set_val(
             (
                 'traj.cruise.rhs_all.'
-                f'{Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT}'
+                f'{Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT}'
             ),
             0.5,
             units='unitless',

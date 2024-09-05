@@ -207,8 +207,6 @@ class Aircraft:
     class Engine:
         ADDITIONAL_MASS = 'aircraft:engine:additional_mass'
         ADDITIONAL_MASS_FRACTION = 'aircraft:engine:additional_mass_fraction'
-        COMPUTE_PROPELLER_INSTALLATION_LOSS = \
-            'aircraft:engine:compute_propeller_installation_loss'
         CONSTANT_FUEL_CONSUMPTION = 'aircraft:engine:constant_fuel_consumption'
         CONTROLS_MASS = 'aircraft:engine:controls_mass'
         DATA_FILE = 'aircraft:engine:data_file'
@@ -227,18 +225,10 @@ class Aircraft:
         MASS_SPECIFIC = 'aircraft:engine:mass_specific'
         NUM_ENGINES = 'aircraft:engine:num_engines'
         NUM_FUSELAGE_ENGINES = 'aircraft:engine:num_fuselage_engines'
-        NUM_PROPELLER_BLADES = 'aircraft:engine:num_propeller_blades'
         NUM_WING_ENGINES = 'aircraft:engine:num_wing_engines'
         POD_MASS = 'aircraft:engine:pod_mass'
         POD_MASS_SCALER = 'aircraft:engine:pod_mass_scaler'
         POSITION_FACTOR = 'aircraft:engine:position_factor'
-        PROPELLER_ACTIVITY_FACTOR = 'aircraft:engine:propeller_activity_factor'
-        PROPELLER_DATA_FILE = 'aircraft:engine:propeller_data_file'
-        PROPELLER_DIAMETER = 'aircraft:engine:propeller_diameter'
-        PROPELLER_INTEGRATED_LIFT_COEFFICIENT = \
-            'aircraft:engine:propeller_integrated_lift_coefficient'
-        PROPELLER_TIP_MACH_MAX = 'propeller_tip_mach_max'
-        PROPELLER_TIP_SPEED_MAX = 'aircraft:engine:propeller_tip_speed_max'
         PYLON_FACTOR = 'aircraft:engine:pylon_factor'
         REFERENCE_DIAMETER = 'aircraft:engine:reference_diameter'
         REFERENCE_MASS = 'aircraft:engine:reference_mass'
@@ -254,19 +244,32 @@ class Aircraft:
         THRUST_REVERSERS_MASS = 'aircraft:engine:thrust_reversers_mass'
         THRUST_REVERSERS_MASS_SCALER = 'aircraft:engine:thrust_reversers_mass_scaler'
         TYPE = 'aircraft:engine:type'
-        USE_PROPELLER_MAP = 'aircraft:engine:use_propeller_map'
         WING_LOCATIONS = 'aircraft:engine:wing_locations'
 
         class Gearbox:
-            EFFICIENCY = "aircraft:engine:gearbox:efficiency"
-            GEAR_RATIO = "aircraft:engine:gearbox:gear_ratio"
-            MASS = "aircraft:engine:gearbox:mass"
+            EFFICIENCY = 'aircraft:engine:gearbox:efficiency'
+            GEAR_RATIO = 'aircraft:engine:gearbox:gear_ratio'
+            MASS = 'aircraft:engine:gearbox:mass'
             SHAFT_POWER_DESIGN = 'aircraft:engine:shaft_power_design'
             SPECIFIC_TORQUE = "aircraft:engine:gearbox:specific_torque"
 
         class Motor:
             MASS = 'aircraft:engine:motor:mass'
             TORQUE_MAX = 'aircraft:engine:motor:torque_max'
+
+        class Propeller:
+            COMPUTE_INSTALLATION_LOSS = (
+                'aircraft:engine:propeller:compute_installation_loss'
+            )
+            NUM_BLADES = 'aircraft:engine:propeller:num_blades'
+            ACTIVITY_FACTOR = 'aircraft:engine:propeller:activity_factor'
+            DATA_FILE = 'aircraft:engine:propeller:data_file'
+            DIAMETER = 'aircraft:engine:propeller:diameter'
+            INTEGRATED_LIFT_COEFFICIENT = (
+                'aircraft:engine:propeller:integrated_lift_coefficient'
+            )
+            TIP_MACH_MAX = 'propeller:tip_mach_max'
+            TIP_SPEED_MAX = 'aircraft:engine:propeller:tip_speed_max'
 
     class Fins:
         AREA = 'aircraft:fins:area'

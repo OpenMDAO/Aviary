@@ -50,7 +50,7 @@ class PropellerMap(om.ExplicitComponent):
         # Create dict for variables present in propeller data with associated units
         self.propeller_variables = {}
 
-        data_file = options.get_val(Aircraft.Engine.PROPELLER_DATA_FILE)
+        data_file = options.get_val(Aircraft.Engine.Propeller.DATA_FILE)
         self._read_data(data_file)
 
     def _read_data(self, data_file):

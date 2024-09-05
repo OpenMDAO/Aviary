@@ -21,15 +21,21 @@ class GearboxMission(om.Group):
     def setup(self):
         n = self.options["num_nodes"]
 
-        self.add_subsystem('RPM_comp',
-                           om.ExecComp('RPM_out = RPM_in / gear_ratio',
-                                       RPM_out={'val': np.ones(n), 'units': 'rpm'},
-                                       gear_ratio={'val': 1.0, 'units': 'unitless'},
-                                       RPM_in={'val': np.ones(n), 'units': 'rpm'},
-                                       has_diag_partials=True),
-                           promotes_inputs=[('RPM_in', Aircraft.Engine.RPM_DESIGN),
-                                            ('gear_ratio', Aircraft.Engine.Gearbox.GEAR_RATIO)],
-                           promotes_outputs=[('RPM_out', Dynamic.Mission.RPM_GEARBOX)])
+        self.add_subsystem(
+            'RPM_comp',
+            om.ExecComp(
+                'RPM_out = RPM_in / gear_ratio',
+                RPM_out={'val': np.ones(n), 'units': 'rpm'},
+                gear_ratio={'val': 1.0, 'units': 'unitless'},
+                RPM_in={'val': np.ones(n), 'units': 'rpm'},
+                has_diag_partials=True,
+            ),
+            promotes_inputs=[
+                ('RPM_in', Aircraft.Engine.GEARBOX.RPM_DESIGN),
+                ('gear_ratio', Aircraft.Engine.Gearbox.GEAR_RATIO),
+            ],
+            promotes_outputs=[('RPM_out', Dynamic.Mission.RPM_GEARBOX)],
+        )
 
         self.add_subsystem('shaft_power_comp',
                            om.ExecComp('shaft_power_out = shaft_power_in * eff',

@@ -25,7 +25,7 @@ class TestGearbox(unittest.TestCase):
 
         prob.setup(force_alloc_complex=True)
 
-        prob.set_val(av.Aircraft.Engine.RPM_DESIGN, 6195, units='rpm')
+        prob.set_val(av.Aircraft.Engine.GEARBOX.RPM_DESIGN, 6195, units='rpm')
         prob.set_val(av.Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN, 375, units='hp')
         prob.set_val(av.Aircraft.Engine.Gearbox.GEAR_RATIO, 12.6, units=None)
         prob.set_val(av.Aircraft.Engine.Gearbox.SPECIFIC_TORQUE, 103, units='N*m/kg')
@@ -53,7 +53,9 @@ class TestGearbox(unittest.TestCase):
 
         prob.setup(force_alloc_complex=True)
 
-        prob.set_val(av.Aircraft.Engine.RPM_DESIGN, [5000, 6195, 6195], units='rpm')
+        prob.set_val(
+            av.Aircraft.Engine.GEARBOX.RPM_DESIGN, [5000, 6195, 6195], units='rpm'
+        )
         prob.set_val(av.Dynamic.Mission.SHAFT_POWER, [100, 200, 375], units='hp')
         prob.set_val(av.Dynamic.Mission.SHAFT_POWER_MAX, [375, 300, 375], units='hp')
         prob.set_val(av.Aircraft.Engine.Gearbox.GEAR_RATIO, 12.6, units=None)

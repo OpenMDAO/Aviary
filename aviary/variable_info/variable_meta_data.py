@@ -1724,22 +1724,6 @@ add_meta_data(
     default_value=0.0,
 )
 
-# NOTE if FT < 0, this bool is true, if >= 0, this is false and the value of FT is used
-# as the installation loss factor
-add_meta_data(
-    Aircraft.Engine.COMPUTE_PROPELLER_INSTALLATION_LOSS,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INPROP.FT',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units="unitless",
-    option=True,
-    default_value=True,
-    types=bool,
-    desc='if true, compute installation loss factor based on blockage factor',
-)
-
 add_meta_data(
     Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION,
     meta_data=_MetaData,
@@ -1999,20 +1983,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Engine.NUM_PROPELLER_BLADES,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INPROP.BL',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='unitless',
-    desc='number of blades per propeller',
-    option=True,
-    types=int,
-    default_value=0
-)
-
-add_meta_data(
     Aircraft.Engine.NUM_WING_ENGINES,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -2061,81 +2031,6 @@ add_meta_data(
     units="unitless",
     desc='engine position factor',
     default_value=0,
-)
-
-add_meta_data(
-    Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INPROP.AF',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units="unitless",
-    desc='propeller actitivty factor per Blade (Range: 80 to 200)',
-    default_value=0.0,
-)
-
-add_meta_data(
-    Aircraft.Engine.PROPELLER_DATA_FILE,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='unitless',
-    types=(str, Path),
-    default_value=None,
-    option=True,
-    desc='filepath to data file containing propeller data map',
-)
-
-add_meta_data(
-    Aircraft.Engine.PROPELLER_DIAMETER,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INPROP.DPROP',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='ft',
-    desc='propeller diameter',
-    default_value=0.0,
-)
-
-add_meta_data(
-    Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INPROP.CLI',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='unitless',
-    desc='propeller blade integrated design lift coefficient (Range: 0.3 to 0.8)',
-    default_value=0.5,
-)
-
-add_meta_data(
-    Aircraft.Engine.PROPELLER_TIP_MACH_MAX,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,  # TODO this needs verification
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='unitless',
-    desc='maximum allowable Mach number at propeller tip (based on helical speed)',
-    default_value=1.0,
-)
-
-add_meta_data(
-    Aircraft.Engine.PROPELLER_TIP_SPEED_MAX,
-    meta_data=_MetaData,
-    historical_name={
-        "GASP": ['INPROP.TSPDMX', 'INPROP.TPSPDMXe'],
-        "FLOPS": None,
-        "LEAPS1": None,
-    },
-    units='ft/s',
-    desc='maximum allowable propeller linear tip speed',
-    default_value=800.0,
 )
 
 add_meta_data(
@@ -2195,10 +2090,11 @@ add_meta_data(
 add_meta_data(
     Aircraft.Engine.RPM_DESIGN,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INPROP.XNMAX',  # maximum engine speed, rpm
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={
+        "GASP": 'INPROP.XNMAX',  # maximum engine speed, rpm
+        "FLOPS": None,
+        "LEAPS1": None,
+    },
     units='rpm',
     desc='the designed output RPM from the engine for fixed-RPM shafts',
     default_value=None,
@@ -2345,20 +2241,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Engine.USE_PROPELLER_MAP,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    option=True,
-    default_value=False,
-    types=bool,
-    units="unitless",
-    desc='flag whether to use propeller map or Hamilton-Standard model.'
-)
-
-add_meta_data(
     Aircraft.Engine.WING_LOCATIONS,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.YP',
@@ -2462,6 +2344,116 @@ add_meta_data(
     desc='Max torque value that can be output from a single motor. Used to determine '
          'motor mass in pre-mission',
 )
+
+#   ___                            _   _
+#  | _ \  _ _   ___   _ __   ___  | | | |  ___   _ _
+#  |  _/ | '_| / _ \ | '_ \ / -_) | | | | / -_) | '_|
+#  |_|   |_|   \___/ | .__/ \___| |_| |_| \___| |_|
+#                    |_|
+# ===================================================
+
+# NOTE if FT < 0, this bool is true, if >= 0, this is false and the value of FT is used
+# as the installation loss factor
+add_meta_data(
+    Aircraft.Engine.Propeller.COMPUTE_INSTALLATION_LOSS,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INPROP.FT', "FLOPS": None, "LEAPS1": None},
+    units="unitless",
+    option=True,
+    default_value=True,
+    types=bool,
+    desc='if true, compute installation loss factor based on blockage factor',
+)
+
+add_meta_data(
+    Aircraft.Engine.Propeller.NUM_BLADES,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INPROP.BL', "FLOPS": None, "LEAPS1": None},
+    units='unitless',
+    desc='number of blades per propeller',
+    option=True,
+    types=int,
+    default_value=0,
+)
+
+
+add_meta_data(
+    Aircraft.Engine.Propeller.ACTIVITY_FACTOR,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INPROP.AF', "FLOPS": None, "LEAPS1": None},
+    units="unitless",
+    desc='propeller actitivty factor per Blade (Range: 80 to 200)',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Engine.Propeller.DATA_FILE,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='unitless',
+    types=(str, Path),
+    default_value=None,
+    option=True,
+    desc='filepath to data file containing propeller data map',
+)
+
+add_meta_data(
+    Aircraft.Engine.Propeller.DIAMETER,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INPROP.DPROP', "FLOPS": None, "LEAPS1": None},
+    units='ft',
+    desc='propeller diameter',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INPROP.CLI', "FLOPS": None, "LEAPS1": None},
+    units='unitless',
+    desc='propeller blade integrated design lift coefficient (Range: 0.3 to 0.8)',
+    default_value=0.5,
+)
+
+add_meta_data(
+    Aircraft.Engine.Propeller.TIP_MACH_MAX,
+    meta_data=_MetaData,
+    historical_name={
+        "GASP": None,  # TODO this needs verification
+        "FLOPS": None,
+        "LEAPS1": None,
+    },
+    units='unitless',
+    desc='maximum allowable Mach number at propeller tip (based on helical speed)',
+    default_value=1.0,
+)
+
+add_meta_data(
+    Aircraft.Engine.Propeller.TIP_SPEED_MAX,
+    meta_data=_MetaData,
+    historical_name={
+        "GASP": ['INPROP.TSPDMX', 'INPROP.TPSPDMXe'],
+        "FLOPS": None,
+        "LEAPS1": None,
+    },
+    units='ft/s',
+    desc='maximum allowable propeller linear tip speed',
+    default_value=800.0,
+)
+
+# add_meta_data(
+#     Aircraft.Engine.USE_PROPELLER_MAP,
+#     meta_data=_MetaData,
+#     historical_name={"GASP": None,
+#                      "FLOPS": None,
+#                      "LEAPS1": None
+#                      },
+#     option=True,
+#     default_value=False,
+#     types=bool,
+#     units="unitless",
+#     desc='flag whether to use propeller map or Hamilton-Standard model.'
+# )
 
 #  ______   _
 # |  ____| (_)

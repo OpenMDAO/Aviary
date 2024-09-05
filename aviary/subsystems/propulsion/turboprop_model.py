@@ -130,7 +130,7 @@ class TurbopropModel(EngineModel):
                 )
 
         # turboprop_group.set_input_default(
-        #     Aircraft.Engine.PROPELLER_TIP_SPEED_MAX, val=0.0, units='ft/s'
+        #     Aircraft.Engine.Propeller.TIP_SPEED_MAX, val=0.0, units='ft/s'
         # )
 
         return turboprop_group
@@ -216,12 +216,12 @@ class TurbopropMission(om.Group):
             # only promote top-level inputs to avoid conflicts with max group
             prop_inputs = [
                 Dynamic.Mission.MACH,
-                Aircraft.Engine.PROPELLER_TIP_SPEED_MAX,
+                Aircraft.Engine.Propeller.TIP_SPEED_MAX,
                 Dynamic.Mission.DENSITY,
                 Dynamic.Mission.VELOCITY,
-                Aircraft.Engine.PROPELLER_DIAMETER,
-                Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,
-                Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT,
+                Aircraft.Engine.Propeller.DIAMETER,
+                Aircraft.Engine.Propeller.ACTIVITY_FACTOR,
+                Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT,
                 Aircraft.Nacelle.AVG_DIAMETER,
                 Dynamic.Mission.SPEED_OF_SOUND,
             ]
