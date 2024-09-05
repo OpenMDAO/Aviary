@@ -79,10 +79,13 @@ class PreMissionGroup(om.Group):
     def configure(self):
         external_outputs = promote_aircraft_and_mission_vars(self)
 
-        statics = self.core_subsystems
-        override_aviary_vars(statics, statics.options["aviary_options"],
-                             external_overrides=external_outputs,
-                             manual_overrides=statics.manual_overrides)
+        pre_mission = self.core_subsystems
+        override_aviary_vars(
+            pre_mission,
+            pre_mission.options["aviary_options"],
+            external_overrides=external_outputs,
+            manual_overrides=pre_mission.manual_overrides,
+        )
 
 
 class PostMissionGroup(om.Group):
@@ -240,8 +243,7 @@ class AviaryProblem(om.Problem):
         self.regular_phases = []
         self.reserve_phases = []
 
-    def load_inputs(self, aviary_inputs, phase_info=None, engine_builders=None, meta_data=BaseMetaData,
-                    verbosity=None):
+    def load_inputs(self, aviary_inputs, phase_info=None, engine_builders=None, meta_data=BaseMetaData, verbosity=Verbosity.BRIEF):
         """
         This method loads the aviary_values inputs and options that the
         user specifies. They could specify files to load and values to
@@ -252,6 +254,8 @@ class AviaryProblem(om.Problem):
         This method is not strictly necessary; a user could also supply
         an AviaryValues object and/or phase_info dict of their own.
         """
+        # compatibility with being passed int for verbosity
+        verbosity = Verbosity(verbosity)
         ## LOAD INPUT FILE ###
         # Create AviaryValues object from file (or process existing AviaryValues object
         # with default values from metadata) and generate initial guesses
@@ -287,7 +291,7 @@ class AviaryProblem(om.Problem):
                 phase_info = outputted_phase_info.phase_info
 
                 # if verbosity level is BRIEF or higher, print that we're using the outputted phase info
-                if verbosity is not None and verbosity.value >= 1:
+                if verbosity is not None and verbosity >= Verbosity.BRIEF:
                     print('Using outputted phase_info from current working directory')
 
             else:
@@ -303,7 +307,7 @@ class AviaryProblem(om.Problem):
                 elif self.mission_method is HEIGHT_ENERGY:
                     from aviary.interface.default_phase_info.height_energy import phase_info
 
-                if verbosity is not None and verbosity.value >= 1:
+                if verbosity is not None and verbosity >= Verbosity.BRIEF:
                     print('Loaded default phase_info for '
                           f'{self.mission_method.value.lower()} equations of motion')
 
@@ -440,7 +444,9 @@ class AviaryProblem(om.Problem):
                     if target_distance[0] <= 0:
                         raise ValueError(
                             f"Invalid target_distance in [{phase_name}].[user_options]. "
-                            f"Current (value: {target_distance[0]}), (units: {target_distance[1]}) <= 0")
+                            f"Current (value: {target_distance[0]}), "
+                            f"(units: {target_distance[1]}) <= 0"
+                        )
 
         # Checks to make sure target_duration is positive,
         # Sets duration_bounds, initial_guesses, and fixed_duration
@@ -462,8 +468,10 @@ class AviaryProblem(om.Problem):
                     target_duration = self.phase_info[phase_name]["user_options"]["target_duration"]
                     if target_duration[0] <= 0:
                         raise ValueError(
-                            f"Invalid target_duration in phase_info[{phase_name}][user_options]. "
-                            f"Current (value: {target_duration[0]}), (units: {target_duration[1]}) <= 0")
+                            f'Invalid target_duration in phase_info[{phase_name}]'
+                            f'[user_options]. Current (value: {target_duration[0]}), '
+                            f'(units: {target_duration[1]}) <= 0")'
+                        )
 
                     # Only applies to non-analytic phases (all HE and most 2DOF)
                     if not analytic:
@@ -549,8 +557,7 @@ class AviaryProblem(om.Problem):
 
     def add_pre_mission_systems(self):
         """
-        Add pre-mission systems to the Aviary problem. These systems are executed before the mission
-        and are also known as the "pre_mission" group.
+        Add pre-mission systems to the Aviary problem. These systems are executed before the mission.
 
         Depending on the mission model specified (`FLOPS` or `GASP`), this method adds various subsystems
         to the aircraft model. For the `FLOPS` mission model, a takeoff phase is added using the Takeoff class
@@ -1108,7 +1115,7 @@ class AviaryProblem(om.Problem):
 
     def add_post_mission_systems(self, include_landing=True):
         """
-        Add post-mission systems to the aircraft model. This is akin to the statics group
+        Add post-mission systems to the aircraft model. This is akin to the pre-mission group
         or the "premission_systems", but occurs after the mission in the execution order.
 
         Depending on the mission model specified (`FLOPS` or `GASP`), this method adds various subsystems
@@ -1597,7 +1604,7 @@ class AviaryProblem(om.Problem):
             The maximum number of iterations allowed for the optimization process. Default is 50. This option is
             applicable to "SNOPT", "IPOPT", and "SLSQP" optimizers.
 
-        verbosity : Verbosity or list, optional
+        verbosity : Verbosity, int or list, optional
             If Verbosity.DEBUG, debug print options ['desvars','ln_cons','nl_cons','objs'] will be set. If a list is
             provided, it will be used as the debug print options.
 
@@ -1605,8 +1612,8 @@ class AviaryProblem(om.Problem):
         -------
         None
         """
-        if not isinstance(verbosity, Verbosity):
-            verbosity = Verbosity(verbosity)
+        # compatibility with being passed int for verbosity
+        verbosity = Verbosity(verbosity)
 
         # Set defaults for optimizer and use_coloring based on analysis scheme
         if optimizer is None:
@@ -1629,7 +1636,7 @@ class AviaryProblem(om.Problem):
                 isumm, iprint = 0, 0
             elif verbosity == Verbosity.BRIEF:
                 isumm, iprint = 6, 0
-            else:
+            elif verbosity > Verbosity.BRIEF:
                 isumm, iprint = 6, 9
             driver.opt_settings["Major iterations limit"] = max_iter
             driver.opt_settings["Major optimality tolerance"] = 1e-4
@@ -1646,7 +1653,7 @@ class AviaryProblem(om.Problem):
                 driver.opt_settings['print_frequency_iter'] = 10
             elif verbosity == Verbosity.VERBOSE:
                 print_level = 5
-            else:
+            else:  # DEBUG
                 print_level = 7
             driver.opt_settings['tol'] = 1.0E-6
             driver.opt_settings['mu_init'] = 1e-5
@@ -1665,15 +1672,15 @@ class AviaryProblem(om.Problem):
             driver.options["maxiter"] = max_iter
             driver.options["disp"] = disp
 
-        if verbosity != Verbosity.QUIET:
+        if verbosity > Verbosity.QUIET:
             if isinstance(verbosity, list):
                 driver.options['debug_print'] = verbosity
-            elif verbosity.value > Verbosity.DEBUG.value:
+            elif verbosity == Verbosity.DEBUG:
                 driver.options['debug_print'] = ['desvars', 'ln_cons', 'nl_cons', 'objs']
         if optimizer in ("SNOPT", "IPOPT"):
-            if verbosity is Verbosity.QUIET:
+            if verbosity == Verbosity.QUIET:
                 driver.options['print_results'] = False
-            elif verbosity is not Verbosity.DEBUG:
+            elif verbosity < Verbosity.DEBUG:
                 driver.options['print_results'] = 'minimal'
 
     def add_design_variables(self):
