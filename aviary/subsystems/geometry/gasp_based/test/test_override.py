@@ -106,5 +106,6 @@ class GASPOverrideTestCase(unittest.TestCase):
 
         assert_near_equal(self.prob[Aircraft.Fuselage.WETTED_AREA], 4000, 1e-6)
 
+
 if __name__ == '__main__':
     unittest.main()
