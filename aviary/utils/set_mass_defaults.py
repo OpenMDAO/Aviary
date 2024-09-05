@@ -2,6 +2,9 @@ from aviary.variable_info.variables import Aircraft
 
 
 def mass_defaults(prob):
+    """
+    This function is not used. Should we keep this file?
+    """
     prob.model.set_input_defaults(
         Aircraft.Strut.ATTACHMENT_LOCATION, val=0, units='unitless')
     prob.model.set_input_defaults(
@@ -38,9 +41,6 @@ def mass_defaults(prob):
     )
     prob.model.set_input_defaults(
         Aircraft.Fuselage.TAIL_FINENESS, 3, units="unitless"
-    )
-    prob.model.set_input_defaults(
-        Aircraft.Fuselage.WETTED_AREA_FACTOR, 4000, units="unitless"
     )
     prob.model.set_input_defaults(
         Aircraft.VerticalTail.MOMENT_RATIO, 2.362, units="unitless"
