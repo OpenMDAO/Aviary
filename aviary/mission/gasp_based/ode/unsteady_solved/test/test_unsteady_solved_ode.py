@@ -40,9 +40,9 @@ class TestUnsteadySolvedODE(unittest.TestCase):
         param_port = ParamPort()
         for key, data in param_port.param_data.items():
             p.model.set_input_defaults(key, **data)
-        p.model.set_input_defaults(Dynamic.Mission.MACH, 0.8 * np.ones(nn))
+        p.model.set_input_defaults(Dynamic.Atmosphere.MACH, 0.8 * np.ones(nn))
         if ground_roll:
-            p.model.set_input_defaults(Dynamic.Mission.MACH, 0.1 * np.ones(nn))
+            p.model.set_input_defaults(Dynamic.Atmosphere.MACH, 0.1 * np.ones(nn))
             ode.set_input_defaults("alpha", np.zeros(nn), units="deg")
 
         p.setup(force_alloc_complex=True)

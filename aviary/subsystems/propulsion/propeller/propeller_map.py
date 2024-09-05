@@ -122,7 +122,7 @@ class PropellerMap(om.ExplicitComponent):
             method=interp_method, extrapolate=True, vec_size=num_nodes)
 
         # add inputs and outputs to interpolator
-        # depending on p, selected_mach can be Mach number (Dynamic.Mission.MACH) or helical Mach number
+        # depending on p, selected_mach can be Mach number (Dynamic.Atmosphere.MACH) or helical Mach number
         propeller.add_input('selected_mach',
                             self.data[MACH],
                             units='unitless',

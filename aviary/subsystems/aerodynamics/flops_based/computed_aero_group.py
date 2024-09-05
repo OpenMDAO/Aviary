@@ -50,7 +50,10 @@ class ComputedAeroGroup(om.Group):
         self.add_subsystem(
             'DynamicPressure',
             DynamicPressure(num_nodes=num_nodes, gamma=gamma),
-            promotes_inputs=[Dynamic.Mission.MACH, Dynamic.Atmosphere.STATIC_PRESSURE],
+            promotes_inputs=[
+                Dynamic.Atmosphere.MACH,
+                Dynamic.Atmosphere.STATIC_PRESSURE,
+            ],
             promotes_outputs=[Dynamic.Atmosphere.DYNAMIC_PRESSURE],
         )
 
@@ -71,7 +74,7 @@ class ComputedAeroGroup(om.Group):
             'PressureDrag',
             comp,
             promotes_inputs=[
-                Dynamic.Mission.MACH,
+                Dynamic.Atmosphere.MACH,
                 Dynamic.Vehicle.LIFT,
                 Dynamic.Atmosphere.STATIC_PRESSURE,
                 Mission.Design.MACH,
@@ -90,7 +93,7 @@ class ComputedAeroGroup(om.Group):
             'InducedDrag',
             comp,
             promotes_inputs=[
-                Dynamic.Mission.MACH,
+                Dynamic.Atmosphere.MACH,
                 Dynamic.Vehicle.LIFT,
                 Dynamic.Atmosphere.STATIC_PRESSURE,
                 Aircraft.Wing.AREA,
@@ -103,9 +106,10 @@ class ComputedAeroGroup(om.Group):
 
         comp = CompressibilityDrag(num_nodes=num_nodes)
         self.add_subsystem(
-            'CompressibilityDrag', comp,
+            'CompressibilityDrag',
+            comp,
             promotes_inputs=[
-                Dynamic.Mission.MACH,
+                Dynamic.Atmosphere.MACH,
                 Mission.Design.MACH,
                 Aircraft.Design.BASE_AREA,
                 Aircraft.Wing.AREA,
@@ -116,14 +120,16 @@ class ComputedAeroGroup(om.Group):
                 Aircraft.Wing.THICKNESS_TO_CHORD,
                 Aircraft.Fuselage.CROSS_SECTION,
                 Aircraft.Fuselage.DIAMETER_TO_WING_SPAN,
-                Aircraft.Fuselage.LENGTH_TO_DIAMETER])
+                Aircraft.Fuselage.LENGTH_TO_DIAMETER,
+            ],
+        )
 
         comp = SkinFriction(num_nodes=num_nodes, aviary_options=aviary_options)
         self.add_subsystem(
             'SkinFrictionCoef',
             comp,
             promotes_inputs=[
-                Dynamic.Mission.MACH,
+                Dynamic.Atmosphere.MACH,
                 Dynamic.Atmosphere.STATIC_PRESSURE,
                 Dynamic.Atmosphere.TEMPERATURE,
                 'characteristic_lengths',
@@ -145,7 +151,7 @@ class ComputedAeroGroup(om.Group):
             comp,
             promotes_inputs=[
                 Dynamic.Atmosphere.DYNAMIC_PRESSURE,
-                Dynamic.Mission.MACH,
+                Dynamic.Atmosphere.MACH,
                 Aircraft.Wing.AREA,
                 Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR,
                 Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR,
@@ -157,14 +163,17 @@ class ComputedAeroGroup(om.Group):
 
         buf = BuffetLift(num_nodes=num_nodes)
         self.add_subsystem(
-            'Buffet', buf,
+            'Buffet',
+            buf,
             promotes_inputs=[
-                Dynamic.Mission.MACH,
+                Dynamic.Atmosphere.MACH,
                 Mission.Design.MACH,
                 Aircraft.Wing.ASPECT_RATIO,
                 Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN,
                 Aircraft.Wing.SWEEP,
-                Aircraft.Wing.THICKNESS_TO_CHORD])
+                Aircraft.Wing.THICKNESS_TO_CHORD,
+            ],
+        )
 
         self.connect('PressureDrag.CD', 'Drag.pressure_drag_coeff')
         self.connect('InducedDrag.induced_drag_coeff', 'Drag.induced_drag_coeff')
@@ -205,7 +214,7 @@ class ComputedDrag(om.Group):
                 Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR,
                 'CDI',
                 'CD0',
-                Dynamic.Mission.MACH,
+                Dynamic.Atmosphere.MACH,
                 Dynamic.Atmosphere.DYNAMIC_PRESSURE,
             ],
             promotes_outputs=['CD', Dynamic.Vehicle.DRAG],

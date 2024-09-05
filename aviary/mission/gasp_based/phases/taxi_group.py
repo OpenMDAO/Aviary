@@ -38,7 +38,7 @@ class TaxiSegment(BaseODE):
                     promotes_inputs=[
                         '*',
                         (Dynamic.Atmosphere.ALTITUDE, Mission.Takeoff.AIRPORT_ALTITUDE),
-                        (Dynamic.Mission.MACH, Mission.Taxi.MACH),
+                        (Dynamic.Atmosphere.MACH, Mission.Taxi.MACH),
                     ],
                     promotes_outputs=['*'],
                 )

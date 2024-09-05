@@ -454,8 +454,10 @@ def run_trajectory(sim=True):
         units='m',
     )
     prob.set_val(
-        'traj.climb.controls:mach', climb.interp(
-            Dynamic.Mission.MACH, ys=[mach_i_climb, mach_f_climb]), units='unitless')
+        'traj.climb.controls:mach',
+        climb.interp(Dynamic.Atmosphere.MACH, ys=[mach_i_climb, mach_f_climb]),
+        units='unitless',
+    )
     prob.set_val(
         'traj.climb.states:mass',
         climb.interp(Dynamic.Vehicle.MASS, ys=[mass_i_climb, mass_f_climb]),
@@ -478,8 +480,10 @@ def run_trajectory(sim=True):
         units='m',
     )
     prob.set_val(
-        f'traj.cruise.{controls_str}:mach', cruise.interp(
-            Dynamic.Mission.MACH, ys=[cruise_mach, cruise_mach]), units='unitless')
+        f'traj.cruise.{controls_str}:mach',
+        cruise.interp(Dynamic.Atmosphere.MACH, ys=[cruise_mach, cruise_mach]),
+        units='unitless',
+    )
     prob.set_val(
         'traj.cruise.states:mass',
         cruise.interp(Dynamic.Vehicle.MASS, ys=[mass_i_cruise, mass_f_cruise]),
@@ -497,8 +501,10 @@ def run_trajectory(sim=True):
         units='m',
     )
     prob.set_val(
-        'traj.descent.controls:mach', descent.interp(
-            Dynamic.Mission.MACH, ys=[mach_i_descent, mach_f_descent]), units='unitless')
+        'traj.descent.controls:mach',
+        descent.interp(Dynamic.Atmosphere.MACH, ys=[mach_i_descent, mach_f_descent]),
+        units='unitless',
+    )
     prob.set_val(
         'traj.descent.states:mass',
         descent.interp(Dynamic.Vehicle.MASS, ys=[mass_i_descent, mass_f_descent]),

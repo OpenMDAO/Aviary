@@ -81,10 +81,12 @@ class TableEngineBuilder(EngineModel):
               '--------------------------------------')
 
         # add inputs and outputs to interpolator
-        engine.add_input(Dynamic.Mission.MACH,
-                         engine_data[:, 0],
-                         units='unitless',
-                         desc='Current flight Mach number')
+        engine.add_input(
+            Dynamic.Atmosphere.MACH,
+            engine_data[:, 0],
+            units='unitless',
+            desc='Current flight Mach number',
+        )
         engine.add_input(
             Dynamic.Atmosphere.ALTITUDE,
             engine_data[:, 1],

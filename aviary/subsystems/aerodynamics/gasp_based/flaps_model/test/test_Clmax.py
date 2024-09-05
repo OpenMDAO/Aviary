@@ -65,7 +65,7 @@ class CLmaxCalculationTestCase(unittest.TestCase):
         assert_near_equal(ans, reg_data, tol)
 
         reg_data = 0.17522
-        ans = self.prob[Dynamic.Mission.MACH]
+        ans = self.prob[Dynamic.Atmosphere.MACH]
         assert_near_equal(ans, reg_data, tol)
 
         reg_data = 157.19864

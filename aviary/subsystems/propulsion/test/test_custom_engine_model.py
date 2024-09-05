@@ -40,7 +40,7 @@ class SimpleEngine(om.ExplicitComponent):
         nn = self.options['num_nodes']
         # add inputs and outputs to interpolator
         self.add_input(
-            Dynamic.Mission.MACH,
+            Dynamic.Atmosphere.MACH,
             shape=nn,
             units='unitless',
             desc='Current flight Mach number',

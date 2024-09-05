@@ -75,7 +75,7 @@ class FlapsGroup(om.Group):
                 Dynamic.Atmosphere.TEMPERATURE,
             ]
             + ["aircraft:*"],
-            promotes_outputs=["CL_max", Dynamic.Mission.MACH, "reynolds"],
+            promotes_outputs=["CL_max", Dynamic.Atmosphere.MACH, "reynolds"],
         )
 
         self.add_subsystem(
@@ -86,7 +86,7 @@ class FlapsGroup(om.Group):
                 "flap_defl",
                 "slat_defl_ratio",
                 "reynolds",
-                Dynamic.Mission.MACH,
+                Dynamic.Atmosphere.MACH,
                 "body_to_span_ratio",
                 "chord_to_body_ratio",
             ]

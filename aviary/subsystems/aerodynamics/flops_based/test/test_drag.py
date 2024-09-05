@@ -47,7 +47,7 @@ class SimpleDragTest(unittest.TestCase):
             Dynamic.Atmosphere.DYNAMIC_PRESSURE,
             'CD_prescaled',
             'CD',
-            Dynamic.Mission.MACH,
+            Dynamic.Atmosphere.MACH,
         )
 
         # drag = 4 digits precision
@@ -122,7 +122,7 @@ class TotalDragTest(unittest.TestCase):
         # drag coefficient = 5 digits precision
         mission_keys = (
             Dynamic.Atmosphere.DYNAMIC_PRESSURE,
-            Dynamic.Mission.MACH,
+            Dynamic.Atmosphere.MACH,
             'CD0',
             'CDI',
         )
@@ -202,7 +202,7 @@ class ComputedDragTest(unittest.TestCase):
         prob.set_val('pressure_drag_coeff', 0.01 * cdp)
         prob.set_val('compress_drag_coeff', 0.01 * cdc)
         prob.set_val('induced_drag_coeff', 0.01 * cdi)
-        prob.set_val(Dynamic.Mission.MACH, M)
+        prob.set_val(Dynamic.Atmosphere.MACH, M)
 
         prob.set_val(Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR, 0.7)
         prob.set_val(Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, 0.3)
@@ -279,7 +279,7 @@ CD_scaled = np.array([0.03313, 0.03313, 0.03313])
 CD0_scaled = np.array([0.02012, 0.02013, 0.02013])
 CDI_scaled = np.array([0.01301, 0.01301, 0.01300])
 
-_mission_data.set_val(Dynamic.Mission.MACH, M)
+_mission_data.set_val(Dynamic.Atmosphere.MACH, M)
 _add_drag_coefficients(key, _mission_data, M, CD_scaled, CD0_scaled, CDI_scaled)
 
 mission_simple_CD[key] = np.array([0.03313, 0.03313, 0.03313])
@@ -300,7 +300,7 @@ CD_scaled = np.array([0.03304, 0.03293, 0.03258])
 CD0_scaled = np.array([0.02016, 0.02016, 0.02016])
 CDI_scaled = np.array([0.01288, 0.01277, 0.01242])
 
-_mission_data.set_val(Dynamic.Mission.MACH, M)
+_mission_data.set_val(Dynamic.Atmosphere.MACH, M)
 _add_drag_coefficients(key, _mission_data, M, CD_scaled, CD0_scaled, CDI_scaled)
 
 mission_simple_CD[key] = np.array([0.03304, 0.03293, 0.03258])
@@ -321,7 +321,7 @@ CD_scaled = np.array([0.02296, 0.01861, 0.01704])
 CD0_scaled = np.array([0.01611, 0.01569, 0.01556])
 CDI_scaled = np.array([0.00806, 0.00390, 0.00237])
 
-_mission_data.set_val(Dynamic.Mission.MACH, M)
+_mission_data.set_val(Dynamic.Atmosphere.MACH, M)
 _add_drag_coefficients(key, _mission_data, M, CD_scaled, CD0_scaled, CDI_scaled)
 # endregion - mission test data taken from the baseline FLOPS output for each case
 

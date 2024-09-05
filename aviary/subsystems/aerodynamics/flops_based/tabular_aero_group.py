@@ -19,7 +19,7 @@ from aviary.utils.data_interpolator_builder import build_data_interpolator
 # all-lowercase name
 aliases = {
     Dynamic.Atmosphere.ALTITUDE: ['h', 'alt', 'altitude'],
-    Dynamic.Mission.MACH: ['m', 'mach'],
+    Dynamic.Atmosphere.MACH: ['m', 'mach'],
     'lift_coefficient': ['cl', 'coefficient_of_lift', 'lift_coefficient'],
     'lift_dependent_drag_coefficient': [
         'cdi',
@@ -129,7 +129,7 @@ class TabularAeroGroup(om.Group):
                 Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR,
                 ('CDI', 'lift_dependent_drag_coefficient'),
                 ('CD0', 'zero_lift_drag_coefficient'),
-                Dynamic.Mission.MACH,
+                Dynamic.Atmosphere.MACH,
                 Dynamic.Atmosphere.DYNAMIC_PRESSURE,
             ],
             promotes_outputs=['CD', Dynamic.Vehicle.DRAG],

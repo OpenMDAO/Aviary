@@ -99,7 +99,7 @@ class FlapsGroupTestCaseTripleSlotted(unittest.TestCase):
         assert_near_equal(ans, reg_data, tol)
 
         reg_data = 0.17522
-        ans = self.prob[Dynamic.Mission.MACH]
+        ans = self.prob[Dynamic.Atmosphere.MACH]
         assert_near_equal(ans, reg_data, tol)
 
         reg_data = 157.1111
@@ -204,7 +204,7 @@ class FlapsGroupTestCaseSplit(unittest.TestCase):
         assert_near_equal(ans, reg_data, tol)
 
         reg_data = 0.18368
-        ans = self.prob[Dynamic.Mission.MACH]
+        ans = self.prob[Dynamic.Atmosphere.MACH]
         assert_near_equal(ans, reg_data, tol)
 
         reg_data = 164.78406
@@ -311,7 +311,7 @@ class FlapsGroupTestCaseSingleSlotted(unittest.TestCase):
         assert_near_equal(ans, reg_data, tol)
 
         reg_data = 0.17522
-        ans = self.prob[Dynamic.Mission.MACH]
+        ans = self.prob[Dynamic.Atmosphere.MACH]
         assert_near_equal(ans, reg_data, tol)
 
         reg_data = 157.1111
@@ -416,7 +416,7 @@ class FlapsGroupTestCasePlain(unittest.TestCase):
         assert_near_equal(ans, reg_data, tol)
 
         reg_data = 0.18368
-        ans = self.prob[Dynamic.Mission.MACH]
+        ans = self.prob[Dynamic.Atmosphere.MACH]
         assert_near_equal(ans, reg_data, tol)
 
         reg_data = 164.78406
@@ -521,7 +521,7 @@ class FlapsGroupTestCaseFowler(unittest.TestCase):
         assert_near_equal(ans, reg_data, tol)
 
         reg_data = 0.17168
-        ans = self.prob[Dynamic.Mission.MACH]
+        ans = self.prob[Dynamic.Atmosphere.MACH]
         assert_near_equal(ans, reg_data, tol)
 
         reg_data = 154.02686
@@ -627,7 +627,7 @@ class FlapsGroupTestCaseDoubleFowler(unittest.TestCase):
         assert_near_equal(ans, reg_data, tol)
 
         reg_data = 0.17168
-        ans = self.prob[Dynamic.Mission.MACH]
+        ans = self.prob[Dynamic.Atmosphere.MACH]
         assert_near_equal(ans, reg_data, tol)
 
         reg_data = 154.02686

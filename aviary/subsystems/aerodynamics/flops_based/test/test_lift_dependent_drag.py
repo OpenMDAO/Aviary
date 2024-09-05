@@ -27,7 +27,7 @@ class LiftDependentDragTest(unittest.TestCase):
         prob.model.add_subsystem('drag', LiftDependentDrag(num_nodes=nn), promotes=['*'])
         prob.setup(force_alloc_complex=True)
 
-        prob.set_val(Dynamic.Mission.MACH, val=mach)
+        prob.set_val(Dynamic.Atmosphere.MACH, val=mach)
         prob.set_val(Dynamic.Vehicle.LIFT, val=lift)
         prob.set_val(Dynamic.Atmosphere.STATIC_PRESSURE, val=P)
         prob.set_val(Aircraft.Wing.AREA, val=Sref)
@@ -64,7 +64,7 @@ class LiftDependentDragTest(unittest.TestCase):
         prob.model.add_subsystem('drag', LiftDependentDrag(num_nodes=nn), promotes=['*'])
         prob.setup(force_alloc_complex=True)
 
-        prob.set_val(Dynamic.Mission.MACH, val=mach)
+        prob.set_val(Dynamic.Atmosphere.MACH, val=mach)
         prob.set_val(Dynamic.Vehicle.LIFT, val=lift)
         prob.set_val(Dynamic.Atmosphere.STATIC_PRESSURE, val=P)
         prob.set_val(Aircraft.Wing.AREA, val=Sref)

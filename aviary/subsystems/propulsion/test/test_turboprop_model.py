@@ -66,7 +66,9 @@ class TurbopropTest(unittest.TestCase):
         preprocess_propulsion(options, [engine])
 
         machs, alts, throttles = zip(*test_points)
-        IVC = om.IndepVarComp(Dynamic.Mission.MACH, np.array(machs), units='unitless')
+        IVC = om.IndepVarComp(
+            Dynamic.Atmosphere.MACH, np.array(machs), units='unitless'
+        )
         IVC.add_output(Dynamic.Atmosphere.ALTITUDE, np.array(alts), units='ft')
         IVC.add_output(Dynamic.Vehicle.Propulsion.THROTTLE,
                        np.array(throttles), units='unitless')
@@ -344,7 +346,7 @@ class ExamplePropModel(SubsystemBuilderBase):
             'propeller_performance',
             PropellerPerformance(aviary_options=aviary_inputs, num_nodes=num_nodes),
             promotes_inputs=[
-                Dynamic.Mission.MACH,
+                Dynamic.Atmosphere.MACH,
                 Dynamic.Atmosphere.SPEED_OF_SOUND,
                 Aircraft.Engine.Propeller.TIP_SPEED_MAX,
                 Dynamic.Atmosphere.DENSITY,

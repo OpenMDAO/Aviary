@@ -25,7 +25,7 @@ class EngineModelVariables(Enum):
     Define constants that map to supported variable names in an engine model.
     """
 
-    MACH = Dynamic.Mission.MACH
+    MACH = Dynamic.Atmosphere.MACH
     ALTITUDE = Dynamic.Atmosphere.ALTITUDE
     THROTTLE = Dynamic.Vehicle.Propulsion.THROTTLE
     HYBRID_THROTTLE = Dynamic.Vehicle.Propulsion.HYBRID_THROTTLE
@@ -374,7 +374,7 @@ class UncorrectData(om.Group):
             ),
             promotes_inputs=[
                 ('P0', Dynamic.Atmosphere.STATIC_PRESSURE),
-                ('mach', Dynamic.Mission.MACH),
+                ('mach', Dynamic.Atmosphere.MACH),
             ],
             promotes_outputs=['delta_T'],
         )
@@ -394,7 +394,7 @@ class UncorrectData(om.Group):
             ),
             promotes_inputs=[
                 ('T0', Dynamic.Atmosphere.TEMPERATURE),
-                ('mach', Dynamic.Mission.MACH),
+                ('mach', Dynamic.Atmosphere.MACH),
             ],
             promotes_outputs=['theta_T'],
         )

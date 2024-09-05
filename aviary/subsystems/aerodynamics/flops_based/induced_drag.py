@@ -28,7 +28,8 @@ class InducedDrag(om.ExplicitComponent):
 
         # Simulation inputs
         self.add_input(
-            Dynamic.Mission.MACH, shape=(nn), units='unitless', desc="Mach number")
+            Dynamic.Atmosphere.MACH, shape=(nn), units='unitless', desc="Mach number"
+        )
         self.add_input(
             Dynamic.Vehicle.LIFT, shape=(nn), units="lbf", desc="Lift magnitude"
         )
@@ -58,7 +59,7 @@ class InducedDrag(om.ExplicitComponent):
         self.declare_partials(
             'induced_drag_coeff',
             [
-                Dynamic.Mission.MACH,
+                Dynamic.Atmosphere.MACH,
                 Dynamic.Vehicle.LIFT,
                 Dynamic.Atmosphere.STATIC_PRESSURE,
             ],
@@ -153,7 +154,7 @@ class InducedDrag(om.ExplicitComponent):
         dCDi_dAR = -CL ** 2 / (np.pi * AR ** 2 * span_efficiency)
         dCDi_dspan = -CL ** 2 / (np.pi * AR * span_efficiency ** 2)
 
-        partials['induced_drag_coeff', Dynamic.Mission.MACH] = dCDi_dCL * dCL_dmach
+        partials['induced_drag_coeff', Dynamic.Atmosphere.MACH] = dCDi_dCL * dCL_dmach
         partials['induced_drag_coeff', Dynamic.Vehicle.LIFT] = dCDi_dCL * dCL_dL
         partials['induced_drag_coeff', Dynamic.Atmosphere.STATIC_PRESSURE] = (
             dCDi_dCL * dCL_dP
@@ -219,8 +220,9 @@ class InducedDrag(om.ExplicitComponent):
             dCDi_dCAYT = CL ** 2
             dCDi_dCL = 2.0 * CAYT * CL
 
-            partials['induced_drag_coeff', Dynamic.Mission.MACH] += \
+            partials['induced_drag_coeff', Dynamic.Atmosphere.MACH] += (
                 dCDi_dCL * dCL_dmach + dCDi_dCAYT * dCAYT_dmach
+            )
             partials['induced_drag_coeff', Dynamic.Vehicle.LIFT] += dCDi_dCL * dCL_dL
             partials['induced_drag_coeff', Aircraft.Wing.ASPECT_RATIO] += (
                 dCDi_dCAYT * dTH_dAR

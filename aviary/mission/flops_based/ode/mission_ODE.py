@@ -218,7 +218,9 @@ class MissionODE(om.Group):
                 Dynamic.Vehicle.Propulsion.THROTTLE, val=1.0, units='unitless'
             )
 
-        self.set_input_defaults(Dynamic.Mission.MACH, val=np.ones(nn), units='unitless')
+        self.set_input_defaults(
+            Dynamic.Atmosphere.MACH, val=np.ones(nn), units='unitless'
+        )
         self.set_input_defaults(Dynamic.Vehicle.MASS, val=np.ones(nn), units='kg')
         self.set_input_defaults(
             Dynamic.Atmosphere.VELOCITY, val=np.ones(nn), units='m/s'

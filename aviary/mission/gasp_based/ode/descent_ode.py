@@ -103,7 +103,7 @@ class DescentODE(BaseODE):
                 mach_balance_group.linear_solver = om.DirectSolver(assemble_jac=True)
 
                 speed_bal = om.BalanceComp(
-                    name=Dynamic.Mission.MACH,
+                    name=Dynamic.Atmosphere.MACH,
                     val=mach_cruise * np.ones(nn),
                     units="unitless",
                     lhs_name="KS",
@@ -116,7 +116,7 @@ class DescentODE(BaseODE):
                     "speed_bal",
                     speed_bal,
                     promotes_inputs=["KS"],
-                    promotes_outputs=[Dynamic.Mission.MACH],
+                    promotes_outputs=[Dynamic.Atmosphere.MACH],
                 )
 
                 mach_balance_group.add_subsystem(
@@ -126,7 +126,7 @@ class DescentODE(BaseODE):
                         mach_cruise=mach_cruise,
                         EAS_target=EAS_limit,
                     ),
-                    promotes_inputs=["EAS", Dynamic.Mission.MACH],
+                    promotes_inputs=["EAS", Dynamic.Atmosphere.MACH],
                     promotes_outputs=["speed_constraint"],
                 )
                 mach_balance_group.add_subsystem(
@@ -230,7 +230,8 @@ class DescentODE(BaseODE):
         self.set_input_defaults(
             Dynamic.Vehicle.MASS, val=147000 * np.ones(nn), units="lbm"
         )
-        self.set_input_defaults(Dynamic.Mission.MACH,
-                                val=0 * np.ones(nn), units="unitless")
+        self.set_input_defaults(
+            Dynamic.Atmosphere.MACH, val=0 * np.ones(nn), units="unitless"
+        )
         self.set_input_defaults(Dynamic.Vehicle.Propulsion.THROTTLE,
                                 val=0 * np.ones(nn), units="unitless")

@@ -37,7 +37,10 @@ class DescentPhase(PhaseBuilderBase):
 
         # Add timeseries outputs
         phase.add_timeseries_output(
-            Dynamic.Mission.MACH, output_name=Dynamic.Mission.MACH, units="unitless")
+            Dynamic.Atmosphere.MACH,
+            output_name=Dynamic.Atmosphere.MACH,
+            units="unitless",
+        )
         phase.add_timeseries_output("EAS", output_name="EAS", units="kn")
         phase.add_timeseries_output(
             Dynamic.Atmosphere.VELOCITY,

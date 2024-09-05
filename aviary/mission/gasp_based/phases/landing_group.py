@@ -34,7 +34,7 @@ class LandingSegment(BaseODE):
             subsys=Atmosphere(num_nodes=1, input_speed_type=SpeedType.MACH),
             promotes_inputs=[
                 (Dynamic.Atmosphere.ALTITUDE, Mission.Landing.INITIAL_ALTITUDE),
-                (Dynamic.Mission.MACH, Mission.Landing.INITIAL_MACH),
+                (Dynamic.Atmosphere.MACH, Mission.Landing.INITIAL_MACH),
             ],
             promotes_outputs=[
                 (Dynamic.Atmosphere.DENSITY, "rho_app"),
@@ -67,7 +67,7 @@ class LandingSegment(BaseODE):
                         (Dynamic.Atmosphere.SPEED_OF_SOUND, "sos_app"),
                         ("viscosity", "viscosity_app"),
                         ("airport_alt", Mission.Landing.AIRPORT_ALTITUDE),
-                        (Dynamic.Mission.MACH, Mission.Landing.INITIAL_MACH),
+                        (Dynamic.Atmosphere.MACH, Mission.Landing.INITIAL_MACH),
                         (Dynamic.Atmosphere.DYNAMIC_PRESSURE, "q_app"),
                         ("flap_defl", Aircraft.Wing.FLAP_DEFLECTION_LANDING),
                         ("t_init_flaps", "t_init_flaps_app"),
@@ -97,7 +97,7 @@ class LandingSegment(BaseODE):
                             Dynamic.Atmosphere.ALTITUDE,
                             Mission.Landing.INITIAL_ALTITUDE,
                         ),
-                        (Dynamic.Mission.MACH, Mission.Landing.INITIAL_MACH),
+                        (Dynamic.Atmosphere.MACH, Mission.Landing.INITIAL_MACH),
                     ],
                     promotes_outputs=[
                         (Dynamic.Vehicle.Propulsion.THRUST_TOTAL, "thrust_idle")
@@ -147,7 +147,7 @@ class LandingSegment(BaseODE):
                 (Dynamic.Atmosphere.SPEED_OF_SOUND, "sos_td"),
                 ("viscosity", "viscosity_td"),
                 (Dynamic.Atmosphere.DYNAMIC_PRESSURE, "q_td"),
-                (Dynamic.Mission.MACH, "mach_td"),
+                (Dynamic.Atmosphere.MACH, "mach_td"),
             ],
         )
 
@@ -167,7 +167,7 @@ class LandingSegment(BaseODE):
                 (Dynamic.Atmosphere.SPEED_OF_SOUND, "sos_td"),
                 ("viscosity", "viscosity_td"),
                 ("airport_alt", Mission.Landing.AIRPORT_ALTITUDE),
-                (Dynamic.Mission.MACH, "mach_td"),
+                (Dynamic.Atmosphere.MACH, "mach_td"),
                 (Dynamic.Atmosphere.DYNAMIC_PRESSURE, "q_td"),
                 ("alpha", Aircraft.Wing.INCIDENCE),
                 ("flap_defl", Aircraft.Wing.FLAP_DEFLECTION_LANDING),

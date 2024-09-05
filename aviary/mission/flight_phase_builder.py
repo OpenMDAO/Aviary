@@ -152,17 +152,24 @@ class FlightPhaseBase(PhaseBuilderBase):
 
         if use_polynomial_control:
             phase.add_polynomial_control(
-                Dynamic.Mission.MACH,
-                targets=Dynamic.Mission.MACH, units=mach_bounds[1],
-                opt=optimize_mach, lower=mach_bounds[0][0], upper=mach_bounds[0][1],
+                Dynamic.Atmosphere.MACH,
+                targets=Dynamic.Atmosphere.MACH,
+                units=mach_bounds[1],
+                opt=optimize_mach,
+                lower=mach_bounds[0][0],
+                upper=mach_bounds[0][1],
                 rate_targets=rate_targets,
-                order=polynomial_control_order, ref=0.5,
+                order=polynomial_control_order,
+                ref=0.5,
             )
         else:
             phase.add_control(
-                Dynamic.Mission.MACH,
-                targets=Dynamic.Mission.MACH, units=mach_bounds[1],
-                opt=optimize_mach, lower=mach_bounds[0][0], upper=mach_bounds[0][1],
+                Dynamic.Atmosphere.MACH,
+                targets=Dynamic.Atmosphere.MACH,
+                units=mach_bounds[1],
+                opt=optimize_mach,
+                lower=mach_bounds[0][0],
+                upper=mach_bounds[0][1],
                 rate_targets=rate_targets,
                 ref=0.5,
             )
@@ -248,7 +255,9 @@ class FlightPhaseBase(PhaseBuilderBase):
         # Add Timeseries #
         ##################
         phase.add_timeseries_output(
-            Dynamic.Mission.MACH, output_name=Dynamic.Mission.MACH, units='unitless'
+            Dynamic.Atmosphere.MACH,
+            output_name=Dynamic.Atmosphere.MACH,
+            units='unitless',
         )
 
         phase.add_timeseries_output(
@@ -307,14 +316,22 @@ class FlightPhaseBase(PhaseBuilderBase):
         ###################
         # Add Constraints #
         ###################
-        if optimize_mach and fix_initial and not Dynamic.Mission.MACH in constraints:
+        if optimize_mach and fix_initial and not Dynamic.Atmosphere.MACH in constraints:
             phase.add_boundary_constraint(
-                Dynamic.Mission.MACH, loc='initial', equals=initial_mach,
+                Dynamic.Atmosphere.MACH,
+                loc='initial',
+                equals=initial_mach,
             )
 
-        if optimize_mach and constrain_final and not Dynamic.Mission.MACH in constraints:
+        if (
+            optimize_mach
+            and constrain_final
+            and not Dynamic.Atmosphere.MACH in constraints
+        ):
             phase.add_boundary_constraint(
-                Dynamic.Mission.MACH, loc='final', equals=final_mach,
+                Dynamic.Atmosphere.MACH,
+                loc='final',
+                equals=final_mach,
             )
 
         if (

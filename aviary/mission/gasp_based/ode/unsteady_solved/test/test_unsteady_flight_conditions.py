@@ -56,12 +56,12 @@ class TestUnsteadyFlightConditions(unittest.TestCase):
             p.set_val("dEAS_dr", np.zeros(nn), units="kn/km")
         else:
             p.set_val(Dynamic.Atmosphere.ALTITUDE, 37500, units="ft")
-            p.set_val(Dynamic.Mission.MACH, 0.78, units="unitless")
+            p.set_val(Dynamic.Atmosphere.MACH, 0.78, units="unitless")
             p.set_val("dmach_dr", np.zeros(nn), units="unitless/km")
 
         p.run_model()
 
-        mach = p.get_val(Dynamic.Mission.MACH)
+        mach = p.get_val(Dynamic.Atmosphere.MACH)
         eas = p.get_val("EAS")
         tas = p.get_val(Dynamic.Atmosphere.VELOCITY, units="m/s")
         sos = p.get_val(Dynamic.Atmosphere.SPEED_OF_SOUND, units="m/s")

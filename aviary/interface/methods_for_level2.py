@@ -1427,7 +1427,8 @@ class AviaryProblem(om.Problem):
                 ref=1.0e4,
             )
             self._link_phases_helper_with_options(
-                self.regular_phases, 'optimize_mach', Dynamic.Mission.MACH)
+                self.regular_phases, 'optimize_mach', Dynamic.Atmosphere.MACH
+            )
 
             # connect reserve phases with each other if you are optimizing alt or mach
             self._link_phases_helper_with_options(
@@ -1437,7 +1438,8 @@ class AviaryProblem(om.Problem):
                 ref=1.0e4,
             )
             self._link_phases_helper_with_options(
-                self.reserve_phases, 'optimize_mach', Dynamic.Mission.MACH)
+                self.reserve_phases, 'optimize_mach', Dynamic.Atmosphere.MACH
+            )
 
             if self.mission_method is HEIGHT_ENERGY:
                 # connect mass and distance between all phases regardless of reserve / non-reserve status

@@ -214,7 +214,9 @@ class FlightPathODE(BaseODE):
         self.set_input_defaults(
             Dynamic.Atmosphere.ALTITUDE, val=np.zeros(nn), units="ft"
         )
-        self.set_input_defaults(Dynamic.Mission.MACH, val=np.zeros(nn), units="unitless")
+        self.set_input_defaults(
+            Dynamic.Atmosphere.MACH, val=np.zeros(nn), units="unitless"
+        )
         self.set_input_defaults(Dynamic.Vehicle.MASS, val=np.zeros(nn), units="lbm")
         self.set_input_defaults(
             Dynamic.Atmosphere.VELOCITY, val=np.zeros(nn), units="kn"

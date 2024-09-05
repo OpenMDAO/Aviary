@@ -132,8 +132,12 @@ class CLmaxCalculation(om.ExplicitComponent):
 
         self.add_output("CL_max", val=2.8155,
                         desc="CLMAX: maximum lift coefficient", units="unitless")
-        self.add_output(Dynamic.Mission.MACH, val=0.17522,
-                        units='unitless', desc="SMN: mach number")
+        self.add_output(
+            Dynamic.Atmosphere.MACH,
+            val=0.17522,
+            units='unitless',
+            desc="SMN: mach number",
+        )
         self.add_output("reynolds", val=157.1111, units='unitless',
                         desc="RNW: reynolds number")
 
@@ -166,7 +170,7 @@ class CLmaxCalculation(om.ExplicitComponent):
             step=1e-8,
         )
         self.declare_partials(
-            Dynamic.Mission.MACH,
+            Dynamic.Atmosphere.MACH,
             [
                 Aircraft.Wing.LOADING,
                 Dynamic.Atmosphere.STATIC_PRESSURE,
@@ -262,7 +266,7 @@ class CLmaxCalculation(om.ExplicitComponent):
 
         Q1 = wing_loading / CL_max
 
-        outputs[Dynamic.Mission.MACH] = mach = (Q1 / 0.7 / P) ** 0.5
+        outputs[Dynamic.Atmosphere.MACH] = mach = (Q1 / 0.7 / P) ** 0.5
 
         VK = mach * sos
         outputs["reynolds"] = reynolds = (avg_chord * VK / kinematic_viscosity) / 100000

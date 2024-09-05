@@ -258,8 +258,13 @@ class Xlifts(om.ExplicitComponent):
         nn = self.options["num_nodes"]
 
         # mission inputs
-        self.add_input(Dynamic.Mission.MACH, val=0.0, units="unitless",
-                       shape=nn, desc="Mach number")
+        self.add_input(
+            Dynamic.Atmosphere.MACH,
+            val=0.0,
+            units="unitless",
+            shape=nn,
+            desc="Mach number",
+        )
 
         # stability inputs
 
@@ -297,8 +302,9 @@ class Xlifts(om.ExplicitComponent):
         ar = np.arange(self.options["num_nodes"])
 
         self.declare_partials("lift_ratio", "*", method="cs")
-        self.declare_partials("lift_ratio", Dynamic.Mission.MACH,
-                              rows=ar, cols=ar, method="cs")
+        self.declare_partials(
+            "lift_ratio", Dynamic.Atmosphere.MACH, rows=ar, cols=ar, method="cs"
+        )
         self.declare_partials("lift_curve_slope", "*", method="cs")
         self.declare_partials(
             "lift_curve_slope",
@@ -315,8 +321,9 @@ class Xlifts(om.ExplicitComponent):
             ],
             method="cs",
         )
-        self.declare_partials("lift_curve_slope", Dynamic.Mission.MACH,
-                              rows=ar, cols=ar, method="cs")
+        self.declare_partials(
+            "lift_curve_slope", Dynamic.Atmosphere.MACH, rows=ar, cols=ar, method="cs"
+        )
 
     def compute(self, inputs, outputs):
         (
@@ -391,7 +398,12 @@ class AeroGeom(om.ExplicitComponent):
             Aircraft.Engine.NUM_ENGINES))
 
         self.add_input(
-            Dynamic.Mission.MACH, val=0.0, units="unitless", shape=nn, desc="Current Mach number")
+            Dynamic.Atmosphere.MACH,
+            val=0.0,
+            units="unitless",
+            shape=nn,
+            desc="Current Mach number",
+        )
         self.add_input(
             Dynamic.Atmosphere.SPEED_OF_SOUND,
             val=1.0,
@@ -538,27 +550,28 @@ class AeroGeom(om.ExplicitComponent):
         self.declare_partials(
             "SA4", [Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED], method="cs"
         )
-        self.declare_partials("cf", [Dynamic.Mission.MACH],
-                              rows=ar, cols=ar, method="cs")
+        self.declare_partials(
+            "cf", [Dynamic.Atmosphere.MACH], rows=ar, cols=ar, method="cs"
+        )
 
         # diag partials for SA5-SA7
         self.declare_partials(
             "SA5",
-            [Dynamic.Mission.MACH, Dynamic.Atmosphere.SPEED_OF_SOUND, "nu"],
+            [Dynamic.Atmosphere.MACH, Dynamic.Atmosphere.SPEED_OF_SOUND, "nu"],
             rows=ar,
             cols=ar,
             method="cs",
         )
         self.declare_partials(
             "SA6",
-            [Dynamic.Mission.MACH, Dynamic.Atmosphere.SPEED_OF_SOUND, "nu"],
+            [Dynamic.Atmosphere.MACH, Dynamic.Atmosphere.SPEED_OF_SOUND, "nu"],
             rows=ar,
             cols=ar,
             method="cs",
         )
         self.declare_partials(
             "SA7",
-            [Dynamic.Mission.MACH, Dynamic.Atmosphere.SPEED_OF_SOUND, "nu", "ufac"],
+            [Dynamic.Atmosphere.MACH, Dynamic.Atmosphere.SPEED_OF_SOUND, "nu", "ufac"],
             rows=ar,
             cols=ar,
             method="cs",
@@ -1024,8 +1037,13 @@ class DragCoefClean(om.ExplicitComponent):
         nn = self.options["num_nodes"]
 
         # mission inputs
-        self.add_input(Dynamic.Mission.MACH, val=0.0, units="unitless",
-                       shape=nn, desc="Mach number")
+        self.add_input(
+            Dynamic.Atmosphere.MACH,
+            val=0.0,
+            units="unitless",
+            shape=nn,
+            desc="Mach number",
+        )
         self.add_input(
             "CL", val=1.0, units="unitless", shape=nn, desc="Lift coefficient")
 
@@ -1050,7 +1068,7 @@ class DragCoefClean(om.ExplicitComponent):
 
         self.declare_partials(
             "CD",
-            [Dynamic.Mission.MACH, "CL", "cf", "SA1", "SA2", "SA5", "SA6", "SA7"],
+            [Dynamic.Atmosphere.MACH, "CL", "cf", "SA1", "SA2", "SA5", "SA6", "SA7"],
             rows=ar,
             cols=ar,
             method="cs",

@@ -173,7 +173,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
             if method == 'computed':
                 promotes = [
                     Dynamic.Atmosphere.STATIC_PRESSURE,
-                    Dynamic.Mission.MACH,
+                    Dynamic.Atmosphere.MACH,
                     Dynamic.Atmosphere.TEMPERATURE,
                     Dynamic.Vehicle.MASS,
                     'aircraft:*',
@@ -183,7 +183,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
             elif method == 'solved_alpha':
                 promotes = [
                     Dynamic.Atmosphere.ALTITUDE,
-                    Dynamic.Mission.MACH,
+                    Dynamic.Atmosphere.MACH,
                     Dynamic.Vehicle.MASS,
                     Dynamic.Atmosphere.STATIC_PRESSURE,
                     'aircraft:*',
@@ -205,7 +205,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
             elif method == 'tabular':
                 promotes = [
                     Dynamic.Atmosphere.ALTITUDE,
-                    Dynamic.Mission.MACH,
+                    Dynamic.Atmosphere.MACH,
                     Dynamic.Vehicle.MASS,
                     Dynamic.Atmosphere.VELOCITY,
                     Dynamic.Atmosphere.DENSITY,

@@ -27,7 +27,7 @@ class SpeedConstraintTestCase1(unittest.TestCase):
 
         self.prob.model.set_input_defaults("EAS", np.array([229, 229, 229]), units="kn")
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.MACH, np.array([0.6, 0.6, 0.6]), units="unitless"
+            Dynamic.Atmosphere.MACH, np.array([0.6, 0.6, 0.6]), units="unitless"
         )
 
         self.prob.setup(check=False, force_alloc_complex=True)
@@ -63,7 +63,7 @@ class SpeedConstraintTestCase2(unittest.TestCase):
 
         self.prob.model.set_input_defaults("EAS", np.array([229, 229, 229]), units="kn")
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.MACH, np.array([0.9, 0.9, 0.9]), units="unitless"
+            Dynamic.Atmosphere.MACH, np.array([0.9, 0.9, 0.9]), units="unitless"
         )
 
         self.prob.setup(check=False, force_alloc_complex=True)

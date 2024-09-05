@@ -24,8 +24,11 @@ class SimpleCD(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR, val=1.)
 
         self.add_input(
-            Dynamic.Mission.MACH, val=np.ones(nn), units='unitless',
-            desc='ratio of local fluid speed to local speed of sound')
+            Dynamic.Atmosphere.MACH,
+            val=np.ones(nn),
+            units='unitless',
+            desc='ratio of local fluid speed to local speed of sound',
+        )
 
         self.add_input(
             'CD_prescaled', val=np.ones(nn), units='unitless',
@@ -41,8 +44,7 @@ class SimpleCD(om.ExplicitComponent):
                                Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR]
                               )
 
-        self.declare_partials('CD',
-                              Dynamic.Mission.MACH, dependent=False)
+        self.declare_partials('CD', Dynamic.Atmosphere.MACH, dependent=False)
 
         nn = self.options['num_nodes']
         rows_cols = np.arange(nn)
@@ -54,7 +56,7 @@ class SimpleCD(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         FCDSUB = inputs[Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR]
         FCDSUP = inputs[Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR]
-        M = inputs[Dynamic.Mission.MACH]
+        M = inputs[Dynamic.Atmosphere.MACH]
 
         CD_prescaled = inputs['CD_prescaled']
 
@@ -66,7 +68,7 @@ class SimpleCD(om.ExplicitComponent):
     def compute_partials(self, inputs, partials):
         FCDSUB = inputs[Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR]
         FCDSUP = inputs[Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR]
-        M = inputs[Dynamic.Mission.MACH]
+        M = inputs[Dynamic.Atmosphere.MACH]
         CD_prescaled = inputs['CD_prescaled']
 
         idx_sup = np.where(M >= 1.0)

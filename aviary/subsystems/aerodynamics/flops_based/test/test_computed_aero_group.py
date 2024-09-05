@@ -84,7 +84,7 @@ class MissionDragTest(unittest.TestCase):
         prob.set_solver_print(level=2)
 
         # Mission params
-        prob.set_val(Dynamic.Mission.MACH, val=mach)
+        prob.set_val(Dynamic.Atmosphere.MACH, val=mach)
         prob.set_val(Dynamic.Atmosphere.STATIC_PRESSURE, val=P, units='lbf/ft**2')
         prob.set_val(Dynamic.Atmosphere.TEMPERATURE, val=T, units='degR')
         prob.set_val(Dynamic.Vehicle.MASS, val=mass, units='lbm')
@@ -193,7 +193,7 @@ class MissionDragTest(unittest.TestCase):
         prob.setup()
 
         # Mission params
-        prob.set_val(Dynamic.Mission.MACH, val=mach)
+        prob.set_val(Dynamic.Atmosphere.MACH, val=mach)
         prob.set_val(Dynamic.Atmosphere.STATIC_PRESSURE, val=P, units='lbf/ft**2')
         prob.set_val(Dynamic.Atmosphere.TEMPERATURE, val=T, units='degR')
         prob.set_val(Dynamic.Vehicle.MASS, val=mass, units='lbm')
@@ -302,7 +302,7 @@ class MissionDragTest(unittest.TestCase):
         prob.setup()
 
         # Mission params
-        prob.set_val(Dynamic.Mission.MACH, val=mach)
+        prob.set_val(Dynamic.Atmosphere.MACH, val=mach)
         prob.set_val(Dynamic.Atmosphere.STATIC_PRESSURE, val=P, units='lbf/ft**2')
         prob.set_val(Dynamic.Atmosphere.TEMPERATURE, val=T, units='degR')
         prob.set_val(Dynamic.Vehicle.MASS, val=mass, units='lbm')

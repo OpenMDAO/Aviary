@@ -54,7 +54,10 @@ class SolvedAlphaGroup(om.Group):
         self.add_subsystem(
             'DynamicPressure',
             DynamicPressure(num_nodes=nn),
-            promotes_inputs=[Dynamic.Mission.MACH, Dynamic.Atmosphere.STATIC_PRESSURE],
+            promotes_inputs=[
+                Dynamic.Atmosphere.MACH,
+                Dynamic.Atmosphere.STATIC_PRESSURE,
+            ],
             promotes_outputs=[Dynamic.Atmosphere.DYNAMIC_PRESSURE],
         )
 
@@ -75,9 +78,9 @@ class SolvedAlphaGroup(om.Group):
             aero,
             promotes_inputs=[
                 Dynamic.Atmosphere.ALTITUDE,
-                Dynamic.Mission.MACH,
+                Dynamic.Atmosphere.MACH,
                 Aircraft.Wing.AREA,
-                Dynamic.Mission.MACH,
+                Dynamic.Atmosphere.MACH,
                 Dynamic.Atmosphere.DYNAMIC_PRESSURE,
             ]
             + extra_promotes,

@@ -25,14 +25,14 @@ class CruiseODETestCase(unittest.TestCase):
             core_subsystems=default_mission_subsystems)
 
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.MACH, np.array([0, 0]), units="unitless"
+            Dynamic.Atmosphere.MACH, np.array([0, 0]), units="unitless"
         )
 
     def test_cruise(self):
         """Test partial derivatives"""
         self.prob.setup(check=False, force_alloc_complex=True)
 
-        self.prob.set_val(Dynamic.Mission.MACH, [0.7, 0.7], units="unitless")
+        self.prob.set_val(Dynamic.Atmosphere.MACH, [0.7, 0.7], units="unitless")
 
         self.prob.run_model()
 

@@ -56,8 +56,12 @@ class EngineScaling(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Engine.SCALE_FACTOR, val=1.0)
 
-        self.add_input(Dynamic.Mission.MACH, val=np.zeros(nn),
-                       desc='current Mach number', units='unitless')
+        self.add_input(
+            Dynamic.Atmosphere.MACH,
+            val=np.zeros(nn),
+            desc='current Mach number',
+            units='unitless',
+        )
 
         # loop through all variables, special handling for fuel flow to output negative version
         # add outputs for 'max' counterpart of variables that have them
@@ -113,7 +117,7 @@ class EngineScaling(om.ExplicitComponent):
 
         # thrust-based engine scaling factor
         engine_scale_factor = inputs[Aircraft.Engine.SCALE_FACTOR]
-        mach_number = inputs[Dynamic.Mission.MACH]
+        mach_number = inputs[Dynamic.Atmosphere.MACH]
 
         scale_factor = 1
         fuel_flow_scale_factor = np.ones(nn, dtype=engine_scale_factor.dtype)
@@ -223,7 +227,7 @@ class EngineScaling(om.ExplicitComponent):
         linear_fuel_term = options.get_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM)
         mission_fuel_scaler = options.get_val(Mission.Summary.FUEL_FLOW_SCALER)
 
-        mach_number = inputs[Dynamic.Mission.MACH]
+        mach_number = inputs[Dynamic.Atmosphere.MACH]
         engine_scale_factor = inputs[Aircraft.Engine.SCALE_FACTOR]
 
         # determine which mach-based fuel flow scaler is applied at each node

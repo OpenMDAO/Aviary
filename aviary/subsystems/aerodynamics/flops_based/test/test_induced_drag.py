@@ -30,7 +30,7 @@ class InducedDragTest(unittest.TestCase):
             num_nodes=nn, aviary_options=AviaryValues(options)), promotes=['*'])
         prob.setup(force_alloc_complex=True)
 
-        prob.set_val(Dynamic.Mission.MACH, val=mach)
+        prob.set_val(Dynamic.Atmosphere.MACH, val=mach)
         prob.set_val(Dynamic.Vehicle.LIFT, val=lift)
         prob.set_val(Dynamic.Atmosphere.STATIC_PRESSURE, val=P)
         prob.set_val(Aircraft.Wing.AREA, val=Sref)
@@ -69,7 +69,7 @@ class InducedDragTest(unittest.TestCase):
             num_nodes=nn, aviary_options=AviaryValues(options)), promotes=['*'])
         prob.setup(force_alloc_complex=True)
 
-        prob.set_val(Dynamic.Mission.MACH, val=mach)
+        prob.set_val(Dynamic.Atmosphere.MACH, val=mach)
         prob.set_val(Dynamic.Vehicle.LIFT, val=lift)
         prob.set_val(Dynamic.Atmosphere.STATIC_PRESSURE, val=P)
         prob.set_val(Aircraft.Wing.AREA, val=Sref)
@@ -98,7 +98,7 @@ class InducedDragTest(unittest.TestCase):
             num_nodes=nn, aviary_options=AviaryValues(options)), promotes=['*'])
         prob.setup(force_alloc_complex=True)
 
-        prob.set_val(Dynamic.Mission.MACH, val=mach)
+        prob.set_val(Dynamic.Atmosphere.MACH, val=mach)
         prob.set_val(Dynamic.Vehicle.LIFT, val=lift)
         prob.set_val(Dynamic.Atmosphere.STATIC_PRESSURE, val=P)
         prob.set_val(Aircraft.Wing.AREA, val=Sref)

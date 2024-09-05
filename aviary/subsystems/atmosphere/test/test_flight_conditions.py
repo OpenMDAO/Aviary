@@ -39,7 +39,7 @@ class FlightConditionsTestCase1(unittest.TestCase):
         assert_near_equal(
             self.prob[Dynamic.Atmosphere.DYNAMIC_PRESSURE], 1507.6 * np.ones(2), tol
         )
-        assert_near_equal(self.prob[Dynamic.Mission.MACH], np.ones(2), tol)
+        assert_near_equal(self.prob[Dynamic.Atmosphere.MACH], np.ones(2), tol)
         assert_near_equal(
             self.prob.get_val("EAS", units="m/s"), 343.3 * np.ones(2), tol
         )
@@ -81,7 +81,7 @@ class FlightConditionsTestCase2(unittest.TestCase):
         assert_near_equal(
             self.prob[Dynamic.Atmosphere.VELOCITY], 1128.61 * np.ones(2), tol
         )
-        assert_near_equal(self.prob[Dynamic.Mission.MACH], np.ones(2), tol)
+        assert_near_equal(self.prob[Dynamic.Atmosphere.MACH], np.ones(2), tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
@@ -104,7 +104,7 @@ class FlightConditionsTestCase3(unittest.TestCase):
             Dynamic.Atmosphere.SPEED_OF_SOUND, val=344 * np.ones(2), units="m/s"
         )
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.MACH, val=np.ones(2), units="unitless"
+            Dynamic.Atmosphere.MACH, val=np.ones(2), units="unitless"
         )
 
         self.prob.setup(check=False, force_alloc_complex=True)

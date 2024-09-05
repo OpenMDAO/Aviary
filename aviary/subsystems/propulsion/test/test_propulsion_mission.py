@@ -56,9 +56,9 @@ class PropulsionMissionTest(unittest.TestCase):
         self.prob.model = PropulsionMission(
             num_nodes=nn, aviary_options=options, engine_models=[engine])
 
-        IVC = om.IndepVarComp(Dynamic.Mission.MACH,
-                              np.linspace(0, 0.8, nn),
-                              units='unitless')
+        IVC = om.IndepVarComp(
+            Dynamic.Atmosphere.MACH, np.linspace(0, 0.8, nn), units='unitless'
+        )
         IVC.add_output(
             Dynamic.Atmosphere.ALTITUDE, np.linspace(0, 40000, nn), units='ft'
         )
@@ -172,11 +172,13 @@ class PropulsionMissionTest(unittest.TestCase):
         self.prob.model = PropulsionMission(
             num_nodes=20, aviary_options=options, engine_models=engine_models)
 
-        self.prob.model.add_subsystem(Dynamic.Mission.MACH,
-                                      om.IndepVarComp(Dynamic.Mission.MACH,
-                                                      np.linspace(0, 0.85, nn),
-                                                      units='unitless'),
-                                      promotes=['*'])
+        self.prob.model.add_subsystem(
+            Dynamic.Atmosphere.MACH,
+            om.IndepVarComp(
+                Dynamic.Atmosphere.MACH, np.linspace(0, 0.85, nn), units='unitless'
+            ),
+            promotes=['*'],
+        )
 
         self.prob.model.add_subsystem(
             Dynamic.Atmosphere.ALTITUDE,

@@ -109,7 +109,7 @@ class GroundrollPhase(PhaseBuilderBase):
         phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units="lbf")
         phase.add_timeseries_output("thrust_req", units="lbf")
         phase.add_timeseries_output("normal_force")
-        phase.add_timeseries_output(Dynamic.Mission.MACH)
+        phase.add_timeseries_output(Dynamic.Atmosphere.MACH)
         phase.add_timeseries_output("EAS", units="kn")
         phase.add_timeseries_output(Dynamic.Atmosphere.VELOCITY, units="kn")
         phase.add_timeseries_output(Dynamic.Vehicle.LIFT)

@@ -64,8 +64,7 @@ class CruisePhase(PhaseBuilderBase):
         phase.add_parameter(
             Dynamic.Atmosphere.ALTITUDE, opt=False, val=alt_cruise, units=alt_units
         )
-        phase.add_parameter(Dynamic.Mission.MACH, opt=False,
-                            val=mach_cruise)
+        phase.add_parameter(Dynamic.Atmosphere.MACH, opt=False, val=mach_cruise)
         phase.add_parameter("initial_distance", opt=False, val=0.0,
                             units="NM", static_target=True)
         phase.add_parameter("initial_time", opt=False, val=0.0,

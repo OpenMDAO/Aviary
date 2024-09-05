@@ -21,7 +21,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 # all-lowercase name
 aliases = {
     Dynamic.Atmosphere.ALTITUDE: ['h', 'alt', 'altitude'],
-    Dynamic.Mission.MACH: ['m', 'mach'],
+    Dynamic.Atmosphere.MACH: ['m', 'mach'],
     'angle_of_attack': ['alpha', 'angle_of_attack', 'AoA'],
     'flap_deflection': ['flap_deflection'],
     'hob': ['hob'],
@@ -77,7 +77,7 @@ class TabularCruiseAero(om.Group):
             subsys=interp_comp,
             promotes_inputs=[
                 Dynamic.Atmosphere.ALTITUDE,
-                Dynamic.Mission.MACH,
+                Dynamic.Atmosphere.MACH,
                 ('angle_of_attack', 'alpha'),
             ]
             + extra_promotes,
@@ -86,7 +86,7 @@ class TabularCruiseAero(om.Group):
 
         self.add_subsystem("forces", AeroForces(num_nodes=nn), promotes=["*"])
 
-        self.set_input_defaults(Dynamic.Mission.MACH, np.zeros(nn))
+        self.set_input_defaults(Dynamic.Atmosphere.MACH, np.zeros(nn))
 
 
 class TabularLowSpeedAero(om.Group):
@@ -174,7 +174,7 @@ class TabularLowSpeedAero(om.Group):
             free_aero_interp,
             promotes_inputs=[
                 Dynamic.Atmosphere.ALTITUDE,
-                Dynamic.Mission.MACH,
+                Dynamic.Atmosphere.MACH,
                 ('angle_of_attack', 'alpha'),
             ],
             promotes_outputs=[
@@ -193,8 +193,11 @@ class TabularLowSpeedAero(om.Group):
         self.add_subsystem(
             "interp_flaps",
             flaps_aero_interp,
-            promotes_inputs=[('flap_deflection', 'flap_defl'),
-                             Dynamic.Mission.MACH, ('angle_of_attack', 'alpha')],
+            promotes_inputs=[
+                ('flap_deflection', 'flap_defl'),
+                Dynamic.Atmosphere.MACH,
+                ('angle_of_attack', 'alpha'),
+            ],
             promotes_outputs=[
                 ("delta_lift_coefficient", "dCL_flaps_full"),
                 ("delta_drag_coefficient", "dCD_flaps_full"),
@@ -211,7 +214,11 @@ class TabularLowSpeedAero(om.Group):
         self.add_subsystem(
             "interp_ground",
             ground_aero_interp,
-            promotes_inputs=[Dynamic.Mission.MACH, ('angle_of_attack', 'alpha'), 'hob'],
+            promotes_inputs=[
+                Dynamic.Atmosphere.MACH,
+                ('angle_of_attack', 'alpha'),
+                'hob',
+            ],
             promotes_outputs=[
                 ("delta_lift_coefficient", "dCL_ground"),
                 ("delta_drag_coefficient", "dCD_ground"),
@@ -320,7 +327,7 @@ class TabularLowSpeedAero(om.Group):
             # TODO default flap duration for landing?
 
         self.set_input_defaults(Dynamic.Atmosphere.ALTITUDE, np.zeros(nn))
-        self.set_input_defaults(Dynamic.Mission.MACH, np.zeros(nn))
+        self.set_input_defaults(Dynamic.Atmosphere.MACH, np.zeros(nn))
 
 
 class GearDragIncrement(om.ExplicitComponent):
@@ -405,7 +412,7 @@ def _build_free_aero_interp(num_nodes=0, aero_data=None, connect_training_data=F
 
     required_inputs = {
         Dynamic.Atmosphere.ALTITUDE,
-        Dynamic.Mission.MACH,
+        Dynamic.Atmosphere.MACH,
         'angle_of_attack',
     }
     required_outputs = {'lift_coefficient', 'drag_coefficient'}
@@ -449,10 +456,13 @@ def _build_free_aero_interp(num_nodes=0, aero_data=None, connect_training_data=F
         meta_1d = om.MetaModelStructuredComp(method='1D-lagrange2',
                                              vec_size=num_nodes,
                                              extrapolate=extrapolate)
-        meta_1d.add_input(Dynamic.Mission.MACH, 0.0, units="unitless",
-                          shape=num_nodes,
-                          training_data=interp_data.get_val(Dynamic.Mission.MACH,
-                                                            'unitless'))
+        meta_1d.add_input(
+            Dynamic.Atmosphere.MACH,
+            0.0,
+            units="unitless",
+            shape=num_nodes,
+            training_data=interp_data.get_val(Dynamic.Atmosphere.MACH, 'unitless'),
+        )
         meta_1d.add_output('lift_coefficient_max', units="unitless",
                            shape=num_nodes, training_data=cl_max)
 
@@ -478,7 +488,7 @@ def _build_flaps_aero_interp(num_nodes=0, aero_data=None, connect_training_data=
 
     interp_data = _structure_special_grid(interp_data)
 
-    required_inputs = {'flap_deflection', Dynamic.Mission.MACH, 'angle_of_attack'}
+    required_inputs = {'flap_deflection', Dynamic.Atmosphere.MACH, 'angle_of_attack'}
     required_outputs = {'delta_lift_coefficient', 'delta_drag_coefficient'}
 
     missing_variables = []
@@ -497,7 +507,7 @@ def _build_flaps_aero_interp(num_nodes=0, aero_data=None, connect_training_data=
                      )  # units don't matter, not using values
     alpha = np.unique(interp_data.get_val('angle_of_attack', 'deg')
                       )  # units don't matter, not using values
-    mach = np.unique(interp_data.get_val(Dynamic.Mission.MACH, 'unitless'))
+    mach = np.unique(interp_data.get_val(Dynamic.Atmosphere.MACH, 'unitless'))
 
     dcl_max = np.zeros_like(dcl)
     shape = (defl.size, mach.size, alpha.size)
@@ -532,7 +542,7 @@ def _build_ground_aero_interp(num_nodes=0, aero_data=None, connect_training_data
     # aero_data is modified in-place, deepcopy required
     interp_data = aero_data.deepcopy()
 
-    required_inputs = {'hob', Dynamic.Mission.MACH, 'angle_of_attack'}
+    required_inputs = {'hob', Dynamic.Atmosphere.MACH, 'angle_of_attack'}
     required_outputs = {'delta_lift_coefficient', 'delta_drag_coefficient'}
 
     missing_variables = []
@@ -549,7 +559,7 @@ def _build_ground_aero_interp(num_nodes=0, aero_data=None, connect_training_data
     dcl = interp_data.get_val('delta_lift_coefficient', 'unitless')
     alpha = np.unique(interp_data.get_val('angle_of_attack', 'deg')
                       )  # units don't matter, not using values
-    mach = np.unique(interp_data.get_val(Dynamic.Mission.MACH, 'unitless'))
+    mach = np.unique(interp_data.get_val(Dynamic.Atmosphere.MACH, 'unitless'))
     hob = np.unique(interp_data.get_val('hob', 'unitless'))
 
     dcl_max = np.zeros_like(dcl)

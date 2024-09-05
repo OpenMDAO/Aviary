@@ -22,8 +22,9 @@ class LiftDependentDrag(om.ExplicitComponent):
         nn = self.options["num_nodes"]
 
         # Simulation inputs
-        self.add_input(Dynamic.Mission.MACH, shape=(
-            nn), units='unitless', desc="Mach number")
+        self.add_input(
+            Dynamic.Atmosphere.MACH, shape=(nn), units='unitless', desc="Mach number"
+        )
         self.add_input(
             Dynamic.Vehicle.LIFT, shape=(nn), units="lbf", desc="Lift magnitude"
         )
@@ -55,7 +56,7 @@ class LiftDependentDrag(om.ExplicitComponent):
         self.declare_partials(
             'CD',
             [
-                Dynamic.Mission.MACH,
+                Dynamic.Atmosphere.MACH,
                 Dynamic.Vehicle.LIFT,
                 Dynamic.Atmosphere.STATIC_PRESSURE,
             ],
@@ -299,7 +300,7 @@ class LiftDependentDrag(om.ExplicitComponent):
         dFCDP_dSW25 = dFCDP_dA * dA_dSW25
         dCD_dSW25 = dDCDP_dFCDP * dFCDP_dSW25
 
-        partials["CD", Dynamic.Mission.MACH] = dCD_dmach + dCD_dCL * ddelCL_dmach
+        partials["CD", Dynamic.Atmosphere.MACH] = dCD_dmach + dCD_dCL * ddelCL_dmach
         partials["CD", Dynamic.Vehicle.LIFT] = dCD_dCL * ddelCL_dL
         partials["CD", Dynamic.Atmosphere.STATIC_PRESSURE] = dCD_dCL * ddelCL_dP
         partials["CD", Aircraft.Wing.AREA] = dCD_dCL * ddelCL_dSref
@@ -311,7 +312,7 @@ class LiftDependentDrag(om.ExplicitComponent):
         partials["CD", Mission.Design.MACH] = -dCD_dmach
 
         if self.clamp_indices:
-            partials["CD", Dynamic.Mission.MACH][self.clamp_indices] = 0.0
+            partials["CD", Dynamic.Atmosphere.MACH][self.clamp_indices] = 0.0
             partials["CD", Dynamic.Vehicle.LIFT][self.clamp_indices] = 0.0
             partials["CD", Dynamic.Atmosphere.STATIC_PRESSURE][self.clamp_indices] = 0.0
             partials["CD", Aircraft.Wing.AREA][self.clamp_indices] = 0.0

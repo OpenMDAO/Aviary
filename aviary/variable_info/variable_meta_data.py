@@ -6244,14 +6244,15 @@ add_meta_data(
 #  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'
 # ============================================================================================================================================
 
-#  __  __   _               _
-# |  \/  | (_)             (_)
-# | \  / |  _   ___   ___   _    ___    _ __
-# | |\/| | | | / __| / __| | |  / _ \  | '_ \
-# | |  | | | | \__ \ \__ \ | | | (_) | | | | |
-# |_|  |_| |_| |___/ |___/ |_|  \___/  |_| |_|
-# ============================================
-
+#              _                                       _
+#      /\     | |                                     | |
+#     /  \    | |_   _ __ ___     ___    ___   _ __   | |__     ___   _ __    ___
+#    / /\ \   | __| | '_ ` _ \   / _ \  / __| | '_ \  | '_ \   / _ \ | '__|  / _ \
+#   / ____ \  | |_  | | | | | | | (_) | \__ \ | |_) | | | | | |  __/ | |    |  __/
+#  /_/    \_\  \__| |_| |_| |_|  \___/  |___/ | .__/  |_| |_|  \___| |_|     \___|
+#                                             | |
+#                                             |_|
+# ================================================================================
 add_meta_data(
     Dynamic.Atmosphere.ALTITUDE,
     meta_data=_MetaData,
@@ -6269,21 +6270,85 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Vehicle.ALTITUDE_RATE_MAX,
+    Dynamic.Atmosphere.DENSITY,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='ft/s',
-    desc='Current maximum possible rate of altitude change (climb rate) of the vehicle '
-    '(at hypothetical maximum thrust condition)',
+    units='lbm/ft**3',
+    desc="Atmospheric density at the vehicle's current altitude",
 )
 
 add_meta_data(
-    Dynamic.Vehicle.BATTERY_STATE_OF_CHARGE,
+    Dynamic.Atmosphere.DYNAMIC_PRESSURE,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='lbf/ft**2',
+    desc="Atmospheric dynamic pressure at the vehicle's current flight condition",
+)
+
+add_meta_data(
+    Dynamic.Atmosphere.MACH,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='unitless',
-    desc="battery's current state of charge",
+    desc='Current Mach number of the vehicle',
 )
+
+add_meta_data(
+    Dynamic.Atmosphere.MACH_RATE,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='unitless',
+    desc='Current rate at which the Mach number of the vehicle is changing',
+)
+
+add_meta_data(
+    Dynamic.Atmosphere.SPEED_OF_SOUND,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='ft/s',
+    desc="Atmospheric speed of sound at vehicle's current flight condition",
+)
+
+add_meta_data(
+    Dynamic.Atmosphere.STATIC_PRESSURE,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='lbf/ft**2',
+    desc="Atmospheric static pressure at the vehicle's current flight condition",
+)
+
+add_meta_data(
+    Dynamic.Atmosphere.TEMPERATURE,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='degR',
+    desc="Atmospheric temperature at vehicle's current flight condition",
+)
+
+add_meta_data(
+    Dynamic.Atmosphere.VELOCITY,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='ft/s',
+    desc='Current velocity of the vehicle along its body axis',
+)
+
+add_meta_data(
+    Dynamic.Atmosphere.VELOCITY_RATE,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='ft/s**2',
+    desc='Current rate of change in velocity (acceleration) of the vehicle along its '
+    'body axis',
+)
+
+#  __  __   _               _
+# |  \/  | (_)             (_)
+# | \  / |  _   ___   ___   _    ___    _ __
+# | |\/| | | | / __| / __| | |  / _ \  | '_ \
+# | |  | | | | \__ \ \__ \ | | | (_) | | | | |
+# |_|  |_| |_| |___/ |___/ |_|  \___/  |_| |_|
+# ============================================
 
 add_meta_data(
     Dynamic.Mission.CUMULATIVE_ELECTRIC_ENERGY_USED,
@@ -6294,14 +6359,6 @@ add_meta_data(
                      },
     units='kJ',
     desc='Total amount of electric energy consumed by the vehicle up until this point in the mission',
-)
-
-add_meta_data(
-    Dynamic.Atmosphere.DENSITY,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='lbm/ft**3',
-    desc="Atmospheric density at the vehicle's current altitude",
 )
 
 add_meta_data(
@@ -6326,6 +6383,31 @@ add_meta_data(
     desc="The rate at which the distance traveled is changing at the current time"
 )
 
+#  __      __         _       _          _
+#  \ \    / /        | |     (_)        | |
+#   \ \  / /    ___  | |__    _    ___  | |   ___
+#    \ \/ /    / _ \ | '_ \  | |  / __| | |  / _ \
+#     \  /    |  __/ | | | | | | | (__  | | |  __/
+#      \/      \___| |_| |_| |_|  \___| |_|  \___|
+# ================================================
+
+add_meta_data(
+    Dynamic.Vehicle.ALTITUDE_RATE_MAX,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='ft/s',
+    desc='Current maximum possible rate of altitude change (climb rate) of the vehicle '
+    '(at hypothetical maximum thrust condition)',
+)
+
+add_meta_data(
+    Dynamic.Vehicle.BATTERY_STATE_OF_CHARGE,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='unitless',
+    desc="battery's current state of charge",
+)
+
 add_meta_data(
     Dynamic.Vehicle.DRAG,
     meta_data=_MetaData,
@@ -6335,12 +6417,78 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Atmosphere.DYNAMIC_PRESSURE,
+    Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='lbf/ft**2',
-    desc="Atmospheric dynamic pressure at the vehicle's current flight condition",
+    units='rad',
+    desc='Current flight path angle',
 )
+
+add_meta_data(
+    Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='rad/s',
+    desc='Current rate at which flight path angle is changing',
+)
+
+add_meta_data(
+    Dynamic.Vehicle.LIFT,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='lbf',
+    desc='Current total lift produced by the vehicle',
+)
+
+add_meta_data(
+    Dynamic.Vehicle.MASS,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='lbm',
+    desc='Current total mass of the vehicle',
+)
+
+add_meta_data(
+    Dynamic.Vehicle.MASS_RATE,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='lbm/s',
+    desc='Current rate at which the mass of the vehicle is changing',
+)
+
+add_meta_data(
+    Dynamic.Vehicle.SPECIFIC_ENERGY,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='m/s',
+    desc='Rate of change in specific energy (energy per unit weight) of the vehicle at current '
+    'flight condition',
+)
+
+add_meta_data(
+    Dynamic.Vehicle.SPECIFIC_ENERGY_RATE,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='m/s',
+    desc='Rate of change in specific energy (specific power) of the vehicle at current '
+    'flight condition',
+)
+
+add_meta_data(
+    Dynamic.Vehicle.SPECIFIC_ENERGY_RATE_EXCESS,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='m/s',
+    desc='Specific excess power of the vehicle at current flight condition and at '
+    'hypothetical maximum thrust',
+)
+
+#   ___                             _        _
+#  | _ \  _ _   ___   _ __   _  _  | |  ___ (_)  ___   _ _
+#  |  _/ | '_| / _ \ | '_ \ | || | | | (_-< | | / _ \ | ' \
+#  |_|   |_|   \___/ | .__/  \_,_| |_| /__/ |_| \___/ |_||_|
+#                    |_|
+# ==========================================================
 
 add_meta_data(
     Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN,
@@ -6359,7 +6507,7 @@ add_meta_data(
 )
 
 # add_meta_data(
-#     Dynamic.Mission.EXIT_AREA,
+#     Dynamic.Vehicle.Propulsion.EXIT_AREA,
 #     meta_data=_MetaData,
 #     historical_name={"GASP": None,
 #                     "FLOPS": None,
@@ -6369,22 +6517,6 @@ add_meta_data(
 #     desc='Current nozzle exit area of engines, per single instance of each '
 #          'engine model'
 # )
-
-add_meta_data(
-    Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='rad',
-    desc='Current flight path angle',
-)
-
-add_meta_data(
-    Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='rad/s',
-    desc='Current rate at which flight path angle is changing',
-)
 
 add_meta_data(
     Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE,
@@ -6430,46 +6562,6 @@ add_meta_data(
     units='unitless',
     desc='Current secondary throttle setting of each individual engine model on the '
     'vehicle, used as an additional degree of control for hybrid engines',
-)
-
-add_meta_data(
-    Dynamic.Vehicle.LIFT,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='lbf',
-    desc='Current total lift produced by the vehicle',
-)
-
-add_meta_data(
-    Dynamic.Atmosphere.MACH,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='unitless',
-    desc='Current Mach number of the vehicle',
-)
-
-add_meta_data(
-    Dynamic.Atmosphere.MACH_RATE,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='unitless',
-    desc='Current rate at which the Mach number of the vehicle is changing',
-)
-
-add_meta_data(
-    Dynamic.Vehicle.MASS,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='lbm',
-    desc='Current total mass of the vehicle',
-)
-
-add_meta_data(
-    Dynamic.Vehicle.MASS_RATE,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='lbm/s',
-    desc='Current rate at which the mass of the vehicle is changing',
 )
 
 add_meta_data(
@@ -6527,24 +6619,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Vehicle.SPECIFIC_ENERGY,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='m/s',
-    desc='Rate of change in specific energy (energy per unit weight) of the vehicle at current '
-    'flight condition',
-)
-
-add_meta_data(
-    Dynamic.Vehicle.SPECIFIC_ENERGY_RATE,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='m/s',
-    desc='Rate of change in specific energy (specific power) of the vehicle at current '
-    'flight condition',
-)
-
-add_meta_data(
     Dynamic.Vehicle.Propulsion.SHAFT_POWER,
     meta_data=_MetaData,
     historical_name={"GASP": ['SHP, EHP'], "FLOPS": None, "LEAPS1": None},
@@ -6574,39 +6648,6 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='hp',
     desc='The maximum possible shaft power the gearbox can currently produce, per gearbox',
-)
-
-add_meta_data(
-    Dynamic.Vehicle.SPECIFIC_ENERGY_RATE_EXCESS,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='m/s',
-    desc='Specific excess power of the vehicle at current flight condition and at '
-    'hypothetical maximum thrust',
-)
-
-add_meta_data(
-    Dynamic.Atmosphere.SPEED_OF_SOUND,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='ft/s',
-    desc="Atmospheric speed of sound at vehicle's current flight condition",
-)
-
-add_meta_data(
-    Dynamic.Atmosphere.STATIC_PRESSURE,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='lbf/ft**2',
-    desc="Atmospheric static pressure at the vehicle's current flight condition",
-)
-
-add_meta_data(
-    Dynamic.Atmosphere.TEMPERATURE,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='degR',
-    desc="Atmospheric temperature at vehicle's current flight condition",
 )
 
 add_meta_data(
@@ -6675,23 +6716,6 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='N*m',
     desc='Current torque being produced, per gearbox',
-)
-
-add_meta_data(
-    Dynamic.Atmosphere.VELOCITY,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='ft/s',
-    desc='Current velocity of the vehicle along its body axis',
-)
-
-add_meta_data(
-    Dynamic.Atmosphere.VELOCITY_RATE,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='ft/s**2',
-    desc='Current rate of change in velocity (acceleration) of the vehicle along its '
-    'body axis',
 )
 
 # ============================================================================================================================================

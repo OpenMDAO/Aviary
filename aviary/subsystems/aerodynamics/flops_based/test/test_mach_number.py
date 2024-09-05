@@ -13,7 +13,7 @@ class MachNumberTest(unittest.TestCase):
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
-            Dynamic.Mission.MACH,
+            Dynamic.Atmosphere.MACH,
             MachNumber(num_nodes=1),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
@@ -31,7 +31,7 @@ class MachNumberTest(unittest.TestCase):
 
         tol = 1e-3
         assert_near_equal(
-            self.prob.get_val(Dynamic.Mission.MACH, units='unitless'), 0.332, tol
+            self.prob.get_val(Dynamic.Atmosphere.MACH, units='unitless'), 0.332, tol
         )  # check the value of each output
 
         # TODO resolve partials wrt gravity (decide on implementation of gravity)
@@ -40,8 +40,7 @@ class MachNumberTest(unittest.TestCase):
             partial_data, atol=1e-6, rtol=1e-6
         )  # check the partial derivatives
 
-        assert_near_equal(
-            self.prob.get_val(Dynamic.Mission.MACH), [0.3320574], 1e-6)
+        assert_near_equal(self.prob.get_val(Dynamic.Atmosphere.MACH), [0.3320574], 1e-6)
 
     def test_IO(self):
         assert_match_varnames(self.prob.model)

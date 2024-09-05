@@ -59,7 +59,7 @@ class TabularAeroGroupFileTest(unittest.TestCase):
             units='m/s')  # convert from knots to ft/s
         self.prob.set_val(Dynamic.Atmosphere.ALTITUDE, val=10582, units='m')
         self.prob.set_val(Dynamic.Vehicle.MASS, val=80442, units='kg')
-        self.prob.set_val(Dynamic.Mission.MACH, val=0.3876, units='unitless')
+        self.prob.set_val(Dynamic.Atmosphere.MACH, val=0.3876, units='unitless')
         # 1344.5? 'reference' vs 'calculated'?
         self.prob.set_val(Aircraft.Wing.AREA, val=1341, units='ft**2')
         # calculated from online atmospheric table
@@ -134,7 +134,7 @@ class TabularAeroGroupDataTest(unittest.TestCase):
             units='m/s')  # convert from knots to ft/s
         self.prob.set_val(Dynamic.Atmosphere.ALTITUDE, val=10582, units='m')
         self.prob.set_val(Dynamic.Vehicle.MASS, val=80442, units='kg')
-        self.prob.set_val(Dynamic.Mission.MACH, val=0.3876, units='unitless')
+        self.prob.set_val(Dynamic.Atmosphere.MACH, val=0.3876, units='unitless')
         # 1344.5? 'reference' vs 'calculated'?
         self.prob.set_val(Aircraft.Wing.AREA, val=1341, units='ft**2')
         # calculated from online atmospheric table
@@ -201,7 +201,7 @@ class ComputedVsTabularTest(unittest.TestCase):
         sos = prob.get_val(Dynamic.Atmosphere.SPEED_OF_SOUND, vel_units)
         mach = vel / sos
 
-        dynamic_inputs.set_val(Dynamic.Mission.MACH, val=mach, units='unitless')
+        dynamic_inputs.set_val(Dynamic.Atmosphere.MACH, val=mach, units='unitless')
 
         key = Dynamic.Atmosphere.DENSITY
         units = 'kg/m**3'
@@ -334,7 +334,7 @@ def _default_CD0_data():
 
     CD0_data = NamedValues()
     CD0_data.set_val(Dynamic.Atmosphere.ALTITUDE, alt_range, 'ft')
-    CD0_data.set_val(Dynamic.Mission.MACH, mach_range)
+    CD0_data.set_val(Dynamic.Atmosphere.MACH, mach_range)
     CD0_data.set_val('zero_lift_drag_coefficient', CD0)
 
     return CD0_data
@@ -400,7 +400,7 @@ def _default_CDI_data():
     # cl_list = np.array(cl_list).flatten()
     # mach_list = np.array(mach_list).flatten()
     CDI_data = NamedValues()
-    CDI_data.set_val(Dynamic.Mission.MACH, mach_range)
+    CDI_data.set_val(Dynamic.Atmosphere.MACH, mach_range)
     CDI_data.set_val('lift_coefficient', cl_range)
     CDI_data.set_val('lift_dependent_drag_coefficient', CDI)
 
@@ -469,7 +469,7 @@ def _computed_aero_drag_data(flops_inputs: AviaryValues, design_altitude, units)
 
     dynamic_inputs = AviaryValues()
 
-    dynamic_inputs.set_val(Dynamic.Mission.MACH, val=mach)
+    dynamic_inputs.set_val(Dynamic.Atmosphere.MACH, val=mach)
     dynamic_inputs.set_val(Dynamic.Atmosphere.STATIC_PRESSURE, val=P, units='lbf/ft**2')
     dynamic_inputs.set_val(Dynamic.Atmosphere.TEMPERATURE, val=T, units='degR')
     dynamic_inputs.set_val(Dynamic.Vehicle.MASS, val=mass, units='lbm')
@@ -480,7 +480,7 @@ def _computed_aero_drag_data(flops_inputs: AviaryValues, design_altitude, units)
     CDI = np.reshape(CDI.flatten(), (nsteps, nsteps))
 
     CDI_data = NamedValues()
-    CDI_data.set_val(Dynamic.Mission.MACH, seed)
+    CDI_data.set_val(Dynamic.Atmosphere.MACH, seed)
     CDI_data.set_val('lift_coefficient', seed)
     CDI_data.set_val('lift_dependent_drag_coefficient', CDI)
 
@@ -493,7 +493,7 @@ def _computed_aero_drag_data(flops_inputs: AviaryValues, design_altitude, units)
 
     dynamic_inputs = AviaryValues()
 
-    dynamic_inputs.set_val(Dynamic.Mission.MACH, val=mach)
+    dynamic_inputs.set_val(Dynamic.Atmosphere.MACH, val=mach)
     dynamic_inputs.set_val(Dynamic.Vehicle.MASS, val=mass, units=units)
 
     CD0 = []
@@ -515,7 +515,7 @@ def _computed_aero_drag_data(flops_inputs: AviaryValues, design_altitude, units)
 
     CD0_data = NamedValues()
     CD0_data.set_val(Dynamic.Atmosphere.ALTITUDE, alt, 'ft')
-    CD0_data.set_val(Dynamic.Mission.MACH, seed)
+    CD0_data.set_val(Dynamic.Atmosphere.MACH, seed)
     CD0_data.set_val('zero_lift_drag_coefficient', CD0)
 
     return (CDI_data, CD0_data)

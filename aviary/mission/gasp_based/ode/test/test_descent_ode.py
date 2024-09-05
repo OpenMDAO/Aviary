@@ -60,7 +60,7 @@ class DescentODETestCase(unittest.TestCase):
                 [-451.0239, -997.1514]
             ),
             "EAS": [417.87419406, 590.73344937],  # ft/s ([247.58367, 349.99997] kts)
-            Dynamic.Mission.MACH: [0.8, 0.697266],
+            Dynamic.Atmosphere.MACH: [0.8, 0.697266],
             # gamma, rad ([-2.908332, -3.723388] deg)
             Dynamic.Vehicle.FLIGHT_PATH_ANGLE: [-0.05075997, -0.06498538],
         }

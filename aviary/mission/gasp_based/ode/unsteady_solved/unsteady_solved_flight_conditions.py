@@ -118,7 +118,7 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
                 desc="equivalent air speed",
             )
             self.add_output(
-                Dynamic.Mission.MACH,
+                Dynamic.Atmosphere.MACH,
                 val=np.zeros(nn),
                 units="unitless",
                 desc="mach number",
@@ -131,7 +131,7 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
                 cols=ar,
             )
             self.declare_partials(
-                of=Dynamic.Mission.MACH,
+                of=Dynamic.Atmosphere.MACH,
                 wrt=[Dynamic.Atmosphere.SPEED_OF_SOUND, Dynamic.Atmosphere.VELOCITY],
                 rows=ar,
                 cols=ar,
@@ -184,7 +184,7 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
                 desc="true air speed",
             )
             self.add_output(
-                Dynamic.Mission.MACH,
+                Dynamic.Atmosphere.MACH,
                 val=np.zeros(nn),
                 units="unitless",
                 desc="mach number",
@@ -197,7 +197,7 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
                 cols=ar,
             )
             self.declare_partials(
-                of=Dynamic.Mission.MACH,
+                of=Dynamic.Atmosphere.MACH,
                 wrt=[
                     Dynamic.Atmosphere.SPEED_OF_SOUND,
                     "EAS",
@@ -229,7 +229,7 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
 
         else:
             self.add_input(
-                Dynamic.Mission.MACH,
+                Dynamic.Atmosphere.MACH,
                 val=np.zeros(nn),
                 units="unitless",
                 desc="mach number",
@@ -264,7 +264,7 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
                 of=Dynamic.Atmosphere.DYNAMIC_PRESSURE,
                 wrt=[
                     Dynamic.Atmosphere.SPEED_OF_SOUND,
-                    Dynamic.Mission.MACH,
+                    Dynamic.Atmosphere.MACH,
                     Dynamic.Atmosphere.DENSITY,
                 ],
                 rows=ar,
@@ -273,7 +273,7 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
 
             self.declare_partials(
                 of=Dynamic.Atmosphere.VELOCITY,
-                wrt=[Dynamic.Atmosphere.SPEED_OF_SOUND, Dynamic.Mission.MACH],
+                wrt=[Dynamic.Atmosphere.SPEED_OF_SOUND, Dynamic.Atmosphere.MACH],
                 rows=ar,
                 cols=ar,
             )
@@ -282,7 +282,7 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
                 of="EAS",
                 wrt=[
                     Dynamic.Atmosphere.SPEED_OF_SOUND,
-                    Dynamic.Mission.MACH,
+                    Dynamic.Atmosphere.MACH,
                     Dynamic.Atmosphere.DENSITY,
                 ],
                 rows=ar,
@@ -308,7 +308,7 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
         if in_type is SpeedType.TAS:
             tas = inputs[Dynamic.Atmosphere.VELOCITY]
             dtas_dr = inputs["dTAS_dr"]
-            outputs[Dynamic.Mission.MACH] = tas / sos
+            outputs[Dynamic.Atmosphere.MACH] = tas / sos
             outputs["EAS"] = tas * sqrt_rho_rho_sl
             outputs["dTAS_dt_approx"] = dtas_dr * tas * cgam
 
@@ -317,14 +317,14 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
             drho_dh = inputs["drho_dh"]
             deas_dr = inputs["dEAS_dr"]
             outputs[Dynamic.Atmosphere.VELOCITY] = tas = eas / sqrt_rho_rho_sl
-            outputs[Dynamic.Mission.MACH] = tas / sos
+            outputs[Dynamic.Atmosphere.MACH] = tas / sos
             drho_dt_approx = drho_dh * tas * sgam
             deas_dt_approx = deas_dr * tas * cgam
             outputs["dTAS_dt_approx"] = deas_dt_approx * (rho_sl / rho)**1.5 \
                 - 0.5 * eas * drho_dt_approx * rho_sl**1.5 / rho_sl**2.5
 
         else:
-            mach = inputs[Dynamic.Mission.MACH]
+            mach = inputs[Dynamic.Atmosphere.MACH]
             dmach_dr = inputs["dmach_dr"]
             outputs[Dynamic.Atmosphere.VELOCITY] = tas = sos * mach
             outputs["EAS"] = tas * sqrt_rho_rho_sl
@@ -361,8 +361,8 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
                 Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Atmosphere.DENSITY
             ] = (0.5 * TAS**2)
 
-            partials[Dynamic.Mission.MACH, Dynamic.Atmosphere.VELOCITY] = 1 / sos
-            partials[Dynamic.Mission.MACH, Dynamic.Atmosphere.SPEED_OF_SOUND] = (
+            partials[Dynamic.Atmosphere.MACH, Dynamic.Atmosphere.VELOCITY] = 1 / sos
+            partials[Dynamic.Atmosphere.MACH, Dynamic.Atmosphere.SPEED_OF_SOUND] = (
                 -TAS / sos**2
             )
 
@@ -385,9 +385,11 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
             dTAS_dEAS = 1 / sqrt_rho_rho_sl
 
             partials[Dynamic.Atmosphere.DYNAMIC_PRESSURE, "EAS"] = EAS * rho_sl
-            partials[Dynamic.Mission.MACH, "EAS"] = dTAS_dEAS / sos
-            partials[Dynamic.Mission.MACH, Dynamic.Atmosphere.DENSITY] = dTAS_dRho / sos
-            partials[Dynamic.Mission.MACH, Dynamic.Atmosphere.SPEED_OF_SOUND] = (
+            partials[Dynamic.Atmosphere.MACH, "EAS"] = dTAS_dEAS / sos
+            partials[Dynamic.Atmosphere.MACH, Dynamic.Atmosphere.DENSITY] = (
+                dTAS_dRho / sos
+            )
+            partials[Dynamic.Atmosphere.MACH, Dynamic.Atmosphere.SPEED_OF_SOUND] = (
                 -TAS / sos**2
             )
             partials[Dynamic.Atmosphere.VELOCITY, Dynamic.Atmosphere.DENSITY] = (
@@ -399,13 +401,13 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
                 EAS * TAS * sgam * rho_sl**1.5 / rho_sl**2.5
 
         else:
-            mach = inputs[Dynamic.Mission.MACH]
+            mach = inputs[Dynamic.Atmosphere.MACH]
             TAS = sos * mach
 
             partials[
                 Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Atmosphere.SPEED_OF_SOUND
             ] = (rho * sos * mach**2)
-            partials[Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Mission.MACH] = (
+            partials[Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Atmosphere.MACH] = (
                 rho * sos**2 * mach
             )
             partials[
@@ -414,9 +416,9 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
             partials[Dynamic.Atmosphere.VELOCITY, Dynamic.Atmosphere.SPEED_OF_SOUND] = (
                 mach
             )
-            partials[Dynamic.Atmosphere.VELOCITY, Dynamic.Mission.MACH] = sos
+            partials[Dynamic.Atmosphere.VELOCITY, Dynamic.Atmosphere.MACH] = sos
             partials["EAS", Dynamic.Atmosphere.SPEED_OF_SOUND] = mach * sqrt_rho_rho_sl
-            partials["EAS", Dynamic.Mission.MACH] = sos * sqrt_rho_rho_sl
+            partials["EAS", Dynamic.Atmosphere.MACH] = sos * sqrt_rho_rho_sl
             partials["EAS", Dynamic.Atmosphere.DENSITY] = (
                 TAS * (1 / rho_sl) ** 0.5 * 0.5 * rho ** (-0.5)
             )

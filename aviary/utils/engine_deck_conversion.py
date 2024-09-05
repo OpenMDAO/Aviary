@@ -214,12 +214,10 @@ def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
                                      promotes=['*'])
 
             prob.model.add_subsystem(
-                Dynamic.Mission.MACH,
-                om.IndepVarComp(
-                    Dynamic.Mission.MACH,
-                    data[MACH],
-                    units='unitless'),
-                promotes=['*'])
+                Dynamic.Atmosphere.MACH,
+                om.IndepVarComp(Dynamic.Atmosphere.MACH, data[MACH], units='unitless'),
+                promotes=['*'],
+            )
 
             prob.model.add_subsystem(
                 Dynamic.Atmosphere.ALTITUDE,
@@ -239,9 +237,11 @@ def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
             prob.model.add_subsystem(
                 name='conversion',
                 subsys=AtmosCalc(num_nodes=len(data[MACH])),
-                promotes_inputs=[Dynamic.Mission.MACH,
-                                 Dynamic.Atmosphere.TEMPERATURE],
-                promotes_outputs=['t2']
+                promotes_inputs=[
+                    Dynamic.Atmosphere.MACH,
+                    Dynamic.Atmosphere.TEMPERATURE,
+                ],
+                promotes_outputs=['t2'],
             )
 
             prob.setup()
@@ -540,12 +540,10 @@ def _generate_flight_idle(data, T4T2, ref_sls_airflow, ref_sfn_idle):
     prob = om.Problem()
 
     prob.model.add_subsystem(
-        Dynamic.Mission.MACH,
-        om.IndepVarComp(
-            Dynamic.Mission.MACH,
-            mach_list,
-            units='unitless'),
-        promotes=['*'])
+        Dynamic.Atmosphere.MACH,
+        om.IndepVarComp(Dynamic.Atmosphere.MACH, mach_list, units='unitless'),
+        promotes=['*'],
+    )
 
     prob.model.add_subsystem(
         Dynamic.Atmosphere.ALTITUDE,
@@ -565,15 +563,14 @@ def _generate_flight_idle(data, T4T2, ref_sls_airflow, ref_sfn_idle):
 
     prob.model.add_subsystem(
         name='conversion',
-        subsys=AtmosCalc(
-            num_nodes=nn),
+        subsys=AtmosCalc(num_nodes=nn),
         promotes_inputs=[
-            Dynamic.Mission.MACH,
+            Dynamic.Atmosphere.MACH,
             Dynamic.Atmosphere.TEMPERATURE,
-            Dynamic.Atmosphere.STATIC_PRESSURE],
-        promotes_outputs=[
-            't2',
-            'p2'])
+            Dynamic.Atmosphere.STATIC_PRESSURE,
+        ],
+        promotes_outputs=['t2', 'p2'],
+    )
 
     prob.model.add_subsystem(
         name='flight_idle',
@@ -686,8 +683,12 @@ class AtmosCalc(om.ExplicitComponent):
 
     def setup(self):
         nn = self.options['num_nodes']
-        self.add_input(Dynamic.Mission.MACH, val=np.zeros(nn),
-                       desc='current Mach number', units='unitless')
+        self.add_input(
+            Dynamic.Atmosphere.MACH,
+            val=np.zeros(nn),
+            desc='current Mach number',
+            units='unitless',
+        )
         self.add_input(Dynamic.Atmosphere.TEMPERATURE, val=np.zeros(nn),
                        desc='current atmospheric temperature', units='degR')
         self.add_input(

@@ -115,8 +115,12 @@ data.set_val(
 )
 
 data.set_val(
-    Dynamic.Mission.MACH,
-    val=[0.482191004489294, 0.785, 0.345807620281699, ],
+    Dynamic.Atmosphere.MACH,
+    val=[
+        0.482191004489294,
+        0.785,
+        0.345807620281699,
+    ],
     units='unitless',
 )
 

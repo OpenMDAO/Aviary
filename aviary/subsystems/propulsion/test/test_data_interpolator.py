@@ -29,7 +29,7 @@ class DataInterpolationTest(unittest.TestCase):
         fuel_flow_rate = model.data[keys.FUEL_FLOW]
 
         inputs = NamedValues()
-        inputs.set_val(Dynamic.Mission.MACH, mach_number)
+        inputs.set_val(Dynamic.Atmosphere.MACH, mach_number)
         inputs.set_val(Dynamic.Atmosphere.ALTITUDE, altitude, units='ft')
         inputs.set_val(Dynamic.Vehicle.Propulsion.THROTTLE, throttle)
 
@@ -48,9 +48,11 @@ class DataInterpolationTest(unittest.TestCase):
         num_nodes = len(test_mach.flatten())
 
         engine_data = om.IndepVarComp()
-        engine_data.add_output(Dynamic.Mission.MACH + '_train',
-                               val=np.array(mach_number),
-                               units='unitless')
+        engine_data.add_output(
+            Dynamic.Atmosphere.MACH + '_train',
+            val=np.array(mach_number),
+            units='unitless',
+        )
         engine_data.add_output(
             Dynamic.Atmosphere.ALTITUDE + '_train',
             val=np.array(altitude),
@@ -83,7 +85,7 @@ class DataInterpolationTest(unittest.TestCase):
 
         prob.setup()
 
-        prob.set_val(Dynamic.Mission.MACH, np.array(test_mach.flatten()), 'unitless')
+        prob.set_val(Dynamic.Atmosphere.MACH, np.array(test_mach.flatten()), 'unitless')
         prob.set_val(Dynamic.Atmosphere.ALTITUDE, np.array(test_alt.flatten()), 'ft')
         prob.set_val(
             Dynamic.Vehicle.Propulsion.THROTTLE,

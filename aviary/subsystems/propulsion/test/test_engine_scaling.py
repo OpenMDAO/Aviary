@@ -70,7 +70,7 @@ class EngineScalingTest(unittest.TestCase):
         )
         self.prob.set_val('nox_rate_unscaled', np.ones([nn, count]) * 10, units='lbm/h')
         self.prob.set_val(
-            Dynamic.Mission.MACH, np.linspace(0, 0.75, nn), units='unitless'
+            Dynamic.Atmosphere.MACH, np.linspace(0, 0.75, nn), units='unitless'
         )
         self.prob.set_val(
             Aircraft.Engine.SCALE_FACTOR, options.get_val(Aircraft.Engine.SCALE_FACTOR)

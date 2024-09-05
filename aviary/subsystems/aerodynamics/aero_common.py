@@ -23,8 +23,11 @@ class DynamicPressure(om.ExplicitComponent):
         )
 
         self.add_input(
-            Dynamic.Mission.MACH, np.ones(nn), units='unitless',
-            desc='Mach at each evaulation point.')
+            Dynamic.Atmosphere.MACH,
+            np.ones(nn),
+            units='unitless',
+            desc='Mach at each evaulation point.',
+        )
 
         self.add_output(
             Dynamic.Atmosphere.DYNAMIC_PRESSURE,
@@ -40,7 +43,7 @@ class DynamicPressure(om.ExplicitComponent):
 
         self.declare_partials(
             Dynamic.Atmosphere.DYNAMIC_PRESSURE,
-            [Dynamic.Atmosphere.STATIC_PRESSURE, Dynamic.Mission.MACH],
+            [Dynamic.Atmosphere.STATIC_PRESSURE, Dynamic.Atmosphere.MACH],
             rows=rows_cols,
             cols=rows_cols,
         )
@@ -48,16 +51,16 @@ class DynamicPressure(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         gamma = self.options['gamma']
         P = inputs[Dynamic.Atmosphere.STATIC_PRESSURE]
-        M = inputs[Dynamic.Mission.MACH]
+        M = inputs[Dynamic.Atmosphere.MACH]
 
         outputs[Dynamic.Atmosphere.DYNAMIC_PRESSURE] = 0.5 * gamma * P * M**2
 
     def compute_partials(self, inputs, partials):
         gamma = self.options['gamma']
         P = inputs[Dynamic.Atmosphere.STATIC_PRESSURE]
-        M = inputs[Dynamic.Mission.MACH]
+        M = inputs[Dynamic.Atmosphere.MACH]
 
-        partials[Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Mission.MACH] = (
+        partials[Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Atmosphere.MACH] = (
             gamma * P * M
         )
         partials[

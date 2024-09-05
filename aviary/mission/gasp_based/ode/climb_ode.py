@@ -95,7 +95,7 @@ class ClimbODE(BaseODE):
                 SpeedConstraints(
                     num_nodes=nn, EAS_target=EAS_target, mach_cruise=mach_cruise
                 ),
-                promotes_inputs=["EAS", Dynamic.Mission.MACH],
+                promotes_inputs=["EAS", Dynamic.Atmosphere.MACH],
                 promotes_outputs=["speed_constraint"],
             )
             mach_balance_group.add_subsystem(
@@ -218,5 +218,6 @@ class ClimbODE(BaseODE):
         self.set_input_defaults(
             Dynamic.Vehicle.MASS, val=174000 * np.ones(nn), units='lbm'
         )
-        self.set_input_defaults(Dynamic.Mission.MACH,
-                                val=0 * np.ones(nn), units="unitless")
+        self.set_input_defaults(
+            Dynamic.Atmosphere.MACH, val=0 * np.ones(nn), units="unitless"
+        )
