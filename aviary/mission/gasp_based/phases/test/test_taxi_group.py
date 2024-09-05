@@ -40,7 +40,7 @@ class DLandTestCase(unittest.TestCase):
         self.prob.set_val(Mission.Landing.TOUCHDOWN_SINK_RATE, 5, units="ft/s")
         self.prob.set_val(Mission.Landing.BRAKING_DELAY, 1, units="s")
         self.prob.set_val("mass", 165279, units="lbm")
-        self.prob.set_val(Dynamic.Mission.THROTTLE, 0.0, units='unitless')
+        self.prob.set_val(Dynamic.Vehicle.Propulsion.THROTTLE, 0.0, units='unitless')
 
         self.prob.run_model()
 

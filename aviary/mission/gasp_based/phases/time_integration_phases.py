@@ -32,20 +32,21 @@ class SGMGroundroll(SimuPyProblem):
             problem_name=phase_name,
             outputs=["normal_force"],
             states=[
-                Dynamic.Mission.MASS,
+                Dynamic.Vehicle.MASS,
                 Dynamic.Mission.DISTANCE,
-                Dynamic.Mission.ALTITUDE,
-                Dynamic.Mission.VELOCITY,
+                Dynamic.Atmosphere.ALTITUDE,
+                Dynamic.Atmosphere.VELOCITY,
             ],
             # state_units=['lbm','nmi','ft','ft/s'],
             alternate_state_rate_names={
-                Dynamic.Mission.MASS: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
+                Dynamic.Vehicle.MASS: Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL
+            },
             **simupy_args,
         )
 
         self.phase_name = phase_name
         self.VR_value = VR_value
-        self.add_trigger(Dynamic.Mission.VELOCITY, "VR_value")
+        self.add_trigger(Dynamic.Atmosphere.VELOCITY, "VR_value")
 
 
 class SGMRotation(SimuPyProblem):
@@ -66,14 +67,15 @@ class SGMRotation(SimuPyProblem):
             problem_name=phase_name,
             outputs=["normal_force", "alpha"],
             states=[
-                Dynamic.Mission.MASS,
+                Dynamic.Vehicle.MASS,
                 Dynamic.Mission.DISTANCE,
-                Dynamic.Mission.ALTITUDE,
-                Dynamic.Mission.VELOCITY,
+                Dynamic.Atmosphere.ALTITUDEUDE,
+                Dynamic.Atmosphere.VELOCITY,
             ],
             # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
-                Dynamic.Mission.MASS: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
+                Dynamic.Vehicle.MASS: Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL
+            },
             **simupy_args,
         )
 
@@ -108,8 +110,11 @@ class SGMAscent(SimuPyProblem):
     ):
         controls = None
         super().__init__(
-            AscentODE(analysis_scheme=AnalysisScheme.SHOOTING,
-                      alpha_mode=alpha_mode, **ode_args),
+            AscentODE(
+                analysis_scheme=AnalysisScheme.SHOOTING,
+                alpha_mode=alpha_mode,
+                **ode_args,
+            ),
             problem_name=phase_name,
             outputs=[
                 "load_factor",
@@ -118,25 +123,26 @@ class SGMAscent(SimuPyProblem):
                 "alpha",
             ],
             states=[
-                Dynamic.Mission.MASS,
+                Dynamic.Vehicle.MASS,
                 Dynamic.Mission.DISTANCE,
-                Dynamic.Mission.ALTITUDE,
-                Dynamic.Mission.VELOCITY,
-                Dynamic.Mission.FLIGHT_PATH_ANGLE,
+                Dynamic.Atmosphere.ALTITUDEUDE,
+                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
                 "alpha",
             ],
             # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
-                Dynamic.Mission.MASS: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
+                Dynamic.Vehicle.MASS: Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL
+            },
             controls=controls,
             **simupy_args,
         )
 
         self.phase_name = phase_name
         self.event_channel_names = [
-            Dynamic.Mission.ALTITUDE,
-            Dynamic.Mission.ALTITUDE,
-            Dynamic.Mission.ALTITUDE,
+            Dynamic.Atmosphere.ALTITUDEUDE,
+            Dynamic.Atmosphere.ALTITUDEUDE,
+            Dynamic.Atmosphere.ALTITUDEUDE,
         ]
         self.num_events = len(self.event_channel_names)
 
@@ -150,7 +156,7 @@ class SGMAscent(SimuPyProblem):
         alpha = self.get_alpha(t, x)
         self.ode0.set_val("alpha", alpha)
         self.ode0.output_equation_function(t, x)
-        alt = self.ode0.get_val(Dynamic.Mission.ALTITUDE).squeeze()
+        alt = self.ode0.get_val(Dynamic.Atmosphere.ALTITUDEUDE).squeeze()
         return np.array(
             [
                 alt - ascent_termination_alt,
@@ -365,14 +371,15 @@ class SGMAccel(SimuPyProblem):
             problem_name=phase_name,
             outputs=["EAS", "mach", "alpha"],
             states=[
-                Dynamic.Mission.MASS,
+                Dynamic.Vehicle.MASS,
                 Dynamic.Mission.DISTANCE,
-                Dynamic.Mission.ALTITUDE,
-                Dynamic.Mission.VELOCITY,
+                Dynamic.Atmosphere.ALTITUDEUDE,
+                Dynamic.Atmosphere.VELOCITY,
             ],
             # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
-                Dynamic.Mission.MASS: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
+                Dynamic.Vehicle.MASS: Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL
+            },
             **simupy_args,
         )
 
@@ -418,30 +425,32 @@ class SGMClimb(SimuPyProblem):
             problem_name=phase_name,
             outputs=[
                 "alpha",
-                Dynamic.Mission.FLIGHT_PATH_ANGLE,
+                Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
                 "required_lift",
                 "lift",
                 "mach",
                 "EAS",
-                Dynamic.Mission.VELOCITY,
-                Dynamic.Mission.THRUST_TOTAL,
+                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                 "drag",
-                Dynamic.Mission.ALTITUDE_RATE,
+                Dynamic.Atmosphere.ALTITUDE_RATE,
             ],
             states=[
-                Dynamic.Mission.MASS,
+                Dynamic.Vehicle.MASS,
                 Dynamic.Mission.DISTANCE,
-                Dynamic.Mission.ALTITUDE,
+                Dynamic.Atmosphere.ALTITUDEUDE,
             ],
             # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
-                Dynamic.Mission.MASS: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
+                Dynamic.Vehicle.MASS: Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL
+            },
             **simupy_args,
         )
 
         self.phase_name = phase_name
-        self.add_trigger(Dynamic.Mission.ALTITUDE, "alt_trigger",
-                         units=self.alt_trigger_units)
+        self.add_trigger(
+            Dynamic.Atmosphere.ALTITUDEUDE, "alt_trigger", units=self.alt_trigger_units
+        )
         self.add_trigger(self.speed_trigger_name, "speed_trigger",
                          units="speed_trigger_units")
 
@@ -480,26 +489,27 @@ class SGMCruise(SimuPyProblem):
                 "alpha",  # ?
                 "lift",
                 "EAS",
-                Dynamic.Mission.VELOCITY,
-                Dynamic.Mission.THRUST_TOTAL,
+                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL,
                 "drag",
-                Dynamic.Mission.ALTITUDE_RATE,
+                Dynamic.Atmosphere.ALTITUDE_RATE,
             ],
             states=[
-                Dynamic.Mission.MASS,
+                Dynamic.Vehicle.MASS,
                 Dynamic.Mission.DISTANCE,
-                Dynamic.Mission.ALTITUDE,
-                Dynamic.Mission.VELOCITY,
+                Dynamic.Atmosphere.ALTITUDEUDE,
+                Dynamic.Atmosphere.VELOCITY,
             ],
             # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
-                Dynamic.Mission.MASS: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
+                Dynamic.Vehicle.MASS: Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL
+            },
             **simupy_args,
         )
 
         self.phase_name = phase_name
         self.add_trigger(Dynamic.Mission.DISTANCE, "distance_trigger")
-        self.add_trigger(Dynamic.Mission.MASS, 'mass_trigger')
+        self.add_trigger(Dynamic.Vehicle.MASS, 'mass_trigger')
 
 
 class SGMDescent(SimuPyProblem):
@@ -543,24 +553,26 @@ class SGMDescent(SimuPyProblem):
                 "required_lift",
                 "lift",
                 "EAS",
-                Dynamic.Mission.VELOCITY,
-                Dynamic.Mission.THRUST_TOTAL,
+                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL,
                 "drag",
-                Dynamic.Mission.ALTITUDE_RATE,
+                Dynamic.Atmosphere.ALTITUDE_RATE,
             ],
             states=[
-                Dynamic.Mission.MASS,
+                Dynamic.Vehicle.MASS,
                 Dynamic.Mission.DISTANCE,
-                Dynamic.Mission.ALTITUDE,
+                Dynamic.Atmosphere.ALTITUDEUDE,
             ],
             # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
-                Dynamic.Mission.MASS: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
+                Dynamic.Vehicle.MASS: Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL
+            },
             **simupy_args,
         )
 
         self.phase_name = phase_name
-        self.add_trigger(Dynamic.Mission.ALTITUDE, "alt_trigger",
-                         units=self.alt_trigger_units)
+        self.add_trigger(
+            Dynamic.Atmosphere.ALTITUDEUDE, "alt_trigger", units=self.alt_trigger_units
+        )
         self.add_trigger(self.speed_trigger_name, "speed_trigger",
                          units=self.speed_trigger_units)

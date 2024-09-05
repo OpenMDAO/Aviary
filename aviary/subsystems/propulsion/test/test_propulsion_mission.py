@@ -59,12 +59,14 @@ class PropulsionMissionTest(unittest.TestCase):
         IVC = om.IndepVarComp(Dynamic.Mission.MACH,
                               np.linspace(0, 0.8, nn),
                               units='unitless')
-        IVC.add_output(Dynamic.Mission.ALTITUDE,
-                       np.linspace(0, 40000, nn),
-                       units='ft')
-        IVC.add_output(Dynamic.Mission.THROTTLE,
-                       np.linspace(1, 0.7, nn),
-                       units='unitless')
+        IVC.add_output(
+            Dynamic.Atmosphere.ALTITUDE, np.linspace(0, 40000, nn), units='ft'
+        )
+        IVC.add_output(
+            Dynamic.Vehicle.Propulsion.THROTTLE,
+            np.linspace(1, 0.7, nn),
+            units='unitless',
+        )
         self.prob.model.add_subsystem('IVC', IVC, promotes=['*'])
 
         self.prob.setup(force_alloc_complex=True)
@@ -73,9 +75,9 @@ class PropulsionMissionTest(unittest.TestCase):
 
         self.prob.run_model()
 
-        thrust = self.prob.get_val(Dynamic.Mission.THRUST_TOTAL, units='lbf')
+        thrust = self.prob.get_val(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
         fuel_flow = self.prob.get_val(
-            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/h')
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/h')
 
         expected_thrust = np.array([26559.90955398, 24186.4637312, 21938.65874407,
                                     19715.77939805, 17507.00655484, 15461.29892872,
@@ -111,26 +113,32 @@ class PropulsionMissionTest(unittest.TestCase):
 
         self.prob.setup(force_alloc_complex=True)
 
-        self.prob.set_val(Dynamic.Mission.THRUST, np.array(
-            [[500.4, 423.001], [325, 6780]]))
-        self.prob.set_val(Dynamic.Mission.THRUST_MAX,
-                          np.array([[602.11, 3554], [100, 9000]]))
-        self.prob.set_val(Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE,
+        self.prob.set_val(
+            Dynamic.Vehicle.Propulsion.THRUST, np.array([[500.4, 423.001], [325, 6780]])
+        )
+        self.prob.set_val(
+            Dynamic.Vehicle.Propulsion.THRUST_MAX,
+            np.array([[602.11, 3554], [100, 9000]]),
+        )
+        self.prob.set_val(Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE,
                           np.array([[123, -221.44], [-765.2, -1]]))
-        self.prob.set_val(Dynamic.Mission.ELECTRIC_POWER_IN,
+        self.prob.set_val(Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN,
                           np.array([[3.01, -12], [484.2, 8123]]))
-        self.prob.set_val(Dynamic.Mission.NOX_RATE,
-                          np.array([[322, 4610], [1.54, 2.844]]))
+        self.prob.set_val(
+            Dynamic.Vehicle.Propulsion.NOX_RATE, np.array([[322, 4610], [1.54, 2.844]])
+        )
 
         self.prob.run_model()
 
-        thrust = self.prob.get_val(Dynamic.Mission.THRUST_TOTAL, units='lbf')
-        thrust_max = self.prob.get_val(Dynamic.Mission.THRUST_MAX_TOTAL, units='lbf')
+        thrust = self.prob.get_val(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
+        thrust_max = self.prob.get_val(
+            Dynamic.Vehicle.Propulsion.THRUST_MAX.THRUST_MAX_TOTAL, units='lbf'
+        )
         fuel_flow = self.prob.get_val(
-            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units='lb/h')
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL, units='lb/h')
         electric_power_in = self.prob.get_val(
-            Dynamic.Mission.ELECTRIC_POWER_IN_TOTAL, units='kW')
-        nox = self.prob.get_val(Dynamic.Mission.NOX_RATE_TOTAL, units='lb/h')
+            Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_INIC_POWER_IN_TOTAL, units='kW')
+        nox = self.prob.get_val(Dynamic.Vehicle.Propulsion.NOX_RATE_TOTAL, units='lb/h')
 
         expected_thrust = np.array([2347.202, 14535])
         expected_thrust_max = np.array([8914.33, 18300])
@@ -170,25 +178,34 @@ class PropulsionMissionTest(unittest.TestCase):
                                       promotes=['*'])
 
         self.prob.model.add_subsystem(
-            Dynamic.Mission.ALTITUDE,
+            Dynamic.Atmosphere.ALTITUDEUDE,
             om.IndepVarComp(
-                Dynamic.Mission.ALTITUDE,
-                np.linspace(0, 40000, nn),
-                units='ft'),
-            promotes=['*'])
+                Dynamic.Atmosphere.ALTITUDEUDE, np.linspace(0, 40000, nn), units='ft'
+            ),
+            promotes=['*'],
+        )
         throttle = np.linspace(1.0, 0.6, nn)
         self.prob.model.add_subsystem(
-            Dynamic.Mission.THROTTLE, om.IndepVarComp(Dynamic.Mission.THROTTLE, np.vstack((throttle, throttle)).transpose(), units='unitless'), promotes=['*'])
+            Dynamic.Vehicle.Propulsion.THROTTLE,
+            om.IndepVarComp(
+                Dynamic.Vehicle.Propulsion.THROTTLE,
+                np.vstack((throttle, throttle)).transpose(),
+                units='unitless',
+            ),
+            promotes=['*'],
+        )
 
         self.prob.setup(force_alloc_complex=True)
         self.prob.set_val(Aircraft.Engine.SCALE_FACTOR, [0.975], units='unitless')
 
         self.prob.run_model()
 
-        thrust = self.prob.get_val(Dynamic.Mission.THRUST_TOTAL, units='lbf')
+        thrust = self.prob.get_val(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
         fuel_flow = self.prob.get_val(
-            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/h')
-        nox_rate = self.prob.get_val(Dynamic.Mission.NOX_RATE_TOTAL, units='lbm/h')
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL, units='lbm/h')
+        nox_rate = self.prob.get_val(
+            Dynamic.Vehicle.Propulsion.NOX_RATE_TOTAL, units='lbm/h'
+        )
 
         expected_thrust = np.array([103583.64726051,  92899.15059987,  82826.62014006,  73006.74478288,
                                     63491.73778033,  55213.71927899,  48317.05801159,  42277.98362824,

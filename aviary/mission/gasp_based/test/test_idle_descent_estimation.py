@@ -24,7 +24,9 @@ class IdleDescentTestCase(unittest.TestCase):
         aviary_inputs, _ = create_vehicle(input_deck)
         aviary_inputs.set_val(Settings.VERBOSITY, 0)
         aviary_inputs.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=28690, units="lbf")
-        aviary_inputs.set_val(Dynamic.Mission.THROTTLE, val=0, units="unitless")
+        aviary_inputs.set_val(
+            Dynamic.Vehicle.Propulsion.THROTTLE, val=0, units="unitless"
+        )
 
         engine = build_engine_deck(aviary_options=aviary_inputs)
         preprocess_propulsion(aviary_inputs, engine)

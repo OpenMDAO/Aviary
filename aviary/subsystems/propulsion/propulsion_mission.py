@@ -61,7 +61,7 @@ class PropulsionMission(om.Group):
                 # split vectorized throttles and connect to the correct engine model
                 self.promotes(
                     engine.name,
-                    inputs=[Dynamic.Mission.THROTTLE],
+                    inputs=[Dynamic.Vehicle.Propulsion.THROTTLE],
                     src_indices=om.slicer[:, i],
                 )
 
@@ -76,7 +76,7 @@ class PropulsionMission(om.Group):
                 if engine.use_hybrid_throttle:
                     self.promotes(
                         engine.name,
-                        inputs=[Dynamic.Mission.HYBRID_THROTTLE],
+                        inputs=[Dynamic.Vehicle.Propulsion.HYBRID_THROTTLE],
                         src_indices=om.slicer[:, i],
                     )
         else:
@@ -89,41 +89,63 @@ class PropulsionMission(om.Group):
                     promotes_inputs=['*'],
                 )
 
-                self.promotes(engine.name, inputs=[Dynamic.Mission.THROTTLE])
+                self.promotes(engine.name, inputs=[Dynamic.Vehicle.Propulsion.THROTTLE])
                 if engine.use_hybrid_throttle:
-                    self.promotes(engine.name, inputs=[Dynamic.Mission.HYBRID_THROTTLE])
+                    self.promotes(
+                        engine.name, inputs=[Dynamic.Vehicle.Propulsion.HYBRID_THROTTLE]
+                    )
 
         # TODO might be able to avoid hardcoding using propulsion Enums
         # mux component to vectorize individual engine outputs into 2d arrays
         perf_mux = om.MuxComp(vec_size=num_engine_type)
         # add each engine data variable to mux component
         perf_mux.add_var(
-            Dynamic.Mission.THRUST, val=0, shape=(nn,), axis=1, units='lbf'
+            Dynamic.Vehicle.Propulsion.THRUST, val=0, shape=(nn,), axis=1, units='lbf'
         )
         perf_mux.add_var(
-            Dynamic.Mission.THRUST_MAX, val=0, shape=(nn,), axis=1, units='lbf'
+            Dynamic.Vehicle.Propulsion.THRUST_MAX,
+            val=0,
+            shape=(nn,),
+            axis=1,
+            units='lbf',
         )
         perf_mux.add_var(
-            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE,
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE,
             val=0,
             shape=(nn,),
             axis=1,
             units='lbm/h',
         )
         perf_mux.add_var(
-            Dynamic.Mission.ELECTRIC_POWER_IN, val=0, shape=(nn,), axis=1, units='kW'
+            Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN,
+            val=0,
+            shape=(nn,),
+            axis=1,
+            units='kW',
         )
         perf_mux.add_var(
-            Dynamic.Mission.NOX_RATE, val=0, shape=(nn,), axis=1, units='lb/h'
+            Dynamic.Vehicle.Propulsion.NOX_RATE,
+            val=0,
+            shape=(nn,),
+            axis=1,
+            units='lb/h',
         )
         perf_mux.add_var(
-            Dynamic.Mission.TEMPERATURE_T4, val=0, shape=(nn,), axis=1, units='degR'
+            Dynamic.Atmosphere.TEMPERATURE_T4, val=0, shape=(nn,), axis=1, units='degR'
         )
         perf_mux.add_var(
-            Dynamic.Mission.SHAFT_POWER, val=0, shape=(nn,), axis=1, units='hp'
+            Dynamic.Vehicle.Propulsion.SHAFT_POWER,
+            val=0,
+            shape=(nn,),
+            axis=1,
+            units='hp',
         )
         perf_mux.add_var(
-            Dynamic.Mission.SHAFT_POWER_MAX, val=0, shape=(nn,), axis=1, units='hp'
+            Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX,
+            val=0,
+            shape=(nn,),
+            axis=1,
+            units='hp',
         )
         # perf_mux.add_var(
         #     'exit_area_unscaled',
@@ -149,14 +171,14 @@ class PropulsionMission(om.Group):
 
         # TODO this list shouldn't be hardcoded so it can be extended by users
         supported_outputs = [
-            Dynamic.Mission.ELECTRIC_POWER_IN,
-            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE,
-            Dynamic.Mission.NOX_RATE,
-            Dynamic.Mission.SHAFT_POWER,
-            Dynamic.Mission.SHAFT_POWER_MAX,
-            Dynamic.Mission.TEMPERATURE_T4,
-            Dynamic.Mission.THRUST,
-            Dynamic.Mission.THRUST_MAX,
+            Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN,
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATEL_FLOW_RATE_NEGATIVE,
+            Dynamic.Vehicle.Propulsion.NOX_RATE,
+            Dynamic.Vehicle.Propulsion.SHAFT_POWER,
+            Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX,
+            Dynamic.Atmosphere.TEMPERATURE_T4,
+            Dynamic.Vehicle.Propulsion.THRUST,
+            Dynamic.Vehicle.Propulsion.THRUST_MAX,
         ]
 
         engine_models = self.options['engine_models']
@@ -240,36 +262,52 @@ class PropulsionSum(om.ExplicitComponent):
         )
 
         self.add_input(
-            Dynamic.Mission.THRUST, val=np.zeros((nn, num_engine_type)), units='lbf'
+            Dynamic.Vehicle.Propulsion.THRUST,
+            val=np.zeros((nn, num_engine_type)),
+            units='lbf',
         )
         self.add_input(
-            Dynamic.Mission.THRUST_MAX, val=np.zeros((nn, num_engine_type)), units='lbf'
+            Dynamic.Vehicle.Propulsion.THRUST_MAX,
+            val=np.zeros((nn, num_engine_type)),
+            units='lbf',
         )
         self.add_input(
-            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE,
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATEL_FLOW_RATE_NEGATIVE,
             val=np.zeros((nn, num_engine_type)),
             units='lbm/h',
         )
         self.add_input(
-            Dynamic.Mission.ELECTRIC_POWER_IN,
+            Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN,
             val=np.zeros((nn, num_engine_type)),
             units='kW',
         )
         self.add_input(
-            Dynamic.Mission.NOX_RATE, val=np.zeros((nn, num_engine_type)), units='lbm/h'
+            Dynamic.Vehicle.Propulsion.NOX_RATE,
+            val=np.zeros((nn, num_engine_type)),
+            units='lbm/h',
         )
 
-        self.add_output(Dynamic.Mission.THRUST_TOTAL, val=np.zeros(nn), units='lbf')
-        self.add_output(Dynamic.Mission.THRUST_MAX_TOTAL, val=np.zeros(nn), units='lbf')
         self.add_output(
-            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL, val=np.zeros(nn), units='lbf'
+        )
+        self.add_output(
+            Dynamic.Vehicle.Propulsion.THRUST_MAX.THRUST_MAX_TOTAL,
+            val=np.zeros(nn),
+            units='lbf',
+        )
+        self.add_output(
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             val=np.zeros(nn),
             units='lbm/h',
         )
         self.add_output(
-            Dynamic.Mission.ELECTRIC_POWER_IN_TOTAL, val=np.zeros(nn), units='kW'
+            Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL,
+            val=np.zeros(nn),
+            units='kW',
         )
-        self.add_output(Dynamic.Mission.NOX_RATE_TOTAL, val=np.zeros(nn), units='lbm/h')
+        self.add_output(
+            Dynamic.Vehicle.Propulsion.NOX_RATE_TOTAL, val=np.zeros(nn), units='lbm/h'
+        )
 
     def setup_partials(self):
         nn = self.options['num_nodes']
@@ -283,36 +321,36 @@ class PropulsionSum(om.ExplicitComponent):
         c = np.arange(nn * num_engine_type, dtype=int)
 
         self.declare_partials(
-            Dynamic.Mission.THRUST_TOTAL,
-            Dynamic.Mission.THRUST,
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            Dynamic.Vehicle.Propulsion.THRUST,
             val=deriv,
             rows=r,
             cols=c,
         )
         self.declare_partials(
-            Dynamic.Mission.THRUST_MAX_TOTAL,
-            Dynamic.Mission.THRUST_MAX,
+            Dynamic.Vehicle.Propulsion.THRUST_MAX.THRUST_MAX_TOTAL,
+            Dynamic.Vehicle.Propulsion.THRUST_MAX,
             val=deriv,
             rows=r,
             cols=c,
         )
         self.declare_partials(
-            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE,
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATEL_FLOW_RATE_NEGATIVE,
             val=deriv,
             rows=r,
             cols=c,
         )
         self.declare_partials(
-            Dynamic.Mission.ELECTRIC_POWER_IN_TOTAL,
-            Dynamic.Mission.ELECTRIC_POWER_IN,
+            Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL,
+            Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN,
             val=deriv,
             rows=r,
             cols=c,
         )
         self.declare_partials(
-            Dynamic.Mission.NOX_RATE_TOTAL,
-            Dynamic.Mission.NOX_RATE,
+            Dynamic.Vehicle.Propulsion.NOX_RATE_TOTAL,
+            Dynamic.Vehicle.Propulsion.NOX_RATE,
             val=deriv,
             rows=r,
             cols=c,
@@ -323,16 +361,22 @@ class PropulsionSum(om.ExplicitComponent):
             Aircraft.Engine.NUM_ENGINES
         )
 
-        thrust = inputs[Dynamic.Mission.THRUST]
-        thrust_max = inputs[Dynamic.Mission.THRUST_MAX]
-        fuel_flow = inputs[Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE]
-        electric = inputs[Dynamic.Mission.ELECTRIC_POWER_IN]
-        nox = inputs[Dynamic.Mission.NOX_RATE]
+        thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST]
+        thrust_max = inputs[Dynamic.Vehicle.Propulsion.THRUST_MAX]
+        fuel_flow = inputs[
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATEL_FLOW_RATE_NEGATIVE
+        ]
+        electric = inputs[Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN]
+        nox = inputs[Dynamic.Vehicle.Propulsion.NOX_RATE]
 
-        outputs[Dynamic.Mission.THRUST_TOTAL] = np.dot(thrust, num_engines)
-        outputs[Dynamic.Mission.THRUST_MAX_TOTAL] = np.dot(thrust_max, num_engines)
-        outputs[Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL] = np.dot(
+        outputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = np.dot(thrust, num_engines)
+        outputs[Dynamic.Vehicle.Propulsion.THRUST_MAX.THRUST_MAX_TOTAL] = np.dot(
+            thrust_max, num_engines
+        )
+        outputs[Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL] = np.dot(
             fuel_flow, num_engines
         )
-        outputs[Dynamic.Mission.ELECTRIC_POWER_IN_TOTAL] = np.dot(electric, num_engines)
-        outputs[Dynamic.Mission.NOX_RATE_TOTAL] = np.dot(nox, num_engines)
+        outputs[Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL] = np.dot(
+            electric, num_engines
+        )
+        outputs[Dynamic.Vehicle.Propulsion.NOX_RATE_TOTAL] = np.dot(nox, num_engines)

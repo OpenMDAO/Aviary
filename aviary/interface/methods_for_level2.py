@@ -986,7 +986,7 @@ class AviaryProblem(om.Problem):
 
         if 'cruise' not in phase_name and self.mission_method is TWO_DEGREES_OF_FREEDOM:
             phase.add_control(
-                Dynamic.Mission.THROTTLE, targets=Dynamic.Mission.THROTTLE, units='unitless',
+                Dynamic.Vehicle.Propulsion.THROTTLE, targets=Dynamic.Vehicle.Propulsion.THROTTLE, units='unitless',
                 opt=False,
             )
 
@@ -1024,26 +1024,38 @@ class AviaryProblem(om.Problem):
             full_traj = FlexibleTraj(
                 Phases=self.phase_info,
                 traj_final_state_output=[
-                    Dynamic.Mission.MASS,
+                    Dynamic.Vehicle.MASS,
                     Dynamic.Mission.DISTANCE,
                 ],
                 traj_initial_state_input=[
-                    Dynamic.Mission.MASS,
+                    Dynamic.Vehicle.MASS,
                     Dynamic.Mission.DISTANCE,
-                    Dynamic.Mission.ALTITUDE,
+                    Dynamic.Atmosphere.ALTITUDE,
                 ],
                 traj_event_trigger_input=[
                     # specify ODE, output_name, with units that SimuPyProblem expects
                     # assume event function is of form ODE.output_name - value
                     # third key is event_idx associated with input
-                    ('groundroll', Dynamic.Mission.VELOCITY, 0,),
-                    ('climb3', Dynamic.Mission.ALTITUDE, 0,),
-                    ('cruise', Dynamic.Mission.MASS, 0,),
+                    (
+                        'groundroll',
+                        Dynamic.Atmosphere.VELOCITY,
+                        0,
+                    ),
+                    (
+                        'climb3',
+                        Dynamic.Atmosphere.ALTITUDEUDE,
+                        0,
+                    ),
+                    (
+                        'cruise',
+                        Dynamic.Vehicle.MASS,
+                        0,
+                    ),
                 ],
                 traj_intermediate_state_output=[
                     ('cruise', Dynamic.Mission.DISTANCE),
-                    ('cruise', Dynamic.Mission.MASS),
-                ]
+                    ('cruise', Dynamic.Vehicle.MASS),
+                ],
             )
             traj = self.model.add_subsystem('traj', full_traj, promotes_inputs=[
                                             ('altitude_initial', Mission.Design.CRUISE_ALTITUDE)])
@@ -1409,13 +1421,21 @@ class AviaryProblem(om.Problem):
         if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
             # connect regular_phases with each other if you are optimizing alt or mach
             self._link_phases_helper_with_options(
-                self.regular_phases, 'optimize_altitude', Dynamic.Mission.ALTITUDE, ref=1.e4)
+                self.regular_phases,
+                'optimize_altitude',
+                Dynamic.Atmosphere.ALTITUDEUDE,
+                ref=1.0e4,
+            )
             self._link_phases_helper_with_options(
                 self.regular_phases, 'optimize_mach', Dynamic.Mission.MACH)
 
             # connect reserve phases with each other if you are optimizing alt or mach
             self._link_phases_helper_with_options(
-                self.reserve_phases, 'optimize_altitude', Dynamic.Mission.ALTITUDE, ref=1.e4)
+                self.reserve_phases,
+                'optimize_altitude',
+                Dynamic.Atmosphere.ALTITUDEUDE,
+                ref=1.0e4,
+            )
             self._link_phases_helper_with_options(
                 self.reserve_phases, 'optimize_mach', Dynamic.Mission.MACH)
 
@@ -1424,7 +1444,7 @@ class AviaryProblem(om.Problem):
                 self.traj.link_phases(phases, ["time"],
                                       ref=None if true_unless_mpi else 1e3,
                                       connected=true_unless_mpi)
-                self.traj.link_phases(phases, [Dynamic.Mission.MASS],
+                self.traj.link_phases(phases, [Dynamic.Vehicle.MASS],
                                       ref=None if true_unless_mpi else 1e6,
                                       connected=true_unless_mpi)
                 self.traj.link_phases(phases, [Dynamic.Mission.DISTANCE],
@@ -1436,7 +1456,7 @@ class AviaryProblem(om.Problem):
                                    src_indices=[-1], flat_src_indices=True)
 
             elif self.mission_method is SOLVED_2DOF:
-                self.traj.link_phases(phases, [Dynamic.Mission.MASS], connected=True)
+                self.traj.link_phases(phases, [Dynamic.Vehicle.MASS], connected=True)
                 self.traj.link_phases(
                     phases, [Dynamic.Mission.DISTANCE], units='ft', ref=1.e3, connected=False)
                 self.traj.link_phases(phases, ["time"], connected=False)
@@ -1457,7 +1477,7 @@ class AviaryProblem(om.Problem):
                         states_to_link = {
                             'time': true_unless_mpi,
                             Dynamic.Mission.DISTANCE: true_unless_mpi,
-                            Dynamic.Mission.MASS: False,
+                            Dynamic.Vehicle.MASS: False,
                         }
 
                         # if both phases are reserve phases or neither is a reserve phase
@@ -1467,12 +1487,16 @@ class AviaryProblem(om.Problem):
                         if ((phase1 in self.reserve_phases) == (phase2 in self.reserve_phases)) and \
                                 not ({"groundroll", "rotation"} & {phase1, phase2}) and \
                                 not ('accel', 'climb1') == (phase1, phase2):  # required for convergence of FwGm
-                            states_to_link[Dynamic.Mission.ALTITUDE] = true_unless_mpi
+                            states_to_link[Dynamic.Atmosphere.ALTITUDEUDE] = (
+                                true_unless_mpi
+                            )
 
                         # if either phase is rotation, we need to connect velocity
                         # ascent to accel also requires velocity
                         if 'rotation' in (phase1, phase2) or ('ascent', 'accel') == (phase1, phase2):
-                            states_to_link[Dynamic.Mission.VELOCITY] = true_unless_mpi
+                            states_to_link[Dynamic.Atmosphere.VELOCITY] = (
+                                true_unless_mpi
+                            )
                             # if the first phase is rotation, we also need alpha
                             if phase1 == 'rotation':
                                 states_to_link['alpha'] = False
@@ -1835,11 +1859,11 @@ class AviaryProblem(om.Problem):
             if objective_type == 'mass':
                 if self.analysis_scheme is AnalysisScheme.COLLOCATION:
                     self.model.add_objective(
-                        f"traj.{final_phase_name}.timeseries.{Dynamic.Mission.MASS}", index=-1, ref=ref)
+                        f"traj.{final_phase_name}.timeseries.{Dynamic.Vehicle.MASS}", index=-1, ref=ref)
                 else:
                     last_phase = self.traj._phases.items()[final_phase_name]
                     last_phase.add_objective(
-                        Dynamic.Mission.MASS, loc='final', ref=ref)
+                        Dynamic.Vehicle.MASS, loc='final', ref=ref)
             elif objective_type == 'time':
                 self.model.add_objective(
                     f"traj.{final_phase_name}.timeseries.time", index=-1, ref=ref)
@@ -1962,8 +1986,11 @@ class AviaryProblem(om.Problem):
                 self.set_val(Mission.Summary.GROSS_MASS,
                              self.get_val(Mission.Design.GROSS_MASS))
 
-            self.set_val("traj.SGMClimb_"+Dynamic.Mission.ALTITUDE +
-                         "_trigger", val=self.cruise_alt, units="ft")
+            self.set_val(
+                "traj.SGMClimb_" + Dynamic.Atmosphere.ALTITUDEUDE + "_trigger",
+                val=self.cruise_alt,
+                units="ft",
+            )
 
             return
 
@@ -2137,8 +2164,14 @@ class AviaryProblem(om.Problem):
             state_keys = ["mass", Dynamic.Mission.DISTANCE]
         else:
             control_keys = ["velocity_rate", "throttle"]
-            state_keys = ["altitude", "mass",
-                          Dynamic.Mission.DISTANCE, Dynamic.Mission.VELOCITY, "flight_path_angle", "alpha"]
+            state_keys = [
+                "altitude",
+                "mass",
+                Dynamic.Mission.DISTANCE,
+                Dynamic.Atmosphere.VELOCITY,
+                "flight_path_angle",
+                "alpha",
+            ]
             if self.mission_method is TWO_DEGREES_OF_FREEDOM and phase_name == 'ascent':
                 # Alpha is a control for ascent.
                 control_keys.append('alpha')
@@ -2456,7 +2489,7 @@ class AviaryProblem(om.Problem):
             LandingSegment(
                 **(self.ode_args)),
             promotes_inputs=['aircraft:*', 'mission:*',
-                             (Dynamic.Mission.MASS, Mission.Landing.TOUCHDOWN_MASS)],
+                             (Dynamic.Vehicle.MASS, Mission.Landing.TOUCHDOWN_MASS)],
             promotes_outputs=['mission:*'],
         )
 

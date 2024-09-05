@@ -25,8 +25,10 @@ class FlightPathEOMTestCase(unittest.TestCase):
         self.prob.run_model()
 
         assert_near_equal(
-            self.prob[Dynamic.Mission.VELOCITY_RATE], np.array(
-                [-27.10027, -27.10027]), tol)
+            self.prob[Dynamic.Atmosphere.VELOCITY_RATE],
+            np.array([-27.10027, -27.10027]),
+            tol,
+        )
         assert_near_equal(
             self.prob[Dynamic.Mission.DISTANCE_RATE], np.array(
                 [0.5403023, 0.5403023]), tol)
@@ -40,11 +42,15 @@ class FlightPathEOMTestCase(unittest.TestCase):
             self.prob["load_factor"], np.array(
                 [1.883117, 1.883117]), tol)
         assert_near_equal(
-            self.prob[Dynamic.Mission.ALTITUDE_RATE], np.array(
-                [0.841471, 0.841471]), tol)
+            self.prob[Dynamic.Atmosphere.ALTITUDE_RATE],
+            np.array([0.841471, 0.841471]),
+            tol,
+        )
         assert_near_equal(
-            self.prob[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE], np.array(
-                [15.36423, 15.36423]), tol)
+            self.prob[Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE],
+            np.array([15.36423, 15.36423]),
+            tol,
+        )
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
@@ -60,8 +66,10 @@ class FlightPathEOMTestCase(unittest.TestCase):
         self.prob.run_model()
 
         assert_near_equal(
-            self.prob[Dynamic.Mission.VELOCITY_RATE], np.array(
-                [-27.09537, -27.09537]), tol)
+            self.prob[Dynamic.Atmosphere.VELOCITYITY_RATE],
+            np.array([-27.09537, -27.09537]),
+            tol,
+        )
         assert_near_equal(
             self.prob[Dynamic.Mission.DISTANCE_RATE], np.array(
                 [0.5403023, 0.5403023]), tol)

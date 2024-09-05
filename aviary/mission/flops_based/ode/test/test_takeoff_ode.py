@@ -26,17 +26,17 @@ class TakeoffODETest(unittest.TestCase):
             output_validation_data=detailed_takeoff_ground,
             input_keys=[
                 'angle_of_attack',
-                Dynamic.Mission.FLIGHT_PATH_ANGLE,
-                Dynamic.Mission.ALTITUDE,
-                Dynamic.Mission.VELOCITY,
-                Dynamic.Mission.MASS,
-                Dynamic.Mission.LIFT,
-                Dynamic.Mission.THRUST_TOTAL,
-                Dynamic.Mission.DRAG],
+                Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+                Dynamic.Atmosphere.ALTITUDE,
+                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Vehicle.MASS,
+                Dynamic.Vehicle.LIFT,
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                Dynamic.Vehicle.DRAG],
             output_keys=[
                 Dynamic.Mission.DISTANCE_RATE,
-                Dynamic.Mission.ALTITUDE_RATE,
-                Dynamic.Mission.VELOCITY_RATE],
+                Dynamic.Atmosphere.ALTITUDEUDE_RATE,
+                Dynamic.Atmosphere.VELOCITYITY_RATE],
             tol=1e-2, atol=1e-9, rtol=1e-11,
             check_values=False, check_partials=True)
 
@@ -50,17 +50,17 @@ class TakeoffODETest(unittest.TestCase):
             output_validation_data=detailed_takeoff_climbing,
             input_keys=[
                 'angle_of_attack',
-                Dynamic.Mission.FLIGHT_PATH_ANGLE,
-                Dynamic.Mission.ALTITUDE,
-                Dynamic.Mission.VELOCITY,
-                Dynamic.Mission.MASS,
-                Dynamic.Mission.LIFT,
-                Dynamic.Mission.THRUST_TOTAL,
-                Dynamic.Mission.DRAG],
+                Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+                Dynamic.Atmosphere.ALTITUDE,
+                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Vehicle.MASS,
+                Dynamic.Vehicle.LIFT,
+                Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL,
+                Dynamic.Vehicle.DRAG],
             output_keys=[
                 Dynamic.Mission.DISTANCE_RATE,
-                Dynamic.Mission.ALTITUDE_RATE,
-                Dynamic.Mission.VELOCITY_RATE],
+                Dynamic.Atmosphere.ALTITUDEUDE_RATE,
+                Dynamic.Atmosphere.VELOCITYITY_RATE],
             tol=1e-2, atol=1e-9, rtol=1e-11,
             check_values=False, check_partials=True)
 

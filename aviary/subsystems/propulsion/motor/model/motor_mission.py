@@ -36,12 +36,12 @@ class MotorMission(om.Group):
             'motor_map',
             MotorMap(num_nodes=nn),
             promotes_inputs=[
-                Dynamic.Mission.THROTTLE,
+                Dynamic.Vehicle.Propulsion.THROTTLE,
                 Aircraft.Engine.SCALE_FACTOR,
-                Dynamic.Mission.RPM,
+                Dynamic.Vehicle.Propulsion.RPM,
             ],
             promotes_outputs=[
-                (Dynamic.Mission.TORQUE, 'motor_torque'),
+                (Dynamic.Vehicle.Propulsion.TORQUE, 'motor_torque'),
                 'motor_efficiency',
             ],
         )
@@ -55,8 +55,9 @@ class MotorMission(om.Group):
                 RPM={'val': np.ones(nn), 'units': 'rad/s'},
                 has_diag_partials=True,
             ),  # fixed RPM system
-            promotes_inputs=[('torque', 'motor_torque'), ('RPM', Dynamic.Mission.RPM)],
-            promotes_outputs=[('shaft_power', Dynamic.Mission.SHAFT_POWER)],
+            promotes_inputs=[('torque', 'motor_torque'),
+                             ('RPM', Dynamic.Vehicle.Propulsion.RPM)],
+            promotes_outputs=[('shaft_power', Dynamic.Vehicle.Propulsion.SHAFT_POWER)],
         )
 
         motor_group.add_subsystem(
@@ -69,13 +70,15 @@ class MotorMission(om.Group):
                 has_diag_partials=True,
             ),
             promotes_inputs=[
-                #   ('shaft_power', Dynamic.Mission.SHAFT_POWER),
+                #   ('shaft_power', Dynamic.Vehicle.Propulsion.SHAFT_POWER),
                 ('efficiency', 'motor_efficiency')
             ],
-            promotes_outputs=[('power_elec', Dynamic.Mission.ELECTRIC_POWER_IN)],
+            promotes_outputs=[
+                ('power_elec', Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN)],
         )
 
-        motor_group.connect(Dynamic.Mission.SHAFT_POWER, 'energy_comp.shaft_power')
+        motor_group.connect(Dynamic.Vehicle.Propulsion.SHAFT_POWER,
+                            'energy_comp.shaft_power')
 
         self.add_subsystem('motor_group', motor_group,
                            promotes_inputs=['*'],
@@ -90,12 +93,12 @@ class MotorMission(om.Group):
             'motor_map_max',
             MotorMap(num_nodes=nn),
             promotes_inputs=[
-                (Dynamic.Mission.THROTTLE, 'max_throttle'),
+                (Dynamic.Vehicle.Propulsion.THROTTLE, 'max_throttle'),
                 Aircraft.Engine.SCALE_FACTOR,
-                Dynamic.Mission.RPM,
+                Dynamic.Vehicle.Propulsion.RPM,
             ],
             promotes_outputs=[
-                (Dynamic.Mission.TORQUE, 'motor_max_torque'),
+                (Dynamic.Vehicle.Propulsion.TORQUE, 'motor_max_torque'),
                 'motor_efficiency',
             ],
         )
@@ -111,13 +114,14 @@ class MotorMission(om.Group):
             ),
             promotes_inputs=[
                 ('max_torque', Aircraft.Engine.Motor.TORQUE_MAX),
-                ('RPM', Dynamic.Mission.RPM),
+                ('RPM', Dynamic.Vehicle.Propulsion.RPM),
             ],
-            promotes_outputs=[('max_power', Dynamic.Mission.SHAFT_POWER_MAX)],
+            promotes_outputs=[('max_power', Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX)],
         )
 
         self.add_subsystem('motor_group_max', motor_group_max,
                            promotes_inputs=['*', 'max_throttle'],
-                           promotes_outputs=[Dynamic.Mission.SHAFT_POWER_MAX])
+                           promotes_outputs=[Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX])
 
-        self.set_input_defaults(Dynamic.Mission.RPM, val=np.ones(nn), units='rpm')
+        self.set_input_defaults(Dynamic.Vehicle.Propulsion.RPM,
+                                val=np.ones(nn), units='rpm')

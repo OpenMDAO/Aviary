@@ -39,17 +39,20 @@ class CLmaxCalculationTestCase(unittest.TestCase):
         self.prob.set_val("VLAM13", 1.03512)
         self.prob.set_val("VLAM14", 0.99124)
 
-        self.prob.set_val(Dynamic.Mission.SPEED_OF_SOUND, 1118.21948771, units="ft/s")  #
+        self.prob.set_val(
+            Dynamic.Atmosphere.SPEED_OF_SOUND, 1118.21948771, units="ft/s"
+        )  #
         self.prob.set_val(Aircraft.Wing.LOADING, 128.0, units="lbf/ft**2")
-        self.prob.set_val(Dynamic.Mission.STATIC_PRESSURE,
-                          (14.696 * 144), units="lbf/ft**2")
+        self.prob.set_val(
+            Dynamic.Atmosphere.STATIC_PRESSURE, (14.696 * 144), units="lbf/ft**2"
+        )
         self.prob.set_val(Aircraft.Wing.AVERAGE_CHORD, 12.61, units="ft")
         self.prob.set_val("kinematic_viscosity", 0.15723e-3, units="ft**2/s")
         self.prob.set_val(Aircraft.Wing.MAX_LIFT_REF, 1.150)
         self.prob.set_val(Aircraft.Wing.SLAT_LIFT_INCREMENT_OPTIMUM, 0.930)
         self.prob.set_val("fus_lift", 0.05498)
         self.prob.set_val(Aircraft.Wing.FLAP_LIFT_INCREMENT_OPTIMUM, 1.500)
-        self.prob.set_val(Dynamic.Mission.TEMPERATURE, 518.7, units="degR")
+        self.prob.set_val(Dynamic.Atmosphere.TEMPERATURE, 518.7, units="degR")
 
     def test_case(self):
 

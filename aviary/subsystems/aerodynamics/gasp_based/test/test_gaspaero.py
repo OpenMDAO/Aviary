@@ -47,10 +47,10 @@ class GASPAeroTest(unittest.TestCase):
             alpha = row["alpha"]
 
             with self.subTest(alt=alt, mach=mach, alpha=alpha):
-                # prob.set_val(Dynamic.Mission.ALTITUDE, alt)
+                # prob.set_val(Dynamic.Atmosphere.ALTITUDE, alt)
                 prob.set_val(Dynamic.Mission.MACH, mach)
                 prob.set_val("alpha", alpha)
-                prob.set_val(Dynamic.Mission.SPEED_OF_SOUND, row["sos"])
+                prob.set_val(Dynamic.Atmosphere.SPEED_OF_SOUND, row["sos"])
                 prob.set_val("nu", row["nu"])
 
                 prob.run_model()
@@ -86,9 +86,9 @@ class GASPAeroTest(unittest.TestCase):
 
             with self.subTest(ilift=ilift, alt=alt, mach=mach, alpha=alpha):
                 prob.set_val(Dynamic.Mission.MACH, mach)
-                prob.set_val(Dynamic.Mission.ALTITUDE, alt)
+                prob.set_val(Dynamic.Atmosphere.ALTITUDEUDE, alt)
                 prob.set_val("alpha", alpha)
-                prob.set_val(Dynamic.Mission.SPEED_OF_SOUND, row["sos"])
+                prob.set_val(Dynamic.Atmosphere.SPEED_OF_SOUND, row["sos"])
                 prob.set_val("nu", row["nu"])
 
                 # note we're just letting the time ramps for flaps/gear default to the
@@ -124,7 +124,7 @@ class GASPAeroTest(unittest.TestCase):
             "alpha_in",
             LowSpeedAero(aviary_options=get_option_defaults()),
             promotes_inputs=["*", ("alpha", "alpha_in")],
-            promotes_outputs=[(Dynamic.Mission.LIFT, "lift_req")],
+            promotes_outputs=[(Dynamic.Vehicle.LIFT, "lift_req")],
         )
 
         prob.model.add_subsystem(
@@ -145,7 +145,7 @@ class GASPAeroTest(unittest.TestCase):
         prob.set_val(Mission.Design.GROSS_MASS, setup_data["wgto"])
 
         prob.set_val(Dynamic.Mission.MACH, 0.1)
-        prob.set_val(Dynamic.Mission.ALTITUDE, 10)
+        prob.set_val(Dynamic.Atmosphere.ALTITUDEUDE, 10)
         prob.set_val("alpha_in", 5)
         prob.run_model()
 

@@ -17,7 +17,7 @@ class CLmaxCalculation(om.ExplicitComponent):
             desc="VLAM8: sensitivity of flap clean wing maximum lift coefficient to wing sweep angle",
         )
         self.add_input(
-            Dynamic.Mission.SPEED_OF_SOUND,
+            Dynamic.Atmosphere.SPEED_OF_SOUND,
             val=1118.21948771,
             units="ft/s",
             desc="SA: speed of sound at sea level",
@@ -79,7 +79,10 @@ class CLmaxCalculation(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.LOADING, val=128)
 
         self.add_input(
-            Dynamic.Mission.STATIC_PRESSURE, val=(14.696 * 144), units="lbf/ft**2", desc="P0: static pressure"
+            Dynamic.Atmosphere.STATIC_PRESSURE,
+            val=(14.696 * 144),
+            units="lbf/ft**2",
+            desc="P0: static pressure",
         )
 
         add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, val=12.61)
@@ -119,7 +122,7 @@ class CLmaxCalculation(om.ExplicitComponent):
             desc="XKV: kinematic viscosity",
         )
         self.add_input(
-            Dynamic.Mission.TEMPERATURE,
+            Dynamic.Atmosphere.TEMPERATURE,
             val=518.67,
             units="degR",
             desc="T0: static temperature of air cross wing",
@@ -166,7 +169,7 @@ class CLmaxCalculation(om.ExplicitComponent):
             Dynamic.Mission.MACH,
             [
                 Aircraft.Wing.LOADING,
-                Dynamic.Mission.STATIC_PRESSURE,
+                Dynamic.Atmosphere.STATIC_PRESSURE,
                 Aircraft.Wing.MAX_LIFT_REF,
                 "VLAM1",
                 "VLAM2",
@@ -194,9 +197,9 @@ class CLmaxCalculation(om.ExplicitComponent):
             "reynolds",
             [
                 "kinematic_viscosity",
-                Dynamic.Mission.SPEED_OF_SOUND,
+                Dynamic.Atmosphere.SPEED_OF_SOUND,
                 Aircraft.Wing.AVERAGE_CHORD,
-                Dynamic.Mission.STATIC_PRESSURE,
+                Dynamic.Atmosphere.STATIC_PRESSURE,
                 Aircraft.Wing.LOADING,
                 Aircraft.Wing.MAX_LIFT_REF,
                 "VLAM1",
@@ -239,9 +242,9 @@ class CLmaxCalculation(om.ExplicitComponent):
         VLAM13 = inputs["VLAM13"]
         VLAM14 = inputs["VLAM14"]
 
-        sos = inputs[Dynamic.Mission.SPEED_OF_SOUND]
+        sos = inputs[Dynamic.Atmosphere.SPEED_OF_SOUND]
         wing_loading = inputs[Aircraft.Wing.LOADING]
-        P = inputs[Dynamic.Mission.STATIC_PRESSURE]
+        P = inputs[Dynamic.Atmosphere.STATIC_PRESSURE]
         avg_chord = inputs[Aircraft.Wing.AVERAGE_CHORD]
         kinematic_viscosity = inputs["kinematic_viscosity"]
         max_lift_reference = inputs[Aircraft.Wing.MAX_LIFT_REF]

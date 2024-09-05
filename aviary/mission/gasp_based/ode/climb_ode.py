@@ -46,10 +46,10 @@ class ClimbODE(BaseODE):
 
         if input_speed_type is SpeedType.EAS:
             speed_inputs = ["EAS"]
-            speed_outputs = ["mach", Dynamic.Mission.VELOCITY]
+            speed_outputs = ["mach", Dynamic.Atmosphere.VELOCITY]
         elif input_speed_type is SpeedType.MACH:
             speed_inputs = ["mach"]
-            speed_outputs = ["EAS", Dynamic.Mission.VELOCITY]
+            speed_outputs = ["EAS", Dynamic.Atmosphere.VELOCITY]
 
         if analysis_scheme is AnalysisScheme.SHOOTING:
             add_SGM_required_inputs(self, {
@@ -65,12 +65,12 @@ class ClimbODE(BaseODE):
         self.add_subsystem(
             name='atmosphere',
             subsys=Atmosphere(num_nodes=nn),
-            promotes_inputs=[Dynamic.Mission.ALTITUDE],
+            promotes_inputs=[Dynamic.Atmosphere.ALTITUDE],
             promotes_outputs=[
-                Dynamic.Mission.DENSITY,
-                Dynamic.Mission.SPEED_OF_SOUND,
-                Dynamic.Mission.TEMPERATURE,
-                Dynamic.Mission.STATIC_PRESSURE,
+                Dynamic.Atmosphere.DENSITY,
+                Dynamic.Atmosphere.SPEED_OF_SOUND,
+                Dynamic.Atmosphere.TEMPERATURE,
+                Dynamic.Atmosphere.STATIC_PRESSURE,
                 "viscosity",
             ],
         )
@@ -133,9 +133,12 @@ class ClimbODE(BaseODE):
         flight_condition_group.add_subsystem(
             name='flight_conditions',
             subsys=FlightConditions(num_nodes=nn, input_speed_type=input_speed_type),
-            promotes_inputs=[Dynamic.Mission.DENSITY, Dynamic.Mission.SPEED_OF_SOUND]
+            promotes_inputs=[
+                Dynamic.Atmosphere.DENSITY,
+                Dynamic.Atmosphere.SPEED_OF_SOUND,
+            ]
             + speed_inputs,
-            promotes_outputs=[Dynamic.Mission.DYNAMIC_PRESSURE] + speed_outputs,
+            promotes_outputs=[Dynamic.Atmosphere.DYNAMIC_PRESSURE] + speed_outputs,
         )
 
         kwargs = {'num_nodes': nn, 'aviary_inputs': aviary_options,
@@ -170,16 +173,16 @@ class ClimbODE(BaseODE):
             "climb_eom",
             ClimbRates(num_nodes=nn),
             promotes_inputs=[
-                Dynamic.Mission.MASS,
-                Dynamic.Mission.VELOCITY,
-                Dynamic.Mission.DRAG,
-                Dynamic.Mission.THRUST_TOTAL
+                Dynamic.Vehicle.MASS,
+                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Vehicle.DRAG,
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
             ],
             promotes_outputs=[
-                Dynamic.Mission.ALTITUDE_RATE,
+                Dynamic.Atmosphere.ALTITUDE_RATE,
                 Dynamic.Mission.DISTANCE_RATE,
                 "required_lift",
-                Dynamic.Mission.FLIGHT_PATH_ANGLE,
+                Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
             ],
         )
 
@@ -194,11 +197,11 @@ class ClimbODE(BaseODE):
             FlightConstraints(num_nodes=nn),
             promotes_inputs=[
                 "alpha",
-                Dynamic.Mission.DENSITY,
+                Dynamic.Atmosphere.DENSITY,
                 "CL_max",
-                Dynamic.Mission.FLIGHT_PATH_ANGLE,
-                Dynamic.Mission.MASS,
-                Dynamic.Mission.VELOCITY,
+                Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+                Dynamic.Vehicle.MASS,
+                Dynamic.Atmosphere.VELOCITY,
             ]
             + ["aircraft:*"],
             promotes_outputs=["theta", "TAS_violation"],
@@ -209,9 +212,11 @@ class ClimbODE(BaseODE):
 
         ParamPort.set_default_vals(self)
         self.set_input_defaults("CL_max", val=5 * np.ones(nn), units="unitless")
-        self.set_input_defaults(Dynamic.Mission.ALTITUDE,
-                                val=500 * np.ones(nn), units='ft')
-        self.set_input_defaults(Dynamic.Mission.MASS,
-                                val=174000 * np.ones(nn), units='lbm')
+        self.set_input_defaults(
+            Dynamic.Atmosphere.ALTITUDEUDE, val=500 * np.ones(nn), units='ft'
+        )
+        self.set_input_defaults(
+            Dynamic.Vehicle.MASS, val=174000 * np.ones(nn), units='lbm'
+        )
         self.set_input_defaults(Dynamic.Mission.MACH,
                                 val=0 * np.ones(nn), units="unitless")

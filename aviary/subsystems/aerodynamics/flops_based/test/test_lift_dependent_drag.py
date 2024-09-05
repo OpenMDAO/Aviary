@@ -28,8 +28,8 @@ class LiftDependentDragTest(unittest.TestCase):
         prob.setup(force_alloc_complex=True)
 
         prob.set_val(Dynamic.Mission.MACH, val=mach)
-        prob.set_val(Dynamic.Mission.LIFT, val=lift)
-        prob.set_val(Dynamic.Mission.STATIC_PRESSURE, val=P)
+        prob.set_val(Dynamic.Vehicle.LIFT, val=lift)
+        prob.set_val(Dynamic.Atmosphere.STATIC_PRESSURE, val=P)
         prob.set_val(Aircraft.Wing.AREA, val=Sref)
         prob.set_val(Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN, val=1.0)
         prob.set_val(Aircraft.Wing.SWEEP, val=25.03)
@@ -65,8 +65,8 @@ class LiftDependentDragTest(unittest.TestCase):
         prob.setup(force_alloc_complex=True)
 
         prob.set_val(Dynamic.Mission.MACH, val=mach)
-        prob.set_val(Dynamic.Mission.LIFT, val=lift)
-        prob.set_val(Dynamic.Mission.STATIC_PRESSURE, val=P)
+        prob.set_val(Dynamic.Vehicle.LIFT, val=lift)
+        prob.set_val(Dynamic.Atmosphere.STATIC_PRESSURE, val=P)
         prob.set_val(Aircraft.Wing.AREA, val=Sref)
         prob.set_val(Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN, val=1.0)
         prob.set_val(Aircraft.Wing.SWEEP, val=25.07)

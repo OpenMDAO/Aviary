@@ -61,17 +61,19 @@ def make_problem():
     height = (8., 'ft')
     span = (34., 'm')
 
-    inputs = AviaryValues({
-        'angle_of_attack': (np.array([0., 2., 6]), 'deg'),
-        Dynamic.Mission.ALTITUDE: (np.array([100.0, 132, 155]), 'm'),
-        Dynamic.Mission.FLIGHT_PATH_ANGLE: (np.array([0., 0.5, 1.0]), 'deg'),
-        'minimum_drag_coefficient': minimum_drag_coefficient,
-        'base_lift_coefficient': base_lift_coefficient,
-        'base_drag_coefficient': base_drag_coefficient,
-        Aircraft.Wing.ASPECT_RATIO: aspect_ratio,
-        Aircraft.Wing.HEIGHT: height,
-        Aircraft.Wing.SPAN: span
-    })
+    inputs = AviaryValues(
+        {
+            'angle_of_attack': (np.array([0.0, 2.0, 6]), 'deg'),
+            Dynamic.Atmosphere.ALTITUDE: (np.array([100.0, 132, 155]), 'm'),
+            Dynamic.Vehicle.FLIGHT_PATH_ANGLE: (np.array([0.0, 0.5, 1.0]), 'deg'),
+            'minimum_drag_coefficient': minimum_drag_coefficient,
+            'base_lift_coefficient': base_lift_coefficient,
+            'base_drag_coefficient': base_drag_coefficient,
+            Aircraft.Wing.ASPECT_RATIO: aspect_ratio,
+            Aircraft.Wing.HEIGHT: height,
+            Aircraft.Wing.SPAN: span,
+        }
+    )
 
     ground_effect = GroundEffect(num_nodes=nn, ground_altitude=ground_altitude)
 

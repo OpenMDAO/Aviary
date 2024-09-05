@@ -393,7 +393,7 @@ class AeroGeom(om.ExplicitComponent):
         self.add_input(
             Dynamic.Mission.MACH, val=0.0, units="unitless", shape=nn, desc="Current Mach number")
         self.add_input(
-            Dynamic.Mission.SPEED_OF_SOUND,
+            Dynamic.Atmosphere.SPEED_OF_SOUND,
             val=1.0,
             units="ft/s",
             shape=nn,
@@ -543,13 +543,25 @@ class AeroGeom(om.ExplicitComponent):
 
         # diag partials for SA5-SA7
         self.declare_partials(
-            "SA5", [Dynamic.Mission.MACH, Dynamic.Mission.SPEED_OF_SOUND, "nu"], rows=ar, cols=ar, method="cs"
+            "SA5",
+            [Dynamic.Mission.MACH, Dynamic.Atmosphere.SPEED_OF_SOUND, "nu"],
+            rows=ar,
+            cols=ar,
+            method="cs",
         )
         self.declare_partials(
-            "SA6", [Dynamic.Mission.MACH, Dynamic.Mission.SPEED_OF_SOUND, "nu"], rows=ar, cols=ar, method="cs"
+            "SA6",
+            [Dynamic.Mission.MACH, Dynamic.Atmosphere.SPEED_OF_SOUND, "nu"],
+            rows=ar,
+            cols=ar,
+            method="cs",
         )
         self.declare_partials(
-            "SA7", [Dynamic.Mission.MACH, Dynamic.Mission.SPEED_OF_SOUND, "nu", "ufac"], rows=ar, cols=ar, method="cs"
+            "SA7",
+            [Dynamic.Mission.MACH, Dynamic.Atmosphere.SPEED_OF_SOUND, "nu", "ufac"],
+            rows=ar,
+            cols=ar,
+            method="cs",
         )
 
         # dense partials for SA5-SA7
@@ -831,8 +843,8 @@ class AeroSetup(om.Group):
             # self.add_subsystem(
             #     "atmos",
             #     USatm1976Comp(num_nodes=nn),
-            #     promotes_inputs=[("h", Dynamic.Mission.ALTITUDE)],
-            #     promotes_outputs=["rho", Dynamic.Mission.SPEED_OF_SOUND, "viscosity"],
+            #     promotes_inputs=[("h", Dynamic.Atmosphere.ALTITUDE)],
+            #     promotes_outputs=["rho", Dynamic.Atmosphere.SPEED_OF_SOUND, "viscosity"],
             # )
             self.add_subsystem(
                 "kin_visc",
@@ -843,7 +855,7 @@ class AeroSetup(om.Group):
                     nu={"units": "ft**2/s", "shape": nn},
                     has_diag_partials=True,
                 ),
-                promotes=["*", ('rho', Dynamic.Mission.DENSITY)],
+                promotes=["*", ('rho', Dynamic.Atmosphere.DENSITY)],
             )
 
         self.add_subsystem("geom", AeroGeom(
@@ -865,8 +877,13 @@ class DragCoef(om.ExplicitComponent):
         nn = self.options["num_nodes"]
 
         # mission inputs
-        self.add_input(Dynamic.Mission.ALTITUDE, val=0.0,
-                       units="ft", shape=nn, desc="Altitude")
+        self.add_input(
+            Dynamic.Atmosphere.ALTITUDEUDE,
+            val=0.0,
+            units="ft",
+            shape=nn,
+            desc="Altitude",
+        )
         self.add_input(
             "CL", val=1.0, units="unitless", shape=nn, desc="Lift coefficient")
 
@@ -934,7 +951,7 @@ class DragCoef(om.ExplicitComponent):
         self.declare_partials("CD_base", ["*"], method="cs")
         self.declare_partials(
             "CD_base",
-            [Dynamic.Mission.ALTITUDE, "CL", "cf", "SA5", "SA6", "SA7"],
+            [Dynamic.Atmosphere.ALTITUDEUDE, "CL", "cf", "SA5", "SA6", "SA7"],
             rows=ar,
             cols=ar,
             method="cs",
@@ -1073,8 +1090,13 @@ class LiftCoeff(om.ExplicitComponent):
 
         # mission inputs
         self.add_input("alpha", val=0.0, units="deg", shape=nn, desc="Angle of attack")
-        self.add_input(Dynamic.Mission.ALTITUDE, val=0.0,
-                       units="ft", shape=nn, desc="Altitude")
+        self.add_input(
+            Dynamic.Atmosphere.ALTITUDEUDE,
+            val=0.0,
+            units="ft",
+            shape=nn,
+            desc="Altitude",
+        )
         self.add_input("lift_curve_slope", units="unitless",
                        shape=nn, desc="Lift-curve slope")
         self.add_input("lift_ratio", units="unitless", shape=nn, desc="Lift ratio")
@@ -1131,7 +1153,12 @@ class LiftCoeff(om.ExplicitComponent):
         self.declare_partials("*", "*", dependent=False)
         ar = np.arange(self.options["num_nodes"])
 
-        dynvars = ["alpha", Dynamic.Mission.ALTITUDE, "lift_curve_slope", "lift_ratio"]
+        dynvars = [
+            "alpha",
+            Dynamic.Atmosphere.ALTITUDEUDE,
+            "lift_curve_slope",
+            "lift_ratio",
+        ]
 
         self.declare_partials("CL_base", ["*"], method="cs")
         self.declare_partials("CL_base", dynvars, rows=ar, cols=ar, method="cs")
@@ -1469,7 +1496,7 @@ class LowSpeedAero(om.Group):
 
         self.add_subsystem("forces", AeroForces(num_nodes=nn), promotes=["*"])
 
-        self.set_input_defaults(Dynamic.Mission.ALTITUDE, np.zeros(nn))
+        self.set_input_defaults(Dynamic.Atmosphere.ALTITUDEUDE, np.zeros(nn))
 
         if self.options["retract_gear"]:
             # takeoff defaults

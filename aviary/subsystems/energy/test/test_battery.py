@@ -62,7 +62,7 @@ class TestBatteryDerivs(unittest.TestCase):
         prob.run_model()
 
         soc_expected = np.array([1., 0.7894736842105263, 0.4736842105263159, 0.])
-        soc = prob.get_val(av.Dynamic.Mission.BATTERY_STATE_OF_CHARGE, 'unitless')
+        soc = prob.get_val(av.Dynamic.Vehicle.BATTERY_STATE_OF_CHARGE, 'unitless')
 
         assert_near_equal(soc, soc_expected, tolerance=1e-10)
 

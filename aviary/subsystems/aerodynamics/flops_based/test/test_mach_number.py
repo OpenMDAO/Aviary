@@ -25,8 +25,8 @@ class MachNumberTest(unittest.TestCase):
         # for key, temp in FLOPS_Test_Data.items():
         # TODO currently no way to use FLOPS test case data for mission components
 
-        self.prob.set_val(Dynamic.Mission.VELOCITY, val=347, units='ft/s')
-        self.prob.set_val(Dynamic.Mission.SPEED_OF_SOUND, val=1045, units='ft/s')
+        self.prob.set_val(Dynamic.Atmosphere.VELOCITY, val=347, units='ft/s')
+        self.prob.set_val(Dynamic.Atmosphere.SPEED_OF_SOUND, val=1045, units='ft/s')
         self.prob.run_model()
 
         tol = 1e-3

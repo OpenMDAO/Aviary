@@ -102,45 +102,48 @@ class SimpleDrag(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.AREA, val=1., units='m**2')
 
         self.add_input(
-            Dynamic.Mission.DYNAMIC_PRESSURE, val=np.ones(nn), units='N/m**2',
-            desc='pressure caused by fluid motion')
+            Dynamic.Atmosphere.DYNAMIC_PRESSURE,
+            val=np.ones(nn),
+            units='N/m**2',
+            desc='pressure caused by fluid motion',
+        )
 
         self.add_input(
             'CD', val=np.ones(nn), units='unitless',
             desc='total drag coefficient')
 
-        self.add_output(Dynamic.Mission.DRAG, val=np.ones(nn),
-                        units='N', desc='total drag')
+        self.add_output(
+            Dynamic.Vehicle.DRAG, val=np.ones(nn), units='N', desc='total drag'
+        )
 
     def setup_partials(self):
         nn = self.options['num_nodes']
         rows_cols = np.arange(nn)
 
-        self.declare_partials(
-            Dynamic.Mission.DRAG,
-            Aircraft.Wing.AREA
-        )
+        self.declare_partials(Dynamic.Vehicle.DRAG, Aircraft.Wing.AREA)
 
         self.declare_partials(
-            Dynamic.Mission.DRAG,
-            [Dynamic.Mission.DYNAMIC_PRESSURE, 'CD'],
-            rows=rows_cols, cols=rows_cols)
+            Dynamic.Vehicle.DRAG,
+            [Dynamic.Atmosphere.DYNAMIC_PRESSURE, 'CD'],
+            rows=rows_cols,
+            cols=rows_cols,
+        )
 
     def compute(self, inputs, outputs):
         S = inputs[Aircraft.Wing.AREA]
-        q = inputs[Dynamic.Mission.DYNAMIC_PRESSURE]
+        q = inputs[Dynamic.Atmosphere.DYNAMIC_PRESSURE]
         CD = inputs['CD']
 
-        outputs[Dynamic.Mission.DRAG] = q * S * CD
+        outputs[Dynamic.Vehicle.DRAG] = q * S * CD
 
     def compute_partials(self, inputs, partials):
         S = inputs[Aircraft.Wing.AREA]
-        q = inputs[Dynamic.Mission.DYNAMIC_PRESSURE]
+        q = inputs[Dynamic.Atmosphere.DYNAMIC_PRESSURE]
         CD = inputs['CD']
 
-        partials[Dynamic.Mission.DRAG, Aircraft.Wing.AREA] = q * CD
-        partials[Dynamic.Mission.DRAG, Dynamic.Mission.DYNAMIC_PRESSURE] = S * CD
-        partials[Dynamic.Mission.DRAG, 'CD'] = q * S
+        partials[Dynamic.Vehicle.DRAG, Aircraft.Wing.AREA] = q * CD
+        partials[Dynamic.Vehicle.DRAG, Dynamic.Atmosphere.DYNAMIC_PRESSURE] = S * CD
+        partials[Dynamic.Vehicle.DRAG, 'CD'] = q * S
 
 
 class TotalDrag(om.Group):

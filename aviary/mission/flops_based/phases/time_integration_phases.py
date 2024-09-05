@@ -14,24 +14,25 @@ class SGMHeightEnergy(SimuPyProblem):
         simupy_args={},
         mass_trigger=(150000, 'lbm')
     ):
-        super().__init__(MissionODE(
-            analysis_scheme=AnalysisScheme.SHOOTING,
-            **ode_args),
+        super().__init__(
+            MissionODE(analysis_scheme=AnalysisScheme.SHOOTING, **ode_args),
             problem_name=phase_name,
             outputs=[],
             states=[
-                Dynamic.Mission.MASS,
+                Dynamic.Vehicle.MASS,
                 Dynamic.Mission.DISTANCE,
-                Dynamic.Mission.ALTITUDE,
-        ],
+                Dynamic.Atmosphere.ALTITUDE,
+            ],
             alternate_state_rate_names={
-                Dynamic.Mission.MASS: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
+                Dynamic.Vehicle.MASS: Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL
+            },
             aviary_options=ode_args['aviary_options'],
-            **simupy_args)
+            **simupy_args
+        )
 
         self.phase_name = phase_name
         self.mass_trigger = mass_trigger
-        self.add_trigger(Dynamic.Mission.MASS, 'mass_trigger')
+        self.add_trigger(Dynamic.Vehicle.MASS, 'mass_trigger')
 
 
 class SGMDetailedTakeoff(SimuPyProblem):
@@ -41,23 +42,24 @@ class SGMDetailedTakeoff(SimuPyProblem):
         phase_name='detailed_takeoff',
         simupy_args={},
     ):
-        super().__init__(TakeoffODE(
-            analysis_scheme=AnalysisScheme.SHOOTING,
-            **ode_args),
+        super().__init__(
+            TakeoffODE(analysis_scheme=AnalysisScheme.SHOOTING, **ode_args),
             problem_name=phase_name,
             outputs=[],
             states=[
-                Dynamic.Mission.MASS,
+                Dynamic.Vehicle.MASS,
                 Dynamic.Mission.DISTANCE,
-                Dynamic.Mission.ALTITUDE,
-        ],
+                Dynamic.Atmosphere.ALTITUDEUDE,
+            ],
             alternate_state_rate_names={
-                Dynamic.Mission.MASS: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
+                Dynamic.Vehicle.MASS: Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL
+            },
             aviary_options=ode_args['aviary_options'],
-            **simupy_args)
+            **simupy_args
+        )
 
         self.phase_name = phase_name
-        self.add_trigger(Dynamic.Mission.ALTITUDE, 50, units='ft')
+        self.add_trigger(Dynamic.Atmosphere.ALTITUDEUDE, 50, units='ft')
 
 
 class SGMDetailedLanding(SimuPyProblem):
@@ -67,20 +69,21 @@ class SGMDetailedLanding(SimuPyProblem):
         phase_name='detailed_landing',
         simupy_args={},
     ):
-        super().__init__(LandingODE(
-            analysis_scheme=AnalysisScheme.SHOOTING,
-            **ode_args),
+        super().__init__(
+            LandingODE(analysis_scheme=AnalysisScheme.SHOOTING, **ode_args),
             problem_name=phase_name,
             outputs=[],
             states=[
-                Dynamic.Mission.MASS,
+                Dynamic.Vehicle.MASS,
                 Dynamic.Mission.DISTANCE,
-                Dynamic.Mission.ALTITUDE,
-        ],
+                Dynamic.Atmosphere.ALTITUDEUDE,
+            ],
             alternate_state_rate_names={
-                Dynamic.Mission.MASS: Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL},
+                Dynamic.Vehicle.MASS: Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVETE_NEGATIVE_TOTAL
+            },
             aviary_options=ode_args['aviary_options'],
-            **simupy_args)
+            **simupy_args
+        )
 
         self.phase_name = phase_name
-        self.add_trigger(Dynamic.Mission.ALTITUDE, 0, units='ft')
+        self.add_trigger(Dynamic.Atmosphere.ALTITUDEUDE, 0, units='ft')

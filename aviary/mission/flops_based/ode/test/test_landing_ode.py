@@ -50,17 +50,23 @@ class FlareODETest(unittest.TestCase):
             output_validation_data=detailed_landing_flare,
             input_keys=[
                 'angle_of_attack',
-                Dynamic.Mission.FLIGHT_PATH_ANGLE,
-                Dynamic.Mission.VELOCITY,
-                Dynamic.Mission.MASS,
-                Dynamic.Mission.LIFT,
-                Dynamic.Mission.THRUST_TOTAL,
-                Dynamic.Mission.DRAG],
+                Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Vehicle.MASS,
+                Dynamic.Vehicle.LIFT,
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                Dynamic.Vehicle.DRAG,
+            ],
             output_keys=[
                 Dynamic.Mission.DISTANCE_RATE,
-                Dynamic.Mission.ALTITUDE_RATE],
-            tol=1e-2, atol=5e-9, rtol=5e-9,
-            check_values=False, check_partials=True)
+                Dynamic.Atmosphere.ALTITUDE_RATE,
+            ],
+            tol=1e-2,
+            atol=5e-9,
+            rtol=5e-9,
+            check_values=False,
+            check_partials=True,
+        )
 
 
 if __name__ == "__main__":

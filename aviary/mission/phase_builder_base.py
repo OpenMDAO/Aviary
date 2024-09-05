@@ -444,14 +444,14 @@ class PhaseBuilderBase(ABC):
         velocity_ref0 = user_options.get_val('velocity_ref0', units='kn')
         velocity_defect_ref = user_options.get_val('velocity_defect_ref', units='kn')
         self.phase.add_state(
-            Dynamic.Mission.VELOCITY,
+            Dynamic.Atmosphere.VELOCITY,
             fix_initial=user_options.get_val('fix_initial'),
             fix_final=False,
             lower=velocity_lower,
             upper=velocity_upper,
             units="kn",
-            rate_source=Dynamic.Mission.VELOCITY_RATE,
-            targets=Dynamic.Mission.VELOCITY,
+            rate_source=Dynamic.Atmosphere.VELOCITYITY_RATE,
+            targets=Dynamic.Atmosphere.VELOCITY,
             ref=velocity_ref,
             ref0=velocity_ref0,
             defect_ref=velocity_defect_ref,
@@ -464,14 +464,14 @@ class PhaseBuilderBase(ABC):
         mass_ref0 = user_options.get_val('mass_ref0', units='lbm')
         mass_defect_ref = user_options.get_val('mass_defect_ref', units='lbm')
         self.phase.add_state(
-            Dynamic.Mission.MASS,
+            Dynamic.Vehicle.MASS,
             fix_initial=user_options.get_val('fix_initial'),
             fix_final=False,
             lower=mass_lower,
             upper=mass_upper,
             units="lbm",
-            rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            targets=Dynamic.Mission.MASS,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            targets=Dynamic.Vehicle.MASS,
             ref=mass_ref,
             ref0=mass_ref0,
             defect_ref=mass_defect_ref,
@@ -503,13 +503,13 @@ class PhaseBuilderBase(ABC):
         angle_ref0 = user_options.get_val('angle_ref0', units='rad')
         angle_defect_ref = user_options.get_val('angle_defect_ref', units='rad')
         self.phase.add_state(
-            Dynamic.Mission.FLIGHT_PATH_ANGLE,
+            Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
             fix_initial=True,
             fix_final=False,
             lower=angle_lower,
             upper=angle_upper,
             units="rad",
-            rate_source=Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
+            rate_source=Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE,
             ref=angle_ref,
             defect_ref=angle_defect_ref,
             ref0=angle_ref0,
@@ -522,12 +522,12 @@ class PhaseBuilderBase(ABC):
         alt_ref0 = user_options.get_val('alt_ref0', units=units)
         alt_defect_ref = user_options.get_val('alt_defect_ref', units=units)
         self.phase.add_state(
-            Dynamic.Mission.ALTITUDE,
+            Dynamic.Atmosphere.ALTITUDE,
             fix_final=False,
             lower=alt_lower,
             upper=alt_upper,
             units=units,
-            rate_source=Dynamic.Mission.ALTITUDE_RATE,
+            rate_source=Dynamic.Atmosphere.ALTITUDE_RATE,
             ref=alt_ref,
             defect_ref=alt_defect_ref,
             ref0=alt_ref0,
@@ -537,7 +537,7 @@ class PhaseBuilderBase(ABC):
         final_altitude = user_options.get_val('final_altitude', units='ft')
         alt_constraint_ref = user_options.get_val('alt_constraint_ref', units='ft')
         self.phase.add_boundary_constraint(
-            Dynamic.Mission.ALTITUDE,
+            Dynamic.Atmosphere.ALTITUDEUDE,
             loc="final",
             equals=final_altitude,
             units="ft",

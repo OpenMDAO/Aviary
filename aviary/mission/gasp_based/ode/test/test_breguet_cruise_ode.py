@@ -38,8 +38,8 @@ class CruiseODETestCase(unittest.TestCase):
 
         tol = tol = 1e-6
         assert_near_equal(
-            self.prob[Dynamic.Mission.VELOCITY_RATE], np.array(
-                [1.0, 1.0]), tol)
+            self.prob[Dynamic.Atmosphere.VELOCITY_RATE], np.array([1.0, 1.0]), tol
+        )
         assert_near_equal(
             self.prob[Dynamic.Mission.DISTANCE], np.array(
                 [0.0, 881.8116]), tol)
@@ -47,11 +47,15 @@ class CruiseODETestCase(unittest.TestCase):
             self.prob["time"], np.array(
                 [0, 7906.83]), tol)
         assert_near_equal(
-            self.prob[Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS], np.array(
-                [3.429719,  4.433518]), tol)
+            self.prob[Dynamic.Vehicle.SPECIFIC_ENERGY_RATE_EXCESS],
+            np.array([3.429719, 4.433518]),
+            tol,
+        )
         assert_near_equal(
-            self.prob[Dynamic.Mission.ALTITUDE_RATE_MAX], np.array(
-                [-17.63194, -16.62814]), tol)
+            self.prob[Dynamic.Atmosphere.ALTITUDE_RATE_MAX],
+            np.array([-17.63194, -16.62814]),
+            tol,
+        )
 
         partial_data = self.prob.check_partials(
             out_stream=None, method="cs", excludes=["*USatm*", "*params*", "*aero*"]

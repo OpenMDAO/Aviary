@@ -48,41 +48,58 @@ class ComputedAeroGroup(om.Group):
                 'laminar_fractions_upper', 'laminar_fractions_lower'])
 
         self.add_subsystem(
-            'DynamicPressure', DynamicPressure(num_nodes=num_nodes, gamma=gamma),
-            promotes_inputs=[Dynamic.Mission.MACH, Dynamic.Mission.STATIC_PRESSURE],
-            promotes_outputs=[Dynamic.Mission.DYNAMIC_PRESSURE])
+            'DynamicPressure',
+            DynamicPressure(num_nodes=num_nodes, gamma=gamma),
+            promotes_inputs=[Dynamic.Mission.MACH, Dynamic.Atmosphere.STATIC_PRESSURE],
+            promotes_outputs=[Dynamic.Atmosphere.DYNAMIC_PRESSURE],
+        )
 
         comp = LiftEqualsWeight(num_nodes=num_nodes)
         self.add_subsystem(
-            name=Dynamic.Mission.LIFT, subsys=comp,
-            promotes_inputs=[Aircraft.Wing.AREA, Dynamic.Mission.MASS,
-                             Dynamic.Mission.DYNAMIC_PRESSURE],
-            promotes_outputs=['cl', Dynamic.Mission.LIFT])
+            name=Dynamic.Vehicle.LIFT,
+            subsys=comp,
+            promotes_inputs=[
+                Aircraft.Wing.AREA,
+                Dynamic.Vehicle.MASS,
+                Dynamic.Atmosphere.DYNAMIC_PRESSURE,
+            ],
+            promotes_outputs=['cl', Dynamic.Vehicle.LIFT],
+        )
 
         comp = LiftDependentDrag(num_nodes=num_nodes, gamma=gamma)
         self.add_subsystem(
-            'PressureDrag', comp,
+            'PressureDrag',
+            comp,
             promotes_inputs=[
-                Dynamic.Mission.MACH, Dynamic.Mission.LIFT, Dynamic.Mission.STATIC_PRESSURE,
+                Dynamic.Mission.MACH,
+                Dynamic.Vehicle.LIFT,
+                Dynamic.Atmosphere.STATIC_PRESSURE,
                 Mission.Design.MACH,
                 Mission.Design.LIFT_COEFFICIENT,
                 Aircraft.Wing.AREA,
                 Aircraft.Wing.ASPECT_RATIO,
                 Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN,
                 Aircraft.Wing.SWEEP,
-                Aircraft.Wing.THICKNESS_TO_CHORD])
+                Aircraft.Wing.THICKNESS_TO_CHORD,
+            ],
+        )
 
         comp = InducedDrag(
             num_nodes=num_nodes, gamma=gamma, aviary_options=aviary_options)
         self.add_subsystem(
-            'InducedDrag', comp,
+            'InducedDrag',
+            comp,
             promotes_inputs=[
-                Dynamic.Mission.MACH, Dynamic.Mission.LIFT, Dynamic.Mission.STATIC_PRESSURE,
+                Dynamic.Mission.MACH,
+                Dynamic.Vehicle.LIFT,
+                Dynamic.Atmosphere.STATIC_PRESSURE,
                 Aircraft.Wing.AREA,
                 Aircraft.Wing.ASPECT_RATIO,
                 Aircraft.Wing.SPAN_EFFICIENCY_FACTOR,
                 Aircraft.Wing.SWEEP,
-                Aircraft.Wing.TAPER_RATIO])
+                Aircraft.Wing.TAPER_RATIO,
+            ],
+        )
 
         comp = CompressibilityDrag(num_nodes=num_nodes)
         self.add_subsystem(
@@ -103,11 +120,16 @@ class ComputedAeroGroup(om.Group):
 
         comp = SkinFriction(num_nodes=num_nodes, aviary_options=aviary_options)
         self.add_subsystem(
-            'SkinFrictionCoef', comp,
+            'SkinFrictionCoef',
+            comp,
             promotes_inputs=[
-                Dynamic.Mission.MACH, Dynamic.Mission.STATIC_PRESSURE, Dynamic.Mission.TEMPERATURE,
-                'characteristic_lengths'],
-            promotes_outputs=['skin_friction_coeff', 'Re'])
+                Dynamic.Mission.MACH,
+                Dynamic.Atmosphere.STATIC_PRESSURE,
+                Dynamic.Atmosphere.TEMPERATURE,
+                'characteristic_lengths',
+            ],
+            promotes_outputs=['skin_friction_coeff', 'Re'],
+        )
 
         comp = SkinFrictionDrag(num_nodes=num_nodes, aviary_options=aviary_options)
         self.add_subsystem(
@@ -119,14 +141,19 @@ class ComputedAeroGroup(om.Group):
 
         comp = ComputedDrag(num_nodes=num_nodes)
         self.add_subsystem(
-            'Drag', comp,
+            'Drag',
+            comp,
             promotes_inputs=[
-                Dynamic.Mission.DYNAMIC_PRESSURE, Dynamic.Mission.MACH, Aircraft.Wing.AREA,
+                Dynamic.Atmosphere.DYNAMIC_PRESSURE,
+                Dynamic.Mission.MACH,
+                Aircraft.Wing.AREA,
                 Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR,
                 Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR,
                 Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR,
-                Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR],
-            promotes_outputs=['CDI', 'CD0', 'CD', Dynamic.Mission.DRAG])
+                Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR,
+            ],
+            promotes_outputs=['CDI', 'CD0', 'CD', Dynamic.Vehicle.DRAG],
+        )
 
         buf = BuffetLift(num_nodes=num_nodes)
         self.add_subsystem(
@@ -168,15 +195,21 @@ class ComputedDrag(om.Group):
             desc='zero-lift drag coefficient')
 
         self.add_subsystem(
-            Dynamic.Mission.DRAG, TotalDrag(num_nodes=nn),
+            Dynamic.Vehicle.DRAG,
+            TotalDrag(num_nodes=nn),
             promotes_inputs=[
                 Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR,
                 Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR,
                 Aircraft.Wing.AREA,
                 Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR,
                 Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR,
-                'CDI', 'CD0', Dynamic.Mission.MACH, Dynamic.Mission.DYNAMIC_PRESSURE],
-            promotes_outputs=['CD', Dynamic.Mission.DRAG])
+                'CDI',
+                'CD0',
+                Dynamic.Mission.MACH,
+                Dynamic.Atmosphere.DYNAMIC_PRESSURE,
+            ],
+            promotes_outputs=['CD', Dynamic.Vehicle.DRAG],
+        )
 
         self.set_input_defaults(Aircraft.Wing.AREA, 1., 'ft**2')
 

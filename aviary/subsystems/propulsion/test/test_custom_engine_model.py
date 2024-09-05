@@ -46,13 +46,13 @@ class SimpleEngine(om.ExplicitComponent):
             desc='Current flight Mach number',
         )
         self.add_input(
-            Dynamic.Mission.ALTITUDE,
+            Dynamic.Atmosphere.ALTITUDE,
             shape=nn,
             units='ft',
             desc='Current flight altitude',
         )
         self.add_input(
-            Dynamic.Mission.THROTTLE,
+            Dynamic.Vehicle.Propulsion.THROTTLE,
             shape=nn,
             units='unitless',
             desc='Current engine throttle',
@@ -66,37 +66,37 @@ class SimpleEngine(om.ExplicitComponent):
         self.add_input('y', units='m**2', desc='Dummy variable for bus testing')
 
         self.add_output(
-            Dynamic.Mission.THRUST,
+            Dynamic.Vehicle.Propulsion.THRUST,
             shape=nn,
             units='lbf',
             desc='Current net thrust produced (scaled)',
         )
         self.add_output(
-            Dynamic.Mission.THRUST_MAX,
+            Dynamic.Vehicle.Propulsion.THRUST_MAX,
             shape=nn,
             units='lbf',
             desc='Current net thrust produced (scaled)',
         )
         self.add_output(
-            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE,
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE,
             shape=nn,
             units='lbm/s',
             desc='Current fuel flow rate (scaled)',
         )
         self.add_output(
-            Dynamic.Mission.ELECTRIC_POWER_IN,
+            Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN,
             shape=nn,
             units='W',
             desc='Current electric energy rate (scaled)',
         )
         self.add_output(
-            Dynamic.Mission.NOX_RATE,
+            Dynamic.Vehicle.Propulsion.NOX_RATE,
             shape=nn,
             units='lbm/s',
             desc='Current NOx emission rate (scaled)',
         )
         self.add_output(
-            Dynamic.Mission.TEMPERATURE_T4,
+            Dynamic.Atmosphere.TEMPERATURE_T4,
             shape=nn,
             units='degR',
             desc='Current turbine exit temperature',
@@ -106,14 +106,15 @@ class SimpleEngine(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         combined_throttle = (
-            inputs[Dynamic.Mission.THROTTLE] + inputs['different_throttle']
+            inputs[Dynamic.Vehicle.Propulsion.THROTTLE] + inputs['different_throttle']
         )
 
         # calculate outputs
-        outputs[Dynamic.Mission.THRUST] = 10000.0 * combined_throttle
-        outputs[Dynamic.Mission.THRUST_MAX] = 10000.0
-        outputs[Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE] = -10.0 * combined_throttle
-        outputs[Dynamic.Mission.TEMPERATURE_T4] = 2800.0
+        outputs[Dynamic.Vehicle.Propulsion.THRUST] = 10000.0 * combined_throttle
+        outputs[Dynamic.Vehicle.Propulsion.THRUST_MAX] = 10000.0
+        outputs[Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE] = - \
+            10.0 * combined_throttle
+        outputs[Dynamic.Atmosphere.TEMPERATURE_T4] = 2800.0
 
 
 class SimpleTestEngine(EngineModel):

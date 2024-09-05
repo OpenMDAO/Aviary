@@ -34,7 +34,7 @@ class PreMissionAero(om.Group):
         self.add_subsystem(
             name='atmosphere',
             subsys=Atmosphere(num_nodes=1, input_speed_type=SpeedType.MACH),
-            promotes=['*', (Dynamic.Mission.ALTITUDE, "alt_flaps")],
+            promotes=['*', (Dynamic.Atmosphere.ALTITUDE, "alt_flaps")],
         )
 
         self.add_subsystem(
@@ -46,7 +46,7 @@ class PreMissionAero(om.Group):
                 kinematic_viscosity={"units": "ft**2/s"},
             ),
             promotes=["viscosity", "kinematic_viscosity",
-                      ("rho", Dynamic.Mission.DENSITY)],
+                      ("rho", Dynamic.Atmosphere.DENSITY)],
         )
 
         self.add_subsystem(

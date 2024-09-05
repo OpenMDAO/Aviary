@@ -52,12 +52,12 @@ class FlightPathODE(BaseODE):
             kwargs['output_alpha'] = False
 
         EOM_inputs = [
-            Dynamic.Mission.MASS,
-            Dynamic.Mission.THRUST_TOTAL,
-            Dynamic.Mission.LIFT,
-            Dynamic.Mission.DRAG,
-            Dynamic.Mission.VELOCITY,
-            Dynamic.Mission.FLIGHT_PATH_ANGLE,
+            Dynamic.Vehicle.MASS,
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            Dynamic.Vehicle.LIFT,
+            Dynamic.Vehicle.DRAG,
+            Dynamic.Atmosphere.VELOCITY,
+            Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
         ] + ['aircraft:*']
         if not self.options['ground_roll']:
             EOM_inputs.append('alpha')
@@ -66,12 +66,14 @@ class FlightPathODE(BaseODE):
             SGM_required_inputs = {
                 't_curr': {'units': 's'},
                 'distance_trigger': {'units': 'ft'},
-                Dynamic.Mission.ALTITUDE: {'units': 'ft'},
+                Dynamic.Atmosphere.ALTITUDE: {'units': 'ft'},
                 Dynamic.Mission.DISTANCE: {'units': 'ft'},
             }
             if kwargs['method'] == 'cruise':
-                SGM_required_inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE] = {
-                    'val': 0, 'units': 'deg'}
+                SGM_required_inputs[Dynamic.Vehicle.FLIGHT_PATH_ANGLE] = {
+                    'val': 0,
+                    'units': 'deg',
+                }
             add_SGM_required_inputs(self, SGM_required_inputs)
             prop_group = om.Group()
         else:
@@ -102,8 +104,8 @@ class FlightPathODE(BaseODE):
                 self.add_subsystem(
                     "calc_weight",
                     MassToWeight(num_nodes=nn),
-                    promotes_inputs=[("mass", Dynamic.Mission.MASS)],
-                    promotes_outputs=["weight"]
+                    promotes_inputs=[("mass", Dynamic.Vehicle.MASS)],
+                    promotes_outputs=["weight"],
                 )
                 self.add_subsystem(
                     'calc_lift',
@@ -118,12 +120,12 @@ class FlightPathODE(BaseODE):
                     ),
                     promotes_inputs=[
                         'weight',
-                        ('thrust', Dynamic.Mission.THRUST_TOTAL),
+                        ('thrust', Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL),
                         'alpha',
-                        ('gamma', Dynamic.Mission.FLIGHT_PATH_ANGLE),
-                        ('i_wing', Aircraft.Wing.INCIDENCE)
+                        ('gamma', Dynamic.Vehicle.FLIGHT_PATH_ANGLE),
+                        ('i_wing', Aircraft.Wing.INCIDENCE),
                     ],
-                    promotes_outputs=['required_lift']
+                    promotes_outputs=['required_lift'],
                 )
             self.AddAlphaControl(
                 alpha_mode=alpha_mode,
@@ -161,13 +163,13 @@ class FlightPathODE(BaseODE):
                     i_wing={'val': 0, 'units': 'rad'},
                 ),
                 promotes_inputs=[
-                    ('drag', Dynamic.Mission.DRAG),
+                    ('drag', Dynamic.Vehicle.DRAG),
                     # 'weight',
                     # 'alpha',
-                    # ('gamma', Dynamic.Mission.FLIGHT_PATH_ANGLE),
-                    ('i_wing', Aircraft.Wing.INCIDENCE)
+                    # ('gamma', Dynamic.Vehicle.FLIGHT_PATH_ANGLE),
+                    ('i_wing', Aircraft.Wing.INCIDENCE),
                 ],
-                promotes_outputs=['required_thrust']
+                promotes_outputs=['required_thrust'],
             )
 
             self.AddThrottleControl(prop_group=prop_group,
@@ -181,7 +183,7 @@ class FlightPathODE(BaseODE):
             ),
             promotes_inputs=EOM_inputs,
             promotes_outputs=[
-                Dynamic.Mission.VELOCITY_RATE,
+                Dynamic.Atmosphere.VELOCITYITY_RATE,
                 Dynamic.Mission.DISTANCE_RATE,
                 "normal_force",
                 "fuselage_pitch",
@@ -190,8 +192,13 @@ class FlightPathODE(BaseODE):
         )
 
         if not self.options['ground_roll']:
-            self.promotes('flight_path_eom', outputs=[
-                          Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE])
+            self.promotes(
+                'flight_path_eom',
+                outputs=[
+                    Dynamic.Atmosphere.ALTITUDE_RATE,
+                    Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE,
+                ],
+            )
 
         self.add_excess_rate_comps(nn)
 
@@ -201,9 +208,14 @@ class FlightPathODE(BaseODE):
             self.set_input_defaults("t_init_gear", val=37.3)
             self.set_input_defaults("t_curr", val=np.zeros(nn), units="s")
         self.set_input_defaults("alpha", val=np.zeros(nn), units="rad")
-        self.set_input_defaults(Dynamic.Mission.FLIGHT_PATH_ANGLE,
-                                val=np.zeros(nn), units="deg")
-        self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.zeros(nn), units="ft")
+        self.set_input_defaults(
+            Dynamic.Vehicle.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units="deg"
+        )
+        self.set_input_defaults(
+            Dynamic.Atmosphere.ALTITUDEUDE, val=np.zeros(nn), units="ft"
+        )
         self.set_input_defaults(Dynamic.Mission.MACH, val=np.zeros(nn), units="unitless")
-        self.set_input_defaults(Dynamic.Mission.MASS, val=np.zeros(nn), units="lbm")
-        self.set_input_defaults(Dynamic.Mission.VELOCITY, val=np.zeros(nn), units="kn")
+        self.set_input_defaults(Dynamic.Vehicle.MASS, val=np.zeros(nn), units="lbm")
+        self.set_input_defaults(
+            Dynamic.Atmosphere.VELOCITY, val=np.zeros(nn), units="kn"
+        )

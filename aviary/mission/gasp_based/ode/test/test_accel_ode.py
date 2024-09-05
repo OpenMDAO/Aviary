@@ -28,18 +28,22 @@ class AccelerationODETestCase(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
         throttle_climb = 0.956
-        self.prob.set_val(Dynamic.Mission.ALTITUDE, [500, 500], units="ft")
+        self.prob.set_val(Dynamic.Atmosphere.ALTITUDE, [500, 500], units="ft")
         self.prob.set_val(
-            Dynamic.Mission.THROTTLE, [
-                throttle_climb, throttle_climb], units='unitless')
-        self.prob.set_val(Dynamic.Mission.VELOCITY, [185, 252], units="kn")
-        self.prob.set_val(Dynamic.Mission.MASS, [174974, 174878], units="lbm")
+            Dynamic.Vehicle.Propulsion.THROTTLE,
+            [throttle_climb, throttle_climb],
+            units='unitless',
+        )
+        self.prob.set_val(Dynamic.Atmosphere.VELOCITY, [185, 252], units="kn")
+        self.prob.set_val(Dynamic.Vehicle.MASS, [174974, 174878], units="lbm")
 
         self.prob.run_model()
         testvals = {
-            Dynamic.Mission.LIFT: [174974, 174878],
-            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: [
-                -13262.73, -13567.53]  # lbm/h
+            Dynamic.Vehicle.LIFT: [174974, 174878],
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL: [
+                -13262.73,
+                -13567.53,
+            ],  # lbm/h
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 

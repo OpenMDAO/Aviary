@@ -53,8 +53,9 @@ class SkinFriction(om.ImplicitComponent):
         self.nc = nc = 2 + num_tails + num_fuselages + int(sum(num_engines))
 
         # Simulation inputs
-        self.add_input(Dynamic.Mission.TEMPERATURE, np.ones(nn), units='degR')
-        self.add_input(Dynamic.Mission.STATIC_PRESSURE, np.ones(nn), units='lbf/ft**2')
+        self.add_input(Dynamic.Atmosphere.TEMPERATURE, np.ones(nn), units='degR')
+        self.add_input(Dynamic.Atmosphere.STATIC_PRESSURE,
+                       np.ones(nn), units='lbf/ft**2')
         self.add_input(Dynamic.Mission.MACH, np.ones(nn), units='unitless')
 
         # Aero subsystem inputs
@@ -86,14 +87,14 @@ class SkinFriction(om.ImplicitComponent):
         col = np.arange(nn)
         cols = np.repeat(col, nc)
         self.declare_partials(
-            'cf_iter', [Dynamic.Mission.TEMPERATURE, Dynamic.Mission.STATIC_PRESSURE, Dynamic.Mission.MACH], rows=row_col, cols=cols)
+            'cf_iter', [Dynamic.Atmosphere.TEMPERATURE, Dynamic.Atmosphere.STATIC_PRESSURE, Dynamic.Mission.MACH], rows=row_col, cols=cols)
         self.declare_partials(
-            'wall_temp', [Dynamic.Mission.TEMPERATURE, Dynamic.Mission.STATIC_PRESSURE, Dynamic.Mission.MACH], rows=row_col, cols=cols)
+            'wall_temp', [Dynamic.Atmosphere.TEMPERATURE, Dynamic.Atmosphere.STATIC_PRESSURE, Dynamic.Mission.MACH], rows=row_col, cols=cols)
         self.declare_partials(
-            'Re', [Dynamic.Mission.TEMPERATURE, Dynamic.Mission.STATIC_PRESSURE, Dynamic.Mission.MACH], rows=row_col, cols=cols)
+            'Re', [Dynamic.Atmosphere.TEMPERATURE, Dynamic.Atmosphere.STATIC_PRESSURE, Dynamic.Mission.MACH], rows=row_col, cols=cols)
         self.declare_partials(
-            'skin_friction_coeff', [Dynamic.Mission.TEMPERATURE,
-                                    Dynamic.Mission.STATIC_PRESSURE, Dynamic.Mission.MACH],
+            'skin_friction_coeff', [Dynamic.Atmosphere.TEMPERATURE,
+                                    Dynamic.Atmosphere.STATIC_PRESSURE, Dynamic.Mission.MACH],
             rows=row_col, cols=cols)
 
         col = np.arange(nc)
@@ -189,8 +190,8 @@ class SkinFriction(om.ImplicitComponent):
         dreyn_dmach = np.einsum('i,j->ij', RE, length)
         dreyn_dlen = np.tile(RE * mach, nc).reshape((nc, nn)).T
 
-        partials['Re', Dynamic.Mission.STATIC_PRESSURE] = -dreyn_dp.ravel()
-        partials['Re', Dynamic.Mission.TEMPERATURE] = -dreyn_dT.ravel()
+        partials['Re', Dynamic.Atmosphere.STATIC_PRESSURE] = -dreyn_dp.ravel()
+        partials['Re', Dynamic.Atmosphere.TEMPERATURE] = -dreyn_dT.ravel()
         partials['Re', Dynamic.Mission.MACH] = -dreyn_dmach.ravel()
         partials['Re', 'characteristic_lengths'] = -dreyn_dlen.ravel()
 
@@ -228,9 +229,9 @@ class SkinFriction(om.ImplicitComponent):
             -0.5 - 1.5 * self.TAW * np.einsum('i,ij->ij', combined_const, wall_temp ** 2)
             / (CFL * den ** 2))
 
-        partials['wall_temp', Dynamic.Mission.STATIC_PRESSURE] = (
+        partials['wall_temp', Dynamic.Atmosphere.STATIC_PRESSURE] = (
             np.einsum('ij,i->ij', dreswt_dcomb, dcomb_dp)).ravel()
-        partials['wall_temp', Dynamic.Mission.TEMPERATURE] = (
+        partials['wall_temp', Dynamic.Atmosphere.TEMPERATURE] = (
             np.einsum('ij,i->ij', dreswt_dcomb, dcomb_dT)
             + dreswt_dCFL * dCFL_dT).ravel()
         partials['wall_temp', Dynamic.Mission.MACH] = (
@@ -260,9 +261,10 @@ class SkinFriction(om.ImplicitComponent):
         drescf_dRP = -2.0 * fact / (RP * np.log(RP * cf) ** 3)
         drescf_dcf = -2.0 * fact / (cf * np.log(RP * cf) ** 3) - 1.0
 
-        partials['cf_iter', Dynamic.Mission.STATIC_PRESSURE] = (
+        partials['cf_iter', Dynamic.Atmosphere.STATIC_PRESSURE] = (
             drescf_dRP * dRP_dp).ravel()
-        partials['cf_iter', Dynamic.Mission.TEMPERATURE] = (drescf_dRP * dRP_dT).ravel()
+        partials['cf_iter', Dynamic.Atmosphere.TEMPERATURE] = (
+            drescf_dRP * dRP_dT).ravel()
         partials['cf_iter', Dynamic.Mission.MACH] = (drescf_dRP * dRP_dmach).ravel()
         partials['cf_iter', 'characteristic_lengths'] = (drescf_dRP * dRP_dlen).ravel()
         partials['cf_iter', 'wall_temp'] = (drescf_dRP * dRP_dwt).ravel()
@@ -270,7 +272,7 @@ class SkinFriction(om.ImplicitComponent):
 
         dskf_dwtr = outputs['cf_iter'] / wall_temp_ratio ** 2
 
-        partials['skin_friction_coeff', Dynamic.Mission.TEMPERATURE] = (
+        partials['skin_friction_coeff', Dynamic.Atmosphere.TEMPERATURE] = (
             dskf_dwtr * dwtr_dT).ravel()
         partials['skin_friction_coeff', Dynamic.Mission.MACH] = np.einsum(
             'ij,i->ij', dskf_dwtr, dwtr_dmach).ravel()

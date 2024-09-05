@@ -30,27 +30,27 @@ class FlightPathODETestCase(unittest.TestCase):
         """
         self.prob.setup(check=False, force_alloc_complex=True)
 
-        self.prob.set_val(Dynamic.Mission.VELOCITY, [100, 100], units="kn")
-        self.prob.set_val(Dynamic.Mission.MASS, [100000, 100000], units="lbm")
-        self.prob.set_val(Dynamic.Mission.ALTITUDE, [500, 500], units="ft")
+        self.prob.set_val(Dynamic.Atmosphere.VELOCITY, [100, 100], units="kn")
+        self.prob.set_val(Dynamic.Vehicle.MASS, [100000, 100000], units="lbm")
+        self.prob.set_val(Dynamic.Atmosphere.ALTITUDE, [500, 500], units="ft")
 
         self.prob.run_model()
         testvals = {
-            Dynamic.Mission.VELOCITY_RATE: [14.0673, 14.0673],
-            Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE: [-0.1429133, -0.1429133],
-            Dynamic.Mission.ALTITUDE_RATE: [0.0, 0.0],
+            Dynamic.Atmosphere.VELOCITYITY_RATE: [14.0673, 14.0673],
+            Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE: [-0.1429133, -0.1429133],
+            Dynamic.Atmosphere.ALTITUDEUDE_RATE: [0.0, 0.0],
             Dynamic.Mission.DISTANCE_RATE: [168.781, 168.781],
             "normal_force": [74910.12, 74910.12],
             "fuselage_pitch": [0.0, 0.0],
             "load_factor": [0.2508988, 0.2508988],
-            Dynamic.Mission.ALTITUDE_RATE: [0.0, 0.0],
-            Dynamic.Mission.ALTITUDE_RATE_MAX: [-0.01812796, -0.01812796],
+            Dynamic.Atmosphere.ALTITUDEUDE_RATE: [0.0, 0.0],
+            Dynamic.Atmosphere.ALTITUDEUDE_RATE_MAX: [-0.01812796, -0.01812796],
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
         tol = 1e-6
         assert_near_equal(
-            self.prob[Dynamic.Mission.ALTITUDE_RATE], np.array(
+            self.prob[Dynamic.Atmosphere.ALTITUDEUDE_RATE], np.array(
                 [0, 0]), tol
         )
 
@@ -66,18 +66,18 @@ class FlightPathODETestCase(unittest.TestCase):
         self.fp.options["ground_roll"] = True
         self.prob.setup(check=False, force_alloc_complex=True)
 
-        self.prob.set_val(Dynamic.Mission.VELOCITY, [100, 100], units="kn")
-        self.prob.set_val(Dynamic.Mission.MASS, [100000, 100000], units="lbm")
-        self.prob.set_val(Dynamic.Mission.ALTITUDE, [500, 500], units="ft")
+        self.prob.set_val(Dynamic.Atmosphere.VELOCITY, [100, 100], units="kn")
+        self.prob.set_val(Dynamic.Vehicle.MASS, [100000, 100000], units="lbm")
+        self.prob.set_val(Dynamic.Atmosphere.ALTITUDE, [500, 500], units="ft")
 
         self.prob.run_model()
         testvals = {
-            Dynamic.Mission.VELOCITY_RATE: [13.58489, 13.58489],
+            Dynamic.Atmosphere.VELOCITYITY_RATE: [13.58489, 13.58489],
             Dynamic.Mission.DISTANCE_RATE: [168.781, 168.781],
             "normal_force": [74910.12, 74910.12],
             "fuselage_pitch": [0.0, 0.0],
             "load_factor": [0.2508988, 0.2508988],
-            Dynamic.Mission.ALTITUDE_RATE_MAX: [0.7532356, 0.7532356],
+            Dynamic.Atmosphere.ALTITUDEUDE_RATE_MAX: [0.7532356, 0.7532356],
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 

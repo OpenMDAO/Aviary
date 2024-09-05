@@ -14,19 +14,23 @@ class AscentEOMTestCase(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem("group", AscentEOM(num_nodes=2), promotes=["*"])
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.MASS, val=175400 * np.ones(2), units="lbm"
+            Dynamic.Vehicle.MASS, val=175400 * np.ones(2), units="lbm"
         )
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.THRUST_TOTAL, val=22000 * np.ones(2), units="lbf"
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL, val=22000 * np.ones(2), units="lbf"
         )
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.LIFT, val=200 * np.ones(2), units="lbf")
+            Dynamic.Vehicle.LIFT, val=200 * np.ones(2), units="lbf"
+        )
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.DRAG, val=10000 * np.ones(2), units="lbf")
+            Dynamic.Vehicle.DRAG, val=10000 * np.ones(2), units="lbf"
+        )
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.VELOCITY, val=10 * np.ones(2), units="ft/s")
+            Dynamic.Atmosphere.VELOCITY, val=10 * np.ones(2), units="ft/s"
+        )
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(2), units="rad")
+            Dynamic.Vehicle.FLIGHT_PATH_ANGLE, val=np.zeros(2), units="rad"
+        )
         self.prob.model.set_input_defaults(Aircraft.Wing.INCIDENCE, val=0, units="deg")
         self.prob.model.set_input_defaults("alpha", val=np.zeros(2), units="deg")
 
@@ -38,12 +42,14 @@ class AscentEOMTestCase(unittest.TestCase):
         self.prob.run_model()
 
         assert_near_equal(
-            self.prob[Dynamic.Mission.VELOCITY_RATE], np.array(
-                [2.202965, 2.202965]), tol
+            self.prob[Dynamic.Atmosphere.VELOCITYITY_RATE],
+            np.array([2.202965, 2.202965]),
+            tol,
         )
         assert_near_equal(
-            self.prob[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE], np.array(
-                [-3.216328, -3.216328]), tol
+            self.prob[Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE],
+            np.array([-3.216328, -3.216328]),
+            tol,
         )
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")

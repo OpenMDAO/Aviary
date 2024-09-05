@@ -31,8 +31,8 @@ class InducedDragTest(unittest.TestCase):
         prob.setup(force_alloc_complex=True)
 
         prob.set_val(Dynamic.Mission.MACH, val=mach)
-        prob.set_val(Dynamic.Mission.LIFT, val=lift)
-        prob.set_val(Dynamic.Mission.STATIC_PRESSURE, val=P)
+        prob.set_val(Dynamic.Vehicle.LIFT, val=lift)
+        prob.set_val(Dynamic.Atmosphere.STATIC_PRESSURE, val=P)
         prob.set_val(Aircraft.Wing.AREA, val=Sref)
         prob.set_val(Aircraft.Wing.SWEEP, val=-25.03)
         prob.set_val(Aircraft.Wing.TAPER_RATIO, 0.278)
@@ -70,8 +70,8 @@ class InducedDragTest(unittest.TestCase):
         prob.setup(force_alloc_complex=True)
 
         prob.set_val(Dynamic.Mission.MACH, val=mach)
-        prob.set_val(Dynamic.Mission.LIFT, val=lift)
-        prob.set_val(Dynamic.Mission.STATIC_PRESSURE, val=P)
+        prob.set_val(Dynamic.Vehicle.LIFT, val=lift)
+        prob.set_val(Dynamic.Atmosphere.STATIC_PRESSURE, val=P)
         prob.set_val(Aircraft.Wing.AREA, val=Sref)
         prob.set_val(Aircraft.Wing.SWEEP, val=-25.10)
         prob.set_val(Aircraft.Wing.TAPER_RATIO, 0.312)
@@ -99,8 +99,8 @@ class InducedDragTest(unittest.TestCase):
         prob.setup(force_alloc_complex=True)
 
         prob.set_val(Dynamic.Mission.MACH, val=mach)
-        prob.set_val(Dynamic.Mission.LIFT, val=lift)
-        prob.set_val(Dynamic.Mission.STATIC_PRESSURE, val=P)
+        prob.set_val(Dynamic.Vehicle.LIFT, val=lift)
+        prob.set_val(Dynamic.Atmosphere.STATIC_PRESSURE, val=P)
         prob.set_val(Aircraft.Wing.AREA, val=Sref)
         prob.set_val(Aircraft.Wing.SWEEP, val=-25.10)
         prob.set_val(Aircraft.Wing.TAPER_RATIO, 0.312)

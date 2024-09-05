@@ -77,8 +77,8 @@ def make_problem(subsystem_options={}):
     dynamic_inputs = AviaryValues(
         {
             'angle_of_attack': (np.array([0.0, 2.0, 6.0]), 'deg'),
-            Dynamic.Mission.ALTITUDE: (np.array([0.0, 32.0, 55.0]), 'm'),
-            Dynamic.Mission.FLIGHT_PATH_ANGLE: (np.array([0.0, 0.5, 1.0]), 'deg'),
+            Dynamic.Atmosphere.ALTITUDE: (np.array([0.0, 32.0, 55.0]), 'm'),
+            Dynamic.Vehicle.FLIGHT_PATH_ANGLE: (np.array([0.0, 0.5, 1.0]), 'deg'),
         }
     )
 
@@ -88,7 +88,7 @@ def make_problem(subsystem_options={}):
     prob.model.add_subsystem(
         name='atmosphere',
         subsys=Atmosphere(num_nodes=nn),
-        promotes=['*', (Dynamic.Mission.DYNAMIC_PRESSURE, 'skip')],
+        promotes=['*', (Dynamic.Atmosphere.DYNAMIC_PRESSURE, 'skip')],
     )
 
     aero_builder = CoreAerodynamicsBuilder(code_origin=LegacyCode.FLOPS)
@@ -102,7 +102,7 @@ def make_problem(subsystem_options={}):
             **subsystem_options['core_aerodynamics']),
         promotes_outputs=aero_builder.mission_outputs(**subsystem_options['core_aerodynamics']))
 
-    prob.model.set_input_defaults(Dynamic.Mission.ALTITUDE, np.zeros(nn), 'm')
+    prob.model.set_input_defaults(Dynamic.Atmosphere.ALTITUDEUDE, np.zeros(nn), 'm')
 
     prob.setup(force_alloc_complex=True)
 
@@ -132,22 +132,36 @@ _units_drag = 'N'
 #    - last generated 2023 June 8
 # - generate new regression data if, and only if, takeoff aero group is updated with a
 #   more trusted implementation
-_regression_data = AviaryValues({
-    Dynamic.Mission.LIFT: (
-        [3028.138891962988, 4072.059743068957, 6240.85493286], _units_lift),
-    Dynamic.Mission.DRAG: (
-        [434.6285684000267, 481.5245555324278, 586.0976806512001], _units_drag)})
+_regression_data = AviaryValues(
+    {
+        Dynamic.Vehicle.LIFT: (
+            [3028.138891962988, 4072.059743068957, 6240.85493286],
+            _units_lift,
+        ),
+        Dynamic.Vehicle.DRAG: (
+            [434.6285684000267, 481.5245555324278, 586.0976806512001],
+            _units_drag,
+        ),
+    }
+)
 
 # NOTE:
 # - results from `generate_regression_data_spoiler()`
 #    - last generated 2023 June 8
 # - generate new regression data if, and only if, takeoff aero group is updated with a
 #   more trusted implementation
-_regression_data_spoiler = AviaryValues({
-    Dynamic.Mission.LIFT: (
-        [-1367.5937129210124, -323.67286181504335, 1845.1223279759993], _units_lift),
-    Dynamic.Mission.DRAG: (
-        [895.9091503940268, 942.8051375264279, 1047.3782626452], _units_drag)})
+_regression_data_spoiler = AviaryValues(
+    {
+        Dynamic.Vehicle.LIFT: (
+            [-1367.5937129210124, -323.67286181504335, 1845.1223279759993],
+            _units_lift,
+        ),
+        Dynamic.Vehicle.DRAG: (
+            [895.9091503940268, 942.8051375264279, 1047.3782626452],
+            _units_drag,
+        ),
+    }
+)
 
 
 def generate_regression_data():
@@ -202,8 +216,8 @@ def _generate_regression_data(subsystem_options={}):
 
     prob.run_model()
 
-    lift = prob.get_val(Dynamic.Mission.LIFT, _units_lift)
-    drag = prob.get_val(Dynamic.Mission.DRAG, _units_drag)
+    lift = prob.get_val(Dynamic.Vehicle.LIFT, _units_lift)
+    drag = prob.get_val(Dynamic.Vehicle.DRAG, _units_drag)
 
     prob.check_partials(compact_print=True, method="cs")
 

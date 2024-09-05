@@ -30,10 +30,13 @@ class AscentODE(BaseODE):
         # TODO: paramport
         ascent_params = ParamPort()
         if analysis_scheme is AnalysisScheme.SHOOTING:
-            add_SGM_required_inputs(self, {
-                Dynamic.Mission.ALTITUDE: {'units': 'ft'},
-                Dynamic.Mission.DISTANCE: {'units': 'ft'},
-            })
+            add_SGM_required_inputs(
+                self,
+                {
+                    Dynamic.Atmosphere.ALTITUDE: {'units': 'ft'},
+                    Dynamic.Mission.DISTANCE: {'units': 'ft'},
+                },
+            )
 
             ascent_params.add_params({
                 Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE: dict(units='deg', val=0),
@@ -62,18 +65,19 @@ class AscentODE(BaseODE):
             "ascent_eom",
             AscentEOM(num_nodes=nn),
             promotes_inputs=[
-                Dynamic.Mission.MASS,
-                Dynamic.Mission.THRUST_TOTAL,
-                Dynamic.Mission.LIFT,
-                Dynamic.Mission.DRAG,
-                Dynamic.Mission.VELOCITY,
-                Dynamic.Mission.FLIGHT_PATH_ANGLE,
+                Dynamic.Vehicle.MASS,
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                Dynamic.Vehicle.LIFT,
+                Dynamic.Vehicle.DRAG,
+                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
                 "alpha",
-            ] + ["aircraft:*"],
+            ]
+            + ["aircraft:*"],
             promotes_outputs=[
-                Dynamic.Mission.VELOCITY_RATE,
-                Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
-                Dynamic.Mission.ALTITUDE_RATE,
+                Dynamic.Atmosphere.VELOCITYITY_RATE,
+                Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE,
+                Dynamic.Atmosphere.ALTITUDE_RATE,
                 Dynamic.Mission.DISTANCE_RATE,
                 "alpha_rate",
                 "normal_force",
@@ -88,14 +92,20 @@ class AscentODE(BaseODE):
         self.set_input_defaults("t_init_flaps", val=47.5)
         self.set_input_defaults("t_init_gear", val=37.3)
         self.set_input_defaults("alpha", val=np.zeros(nn), units="deg")
-        self.set_input_defaults(Dynamic.Mission.FLIGHT_PATH_ANGLE,
-                                val=np.zeros(nn), units="deg")
-        self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.zeros(nn), units="ft")
-        self.set_input_defaults(Dynamic.Mission.VELOCITY, val=np.zeros(nn), units="kn")
+        self.set_input_defaults(
+            Dynamic.Vehicle.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units="deg"
+        )
+        self.set_input_defaults(
+            Dynamic.Atmosphere.ALTITUDEUDE, val=np.zeros(nn), units="ft"
+        )
+        self.set_input_defaults(
+            Dynamic.Atmosphere.VELOCITY, val=np.zeros(nn), units="kn"
+        )
         self.set_input_defaults("t_curr", val=np.zeros(nn), units="s")
         self.set_input_defaults('aero_ramps.flap_factor:final_val', val=0.)
         self.set_input_defaults('aero_ramps.gear_factor:final_val', val=0.)
         self.set_input_defaults('aero_ramps.flap_factor:initial_val', val=1.)
         self.set_input_defaults('aero_ramps.gear_factor:initial_val', val=1.)
-        self.set_input_defaults(Dynamic.Mission.MASS, val=np.ones(
-            nn), units='kg')  # val here is nominal
+        self.set_input_defaults(
+            Dynamic.Vehicle.MASS, val=np.ones(nn), units='kg'
+        )  # val here is nominal

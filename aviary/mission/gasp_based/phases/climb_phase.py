@@ -62,7 +62,7 @@ class ClimbPhase(PhaseBuilderBase):
 
         # Boundary Constraints
         phase.add_boundary_constraint(
-            Dynamic.Mission.ALTITUDE,
+            Dynamic.Atmosphere.ALTITUDE,
             loc="final",
             equals=final_altitude,
             units="ft",
@@ -72,7 +72,7 @@ class ClimbPhase(PhaseBuilderBase):
         if required_available_climb_rate is not None:
             # TODO: this should be altitude rate max
             phase.add_boundary_constraint(
-                Dynamic.Mission.ALTITUDE_RATE,
+                Dynamic.Atmosphere.ALTITUDE_RATE,
                 loc="final",
                 lower=required_available_climb_rate,
                 units="ft/min",
@@ -89,19 +89,28 @@ class ClimbPhase(PhaseBuilderBase):
             Dynamic.Mission.MACH, output_name=Dynamic.Mission.MACH, units="unitless")
         phase.add_timeseries_output("EAS", output_name="EAS", units="kn")
         phase.add_timeseries_output(
-            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units="lbm/s")
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units="lbm/s"
+        )
         phase.add_timeseries_output("theta", output_name="theta", units="deg")
         phase.add_timeseries_output("alpha", output_name="alpha", units="deg")
-        phase.add_timeseries_output(Dynamic.Mission.FLIGHT_PATH_ANGLE,
-                                    output_name=Dynamic.Mission.FLIGHT_PATH_ANGLE, units="deg")
+        phase.add_timeseries_output(
+            Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+            output_name=Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+            units="deg",
+        )
         phase.add_timeseries_output(
             "TAS_violation", output_name="TAS_violation", units="kn")
         phase.add_timeseries_output(
-            Dynamic.Mission.VELOCITY, output_name=Dynamic.Mission.VELOCITY, units="kn"
+            Dynamic.Atmosphere.VELOCITY,
+            output_name=Dynamic.Atmosphere.VELOCITY,
+            units="kn",
         )
         phase.add_timeseries_output("aero.CL", output_name="CL", units="unitless")
         phase.add_timeseries_output(
-            Dynamic.Mission.THRUST_TOTAL, output_name=Dynamic.Mission.THRUST_TOTAL, units="lbf")
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            units="lbf",
+        )
         phase.add_timeseries_output("aero.CD", output_name="CD", units="unitless")
 
         return phase

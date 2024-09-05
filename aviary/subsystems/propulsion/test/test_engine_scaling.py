@@ -78,9 +78,11 @@ class EngineScalingTest(unittest.TestCase):
 
         self.prob.run_model()
 
-        thrust = self.prob.get_val(Dynamic.Mission.THRUST)
-        fuel_flow = self.prob.get_val(Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE)
-        nox_rate = self.prob.get_val(Dynamic.Mission.NOX_RATE)
+        thrust = self.prob.get_val(Dynamic.Vehicle.Propulsion.THRUST)
+        fuel_flow = self.prob.get_val(
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE
+        )
+        nox_rate = self.prob.get_val(Dynamic.Vehicle.Propulsion.NOX_RATE)
         # exit_area = self.prob.get_val(Dynamic.Mission.EXIT_AREA)
 
         thrust_expected = np.array([900.0, 900.0, 900.0, 900])

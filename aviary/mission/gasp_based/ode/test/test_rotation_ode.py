@@ -28,23 +28,23 @@ class RotationODETestCase(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
         self.prob.set_val(Aircraft.Wing.INCIDENCE, 1.5, units="deg")
-        self.prob.set_val(Dynamic.Mission.MASS, [100000, 100000], units="lbm")
+        self.prob.set_val(Dynamic.Vehicle.MASS, [100000, 100000], units="lbm")
         self.prob.set_val("alpha", [1.5, 1.5], units="deg")
-        self.prob.set_val(Dynamic.Mission.VELOCITY, [100, 100], units="kn")
+        self.prob.set_val(Dynamic.Atmosphere.VELOCITY, [100, 100], units="kn")
         self.prob.set_val("t_curr", [1, 2], units="s")
 
         self.prob.run_model()
 
         tol = 1e-6
         assert_near_equal(
-            self.prob[Dynamic.Mission.VELOCITY_RATE], np.array(
+            self.prob[Dynamic.Atmosphere.VELOCITYITY_RATE], np.array(
                 [13.66655, 13.66655]), tol)
         assert_near_equal(
-            self.prob[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE], np.array(
+            self.prob[Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE], np.array(
                 [0.0, 0.0]), tol)
         assert_near_equal(
-            self.prob[Dynamic.Mission.ALTITUDE_RATE], np.array(
-                [0.0, 0.0]), tol)
+            self.prob[Dynamic.Atmosphere.ALTITUDE_RATE], np.array([0.0, 0.0]), tol
+        )
         assert_near_equal(
             self.prob[Dynamic.Mission.DISTANCE_RATE], np.array(
                 [168.781, 168.781]), tol)

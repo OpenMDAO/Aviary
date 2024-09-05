@@ -23,16 +23,16 @@ class TestUnsteadySolvedEOM(unittest.TestCase):
 
         p.setup(force_alloc_complex=True)
 
-        p.set_val(Dynamic.Mission.VELOCITY, 250, units="kn")
+        p.set_val(Dynamic.Atmosphere.VELOCITY, 250, units="kn")
         p.set_val("mass", 175_000, units="lbm")
-        p.set_val(Dynamic.Mission.THRUST_TOTAL, 20_000, units="lbf")
-        p.set_val(Dynamic.Mission.LIFT, 175_000, units="lbf")
-        p.set_val(Dynamic.Mission.DRAG, 20_000, units="lbf")
+        p.set_val(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, 20_000, units="lbf")
+        p.set_val(Dynamic.Vehicle.LIFT, 175_000, units="lbf")
+        p.set_val(Dynamic.Vehicle.DRAG, 20_000, units="lbf")
         p.set_val(Aircraft.Wing.INCIDENCE, 0.0, units="deg")
 
         if not ground_roll:
             p.set_val("alpha", 0.0, units="deg")
-            p.set_val(Dynamic.Mission.FLIGHT_PATH_ANGLE, 0, units="deg")
+            p.set_val(Dynamic.Vehicle.FLIGHT_PATH_ANGLE, 0, units="deg")
             p.set_val("dh_dr", 0, units=None)
             p.set_val("d2h_dr2", 0, units="1/m")
 
@@ -66,17 +66,17 @@ class TestUnsteadySolvedEOM(unittest.TestCase):
             assert_near_equal(dgam_dt, np.zeros(nn), tolerance=1.0E-12)
             assert_near_equal(dgam_dt_approx, np.zeros(nn), tolerance=1.0E-12)
 
-        p.set_val(Dynamic.Mission.VELOCITY, 250 + 10 * np.random.rand(nn), units="kn")
+        p.set_val(Dynamic.Atmosphere.VELOCITY, 250 + 10 * np.random.rand(nn), units="kn")
         p.set_val("mass", 175_000 + 1000 * np.random.rand(nn), units="lbm")
-        p.set_val(Dynamic.Mission.THRUST_TOTAL, 20_000 +
+        p.set_val(Dynamic.Vehicle.Propulsion.THRUSTsion.THRUST_TOTAL, 20_000 +
                   100 * np.random.rand(nn), units="lbf")
-        p.set_val(Dynamic.Mission.LIFT, 175_000 + 1000 * np.random.rand(nn), units="lbf")
-        p.set_val(Dynamic.Mission.DRAG, 20_000 + 100 * np.random.rand(nn), units="lbf")
+        p.set_val(Dynamic.Vehicle.LIFT, 175_000 + 1000 * np.random.rand(nn), units="lbf")
+        p.set_val(Dynamic.Vehicle.DRAG, 20_000 + 100 * np.random.rand(nn), units="lbf")
         p.set_val(Aircraft.Wing.INCIDENCE, np.random.rand(1), units="deg")
 
         if not ground_roll:
             p.set_val("alpha", 5 * np.random.rand(nn), units="deg")
-            p.set_val(Dynamic.Mission.FLIGHT_PATH_ANGLE,
+            p.set_val(Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
                       5 * np.random.rand(nn), units="deg")
             p.set_val("dh_dr", 0.1 * np.random.rand(nn), units=None)
             p.set_val("d2h_dr2", 0.01 * np.random.rand(nn), units="1/m")
