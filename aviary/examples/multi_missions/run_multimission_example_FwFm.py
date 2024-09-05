@@ -262,7 +262,8 @@ def FwFm_example(makeN2=False):
                     (Aircraft.LandingGear.NOSE_GEAR_MASS, 'lbm'),
                     (Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, 'unitless'),
                     (Mission.Summary.CRUISE_MACH, 'unitless'),
-                    (Aircraft.Furnishings.MASS, 'lbm'),]
+                    (Aircraft.Furnishings.MASS, 'lbm'),
+                    (Aircraft.CrewPayload.PASSENGER_SERVICE_MASS, 'lbm')]
     super_prob.print_vars(vars=printoutputs)
 
     plotvars = [('altitude', 'ft'),
@@ -283,6 +284,6 @@ if __name__ == '__main__':
     makeN2 = True if (len(sys.argv) > 1 and "n2" in sys.argv[1]) else False
 
     super_prob = FwFm_example(makeN2=makeN2)
-
-    super_prob.model.list_vars(val=True, units=True, print_arrays=True)
+        
+    super_prob.model.group_0.list_vars(val=True, units=True, print_arrays=False)
     # https://openmdao.org/newdocs/versions/latest/features/debugging/listing_variables.html?highlight=list_driver_vars

@@ -57,7 +57,7 @@ class FuselageParameters(om.ExplicitComponent):
         num_aisle = aviary_options.get_val(Aircraft.Fuselage.NUM_AISLES)
         aisle_width = aviary_options.get_val(Aircraft.Fuselage.AISLE_WIDTH, units='inch')
         PAX = self.options['aviary_options'].get_val(
-            Aircraft.CrewPayload.NUM_PASSENGERS, units='unitless')
+            Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless')
         seat_pitch = aviary_options.get_val(Aircraft.Fuselage.SEAT_PITCH, units='inch')
         delta_diameter = inputs[Aircraft.Fuselage.DELTA_DIAMETER]
 

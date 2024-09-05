@@ -36,14 +36,19 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
     """
 
     if Aircraft.CrewPayload.NUM_PASSENGERS not in aviary_options:
-        passenger_count = 0
-        for key in (Aircraft.CrewPayload.NUM_FIRST_CLASS,
-                    Aircraft.CrewPayload.NUM_BUSINESS_CLASS,
-                    Aircraft.CrewPayload.NUM_TOURIST_CLASS):
-            if key in aviary_options:
-                passenger_count += aviary_options.get_val(key)
-        if passenger_count == 0:
-            passenger_count = 1
+        if Aircraft.CrewPayload.Design.NUM_PASSENGERS in aviary_options:
+            # Set the num_passengers to the designed number of passengers
+            passenger_count = aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS)
+        else:
+            # sum up the number of passengers
+            passenger_count = 0
+            for key in (Aircraft.CrewPayload.NUM_FIRST_CLASS,
+                        Aircraft.CrewPayload.NUM_BUSINESS_CLASS,
+                        Aircraft.CrewPayload.NUM_TOURIST_CLASS):
+                if key in aviary_options:
+                    passenger_count += aviary_options.get_val(key)
+            if passenger_count == 0:
+                passenger_count = 1
 
         aviary_options.set_val(
             Aircraft.CrewPayload.NUM_PASSENGERS, passenger_count)

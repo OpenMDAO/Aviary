@@ -132,7 +132,7 @@ class AltPassengerServiceMass(om.ExplicitComponent):
     ):
         aviary_options: AviaryValues = self.options['aviary_options']
         passenger_count = aviary_options.get_val(
-            Aircraft.CrewPayload.NUM_PASSENGERS, units='unitless')
+            Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless')
 
         passenger_service_mass_scaler = \
             inputs[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER]
@@ -146,7 +146,7 @@ class AltPassengerServiceMass(om.ExplicitComponent):
     def compute_partials(self, inputs, J, discrete_inputs=None):
         aviary_options: AviaryValues = self.options['aviary_options']
         passenger_count = aviary_options.get_val(
-            Aircraft.CrewPayload.NUM_PASSENGERS, units='unitless')
+            Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless')
 
         J[
             Aircraft.CrewPayload.PASSENGER_SERVICE_MASS,
