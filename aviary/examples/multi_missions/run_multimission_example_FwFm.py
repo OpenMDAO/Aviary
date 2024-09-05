@@ -129,7 +129,7 @@ class MultiMissionProblem(om.Problem):
 
     def run(self):
         self.model.set_solver_print(0)
-        dm.run_problem(self, make_plots=True)
+        dm.run_problem(self, make_plots=False)
 
     def get_design_range(self):
         """Finds the longest mission and sets its range as the design range for all
@@ -251,7 +251,9 @@ def FwFm_example(makeN2=False):
         createN2(__file__, super_prob)
 
     super_prob.run()
-    printoutputs = [(Aircraft.Design.EMPTY_MASS, 'lbm'),
+    printoutputs = [
+        (Mission.Design.GROSS_MASS, 'lbm'),
+        (Aircraft.Design.EMPTY_MASS, 'lbm'),
                     (Mission.Summary.FUEL_BURNED, 'lbm'),
                     (Mission.Summary.GROSS_MASS, 'lbm'),
                     (Aircraft.Wing.SPAN, 'ft'),
@@ -260,8 +262,7 @@ def FwFm_example(makeN2=False):
                     (Aircraft.LandingGear.NOSE_GEAR_MASS, 'lbm'),
                     (Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, 'unitless'),
                     (Mission.Summary.CRUISE_MACH, 'unitless'),
-                    (Aircraft.CrewPayload.NUM_PASSENGERS, 'unitless'),
-                    (Aircraft.CrewPayload.Design.NUM_PASSENGERS, 'unitless')]
+                    (Aircraft.Furnishings.MASS, 'lbm'),]
     super_prob.print_vars(vars=printoutputs)
 
     plotvars = [('altitude', 'ft'),
