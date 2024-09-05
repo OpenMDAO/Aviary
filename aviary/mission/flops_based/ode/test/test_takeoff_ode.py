@@ -4,12 +4,13 @@ from copy import deepcopy
 import openmdao.api as om
 
 from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.functions import set_aviary_initial_values
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.mission.flops_based.ode.takeoff_ode import TakeoffODE
 from aviary.models.N3CC.N3CC_data import (
     detailed_takeoff_climbing, detailed_takeoff_ground, takeoff_subsystem_options, inputs)
 from aviary.validation_cases.validation_tests import do_validation_test
-from aviary.variable_info.variables import Dynamic, Mission
+from aviary.variable_info.variables import Dynamic, Mission, Aircraft
 
 takeoff_subsystem_options = deepcopy(takeoff_subsystem_options)
 
@@ -86,7 +87,11 @@ class TakeoffODETest(unittest.TestCase):
             promotes_inputs=['*'],
             promotes_outputs=['*'])
 
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1.0, units='ft**2')
+
         prob.setup(check=False, force_alloc_complex=True)
+
+        set_aviary_initial_values(prob, aviary_options)
 
         return prob
 

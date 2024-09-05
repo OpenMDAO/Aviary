@@ -10,7 +10,6 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import promote_aircraft_and_mission_vars
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-from aviary.variable_info.variables_in import VariablesIn
 from aviary.variable_info.enums import AnalysisScheme, ThrottleAllocation, SpeedType
 
 
@@ -75,14 +74,6 @@ class MissionODE(om.Group):
                 Dynamic.Mission.DISTANCE: {'units': 'm'},
             }
             add_SGM_required_inputs(self, SGM_required_inputs)
-
-        self.add_subsystem(
-            'input_port',
-            VariablesIn(aviary_options=aviary_options,
-                        meta_data=self.options['meta_data'],
-                        context='mission'),
-            promotes_inputs=['*'],
-            promotes_outputs=['*'])
 
         self.add_subsystem(
             name='atmosphere',
