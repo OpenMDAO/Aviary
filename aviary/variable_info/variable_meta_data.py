@@ -1175,7 +1175,7 @@ add_meta_data(
                      "LEAPS1": 'aircraft.inputs.L0_overrides.weight_empty_margin'
                      },
     units='unitless',
-    desc='empty mass margin scalar',
+    desc='empty mass margin scaler',
     default_value=0.0,
 )
 
