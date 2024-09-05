@@ -1332,7 +1332,7 @@ add_meta_data(
                      },
     units='unitless',
     desc='ratio of maximum landing mass to maximum takeoff mass',
-    default_value=None,
+    default_value=0.9,
 )
 
 add_meta_data(

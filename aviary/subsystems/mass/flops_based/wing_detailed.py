@@ -149,7 +149,6 @@ class DetailedWingBendingFact(om.ExplicitComponent):
             chord_int_stations[1:] * (2*load_intensity[1:] + load_intensity[:-1])) / 6
 
         el = np.sum(del_load)
-        print('el', el)
 
         del_moment = dy**2 * (
             chord_int_stations[:-1] * (load_intensity[:-1]+load_intensity[1:]) +
@@ -173,7 +172,6 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         bma = total_moment * csw / (chord_int_stations[:-1] * tc_int_stations[:-1])
 
         pm = np.sum((bma[:-1] + bma[1:]) * dy[:-1] * 0.5)
-        print('pm',pm)
 
         # s = np.sum((chord_int_stations[:-1] + chord_int_stations[1:]) * dy * 0.5)
 
@@ -187,7 +185,6 @@ class DetailedWingBendingFact(om.ExplicitComponent):
 
         bt = btb / (ar**(0.25*fstrt) * (1.0 + (0.5*faert - 0.16*fstrt)
                     * sa**2 + 0.03*caya * (1.0-0.5*faert)*sa))
-        print('BT', bt)
 
         outputs[Aircraft.Wing.BENDING_FACTOR] = bt
 

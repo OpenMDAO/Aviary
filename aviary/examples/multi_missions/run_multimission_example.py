@@ -106,17 +106,9 @@ class MultiMissionProblem(om.Problem):
             "compound = "+weighted_str, has_diag_partials=True), promotes=["compound"])
         self.model.add_objective('compound')
 
-    def setup_wrapper(self,LANDING_TO_TAKEOFF_MASS_RATIO=[None,'unitless'], TOUCHDOWN_MASS=[None,'lbm']):
+    def setup_wrapper(self):
         """Wrapper for om.Problem setup with warning ignoring and setting options"""
         for prob in self.probs:
-            if LANDING_TO_TAKEOFF_MASS_RATIO[0] is not None:
-                prob.aviary_inputs.set_val(Aircraft.Design.TOUCHDOWN_MASS, TOUCHDOWN_MASS[0], units=TOUCHDOWN_MASS[1])
-            elif TOUCHDOWN_MASS[0] is not None:
-                prob.aviary_inputs.set_val(Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, LANDING_TO_TAKEOFF_MASS_RATIO[0], units=LANDING_TO_TAKEOFF_MASS_RATIO[1])
-            else:
-                print('User must specify LANDING_TO_TAKEOFF_MASS_RATIO or TOUCHDOWN_MASS in MultiMissionProblem.setup_wrapper().')
-                exit()
-
             prob.model.options['aviary_options'] = prob.aviary_inputs
             prob.model.options['aviary_metadata'] = prob.meta_data
             prob.model.options['phase_info'] = prob.phase_info
@@ -241,9 +233,7 @@ def C5_example(makeN2=False):
     super_prob.add_objective()
     # set input default to prevent error, value doesn't matter since set val is used later
     super_prob.model.set_input_defaults(Mission.Design.RANGE, val=1.)
-    # Setqup aviary problem and user must specify LANDING_TO_TAKEOFF_MASS_RATIO or TOUCHDOWN_MASS
-    super_prob.setup_wrapper(LANDING_TO_TAKEOFF_MASS_RATIO = [0.91,'unitless'])
-    #super_prob.setup_wrapper(TOUCHDOWN_MASS = [700000,'lbm'])
+    super_prob.setup_wrapper()
 
     # All the design ranges must be the same to make sure Air Conditioning and Avionics are designed the same for all missions,
     super_prob.set_val(Mission.Design.RANGE, super_prob.get_design_range()[0])

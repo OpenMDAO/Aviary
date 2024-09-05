@@ -13,6 +13,7 @@ aircraft:crew_and_payload:mass_per_passenger,180.0,lbm
 
 aircraft:crew_and_payload:cargo_mass,0,lbm
 #aircraft:crew_and_payload:num_passengers,82,unitless
+#aircraft:crew_and_payload:design:num_passengers,82,unitless
 
 #aircraft:crew_and_payload:non_flight_crew_mass_scaler,1.0,unitless
 aircraft:crew_and_payload:num_flight_crew,7,unitless
