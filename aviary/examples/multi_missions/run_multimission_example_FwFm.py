@@ -23,11 +23,13 @@ from aviary.variable_info.enums import ProblemType
 from aviary.variable_info.variables import Mission, Aircraft
 
 from aviary.examples.example_phase_info import phase_info
+import copy as copy
 
 # fly the same mission twice with two different passenger loads
-phase_info_primary = phase_info
-phase_info_deadhead = phase_info
+phase_info_primary = copy.deepcopy(phase_info)
+phase_info_deadhead = copy.deepcopy(phase_info)
 
+#phase_info_deadhead['post_mission']['target_range'] = [1500, "nmi"]
 
 class MultiMissionProblem(om.Problem):
     def __init__(self, planes, phase_infos, weights):
@@ -232,7 +234,7 @@ def FwFm_example(makeN2=False):
                 phaseinfo[key]["user_options"]["optimize_altitude"] = optalt
 
     # how much each mission should be valued by the optimizer, larger numbers = more significance
-    weights = [.9, 0.1]
+    weights = [9, 1]
 
     super_prob = MultiMissionProblem(planes, phase_infos, weights)
     super_prob.add_driver()
