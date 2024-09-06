@@ -7,6 +7,10 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class BatteryBuilder(SubsystemBuilderBase):
+    """
+    Battery builder class
+    """
+
     default_name = 'battery'
 
     def build_pre_mission(self, aviary_inputs=None):

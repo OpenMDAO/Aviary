@@ -12,6 +12,10 @@ GASP = LegacyCode.GASP
 
 
 class CombinedGeometry(om.Group):
+    """
+    Combined geometry group
+    """
+
     def initialize(self):
         self.options.declare(
             'aviary_options', types=AviaryValues,

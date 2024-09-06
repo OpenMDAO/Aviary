@@ -6,7 +6,12 @@ from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variables import Dynamic
 
 
-class FlightConditions(om.ExplicitComponent):
+class FlightConditions(om.ExplicitComponent): 
+    """
+    Flight conditions. Given a speed type (TAS, SPEED_OF_SOUND and EAS) and air density,
+    compute dynamic pressure and Mach number.
+    """
+
     def initialize(self):
         self.options.declare("num_nodes", types=int)
         self.options.declare(
