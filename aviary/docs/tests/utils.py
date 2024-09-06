@@ -268,6 +268,11 @@ def glue_variable(name: str, val=None, md_code=False, display=True):
     """
     Glue a variable for later use in markdown cells of notebooks
 
+    Note:
+    glue_variable(f'{Aircraft.APU.MASS=}'.split('=')[0])
+    can be used to glue the name of the variable (Aircraft.APU.MASS)
+    not the value of the variable ('aircraft:apu:mass')
+
     Parameters
     ----------
     name : str
