@@ -13,7 +13,7 @@ from aviary.models.large_turboprop_freighter.phase_info import phase_info
 
 
 @use_tempdirs
-@unittest.skip("Skipping until input_port is removed")
+# TODO need to add asserts with "truth" values
 class LargeTurbopropFreighterBenchmark(unittest.TestCase):
 
     def build_and_run_problem(self):
@@ -49,11 +49,8 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         prob.add_objective()
         prob.setup()
         prob.set_initial_guesses()
-        import openmdao.api as om
 
-        # om.n2(prob)
         prob.run_aviary_problem("dymos_solution.db", make_plots=False)
-        om.n2(prob)
 
 
 if __name__ == '__main__':

@@ -8,7 +8,7 @@ from aviary.constants import RHO_SEA_LEVEL_ENGLISH
 from aviary.mission.gasp_based.phases.landing_components import (
     GlideConditionComponent, LandingAltitudeComponent,
     LandingGroundRollComponent)
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 
 
 class LandingAltTestCase(unittest.TestCase):
@@ -47,7 +47,7 @@ class GlideTestCase(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            "rho_app", RHO_SEA_LEVEL_ENGLISH, units="slug/ft**3"
+            Dynamic.Mission.DENSITY, RHO_SEA_LEVEL_ENGLISH, units="slug/ft**3"
         )  # value from online calculator
 
         self.prob.model.set_input_defaults(

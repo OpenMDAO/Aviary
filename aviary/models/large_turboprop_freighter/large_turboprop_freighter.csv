@@ -29,7 +29,7 @@ aircraft:engine:additional_mass_fraction, 0.34, unitless
 aircraft:engine:mass_scaler, 1, unitless
 aircraft:engine:mass_specific, 0.37026, lbm/lbf
 aircraft:engine:num_engines, 4, unitless
-aircraft:engine:data_file, models/engines/turboprop_4465hp.deck
+aircraft:engine:data_file, models/engines/turboshaft_4465hp.deck
 aircraft:engine:pod_mass_scaler, 1, unitless
 aircraft:engine:pylon_factor, 0.7, unitless
 aircraft:engine:reference_diameter, 5.8, ft
@@ -41,7 +41,7 @@ aircraft:engine:propeller_diameter, 13.5, ft
 aircraft:engine:num_propeller_blades, 4, unitless
 aircraft:engine:propeller_activity_factor, 167, unitless
 aircraft:engine:propeller_tip_speed_max, 720, ft/s
-aircraft:engine:gearbox:gear_ratio, 13.53, unitless
+# aircraft:engine:gearbox:gear_ratio, 13.53, unitless
 aircraft:engine:fixed_rpm, 1019, rpm
 aircraft:fuel:density, 6.687, lbm/galUS
 aircraft:fuel:fuel_margin, 15, unitless
