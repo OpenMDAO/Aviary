@@ -7,6 +7,10 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class MetaModelGroup(om.Group):
+    """
+    Meta model group
+    """
+
     def initialize(self):
         self.options.declare(
             'aviary_options', types=AviaryValues,

@@ -6,6 +6,10 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class BasicFlapsCalculations(om.ExplicitComponent):
+    """
+    Basic flaps calculations
+    """
+
     def setup(self):
 
         # inputs

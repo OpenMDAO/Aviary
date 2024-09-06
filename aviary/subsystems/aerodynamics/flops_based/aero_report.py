@@ -16,6 +16,9 @@ from aviary.variable_info.variables import Aircraft, Mission
 # structures that are passed to the dynamic portion, so that they can be overridden if
 # needed.
 class AeroReport(om.ExplicitComponent):
+    """
+    TODO: docstring
+    """
 
     def initialize(self):
         self.options.declare(

@@ -5,6 +5,10 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class LiftAndDragIncrements(om.ExplicitComponent):
+    """
+    Compute lift and drag increments
+    """
+
     def setup(self):
 
         # Inputs

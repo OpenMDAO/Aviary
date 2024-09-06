@@ -42,6 +42,10 @@ _default_name = 'aerodynamics'
 
 
 class AerodynamicsBuilderBase(SubsystemBuilderBase):
+    """
+    Base class of aerodynamics builder
+    """
+
     def __init__(self, name=None, meta_data=None):
         if name is None:
             name = _default_name
@@ -56,6 +60,10 @@ class AerodynamicsBuilderBase(SubsystemBuilderBase):
 
 
 class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
+    """
+    Core aerodynamics builder
+    """
+
     def __init__(self, name=None, meta_data=None, code_origin=None):
         if name is None:
             name = 'core_aerodynamics'
