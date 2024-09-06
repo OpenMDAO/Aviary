@@ -3,7 +3,7 @@
 ## Quick start installation
 
 ```{note}
-If you do not already have Python installed, we recommend installing [miniconda](https://docs.anaconda.com/miniconda/miniconda-install/).
+If you do not already have Python installed, we recommend installing [condaforge](https://github.com/conda-forge/miniforge?tab=readme-ov-file#download).
 The minimum supported version of Python is 3.9; we recommend using the latest release of Python.
 ```
 

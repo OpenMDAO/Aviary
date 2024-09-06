@@ -46,6 +46,9 @@ def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
     If an invalid filepath is given, pre-packaged resources will be checked for
     input decks with a matching name.
     '''
+    # compatibility with being passed int for verbosity
+    verbosity = Verbosity(verbosity)
+
     # TODO generate both an Aviary input file and a phase_info file
 
     vehicle_data = {'input_values': NamedValues(), 'unused_values': NamedValues(),
@@ -59,7 +62,9 @@ def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
 
     comments.append(f'# created {timestamp} by {user}')
     comments.append(
-        f'# {legacy_code.value}-derived aircraft input deck converted from {fortran_deck.name}')
+        f'# {legacy_code.value}-derived aircraft input deck converted from '
+        f'{fortran_deck.name}'
+    )
 
     if out_file:
         out_file = Path(out_file)
@@ -101,13 +106,13 @@ def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
         if not force:
             raise RuntimeError(f'{out_file} already exists. Choose a new name or enable '
                                '--force')
-        elif verbosity.value >= 1:
+        elif verbosity >= Verbosity.BRIEF:
             print(f'Overwriting existing file: {out_file.name}')
 
     else:
         # create any directories defined by the new filename if they don't already exist
         out_file.parent.mkdir(parents=True, exist_ok=True)
-        if verbosity.value >= 2:
+        if verbosity >= Verbosity.VERBOSE:
             print('Writing to:', out_file)
 
     # open the file in write mode
@@ -255,6 +260,12 @@ def process_and_store_data(data, var_name, legacy_code, current_namelist, altern
     if var_ind is not None:
         var_ind -= fortran_offset
 
+    # Aviary has a reduction gearbox which is 1/gear ratio of GASP gearbox
+    if current_namelist+var_name == 'INPROP.GR':
+        var_values = [1/var for var in var_values]
+        vehicle_data['input_values'] = set_value(Aircraft.Engine.Gearbox.GEAR_RATIO, var_values,
+                                                 vehicle_data['input_values'], var_id=var_ind, units=data_units)
+
     for name in list_of_equivalent_aviary_names:
         if not skip_variable:
             if name in guess_names and legacy_code is GASP:
@@ -269,7 +280,7 @@ def process_and_store_data(data, var_name, legacy_code, current_namelist, altern
 
         vehicle_data['unused_values'] = set_value(name, var_values, vehicle_data['unused_values'],
                                                   var_ind=var_ind, units=data_units)
-        if vehicle_data['verbosity'].value >= 2:
+        if vehicle_data['verbosity'].value >= Verbosity.VERBOSE:
             print('Unused:', name, var_values, comment)
 
     return vehicle_data
@@ -357,14 +368,16 @@ def update_name(alternate_names, var_name, verbosity=Verbosity.BRIEF):
                     if altname.endswith(var_name.lower()):
                         all_equivalent_names.append(key)
                         continue
-                    elif var_ind is not None and altname.endswith(f'{var_name.lower()}({var_ind})'):
+                    elif var_ind is not None and altname.endswith(
+                        f'{var_name.lower()}({var_ind})'
+                    ):
                         all_equivalent_names.append(key)
                         var_ind = None
                         continue
 
     # if there are no equivalent variable names, return the original name
     if len(all_equivalent_names) == 0:
-        if verbosity.value >= 2:
+        if verbosity >= Verbosity.VERBOSE:
             print('passing: ', var_name)
         all_equivalent_names = [var_name]
 
@@ -652,7 +665,7 @@ def _exec_F2A(args, user_args):
         args.input_deck = args.input_deck[0]
     filepath = args.input_deck
 
-    # convert verbosity from number to enum
+    # convert verbosity from int to enum
     verbosity = Verbosity(args.verbosity)
 
     create_aviary_deck(filepath, args.legacy_code, args.defaults_deck,

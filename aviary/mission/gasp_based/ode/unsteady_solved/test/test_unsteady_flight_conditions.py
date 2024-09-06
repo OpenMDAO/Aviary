@@ -73,8 +73,6 @@ class TestUnsteadyFlightConditions(unittest.TestCase):
         assert_near_equal(eas, tas * np.sqrt(rho / rho_sl))
         assert_near_equal(dTAS_dt_approx, np.zeros(nn))
 
-        p.run_model()
-
         with np.printoptions(linewidth=1024):
             cpd = p.check_partials(method="cs")
         assert_check_partials(cpd)
