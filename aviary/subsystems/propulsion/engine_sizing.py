@@ -8,8 +8,8 @@ from aviary.variable_info.variables import Aircraft
 
 class SizeEngine(om.ExplicitComponent):
     '''
-    Calculates thrust scaling factors for dynamic mission parameters. Designed for use
-    with EngineDecks.
+    Calculates thrust scaling factors for mission performance parameters. Designed for
+    use with EngineDecks.
 
     Can be vectorized for all unique engines present on aircraft. Each index represents a
     single instance of an engine model.

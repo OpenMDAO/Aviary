@@ -95,7 +95,7 @@ def add_descent_estimation_as_submodel(
         ],
         promotes_outputs=[('actual_fuel_burn', 'descent_fuel')])
 
-    if verbosity.value >= 1:
+    if verbosity >= Verbosity.BRIEF:
         from aviary.utils.functions import create_printcomp
         dummy_comp = create_printcomp(
             all_inputs=[

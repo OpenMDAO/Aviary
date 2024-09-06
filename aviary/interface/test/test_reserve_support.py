@@ -11,7 +11,7 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 
 @use_tempdirs
-class StaticGroupTest(unittest.TestCase):
+class PreMissionGroupTest(unittest.TestCase):
 
     def test_post_mission_promotion(self):
         phase_info = deepcopy(ph_in_flops)

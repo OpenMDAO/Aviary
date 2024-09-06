@@ -1,6 +1,7 @@
 import numpy as np
 from aviary.mission.gasp_based.ode.time_integration_base_classes import SGMTrajBase
 from aviary.mission.gasp_based.phases.time_integration_phases import SGMGroundroll, SGMRotation
+from aviary.variable_info.enums import Verbosity
 
 
 class TimeIntegrationTrajBase(SGMTrajBase):
@@ -74,7 +75,7 @@ class FlexibleTraj(TimeIntegrationTrajBase):
 
         ode_index = 0
         sim_gen = self.compute_traj_loop(self.ODEs[0], inputs, outputs)
-        if self.verbosity.value >= 1:
+        if self.verbosity >= Verbosity.BRIEF:
             print('*'*40)
             print('Starting: '+self.ODEs[ode_index].phase_name)
         for current_problem, sim_result in sim_gen:
@@ -89,7 +90,7 @@ class FlexibleTraj(TimeIntegrationTrajBase):
             except IndexError:
                 next_problem = None
 
-            if self.verbosity.value >= 1:
+            if self.verbosity >= Verbosity.BRIEF:
                 print('Finished: '+current_problem.phase_name)
 
             if next_problem is not None:
@@ -98,16 +99,16 @@ class FlexibleTraj(TimeIntegrationTrajBase):
                 elif type(current_problem) is SGMRotation:
                     next_problem.rotation.set_val("start_rotation", t_start_rotation)
 
-                if self.verbosity.value >= 1:
+                if self.verbosity >= Verbosity.BRIEF:
                     print('Starting: '+next_problem.phase_name)
                 sim_gen.send(next_problem)
             else:
-                if self.verbosity.value >= 1:
+                if self.verbosity >= Verbosity.BRIEF:
                     print('Reached the end of the Trajectory!')
                 sim_gen.close()
                 break
 
-        if self.verbosity.value >= 1:
+        if self.verbosity >= Verbosity.BRIEF:
             print('t_final', t_final)
             print('x_final', x_final)
             print(self.ODEs[-1].states)
