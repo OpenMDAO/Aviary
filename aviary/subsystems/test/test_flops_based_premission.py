@@ -28,7 +28,7 @@ class PreMissionGroupTest(unittest.TestCase):
         flops_outputs = get_flops_outputs(case_name)
         flops_inputs.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES,
                              flops_outputs.get_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES))
-        flops_inputs.set_val(Settings.VERBOSITY, 0.0)
+        flops_inputs.set_val(Settings.VERBOSITY, 0)
 
         engine = build_engine_deck(flops_inputs)
         preprocess_options(flops_inputs, engine_models=engine)
@@ -89,7 +89,7 @@ class PreMissionGroupTest(unittest.TestCase):
 
         flops_inputs: AviaryValues = LargeSingleAisle2FLOPS['inputs']
         flops_outputs: AviaryValues = LargeSingleAisle2FLOPS['outputs']
-        flops_inputs.set_val(Settings.VERBOSITY, 0.0)
+        flops_inputs.set_val(Settings.VERBOSITY, 0)
 
         engine = build_engine_deck(flops_inputs)
         preprocess_options(flops_inputs, engine_models=engine)

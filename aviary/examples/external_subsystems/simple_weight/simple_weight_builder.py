@@ -29,7 +29,7 @@ class WingWeightBuilder(SubsystemBuilderBase):
         -------
         pre_mission_sys : openmdao.core.System
             An OpenMDAO system containing all computations that need to happen in
-            the pre-mission (formerly statics) part of the Aviary problem. This
+            the pre-mission part of the Aviary problem. This
             includes sizing, design, and other non-mission parameters.
         '''
         wing_group = om.Group()
