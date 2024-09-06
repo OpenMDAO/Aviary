@@ -780,7 +780,7 @@ class HamiltonStandard(om.ExplicitComponent):
                     try:
                         CTT[kdx], run_flag = _unint(
                             # thrust coeff at baseline point for kdx
-                            Blade_angle_table[kdx], CT_Angle_table[idx_blade][kdx][:ang_len], BLL[kdx])
+                            Blade_angle_table[kdx][:ang_len], CT_Angle_table[idx_blade][kdx][:ang_len], BLL[kdx])
                     except IndexError:
                         raise om.AnalysisError(
                             "interp failed for CTT (thrust coefficient) in hamilton_standard.py")
