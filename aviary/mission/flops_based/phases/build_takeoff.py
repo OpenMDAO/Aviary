@@ -51,7 +51,7 @@ class Takeoff:
             a group in OpenMDAO
         """
 
-        if use_detailed:
+        if use_detailed:  # TODO
             raise om.AnalysisError(
                 "Must set takeoff method to `use_detailed=False`, detailed takeoff is"
                 " not currently enabled."

@@ -45,7 +45,8 @@ class PrepGeomTest(unittest.TestCase):
     @parameterized.expand(get_flops_case_names(),
                           name_func=print_case)
     def test_case(self, case_name):
-        class Statics(om.Group):
+
+        class PreMission(om.Group):
 
             def initialize(self):
                 self.options.declare(
@@ -76,7 +77,8 @@ class PrepGeomTest(unittest.TestCase):
         prob = self.prob
 
         prob.model.add_subsystem(
-            'statics', Statics(aviary_options=options), promotes=['*'])
+            'premission', PreMission(aviary_options=options), promotes=['*']
+        )
 
         prob.setup(check=False, force_alloc_complex=True)
 

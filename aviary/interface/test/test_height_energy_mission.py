@@ -10,7 +10,6 @@ from aviary.interface.methods_for_level1 import run_aviary
 from aviary.subsystems.test.test_dummy_subsystem import ArrayGuessSubsystemBuilder
 from aviary.mission.energy_phase import EnergyPhase
 from aviary.variable_info.variables import Dynamic
-from aviary.variable_info.enums import Verbosity
 
 
 @use_tempdirs
@@ -120,9 +119,14 @@ class AircraftMissionTestSuite(unittest.TestCase):
 
     def run_mission(self, phase_info, optimizer):
         return run_aviary(
-            self.aircraft_definition_file, phase_info,
-            make_plots=self.make_plots, max_iter=self.max_iter, optimizer=optimizer,
-            optimization_history_filename="driver_test.db", verbosity=Verbosity.QUIET)
+            self.aircraft_definition_file,
+            phase_info,
+            make_plots=self.make_plots,
+            max_iter=self.max_iter,
+            optimizer=optimizer,
+            optimization_history_filename="driver_test.db",
+            verbosity=0,
+        )
 
     def test_mission_basic_and_dashboard(self):
         # We need to remove the TESTFLO_RUNNING environment variable for this test to run.
@@ -139,7 +143,10 @@ class AircraftMissionTestSuite(unittest.TestCase):
         self.assertIsNotNone(prob)
         self.assertTrue(prob.problem_ran_successfully)
 
-        cmd = f'aviary dashboard --problem_recorder dymos_solution.db --driver_recorder driver_test.db {prob.driver._problem()._name}'
+        cmd = (
+            'aviary dashboard --problem_recorder dymos_solution.db --driver_recorder '
+            f'driver_test.db {prob.driver._problem()._name}'
+        )
         # this only tests that a given command line tool returns a 0 return code. It doesn't
         # check the expected output at all.  The underlying functions that implement the
         # commands should be tested seperately.
@@ -224,16 +231,26 @@ class AircraftMissionTestSuite(unittest.TestCase):
         local_phase_info = self.phase_info.copy()
         local_phase_info['climb']['phase_builder'] = EnergyPhase
 
-        run_aviary(self.aircraft_definition_file, local_phase_info,
-                   verbosity=Verbosity.QUIET, max_iter=1, optimizer='SLSQP')
+        run_aviary(
+            self.aircraft_definition_file,
+            local_phase_info,
+            verbosity=0,
+            max_iter=1,
+            optimizer='SLSQP',
+        )
 
     def test_custom_phase_builder_error(self):
         local_phase_info = self.phase_info.copy()
         local_phase_info['climb']['phase_builder'] = "fake phase object"
 
         with self.assertRaises(TypeError):
-            run_aviary(self.aircraft_definition_file, local_phase_info,
-                       verbosity=Verbosity.QUIET, max_iter=1, optimizer='SLSQP')
+            run_aviary(
+                self.aircraft_definition_file,
+                local_phase_info,
+                verbosity=0,
+                max_iter=1,
+                optimizer='SLSQP',
+            )
 
 
 if __name__ == '__main__':
