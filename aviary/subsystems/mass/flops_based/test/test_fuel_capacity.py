@@ -23,7 +23,7 @@ class FuelCapacityGroupTest(unittest.TestCase):
                           name_func=print_case)
     def test_case(self, case_name):
 
-        class StaticsHarness(om.Group):
+        class PreMission(om.Group):
 
             def initialize(self):
                 self.options.declare(
@@ -34,8 +34,11 @@ class FuelCapacityGroupTest(unittest.TestCase):
                 aviary_options = self.options['aviary_options']
 
                 self.add_subsystem(
-                    'fuel_capy_group', FuelCapacityGroup(aviary_options=aviary_options),
-                    promotes_inputs=['*'], promotes_outputs=['*'])
+                    'fuel_capacity_group',
+                    FuelCapacityGroup(aviary_options=aviary_options),
+                    promotes_inputs=['*'],
+                    promotes_outputs=['*'],
+                )
 
             def configure(self):
                 aviary_options = self.options['aviary_options']
@@ -45,10 +48,10 @@ class FuelCapacityGroupTest(unittest.TestCase):
 
         prob = om.Problem()
         prob.model.add_subsystem(
-            "statics",
-            StaticsHarness(aviary_options=get_flops_inputs(case_name)),
+            "premission",
+            PreMission(aviary_options=get_flops_inputs(case_name)),
             promotes_outputs=['*'],
-            promotes_inputs=['*']
+            promotes_inputs=['*'],
         )
 
         prob.setup(check=False, force_alloc_complex=True)
