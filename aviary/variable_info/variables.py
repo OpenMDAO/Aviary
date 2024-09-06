@@ -730,7 +730,7 @@ class Mission:
         RANGE = 'mission:objectives:range'
 
     class Summary:
-        # These values are inputs and outputs to/from dynamic analysis
+        # These values are inputs and outputs to/from mission analysis
         # for the given mission (whether it is design or off-design).
         # In on-design these may be constrained to design values, but
         # in off-design they independently represent the final analysis

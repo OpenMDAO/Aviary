@@ -7944,7 +7944,7 @@ add_meta_data(
          '0. QUIET: All output except errors are suppressed'
          '1. BRIEF: Only important information is output, in human-readable format'
          '2. VERBOSE: All user-relevant information is output, in human-readable format'
-         '3. DEBUG: All information is output, including warnings, intermediate calculations, etc., no formatting requirement',
+         '3. DEBUG: Any information can be outtputed, including warnings, intermediate calculations, etc., with no formatting requirement',
     option=True,
     types=Verbosity,
     default_value=Verbosity.BRIEF

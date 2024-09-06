@@ -157,7 +157,7 @@ def sigmoid(x, x0, alpha=0.1):
 
 
 class WingTailRatios(om.ExplicitComponent):
-    """Static calculation of ratios between tail and wing parameters"""
+    """Pre-mission calculation of ratios between tail and wing parameters"""
 
     def setup(self):
 
@@ -257,7 +257,7 @@ class Xlifts(om.ExplicitComponent):
     def setup(self):
         nn = self.options["num_nodes"]
 
-        # dynamic inputs
+        # mission inputs
         self.add_input(Dynamic.Mission.MACH, val=0.0, units="unitless",
                        shape=nn, desc="Mach number")
 
@@ -864,7 +864,7 @@ class DragCoef(om.ExplicitComponent):
     def setup(self):
         nn = self.options["num_nodes"]
 
-        # dynamic inputs
+        # mission inputs
         self.add_input(Dynamic.Mission.ALTITUDE, val=0.0,
                        units="ft", shape=nn, desc="Altitude")
         self.add_input(
@@ -1006,7 +1006,7 @@ class DragCoefClean(om.ExplicitComponent):
     def setup(self):
         nn = self.options["num_nodes"]
 
-        # dynamic inputs
+        # mission inputs
         self.add_input(Dynamic.Mission.MACH, val=0.0, units="unitless",
                        shape=nn, desc="Mach number")
         self.add_input(
@@ -1071,7 +1071,7 @@ class LiftCoeff(om.ExplicitComponent):
     def setup(self):
         nn = self.options["num_nodes"]
 
-        # dynamic inputs
+        # mission inputs
         self.add_input("alpha", val=0.0, units="deg", shape=nn, desc="Angle of attack")
         self.add_input(Dynamic.Mission.ALTITUDE, val=0.0,
                        units="ft", shape=nn, desc="Altitude")
