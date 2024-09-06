@@ -232,7 +232,7 @@ def FwFm_example(makeN2=False):
                 phaseinfo[key]["user_options"]["optimize_altitude"] = optalt
 
     # how much each mission should be valued by the optimizer, larger numbers = more significance
-    weights = [1, 1]
+    weights = [.9, 0.1]
 
     super_prob = MultiMissionProblem(planes, phase_infos, weights)
     super_prob.add_driver()
@@ -254,16 +254,18 @@ def FwFm_example(makeN2=False):
     printoutputs = [
         (Mission.Design.GROSS_MASS, 'lbm'),
         (Aircraft.Design.EMPTY_MASS, 'lbm'),
-                    (Mission.Summary.FUEL_BURNED, 'lbm'),
-                    (Mission.Summary.GROSS_MASS, 'lbm'),
-                    (Aircraft.Wing.SPAN, 'ft'),
-                    (Aircraft.Wing.AREA, 'ft**2'),
-                    (Aircraft.LandingGear.MAIN_GEAR_MASS, 'lbm'),
-                    (Aircraft.LandingGear.NOSE_GEAR_MASS, 'lbm'),
-                    (Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, 'unitless'),
-                    (Mission.Summary.CRUISE_MACH, 'unitless'),
-                    (Aircraft.Furnishings.MASS, 'lbm'),
-                    (Aircraft.CrewPayload.PASSENGER_SERVICE_MASS, 'lbm')]
+        (Mission.Summary.GROSS_MASS, 'lbm'),
+        (Mission.Summary.FUEL_BURNED, 'lbm'),
+        (Mission.Design.FUEL_MASS, 'lbm'),
+        (Mission.Summary.TOTAL_FUEL_MASS, 'lbm'),
+        (Aircraft.Wing.SPAN, 'ft'),
+        (Aircraft.Wing.AREA, 'ft**2'),
+        (Aircraft.LandingGear.MAIN_GEAR_MASS, 'lbm'),
+        (Aircraft.LandingGear.NOSE_GEAR_MASS, 'lbm'),
+        (Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, 'unitless'),
+        (Mission.Summary.CRUISE_MACH, 'unitless'),
+        (Aircraft.Furnishings.MASS, 'lbm'),
+        (Aircraft.CrewPayload.PASSENGER_SERVICE_MASS, 'lbm')]
     super_prob.print_vars(vars=printoutputs)
 
     plotvars = [('altitude', 'ft'),
@@ -285,5 +287,5 @@ if __name__ == '__main__':
 
     super_prob = FwFm_example(makeN2=makeN2)
         
-    super_prob.model.group_0.list_vars(val=True, units=True, print_arrays=False)
+    # super_prob.model.group_1.list_vars(val=True, units=True, print_arrays=False)
     # https://openmdao.org/newdocs/versions/latest/features/debugging/listing_variables.html?highlight=list_driver_vars

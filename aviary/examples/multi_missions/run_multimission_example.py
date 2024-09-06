@@ -123,7 +123,7 @@ class MultiMissionProblem(om.Problem):
 
     def run(self):
         self.model.set_solver_print(0)
-        dm.run_problem(self, make_plots=True)
+        dm.run_problem(self, make_plots=False)
 
     def get_design_range(self):
         """Finds the longest mission and sets its range as the design range for all
@@ -246,17 +246,21 @@ def C5_example(makeN2=False):
         createN2(__file__, super_prob)
 
     super_prob.run()
-    printoutputs = [(Aircraft.Design.EMPTY_MASS, 'lbm'),
-                    (Mission.Design.GROSS_MASS, 'lbm'),
-                    (Mission.Summary.FUEL_BURNED, 'lbm'),
-                    (Mission.Summary.GROSS_MASS, 'lbm'),
-                    (Aircraft.Wing.SPAN, 'ft'),
-                    (Aircraft.Wing.AREA, 'ft**2'),
-                    (Aircraft.LandingGear.MAIN_GEAR_MASS, 'lbm'),
-                    (Aircraft.LandingGear.NOSE_GEAR_MASS, 'lbm'),
-                    (Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, 'unitless'),
-                    (Mission.Summary.CRUISE_MACH, 'unitless'),
-                    (Aircraft.Design.TOUCHDOWN_MASS, 'lbm')]
+    printoutputs = [
+        (Mission.Design.GROSS_MASS, 'lbm'),
+        (Aircraft.Design.EMPTY_MASS, 'lbm'),
+        (Mission.Summary.GROSS_MASS, 'lbm'),
+        (Mission.Summary.FUEL_BURNED, 'lbm'),
+        (Mission.Design.FUEL_MASS, 'lbm'),
+        (Mission.Summary.TOTAL_FUEL_MASS, 'lbm'),
+        (Aircraft.Wing.SPAN, 'ft'),
+        (Aircraft.Wing.AREA, 'ft**2'),
+        (Aircraft.LandingGear.MAIN_GEAR_MASS, 'lbm'),
+        (Aircraft.LandingGear.NOSE_GEAR_MASS, 'lbm'),
+        (Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, 'unitless'),
+        (Mission.Summary.CRUISE_MACH, 'unitless'),
+        (Aircraft.Furnishings.MASS, 'lbm'),
+        (Aircraft.CrewPayload.PASSENGER_SERVICE_MASS, 'lbm')]
     super_prob.print_vars(vars=printoutputs)
 
     plotvars = [('altitude', 'ft'),
