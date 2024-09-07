@@ -53,7 +53,7 @@ class StallSpeedTest(unittest.TestCase):
 
 class StallSpeedTest2(unittest.TestCase):
     def setUp(self):
-        import aviary.mission.flops_based.phases.simplified_takeoff  as takeoff
+        import aviary.mission.flops_based.phases.simplified_takeoff as takeoff
         constants.GRAV_ENGLISH_LBM = 1.1
         takeoff.GRAV_ENGLISH_LBM = 1.1
 
