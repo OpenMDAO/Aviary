@@ -117,6 +117,7 @@ def _dashboard_setup_parser(parser):
     parser.add_argument(
         "-b",
         "--background",
+        action="store_true",
         dest="run_in_background",
         help="Run the server in the background (don't automatically open the browser)",
     )
@@ -184,7 +185,7 @@ def _dashboard_cmd(options, user_args):
             options.problem_recorder,
             options.driver_recorder,
             options.port,
-            options.run_in_background
+            options.run_in_background,
         )
         return
 
@@ -203,6 +204,7 @@ def _dashboard_cmd(options, user_args):
         options.problem_recorder,
         options.driver_recorder,
         options.port,
+        options.run_in_background,
     )
 
 
