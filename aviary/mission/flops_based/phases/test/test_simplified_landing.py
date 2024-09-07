@@ -50,6 +50,43 @@ class LandingCalcTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+class LandingCalcTest2(unittest.TestCase):
+    def setUp(self):
+        import aviary.mission.flops_based.phases.simplified_landing as landing
+        constants.GRAV_ENGLISH_LBM = 1.1
+        landing.GRAV_ENGLISH_LBM = 1.1
+
+
+    def tearDown(self):
+        import aviary.mission.flops_based.phases.simplified_landing as landing
+        constants.GRAV_ENGLISH_LBM = 1.0
+        landing.GRAV_ENGLISH_LBM = 1.0
+
+    def test_case1(self):
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem(
+            "land",
+            LandingCalc(),
+            promotes=["*"],
+        )
+
+        self.prob.model.set_input_defaults(
+            Mission.Landing.TOUCHDOWN_MASS, val=152800.0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Dynamic.Mission.DENSITY, val=constants.RHO_SEA_LEVEL_METRIC, units="kg/m**3")
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.AREA, val=1370.0, units="ft**2")
+        self.prob.model.set_input_defaults(
+            Mission.Landing.LIFT_COEFFICIENT_MAX, val=3, units='unitless')
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+        self.prob.run_model()
+
+        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
 class LandingGroupTest(unittest.TestCase):
     def setUp(self):
 
