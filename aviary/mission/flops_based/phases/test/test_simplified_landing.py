@@ -56,7 +56,6 @@ class LandingCalcTest2(unittest.TestCase):
         constants.GRAV_ENGLISH_LBM = 1.1
         landing.GRAV_ENGLISH_LBM = 1.1
 
-
     def tearDown(self):
         import aviary.mission.flops_based.phases.simplified_landing as landing
         constants.GRAV_ENGLISH_LBM = 1.0
