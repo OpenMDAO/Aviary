@@ -1,9 +1,9 @@
 from copy import deepcopy
 import unittest
 
+from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
-from openmdao.core.problem import _clear_problem_names
 
 from aviary.interface.default_phase_info.two_dof import phase_info
 from aviary.interface.methods_for_level1 import run_aviary
