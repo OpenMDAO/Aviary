@@ -62,7 +62,11 @@ class TestEngineDeckConversion(unittest.TestCase):
                     self.assertEqual(line_no_whitespace.count(expected_line), 1)
 
                 except Exception as error:
-                    exc_string = f'Error:  {filename}\nFound: {line_no_whitespace}\nExpected:  {expected_line}'
+                    exc_string = (
+                        f'Error: {filename}\n'
+                        f'Found: {line_no_whitespace}\n'
+                        f'Expected: {expected_line}'
+                    )
                     raise Exception(exc_string)
 
     # TODO currently untested!!
@@ -70,9 +74,9 @@ class TestEngineDeckConversion(unittest.TestCase):
     #     return
 
     def test_TP_conversion(self):
-        filename = 'turboprop_4465hp.eng'
+        filename = 'turboshaft_4465hp.eng'
 
-        args = self.prepare_and_run(filename, data_format=EngineDeckType.GASP_TP)
+        args = self.prepare_and_run(filename, data_format=EngineDeckType.GASP_TS)
         self.compare_files(filename, skip_list=['# created'])
 
 
