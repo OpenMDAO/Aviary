@@ -72,7 +72,7 @@ class TestSolvedAero(unittest.TestCase):
         CL_base = prob.get_val("traj.cruise.rhs_all.core_aerodynamics.tabular_aero.CL")
         CD_base = prob.get_val("traj.cruise.rhs_all.core_aerodynamics.tabular_aero.CD")
 
-        # Lift and Drag polars passed from external component in static.
+        # Lift and Drag polars passed from external component in pre-mission.
 
         ph_in = deepcopy(phase_info)
 
@@ -148,7 +148,7 @@ class TestSolvedAero(unittest.TestCase):
         CL_base = prob.get_val("traj.cruise.rhs_all.core_aerodynamics.tabular_aero.CL")
         CD_base = prob.get_val("traj.cruise.rhs_all.core_aerodynamics.tabular_aero.CD")
 
-        # Lift and Drag polars passed from external component in static.
+        # Lift and Drag polars passed from external component in pre-mission.
 
         ph_in = deepcopy(phase_info)
 
@@ -272,7 +272,7 @@ class FakeDragPolarBuilder(SubsystemBuilderBase):
         -------
         pre_mission_sys : openmdao.core.Group
             An OpenMDAO group containing all computations that need to happen in
-            the pre-mission (formerly statics) part of the Aviary problem. This
+            the pre-mission part of the Aviary problem. This
             includes sizing, design, and other non-mission parameters.
         """
 
