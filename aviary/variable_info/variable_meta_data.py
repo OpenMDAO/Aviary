@@ -1227,18 +1227,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.IJEFF,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.IJEFF',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    desc="A flag used by Jeff V. Bowles to debug GASP code during his 53 years supporting the development of GASP. "
-         "This flag is planted here to thank him for his hard work and dedication, Aviary wouldn't be what it is today "
-         "without his help.",
-)
-
-add_meta_data(
     Aircraft.Design.LAMINAR_FLOW_LOWER,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -1619,6 +1607,18 @@ add_meta_data(
     units='unitless',
     default_value=1.0,
     desc='Scaling factor for zero-lift drag coefficient'
+)
+
+add_meta_data(
+    Aircraft.Design.IJEFF,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.IJEFF',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    desc="A flag used by Jeff V. Bowles to debug GASP code during his 53 years supporting the development of GASP. "
+         "This flag is planted here to thank him for his hard work and dedication, Aviary wouldn't be what it is today "
+         "without his help.",
 )
 
 #
