@@ -79,6 +79,10 @@ def create_vehicle(vehicle_deck='', meta_data=_MetaData, verbosity=None):
     }
 
     if isinstance(vehicle_deck, AviaryValues):
+        for key, (val, units) in vehicle_deck:
+            if key.startswith('initial_guesses:'):
+                new_key = key.split('initial_guesses:', 1)[-1]
+                initial_guesses[new_key] = val
         aircraft_values.update(vehicle_deck)
     else:
         vehicle_deck = get_path(vehicle_deck)
