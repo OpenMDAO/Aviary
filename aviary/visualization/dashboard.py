@@ -1,22 +1,22 @@
 import argparse
+from collections import defaultdict
+from dataclasses import dataclass
+import importlib.util
 import json
 import os
-from pathlib import Path
 import pathlib
+import re
 import shutil
-import importlib.util
-from string import Template
-from dataclasses import dataclass
-from typing import (
-    List,
-    Iterator,
-    Tuple,
-)
 import warnings
-import zipfile  # Use typing.List and typing.Tuple for compatibility
+import zipfile
 
 import numpy as np
-from bokeh.palettes import Category10
+
+import bokeh.palettes as bp
+from bokeh.models import Legend, CheckboxGroup, CustomJS
+from bokeh.plotting import figure
+from bokeh.models import ColumnDataSource
+
 import hvplot.pandas  # noqa # need this ! Otherwise hvplot using DataFrames does not work
 import pandas as pd
 import panel as pn
@@ -24,6 +24,7 @@ from panel.theme import DefaultTheme
 
 import openmdao.api as om
 from openmdao.utils.general_utils import env_truthy
+from openmdao.utils.units import conversion_to_base_units
 try:
     from openmdao.utils.gui_testing_utils import get_free_port
 except:
@@ -31,6 +32,8 @@ except:
     def get_free_port():
         return 5000
 from openmdao.utils.om_warnings import issue_warning
+
+from dymos.visualization.timeseries.bokeh_timeseries_report import _meta_tree_subsys_iter
 
 from aviary.visualization.aircraft_3d_model import Aircraft3DModel
 
@@ -45,9 +48,10 @@ except ImportError:
 
 import aviary.api as av
 
+# Enable Panel extensions
 pn.extension(sizing_mode="stretch_width")
+# Initialize any custom extensions
 pn.extension('tabulator')
-
 
 # Constants
 aviary_variables_json_file_name = "aviary_vars.json"
@@ -117,6 +121,7 @@ def _dashboard_setup_parser(parser):
     parser.add_argument(
         "-b",
         "--background",
+        action="store_true",
         dest="run_in_background",
         help="Run the server in the background (don't automatically open the browser)",
     )
@@ -184,7 +189,7 @@ def _dashboard_cmd(options, user_args):
             options.problem_recorder,
             options.driver_recorder,
             options.port,
-            options.run_in_background
+            options.run_in_background,
         )
         return
 
@@ -203,6 +208,7 @@ def _dashboard_cmd(options, user_args):
         options.problem_recorder,
         options.driver_recorder,
         options.port,
+        options.run_in_background,
     )
 
 
@@ -553,6 +559,15 @@ def create_aircraft_3d_file(recorder_file, reports_dir, outfilepath):
     aircraft_3d_model.write_file(aircraft_3d_template_filepath, outfilepath)
 
 
+def _get_interactive_plot_sources(data_by_varname_and_phase, x_varname, y_varname, phase):
+    x = data_by_varname_and_phase[x_varname][phase]
+    y = data_by_varname_and_phase[y_varname][phase]
+    if len(x) > 0 and len(x) == len(y):
+        return x, y
+    else:
+        return [], []
+
+
 # The main script that generates all the tabs in the dashboard
 def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_background=False):
     """
@@ -574,7 +589,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
     else:
         reports_dir = script_name
 
-    if not Path(reports_dir).is_dir():
+    if not pathlib.Path(reports_dir).is_dir():
         raise ValueError(
             f"The script name, '{script_name}', does not have a reports folder associated with it. "
             f"The directory '{reports_dir}' does not exist."
@@ -664,7 +679,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
                     y=variables,
                     responsive=True,
                     min_height=400,
-                    color=list(Category10[10]),
+                    color=list(bp.Category10[10]),
                     yformatter="%.0f",
                     title="Model Optimization using OpenMDAO",
                 )
@@ -832,13 +847,164 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
         ("Trajectory Results", traj_results_report_pane)
     )
 
+    # Interactive XY plot of mission variables
+    if problem_recorder:
+        if os.path.exists(problem_recorder):
+            cr = om.CaseReader(problem_recorder)
+
+            # determine what trajectories there are
+            traj_nodes = [n for n in _meta_tree_subsys_iter(
+                cr.problem_metadata['tree'], cls='dymos.trajectory.trajectory:Trajectory')]
+
+            if len(traj_nodes) == 0:
+                raise ValueError("No trajectories available in case recorder file for use "
+                                 "in generating interactive XY plot of mission variables")
+            traj_name = traj_nodes[0]["name"]
+            if len(traj_nodes) > 1:
+                issue_warning("More than one trajectory found in problem case recorder file. Only using "
+                              f'the first one, "{traj_name}", for the interactive XY plot of mission variables')
+            case = cr.get_case("final")
+            outputs = case.list_outputs(out_stream=None, units=True)
+
+            # data_by_varname_and_phase = defaultdict(dict)
+            data_by_varname_and_phase = defaultdict(lambda: defaultdict(list))
+
+            # Find the "largest" unit used for any timeseries output across all phases
+            units_by_varname = {}
+            phases = set()
+            varnames = set()
+            # pattern used to parse out the phase names and variable names
+            pattern = fr"{traj_name}\.phases\.([a-zA-Z0-9_]+)\.timeseries\.timeseries_comp\.([a-zA-Z0-9_]+)"
+            for varname, meta in outputs:
+                match = re.match(pattern, varname)
+                if match:
+                    phase, name = match.group(1), match.group(2)
+                    phases.add(phase)
+                    varnames.add(name)
+                    if name not in units_by_varname:
+                        units_by_varname[name] = meta['units']
+                    else:
+                        _, new_conv_factor = conversion_to_base_units(meta['units'])
+                        _, old_conv_factor = conversion_to_base_units(
+                            units_by_varname[name])
+                        if new_conv_factor < old_conv_factor:
+                            units_by_varname[name] = meta['units']
+
+            # Now get the values using those units
+            for varname, meta in outputs:
+                match = re.match(pattern, varname)
+                if match:
+                    phase, name = match.group(1), match.group(2)
+                    val = case.get_val(varname, units=units_by_varname[name])
+                    data_by_varname_and_phase[name][phase] = val
+
+            # determine the initial variables used for X and Y
+            varname_options = list(sorted(varnames, key=str.casefold))
+            if "distance" in varname_options:
+                x_varname_default = "distance"
+            elif "time" in varname_options:
+                x_varname_default = "time"
+            else:
+                x_varname_default = varname_options[0]
+
+            if "altitude" in varname_options:
+                y_varname_default = "altitude"
+            else:
+                y_varname_default = varname_options[-1]
+
+            # need to create ColumnDataSource for each phase
+            sources = {}
+            for phase in phases:
+                x, y = _get_interactive_plot_sources(data_by_varname_and_phase,
+                                                     x_varname_default, y_varname_default, phase)
+                sources[phase] = ColumnDataSource(data=dict(
+                    x=x,
+                    y=y))
+
+            # Create the figure
+            p = figure(
+                width=800, height=400,
+                tools='pan,box_zoom,xwheel_zoom,hover,undo,reset,save',
+                tooltips=[
+                    ('x', '@x'),
+                    ('y', '@y'),
+                ],
+            )
+
+            colors = bp.d3['Category20'][20][0::2] + bp.d3['Category20'][20][1::2]
+            legend_data = []
+            phases = sorted(phases, key=str.casefold)
+            for i, phase in enumerate(phases):
+                color = colors[i % 20]
+                scatter_plot = p.scatter('x', 'y', source=sources[phase],
+                                         color=color,
+                                         size=5,
+                                         )
+                line_plot = p.line('x', 'y', source=sources[phase],
+                                   color=color,
+                                   line_width=1,
+                                   )
+                legend_data.append((phase, [scatter_plot, line_plot]))
+
+            # Make the Legend
+            legend = Legend(items=legend_data, location='center',
+                            label_text_font_size='8pt')
+            # so users can click on the dot in the legend to turn off/on that phase in the plot
+            legend.click_policy = "hide"
+            p.add_layout(legend, 'right')
+
+            # Create dropdown menus for X and Y axis selection
+            x_select = pn.widgets.Select(
+                name="X-Axis", value=x_varname_default, options=varname_options)
+            y_select = pn.widgets.Select(
+                name="Y-Axis", value=y_varname_default, options=varname_options)
+
+            # Callback function to update the plot
+            @pn.depends(x_select, y_select)
+            def update_plot(x_varname, y_varname):
+                for phase in phases:
+                    x = data_by_varname_and_phase[x_varname][phase]
+                    y = data_by_varname_and_phase[y_varname][phase]
+                    x, y = _get_interactive_plot_sources(data_by_varname_and_phase,
+                                                         x_varname, y_varname, phase)
+                    sources[phase].data = dict(x=x, y=y)
+
+                p.xaxis.axis_label = f'{x_varname} ({units_by_varname[x_varname]})'
+                p.yaxis.axis_label = f'{y_varname} ({units_by_varname[y_varname]})'
+
+                p.hover.tooltips = [
+                    (x_varname, "@x"),
+                    (y_varname, "@y")
+                ]
+                return p
+
+            # Create the dashboard pane for this plot
+            interactive_mission_var_plot_pane = pn.Column(
+                pn.pane.Markdown(
+                    f"# Interactive Mission Variable Plot for Trajectory, {traj_name}"),
+                pn.Row(x_select, y_select),
+                pn.Row(pn.HSpacer(), update_plot, pn.HSpacer())
+            )
+        else:
+            interactive_mission_var_plot_pane = pn.pane.Markdown(
+                f"# Recorder file '{problem_recorder}' not found.")
+
+        interactive_mission_var_plot_pane_with_doc = pn.Column(
+            pn.pane.HTML(f"<p>Plot of mission variables allowing user to select X and Y plot values.</p>",
+                         styles={'text-align': documentation_text_align}),
+            interactive_mission_var_plot_pane
+        )
+        results_tabs_list.append(
+            ("Interactive Mission Variable Plot", interactive_mission_var_plot_pane_with_doc)
+        )
+
     ####### Subsystems Tab #######
     subsystem_tabs_list = []
 
     # Look through subsystems directory for markdown files
     # The subsystems report tab shows selected results for every major subsystem in the Aviary problem
 
-    for md_file in sorted(Path(f"{reports_dir}/subsystems").glob("*.md"), key=str):
+    for md_file in sorted(pathlib.Path(f"{reports_dir}subsystems").glob("*.md"), key=str):
         subsystems_pane = create_report_frame("markdown", str(
             md_file),
             f'''
