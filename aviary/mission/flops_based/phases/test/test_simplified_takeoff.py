@@ -75,9 +75,7 @@ class StallSpeedTest2(unittest.TestCase):
         self.prob.run_model()
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(
-            partial_data, atol=1e-12, rtol=1e-12
-        )
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
 class FinalConditionsTest(unittest.TestCase):
@@ -154,6 +152,9 @@ class FinalConditionsTest2(unittest.TestCase):
         )
         # default value v_stall = 0.1 will worsen the output
         prob.model.set_input_defaults("v_stall", val=100, units="m/s")
+        # default value GROSS_MASS = 150000 will worsen the output
+        prob.model.set_input_defaults(
+            Mission.Summary.GROSS_MASS, val=181200.0, units="lbm")
         prob.setup(check=False, force_alloc_complex=True)
         prob.run_model()
 
