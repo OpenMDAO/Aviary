@@ -82,6 +82,37 @@ class TestBreguetPartials(unittest.TestCase):
         assert_check_partials(partial_data, atol=tol, rtol=tol)
 
 
+class TestBreguetPartials2(unittest.TestCase):
+    """
+    Test mass-weight conversion
+    """
+
+    def setUp(self):
+        import aviary.mission.gasp_based.phases.breguet as breguet
+        breguet.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.mission.gasp_based.phases.breguet as breguet
+        breguet.GRAV_ENGLISH_LBM = 1.0
+
+    def test_partials(self):
+        nn = 2
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "range_comp", RangeComp(num_nodes=nn), promotes=["*"])
+        prob.model.set_input_defaults(
+            "TAS_cruise", 458.8 + 50 * np.random.rand(nn,), units="kn")
+        prob.model.set_input_defaults(
+            "mass", np.linspace(171481, 171481 - 10000, nn), units="lbm")
+        prob.model.set_input_defaults(
+            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, -5870 * np.ones(nn,), units="lbm/h")
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.run_model()
+
+        partial_data = prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
 class TestBreguetResults(unittest.TestCase):
     def setUp(self):
         self.nn = nn = 100

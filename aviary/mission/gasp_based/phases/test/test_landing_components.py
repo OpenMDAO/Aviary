@@ -111,6 +111,47 @@ class GlideTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-12)
 
 
+class GlideTestCase2(unittest.TestCase):
+    """
+    Test mass-weight conversion
+    """
+
+    def setUp(self):
+        import aviary.mission.gasp_based.phases.landing_components as landing
+        landing.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.mission.gasp_based.phases.landing_components as landing
+        landing.GRAV_ENGLISH_LBM = 1.0
+
+    def test_case1(self):
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "group", GlideConditionComponent(), promotes=["*"])
+        prob.model.set_input_defaults(
+            "rho_app", RHO_SEA_LEVEL_ENGLISH, units="slug/ft**3")
+        prob.model.set_input_defaults(
+            Mission.Landing.MAXIMUM_SINK_RATE, 900, units="ft/min")
+        prob.model.set_input_defaults("mass", 165279, units="lbm")
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, 1370.3, units="ft**2")
+        prob.model.set_input_defaults(
+            Mission.Landing.GLIDE_TO_STALL_RATIO, 1.3, units="unitless")
+        prob.model.set_input_defaults("CL_max", 2.9533, units="unitless")
+        prob.model.set_input_defaults(
+            Mission.Landing.MAXIMUM_FLARE_LOAD_FACTOR, 1.15, units="unitless")
+        prob.model.set_input_defaults(
+            Mission.Landing.TOUCHDOWN_SINK_RATE, 5, units="ft/s")
+        prob.model.set_input_defaults(
+            Mission.Landing.INITIAL_ALTITUDE, val=50.0, units="ft")
+        prob.model.set_input_defaults(
+            Mission.Landing.BRAKING_DELAY, val=1.0, units="s")
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.run_model()
+
+        partial_data = prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-10, rtol=1e-12)
+
+
 class GroundRollTestCase(unittest.TestCase):
     def setUp(self):
 
@@ -153,6 +194,52 @@ class GroundRollTestCase(unittest.TestCase):
         assert_near_equal(
             self.prob["average_acceleration"], 0.29308129, tol
         )  # actual GASP value is: 0.3932
+
+        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=5e-12, rtol=1e-12)
+
+
+class GroundRollTestCase2(unittest.TestCase):
+    """
+    Test mass-weight conversion
+    """
+
+    def setUp(self):
+        import aviary.mission.gasp_based.phases.landing_components as landing
+        landing.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.mission.gasp_based.phases.landing_components as landing
+        landing.GRAV_ENGLISH_LBM = 1.0
+
+    def test_case1(self):
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem(
+            "group", LandingGroundRollComponent(), promotes=["*"]
+        )
+
+        self.prob.model.set_input_defaults("touchdown_CD", val=0.07344)
+        self.prob.model.set_input_defaults("touchdown_CL", val=1.18694)
+        self.prob.model.set_input_defaults(
+            Mission.Landing.STALL_VELOCITY, val=109.73, units="kn"
+        )  # note: EAS in GASP, although at this altitude they are nearly identical
+        self.prob.model.set_input_defaults("TAS_touchdown", val=126.27, units="kn")
+        self.prob.model.set_input_defaults("thrust_idle", val=1276, units="lbf")
+        self.prob.model.set_input_defaults(
+            "density_ratio", val=0.998739, units="unitless"
+        )  # note: calculated from GASP glide speed values
+        self.prob.model.set_input_defaults(
+            "wing_loading_land", val=120.61, units="lbf/ft**2"
+        )
+        self.prob.model.set_input_defaults("glide_distance", val=802, units="ft")
+        self.prob.model.set_input_defaults("tr_distance", val=167, units="ft")
+        self.prob.model.set_input_defaults("delay_distance", val=213, units="ft")
+        self.prob.model.set_input_defaults("CL_max", 2.9533, units="unitless")
+        self.prob.model.set_input_defaults("mass", 165279, units="lbm")
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+        self.prob.run_model()
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=5e-12, rtol=1e-12)
