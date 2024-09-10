@@ -1,0 +1,30 @@
+cff-version: 1.2.0
+title: Aviary
+message: Please use this citation when using Aviary in your research!
+type: software
+authors:
+  - given-names: Jennifer
+    family-names: Gratz
+    affiliation: NASA Glenn Research Center
+  - given-names: Jason
+    family-names: Kirk
+    affiliation: NASA Langley Research Center
+  - given-names: Carl
+    family-names: Recine
+    affiliation: NASA Ames Research Center
+  - given-names: John
+    family-names: Jasa
+    affiliation: Banner Quality Management Inc.
+  - given-names: Eliot
+    family-names: Aretskin-Hariton
+    affiliation: NASA Glenn Research Center
+  - given-names: Kenneth
+    family-names: Moore
+    affiliation: Banner Quality Management Inc.
+identifiers:
+  - type: doi
+    value: 10.2514/6.2024-4219
+repository-code: 'https://github.com/OpenMDAO/Aviary'
+repository: 'https://github.com/OpenMDAO/Aviary_Community'
+license: Apache-2.0
+version: 0.9.3
