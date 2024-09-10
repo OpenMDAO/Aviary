@@ -6,6 +6,7 @@ from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
+from aviary.subsystems.propulsion.motor.motor_builder import MotorBuilder
 from aviary.utils.process_input_decks import create_vehicle
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
@@ -27,6 +28,10 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         )
 
         turboprop = TurbopropModel('turboprop', options=options)
+
+        motor = MotorBuilder(
+            'motor',
+        )
 
         # load_inputs needs to be updated to accept an already existing aviary options
         prob.load_inputs(
@@ -50,7 +55,7 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         prob.setup()
         prob.set_initial_guesses()
 
-        prob.run_aviary_problem("dymos_solution.db", make_plots=False)
+        prob.run_aviary_problem()
 
 
 if __name__ == '__main__':

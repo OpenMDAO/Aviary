@@ -25,22 +25,27 @@ aircraft:design:reserve_fuel_additional, 0.667, lbm
 aircraft:design:static_margin, 0.05, unitless
 aircraft:design:structural_mass_increment, 0, lbm
 aircraft:design:supercritical_drag_shift, 0, unitless
+# this may not do anything
+aircraft:electrical:mass, 300, lbm 
 aircraft:engine:additional_mass_fraction, 0.34, unitless
 aircraft:engine:mass_scaler, 1, unitless
 aircraft:engine:mass_specific, 0.37026, lbm/lbf
 aircraft:engine:num_engines, 4, unitless
 aircraft:engine:data_file, models/engines/turboshaft_4465hp.deck
+#aircraft:engine:generate_flight_idle, True
+#aircraft:engine:data_file, models/engines/test.deck
 aircraft:engine:pod_mass_scaler, 1, unitless
 aircraft:engine:pylon_factor, 0.7, unitless
 aircraft:engine:reference_diameter, 5.8, ft
-aircraft:engine:reference_sls_thrust, 28690, lbf
-aircraft:engine:scaled_sls_thrust, 28690, lbf
+aircraft:engine:reference_sls_thrust, 4465, lbf
+aircraft:engine:scaled_sls_thrust, 4465, lbf
 aircraft:engine:type, 6, unitless
 aircraft:engine:wing_locations, [0.385, 0.385], unitless
 aircraft:engine:propeller_diameter, 13.5, ft
 aircraft:engine:num_propeller_blades, 4, unitless
 aircraft:engine:propeller_activity_factor, 167, unitless
 aircraft:engine:propeller_tip_speed_max, 720, ft/s
+aircraft:engine:gearbox:mass, 466, lbm
 # aircraft:engine:gearbox:gear_ratio, 13.53, unitless
 aircraft:engine:fixed_rpm, 1019, rpm
 aircraft:fuel:density, 6.687, lbm/galUS
@@ -185,6 +190,7 @@ INGASP.CK18, 1
 INGASP.CK7, 1
 INGASP.CK8, 1
 INGASP.CK9, 1
+# none of the "CW" mass overrides might be working right now
 INGASP.CW, , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0
 INGASP.DCDSE, 0
 INGASP.EMCRU, 0.475
@@ -226,10 +232,8 @@ INPROP.AF, 167
 INPROP.ANCQHP, 0.03405
 INPROP.BL, 4
 INPROP.BLANG, 0
-INPROP.CLI, 0.5
 INPROP.CTI, 0.2
 INPROP.DIST, 1000
-INPROP.DPROP, 13.5
 INPROP.GR, 0.0738
 INPROP.HNOYS, 1000
 INPROP.HPMSLS, 4465
