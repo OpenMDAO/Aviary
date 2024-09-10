@@ -81,8 +81,7 @@ def create_vehicle(vehicle_deck='', meta_data=_MetaData, verbosity=None):
     if isinstance(vehicle_deck, AviaryValues):
         for key, (val, units) in vehicle_deck:
             if key.startswith('initialization_guesses:'):
-                new_key = key.split('initialization_guesses:', 1)[-1]
-                initialization_guesses[new_key] = val
+                initialization_guesses[key.removeprefix('initialization_guesses:')] = val
         aircraft_values.update(vehicle_deck)
     else:
         vehicle_deck = get_path(vehicle_deck)
@@ -168,7 +167,8 @@ def parse_inputs(vehicle_deck, aircraft_values: AviaryValues = None, initializat
 
             elif var_name.startswith('initialization_guesses:'):
                 # get values labelled as initialization_guesses in .csv input file
-                initialization_guesses[var_name.split(':')[-1]] = float(var_values[0])
+                initialization_guesses[var_name.removeprefix(
+                    'initialization_guesses:')] = float(var_values[0])
                 continue
 
             elif ":" in var_name:
