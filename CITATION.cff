@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-title: Aviary
+title: Aviary: An Open-Source Multidisciplinary Design, Analysis, and Optimization Tool for Modeling Aircraft With Analytic Gradients
 message: Please use this citation when using Aviary in your research!
 type: software
 authors:
@@ -18,6 +18,9 @@ authors:
   - given-names: Eliot
     family-names: Aretskin-Hariton
     affiliation: NASA Glenn Research Center
+  - given-names: Kenneth
+    family-names: Moore
+    affiliation: Banner Quality Management Inc.
   - given-names: Kenneth
     family-names: Moore
     affiliation: Banner Quality Management Inc.
