@@ -1,11 +1,12 @@
 import unittest
 
 import numpy as np
+
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal, assert_check_partials
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.mission.gasp_based.ode.params import ParamPort
+from aviary.mission.gasp_based.ode.params import set_params_for_unit_tests
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_control_iter_group import \
     UnsteadyControlIterGroup
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_flight_conditions import \
@@ -27,11 +28,6 @@ class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
 
         p = om.Problem()
 
-        # TODO: paramport
-        param_port = ParamPort()
-
-        p.model.add_subsystem("params", param_port, promotes=["*"])
-
         fc = UnsteadySolvedFlightConditions(num_nodes=nn,
                                             input_speed_type=SpeedType.TAS,
                                             ground_roll=ground_roll)
@@ -51,12 +47,12 @@ class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
                                    promotes_inputs=["*"],
                                    promotes_outputs=["*"])
 
-        for key, data in param_port.param_data.items():
-            p.model.set_input_defaults(key, **data)
         if ground_roll:
             ig.set_input_defaults("alpha", np.zeros(nn), units="deg")
 
         p.setup(force_alloc_complex=True)
+
+        set_params_for_unit_tests(p)
 
         p.final_setup()
 
