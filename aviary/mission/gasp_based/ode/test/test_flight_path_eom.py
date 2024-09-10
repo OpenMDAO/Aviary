@@ -79,5 +79,48 @@ class FlightPathEOMTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+class FlightPathEOMTestCase2(unittest.TestCase):
+    """
+    Test mass-weight conversion
+    """
+
+    def setUp(self):
+        import aviary.mission.gasp_based.ode.flight_path_eom as fp
+        fp.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.mission.gasp_based.ode.flight_path_eom as fp
+        fp.GRAV_ENGLISH_LBM = 1.0
+
+    def test_case1(self):
+        """
+        ground_roll = False (the aircraft is not confined to the ground)
+        """
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "group", FlightPathEOM(num_nodes=2, ground_roll=False), promotes=["*"]
+        )
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.run_model()
+
+        partial_data = prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+    def test_case2(self):
+        """
+        ground_roll = True (the aircraft is confined to the ground)
+        """
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "group", FlightPathEOM(num_nodes=2, ground_roll=True), promotes=["*"]
+        )
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.setup(force_alloc_complex=True)
+        prob.run_model()
+
+        partial_data = prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
 if __name__ == "__main__":
     unittest.main()

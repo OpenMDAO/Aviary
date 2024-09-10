@@ -62,5 +62,39 @@ class ClimbTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+class ClimbTestCase2(unittest.TestCase):
+    """
+    Test mass-weight conversion
+    """
+
+    def setUp(self):
+        import aviary.mission.gasp_based.ode.climb_eom as climb
+        climb.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.mission.gasp_based.ode.climb_eom as climb
+        climb.GRAV_ENGLISH_LBM = 1.0
+
+    def test_case1(self):
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem("group", ClimbRates(num_nodes=2), promotes=["*"])
+        self.prob.model.set_input_defaults(
+            Dynamic.Mission.VELOCITY, np.array([459, 459]), units="kn")
+        self.prob.model.set_input_defaults(
+            Dynamic.Mission.THRUST_TOTAL, np.array([10473, 10473]), units="lbf"
+        )
+        self.prob.model.set_input_defaults(
+            Dynamic.Mission.DRAG, np.array([9091.517, 9091.517]), units="lbf"
+        )
+        self.prob.model.set_input_defaults(
+            Dynamic.Mission.MASS, np.array([171481, 171481]), units="lbm"
+        )
+        self.prob.setup(check=False, force_alloc_complex=True)
+        self.prob.run_model()
+
+        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
 if __name__ == "__main__":
     unittest.main()
