@@ -55,7 +55,7 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         prob.setup()
         prob.set_initial_guesses()
 
-        prob.run_aviary_problem()
+        prob.run_aviary_problem("dymos_solution.db")
 
 
 if __name__ == '__main__':
