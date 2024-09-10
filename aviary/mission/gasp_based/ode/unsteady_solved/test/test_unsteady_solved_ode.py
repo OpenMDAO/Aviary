@@ -1,11 +1,12 @@
 import unittest
 
 import numpy as np
+
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_near_equal
+from openmdao.utils.assert_utils import assert_near_equal, assert_check_partials
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.mission.gasp_based.ode.params import ParamPort
+from aviary.mission.gasp_based.ode.params import set_params_for_unit_tests
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_ode import \
     UnsteadySolvedODE
 from aviary.variable_info.options import get_option_defaults
@@ -36,13 +37,14 @@ class TestUnsteadySolvedODE(unittest.TestCase):
 
         p.model.add_subsystem("ode", ode, promotes=["*"])
 
-        # TODO: paramport
-        param_port = ParamPort()
-        for key, data in param_port.param_data.items():
-            p.model.set_input_defaults(key, **data)
         p.model.set_input_defaults(Dynamic.Mission.MACH, 0.8 * np.ones(nn))
+        if ground_roll:
+            p.model.set_input_defaults(Dynamic.Mission.MACH, 0.1 * np.ones(nn))
+            ode.set_input_defaults("alpha", np.zeros(nn), units="deg")
 
         p.setup(force_alloc_complex=True)
+
+        set_params_for_unit_tests(p)
 
         p.final_setup()
 
@@ -100,8 +102,16 @@ class TestUnsteadySolvedODE(unittest.TestCase):
         # 5. Test that fuelflow (lbf/s) * dt_dr (s/ft) is equal to dmass_dr
         assert_near_equal(fuelflow * dt_dr, dmass_dr, tolerance=1.0E-12)
 
+        cpd = p.check_partials(out_stream=None, method="cs",
+                               excludes=["*params*", "*aero*"])
+        # issue #495
+        # dTAS_dt_approx wrt flight_path_angle | abs | fwd-fd | 1.8689625335382314
+        # dTAS_dt_approx wrt flight_path_angle | rel | fwd-fd | 1.0
+        # assert_check_partials(cpd, atol=1e-6, rtol=1e-6)
+
     def test_steady_level_flight(self):
 
+        # issue #494: why not ground_roll in [True] ?
         for ground_roll in [False]:
             with self.subTest(msg=f"ground_roll={ground_roll}"):
                 self._test_unsteady_solved_ode(ground_roll=ground_roll)

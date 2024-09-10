@@ -1,18 +1,21 @@
+from packaging import version
 import unittest
-import os
 
 import numpy as np
+
 import openmdao
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
-from packaging import version
 
+from aviary.mission.gasp_based.ode.params import set_params_for_unit_tests
 from aviary.mission.gasp_based.phases.landing_group import LandingSegment
-from aviary.variable_info.options import get_option_defaults
-from aviary.utils.test_utils.IO_test_util import check_prob_outputs
-from aviary.variable_info.variables import Dynamic, Mission
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
+from aviary.utils.test_utils.IO_test_util import check_prob_outputs
+from aviary.variable_info.options import get_option_defaults
+from aviary.variable_info.variables import Dynamic, Mission
+
+# TODO - Why does this test landing instead of taxi?
 
 
 class DLandTestCase(unittest.TestCase):
@@ -31,6 +34,8 @@ class DLandTestCase(unittest.TestCase):
     def test_dland(self):
         self.prob.setup(check=False, force_alloc_complex=True)
 
+        set_params_for_unit_tests(self.prob)
+
         self.prob.set_val(Mission.Landing.AIRPORT_ALTITUDE, 0, units="ft")
         self.prob.set_val(Mission.Landing.INITIAL_MACH, 0.1, units="unitless")
         self.prob.set_val("alpha", 0, units="deg")  # doesn't matter
@@ -46,9 +51,9 @@ class DLandTestCase(unittest.TestCase):
         self.prob.run_model()
 
         testvals = {
-            Mission.Landing.INITIAL_VELOCITY: 142.74 * 1.68781,
-            "TAS_touchdown": 126.27 * 1.68781,
-            "theta": np.deg2rad(3.57),
+            Mission.Landing.INITIAL_VELOCITY: 240.9179994,  # ft/s (142.74 knot)
+            "TAS_touchdown": 213.1197687,  # ft/s (126.27 knot)
+            "theta": 0.06230825,  # rad (3.57 deg)
             "flare_alt": 20.8,
             "ground_roll_distance": 1798,
             Mission.Landing.GROUND_DISTANCE: 2980,

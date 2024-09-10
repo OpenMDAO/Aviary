@@ -4,11 +4,10 @@ import openmdao.api as om
 from aviary.mission.gasp_based.ode.base_ode import BaseODE
 from aviary.mission.gasp_based.ode.groundroll_eom import GroundrollEOM
 from aviary.mission.gasp_based.ode.params import ParamPort
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.variable_info.enums import AnalysisScheme
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.variable_info.variables_in import VariablesIn
 from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
 
 
@@ -46,12 +45,6 @@ class GroundrollODE(BaseODE):
 
         # TODO: paramport
         self.add_subsystem("params", ParamPort(), promotes=["*"])
-
-        self.add_subsystem(
-            'input_port',
-            VariablesIn(aviary_options=aviary_options),
-            promotes_inputs=['*'],
-            promotes_outputs=['*'])
 
         self.add_atmosphere(nn)
 
@@ -143,3 +136,5 @@ class GroundrollODE(BaseODE):
         self.set_input_defaults(Dynamic.Mission.VELOCITY, val=np.zeros(nn), units="kn")
         self.set_input_defaults(Dynamic.Mission.VELOCITY_RATE,
                                 val=np.zeros(nn), units="kn/s")
+
+        self.set_input_defaults(Aircraft.Wing.INCIDENCE, val=1.0, units="deg")

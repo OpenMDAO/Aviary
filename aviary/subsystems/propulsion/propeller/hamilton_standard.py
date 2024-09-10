@@ -723,7 +723,7 @@ class HamiltonStandard(om.ExplicitComponent):
                             CP_CLi_table[CL_tab_idx][:cli_len], XPCLI[CL_tab_idx], CPE1X)
                         if (run_flag == 1):
                             ichck = ichck + 1
-                        if (verbosity is Verbosity.DEBUG or ichck <= 1):
+                        if verbosity == Verbosity.DEBUG or ichck <= Verbosity.BRIEF:
                             if (run_flag == 1):
                                 warnings.warn(
                                     f"Mach,VTMACH,J,power_coefficient,CP_Eff =: {inputs[Dynamic.Mission.MACH][i_node]},{inputs['tip_mach'][i_node]},{inputs['advance_ratio'][i_node]},{power_coefficient},{CP_Eff}")
@@ -747,10 +747,12 @@ class HamiltonStandard(om.ExplicitComponent):
                     CP_Eff = CP_Eff*PCLI  # the effective CP at baseline point for kdx
                     ang_len = ang_arr_len[kdx]
                     BLL[kdx], run_flag = _unint(
-                        CP_Angle_table[idx_blade][kdx][:ang_len], Blade_angle_table[kdx], CP_Eff)  # blade angle at baseline point for kdx
+                        # blade angle at baseline point for kdx
+                        CP_Angle_table[idx_blade][kdx][:ang_len], Blade_angle_table[kdx], CP_Eff)
                     try:
                         CTT[kdx], run_flag = _unint(
-                            Blade_angle_table[kdx], CT_Angle_table[idx_blade][kdx][:ang_len], BLL[kdx])  # thrust coeff at baseline point for kdx
+                            # thrust coeff at baseline point for kdx
+                            Blade_angle_table[kdx], CT_Angle_table[idx_blade][kdx][:ang_len], BLL[kdx])
                     except IndexError:
                         raise om.AnalysisError(
                             "interp failed for CTT (thrust coefficient) in hamilton_standard.py")
