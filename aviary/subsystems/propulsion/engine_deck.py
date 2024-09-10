@@ -43,6 +43,7 @@ from aviary.subsystems.propulsion.utils import (
 from aviary.utils.aviary_values import AviaryValues, NamedValues, get_keys, get_items
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
+from aviary.variable_info.enums import Verbosity
 from aviary.utils.csv_data_file import read_data_file
 from aviary.interface.utils.markdown_utils import round_it
 
@@ -144,7 +145,8 @@ class EngineDeck(EngineModel):
     """
 
     def __init__(self, name='engine_deck', options: AviaryValues = None,
-                 data: NamedValues = None, required_variables=default_required_variables):
+                 data: NamedValues = None,
+                 required_variables: set = default_required_variables):
         if data is not None:
             self.read_from_file = False
         else:
@@ -215,7 +217,7 @@ class EngineDeck(EngineModel):
                 val = _MetaData[key]['default_value']
                 units = _MetaData[key]['units']
 
-                if self.get_val(Settings.VERBOSITY).value >= 1:
+                if self.get_val(Settings.VERBOSITY) >= Verbosity.BRIEF:
                     warnings.warn(
                         f'<{key}> is a required option for EngineDecks, but has not been '
                         f'specified for EngineDeck <{self.name}>. The default value '
@@ -241,8 +243,9 @@ class EngineDeck(EngineModel):
             if idle_min > idle_max:
                 if self.get_val(Settings.VERBOSITY).value >= 1:
                     warnings.warn(
-                        f'EngineDeck <{self.name}>: Minimum flight idle fraction exceeds maximum '
-                        f'flight idle fraction. Values for min and max fraction will be flipped.'
+                        f'EngineDeck <{self.name}>: Minimum flight idle fraction '
+                        'exceeds maximum flight idle fraction. Values for min and max '
+                        'fraction will be flipped.'
                     )
                 self.set_val(Aircraft.Engine.FLIGHT_IDLE_MIN_FRACTION,
                              val=idle_max)
@@ -395,16 +398,18 @@ class EngineDeck(EngineModel):
                     val = np.array([convert_units(i, units, default_units[key])
                                    for i in val])
                 except TypeError:
-                    raise TypeError(f"{message}: units of '{units}' provided for "
-                                    f'<{key.name}> are not compatible with expected units '
-                                    f'of {default_units[key]}')
+                    raise TypeError(
+                        f"{message}: units of '{units}' provided for "
+                        f'<{key.name}> are not compatible with expected '
+                        f'units of {default_units[key]}'
+                    )
 
                 # Engine_variables currently only used to store "valid" engine variables
                 # as defined in EngineModelVariables Enum
                 self.engine_variables[key] = default_units[key]
 
             else:
-                if self.get_val(Settings.VERBOSITY).value >= 1:
+                if self.get_val(Settings.VERBOSITY) >= Verbosity.BRIEF:
                     warnings.warn(
                         f'{message}: header <{key}> was not recognized, and will be skipped')
 
@@ -514,7 +519,11 @@ class EngineDeck(EngineModel):
         # them for consistency, as that requires information not avaliable during setup
         # (freestream air temp and pressure). Instead, we must trust the source and
         # assume either data set is valid and can be used.
-        if SHAFT_POWER in engine_variables and SHAFT_POWER_CORRECTED in engine_variables and self.get_val(Settings.VERBOSITY).value >= 1:
+        if (
+            SHAFT_POWER in engine_variables
+            and SHAFT_POWER_CORRECTED in engine_variables
+            and self.get_val(Settings.VERBOSITY) >= Verbosity.BRIEF
+        ):
             warnings.warn(
                 'Both corrected and uncorrected shaft horsepower are '
                 f'present in {message}. The two cannot be validated for '
@@ -1145,11 +1154,13 @@ class EngineDeck(EngineModel):
             sls_idx = np.intersect1d(sea_level_idx, static_idx)
 
             if sls_idx.size == 0:
-                raise UserWarning('Could not find sea-level static max thrust point for '
-                                  f'EngineDeck <{self.name}>. Please review the data file '
-                                  f'<{self.get_val(Aircraft.Engine.DATA_FILE)}> or '
-                                  'manually specify Aircraft.Engine.REFERENCE_SLS_THRUST '
-                                  'in EngineDeck options')
+                raise UserWarning(
+                    'Could not find sea-level static max thrust point for '
+                    f'EngineDeck <{self.name}>. Please review the data '
+                    f'file <{self.get_val(Aircraft.Engine.DATA_FILE)}> or '
+                    'manually specify Aircraft.Engine.REFERENCE_SLS_THRUST '
+                    'in EngineDeck options'
+                )
 
             reference_sls_thrust = max(self.data[THRUST][sls_idx])
 
@@ -1179,8 +1190,8 @@ class EngineDeck(EngineModel):
                         # user wants scaling but provided conflicting inputs,
                         # cannot be resolved
                         raise AttributeError(
-                            f'EngineModel <{self.name}>: Conflicting values provided for '
-                            'aircraft:engine:scale_factor and '
+                            f'EngineModel <{self.name}>: Conflicting values provided '
+                            'for aircraft:engine:scale_factor and '
                             'aircraft:engine:scaled_sls_thrust'
                         )
                     # get thrust target & scale factor matching exactly. Scale factor is
@@ -1455,10 +1466,12 @@ class EngineDeck(EngineModel):
                 # new Mach number
                 # if there are less than two altitudes for this Mach number, quit
                 if alt_count < 2 and mach_count > 0:
-                    raise UserWarning('Only one altitude provided for Mach number '
-                                      f'{mach_numbers[mach_count]:6.3f} in engine data file '
-                                      f'<{self.get_val(Aircraft.Engine.DATA_FILE).name}>'
-                                      )
+                    raise UserWarning(
+                        'Only one altitude provided for Mach number '
+                        f'{mach_numbers[mach_count]:6.3f} in engine data '
+                        'file '
+                        f'<{self.get_val(Aircraft.Engine.DATA_FILE).name}>'
+                    )
 
                 # record and count mach numbers
                 curr_mach = mach_num
