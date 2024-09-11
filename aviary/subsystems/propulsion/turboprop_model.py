@@ -355,7 +355,7 @@ class TurbopropMission(om.Group):
         components. It is assumed only the gearbox has variables like this.
 
         Set up fixed RPM value if requested by user, which overrides any RPM defined by
-        shaft powerm model
+        shaft power model
         """
         has_gearbox = self.options['gearbox_model'] is not None
 
