@@ -265,7 +265,14 @@ def large_single_aisle_example(makeN2=False):
         prob.set_initial_guesses(super_prob, super_prob.group_prefix+f"_{i}.")
 
     if makeN2:
-        from createN2 import createN2
+        # TODO: Not sure we need this at all.
+        from openmdao.api import n2
+        from os.path import basename, dirname, join, abspath
+        def createN2(fileref, prob):
+            n2folder = join(dirname(abspath(__file__)), "N2s")
+            n2(prob, outfile=join(n2folder,
+                f"n2_{basename(fileref).split('.')[0]}.html"))
+    
         createN2(__file__, super_prob)
 
     super_prob.run()
