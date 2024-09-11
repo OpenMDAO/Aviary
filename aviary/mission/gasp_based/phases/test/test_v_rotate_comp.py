@@ -59,6 +59,5 @@ class TestVRotateComp2(unittest.TestCase):
         )
         prob.set_val("CL_max", val=2.1886, units="unitless")
         prob.set_val("mass", val=175_000, units="lbm")
-        prob.run_model()
 
         prob.check_partials(method='cs')

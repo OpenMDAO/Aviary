@@ -59,14 +59,7 @@ class WingSizeTestCase2(unittest.TestCase):
     def test_case1(self):
         self.prob = om.Problem()
         self.prob.model.add_subsystem("size", WingSize(), promotes=["*"])
-        self.prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, 175400, units="lbm")
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.LOADING, 128, units="lbf/ft**2")
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.ASPECT_RATIO, 10.13, units="unitless")
         self.prob.setup(check=False, force_alloc_complex=True)
-        self.prob.run_model()
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)

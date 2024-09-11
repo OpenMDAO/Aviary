@@ -82,7 +82,6 @@ class AscentEOMTestCase2(unittest.TestCase):
             Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(2), units="rad")
         prob.model.set_input_defaults("alpha", val=np.zeros(2), units="deg")
         prob.setup(check=False, force_alloc_complex=True)
-        prob.run_model()
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)

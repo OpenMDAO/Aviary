@@ -146,7 +146,6 @@ class GlideTestCase2(unittest.TestCase):
         prob.model.set_input_defaults(
             Mission.Landing.BRAKING_DELAY, val=1.0, units="s")
         prob.setup(check=False, force_alloc_complex=True)
-        prob.run_model()
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-12)

@@ -71,7 +71,6 @@ class LandingCalcTest2(unittest.TestCase):
             promotes=["*"],
         )
         prob.setup(check=False, force_alloc_complex=True)
-        prob.run_model()
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
@@ -120,4 +119,7 @@ class LandingGroupTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    #unittest.main()
+    thisClass = LandingCalcTest2()
+    thisClass.setUp()
+    thisClass.test_case1()

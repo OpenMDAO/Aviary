@@ -94,7 +94,6 @@ class DescentTestCase2(unittest.TestCase):
         )
         self.prob.model.set_input_defaults("alpha", np.array([3.2, 3.2]), units="deg")
         self.prob.setup(check=False, force_alloc_complex=True)
-        self.prob.run_model()
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)

@@ -90,7 +90,6 @@ class ClimbTestCase2(unittest.TestCase):
             Dynamic.Mission.MASS, np.array([171481, 171481]), units="lbm"
         )
         self.prob.setup(check=False, force_alloc_complex=True)
-        self.prob.run_model()
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)

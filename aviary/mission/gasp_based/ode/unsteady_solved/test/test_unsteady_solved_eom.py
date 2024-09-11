@@ -115,18 +115,6 @@ class TestUnsteadySolvedEOM2(unittest.TestCase):
                               promotes_outputs=["*"])
 
         p.setup(force_alloc_complex=True)
-        p.set_val(Dynamic.Mission.VELOCITY, 250, units="kn")
-        p.set_val("mass", 175_000, units="lbm")
-        p.set_val(Dynamic.Mission.THRUST_TOTAL, 20_000, units="lbf")
-        p.set_val(Dynamic.Mission.LIFT, 175_000, units="lbf")
-        p.set_val(Dynamic.Mission.DRAG, 20_000, units="lbf")
-        p.set_val(Aircraft.Wing.INCIDENCE, 0.0, units="deg")
-
-        if not ground_roll:
-            p.set_val("alpha", 0.0, units="deg")
-            p.set_val(Dynamic.Mission.FLIGHT_PATH_ANGLE, 0, units="deg")
-            p.set_val("dh_dr", 0, units=None)
-            p.set_val("d2h_dr2", 0, units="1/m")
 
         p.set_val(Dynamic.Mission.VELOCITY, 250 + 10 * np.random.rand(nn), units="kn")
         p.set_val("mass", 175_000 + 1000 * np.random.rand(nn), units="lbm")
@@ -142,8 +130,6 @@ class TestUnsteadySolvedEOM2(unittest.TestCase):
                       nn * np.random.rand(nn), units="deg")
             p.set_val("dh_dr", 0.1 * np.random.rand(nn), units=None)
             p.set_val("d2h_dr2", 0.01 * np.random.rand(nn), units="1/m")
-
-        p.run_model()
 
         partial_data = p.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)

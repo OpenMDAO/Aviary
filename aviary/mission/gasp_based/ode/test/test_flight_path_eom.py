@@ -101,7 +101,6 @@ class FlightPathEOMTestCase2(unittest.TestCase):
             "group", FlightPathEOM(num_nodes=2, ground_roll=False), promotes=["*"]
         )
         prob.setup(check=False, force_alloc_complex=True)
-        prob.run_model()
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
@@ -116,7 +115,6 @@ class FlightPathEOMTestCase2(unittest.TestCase):
         )
         prob.setup(check=False, force_alloc_complex=True)
         prob.setup(force_alloc_complex=True)
-        prob.run_model()
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)

@@ -76,7 +76,6 @@ class AccelerationTestCase2(unittest.TestCase):
             "group", AccelerationRates(num_nodes=2), promotes=["*"]
         )
         self.prob.setup(check=False, force_alloc_complex=True)
-        self.prob.run_model()
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
