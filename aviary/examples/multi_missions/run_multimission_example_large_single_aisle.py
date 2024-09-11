@@ -1,7 +1,15 @@
 """
 authors: Jatin Soni, Eliot Aretskin
 Multi Mission Optimization Example using Aviary
+
+For the deadhead mission: 
+aircraft:crew_and_payload:num_passengers,0,unitless
+aircraft:crew_and_payload:num_tourist_class,0,unitless
+aircraft:crew_and_payload:num_first_class,0,unitless
+
 """
+from aviary.api import SubsystemBuilderBase
+from aviary.subsystems.mass.flops_based.furnishings import TransportFurnishingsGroupMass
 import sys
 import warnings
 import dymos as dm
@@ -14,31 +22,48 @@ import aviary.api as av
 from aviary.variable_info.enums import ProblemType
 from aviary.variable_info.variables import Mission, Aircraft
 
-from c5_models.c5_ferry_phase_info import phase_info as c5_ferry_phase_info
-from c5_models.c5_intermediate_phase_info import phase_info as c5_intermediate_phase_info
-from c5_models.c5_maxpayload_phase_info import phase_info as c5_maxpayload_phase_info
+
+from aviary.examples.example_phase_info import phase_info
+import copy as copy
+
+# fly the same mission twice with two different passenger loads
+phase_info_primary = copy.deepcopy(phase_info)
+phase_info_deadhead = copy.deepcopy(phase_info)
+
+# get large single aisle values
+from aviary.validation_cases.validation_tests import get_flops_inputs
+aviary_inputs_primary = get_flops_inputs('LargeSingleAisle2FLOPS')
+aviary_inputs_primary.set_val('aircraft:crew_and_payload:design:num_passengers', 162, 'unitless')
+aviary_inputs_primary.set_val('aircraft:crew_and_payload:design:num_tourist_class', 150, 'unitless')
+aviary_inputs_primary.set_val('aircraft:crew_and_payload:design:num_business_class', 0, 'unitless')
+aviary_inputs_primary.set_val('aircraft:crew_and_payload:design:num_first_class', 12, 'unitless')
 
 
-# Usage:
-# For the landing gear mass (MAIN_GEAR_MASS & NOSE_GEAR_MASS) to be designed consistently 
-# between missions, the Aircraft.Design.TOUCHDOWN_MASS must be set to the same value for all missions.
+aviary_inputs_deadhead = copy.deepcopy(aviary_inputs_primary)
+aviary_inputs_deadhead.set_val('aircraft:crew_and_payload:num_passengers', 0, 'unitless')
+aviary_inputs_deadhead.set_val('aircraft:crew_and_payload:num_tourist_class', 0, 'unitless')
+aviary_inputs_deadhead.set_val('aircraft:crew_and_payload:num_business_class', 0, 'unitless')
+aviary_inputs_deadhead.set_val('aircraft:crew_and_payload:num_first_class', 0, 'unitless')
+aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.MISC_CARGO, 0.0, 'lbm')
+
+#phase_info_deadhead['post_mission']['target_range'] = [1500, "nmi"]
 
 class MultiMissionProblem(om.Problem):
-    def __init__(self, planes, phase_infos, weights):
+    def __init__(self, aviary_values, phase_infos, weights):
         super().__init__()
-        self.num_missions = len(planes)
-        # phase infos and planes length must match - this maybe unnecessary if
-        # different planes (payloads) fly same mission (say pax vs cargo)
+        self.num_missions = len(aviary_values)
+        # phase infos and aviary_values length must match - this maybe unnecessary if
+        # different aviary_values (payloads) fly same mission (say pax vs cargo)
         # or if same payload flies 2 different missions (altitude/mach differences)
         if self.num_missions != len(phase_infos):
-            raise Exception("Length of planes and phase_infos must be the same!")
+            raise Exception("Length of aviary_values and phase_infos must be the same!")
 
-        # if fewer weights than planes are provided, assign equal weights for all planes
+        # if fewer weights than aviary_values are provided, assign equal weights for all aviary_values
         if len(weights) < self.num_missions:
             weights = [1]*self.num_missions
-        # if more weights than planes, raise exception
+        # if more weights than aviary_values, raise exception
         elif len(weights) > self.num_missions:
-            raise Exception("Length of weights cannot exceed length of planes!")
+            raise Exception("Length of weights cannot exceed length of aviary_values!")
         self.weights = weights
         self.phase_infos = phase_infos
 
@@ -47,9 +72,9 @@ class MultiMissionProblem(om.Problem):
         self.fuel_vars = []
         self.phases = {}
         # define individual aviary problems
-        for i, (plane, phase_info) in enumerate(zip(planes, phase_infos)):
+        for i, (aviary_values, phase_info) in enumerate(zip(aviary_values, phase_infos)):
             prob = av.AviaryProblem()
-            prob.load_inputs(plane, phase_info)
+            prob.load_inputs(aviary_values, phase_info)
             prob.check_and_preprocess_inputs()
             prob.add_pre_mission_systems()
             prob.add_phases()
@@ -212,12 +237,11 @@ class MultiMissionProblem(om.Problem):
             print()
 
 
-def C5_example(makeN2=False):
-    plane_dir = 'c5_models'
-    planes = ['c5_maxpayload.csv', 'c5_intermediate.csv', 'c5_ferry.csv']
-    planes = [join(plane_dir, plane) for plane in planes]
-    phase_infos = [c5_maxpayload_phase_info,
-                   c5_intermediate_phase_info, c5_ferry_phase_info]
+def large_single_aisle_example(makeN2=False):
+    aviary_values=[aviary_inputs_primary, 
+                   aviary_inputs_deadhead]
+    phase_infos = [phase_info_primary,
+                   phase_info_deadhead]
     optalt, optmach = False, False
     for phaseinfo in phase_infos:
         for key in phaseinfo.keys():
@@ -225,17 +249,16 @@ def C5_example(makeN2=False):
                 phaseinfo[key]["user_options"]["optimize_mach"] = optmach
                 phaseinfo[key]["user_options"]["optimize_altitude"] = optalt
 
-    weights = [1, 1, 1] 
+    # how much each mission should be valued by the optimizer, larger numbers = more significance
+    weights = [9, 1]
 
-    super_prob = MultiMissionProblem(planes, phase_infos, weights)
+    super_prob = MultiMissionProblem(aviary_values, phase_infos, weights)
     super_prob.add_driver()
     super_prob.add_design_variables()
     super_prob.add_objective()
     # set input default to prevent error, value doesn't matter since set val is used later
     super_prob.model.set_input_defaults(Mission.Design.RANGE, val=1.)
     super_prob.setup_wrapper()
-
-    # All the design ranges must be the same to make sure Air Conditioning and Avionics are designed the same for all missions,
     super_prob.set_val(Mission.Design.RANGE, super_prob.get_design_range()[0])
 
     for i, prob in enumerate(super_prob.probs):
@@ -280,4 +303,7 @@ def C5_example(makeN2=False):
 if __name__ == '__main__':
     makeN2 = True if (len(sys.argv) > 1 and "n2" in sys.argv[1]) else False
 
-    super_prob = C5_example(makeN2=makeN2)
+    super_prob = large_single_aisle_example(makeN2=makeN2)
+        
+    # super_prob.model.group_1.list_vars(val=True, units=True, print_arrays=False)
+    # https://openmdao.org/newdocs/versions/latest/features/debugging/listing_variables.html?highlight=list_driver_vars
