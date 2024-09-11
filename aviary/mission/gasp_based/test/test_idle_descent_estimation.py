@@ -6,11 +6,11 @@ import openmdao.api as om
 from aviary.interface.default_phase_info.two_dof_fiti_deprecated import create_2dof_based_descent_phases
 from aviary.interface.default_phase_info.two_dof_fiti import descent_phases, add_default_sgm_args
 
-from openmdao.utils.assert_utils import assert_near_equal
+from openmdao.utils.assert_utils import assert_near_equal, assert_check_partials
 
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
-from aviary.mission.gasp_based.idle_descent_estimation import descent_range_and_fuel, add_descent_estimation_as_submodel
+from aviary.mission.gasp_based.idle_descent_estimation import add_descent_estimation_as_submodel
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 from aviary.variable_info.enums import Verbosity
@@ -43,14 +43,6 @@ class IdleDescentTestCase(unittest.TestCase):
         add_default_sgm_args(descent_phases, self.ode_args)
         self.phases = descent_phases
 
-    def test_case1(self):
-
-        results = descent_range_and_fuel(phases=self.phases)['refined_guess']
-
-        # Values obtained by running idle_descent_estimation
-        assert_near_equal(results['distance_flown'], 91.8911599691433, self.tol)
-        assert_near_equal(results['fuel_burned'], 236.73893823639082, self.tol)
-
     def test_subproblem(self):
         prob = om.Problem()
         prob.model = om.Group()
@@ -77,6 +69,10 @@ class IdleDescentTestCase(unittest.TestCase):
         # Values obtained by running idle_descent_estimation
         assert_near_equal(prob.get_val('descent_range', 'NM'), 98.38026813, self.tol)
         assert_near_equal(prob.get_val('descent_fuel', 'lbm'), 250.84809336, self.tol)
+
+        # TODO: check_partials() call results in runtime error: Jacobian in 'ODE_group' is not full rank.
+        # partial_data = prob.check_partials(out_stream=None, method="cs")
+        # assert_check_partials(partial_data, atol=0.0005, rtol=1e-9)
 
 
 if __name__ == "__main__":

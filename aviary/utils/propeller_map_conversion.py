@@ -26,11 +26,13 @@ J = PropellerModelVariables.J
 
 
 def PropDataConverter(input_file, output_file, data_format: PropMapType):
-    """This is a utility class to convert a propeller map file to Aviary format.
+    """
+    This is a utility class to convert a propeller map file to Aviary format.
     Currently, there is only one option: from GASP format to Aviary format.
     As an Aviary command, the usage is:
-    aviary convert_prop_table -F GASP input_file output_file
+    aviary convert_prop_table -f GASP input_file output_file
     """
+
     timestamp = datetime.now().strftime('%m/%d/%y at %H:%M')
     comments = []
     header = {}
