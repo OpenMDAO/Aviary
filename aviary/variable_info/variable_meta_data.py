@@ -2414,11 +2414,8 @@ add_meta_data(
 add_meta_data(
     Aircraft.Engine.Gearbox.MASS,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='kg',
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='lbm',
     desc='The mass of the gearbox.',
     default_value=0,
 )
@@ -2431,7 +2428,7 @@ add_meta_data(
         "FLOPS": None,
         "LEAPS1": None,
     },
-    units='kW',
+    units='hp',
     desc='A guess for the maximum power that will be transmitted through the gearbox during the mission (max shp input).',
     default_value=1.0,
     option=True,
@@ -2440,11 +2437,8 @@ add_meta_data(
 add_meta_data(
     Aircraft.Engine.Gearbox.SPECIFIC_TORQUE,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='N*m/kg',
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='lbf*ft/lbm',
     desc='The specific torque of the gearbox, used to calculate gearbox mass. ',
     default_value=100,
 )
@@ -2459,7 +2453,7 @@ add_meta_data(
     Aircraft.Engine.Motor.MASS,
     meta_data=_MetaData,
     historical_name={"GASP": 'WMOTOR', "FLOPS": None, "LEAPS1": None},
-    units='kg',
+    units='lbm',
     desc='Total motor mass (considers number of motors)',
     default_value=0.0,
 )
@@ -2467,13 +2461,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.Engine.Motor.TORQUE_MAX,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='N*m',
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='lbf*ft',
     desc='Max torque value that can be output from a single motor. Used to determine '
-         'motor mass in pre-mission',
+    'motor mass in pre-mission',
 )
 
 #  ______   _
