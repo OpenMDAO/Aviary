@@ -2133,7 +2133,7 @@ add_meta_data(
         "LEAPS1": None,
     },
     units='unitless',
-    desc='maximum allowable Mach number at propeller tip (based on helical airspeed)',
+    desc='maximum allowable Mach number at propeller tip (based on helical speed)',
     default_value=1.0,
 )
 

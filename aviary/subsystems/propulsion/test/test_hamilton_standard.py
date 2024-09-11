@@ -178,7 +178,7 @@ class PostHamiltonStandardTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    # unittest.main()
-    test = HamiltonStandardTest()
-    test.setUp()
-    test.test_HS()
+    unittest.main()
+    # test = HamiltonStandardTest()
+    # test.setUp()
+    # test.test_HS()

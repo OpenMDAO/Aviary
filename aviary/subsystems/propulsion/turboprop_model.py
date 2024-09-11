@@ -467,11 +467,7 @@ class TurbopropMission(om.Group):
                 # Check for case: var is output from shp_model, connects to gearbox, then
                 #   gets updated by gearbox
                 # RPM has special handling, so skip it here
-                if (
-                    var in shp_output_list
-                    and var + '_in' in gearbox_input_list
-                    and var != Dynamic.Mission.RPM
-                ):
+                if var + '_in' in gearbox_input_list and var != Dynamic.Mission.RPM:
                     # if var is in gearbox input and output, connect on shp -> gearbox side
                     if (
                         var in gearbox_output_list
