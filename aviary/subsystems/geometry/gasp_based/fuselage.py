@@ -162,7 +162,7 @@ class FuselageSize(om.ExplicitComponent):
         LoverD_nose = inputs[Aircraft.Fuselage.NOSE_FINENESS]
         LoverD_tail = inputs[Aircraft.Fuselage.TAIL_FINENESS]
         cockpit_len = inputs[Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH]
-        fus_SA_factor = inputs[Aircraft.Fuselage.WETTED_AREA_SCALER]
+        fus_SA_scaler = inputs[Aircraft.Fuselage.WETTED_AREA_SCALER]
         nose_height = inputs["nose_height"]
         cabin_len = inputs["cabin_len"]
         cabin_height = inputs["cabin_height"]
@@ -180,7 +180,7 @@ class FuselageSize(om.ExplicitComponent):
             + 2.1 * LoverD_tail * cabin_height
         )
 
-        fus_SA = fus_SA * fus_SA_factor
+        fus_SA = fus_SA * fus_SA_scaler
 
         cabin_len_tailboom = fus_len
 
@@ -193,7 +193,7 @@ class FuselageSize(om.ExplicitComponent):
         LoverD_tail = inputs[Aircraft.Fuselage.TAIL_FINENESS]
         nose_height = inputs["nose_height"]
         cabin_height = inputs["cabin_height"]
-        fus_SA_factor = inputs[Aircraft.Fuselage.WETTED_AREA_SCALER]
+        fus_SA_scaler = inputs[Aircraft.Fuselage.WETTED_AREA_SCALER]
         cockpit_len = inputs[Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH]
         cabin_len = inputs["cabin_len"]
 
@@ -204,26 +204,26 @@ class FuselageSize(om.ExplicitComponent):
         J[Aircraft.Fuselage.LENGTH, Aircraft.Fuselage.TAIL_FINENESS] = cabin_height
         J[Aircraft.Fuselage.LENGTH, "cabin_height"] = LoverD_tail
 
-        J[Aircraft.Fuselage.WETTED_AREA, "cabin_height"] = fus_SA_factor * (
+        J[Aircraft.Fuselage.WETTED_AREA, "cabin_height"] = fus_SA_scaler * (
             2.5 * (LoverD_nose * nose_height + cockpit_len)
             + 3.14 * cabin_len
             + 2.1 * LoverD_tail * cabin_height
             + cabin_height * 2.1 * LoverD_tail
         )
         J[Aircraft.Fuselage.WETTED_AREA, Aircraft.Fuselage.NOSE_FINENESS] = (
-            fus_SA_factor * cabin_height * 2.5 * nose_height
+            fus_SA_scaler * cabin_height * 2.5 * nose_height
         )
         J[Aircraft.Fuselage.WETTED_AREA, "nose_height"] = (
-            fus_SA_factor * cabin_height * 2.5 * LoverD_nose
+            fus_SA_scaler * cabin_height * 2.5 * LoverD_nose
         )
         J[Aircraft.Fuselage.WETTED_AREA, Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH] = (
-            fus_SA_factor * cabin_height * 2.5
+            fus_SA_scaler * cabin_height * 2.5
         )
         J[Aircraft.Fuselage.WETTED_AREA, "cabin_len"] = (
-            fus_SA_factor * 3.14 * cabin_height
+            fus_SA_scaler * 3.14 * cabin_height
         )
         J[Aircraft.Fuselage.WETTED_AREA, Aircraft.Fuselage.TAIL_FINENESS] = (
-            fus_SA_factor * 2.1 * cabin_height**2
+            fus_SA_scaler * 2.1 * cabin_height**2
         )
         J[Aircraft.Fuselage.WETTED_AREA, Aircraft.Fuselage.WETTED_AREA_SCALER] = cabin_height * (
             2.5 * (LoverD_nose * nose_height + cockpit_len)
