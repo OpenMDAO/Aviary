@@ -37,7 +37,7 @@ class LandingSegment(BaseODE):
                 (Dynamic.Mission.MACH, Mission.Landing.INITIAL_MACH),
             ],
             promotes_outputs=[
-                (Dynamic.Mission.DENSITY, Dynamic.Mission.DENSITY),
+                Dynamic.Mission.DENSITY,
                 Dynamic.Mission.SPEED_OF_SOUND,
                 Dynamic.Mission.TEMPERATURE,
                 Dynamic.Mission.STATIC_PRESSURE,
