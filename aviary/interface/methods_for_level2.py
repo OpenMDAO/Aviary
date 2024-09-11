@@ -1090,8 +1090,15 @@ class AviaryProblem(om.Problem):
                         phase_name, self._get_phase(phase_name, phase_idx))
                     add_subsystem_timeseries_outputs(phase, phase_name)
 
-                    if phase_name == 'ascent' and self.mission_method is TWO_DEGREES_OF_FREEDOM:
-                        self._add_groundroll_eq_constraint(phase)
+                    if self.mission_method is TWO_DEGREES_OF_FREEDOM:
+
+                        # In GASP, we still use the phase name to infer the phase type.
+                        # We need this information to be available in the builders.
+                        # TODO - Ultimately we should overhaul all of this.
+                        self.phase_info[phase_name]['phase_type'] = phase_name
+
+                        if phase_name == 'ascent':
+                            self._add_groundroll_eq_constraint(phase)
 
             # loop through phase_info and external subsystems
             external_parameters = {}
@@ -1107,9 +1114,8 @@ class AviaryProblem(om.Problem):
                     for parameter in parameter_dict:
                         external_parameters[phase_name][parameter] = parameter_dict[parameter]
 
-            if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
-                traj = setup_trajectory_params(
-                    self.model, traj, self.aviary_inputs, phases, meta_data=self.meta_data, external_parameters=external_parameters)
+            traj = setup_trajectory_params(
+                self.model, traj, self.aviary_inputs, phases, meta_data=self.meta_data, external_parameters=external_parameters)
 
         self.traj = traj
 

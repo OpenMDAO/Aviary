@@ -1,11 +1,12 @@
 import unittest
 
 import numpy as np
+
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal, assert_check_partials
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.mission.gasp_based.ode.params import ParamPort
+from aviary.mission.gasp_based.ode.params import set_params_for_unit_tests
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_ode import \
     UnsteadySolvedODE
 from aviary.variable_info.options import get_option_defaults
@@ -36,16 +37,14 @@ class TestUnsteadySolvedODE(unittest.TestCase):
 
         p.model.add_subsystem("ode", ode, promotes=["*"])
 
-        # TODO: paramport
-        param_port = ParamPort()
-        for key, data in param_port.param_data.items():
-            p.model.set_input_defaults(key, **data)
         p.model.set_input_defaults(Dynamic.Mission.MACH, 0.8 * np.ones(nn))
         if ground_roll:
             p.model.set_input_defaults(Dynamic.Mission.MACH, 0.1 * np.ones(nn))
             ode.set_input_defaults("alpha", np.zeros(nn), units="deg")
 
         p.setup(force_alloc_complex=True)
+
+        set_params_for_unit_tests(p)
 
         p.final_setup()
 
