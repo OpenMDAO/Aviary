@@ -13,4 +13,6 @@ Default Values from FLOPS
  \
   &AERIN
   MIKE=False,unitless
+  SWETF=1,unitless
+  SWETV=1,unitless
  \
