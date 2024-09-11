@@ -19,6 +19,7 @@ documentation doesn't get stale.
 expected_error is an execption that can be used in try/except blocks to allow desired errors to
 pass while still raising unexpected errors.
 
+gramatical_list combines the elements of a list into a string with proper punctuation
 check_value is a simple function for comparing two values
 check_contains confirms that all the elements of one iterable are contained in the other
 check_args gets the signature of a function and compares it to the arguments you are expecting
@@ -33,6 +34,31 @@ glue_keys recursively glue all of the keys from a dict of dicts
 
 class expected_error(Exception):
     ...
+
+
+def gramatical_list(list_of_strings: list, cc='and', add_accents=False) -> str:
+    """
+    Combines the elements of a list into a string with proper punctuation
+
+    Parameters
+    ----------
+    list_of_strings : list
+        A list of strings (or elements with a string representation)
+    cc : str
+        The coordinating conjunction to use with the list
+
+    Returns
+    -------
+    str
+        A string that combines the elements of the list into a string with proper punctuation
+    """
+    list_of_strings = ['`'+s+'`' if add_accents else s for s in list_of_strings]
+    if len(list_of_strings) == 1:
+        return str(list_of_strings[0])
+    elif len(list_of_strings) == 2:
+        return str(list_of_strings[0])+' '+cc+' '+str(list_of_strings[1])
+    else:
+        return ', '.join([str(s) for s in list_of_strings[:-1]]+[cc+' '+str(list_of_strings[-1])])
 
 
 def check_value(val1, val2):
@@ -68,19 +94,21 @@ def check_contains(expected_values, actual_values, error_string="{var} not in {a
     Checks that all of the expected_values exist in actual_values
     (It does not check for missing values)
 
-    Args:
-        expected_values : any iterable
-            This can also be a single value, in which case it will be wrapped into a list
-        actual_values : any iterable
-        error_string : str
-            The string to display as the error message,
-            kwarg substitutions will be made using .format() for "var" and "actual_values"
-        error_type : Exception
-            The exception to raise (default is RuntimeError)
+    Parameters
+    ----------
+    expected_values : any iterable
+        This can also be a single value, in which case it will be wrapped into a list
+    actual_values : any iterable
+    error_string : str
+        The string to display as the error message,
+        kwarg substitutions will be made using .format() for "var" and "actual_values"
+    error_type : Exception
+        The exception to raise (default is RuntimeError)
 
-    Raises:
-        RuntimeError
-            If a value in expected_values is not present in actual_values
+    Raises
+    ------
+    RuntimeError
+        If a value in expected_values is not present in actual_values
     """
     # if a single expected item is provided, wrap it
     if not hasattr(expected_values, '__class_getitem__'):
