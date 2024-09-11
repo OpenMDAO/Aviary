@@ -182,11 +182,13 @@ def parse_inputs(vehicle_deck, aircraft_values: AviaryValues = None, initial_gue
 
             elif ":" in var_name:
                 warnings.warn(
-                    f"Variable '{var_name}' is not in meta_data nor in 'guess_names'. It will be ignored.",
-                    UserWarning)
+                    f"Variable '{var_name}' is not in meta_data nor in 'guess_names'. "
+                    "It will be ignored.",
+                    UserWarning,
+                )
                 continue
 
-            if aircraft_values.get_val(Settings.VERBOSITY).value >= 2:
+            if aircraft_values.get_val(Settings.VERBOSITY) >= Verbosity.VERBOSE:
                 print('Unused:', var_name, var_values, comment)
 
     return aircraft_values, initial_guesses
@@ -230,7 +232,7 @@ def update_GASP_options(aircraft_values: AviaryValues):
         aircraft_values.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=False)
 
-    if aircraft_values.get_val(Settings.VERBOSITY).value >= 2:
+    if aircraft_values.get_val(Settings.VERBOSITY) >= Verbosity.VERBOSE:
         print('\nOptions')
         for key in get_keys(aircraft_values):
             val, units = aircraft_values.get_item(key)
@@ -402,7 +404,7 @@ def initial_guessing(aircraft_values: AviaryValues, initial_guesses, engine_buil
         initial_guesses['climb_range'] = initial_guesses['time_to_climb'] / \
             (60 * 60) * (avg_speed_guess * np.cos(gamma_guess))
 
-    if aircraft_values.get_val(Settings.VERBOSITY).value >= 2:
+    if aircraft_values.get_val(Settings.VERBOSITY) >= Verbosity.VERBOSE:
         print('\nInitial Guesses')
         for key, value in initial_guesses.items():
             print(key, value)

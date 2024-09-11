@@ -6,17 +6,17 @@ from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.enums import Verbosity
+from aviary.variable_info.variables import Aircraft, Dynamic
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
 from aviary.variable_info.options import get_option_defaults
 from aviary.utils.functions import get_path
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 from dymos.transcriptions.transcription_base import TranscriptionBase
+
 if hasattr(TranscriptionBase, 'setup_polynomial_controls'):
     use_new_dymos_syntax = False
 else:
@@ -25,8 +25,11 @@ else:
 
 class PreMissionEngine(om.Group):
     def setup(self):
-        self.add_subsystem('dummy_comp', om.ExecComp(
-            'y=x**2', x={'units': 'm', 'val': 2.}, y={'units': 'm**2'}), promotes=['*'])
+        self.add_subsystem(
+            'dummy_comp',
+            om.ExecComp('y=x**2', x={'units': 'm', 'val': 2.0}, y={'units': 'm**2'}),
+            promotes=['*'],
+        )
 
 
 class SimpleEngine(om.ExplicitComponent):
@@ -36,62 +39,81 @@ class SimpleEngine(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
         # add inputs and outputs to interpolator
-        self.add_input(Dynamic.Mission.MACH,
-                       shape=nn,
-                       units='unitless',
-                       desc='Current flight Mach number')
-        self.add_input(Dynamic.Mission.ALTITUDE,
-                       shape=nn,
-                       units='ft',
-                       desc='Current flight altitude')
-        self.add_input(Dynamic.Mission.THROTTLE,
-                       shape=nn,
-                       units='unitless',
-                       desc='Current engine throttle')
-        self.add_input('different_throttle',
-                       shape=nn,
-                       units='unitless',
-                       desc='Little bonus throttle for testing')
-        self.add_input('y',
-                       units='m**2',
-                       desc='Dummy variable for bus testing')
+        self.add_input(
+            Dynamic.Mission.MACH,
+            shape=nn,
+            units='unitless',
+            desc='Current flight Mach number',
+        )
+        self.add_input(
+            Dynamic.Mission.ALTITUDE,
+            shape=nn,
+            units='ft',
+            desc='Current flight altitude',
+        )
+        self.add_input(
+            Dynamic.Mission.THROTTLE,
+            shape=nn,
+            units='unitless',
+            desc='Current engine throttle',
+        )
+        self.add_input(
+            'different_throttle',
+            shape=nn,
+            units='unitless',
+            desc='Little bonus throttle for testing',
+        )
+        self.add_input('y', units='m**2', desc='Dummy variable for bus testing')
 
-        self.add_output(Dynamic.Mission.THRUST,
-                        shape=nn,
-                        units='lbf',
-                        desc='Current net thrust produced (scaled)')
-        self.add_output(Dynamic.Mission.THRUST_MAX,
-                        shape=nn,
-                        units='lbf',
-                        desc='Current net thrust produced (scaled)')
-        self.add_output(Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE,
-                        shape=nn,
-                        units='lbm/s',
-                        desc='Current fuel flow rate (scaled)')
-        self.add_output(Dynamic.Mission.ELECTRIC_POWER_IN,
-                        shape=nn,
-                        units='W',
-                        desc='Current electric energy rate (scaled)')
-        self.add_output(Dynamic.Mission.NOX_RATE,
-                        shape=nn,
-                        units='lbm/s',
-                        desc='Current NOx emission rate (scaled)')
-        self.add_output(Dynamic.Mission.TEMPERATURE_T4,
-                        shape=nn,
-                        units='degR',
-                        desc='Current turbine exit temperature')
+        self.add_output(
+            Dynamic.Mission.THRUST,
+            shape=nn,
+            units='lbf',
+            desc='Current net thrust produced (scaled)',
+        )
+        self.add_output(
+            Dynamic.Mission.THRUST_MAX,
+            shape=nn,
+            units='lbf',
+            desc='Current net thrust produced (scaled)',
+        )
+        self.add_output(
+            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE,
+            shape=nn,
+            units='lbm/s',
+            desc='Current fuel flow rate (scaled)',
+        )
+        self.add_output(
+            Dynamic.Mission.ELECTRIC_POWER_IN,
+            shape=nn,
+            units='W',
+            desc='Current electric energy rate (scaled)',
+        )
+        self.add_output(
+            Dynamic.Mission.NOX_RATE,
+            shape=nn,
+            units='lbm/s',
+            desc='Current NOx emission rate (scaled)',
+        )
+        self.add_output(
+            Dynamic.Mission.TEMPERATURE_T4,
+            shape=nn,
+            units='degR',
+            desc='Current turbine exit temperature',
+        )
 
         self.declare_partials('*', '*', method='fd')
 
     def compute(self, inputs, outputs):
-        combined_throttle = inputs[Dynamic.Mission.THROTTLE] + \
-            inputs['different_throttle']
+        combined_throttle = (
+            inputs[Dynamic.Mission.THROTTLE] + inputs['different_throttle']
+        )
 
         # calculate outputs
-        outputs[Dynamic.Mission.THRUST] = 10000. * combined_throttle
-        outputs[Dynamic.Mission.THRUST_MAX] = 10000.
-        outputs[Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE] = -10. * combined_throttle
-        outputs[Dynamic.Mission.TEMPERATURE_T4] = 2800.
+        outputs[Dynamic.Mission.THRUST] = 10000.0 * combined_throttle
+        outputs[Dynamic.Mission.THRUST_MAX] = 10000.0
+        outputs[Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE] = -10.0 * combined_throttle
+        outputs[Dynamic.Mission.TEMPERATURE_T4] = 2800.0
 
 
 class SimpleTestEngine(EngineModel):
@@ -107,7 +129,7 @@ class SimpleTestEngine(EngineModel):
 
     def get_controls(self, **kwargs):
         controls_dict = {
-            "different_throttle": {'units': 'unitless', 'lower': 0., 'upper': 0.1},
+            "different_throttle": {'units': 'unitless', 'lower': 0.0, 'upper': 0.1},
         }
         if use_new_dymos_syntax:
             controls_dict['different_throttle']['control_type'] = 'polynomial'
@@ -164,22 +186,25 @@ class CustomEngineTest(unittest.TestCase):
                     "constrain_final": False,
                     "fix_duration": False,
                     "initial_bounds": ((0.0, 0.0), "min"),
-                    "duration_bounds": ((10., 30.), "min"),
+                    "duration_bounds": ((10.0, 30.0), "min"),
                 },
                 "initial_guesses": {"time": ([0, 30], "min")},
             },
             'post_mission': {
                 'include_landing': False,
                 'external_subsystems': [],
-            }
+            },
         }
 
         prob = AviaryProblem(reports=False)
 
         # Load aircraft and options data from user
         # Allow for user overrides here
-        prob.load_inputs("models/test_aircraft/aircraft_for_bench_GwFm.csv",
-                         phase_info, engine_builders=[SimpleTestEngine()])
+        prob.load_inputs(
+            "models/test_aircraft/aircraft_for_bench_GwFm.csv",
+            phase_info,
+            engine_builders=[SimpleTestEngine()],
+        )
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
@@ -193,7 +218,7 @@ class CustomEngineTest(unittest.TestCase):
         # Link phases and variables
         prob.link_phases()
 
-        prob.add_driver("SLSQP", verbosity=Verbosity.QUIET)
+        prob.add_driver("SLSQP", verbosity=0)
 
         prob.add_design_variables()
 
@@ -207,19 +232,24 @@ class CustomEngineTest(unittest.TestCase):
 
         # check that the different throttle initial guess has been set correctly
         initial_guesses = prob.get_val(
-            'traj.phases.cruise.controls:different_throttle')[0]
+            'traj.phases.cruise.controls:different_throttle'
+        )[0]
         assert_near_equal(float(initial_guesses), 0.05)
 
-        # and run mission, and dynamics
+        # and run mission
         dm.run_problem(prob, run_driver=True, simulate=False, make_plots=False)
 
-        tol = 1.e-4
+        tol = 1.0e-4
 
-        assert_near_equal(float(prob.get_val('traj.cruise.rhs_all.y')), 4., tol)
+        assert_near_equal(float(prob.get_val('traj.cruise.rhs_all.y')), 4.0, tol)
 
 
 @use_tempdirs
 class TurbopropTest(unittest.TestCase):
+    """
+    Test integrating turboprop component with full AviaryProblem
+    """
+
     def test_turboprop(self):
         phase_info = {
             'pre_mission': {
@@ -247,17 +277,17 @@ class TurbopropTest(unittest.TestCase):
                     "constrain_final": False,
                     "fix_duration": False,
                     "initial_bounds": ((0.0, 0.0), "min"),
-                    "duration_bounds": ((30., 60.), "min"),
+                    "duration_bounds": ((30.0, 60.0), "min"),
                 },
                 "initial_guesses": {"time": ([0, 30], "min")},
             },
             'post_mission': {
                 'include_landing': False,
                 'external_subsystems': [],
-            }
+            },
         }
 
-        engine_filepath = get_path('models/engines/turboprop_4465hp.deck')
+        engine_filepath = get_path('models/engines/turboshaft_4465hp.deck')
         options = get_option_defaults()
         options.set_val(Aircraft.Engine.DATA_FILE, engine_filepath)
         options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
@@ -268,8 +298,7 @@ class TurbopropTest(unittest.TestCase):
             val=True,
             units='unitless',
         )
-        options.set_val(Aircraft.Engine.NUM_PROPELLER_BLADES,
-                        val=4, units='unitless')
+        options.set_val(Aircraft.Engine.NUM_PROPELLER_BLADES, val=4, units='unitless')
 
         engine = TurbopropModel(options=options)
 
@@ -277,8 +306,11 @@ class TurbopropTest(unittest.TestCase):
 
         # Load aircraft and options data from user
         # Allow for user overrides here
-        prob.load_inputs("models/test_aircraft/aircraft_for_bench_FwFm.csv",
-                         phase_info, engine_builders=[engine])
+        prob.load_inputs(
+            "models/test_aircraft/aircraft_for_bench_FwFm.csv",
+            phase_info,
+            engine_builders=[engine],
+        )
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
@@ -316,16 +348,21 @@ class TurbopropTest(unittest.TestCase):
             units='unitless',
         )
         prob.set_val(
-            f'traj.cruise.rhs_all.{Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT}',
+            (
+                'traj.cruise.rhs_all.'
+                f'{Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT}'
+            ),
             0.5,
             units='unitless',
         )
 
         prob.set_solver_print(level=0)
 
-        # and run mission, and dynamics
+        # and run mission
         dm.run_problem(prob, run_driver=True, simulate=False, make_plots=True)
 
 
 if __name__ == '__main__':
     unittest.main()
+    # test = TurbopropTest()
+    # test.test_turboprop()
