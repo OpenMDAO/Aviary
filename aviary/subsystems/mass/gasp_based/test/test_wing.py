@@ -103,6 +103,42 @@ class TotalWingMassTestCase1(unittest.TestCase):
 
 
 class TotalWingMassTestCase2(unittest.TestCase):
+    """
+    Test mass-weight conversion
+    """
+
+    def setUp(self):
+        import aviary.subsystems.mass.gasp_based.wing as wing
+        wing.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.subsystems.mass.gasp_based.wing as wing
+        wing.GRAV_ENGLISH_LBM = 1.0
+
+    def test_case1(self):
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem(
+            "total",
+            WingMassTotal(aviary_options=get_option_defaults()),
+            promotes=["*"],
+        )
+
+        self.prob.model.set_input_defaults(
+            "isolated_wing_mass", val=15830.0, units="lbm")
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+        self.prob.run_model()
+
+        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
+
+
+class TotalWingMassTestCase2(unittest.TestCase):
+    """
+    Has fold and no strut
+    """
+
     def setUp(self):
 
         options = get_option_defaults()
@@ -143,6 +179,10 @@ class TotalWingMassTestCase2(unittest.TestCase):
 
 
 class TotalWingMassTestCase3(unittest.TestCase):
+    """
+    Has strut and no fold
+    """
+
     def setUp(self):
 
         options = get_option_defaults()
@@ -177,6 +217,10 @@ class TotalWingMassTestCase3(unittest.TestCase):
 
 
 class TotalWingMassTestCase4(unittest.TestCase):
+    """
+    Has fold and strut
+    """
+
     def setUp(self):
 
         options = get_option_defaults()
@@ -216,6 +260,42 @@ class TotalWingMassTestCase4(unittest.TestCase):
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
+
+
+class TotalWingMassTestCase5(unittest.TestCase):
+    """
+    Test mass-weight conversion
+    """
+
+    def setUp(self):
+        import aviary.subsystems.mass.gasp_based.wing as wing
+        wing.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.subsystems.mass.gasp_based.wing as wing
+        wing.GRAV_ENGLISH_LBM = 1.0
+
+    def test_case1(self):
+        options = get_option_defaults()
+        options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')
+        options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "total", WingMassTotal(aviary_options=options), promotes=["*"])
+        prob.model.set_input_defaults(
+            "isolated_wing_mass", val=15830.0, units="lbm")
+        prob.model.set_input_defaults(
+            Aircraft.Wing.AREA, val=100, units="ft**2")
+        prob.model.set_input_defaults(
+            Aircraft.Wing.FOLDING_AREA, val=50, units="ft**2")
+        prob.model.set_input_defaults(
+            Aircraft.Wing.FOLD_MASS_COEFFICIENT, val=0.2, units="unitless")
+        prob.model.set_input_defaults(
+            Aircraft.Strut.MASS_COEFFICIENT, val=0.5, units="unitless")
+        prob.setup(check=False, force_alloc_complex=True)
+
+        partial_data = prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=2e-12, rtol=1e-12)
 
 
 # this is the large single aisle 1 V3 test case
