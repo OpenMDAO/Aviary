@@ -107,8 +107,8 @@ class ThrustReverserMassTest2(unittest.TestCase):
     def tearDown(self):
         import aviary.subsystems.mass.flops_based.thrust_reverser as reverser
         reverser.GRAV_ENGLISH_LBM = 1.0
-    def test_case(self):
 
+    def test_case(self):
         prob = om.Problem()
         prob.model.add_subsystem(
             "thrust_rev",
