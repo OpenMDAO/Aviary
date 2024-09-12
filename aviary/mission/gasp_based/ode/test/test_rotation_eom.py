@@ -1,5 +1,4 @@
 import unittest
-import os
 
 import numpy as np
 import openmdao.api as om
@@ -78,11 +77,9 @@ class RotationEOMTestCase2(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem("group", RotationEOM(num_nodes=2), promotes=["*"])
         prob.model.set_input_defaults(
-            Dynamic.Mission.MASS, val=175400 * np.ones(2), units="lbm"
-        )
+            Dynamic.Mission.MASS, val=175400 * np.ones(2), units="lbm")
         prob.model.set_input_defaults(
-            Dynamic.Mission.THRUST_TOTAL, val=22000 * np.ones(2), units="lbf"
-        )
+            Dynamic.Mission.THRUST_TOTAL, val=22000 * np.ones(2), units="lbf")
         prob.model.set_input_defaults(
             Dynamic.Mission.LIFT, val=200 * np.ones(2), units="lbf")
         prob.model.set_input_defaults(
