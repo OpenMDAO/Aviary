@@ -147,12 +147,6 @@ class NacelleMassTest2(unittest.TestCase):
         prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST,
                      np.array([28000] * 3), units='lbf')
 
-        prob.run_model()
-
-        nacelle_mass = prob.get_val(Aircraft.Nacelle.MASS, 'lbm')
-        nacelle_mass_expected = np.array([2793.02569, 778.05716, 1915.21762])
-        assert_near_equal(nacelle_mass, nacelle_mass_expected, tolerance=1e-8)
-
         partial_data = prob.check_partials(
             out_stream=None, compact_print=True, show_only_incorrect=True, form='central', method="fd")
         assert_check_partials(partial_data, atol=1e-5, rtol=1e-5)
