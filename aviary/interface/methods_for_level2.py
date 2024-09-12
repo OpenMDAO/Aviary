@@ -1935,7 +1935,7 @@ class AviaryProblem(om.Problem):
 
     def setup(self, **kwargs):
         """
-        Lightly wrappd setup() method for the problem.
+        Lightly wrapped setup() method for the problem.
         """
         # suppress warnings:
         # "input variable '...' promoted using '*' was already promoted using 'aircraft:*'

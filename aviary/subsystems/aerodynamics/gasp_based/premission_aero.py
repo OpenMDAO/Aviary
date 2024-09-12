@@ -11,6 +11,7 @@ from aviary.subsystems.aerodynamics.gasp_based.flaps_model import FlapsGroup
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.enums import SpeedType
+from aviary.subsystems.aerodynamics.gasp_based.gasp_aero_coeffs import AeroFormfactors
 
 # TODO: add subsystems to compute CLMXFU, CLMXTO, CLMXLD using dynamic aero components
 # with alpha > alpha_stall
@@ -28,6 +29,11 @@ class PreMissionAero(om.Group):
     def setup(self):
 
         aviary_options = self.options['aviary_options']
+
+        self.add_subsystem("aero_form_factors", AeroFormfactors(),
+                           promotes_inputs=["*"],
+                           promotes_outputs=["*"],
+                           )
 
         # speeds weren't originally computed here, speedtype of Mach is intended
         # to avoid multiple sources for computed Mach (gets calculated somewhere upstream)
