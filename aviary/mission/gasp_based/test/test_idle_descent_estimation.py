@@ -6,13 +6,13 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal, assert_check_partials
 
 from aviary.interface.default_phase_info.two_dof_fiti import descent_phases, add_default_sgm_args
-from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
+
 from aviary.mission.gasp_based.idle_descent_estimation import add_descent_estimation_as_submodel
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 from aviary.utils.process_input_decks import create_vehicle
 from aviary.utils.preprocessors import preprocess_propulsion
+from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 
 
 @unittest.skipUnless(importlib.util.find_spec("pyoptsparse") is not None, "pyoptsparse is not installed")
