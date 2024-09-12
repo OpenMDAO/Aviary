@@ -72,7 +72,6 @@ class MassToWeightTest2(unittest.TestCase):
         import aviary.subsystems.mass.mass_to_weight as m_to_w
         m_to_w.GRAV_ENGLISH_LBM = 1.0
 
-
     def test_case(self):
         prob = om.Problem()
         prob.model.add_subsystem(
