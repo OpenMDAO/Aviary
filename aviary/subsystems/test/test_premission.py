@@ -115,6 +115,10 @@ class PreMissionTestCase(unittest.TestCase):
         # Set inital values for all variables.
         set_aviary_initial_values(self.prob, input_options)
 
+        # Adjust WETTED_AREA_SCALER such that WETTED_AREA = 4000.0
+        self.prob.set_val(
+            Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.86215, units="unitless")
+
     def test_GASP_mass_FLOPS_everything_else(self):
         self.prob.run_model()
 

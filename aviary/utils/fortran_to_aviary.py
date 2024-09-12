@@ -390,6 +390,9 @@ def update_gasp_options(vehicle_data):
     """
     input_values: NamedValues = vehicle_data['input_values']
 
+    for var_name in gasp_scaler_variables:
+        update_gasp_scaler_variables(var_name, input_values)
+
     flap_types = ["plain", "split", "single_slotted", "double_slotted",
                   "triple_slotted", "fowler", "double_slotted_fowler"]
 
@@ -502,8 +505,8 @@ def update_flops_options(vehicle_data):
     """
     input_values: NamedValues = vehicle_data['input_values']
 
-    for var_name in flops_scalar_variables:
-        update_flops_scalar_variables(var_name, input_values)
+    for var_name in flops_scaler_variables:
+        update_flops_scaler_variables(var_name, input_values)
 
     # TWR <= 0 is not valid in Aviary (parametric variation)
     if Aircraft.Design.THRUST_TO_WEIGHT_RATIO in input_values:
@@ -512,7 +515,7 @@ def update_flops_options(vehicle_data):
 
     # WSR
 
-    # Additional mass fraction scalar set to zero to not add mass twice
+    # Additional mass fraction scaler set to zero to not add mass twice
     if Aircraft.Engine.ADDITIONAL_MASS_FRACTION in input_values:
         if input_values.get_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION)[0] >= 1:
             input_values.set_val(Aircraft.Engine.ADDITIONAL_MASS,
@@ -534,33 +537,63 @@ def update_flops_options(vehicle_data):
     return vehicle_data
 
 
-def update_flops_scalar_variables(var_name, input_values: NamedValues):
-    # The following parameters are used to modify or override
-    # internally computed weights for various components as follows:
-    # < 0., negative of starting weight which will be modified
-    #   as appropriate during optimization or parametric
-    #   variation, lb
-    # = 0., no weight for that component
-    # > 0. but < 5., scale factor applied to internally
-    #   computed weight
-    # > 5., actual fixed weight for component, lb
-    # Same rules also applied to various other FLOPS scalar parameters
-    scalar_name = var_name + '_scaler'
-    if scalar_name not in input_values:
+def update_flops_scaler_variables(var_name, input_values: NamedValues):
+    """
+    The following parameters are used to modify or override
+    internally computed weights and areas for various components as follows:
+    < 0., negative of starting weight which will be modified
+    as appropriate during optimization or parametric variation, lb or ft**2
+    = 0., no weight for that component
+    > 0. but < 5., scale factor applied to internally computed weight or area
+    > 5., actual fixed weight for component, lb or ft**2
+    Same rules also applied to various other FLOPS scaler parameters
+    """
+    scaler_name = var_name + '_scaler'
+    if scaler_name not in input_values:
         return
-    scalar_value = input_values.get_val(scalar_name)[0]
-    if scalar_value <= 0:
-        input_values.delete(scalar_name)
-    elif scalar_value < 5:
+    scaler_value = input_values.get_val(scaler_name)[0]
+    if scaler_value <= 0:
+        input_values.delete(scaler_name)
+    elif scaler_value < 5:
         return
-    elif scalar_value > 5:
-        input_values.set_val(var_name, [scalar_value], 'lbm')
-        input_values.set_val(scalar_name, [1.0])
+    elif scaler_value > 5:
+        if "area" in var_name.lower():
+            input_values.set_val(var_name, [scaler_value], 'ft**2')
+        else:
+            input_values.set_val(var_name, [scaler_value], 'lbm')
+        input_values.delete(scaler_name)
+
+
+def update_gasp_scaler_variables(var_name, input_values: NamedValues):
+    """
+    The following parameters are used to modify or override
+    internally computed weights and areas for various components as follows:
+    < 0., negative of starting weight which will be modified
+    as appropriate during optimization or parametric variation, lb or ft**2
+    = 0., no weight/area for that component
+    > 0. but < 10., scale factor applied to internally computed weight
+    > 10., actual fixed weight for component, lb or ft**2
+    Same rules also applied to various other FLOPS scaler parameters
+    """
+    scaler_name = var_name + '_scaler'
+    if scaler_name not in input_values:
+        return
+    scaler_value = input_values.get_val(scaler_name)[0]
+    if scaler_value <= 0:
+        input_values.delete(scaler_name)
+    elif scaler_value < 10:
+        return
+    elif scaler_value > 10:
+        if "area" in var_name.lower():
+            input_values.set_val(var_name, [scaler_value], 'ft**2')
+        else:
+            input_values.set_val(var_name, [scaler_value], 'lbm')
+        input_values.delete(scaler_name)
 
 
 # list storing information on Aviary variables that are split from single
 # FLOPS variables that use the same value-based branching behavior
-flops_scalar_variables = [
+flops_scaler_variables = [
     Aircraft.AirConditioning.MASS,
     Aircraft.AntiIcing.MASS,
     Aircraft.APU.MASS,
@@ -587,13 +620,19 @@ flops_scalar_variables = [
     Aircraft.LandingGear.MAIN_GEAR_MASS,
     Aircraft.LandingGear.NOSE_GEAR_MASS,
     Aircraft.Nacelle.MASS,
+    Aircraft.Nacelle.WETTED_AREA,
     Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS,
     Aircraft.VerticalTail.MASS_SCALER,
-    Aircraft.VerticalTail.WETTED_AREA_SCALER,
+    Aircraft.VerticalTail.WETTED_AREA,
     Aircraft.Wing.MASS,
     Aircraft.Wing.SHEAR_CONTROL_MASS,
     Aircraft.Wing.SURFACE_CONTROL_MASS,
     Aircraft.Wing.WETTED_AREA,
+]
+
+# GASP variables that use the same value-based branching behavior
+gasp_scaler_variables = [
+    Aircraft.Fuselage.WETTED_AREA,
 ]
 
 initial_guesses = {
