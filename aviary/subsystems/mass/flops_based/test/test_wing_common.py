@@ -13,7 +13,7 @@ from aviary.validation_cases.validation_tests import (flops_validation_test,
                                                       print_case)
 from aviary.variable_info.variables import Aircraft, Mission
 
- 
+
 class WingShearControlMassTest(unittest.TestCase):
     def setUp(self):
         prob = self.prob = om.Problem()
