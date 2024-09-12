@@ -1,6 +1,7 @@
 import unittest
 
 import openmdao.api as om
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH
 from aviary.mission.gasp_based.phases.v_rotate_comp import VRotateComp
@@ -60,4 +61,5 @@ class TestVRotateComp2(unittest.TestCase):
         prob.set_val("CL_max", val=2.1886, units="unitless")
         prob.set_val("mass", val=175_000, units="lbm")
 
-        prob.check_partials(method='cs')
+        partial_data = prob.check_partials(method='cs')
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)

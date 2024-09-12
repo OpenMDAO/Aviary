@@ -230,7 +230,7 @@ class TotalWingMassTestCase4(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
 
-class TotalWingMassTestCase2(unittest.TestCase):
+class TotalWingMassTestCase5(unittest.TestCase):
     """
     Test mass-weight conversion
     """
@@ -255,7 +255,7 @@ class TotalWingMassTestCase2(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
 class TotalWingMassTestCase6(unittest.TestCase):

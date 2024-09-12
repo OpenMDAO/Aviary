@@ -148,8 +148,8 @@ class AltUnusableFuelMassTest2(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.Fuel.TOTAL_CAPACITY, 30000.0, 'lbm')
 
-        partial_data = prob.check_partials(out_stream=None, method="fd")
-        assert_check_partials(partial_data, atol=1e-5, rtol=1e-5)
+        partial_data = prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
 if __name__ == '__main__':

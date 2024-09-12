@@ -78,7 +78,7 @@ class SurfaceCtrlMassTest2(unittest.TestCase):
         prob.set_val(Aircraft.Wing.AREA, 1000, 'ft**2')
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
 class AltSurfaceCtrlMassTest(unittest.TestCase):
@@ -143,7 +143,7 @@ class AltSurfaceCtrlMassTest2(unittest.TestCase):
         prob.set_val(Aircraft.VerticalTail.AREA, 100, 'ft**2')
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
 if __name__ == "__main__":
