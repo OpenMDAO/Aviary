@@ -118,7 +118,6 @@ class NacelleMassTest2(unittest.TestCase):
         partial_data = prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
-
     def test_case_multiengine(self):
         prob = om.Problem()
 
