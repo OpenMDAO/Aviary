@@ -119,7 +119,4 @@ class LandingGroupTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    #unittest.main()
-    thisClass = LandingCalcTest2()
-    thisClass.setUp()
-    thisClass.test_case1()
+    unittest.main()
