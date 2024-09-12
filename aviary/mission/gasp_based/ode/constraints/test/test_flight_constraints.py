@@ -1,5 +1,4 @@
 import unittest
-import os
 
 import numpy as np
 import openmdao.api as om
@@ -69,13 +68,13 @@ class FlightConstraintTestCase2(unittest.TestCase):
         constraints.GRAV_ENGLISH_LBM = 1.0
 
     def test_case1(self):
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem(
+        prob = om.Problem()
+        prob.model.add_subsystem(
             "group", FlightConstraints(num_nodes=2), promotes=["*"]
         )
-        self.prob.setup(check=False, force_alloc_complex=True)
+        prob.setup(check=False, force_alloc_complex=True)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=3e-11, rtol=1e-12)
 
 

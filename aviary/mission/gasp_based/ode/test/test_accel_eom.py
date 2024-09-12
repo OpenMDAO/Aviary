@@ -71,13 +71,13 @@ class AccelerationTestCase2(unittest.TestCase):
         accel.GRAV_ENGLISH_LBM = 1.0
 
     def test_case1(self):
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem(
+        prob = om.Problem()
+        prob.model.add_subsystem(
             "group", AccelerationRates(num_nodes=2), promotes=["*"]
         )
-        self.prob.setup(check=False, force_alloc_complex=True)
+        prob.setup(check=False, force_alloc_complex=True)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
