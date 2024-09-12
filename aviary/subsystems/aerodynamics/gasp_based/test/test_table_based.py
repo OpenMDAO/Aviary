@@ -207,12 +207,12 @@ class GearDragIncrementTest2(unittest.TestCase):
     """
 
     def setUp(self):
-        import aviary.subsystems.mass.flops_based.fuselage as fuselage
-        fuselage.GRAV_ENGLISH_LBM = 1.1
+        import aviary.subsystems.aerodynamics.gasp_based.table_based as table
+        table.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.subsystems.mass.flops_based.fuselage as fuselage
-        fuselage.GRAV_ENGLISH_LBM = 1.0
+        import aviary.subsystems.aerodynamics.gasp_based.table_based as table
+        table.GRAV_ENGLISH_LBM = 1.0
 
     def test_case(self):
         prob = om.Problem()
