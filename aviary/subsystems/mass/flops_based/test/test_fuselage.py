@@ -125,9 +125,7 @@ class AltFuselageMassTest2(unittest.TestCase):
         fuselage.GRAV_ENGLISH_LBM = 1.0
 
     def test_case(self):
-
         prob = om.Problem()
-
         prob.model.add_subsystem(
             "fuselage",
             AltFuselageMass(aviary_options=get_flops_inputs("N3CC")),
@@ -135,9 +133,11 @@ class AltFuselageMassTest2(unittest.TestCase):
             promotes_outputs=['*'],
         )
         prob.setup(check=False, force_alloc_complex=True)
-        pdb.set_trace()
+        prob.set_val(Aircraft.Fuselage.WETTED_AREA, 4000.0, 'ft**2')
+        prob.set_val(Aircraft.Fuselage.MAX_HEIGHT, 15.0, 'ft')
+        prob.set_val(Aircraft.Fuselage.MAX_WIDTH, 15.0, 'ft')
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
