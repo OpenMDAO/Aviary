@@ -115,6 +115,9 @@ class AltFuselageMassTest(unittest.TestCase):
 
 
 class AltFuselageMassTest2(unittest.TestCase):
+    """
+    Test mass-weight conversion
+    """
 
     def setUp(self):
         import aviary.subsystems.mass.flops_based.fuselage as fuselage
