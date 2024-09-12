@@ -46,20 +46,20 @@ class FinMass(om.ExplicitComponent):
         if num_fins > 0:
             area = inputs[Aircraft.Fins.AREA]
             taper_ratio = inputs[Aircraft.Fins.TAPER_RATIO]
-            scalar = inputs[Aircraft.Fins.MASS_SCALER]
+            scaler = inputs[Aircraft.Fins.MASS_SCALER]
             gross_weight = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
 
             area_exp = area**0.85
             gross_weight_exp = gross_weight**0.3
 
             J[Aircraft.Fins.MASS, Aircraft.Fins.AREA] = (
-                (0.272 * num_fins * scalar * (taper_ratio + 0.5) * gross_weight_exp)
+                (0.272 * num_fins * scaler * (taper_ratio + 0.5) * gross_weight_exp)
                 / area**0.15) / GRAV_ENGLISH_LBM
             J[Aircraft.Fins.MASS, Aircraft.Fins.TAPER_RATIO] = \
-                0.32 * area_exp * num_fins * scalar * gross_weight_exp / GRAV_ENGLISH_LBM
+                0.32 * area_exp * num_fins * scaler * gross_weight_exp / GRAV_ENGLISH_LBM
             J[Aircraft.Fins.MASS, Aircraft.Fins.MASS_SCALER] = \
                 0.32 * area_exp * num_fins * \
                 (taper_ratio + 0.5) * gross_weight_exp / GRAV_ENGLISH_LBM
             J[Aircraft.Fins.MASS, Mission.Design.GROSS_MASS] = (
-                (0.096 * area_exp * num_fins * scalar * (taper_ratio + 0.5))
+                (0.096 * area_exp * num_fins * scaler * (taper_ratio + 0.5))
                 / gross_weight**0.7)

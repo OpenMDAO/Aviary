@@ -81,9 +81,6 @@ class SizeGroupTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.TAIL_FINENESS, 3, units="unitless")
         self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.WETTED_AREA_FACTOR, 4000, units="unitless"
-        )
-        self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.12, units="unitless"
         )
         self.prob.model.set_input_defaults(
@@ -116,7 +113,7 @@ class SizeGroupTestCase1(unittest.TestCase):
         assert_near_equal(
             self.prob[Aircraft.Fuselage.LENGTH], 129.5, tol
         )
-        assert_near_equal(self.prob[Aircraft.Fuselage.WETTED_AREA], 4000, tol)
+        assert_near_equal(self.prob[Aircraft.Fuselage.WETTED_AREA], 4639.57, tol)
         # note: this is the actual GASP value, but for version 3.5. Version 3 has 129.4
         assert_near_equal(
             self.prob[Aircraft.TailBoom.LENGTH], 129.5, tol
@@ -163,8 +160,6 @@ class SizeGroupTestCase2(unittest.TestCase):
     def setUp(self):
 
         options = get_option_defaults()
-        options.set_val(Aircraft.Fuselage.PROVIDE_SURFACE_AREA,
-                        val=False, units='unitless')
         options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')
         options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM,
@@ -241,9 +236,6 @@ class SizeGroupTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.TAIL_FINENESS, 3, units="unitless")
         self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.WETTED_AREA_FACTOR, 4000, units="unitless"
-        )
-        self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.12, units="unitless"
         )
         self.prob.model.set_input_defaults(
@@ -284,7 +276,7 @@ class SizeGroupTestCase2(unittest.TestCase):
             self.prob[Aircraft.Fuselage.LENGTH], 129.5, tol
         )  # not actual GASP value
         assert_near_equal(
-            self.prob[Aircraft.Fuselage.WETTED_AREA], 18558260.55555555, tol
+            self.prob[Aircraft.Fuselage.WETTED_AREA], 4639.57, tol
         )  # not actual GASP value
         assert_near_equal(
             self.prob[Aircraft.TailBoom.LENGTH], 129.5, tol
@@ -387,8 +379,6 @@ class SizeGroupTestCase3(unittest.TestCase):
     def setUp(self):
 
         options = get_option_defaults()
-        options.set_val(Aircraft.Fuselage.PROVIDE_SURFACE_AREA,
-                        val=False, units='unitless')
         options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')
         options.set_val(Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF,
                         val=True, units='unitless')
@@ -469,9 +459,6 @@ class SizeGroupTestCase3(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.TAIL_FINENESS, 3, units="unitless")
         self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.WETTED_AREA_FACTOR, 4000, units="unitless"
-        )
-        self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.12, units="unitless"
         )
         self.prob.model.set_input_defaults(
@@ -512,7 +499,7 @@ class SizeGroupTestCase3(unittest.TestCase):
             self.prob[Aircraft.Fuselage.LENGTH], 476.7333, tol
         )  # not actual GASP value
         assert_near_equal(
-            self.prob[Aircraft.Fuselage.WETTED_AREA], 53601769, tol
+            self.prob[Aircraft.Fuselage.WETTED_AREA], 13400.44, tol
         )  # not actual GASP value
         assert_near_equal(
             self.prob[Aircraft.TailBoom.LENGTH], 476.7333, tol
@@ -693,9 +680,6 @@ class SizeGroupTestCase4(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.TAIL_FINENESS, 3, units="unitless")
         self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.WETTED_AREA_FACTOR, 4000, units="unitless"
-        )
-        self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.12, units="unitless"
         )
         self.prob.model.set_input_defaults(
@@ -736,7 +720,7 @@ class SizeGroupTestCase4(unittest.TestCase):
             self.prob[Aircraft.Fuselage.LENGTH], 476.7333, tol
         )  # not actual GASP value
         assert_near_equal(
-            self.prob[Aircraft.Fuselage.WETTED_AREA], 4000, tol
+            self.prob[Aircraft.Fuselage.WETTED_AREA], 13400.44, tol
         )  # not actual GASP value
         assert_near_equal(
             self.prob[Aircraft.TailBoom.LENGTH], 476.7333, tol

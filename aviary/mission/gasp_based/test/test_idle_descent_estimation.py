@@ -8,6 +8,7 @@ from openmdao.utils.assert_utils import assert_near_equal, assert_check_partials
 from aviary.interface.default_phase_info.two_dof_fiti import descent_phases, add_default_sgm_args
 
 from aviary.mission.gasp_based.idle_descent_estimation import add_descent_estimation_as_submodel
+from aviary.mission.gasp_based.ode.params import set_params_for_unit_tests
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 from aviary.utils.process_input_decks import create_vehicle
@@ -58,6 +59,8 @@ class IdleDescentTestCase(unittest.TestCase):
         )
 
         prob.setup()
+
+        set_params_for_unit_tests(prob)
 
         warnings.filterwarnings('ignore', category=UserWarning)
         prob.run_model()

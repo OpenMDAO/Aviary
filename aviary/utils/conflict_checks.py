@@ -22,7 +22,6 @@ def check_fold_location_definition(inputs, options: AviaryValues):
 # Aircraft.Engine.TYPE - Aircraft.Engine.HAS_PROPELLERS
 # Aircraft.Design.COMPUTE_TAIL_VOLUME_COEFFS
 # Aircraft.Engine.REFERENCE_WEIGHT
-# Aircraft.Fuselage.PROVIDE_SURFACE_AREA - Aircraft.Fuselage.WETTED_AREA_FACTOR
 # Mission.Taxi.MACH - pycycle
 # Aircraft.HorizontalTail.AREA
 # Aircraft.VerticalTail.AREA

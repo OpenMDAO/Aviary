@@ -7,6 +7,8 @@ AerodynamicsBuilderBase : the interface for an aerodynamics subsystem builder.
 
 CoreAerodynamicsBuilder : the interface for Aviary's core aerodynamics subsystem builder
 """
+from itertools import chain
+
 import numpy as np
 
 import openmdao.api as om
@@ -390,6 +392,34 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                     params[var] = {'val': val,
                                    'static_target': True}
 
+        else:
+
+            # TODO: 2DOF/Gasp decided on phases based on phase names. We used
+            # a saved phase_name to determine the correct aero variables to
+            # promote. Ideally, this should all be refactored.
+            if phase_info['phase_type'] in ['ascent', 'groundroll', 'rotation']:
+                all_vars = (AERO_2DOF_INPUTS, AERO_LS_2DOF_INPUTS)
+            else:
+                all_vars = (AERO_2DOF_INPUTS, AERO_CLEAN_2DOF_INPUTS)
+
+            for var in chain.from_iterable(all_vars):
+
+                meta = _MetaData[var]
+
+                val = meta['default_value']
+                if val is None:
+                    val = _unspecified
+                units = meta['units']
+
+                if var in aviary_inputs:
+                    try:
+                        val = aviary_inputs.get_val(var, units)
+                    except TypeError:
+                        val = aviary_inputs.get_val(var)
+
+                params[var] = {'val': val,
+                               'static_target': True}
+
         return params
 
     def report(self, prob, reports_folder, **kwargs):
@@ -469,4 +499,59 @@ ENGINE_SIZED_INPUTS = [
     Aircraft.Nacelle.LAMINAR_FLOW_LOWER,
     Aircraft.Nacelle.LAMINAR_FLOW_UPPER,
     Aircraft.Nacelle.WETTED_AREA
+]
+
+AERO_2DOF_INPUTS = [
+    Aircraft.Design.CG_DELTA,
+    Aircraft.Design.DRAG_COEFFICIENT_INCREMENT,   # drag increment?
+    Aircraft.Design.STATIC_MARGIN,
+    Aircraft.Fuselage.AVG_DIAMETER,
+    Aircraft.Fuselage.FLAT_PLATE_AREA_INCREMENT,
+    Aircraft.Fuselage.FORM_FACTOR,
+    Aircraft.Fuselage.LENGTH,
+    Aircraft.Fuselage.WETTED_AREA,
+    Aircraft.HorizontalTail.AREA,
+    Aircraft.HorizontalTail.AVERAGE_CHORD,
+    Aircraft.HorizontalTail.FORM_FACTOR,
+    Aircraft.HorizontalTail.MOMENT_RATIO,
+    Aircraft.HorizontalTail.SPAN,
+    Aircraft.HorizontalTail.SWEEP,
+    Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION,
+    Aircraft.Nacelle.AVG_LENGTH,
+    Aircraft.Nacelle.FORM_FACTOR,
+    Aircraft.Nacelle.SURFACE_AREA,
+    Aircraft.Strut.AREA_RATIO,
+    Aircraft.Strut.CHORD,
+    Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR,
+    Aircraft.VerticalTail.AREA,
+    Aircraft.VerticalTail.AVERAGE_CHORD,
+    Aircraft.VerticalTail.FORM_FACTOR,
+    Aircraft.VerticalTail.SPAN,
+    Aircraft.Wing.AVERAGE_CHORD,
+    Aircraft.Wing.AREA,
+    Aircraft.Wing.ASPECT_RATIO,
+    Aircraft.Wing.CENTER_DISTANCE,
+    Aircraft.Wing.FORM_FACTOR,
+    Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR,
+    Aircraft.Wing.MAX_THICKNESS_LOCATION,
+    Aircraft.Wing.MIN_PRESSURE_LOCATION,
+    Aircraft.Wing.MOUNTING_TYPE,
+    Aircraft.Wing.SPAN,
+    Aircraft.Wing.SWEEP,
+    Aircraft.Wing.TAPER_RATIO,
+    Aircraft.Wing.THICKNESS_TO_CHORD_TIP,
+    Aircraft.Wing.THICKNESS_TO_CHORD_ROOT,
+    Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED,
+    Aircraft.Wing.ZERO_LIFT_ANGLE,
+]
+
+AERO_LS_2DOF_INPUTS = [
+    Mission.Takeoff.DRAG_COEFFICIENT_FLAP_INCREMENT,
+    Mission.Takeoff.LIFT_COEFFICIENT_FLAP_INCREMENT,
+    Mission.Takeoff.LIFT_COEFFICIENT_MAX,
+]
+
+AERO_CLEAN_2DOF_INPUTS = [
+    Aircraft.Design.SUPERCRITICAL_DIVERGENCE_SHIFT,  # super drag shift?
+    Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP,
 ]
