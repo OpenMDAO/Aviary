@@ -104,38 +104,6 @@ class TotalWingMassTestCase1(unittest.TestCase):
 
 class TotalWingMassTestCase2(unittest.TestCase):
     """
-    Test mass-weight conversion
-    """
-
-    def setUp(self):
-        import aviary.subsystems.mass.gasp_based.wing as wing
-        wing.GRAV_ENGLISH_LBM = 1.1
-
-    def tearDown(self):
-        import aviary.subsystems.mass.gasp_based.wing as wing
-        wing.GRAV_ENGLISH_LBM = 1.0
-
-    def test_case1(self):
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem(
-            "total",
-            WingMassTotal(aviary_options=get_option_defaults()),
-            promotes=["*"],
-        )
-
-        self.prob.model.set_input_defaults(
-            "isolated_wing_mass", val=15830.0, units="lbm")
-
-        self.prob.setup(check=False, force_alloc_complex=True)
-
-        self.prob.run_model()
-
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
-
-
-class TotalWingMassTestCase2(unittest.TestCase):
-    """
     Has fold and no strut
     """
 
@@ -262,7 +230,35 @@ class TotalWingMassTestCase4(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
 
-class TotalWingMassTestCase5(unittest.TestCase):
+class TotalWingMassTestCase2(unittest.TestCase):
+    """
+    Test mass-weight conversion
+    """
+
+    def setUp(self):
+        import aviary.subsystems.mass.gasp_based.wing as wing
+        wing.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.subsystems.mass.gasp_based.wing as wing
+        wing.GRAV_ENGLISH_LBM = 1.0
+
+    def test_case1(self):
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "total",
+            WingMassTotal(aviary_options=get_option_defaults()),
+            promotes=["*"],
+        )
+        prob.model.set_input_defaults(
+            "isolated_wing_mass", val=15830.0, units="lbm")
+        prob.setup(check=False, force_alloc_complex=True)
+
+        partial_data = prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
+
+
+class TotalWingMassTestCase6(unittest.TestCase):
     """
     Test mass-weight conversion
     """
