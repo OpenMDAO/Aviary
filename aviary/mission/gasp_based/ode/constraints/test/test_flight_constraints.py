@@ -75,7 +75,7 @@ class FlightConstraintTestCase2(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=3e-11, rtol=1e-12)
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
 if __name__ == "__main__":
