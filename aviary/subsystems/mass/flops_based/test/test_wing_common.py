@@ -74,7 +74,7 @@ class WingShearControlMassTest2(unittest.TestCase):
         prob.set_val(Mission.Design.GROSS_MASS, 100000, 'lbm')
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=5e-12, rtol=1e-12)
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
 class WingMiscMassTest(unittest.TestCase):
