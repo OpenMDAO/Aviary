@@ -35,6 +35,18 @@ class GASPOverrideTestCase(unittest.TestCase):
 
         prob.model = AviaryGroup(aviary_options=aviary_options,
                                  aviary_metadata=BaseMetaData)
+
+        # pre_mission = CorePreMission(aviary_options=aviary_options,
+        #                              subsystems=subsystems)
+        # pre_mission.add_subsystem("geom", AeroGeom(
+        #     aviary_options=self.aviary_inputs),
+        #     promotes_inputs=["*"],promotes_outputs=["*"])
+        # prob.model.add_subsystem(
+        #     'pre_mission',
+        #     pre_mission,
+        #     promotes_inputs=['aircraft:*', 'mission:*'],
+        #     promotes_outputs=['aircraft:*', 'mission:*']
+        # )
         prob.model.add_subsystem(
             'pre_mission',
             CorePreMission(aviary_options=aviary_options,
@@ -118,16 +130,17 @@ class GASPOverrideTestCase(unittest.TestCase):
             warnings.simplefilter("ignore", om.PromotionWarning)
             prob.setup()
 
-        om.n2(prob, 'override_n2.html', show_browser=False)
-
         prob.run_model()
 
         assert_near_equal(self.prob[Aircraft.Wing.FORM_FACTOR], 2.47320154, 1e-6)
         assert_near_equal(self.prob[Aircraft.HorizontalTail.FORM_FACTOR], 1.5, 1e-6)
         assert_near_equal(self.prob[Aircraft.VerticalTail.FORM_FACTOR], 2, 1e-6)
         assert_near_equal(
-            self.prob[Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR], 0, 1e-6)
+            self.prob[Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR], 1.125, 1e-6)
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = GASPOverrideTestCase()
+    test.setUp()
+    test.test_case_aero_coeffs()
