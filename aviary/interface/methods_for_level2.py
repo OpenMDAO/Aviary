@@ -40,7 +40,7 @@ from aviary.mission.gasp_based.phases.v_rotate_comp import VRotateComp
 from aviary.mission.gasp_based.polynomial_fit import PolynomialFit
 from aviary.subsystems.premission import CorePreMission
 from aviary.utils.functions import create_opts2vals, add_opts2vals, promote_aircraft_and_mission_vars, wrapped_convert_units
-from aviary.utils.process_input_decks import create_vehicle, update_GASP_options, initial_guessing
+from aviary.utils.process_input_decks import create_vehicle, update_GASP_options, initialization_guessing
 from aviary.utils.preprocessors import preprocess_crewpayload
 from aviary.interface.utils.check_phase_info import check_phase_info
 from aviary.utils.aviary_values import AviaryValues
@@ -278,7 +278,7 @@ class AviaryProblem(om.Problem):
         ## LOAD INPUT FILE ###
         # Create AviaryValues object from file (or process existing AviaryValues object
         # with default values from metadata) and generate initial guesses
-        aviary_inputs, initial_guesses = create_vehicle(
+        aviary_inputs, initialization_guesses = create_vehicle(
             aviary_inputs, meta_data=meta_data, verbosity=verbosity)
 
         # pull which methods will be used for subsystems and mission
@@ -288,10 +288,10 @@ class AviaryProblem(om.Problem):
 
         if mission_method is TWO_DEGREES_OF_FREEDOM or mass_method is GASP:
             aviary_inputs = update_GASP_options(aviary_inputs)
-        initial_guesses = initial_guessing(aviary_inputs, initial_guesses,
-                                           engine_builders)
+        initialization_guesses = initialization_guessing(aviary_inputs, initialization_guesses,
+                                                         engine_builders)
         self.aviary_inputs = aviary_inputs
-        self.initial_guesses = initial_guesses
+        self.initialization_guesses = initialization_guesses
 
         ## LOAD PHASE_INFO ###
         if phase_info is None:
@@ -361,9 +361,9 @@ class AviaryProblem(om.Problem):
 
         if mission_method is TWO_DEGREES_OF_FREEDOM:
             aviary_inputs.set_val(Mission.Summary.CRUISE_MASS_FINAL,
-                                  val=self.initial_guesses['cruise_mass_final'], units='lbm')
+                                  val=self.initialization_guesses['cruise_mass_final'], units='lbm')
             aviary_inputs.set_val(Mission.Summary.GROSS_MASS,
-                                  val=self.initial_guesses['actual_takeoff_mass'], units='lbm')
+                                  val=self.initialization_guesses['actual_takeoff_mass'], units='lbm')
 
             # Commonly referenced values
             self.cruise_alt = aviary_inputs.get_val(
@@ -381,7 +381,7 @@ class AviaryProblem(om.Problem):
         elif mission_method is HEIGHT_ENERGY:
             self.problem_type = aviary_inputs.get_val(Settings.PROBLEM_TYPE)
             aviary_inputs.set_val(Mission.Summary.GROSS_MASS,
-                                  val=self.initial_guesses['actual_takeoff_mass'], units='lbm')
+                                  val=self.initialization_guesses['actual_takeoff_mass'], units='lbm')
             if 'target_range' in self.post_mission_info:
                 aviary_inputs.set_val(Mission.Design.RANGE, wrapped_convert_units(
                     phase_info['post_mission']['target_range'], 'NM'), units='NM')
@@ -2154,8 +2154,8 @@ class AviaryProblem(om.Problem):
 
         # If using the GASP model, set initial guesses for the rotation mass and flight duration
         if self.mission_method is TWO_DEGREES_OF_FREEDOM:
-            rotation_mass = self.initial_guesses['rotation_mass']
-            flight_duration = self.initial_guesses['flight_duration']
+            rotation_mass = self.initialization_guesses['rotation_mass']
+            flight_duration = self.initialization_guesses['flight_duration']
 
         if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
             control_keys = ["mach", "altitude"]
