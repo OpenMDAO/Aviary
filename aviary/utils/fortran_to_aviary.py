@@ -52,7 +52,7 @@ def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
     # TODO generate both an Aviary input file and a phase_info file
 
     vehicle_data = {'input_values': NamedValues(), 'unused_values': NamedValues(),
-                    'initial_guesses': initial_guesses, 'verbosity': verbosity}
+                    'initialization_guesses': initialization_guesses, 'verbosity': verbosity}
 
     fortran_deck: Path = get_path(fortran_deck, verbose=False)
 
@@ -135,9 +135,9 @@ def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
         if legacy_code is GASP:
             # Values used in initial guessing of the trajectory
             writer.writerow([])
-            writer.writerow(['# Initial Guesses'])
-            for var_name in sorted(vehicle_data['initial_guesses']):
-                row = [var_name, vehicle_data['initial_guesses'][var_name]]
+            writer.writerow(['# Initialization Guesses'])
+            for var_name in sorted(vehicle_data['initialization_guesses']):
+                row = [var_name, vehicle_data['initialization_guesses'][var_name]]
                 writer.writerow(row)
 
         # Values that were not successfully converted
@@ -235,7 +235,7 @@ def process_and_store_data(data, var_name, legacy_code, current_namelist, altern
     The variables are also sorted based on whether they will set an Aviary variable or they are for initial guessing
     '''
 
-    guess_names = list(initial_guesses.keys())
+    guess_names = list(initialization_guesses.keys())
     var_ind = data_units = None
     skip_variable = False
     # skip any variables that shouldn't get converted
@@ -270,7 +270,7 @@ def process_and_store_data(data, var_name, legacy_code, current_namelist, altern
         if not skip_variable:
             if name in guess_names and legacy_code is GASP:
                 # all initial guesses take only a single value
-                vehicle_data['initial_guesses'][name] = float(var_values[0])
+                vehicle_data['initialization_guesses'][name] = float(var_values[0])
                 continue
 
             elif name in _MetaData:
@@ -635,11 +635,11 @@ gasp_scaler_variables = [
     Aircraft.Fuselage.WETTED_AREA,
 ]
 
-initial_guesses = {
-    # initial_guesses is a dictionary that contains values used to initialize the trajectory
+initialization_guesses = {
+    # initialization_guesses is a dictionary that contains values used to initialize the trajectory
     'actual_takeoff_mass': 0,
-    'rotation_mass': .99,
-    'fuel_burn_per_passenger_mile': 0.1,
+    'rotation_mass': 0,
+    'fuel_burn_per_passenger_mile': 0,
     'cruise_mass_final': 0,
     'flight_duration': 0,
     'time_to_climb': 0,
