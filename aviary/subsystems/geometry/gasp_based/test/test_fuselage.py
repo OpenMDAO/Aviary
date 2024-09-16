@@ -10,9 +10,11 @@ from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft
 
 
-class FuselageParametersTestCase1(
-    unittest.TestCase
-):  # this is the GASP test case, input and output values based on large single aisle 1 v3 without bug fix
+class FuselageParametersTestCase1(unittest.TestCase):
+    """
+    this is the GASP test case, input and output values based on large single aisle 1 v3 without bug fix
+    """
+
     def setUp(self):
 
         options = get_option_defaults()
@@ -90,9 +92,11 @@ class FuselageParametersTestCase2(unittest.TestCase):
         assert_check_partials(partial_data2, atol=1e-8, rtol=1e-8)
 
 
-class FuselageSizeTestCase1(
-    unittest.TestCase
-):  # this is the GASP test case, input and output values based on large single aisle 1 v3 without bug fix
+class FuselageSizeTestCase1(unittest.TestCase):
+    """ 
+    this is the GASP test case, input and output values based on large single aisle 1 v3 without bug fix
+    """
+
     def setUp(self):
 
         self.prob = om.Problem()
@@ -109,8 +113,6 @@ class FuselageSizeTestCase1(
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.TAIL_FINENESS, 3, units="unitless")
         self.prob.model.set_input_defaults("cabin_height", 13.1, units="ft")
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.WETTED_AREA_FACTOR, 4000, units="unitless")
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -122,7 +124,7 @@ class FuselageSizeTestCase1(
         assert_near_equal(
             self.prob[Aircraft.Fuselage.LENGTH], 129.5, tol
         )  # note: this is the actual GASP value, but for version 3.5. Version 3 has 129.4
-        assert_near_equal(self.prob[Aircraft.Fuselage.WETTED_AREA], 4000, tol)
+        assert_near_equal(self.prob[Aircraft.Fuselage.WETTED_AREA], 4639.68, tol)
         assert_near_equal(
             self.prob[Aircraft.TailBoom.LENGTH], 129.5, tol
         )  # note: this is the actual GASP value, but for version 3.5. Version 3 has 129.4
@@ -131,14 +133,14 @@ class FuselageSizeTestCase1(
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
 
-class FuselageSizeTestCase2(
-    unittest.TestCase
-):  # this is the GASP test case for V3.6 advanced tube and wing
+class FuselageSizeTestCase2(unittest.TestCase):
+    """
+    this is the GASP test case for V3.6 advanced tube and wing
+    """
+
     def setUp(self):
 
         options = get_option_defaults()
-        options.set_val(Aircraft.Fuselage.PROVIDE_SURFACE_AREA,
-                        val=False, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -155,7 +157,7 @@ class FuselageSizeTestCase2(
             Aircraft.Fuselage.TAIL_FINENESS, 3, units="unitless")
         self.prob.model.set_input_defaults("cabin_height", 13.1, units="ft")
         self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.WETTED_AREA_FACTOR, 1, units="unitless")
+            Aircraft.Fuselage.WETTED_AREA_SCALER, 1, units="unitless")
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -205,8 +207,6 @@ class FuselageGroupTestCase1(
             Aircraft.Fuselage.NOSE_FINENESS, 1, units="unitless")
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.TAIL_FINENESS, 3, units="unitless")
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.WETTED_AREA_FACTOR, 4000, units="unitless")
 
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, 9.5, units="ft")
@@ -222,7 +222,7 @@ class FuselageGroupTestCase1(
         assert_near_equal(
             self.prob[Aircraft.Fuselage.LENGTH], 129.5, tol
         )  # note: this is the actual GASP value, but for version 3.5. Version 3 has 129.4
-        assert_near_equal(self.prob[Aircraft.Fuselage.WETTED_AREA], 4000, tol)
+        assert_near_equal(self.prob[Aircraft.Fuselage.WETTED_AREA], 4639.57, tol)
         assert_near_equal(
             self.prob[Aircraft.TailBoom.LENGTH], 129.5, tol
         )  # note: this is the actual GASP value, but for version 3.5. Version 3 has 129.4
@@ -235,8 +235,6 @@ class FuselageGroupTestCase2(unittest.TestCase):
     def setUp(self):
 
         options = get_option_defaults()
-        options.set_val(Aircraft.Fuselage.PROVIDE_SURFACE_AREA,
-                        val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24,
                         units="inch")  # not actual GASP value
@@ -264,9 +262,6 @@ class FuselageGroupTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.TAIL_FINENESS, 3, units="unitless"
         )  # not actual GASP value
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.WETTED_AREA_FACTOR, 4000, units="unitless"
-        )  # not actual GASP value
 
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, 9.5, units="ft"
@@ -286,7 +281,7 @@ class FuselageGroupTestCase2(unittest.TestCase):
             self.prob[Aircraft.Fuselage.LENGTH], 129.5, tol
         )  # not actual GASP value
         assert_near_equal(
-            self.prob[Aircraft.Fuselage.WETTED_AREA], 18558260.55555555, tol
+            self.prob[Aircraft.Fuselage.WETTED_AREA], 4639.565, tol
         )  # not actual GASP value
         assert_near_equal(
             self.prob[Aircraft.TailBoom.LENGTH], 129.5, tol
@@ -300,8 +295,6 @@ class FuselageGroupTestCase3(unittest.TestCase):
     def setUp(self):
 
         options = get_option_defaults()
-        options.set_val(Aircraft.Fuselage.PROVIDE_SURFACE_AREA,
-                        val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=30, units='unitless')
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24,
                         units="inch")  # not actual GASP value
@@ -329,9 +322,6 @@ class FuselageGroupTestCase3(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.TAIL_FINENESS, 3, units="unitless"
         )  # not actual GASP value
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.WETTED_AREA_FACTOR, 4000, units="unitless"
-        )  # not actual GASP value
 
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, 9.5, units="ft"
@@ -351,7 +341,7 @@ class FuselageGroupTestCase3(unittest.TestCase):
             self.prob[Aircraft.Fuselage.LENGTH], 114.23, tol
         )  # not actual GASP value
         assert_near_equal(
-            self.prob[Aircraft.Fuselage.WETTED_AREA], 1.1790053e7, tol
+            self.prob[Aircraft.Fuselage.WETTED_AREA], 2947.51, tol
         )  # not actual GASP value
         assert_near_equal(
             self.prob[Aircraft.TailBoom.LENGTH], 114.23, tol
@@ -392,9 +382,6 @@ class FuselageGroupTestCase4(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.TAIL_FINENESS, 3, units="unitless"
         )  # not actual GASP value
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.WETTED_AREA_FACTOR, 4000, units="unitless"
-        )  # not actual GASP value
 
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, 9.5, units="ft"
@@ -414,7 +401,7 @@ class FuselageGroupTestCase4(unittest.TestCase):
             self.prob[Aircraft.Fuselage.LENGTH], 114.23, tol
         )  # not actual GASP value
         assert_near_equal(
-            self.prob[Aircraft.Fuselage.WETTED_AREA], 4000, tol
+            self.prob[Aircraft.Fuselage.WETTED_AREA], 2947.51, tol
         )  # not actual GASP value
         assert_near_equal(
             self.prob[Aircraft.TailBoom.LENGTH], 114.23, tol
