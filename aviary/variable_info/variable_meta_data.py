@@ -3058,12 +3058,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.Fuselage.FORM_FACTOR,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CKF',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={"GASP": 'INGASP.CKF', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='fuselage form factor',
+    default_value=1.25,
 )
 
 add_meta_data(
@@ -3493,12 +3491,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.HorizontalTail.FORM_FACTOR,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CKHT',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={"GASP": 'INGASP.CKHT', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='horizontal tail form factor',
+    default_value=1.25,
 )
 
 add_meta_data(
@@ -4122,12 +4118,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.Nacelle.FORM_FACTOR,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CKN',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={"GASP": 'INGASP.CKN', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='nacelle form factor',
+    default_value=1.5,
 )
 
 add_meta_data(
@@ -4571,12 +4565,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CKSTRT',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={"GASP": 'INGASP.CKSTRT', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='strut/fuselage interference factor',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4727,12 +4719,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.VerticalTail.FORM_FACTOR,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CKVT',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={"GASP": 'INGASP.CKVT', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='vertical tail form factor',
+    default_value=1.25,
 )
 
 add_meta_data(
@@ -5439,23 +5429,19 @@ add_meta_data(
 add_meta_data(
     Aircraft.Wing.FORM_FACTOR,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CKW',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={"GASP": 'INGASP.CKW', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='wing form factor',
+    default_value=1.25,
 )
 
 add_meta_data(
     Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CKI',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={"GASP": 'INGASP.CKI', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='wing/fuselage interference factor',
+    default_value=1.1,
 )
 
 add_meta_data(

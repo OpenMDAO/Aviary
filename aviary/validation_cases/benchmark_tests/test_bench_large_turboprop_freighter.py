@@ -35,10 +35,12 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
 
         # load_inputs needs to be updated to accept an already existing aviary options
         prob.load_inputs(
-            "models/large_turboprop_freighter/large_turboprop_freighter.csv",
+            # "models/large_turboprop_freighter/large_turboprop_freighter.csv",
+            "models/large_turboprop_freighter/test_out.txt",
             phase_info,
             engine_builders=[turboprop],
         )
+        prob.aviary_inputs.set_val(Settings.VERBOSITY, 2)
 
         # FLOPS aero specific stuff? Best guesses for values here
         # prob.aviary_inputs.set_val(Mission.Constraints.MAX_MACH, 0.5)
@@ -56,6 +58,9 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         prob.set_initial_guesses()
 
         prob.run_aviary_problem("dymos_solution.db")
+        import openmdao.api as om
+
+        om.n2(prob)
 
 
 if __name__ == '__main__':
