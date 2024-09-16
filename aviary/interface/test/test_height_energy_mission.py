@@ -7,6 +7,7 @@ from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.reports_system import clear_reports
 
 from aviary.interface.methods_for_level1 import run_aviary
+from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.subsystems.test.test_dummy_subsystem import ArrayGuessSubsystemBuilder
 from aviary.mission.energy_phase import EnergyPhase
 from aviary.variable_info.variables import Dynamic
@@ -251,6 +252,48 @@ class AircraftMissionTestSuite(unittest.TestCase):
                 max_iter=1,
                 optimizer='SLSQP',
             )
+
+    def test_support_constraint_aliases(self):
+        # Test specification of multiple constraints on a single variable.
+        modified_phase_info = self.phase_info.copy()
+        modified_phase_info['climb']['user_options']['constraints'] = {
+            'throttle_1': {
+                'target': Dynamic.Mission.THROTTLE,
+                'equals': 0.2,
+                'loc': 'initial',
+                'type': 'boundary',
+            },
+            'throttle_2': {
+                'target': Dynamic.Mission.THROTTLE,
+                'equals': 0.8,
+                'loc': 'final',
+                'type': 'boundary',
+            },
+        }
+
+        prob = AviaryProblem()
+
+        csv_path = "models/test_aircraft/aircraft_for_bench_FwFm.csv"
+
+        prob.load_inputs(csv_path, modified_phase_info)
+        prob.check_and_preprocess_inputs()
+        prob.add_pre_mission_systems()
+        prob.add_phases()
+        prob.add_post_mission_systems()
+        prob.link_phases()
+
+        prob.setup()
+        prob.set_initial_guesses()
+
+        prob.run_model()
+
+        prob_vars = prob.list_problem_vars()
+        cons = {key: val for (key, val) in prob_vars['constraints']}
+        con1 = cons['traj.phases.climb->initial_boundary_constraint->throttle_1']
+        con2 = cons['traj.phases.climb->final_boundary_constraint->throttle_2']
+
+        self.assertEqual(con1['name'], 'timeseries.throttle_1')
+        self.assertEqual(con2['name'], 'timeseries.throttle_2')
 
 
 if __name__ == '__main__':
