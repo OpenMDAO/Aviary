@@ -58,7 +58,7 @@ phase_info = {
             'normal_ref': (10000, 'lbf'),
         },
         'initial_guesses': {
-            'time': ([40.0, 5.0], 's'),
+            'time': ([40.0, 45.0], 's'),
             'alpha': ([0.0, 2.5], 'deg'),
             'velocity': ([143, 150.], 'kn'),
             'distance': ([3680.37217765, 4000], 'ft'),
@@ -97,7 +97,7 @@ phase_info = {
             'pitch_constraint_ref': (1., 'deg'),
         },
         'initial_guesses': {
-            'time': ([45., 25.], 's'),
+            'time': ([45., 70.], 's'),
             'flight_path_angle': ([0.0, 8.], 'deg'),
             'alpha': ([2.5, 1.5], 'deg'),
             'velocity': ([150., 185.], 'kn'),
@@ -131,7 +131,7 @@ phase_info = {
             'distance_defect_ref': (5, 'NM'),
         },
         'initial_guesses': {
-            'time': ([70., 13.], 's'),
+            'time': ([70., 83.], 's'),
             'velocity': ([185., 250.], 'kn'),
             'distance': ([10.e3, 20.e3], 'ft'),
             'throttle': ([0.956, 0.956], 'unitless'),
@@ -161,7 +161,7 @@ phase_info = {
             'distance_ref0': (0, 'NM'),
         },
         'initial_guesses': {
-            'time': ([1., 2.], 'min'),
+            'time': ([1., 3.], 'min'),
             'distance': ([20.e3, 100.e3], 'ft'),
             'altitude': ([500., 10.e3], 'ft'),
             'throttle': ([0.956, 0.956], 'unitless'),
@@ -194,7 +194,7 @@ phase_info = {
             'distance_defect_ref': (500, 'NM'),
         },
         'initial_guesses': {
-            'time': ([216., 1300.], 's'),
+            'time': ([216., 1516.], 's'),
             'distance': ([100.e3, 200.e3], 'ft'),
             'altitude': ([10.e3, 37.5e3], 'ft'),
             'throttle': ([0.956, 0.956], 'unitless'),
@@ -207,11 +207,13 @@ phase_info = {
         },
         'initial_guesses': {
             # [Initial mass, delta mass] for special cruise phase.
-            'mass': ([171481., -35000], 'lbm'),
-            'initial_distance': (200.e3, 'ft'),
-            'initial_time': (1516., 's'),
-            'altitude': (37.5e3, 'ft'),
-            'mach': (0.8, 'unitless'),
+            'mass': ([171481., 136000], 'lbm'),
+            'distance': ([200.e3, 200.e6], 'ft'),
+            # 'initial_distance': (200.e3, 'ft'),
+            'time': ([1516., 28000.], 's'),
+            # 'initial_time': (1516., 's'),
+            'altitude': ([37.5e3, 40.e3], 'ft'),
+            'mach': ([0.8, 0.8], 'unitless'),
         }
     },
     'desc1': {
@@ -243,11 +245,11 @@ phase_info = {
             'distance_defect_ref': (100, 'NM'),
         },
         'initial_guesses': {
-            'mass': (136000., 'lbm'),
+            'mass': ([136000., 136000], 'lbm'),
             'altitude': ([37.5e3, 10.e3], 'ft'),
             'throttle': ([0.0, 0.0], 'unitless'),
             'distance': ([.92*mission_distance, .96*mission_distance], 'NM'),
-            'time': ([28000., 500.], 's'),
+            'time': ([28000., 28500.], 's'),
         }
     },
     'desc2': {
@@ -277,11 +279,11 @@ phase_info = {
             'distance_defect_ref': (100, 'NM'),
         },
         'initial_guesses': {
-            'mass': (136000., 'lbm'),
+            'mass': ([136000., 136000], 'lbm'),
             'altitude': ([10.e3, 1.e3], 'ft'),
             'throttle': ([0., 0.], 'unitless'),
             'distance': ([.96*mission_distance, mission_distance], 'NM'),
-            'time': ([28500., 500.], 's'),
+            'time': ([28500., 29000.], 's'),
         }
     },
 }

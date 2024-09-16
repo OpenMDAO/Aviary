@@ -1994,23 +1994,29 @@ class AviaryProblem(om.Problem):
             else:
                 guesses = {}
 
+            # Check the name of integration variable in dymos phase
+            # integration_variable = phase.time_options['name']
             if self.mission_method is TWO_DEGREES_OF_FREEDOM and \
                     self.phase_info[phase_name]["user_options"].get("analytic", False):
                 for guess_key, guess_data in guesses.items():
                     val, units = guess_data
 
                     if 'mass' == guess_key:
+                        duration = val[-1] - val[0]
                         # Set initial and duration mass for the analytic cruise phase.
                         # Note we are integrating over mass, not time for this phase.
                         self.set_val(f'traj.{phase_name}.t_initial',
                                      val[0], units=units)
                         self.set_val(f'traj.{phase_name}.t_duration',
-                                     val[1], units=units)
+                                     duration, units=units)
 
+                    elif 'distance' == guess_key or 'time' == guess_key:
+                        self.set_val(f'traj.{phase_name}.parameters:initial_{guess_key}',
+                                     val[0], units=units)
                     else:
                         # Otherwise, set the value of the parameter in the trajectory phase
                         self.set_val(f'traj.{phase_name}.parameters:{guess_key}',
-                                     val, units=units)
+                                     val[0], units=units)
 
                 continue
 
@@ -2191,10 +2197,11 @@ class AviaryProblem(om.Problem):
 
             # Set initial guess for time variables
             if 'time' == guess_key and self.mission_method is not SOLVED_2DOF:
+                duration = val[-1] - val[0]
                 self.set_val(f'traj.{phase_name}.t_initial',
                              val[0], units=units)
                 self.set_val(f'traj.{phase_name}.t_duration',
-                             val[1], units=units)
+                             duration, units=units)
 
             else:
                 # Set initial guess for control variables
