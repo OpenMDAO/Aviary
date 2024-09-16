@@ -51,7 +51,7 @@ There are other similar assertions like `assertIsNone`, `assertIsNotNone`, `asse
 
 ### assert_check_partials
 
-The second most used assertion is `assert_check_partials` from the OpenMDAO utility. This is critically important because it checks whether the partial derivatives coded by develops are correct. It is the key in optimization. To use this test, you first prepare the partial derivative `data` by calling `check_partials` on an model after the model is setup. Then call `assert_check_partials` function with the `data`. Note that you don't need to run the model if you only want to check partials.
+The second most used assertion is `assert_check_partials` from the OpenMDAO utility. This is critically important because it checks whether the partial derivatives coded by develops are correct. It is the key in optimization. To use this test, you first prepare the partial derivative `data` by calling `check_partials` on a model after the model is setup. Then call `assert_check_partials` function with the `data`. Note that you don't need to run the model if you only want to check partials.
 
 ```
 data = prob.check_partials(out_stream=None)
