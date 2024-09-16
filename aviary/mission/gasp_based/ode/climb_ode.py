@@ -5,13 +5,17 @@ from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.atmosphere.flight_conditions import FlightConditions
 from aviary.mission.gasp_based.ode.base_ode import BaseODE
 from aviary.mission.gasp_based.ode.climb_eom import ClimbRates
-from aviary.mission.gasp_based.ode.constraints.flight_constraints import FlightConstraints
+from aviary.mission.gasp_based.ode.constraints.flight_constraints import (
+    FlightConstraints,
+)
 from aviary.mission.gasp_based.ode.constraints.speed_constraints import SpeedConstraints
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase
 from aviary.variable_info.enums import AnalysisScheme, AlphaModes, SpeedType
-from aviary.variable_info.variables import Dynamic
-from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
+from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.mission.gasp_based.ode.time_integration_base_classes import (
+    add_SGM_required_inputs,
+)
 
 
 class ClimbODE(BaseODE):
@@ -23,14 +27,28 @@ class ClimbODE(BaseODE):
 
     def initialize(self):
         super().initialize()
-        self.options.declare("input_speed_type", default=SpeedType.EAS, types=SpeedType,
-                             desc="Whether the speed is given as a equivalent airspeed, true airspeed, or mach number")
-        self.options.declare("alt_trigger_units", default='ft',
-                             desc='The units that the altitude trigger is provided in')
-        self.options.declare("speed_trigger_units", default='kn',
-                             desc='The units that the speed trigger is provided in.')
-        self.options.declare("input_speed_type", default=SpeedType.EAS, types=SpeedType,
-                             desc="Whether the speed is given as a equivalent airspeed, true airspeed, or mach number")
+        self.options.declare(
+            "input_speed_type",
+            default=SpeedType.EAS,
+            types=SpeedType,
+            desc="Whether the speed is given as a equivalent airspeed, true airspeed, or mach number",
+        )
+        self.options.declare(
+            "alt_trigger_units",
+            default='ft',
+            desc='The units that the altitude trigger is provided in',
+        )
+        self.options.declare(
+            "speed_trigger_units",
+            default='kn',
+            desc='The units that the speed trigger is provided in.',
+        )
+        self.options.declare(
+            "input_speed_type",
+            default=SpeedType.EAS,
+            types=SpeedType,
+            desc="Whether the speed is given as a equivalent airspeed, true airspeed, or mach number",
+        )
         self.options.declare("EAS_target", desc="target climbing EAS in knots")
         self.options.declare(
             "mach_cruise", default=0, desc="targeted cruise mach number"
@@ -52,12 +70,21 @@ class ClimbODE(BaseODE):
             speed_outputs = ["EAS", Dynamic.Atmosphere.VELOCITY]
 
         if analysis_scheme is AnalysisScheme.SHOOTING:
-            add_SGM_required_inputs(self, {
-                't_curr': {'units': 's'},
-                Dynamic.Mission.DISTANCE: {'units': 'ft'},
-                'alt_trigger': {'units': self.options['alt_trigger_units'], 'val': 10e3},
-                'speed_trigger': {'units': self.options['speed_trigger_units'], 'val': 100},
-            })
+            add_SGM_required_inputs(
+                self,
+                {
+                    't_curr': {'units': 's'},
+                    Dynamic.Mission.DISTANCE: {'units': 'ft'},
+                    'alt_trigger': {
+                        'units': self.options['alt_trigger_units'],
+                        'val': 10e3,
+                    },
+                    'speed_trigger': {
+                        'units': self.options['speed_trigger_units'],
+                        'val': 100,
+                    },
+                },
+            )
 
         # TODO: paramport
         self.add_subsystem("params", ParamPort(), promotes=["*"])
@@ -141,24 +168,25 @@ class ClimbODE(BaseODE):
             promotes_outputs=[Dynamic.Atmosphere.DYNAMIC_PRESSURE] + speed_outputs,
         )
 
-        kwargs = {'num_nodes': nn, 'aviary_inputs': aviary_options,
-                  'method': 'cruise'}
+        kwargs = {'num_nodes': nn, 'aviary_inputs': aviary_options, 'method': 'cruise'}
         # collect the propulsion group names for later use with
         for subsystem in core_subsystems:
             system = subsystem.build_mission(**kwargs)
             if system is not None:
                 if isinstance(subsystem, AerodynamicsBuilderBase):
-                    lift_balance_group.add_subsystem(subsystem.name,
-                                                     system,
-                                                     promotes_inputs=subsystem.mission_inputs(
-                                                         **kwargs),
-                                                     promotes_outputs=subsystem.mission_outputs(**kwargs))
+                    lift_balance_group.add_subsystem(
+                        subsystem.name,
+                        system,
+                        promotes_inputs=subsystem.mission_inputs(**kwargs),
+                        promotes_outputs=subsystem.mission_outputs(**kwargs),
+                    )
                 else:
-                    self.add_subsystem(subsystem.name,
-                                       system,
-                                       promotes_inputs=subsystem.mission_inputs(
-                                           **kwargs),
-                                       promotes_outputs=subsystem.mission_outputs(**kwargs))
+                    self.add_subsystem(
+                        subsystem.name,
+                        system,
+                        promotes_inputs=subsystem.mission_inputs(**kwargs),
+                        promotes_outputs=subsystem.mission_outputs(**kwargs),
+                    )
 
         # maybe replace this with the solver in AddAlphaControl?
         lift_balance_group.nonlinear_solver = om.NewtonSolver()
@@ -190,7 +218,8 @@ class ClimbODE(BaseODE):
             alpha_group=lift_balance_group,
             alpha_mode=AlphaModes.REQUIRED_LIFT,
             add_default_solver=False,
-            num_nodes=nn)
+            num_nodes=nn,
+        )
 
         self.add_subsystem(
             "constraints",
@@ -221,3 +250,5 @@ class ClimbODE(BaseODE):
         self.set_input_defaults(
             Dynamic.Atmosphere.MACH, val=0 * np.ones(nn), units="unitless"
         )
+
+        self.set_input_defaults(Aircraft.Wing.AREA, val=1.0, units="ft**2")

@@ -5,6 +5,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.mission.gasp_based.ode.ascent_ode import AscentODE
+from aviary.mission.gasp_based.ode.params import set_params_for_unit_tests
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.variable_info.options import get_option_defaults
@@ -29,6 +30,8 @@ class AscentODETestCase(unittest.TestCase):
 
         self.prob.set_val(Dynamic.Atmosphere.VELOCITY, [100, 100], units="kn")
         self.prob.set_val("t_curr", [1, 2], units="s")
+
+        set_params_for_unit_tests(self.prob)
 
         self.prob.run_model()
 

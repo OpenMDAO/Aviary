@@ -24,7 +24,7 @@ import importlib
 @unittest.skipUnless(importlib.util.find_spec("pyoptsparse") is not None, "pyoptsparse is not installed")
 class HE_SGMDescentTestCase(unittest.TestCase):
     def setUp(self):
-        aviary_inputs, initial_guesses = create_vehicle(
+        aviary_inputs, initialization_guesses = create_vehicle(
             'models/test_aircraft/aircraft_for_bench_FwFm.csv')
         aviary_inputs.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=28690, units="lbf")
         aviary_inputs.set_val(Dynamic.Vehicle.Propulsion.THROTTLE,

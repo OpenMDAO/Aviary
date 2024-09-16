@@ -5,6 +5,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.mission.gasp_based.ode.flight_path_ode import FlightPathODE
+from aviary.mission.gasp_based.ode.params import set_params_for_unit_tests
 from aviary.variable_info.options import get_option_defaults
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
@@ -18,17 +19,22 @@ class FlightPathODETestCase(unittest.TestCase):
 
         aviary_options = get_option_defaults()
         default_mission_subsystems = get_default_mission_subsystems(
-            'GASP', build_engine_deck(aviary_options))
+            'GASP', build_engine_deck(aviary_options)
+        )
 
-        self.fp = self.prob.model = FlightPathODE(num_nodes=2,
-                                                  aviary_options=get_option_defaults(),
-                                                  core_subsystems=default_mission_subsystems)
+        self.fp = self.prob.model = FlightPathODE(
+            num_nodes=2,
+            aviary_options=get_option_defaults(),
+            core_subsystems=default_mission_subsystems,
+        )
 
     def test_case1(self):
         """
         ground_roll = False (the aircraft is not confined to the ground)
         """
         self.prob.setup(check=False, force_alloc_complex=True)
+
+        set_params_for_unit_tests(self.prob)
 
         self.prob.set_val(Dynamic.Atmosphere.VELOCITY, [100, 100], units="kn")
         self.prob.set_val(Dynamic.Vehicle.MASS, [100000, 100000], units="lbm")
@@ -64,6 +70,8 @@ class FlightPathODETestCase(unittest.TestCase):
         """
         self.fp.options["ground_roll"] = True
         self.prob.setup(check=False, force_alloc_complex=True)
+
+        set_params_for_unit_tests(self.prob)
 
         self.prob.set_val(Dynamic.Atmosphere.VELOCITY, [100, 100], units="kn")
         self.prob.set_val(Dynamic.Vehicle.MASS, [100000, 100000], units="lbm")
