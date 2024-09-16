@@ -25,6 +25,8 @@ class TestAeroForces(unittest.TestCase):
         prob.set_val(Aircraft.HorizontalTail.SWEEP, 10, units='deg')
         prob.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, 0)
         prob.set_val(Mission.Design.MACH, .6)
+        prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, 6)
+        prob.set_val(Aircraft.Nacelle.AVG_LENGTH, 10)
 
         prob.run_model()
 
@@ -35,6 +37,7 @@ class TestAeroForces(unittest.TestCase):
             Aircraft.HorizontalTail.FORM_FACTOR), [2.59223754], tol)
         assert_near_equal(prob.get_val(
             Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR), [2.4786], tol)
+        assert_near_equal(prob.get_val(Aircraft.Nacelle.FORM_FACTOR), [1.815], tol)
 
         partial_data = prob.check_partials(method="cs", out_stream=None)
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-14)

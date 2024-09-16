@@ -503,6 +503,10 @@ def update_gasp_options(vehicle_data):
         input_values.delete(Aircraft.HorizontalTail.FORM_FACTOR)
     if input_values.get_val(Aircraft.VerticalTail.FORM_FACTOR)[0] < 0:
         input_values.delete(Aircraft.VerticalTail.FORM_FACTOR)
+    if input_values.get_val(Aircraft.Fuselage.FORM_FACTOR)[0] < 0:
+        input_values.delete(Aircraft.Fuselage.FORM_FACTOR)
+    if input_values.get_val(Aircraft.Nacelle.FORM_FACTOR)[0] < 0:
+        input_values.delete(Aircraft.Nacelle.FORM_FACTOR)
     if input_values.get_val(Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR)[0] < 0:
         input_values.delete(Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR)
 
