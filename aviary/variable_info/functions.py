@@ -118,13 +118,13 @@ def override_aviary_vars(group, aviary_inputs: AviaryValues,
                 continue  # don't promote it
 
             elif name in aviary_inputs:
+                val, units = aviary_inputs.get_item(name)
                 if name in all_inputs:
-                    val, units = aviary_inputs.get_item(name)
                     group.set_input_defaults(name, val=val, units=units)
 
-                    # Overridden variables are given a new name
-                    comp_promoted_outputs.append((name, f"AUTO_OVERRIDE:{name}"))
-                    overridden_outputs.append(name)
+                # Overridden variables are given a new name
+                comp_promoted_outputs.append((name, f"AUTO_OVERRIDE:{name}"))
+                overridden_outputs.append(name)
 
                 continue  # don't promote it
 

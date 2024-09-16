@@ -329,7 +329,7 @@ def create_report_frame(format, text_filepath, documentation):
             if format == "markdown":
                 report_pane = pn.pane.Markdown(file_text)
             elif format == "text":
-                report_pane = pn.pane.Markdown(f"```\n{file_text}\n```\n")
+                report_pane = pn.pane.Str(file_text)
             report_pane = pn.Column(
                 pn.pane.HTML(f"<p>{documentation}</p>", styles={'text-align': 'left'}),
                 report_pane

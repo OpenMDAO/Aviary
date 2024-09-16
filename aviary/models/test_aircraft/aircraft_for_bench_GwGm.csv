@@ -154,14 +154,14 @@ mission:taxi:duration,0.1677,h
 settings:equations_of_motion,2DOF
 settings:mass_method,GASP
 
-# Initial Guesses
+# Initialization Guesses
 actual_takeoff_mass,0
 climb_range,0
 cruise_mass_final,0
 flight_duration,0
-fuel_burn_per_passenger_mile,0.1
+fuel_burn_per_passenger_mile,0
 reserves,0
-rotation_mass,0.99
+rotation_mass,0
 time_to_climb,0
 
 INGASP.ALR,1.11
