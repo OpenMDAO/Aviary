@@ -120,7 +120,10 @@ class GASPOverrideTestCase(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Fuselage.WETTED_AREA], 4000, 1e-6)
 
     def test_case_aero_coeffs(self):
-        """"""
+        """
+        Test overriding from csv (vertical tail) and overriding from code (horizontal tail)
+        Also checks non-overriden (wing) and default (strut)
+        """
         prob = self.prob
         prob.model.add_subsystem("geom", AeroGeom(
             aviary_options=self.aviary_inputs), promotes=["*"])
@@ -140,7 +143,4 @@ class GASPOverrideTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = GASPOverrideTestCase()
-    test.setUp()
-    test.test_case_aero_coeffs()
+    unittest.main()
