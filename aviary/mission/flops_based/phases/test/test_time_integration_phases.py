@@ -23,6 +23,10 @@ import importlib
 
 @unittest.skipUnless(importlib.util.find_spec("pyoptsparse") is not None, "pyoptsparse is not installed")
 class HE_SGMDescentTestCase(unittest.TestCase):
+    """
+    TODO: docstring
+    """
+
     def setUp(self):
         aviary_inputs, initialization_guesses = create_vehicle(
             'models/test_aircraft/aircraft_for_bench_FwFm.csv')

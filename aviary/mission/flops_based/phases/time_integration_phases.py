@@ -7,7 +7,9 @@ from aviary.variable_info.variables import Dynamic
 
 
 class SGMHeightEnergy(SimuPyProblem):
-    """TODO: docstring"""
+    """
+    TODO: docstring
+    """
 
     def __init__(
         self,
