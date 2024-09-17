@@ -5,6 +5,9 @@ from aviary.variable_info.variables import Dynamic
 
 
 class GammaComp(om.ExplicitComponent):
+    """
+    TODO: docstring
+    """
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

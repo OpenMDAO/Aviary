@@ -11,6 +11,9 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class TestUnsteadySolvedEOM(unittest.TestCase):
+    """
+    TODO: docstring
+    """
 
     def _test_unsteady_solved_eom(self, ground_roll=False):
         nn = 5
