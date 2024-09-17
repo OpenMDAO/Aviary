@@ -87,6 +87,10 @@ class VerticalScrolledFrame(tk.Frame):
 
 
 class AviaryMissionEditor(tk.Tk):
+    """
+    Aviary mission editor class
+    """
+
     def __init__(self):
         screen_width, screen_height = \
             [int(x) for x in get_screen_geometry().split("+")[0].split("x")]

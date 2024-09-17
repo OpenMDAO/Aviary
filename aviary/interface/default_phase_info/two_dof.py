@@ -1,6 +1,7 @@
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variables import Mission
 
+# defaults for 2DOF based phases
 mission_distance = 3675
 
 phase_info = {
