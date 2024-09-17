@@ -21,6 +21,10 @@ from aviary.variable_info.variables import Aircraft
 # - self.meta_data, with cls.default_meta_data customization point
 @register
 class FlightPhaseBase(PhaseBuilderBase):
+    """
+    TODO: The base class for flight phase
+    """
+
     __slots__ = ('external_subsystems', 'meta_data')
 
     # region : derived type customization points
