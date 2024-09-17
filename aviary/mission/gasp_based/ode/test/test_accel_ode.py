@@ -13,6 +13,9 @@ from aviary.variable_info.variables import Dynamic
 
 
 class AccelerationODETestCase(unittest.TestCase):
+    """
+    """
+
     def setUp(self):
         self.prob = om.Problem()
 

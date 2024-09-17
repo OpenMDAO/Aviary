@@ -17,6 +17,10 @@ from aviary.variable_info.variables import Dynamic
 
 
 class DescentODETestCase(unittest.TestCase):
+    """
+    Test descent ODE
+    """
+
     def setUp(self):
         self.prob = om.Problem()
 

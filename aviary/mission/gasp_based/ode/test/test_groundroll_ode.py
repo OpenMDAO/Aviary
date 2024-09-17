@@ -14,6 +14,10 @@ from aviary.variable_info.options import get_option_defaults
 
 
 class GroundrollODETestCase(unittest.TestCase):
+    """
+    Test groundroll ODE
+    """
+
     def setUp(self):
         self.prob = om.Problem()
 

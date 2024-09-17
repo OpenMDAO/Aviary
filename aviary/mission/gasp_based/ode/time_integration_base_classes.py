@@ -444,6 +444,10 @@ class SimuPyProblem(SimulationMixin):
 
 
 class SGMTrajBase(om.ExplicitComponent):
+    """
+    TODO: docstring
+    """
+
     def initialize(self, verbosity=Verbosity.QUIET):
         # needs to get passed to each ODE
         # TODO: param_dict

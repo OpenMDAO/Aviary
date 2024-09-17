@@ -13,6 +13,10 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class RotationODETestCase(unittest.TestCase):
+    """
+    Test rotation ODE
+    """
+
     def setUp(self):
         self.prob = om.Problem()
 
