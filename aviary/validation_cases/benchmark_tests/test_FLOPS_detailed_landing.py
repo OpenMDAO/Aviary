@@ -26,6 +26,10 @@ from aviary.utils.preprocessors import preprocess_options
 
 @use_tempdirs
 class TestFLOPSDetailedLanding(unittest.TestCase):
+    """
+    Test detailed landing using N3CC data
+    """
+
     # @require_pyoptsparse(optimizer='IPOPT')
     # def bench_test_IPOPT(self):
     #     driver = om.pyOptSparseDriver()

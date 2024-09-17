@@ -503,6 +503,9 @@ def run_trajectory(sim=True):
 
 @use_tempdirs
 class ProblemPhaseTestCase(unittest.TestCase):
+    """
+    Test sizing using N3CC data.
+    """
 
     @require_pyoptsparse(optimizer="SNOPT")
     def bench_test_sizing_N3CC(self):

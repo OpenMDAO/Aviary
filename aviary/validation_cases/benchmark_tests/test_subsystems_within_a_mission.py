@@ -13,6 +13,10 @@ from aviary.subsystems.test.test_dummy_subsystem import (
 
 @use_tempdirs
 class TestSubsystemsMission(unittest.TestCase):
+    """
+    Test the setup and run of a model with external subsystem
+    """
+
     def setUp(self):
         self.phase_info = {
             'pre_mission': {

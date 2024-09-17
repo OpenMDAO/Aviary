@@ -18,6 +18,11 @@ class TwoDOFTestCase(unittest.TestCase):
 
 @use_tempdirs
 class TestOffDesign(TwoDOFTestCase):
+    """
+    Build the model using a large single aisle commercial transport aircraft data using
+    GASP mass method and TWO_DEGREES_OF_FREEDOM mission method. Run a fallout mission to test off design.
+    """
+
     @require_pyoptsparse(optimizer="IPOPT")
     def test_off_design_IPOPT(self):
         # Fallout Mission
