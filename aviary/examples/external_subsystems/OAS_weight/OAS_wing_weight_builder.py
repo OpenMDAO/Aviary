@@ -7,6 +7,7 @@ class OASWingWeightBuilder(av.SubsystemBuilderBase):
     """
     Builder for an OpenAeroStruct component that computes a new wing mass.
     """
+
     def __init__(self, name='wing_weight'):
         super().__init__(name)
 
