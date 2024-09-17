@@ -11,6 +11,7 @@ from aviary.examples.external_subsystems.engine_NPSS.define_simple_engine_proble
 
 
 class AviaryNPSSTestCase(unittest.TestCase):
+    """Test NPSS engine builder from table"""
 
     @unittest.skipUnless(os.environ.get('NPSS_TOP', False), 'environment does not contain NPSS')
     def bench_test_aviary_NPSS(self):

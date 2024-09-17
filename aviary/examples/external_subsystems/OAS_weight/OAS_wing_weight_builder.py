@@ -1,13 +1,12 @@
-"""
-Builder for an OpenAeroStruct component that computes a new wing mass.
-
-"""
 import openmdao.api as om
 import aviary.api as av
 from aviary.examples.external_subsystems.OAS_weight.OAS_wing_weight_analysis import OAStructures
 
 
 class OASWingWeightBuilder(av.SubsystemBuilderBase):
+    """
+    Builder for an OpenAeroStruct component that computes a new wing mass.
+    """
     def __init__(self, name='wing_weight'):
         super().__init__(name)
 

@@ -5,11 +5,10 @@ AviaryAircraft = av_Aircraft
 AviaryMission = av_Mission
 
 
-# ---------------------------
-# Aircraft data hierarchy
-# ---------------------------
-
 class Aircraft(AviaryAircraft):
+    """
+    Aircraft data hierarchy
+    """
 
     # cell = single cell, battery = one case plus multiple cells
 
@@ -34,12 +33,11 @@ class Aircraft(AviaryAircraft):
             VOLUME = "aircraft:battery:cell:volume"
             TYPE = "aircraft:battery:cell:type"
 
-# ---------------------------
-# Mission data hierarchy
-# ---------------------------
-
 
 class Mission(AviaryMission):
+    """
+    Mission data hierarchy
+    """
 
     class Battery:
         CURRENT = "mission:battery:current"

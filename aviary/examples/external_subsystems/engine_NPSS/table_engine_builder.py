@@ -13,6 +13,9 @@ import numpy as np
 
 
 class TableEngineBuilder(EngineModel):
+    """
+    NPSS engine builder from table
+    """
 
     def __init__(self, name='NPSS_prop_system', aviary_inputs=AviaryValues()):
 

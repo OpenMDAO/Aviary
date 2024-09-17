@@ -4,11 +4,10 @@ AviaryAircraft = av.Aircraft
 AviaryDynamic = av.Dynamic
 
 
-# ---------------------------
-# Aircraft data hierarchy
-# ---------------------------
-
 class Aircraft(AviaryAircraft):
+    """
+    Aircraft data hierarchy
+    """
 
     class Engine(AviaryAircraft.Engine):
         DESIGN_MACH = "aircraft:engine:design_mach"
@@ -18,11 +17,10 @@ class Aircraft(AviaryAircraft):
         DESIGN_NET_THRUST = "aircraft:engine:design_net_thrust"
 
 
-# ---------------------------
-# Dynamics data hierarchy
-# ---------------------------
-
 class Dynamic(AviaryDynamic):
+    """
+    Dynamics data hierarchy
+    """
 
     class Engine:
         SHAFT_MECH_SPEED = "dynamic:engine:shaft_mech_speed"  # Part power variable names

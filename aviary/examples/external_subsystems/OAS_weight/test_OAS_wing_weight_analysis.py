@@ -6,6 +6,7 @@ import unittest
 
 
 class Test_OAStructures(unittest.TestCase):
+    """Test OAS wing weight component"""
 
     @use_tempdirs
     def test_OAS_wing_weight_analysis(self):

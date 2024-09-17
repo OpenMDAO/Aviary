@@ -11,6 +11,7 @@ from aviary.examples.external_subsystems.engine_NPSS.engine_variable_meta_data i
 
 
 def define_aviary_NPSS_problem():
+    """NPSS model in Aviary"""
     phase_info = deepcopy(av.default_height_energy_phase_info)
 
     prob = av.AviaryProblem()
