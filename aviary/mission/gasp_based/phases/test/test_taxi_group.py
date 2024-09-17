@@ -20,7 +20,7 @@ from aviary.variable_info.variables import Dynamic, Mission
 
 class DLandTestCase(unittest.TestCase):
     """
-    TODO: docstring
+    Test taxi group
     """
 
     def setUp(self):
