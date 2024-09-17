@@ -19,6 +19,10 @@ class DummyArgs(object):
 
 @use_tempdirs
 class TestFortranToAviary(unittest.TestCase):
+    """
+    Test conversion from legacy data in GASP and FLOPS to Aviary data.
+    """
+
     def prepare_and_run(self, filepath, out_file=None, legacy_code=LegacyCode.GASP):
         args = DummyArgs()
 

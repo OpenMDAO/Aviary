@@ -16,6 +16,10 @@ class DummyArgs(object):
 
 @use_tempdirs
 class TestPropellerMapConversion(unittest.TestCase):
+    """
+    Test conversion of GASP propeller data to Aviary.
+    """
+
     def prepare_and_run(self, filename, output_file=None, data_format=PropMapType.GASP):
         args = DummyArgs()
 

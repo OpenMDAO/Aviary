@@ -16,6 +16,10 @@ class DummyArgs(object):
 
 @use_tempdirs
 class TestEngineDeckConversion(unittest.TestCase):
+    """
+    Test engine deck conversion
+    """
+
     def prepare_and_run(self, filename, output_file=None, data_format=EngineDeckType.GASP):
         args = DummyArgs()
 
