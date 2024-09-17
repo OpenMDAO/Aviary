@@ -12,6 +12,10 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 
 class LandingAltTestCase(unittest.TestCase):
+    """
+    TODO: docstring
+    """
+
     def setUp(self):
 
         self.prob = om.Problem()
@@ -39,6 +43,10 @@ class LandingAltTestCase(unittest.TestCase):
 
 
 class GlideTestCase(unittest.TestCase):
+    """
+    TODO: docstring
+    """
+
     def setUp(self):
 
         self.prob = om.Problem()
@@ -112,6 +120,10 @@ class GlideTestCase(unittest.TestCase):
 
 
 class GroundRollTestCase(unittest.TestCase):
+    """
+    TODO: docstring
+    """
+
     def setUp(self):
 
         self.prob = om.Problem()

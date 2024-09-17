@@ -8,6 +8,9 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class TestVRotateComp(unittest.TestCase):
+    """
+    TODO: docstring
+    """
 
     def test_partials(self):
         prob = om.Problem()

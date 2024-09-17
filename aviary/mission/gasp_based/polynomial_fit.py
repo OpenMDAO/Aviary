@@ -4,6 +4,11 @@ from numpy.polynomial import Polynomial
 
 
 class PolynomialFit(om.ImplicitComponent):
+    """
+    Using location data (control points) to build a polynomial fit function
+    and to compute initial gear time and flap time.
+    """
+
     def initialize(self):
 
         self.options.declare("N_cp", types=int)
