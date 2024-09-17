@@ -20,7 +20,7 @@ class MetaDataExtensionTest(unittest.TestCase):
         filename = get_path(
             'models/engines/turbofan_23k_1.deck')
         option_defaults.set_val(Aircraft.Engine.DATA_FILE, filename)
-        option_defaults.set_val(Aircraft.Wing.AERO_CENTER, val=5, units='ft', 
+        option_defaults.set_val(Aircraft.Wing.AERO_CENTER, val=5, units='ft',
                                 meta_data=ExtendedMetaData)
 
         option_defaults = set_value(Aircraft.Wing.AERO_CENTER, [
