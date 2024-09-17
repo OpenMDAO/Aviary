@@ -11,6 +11,9 @@ from aviary.variable_info.variables import Dynamic
 
 
 class RequiredThrustTest(unittest.TestCase):
+    """
+    Test required thrust
+    """
 
     def setUp(self):
         prob = self.prob = om.Problem()

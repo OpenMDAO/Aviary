@@ -11,6 +11,10 @@ from aviary.variable_info.variables import Dynamic
 
 
 class MissionEOMTest(unittest.TestCase):
+    """
+    Test mission equation of motion
+    """
+
     def setUp(self):
         self.prob = prob = om.Problem()
         prob.model.add_subsystem(
