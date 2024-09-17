@@ -1,5 +1,6 @@
 from aviary.variable_info.variables import Mission
 
+# defaults for height energy based phases
 
 phase_info = {
     "pre_mission": {"include_takeoff": False, "optimize_mass": True},
