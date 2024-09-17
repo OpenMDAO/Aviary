@@ -13,7 +13,7 @@ from aviary.variable_info.variables import Dynamic
 
 class SpeedConstraintTestCase1(unittest.TestCase):
     """
-    MACH = 0.6
+    Test speed constraint at MACH = 0.8 with flight MACH at 0.6
     """
 
     def setUp(self):
@@ -49,7 +49,7 @@ class SpeedConstraintTestCase1(unittest.TestCase):
 
 class SpeedConstraintTestCase2(unittest.TestCase):
     """
-    MACH = 0.9
+    Test speed constraint at MACH = 0.9
     """
 
     def setUp(self):

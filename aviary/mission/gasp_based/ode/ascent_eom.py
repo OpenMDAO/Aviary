@@ -7,6 +7,10 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class AscentEOM(om.ExplicitComponent):
+    """
+    TODO: docstring
+    """
+
     def initialize(self):
         self.options.declare("num_nodes", types=int)
 
