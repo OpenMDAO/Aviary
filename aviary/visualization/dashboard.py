@@ -214,7 +214,19 @@ def _dashboard_cmd(options, user_args):
 
 def create_table_pane_from_json(json_filepath):
     """
-    TODO: docstring
+    Create a Tabulator Pane with Name and Value columns using tabular data 
+    from a JSON file.
+ 
+    Parameters
+    ----------
+    json_filepath : str
+        Path to the JSON file containing tabular data.
+ 
+    Returns
+    -------
+    pane : Panel.Pane or None
+        A Panel Pane that is a Panel library Tabular widget.
+        Or None if there was an error.
     """
 
     try:
