@@ -84,7 +84,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
             aero_group = PreMissionAero(aviary_options=aviary_inputs)
 
         elif code_origin is FLOPS:
-            aero_group = (Design(aviary_options=aviary_inputs),)
+            aero_group = Design(aviary_options=aviary_inputs)
 
         return aero_group
 
