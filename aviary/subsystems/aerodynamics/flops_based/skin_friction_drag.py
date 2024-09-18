@@ -47,6 +47,7 @@ class SkinFrictionDrag(om.ExplicitComponent):
         nvtail = self.options[Aircraft.VerticalTail.NUM_TAILS]
         nfuse = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
         num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
+
         if not isinstance(num_engines, int):
             num_engines = int(sum(num_engines))
         self.nc = nc = 2 + nvtail + nfuse + num_engines
