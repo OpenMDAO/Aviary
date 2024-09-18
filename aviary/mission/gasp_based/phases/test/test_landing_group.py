@@ -18,7 +18,7 @@ from aviary.variable_info.variables import Dynamic, Mission
 
 class DLandTestCase(unittest.TestCase):
     """
-    TODO: docstring
+    Test landing group
     """
 
     def setUp(self):

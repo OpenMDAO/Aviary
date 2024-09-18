@@ -13,7 +13,7 @@ Y_cp = [0.0, 44.38137822, 105.61862178, 125.0, 125.0, 169.38137822, 230.61862178
 
 class PolynomialFitTest(unittest.TestCase):
     """
-    TODO: docstring
+    Test computation of initial gear time and initial flap time.
     """
 
     def setUp(self):

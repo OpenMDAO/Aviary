@@ -29,7 +29,6 @@ class BaseODE(om.Group):
             desc='collection of Aircraft/Mission specific options'
         )
 
-        # TODO finish description
         self.options.declare(
             'core_subsystems',
             desc='list of core subsystems'

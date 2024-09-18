@@ -9,7 +9,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 class TestVRotateComp(unittest.TestCase):
     """
-    TODO: docstring
+    Test the computation of the speed at which takeoff rotation should be initiated
     """
 
     def test_partials(self):

@@ -22,7 +22,7 @@ from aviary.variable_info.variables import Aircraft
 @register
 class FlightPhaseBase(PhaseBuilderBase):
     """
-    TODO: The base class for flight phase
+    The base class for flight phase
     """
 
     __slots__ = ('external_subsystems', 'meta_data')
