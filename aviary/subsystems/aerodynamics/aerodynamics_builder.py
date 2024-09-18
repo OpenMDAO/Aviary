@@ -63,7 +63,22 @@ class AerodynamicsBuilderBase(SubsystemBuilderBase):
 
 class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
     """
-    Core aerodynamics builder
+    Core aerodynamics builder.
+
+    Method
+    ------
+    build_pre_mission()
+        Build pre-mission.
+    build_mission()
+        Build mission.
+    mission_inputs()
+        Return mission inputs.
+    mission_outputs()
+        Return mission outputs.
+    get_parameters()
+        Return a dictionary of fixed values for the subsystem.
+    report()
+        Generate the report for Aviary core aerodynamics analysis
     """
 
     def __init__(self, name=None, meta_data=None, code_origin=None):
