@@ -6,7 +6,7 @@ from aviary.variable_info.variables import Dynamic
 
 class GammaComp(om.ExplicitComponent):
     """
-    TODO: docstring
+    Computes flight path angle and its curvature.
     """
 
     def __init__(self, **kwargs):

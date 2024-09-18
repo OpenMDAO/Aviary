@@ -11,7 +11,7 @@ from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_ode import \
     UnsteadySolvedODE
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.enums import SpeedType
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 
