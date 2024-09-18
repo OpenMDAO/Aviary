@@ -7,7 +7,7 @@ import openmdao.api as om
 from openmdao.components.interp_util.interp import InterpND
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -30,6 +30,9 @@ class Design(om.ExplicitComponent):
             'aviary_options', types=AviaryValues,
             desc='collection of Aircraft/Mission specific options')
 
+        add_aviary_option(self, Aircraft.Wing.AIRFOIL_TECHNOLOGY)
+        add_aviary_option(self, Mission.Constraints.MAX_MACH)
+
     def setup(self):
         # Aircraft design inputs
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, 0.0)
@@ -45,9 +48,8 @@ class Design(om.ExplicitComponent):
         self.declare_partials(of='*', wrt='*')
 
     def compute(self, inputs, outputs):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        AITEK = aviary_options.get_val(Aircraft.Wing.AIRFOIL_TECHNOLOGY)
-        VMAX = aviary_options.get_val(Mission.Constraints.MAX_MACH)
+        AITEK = self.options[Aircraft.Wing.AIRFOIL_TECHNOLOGY]
+        VMAX = self.options[Mission.Constraints.MAX_MACH]
 
         AR, CAM, SW25, TC = inputs.values()
 
@@ -88,9 +90,8 @@ class Design(om.ExplicitComponent):
         outputs[Mission.Design.MACH] = DESM2D + DMDSWP + DMDAR
 
     def compute_partials(self, inputs, partials):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        AITEK = aviary_options.get_val(Aircraft.Wing.AIRFOIL_TECHNOLOGY)
-        VMAX = aviary_options.get_val(Mission.Constraints.MAX_MACH)
+        AITEK = self.options[Aircraft.Wing.AIRFOIL_TECHNOLOGY]
+        VMAX = self.options[Mission.Constraints.MAX_MACH]
 
         AR, CAM, SW25, TC = inputs.values()
 

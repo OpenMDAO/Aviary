@@ -46,7 +46,7 @@ from aviary.interface.utils.check_phase_info import check_phase_info
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import convert_strings_to_data, set_value
 
-from aviary.variable_info.functions import setup_trajectory_params, override_aviary_vars
+from aviary.variable_info.functions import setup_trajectory_params, override_aviary_vars, extract_options
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
 from aviary.variable_info.enums import AnalysisScheme, ProblemType, EquationsOfMotion, LegacyCode, Verbosity
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
@@ -1944,6 +1944,10 @@ class AviaryProblem(om.Problem):
             self.model.options['aviary_options'] = self.aviary_inputs
             self.model.options['aviary_metadata'] = self.meta_data
             self.model.options['phase_info'] = self.phase_info
+
+            # Use OpenMDAO's model options to pass all options through the system hierarchy.
+            self.model_options['*'] = extract_options(self.aviary_inputs,
+                                                      self.meta_data)
 
             warnings.simplefilter("ignore", om.OpenMDAOWarning)
             warnings.simplefilter("ignore", om.PromotionWarning)

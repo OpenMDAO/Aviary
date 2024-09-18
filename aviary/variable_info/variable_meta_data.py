@@ -1979,7 +1979,7 @@ add_meta_data(
     units='unitless',
     desc='total number of engines per model on the aircraft '
          '(fuselage, wing, or otherwise)',
-    types=int,
+    types=(int, list, np.ndarray),
     option=True,
     default_value=2
 )
@@ -4941,6 +4941,7 @@ add_meta_data(
          'conventional technology wing (Default); 2.0 represents advanced '
          'technology wing.',
     default_value=1.0,
+    types=float,
     option=True,
 )
 

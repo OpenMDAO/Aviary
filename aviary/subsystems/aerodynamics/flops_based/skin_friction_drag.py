@@ -2,7 +2,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, get_units
+from aviary.variable_info.functions import add_aviary_input, get_units, add_aviary_option
 from aviary.variable_info.variables import Aircraft
 
 
@@ -31,20 +31,25 @@ class SkinFrictionDrag(om.ExplicitComponent):
             'aviary_options', types=AviaryValues,
             desc='collection of Aircraft/Mission specific options')
 
-        # TODO: Convert these into aviary_options entries.
+        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
+        add_aviary_option(self, Aircraft.Fuselage.NUM_FUSELAGES)
+        add_aviary_option(self, Aircraft.VerticalTail.NUM_TAILS)
+        add_aviary_option(self, Aircraft.Wing.AIRFOIL_TECHNOLOGY)
+
+        # TODO: Bring this into the variable hierarchy.
         self.options.declare(
             'excrescences_drag', default=0.06,
             desc='Drag contribution of excrescences as a percentage.')
 
     def setup(self):
-        aviary_options: AviaryValues = self.options['aviary_options']
         nn = self.options['num_nodes']
 
-        zero_count = (0, None)
-        nvtail, _ = aviary_options.get_item(Aircraft.VerticalTail.NUM_TAILS, zero_count)
-        nfuse, _ = aviary_options.get_item(Aircraft.Fuselage.NUM_FUSELAGES, zero_count)
-        num_engines, _ = aviary_options.get_item(Aircraft.Engine.NUM_ENGINES, zero_count)
-        self.nc = nc = 2 + nvtail + nfuse + int(sum(num_engines))
+        nvtail = self.options[Aircraft.VerticalTail.NUM_TAILS]
+        nfuse = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
+        num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
+        if not isinstance(num_engines, int):
+            num_engines = int(sum(num_engines))
+        self.nc = nc = 2 + nvtail + nfuse + num_engines
 
         # Computed by other components in drag group.
         self.add_input('skin_friction_coeff', np.zeros((nn, nc)), units='unitless')
@@ -96,7 +101,6 @@ class SkinFrictionDrag(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         nc = self.nc
-        aviary_options: AviaryValues = self.options['aviary_options']
 
         cf = inputs['skin_friction_coeff']
         Re = inputs['Re']
@@ -136,7 +140,7 @@ class SkinFrictionDrag(om.ExplicitComponent):
         # Form factor for surfaces.
         idx_surf = np.where(fineness <= 0.5)[0]
         fine = fineness[idx_surf]
-        airfoil = aviary_options.get_val(Aircraft.Wing.AIRFOIL_TECHNOLOGY)
+        airfoil = self.options[Aircraft.Wing.AIRFOIL_TECHNOLOGY]
 
         FF1 = 1.0 + fine * (F[7] + fine * (F[8] + fine *
                             (F[9] + fine * (F[10] + fine * (F[11] + fine * F[12])))))
@@ -163,7 +167,6 @@ class SkinFrictionDrag(om.ExplicitComponent):
     def compute_partials(self, inputs, partials):
         nc = self.nc
         nn = self.options["num_nodes"]
-        aviary_options: AviaryValues = self.options['aviary_options']
 
         cf = inputs['skin_friction_coeff']
         Re = inputs['Re']
@@ -209,7 +212,7 @@ class SkinFrictionDrag(om.ExplicitComponent):
         idx_surf = np.where(fineness <= 0.5)[0]
         fine = fineness[idx_surf]
 
-        airfoil = aviary_options.get_val(Aircraft.Wing.AIRFOIL_TECHNOLOGY)
+        airfoil = self.options[Aircraft.Wing.AIRFOIL_TECHNOLOGY]
 
         FF1 = 1.0 + fine * (
             F[7] + fine

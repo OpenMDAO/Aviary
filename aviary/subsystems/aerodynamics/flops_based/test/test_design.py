@@ -4,7 +4,6 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.aerodynamics.flops_based.design import Design
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -19,12 +18,12 @@ class DesignMCLTest(unittest.TestCase):
         model = prob.model
 
         options = {}
-        options[Aircraft.Wing.AIRFOIL_TECHNOLOGY] = (1.0, 'unitless')
-        options[Mission.Constraints.MAX_MACH] = (1.2, 'unitless')
+        options[Aircraft.Wing.AIRFOIL_TECHNOLOGY] = 1.0
+        options[Mission.Constraints.MAX_MACH] = 1.2
 
         model.add_subsystem(
             'design',
-            Design(aviary_options=AviaryValues(options)),
+            Design(**options),
             promotes_inputs=['*'],
             promotes_outputs=[Mission.Design.MACH, Mission.Design.LIFT_COEFFICIENT]
         )
@@ -54,12 +53,12 @@ class DesignMCLTest(unittest.TestCase):
         model = prob.model
 
         options = {}
-        options[Aircraft.Wing.AIRFOIL_TECHNOLOGY] = (1.0, 'unitless')
-        options[Mission.Constraints.MAX_MACH] = (0.9, 'unitless')
+        options[Aircraft.Wing.AIRFOIL_TECHNOLOGY] = 1.0
+        options[Mission.Constraints.MAX_MACH] = 0.9
 
         model.add_subsystem(
             'design',
-            Design(aviary_options=AviaryValues(options)),
+            Design(**options),
             promotes_inputs=['*'],
             promotes_outputs=[Mission.Design.MACH, Mission.Design.LIFT_COEFFICIENT],
         )
@@ -89,12 +88,12 @@ class DesignMCLTest(unittest.TestCase):
         model = prob.model
 
         options = {}
-        options[Aircraft.Wing.AIRFOIL_TECHNOLOGY] = (1.0, 'unitless')
-        options[Mission.Constraints.MAX_MACH] = (1.2, 'unitless')
+        options[Aircraft.Wing.AIRFOIL_TECHNOLOGY] = 1.0
+        options[Mission.Constraints.MAX_MACH] = 1.2
 
         model.add_subsystem(
             'design',
-            Design(aviary_options=AviaryValues(options)),
+            Design(**options),
             promotes_inputs=['*'],
             promotes_outputs=[Mission.Design.MACH, Mission.Design.LIFT_COEFFICIENT],
         )
@@ -124,12 +123,12 @@ class DesignMCLTest(unittest.TestCase):
         model = prob.model
 
         options = {}
-        options[Aircraft.Wing.AIRFOIL_TECHNOLOGY] = (1.0, 'unitless')
-        options[Mission.Constraints.MAX_MACH] = (0.9, 'unitless')
+        options[Aircraft.Wing.AIRFOIL_TECHNOLOGY] = 1.0
+        options[Mission.Constraints.MAX_MACH] = 0.9
 
         model.add_subsystem(
             'design',
-            Design(aviary_options=AviaryValues(options)),
+            Design(**options),
             promotes_inputs=['*'],
             promotes_outputs=[Mission.Design.MACH, Mission.Design.LIFT_COEFFICIENT],
         )

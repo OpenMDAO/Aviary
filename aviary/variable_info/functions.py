@@ -11,14 +11,35 @@ from aviary.variable_info.variable_meta_data import _MetaData
 # ---------------------------
 
 
-def add_aviary_input(comp, varname, val=None, units=None, desc=None, shape_by_conn=False, meta_data=_MetaData, shape=None):
-    '''
+def add_aviary_input(comp, varname, val=None, units=None, desc=None, shape_by_conn=False,
+                     meta_data=_MetaData, shape=None):
+    """
     This function provides a clean way to add variables from the
     variable hierarchy into components as Aviary inputs. It takes
     the standard OpenMDAO inputs of the variable's name, initial
     value, units, and description, as well as the component which
     the variable is being added to.
-    '''
+
+    Parameters
+    ----------
+    comp: Component
+        OpenMDAO component to add this variable.
+    varname: str
+        Name of variable.
+    val: float or ndarray
+        Default value for variable.
+    units: str
+        (Optional) when speficying val, units should also be specified.
+    desc: str
+        (Optional) description text for the variable.
+    shape_by_conn: bool
+        Set to True to infer the shape from the connected output.
+    meta_data: dict
+        (Optional) Aviary metadata dictionary. If unspecified, the built-in metadata will
+        be used.
+    shape: tuple
+        (Optional) shape for this input.
+    """
     meta = meta_data[varname]
     if units:
         input_units = units
@@ -37,14 +58,34 @@ def add_aviary_input(comp, varname, val=None, units=None, desc=None, shape_by_co
                    desc=input_desc, shape_by_conn=shape_by_conn, shape=shape)
 
 
-def add_aviary_output(comp, varname, val, units=None, desc=None, shape_by_conn=False, meta_data=_MetaData):
-    '''
+def add_aviary_output(comp, varname, val, units=None, desc=None, shape_by_conn=False,
+                      meta_data=_MetaData):
+    """
     This function provides a clean way to add variables from the
     variable hierarchy into components as Aviary outputs. It takes
     the standard OpenMDAO inputs of the variable's name, initial
     value, units, and description, as well as the component which
     the variable is being added to.
-    '''
+
+    Parameters
+    ----------
+    comp: Component
+        OpenMDAO component to add this variable.
+    varname: str
+        Name of variable.
+    val: float or ndarray
+        (Optional) Default value for variable. If not specified, the value from metadata
+        is used.
+    units: str
+        (Optional) when speficying val, units should also be specified.
+    desc: str
+        (Optional) description text for the variable.
+    shape_by_conn: bool
+        Set to True to infer the shape from the connected output.
+    meta_data: dict
+        (Optional) Aviary metadata dictionary. If unspecified, the built-in metadata will
+        be used.
+    """
     meta = meta_data[varname]
     if units:
         output_units = units
@@ -59,6 +100,34 @@ def add_aviary_output(comp, varname, val, units=None, desc=None, shape_by_conn=F
         output_desc = meta['desc']
     comp.add_output(varname, val=val, units=output_units,
                     desc=output_desc, shape_by_conn=shape_by_conn)
+
+
+def add_aviary_option(comp, name, val=_unspecified, desc=None, meta_data=_MetaData):
+    """
+    Adds an option to an Aviary component. Default values from the metadata are used
+    unless a new value is specified.
+
+    Parameters
+    ----------
+    comp: Component
+        OpenMDAO component to add this option.
+    name: str
+        Name of variable.
+    val: float or ndarray
+        (Optional) Default value for option. If not specified, the value from metadata
+        is used.
+    desc: str
+        (Optional) description text for the variable.
+    meta_data: dict
+        (Optional) Aviary metadata dictionary. If unspecified, the built-in metadata will
+        be used.
+    """
+    meta = meta_data[name]
+    if not desc:
+        desc = meta['desc']
+    if val is _unspecified:
+        val = meta['default_value']
+    comp.options.declare(name, default=val, types=meta['types'], desc=desc)
 
 
 def override_aviary_vars(group, aviary_inputs: AviaryValues,
@@ -251,3 +320,42 @@ def get_units(key, meta_data=None) -> str:
         meta_data = _MetaData
 
     return meta_data[key]['units']
+
+
+def extract_options(aviary_inputs: AviaryValues, metadata=_MetaData) -> dict:
+    """
+    Extract a dictionary of options from the given aviary_inputs.
+
+    Parameters
+    ----------
+    aviary_inputs : AviaryValues
+        Instance of AviaryValues containing all initial values.
+    meta_data : dict
+        (Optional) Dictionary of aircraft metadata. Uses Aviary's built-in
+        metadata by default.
+
+    Returns
+    -------
+    dict
+        Dictionary of option names and values.
+    """
+    options = {}
+    for key, meta in metadata.items():
+
+        if key not in aviary_inputs:
+            continue
+
+        if not meta['option']:
+            continue
+
+        val, units = aviary_inputs.get_item(key)
+        meta_units = meta['units']
+
+        if meta_units is 'unitless' or meta_units is None:
+            options[key] = val
+
+        else:
+            # Implement as (quanitity, unit)
+            options[key] = (val, units)
+
+    return options
