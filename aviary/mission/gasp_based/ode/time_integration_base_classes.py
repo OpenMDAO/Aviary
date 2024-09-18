@@ -19,7 +19,7 @@ def add_SGM_required_inputs(group: om.Group, inputs_to_add: dict):
     they can be added to the ODE with this function, in order to minimize the differences between ODEs that are
     used for both SGM and collocation.
     """
-    
+
     blank_component = om.ExplicitComponent()
     for input, details in inputs_to_add.items():
         blank_component.add_input(input, **details)
@@ -36,7 +36,7 @@ def add_SGM_required_outputs(group: om.Group, outputs_to_add: dict):
     calculated by the EOM they can be added to the ODE with this function, in order to minimize the
     differences between ODEs that are used for both SGM and collocation.
     """
-    
+
     iv_comp = om.IndepVarComp()
     for output, details in outputs_to_add.items():
         iv_comp.add_output(output, **details)
@@ -54,7 +54,7 @@ class event_trigger():
     Users are expect to interact with triggers primarily through SimuPyProblem.add_trigger() and
     SimuPyProblem.clear_triggers(), but may want more detailed control over the triggers.
     """
-    
+
     def __init__(
             self,
             state: str,
@@ -468,7 +468,7 @@ class SGMTrajBase(om.ExplicitComponent):
     specific to Aviary and aircraft simulation, whereas this base class is intended to be more generic and
     provides a framework for any sort of SGM based trajectory.
     """
-    
+
     def initialize(self, verbosity=Verbosity.QUIET):
         # needs to get passed to each ODE
         # TODO: param_dict

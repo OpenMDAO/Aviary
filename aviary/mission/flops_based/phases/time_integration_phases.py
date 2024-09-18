@@ -12,7 +12,7 @@ class SGMHeightEnergy(SimuPyProblem):
     be solved using SGM.
     A mass trigger is added as an example, but any other trigger can be added as necessary.
     """
-    
+
     def __init__(
         self,
         ode_args,
@@ -47,7 +47,7 @@ class SGMDetailedTakeoff(SimuPyProblem):
     An altitude trigger is added as an example, but any other trigger can be added as necessary in order to
     string together the phases needed for a noise certification takeoff.
     """
-    
+
     def __init__(
         self,
         ode_args,
@@ -80,7 +80,7 @@ class SGMDetailedLanding(SimuPyProblem):
     An altitude trigger is added as an example, but any other trigger can be added as necessary in order to
     string together the phases needed for a noise certification landing.
     """
-    
+
     def __init__(
         self,
         ode_args,
