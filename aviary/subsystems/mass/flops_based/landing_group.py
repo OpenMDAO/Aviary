@@ -9,6 +9,11 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 
 class LandingMassGroup(om.Group):
+    """
+    Group of landing related components: LandingTakeoffMassRatio, MainGearLength,
+    NoseGearLength, LandingMass, etc.
+    """
+
     def initialize(self):
         self.options.declare(
             'aviary_options', types=AviaryValues,

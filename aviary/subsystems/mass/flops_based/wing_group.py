@@ -11,6 +11,10 @@ from aviary.variable_info.variables import Aircraft
 
 
 class WingMassGroup(om.Group):
+    """
+    Group of components that computation of wing mass
+    """
+
     def initialize(self):
         self.options.declare(
             'aviary_options', types=AviaryValues,

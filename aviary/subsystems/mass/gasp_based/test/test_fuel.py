@@ -13,8 +13,9 @@ from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission
 
 
-# this is the large single aisle 1 V3 test case
 class BodyCalculationTestCase1(unittest.TestCase):
+    """this is the large single aisle 1 V3 test case"""
+
     def setUp(self):
 
         self.prob = om.Problem()

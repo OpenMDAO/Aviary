@@ -9,6 +9,9 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 
 class DetailedWingBendingFact(om.ExplicitComponent):
+    """
+    Computation of wing bending factor and engine inertia relief factor.
+    """
 
     def initialize(self):
         self.options.declare(

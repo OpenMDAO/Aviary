@@ -50,6 +50,11 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 
 class MassPremission(om.Group):
+    """
+    Groups of mass components: CargoMass, TransportCargoContainersMass, TransportEngineCtrlsMass,
+    TransportAvionicsMass, FuelCapacityGroup, EngineMass, etc.
+    """
+
     def initialize(self):
         self.options.declare(
             'aviary_options', types=AviaryValues,
