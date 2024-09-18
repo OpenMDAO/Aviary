@@ -14,6 +14,10 @@ from aviary.subsystems.propulsion.propeller.propeller_map import PropellerMap
 
 
 class TipSpeedLimit(om.ExplicitComponent):
+    """
+    Computation of propeller tip speed.
+    """
+
     def initialize(self):
         self.options.declare(
             'num_nodes', types=int, default=1,
