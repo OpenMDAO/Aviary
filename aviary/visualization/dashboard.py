@@ -214,9 +214,9 @@ def _dashboard_cmd(options, user_args):
 
 def create_table_pane_from_json(json_filepath):
     """
-    Create a Tabulator Pane with Name and Value columns using tabular data 
+    Create a Tabulator Pane with Name and Value columns using tabular data
     from a JSON file.
- 
+
     Parameters
     ----------
     json_filepath : str
