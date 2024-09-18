@@ -1458,10 +1458,10 @@ class AviaryProblem(om.Problem):
                                                   promotes_inputs=[('rhs:mass',
                                                                     Mission.Summary.GROSS_MASS)])
                     eq.add_eq_output('mass', eq_units='lbm', normalize=False,
-                                     ref=10000., add_constraint=True)
+                                     ref=100000., add_constraint=True)
                     self.model.connect(
                         f'traj.{first_flight_phase_name}.states:mass',
-                        'link_climb_mass.lhs:mass',
+                        f'link_{first_flight_phase_name}_mass.lhs:mass',
                         src_indices=[0],
                         flat_src_indices=True,
                     )
