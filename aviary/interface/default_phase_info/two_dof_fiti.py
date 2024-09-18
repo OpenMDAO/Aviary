@@ -194,6 +194,9 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs: Av
 
 
 def add_default_sgm_args(phase_info: dict, ode_args: dict, verbosity=None):
+    """
+    Add default SGM arguments to phase_info
+    """
     for phase_name, info in phase_info.items():
         kwargs = info.get('kwargs', {})
         if 'ode_args' not in kwargs:

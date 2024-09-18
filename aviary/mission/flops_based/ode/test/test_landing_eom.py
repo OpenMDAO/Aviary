@@ -70,6 +70,10 @@ class FlareEOMTest(unittest.TestCase):
 
 
 class OtherTest(unittest.TestCase):
+    """
+    Test against data of detailed landing glide slope forces, flare sum forces, 
+    and ground sum forces from models/N3CC/N3CC_data.py
+    """
 
     def test_GlideSlopeForces(self):
         """

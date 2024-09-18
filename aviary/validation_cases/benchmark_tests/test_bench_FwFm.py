@@ -19,6 +19,13 @@ except ImportError:
 
 
 class ProblemPhaseTestCase(unittest.TestCase):
+    """
+    Setup of a large single aisle commercial transport aircraft using 
+    FLOPS mass method and HEIGHT_ENERGY mission method. Note that this
+    class assumes the model is 'models/test_aircraft/aircraft_for_bench_FwFm.csv'
+    and set the expected outputs.
+    """
+
     def setUp(self):
         expected_dict = {}
 
@@ -362,6 +369,9 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
 @use_tempdirs
 class TestBenchFwFmSerial(ProblemPhaseTestCase):
+    """
+    Run the model in serial that is setup in ProblemPhaseTestCase class.
+    """
 
     @require_pyoptsparse(optimizer="IPOPT")
     def test_bench_FwFm_IPOPT(self):
@@ -397,6 +407,9 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
 @use_tempdirs
 @unittest.skipUnless(MPI and PETScVector, "MPI and PETSc are required.")
 class TestBenchFwFmParallel(ProblemPhaseTestCase):
+    """
+    Run the model in parallel that is setup in ProblemPhaseTestCase class.
+    """
 
     N_PROCS = 3
 

@@ -14,6 +14,10 @@ from aviary.variable_info.variables import Dynamic
 
 
 class FlightPathODETestCase(unittest.TestCase):
+    """
+    Test flight path ODE
+    """
+
     def setUp(self):
         self.prob = om.Problem()
 

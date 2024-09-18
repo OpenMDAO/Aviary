@@ -11,6 +11,9 @@ from aviary.variable_info.variables import Aircraft, Settings
 
 
 class NacelleTest(unittest.TestCase):
+    """
+    Test nacelle wetted area computation.
+    """
 
     def setUp(self):
         self.prob = om.Problem()

@@ -78,7 +78,14 @@ else:
 
 
 class PreMissionGroup(om.Group):
+    """Pre mission group"""
+
     def configure(self):
+        """
+        Configure this group for pre-mission.
+        Promote aircraft and mission variables.
+        Override output aviary variables.
+        """
         external_outputs = promote_aircraft_and_mission_vars(self)
 
         pre_mission = self.core_subsystems
@@ -91,7 +98,13 @@ class PreMissionGroup(om.Group):
 
 
 class PostMissionGroup(om.Group):
+    """Post mission group"""
+
     def configure(self):
+        """
+        Congigure this group for post-mission.
+        Promote aircraft and mission variables.
+        """
         promote_aircraft_and_mission_vars(self)
 
 
@@ -103,6 +116,7 @@ class AviaryGroup(om.Group):
     """
 
     def initialize(self):
+        """declare options"""
         self.options.declare(
             'aviary_options', types=AviaryValues,
             desc='collection of Aircraft/Mission specific options')
@@ -114,6 +128,9 @@ class AviaryGroup(om.Group):
             desc='phase-specific settings.')
 
     def configure(self):
+        """
+        Configure the Aviary group
+        """
         aviary_options = self.options['aviary_options']
         aviary_metadata = self.options['aviary_metadata']
 

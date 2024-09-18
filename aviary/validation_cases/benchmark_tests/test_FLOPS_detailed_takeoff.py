@@ -26,6 +26,10 @@ from aviary.utils.preprocessors import preprocess_options
 
 @use_tempdirs
 class TestFLOPSDetailedTakeoff(unittest.TestCase):
+    """
+    Test detailed takeoff using N3CC data
+    """
+
     @require_pyoptsparse(optimizer='IPOPT')
     def bench_test_IPOPT(self):
         # raise unittest.SkipTest("IPOPT currently not working with this benchmark.")

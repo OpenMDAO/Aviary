@@ -19,6 +19,10 @@ from aviary.variable_info.variables import Dynamic, Mission
 
 
 class DLandTestCase(unittest.TestCase):
+    """
+    Test taxi group
+    """
+
     def setUp(self):
 
         self.prob = om.Problem()

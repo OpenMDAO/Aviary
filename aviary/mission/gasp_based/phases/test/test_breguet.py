@@ -11,6 +11,10 @@ from aviary.variable_info.variables import Dynamic
 
 
 class TestBreguetResults(unittest.TestCase):
+    """
+    Test cruise range and time in RangeComp component
+    """
+
     def setUp(self):
         nn = 10
 

@@ -101,9 +101,11 @@ def set_aviary_input_defaults(model, inputs, aviary_inputs: AviaryValues,
 
 
 def convert_strings_to_data(string_list):
-    # convert_strings_to_data will convert a list of strings to usable data.
-    # Strings that can't be converted to numbers will attempt to store as a logical,
-    # otherwise they are passed as is
+    """
+    convert_strings_to_data will convert a list of strings to usable data.
+    Strings that can't be converted to numbers will attempt to store as a logical,
+    otherwise they are passed as is
+    """
     value_list = [0]*len(string_list)
     for ii, dat in enumerate(string_list):
         dat = dat.strip('[]')
@@ -127,6 +129,9 @@ def convert_strings_to_data(string_list):
 
 
 def set_value(var_name, var_value, aviary_values: AviaryValues, units=None, is_array=False, meta_data=_MetaData):
+    """
+    Set the value of var_name to var_value
+    """
     if var_name in aviary_values:
         current_value, current_units = aviary_values.get_item(var_name)
     else:
@@ -311,6 +316,9 @@ def create_printcomp(all_inputs: list, input_units: dict = {}, meta_data=_MetaDa
 
 
 def promote_aircraft_and_mission_vars(group):
+    """
+    Locally promote aircraft:* and mission:* only.
+    """
     external_outputs = []
     for comp in group.system_iter(recurse=False):
 
@@ -479,7 +487,7 @@ def wrapped_convert_units(val_unit_tuple, new_units):
     val_unit_tuple : tuple
         Tuple of the form (value, units) where value is a float and units is a
         string.
-    new_units : string
+    new_units : str
         New units to convert to.
 
     Returns

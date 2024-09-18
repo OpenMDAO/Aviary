@@ -28,6 +28,10 @@ aliases = {Dynamic.Mission.ALTITUDE: ['h', 'alt', 'altitude'],
 
 
 class TabularAeroGroup(om.Group):
+    """
+    TODO: docstring
+    """
+
     def initialize(self):
         options = self.options
 

@@ -87,6 +87,10 @@ class VerticalScrolledFrame(tk.Frame):
 
 
 class AviaryMissionEditor(tk.Tk):
+    """
+    Aviary mission editor class
+    """
+
     def __init__(self):
         screen_width, screen_height = \
             [int(x) for x in get_screen_geometry().split("+")[0].split("x")]
@@ -664,6 +668,7 @@ class AviaryMissionEditor(tk.Tk):
             self.table_add_button.grid(row=row*2+3, column=0, columnspan=col+2)
 
     def update_header(self, new_headers):
+        """Update header"""
         i = 0
         for widget in self.table_header_widgets:
             if isinstance(widget, tk.Entry):

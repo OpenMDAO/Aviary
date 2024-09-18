@@ -28,6 +28,10 @@ from aviary.subsystems.premission import CorePreMission
 
 @use_tempdirs
 class TestFLOPSBalancedFieldLength(unittest.TestCase):
+    """
+    Test balanced field computation using N3CC data in balanced_liftoff phase
+    """
+
     @require_pyoptsparse(optimizer='IPOPT')
     def bench_test_IPOPT(self):
         # raise unittest.SkipTest("IPOPT currently not working with this benchmark.")

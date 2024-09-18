@@ -5,6 +5,10 @@ from aviary.variable_info.variables import Dynamic, Mission
 
 
 class MachNumber(om.ExplicitComponent):
+    """
+    This class is not used.
+    """
+
     def initialize(self):
         self.options.declare('num_nodes', types=int)
 

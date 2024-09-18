@@ -19,6 +19,9 @@ from aviary.variable_info.enums import LegacyCode
 
 
 class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
+    """
+    Test the UnsteadyControlIterGroup.
+    """
 
     def _test_unsteady_alpha_thrust_iter_group(self, ground_roll=False):
         nn = 5

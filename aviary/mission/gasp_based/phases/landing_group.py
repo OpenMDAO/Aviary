@@ -12,6 +12,10 @@ from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBas
 
 
 class LandingSegment(BaseODE):
+    """
+    ODE for landing.
+    """
+
     def setup(self):
         aviary_options = self.options['aviary_options']
         core_subsystems = self.options['core_subsystems']

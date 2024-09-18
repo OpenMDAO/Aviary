@@ -5,6 +5,10 @@ from aviary.variable_info.variables import Dynamic
 
 
 class SpeedConstraints(om.ExplicitComponent):
+    """
+    Compute speed constraint to be driven to zero in order to control speed
+    """
+
     def initialize(self):
         self.options.declare("num_nodes", types=int)
         self.options.declare(

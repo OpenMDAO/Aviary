@@ -71,7 +71,10 @@ class event_trigger():
 
 
 class SimuPyProblem(SimulationMixin):
-    # Subproblem used as a basis for forward in time integration phases.
+    """
+    Subproblem used as a basis for forward in time integration phases.
+    """
+
     def __init__(
         self,
         ode,

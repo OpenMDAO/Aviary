@@ -36,6 +36,9 @@ local_phase_info['descent']['user_options']['use_polynomial_control'] = True
 
 @use_tempdirs
 class MultiengineTestcase(unittest.TestCase):
+    """
+    Test the setup and run of a model with multi-engines.
+    """
 
     def setUp(self):
         om.clear_reports()

@@ -7,6 +7,9 @@ from aviary.utils.functions import get_path
 
 @use_tempdirs
 class TestCreateVehicle(unittest.TestCase):
+    """
+    Test creation and modification of aircraft from CSV file.
+    """
 
     def test_load_aircraft_csv(self):
         """Test loading a standard aircraft CSV file."""

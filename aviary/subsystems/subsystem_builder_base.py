@@ -4,6 +4,10 @@ from aviary.variable_info.variable_meta_data import _MetaData
 
 
 class SubsystemBuilderBase(ABC):
+    """
+    Base class of subsystem builder
+    """
+
     __slots__ = ('name', 'meta_data')
 
     # derived type customization point

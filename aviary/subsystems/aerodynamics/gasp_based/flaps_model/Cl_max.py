@@ -5,6 +5,10 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class CLmaxCalculation(om.ExplicitComponent):
+    """
+    Max CL calculation
+    """
+
     def setup(self):
 
         # inputs

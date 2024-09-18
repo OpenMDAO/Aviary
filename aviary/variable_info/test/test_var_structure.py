@@ -10,6 +10,7 @@ from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
 
 
 class DuplicateHierarchy:
+    """A sample data set with a duplicate name in two different classes."""
 
     stuff = 'nothing'
 
@@ -22,6 +23,10 @@ class DuplicateHierarchy:
 
 
 class MetaDataTest(unittest.TestCase):
+    """
+    Test no duplicate FLOPS and LEAPS1 names and in alphabetic order. Also test no missing names.
+    """
+
     def test_duplicate_names_FLOPS(self):
 
         flops_names = [var["historical_name"]['FLOPS'] for var in _MetaData.values()]
@@ -64,6 +69,10 @@ class MetaDataTest(unittest.TestCase):
 
 
 class VariableStructureTest(unittest.TestCase):
+    """
+    Variable structure test: no duplicates and in order.
+    """
+
     def test_duplicate_names_Aviary(self):
 
         aviary_names = get_names_from_hierarchy(Aircraft)\

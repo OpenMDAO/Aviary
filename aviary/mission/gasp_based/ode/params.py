@@ -4,6 +4,9 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 
 class ParamPort(om.ExplicitComponent):
+    """
+    This is to be replaced with curated lists in the areo and propulsion builders
+    """
 
     param_data = {
         Aircraft.Wing.INCIDENCE: dict(units="deg", val=0),

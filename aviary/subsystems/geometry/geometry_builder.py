@@ -24,6 +24,10 @@ _default_name = 'geometry'
 
 
 class GeometryBuilderBase(SubsystemBuilderBase):
+    """
+    Base geometry builder
+    """
+
     def __init__(self, name=None, meta_data=None):
         if name is None:
             name = _default_name
@@ -38,6 +42,10 @@ class GeometryBuilderBase(SubsystemBuilderBase):
 
 
 class CoreGeometryBuilder(GeometryBuilderBase):
+    """
+    Core geometry builder
+    """
+
     def __init__(self, name=None, meta_data=None, code_origin=None,
                  use_both_geometries=False, code_origin_to_prioritize=None):
         if name is None:

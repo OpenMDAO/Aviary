@@ -38,6 +38,9 @@ wetted_area_overide = get_flops_case_names(
 # TODO: We have no integration tests for canard, so canard-related names are commented
 # out.
 class PrepGeomTest(unittest.TestCase):
+    """
+    Test computation of derived values of aircraft geometry for aerodynamics analysis
+    """
 
     def setUp(self):
         self.prob = om.Problem()

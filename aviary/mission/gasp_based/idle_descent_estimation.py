@@ -2,7 +2,6 @@ import warnings
 
 import openmdao.api as om
 
-from aviary.interface.default_phase_info.two_dof_fiti_deprecated import create_2dof_based_descent_phases
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 from aviary.variable_info.enums import Verbosity
@@ -20,7 +19,9 @@ def add_descent_estimation_as_submodel(
         reserve_fuel=None,
         verbosity=Verbosity.QUIET,
 ):
-
+    """
+    Add descent estimation
+    """
     if phases is None:
         from aviary.interface.default_phase_info.two_dof_fiti import \
             descent_phases as phases, add_default_sgm_args

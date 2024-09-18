@@ -10,6 +10,9 @@ from aviary.utils.functions import get_path
 
 
 def plot_drag_polar(input_file=None):
+    """
+    Plot drag polar
+    """
     if input_file is None:
         input_file = filedialog.askopenfilename(filetypes=[("CSV files", "*.csv")])
         if not input_file:
