@@ -221,7 +221,7 @@ def create_table_pane_from_json(json_filepath):
     ----------
     json_filepath : str
         Path to the JSON file containing tabular data.
- 
+
     Returns
     -------
     pane : Panel.Pane or None
