@@ -17,7 +17,7 @@ from dymos.utils.misc import _unspecified
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
-from aviary.subsystems.aerodynamics.flops_based.aero_report import AeroReport
+from aviary.subsystems.aerodynamics.flops_based.drag_polar import DragPolar
 from aviary.subsystems.aerodynamics.flops_based.design import Design
 from aviary.subsystems.aerodynamics.gasp_based.premission_aero import PreMissionAero
 from aviary.subsystems.aerodynamics.gasp_based.gaspaero import CruiseAero
@@ -84,16 +84,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
             aero_group = PreMissionAero(aviary_options=aviary_inputs)
 
         elif code_origin is FLOPS:
-            aero_group = om.Group()
-            aero_group.add_subsystem(
-                'design', Design(aviary_options=aviary_inputs),
-                promotes_inputs=['*'],
-                promotes_outputs=['*'])
-
-            aero_group.add_subsystem(
-                'aero_report', AeroReport(aviary_options=aviary_inputs),
-                promotes_inputs=['*'],
-                promotes_outputs=['*'])
+            aero_group = (Design(aviary_options=aviary_inputs),)
 
         return aero_group
 
@@ -174,6 +165,12 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                                  '(cruise, low_speed)')
 
         return aero_group
+
+    # TODO DragPolar comp is unfinished and currently does nothing
+    # def build_post_mission(self, aviary_inputs, **kwargs):
+    #     aero_group = DragPolar(aviary_options=aviary_inputs),
+
+    #     return aero_group
 
     def mission_inputs(self, **kwargs):
         method = kwargs['method']
