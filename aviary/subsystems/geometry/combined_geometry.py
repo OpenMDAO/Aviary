@@ -13,7 +13,7 @@ GASP = LegacyCode.GASP
 
 class CombinedGeometry(om.Group):
     """
-    Combined geometry group
+    Combined geometry group (SizeGroup and PrepGeom)
     """
 
     def initialize(self):

@@ -11,6 +11,7 @@ from aviary.variable_info.variables import Aircraft
 
 
 class CharacteristicLengthsTest(unittest.TestCase):
+    """Test various characteristic length and fineness."""
 
     def setUp(self):
         self.prob = om.Problem()

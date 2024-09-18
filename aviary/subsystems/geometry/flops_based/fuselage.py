@@ -10,6 +10,9 @@ from aviary.variable_info.variables import Aircraft
 
 
 class FuselagePrelim(om.ExplicitComponent):
+    """
+    Calculate fuselage average diameter and planform area.
+    """
 
     def initialize(self):
         self.options.declare(
