@@ -62,10 +62,10 @@ class GearboxBuilder(SubsystemBuilderBase):
     def get_parameters(self, aviary_inputs=None, phase_info=None):
         """
         Parameters are only tested to see if they exist in mission.
-        A value the doesn't change throught the mission mission
-        Returns a dictionary of fixed values for the gearbox subsystem, where the keys are the names 
-        of the fixed values, and the values are dictionaries that contain the fixed value for the 
-        variable, the units for the variable, and any additional keyword arguments required by 
+        The value doesn't change throughout the mission.
+        Returns a dictionary of fixed values for the gearbox subsystem, where the keys are the names
+        of the fixed values, and the values are dictionaries that contain the fixed value for the
+        variable, the units for the variable, and any additional keyword arguments required by
         OpenMDAO for the variable.
 
         Returns
@@ -75,7 +75,11 @@ class GearboxBuilder(SubsystemBuilderBase):
         """
         parameters = {
             Aircraft.Engine.Gearbox.EFFICIENCY: {
-                'val': 0.98,
+                'val': 1.0,
+                'units': 'unitless',
+            },
+            Aircraft.Engine.Gearbox.GEAR_RATIO: {
+                'val': 1.0,
                 'units': 'unitless',
             },
         }

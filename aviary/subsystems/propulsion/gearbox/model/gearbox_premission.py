@@ -23,15 +23,21 @@ class GearboxPreMission(om.Group):
         self.name = 'gearbox_premission'
 
     def setup(self):
-        self.add_subsystem('gearbox_PRM',
-                           om.ExecComp('RPM_out = RPM_in / gear_ratio',
-                                       RPM_out={'val': 0.0, 'units': 'rpm'},
-                                       gear_ratio={'val': 1.0, 'units': 'unitless'},
-                                       RPM_in={'val': 0.0, 'units': 'rpm'},
-                                       has_diag_partials=True),
-                           promotes_inputs=[('RPM_in', Aircraft.Engine.RPM_DESIGN),
-                                            ('gear_ratio', Aircraft.Engine.Gearbox.GEAR_RATIO)],
-                           promotes_outputs=['RPM_out'])
+        self.add_subsystem(
+            'gearbox_RPM',
+            om.ExecComp(
+                'RPM_out = RPM_in / gear_ratio',
+                RPM_out={'val': 0.0, 'units': 'rpm'},
+                gear_ratio={'val': 1.0, 'units': 'unitless'},
+                RPM_in={'val': 0.0, 'units': 'rpm'},
+                has_diag_partials=True,
+            ),
+            promotes_inputs=[
+                ('RPM_in', Aircraft.Engine.RPM_DESIGN),
+                ('gear_ratio', Aircraft.Engine.Gearbox.GEAR_RATIO),
+            ],
+            promotes_outputs=['RPM_out'],
+        )
 
         # max torque is calculated based on input shaft power and output RPM
         self.add_subsystem('torque_comp',

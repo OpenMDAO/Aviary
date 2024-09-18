@@ -26,6 +26,7 @@ aircraft:design:supercritical_drag_shift, 0, unitless
 # setting electrical mass may not do anything
 aircraft:electrical:mass, 300, lbm 
 aircraft:engine:additional_mass_fraction, 0.34, unitless
+aircraft:engine:data_file, models/engines/turboshaft_4465hp.deck
 aircraft:engine:gearbox:gear_ratio, 13.550135501355014, unitless
 aircraft:engine:mass_scaler, 1, unitless
 aircraft:engine:mass_specific, 0.37026, lbm/lbf
@@ -38,9 +39,10 @@ aircraft:engine:propeller_integrated_lift_coefficient, 0.5, unitless
 aircraft:engine:propeller_tip_speed_max, 720, ft/s
 aircraft:engine:pylon_factor, 0.7, unitless
 aircraft:engine:reference_diameter, 5.8, ft
-# aircraft:engine:reference_sls_thrust, 28690, lbf
+aircraft:engine:reference_sls_thrust, 5000, lbf
 aircraft:engine:rpm_design, 13820, rpm
-# aircraft:engine:scaled_sls_thrust, 0, lbf
+aircraft:engine:fixed_rpm, 3820, rpm
+aircraft:engine:scaled_sls_thrust, 5000, lbf
 aircraft:engine:shaft_power_design, 4465, kW
 aircraft:engine:type, 6, unitless
 aircraft:engine:wing_locations, [0.385, 0.385], unitless
