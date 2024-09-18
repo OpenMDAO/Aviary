@@ -474,7 +474,8 @@ class AviaryProblem(om.Problem):
                         "target_duration"]
                     if target_duration[0] <= 0:
                         raise ValueError(
-                            f"Invalid target_duration in phase_info[{phase_name}][user_options]. "
+                            f"Invalid target_duration in phase_info"
+                            f"[{phase_name}][user_options]. "
                             f"Current (value: {target_duration[0]}), (units: {target_duration[1]}) <= 0")
 
                     # Only applies to non-analytic phases (all HE and most 2DOF)
@@ -2187,7 +2188,8 @@ class AviaryProblem(om.Problem):
                                 units=units)
                         except KeyError:
                             setvalprob.set_val(parent_prefix +
-                                               f'traj.{phase_name}.bspline_controls:{guess_key}',
+                                               f'traj.{phase_name}.bspline_controls:',
+                                               {guess_key},
                                                self._process_guess_var(
                                                    val, guess_key, phase),
                                                units=units)

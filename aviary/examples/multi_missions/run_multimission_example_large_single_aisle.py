@@ -8,6 +8,7 @@ aircraft:crew_and_payload:num_tourist_class,0,unitless
 aircraft:crew_and_payload:num_first_class,0,unitless
 
 """
+from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.api import SubsystemBuilderBase
 from aviary.subsystems.mass.flops_based.furnishings import TransportFurnishingsGroupMass
 import sys
@@ -29,24 +30,32 @@ import copy as copy
 # fly the same mission twice with two different passenger loads
 phase_info_primary = copy.deepcopy(phase_info)
 phase_info_deadhead = copy.deepcopy(phase_info)
+# phase_info_deadhead['post_mission']['target_range'] = [500, "nmi"]
 
 # get large single aisle values
-from aviary.validation_cases.validation_tests import get_flops_inputs
 aviary_inputs_primary = get_flops_inputs('LargeSingleAisle2FLOPS')
-aviary_inputs_primary.set_val('aircraft:crew_and_payload:design:num_passengers', 162, 'unitless')
-aviary_inputs_primary.set_val('aircraft:crew_and_payload:design:num_tourist_class', 150, 'unitless')
-aviary_inputs_primary.set_val('aircraft:crew_and_payload:design:num_business_class', 0, 'unitless')
-aviary_inputs_primary.set_val('aircraft:crew_and_payload:design:num_first_class', 12, 'unitless')
+aviary_inputs_primary.set_val(
+    'aircraft:crew_and_payload:design:num_passengers', 162, 'unitless')
+aviary_inputs_primary.set_val(
+    'aircraft:crew_and_payload:design:num_tourist_class', 150, 'unitless')
+aviary_inputs_primary.set_val(
+    'aircraft:crew_and_payload:design:num_business_class', 0, 'unitless')
+aviary_inputs_primary.set_val(
+    'aircraft:crew_and_payload:design:num_first_class', 12, 'unitless')
 
 
 aviary_inputs_deadhead = copy.deepcopy(aviary_inputs_primary)
 aviary_inputs_deadhead.set_val('aircraft:crew_and_payload:num_passengers', 0, 'unitless')
-aviary_inputs_deadhead.set_val('aircraft:crew_and_payload:num_tourist_class', 0, 'unitless')
-aviary_inputs_deadhead.set_val('aircraft:crew_and_payload:num_business_class', 0, 'unitless')
-aviary_inputs_deadhead.set_val('aircraft:crew_and_payload:num_first_class', 0, 'unitless')
+aviary_inputs_deadhead.set_val(
+    'aircraft:crew_and_payload:num_tourist_class', 0, 'unitless')
+aviary_inputs_deadhead.set_val(
+    'aircraft:crew_and_payload:num_business_class', 0, 'unitless')
+aviary_inputs_deadhead.set_val(
+    'aircraft:crew_and_payload:num_first_class', 0, 'unitless')
 aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.MISC_CARGO, 0.0, 'lbm')
 
-#phase_info_deadhead['post_mission']['target_range'] = [1500, "nmi"]
+# phase_info_deadhead['post_mission']['target_range'] = [1500, "nmi"]
+
 
 class MultiMissionProblem(om.Problem):
     def __init__(self, aviary_values, phase_infos, weights):
@@ -159,7 +168,7 @@ class MultiMissionProblem(om.Problem):
                                 ['target_range'][0])  # TBD add units
         design_range_min = np.min(design_range)
         design_range_max = np.max(design_range)
-        return design_range_max, design_range_min # design_range_min
+        return design_range_max, design_range_min  # design_range_min
 
     def create_timeseries_plots(self, plotvars=[], show=True):
         """
@@ -228,7 +237,7 @@ class MultiMissionProblem(om.Problem):
             print(f"{name:^30}", end='| ')
         print()
         for var, unit in vars:
-            varname = f"Variable: {var.replace(':','.').upper()}"
+            varname = f"Variable: {var.replace(':', '.').upper()}"
             print(f"{varname:40}", end=": ")
             for i in range(self.num_missions):
                 val = self.get_val(f'group_{i}.{var}', units=unit)[0]
@@ -238,8 +247,8 @@ class MultiMissionProblem(om.Problem):
 
 
 def large_single_aisle_example(makeN2=False):
-    aviary_values=[aviary_inputs_primary, 
-                   aviary_inputs_deadhead]
+    aviary_values = [aviary_inputs_primary,
+                     aviary_inputs_deadhead]
     phase_infos = [phase_info_primary,
                    phase_info_deadhead]
     optalt, optmach = False, False
@@ -268,11 +277,12 @@ def large_single_aisle_example(makeN2=False):
         # TODO: Not sure we need this at all.
         from openmdao.api import n2
         from os.path import basename, dirname, join, abspath
+
         def createN2(fileref, prob):
             n2folder = join(dirname(abspath(__file__)), "N2s")
             n2(prob, outfile=join(n2folder,
-                f"n2_{basename(fileref).split('.')[0]}.html"))
-    
+                                  f"n2_{basename(fileref).split('.')[0]}.html"))
+
         createN2(__file__, super_prob)
 
     super_prob.run()
@@ -311,6 +321,6 @@ if __name__ == '__main__':
     makeN2 = True if (len(sys.argv) > 1 and "n2" in sys.argv[1]) else False
 
     super_prob = large_single_aisle_example(makeN2=makeN2)
-        
+
     # super_prob.model.group_1.list_vars(val=True, units=True, print_arrays=False)
     # https://openmdao.org/newdocs/versions/latest/features/debugging/listing_variables.html?highlight=list_driver_vars
