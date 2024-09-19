@@ -1058,8 +1058,8 @@ class EngineDeck(EngineModel):
     def get_parameters(self):
         params = {
             Aircraft.Engine.SCALE_FACTOR: {
-                'val': 0.0,
-                'units': 'ft',
+                'val': 1.0,
+                'units': 'unitless',
             }
         }
         return params

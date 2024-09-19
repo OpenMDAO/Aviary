@@ -495,7 +495,7 @@ ENGINE_SIZED_INPUTS = [
 
 AERO_2DOF_INPUTS = [
     Aircraft.Design.CG_DELTA,
-    Aircraft.Design.DRAG_COEFFICIENT_INCREMENT,   # drag increment?
+    Aircraft.Design.DRAG_COEFFICIENT_INCREMENT,  # drag increment?
     Aircraft.Design.STATIC_MARGIN,
     Aircraft.Fuselage.AVG_DIAMETER,
     Aircraft.Fuselage.FLAT_PLATE_AREA_INCREMENT,
@@ -546,4 +546,8 @@ AERO_LS_2DOF_INPUTS = [
 AERO_CLEAN_2DOF_INPUTS = [
     Aircraft.Design.SUPERCRITICAL_DIVERGENCE_SHIFT,  # super drag shift?
     Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP,
+    Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR,
+    Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR,
+    Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR,
+    Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR,
 ]
