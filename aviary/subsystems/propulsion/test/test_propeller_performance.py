@@ -167,6 +167,10 @@ install_eff = np.array(
 
 
 class PropellerPerformanceTest(unittest.TestCase):
+    """
+    Test computation of propeller performance test using Hamilton Standard model.
+    """
+
     def setUp(self):
         options = get_option_defaults()
         options.set_val(
@@ -246,7 +250,7 @@ class PropellerPerformanceTest(unittest.TestCase):
             assert_near_equal(ieff[idx], install_eff[case_idx], tolerance=tol)
 
     def test_case_0_1_2(self):
-        # Case 0, 1, 2, to test installation loss factor computation.
+        """Case 0, 1, 2, to test installation loss factor computation."""
         prob = self.prob
         prob.set_val(Dynamic.Mission.ALTITUDE, [0.0, 0.0, 25000.0], units="ft")
         prob.set_val(Dynamic.Mission.VELOCITY, [0.10, 125.0, 300.0], units="knot")
@@ -271,7 +275,7 @@ class PropellerPerformanceTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=5e-4, rtol=1e-4)
 
     def test_case_3_4_5(self):
-        # Case 3, 4, 5, to test normal cases.
+        """Case 3, 4, 5, to test normal cases."""
         prob = self.prob
         options = self.options
 
@@ -309,7 +313,7 @@ class PropellerPerformanceTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1.5e-4, rtol=1e-4)
 
     def test_case_6_7_8(self):
-        # Case 6, 7, 8, to test odd number of blades.
+        """Case 6, 7, 8, to test odd number of blades."""
         prob = self.prob
         options = self.options
 
@@ -351,7 +355,7 @@ class PropellerPerformanceTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-4, rtol=1e-4)
 
     def test_case_9_10_11(self):
-        # Case 9, 10, 11, to test CLI > 0.5
+        """Case 9, 10, 11, to test CLI > 0.5"""
         prob = self.prob
         prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 12.0, units="ft")
         prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, 2.4, units='ft')
@@ -391,7 +395,7 @@ class PropellerPerformanceTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1.5e-3, rtol=1e-4)
 
     def test_case_12_13_14(self):
-        # Case 12, 13, 14, to test mach limited tip speed.
+        """Case 12, 13, 14, to test mach limited tip speed."""
         prob = self.prob
         prob.set_val(Dynamic.Mission.ALTITUDE, [0.0, 0.0, 25000.0], units="ft")
         prob.set_val(Dynamic.Mission.VELOCITY, [0.10, 125.0, 300.0], units="knot")
@@ -416,7 +420,7 @@ class PropellerPerformanceTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=5e-4, rtol=1e-4)
 
     def test_case_15_16_17(self):
-        # case 15, 16, 17, to test propeller map
+        """case 15, 16, 17, to test propeller map"""
         prob = self.prob
         options = self.options
 
@@ -454,7 +458,13 @@ class PropellerPerformanceTest(unittest.TestCase):
 
 
 class OutMachsTest(unittest.TestCase):
+    """
+    Test the computation of OutMachs: Given two of Mach, helical Mach, and tip Mach,
+    compute the other.
+    """
+
     def test_helical_mach(self):
+        """Given Mach and tip Mach, compute helical Mach."""
         tol = 1e-5
         prob = om.Problem()
         prob.model.add_subsystem(
@@ -477,6 +487,7 @@ class OutMachsTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-4, rtol=1e-4)
 
     def test_mach(self):
+        """Given helical Mach and tip Mach, compute Mach."""
         tol = 1e-5
         prob = om.Problem()
         prob.model.add_subsystem(
@@ -499,6 +510,7 @@ class OutMachsTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-4, rtol=1e-4)
 
     def test_tip_mach(self):
+        """Given helical Mach and Mach, compute tip Mach."""
         tol = 1e-5
         prob = om.Problem()
         prob.model.add_subsystem(
@@ -522,6 +534,10 @@ class OutMachsTest(unittest.TestCase):
 
 
 class TipSpeedLimitTest(unittest.TestCase):
+    """
+    Test computation of tip speed limit in TipSpeedLimit class.
+    """
+
     def test_tipspeed(self):
         tol = 1e-5
 

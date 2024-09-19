@@ -15,6 +15,10 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class PreHamiltonStandardTest(unittest.TestCase):
+    """
+    Test computation in PreHamiltonStandard class.
+    """
+
     def setUp(self):
         prob = om.Problem()
 
@@ -68,6 +72,10 @@ class PreHamiltonStandardTest(unittest.TestCase):
 
 
 class HamiltonStandardTest(unittest.TestCase):
+    """
+    Test computation in HamiltonStandard class.
+    """
+
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Engine.NUM_PROPELLER_BLADES, val=4, units='unitless')
@@ -118,6 +126,10 @@ class HamiltonStandardTest(unittest.TestCase):
 
 
 class PostHamiltonStandardTest(unittest.TestCase):
+    """
+    Test computation in PostHamiltonStandard class.
+    """
+
     def setUp(self):
         prob = om.Problem()
 
