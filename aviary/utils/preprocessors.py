@@ -40,7 +40,8 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
     passenger_check = aviary_options.get_val(Aircraft.CrewPayload.NUM_FIRST_CLASS) + aviary_options.get_val(
         Aircraft.CrewPayload.NUM_BUSINESS_CLASS) + aviary_options.get_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS)
 
-    if passenger_check != passenger_count:
+    # only perform check if at least one passenger class is entered
+    if passenger_check > 0 and passenger_count != passenger_check:
         if passenger_count == 0:
             # Aviary will calculate total passengers based on sum of passengers in each class and print warning so user knows
             aviary_options.set_val(
