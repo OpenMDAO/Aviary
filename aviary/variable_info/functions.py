@@ -152,8 +152,8 @@ def override_aviary_vars(group, aviary_inputs: AviaryValues,
     if external_overridden_outputs:
         print("\nThe following variables have been overridden by an external subsystem:")
         for prom_name in sorted(external_overridden_outputs):
-            item = aviary_inputs.get_item(prom_name)
-            print(f"  '{prom_name}  {item[0]}  {item[1]}")
+            # do not print values because they will be updated later.
+            print(f"  '{prom_name}")
 
     return overridden_outputs
 
