@@ -89,8 +89,9 @@ class TestFLOPSBalancedFieldLength(unittest.TestCase):
                 aviary_options=aviary_options,
                 subsystems=default_mission_subsystems,
             ),
-            promotes_inputs=['aircraft:*', 'mission:*'],
-            promotes_outputs=['aircraft:*', 'mission:*'])
+            promotes_inputs=['aircraft:*'],
+            promotes_outputs=['aircraft:*', 'mission:*'],
+        )
 
         # Instantiate the trajectory and add the phases
         traj = dm.Trajectory()
