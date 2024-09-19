@@ -17,6 +17,10 @@ def dsig(x):
 
 
 class EquipAndUsefulLoadMass(om.ExplicitComponent):
+    """
+    Computation of fixed equipment mass and useful load
+    """
+
     def initialize(self):
 
         self.options.declare(

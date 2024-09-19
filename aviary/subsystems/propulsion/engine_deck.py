@@ -7,10 +7,6 @@ EngineDeck : the interface for an engine deck builder.
 
 Attributes
 ----------
-accepted_headers : dict
-    The strings that are accepted as valid header names after converted to all lowercase
-    with all whitespace removed, mapped to the enum EngineModelVariables.
-
 required_variables : set
     Variables that must be present in an EngineDeck's DATA_FILE (Mach, altitude, etc.)
 

@@ -9,6 +9,9 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 
 class MassSummation(om.Group):
+    """
+    Group to compute various design masses.
+    """
 
     def initialize(self):
         self.options.declare(

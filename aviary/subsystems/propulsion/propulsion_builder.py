@@ -27,10 +27,24 @@ from aviary.utils.preprocessors import _get_engine_variables
 _default_name = 'propulsion'
 
 
-# NOTE unlike the other subsystem builders, it is not reccomended to create additional
-#      propulsion subsystems, as propulsion is intended to be an agnostic carrier of
-#      all propulsion-related subsystem builders.
 class PropulsionBuilderBase(SubsystemBuilderBase):
+    """
+    Base class for propulsion builder
+
+    Note
+    ----
+    unlike the other subsystem builders, it is not reccomended to create additional
+    propulsion subsystems, as propulsion is intended to be an agnostic carrier of
+    all propulsion-related subsystem builders.
+
+    Methods
+    -------
+    mission_inputs()
+        class method.d
+    mission_outputs()
+        class method.
+    """
+
     def __init__(self, name=None, meta_data=None):
         if name is None:
             name = _default_name
@@ -45,7 +59,34 @@ class PropulsionBuilderBase(SubsystemBuilderBase):
 
 
 class CorePropulsionBuilder(PropulsionBuilderBase):
-    # code_origin is not necessary for this subsystem, catch with kwargs and ignore
+    """
+    Core propulsion builder.
+
+    Note
+    ----
+    code_origin is not necessary for this subsystem, catch with kwargs and ignore.
+
+    Methods
+    -------
+    build_pre_mission()
+        Build pre-mission
+    build_mission()
+        Build pre-mission
+    get_states()
+    get_controls()
+    get_parameters()
+    get_constraints()
+    get_linked_variables()
+    get_bus_variables()
+    define_order()
+    get_design_vars()
+    get_initial_guesses()
+    get_mass_names()
+    preprocess_inputs()
+    get_outputs()
+    report()
+    """
+
     def __init__(self, name=None, meta_data=None, engine_models=None, **kwargs):
         if name is None:
             name = 'core_propulsion'

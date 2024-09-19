@@ -11,8 +11,9 @@ from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission
 
 
-# this is the large single aisle 1 V3 test case
 class WingMassSolveTestCase(unittest.TestCase):
+    """this is the large single aisle 1 V3 test case"""
+
     def setUp(self):
 
         self.prob = om.Problem()
@@ -75,8 +76,9 @@ class WingMassSolveTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
 
-# this is the large single aisle 1 V3 test case
 class TotalWingMassTestCase1(unittest.TestCase):
+    """this is the large single aisle 1 V3 test case"""
+
     def setUp(self):
 
         self.prob = om.Problem()
@@ -218,8 +220,9 @@ class TotalWingMassTestCase4(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
 
-# this is the large single aisle 1 V3 test case
 class WingMassGroupTestCase1(unittest.TestCase):
+    """this is the large single aisle 1 V3 test case"""
+
     def setUp(self):
 
         self.prob = om.Problem()

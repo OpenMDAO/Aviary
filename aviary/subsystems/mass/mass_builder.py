@@ -22,6 +22,10 @@ _default_name = 'mass'
 
 
 class MassBuilderBase(SubsystemBuilderBase):
+    """
+    Base mass builder
+    """
+
     def __init__(self, name=None, meta_data=None):
         if name is None:
             name = _default_name
@@ -36,6 +40,10 @@ class MassBuilderBase(SubsystemBuilderBase):
 
 
 class CoreMassBuilder(MassBuilderBase):
+    """
+    Core mass subsystem builder
+    """
+
     def __init__(self, name=None, meta_data=None, code_origin=None):
         if name is None:
             name = 'core_mass'

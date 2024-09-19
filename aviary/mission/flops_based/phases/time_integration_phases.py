@@ -8,7 +8,9 @@ from aviary.variable_info.variables import Dynamic
 
 class SGMHeightEnergy(SimuPyProblem):
     """
-    TODO: docstring
+    This creates a subproblem that will be used by most height energy phases during a trajectory that will
+    be solved using SGM.
+    A mass trigger is added as an example, but any other trigger can be added as necessary.
     """
 
     def __init__(
@@ -39,7 +41,12 @@ class SGMHeightEnergy(SimuPyProblem):
 
 
 class SGMDetailedTakeoff(SimuPyProblem):
-    """TODO: docstring"""
+    """
+    This creates a subproblem that will be used by height energy phases during detailed takeoff that will
+    be solved using SGM.
+    An altitude trigger is added as an example, but any other trigger can be added as necessary in order to
+    string together the phases needed for a noise certification takeoff.
+    """
 
     def __init__(
         self,
@@ -67,7 +74,12 @@ class SGMDetailedTakeoff(SimuPyProblem):
 
 
 class SGMDetailedLanding(SimuPyProblem):
-    """TODO: docstring"""
+    """
+    This creates a subproblem that will be used by height energy phases during detailed landing that will
+    be solved using SGM.
+    An altitude trigger is added as an example, but any other trigger can be added as necessary in order to
+    string together the phases needed for a noise certification landing.
+    """
 
     def __init__(
         self,
