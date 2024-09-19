@@ -27,7 +27,7 @@ class HE_SGMDescentTestCase(unittest.TestCase):
     This test builds height-energy based trajectories and then simulates them and checks that the final values are correct.
     The trajectories used are intended to be single phases to simplify debugging and to allow for easier testing of trigger based values.
     """
-    
+
     def setUp(self):
         aviary_inputs, initialization_guesses = create_vehicle(
             'models/test_aircraft/aircraft_for_bench_FwFm.csv')
