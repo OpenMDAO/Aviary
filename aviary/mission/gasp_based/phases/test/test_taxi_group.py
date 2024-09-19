@@ -45,7 +45,7 @@ class TaxiTestCase(unittest.TestCase):
         self.prob.run_model()
 
         testvals = {
-            Dynamic.Mission.MASS: 175190.3, # lbm
+            Dynamic.Mission.MASS: 175190.3,  # lbm
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
