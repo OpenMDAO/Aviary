@@ -13,7 +13,8 @@ from aviary.variable_info.variables import Aircraft
 
 class PropellerMapTest(unittest.TestCase):
     """
-    Test propeller map using OpenMDAO interpolator
+    Test propeller map using OpenMDAO interpolator to make sure 
+    it provides correct error and gets correct Mach type.
     """
 
     def test_general_aviation(self):
