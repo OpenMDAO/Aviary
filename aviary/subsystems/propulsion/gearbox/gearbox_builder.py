@@ -63,10 +63,10 @@ class GearboxBuilder(SubsystemBuilderBase):
         """
         Parameters are only tested to see if they exist in mission.
         The value doesn't change throughout the mission.
-        Returns a dictionary of fixed values for the gearbox subsystem, where the keys are the names
-        of the fixed values, and the values are dictionaries that contain the fixed value for the
-        variable, the units for the variable, and any additional keyword arguments required by
-        OpenMDAO for the variable.
+        Returns a dictionary of fixed values for the gearbox subsystem, where the keys
+        are the names of the fixed values, and the values are dictionaries that contain
+        the fixed value for the variable, the units for the variable, and any additional
+        keyword arguments required by OpenMDAO for the variable.
 
         Returns
         -------
