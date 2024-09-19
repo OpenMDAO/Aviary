@@ -41,7 +41,7 @@ from aviary.mission.gasp_based.polynomial_fit import PolynomialFit
 from aviary.subsystems.premission import CorePreMission
 from aviary.utils.functions import create_opts2vals, add_opts2vals, promote_aircraft_and_mission_vars, wrapped_convert_units
 from aviary.utils.process_input_decks import create_vehicle, update_GASP_options, initialization_guessing
-from aviary.utils.preprocessors import preprocess_crewpayload
+from aviary.utils.preprocessors import preprocess_options
 from aviary.interface.utils.check_phase_info import check_phase_info
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import convert_strings_to_data, set_value
@@ -56,7 +56,6 @@ from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilde
 from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
 from aviary.subsystems.mass.mass_builder import CoreMassBuilder
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
-from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.merge_variable_metadata import merge_meta_data
 
 from aviary.interface.default_phase_info.two_dof_fiti import add_default_sgm_args
