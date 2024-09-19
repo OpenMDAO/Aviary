@@ -56,7 +56,7 @@ class EngineMass(om.ExplicitComponent):
         # use dtype to make complex safe
         calc_mass = np.array(ref_engine_mass, dtype=scaled_thrust.dtype)
 
-        # scale engine mass using equation chosen by value of user-provided mass scalar
+        # scale engine mass using equation chosen by value of user-provided mass scaler
         thrust_ratio = scaled_thrust / ref_thrust
 
         calc_mass[scale_idx] = ref_engine_mass[scale_idx] + (

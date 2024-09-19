@@ -197,7 +197,9 @@ class LandingSegment(BaseODE):
         )
 
         ParamPort.set_default_vals(self)
+
         self.set_input_defaults(Mission.Landing.INITIAL_MACH, val=0.1)
+
         # landing doesn't change flap or gear position
         self.set_input_defaults("t_init_flaps_app", val=1e10)
         self.set_input_defaults("t_init_gear_app", val=1e10)
@@ -207,3 +209,5 @@ class LandingSegment(BaseODE):
         self.set_input_defaults('aero_ramps.gear_factor:final_val', val=1.)
         self.set_input_defaults('aero_ramps.flap_factor:initial_val', val=0.)
         self.set_input_defaults('aero_ramps.gear_factor:initial_val', val=0.)
+
+        self.set_input_defaults(Aircraft.Wing.AREA, val=1.0, units="ft**2")

@@ -40,19 +40,19 @@ class CanardMass(om.ExplicitComponent):
     def compute_partials(self, inputs, J):
         area = inputs[Aircraft.Canard.AREA]
         taper_ratio = inputs[Aircraft.Canard.TAPER_RATIO]
-        scalar = inputs[Aircraft.Canard.MASS_SCALER]
+        scaler = inputs[Aircraft.Canard.MASS_SCALER]
         gross_weight = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
 
         gross_weight_exp = gross_weight**0.2
 
         J[Aircraft.Canard.MASS, Aircraft.Canard.AREA] = 0.53 * \
-            scalar * (taper_ratio+0.5) * gross_weight_exp / GRAV_ENGLISH_LBM
+            scaler * (taper_ratio+0.5) * gross_weight_exp / GRAV_ENGLISH_LBM
 
         J[Aircraft.Canard.MASS, Aircraft.Canard.TAPER_RATIO] = \
-            0.53*area * scalar * gross_weight_exp / GRAV_ENGLISH_LBM
+            0.53*area * scaler * gross_weight_exp / GRAV_ENGLISH_LBM
 
         J[Aircraft.Canard.MASS, Aircraft.Canard.MASS_SCALER] = \
             0.53*area * (taper_ratio+0.5) * gross_weight_exp / GRAV_ENGLISH_LBM
 
         J[Aircraft.Canard.MASS, Mission.Design.GROSS_MASS] = \
-            (0.106*area * scalar * (taper_ratio+0.5)) / gross_weight**0.8
+            (0.106*area * scaler * (taper_ratio+0.5)) / gross_weight**0.8
