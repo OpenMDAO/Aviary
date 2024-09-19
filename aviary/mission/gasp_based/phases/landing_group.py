@@ -13,7 +13,7 @@ from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBas
 
 class LandingSegment(BaseODE):
     """
-    ODE for landing.
+    Group for landing ODE.
     """
 
     def setup(self):
