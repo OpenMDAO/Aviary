@@ -34,34 +34,26 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
     This function modifies the entries in the supplied collection, and for convenience also
     returns the modified collection.
     """
+    # Check consistency of passenger numbers
+    passenger_count = aviary_options.get_val(
+        Aircraft.CrewPayload.NUM_PASSENGERS)
+    passenger_check = aviary_options.get_val(Aircraft.CrewPayload.NUM_FIRST_CLASS) + aviary_options.get_val(
+        Aircraft.CrewPayload.NUM_BUSINESS_CLASS) + aviary_options.get_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS)
 
-    if Aircraft.CrewPayload.NUM_PASSENGERS not in aviary_options:
-        passenger_count = 0
-        for key in (Aircraft.CrewPayload.NUM_FIRST_CLASS,
-                    Aircraft.CrewPayload.NUM_BUSINESS_CLASS,
-                    Aircraft.CrewPayload.NUM_TOURIST_CLASS):
-            if key in aviary_options:
-                passenger_count += aviary_options.get_val(key)
+    if passenger_check != passenger_count:
         if passenger_count == 0:
-            passenger_count = 1
-
-        aviary_options.set_val(
-            Aircraft.CrewPayload.NUM_PASSENGERS, passenger_count)
-    else:
-        passenger_count = aviary_options.get_val(
-            Aircraft.CrewPayload.NUM_PASSENGERS)
-        # check in here to ensure that in this case passenger count is the sum of the first class, business class, and tourist class counts.
-        passenger_check = aviary_options.get_val(Aircraft.CrewPayload.NUM_FIRST_CLASS)
-        passenger_check += aviary_options.get_val(
-            Aircraft.CrewPayload.NUM_BUSINESS_CLASS)
-        passenger_check += aviary_options.get_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS)
-        # only perform check if at least one passenger class is entered
-        if passenger_check > 0 and passenger_count != passenger_check:
+            # Aviary will calculate total passengers based on sum of passengers in each class and print warning so user knows
+            aviary_options.set_val(
+                Aircraft.CrewPayload.NUM_PASSENGERS, passenger_check)
+            warnings.warn(
+                f"Calculating Aircraft.CrewPayload.NUM_PASSENGERS as sum of first class + business class + tourist class passengers = {passenger_check}")
+        else:
+            # Flag an error to the user that their input is inconsistent and needs correcting
             raise om.AnalysisError(
                 f"ERROR: In preprocesssors.py: passenger_count ({passenger_count}) does not equal the sum of first class + business class + tourist class passengers (total of {passenger_check}).")
 
     if Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS not in aviary_options:
-        flight_attendants_count = 0  # assume no passengers
+        flight_attendants_count = 0
 
         if 0 < passenger_count:
             if passenger_count < 51:
@@ -74,7 +66,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
             Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS, flight_attendants_count)
 
     if Aircraft.CrewPayload.NUM_GALLEY_CREW not in aviary_options:
-        galley_crew_count = 0  # assume no passengers
+        galley_crew_count = 0
 
         if 150 < passenger_count:
             galley_crew_count = passenger_count // 250 + 1
