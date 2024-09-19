@@ -82,10 +82,9 @@ class HE_SGMDescentTestCase(unittest.TestCase):
                                  aviary_metadata=BaseMetaData)
         prob.model.add_subsystem(
             'pre_mission',
-            CorePreMission(aviary_options=aviary_options,
-                           subsystems=subsystems),
-            promotes_inputs=['aircraft:*', 'mission:*'],
-            promotes_outputs=['aircraft:*', 'mission:*']
+            CorePreMission(aviary_options=aviary_options, subsystems=subsystems),
+            promotes_inputs=['aircraft:*'],
+            promotes_outputs=['aircraft:*', 'mission:*'],
         )
         prob.model.add_subsystem('traj', traj,
                                  promotes=['aircraft:*', 'mission:*']

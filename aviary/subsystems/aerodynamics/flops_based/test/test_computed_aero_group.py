@@ -295,7 +295,7 @@ class MissionDragTest(unittest.TestCase):
                 aviary_options=flops_inputs, subsystems=default_premission_subsystems
             ),
             promotes_inputs=['aircraft:*'],
-            promotes_outputs=['aircraft:*'],
+            promotes_outputs=['aircraft:*', 'mission:*'],
         )
 
         model.add_subsystem(
@@ -353,6 +353,4 @@ class MissionDragTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    # unittest.main()
-    test = MissionDragTest()
-    test.test_n3cc_drag()
+    unittest.main()
