@@ -46,6 +46,15 @@ _default_name = 'aerodynamics'
 class AerodynamicsBuilderBase(SubsystemBuilderBase):
     """
     Base class of aerodynamics builder
+
+    Methods
+    -------
+    __init__(self, name=None, meta_data=None):
+        Initializes the AerodynamicsBuilderBase object with a given name.
+    mission_inputs(self, **kwargs) -> list:
+        Return mission inputs.
+    mission_outputs(self, **kwargs) -> list:
+        Return mission outputs.
     """
 
     def __init__(self, name=None, meta_data=None):
