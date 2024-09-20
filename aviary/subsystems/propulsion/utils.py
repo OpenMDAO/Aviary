@@ -5,7 +5,7 @@ default_units : dict
     Matches each EngineModelVariables entry with default units (str)
 """
 
-from enum import Enum, auto
+from enum import Enum
 from pathlib import Path
 
 import numpy as np
@@ -15,9 +15,8 @@ import aviary.constants as constants
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.named_values import NamedValues, get_keys, get_items
-from aviary.variable_info.variables import Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.variable_info.variables import Aircraft
 
 
 class EngineModelVariables(Enum):

@@ -17,12 +17,11 @@ from aviary.subsystems.propulsion.propulsion_premission import PropulsionPreMiss
 from aviary.subsystems.propulsion.propulsion_mission import PropulsionMission
 from aviary.subsystems.propulsion.engine_model import EngineModel
 
-from aviary.variable_info.variables import Aircraft
-
 # NOTE These are currently needed to get around variable hierarchy being class-based.
 #      Ideally, an alternate solution to loop through the hierarchy will be created and
 #      these can be replaced.
 from aviary.utils.preprocessors import _get_engine_variables
+from aviary.variable_info.variables import Aircraft
 
 _default_name = 'propulsion'
 

@@ -1,11 +1,9 @@
 import unittest
 
-import numpy as np
 import openmdao.api as om
 
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
-from aviary.variable_info.variables import Aircraft
 from aviary.subsystems.propulsion.propeller.hamilton_standard import (
     HamiltonStandard, PreHamiltonStandard, PostHamiltonStandard,
 )
