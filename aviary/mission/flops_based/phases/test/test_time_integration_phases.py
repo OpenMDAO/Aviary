@@ -1,20 +1,19 @@
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 
+from aviary.interface.default_phase_info.height_energy_fiti import add_default_sgm_args
 from aviary.interface.methods_for_level2 import AviaryGroup
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 from aviary.mission.flops_based.phases.time_integration_phases import \
-    SGMHeightEnergy, SGMDetailedTakeoff, SGMDetailedLanding
+    SGMHeightEnergy
 from aviary.subsystems.premission import CorePreMission
-from aviary.variable_info.enums import EquationsOfMotion
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
-
-from aviary.interface.default_phase_info.height_energy_fiti import add_default_sgm_args
-from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
 from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.process_input_decks import create_vehicle
 from aviary.utils.preprocessors import preprocess_propulsion
+from aviary.utils.process_input_decks import create_vehicle
+from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
+from aviary.variable_info.enums import EquationsOfMotion
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 import warnings
 import unittest

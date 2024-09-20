@@ -2,12 +2,12 @@ import numpy as np
 
 import openmdao.api as om
 
+from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
+from aviary.mission.ode.altitude_rate import AltitudeRate
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import AnalysisScheme, AlphaModes, SpeedType
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic
-from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
-from aviary.mission.ode.altitude_rate import AltitudeRate
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class BaseODE(om.Group):

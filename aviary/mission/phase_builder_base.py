@@ -8,15 +8,15 @@ PhaseBuilderBase : the interface for a phase builder
 from abc import ABC
 from collections import namedtuple
 
-from aviary.mission.initial_guess_builders import InitialGuess
-from aviary.variable_info.variables import Dynamic
-
 import dymos as dm
 import openmdao.api as om
 
 from aviary.mission.flops_based.ode.mission_ODE import MissionODE
+from aviary.mission.initial_guess_builders import InitialGuess
 from aviary.utils.aviary_values import AviaryValues, get_keys
+from aviary.variable_info.variables import Dynamic
 from aviary.variable_info.variable_meta_data import _MetaData
+
 
 _require_new_meta_data_class_attr_ = \
     namedtuple('_require_new_meta_data_class_attr_', ())

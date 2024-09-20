@@ -1,10 +1,10 @@
 import numpy as np
 
-from aviary.mission.phase_builder_base import PhaseBuilderBase
+from aviary.mission.gasp_based.ode.rotation_ode import RotationODE
 from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessIntegrationVariable, InitialGuessControl
+from aviary.mission.phase_builder_base import PhaseBuilderBase
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
-from aviary.mission.gasp_based.ode.rotation_ode import RotationODE
 
 
 class RotationPhase(PhaseBuilderBase):

@@ -8,7 +8,7 @@ from openmdao.utils.assert_utils import (assert_check_partials,
 from aviary.mission.gasp_based.ode.unsteady_solved.gamma_comp import GammaComp
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_eom import \
     UnsteadySolvedEOM
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class TestUnsteadyFlightEOM(unittest.TestCase):

@@ -1,9 +1,9 @@
 import openmdao.api as om
 
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
+from aviary.utils.functions import promote_aircraft_and_mission_vars
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.variable_info.enums import Verbosity
-from aviary.utils.functions import promote_aircraft_and_mission_vars
 
 
 def add_descent_estimation_as_submodel(
