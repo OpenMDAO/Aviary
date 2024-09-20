@@ -18,7 +18,6 @@ from matplotlib.backend_bases import MouseButton
 from openmdao.utils.units import convert_units
 
 
-
 def get_screen_geometry():
     """
     Taken from: https://stackoverflow.com/questions/3129322/how-do-i-get-monitor-resolution-in-python/56913005#56913005
