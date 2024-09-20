@@ -272,6 +272,9 @@ def get_flops_data(case_name: str, keys: str = None, preprocess: bool = False) -
     keys : str, or iter of str
         List of variables whose values will be transferred from the validation data.
         The default is all variables.
+    preprocess: bool
+        If true, the input data will be passed through preprocess_options() to
+        fill in any missing options before being returned. The default is False.
     """
     flops_data_copy: AviaryValues = get_flops_inputs(case_name, preprocess=preprocess)
     flops_data_copy.update(get_flops_outputs(case_name))

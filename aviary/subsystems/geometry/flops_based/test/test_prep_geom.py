@@ -64,20 +64,24 @@ class PrepGeomTest(unittest.TestCase):
 
                 override_aviary_vars(self, aviary_options)
 
-        options = get_flops_data(case_name, preprocess=True,
-                                 keys=[
-                                     Aircraft.Fuselage.NUM_FUSELAGES,
-                                     Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES,
-                                     Aircraft.VerticalTail.NUM_TAILS,
-                                     Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION,
-                                     Aircraft.Engine.NUM_ENGINES,
-                                     Aircraft.Propulsion.TOTAL_NUM_ENGINES,
-                                 ])
+        keys=[
+            Aircraft.Fuselage.NUM_FUSELAGES,
+            Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES,
+            Aircraft.VerticalTail.NUM_TAILS,
+            Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION,
+            Aircraft.Engine.NUM_ENGINES,
+            Aircraft.Propulsion.TOTAL_NUM_ENGINES,
+        ]
+
+        inputs = get_flops_data(case_name, preprocess=True, keys=keys)
+        options = {}
+        for key in keys:
+            options[key] = inputs.get_item(key)[0]
 
         prob = self.prob
 
         prob.model.add_subsystem(
-            'premission', PreMission(aviary_options=options), promotes=['*']
+            'premission', PreMission(**options), promotes=['*']
         )
 
         prob.setup(check=False, force_alloc_complex=True)
@@ -205,10 +209,15 @@ class _PrelimTest(unittest.TestCase):
 
         prob = self.prob
 
+        keys = [Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION]
+        flops_inputs = get_flops_inputs(case_name, keys=keys)
+        options = {}
+        for key in keys:
+            options[key] = flops_inputs.get_item(key)[0]
+
         prob.model.add_subsystem(
             'prelim',
-            _Prelim(aviary_options=get_flops_inputs(case_name,
-                                                    keys=[Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION])),
+            _Prelim(**options),
             promotes=['*']
         )
 
@@ -263,10 +272,15 @@ class _WingTest(unittest.TestCase):
 
         prob = self.prob
 
+        keys = [Aircraft.Fuselage.NUM_FUSELAGES]
+        flops_inputs = get_flops_inputs(case_name, keys=keys)
+        options = {}
+        for key in keys:
+            options[key] = flops_inputs.get_item(key)[0]
+
         prob.model.add_subsystem(
             'wings',
-            _Wing(aviary_options=get_flops_inputs(case_name,
-                                                  keys=[Aircraft.Fuselage.NUM_FUSELAGES])),
+            _Wing(**options),
             promotes=['*'])
 
         prob.setup(check=False, force_alloc_complex=True)
@@ -302,11 +316,16 @@ class _TailTest(unittest.TestCase):
 
         prob = self.prob
 
+        keys = [Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION,
+                Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES]
+        flops_inputs = get_flops_data(case_name, keys=keys)
+        options = {}
+        for key in keys:
+            options[key] = flops_inputs.get_item(key)[0]
+
         prob.model.add_subsystem(
             'tails',
-            _Tail(aviary_options=get_flops_inputs(case_name, preprocess=True,
-                                                  keys=[Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION,
-                                                        Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES])),
+            _Tail(**options),
             promotes=['*'])
 
         prob.setup(check=False, force_alloc_complex=True)
@@ -344,10 +363,15 @@ class _FuselageTest(unittest.TestCase):
 
         prob = self.prob
 
+        keys = [Aircraft.Fuselage.NUM_FUSELAGES]
+        flops_inputs = get_flops_inputs(case_name, keys=keys)
+        options = {}
+        for key in keys:
+            options[key] = flops_inputs.get_item(key)[0]
+
         prob.model.add_subsystem(
             'fuse',
-            _Fuselage(aviary_options=get_flops_inputs(case_name,
-                                                      keys=[Aircraft.Fuselage.NUM_FUSELAGES])),
+            _Fuselage(**options),
             promotes=['*'])
 
         prob.setup(check=False, force_alloc_complex=True)
@@ -400,14 +424,15 @@ class NacellesTest(unittest.TestCase):
 
         prob = self.prob
 
-        flops_inputs = get_flops_inputs(case_name, preprocess=True,
-                                        keys=[Aircraft.Engine.NUM_ENGINES,
-                                              Aircraft.Fuselage.NUM_FUSELAGES,
-                                              ])
+        keys = [Aircraft.Engine.NUM_ENGINES]
+        flops_inputs = get_flops_inputs(case_name, keys=keys)
+        options = {}
+        for key in keys:
+            options[key] = flops_inputs.get_item(key)[0]
 
         prob.model.add_subsystem(
             'nacelles',
-            Nacelles(aviary_options=flops_inputs),
+            Nacelles(**options),
             promotes=['*'])
 
         prob.setup(check=False, force_alloc_complex=True)
@@ -437,7 +462,7 @@ class CanardTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             'canard',
-            Canard(aviary_options=AviaryValues()),
+            Canard(),
             promotes=['*'])
 
         prob.setup(check=False, force_alloc_complex=True)
@@ -470,16 +495,16 @@ class CharacteristicLengthsTest(unittest.TestCase):
 
         prob = self.prob
 
-        flops_inputs = get_flops_inputs(case_name, preprocess=True,
-                                        keys=[Aircraft.Engine.NUM_ENGINES,
-                                              Aircraft.Fuselage.NUM_FUSELAGES,
-                                              Aircraft.VerticalTail.NUM_TAILS,
-                                              Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION,
-                                              ])
+        keys = [Aircraft.Engine.NUM_ENGINES,
+                Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION,]
+        flops_inputs = get_flops_inputs(case_name, keys=keys)
+        options = {}
+        for key in keys:
+            options[key] = flops_inputs.get_item(key)[0]
 
         prob.model.add_subsystem(
             'characteristic_lengths',
-            CharacteristicLengths(aviary_options=flops_inputs),
+            CharacteristicLengths(**options),
             promotes=['*']
         )
 

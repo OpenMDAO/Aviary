@@ -1,7 +1,6 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import add_aviary_input, get_units, add_aviary_option
 from aviary.variable_info.variables import Aircraft
 
@@ -27,9 +26,6 @@ class SkinFrictionDrag(om.ExplicitComponent):
         self.options.declare(
             'num_nodes', types=int, default=1,
             desc='The number of points at which the cross product is computed.')
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
 
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
         add_aviary_option(self, Aircraft.Fuselage.NUM_FUSELAGES)
@@ -48,9 +44,7 @@ class SkinFrictionDrag(om.ExplicitComponent):
         nfuse = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
         num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
 
-        if not isinstance(num_engines, int):
-            num_engines = int(sum(num_engines))
-        self.nc = nc = 2 + nvtail + nfuse + num_engines
+        self.nc = nc = 2 + nvtail + nfuse + int(sum(num_engines))
 
         # Computed by other components in drag group.
         self.add_input('skin_friction_coeff', np.zeros((nn, nc)), units='unitless')

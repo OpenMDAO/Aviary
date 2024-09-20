@@ -1951,6 +1951,11 @@ class AviaryProblem(om.Problem):
 
             warnings.simplefilter("ignore", om.OpenMDAOWarning)
             warnings.simplefilter("ignore", om.PromotionWarning)
+
+            # OpenMDAO currently warns that ":" won't be supported in option names, but
+            # removing support has been reconsidered.
+            warnings.simplefilter("ignore", om.OMDeprecationWarning)
+
             super().setup(**kwargs)
 
     def set_initial_guesses(self):

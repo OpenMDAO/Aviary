@@ -1979,9 +1979,9 @@ add_meta_data(
     units='unitless',
     desc='total number of engines per model on the aircraft '
          '(fuselage, wing, or otherwise)',
-    types=(int, list, np.ndarray),
+    types=(list, np.ndarray, int),
     option=True,
-    default_value=2
+    default_value=np.array([2])
 )
 
 add_meta_data(

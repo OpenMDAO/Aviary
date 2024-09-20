@@ -2,20 +2,18 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.subsystems.geometry.flops_based.utils import Names
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft
 
 
 class CharacteristicLengths(om.ExplicitComponent):
+
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
+        add_aviary_option(self, Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION)
 
     def setup(self):
-        num_engine_type = len(self.options['aviary_options'].get_val(
-            Aircraft.Engine.NUM_ENGINES))
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
         self.add_input(Names.CROOT, 0.0, units='unitless')
 
@@ -88,9 +86,8 @@ class CharacteristicLengths(om.ExplicitComponent):
         self._setup_partials_nacelles()
         self._setup_partials_canard()
 
-    def compute(
-        self, inputs, outputs, discrete_inputs=None, discrete_outputs=None
-    ):
+    def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
+
         self._compute_wing(inputs, outputs, discrete_inputs, discrete_outputs)
 
         self._compute_horizontal_tail(
@@ -136,9 +133,7 @@ class CharacteristicLengths(om.ExplicitComponent):
             Aircraft.Wing.GLOVE_AND_BAT,
         ]
 
-        aviary_options: AviaryValues = self.options['aviary_options']
-
-        if aviary_options.get_val(Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION):
+        if self.options[Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION]:
             wrt = [
                 Names.CROOT,
                 Aircraft.Wing.TAPER_RATIO,
@@ -194,8 +189,7 @@ class CharacteristicLengths(om.ExplicitComponent):
 
     def _setup_partials_nacelles(self):
         # derivatives w.r.t vectorized engine inputs have known sparsity pattern
-        num_engine_type = len(self.options['aviary_options'].get_val(
-            Aircraft.Engine.NUM_ENGINES))
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
         shape = np.arange(num_engine_type)
 
         self.declare_partials(
@@ -234,9 +228,7 @@ class CharacteristicLengths(om.ExplicitComponent):
 
         length = ((area - glove_and_bat) / aspect_ratio)**0.5
 
-        aviary_options: AviaryValues = self.options['aviary_options']
-
-        if aviary_options.get_val(Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION):
+        if self.options[Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION]:
             taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
             CROOT = inputs[Names.CROOT]
 
@@ -305,7 +297,7 @@ class CharacteristicLengths(om.ExplicitComponent):
     ):
         # TODO do all engines support nacelles? If not, is this deliberate, or
         # just an artifact of the implementation?
-        num_eng = self.options['aviary_options'].get_val(Aircraft.Engine.NUM_ENGINES)
+        num_eng = self.options[Aircraft.Engine.NUM_ENGINES]
 
         avg_diam = inputs[Aircraft.Nacelle.AVG_DIAMETER]
         avg_length = inputs[Aircraft.Nacelle.AVG_LENGTH]
@@ -324,66 +316,66 @@ class CharacteristicLengths(om.ExplicitComponent):
         outputs[Aircraft.Nacelle.CHARACTERISTIC_LENGTH] = char_len
         outputs[Aircraft.Nacelle.FINENESS] = fineness
 
-    def _compute_additional_fuselages(
-        self, inputs, outputs, discrete_inputs=None, discrete_outputs=None
-    ):
-        num_fuselages = inputs[Aircraft.Fuselage.NUM_FUSELAGES]
+    #def _compute_additional_fuselages(
+        #self, inputs, outputs, discrete_inputs=None, discrete_outputs=None
+    #):
+        #num_fuselages = inputs[Aircraft.Fuselage.NUM_FUSELAGES]
 
-        if num_fuselages < 2:
-            return
+        #if num_fuselages < 2:
+            #return
 
-        num_extra = num_fuselages - 1
+        #num_extra = num_fuselages - 1
 
-        idx = self._num_components
-        self._num_components += num_extra
+        #idx = self._num_components
+        #self._num_components += num_extra
 
-        lengths = outputs[Aircraft.Design.CHARACTERISTIC_LENGTHS]
+        #lengths = outputs[Aircraft.Design.CHARACTERISTIC_LENGTHS]
 
-        fineness = outputs[Aircraft.Design.FINENESS]
+        #fineness = outputs[Aircraft.Design.FINENESS]
 
-        laminar_flow_lower = outputs[Aircraft.Design.LAMINAR_FLOW_LOWER]
-        laminar_flow_upper = outputs[Aircraft.Design.LAMINAR_FLOW_UPPER]
+        #laminar_flow_lower = outputs[Aircraft.Design.LAMINAR_FLOW_LOWER]
+        #laminar_flow_upper = outputs[Aircraft.Design.LAMINAR_FLOW_UPPER]
 
-        for _ in range(num_extra):
-            lengths[idx] = lengths[3]
+        #for _ in range(num_extra):
+            #lengths[idx] = lengths[3]
 
-            fineness[idx] = fineness[3]
+            #fineness[idx] = fineness[3]
 
-            laminar_flow_lower[idx] = laminar_flow_lower[3]
-            laminar_flow_upper[idx] = laminar_flow_upper[3]
+            #laminar_flow_lower[idx] = laminar_flow_lower[3]
+            #laminar_flow_upper[idx] = laminar_flow_upper[3]
 
-            idx += 1
+            #idx += 1
 
-    def _compute_additional_vertical_tails(
-        self, inputs, outputs, discrete_inputs=None, discrete_outputs=None
-    ):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        num_tails = aviary_options.get_val(Aircraft.VerticalTail.NUM_TAILS)
+    #def _compute_additional_vertical_tails(
+        #self, inputs, outputs, discrete_inputs=None, discrete_outputs=None
+    #):
+        #aviary_options: AviaryValues = self.options['aviary_options']
+        #num_tails = aviary_options.get_val(Aircraft.VerticalTail.NUM_TAILS)
 
-        if num_tails < 2:
-            return
+        #if num_tails < 2:
+            #return
 
-        num_extra = num_tails - 1
+        #num_extra = num_tails - 1
 
-        idx = self._num_components
-        self._num_components += num_extra
+        #idx = self._num_components
+        #self._num_components += num_extra
 
-        lengths = outputs[Aircraft.Design.CHARACTERISTIC_LENGTHS]
+        #lengths = outputs[Aircraft.Design.CHARACTERISTIC_LENGTHS]
 
-        fineness = outputs[Aircraft.Design.FINENESS]
+        #fineness = outputs[Aircraft.Design.FINENESS]
 
-        laminar_flow_lower = outputs[Aircraft.Design.LAMINAR_FLOW_LOWER]
-        laminar_flow_upper = outputs[Aircraft.Design.LAMINAR_FLOW_UPPER]
+        #laminar_flow_lower = outputs[Aircraft.Design.LAMINAR_FLOW_LOWER]
+        #laminar_flow_upper = outputs[Aircraft.Design.LAMINAR_FLOW_UPPER]
 
-        for _ in range(num_extra):
-            lengths[idx] = lengths[2]
+        #for _ in range(num_extra):
+            #lengths[idx] = lengths[2]
 
-            fineness[idx] = fineness[2]
+            #fineness[idx] = fineness[2]
 
-            laminar_flow_lower[idx] = laminar_flow_lower[2]
-            laminar_flow_upper[idx] = laminar_flow_upper[2]
+            #laminar_flow_lower[idx] = laminar_flow_lower[2]
+            #laminar_flow_upper[idx] = laminar_flow_upper[2]
 
-            idx += 1
+            #idx += 1
 
     def _compute_canard(
         self, inputs, outputs, discrete_inputs=None, discrete_outputs=None
@@ -406,9 +398,8 @@ class CharacteristicLengths(om.ExplicitComponent):
         outputs[Aircraft.Canard.FINENESS] = thickness_to_chord
 
     def _compute_partials_wing(self, inputs, J, discrete_inputs=None):
-        aviary_options: AviaryValues = self.options['aviary_options']
 
-        if aviary_options.get_val(Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION):
+        if self.options[Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION]:
             taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
             CROOT = inputs[Names.CROOT]
 
@@ -513,7 +504,7 @@ class CharacteristicLengths(om.ExplicitComponent):
         ] = -length / avg_diam**2.0
 
     def _compute_partials_nacelles(self, inputs, J, discrete_inputs=None):
-        num_eng = self.options['aviary_options'].get_val(Aircraft.Engine.NUM_ENGINES)
+        num_eng = self.options[Aircraft.Engine.NUM_ENGINES]
 
         avg_diam = inputs[Aircraft.Nacelle.AVG_DIAMETER]
         avg_length = inputs[Aircraft.Nacelle.AVG_LENGTH]

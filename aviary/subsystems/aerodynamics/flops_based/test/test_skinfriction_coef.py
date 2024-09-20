@@ -24,12 +24,12 @@ class SkinFrictionCoeffTest(unittest.TestCase):
         model = prob.model
 
         options = {}
-        options[Aircraft.VerticalTail.NUM_TAILS] = (0, 'unitless')
-        options[Aircraft.Fuselage.NUM_FUSELAGES] = (1, 'unitless')
-        options[Aircraft.Engine.NUM_ENGINES] = ([0], 'unitless')
+        options[Aircraft.VerticalTail.NUM_TAILS] = 0
+        options[Aircraft.Fuselage.NUM_FUSELAGES] = 1
+        options[Aircraft.Engine.NUM_ENGINES] = [0]
 
         model.add_subsystem(
-            'cf', SkinFriction(num_nodes=n, aviary_options=AviaryValues(options)), promotes=['*'])
+            'cf', SkinFriction(num_nodes=n, **options), promotes=['*'])
 
         prob.setup(force_alloc_complex=True)
 
@@ -122,12 +122,12 @@ class SkinFrictionCoeffTest(unittest.TestCase):
         model = prob.model
 
         options = {}
-        options[Aircraft.VerticalTail.NUM_TAILS] = (0, 'unitless')
-        options[Aircraft.Fuselage.NUM_FUSELAGES] = (1, 'unitless')
-        options[Aircraft.Engine.NUM_ENGINES] = ([2, 4], 'unitless')
+        options[Aircraft.VerticalTail.NUM_TAILS] = 0
+        options[Aircraft.Fuselage.NUM_FUSELAGES] = 1
+        options[Aircraft.Engine.NUM_ENGINES] = [2, 4]
 
         model.add_subsystem(
-            'cf', SkinFriction(num_nodes=n, aviary_options=AviaryValues(options)), promotes=['*'])
+            'cf', SkinFriction(num_nodes=n, **options), promotes=['*'])
 
         prob.setup(force_alloc_complex=True)
 
@@ -281,12 +281,12 @@ class SkinFrictionCoeffTest(unittest.TestCase):
         model = prob.model
 
         options = {}
-        options[Aircraft.VerticalTail.NUM_TAILS] = (0, 'unitless')
-        options[Aircraft.Fuselage.NUM_FUSELAGES] = (1, 'unitless')
-        options[Aircraft.Engine.NUM_ENGINES] = ([0], 'unitless')
+        options[Aircraft.VerticalTail.NUM_TAILS] = 0
+        options[Aircraft.Fuselage.NUM_FUSELAGES] = 1
+        options[Aircraft.Engine.NUM_ENGINES] = [0]
 
         model.add_subsystem(
-            'cf', SkinFriction(num_nodes=n, aviary_options=AviaryValues(options)))
+            'cf', SkinFriction(num_nodes=n, **options))
 
         prob.setup(force_alloc_complex=True)
 

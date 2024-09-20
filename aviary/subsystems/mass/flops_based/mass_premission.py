@@ -45,255 +45,248 @@ from aviary.subsystems.mass.flops_based.unusable_fuel import (
 from aviary.subsystems.mass.flops_based.vertical_tail import (
     AltVerticalTailMass, VerticalTailMass)
 from aviary.subsystems.mass.flops_based.wing_group import WingMassGroup
-from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.functions import add_aviary_option
 from aviary.variable_info.variables import Aircraft, Mission
 
 
 class MassPremission(om.Group):
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.Design.USE_ALT_MASS)
 
     def setup(self):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        alt_mass = aviary_options.get_val(Aircraft.Design.USE_ALT_MASS)
+        alt_mass = self.options[Aircraft.Design.USE_ALT_MASS]
 
         self.add_subsystem(
             'cargo',
-            CargoMass(aviary_options=aviary_options),
+            CargoMass(),
             promotes_inputs=['*'], promotes_outputs=['*'])
 
         self.add_subsystem(
             'cargo_containers',
-            TransportCargoContainersMass(
-                aviary_options=aviary_options),
+            TransportCargoContainersMass(),
             promotes_inputs=['*', ], promotes_outputs=['*', ])
 
         self.add_subsystem(
             'engine_controls',
-            TransportEngineCtrlsMass(aviary_options=aviary_options),
+            TransportEngineCtrlsMass(),
             promotes_inputs=['*', ], promotes_outputs=['*', ])
 
         self.add_subsystem(
             'avionics',
-            TransportAvionicsMass(aviary_options=aviary_options),
+            TransportAvionicsMass(),
             promotes_inputs=['*'], promotes_outputs=['*'])
 
         self.add_subsystem(
             'fuel_capacity_group',
-            FuelCapacityGroup(aviary_options=aviary_options),
+            FuelCapacityGroup(),
             promotes_inputs=['*'], promotes_outputs=['*'])
 
         self.add_subsystem(
             'engine_mass',
-            EngineMass(aviary_options=aviary_options),
+            EngineMass(),
             promotes_inputs=['*'], promotes_outputs=['*'])
 
         if alt_mass:
             self.add_subsystem(
                 'fuel_system',
-                AltFuelSystemMass(aviary_options=aviary_options),
+                AltFuelSystemMass(),
                 promotes_inputs=['*', ], promotes_outputs=['*', ])
 
             self.add_subsystem(
                 'AC',
-                AltAirCondMass(aviary_options=aviary_options),
+                AltAirCondMass(),
                 promotes_inputs=['*'], promotes_outputs=['*'])
 
             self.add_subsystem(
                 'engine_oil',
-                AltEngineOilMass(aviary_options=aviary_options),
+                AltEngineOilMass(),
                 promotes_inputs=['*'], promotes_outputs=['*'])
 
             self.add_subsystem(
                 'furnishing_base',
                 AltFurnishingsGroupMassBase(
-                    aviary_options=aviary_options),
+                    ),
                 promotes_inputs=['*'], promotes_outputs=['*'])
 
             self.add_subsystem(
                 'furnishings',
-                AltFurnishingsGroupMass(aviary_options=aviary_options),
+                AltFurnishingsGroupMass(),
                 promotes_inputs=['*'], promotes_outputs=['*'])
 
             self.add_subsystem(
                 'hydraulics',
-                AltHydraulicsGroupMass(aviary_options=aviary_options),
+                AltHydraulicsGroupMass(),
                 promotes_inputs=['*'], promotes_outputs=['*'])
 
             self.add_subsystem(
                 'pass_service',
-                AltPassengerServiceMass(
-                    aviary_options=aviary_options),
+                AltPassengerServiceMass(),
                 promotes_inputs=['*'], promotes_outputs=['*'])
 
             self.add_subsystem(
                 'unusable_fuel',
-                AltUnusableFuelMass(aviary_options=aviary_options),
+                AltUnusableFuelMass(),
                 promotes_inputs=['*'], promotes_outputs=['*'])
 
             self.add_subsystem(
                 'electrical',
-                AltElectricalMass(aviary_options=aviary_options),
+                AltElectricalMass(),
                 promotes_inputs=['*'], promotes_outputs=['*'])
 
         else:
             self.add_subsystem(
                 'fuel_system',
-                TransportFuelSystemMass(aviary_options=aviary_options),
+                TransportFuelSystemMass(),
                 promotes_inputs=['*', ], promotes_outputs=['*', ])
 
             self.add_subsystem(
                 'AC',
-                TransportAirCondMass(aviary_options=aviary_options),
+                TransportAirCondMass(),
                 promotes_inputs=['*'], promotes_outputs=['*'])
 
             self.add_subsystem(
                 'engine_oil',
-                TransportEngineOilMass(aviary_options=aviary_options),
+                TransportEngineOilMass(),
                 promotes_inputs=['*'], promotes_outputs=['*'])
 
             self.add_subsystem(
                 'furnishings',
-                TransportFurnishingsGroupMass(
-                    aviary_options=aviary_options),
+                TransportFurnishingsGroupMass(),
                 promotes_inputs=['*'], promotes_outputs=['*'])
 
             self.add_subsystem(
                 'hydraulics',
-                TransportHydraulicsGroupMass(
-                    aviary_options=aviary_options),
+                TransportHydraulicsGroupMass(),
                 promotes_inputs=['*'], promotes_outputs=['*'])
 
             self.add_subsystem(
                 'pass_service',
-                PassengerServiceMass(aviary_options=aviary_options),
+                PassengerServiceMass(),
                 promotes_inputs=['*'], promotes_outputs=['*'])
 
             self.add_subsystem(
                 'unusable_fuel',
-                TransportUnusableFuelMass(aviary_options=aviary_options),
+                TransportUnusableFuelMass(),
                 promotes_inputs=['*'], promotes_outputs=['*'])
 
             self.add_subsystem(
                 'electrical',
-                ElectricalMass(aviary_options=aviary_options),
+                ElectricalMass(),
                 promotes_inputs=['*'], promotes_outputs=['*'])
 
         self.add_subsystem(
             'starter',
-            TransportStarterMass(aviary_options=aviary_options),
+            TransportStarterMass(),
             promotes_inputs=['*'], promotes_outputs=['*'])
 
         self.add_subsystem(
             'anti_icing',
-            AntiIcingMass(aviary_options=aviary_options),
+            AntiIcingMass(),
             promotes_inputs=['*'], promotes_outputs=['*'])
 
         self.add_subsystem(
             'apu',
-            TransportAPUMass(aviary_options=aviary_options),
+            TransportAPUMass(),
             promotes_inputs=['*'], promotes_outputs=['*'])
 
         self.add_subsystem(
             'nonflight_crew',
-            NonFlightCrewMass(aviary_options=aviary_options),
+            NonFlightCrewMass(),
             promotes_inputs=['*'], promotes_outputs=['*'])
 
         self.add_subsystem(
             'flight_crew',
-            FlightCrewMass(aviary_options=aviary_options),
+            FlightCrewMass(),
             promotes_inputs=['*'], promotes_outputs=['*'])
 
         self.add_subsystem(
             'instruments',
-            TransportInstrumentMass(aviary_options=aviary_options),
+            TransportInstrumentMass(),
             promotes_inputs=['*'], promotes_outputs=['*'])
 
         self.add_subsystem(
             'misc_engine',
-            EngineMiscMass(aviary_options=aviary_options),
+            EngineMiscMass(),
             promotes_inputs=['*'], promotes_outputs=['*'])
 
         self.add_subsystem(
             'nacelle',
-            NacelleMass(aviary_options=aviary_options),
+            NacelleMass(),
             promotes_inputs=['*'], promotes_outputs=['*'])
 
         self.add_subsystem(
             'paint',
-            PaintMass(aviary_options=aviary_options),
+            PaintMass(),
             promotes_inputs=['*'], promotes_outputs=['*'])
 
         self.add_subsystem(
             'thrust_rev',
-            ThrustReverserMass(aviary_options=aviary_options),
+            ThrustReverserMass(),
             promotes_inputs=['*'], promotes_outputs=['*'])
 
         self.add_subsystem(
             'landing_group',
-            LandingMassGroup(aviary_options=aviary_options),
+            LandingMassGroup(),
             promotes_inputs=['*'], promotes_outputs=['*'])
 
         if alt_mass:
             self.add_subsystem(
                 'surf_ctrl',
-                AltSurfaceControlMass(aviary_options=aviary_options),
+                AltSurfaceControlMass(),
                 promotes_inputs=['*'], promotes_outputs=['*'])
 
             self.add_subsystem(
                 'fuselage',
-                AltFuselageMass(aviary_options=aviary_options),
+                AltFuselageMass(),
                 promotes_inputs=['*', ], promotes_outputs=['*', ])
 
             self.add_subsystem(
                 'htail',
-                AltHorizontalTailMass(aviary_options=aviary_options),
+                AltHorizontalTailMass(),
                 promotes_inputs=['*', ], promotes_outputs=['*', ])
 
             self.add_subsystem(
                 'vert_tail',
-                AltVerticalTailMass(aviary_options=aviary_options),
+                AltVerticalTailMass(),
                 promotes_inputs=['*'], promotes_outputs=['*'])
 
         else:
             self.add_subsystem(
                 'surf_ctrl',
-                SurfaceControlMass(aviary_options=aviary_options),
+                SurfaceControlMass(),
                 promotes_inputs=['*'], promotes_outputs=['*'])
 
             self.add_subsystem(
                 'fuselage',
-                TransportFuselageMass(aviary_options=aviary_options),
+                TransportFuselageMass(),
                 promotes_inputs=['*', ], promotes_outputs=['*', ])
 
             self.add_subsystem(
                 'htail',
-                HorizontalTailMass(aviary_options=aviary_options),
+                HorizontalTailMass(),
                 promotes_inputs=['*', ], promotes_outputs=['*', ])
 
             self.add_subsystem(
                 'vert_tail',
-                VerticalTailMass(aviary_options=aviary_options),
+                VerticalTailMass(),
                 promotes_inputs=['*'], promotes_outputs=['*'])
 
         self.add_subsystem(
             'canard',
-            CanardMass(aviary_options=aviary_options),
+            CanardMass(),
             promotes_inputs=['*'], promotes_outputs=['*'])
 
         self.add_subsystem(
             'fin',
-            FinMass(aviary_options=aviary_options),
+            FinMass(),
             promotes_inputs=['*'], promotes_outputs=['*'])
 
         self.add_subsystem(
             'wing_group',
-            WingMassGroup(aviary_options=aviary_options),
+            WingMassGroup(),
             promotes_inputs=['*'], promotes_outputs=['*'])
 
         self.add_subsystem(
             'total_mass',
-            MassSummation(aviary_options=aviary_options),
+            MassSummation(),
             promotes_inputs=['*'], promotes_outputs=['*'])

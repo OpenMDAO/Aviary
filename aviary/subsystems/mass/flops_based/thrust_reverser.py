@@ -3,8 +3,7 @@ import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.mass.flops_based.distributed_prop import nacelle_count_factor
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft
 
 
@@ -23,9 +22,7 @@ class ThrustReverserMass(om.ExplicitComponent):
     '''
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
 
     def setup(self):
         num_engine_type = len(self.options['aviary_options'].get_val(
@@ -43,8 +40,7 @@ class ThrustReverserMass(om.ExplicitComponent):
 
     def setup_partials(self):
         # derivatives w.r.t vectorized engine inputs have known sparsity pattern
-        num_engine_type = len(self.options['aviary_options'].get_val(
-            Aircraft.Engine.NUM_ENGINES))
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
         shape = np.arange(num_engine_type)
 
         self.declare_partials(Aircraft.Engine.THRUST_REVERSERS_MASS,
@@ -64,8 +60,7 @@ class ThrustReverserMass(om.ExplicitComponent):
                               val=1.0)
 
     def compute(self, inputs, outputs):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        num_eng = aviary_options.get_val(Aircraft.Engine.NUM_ENGINES)
+        num_eng = self.options[Aircraft.Engine.NUM_ENGINES]
         scaler = inputs[Aircraft.Engine.THRUST_REVERSERS_MASS_SCALER]
         max_thrust = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
         nac_count = nacelle_count_factor(num_eng)
@@ -76,8 +71,7 @@ class ThrustReverserMass(om.ExplicitComponent):
             thrust_reverser_mass)
 
     def compute_partials(self, inputs, J):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        num_eng = aviary_options.get_val(Aircraft.Engine.NUM_ENGINES)
+        num_eng = self.options[Aircraft.Engine.NUM_ENGINES]
         scaler = inputs[Aircraft.Engine.THRUST_REVERSERS_MASS_SCALER]
         max_thrust = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
         nac_count = nacelle_count_factor(num_eng)

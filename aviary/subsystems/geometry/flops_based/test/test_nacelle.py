@@ -7,7 +7,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from aviary.subsystems.geometry.flops_based.nacelle import Nacelles
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import get_flops_inputs
-from aviary.variable_info.variables import Aircraft, Settings
+from aviary.variable_info.variables import Aircraft
 
 
 class NacelleTest(unittest.TestCase):
@@ -19,13 +19,13 @@ class NacelleTest(unittest.TestCase):
         # test with multiple engine types
         prob = self.prob
 
-        aviary_options = get_flops_inputs('LargeSingleAisle1FLOPS')
-        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2, 2, 3]))
-        aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 7)
+        options = {
+            Aircraft.Engine.NUM_ENGINES: np.array([2, 2, 3]),
+        }
 
         prob.model.add_subsystem(
             'nacelles',
-            Nacelles(aviary_options=aviary_options),
+            Nacelles(**options),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )

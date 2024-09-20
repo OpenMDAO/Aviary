@@ -39,7 +39,7 @@ class ComputedAeroGroup(om.Group):
         gamma = self.options['gamma']
         aviary_options: AviaryValues = self.options['aviary_options']
 
-        comp = MuxComponent(aviary_options=aviary_options)
+        comp = MuxComponent()
         self.add_subsystem(
             'Mux', comp,
             promotes_inputs=['aircraft:*'],
@@ -73,7 +73,7 @@ class ComputedAeroGroup(om.Group):
                 Aircraft.Wing.THICKNESS_TO_CHORD])
 
         comp = InducedDrag(
-            num_nodes=num_nodes, gamma=gamma, aviary_options=aviary_options)
+            num_nodes=num_nodes, gamma=gamma)
         self.add_subsystem(
             'InducedDrag', comp,
             promotes_inputs=[
@@ -101,7 +101,7 @@ class ComputedAeroGroup(om.Group):
                 Aircraft.Fuselage.DIAMETER_TO_WING_SPAN,
                 Aircraft.Fuselage.LENGTH_TO_DIAMETER])
 
-        comp = SkinFriction(num_nodes=num_nodes, aviary_options=aviary_options)
+        comp = SkinFriction(num_nodes=num_nodes)
         self.add_subsystem(
             'SkinFrictionCoef', comp,
             promotes_inputs=[
@@ -109,7 +109,7 @@ class ComputedAeroGroup(om.Group):
                 'characteristic_lengths'],
             promotes_outputs=['skin_friction_coeff', 'Re'])
 
-        comp = SkinFrictionDrag(num_nodes=num_nodes, aviary_options=aviary_options)
+        comp = SkinFrictionDrag(num_nodes=num_nodes)
         self.add_subsystem(
             'SkinFrictionDrag', comp,
             promotes_inputs=[

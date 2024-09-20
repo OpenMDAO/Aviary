@@ -3,7 +3,7 @@ import openmdao.api as om
 import scipy.constants as _units
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -22,6 +22,8 @@ class InducedDrag(om.ExplicitComponent):
         self.options.declare(
             'aviary_options', types=AviaryValues,
             desc='collection of Aircraft/Mission specific options')
+
+        add_aviary_option(self, Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION)
 
     def setup(self):
         nn = self.options["num_nodes"]
@@ -68,13 +70,11 @@ class InducedDrag(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         options = self.options
         gamma = options['gamma']
-        aviary_options: AviaryValues = options['aviary_options']
         mach, lift, P, Sref, AR, span_efficiency_factor, SW25, TR = inputs.values()
 
         CL = 2.0 * lift / (Sref * gamma * P * mach ** 2)
 
-        redux, _ = aviary_options.get_item(
-            Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION, (False, None))
+        redux = self.options[Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION]
 
         if redux:
             # Adjustment for extreme taper ratios.
@@ -113,10 +113,8 @@ class InducedDrag(om.ExplicitComponent):
     def compute_partials(self, inputs, partials):
         options = self.options
         gamma = options['gamma']
-        aviary_options: AviaryValues = options['aviary_options']
         mach, lift, P, Sref, AR, span_efficiency_factor, SW25, TR = inputs.values()
-        redux, _ = aviary_options.get_item(
-            Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION, (False, None))
+        redux = self.options[Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION]
 
         if redux:
             sqrt_AR = np.sqrt(AR)

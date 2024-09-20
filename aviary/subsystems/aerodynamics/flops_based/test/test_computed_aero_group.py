@@ -5,12 +5,14 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.subsystems.premission import CorePreMission
-from aviary.utils.functions import set_aviary_initial_values
-from aviary.validation_cases.validation_tests import get_flops_inputs, get_flops_outputs
-from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.functions import set_aviary_initial_values
 from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
 from aviary.utils.preprocessors import preprocess_options
+from aviary.validation_cases.validation_tests import get_flops_inputs, get_flops_outputs
+from aviary.variable_info.functions import extract_options
+from aviary.variable_info.variables import Aircraft, Dynamic, Settings
+from aviary.variable_info.variable_meta_data import _MetaData
 
 
 class MissionDragTest(unittest.TestCase):
@@ -79,6 +81,9 @@ class MissionDragTest(unittest.TestCase):
                                        **{'method': 'computed'}),
             promotes=['*']
         )
+
+        # Set all options
+        prob.model_options['*'] = extract_options(flops_inputs, _MetaData)
 
         prob.setup(force_alloc_complex=True)
         prob.set_solver_print(level=2)
@@ -190,6 +195,9 @@ class MissionDragTest(unittest.TestCase):
             promotes=['*']
         )
 
+        # Set all options
+        prob.model_options['*'] = extract_options(flops_inputs, _MetaData)
+
         prob.setup()
 
         # Mission params
@@ -298,6 +306,9 @@ class MissionDragTest(unittest.TestCase):
                                        **{'method': 'computed'}),
             promotes=['*']
         )
+
+        # Set all options
+        prob.model_options['*'] = extract_options(flops_inputs, _MetaData)
 
         prob.setup()
 

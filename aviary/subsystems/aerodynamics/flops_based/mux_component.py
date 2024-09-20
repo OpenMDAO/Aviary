@@ -1,8 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, get_units
+from aviary.variable_info.functions import add_aviary_input, get_units, add_aviary_option
 from aviary.variable_info.variables import Aircraft
 
 
@@ -23,13 +22,12 @@ class MuxComponent(om.ExplicitComponent):
         super().__init__(**kwargs)
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
+        add_aviary_option(self, Aircraft.Fuselage.NUM_FUSELAGES)
+        add_aviary_option(self, Aircraft.VerticalTail.NUM_TAILS)
 
     def setup(self):
         nc = 2
-        aviary_options: AviaryValues = self.options['aviary_options']
 
         # Wing (Always 1)
         add_aviary_input(self, Aircraft.Wing.WETTED_AREA, 1.0)
@@ -45,9 +43,8 @@ class MuxComponent(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER, 0.0)
         add_aviary_input(self, Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER, 0.0)
 
-        zero_count = (0, None)
-        # Vertical Tail
-        num, _ = aviary_options.get_item(Aircraft.VerticalTail.NUM_TAILS, zero_count)
+        num = self.options[Aircraft.VerticalTail.NUM_TAILS]
+
         self.num_tails = num
         if num > 0:
             add_aviary_input(self, Aircraft.VerticalTail.WETTED_AREA, 1.0)
@@ -58,7 +55,7 @@ class MuxComponent(om.ExplicitComponent):
             nc += num
 
         # Fuselage
-        num, _ = aviary_options.get_item(Aircraft.Fuselage.NUM_FUSELAGES, zero_count)
+        num = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
         self.num_fuselages = num
         if num > 0:
             add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA, 1.0)
@@ -68,19 +65,22 @@ class MuxComponent(om.ExplicitComponent):
             add_aviary_input(self, Aircraft.Fuselage.LAMINAR_FLOW_LOWER, 0.0)
             nc += num
 
-        num_engines = aviary_options.get_val(Aircraft.Engine.NUM_ENGINES)
-        self.num_nacelles = int(sum(num_engines))
+        num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
+        num_nacelles = int(sum(num_engines))
+        num_engine_models = len(num_engines)
+        self.num_nacelles = num_nacelles
+
         if self.num_nacelles > 0:
             add_aviary_input(self, Aircraft.Nacelle.WETTED_AREA,
-                             np.zeros(len(num_engines)))
+                             np.zeros(num_engine_models))
             add_aviary_input(self, Aircraft.Nacelle.FINENESS,
-                             np.zeros(len(num_engines)))
+                             np.zeros(num_engine_models))
             add_aviary_input(self, Aircraft.Nacelle.CHARACTERISTIC_LENGTH,
-                             np.zeros(len(num_engines)))
+                             np.zeros(num_engine_models))
             add_aviary_input(self, Aircraft.Nacelle.LAMINAR_FLOW_UPPER,
-                             np.zeros(len(num_engines)))
+                             np.zeros(num_engine_models))
             add_aviary_input(self, Aircraft.Nacelle.LAMINAR_FLOW_LOWER,
-                             np.zeros(len(num_engines)))
+                             np.zeros(num_engine_models))
             nc += self.num_nacelles
 
         self.add_output(
@@ -185,8 +185,8 @@ class MuxComponent(om.ExplicitComponent):
         # Nacelle
         if self.num_nacelles > 0:
             # derivatives w.r.t vectorized engine inputs have known sparsity pattern
-            num_engines = self.options['aviary_options'].get_val(
-                Aircraft.Engine.NUM_ENGINES)
+            num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
+
             rows = ic + np.arange(self.num_nacelles)
             cols = [item for sublist in [[i]*j for i,
                                          j in enumerate(num_engines)] for item in sublist]
@@ -268,7 +268,7 @@ class MuxComponent(om.ExplicitComponent):
             ic += self.num_fuselages
 
         # Nacelle
-        num_engines = self.options['aviary_options'].get_val(Aircraft.Engine.NUM_ENGINES)
+        num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
 
         wetted_areas = inputs[Aircraft.Nacelle.WETTED_AREA]
         fineness = inputs[Aircraft.Nacelle.FINENESS]
