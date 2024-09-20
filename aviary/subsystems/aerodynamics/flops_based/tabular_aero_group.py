@@ -7,10 +7,10 @@ from aviary.subsystems.aerodynamics.flops_based.drag import TotalDrag as Drag
 from aviary.subsystems.aerodynamics.flops_based.lift import \
     LiftEqualsWeight as CL
 from aviary.utils.csv_data_file import read_data_file
+from aviary.utils.data_interpolator_builder import build_data_interpolator
 from aviary.utils.functions import get_path
 from aviary.utils.named_values import NamedValues
 from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.utils.data_interpolator_builder import build_data_interpolator
 
 
 # Map of variable names to allowed headers for data files (only lowercase required,
