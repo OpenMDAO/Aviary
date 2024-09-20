@@ -1,12 +1,11 @@
 import unittest
 import aviary.api as av
 
-from aviary.interface.default_phase_info.height_energy import phase_info_parameterization
-from aviary.variable_info.enums import ProblemType, Verbosity
-from aviary.variable_info.variables import Mission
-
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 from openmdao.utils.assert_utils import assert_near_equal
+
+from aviary.interface.default_phase_info.height_energy import phase_info_parameterization
+from aviary.variable_info.enums import ProblemType, Verbosity
 
 
 class HeightEnergyTestCase(unittest.TestCase):

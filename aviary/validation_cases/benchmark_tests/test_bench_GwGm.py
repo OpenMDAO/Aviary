@@ -7,8 +7,8 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.interface.default_phase_info.two_dof import phase_info
 from aviary.interface.methods_for_level1 import run_aviary
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 from aviary.variable_info.enums import AnalysisScheme
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 @use_tempdirs

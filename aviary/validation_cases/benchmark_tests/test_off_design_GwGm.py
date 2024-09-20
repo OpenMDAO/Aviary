@@ -1,12 +1,12 @@
 import unittest
 import aviary.api as av
 from copy import deepcopy
-from aviary.variable_info.enums import ProblemType, Verbosity, SpeedType
-from aviary.variable_info.variables import Mission
-from aviary.interface.default_phase_info.two_dof import phase_info
 
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 from openmdao.utils.assert_utils import assert_near_equal
+
+from aviary.interface.default_phase_info.two_dof import phase_info
+from aviary.variable_info.enums import ProblemType, Verbosity
 
 
 class TwoDOFTestCase(unittest.TestCase):
