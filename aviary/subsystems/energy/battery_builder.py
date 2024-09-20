@@ -9,6 +9,22 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 class BatteryBuilder(SubsystemBuilderBase):
     """
     Battery builder class
+
+    Methods
+    -------
+    build_pre_mission(self, aviary_inputs=None) -> openmdao.core.System:
+        Builds an OpenMDAO system for the pre-mission computations of the subsystem.
+    build_mission(self, num_nodes, aviary_inputs=None) -> om.Group:
+        Builds an OpenMDAO system for the mission computations of the subsystem.
+    get_mass_names(self) -> list:
+        Returns the name of variable Aircraft.Battery.MASS as a list
+    get_states(self) -> dict:
+        Returns a dictionary of the subsystem's states, where the keys are the names 
+        of the state variables, and the values are dictionaries that contain the units 
+        for the state variable and any additional keyword arguments required by OpenMDAO 
+        for the state variable.
+    get_constraints(self) -> dict:
+        Returns a dictionary of constraints for the battery subsystem.
     """
 
     default_name = 'battery'
