@@ -14,16 +14,6 @@ import numpy as np
 import openmdao.api as om
 from dymos.utils.misc import _unspecified
 
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic
-
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
-from aviary.subsystems.aerodynamics.flops_based.drag_polar import DragPolar
-from aviary.subsystems.aerodynamics.flops_based.design import Design
-from aviary.subsystems.aerodynamics.gasp_based.premission_aero import PreMissionAero
-from aviary.subsystems.aerodynamics.gasp_based.gaspaero import CruiseAero
-from aviary.subsystems.aerodynamics.gasp_based.gaspaero import LowSpeedAero
-from aviary.subsystems.aerodynamics.gasp_based.table_based import TabularCruiseAero
-from aviary.subsystems.aerodynamics.gasp_based.table_based import TabularLowSpeedAero
 from aviary.subsystems.aerodynamics.flops_based.computed_aero_group import \
     ComputedAeroGroup
 from aviary.subsystems.aerodynamics.flops_based.takeoff_aero_group import \
@@ -32,9 +22,18 @@ from aviary.subsystems.aerodynamics.flops_based.solved_alpha_group import \
     SolvedAlphaGroup
 from aviary.subsystems.aerodynamics.flops_based.tabular_aero_group import \
     TabularAeroGroup
+from aviary.subsystems.aerodynamics.flops_based.drag_polar import DragPolar
+from aviary.subsystems.aerodynamics.flops_based.design import Design
+from aviary.subsystems.aerodynamics.gasp_based.premission_aero import PreMissionAero
+from aviary.subsystems.aerodynamics.gasp_based.gaspaero import CruiseAero
+from aviary.subsystems.aerodynamics.gasp_based.gaspaero import LowSpeedAero
+from aviary.subsystems.aerodynamics.gasp_based.table_based import TabularCruiseAero
+from aviary.subsystems.aerodynamics.gasp_based.table_based import TabularLowSpeedAero
+from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.utils.named_values import NamedValues
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 
 
 GASP = LegacyCode.GASP
