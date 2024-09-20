@@ -1,5 +1,6 @@
 from typing import Union
 from pathlib import Path
+import importlib_resources
 from contextlib import ExitStack
 import atexit
 import os
