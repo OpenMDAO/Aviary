@@ -59,11 +59,6 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
             Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS in aviary_options:
         user_input_design_1TB = True
 
-    print('user_input_num_pax', user_input_num_pax)
-    print('user_input_design_num_pax', user_input_design_num_pax)
-    print('user_input_1TB', user_input_1TB)
-    print('user_input_design_1TB', user_input_design_1TB)
-
     # Grab Default values for 1TB (1st class, Tourist Class, Business Class Passengers) to make
     #   sure they are accessible so we don't have to run checks if they exist again
     if user_input_1TB:
@@ -102,11 +97,13 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
             design_passenger_count += aviary_options.get_val(key)
 
     # Create summary data if it was not assigned by the user originally
-    if user_input_num_pax is False and user_input_1TB is True:
+    # or if it was left or set to it's default value of zero
+    if user_input_num_pax is False and user_input_1TB is True or \
+            user_input_num_pax and aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS) == 0:
         aviary_options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, passenger_count)
         user_input_num_pax = True
-    if user_input_design_1TB and not user_input_design_num_pax:
-        print('setting Design.NUM_PASSENGERS')
+    if user_input_design_1TB and not user_input_design_num_pax or \
+            user_input_design_num_pax and aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS) == 0:
         aviary_options.set_val(
             Aircraft.CrewPayload.Design.NUM_PASSENGERS, design_passenger_count)
         user_input_design_num_pax = True
