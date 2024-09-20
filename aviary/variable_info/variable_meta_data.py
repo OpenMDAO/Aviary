@@ -632,7 +632,7 @@ add_meta_data(
     desc='number of business class passengers that the aircraft is designed to accommodate',
     types=int,
     option=True,
-    default_value=0, #AviaryValues.get_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS),
+    default_value=0,  # AviaryValues.get_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS),
 )
 
 add_meta_data(

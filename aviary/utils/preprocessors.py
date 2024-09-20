@@ -8,6 +8,7 @@ from aviary.utils.named_values import get_keys
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Mission
 from aviary.utils.test_utils.variable_test import get_names_from_hierarchy
+from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 
 
 def preprocess_options(aviary_options: AviaryValues, **kwargs):
@@ -35,64 +36,215 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
     returns the modified collection.
     """
 
-    # If Design.Num_Passenger values are left blank (as they are in all pre- 9/18/2024 examples),
-    # then set Design.Num_Passenger to Num_Passenger
+    # Check which values were received from user input
+    user_input_num_pax = False
+    user_input_design_num_pax = False
+    user_input_1TB = False
+    user_input_design_1TB = False
 
-    # If individual passenger numbers are set but not totals, sum them up to find the total
+    if Aircraft.CrewPayload.NUM_PASSENGERS in aviary_options:
+        user_input_num_pax = True
+        print('NUM_PASSENGERS', aviary_options.get_val(
+            Aircraft.CrewPayload.NUM_PASSENGERS))
+    if Aircraft.CrewPayload.Design.NUM_PASSENGERS in aviary_options:
+        user_input_design_num_pax = True
+        print('Design.NUM_PASSENGERS', aviary_options.get_val(
+            Aircraft.CrewPayload.Design.NUM_PASSENGERS))
+    if Aircraft.CrewPayload.NUM_FIRST_CLASS in aviary_options or \
+        Aircraft.CrewPayload.NUM_BUSINESS_CLASS in aviary_options or \
+            Aircraft.CrewPayload.NUM_TOURIST_CLASS in aviary_options:
+        user_input_1TB = True
+    if Aircraft.CrewPayload.Design.NUM_FIRST_CLASS in aviary_options or \
+        Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS in aviary_options or \
+            Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS in aviary_options:
+        user_input_design_1TB = True
 
-    # CHeck if total = individual passenger counts
+    print('user_input_num_pax', user_input_num_pax)
+    print('user_input_design_num_pax', user_input_design_num_pax)
+    print('user_input_1TB', user_input_1TB)
+    print('user_input_design_1TB', user_input_design_1TB)
 
-    # If Design.Num_Passengers < Num_Passengers warn and exit?
+    # Grab Default values for 1TB (1st class, Tourist Class, Business Class Passengers) to make
+    #   sure they are accessible so we don't have to run checks if they exist again
+    if user_input_1TB:
+        if Aircraft.CrewPayload.NUM_FIRST_CLASS not in aviary_options:
+            aviary_options.set_val(Aircraft.CrewPayload.NUM_FIRST_CLASS,
+                                   BaseMetaData[Aircraft.CrewPayload.NUM_FIRST_CLASS]['default_value'])
+        if Aircraft.CrewPayload.NUM_BUSINESS_CLASS not in aviary_options:
+            aviary_options.set_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS,
+                                   BaseMetaData[Aircraft.CrewPayload.NUM_BUSINESS_CLASS]['default_value'])
+        if Aircraft.CrewPayload.NUM_TOURIST_CLASS not in aviary_options:
+            aviary_options.set_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS,
+                                   BaseMetaData[Aircraft.CrewPayload.NUM_TOURIST_CLASS]['default_value'])
+    if user_input_design_1TB:
+        if Aircraft.CrewPayload.Design.NUM_FIRST_CLASS not in aviary_options:
+            aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS,
+                                   BaseMetaData[Aircraft.CrewPayload.Design.NUM_FIRST_CLASS]['default_value'])
+        if Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS not in aviary_options:
+            aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS,
+                                   BaseMetaData[Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS]['default_value'])
+        if Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS not in aviary_options:
+            aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS,
+                                   BaseMetaData[Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS]['default_value'])
 
-    # sum up the number of passengers if they were defined individually
+    # Sum passenger Counts for later checks and assignments
     passenger_count = 0
-    design_passenger_count = 0
     for key in (Aircraft.CrewPayload.NUM_FIRST_CLASS,
                 Aircraft.CrewPayload.NUM_BUSINESS_CLASS,
                 Aircraft.CrewPayload.NUM_TOURIST_CLASS):
         if key in aviary_options:
             passenger_count += aviary_options.get_val(key)
+    design_passenger_count = 0
     for key in (Aircraft.CrewPayload.Design.NUM_FIRST_CLASS,
                 Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS,
                 Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS):
         if key in aviary_options:
             design_passenger_count += aviary_options.get_val(key)
 
-    # check if passenger_count = num_passengers, otherwise set num_passengers
-    if Aircraft.CrewPayload.NUM_PASSENGERS in aviary_options:
-        if passenger_count != aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS):
-            raise om.AnalysisError(
-                f"ERROR: In preprocesssors.py: NUM_PASSENGERS ({Aircraft.CrewPayload.NUM_PASSENGERS}) does not equal the sum of first class + business class + tourist class passengers (total of {passenger_count}).")
-    else:
+    # Create summary data if it was not assigned by the user originally
+    if user_input_num_pax is False and user_input_1TB is True:
+        aviary_options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, passenger_count)
+        user_input_num_pax = True
+    if user_input_design_1TB and not user_input_design_num_pax:
+        print('setting Design.NUM_PASSENGERS')
         aviary_options.set_val(
-            Aircraft.CrewPayload.NUM_PASSENGERS, passenger_count)
+            Aircraft.CrewPayload.Design.NUM_PASSENGERS, design_passenger_count)
+        user_input_design_num_pax = True
 
-    # check if design_passenger_count = design.num_passengers, otherwise set design.num_passengers
-    if Aircraft.CrewPayload.Design.NUM_PASSENGERS in aviary_options:
-        if design_passenger_count != aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS):
-            raise om.AnalysisError(
-                f"ERROR: In preprocesssors.py: Design.NUM_PASSENGERS ({Aircraft.CrewPayload.Design.NUM_PASSENGERS}) does not equal the sum of Design [first class + business class + tourist class] passengers (total of {design_passenger_count}).")
-    else:
-        # Design.NUM_PASSENGERS has not been set
-        if design_passenger_count > 0:
-            # a design passenger number for business / tourist / first class was set
-            aviary_options.set_val(
-                Aircraft.CrewPayload.Design.NUM_PASSENGERS, design_passenger_count)
-        else:
-            # no design passenger values were set, assume design is same as num_passengers
-            aviary_options.set_val(
-                Aircraft.CrewPayload.Design.NUM_PASSENGERS, aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS))
-            aviary_options.set_val(
-                Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, aviary_options.get_val(Aircraft.CrewPayload.NUM_FIRST_CLASS))
-            aviary_options.set_val(
-                Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS, aviary_options.get_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS))
-            aviary_options.set_val(
-                Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS, aviary_options.get_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS))
-
-    # check if NUM_PASSENGERS > DESIGN.NUM_PASSENGERS
-    if aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS) < aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS):
+    # Fail if incorrect data sets were provided:
+    if user_input_num_pax and user_input_design_1TB and not user_input_1TB:
         raise om.AnalysisError(
-            f"ERROR: In preprocesssors.py: Design.NUM_PASSENGERS ({Aircraft.CrewPayload.Design.NUM_PASSENGERS}) is less than NUM_PASSENGERS ({Aircraft.CrewPayload.NUM_PASSENGERS}).")
+            f"ERROR: In preprocessor.py: User must specify CrewPayload.FIRST_CLASS, CrewPayload.NUM_BUSINESS_CLASS, Design.NUM_TOURIST_CLASS in aviary_values.")
+    if user_input_design_num_pax and user_input_1TB and not user_input_design_1TB:
+        raise om.AnalysisError(
+            f"ERROR: In preprocessor.py: User must specify Design.FIRST_CLASS, Design.NUM_BUSINESS_CLASS, Design.NUM_TOURIST_CLASS in aviary_values.")
+
+    # Check summary data against individual data if individual data was entered
+    if user_input_1TB is True and aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS) != passenger_count:
+        raise om.AnalysisError(
+            f"ERROR: In preprocesssors.py: NUM_PASSENGERS ({aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)}) does not equal the sum of first class + business class + tourist class passengers (total of {passenger_count}).")
+    if user_input_design_1TB is True and aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS) != design_passenger_count:
+        raise om.AnalysisError(
+            f"ERROR: In preprocesssors.py: Design.NUM_PASSENGERS ({aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS)}) does not equal the sum of design first class + business class + tourist class passengers (total of {design_passenger_count}).")
+
+    # Copy data over if only one set of data exists
+    if user_input_1TB and not (user_input_design_num_pax and user_input_design_1TB):
+        aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS,
+                               aviary_options.get_val(Aircraft.CrewPayload.NUM_FIRST_CLASS))
+        aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS,
+                               aviary_options.get_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS))
+        aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS,
+                               aviary_options.get_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS))
+        user_input_design_1TB = True
+    if user_input_num_pax and not user_input_design_num_pax:
+        aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS,
+                               aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS))
+        user_input_design_num_pax = True
+    if user_input_design_1TB and not (user_input_num_pax and user_input_1TB):
+        aviary_options.set_val(Aircraft.CrewPayload.NUM_FIRST_CLASS, aviary_options.get_val(
+            Aircraft.CrewPayload.Design.NUM_FIRST_CLASS))
+        aviary_options.set_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS, aviary_options.get_val(
+            Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS))
+        aviary_options.set_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS, aviary_options.get_val(
+            Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS))
+        user_input_1TB = True
+    if user_input_design_num_pax and not user_input_num_pax:
+        aviary_options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, aviary_options.get_val(
+            Aircraft.CrewPayload.Design.NUM_PASSENGERS))
+        user_input_num_pax = True
+
+    # Performe checks on the final data tables to ensure data is accurate
+    if user_input_design_num_pax and user_input_num_pax:
+        if aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS) < aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS):
+            raise om.AnalysisError(
+                f"ERROR: In preprocesssors.py: NUM_PASSENGERS ({aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)}) is larger than the number of seats set by Design.NUM_PASSENGERS ({aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS)}) .")
+    if user_input_1TB and user_input_design_1TB:
+        if aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS) < aviary_options.get_val(Aircraft.CrewPayload.NUM_FIRST_CLASS):
+            raise om.AnalysisError(
+                f"ERROR: In preprocesssors.py: NUM_FIRST_CLASS ({aviary_options.get_val(Aircraft.CrewPayload.NUM_FIRST_CLASS)}) is larger than the number of seats set by Design.NUM_FIRST_CLASS ({aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)}) .")
+        if aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS) < aviary_options.get_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS):
+            raise om.AnalysisError(
+                f"ERROR: In preprocesssors.py: NUM_BUSINESS_CLASS ({aviary_options.get_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS)}) is larger than the number of seats set by Design.NUM_BUSINESS_CLASS ({aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)}) .")
+        if aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS) < aviary_options.get_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS):
+            raise om.AnalysisError(
+                f"ERROR: In preprocesssors.py: NUM_TOURIST_CLASS ({aviary_options.get_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS)}) is larger than the number of seats set by Design.NUM_TOURIST_CLASS ({aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS)}) .")
+
+        # fail
+
+        # # Assign NUM_Passengers if it's not assigned
+        # if Aircraft.CrewPayload.NUM_PASSENGERS not in aviary_options:
+        #     aviary_options.set_val(
+        #         Aircraft.CrewPayload.NUM_PASSENGERS, passenger_count)
+        # else:
+        #     # we only do this if the values don't match AND at least one of the first/buisness/tourist passenger counts has been set
+        #     if passenger_count > 0 and aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS) != passenger_count:
+        #         raise om.AnalysisError(
+        #             f"ERROR: In preprocesssors.py: NUM_PASSENGERS ({aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)}) does not equal the sum of first class + business class + tourist class passengers (total of {passenger_count}).")
+
+        # # Check if any Design.NUM_ values exist, if non of them exist, assign all values
+        # # if any of them do exist, don't over-write anything
+        # if Aircraft.CrewPayload.Design.NUM_PASSENGERS not in aviary_options and \
+        #     Aircraft.CrewPayload.Design.NUM_FIRST_CLASS not in aviary_options and \
+        #         Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS not in aviary_options and \
+        # Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS not in aviary_options:
+        #     for key in ([Aircraft.CrewPayload.NUM_PASSENGERS, Aircraft.CrewPayload.Design.NUM_PASSENGERS],
+        #                 [Aircraft.CrewPayload.NUM_FIRST_CLASS,
+        #                     Aircraft.CrewPayload.Design.NUM_FIRST_CLASS],
+        #                 [Aircraft.CrewPayload.NUM_BUSINESS_CLASS,
+        #                     Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS],
+        #                 [Aircraft.CrewPayload.NUM_TOURIST_CLASS, Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS]):
+        #         if key[0] in aviary_options:
+        #             aviary_options.set_val(
+        #                 key[1], aviary_options.get_val(key[0]))
+
+        # # if the user has specified Design.NUM_
+        # if Aircraft.CrewPayload.NUM_PASSENGERS not in aviary_options and \
+        #     Aircraft.CrewPayload.NUM_FIRST_CLASS not in aviary_options and \
+        #         Aircraft.CrewPayload.NUM_BUSINESS_CLASS not in aviary_options and \
+        # Aircraft.CrewPayload.NUM_TOURIST_CLASS not in aviary_options:
+        #     for key in ([Aircraft.CrewPayload.NUM_PASSENGERS, Aircraft.CrewPayload.Design.NUM_PASSENGERS],
+        #                 [Aircraft.CrewPayload.NUM_FIRST_CLASS,
+        #                     Aircraft.CrewPayload.Design.NUM_FIRST_CLASS],
+        #                 [Aircraft.CrewPayload.NUM_BUSINESS_CLASS,
+        #                     Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS],
+        #                 [Aircraft.CrewPayload.NUM_TOURIST_CLASS, Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS]):
+        #         if key[1] in aviary_options:
+        #             aviary_options.set_val(
+        #                 key[0], aviary_options.get_val(key[1]))
+
+        # # Assign Design.NUM_Passengers if it hasn't been set yet
+        # if Aircraft.CrewPayload.Design.NUM_PASSENGERS not in aviary_options:
+        #     aviary_options.set_val(
+        #         Aircraft.CrewPayload.NUM_PASSENGERS, design_passenger_count)
+        # else:
+        #     # we only do this if the values don't match AND at least one of the first/buisness/tourist passenger counts has been set
+        #     if design_passenger_count > 0 and aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS) != design_passenger_count:
+        #         raise om.AnalysisError(
+        #             f"ERROR: In preprocesssors.py: Design.NUM_PASSENGERS ({aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS)}) does not equal the sum of design first class + business class + tourist class passengers (total of {design_passenger_count}).")
+
+        # # Check the individual seat assignments if they exist and error if more passengers have been assigned to that group than seats:
+        # if aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS) < aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS):
+        #     raise om.AnalysisError(
+        #         f"ERROR: In preprocessor.py: More passengers assigned to aircraft than seats. Design.NUM_PASSENGERS < NUM_PASSENGERS."
+        #     )
+
+        # if Aircraft.CrewPayload.Design.NUM_FIRST_CLASS in aviary_options and Aircraft.CrewPayload.NUM_FIRST_CLASS in aviary_options:
+        #     if aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS) < aviary_options.get_val(Aircraft.CrewPayload.NUM_FIRST_CLASS):
+        #         raise om.AnalysisError(
+        #             f"ERROR: In preprocessor.py: More passengers assigned to first class than seats. Design.NUM_FIRST_CLASS < NUM_FIRST_CLASS."
+        #         )
+
+        # if Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS in aviary_options and Aircraft.CrewPayload.NUM_BUSINESS_CLASS in aviary_options:
+        #     if aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS) < aviary_options.get_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS):
+        #         raise om.AnalysisError(
+        #             f"ERROR: In preprocessor.py: More passengers assigned to business class than seats. Design.NUM_BUSINESS_CLASS < NUM_BUSINESS_CLASS."
+        #         )
+
+        # if Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS in aviary_options and Aircraft.CrewPayload.NUM_TOURIST_CLASS in aviary_options:
+        #     if aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS) < aviary_options.get_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS):
+        #         raise om.AnalysisError(
+        #             f"ERROR: In preprocessor.py: More passengers assigned to tourist class than seats. Design.NUM_TOURIST_CLASS < NUM_TOURIST_CLASS."
+        #         )
 
     if Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS not in aviary_options:
         flight_attendants_count = 0  # assume no passengers
@@ -154,7 +306,7 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
     Performs basic sanity checks on inputs that are universal to all EngineModels.
 
     !!! WARNING !!!
-    Values in aviary_options can be overwritten with corresponding values from 
+    Values in aviary_options can be overwritten with corresponding values from
     engine_models!
 
     Parameters

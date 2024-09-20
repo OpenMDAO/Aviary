@@ -8,24 +8,21 @@ aircraft:crew_and_payload:num_tourist_class,0,unitless
 aircraft:crew_and_payload:num_first_class,0,unitless
 
 """
-from aviary.validation_cases.validation_tests import get_flops_inputs
-from aviary.api import SubsystemBuilderBase
-from aviary.subsystems.mass.flops_based.furnishings import TransportFurnishingsGroupMass
-import sys
-import warnings
-import dymos as dm
-import numpy as np
-from os.path import join
-import matplotlib.pyplot as plt
-
-import openmdao.api as om
-import aviary.api as av
-from aviary.variable_info.enums import ProblemType
-from aviary.variable_info.variables import Mission, Aircraft
-
-
-from aviary.examples.example_phase_info import phase_info
 import copy as copy
+from aviary.examples.example_phase_info import phase_info
+from aviary.variable_info.variables import Mission, Aircraft
+from aviary.variable_info.enums import ProblemType
+import aviary.api as av
+import openmdao.api as om
+import matplotlib.pyplot as plt
+from os.path import join
+import numpy as np
+import dymos as dm
+import warnings
+import sys
+from aviary.subsystems.mass.flops_based.furnishings import TransportFurnishingsGroupMass
+from aviary.api import SubsystemBuilderBase
+from aviary.validation_cases.validation_tests import get_flops_inputs
 
 # fly the same mission twice with two different passenger loads
 phase_info_primary = copy.deepcopy(phase_info)
@@ -35,14 +32,13 @@ phase_info_deadhead = copy.deepcopy(phase_info)
 # get large single aisle values
 aviary_inputs_primary = get_flops_inputs('LargeSingleAisle2FLOPS')
 aviary_inputs_primary.set_val(
-    'aircraft:crew_and_payload:design:num_passengers', 162, 'unitless')
+    Aircraft.CrewPayload.Design.NUM_PASSENGERS, 162, 'unitless')
 aviary_inputs_primary.set_val(
     'aircraft:crew_and_payload:design:num_tourist_class', 150, 'unitless')
 aviary_inputs_primary.set_val(
     'aircraft:crew_and_payload:design:num_business_class', 0, 'unitless')
 aviary_inputs_primary.set_val(
     'aircraft:crew_and_payload:design:num_first_class', 12, 'unitless')
-
 
 aviary_inputs_deadhead = copy.deepcopy(aviary_inputs_primary)
 aviary_inputs_deadhead.set_val('aircraft:crew_and_payload:num_passengers', 0, 'unitless')
@@ -53,6 +49,7 @@ aviary_inputs_deadhead.set_val(
 aviary_inputs_deadhead.set_val(
     'aircraft:crew_and_payload:num_first_class', 0, 'unitless')
 aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.MISC_CARGO, 0.0, 'lbm')
+
 
 # phase_info_deadhead['post_mission']['target_range'] = [1500, "nmi"]
 
