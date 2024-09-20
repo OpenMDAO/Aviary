@@ -1,6 +1,5 @@
 from typing import Union
 from pathlib import Path
-import importlib_resources
 from contextlib import ExitStack
 import atexit
 import os
@@ -9,7 +8,7 @@ import openmdao.api as om
 import numpy as np
 from openmdao.utils.units import convert_units
 
-from aviary.utils.aviary_values import AviaryValues, get_keys, get_items
+from aviary.utils.aviary_values import AviaryValues, get_items
 from aviary.variable_info.enums import ProblemType, EquationsOfMotion, LegacyCode
 from aviary.variable_info.functions import add_aviary_output, add_aviary_input
 from aviary.variable_info.variable_meta_data import _MetaData

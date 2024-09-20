@@ -1,10 +1,10 @@
 import unittest
 from pathlib import Path
 
-from aviary.utils.functions import get_path
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.utils.engine_deck_conversion import EngineDeckType, _exec_EDC
+from aviary.utils.functions import get_path
 
 
 class DummyArgs(object):

@@ -1,7 +1,7 @@
 import unittest
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.utils.process_input_decks import create_vehicle, parse_inputs
+from aviary.utils.process_input_decks import create_vehicle
 from aviary.utils.functions import get_path
 
 
