@@ -6,8 +6,8 @@ The engine model was developed using NPSS v3.2.
 from copy import deepcopy
 import aviary.api as av
 
-from aviary.examples.external_subsystems.engine_NPSS.table_engine_builder import TableEngineBuilder as EngineBuilder
 from aviary.examples.external_subsystems.engine_NPSS.engine_variable_meta_data import ExtendedMetaData
+from aviary.examples.external_subsystems.engine_NPSS.table_engine_builder import TableEngineBuilder as EngineBuilder
 
 
 def define_aviary_NPSS_problem():

@@ -7,10 +7,9 @@ the variable "Tail" using the alias Aircraft.HorizontalTail.MASS
 """
 import openmdao.api as om
 
+from aviary.examples.external_subsystems.simple_weight.simple_weight import SimpleWeight
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.variable_info.variables import Aircraft
-
-from aviary.examples.external_subsystems.simple_weight.simple_weight import SimpleWeight
 
 
 class WingWeightBuilder(SubsystemBuilderBase):

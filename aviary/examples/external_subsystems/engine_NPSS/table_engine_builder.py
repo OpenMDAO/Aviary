@@ -1,15 +1,14 @@
-import openmdao.api as om
-
-from aviary.subsystems.propulsion.engine_model import EngineModel
-from aviary.utils.aviary_values import AviaryValues
-
-from aviary.examples.external_subsystems.engine_NPSS.NPSS_Model.DesignEngineGroup import DesignEngineGroup
-from aviary.examples.external_subsystems.engine_NPSS.engine_variable_meta_data import ExtendedMetaData
-from aviary.examples.external_subsystems.engine_NPSS.engine_variables import Aircraft, Dynamic
-from aviary.examples.external_subsystems.engine_NPSS.table_engine_connected_variables import vars_to_connect
-from aviary.utils.functions import get_aviary_resource_path
 import os
 import numpy as np
+import openmdao.api as om
+
+from aviary.examples.external_subsystems.engine_NPSS.engine_variable_meta_data import ExtendedMetaData
+from aviary.examples.external_subsystems.engine_NPSS.engine_variables import Aircraft, Dynamic
+from aviary.examples.external_subsystems.engine_NPSS.NPSS_Model.DesignEngineGroup import DesignEngineGroup
+from aviary.examples.external_subsystems.engine_NPSS.table_engine_connected_variables import vars_to_connect
+from aviary.subsystems.propulsion.engine_model import EngineModel
+from aviary.utils.aviary_values import AviaryValues
+from aviary.utils.functions import get_aviary_resource_path
 
 
 class TableEngineBuilder(EngineModel):
