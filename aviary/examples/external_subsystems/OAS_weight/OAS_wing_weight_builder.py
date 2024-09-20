@@ -25,7 +25,7 @@ class OASWingWeightBuilder(av.SubsystemBuilderBase):
     def __init__(self, name='wing_weight'):
         super().__init__(name)
 
-    def build_pre_mission(self):
+    def build_pre_mission(self, aviary_inputs):
         '''
         Build an OpenMDAO system for the pre-mission computations of the subsystem.
 
