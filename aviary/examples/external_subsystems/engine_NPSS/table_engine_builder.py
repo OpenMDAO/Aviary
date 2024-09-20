@@ -22,7 +22,7 @@ class TableEngineBuilder(EngineModel):
         object label
     aviary_inputs: AviaryValues
         default Aviary options
-    
+
     Methods
     -------
     __init__(self, name='NPSS_prop_system', aviary_inputs=AviaryValues()):
