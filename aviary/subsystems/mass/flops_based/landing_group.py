@@ -5,7 +5,7 @@ from aviary.subsystems.mass.flops_based.landing_gear import (
 from aviary.subsystems.mass.flops_based.landing_mass import (
     LandingMass, LandingTakeoffMassRatio)
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft
 
 
 class LandingMassGroup(om.Group):

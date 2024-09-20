@@ -6,8 +6,8 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.mass.gasp_based.equipment_and_useful_load import \
     EquipAndUsefulLoadMass
-from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.enums import GASPEngineType
+from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission
 
 
