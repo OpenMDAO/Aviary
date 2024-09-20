@@ -7,11 +7,22 @@ class PolynomialFit(om.ImplicitComponent):
     """
     Using location data (control points) to build a polynomial fit function
     and to compute initial gear time and flap time.
+
+    Methods
+    -------
+    initialize(self):
+        declare number of control point "N_cp"
+    setup(self):
+        setup the polynomial fit inputs, outputs, and solver.
+    solve_nonlinear(self, inputs, outputs):
+        Compute the outputs, given the inputs using the numpy fitting function.
+    apply_nonlinear(self, inputs, outputs, residuals):
+        Compute the residuals
     """
 
     def initialize(self):
 
-        self.options.declare("N_cp", types=int)
+        self.options.declare("N_cp", types=int, desc="number of control point")
 
     def setup(self):
 
