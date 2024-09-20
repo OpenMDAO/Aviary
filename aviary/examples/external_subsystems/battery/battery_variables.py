@@ -7,7 +7,7 @@ AviaryMission = av_Mission
 
 class Aircraft(AviaryAircraft):
     """
-    Aircraft data hierarchy
+    Aircraft data hierarchy for battery subsystem.
     """
 
     # cell = single cell, battery = one case plus multiple cells
@@ -36,7 +36,7 @@ class Aircraft(AviaryAircraft):
 
 class Mission(AviaryMission):
     """
-    Mission data hierarchy
+    Mission data hierarchy for battery subsystem.
     """
 
     class Battery:

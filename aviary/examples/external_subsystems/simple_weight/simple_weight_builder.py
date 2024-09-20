@@ -16,6 +16,20 @@ from aviary.examples.external_subsystems.simple_weight.simple_weight import Simp
 class WingWeightBuilder(SubsystemBuilderBase):
     """
     Prototype of a subsystem that overrides an aviary internally computed var.
+
+    It also provides a method to build OpenMDAO systems for the pre-mission and mission computations of the subsystem.
+
+    Attributes
+    ----------
+    name : str ('wing_weight')
+        object label
+
+    Methods
+    -------
+    __init__(self, name='wing_weight'):
+        Initializes the WingWeightBuilder object with a given name.
+    build_pre_mission(self, aviary_inputs) -> openmdao.core.System:
+        Builds an OpenMDAO system for the pre-mission computations of the subsystem.
     """
 
     def __init__(self, name='wing_weight'):

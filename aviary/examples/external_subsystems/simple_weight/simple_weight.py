@@ -16,7 +16,7 @@ from aviary.variable_info.variables import Aircraft
 
 
 class SimpleWeight(om.ExplicitComponent):
-    """A simple weight component"""
+    """A simple weight component that computes wing mass."""
 
     def setup(self):
 

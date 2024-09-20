@@ -11,6 +11,10 @@ from aviary.examples.external_subsystems.engine_NPSS.engine_variables import Air
 
 
 class NPSSExternalCodeComp(om.ExternalCodeComp):
+    """
+    TODO: docstring
+    """
+
     def initialize(self):
         self.options.declare('vec_size', default=72, types=int,
                              desc='number of points in NPSS model deck. Will need to be updated if size of deck changes')
