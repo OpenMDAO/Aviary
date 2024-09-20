@@ -20,10 +20,13 @@ from openmdao.utils.mpi import MPI
 from openmdao.utils.reports_system import _default_reports
 
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
+from aviary.interface.default_phase_info.two_dof_fiti import add_default_sgm_args
+from aviary.interface.utils.check_phase_info import check_phase_info
+from aviary.mission.energy_phase import EnergyPhase
 from aviary.mission.flops_based.phases.build_landing import Landing
 from aviary.mission.flops_based.phases.build_takeoff import Takeoff
-from aviary.mission.energy_phase import EnergyPhase
 from aviary.mission.twodof_phase import TwoDOFPhase
+from aviary.mission.gasp_based.idle_descent_estimation import add_descent_estimation_as_submodel
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 from aviary.mission.gasp_based.phases.groundroll_phase import GroundrollPhase
@@ -38,30 +41,27 @@ from aviary.mission.gasp_based.phases.landing_group import LandingSegment
 from aviary.mission.gasp_based.phases.taxi_group import TaxiSegment
 from aviary.mission.gasp_based.phases.v_rotate_comp import VRotateComp
 from aviary.mission.gasp_based.polynomial_fit import PolynomialFit
-from aviary.subsystems.premission import CorePreMission
-from aviary.utils.functions import create_opts2vals, add_opts2vals, promote_aircraft_and_mission_vars, wrapped_convert_units
-from aviary.utils.process_input_decks import create_vehicle, update_GASP_options, initialization_guessing
-from aviary.utils.preprocessors import preprocess_crewpayload
-from aviary.interface.utils.check_phase_info import check_phase_info
-from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.functions import convert_strings_to_data, set_value
+from aviary.mission.phase_builder_base import PhaseBuilderBase
 
-from aviary.variable_info.functions import setup_trajectory_params, override_aviary_vars
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
-from aviary.variable_info.enums import AnalysisScheme, ProblemType, EquationsOfMotion, LegacyCode, Verbosity
-from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
-
-from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
+from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
 from aviary.subsystems.mass.mass_builder import CoreMassBuilder
-from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
-from aviary.utils.preprocessors import preprocess_propulsion
-from aviary.utils.merge_variable_metadata import merge_meta_data
+from aviary.subsystems.premission import CorePreMission
+from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
 
-from aviary.interface.default_phase_info.two_dof_fiti import add_default_sgm_args
-from aviary.mission.gasp_based.idle_descent_estimation import add_descent_estimation_as_submodel
-from aviary.mission.phase_builder_base import PhaseBuilderBase
+from aviary.utils.aviary_values import AviaryValues
+from aviary.utils.functions import create_opts2vals, add_opts2vals, promote_aircraft_and_mission_vars, wrapped_convert_units
+from aviary.utils.functions import convert_strings_to_data, set_value
+from aviary.utils.merge_variable_metadata import merge_meta_data
+from aviary.utils.preprocessors import preprocess_crewpayload, preprocess_propulsion
+from aviary.utils.process_input_decks import create_vehicle, update_GASP_options, initialization_guessing
+
+from aviary.variable_info.enums import AnalysisScheme, ProblemType, EquationsOfMotion, LegacyCode, Verbosity
+from aviary.variable_info.functions import setup_trajectory_params, override_aviary_vars
+from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
+from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
+
 
 
 FLOPS = LegacyCode.FLOPS
