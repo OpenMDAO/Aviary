@@ -3,9 +3,9 @@ import unittest
 
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
-from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.interface.default_phase_info.two_dof import phase_info as two_dof_phase_info
 from aviary.interface.default_phase_info.height_energy import phase_info as height_energy_phase_info
+from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.models.N3CC.N3CC_data import inputs
 
 
