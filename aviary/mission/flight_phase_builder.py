@@ -2,16 +2,15 @@ import numpy as np
 
 import dymos as dm
 
-from aviary.mission.phase_builder_base import PhaseBuilderBase, register
 from aviary.mission.initial_guess_builders import InitialGuessState
+from aviary.mission.flops_based.ode.mission_ODE import MissionODE
+from aviary.mission.flops_based.phases.phase_utils import add_subsystem_variables_to_phase, get_initial
+from aviary.mission.phase_builder_base import PhaseBuilderBase, register
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.mission.flops_based.phases.phase_utils import add_subsystem_variables_to_phase, get_initial
-from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.mission.flops_based.ode.mission_ODE import MissionODE
 from aviary.variable_info.enums import EquationsOfMotion, ThrottleAllocation
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 # TODO: support/handle the following in the base class
