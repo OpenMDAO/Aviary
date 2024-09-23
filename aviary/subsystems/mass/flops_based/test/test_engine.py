@@ -85,7 +85,9 @@ class EngineMassTest(unittest.TestCase):
             aviary_options=options), promotes=['*'])
         prob.setup(force_alloc_complex=True)
         prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST,
-                     np.array([28000] * 3), units='lbf')
+                     np.array([28000.0, 28000.0, 28000.0]), units='lbf')
+        prob.set_val(Aircraft.Engine.MASS_SCALER,
+                     np.array([1.15, 1.0, 0.2]))
 
         prob.run_model()
 
@@ -102,7 +104,7 @@ class EngineMassTest(unittest.TestCase):
         assert_near_equal(additional_mass, additional_mass_expected, tolerance=1e-10)
 
         partial_data = prob.check_partials(
-            out_stream=None, compact_print=True, show_only_incorrect=True, form='central', method="cs")
+            out_stream=None, compact_print=True, show_only_incorrect=True, method="cs")
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
 
     def test_IO(self):
