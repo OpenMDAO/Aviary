@@ -2188,8 +2188,8 @@ class AviaryProblem(om.Problem):
                     self.phase_info[phase_name]['user_options']['initial_bounds'], 's')
                 duration_bounds = wrapped_convert_units(
                     self.phase_info[phase_name]['user_options']['duration_bounds'], 's')
-                guesses["time"] = ([np.mean(initial_bounds[0]), np.mean(
-                    duration_bounds[0])], 's')
+                guesses["time"] = (
+                    [initial_bounds[0], initial_bounds[0]+duration_bounds[0]], 's')
 
         for guess_key, guess_data in guesses.items():
             val, units = guess_data
