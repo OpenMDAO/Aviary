@@ -86,7 +86,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
     get_parameters()
         Return a dictionary of fixed values for the subsystem.
     report()
-        Generate the report for Aviary core aerodynamics analysis
+        Generate the report for Aviary core aerodynamics analysis.
     """
 
     def __init__(self, name=None, meta_data=None, code_origin=None):

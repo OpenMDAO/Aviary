@@ -39,9 +39,9 @@ class PropulsionBuilderBase(SubsystemBuilderBase):
     Methods
     -------
     mission_inputs()
-        class method.d
+        class method to return mission inputs.
     mission_outputs()
-        class method.
+        class method to return mission outputs.
     """
 
     def __init__(self, name=None, meta_data=None):
@@ -67,23 +67,34 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
 
     Methods
     -------
-    build_pre_mission()
-        Build pre-mission
-    build_mission()
-        Build pre-mission
-    get_states()
-    get_controls()
-    get_parameters()
-    get_constraints()
-    get_linked_variables()
-    get_bus_variables()
-    define_order()
-    get_design_vars()
-    get_initial_guesses()
-    get_mass_names()
-    preprocess_inputs()
-    get_outputs()
-    report()
+    build_pre_mission(self, aviary_inputs) -> openmdao.core.System:
+        Build pre-mission.
+    build_mission(self, num_nodes, aviary_inputs, **kwargs) -> openmdao.core.System:
+        Build pre-mission.
+    get_states(self) -> dict:
+        Call get_states() on all engine models and return combined result.
+    get_parameters(self, aviary_inputs=None, phase_info=None) -> dict:
+        Set expected shape of all variables that need to be vectorized for multiple engine types.
+    get_controls(self, phase_name=None) -> dict:
+        Call get_controls() on all engine models and return combined result.
+    get_linked_variables(self) -> dict:
+        Call get_linked_variables() on all engine models and return combined result.
+    get_bus_variables(self) -> dict
+        Call get_linked_variables() on all engine models and return combined result.
+    define_order(self) -> list:
+        Call define_order() on all engine models and return combined result.
+    get_design_vars(self) -> dict:
+        Call get_design_vars() on all engine models and return combined result.
+    get_initial_guesses(self) -> dict:
+        Call get_initial_guesses() on all engine models and return combined result.
+    get_mass_names(self) -> list:
+        Call get_mass_names() on all engine models and return combined result.
+    preprocess_inputs(self) -> aviary_inputs:
+        Call get_mass_names() on all engine models and return combined result.
+    get_outputs(self) -> list:
+        Call get_outputs() on all engine models and return combined result.
+    report(self):
+        Generate the report for Aviary core propulsion analysis.
     """
 
     def __init__(self, name=None, meta_data=None, engine_models=None, **kwargs):
