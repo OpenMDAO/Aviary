@@ -84,10 +84,12 @@ class EngineMassTest(unittest.TestCase):
         prob.model.add_subsystem('engine_mass', EngineMass(
             aviary_options=options), promotes=['*'])
         prob.setup(force_alloc_complex=True)
+
         prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST,
                      np.array([28000.0, 28000.0, 28000.0]), units='lbf')
-        prob.set_val(Aircraft.Engine.MASS_SCALER,
-                     np.array([1.15, 1.0, 0.2]))
+        # Pull value from the processed options.
+        val, units = options.get_item(Aircraft.Engine.MASS_SCALER)
+        prob.set_val(Aircraft.Engine.MASS_SCALER, val, units=units)
 
         prob.run_model()
 
