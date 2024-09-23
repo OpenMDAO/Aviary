@@ -16,6 +16,9 @@ class CargoMass(om.ExplicitComponent):
     '''
 
     def initialize(self):
+        add_aviary_option(self, Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER,
+                          units='lbm')
+        add_aviary_option(self, Aircraft.CrewPayload.MASS_PER_PASSENGER, units='lbm')
         add_aviary_option(self, Aircraft.CrewPayload.NUM_PASSENGERS)
 
     def setup(self):
@@ -52,12 +55,8 @@ class CargoMass(om.ExplicitComponent):
         self, inputs, outputs, discrete_inputs=None, discrete_outputs=None
     ):
         passenger_count = self.options[Aircraft.CrewPayload.NUM_PASSENGERS]
-
-        mass_per_passenger = aviary_options.get_val(
-            Aircraft.CrewPayload.MASS_PER_PASSENGER, units='lbm')
-
-        baggage_mass_per_passenger = aviary_options.get_val(
-            Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER, 'lbm')
+        mass_per_passenger, _ = self.options[Aircraft.CrewPayload.MASS_PER_PASSENGER]
+        baggage_mass_per_passenger, _  = self.options[Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER]
 
         outputs[Aircraft.CrewPayload.PASSENGER_MASS] = \
             mass_per_passenger * passenger_count

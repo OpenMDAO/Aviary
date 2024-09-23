@@ -1,7 +1,8 @@
-import dymos as dm
 import openmdao.api as om
-from dymos.utils.misc import _unspecified
 from openmdao.core.component import Component
+from openmdao.utils.units import convert_units
+import dymos as dm
+from dymos.utils.misc import _unspecified
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variable_meta_data import _MetaData
@@ -102,7 +103,30 @@ def add_aviary_output(comp, varname, val, units=None, desc=None, shape_by_conn=F
                     desc=output_desc, shape_by_conn=shape_by_conn)
 
 
-def add_aviary_option(comp, name, val=_unspecified, desc=None, meta_data=_MetaData):
+def units_setter(opt_meta, value):
+    """
+    Check and convert new units tuple into
+
+    Parameters
+    ----------
+    opt_meta : dict
+        Dictionary of entries for the option.
+    value : any
+        New value for the option.
+
+    Returns
+    -------
+    any
+        Post processed value to set into the option.
+    """
+    new_val, new_units = value
+    old_val, units = opt_meta['val']
+
+    converted_val = convert_units(new_val, new_units, units)
+    return (converted_val, units)
+
+
+def add_aviary_option(comp, name, val=_unspecified, units=None, desc=None, meta_data=_MetaData):
     """
     Adds an option to an Aviary component. Default values from the metadata are used
     unless a new value is specified.
@@ -118,6 +142,8 @@ def add_aviary_option(comp, name, val=_unspecified, desc=None, meta_data=_MetaDa
         is used.
     desc: str
         (Optional) description text for the variable.
+    units: str
+        (Optional) OpenMDAO units string. This can be specified for variables with units.
     meta_data: dict
         (Optional) Aviary metadata dictionary. If unspecified, the built-in metadata will
         be used.
@@ -127,7 +153,12 @@ def add_aviary_option(comp, name, val=_unspecified, desc=None, meta_data=_MetaDa
         desc = meta['desc']
     if val is _unspecified:
         val = meta['default_value']
-    comp.options.declare(name, default=val, types=meta['types'], desc=desc)
+
+    if units not in [None, 'unitless']:
+        comp.options.declare(name, default=(val, units), types=meta['types'], desc=desc,
+                             set_function=units_setter)
+    else:
+        comp.options.declare(name, default=val, types=meta['types'], desc=desc)
 
 
 def override_aviary_vars(group, aviary_inputs: AviaryValues,

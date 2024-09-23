@@ -13,7 +13,7 @@ from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.utils.functions import get_path
 from aviary.validation_cases.validation_tests import (flops_validation_test,
                                                       get_flops_case_names,
-                                                      get_flops_inputs,
+                                                      get_flops_options,
                                                       print_case)
 from aviary.variable_info.variables import Aircraft, Settings
 
@@ -31,10 +31,12 @@ class EngineMassTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             "engine_mass",
-            EngineMass(aviary_options=get_flops_inputs(case_name, preprocess=True)),
+            EngineMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        prob.model_options['*'] = get_flops_options(case_name, preprocess=True)
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -81,8 +83,7 @@ class EngineMassTest(unittest.TestCase):
         engine3 = EngineDeck(name='engine3', options=options)
         preprocess_propulsion(options, [engine, engine2, engine3])
 
-        prob.model.add_subsystem('engine_mass', EngineMass(
-            aviary_options=options), promotes=['*'])
+        prob.model.add_subsystem('engine_mass', EngineMass(), promotes=['*'])
         prob.setup(force_alloc_complex=True)
         prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST,
                      np.array([28000] * 3), units='lbf')

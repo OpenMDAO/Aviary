@@ -8,7 +8,7 @@ from aviary.subsystems.mass.flops_based.cargo_containers import \
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (flops_validation_test,
                                                       get_flops_case_names,
-                                                      get_flops_inputs,
+                                                      get_flops_options,
                                                       print_case)
 from aviary.variable_info.variables import Aircraft
 
@@ -26,11 +26,12 @@ class CargoContainerMassTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             "cargo_containers",
-            TransportCargoContainersMass(
-                aviary_options=get_flops_inputs(case_name)),
+            TransportCargoContainersMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        prob.model_options['*'] = get_flops_options(case_name, preprocess=True)
 
         prob.setup(check=False, force_alloc_complex=True)
 

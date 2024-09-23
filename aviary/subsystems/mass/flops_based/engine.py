@@ -16,6 +16,7 @@ class EngineMass(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
+        add_aviary_option(self, Aircraft.Engine.SCALE_MASS)
 
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
@@ -23,16 +24,18 @@ class EngineMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST,
                          val=np.zeros(num_engine_type))
 
+        #add_aviary_input(self, Aircraft.Engine.MASS_SCALER,
+        #                 val=np.zeros(num_engine_type))
+
         add_aviary_output(self, Aircraft.Engine.MASS, val=np.zeros(num_engine_type))
         add_aviary_output(self, Aircraft.Engine.ADDITIONAL_MASS,
                           val=np.zeros(num_engine_type))
         add_aviary_output(self, Aircraft.Propulsion.TOTAL_ENGINE_MASS, val=0.0)
 
     def compute(self, inputs, outputs):
-        aviary_options: AviaryValues = self.options['aviary_options']
-
+        options = self.options
         # cast to numpy arrays to ensure values are always correct type
-        num_engines = np.array(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
+        num_engines = options[Aircraft.Engine.NUM_ENGINES]
         scaling_parameter = np.array(aviary_options.get_val(Aircraft.Engine.MASS_SCALER))
         scale_mass = np.array(aviary_options.get_val(Aircraft.Engine.SCALE_MASS))
         addtl_mass_fraction = np.array(aviary_options.get_val(
@@ -69,8 +72,7 @@ class EngineMass(om.ExplicitComponent):
         outputs[Aircraft.Engine.ADDITIONAL_MASS] = addtl_mass
 
     def setup_partials(self):
-        num_engine_type = len(self.options['aviary_options'].get_val(
-            Aircraft.Engine.NUM_ENGINES))
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
         shape = np.arange(num_engine_type)
 
         self.declare_partials(Aircraft.Engine.MASS,

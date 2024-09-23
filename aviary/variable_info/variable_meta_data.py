@@ -642,7 +642,7 @@ add_meta_data(
     units='lbm',
     desc='baggage mass per passenger',
     option=True,
-    default_value=None,
+    default_value=50.,
 )
 
 add_meta_data(
@@ -2226,7 +2226,7 @@ add_meta_data(
                      },
     desc='Toggle for enabling scaling of engine mass',
     option=True,
-    types=bool,
+    types=(bool, list),
     default_value=True,
 )
 

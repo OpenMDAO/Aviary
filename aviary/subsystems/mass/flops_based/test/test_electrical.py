@@ -9,7 +9,7 @@ from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (Version,
                                                       flops_validation_test,
                                                       get_flops_case_names,
-                                                      get_flops_inputs,
+                                                      get_flops_options,
                                                       print_case)
 from aviary.variable_info.variables import Aircraft
 
@@ -27,7 +27,7 @@ class ElectricMassTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             "electric_test",
-            ElectricalMass(aviary_options=get_flops_inputs(case_name, preprocess=True)),
+            ElectricalMass(),
             promotes_outputs=[
                 Aircraft.Electrical.MASS,
             ],
@@ -37,6 +37,8 @@ class ElectricMassTest(unittest.TestCase):
                 Aircraft.Electrical.MASS_SCALER
             ]
         )
+
+        prob.model_options['*'] = get_flops_options(case_name, preprocess=True)
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -66,8 +68,7 @@ class AltElectricMassTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             "electric_test",
-            AltElectricalMass(aviary_options=get_flops_inputs(
-                case_name, preprocess=True)),
+            AltElectricalMass(),
             promotes_outputs=[
                 Aircraft.Electrical.MASS,
             ],
@@ -75,6 +76,8 @@ class AltElectricMassTest(unittest.TestCase):
                 Aircraft.Electrical.MASS_SCALER
             ]
         )
+
+        prob.model_options['*'] = get_flops_options(case_name, preprocess=True)
 
         prob.setup(check=False, force_alloc_complex=True)
 
