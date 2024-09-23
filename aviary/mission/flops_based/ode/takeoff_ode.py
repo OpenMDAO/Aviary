@@ -8,14 +8,9 @@ from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.mission.flops_based.ode.takeoff_eom import StallSpeed, TakeoffEOM
 from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.functions import promote_aircraft_and_mission_vars
+from aviary.mission.utils import ExternalSubsystemGroup
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.enums import AnalysisScheme
-
-
-class ExternalSubsystemGroup(om.Group):
-    def configure(self):
-        promote_aircraft_and_mission_vars(self)
 
 
 class TakeoffODE(om.Group):
