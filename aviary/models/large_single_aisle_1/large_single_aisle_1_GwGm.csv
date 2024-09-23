@@ -56,7 +56,7 @@ aircraft:fuselage:pressure_differential,7.5,psi
 aircraft:fuselage:seat_pitch,29,inch
 aircraft:fuselage:seat_width,20.2,inch
 aircraft:fuselage:tail_fineness,3,unitless
-aircraft:fuselage:wetted_area_factor,4000,unitless
+aircraft:fuselage:wetted_area,4000,ft**2
 aircraft:horizontal_tail:area,0,ft**2
 aircraft:horizontal_tail:aspect_ratio,4.75,unitless
 aircraft:horizontal_tail:form_factor,1.25,unitless
@@ -156,14 +156,14 @@ mission:taxi:duration,0.1677,h
 settings:equations_of_motion,2DOF
 settings:mass_method,GASP
 
-# Initial Guesses
+# Initialization Guesses
 actual_takeoff_mass,0
 climb_range,0
 cruise_mass_final,0
 flight_duration,0
-fuel_burn_per_passenger_mile,0.1
+fuel_burn_per_passenger_mile,0
 reserves,0
-rotation_mass,0.99
+rotation_mass,0
 time_to_climb,0
 
 # Unconverted Values
