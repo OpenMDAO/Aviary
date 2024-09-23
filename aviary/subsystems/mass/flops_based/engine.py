@@ -154,4 +154,3 @@ class EngineMass(om.ExplicitComponent):
         J[Aircraft.Engine.ADDITIONAL_MASS,
             Aircraft.Engine.MASS_SCALER
           ] = addtl_mass_fraction * scale_deriv
-
