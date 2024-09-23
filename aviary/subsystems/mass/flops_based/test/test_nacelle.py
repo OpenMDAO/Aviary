@@ -28,9 +28,15 @@ class NacelleMassTest(unittest.TestCase):
 
         prob = self.prob
 
+        inputs = get_flops_inputs(case_name, preprocess=True)
+
+        options = {
+            Aircraft.Engine.NUM_ENGINES: inputs.get_val(Aircraft.Engine.NUM_ENGINES),
+        }
+
         prob.model.add_subsystem(
             "nacelle",
-            NacelleMass(aviary_options=get_flops_inputs(case_name, preprocess=True)),
+            NacelleMass(**options),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -66,9 +72,15 @@ class NacelleMassTest(unittest.TestCase):
 
         preprocess_propulsion(options, [engineModel1, engineModel2, engineModel3])
 
-        prob.model.add_subsystem('nacelle_mass', NacelleMass(
-            aviary_options=options), promotes=['*'])
+        comp_options = {
+            Aircraft.Engine.NUM_ENGINES: options.get_val(Aircraft.Engine.NUM_ENGINES),
+        }
+
+        prob.model.add_subsystem('nacelle_mass', NacelleMass(**comp_options),
+                                 promotes=['*'])
+
         prob.setup(force_alloc_complex=True)
+
         prob.set_val(Aircraft.Nacelle.AVG_DIAMETER,
                      np.array([5.0, 3.0, 8.0]), units='ft')
         prob.set_val(Aircraft.Nacelle.AVG_LENGTH,

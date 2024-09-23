@@ -25,8 +25,7 @@ class ThrustReverserMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
 
     def setup(self):
-        num_engine_type = len(self.options['aviary_options'].get_val(
-            Aircraft.Engine.NUM_ENGINES))
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
         add_aviary_input(
             self, Aircraft.Engine.THRUST_REVERSERS_MASS_SCALER, val=np.zeros(num_engine_type))

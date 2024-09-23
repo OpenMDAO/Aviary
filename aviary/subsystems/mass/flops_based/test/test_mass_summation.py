@@ -99,9 +99,15 @@ class AltTotalSummationTest(unittest.TestCase):
 
         prob = self.prob
 
+        inputs = get_flops_inputs(case_name, preprocess=True)
+
+        options = {
+            Aircraft.Design.USE_ALT_MASS: inputs.get_val(Aircraft.Design.USE_ALT_MASS),
+        }
+
         prob.model.add_subsystem(
             "tot",
-            MassSummation(),
+            MassSummation(**options),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )

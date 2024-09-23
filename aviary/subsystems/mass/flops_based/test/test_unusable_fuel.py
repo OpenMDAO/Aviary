@@ -9,7 +9,7 @@ from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (Version,
                                                       flops_validation_test,
                                                       get_flops_case_names,
-                                                      get_flops_inputs,
+                                                      get_flops_options,
                                                       print_case)
 from aviary.variable_info.variables import Aircraft
 
@@ -27,14 +27,15 @@ class TransportUnusableFuelMassTest(unittest.TestCase):
     def test_case(self, case_name):
 
         prob = self.prob
-        flops_inputs = get_flops_inputs(case_name, preprocess=True)
 
         prob.model.add_subsystem(
             'unusable_fuel',
-            TransportUnusableFuelMass(aviary_options=flops_inputs),
+            TransportUnusableFuelMass(),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )
+
+        prob.model_options['*'] = get_flops_options(case_name, preprocess=True)
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -72,7 +73,7 @@ class AltUnusableFuelMassTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             'unusable_fuel',
-            AltUnusableFuelMass(aviary_options=get_flops_inputs(case_name)),
+            AltUnusableFuelMass(),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )
