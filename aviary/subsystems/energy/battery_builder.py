@@ -25,6 +25,14 @@ class BatteryBuilder(SubsystemBuilderBase):
         for the state variable.
     get_constraints(self) -> dict:
         Returns a dictionary of constraints for the battery subsystem.
+
+    Note
+    ----
+    The battery model in the energy subsystem is the simple battery model we are including
+    in Aviary as the default battery. It only tracks energy consumption (with an efficiency)
+    and state of charge. As a contrast, The battery in the examples is an "advanced" battery
+    model, which is relatively detailed (tracks voltage, current, etc.) It is only an example
+    (like the pycycle or OAS models).
     """
 
     default_name = 'battery'
