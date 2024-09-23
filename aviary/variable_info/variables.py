@@ -4,10 +4,8 @@ gets a copy of this hierarchy.
 '''
 
 
-# ---------------------------
-# Aircraft data hierarchy
-# ---------------------------
 class Aircraft:
+    """Aircraft data hierarchy"""
 
     class AirConditioning:
         MASS = 'aircraft:air_conditioning:mass'
@@ -344,12 +342,10 @@ class Aircraft:
         PILOT_COMPARTMENT_LENGTH = 'aircraft:fuselage:pilot_compartment_length'
         PLANFORM_AREA = 'aircraft:fuselage:planform_area'
         PRESSURE_DIFFERENTIAL = 'aircraft:fuselage:pressure_differential'
-        PROVIDE_SURFACE_AREA = 'aircraft:fuselage:provide_surface_area'
         SEAT_PITCH = 'aircraft:fuselage:seat_pitch'
         SEAT_WIDTH = 'aircraft:fuselage:seat_width'
         TAIL_FINENESS = 'aircraft:fuselage:tail_fineness'
         WETTED_AREA = 'aircraft:fuselage:wetted_area'
-        WETTED_AREA_FACTOR = 'aircraft:fuselage:wetted_area_factor'
         WETTED_AREA_SCALER = 'aircraft:fuselage:wetted_area_scaler'
 
     class HorizontalTail:
@@ -613,6 +609,7 @@ class Aircraft:
 
 
 class Dynamic:
+    """Dynamic mission data hierarchy"""
 
     class Mission:
         # all time-dependent variables used during mission analysis
@@ -670,6 +667,7 @@ class Dynamic:
 
 
 class Mission:
+    """mission data hierarchy"""
 
     class Constraints:
         # these can be residuals (for equality constraints),
@@ -737,7 +735,7 @@ class Mission:
         RANGE = 'mission:objectives:range'
 
     class Summary:
-        # These values are inputs and outputs to/from dynamic analysis
+        # These values are inputs and outputs to/from mission analysis
         # for the given mission (whether it is design or off-design).
         # In on-design these may be constrained to design values, but
         # in off-design they independently represent the final analysis
@@ -791,6 +789,7 @@ class Mission:
 
 
 class Settings:
+    """Setting data hierarchy"""
     EQUATIONS_OF_MOTION = 'settings:equations_of_motion'
     MASS_METHOD = 'settings:mass_method'
     PROBLEM_TYPE = 'settings:problem_type'

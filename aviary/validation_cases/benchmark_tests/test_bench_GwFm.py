@@ -13,7 +13,6 @@ from openmdao.utils.testing_utils import require_pyoptsparse
 from openmdao.core.problem import _clear_problem_names
 
 from aviary.interface.methods_for_level1 import run_aviary
-from aviary.variable_info.enums import Verbosity
 from aviary.validation_cases.benchmark_utils import \
     compare_against_expected_values
 
@@ -361,15 +360,25 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
     @require_pyoptsparse(optimizer="IPOPT")
     def bench_test_swap_1_GwFm_IPOPT(self):
-        prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwFm.csv', self.phase_info,
-                          max_iter=100, optimizer='IPOPT', verbosity=Verbosity.QUIET)
+        prob = run_aviary(
+            'models/test_aircraft/aircraft_for_bench_GwFm.csv',
+            self.phase_info,
+            max_iter=100,
+            optimizer='IPOPT',
+            verbosity=0,
+        )
 
         compare_against_expected_values(prob, self.expected_dict)
 
     @require_pyoptsparse(optimizer="SNOPT")
     def bench_test_swap_1_GwFm_SNOPT(self):
-        prob = run_aviary('models/test_aircraft/aircraft_for_bench_GwFm.csv', self.phase_info,
-                          max_iter=50, optimizer='SNOPT', verbosity=Verbosity.QUIET)
+        prob = run_aviary(
+            'models/test_aircraft/aircraft_for_bench_GwFm.csv',
+            self.phase_info,
+            max_iter=50,
+            optimizer='SNOPT',
+            verbosity=0,
+        )
 
         compare_against_expected_values(prob, self.expected_dict)
 

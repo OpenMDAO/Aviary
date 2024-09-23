@@ -11,7 +11,7 @@ from aviary.mission.gasp_based.ode.constraints.flight_constraints import FlightC
 from aviary.mission.gasp_based.ode.constraints.speed_constraints import SpeedConstraints
 
 from aviary.variable_info.enums import AnalysisScheme, AlphaModes, SpeedType
-from aviary.variable_info.variables import Mission, Dynamic
+from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
 from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
@@ -232,3 +232,5 @@ class DescentODE(BaseODE):
                                 val=0 * np.ones(nn), units="unitless")
         self.set_input_defaults(Dynamic.Mission.THROTTLE,
                                 val=0 * np.ones(nn), units="unitless")
+
+        self.set_input_defaults(Aircraft.Wing.AREA, val=1.0, units="ft**2")

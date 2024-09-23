@@ -1235,7 +1235,7 @@ add_meta_data(
                      "LEAPS1": 'aircraft.inputs.L0_overrides.weight_empty_margin'
                      },
     units='unitless',
-    desc='empty mass margin scalar',
+    desc='empty mass margin scaler',
     default_value=0.0,
 )
 
@@ -3369,21 +3369,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    # TODO get rid of this in favor of overriding. In GASP this depended on fus_SA_factor
-    Aircraft.Fuselage.PROVIDE_SURFACE_AREA,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units="unitless",
-    option=True,
-    default_value=True,
-    types=bool,
-    desc='if true the fuselage surface area is set to be fus_SA_factor, otherwise '
-         'it is calculated.')
-
-add_meta_data(
     Aircraft.Fuselage.SEAT_PITCH,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.PS',
@@ -3440,23 +3425,10 @@ add_meta_data(
     default_value=None,
 )
 
-# TODO add preprocessing step to handle variable split then combine with WETTED_AREA_SCALER
-add_meta_data(
-    Aircraft.Fuselage.WETTED_AREA_FACTOR,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.SF_FAC',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units="unitless",
-    desc='fuselage wetted area adjustment factor, if this is >10, it is interpreted as the wetted area in ft**2',
-    default_value=1,
-)
-
 add_meta_data(
     Aircraft.Fuselage.WETTED_AREA_SCALER,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
+    historical_name={"GASP": 'INGASP.SF_FAC',
                      "FLOPS": 'AERIN.SWETF',  # ['&DEFINE.AERIN.SWETF', 'AWETO.SWETF', ],
                      "LEAPS1": 'aircraft.inputs.L0_aerodynamics.fuselage_wetted_area'
                      },
@@ -8042,7 +8014,7 @@ add_meta_data(
          '0. QUIET: All output except errors are suppressed'
          '1. BRIEF: Only important information is output, in human-readable format'
          '2. VERBOSE: All user-relevant information is output, in human-readable format'
-         '3. DEBUG: All information is output, including warnings, intermediate calculations, etc., no formatting requirement',
+         '3. DEBUG: Any information can be outtputed, including warnings, intermediate calculations, etc., with no formatting requirement',
     option=True,
     types=Verbosity,
     default_value=Verbosity.BRIEF

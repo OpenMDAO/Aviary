@@ -5,7 +5,6 @@ from openmdao.utils.testing_utils import use_tempdirs
 from openmdao.core.problem import _clear_problem_names
 
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.variable_info.enums import Verbosity
 
 
 @use_tempdirs
@@ -133,7 +132,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
         # Link phases and variables
         prob.link_phases()
 
-        prob.add_driver('SLSQP', verbosity=Verbosity.QUIET)
+        prob.add_driver('SLSQP', verbosity=0)
 
         prob.add_design_variables()
 

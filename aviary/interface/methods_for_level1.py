@@ -49,6 +49,11 @@ def run_aviary(aircraft_filename, phase_info, optimizer=None,
     phase_info_parameterization : function, optional
         Additional information to parameterize the phase_info object based on
         desired cruise altitude and Mach.
+    optimization_history_filename : str or Path
+        The name of the database file where the driver iterations are to be recorded. The
+        default is None.
+    verbosity : Verbosity or int
+        Sets level of information outputted to the terminal during model execution.
 
     Returns
     -------
@@ -61,6 +66,8 @@ def run_aviary(aircraft_filename, phase_info, optimizer=None,
     It raises warnings or errors if there are clashing user inputs.
     Users can modify or add methods to alter the Aviary problem's behavior.
     """
+    # compatibility with being passed int for verbosity
+    verbosity = Verbosity(verbosity)
 
     # Build problem
     prob = AviaryProblem(analysis_scheme, name=Path(aircraft_filename).stem)
