@@ -121,3 +121,5 @@ If there's not, you can create one.
 Add a new file to this directory with the name `test_<name_of_file>.py` where `<name_of_file>` is the name of the file you're adding or modifying.
 Within this file, add a class called `Test<name_of_file>` that inherits from `unittest.TestCase`.
 Within this class, add a method called `test_<name_of_test>` where `<name_of_test>` is the name of the test you're adding.
+
+Do not write docstrings to unit test methods as we explain in [Guidelines for Contributing Code](contributing_guidelines.md).
