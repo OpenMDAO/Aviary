@@ -1997,7 +1997,8 @@ class AviaryProblem(om.Problem):
             print(guesses)
 
             # Check the name of integration variable in dymos phase
-            # integration_variable = phase.time_options['name']
+            integration_variable = phase.time_options['name']
+            print('integration_variable = ', integration_variable)
             if self.mission_method is TWO_DEGREES_OF_FREEDOM and \
                     self.phase_info[phase_name]["user_options"].get("analytic", False):
                 for guess_key, guess_data in guesses.items():
@@ -2155,13 +2156,16 @@ class AviaryProblem(om.Problem):
         if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
             control_keys = ["mach", "altitude"]
             state_keys = ["mass", Dynamic.Mission.DISTANCE]
-        else:
+        elif self.mission_method in (TWO_DEGREES_OF_FREEDOM):
             control_keys = ["velocity_rate", "throttle"]
             state_keys = ["altitude", "mass",
                           Dynamic.Mission.DISTANCE, Dynamic.Mission.VELOCITY, "flight_path_angle", "alpha"]
-            if self.mission_method is TWO_DEGREES_OF_FREEDOM and phase_name == 'ascent':
+            if phase_name == 'ascent':
                 # Alpha is a control for ascent.
                 control_keys.append('alpha')
+        else:
+            raise ValueError(
+                f"Invalid mission_method. {self.mission_method} is not recognized.")
 
         prob_keys = ["tau_gear", "tau_flaps"]
 
@@ -2186,17 +2190,6 @@ class AviaryProblem(om.Problem):
                     self.phase_info[phase_name]['user_options']['duration_bounds'], 's')
                 guesses["time"] = ([np.mean(initial_bounds[0]), np.mean(
                     duration_bounds[0])], 's')
-
-            # if time not in initial guesses, set it to the average of the initial_bounds and the duration_bounds
-            if 'time' not in guesses:
-                initial_bounds = self.phase_info[phase_name]['user_options']['initial_bounds']
-                duration_bounds = self.phase_info[phase_name]['user_options']['duration_bounds']
-                # Add a check for the initial and duration bounds, raise an error if they are not consistent
-                if initial_bounds[1] != duration_bounds[1]:
-                    raise ValueError(
-                        f"Initial and duration bounds for {phase_name} are not consistent.")
-                guesses["time"] = ([np.mean(initial_bounds[0]), np.mean(
-                    duration_bounds[0])], initial_bounds[1])
 
         for guess_key, guess_data in guesses.items():
             val, units = guess_data
