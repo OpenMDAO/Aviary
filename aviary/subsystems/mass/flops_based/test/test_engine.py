@@ -26,7 +26,6 @@ class EngineMassTest(unittest.TestCase):
     @parameterized.expand(get_flops_case_names(),
                           name_func=print_case)
     def test_case(self, case_name):
-
         prob = self.prob
 
         prob.model.add_subsystem(
@@ -84,9 +83,24 @@ class EngineMassTest(unittest.TestCase):
         preprocess_propulsion(options, [engine, engine2, engine3])
 
         prob.model.add_subsystem('engine_mass', EngineMass(), promotes=['*'])
+
+        opts = {
+            Aircraft.Engine.ADDITIONAL_MASS_FRACTION: options.get_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION),
+            Aircraft.Engine.NUM_ENGINES: options.get_val(Aircraft.Engine.NUM_ENGINES),
+            Aircraft.Engine.REFERENCE_MASS: options.get_item(Aircraft.Engine.REFERENCE_MASS),
+            Aircraft.Engine.REFERENCE_SLS_THRUST: options.get_item(Aircraft.Engine.REFERENCE_SLS_THRUST),
+            Aircraft.Engine.SCALE_MASS: options.get_val(Aircraft.Engine.SCALE_MASS),
+        }
+
+        prob.model_options['*'] = opts
+
         prob.setup(force_alloc_complex=True)
+
         prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST,
-                     np.array([28000] * 3), units='lbf')
+                     np.array([28000.0, 28000.0, 28000.0]), units='lbf')
+        # Pull value from the processed options.
+        val, units = options.get_item(Aircraft.Engine.MASS_SCALER)
+        prob.set_val(Aircraft.Engine.MASS_SCALER, val, units=units)
 
         prob.run_model()
 
@@ -103,7 +117,7 @@ class EngineMassTest(unittest.TestCase):
         assert_near_equal(additional_mass, additional_mass_expected, tolerance=1e-10)
 
         partial_data = prob.check_partials(
-            out_stream=None, compact_print=True, show_only_incorrect=True, form='central', method="cs")
+            out_stream=None, compact_print=True, show_only_incorrect=True, method="cs")
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
 
     def test_IO(self):

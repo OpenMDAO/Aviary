@@ -2023,8 +2023,8 @@ add_meta_data(
     units='unitless',
     desc='number of wing mounted engines per model',
     option=True,
-    types=int,
-    default_value=0
+    types=(list, np.ndarray, int),
+    default_value=[0]
 )
 
 add_meta_data(

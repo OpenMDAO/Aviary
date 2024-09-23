@@ -8,7 +8,7 @@ from aviary.subsystems.mass.flops_based.engine_controls import \
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (flops_validation_test,
                                                       get_flops_case_names,
-                                                      get_flops_inputs,
+                                                      get_flops_options,
                                                       print_case)
 from aviary.variable_info.variables import Aircraft
 
@@ -24,16 +24,17 @@ class BasicTransportEngineCtrlsTest(unittest.TestCase):
     @parameterized.expand(get_flops_case_names(omit='N3CC'),
                           name_func=print_case)
     def test_case(self, case_name):
-        flops_inputs = get_flops_inputs(case_name, preprocess=True)
 
         prob = self.prob
 
         prob.model.add_subsystem(
             'engine_ctrls',
-            TransportEngineCtrlsMass(aviary_options=flops_inputs),
+            TransportEngineCtrlsMass(),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )
+
+        prob.model_options['*'] = get_flops_options(case_name, preprocess=True)
 
         prob.setup(force_alloc_complex=True)
 

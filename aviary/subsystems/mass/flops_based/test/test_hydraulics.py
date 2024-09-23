@@ -40,10 +40,17 @@ class TransportHydraulicsGroupMassTest(unittest.TestCase):
 
         prob = self.prob
 
+        inputs = get_flops_inputs(case_name, preprocess=True)
+
+        options = {
+            Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES: inputs.get_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES),
+            Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: inputs.get_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES),
+            Mission.Constraints.MAX_MACH: inputs.get_val(Mission.Constraints.MAX_MACH),
+        }
+
         prob.model.add_subsystem(
             'hydraulics',
-            TransportHydraulicsGroupMass(
-                aviary_options=get_flops_inputs(case_name, preprocess=True)),
+            TransportHydraulicsGroupMass(**options),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )
@@ -82,8 +89,7 @@ class AltHydraulicsGroupMassTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             'hydraulics',
-            AltHydraulicsGroupMass(
-                aviary_options=get_flops_inputs(case_name, preprocess=True)),
+            AltHydraulicsGroupMass(),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )

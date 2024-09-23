@@ -9,6 +9,7 @@ from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (Version,
                                                       flops_validation_test,
                                                       get_flops_case_names,
+                                                      get_flops_options,
                                                       get_flops_inputs,
                                                       print_case)
 from aviary.variable_info.variables import Aircraft
@@ -28,15 +29,18 @@ class TransportEngineOilMassTest(unittest.TestCase):
 
         prob = self.prob
 
-        options = get_flops_inputs(case_name)
-        options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2)
+        options = {
+            Aircraft.Propulsion.TOTAL_NUM_ENGINES: 2,
+        }
 
         prob.model.add_subsystem(
             'engine_oil',
-            TransportEngineOilMass(aviary_options=options),
+            TransportEngineOilMass(**options),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )
+
+        prob.model_options['*'] = options
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -67,15 +71,20 @@ class AltEngineOilMassTest(unittest.TestCase):
 
         prob = self.prob
 
-        options = get_flops_inputs(case_name)
-        options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2)
+        inputs = get_flops_inputs(case_name, preprocess=True)
+
+        options = {
+            Aircraft.CrewPayload.NUM_PASSENGERS: inputs.get_val(Aircraft.CrewPayload.NUM_PASSENGERS),
+        }
 
         prob.model.add_subsystem(
             'engine_oil',
-            AltEngineOilMass(aviary_options=options),
+            AltEngineOilMass(),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )
+
+        prob.model_options['*'] = options
 
         prob.setup(check=False, force_alloc_complex=True)
 

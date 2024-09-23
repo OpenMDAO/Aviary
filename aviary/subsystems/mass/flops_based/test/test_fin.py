@@ -35,9 +35,12 @@ class FinMassTest(unittest.TestCase):
         validation_data = fin_test_data[case_name]
         prob = self.prob
 
+        options = {
+            Aircraft.Fins.NUM_FINS: 1,
+        }
         prob.model.add_subsystem(
             "fin",
-            FinMass(aviary_options=validation_data),
+            FinMass(**options),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
