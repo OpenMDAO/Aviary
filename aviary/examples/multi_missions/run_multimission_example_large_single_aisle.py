@@ -23,7 +23,7 @@ import sys
 from aviary.subsystems.mass.flops_based.furnishings import TransportFurnishingsGroupMass
 from aviary.api import SubsystemBuilderBase
 from aviary.validation_cases.validation_tests import get_flops_inputs
-
+print("========== Starting Run ===============")
 # fly the same mission twice with two different passenger loads
 phase_info_primary = copy.deepcopy(phase_info)
 phase_info_deadhead = copy.deepcopy(phase_info)
