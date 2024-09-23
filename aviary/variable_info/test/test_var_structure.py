@@ -46,9 +46,7 @@ class MetaDataTest(unittest.TestCase):
         assert_metadata_alphabetization(metadata_var_names)
 
     def test_missing_names(self):
-        """
-        Test that all variables inside the metadata exist in the hierarchy, and vice-versa
-        """
+        # Test that all variables inside the metadata exist in the hierarchy, and vice-versa
         var_names = \
             get_names_from_hierarchy(Aircraft)\
             + get_names_from_hierarchy(Mission)\

@@ -18,7 +18,7 @@ class PropellerMapTest(unittest.TestCase):
     """
 
     def test_general_aviation(self):
-        """The case when prop_type is helical_mach."""
+        # The case when prop_type is helical_mach.
         tol = 0.005
         aviary_options = get_option_defaults()
         prop_file_path = 'models/propellers/general_aviation.prop'
@@ -43,7 +43,7 @@ class PropellerMapTest(unittest.TestCase):
         assert_near_equal(f, 0.0934, tolerance=tol)
 
     def test_propfan(self):
-        """The case when prop_type is mach."""
+        # The case when prop_type is mach.
         tol = 0.005
         aviary_options = get_option_defaults()
         prop_file_path = 'models/propellers/PropFan.prop'
@@ -68,7 +68,7 @@ class PropellerMapTest(unittest.TestCase):
         assert_near_equal(f, 0.095985, tolerance=tol)
 
     def test_mach_type(self):
-        """Test reading prop_type from .prop file."""
+        # Test reading prop_type from .prop file.
         aviary_options = get_option_defaults()
         prop_file_path = 'models/propellers/general_aviation.prop'
         aviary_options.set_val(

@@ -8,7 +8,7 @@ from aviary.examples.level2_shooting_traj import custom_run_aviary
 
 @use_tempdirs
 class CustomTrajTestCase(unittest.TestCase):
-    """A test class for shooting scheme"""
+    # A test class for shooting scheme
 
     @require_pyoptsparse(optimizer='IPOPT')
     def test_run_aviary(self):

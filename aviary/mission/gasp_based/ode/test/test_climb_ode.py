@@ -34,7 +34,7 @@ class ClimbODETestCase(unittest.TestCase):
         )
 
     def test_start_of_climb(self):
-        """Test against GASP start of climb at 250 kts EAS, check partials"""
+        # Test against GASP start of climb at 250 kts EAS, check partials
         self.sys.options["EAS_target"] = 250
 
         self.prob.setup(check=False, force_alloc_complex=True)
@@ -72,7 +72,7 @@ class ClimbODETestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
     def test_end_of_climb(self):
-        """Test against GASP at 270 kts EAS and at cruise Mach."""
+        # Test against GASP at 270 kts EAS and at cruise Mach.
         self.sys.options["num_nodes"] = 2
         self.sys.options["EAS_target"] = 270
 

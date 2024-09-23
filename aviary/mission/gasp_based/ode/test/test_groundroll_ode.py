@@ -29,7 +29,7 @@ class GroundrollODETestCase(unittest.TestCase):
                                         core_subsystems=default_mission_subsystems)
 
     def test_groundroll_partials(self):
-        """Check partial derivatives"""
+        # Check partial derivatives
         self.prob.setup(check=False, force_alloc_complex=True)
 
         set_params_for_unit_tests(self.prob)

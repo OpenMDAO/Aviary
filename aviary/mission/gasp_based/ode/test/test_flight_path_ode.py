@@ -30,9 +30,8 @@ class FlightPathODETestCase(unittest.TestCase):
                                                   core_subsystems=default_mission_subsystems)
 
     def test_case1(self):
-        """
-        ground_roll = False (the aircraft is not confined to the ground)
-        """
+        # ground_roll = False (the aircraft is not confined to the ground)
+
         self.prob.setup(check=False, force_alloc_complex=True)
 
         set_params_for_unit_tests(self.prob)
@@ -67,9 +66,8 @@ class FlightPathODETestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
     def test_case2(self):
-        """
-        ground_roll = True (the aircraft is confined to the ground)
-        """
+        # ground_roll = True (the aircraft is confined to the ground)
+
         self.fp.options["ground_roll"] = True
         self.prob.setup(check=False, force_alloc_complex=True)
 

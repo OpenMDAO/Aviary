@@ -29,7 +29,7 @@ class RotationODETestCase(unittest.TestCase):
                                       core_subsystems=default_mission_subsystems)
 
     def test_rotation_partials(self):
-        """Check partial derivatives"""
+        # Check partial derivatives
         self.prob.setup(check=False, force_alloc_complex=True)
 
         self.prob.set_val(Aircraft.Wing.INCIDENCE, 1.5, units="deg")

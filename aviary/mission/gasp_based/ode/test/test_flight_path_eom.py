@@ -18,9 +18,8 @@ class FlightPathEOMTestCase(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
-        """
-        ground_roll = False (the aircraft is not confined to the ground)
-        """
+        # ground_roll = False (the aircraft is not confined to the ground)
+
         tol = 1e-6
         self.prob.run_model()
 

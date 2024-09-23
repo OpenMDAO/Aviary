@@ -118,7 +118,7 @@ class GASPAeroTest(unittest.TestCase):
                 assert_check_partials(partial_data, atol=4.5, rtol=5e-3)
 
     def test_ground_alpha_out(self):
-        """Test that drag output matches between alpha in/out cases"""
+        # Test that drag output matches between alpha in/out cases
         prob = om.Problem()
         prob.model.add_subsystem(
             "alpha_in",
