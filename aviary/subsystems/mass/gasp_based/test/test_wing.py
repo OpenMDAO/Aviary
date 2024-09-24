@@ -130,7 +130,6 @@ class WingMassSolveTestCase2(unittest.TestCase):
         assert_check_partials(partial_data, atol=5e-11, rtol=1e-12)
 
 
-# this is the large single aisle 1 V3 test case
 class TotalWingMassTestCase1(unittest.TestCase):
     """this is the large single aisle 1 V3 test case"""
 
@@ -423,7 +422,6 @@ class TotalWingMassTestCase8(unittest.TestCase):
         assert_check_partials(partial_data, atol=2e-12, rtol=1e-12)
 
 
-# this is the large single aisle 1 V3 test case
 class WingMassGroupTestCase1(unittest.TestCase):
     """this is the large single aisle 1 V3 test case"""
 
