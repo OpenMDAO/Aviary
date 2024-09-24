@@ -32,7 +32,7 @@ class SubsystemBuilderBase(ABC):
 
         Returns
         -------
-        openmdao.core.System
+        pre_mission_sys : openmdao.core.System
             An OpenMDAO system containing all computations that need to happen in
             the pre-mission part of the Aviary problem. This
             includes sizing, design, and other non-mission parameters.
@@ -53,7 +53,7 @@ class SubsystemBuilderBase(ABC):
 
         Returns
         -------
-        dict
+        states : dict
             A dictionary where the keys are the names of the state variables
             and the values are dictionaries with the following keys:
 
@@ -80,7 +80,7 @@ class SubsystemBuilderBase(ABC):
 
         Returns
         -------
-        dict
+        controls : dict
             A dictionary where the keys are the names of the control variables
             and the values are dictionaries with the following keys:
 
@@ -114,7 +114,7 @@ class SubsystemBuilderBase(ABC):
 
         Returns
         -------
-        dict
+        fixed_values : dict
             A dictionary where the keys are the names of the fixed variables
             and the values are dictionaries with the following keys:
 
@@ -137,7 +137,7 @@ class SubsystemBuilderBase(ABC):
 
         Returns
         -------
-        dict
+        constraints : dict
             A dictionary where the keys are the names of the constraint variables
             and the values are dictionaries with the following keys:
 
@@ -156,7 +156,7 @@ class SubsystemBuilderBase(ABC):
 
         Returns
         -------
-        list of variables to link between phases
+        linked_vars : list of variables to link between phases
         """
         return []
 
@@ -167,7 +167,7 @@ class SubsystemBuilderBase(ABC):
 
         Returns
         -------
-        dict
+        bus_variables : dict
             A dictionary where the keys are the names of the variables
             output in the pre-mission subsystem and the values are
             dictionaries with the following keys:
@@ -195,7 +195,7 @@ class SubsystemBuilderBase(ABC):
 
         Returns
         -------
-        openmdao.core.System
+        mission_sys : openmdao.core.System
             An OpenMDAO System containing all computations that need to happen
             during the mission. This includes time-dependent states that are
             being integrated as well as any other variables that vary during
@@ -215,7 +215,7 @@ class SubsystemBuilderBase(ABC):
 
         Returns
         -------
-        list of str
+        order : list of str
             A list of subsystem names that this subsystem depends on.
         """
         return []
@@ -230,7 +230,7 @@ class SubsystemBuilderBase(ABC):
 
         Returns
         -------
-        dict
+        design_vars : dict
             A dictionary where the keys are the names of the design variables
             and the values are dictionaries with the following keys:
 
@@ -247,7 +247,7 @@ class SubsystemBuilderBase(ABC):
 
         Returns
         -------
-        dict
+        initial_guesses : dict
             A dictionary where the keys are the names of the variables
             and the values are dictionaries with the following keys:
 
@@ -266,7 +266,7 @@ class SubsystemBuilderBase(ABC):
 
         Returns
         -------
-        list of str
+        mass_names : list of str
             A list of the names of the mass variables for the subsystem.
         """
         return []
@@ -303,7 +303,7 @@ class SubsystemBuilderBase(ABC):
 
         Returns
         -------
-        openmdao.core.System
+        post_mission_sys : openmdao.core.System
             An OpenMDAO system containing all computations that need to happen
             after the mission. This includes time-dependent states that are
             being integrated as well as any other variables that vary after
