@@ -13,35 +13,37 @@ phase_info['climb']['external_subsystems'] = [battery_builder]
 phase_info['cruise']['external_subsystems'] = [battery_builder]
 phase_info['descent']['external_subsystems'] = [battery_builder]
 
-prob = AviaryProblem()
+if __name__ == '__main__':
+    prob = AviaryProblem()
 
-# Load aircraft and options data from user
-# Allow for user overrides here
-input_file = get_aviary_resource_path('models/test_aircraft/aircraft_for_bench_FwFm.csv')
-prob.load_inputs(input_file, phase_info, meta_data=ExtendedMetaData)
+    # Load aircraft and options data from user
+    # Allow for user overrides here
+    input_file = get_aviary_resource_path(
+        'models/test_aircraft/aircraft_for_bench_FwFm.csv')
+    prob.load_inputs(input_file, phase_info, meta_data=ExtendedMetaData)
 
-# Preprocess inputs
-prob.check_and_preprocess_inputs()
+    # Preprocess inputs
+    prob.check_and_preprocess_inputs()
 
-prob.add_pre_mission_systems()
+    prob.add_pre_mission_systems()
 
-prob.add_phases()
+    prob.add_phases()
 
-prob.add_post_mission_systems()
+    prob.add_post_mission_systems()
 
-# Link phases and variables
-prob.link_phases()
+    # Link phases and variables
+    prob.link_phases()
 
-prob.add_driver("SLSQP")
+    prob.add_driver("SLSQP")
 
-prob.add_design_variables()
+    prob.add_design_variables()
 
-prob.add_objective('mass')
-# prob.model.add_objective(
-#     f'traj.climb.states:{Mission.Battery.STATE_OF_CHARGE}', index=-1, ref=-1)
+    prob.add_objective('mass')
+    # prob.model.add_objective(
+    #     f'traj.climb.states:{Mission.Battery.STATE_OF_CHARGE}', index=-1, ref=-1)
 
-prob.setup()
+    prob.setup()
 
-prob.set_initial_guesses()
+    prob.set_initial_guesses()
 
-prob.run_aviary_problem()
+    prob.run_aviary_problem()
