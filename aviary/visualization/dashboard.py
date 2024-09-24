@@ -73,7 +73,7 @@ def _none_or_str(value):
 
     Returns
     -------
-    option_value : str or None
+    str or None
         The value of the option after possibly converting from 'None' to None.
     """
     if value == "None":
@@ -224,7 +224,7 @@ def create_table_pane_from_json(json_filepath):
 
     Returns
     -------
-    pane : Panel.Pane or None
+    Panel.Pane or None
         A Panel Pane that is a Panel library Tabular widget.
         Or None if there was an error.
     """
@@ -263,7 +263,7 @@ def create_csv_frame(csv_filepath, documentation):
 
     Returns
     -------
-    pane : Panel.Pane or None
+    Panel.Pane or None
         A Panel Pane object showing the tabular display of the CSV file contents.
         Or None if the CSV file does not exist.
     """
@@ -325,7 +325,7 @@ def create_report_frame(format, text_filepath, documentation):
 
     Returns
     -------
-    pane : Panel.Pane or None
+    Panel.Pane or None
         A Panel Pane object to be displayed in the dashboard. Or None if the file
         does not exist.
     """
