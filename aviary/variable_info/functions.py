@@ -148,8 +148,8 @@ def override_aviary_vars(group, aviary_inputs: AviaryValues,
         if aviary_inputs.get_val(Settings.VERBOSITY).value >= 1:
             print("\nThe following variables have been overridden:")
             for prom_name in sorted(overridden_outputs):
-                item = aviary_inputs.get_item(prom_name)
-                print(f"  '{prom_name}  {item[0]}  {item[1]}")
+                val, units = aviary_inputs.get_item(prom_name)
+                print(f"  '{prom_name}  {val}  {units}")
 
     if external_overridden_outputs:
         if aviary_inputs.get_val(Settings.VERBOSITY).value >= 1:
