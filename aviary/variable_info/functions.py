@@ -4,6 +4,7 @@ from dymos.utils.misc import _unspecified
 from openmdao.core.component import Component
 
 from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.variables import Settings
 from aviary.variable_info.variable_meta_data import _MetaData
 
 # ---------------------------
@@ -144,15 +145,17 @@ def override_aviary_vars(group, aviary_inputs: AviaryValues,
             group.promotes(comp.name, inputs=in_var_names, outputs=comp_promoted_outputs)
 
     if overridden_outputs:
-        print("\nThe following variables have been overridden:")
+        if aviary_inputs.get_val(Settings.VERBOSITY).value >= 1:
+            print("\nThe following variables have been overridden:")
         for prom_name in sorted(overridden_outputs):
             item = aviary_inputs.get_item(prom_name)
             print(f"  '{prom_name}  {item[0]}  {item[1]}")
 
     if external_overridden_outputs:
-        print("\nThe following variables have been overridden by an external subsystem:")
+        if aviary_inputs.get_val(Settings.VERBOSITY).value >= 1:
+            print("\nThe following variables have been overridden by an external subsystem:")
         for prom_name in sorted(external_overridden_outputs):
-            # do not print values because they will be updated later.
+            # do not print values because they will be updated by an external subsystem later.
             print(f"  '{prom_name}")
 
     return overridden_outputs
