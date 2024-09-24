@@ -6464,7 +6464,7 @@ add_meta_data(
 add_meta_data(
     Dynamic.Mission.KINEMATIC_VISCOSITY,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
+    historical_name={"GASP": 'XKV',
                      "FLOPS": None,
                      "LEAPS1": None
                      },
