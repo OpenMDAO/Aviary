@@ -6469,7 +6469,7 @@ add_meta_data(
                      "LEAPS1": None
                      },
     units='ft**2/s',
-    desc='Atmospheric kinematic viscosity at the vehicle\'s current flight condition'
+    desc="Atmospheric kinematic viscosity at the vehicle's current flight condition"
 )
 
 add_meta_data(
