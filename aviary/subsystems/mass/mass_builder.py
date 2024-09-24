@@ -54,7 +54,7 @@ class CoreMassBuilder(MassBuilderBase):
             mass_premission = MassPremissionGASP(aviary_options=aviary_inputs,)
 
         elif code_origin is FLOPS:
-            mass_premission = MassPremissionFLOPS(aviary_options=aviary_inputs)
+            mass_premission = MassPremissionFLOPS()
 
         return mass_premission
 

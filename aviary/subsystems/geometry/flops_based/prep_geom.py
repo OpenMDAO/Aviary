@@ -107,7 +107,7 @@ class PrepGeom(om.Group):
         )
 
         self.add_subsystem(
-            'total_wetted_area', TotalWettedArea(aviary_options=aviary_options),
+            'total_wetted_area', TotalWettedArea(),
             promotes_inputs=['*'],
             promotes_outputs=['*']
         )

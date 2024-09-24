@@ -2242,7 +2242,7 @@ add_meta_data(
     desc='Toggle for enabling scaling of engine performance including thrust, fuel flow, '
          'and electric power',
     option=True,
-    types=bool,
+    types=(bool, list),
     default_value=True,
 )
 

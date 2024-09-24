@@ -1013,7 +1013,6 @@ class EngineDeck(EngineModel):
             'engine_scaling',
             subsys=EngineScaling(
                 num_nodes=num_nodes,
-                aviary_options=self.options,
                 engine_variables=engine_outputs,
             ),
             promotes_inputs=[Aircraft.Engine.SCALE_FACTOR, Dynamic.Mission.MACH],
