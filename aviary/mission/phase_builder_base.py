@@ -579,6 +579,7 @@ def register(phase_builder_t=None, *, check_repeats=True):
 
     Returns
     -------
+    phase builder type
     '''
     if phase_builder_t is None:
         def decorator(phase_builder_t):
