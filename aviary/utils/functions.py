@@ -497,3 +497,35 @@ def wrapped_convert_units(val_unit_tuple, new_units):
         return [convert_units(v, units, new_units) for v in value]
     else:
         return convert_units(value, units, new_units)
+
+
+def sigmoidX(x, x0, alpha=0.1):
+    """
+    Sigmoid used to smoothly transition between piecewise functions
+
+    Inputs
+    ------
+    x: independent variable
+    x0: the center of symmetry. When x = x0, sigmoidX = 1/2.
+    alpha: steepness parameter.
+    """
+    if alpha == 0:
+        raise ValueError("alpha must be non-zero")
+    return 1 / (1 + np.exp(-(x - x0) / alpha))
+
+
+def dSigmoidXdx(x, x0, alpha=0.1):
+    """
+    Derivative of sigmoid function
+    
+    Inputs
+    ------
+    x: independent variable
+    x0: the center of symmetry. When x = x0, sigmoidX = 1/2.
+    alpha: steepness parameter.
+    """
+    if alpha == 0:
+        raise ValueError("alpha must be non-zero")
+    term = np.exp(np.exp(-(x - x0) / alpha))
+    term2 = (1 + term) * (1 + term)
+    return term / alpha / term2

@@ -9,6 +9,7 @@ from aviary.subsystems.aerodynamics.gasp_based.common import (AeroForces,
                                                               CLFromLift,
                                                               TanhRampComp)
 from aviary.utils.aviary_values import AviaryValues
+from aviary.utils.functions import sigmoidX
 from aviary.variable_info.functions import add_aviary_input
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.utils.aviary_values import AviaryValues
@@ -656,7 +657,7 @@ class AeroGeom(om.ExplicitComponent):
         # isn't a problem.
         reli_y1 = 700000 * np.ones(self.options["num_nodes"])
         reli_y2 = sos * mach / nu
-        sig = sigmoid(mach, 0.1, alpha=0.005)
+        sig = sigmoidX(mach, 0.1, alpha=0.005)
         reli = (1 - sig) * reli_y1 + sig * reli_y2
 
         # Re correction factors: fuselage, wing, nacelle, vtail, htail, strut, tip tank
