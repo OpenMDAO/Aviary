@@ -64,10 +64,13 @@ class APUMassTest2(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem(
             "apu",
-            TransportAPUMass(aviary_options=get_flops_inputs("N3CC")),
+            TransportAPUMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        prob.model_options['*'] = get_flops_options("N3CC", preprocess=True)
+
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.Fuselage.PLANFORM_AREA, 100.0, 'ft**2')
 

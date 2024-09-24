@@ -68,11 +68,12 @@ class CargoContainerMassTest2(unittest.TestCase):
 
         prob.model.add_subsystem(
             "cargo_containers",
-            TransportCargoContainersMass(
-                aviary_options=get_flops_inputs("N3CC")),
+            TransportCargoContainersMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        prob.model_options['*'] = get_flops_options("N3CC", preprocess=True)
 
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.CrewPayload.BAGGAGE_MASS, 5000.0, 'lbm')

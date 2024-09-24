@@ -69,11 +69,13 @@ class TransportAvionicsMassTest2(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem(
             "avionics",
-            TransportAvionicsMass(aviary_options=get_flops_inputs(
-                "N3CC", preprocess=True)),
+            TransportAvionicsMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        prob.model_options['*'] = get_flops_options("N3CC", preprocess=True)
+
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.Fuselage.PLANFORM_AREA, 1500.0, 'ft**2')
         prob.set_val(Mission.Design.RANGE, 3500.0, 'nmi')

@@ -139,15 +139,20 @@ class AntiIcingMassTest2(unittest.TestCase):
 
     def test_case_2(self):
         prob = om.Problem()
-        aviary_options = get_flops_inputs('N3CC')
-        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([5]))
-        aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 5)
+
+        options = get_flops_options('N3CC')
+        options[Aircraft.Engine.NUM_ENGINES] = np.array([5])
+        options[Aircraft.Propulsion.TOTAL_NUM_ENGINES] = 5
+
         prob.model.add_subsystem(
             "anti_icing",
-            AntiIcingMass(aviary_options=aviary_options),
+            AntiIcingMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        prob.model_options['*'] = options
+
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.AntiIcing.MASS_SCALER, 1.0)
         prob.set_val(Aircraft.Fuselage.MAX_WIDTH, 12.33, 'ft')
