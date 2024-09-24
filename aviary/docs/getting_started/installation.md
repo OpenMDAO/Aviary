@@ -272,12 +272,12 @@ $ testflo .
 If you run into an MPI error, you can add `--nompi` option to `testflo` command run. If everything runs, you will get something like the following:
 
 ```
-Passed:  875
+Passed:  1065
 Failed:  0
 Skipped: 3
 
 
-Ran 878 tests using 1 processes
+Ran 1065 tests using 1 processes
 Wall clock time:   00:02:47.31
 ```
 
