@@ -357,6 +357,12 @@ class AviaryProblem(om.Problem):
 
             self.cruise_mass_final = aviary_inputs.get_val(
                 Mission.Summary.CRUISE_MASS_FINAL, units='lbm')
+
+            # if 'target_range' in self.post_mission_info:
+            #     self.target_range = wrapped_convert_units(
+            #         phase_info['post_mission']['target_range'], 'NM')
+            # else:
+            print('WARNING: In methods_for_level2: user has not specified target_range in phase_info. This will be required in future release.')
             self.target_range = aviary_inputs.get_val(
                 Mission.Design.RANGE, units='NM')
             self.cruise_mach = aviary_inputs.get_val(Mission.Design.MACH)
@@ -370,12 +376,14 @@ class AviaryProblem(om.Problem):
                 aviary_inputs.set_val(Mission.Summary.RANGE, wrapped_convert_units(
                     phase_info['post_mission']['target_range'], 'NM'), units='NM')
                 self.require_range_residual = True
-                self.target_range = aviary_inputs.get_val(
-                Mission.Summary.RANGE, units='NM')
+                self.target_range = wrapped_convert_units(
+                    phase_info['post_mission']['target_range'], 'NM')
             else:
+                print('WARNING: In methods_for_level2: user has not specified target_range in phase_info. This will be required in future release.')
                 self.require_range_residual = False
-                # TODO: this maybe broken?
-                self.target_range = aviary_inputs.get_val(Mission.Design.RANGE, units='NM')
+                # still instantiate target_range because used for default guesses for phase comps
+                self.target_range = aviary_inputs.get_val(
+                    Mission.Design.RANGE, units='NM')
 
         return aviary_inputs
 
@@ -2671,7 +2679,7 @@ class AviaryProblem(om.Problem):
             om.ExecComp(
                 "range_resid = target_range - actual_range",
                 target_range={"val": self.target_range, "units": "NM"},
-                actual_range={"val": self.target_range - 25, "units": "NM"},
+                actual_range={"val": self.target_range, "units": "NM"},
                 range_resid={"val": 30, "units": "NM"},
             ),
             promotes_inputs=[

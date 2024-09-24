@@ -56,8 +56,7 @@ class FuselageParameters(om.ExplicitComponent):
         seat_width = aviary_options.get_val(Aircraft.Fuselage.SEAT_WIDTH, units='inch')
         num_aisle = aviary_options.get_val(Aircraft.Fuselage.NUM_AISLES)
         aisle_width = aviary_options.get_val(Aircraft.Fuselage.AISLE_WIDTH, units='inch')
-        PAX = self.options['aviary_options'].get_val(
-            Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless')
+        PAX = aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS)
         seat_pitch = aviary_options.get_val(Aircraft.Fuselage.SEAT_PITCH, units='inch')
         delta_diameter = inputs[Aircraft.Fuselage.DELTA_DIAMETER]
 
@@ -65,6 +64,7 @@ class FuselageParameters(om.ExplicitComponent):
 
         if PAX < 1:
             print("Warning: you have not specified at least one passenger")
+            print(aviary_options)
 
         # single seat across
         cabin_len_a = PAX * seat_pitch / 12
