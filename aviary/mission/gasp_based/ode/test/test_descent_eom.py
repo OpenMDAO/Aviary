@@ -64,5 +64,40 @@ class DescentTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+class DescentTestCase2(unittest.TestCase):
+    """
+    Test mass-weight conversion
+    """
+
+    def setUp(self):
+        import aviary.mission.gasp_based.ode.descent_eom as descent
+        descent.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.mission.gasp_based.ode.descent_eom as descent
+        descent.GRAV_ENGLISH_LBM = 1.0
+
+    def test_case1(self):
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "group", DescentRates(num_nodes=2), promotes=["*"]
+        )
+        prob.model.set_input_defaults(
+            Dynamic.Mission.VELOCITY, np.array([459, 459]), units="kn")
+        prob.model.set_input_defaults(
+            Dynamic.Mission.THRUST_TOTAL, np.array([452, 452]), units="lbf")
+        prob.model.set_input_defaults(
+            Dynamic.Mission.DRAG, np.array([7966.927, 7966.927]), units="lbf"
+        )
+        prob.model.set_input_defaults(
+            Dynamic.Mission.MASS, np.array([147661, 147661]), units="lbm"
+        )
+        prob.model.set_input_defaults("alpha", np.array([3.2, 3.2]), units="deg")
+        prob.setup(check=False, force_alloc_complex=True)
+
+        partial_data = prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
 if __name__ == "__main__":
     unittest.main()

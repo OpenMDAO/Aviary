@@ -1,6 +1,7 @@
 import unittest
 
 import openmdao.api as om
+from openmdao.utils.assert_utils import assert_check_partials
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.fin import FinMass
@@ -59,6 +60,38 @@ class FinMassTest(unittest.TestCase):
 
     def test_IO(self):
         assert_match_varnames(self.prob.model)
+
+
+class FinMassTest2(unittest.TestCase):
+    """
+    Test mass-weight conversion
+    """
+
+    def setUp(self):
+        import aviary.subsystems.mass.flops_based.fin as fin
+        fin.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.subsystems.mass.flops_based.fin as fin
+        fin.GRAV_ENGLISH_LBM = 1.0
+
+    def test_case(self):
+        validation_data = fin_test_data["1"]
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "fin",
+            FinMass(aviary_options=validation_data),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(Mission.Design.GROSS_MASS, 100000.0, 'lbm')
+        prob.set_val(Aircraft.Fins.TAPER_RATIO, 0.33, 'unitless')
+        prob.set_val(Aircraft.Fins.AREA, 250.0, 'ft**2')
+        prob.set_val(Aircraft.Fins.MASS, 1000.0, 'lbm')
+
+        partial_data = prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
 if __name__ == "__main__":

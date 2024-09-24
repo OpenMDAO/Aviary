@@ -104,5 +104,33 @@ class ThrustReverserMassTest(unittest.TestCase):
         assert_match_varnames(self.prob.model)
 
 
+class ThrustReverserMassTest2(unittest.TestCase):
+    """
+    Test mass-weight conversion
+    """
+
+    def setUp(self):
+        import aviary.subsystems.mass.flops_based.thrust_reverser as reverser
+        reverser.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.subsystems.mass.flops_based.thrust_reverser as reverser
+        reverser.GRAV_ENGLISH_LBM = 1.0
+
+    def test_case(self):
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "thrust_rev",
+            ThrustReverserMass(aviary_options=get_flops_inputs(
+                "N3CC", preprocess=True)),
+            promotes=['*']
+        )
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, 10000.0, 'lbf')
+
+        partial_data = prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -1,6 +1,7 @@
 import unittest
 
 import openmdao.api as om
+from openmdao.utils.assert_utils import assert_check_partials
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.instruments import TransportInstrumentMass
@@ -56,6 +57,40 @@ class TransportInstrumentsMassTest(unittest.TestCase):
 
     def test_IO(self):
         assert_match_varnames(self.prob.model)
+
+
+class TransportInstrumentsMassTest2(unittest.TestCase):
+    """
+    Test mass-weight conversion
+    """
+
+    def setUp(self):
+        import aviary.subsystems.mass.flops_based.instruments as instruments
+        instruments.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.subsystems.mass.flops_based.instruments as instruments
+        instruments.GRAV_ENGLISH_LBM = 1.0
+
+    def test_case(self):
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "instruments_tests",
+            TransportInstrumentMass(
+                aviary_options=get_flops_inputs("N3CC", preprocess=True)),
+            promotes_outputs=[
+                Aircraft.Instruments.MASS,
+            ],
+            promotes_inputs=[
+                Aircraft.Fuselage.PLANFORM_AREA,
+                Aircraft.Instruments.MASS_SCALER
+            ]
+        )
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(Aircraft.Fuselage.PLANFORM_AREA, 1500.0, 'ft**2')
+
+        partial_data = prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
 if __name__ == "__main__":

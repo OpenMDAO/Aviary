@@ -158,7 +158,7 @@ def flops_validation_test(prob: om.Problem,
                           flops_inputs=None,
                           flops_outputs=None):
     """
-    Runs a validation test using FLOPS validation data.
+    Set a model, runs the model and runs a validation test using FLOPS validation data.
 
     Parameters
     ----------
