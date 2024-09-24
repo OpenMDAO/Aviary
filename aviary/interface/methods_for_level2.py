@@ -370,11 +370,12 @@ class AviaryProblem(om.Problem):
                 aviary_inputs.set_val(Mission.Summary.RANGE, wrapped_convert_units(
                     phase_info['post_mission']['target_range'], 'NM'), units='NM')
                 self.require_range_residual = True
+                self.target_range = aviary_inputs.get_val(
+                Mission.Summary.RANGE, units='NM')
             else:
                 self.require_range_residual = False
-
-            self.target_range = aviary_inputs.get_val(
-                Mission.Summary.RANGE, units='NM')
+                # TODO: this maybe broken?
+                self.target_range = aviary_inputs.get_val(Mission.Design.RANGE, units='NM')
 
         return aviary_inputs
 
