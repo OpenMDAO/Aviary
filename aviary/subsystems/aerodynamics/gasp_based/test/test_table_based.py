@@ -8,8 +8,8 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from packaging import version
 
 from aviary.subsystems.aerodynamics.gasp_based.table_based import (
-    TabularCruiseAero, TabularLowSpeedAero)
-from aviary.variable_info.variables import Aircraft, Dynamic
+    GearDragIncrement, TabularCruiseAero, TabularLowSpeedAero)
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class TestCruiseAero(unittest.TestCase):
@@ -175,6 +175,57 @@ class TestLowSpeedAero(unittest.TestCase):
         )  # fd does very poorly with the t_curr, t_init, and duration values in the time
         # ramp because its step is so much bigger that cs. By decreasing the fd step
         # size you can see that the derivatives are right wrt these values
+
+
+class GearDragIncrementTest(unittest.TestCase):
+    """
+    Test Gear drag coefficient increment
+    """
+
+    def test_case(self):
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "drag_inc",
+            GearDragIncrement(num_nodes=2),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(Mission.Design.GROSS_MASS, 175000, 'lbm')
+        prob.set_val(Aircraft.Wing.AREA, 1000, 'ft**2')
+        prob.set_val('flap_defl', [0.0, 0.3], 'deg')
+        prob.run_model()
+
+        assert_near_equal(prob["dCD"], [0.04308, 0.04296], 1e-4)
+        partial_data = prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
+class GearDragIncrementTest2(unittest.TestCase):
+    """
+    Test mass-weight conversion
+    """
+
+    def setUp(self):
+        import aviary.subsystems.aerodynamics.gasp_based.table_based as table
+        table.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.subsystems.aerodynamics.gasp_based.table_based as table
+        table.GRAV_ENGLISH_LBM = 1.0
+
+    def test_case(self):
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "drag_inc",
+            GearDragIncrement(num_nodes=2),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+        prob.setup(check=False, force_alloc_complex=True)
+
+        partial_data = prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
 if __name__ == "__main__":

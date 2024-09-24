@@ -1,6 +1,7 @@
 import unittest
 
 import openmdao.api as om
+from openmdao.utils.assert_utils import assert_check_partials
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.canard import CanardMass
@@ -57,6 +58,38 @@ class CanardMassTest(unittest.TestCase):
 
     def test_IO(self):
         assert_match_varnames(self.prob.model)
+
+
+class CanardMassTest2(unittest.TestCase):
+    """
+    Test mass-weight conversion
+    """
+
+    def setUp(self):
+        import aviary.subsystems.mass.flops_based.canard as canard
+        canard.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.subsystems.mass.flops_based.canard as canard
+        canard.GRAV_ENGLISH_LBM = 1.0
+
+    def test_case1(self):
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "canard",
+            CanardMass(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(Mission.Design.GROSS_MASS, 100000.0, 'lbm')
+        prob.set_val(Aircraft.Canard.AREA, 250.00, 'ft**2')
+        prob.set_val(Aircraft.Canard.TAPER_RATIO, 0.330, 'unitless')
+        prob.set_val(Aircraft.Canard.MASS_SCALER, 1.0, 'unitless')
+        prob.set_val(Aircraft.Canard.MASS, 1099.75, 'lbm')
+
+        partial_data = prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
 if __name__ == "__main__":
