@@ -75,5 +75,37 @@ class TransportStarterMassTest(unittest.TestCase):
         assert_match_varnames(self.prob.model)
 
 
+class TransportStarterMassTest2(unittest.TestCase):
+    """
+    Test mass-weight conversion
+    """
+
+    def setUp(self):
+        import aviary.subsystems.mass.flops_based.starter as starter
+        starter.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.subsystems.mass.flops_based.starter as starter
+        starter.GRAV_ENGLISH_LBM = 1.0
+
+    def test_case_2(self):
+        prob = om.Problem()
+        aviary_options = get_flops_inputs('LargeSingleAisle1FLOPS')
+        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([5]))
+        aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 5)
+        aviary_options.set_val(Mission.Constraints.MAX_MACH, 0.785)
+        prob.model.add_subsystem(
+            "starter_test",
+            TransportStarterMass(aviary_options=aviary_options),
+            promotes_outputs=['*'],
+            promotes_inputs=['*']
+        )
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, np.array([7.94]), 'ft')
+
+        partial_data = prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
 if __name__ == "__main__":
     unittest.main()
