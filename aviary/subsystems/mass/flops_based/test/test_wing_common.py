@@ -5,7 +5,6 @@ from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.wing_common import (
     WingBendingMass, WingMiscMass, WingShearControlMass)
-from aviary.variable_info.options import get_option_defaults
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (flops_validation_test,
                                                       get_flops_case_names,
@@ -81,9 +80,14 @@ class WingMiscMassTest(unittest.TestCase):
 class WingBendingMassTest(unittest.TestCase):
     def setUp(self):
         prob = self.prob = om.Problem()
+
+        opts = {
+            Aircraft.Fuselage.NUM_FUSELAGES: 1,
+        }
+
         prob.model.add_subsystem(
             "wing",
-            WingBendingMass(aviary_options=get_option_defaults()),
+            WingBendingMass(**opts),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )

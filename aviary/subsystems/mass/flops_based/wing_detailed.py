@@ -12,9 +12,11 @@ class DetailedWingBendingFact(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
+        add_aviary_option(self, Aircraft.Engine.NUM_WING_ENGINES)
         add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES)
         add_aviary_option(self, Aircraft.Wing.INPUT_STATION_DIST)
         add_aviary_option(self, Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL)
+        add_aviary_option(self, Aircraft.Wing.NUM_INTEGRATION_STATIONS)
 
     def setup(self):
         input_station_dist = self.options[Aircraft.Wing.INPUT_STATION_DIST]

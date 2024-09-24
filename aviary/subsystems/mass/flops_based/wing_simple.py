@@ -75,7 +75,6 @@ class SimpleWingBendingFact(om.ExplicitComponent):
         outputs[Aircraft.Wing.ENG_POD_INERTIA_FACTOR] = 1.0 - 0.03 * num_wing_eng
 
     def compute_partials(self, inputs, J):
-        num_wing_eng = self.options[Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES]
         fstrt = inputs[Aircraft.Wing.STRUT_BRACING_FACTOR]
         span = inputs[Aircraft.Wing.SPAN]
         tr = inputs[Aircraft.Wing.TAPER_RATIO]
