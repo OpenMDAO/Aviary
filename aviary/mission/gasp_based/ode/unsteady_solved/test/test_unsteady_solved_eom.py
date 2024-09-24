@@ -96,5 +96,52 @@ class TestUnsteadySolvedEOM(unittest.TestCase):
                 self._test_unsteady_solved_eom(ground_roll=ground_roll)
 
 
+class TestUnsteadySolvedEOM2(unittest.TestCase):
+    """
+    Test mass-weight conversion
+    """
+
+    def setUp(self):
+        import aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_eom as unsteady
+        unsteady.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_eom as unsteady
+        unsteady.GRAV_ENGLISH_LBM = 1.0
+
+    def _test_unsteady_solved_eom(self, ground_roll=False):
+        nn = 2
+        p = om.Problem()
+        p.model.add_subsystem("eom",
+                              UnsteadySolvedEOM(num_nodes=nn, ground_roll=ground_roll),
+                              promotes_inputs=["*"],
+                              promotes_outputs=["*"])
+
+        p.setup(force_alloc_complex=True)
+
+        p.set_val(Dynamic.Mission.VELOCITY, 250 + 10 * np.random.rand(nn), units="kn")
+        p.set_val("mass", 175_000 + 1000 * np.random.rand(nn), units="lbm")
+        p.set_val(Dynamic.Mission.THRUST_TOTAL, 20_000 +
+                  100 * np.random.rand(nn), units="lbf")
+        p.set_val(Dynamic.Mission.LIFT, 175_000 + 1000 * np.random.rand(nn), units="lbf")
+        p.set_val(Dynamic.Mission.DRAG, 20_000 + 100 * np.random.rand(nn), units="lbf")
+        p.set_val(Aircraft.Wing.INCIDENCE, np.random.rand(1), units="deg")
+
+        if not ground_roll:
+            p.set_val("alpha", nn * np.random.rand(nn), units="deg")
+            p.set_val(Dynamic.Mission.FLIGHT_PATH_ANGLE,
+                      nn * np.random.rand(nn), units="deg")
+            p.set_val("dh_dr", 0.1 * np.random.rand(nn), units=None)
+            p.set_val("d2h_dr2", 0.01 * np.random.rand(nn), units="1/m")
+
+        partial_data = p.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=5e-11, rtol=1e-12)
+
+    def test_unsteady_solved_eom(self):
+        for ground_roll in True, False:
+            with self.subTest(msg=f"ground_roll={ground_roll}"):
+                self._test_unsteady_solved_eom(ground_roll=ground_roll)
+
+
 if __name__ == '__main__':
     unittest.main()

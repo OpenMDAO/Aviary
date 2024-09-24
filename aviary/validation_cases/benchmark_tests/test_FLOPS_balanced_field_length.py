@@ -33,7 +33,6 @@ class TestFLOPSBalancedFieldLength(unittest.TestCase):
 
     @require_pyoptsparse(optimizer='IPOPT')
     def bench_test_IPOPT(self):
-        # raise unittest.SkipTest("IPOPT currently not working with this benchmark.")
 
         driver = om.pyOptSparseDriver()
 
