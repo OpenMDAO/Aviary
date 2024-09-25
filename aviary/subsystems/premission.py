@@ -12,7 +12,7 @@ use_new_openmdao_syntax = version.parse(openmdao.__version__) >= version.parse("
 
 class CorePreMission(om.Group):
     """
-    Core pre-mission group
+    Group that contains all pre-mission groups of core Aviary subsystems (geometry, mass, propulsion, aerodynamics)
     """
 
     def initialize(self):
