@@ -49,7 +49,7 @@ def write_markdown_variable_table(open_file, problem, outputs, metadata):
         The dictionary that contains the data.
     outputs : List
         The list of keywords that will go to outputs file.
-    metadata: dict
+    metadata : dict
         The dictionary that contains the metadata of the data with desired units.
     """
     open_file.write('\n| Variable Name | Value | Units |\n')
