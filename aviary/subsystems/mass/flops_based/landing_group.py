@@ -10,8 +10,8 @@ from aviary.variable_info.variables import Aircraft
 
 class LandingMassGroup(om.Group):
     """
-    Group of landing related components: LandingTakeoffMassRatio, MainGearLength,
-    NoseGearLength, LandingMass, etc.
+    Group of landing-related components for FLOPS-based mass:
+    LandingTakeoffMassRatio, MainGearLength, NoseGearLength, LandingMass, etc.
     """
 
     def initialize(self):
