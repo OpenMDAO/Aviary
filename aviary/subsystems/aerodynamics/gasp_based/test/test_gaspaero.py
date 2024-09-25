@@ -51,7 +51,7 @@ class GASPAeroTest(unittest.TestCase):
                 prob.set_val(Dynamic.Mission.MACH, mach)
                 prob.set_val("alpha", alpha)
                 prob.set_val(Dynamic.Mission.SPEED_OF_SOUND, row["sos"])
-                prob.set_val("nu", row["nu"])
+                prob.set_val(Dynamic.Mission.KINEMATIC_VISCOSITY, row["nu"])
 
                 prob.run_model()
 
@@ -89,7 +89,7 @@ class GASPAeroTest(unittest.TestCase):
                 prob.set_val(Dynamic.Mission.ALTITUDE, alt)
                 prob.set_val("alpha", alpha)
                 prob.set_val(Dynamic.Mission.SPEED_OF_SOUND, row["sos"])
-                prob.set_val("nu", row["nu"])
+                prob.set_val(Dynamic.Mission.KINEMATIC_VISCOSITY, row["nu"])
 
                 # note we're just letting the time ramps for flaps/gear default to the
                 # takeoff config such that the default times correspond to full flap and
