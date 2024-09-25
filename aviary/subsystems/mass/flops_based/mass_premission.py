@@ -51,8 +51,9 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 class MassPremission(om.Group):
     """
-    Groups of mass components: CargoMass, TransportCargoContainersMass, TransportEngineCtrlsMass,
-    TransportAvionicsMass, FuelCapacityGroup, EngineMass, etc.
+    Pre-mission group of top-level mass estimation groups and components for FLOPS-based analysis:
+    CargoMass, TransportCargoContainersMass, TransportEngineCtrlsMass, TransportAvionicsMass,
+    FuelCapacityGroup, EngineMass, etc.
     """
 
     def initialize(self):
