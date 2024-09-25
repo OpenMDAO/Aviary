@@ -958,7 +958,7 @@ class EngineDeck(EngineModel):
             uncorrect_shp = True
             engine_group.add_subsystem(
                 'uncorrect_shaft_power',
-                subsys=UncorrectData(num_nodes=num_nodes, aviary_options=self.options),
+                subsys=UncorrectData(num_nodes=num_nodes),
                 promotes_inputs=[
                     Dynamic.Mission.TEMPERATURE,
                     Dynamic.Mission.STATIC_PRESSURE,
@@ -992,7 +992,7 @@ class EngineDeck(EngineModel):
                 engine_group.add_subsystem(
                     'uncorrect_max_shaft_power',
                     subsys=UncorrectData(
-                        num_nodes=num_nodes, aviary_options=self.options
+                        num_nodes=num_nodes,
                     ),
                     promotes_inputs=[
                         Dynamic.Mission.TEMPERATURE,

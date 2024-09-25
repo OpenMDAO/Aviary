@@ -2,7 +2,6 @@ import openmdao.api as om
 
 from aviary.variable_info.variables import Aircraft
 
-from aviary.utils.aviary_values import AviaryValues
 from aviary.subsystems.geometry.flops_based.prep_geom import PrepGeom
 from aviary.subsystems.geometry.gasp_based.size_group import SizeGroup
 from aviary.variable_info.enums import LegacyCode
@@ -13,11 +12,6 @@ GASP = LegacyCode.GASP
 
 class CombinedGeometry(om.Group):
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options'
-        )
-
         self.options.declare('code_origin_to_prioritize',
                              values=[GASP, FLOPS, None],
                              default=None,
@@ -26,18 +20,17 @@ class CombinedGeometry(om.Group):
                              )
 
     def setup(self):
-        aviary_inputs = self.options['aviary_options']
 
         self.add_subsystem(
             'gasp_based_geom',
-            SizeGroup(aviary_options=aviary_inputs,),
+            SizeGroup(),
             promotes_inputs=["aircraft:*", "mission:*"],
             promotes_outputs=["aircraft:*"],
         )
 
         self.add_subsystem(
             'flops_based_geom',
-            PrepGeom(aviary_options=aviary_inputs),
+            PrepGeom(),
             promotes_inputs=['*'],
             promotes_outputs=['*']
         )

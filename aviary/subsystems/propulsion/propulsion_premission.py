@@ -17,15 +17,13 @@ class PropulsionPreMission(om.Group):
 
     def initialize(self):
         self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
-        self.options.declare(
             'engine_models', types=list,
             desc='list of EngineModels on aircraft'
         )
+        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
+        add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
-        options = self.options['aviary_options']
         engine_models = self.options['engine_models']
         num_engine_type = len(engine_models)
 
@@ -35,7 +33,7 @@ class PropulsionPreMission(om.Group):
         # each component here
         # Promotions are handled in self.configure()
         for engine in engine_models:
-            subsys = engine.build_pre_mission(options)
+            subsys = engine.build_pre_mission()
             if subsys:
                 if num_engine_type > 1:
                     proms = None
@@ -68,11 +66,10 @@ class PropulsionPreMission(om.Group):
         # so vectorized inputs/outputs are a problem. Slice all needed vector inputs and pass
         # pre_mission components only the value they need, then mux all the outputs back together
 
-        num_engine_type = len(self.options['aviary_options'].get_val(
-            Aircraft.Engine.NUM_ENGINES))
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
         # determine if openMDAO messages and warnings should be suppressed
-        verbosity = self.options['aviary_options'].get_val(Settings.VERBOSITY)
+        verbosity = self.options[Settings.VERBOSITY]
         out_stream = None
 
         # DEBUG
