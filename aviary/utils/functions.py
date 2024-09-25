@@ -146,7 +146,7 @@ def set_value(var_name, var_value, aviary_values: AviaryValues, units=None, is_a
 
     if is_array:
         var_value = np.atleast_1d(var_value)
-    elif len(var_value) == 1 and not isinstance(current_value, list):
+    elif len(var_value) == 1 and not isinstance(current_value, (list, np.ndarray)):
         # if only a single value is provided, don't store it as a list
         var_value = var_value[0]
 
