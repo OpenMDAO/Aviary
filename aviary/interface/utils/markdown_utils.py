@@ -15,7 +15,7 @@ def round_it(x, sig=None):
     ----------
     x : str
         the float that needs to be rounded.
-    sig: int
+    sig : int
         the number of significance (default to 2 if None).
 
     Returns
