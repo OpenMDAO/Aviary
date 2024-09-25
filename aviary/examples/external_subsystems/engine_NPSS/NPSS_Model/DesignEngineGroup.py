@@ -104,7 +104,7 @@ class NPSSExternalCodeComp(om.ExternalCodeComp):
 
 class DesignEngineGroup(om.Group):
     """
-    TODO: docstring
+    Group that contains NPSSExternalCodeComp and component to calculate negative fuel flow rate
     """
 
     def initialize(self):
