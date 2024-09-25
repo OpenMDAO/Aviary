@@ -10,7 +10,7 @@ from aviary.utils.functions import get_path
 
 class NPSSExternalCodeComp(om.ExternalCodeComp):
     """
-    TODO: docstring
+    Component that wraps NPSS engine model
     """
 
     def initialize(self):
