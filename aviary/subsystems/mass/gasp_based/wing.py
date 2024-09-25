@@ -417,7 +417,7 @@ class WingMassTotal(om.ExplicitComponent):
 
 class WingMassGroup(om.Group):
     """
-    Goupd that combined WingMassSolve and WingMassTotal.
+    Group to compute wing mass for GASP-based mass.
     """
 
     def initialize(self):
