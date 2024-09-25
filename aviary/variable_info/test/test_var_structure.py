@@ -24,7 +24,7 @@ class DuplicateHierarchy:
 
 class MetaDataTest(unittest.TestCase):
     """
-    Test no duplicate FLOPS and LEAPS1 names and in alphabetic order. Also test no missing names.
+    Tests for variable_meta_data.py: check for duplicate legacy code names, alphabetization, and any missing names from variable hierarchy.
     """
 
     def test_duplicate_names_FLOPS(self):
