@@ -2457,7 +2457,7 @@ class GearMass(om.ExplicitComponent):
 
 class FixedMassGroup(om.Group):
     """
-    Group of all fixed masses.
+    Group of all fixed mass components for GASP-based mass.
     """
 
     def initialize(self):
