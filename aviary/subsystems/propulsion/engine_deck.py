@@ -770,7 +770,7 @@ class EngineDeck(EngineModel):
             scaling factors.
         """
 
-        return SizeEngine(aviary_options=self.options)
+        return SizeEngine()
 
     def _build_engine_interpolator(self, num_nodes, aviary_inputs):
         """

@@ -73,12 +73,14 @@ class TransportEngineOilMassTest2(unittest.TestCase):
 
     def test_case(self):
         prob = om.Problem()
-        options = get_flops_inputs("N3CC")
-        options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2)
+
+        options = {
+            Aircraft.Propulsion.TOTAL_NUM_ENGINES: 2,
+        }
 
         prob.model.add_subsystem(
             'engine_oil',
-            TransportEngineOilMass(aviary_options=options),
+            TransportEngineOilMass(**options),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )
@@ -146,11 +148,16 @@ class AltEngineOilMassTest2(unittest.TestCase):
 
     def test_case(self):
         prob = om.Problem()
-        options = get_flops_inputs("N3CC")
-        options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2)
+
+        inputs = get_flops_inputs("N3CC", preprocess=True)
+
+        options = {
+            Aircraft.CrewPayload.NUM_PASSENGERS: inputs.get_val(Aircraft.CrewPayload.NUM_PASSENGERS),
+        }
+
         prob.model.add_subsystem(
             'engine_oil',
-            AltEngineOilMass(aviary_options=options),
+            AltEngineOilMass(**options),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )

@@ -98,13 +98,16 @@ class TransportStarterMassTest2(unittest.TestCase):
 
     def test_case_2(self):
         prob = om.Problem()
-        aviary_options = get_flops_inputs('LargeSingleAisle1FLOPS')
-        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([5]))
-        aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 5)
-        aviary_options.set_val(Mission.Constraints.MAX_MACH, 0.785)
+
+        options = {
+            Aircraft.Engine.NUM_ENGINES: np.array([5]),
+            Aircraft.Propulsion.TOTAL_NUM_ENGINES: 5,
+            Mission.Constraints.MAX_MACH: 0.785,
+        }
+
         prob.model.add_subsystem(
             "starter_test",
-            TransportStarterMass(aviary_options=aviary_options),
+            TransportStarterMass(**options),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )

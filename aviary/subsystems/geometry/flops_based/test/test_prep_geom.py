@@ -54,9 +54,7 @@ class PrepGeomTest(unittest.TestCase):
                     desc='collection of Aircraft/Mission specific options')
 
             def setup(self):
-                aviary_options = self.options['aviary_options']
-
-                self.add_subsystem('prep_geom', PrepGeom(aviary_options=aviary_options),
+                self.add_subsystem('prep_geom', PrepGeom(),
                                    promotes=['*'])
 
             def configure(self):
@@ -73,16 +71,18 @@ class PrepGeomTest(unittest.TestCase):
             Aircraft.Propulsion.TOTAL_NUM_ENGINES,
         ]
 
-        inputs = get_flops_data(case_name, preprocess=True, keys=keys)
-        options = {}
+        options = get_flops_data(case_name, preprocess=True, keys=keys)
+        model_options = {}
         for key in keys:
-            options[key] = inputs.get_item(key)[0]
+            model_options[key] = options.get_item(key)[0]
 
         prob = self.prob
 
         prob.model.add_subsystem(
-            'premission', PreMission(**options), promotes=['*']
+            'premission', PreMission(aviary_options=options), promotes=['*']
         )
+
+        prob.model_options['*'] = model_options
 
         prob.setup(check=False, force_alloc_complex=True)
 

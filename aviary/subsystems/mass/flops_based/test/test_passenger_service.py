@@ -67,10 +67,13 @@ class PassengerServiceMassTest2(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem(
             'passenger_service_weight',
-            PassengerServiceMass(aviary_options=get_flops_inputs("N3CC")),
+            PassengerServiceMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        prob.model_options['*'] = get_flops_options("N3CC", preprocess=True)
+
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Mission.Design.RANGE, 3500.0, 'nmi')
 
@@ -128,10 +131,13 @@ class AlternatePassengerServiceMassTest2(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem(
             'alternate_passenger_service_weight',
-            AltPassengerServiceMass(aviary_options=get_flops_inputs("N3CC")),
+            AltPassengerServiceMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        prob.model_options['*'] = get_flops_options("N3CC", preprocess=True)
+
         prob.setup(check=False, force_alloc_complex=True)
 
         partial_data = prob.check_partials(out_stream=None, method="cs")

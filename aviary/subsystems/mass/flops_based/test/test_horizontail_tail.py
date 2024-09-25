@@ -66,7 +66,7 @@ class ExplicitHorizontalTailMassTest2(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem(
             "horizontal_tail",
-            HorizontalTailMass(aviary_options=get_flops_inputs("N3CC")),
+            HorizontalTailMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -128,7 +128,7 @@ class ExplicitAltHorizontalTailMassTest2(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem(
             "horizontal_tail",
-            AltHorizontalTailMass(aviary_options=get_flops_inputs("N3CC")),
+            AltHorizontalTailMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )

@@ -67,7 +67,7 @@ class ElectricMassTest0(unittest.TestCase):
 
         prob.model.add_subsystem(
             "electric_test",
-            ElectricalMass(aviary_options=get_flops_inputs("N3CC", preprocess=True)),
+            ElectricalMass(),
             promotes_outputs=[
                 Aircraft.Electrical.MASS,
             ],
@@ -77,6 +77,8 @@ class ElectricMassTest0(unittest.TestCase):
                 Aircraft.Electrical.MASS_SCALER
             ]
         )
+
+        prob.model_options['*'] = get_flops_options("N3CC", preprocess=True)
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -108,7 +110,7 @@ class ElectricMassTest2(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem(
             "electric_test",
-            ElectricalMass(aviary_options=get_flops_inputs("N3CC", preprocess=True)),
+            ElectricalMass(),
             promotes_outputs=[
                 Aircraft.Electrical.MASS,
             ],
@@ -118,6 +120,9 @@ class ElectricMassTest2(unittest.TestCase):
                 Aircraft.Electrical.MASS_SCALER
             ]
         )
+
+        prob.model_options['*'] = get_flops_options("N3CC", preprocess=True)
+
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.Fuselage.LENGTH, 100.0, 'ft')
         prob.set_val(Aircraft.Fuselage.MAX_WIDTH, 12.0, 'ft')

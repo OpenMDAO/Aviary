@@ -202,9 +202,14 @@ class WingBendingMassTest2(unittest.TestCase):
     def test_case(self):
 
         prob = om.Problem()
+
+        opts = {
+            Aircraft.Fuselage.NUM_FUSELAGES: 1,
+        }
+
         prob.model.add_subsystem(
             "wing",
-            WingBendingMass(aviary_options=get_option_defaults()),
+            WingBendingMass(**opts),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )

@@ -68,10 +68,13 @@ class VerticalTailMassTest2(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem(
             "vertical_tail",
-            VerticalTailMass(aviary_options=get_flops_inputs("N3CC")),
+            VerticalTailMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        prob.model_options['*'] = get_flops_options("N3CC", preprocess=True)
+
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.VerticalTail.AREA, 100, 'ft**2')
         prob.set_val(Mission.Design.GROSS_MASS, 1000.0, 'lbm')

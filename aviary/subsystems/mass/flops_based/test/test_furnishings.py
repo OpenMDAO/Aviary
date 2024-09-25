@@ -133,14 +133,21 @@ class BWBFurnishingsGroupMassTest2(unittest.TestCase):
 
     def test_case(self):
         prob = om.Problem()
+
         flops_inputs = get_flops_inputs("N3CC", preprocess=True)
-        flops_inputs.update({
-            Aircraft.Fuselage.MILITARY_CARGO_FLOOR: (False, 'unitless'),
-            Aircraft.BWB.NUM_BAYS: (5, 'unitless')
-        })
+
+        opts = {
+            Aircraft.BWB.NUM_BAYS: 5,
+            Aircraft.CrewPayload.NUM_BUSINESS_CLASS: flops_inputs.get_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS),
+            Aircraft.CrewPayload.NUM_FLIGHT_CREW: flops_inputs.get_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW),
+            Aircraft.CrewPayload.NUM_FIRST_CLASS: flops_inputs.get_val(Aircraft.CrewPayload.NUM_FIRST_CLASS),
+            Aircraft.CrewPayload.NUM_TOURIST_CLASS: flops_inputs.get_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS),
+            Aircraft.Fuselage.MILITARY_CARGO_FLOOR: False,
+        }
+
         prob.model.add_subsystem(
             'furnishings',
-            BWBFurnishingsGroupMass(aviary_options=flops_inputs),
+            BWBFurnishingsGroupMass(**opts),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )

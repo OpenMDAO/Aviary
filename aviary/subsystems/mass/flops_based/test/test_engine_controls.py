@@ -65,14 +65,16 @@ class BasicTransportEngineCtrlsTest2(unittest.TestCase):
         control.GRAV_ENGLISH_LBM = 1.0
 
     def test_case(self):
-        flops_inputs = get_flops_inputs("LargeSingleAisle1FLOPS", preprocess=True)
         prob = om.Problem()
         prob.model.add_subsystem(
             'engine_ctrls',
-            TransportEngineCtrlsMass(aviary_options=flops_inputs),
+            TransportEngineCtrlsMass(),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )
+
+        prob.model_options['*'] = get_flops_options("LargeSingleAisle1FLOPS", preprocess=True)
+
         prob.setup(force_alloc_complex=True)
         prob.set_val(Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, 50000.0, 'lbf')
 

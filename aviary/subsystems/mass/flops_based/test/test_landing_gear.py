@@ -66,7 +66,7 @@ class LandingGearMassTest2(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem(
             "landing_gear",
-            LandingGearMass(aviary_options=get_flops_inputs("N3CC")),
+            LandingGearMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -130,7 +130,7 @@ class AltLandingGearMassTest2(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem(
             "landing_gear_alt",
-            AltLandingGearMass(aviary_options=get_flops_inputs("N3CC")),
+            AltLandingGearMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )

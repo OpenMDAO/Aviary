@@ -70,12 +70,12 @@ class PropulsionPreMissionTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
 
     def test_propulsion_sum(self):
-        options = AviaryValues()
-        options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([1, 2, 5]))
-        options.set_val(Settings.VERBOSITY, 0)
+        options = {
+            Aircraft.Engine.NUM_ENGINES: np.array([1, 2, 5]),
+        }
         self.prob.model = om.Group()
         self.prob.model.add_subsystem('propsum',
-                                      PropulsionSum(aviary_options=options),
+                                      PropulsionSum(**options),
                                       promotes=['*'])
 
         self.prob.setup(force_alloc_complex=True)

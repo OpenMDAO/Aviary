@@ -15,17 +15,16 @@ from aviary.variable_info.variables import Aircraft
 class ThrottleAllocationTest(unittest.TestCase):
 
     def setUp(self):
-        aviary_inputs = AviaryValues()
-        aviary_inputs.set_val(Aircraft.Engine.NUM_ENGINES, np.array([1, 1, 1]))
-
-        self.aviary_inputs = aviary_inputs
+        self.options = {
+            Aircraft.Engine.NUM_ENGINES: np.array([1, 1, 1]),
+        }
 
     def test_derivs_fixed_or_static(self):
         prob = om.Problem()
         model = prob.model
         model.add_subsystem('comp', ThrottleAllocator(num_nodes=4,
-                                                      aviary_options=self.aviary_inputs,
-                                                      throttle_allocation=ThrottleAllocation.FIXED),
+                                                      throttle_allocation=ThrottleAllocation.FIXED,
+                                                      **self.options),
                             promotes=['*'])
 
         prob.setup(force_alloc_complex=True)
@@ -41,8 +40,8 @@ class ThrottleAllocationTest(unittest.TestCase):
         prob = om.Problem()
         model = prob.model
         model.add_subsystem('comp', ThrottleAllocator(num_nodes=4,
-                                                      aviary_options=self.aviary_inputs,
-                                                      throttle_allocation=ThrottleAllocation.DYNAMIC),
+                                                      throttle_allocation=ThrottleAllocation.DYNAMIC,
+                                                      **self.options),
                             promotes=['*'])
 
         prob.setup(force_alloc_complex=True)

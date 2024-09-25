@@ -68,11 +68,13 @@ class FuselageMassTest2(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem(
             "fuselage",
-            TransportFuselageMass(aviary_options=get_flops_inputs(
-                "N3CC", preprocess=True)),
+            TransportFuselageMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        prob.model_options['*'] = get_flops_options("N3CC", preprocess=True)
+
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.Fuselage.LENGTH, 100.0, 'ft')
         prob.set_val(Aircraft.Fuselage.AVG_DIAMETER, 10.0, 'ft')
@@ -132,7 +134,7 @@ class AltFuselageMassTest2(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem(
             "fuselage",
-            AltFuselageMass(aviary_options=get_flops_inputs("N3CC")),
+            AltFuselageMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )

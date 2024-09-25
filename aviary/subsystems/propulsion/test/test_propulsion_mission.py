@@ -101,12 +101,13 @@ class PropulsionMissionTest(unittest.TestCase):
 
     def test_propulsion_sum(self):
         nn = 2
-        options = self.options
-        options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([3, 2]))
+        options = {
+            Aircraft.Engine.NUM_ENGINES: np.array([3, 2]),
+        }
         self.prob.model = om.Group()
         self.prob.model.add_subsystem('propsum',
                                       PropulsionSum(num_nodes=nn,
-                                                    aviary_options=options),
+                                                    **options),
                                       promotes=['*'])
 
         self.prob.setup(force_alloc_complex=True)

@@ -74,10 +74,19 @@ class TransportInstrumentsMassTest2(unittest.TestCase):
 
     def test_case(self):
         prob = om.Problem()
+
+        inputs = get_flops_inputs("N3CC", preprocess=True)
+
+        options = {
+            Aircraft.CrewPayload.NUM_FLIGHT_CREW: inputs.get_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW),
+            Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES: inputs.get_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES),
+            Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: inputs.get_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES),
+            Mission.Constraints.MAX_MACH: inputs.get_val(Mission.Constraints.MAX_MACH),
+        }
+
         prob.model.add_subsystem(
             "instruments_tests",
-            TransportInstrumentMass(
-                aviary_options=get_flops_inputs("N3CC", preprocess=True)),
+            TransportInstrumentMass(**options),
             promotes_outputs=[
                 Aircraft.Instruments.MASS,
             ],

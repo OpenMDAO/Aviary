@@ -4,7 +4,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Settings
 from aviary.variable_info.enums import Verbosity
 
@@ -57,8 +57,7 @@ class PropulsionPreMission(om.Group):
 
         self.add_subsystem(
             'propulsion_sum',
-            subsys=PropulsionSum(
-                aviary_options=options),
+            subsys=PropulsionSum(),
             promotes_inputs=['*'],
             promotes_outputs=['*']
         )
@@ -183,13 +182,10 @@ class PropulsionSum(om.ExplicitComponent):
     '''
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
 
     def setup(self):
-        num_engine_type = len(self.options['aviary_options'].get_val(
-            Aircraft.Engine.NUM_ENGINES))
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
         add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST,
                          val=np.zeros(num_engine_type))
@@ -198,13 +194,13 @@ class PropulsionSum(om.ExplicitComponent):
             self, Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, val=0.0)
 
     def setup_partials(self):
-        num_engines = self.options['aviary_options'].get_val(Aircraft.Engine.NUM_ENGINES)
+        num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
 
         self.declare_partials(Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST,
                               Aircraft.Engine.SCALED_SLS_THRUST, val=num_engines)
 
     def compute(self, inputs, outputs):
-        num_engines = self.options['aviary_options'].get_val(Aircraft.Engine.NUM_ENGINES)
+        num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
 
         thrust = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
 

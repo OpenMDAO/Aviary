@@ -4,6 +4,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.functions import add_aviary_option
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 
 
@@ -54,7 +55,7 @@ class PropulsionMission(om.Group):
             for i, engine in enumerate(engine_models):
                 self.add_subsystem(
                     engine.name,
-                    subsys=engine.build_mission(num_nodes=nn, aviary_inputs=options),
+                    subsys=engine.build_mission(num_nodes=nn),
                     promotes_inputs=['*'],
                 )
 
@@ -137,7 +138,7 @@ class PropulsionMission(om.Group):
 
         self.add_subsystem(
             'propulsion_sum',
-            subsys=PropulsionSum(num_nodes=nn, aviary_options=options),
+            subsys=PropulsionSum(num_nodes=nn),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -226,17 +227,12 @@ class PropulsionSum(om.ExplicitComponent):
 
     def initialize(self):
         self.options.declare('num_nodes', types=int, lower=0)
-
-        self.options.declare(
-            'aviary_options',
-            types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options',
-        )
+        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
 
     def setup(self):
         nn = self.options['num_nodes']
         num_engine_type = len(
-            self.options['aviary_options'].get_val(Aircraft.Engine.NUM_ENGINES)
+            self.options[Aircraft.Engine.NUM_ENGINES]
         )
 
         self.add_input(
@@ -273,9 +269,8 @@ class PropulsionSum(om.ExplicitComponent):
 
     def setup_partials(self):
         nn = self.options['num_nodes']
-        num_engines = self.options['aviary_options'].get_val(
-            Aircraft.Engine.NUM_ENGINES
-        )
+        num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
+
         num_engine_type = len(num_engines)
         deriv = np.tile(num_engines, nn)
 
@@ -319,9 +314,7 @@ class PropulsionSum(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
-        num_engines = self.options['aviary_options'].get_val(
-            Aircraft.Engine.NUM_ENGINES
-        )
+        num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
 
         thrust = inputs[Dynamic.Mission.THRUST]
         thrust_max = inputs[Dynamic.Mission.THRUST_MAX]

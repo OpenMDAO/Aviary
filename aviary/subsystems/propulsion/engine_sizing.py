@@ -34,7 +34,7 @@ class SizeEngine(om.ExplicitComponent):
     def compute(self, inputs, outputs):
 
         scale_engine = self.options[Aircraft.Engine.SCALE_PERFORMANCE]
-        reference_sls_thrust = self.options[Aircraft.Engine.REFERENCE_SLS_THRUST]
+        reference_sls_thrust, _ = self.options[Aircraft.Engine.REFERENCE_SLS_THRUST]
 
         scaled_sls_thrust = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
 
@@ -52,7 +52,7 @@ class SizeEngine(om.ExplicitComponent):
 
     def compute_partials(self, inputs, J):
         scale_engine = self.options[Aircraft.Engine.SCALE_PERFORMANCE]
-        reference_sls_thrust = self.options[Aircraft.Engine.REFERENCE_SLS_THRUST]
+        reference_sls_thrust, _ = self.options[Aircraft.Engine.REFERENCE_SLS_THRUST]
 
         deriv_scale_factor = 0
         if scale_engine:
