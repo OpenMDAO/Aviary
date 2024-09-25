@@ -6,7 +6,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 class CLmaxCalculation(om.ExplicitComponent):
     """
-    Max CL calculation
+    CL_max calculation for GASP-based aerodynamics
     """
 
     def setup(self):

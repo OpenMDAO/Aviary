@@ -6,7 +6,7 @@ from aviary.variable_info.variables import Aircraft
 
 class LiftAndDragIncrements(om.ExplicitComponent):
     """
-    Compute lift and drag increments
+    Compute lift and drag increments from flaps for GASP-based aerodynamics
     """
 
     def setup(self):

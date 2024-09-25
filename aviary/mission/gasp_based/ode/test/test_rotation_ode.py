@@ -14,7 +14,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 class RotationODETestCase(unittest.TestCase):
     """
-    Test rotation ODE
+    Test 2-degree of freedom rotation ODE
     """
 
     def setUp(self):

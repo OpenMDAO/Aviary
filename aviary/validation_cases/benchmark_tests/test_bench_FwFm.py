@@ -21,9 +21,8 @@ except ImportError:
 class ProblemPhaseTestCase(unittest.TestCase):
     """
     Setup of a large single aisle commercial transport aircraft using 
-    FLOPS mass method and HEIGHT_ENERGY mission method. Note that this
-    class assumes the model is 'models/test_aircraft/aircraft_for_bench_FwFm.csv'
-    and set the expected outputs.
+    FLOPS mass method and HEIGHT_ENERGY mission method. Expected outputs based
+    on 'models/test_aircraft/aircraft_for_bench_FwFm.csv' model.
     """
 
     def setUp(self):

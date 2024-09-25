@@ -555,7 +555,7 @@ class PhaseBuilderBase(ABC):
 
     def add_altitude_constraint(self, user_options):
         """
-        add altitude constraint: final altitude and altitude constraint reference.
+        Add altitude constraint: final altitude and altitude constraint reference.
         """
         final_altitude = user_options.get_val('final_altitude', units='ft')
         alt_constraint_ref = user_options.get_val('alt_constraint_ref', units='ft')

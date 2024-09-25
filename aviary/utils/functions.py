@@ -130,7 +130,11 @@ def convert_strings_to_data(string_list):
 
 def set_value(var_name, var_value, aviary_values: AviaryValues, units=None, is_array=False, meta_data=_MetaData):
     """
-    Set the value of var_name to var_value
+    Wrapper for AviaryValues.set_val(). Existing value/units of the provided variable name are used as defaults if
+    they exist and not provided in this function. Special list handling provided: if 'is_array' is true, 'var_value' is
+    always added to 'aviary_values' as a numpy array. Otherwise, if 'var_value' is a list or numpy array of length
+    one and existing value in 'aviary_values' or default value in 'meta_data' is not a list or numpy array,
+    individual value is pulled out of 'var_value' to be stored in 'aviary_values'.
     """
     if var_name in aviary_values:
         current_value, current_units = aviary_values.get_item(var_name)
@@ -317,7 +321,7 @@ def create_printcomp(all_inputs: list, input_units: dict = {}, meta_data=_MetaDa
 
 def promote_aircraft_and_mission_vars(group):
     """
-    Locally promote aircraft:* and mission:* only.
+    Promotes inputs and outputs in Aircraft and Mission hierarchy categories for provided group.
     """
     external_outputs = []
     for comp in group.system_iter(recurse=False):

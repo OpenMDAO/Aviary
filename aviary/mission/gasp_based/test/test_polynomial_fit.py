@@ -45,7 +45,7 @@ class PolynomialFitTest(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
-        # It checks output values. It will not check partials
+        # Checks output values only. It will not check partials
         # because cs is used to compute partials already.
 
         self.prob.run_model()

@@ -7,7 +7,7 @@ from aviary.variable_info.variables import Aircraft
 
 class BasicFlapsCalculations(om.ExplicitComponent):
     """
-    Basic flaps calculations
+    Intermediate calculations for flaps model of GASP-based aerodynamics
     """
 
     def setup(self):

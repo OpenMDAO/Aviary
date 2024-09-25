@@ -14,9 +14,8 @@ from aviary.variable_info.variables import Aircraft, Mission
 class ProblemPhaseTestCase(unittest.TestCase):
     """
     Test the setup and run of a large single aisle commercial transport aircraft using 
-    FLOPS mass method and TWO_DEGREES_OF_FREEDOM mission method. Note that this
-    class assumes the model is 'models/test_aircraft/aircraft_for_bench_FwFm.csv'
-    and set the expected outputs.
+    FLOPS mass method and TWO_DEGREES_OF_FREEDOM mission method. Expected outputs
+    based on 'models/test_aircraft/aircraft_for_bench_FwFm.csv' model.
     """
 
     def setUp(self):

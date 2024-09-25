@@ -11,7 +11,7 @@ from aviary.models.N3CC.N3CC_data import inputs
 
 class BaseProblemPhaseTestCase(unittest.TestCase):
     """
-    Test the setup and run optimization model with 0 iteration.
+    Test the setup and run of a simple energy method and 2DOF mission (no optimization, single iteration)
     """
 
     def build_and_run_problem(self, input_filename, phase_info, objective_type=None):

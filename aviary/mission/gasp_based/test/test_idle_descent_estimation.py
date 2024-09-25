@@ -19,7 +19,7 @@ from aviary.utils.test_utils.default_subsystems import get_default_mission_subsy
 @unittest.skipUnless(importlib.util.find_spec("pyoptsparse") is not None, "pyoptsparse is not installed")
 class IdleDescentTestCase(unittest.TestCase):
     """
-    Test idle descent
+    Test idle descent for 2DOF mission
     """
 
     def setUp(self):

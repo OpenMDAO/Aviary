@@ -9,12 +9,8 @@ from aviary.variable_info.variables import Aircraft
 
 class CharacteristicLengths(om.ExplicitComponent):
     """
-    Calculate the canard characteristic length, canard fineness,
-    fuselage characteristic length, fuselage fineness,
-    horizontal tail characteristic length, horizontal tail fineness,
-    nacelle characteristic length, nacelle fineness,
-    vertical tail characteristic length, vertical tail fineness,
-    wing characteristic length, wing fineness.
+    Calculate the characteristic length and fineness ratio of the
+    canard, fuselage, horizontal tail, nacelle, and vertical tail.
     """
 
     def initialize(self):

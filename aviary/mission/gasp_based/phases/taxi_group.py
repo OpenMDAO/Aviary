@@ -9,7 +9,7 @@ from aviary.variable_info.variables import Dynamic, Mission
 
 
 class TaxiSegment(BaseODE):
-    """ODE for taxi."""
+    """ODE for taxi phase of a 2DOF mission"""
 
     def setup(self):
         options: AviaryValues = self.options['aviary_options']
