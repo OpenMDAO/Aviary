@@ -3,6 +3,7 @@ import openmdao.api as om
 
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH
 from aviary.utils.aviary_values import AviaryValues
+from aviary.utils.functions import sigmoidX, dSigmoidXdx
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission
 
@@ -87,10 +88,18 @@ class LoadSpeeds(om.ExplicitComponent):
             VCMIN = VCCOF * (wing_loading**0.5)
 
             if smooth:
-                VCMIN = VCMIN * sig((VCMAX - VCMIN) / VCMAX) + VCMAX * sig(
-                    (VCMIN - VCMAX) / VCMAX
-                )
-
+                import pdb
+                x1 = sig((VCMAX - VCMIN) / VCMAX)
+                x2 = sig((VCMIN - VCMAX) / VCMAX)
+                y1 = sigmoidX(VCMIN/VCMAX, 1, -0.01)
+                y2 = sigmoidX(VCMIN/VCMAX, 1, 0.01)
+                VCMIN_bk = VCMIN
+                #VCMIN = VCMIN * sig((VCMAX - VCMIN) / VCMAX) + VCMAX * sig((VCMIN - VCMAX) / VCMAX)
+                VCMIN = VCMIN * sigmoidX(VCMIN/VCMAX, 1, -0.01) + VCMAX * sigmoidX(VCMIN/VCMAX, 1, 0.01)
+                z1 = VCMIN_bk * x1 + VCMAX * x2
+                z2 = VCMIN_bk * y1 + VCMAX * y2
+                #pdb.set_trace()
+                pass
             else:
                 if VCMIN > VCMAX:
                     VCMIN = VCMAX

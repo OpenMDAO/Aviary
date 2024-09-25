@@ -205,7 +205,6 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
         aux_wt = 0.0
 
         if smooth:
-            #aux_wt = 3 * sig((gross_wt_initial - 3000) / 3000)
             aux_wt = 3 * sigmoidX(gross_wt_initial/3000, 1.0, 0.01)
 
         else:
@@ -575,11 +574,8 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
 
         if smooth:
             d_aux_wt_dgross_wt_initial = (
-                3 * dsig((gross_wt_initial - 3000) / 3000) * 1 / 3000
+                3 * dSigmoidXdx(gross_wt_initial / 3000, 1, 0.01) * 1 / 3000
             )
-            #d_aux_wt_dgross_wt_initial = (
-            #    3 * dSigmoidXdx((gross_wt_initial - 3000) / 3000, 1, 0.01) * 1 / 3000
-            #)
         else:
             if (
                 gross_wt_initial > 3000.0
@@ -604,17 +600,17 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
             )
 
             dCPX_dcabin_width = (
-                28 * dsig((28 - CPX) / 28) * -dCPX_dcabin_width
+                28 * dSigmoidXdx(CPX/28, 1, -0.01) * -dCPX_dcabin_width
                 + (
-                    dCPX_dcabin_width * sig((CPX - 28) / 28)
-                    + CPX * dsig((CPX - 28) / 28) * dCPX_dcabin_width
+                    dCPX_dcabin_width * sigmoidX(CPX/28, 1, 0.01)
+                    + CPX * dSigmoidXdx(CPX/28, 1, 0.01) * dCPX_dcabin_width
                 )
                 * sigmoidX(CPX/62, 1, -0.01)
                 + CPX
                 * sigmoidX(CPX/28, 1, 0.01)
-                * dsig((62 - CPX) / 62)
+                * dSigmoidXdx(CPX/62, 1, -0.01)
                 * -dCPX_dcabin_width
-                + 62 * dsig((CPX - 62) / 62) * dCPX_dcabin_width
+                + 62 * dSigmoidXdx(CPX/62, 1, 0.01) * dCPX_dcabin_width
             )
 
             CPX = CPX_1

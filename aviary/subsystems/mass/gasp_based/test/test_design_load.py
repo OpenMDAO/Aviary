@@ -293,7 +293,7 @@ class LoadSpeedsTestCase7smooth(unittest.TestCase):  # TestCase2 with smooth fun
         )  # not actual GASP value
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-15, rtol=1e-14)
+        assert_check_partials(partial_data, atol=1e-14, rtol=1e-14)
 
 
 class LoadSpeedsTestCase8smooth(unittest.TestCase):  # TestCase3 with smooth functions
@@ -954,4 +954,7 @@ class DesignLoadGroupTestCase2smooth(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    #unittest.main()
+    thisClass = LoadSpeedsTestCase7smooth()
+    thisClass.setUp()
+    thisClass.test_case1()

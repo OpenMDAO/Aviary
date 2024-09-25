@@ -526,6 +526,6 @@ def dSigmoidXdx(x, x0, alpha=0.1):
     """
     if alpha == 0:
         raise ValueError("alpha must be non-zero")
-    term = np.exp(np.exp(-(x - x0) / alpha))
+    term = np.exp(-(x - x0) / alpha)
     term2 = (1 + term) * (1 + term)
     return term / alpha / term2
