@@ -5,7 +5,7 @@ from aviary.constants import GRAV_ENGLISH_LBM
 
 class MassToWeight(om.ExplicitComponent):
     """
-    Computation from mass to weight.
+    Component to convert mass to weight.
     """
 
     def initialize(self):
