@@ -126,6 +126,10 @@ def convert_strings_to_data(string_list):
     return value_list
 
 
+# TODO this function is only used in a single place (process_input_decks.py), and its
+#      functionality can get handled in other places (convert_strings_to_data being able
+#      to handle lists/arrays, and other special handling directly present in
+#      process_input_decks.py)
 def set_value(var_name, var_value, aviary_values: AviaryValues, units=None, is_array=False, meta_data=_MetaData):
     if var_name in aviary_values:
         current_value, current_units = aviary_values.get_item(var_name)
@@ -148,11 +152,11 @@ def set_value(var_name, var_value, aviary_values: AviaryValues, units=None, is_a
 
     # TODO handle enums in an automated method via checking metadata for enum type
     if var_name == 'settings:problem_type':
-        var_values = ProblemType(var_value)
+        var_value = ProblemType(var_value)
     if var_name == 'settings:equations_of_motion':
-        var_values = EquationsOfMotion(var_value)
+        var_value = EquationsOfMotion(var_value)
     if var_name == 'settings:mass_method':
-        var_values = LegacyCode(var_value)
+        var_value = LegacyCode(var_value)
 
     aviary_values.set_val(var_name, val=var_value, units=units, meta_data=meta_data)
     return aviary_values
