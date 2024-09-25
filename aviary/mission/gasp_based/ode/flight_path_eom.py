@@ -7,7 +7,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class FlightPathEOM(om.ExplicitComponent):
-    """GASP based flight path EOM."""
+    """2-degree of freedom flight path EOM."""
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
