@@ -68,7 +68,7 @@ class MetaDataTest(unittest.TestCase):
 
 class VariableStructureTest(unittest.TestCase):
     """
-    Variable structure test: no duplicates and in order.
+    Tests for variables.py: check for duplicates and alphabetization
     """
 
     def test_duplicate_names_Aviary(self):
