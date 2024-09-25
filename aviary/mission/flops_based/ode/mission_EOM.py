@@ -8,7 +8,7 @@ from aviary.variable_info.variables import Dynamic
 
 
 class MissionEOM(om.Group):
-    """Define the mission equation of motion"""
+    """Define the mission equation of motion for the energy method"""
 
     def initialize(self):
         self.options.declare('num_nodes', types=int,
