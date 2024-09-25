@@ -2,7 +2,6 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.subsystems.mass.flops_based.distributed_prop import nacelle_count_factor
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft
 

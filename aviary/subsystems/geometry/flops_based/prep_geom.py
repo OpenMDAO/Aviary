@@ -19,7 +19,6 @@ from aviary.subsystems.geometry.flops_based.utils import (
     d_calc_fuselage_adjustment, thickness_to_chord_scaler)
 from aviary.subsystems.geometry.flops_based.wetted_area_total import TotalWettedArea
 from aviary.subsystems.geometry.flops_based.wing import WingPrelim
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft
 
@@ -28,11 +27,6 @@ class PrepGeom(om.Group):
     '''
     Prepare derived values of aircraft geometry for aerodynamics analysis.
     '''
-
-    def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
 

@@ -2,7 +2,6 @@ import numpy as np
 import openmdao.api as om
 import scipy.constants as _units
 
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Dynamic
 
@@ -19,9 +18,6 @@ class InducedDrag(om.ExplicitComponent):
         self.options.declare(
             'gamma', default=1.4,
             desc='Ratio of specific heats for air.')
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
 
         add_aviary_option(self, Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION)
 

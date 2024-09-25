@@ -1,11 +1,10 @@
 import warnings
 import numpy as np
 import openmdao.api as om
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH, TSLS_DEGR
-from aviary.utils.functions import add_aviary_input, add_aviary_output
+from aviary.utils.functions import add_aviary_input, add_aviary_output, add_aviary_option
 
 
 def _unint(xa, ya, x):
@@ -78,7 +77,7 @@ def _unint(xa, ya, x):
 
 def _biquad(T, i, xi, yi):
     """
-    This routine interpolates over a 4 point interval using a 
+    This routine interpolates over a 4 point interval using a
     variation of 2nd degree interpolation to produce a continuity
     of slope between adjacent intervals.
 
@@ -579,17 +578,17 @@ class PreHamiltonStandard(om.ExplicitComponent):
 
 class HamiltonStandard(om.ExplicitComponent):
     """
-    This is Hamilton Standard component rewritten from Fortran code. 
-    The original documentation is available at 
+    This is Hamilton Standard component rewritten from Fortran code.
+    The original documentation is available at
     https://ntrs.nasa.gov/api/citations/19720010354/downloads/19720010354.pdf
     It computes the thrust coefficient of a propeller blade.
     """
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
         self.options.declare('num_nodes', default=1, types=int)
+
+        add_aviary_option(self, Aircraft.Engine.NUM_PROPELLER_BLADES)
+        add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
         nn = self.options['num_nodes']
@@ -615,9 +614,8 @@ class HamiltonStandard(om.ExplicitComponent):
         self.declare_partials('*', '*', method='fd', form='forward')
 
     def compute(self, inputs, outputs):
-        verbosity = self.options['aviary_options'].get_val(Settings.VERBOSITY)
-        num_blades = self.options['aviary_options'].get_val(
-            Aircraft.Engine.NUM_PROPELLER_BLADES)
+        verbosity = self.options[Settings.VERBOSITY]
+        num_blades = self.options[Aircraft.Engine.NUM_PROPELLER_BLADES]
 
         for i_node in range(self.options['num_nodes']):
             ichck = 0

@@ -6,7 +6,6 @@ import numpy as np
 import openmdao.api as om
 from openmdao.components.interp_util.interp import InterpND
 
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Mission
 
@@ -26,10 +25,6 @@ class Design(om.ExplicitComponent):
         self.des_mach_coeff = [0.32, 57.2958, 0.144]
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
-
         add_aviary_option(self, Aircraft.Wing.AIRFOIL_TECHNOLOGY)
         add_aviary_option(self, Mission.Constraints.MAX_MACH)
 

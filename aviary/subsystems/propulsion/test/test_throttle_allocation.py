@@ -7,7 +7,6 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
 
 from aviary.subsystems.propulsion.throttle_allocation import ThrottleAllocator
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import ThrottleAllocation
 from aviary.variable_info.variables import Aircraft
 
