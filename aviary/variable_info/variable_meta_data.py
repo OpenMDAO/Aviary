@@ -1994,7 +1994,7 @@ add_meta_data(
     units='unitless',
     desc='number of fuselage mounted engines per model',
     option=True,
-    types=int,
+    types=(list, np.ndarray, int),
     default_value=0
 )
 
@@ -2339,7 +2339,7 @@ add_meta_data(
                      },
     option=True,
     default_value=GASPEngineType.TURBOJET,
-    types=GASPEngineType,
+    types=(list, GASPEngineType, str, int, np.ndarray),
     units="unitless",
     desc='specifies engine type used for engine mass calculation',
 )

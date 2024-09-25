@@ -12,7 +12,6 @@ from aviary.utils.preprocessors import preprocess_options
 from aviary.validation_cases.validation_tests import get_flops_inputs, get_flops_outputs
 from aviary.variable_info.functions import extract_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
-from aviary.variable_info.variable_meta_data import _MetaData
 
 
 class MissionDragTest(unittest.TestCase):
@@ -83,7 +82,7 @@ class MissionDragTest(unittest.TestCase):
         )
 
         # Set all options
-        prob.model_options['*'] = extract_options(flops_inputs, _MetaData)
+        prob.model_options['*'] = extract_options(flops_inputs)
 
         prob.setup(force_alloc_complex=True)
         prob.set_solver_print(level=2)
@@ -196,7 +195,7 @@ class MissionDragTest(unittest.TestCase):
         )
 
         # Set all options
-        prob.model_options['*'] = extract_options(flops_inputs, _MetaData)
+        prob.model_options['*'] = extract_options(flops_inputs)
 
         prob.setup()
 
@@ -308,7 +307,7 @@ class MissionDragTest(unittest.TestCase):
         )
 
         # Set all options
-        prob.model_options['*'] = extract_options(flops_inputs, _MetaData)
+        prob.model_options['*'] = extract_options(flops_inputs)
 
         prob.setup()
 

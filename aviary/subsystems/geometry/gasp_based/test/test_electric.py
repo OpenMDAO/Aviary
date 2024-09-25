@@ -5,6 +5,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.geometry.gasp_based.electric import CableSize
+from aviary.variable_info.functions import extract_options
 from aviary.variable_info.variables import Aircraft
 from aviary.utils.aviary_values import AviaryValues
 
@@ -17,8 +18,8 @@ class ElectricTestCase(unittest.TestCase):
         aviary_options = AviaryValues()
         aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 2)
 
-        self.prob.model.add_subsystem("cable", CableSize(
-            aviary_options=aviary_options), promotes=["*"])
+        self.prob.model.add_subsystem("cable", CableSize(),
+                                      promotes=["*"])
 
         self.prob.model.set_input_defaults(
             Aircraft.Engine.WING_LOCATIONS, 0.35, units="unitless"
@@ -29,6 +30,8 @@ class ElectricTestCase(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.AVG_DIAMETER, 10, units="ft"
         )  # not actual GASP value
+
+        self.prob.model_options['*'] = extract_options(aviary_options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -53,8 +56,8 @@ class ElectricTestCaseMultiEngine(unittest.TestCase):
         # aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2, 4]))
         aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 6)
 
-        prob.model.add_subsystem("cable", CableSize(
-            aviary_options=aviary_options), promotes=["*"])
+        prob.model.add_subsystem("cable", CableSize(),
+                                 promotes=["*"])
 
         prob.model.set_input_defaults(
             Aircraft.Engine.WING_LOCATIONS, np.array([0.35, 0.2, 0.6]), units="unitless"
@@ -65,6 +68,8 @@ class ElectricTestCaseMultiEngine(unittest.TestCase):
         prob.model.set_input_defaults(
             Aircraft.Fuselage.AVG_DIAMETER, 10, units="ft"
         )
+
+        prob.model_options['*'] = extract_options(aviary_options)
 
         prob.setup(check=False, force_alloc_complex=True)
 

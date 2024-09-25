@@ -23,7 +23,7 @@ class FlapsGroupTestCaseTripleSlotted(unittest.TestCase):
         options.set_val(Aircraft.Wing.FLAP_TYPE,
                         val=FlapType.TRIPLE_SLOTTED, units='unitless')
 
-        self.prob.model = FCC = FlapsGroup(aviary_options=options)
+        self.prob.model = FCC = FlapsGroup()
 
         self.prob.setup()
 
@@ -125,7 +125,7 @@ class FlapsGroupTestCaseSplit(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.Wing.FLAP_TYPE, val=FlapType.SPLIT, units='unitless')
 
-        self.prob.model = FCC = FlapsGroup(aviary_options=options)
+        self.prob.model = FCC = FlapsGroup()
 
         self.prob.setup()
 
@@ -228,7 +228,7 @@ class FlapsGroupTestCaseSingleSlotted(unittest.TestCase):
         options.set_val(Aircraft.Wing.FLAP_TYPE,
                         val=FlapType.SINGLE_SLOTTED, units='unitless')
 
-        self.prob.model = FCC = FlapsGroup(aviary_options=options)
+        self.prob.model = FCC = FlapsGroup()
 
         self.prob.setup()
 
@@ -331,7 +331,7 @@ class FlapsGroupTestCasePlain(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.Wing.FLAP_TYPE, val=FlapType.PLAIN, units='unitless')
 
-        self.prob.model = FCC = FlapsGroup(aviary_options=options)
+        self.prob.model = FCC = FlapsGroup()
 
         self.prob.setup()
 
@@ -433,7 +433,7 @@ class FlapsGroupTestCaseFowler(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.Wing.FLAP_TYPE, val=FlapType.FOWLER, units='unitless')
 
-        self.prob.model = FCC = FlapsGroup(aviary_options=options)
+        self.prob.model = FCC = FlapsGroup()
 
         self.prob.setup()
 
@@ -536,7 +536,7 @@ class FlapsGroupTestCaseDoubleFowler(unittest.TestCase):
         options.set_val(Aircraft.Wing.FLAP_TYPE,
                         val=FlapType.DOUBLE_SLOTTED_FOWLER, units='unitless')
 
-        self.prob.model = FCC = FlapsGroup(aviary_options=options)
+        self.prob.model = FCC = FlapsGroup()
 
         self.prob.setup()
 

@@ -60,21 +60,20 @@ class CoreGeometryBuilder(GeometryBuilderBase):
         geom_group = None
 
         if both_geom:
-            geom_group = CombinedGeometry(aviary_options=aviary_inputs,
-                                          code_origin_to_prioritize=code_origin_to_prioritize)
+            geom_group = CombinedGeometry(code_origin_to_prioritize=code_origin_to_prioritize)
 
         elif code_origin is GASP:
-            geom_group = SizeGroup(aviary_options=aviary_inputs)
+            geom_group = SizeGroup()
             geom_group.manual_overrides = None
 
         elif code_origin is FLOPS:
-            geom_group = PrepGeom(aviary_options=aviary_inputs)
+            geom_group = PrepGeom()
             geom_group.manual_overrides = None
 
         return geom_group
 
     def build_mission(self, num_nodes, aviary_inputs, **kwargs):
-        super().build_mission(num_nodes, aviary_inputs)
+        super().build_mission(num_nodes)
 
     def get_parameters(self, aviary_inputs=None, phase_info=None):
         num_engine_type = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))

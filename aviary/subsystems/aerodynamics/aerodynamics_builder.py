@@ -73,17 +73,17 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
         code_origin = self.code_origin
 
         if code_origin is GASP:
-            aero_group = PreMissionAero(aviary_options=aviary_inputs)
+            aero_group = PreMissionAero()
 
         elif code_origin is FLOPS:
             aero_group = om.Group()
             aero_group.add_subsystem(
-                'design', Design(aviary_options=aviary_inputs),
+                'design', Design(),
                 promotes_inputs=['*'],
                 promotes_outputs=['*'])
 
             aero_group.add_subsystem(
-                'aero_report', AeroReport(aviary_options=aviary_inputs),
+                'aero_report', AeroReport(),
                 promotes_inputs=['*'],
                 promotes_outputs=['*'])
 

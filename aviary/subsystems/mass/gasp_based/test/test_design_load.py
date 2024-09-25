@@ -9,6 +9,7 @@ from aviary.subsystems.mass.gasp_based.design_load import (DesignLoadGroup,
                                                            LoadParameters,
                                                            LiftCurveSlopeAtCruise,
                                                            LoadSpeeds)
+from aviary.variable_info.functions import extract_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission
 
@@ -20,7 +21,7 @@ class LoadSpeedsTestCase1(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "speeds",
-            LoadSpeeds(aviary_options=get_option_defaults()),
+            LoadSpeeds(),
             promotes=["*"],
         )
 
@@ -54,7 +55,7 @@ class LoadSpeedsTestCase2(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "speeds",
-            LoadSpeeds(aviary_options=options),
+            LoadSpeeds(),
             promotes=["*"],
         )
 
@@ -64,6 +65,8 @@ class LoadSpeedsTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.LOADING, val=128, units="lbf/ft**2"
         )  # not actual bug fixed value
+
+        self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -98,7 +101,7 @@ class LoadSpeedsTestCase3(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "speeds",
-            LoadSpeeds(aviary_options=options),
+            LoadSpeeds(),
             promotes=["*"],
         )
 
@@ -108,6 +111,8 @@ class LoadSpeedsTestCase3(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.LOADING, val=128, units="lbf/ft**2"
         )  # not actual bug fixed value
+
+        self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -141,7 +146,7 @@ class LoadSpeedsTestCase4(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "speeds",
-            LoadSpeeds(aviary_options=options),
+            LoadSpeeds(),
             promotes=["*"],
         )
 
@@ -151,6 +156,8 @@ class LoadSpeedsTestCase4(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.LOADING, val=128, units="lbf/ft**2"
         )  # not actual bug fixed value
+
+        self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -185,13 +192,15 @@ class LoadSpeedsTestCase5(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "speeds",
-            LoadSpeeds(aviary_options=options),
+            LoadSpeeds(),
             promotes=["*"],
         )
 
         self.prob.model.set_input_defaults(
             Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units="mi/h"
         )  # not actual bug fixed value
+
+        self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -223,15 +232,15 @@ class LoadSpeedsTestCase6smooth(
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "speeds",
-            LoadSpeeds(
-                aviary_options=options
-            ),
+            LoadSpeeds(),
             promotes=["*"],
         )
 
         self.prob.model.set_input_defaults(
             Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units="mi/h"
         )  # bug fixed value
+
+        self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -261,9 +270,7 @@ class LoadSpeedsTestCase7smooth(unittest.TestCase):  # TestCase2 with smooth fun
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "speeds",
-            LoadSpeeds(
-                aviary_options=options
-            ),
+            LoadSpeeds(),
             promotes=["*"],
         )
 
@@ -273,6 +280,8 @@ class LoadSpeedsTestCase7smooth(unittest.TestCase):  # TestCase2 with smooth fun
         self.prob.model.set_input_defaults(
             Aircraft.Wing.LOADING, val=128, units="lbf/ft**2"
         )  # not actual bug fixed value
+
+        self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -309,9 +318,7 @@ class LoadSpeedsTestCase8smooth(unittest.TestCase):  # TestCase3 with smooth fun
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "speeds",
-            LoadSpeeds(
-                aviary_options=options,
-            ),
+            LoadSpeeds(),
             promotes=["*"],
         )
 
@@ -321,6 +328,8 @@ class LoadSpeedsTestCase8smooth(unittest.TestCase):  # TestCase3 with smooth fun
         self.prob.model.set_input_defaults(
             Aircraft.Wing.LOADING, val=128, units="lbf/ft**2"
         )  # not actual bug fixed value
+
+        self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -356,9 +365,7 @@ class LoadSpeedsTestCase9smooth(unittest.TestCase):  # TestCase4 with smooth fun
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "speeds",
-            LoadSpeeds(
-                aviary_options=options,
-            ),
+            LoadSpeeds(),
             promotes=["*"],
         )
 
@@ -368,6 +375,8 @@ class LoadSpeedsTestCase9smooth(unittest.TestCase):  # TestCase4 with smooth fun
         self.prob.model.set_input_defaults(
             Aircraft.Wing.LOADING, val=128, units="lbf/ft**2"
         )  # not actual bug fixed value
+
+        self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -404,15 +413,15 @@ class LoadSpeedsTestCase10smooth(unittest.TestCase):  # TestCase5 with smooth fu
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "speeds",
-            LoadSpeeds(
-                aviary_options=options,
-            ),
+            LoadSpeeds(),
             promotes=["*"],
         )
 
         self.prob.model.set_input_defaults(
             Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units="mi/h"
         )  # not actual bug fixed value
+
+        self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -436,12 +445,9 @@ class LoadSpeedsTestCase10smooth(unittest.TestCase):  # TestCase5 with smooth fu
 class LoadParametersTestCase1(unittest.TestCase):
     def setUp(self):
 
-        options = get_option_defaults()
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
-
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
-            "params", LoadParameters(aviary_options=options), promotes=["*"]
+            "params", LoadParameters(), promotes=["*"]
         )
 
         self.prob.model.set_input_defaults(
@@ -452,6 +458,8 @@ class LoadParametersTestCase1(unittest.TestCase):
         )  # bug fixed value
 
         self.prob.setup(check=False, force_alloc_complex=True)
+
+        self.prob.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
 
     def test_case1(self):
 
@@ -472,11 +480,10 @@ class LoadParametersTestCase2(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY,
                         val=2, units='unitless')
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=30000, units='ft')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
-            "params", LoadParameters(aviary_options=options), promotes=["*"]
+            "params", LoadParameters(), promotes=["*"]
         )
 
         self.prob.model.set_input_defaults(
@@ -486,7 +493,11 @@ class LoadParametersTestCase2(unittest.TestCase):
             "max_airspeed", val=350, units="kn"
         )  # bug fixed value
 
+        self.prob.model_options['*'] = extract_options(options)
+
         self.prob.setup(check=False, force_alloc_complex=True)
+
+        self.prob.set_val(Mission.Design.CRUISE_ALTITUDE, val=30000, units='ft')
 
     def test_case1(self):
 
@@ -508,11 +519,10 @@ class LoadParametersTestCase3(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY,
                         val=4, units='unitless')
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=22000, units='ft')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
-            "params", LoadParameters(aviary_options=options), promotes=["*"]
+            "params", LoadParameters(), promotes=["*"]
         )
 
         self.prob.model.set_input_defaults(
@@ -522,7 +532,11 @@ class LoadParametersTestCase3(unittest.TestCase):
             "max_airspeed", val=350, units="kn"
         )  # bug fixed value
 
+        self.prob.model_options['*'] = extract_options(options)
+
         self.prob.setup(check=False, force_alloc_complex=True)
+
+        self.prob.set_val(Mission.Design.CRUISE_ALTITUDE, val=22000, units='ft')
 
     def test_case1(self):
 
@@ -543,14 +557,13 @@ class LoadParametersTestCase4smooth(unittest.TestCase):
     def setUp(self):
 
         options = get_option_defaults()
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES,
                         val=True, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "params",
-            LoadParameters(aviary_options=options,),
+            LoadParameters(),
             promotes=["*"],
         )
 
@@ -561,7 +574,11 @@ class LoadParametersTestCase4smooth(unittest.TestCase):
             "max_airspeed", val=350, units="kn"
         )  # bug fixed value
 
+        self.prob.model_options['*'] = extract_options(options)
+
         self.prob.setup(check=False, force_alloc_complex=True)
+
+        self.prob.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
 
     def test_case1(self):
 
@@ -582,14 +599,13 @@ class LoadParametersTestCase5smooth(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY,
                         val=2, units='unitless')
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=30000, units='ft')
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES,
                         val=True, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "params",
-            LoadParameters(aviary_options=options,),
+            LoadParameters(),
             promotes=["*"],
         )
 
@@ -600,7 +616,11 @@ class LoadParametersTestCase5smooth(unittest.TestCase):
             "max_airspeed", val=350, units="kn"
         )  # bug fixed value
 
+        self.prob.model_options['*'] = extract_options(options)
+
         self.prob.setup(check=False, force_alloc_complex=True)
+
+        self.prob.set_val(Mission.Design.CRUISE_ALTITUDE, val=30000, units='ft')
 
     def test_case1(self):
 
@@ -622,14 +642,13 @@ class LoadParametersTestCase6smooth(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY,
                         val=4, units='unitless')
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=22000, units='ft')
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES,
                         val=True, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "params",
-            LoadParameters(aviary_options=options,),
+            LoadParameters(),
             promotes=["*"],
         )
 
@@ -640,7 +659,11 @@ class LoadParametersTestCase6smooth(unittest.TestCase):
             "max_airspeed", val=350, units="kn"
         )  # bug fixed value
 
+        self.prob.model_options['*'] = extract_options(options)
+
         self.prob.setup(check=False, force_alloc_complex=True)
+
+        self.prob.set_val(Mission.Design.CRUISE_ALTITUDE, val=22000, units='ft')
 
     def test_case1(self):
 
@@ -689,7 +712,7 @@ class LoadFactorsTestCase1(unittest.TestCase):
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
-            "factors", LoadFactors(aviary_options=get_option_defaults()), promotes=["*"]
+            "factors", LoadFactors(), promotes=["*"]
         )
 
         self.prob.model.set_input_defaults(
@@ -735,7 +758,7 @@ class LoadFactorsTestCase2(unittest.TestCase):
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
-            "factors", LoadFactors(aviary_options=options), promotes=["*"]
+            "factors", LoadFactors(), promotes=["*"]
         )
 
         self.prob.model.set_input_defaults(
@@ -755,6 +778,8 @@ class LoadFactorsTestCase2(unittest.TestCase):
         )
         self.prob.model.set_input_defaults(
             Aircraft.Design.LIFT_CURVE_SLOPE, val=7.1765, units="1/rad")
+
+        self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -781,7 +806,7 @@ class LoadFactorsTestCase3smooth(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "factors",
-            LoadFactors(aviary_options=options),
+            LoadFactors(),
             promotes=["*"],
         )
 
@@ -804,6 +829,8 @@ class LoadFactorsTestCase3smooth(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Design.LIFT_CURVE_SLOPE, val=7.1765, units="1/rad"
         )  # bug fixed value and original value
+
+        self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -829,7 +856,7 @@ class LoadFactorsTestCase4smooth(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "factors",
-            LoadFactors(aviary_options=options,),
+            LoadFactors(),
             promotes=["*"],
         )
 
@@ -851,6 +878,8 @@ class LoadFactorsTestCase4smooth(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Design.LIFT_CURVE_SLOPE, val=7.1765, units="1/rad")
 
+        self.prob.model_options['*'] = extract_options(options)
+
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
@@ -869,16 +898,11 @@ class LoadFactorsTestCase4smooth(unittest.TestCase):
 class DesignLoadGroupTestCase1(unittest.TestCase):
     def setUp(self):
 
-        options = get_option_defaults()
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
-
         self.prob = om.Problem()
 
         self.prob.model.add_subsystem(
             "Dload",
-            DesignLoadGroup(
-                aviary_options=options,
-            ),
+            DesignLoadGroup(),
             promotes=["*"],
         )
 
@@ -894,6 +918,8 @@ class DesignLoadGroupTestCase1(unittest.TestCase):
         )  # bug fixed value
 
         self.prob.setup(check=False, force_alloc_complex=True)
+
+        self.prob.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
 
     def test_case1(self):
 
@@ -913,7 +939,6 @@ class DesignLoadGroupTestCase2smooth(unittest.TestCase):
     def setUp(self):
 
         options = get_option_defaults()
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES,
                         val=True, units='unitless')
 
@@ -921,9 +946,7 @@ class DesignLoadGroupTestCase2smooth(unittest.TestCase):
 
         self.prob.model.add_subsystem(
             "Dload",
-            DesignLoadGroup(
-                aviary_options=options,
-            ),
+            DesignLoadGroup(),
             promotes=["*"],
         )
 
@@ -938,7 +961,11 @@ class DesignLoadGroupTestCase2smooth(unittest.TestCase):
             Aircraft.Wing.AVERAGE_CHORD, val=12.71, units="ft"
         )  # bug fixed value
 
+        self.prob.model_options['*'] = extract_options(options)
+
         self.prob.setup(check=False, force_alloc_complex=True)
+
+        self.prob.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
 
     def test_case1(self):
 

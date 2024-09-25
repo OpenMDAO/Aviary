@@ -7,17 +7,11 @@ from aviary.subsystems.geometry.gasp_based.non_dimensional_conversion import \
 from aviary.subsystems.geometry.gasp_based.strut import StrutGeom
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.conflict_checks import check_fold_location_definition
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Mission
 
 
 class WingSize(om.ExplicitComponent):
-
-    def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options'
-        )
 
     def setup(self):
 
@@ -79,11 +73,7 @@ class WingSize(om.ExplicitComponent):
 
 class WingParameters(om.ExplicitComponent):
     def initialize(self):
-
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options'
-        )
+        add_aviary_option(self, Aircraft.Wing.HAS_FOLD)
 
     def setup(self):
 
@@ -96,7 +86,7 @@ class WingParameters(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, val=10)
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_TIP, val=0.1)
 
-        if not self.options["aviary_options"].get_val(Aircraft.Wing.HAS_FOLD, units='unitless'):
+        if not self.options[Aircraft.Wing.HAS_FOLD]:
 
             add_aviary_input(self, Aircraft.Fuel.WING_FUEL_FRACTION, val=0.6)
             add_aviary_output(self, Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, val=0)
@@ -207,7 +197,7 @@ class WingParameters(om.ExplicitComponent):
         outputs[Aircraft.Wing.ROOT_CHORD] = root_chord
         outputs[Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED] = tc_ratio_avg
 
-        if not self.options["aviary_options"].get_val(Aircraft.Wing.HAS_FOLD, units='unitless'):
+        if not self.options[Aircraft.Wing.HAS_FOLD]:
             fuel_vol_frac = inputs[Aircraft.Fuel.WING_FUEL_FRACTION]
 
             geometric_fuel_vol = (
@@ -423,7 +413,7 @@ class WingParameters(om.ExplicitComponent):
             np.pi * AR**2 * trp1**2 / denom / 180 / np.cos(swprad) ** 2
         )
 
-        if not self.options["aviary_options"].get_val(Aircraft.Wing.HAS_FOLD, units='unitless'):
+        if not self.options[Aircraft.Wing.HAS_FOLD]:
             fuel_vol_frac = inputs[Aircraft.Fuel.WING_FUEL_FRACTION]
             geometric_fuel_vol = (
                 fuel_vol_frac
@@ -509,16 +499,13 @@ class WingParameters(om.ExplicitComponent):
 
 
 class WingFold(om.ExplicitComponent):
-    def initialize(self):
 
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options'
-        )
+    def initialize(self):
+        add_aviary_option(self, Aircraft.Wing.CHOOSE_FOLD_LOCATION)
 
     def setup(self):
 
-        if not self.options["aviary_options"].get_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, units='unitless'):
+        if not self.options[Aircraft.Wing.CHOOSE_FOLD_LOCATION]:
             self.add_input(
                 "strut_y",
                 val=25,
@@ -626,7 +613,7 @@ class WingFold(om.ExplicitComponent):
         tc_ratio_tip = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_TIP]
         fuel_vol_frac = inputs[Aircraft.Fuel.WING_FUEL_FRACTION]
 
-        if not self.options["aviary_options"].get_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, units='unitless'):
+        if not self.options[Aircraft.Wing.CHOOSE_FOLD_LOCATION]:
 
             strut_y = inputs["strut_y"]
             location = strut_y
@@ -679,7 +666,7 @@ class WingFold(om.ExplicitComponent):
         tc_ratio_tip = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_TIP]
         fuel_vol_frac = inputs[Aircraft.Fuel.WING_FUEL_FRACTION]
 
-        if not self.options["aviary_options"].get_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, units='unitless'):
+        if not self.options[Aircraft.Wing.CHOOSE_FOLD_LOCATION]:
 
             strut_y = inputs["strut_y"]
             location = strut_y
@@ -953,61 +940,58 @@ class WingFold(om.ExplicitComponent):
 
 
 class WingGroup(om.Group):
-    def initialize(self):
 
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options'
-        )
+    def initialize(self):
+        add_aviary_option(self, Aircraft.Wing.CHOOSE_FOLD_LOCATION)
+        add_aviary_option(self, Aircraft.Wing.HAS_FOLD)
+        add_aviary_option(self, Aircraft.Wing.HAS_STRUT)
 
     def setup(self):
 
-        aviary_options = self.options['aviary_options']
+        has_fold = self.options[Aircraft.Wing.HAS_FOLD]
+        has_strut = self.options[Aircraft.Wing.HAS_STRUT]
 
         size = self.add_subsystem(
             "size",
-            WingSize(aviary_options=aviary_options,),
+            WingSize(),
             promotes_inputs=["aircraft:*", "mission:*"],
             promotes_outputs=["aircraft:*"],
         )
 
-        if self.options["aviary_options"].get_val(Aircraft.Wing.HAS_FOLD, units='unitless') or self.options["aviary_options"].get_val(Aircraft.Wing.HAS_STRUT, units='unitless'):
+        if has_fold or has_strut:
             self.add_subsystem(
                 "dimensionless_calcs",
-                DimensionalNonDimensionalInterchange(aviary_options=aviary_options),
+                DimensionalNonDimensionalInterchange(),
                 promotes_inputs=["aircraft:*"],
                 promotes_outputs=["aircraft:*"]
             )
 
         parameters = self.add_subsystem(
             "parameters",
-            WingParameters(aviary_options=aviary_options,),
+            WingParameters(),
             promotes_inputs=["aircraft:*"],
             promotes_outputs=["aircraft:*"],
         )
 
-        if self.options["aviary_options"].get_val(Aircraft.Wing.HAS_STRUT, units='unitless'):
+        if has_strut:
             strut = self.add_subsystem(
                 "strut",
-                StrutGeom(
-                    aviary_options=aviary_options,
-                ),
+                StrutGeom(),
                 promotes_inputs=["aircraft:*"],
                 promotes_outputs=["aircraft:*"],
             )
 
-        if self.options["aviary_options"].get_val(Aircraft.Wing.HAS_FOLD, units='unitless'):
+        if has_fold:
             fold = self.add_subsystem(
                 "fold",
-                WingFold(
-                    aviary_options=aviary_options,
-                ),
+                WingFold(),
                 promotes_inputs=["aircraft:*"],
                 promotes_outputs=["aircraft:*"],
             )
 
-            if not self.options["aviary_options"].get_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, units='unitless'):
-                check_fold_location_definition(None, aviary_options)
+            choose_fold_location = self.options[Aircraft.Wing.CHOOSE_FOLD_LOCATION]
+            if not choose_fold_location:
+                check_fold_location_definition(None, choose_fold_location, has_strut)
                 self.promotes("strut", outputs=["strut_y"])
                 self.promotes("fold", inputs=["strut_y"])
 

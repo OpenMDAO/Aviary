@@ -6,6 +6,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from aviary.subsystems.geometry.gasp_based.fuselage import (FuselageGroup,
                                                             FuselageParameters,
                                                             FuselageSize)
+from aviary.variable_info.functions import extract_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft
 
@@ -28,7 +29,7 @@ class FuselageParametersTestCase1(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "parameters",
-            FuselageParameters(aviary_options=options),
+            FuselageParameters(),
             promotes=["*"],
         )
 
@@ -36,6 +37,8 @@ class FuselageParametersTestCase1(unittest.TestCase):
             Aircraft.Fuselage.DELTA_DIAMETER, 4.5, units="ft")
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, 9.5, units="ft")
+
+        self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -67,7 +70,7 @@ class FuselageParametersTestCase2(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "parameters",
-            FuselageParameters(aviary_options=options),
+            FuselageParameters(),
             promotes=["*"],
         )
 
@@ -75,6 +78,8 @@ class FuselageParametersTestCase2(unittest.TestCase):
             Aircraft.Fuselage.DELTA_DIAMETER, 4.5, units="ft")
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, 9.5, units="ft")
+
+        self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -93,7 +98,7 @@ class FuselageParametersTestCase2(unittest.TestCase):
 
 
 class FuselageSizeTestCase1(unittest.TestCase):
-    """ 
+    """
     this is the GASP test case, input and output values based on large single aisle 1 v3 without bug fix
     """
 
@@ -101,7 +106,7 @@ class FuselageSizeTestCase1(unittest.TestCase):
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
-            "size", FuselageSize(aviary_options=get_option_defaults()), promotes=["*"]
+            "size", FuselageSize(), promotes=["*"]
         )
 
         self.prob.model.set_input_defaults(
@@ -144,7 +149,7 @@ class FuselageSizeTestCase2(unittest.TestCase):
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
-            "parameters", FuselageSize(aviary_options=options), promotes=["*"]
+            "parameters", FuselageSize(), promotes=["*"]
         )
 
         self.prob.model.set_input_defaults(
@@ -158,6 +163,8 @@ class FuselageSizeTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults("cabin_height", 13.1, units="ft")
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.WETTED_AREA_SCALER, 1, units="unitless")
+
+        self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -196,7 +203,7 @@ class FuselageGroupTestCase1(
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "group",
-            FuselageGroup(aviary_options=options),
+            FuselageGroup(),
             promotes=["*"],
         )
 
@@ -210,6 +217,8 @@ class FuselageGroupTestCase1(
 
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, 9.5, units="ft")
+
+        self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -248,7 +257,7 @@ class FuselageGroupTestCase2(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "group",
-            FuselageGroup(aviary_options=options),
+            FuselageGroup(),
             promotes=["*"],
         )
 
@@ -266,6 +275,8 @@ class FuselageGroupTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, 9.5, units="ft"
         )  # not actual GASP value
+
+        self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -308,7 +319,7 @@ class FuselageGroupTestCase3(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "group",
-            FuselageGroup(aviary_options=options),
+            FuselageGroup(),
             promotes=["*"],
         )
 
@@ -326,6 +337,8 @@ class FuselageGroupTestCase3(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, 9.5, units="ft"
         )  # not actual GASP value
+
+        self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -368,7 +381,7 @@ class FuselageGroupTestCase4(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "group",
-            FuselageGroup(aviary_options=options),
+            FuselageGroup(),
             promotes=["*"],
         )
 
@@ -386,6 +399,8 @@ class FuselageGroupTestCase4(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, 9.5, units="ft"
         )  # not actual GASP value
+
+        self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 

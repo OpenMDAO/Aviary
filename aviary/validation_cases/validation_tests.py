@@ -14,7 +14,6 @@ from aviary.validation_cases.validation_data.flops_data.FLOPS_Test_Data import \
     FLOPS_Test_Data, FLOPS_Lacking_Test_Data
 from aviary.variable_info.functions import extract_options
 from aviary.variable_info.variables import Aircraft
-from aviary.variable_info.variable_meta_data import _MetaData
 
 Version = Enum('Version', ['ALL', 'TRANSPORT', 'ALTERNATE', 'BWB'])
 
@@ -346,9 +345,9 @@ def get_flops_options(case_name: str, keys: str = None, preprocess: bool = False
                            engine_models=build_engine_deck(flops_inputs_copy))
 
     if keys is None:
-        options = extract_options(flops_inputs_copy, _MetaData)
+        options = extract_options(flops_inputs_copy)
     else:
-        options = extract_options(keys, _MetaData)
+        options = extract_options(keys)
 
     return options
 

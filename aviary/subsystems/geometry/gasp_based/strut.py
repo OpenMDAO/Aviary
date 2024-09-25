@@ -9,11 +9,6 @@ from aviary.variable_info.variables import Aircraft
 
 
 class StrutGeom(om.ExplicitComponent):
-    def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options'
-        )
 
     def setup(self):
 

@@ -6,6 +6,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from aviary.subsystems.geometry.gasp_based.wing import (WingFold, WingGroup,
                                                         WingParameters,
                                                         WingSize)
+from aviary.variable_info.functions import extract_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission
 
@@ -71,7 +72,7 @@ class WingParametersTestCase1(
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
-            "parameters", WingParameters(aviary_options=get_option_defaults()), promotes=["*"]
+            "parameters", WingParameters(), promotes=["*"]
         )
 
         self.prob.model.set_input_defaults(Aircraft.Wing.AREA, 1370.3, units="ft**2")
@@ -121,7 +122,7 @@ class WingParametersTestCase2(unittest.TestCase):
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
-            "parameters", WingParameters(aviary_options=options), promotes=["*"]
+            "parameters", WingParameters(), promotes=["*"]
         )
 
         self.prob.model.set_input_defaults(Aircraft.Wing.AREA, 1370.3, units="ft**2")
@@ -140,6 +141,8 @@ class WingParametersTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.12, units="unitless"
         )
+
+        self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -170,9 +173,7 @@ class WingFoldTestCase1(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "group",
-            WingFold(
-                aviary_options=options,
-            ),
+            WingFold(),
             promotes=["*"],
         )
 
@@ -194,6 +195,8 @@ class WingFoldTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_FUEL_FRACTION, 0.6, units="unitless"
         )
+
+        self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -236,9 +239,7 @@ class WingFoldTestCase2(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "group",
-            WingFold(
-                aviary_options=options
-            ),
+            WingFold(),
             promotes=["*"],
         )
 
@@ -260,6 +261,8 @@ class WingFoldTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_FUEL_FRACTION, 0.6, units="unitless"
         )
+
+        self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -299,7 +302,7 @@ class WingGroupTestCase1(
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
-            "group", WingGroup(aviary_options=get_option_defaults()), promotes=["*"]
+            "group", WingGroup(), promotes=["*"]
         )
 
         self.prob.model.set_input_defaults(
@@ -371,9 +374,7 @@ class WingGroupTestCase2(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "group",
-            WingGroup(
-                aviary_options=options,
-            ),
+            WingGroup(),
             promotes=["*"],
         )
 
@@ -409,6 +410,8 @@ class WingGroupTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_FUEL_FRACTION, 0.6, units="unitless"
         )
+
+        self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -473,9 +476,7 @@ class WingGroupTestCase3(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "group",
-            WingGroup(
-                aviary_options=options,
-            ),
+            WingGroup(),
             promotes=["*"],
         )
 
@@ -507,6 +508,8 @@ class WingGroupTestCase3(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_FUEL_FRACTION, 0.6, units="unitless"
         )
+
+        self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -567,9 +570,7 @@ class WingGroupTestCase4(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "group",
-            WingGroup(
-                aviary_options=options,
-            ),
+            WingGroup(),
             promotes=["*"],
         )
 
@@ -579,6 +580,8 @@ class WingGroupTestCase4(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Strut.ATTACHMENT_LOCATION, val=0, units="ft"
         )
+
+        self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -623,9 +626,7 @@ class WingGroupTestCase5(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "group",
-            WingGroup(
-                aviary_options=options,
-            ),
+            WingGroup(),
             promotes=["*"],
         )
 
@@ -667,6 +668,8 @@ class WingGroupTestCase5(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_FUEL_FRACTION, 0.6, units="unitless"
         )
+
+        self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 

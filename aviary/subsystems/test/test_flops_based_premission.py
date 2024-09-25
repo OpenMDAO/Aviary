@@ -16,7 +16,6 @@ from aviary.validation_cases.validation_tests import (
 
 from aviary.variable_info.functions import extract_options
 from aviary.variable_info.variables import Aircraft, Mission, Settings
-from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 
 
 class PreMissionGroupTest(unittest.TestCase):
@@ -48,7 +47,7 @@ class PreMissionGroupTest(unittest.TestCase):
             promotes_outputs=['*'],
         )
 
-        self.prob.model_options['*'] = extract_options(flops_inputs, BaseMetaData)
+        self.prob.model_options['*'] = extract_options(flops_inputs)
 
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_solver_print(2)
@@ -109,7 +108,7 @@ class PreMissionGroupTest(unittest.TestCase):
             promotes_outputs=['*'],
         )
 
-        self.prob.model_options['*'] = extract_options(flops_inputs, BaseMetaData)
+        self.prob.model_options['*'] = extract_options(flops_inputs)
 
         prob.setup(check=False)
 
