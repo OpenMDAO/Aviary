@@ -14,7 +14,7 @@ class StallSpeed(om.ExplicitComponent):
 
     def setup(self):
         """
-        setup the inputs and output to calculates the stall speed of the aircraft.
+        Setup the inputs and output to calculates the stall speed of the aircraft.
         """
 
         self.add_input(
