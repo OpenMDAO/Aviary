@@ -14,7 +14,7 @@ from aviary.variable_info.variables import Dynamic
 
 class AccelerationODETestCase(unittest.TestCase):
     """
-    Test acceleration ODE.
+    Test 2-degree of freedom acceleration ODE.
     """
 
     def setUp(self):
