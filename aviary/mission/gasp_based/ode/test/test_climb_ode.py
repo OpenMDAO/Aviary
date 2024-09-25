@@ -15,7 +15,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 class ClimbODETestCase(unittest.TestCase):
     """
-    Test climb ODE
+    Test 2-degree of freedom climb ODE
     """
 
     def setUp(self):
