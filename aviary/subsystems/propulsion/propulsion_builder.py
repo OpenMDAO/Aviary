@@ -67,7 +67,8 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
                                     engine_models=self.engine_models)
 
     def build_mission(self, num_nodes, aviary_inputs, **kwargs):
-        return PropulsionMission(num_nodes=num_nodes, aviary_options=aviary_inputs,
+        return PropulsionMission(num_nodes=num_nodes,
+                                 aviary_options=aviary_inputs,
                                  engine_models=self.engine_models)
 
     # NOTE untested!

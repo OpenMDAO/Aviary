@@ -1736,7 +1736,7 @@ add_meta_data(
     units="unitless",
     option=True,
     default_value=True,
-    types=bool,
+    types=(bool, list),
     desc='if true, compute installation loss factor based on blockage factor',
 )
 
@@ -2008,7 +2008,7 @@ add_meta_data(
     units='unitless',
     desc='number of blades per propeller',
     option=True,
-    types=int,
+    types=(int, list, np.ndarray),
     default_value=0
 )
 
@@ -2353,7 +2353,7 @@ add_meta_data(
                      },
     option=True,
     default_value=False,
-    types=bool,
+    types=(bool, list),
     units="unitless",
     desc='flag whether to use propeller map or Hamilton-Standard model.'
 )

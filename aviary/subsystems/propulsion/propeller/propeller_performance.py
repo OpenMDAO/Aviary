@@ -6,8 +6,9 @@ import numpy as np
 from openmdao.components.ks_comp import KSfunction
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.functions import add_aviary_input, add_aviary_output, add_aviary_option
+
 from aviary.variable_info.enums import OutMachType
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.subsystems.propulsion.propeller.hamilton_standard import HamiltonStandard, PostHamiltonStandard, PreHamiltonStandard
 from aviary.subsystems.propulsion.propeller.propeller_map import PropellerMap
@@ -428,12 +429,17 @@ class PropellerPerformance(om.Group):
             'input_rpm', types=bool, default=False,
             desc='If True, the input is RPM, otherwise RPM is set by propeller limits')
 
+        self.options.declare('aviary_options', types=AviaryValues,
+                             desc='collection of Aircraft/Mission specific options')
+
         add_aviary_option(self, Aircraft.Engine.COMPUTE_PROPELLER_INSTALLATION_LOSS)
         add_aviary_option(self, Aircraft.Engine.PROPELLER_DATA_FILE)
+        add_aviary_option(self, Aircraft.Engine.USE_PROPELLER_MAP)
 
     def setup(self):
         options = self.options
         nn = options['num_nodes']
+        aviary_options = options['aviary_options']
 
         # TODO options are lists here when using full Aviary problem - need further investigation
         compute_installation_loss = options[Aircraft.Engine.COMPUTE_PROPELLER_INSTALLATION_LOSS]
@@ -441,7 +447,7 @@ class PropellerPerformance(om.Group):
         if isinstance(compute_installation_loss, (list, np.ndarray)):
             compute_installation_loss = compute_installation_loss[0]
 
-        use_propeller_map = aviary_options.get_val(Aircraft.Engine.USE_PROPELLER_MAP)
+        use_propeller_map = options[Aircraft.Engine.USE_PROPELLER_MAP]
         if isinstance(use_propeller_map, (list, np.ndarray)):
             use_propeller_map = use_propeller_map[0]
 
@@ -550,7 +556,7 @@ class PropellerPerformance(om.Group):
         else:
             self.add_subsystem(
                 name='hamilton_standard',
-                subsys=HamiltonStandard(num_nodes=nn, aviary_options=aviary_options),
+                subsys=HamiltonStandard(num_nodes=nn),
                 promotes_inputs=[
                     Dynamic.Mission.MACH,
                     "power_coefficient",

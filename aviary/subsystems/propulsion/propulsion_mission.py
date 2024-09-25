@@ -55,7 +55,7 @@ class PropulsionMission(om.Group):
             for i, engine in enumerate(engine_models):
                 self.add_subsystem(
                     engine.name,
-                    subsys=engine.build_mission(num_nodes=nn),
+                    subsys=engine.build_mission(num_nodes=nn, aviary_inputs=options),
                     promotes_inputs=['*'],
                 )
 

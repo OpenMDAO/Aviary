@@ -12,6 +12,7 @@ from aviary.subsystems.propulsion.propeller.propeller_performance import (
 )
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.functions import get_path
+from aviary.variable_info.functions import extract_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.options import get_option_defaults
@@ -86,6 +87,8 @@ class TurbopropTest(unittest.TestCase):
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(force_alloc_complex=False)
         self.prob.set_val(Aircraft.Engine.SCALE_FACTOR, 1, units='unitless')

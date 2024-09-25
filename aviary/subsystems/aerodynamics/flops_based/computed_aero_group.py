@@ -17,7 +17,6 @@ from aviary.subsystems.aerodynamics.flops_based.mux_component import MuxComponen
 from aviary.subsystems.aerodynamics.flops_based.skin_friction import SkinFriction
 from aviary.subsystems.aerodynamics.flops_based.skin_friction_drag import \
     SkinFrictionDrag
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
@@ -30,14 +29,10 @@ class ComputedAeroGroup(om.Group):
         self.options.declare(
             'gamma', default=1.4,
             desc='Ratio of specific heats for air.')
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
         num_nodes = self.options["num_nodes"]
         gamma = self.options['gamma']
-        aviary_options: AviaryValues = self.options['aviary_options']
 
         comp = MuxComponent()
         self.add_subsystem(

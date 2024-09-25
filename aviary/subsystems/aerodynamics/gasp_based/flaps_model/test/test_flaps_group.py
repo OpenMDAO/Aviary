@@ -5,6 +5,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.aerodynamics.gasp_based.flaps_model.flaps_model import \
     FlapsGroup
+from aviary.variable_info.functions import extract_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.enums import FlapType
 from aviary.variable_info.variables import Aircraft, Dynamic
@@ -24,6 +25,8 @@ class FlapsGroupTestCaseTripleSlotted(unittest.TestCase):
                         val=FlapType.TRIPLE_SLOTTED, units='unitless')
 
         self.prob.model = FCC = FlapsGroup()
+
+        self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup()
 
@@ -126,6 +129,8 @@ class FlapsGroupTestCaseSplit(unittest.TestCase):
         options.set_val(Aircraft.Wing.FLAP_TYPE, val=FlapType.SPLIT, units='unitless')
 
         self.prob.model = FCC = FlapsGroup()
+
+        self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup()
 
@@ -230,6 +235,8 @@ class FlapsGroupTestCaseSingleSlotted(unittest.TestCase):
 
         self.prob.model = FCC = FlapsGroup()
 
+        self.prob.model_options['*'] = extract_options(options)
+
         self.prob.setup()
 
         self.prob.set_val(Aircraft.Wing.SWEEP, 25.0, units="deg")
@@ -333,6 +340,8 @@ class FlapsGroupTestCasePlain(unittest.TestCase):
 
         self.prob.model = FCC = FlapsGroup()
 
+        self.prob.model_options['*'] = extract_options(options)
+
         self.prob.setup()
 
         self.prob.set_val(Aircraft.Wing.SWEEP, 25.0, units="deg")
@@ -434,6 +443,8 @@ class FlapsGroupTestCaseFowler(unittest.TestCase):
         options.set_val(Aircraft.Wing.FLAP_TYPE, val=FlapType.FOWLER, units='unitless')
 
         self.prob.model = FCC = FlapsGroup()
+
+        self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup()
 
@@ -537,6 +548,8 @@ class FlapsGroupTestCaseDoubleFowler(unittest.TestCase):
                         val=FlapType.DOUBLE_SLOTTED_FOWLER, units='unitless')
 
         self.prob.model = FCC = FlapsGroup()
+
+        self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup()
 

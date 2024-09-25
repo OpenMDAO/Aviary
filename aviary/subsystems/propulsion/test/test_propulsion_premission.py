@@ -10,6 +10,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.models.multi_engine_single_aisle.multi_engine_single_aisle_data import engine_1_inputs, engine_2_inputs
+from aviary.variable_info.functions import extract_options
 from aviary.variable_info.variables import Aircraft, Settings
 from aviary.utils.preprocessors import preprocess_options
 
@@ -25,6 +26,8 @@ class PropulsionPreMissionTest(unittest.TestCase):
 
         self.prob.model = PropulsionPreMission(aviary_options=options,
                                                engine_models=build_engine_deck(options))
+
+        self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(force_alloc_complex=True)
         self.prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, options.get_val(
@@ -53,6 +56,8 @@ class PropulsionPreMissionTest(unittest.TestCase):
 
         self.prob.model = PropulsionPreMission(aviary_options=options,
                                                engine_models=engine_models)
+
+        self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(force_alloc_complex=True)
         self.prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, options.get_val(

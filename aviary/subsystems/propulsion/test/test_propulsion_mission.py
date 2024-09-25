@@ -13,6 +13,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.functions import get_path
 from aviary.validation_cases.validation_tests import get_flops_inputs
+from aviary.variable_info.functions import extract_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 from aviary.subsystems.propulsion.utils import build_engine_deck
 
@@ -66,6 +67,8 @@ class PropulsionMissionTest(unittest.TestCase):
                        np.linspace(1, 0.7, nn),
                        units='unitless')
         self.prob.model.add_subsystem('IVC', IVC, promotes=['*'])
+
+        self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(force_alloc_complex=True)
         self.prob.set_val(Aircraft.Engine.SCALE_FACTOR, options.get_val(

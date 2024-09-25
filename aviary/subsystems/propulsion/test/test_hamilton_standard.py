@@ -9,7 +9,7 @@ from aviary.variable_info.variables import Aircraft
 from aviary.subsystems.propulsion.propeller.hamilton_standard import (
     HamiltonStandard, PreHamiltonStandard, PostHamiltonStandard,
 )
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.functions import extract_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
 
@@ -78,10 +78,12 @@ class HamiltonStandardTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             'hs',
-            HamiltonStandard(num_nodes=num_nodes, aviary_options=options),
+            HamiltonStandard(num_nodes=num_nodes),
             promotes_inputs=['*'],
             promotes_outputs=["*"],
         )
+
+        prob.model_options['*'] = extract_options(options)
 
         prob.setup()
         self.prob = prob

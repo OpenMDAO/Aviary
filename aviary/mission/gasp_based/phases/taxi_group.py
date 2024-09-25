@@ -38,8 +38,7 @@ class TaxiSegment(BaseODE):
                                                     (Dynamic.Mission.MACH, Mission.Taxi.MACH)],
                                    promotes_outputs=['*'])
 
-        self.add_subsystem("taxifuel", TaxiFuelComponent(
-            aviary_options=options), promotes=["*"])
+        self.add_subsystem("taxifuel", TaxiFuelComponent(), promotes=["*"])
 
         ParamPort.set_default_vals(self)
         self.set_input_defaults(Mission.Taxi.MACH, 0)
