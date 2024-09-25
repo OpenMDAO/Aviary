@@ -12,7 +12,7 @@ from aviary.variable_info.variables import Dynamic
 
 class MissionEOMTest(unittest.TestCase):
     """
-    Test mission equation of motion
+    Test energy-method equations of motion
     """
 
     def setUp(self):
