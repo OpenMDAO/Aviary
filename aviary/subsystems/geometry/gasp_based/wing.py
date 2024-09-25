@@ -82,7 +82,7 @@ class WingSize(om.ExplicitComponent):
 
 class WingParameters(om.ExplicitComponent):
     """
-    Computation of various wing parameters.
+    Computation of various wing parameters for GASP-based geometry.
     """
 
     def initialize(self):
