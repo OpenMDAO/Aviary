@@ -975,7 +975,8 @@ class EngineMass(om.ExplicitComponent):
 
 class TailMass(om.ExplicitComponent):
     """
-    Computation of horizontal tail mass and vertical tail mass"""
+    Computation of horizontal tail mass and vertical tail mass.
+    """
 
     def initialize(self):
         self.options.declare(
