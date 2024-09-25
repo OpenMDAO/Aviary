@@ -1,3 +1,4 @@
+from copy import deepcopy
 import os
 import unittest
 import subprocess
@@ -255,7 +256,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
 
     def test_support_constraint_aliases(self):
         # Test specification of multiple constraints on a single variable.
-        modified_phase_info = self.phase_info.copy()
+        modified_phase_info = deepcopy(self.phase_info)
         modified_phase_info['climb']['user_options']['constraints'] = {
             'throttle_1': {
                 'target': Dynamic.Mission.THROTTLE,
