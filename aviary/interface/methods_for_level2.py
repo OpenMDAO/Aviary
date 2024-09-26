@@ -77,7 +77,7 @@ else:
 
 
 class PreMissionGroup(om.Group):
-    """Pre mission group"""
+    """OpenMDAO group that holds all pre-mission systems"""
 
     def configure(self):
         """
