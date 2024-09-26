@@ -502,6 +502,15 @@ class FuelAndOEMOutputs(om.ExplicitComponent):
             - useful_wt
         )
 
+        print('OEM_wingfuel_mass', OEM_wingfuel_wt / GRAV_ENGLISH_LBM)
+        print('supporting values')
+        print('gross_wt_initial', gross_wt_initial)
+        print('propulsion_wt', propulsion_wt)
+        print('control_wt', control_wt)
+        print('struct_wt', struct_wt)
+        print('fixed_equip_wt', fixed_equip_wt)
+        print('useful_wt', useful_wt)
+
         OEM_fuel_vol = OEM_wingfuel_wt / rho_fuel
         design_fuel_vol = (1.0 + fuel_margin / 100.0) * req_fuel_wt / rho_fuel
 
