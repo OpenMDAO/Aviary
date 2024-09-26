@@ -28,12 +28,7 @@ class WingFuselageInterference_premission(om.ExplicitComponent):
     (based on results from Hoerner's drag)
     """
 
-    def initialize(self):
-        self.options.declare("num_nodes", default=1, types=int)
-
     def setup(self):
-        nn = self.options["num_nodes"]
-
         add_aviary_input(self, Aircraft.Wing.AREA)
         add_aviary_input(self, Aircraft.Wing.SPAN)
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO)
@@ -47,13 +42,12 @@ class WingFuselageInterference_premission(om.ExplicitComponent):
         self.add_output('drag_loss_due_to_shielded_wing_area', 1.23456)
 
     def setup_partials(self):
-        nn = self.options["num_nodes"]
-        # arange = np.arange(nn)
-        self.declare_partials(
-            Aircraft.Wing.FORM_FACTOR, [
-                Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED,
-                Mission.Design.MACH,
-                Aircraft.Wing.SWEEP])  # , rows=arange, cols=arange)
+        pass
+        # self.declare_partials(
+        #     Aircraft.Wing.FORM_FACTOR, [
+        #         Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED,
+        #         Mission.Design.MACH,
+        #         Aircraft.Wing.SWEEP])
 
     def compute(self, inputs, outputs):
         SW, B, SLM, HWING, TCR, TCT, SWF, XWQLF = inputs.values()
@@ -62,10 +56,22 @@ class WingFuselageInterference_premission(om.ExplicitComponent):
         ZW_RF = 2.*HWING - 1.  # constant
 
         wtofd = TCR*CROOT/SWF  # wing_thickness_over_fuselage_diameter # constant
-        WIDTHFTOP = (SWF*(1.0 - (ZW_RF + wtofd)**2)**0.5) * \
-            (sigX(ZW_RF+wtofd+1)-sigX(ZW_RF+wtofd-1))  # constant
-        WIDTHFBOT = (SWF*(1.0 - (ZW_RF - wtofd)**2)**0.5) * \
-            (sigX(ZW_RF-wtofd+1)-sigX(ZW_RF-wtofd-1))  # constant
+        print(SWF, ZW_RF, wtofd)
+        # WIDTHFTOP = (SWF*(1.0 - (ZW_RF + wtofd)**2)**0.5) * \
+        #     (sigX(ZW_RF+wtofd+1)-sigX(ZW_RF+wtofd-1))  # constant
+        # WIDTHFBOT = (SWF*(1.0 - (ZW_RF - wtofd)**2)**0.5) * \
+        #     (sigX(ZW_RF-wtofd+1)-sigX(ZW_RF-wtofd-1))  # constant
+
+        if (abs(ZW_RF + wtofd) >= 1.0):
+            WIDTHFTOP = 0.0
+        else:
+            WIDTHFTOP = SWF*(1.0 - (ZW_RF + wtofd)**2)**0.5
+            # -.5*(ZW_RF + wtofd)*(1.0-(ZW_RF + wtofd)**2)**-0.5
+        if (abs(ZW_RF - wtofd) >= 1.0):
+            WIDTHFBOT = 0.0
+        else:
+            WIDTHFBOT = SWF*(1.0 - (ZW_RF - wtofd)**2)**0.5
+        print(WIDTHFTOP)
 
         WBODYWF = 0.5*(WIDTHFTOP + WIDTHFBOT)  # constant
         TCBODYWF = TCR - WBODYWF/B*(TCR - TCT)  # constant
@@ -97,11 +103,12 @@ class WingFuselageInterference_dynamic(om.ExplicitComponent):
         nn = self.options["num_nodes"]
 
         add_aviary_input(self, Aircraft.Wing.AREA)
-        add_aviary_input(self, Aircraft.Wing.FORM_FACTOR)
+        add_aviary_input(self, Aircraft.Wing.FORM_FACTOR, 1.25)
         add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD)
-        add_aviary_input(self, Dynamic.Mission.MACH)
-        add_aviary_input(self, Dynamic.Mission.TEMPERATURE)
-        add_aviary_input(self, Dynamic.Mission.KINEMATIC_VISCOSITY)
+        add_aviary_input(self, Dynamic.Mission.MACH, shape=nn)  # np.ones(nn))
+        add_aviary_input(self, Dynamic.Mission.TEMPERATURE, shape=nn)  # np.ones(nn))
+        add_aviary_input(self, Dynamic.Mission.KINEMATIC_VISCOSITY,
+                         shape=nn)  # np.ones(nn))
         self.add_input('interference_independent_of_shielded_area')
         self.add_input('drag_loss_due_to_shielded_wing_area')
 
@@ -111,11 +118,11 @@ class WingFuselageInterference_dynamic(om.ExplicitComponent):
     def setup_partials(self):
         nn = self.options["num_nodes"]
         # arange = np.arange(nn)
-        self.declare_partials(
-            Aircraft.Wing.FORM_FACTOR, [
-                Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED,
-                Mission.Design.MACH,
-                Aircraft.Wing.SWEEP])  # , rows=arange, cols=arange)
+        # self.declare_partials(
+        #     Aircraft.Wing.FORM_FACTOR, [
+        #         Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED,
+        #         Mission.Design.MACH,
+        #         Aircraft.Wing.SWEEP])  # , rows=arange, cols=arange)
 
     def compute(self, inputs, outputs):
         SW, CKW, CBARW, EM, T0, XKV, AREASHIELDWF, FEINTWF = inputs.values()
@@ -128,7 +135,14 @@ class WingFuselageInterference_dynamic(om.ExplicitComponent):
         # CFIN CALCULATION FROM SCHLICHTING PG. 635-665
         CFIN = 0.455/np.log10(10_000_000.)**2.58/(1. + 0.144*EM**2)**0.65  # dynamic
         CDWI = FCFWC*FCFWT*CFIN  # dynamic
-        FEW = SW * CDWI * CKW * ((np.log10(RELI * CBARW)/7.)**(-2.6))  # dynamic
+        # print(RELI, CBARW)
+        from warnings import filterwarnings
+        filterwarnings('error')
+        try:
+            FEW = SW * CDWI * CKW * ((np.log10(RELI * CBARW)/7.)**(-2.6))  # dynamic
+        except RuntimeWarning:
+            print(RELI, CBARW)
+            exit()
 
         # from interference.f
         FEIWF = FEINTWF - 1*FEW/SW*AREASHIELDWF  # dynamic

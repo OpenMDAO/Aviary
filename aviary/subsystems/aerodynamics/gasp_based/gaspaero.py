@@ -12,6 +12,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import add_aviary_input
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.utils.aviary_values import AviaryValues
+from aviary.subsystems.aerodynamics.gasp_based.interference import WingFuselageInterference_dynamic
 
 #
 # data from INTERFERENCE - polynomial coefficients
@@ -423,7 +424,8 @@ class AeroGeom(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.HorizontalTail.FORM_FACTOR, val=1.25)
 
-        add_aviary_input(self, Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR, val=1.1)
+        add_aviary_input(self, Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR,
+                         val=np.full(nn, 1.1))
 
         add_aviary_input(self, Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR, val=0.0)
 
@@ -850,8 +852,16 @@ class AeroSetup(om.Group):
                           ('nu', Dynamic.Mission.KINEMATIC_VISCOSITY)],
             )
 
+        self.add_subsystem("wing_fus_interference_dynamic",
+                           WingFuselageInterference_dynamic(num_nodes=nn),
+                           promotes_inputs=["*"],
+                           promotes_outputs=["*"],
+                           )
+
         self.add_subsystem("geom", AeroGeom(
             num_nodes=nn, aviary_options=aviary_options), promotes=["*"])
+
+        # self.set_input_defaults(Aircraft.Wing.FORM_FACTOR,1)
 
 
 class DragCoef(om.ExplicitComponent):

@@ -414,6 +414,20 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
         return params
 
+    def get_bus_variables(self):
+        return {
+            "interference_independent_of_shielded_area": {
+                "mission_name": ['interference_independent_of_shielded_area'],
+                # "post_mission_name": ['interference_independent_of_shielded_area'],
+                "units": "unitless",
+            },
+            "drag_loss_due_to_shielded_wing_area": {
+                "mission_name": ['drag_loss_due_to_shielded_wing_area'],
+                # "post_mission_name": ['drag_loss_due_to_shielded_wing_area'],
+                "units": "lbf",
+            },
+        }
+
     def report(self, prob, reports_folder, **kwargs):
         """
         Generate the report for Aviary core aerodynamics analysis
@@ -521,7 +535,7 @@ AERO_2DOF_INPUTS = [
     Aircraft.Wing.AREA,
     Aircraft.Wing.ASPECT_RATIO,
     Aircraft.Wing.CENTER_DISTANCE,
-    Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR,
+    # Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR,
     Aircraft.Wing.MAX_THICKNESS_LOCATION,
     Aircraft.Wing.MIN_PRESSURE_LOCATION,
     Aircraft.Wing.MOUNTING_TYPE,

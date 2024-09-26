@@ -183,7 +183,8 @@ def _init_geom(prob):
     prob.set_val(Aircraft.Nacelle.FORM_FACTOR, setup_data["ckn"])
     prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, setup_data["ckvt"])
     prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, setup_data["ckht"])
-    prob.set_val(Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR, setup_data["cki"])
+    prob.set_val(Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR,
+                 np.full(2, setup_data["cki"]))
     prob.set_val(Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR, setup_data["ckstrt"])
     prob.set_val(Aircraft.Design.DRAG_COEFFICIENT_INCREMENT, setup_data["delcd"])
     prob.set_val(Aircraft.Fuselage.FLAT_PLATE_AREA_INCREMENT, setup_data["delfe"])

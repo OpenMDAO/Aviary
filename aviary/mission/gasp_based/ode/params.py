@@ -123,7 +123,7 @@ params_for_unit_tests = {
     Aircraft.Design.CG_DELTA: dict(units="unitless", val=0.25),
     Aircraft.Fuselage.FORM_FACTOR: dict(units="unitless", val=1.25),
     Aircraft.Nacelle.FORM_FACTOR: dict(units="unitless", val=1.5),
-    Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR: dict(units="unitless", val=1.1),
+    # Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR: dict(units="unitless", val=1.1),
     Aircraft.Design.DRAG_COEFFICIENT_INCREMENT: dict(units="unitless", val=0.00175),
     Aircraft.Fuselage.FLAT_PLATE_AREA_INCREMENT: dict(units="ft**2", val=0.25),
     Aircraft.Wing.CENTER_DISTANCE: dict(units="unitless", val=0.463),

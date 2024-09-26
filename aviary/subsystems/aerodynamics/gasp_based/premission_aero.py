@@ -12,6 +12,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.enums import SpeedType
 from aviary.subsystems.aerodynamics.gasp_based.gasp_aero_coeffs import AeroFormfactors
+from aviary.subsystems.aerodynamics.gasp_based.interference import WingFuselageInterference_premission
 
 # TODO: add subsystems to compute CLMXFU, CLMXTO, CLMXLD using dynamic aero components
 # with alpha > alpha_stall
@@ -29,6 +30,12 @@ class PreMissionAero(om.Group):
     def setup(self):
 
         aviary_options = self.options['aviary_options']
+
+        self.add_subsystem("wing_fus_interference_premission",
+                           WingFuselageInterference_premission(),
+                           promotes_inputs=["*"],
+                           promotes_outputs=["*"],
+                           )
 
         self.add_subsystem("aero_form_factors", AeroFormfactors(),
                            promotes_inputs=["*"],
