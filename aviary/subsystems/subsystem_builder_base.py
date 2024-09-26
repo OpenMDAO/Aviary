@@ -6,7 +6,7 @@ from aviary.variable_info.variable_meta_data import _MetaData
 class SubsystemBuilderBase(ABC):
     """
     Base class of subsystem builder.
-    
+
     Attributes
     ----------
     name : string
