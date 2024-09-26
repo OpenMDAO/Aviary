@@ -10,7 +10,7 @@ class GroundrollPhase(PhaseBuilderBase):
     A phase builder for a groundroll phase in a mission simulation.
 
     This class extends the PhaseBuilderBase class, providing specific implementations for
-    the groundroll phase of a flight mission.
+    the groundroll phase of a 2-degree of freedom flight mission.
 
     Attributes
     ----------

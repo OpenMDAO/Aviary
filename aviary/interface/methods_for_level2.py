@@ -97,7 +97,7 @@ class PreMissionGroup(om.Group):
 
 
 class PostMissionGroup(om.Group):
-    """Post mission group"""
+    """OpenMDAO group that holds all post-mission systems"""
 
     def configure(self):
         """

@@ -12,7 +12,7 @@ from aviary.variable_info.variables import Aircraft
 
 class MassPremission(om.Group):
     """
-    Group that tracks all masses during pre-mission analysis.
+    Pre-mission mass group for GASP-based mass.
     """
 
     def initialize(self):

@@ -11,7 +11,7 @@ class DescentPhase(PhaseBuilderBase):
     A phase builder for an descent phase in a mission simulation.
 
     This class extends the PhaseBuilderBase class, providing specific implementations for
-    the descent phase of a flight mission.
+    the descent phase of a 2-degree of freedom flight mission.
 
     Attributes
     ----------

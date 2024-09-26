@@ -8,7 +8,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 class BatteryBuilder(SubsystemBuilderBase):
     """
-    Battery builder class
+    Builder for the battery model. This simplified battery is sized with a simple energy density relation, and tracks state of charge over the mission (with an efficiency).
 
     Methods
     -------
@@ -26,13 +26,6 @@ class BatteryBuilder(SubsystemBuilderBase):
     get_constraints(self) -> dict:
         Returns a dictionary of constraints for the battery subsystem.
 
-    Note
-    ----
-    The battery model in the energy subsystem is the simple battery model we are including
-    in Aviary as the default battery. It only tracks energy consumption (with an efficiency)
-    and state of charge. As a contrast, The battery in the examples is an "advanced" battery
-    model, which is relatively detailed (tracks voltage, current, etc.) It is only an example
-    (like the pycycle or OAS models).
     """
 
     default_name = 'battery'

@@ -975,7 +975,8 @@ class EngineMass(om.ExplicitComponent):
 
 class TailMass(om.ExplicitComponent):
     """
-    Computation of horizontal tail mass and vertical tail mass"""
+    Computation of horizontal tail mass and vertical tail mass.
+    """
 
     def initialize(self):
         self.options.declare(
@@ -2456,7 +2457,7 @@ class GearMass(om.ExplicitComponent):
 
 class FixedMassGroup(om.Group):
     """
-    Group of all fixed masses.
+    Group of all fixed mass components for GASP-based mass.
     """
 
     def initialize(self):

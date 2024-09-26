@@ -17,7 +17,7 @@ takeoff_subsystem_options = deepcopy(takeoff_subsystem_options)
 
 class TakeoffODETest(unittest.TestCase):
     """
-    Test takeoff ODE
+    Test detailed takeoff ODE
     """
 
     def test_case_ground(self):

@@ -9,7 +9,7 @@ from aviary.mission.gasp_based.ode.ascent_ode import AscentODE
 
 class AscentPhase(PhaseBuilderBase):
     """
-    A phase builder for an ascent phase in a mission simulation.
+    A phase builder for an ascent phase in a 2-degree of freedom mission simulation.
 
     This class extends the PhaseBuilderBase class, providing specific implementations for
     the ascent phase of a flight mission.

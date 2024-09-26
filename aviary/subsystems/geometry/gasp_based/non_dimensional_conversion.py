@@ -7,7 +7,7 @@ from aviary.variable_info.variables import Aircraft
 
 class StrutCalcs(om.ExplicitComponent):
     """
-    Dimensional and non-dimensional conversion of strut calculation.
+    Given strut location as a non-dimensional function of wing half-span or distance from aircraft center, compute the other value not provided.
     """
 
     def initialize(self):

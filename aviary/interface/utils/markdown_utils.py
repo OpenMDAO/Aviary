@@ -15,7 +15,7 @@ def round_it(x, sig=None):
     ----------
     x : str
         the float that needs to be rounded.
-    sig: int
+    sig : int
         the number of significance (default to 2 if None).
 
     Returns
@@ -49,7 +49,7 @@ def write_markdown_variable_table(open_file, problem, outputs, metadata):
         The dictionary that contains the data.
     outputs : List
         The list of keywords that will go to outputs file.
-    metadata: dict
+    metadata : dict
         The dictionary that contains the metadata of the data with desired units.
     """
     open_file.write('\n| Variable Name | Value | Units |\n')

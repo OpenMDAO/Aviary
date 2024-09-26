@@ -161,7 +161,7 @@ class GlideTestCase2(unittest.TestCase):
 
 class GroundRollTestCase(unittest.TestCase):
     """
-    Test the computation of groundroll distance and average acceleration/decelleration in 
+    Test the computation of groundroll distance and average acceleration/deceleration in 
     LandingGroundRollComponent component.
     """
 

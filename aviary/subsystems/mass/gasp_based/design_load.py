@@ -1245,7 +1245,7 @@ class LoadFactors(om.ExplicitComponent):
 
 class DesignLoadGroup(om.Group):
     """
-    Design load group.
+    Design load group for GASP-based mass.
     """
 
     def initialize(self):

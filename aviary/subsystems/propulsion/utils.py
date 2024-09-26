@@ -348,7 +348,7 @@ class EngineDataInterpolator(om.Group):
 
 class UncorrectData(om.Group):
     """
-    TODO: docstring
+    Calculations to recover physical parameter values that have been corrected based on ambient atmospheric conditions
     """
 
     def initialize(self):

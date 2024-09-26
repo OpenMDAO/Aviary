@@ -17,7 +17,7 @@ from aviary.variable_info.variables import Dynamic, Mission
 
 class TakeoffEOMTest(unittest.TestCase):
     """
-    Test takeoff equation of motion
+    Test detailed takeoff equation of motion
     """
 
     def test_case_ground(self):

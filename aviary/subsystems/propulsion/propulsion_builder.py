@@ -34,7 +34,7 @@ class PropulsionBuilderBase(SubsystemBuilderBase):
     ----
     unlike the other subsystem builders, it is not reccomended to create additional
     propulsion subsystems, as propulsion is intended to be an agnostic carrier of
-    all propulsion-related subsystem builders.
+    all propulsion-related subsystem builders in the form of EngineModels.
 
     Methods
     -------
@@ -60,11 +60,6 @@ class PropulsionBuilderBase(SubsystemBuilderBase):
 class CorePropulsionBuilder(PropulsionBuilderBase):
     """
     Core propulsion builder.
-
-    Note
-    ----
-    code_origin is not necessary for this subsystem, catch with kwargs and ignore.
-
     Methods
     -------
     build_pre_mission(self, aviary_inputs) -> openmdao.core.System:

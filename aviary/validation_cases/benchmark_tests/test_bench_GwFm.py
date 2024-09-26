@@ -21,9 +21,8 @@ from aviary.validation_cases.benchmark_utils import \
 class ProblemPhaseTestCase(unittest.TestCase):
     """
     Test the setup and run of a large single aisle commercial transport aircraft using 
-    GASP mass method and HEIGHT_ENERGY mission method. Note that this
-    class assumes the model is 'models/test_aircraft/aircraft_for_bench_FwFm.csv'
-    and set the expected outputs.
+    GASP mass method and HEIGHT_ENERGY mission method. Expected outputs
+    based on 'models/test_aircraft/aircraft_for_bench_FwFm.csv' model.
     """
 
     def setUp(self):

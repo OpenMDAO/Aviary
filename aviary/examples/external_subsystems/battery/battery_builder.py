@@ -8,8 +8,10 @@ from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 class BatteryBuilder(SubsystemBuilderBase):
     '''
     Define the builder for a battery subsystem that provides methods to define the battery subsystem's states, design variables, fixed values, initial guesses, and mass names.
-
     It also provides methods to build OpenMDAO systems for the pre-mission and mission computations of the subsystem, to get the constraints for the subsystem, and to preprocess the inputs for the subsystem.
+
+    As a contrast, The battery in the examples is a "simple" battery
+    model which only tracks state-of-charge throughout the mission. This battery model is only an example, and is not used by any of Aviary's core subsystems (like the pycycle or OAS examples).
 
     Attributes
     ----------

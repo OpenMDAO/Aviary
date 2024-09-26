@@ -251,7 +251,7 @@ class AltLandingGearMass(om.ExplicitComponent):
 
 class NoseGearLength(om.ExplicitComponent):
     """
-    Computation of landing gear OLEO length from main gear OLEO length:\n
+    Computation of nose gear oleo strut length from main gear oleo strut length:
     NOSE_GEAR_OLEO_LENGTH = 0.7 * MAIN_GEAR_OLEO_LENGTH
     """
 

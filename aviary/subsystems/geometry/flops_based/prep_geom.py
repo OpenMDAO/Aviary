@@ -115,7 +115,7 @@ class PrepGeom(om.Group):
 
 class _Prelim(om.ExplicitComponent):
     '''
-    Calculate internal derived values of aircraft geometry for aerodynamics analysis.
+    Calculate internal derived values of aircraft geometry for FLOPS-based aerodynamics analysis.
     '''
 
     def initialize(self):
@@ -487,7 +487,7 @@ class _Prelim(om.ExplicitComponent):
 
 class _Wing(om.ExplicitComponent):
     """
-    Calculate wing wetted area of aircraft geometry for aerodynamics analysis.
+    Calculate wing wetted area of aircraft geometry for FLOPS-based aerodynamics analysis.
     """
 
     def initialize(self):
@@ -567,7 +567,7 @@ class _Wing(om.ExplicitComponent):
 class _Tail(om.ExplicitComponent):
     """
     Calculate horizontal wing and vertical wing wetted areas of aircraft geometry
-    for aerodynamics analysis.
+    for FLOPS-based aerodynamics analysis.
     """
 
     def initialize(self):
@@ -730,7 +730,7 @@ class _Fuselage(om.ExplicitComponent):
     """
     Calculate fuselage cross sectional area, fuselage diameter to wing span ratio,
     fuselage length to diameter ratio, and fuselage wetted area of aircraft geometry
-    for aerodynamics analysis.
+    for FLOPS-based aerodynamics analysis.
     """
 
     def initialize(self):

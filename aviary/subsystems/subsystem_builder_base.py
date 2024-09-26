@@ -5,7 +5,15 @@ from aviary.variable_info.variable_meta_data import _MetaData
 
 class SubsystemBuilderBase(ABC):
     """
-    Base class of subsystem builder
+    Base class of subsystem builder.
+
+    Attributes
+    ----------
+    name : string
+        Name of subsystem, as it will appear when added to the OpenMDAO problem
+    meta_data : dict
+        Dictionary containing the variable metadata used by this Aviary problem
+    ```
     """
 
     __slots__ = ('name', 'meta_data')

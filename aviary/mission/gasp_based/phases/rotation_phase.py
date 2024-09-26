@@ -9,7 +9,7 @@ from aviary.variable_info.variables import Dynamic
 
 class RotationPhase(PhaseBuilderBase):
     """
-    A phase builder for a rotation phase in a mission simulation.
+    A phase builder for a rotation phase in a 2-degree of freedom mission simulation.
 
     This class extends the PhaseBuilderBase class, providing specific implementations for
     the rotation phase of a flight mission.

@@ -5,7 +5,9 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 class ParamPort(om.ExplicitComponent):
     """
-    This is to be replaced with curated lists in the areo and propulsion builders
+    Component that adds variables needed by mission systems to the OpenMDAO problem
+    This is to be replaced with curated lists in the areo and propulsion builders using
+    the get_parameters() method.
     """
 
     param_data = {

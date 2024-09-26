@@ -13,7 +13,7 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 class WingSize(om.ExplicitComponent):
     """
-    Computation of wing area and wing span.
+    Computation of wing area and wing span for GASP-based aerodynamics.
     """
 
     def initialize(self):
@@ -82,7 +82,7 @@ class WingSize(om.ExplicitComponent):
 
 class WingParameters(om.ExplicitComponent):
     """
-    Computation of various wing parameters.
+    Computation of various wing parameters for GASP-based geometry.
     """
 
     def initialize(self):

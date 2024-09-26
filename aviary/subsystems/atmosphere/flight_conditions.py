@@ -8,8 +8,8 @@ from aviary.variable_info.variables import Dynamic
 
 class FlightConditions(om.ExplicitComponent):
     """
-    Flight conditions. Given a speed type (TAS, SPEED_OF_SOUND and EAS) and air density,
-    compute dynamic pressure and Mach number.
+    Given a speed type (TAS, MACH, or EAS) and air density,
+    compute dynamic pressure and other two speed types.
     """
 
     def initialize(self):

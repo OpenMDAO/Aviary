@@ -13,7 +13,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 class LandingSegment(BaseODE):
     """
-    Group for landing ODE.
+    Group for a 2-degree of freedom landing ODE.
     """
 
     def setup(self):

@@ -32,7 +32,7 @@ class LandingAltitudeComponent(om.ExplicitComponent):
 
 class GlideConditionComponent(om.ExplicitComponent):
     """
-    Compute the condition at the start of glide.
+    Compute the initial conditions of the 2DOF glide phase.
     """
 
     def setup(self):
@@ -578,7 +578,7 @@ class GlideConditionComponent(om.ExplicitComponent):
 
 class LandingGroundRollComponent(om.ExplicitComponent):
     """
-    Compute the groundroll distance and average acceleration/decelleration
+    Compute the groundroll distance and average acceleration/deceleration
     """
 
     def setup(self):
