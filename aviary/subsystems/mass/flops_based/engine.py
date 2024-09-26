@@ -125,7 +125,9 @@ class EngineMass(om.ExplicitComponent):
         thrust_deriv[param_idx] = (scaling_parameter[param_idx] *
                                    scaled_mass) / scaled_sls_thrust[param_idx]
 
-        scale_deriv[scale_idx] = (scaled_sls_thrust[scale_idx] - ref_sls_thrust[scale_idx])
+        scale_deriv[scale_idx] = (
+            scaled_sls_thrust[scale_idx] - ref_sls_thrust[scale_idx])
+
         scale_deriv[param_idx] = ref_engine_mass[param_idx] * \
             thrust_ratio[param_idx]**scaling_parameter[param_idx]
         if len(param_idx) > 0:
