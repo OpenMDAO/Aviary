@@ -13,7 +13,7 @@ GASP = LegacyCode.GASP
 class CombinedGeometry(om.Group):
     """
     Group that contains both FLOPS and GASP based pre-mission geometry components, for models that require both sets of geometry calculations.
-    
+
     The "code_origin_to_prioritize" flag is used to determine which method's outputs should be used if both FLOPS and  GASP methods compute the same variable.
     """
 
