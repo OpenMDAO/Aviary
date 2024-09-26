@@ -127,6 +127,7 @@ class Aircraft:
         TOTAL_PAYLOAD_MASS = 'aircraft:crew_and_payload:total_payload_mass'
         WATER_MASS_PER_OCCUPANT = 'aircraft:crew_and_payload:water_mass_per_occupant'
         WING_CARGO = 'aircraft:crew_and_payload:wing_cargo'
+
         class Design:
             NUM_BUSINESS_CLASS = 'aircraft:crew_and_payload:design:num_business_class'
             NUM_FIRST_CLASS = 'aircraft:crew_and_payload:design:num_first_class'
