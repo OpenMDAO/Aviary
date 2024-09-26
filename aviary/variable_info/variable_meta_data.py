@@ -735,7 +735,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.CrewPayload.Design.NUM_PASSENGERS,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.PAX',
+    historical_name={"GASP": 'INGASP.PAX',  # number of passenger seats excluding crew
                      "FLOPS": None,  # ['CSTDAT.NSV', '~WEIGHT.NPASS', '~WTSTAT.NPASS'],
                      "LEAPS1": 'aircraft.outputs.L0_crew_and_payload.passenger_count'
                      },
