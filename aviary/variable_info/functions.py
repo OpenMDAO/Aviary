@@ -145,7 +145,7 @@ def override_aviary_vars(group, aviary_inputs: AviaryValues,
             group.promotes(comp.name, inputs=in_var_names, outputs=comp_promoted_outputs)
 
     if overridden_outputs:
-        if aviary_inputs.get_val(Settings.VERBOSITY).value >= 1:
+        if aviary_inputs.get_val(Settings.VERBOSITY).value >= 1:  # Verbosity.BRIEF
             print("\nThe following variables have been overridden:")
             for prom_name in sorted(overridden_outputs):
                 val, units = aviary_inputs.get_item(prom_name)
