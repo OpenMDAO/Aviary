@@ -38,13 +38,13 @@ class TestSubsystemsMission(unittest.TestCase):
                     "constrain_final": False,
                     "fix_duration": False,
                     "initial_bounds": ((0.0, 0.0), "min"),
-                    "duration_bounds": ((10., 30.), "min"),
+                    "duration_bounds": ((10.0, 30.0), "min"),
                 },
             },
             'post_mission': {
                 'include_landing': False,
                 'external_subsystems': [],
-            }
+            },
         }
 
     def test_subsystems_in_a_mission(self):
@@ -80,16 +80,48 @@ class TestSubsystemsMission(unittest.TestCase):
         prob.set_val(av.Aircraft.Battery.PACK_ENERGY_DENSITY, 550, units='kJ/kg')
         prob.set_val(av.Aircraft.Battery.PACK_MASS, 1000, units='lbm')
         prob.set_val(av.Aircraft.Battery.ADDITIONAL_MASS, 115, units='lbm')
+        prob.set_val(av.Aircraft.Battery.EFFICIENCY, 0.95, units='unitless')
 
         prob.run_aviary_problem()
 
         electric_energy_used = prob.get_val(
             f'traj.cruise.timeseries.{av.Dynamic.Mission.CUMULATIVE_ELECTRIC_ENERGY_USED}', units='kW*h')
         fuel_burned = prob.get_val(av.Mission.Summary.FUEL_BURNED, units='lbm')
+        soc = prob.get_val(
+            'traj.cruise.rhs_all.battery.battery_state_of_charge', units='unitless'
+        )
 
         # Check outputs
-        assert_near_equal(electric_energy_used[-1], 42.5594728, 1.e-7)
-        assert_near_equal(fuel_burned, 805.8963261, 1.e-7)
+        # indirectly check mission trajectory by checking total fuel/electric split
+        assert_near_equal(electric_energy_used[-1], 42.55947282, 1.0e-7)
+        assert_near_equal(fuel_burned, 805.8963261, 1.0e-7)
+        # check battery state-of-charge over mission
+        assert_near_equal(
+            soc,
+            [
+                0.99999578,
+                0.97299996,
+                0.93575589,
+                0.92396939,
+                0.92396939,
+                0.86885556,
+                0.79282909,
+                0.76877164,
+                0.76877164,
+                0.70328763,
+                0.61296079,
+                0.5843794,
+                0.5843794,
+                0.52933894,
+                0.45341399,
+                0.42938874,
+                0.42938874,
+                0.4024533,
+                0.36529259,
+                0.35353249,
+            ],
+            1e-7,
+        )
 
 
 if __name__ == "__main__":
