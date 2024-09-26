@@ -14,6 +14,10 @@ V3_bug_fixed_options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM,
                              val=False, units='unitless')
 V3_bug_fixed_options.set_val(
     Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
+# we keep CrewPayload.NUM_PASSENGERS here because preprocess_crewpayload is often not run in these
+# tests which prevents these values being assigned from Design.NUM_PASSENGERS as would normally happen
+V3_bug_fixed_options.set_val(
+    Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
 V3_bug_fixed_options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
 V3_bug_fixed_options.set_val(
     Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
