@@ -36,8 +36,6 @@ class TableEngineBuilder(EngineModel):
         Builds dictionary of controls for engine off-design.
     get_design_vars(self) -> dict:
         Builds dictionary of design variables for Engine off-design.
-    get_mass_names(self):
-        Not used for now.
     """
 
     def __init__(self, name='NPSS_prop_system', aviary_inputs=AviaryValues()):
@@ -179,11 +177,6 @@ class TableEngineBuilder(EngineModel):
         }
 
         return design_vars
-
-    def get_mass_names(self):
-        """pass for now"""
-        # TODO: I think we're not doing any masses and letting the standard procedure calculate?
-        pass
 
 
 '''
