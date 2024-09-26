@@ -51,7 +51,7 @@ class FlapsGroup(om.Group):
             promotes_inputs=[
                 Dynamic.Mission.SPEED_OF_SOUND,
                 Dynamic.Mission.STATIC_PRESSURE,
-                "kinematic_viscosity",
+                Dynamic.Mission.KINEMATIC_VISCOSITY,
                 "VLAM1",
                 "VLAM2",
                 "VLAM3",

@@ -72,7 +72,8 @@ class FlapsGroupTestCaseTripleSlotted(unittest.TestCase):
         self.prob.set_val(Dynamic.Mission.STATIC_PRESSURE,
                           (14.696 * 144), units="lbf/ft**2")
         self.prob.set_val(Aircraft.Wing.AVERAGE_CHORD, 12.61, units="ft")
-        self.prob.set_val("kinematic_viscosity", 0.15723e-3, units="ft**2/s")
+        self.prob.set_val(Dynamic.Mission.KINEMATIC_VISCOSITY,
+                          0.15723e-3, units="ft**2/s")
         self.prob.set_val(Aircraft.Wing.MAX_LIFT_REF, 1.150)
         self.prob.set_val(Aircraft.Wing.SLAT_LIFT_INCREMENT_OPTIMUM, 0.930)
         self.prob.set_val("fus_lift", 0.05498)
@@ -176,7 +177,8 @@ class FlapsGroupTestCaseSplit(unittest.TestCase):
         self.prob.set_val(Dynamic.Mission.STATIC_PRESSURE,
                           (14.696 * 144), units="lbf/ft**2")
         self.prob.set_val(Aircraft.Wing.AVERAGE_CHORD, 12.61, units="ft")
-        self.prob.set_val("kinematic_viscosity", 0.15723e-3, units="ft**2/s")
+        self.prob.set_val(Dynamic.Mission.KINEMATIC_VISCOSITY,
+                          0.15723e-3, units="ft**2/s")
         self.prob.set_val(Aircraft.Wing.MAX_LIFT_REF, 1.150)
         self.prob.set_val(Aircraft.Wing.SLAT_LIFT_INCREMENT_OPTIMUM, 0.930)
         self.prob.set_val("fus_lift", 0.05498)
@@ -282,7 +284,8 @@ class FlapsGroupTestCaseSingleSlotted(unittest.TestCase):
         self.prob.set_val(Dynamic.Mission.STATIC_PRESSURE,
                           (14.696 * 144), units="lbf/ft**2")
         self.prob.set_val(Aircraft.Wing.AVERAGE_CHORD, 12.61, units="ft")
-        self.prob.set_val("kinematic_viscosity", 0.15723e-3, units="ft**2/s")
+        self.prob.set_val(Dynamic.Mission.KINEMATIC_VISCOSITY,
+                          0.15723e-3, units="ft**2/s")
         self.prob.set_val(Aircraft.Wing.MAX_LIFT_REF, 1.150)
         self.prob.set_val(Aircraft.Wing.SLAT_LIFT_INCREMENT_OPTIMUM, 0.930)
         self.prob.set_val("fus_lift", 0.05498)
@@ -386,7 +389,8 @@ class FlapsGroupTestCasePlain(unittest.TestCase):
         self.prob.set_val(Dynamic.Mission.STATIC_PRESSURE,
                           (14.696 * 144), units="lbf/ft**2")
         self.prob.set_val(Aircraft.Wing.AVERAGE_CHORD, 12.61, units="ft")
-        self.prob.set_val("kinematic_viscosity", 0.15723e-3, units="ft**2/s")
+        self.prob.set_val(Dynamic.Mission.KINEMATIC_VISCOSITY,
+                          0.15723e-3, units="ft**2/s")
         self.prob.set_val(Aircraft.Wing.MAX_LIFT_REF, 1.150)
         self.prob.set_val(Aircraft.Wing.SLAT_LIFT_INCREMENT_OPTIMUM, 0.930)
         self.prob.set_val("fus_lift", 0.05498)
@@ -490,7 +494,8 @@ class FlapsGroupTestCaseFowler(unittest.TestCase):
         self.prob.set_val(Dynamic.Mission.STATIC_PRESSURE,
                           (14.696 * 144), units="lbf/ft**2")
         self.prob.set_val(Aircraft.Wing.AVERAGE_CHORD, 12.61, units="ft")
-        self.prob.set_val("kinematic_viscosity", 0.15723e-3, units="ft**2/s")
+        self.prob.set_val(Dynamic.Mission.KINEMATIC_VISCOSITY,
+                          0.15723e-3, units="ft**2/s")
         self.prob.set_val(Aircraft.Wing.MAX_LIFT_REF, 1.150)
         self.prob.set_val(Aircraft.Wing.SLAT_LIFT_INCREMENT_OPTIMUM, 0.930)
         self.prob.set_val("fus_lift", 0.05498)
@@ -595,7 +600,8 @@ class FlapsGroupTestCaseDoubleFowler(unittest.TestCase):
         self.prob.set_val(Dynamic.Mission.STATIC_PRESSURE,
                           (14.696 * 144), units="lbf/ft**2")
         self.prob.set_val(Aircraft.Wing.AVERAGE_CHORD, 12.61, units="ft")
-        self.prob.set_val("kinematic_viscosity", 0.15723e-3, units="ft**2/s")
+        self.prob.set_val(Dynamic.Mission.KINEMATIC_VISCOSITY,
+                          0.15723e-3, units="ft**2/s")
         self.prob.set_val(Aircraft.Wing.MAX_LIFT_REF, 1.150)
         self.prob.set_val(Aircraft.Wing.SLAT_LIFT_INCREMENT_OPTIMUM, 0.930)
         self.prob.set_val("fus_lift", 0.05498)
