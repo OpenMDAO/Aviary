@@ -87,11 +87,15 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
     # have you give us enough info to determine where people were sitting vs. designed seats
     if num_pax != 0 and design_passenger_count != 0 and passenger_count == 0:
         raise om.AnalysisError(
-            f"ERROR: In preprocessor.py: User must specify CrewPayload.FIRST_CLASS, CrewPayload.NUM_BUSINESS_CLASS, Design.NUM_TOURIST_CLASS in aviary_values.")
+            f"ERROR: In preprocessor.py: The user has specified CrewPayload.NUM_PASSENGERS, and how many of what types of seats are on the aircraft."
+            f"However, the user has not specified where those passengers are sitting."
+            f"User must specify CrewPayload.FIRST_CLASS, CrewPayload.NUM_BUSINESS_CLASS, NUM_TOURIST_CLASS in aviary_values.")
         # where are the people sitting? is first class full? We know how many seats are in each class.
     if design_num_pax != 0 and passenger_count != 0 and design_passenger_count == 0:
         raise om.AnalysisError(
-            f"ERROR: In preprocessor.py: User must specify Design.FIRST_CLASS, Design.NUM_BUSINESS_CLASS, Design.NUM_TOURIST_CLASS in aviary_values.")
+            f"ERROR: In preprocessor.py: The user has specified Design.NUM_PASSENGERS, and has specified how many people are sitting in each class of seats."
+            f"However, the user has not specified how many seats of each class exist in the aircraft."
+            f"User must specify Design.FIRST_CLASS, Design.NUM_BUSINESS_CLASS, Design.NUM_TOURIST_CLASS in aviary_values.")
         # we don't know which classes this aircraft has been design for. How many 1st class seats are there?
 
     # Copy data over if only one set of data exists
