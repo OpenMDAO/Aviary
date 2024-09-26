@@ -927,7 +927,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.CrewPayload.NUM_PASSENGERS,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.PAX',
+    historical_name={"GASP": None,  # 'INGASP.PAX' here we assume previous studies were changing Design.num_pax not as-flown
                      "FLOPS": None,  # ['CSTDAT.NSV', '~WEIGHT.NPASS', '~WTSTAT.NPASS'],
                      "LEAPS1": None,  # 'aircraft.outputs.L0_crew_and_payload.passenger_count'
                      },
