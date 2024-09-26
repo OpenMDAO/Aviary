@@ -33,7 +33,8 @@ class ElectricalMass(om.ExplicitComponent):
         options: AviaryValues = self.options['aviary_options']
         nfuse = options.get_val(Aircraft.Fuselage.NUM_FUSELAGES)
         ncrew = options.get_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW)
-        npass = options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless')
+        npass = options.get_val(
+            Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless')
         length = inputs[Aircraft.Fuselage.LENGTH]
         width = inputs[Aircraft.Fuselage.MAX_WIDTH]
         num_eng = options.get_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES)
@@ -48,7 +49,8 @@ class ElectricalMass(om.ExplicitComponent):
         options: AviaryValues = self.options['aviary_options']
         nfuse = options.get_val(Aircraft.Fuselage.NUM_FUSELAGES)
         ncrew = options.get_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW)
-        npass = options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless')
+        npass = options.get_val(
+            Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless')
         length = inputs[Aircraft.Fuselage.LENGTH]
         width = inputs[Aircraft.Fuselage.MAX_WIDTH]
         num_eng = options.get_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES)

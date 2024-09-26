@@ -46,7 +46,8 @@ class PassengerServiceMass(om.ExplicitComponent):
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
         aviary_options: AviaryValues = self.options['aviary_options']
-        first_class_count = aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
+        first_class_count = aviary_options.get_val(
+            Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
 
         business_class_count = \
             aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)
@@ -72,7 +73,8 @@ class PassengerServiceMass(om.ExplicitComponent):
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
         aviary_options: AviaryValues = self.options['aviary_options']
-        first_class_count = aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
+        first_class_count = aviary_options.get_val(
+            Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
 
         business_class_count = \
             aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)

@@ -77,7 +77,8 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
     def compute(self, inputs, outputs):
 
         options: AviaryValues = self.options["aviary_options"]
-        PAX = options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless')
+        PAX = options.get_val(
+            Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless')
         smooth = options.get_val(
             Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, units='unitless')
 
@@ -388,7 +389,8 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
 
     def compute_partials(self, inputs, partials):
         options = self.options['aviary_options']
-        PAX = options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless')
+        PAX = options.get_val(
+            Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless')
         smooth = options.get_val(
             Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, units='unitless')
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM

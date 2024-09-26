@@ -38,7 +38,8 @@ class TransportFurnishingsGroupMass(om.ExplicitComponent):
         aviary_options: AviaryValues = self.options['aviary_options']
 
         flight_crew_count = aviary_options.get_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW)
-        first_class_count = aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
+        first_class_count = aviary_options.get_val(
+            Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
 
         business_class_count = aviary_options.get_val(
             Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)
@@ -67,7 +68,8 @@ class TransportFurnishingsGroupMass(om.ExplicitComponent):
         aviary_options: AviaryValues = self.options['aviary_options']
 
         flight_crew_count = aviary_options.get_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW)
-        first_class_count = aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
+        first_class_count = aviary_options.get_val(
+            Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
 
         business_class_count = aviary_options.get_val(
             Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)
@@ -135,7 +137,8 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
         aviary_options: AviaryValues = self.options['aviary_options']
 
         flight_crew_count = aviary_options.get_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW)
-        first_class_count = aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
+        first_class_count = aviary_options.get_val(
+            Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
 
         business_class_count = aviary_options.get_val(
             Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)
@@ -173,7 +176,8 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
         aviary_options: AviaryValues = self.options['aviary_options']
 
         flight_crew_count = aviary_options.get_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW)
-        first_class_count = aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
+        first_class_count = aviary_options.get_val(
+            Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
 
         business_class_count = aviary_options.get_val(
             Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)
