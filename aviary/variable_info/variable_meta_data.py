@@ -622,64 +622,6 @@ add_meta_data(
 # from aviary.utils.aviary_values import AviaryValues
 
 add_meta_data(
-    Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": 'WTIN.NPB',  # ['&DEFINE.WTIN.NPB', 'WTS.NPB'],
-                     "LEAPS1": 'aircraft.inputs.L0_crew_and_payload.business_class_count'
-                     },
-    units='unitless',
-    desc='number of business class passengers that the aircraft is designed to accommodate',
-    types=int,
-    option=True,
-    default_value=0,  # AviaryValues.get_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS),
-)
-
-add_meta_data(
-    Aircraft.CrewPayload.Design.NUM_FIRST_CLASS,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": 'WTIN.NPF',  # ['&DEFINE.WTIN.NPF', 'WTS.NPF'],
-                     "LEAPS1": 'aircraft.inputs.L0_crew_and_payload.first_class_count'
-                     },
-    units='unitless',
-    desc='number of first class passengers that the aircraft is designed to accommodate',
-    types=int,
-    option=True,
-    default_value=0,
-)
-
-# TODO rename to economy?
-add_meta_data(
-    Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": 'WTIN.NPT',  # ['&DEFINE.WTIN.NPT', 'WTS.NPT'],
-                     "LEAPS1": 'aircraft.inputs.L0_crew_and_payload.tourist_class_count'
-                     },
-    units='unitless',
-    desc='number of tourist class passengers that the aircraft is designed to accommodate',
-    types=int,
-    option=True,
-    default_value=0,
-)
-
-add_meta_data(
-    Aircraft.CrewPayload.Design.NUM_PASSENGERS,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.PAX',
-                     "FLOPS": None,  # ['CSTDAT.NSV', '~WEIGHT.NPASS', '~WTSTAT.NPASS'],
-                     "LEAPS1": 'aircraft.outputs.L0_crew_and_payload.passenger_count'
-                     },
-    units='unitless',
-    desc='total number of passengers that the aircraft is designed to accommodate',
-    option=True,
-    default_value=0,
-    types=int,
-)
-
-
-add_meta_data(
     Aircraft.CrewPayload.BAGGAGE_MASS,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -760,6 +702,64 @@ add_meta_data(
     units='lbm',
     desc='mass of catering items per passenger',
     default_value=0.7,
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": 'WTIN.NPB',  # ['&DEFINE.WTIN.NPB', 'WTS.NPB'],
+                     "LEAPS1": 'aircraft.inputs.L0_crew_and_payload.business_class_count'
+                     },
+    units='unitless',
+    desc='number of business class passengers that the aircraft is designed to accommodate',
+    types=int,
+    option=True,
+    default_value=0,  # AviaryValues.get_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS),
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.Design.NUM_FIRST_CLASS,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": 'WTIN.NPF',  # ['&DEFINE.WTIN.NPF', 'WTS.NPF'],
+                     "LEAPS1": 'aircraft.inputs.L0_crew_and_payload.first_class_count'
+                     },
+    units='unitless',
+    desc='number of first class passengers that the aircraft is designed to accommodate',
+    types=int,
+    option=True,
+    default_value=0,
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.Design.NUM_PASSENGERS,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.PAX',
+                     "FLOPS": None,  # ['CSTDAT.NSV', '~WEIGHT.NPASS', '~WTSTAT.NPASS'],
+                     "LEAPS1": 'aircraft.outputs.L0_crew_and_payload.passenger_count'
+                     },
+    units='unitless',
+    desc='total number of passengers that the aircraft is designed to accommodate',
+    option=True,
+    default_value=0,
+    types=int,
+)
+
+
+# TODO rename to economy?
+add_meta_data(
+    Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": 'WTIN.NPT',  # ['&DEFINE.WTIN.NPT', 'WTS.NPT'],
+                     "LEAPS1": 'aircraft.inputs.L0_crew_and_payload.tourist_class_count'
+                     },
+    units='unitless',
+    desc='number of tourist class passengers that the aircraft is designed to accommodate',
+    types=int,
+    option=True,
+    default_value=0,
 )
 
 add_meta_data(
@@ -851,8 +851,8 @@ add_meta_data(
     Aircraft.CrewPayload.NUM_BUSINESS_CLASS,
     meta_data=_MetaData,
     historical_name={"GASP": None,
-                     "FLOPS": 'WTIN.NPB',  # ['&DEFINE.WTIN.NPB', 'WTS.NPB'],
-                     "LEAPS1": 'aircraft.inputs.L0_crew_and_payload.business_class_count'
+                     "FLOPS": None,  # ['&DEFINE.WTIN.NPB', 'WTS.NPB'],
+                     "LEAPS1": None,  # 'aircraft.inputs.L0_crew_and_payload.business_class_count'
                      },
     units='unitless',
     desc='number of business class passengers',
@@ -865,8 +865,8 @@ add_meta_data(
     Aircraft.CrewPayload.NUM_FIRST_CLASS,
     meta_data=_MetaData,
     historical_name={"GASP": None,
-                     "FLOPS": 'WTIN.NPF',  # ['&DEFINE.WTIN.NPF', 'WTS.NPF'],
-                     "LEAPS1": 'aircraft.inputs.L0_crew_and_payload.first_class_count'
+                     "FLOPS": None,  # ['&DEFINE.WTIN.NPF', 'WTS.NPF'],
+                     "LEAPS1": None,  # 'aircraft.inputs.L0_crew_and_payload.first_class_count'
                      },
     units='unitless',
     desc='number of first class passengers',
@@ -929,7 +929,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.PAX',
                      "FLOPS": None,  # ['CSTDAT.NSV', '~WEIGHT.NPASS', '~WTSTAT.NPASS'],
-                     "LEAPS1": 'aircraft.outputs.L0_crew_and_payload.passenger_count'
+                     "LEAPS1": None,  # 'aircraft.outputs.L0_crew_and_payload.passenger_count'
                      },
     units='unitless',
     desc='total number of passengers',
@@ -943,8 +943,8 @@ add_meta_data(
     Aircraft.CrewPayload.NUM_TOURIST_CLASS,
     meta_data=_MetaData,
     historical_name={"GASP": None,
-                     "FLOPS": 'WTIN.NPT',  # ['&DEFINE.WTIN.NPT', 'WTS.NPT'],
-                     "LEAPS1": 'aircraft.inputs.L0_crew_and_payload.tourist_class_count'
+                     "FLOPS": None,  # ['&DEFINE.WTIN.NPT', 'WTS.NPT'],
+                     "LEAPS1": None,  # 'aircraft.inputs.L0_crew_and_payload.tourist_class_count'
                      },
     units='unitless',
     desc='number of tourist class passengers',
