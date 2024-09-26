@@ -419,7 +419,15 @@ class PhaseBuilderBase(ABC):
         for constraint_name, kwargs in constraints.items():
             if kwargs['type'] == 'boundary':
                 kwargs.pop('type')
-                phase.add_boundary_constraint(constraint_name, **kwargs)
+
+                if 'target' in kwargs:
+                    # Support for constraint aliases.
+                    target = kwargs.pop('target')
+                    kwargs['constraint_name'] = constraint_name
+                    phase.add_boundary_constraint(target, **kwargs)
+                else:
+                    phase.add_boundary_constraint(constraint_name, **kwargs)
+
             elif kwargs['type'] == 'path':
                 kwargs.pop('type')
                 phase.add_path_constraint(constraint_name, **kwargs)
