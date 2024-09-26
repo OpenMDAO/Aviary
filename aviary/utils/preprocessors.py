@@ -139,8 +139,8 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
         raise om.AnalysisError(
             f"ERROR: In preprocesssors.py: NUM_PASSENGERS ({aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)}) is larger than the number of seats set by Design.NUM_PASSENGERS ({aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS)}) .")
 
-    dnp = aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS)
-    print(f"INFO: In preprocessor.py: Aircraft has been designed for {dnp} passengers.")
+    # dnp = aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS)
+    # print(f"INFO: In preprocessor.py: Aircraft has been designed for {dnp} passengers.")
 
     if Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS not in aviary_options:
         flight_attendants_count = 0  # assume no passengers
