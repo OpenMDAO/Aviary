@@ -1060,6 +1060,7 @@ class EngineDeck(EngineModel):
             Aircraft.Engine.SCALE_FACTOR: {
                 'val': 1.0,
                 'units': 'unitless',
+                'static_target': True,
             }
         }
         return params

@@ -77,10 +77,12 @@ class GearboxBuilder(SubsystemBuilderBase):
             Aircraft.Engine.Gearbox.EFFICIENCY: {
                 'val': 1.0,
                 'units': 'unitless',
+                'static_target': True,
             },
             Aircraft.Engine.Gearbox.GEAR_RATIO: {
                 'val': 1.0,
                 'units': 'unitless',
+                'static_target': True,
             },
         }
 

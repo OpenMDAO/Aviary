@@ -48,7 +48,6 @@ aircraft:crew_and_payload:water_mass_per_occupant, 0, lbm
 aircraft:electrical:mass, 300, lbm 
 aircraft:engine:additional_mass_fraction, 0.34, unitless
 aircraft:engine:data_file, models/engines/turboshaft_4465hp.deck
-aircraft:engine:gearbox:gear_ratio, 13.550135501355014, unitless
 aircraft:engine:mass_scaler, 1, unitless
 aircraft:engine:mass_specific, 0.37026, lbm/lbf
 aircraft:engine:num_engines, 4, unitless
@@ -67,6 +66,7 @@ aircraft:engine:scaled_sls_thrust, 5000, lbf
 aircraft:engine:shaft_power_design, 4465, kW
 aircraft:engine:type, 6, unitless
 aircraft:engine:wing_locations, [0.385, 0.385], unitless
+aircraft:engine:gearbox:gear_ratio, 13.550135501355014, unitless
 
 # Fuel
 aircraft:fuel:density, 6.687, lbm/galUS
