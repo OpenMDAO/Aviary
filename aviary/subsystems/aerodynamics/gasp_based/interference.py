@@ -56,7 +56,6 @@ class WingFuselageInterference_premission(om.ExplicitComponent):
         ZW_RF = 2.*HWING - 1.  # constant
 
         wtofd = TCR*CROOT/SWF  # wing_thickness_over_fuselage_diameter # constant
-        print(SWF, ZW_RF, wtofd)
         # WIDTHFTOP = (SWF*(1.0 - (ZW_RF + wtofd)**2)**0.5) * \
         #     (sigX(ZW_RF+wtofd+1)-sigX(ZW_RF+wtofd-1))  # constant
         # WIDTHFBOT = (SWF*(1.0 - (ZW_RF - wtofd)**2)**0.5) * \
@@ -71,7 +70,6 @@ class WingFuselageInterference_premission(om.ExplicitComponent):
             WIDTHFBOT = 0.0
         else:
             WIDTHFBOT = SWF*(1.0 - (ZW_RF - wtofd)**2)**0.5
-        print(WIDTHFTOP)
 
         WBODYWF = 0.5*(WIDTHFTOP + WIDTHFBOT)  # constant
         TCBODYWF = TCR - WBODYWF/B*(TCR - TCT)  # constant
@@ -135,15 +133,7 @@ class WingFuselageInterference_dynamic(om.ExplicitComponent):
         # CFIN CALCULATION FROM SCHLICHTING PG. 635-665
         CFIN = 0.455/np.log10(10_000_000.)**2.58/(1. + 0.144*EM**2)**0.65  # dynamic
         CDWI = FCFWC*FCFWT*CFIN  # dynamic
-        # print(RELI, CBARW)
-        from warnings import filterwarnings
-        filterwarnings('error')
-        try:
-            FEW = SW * CDWI * CKW * ((np.log10(RELI * CBARW)/7.)**(-2.6))  # dynamic
-        except RuntimeWarning:
-            print(RELI, CBARW)
-            exit()
-
+        FEW = SW * CDWI * CKW * ((np.log10(RELI * CBARW)/7.)**(-2.6))  # dynamic
         # from interference.f
         FEIWF = FEINTWF - 1*FEW/SW*AREASHIELDWF  # dynamic
 

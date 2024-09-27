@@ -62,6 +62,7 @@ class LandingSegment(BaseODE):
                         (Dynamic.Mission.ALTITUDE, Mission.Landing.INITIAL_ALTITUDE),
                         (Dynamic.Mission.DENSITY, "rho_app"),
                         (Dynamic.Mission.SPEED_OF_SOUND, "sos_app"),
+                        (Dynamic.Mission.TEMPERATURE, "T_app"),
                         ("viscosity", "viscosity_app"),
                         ("airport_alt", Mission.Landing.AIRPORT_ALTITUDE),
                         (Dynamic.Mission.MACH, Mission.Landing.INITIAL_MACH),
@@ -131,6 +132,7 @@ class LandingSegment(BaseODE):
             promotes_outputs=[
                 (Dynamic.Mission.DENSITY, "rho_td"),
                 (Dynamic.Mission.SPEED_OF_SOUND, "sos_td"),
+                (Dynamic.Mission.TEMPERATURE, "T_td"),
                 ("viscosity", "viscosity_td"),
                 (Dynamic.Mission.DYNAMIC_PRESSURE, "q_td"),
                 (Dynamic.Mission.MACH, "mach_td"),
@@ -151,6 +153,7 @@ class LandingSegment(BaseODE):
                 (Dynamic.Mission.ALTITUDE, Mission.Landing.AIRPORT_ALTITUDE),
                 (Dynamic.Mission.DENSITY, "rho_td"),
                 (Dynamic.Mission.SPEED_OF_SOUND, "sos_td"),
+                (Dynamic.Mission.TEMPERATURE, "T_td"),
                 ("viscosity", "viscosity_td"),
                 ("airport_alt", Mission.Landing.AIRPORT_ALTITUDE),
                 (Dynamic.Mission.MACH, "mach_td"),
