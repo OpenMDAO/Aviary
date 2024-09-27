@@ -64,7 +64,7 @@ class FuselageParameters(om.ExplicitComponent):
 
         cabin_width = seats_abreast * seat_width + num_aisle * aisle_width + 12
 
-        if PAX < 1: 
+        if PAX < 1:
             if verbosity >= Verbosity.BRIEF:
                 print("Warning: you have not specified at least one passenger")
 
