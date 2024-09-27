@@ -632,8 +632,8 @@ class AviaryProblem(om.Problem):
     def _add_two_dof_takeoff_systems(self):
         # Create options to values
         OptionsToValues = create_opts2vals(
-            [Aircraft.CrewPayload.NUM_PASSENGERS,
-                Mission.Design.CRUISE_ALTITUDE, ])
+            [Aircraft.CrewPayload.NUM_PASSENGERS]
+        )
         add_opts2vals(self.model, OptionsToValues, self.aviary_inputs)
 
         if self.analysis_scheme is AnalysisScheme.SHOOTING:

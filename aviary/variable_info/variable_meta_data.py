@@ -6916,7 +6916,6 @@ add_meta_data(
                      "FLOPS": None,
                      "LEAPS1": None
                      },
-    option=True,
     units='ft',
     default_value=25000,
     desc='design mission cruise altitude',
