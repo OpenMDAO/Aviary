@@ -102,7 +102,7 @@ class TurbopropModel(EngineModel):
         # TODO engine scaling for turboshafts requires EngineSizing to be refactored to
         # accept target scaling variable as an option, skipping for now
         if not isinstance(shp_model, EngineDeck):
-            shp_model_pre_mission = shp_model.build_pre_mission(aviary_inputs, **kwargs)
+            shp_model_pre_mission = shp_model.build_pre_mission(self.options, **kwargs)
             if shp_model_pre_mission is not None:
                 turboprop_group.add_subsystem(
                     shp_model_pre_mission.name,
@@ -111,7 +111,7 @@ class TurbopropModel(EngineModel):
                 )
 
         gearbox_model_pre_mission = gearbox_model.build_pre_mission(
-            aviary_inputs, **kwargs
+            self.options, **kwargs
         )
         if gearbox_model_pre_mission is not None:
             turboprop_group.add_subsystem(
@@ -121,7 +121,7 @@ class TurbopropModel(EngineModel):
             )
 
         propeller_model_pre_mission = propeller_model.build_pre_mission(
-            aviary_inputs, **kwargs
+            self.options, **kwargs
         )
         if propeller_model_pre_mission is not None:
             turboprop_group.add_subsystem(
@@ -138,7 +138,7 @@ class TurbopropModel(EngineModel):
             shaft_power_model=self.shaft_power_model,
             propeller_model=self.propeller_model,
             gearbox_model=self.gearbox_model,
-            aviary_inputs=aviary_inputs,
+            aviary_inputs=self.options,
             kwargs=kwargs,
         )
 
@@ -217,6 +217,10 @@ class TurbopropMission(om.Group):
         # save aviary_inputs for use in configure()
         self.aviary_inputs = aviary_inputs = self.options['aviary_inputs']
 
+        # NOTE: this subsystem is a empty component that has fixed RPM added as an output
+        #       in configure() if provided in aviary_inputs
+        self.add_subsystem('fixed_rpm_source', subsys=om.IndepVarComp())
+
         # Shaft Power Model
         try:
             shp_kwargs = kwargs[shp_model.name]
@@ -226,10 +230,6 @@ class TurbopropMission(om.Group):
             num_nodes, aviary_inputs, **shp_kwargs)
         if shp_model_mission is not None:
             self.add_subsystem(shp_model.name, subsys=shp_model_mission)
-
-        # NOTE: this subsystem is a empty component that has fixed RPM added as an output
-        #       in configure() if provided in aviary_inputs
-        self.add_subsystem('fixed_rpm_source', subsys=om.IndepVarComp())
 
         # Gearbox Model
         try:
@@ -387,6 +387,16 @@ class TurbopropMission(om.Group):
         #   given component, which is done at the end as a bulk promote.
 
         shp_model = self._get_subsystem(self.options['shaft_power_model'].name)
+        shp_input_dict = shp_model.list_inputs(
+            return_format='dict', units=True, out_stream=None, all_procs=True
+        )
+        shp_input_list = list(
+            set(
+                shp_input_dict[key]['prom_name']
+                for key in shp_input_dict
+                if '.' not in shp_input_dict[key]['prom_name']
+            )
+        )
         shp_output_dict = shp_model.list_outputs(
             return_format='dict', units=True, out_stream=None, all_procs=True
         )
@@ -519,6 +529,9 @@ class TurbopropMission(om.Group):
                 gearbox_input_list.remove(Dynamic.Mission.RPM + '_in')
             else:
                 self.promotes('fixed_rpm_source', ['*'])
+            # models such as motor take RPM as input
+            if Dynamic.Mission.RPM in shp_input_list:
+                shp_inputs.append((Dynamic.Mission.RPM, 'fixed_rpm'))
         else:
             rpm_ivc.add_output('AUTO_OVERRIDE:' + Dynamic.Mission.RPM, 1.0, units='rpm')
             if has_gearbox:

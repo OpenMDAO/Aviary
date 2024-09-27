@@ -19,7 +19,7 @@ from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.subsystems.propulsion.motor.motor_builder import MotorBuilder
 
 
-class TurbopropTest(unittest.TestCase):
+class TurbopropMissionTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
