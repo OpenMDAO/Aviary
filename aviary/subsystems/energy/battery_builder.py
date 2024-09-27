@@ -68,8 +68,16 @@ class BatteryBuilder(SubsystemBuilderBase):
 
     def get_parameters(self, aviary_inputs=None, phase_info=None):
         params = {
-            Aircraft.Battery.ENERGY_CAPACITY: {'static_target': True},
-            Aircraft.Battery.EFFICIENCY: {'static_target': True},
+            Aircraft.Battery.ENERGY_CAPACITY: {
+                'val': 0.0,
+                'units': 'kJ',
+                'static_target': True,
+            },
+            Aircraft.Battery.EFFICIENCY: {
+                'val': 0.0,
+                'units': 'unitless',
+                'static_target': True,
+            },
         }
 
         return params
