@@ -2628,6 +2628,12 @@ class AviaryProblem(om.Problem):
                              (Dynamic.Mission.MASS, Mission.Landing.TOUCHDOWN_MASS)],
             promotes_outputs=['mission:*'],
         )
+        self.model.connect(
+            'pre_mission.interference_independent_of_shielded_area',
+            'landing.interference_independent_of_shielded_area')
+        self.model.connect(
+            'pre_mission.drag_loss_due_to_shielded_wing_area',
+            'landing.drag_loss_due_to_shielded_wing_area')
 
     def _add_objectives(self):
         self.model.add_subsystem(
