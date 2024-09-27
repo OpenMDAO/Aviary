@@ -445,6 +445,9 @@ class LoadSpeedsTestCase10smooth(unittest.TestCase):  # TestCase5 with smooth fu
 class LoadParametersTestCase1(unittest.TestCase):
     def setUp(self):
 
+        options = get_option_defaults()
+        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
+
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "params", LoadParameters(), promotes=["*"]
@@ -457,9 +460,9 @@ class LoadParametersTestCase1(unittest.TestCase):
             "max_airspeed", val=350, units="kn"
         )  # bug fixed value
 
-        self.prob.setup(check=False, force_alloc_complex=True)
+        self.prob.model_options['*'] = extract_options(options)
 
-        self.prob.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
+        self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
 
@@ -480,6 +483,7 @@ class LoadParametersTestCase2(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY,
                         val=2, units='unitless')
+        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=30000, units='ft')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -496,8 +500,6 @@ class LoadParametersTestCase2(unittest.TestCase):
         self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
-
-        self.prob.set_val(Mission.Design.CRUISE_ALTITUDE, val=30000, units='ft')
 
     def test_case1(self):
 
@@ -519,6 +521,7 @@ class LoadParametersTestCase3(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY,
                         val=4, units='unitless')
+        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=22000, units='ft')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -535,8 +538,6 @@ class LoadParametersTestCase3(unittest.TestCase):
         self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
-
-        self.prob.set_val(Mission.Design.CRUISE_ALTITUDE, val=22000, units='ft')
 
     def test_case1(self):
 
@@ -559,6 +560,7 @@ class LoadParametersTestCase4smooth(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES,
                         val=True, units='unitless')
+        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -577,8 +579,6 @@ class LoadParametersTestCase4smooth(unittest.TestCase):
         self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
-
-        self.prob.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
 
     def test_case1(self):
 
@@ -601,6 +601,7 @@ class LoadParametersTestCase5smooth(unittest.TestCase):
                         val=2, units='unitless')
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES,
                         val=True, units='unitless')
+        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=30000, units='ft')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -619,8 +620,6 @@ class LoadParametersTestCase5smooth(unittest.TestCase):
         self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
-
-        self.prob.set_val(Mission.Design.CRUISE_ALTITUDE, val=30000, units='ft')
 
     def test_case1(self):
 
@@ -644,6 +643,7 @@ class LoadParametersTestCase6smooth(unittest.TestCase):
                         val=4, units='unitless')
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES,
                         val=True, units='unitless')
+        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=22000, units='ft')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -662,8 +662,6 @@ class LoadParametersTestCase6smooth(unittest.TestCase):
         self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
-
-        self.prob.set_val(Mission.Design.CRUISE_ALTITUDE, val=22000, units='ft')
 
     def test_case1(self):
 
@@ -898,49 +896,8 @@ class LoadFactorsTestCase4smooth(unittest.TestCase):
 class DesignLoadGroupTestCase1(unittest.TestCase):
     def setUp(self):
 
-        self.prob = om.Problem()
-
-        self.prob.model.add_subsystem(
-            "Dload",
-            DesignLoadGroup(),
-            promotes=["*"],
-        )
-
-        self.prob.model.set_input_defaults(
-            Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units="mi/h"
-        )  # bug fixed and original value
-
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.LOADING, val=126, units="lbf/ft**2"
-        )  # bug fixed value
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.AVERAGE_CHORD, val=12.71, units="ft"
-        )  # bug fixed value
-
-        self.prob.setup(check=False, force_alloc_complex=True)
-
-        self.prob.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
-
-    def test_case1(self):
-
-        self.prob.run_model()
-
-        tol = 1e-4
-        assert_near_equal(self.prob["max_mach"], 0.9, tol)  # bug fixed value
-        # bug fixed value
-        assert_near_equal(self.prob[Aircraft.Wing.ULTIMATE_LOAD_FACTOR], 3.75, tol)
-
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
-
-
-# this is the large single aisle 1 V3 test case
-class DesignLoadGroupTestCase2smooth(unittest.TestCase):
-    def setUp(self):
-
         options = get_option_defaults()
-        options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES,
-                        val=True, units='unitless')
+        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
 
         self.prob = om.Problem()
 
@@ -965,7 +922,50 @@ class DesignLoadGroupTestCase2smooth(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-        self.prob.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
+    def test_case1(self):
+
+        self.prob.run_model()
+
+        tol = 1e-4
+        assert_near_equal(self.prob["max_mach"], 0.9, tol)  # bug fixed value
+        # bug fixed value
+        assert_near_equal(self.prob[Aircraft.Wing.ULTIMATE_LOAD_FACTOR], 3.75, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
+
+
+# this is the large single aisle 1 V3 test case
+class DesignLoadGroupTestCase2smooth(unittest.TestCase):
+    def setUp(self):
+
+        options = get_option_defaults()
+        options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES,
+                        val=True, units='unitless')
+        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
+
+        self.prob = om.Problem()
+
+        self.prob.model.add_subsystem(
+            "Dload",
+            DesignLoadGroup(),
+            promotes=["*"],
+        )
+
+        self.prob.model.set_input_defaults(
+            Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units="mi/h"
+        )  # bug fixed and original value
+
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.LOADING, val=126, units="lbf/ft**2"
+        )  # bug fixed value
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.AVERAGE_CHORD, val=12.71, units="ft"
+        )  # bug fixed value
+
+        self.prob.model_options['*'] = extract_options(options)
+
+        self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
 

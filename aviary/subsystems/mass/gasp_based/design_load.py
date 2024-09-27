@@ -365,6 +365,7 @@ class LoadParameters(om.ExplicitComponent):
     def initialize(self):
         add_aviary_option(self, Aircraft.Design.PART25_STRUCTURAL_CATEGORY)
         add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)
+        add_aviary_option(self, Mission.Design.CRUISE_ALTITUDE, units='ft')
 
     def setup(self):
 
@@ -380,12 +381,6 @@ class LoadParameters(om.ExplicitComponent):
             val=200,
             units="kn",
             desc="VM0: maximum operating equivalent airspeed",
-        )
-
-        add_aviary_input(
-            self,
-            Mission.Design.CRUISE_ALTITUDE,
-            units='ft',
         )
 
         self.add_output(
@@ -410,7 +405,7 @@ class LoadParameters(om.ExplicitComponent):
         vel_c = inputs["vel_c"]
         max_airspeed = inputs["max_airspeed"]
 
-        cruise_alt = inputs[Mission.Design.CRUISE_ALTITUDE]
+        cruise_alt, _ = self.options[Mission.Design.CRUISE_ALTITUDE]
         CATD = self.options[Aircraft.Design.PART25_STRUCTURAL_CATEGORY]
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
 
@@ -478,7 +473,7 @@ class LoadParameters(om.ExplicitComponent):
         vel_c = inputs["vel_c"]
         max_airspeed = inputs["max_airspeed"]
 
-        cruise_alt = inputs[Mission.Design.CRUISE_ALTITUDE]
+        cruise_alt, _ = self.options[Mission.Design.CRUISE_ALTITUDE]
         CATD = self.options[Aircraft.Design.PART25_STRUCTURAL_CATEGORY]
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
 
@@ -1230,7 +1225,6 @@ class DesignLoadGroup(om.Group):
             promotes_inputs=[
                 "max_airspeed",
                 "vel_c",
-                Mission.Design.CRUISE_ALTITUDE,
             ],
             promotes_outputs=["density_ratio", "V9", "max_mach"],
         )

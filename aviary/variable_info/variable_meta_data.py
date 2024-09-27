@@ -6917,9 +6917,9 @@ add_meta_data(
                      "LEAPS1": None
                      },
     units='ft',
+    option=True,
     default_value=25000,
     desc='design mission cruise altitude',
-    types=[int, float]
 )
 
 add_meta_data(

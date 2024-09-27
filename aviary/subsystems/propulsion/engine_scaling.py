@@ -143,14 +143,10 @@ class EngineScaling(om.ExplicitComponent):
         for variable in engine_variables:
             if variable not in skip_variables:
                 if variable is FUEL_FLOW:
-                    try:
-
-                        outputs[Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE] = -(
-                            inputs['fuel_flow_rate_unscaled'] * fuel_flow_scale_factor
-                            + constant_fuel_flow
-                        )
-                    except:
-                        print('z')
+                    outputs[Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE] = -(
+                        inputs['fuel_flow_rate_unscaled'] * fuel_flow_scale_factor
+                        + constant_fuel_flow
+                    )
                 else:
                     outputs[variable.value] = (
                         inputs[variable.value + '_unscaled'] * scale_factor
