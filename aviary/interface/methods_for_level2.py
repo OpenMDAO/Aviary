@@ -358,13 +358,17 @@ class AviaryProblem(om.Problem):
             self.cruise_mass_final = aviary_inputs.get_val(
                 Mission.Summary.CRUISE_MASS_FINAL, units='lbm')
 
-            # if 'target_range' in self.post_mission_info:
-            #     self.target_range = wrapped_convert_units(
-            #         phase_info['post_mission']['target_range'], 'NM')
-            # else:
-            print('WARNING: In methods_for_level2: user has not specified target_range in phase_info. This will be required in future release.')
-            self.target_range = aviary_inputs.get_val(
-                Mission.Design.RANGE, units='NM')
+            if self.post_mission_info is True and 'target_range' in self.post_mission_info:
+                self.target_range = wrapped_convert_units(
+                    phase_info['post_mission']['target_range'], 'NM')
+                aviary_inputs.set_val(Mission.Summary.RANGE,
+                                      self.target_range, units='NM')
+            else:
+                print('WARNING: In methods_for_level2: user has not specified target_range in phase_info. This will be required in future releases.')
+                self.target_range = aviary_inputs.get_val(
+                    Mission.Design.RANGE, units='NM')
+                aviary_inputs.set_val(Mission.Summary.RANGE, aviary_inputs.get_val(
+                    Mission.Design.RANGE, units='NM'), units='NM')
             self.cruise_mach = aviary_inputs.get_val(Mission.Design.MACH)
             self.require_range_residual = True
 
@@ -379,7 +383,7 @@ class AviaryProblem(om.Problem):
                 self.target_range = wrapped_convert_units(
                     phase_info['post_mission']['target_range'], 'NM')
             else:
-                print('WARNING: In methods_for_level2: user has not specified target_range in phase_info. This will be required in future release.')
+                print('WARNING: In methods_for_level2: user has not specified target_range in phase_info. This will be required in future releases.')
                 self.require_range_residual = False
                 # still instantiate target_range because used for default guesses for phase comps
                 self.target_range = aviary_inputs.get_val(
