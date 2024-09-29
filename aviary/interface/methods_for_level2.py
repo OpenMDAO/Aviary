@@ -1999,29 +1999,29 @@ class AviaryProblem(om.Problem):
             # Check the name of integration variable in dymos phase
             integration_variable = phase.time_options['name']
             print('integration_variable = ', integration_variable)
-            if self.mission_method is TWO_DEGREES_OF_FREEDOM and \
-                    self.phase_info[phase_name]["user_options"].get("analytic", False):
-                for guess_key, guess_data in guesses.items():
-                    val, units = guess_data
+            # if self.mission_method is TWO_DEGREES_OF_FREEDOM and \
+            #        self.phase_info[phase_name]["user_options"].get("analytic", False):
+            #    for guess_key, guess_data in guesses.items():
+            #        val, units = guess_data
 
-                    if 'mass' == guess_key:
-                        duration = val[-1] - val[0]
-                        # Set initial and duration mass for the analytic cruise phase.
-                        # Note we are integrating over mass, not time for this phase.
-                        self.set_val(f'traj.{phase_name}.t_initial',
-                                     val[0], units=units)
-                        self.set_val(f'traj.{phase_name}.t_duration',
-                                     duration, units=units)
+            #        if 'mass' == guess_key:
+            #            duration = val[-1] - val[0]
+            # Set initial and duration mass for the analytic cruise phase.
+            # Note we are integrating over mass, not time for this phase.
+            #            self.set_val(f'traj.{phase_name}.t_initial',
+            #                         val[0], units=units)
+            #            self.set_val(f'traj.{phase_name}.t_duration',
+            #                         duration, units=units)
 
-                    elif 'distance' == guess_key or 'time' == guess_key:
-                        self.set_val(f'traj.{phase_name}.parameters:initial_{guess_key}',
-                                     val[0], units=units)
-                    else:
-                        # Otherwise, set the value of the parameter in the trajectory phase
-                        self.set_val(f'traj.{phase_name}.parameters:{guess_key}',
-                                     val[0], units=units)
+            #        elif 'distance' == guess_key or 'time' == guess_key:
+            #            self.set_val(f'traj.{phase_name}.parameters:initial_{guess_key}',
+            #                         val[0], units=units)
+            #        else:
+            # Otherwise, set the value of the parameter in the trajectory phase
+            #            self.set_val(f'traj.{phase_name}.parameters:{guess_key}',
+            #                         val[0], units=units)
 
-                continue
+            #    continue
 
             # If not cruise and GASP, add subsystem guesses
             print('adding_subsystem_guesses')
@@ -2147,16 +2147,24 @@ class AviaryProblem(om.Problem):
         guesses : dict
             A dictionary containing the initial guesses for the phase.
         """
-
+        integration_variable = phase.time_options['name']
+        print('integration_variable in add_guesses = ', integration_variable)
         # If using the GASP model, set initial guesses for the rotation mass and flight duration
         if self.mission_method is TWO_DEGREES_OF_FREEDOM:
             rotation_mass = self.initialization_guesses['rotation_mass']
             flight_duration = self.initialization_guesses['flight_duration']
 
+        control_keys = []
+        state_keys = []
+        initial_param_keys = []
+        param_keys = []
         if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
             control_keys = ["mach", "altitude"]
             state_keys = ["mass", Dynamic.Mission.DISTANCE]
-        elif self.mission_method in (TWO_DEGREES_OF_FREEDOM):
+        elif self.mission_method == TWO_DEGREES_OF_FREEDOM and phase_name == 'cruise':
+            initial_param_keys = ["distance", "time"]
+            param_keys = ["altitude", "mach"]
+        elif self.mission_method == TWO_DEGREES_OF_FREEDOM:
             control_keys = ["velocity_rate", "throttle"]
             state_keys = ["altitude", "mass",
                           Dynamic.Mission.DISTANCE, Dynamic.Mission.VELOCITY, "flight_path_angle", "alpha"]
@@ -2182,7 +2190,7 @@ class AviaryProblem(om.Problem):
             guesses["altitude"] = ([initial_altitude, final_altitude], 'ft')
 
         if self.mission_method is HEIGHT_ENERGY:
-            # if time not in initial guesses, set it to the average of the initial_bounds and the duration_bounds
+            # if time not in initial guesses, set it based on first element of initial_bounds and duration_bounds
             if 'time' not in guesses:
                 initial_bounds = wrapped_convert_units(
                     self.phase_info[phase_name]['user_options']['initial_bounds'], 's')
@@ -2195,8 +2203,8 @@ class AviaryProblem(om.Problem):
             val, units = guess_data
             print(guess_key, val, units)
 
-            # Set initial guess for time variables
-            if 'time' == guess_key and self.mission_method is not SOLVED_2DOF:
+            # Set initial guess for integration variable (usually time, but is mass for 2DOF cruise)
+            if integration_variable == guess_key and self.mission_method is not SOLVED_2DOF:
                 duration = val[-1] - val[0]
                 self.set_val(f'traj.{phase_name}.t_initial',
                              val[0], units=units)
@@ -2230,13 +2238,19 @@ class AviaryProblem(om.Problem):
                         val, guess_key, phase), units=units)
                 elif guess_key in prob_keys:
                     self.set_val(guess_key, val, units=units)
+                elif guess_key in initial_param_keys:
+                    self.set_val(f'traj.{phase_name}.parameters:initial_{guess_key}',
+                                 val[0], units=units)
+                elif guess_key in param_keys:
+                    self.set_val(f'traj.{phase_name}.parameters:{guess_key}',
+                                 val[0], units=units)
                 elif ":" in guess_key:
                     self.set_val(f'traj.{phase_name}.{guess_key}', self._process_guess_var(
                         val, guess_key, phase), units=units)
                 else:
                     # raise error if the guess key is not recognized
                     raise ValueError(
-                        f"Initial guess key {guess_key} in {phase_name} is not recognized.")
+                        f"Initial guess key '{guess_key}' in phase '{phase_name}' is not recognized for '{self.mission_method}'")
 
         if self.mission_method is SOLVED_2DOF:
             return
