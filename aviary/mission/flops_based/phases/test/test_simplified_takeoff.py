@@ -51,6 +51,33 @@ class StallSpeedTest(unittest.TestCase):
         )  # check the partial derivatives
 
 
+class StallSpeedTest2(unittest.TestCase):
+    """
+    Test mass-weight conversion
+    """
+
+    def setUp(self):
+        import aviary.mission.flops_based.phases.simplified_takeoff as takeoff
+        takeoff.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.mission.flops_based.phases.simplified_takeoff as takeoff
+        takeoff.GRAV_ENGLISH_LBM = 1.0
+
+    def test_case1(self):
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem(
+            "comp",
+            StallSpeed(),
+            promotes=["*"],
+        )
+        self.prob.setup(check=False, force_alloc_complex=True)
+        self.prob.run_model()
+
+        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
 class FinalConditionsTest(unittest.TestCase):
     def setUp(self):
 
@@ -102,6 +129,35 @@ class FinalConditionsTest(unittest.TestCase):
             self.prob[Mission.Takeoff.FINAL_ALTITUDE], 35, tol)  # ft
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
+class FinalConditionsTest2(unittest.TestCase):
+    """
+    Test mass-weight conversion
+    """
+
+    def setUp(self):
+        import aviary.mission.flops_based.phases.simplified_takeoff as takeoff
+        takeoff.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.mission.flops_based.phases.simplified_takeoff as takeoff
+        takeoff.GRAV_ENGLISH_LBM = 1.0
+
+    def test_case1(self):
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "comp", FinalTakeoffConditions(num_engines=2), promotes=["*"]
+        )
+        # default value v_stall = 0.1 will worsen the output
+        prob.model.set_input_defaults("v_stall", val=100, units="m/s")
+        # default value GROSS_MASS = 150000 will worsen the output
+        prob.model.set_input_defaults(
+            Mission.Summary.GROSS_MASS, val=181200.0, units="lbm")
+        prob.setup(check=False, force_alloc_complex=True)
+
+        partial_data = prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
