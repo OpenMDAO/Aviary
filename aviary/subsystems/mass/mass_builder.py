@@ -59,7 +59,7 @@ class CoreMassBuilder(MassBuilderBase):
         return mass_premission
 
     def build_mission(self, num_nodes, aviary_inputs, **kwargs):
-        super().build_mission(num_nodes)
+        super().build_mission(num_nodes, aviary_inputs)
 
     def report(self, prob, reports_folder, **kwargs):
         """
