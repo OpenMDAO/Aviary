@@ -1951,10 +1951,15 @@ class AviaryProblem(om.Problem):
 
                 # TODO: For future flexibility, need to tag the required engine options.
                 opt_names = [
-                    Aircraft.Engine.SCALE_PERFORMANCE
+                    Aircraft.Engine.SCALE_PERFORMANCE,
+                    Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER,
+                    Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER,
+                    Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM,
+                    Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM,
                 ]
                 opt_names_units = [
                     Aircraft.Engine.REFERENCE_SLS_THRUST,
+                    Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION,
                 ]
                 opts = {}
                 for key in opt_names:
@@ -1964,7 +1969,9 @@ class AviaryProblem(om.Problem):
                     opts[key] = (val[idx], units)
 
                 pre_path = f"pre_mission.core_propulsion.{eng_name}"
+                mission_path = f"traj.phases.*.core_propulsion.{eng_name}.*"
                 self.model_options[pre_path] = opts
+                self.model_options[mission_path] = opts
 
         # suppress warnings:
         # "input variable '...' promoted using '*' was already promoted using 'aircraft:*'

@@ -279,9 +279,10 @@ class MainGearLength(om.ExplicitComponent):
         self.declare_partials('*', '*')
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
-        # TODO temp using first engine, heterogeneous engines not supported
         num_eng = self.options[Aircraft.Engine.NUM_ENGINES]
-        num_wing_eng = self.options[Aircraft.Engine.NUM_WING_ENGINES]
+
+        # TODO temp using first engine, heterogeneous engines not supported
+        num_wing_eng = self.options[Aircraft.Engine.NUM_WING_ENGINES][0]
 
         y_eng_fore = inputs[Aircraft.Engine.WING_LOCATIONS][0][0]
 
