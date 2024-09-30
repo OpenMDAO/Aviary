@@ -2127,7 +2127,7 @@ class AviaryProblem(om.Problem):
         if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
             control_keys = ["mach", "altitude"]
             state_keys = ["mass", Dynamic.Mission.DISTANCE]
-        elif self.mission_method == TWO_DEGREES_OF_FREEDOM and phase_name == 'cruise':
+        elif self.mission_method == TWO_DEGREES_OF_FREEDOM and self.phase_info[phase_name]["user_options"].get("analytic", False):
             initial_param_keys = ["distance", "time"]
             param_keys = ["altitude", "mach"]
         elif self.mission_method == TWO_DEGREES_OF_FREEDOM:
