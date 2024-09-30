@@ -39,7 +39,6 @@ class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
         g = UnsteadyControlIterGroup(num_nodes=nn,
                                      ground_roll=ground_roll,
                                      clean=True,
-                                     aviary_options=get_option_defaults(),
                                      core_subsystems=[aero])
 
         ig = p.model.add_subsystem("iter_group",

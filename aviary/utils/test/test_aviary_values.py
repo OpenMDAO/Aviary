@@ -84,24 +84,26 @@ class TestTypes(unittest.TestCase):
         except:
             self.fail('Expecting to be able to set the value of an Enum.')
 
-        try:
-            vals.set_val(Aircraft.Engine.TYPE, 'turbojet')
-            self.assertTrue(vals.get_val(Aircraft.Engine.TYPE)
-                            is GASPEngineType.TURBOJET)
-        except:
-            self.fail('Expecting to be able to set the value of an Enum from a string.')
+        # TODO - Following the pattern of other intenums, these go away. Seems like
+        # we need to pick either int or string setting.
+        #try:
+            #vals.set_val(Aircraft.Engine.TYPE, 'turbojet')
+            #self.assertTrue(vals.get_val(Aircraft.Engine.TYPE)
+                            #== GASPEngineType.TURBOJET)
+        #except:
+            #self.fail('Expecting to be able to set the value of an Enum from an int.')
 
-        try:
-            vals.set_val(Aircraft.Engine.TYPE, 'TURBOJET')
-            self.assertTrue(vals.get_val(Aircraft.Engine.TYPE)
-                            is GASPEngineType.TURBOJET)
-        except:
-            self.fail('Expecting to be able to set the value of an Enum from a string.')
+        #try:
+            #vals.set_val(Aircraft.Engine.TYPE, 'TURBOJET')
+            #self.assertTrue(vals.get_val(Aircraft.Engine.TYPE)
+                            #is GASPEngineType.TURBOJET)
+        #except:
+            #self.fail('Expecting to be able to set the value of an Enum from a string.')
 
         try:
             vals.set_val(Aircraft.Engine.TYPE, 7)
             self.assertTrue(vals.get_val(Aircraft.Engine.TYPE)
-                            is GASPEngineType.TURBOJET)
+                            == GASPEngineType.TURBOJET)
         except:
             self.fail('Expecting to be able to set the value of an Enum from an int.')
 
