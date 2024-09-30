@@ -328,7 +328,8 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs):
 
         phase_info['climb2']['user_options']['final_altitude'] = (alt_cruise, 'ft')
         phase_info['climb2']['initial_guesses']['altitude'] = ([10.e3, alt_cruise], 'ft')
-        phase_info['cruise']['initial_guesses']['altitude'] = (alt_cruise, 'ft')
+        phase_info['cruise']['initial_guesses']['altitude'] = (
+            [alt_cruise, alt_cruise], 'ft')
         phase_info['desc1']['initial_guesses']['altitude'] = ([alt_cruise, 10.e3], 'ft')
 
         # TODO - Could adjust time guesses/bounds in climb2 and desc2.
