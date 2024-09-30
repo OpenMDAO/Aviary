@@ -1982,7 +1982,6 @@ class AviaryProblem(om.Problem):
 
         # Loop over each phase and set initial guesses for the state and control variables
         for idx, (phase_name, phase) in enumerate(phase_items):
-            print(phase_name)
             if self.mission_method is SOLVED_2DOF:
                 self.phase_objects[idx].apply_initial_guesses(self, 'traj', phase)
                 if self.phase_info[phase_name]['user_options']['ground_roll'] and self.phase_info[phase_name]['user_options']['fix_initial']:
@@ -1994,41 +1993,11 @@ class AviaryProblem(om.Problem):
                 guesses = self.phase_info[phase_name]['initial_guesses']
             else:
                 guesses = {}
-            print(guesses)
 
-            # Check the name of integration variable in dymos phase
-            integration_variable = phase.time_options['name']
-            print('integration_variable = ', integration_variable)
-            # if self.mission_method is TWO_DEGREES_OF_FREEDOM and \
-            #        self.phase_info[phase_name]["user_options"].get("analytic", False):
-            #    for guess_key, guess_data in guesses.items():
-            #        val, units = guess_data
-
-            #        if 'mass' == guess_key:
-            #            duration = val[-1] - val[0]
-            # Set initial and duration mass for the analytic cruise phase.
-            # Note we are integrating over mass, not time for this phase.
-            #            self.set_val(f'traj.{phase_name}.t_initial',
-            #                         val[0], units=units)
-            #            self.set_val(f'traj.{phase_name}.t_duration',
-            #                         duration, units=units)
-
-            #        elif 'distance' == guess_key or 'time' == guess_key:
-            #            self.set_val(f'traj.{phase_name}.parameters:initial_{guess_key}',
-            #                         val[0], units=units)
-            #        else:
-            # Otherwise, set the value of the parameter in the trajectory phase
-            #            self.set_val(f'traj.{phase_name}.parameters:{guess_key}',
-            #                         val[0], units=units)
-
-            #    continue
-
-            # If not cruise and GASP, add subsystem guesses
-            print('adding_subsystem_guesses')
+            # Add subsystem guesses
             self._add_subsystem_guesses(phase_name, phase)
 
             # Set initial guesses for states and controls for each phase
-            print('adding_guesses')
             self._add_guesses(phase_name, phase, guesses)
 
     def _process_guess_var(self, val, key, phase):
@@ -2108,10 +2077,8 @@ class AviaryProblem(om.Problem):
 
         # Loop over each subsystem
         for subsystem in all_subsystems:
-            print(subsystem)
             # Fetch the initial guesses for the subsystem
             initial_guesses = subsystem.get_initial_guesses()
-            print('subsystem guesses', initial_guesses)
 
             # Loop over each guess
             for key, val in initial_guesses.items():
@@ -2148,7 +2115,6 @@ class AviaryProblem(om.Problem):
             A dictionary containing the initial guesses for the phase.
         """
         integration_variable = phase.time_options['name']
-        print('integration_variable in add_guesses = ', integration_variable)
         # If using the GASP model, set initial guesses for the rotation mass and flight duration
         if self.mission_method is TWO_DEGREES_OF_FREEDOM:
             rotation_mass = self.initialization_guesses['rotation_mass']
@@ -2201,7 +2167,6 @@ class AviaryProblem(om.Problem):
 
         for guess_key, guess_data in guesses.items():
             val, units = guess_data
-            print(guess_key, val, units)
 
             # Set initial guess for integration variable (usually time, but is mass for 2DOF cruise)
             if integration_variable == guess_key and self.mission_method is not SOLVED_2DOF:
@@ -2214,7 +2179,6 @@ class AviaryProblem(om.Problem):
             else:
                 # Set initial guess for control variables
                 if guess_key in control_keys:
-                    print('Im a control key')
                     try:
                         self.set_val(f'traj.{phase_name}.controls:{guess_key}', self._process_guess_var(
                             val, guess_key, phase), units=units)
@@ -2233,7 +2197,6 @@ class AviaryProblem(om.Problem):
                     pass
                 # Set initial guess for state variables
                 elif guess_key in state_keys:
-                    print('im a state key')
                     self.set_val(f'traj.{phase_name}.states:{guess_key}', self._process_guess_var(
                         val, guess_key, phase), units=units)
                 elif guess_key in prob_keys:
@@ -2263,9 +2226,7 @@ class AviaryProblem(om.Problem):
             base_phase = phase_name.removeprefix('reserve_')
         else:
             base_phase = phase_name
-        print('finding the base phase ', base_phase)
         if 'mass' not in guesses:
-            print('mass missing')
             if self.mission_method is TWO_DEGREES_OF_FREEDOM:
                 # Determine a mass guess depending on the phase name
                 if base_phase in ["groundroll", "rotation", "ascent", "accel", "climb1"]:
@@ -2282,14 +2243,13 @@ class AviaryProblem(om.Problem):
                          mass_guess, units='lbm')
 
         if 'time' not in guesses:
-            print('time missing')
             # Determine initial time and duration guesses depending on the phase name
             if 'desc1' == base_phase:
                 t_initial = flight_duration*.9
                 t_duration = flight_duration*.04
             elif 'desc2' in base_phase:
                 t_initial = flight_duration*.94
-                t_duration = 5000
+                t_duration = flight_duration*.06
             # Set the time guesses as the initial values for the time-related trajectory variables
             self.set_val(f"traj.{phase_name}.t_initial",
                          t_initial, units='s')
@@ -2298,7 +2258,6 @@ class AviaryProblem(om.Problem):
 
         if self.mission_method is TWO_DEGREES_OF_FREEDOM:
             if 'distance' not in guesses:
-                print('distance missing')
                 # Determine initial distance guesses depending on the phase name
                 if 'desc1' == base_phase:
                     ys = [self.target_range*.97, self.target_range*.99]
