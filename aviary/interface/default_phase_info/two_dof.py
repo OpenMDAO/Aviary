@@ -350,17 +350,18 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs):
         phase_info['ascent']['initial_guesses']['mass'] = \
             ([gross_mass, gross_mass], 'lbm')
 
-        phase_info['cruise']['initial_guesses']['mass'] = \
-            ([gross_mass, -fuel_used], 'lbm')
-
         end_mass = gross_mass - fuel_used
-        phase_info['desc1']['initial_guesses']['mass'] = (end_mass, 'lbm')
-        phase_info['desc2']['initial_guesses']['mass'] = (end_mass, 'lbm')
+        phase_info['cruise']['initial_guesses']['mass'] = \
+            ([gross_mass, end_mass], 'lbm')
+
+        phase_info['desc1']['initial_guesses']['mass'] = ([end_mass, end_mass] 'lbm')
+        phase_info['desc2']['initial_guesses']['mass'] = ([end_mass, end_mass] 'lbm')
 
     # Mach
     old_mach_cruise = phase_info['cruise']['initial_guesses']['mach'][0]
     if mach_cruise != old_mach_cruise:
 
-        phase_info['cruise']['initial_guesses']['mach'] = (mach_cruise, 'unitless')
+        phase_info['cruise']['initial_guesses']['mach'] = (
+            [mach_cruise, mach_cruise], 'unitless')
 
     return phase_info, post_mission_info
