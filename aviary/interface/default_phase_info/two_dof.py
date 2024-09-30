@@ -206,12 +206,9 @@ phase_info = {
             'mach_cruise': 0.8,
         },
         'initial_guesses': {
-            # [Initial mass, delta mass] for special cruise phase.
             'mass': ([171481., 136000], 'lbm'),
             'distance': ([200.e3, 200.e6], 'ft'),
-            # 'initial_distance': (200.e3, 'ft'),
             'time': ([1516., 28000.], 's'),
-            # 'initial_time': (1516., 's'),
             'altitude': ([37.5e3, 40.e3], 'ft'),
             'mach': ([0.8, 0.8], 'unitless'),
         }
