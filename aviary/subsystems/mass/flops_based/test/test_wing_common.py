@@ -1,6 +1,7 @@
 import unittest
 
 import openmdao.api as om
+from openmdao.utils.assert_utils import assert_check_partials
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.wing_common import (
@@ -46,6 +47,36 @@ class WingShearControlMassTest(unittest.TestCase):
         assert_match_varnames(self.prob.model)
 
 
+class WingShearControlMassTest2(unittest.TestCase):
+    """
+    Test mass-weight conversion
+    """
+
+    def setUp(self):
+        import aviary.subsystems.mass.flops_based.wing_common as wing
+        wing.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.subsystems.mass.flops_based.wing_common as wing
+        wing.GRAV_ENGLISH_LBM = 1.0
+
+    def test_case(self):
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "wing",
+            WingShearControlMass(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(Aircraft.Wing.COMPOSITE_FRACTION, 0.333, 'unitless')
+        prob.set_val(Aircraft.Wing.CONTROL_SURFACE_AREA, 400, 'ft**2')
+        prob.set_val(Mission.Design.GROSS_MASS, 100000, 'lbm')
+
+        partial_data = prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=5e-12, rtol=1e-12)
+
+
 class WingMiscMassTest(unittest.TestCase):
     def setUp(self):
         prob = self.prob = om.Problem()
@@ -76,6 +107,35 @@ class WingMiscMassTest(unittest.TestCase):
 
     def test_IO(self):
         assert_match_varnames(self.prob.model)
+
+
+class WingMiscMassTest2(unittest.TestCase):
+    """
+    Test mass-weight conversion
+    """
+
+    def setUp(self):
+        import aviary.subsystems.mass.flops_based.wing_common as wing
+        wing.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.subsystems.mass.flops_based.wing_common as wing
+        wing.GRAV_ENGLISH_LBM = 1.0
+
+    def test_case(self):
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "wing",
+            WingMiscMass(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(Aircraft.Wing.COMPOSITE_FRACTION, 0.333, 'unitless')
+        prob.set_val(Aircraft.Wing.AREA, 1000, 'ft**2')
+
+        partial_data = prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
 class WingBendingMassTest(unittest.TestCase):
@@ -120,6 +180,44 @@ class WingBendingMassTest(unittest.TestCase):
 
     def test_IO(self):
         assert_match_varnames(self.prob.model)
+
+
+class WingBendingMassTest2(unittest.TestCase):
+    """
+    Test mass-weight conversion
+    """
+
+    def setUp(self):
+        import aviary.subsystems.mass.flops_based.wing_common as wing
+        wing.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.subsystems.mass.flops_based.wing_common as wing
+        wing.GRAV_ENGLISH_LBM = 1.0
+
+    def test_case(self):
+
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "wing",
+            WingBendingMass(aviary_options=get_option_defaults()),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, 0.333, 'unitless')
+        prob.set_val(Aircraft.Wing.BENDING_FACTOR, 10, 'unitless')
+        prob.set_val(Aircraft.Wing.COMPOSITE_FRACTION, 0.333, 'unitless')
+        prob.set_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR, 1, 'unitless')
+        prob.set_val(Mission.Design.GROSS_MASS, 100000, 'lbm')
+        prob.set_val(Aircraft.Wing.LOAD_FRACTION, 1, 'unitless')
+        prob.set_val(Aircraft.Wing.MISC_MASS, 2000, 'lbm')
+        prob.set_val(Aircraft.Wing.SHEAR_CONTROL_MASS, 4000, 'lbm')
+        prob.set_val(Aircraft.Wing.SPAN, 100, 'ft')
+        prob.set_val(Aircraft.Wing.SWEEP, 20, 'deg')
+
+        partial_data = prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
 if __name__ == "__main__":

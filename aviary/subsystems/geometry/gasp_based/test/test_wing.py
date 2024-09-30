@@ -1,5 +1,4 @@
 import unittest
-import os
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
@@ -38,6 +37,28 @@ class WingSizeTestCase1(
         tol = 2e-4
         assert_near_equal(self.prob[Aircraft.Wing.AREA], 1370.3, tol)
         assert_near_equal(self.prob[Aircraft.Wing.SPAN], 117.8, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
+class WingSizeTestCase2(unittest.TestCase):
+    """
+    Test mass-weight conversion
+    """
+
+    def setUp(self):
+        import aviary.subsystems.geometry.gasp_based.wing as wing
+        wing.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.subsystems.geometry.gasp_based.wing as wing
+        wing.GRAV_ENGLISH_LBM = 1.0
+
+    def test_case1(self):
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem("size", WingSize(), promotes=["*"])
+        self.prob.setup(check=False, force_alloc_complex=True)
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
