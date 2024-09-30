@@ -13,7 +13,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.functions import get_path
 from aviary.validation_cases.validation_tests import get_flops_inputs
-from aviary.variable_info.functions import extract_options
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 from aviary.subsystems.propulsion.utils import build_engine_deck
 
@@ -68,7 +68,7 @@ class PropulsionMissionTest(unittest.TestCase):
                        units='unitless')
         self.prob.model.add_subsystem('IVC', IVC, promotes=['*'])
 
-        self.prob.model_options['*'] = extract_options(options)
+        setup_model_options(self.prob, options)
 
         self.prob.setup(force_alloc_complex=True)
         self.prob.set_val(Aircraft.Engine.SCALE_FACTOR, options.get_val(
@@ -164,8 +164,14 @@ class PropulsionMissionTest(unittest.TestCase):
         engine_models = [engine, engine2]
         preprocess_propulsion(options, engine_models=engine_models)
 
-        self.prob.model = PropulsionMission(
-            num_nodes=20, aviary_options=options, engine_models=engine_models)
+        model = self.prob.model
+        prop = PropulsionMission(
+            num_nodes=20,
+            aviary_options=options,
+            engine_models=engine_models,
+        )
+        model.add_subsystem('core_propulsion', prop,
+                            promotes=['*'])
 
         self.prob.model.add_subsystem(Dynamic.Mission.MACH,
                                       om.IndepVarComp(Dynamic.Mission.MACH,
@@ -183,6 +189,8 @@ class PropulsionMissionTest(unittest.TestCase):
         throttle = np.linspace(1.0, 0.6, nn)
         self.prob.model.add_subsystem(
             Dynamic.Mission.THROTTLE, om.IndepVarComp(Dynamic.Mission.THROTTLE, np.vstack((throttle, throttle)).transpose(), units='unitless'), promotes=['*'])
+
+        setup_model_options(self.prob, options, engine_models=engine_models)
 
         self.prob.setup(force_alloc_complex=True)
         self.prob.set_val(Aircraft.Engine.SCALE_FACTOR, [0.975], units='unitless')

@@ -5,7 +5,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.geometry.gasp_based.engine import EngineSize
-from aviary.variable_info.functions import extract_options
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft
 from aviary.utils.aviary_values import AviaryValues
 
@@ -31,7 +31,7 @@ class TestEngine(
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.FINENESS, 2, units="unitless")
 
-        self.prob.model_options['*'] = extract_options(aviary_options)
+        setup_model_options(self.prob, aviary_options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -66,7 +66,7 @@ class ElectricTestCaseMultiEngine(unittest.TestCase):
         prob.model.set_input_defaults(
             Aircraft.Nacelle.FINENESS, np.array([2, 2.21]), units="unitless")
 
-        prob.model_options['*'] = extract_options(aviary_options)
+        setup_model_options(prob, aviary_options)
 
         prob.setup(check=False, force_alloc_complex=True)
 

@@ -10,7 +10,7 @@ from aviary.mission.gasp_based.phases.taxi_group import TaxiSegment
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.utils.test_utils.IO_test_util import check_prob_outputs
-from aviary.variable_info.functions import extract_options
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Dynamic, Mission
 
@@ -32,7 +32,7 @@ class TaxiTestCase(unittest.TestCase):
         self.prob.model = TaxiSegment(
             aviary_options=options, core_subsystems=default_mission_subsystems)
 
-        self.prob.model_options['*'] = extract_options(options)
+        setup_model_options(self.prob, options)
 
     @unittest.skipIf(version.parse(openmdao.__version__) < version.parse("3.26"), "Skipping due to OpenMDAO version being too low (<3.26)")
     def test_taxi(self):

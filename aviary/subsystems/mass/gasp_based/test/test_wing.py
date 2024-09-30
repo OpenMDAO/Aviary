@@ -7,7 +7,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from aviary.subsystems.mass.gasp_based.wing import (WingMassGroup,
                                                     WingMassSolve,
                                                     WingMassTotal)
-from aviary.variable_info.functions import extract_options
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission
 
@@ -187,7 +187,7 @@ class TotalWingMassTestCase2(unittest.TestCase):
             Aircraft.Wing.FOLD_MASS_COEFFICIENT, val=0.2, units="unitless"
         )  # not actual GASP value
 
-        self.prob.model_options['*'] = extract_options(options)
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -227,7 +227,7 @@ class TotalWingMassTestCase3(unittest.TestCase):
             Aircraft.Strut.MASS_COEFFICIENT, val=0.5, units="unitless"
         )  # not actual GASP value
 
-        self.prob.model_options['*'] = extract_options(options)
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -275,7 +275,7 @@ class TotalWingMassTestCase4(unittest.TestCase):
             Aircraft.Strut.MASS_COEFFICIENT, val=0.5, units="unitless"
         )  # not actual GASP value
 
-        self.prob.model_options['*'] = extract_options(options)
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -353,7 +353,7 @@ class TotalWingMassTestCase6(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.FOLD_MASS_COEFFICIENT, val=0.2, units="unitless")
 
-        self.prob.model_options['*'] = extract_options(options)
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -389,7 +389,7 @@ class TotalWingMassTestCase7(unittest.TestCase):
         prob.model.set_input_defaults(
             Aircraft.Strut.MASS_COEFFICIENT, val=0.5, units="unitless")
 
-        prob.model_options['*'] = extract_options(options)
+        setup_model_options(prob, options)
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -429,7 +429,7 @@ class TotalWingMassTestCase8(unittest.TestCase):
         prob.model.set_input_defaults(
             Aircraft.Strut.MASS_COEFFICIENT, val=0.5, units="unitless")
 
-        prob.model_options['*'] = extract_options(options)
+        setup_model_options(prob, options)
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -540,7 +540,7 @@ class WingMassGroupTestCase2(unittest.TestCase):
             Aircraft.Wing.FOLD_MASS_COEFFICIENT, val=0.2, units="unitless"
         )  # not actual GASP value
 
-        self.prob.model_options['*'] = extract_options(options)
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -602,7 +602,7 @@ class WingMassGroupTestCase3(unittest.TestCase):
             Aircraft.Strut.MASS_COEFFICIENT, val=0.5, units="unitless"
         )  # not actual GASP value
 
-        self.prob.model_options['*'] = extract_options(options)
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -672,7 +672,7 @@ class WingMassGroupTestCase4(unittest.TestCase):
             Aircraft.Strut.MASS_COEFFICIENT, val=0.5, units="unitless"
         )  # not actual GASP value
 
-        self.prob.model_options['*'] = extract_options(options)
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 

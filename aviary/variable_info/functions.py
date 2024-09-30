@@ -5,6 +5,7 @@ import dymos as dm
 from dymos.utils.misc import _unspecified
 
 from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.variables import Aircraft
 from aviary.variable_info.variable_meta_data import _MetaData
 
 # ---------------------------
@@ -390,3 +391,63 @@ def extract_options(aviary_inputs: AviaryValues, metadata=_MetaData) -> dict:
             options[key] = (val, units)
 
     return options
+
+def setup_model_options(prob: om.Problem, aviary_inputs: AviaryValues,
+                        meta_data=_MetaData, engine_models=None):
+    """
+    Setup the correct model options for an aviary problem.
+
+    Parameters
+    ----------
+    prob: Problem
+        OpenMDAO problem prior to setup.
+    aviary_inputs : AviaryValues
+        Instance of AviaryValues containing all initial values.
+    meta_data : dict
+        (Optional) Dictionary of aircraft metadata. Uses Aviary's built-in
+        metadata by default.
+    engine_models : List of EngineModels or None
+        (Optional) Engine models
+    """
+
+    # Use OpenMDAO's model options to pass all options through the system hierarchy.
+    prob.model_options['*'] = extract_options(aviary_inputs,
+                                              meta_data)
+
+    # Multi-engines need to index into their options.
+    try:
+        num_engine_models = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
+    except KeyError:
+        # No engine data.
+        return
+
+    if num_engine_models > 1:
+
+        if engine_models is None:
+            engine_models = prob.engine_builders
+
+        for idx in range(num_engine_models):
+            eng_name = engine_models[idx].name
+
+            # TODO: For future flexibility, need to tag the required engine options.
+            opt_names = [
+                Aircraft.Engine.SCALE_PERFORMANCE,
+                Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER,
+                Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER,
+                Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM,
+                Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM,
+            ]
+            opt_names_units = [
+                Aircraft.Engine.REFERENCE_SLS_THRUST,
+                Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION,
+            ]
+            opts = {}
+            for key in opt_names:
+                opts[key] = aviary_inputs.get_item(key)[0][idx]
+            for key in opt_names_units:
+                val, units = aviary_inputs.get_item(key)
+                opts[key] = (val[idx], units)
+
+            path = f"*core_propulsion.{eng_name}*"
+            prob.model_options[path] = opts
+

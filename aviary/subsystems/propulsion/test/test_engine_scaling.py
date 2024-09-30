@@ -9,7 +9,7 @@ from aviary.subsystems.propulsion.engine_scaling import EngineScaling
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.functions import get_path
-from aviary.variable_info.functions import extract_options
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.subsystems.propulsion.utils import EngineModelVariables
 
@@ -63,7 +63,7 @@ class EngineScalingTest(unittest.TestCase):
             promotes=['*'],
         )
 
-        self.prob.model_options['*'] = extract_options(options)
+        setup_model_options(self.prob, options)
 
         self.prob.setup(force_alloc_complex=True)
 

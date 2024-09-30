@@ -9,7 +9,7 @@ from aviary.utils.test_utils.default_subsystems import get_default_premission_su
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.process_input_decks import create_vehicle
 from aviary.utils.preprocessors import preprocess_propulsion
-from aviary.variable_info.functions import extract_options
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 
 import warnings
@@ -52,7 +52,7 @@ class GASPOverrideTestCase(unittest.TestCase):
         self.aviary_inputs.set_val(
             Aircraft.Fuselage.WETTED_AREA, val=4000.0, units="ft**2")
 
-        prob.model_options['*'] = extract_options(self.aviary_inputs)
+        setup_model_options(prob, self.aviary_inputs)
 
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", om.PromotionWarning)
@@ -68,7 +68,7 @@ class GASPOverrideTestCase(unittest.TestCase):
 
         # self.aviary_inputs.set_val(Aircraft.Fuselage.WETTED_AREA, val=4000, units="ft**2")
 
-        prob.model_options['*'] = extract_options(self.aviary_inputs)
+        setup_model_options(prob, self.aviary_inputs)
 
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", om.PromotionWarning)
@@ -86,7 +86,7 @@ class GASPOverrideTestCase(unittest.TestCase):
         self.aviary_inputs.set_val(
             Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.5, units="unitless")
 
-        prob.model_options['*'] = extract_options(self.aviary_inputs)
+        setup_model_options(prob, self.aviary_inputs)
 
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", om.PromotionWarning)
@@ -105,7 +105,7 @@ class GASPOverrideTestCase(unittest.TestCase):
         self.aviary_inputs.set_val(
             Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.5, units="unitless")
 
-        prob.model_options['*'] = extract_options(self.aviary_inputs)
+        setup_model_options(prob, self.aviary_inputs)
 
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", om.PromotionWarning)

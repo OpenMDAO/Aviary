@@ -6,7 +6,7 @@ from openmdao.utils.assert_utils import (assert_check_partials,
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.mission.gasp_based.phases.taxi_component import TaxiFuelComponent
-from aviary.variable_info.functions import extract_options
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Dynamic, Mission
 
 
@@ -20,7 +20,7 @@ class TaxiFuelComponentTestCase(unittest.TestCase):
         self.prob.model.add_subsystem('taxi', TaxiFuelComponent(),
                                       promotes=['*'])
 
-        self.prob.model_options['*'] = extract_options(aviary_options)
+        setup_model_options(self.prob, aviary_options)
 
     def test_fuel_consumed(self):
         self.prob.setup(force_alloc_complex=True)

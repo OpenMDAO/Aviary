@@ -16,7 +16,7 @@ from aviary.subsystems.mass.gasp_based.fixed import (ControlMass,
                                                      MassParameters,
                                                      PayloadMass, TailMass)
 from aviary.utils.aviary_values import AviaryValues, get_keys
-from aviary.variable_info.functions import extract_options
+from aviary.variable_info.functions import setup_model_options, extract_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission
 
@@ -53,7 +53,7 @@ class MassParametersTestCase1(unittest.TestCase):
             "max_mach", val=0.9, units="unitless"
         )  # bug fixed value
 
-        self.prob.model_options['*'] = extract_options(options)
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -107,7 +107,7 @@ class MassParametersTestCase2(unittest.TestCase):
             Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0
         )
 
-        self.prob.model_options['*'] = extract_options(options)
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -162,7 +162,7 @@ class MassParametersTestCase3(unittest.TestCase):
             Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0
         )
 
-        self.prob.model_options['*'] = extract_options(options)
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -218,7 +218,7 @@ class MassParametersTestCase4(unittest.TestCase):
             Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0
         )
 
-        self.prob.model_options['*'] = extract_options(options)
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -274,7 +274,7 @@ class MassParametersTestCase5(unittest.TestCase):
             Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0
         )
 
-        self.prob.model_options['*'] = extract_options(options)
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -315,7 +315,7 @@ class PayloadMassTestCase(unittest.TestCase):
             Aircraft.CrewPayload.CARGO_MASS, val=10040, units="lbm"
         )  # bug fixed value and original value
 
-        self.prob.model_options['*'] = extract_options(options)
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -462,7 +462,7 @@ class EngineTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3
             Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15, units="unitless"
         )  # bug fixed value and original value
 
-        self.prob.model_options['*'] = extract_options(options)
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -544,7 +544,7 @@ class EngineTestCase2(unittest.TestCase):
             Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15, units="unitless"
         )  # bug fixed value and original value
 
-        self.prob.model_options['*'] = extract_options(options)
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -791,7 +791,7 @@ class HighLiftTestCase(unittest.TestCase):
             Mission.Landing.LIFT_COEFFICIENT_MAX, val=2.3648, units="unitless"
         )
 
-        self.prob.model_options['*'] = extract_options(aviary_options)
+        setup_model_options(self.prob, aviary_options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -929,7 +929,7 @@ class GearTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.MOUNTING_TYPE, val=0.1, units="unitless")
 
-        self.prob.model_options['*'] = extract_options(options)
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -1161,7 +1161,7 @@ class FixedMassGroupTestCase1(unittest.TestCase):
             Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15, units="unitless"
         )  # bug fixed value and original value
 
-        self.prob.model_options['*'] = extract_options(options)
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -1467,7 +1467,7 @@ class FixedMassGroupTestCase2(unittest.TestCase):
             "engine.prop_mass", val=0, units="lbm"
         )  # bug fixed value and original value
 
-        self.prob.model_options['*'] = extract_options(options)
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -1559,7 +1559,7 @@ class FixedMassGroupTestCase3(unittest.TestCase):
             promotes=['*'],
         )
 
-        prob.model_options['*'] = extract_options(data)
+        setup_model_options(prob, data)
 
         prob.setup(force_alloc_complex=True)
 

@@ -18,7 +18,7 @@ from aviary.utils.test_utils.default_subsystems import get_default_premission_su
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.process_input_decks import create_vehicle
 from aviary.utils.preprocessors import preprocess_propulsion
-from aviary.variable_info.functions import extract_options
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 
 
@@ -103,7 +103,7 @@ class HE_SGMDescentTestCase(unittest.TestCase):
 
         prob.model.add_objective(Mission.Objectives.FUEL, ref=1e4)
 
-        prob.model_options['*'] = extract_options(aviary_options)
+        setup_model_options(prob, aviary_options)
 
         with warnings.catch_warnings():
 

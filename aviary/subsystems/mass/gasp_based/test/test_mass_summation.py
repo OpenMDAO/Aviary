@@ -7,7 +7,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from aviary.subsystems.geometry.gasp_based.size_group import SizeGroup
 from aviary.subsystems.mass.gasp_based.mass_premission import MassPremission
 from aviary.utils.aviary_values import get_items
-from aviary.variable_info.functions import extract_options
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults, is_option
 from aviary.models.large_single_aisle_1.V3_bug_fixed_IO import (
     V3_bug_fixed_non_metadata, V3_bug_fixed_options)
@@ -53,7 +53,7 @@ class MassSummationTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.86215, units="unitless")
 
-        self.prob.model_options['*'] = extract_options(V3_bug_fixed_options)
+        setup_model_options(self.prob, V3_bug_fixed_options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -441,7 +441,7 @@ class MassSummationTestCase2(unittest.TestCase):
 
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=0.0, units="ft")
 
-        self.prob.model_options['*'] = extract_options(options)
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -829,7 +829,7 @@ class MassSummationTestCase3(unittest.TestCase):
 
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=0.0, units="ft")
 
-        self.prob.model_options['*'] = extract_options(options)
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -1208,7 +1208,7 @@ class MassSummationTestCase4(unittest.TestCase):
 
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=0.0, units="ft")
 
-        self.prob.model_options['*'] = extract_options(options)
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -1587,7 +1587,7 @@ class MassSummationTestCase5(unittest.TestCase):
 
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=0.0, units="ft")
 
-        self.prob.model_options['*'] = extract_options(options)
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -1965,7 +1965,7 @@ class MassSummationTestCase6(unittest.TestCase):
 
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=0.0, units="ft")
 
-        self.prob.model_options['*'] = extract_options(options)
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -2348,7 +2348,7 @@ class MassSummationTestCase7(unittest.TestCase):
 
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=0.0, units="ft")
 
-        self.prob.model_options['*'] = extract_options(options)
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -2745,7 +2745,7 @@ class MassSummationTestCase8(unittest.TestCase):
 
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=0.0, units="ft")
 
-        self.prob.model_options['*'] = extract_options(options)
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -3182,7 +3182,7 @@ class MassSummationTestCase9(unittest.TestCase):
 
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=0.0, units="ft")
 
-        self.prob.model_options['*'] = extract_options(options)
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 

@@ -46,7 +46,7 @@ from aviary.interface.utils.check_phase_info import check_phase_info
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import convert_strings_to_data, set_value
 
-from aviary.variable_info.functions import setup_trajectory_params, override_aviary_vars, extract_options
+from aviary.variable_info.functions import setup_trajectory_params, override_aviary_vars, setup_model_options
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
 from aviary.variable_info.enums import AnalysisScheme, ProblemType, EquationsOfMotion, LegacyCode, Verbosity
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
@@ -1938,40 +1938,8 @@ class AviaryProblem(om.Problem):
         """
         Lightly wrappd setup() method for the problem.
         """
-
         # Use OpenMDAO's model options to pass all options through the system hierarchy.
-        self.model_options['*'] = extract_options(self.aviary_inputs,
-                                                  self.meta_data)
-
-        # Multi-engines need to index into their options.
-        num_engine_models = len(self.aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
-        if num_engine_models > 1:
-            for idx in range(num_engine_models):
-                eng_name = self.engine_builders[idx].name
-
-                # TODO: For future flexibility, need to tag the required engine options.
-                opt_names = [
-                    Aircraft.Engine.SCALE_PERFORMANCE,
-                    Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER,
-                    Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER,
-                    Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM,
-                    Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM,
-                ]
-                opt_names_units = [
-                    Aircraft.Engine.REFERENCE_SLS_THRUST,
-                    Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION,
-                ]
-                opts = {}
-                for key in opt_names:
-                    opts[key] = self.aviary_inputs.get_item(key)[0][idx]
-                for key in opt_names_units:
-                    val, units = self.aviary_inputs.get_item(key)
-                    opts[key] = (val[idx], units)
-
-                pre_path = f"pre_mission.core_propulsion.{eng_name}"
-                mission_path = f"traj.phases.*.core_propulsion.{eng_name}.*"
-                self.model_options[pre_path] = opts
-                self.model_options[mission_path] = opts
+        setup_model_options(self, self.aviary_inputs, self.meta_data)
 
         # suppress warnings:
         # "input variable '...' promoted using '*' was already promoted using 'aircraft:*'

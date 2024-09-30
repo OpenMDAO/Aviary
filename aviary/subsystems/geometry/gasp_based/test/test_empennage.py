@@ -7,7 +7,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from aviary.subsystems.geometry.gasp_based.empennage import (EmpennageSize,
                                                              TailSize,
                                                              TailVolCoef)
-from aviary.variable_info.functions import extract_options
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft
 
@@ -194,7 +194,7 @@ class TestEmpennageGroup(
         options.set_val(Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF,
                         val=True, units='unitless')
 
-        self.prob.model_options['*'] = extract_options(options)
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 

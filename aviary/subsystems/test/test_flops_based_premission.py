@@ -14,7 +14,7 @@ from aviary.validation_cases.validation_tests import (
     flops_validation_test, get_flops_inputs, get_flops_outputs, get_flops_case_names, print_case
 )
 
-from aviary.variable_info.functions import extract_options
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
@@ -47,7 +47,7 @@ class PreMissionGroupTest(unittest.TestCase):
             promotes_outputs=['*'],
         )
 
-        self.prob.model_options['*'] = extract_options(flops_inputs)
+        setup_model_options(prob, flops_inputs)
 
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_solver_print(2)
@@ -108,7 +108,7 @@ class PreMissionGroupTest(unittest.TestCase):
             promotes_outputs=['*'],
         )
 
-        self.prob.model_options['*'] = extract_options(flops_inputs)
+        setup_model_options(prob, flops_inputs)
 
         prob.setup(check=False)
 

@@ -5,7 +5,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.geometry.gasp_based.electric import CableSize
-from aviary.variable_info.functions import extract_options
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft
 from aviary.utils.aviary_values import AviaryValues
 
@@ -31,7 +31,7 @@ class ElectricTestCase(unittest.TestCase):
             Aircraft.Fuselage.AVG_DIAMETER, 10, units="ft"
         )  # not actual GASP value
 
-        self.prob.model_options['*'] = extract_options(aviary_options)
+        setup_model_options(self.prob, aviary_options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -69,7 +69,7 @@ class ElectricTestCaseMultiEngine(unittest.TestCase):
             Aircraft.Fuselage.AVG_DIAMETER, 10, units="ft"
         )
 
-        prob.model_options['*'] = extract_options(aviary_options)
+        setup_model_options(prob, aviary_options)
 
         prob.setup(check=False, force_alloc_complex=True)
 
