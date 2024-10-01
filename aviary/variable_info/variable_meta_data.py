@@ -1722,7 +1722,7 @@ add_meta_data(
     desc='fraction of (scaled) engine mass used to calculate additional propulsion '
          'system mass added to engine control and starter mass, or used to '
          'calculate engine installation mass',
-    types=(float, list, np.ndarray),
+    types=(float, int, list, np.ndarray),
     default_value=0.0,
 )
 
