@@ -64,6 +64,11 @@ class PropulsionPreMission(om.Group):
         )
 
     def configure(self):
+        # Special configure step needed to handle multiple, unique engine models.
+        # Each engine's pre_mission component should only handle single instance of engine,
+        # so vectorized inputs/outputs are a problem. Slice all needed vector inputs and pass
+        # pre_mission components only the value they need, then mux all the outputs back together
+
         engine_models = self.options['engine_models']
         num_engine_type = len(engine_models)
 
@@ -82,18 +87,33 @@ class PropulsionPreMission(om.Group):
         # Dictionary of all unique inputs/outputs from all new components, keys are
         # units for each var
         unique_outputs = {}
-        unique_inputs = {}
+        # unique_inputs = {}
 
         # dictionaries of inputs/outputs for engine in prop pre-mission
         input_dict = {}
         output_dict = {}
 
-        for idx, engine in enumerate(engine_models):
-            eng_model = self._get_subsystem(engine.name)
+        for idx, engine_model in enumerate(engine_models):
+            engine = self._get_subsystem(engine_model.name)
+            # Patterns to identify which inputs/outputs are vectorized and need to be
+            # split then re-muxed
+            pattern = ['engine:', 'nacelle:']
 
             # pull out all inputs (in dict format) in component
-            eng_inputs = eng_model.list_inputs(
-                return_format='dict', units=True, out_stream=out_stream, all_procs=True
+            eng_inputs = engine.list_inputs(
+                return_format='dict',
+                units=True,
+                out_stream=out_stream,
+                all_procs=True,
+            )
+            # switch dictionary keys to promoted name rather than full path
+            # only handle variables that were top-level promoted inside engine model
+            eng_inputs = dict(
+                [
+                    (eng_inputs[key]['prom_name'], eng_inputs[key])
+                    for key in eng_inputs
+                    if '.' not in eng_inputs[key]['prom_name']
+                ]
             )
             # only keep inputs if they contain the pattern
             input_dict[engine.name] = dict(
@@ -106,16 +126,23 @@ class PropulsionPreMission(om.Group):
             # care if units get overridden, if they differ openMDAO will convert
             # (if they aren't compatible, then a component specified the wrong units and
             # needs to be fixed there)
-            unique_inputs.update(
-                [
-                    (key, input_dict[engine.name][key]['units'])
-                    for key in input_dict[engine.name]
-                ]
-            )
+            # unique_inputs.update(
+            #     [
+            #         (key, input_dict[engine.name][key]['units'])
+            #         for key in input_dict[engine.name]
+            #     ]
+            # )
 
             # do the same thing with outputs
-            eng_outputs = eng_model.list_outputs(
+            eng_outputs = engine.list_outputs(
                 return_format='dict', units=True, out_stream=out_stream, all_procs=True
+            )
+            eng_outputs = dict(
+                [
+                    (eng_outputs[key]['prom_name'], eng_outputs[key])
+                    for key in eng_outputs
+                    if '.' not in eng_outputs[key]['prom_name']
+                ]
             )
             output_dict[engine.name] = dict(
                 (key, eng_outputs[key])
@@ -124,28 +151,31 @@ class PropulsionPreMission(om.Group):
             )
             unique_outputs.update(
                 [
-                    (key, output_dict[engine.name][key]['units'])
+                    (
+                        key,
+                        output_dict[engine.name][key]['units'],
+                    )
                     for key in output_dict[engine.name]
                 ]
             )
 
-            # slice incoming inputs for this component, so it only gets the correct index
+            # slice incoming inputs for this engine, so it only gets the correct index
             self.promotes(
                 engine.name,
-                inputs=input_dict[engine.name].keys(),
+                inputs=[input for input in input_dict[engine.name]],
                 src_indices=om.slicer[idx],
             )
 
-            # promote all other inputs/outputs for this component normally (handle vectorized outputs later)
+            # promote all other inputs/outputs for this engine normally (handle vectorized outputs later)
             self.promotes(
                 engine.name,
                 inputs=[
-                    eng_inputs[input]['prom_name']
+                    input
                     for input in eng_inputs
                     if input not in input_dict[engine.name]
                 ],
                 outputs=[
-                    eng_outputs[output]['prom_name']
+                    output
                     for output in eng_outputs
                     if output not in output_dict[engine.name]
                 ],
@@ -157,11 +187,11 @@ class PropulsionPreMission(om.Group):
             for output in unique_outputs:
                 self.pre_mission_mux.add_var(output, units=unique_outputs[output])
                 # promote/alias outputs for each comp that has relevant outputs
-                for i, eng in enumerate(output_dict):
-                    if output in output_dict[engine.name]:
+                for i, engine in enumerate(output_dict):
+                    if output in output_dict[engine]:
                         # if this component provides the output, connect it to the correct mux input
                         self.connect(
-                            eng + '.' + output,
+                            engine + '.' + output,
                             'pre_mission_mux.' + output + '_' + str(i),
                         )
                     else:
