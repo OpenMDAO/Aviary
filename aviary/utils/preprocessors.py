@@ -242,7 +242,6 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
                and type(vec) is not tuple:
                 vec = np.array(vec, dtype=dtype)
             aviary_options.set_val(var, vec, units)
-            print(var, units)
 
     ###################################
     # Input/Option Consistency Checks #
