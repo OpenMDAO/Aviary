@@ -19,7 +19,6 @@ from aviary.interface.default_phase_info.height_energy import phase_info
 from aviary.variable_info.variables import Aircraft
 
 
-
 # The drag-polar-generating component reads this in, instead of computing the polars.
 polar_file = "subsystems/aerodynamics/gasp_based/data/large_single_aisle_1_aero_free_reduced_alpha.txt"
 
