@@ -1,9 +1,9 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.variable_info.options import get_option_defaults
+from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variables import Aircraft, Settings
 
 
 def sigX(x):
@@ -26,6 +26,7 @@ class FuselageParameters(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Fuselage.NUM_SEATS_ABREAST)
         add_aviary_option(self, Aircraft.Fuselage.SEAT_PITCH, units='inch')
         add_aviary_option(self, Aircraft.Fuselage.SEAT_WIDTH, units='inch')
+        add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
 
@@ -52,6 +53,7 @@ class FuselageParameters(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         options = self.options
+        verbosity = options[Settings.VERBOSITY]
         seats_abreast = options[Aircraft.Fuselage.NUM_SEATS_ABREAST]
         seat_width, _ = options[Aircraft.Fuselage.SEAT_WIDTH]
         num_aisle = options[Aircraft.Fuselage.NUM_AISLES]
@@ -64,7 +66,8 @@ class FuselageParameters(om.ExplicitComponent):
         cabin_width = seats_abreast * seat_width + num_aisle * aisle_width + 12
 
         if PAX < 1:
-            print("Warning: you have not specified at least one passenger")
+            if verbosity >= Verbosity.BRIEF:
+                print("Warning: you have not specified at least one passenger")
 
         # single seat across
         cabin_len_a = PAX * seat_pitch / 12
