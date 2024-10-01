@@ -298,7 +298,7 @@ class AircraftModelReader(object):
             Value of the variable.
         """
         try:
-            val = self._final_case[var_prom_name]
+            val = self._final_case.get_val(var_prom_name, units=units)
             return float(val)
         except KeyError as e:
             pass
