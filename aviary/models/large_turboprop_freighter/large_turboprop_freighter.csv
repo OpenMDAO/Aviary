@@ -2,7 +2,7 @@
 # SETTINGS #
 ############
 settings:problem_type, fallout, unitless
-settings:equations_of_motion, 2DOF
+settings:equations_of_motion, height_energy
 settings:mass_method, GASP
 
 ############
@@ -63,10 +63,12 @@ aircraft:engine:reference_sls_thrust, 5000, lbf
 aircraft:engine:rpm_design, 13820, rpm
 aircraft:engine:fixed_rpm, 13820, rpm
 aircraft:engine:scaled_sls_thrust, 5000, lbf
-aircraft:engine:shaft_power_design, 4465, kW
 aircraft:engine:type, 6, unitless
 aircraft:engine:wing_locations, [0.385, 0.385], unitless
 aircraft:engine:gearbox:gear_ratio, 13.550135501355014, unitless
+aircraft:engine:gearbox:efficiency, 1.0, unitless
+aircraft:engine:gearbox:shaft_power_design, 4465, kW
+aircraft:engine:gearbox:specific_torque, 0.0, N*m/kg
 
 # Fuel
 aircraft:fuel:density, 6.687, lbm/galUS
@@ -190,7 +192,7 @@ mission:summary:fuel_flow_scaler, 1, unitless
 mission:design:cruise_altitude, 21000, ft
 mission:design:gross_mass, 155000, lbm
 mission:design:mach, 0.475, unitless
-mission:design:range, 0, NM
+mission:design:range, 2020, NM
 mission:design:rate_of_climb_at_top_of_climb, 300, ft/min
 
 # Takeoff and Landing

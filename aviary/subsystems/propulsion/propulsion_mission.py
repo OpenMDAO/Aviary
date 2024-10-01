@@ -34,13 +34,12 @@ class PropulsionMission(om.Group):
         num_engine_type = len(engine_models)
 
         if num_engine_type > 1:
-
             # We need a component to add parameters to problem. Dymos can't find it when
             # it is already sliced across several components.
             # TODO is this problem fixable from dymos end (introspection includes parameters)?
 
             # create set of params
-            # TODO get_parameters should have access to aviary options + phase info
+            # TODO get_parameters() should have access to aviary options + phase info
             param_dict = {}
             # save parameters for use in configure()
             parameters = self.parameters = set()
@@ -50,15 +49,9 @@ class PropulsionMission(om.Group):
 
             parameters.update(eng_params.keys())
 
-            # if params exist, create execcomp, fill with equations
+            # if params exist, create execcomp, fill with placeholder equations
             if len(parameters) != 0:
                 comp = om.ExecComp(has_diag_partials=True)
-                # comp = om.ExecComp(
-                #     "y=x",
-                #     y={'val': np.ones(num_engine_type), 'units': 'unitless'},
-                #     x={'val': np.ones(num_engine_type), 'units': 'unitless'},
-                #     has_diag_partials=True,
-                # )
 
                 for i, param in enumerate(parameters):
                     # try to find units information
@@ -85,8 +78,6 @@ class PropulsionMission(om.Group):
             self.add_subsystem(
                 "parameter_passthrough",
                 comp,
-                #     promotes_inputs=[('x', Aircraft.Engine.SCALE_FACTOR)],
-                #     promotes_outputs=[('y', 'passthrough_scale_factor')],
             )
 
             for i, engine in enumerate(engine_models):
@@ -202,7 +193,7 @@ class PropulsionMission(om.Group):
 
         engine_models = self.options['engine_models']
         engine_names = [engine.name for engine in engine_models]
-        # num_engine_type = len(engine_models)
+        num_engine_type = len(engine_models)
 
         # determine if openMDAO messages and warnings should be suppressed
         verbosity = self.options['aviary_options'].get_val(Settings.VERBOSITY)
@@ -259,10 +250,11 @@ class PropulsionMission(om.Group):
                         )
             # TODO handle setting of other variables from engine outputs (e.g. Aircraft.Engine.****)
 
-        engine_models = self.options['engine_models']
-        num_engine_type = len(engine_models)
-
         if num_engine_type > 1:
+            # commented out block of code is for experimenting with automatically finding
+            # inputs that need a passthrough, rather than relying on get_parameters()
+            # being properly set up
+
             # custom promote parameters with aliasing to connect to passthrough component
             # for engine in engine_models:
             # get inputs to engine model
@@ -270,7 +262,7 @@ class PropulsionMission(om.Group):
             # input_dict = engine_comp.list_inputs(
             #     return_format='dict', units=True, out_stream=None, all_procs=True
             # )
-            # # TODO this makes sure even not fully promoted variables are caught - is this
+            # # TODO this catches not fully promoted variables are caught - is this
             # #      wanted?
             # input_list = list(
             #     set(

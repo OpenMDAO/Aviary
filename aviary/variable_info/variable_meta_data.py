@@ -2398,7 +2398,7 @@ add_meta_data(
                      },
     units='unitless',
     desc='The efficiency of the gearbox.',
-    default_value=0.98,
+    default_value=1.0,
 )
 add_meta_data(
     Aircraft.Engine.Gearbox.GEAR_RATIO,
