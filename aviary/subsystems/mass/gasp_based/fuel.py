@@ -4,8 +4,9 @@ import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 check = 1
 
@@ -136,10 +137,12 @@ class BodyTankCalculations(om.ExplicitComponent):
             design_fuel_vol - geometric_fuel_vol
         )
 
-        if (req_fuel_wt > max_wingfuel_wt) and (design_fuel_vol > max_wingfuel_vol):
-            print("Warning: req_fuel_mass > max_wingfuel_mass, adding a body tank")
-        if (req_fuel_wt < max_wingfuel_wt) and (design_fuel_vol > max_wingfuel_vol):
-            print("Warning: design_fuel_vol > max_wingfuel_vol, adding a body tank")
+        verbosity = self.options['aviary_options'].get_val(Settings.VERBOSITY)
+        if verbosity >= Verbosity.BRIEF:
+            if (req_fuel_wt > max_wingfuel_wt) and (design_fuel_vol > max_wingfuel_vol):
+                print("Warning: req_fuel_mass > max_wingfuel_mass, adding a body tank")
+            if (req_fuel_wt < max_wingfuel_wt) and (design_fuel_vol > max_wingfuel_vol):
+                print("Warning: design_fuel_vol > max_wingfuel_vol, adding a body tank")
 
         extra_fuel_wt = req_fuel_wt - max_wingfuel_wt
         if smooth:
