@@ -642,7 +642,7 @@ add_meta_data(
     units='lbm',
     desc='baggage mass per passenger',
     option=True,
-    default_value=50.,
+    default_value=None,
 )
 
 add_meta_data(
@@ -1718,9 +1718,11 @@ add_meta_data(
                      "LEAPS1": 'aircraft.inputs.L0_propulsion.misc_weight'
                      },
     units='unitless',
+    option=True,
     desc='fraction of (scaled) engine mass used to calculate additional propulsion '
          'system mass added to engine control and starter mass, or used to '
          'calculate engine installation mass',
+    types=(float, list, np.ndarray),
     default_value=0.0,
 )
 
