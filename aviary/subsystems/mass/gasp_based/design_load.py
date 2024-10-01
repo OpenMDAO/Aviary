@@ -17,6 +17,7 @@ def dsig(x):
 
 
 def dquotient(u, v, du, dv):
+    """d(u/v) / dv"""
     return (du * v - u * dv) / v**2
 
 
@@ -88,17 +89,7 @@ class LoadSpeeds(om.ExplicitComponent):
             VCMIN = VCCOF * (wing_loading**0.5)
 
             if smooth:
-                import pdb
-                x1 = sig((VCMAX - VCMIN) / VCMAX)
-                x2 = sig((VCMIN - VCMAX) / VCMAX)
-                y1 = sigmoidX(VCMIN/VCMAX, 1, -0.01)
-                y2 = sigmoidX(VCMIN/VCMAX, 1, 0.01)
-                VCMIN_bk = VCMIN
-                #VCMIN = VCMIN * sig((VCMAX - VCMIN) / VCMAX) + VCMAX * sig((VCMIN - VCMAX) / VCMAX)
                 VCMIN = VCMIN * sigmoidX(VCMIN/VCMAX, 1, -0.01) + VCMAX * sigmoidX(VCMIN/VCMAX, 1, 0.01)
-                z1 = VCMIN_bk * x1 + VCMAX * x2
-                z2 = VCMIN_bk * y1 + VCMAX * y2
-                #pdb.set_trace()
                 pass
             else:
                 if VCMIN > VCMAX:
@@ -121,10 +112,10 @@ class LoadSpeeds(om.ExplicitComponent):
             min_dive_vel = VDCOF * VCMIN
 
             if smooth:
-                min_dive_vel = max_struct_speed_kts * sig(
-                    (max_struct_speed_kts - min_dive_vel) / max_struct_speed_kts
-                ) + min_dive_vel * sig(
-                    (min_dive_vel - max_struct_speed_kts) / max_struct_speed_kts
+                min_dive_vel = max_struct_speed_kts * sigmoidX(
+                    min_dive_vel / max_struct_speed_kts, 1, -0.01
+                ) + min_dive_vel * sigmoidX(
+                    min_dive_vel / max_struct_speed_kts, 1, 0.01
                 )
             else:
                 if min_dive_vel < max_struct_speed_kts:
@@ -196,33 +187,32 @@ class LoadSpeeds(om.ExplicitComponent):
             dVCMIN_dmax_struct_speed_mph = 0.0
 
             if smooth:
-                VCMIN_1 = VCMIN * sig((VCMAX - VCMIN) / VCMAX) + VCMAX * sig(
-                    (VCMIN - VCMAX) / VCMAX
-                )
+                VCMIN_1 = VCMIN * sigmoidX(VCMIN / VCMAX, 1, -0.01) + \
+                    VCMAX * sigmoidX(VCMIN / VCMAX, 1, 0.01)
                 dVCMIN_dwing_loading = (
-                    dVCMIN_dwing_loading * sig((VCMAX - VCMIN) / VCMAX)
+                    dVCMIN_dwing_loading * sigmoidX(VCMIN / VCMAX, 1, -0.01)
                     + VCMIN
-                    * dsig((VCMAX - VCMIN) / VCMAX)
+                    * dSigmoidXdx(VCMIN/VCMAX, 1, 0.01)
                     * -dVCMIN_dwing_loading
                     / VCMAX
                     + VCMAX
-                    * dsig((VCMIN - VCMAX) / VCMAX)
+                    * dSigmoidXdx(VCMIN/VCMAX, 1, 0.01)
                     * dVCMIN_dwing_loading
                     / VCMAX
                 )
                 dVCMIN_dmax_struct_speed_mph = (
-                    dVCMIN_dmax_struct_speed_mph * sig((VCMAX - VCMIN) / VCMAX)
+                    dVCMIN_dmax_struct_speed_mph * sigmoidX(VCMIN / VCMAX, 1, -0.01)
                     + VCMIN
-                    * dsig((VCMAX - VCMIN) / VCMAX)
+                    * dSigmoidXdx(VCMIN / VCMAX, 1, 0.01)
                     * dquotient(
                         (VCMAX - VCMIN),
                         VCMAX,
                         dVCMAX_dmax_struct_speed_mph - dVCMIN_dmax_struct_speed_mph,
                         dVCMAX_dmax_struct_speed_mph,
                     )
-                    + dVCMAX_dmax_struct_speed_mph * sig((VCMIN - VCMAX) / VCMAX)
+                    + dVCMAX_dmax_struct_speed_mph * sigmoidX(VCMIN / VCMAX, 1, 0.01)
                     + VCMAX
-                    * dsig((VCMIN - VCMAX) / VCMAX)
+                    * dSigmoidXdx(VCMIN / VCMAX, 1, 0.01)
                     * dquotient(
                         (VCMIN - VCMAX),
                         VCMAX,
@@ -269,16 +259,16 @@ class LoadSpeeds(om.ExplicitComponent):
             dmin_dive_vel_dmax_struct_speed_mph = VDCOF * dVCMIN_dmax_struct_speed_mph
 
             if smooth:
-                min_dive_vel_1 = max_struct_speed_kts * sig(
-                    (max_struct_speed_kts - min_dive_vel) / max_struct_speed_kts
-                ) + min_dive_vel * sig(
-                    (min_dive_vel - max_struct_speed_kts) / max_struct_speed_kts
+                min_dive_vel_1 = max_struct_speed_kts * sigmoidX(
+                    min_dive_vel / max_struct_speed_kts, 1, -0.01
+                ) + min_dive_vel * sigmoidX(
+                    min_dive_vel / max_struct_speed_kts, 1, 0.01
                 )
                 dmin_dive_vel_dmax_struct_speed_mph = (
                     dmax_struct_speed_kts_dmax_struct_speed_mph
-                    * sig((max_struct_speed_kts - min_dive_vel) / max_struct_speed_kts)
+                    * sigmoidX(min_dive_vel / max_struct_speed_kts, 1, -0.01)
                     + max_struct_speed_kts
-                    * dsig((max_struct_speed_kts - min_dive_vel) / max_struct_speed_kts)
+                    * dSigmoidXdx(min_dive_vel / max_struct_speed_kts, 1, 0.01)
                     * dquotient(
                         (max_struct_speed_kts - min_dive_vel),
                         max_struct_speed_kts,
@@ -289,9 +279,9 @@ class LoadSpeeds(om.ExplicitComponent):
                         dmax_struct_speed_kts_dmax_struct_speed_mph,
                     )
                     + dmin_dive_vel_dmax_struct_speed_mph
-                    * sig((min_dive_vel - max_struct_speed_kts) / max_struct_speed_kts)
+                    * sigmoidX(min_dive_vel / max_struct_speed_kts, 1, 0.01)
                     + min_dive_vel
-                    * dsig((min_dive_vel - max_struct_speed_kts) / max_struct_speed_kts)
+                    * dSigmoidXdx(min_dive_vel / max_struct_speed_kts, 1, 0.01)
                     * dquotient(
                         (min_dive_vel - max_struct_speed_kts),
                         max_struct_speed_kts,
@@ -302,9 +292,9 @@ class LoadSpeeds(om.ExplicitComponent):
                 )
                 dmin_dive_vel_dwing_loading = (
                     dmax_struct_speed_kts_dwing_loading
-                    * sig((max_struct_speed_kts - min_dive_vel) / max_struct_speed_kts)
+                    * sigmoidX(min_dive_vel / max_struct_speed_kts, 1, -0.01)
                     + max_struct_speed_kts
-                    * dsig((max_struct_speed_kts - min_dive_vel) / max_struct_speed_kts)
+                    * dSigmoidXdx(min_dive_vel / max_struct_speed_kts, 1, 0.01)
                     * dquotient(
                         max_struct_speed_kts - min_dive_vel,
                         max_struct_speed_kts,
@@ -313,9 +303,9 @@ class LoadSpeeds(om.ExplicitComponent):
                         dmax_struct_speed_kts_dwing_loading,
                     )
                     + dmin_dive_vel_dwing_loading
-                    * sig((min_dive_vel - max_struct_speed_kts) / max_struct_speed_kts)
+                    * sigmoidX(min_dive_vel / max_struct_speed_kts, 1, 0.01)
                     + min_dive_vel
-                    * dsig((min_dive_vel - max_struct_speed_kts) / max_struct_speed_kts)
+                    * dSigmoidXdx(min_dive_vel / max_struct_speed_kts, 1, 0.01)
                     * dquotient(
                         (min_dive_vel - max_struct_speed_kts),
                         max_struct_speed_kts,
@@ -439,8 +429,8 @@ class LoadParameters(om.ExplicitComponent):
             max_mach = max_airspeed / 372.34
 
         if smooth:
-            max_mach = max_mach * sig((0.9 - max_mach) / 0.9) + 0.9 * sig(
-                (max_mach - 0.9) / 0.9
+            max_mach = max_mach * sigmoidX(max_mach / 0.9, 1, -0.01) + 0.9 * sigmoidX(
+                max_mach / 0.9, 1, 0.01
             )
 
         else:
@@ -450,25 +440,25 @@ class LoadParameters(om.ExplicitComponent):
         density_ratio = (max_airspeed / (661.7 * max_mach)) ** 1.61949
 
         if smooth:
-            V9 = vel_c * sig(1 - density_ratio) + 661.7 * \
-                max_mach * sig(density_ratio - 1)
+            V9 = vel_c * sigmoidX(density_ratio, 1, -0.01) + 661.7 * \
+                max_mach * sigmoidX(density_ratio, 1, 0.01)
 
             if CATD < 3:
                 # this line creates a smooth bounded density_ratio such that .6820<=density_ratio<=1
                 density_ratio = (
-                    0.6820 * sig((0.6820 - density_ratio) / 0.6820)
-                    + density_ratio * sig((density_ratio - 0.6820) /
-                                          0.6820) * sig(1 - density_ratio)
-                    + sig(density_ratio - 1)
+                    0.6820 * sigmoidX(density_ratio / 0.6820, 1, -0.01)
+                    + density_ratio * sigmoidX(density_ratio /
+                                          0.6820, 1, 0.01) * sigmoidX(density_ratio, 1, -0.01)
+                    + sigmoidX(density_ratio, 1, 0.01)
                 )
 
             else:
                 # this line creates a smooth bounded density_ratio such that .53281<=density_ratio<=1
                 density_ratio = (
-                    0.53281 * sig((0.53281 - density_ratio) / 0.53281)
-                    + density_ratio * sig((density_ratio - 0.53281) /
-                                          0.53281) * sig(1 - density_ratio)
-                    + sig(density_ratio - 1)
+                    0.53281 * sigmoidX(density_ratio / 0.53281, 1, -0.01)
+                    + density_ratio * sigmoidX(density_ratio /
+                                          0.53281, 1, 0.01) * sigmoidX(density_ratio, 1, -0.01)
+                    + sigmoidX(density_ratio, 1, 0.01)
                 )
 
         else:
@@ -512,16 +502,16 @@ class LoadParameters(om.ExplicitComponent):
             dmax_mach_dmax_airspeed = 1 / 372.34
 
         if smooth:
-            max_mach_1 = max_mach * sig((0.9 - max_mach) / 0.9) + 0.9 * sig(
-                (max_mach - 0.9) / 0.9
+            max_mach_1 = max_mach * sigmoidX(max_mach / 0.9, 1, -0.01) + 0.9 * sigmoidX(
+                max_mach / 0.9, 1, 0.01
             )
             dmax_mach_dmax_airspeed = (
-                dmax_mach_dmax_airspeed * sig((0.9 - max_mach) / 0.9)
+                dmax_mach_dmax_airspeed * sigmoidX(max_mach / 0.9, 1, -0.01)
                 + max_mach
-                * dsig((0.9 - max_mach) / 0.9)
+                * dSigmoidXdx(max_mach / 0.9, 1, 0.01)
                 * dquotient((0.9 - max_mach), 0.9, -dmax_mach_dmax_airspeed, 0.0)
                 + 0.9
-                * dsig((max_mach - 0.9) / 0.9)
+                * dSigmoidXdx(max_mach / 0.9, 1, 0.01)
                 * dquotient((max_mach - 0.9), 0.9, dmax_mach_dmax_airspeed, 0.0)
             )
             max_mach = max_mach_1
@@ -540,78 +530,78 @@ class LoadParameters(om.ExplicitComponent):
         )
 
         if smooth:
-            V9_1 = vel_c * sig(1 - density_ratio) + 661.7 * \
-                max_mach * sig(density_ratio - 1)
+            V9_1 = vel_c * sigmoidX(density_ratio, 1, -0.01) + 661.7 * \
+                max_mach * sigmoidX(density_ratio, 1, 0.01)
             dV9_dmax_airspeed = (
-                vel_c * dsig(1 - density_ratio) * -ddensity_ratio_dmax_airspeed
+                vel_c * dSigmoidXdx(density_ratio, 1, 0.01) * -ddensity_ratio_dmax_airspeed
                 + 661.7
                 * dmax_mach_dmax_airspeed
-                * sig(density_ratio - 1)
+                * sigmoidX(density_ratio, 1, 0.01)
                 * 661.7
                 * max_mach
-                * dsig(density_ratio - 1)
+                * dSigmoidXdx(density_ratio, 1, 0.01)
                 * ddensity_ratio_dmax_airspeed
             )
-            dV9_dvel_c = sig(1 - density_ratio)
+            dV9_dvel_c = sigmoidX(density_ratio, 1, -0.01)
             V9 = V9_1
 
             if CATD < 3:
                 # this line creates a smooth bounded density_ratio such that .6820<=density_ratio<=1
                 density_ratio_1 = (
-                    0.6820 * sig((0.6820 - density_ratio) / 0.6820)
-                    + density_ratio * sig((density_ratio - 0.6820) /
-                                          0.6820) * sig(1 - density_ratio)
-                    + sig(density_ratio - 1)
+                    0.6820 * sigmoidX(density_ratio / 0.6820, 1, -0.01)
+                    + density_ratio * sigmoidX(density_ratio /
+                                          0.6820, 1, 0.01) * sigmoidX(density_ratio, 1, -0.01)
+                    + sigmoidX(density_ratio, 1, 0.01)
                 )
                 ddensity_ratio_dmax_airspeed = (
                     0.6820
-                    * dsig((0.6820 - density_ratio) / 0.6820)
+                    * dSigmoidXdx(density_ratio / 0.6820, 1, 0.01)
                     * -ddensity_ratio_dmax_airspeed
                     / 0.6820
                     + ddensity_ratio_dmax_airspeed
-                    * sig((density_ratio - 0.6820) / 0.6820)
-                    * sig(1 - density_ratio)
+                    * sigmoidX(density_ratio / 0.6820, 1, 0.01)
+                    * sigmoidX(density_ratio, 1, -0.01)
                     + density_ratio
                     * (
-                        dsig((density_ratio - 0.6820) / 0.6820)
+                        dSigmoidXdx(density_ratio / 0.6820, 1, 0.01)
                         * ddensity_ratio_dmax_airspeed
                         / 0.6820
-                        * sig(1 - density_ratio)
-                        + sig((density_ratio - 0.6820) / 0.6820)
-                        * dsig(1 - density_ratio)
+                        * sigmoidX(density_ratio, 1, -0.01)
+                        + sigmoidX(density_ratio / 0.6820, 1, 0.01)
+                        * dSigmoidXdx(density_ratio, 1, 0.01)
                         * -ddensity_ratio_dmax_airspeed
                     )
-                    + dsig(density_ratio - 1) * ddensity_ratio_dmax_airspeed
+                    + dSigmoidXdx(density_ratio, 1, 0.01) * ddensity_ratio_dmax_airspeed
                 )
                 density_ratio = density_ratio_1
 
             else:
                 # this line creates a smooth bounded density_ratio such that .53281<=density_ratio<=1
                 density_ratio_1 = (
-                    0.53281 * sig((0.53281 - density_ratio) / 0.53281)
-                    + density_ratio * sig((density_ratio - 0.53281) /
-                                          0.53281) * sig(1 - density_ratio)
-                    + sig(density_ratio - 1)
+                    0.53281 * sigmoidX(density_ratio / 0.53281, 1, -0.01)
+                    + density_ratio * sigmoidX(density_ratio /
+                                          0.53281, 1, 0.01) * sigmoidX(density_ratio, 1, -0.01)
+                    + sigmoidX(density_ratio, 1, 0.01)
                 )
                 ddensity_ratio_dmax_airspeed = (
                     0.53281
-                    * dsig((0.53281 - density_ratio) / 0.53281)
+                    * dSigmoidXdx(density_ratio / 0.53281, 1, 0.01)
                     * -ddensity_ratio_dmax_airspeed
                     / 0.53281
                     + ddensity_ratio_dmax_airspeed
-                    * sig((density_ratio - 0.53281) / 0.53281)
-                    * sig(1 - density_ratio)
+                    * sigmoidX(density_ratio / 0.53281, 1, 0.01)
+                    * sigmoidX(density_ratio, 1, -0.01)
                     + density_ratio
                     * (
-                        dsig((density_ratio - 0.53281) / 0.53281)
+                        dSigmoidXdx(density_ratio / 0.53281, 1, 0.01)
                         * ddensity_ratio_dmax_airspeed
                         / 0.53281
-                        * sig(1 - density_ratio)
-                        + sig((density_ratio - 0.53281) / 0.53281)
-                        * dsig(1 - density_ratio)
+                        * sigmoidX(density_ratio, 1, -0.01)
+                        + sigmoidX(density_ratio / 0.53281, 1, -0.01)
+                        * dSigmoidXdx(density_ratio, 1, 0.01)
                         * -ddensity_ratio_dmax_airspeed
                     )
-                    + dsig(density_ratio - 1) * ddensity_ratio_dmax_airspeed
+                    + dSigmoidXdx(density_ratio, 1, 0.01) * ddensity_ratio_dmax_airspeed
                 )
                 density_ratio = density_ratio_1
         else:
@@ -747,10 +737,10 @@ class LoadFactors(om.ExplicitComponent):
         gust_load_factor = dive_load_factor
 
         if smooth:
-            gust_load_factor = dive_load_factor * sig(
-                (dive_load_factor - cruise_load_factor) / dive_load_factor
-            ) + cruise_load_factor * sig(
-                (cruise_load_factor - dive_load_factor) / dive_load_factor
+            gust_load_factor = dive_load_factor * sigmoidX(
+                cruise_load_factor / dive_load_factor, 1, -0.01
+            ) + cruise_load_factor * sigmoidX(
+                cruise_load_factor / dive_load_factor, 1, 0.01
             )
 
         else:
@@ -764,9 +754,9 @@ class LoadFactors(om.ExplicitComponent):
         if smooth:
             ULF = 1.5 * (
                 gust_load_factor
-                * sig((gust_load_factor - max_maneuver_factor) / gust_load_factor)
+                * sigmoidX(max_maneuver_factor / gust_load_factor, 1, -0.01)
                 + max_maneuver_factor
-                * sig((max_maneuver_factor - gust_load_factor) / gust_load_factor)
+                * sigmoidX(max_maneuver_factor / gust_load_factor, 1, 0.01)
             )
 
         else:
@@ -912,16 +902,16 @@ class LoadFactors(om.ExplicitComponent):
         dgust_load_factor_dV9 = 0.0
 
         if smooth:
-            gust_load_factor_1 = dive_load_factor * sig(
-                (dive_load_factor - cruise_load_factor) / dive_load_factor
-            ) + cruise_load_factor * sig(
-                (cruise_load_factor - dive_load_factor) / dive_load_factor
+            gust_load_factor_1 = dive_load_factor * sigmoidX(
+                cruise_load_factor / dive_load_factor, 1, -0.01
+            ) + cruise_load_factor * sigmoidX(
+                cruise_load_factor / dive_load_factor, 1, 0.01
             )
             dgust_load_factor_dwing_loading = (
                 ddive_load_factor_dwing_loading
-                * sig((dive_load_factor - cruise_load_factor) / dive_load_factor)
+                * sigmoidX(cruise_load_factor / dive_load_factor, 1, -0.01)
                 + dive_load_factor
-                * dsig((dive_load_factor - cruise_load_factor) / dive_load_factor)
+                * dSigmoidXdx(cruise_load_factor / dive_load_factor, 1, -0.01)
                 * dquotient(
                     (dive_load_factor - cruise_load_factor),
                     dive_load_factor,
@@ -929,9 +919,9 @@ class LoadFactors(om.ExplicitComponent):
                     ddive_load_factor_dwing_loading,
                 )
                 + dcruise_load_factor_dwing_loading
-                * sig((cruise_load_factor - dive_load_factor) / dive_load_factor)
+                * sigmoidX(cruise_load_factor / dive_load_factor, 1, 0.01)
                 + cruise_load_factor
-                * dsig((cruise_load_factor - dive_load_factor) / dive_load_factor)
+                * dSigmoidXdx(cruise_load_factor / dive_load_factor, 1, -0.01)
                 * dquotient(
                     (cruise_load_factor - dive_load_factor),
                     dive_load_factor,
@@ -941,9 +931,9 @@ class LoadFactors(om.ExplicitComponent):
             )
             dgust_load_factor_ddensity_ratio = (
                 ddive_load_factor_ddensity_ratio
-                * sig((dive_load_factor - cruise_load_factor) / dive_load_factor)
+                * sigmoidX(cruise_load_factor / dive_load_factor, 1, -0.01)
                 + dive_load_factor
-                * dsig((dive_load_factor - cruise_load_factor) / dive_load_factor)
+                * dSigmoidXdx(cruise_load_factor / dive_load_factor, 1, -0.01)
                 * dquotient(
                     (dive_load_factor - cruise_load_factor),
                     dive_load_factor,
@@ -951,9 +941,9 @@ class LoadFactors(om.ExplicitComponent):
                     ddive_load_factor_ddensity_ratio,
                 )
                 + dcruise_load_factor_ddensity_ratio
-                * sig((cruise_load_factor - dive_load_factor) / dive_load_factor)
+                * sigmoidX(cruise_load_factor / dive_load_factor, 1, 0.01)
                 + cruise_load_factor
-                * dsig((cruise_load_factor - dive_load_factor) / dive_load_factor)
+                * dSigmoidXdx(cruise_load_factor / dive_load_factor, 1, 0.01)
                 * dquotient(
                     (cruise_load_factor - dive_load_factor),
                     dive_load_factor,
@@ -963,9 +953,9 @@ class LoadFactors(om.ExplicitComponent):
             )
             dgust_load_factor_davg_chord = (
                 ddive_load_factor_davg_chord
-                * sig((dive_load_factor - cruise_load_factor) / dive_load_factor)
+                * sigmoidX(cruise_load_factor / dive_load_factor, 1, -0.01)
                 + dive_load_factor
-                * dsig((dive_load_factor - cruise_load_factor) / dive_load_factor)
+                * dSigmoidXdx(cruise_load_factor / dive_load_factor, 1, 0.01)
                 * dquotient(
                     (dive_load_factor - cruise_load_factor),
                     dive_load_factor,
@@ -973,9 +963,9 @@ class LoadFactors(om.ExplicitComponent):
                     ddive_load_factor_davg_chord,
                 )
                 + dcruise_load_factor_davg_chord
-                * sig((cruise_load_factor - dive_load_factor) / dive_load_factor)
+                * sigmoidX(cruise_load_factor / dive_load_factor, 1, 0.01)
                 + cruise_load_factor
-                * dsig((cruise_load_factor - dive_load_factor) / dive_load_factor)
+                * dSigmoidXdx(cruise_load_factor / dive_load_factor, 1, 0.01)
                 * dquotient(
                     (cruise_load_factor - dive_load_factor),
                     dive_load_factor,
@@ -985,9 +975,9 @@ class LoadFactors(om.ExplicitComponent):
             )
             dgust_load_factor_dCl_alpha = (
                 ddive_load_factor_dCl_alpha
-                * sig((dive_load_factor - cruise_load_factor) / dive_load_factor)
+                * sigmoidX(cruise_load_factor / dive_load_factor, 1, -0.01)
                 + dive_load_factor
-                * dsig((dive_load_factor - cruise_load_factor) / dive_load_factor)
+                * dSigmoidXdx(cruise_load_factor / dive_load_factor, 1, 0.01)
                 * dquotient(
                     (dive_load_factor - cruise_load_factor),
                     dive_load_factor,
@@ -995,9 +985,9 @@ class LoadFactors(om.ExplicitComponent):
                     ddive_load_factor_dCl_alpha,
                 )
                 + dcruise_load_factor_dCl_alpha
-                * sig((cruise_load_factor - dive_load_factor) / dive_load_factor)
+                * sigmoidX(cruise_load_factor / dive_load_factor, 1, 0.01)
                 + cruise_load_factor
-                * dsig((cruise_load_factor - dive_load_factor) / dive_load_factor)
+                * dSigmoidXdx(cruise_load_factor / dive_load_factor, 1, 0.01)
                 * dquotient(
                     (cruise_load_factor - dive_load_factor),
                     dive_load_factor,
@@ -1007,7 +997,7 @@ class LoadFactors(om.ExplicitComponent):
             )
             dgust_load_factor_dV9 = (
                 dive_load_factor
-                * dsig((dive_load_factor - cruise_load_factor) / dive_load_factor)
+                * dSigmoidXdx(cruise_load_factor / dive_load_factor, 1, 0.01)
                 * dquotient(
                     (dive_load_factor - cruise_load_factor),
                     dive_load_factor,
@@ -1015,9 +1005,9 @@ class LoadFactors(om.ExplicitComponent):
                     ddive_load_factor_dV9,
                 )
                 + dcruise_load_factor_dV9
-                * sig((cruise_load_factor - dive_load_factor) / dive_load_factor)
+                * sigmoidX(cruise_load_factor / dive_load_factor, 1, 0.01)
                 + cruise_load_factor
-                * dsig((cruise_load_factor - dive_load_factor) / dive_load_factor)
+                * dSigmoidXdx(cruise_load_factor / dive_load_factor, 1, 0.01)
                 * dquotient(
                     (cruise_load_factor - dive_load_factor),
                     dive_load_factor,
@@ -1027,9 +1017,9 @@ class LoadFactors(om.ExplicitComponent):
             )
             dgust_loading_dmin_dive_vel = (
                 ddive_load_factor_dmin_dive_vel
-                * sig((dive_load_factor - cruise_load_factor) / dive_load_factor)
+                * sigmoidX(cruise_load_factor / dive_load_factor, 1, -0.01)
                 + dive_load_factor
-                * dsig((dive_load_factor - cruise_load_factor) / dive_load_factor)
+                * dSigmoidXdx(cruise_load_factor / dive_load_factor, 1, 0.01)
                 * dquotient(
                     (dive_load_factor - cruise_load_factor),
                     dive_load_factor,
@@ -1037,7 +1027,7 @@ class LoadFactors(om.ExplicitComponent):
                     ddive_load_factor_dmin_dive_vel,
                 )
                 + cruise_load_factor
-                * dsig((cruise_load_factor - dive_load_factor) / dive_load_factor)
+                * dSigmoidXdx(cruise_load_factor / dive_load_factor, 1, 0.01)
                 * dquotient(
                     (cruise_load_factor - dive_load_factor),
                     dive_load_factor,
@@ -1072,31 +1062,31 @@ class LoadFactors(om.ExplicitComponent):
         if smooth:
             ULF_1 = 1.5 * (
                 gust_load_factor
-                * sig((gust_load_factor - max_maneuver_factor) / gust_load_factor)
+                * sigmoidX(max_maneuver_factor / gust_load_factor, 1, 0.01)
                 + max_maneuver_factor
                 * sig((max_maneuver_factor - gust_load_factor) / gust_load_factor)
             )
             dULF_dmax_maneuver_factor = 1.5 * (
                 gust_load_factor
-                * dsig((gust_load_factor - max_maneuver_factor) / gust_load_factor)
+                * dSigmoidXdx(max_maneuver_factor / gust_load_factor, 1, 0.01)
                 * dquotient(
                     (gust_load_factor - max_maneuver_factor),
                     gust_load_factor,
                     -1.0,
                     0.0,
                 )
-                + sig((max_maneuver_factor - gust_load_factor) / gust_load_factor)
+                + sigmoidX(max_maneuver_factor / gust_load_factor, 1, 0.01)
                 + max_maneuver_factor
-                * dsig((max_maneuver_factor - gust_load_factor) / gust_load_factor)
+                * dSigmoidXdx(max_maneuver_factor / gust_load_factor, 1, 0.01)
                 * dquotient(
                     (max_maneuver_factor - gust_load_factor), gust_load_factor, 1.0, 0.0
                 )
             )
             dULF_dwing_loading = 1.5 * (
                 dgust_load_factor_dwing_loading
-                * sig((gust_load_factor - max_maneuver_factor) / gust_load_factor)
+                * sigmoidX(max_maneuver_factor / gust_load_factor, 1, -0.01)
                 + gust_load_factor
-                * dsig((gust_load_factor - max_maneuver_factor) / gust_load_factor)
+                * dSigmoidXdx(max_maneuver_factor / gust_load_factor, 1, 0.01)
                 * dquotient(
                     (gust_load_factor - max_maneuver_factor),
                     gust_load_factor,
@@ -1104,7 +1094,7 @@ class LoadFactors(om.ExplicitComponent):
                     dgust_load_factor_dwing_loading,
                 )
                 + max_maneuver_factor
-                * dsig((max_maneuver_factor - gust_load_factor) / gust_load_factor)
+                * dSigmoidXdx(max_maneuver_factor / gust_load_factor, 1, 0.01)
                 * dquotient(
                     (max_maneuver_factor - gust_load_factor),
                     gust_load_factor,
@@ -1114,9 +1104,9 @@ class LoadFactors(om.ExplicitComponent):
             )
             dULF_ddensity_ratio = 1.5 * (
                 dgust_load_factor_ddensity_ratio
-                * sig((gust_load_factor - max_maneuver_factor) / gust_load_factor)
+                * sigmoidX(max_maneuver_factor / gust_load_factor, 1, -0.01)
                 + gust_load_factor
-                * dsig((gust_load_factor - max_maneuver_factor) / gust_load_factor)
+                * dSigmoidXdx(max_maneuver_factor / gust_load_factor, 1, 0.01)
                 * dquotient(
                     (gust_load_factor - max_maneuver_factor),
                     gust_load_factor,
@@ -1124,7 +1114,7 @@ class LoadFactors(om.ExplicitComponent):
                     dgust_load_factor_ddensity_ratio,
                 )
                 + max_maneuver_factor
-                * dsig((max_maneuver_factor - gust_load_factor) / gust_load_factor)
+                * dSigmoidXdx(max_maneuver_factor / gust_load_factor, 1, 0.01)
                 * dquotient(
                     (max_maneuver_factor - gust_load_factor),
                     gust_load_factor,
@@ -1134,9 +1124,9 @@ class LoadFactors(om.ExplicitComponent):
             )
             dULF_davg_chord = 1.5 * (
                 dgust_load_factor_davg_chord
-                * sig((gust_load_factor - max_maneuver_factor) / gust_load_factor)
+                * sigmoidX(max_maneuver_factor / gust_load_factor, 1, -0.01)
                 + gust_load_factor
-                * dsig((gust_load_factor - max_maneuver_factor) / gust_load_factor)
+                * dSigmoidXdx(max_maneuver_factor / gust_load_factor, 1, 0.01)
                 * dquotient(
                     (gust_load_factor - max_maneuver_factor),
                     gust_load_factor,
@@ -1144,7 +1134,7 @@ class LoadFactors(om.ExplicitComponent):
                     dgust_load_factor_davg_chord,
                 )
                 + max_maneuver_factor
-                * dsig((max_maneuver_factor - gust_load_factor) / gust_load_factor)
+                * dSigmoidXdx(max_maneuver_factor / gust_load_factor, 1, 0.01)
                 * dquotient(
                     (max_maneuver_factor - gust_load_factor),
                     gust_load_factor,
@@ -1154,9 +1144,9 @@ class LoadFactors(om.ExplicitComponent):
             )
             dULF_dCl_alpha = 1.5 * (
                 dgust_load_factor_dCl_alpha
-                * sig((gust_load_factor - max_maneuver_factor) / gust_load_factor)
+                * sigmoidX(max_maneuver_factor / gust_load_factor, 1, -0.01)
                 + gust_load_factor
-                * dsig((gust_load_factor - max_maneuver_factor) / gust_load_factor)
+                * dSigmoidXdx(max_maneuver_factor / gust_load_factor, 1, 0.01)
                 * dquotient(
                     (gust_load_factor - max_maneuver_factor),
                     gust_load_factor,
@@ -1164,7 +1154,7 @@ class LoadFactors(om.ExplicitComponent):
                     dgust_load_factor_dCl_alpha,
                 )
                 + max_maneuver_factor
-                * dsig((max_maneuver_factor - gust_load_factor) / gust_load_factor)
+                * dSigmoidXdx(max_maneuver_factor / gust_load_factor, 1, 0.01)
                 * dquotient(
                     (max_maneuver_factor - gust_load_factor),
                     gust_load_factor,
@@ -1174,9 +1164,9 @@ class LoadFactors(om.ExplicitComponent):
             )
             dULF_dV9 = 1.5 * (
                 dgust_load_factor_dV9
-                * sig((gust_load_factor - max_maneuver_factor) / gust_load_factor)
+                * sigmoidX(max_maneuver_factor / gust_load_factor, 1, -0.01)
                 + gust_load_factor
-                * dsig((gust_load_factor - max_maneuver_factor) / gust_load_factor)
+                * dSigmoidXdx(max_maneuver_factor / gust_load_factor, 1, 0.01)
                 * dquotient(
                     (gust_load_factor - max_maneuver_factor),
                     gust_load_factor,
@@ -1184,7 +1174,7 @@ class LoadFactors(om.ExplicitComponent):
                     dgust_load_factor_dV9,
                 )
                 + max_maneuver_factor
-                * dsig((max_maneuver_factor - gust_load_factor) / gust_load_factor)
+                * dSigmoidXdx(max_maneuver_factor / gust_load_factor, 1, 0.01)
                 * dquotient(
                     (max_maneuver_factor - gust_load_factor),
                     gust_load_factor,

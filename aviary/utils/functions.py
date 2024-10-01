@@ -511,7 +511,12 @@ def sigmoidX(x, x0, alpha=0.1):
     """
     if alpha == 0:
         raise ValueError("alpha must be non-zero")
-    return 1 / (1 + np.exp(-(x - x0) / alpha))
+    #n_size = x.size
+    #y = np.zeros(n_size)
+    #calc_idx = np.where(x > -320)
+    #y[calc_idx] = 1 / (1 + np.exp(-(x[calc_idx] - x0) / alpha))
+    y = 1 / (1 + np.exp(-(x - x0) / alpha))
+    return y
 
 
 def dSigmoidXdx(x, x0, alpha=0.1):
@@ -526,6 +531,10 @@ def dSigmoidXdx(x, x0, alpha=0.1):
     """
     if alpha == 0:
         raise ValueError("alpha must be non-zero")
+    #n_size = x.size
+    #y = np.zeros(n_size)
+    #calc_idx = np.where(x > -320)
     term = np.exp(-(x - x0) / alpha)
     term2 = (1 + term) * (1 + term)
-    return term / alpha / term2
+    y = term / alpha / term2
+    return y

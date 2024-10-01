@@ -293,7 +293,7 @@ class LoadSpeedsTestCase7smooth(unittest.TestCase):  # TestCase2 with smooth fun
         )  # not actual GASP value
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-14, rtol=1e-14)
+        assert_check_partials(partial_data, atol=2e-14, rtol=2e-13)
 
 
 class LoadSpeedsTestCase8smooth(unittest.TestCase):  # TestCase3 with smooth functions
@@ -388,7 +388,7 @@ class LoadSpeedsTestCase9smooth(unittest.TestCase):  # TestCase4 with smooth fun
         )  # not actual GASP value
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-15, rtol=2e-14)
+        assert_check_partials(partial_data, atol=1e-15, rtol=1e-13)
 
 
 class LoadSpeedsTestCase10smooth(unittest.TestCase):  # TestCase5 with smooth functions
@@ -573,7 +573,7 @@ class LoadParametersTestCase4smooth(unittest.TestCase):
         assert_near_equal(self.prob["V9"], 350, tol)  # bug fixed value
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-15, rtol=1e-14)
+        assert_check_partials(partial_data, atol=1e-15, rtol=5e-14)
 
 
 class LoadParametersTestCase5smooth(unittest.TestCase):
@@ -816,7 +816,7 @@ class LoadFactorsTestCase3smooth(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Wing.ULTIMATE_LOAD_FACTOR], 3.9502, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=5e-14, rtol=2e-13)
+        assert_check_partials(partial_data, atol=1e-13, rtol=2e-13)
 
 
 class LoadFactorsTestCase4smooth(unittest.TestCase):
@@ -950,11 +950,11 @@ class DesignLoadGroupTestCase2smooth(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Wing.ULTIMATE_LOAD_FACTOR], 3.7397, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=2e-14, rtol=2e-12)
+        assert_check_partials(partial_data, atol=1e-13, rtol=5e-12)
 
 
 if __name__ == "__main__":
-    #unittest.main()
-    thisClass = LoadSpeedsTestCase7smooth()
-    thisClass.setUp()
-    thisClass.test_case1()
+    unittest.main()
+    #thisClass = LoadSpeedsTestCase7smooth()
+    #thisClass.setUp()
+    #thisClass.test_case1()

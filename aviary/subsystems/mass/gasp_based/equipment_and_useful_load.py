@@ -600,15 +600,15 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
             )
 
             dCPX_dcabin_width = (
-                28 * dSigmoidXdx(CPX/28, 1, -0.01) * -dCPX_dcabin_width
+                28 * dSigmoidXdx(CPX/28, 1, 0.01) * -dCPX_dcabin_width
                 + (
                     dCPX_dcabin_width * sigmoidX(CPX/28, 1, 0.01)
                     + CPX * dSigmoidXdx(CPX/28, 1, 0.01) * dCPX_dcabin_width
                 )
-                * sigmoidX(CPX/62, 1, -0.01)
+                * sigmoidX(CPX/62, 1, 0.01)
                 + CPX
                 * sigmoidX(CPX/28, 1, 0.01)
-                * dSigmoidXdx(CPX/62, 1, -0.01)
+                * dSigmoidXdx(CPX/62, 1, 0.01)
                 * -dCPX_dcabin_width
                 + 62 * dSigmoidXdx(CPX/62, 1, 0.01) * dCPX_dcabin_width
             )
