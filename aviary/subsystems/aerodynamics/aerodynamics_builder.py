@@ -364,6 +364,26 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                 for var in ENGINE_SIZED_INPUTS:
                     params[var] = {'shape': (num_engine_type, ), 'static_target': True}
 
+            elif method == 'tabular':
+
+                for var in TABULAR_CORE_INPUTS:
+
+                    meta = _MetaData[var]
+
+                    val = meta['default_value']
+                    if val is None:
+                        val = _unspecified
+                    units = meta['units']
+
+                    if var in aviary_inputs:
+                        try:
+                            val = aviary_inputs.get_val(var, units)
+                        except TypeError:
+                            val = aviary_inputs.get_val(var)
+
+                    params[var] = {'val': val,
+                                   'static_target': True}
+
             elif method == "low_speed":
 
                 for var in LOW_SPEED_CORE_INPUTS:
@@ -473,6 +493,10 @@ COMPUTED_CORE_INPUTS = [
     Mission.Summary.GROSS_MASS,
     Mission.Design.LIFT_COEFFICIENT,
     Mission.Design.MACH,
+]
+
+TABULAR_CORE_INPUTS = [
+    Aircraft.Wing.AREA,
 ]
 
 # Parameters for low speed aero.
