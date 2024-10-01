@@ -92,10 +92,12 @@ class MotorMap(om.Group):
             promotes=[("throttle", Dynamic.Mission.THROTTLE)],
         )
 
-        self.add_subsystem(name="motor_efficiency",
-                           subsys=motor,
-                           promotes_inputs=[Dynamic.Mission.RPM, "torque_unscaled"],
-                           promotes_outputs=["motor_efficiency"])
+        self.add_subsystem(
+            name="motor_efficiency",
+            subsys=motor,
+            promotes_inputs=[Dynamic.Mission.RPM],
+            promotes_outputs=["motor_efficiency"],
+        )
 
         # Now that we know the efficiency, scale up the torque correctly for the engine
         #   size selected
@@ -115,5 +117,6 @@ class MotorMap(om.Group):
         )
 
         self.connect(
-            'throttle_to_torque.torque_unscaled', 'scale_motor_torque.torque_unscaled'
+            'throttle_to_torque.torque_unscaled',
+            ['motor_efficiency.torque_unscaled', 'scale_motor_torque.torque_unscaled'],
         )

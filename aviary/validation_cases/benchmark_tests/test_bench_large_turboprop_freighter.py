@@ -32,8 +32,8 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
             "models/large_turboprop_freighter/large_turboprop_freighter.csv"
         )
 
-        options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
-        options.set_val(Aircraft.Engine.WING_LOCATIONS, 0.385)
+        # options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
+        # options.set_val(Aircraft.Engine.WING_LOCATIONS, 0.385)
 
         turboprop = TurbopropModel('turboprop', options=options)
         turboprop2 = TurbopropModel('turboprop2', options=options)
@@ -63,11 +63,11 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         prob.add_phases()
         prob.add_post_mission_systems()
         prob.link_phases()
-        prob.add_driver("SLSQP", max_iter=0, verbosity=0)
+        prob.add_driver("IPOPT", max_iter=0, verbosity=0)
         prob.add_design_variables()
         prob.add_objective()
         prob.setup()
-        om.n2(prob)
+        # om.n2(prob)
 
         prob.set_initial_guesses()
         prob.run_aviary_problem("dymos_solution.db")
