@@ -32,13 +32,25 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
             "models/large_turboprop_freighter/large_turboprop_freighter.csv"
         )
 
+        options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
+        options.set_val(Aircraft.Engine.WING_LOCATIONS, 0.385)
+
         turboprop = TurbopropModel('turboprop', options=options)
+        turboprop2 = TurbopropModel('turboprop2', options=options)
+
+        motor = MotorBuilder(
+            'motor',
+        )
+
+        electroprop = TurbopropModel(
+            'electroprop', options=options, shaft_power_model=motor
+        )
 
         # load_inputs needs to be updated to accept an already existing aviary options
         prob.load_inputs(
             "models/large_turboprop_freighter/large_turboprop_freighter.csv",
             two_dof_phase_info,
-            engine_builders=[turboprop],
+            engine_builders=[turboprop, electroprop],
         )
         prob.aviary_inputs.set_val(Settings.VERBOSITY, 2)
 
