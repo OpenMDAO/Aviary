@@ -12,6 +12,7 @@ import zipfile
 
 import numpy as np
 
+import bokeh
 import bokeh.palettes as bp
 from bokeh.models import Legend, CheckboxGroup, CustomJS
 from bokeh.plotting import figure
@@ -329,7 +330,8 @@ def create_report_frame(format, text_filepath, documentation):
             if format == "markdown":
                 report_pane = pn.pane.Markdown(file_text)
             elif format == "text":
-                report_pane = pn.pane.Markdown(f"```\n{file_text}\n```\n")
+                # report_pane = pn.pane.Markdown(f"```\n{file_text}\n```\n")
+                report_pane = pn.pane.Str(file_text)
             report_pane = pn.Column(
                 pn.pane.HTML(f"<p>{documentation}</p>", styles={'text-align': 'left'}),
                 report_pane
@@ -568,6 +570,249 @@ def _get_interactive_plot_sources(data_by_varname_and_phase, x_varname, y_varnam
         return [], []
 
 
+def create_optimization_history_plot_test():
+    # testing the plotting
+    
+    import pandas as pd
+    import numpy as np
+    import panel as pn
+    import bokeh.plotting as bp
+    from bokeh.models import ColumnDataSource, LegendItem, Legend
+
+    # Enable the Panel extension (for Jupyter notebooks; optional if running as a script)
+    pn.extension()
+
+    # Create sample time series data
+    dates = pd.date_range(start='2020-01-01', periods=100)
+    data = pd.DataFrame({
+        'date': dates,
+        'Series 1': np.random.randn(100).cumsum(),
+        'Series 2': np.random.randn(100).cumsum(),
+        'Series 3': np.random.randn(100).cumsum(),
+    })
+
+    # Create a ColumnDataSource
+    source = ColumnDataSource(data)
+
+    # Create a Bokeh figure with a datetime x-axis
+    p = bp.figure(x_axis_type='datetime', title='Time Series Plot', width=800, height=400)
+    p.xaxis.axis_label = 'Date'
+    p.yaxis.axis_label = 'Value'
+
+    # Plot each time series and keep references to the renderers
+    renderers = {}
+    colors = ['blue', 'red', 'green']
+    series_list = ['Series 1', 'Series 2', 'Series 3']
+    for i, series in enumerate(series_list):
+        renderers[series] = p.line(
+            x='date',
+            y=series,
+            source=source,
+            color=colors[i],
+            line_width=2
+        )
+
+    # Create the legend manually using LegendItem
+    legend_items = [LegendItem(label=series, renderers=[renderers[series]]) for series in series_list]
+    legend = Legend(items=legend_items)
+    print(f"{id(legend)=}")
+    p.add_layout(legend, 'right')
+    print(f"{id(p)=}")
+    # Create a CheckBoxGroup widget using Panel
+    checkbox_group = pn.widgets.CheckBoxGroup(
+        name='Time Series',
+        value=series_list,  # All series are active by default
+        options=series_list
+    )
+
+    # Define a callback function to update visibility and legend based on checkbox selection
+    def update(event):
+        active_labels = checkbox_group.value
+        # Update renderers' visibility
+        for series in series_list:
+            renderers[series].visible = series in active_labels
+        # Update legend items to only include visible series
+        print(f"update legend {active_labels=}")
+        # p.legend.items = [LegendItem(label=series, renderers=[renderers[series]]) for series in active_labels]
+        print(f"{id(legend)=}")
+        legend.items = [LegendItem(label=series, renderers=[renderers[series]]) for series in active_labels]
+        print(f"{id(p)=}")
+        print(f"{legend.items=}")
+
+    # Attach the callback to the CheckBoxGroup
+    checkbox_group.param.watch(update, 'value')
+
+    # Arrange the layout using Panel
+    layout = pn.Column(checkbox_group, p)
+    return layout
+
+def create_optimization_history_plot(df):
+    # testing the plotting
+    
+    import pandas as pd
+    import numpy as np
+    import panel as pn
+    import bokeh.plotting as bp
+    from bokeh.models import ColumnDataSource, LegendItem, Legend
+
+    # Enable the Panel extension (for Jupyter notebooks; optional if running as a script)
+    pn.extension()
+
+    # Create a ColumnDataSource
+    source = ColumnDataSource(df)
+
+    # Create a Bokeh figure
+    p = bp.figure(title='Optimization History', width=600, height=600)
+    p.xaxis.axis_label = 'Iterations'
+    p.yaxis.axis_label = 'Variables'
+    # p.legend.visible = True
+    
+
+    # # Plot each time series and keep references to the renderers
+    renderers = {}
+    colors = ['blue', 'red', 'green']
+    series_list = list(df.columns)[1:]
+    for i, series in enumerate(series_list):
+        renderers[series] = p.line(
+            x='iter_count',
+            y=series,
+            source=source,
+            color=colors[i % 3],
+            line_width=2,
+            visible=False,
+        )
+
+
+    # Create the legend manually using LegendItem
+    # legend_items = [LegendItem(label=series, renderers=[renderers[series]]) for series in series_list]
+    legend_items = []
+    legend = Legend(items=legend_items, location=(-50, 0))
+
+    # # Create a CheckBoxGroup widget using Panel
+    # checkbox_group = pn.widgets.CheckBoxGroup(
+    #     name='Time Series',
+    #     value=[],
+    #     options=series_list
+    # )
+
+    # # Define a callback function to update visibility and legend based on checkbox selection
+    # def update(event):
+    #     active_labels = checkbox_group.value
+    #     # Update renderers' visibility
+    #     for series in series_list:
+    #         renderers[series].visible = series in active_labels
+    #     # Update legend items to only include visible series
+    #     # p.legend.items = [LegendItem(label=series, renderers=[renderers[series]]) for series in active_labels]
+
+    #     legend.items = [LegendItem(label=series, renderers=[renderers[series]]) for series in active_labels]
+    #     print(f"{id(p)=}")
+    #     print(f"{legend.items=}")
+
+    # # Attach the callback to the CheckBoxGroup
+    # checkbox_group.param.watch(update, 'value')
+    
+    
+    # legend.items = [LegendItem(label=series, renderers=[renderers[series]]) for series in series_list]
+    # legend.items = [LegendItem(label=series, renderers=[renderers[series]]) for series in series_list[:5]]
+
+    legend_items = [LegendItem(label=series, renderers=[renderers[series]]) for series in series_list]
+
+    p.add_layout(legend, 'below')
+
+    
+    
+    
+    from bokeh.models import TextInput, ColumnDataSource, CustomJS, Div
+    import random
+    import string
+    from bokeh.io import show
+    from bokeh.layouts import column
+    from bokeh.models import TextInput, ColumnDataSource, CustomJS, Div
+
+    # def random_str():
+    #     return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(20))
+
+    # # Generate a larger set of options
+    # options = [random_str() for _ in range(100)]
+    ds = ColumnDataSource(data=dict(options=series_list, checked=[False]*len(series_list)))
+   # Create a Div to act as a scrollable container
+    scroll_box = Div(
+        styles={
+            'overflow-y': 'scroll', 
+            'height': '300px', 
+            'border': '1px solid #ddd',
+            'padding': '10px'
+        }
+    )
+
+    ti = TextInput(placeholder='Enter filter')
+
+    # CustomJS callback for checkbox changes
+    checkbox_callback = CustomJS(args=dict(ds=ds,renderers=renderers,legend=legend, legend_items=legend_items), code="""
+    // The incoming Legend is empty. The items are passed in separately
+    var doc = Bokeh.documents[0];
+    
+    const checkedIndex = cb_obj.index;
+    const isChecked = cb_obj.checked;
+    ds.data['checked'][checkedIndex] = isChecked;
+    renderers[ds.data['options'][checkedIndex]].visible = isChecked;
+            
+    // empty the Legend items and then add in the ones for the variables that are checked         
+    legend.items = [];
+    for (let i =0; i < legend_items.length; i++){
+        if ( ds.data['checked'][i] ) {
+            legend.items.push(legend_items[i]);
+        }
+    }
+
+ds.change.emit();    """)
+
+    # Update the main CustomJS callback
+    callback = CustomJS(args=dict(ds=ds, scroll_box=scroll_box, checkbox_callback=checkbox_callback), code="""
+                        
+        const filter_text = cb_obj.value.toLowerCase();
+        const all_options = ds.data['options'];
+        const checked_states = ds.data['checked'];
+        
+        // Filter options
+        const filtered_options = all_options.filter(option => 
+            option.toLowerCase().includes(filter_text)
+        );
+        
+        // Update the scroll box content
+        let checkboxes_html = '';
+        filtered_options.forEach((label) => {
+            const index = all_options.indexOf(label);
+            checkboxes_html += `
+                <label style="display:block; margin-bottom:5px;">
+                    <input type="checkbox" value="${label}" ${checked_states[index] ? 'checked' : ''}
+                        onchange="Bokeh.documents[0].get_model_by_id('${checkbox_callback.id}').execute({index: ${index}, checked: this.checked})">
+                    ${label}
+                </label>
+            `;
+        });
+        scroll_box.text = checkboxes_html;
+    """)
+
+    ti.js_on_change('value', callback)
+
+    # Initial population of the scroll box
+    initial_html = ''.join(f"""
+        <label style="display:block; margin-bottom:5px;">
+            <input type="checkbox" value="{option}"
+                onchange="Bokeh.documents[0].get_model_by_id('{checkbox_callback.id}').execute({{index: {i}, checked: this.checked}})">
+            {option}
+        </label>
+    """ for i, option in enumerate(series_list))
+    scroll_box.text = initial_html
+
+
+    # Arrange the layout using Panel
+    # layout = pn.Row(pn.Column(ti, scroll_box), checkbox_group, p)
+    layout = pn.Row(pn.Column(ti, scroll_box), p)
+    # layout = pn.Row(checkbox_group,bokeh_layout)
+    return layout
+
 # The main script that generates all the tabs in the dashboard
 def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_background=False):
     """
@@ -649,9 +894,6 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
     )
     model_tabs_list.append(("Trajectory Linkage", traj_linkage_report_pane))
 
-    ####### Optimization Tab #######
-    optimization_tabs_list = []
-
     # Driver scaling
     driver_scaling_report_pane = create_report_frame(
         "html", f"{reports_dir}/driver_scaling_report.html", '''
@@ -662,6 +904,19 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
         '''
     )
     model_tabs_list.append(("Driver Scaling", driver_scaling_report_pane))
+
+    ####### Optimization Tab #######
+    optimization_tabs_list = []
+    
+    opt_plot_testing_pane = create_optimization_history_plot_test() 
+    optimization_tabs_list.append(("Optimization History test", opt_plot_testing_pane))
+
+    # Optimization History Plot
+    if driver_recorder:
+        if os.path.isfile(driver_recorder):
+            df = convert_case_recorder_file_to_df(f"{driver_recorder}")
+            opt_history_pane = create_optimization_history_plot(df) 
+            optimization_tabs_list.append(("Optimization History", opt_history_pane))
 
     # Desvars, cons, opt interactive plot
     if driver_recorder:
@@ -682,14 +937,23 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
                     color=list(bp.Category10[10]),
                     yformatter="%.0f",
                     title="Model Optimization using OpenMDAO",
+                    legend=False,
+                    # legend="bottom",
+                    # legend_cols=True,
+                    # legend_muted=True,
+                    # legend_position='right', legend_offset=(-200, -200)
                 )
+                # ihvplot.opts(show_legend='bottom') # does not work. Still on right
+                # print(dir(ihvplot))
+                # hm = hm.opts(legend_position='top')
+
                 optimization_plot_pane = pn.Column(
                     pn.Row(
                         pn.Column(
                             variables,
                             pn.VSpacer(height=30),
                             pn.VSpacer(height=30),
-                            width=300,
+                            # width=300,
                         ),
                         ihvplot.panel(),
                     )
@@ -931,7 +1195,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
                 ],
             )
 
-            colors = bp.d3['Category20'][20][0::2] + bp.d3['Category20'][20][1::2]
+            colors = bokeh.palettes.d3['Category20'][20][0::2] + bokeh.palettes.d3['Category20'][20][1::2]
             legend_data = []
             phases = sorted(phases, key=str.casefold)
             for i, phase in enumerate(phases):
@@ -1089,6 +1353,11 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
     home_dir = "."
     if port == 0:
         port = get_free_port()
+        
+        
+        
+    print(f"{show=}")
+    print(f"{threaded=}")
     server = pn.serve(
         template,
         port=port,
