@@ -32,8 +32,8 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
             "models/large_turboprop_freighter/large_turboprop_freighter.csv"
         )
 
-        # options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
-        # options.set_val(Aircraft.Engine.WING_LOCATIONS, 0.385)
+        options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
+        options.set_val(Aircraft.Engine.WING_LOCATIONS, 0.385)
 
         turboprop = TurbopropModel('turboprop', options=options)
         turboprop2 = TurbopropModel('turboprop2', options=options)
@@ -49,8 +49,8 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         # load_inputs needs to be updated to accept an already existing aviary options
         prob.load_inputs(
             "models/large_turboprop_freighter/large_turboprop_freighter.csv",
-            energy_phase_info,
-            engine_builders=[turboprop],  # , turboprop2],
+            two_dof_phase_info,
+            engine_builders=[turboprop, turboprop2],
         )
         prob.aviary_inputs.set_val(Settings.VERBOSITY, 2)
 
@@ -67,7 +67,7 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         prob.add_design_variables()
         prob.add_objective()
         prob.setup()
-        # om.n2(prob)
+        om.n2(prob)
 
         prob.set_initial_guesses()
         prob.run_aviary_problem("dymos_solution.db")

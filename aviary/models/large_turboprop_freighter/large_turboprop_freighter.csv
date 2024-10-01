@@ -2,7 +2,7 @@
 # SETTINGS #
 ############
 settings:problem_type, fallout, unitless
-settings:equations_of_motion, height_energy
+settings:equations_of_motion, 2DOF
 settings:mass_method, GASP
 
 ############
@@ -68,7 +68,7 @@ aircraft:engine:wing_locations, [0.385, 0.385], unitless
 aircraft:engine:gearbox:gear_ratio, 13.550135501355014, unitless
 aircraft:engine:gearbox:efficiency, 1.0, unitless
 aircraft:engine:gearbox:shaft_power_design, 4465, kW
-aircraft:engine:gearbox:specific_torque, 0.0, N*m/kg
+aircraft:engine:gearbox:specific_torque, 100.0, N*m/kg
 
 # Fuel
 aircraft:fuel:density, 6.687, lbm/galUS
