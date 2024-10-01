@@ -35,20 +35,58 @@ class PropulsionMission(om.Group):
 
         if num_engine_type > 1:
 
-            # We need a single component with scale_factor. Dymos can't find it when it is
-            # already sliced across several component.
-            # TODO this only works for engine decks. Need to fix problem in generic way
-            comp = om.ExecComp(
-                "y=x",
-                y={'val': np.ones(num_engine_type), 'units': 'unitless'},
-                x={'val': np.ones(num_engine_type), 'units': 'unitless'},
-                has_diag_partials=True,
-            )
+            # We need a component to add parameters to problem. Dymos can't find it when
+            # it is already sliced across several components.
+            # TODO is this problem fixable from dymos end (introspection includes parameters)?
+
+            # create set of params
+            # TODO get_parameters should have access to aviary options + phase info
+            param_dict = {}
+            # save parameters for use in configure()
+            parameters = self.parameters = set()
+            for engine in engine_models:
+                eng_params = engine.get_parameters()
+                param_dict.update(eng_params)
+
+            parameters.update(eng_params.keys())
+
+            # if params exist, create execcomp, fill with equations
+            if len(parameters) != 0:
+                comp = om.ExecComp(has_diag_partials=True)
+                # comp = om.ExecComp(
+                #     "y=x",
+                #     y={'val': np.ones(num_engine_type), 'units': 'unitless'},
+                #     x={'val': np.ones(num_engine_type), 'units': 'unitless'},
+                #     has_diag_partials=True,
+                # )
+
+                for i, param in enumerate(parameters):
+                    # try to find units information
+                    try:
+                        units = param_dict[param]['units']
+                    except KeyError:
+                        units = 'unitless'
+
+                    attrs = {
+                        f'x_{i}': {
+                            'val': np.ones(num_engine_type),
+                            'units': units,
+                        },
+                        f'y_{i}': {
+                            'val': np.ones(num_engine_type),
+                            'units': units,
+                        },
+                    }
+                    comp.add_expr(
+                        f'y_{i}=x_{i}',
+                        **attrs,
+                    )
+
             self.add_subsystem(
-                "scale_passthrough",
+                "parameter_passthrough",
                 comp,
-                promotes_inputs=[('x', Aircraft.Engine.SCALE_FACTOR)],
-                promotes_outputs=[('y', 'passthrough_scale_factor')],
+                #     promotes_inputs=[('x', Aircraft.Engine.SCALE_FACTOR)],
+                #     promotes_outputs=[('y', 'passthrough_scale_factor')],
             )
 
             for i, engine in enumerate(engine_models):
@@ -65,11 +103,14 @@ class PropulsionMission(om.Group):
                     src_indices=om.slicer[:, i],
                 )
 
-                self.promotes(
-                    engine.name,
-                    inputs=[(Aircraft.Engine.SCALE_FACTOR, 'passthrough_scale_factor')],
-                    src_indices=om.slicer[i],
-                )
+                # loop through params and slice as needed
+                params = engine.get_parameters()
+                for param in params:
+                    self.promotes(
+                        engine.name,
+                        inputs=[(param, param + '_passthrough')],
+                        src_indices=om.slicer[i],
+                    )
 
                 # TODO if only some engine use hybrid throttle, source vector will have an
                 #      index for that engine that is unused, will this confuse optimizer?
@@ -217,6 +258,37 @@ class PropulsionMission(om.Group):
                             'vectorize_performance.' + output + '_' + str(i),
                         )
             # TODO handle setting of other variables from engine outputs (e.g. Aircraft.Engine.****)
+
+        engine_models = self.options['engine_models']
+        num_engine_type = len(engine_models)
+
+        if num_engine_type > 1:
+            # custom promote parameters with aliasing to connect to passthrough component
+            # for engine in engine_models:
+            # get inputs to engine model
+            # engine_comp = self._get_subsystem(engine.name)
+            # input_dict = engine_comp.list_inputs(
+            #     return_format='dict', units=True, out_stream=None, all_procs=True
+            # )
+            # # TODO this makes sure even not fully promoted variables are caught - is this
+            # #      wanted?
+            # input_list = list(
+            #     set(
+            #         input_dict[key]['prom_name']
+            #         for key in input_dict
+            #         if '.' not in input_dict[key]['prom_name']
+            #     )
+            # )
+            # promotions = []
+            for i, param in enumerate(self.parameters):
+                self.promotes(
+                    'parameter_passthrough',
+                    inputs=[(f'x_{i}', param)],
+                    outputs=[(f'y_{i}', param + '_passthrough')],
+                )
+                #     if param in input_dict:
+                #         promotions.append((param, param + '_passthrough'))
+                # self.promotes(engine.name, inputs=promotions)
 
 
 class PropulsionSum(om.ExplicitComponent):
