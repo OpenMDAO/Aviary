@@ -2339,7 +2339,7 @@ add_meta_data(
                      },
     option=True,
     default_value=GASPEngineType.TURBOJET,
-    types=(list, GASPEngineType, str, int, np.ndarray),
+    types=(list, GASPEngineType, int, np.ndarray),
     units="unitless",
     desc='specifies engine type used for engine mass calculation',
 )
@@ -6918,7 +6918,9 @@ add_meta_data(
                      },
     units='ft',
     option=True,
-    default_value=25000,
+    default_value=25000.0,
+    types=(int, float),
+    openmdao_types=tuple,
     desc='design mission cruise altitude',
 )
 

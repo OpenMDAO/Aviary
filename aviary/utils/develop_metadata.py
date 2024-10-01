@@ -6,6 +6,7 @@ def add_meta_data(
         default_value=0.0,
         option=False,
         types=None,
+        openmdao_types=None,
         historical_name=None,
         _check_unique=True):
     '''
@@ -36,7 +37,12 @@ def add_meta_data(
         indicates that this variable is an option, rather than a normal input
 
     types : type
-        gives the allowable type(s) of the variable
+        gives the allowable type(s) of the variable in the aviary API.
+
+    openmdao_types : type
+        the types used for declaring component options can differ from the options
+        that are checked in the AviaryValues container. This should only be
+        specified in those cases.
 
     historical_name : dict or None
         dictionary of names that the variable held in prior codes
@@ -67,7 +73,7 @@ def add_meta_data(
         of the provided key. This should only be set to false when update_meta_data is the calling function.
 
     Returns
-    ------- 
+    -------
     None
         No variables returned by this method.
 
@@ -84,13 +90,17 @@ def add_meta_data(
     if units is None:
         units = 'unitless'
 
+    if openmdao_types is None:
+        openmdao_types = types
+
     meta_data[key] = {
         'historical_name': historical_name,
         'units': units,
         'desc': desc,
         'option': option,
         'default_value': default_value,
-        'types': types
+        'types': types,
+        'openmdao_types': openmdao_types
     }
 
 
@@ -158,7 +168,7 @@ def update_meta_data(
                 represents the GWTOL variable of the ANALYS subroutine
 
     Returns
-    ------- 
+    -------
     None
         No variables returned by this method.
 

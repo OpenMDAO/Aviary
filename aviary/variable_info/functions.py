@@ -156,10 +156,12 @@ def add_aviary_option(comp, name, val=_unspecified, units=None, desc=None, meta_
         val = meta['default_value']
 
     if units not in [None, 'unitless']:
-        comp.options.declare(name, default=(val, units), types=meta['types'], desc=desc,
+        comp.options.declare(name, default=(val, units),
+                             types=meta['openmdao_types'], desc=desc,
                              set_function=units_setter)
     else:
-        comp.options.declare(name, default=val, types=meta['types'], desc=desc)
+        comp.options.declare(name, default=val,
+                             types=meta['openmdao_types'], desc=desc)
 
 
 def override_aviary_vars(group, aviary_inputs: AviaryValues,
