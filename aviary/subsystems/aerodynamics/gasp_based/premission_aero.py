@@ -45,7 +45,8 @@ class PreMissionAero(om.Group):
                 rho={"units": "slug/ft**3"},
                 kinematic_viscosity={"units": "ft**2/s"},
             ),
-            promotes=["viscosity", "kinematic_viscosity",
+            promotes=["viscosity",
+                      ("kinematic_viscosity", Dynamic.Mission.KINEMATIC_VISCOSITY),
                       ("rho", Dynamic.Mission.DENSITY)],
         )
 
