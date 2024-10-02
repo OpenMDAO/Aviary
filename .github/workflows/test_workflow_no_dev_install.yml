@@ -28,6 +28,7 @@ jobs:
           # latest versions of openmdao/dymos
           - NAME: latest
             PY: 3
+            NUMPY: 1
 
     steps:
       - name: Display run details
@@ -67,6 +68,9 @@ jobs:
           echo "============================================================="
           echo "Install Aviary"
           echo "============================================================="
+          echo ""
+          echo "Temporarilly install specific versions for now."
+          pip install openmdao==3.34.2 numpy<2
           pip install packaging
           pip install .[all]
 
