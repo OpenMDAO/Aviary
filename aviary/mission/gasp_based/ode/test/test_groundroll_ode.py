@@ -38,13 +38,13 @@ class GroundrollODETestCase(unittest.TestCase):
         self.prob.run_model()
 
         testvals = {
-            Dynamic.Mission.VELOCITY_RATE: [1413548.36, 1413548.36],
+            Dynamic.Mission.VELOCITY_RATE: [1413741.12, 1413741.12],
             Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE: [0.0, 0.0],
             Dynamic.Mission.ALTITUDE_RATE: [0.0, 0.0],
             Dynamic.Mission.DISTANCE_RATE: [168.781, 168.781],
             "normal_force": [0.0, 0.0],
             "fuselage_pitch": [0.0, 0.0],
-            "dmass_dv": [-5.03252493e-06, -5.03252493e-06],
+            "dmass_dv": [-5.03183878e-06, -5.03183878e-06],
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 

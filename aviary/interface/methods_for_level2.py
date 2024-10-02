@@ -1071,6 +1071,7 @@ class AviaryProblem(om.Problem):
                 src_indices=[-1],
                 flat_src_indices=True,
             )
+            self.traj = traj
             return traj
 
         def add_subsystem_timeseries_outputs(phase, phase_name):

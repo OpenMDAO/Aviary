@@ -448,6 +448,10 @@ class SGMTrajBase(om.ExplicitComponent):
         self.adjoint_int_opts['nsteps'] = 5000
         self.adjoint_int_opts['name'] = "dop853"
 
+    def add_parameter(self, name, units=None, **kwargs):
+        self.add_input('parameters:'+name, units=units)
+        self.options["param_dict"].get(name, {}).update({'units': units})
+
     def setup_params(
             self,
             ODEs,

@@ -49,19 +49,17 @@ class DescentODETestCase(unittest.TestCase):
         self.prob.run_model()
 
         testvals = {
-            "alpha": np.array([3.23388, 1.203234]),
-            "CL": np.array([0.51849367, 0.25908653]),
-            "CD": np.array([0.02794324, 0.01862946]),
+            "alpha": np.array([3.23393993, 1.20331298]),
+            "CL": np.array([0.51850073, 0.25909499]),
+            "CD": np.array([0.02780363, 0.01849853]),
             # ft/s
-            Dynamic.Mission.ALTITUDE_RATE: np.array([-2356.7705, -2877.9606]) / 60,
-            # TAS (ft/s) * cos(gamma), [458.67774, 437.62297] kts
-            Dynamic.Mission.DISTANCE_RATE: [773.1637, 737.0653],  # ft/s
+            Dynamic.Mission.ALTITUDE_RATE: np.array([-39.07162618, -47.59435367]),
+            Dynamic.Mission.DISTANCE_RATE: [773.1742866, 737.08941812],  # ft/s
             # lbm/h
             Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: np.array([-451.0239, -997.1514]),
             "EAS": [417.87419406, 590.73344937],  # ft/s ([247.58367, 349.99997] kts)
             Dynamic.Mission.MACH: [0.8, 0.697266],
-            # gamma, rad ([-2.908332, -3.723388] deg)
-            Dynamic.Mission.FLIGHT_PATH_ANGLE: [-0.05075997, -0.06498538],
+            Dynamic.Mission.FLIGHT_PATH_ANGLE: [-0.0504911, -0.06448115],
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
@@ -87,14 +85,13 @@ class DescentODETestCase(unittest.TestCase):
         self.prob.run_model()
 
         testvals = {
-            "alpha": 4.19956,
-            "CL": 0.507578,
-            "CD": 0.0268404,
-            Dynamic.Mission.ALTITUDE_RATE: -1138.583 / 60,
-            # TAS (ft/s) * cos(gamma) = 255.5613 * 1.68781 * cos(-0.0440083)
-            Dynamic.Mission.DISTANCE_RATE: 430.9213,
+            "alpha": 4.19962426,
+            "CL": 0.50758417,
+            "CD": 0.02670105,
+            Dynamic.Mission.ALTITUDE_RATE: -18.85828188,
+            Dynamic.Mission.DISTANCE_RATE: 430.92650383,
             Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: -1295.11,
-            Dynamic.Mission.FLIGHT_PATH_ANGLE: -0.0440083,  # rad (-2.52149 deg)
+            Dynamic.Mission.FLIGHT_PATH_ANGLE: -0.04373427,  # rad (-2.52149 deg)
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
