@@ -68,8 +68,9 @@ jobs:
           echo "Install Aviary"
           echo "============================================================="
           echo ""
-          echo "Temporarilly install specific versions for now."
-          pip install openmdao==3.34.2 numpy<2
+          echo "Temporarily install specific versions for now."
+          pip install "numpy<2"
+          pip install "openmdao==3.34.2"
           pip install packaging
           pip install .[all]
 
