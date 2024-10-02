@@ -4,7 +4,7 @@ from dymos.models.atmosphere.atmos_1976 import USatm1976Comp
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
-from aviary.subsystems.aerodynamics.gasp_based.interference2 import root_chord, \
+from aviary.subsystems.aerodynamics.gasp_based.interference import root_chord, \
     common_variables, top_and_bottom_width, body_ratios, interference_drag, \
     WingFuselageInterference_premission, WingFuselageInterference_dynamic
 from aviary.variable_info.variables import Aircraft, Dynamic
