@@ -105,7 +105,7 @@ class MassPremission(om.Group):
             self.add_subsystem(
                 'furnishing_base',
                 AltFurnishingsGroupMassBase(
-                    ),
+                ),
                 promotes_inputs=['*'], promotes_outputs=['*'])
 
             self.add_subsystem(

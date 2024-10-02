@@ -56,7 +56,7 @@ class CargoMass(om.ExplicitComponent):
     ):
         passenger_count = self.options[Aircraft.CrewPayload.NUM_PASSENGERS]
         mass_per_passenger, _ = self.options[Aircraft.CrewPayload.MASS_PER_PASSENGER]
-        baggage_mass_per_passenger, _  = self.options[Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER]
+        baggage_mass_per_passenger, _ = self.options[Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER]
 
         outputs[Aircraft.CrewPayload.PASSENGER_MASS] = \
             mass_per_passenger * passenger_count

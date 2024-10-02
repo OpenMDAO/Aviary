@@ -60,7 +60,9 @@ class CoreGeometryBuilder(GeometryBuilderBase):
         geom_group = None
 
         if both_geom:
-            geom_group = CombinedGeometry(code_origin_to_prioritize=code_origin_to_prioritize)
+            geom_group = CombinedGeometry(
+                code_origin_to_prioritize=code_origin_to_prioritize
+            )
 
         elif code_origin is GASP:
             geom_group = SizeGroup()

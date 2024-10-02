@@ -316,66 +316,66 @@ class CharacteristicLengths(om.ExplicitComponent):
         outputs[Aircraft.Nacelle.CHARACTERISTIC_LENGTH] = char_len
         outputs[Aircraft.Nacelle.FINENESS] = fineness
 
-    #def _compute_additional_fuselages(
-        #self, inputs, outputs, discrete_inputs=None, discrete_outputs=None
-    #):
-        #num_fuselages = inputs[Aircraft.Fuselage.NUM_FUSELAGES]
+    def _compute_additional_fuselages(
+        self, inputs, outputs, discrete_inputs=None, discrete_outputs=None
+    ):
+        num_fuselages = inputs[Aircraft.Fuselage.NUM_FUSELAGES]
 
-        #if num_fuselages < 2:
-            #return
+        if num_fuselages < 2:
+            return
 
-        #num_extra = num_fuselages - 1
+        num_extra = num_fuselages - 1
 
-        #idx = self._num_components
-        #self._num_components += num_extra
+        idx = self._num_components
+        self._num_components += num_extra
 
-        #lengths = outputs[Aircraft.Design.CHARACTERISTIC_LENGTHS]
+        lengths = outputs[Aircraft.Design.CHARACTERISTIC_LENGTHS]
 
-        #fineness = outputs[Aircraft.Design.FINENESS]
+        fineness = outputs[Aircraft.Design.FINENESS]
 
-        #laminar_flow_lower = outputs[Aircraft.Design.LAMINAR_FLOW_LOWER]
-        #laminar_flow_upper = outputs[Aircraft.Design.LAMINAR_FLOW_UPPER]
+        laminar_flow_lower = outputs[Aircraft.Design.LAMINAR_FLOW_LOWER]
+        laminar_flow_upper = outputs[Aircraft.Design.LAMINAR_FLOW_UPPER]
 
-        #for _ in range(num_extra):
-            #lengths[idx] = lengths[3]
+        for _ in range(num_extra):
+            lengths[idx] = lengths[3]
 
-            #fineness[idx] = fineness[3]
+            fineness[idx] = fineness[3]
 
-            #laminar_flow_lower[idx] = laminar_flow_lower[3]
-            #laminar_flow_upper[idx] = laminar_flow_upper[3]
+            laminar_flow_lower[idx] = laminar_flow_lower[3]
+            laminar_flow_upper[idx] = laminar_flow_upper[3]
 
-            #idx += 1
+            idx += 1
 
-    #def _compute_additional_vertical_tails(
-        #self, inputs, outputs, discrete_inputs=None, discrete_outputs=None
-    #):
-        #aviary_options: AviaryValues = self.options['aviary_options']
-        #num_tails = aviary_options.get_val(Aircraft.VerticalTail.NUM_TAILS)
+    def _compute_additional_vertical_tails(
+        self, inputs, outputs, discrete_inputs=None, discrete_outputs=None
+    ):
+        aviary_options: AviaryValues = self.options['aviary_options']
+        num_tails = aviary_options.get_val(Aircraft.VerticalTail.NUM_TAILS)
 
-        #if num_tails < 2:
-            #return
+        if num_tails < 2:
+            return
 
-        #num_extra = num_tails - 1
+        num_extra = num_tails - 1
 
-        #idx = self._num_components
-        #self._num_components += num_extra
+        idx = self._num_components
+        self._num_components += num_extra
 
-        #lengths = outputs[Aircraft.Design.CHARACTERISTIC_LENGTHS]
+        lengths = outputs[Aircraft.Design.CHARACTERISTIC_LENGTHS]
 
-        #fineness = outputs[Aircraft.Design.FINENESS]
+        fineness = outputs[Aircraft.Design.FINENESS]
 
-        #laminar_flow_lower = outputs[Aircraft.Design.LAMINAR_FLOW_LOWER]
-        #laminar_flow_upper = outputs[Aircraft.Design.LAMINAR_FLOW_UPPER]
+        laminar_flow_lower = outputs[Aircraft.Design.LAMINAR_FLOW_LOWER]
+        laminar_flow_upper = outputs[Aircraft.Design.LAMINAR_FLOW_UPPER]
 
-        #for _ in range(num_extra):
-            #lengths[idx] = lengths[2]
+        for _ in range(num_extra):
+            lengths[idx] = lengths[2]
 
-            #fineness[idx] = fineness[2]
+            fineness[idx] = fineness[2]
 
-            #laminar_flow_lower[idx] = laminar_flow_lower[2]
-            #laminar_flow_upper[idx] = laminar_flow_upper[2]
+            laminar_flow_lower[idx] = laminar_flow_lower[2]
+            laminar_flow_upper[idx] = laminar_flow_upper[2]
 
-            #idx += 1
+            idx += 1
 
     def _compute_canard(
         self, inputs, outputs, discrete_inputs=None, discrete_outputs=None

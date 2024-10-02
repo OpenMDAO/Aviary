@@ -73,7 +73,8 @@ class BasicTransportEngineCtrlsTest2(unittest.TestCase):
             promotes_inputs=['*']
         )
 
-        prob.model_options['*'] = get_flops_options("LargeSingleAisle1FLOPS", preprocess=True)
+        prob.model_options['*'] = get_flops_options("LargeSingleAisle1FLOPS",
+                                                    preprocess=True)
 
         prob.setup(force_alloc_complex=True)
         prob.set_val(Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, 50000.0, 'lbf')

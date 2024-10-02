@@ -238,7 +238,8 @@ class MassParameters(om.ExplicitComponent):
 class PayloadMass(om.ExplicitComponent):
     def initialize(self):
         add_aviary_option(self, Aircraft.CrewPayload.NUM_PASSENGERS)
-        add_aviary_option(self, Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS, units='lbm')
+        add_aviary_option(self, Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS,
+                          units='lbm')
 
     def setup(self):
         add_aviary_input(self, Aircraft.CrewPayload.CARGO_MASS, val=10040)
@@ -721,7 +722,6 @@ class EngineMass(om.ExplicitComponent):
         num_engine_type = len(num_engines)
         eng_spec_wt = inputs[Aircraft.Engine.MASS_SPECIFIC] * GRAV_ENGLISH_LBM
         Fn_SLS = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
-
 
         spec_nacelle_wt = inputs[Aircraft.Nacelle.MASS_SPECIFIC] * GRAV_ENGLISH_LBM
         nacelle_area = inputs[Aircraft.Nacelle.SURFACE_AREA]

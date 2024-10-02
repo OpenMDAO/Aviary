@@ -59,7 +59,7 @@ class FuselageParameters(om.ExplicitComponent):
         num_aisle = options[Aircraft.Fuselage.NUM_AISLES]
         aisle_width, _ = options[Aircraft.Fuselage.AISLE_WIDTH]
         PAX = options[Aircraft.CrewPayload.NUM_PASSENGERS]
-        seat_pitch, _= options[Aircraft.Fuselage.SEAT_PITCH]
+        seat_pitch, _ = options[Aircraft.Fuselage.SEAT_PITCH]
 
         delta_diameter = inputs[Aircraft.Fuselage.DELTA_DIAMETER]
 

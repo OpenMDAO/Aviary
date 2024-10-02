@@ -230,8 +230,10 @@ class FuelAndOEMTestCase2(unittest.TestCase):
 
     def test_case1(self):
         prob = om.Problem()
-        prob.model.add_subsystem("wing_calcs", FuelAndOEMOutputs(),
-                                 promotes=["*"]
+        prob.model.add_subsystem(
+            "wing_calcs",
+            FuelAndOEMOutputs(),
+            promotes=["*"]
         )
         prob.model.set_input_defaults(
             Aircraft.Fuel.DENSITY, val=6.687, units="lbm/galUS")

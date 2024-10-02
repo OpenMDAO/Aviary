@@ -399,6 +399,7 @@ def extract_options(aviary_inputs: AviaryValues, metadata=_MetaData) -> dict:
 
     return options
 
+
 def setup_model_options(prob: om.Problem, aviary_inputs: AviaryValues,
                         meta_data=_MetaData, engine_models=None):
     """

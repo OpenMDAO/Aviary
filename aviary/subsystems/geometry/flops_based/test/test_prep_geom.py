@@ -62,7 +62,7 @@ class PrepGeomTest(unittest.TestCase):
 
                 override_aviary_vars(self, aviary_options)
 
-        keys=[
+        keys = [
             Aircraft.Fuselage.NUM_FUSELAGES,
             Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES,
             Aircraft.VerticalTail.NUM_TAILS,
