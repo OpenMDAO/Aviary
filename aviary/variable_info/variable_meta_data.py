@@ -6922,7 +6922,6 @@ add_meta_data(
     option=True,
     default_value=25000.0,
     types=(int, float),
-    openmdao_types=tuple,
     desc='design mission cruise altitude',
 )
 

@@ -156,12 +156,13 @@ def add_aviary_option(comp, name, val=_unspecified, units=None, desc=None, meta_
         val = meta['default_value']
 
     if units not in [None, 'unitless']:
+        types = tuple
         comp.options.declare(name, default=(val, units),
-                             types=meta['openmdao_types'], desc=desc,
+                             types=types, desc=desc,
                              set_function=units_setter)
     else:
         comp.options.declare(name, default=val,
-                             types=meta['openmdao_types'], desc=desc)
+                             types=meta['types'], desc=desc)
 
 
 def override_aviary_vars(group, aviary_inputs: AviaryValues,
@@ -389,7 +390,7 @@ def extract_options(aviary_inputs: AviaryValues, metadata=_MetaData) -> dict:
         val, units = aviary_inputs.get_item(key)
         meta_units = meta['units']
 
-        if meta_units is 'unitless' or meta_units is None:
+        if meta_units == 'unitless' or meta_units is None:
             options[key] = val
 
         else:
