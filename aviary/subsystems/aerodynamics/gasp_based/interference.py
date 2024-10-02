@@ -1,5 +1,6 @@
 import numpy as np
 import openmdao.api as om
+import os
 
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
@@ -42,12 +43,25 @@ class WingFuselageInterference_premission(om.ExplicitComponent):
         self.add_output('drag_loss_due_to_shielded_wing_area', 1.23456)
 
     def setup_partials(self):
-        pass
-        # self.declare_partials(
-        #     Aircraft.Wing.FORM_FACTOR, [
-        #         Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED,
-        #         Mission.Design.MACH,
-        #         Aircraft.Wing.SWEEP])
+        self.declare_partials(
+            'interference_independent_of_shielded_area', [
+                Aircraft.Wing.AREA,
+                Aircraft.Wing.SPAN,
+                Aircraft.Wing.TAPER_RATIO,
+                Aircraft.Wing.MOUNTING_TYPE,
+                Aircraft.Wing.THICKNESS_TO_CHORD_ROOT,
+                Aircraft.Wing.THICKNESS_TO_CHORD_TIP,
+                Aircraft.Fuselage.AVG_DIAMETER,
+                Aircraft.Wing.CENTER_DISTANCE])
+        self.declare_partials(
+            'drag_loss_due_to_shielded_wing_area', [
+                Aircraft.Wing.AREA,
+                Aircraft.Wing.SPAN,
+                Aircraft.Wing.TAPER_RATIO,
+                Aircraft.Wing.MOUNTING_TYPE,
+                Aircraft.Wing.THICKNESS_TO_CHORD_ROOT,
+                Aircraft.Fuselage.AVG_DIAMETER,
+                Aircraft.Wing.CENTER_DISTANCE])
 
     def compute(self, inputs, outputs):
         SW, B, SLM, HWING, TCR, TCT, SWF, XWQLF = inputs.values()
@@ -86,6 +100,69 @@ class WingFuselageInterference_premission(om.ExplicitComponent):
         outputs['interference_independent_of_shielded_area'] = FEINTWF
         # the loss in drag due to the shielded wing area
         outputs['drag_loss_due_to_shielded_wing_area'] = AREASHIELDWF
+
+    def compute_partials(self, inputs, J):
+        SW, B, SLM, HWING, TCR, TCT, SWF, XWQLF = inputs.values()
+
+        CROOT = 2*SW/(B*(1 + SLM))
+        dCROOT_dSW = 2/(B*(1 + SLM))
+        dCROOT_dB = -2*SW/(B**2*(1 + SLM))
+        dCROOT_dSLM = -2*SW/(B*(1 + SLM)**2)
+        ZW_RF = 2*HWING - 1
+
+        wtofd = TCR*CROOT/SWF  # wing_thickness_over_fuselage_diameter
+        dwtofd_dTCR = CROOT/SWF
+        dwtofd_dCROOT = TCR/SWF
+        dwtofd_dSWF = -TCR*CROOT/SWF**2
+        if (abs(ZW_RF + wtofd) >= 1):
+            WIDTHFTOP = 0.0
+            dWIDTHFTOP_dSWF = 0
+            dWIDTHFTOP_dHWING = 0
+            dWIDTHFTOP_dTCR = 0
+            dWIDTHFTOP_dSW = 0
+            dWIDTHFTOP_dB = 0
+            dWIDTHFTOP_dSLM = 0
+        else:
+            WIDTHFTOP = SWF*(1.0 - (2*HWING - 1 + wtofd)**2)**0.5
+            dWIDTHFTOP_dSWF = (1.0 - (2*HWING - 1 + wtofd)**2)**0.5 + .5*SWF*(1.0 -
+                                                                              (2*HWING - 1 + wtofd)**2)**-0.5 * (-2*(2*HWING - 1 + wtofd)*dwtofd_dSWF)
+            dWIDTHFTOP_dHWING = .5*SWF * \
+                (1.0 - (2*HWING - 1 + wtofd)**2)**-0.5 * (-2*(2*HWING - 1 + wtofd)*2)
+            dWIDTHFTOP_dTCR = .5*SWF*(1.0 - (2*HWING - 1 + wtofd)
+                                      ** 2)**-0.5 * (-2*(2*HWING - 1 + wtofd)*dwtofd_dTCR)
+            dWIDTHFTOP_dSW = .5*SWF*(1.0 - (2*HWING - 1 + wtofd)**2)**- \
+                0.5 * (-2*(2*HWING - 1 + wtofd)*dwtofd_dCROOT*dCROOT_dSW)
+            dWIDTHFTOP_dB = .5*SWF*(1.0 - (2*HWING - 1 + wtofd)**2)**- \
+                0.5 * (-2*(2*HWING - 1 + wtofd)*dwtofd_dCROOT*dCROOT_dB)
+            dWIDTHFTOP_dSLM = .5*SWF*(1.0 - (2*HWING - 1 + wtofd)**2)**- \
+                0.5 * (-2*(2*HWING - 1 + wtofd)*dwtofd_dCROOT*dCROOT_dSLM)
+            # -.5*(ZW_RF + wtofd)*(1.0-(ZW_RF + wtofd)**2)**-0.5
+        if (abs(ZW_RF - wtofd) >= 1):
+            WIDTHFBOT = 0.0
+        else:
+            WIDTHFBOT = SWF*(1.0 - (2*HWING - 1 - wtofd)**2)**0.5
+            dWIDTHFBOT_dSWF = (1.0 - (2*HWING - 1 - wtofd)**2)**0.5 + .5*SWF*(1.0 -
+                                                                              (2*HWING - 1 - wtofd)**2)**-0.5 * (-2*(2*HWING - 1 - wtofd)*-dwtofd_dSWF)
+            dWIDTHFBOT_dHWING = .5*SWF * \
+                (1.0 - (2*HWING - 1 - wtofd)**2)**-0.5 * (-2*(2*HWING - 1 - wtofd)*2)
+            dWIDTHFBOT_dTCR = .5*SWF*(1.0 - (2*HWING - 1 - wtofd)
+                                      ** 2)**-0.5 * (-2*(2*HWING - 1 - wtofd)*-dwtofd_dTCR)
+            dWIDTHFBOT_dSW = .5*SWF*(1.0 - (2*HWING - 1 - wtofd)**2)**- \
+                0.5 * (-2*(2*HWING - 1 - wtofd)*-dwtofd_dCROOT*dCROOT_dSW)
+            dWIDTHFBOT_dB = .5*SWF*(1.0 - (2*HWING - 1 - wtofd)**2)**- \
+                0.5 * (-2*(2*HWING - 1 - wtofd)*-dwtofd_dCROOT*dCROOT_dB)
+            dWIDTHFBOT_dSLM = .5*SWF*(1.0 - (2*HWING - 1 - wtofd)**2)**- \
+                0.5 * (-2*(2*HWING - 1 - wtofd)*-dwtofd_dCROOT*dCROOT_dSLM)
+
+        TCBODYWF = TCR - 0.5*(WIDTHFTOP + WIDTHFBOT)/B*(TCR - TCT)
+        CBODYWF = CROOT*(1 - 0.5*(WIDTHFTOP + WIDTHFBOT)/B*(1 - SLM))
+
+        KVWF = .0194 - 0.14817*(2*HWING - 1) + 1.3515*(2*HWING - 1)**2
+        KLWF = 0.13077 + 1.9791*XWQLF + 3.3325*XWQLF**2 - \
+            10.095*XWQLF**3 + 4.7229*XWQLF**4
+        KDTWF = 0.73543 + .028571*SWF/(TCBODYWF*CBODYWF)
+        FEINTWF = 1.5*(TCBODYWF**3)*(CBODYWF**2)*KVWF*KLWF*KDTWF
+        AREASHIELDWF = 0.5*(CROOT + CBODYWF)*0.5*(WIDTHFTOP + WIDTHFBOT)
 
 
 class WingFuselageInterference_dynamic(om.ExplicitComponent):
@@ -155,3 +232,17 @@ class WingFuselageInterference_dynamic(om.ExplicitComponent):
     #       WIDTHFBOT = 0.0
     #    ELSE
     #       WIDTHFBOT = SWF*(1.0 - (ZW_RF - TCR*CROOT/SWF)**2)**0.5
+
+
+class WingFuselageInterference(om.Group):
+    def initialize(self):
+        self.options.declare("num_nodes", default=1, types=int)
+
+    def setup(self):
+        nn = self.options["num_nodes"]
+
+        if os.environ['TESTFLO_RUNNING']:
+            self.add_subsystem("static_calculations",
+                               WingFuselageInterference_premission(), promotes=["*"])
+        self.add_subsystem("dynamic_calculations", WingFuselageInterference_dynamic(
+            num_nodes=nn), promotes=["*"])
