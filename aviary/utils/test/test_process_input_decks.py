@@ -11,9 +11,9 @@ class TestCreateVehicle(unittest.TestCase):
     def test_load_aircraft_csv(self):
         """Test loading a standard aircraft CSV file."""
         file_path = 'models/test_aircraft/aircraft_for_bench_FwFm.csv'
-        aircraft_values, initial_guesses = create_vehicle(get_path(file_path))
+        aircraft_values, initialization_guesses = create_vehicle(get_path(file_path))
         self.assertIsNotNone(aircraft_values)
-        self.assertIsNotNone(initial_guesses)
+        self.assertIsNotNone(initialization_guesses)
 
     def test_load_modified_aircraft_csv(self):
         """Test loading a modified aircraft CSV file with an additional blank line."""
@@ -35,9 +35,9 @@ class TestCreateVehicle(unittest.TestCase):
             modified_file.writelines(content[half_way_point:])
 
         # Test create_vehicle with the modified file
-        aircraft_values, initial_guesses = create_vehicle(modified_file_path)
+        aircraft_values, initialization_guesses = create_vehicle(modified_file_path)
         self.assertIsNotNone(aircraft_values)
-        self.assertIsNotNone(initial_guesses)
+        self.assertIsNotNone(initialization_guesses)
 
 
 if __name__ == '__main__':
