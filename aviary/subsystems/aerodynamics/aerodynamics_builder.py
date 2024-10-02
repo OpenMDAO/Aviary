@@ -415,18 +415,21 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
         return params
 
     def get_bus_variables(self):
-        return {
-            "interference_independent_of_shielded_area": {
-                "mission_name": ['interference_independent_of_shielded_area'],
-                # "post_mission_name": ['interference_independent_of_shielded_area'],
-                "units": "unitless",
-            },
-            "drag_loss_due_to_shielded_wing_area": {
-                "mission_name": ['drag_loss_due_to_shielded_wing_area'],
-                # "post_mission_name": ['drag_loss_due_to_shielded_wing_area'],
-                "units": "lbf",
-            },
-        }
+        if self.code_origin is GASP:
+            return {
+                "interference_independent_of_shielded_area": {
+                    "mission_name": ['interference_independent_of_shielded_area'],
+                    # "post_mission_name": ['interference_independent_of_shielded_area'],
+                    "units": "unitless",
+                },
+                "drag_loss_due_to_shielded_wing_area": {
+                    "mission_name": ['drag_loss_due_to_shielded_wing_area'],
+                    # "post_mission_name": ['drag_loss_due_to_shielded_wing_area'],
+                    "units": "lbf",
+                },
+            }
+        else:
+            return {}
 
     def report(self, prob, reports_folder, **kwargs):
         """

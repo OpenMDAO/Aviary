@@ -9,8 +9,8 @@ from aviary.variable_info.variables import Aircraft, Mission
 tol = 1e-8
 
 
-class TestAeroForces(unittest.TestCase):
-    def testAeroForces(self):
+class TestAeroCoeffs(unittest.TestCase):
+    def testAeroCoeffs(self):
         aero_coeffs = AeroFormfactors()
         prob = om.Problem()
         prob.model.add_subsystem("comp", aero_coeffs, promotes=["*"])

@@ -861,8 +861,6 @@ class AeroSetup(om.Group):
         self.add_subsystem("geom", AeroGeom(
             num_nodes=nn, aviary_options=aviary_options), promotes=["*"])
 
-        # self.set_input_defaults(Aircraft.Wing.FORM_FACTOR,1)
-
 
 class DragCoef(om.ExplicitComponent):
     """GASP lift coefficient calculation for low-speed near-ground flight.

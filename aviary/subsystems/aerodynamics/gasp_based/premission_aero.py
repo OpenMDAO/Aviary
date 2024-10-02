@@ -33,8 +33,10 @@ class PreMissionAero(om.Group):
 
         self.add_subsystem("wing_fus_interference_premission",
                            WingFuselageInterference_premission(),
-                           promotes_inputs=["*"],
-                           promotes_outputs=["*"],
+                           promotes_inputs=["aircraft:*"],
+                           promotes_outputs=[
+                               "interference_independent_of_shielded_area",
+                               "drag_loss_due_to_shielded_wing_area"],
                            )
 
         self.add_subsystem("aero_form_factors", AeroFormfactors(),
