@@ -402,7 +402,7 @@ class UncorrectData(om.Group):
         self.add_subsystem(
             'uncorrection',
             om.ExecComp(
-                'uncorrected_data = corrected_data * (delta_T + theta_T**.5)',
+                'uncorrected_data = corrected_data * (delta_T * theta_T**.5)',
                 uncorrected_data={'units': "hp", 'shape': num_nodes},
                 delta_T={'units': "unitless", 'shape': num_nodes},
                 theta_T={'units': "unitless", 'shape': num_nodes},

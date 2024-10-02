@@ -263,8 +263,13 @@ def process_and_store_data(data, var_name, legacy_code, current_namelist, altern
     # Aviary has a reduction gearbox which is 1/gear ratio of GASP gearbox
     if current_namelist+var_name == 'INPROP.GR':
         var_values = [1/var for var in var_values]
-        vehicle_data['input_values'] = set_value(Aircraft.Engine.Gearbox.GEAR_RATIO, var_values,
-                                                 vehicle_data['input_values'], var_id=var_ind, units=data_units)
+        vehicle_data['input_values'] = set_value(
+            Aircraft.Engine.Gearbox.GEAR_RATIO,
+            var_values,
+            vehicle_data['input_values'],
+            var_ind=var_ind,
+            units=data_units,
+        )
 
     for name in list_of_equivalent_aviary_names:
         if not skip_variable:
@@ -494,6 +499,20 @@ def update_gasp_options(vehicle_data):
                              [0], units='unitless')
     else:
         ValueError('"FRESF" is not valid between 0 and 10.')
+
+    # Form Factors - set "-1" to default value
+    negative_default_list = [
+        Aircraft.Fuselage.FORM_FACTOR,
+        Aircraft.Wing.FORM_FACTOR,
+        # "CKI",
+        Aircraft.Wing.MAX_THICKNESS_LOCATION,
+        Aircraft.Nacelle.FORM_FACTOR,
+        Aircraft.VerticalTail.FORM_FACTOR,
+        Aircraft.HorizontalTail.FORM_FACTOR,
+    ]  # list may be incomplete
+    for var in negative_default_list:
+        if input_values.get_val(var)[0] < 0:
+            input_values.set_val(var, [_MetaData[var]['default_value']])
 
     vehicle_data['input_values'] = input_values
     return vehicle_data

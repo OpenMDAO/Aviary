@@ -8,7 +8,9 @@ from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
 from aviary.variable_info.variables import Aircraft
 from aviary.subsystems.propulsion.propeller.propeller_performance import (
-    OutMachs, PropellerPerformance, TipSpeedLimit,
+    OutMachs,
+    PropellerPerformance,
+    TipSpeed,
 )
 from aviary.variable_info.enums import OutMachType
 from aviary.variable_info.variables import Aircraft, Dynamic
@@ -250,6 +252,11 @@ class PropellerPerformanceTest(unittest.TestCase):
         prob = self.prob
         prob.set_val(Dynamic.Mission.ALTITUDE, [0.0, 0.0, 25000.0], units="ft")
         prob.set_val(Dynamic.Mission.VELOCITY, [0.10, 125.0, 300.0], units="knot")
+        prob.set_val(
+            Dynamic.Mission.RPM,
+            [1455.13090827, 1455.13090827, 1455.13090827],
+            units='rpm',
+        )
         prob.set_val(Dynamic.Mission.SHAFT_POWER, [1850.0, 1850.0, 900.0], units="hp")
         prob.set_val(Aircraft.Engine.PROPELLER_TIP_MACH_MAX, 1.0, units="unitless")
         prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED_MAX, 800.0, units="ft/s")
@@ -290,9 +297,15 @@ class PropellerPerformanceTest(unittest.TestCase):
         prob.set_val(Dynamic.Mission.ALTITUDE, [10000.0, 10000.0, 0.0], units="ft")
         prob.set_val(Dynamic.Mission.VELOCITY, [200.0, 200.0, 50.0], units="knot")
         prob.set_val(Dynamic.Mission.SHAFT_POWER, [1000.0, 1000.0, 1250.0], units="hp")
+        prob.set_val(
+            Dynamic.Mission.RPM,
+            [1225.02, 1225.02, 1225.02],
+            units='rpm',
+        )
         prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED_MAX, 769.70, units="ft/s")
 
         prob.run_model()
+
         self.compare_results(case_idx_begin=3, case_idx_end=5)
 
         partial_data = prob.check_partials(
@@ -332,6 +345,11 @@ class PropellerPerformanceTest(unittest.TestCase):
         prob.set_val(Dynamic.Mission.ALTITUDE, [10000.0, 10000.0, 0.0], units="ft")
         prob.set_val(Dynamic.Mission.VELOCITY, [200.0, 200.0, 50.0], units="knot")
         prob.set_val(Dynamic.Mission.SHAFT_POWER, [1000.0, 1000.0, 1250.0], units="hp")
+        prob.set_val(
+            Dynamic.Mission.RPM,
+            [1193.66207319, 1193.66207319, 1193.66207319],
+            units='rpm',
+        )
         prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED_MAX, 750.0, units="ft/s")
 
         prob.run_model()
@@ -364,6 +382,12 @@ class PropellerPerformanceTest(unittest.TestCase):
         prob.set_val(Dynamic.Mission.ALTITUDE, [10000.0, 10000.0, 10000.0], units="ft")
         prob.set_val(Dynamic.Mission.VELOCITY, [200.0, 200.0, 200.0], units="knot")
         prob.set_val(Dynamic.Mission.SHAFT_POWER, [900.0, 750.0, 500.0], units="hp")
+        prob.set_val(
+            Dynamic.Mission.RPM,
+            [1193.66207319, 1193.66207319, 1193.66207319],
+            units='rpm',
+        )
+
         prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED_MAX, 750.0, units="ft/s")
 
         prob.run_model()
@@ -396,6 +420,11 @@ class PropellerPerformanceTest(unittest.TestCase):
         prob.set_val(Dynamic.Mission.ALTITUDE, [0.0, 0.0, 25000.0], units="ft")
         prob.set_val(Dynamic.Mission.VELOCITY, [0.10, 125.0, 300.0], units="knot")
         prob.set_val(Dynamic.Mission.SHAFT_POWER, [1850.0, 1850.0, 900.0], units="hp")
+        prob.set_val(
+            Dynamic.Mission.RPM,
+            [1455.1309082687574, 1455.1309082687574, 1156.4081529986502],
+            units='rpm',
+        )
         prob.set_val(Aircraft.Engine.PROPELLER_TIP_MACH_MAX, 0.8, units="unitless")
         prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED_MAX, 800.0, units="ft/s")
 
@@ -436,6 +465,11 @@ class PropellerPerformanceTest(unittest.TestCase):
         prob.set_val(Dynamic.Mission.ALTITUDE, [10000.0, 10000.0, 0.0], units="ft")
         prob.set_val(Dynamic.Mission.VELOCITY, [200.0, 200.0, 50.0], units="knot")
         prob.set_val(Dynamic.Mission.SHAFT_POWER, [1000.0, 1000.0, 1250.0], units="hp")
+        prob.set_val(
+            Dynamic.Mission.RPM,
+            [1225.0155969783186, 1225.0155969783186, 1225.0155969783186],
+            units='rpm',
+        )
         prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED_MAX, 769.70, units="ft/s")
 
         prob.run_model()
@@ -528,7 +562,7 @@ class TipSpeedLimitTest(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem(
             "group",
-            TipSpeedLimit(num_nodes=3),
+            TipSpeed(num_nodes=3),
             promotes=["*"],
         )
         prob.setup()
@@ -542,10 +576,8 @@ class TipSpeedLimitTest(unittest.TestCase):
 
         prob.run_model()
 
-        tip_speed = prob.get_val(Dynamic.Mission.PROPELLER_TIP_SPEED, units='ft/s')
-        rpm = prob.get_val('rpm', units='rpm')
+        tip_speed = prob.get_val('propeller_tip_speed_limit', units='ft/s')
         assert_near_equal(tip_speed, [800, 800, 635.7686], tolerance=tol)
-        assert_near_equal(rpm, [1455.1309, 1455.1309, 1156.4082], tolerance=tol)
 
         partial_data = prob.check_partials(
             out_stream=None,
@@ -562,3 +594,6 @@ class TipSpeedLimitTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+    # test = PropellerPerformanceTest()
+    # test.setUp()
+    # test.test_case_3_4_5()

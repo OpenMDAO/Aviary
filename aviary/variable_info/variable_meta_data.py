@@ -1781,6 +1781,17 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Engine.FIXED_RPM,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='rpm',
+    default_value=1.0,
+    desc='RPM the engine is set to be running at. Overrides RPM provided by '
+    'engine model or chosen by optimizer. Typically used when pairing a motor or '
+    'turboshaft using a fixed operating RPM with a propeller.',
+)
+
+add_meta_data(
     Aircraft.Engine.FLIGHT_IDLE_MAX_FRACTION,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -2116,12 +2127,13 @@ add_meta_data(
 add_meta_data(
     Aircraft.Engine.PROPELLER_TIP_MACH_MAX,
     meta_data=_MetaData,
-    historical_name={"GASP": None,  # TODO this needs verification
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={
+        "GASP": None,  # TODO this needs verification
+        "FLOPS": None,
+        "LEAPS1": None,
+    },
     units='unitless',
-    desc='maximum allowable Mach number at propeller tip (based on helical speed)',
+    desc='maximum allowable Mach number at propeller tip (based on helical airspeed)',
     default_value=1.0,
 )
 
@@ -2134,7 +2146,7 @@ add_meta_data(
         "LEAPS1": None,
     },
     units='ft/s',
-    desc='maximum allowable propeller linear tip speed',
+    desc='maximum allowable linear propeller tip speed due to rotation',
     default_value=800.0,
 )
 
@@ -2386,7 +2398,7 @@ add_meta_data(
                      },
     units='unitless',
     desc='The efficiency of the gearbox.',
-    default_value=0.98,
+    default_value=1.0,
 )
 add_meta_data(
     Aircraft.Engine.Gearbox.GEAR_RATIO,
@@ -2414,14 +2426,15 @@ add_meta_data(
 add_meta_data(
     Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INPROP.HPMSLS',  # max sea level static horsepower, hp
-                     "FLOPS": None,
-                     "LEAPS1": None,
-                     },
+    historical_name={
+        "GASP": 'INPROP.HPMSLS',  # max sea level static horsepower, hp
+        "FLOPS": None,
+        "LEAPS1": None,
+    },
     units='kW',
-    desc='A guess for the maximum power that will be transmitted through the gearbox during the mission.',
+    desc='A guess for the maximum power that will be transmitted through the gearbox during the mission (max shp input).',
     default_value=1.0,
-    option=True
+    option=True,
 )
 
 add_meta_data(
@@ -3045,12 +3058,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.Fuselage.FORM_FACTOR,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CKF',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={"GASP": 'INGASP.CKF', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='fuselage form factor',
+    default_value=1.25,
 )
 
 add_meta_data(
@@ -3452,12 +3463,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.HorizontalTail.FORM_FACTOR,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CKHT',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={"GASP": 'INGASP.CKHT', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='horizontal tail form factor',
+    default_value=1.25,
 )
 
 add_meta_data(
@@ -4081,12 +4090,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.Nacelle.FORM_FACTOR,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CKN',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={"GASP": 'INGASP.CKN', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='nacelle form factor',
+    default_value=1.5,
 )
 
 add_meta_data(
@@ -4530,12 +4537,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CKSTRT',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={"GASP": 'INGASP.CKSTRT', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='strut/fuselage interference factor',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4686,12 +4691,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.VerticalTail.FORM_FACTOR,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CKVT',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={"GASP": 'INGASP.CKVT', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='vertical tail form factor',
+    default_value=1.25,
 )
 
 add_meta_data(
@@ -5398,23 +5401,19 @@ add_meta_data(
 add_meta_data(
     Aircraft.Wing.FORM_FACTOR,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CKW',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={"GASP": 'INGASP.CKW', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='wing form factor',
+    default_value=1.25,
 )
 
 add_meta_data(
     Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CKI',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={"GASP": 'INGASP.CKI', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='wing/fuselage interference factor',
+    default_value=1.1,
 )
 
 add_meta_data(
@@ -6550,18 +6549,6 @@ add_meta_data(
     desc='Current total rate of nitrous oxide (NOx) production by the vehicle'
 )
 
-# add_meta_data(
-#     Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
-#     meta_data=_MetaData,
-#     historical_name={"GASP": None,
-#                      "FLOPS": None,
-#                      "LEAPS1": None
-#                      },
-#     units='unitless',
-#     desc='percent of the corrected rotor speed',
-#     default_value=0.9,
-# )
-
 add_meta_data(
     Dynamic.Mission.PROPELLER_TIP_SPEED,
     meta_data=_MetaData,
@@ -6580,16 +6567,6 @@ add_meta_data(
     historical_name={"GASP": ['RPM', 'RPMe'], "FLOPS": None, "LEAPS1": None},
     units='rpm',
     desc='Rotational rate of shaft, per engine.',
-)
-
-add_meta_data(
-    Dynamic.Mission.RPM_GEARBOX,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None},
-    units='rpm',
-    desc='Rotational rate of shaft coming out of the gearbox and into the prop.',
 )
 
 add_meta_data(
@@ -6625,14 +6602,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Mission.SHAFT_POWER_GEARBOX,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='kW',
-    desc='current shaft power coming out of the gearbox, per gearbox',
-)
-
-add_meta_data(
     Dynamic.Mission.SHAFT_POWER_MAX,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -6641,17 +6610,6 @@ add_meta_data(
                      },
     units='hp',
     desc='The maximum possible shaft power currently producible, per engine'
-)
-
-add_meta_data(
-    Dynamic.Mission.SHAFT_POWER_MAX_GEARBOX,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='hp',
-    desc='The maximum possible shaft power the gearbox can currently produce, per gearbox'
 )
 
 add_meta_data(
@@ -6778,14 +6736,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Mission.TORQUE_GEARBOX,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='N*m',
-    desc='Current torque being produced, per gearbox',
-)
-
-add_meta_data(
     Dynamic.Mission.VELOCITY,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -6829,6 +6779,13 @@ add_meta_data(
 # | |____  | (_) | | | | | \__ \ | |_  | |    | (_| | | | | | | | | |_  \__ \
 #  \_____|  \___/  |_| |_| |___/  \__| |_|     \__,_| |_| |_| |_|  \__| |___/
 # ===========================================================================
+add_meta_data(
+    Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='kW',
+    desc='Must be zero or positive to ensure that the gearbox is sized large enough to handle the maximum shaft power the engine could output during any part of the mission',
+)
 
 add_meta_data(
     Mission.Constraints.MASS_RESIDUAL,
@@ -6888,14 +6845,6 @@ add_meta_data(
     desc='residual to make sure aircraft reserve mission range is equal to the targeted '
          'range, value should be zero at convergence (within acceptable '
          'tolerance)',
-)
-
-add_meta_data(
-    Mission.Constraints.SHAFT_POWER_RESIDUAL,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='kW',
-    desc='Must be zero or positive to ensure that the gearbox is sized large enough to handle the maximum shaft power the engine could output during any part of the mission',
 )
 
 #  _____                 _

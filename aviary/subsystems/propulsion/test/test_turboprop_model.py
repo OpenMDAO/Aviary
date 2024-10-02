@@ -19,7 +19,7 @@ from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.subsystems.propulsion.motor.motor_builder import MotorBuilder
 
 
-class TurbopropTest(unittest.TestCase):
+class TurbopropMissionTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
@@ -50,6 +50,11 @@ class TurbopropTest(unittest.TestCase):
         options.set_val(Aircraft.Engine.FLIGHT_IDLE_MIN_FRACTION, 0.08)
         options.set_val(Aircraft.Engine.GEOPOTENTIAL_ALT, False)
         options.set_val(Aircraft.Engine.INTERPOLATION_METHOD, 'slinear')
+        options.set_val(
+            Aircraft.Engine.FIXED_RPM,
+            1455.13090827,
+            units='rpm',
+        )
 
         options.set_val(
             Aircraft.Engine.COMPUTE_PROPELLER_INSTALLATION_LOSS,
@@ -124,27 +129,27 @@ class TurbopropTest(unittest.TestCase):
         # shp, tailpipe thrust, prop_thrust, total_thrust, max_thrust, fuel flow
         truth_vals = [
             (
-                223.99923788786057,
+                111.99923788786062,
                 37.699999999999996,
-                1195.4410168571105,
-                1233.1410168571106,
-                4983.816421227165,
+                610.3580810058977,
+                648.0580810058977,
+                4184.157517016291,
                 -195.79999999999995,
             ),
             (
-                2239.9923788786077,
+                1119.992378878607,
                 136.29999999999967,
-                4847.516421227166,
-                4983.816421227165,
-                4983.816421227165,
+                4047.857517016292,
+                4184.157517016291,
+                4184.157517016291,
                 -643.9999999999998,
             ),
             (
-                2466.55094358958,
+                777.0987186814681,
                 21.30000000000001,
-                1833.4755577366554,
-                1854.7755577366554,
-                1854.7755577366554,
+                557.5040281733225,
+                578.8040281733224,
+                578.8040281733224,
                 -839.7000000000685,
             ),
         ]
@@ -176,7 +181,9 @@ class TurbopropTest(unittest.TestCase):
 
         self.prob.run_model()
         results = self.get_results()
-        assert_near_equal(results, truth_vals)
+        assert_near_equal(results[0], truth_vals[0], tolerance=1.5e-12)
+        assert_near_equal(results[1], truth_vals[1], tolerance=1.5e-12)
+        assert_near_equal(results[2], truth_vals[2], tolerance=1.5e-12)
 
         # because Hamilton Standard model uses fd method, the following may not be accurate.
         partial_data = self.prob.check_partials(out_stream=None, form="central")
@@ -188,27 +195,27 @@ class TurbopropTest(unittest.TestCase):
         test_points = [(0.001, 0, 0), (0, 0, 1), (0.6, 25000, 1)]
         truth_vals = [
             (
-                223.99007751511726,
-                37.507374999999996,
-                1186.6952790705282,
-                1224.202654070528,
-                4984.168836459296,
-                -195.78762499999996,
+                111.99470252,
+                37.507375,
+                610.74316702,
+                648.25054202,
+                4174.71017,
+                -195.787625,
             ),
             (
-                2239.9923788786077,
+                1119.992378878607,
                 136.29999999999967,
-                4847.516421227166,
-                4983.816421227165,
-                4983.816421227165,
+                4047.857517016292,
+                4184.157517016291,
+                4184.157517016291,
                 -643.9999999999998,
             ),
             (
-                2466.55094358958,
+                777.0987186814681,
                 21.30000000000001,
-                1833.4755577366554,
-                1854.7755577366554,
-                1854.7755577366554,
+                557.5040281733225,
+                578.8040281733224,
+                578.8040281733224,
                 -839.7000000000685,
             ),
         ]
@@ -230,7 +237,9 @@ class TurbopropTest(unittest.TestCase):
         self.prob.run_model()
 
         results = self.get_results()
-        assert_near_equal(results, truth_vals)
+        assert_near_equal(results[0], truth_vals[0], tolerance=1.5e-12)
+        assert_near_equal(results[1], truth_vals[1], tolerance=1.5e-12)
+        assert_near_equal(results[2], truth_vals[2], tolerance=1.5e-12)
 
         partial_data = self.prob.check_partials(out_stream=None, form="central")
         assert_check_partials(partial_data, atol=0.15, rtol=0.15)
@@ -241,27 +250,27 @@ class TurbopropTest(unittest.TestCase):
         test_points = [(0, 0, 0), (0, 0, 1), (0.6, 25000, 1)]
         truth_vals = [
             (
-                223.99923788786057,
+                111.99923788786062,
                 0.0,
-                1195.4410168571105,
-                1195.4410168571105,
-                4847.516421227166,
+                610.3580810058977,
+                610.3580810058977,
+                4047.857517016292,
                 -195.79999999999995,
             ),
             (
-                2239.9923788786077,
+                1119.992378878607,
                 0.0,
-                4847.516421227166,
-                4847.516421227166,
-                4847.516421227166,
+                4047.857517016292,
+                4047.857517016292,
+                4047.857517016292,
                 -643.9999999999998,
             ),
             (
-                2466.55094358958,
+                777.0987186814681,
                 0.0,
-                1833.4755577366554,
-                1833.4755577366554,
-                1833.4755577366554,
+                557.5040281733225,
+                557.5040281733225,
+                557.5040281733225,
                 -839.7000000000685,
             ),
         ]
@@ -280,7 +289,9 @@ class TurbopropTest(unittest.TestCase):
         self.prob.run_model()
 
         results = self.get_results()
-        assert_near_equal(results, truth_vals)
+        assert_near_equal(results[0], truth_vals[0], tolerance=1.5e-12)
+        assert_near_equal(results[1], truth_vals[1], tolerance=1.5e-12)
+        assert_near_equal(results[2], truth_vals[2], tolerance=1.5e-12)
 
         partial_data = self.prob.check_partials(out_stream=None, form="central")
         assert_check_partials(partial_data, atol=0.15, rtol=0.15)
@@ -307,13 +318,13 @@ class TurbopropTest(unittest.TestCase):
 
         self.prob.run_model()
 
-        shp_expected = [0.0, 505.55333, 505.55333]
+        shp_expected = [0.0, 367.82313837, 367.82313837]
         prop_thrust_expected = total_thrust_expected = [
-            610.35808,
-            2627.26329,
-            312.27342,
+            610.35808277,
+            2083.25333191,
+            184.58031533,
         ]
-        electric_power_expected = [0.0, 408.4409047, 408.4409047]
+        electric_power_expected = [0.0, 303.31014553, 303.31014553]
 
         shp = self.prob.get_val(Dynamic.Mission.SHAFT_POWER, units='hp')
         total_thrust = self.prob.get_val(Dynamic.Mission.THRUST, units='lbf')
@@ -342,14 +353,17 @@ class ExamplePropModel(SubsystemBuilderBase):
             PropellerPerformance(aviary_options=aviary_inputs, num_nodes=num_nodes),
             promotes_inputs=[
                 Dynamic.Mission.MACH,
-                Dynamic.Mission.SPEED_OF_SOUND,
                 Aircraft.Engine.PROPELLER_TIP_SPEED_MAX,
+                Aircraft.Engine.PROPELLER_TIP_MACH_MAX,
                 Dynamic.Mission.DENSITY,
                 Dynamic.Mission.VELOCITY,
                 Aircraft.Engine.PROPELLER_DIAMETER,
-                Dynamic.Mission.SHAFT_POWER,
                 Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,
                 Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT,
+                Aircraft.Nacelle.AVG_DIAMETER,
+                Dynamic.Mission.SPEED_OF_SOUND,
+                Dynamic.Mission.RPM,
+                Dynamic.Mission.SHAFT_POWER,
             ],
             promotes_outputs=['*'],
         )
