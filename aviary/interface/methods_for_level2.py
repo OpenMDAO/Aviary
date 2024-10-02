@@ -1331,6 +1331,23 @@ class AviaryProblem(om.Problem):
             self.post_mission.add_constraint(
                 Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.e5)
 
+        if self.mission_method is HEIGHT_ENERGY:
+
+            if not self.pre_mission_info['include_takeoff']:
+                first_flight_phase_name = list(self.phase_info.keys())[0]
+                eq = self.model.add_subsystem(f'link_{first_flight_phase_name}_mass',
+                                              om.EQConstraintComp(),
+                                              promotes_inputs=[('rhs:mass',
+                                                                Mission.Summary.GROSS_MASS)])
+                eq.add_eq_output('mass', eq_units='lbm', normalize=False,
+                                 ref=100000., add_constraint=True)
+                self.model.connect(
+                    f'traj.{first_flight_phase_name}.states:mass',
+                    f'link_{first_flight_phase_name}_mass.lhs:mass',
+                    src_indices=[0],
+                    flat_src_indices=True,
+                )
+
     def _link_phases_helper_with_options(self, phases, option_name, var, **kwargs):
         # Initialize a list to keep track of indices where option_name is True
         true_option_indices = []
@@ -1450,21 +1467,6 @@ class AviaryProblem(om.Problem):
                 self.model.connect(f'traj.{self.regular_phases[-1]}.timeseries.distance',
                                    Mission.Summary.RANGE,
                                    src_indices=[-1], flat_src_indices=True)
-
-                if not self.pre_mission_info['include_takeoff']:
-                    first_flight_phase_name = list(self.phase_info.keys())[0]
-                    eq = self.model.add_subsystem(f'link_{first_flight_phase_name}_mass',
-                                                  om.EQConstraintComp(),
-                                                  promotes_inputs=[('rhs:mass',
-                                                                    Mission.Summary.GROSS_MASS)])
-                    eq.add_eq_output('mass', eq_units='lbm', normalize=False,
-                                     ref=100000., add_constraint=True)
-                    self.model.connect(
-                        f'traj.{first_flight_phase_name}.states:mass',
-                        f'link_{first_flight_phase_name}_mass.lhs:mass',
-                        src_indices=[0],
-                        flat_src_indices=True,
-                    )
 
             elif self.mission_method is SOLVED_2DOF:
                 self.traj.link_phases(phases, [Dynamic.Mission.MASS], connected=True)
