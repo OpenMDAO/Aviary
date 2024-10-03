@@ -89,14 +89,14 @@ class TestTypes(unittest.TestCase):
         # try:
             # vals.set_val(Aircraft.Engine.TYPE, 'turbojet')
             # self.assertTrue(vals.get_val(Aircraft.Engine.TYPE)
-                            #== GASPEngineType.TURBOJET)
+                            # == GASPEngineType.TURBOJET)
         # except:
             # self.fail('Expecting to be able to set the value of an Enum from an int.')
 
         # try:
             # vals.set_val(Aircraft.Engine.TYPE, 'TURBOJET')
             # self.assertTrue(vals.get_val(Aircraft.Engine.TYPE)
-                            #is GASPEngineType.TURBOJET)
+                            # is GASPEngineType.TURBOJET)
         # except:
             # self.fail('Expecting to be able to set the value of an Enum from a string.')
 
@@ -113,7 +113,7 @@ class TestTypes(unittest.TestCase):
             # vals.set_val(Aircraft.Engine.TYPE, FlapType.DOUBLE_SLOTTED)
         # except ValueError as err:
             # self.assertEqual(str(err),
-                             #"<FlapType.DOUBLE_SLOTTED: 4> is not a valid GASPEngineType")
+                             # "<FlapType.DOUBLE_SLOTTED: 4> is not a valid GASPEngineType")
         # else:
             # self.fail("Expecting ValueError.")
 
