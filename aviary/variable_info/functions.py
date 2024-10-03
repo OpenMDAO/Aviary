@@ -458,4 +458,3 @@ def setup_model_options(prob: om.Problem, aviary_inputs: AviaryValues,
 
             path = f"*core_propulsion.{eng_name}*"
             prob.model_options[path] = opts
-
