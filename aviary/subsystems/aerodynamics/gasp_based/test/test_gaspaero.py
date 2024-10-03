@@ -7,6 +7,7 @@ import openmdao.api as om
 import pandas as pd
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
+from aviary.subsystems.aerodynamics.gasp_based.interference import WingFuselageInterference_premission
 from aviary.subsystems.aerodynamics.gasp_based.gaspaero import CruiseAero, LowSpeedAero
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
@@ -28,6 +29,16 @@ class GASPAeroTest(unittest.TestCase):
 
     def test_cruise(self):
         prob = om.Problem()
+        prob.model.add_subsystem("wing_fus_interference_premission",
+                                 WingFuselageInterference_premission(),
+                                 promotes_inputs=["aircraft:*"],
+                                 promotes_outputs=[
+                                     "interference_independent_of_shielded_area",
+                                     "drag_loss_due_to_shielded_wing_area"],
+                                 )
+        prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, 0)
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, 0)
+        prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0)
         prob.model.add_subsystem(
             "aero", CruiseAero(num_nodes=2, aviary_options=get_option_defaults(), input_atmos=True), promotes=["*"]
         )
@@ -64,6 +75,16 @@ class GASPAeroTest(unittest.TestCase):
 
     def test_ground(self):
         prob = om.Problem()
+        prob.model.add_subsystem("wing_fus_interference_premission",
+                                 WingFuselageInterference_premission(),
+                                 promotes_inputs=["aircraft:*"],
+                                 promotes_outputs=[
+                                     "interference_independent_of_shielded_area",
+                                     "drag_loss_due_to_shielded_wing_area"],
+                                 )
+        prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, 0)
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, 0)
+        prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0)
         prob.model.add_subsystem(
             "aero", LowSpeedAero(num_nodes=2, aviary_options=get_option_defaults(), input_atmos=True), promotes=["*"]
         )
@@ -120,6 +141,16 @@ class GASPAeroTest(unittest.TestCase):
     def test_ground_alpha_out(self):
         """Test that drag output matches between alpha in/out cases"""
         prob = om.Problem()
+        prob.model.add_subsystem("wing_fus_interference_premission",
+                                 WingFuselageInterference_premission(),
+                                 promotes_inputs=["aircraft:*"],
+                                 promotes_outputs=[
+                                     "interference_independent_of_shielded_area",
+                                     "drag_loss_due_to_shielded_wing_area"],
+                                 )
+        prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, 0)
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, 0)
+        prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0)
         prob.model.add_subsystem(
             "alpha_in",
             LowSpeedAero(aviary_options=get_option_defaults()),
@@ -183,8 +214,7 @@ def _init_geom(prob):
     prob.set_val(Aircraft.Nacelle.FORM_FACTOR, setup_data["ckn"])
     prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, setup_data["ckvt"])
     prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, setup_data["ckht"])
-    prob.set_val(Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR,
-                 np.full(2, setup_data["cki"]))
+    prob.set_val(Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR, setup_data["cki"])
     prob.set_val(Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR, setup_data["ckstrt"])
     prob.set_val(Aircraft.Design.DRAG_COEFFICIENT_INCREMENT, setup_data["delcd"])
     prob.set_val(Aircraft.Fuselage.FLAT_PLATE_AREA_INCREMENT, setup_data["delfe"])

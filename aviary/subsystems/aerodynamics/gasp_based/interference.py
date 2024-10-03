@@ -1,5 +1,6 @@
 import numpy as np
 import openmdao.api as om
+from openmdao.utils import cs_safe as cs
 import os
 
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
@@ -83,11 +84,11 @@ class top_and_bottom_width(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         ZW_RF, wtofd, SWF = inputs.values()
 
-        if (abs(ZW_RF + wtofd) >= 1.0):
+        if (cs.abs(ZW_RF + wtofd) >= 1.0):
             WIDTHFTOP = 0.0
         else:
             WIDTHFTOP = SWF*(1.0 - (ZW_RF + wtofd)**2)**0.5
-        if (abs(ZW_RF - wtofd) >= 1.0):
+        if (cs.abs(ZW_RF - wtofd) >= 1.0):
             WIDTHFBOT = 0.0
         else:
             WIDTHFBOT = SWF*(1.0 - (ZW_RF - wtofd)**2)**0.5
@@ -105,7 +106,7 @@ class top_and_bottom_width(om.ExplicitComponent):
     def compute_partials(self, inputs, J):
         ZW_RF, wtofd, SWF = inputs.values()
 
-        if (abs(ZW_RF + wtofd) >= 1.0):
+        if (cs.abs(ZW_RF + wtofd) >= 1.0):
             dTOP_dZWRF = 0
             dTOP_dwtofd = 0
             dTOP_dSWF = 0
@@ -113,7 +114,7 @@ class top_and_bottom_width(om.ExplicitComponent):
             dTOP_dZWRF = -SWF*(1.0 - (ZW_RF + wtofd)**2)**-0.5 * (ZW_RF + wtofd)
             dTOP_dwtofd = -SWF*(1.0 - (ZW_RF + wtofd)**2)**-0.5 * (ZW_RF + wtofd)
             dTOP_dSWF = (1.0 - (ZW_RF + wtofd)**2)**0.5
-        if (abs(ZW_RF - wtofd) >= 1.0):
+        if (cs.abs(ZW_RF - wtofd) >= 1.0):
             dBOT_dZWRF = 0
             dBOT_dwtofd = 0
             dBOT_dSWF = 0
@@ -191,9 +192,12 @@ class interference_drag(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         WBODYWF, CROOT, TCBODYWF, CBODYWF, ZW_RF, SWF, XWQLF = inputs.values()
 
+        # factor due to vertical location
         KVWF = .0194 - 0.14817*ZW_RF + 1.3515*ZW_RF**2
+        # factor due to longitudinal location
         KLWF = 0.13077 + 1.9791*XWQLF + 3.3325*XWQLF**2 - \
             10.095*XWQLF**3 + 4.7229*XWQLF**4
+        # factor due to fuselage diameter / thickness
         KDTWF = 0.73543 + .028571*SWF/(TCBODYWF*CBODYWF)
 
         FEINTWF = 1.5*(TCBODYWF**3)*(CBODYWF**2)*KVWF*KLWF*KDTWF
@@ -290,25 +294,25 @@ class WingFuselageInterference_dynamic(om.ExplicitComponent):
         self.add_input('interference_independent_of_shielded_area')
         self.add_input('drag_loss_due_to_shielded_wing_area')
 
-        add_aviary_output(
-            self, Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR, np.full(nn, 1.23456))
+        self.add_output('wing_fuselage_interference_flat_plate_equivalent',
+                        np.full(nn, 1.23456))
 
     def setup_partials(self):
         nn = self.options["num_nodes"]
         arange = np.arange(nn)
         self.declare_partials(
-            Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR, [
+            'wing_fuselage_interference_flat_plate_equivalent', [
                 Dynamic.Mission.MACH,
                 Dynamic.Mission.TEMPERATURE,
                 Dynamic.Mission.KINEMATIC_VISCOSITY],
             rows=arange, cols=arange)
         self.declare_partials(
-            Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR, [
+            'wing_fuselage_interference_flat_plate_equivalent', [
                 Aircraft.Wing.FORM_FACTOR,
                 Aircraft.Wing.AVERAGE_CHORD,
                 'interference_independent_of_shielded_area'],
             rows=arange, cols=np.zeros(nn))
-        self.declare_partials(Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR, [
+        self.declare_partials('wing_fuselage_interference_flat_plate_equivalent', [
                               'drag_loss_due_to_shielded_wing_area'], val=1)
 
     def compute(self, inputs, outputs):
@@ -320,13 +324,14 @@ class WingFuselageInterference_dynamic(om.ExplicitComponent):
 
         # from aero.f
         # CFIN CALCULATION FROM SCHLICHTING PG. 635-665
-        CFIN = 0.455/np.log10(10_000_000.)**2.58/(1. + 0.144*EM**2)**0.65  # dynamic
+        # log10(10_000_000.) = 7
+        CFIN = 0.455/7**2.58/(1. + 0.144*EM**2)**0.65  # dynamic
         CDWI = FCFWC*FCFWT*CFIN  # dynamic
         FEW_over_SW = CDWI * CKW * ((np.log10(RELI * CBARW)/7.)**(-2.6))  # dynamic
         # from interference.f
         FEIWF = FEINTWF - FEW_over_SW*AREASHIELDWF  # dynamic
 
-        outputs[Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR] = FEIWF
+        outputs['wing_fuselage_interference_flat_plate_equivalent'] = FEIWF
 
     def compute_partials(self, inputs, J):
         CKW, CBARW, EM, T0, XKV, AREASHIELDWF, FEINTWF = inputs.values()
@@ -334,26 +339,26 @@ class WingFuselageInterference_dynamic(om.ExplicitComponent):
         RELI = np.sqrt(1.4*GRAV_ENGLISH_GASP*53.32) * EM * np.sqrt(T0)/XKV
         dRELI_dEM = np.sqrt(1.4*GRAV_ENGLISH_GASP*53.32) * np.sqrt(T0)/XKV
 
-        CFIN = 0.455/np.log10(10_000_000.)**2.58/(1. + 0.144*EM**2)**0.65
+        CFIN = 0.455/7**2.58/(1. + 0.144*EM**2)**0.65
         dCFIN_dEM = -.65*CFIN/(1. + 0.144*EM**2)*.288*EM
         CDWI = FCFWC*FCFWT*CFIN
 
-        J[Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR, Aircraft.Wing.FORM_FACTOR] = \
+        J['wing_fuselage_interference_flat_plate_equivalent', Aircraft.Wing.FORM_FACTOR] = \
             -CDWI * ((np.log10(RELI * CBARW)/7.)**(-2.6))*AREASHIELDWF
-        J[Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR, Aircraft.Wing.AVERAGE_CHORD] = \
+        J['wing_fuselage_interference_flat_plate_equivalent', Aircraft.Wing.AVERAGE_CHORD] = \
             2.6*CDWI * CKW * ((np.log10(RELI * CBARW)/7.)**(-3.6))*AREASHIELDWF \
             * 1/(np.log(10)*(CBARW)*7)
-        J[Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR, Dynamic.Mission.MACH] = -CKW * AREASHIELDWF * (((np.log10(RELI * CBARW)/7.)**(-2.6)) * (
+        J['wing_fuselage_interference_flat_plate_equivalent', Dynamic.Mission.MACH] = -CKW * AREASHIELDWF * (((np.log10(RELI * CBARW)/7.)**(-2.6)) * (
             FCFWC*FCFWT * dCFIN_dEM) + CFIN*(-2.6*((np.log10(RELI * CBARW)/7.)**(-3.6)) / (np.log(10)*(RELI)*7)*(dRELI_dEM)))
-        J[Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR, Dynamic.Mission.TEMPERATURE] = \
+        J['wing_fuselage_interference_flat_plate_equivalent', Dynamic.Mission.TEMPERATURE] = \
             -CDWI * CKW * -2.6*((np.log10(RELI * CBARW)/7.)**(-3.6))*AREASHIELDWF \
             * 1/(np.log(10)*(RELI)*7) * np.sqrt(1.4*GRAV_ENGLISH_GASP*53.32) \
             * EM * .5/(XKV*np.sqrt(T0))
-        J[Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR, Dynamic.Mission.KINEMATIC_VISCOSITY] = \
+        J['wing_fuselage_interference_flat_plate_equivalent', Dynamic.Mission.KINEMATIC_VISCOSITY] = \
             CDWI * CKW * -2.6*((np.log10(RELI * CBARW)/7.)**(-3.6))*AREASHIELDWF \
             * 1/(np.log(10)*(RELI)*7) * np.sqrt(1.4*GRAV_ENGLISH_GASP*53.32) \
             * EM * np.sqrt(T0) / XKV**2
-        J[Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR,
+        J['wing_fuselage_interference_flat_plate_equivalent',
             'interference_independent_of_shielded_area'] = \
             -CDWI * CKW * ((np.log10(RELI * CBARW)/7.)**(-2.6))
 

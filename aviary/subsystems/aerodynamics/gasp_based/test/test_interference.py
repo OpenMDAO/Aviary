@@ -174,7 +174,7 @@ class TestDynamic(unittest.TestCase):
 
         prob.run_model()
 
-        assert_near_equal(prob.get_val(Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR), [
+        assert_near_equal(prob.get_val('wing_fuselage_interference_flat_plate_equivalent'), [
                           83.53249732, 83.53251792], tol)
 
         partial_data = prob.check_partials(method="cs", out_stream=None)
