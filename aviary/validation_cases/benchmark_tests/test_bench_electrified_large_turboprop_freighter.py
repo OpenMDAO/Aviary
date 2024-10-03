@@ -50,7 +50,7 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         prob.load_inputs(
             "models/large_turboprop_freighter/large_turboprop_freighter.csv",
             two_dof_phase_info,
-            engine_builders=[turboprop, electroprop],
+            engine_builders=[turboprop, turboprop2],
         )
         prob.aviary_inputs.set_val(Settings.VERBOSITY, 2)
 
@@ -66,8 +66,10 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         prob.add_driver("IPOPT", max_iter=0, verbosity=0)
         prob.add_design_variables()
         prob.add_objective()
+
         prob.setup()
-        om.n2(prob)
+        # prob.model.list_vars(units=True, print_arrays=True)
+        # om.n2(prob)
 
         prob.set_initial_guesses()
         prob.run_aviary_problem("dymos_solution.db")
