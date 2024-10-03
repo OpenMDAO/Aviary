@@ -47,7 +47,7 @@ class PropulsionMission(om.Group):
                 eng_params = engine.get_parameters()
                 param_dict.update(eng_params)
 
-            parameters.update(eng_params.keys())
+            parameters.update(param_dict.keys())
 
             # if params exist, create execcomp, fill with placeholder equations
             if len(parameters) != 0:
