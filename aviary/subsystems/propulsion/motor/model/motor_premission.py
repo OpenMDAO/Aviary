@@ -53,7 +53,7 @@ class MotorPreMission(om.Group):
         self.add_subsystem(
             'motor_mass',
             om.ExecComp(
-                'motor_mass = 0.3151 * max_torque^(0.748)',
+                'motor_mass = 0.3151 * max_torque**(0.748)',
                 motor_mass={'val': 0.0, 'units': 'kg'},
                 max_torque={'val': 0.0, 'units': 'N*m'},
             ),

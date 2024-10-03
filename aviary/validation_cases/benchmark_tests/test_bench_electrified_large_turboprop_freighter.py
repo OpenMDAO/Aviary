@@ -28,15 +28,17 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         prob = AviaryProblem()
 
         # load inputs from .csv to build engine
-        options, _ = create_vehicle(
+        options, guesses = create_vehicle(
             "models/large_turboprop_freighter/large_turboprop_freighter.csv"
         )
 
-        options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
-        options.set_val(Aircraft.Engine.WING_LOCATIONS, 0.385)
+        # options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
+        # options.set_val(Aircraft.Engine.WING_LOCATIONS, 0.385)
+        options.set_val(Aircraft.Engine.RPM_DESIGN, 1_019.916, 'rpm')
+        options.set_val(Aircraft.Engine.Gearbox.GEAR_RATIO, 1.0)
 
-        turboprop = TurbopropModel('turboprop', options=options)
-        turboprop2 = TurbopropModel('turboprop2', options=options)
+        # turboprop = TurbopropModel('turboprop', options=options)
+        # turboprop2 = TurbopropModel('turboprop2', options=options)
 
         motor = MotorBuilder(
             'motor',
@@ -48,9 +50,9 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
 
         # load_inputs needs to be updated to accept an already existing aviary options
         prob.load_inputs(
-            "models/large_turboprop_freighter/large_turboprop_freighter.csv",
+            options,  # "models/large_turboprop_freighter/large_turboprop_freighter.csv",
             two_dof_phase_info,
-            engine_builders=[turboprop, electroprop],
+            engine_builders=[electroprop],
         )
         prob.aviary_inputs.set_val(Settings.VERBOSITY, 2)
 
