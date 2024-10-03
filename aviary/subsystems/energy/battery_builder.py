@@ -37,8 +37,9 @@ class BatteryBuilder(SubsystemBuilderBase):
         return battery_group
 
     def get_states(self):
-        # TODO need to add target name with 'battery.' to state due to issue where non
-        #      aircraft or mission variables are not fully promoted
+        # need to add subsystem name to target name ('battery.') for state due
+        # to issue where non aircraft or mission variables are not fully promoted
+        # TODO fix this by not promoting only 'aircraft:*' and 'mission:*'
         state_dict = {
             Dynamic.Mission.CUMULATIVE_ELECTRIC_ENERGY_USED: {
                 'fix_initial': True,
