@@ -27,7 +27,8 @@ jobs:
             SCIPY: 1
             PYOPTSPARSE: 'latest'
             SNOPT: '7.7'
-            OPENMDAO: 'dev'
+            #OPENMDAO: 'dev'
+            OPENMDAO: '3.34.2'
             DYMOS: 'dev'
 
     steps:
