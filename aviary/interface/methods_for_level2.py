@@ -1115,7 +1115,15 @@ class AviaryProblem(om.Problem):
                         external_parameters[phase_name][parameter] = parameter_dict[parameter]
 
             traj = setup_trajectory_params(
-                self.model, traj, self.aviary_inputs, phases, meta_data=self.meta_data, external_parameters=external_parameters)
+                self.model, traj, self.aviary_inputs, phases, meta_data=self.meta_data,
+                external_parameters=external_parameters)
+
+            if self.mission_method is HEIGHT_ENERGY:
+                if not self.pre_mission_info['include_takeoff']:
+                    first_flight_phase_name = list(phase_info.keys())[0]
+                    first_flight_phase = traj._phases[first_flight_phase_name]
+                    first_flight_phase.set_state_options(Dynamic.Mission.MASS,
+                                                         fix_initial=False)
 
         self.traj = traj
 
@@ -1322,6 +1330,23 @@ class AviaryProblem(om.Problem):
         if self.mission_method in (HEIGHT_ENERGY, TWO_DEGREES_OF_FREEDOM):
             self.post_mission.add_constraint(
                 Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.e5)
+
+        if self.mission_method is HEIGHT_ENERGY:
+
+            if not self.pre_mission_info['include_takeoff']:
+                first_flight_phase_name = list(self.phase_info.keys())[0]
+                eq = self.model.add_subsystem(f'link_{first_flight_phase_name}_mass',
+                                              om.EQConstraintComp(),
+                                              promotes_inputs=[('rhs:mass',
+                                                                Mission.Summary.GROSS_MASS)])
+                eq.add_eq_output('mass', eq_units='lbm', normalize=False,
+                                 ref=100000., add_constraint=True)
+                self.model.connect(
+                    f'traj.{first_flight_phase_name}.states:mass',
+                    f'link_{first_flight_phase_name}_mass.lhs:mass',
+                    src_indices=[0],
+                    flat_src_indices=True,
+                )
 
     def _link_phases_helper_with_options(self, phases, option_name, var, **kwargs):
         # Initialize a list to keep track of indices where option_name is True
