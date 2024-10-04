@@ -29,6 +29,7 @@ from aviary.mission.energy_phase import EnergyPhase
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 from aviary.variable_info.enums import LegacyCode
+from aviary.variable_info.functions import setup_model_options
 
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
@@ -433,6 +434,8 @@ def run_trajectory(sim=True):
         Mission.Summary.GROSS_MASS,
     ]
     set_aviary_input_defaults(prob.model, varnames, aviary_inputs)
+
+    setup_model_options(prob, aviary_inputs)
 
     prob.setup(force_alloc_complex=True)
 

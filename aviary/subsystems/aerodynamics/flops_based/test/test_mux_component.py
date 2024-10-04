@@ -6,7 +6,6 @@ from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.assert_utils import assert_check_partials
 
 from aviary.subsystems.aerodynamics.flops_based.mux_component import MuxComponent
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft
 
 
@@ -16,13 +15,14 @@ class TestMuxComponent(unittest.TestCase):
         prob = om.Problem()
         model = prob.model
 
-        aviary_options = AviaryValues()
-        aviary_options.set_val(Aircraft.VerticalTail.NUM_TAILS, 1)
-        aviary_options.set_val(Aircraft.Fuselage.NUM_FUSELAGES, 1)
-        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
+        aviary_options = {
+            Aircraft.Engine.NUM_ENGINES: np.array([2]),
+            Aircraft.Fuselage.NUM_FUSELAGES: 1,
+            Aircraft.VerticalTail.NUM_TAILS: 1,
+        }
 
         model.add_subsystem(
-            'mux', MuxComponent(aviary_options=aviary_options),
+            'mux', MuxComponent(**aviary_options),
             promotes_inputs=['*'])
 
         prob.setup(force_alloc_complex=True)
@@ -91,13 +91,14 @@ class TestMuxComponent(unittest.TestCase):
         prob = om.Problem()
         model = prob.model
 
-        aviary_options = AviaryValues()
-        aviary_options.set_val(Aircraft.VerticalTail.NUM_TAILS, 1)
-        aviary_options.set_val(Aircraft.Fuselage.NUM_FUSELAGES, 1)
-        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2, 3]))
+        aviary_options = {
+            Aircraft.Engine.NUM_ENGINES: np.array([2, 3]),
+            Aircraft.Fuselage.NUM_FUSELAGES: 1,
+            Aircraft.VerticalTail.NUM_TAILS: 1,
+        }
 
         model.add_subsystem(
-            'mux', MuxComponent(aviary_options=aviary_options),
+            'mux', MuxComponent(**aviary_options),
             promotes_inputs=['*'])
 
         prob.setup(force_alloc_complex=True)

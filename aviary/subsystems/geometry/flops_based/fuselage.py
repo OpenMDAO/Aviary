@@ -4,17 +4,11 @@ Contains any preliminary calculations on the fuselage.
 
 import openmdao.api as om
 
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
 
 class FuselagePrelim(om.ExplicitComponent):
-
-    def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, val=0.0)

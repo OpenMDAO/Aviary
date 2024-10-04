@@ -29,7 +29,7 @@ class GASPAeroTest(unittest.TestCase):
     def test_cruise(self):
         prob = om.Problem()
         prob.model.add_subsystem(
-            "aero", CruiseAero(num_nodes=2, aviary_options=get_option_defaults(), input_atmos=True), promotes=["*"]
+            "aero", CruiseAero(num_nodes=2, input_atmos=True), promotes=["*"]
         )
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -65,7 +65,7 @@ class GASPAeroTest(unittest.TestCase):
     def test_ground(self):
         prob = om.Problem()
         prob.model.add_subsystem(
-            "aero", LowSpeedAero(num_nodes=2, aviary_options=get_option_defaults(), input_atmos=True), promotes=["*"]
+            "aero", LowSpeedAero(num_nodes=2, input_atmos=True), promotes=["*"]
         )
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -122,14 +122,14 @@ class GASPAeroTest(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem(
             "alpha_in",
-            LowSpeedAero(aviary_options=get_option_defaults()),
+            LowSpeedAero(),
             promotes_inputs=["*", ("alpha", "alpha_in")],
             promotes_outputs=[(Dynamic.Mission.LIFT, "lift_req")],
         )
 
         prob.model.add_subsystem(
             "alpha_out",
-            LowSpeedAero(aviary_options=get_option_defaults(), output_alpha=True),
+            LowSpeedAero(output_alpha=True),
             promotes_inputs=["*", "lift_req"],
         )
 

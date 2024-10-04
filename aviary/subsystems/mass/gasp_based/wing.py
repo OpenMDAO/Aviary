@@ -2,21 +2,16 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Mission
 
 
 class WingMassSolve(om.ImplicitComponent):
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options'
-        )
+        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
 
     def setup(self):
-        num_engine_type = len(self.options['aviary_options'].get_val(
-            Aircraft.Engine.NUM_ENGINES))
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
         add_aviary_input(self, Mission.Design.GROSS_MASS, val=175400)
         add_aviary_input(self, Aircraft.Wing.HIGH_LIFT_MASS, val=3645)
@@ -288,12 +283,10 @@ class WingMassSolve(om.ImplicitComponent):
 
 
 class WingMassTotal(om.ExplicitComponent):
-    def initialize(self):
 
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options'
-        )
+    def initialize(self):
+        add_aviary_option(self, Aircraft.Wing.HAS_FOLD)
+        add_aviary_option(self, Aircraft.Wing.HAS_STRUT)
 
     def setup(self):
 
@@ -304,11 +297,10 @@ class WingMassTotal(om.ExplicitComponent):
             desc="WW: wing mass including high lift devices (but excluding struts and fold effects)",
         )
 
-        if self.options["aviary_options"].get_val(Aircraft.Wing.HAS_STRUT, units='unitless'):
+        if self.options[Aircraft.Wing.HAS_STRUT]:
             add_aviary_input(self, Aircraft.Strut.MASS_COEFFICIENT, val=0.000000000001)
 
-        if self.options["aviary_options"].get_val(Aircraft.Wing.HAS_FOLD, units='unitless') == True:
-
+        if self.options[Aircraft.Wing.HAS_FOLD]:
             add_aviary_input(self, Aircraft.Wing.AREA, val=100)
             add_aviary_input(self, Aircraft.Wing.FOLDING_AREA, val=50)
             add_aviary_input(self, Aircraft.Wing.FOLD_MASS_COEFFICIENT, val=0.2)
@@ -318,10 +310,10 @@ class WingMassTotal(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Wing.FOLD_MASS, val=0)
 
         self.declare_partials(Aircraft.Wing.MASS, "*")
-        if self.options["aviary_options"].get_val(Aircraft.Wing.HAS_STRUT, units='unitless'):
+        if self.options[Aircraft.Wing.HAS_STRUT]:
             self.declare_partials(Aircraft.Strut.MASS, [
                                   Aircraft.Strut.MASS_COEFFICIENT, "isolated_wing_mass"])
-        if self.options["aviary_options"].get_val(Aircraft.Wing.HAS_FOLD, units='unitless'):
+        if self.options[Aircraft.Wing.HAS_FOLD]:
             self.declare_partials(Aircraft.Wing.FOLD_MASS, [
                                   Aircraft.Wing.AREA, Aircraft.Wing.FOLDING_AREA, Aircraft.Wing.FOLD_MASS_COEFFICIENT, "isolated_wing_mass"])
 
@@ -329,7 +321,7 @@ class WingMassTotal(om.ExplicitComponent):
 
         isolated_wing_wt = inputs["isolated_wing_mass"] * GRAV_ENGLISH_LBM
 
-        if self.options["aviary_options"].get_val(Aircraft.Wing.HAS_STRUT, units='unitless'):
+        if self.options[Aircraft.Wing.HAS_STRUT]:
             c_strut_mass = inputs[Aircraft.Strut.MASS_COEFFICIENT]
 
             strut_wt = c_strut_mass * isolated_wing_wt
@@ -338,7 +330,7 @@ class WingMassTotal(om.ExplicitComponent):
         else:
             outputs[Aircraft.Strut.MASS] = strut_wt = 0
 
-        if self.options["aviary_options"].get_val(Aircraft.Wing.HAS_FOLD, units='unitless'):
+        if self.options[Aircraft.Wing.HAS_FOLD]:
             wing_area = inputs[Aircraft.Wing.AREA]
             folding_area = inputs[Aircraft.Wing.FOLDING_AREA]
             c_wing_fold = inputs[Aircraft.Wing.FOLD_MASS_COEFFICIENT]
@@ -358,7 +350,7 @@ class WingMassTotal(om.ExplicitComponent):
 
         isolated_wing_wt = inputs["isolated_wing_mass"] * GRAV_ENGLISH_LBM
 
-        if self.options["aviary_options"].get_val(Aircraft.Wing.HAS_STRUT, units='unitless'):
+        if self.options[Aircraft.Wing.HAS_STRUT]:
             c_strut_mass = inputs[Aircraft.Strut.MASS_COEFFICIENT]
 
             J[Aircraft.Wing.MASS, Aircraft.Strut.MASS_COEFFICIENT] = \
@@ -367,7 +359,7 @@ class WingMassTotal(om.ExplicitComponent):
             J[Aircraft.Wing.MASS, "isolated_wing_mass"] = 1 + c_strut_mass
             J[Aircraft.Strut.MASS, "isolated_wing_mass"] = c_strut_mass
 
-        if self.options["aviary_options"].get_val(Aircraft.Wing.HAS_FOLD, units='unitless'):
+        if self.options[Aircraft.Wing.HAS_FOLD]:
             wing_area = inputs[Aircraft.Wing.AREA]
             folding_area = inputs[Aircraft.Wing.FOLDING_AREA]
             c_wing_fold = inputs[Aircraft.Wing.FOLD_MASS_COEFFICIENT]
@@ -391,32 +383,27 @@ class WingMassTotal(om.ExplicitComponent):
             J[Aircraft.Wing.FOLD_MASS, "isolated_wing_mass"] = c_wing_fold * \
                 folding_area / wing_area
 
-        if self.options["aviary_options"].get_val(Aircraft.Wing.HAS_FOLD, units='unitless') and \
-                self.options["aviary_options"].get_val(Aircraft.Wing.HAS_STRUT, units='unitless'):
+        if self.options[Aircraft.Wing.HAS_FOLD] and \
+                self.options[Aircraft.Wing.HAS_STRUT]:
 
             J[Aircraft.Wing.MASS, "isolated_wing_mass"] = (
                 1 + c_wing_fold * folding_area / wing_area + c_strut_mass
             )
 
         if (
-            self.options["aviary_options"].get_val(
-                Aircraft.Wing.HAS_STRUT, units='unitless') == False
-            and self.options["aviary_options"].get_val(Aircraft.Wing.HAS_FOLD, units='unitless') == False
+            self.options[Aircraft.Wing.HAS_STRUT] == False
+            and self.options[Aircraft.Wing.HAS_FOLD] == False
         ):
             J[Aircraft.Wing.MASS, "isolated_wing_mass"] = 1
 
 
 class WingMassGroup(om.Group):
-    def initialize(self):
 
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options'
-        )
+    def initialize(self):
+        add_aviary_option(self, Aircraft.Wing.HAS_FOLD)
+        add_aviary_option(self, Aircraft.Wing.HAS_STRUT)
 
     def setup(self):
-
-        aviary_options = self.options['aviary_options']
 
         # variables that are calculated at a higher level
         higher_level_inputs_isolated = [
@@ -424,8 +411,8 @@ class WingMassGroup(om.Group):
             "c_gear_loc",
             "half_sweep",
         ]
-        if self.options["aviary_options"].get_val(Aircraft.Wing.HAS_FOLD, units='unitless') or \
-                self.options["aviary_options"].get_val(Aircraft.Wing.HAS_STRUT, units='unitless'):
+        if self.options[Aircraft.Wing.HAS_FOLD] or \
+                self.options[Aircraft.Wing.HAS_STRUT]:
 
             higher_level_inputs_total = [
                 "aircraft:*"
@@ -443,16 +430,14 @@ class WingMassGroup(om.Group):
 
         isolated_mass = self.add_subsystem(
             "isolated_mass",
-            WingMassSolve(aviary_options=aviary_options),
+            WingMassSolve(),
             promotes_inputs=higher_level_inputs_isolated + ["aircraft:*", "mission:*"],
             promotes_outputs=connected_outputs_isolated,
         )
 
         total_mass = self.add_subsystem(
             "total_mass",
-            WingMassTotal(
-                aviary_options=aviary_options,
-            ),
+            WingMassTotal(),
             promotes_inputs=connected_inputs_total + higher_level_inputs_total,
             promotes_outputs=["aircraft:*"],
         )

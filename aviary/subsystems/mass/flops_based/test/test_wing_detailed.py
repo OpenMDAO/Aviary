@@ -31,10 +31,20 @@ class DetailedWingBendingTest(unittest.TestCase):
 
         prob = self.prob
 
+        inputs = get_flops_inputs(case_name, preprocess=True)
+
+        options = {
+            Aircraft.Engine.NUM_ENGINES: inputs.get_val(Aircraft.Engine.NUM_ENGINES),
+            Aircraft.Engine.NUM_WING_ENGINES: inputs.get_val(Aircraft.Engine.NUM_WING_ENGINES),
+            Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: inputs.get_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES),
+            Aircraft.Wing.INPUT_STATION_DIST: inputs.get_val(Aircraft.Wing.INPUT_STATION_DIST),
+            Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL: inputs.get_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL),
+            Aircraft.Wing.NUM_INTEGRATION_STATIONS: inputs.get_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS),
+        }
+
         self.prob.model.add_subsystem(
             "wing",
-            DetailedWingBendingFact(
-                aviary_options=get_flops_inputs(case_name, preprocess=True)),
+            DetailedWingBendingFact(**options),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -79,8 +89,17 @@ class DetailedWingBendingTest(unittest.TestCase):
 
         preprocess_propulsion(aviary_options, [engineModel1, engineModel2, engineModel3])
 
-        prob.model.add_subsystem('detailed_wing', DetailedWingBendingFact(
-            aviary_options=aviary_options), promotes=['*'])
+        options = {
+            Aircraft.Engine.NUM_ENGINES: aviary_options.get_val(Aircraft.Engine.NUM_ENGINES),
+            Aircraft.Engine.NUM_WING_ENGINES: aviary_options.get_val(Aircraft.Engine.NUM_WING_ENGINES),
+            Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: aviary_options.get_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES),
+            Aircraft.Wing.INPUT_STATION_DIST: aviary_options.get_val(Aircraft.Wing.INPUT_STATION_DIST),
+            Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL: aviary_options.get_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL),
+            Aircraft.Wing.NUM_INTEGRATION_STATIONS: aviary_options.get_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS),
+        }
+
+        prob.model.add_subsystem('detailed_wing', DetailedWingBendingFact(**options),
+                                 promotes=['*'])
 
         prob.setup(force_alloc_complex=True)
 
@@ -140,9 +159,18 @@ class DetailedWingBendingTest(unittest.TestCase):
 
         preprocess_propulsion(aviary_options, [engineModel])
 
+        options = {
+            Aircraft.Engine.NUM_ENGINES: aviary_options.get_val(Aircraft.Engine.NUM_ENGINES),
+            Aircraft.Engine.NUM_WING_ENGINES: aviary_options.get_val(Aircraft.Engine.NUM_WING_ENGINES),
+            Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: aviary_options.get_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES),
+            Aircraft.Wing.INPUT_STATION_DIST: aviary_options.get_val(Aircraft.Wing.INPUT_STATION_DIST),
+            Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL: aviary_options.get_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL),
+            Aircraft.Wing.NUM_INTEGRATION_STATIONS: aviary_options.get_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS),
+        }
+
         self.prob.model.add_subsystem(
             "wing",
-            DetailedWingBendingFact(aviary_options=aviary_options),
+            DetailedWingBendingFact(**options),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )

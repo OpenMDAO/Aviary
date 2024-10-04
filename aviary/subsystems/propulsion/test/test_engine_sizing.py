@@ -13,7 +13,7 @@ from aviary.variable_info.variables import Aircraft
 
 class EngineSizingTest1(unittest.TestCase):
     def setUp(self):
-        self.prob = om.Problem(model=om.Group())
+        self.prob = om.Problem()
 
     def test_case_multiengine(self):
         filename = 'models/engines/turbofan_28k.deck'
@@ -31,15 +31,22 @@ class EngineSizingTest1(unittest.TestCase):
         options.set_val(Aircraft.Engine.GEOPOTENTIAL_ALT, False)
 
         engine = EngineDeck(name='engine', options=options)
-        options.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, engine.get_val(
-            Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf'), 'lbf')
         # options.set_val(Aircraft.Engine.SCALE_PERFORMANCE, False)
         # engine2 = EngineDeck(name='engine2', options=options)
         # preprocess_propulsion(options, [engine, engine2])
 
-        self.prob.model.add_subsystem('engine', SizeEngine(
-            aviary_options=options), promotes=['*'])
+        ref_thrust = engine.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf')
+
+        options = {
+            Aircraft.Engine.SCALE_PERFORMANCE: True,
+            Aircraft.Engine.REFERENCE_SLS_THRUST: (ref_thrust, 'lbf'),
+        }
+
+        self.prob.model.add_subsystem('engine', SizeEngine(**options),
+                                      promotes=['*'])
+
         self.prob.setup(force_alloc_complex=True)
+
         self.prob.set_val(
             Aircraft.Engine.SCALED_SLS_THRUST,
             np.array([15250]),

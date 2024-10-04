@@ -64,7 +64,7 @@ class EquationsOfMotion(Enum):
 
 
 @unique
-class GASPEngineType(Enum):
+class GASPEngineType(IntEnum):
     """
     Defines the type of engine to use in GASP-based mass calculations.
     Note that only the value for the first engine model will be used.
@@ -109,7 +109,7 @@ class GASPEngineType(Enum):
 
 
 @unique
-class FlapType(Enum):
+class FlapType(IntEnum):
     """
     Defines the type of flap used on the wing. Used in GASP-based aerodynamics and mass calculations.
     """

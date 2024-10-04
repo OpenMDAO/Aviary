@@ -2,8 +2,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -14,9 +13,7 @@ class WingBendingMass(om.ExplicitComponent):
     '''
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.Fuselage.NUM_FUSELAGES)
 
     def setup(self):
         add_aviary_input(self, Mission.Design.GROSS_MASS, val=0.0)
@@ -56,8 +53,7 @@ class WingBendingMass(om.ExplicitComponent):
         CAYE = inputs[Aircraft.Wing.ENG_POD_INERTIA_FACTOR]
         scaler = inputs[Aircraft.Wing.BENDING_MASS_SCALER]
 
-        num_fuse = self.options['aviary_options'].get_val(
-            Aircraft.Fuselage.NUM_FUSELAGES)
+        num_fuse = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
 
         # Note: Calculation requires weights prior to being scaled, so we need to divide
         # by the scale factor.
@@ -93,8 +89,7 @@ class WingBendingMass(om.ExplicitComponent):
         W3scale = inputs[Aircraft.Wing.MISC_MASS_SCALER]
         scaler = inputs[Aircraft.Wing.BENDING_MASS_SCALER]
 
-        num_fuse = self.options['aviary_options'].get_val(
-            Aircraft.Fuselage.NUM_FUSELAGES)
+        num_fuse = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
 
         deg2rad = np.pi / 180.
         term = 0.96 / np.cos(deg2rad * sweep)
@@ -190,10 +185,6 @@ class WingShearControlMass(om.ExplicitComponent):
 
     def initialize(self):
         self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
-
-        self.options.declare(
             'aircraft_type',
             default='Transport',
             values=['Transport', 'HWB', 'GA'],
@@ -271,10 +262,6 @@ class WingMiscMass(om.ExplicitComponent):
 
     def initialize(self):
         self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
-
-        self.options.declare(
             'aircraft_type',
             default='Transport',
             values=['Transport', 'HWB', 'GA'],
@@ -326,11 +313,6 @@ class WingMiscMass(om.ExplicitComponent):
 
 
 class WingTotalMass(om.ExplicitComponent):
-
-    def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.BENDING_MASS, val=0.0)

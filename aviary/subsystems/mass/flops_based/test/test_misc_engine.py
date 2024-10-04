@@ -28,9 +28,15 @@ class MiscEngineMassTest(unittest.TestCase):
 
         prob = self.prob
 
+        inputs = get_flops_inputs(case_name, preprocess=True)
+
+        options = {
+            Aircraft.Engine.NUM_ENGINES: inputs.get_val(Aircraft.Engine.NUM_ENGINES),
+        }
+
         prob.model.add_subsystem(
             "misc_mass",
-            EngineMiscMass(aviary_options=get_flops_inputs(case_name, preprocess=True)),
+            EngineMiscMass(**options),
             promotes_inputs=['*'],
             promotes_outputs=['*']
         )
@@ -65,9 +71,15 @@ class MiscEngineMassTest(unittest.TestCase):
 
         preprocess_propulsion(options, [engineModel1, engineModel2, engineModel3])
 
-        prob.model.add_subsystem('misc_engine_mass', EngineMiscMass(
-            aviary_options=options), promotes=['*'])
+        comp_options = {
+            Aircraft.Engine.NUM_ENGINES: options.get_val(Aircraft.Engine.NUM_ENGINES),
+        }
+
+        prob.model.add_subsystem('misc_engine_mass', EngineMiscMass(**comp_options),
+                                 promotes=['*'])
+
         prob.setup(force_alloc_complex=True)
+
         prob.set_val(Aircraft.Engine.ADDITIONAL_MASS,
                      np.array([100, 26, 30]), units='lbm')
         prob.set_val(Aircraft.Propulsion.MISC_MASS_SCALER, 1.02, units='unitless')

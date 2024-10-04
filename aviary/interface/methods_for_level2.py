@@ -46,7 +46,7 @@ from aviary.interface.utils.check_phase_info import check_phase_info
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import convert_strings_to_data, set_value
 
-from aviary.variable_info.functions import setup_trajectory_params, override_aviary_vars
+from aviary.variable_info.functions import setup_trajectory_params, override_aviary_vars, setup_model_options
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
 from aviary.variable_info.enums import AnalysisScheme, ProblemType, EquationsOfMotion, LegacyCode, Verbosity
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
@@ -633,7 +633,8 @@ class AviaryProblem(om.Problem):
         # Create options to values
         OptionsToValues = create_opts2vals(
             [Aircraft.CrewPayload.NUM_PASSENGERS,
-                Mission.Design.CRUISE_ALTITUDE, ])
+             Mission.Design.CRUISE_ALTITUDE, ])
+
         add_opts2vals(self.model, OptionsToValues, self.aviary_inputs)
 
         if self.analysis_scheme is AnalysisScheme.SHOOTING:
@@ -1937,6 +1938,9 @@ class AviaryProblem(om.Problem):
         """
         Lightly wrappd setup() method for the problem.
         """
+        # Use OpenMDAO's model options to pass all options through the system hierarchy.
+        setup_model_options(self, self.aviary_inputs, self.meta_data)
+
         # suppress warnings:
         # "input variable '...' promoted using '*' was already promoted using 'aircraft:*'
         with warnings.catch_warnings():
@@ -1947,6 +1951,11 @@ class AviaryProblem(om.Problem):
 
             warnings.simplefilter("ignore", om.OpenMDAOWarning)
             warnings.simplefilter("ignore", om.PromotionWarning)
+
+            # OpenMDAO currently warns that ":" won't be supported in option names, but
+            # removing support has been reconsidered.
+            warnings.simplefilter("ignore", om.OMDeprecationWarning)
+
             super().setup(**kwargs)
 
     def set_initial_guesses(self):

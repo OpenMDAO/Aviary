@@ -36,7 +36,7 @@ def add_meta_data(
         indicates that this variable is an option, rather than a normal input
 
     types : type
-        gives the allowable type(s) of the variable
+        gives the allowable type(s) of the variable in the aviary API.
 
     historical_name : dict or None
         dictionary of names that the variable held in prior codes
@@ -67,7 +67,7 @@ def add_meta_data(
         of the provided key. This should only be set to false when update_meta_data is the calling function.
 
     Returns
-    ------- 
+    -------
     None
         No variables returned by this method.
 
@@ -90,7 +90,7 @@ def add_meta_data(
         'desc': desc,
         'option': option,
         'default_value': default_value,
-        'types': types
+        'types': types,
     }
 
 
@@ -158,7 +158,7 @@ def update_meta_data(
                 represents the GWTOL variable of the ANALYS subroutine
 
     Returns
-    ------- 
+    -------
     None
         No variables returned by this method.
 

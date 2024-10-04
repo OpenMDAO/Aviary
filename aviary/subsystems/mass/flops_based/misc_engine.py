@@ -1,9 +1,8 @@
 import numpy as np
-import openmdao.api as om
-import numpy as np
 
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+import openmdao.api as om
+
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft
 
 
@@ -20,13 +19,10 @@ class EngineMiscMass(om.ExplicitComponent):
     '''
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
 
     def setup(self):
-        num_engine_type = len(self.options['aviary_options'].get_val(
-            Aircraft.Engine.NUM_ENGINES))
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
         add_aviary_input(
             self, Aircraft.Engine.ADDITIONAL_MASS, val=np.zeros(num_engine_type))
@@ -48,8 +44,7 @@ class EngineMiscMass(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         # TODO temporarily using engine-level additional mass and multiplying
         #      by num_engines to get propulsion-level additional mass
-        options: AviaryValues = self.options['aviary_options']
-        num_engines = options.get_val(Aircraft.Engine.NUM_ENGINES)
+        num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
 
         addtl_mass = sum(inputs[Aircraft.Engine.ADDITIONAL_MASS] * num_engines)
         ctrl_mass = inputs[Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS]
@@ -63,8 +58,7 @@ class EngineMiscMass(om.ExplicitComponent):
     def compute_partials(self, inputs, J):
         # TODO temporarily using engine-level additional mass and multiplying
         #      by num_engines to get propulsion-level additional mass
-        options: AviaryValues = self.options['aviary_options']
-        num_engines = options.get_val(Aircraft.Engine.NUM_ENGINES)
+        num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
 
         addtl_mass = inputs[Aircraft.Engine.ADDITIONAL_MASS] * num_engines
         ctrl_mass = inputs[Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS]

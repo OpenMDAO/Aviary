@@ -24,6 +24,7 @@ from aviary.variable_info.variables import Dynamic, Aircraft
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.subsystems.premission import CorePreMission
+from aviary.variable_info.functions import setup_model_options
 
 
 @use_tempdirs
@@ -102,6 +103,8 @@ class TestFLOPSBalancedFieldLength(unittest.TestCase):
 
         varnames = [Aircraft.Wing.ASPECT_RATIO]
         set_aviary_input_defaults(takeoff.model, varnames, aviary_options)
+
+        setup_model_options(takeoff, aviary_options)
 
         # suppress warnings:
         # "input variable '...' promoted using '*' was already promoted using 'aircraft:*'
