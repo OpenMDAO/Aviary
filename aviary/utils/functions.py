@@ -511,11 +511,18 @@ def sigmoidX(x, x0, alpha=0.1):
     """
     if alpha == 0:
         raise ValueError("alpha must be non-zero")
-    #n_size = x.size
-    #y = np.zeros(n_size)
-    #calc_idx = np.where(x > -320)
-    #y[calc_idx] = 1 / (1 + np.exp(-(x[calc_idx] - x0) / alpha))
-    y = 1 / (1 + np.exp(-(x - x0) / alpha))
+
+    if isinstance(x, np.ndarray):
+        n_size = x.size
+        y = np.zeros(n_size)
+        calc_idx = np.where((x - x0)*alpha > -320)
+        y[calc_idx] = 1 / (1 + np.exp(-(x[calc_idx] - x0) / alpha))
+        y = 1 / (1 + np.exp(-(x - x0) / alpha))
+    else:
+        y = 0
+        if (x - x0)*alpha > -320:
+            y = 1 / (1 + np.exp(-(x - x0) / alpha))
+
     return y
 
 
@@ -531,10 +538,21 @@ def dSigmoidXdx(x, x0, alpha=0.1):
     """
     if alpha == 0:
         raise ValueError("alpha must be non-zero")
-    #n_size = x.size
-    #y = np.zeros(n_size)
-    #calc_idx = np.where(x > -320)
-    term = np.exp(-(x - x0) / alpha)
-    term2 = (1 + term) * (1 + term)
-    y = term / alpha / term2
+
+    if isinstance(x, np.ndarray):
+        n_size = x.size
+        y = np.zeros(n_size)
+        term = np.zeros(n_size)
+        term2 = np.zeros(n_size)
+        calc_idx = np.where((x - x0)*alpha > -320)
+        term[calc_idx] = np.exp(-(x[calc_idx] - x0) / alpha)
+        term2[calc_idx] = (1 + term[calc_idx]) * (1 + term[calc_idx])
+        y[calc_idx] = term[calc_idx] / alpha / term2[calc_idx]
+    else:
+        y = 0
+        if (x - x0)*alpha > -320:
+            term = np.exp(-(x - x0) / alpha)
+            term2 = (1 + term) * (1 + term)
+            y = term / alpha / term2
+
     return y
