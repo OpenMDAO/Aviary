@@ -100,6 +100,16 @@ class MotorBuilder(SubsystemBuilderBase):
 
         return DVs
 
+    def get_parameters(self):
+        params = {
+            Aircraft.Engine.SCALE_FACTOR: {
+                'val': 1.0,
+                'units': 'unitless',
+                'static_target': True,
+            }
+        }
+        return params
+
     # def get_initial_guesses(self):
     #     initial_guess_dict = {
     #         Aircraft.Motor.RPM: {
