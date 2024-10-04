@@ -4,6 +4,7 @@ from openmdao.components.ks_comp import KSfunction
 
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
 from aviary.utils.aviary_values import AviaryValues
+from aviary.utils.functions import sigmoidX, dSigmoidXdx
 from aviary.variable_info.enums import FlapType
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission
@@ -125,21 +126,21 @@ class MassParameters(om.ExplicitComponent):
         ):
             # smooth transition for c_gear_loc from 0.95 to 1 when gear_location varies
             # between 0 and 1% of span
-            c_gear_loc = .95 * sigX((0.005 - gear_location)*100) + \
-                1 * sigX(100*(gear_location - 0.005))
+            c_gear_loc = .95 * sigmoidX(gear_location, 0.005, -0.01) + \
+                1 * sigmoidX(gear_location, 0.005, 0.01)
         else:
             if gear_location == 0:
                 c_gear_loc = 0.95
 
-        c_eng_pos = 1.0 * sigX(0.75 - max_mach) + 1.05 * sigX(max_mach - 0.75)
+        c_eng_pos = 1.0 * sigmoidX(max_mach, 0.75, -1./320.) + 1.05 * sigmoidX(max_mach, 0.75, 1./320.)
         if (
             not_fuselage_mounted
             and num_engines == 2
             or num_engines == 3
         ):
-            c_eng_pos = 0.98 * sigX(0.75 - max_mach) + 0.95 * sigX(max_mach - 0.75)
+            c_eng_pos = 0.98 * sigmoidX(max_mach, 0.75, -1./320.) + 0.95 * sigmoidX(max_mach, 0.75, 1./320.)
         if not_fuselage_mounted and num_engines == 4:
-            c_eng_pos = 0.95 * sigX(0.75 - max_mach) + 0.9 * sigX(max_mach - 0.75)
+            c_eng_pos = 0.95 * sigmoidX(max_mach, 0.75, -1./320.) + 0.9 * sigmoidX(max_mach, 0.75, 1./320.)
 
         outputs[Aircraft.Wing.MATERIAL_FACTOR] = c_material
         outputs["c_strut_braced"] = c_strut_braced
@@ -2321,6 +2322,9 @@ class GearMass(om.ExplicitComponent):
 
         # A minimum gear height of 6 feet is enforced here using a smoothing function to
         # prevent discontinuities in the function and it's derivatives.
+        # TODO: XJ
+        # x = sigX(gear_height_temp-6)
+        # y = sigmoidX(gear_height_temp, 6, 1/320.)
         gear_height = gear_height_temp * \
             sigX(gear_height_temp-6) + 6 * sigX(6-gear_height_temp)
 
