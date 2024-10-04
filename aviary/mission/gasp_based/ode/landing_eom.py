@@ -7,13 +7,22 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class LandingAltitudeComponent(om.ExplicitComponent):
+    def initialize(self):
+        self.options.declare('num_nodes', default=1, types=int)
+
     def setup(self):
-        add_aviary_input(self, Mission.Landing.OBSTACLE_HEIGHT, val=50.0)
-        add_aviary_input(self, Mission.Landing.AIRPORT_ALTITUDE, val=0.0)
+        nn = self.options['num_nodes']
 
-        add_aviary_output(self, Mission.Landing.INITIAL_ALTITUDE, val=0.0)
+        add_aviary_input(self, Mission.Landing.OBSTACLE_HEIGHT, val=np.ones(nn)*50.0)
+        add_aviary_input(self, Mission.Landing.AIRPORT_ALTITUDE, val=np.zeros(nn))
 
-        self.declare_partials(Mission.Landing.INITIAL_ALTITUDE, "*", val=1)
+        add_aviary_output(self, Mission.Landing.INITIAL_ALTITUDE, val=np.zeros(nn))
+
+    def setup_partials(self):
+        arange = np.arange(self.options['num_nodes'])
+
+        self.declare_partials(Mission.Landing.INITIAL_ALTITUDE, "*",
+                              rows=arange, cols=arange)
 
     def compute(self, inputs, outputs):
         (
@@ -23,84 +32,99 @@ class LandingAltitudeComponent(om.ExplicitComponent):
         outputs[Mission.Landing.INITIAL_ALTITUDE] = airport_alt + approach_height
 
     def compute_partials(self, inputs, J):
-        pass
+        nn = self.options['num_nodes']
+
+        J[Mission.Landing.INITIAL_ALTITUDE, Mission.Landing.OBSTACLE_HEIGHT] = np.ones(nn)
+        J[Mission.Landing.INITIAL_ALTITUDE, Mission.Landing.AIRPORT_ALTITUDE] = np.ones(nn)
 
 
 class GlideConditionComponent(om.ExplicitComponent):
+    def initialize(self):
+        self.options.declare('num_nodes', default=1, types=int)
+
     def setup(self):
-        self.add_input("rho_app", val=0.0, units="slug/ft**3", desc="air density")
-        add_aviary_input(self, Mission.Landing.MAXIMUM_SINK_RATE, val=900.0)
-        self.add_input(Dynamic.Mission.MASS, val=0.0, units="lbm",
+        nn = self.options['num_nodes']
+
+        self.add_input("rho_app", val=np.zeros(nn), units="slug/ft**3", desc="air density")
+        add_aviary_input(self, Mission.Landing.MAXIMUM_SINK_RATE, val=np.ones(nn)*900.0)
+        self.add_input(Dynamic.Mission.MASS, val=np.zeros(nn), units="lbm",
                        desc="aircraft mass at start of landing")
-        add_aviary_input(self, Aircraft.Wing.AREA, val=1.0)
-        add_aviary_input(self, Mission.Landing.GLIDE_TO_STALL_RATIO, val=1.3)
-        self.add_input("CL_max", val=0.0, units='unitless',
+        add_aviary_input(self, Aircraft.Wing.AREA, val=np.ones(nn))
+        add_aviary_input(self, Mission.Landing.GLIDE_TO_STALL_RATIO, val=np.ones(nn)*1.3)
+        self.add_input("CL_max", val=np.zeros(nn), units='unitless',
                        desc="CLMX: max CL at approach altitude")
 
-        add_aviary_input(self, Mission.Landing.MAXIMUM_FLARE_LOAD_FACTOR, val=1.15)
-        add_aviary_input(self, Mission.Landing.TOUCHDOWN_SINK_RATE, val=5.0)
-        add_aviary_input(self, Mission.Landing.INITIAL_ALTITUDE, val=0.0)
-        add_aviary_input(self, Mission.Landing.BRAKING_DELAY, val=1.0)
+        add_aviary_input(self, Mission.Landing.MAXIMUM_FLARE_LOAD_FACTOR, val=np.ones(nn)*1.15)
+        add_aviary_input(self, Mission.Landing.TOUCHDOWN_SINK_RATE, val=np.ones(nn)*5.0)
+        add_aviary_input(self, Mission.Landing.INITIAL_ALTITUDE, val=np.zeros(nn))
+        add_aviary_input(self, Mission.Landing.BRAKING_DELAY, val=np.ones(nn))
 
-        add_aviary_output(self, Mission.Landing.INITIAL_VELOCITY, val=0.0,
+        add_aviary_output(self, Mission.Landing.INITIAL_VELOCITY, val=np.zeros(nn),
                           desc="glide speed calculated using TAS_stall")
-        add_aviary_output(self, Mission.Landing.STALL_VELOCITY, val=0.0)
+        add_aviary_output(self, Mission.Landing.STALL_VELOCITY, val=np.zeros(nn))
 
         self.add_output(
-            "TAS_touchdown", val=0.0, units="ft/s", desc="VTD: touchdown speed"
+            "TAS_touchdown", val=np.zeros(nn), units="ft/s", desc="VTD: touchdown speed"
         )
         self.add_output(
-            "density_ratio", val=0.0, units="unitless", desc="DRAT: density ratio for DLAND"
+            "density_ratio", val=np.zeros(nn), units="unitless", desc="DRAT: density ratio for DLAND"
         )
         self.add_output(
             "wing_loading_land",
-            val=0.0,
+            val=np.zeros(nn),
             units="lbf/ft**2",
             desc="WOS: wing loading at landing",
         )
         self.add_output(
             "theta",
-            val=0.0,
+            val=np.zeros(nn),
             units="rad",
             desc="THETA: theta angle for approach to transition",
         )
 
         self.add_output(
-            "glide_distance", val=0.0, units="ft", desc="DLGL: glide distance"
+            "glide_distance", val=np.zeros(nn), units="ft", desc="DLGL: glide distance"
         )
         self.add_output(
             "tr_distance",
-            val=0.0,
+            val=np.zeros(nn),
             units="ft",
             desc="DLTR: distance covered by the flare maneuver",
         )
         self.add_output(
             "delay_distance",
-            val=0.0,
+            val=np.zeros(nn),
             units="ft",
             desc="DDELAY: delay distance - touchdown to brake application",
         )
         self.add_output(
-            "flare_alt", val=0.0, units="ft", desc="HFLAR: altitude of flare maneuver"
+            "flare_alt", val=np.zeros(nn), units="ft", desc="HFLAR: altitude of flare maneuver"
         )
+
+    def setup_partials(self):
+        arange = np.arange(self.options['num_nodes'])
 
         self.declare_partials(
             Mission.Landing.INITIAL_VELOCITY,
             [Dynamic.Mission.MASS, Aircraft.Wing.AREA, "CL_max", "rho_app",
                 Mission.Landing.GLIDE_TO_STALL_RATIO],
+            rows=arange, cols=arange,
         )
         self.declare_partials(
             Mission.Landing.STALL_VELOCITY, [
-                Dynamic.Mission.MASS, Aircraft.Wing.AREA, "CL_max", "rho_app"]
+                Dynamic.Mission.MASS, Aircraft.Wing.AREA, "CL_max", "rho_app"],
+            rows=arange, cols=arange,
         )
         self.declare_partials(
             "TAS_touchdown",
             [Mission.Landing.GLIDE_TO_STALL_RATIO, Dynamic.Mission.MASS,
                 Aircraft.Wing.AREA, "CL_max", "rho_app"],
+            rows=arange, cols=arange,
         )
-        self.declare_partials("density_ratio", ["rho_app"])
+        self.declare_partials("density_ratio", ["rho_app"], rows=arange, cols=arange)
         self.declare_partials("wing_loading_land", [
-                              Dynamic.Mission.MASS, Aircraft.Wing.AREA])
+                              Dynamic.Mission.MASS, Aircraft.Wing.AREA],
+                              rows=arange, cols=arange)
         self.declare_partials(
             "theta",
             [
@@ -111,6 +135,7 @@ class GlideConditionComponent(om.ExplicitComponent):
                 "rho_app",
                 Mission.Landing.GLIDE_TO_STALL_RATIO,
             ],
+            rows=arange, cols=arange,
         )
         self.declare_partials(
             "glide_distance",
@@ -123,6 +148,7 @@ class GlideConditionComponent(om.ExplicitComponent):
                 "rho_app",
                 Mission.Landing.GLIDE_TO_STALL_RATIO,
             ],
+            rows=arange, cols=arange,
         )
         self.declare_partials(
             "tr_distance",
@@ -136,6 +162,7 @@ class GlideConditionComponent(om.ExplicitComponent):
                 Mission.Landing.GLIDE_TO_STALL_RATIO,
                 Mission.Landing.MAXIMUM_SINK_RATE,
             ],
+            rows=arange, cols=arange,
         )
         self.declare_partials(
             "delay_distance",
@@ -147,6 +174,7 @@ class GlideConditionComponent(om.ExplicitComponent):
                 "rho_app",
                 Mission.Landing.BRAKING_DELAY,
             ],
+            rows=arange, cols=arange,
         )
         self.declare_partials(
             "flare_alt",
@@ -160,6 +188,7 @@ class GlideConditionComponent(om.ExplicitComponent):
                 "rho_app",
                 Mission.Landing.GLIDE_TO_STALL_RATIO,
             ],
+            rows=arange, cols=arange,
         )
 
     def compute(self, inputs, outputs):
@@ -569,44 +598,48 @@ class GlideConditionComponent(om.ExplicitComponent):
 
 
 class LandingGroundRollComponent(om.ExplicitComponent):
-    def setup(self):
+    def initialize(self):
+        self.options.declare('num_nodes', default=1, types=int)
 
-        self.add_input("touchdown_CD", val=0.0, units='unitless',
+    def setup(self):
+        nn = self.options['num_nodes']
+
+        self.add_input("touchdown_CD", val=np.zeros(nn), units='unitless',
                        desc="CDRL: CD at touchdown")
-        self.add_input("touchdown_CL", val=0.0, units='unitless',
+        self.add_input("touchdown_CL", val=np.zeros(nn), units='unitless',
                        desc="CLRL: CL at touchdown")
 
-        add_aviary_input(self, Mission.Landing.STALL_VELOCITY, val=0.0)
+        add_aviary_input(self, Mission.Landing.STALL_VELOCITY, val=np.zeros(nn))
         self.add_input(
-            "TAS_touchdown", val=0.0, units="ft/s", desc="VTD: velocity at touchdown"
+            "TAS_touchdown", val=np.zeros(nn), units="ft/s", desc="VTD: velocity at touchdown"
         )
         self.add_input(
             "thrust_idle",
-            val=0.0,
+            val=np.zeros(nn),
             units="lbf",
             desc="TIDLE: idle thrust at start of landing",
         )
         self.add_input(
-            "density_ratio", val=0.0, units="unitless", desc="DRAT: density ratio for DLAND"
+            "density_ratio", val=np.zeros(nn), units="unitless", desc="DRAT: density ratio for DLAND"
         )
         self.add_input(
             "wing_loading_land",
-            val=0.0,
+            val=np.zeros(nn),
             units="lbf/ft**2",
             desc="WOS: wing loading at landing",
         )
         self.add_input(
-            "glide_distance", val=0.0, units="ft", desc="DLGL: glide distance"
+            "glide_distance", val=np.zeros(nn), units="ft", desc="DLGL: glide distance"
         )
         self.add_input(
             "tr_distance",
-            val=0.0,
+            val=np.zeros(nn),
             units="ft",
             desc="DLTR: distance from glide to touchdown",
         )
         self.add_input(
             "delay_distance",
-            val=0.0,
+            val=np.zeros(nn),
             units="ft",
             desc="DDELAY: touchdown to brake application",
         )
@@ -615,20 +648,23 @@ class LandingGroundRollComponent(om.ExplicitComponent):
         )
         self.add_input(
             Dynamic.Mission.MASS,
-            val=0.0,
+            val=np.zeros(nn),
             units="lbm",
             desc="WL: aircraft mass at start of landing",
         )
 
         self.add_output(
             "ground_roll_distance",
-            val=0.0,
+            val=np.zeros(nn),
             units="ft",
             desc="DLG: distance during braked ground roll",
         )
-        add_aviary_output(self, Mission.Landing.GROUND_DISTANCE, val=0.0)
-        self.add_output("average_acceleration", val=0.0, units="unitless",  # renamed from GASP var ABAR
+        add_aviary_output(self, Mission.Landing.GROUND_DISTANCE, val=np.zeros(nn))
+        self.add_output("average_acceleration", val=np.zeros(nn), units="unitless",  # renamed from GASP var ABAR
                         desc="average acceleration/decelleration based on starting speed (TAS) and rollout distance")
+
+    def setup_partials(self):
+        arange = np.arange(self.options['num_nodes'])
 
         self.declare_partials(
             "ground_roll_distance",
@@ -643,6 +679,7 @@ class LandingGroundRollComponent(om.ExplicitComponent):
                 Mission.Landing.STALL_VELOCITY,
                 "TAS_touchdown",
             ],
+            rows=arange, cols=arange,
         )
         self.declare_partials(
             Mission.Landing.GROUND_DISTANCE,
@@ -660,6 +697,7 @@ class LandingGroundRollComponent(om.ExplicitComponent):
                 "delay_distance",
                 "glide_distance",
             ],
+            rows=arange, cols=arange,
         )
         self.declare_partials(
             "average_acceleration",
@@ -674,6 +712,7 @@ class LandingGroundRollComponent(om.ExplicitComponent):
                 "CL_max",
                 Mission.Landing.STALL_VELOCITY,
             ],
+            rows=arange, cols=arange,
         )
 
     def compute(self, inputs, outputs):

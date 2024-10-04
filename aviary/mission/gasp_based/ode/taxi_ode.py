@@ -4,7 +4,7 @@ from aviary.utils.functions import add_opts2vals, create_opts2vals
 
 from aviary.mission.gasp_based.ode.base_ode import BaseODE
 from aviary.mission.gasp_based.ode.params import ParamPort
-from aviary.mission.gasp_based.phases.taxi_component import TaxiFuelComponent
+from aviary.mission.gasp_based.ode.taxi_eom import TaxiFuelComponent
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
 from aviary.variable_info.variables import Dynamic, Mission
 

@@ -5,7 +5,7 @@ from openmdao.utils.assert_utils import (assert_check_partials,
                                          assert_near_equal)
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.mission.gasp_based.phases.taxi_component import TaxiFuelComponent
+from aviary.mission.gasp_based.ode.taxi_eom import TaxiFuelComponent
 from aviary.variable_info.variables import Dynamic, Mission
 
 

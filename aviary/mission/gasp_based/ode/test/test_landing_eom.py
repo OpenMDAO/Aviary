@@ -5,7 +5,7 @@ from openmdao.utils.assert_utils import (assert_check_partials,
                                          assert_near_equal)
 
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH
-from aviary.mission.gasp_based.phases.landing_components import (
+from aviary.mission.gasp_based.ode.landing_eom import (
     GlideConditionComponent, LandingAltitudeComponent,
     LandingGroundRollComponent)
 from aviary.variable_info.variables import Aircraft, Mission
