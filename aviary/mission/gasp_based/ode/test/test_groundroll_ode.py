@@ -34,17 +34,19 @@ class GroundrollODETestCase(unittest.TestCase):
         self.prob.set_val(Dynamic.Mission.VELOCITY, [100, 100], units="kn")
         self.prob.set_val("t_curr", [1, 2], units="s")
         self.prob.set_val("aircraft:wing:incidence", 0, units="deg")
+        self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
+        self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
 
         self.prob.run_model()
 
         testvals = {
-            Dynamic.Mission.VELOCITY_RATE: [1413741.12, 1413741.12],
+            Dynamic.Mission.VELOCITY_RATE: [1413548.36, 1413548.36],
             Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE: [0.0, 0.0],
             Dynamic.Mission.ALTITUDE_RATE: [0.0, 0.0],
             Dynamic.Mission.DISTANCE_RATE: [168.781, 168.781],
             "normal_force": [0.0, 0.0],
             "fuselage_pitch": [0.0, 0.0],
-            "dmass_dv": [-5.03183878e-06, -5.03183878e-06],
+            "dmass_dv": [-5.03252493e-06, -5.03252493e-06],
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 

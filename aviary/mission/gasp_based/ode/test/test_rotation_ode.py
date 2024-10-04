@@ -33,6 +33,8 @@ class RotationODETestCase(unittest.TestCase):
         self.prob.set_val("alpha", [1.5, 1.5], units="deg")
         self.prob.set_val(Dynamic.Mission.VELOCITY, [100, 100], units="kn")
         self.prob.set_val("t_curr", [1, 2], units="s")
+        self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
+        self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
 
         set_params_for_unit_tests(self.prob)
 
@@ -41,7 +43,7 @@ class RotationODETestCase(unittest.TestCase):
         tol = 1e-6
         assert_near_equal(
             self.prob[Dynamic.Mission.VELOCITY_RATE], np.array(
-                [13.66852121, 13.66852121]), tol)
+                [13.66655, 13.66655]), tol)
         assert_near_equal(
             self.prob[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE], np.array(
                 [0.0, 0.0]), tol)

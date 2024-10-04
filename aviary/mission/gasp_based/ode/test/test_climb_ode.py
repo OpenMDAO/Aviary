@@ -43,20 +43,23 @@ class ClimbODETestCase(unittest.TestCase):
         self.prob.set_val("EAS", 250, units="kn")
         # slightly greater than zero to help check partials
         self.prob.set_val(Aircraft.Wing.INCIDENCE, 0.0000001, units="deg")
+        self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
+        self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
 
         set_params_for_unit_tests(self.prob)
 
         self.prob.run_model()
 
         testvals = {
-            "alpha": 5.16376881,
-            "CL": 0.59764714,
-            "CD": 0.03056306,
-            Dynamic.Mission.ALTITUDE_RATE: 57.01361283,  # ft/s
-            Dynamic.Mission.DISTANCE_RATE: 424.35532272,  # ft/s
+            "alpha": 5.16398,
+            "CL": 0.59766664,
+            "CD": 0.03070836,
+            Dynamic.Mission.ALTITUDE_RATE: 3414.63 / 60,  # ft/s
+            # TAS (kts -> ft/s) * cos(gamma), 253.6827 * 1.68781 * cos(0.13331060446181708)
+            Dynamic.Mission.DISTANCE_RATE: 424.36918705874785,  # ft/s
             Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: -13448.29,  # lbm/h
-            "theta": 0.22367849,  # rad
-            Dynamic.Mission.FLIGHT_PATH_ANGLE: 0.13355372,  # rad
+            "theta": 0.22343879616956605,  # rad (12.8021 deg)
+            Dynamic.Mission.FLIGHT_PATH_ANGLE: 0.13331060446181708,  # rad (7.638135 deg)
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
@@ -80,20 +83,23 @@ class ClimbODETestCase(unittest.TestCase):
         self.prob.set_val(Dynamic.Mission.ALTITUDE, np.array([11000, 37000]), units="ft")
         self.prob.set_val(Dynamic.Mission.MASS, np.array([174149, 171592]), units="lbm")
         self.prob.set_val("EAS", np.array([270, 270]), units="kn")
+        self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
+        self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
 
         set_params_for_unit_tests(self.prob)
 
         self.prob.run_model()
 
         testvals = {
-            "alpha": [4.05545557, 4.08244122],
-            "CL": [0.51261517, 0.61772367],
-            "CD": [0.02678719, 0.03296697],
-            Dynamic.Mission.ALTITUDE_RATE: [51.04282581, 7.34336078],  # ft/s
-            Dynamic.Mission.DISTANCE_RATE: [536.26997036, 774.40958246],  # ft/s
+            "alpha": [4.05559, 4.08245],
+            "CL": [0.512629, 0.617725],
+            "CD": [0.02692764, 0.03311237],
+            Dynamic.Mission.ALTITUDE_RATE: [3053.754 / 60, 429.665 / 60],  # ft/s
+            # TAS (kts -> ft/s) * cos(gamma), [319, 459] kts
+            Dynamic.Mission.DISTANCE_RATE: [536.2835, 774.4118],  # ft/s
             Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: [-11420.05,  -6050.26],
-            "theta": [0.16567639, 0.08073428],  # rad
-            Dynamic.Mission.FLIGHT_PATH_ANGLE: [0.09489533, 0.00948224],  # rad, gamma
+            "theta": [0.16540479, 0.08049912],  # rad ([9.47699, 4.61226] deg),
+            Dynamic.Mission.FLIGHT_PATH_ANGLE: [0.09462135, 0.00924686],  # rad, gamma
             Dynamic.Mission.THRUST_TOTAL: [25560.51, 10784.25],
         }
         check_prob_outputs(self.prob, testvals, 1e-6)
