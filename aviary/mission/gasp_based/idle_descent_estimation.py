@@ -18,7 +18,8 @@ def add_descent_estimation_as_submodel(
         verbosity=Verbosity.QUIET,
 ):
     """
-    Add descent estimation
+    This creates a sub model that contains a copy of the descent portion of the mission's trajectory. This is used to calculate an estimation of the fuel burn and distance required for the descent, so that they can be used as triggers for the cruise phase. The sub model is then added to the main problem.
+    The user can specify certain initial conditions or requirements such as cruise Mach number, reserve fuel required, etc.
     """
     if phases is None:
         from aviary.interface.default_phase_info.two_dof_fiti import \

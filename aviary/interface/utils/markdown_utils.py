@@ -10,13 +10,14 @@ from math import floor, log10
 def round_it(x, sig=None):
     """
     Round a float to a specified significance.
+    If the number is equal to zero, "0" will be returned, regardless of the number of significant digits specified
 
     Parameters
     ----------
-    x : str
+    x : str or float
         the float that needs to be rounded.
     sig : int
-        the number of significance (default to 2 if None).
+        the number of significant digits to include (If this is unspecified, the number will be rounded to two decimal places).
 
     Returns
     -------

@@ -7,7 +7,7 @@ class OASWingWeightBuilder(av.SubsystemBuilderBase):
     """
     Builder for an OpenAeroStruct component that computes a new wing mass.
 
-    It also provides a method to build OpenMDAO systems for the pre-mission and mission computations of the subsystem.
+    This also provides a method to build OpenMDAO systems for the pre-mission and mission computations of the subsystem.
 
     Attributes
     ----------
