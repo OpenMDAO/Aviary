@@ -20,7 +20,6 @@ class TestGearbox(unittest.TestCase):
 
         prob.set_val(Dynamic.Mission.THROTTLE, np.linspace(0, 1, nn))
         prob.set_val(Dynamic.Mission.RPM, np.linspace(0, 6000, nn))
-        prob.set_val('torque_unscaled', np.linspace(0, 1800, nn), 'N*m')
         prob.set_val(Aircraft.Engine.SCALE_FACTOR, 1.12)
 
         prob.run_model()

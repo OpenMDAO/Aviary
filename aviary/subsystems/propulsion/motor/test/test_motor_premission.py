@@ -21,7 +21,6 @@ class TestGearbox(unittest.TestCase):
 
         prob.setup(force_alloc_complex=True)
 
-        # prob.set_val('torque_unscaled', np.linspace(0, 1800, nn), 'N*m')
         prob.set_val(Aircraft.Engine.SCALE_FACTOR, 1.12)
 
         prob.run_model()
