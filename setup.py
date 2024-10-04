@@ -35,7 +35,7 @@ setup(
         "dymos>=1.8.1",
         "hvplot",
         "importlib_resources",
-        "numpy",
+        "numpy<2",
         "matplotlib",
         "pandas",
         "panel>=1.0.0",
