@@ -12,16 +12,16 @@ from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.premission import CorePreMission
-from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
 from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.aviary_values import AviaryValues, get_items
+from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import set_aviary_initial_values
 from aviary.utils.named_values import NamedValues
+from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
 from aviary.validation_cases.validation_tests import (get_flops_inputs,
                                                       get_flops_outputs,
                                                       print_case)
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 from aviary.variable_info.enums import LegacyCode
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 FLOPS = LegacyCode.FLOPS
 GASP = LegacyCode.GASP
@@ -624,10 +624,12 @@ class _ComputedAeroHarness(om.Group):
         # Upstream pre-mission analysis for aero
         pre_mission: om.Group = self.add_subsystem(
             'pre_mission',
-            CorePreMission(aviary_options=aviary_options,
-                           subsystems=default_premission_subsystems),
-            promotes_inputs=['aircraft:*', 'mission:*'],
-            promotes_outputs=['aircraft:*', 'mission:*'])
+            CorePreMission(
+                aviary_options=aviary_options, subsystems=default_premission_subsystems
+            ),
+            promotes_inputs=['aircraft:*'],
+            promotes_outputs=['aircraft:*', 'mission:*'],
+        )
 
         kwargs = {'method': 'computed', 'gamma': gamma}
 

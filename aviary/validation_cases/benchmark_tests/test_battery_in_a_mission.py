@@ -4,12 +4,15 @@ from openmdao.utils.testing_utils import use_tempdirs
 from openmdao.utils.assert_utils import assert_near_equal
 
 import aviary.api as av
-
 from aviary.subsystems.energy.battery_builder import BatteryBuilder
 
 
 @use_tempdirs
 class TestSubsystemsMission(unittest.TestCase):
+    """
+    Test the setup and run optimization model with a bettery subsystem.
+    """
+
     def setUp(self):
         self.phase_info = {
             'pre_mission': {

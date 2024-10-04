@@ -15,6 +15,10 @@ tR_0 = np.vstack((np.linspace(0.06, 0.03, 32), np.linspace(0.04, 0.02, 32)))
 
 
 class RegTheveninInterpGroup(Group):
+    """
+    Thevenin resistance and voltage computation by interpolation using temperature,
+    state of charge, and capacitance.
+    """
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)

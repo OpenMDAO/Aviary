@@ -5,6 +5,10 @@ from aviary.examples.variables_extension import Aircraft
 
 
 class MetaDataExtensionTest(unittest.TestCase):
+    """
+    Test the use of extended meta data
+    """
+
     def test_metadata_extension(self):
 
         aircraft_variable = ExtendedMetaData[Aircraft.LandingGear.MAIN_GEAR_OLEO_DIAMETER]
