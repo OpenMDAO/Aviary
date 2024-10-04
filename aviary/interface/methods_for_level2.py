@@ -34,8 +34,8 @@ from aviary.mission.gasp_based.phases.cruise_phase import CruisePhase
 from aviary.mission.gasp_based.phases.accel_phase import AccelPhase
 from aviary.mission.gasp_based.phases.ascent_phase import AscentPhase
 from aviary.mission.gasp_based.phases.descent_phase import DescentPhase
-from aviary.mission.gasp_based.phases.landing_group import LandingSegment
-from aviary.mission.gasp_based.phases.taxi_group import TaxiSegment
+from aviary.mission.gasp_based.ode.landing_ode import LandingSegment
+from aviary.mission.gasp_based.ode.taxi_ode import TaxiSegment
 from aviary.mission.gasp_based.phases.v_rotate_comp import VRotateComp
 from aviary.mission.gasp_based.polynomial_fit import PolynomialFit
 from aviary.subsystems.premission import CorePreMission
