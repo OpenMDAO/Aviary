@@ -8,15 +8,15 @@ PhaseBuilderBase : the interface for a phase builder
 from abc import ABC
 from collections import namedtuple
 
-from aviary.mission.initial_guess_builders import InitialGuess
-from aviary.variable_info.variables import Dynamic
-
 import dymos as dm
 import openmdao.api as om
 
 from aviary.mission.flops_based.ode.mission_ODE import MissionODE
+from aviary.mission.initial_guess_builders import InitialGuess
 from aviary.utils.aviary_values import AviaryValues, get_keys
+from aviary.variable_info.variables import Dynamic
 from aviary.variable_info.variable_meta_data import _MetaData
+
 
 _require_new_meta_data_class_attr_ = \
     namedtuple('_require_new_meta_data_class_attr_', ())
@@ -415,7 +415,9 @@ class PhaseBuilderBase(ABC):
             apply_initial_guess=initial_guess.apply_initial_guess, desc=desc)
 
     def _add_user_defined_constraints(self, phase, constraints):
-        # Add each constraint and its corresponding arguments to the phase
+        """
+        Add each constraint and its corresponding arguments to the phase
+        """
         for constraint_name, kwargs in constraints.items():
             if kwargs['type'] == 'boundary':
                 kwargs.pop('type')
@@ -433,6 +435,9 @@ class PhaseBuilderBase(ABC):
                 phase.add_path_constraint(constraint_name, **kwargs)
 
     def set_time_options(self, user_options, targets=[]):
+        """
+        Set time options: fix_initial flag, duration upper bounds, duration reference
+        """
         fix_initial = user_options.get_val('fix_initial')
         duration_bounds = user_options.get_val('duration_bounds', units='s')
         duration_ref = user_options.get_val('duration_ref', units='s')
@@ -446,6 +451,9 @@ class PhaseBuilderBase(ABC):
         )
 
     def add_velocity_state(self, user_options):
+        """
+        Add velocity state: lower and upper bounds, reference, zero-reference, and state defect reference.
+        """
         velocity_lower = user_options.get_val('velocity_lower', units='kn')
         velocity_upper = user_options.get_val('velocity_upper', units='kn')
         velocity_ref = user_options.get_val('velocity_ref', units='kn')
@@ -466,6 +474,9 @@ class PhaseBuilderBase(ABC):
         )
 
     def add_mass_state(self, user_options):
+        """
+        Add mass state: lower and upper bounds, reference, zero-reference, and state defect reference.
+        """
         mass_lower = user_options.get_val('mass_lower', units='lbm')
         mass_upper = user_options.get_val('mass_upper', units='lbm')
         mass_ref = user_options.get_val('mass_ref', units='lbm')
@@ -486,6 +497,9 @@ class PhaseBuilderBase(ABC):
         )
 
     def add_distance_state(self, user_options, units='NM'):
+        """
+        Add distance state: lower and upper bounds, reference, zero-reference, and state defect reference.
+        """
         distance_lower = user_options.get_val('distance_lower', units=units)
         distance_upper = user_options.get_val('distance_upper', units=units)
         distance_ref = user_options.get_val('distance_ref', units=units)
@@ -505,6 +519,9 @@ class PhaseBuilderBase(ABC):
         )
 
     def add_flight_path_angle_state(self, user_options):
+        """
+        Add flight path angle state: lower and upper bounds, reference, zero-reference, and state defect reference.
+        """
         angle_lower = user_options.get_val('angle_lower', units='rad')
         angle_upper = user_options.get_val('angle_upper', units='rad')
         angle_ref = user_options.get_val('angle_ref', units='rad')
@@ -524,6 +541,9 @@ class PhaseBuilderBase(ABC):
         )
 
     def add_altitude_state(self, user_options, units='ft'):
+        """
+        Add altitude state: lower and upper bounds, reference, zero-reference, and state defect reference.
+        """
         alt_lower = user_options.get_val('alt_lower', units=units)
         alt_upper = user_options.get_val('alt_upper', units=units)
         alt_ref = user_options.get_val('alt_ref', units=units)
@@ -542,6 +562,9 @@ class PhaseBuilderBase(ABC):
         )
 
     def add_altitude_constraint(self, user_options):
+        """
+        Add altitude constraint: final altitude and altitude constraint reference.
+        """
         final_altitude = user_options.get_val('final_altitude', units='ft')
         alt_constraint_ref = user_options.get_val('alt_constraint_ref', units='ft')
         self.phase.add_boundary_constraint(
@@ -564,6 +587,7 @@ def register(phase_builder_t=None, *, check_repeats=True):
 
     Returns
     -------
+    phase builder type
     '''
     if phase_builder_t is None:
         def decorator(phase_builder_t):

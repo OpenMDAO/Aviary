@@ -8,6 +8,8 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class GroundrollEOM(om.ExplicitComponent):
+    """GASP based ground roll EOM"""
+
     def initialize(self):
         self.options.declare("num_nodes", types=int)
         self.options.declare("analysis_scheme", types=AnalysisScheme, default=AnalysisScheme.COLLOCATION,

@@ -7,6 +7,10 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class LandingAltitudeComponent(om.ExplicitComponent):
+    """
+    Compute the landing altitude.
+    """
+
     def initialize(self):
         self.options.declare('num_nodes', default=1, types=int)
 
@@ -39,6 +43,10 @@ class LandingAltitudeComponent(om.ExplicitComponent):
 
 
 class GlideConditionComponent(om.ExplicitComponent):
+    """
+    Compute the initial conditions of the 2DOF glide phase.
+    """
+
     def initialize(self):
         self.options.declare('num_nodes', default=1, types=int)
 
@@ -598,6 +606,10 @@ class GlideConditionComponent(om.ExplicitComponent):
 
 
 class LandingGroundRollComponent(om.ExplicitComponent):
+    """
+    Compute the groundroll distance and average acceleration/deceleration
+    """
+
     def initialize(self):
         self.options.declare('num_nodes', default=1, types=int)
 
@@ -644,7 +656,7 @@ class LandingGroundRollComponent(om.ExplicitComponent):
             desc="DDELAY: touchdown to brake application",
         )
         self.add_input(
-            "CL_max", val=0.0, units="unitless", desc="CLMX: max CL at approach altitude"
+            "CL_max", val=np.zeros(nn), units="unitless", desc="CLMX: max CL at approach altitude"
         )
         self.add_input(
             Dynamic.Mission.MASS,
