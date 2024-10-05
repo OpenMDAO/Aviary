@@ -4,6 +4,7 @@ import openmdao.api as om
 from aviary.constants import GRAV_ENGLISH_GASP, GRAV_ENGLISH_LBM, MU_LANDING, RHO_SEA_LEVEL_ENGLISH
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+import pdb
 
 
 class LandingAltitudeComponent(om.ExplicitComponent):
@@ -102,6 +103,7 @@ class GlideConditionComponent(om.ExplicitComponent):
         )
 
     def setup_partials(self):
+        #pdb.set_trace()
         arange = np.arange(self.options['num_nodes'])
 
         self.declare_partials(
@@ -207,6 +209,7 @@ class GlideConditionComponent(om.ExplicitComponent):
         weight = mass * GRAV_ENGLISH_LBM
         G = GRAV_ENGLISH_GASP
 
+        #pdb.set_trace()
         wing_loading_land = weight / wing_area
         TAS_stall = np.sqrt(2 * wing_loading_land / (CL_max * rho_app))
         TAS_glide = TAS_stall * glide_to_stall_ratio
@@ -255,6 +258,7 @@ class GlideConditionComponent(om.ExplicitComponent):
         weight = mass * GRAV_ENGLISH_LBM
         G = GRAV_ENGLISH_GASP
 
+        #pdb.set_trace()
         wing_loading_land = weight / wing_area
         TAS_stall = np.sqrt(2 * wing_loading_land / (CL_max * rho_app))
         TAS_glide = TAS_stall * glide_to_stall_ratio
@@ -292,6 +296,7 @@ class GlideConditionComponent(om.ExplicitComponent):
         J[Mission.Landing.INITIAL_VELOCITY, Aircraft.Wing.AREA] = dTasGlide_dWingArea = (
             dTasStall_dWingArea * glide_to_stall_ratio
         )
+        #pdb.set_trace()
         J[Mission.Landing.INITIAL_VELOCITY, "CL_max"] = dTasGlide_dClMax = (
             dTasStall_dClMax * glide_to_stall_ratio
         )
@@ -644,7 +649,7 @@ class LandingGroundRollComponent(om.ExplicitComponent):
             desc="DDELAY: touchdown to brake application",
         )
         self.add_input(
-            "CL_max", val=0.0, units="unitless", desc="CLMX: max CL at approach altitude"
+            "CL_max", val=np.zeros(nn), units="unitless", desc="CLMX: max CL at approach altitude"
         )
         self.add_input(
             Dynamic.Mission.MASS,
