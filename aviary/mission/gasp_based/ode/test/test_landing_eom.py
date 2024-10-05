@@ -13,6 +13,10 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 
 class LandingAltTestCase(unittest.TestCase):
+    """
+    Test computation of initial altitude in LandingAltitudeComponent component
+    """
+
     def setUp(self):
 
         num_nodes = 2
@@ -41,6 +45,10 @@ class LandingAltTestCase(unittest.TestCase):
 
 
 class GlideTestCase(unittest.TestCase):
+    """
+    Test computation of initial velocity and stall velocity in GlideConditionComponent component
+    """
+
     def setUp(self):
 
         num_nodes = 2
@@ -156,6 +164,11 @@ class GlideTestCase2(unittest.TestCase):
 
 
 class GroundRollTestCase(unittest.TestCase):
+    """
+    Test the computation of groundroll distance and average acceleration/deceleration in 
+    LandingGroundRollComponent component.
+    """
+
     def setUp(self):
 
         num_nodes = 2

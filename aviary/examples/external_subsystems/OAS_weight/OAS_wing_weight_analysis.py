@@ -46,7 +46,7 @@ from openaerostruct.structures.wingbox_fuel_vol_delta import WingboxFuelVolDelta
 
 
 def user_mesh():
-    # generate a user defined mesh which is model specific
+    """generate a user defined mesh which is model specific"""
 
     # Planform specifications
     half_span = 17.9573
@@ -130,6 +130,7 @@ def user_mesh():
 
 
 class OAStructures(om.ExplicitComponent):
+    """OAS structure component"""
 
     def initialize(self):
         self.options.declare('symmetry', default=True,

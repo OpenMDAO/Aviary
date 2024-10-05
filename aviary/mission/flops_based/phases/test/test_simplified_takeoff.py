@@ -17,6 +17,10 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class StallSpeedTest(unittest.TestCase):
+    """
+    Test computation in StallSpeed class
+    """
+
     def setUp(self):
 
         self.prob = om.Problem()
@@ -79,6 +83,10 @@ class StallSpeedTest2(unittest.TestCase):
 
 
 class FinalConditionsTest(unittest.TestCase):
+    """
+    Test final conditions computation in FinalTakeoffConditions class
+    """
+
     def setUp(self):
 
         self.prob = om.Problem()
@@ -162,6 +170,10 @@ class FinalConditionsTest2(unittest.TestCase):
 
 
 class TakeoffGroupTest(unittest.TestCase):
+    """
+    Test computation in TakeoffGroup
+    """
+
     def setUp(self):
 
         self.prob = om.Problem()

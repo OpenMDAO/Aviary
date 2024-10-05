@@ -7,6 +7,7 @@ from aviary.variable_info.variables import Dynamic
 class Takeoff:
     """
     Define user constraints for a climb phase.
+
     Parameters
     ----------
     airport_altitude : float (None)

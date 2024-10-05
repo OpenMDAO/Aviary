@@ -1,11 +1,14 @@
 import numpy as np
-import openmdao.api as om
-from aviary.examples.external_subsystems.OAS_weight.OAS_wing_weight_analysis import OAStructures
-from openmdao.utils.testing_utils import use_tempdirs
 import unittest
+
+import openmdao.api as om
+from openmdao.utils.testing_utils import use_tempdirs
+
+from aviary.examples.external_subsystems.OAS_weight.OAS_wing_weight_analysis import OAStructures
 
 
 class Test_OAStructures(unittest.TestCase):
+    """Test OAS wing weight component"""
 
     @use_tempdirs
     def test_OAS_wing_weight_analysis(self):
