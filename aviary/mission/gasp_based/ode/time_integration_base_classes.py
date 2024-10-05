@@ -13,6 +13,13 @@ from aviary.variable_info.variable_meta_data import _MetaData
 
 
 def add_SGM_required_inputs(group: om.Group, inputs_to_add: dict):
+    """
+    This is a simple utility that can be used to add inputs that are necessary for SGM but not collocation.
+    The SGM integrator expects that all states are inputs to the ODE. If any states aren't required by the EOM
+    they can be added to the ODE with this function, in order to minimize the differences between ODEs that are
+    used for both SGM and collocation.
+    """
+
     blank_component = om.ExplicitComponent()
     for input, details in inputs_to_add.items():
         blank_component.add_input(input, **details)
@@ -23,6 +30,13 @@ def add_SGM_required_inputs(group: om.Group, inputs_to_add: dict):
 
 
 def add_SGM_required_outputs(group: om.Group, outputs_to_add: dict):
+    """
+    This is a simple utility that can be used to add inputs that are necessary for SGM but not collocation.
+    The SGM integrator expects that all state rates are outputs from the ODE. If any state rates aren't
+    calculated by the EOM they can be added to the ODE with this function, in order to minimize the
+    differences between ODEs that are used for both SGM and collocation.
+    """
+
     iv_comp = om.IndepVarComp()
     for output, details in outputs_to_add.items():
         iv_comp.add_output(output, **details)
@@ -33,6 +47,14 @@ def add_SGM_required_outputs(group: om.Group, outputs_to_add: dict):
 
 
 class event_trigger():
+    """
+    event_trigger is used by SimuPyProblem to track the information that is required to trigger events during phases.
+    The state name, trigger value, and trigger units are required. Optionally a channel_name can be specified if it is
+    different from the state name.
+    Users are expect to interact with triggers primarily through SimuPyProblem.add_trigger() and
+    SimuPyProblem.clear_triggers(), but may want more detailed control over the triggers.
+    """
+
     def __init__(
             self,
             state: str,
@@ -49,7 +71,10 @@ class event_trigger():
 
 
 class SimuPyProblem(SimulationMixin):
-    # Subproblem used as a basis for forward in time integration phases.
+    """
+    Subproblem used as a basis for forward in time integration phases.
+    """
+
     def __init__(
         self,
         ode,
@@ -437,6 +462,13 @@ class SimuPyProblem(SimulationMixin):
 
 
 class SGMTrajBase(om.ExplicitComponent):
+    """
+    SGMTrajBase is intended to mimic the dymos trajectory used in collocation problems as closely as possible.
+    Users are expected to mostly use FlexibleTraj which has some additions and helper functions that are more
+    specific to Aviary and aircraft simulation, whereas this base class is intended to be more generic and
+    provides a framework for any sort of SGM based trajectory.
+    """
+
     def initialize(self, verbosity=Verbosity.QUIET):
         # needs to get passed to each ODE
         # TODO: param_dict

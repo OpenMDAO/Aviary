@@ -1,16 +1,18 @@
 import numpy as np
 import openmdao.api as om
 import subprocess as subprocess
-from openmdao.utils.file_wrap import FileParser
-from aviary.subsystems.propulsion.engine_sizing import SizeEngine
-from aviary.utils.functions import get_path
-import time
-import os
 
-from aviary.examples.external_subsystems.engine_NPSS.engine_variables import Aircraft, Dynamic
+from openmdao.utils.file_wrap import FileParser
+
+from aviary.examples.external_subsystems.engine_NPSS.engine_variables import Aircraft
+from aviary.utils.functions import get_path
 
 
 class NPSSExternalCodeComp(om.ExternalCodeComp):
+    """
+    Component that wraps NPSS engine model
+    """
+
     def initialize(self):
         self.options.declare('vec_size', default=72, types=int,
                              desc='number of points in NPSS model deck. Will need to be updated if size of deck changes')
@@ -101,6 +103,10 @@ class NPSSExternalCodeComp(om.ExternalCodeComp):
 
 
 class DesignEngineGroup(om.Group):
+    """
+    Group that contains NPSSExternalCodeComp and component to calculate negative fuel flow rate
+    """
+
     def initialize(self):
         self.options.declare('vec_size', default=72, types=int,
                              desc='number of points in NPSS model deck. Will need to be updated if size of deck changes')

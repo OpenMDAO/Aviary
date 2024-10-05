@@ -326,6 +326,9 @@ class WingMiscMass(om.ExplicitComponent):
 
 
 class WingTotalMass(om.ExplicitComponent):
+    """
+    Computation of wing mass using FLOPS-based detailed wing mass equations.
+    """
 
     def initialize(self):
         self.options.declare(

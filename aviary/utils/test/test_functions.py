@@ -6,13 +6,16 @@ from pathlib import Path
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 
-from aviary.utils.functions import add_opts2vals, create_opts2vals
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission
-from aviary.utils.functions import get_path
+from aviary.utils.functions import add_opts2vals, create_opts2vals, get_path
 
 
 class TestOpts2Vals(unittest.TestCase):
+    """
+    Test the functionality of create_opts2vals function.
+    """
+
     def setUp(self):
         self.options = get_option_defaults()
         self.options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS,
@@ -52,6 +55,9 @@ class TestOpts2Vals(unittest.TestCase):
 
 
 class TestGetPath(unittest.TestCase):
+    """
+    Test get_path function from string and Path object for absolute and relative path
+    """
 
     def setUp(self):
         self.current_dir = Path.cwd()
