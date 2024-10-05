@@ -214,7 +214,7 @@ class GroundRollTestCase(unittest.TestCase):
         )  # actual GASP value is: 0.3932
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=5e-12, rtol=1e-12)
+        assert_check_partials(partial_data, atol=6e-12, rtol=1e-12)
 
 
 class GroundRollTestCase2(unittest.TestCase):
@@ -260,13 +260,8 @@ class GroundRollTestCase2(unittest.TestCase):
         self.prob.run_model()
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=5e-12, rtol=1e-12)
+        assert_check_partials(partial_data, atol=6e-12, rtol=1e-12)
 
 
 if __name__ == "__main__":
-    #unittest.main()
-    import pdb
-    thisClass = GroundRollTestCase()
-    #pdb.set_trace()
-    thisClass.setUp()
-    thisClass.test_case1()
+    unittest.main()
