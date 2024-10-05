@@ -1,6 +1,7 @@
 from aviary.mission.gasp_based.ode.base_ode import BaseODE
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.taxi_eom import TaxiFuelComponent
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import add_opts2vals, create_opts2vals
