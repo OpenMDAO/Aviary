@@ -10,6 +10,7 @@ from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
 
 
 class DuplicateHierarchy:
+    """A sample data set with a duplicate name in two different classes."""
 
     stuff = 'nothing'
 
@@ -22,6 +23,10 @@ class DuplicateHierarchy:
 
 
 class MetaDataTest(unittest.TestCase):
+    """
+    Tests for variable_meta_data.py: check for duplicate legacy code names, alphabetization, and any missing names from variable hierarchy.
+    """
+
     def test_duplicate_names_FLOPS(self):
 
         flops_names = [var["historical_name"]['FLOPS'] for var in _MetaData.values()]
@@ -41,9 +46,7 @@ class MetaDataTest(unittest.TestCase):
         assert_metadata_alphabetization(metadata_var_names)
 
     def test_missing_names(self):
-        """
-        Test that all variables inside the metadata exist in the hierarchy, and vice-versa
-        """
+        # Test that all variables inside the metadata exist in the hierarchy, and vice-versa
         var_names = \
             get_names_from_hierarchy(Aircraft)\
             + get_names_from_hierarchy(Mission)\
@@ -64,6 +67,10 @@ class MetaDataTest(unittest.TestCase):
 
 
 class VariableStructureTest(unittest.TestCase):
+    """
+    Tests for variables.py: check for duplicates and alphabetization
+    """
+
     def test_duplicate_names_Aviary(self):
 
         aviary_names = get_names_from_hierarchy(Aircraft)\

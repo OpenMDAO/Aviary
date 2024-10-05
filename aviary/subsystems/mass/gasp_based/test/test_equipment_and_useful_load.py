@@ -6,13 +6,14 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.mass.gasp_based.equipment_and_useful_load import \
     EquipAndUsefulLoadMass
-from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.enums import GASPEngineType
+from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission
 
 
-# this is the large single aisle 1 V3 test case
 class FixedEquipMassTestCase1(unittest.TestCase):
+    """ this is the large single aisle 1 V3 test case"""
+
     def setUp(self):
 
         options = get_option_defaults()
@@ -282,9 +283,9 @@ class FixedEquipMassTestCase3(unittest.TestCase):
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
 
-class FixedEquipMassTestCase4smooth(
-    unittest.TestCase
-):  # this is the large single aisle 1 V3 test case
+class FixedEquipMassTestCase4smooth(unittest.TestCase):
+    """this is the large single aisle 1 V3 test case"""
+
     def setUp(self):
 
         options = get_option_defaults()
@@ -568,9 +569,9 @@ class FixedEquipMassTestCase6smooth(unittest.TestCase):
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
 
-class EquipAndUsefulMassGroupTestCase1(
-    unittest.TestCase
-):  # this is the large single aisle 1 V3 test case
+class EquipAndUsefulMassGroupTestCase1(unittest.TestCase):
+    """this is the large single aisle 1 V3 test case"""
+
     def setUp(self):
 
         options = get_option_defaults()

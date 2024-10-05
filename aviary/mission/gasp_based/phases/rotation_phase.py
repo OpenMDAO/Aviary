@@ -1,13 +1,29 @@
 import numpy as np
 
-from aviary.mission.phase_builder_base import PhaseBuilderBase
+from aviary.mission.gasp_based.ode.rotation_ode import RotationODE
 from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessIntegrationVariable, InitialGuessControl
+from aviary.mission.phase_builder_base import PhaseBuilderBase
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
-from aviary.mission.gasp_based.ode.rotation_ode import RotationODE
 
 
 class RotationPhase(PhaseBuilderBase):
+    """
+    A phase builder for a rotation phase in a 2-degree of freedom mission simulation.
+
+    This class extends the PhaseBuilderBase class, providing specific implementations for
+    the rotation phase of a flight mission.
+
+    Attributes
+    ----------
+    Inherits all attributes from PhaseBuilderBase.
+
+    Methods
+    -------
+    Inherits all methods from PhaseBuilderBase.
+    Additional method overrides and new methods specific to the rotation phase are included.
+    """
+
     default_name = 'rotation_phase'
     default_ode_class = RotationODE
 

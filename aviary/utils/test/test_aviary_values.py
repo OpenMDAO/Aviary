@@ -12,6 +12,9 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 
 class TestTypes(unittest.TestCase):
+    """
+    Test Aviary variables have correct data types.
+    """
 
     def test_aircraft(self):
         vals = AviaryValues()
@@ -158,6 +161,9 @@ class TestTypes(unittest.TestCase):
 
 
 class TestUnits(unittest.TestCase):
+    """
+    Test Aviary variables have correct units.
+    """
 
     def test_aircraft(self):
         vals = AviaryValues()
@@ -231,16 +237,18 @@ class TestUnits(unittest.TestCase):
 
 
 class TestVariableExtension(unittest.TestCase):
+    """
+    Test set_val function for extended Aviary variables.
+    """
+
     def test_set_val_metadata_extension(self):
         option_defaults = AviaryValues()
 
         filename = get_path(
             'models/engines/turbofan_23k_1.deck')
         option_defaults.set_val(ExtendedAircraft.Engine.DATA_FILE, filename)
-        option_defaults.set_val(ExtendedAircraft.Engine.NUM_ENGINES, val=[
-                                2], units='unitless', meta_data=ExtendedMetaData)
-        option_defaults.set_val(ExtendedAircraft.Wing.AERO_CENTER, val=5, units='ft', meta_data=ExtendedMetaData
-                                )
+        option_defaults.set_val(ExtendedAircraft.Wing.AERO_CENTER, val=5, units='ft',
+                                meta_data=ExtendedMetaData)
 
         check_val = option_defaults.get_val(
             ExtendedAircraft.Wing.AERO_CENTER, units='inch')

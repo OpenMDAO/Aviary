@@ -3,7 +3,7 @@ import openmdao.api as om
 
 from aviary import constants
 from aviary.variable_info.enums import SpeedType
-from aviary.variable_info.variables import Dynamic, Mission
+from aviary.variable_info.variables import Dynamic
 
 
 class UnsteadySolvedFlightConditions(om.ExplicitComponent):
@@ -11,14 +11,14 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
     Cross-compute TAS, EAS, and Mach regardless of the input speed type.
 
     Inputs:
-        rho : local atmospheric density
-        sos : local speed of sound
+        Dynamic.Mission.DENSITY : local atmospheric density
+        Dynamic.Mission.SPEED_OF_SOUND : local speed of sound
 
     Additional inputs if ground_roll = False:
-        flight_path_angle : flight path angle
+        Dynamic.Mission.FLIGHT_PATH_ANGLE : flight path angle
 
     Additional inputs when input_speed_type = SpeedType.TAS:
-        TAS : true airspeed
+        Dynamic.Mission.VELOCITY : true airspeed
         dTAS_dr : approximate rate of change of true airspeed per unit range
 
     Additional inputs when input_speed_type = SpeedType.EAS:
@@ -26,7 +26,7 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
         dEAS_dr : approximate rate of change of equivalent airspeed per unit range
 
     Additional inputs when input_speed_type = SpeedType.MACH:
-        mach : Mach number
+        Dynamic.Mission.MACH : Mach number
         dmach_dr : approximate rate of change of Mach number per unit range
 
     Outputs always provided:
@@ -35,11 +35,11 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
 
     Additional outputs when input_speed_type = SpeedType.TAS
         EAS : equivalent airspeed
-        mach : Mach number
+        Dynamic.Mission.MACH : Mach number
 
     Outputs provided when input_speed_type = SpeedType.EAS:
         TAS : true airspeed
-        mach : Mach number
+        Dynamic.Mission.MACH : Mach number
     """
 
     def initialize(self):

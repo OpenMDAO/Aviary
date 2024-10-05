@@ -10,6 +10,12 @@ LBF_TO_N = convert_units(1.0, 'lbf', 'N')
 
 
 class UnsteadySolvedEOM(om.ExplicitComponent):
+    """
+    This class provides the 2-degree of freedom equations of motion for a flight condition.
+    Given velocity, thrust, lift, drag, and alpha, it computes normal force,
+    fuselage pitch angle, load factor, seconds passed per each meter of range covered,
+    rate of change of true airspeed.
+    """
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

@@ -1,5 +1,4 @@
 import numpy as np
-import openmdao.api as om
 import aviary.api as av
 from aviary.examples.external_subsystems.battery.battery_variables import Aircraft, Mission
 
