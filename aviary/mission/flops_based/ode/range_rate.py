@@ -5,6 +5,11 @@ from aviary.variable_info.variables import Dynamic
 
 
 class RangeRate(om.ExplicitComponent):
+    """
+    Compute the range rate using equation:
+    distance_rate = (velocity**2 - climb_rate**2)**0.5
+    """
+
     def initialize(self):
         self.options.declare('num_nodes', types=int)
 

@@ -1,10 +1,10 @@
 import unittest
 from pathlib import Path
 
-from aviary.utils.functions import get_path
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.utils.engine_deck_conversion import EngineDeckType, _exec_EDC
+from aviary.utils.functions import get_path
 
 
 class DummyArgs(object):
@@ -16,6 +16,10 @@ class DummyArgs(object):
 
 @use_tempdirs
 class TestEngineDeckConversion(unittest.TestCase):
+    """
+    Test engine deck conversion utility by comparing against previously converted engine deck files
+    """
+
     def prepare_and_run(self, filename, output_file=None, data_format=EngineDeckType.GASP):
         args = DummyArgs()
 

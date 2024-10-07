@@ -8,6 +8,7 @@ OASWingWeightBuilder = av.TestSubsystemBuilderBase.import_builder(path_to_builde
 
 @av.skipIfMissingDependencies(OASWingWeightBuilder)
 class TestStructures(av.TestSubsystemBuilderBase):
+    """Test OAS structure builder"""
 
     def setUp(self):
         self.subsystem_builder = OASWingWeightBuilder()

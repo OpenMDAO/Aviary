@@ -4,9 +4,25 @@ from math import floor, log10
 # TODO openMDAO has generate_table() that might be able to replace this
 
 # TODO rounding might have other use cases, move to utils if so
+# It is confirmed that both functions are used else where.
 
 
 def round_it(x, sig=None):
+    """
+    Round a float to a specified significance.
+    If the number is equal to zero, "0" will be returned, regardless of the number of significant digits specified
+
+    Parameters
+    ----------
+    x : str or float
+        the float that needs to be rounded.
+    sig : int
+        the number of significant digits to include (If this is unspecified, the number will be rounded to two decimal places).
+
+    Returns
+    -------
+        The rounded number
+    """
     # default sig figs to 2 decimal places out
     if isinstance(x, str):
         try:
@@ -25,6 +41,17 @@ def write_markdown_variable_table(open_file, problem, outputs, metadata):
     """
     Writes a table of the provided variable names in outputs. Converts units to defaults
     from metadata if avaliable.
+
+    Parameters
+    ----------
+    open_file : Path
+        The output file to be written to. This file should have been opened for writing.
+    problem : dict
+        The dictionary that contains the data.
+    outputs : List
+        The list of keywords that will go to outputs file.
+    metadata : dict
+        The dictionary that contains the metadata of the data with desired units.
     """
     open_file.write('\n| Variable Name | Value | Units |\n')
     open_file.write('| :- | :- | :- |\n')

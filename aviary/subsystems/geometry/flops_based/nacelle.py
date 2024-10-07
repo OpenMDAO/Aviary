@@ -10,6 +10,9 @@ from aviary.variable_info.variables import Aircraft
 #      Aircraft.Nacelle.AVG_LENGTH = 0.07 * sqrt(Aircraft.ENGINE.SCALED_SLS_THRUST)
 #      Aircraft.Nacelle.AVG_DIAMETER = 0.04 * sqrt(Aircraft.ENGINE.SCALED_SLS_THRUST)
 class Nacelles(om.ExplicitComponent):
+    """
+    Calculate nacelle wetted area and total wetted area
+    """
 
     def initialize(self):
         self.options.declare(

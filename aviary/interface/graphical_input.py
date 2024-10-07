@@ -6,9 +6,6 @@ import platform
 import importlib.util  # used for opening existing phase info file
 import numpy as np
 
-# used for unit conversion of numerical data
-from openmdao.utils.units import convert_units
-
 import tkinter as tk  # base tkinter
 import tkinter.ttk as ttk  # used for combobox
 from tkinter import filedialog, messagebox, font
@@ -16,6 +13,9 @@ from tkinter import filedialog, messagebox, font
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backend_bases import MouseButton
+
+# used for unit conversion of numerical data
+from openmdao.utils.units import convert_units
 
 
 def get_screen_geometry():
@@ -87,6 +87,10 @@ class VerticalScrolledFrame(tk.Frame):
 
 
 class AviaryMissionEditor(tk.Tk):
+    """
+    Aviary mission editor class
+    """
+
     def __init__(self):
         screen_width, screen_height = \
             [int(x) for x in get_screen_geometry().split("+")[0].split("x")]
@@ -664,6 +668,7 @@ class AviaryMissionEditor(tk.Tk):
             self.table_add_button.grid(row=row*2+3, column=0, columnspan=col+2)
 
     def update_header(self, new_headers):
+        """Update header"""
         i = 0
         for widget in self.table_header_widgets:
             if isinstance(widget, tk.Entry):
