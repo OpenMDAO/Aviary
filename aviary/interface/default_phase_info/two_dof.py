@@ -207,10 +207,10 @@ phase_info = {
         },
         'initial_guesses': {
             'mass': ([171481., 136000], 'lbm'),
-            'distance': ([200.e3, 200.e6], 'ft'),
-            'time': ([1516., 28000.], 's'),
-            'altitude': ([37.5e3, 40.e3], 'ft'),
-            'mach': ([0.8, 0.8], 'unitless'),
+            'initial_distance': (200.e3, 'ft'),
+            'initial_time': (1516, 's'),
+            'altitude': (37.5e3, 'ft'),
+            'mach': (0.8, 'unitless'),
         }
     },
     'desc1': {

@@ -102,11 +102,11 @@ CruisePhase._add_initial_guess_meta_data(
     desc='initial guess for mass')
 
 CruisePhase._add_initial_guess_meta_data(
-    InitialGuessState('distance'),
+    InitialGuessState('initial_distance'),
     desc='initial guess for initial_distance')
 
 CruisePhase._add_initial_guess_meta_data(
-    InitialGuessState('time'),
+    InitialGuessState('initial_time'),
     desc='initial guess for initial_time')
 
 CruisePhase._add_initial_guess_meta_data(

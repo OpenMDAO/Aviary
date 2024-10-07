@@ -853,6 +853,7 @@ class AviaryProblem(om.Problem):
 
         if self.mission_method is SOLVED_2DOF:
             if phase_options['user_options']['ground_roll'] and phase_options['user_options']['fix_initial']:
+                # if phase_name == 'groundroll':
                 phase_builder = GroundrollPhaseVelocityIntegrated
             else:
                 phase_builder = TwoDOFPhase
@@ -2114,119 +2115,56 @@ class AviaryProblem(om.Problem):
         guesses : dict
             A dictionary containing the initial guesses for the phase.
         """
+        print("=========================", phase_name, "=========================")
         integration_variable = phase.time_options['name']
+        print("integration_variable = ", integration_variable)
+        control_keys = phase.control_options.keys()
+        print("control_keys_new = ", control_keys)
+        polynomial_control_keys = phase.polynomial_control_options.keys()
+        print("polynomial_control_keys_new = ", polynomial_control_keys)
+        state_keys = phase.state_options.keys()
+        print("state_keys_new = ", state_keys)
+        parameter_keys = phase.parameter_options.keys()
+        # print("parameter_keys_new = ", parameter_keys)
+        prob_keys = ["tau_gear", "tau_flaps"]
+        print("prob_keys =", prob_keys)
+
+        print("guesses =", guesses)
+
+        # If the user hasn't provided initial guesses then we can guess guesses for some parameters:
         # If using the GASP model, set initial guesses for the rotation mass and flight duration
         if self.mission_method is TWO_DEGREES_OF_FREEDOM:
             rotation_mass = self.initialization_guesses['rotation_mass']
             flight_duration = self.initialization_guesses['flight_duration']
-
-        control_keys = []
-        state_keys = []
-        initial_param_keys = []
-        param_keys = []
-        if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
-            control_keys = ["mach", "altitude"]
-            state_keys = ["mass", Dynamic.Mission.DISTANCE]
-        elif self.mission_method == TWO_DEGREES_OF_FREEDOM and self.phase_info[phase_name]["user_options"].get("analytic", False):
-            initial_param_keys = ["distance", "time"]
-            param_keys = ["altitude", "mach"]
-        elif self.mission_method == TWO_DEGREES_OF_FREEDOM:
-            control_keys = ["velocity_rate", "throttle"]
-            state_keys = ["altitude", "mass",
-                          Dynamic.Mission.DISTANCE, Dynamic.Mission.VELOCITY, "flight_path_angle", "alpha"]
-            if phase_name == 'ascent':
-                # Alpha is a control for ascent.
-                control_keys.append('alpha')
+            base_phase = phase_name.removeprefix('reserve_')
         else:
-            raise ValueError(
-                f"Invalid mission_method. {self.mission_method} is not recognized.")
+            base_phase = phase_name
 
-        prob_keys = ["tau_gear", "tau_flaps"]
+        if 'time' not in guesses and 'initial_time' not in guesses:
+            print("NO time or initial_time GUESS")
+            if self.mission_method is TWO_DEGREES_OF_FREEDOM:
+                # Determine initial time and duration guesses depending on the phase name
+                if 'desc1' == base_phase:
+                    t_initial = flight_duration*.9
+                    t_final = flight_duration*.94
+                elif 'desc2' in base_phase:
+                    t_initial = flight_duration*.94
+                    t_final = flight_duration
+                # what about other phases - why guess guesses only for descent?
 
-        # for the simple mission method, use the provided initial and final mach and altitude values from phase_info
-        if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
-            initial_altitude = wrapped_convert_units(
-                self.phase_info[phase_name]['user_options']['initial_altitude'], 'ft')
-            final_altitude = wrapped_convert_units(
-                self.phase_info[phase_name]['user_options']['final_altitude'], 'ft')
-            initial_mach = self.phase_info[phase_name]['user_options']['initial_mach']
-            final_mach = self.phase_info[phase_name]['user_options']['final_mach']
-
-            guesses["mach"] = ([initial_mach[0], final_mach[0]], "unitless")
-            guesses["altitude"] = ([initial_altitude, final_altitude], 'ft')
-
-        if self.mission_method is HEIGHT_ENERGY:
-            # if time not in initial guesses, set it based on first element of initial_bounds and duration_bounds
-            if 'time' not in guesses:
+            elif self.mission_method is HEIGHT_ENERGY:
+                # if time not in initial guesses, set it based on first element of initial_bounds and duration_bounds
                 initial_bounds = wrapped_convert_units(
                     self.phase_info[phase_name]['user_options']['initial_bounds'], 's')
                 duration_bounds = wrapped_convert_units(
                     self.phase_info[phase_name]['user_options']['duration_bounds'], 's')
-                guesses["time"] = (
-                    [initial_bounds[0], initial_bounds[0]+duration_bounds[0]], 's')
+                t_initial = initial_bounds[0]
+                t_final = initial_bounds[0] + duration_bounds[0]
 
-        for guess_key, guess_data in guesses.items():
-            val, units = guess_data
+            guesses["time"] = ([t_initial, t_final], 's')
 
-            # Set initial guess for integration variable (usually time, but is mass for 2DOF cruise)
-            if integration_variable == guess_key and self.mission_method is not SOLVED_2DOF:
-                duration = val[-1] - val[0]
-                self.set_val(f'traj.{phase_name}.t_initial',
-                             val[0], units=units)
-                self.set_val(f'traj.{phase_name}.t_duration',
-                             duration, units=units)
-
-            else:
-                # Set initial guess for control variables
-                if guess_key in control_keys:
-                    try:
-                        self.set_val(f'traj.{phase_name}.controls:{guess_key}', self._process_guess_var(
-                            val, guess_key, phase), units=units)
-                    except KeyError:
-                        try:
-                            self.set_val(f'traj.{phase_name}.polynomial_controls:{guess_key}', self._process_guess_var(
-                                val, guess_key, phase), units=units)
-                        except KeyError:
-                            self.set_val(f'traj.{phase_name}.bspline_controls:{guess_key}', self._process_guess_var(
-                                val, guess_key, phase), units=units)
-
-                if self.mission_method is SOLVED_2DOF:
-                    continue
-
-                if guess_key in control_keys:
-                    pass
-                # Set initial guess for state variables
-                elif guess_key in state_keys:
-                    self.set_val(f'traj.{phase_name}.states:{guess_key}', self._process_guess_var(
-                        val, guess_key, phase), units=units)
-                elif guess_key in prob_keys:
-                    self.set_val(guess_key, val, units=units)
-                elif guess_key in initial_param_keys:
-                    self.set_val(f'traj.{phase_name}.parameters:initial_{guess_key}',
-                                 val[0], units=units)
-                elif guess_key in param_keys:
-                    self.set_val(f'traj.{phase_name}.parameters:{guess_key}',
-                                 val[0], units=units)
-                elif ":" in guess_key:
-                    self.set_val(f'traj.{phase_name}.{guess_key}', self._process_guess_var(
-                        val, guess_key, phase), units=units)
-                else:
-                    # raise error if the guess key is not recognized
-                    raise ValueError(
-                        f"Initial guess key '{guess_key}' in phase '{phase_name}' is not recognized for '{self.mission_method}'")
-
-        if self.mission_method is SOLVED_2DOF:
-            return
-
-        # We need some special logic for these following variables because GASP computes
-        # initial guesses using some knowledge of the mission duration and other variables
-        # that are only available after calling `create_vehicle`. Thus these initial guess
-        # values are not included in the `phase_info` object.
-        if self.mission_method is TWO_DEGREES_OF_FREEDOM:
-            base_phase = phase_name.removeprefix('reserve_')
-        else:
-            base_phase = phase_name
         if 'mass' not in guesses:
+            print("NO MASS GUESS")
             if self.mission_method is TWO_DEGREES_OF_FREEDOM:
                 # Determine a mass guess depending on the phase name
                 if base_phase in ["groundroll", "rotation", "ascent", "accel", "climb1"]:
@@ -2239,35 +2177,117 @@ class AviaryProblem(om.Problem):
                 mass_guess = self.aviary_inputs.get_val(
                     Mission.Design.GROSS_MASS, units='lbm')
             # Set the mass guess as the initial value for the mass state variable
-            self.set_val(f'traj.{phase_name}.states:mass',
-                         mass_guess, units='lbm')
+            guesses["mass"] = ([mass_guess, mass_guess], 'lbm')
 
-        if 'time' not in guesses:
-            # Determine initial time and duration guesses depending on the phase name
-            if 'desc1' == base_phase:
-                t_initial = flight_duration*.9
-                t_duration = flight_duration*.04
-            elif 'desc2' in base_phase:
-                t_initial = flight_duration*.94
-                t_duration = flight_duration*.06
-            # Set the time guesses as the initial values for the time-related trajectory variables
-            self.set_val(f"traj.{phase_name}.t_initial",
-                         t_initial, units='s')
-            self.set_val(f"traj.{phase_name}.t_duration",
-                         t_duration, units='s')
-
-        if self.mission_method is TWO_DEGREES_OF_FREEDOM:
-            if 'distance' not in guesses:
+        if 'distance' not in guesses:
+            print("NO DISTANCE GUESS")
+            if self.mission_method is TWO_DEGREES_OF_FREEDOM and not self.phase_info[phase_name]["user_options"].get("analytic", False):
                 # Determine initial distance guesses depending on the phase name
                 if 'desc1' == base_phase:
-                    ys = [self.target_range*.97, self.target_range*.99]
+                    initial_distance = self.target_range*.97
+                    final_distance = self.target_range*.99
                 elif 'desc2' in base_phase:
-                    ys = [self.target_range*.99, self.target_range]
+                    initial_distance = self.target_range*.99
+                    final_distance = self.target_range
+                else:
+                    initial_distance = self.target_range*0.45
+                    final_distance = self.target_range*0.55
                 # Set the distance guesses as the initial values for the distance state variable
-                self.set_val(
-                    f"traj.{phase_name}.states:distance", phase.interp(
-                        Dynamic.Mission.DISTANCE, ys=ys)
-                )
+                guesses["distance"] = [initial_distance, final_distance]
+
+        if 'altitude' not in guesses:
+            print("NO ALTITUDE GUESS")
+            if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
+                initial_altitude = wrapped_convert_units(
+                    self.phase_info[phase_name]['user_options']['initial_altitude'], 'ft')
+                final_altitude = wrapped_convert_units(
+                    self.phase_info[phase_name]['user_options']['final_altitude'], 'ft')
+                guesses["altitude"] = ([initial_altitude, final_altitude], 'ft')
+
+        if 'mach' not in guesses:
+            print("NO MACH GUESS")
+            if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
+                initial_mach = self.phase_info[phase_name]['user_options']['initial_mach'][0]
+                final_mach = self.phase_info[phase_name]['user_options']['final_mach'][0]
+                guesses["mach"] = ([initial_mach, final_mach], "unitless")
+
+        print("updated_guesses=", guesses)
+        # Loop over the guesses and set based on the keys for that phase
+        for guess_key, guess_data in guesses.items():
+            val, units = guess_data
+
+            # Set initial guess for integration variable (usually time)
+            if guess_key == integration_variable and self.mission_method is not SOLVED_2DOF:
+                duration = val[-1] - val[0]
+                print("getting intial values of integration variable", guess_key)
+                print(guess_key, self.get_val(f'traj.{phase_name}.t_initial'), self.get_val(
+                    f'traj.{phase_name}.t_duration'))
+                print("setting integration variable ",
+                      guess_key, val[0], duration, units)
+                self.set_val(f'traj.{phase_name}.t_initial', val[0], units=units)
+                self.set_val(f'traj.{phase_name}.t_duration', duration, units=units)
+                print("getting set values of integration variable ", guess_key)
+                print(guess_key, self.get_val(f'traj.{phase_name}.t_initial'), self.get_val(
+                    f'traj.{phase_name}.t_duration'))
+
+            else:
+                # Set initial guess for control variables
+                if guess_key in control_keys:
+                    print("getting intial values of control ", guess_key)
+                    print(self.get_val(f'traj.{phase_name}.controls:{guess_key}'))
+                    print("setting control guess ", guess_key, val, units)
+                    self.set_val(f'traj.{phase_name}.controls:{guess_key}', self._process_guess_var(
+                        val, guess_key, phase), units=units)
+                    print("getting set values of control", guess_key)
+                    print(self.get_val(f'traj.{phase_name}.controls:{guess_key}'))
+                elif guess_key in polynomial_control_keys:
+                    print("getting intial values of poly_control ", guess_key)
+                    print(self.get_val(
+                        f'traj.{phase_name}.polynomial_controls:{guess_key}'))
+                    print("setting polynomial control guess ", guess_key, val, units)
+                    self.set_val(f'traj.{phase_name}.polynomial_controls:{
+                                 guess_key}', self._process_guess_var(val, guess_key, phase), units=units)
+                    print("getting set values of poly_control ", guess_key)
+                    print(self.get_val(
+                        f'traj.{phase_name}.polynomial_controls:{guess_key}'))
+
+                if self.mission_method is SOLVED_2DOF:
+                    print("skip to next guess as SOLVED_2DOF")
+                    # why don't we want to set state, prob and parameter guesses for SOLVED_2DOF?
+                    continue
+
+                if guess_key in control_keys or guess_key in polynomial_control_keys:
+                    pass
+                # Set initial guess for state variables
+                elif guess_key in state_keys:
+                    print("getting initial state value", guess_key,
+                          self.get_val(f'traj.{phase_name}.states:{guess_key}'))
+                    print("setting state guess ", guess_key, val, units)
+                    self.set_val(f'traj.{phase_name}.states:{guess_key}', self._process_guess_var(
+                        val, guess_key, phase), units=units)
+                    print("getting set state value", guess_key, self.get_val(
+                        f'traj.{phase_name}.states:{guess_key}'))
+                elif guess_key in prob_keys:
+                    print("Get initial prob value ", self.get_val(guess_key))
+                    print("setting prob value ", guess_key, val, units)
+                    self.set_val(guess_key, val, units=units)
+                    print("Get set prob value ", self.get_val(guess_key))
+                elif guess_key in parameter_keys:
+                    print("Get initial parameter value", self.get_val(
+                        f'traj.{phase_name}.parameters:{guess_key}'))
+                    print("setting parameter guess ", guess_key, val, units)
+                    self.set_val(f'traj.{phase_name}.parameters:{
+                                 guess_key}', val, units=units)
+                    print("Get set parameter value", self.get_val(
+                        f'traj.{phase_name}.parameters:{guess_key}'))
+                elif ":" in guess_key:
+                    print("***********other************")
+                    self.set_val(f'traj.{phase_name}.{guess_key}', self._process_guess_var(
+                        val, guess_key, phase), units=units)
+                else:
+                    # raise error if the guess key is not recognized
+                    warnings.warn(
+                        f"Initial guess key '{guess_key}' in phase '{phase_name}' is not recognized for '{self.mission_method}'")
 
     def run_aviary_problem(self,
                            record_filename="problem_history.db",
