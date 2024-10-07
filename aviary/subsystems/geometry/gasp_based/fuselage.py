@@ -2,9 +2,9 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.options import get_option_defaults
+from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variables import Aircraft, Settings
 
 
 def sigX(x):
@@ -20,6 +20,10 @@ def dSigXdX(x):
 
 
 class FuselageParameters(om.ExplicitComponent):
+    """
+    Computation of average fuselage diameter, cabin height, cabin length and nose height.
+    """
+
     def initialize(self):
 
         self.options.declare(
@@ -51,6 +55,7 @@ class FuselageParameters(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
+        verbosity = self.options['aviary_options'].get_val(Settings.VERBOSITY)
         aviary_options: AviaryValues = self.options['aviary_options']
         seats_abreast = aviary_options.get_val(Aircraft.Fuselage.NUM_SEATS_ABREAST)
         seat_width = aviary_options.get_val(Aircraft.Fuselage.SEAT_WIDTH, units='inch')
@@ -63,8 +68,8 @@ class FuselageParameters(om.ExplicitComponent):
         cabin_width = seats_abreast * seat_width + num_aisle * aisle_width + 12
 
         if PAX < 1:
-            print("Warning: you have not specified at least one passenger")
-            print(aviary_options)
+            if verbosity >= Verbosity.BRIEF:
+                print("Warning: you have not specified at least one passenger")
 
         # single seat across
         cabin_len_a = PAX * seat_pitch / 12
@@ -99,6 +104,11 @@ class FuselageParameters(om.ExplicitComponent):
 
 
 class FuselageSize(om.ExplicitComponent):
+    """
+    Computation of fuselage length, fuselage wetted area, and cabin length
+    for the tail boom fuselage. 
+    """
+
     def initialize(self):
 
         self.options.declare(
@@ -240,6 +250,10 @@ class FuselageSize(om.ExplicitComponent):
 
 
 class FuselageGroup(om.Group):
+    """
+    Group to pull together FuselageParameters and FuselageSize.
+    """
+
     def initialize(self):
 
         self.options.declare(
