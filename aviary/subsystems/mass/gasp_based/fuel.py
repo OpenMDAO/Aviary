@@ -27,6 +27,11 @@ def dSigXdX(x):
 
 
 class BodyTankCalculations(om.ExplicitComponent):
+    """
+    Computation of fuel capacity of the auxiliary tank, extra required design fuel volume
+    along with mass of fuel in it, and minimum wing fuel mass.
+    """
+
     def initialize(self):
         self.options.declare(
             'aviary_options', types=AviaryValues,
@@ -347,6 +352,15 @@ class BodyTankCalculations(om.ExplicitComponent):
 
 
 class FuelAndOEMOutputs(om.ExplicitComponent):
+    """
+    Computation of various fuel and OEM parameters (such as wing fuel mass when
+    operating empty, wing tank fuel volume when carrying maximum fuel, wing tank
+    fuel volume when carrying design fuel plus fuel margin, operating mass empty
+    of the aircraft, allowable payload mass with maximum fuel, mass of wing fuel
+    based on volume, maximum wingfuel mass, and wing tank volume based on maximum
+    wing fuel weight).
+    """
+
     def initialize(self):
         self.options.declare(
             'aviary_options', types=AviaryValues,
@@ -714,6 +728,10 @@ class FuelAndOEMOutputs(om.ExplicitComponent):
 
 
 class FuelSysAndFullFuselageMass(om.ExplicitComponent):
+    """
+    Computation of fuselage mass and fuel system mass
+    """
+
     def initialize(self):
         self.options.declare(
             'aviary_options', types=AviaryValues,
@@ -747,7 +765,7 @@ class FuelSysAndFullFuselageMass(om.ExplicitComponent):
             "fus_mass_full",
             val=0,
             units="lbm",
-            desc="WX: nass of fuselage and contents, including empennage",
+            desc="WX: mass of fuselage and contents, including empennage",
         )
         add_aviary_output(self, Aircraft.Fuel.FUEL_SYSTEM_MASS, val=0)
 
@@ -843,6 +861,10 @@ class FuelSysAndFullFuselageMass(om.ExplicitComponent):
 
 
 class FuselageAndStructMass(om.ExplicitComponent):
+    """
+    Computation of total structural group mass and mass of the fuselage structure.
+    """
+
     def initialize(self):
         self.options.declare(
             'aviary_options', types=AviaryValues,
@@ -1181,6 +1203,11 @@ class FuselageAndStructMass(om.ExplicitComponent):
 
 
 class FuelMass(om.ExplicitComponent):
+    """
+    Computation of fuel masses including fuel carried, total propulsion group mass,
+    and minimum value of fuel mass.
+    """
+
     def initialize(self):
         self.options.declare(
             'aviary_options', types=AviaryValues,
@@ -1482,6 +1509,11 @@ class FuelMass(om.ExplicitComponent):
 
 
 class FuelMassGroup(om.Group):
+    """
+    Group of fuel related components including FuelSysAndFullFuselageMass,
+    FuselageAndStructMass, FuelMass, FuelAndOEMOutputs, and BodyTankCalculations.
+    """
+
     def initialize(self):
         self.options.declare(
             'aviary_options', types=AviaryValues,

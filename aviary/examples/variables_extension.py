@@ -4,10 +4,8 @@ AviaryAircraft = av.Aircraft
 AviaryMission = av.Mission
 
 
-# ---------------------------
-# Aircraft data hierarchy
-# ---------------------------
 class Aircraft(AviaryAircraft):
+    """Extended Aircraft data hierarchy"""
 
     CG = "aircraft:center_of_gravity"
     MASS = "aircraft:mass"
@@ -49,12 +47,9 @@ class Aircraft(AviaryAircraft):
             ROOT_CHORD = "aircraft:wing:krueger:root_chord_dist"
             SPAN = "aircraft:wing:krueger:span_dist"
 
-# ---------------------------
-# Aircraft data hierarchy
-# ---------------------------
-
 
 class Mission(AviaryMission):
+    """Extended Mission data hierarchy"""
 
     class Cruise:
         FUEL_MASS = "mission:cruise:fuel_mass"

@@ -1,15 +1,18 @@
 import unittest
 import aviary.api as av
 
-from aviary.interface.default_phase_info.height_energy import phase_info_parameterization
-from aviary.variable_info.enums import ProblemType, Verbosity
-from aviary.variable_info.variables import Mission
-
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 from openmdao.utils.assert_utils import assert_near_equal
 
+from aviary.interface.default_phase_info.height_energy import phase_info_parameterization
+from aviary.variable_info.enums import ProblemType, Verbosity
+
 
 class HeightEnergyTestCase(unittest.TestCase):
+    """
+    Setup basic aircraft mass and range and select climb, cruise, and descent phases for simulation. 
+    """
+
     def setUp(self) -> None:
         self.sized_mass = 175871.04745399
         self.sized_range = 3375
@@ -104,6 +107,11 @@ class HeightEnergyTestCase(unittest.TestCase):
 
 @use_tempdirs
 class TestOffDesign(HeightEnergyTestCase):
+    """
+    Build the model using a large single aisle commercial transport aircraft data using
+    FLOPS mass method and HEIGHT_ENERGY mission method. Run a fallout mission to test off design.
+    """
+
     @require_pyoptsparse(optimizer="IPOPT")
     def test_off_design_IPOPT(self):
         # Fallout Mission

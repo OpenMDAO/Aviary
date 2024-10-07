@@ -6,7 +6,9 @@ from aviary.utils.test_utils.assert_utils import warn_timeseries_near_equal
 
 
 def compare_against_expected_values(prob, expected_dict):
-
+    """
+    Compare values in prob with the ones in expected_dict.
+    """
     expected_times = expected_dict['times']
     expected_altitudes = expected_dict['altitudes']
     expected_masses = expected_dict['masses']

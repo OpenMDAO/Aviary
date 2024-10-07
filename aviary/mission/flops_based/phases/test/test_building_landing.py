@@ -8,6 +8,10 @@ from aviary.variable_info.variables import Mission
 
 
 class LandingPhaseTest(unittest.TestCase):
+    """
+    Test landing phase builder
+    """
+
     def test_case1(self):
         landing_options = Landing(
             ref_wing_area=1370.0,  # ft**2

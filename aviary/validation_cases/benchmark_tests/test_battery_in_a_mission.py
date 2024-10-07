@@ -4,12 +4,15 @@ from openmdao.utils.testing_utils import use_tempdirs
 from openmdao.utils.assert_utils import assert_near_equal
 
 import aviary.api as av
-
 from aviary.subsystems.energy.battery_builder import BatteryBuilder
 
 
 @use_tempdirs
 class TestSubsystemsMission(unittest.TestCase):
+    """
+    Test the setup and run optimization model with a bettery subsystem.
+    """
+
     def setUp(self):
         self.phase_info = {
             'pre_mission': {
@@ -53,7 +56,8 @@ class TestSubsystemsMission(unittest.TestCase):
         prob = av.AviaryProblem()
 
         prob.load_inputs(
-            "models/test_aircraft/aircraft_for_bench_FwFm_with_electric.csv", phase_info)
+            "models/test_aircraft/aircraft_for_bench_FwFm_with_electric.csv", phase_info
+        )
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
@@ -85,7 +89,10 @@ class TestSubsystemsMission(unittest.TestCase):
         prob.run_aviary_problem()
 
         electric_energy_used = prob.get_val(
-            f'traj.cruise.timeseries.{av.Dynamic.Mission.CUMULATIVE_ELECTRIC_ENERGY_USED}', units='kW*h')
+            f'traj.cruise.timeseries.{
+                av.Dynamic.Mission.CUMULATIVE_ELECTRIC_ENERGY_USED}',
+            units='kW*h',
+        )
         fuel_burned = prob.get_val(av.Mission.Summary.FUEL_BURNED, units='lbm')
         soc = prob.get_val(
             'traj.cruise.rhs_all.battery.battery_state_of_charge', units='unitless'
