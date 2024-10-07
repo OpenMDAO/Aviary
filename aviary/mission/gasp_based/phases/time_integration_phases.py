@@ -34,7 +34,7 @@ class SGMGroundroll(SimuPyProblem):
             states=[
                 Dynamic.Vehicle.MASS,
                 Dynamic.Mission.DISTANCE,
-                Dynamic.Atmosphere.ALTITUDE,
+                Dynamic.Mission.ALTITUDE,
                 Dynamic.Atmosphere.VELOCITY,
             ],
             # state_units=['lbm','nmi','ft','ft/s'],
@@ -69,7 +69,7 @@ class SGMRotation(SimuPyProblem):
             states=[
                 Dynamic.Vehicle.MASS,
                 Dynamic.Mission.DISTANCE,
-                Dynamic.Atmosphere.ALTITUDE,
+                Dynamic.Mission.ALTITUDE,
                 Dynamic.Atmosphere.VELOCITY,
             ],
             # state_units=['lbm','nmi','ft'],
@@ -125,9 +125,9 @@ class SGMAscent(SimuPyProblem):
             states=[
                 Dynamic.Vehicle.MASS,
                 Dynamic.Mission.DISTANCE,
-                Dynamic.Atmosphere.ALTITUDE,
+                Dynamic.Mission.ALTITUDE,
                 Dynamic.Atmosphere.VELOCITY,
-                Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+                Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 "alpha",
             ],
             # state_units=['lbm','nmi','ft'],
@@ -140,9 +140,9 @@ class SGMAscent(SimuPyProblem):
 
         self.phase_name = phase_name
         self.event_channel_names = [
-            Dynamic.Atmosphere.ALTITUDE,
-            Dynamic.Atmosphere.ALTITUDE,
-            Dynamic.Atmosphere.ALTITUDE,
+            Dynamic.Mission.ALTITUDE,
+            Dynamic.Mission.ALTITUDE,
+            Dynamic.Mission.ALTITUDE,
         ]
         self.num_events = len(self.event_channel_names)
 
@@ -156,7 +156,7 @@ class SGMAscent(SimuPyProblem):
         alpha = self.get_alpha(t, x)
         self.ode0.set_val("alpha", alpha)
         self.ode0.output_equation_function(t, x)
-        alt = self.ode0.get_val(Dynamic.Atmosphere.ALTITUDE).squeeze()
+        alt = self.ode0.get_val(Dynamic.Mission.ALTITUDE).squeeze()
         return np.array(
             [
                 alt - ascent_termination_alt,
@@ -373,7 +373,7 @@ class SGMAccel(SimuPyProblem):
             states=[
                 Dynamic.Vehicle.MASS,
                 Dynamic.Mission.DISTANCE,
-                Dynamic.Atmosphere.ALTITUDE,
+                Dynamic.Mission.ALTITUDE,
                 Dynamic.Atmosphere.VELOCITY,
             ],
             # state_units=['lbm','nmi','ft'],
@@ -425,7 +425,7 @@ class SGMClimb(SimuPyProblem):
             problem_name=phase_name,
             outputs=[
                 "alpha",
-                Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+                Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 "required_lift",
                 "lift",
                 "mach",
@@ -433,12 +433,12 @@ class SGMClimb(SimuPyProblem):
                 Dynamic.Atmosphere.VELOCITY,
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                 "drag",
-                Dynamic.Atmosphere.ALTITUDE_RATE,
+                Dynamic.Mission.ALTITUDE_RATE,
             ],
             states=[
                 Dynamic.Vehicle.MASS,
                 Dynamic.Mission.DISTANCE,
-                Dynamic.Atmosphere.ALTITUDE,
+                Dynamic.Mission.ALTITUDE,
             ],
             # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
@@ -449,7 +449,7 @@ class SGMClimb(SimuPyProblem):
 
         self.phase_name = phase_name
         self.add_trigger(
-            Dynamic.Atmosphere.ALTITUDE, "alt_trigger", units=self.alt_trigger_units
+            Dynamic.Mission.ALTITUDE, "alt_trigger", units=self.alt_trigger_units
         )
         self.add_trigger(self.speed_trigger_name, "speed_trigger",
                          units="speed_trigger_units")
@@ -492,12 +492,12 @@ class SGMCruise(SimuPyProblem):
                 Dynamic.Atmosphere.VELOCITY,
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                 "drag",
-                Dynamic.Atmosphere.ALTITUDE_RATE,
+                Dynamic.Mission.ALTITUDE_RATE,
             ],
             states=[
                 Dynamic.Vehicle.MASS,
                 Dynamic.Mission.DISTANCE,
-                Dynamic.Atmosphere.ALTITUDE,
+                Dynamic.Mission.ALTITUDE,
                 Dynamic.Atmosphere.VELOCITY,
             ],
             # state_units=['lbm','nmi','ft'],
@@ -556,12 +556,12 @@ class SGMDescent(SimuPyProblem):
                 Dynamic.Atmosphere.VELOCITY,
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                 "drag",
-                Dynamic.Atmosphere.ALTITUDE_RATE,
+                Dynamic.Mission.ALTITUDE_RATE,
             ],
             states=[
                 Dynamic.Vehicle.MASS,
                 Dynamic.Mission.DISTANCE,
-                Dynamic.Atmosphere.ALTITUDE,
+                Dynamic.Mission.ALTITUDE,
             ],
             # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
@@ -572,7 +572,7 @@ class SGMDescent(SimuPyProblem):
 
         self.phase_name = phase_name
         self.add_trigger(
-            Dynamic.Atmosphere.ALTITUDE, "alt_trigger", units=self.alt_trigger_units
+            Dynamic.Mission.ALTITUDE, "alt_trigger", units=self.alt_trigger_units
         )
         self.add_trigger(self.speed_trigger_name, "speed_trigger",
                          units=self.speed_trigger_units)

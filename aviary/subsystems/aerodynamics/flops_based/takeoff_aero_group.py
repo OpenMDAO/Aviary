@@ -122,8 +122,8 @@ class TakeoffAeroGroup(om.Group):
 
         inputs = [
             'angle_of_attack',
-            Dynamic.Atmosphere.ALTITUDE,
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+            Dynamic.Mission.ALTITUDE,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE,
             ('minimum_drag_coefficient', Mission.Takeoff.DRAG_COEFFICIENT_MIN),
             Aircraft.Wing.ASPECT_RATIO,
             Aircraft.Wing.HEIGHT,

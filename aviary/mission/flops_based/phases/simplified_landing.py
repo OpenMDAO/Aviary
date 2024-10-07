@@ -118,7 +118,7 @@ class LandingGroup(om.Group):
             subsys=Atmosphere(num_nodes=1),
             promotes=[
                 '*',
-                (Dynamic.Atmosphere.ALTITUDE, Mission.Landing.INITIAL_ALTITUDE),
+                (Dynamic.Mission.ALTITUDE, Mission.Landing.INITIAL_ALTITUDE),
             ],
         )
 

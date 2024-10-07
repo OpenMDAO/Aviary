@@ -125,8 +125,8 @@ class BreguetCruiseODESolution(BaseODE):
             ],
             promotes_outputs=[
                 (
-                    Dynamic.Vehicle.SPECIFIC_ENERGY_RATE,
-                    Dynamic.Vehicle.SPECIFIC_ENERGY_RATE_EXCESS,
+                    Dynamic.Mission.SPECIFIC_ENERGY_RATE,
+                    Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
                 )
             ],
         )
@@ -136,20 +136,20 @@ class BreguetCruiseODESolution(BaseODE):
             subsys=AltitudeRate(num_nodes=nn),
             promotes_inputs=[
                 (
-                    Dynamic.Vehicle.SPECIFIC_ENERGY_RATE,
-                    Dynamic.Vehicle.SPECIFIC_ENERGY_RATE_EXCESS,
+                    Dynamic.Mission.SPECIFIC_ENERGY_RATE,
+                    Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
                 ),
                 Dynamic.Atmosphere.VELOCITY_RATE,
                 Dynamic.Atmosphere.VELOCITY,
             ],
             promotes_outputs=[
-                (Dynamic.Atmosphere.ALTITUDE_RATE, Dynamic.Vehicle.ALTITUDE_RATE_MAX)
+                (Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.ALTITUDE_RATE_MAX)
             ],
         )
 
         ParamPort.set_default_vals(self)
         self.set_input_defaults(
-            Dynamic.Atmosphere.ALTITUDE, val=37500 * np.ones(nn), units="ft"
+            Dynamic.Mission.ALTITUDE, val=37500 * np.ones(nn), units="ft"
         )
         self.set_input_defaults("mass", val=np.linspace(
             171481, 171581 - 10000, nn), units="lbm")

@@ -111,7 +111,7 @@ class UnsteadyControlIterGroup(om.Group):
         )
         if not self.options['ground_roll']:
             self.set_input_defaults(
-                name=Dynamic.Vehicle.FLIGHT_PATH_ANGLE, val=0.0 * onn, units="rad"
+                name=Dynamic.Mission.FLIGHT_PATH_ANGLE, val=0.0 * onn, units="rad"
             )
         self.set_input_defaults(
             name=Dynamic.Atmosphere.VELOCITY, val=250.0 * onn, units="kn"

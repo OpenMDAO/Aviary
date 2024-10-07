@@ -137,8 +137,8 @@ class TakeoffEOM(om.Group):
             'climbing': climbing
         }
 
-        inputs = [Dynamic.Vehicle.FLIGHT_PATH_ANGLE, Dynamic.Atmosphere.VELOCITY]
-        outputs = [Dynamic.Mission.DISTANCE_RATE, Dynamic.Atmosphere.ALTITUDE_RATE]
+        inputs = [Dynamic.Mission.FLIGHT_PATH_ANGLE, Dynamic.Atmosphere.VELOCITY]
+        outputs = [Dynamic.Mission.DISTANCE_RATE, Dynamic.Mission.ALTITUDE_RATE]
 
         self.add_subsystem(
             'distance_rates', DistanceRates(**kwargs),
@@ -204,7 +204,7 @@ class DistanceRates(om.ExplicitComponent):
         nn = options['num_nodes']
 
         add_aviary_input(
-            self, Dynamic.Vehicle.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units='rad'
+            self, Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units='rad'
         )
         add_aviary_input(
             self, Dynamic.Atmosphere.VELOCITY, val=np.zeros(nn), units='m/s'
@@ -213,7 +213,7 @@ class DistanceRates(om.ExplicitComponent):
         add_aviary_output(self, Dynamic.Mission.DISTANCE_RATE,
                           val=np.zeros(nn), units='m/s')
         add_aviary_output(
-            self, Dynamic.Atmosphere.ALTITUDE_RATE, val=np.zeros(nn), units='m/s'
+            self, Dynamic.Mission.ALTITUDE_RATE, val=np.zeros(nn), units='m/s'
         )
 
     def setup_partials(self):
@@ -229,7 +229,7 @@ class DistanceRates(om.ExplicitComponent):
         else:
             self.declare_partials(
                 Dynamic.Mission.DISTANCE_RATE,
-                Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+                Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 dependent=False,
             )
 
@@ -239,15 +239,13 @@ class DistanceRates(om.ExplicitComponent):
                 val=np.identity(nn),
             )
 
-            self.declare_partials(
-                Dynamic.Atmosphere.ALTITUDE_RATE, '*', dependent=False
-            )
+            self.declare_partials(Dynamic.Mission.ALTITUDE_RATE, '*', dependent=False)
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
         velocity = inputs[Dynamic.Atmosphere.VELOCITY]
 
         if self.options['climbing']:
-            flight_path_angle = inputs[Dynamic.Vehicle.FLIGHT_PATH_ANGLE]
+            flight_path_angle = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
 
             cgam = np.cos(flight_path_angle)
             range_rate = cgam * velocity
@@ -255,7 +253,7 @@ class DistanceRates(om.ExplicitComponent):
             sgam = np.sin(flight_path_angle)
             altitude_rate = sgam * velocity
 
-            outputs[Dynamic.Atmosphere.ALTITUDE_RATE] = altitude_rate
+            outputs[Dynamic.Mission.ALTITUDE_RATE] = altitude_rate
 
         else:
             range_rate = velocity
@@ -264,21 +262,21 @@ class DistanceRates(om.ExplicitComponent):
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
         if self.options['climbing']:
-            flight_path_angle = inputs[Dynamic.Vehicle.FLIGHT_PATH_ANGLE]
+            flight_path_angle = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
             velocity = inputs[Dynamic.Atmosphere.VELOCITY]
 
             cgam = np.cos(flight_path_angle)
             sgam = np.sin(flight_path_angle)
 
-            J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Vehicle.FLIGHT_PATH_ANGLE] = (
+            J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Mission.FLIGHT_PATH_ANGLE] = (
                 -sgam * velocity
             )
             J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Atmosphere.VELOCITY] = cgam
 
-            J[Dynamic.Atmosphere.ALTITUDE_RATE, Dynamic.Vehicle.FLIGHT_PATH_ANGLE] = (
+            J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.FLIGHT_PATH_ANGLE] = (
                 cgam * velocity
             )
-            J[Dynamic.Atmosphere.ALTITUDE_RATE, Dynamic.Atmosphere.VELOCITY] = sgam
+            J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Atmosphere.VELOCITY] = sgam
 
 
 class Accelerations(om.ExplicitComponent):
@@ -394,7 +392,7 @@ class VelocityRate(om.ExplicitComponent):
         add_aviary_input(self, Dynamic.Mission.DISTANCE_RATE,
                          val=np.zeros(nn), units='m/s')
         add_aviary_input(
-            self, Dynamic.Atmosphere.ALTITUDE_RATE, val=np.zeros(nn), units='m/s'
+            self, Dynamic.Mission.ALTITUDE_RATE, val=np.zeros(nn), units='m/s'
         )
 
         add_aviary_output(
@@ -409,7 +407,7 @@ class VelocityRate(om.ExplicitComponent):
         a_h = inputs['acceleration_horizontal']
         a_v = inputs['acceleration_vertical']
         v_h = inputs[Dynamic.Mission.DISTANCE_RATE]
-        v_v = inputs[Dynamic.Atmosphere.ALTITUDE_RATE]
+        v_v = inputs[Dynamic.Mission.ALTITUDE_RATE]
 
         v_mag = np.sqrt(v_h**2 + v_v**2)
         outputs[Dynamic.Atmosphere.VELOCITY_RATE] = (a_h * v_h + a_v * v_v) / v_mag
@@ -418,7 +416,7 @@ class VelocityRate(om.ExplicitComponent):
         a_h = inputs['acceleration_horizontal']
         a_v = inputs['acceleration_vertical']
         v_h = inputs[Dynamic.Mission.DISTANCE_RATE]
-        v_v = inputs[Dynamic.Atmosphere.ALTITUDE_RATE]
+        v_v = inputs[Dynamic.Mission.ALTITUDE_RATE]
 
         num = (a_h * v_h + a_v * v_v)
         fact = v_h**2 + v_v**2
@@ -431,7 +429,7 @@ class VelocityRate(om.ExplicitComponent):
             a_h / den - 0.5 * num / fact ** (3 / 2) * 2.0 * v_h
         )
 
-        J[Dynamic.Atmosphere.VELOCITY_RATE, Dynamic.Atmosphere.ALTITUDE_RATE] = (
+        J[Dynamic.Atmosphere.VELOCITY_RATE, Dynamic.Mission.ALTITUDE_RATE] = (
             a_v / den - 0.5 * num / fact ** (3 / 2) * 2.0 * v_v
         )
 
@@ -452,7 +450,7 @@ class FlightPathAngleRate(om.ExplicitComponent):
         add_aviary_input(self, Dynamic.Mission.DISTANCE_RATE,
                          val=np.zeros(nn), units='m/s')
         add_aviary_input(
-            self, Dynamic.Atmosphere.ALTITUDE_RATE, val=np.zeros(nn), units='m/s'
+            self, Dynamic.Mission.ALTITUDE_RATE, val=np.zeros(nn), units='m/s'
         )
 
         self.add_input(
@@ -469,7 +467,7 @@ class FlightPathAngleRate(om.ExplicitComponent):
 
         add_aviary_output(
             self,
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
             val=np.zeros(nn),
             units='rad/s',
         )
@@ -480,17 +478,17 @@ class FlightPathAngleRate(om.ExplicitComponent):
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
         v_h = inputs[Dynamic.Mission.DISTANCE_RATE]
-        v_v = inputs[Dynamic.Atmosphere.ALTITUDE_RATE]
+        v_v = inputs[Dynamic.Mission.ALTITUDE_RATE]
         a_h = inputs['acceleration_horizontal']
         a_v = inputs['acceleration_vertical']
 
         x = (a_v * v_h - a_h * v_v) / (v_h**2 + v_v**2)
 
-        outputs[Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE] = x
+        outputs[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE] = x
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
         v_h = inputs[Dynamic.Mission.DISTANCE_RATE]
-        v_v = inputs[Dynamic.Atmosphere.ALTITUDE_RATE]
+        v_v = inputs[Dynamic.Mission.ALTITUDE_RATE]
         a_h = inputs['acceleration_horizontal']
         a_v = inputs['acceleration_vertical']
 
@@ -505,14 +503,14 @@ class FlightPathAngleRate(om.ExplicitComponent):
 
         df_dav = v_h / den
 
-        J[Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE, Dynamic.Mission.DISTANCE_RATE] = (
+        J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, Dynamic.Mission.DISTANCE_RATE] = (
             df_dvh
         )
-        J[Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE, Dynamic.Atmosphere.ALTITUDE_RATE] = (
+        J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, Dynamic.Mission.ALTITUDE_RATE] = (
             df_dvv
         )
-        J[Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE, 'acceleration_horizontal'] = df_dah
-        J[Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE, 'acceleration_vertical'] = df_dav
+        J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, 'acceleration_horizontal'] = df_dah
+        J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, 'acceleration_vertical'] = df_dav
 
 
 class SumForces(om.ExplicitComponent):
@@ -554,7 +552,7 @@ class SumForces(om.ExplicitComponent):
         self.add_input('angle_of_attack', val=np.zeros(nn), units='rad')
 
         add_aviary_input(
-            self, Dynamic.Vehicle.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units='rad'
+            self, Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units='rad'
         )
 
         self.add_output(
@@ -591,7 +589,7 @@ class SumForces(om.ExplicitComponent):
                 Dynamic.Vehicle.LIFT,
                 Dynamic.Vehicle.DRAG,
                 'angle_of_attack',
-                Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+                Dynamic.Mission.FLIGHT_PATH_ANGLE,
             ]
 
             self.declare_partials('*', wrt, rows=rows_cols, cols=rows_cols)
@@ -639,7 +637,7 @@ class SumForces(om.ExplicitComponent):
 
             self.declare_partials(
                 'forces_horizontal',
-                ['angle_of_attack', Dynamic.Vehicle.FLIGHT_PATH_ANGLE],
+                ['angle_of_attack', Dynamic.Mission.FLIGHT_PATH_ANGLE],
                 dependent=False,
             )
 
@@ -669,7 +667,7 @@ class SumForces(om.ExplicitComponent):
                 aviary_options.get_val(Mission.Takeoff.ANGLE_OF_ATTACK_RUNWAY, 'rad')
 
             alpha = inputs['angle_of_attack']
-            gamma = inputs[Dynamic.Vehicle.FLIGHT_PATH_ANGLE]
+            gamma = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
 
             angle = alpha - alpha0 + t_inc + gamma
 
@@ -718,7 +716,7 @@ class SumForces(om.ExplicitComponent):
         drag = inputs[Dynamic.Vehicle.DRAG]
 
         alpha = inputs['angle_of_attack']
-        gamma = inputs[Dynamic.Vehicle.FLIGHT_PATH_ANGLE]
+        gamma = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
 
         angle = alpha - alpha0 + t_inc + gamma
 
@@ -740,11 +738,11 @@ class SumForces(om.ExplicitComponent):
         J['forces_horizontal', 'angle_of_attack'] = -thrust * s_angle
         J['forces_vertical', 'angle_of_attack'] = thrust * c_angle
 
-        J['forces_horizontal', Dynamic.Vehicle.FLIGHT_PATH_ANGLE] = (
+        J['forces_horizontal', Dynamic.Mission.FLIGHT_PATH_ANGLE] = (
             -thrust * s_angle + drag * s_gamma - lift * c_gamma
         )
 
-        J['forces_vertical', Dynamic.Vehicle.FLIGHT_PATH_ANGLE] = (
+        J['forces_vertical', Dynamic.Mission.FLIGHT_PATH_ANGLE] = (
             thrust * c_angle - drag * c_gamma - lift * s_gamma
         )
 
@@ -779,7 +777,7 @@ class ClimbGradientForces(om.ExplicitComponent):
         self.add_input('angle_of_attack', val=np.zeros(nn), units='rad')
 
         add_aviary_input(
-            self, Dynamic.Vehicle.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units='rad'
+            self, Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units='rad'
         )
 
         self.add_output(
@@ -805,7 +803,7 @@ class ClimbGradientForces(om.ExplicitComponent):
                 Dynamic.Vehicle.MASS,
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                 'angle_of_attack',
-                Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+                Dynamic.Mission.FLIGHT_PATH_ANGLE,
             ],
             rows=rows_cols,
             cols=rows_cols,
@@ -851,7 +849,7 @@ class ClimbGradientForces(om.ExplicitComponent):
         weight = mass * grav_metric
 
         alpha = inputs['angle_of_attack']
-        gamma = inputs[Dynamic.Vehicle.FLIGHT_PATH_ANGLE]
+        gamma = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
 
         angle = alpha - alpha0 + t_inc
 
@@ -885,7 +883,7 @@ class ClimbGradientForces(om.ExplicitComponent):
         weight = mass * grav_metric
 
         alpha = inputs['angle_of_attack']
-        gamma = inputs[Dynamic.Vehicle.FLIGHT_PATH_ANGLE]
+        gamma = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
 
         angle = alpha - alpha0 + t_inc
 
@@ -907,5 +905,5 @@ class ClimbGradientForces(om.ExplicitComponent):
         J[f_h_key, 'angle_of_attack'] = -thrust * s_angle
         J[f_v_key, 'angle_of_attack'] = thrust * c_angle
 
-        J[f_h_key, Dynamic.Vehicle.FLIGHT_PATH_ANGLE] = -weight * c_gamma
-        J[f_v_key, Dynamic.Vehicle.FLIGHT_PATH_ANGLE] = weight * s_gamma
+        J[f_h_key, Dynamic.Mission.FLIGHT_PATH_ANGLE] = -weight * c_gamma
+        J[f_v_key, Dynamic.Mission.FLIGHT_PATH_ANGLE] = weight * s_gamma

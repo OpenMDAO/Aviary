@@ -88,7 +88,7 @@ class TableEngineBuilder(EngineModel):
             desc='Current flight Mach number',
         )
         engine.add_input(
-            Dynamic.Atmosphere.ALTITUDE,
+            Dynamic.Mission.ALTITUDE,
             engine_data[:, 1],
             units='ft',
             desc='Current flight altitude',

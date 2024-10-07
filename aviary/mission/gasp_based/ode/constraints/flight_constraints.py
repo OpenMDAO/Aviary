@@ -47,7 +47,7 @@ class FlightConstraints(om.ExplicitComponent):
             desc="maximum lift coefficient",
         )
         self.add_input(
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE,
             val=np.ones(nn),
             units="rad",
             desc="flight path angle",
@@ -85,7 +85,11 @@ class FlightConstraints(om.ExplicitComponent):
         self.add_output("TAS_min", val=np.zeros(nn), units="ft/s")
 
         self.declare_partials(
-            "theta", [Dynamic.Vehicle.FLIGHT_PATH_ANGLE, "alpha"], rows=arange, cols=arange)
+            "theta",
+            [Dynamic.Mission.FLIGHT_PATH_ANGLE, "alpha"],
+            rows=arange,
+            cols=arange,
+        )
         self.declare_partials(
             "theta",
             [
@@ -128,7 +132,7 @@ class FlightConstraints(om.ExplicitComponent):
         wing_area = inputs[Aircraft.Wing.AREA]
         rho = inputs[Dynamic.Atmosphere.DENSITY]
         CL_max = inputs["CL_max"]
-        gamma = inputs[Dynamic.Vehicle.FLIGHT_PATH_ANGLE]
+        gamma = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
         i_wing = inputs[Aircraft.Wing.INCIDENCE]
         alpha = inputs["alpha"]
         TAS = inputs[Dynamic.Atmosphere.VELOCITY]
@@ -148,12 +152,12 @@ class FlightConstraints(om.ExplicitComponent):
         wing_area = inputs[Aircraft.Wing.AREA]
         rho = inputs[Dynamic.Atmosphere.DENSITY]
         CL_max = inputs["CL_max"]
-        gamma = inputs[Dynamic.Vehicle.FLIGHT_PATH_ANGLE]
+        gamma = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
         i_wing = inputs[Aircraft.Wing.INCIDENCE]
         alpha = inputs["alpha"]
         TAS = inputs[Dynamic.Atmosphere.VELOCITY]
 
-        J["theta", Dynamic.Vehicle.FLIGHT_PATH_ANGLE] = 1
+        J["theta", Dynamic.Mission.FLIGHT_PATH_ANGLE] = 1
         J["theta", "alpha"] = 1
         J["theta", Aircraft.Wing.INCIDENCE] = -1
 
@@ -194,20 +198,19 @@ class ClimbAtTopOfClimb(om.ExplicitComponent):
 
     def setup(self):
         self.add_input(Dynamic.Atmosphere.VELOCITY, units="ft/s", val=-200)
-        self.add_input(
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE, units="rad", val=0.)
+        self.add_input(Dynamic.Mission.FLIGHT_PATH_ANGLE, units="rad", val=0.0)
         self.add_output("ROC", units="ft/s")
         self.declare_partials("*", "*")
 
     def compute(self, inputs, outputs):
         outputs["ROC"] = inputs[Dynamic.Atmosphere.VELOCITY] * np.sin(
-            inputs[Dynamic.Vehicle.FLIGHT_PATH_ANGLE]
+            inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
         )
 
     def compute_partials(self, inputs, J):
         J["ROC", Dynamic.Atmosphere.VELOCITY] = np.sin(
-            inputs[Dynamic.Vehicle.FLIGHT_PATH_ANGLE]
+            inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
         )
-        J["ROC", Dynamic.Vehicle.FLIGHT_PATH_ANGLE] = inputs[
+        J["ROC", Dynamic.Mission.FLIGHT_PATH_ANGLE] = inputs[
             Dynamic.Atmosphere.VELOCITY
-        ] * np.cos(inputs[Dynamic.Vehicle.FLIGHT_PATH_ANGLE])
+        ] * np.cos(inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE])

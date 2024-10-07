@@ -885,10 +885,12 @@ class EngineDeck(EngineModel):
                     units='unitless',
                     desc='Current flight Mach number',
                 )
-                interp_throttles.add_input(Dynamic.Atmosphere.ALTITUDE,
-                                           alt_table,
-                                           units=units[ALTITUDE],
-                                           desc='Current flight altitude')
+                interp_throttles.add_input(
+                    Dynamic.Mission.ALTITUDE,
+                    alt_table,
+                    units=units[ALTITUDE],
+                    desc='Current flight altitude',
+                )
                 if not self.global_throttle:
                     interp_throttles.add_output('throttle_max',
                                                 self.throttle_max,
@@ -914,7 +916,7 @@ class EngineDeck(EngineModel):
                 desc='Current flight Mach number',
             )
             max_thrust_engine.add_input(
-                Dynamic.Atmosphere.ALTITUDE,
+                Dynamic.Mission.ALTITUDE,
                 self.data[ALTITUDE],
                 units=units[ALTITUDE],
                 desc='Current flight altitude',

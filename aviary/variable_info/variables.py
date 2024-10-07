@@ -604,10 +604,7 @@ class Dynamic:
     """All time-dependent variables used during mission analysis"""
 
     class Atmosphere:
-        """Variables related to atmospheric/freestream conditions"""
-
-        ALTITUDE = 'altitude'
-        ALTITUDE_RATE = 'altitude_rate'
+        """Atmospheric and freestream conditions"""
         DENSITY = 'density'
         DYNAMIC_PRESSURE = 'dynamic_pressure'
         MACH = 'mach'
@@ -615,30 +612,36 @@ class Dynamic:
         SPEED_OF_SOUND = 'speed_of_sound'
         STATIC_PRESSURE = 'static_pressure'
         TEMPERATURE = 'temperature'
-        VELOCITY = 'velocity'
-        VELOCITY_RATE = 'velocity_rate'
 
     class Mission:
-        """Variables related to the mission being flown"""
-
-        CUMULATIVE_ELECTRIC_ENERGY_USED = 'cumulative_electric_energy_used'
+        """
+        Kinematic description of vehicle states in a ground-fixed axis.
+        These values are typically ingested by the Equations of Motion to determine
+        vehicle state at a later time.
+        """
+        # TODO Vehicle summary forces, torques, etc. in X,Y,Z axes should also go here
+        ALTITUDE = 'altitude'
+        ALTITUDE_RATE = 'altitude_rate'
+        ALTITUDE_RATE_MAX = 'altitude_rate_max'
+        # TODO Angle of Attack
         DISTANCE = 'distance'
         DISTANCE_RATE = 'distance_rate'
-
-    class Vehicle:
-        """Variables that define the vehicle's state"""
-
-        ALTITUDE_RATE_MAX = 'altitude_rate_max'
-        BATTERY_STATE_OF_CHARGE = 'battery_state_of_charge'
-        DRAG = 'drag'
         FLIGHT_PATH_ANGLE = 'flight_path_angle'
         FLIGHT_PATH_ANGLE_RATE = 'flight_path_angle_rate'
-        LIFT = 'lift'
-        MASS = 'mass'
-        MASS_RATE = 'mass_rate'
         SPECIFIC_ENERGY = 'specific_energy'
         SPECIFIC_ENERGY_RATE = 'specific_energy_rate'
         SPECIFIC_ENERGY_RATE_EXCESS = 'specific_energy_rate_excess'
+        VELOCITY = 'velocity'
+        VELOCITY_RATE = 'velocity_rate'
+
+    class Vehicle:
+        """Vehicle properties and states in a vehicle-fixed reference frame."""
+        BATTERY_STATE_OF_CHARGE = 'battery_state_of_charge'
+        CUMULATIVE_ELECTRIC_ENERGY_USED = 'cumulative_electric_energy_used'
+        DRAG = 'drag'
+        LIFT = 'lift'
+        MASS = 'mass'
+        MASS_RATE = 'mass_rate'
 
         class Propulsion:
             # variables specific to the propulsion subsystem
@@ -670,7 +673,7 @@ class Dynamic:
 
 
 class Mission:
-    """mission data hierarchy"""
+    """Mission data hierarchy"""
 
     class Constraints:
         # these can be residuals (for equality constraints),

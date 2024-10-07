@@ -20,7 +20,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 # "Repeated" aliases allows variables with different cases to match with desired
 # all-lowercase name
 aliases = {
-    Dynamic.Atmosphere.ALTITUDE: ['h', 'alt', 'altitude'],
+    Dynamic.Mission.ALTITUDE: ['h', 'alt', 'altitude'],
     Dynamic.Atmosphere.MACH: ['m', 'mach'],
     'angle_of_attack': ['alpha', 'angle_of_attack', 'AoA'],
     'flap_deflection': ['flap_deflection'],
@@ -76,7 +76,7 @@ class TabularCruiseAero(om.Group):
             'free_aero_interp',
             subsys=interp_comp,
             promotes_inputs=[
-                Dynamic.Atmosphere.ALTITUDE,
+                Dynamic.Mission.ALTITUDE,
                 Dynamic.Atmosphere.MACH,
                 ('angle_of_attack', 'alpha'),
             ]
@@ -155,7 +155,7 @@ class TabularLowSpeedAero(om.Group):
             "hob",
             hob,
             promotes_inputs=[
-                Dynamic.Atmosphere.ALTITUDE,
+                Dynamic.Mission.ALTITUDE,
                 "airport_alt",
                 ("wingspan", Aircraft.Wing.SPAN),
                 ("wing_height", Aircraft.Wing.HEIGHT),
@@ -173,7 +173,7 @@ class TabularLowSpeedAero(om.Group):
             "interp_free",
             free_aero_interp,
             promotes_inputs=[
-                Dynamic.Atmosphere.ALTITUDE,
+                Dynamic.Mission.ALTITUDE,
                 Dynamic.Atmosphere.MACH,
                 ('angle_of_attack', 'alpha'),
             ],
@@ -326,7 +326,7 @@ class TabularLowSpeedAero(om.Group):
             self.set_input_defaults("flap_defl", 40 * np.ones(nn))
             # TODO default flap duration for landing?
 
-        self.set_input_defaults(Dynamic.Atmosphere.ALTITUDE, np.zeros(nn))
+        self.set_input_defaults(Dynamic.Mission.ALTITUDE, np.zeros(nn))
         self.set_input_defaults(Dynamic.Atmosphere.MACH, np.zeros(nn))
 
 
@@ -411,7 +411,7 @@ def _build_free_aero_interp(num_nodes=0, aero_data=None, connect_training_data=F
     interp_data = _structure_special_grid(interp_data)
 
     required_inputs = {
-        Dynamic.Atmosphere.ALTITUDE,
+        Dynamic.Mission.ALTITUDE,
         Dynamic.Atmosphere.MACH,
         'angle_of_attack',
     }

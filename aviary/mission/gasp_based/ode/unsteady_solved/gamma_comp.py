@@ -22,7 +22,7 @@ class GammaComp(om.ExplicitComponent):
                        desc="second derivative of altitude wrt range")
 
         self.add_output(
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE,
             shape=nn,
             units="rad",
             desc="flight path angle",
@@ -36,7 +36,7 @@ class GammaComp(om.ExplicitComponent):
         ar = np.arange(nn, dtype=int)
 
         self.declare_partials(
-            of=Dynamic.Vehicle.FLIGHT_PATH_ANGLE, wrt="dh_dr", rows=ar, cols=ar
+            of=Dynamic.Mission.FLIGHT_PATH_ANGLE, wrt="dh_dr", rows=ar, cols=ar
         )
         self.declare_partials(of="dgam_dr", wrt=["dh_dr", "d2h_dr2"], rows=ar, cols=ar)
 
@@ -44,13 +44,13 @@ class GammaComp(om.ExplicitComponent):
         dh_dr = inputs["dh_dr"]
         d2h_dr2 = inputs["d2h_dr2"]
 
-        outputs[Dynamic.Vehicle.FLIGHT_PATH_ANGLE] = np.arctan(dh_dr)
+        outputs[Dynamic.Mission.FLIGHT_PATH_ANGLE] = np.arctan(dh_dr)
         outputs["dgam_dr"] = d2h_dr2 / (dh_dr**2 + 1)
 
     def compute_partials(self, inputs, partials):
         dh_dr = inputs["dh_dr"]
         d2h_dr2 = inputs["d2h_dr2"]
 
-        partials[Dynamic.Vehicle.FLIGHT_PATH_ANGLE, "dh_dr"] = 1.0 / (dh_dr**2 + 1)
+        partials[Dynamic.Mission.FLIGHT_PATH_ANGLE, "dh_dr"] = 1.0 / (dh_dr**2 + 1)
         partials["dgam_dr", "dh_dr"] = -d2h_dr2 * dh_dr * 2 / (dh_dr**2 + 1)**2
         partials["dgam_dr", "d2h_dr2"] = 1. / (dh_dr**2 + 1)

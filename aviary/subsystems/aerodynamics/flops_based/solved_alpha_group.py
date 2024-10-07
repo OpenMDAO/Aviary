@@ -77,7 +77,7 @@ class SolvedAlphaGroup(om.Group):
             "tabular_aero",
             aero,
             promotes_inputs=[
-                Dynamic.Atmosphere.ALTITUDE,
+                Dynamic.Mission.ALTITUDE,
                 Dynamic.Atmosphere.MACH,
                 Aircraft.Wing.AREA,
                 Dynamic.Atmosphere.MACH,

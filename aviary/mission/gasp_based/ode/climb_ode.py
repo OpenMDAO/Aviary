@@ -92,7 +92,7 @@ class ClimbODE(BaseODE):
         self.add_subsystem(
             name='atmosphere',
             subsys=Atmosphere(num_nodes=nn),
-            promotes_inputs=[Dynamic.Atmosphere.ALTITUDE],
+            promotes_inputs=[Dynamic.Mission.ALTITUDE],
             promotes_outputs=[
                 Dynamic.Atmosphere.DENSITY,
                 Dynamic.Atmosphere.SPEED_OF_SOUND,
@@ -207,10 +207,10 @@ class ClimbODE(BaseODE):
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
             ],
             promotes_outputs=[
-                Dynamic.Atmosphere.ALTITUDE_RATE,
+                Dynamic.Mission.ALTITUDE_RATE,
                 Dynamic.Mission.DISTANCE_RATE,
                 "required_lift",
-                Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+                Dynamic.Mission.FLIGHT_PATH_ANGLE,
             ],
         )
 
@@ -228,7 +228,7 @@ class ClimbODE(BaseODE):
                 "alpha",
                 Dynamic.Atmosphere.DENSITY,
                 "CL_max",
-                Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+                Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 Dynamic.Vehicle.MASS,
                 Dynamic.Atmosphere.VELOCITY,
             ]
@@ -242,7 +242,7 @@ class ClimbODE(BaseODE):
         ParamPort.set_default_vals(self)
         self.set_input_defaults("CL_max", val=5 * np.ones(nn), units="unitless")
         self.set_input_defaults(
-            Dynamic.Atmosphere.ALTITUDE, val=500 * np.ones(nn), units='ft'
+            Dynamic.Mission.ALTITUDE, val=500 * np.ones(nn), units='ft'
         )
         self.set_input_defaults(
             Dynamic.Vehicle.MASS, val=174000 * np.ones(nn), units='lbm'

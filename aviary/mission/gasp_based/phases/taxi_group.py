@@ -21,7 +21,7 @@ class TaxiSegment(BaseODE):
             subsys=Atmosphere(num_nodes=1),
             promotes=[
                 '*',
-                (Dynamic.Atmosphere.ALTITUDE, Mission.Takeoff.AIRPORT_ALTITUDE),
+                (Dynamic.Mission.ALTITUDE, Mission.Takeoff.AIRPORT_ALTITUDE),
             ],
         )
 
@@ -37,7 +37,7 @@ class TaxiSegment(BaseODE):
                     system,
                     promotes_inputs=[
                         '*',
-                        (Dynamic.Atmosphere.ALTITUDE, Mission.Takeoff.AIRPORT_ALTITUDE),
+                        (Dynamic.Mission.ALTITUDE, Mission.Takeoff.AIRPORT_ALTITUDE),
                         (Dynamic.Atmosphere.MACH, Mission.Taxi.MACH),
                     ],
                     promotes_outputs=['*'],

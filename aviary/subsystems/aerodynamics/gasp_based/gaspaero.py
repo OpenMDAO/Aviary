@@ -856,7 +856,7 @@ class AeroSetup(om.Group):
             # self.add_subsystem(
             #     "atmos",
             #     USatm1976Comp(num_nodes=nn),
-            #     promotes_inputs=[("h", Dynamic.Atmosphere.ALTITUDE)],
+            #     promotes_inputs=[("h", Dynamic.Mission.ALTITUDE)],
             #     promotes_outputs=["rho", Dynamic.Atmosphere.SPEED_OF_SOUND, "viscosity"],
             # )
             self.add_subsystem(
@@ -891,7 +891,7 @@ class DragCoef(om.ExplicitComponent):
 
         # mission inputs
         self.add_input(
-            Dynamic.Atmosphere.ALTITUDE,
+            Dynamic.Mission.ALTITUDE,
             val=0.0,
             units="ft",
             shape=nn,
@@ -964,7 +964,7 @@ class DragCoef(om.ExplicitComponent):
         self.declare_partials("CD_base", ["*"], method="cs")
         self.declare_partials(
             "CD_base",
-            [Dynamic.Atmosphere.ALTITUDE, "CL", "cf", "SA5", "SA6", "SA7"],
+            [Dynamic.Mission.ALTITUDE, "CL", "cf", "SA5", "SA6", "SA7"],
             rows=ar,
             cols=ar,
             method="cs",
@@ -1109,7 +1109,7 @@ class LiftCoeff(om.ExplicitComponent):
         # mission inputs
         self.add_input("alpha", val=0.0, units="deg", shape=nn, desc="Angle of attack")
         self.add_input(
-            Dynamic.Atmosphere.ALTITUDE,
+            Dynamic.Mission.ALTITUDE,
             val=0.0,
             units="ft",
             shape=nn,
@@ -1173,7 +1173,7 @@ class LiftCoeff(om.ExplicitComponent):
 
         dynvars = [
             "alpha",
-            Dynamic.Atmosphere.ALTITUDE,
+            Dynamic.Mission.ALTITUDE,
             "lift_curve_slope",
             "lift_ratio",
         ]
@@ -1514,7 +1514,7 @@ class LowSpeedAero(om.Group):
 
         self.add_subsystem("forces", AeroForces(num_nodes=nn), promotes=["*"])
 
-        self.set_input_defaults(Dynamic.Atmosphere.ALTITUDE, np.zeros(nn))
+        self.set_input_defaults(Dynamic.Mission.ALTITUDE, np.zeros(nn))
 
         if self.options["retract_gear"]:
             # takeoff defaults

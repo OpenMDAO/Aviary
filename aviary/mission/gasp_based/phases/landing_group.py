@@ -33,7 +33,7 @@ class LandingSegment(BaseODE):
             name='atmosphere',
             subsys=Atmosphere(num_nodes=1, input_speed_type=SpeedType.MACH),
             promotes_inputs=[
-                (Dynamic.Atmosphere.ALTITUDE, Mission.Landing.INITIAL_ALTITUDE),
+                (Dynamic.Mission.ALTITUDE, Mission.Landing.INITIAL_ALTITUDE),
                 (Dynamic.Atmosphere.MACH, Mission.Landing.INITIAL_MACH),
             ],
             promotes_outputs=[
@@ -60,7 +60,7 @@ class LandingSegment(BaseODE):
                     promotes_inputs=[
                         "*",
                         (
-                            Dynamic.Atmosphere.ALTITUDE,
+                            Dynamic.Mission.ALTITUDE,
                             Mission.Landing.INITIAL_ALTITUDE,
                         ),
                         (Dynamic.Atmosphere.DENSITY, "rho_app"),
@@ -94,7 +94,7 @@ class LandingSegment(BaseODE):
                     promotes_inputs=[
                         "*",
                         (
-                            Dynamic.Atmosphere.ALTITUDE,
+                            Dynamic.Mission.ALTITUDE,
                             Mission.Landing.INITIAL_ALTITUDE,
                         ),
                         (Dynamic.Atmosphere.MACH, Mission.Landing.INITIAL_MACH),
@@ -139,7 +139,7 @@ class LandingSegment(BaseODE):
             name='atmosphere_td',
             subsys=Atmosphere(num_nodes=1),
             promotes_inputs=[
-                (Dynamic.Atmosphere.ALTITUDE, Mission.Landing.AIRPORT_ALTITUDE),
+                (Dynamic.Mission.ALTITUDE, Mission.Landing.AIRPORT_ALTITUDE),
                 (Dynamic.Atmosphere.VELOCITY, "TAS_touchdown"),
             ],
             promotes_outputs=[
@@ -162,7 +162,7 @@ class LandingSegment(BaseODE):
             ),
             promotes_inputs=[
                 "*",
-                (Dynamic.Atmosphere.ALTITUDE, Mission.Landing.AIRPORT_ALTITUDE),
+                (Dynamic.Mission.ALTITUDE, Mission.Landing.AIRPORT_ALTITUDE),
                 (Dynamic.Atmosphere.DENSITY, "rho_td"),
                 (Dynamic.Atmosphere.SPEED_OF_SOUND, "sos_td"),
                 ("viscosity", "viscosity_td"),

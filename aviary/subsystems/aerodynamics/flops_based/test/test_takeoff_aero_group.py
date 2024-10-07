@@ -77,8 +77,8 @@ def make_problem(subsystem_options={}):
     dynamic_inputs = AviaryValues(
         {
             'angle_of_attack': (np.array([0.0, 2.0, 6.0]), 'deg'),
-            Dynamic.Atmosphere.ALTITUDE: (np.array([0.0, 32.0, 55.0]), 'm'),
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE: (np.array([0.0, 0.5, 1.0]), 'deg'),
+            Dynamic.Mission.ALTITUDE: (np.array([0.0, 32.0, 55.0]), 'm'),
+            Dynamic.Mission.FLIGHT_PATH_ANGLE: (np.array([0.0, 0.5, 1.0]), 'deg'),
         }
     )
 
@@ -102,7 +102,7 @@ def make_problem(subsystem_options={}):
             **subsystem_options['core_aerodynamics']),
         promotes_outputs=aero_builder.mission_outputs(**subsystem_options['core_aerodynamics']))
 
-    prob.model.set_input_defaults(Dynamic.Atmosphere.ALTITUDE, np.zeros(nn), 'm')
+    prob.model.set_input_defaults(Dynamic.Mission.ALTITUDE, np.zeros(nn), 'm')
 
     prob.setup(force_alloc_complex=True)
 

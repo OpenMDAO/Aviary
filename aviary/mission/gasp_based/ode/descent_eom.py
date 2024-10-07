@@ -41,7 +41,7 @@ class DescentRates(om.ExplicitComponent):
         )
 
         self.add_output(
-            Dynamic.Atmosphere.ALTITUDE_RATE,
+            Dynamic.Mission.ALTITUDE_RATE,
             val=np.zeros(nn),
             units="ft/s",
             desc="rate of change of altitude",
@@ -59,14 +59,14 @@ class DescentRates(om.ExplicitComponent):
             desc="lift required in order to maintain calculated flight path angle",
         )
         self.add_output(
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE,
             val=np.ones(nn),
             units="rad",
             desc="flight path angle",
         )
 
         self.declare_partials(
-            Dynamic.Atmosphere.ALTITUDE_RATE,
+            Dynamic.Mission.ALTITUDE_RATE,
             [
                 Dynamic.Atmosphere.VELOCITY,
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
@@ -99,7 +99,7 @@ class DescentRates(om.ExplicitComponent):
             cols=arange,
         )
         self.declare_partials(
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE,
             [
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                 Dynamic.Vehicle.DRAG,
@@ -119,10 +119,10 @@ class DescentRates(om.ExplicitComponent):
 
         gamma = (thrust - drag) / weight
 
-        outputs[Dynamic.Atmosphere.ALTITUDE_RATE] = alt_rate = TAS * np.sin(gamma)
+        outputs[Dynamic.Mission.ALTITUDE_RATE] = alt_rate = TAS * np.sin(gamma)
         outputs[Dynamic.Mission.DISTANCE_RATE] = TAS * np.cos(gamma)
         outputs["required_lift"] = weight * np.cos(gamma) - thrust * np.sin(alpha)
-        outputs[Dynamic.Vehicle.FLIGHT_PATH_ANGLE] = gamma
+        outputs[Dynamic.Mission.FLIGHT_PATH_ANGLE] = gamma
 
     def compute_partials(self, inputs, J):
 
@@ -134,14 +134,14 @@ class DescentRates(om.ExplicitComponent):
 
         gamma = (thrust - drag) / weight
 
-        J[Dynamic.Atmosphere.ALTITUDE_RATE, Dynamic.Atmosphere.VELOCITY] = np.sin(gamma)
-        J[Dynamic.Atmosphere.ALTITUDE_RATE, Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = (
+        J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Atmosphere.VELOCITY] = np.sin(gamma)
+        J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = (
             TAS * np.cos(gamma) / weight
         )
-        J[Dynamic.Atmosphere.ALTITUDE_RATE, Dynamic.Vehicle.DRAG] = (
+        J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Vehicle.DRAG] = (
             TAS * np.cos(gamma) * (-1 / weight)
         )
-        J[Dynamic.Atmosphere.ALTITUDE_RATE, Dynamic.Vehicle.MASS] = (
+        J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Vehicle.MASS] = (
             TAS * np.cos(gamma) * (-(thrust - drag) / weight**2) * GRAV_ENGLISH_LBM
         )
 
@@ -168,8 +168,9 @@ class DescentRates(om.ExplicitComponent):
         J["required_lift", "alpha"] = -thrust * np.cos(alpha)
 
         J[
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE, Dynamic.Vehicle.Propulsion.THRUST_TOTAL
+            Dynamic.Mission.FLIGHT_PATH_ANGLE, Dynamic.Vehicle.Propulsion.THRUST_TOTAL
         ] = (1 / weight)
-        J[Dynamic.Vehicle.FLIGHT_PATH_ANGLE, Dynamic.Vehicle.DRAG] = -1 / weight
-        J[Dynamic.Vehicle.FLIGHT_PATH_ANGLE, Dynamic.Vehicle.MASS] = - \
-            (thrust - drag) / weight**2 * GRAV_ENGLISH_LBM
+        J[Dynamic.Mission.FLIGHT_PATH_ANGLE, Dynamic.Vehicle.DRAG] = -1 / weight
+        J[Dynamic.Mission.FLIGHT_PATH_ANGLE, Dynamic.Vehicle.MASS] = (
+            -(thrust - drag) / weight**2 * GRAV_ENGLISH_LBM
+        )

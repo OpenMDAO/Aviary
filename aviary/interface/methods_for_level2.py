@@ -1032,7 +1032,7 @@ class AviaryProblem(om.Problem):
                 traj_initial_state_input=[
                     Dynamic.Vehicle.MASS,
                     Dynamic.Mission.DISTANCE,
-                    Dynamic.Atmosphere.ALTITUDE,
+                    Dynamic.Mission.ALTITUDE,
                 ],
                 traj_event_trigger_input=[
                     # specify ODE, output_name, with units that SimuPyProblem expects
@@ -1045,7 +1045,7 @@ class AviaryProblem(om.Problem):
                     ),
                     (
                         'climb3',
-                        Dynamic.Atmosphere.ALTITUDE,
+                        Dynamic.Mission.ALTITUDE,
                         0,
                     ),
                     (
@@ -1431,7 +1431,7 @@ class AviaryProblem(om.Problem):
             self._link_phases_helper_with_options(
                 self.regular_phases,
                 'optimize_altitude',
-                Dynamic.Atmosphere.ALTITUDE,
+                Dynamic.Mission.ALTITUDE,
                 ref=1.0e4,
             )
             self._link_phases_helper_with_options(
@@ -1442,7 +1442,7 @@ class AviaryProblem(om.Problem):
             self._link_phases_helper_with_options(
                 self.reserve_phases,
                 'optimize_altitude',
-                Dynamic.Atmosphere.ALTITUDE,
+                Dynamic.Mission.ALTITUDE,
                 ref=1.0e4,
             )
             self._link_phases_helper_with_options(
@@ -1497,9 +1497,7 @@ class AviaryProblem(om.Problem):
                         if ((phase1 in self.reserve_phases) == (phase2 in self.reserve_phases)) and \
                                 not ({"groundroll", "rotation"} & {phase1, phase2}) and \
                                 not ('accel', 'climb1') == (phase1, phase2):  # required for convergence of FwGm
-                            states_to_link[Dynamic.Atmosphere.ALTITUDE] = (
-                                true_unless_mpi
-                            )
+                            states_to_link[Dynamic.Mission.ALTITUDE] = true_unless_mpi
 
                         # if either phase is rotation, we need to connect velocity
                         # ascent to accel also requires velocity
@@ -1997,7 +1995,7 @@ class AviaryProblem(om.Problem):
                              self.get_val(Mission.Design.GROSS_MASS))
 
             self.set_val(
-                "traj.SGMClimb_" + Dynamic.Atmosphere.ALTITUDE + "_trigger",
+                "traj.SGMClimb_" + Dynamic.Mission.ALTITUDE + "_trigger",
                 val=self.cruise_alt,
                 units="ft",
             )

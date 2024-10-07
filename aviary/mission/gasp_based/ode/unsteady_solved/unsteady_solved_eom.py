@@ -49,8 +49,12 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
             nn), desc="angle of attack", units="rad")
 
         if not self.options["ground_roll"]:
-            self.add_input(Dynamic.Vehicle.FLIGHT_PATH_ANGLE, val=np.zeros(
-                nn), desc="flight path angle", units="rad")
+            self.add_input(
+                Dynamic.Mission.FLIGHT_PATH_ANGLE,
+                val=np.zeros(nn),
+                desc="flight path angle",
+                units="rad",
+            )
             self.add_input("dh_dr", val=np.zeros(
                 nn), desc="d(alt)/d(range)", units="m/distance_units")
             self.add_input("d2h_dr2", val=np.zeros(
@@ -129,8 +133,9 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
                               rows=ar, cols=ar)
 
         if not ground_roll:
-            self.declare_partials(of="dt_dr", wrt=Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
-                                  rows=ar, cols=ar)
+            self.declare_partials(
+                of="dt_dr", wrt=Dynamic.Mission.FLIGHT_PATH_ANGLE, rows=ar, cols=ar
+            )
 
             self.declare_partials(
                 of=["dgam_dt", "dgam_dt_approx"],
@@ -140,22 +145,29 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
                     Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                     Dynamic.Vehicle.DRAG,
                     "alpha",
-                    Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+                    Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 ],
                 rows=ar,
                 cols=ar,
             )
 
-            self.declare_partials(of=["normal_force", "dTAS_dt"],
-                                  wrt=[Dynamic.Vehicle.FLIGHT_PATH_ANGLE],
-                                  rows=ar, cols=ar)
+            self.declare_partials(
+                of=["normal_force", "dTAS_dt"],
+                wrt=[Dynamic.Mission.FLIGHT_PATH_ANGLE],
+                rows=ar,
+                cols=ar,
+            )
 
             self.declare_partials(
                 of=["dgam_dt"], wrt=[Dynamic.Atmosphere.VELOCITY], rows=ar, cols=ar
             )
 
-            self.declare_partials(of="load_factor", wrt=[Dynamic.Vehicle.FLIGHT_PATH_ANGLE],
-                                  rows=ar, cols=ar)
+            self.declare_partials(
+                of="load_factor",
+                wrt=[Dynamic.Mission.FLIGHT_PATH_ANGLE],
+                rows=ar,
+                cols=ar,
+            )
 
             self.declare_partials(
                 of=["dgam_dt", "dgam_dt_approx"],
@@ -164,15 +176,19 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
                     "mass",
                     Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                     "alpha",
-                    Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+                    Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 ],
                 rows=ar,
                 cols=ar,
             )
 
-            self.declare_partials(of="fuselage_pitch",
-                                  wrt=[Dynamic.Vehicle.FLIGHT_PATH_ANGLE],
-                                  rows=ar, cols=ar, val=1.0)
+            self.declare_partials(
+                of="fuselage_pitch",
+                wrt=[Dynamic.Mission.FLIGHT_PATH_ANGLE],
+                rows=ar,
+                cols=ar,
+                val=1.0,
+            )
 
             self.declare_partials(
                 of=["dgam_dt_approx"],
@@ -203,7 +219,7 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
             gamma = 0.0
         else:
             mu = 0.0
-            gamma = inputs[Dynamic.Vehicle.FLIGHT_PATH_ANGLE]
+            gamma = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
             dh_dr = inputs["dh_dr"]
             d2h_dr2 = inputs["d2h_dr2"]
 
@@ -257,7 +273,7 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
             gamma = 0.0
         else:
             mu = 0.0
-            gamma = inputs[Dynamic.Vehicle.FLIGHT_PATH_ANGLE]
+            gamma = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
             dh_dr = inputs["dh_dr"]
             d2h_dr2 = inputs["d2h_dr2"]
 
@@ -315,9 +331,11 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
         partials["load_factor", "alpha"] = tcai / (weight * cgam)
 
         if not ground_roll:
-            partials["dt_dr", Dynamic.Vehicle.FLIGHT_PATH_ANGLE] = -drdot_dgam / dr_dt**2
+            partials["dt_dr", Dynamic.Mission.FLIGHT_PATH_ANGLE] = (
+                -drdot_dgam / dr_dt**2
+            )
 
-            partials["dTAS_dt", Dynamic.Vehicle.FLIGHT_PATH_ANGLE] = -weight * cgam / m
+            partials["dTAS_dt", Dynamic.Mission.FLIGHT_PATH_ANGLE] = -weight * cgam / m
 
             partials["dgam_dt", Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = (
                 salpha_i / mtas
@@ -326,8 +344,9 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
             partials["dgam_dt", "mass"] = \
                 GRAV_ENGLISH_LBM * (LBF_TO_N*cgam / (mtas) - (tsai +
                                     lift + weight*cgam)/(weight**2 / LBF_TO_N/g * tas))
-            partials["dgam_dt", Dynamic.Vehicle.FLIGHT_PATH_ANGLE] = m * \
-                tas * weight * sgam / mtas2
+            partials["dgam_dt", Dynamic.Mission.FLIGHT_PATH_ANGLE] = (
+                m * tas * weight * sgam / mtas2
+            )
             partials["dgam_dt", "alpha"] = m * tas * tcai / mtas2
             partials["dgam_dt", Dynamic.Atmosphere.VELOCITY] = (
                 -m * (tsai + lift - weight * cgam) / mtas2
@@ -341,7 +360,9 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
             partials["dgam_dt_approx", "dh_dr"] = dr_dt * ddgam_dr_ddh_dr
             partials["dgam_dt_approx", "d2h_dr2"] = dr_dt * ddgam_dr_dd2h_dr2
             partials["dgam_dt_approx", Dynamic.Atmosphere.VELOCITY] = dgam_dr * drdot_dtas
-            partials["dgam_dt_approx",
-                     Dynamic.Vehicle.FLIGHT_PATH_ANGLE] = dgam_dr * drdot_dgam
-            partials["load_factor", Dynamic.Vehicle.FLIGHT_PATH_ANGLE] = (
-                lift + tsai) / (weight * cgam**2) * sgam
+            partials["dgam_dt_approx", Dynamic.Mission.FLIGHT_PATH_ANGLE] = (
+                dgam_dr * drdot_dgam
+            )
+            partials["load_factor", Dynamic.Mission.FLIGHT_PATH_ANGLE] = (
+                (lift + tsai) / (weight * cgam**2) * sgam
+            )

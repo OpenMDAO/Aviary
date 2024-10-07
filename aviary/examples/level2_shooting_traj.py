@@ -92,7 +92,7 @@ def custom_run_aviary(aircraft_filename, optimizer=None,
         traj_initial_state_input=[
             Dynamic.Vehicle.MASS,
             Dynamic.Mission.DISTANCE,
-            Dynamic.Atmosphere.ALTITUDE,
+            Dynamic.Mission.ALTITUDE,
         ],
         traj_event_trigger_input=[
             (
@@ -102,7 +102,7 @@ def custom_run_aviary(aircraft_filename, optimizer=None,
             ),
             (
                 'climb3',
-                Dynamic.Atmosphere.ALTITUDE,
+                Dynamic.Mission.ALTITUDE,
                 0,
             ),
             (

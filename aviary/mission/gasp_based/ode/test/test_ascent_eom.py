@@ -29,7 +29,7 @@ class AscentEOMTestCase(unittest.TestCase):
             Dynamic.Atmosphere.VELOCITY, val=10 * np.ones(2), units="ft/s"
         )
         self.prob.model.set_input_defaults(
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE, val=np.zeros(2), units="rad"
+            Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(2), units="rad"
         )
         self.prob.model.set_input_defaults(Aircraft.Wing.INCIDENCE, val=0, units="deg")
         self.prob.model.set_input_defaults("alpha", val=np.zeros(2), units="deg")
@@ -47,7 +47,7 @@ class AscentEOMTestCase(unittest.TestCase):
             tol,
         )
         assert_near_equal(
-            self.prob[Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE],
+            self.prob[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE],
             np.array([-3.216328, -3.216328]),
             tol,
         )

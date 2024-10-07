@@ -43,7 +43,7 @@ class FlareEOMTest(unittest.TestCase):
             output_validation_data=detailed_landing_flare,
             input_keys=[
                 'angle_of_attack',
-                Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+                Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 Dynamic.Atmosphere.VELOCITY,
                 Dynamic.Vehicle.MASS,
                 Dynamic.Vehicle.LIFT,
@@ -52,7 +52,7 @@ class FlareEOMTest(unittest.TestCase):
             ],
             output_keys=[
                 Dynamic.Mission.DISTANCE_RATE,
-                Dynamic.Atmosphere.ALTITUDE_RATE,
+                Dynamic.Mission.ALTITUDE_RATE,
             ],
             tol=1e-2,
             atol=1e-8,
@@ -104,7 +104,7 @@ class OtherTest(unittest.TestCase):
             "angle_of_attack", np.array([5.086, 6.834]), units="deg"
         )
         prob.model.set_input_defaults(
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE, np.array([-3.0, -2.47]), units="deg"
+            Dynamic.Mission.FLIGHT_PATH_ANGLE, np.array([-3.0, -2.47]), units="deg"
         )
         prob.setup(check=False, force_alloc_complex=True)
         prob.run_model()
@@ -152,7 +152,7 @@ class OtherTest(unittest.TestCase):
             "angle_of_attack", np.array([5.086, 6.834]), units="deg"
         )
         prob.model.set_input_defaults(
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE, np.array([-3.0, -2.47]), units="deg"
+            Dynamic.Mission.FLIGHT_PATH_ANGLE, np.array([-3.0, -2.47]), units="deg"
         )
         prob.setup(check=False, force_alloc_complex=True)
         prob.run_model()

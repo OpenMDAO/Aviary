@@ -93,7 +93,7 @@ class UnsteadySolvedODE(BaseODE):
         self.add_subsystem(
             name='atmosphere',
             subsys=Atmosphere(num_nodes=nn, output_dsos_dh=True),
-            promotes_inputs=[Dynamic.Atmosphere.ALTITUDE],
+            promotes_inputs=[Dynamic.Mission.ALTITUDE],
             promotes_outputs=[
                 Dynamic.Atmosphere.DENSITY,
                 Dynamic.Atmosphere.SPEED_OF_SOUND,
@@ -264,13 +264,13 @@ class UnsteadySolvedODE(BaseODE):
         )
         if not self.options['ground_roll']:
             self.set_input_defaults(
-                name=Dynamic.Vehicle.FLIGHT_PATH_ANGLE, val=0.0 * onn, units="rad"
+                name=Dynamic.Mission.FLIGHT_PATH_ANGLE, val=0.0 * onn, units="rad"
             )
         self.set_input_defaults(
             name=Dynamic.Atmosphere.VELOCITY, val=250.0 * onn, units="kn"
         )
         self.set_input_defaults(
-            name=Dynamic.Atmosphere.ALTITUDE, val=10000.0 * onn, units="ft"
+            name=Dynamic.Mission.ALTITUDE, val=10000.0 * onn, units="ft"
         )
         self.set_input_defaults(name="dh_dr", val=0. * onn, units="ft/distance_units")
         self.set_input_defaults(name="d2h_dr2", val=0. * onn,

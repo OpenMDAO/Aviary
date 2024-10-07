@@ -33,7 +33,7 @@ class AscentODE(BaseODE):
             add_SGM_required_inputs(
                 self,
                 {
-                    Dynamic.Atmosphere.ALTITUDE: {'units': 'ft'},
+                    Dynamic.Mission.ALTITUDE: {'units': 'ft'},
                     Dynamic.Mission.DISTANCE: {'units': 'ft'},
                 },
             )
@@ -70,14 +70,14 @@ class AscentODE(BaseODE):
                 Dynamic.Vehicle.LIFT,
                 Dynamic.Vehicle.DRAG,
                 Dynamic.Atmosphere.VELOCITY,
-                Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+                Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 "alpha",
             ]
             + ["aircraft:*"],
             promotes_outputs=[
                 Dynamic.Atmosphere.VELOCITY_RATE,
-                Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE,
-                Dynamic.Atmosphere.ALTITUDE_RATE,
+                Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
+                Dynamic.Mission.ALTITUDE_RATE,
                 Dynamic.Mission.DISTANCE_RATE,
                 "alpha_rate",
                 "normal_force",
@@ -93,11 +93,9 @@ class AscentODE(BaseODE):
         self.set_input_defaults("t_init_gear", val=37.3)
         self.set_input_defaults("alpha", val=np.zeros(nn), units="deg")
         self.set_input_defaults(
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units="deg"
+            Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units="deg"
         )
-        self.set_input_defaults(
-            Dynamic.Atmosphere.ALTITUDE, val=np.zeros(nn), units="ft"
-        )
+        self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.zeros(nn), units="ft")
         self.set_input_defaults(
             Dynamic.Atmosphere.VELOCITY, val=np.zeros(nn), units="kn"
         )

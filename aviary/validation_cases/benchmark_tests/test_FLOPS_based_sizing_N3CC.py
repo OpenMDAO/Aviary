@@ -450,7 +450,7 @@ def run_trajectory(sim=True):
 
     prob.set_val(
         'traj.climb.controls:altitude',
-        climb.interp(Dynamic.Atmosphere.ALTITUDE, ys=[alt_i_climb, alt_f_climb]),
+        climb.interp(Dynamic.Mission.ALTITUDE, ys=[alt_i_climb, alt_f_climb]),
         units='m',
     )
     prob.set_val(
@@ -476,7 +476,7 @@ def run_trajectory(sim=True):
 
     prob.set_val(
         f'traj.cruise.{controls_str}:altitude',
-        cruise.interp(Dynamic.Atmosphere.ALTITUDE, ys=[alt_i_cruise, alt_f_cruise]),
+        cruise.interp(Dynamic.Mission.ALTITUDE, ys=[alt_i_cruise, alt_f_cruise]),
         units='m',
     )
     prob.set_val(
@@ -497,7 +497,7 @@ def run_trajectory(sim=True):
 
     prob.set_val(
         'traj.descent.controls:altitude',
-        descent.interp(Dynamic.Atmosphere.ALTITUDE, ys=[alt_i_descent, alt_f_descent]),
+        descent.interp(Dynamic.Mission.ALTITUDE, ys=[alt_i_descent, alt_f_descent]),
         units='m',
     )
     prob.set_val(

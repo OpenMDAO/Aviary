@@ -18,7 +18,7 @@ from aviary.utils.data_interpolator_builder import build_data_interpolator
 # "Repeated" aliases allows variables with different cases to match with desired
 # all-lowercase name
 aliases = {
-    Dynamic.Atmosphere.ALTITUDE: ['h', 'alt', 'altitude'],
+    Dynamic.Mission.ALTITUDE: ['h', 'alt', 'altitude'],
     Dynamic.Atmosphere.MACH: ['m', 'mach'],
     'lift_coefficient': ['cl', 'coefficient_of_lift', 'lift_coefficient'],
     'lift_dependent_drag_coefficient': [

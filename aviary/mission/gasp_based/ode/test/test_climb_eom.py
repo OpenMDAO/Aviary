@@ -43,7 +43,7 @@ class ClimbTestCase(unittest.TestCase):
         self.prob.run_model()
 
         assert_near_equal(
-            self.prob[Dynamic.Atmosphere.ALTITUDE_RATE],
+            self.prob[Dynamic.Mission.ALTITUDE_RATE],
             np.array([6.24116612, 6.24116612]),
             tol,
         )  # note: values from GASP are: np.array([5.9667, 5.9667])
@@ -58,7 +58,7 @@ class ClimbTestCase(unittest.TestCase):
             tol,
         )  # note: values from GASP are: np.array([170316.2, 170316.2])
         assert_near_equal(
-            self.prob[Dynamic.Vehicle.FLIGHT_PATH_ANGLE],
+            self.prob[Dynamic.Mission.FLIGHT_PATH_ANGLE],
             np.array([0.00805627, 0.00805627]),
             tol,
         )  # note: values from GASP are:np.array([.0076794487, .0076794487])

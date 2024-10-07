@@ -48,8 +48,8 @@ class DescentPhase(PhaseBuilderBase):
             units="kn",
         )
         phase.add_timeseries_output(
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
-            output_name=Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE,
+            output_name=Dynamic.Mission.FLIGHT_PATH_ANGLE,
             units="deg",
         )
         phase.add_timeseries_output("alpha", output_name="alpha", units="deg")

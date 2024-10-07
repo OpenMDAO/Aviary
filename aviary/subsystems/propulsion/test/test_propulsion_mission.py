@@ -59,9 +59,7 @@ class PropulsionMissionTest(unittest.TestCase):
         IVC = om.IndepVarComp(
             Dynamic.Atmosphere.MACH, np.linspace(0, 0.8, nn), units='unitless'
         )
-        IVC.add_output(
-            Dynamic.Atmosphere.ALTITUDE, np.linspace(0, 40000, nn), units='ft'
-        )
+        IVC.add_output(Dynamic.Mission.ALTITUDE, np.linspace(0, 40000, nn), units='ft')
         IVC.add_output(
             Dynamic.Vehicle.Propulsion.THROTTLE,
             np.linspace(1, 0.7, nn),
@@ -182,9 +180,9 @@ class PropulsionMissionTest(unittest.TestCase):
         )
 
         self.prob.model.add_subsystem(
-            Dynamic.Atmosphere.ALTITUDE,
+            Dynamic.Mission.ALTITUDE,
             om.IndepVarComp(
-                Dynamic.Atmosphere.ALTITUDE, np.linspace(0, 40000, nn), units='ft'
+                Dynamic.Mission.ALTITUDE, np.linspace(0, 40000, nn), units='ft'
             ),
             promotes=['*'],
         )

@@ -16,8 +16,12 @@ class AltitudeRate(om.ExplicitComponent):
 
     def setup(self):
         nn = self.options['num_nodes']
-        self.add_input(Dynamic.Vehicle.SPECIFIC_ENERGY_RATE, val=np.ones(
-            nn), desc='current specific power', units='m/s')
+        self.add_input(
+            Dynamic.Mission.SPECIFIC_ENERGY_RATE,
+            val=np.ones(nn),
+            desc='current specific power',
+            units='m/s',
+        )
         self.add_input(Dynamic.Atmosphere.VELOCITY_RATE, val=np.ones(
             nn), desc='current acceleration', units='m/s**2')
         self.add_input(
@@ -26,7 +30,7 @@ class AltitudeRate(om.ExplicitComponent):
             desc='current velocity',
             units='m/s')
         self.add_output(
-            Dynamic.Atmosphere.ALTITUDE_RATE,
+            Dynamic.Mission.ALTITUDE_RATE,
             val=np.ones(nn),
             desc='current climb rate',
             units='m/s',
@@ -34,20 +38,20 @@ class AltitudeRate(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         gravity = constants.GRAV_METRIC_FLOPS
-        specific_power = inputs[Dynamic.Vehicle.SPECIFIC_ENERGY_RATE]
+        specific_power = inputs[Dynamic.Mission.SPECIFIC_ENERGY_RATE]
         acceleration = inputs[Dynamic.Atmosphere.VELOCITY_RATE]
         velocity = inputs[Dynamic.Atmosphere.VELOCITY]
 
-        outputs[Dynamic.Atmosphere.ALTITUDE_RATE] = (
+        outputs[Dynamic.Mission.ALTITUDE_RATE] = (
             specific_power - (velocity * acceleration) / gravity
         )
 
     def setup_partials(self):
         arange = np.arange(self.options['num_nodes'])
         self.declare_partials(
-            Dynamic.Atmosphere.ALTITUDE_RATE,
+            Dynamic.Mission.ALTITUDE_RATE,
             [
-                Dynamic.Vehicle.SPECIFIC_ENERGY_RATE,
+                Dynamic.Mission.SPECIFIC_ENERGY_RATE,
                 Dynamic.Atmosphere.VELOCITY_RATE,
                 Dynamic.Atmosphere.VELOCITY,
             ],
@@ -61,9 +65,9 @@ class AltitudeRate(om.ExplicitComponent):
         acceleration = inputs[Dynamic.Atmosphere.VELOCITY_RATE]
         velocity = inputs[Dynamic.Atmosphere.VELOCITY]
 
-        J[Dynamic.Atmosphere.ALTITUDE_RATE, Dynamic.Atmosphere.VELOCITY_RATE] = (
+        J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Atmosphere.VELOCITY_RATE] = (
             -velocity / gravity
         )
-        J[Dynamic.Atmosphere.ALTITUDE_RATE, Dynamic.Atmosphere.VELOCITY] = (
+        J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Atmosphere.VELOCITY] = (
             -acceleration / gravity
         )

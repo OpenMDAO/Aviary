@@ -34,21 +34,26 @@ class SpecificEnergyRate(om.ExplicitComponent):
             val=np.ones(nn),
             desc='current drag',
             units='N')
-        self.add_output(Dynamic.Vehicle.SPECIFIC_ENERGY_RATE, val=np.ones(
-            nn), desc='current specific power', units='m/s')
+        self.add_output(
+            Dynamic.Mission.SPECIFIC_ENERGY_RATE,
+            val=np.ones(nn),
+            desc='current specific power',
+            units='m/s',
+        )
 
     def compute(self, inputs, outputs):
         velocity = inputs[Dynamic.Atmosphere.VELOCITY]
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
         drag = inputs[Dynamic.Vehicle.DRAG]
         weight = inputs[Dynamic.Vehicle.MASS] * gravity
-        outputs[Dynamic.Vehicle.SPECIFIC_ENERGY_RATE] = velocity * \
-            (thrust - drag) / weight
+        outputs[Dynamic.Mission.SPECIFIC_ENERGY_RATE] = (
+            velocity * (thrust - drag) / weight
+        )
 
     def setup_partials(self):
         arange = np.arange(self.options['num_nodes'])
         self.declare_partials(
-            Dynamic.Vehicle.SPECIFIC_ENERGY_RATE,
+            Dynamic.Mission.SPECIFIC_ENERGY_RATE,
             [
                 Dynamic.Atmosphere.VELOCITY,
                 Dynamic.Vehicle.MASS,
@@ -65,15 +70,18 @@ class SpecificEnergyRate(om.ExplicitComponent):
         drag = inputs[Dynamic.Vehicle.DRAG]
         weight = inputs[Dynamic.Vehicle.MASS] * gravity
 
-        J[Dynamic.Vehicle.SPECIFIC_ENERGY_RATE, Dynamic.Atmosphere.VELOCITY] = (
+        J[Dynamic.Mission.SPECIFIC_ENERGY_RATE, Dynamic.Atmosphere.VELOCITY] = (
             thrust - drag
         ) / weight
         J[
-            Dynamic.Vehicle.SPECIFIC_ENERGY_RATE,
+            Dynamic.Mission.SPECIFIC_ENERGY_RATE,
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
         ] = (
             velocity / weight
         )
-        J[Dynamic.Vehicle.SPECIFIC_ENERGY_RATE, Dynamic.Vehicle.DRAG] = -velocity / weight
-        J[Dynamic.Vehicle.SPECIFIC_ENERGY_RATE, Dynamic.Vehicle.MASS] = -gravity\
-            * velocity * (thrust - drag) / (weight)**2
+        J[Dynamic.Mission.SPECIFIC_ENERGY_RATE, Dynamic.Vehicle.DRAG] = (
+            -velocity / weight
+        )
+        J[Dynamic.Mission.SPECIFIC_ENERGY_RATE, Dynamic.Vehicle.MASS] = (
+            -gravity * velocity * (thrust - drag) / (weight) ** 2
+        )

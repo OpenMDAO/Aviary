@@ -50,7 +50,7 @@ class CruiseODETestCase(unittest.TestCase):
             self.prob["time"], np.array(
                 [0, 7906.83]), tol)
         assert_near_equal(
-            self.prob[Dynamic.Vehicle.SPECIFIC_ENERGY_RATE_EXCESS],
+            self.prob[Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS],
             np.array([3.429719, 4.433518]),
             tol,
         )

@@ -249,7 +249,7 @@ class PropellerPerformanceTest(unittest.TestCase):
     def test_case_0_1_2(self):
         # Case 0, 1, 2, to test installation loss factor computation.
         prob = self.prob
-        prob.set_val(Dynamic.Atmosphere.ALTITUDE, [0.0, 0.0, 25000.0], units="ft")
+        prob.set_val(Dynamic.Mission.ALTITUDE, [0.0, 0.0, 25000.0], units="ft")
         prob.set_val(Dynamic.Atmosphere.VELOCITY, [0.10, 125.0, 300.0], units="knot")
         prob.set_val(
             Dynamic.Vehicle.Propulsion.SHAFT_POWER, [1850.0, 1850.0, 900.0], units="hp"
@@ -290,7 +290,7 @@ class PropellerPerformanceTest(unittest.TestCase):
         prob.set_val(
             Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT, 0.5, units="unitless"
         )
-        prob.set_val(Dynamic.Atmosphere.ALTITUDE, [10000.0, 10000.0, 0.0], units="ft")
+        prob.set_val(Dynamic.Mission.ALTITUDE, [10000.0, 10000.0, 0.0], units="ft")
         prob.set_val(Dynamic.Atmosphere.VELOCITY, [200.0, 200.0, 50.0], units="knot")
         prob.set_val(
             Dynamic.Vehicle.Propulsion.SHAFT_POWER, [1000.0, 1000.0, 1250.0], units="hp"
@@ -334,7 +334,7 @@ class PropellerPerformanceTest(unittest.TestCase):
         prob.set_val(
             Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT, 0.5, units="unitless"
         )
-        prob.set_val(Dynamic.Atmosphere.ALTITUDE, [10000.0, 10000.0, 0.0], units="ft")
+        prob.set_val(Dynamic.Mission.ALTITUDE, [10000.0, 10000.0, 0.0], units="ft")
         prob.set_val(Dynamic.Atmosphere.VELOCITY, [200.0, 200.0, 50.0], units="knot")
         prob.set_val(
             Dynamic.Vehicle.Propulsion.SHAFT_POWER, [1000.0, 1000.0, 1250.0], units="hp"
@@ -368,9 +368,7 @@ class PropellerPerformanceTest(unittest.TestCase):
             0.65,
             units="unitless",
         )
-        prob.set_val(
-            Dynamic.Atmosphere.ALTITUDE, [10000.0, 10000.0, 10000.0], units="ft"
-        )
+        prob.set_val(Dynamic.Mission.ALTITUDE, [10000.0, 10000.0, 10000.0], units="ft")
         prob.set_val(Dynamic.Atmosphere.VELOCITY, [200.0, 200.0, 200.0], units="knot")
         prob.set_val(
             Dynamic.Vehicle.Propulsion.SHAFT_POWER, [900.0, 750.0, 500.0], units="hp"
@@ -404,7 +402,7 @@ class PropellerPerformanceTest(unittest.TestCase):
     def test_case_12_13_14(self):
         # Case 12, 13, 14, to test mach limited tip speed.
         prob = self.prob
-        prob.set_val(Dynamic.Atmosphere.ALTITUDE, [0.0, 0.0, 25000.0], units="ft")
+        prob.set_val(Dynamic.Mission.ALTITUDE, [0.0, 0.0, 25000.0], units="ft")
         prob.set_val(Dynamic.Atmosphere.VELOCITY, [0.10, 125.0, 300.0], units="knot")
         prob.set_val(
             Dynamic.Vehicle.Propulsion.SHAFT_POWER, [1850.0, 1850.0, 900.0], units="hp"
@@ -447,7 +445,7 @@ class PropellerPerformanceTest(unittest.TestCase):
         prob.setup(force_alloc_complex=True)
         prob.set_val('install_loss_factor', [0.0, 0.05, 0.05], units="unitless")
         prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 12.0, units="ft")
-        prob.set_val(Dynamic.Atmosphere.ALTITUDE, [10000.0, 10000.0, 0.0], units="ft")
+        prob.set_val(Dynamic.Mission.ALTITUDE, [10000.0, 10000.0, 0.0], units="ft")
         prob.set_val(Dynamic.Atmosphere.VELOCITY, [200.0, 200.0, 50.0], units="knot")
         prob.set_val(
             Dynamic.Vehicle.Propulsion.SHAFT_POWER, [1000.0, 1000.0, 1250.0], units="hp"

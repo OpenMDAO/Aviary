@@ -69,7 +69,7 @@ class TurbopropTest(unittest.TestCase):
         IVC = om.IndepVarComp(
             Dynamic.Atmosphere.MACH, np.array(machs), units='unitless'
         )
-        IVC.add_output(Dynamic.Atmosphere.ALTITUDE, np.array(alts), units='ft')
+        IVC.add_output(Dynamic.Mission.ALTITUDE, np.array(alts), units='ft')
         IVC.add_output(Dynamic.Vehicle.Propulsion.THROTTLE,
                        np.array(throttles), units='unitless')
         self.prob.model.add_subsystem('IVC', IVC, promotes=['*'])

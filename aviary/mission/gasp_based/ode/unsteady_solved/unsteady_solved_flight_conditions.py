@@ -90,7 +90,7 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
 
         if not ground_roll:
             self.add_input(
-                Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+                Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 shape=nn,
                 units="rad",
                 desc="flight path angle",
@@ -152,7 +152,7 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
             if not ground_roll:
                 self.declare_partials(
                     of="dTAS_dt_approx",
-                    wrt=[Dynamic.Vehicle.FLIGHT_PATH_ANGLE],
+                    wrt=[Dynamic.Mission.FLIGHT_PATH_ANGLE],
                     rows=ar,
                     cols=ar,
                 )
@@ -222,7 +222,7 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
             if not ground_roll:
                 self.declare_partials(
                     of="dTAS_dt_approx",
-                    wrt=[Dynamic.Vehicle.FLIGHT_PATH_ANGLE],
+                    wrt=[Dynamic.Mission.FLIGHT_PATH_ANGLE],
                     rows=ar,
                     cols=ar,
                 )
@@ -302,8 +302,8 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
         sqrt_rho_rho_sl = np.sqrt(rho / rho_sl)
         sos = inputs[Dynamic.Atmosphere.SPEED_OF_SOUND]
 
-        cgam = 1.0 if ground_roll else np.cos(inputs[Dynamic.Vehicle.FLIGHT_PATH_ANGLE])
-        sgam = 0.0 if ground_roll else np.sin(inputs[Dynamic.Vehicle.FLIGHT_PATH_ANGLE])
+        cgam = 1.0 if ground_roll else np.cos(inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE])
+        sgam = 0.0 if ground_roll else np.sin(inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE])
 
         if in_type is SpeedType.TAS:
             tas = inputs[Dynamic.Atmosphere.VELOCITY]
@@ -345,8 +345,8 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
         dsqrt_rho_rho_sl_drho = 0.5 / sqrt_rho_rho_sl / rho_sl
         sos = inputs[Dynamic.Atmosphere.SPEED_OF_SOUND]
 
-        cgam = 1.0 if ground_roll else np.cos(inputs[Dynamic.Vehicle.FLIGHT_PATH_ANGLE])
-        sgam = 0.0 if ground_roll else np.sin(inputs[Dynamic.Vehicle.FLIGHT_PATH_ANGLE])
+        cgam = 1.0 if ground_roll else np.cos(inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE])
+        sgam = 0.0 if ground_roll else np.sin(inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE])
 
         if in_type is SpeedType.TAS:
             TAS = inputs[Dynamic.Atmosphere.VELOCITY]  # Why is there tas and TAS?
@@ -373,7 +373,7 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
             partials["dTAS_dt_approx", Dynamic.Atmosphere.VELOCITY] = dTAS_dr * cgam
 
             if not ground_roll:
-                partials["dTAS_dt_approx", Dynamic.Vehicle.FLIGHT_PATH_ANGLE] = (
+                partials["dTAS_dt_approx", Dynamic.Mission.FLIGHT_PATH_ANGLE] = (
                     -dTAS_dr * tas * sgam
                 )
 

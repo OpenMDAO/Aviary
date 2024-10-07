@@ -30,7 +30,7 @@ class DataInterpolationTest(unittest.TestCase):
 
         inputs = NamedValues()
         inputs.set_val(Dynamic.Atmosphere.MACH, mach_number)
-        inputs.set_val(Dynamic.Atmosphere.ALTITUDE, altitude, units='ft')
+        inputs.set_val(Dynamic.Mission.ALTITUDE, altitude, units='ft')
         inputs.set_val(Dynamic.Vehicle.Propulsion.THROTTLE, throttle)
 
         outputs = {
@@ -54,7 +54,7 @@ class DataInterpolationTest(unittest.TestCase):
             units='unitless',
         )
         engine_data.add_output(
-            Dynamic.Atmosphere.ALTITUDE + '_train',
+            Dynamic.Mission.ALTITUDE + '_train',
             val=np.array(altitude),
             units='ft',
         )
@@ -86,7 +86,7 @@ class DataInterpolationTest(unittest.TestCase):
         prob.setup()
 
         prob.set_val(Dynamic.Atmosphere.MACH, np.array(test_mach.flatten()), 'unitless')
-        prob.set_val(Dynamic.Atmosphere.ALTITUDE, np.array(test_alt.flatten()), 'ft')
+        prob.set_val(Dynamic.Mission.ALTITUDE, np.array(test_alt.flatten()), 'ft')
         prob.set_val(
             Dynamic.Vehicle.Propulsion.THROTTLE,
             np.array(test_throttle.flatten()),

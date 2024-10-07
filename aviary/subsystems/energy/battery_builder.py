@@ -33,7 +33,7 @@ class BatteryBuilder(SubsystemBuilderBase):
                 ('energy_capacity', Aircraft.Battery.ENERGY_CAPACITY),
                 (
                     'cumulative_electric_energy_used',
-                    Dynamic.Mission.CUMULATIVE_ELECTRIC_ENERGY_USED,
+                    Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED,
                 ),
                 ('efficiency', Aircraft.Battery.EFFICIENCY),
             ],
@@ -46,7 +46,7 @@ class BatteryBuilder(SubsystemBuilderBase):
 
     def get_states(self):
         state_dict = {
-            Dynamic.Mission.CUMULATIVE_ELECTRIC_ENERGY_USED: {
+            Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED: {
                 'fix_initial': True,
                 'fix_final': False,
                 'lower': 0.0,

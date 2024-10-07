@@ -26,7 +26,7 @@ class TakeoffEOMTest(unittest.TestCase):
             output_validation_data=detailed_takeoff_ground,
             input_keys=[
                 'angle_of_attack',
-                Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+                Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 Dynamic.Atmosphere.VELOCITY,
                 Dynamic.Vehicle.MASS,
                 Dynamic.Vehicle.LIFT,
@@ -35,7 +35,7 @@ class TakeoffEOMTest(unittest.TestCase):
             ],
             output_keys=[
                 Dynamic.Mission.DISTANCE_RATE,
-                Dynamic.Atmosphere.ALTITUDE_RATE,
+                Dynamic.Mission.ALTITUDE_RATE,
                 Dynamic.Atmosphere.VELOCITY_RATE,
             ],
             tol=1e-2,
@@ -51,7 +51,7 @@ class TakeoffEOMTest(unittest.TestCase):
             output_validation_data=detailed_takeoff_climbing,
             input_keys=[
                 'angle_of_attack',
-                Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+                Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 Dynamic.Atmosphere.VELOCITY,
                 Dynamic.Vehicle.MASS,
                 Dynamic.Vehicle.LIFT,
@@ -60,7 +60,7 @@ class TakeoffEOMTest(unittest.TestCase):
             ],
             output_keys=[
                 Dynamic.Mission.DISTANCE_RATE,
-                Dynamic.Atmosphere.ALTITUDE_RATE,
+                Dynamic.Mission.ALTITUDE_RATE,
                 Dynamic.Atmosphere.VELOCITY_RATE,
             ],
             tol=1e-2,
@@ -141,7 +141,7 @@ class TakeoffEOMTest(unittest.TestCase):
             "dist_rates", DistanceRates(num_nodes=2, climbing=True), promotes=["*"]
         )
         prob.model.set_input_defaults(
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE, np.array([0.612, 4.096]), units="rad"
+            Dynamic.Mission.FLIGHT_PATH_ANGLE, np.array([0.612, 4.096]), units="rad"
         )
         prob.model.set_input_defaults(
             Dynamic.Atmosphere.VELOCITY, np.array([5.23, 2.7]), units="m/s"
@@ -155,7 +155,7 @@ class TakeoffEOMTest(unittest.TestCase):
                 [4.280758, -1.56085]), tol
         )
         assert_near_equal(
-            prob[Dynamic.Atmosphere.ALTITUDE_RATE],
+            prob[Dynamic.Mission.ALTITUDE_RATE],
             np.array([3.004664, -2.203122]),
             tol,
         )
@@ -174,7 +174,7 @@ class TakeoffEOMTest(unittest.TestCase):
             "dist_rates", DistanceRates(num_nodes=2, climbing=False), promotes=["*"]
         )
         prob.model.set_input_defaults(
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE, np.array([0.0, 0.0]), units="rad"
+            Dynamic.Mission.FLIGHT_PATH_ANGLE, np.array([0.0, 0.0]), units="rad"
         )
         prob.model.set_input_defaults(
             Dynamic.Atmosphere.VELOCITY, np.array([1.0, 2.0]), units="m/s"
@@ -186,7 +186,7 @@ class TakeoffEOMTest(unittest.TestCase):
         assert_near_equal(
             prob[Dynamic.Mission.DISTANCE_RATE], np.array([1.0, 2.0]), tol)
         assert_near_equal(
-            prob[Dynamic.Atmosphere.ALTITUDE_RATE], np.array([0.0, 0.0]), tol
+            prob[Dynamic.Mission.ALTITUDE_RATE], np.array([0.0, 0.0]), tol
         )
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
@@ -236,7 +236,7 @@ class TakeoffEOMTest(unittest.TestCase):
             Dynamic.Mission.DISTANCE_RATE, [160.98, 166.25], units="m/s"
         )
         prob.model.set_input_defaults(
-            Dynamic.Atmosphere.ALTITUDE_RATE, [1.72, 11.91], units="m/s"
+            Dynamic.Mission.ALTITUDE_RATE, [1.72, 11.91], units="m/s"
         )
 
         prob.setup(check=False, force_alloc_complex=True)
@@ -267,14 +267,14 @@ class TakeoffEOMTest(unittest.TestCase):
             Dynamic.Mission.DISTANCE_RATE, [160.98, 166.25], units="m/s"
         )
         prob.model.set_input_defaults(
-            Dynamic.Atmosphere.ALTITUDE_RATE, [1.72, 11.91], units="m/s"
+            Dynamic.Mission.ALTITUDE_RATE, [1.72, 11.91], units="m/s"
         )
 
         prob.setup(check=False, force_alloc_complex=True)
         prob.run_model()
 
         assert_near_equal(
-            prob[Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE],
+            prob[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE],
             np.array([0.3039257, 0.51269018]),
             tol,
         )
@@ -388,7 +388,7 @@ class TakeoffEOMTest(unittest.TestCase):
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL, np.array([4980.3, 4102]), units="N"
         )
         prob.model.set_input_defaults(
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE, np.array([0.612, 4.096]), units="rad"
+            Dynamic.Mission.FLIGHT_PATH_ANGLE, np.array([0.612, 4.096]), units="rad"
         )
         prob.model.set_input_defaults(
             "angle_of_attack", np.array([5.086, 6.834]), units="rad"

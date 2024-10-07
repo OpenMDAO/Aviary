@@ -79,7 +79,7 @@ class LandingApproachToMicP3(PhaseBuilderBase):
             - throttle
             - angle_of_attack
             - altitude
-            - Dynamic.Vehicle.FLIGHT_PATH_ANGLE
+            - Dynamic.Mission.FLIGHT_PATH_ANGLE
 
     ode_class : type (None)
         advanced: the type of system defining the ODE
@@ -155,13 +155,13 @@ class LandingApproachToMicP3(PhaseBuilderBase):
         altitude_ref, units = user_options.get_item('altitude_ref')
 
         phase.add_state(
-            Dynamic.Atmosphere.ALTITUDE,
+            Dynamic.Mission.ALTITUDE,
             fix_initial=False,
             fix_final=False,
             ref=altitude_ref,
             defect_ref=altitude_ref,
             units=units,
-            rate_source=Dynamic.Atmosphere.ALTITUDE_RATE,
+            rate_source=Dynamic.Mission.ALTITUDE_RATE,
         )
 
         max_velocity, units = user_options.get_item('max_velocity')
@@ -178,7 +178,7 @@ class LandingApproachToMicP3(PhaseBuilderBase):
         )
 
         phase.add_control(
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE, opt=False, fix_initial=True
+            Dynamic.Mission.FLIGHT_PATH_ANGLE, opt=False, fix_initial=True
         )
 
         phase.add_state(
@@ -227,7 +227,7 @@ class LandingApproachToMicP3(PhaseBuilderBase):
         h = initial_height + airport_altitude
 
         phase.add_boundary_constraint(
-            Dynamic.Atmosphere.ALTITUDE,
+            Dynamic.Mission.ALTITUDE,
             loc='initial',
             equals=h,
             ref=h,
@@ -280,7 +280,7 @@ LandingApproachToMicP3._add_initial_guess_meta_data(
 LandingApproachToMicP3._add_initial_guess_meta_data(InitialGuessState('altitude'))
 
 LandingApproachToMicP3._add_initial_guess_meta_data(
-    InitialGuessControl(Dynamic.Vehicle.FLIGHT_PATH_ANGLE)
+    InitialGuessControl(Dynamic.Mission.FLIGHT_PATH_ANGLE)
 )
 
 
@@ -322,7 +322,7 @@ class LandingMicP3ToObstacle(LandingApproachToMicP3):
             - throttle
             - angle_of_attack
             - altitude
-            - Dynamic.Vehicle.FLIGHT_PATH_ANGLE
+            - Dynamic.Mission.FLIGHT_PATH_ANGLE
 
     ode_class : type (None)
         advanced: the type of system defining the ODE
@@ -415,7 +415,7 @@ class LandingObstacleToFlare(PhaseBuilderBase):
             - throttle
             - angle_of_attack
             - altitude
-            - Dynamic.Vehicle.FLIGHT_PATH_ANGLE
+            - Dynamic.Mission.FLIGHT_PATH_ANGLE
 
     ode_class : type (None)
         advanced: the type of system defining the ODE
@@ -487,13 +487,13 @@ class LandingObstacleToFlare(PhaseBuilderBase):
         altitude_ref, units = user_options.get_item('altitude_ref')
 
         phase.add_state(
-            Dynamic.Atmosphere.ALTITUDE,
+            Dynamic.Mission.ALTITUDE,
             fix_initial=False,
             lower=0,
             ref=altitude_ref,
             defect_ref=altitude_ref,
             units=units,
-            rate_source=Dynamic.Atmosphere.ALTITUDE_RATE,
+            rate_source=Dynamic.Mission.ALTITUDE_RATE,
         )
 
         max_velocity, units = user_options.get_item('max_velocity')
@@ -509,7 +509,7 @@ class LandingObstacleToFlare(PhaseBuilderBase):
         )
 
         phase.add_control(
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE, opt=False, fix_initial=False
+            Dynamic.Mission.FLIGHT_PATH_ANGLE, opt=False, fix_initial=False
         )
 
         phase.add_state(
@@ -554,7 +554,7 @@ class LandingObstacleToFlare(PhaseBuilderBase):
         h = obstacle_height + airport_altitude
 
         phase.add_boundary_constraint(
-            Dynamic.Atmosphere.ALTITUDE,
+            Dynamic.Mission.ALTITUDE,
             loc='initial',
             equals=h,
             ref=h,
@@ -595,7 +595,7 @@ LandingObstacleToFlare._add_initial_guess_meta_data(
 LandingObstacleToFlare._add_initial_guess_meta_data(InitialGuessState('altitude'))
 
 LandingObstacleToFlare._add_initial_guess_meta_data(
-    InitialGuessControl(Dynamic.Vehicle.FLIGHT_PATH_ANGLE)
+    InitialGuessControl(Dynamic.Mission.FLIGHT_PATH_ANGLE)
 )
 
 
@@ -635,7 +635,7 @@ class LandingFlareToTouchdown(PhaseBuilderBase):
             - throttle
             - angle_of_attack
             - altitude
-            - Dynamic.Vehicle.FLIGHT_PATH_ANGLE
+            - Dynamic.Mission.FLIGHT_PATH_ANGLE
 
     ode_class : type (None)
         advanced: the type of system defining the ODE
@@ -710,14 +710,14 @@ class LandingFlareToTouchdown(PhaseBuilderBase):
         altitude_ref, units = user_options.get_item('altitude_ref')
 
         phase.add_state(
-            Dynamic.Atmosphere.ALTITUDE,
+            Dynamic.Mission.ALTITUDE,
             fix_initial=False,
             fix_final=True,
             lower=0,
             ref=altitude_ref,
             defect_ref=altitude_ref,
             units=units,
-            rate_source=Dynamic.Atmosphere.ALTITUDE_RATE,
+            rate_source=Dynamic.Mission.ALTITUDE_RATE,
         )
 
         max_velocity, units = user_options.get_item('max_velocity')
@@ -733,7 +733,7 @@ class LandingFlareToTouchdown(PhaseBuilderBase):
         )
 
         phase.add_control(
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE, fix_initial=False, opt=False
+            Dynamic.Mission.FLIGHT_PATH_ANGLE, fix_initial=False, opt=False
         )
 
         phase.add_state(
@@ -834,7 +834,7 @@ LandingFlareToTouchdown._add_initial_guess_meta_data(
 LandingFlareToTouchdown._add_initial_guess_meta_data(InitialGuessState('altitude'))
 
 LandingFlareToTouchdown._add_initial_guess_meta_data(
-    InitialGuessControl(Dynamic.Vehicle.FLIGHT_PATH_ANGLE)
+    InitialGuessControl(Dynamic.Mission.FLIGHT_PATH_ANGLE)
 )
 
 

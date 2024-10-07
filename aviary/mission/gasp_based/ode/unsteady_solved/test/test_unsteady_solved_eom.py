@@ -32,7 +32,7 @@ class TestUnsteadySolvedEOM(unittest.TestCase):
 
         if not ground_roll:
             p.set_val("alpha", 0.0, units="deg")
-            p.set_val(Dynamic.Vehicle.FLIGHT_PATH_ANGLE, 0, units="deg")
+            p.set_val(Dynamic.Mission.FLIGHT_PATH_ANGLE, 0, units="deg")
             p.set_val("dh_dr", 0, units=None)
             p.set_val("d2h_dr2", 0, units="1/m")
 
@@ -79,8 +79,9 @@ class TestUnsteadySolvedEOM(unittest.TestCase):
 
         if not ground_roll:
             p.set_val("alpha", 5 * np.random.rand(nn), units="deg")
-            p.set_val(Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
-                      5 * np.random.rand(nn), units="deg")
+            p.set_val(
+                Dynamic.Mission.FLIGHT_PATH_ANGLE, 5 * np.random.rand(nn), units="deg"
+            )
             p.set_val("dh_dr", 0.1 * np.random.rand(nn), units=None)
             p.set_val("d2h_dr2", 0.01 * np.random.rand(nn), units="1/m")
 

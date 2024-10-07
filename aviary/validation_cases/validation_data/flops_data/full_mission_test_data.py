@@ -61,7 +61,7 @@ data.set_val(
 
 data.set_val(
     # states:altitude
-    Dynamic.Atmosphere.ALTITUDE,
+    Dynamic.Mission.ALTITUDE,
     val=[
         29.3112920637369,
         10668,
@@ -72,7 +72,7 @@ data.set_val(
 
 data.set_val(
     # outputs
-    Dynamic.Atmosphere.ALTITUDE_RATE,
+    Dynamic.Mission.ALTITUDE_RATE,
     val=[
         29.8463233754212,
         -5.69941245767868e-09,
@@ -162,7 +162,7 @@ data.set_val(
 
 data.set_val(
     # outputs
-    Dynamic.Vehicle.SPECIFIC_ENERGY_RATE,
+    Dynamic.Mission.SPECIFIC_ENERGY_RATE,
     val=[
         18.4428113202544191,
         -1.7371801250963e-9,
@@ -173,7 +173,7 @@ data.set_val(
 
 data.set_val(
     # outputs
-    Dynamic.Vehicle.SPECIFIC_ENERGY_RATE_EXCESS,
+    Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
     val=[
         28.03523893220630,
         3.8636151713537548,

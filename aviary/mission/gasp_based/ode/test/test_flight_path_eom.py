@@ -42,12 +42,12 @@ class FlightPathEOMTestCase(unittest.TestCase):
             self.prob["load_factor"], np.array(
                 [1.883117, 1.883117]), tol)
         assert_near_equal(
-            self.prob[Dynamic.Atmosphere.ALTITUDE_RATE],
+            self.prob[Dynamic.Mission.ALTITUDE_RATE],
             np.array([0.841471, 0.841471]),
             tol,
         )
         assert_near_equal(
-            self.prob[Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE],
+            self.prob[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE],
             np.array([15.36423, 15.36423]),
             tol,
         )

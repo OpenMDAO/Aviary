@@ -54,7 +54,7 @@ class Atmosphere(om.Group):
             subsys=USatm1976Comp(
                 num_nodes=nn, h_def=h_def, output_dsos_dh=output_dsos_dh
             ),
-            promotes_inputs=[('h', Dynamic.Atmosphere.ALTITUDE)],
+            promotes_inputs=[('h', Dynamic.Mission.ALTITUDE)],
             promotes_outputs=[
                 '*',
                 ('sos', Dynamic.Atmosphere.SPEED_OF_SOUND),

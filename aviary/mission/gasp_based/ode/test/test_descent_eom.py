@@ -44,7 +44,7 @@ class DescentTestCase(unittest.TestCase):
         self.prob.run_model()
 
         assert_near_equal(
-            self.prob[Dynamic.Atmosphere.ALTITUDE_RATE],
+            self.prob[Dynamic.Mission.ALTITUDE_RATE],
             np.array([-39.41011217, -39.41011217]),
             tol,
         )  # note: values from GASP are: np.array([-39.75, -39.75])
@@ -60,7 +60,7 @@ class DescentTestCase(unittest.TestCase):
             # note: values from GASP are: np.array([146288.8, 146288.8]) (estimated based on GASP values)
         )
         assert_near_equal(
-            self.prob[Dynamic.Vehicle.FLIGHT_PATH_ANGLE],
+            self.prob[Dynamic.Mission.FLIGHT_PATH_ANGLE],
             np.array([-0.05089311, -0.05089311]),
             tol,
         )  # note: values from GASP are: np.array([-.0513127, -.0513127])

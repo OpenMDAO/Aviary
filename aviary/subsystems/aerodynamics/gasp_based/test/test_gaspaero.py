@@ -47,7 +47,7 @@ class GASPAeroTest(unittest.TestCase):
             alpha = row["alpha"]
 
             with self.subTest(alt=alt, mach=mach, alpha=alpha):
-                # prob.set_val(Dynamic.Atmosphere.ALTITUDE, alt)
+                # prob.set_val(Dynamic.Mission.ALTITUDE, alt)
                 prob.set_val(Dynamic.Atmosphere.MACH, mach)
                 prob.set_val("alpha", alpha)
                 prob.set_val(Dynamic.Atmosphere.SPEED_OF_SOUND, row["sos"])
@@ -86,7 +86,7 @@ class GASPAeroTest(unittest.TestCase):
 
             with self.subTest(ilift=ilift, alt=alt, mach=mach, alpha=alpha):
                 prob.set_val(Dynamic.Atmosphere.MACH, mach)
-                prob.set_val(Dynamic.Atmosphere.ALTITUDE, alt)
+                prob.set_val(Dynamic.Mission.ALTITUDE, alt)
                 prob.set_val("alpha", alpha)
                 prob.set_val(Dynamic.Atmosphere.SPEED_OF_SOUND, row["sos"])
                 prob.set_val("nu", row["nu"])
@@ -145,7 +145,7 @@ class GASPAeroTest(unittest.TestCase):
         prob.set_val(Mission.Design.GROSS_MASS, setup_data["wgto"])
 
         prob.set_val(Dynamic.Atmosphere.MACH, 0.1)
-        prob.set_val(Dynamic.Atmosphere.ALTITUDE, 10)
+        prob.set_val(Dynamic.Mission.ALTITUDE, 10)
         prob.set_val("alpha_in", 5)
         prob.run_model()
 

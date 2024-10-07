@@ -38,7 +38,7 @@ class AscentEOM(om.ExplicitComponent):
             Dynamic.Atmosphere.VELOCITY, val=np.ones(nn), desc="Velocity", units="ft/s"
         )
         self.add_input(
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE,
             val=np.ones(nn),
             desc="flight path angle",
             units="rad",
@@ -54,13 +54,13 @@ class AscentEOM(om.ExplicitComponent):
             units="ft/s**2",
         )
         self.add_output(
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
             val=np.ones(nn),
             desc="flight path angle rate",
             units="rad/s",
         )
         self.add_output(
-            Dynamic.Atmosphere.ALTITUDE_RATE,
+            Dynamic.Mission.ALTITUDE_RATE,
             val=np.ones(nn),
             desc="altitude rate",
             units="ft/s",
@@ -84,27 +84,27 @@ class AscentEOM(om.ExplicitComponent):
         arange = np.arange(self.options["num_nodes"])
 
         self.declare_partials(
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
             [
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                 "alpha",
                 Dynamic.Vehicle.LIFT,
                 Dynamic.Vehicle.MASS,
-                Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+                Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 Dynamic.Atmosphere.VELOCITY,
             ],
             rows=arange,
             cols=arange,
         )
         self.declare_partials(
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE, [Aircraft.Wing.INCIDENCE]
+            Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, [Aircraft.Wing.INCIDENCE]
         )
         self.declare_partials(
             "load_factor",
             [
                 Dynamic.Vehicle.LIFT,
                 Dynamic.Vehicle.MASS,
-                Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+                Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                 "alpha",
             ],
@@ -120,7 +120,7 @@ class AscentEOM(om.ExplicitComponent):
                 "alpha",
                 Dynamic.Vehicle.DRAG,
                 Dynamic.Vehicle.MASS,
-                Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+                Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 Dynamic.Vehicle.LIFT,
             ],
             rows=arange,
@@ -130,14 +130,14 @@ class AscentEOM(om.ExplicitComponent):
             Dynamic.Atmosphere.VELOCITY_RATE, [Aircraft.Wing.INCIDENCE]
         )
         self.declare_partials(
-            Dynamic.Atmosphere.ALTITUDE_RATE,
-            [Dynamic.Atmosphere.VELOCITY, Dynamic.Vehicle.FLIGHT_PATH_ANGLE],
+            Dynamic.Mission.ALTITUDE_RATE,
+            [Dynamic.Atmosphere.VELOCITY, Dynamic.Mission.FLIGHT_PATH_ANGLE],
             rows=arange,
             cols=arange,
         )
         self.declare_partials(
             Dynamic.Mission.DISTANCE_RATE,
-            [Dynamic.Atmosphere.VELOCITY, Dynamic.Vehicle.FLIGHT_PATH_ANGLE],
+            [Dynamic.Atmosphere.VELOCITY, Dynamic.Mission.FLIGHT_PATH_ANGLE],
             rows=arange,
             cols=arange,
         )
@@ -155,7 +155,7 @@ class AscentEOM(om.ExplicitComponent):
         self.declare_partials("normal_force", [Aircraft.Wing.INCIDENCE])
         self.declare_partials(
             "fuselage_pitch",
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE,
             rows=arange,
             cols=arange,
             val=180 / np.pi,
@@ -169,7 +169,7 @@ class AscentEOM(om.ExplicitComponent):
         incremented_lift = inputs[Dynamic.Vehicle.LIFT]
         incremented_drag = inputs[Dynamic.Vehicle.DRAG]
         TAS = inputs[Dynamic.Atmosphere.VELOCITY]
-        gamma = inputs[Dynamic.Vehicle.FLIGHT_PATH_ANGLE]
+        gamma = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
         i_wing = inputs[Aircraft.Wing.INCIDENCE]
         alpha = inputs["alpha"]
 
@@ -193,13 +193,13 @@ class AscentEOM(om.ExplicitComponent):
             / weight
         )
 
-        outputs[Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE] = (
+        outputs[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE] = (
             (thrust_across_flightpath + incremented_lift - weight * np.cos(gamma))
             * GRAV_ENGLISH_GASP
             / (TAS * weight)
         )
 
-        outputs[Dynamic.Atmosphere.ALTITUDE_RATE] = TAS * np.sin(gamma)
+        outputs[Dynamic.Mission.ALTITUDE_RATE] = TAS * np.sin(gamma)
         outputs[Dynamic.Mission.DISTANCE_RATE] = TAS * np.cos(gamma)
         outputs["normal_force"] = normal_force
         outputs["fuselage_pitch"] = gamma * 180 / np.pi - i_wing + alpha
@@ -220,7 +220,7 @@ class AscentEOM(om.ExplicitComponent):
         incremented_lift = inputs[Dynamic.Vehicle.LIFT]
         incremented_drag = inputs[Dynamic.Vehicle.DRAG]
         TAS = inputs[Dynamic.Atmosphere.VELOCITY]
-        gamma = inputs[Dynamic.Vehicle.FLIGHT_PATH_ANGLE]
+        gamma = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
         i_wing = inputs[Aircraft.Wing.INCIDENCE]
         alpha = inputs["alpha"]
 
@@ -239,29 +239,29 @@ class AscentEOM(om.ExplicitComponent):
         dTAcF_dIwing = -thrust * np.cos((alpha - i_wing) * np.pi / 180) * np.pi / 180
 
         J[
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
         ] = (
             dTAcF_dThrust * GRAV_ENGLISH_GASP / (TAS * weight)
         )
-        J[Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE, "alpha"] = (
+        J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, "alpha"] = (
             dTAcF_dAlpha * GRAV_ENGLISH_GASP / (TAS * weight)
         )
-        J[Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE, Aircraft.Wing.INCIDENCE] = (
+        J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, Aircraft.Wing.INCIDENCE] = (
             dTAcF_dIwing * GRAV_ENGLISH_GASP / (TAS * weight)
         )
-        J[Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE, Dynamic.Vehicle.LIFT] = (
+        J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, Dynamic.Vehicle.LIFT] = (
             GRAV_ENGLISH_GASP / (TAS * weight)
         )
-        J[Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE, Dynamic.Vehicle.MASS] = (
+        J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, Dynamic.Vehicle.MASS] = (
             (GRAV_ENGLISH_GASP / TAS)
             * GRAV_ENGLISH_LBM
             * (-thrust_across_flightpath / weight**2 - incremented_lift / weight**2)
         )
-        J[Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE, Dynamic.Vehicle.FLIGHT_PATH_ANGLE] = (
+        J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, Dynamic.Mission.FLIGHT_PATH_ANGLE] = (
             weight * np.sin(gamma) * GRAV_ENGLISH_GASP / (TAS * weight)
         )
-        J[Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE, Dynamic.Atmosphere.VELOCITY] = -(
+        J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, Dynamic.Atmosphere.VELOCITY] = -(
             (thrust_across_flightpath + incremented_lift - weight * np.cos(gamma))
             * GRAV_ENGLISH_GASP
             / (TAS**2 * weight)
@@ -273,7 +273,7 @@ class AscentEOM(om.ExplicitComponent):
             / (weight**2 * np.cos(gamma))
             * GRAV_ENGLISH_LBM
         )
-        J["load_factor", Dynamic.Vehicle.FLIGHT_PATH_ANGLE] = (
+        J["load_factor", Dynamic.Mission.FLIGHT_PATH_ANGLE] = (
             -(incremented_lift + thrust_across_flightpath)
             / (weight * (np.cos(gamma)) ** 2)
             * (-np.sin(gamma))
@@ -330,20 +330,20 @@ class AscentEOM(om.ExplicitComponent):
             )
             / weight**2
         )
-        J[Dynamic.Atmosphere.VELOCITY_RATE, Dynamic.Vehicle.FLIGHT_PATH_ANGLE] = (
+        J[Dynamic.Atmosphere.VELOCITY_RATE, Dynamic.Mission.FLIGHT_PATH_ANGLE] = (
             -np.cos(gamma) * GRAV_ENGLISH_GASP
         )
         J[Dynamic.Atmosphere.VELOCITY_RATE, Dynamic.Vehicle.LIFT] = (
             GRAV_ENGLISH_GASP * (-mu * dNF_dLift) / weight
         )
 
-        J[Dynamic.Atmosphere.ALTITUDE_RATE, Dynamic.Atmosphere.VELOCITY] = np.sin(gamma)
-        J[Dynamic.Atmosphere.ALTITUDE_RATE, Dynamic.Vehicle.FLIGHT_PATH_ANGLE] = (
+        J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Atmosphere.VELOCITY] = np.sin(gamma)
+        J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.FLIGHT_PATH_ANGLE] = (
             TAS * np.cos(gamma)
         )
 
         J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Atmosphere.VELOCITY] = np.cos(gamma)
-        J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Vehicle.FLIGHT_PATH_ANGLE] = (
+        J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Mission.FLIGHT_PATH_ANGLE] = (
             -TAS * np.sin(gamma)
         )
 

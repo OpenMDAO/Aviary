@@ -26,7 +26,7 @@ class EngineModelVariables(Enum):
     """
 
     MACH = Dynamic.Atmosphere.MACH
-    ALTITUDE = Dynamic.Atmosphere.ALTITUDE
+    ALTITUDE = Dynamic.Mission.ALTITUDE
     THROTTLE = Dynamic.Vehicle.Propulsion.THROTTLE
     HYBRID_THROTTLE = Dynamic.Vehicle.Propulsion.HYBRID_THROTTLE
     THRUST = Dynamic.Vehicle.Propulsion.THRUST

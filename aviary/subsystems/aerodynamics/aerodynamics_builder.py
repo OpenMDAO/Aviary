@@ -184,7 +184,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
             elif method == 'solved_alpha':
                 promotes = [
-                    Dynamic.Atmosphere.ALTITUDE,
+                    Dynamic.Mission.ALTITUDE,
                     Dynamic.Atmosphere.MACH,
                     Dynamic.Vehicle.MASS,
                     Dynamic.Atmosphere.STATIC_PRESSURE,
@@ -194,8 +194,8 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
             elif method == 'low_speed':
                 promotes = [
                     'angle_of_attack',
-                    Dynamic.Atmosphere.ALTITUDE,
-                    Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+                    Dynamic.Mission.ALTITUDE,
+                    Dynamic.Mission.FLIGHT_PATH_ANGLE,
                     Mission.Takeoff.DRAG_COEFFICIENT_MIN,
                     Aircraft.Wing.ASPECT_RATIO,
                     Aircraft.Wing.HEIGHT,
@@ -206,7 +206,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
             elif method == 'tabular':
                 promotes = [
-                    Dynamic.Atmosphere.ALTITUDE,
+                    Dynamic.Mission.ALTITUDE,
                     Dynamic.Atmosphere.MACH,
                     Dynamic.Vehicle.MASS,
                     Dynamic.Atmosphere.VELOCITY,

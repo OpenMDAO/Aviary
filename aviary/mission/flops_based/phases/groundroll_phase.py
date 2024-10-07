@@ -116,9 +116,9 @@ class GroundrollPhase(PhaseBuilderBase):
         phase.add_timeseries_output(Dynamic.Vehicle.DRAG)
         phase.add_timeseries_output("time")
         phase.add_timeseries_output("mass")
-        phase.add_timeseries_output(Dynamic.Atmosphere.ALTITUDE)
+        phase.add_timeseries_output(Dynamic.Mission.ALTITUDE)
         phase.add_timeseries_output("alpha")
-        phase.add_timeseries_output(Dynamic.Vehicle.FLIGHT_PATH_ANGLE)
+        phase.add_timeseries_output(Dynamic.Mission.FLIGHT_PATH_ANGLE)
         phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THROTTLE)
 
         return phase

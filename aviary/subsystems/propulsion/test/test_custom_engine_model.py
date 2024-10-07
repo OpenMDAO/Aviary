@@ -46,7 +46,7 @@ class SimpleEngine(om.ExplicitComponent):
             desc='Current flight Mach number',
         )
         self.add_input(
-            Dynamic.Atmosphere.ALTITUDE,
+            Dynamic.Mission.ALTITUDE,
             shape=nn,
             units='ft',
             desc='Current flight altitude',

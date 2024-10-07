@@ -34,7 +34,7 @@ class PreMissionAero(om.Group):
         self.add_subsystem(
             name='atmosphere',
             subsys=Atmosphere(num_nodes=1, input_speed_type=SpeedType.MACH),
-            promotes=['*', (Dynamic.Atmosphere.ALTITUDE, "alt_flaps")],
+            promotes=['*', (Dynamic.Mission.ALTITUDE, "alt_flaps")],
         )
 
         self.add_subsystem(

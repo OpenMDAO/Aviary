@@ -129,7 +129,8 @@ class TakeoffGroupTest(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Mission.Takeoff.LIFT_OVER_DRAG, val=17.354, units='unitless')  # check
         self.prob.model.set_input_defaults(
-            Dynamic.Atmosphere.ALTITUDE, val=0, units="ft")  # check
+            Dynamic.Mission.ALTITUDE, val=0, units="ft"
+        )  # check
 
         self.prob.setup(check=False, force_alloc_complex=True)
 

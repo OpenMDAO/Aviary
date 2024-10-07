@@ -33,7 +33,7 @@ class TestUnsteadyFlightEOM(unittest.TestCase):
 
         if not ground_roll:
             p.set_val("alpha", 0.0, units="deg")
-            p.set_val(Dynamic.Vehicle.FLIGHT_PATH_ANGLE, 0, units="deg")
+            p.set_val(Dynamic.Mission.FLIGHT_PATH_ANGLE, 0, units="deg")
             p.set_val("dh_dr", 0, units=None)
             p.set_val("d2h_dr2", 0, units="1/m")
 
@@ -87,7 +87,7 @@ class TestUnsteadyFlightEOM(unittest.TestCase):
         if not ground_roll:
             p.set_val("alpha", 5 * np.random.rand(nn), units="deg")
             p.set_val(
-                Dynamic.Vehicle.FLIGHT_PATH_ANGLE, 5 * np.random.rand(nn), units="deg"
+                Dynamic.Mission.FLIGHT_PATH_ANGLE, 5 * np.random.rand(nn), units="deg"
             )
             p.set_val("dh_dr", 0.1 * np.random.rand(nn), units=None)
             p.set_val("d2h_dr2", 0.01 * np.random.rand(nn), units="1/m")
@@ -111,13 +111,13 @@ class TestUnsteadyFlightEOM(unittest.TestCase):
             "gamma",
             GammaComp(num_nodes=nn),
             promotes_inputs=["dh_dr", "d2h_dr2"],
-            promotes_outputs=[Dynamic.Vehicle.FLIGHT_PATH_ANGLE, "dgam_dr"],
+            promotes_outputs=[Dynamic.Mission.FLIGHT_PATH_ANGLE, "dgam_dr"],
         )
         p.setup(force_alloc_complex=True)
         p.run_model()
 
         assert_near_equal(
-            p[Dynamic.Vehicle.FLIGHT_PATH_ANGLE],
+            p[Dynamic.Mission.FLIGHT_PATH_ANGLE],
             [0.78539816, 0.78539816],
             tolerance=1.0e-6,
         )

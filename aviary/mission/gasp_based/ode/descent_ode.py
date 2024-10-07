@@ -72,7 +72,7 @@ class DescentODE(BaseODE):
         self.add_subsystem(
             name='atmosphere',
             subsys=Atmosphere(num_nodes=nn),
-            promotes_inputs=[Dynamic.Atmosphere.ALTITUDE],
+            promotes_inputs=[Dynamic.Mission.ALTITUDE],
             promotes_outputs=[
                 Dynamic.Atmosphere.DENSITY,
                 Dynamic.Atmosphere.SPEED_OF_SOUND,
@@ -173,10 +173,10 @@ class DescentODE(BaseODE):
                 "alpha",
             ],
             promotes_outputs=[
-                Dynamic.Atmosphere.ALTITUDE_RATE,
+                Dynamic.Mission.ALTITUDE_RATE,
                 Dynamic.Mission.DISTANCE_RATE,
                 "required_lift",
-                Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+                Dynamic.Mission.FLIGHT_PATH_ANGLE,
             ],
         )
 
@@ -188,7 +188,7 @@ class DescentODE(BaseODE):
                 "alpha",
                 Dynamic.Atmosphere.DENSITY,
                 "CL_max",
-                Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+                Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 Dynamic.Atmosphere.VELOCITY,
             ]
             + ["aircraft:*"],
@@ -225,7 +225,7 @@ class DescentODE(BaseODE):
 
         ParamPort.set_default_vals(self)
         self.set_input_defaults(
-            Dynamic.Atmosphere.ALTITUDE, val=37500 * np.ones(nn), units="ft"
+            Dynamic.Mission.ALTITUDE, val=37500 * np.ones(nn), units="ft"
         )
         self.set_input_defaults(
             Dynamic.Vehicle.MASS, val=147000 * np.ones(nn), units="lbm"

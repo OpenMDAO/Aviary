@@ -17,7 +17,7 @@ class AltitudeRateTest(unittest.TestCase):
         time, _ = data.get_item('time')
 
         prob.model.add_subsystem(
-            Dynamic.Atmosphere.ALTITUDE_RATE,
+            Dynamic.Mission.ALTITUDE_RATE,
             AltitudeRate(num_nodes=len(time)),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
@@ -33,11 +33,11 @@ class AltitudeRateTest(unittest.TestCase):
             input_validation_data=data,
             output_validation_data=data,
             input_keys=[
-                Dynamic.Vehicle.SPECIFIC_ENERGY_RATE,
+                Dynamic.Mission.SPECIFIC_ENERGY_RATE,
                 Dynamic.Atmosphere.VELOCITY,
                 Dynamic.Atmosphere.VELOCITY_RATE,
             ],
-            output_keys=Dynamic.Atmosphere.ALTITUDE_RATE,
+            output_keys=Dynamic.Mission.ALTITUDE_RATE,
             tol=1e-9,
         )
 

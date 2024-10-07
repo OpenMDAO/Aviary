@@ -24,7 +24,7 @@ class RequiredThrustTest(unittest.TestCase):
             Dynamic.Vehicle.MASS, np.array([106292, 106292]), units="lbm"
         )
         prob.model.set_input_defaults(
-            Dynamic.Atmosphere.ALTITUDE_RATE, np.array([1.72, 11.91]), units="m/s"
+            Dynamic.Mission.ALTITUDE_RATE, np.array([1.72, 11.91]), units="m/s"
         )
         prob.model.set_input_defaults(
             Dynamic.Atmosphere.VELOCITY_RATE, np.array([5.23, 2.7]), units="m/s**2"

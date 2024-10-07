@@ -42,8 +42,8 @@ class GroundrollODETestCase(unittest.TestCase):
 
         testvals = {
             Dynamic.Atmosphere.VELOCITY_RATE: [1413548.36, 1413548.36],
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE: [0.0, 0.0],
-            Dynamic.Atmosphere.ALTITUDE_RATE: [0.0, 0.0],
+            Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE: [0.0, 0.0],
+            Dynamic.Mission.ALTITUDE_RATE: [0.0, 0.0],
             Dynamic.Mission.DISTANCE_RATE: [168.781, 168.781],
             "normal_force": [0.0, 0.0],
             "fuselage_pitch": [0.0, 0.0],

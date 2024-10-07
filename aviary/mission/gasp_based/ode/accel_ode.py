@@ -31,7 +31,7 @@ class AccelODE(BaseODE):
             add_SGM_required_outputs(
                 self,
                 {
-                    Dynamic.Atmosphere.ALTITUDE_RATE: {'units': 'ft/s'},
+                    Dynamic.Mission.ALTITUDE_RATE: {'units': 'ft/s'},
                 },
             )
 
@@ -79,7 +79,7 @@ class AccelODE(BaseODE):
             Dynamic.Vehicle.MASS, val=14e4 * np.ones(nn), units="lbm"
         )
         self.set_input_defaults(
-            Dynamic.Atmosphere.ALTITUDE, val=500 * np.ones(nn), units="ft"
+            Dynamic.Mission.ALTITUDE, val=500 * np.ones(nn), units="ft"
         )
         self.set_input_defaults(
             Dynamic.Atmosphere.VELOCITY, val=200 * np.ones(nn), units="m/s"

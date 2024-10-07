@@ -38,7 +38,7 @@ class SpecificEnergyRateTest(unittest.TestCase):
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                 Dynamic.Atmosphere.VELOCITY,
             ],
-            output_keys=Dynamic.Vehicle.SPECIFIC_ENERGY_RATE,
+            output_keys=Dynamic.Mission.SPECIFIC_ENERGY_RATE,
             tol=1e-12,
         )
 

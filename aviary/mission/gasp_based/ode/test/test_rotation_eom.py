@@ -30,7 +30,7 @@ class RotationEOMTestCase(unittest.TestCase):
             Dynamic.Atmosphere.VELOCITY, val=10 * np.ones(2), units="ft/s"
         )
         self.prob.model.set_input_defaults(
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE, val=np.zeros(2), units="rad"
+            Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(2), units="rad"
         )
         self.prob.model.set_input_defaults(Aircraft.Wing.INCIDENCE, val=0, units="deg")
         self.prob.model.set_input_defaults("alpha", val=np.zeros(2), units="deg")
@@ -48,10 +48,10 @@ class RotationEOMTestCase(unittest.TestCase):
             tol,
         )
         assert_near_equal(
-            self.prob[Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE], np.array([0.0, 0.0]), tol
+            self.prob[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE], np.array([0.0, 0.0]), tol
         )
         assert_near_equal(
-            self.prob[Dynamic.Atmosphere.ALTITUDE_RATE], np.array([0.0, 0.0]), tol
+            self.prob[Dynamic.Mission.ALTITUDE_RATE], np.array([0.0, 0.0]), tol
         )
         assert_near_equal(
             self.prob[Dynamic.Mission.DISTANCE_RATE], np.array(

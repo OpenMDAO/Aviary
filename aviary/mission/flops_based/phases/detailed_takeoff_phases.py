@@ -769,7 +769,7 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
             - throttle
             - angle_of_attack
             - altitude
-            - Dynamic.Vehicle.FLIGHT_PATH_ANGLE
+            - Dynamic.Mission.FLIGHT_PATH_ANGLE
 
     ode_class : type (None)
         advanced: the type of system defining the ODE
@@ -845,14 +845,14 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
         altitude_ref, units = user_options.get_item('altitude_ref')
 
         phase.add_state(
-            Dynamic.Atmosphere.ALTITUDE,
+            Dynamic.Mission.ALTITUDE,
             fix_initial=True,
             lower=0,
             ref=altitude_ref,
             defect_ref=altitude_ref,
             units=units,
             upper=altitude_ref,
-            rate_source=Dynamic.Atmosphere.ALTITUDE_RATE,
+            rate_source=Dynamic.Mission.ALTITUDE_RATE,
         )
 
         max_velocity, units = user_options.get_item('max_velocity')
@@ -871,10 +871,15 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
         flight_path_angle_ref, units = user_options.get_item('flight_path_angle_ref')
 
         phase.add_state(
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE, fix_initial=True, lower=0,
-            ref=flight_path_angle_ref, upper=flight_path_angle_ref,
-            defect_ref=flight_path_angle_ref, units=units,
-            rate_source=Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE)
+            Dynamic.Mission.FLIGHT_PATH_ANGLE,
+            fix_initial=True,
+            lower=0,
+            ref=flight_path_angle_ref,
+            upper=flight_path_angle_ref,
+            defect_ref=flight_path_angle_ref,
+            units=units,
+            rate_source=Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
+        )
 
         phase.add_state(
             Dynamic.Vehicle.MASS,
@@ -926,7 +931,13 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
         h = obstacle_height + airport_altitude
 
         phase.add_boundary_constraint(
-            Dynamic.Atmosphere.ALTITUDE, loc='final', equals=h, ref=h, units=units, linear=True)
+            Dynamic.Mission.ALTITUDE,
+            loc='final',
+            equals=h,
+            ref=h,
+            units=units,
+            linear=True,
+        )
 
         phase.add_path_constraint(
             'v_over_v_stall', lower=1.25, ref=2.0)
@@ -979,7 +990,8 @@ TakeoffLiftoffToObstacle._add_initial_guess_meta_data(
 TakeoffLiftoffToObstacle._add_initial_guess_meta_data(InitialGuessState('altitude'))
 
 TakeoffLiftoffToObstacle._add_initial_guess_meta_data(
-    InitialGuessState(Dynamic.Vehicle.FLIGHT_PATH_ANGLE))
+    InitialGuessState(Dynamic.Mission.FLIGHT_PATH_ANGLE)
+)
 
 
 @_init_initial_guess_meta_data
@@ -1020,7 +1032,7 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
             - throttle
             - angle_of_attack
             - altitude
-            - Dynamic.Vehicle.FLIGHT_PATH_ANGLE
+            - Dynamic.Mission.FLIGHT_PATH_ANGLE
 
     ode_class : type (None)
         advanced: the type of system defining the ODE
@@ -1096,13 +1108,13 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
         altitude_ref, units = user_options.get_item('altitude_ref')
 
         phase.add_state(
-            Dynamic.Atmosphere.ALTITUDE,
+            Dynamic.Mission.ALTITUDE,
             fix_initial=False,
             lower=0,
             ref=altitude_ref,
             defect_ref=altitude_ref,
             units=units,
-            rate_source=Dynamic.Atmosphere.ALTITUDE_RATE,
+            rate_source=Dynamic.Mission.ALTITUDE_RATE,
         )
 
         max_velocity, units = user_options.get_item('max_velocity')
@@ -1121,10 +1133,14 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
         flight_path_angle_ref, units = user_options.get_item('flight_path_angle_ref')
 
         phase.add_state(
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE, fix_initial=False, lower=0,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE,
+            fix_initial=False,
+            lower=0,
             ref=flight_path_angle_ref,
-            defect_ref=flight_path_angle_ref, units=units,
-            rate_source=Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE)
+            defect_ref=flight_path_angle_ref,
+            units=units,
+            rate_source=Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
+        )
 
         phase.add_state(
             Dynamic.Vehicle.MASS,
@@ -1171,7 +1187,13 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
         h = final_altitude + airport_altitude
 
         phase.add_boundary_constraint(
-            Dynamic.Atmosphere.ALTITUDE, loc='final', equals=h, ref=h, units=units, linear=True)
+            Dynamic.Mission.ALTITUDE,
+            loc='final',
+            equals=h,
+            ref=h,
+            units=units,
+            linear=True,
+        )
 
         phase.add_boundary_constraint(
             'v_over_v_stall', loc='final', lower=1.25, ref=1.25)
@@ -1225,7 +1247,8 @@ TakeoffObstacleToMicP2._add_initial_guess_meta_data(
 TakeoffObstacleToMicP2._add_initial_guess_meta_data(InitialGuessState('altitude'))
 
 TakeoffObstacleToMicP2._add_initial_guess_meta_data(
-    InitialGuessState(Dynamic.Vehicle.FLIGHT_PATH_ANGLE))
+    InitialGuessState(Dynamic.Mission.FLIGHT_PATH_ANGLE)
+)
 
 
 @_init_initial_guess_meta_data
@@ -1266,7 +1289,7 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
             - throttle
             - angle_of_attack
             - altitude
-            - Dynamic.Vehicle.FLIGHT_PATH_ANGLE
+            - Dynamic.Mission.FLIGHT_PATH_ANGLE
 
     ode_class : type (None)
         advanced: the type of system defining the ODE
@@ -1342,13 +1365,13 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
         altitude_ref, units = user_options.get_item('altitude_ref')
 
         phase.add_state(
-            Dynamic.Atmosphere.ALTITUDE,
+            Dynamic.Mission.ALTITUDE,
             fix_initial=False,
             lower=0,
             ref=altitude_ref,
             defect_ref=altitude_ref,
             units=units,
-            rate_source=Dynamic.Atmosphere.ALTITUDE_RATE,
+            rate_source=Dynamic.Mission.ALTITUDE_RATE,
         )
 
         max_velocity, units = user_options.get_item('max_velocity')
@@ -1367,10 +1390,14 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
         flight_path_angle_ref, units = user_options.get_item('flight_path_angle_ref')
 
         phase.add_state(
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE, fix_initial=False, lower=0,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE,
+            fix_initial=False,
+            lower=0,
             ref=flight_path_angle_ref,
-            defect_ref=flight_path_angle_ref, units=units,
-            rate_source=Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE)
+            defect_ref=flight_path_angle_ref,
+            units=units,
+            rate_source=Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
+        )
 
         phase.add_state(
             Dynamic.Vehicle.MASS,
@@ -1472,7 +1499,8 @@ TakeoffMicP2ToEngineCutback._add_initial_guess_meta_data(
 TakeoffMicP2ToEngineCutback._add_initial_guess_meta_data(InitialGuessState('altitude'))
 
 TakeoffMicP2ToEngineCutback._add_initial_guess_meta_data(
-    InitialGuessState(Dynamic.Vehicle.FLIGHT_PATH_ANGLE))
+    InitialGuessState(Dynamic.Mission.FLIGHT_PATH_ANGLE)
+)
 
 
 @_init_initial_guess_meta_data
@@ -1510,7 +1538,7 @@ class TakeoffEngineCutback(PhaseBuilderBase):
             - throttle
             - angle_of_attack
             - altitude
-            - Dynamic.Vehicle.FLIGHT_PATH_ANGLE
+            - Dynamic.Mission.FLIGHT_PATH_ANGLE
 
     ode_class : type (None)
         advanced: the type of system defining the ODE
@@ -1584,13 +1612,13 @@ class TakeoffEngineCutback(PhaseBuilderBase):
         altitude_ref, units = user_options.get_item('altitude_ref')
 
         phase.add_state(
-            Dynamic.Atmosphere.ALTITUDE,
+            Dynamic.Mission.ALTITUDE,
             fix_initial=False,
             lower=0,
             ref=altitude_ref,
             defect_ref=altitude_ref,
             units=units,
-            rate_source=Dynamic.Atmosphere.ALTITUDE_RATE,
+            rate_source=Dynamic.Mission.ALTITUDE_RATE,
         )
 
         max_velocity, units = user_options.get_item('max_velocity')
@@ -1609,10 +1637,14 @@ class TakeoffEngineCutback(PhaseBuilderBase):
         flight_path_angle_ref, units = user_options.get_item('flight_path_angle_ref')
 
         phase.add_state(
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE, fix_initial=False, lower=0,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE,
+            fix_initial=False,
+            lower=0,
             ref=flight_path_angle_ref,
-            defect_ref=flight_path_angle_ref, units=units,
-            rate_source=Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE)
+            defect_ref=flight_path_angle_ref,
+            units=units,
+            rate_source=Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
+        )
 
         phase.add_state(
             Dynamic.Vehicle.MASS,
@@ -1697,7 +1729,8 @@ TakeoffEngineCutback._add_initial_guess_meta_data(
 TakeoffEngineCutback._add_initial_guess_meta_data(InitialGuessState('altitude'))
 
 TakeoffEngineCutback._add_initial_guess_meta_data(
-    InitialGuessState(Dynamic.Vehicle.FLIGHT_PATH_ANGLE))
+    InitialGuessState(Dynamic.Mission.FLIGHT_PATH_ANGLE)
+)
 
 
 @_init_initial_guess_meta_data
@@ -1738,7 +1771,7 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilderBase):
             - throttle
             - angle_of_attack
             - altitude
-            - Dynamic.Vehicle.FLIGHT_PATH_ANGLE
+            - Dynamic.Mission.FLIGHT_PATH_ANGLE
 
     ode_class : type (None)
         advanced: the type of system defining the ODE
@@ -1814,13 +1847,13 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilderBase):
         altitude_ref, units = user_options.get_item('altitude_ref')
 
         phase.add_state(
-            Dynamic.Atmosphere.ALTITUDE,
+            Dynamic.Mission.ALTITUDE,
             fix_initial=False,
             lower=0,
             ref=altitude_ref,
             defect_ref=altitude_ref,
             units=units,
-            rate_source=Dynamic.Atmosphere.ALTITUDE_RATE,
+            rate_source=Dynamic.Mission.ALTITUDE_RATE,
         )
 
         max_velocity, units = user_options.get_item('max_velocity')
@@ -1839,10 +1872,14 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilderBase):
         flight_path_angle_ref, units = user_options.get_item('flight_path_angle_ref')
 
         phase.add_state(
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE, fix_initial=False, lower=0,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE,
+            fix_initial=False,
+            lower=0,
             ref=flight_path_angle_ref,
-            defect_ref=flight_path_angle_ref, units=units,
-            rate_source=Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE)
+            defect_ref=flight_path_angle_ref,
+            units=units,
+            rate_source=Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
+        )
 
         phase.add_state(
             Dynamic.Vehicle.MASS,
@@ -1940,7 +1977,8 @@ TakeoffEngineCutbackToMicP1._add_initial_guess_meta_data(
 TakeoffEngineCutbackToMicP1._add_initial_guess_meta_data(InitialGuessState('altitude'))
 
 TakeoffEngineCutbackToMicP1._add_initial_guess_meta_data(
-    InitialGuessState(Dynamic.Vehicle.FLIGHT_PATH_ANGLE))
+    InitialGuessState(Dynamic.Mission.FLIGHT_PATH_ANGLE)
+)
 
 
 @_init_initial_guess_meta_data
@@ -1981,7 +2019,7 @@ class TakeoffMicP1ToClimb(PhaseBuilderBase):
             - throttle
             - angle_of_attack
             - altitude
-            - Dynamic.Vehicle.FLIGHT_PATH_ANGLE
+            - Dynamic.Mission.FLIGHT_PATH_ANGLE
 
     ode_class : type (None)
         advanced: the type of system defining the ODE
@@ -2057,13 +2095,13 @@ class TakeoffMicP1ToClimb(PhaseBuilderBase):
         altitude_ref, units = user_options.get_item('altitude_ref')
 
         phase.add_state(
-            Dynamic.Atmosphere.ALTITUDE,
+            Dynamic.Mission.ALTITUDE,
             fix_initial=False,
             lower=0,
             ref=altitude_ref,
             defect_ref=altitude_ref,
             units=units,
-            rate_source=Dynamic.Atmosphere.ALTITUDE_RATE,
+            rate_source=Dynamic.Mission.ALTITUDE_RATE,
         )
 
         max_velocity, units = user_options.get_item('max_velocity')
@@ -2082,10 +2120,14 @@ class TakeoffMicP1ToClimb(PhaseBuilderBase):
         flight_path_angle_ref, units = user_options.get_item('flight_path_angle_ref')
 
         phase.add_state(
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE, fix_initial=False, lower=0,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE,
+            fix_initial=False,
+            lower=0,
             ref=flight_path_angle_ref,
-            defect_ref=flight_path_angle_ref, units=units,
-            rate_source=Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE)
+            defect_ref=flight_path_angle_ref,
+            units=units,
+            rate_source=Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
+        )
 
         phase.add_state(
             Dynamic.Vehicle.MASS,
@@ -2182,7 +2224,8 @@ TakeoffMicP1ToClimb._add_initial_guess_meta_data(
 TakeoffMicP1ToClimb._add_initial_guess_meta_data(InitialGuessState('altitude'))
 
 TakeoffMicP1ToClimb._add_initial_guess_meta_data(
-    InitialGuessState(Dynamic.Vehicle.FLIGHT_PATH_ANGLE))
+    InitialGuessState(Dynamic.Mission.FLIGHT_PATH_ANGLE)
+)
 
 
 @_init_initial_guess_meta_data
@@ -2679,7 +2722,7 @@ class TakeoffTrajectory:
             engine_cutback_to_mic_p1_name = self._engine_cutback_to_mic_p1.name
             mic_p1_to_climb_name = self._mic_p1_to_climb.name
 
-            acoustics_vars = ext_vars + [Dynamic.Vehicle.FLIGHT_PATH_ANGLE, 'altitude']
+            acoustics_vars = ext_vars + [Dynamic.Mission.FLIGHT_PATH_ANGLE, 'altitude']
 
             traj.link_phases(
                 [liftoff_name, obstacle_to_mic_p2_name],

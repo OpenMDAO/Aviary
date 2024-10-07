@@ -93,7 +93,7 @@ class BaseODE(om.Group):
             )
             alpha_comp_inputs = [
                 ("max_fus_angle", Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE),
-                ("gamma", Dynamic.Vehicle.FLIGHT_PATH_ANGLE),
+                ("gamma", Dynamic.Mission.FLIGHT_PATH_ANGLE),
                 ("i_wing", Aircraft.Wing.INCIDENCE),
             ]
 
@@ -130,40 +130,40 @@ class BaseODE(om.Group):
         #         name="alpha",
         #         val=np.full(nn, 1),
         #         units="deg",
-        #         lhs_name=Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+        #         lhs_name=Dynamic.Mission.FLIGHT_PATH_ANGLE,
         #         rhs_name='target_flight_path_angle',
         #         rhs_val=target_flight_path_angle,
         #         eq_units="deg",
         #         upper=12.0,
         #         lower=-2,
         #     )
-        #     alpha_comp_inputs = [Dynamic.Vehicle.FLIGHT_PATH_ANGLE]
+        #     alpha_comp_inputs = [Dynamic.Mission.FLIGHT_PATH_ANGLE]
 
         # elif alpha_mode is AlphaModes.ALTITUDE_RATE:
         #     alpha_comp = om.BalanceComp(
         #         name="alpha",
         #         val=np.full(nn, 1),
         #         units="deg",
-        #         lhs_name=Dynamic.Atmosphere.ALTITUDE_RATE,
+        #         lhs_name=Dynamic.Mission.ALTITUDE_RATE,
         #         rhs_name='target_alt_rate',
         #         rhs_val=target_alt_rate,
         #         upper=12.0,
         #         lower=-2,
         #     )
-        #     alpha_comp_inputs = [Dynamic.Atmosphere.ALTITUDE_RATE]
+        #     alpha_comp_inputs = [Dynamic.Mission.ALTITUDE_RATE]
 
         # elif alpha_mode is AlphaModes.CONSTANT_ALTITUDE:
         #     alpha_comp = om.BalanceComp(
         #         name="alpha",
         #         val=np.full(nn, 1),
         #         units="deg",
-        #         lhs_name=Dynamic.Atmosphere.ALTITUDE,
+        #         lhs_name=Dynamic.Mission.ALTITUDE,
         #         rhs_name='target_alt',
         #         rhs_val=37500,
         #         upper=12.0,
         #         lower=-2,
         #     )
-        #     alpha_comp_inputs = [Dynamic.Atmosphere.ALTITUDE]
+        #     alpha_comp_inputs = [Dynamic.Mission.ALTITUDE]
 
         if alpha_mode is not AlphaModes.DEFAULT:
             alpha_group.add_subsystem("alpha_comp",
@@ -259,8 +259,8 @@ class BaseODE(om.Group):
             ],
             promotes_outputs=[
                 (
-                    Dynamic.Vehicle.SPECIFIC_ENERGY_RATE,
-                    Dynamic.Vehicle.SPECIFIC_ENERGY_RATE_EXCESS,
+                    Dynamic.Mission.SPECIFIC_ENERGY_RATE,
+                    Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
                 )
             ],
         )
@@ -270,13 +270,13 @@ class BaseODE(om.Group):
             subsys=AltitudeRate(num_nodes=nn),
             promotes_inputs=[
                 (
-                    Dynamic.Vehicle.SPECIFIC_ENERGY_RATE,
-                    Dynamic.Vehicle.SPECIFIC_ENERGY_RATE_EXCESS,
+                    Dynamic.Mission.SPECIFIC_ENERGY_RATE,
+                    Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
                 ),
                 Dynamic.Atmosphere.VELOCITY_RATE,
                 Dynamic.Atmosphere.VELOCITY,
             ],
             promotes_outputs=[
-                (Dynamic.Atmosphere.ALTITUDE_RATE, Dynamic.Vehicle.ALTITUDE_RATE_MAX)
+                (Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.ALTITUDE_RATE_MAX)
             ],
         )

@@ -26,8 +26,8 @@ class TakeoffODETest(unittest.TestCase):
             output_validation_data=detailed_takeoff_ground,
             input_keys=[
                 'angle_of_attack',
-                Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
-                Dynamic.Atmosphere.ALTITUDE,
+                Dynamic.Mission.FLIGHT_PATH_ANGLE,
+                Dynamic.Mission.ALTITUDE,
                 Dynamic.Atmosphere.VELOCITY,
                 Dynamic.Vehicle.MASS,
                 Dynamic.Vehicle.LIFT,
@@ -36,7 +36,7 @@ class TakeoffODETest(unittest.TestCase):
             ],
             output_keys=[
                 Dynamic.Mission.DISTANCE_RATE,
-                Dynamic.Atmosphere.ALTITUDE_RATE,
+                Dynamic.Mission.ALTITUDE_RATE,
                 Dynamic.Atmosphere.VELOCITY_RATE,
             ],
             tol=1e-2,
@@ -56,8 +56,8 @@ class TakeoffODETest(unittest.TestCase):
             output_validation_data=detailed_takeoff_climbing,
             input_keys=[
                 'angle_of_attack',
-                Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
-                Dynamic.Atmosphere.ALTITUDE,
+                Dynamic.Mission.FLIGHT_PATH_ANGLE,
+                Dynamic.Mission.ALTITUDE,
                 Dynamic.Atmosphere.VELOCITY,
                 Dynamic.Vehicle.MASS,
                 Dynamic.Vehicle.LIFT,
@@ -66,7 +66,7 @@ class TakeoffODETest(unittest.TestCase):
             ],
             output_keys=[
                 Dynamic.Mission.DISTANCE_RATE,
-                Dynamic.Atmosphere.ALTITUDE_RATE,
+                Dynamic.Mission.ALTITUDE_RATE,
                 Dynamic.Atmosphere.VELOCITY_RATE,
             ],
             tol=1e-2,

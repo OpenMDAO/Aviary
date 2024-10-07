@@ -66,11 +66,9 @@ class RotationODE(BaseODE):
         self.set_input_defaults("t_init_gear", val=37.3, units='s')
         self.set_input_defaults("alpha", val=np.ones(nn), units="deg")
         self.set_input_defaults(
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units="deg"
+            Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units="deg"
         )
-        self.set_input_defaults(
-            Dynamic.Atmosphere.ALTITUDE, val=np.zeros(nn), units="ft"
-        )
+        self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.zeros(nn), units="ft")
         self.set_input_defaults(
             Dynamic.Atmosphere.VELOCITY, val=np.zeros(nn), units="kn"
         )

@@ -69,12 +69,12 @@ class HE_SGMDescentTestCase(unittest.TestCase):
             traj_final_state_output=[
                 Dynamic.Vehicle.MASS,
                 Dynamic.Mission.DISTANCE,
-                Dynamic.Atmosphere.ALTITUDE,
+                Dynamic.Mission.ALTITUDE,
             ],
             traj_initial_state_input=[
                 Dynamic.Vehicle.MASS,
                 Dynamic.Mission.DISTANCE,
-                Dynamic.Atmosphere.ALTITUDE,
+                Dynamic.Mission.ALTITUDE,
             ],
         )
         prob.model = AviaryGroup(aviary_options=aviary_options,

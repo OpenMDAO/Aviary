@@ -27,7 +27,7 @@ class MissionEOMTest(unittest.TestCase):
             units="lbf",
         )
         prob.model.set_input_defaults(
-            Dynamic.Atmosphere.ALTITUDE_RATE,
+            Dynamic.Mission.ALTITUDE_RATE,
             np.array([29.8463233754212, -5.69941245767868e-09, -4.32644785970493]),
             units="ft/s",
         )

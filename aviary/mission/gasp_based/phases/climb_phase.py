@@ -62,7 +62,7 @@ class ClimbPhase(PhaseBuilderBase):
 
         # Boundary Constraints
         phase.add_boundary_constraint(
-            Dynamic.Atmosphere.ALTITUDE,
+            Dynamic.Mission.ALTITUDE,
             loc="final",
             equals=final_altitude,
             units="ft",
@@ -72,7 +72,7 @@ class ClimbPhase(PhaseBuilderBase):
         if required_available_climb_rate is not None:
             # TODO: this should be altitude rate max
             phase.add_boundary_constraint(
-                Dynamic.Atmosphere.ALTITUDE_RATE,
+                Dynamic.Mission.ALTITUDE_RATE,
                 loc="final",
                 lower=required_available_climb_rate,
                 units="ft/min",
@@ -99,8 +99,8 @@ class ClimbPhase(PhaseBuilderBase):
         phase.add_timeseries_output("theta", output_name="theta", units="deg")
         phase.add_timeseries_output("alpha", output_name="alpha", units="deg")
         phase.add_timeseries_output(
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
-            output_name=Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE,
+            output_name=Dynamic.Mission.FLIGHT_PATH_ANGLE,
             units="deg",
         )
         phase.add_timeseries_output(

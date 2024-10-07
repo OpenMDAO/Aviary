@@ -6227,22 +6227,6 @@ add_meta_data(
 # ================================================================================
 
 add_meta_data(
-    Dynamic.Atmosphere.ALTITUDE,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='ft',
-    desc='Current altitude of the vehicle',
-)
-
-add_meta_data(
-    Dynamic.Atmosphere.ALTITUDE_RATE,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='ft/s',
-    desc='Current rate of altitude change (climb rate) of the vehicle',
-)
-
-add_meta_data(
     Dynamic.Atmosphere.DENSITY,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
@@ -6322,16 +6306,29 @@ add_meta_data(
 # | |  | | | | \__ \ \__ \ | | | (_) | | | | |
 # |_|  |_| |_| |___/ |___/ |_|  \___/  |_| |_|
 # ============================================
+add_meta_data(
+    Dynamic.Mission.ALTITUDE,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='ft',
+    desc='Current altitude of the vehicle',
+)
 
 add_meta_data(
-    Dynamic.Mission.CUMULATIVE_ELECTRIC_ENERGY_USED,
+    Dynamic.Mission.ALTITUDE_RATE,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='kJ',
-    desc='Total amount of electric energy consumed by the vehicle up until this point in the mission',
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='ft/s',
+    desc='Current rate of altitude change (climb rate) of the vehicle',
+)
+
+add_meta_data(
+    Dynamic.Mission.ALTITUDE_RATE_MAX,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='ft/s',
+    desc='Current maximum possible rate of altitude change (climb rate) of the vehicle '
+    '(at hypothetical maximum thrust condition)',
 )
 
 add_meta_data(
@@ -6356,6 +6353,49 @@ add_meta_data(
     desc="The rate at which the distance traveled is changing at the current time"
 )
 
+add_meta_data(
+    Dynamic.Mission.FLIGHT_PATH_ANGLE,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='rad',
+    desc='Current flight path angle',
+)
+
+add_meta_data(
+    Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='rad/s',
+    desc='Current rate at which flight path angle is changing',
+)
+
+add_meta_data(
+    Dynamic.Mission.SPECIFIC_ENERGY,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='m/s',
+    desc='Rate of change in specific energy (energy per unit weight) of the vehicle at current '
+    'flight condition',
+)
+
+add_meta_data(
+    Dynamic.Mission.SPECIFIC_ENERGY_RATE,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='m/s',
+    desc='Rate of change in specific energy (specific power) of the vehicle at current '
+    'flight condition',
+)
+
+add_meta_data(
+    Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='m/s',
+    desc='Specific excess power of the vehicle at current flight condition and at '
+    'hypothetical maximum thrust',
+)
+
 #  __      __         _       _          _
 #  \ \    / /        | |     (_)        | |
 #   \ \  / /    ___  | |__    _    ___  | |   ___
@@ -6363,15 +6403,6 @@ add_meta_data(
 #     \  /    |  __/ | | | | | | | (__  | | |  __/
 #      \/      \___| |_| |_| |_|  \___| |_|  \___|
 # ================================================
-
-add_meta_data(
-    Dynamic.Vehicle.ALTITUDE_RATE_MAX,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='ft/s',
-    desc='Current maximum possible rate of altitude change (climb rate) of the vehicle '
-    '(at hypothetical maximum thrust condition)',
-)
 
 add_meta_data(
     Dynamic.Vehicle.BATTERY_STATE_OF_CHARGE,
@@ -6382,27 +6413,19 @@ add_meta_data(
 )
 
 add_meta_data(
+    Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='kJ',
+    desc='Total amount of electric energy consumed by the vehicle up until this point in the mission',
+)
+
+add_meta_data(
     Dynamic.Vehicle.DRAG,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='lbf',
     desc='Current total drag experienced by the vehicle',
-)
-
-add_meta_data(
-    Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='rad',
-    desc='Current flight path angle',
-)
-
-add_meta_data(
-    Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='rad/s',
-    desc='Current rate at which flight path angle is changing',
 )
 
 add_meta_data(
@@ -6427,33 +6450,6 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='lbm/s',
     desc='Current rate at which the mass of the vehicle is changing',
-)
-
-add_meta_data(
-    Dynamic.Vehicle.SPECIFIC_ENERGY,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='m/s',
-    desc='Rate of change in specific energy (energy per unit weight) of the vehicle at current '
-    'flight condition',
-)
-
-add_meta_data(
-    Dynamic.Vehicle.SPECIFIC_ENERGY_RATE,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='m/s',
-    desc='Rate of change in specific energy (specific power) of the vehicle at current '
-    'flight condition',
-)
-
-add_meta_data(
-    Dynamic.Vehicle.SPECIFIC_ENERGY_RATE_EXCESS,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='m/s',
-    desc='Specific excess power of the vehicle at current flight condition and at '
-    'hypothetical maximum thrust',
 )
 
 #   ___                             _        _

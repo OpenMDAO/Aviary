@@ -54,8 +54,11 @@ class TestBatteryDerivs(unittest.TestCase):
             av.Aircraft.Battery.ENERGY_CAPACITY, 10_000, units='kJ')
         prob.model.set_input_defaults(
             av.Aircraft.Battery.EFFICIENCY, efficiency, units='unitless')
-        prob.model.set_input_defaults(av.Dynamic.Mission.CUMULATIVE_ELECTRIC_ENERGY_USED, [
-                                      0, 2_000, 5_000, 9_500], units='kJ')
+        prob.model.set_input_defaults(
+            av.Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED,
+            [0, 2_000, 5_000, 9_500],
+            units='kJ',
+        )
 
         prob.setup(force_alloc_complex=True)
 

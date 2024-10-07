@@ -147,11 +147,11 @@ class MissionODE(om.Group):
                 Dynamic.Vehicle.MASS,
                 Dynamic.Vehicle.Propulsion.THRUST_MAX_TOTAL,
                 Dynamic.Vehicle.DRAG,
-                Dynamic.Atmosphere.ALTITUDE_RATE,
+                Dynamic.Mission.ALTITUDE_RATE,
                 Dynamic.Atmosphere.VELOCITY_RATE,
             ],
             promotes_outputs=[
-                Dynamic.Vehicle.SPECIFIC_ENERGY_RATE_EXCESS,
+                Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
                 Dynamic.Vehicle.ALTITUDE_RATE_MAX,
                 Dynamic.Mission.DISTANCE_RATE,
                 'thrust_required',
@@ -225,9 +225,9 @@ class MissionODE(om.Group):
         self.set_input_defaults(
             Dynamic.Atmosphere.VELOCITY, val=np.ones(nn), units='m/s'
         )
-        self.set_input_defaults(Dynamic.Atmosphere.ALTITUDE, val=np.ones(nn), units='m')
+        self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.ones(nn), units='m')
         self.set_input_defaults(
-            Dynamic.Atmosphere.ALTITUDE_RATE, val=np.ones(nn), units='m/s'
+            Dynamic.Mission.ALTITUDE_RATE, val=np.ones(nn), units='m/s'
         )
 
         if options['use_actual_takeoff_mass']:
@@ -257,7 +257,7 @@ class MissionODE(om.Group):
 
         if analysis_scheme is AnalysisScheme.SHOOTING:
             SGM_required_outputs = {
-                Dynamic.Atmosphere.ALTITUDE_RATE: {'units': 'm/s'},
+                Dynamic.Mission.ALTITUDE_RATE: {'units': 'm/s'},
             }
             add_SGM_required_outputs(self, SGM_required_outputs)
 

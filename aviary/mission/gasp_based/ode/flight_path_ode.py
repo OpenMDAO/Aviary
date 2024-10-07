@@ -57,7 +57,7 @@ class FlightPathODE(BaseODE):
             Dynamic.Vehicle.LIFT,
             Dynamic.Vehicle.DRAG,
             Dynamic.Atmosphere.VELOCITY,
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE,
         ] + ['aircraft:*']
         if not self.options['ground_roll']:
             EOM_inputs.append('alpha')
@@ -66,11 +66,11 @@ class FlightPathODE(BaseODE):
             SGM_required_inputs = {
                 't_curr': {'units': 's'},
                 'distance_trigger': {'units': 'ft'},
-                Dynamic.Atmosphere.ALTITUDE: {'units': 'ft'},
+                Dynamic.Mission.ALTITUDE: {'units': 'ft'},
                 Dynamic.Mission.DISTANCE: {'units': 'ft'},
             }
             if kwargs['method'] == 'cruise':
-                SGM_required_inputs[Dynamic.Vehicle.FLIGHT_PATH_ANGLE] = {
+                SGM_required_inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE] = {
                     'val': 0,
                     'units': 'deg',
                 }
@@ -122,7 +122,7 @@ class FlightPathODE(BaseODE):
                         'weight',
                         ('thrust', Dynamic.Vehicle.Propulsion.THRUST_TOTAL),
                         'alpha',
-                        ('gamma', Dynamic.Vehicle.FLIGHT_PATH_ANGLE),
+                        ('gamma', Dynamic.Mission.FLIGHT_PATH_ANGLE),
                         ('i_wing', Aircraft.Wing.INCIDENCE),
                     ],
                     promotes_outputs=['required_lift'],
@@ -166,7 +166,7 @@ class FlightPathODE(BaseODE):
                     ('drag', Dynamic.Vehicle.DRAG),
                     # 'weight',
                     # 'alpha',
-                    # ('gamma', Dynamic.Vehicle.FLIGHT_PATH_ANGLE),
+                    # ('gamma', Dynamic.Mission.FLIGHT_PATH_ANGLE),
                     ('i_wing', Aircraft.Wing.INCIDENCE),
                 ],
                 promotes_outputs=['required_thrust'],
@@ -195,8 +195,8 @@ class FlightPathODE(BaseODE):
             self.promotes(
                 'flight_path_eom',
                 outputs=[
-                    Dynamic.Atmosphere.ALTITUDE_RATE,
-                    Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE,
+                    Dynamic.Mission.ALTITUDE_RATE,
+                    Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
                 ],
             )
 
@@ -209,11 +209,9 @@ class FlightPathODE(BaseODE):
             self.set_input_defaults("t_curr", val=np.zeros(nn), units="s")
         self.set_input_defaults("alpha", val=np.zeros(nn), units="rad")
         self.set_input_defaults(
-            Dynamic.Vehicle.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units="deg"
+            Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units="deg"
         )
-        self.set_input_defaults(
-            Dynamic.Atmosphere.ALTITUDE, val=np.zeros(nn), units="ft"
-        )
+        self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.zeros(nn), units="ft")
         self.set_input_defaults(
             Dynamic.Atmosphere.MACH, val=np.zeros(nn), units="unitless"
         )

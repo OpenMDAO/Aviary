@@ -59,7 +59,7 @@ class AccelPhase(PhaseBuilderBase):
             "EAS", loc="final", equals=EAS_constraint_eq, units="kn", ref=EAS_constraint_eq
         )
 
-        phase.add_parameter(Dynamic.Atmosphere.ALTITUDE, opt=False, units="ft", val=alt)
+        phase.add_parameter(Dynamic.Mission.ALTITUDE, opt=False, units="ft", val=alt)
 
         # Timeseries Outputs
         phase.add_timeseries_output("EAS", output_name="EAS", units="kn")

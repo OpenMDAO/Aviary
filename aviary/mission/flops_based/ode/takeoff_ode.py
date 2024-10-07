@@ -154,7 +154,7 @@ class TakeoffODE(om.Group):
             'takeoff_eom',
             TakeoffEOM(**kwargs),
             promotes_inputs=[
-                Dynamic.Vehicle.FLIGHT_PATH_ANGLE,
+                Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 Dynamic.Atmosphere.VELOCITY,
                 Dynamic.Vehicle.MASS,
                 Dynamic.Vehicle.LIFT,
@@ -164,9 +164,9 @@ class TakeoffODE(om.Group):
             ],
             promotes_outputs=[
                 Dynamic.Mission.DISTANCE_RATE,
-                Dynamic.Atmosphere.ALTITUDE_RATE,
+                Dynamic.Mission.ALTITUDE_RATE,
                 Dynamic.Atmosphere.VELOCITY_RATE,
-                Dynamic.Vehicle.FLIGHT_PATH_ANGLE_RATE,
+                Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
             ],
         )
 
@@ -183,6 +183,6 @@ class TakeoffODE(om.Group):
             promotes_outputs=['v_over_v_stall'],
         )
 
-        self.set_input_defaults(Dynamic.Atmosphere.ALTITUDE, np.zeros(nn), 'm')
+        self.set_input_defaults(Dynamic.Mission.ALTITUDE, np.zeros(nn), 'm')
         self.set_input_defaults(Dynamic.Atmosphere.VELOCITY, np.zeros(nn), 'm/s')
         self.set_input_defaults(Aircraft.Wing.AREA, 1.0, 'm**2')
