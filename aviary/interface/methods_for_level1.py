@@ -140,6 +140,16 @@ def run_level_1(
 
     prob = run_aviary(input_deck, phase_info, **kwargs)
 
+    # update n2 diagram after run.
+    outfile = os.path.join(outdir, "n2.html")
+    if outdir != '':
+        os.makedirs(outdir, exist_ok=True)
+    om.n2(
+        prob,
+        outfile=outfile,
+        show_browser=False,
+    )
+
     return prob
 
 
