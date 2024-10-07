@@ -38,8 +38,10 @@ class LandingAltitudeComponent(om.ExplicitComponent):
     def compute_partials(self, inputs, J):
         nn = self.options['num_nodes']
 
-        J[Mission.Landing.INITIAL_ALTITUDE, Mission.Landing.OBSTACLE_HEIGHT] = np.ones(nn)
-        J[Mission.Landing.INITIAL_ALTITUDE, Mission.Landing.AIRPORT_ALTITUDE] = np.ones(nn)
+        J[Mission.Landing.INITIAL_ALTITUDE,
+          Mission.Landing.OBSTACLE_HEIGHT] = np.ones(nn)
+        J[Mission.Landing.INITIAL_ALTITUDE,
+          Mission.Landing.AIRPORT_ALTITUDE] = np.ones(nn)
 
 
 class GlideConditionComponent(om.ExplicitComponent):
@@ -53,17 +55,22 @@ class GlideConditionComponent(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
 
-        self.add_input("rho_app", val=np.zeros(nn), units="slug/ft**3", desc="air density")
-        add_aviary_input(self, Mission.Landing.MAXIMUM_SINK_RATE, val=np.ones(nn)*900.0)
+        self.add_input("rho_app",
+                       val=np.zeros(nn), units="slug/ft**3", desc="air density")
+        add_aviary_input(self, Mission.Landing.MAXIMUM_SINK_RATE,
+                         val=np.ones(nn)*900.0)
         self.add_input(Dynamic.Mission.MASS, val=np.zeros(nn), units="lbm",
                        desc="aircraft mass at start of landing")
         add_aviary_input(self, Aircraft.Wing.AREA, val=np.ones(nn))
-        add_aviary_input(self, Mission.Landing.GLIDE_TO_STALL_RATIO, val=np.ones(nn)*1.3)
+        add_aviary_input(self, Mission.Landing.GLIDE_TO_STALL_RATIO,
+                         val=np.ones(nn)*1.3)
         self.add_input("CL_max", val=np.zeros(nn), units='unitless',
                        desc="CLMX: max CL at approach altitude")
 
-        add_aviary_input(self, Mission.Landing.MAXIMUM_FLARE_LOAD_FACTOR, val=np.ones(nn)*1.15)
-        add_aviary_input(self, Mission.Landing.TOUCHDOWN_SINK_RATE, val=np.ones(nn)*5.0)
+        add_aviary_input(self, Mission.Landing.MAXIMUM_FLARE_LOAD_FACTOR,
+                         val=np.ones(nn)*1.15)
+        add_aviary_input(self, Mission.Landing.TOUCHDOWN_SINK_RATE,
+                         val=np.ones(nn)*5.0)
         add_aviary_input(self, Mission.Landing.INITIAL_ALTITUDE, val=np.zeros(nn))
         add_aviary_input(self, Mission.Landing.BRAKING_DELAY, val=np.ones(nn))
 
