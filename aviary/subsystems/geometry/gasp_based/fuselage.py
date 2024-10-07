@@ -19,6 +19,10 @@ def dSigXdX(x):
 
 
 class FuselageParameters(om.ExplicitComponent):
+    """
+    Computation of average fuselage diameter, cabin height, cabin length and nose height.
+    """
+
     def initialize(self):
         add_aviary_option(self, Aircraft.CrewPayload.NUM_PASSENGERS)
         add_aviary_option(self, Aircraft.Fuselage.AISLE_WIDTH, units='inch')
@@ -102,6 +106,10 @@ class FuselageParameters(om.ExplicitComponent):
 
 
 class FuselageSize(om.ExplicitComponent):
+    """
+    Computation of fuselage length, fuselage wetted area, and cabin length
+    for the tail boom fuselage.
+    """
 
     def setup(self):
 
@@ -237,6 +245,9 @@ class FuselageSize(om.ExplicitComponent):
 
 
 class FuselageGroup(om.Group):
+    """
+    Group to pull together FuselageParameters and FuselageSize.
+    """
 
     def setup(self):
 

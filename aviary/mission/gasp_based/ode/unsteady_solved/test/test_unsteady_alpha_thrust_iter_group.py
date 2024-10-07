@@ -11,14 +11,16 @@ from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_control_iter_group i
     UnsteadyControlIterGroup
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_flight_conditions import \
     UnsteadySolvedFlightConditions
-from aviary.variable_info.enums import SpeedType
+from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
+from aviary.variable_info.enums import LegacyCode, SpeedType
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
-from aviary.variable_info.enums import LegacyCode
 
 
 class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
+    """
+    Test the UnsteadyControlIterGroup.
+    """
 
     def _test_unsteady_alpha_thrust_iter_group(self, ground_roll=False):
         nn = 5

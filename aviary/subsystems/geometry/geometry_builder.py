@@ -24,6 +24,19 @@ _default_name = 'geometry'
 
 
 class GeometryBuilderBase(SubsystemBuilderBase):
+    """
+    Base geometry builder
+
+    Methods
+    -------
+    __init__(self, name=None, meta_data=None):
+        Initializes the GeometryBuilderBase object with a given name.
+    mission_inputs(self, **kwargs) -> list:
+        Return mission inputs.
+    mission_outputs(self, **kwargs) -> list:
+        Return mission outputs.
+    """
+
     def __init__(self, name=None, meta_data=None):
         if name is None:
             name = _default_name
@@ -38,6 +51,23 @@ class GeometryBuilderBase(SubsystemBuilderBase):
 
 
 class CoreGeometryBuilder(GeometryBuilderBase):
+    """
+    Core geometry builder
+
+    Method
+    ------
+    __init__(self, name=None, meta_data=None, code_origin=None,
+        use_both_geometries=False, code_origin_to_prioritize=None):
+    build_pre_mission(self, aviary_inputs) -> openmdao.core.System:
+        Builds an OpenMDAO system for the pre-mission computations of the subsystem.
+    build_mission(self, num_nodes, aviary_inputs, **kwargs) -> openmdao.core.System:
+        Builds an OpenMDAO system for the mission computations of the subsystem.
+    get_parameters(self, aviary_inputs=None, phase_info=None):
+        Returns a dictionary of fixed values for the Nacelle.
+    report(self, prob, reports_folder, **kwargs):
+        Generate the report for Aviary core geometry analysis.
+    """
+
     def __init__(self, name=None, meta_data=None, code_origin=None,
                  use_both_geometries=False, code_origin_to_prioritize=None):
         if name is None:

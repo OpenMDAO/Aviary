@@ -7,10 +7,10 @@ from aviary.subsystems.aerodynamics.flops_based.drag import TotalDrag as Drag
 from aviary.subsystems.aerodynamics.flops_based.lift import \
     LiftEqualsWeight as CL
 from aviary.utils.csv_data_file import read_data_file
+from aviary.utils.data_interpolator_builder import build_data_interpolator
 from aviary.utils.functions import get_path
 from aviary.utils.named_values import NamedValues
 from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.utils.data_interpolator_builder import build_data_interpolator
 
 
 # Map of variable names to allowed headers for data files (only lowercase required,
@@ -28,6 +28,23 @@ aliases = {Dynamic.Mission.ALTITUDE: ['h', 'alt', 'altitude'],
 
 
 class TabularAeroGroup(om.Group):
+    """
+    Define the OpenMDAO system for estimating aerodynamic performance of the vehicle
+    by interpolating from a provided drag polar. Separate data tables for lift-dependent
+    drag (CDI_data) and zero-lift drag (CD0_data) are required, and can be provided
+    either in a .csv data table or an NamedValues object.
+
+    Data is checked for its structure, and attempts to use a structured grid metamodel
+    component where possible. The "structured" flag forces the use of the structured
+    metamodel components (for both tables).
+
+    The "connect_training_data" flag instructs the metamodel components to look for the
+    drag data tables to be connected through OpenMDAO as inputs to this system, for cases
+    where you are using another component to generate the drag data. When
+    "connect_training_data" is True, anything provided in "CD0_data" and "CDI_data" are
+    ignored.
+    """
+
     def initialize(self):
         options = self.options
 
@@ -44,10 +61,14 @@ class TabularAeroGroup(om.Group):
         options.declare('structured', types=bool, default=True,
                         desc='Flag that sets if data is a structured grid.')
 
-        options.declare('connect_training_data', types=bool, default=False,
-                        desc='Flag that sets if drag data for interpolation will be '
-                             'passed via openMDAO connections. If True, provided values  '
-                             'for drag coefficients in data will be ignored.')
+        options.declare(
+            'connect_training_data',
+            types=bool,
+            default=False,
+            desc='Flag that sets if drag data for interpolation will be '
+            'passed via openMDAO connections. If True, provided values '
+            'for drag coefficients in data will be ignored.',
+        )
 
     def setup(self):
         options = self.options
@@ -72,17 +93,23 @@ class TabularAeroGroup(om.Group):
         else:
             method = '2D-lagrange3'
 
-        CD0_interp = build_data_interpolator(nn, interpolator_data=CD0_table,
-                                             interpolator_outputs={'zero_lift_drag_coefficient':
-                                                                   'unitless'},
-                                             method=method, structured=structured,
-                                             connect_training_data=connect_training_data)
+        CD0_interp = build_data_interpolator(
+            nn,
+            interpolator_data=CD0_table,
+            interpolator_outputs={'zero_lift_drag_coefficient': 'unitless'},
+            method=method,
+            structured=structured,
+            connect_training_data=connect_training_data,
+        )
 
-        CDI_interp = build_data_interpolator(nn, interpolator_data=CDI_table,
-                                             interpolator_outputs={'lift_dependent_drag_coefficient':
-                                                                   'unitless'},
-                                             method=method, structured=structured,
-                                             connect_training_data=connect_training_data)
+        CDI_interp = build_data_interpolator(
+            nn,
+            interpolator_data=CDI_table,
+            interpolator_outputs={'lift_dependent_drag_coefficient': 'unitless'},
+            method=method,
+            structured=structured,
+            connect_training_data=connect_training_data,
+        )
 
         # add subsystems
         self.add_subsystem(
@@ -105,15 +132,21 @@ class TabularAeroGroup(om.Group):
                            promotes_outputs=['*'])
 
         self.add_subsystem(
-            Dynamic.Mission.DRAG, Drag(num_nodes=nn),
+            Dynamic.Mission.DRAG,
+            Drag(num_nodes=nn),
             promotes_inputs=[
                 Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR,
                 Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR,
                 Aircraft.Wing.AREA,
                 Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR,
                 Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR,
-                ('CDI', 'lift_dependent_drag_coefficient'), ('CD0', 'zero_lift_drag_coefficient'), Dynamic.Mission.MACH, Dynamic.Mission.DYNAMIC_PRESSURE],
-            promotes_outputs=['CD', Dynamic.Mission.DRAG])
+                ('CDI', 'lift_dependent_drag_coefficient'),
+                ('CD0', 'zero_lift_drag_coefficient'),
+                Dynamic.Mission.MACH,
+                Dynamic.Mission.DYNAMIC_PRESSURE,
+            ],
+            promotes_outputs=['CD', Dynamic.Mission.DRAG],
+        )
 
 
 class _DynamicPressure(om.ExplicitComponent):

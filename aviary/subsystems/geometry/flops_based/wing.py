@@ -9,6 +9,9 @@ from aviary.variable_info.variables import Aircraft
 
 
 class WingPrelim(om.ExplicitComponent):
+    """
+    preliminary calculations of wing aspect ratio
+    """
 
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.AREA, val=0.0)

@@ -5,6 +5,9 @@ from aviary.variable_info.variables import Dynamic, Mission
 
 
 class TaxiFuelComponent(om.ExplicitComponent):
+    """
+    Compute the fuel consumed during taxi and update the mass after taxi in a 2DOF mission.
+    """
 
     def initialize(self):
         add_aviary_option(self, Mission.Taxi.DURATION, units='s')

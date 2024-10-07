@@ -239,6 +239,10 @@ class AltLandingGearMass(om.ExplicitComponent):
 
 
 class NoseGearLength(om.ExplicitComponent):
+    """
+    Computation of nose gear oleo strut length from main gear oleo strut length:
+    NOSE_GEAR_OLEO_LENGTH = 0.7 * MAIN_GEAR_OLEO_LENGTH
+    """
 
     def setup(self):
         add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, val=0.0)
@@ -255,6 +259,9 @@ class NoseGearLength(om.ExplicitComponent):
 
 
 class MainGearLength(om.ExplicitComponent):
+    """
+    Computation of main gear length.
+    """
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)

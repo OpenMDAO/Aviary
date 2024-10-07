@@ -6,7 +6,10 @@ from aviary.variable_info.variables import Aircraft
 
 
 class EngineSize(om.ExplicitComponent):
-    """GASP engine geometry calculation."""
+    """
+    GASP engine geometry calculation. It returns Aircraft.Nacelle.AVG_DIAMETER,
+    Nacelle.AVG_LENGTH, and Aircraft.Nacelle.SURFACE_AREA.
+    """
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)

@@ -26,8 +26,6 @@ from aviary.validation_cases.validation_tests import (do_validation_test,
                                                       print_case)
 from aviary.variable_info.functions import override_aviary_vars
 from aviary.variable_info.variables import Aircraft
-from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.preprocessors import preprocess_options
 
 unit_data_sets = get_flops_case_names(
     only=['LargeSingleAisle2FLOPS', 'LargeSingleAisle2FLOPSdw', 'LargeSingleAisle2FLOPSalt', 'LargeSingleAisle1FLOPS'])
@@ -38,6 +36,9 @@ wetted_area_overide = get_flops_case_names(
 # TODO: We have no integration tests for canard, so canard-related names are commented
 # out.
 class PrepGeomTest(unittest.TestCase):
+    """
+    Test computation of derived values of aircraft geometry for aerodynamics analysis
+    """
 
     def setUp(self):
         self.prob = om.Problem()

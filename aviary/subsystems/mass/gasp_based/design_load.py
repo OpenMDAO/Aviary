@@ -19,6 +19,12 @@ def dquotient(u, v, du, dv):
 
 
 class LoadSpeeds(om.ExplicitComponent):
+    """
+    Computation of load speeds (such as maximum operating equivalent airspeed,
+    velocity used in Gust Load Factor calculation at cruise conditions, maximum
+    maneuver load factor, and minimum dive velocity).
+    """
+
     def initialize(self):
         add_aviary_option(self, Aircraft.Design.PART25_STRUCTURAL_CATEGORY)
         add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)
@@ -362,6 +368,11 @@ class LoadSpeeds(om.ExplicitComponent):
 
 
 class LoadParameters(om.ExplicitComponent):
+    """
+    Computation of load parameters (such as maximum operating mach number,
+    density ratio, etc.)
+    """
+
     def initialize(self):
         add_aviary_option(self, Aircraft.Design.PART25_STRUCTURAL_CATEGORY)
         add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)
@@ -623,6 +634,10 @@ class LoadParameters(om.ExplicitComponent):
 
 
 class LiftCurveSlopeAtCruise(om.ExplicitComponent):
+    """
+    Computation of lift curve slope at cruise mach number
+    """
+
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, val=10.13)
         add_aviary_input(self, Aircraft.Wing.SWEEP, val=0.436, units="rad")
@@ -657,6 +672,10 @@ class LiftCurveSlopeAtCruise(om.ExplicitComponent):
 
 
 class LoadFactors(om.ExplicitComponent):
+    """
+    Computation of structural ultimate load factor.
+    """
+
     def initialize(self):
         add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)
         add_aviary_option(self, Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER)
@@ -1204,6 +1223,9 @@ class LoadFactors(om.ExplicitComponent):
 
 
 class DesignLoadGroup(om.Group):
+    """
+    Design load group for GASP-based mass.
+    """
 
     def setup(self):
 

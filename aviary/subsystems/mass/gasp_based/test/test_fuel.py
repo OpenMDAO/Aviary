@@ -1,5 +1,4 @@
 import unittest
-import os
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
@@ -13,8 +12,9 @@ from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission
 
 
-# this is the large single aisle 1 V3 test case
 class BodyCalculationTestCase1(unittest.TestCase):
+    """this is the large single aisle 1 V3 test case"""
+
     def setUp(self):
 
         self.prob = om.Problem()

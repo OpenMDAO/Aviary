@@ -175,6 +175,21 @@ phase_keys_gasp = {
 
 
 def check_phase_info(phase_info, mission_method):
+    """
+    Check if all phases exist in phase_info for the given mission_method.
+
+    Parameters
+    ----------
+    phase_info : dict
+        Dictionary of phase settings for a mission profile
+    mission_method : str
+        The mission method
+
+    Returns
+    -------
+        True if all phases exist in phase_info
+        Otherwise, raise key not found in phase exception
+    """
     phase_keys = {}
     if mission_method is TWO_DEGREES_OF_FREEDOM:
         for phase in phase_info:

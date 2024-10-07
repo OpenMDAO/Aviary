@@ -21,6 +21,13 @@ def dSigXdX(x):
 
 
 class MassParameters(om.ExplicitComponent):
+    """
+    Computation of various parameters (such as correction factor for the use of
+    non optimum material, reduction in bending moment factor for strut braced wing,
+    landing gear location factor, engine position factor, and wing chord half sweep
+    angle)
+    """
+
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
         add_aviary_option(self, Aircraft.Engine.NUM_FUSELAGE_ENGINES)
@@ -236,6 +243,10 @@ class MassParameters(om.ExplicitComponent):
 
 
 class PayloadMass(om.ExplicitComponent):
+    """
+    Computation of maximum payload that the aircraft is being asked to carry
+    """
+
     def initialize(self):
         add_aviary_option(self, Aircraft.CrewPayload.NUM_PASSENGERS)
         add_aviary_option(self, Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS,
@@ -274,6 +285,10 @@ class PayloadMass(om.ExplicitComponent):
 
 
 class ElectricAugmentationMass(om.ExplicitComponent):
+    """
+    Computation of electrical augmentation system mass
+    """
+
     def initialize(self):
         add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_ENGINES)
 
@@ -553,6 +568,11 @@ class ElectricAugmentationMass(om.ExplicitComponent):
 
 
 class EngineMass(om.ExplicitComponent):
+    """
+    Computation of total engine mass, nacelle mass, pylon mass, total engine POD mass,
+    additional engine mass
+    """
+
     def initialize(self):
         add_aviary_option(self, Aircraft.Electrical.HAS_HYBRID_SYSTEM)
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
@@ -921,6 +941,9 @@ class EngineMass(om.ExplicitComponent):
 
 
 class TailMass(om.ExplicitComponent):
+    """
+    Computation of horizontal tail mass and vertical tail mass.
+    """
 
     def setup(self):
         add_aviary_input(self, Aircraft.VerticalTail.TAPER_RATIO, val=0.801)
@@ -1538,6 +1561,11 @@ class TailMass(om.ExplicitComponent):
 
 
 class HighLiftMass(om.ExplicitComponent):
+    """
+    Computation of masses of the high lift devices, trailing edge devices,
+    leading edge devices.
+    """
+
     def initialize(self):
         add_aviary_option(self, Aircraft.Wing.FLAP_TYPE)
         add_aviary_option(self, Aircraft.Wing.NUM_FLAP_SEGMENTS)
@@ -2005,6 +2033,10 @@ class HighLiftMass(om.ExplicitComponent):
 
 
 class ControlMass(om.ExplicitComponent):
+    """
+    Computation of total mass of cockpit controls, fixed wing controls, and SAS,
+    and mass of surface controls.
+    """
 
     def setup(self):
         add_aviary_input(
@@ -2226,6 +2258,10 @@ class ControlMass(om.ExplicitComponent):
 
 
 class GearMass(om.ExplicitComponent):
+    """
+    Computation of total mass of landing gear and mass of main landing gear.
+    """
+
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
 
@@ -2367,6 +2403,10 @@ class GearMass(om.ExplicitComponent):
 
 
 class FixedMassGroup(om.Group):
+    """
+    Group of all fixed mass components for GASP-based mass.
+    """
+
     def initialize(self):
         add_aviary_option(self, Aircraft.Electrical.HAS_HYBRID_SYSTEM)
 

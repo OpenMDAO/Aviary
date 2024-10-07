@@ -9,6 +9,10 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 
 class LandingMassGroup(om.Group):
+    """
+    Group of landing-related components for FLOPS-based mass:
+    LandingTakeoffMassRatio, MainGearLength, NoseGearLength, LandingMass, etc.
+    """
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Design.USE_ALT_MASS)

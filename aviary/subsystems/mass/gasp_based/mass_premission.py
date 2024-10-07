@@ -10,6 +10,9 @@ from aviary.variable_info.variables import Aircraft
 
 
 class MassPremission(om.Group):
+    """
+    Pre-mission mass group for GASP-based mass.
+    """
 
     def setup(self):
 

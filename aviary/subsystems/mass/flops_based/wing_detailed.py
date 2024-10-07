@@ -8,6 +8,10 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 
 class DetailedWingBendingFact(om.ExplicitComponent):
+    """
+    Computation of wing bending factor and engine inertia relief factor
+    used for FLOPS-based detailed wing mass estimation.
+    """
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)

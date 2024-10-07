@@ -2,6 +2,7 @@ import numpy as np
 
 
 def almost_equal(a, b, rel_tol=1e-8, abs_tol=0.0):
+    """check if two floats, or two ndarray, or two dictionary are equal. Return True if they are equal."""
     if isinstance(a, (float, np.float32, np.float64)) and isinstance(b, (float, np.float32, np.float64)):
         return np.isclose(a, b, rtol=rel_tol, atol=abs_tol)
 

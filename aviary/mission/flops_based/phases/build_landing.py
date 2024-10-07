@@ -7,6 +7,7 @@ from aviary.variable_info.variables import Aircraft, Mission
 class Landing:
     """
     Define user constraints for a climb phase.
+
     Parameters
     ----------
     ref_wing_area : float (0.0)

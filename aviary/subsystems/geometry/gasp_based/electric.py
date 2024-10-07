@@ -6,6 +6,9 @@ from aviary.variable_info.variables import Aircraft
 
 
 class CableSize(om.ExplicitComponent):
+    """
+    Computation of cable length for hybrid electric augmented system
+    """
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES)

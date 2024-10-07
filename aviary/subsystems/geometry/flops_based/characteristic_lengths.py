@@ -7,6 +7,10 @@ from aviary.variable_info.variables import Aircraft
 
 
 class CharacteristicLengths(om.ExplicitComponent):
+    """
+    Calculate the characteristic length and fineness ratio of the
+    canard, fuselage, horizontal tail, nacelle, and vertical tail.
+    """
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)

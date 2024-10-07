@@ -11,6 +11,10 @@ from aviary.variable_info.variables import Aircraft
 
 
 class WingMassGroup(om.Group):
+    """
+    Group of components used for FLOPS-based wing mass computation.
+    """
+
     def initialize(self):
         add_aviary_option(self, Aircraft.Wing.INPUT_STATION_DIST)
 
