@@ -1,15 +1,18 @@
-import matplotlib.pyplot as plt
 import numpy as np
-import aviary.api as av
 import matplotlib.cm as cm
-from tkinter import Label, Button, StringVar, filedialog, messagebox
-from tkinter.ttk import Combobox
+import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 import tkinter as tk
+from tkinter import Label, Button, StringVar, filedialog, messagebox
+from tkinter.ttk import Combobox
+import aviary.api as av
 from aviary.utils.functions import get_path
 
 
 def plot_drag_polar(input_file=None):
+    """
+    Plot drag polar
+    """
     if input_file is None:
         input_file = filedialog.askopenfilename(filetypes=[("CSV files", "*.csv")])
         if not input_file:

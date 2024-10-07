@@ -3,7 +3,9 @@ This test validates passing a drag polar into the solved aero in the mission.
 Computed lift and drag should be the same as reading the same polar in from
 a file.
 """
+from copy import deepcopy
 import unittest
+
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
@@ -15,8 +17,6 @@ from aviary.utils.csv_data_file import read_data_file
 from aviary.utils.named_values import NamedValues
 from aviary.interface.default_phase_info.height_energy import phase_info
 from aviary.variable_info.variables import Aircraft
-
-from copy import deepcopy
 
 
 # The drag-polar-generating component reads this in, instead of computing the polars.

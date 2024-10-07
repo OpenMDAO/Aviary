@@ -8,6 +8,11 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 
 class WingMassSolve(om.ImplicitComponent):
+    """
+    Computation of isolated wing mass, namely wing mass including high lift devices 
+    (but excluding struts and fold effects) using a nonlinear solver.
+    """
+
     def initialize(self):
         self.options.declare(
             'aviary_options', types=AviaryValues,
@@ -288,6 +293,10 @@ class WingMassSolve(om.ImplicitComponent):
 
 
 class WingMassTotal(om.ExplicitComponent):
+    """
+    Computation of wing mass, strut mass, and wing fold mass.
+    """
+
     def initialize(self):
 
         self.options.declare(
@@ -407,6 +416,10 @@ class WingMassTotal(om.ExplicitComponent):
 
 
 class WingMassGroup(om.Group):
+    """
+    Group to compute wing mass for GASP-based mass.
+    """
+
     def initialize(self):
 
         self.options.declare(

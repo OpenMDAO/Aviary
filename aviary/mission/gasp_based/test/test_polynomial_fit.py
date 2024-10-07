@@ -12,6 +12,10 @@ Y_cp = [0.0, 44.38137822, 105.61862178, 125.0, 125.0, 169.38137822, 230.61862178
 
 
 class PolynomialFitTest(unittest.TestCase):
+    """
+    Test computation of initial gear time and initial flap time.
+    """
+
     def setUp(self):
 
         self.prob = om.Problem()
@@ -41,9 +45,8 @@ class PolynomialFitTest(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
-        """
-        It checks output values. It will not check partials because cs is used to compute partials already.
-        """
+        # Checks output values only. It will not check partials
+        # because cs is used to compute partials already.
 
         self.prob.run_model()
 

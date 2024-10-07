@@ -1,12 +1,28 @@
+from aviary.mission.gasp_based.ode.descent_ode import DescentODE
 from aviary.mission.phase_builder_base import PhaseBuilderBase
 from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessIntegrationVariable, InitialGuessControl
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables import Dynamic
 from aviary.variable_info.enums import SpeedType
-from aviary.mission.gasp_based.ode.descent_ode import DescentODE
+from aviary.variable_info.variables import Dynamic
 
 
 class DescentPhase(PhaseBuilderBase):
+    """
+    A phase builder for an descent phase in a mission simulation.
+
+    This class extends the PhaseBuilderBase class, providing specific implementations for
+    the descent phase of a 2-degree of freedom flight mission.
+
+    Attributes
+    ----------
+    Inherits all attributes from PhaseBuilderBase.
+
+    Methods
+    -------
+    Inherits all methods from PhaseBuilderBase.
+    Additional method overrides and new methods specific to the descent phase are included.
+    """
+
     default_name = 'descent_phase'
     default_ode_class = DescentODE
 

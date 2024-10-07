@@ -5,6 +5,9 @@ import unittest
 
 
 class Test_cell_comp(unittest.TestCase):
+    """
+    test partials in CellComp component
+    """
 
     @use_tempdirs
     def test_cell_comp(self):

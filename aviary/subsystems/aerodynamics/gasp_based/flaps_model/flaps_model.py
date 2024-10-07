@@ -15,7 +15,9 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 class FlapsGroup(om.Group):
     """
-    Group connecting four components of the flaps model.
+    Group connecting four components of the flaps model. They are: BasicFlapsCalculations,
+    CLmaxCalculation, MetaModelGroup, and LiftAndDragIncrements. Then, a non-linear solver
+    is provided.
     """
 
     def initialize(self):

@@ -1,18 +1,42 @@
-import openmdao.api as om
-
-from aviary.subsystems.propulsion.engine_model import EngineModel
-from aviary.utils.aviary_values import AviaryValues
-
-from aviary.examples.external_subsystems.engine_NPSS.NPSS_Model.DesignEngineGroup import DesignEngineGroup
-from aviary.examples.external_subsystems.engine_NPSS.engine_variable_meta_data import ExtendedMetaData
-from aviary.examples.external_subsystems.engine_NPSS.engine_variables import Aircraft, Dynamic
-from aviary.examples.external_subsystems.engine_NPSS.table_engine_connected_variables import vars_to_connect
-from aviary.utils.functions import get_aviary_resource_path
 import os
 import numpy as np
+import openmdao.api as om
+
+from aviary.examples.external_subsystems.engine_NPSS.engine_variable_meta_data import ExtendedMetaData
+from aviary.examples.external_subsystems.engine_NPSS.engine_variables import Aircraft, Dynamic
+from aviary.examples.external_subsystems.engine_NPSS.NPSS_Model.DesignEngineGroup import DesignEngineGroup
+from aviary.examples.external_subsystems.engine_NPSS.table_engine_connected_variables import vars_to_connect
+from aviary.subsystems.propulsion.engine_model import EngineModel
+from aviary.utils.aviary_values import AviaryValues
+from aviary.utils.functions import get_aviary_resource_path
 
 
 class TableEngineBuilder(EngineModel):
+    """
+    NPSS engine builder from table
+
+    Attributes
+    ----------
+    name : str ('NPSS_prop_system')
+        object label
+    aviary_inputs: AviaryValues
+        default Aviary options
+
+    Methods
+    -------
+    __init__(self, name='NPSS_prop_system', aviary_inputs=AviaryValues()):
+        Initializes the TableEngineBuilder object with a given name.
+    build_pre_mission(self, aviary_inputs=AviaryValues()) -> openmdao.core.System:
+        Builds an OpenMDAO system for the pre-mission computations of the subsystem.
+    build_mission(self, num_nodes, aviary_inputs) -> openmdao.core.System:
+        Builds an OpenMDAO system for the mission computations of the subsystem.
+    get_bus_variables(self) -> dict:
+        Transfer training data from pre-mission to mission.
+    get_controls(self, phase_name) -> dict:
+        Builds dictionary of controls for engine off-design.
+    get_design_vars(self) -> dict:
+        Builds dictionary of design variables for Engine off-design.
+    """
 
     def __init__(self, name='NPSS_prop_system', aviary_inputs=AviaryValues()):
 
@@ -27,11 +51,11 @@ class TableEngineBuilder(EngineModel):
         aviary_inputs : AviaryValues
             Inputs to Aviary model.
 
-                Returns
-                -------
-                prob : openmdao.core.Group
-                        engine model for design.
-                '''
+        Returns
+        -------
+        prob : openmdao.core.Group
+            engine model for design.
+        '''
 
         return DesignEngineGroup()
 
@@ -119,7 +143,7 @@ class TableEngineBuilder(EngineModel):
         return engine
 
     def get_bus_variables(self):
-      # Transfer training data from pre-mission to mission
+        """Transfer training data from pre-mission to mission"""
         return vars_to_connect
 
     def get_controls(self, phase_name):
@@ -153,10 +177,6 @@ class TableEngineBuilder(EngineModel):
         }
 
         return design_vars
-
-    def get_mass_names(self):
-        # pass for now, I think we're not doing any masses and letting the standard procedure calculate?
-        pass
 
 
 '''

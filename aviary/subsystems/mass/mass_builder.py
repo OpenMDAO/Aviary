@@ -8,9 +8,9 @@ MassBuilderBase : the interface for a mass subsystem builder.
 CoreMassBuilder : the interface for Aviary's core mass subsystem builder
 """
 from aviary.interface.utils.markdown_utils import write_markdown_variable_table
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.subsystems.mass.flops_based.mass_premission import MassPremission as MassPremissionFLOPS
 from aviary.subsystems.mass.gasp_based.mass_premission import MassPremission as MassPremissionGASP
+from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.variable_info.variables import Aircraft, Mission
 from aviary.variable_info.enums import LegacyCode
 
@@ -22,6 +22,10 @@ _default_name = 'mass'
 
 
 class MassBuilderBase(SubsystemBuilderBase):
+    """
+    Base mass builder
+    """
+
     def __init__(self, name=None, meta_data=None):
         if name is None:
             name = _default_name
@@ -36,6 +40,10 @@ class MassBuilderBase(SubsystemBuilderBase):
 
 
 class CoreMassBuilder(MassBuilderBase):
+    """
+    Core mass subsystem builder
+    """
+
     def __init__(self, name=None, meta_data=None, code_origin=None):
         if name is None:
             name = 'core_mass'
