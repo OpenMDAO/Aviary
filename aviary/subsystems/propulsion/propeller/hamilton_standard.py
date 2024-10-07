@@ -249,6 +249,9 @@ def _biquad(T, i, xi, yi):
     return z, lmt
 
 
+# DO NOT AUTO-FORMAT TABLES
+# autopep8: off
+# fmt: off
 CP_Angle_table = np.array([
     [  # 2 blades
         [0.0158, 0.0165, .0188, .0230, .0369,
@@ -467,6 +470,8 @@ comp_mach_CT_arr = np.array([
     .525, .540, .565, .615, .670, .710, .745, .790, .825, .860, .880, .895,  # X = 0.20
     .225, .260, .320, .375, .430, .495, .550, .610, .660, .710, .740, .775,  # X = 0.30
 ])
+# autopep8: off
+# fmt: off
 
 
 class PreHamiltonStandard(om.ExplicitComponent):

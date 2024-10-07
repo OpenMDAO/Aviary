@@ -5,12 +5,16 @@ import numpy as np
 
 from openmdao.components.ks_comp import KSfunction
 
+from aviary.subsystems.propulsion.propeller.hamilton_standard import (
+    HamiltonStandard,
+    PostHamiltonStandard,
+    PreHamiltonStandard,
+)
+from aviary.subsystems.propulsion.propeller.propeller_map import PropellerMap
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.enums import OutMachType
 from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.subsystems.propulsion.propeller.hamilton_standard import HamiltonStandard, PostHamiltonStandard, PreHamiltonStandard
-from aviary.subsystems.propulsion.propeller.propeller_map import PropellerMap
 
 
 class TipSpeed(om.ExplicitComponent):
@@ -22,23 +26,20 @@ class TipSpeed(om.ExplicitComponent):
 
     def initialize(self):
         self.options.declare(
-            'num_nodes', types=int, default=1,
-            desc='Number of nodes to be evaluated in the RHS')
+            'num_nodes',
+            types=int,
+            default=1,
+            desc='Number of nodes to be evaluated in the RHS',
+        )
 
     def setup(self):
         num_nodes = self.options['num_nodes']
 
         add_aviary_input(
-            self,
-            Dynamic.Mission.VELOCITY,
-            val=np.zeros(num_nodes),
-            units='ft/s'
+            self, Dynamic.Mission.VELOCITY, val=np.zeros(num_nodes), units='ft/s'
         )
         add_aviary_input(
-            self,
-            Dynamic.Mission.SPEED_OF_SOUND,
-            val=np.zeros(num_nodes),
-            units='ft/s'
+            self, Dynamic.Mission.SPEED_OF_SOUND, val=np.zeros(num_nodes), units='ft/s'
         )
         add_aviary_input(
             self, Dynamic.Mission.RPM, val=np.zeros(num_nodes), units='rpm'
@@ -50,18 +51,13 @@ class TipSpeed(om.ExplicitComponent):
         add_aviary_input(
             self, Aircraft.Engine.PROPELLER_TIP_SPEED_MAX, val=0.0, units='ft/s'
         )
-        add_aviary_input(
-            self,
-            Aircraft.Engine.PROPELLER_DIAMETER,
-            val=0.0,
-            units='ft'
-        )
+        add_aviary_input(self, Aircraft.Engine.PROPELLER_DIAMETER, val=0.0, units='ft')
 
         add_aviary_output(
             self,
             Dynamic.Mission.PROPELLER_TIP_SPEED,
             val=np.zeros(num_nodes),
-            units='ft/s'
+            units='ft/s',
         )
         self.add_output(
             'propeller_tip_speed_limit', val=np.zeros(num_nodes), units='ft/s'
@@ -116,7 +112,7 @@ class TipSpeed(om.ExplicitComponent):
         rpm = inputs[Dynamic.Mission.RPM]
         diam = inputs[Aircraft.Engine.PROPELLER_DIAMETER]
 
-        tip_speed_mach_limit = ((sos * tip_mach_max)**2 - velocity**2)**0.5
+        tip_speed_mach_limit = ((sos * tip_mach_max) ** 2 - velocity**2) ** 0.5
         # use KSfunction for smooth derivitive across minimum
         tip_speed_max_nn = np.tile(tip_speed_max, num_nodes)
         propeller_tip_speed_limit = -KSfunction.compute(
@@ -139,7 +135,7 @@ class TipSpeed(om.ExplicitComponent):
 
         tip_speed_max_nn = np.tile(tip_speed_max, num_nodes)
 
-        tip_speed_mach_limit = ((sos * tip_mach_max)**2 - velocity**2)**0.5
+        tip_speed_mach_limit = ((sos * tip_mach_max) ** 2 - velocity**2) ** 0.5
         val = -np.stack((tip_speed_max_nn, tip_speed_mach_limit), axis=1)
         # prop_tip_speed = -KSfunction.compute(val).flatten()
 
@@ -212,8 +208,9 @@ class OutMachs(om.ExplicitComponent):
                 units="unitless",
                 desc="helical Mach number",
             )
-            self.declare_partials("helical_mach", [
-                                  "tip_mach", "mach"], rows=arange, cols=arange)
+            self.declare_partials(
+                "helical_mach", ["tip_mach", "mach"], rows=arange, cols=arange
+            )
         elif out_type is OutMachType.MACH:
             self.add_input(
                 "tip_mach",
@@ -233,8 +230,9 @@ class OutMachs(om.ExplicitComponent):
                 units="unitless",
                 desc="Mach number",
             )
-            self.declare_partials("mach", [
-                                  "tip_mach", "helical_mach"], rows=arange, cols=arange)
+            self.declare_partials(
+                "mach", ["tip_mach", "helical_mach"], rows=arange, cols=arange
+            )
         elif out_type is OutMachType.TIP_MACH:
             self.add_input(
                 "mach",
@@ -254,8 +252,9 @@ class OutMachs(om.ExplicitComponent):
                 units="unitless",
                 desc="tip Mach number of a blade",
             )
-            self.declare_partials("tip_mach", [
-                                  "mach", "helical_mach"], rows=arange, cols=arange)
+            self.declare_partials(
+                "tip_mach", ["mach", "helical_mach"], rows=arange, cols=arange
+            )
 
     def compute(self, inputs, outputs):
         out_type = self.options["output_mach_type"]
@@ -279,23 +278,30 @@ class OutMachs(om.ExplicitComponent):
         if out_type is OutMachType.HELICAL_MACH:
             mach = inputs["mach"]
             tip_mach = inputs["tip_mach"]
-            J["helical_mach", "mach"] = mach/np.sqrt(mach * mach + tip_mach * tip_mach)
-            J["helical_mach", "tip_mach"] = tip_mach / \
-                np.sqrt(mach * mach + tip_mach * tip_mach)
+            J["helical_mach", "mach"] = mach / np.sqrt(
+                mach * mach + tip_mach * tip_mach
+            )
+            J["helical_mach", "tip_mach"] = tip_mach / np.sqrt(
+                mach * mach + tip_mach * tip_mach
+            )
         elif out_type is OutMachType.MACH:
             tip_mach = inputs["tip_mach"]
             helical_mach = inputs["helical_mach"]
-            J["mach", "helical_mach"] = helical_mach / \
-                np.sqrt(helical_mach * helical_mach - tip_mach * tip_mach)
-            J["mach", "tip_mach"] = -tip_mach / \
-                np.sqrt(helical_mach * helical_mach - tip_mach * tip_mach)
+            J["mach", "helical_mach"] = helical_mach / np.sqrt(
+                helical_mach * helical_mach - tip_mach * tip_mach
+            )
+            J["mach", "tip_mach"] = -tip_mach / np.sqrt(
+                helical_mach * helical_mach - tip_mach * tip_mach
+            )
         elif out_type is OutMachType.TIP_MACH:
             mach = inputs["mach"]
             helical_mach = inputs["helical_mach"]
-            J["tip_mach", "helical_mach"] = helical_mach / \
-                np.sqrt(helical_mach * helical_mach - mach * mach)
-            J["tip_mach", "mach"] = -mach / \
-                np.sqrt(helical_mach * helical_mach - mach * mach)
+            J["tip_mach", "helical_mach"] = helical_mach / np.sqrt(
+                helical_mach * helical_mach - mach * mach
+            )
+            J["tip_mach", "mach"] = -mach / np.sqrt(
+                helical_mach * helical_mach - mach * mach
+            )
 
 
 class InstallLoss(om.Group):
@@ -305,11 +311,16 @@ class InstallLoss(om.Group):
 
     def initialize(self):
         self.options.declare(
-            'num_nodes', types=int, default=1,
-            desc='Number of nodes to be evaluated in the RHS')
+            'num_nodes',
+            types=int,
+            default=1,
+            desc='Number of nodes to be evaluated in the RHS',
+        )
         self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+            'aviary_options',
+            types=AviaryValues,
+            desc='collection of Aircraft/Mission specific options',
+        )
 
     def setup(self):
         nn = self.options['num_nodes']
@@ -322,8 +333,10 @@ class InstallLoss(om.Group):
                 sqa={'units': 'unitless'},
                 has_diag_partials=True,
             ),
-            promotes_inputs=[("DiamNac", Aircraft.Nacelle.AVG_DIAMETER),
-                             ("DiamProp", Aircraft.Engine.PROPELLER_DIAMETER)],
+            promotes_inputs=[
+                ("DiamNac", Aircraft.Nacelle.AVG_DIAMETER),
+                ("DiamProp", Aircraft.Engine.PROPELLER_DIAMETER),
+            ],
             promotes_outputs=["sqa"],
         )
 
@@ -361,8 +374,9 @@ class InstallLoss(om.Group):
 
         self.blockage_factor_interp = self.add_subsystem(
             "blockage_factor_interp",
-            om.MetaModelStructuredComp(method="2D-slinear",
-                                       extrapolate=True, vec_size=nn),
+            om.MetaModelStructuredComp(
+                method="2D-slinear", extrapolate=True, vec_size=nn
+            ),
             promotes_inputs=["sqa_array", "equiv_adv_ratio"],
             promotes_outputs=[
                 "blockage_factor",
@@ -380,7 +394,7 @@ class InstallLoss(om.Group):
         self.blockage_factor_interp.add_input(
             "equiv_adv_ratio",
             0.0,
-            training_data=[0., 0.5, 1.0, 2.0, 3.0, 4.0, 5.0],
+            training_data=[0.0, 0.5, 1.0, 2.0, 3.0, 4.0, 5.0],
             units="unitless",
             desc="square of DiamNac vs DiamProp",
         )
@@ -391,16 +405,18 @@ class InstallLoss(om.Group):
             units="unitless",
             desc="blockage factor",
             training_data=np.array(
-                [[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-                 [0.992, 0.991, 0.988, 0.983, 0.976, 0.970, 0.963],
-                 [0.986, 0.982, 0.977, 0.965, 0.953, 0.940, 0.927],
-                 [0.979, 0.974, 0.967, 0.948, 0.929, 0.908, 0.887],
-                 [0.972, 0.965, 0.955, 0.932, 0.905, 0.872, 0.835],
-                 [0.964, 0.954, 0.943, 0.912, 0.876, 0.834, 0.786],
-                 [0.955, 0.943, 0.928, 0.892, 0.848, 0.801, 0.751],
-                 [0.948, 0.935, 0.917, 0.872, 0.820, 0.763, 0.706],
-                 [0.940, 0.924, 0.902, 0.848, 0.790, 0.726, 0.662],
-                 [0.904, 0.875, 0.835, 0.740, 0.655, 0.560, 0.464]]
+                [
+                    [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+                    [0.992, 0.991, 0.988, 0.983, 0.976, 0.970, 0.963],
+                    [0.986, 0.982, 0.977, 0.965, 0.953, 0.940, 0.927],
+                    [0.979, 0.974, 0.967, 0.948, 0.929, 0.908, 0.887],
+                    [0.972, 0.965, 0.955, 0.932, 0.905, 0.872, 0.835],
+                    [0.964, 0.954, 0.943, 0.912, 0.876, 0.834, 0.786],
+                    [0.955, 0.943, 0.928, 0.892, 0.848, 0.801, 0.751],
+                    [0.948, 0.935, 0.917, 0.872, 0.820, 0.763, 0.706],
+                    [0.940, 0.924, 0.902, 0.848, 0.790, 0.726, 0.662],
+                    [0.904, 0.875, 0.835, 0.740, 0.655, 0.560, 0.464],
+                ]
             ),
         )
 
@@ -421,7 +437,7 @@ class PropellerPerformance(om.Group):
     """
     Computation of propeller thrust coefficient based on the Hamilton Standard model or a user
     provided propeller map. Note that a propeller map allows either the helical Mach number or
-    free stream Mach number as input. This infomation will be detected automatically when the 
+    free stream Mach number as input. This infomation will be detected automatically when the
     propeller map is loaded into memory.
     The installation loss factor is either a user input or computed internally.
     """
@@ -434,8 +450,11 @@ class PropellerPerformance(om.Group):
             desc='Number of nodes to be evaluated in the RHS',
         )
 
-        self.options.declare('aviary_options', types=AviaryValues,
-                             desc='collection of Aircraft/Mission specific options')
+        self.options.declare(
+            'aviary_options',
+            types=AviaryValues,
+            desc='collection of Aircraft/Mission specific options',
+        )
 
     def setup(self):
         options = self.options
@@ -474,7 +493,8 @@ class PropellerPerformance(om.Group):
             )
         else:
             self.set_input_defaults(
-                'install_loss_factor', val=np.ones(nn), units="unitless")
+                'install_loss_factor', val=np.ones(nn), units="unitless"
+            )
 
         self.add_subsystem(
             name='pre_hamilton_standard',
@@ -497,14 +517,14 @@ class PropellerPerformance(om.Group):
 
         if use_propeller_map:
             prop_model = PropellerMap('prop', aviary_options)
-            prop_file_path = aviary_options.get_val(
-                Aircraft.Engine.PROPELLER_DATA_FILE)
+            prop_file_path = aviary_options.get_val(Aircraft.Engine.PROPELLER_DATA_FILE)
             mach_type = prop_model.read_and_set_mach_type(prop_file_path)
             if mach_type == OutMachType.HELICAL_MACH:
                 self.add_subsystem(
                     name='selectedMach',
                     subsys=OutMachs(
-                        num_nodes=nn, output_mach_type=OutMachType.HELICAL_MACH),
+                        num_nodes=nn, output_mach_type=OutMachType.HELICAL_MACH
+                    ),
                     promotes_inputs=[("mach", Dynamic.Mission.MACH), "tip_mach"],
                     promotes_outputs=[("helical_mach", "selected_mach")],
                 )
@@ -517,7 +537,9 @@ class PropellerPerformance(om.Group):
                         selected_mach={'units': 'unitless', 'shape': nn},
                         has_diag_partials=True,
                     ),
-                    promotes_inputs=[("mach", Dynamic.Mission.MACH),],
+                    promotes_inputs=[
+                        ("mach", Dynamic.Mission.MACH),
+                    ],
                     promotes_outputs=["selected_mach"],
                 )
             propeller = prop_model.build_propeller_interpolator(nn, aviary_options)
@@ -531,11 +553,13 @@ class PropellerPerformance(om.Group):
                 ],
                 promotes_outputs=[
                     "thrust_coefficient",
-                ])
+                ],
+            )
 
             # propeller map has taken compresibility into account.
-            self.set_input_defaults('comp_tip_loss_factor',
-                                    np.linspace(1.0, 1.0, nn), units='unitless')
+            self.set_input_defaults(
+                'comp_tip_loss_factor', np.linspace(1.0, 1.0, nn), units='unitless'
+            )
         else:
             self.add_subsystem(
                 name='hamilton_standard',
@@ -551,7 +575,8 @@ class PropellerPerformance(om.Group):
                 promotes_outputs=[
                     "thrust_coefficient",
                     "comp_tip_loss_factor",
-                ])
+                ],
+            )
 
         self.add_subsystem(
             name='post_hamilton_standard',

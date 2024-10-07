@@ -19,6 +19,12 @@ from aviary.validation_cases.benchmark_utils import \
 
 @use_tempdirs
 class ProblemPhaseTestCase(unittest.TestCase):
+    """
+    Test the setup and run of a large single aisle commercial transport aircraft using 
+    GASP mass method and HEIGHT_ENERGY mission method. Expected outputs
+    based on 'models/test_aircraft/aircraft_for_bench_FwFm.csv' model.
+    """
+
     def setUp(self):
         expected_dict = {}
         expected_dict['times'] = np.array([[120.],

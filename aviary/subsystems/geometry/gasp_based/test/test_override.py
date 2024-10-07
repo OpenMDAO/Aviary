@@ -45,7 +45,7 @@ class GASPOverrideTestCase(unittest.TestCase):
         self.prob = prob
 
     def test_case1(self):
-        """Test override: expect the given value"""
+        # Test override: expect the given value
         prob = self.prob
 
         self.aviary_inputs.set_val(
@@ -60,7 +60,7 @@ class GASPOverrideTestCase(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Fuselage.WETTED_AREA], 4000, 1e-6)
 
     def test_case2(self):
-        """Test override: expect the computed value"""
+        # Test override: expect the computed value
         prob = self.prob
 
         # self.aviary_inputs.set_val(Aircraft.Fuselage.WETTED_AREA, val=4000, units="ft**2")
@@ -74,7 +74,7 @@ class GASPOverrideTestCase(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Fuselage.WETTED_AREA], 4794.748, 1e-6)
 
     def test_case3(self):
-        """Test WETTED_AREA_SCALER: expected half of the computed value """
+        # Test WETTED_AREA_SCALER: expected half of the computed value
         prob = self.prob
 
         # self.aviary_inputs.set_val(Aircraft.Fuselage.WETTED_AREA, val=4000, units="ft**2")
@@ -90,7 +90,7 @@ class GASPOverrideTestCase(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Fuselage.WETTED_AREA], 2397.374, 1e-6)
 
     def test_case4(self):
-        """Test WETTED_AREA_SCALER: expect no effect"""
+        # Test WETTED_AREA_SCALER: expect no effect
         prob = self.prob
 
         self.aviary_inputs.set_val(

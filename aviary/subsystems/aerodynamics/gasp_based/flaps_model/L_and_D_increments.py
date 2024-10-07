@@ -1,10 +1,14 @@
 import openmdao.api as om
 
 from aviary.variable_info.functions import add_aviary_input
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.variables import Aircraft
 
 
 class LiftAndDragIncrements(om.ExplicitComponent):
+    """
+    Compute lift and drag increments from flaps for GASP-based aerodynamics
+    """
+
     def setup(self):
 
         # Inputs
