@@ -8,6 +8,9 @@ BatteryBuilder = av.TestSubsystemBuilderBase.import_builder(
 
 @av.skipIfMissingDependencies(BatteryBuilder)
 class TestBattery(av.TestSubsystemBuilderBase):
+    """
+    Test battery builder
+    """
 
     def setUp(self):
         self.subsystem_builder = BatteryBuilder()

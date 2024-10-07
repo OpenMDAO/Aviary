@@ -9,6 +9,14 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 
 class MassSummation(om.Group):
+    """
+    Group to compute various design masses for FLOPS-based mass:
+    Aircraft.Design.STRUCTURE_MASS, Aircraft.Propulsion.MASS, 
+    Aircraft.Design.SYSTEMS_EQUIP_MASS, Aircraft.Design.SYSTEMS_EQUIP_MASS_BASE,
+    Aircraft.Design.SYSTEMS_EQUIP_MASS, Aircraft.Design.EMPTY_MASS,
+    Aircraft.Design.OPERATING_MASS, Aircraft.Design.ZERO_FUEL_MASS,
+    Mission.Design.FUEL_MASS.
+    """
 
     def initialize(self):
         self.options.declare(

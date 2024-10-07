@@ -20,10 +20,13 @@ from openmdao.utils.mpi import MPI
 from openmdao.utils.reports_system import _default_reports
 
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
+from aviary.interface.default_phase_info.two_dof_fiti import add_default_sgm_args
+from aviary.interface.utils.check_phase_info import check_phase_info
+from aviary.mission.energy_phase import EnergyPhase
 from aviary.mission.flops_based.phases.build_landing import Landing
 from aviary.mission.flops_based.phases.build_takeoff import Takeoff
-from aviary.mission.energy_phase import EnergyPhase
 from aviary.mission.twodof_phase import TwoDOFPhase
+from aviary.mission.gasp_based.idle_descent_estimation import add_descent_estimation_as_submodel
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 from aviary.mission.gasp_based.phases.groundroll_phase import GroundrollPhase
@@ -38,30 +41,26 @@ from aviary.mission.gasp_based.phases.landing_group import LandingSegment
 from aviary.mission.gasp_based.phases.taxi_group import TaxiSegment
 from aviary.mission.gasp_based.phases.v_rotate_comp import VRotateComp
 from aviary.mission.gasp_based.polynomial_fit import PolynomialFit
-from aviary.subsystems.premission import CorePreMission
-from aviary.utils.functions import create_opts2vals, add_opts2vals, promote_aircraft_and_mission_vars, wrapped_convert_units
-from aviary.utils.process_input_decks import create_vehicle, update_GASP_options, initialization_guessing
-from aviary.utils.preprocessors import preprocess_crewpayload
-from aviary.interface.utils.check_phase_info import check_phase_info
-from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.functions import convert_strings_to_data, set_value
+from aviary.mission.phase_builder_base import PhaseBuilderBase
 
-from aviary.variable_info.functions import setup_trajectory_params, override_aviary_vars
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
-from aviary.variable_info.enums import AnalysisScheme, ProblemType, EquationsOfMotion, LegacyCode, Verbosity
-from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
-
-from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
+from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
 from aviary.subsystems.mass.mass_builder import CoreMassBuilder
-from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
-from aviary.utils.preprocessors import preprocess_propulsion
-from aviary.utils.merge_variable_metadata import merge_meta_data
+from aviary.subsystems.premission import CorePreMission
+from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
 
-from aviary.interface.default_phase_info.two_dof_fiti import add_default_sgm_args
-from aviary.mission.gasp_based.idle_descent_estimation import add_descent_estimation_as_submodel
-from aviary.mission.phase_builder_base import PhaseBuilderBase
+from aviary.utils.aviary_values import AviaryValues
+from aviary.utils.functions import create_opts2vals, add_opts2vals, promote_aircraft_and_mission_vars, wrapped_convert_units
+from aviary.utils.functions import convert_strings_to_data, set_value
+from aviary.utils.merge_variable_metadata import merge_meta_data
+from aviary.utils.preprocessors import preprocess_crewpayload, preprocess_propulsion
+from aviary.utils.process_input_decks import create_vehicle, update_GASP_options, initialization_guessing
+
+from aviary.variable_info.enums import AnalysisScheme, ProblemType, EquationsOfMotion, LegacyCode, Verbosity
+from aviary.variable_info.functions import setup_trajectory_params, override_aviary_vars
+from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
+from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 
 
 FLOPS = LegacyCode.FLOPS
@@ -78,7 +77,14 @@ else:
 
 
 class PreMissionGroup(om.Group):
+    """OpenMDAO group that holds all pre-mission systems"""
+
     def configure(self):
+        """
+        Configure this group for pre-mission.
+        Promote aircraft and mission variables.
+        Override output aviary variables.
+        """
         external_outputs = promote_aircraft_and_mission_vars(self)
 
         pre_mission = self.core_subsystems
@@ -91,7 +97,13 @@ class PreMissionGroup(om.Group):
 
 
 class PostMissionGroup(om.Group):
+    """OpenMDAO group that holds all post-mission systems"""
+
     def configure(self):
+        """
+        Congigure this group for post-mission.
+        Promote aircraft and mission variables.
+        """
         promote_aircraft_and_mission_vars(self)
 
 
@@ -103,6 +115,7 @@ class AviaryGroup(om.Group):
     """
 
     def initialize(self):
+        """declare options"""
         self.options.declare(
             'aviary_options', types=AviaryValues,
             desc='collection of Aircraft/Mission specific options')
@@ -114,6 +127,9 @@ class AviaryGroup(om.Group):
             desc='phase-specific settings.')
 
     def configure(self):
+        """
+        Configure the Aviary group
+        """
         aviary_options = self.options['aviary_options']
         aviary_metadata = self.options['aviary_metadata']
 
@@ -1115,7 +1131,15 @@ class AviaryProblem(om.Problem):
                         external_parameters[phase_name][parameter] = parameter_dict[parameter]
 
             traj = setup_trajectory_params(
-                self.model, traj, self.aviary_inputs, phases, meta_data=self.meta_data, external_parameters=external_parameters)
+                self.model, traj, self.aviary_inputs, phases, meta_data=self.meta_data,
+                external_parameters=external_parameters)
+
+            if self.mission_method is HEIGHT_ENERGY:
+                if not self.pre_mission_info['include_takeoff']:
+                    first_flight_phase_name = list(phase_info.keys())[0]
+                    first_flight_phase = traj._phases[first_flight_phase_name]
+                    first_flight_phase.set_state_options(Dynamic.Mission.MASS,
+                                                         fix_initial=False)
 
         self.traj = traj
 
@@ -1322,6 +1346,23 @@ class AviaryProblem(om.Problem):
         if self.mission_method in (HEIGHT_ENERGY, TWO_DEGREES_OF_FREEDOM):
             self.post_mission.add_constraint(
                 Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.e5)
+
+        if self.mission_method is HEIGHT_ENERGY:
+
+            if not self.pre_mission_info['include_takeoff']:
+                first_flight_phase_name = list(self.phase_info.keys())[0]
+                eq = self.model.add_subsystem(f'link_{first_flight_phase_name}_mass',
+                                              om.EQConstraintComp(),
+                                              promotes_inputs=[('rhs:mass',
+                                                                Mission.Summary.GROSS_MASS)])
+                eq.add_eq_output('mass', eq_units='lbm', normalize=False,
+                                 ref=100000., add_constraint=True)
+                self.model.connect(
+                    f'traj.{first_flight_phase_name}.states:mass',
+                    f'link_{first_flight_phase_name}_mass.lhs:mass',
+                    src_indices=[0],
+                    flat_src_indices=True,
+                )
 
     def _link_phases_helper_with_options(self, phases, option_name, var, **kwargs):
         # Initialize a list to keep track of indices where option_name is True
