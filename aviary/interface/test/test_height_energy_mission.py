@@ -178,7 +178,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
             modified_phase_info[phase]["user_options"]["optimize_altitude"] = True
             modified_phase_info[phase]["user_options"]["optimize_mach"] = True
         modified_phase_info['climb']['user_options']['constraints'] = {
-            Dynamic.Mission.THROTTLE: {
+            Dynamic.Vehicle.Propulsion.THROTTLE: {
                 'lower': 0.2,
                 'upper': 0.9,
                 'type': 'path',

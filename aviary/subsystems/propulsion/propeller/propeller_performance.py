@@ -23,41 +23,27 @@ class TipSpeedLimit(om.ExplicitComponent):
         num_nodes = self.options['num_nodes']
 
         add_aviary_input(
+            self, Dynamic.Atmosphere.VELOCITY, val=np.zeros(num_nodes), units='ft/s'
+        )
+        add_aviary_input(
             self,
-            Dynamic.Mission.VELOCITY,
+            Dynamic.Atmosphere.SPEED_OF_SOUND,
             val=np.zeros(num_nodes),
-            units='ft/s'
+            units='ft/s',
         )
         add_aviary_input(
-            self,
-            Dynamic.Mission.SPEED_OF_SOUND,
-            val=np.zeros(num_nodes),
-            units='ft/s'
+            self, Aircraft.Engine.Propeller.TIP_MACH_MAX, val=1.0, units='unitless'
         )
         add_aviary_input(
-            self,
-            Aircraft.Engine.PROPELLER_TIP_MACH_MAX,
-            val=1.0,
-            units='unitless'
+            self, Aircraft.Engine.Propeller.TIP_SPEED_MAX, val=0.0, units='ft/s'
         )
-        add_aviary_input(
-            self,
-            Aircraft.Engine.PROPELLER_TIP_SPEED_MAX,
-            val=0.0,
-            units='ft/s'
-        )
-        add_aviary_input(
-            self,
-            Aircraft.Engine.PROPELLER_DIAMETER,
-            val=0.0,
-            units='ft'
-        )
+        add_aviary_input(self, Aircraft.Engine.Propeller.DIAMETER, val=0.0, units='ft')
 
         add_aviary_output(
             self,
-            Dynamic.Mission.PROPELLER_TIP_SPEED,
+            Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED,
             val=np.zeros(num_nodes),
-            units='ft/s'
+            units='ft/s',
         )
         self.add_output(
             'rpm',
@@ -72,48 +58,50 @@ class TipSpeedLimit(om.ExplicitComponent):
         r = np.arange(num_nodes)
 
         self.declare_partials(
-            Dynamic.Mission.PROPELLER_TIP_SPEED,
+            Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED,
             [
-                Dynamic.Mission.VELOCITY,
-                Dynamic.Mission.SPEED_OF_SOUND,
+                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Atmosphere.SPEED_OF_SOUND,
             ],
-            rows=r, cols=r,
+            rows=r,
+            cols=r,
         )
 
         self.declare_partials(
-            Dynamic.Mission.PROPELLER_TIP_SPEED,
+            Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED,
             [
-                Aircraft.Engine.PROPELLER_TIP_MACH_MAX,
-                Aircraft.Engine.PROPELLER_TIP_SPEED_MAX
+                Aircraft.Engine.Propeller.TIP_MACH_MAX,
+                Aircraft.Engine.Propeller.TIP_SPEED_MAX,
             ],
-        )
-
-        self.declare_partials(
-            'rpm',
-            [
-                Dynamic.Mission.VELOCITY,
-                Dynamic.Mission.SPEED_OF_SOUND,
-            ],
-            rows=r, cols=r,
         )
 
         self.declare_partials(
             'rpm',
             [
-                Aircraft.Engine.PROPELLER_TIP_MACH_MAX,
-                Aircraft.Engine.PROPELLER_TIP_SPEED_MAX,
-                Aircraft.Engine.PROPELLER_DIAMETER
+                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Atmosphere.SPEED_OF_SOUND,
+            ],
+            rows=r,
+            cols=r,
+        )
+
+        self.declare_partials(
+            'rpm',
+            [
+                Aircraft.Engine.Propeller.TIP_MACH_MAX,
+                Aircraft.Engine.Propeller.TIP_SPEED_MAX,
+                Aircraft.Engine.Propeller.DIAMETER,
             ],
         )
 
     def compute(self, inputs, outputs):
         num_nodes = self.options['num_nodes']
 
-        velocity = inputs[Dynamic.Mission.VELOCITY]
-        sos = inputs[Dynamic.Mission.SPEED_OF_SOUND]
-        tip_mach_max = inputs[Aircraft.Engine.PROPELLER_TIP_MACH_MAX]
-        tip_speed_max = inputs[Aircraft.Engine.PROPELLER_TIP_SPEED_MAX]
-        diam = inputs[Aircraft.Engine.PROPELLER_DIAMETER]
+        velocity = inputs[Dynamic.Atmosphere.VELOCITY]
+        sos = inputs[Dynamic.Atmosphere.SPEED_OF_SOUND]
+        tip_mach_max = inputs[Aircraft.Engine.Propeller.TIP_MACH_MAX]
+        tip_speed_max = inputs[Aircraft.Engine.Propeller.TIP_SPEED_MAX]
+        diam = inputs[Aircraft.Engine.Propeller.DIAMETER]
 
         tip_speed_mach_limit = ((sos * tip_mach_max)**2 - velocity**2)**0.5
         # use KSfunction for smooth derivitive across minimum
@@ -123,17 +111,17 @@ class TipSpeedLimit(om.ExplicitComponent):
         ).flatten()
         rpm = prop_tip_speed / (diam * math.pi / 60)
 
-        outputs[Dynamic.Mission.PROPELLER_TIP_SPEED] = prop_tip_speed
+        outputs[Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED] = prop_tip_speed
         outputs['rpm'] = rpm
 
     def compute_partials(self, inputs, J):
         num_nodes = self.options['num_nodes']
 
-        velocity = inputs[Dynamic.Mission.VELOCITY]
-        sos = inputs[Dynamic.Mission.SPEED_OF_SOUND]
-        tip_mach_max = inputs[Aircraft.Engine.PROPELLER_TIP_MACH_MAX]
-        tip_speed_max = inputs[Aircraft.Engine.PROPELLER_TIP_SPEED_MAX]
-        diam = inputs[Aircraft.Engine.PROPELLER_DIAMETER]
+        velocity = inputs[Dynamic.Atmosphere.VELOCITY]
+        sos = inputs[Dynamic.Atmosphere.SPEED_OF_SOUND]
+        tip_mach_max = inputs[Aircraft.Engine.Propeller.TIP_MACH_MAX]
+        tip_speed_max = inputs[Aircraft.Engine.Propeller.TIP_SPEED_MAX]
+        diam = inputs[Aircraft.Engine.Propeller.DIAMETER]
 
         tip_speed_max_nn = np.tile(tip_speed_max, num_nodes)
 
@@ -152,28 +140,32 @@ class TipSpeedLimit(om.ExplicitComponent):
         dspeed_dmm = dKS[:, 1] * dtpml_m
         dspeed_dsm = dKS[:, 0]
 
-        J[Dynamic.Mission.PROPELLER_TIP_SPEED,
-          Dynamic.Mission.VELOCITY] = dspeed_dv
-        J[Dynamic.Mission.PROPELLER_TIP_SPEED,
-          Dynamic.Mission.SPEED_OF_SOUND] = dspeed_ds
-        J[Dynamic.Mission.PROPELLER_TIP_SPEED,
-          Aircraft.Engine.PROPELLER_TIP_MACH_MAX] = dspeed_dmm
-        J[Dynamic.Mission.PROPELLER_TIP_SPEED,
-          Aircraft.Engine.PROPELLER_TIP_SPEED_MAX] = dspeed_dsm
+        J[
+            Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED, Dynamic.Atmosphere.VELOCITY
+        ] = dspeed_dv
+        J[
+            Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED,
+            Dynamic.Atmosphere.SPEED_OF_SOUND,
+        ] = dspeed_ds
+        J[
+            Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED,
+            Aircraft.Engine.Propeller.TIP_MACH_MAX,
+        ] = dspeed_dmm
+        J[
+            Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED,
+            Aircraft.Engine.Propeller.TIP_SPEED_MAX,
+        ] = dspeed_dsm
 
         rpm_fact = (diam * math.pi / 60)
 
-        J['rpm',
-          Dynamic.Mission.VELOCITY] = dspeed_dv / rpm_fact
-        J['rpm',
-          Dynamic.Mission.SPEED_OF_SOUND] = dspeed_ds / rpm_fact
-        J['rpm',
-          Aircraft.Engine.PROPELLER_TIP_MACH_MAX] = dspeed_dmm / rpm_fact
-        J['rpm',
-          Aircraft.Engine.PROPELLER_TIP_SPEED_MAX] = dspeed_dsm / rpm_fact
+        J['rpm', Dynamic.Atmosphere.VELOCITY] = dspeed_dv / rpm_fact
+        J['rpm', Dynamic.Atmosphere.SPEED_OF_SOUND] = dspeed_ds / rpm_fact
+        J['rpm', Aircraft.Engine.Propeller.TIP_MACH_MAX] = dspeed_dmm / rpm_fact
+        J['rpm', Aircraft.Engine.Propeller.TIP_SPEED_MAX] = dspeed_dsm / rpm_fact
 
-        J['rpm', Aircraft.Engine.PROPELLER_DIAMETER] = - \
-            60 * prop_tip_speed / (math.pi * diam**2)
+        J['rpm', Aircraft.Engine.Propeller.DIAMETER] = (
+            -60 * prop_tip_speed / (math.pi * diam**2)
+        )
 
 
 class OutMachs(om.ExplicitComponent):
@@ -325,24 +317,32 @@ class InstallLoss(om.Group):
                 sqa={'units': 'unitless'},
                 has_diag_partials=True,
             ),
-            promotes_inputs=[("DiamNac", Aircraft.Nacelle.AVG_DIAMETER),
-                             ("DiamProp", Aircraft.Engine.PROPELLER_DIAMETER)],
+            promotes_inputs=[
+                ("DiamNac", Aircraft.Nacelle.AVG_DIAMETER),
+                ("DiamProp", Aircraft.Engine.Propeller.DIAMETER),
+            ],
             promotes_outputs=["sqa"],
         )
 
         # We should update these minimum calls to use a smooth minimum so that the
         # gradient information is C1 continuous.
         self.add_subsystem(
-            name='zje_comp', subsys=om.ExecComp(
+            name='zje_comp',
+            subsys=om.ExecComp(
                 'equiv_adv_ratio = minimum((1.0 - 0.254 * sqa) * 5.309 * vktas/tipspd, 5.0)',
                 vktas={'units': 'knot', 'val': np.zeros(nn)},
                 tipspd={'units': 'ft/s', 'val': np.zeros(nn)},
                 sqa={'units': 'unitless'},
                 equiv_adv_ratio={'units': 'unitless', 'val': np.zeros(nn)},
-                has_diag_partials=True,),
-            promotes_inputs=["sqa", ("vktas", Dynamic.Mission.VELOCITY),
-                             ("tipspd", Dynamic.Mission.PROPELLER_TIP_SPEED)],
-            promotes_outputs=["equiv_adv_ratio"],)
+                has_diag_partials=True,
+            ),
+            promotes_inputs=[
+                "sqa",
+                ("vktas", Dynamic.Atmosphere.VELOCITY),
+                ("tipspd", Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED),
+            ],
+            promotes_outputs=["equiv_adv_ratio"],
+        )
 
         self.add_subsystem(
             'convert_sqa',
@@ -441,14 +441,17 @@ class PropellerPerformance(om.Group):
 
         # TODO options are lists here when using full Aviary problem - need further investigation
         compute_installation_loss = aviary_options.get_val(
-            Aircraft.Engine.COMPUTE_PROPELLER_INSTALLATION_LOSS
+            Aircraft.Engine.Propeller.COMPUTE_INSTALLATION_LOSS
         )
         if isinstance(compute_installation_loss, (list, np.ndarray)):
             compute_installation_loss = compute_installation_loss[0]
 
-        use_propeller_map = aviary_options.get_val(Aircraft.Engine.USE_PROPELLER_MAP)
-        if isinstance(use_propeller_map, (list, np.ndarray)):
-            use_propeller_map = use_propeller_map[0]
+        try:
+            prop_file_path = aviary_options.get_val(Aircraft.Engine.Propeller.DATA_FILE)
+        except KeyError:
+            prop_file_path = None
+        if isinstance(prop_file_path, (list, np.ndarray)):
+            prop_file_path = prop_file_path[0]
 
         if self.options['input_rpm']:
             # compute the propeller tip speed based on the input RPM and diameter of the propeller
@@ -458,16 +461,17 @@ class PropellerPerformance(om.Group):
                 om.ExecComp(
                     'prop_tip_speed = diameter * rpm * pi / 60.',
                     prop_tip_speed={'units': "ft/s", 'shape': nn},
-                    diameter={'val': 0., 'units': "ft"},
+                    diameter={'val': 0.0, 'units': "ft"},
                     rpm={'units': "rpm", 'shape': nn},
                     has_diag_partials=True,
                 ),
                 promotes_inputs=[
                     'rpm',  # TODO this should be in dynamic
-                    ('diameter', Aircraft.Engine.PROPELLER_DIAMETER),
+                    ('diameter', Aircraft.Engine.Propeller.DIAMETER),
                 ],
                 promotes_outputs=[
-                    ('prop_tip_speed', Dynamic.Mission.PROPELLER_TIP_SPEED)],
+                    ('prop_tip_speed', Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED)
+                ],
             )
 
         else:
@@ -483,9 +487,9 @@ class PropellerPerformance(om.Group):
                 subsys=InstallLoss(num_nodes=nn),
                 promotes_inputs=[
                     Aircraft.Nacelle.AVG_DIAMETER,
-                    Aircraft.Engine.PROPELLER_DIAMETER,
-                    Dynamic.Mission.VELOCITY,
-                    Dynamic.Mission.PROPELLER_TIP_SPEED,
+                    Aircraft.Engine.Propeller.DIAMETER,
+                    Dynamic.Atmosphere.VELOCITY,
+                    Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED,
                 ],
                 promotes_outputs=['install_loss_factor'],
             )
@@ -497,12 +501,12 @@ class PropellerPerformance(om.Group):
             name='pre_hamilton_standard',
             subsys=PreHamiltonStandard(num_nodes=nn),
             promotes_inputs=[
-                Dynamic.Mission.DENSITY,
-                Dynamic.Mission.SPEED_OF_SOUND,
-                Dynamic.Mission.VELOCITY,
-                Dynamic.Mission.PROPELLER_TIP_SPEED,
-                Aircraft.Engine.PROPELLER_DIAMETER,
-                Dynamic.Mission.SHAFT_POWER,
+                Dynamic.Atmosphere.DENSITY,
+                Dynamic.Atmosphere.SPEED_OF_SOUND,
+                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED,
+                Aircraft.Engine.Propeller.DIAMETER,
+                Dynamic.Vehicle.Propulsion.SHAFT_POWER,
             ],
             promotes_outputs=[
                 "power_coefficient",
@@ -512,17 +516,16 @@ class PropellerPerformance(om.Group):
             ],
         )
 
-        if use_propeller_map:
+        if prop_file_path is not None:
             prop_model = PropellerMap('prop', aviary_options)
-            prop_file_path = aviary_options.get_val(
-                Aircraft.Engine.PROPELLER_DATA_FILE)
             mach_type = prop_model.read_and_set_mach_type(prop_file_path)
             if mach_type == OutMachType.HELICAL_MACH:
                 self.add_subsystem(
                     name='selectedMach',
                     subsys=OutMachs(
-                        num_nodes=nn, output_mach_type=OutMachType.HELICAL_MACH),
-                    promotes_inputs=[("mach", Dynamic.Mission.MACH), "tip_mach"],
+                        num_nodes=nn, output_mach_type=OutMachType.HELICAL_MACH
+                    ),
+                    promotes_inputs=[("mach", Dynamic.Atmosphere.MACH), "tip_mach"],
                     promotes_outputs=[("helical_mach", "selected_mach")],
                 )
             else:
@@ -534,7 +537,9 @@ class PropellerPerformance(om.Group):
                         selected_mach={'units': 'unitless', 'shape': nn},
                         has_diag_partials=True,
                     ),
-                    promotes_inputs=[("mach", Dynamic.Mission.MACH),],
+                    promotes_inputs=[
+                        ("mach", Dynamic.Atmosphere.MACH),
+                    ],
                     promotes_outputs=["selected_mach"],
                 )
             propeller = prop_model.build_propeller_interpolator(nn, aviary_options)
@@ -558,17 +563,18 @@ class PropellerPerformance(om.Group):
                 name='hamilton_standard',
                 subsys=HamiltonStandard(num_nodes=nn, aviary_options=aviary_options),
                 promotes_inputs=[
-                    Dynamic.Mission.MACH,
+                    Dynamic.Atmosphere.MACH,
                     "power_coefficient",
                     "advance_ratio",
                     "tip_mach",
-                    Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,
-                    Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT,
+                    Aircraft.Engine.Propeller.ACTIVITY_FACTOR,
+                    Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT,
                 ],
                 promotes_outputs=[
                     "thrust_coefficient",
                     "comp_tip_loss_factor",
-                ])
+                ],
+            )
 
         self.add_subsystem(
             name='post_hamilton_standard',
@@ -576,8 +582,8 @@ class PropellerPerformance(om.Group):
             promotes_inputs=[
                 "thrust_coefficient",
                 "comp_tip_loss_factor",
-                Dynamic.Mission.PROPELLER_TIP_SPEED,
-                Aircraft.Engine.PROPELLER_DIAMETER,
+                Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED,
+                Aircraft.Engine.Propeller.DIAMETER,
                 "density_ratio",
                 'install_loss_factor',
                 "advance_ratio",
@@ -585,7 +591,8 @@ class PropellerPerformance(om.Group):
             ],
             promotes_outputs=[
                 "thrust_coefficient_comp_loss",
-                Dynamic.Mission.THRUST,
+                Dynamic.Vehicle.Propulsion.THRUST,
                 "propeller_efficiency",
                 "install_efficiency",
-            ])
+            ],
+        )

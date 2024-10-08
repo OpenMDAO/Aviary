@@ -14,21 +14,21 @@ class DescentRates(om.ExplicitComponent):
         arange = np.arange(nn)
 
         self.add_input(
-            Dynamic.Mission.VELOCITY,
+            Dynamic.Atmosphere.VELOCITY,
             val=np.zeros(nn),
             units="ft/s",
             desc="true air speed",
         )
 
-        self.add_input(Dynamic.Mission.THRUST_TOTAL, val=np.zeros(nn),
+        self.add_input(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, val=np.zeros(nn),
                        units="lbf", desc="net thrust")
         self.add_input(
-            Dynamic.Mission.DRAG,
+            Dynamic.Vehicle.DRAG,
             val=np.zeros(nn),
             units="lbf",
             desc="net drag on aircraft")
         self.add_input(
-            Dynamic.Mission.MASS,
+            Dynamic.Vehicle.MASS,
             val=np.zeros(nn),
             units="lbm",
             desc="mass of aircraft",
@@ -65,39 +65,56 @@ class DescentRates(om.ExplicitComponent):
             desc="flight path angle",
         )
 
-        self.declare_partials(Dynamic.Mission.ALTITUDE_RATE,
-                              [Dynamic.Mission.VELOCITY,
-                               Dynamic.Mission.THRUST_TOTAL,
-                               Dynamic.Mission.DRAG,
-                               Dynamic.Mission.MASS],
-                              rows=arange,
-                              cols=arange)
+        self.declare_partials(
+            Dynamic.Mission.ALTITUDE_RATE,
+            [
+                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                Dynamic.Vehicle.DRAG,
+                Dynamic.Vehicle.MASS,
+            ],
+            rows=arange,
+            cols=arange,
+        )
         self.declare_partials(
             Dynamic.Mission.DISTANCE_RATE,
-            [Dynamic.Mission.VELOCITY, Dynamic.Mission.THRUST_TOTAL,
-                Dynamic.Mission.DRAG, Dynamic.Mission.MASS],
+            [
+                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                Dynamic.Vehicle.DRAG,
+                Dynamic.Vehicle.MASS,
+            ],
             rows=arange,
             cols=arange,
         )
         self.declare_partials(
             "required_lift",
-            [Dynamic.Mission.MASS, Dynamic.Mission.THRUST_TOTAL, Dynamic.Mission.DRAG, "alpha"],
+            [
+                Dynamic.Vehicle.MASS,
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                Dynamic.Vehicle.DRAG,
+                "alpha",
+            ],
             rows=arange,
             cols=arange,
         )
-        self.declare_partials(Dynamic.Mission.FLIGHT_PATH_ANGLE,
-                              [Dynamic.Mission.THRUST_TOTAL,
-                               Dynamic.Mission.DRAG,
-                               Dynamic.Mission.MASS],
-                              rows=arange,
-                              cols=arange)
+        self.declare_partials(
+            Dynamic.Mission.FLIGHT_PATH_ANGLE,
+            [
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                Dynamic.Vehicle.DRAG,
+                Dynamic.Vehicle.MASS,
+            ],
+            rows=arange,
+            cols=arange,
+        )
 
     def compute(self, inputs, outputs):
 
-        TAS = inputs[Dynamic.Mission.VELOCITY]
-        thrust = inputs[Dynamic.Mission.THRUST_TOTAL]
-        drag = inputs[Dynamic.Mission.DRAG]
-        weight = inputs[Dynamic.Mission.MASS] * GRAV_ENGLISH_LBM
+        TAS = inputs[Dynamic.Atmosphere.VELOCITY]
+        thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
+        drag = inputs[Dynamic.Vehicle.DRAG]
+        weight = inputs[Dynamic.Vehicle.MASS] * GRAV_ENGLISH_LBM
         alpha = inputs["alpha"]
 
         gamma = (thrust - drag) / weight
@@ -109,43 +126,51 @@ class DescentRates(om.ExplicitComponent):
 
     def compute_partials(self, inputs, J):
 
-        TAS = inputs[Dynamic.Mission.VELOCITY]
-        thrust = inputs[Dynamic.Mission.THRUST_TOTAL]
-        drag = inputs[Dynamic.Mission.DRAG]
-        weight = inputs[Dynamic.Mission.MASS] * GRAV_ENGLISH_LBM
+        TAS = inputs[Dynamic.Atmosphere.VELOCITY]
+        thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
+        drag = inputs[Dynamic.Vehicle.DRAG]
+        weight = inputs[Dynamic.Vehicle.MASS] * GRAV_ENGLISH_LBM
         alpha = inputs["alpha"]
 
         gamma = (thrust - drag) / weight
 
-        J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.VELOCITY] = np.sin(gamma)
-        J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.THRUST_TOTAL] = TAS * \
-            np.cos(gamma) / weight
-        J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.DRAG] = TAS * \
-            np.cos(gamma) * (-1 / weight)
-        J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.MASS] = TAS * \
-            np.cos(gamma) * (-(thrust - drag) / weight**2) * GRAV_ENGLISH_LBM
+        J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Atmosphere.VELOCITY] = np.sin(gamma)
+        J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = (
+            TAS * np.cos(gamma) / weight
+        )
+        J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Vehicle.DRAG] = (
+            TAS * np.cos(gamma) * (-1 / weight)
+        )
+        J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Vehicle.MASS] = (
+            TAS * np.cos(gamma) * (-(thrust - drag) / weight**2) * GRAV_ENGLISH_LBM
+        )
 
-        J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Mission.VELOCITY] = np.cos(gamma)
-        J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Mission.THRUST_TOTAL] = - \
-            TAS * np.sin(gamma) / weight
-        J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Mission.DRAG] = - \
+        J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Atmosphere.VELOCITY] = np.cos(gamma)
+        J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = (
+            -TAS * np.sin(gamma) / weight
+        )
+        J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Vehicle.DRAG] = - \
             TAS * np.sin(gamma) * (-1 / weight)
-        J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Mission.MASS] = (
+        J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Vehicle.MASS] = (
             -TAS * np.sin(gamma) * (-(thrust - drag) / weight**2) * GRAV_ENGLISH_LBM
         )
 
-        J["required_lift", Dynamic.Mission.MASS] = (
+        J["required_lift", Dynamic.Vehicle.MASS] = (
             np.cos(gamma) - weight * np.sin(
                 (thrust - drag) / weight
             ) * (-(thrust - drag) / weight**2)
         ) * GRAV_ENGLISH_LBM
-        J["required_lift", Dynamic.Mission.THRUST_TOTAL] = - \
-            weight * np.sin(gamma) / weight - np.sin(alpha)
-        J["required_lift", Dynamic.Mission.DRAG] = - \
+        J["required_lift", Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = -weight * np.sin(
+            gamma
+        ) / weight - np.sin(alpha)
+        J["required_lift", Dynamic.Vehicle.DRAG] = - \
             weight * np.sin(gamma) * (-1 / weight)
         J["required_lift", "alpha"] = -thrust * np.cos(alpha)
 
-        J[Dynamic.Mission.FLIGHT_PATH_ANGLE, Dynamic.Mission.THRUST_TOTAL] = 1 / weight
-        J[Dynamic.Mission.FLIGHT_PATH_ANGLE, Dynamic.Mission.DRAG] = -1 / weight
-        J[Dynamic.Mission.FLIGHT_PATH_ANGLE, Dynamic.Mission.MASS] = - \
-            (thrust - drag) / weight**2 * GRAV_ENGLISH_LBM
+        J[
+            Dynamic.Mission.FLIGHT_PATH_ANGLE, Dynamic.Vehicle.Propulsion.THRUST_TOTAL
+        ] = (1 / weight)
+        J[Dynamic.Mission.FLIGHT_PATH_ANGLE, Dynamic.Vehicle.DRAG] = -1 / weight
+        J[Dynamic.Mission.FLIGHT_PATH_ANGLE, Dynamic.Vehicle.MASS] = (
+            -(thrust - drag) / weight**2 * GRAV_ENGLISH_LBM
+        )

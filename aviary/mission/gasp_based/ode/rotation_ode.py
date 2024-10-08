@@ -65,10 +65,13 @@ class RotationODE(BaseODE):
         self.set_input_defaults("t_init_flaps", val=47.5, units='s')
         self.set_input_defaults("t_init_gear", val=37.3, units='s')
         self.set_input_defaults("alpha", val=np.ones(nn), units="deg")
-        self.set_input_defaults(Dynamic.Mission.FLIGHT_PATH_ANGLE,
-                                val=np.zeros(nn), units="deg")
+        self.set_input_defaults(
+            Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units="deg"
+        )
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.zeros(nn), units="ft")
-        self.set_input_defaults(Dynamic.Mission.VELOCITY, val=np.zeros(nn), units="kn")
+        self.set_input_defaults(
+            Dynamic.Atmosphere.VELOCITY, val=np.zeros(nn), units="kn"
+        )
         self.set_input_defaults("t_curr", val=np.zeros(nn), units="s")
         self.set_input_defaults('aero_ramps.flap_factor:final_val', val=1.)
         self.set_input_defaults('aero_ramps.gear_factor:final_val', val=1.)

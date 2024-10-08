@@ -18,37 +18,57 @@ class MissionEOM(om.Group):
         self.add_subsystem(
             name='required_thrust',
             subsys=RequiredThrust(num_nodes=nn),
-            promotes_inputs=[Dynamic.Mission.DRAG,
-                             Dynamic.Mission.ALTITUDE_RATE,
-                             Dynamic.Mission.VELOCITY,
-                             Dynamic.Mission.VELOCITY_RATE,
-                             Dynamic.Mission.MASS],
-            promotes_outputs=['thrust_required'])
+            promotes_inputs=[
+                Dynamic.Vehicle.DRAG,
+                Dynamic.Mission.ALTITUDE_RATE,
+                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Atmosphere.VELOCITY_RATE,
+                Dynamic.Vehicle.MASS,
+            ],
+            promotes_outputs=['thrust_required'],
+        )
 
         self.add_subsystem(
             name='groundspeed',
             subsys=RangeRate(num_nodes=nn),
             promotes_inputs=[
                 Dynamic.Mission.ALTITUDE_RATE,
-                Dynamic.Mission.VELOCITY],
-            promotes_outputs=[Dynamic.Mission.DISTANCE_RATE])
+                Dynamic.Atmosphere.VELOCITY,
+            ],
+            promotes_outputs=[Dynamic.Mission.DISTANCE_RATE],
+        )
 
         self.add_subsystem(
             name='excess_specific_power',
             subsys=SpecificEnergyRate(num_nodes=nn),
             promotes_inputs=[
-                (Dynamic.Mission.THRUST_TOTAL, Dynamic.Mission.THRUST_MAX_TOTAL),
-                Dynamic.Mission.VELOCITY,
-                Dynamic.Mission.MASS, Dynamic.Mission.DRAG],
-            promotes_outputs=[(Dynamic.Mission.SPECIFIC_ENERGY_RATE, Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS)])
-        self.add_subsystem(
-            name=Dynamic.Mission.ALTITUDE_RATE_MAX,
-            subsys=AltitudeRate(
-                num_nodes=nn),
-            promotes_inputs=[
-                (Dynamic.Mission.SPECIFIC_ENERGY_RATE,
-                 Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS),
-                Dynamic.Mission.VELOCITY_RATE,
-                Dynamic.Mission.VELOCITY],
+                (
+                    Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                    Dynamic.Vehicle.Propulsion.THRUST_MAX_TOTAL,
+                ),
+                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Vehicle.MASS,
+                Dynamic.Vehicle.DRAG,
+            ],
             promotes_outputs=[
-                (Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.ALTITUDE_RATE_MAX)])
+                (
+                    Dynamic.Mission.SPECIFIC_ENERGY_RATE,
+                    Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
+                )
+            ],
+        )
+        self.add_subsystem(
+            name=Dynamic.Vehicle.ALTITUDE_RATE_MAX,
+            subsys=AltitudeRate(num_nodes=nn),
+            promotes_inputs=[
+                (
+                    Dynamic.Mission.SPECIFIC_ENERGY_RATE,
+                    Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
+                ),
+                Dynamic.Atmosphere.VELOCITY_RATE,
+                Dynamic.Atmosphere.VELOCITY,
+            ],
+            promotes_outputs=[
+                (Dynamic.Mission.ALTITUDE_RATE, Dynamic.Vehicle.ALTITUDE_RATE_MAX)
+            ],
+        )

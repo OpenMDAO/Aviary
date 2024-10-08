@@ -39,10 +39,12 @@ class DescentODETestCase(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
         self.prob.set_val(
-            Dynamic.Mission.THROTTLE, np.array([
-                0, 0]), units='unitless')
-        self.prob.set_val(Dynamic.Mission.ALTITUDE, np.array([36500, 14500]), units="ft")
-        self.prob.set_val(Dynamic.Mission.MASS, np.array([147661, 147572]), units="lbm")
+            Dynamic.Vehicle.Propulsion.THROTTLE, np.array([0, 0]), units='unitless'
+        )
+        self.prob.set_val(
+            Dynamic.Mission.ALTITUDE, np.array([36500, 14500]), units="ft"
+        )
+        self.prob.set_val(Dynamic.Vehicle.MASS, np.array([147661, 147572]), units="lbm")
 
         set_params_for_unit_tests(self.prob)
 
@@ -57,9 +59,11 @@ class DescentODETestCase(unittest.TestCase):
             # TAS (ft/s) * cos(gamma), [458.67774, 437.62297] kts
             Dynamic.Mission.DISTANCE_RATE: [773.1637, 737.0653],  # ft/s
             # lbm/h
-            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: np.array([-451.0239, -997.1514]),
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL: np.array(
+                [-451.0239, -997.1514]
+            ),
             "EAS": [417.87419406, 590.73344937],  # ft/s ([247.58367, 349.99997] kts)
-            Dynamic.Mission.MACH: [0.8, 0.697266],
+            Dynamic.Atmosphere.MACH: [0.8, 0.697266],
             # gamma, rad ([-2.908332, -3.723388] deg)
             Dynamic.Mission.FLIGHT_PATH_ANGLE: [-0.05075997, -0.06498538],
         }
@@ -77,9 +81,9 @@ class DescentODETestCase(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-        self.prob.set_val(Dynamic.Mission.THROTTLE, 0, units='unitless')
+        self.prob.set_val(Dynamic.Vehicle.Propulsion.THROTTLE, 0, units='unitless')
         self.prob.set_val(Dynamic.Mission.ALTITUDE, 1500, units="ft")
-        self.prob.set_val(Dynamic.Mission.MASS, 147410, units="lbm")
+        self.prob.set_val(Dynamic.Vehicle.MASS, 147410, units="lbm")
         self.prob.set_val("EAS", 250, units="kn")
 
         set_params_for_unit_tests(self.prob)
@@ -93,7 +97,7 @@ class DescentODETestCase(unittest.TestCase):
             Dynamic.Mission.ALTITUDE_RATE: -1138.583 / 60,
             # TAS (ft/s) * cos(gamma) = 255.5613 * 1.68781 * cos(-0.0440083)
             Dynamic.Mission.DISTANCE_RATE: 430.9213,
-            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: -1295.11,
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL: -1295.11,
             Dynamic.Mission.FLIGHT_PATH_ANGLE: -0.0440083,  # rad (-2.52149 deg)
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)

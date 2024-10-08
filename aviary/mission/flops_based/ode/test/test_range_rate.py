@@ -31,14 +31,15 @@ class RangeRateTest(unittest.TestCase):
 
     def test_case1(self):
 
-        do_validation_test(self.prob,
-                           'full_mission_test_data',
-                           input_validation_data=data,
-                           output_validation_data=data,
-                           input_keys=[Dynamic.Mission.ALTITUDE_RATE,
-                                       Dynamic.Mission.VELOCITY],
-                           output_keys=Dynamic.Mission.DISTANCE_RATE,
-                           tol=1e-12)
+        do_validation_test(
+            self.prob,
+            'full_mission_test_data',
+            input_validation_data=data,
+            output_validation_data=data,
+            input_keys=[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Atmosphere.VELOCITY],
+            output_keys=Dynamic.Mission.DISTANCE_RATE,
+            tol=1e-12,
+        )
 
     def test_IO(self):
         assert_match_varnames(self.prob.model)

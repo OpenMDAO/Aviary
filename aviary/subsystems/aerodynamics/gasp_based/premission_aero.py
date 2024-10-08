@@ -46,7 +46,7 @@ class PreMissionAero(om.Group):
                 kinematic_viscosity={"units": "ft**2/s"},
             ),
             promotes=["viscosity", "kinematic_viscosity",
-                      ("rho", Dynamic.Mission.DENSITY)],
+                      ("rho", Dynamic.Atmosphere.DENSITY)],
         )
 
         self.add_subsystem(

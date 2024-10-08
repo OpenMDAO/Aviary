@@ -35,13 +35,13 @@ phase_info = {
         "user_options": {
             'mach': (cruise_mach, 'unitless'),
             'alt_trigger': (1000, 'ft'),
-            Dynamic.Mission.THROTTLE: (0, 'unitless'),
+            Dynamic.Vehicle.Propulsion.THROTTLE: (0, 'unitless'),
         },
     },
     "post_mission": {
         "include_landing": False,
         "constrain_range": True,
-        "target_range": (1906., "nmi"),
+        "target_range": (1906.0, "nmi"),
     },
 }
 

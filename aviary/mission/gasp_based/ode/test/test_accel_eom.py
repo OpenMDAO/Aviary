@@ -24,16 +24,19 @@ class AccelerationTestCase(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.MASS, np.array([174878, 174878]), units="lbm"
+            Dynamic.Vehicle.MASS, np.array([174878, 174878]), units="lbm"
         )
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.DRAG, np.array([2635.225, 2635.225]), units="lbf"
+            Dynamic.Vehicle.DRAG, np.array([2635.225, 2635.225]), units="lbf"
         )  # note: this input value is not provided in the GASP data, so an estimation was made based on another similar data point
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.THRUST_TOTAL, np.array([32589, 32589]), units="lbf"
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            np.array([32589, 32589]),
+            units="lbf",
         )
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.VELOCITY, np.array([252, 252]), units="kn")
+            Dynamic.Atmosphere.VELOCITY, np.array([252, 252]), units="kn"
+        )
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -43,8 +46,9 @@ class AccelerationTestCase(unittest.TestCase):
         self.prob.run_model()
 
         assert_near_equal(
-            self.prob[Dynamic.Mission.VELOCITY_RATE], np.array(
-                [5.51533958, 5.51533958]), tol
+            self.prob[Dynamic.Atmosphere.VELOCITY_RATE],
+            np.array([5.51533958, 5.51533958]),
+            tol,
             # note: this was finite differenced from GASP. The fd value is: np.array([5.2353365, 5.2353365])
         )
         assert_near_equal(

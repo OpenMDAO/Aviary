@@ -25,21 +25,21 @@ class EngineModelVariables(Enum):
     Define constants that map to supported variable names in an engine model.
     """
 
-    MACH = Dynamic.Mission.MACH
+    MACH = Dynamic.Atmosphere.MACH
     ALTITUDE = Dynamic.Mission.ALTITUDE
-    THROTTLE = Dynamic.Mission.THROTTLE
-    HYBRID_THROTTLE = Dynamic.Mission.HYBRID_THROTTLE
-    THRUST = Dynamic.Mission.THRUST
+    THROTTLE = Dynamic.Vehicle.Propulsion.THROTTLE
+    HYBRID_THROTTLE = Dynamic.Vehicle.Propulsion.HYBRID_THROTTLE
+    THRUST = Dynamic.Vehicle.Propulsion.THRUST
     TAILPIPE_THRUST = 'tailpipe_thrust'
     GROSS_THRUST = 'gross_thrust'
-    SHAFT_POWER = Dynamic.Mission.SHAFT_POWER
+    SHAFT_POWER = Dynamic.Vehicle.Propulsion.SHAFT_POWER
     SHAFT_POWER_CORRECTED = 'shaft_power_corrected'
     RAM_DRAG = 'ram_drag'
-    FUEL_FLOW = Dynamic.Mission.FUEL_FLOW_RATE
-    ELECTRIC_POWER_IN = Dynamic.Mission.ELECTRIC_POWER_IN
-    NOX_RATE = Dynamic.Mission.NOX_RATE
-    TEMPERATURE_T4 = Dynamic.Mission.TEMPERATURE_T4
-    TORQUE = Dynamic.Mission.TORQUE
+    FUEL_FLOW = Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE
+    ELECTRIC_POWER_IN = Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN
+    NOX_RATE = Dynamic.Vehicle.Propulsion.NOX_RATE
+    TEMPERATURE_T4 = Dynamic.Vehicle.Propulsion.TEMPERATURE_T4
+    TORQUE = Dynamic.Vehicle.Propulsion.TORQUE
     # EXIT_AREA = auto()
 
 
@@ -64,8 +64,8 @@ default_units = {
 
 # variables that have an accompanying max value
 max_variables = {
-    EngineModelVariables.THRUST: Dynamic.Mission.THRUST_MAX,
-    EngineModelVariables.SHAFT_POWER: Dynamic.Mission.SHAFT_POWER_MAX,
+    EngineModelVariables.THRUST: Dynamic.Vehicle.Propulsion.THRUST_MAX,
+    EngineModelVariables.SHAFT_POWER: Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX,
 }
 
 
@@ -373,8 +373,8 @@ class UncorrectData(om.Group):
                 has_diag_partials=True,
             ),
             promotes_inputs=[
-                ('P0', Dynamic.Mission.STATIC_PRESSURE),
-                ('mach', Dynamic.Mission.MACH),
+                ('P0', Dynamic.Atmosphere.STATIC_PRESSURE),
+                ('mach', Dynamic.Atmosphere.MACH),
             ],
             promotes_outputs=['delta_T'],
         )
@@ -393,8 +393,8 @@ class UncorrectData(om.Group):
                 has_diag_partials=True,
             ),
             promotes_inputs=[
-                ('T0', Dynamic.Mission.TEMPERATURE),
-                ('mach', Dynamic.Mission.MACH),
+                ('T0', Dynamic.Atmosphere.TEMPERATURE),
+                ('mach', Dynamic.Atmosphere.MACH),
             ],
             promotes_outputs=['theta_T'],
         )

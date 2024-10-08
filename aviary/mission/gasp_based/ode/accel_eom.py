@@ -21,32 +21,32 @@ class AccelerationRates(om.ExplicitComponent):
         arange = np.arange(nn)
 
         self.add_input(
-            Dynamic.Mission.MASS,
+            Dynamic.Vehicle.MASS,
             val=np.ones(nn) * 1e6,
             units="lbm",
             desc="total mass of the aircraft",
         )
         self.add_input(
-            Dynamic.Mission.DRAG,
+            Dynamic.Vehicle.DRAG,
             val=np.zeros(nn),
             units="lbf",
             desc="drag on aircraft",
         )
         self.add_input(
-            Dynamic.Mission.THRUST_TOTAL,
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
             val=np.zeros(nn),
             units="lbf",
             desc="total thrust",
         )
         self.add_input(
-            Dynamic.Mission.VELOCITY,
+            Dynamic.Atmosphere.VELOCITY,
             val=np.zeros(nn),
             units="ft/s",
             desc="true air speed",
         )
 
         self.add_output(
-            Dynamic.Mission.VELOCITY_RATE,
+            Dynamic.Atmosphere.VELOCITY_RATE,
             val=np.zeros(nn),
             units="ft/s**2",
             desc="rate of change of true air speed",
@@ -59,28 +59,40 @@ class AccelerationRates(om.ExplicitComponent):
         )
 
         self.declare_partials(
-            Dynamic.Mission.VELOCITY_RATE, [
-                Dynamic.Mission.MASS, Dynamic.Mission.DRAG, Dynamic.Mission.THRUST_TOTAL], rows=arange, cols=arange)
+            Dynamic.Atmosphere.VELOCITY_RATE,
+            [
+                Dynamic.Vehicle.MASS,
+                Dynamic.Vehicle.DRAG,
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            ],
+            rows=arange,
+            cols=arange,
+        )
         self.declare_partials(Dynamic.Mission.DISTANCE_RATE, [
-                              Dynamic.Mission.VELOCITY], rows=arange, cols=arange, val=1.)
+                              Dynamic.Atmosphere.VELOCITY], rows=arange, cols=arange, val=1.)
 
     def compute(self, inputs, outputs):
-        weight = inputs[Dynamic.Mission.MASS] * GRAV_ENGLISH_LBM
-        drag = inputs[Dynamic.Mission.DRAG]
-        thrust = inputs[Dynamic.Mission.THRUST_TOTAL]
-        TAS = inputs[Dynamic.Mission.VELOCITY]
+        weight = inputs[Dynamic.Vehicle.MASS] * GRAV_ENGLISH_LBM
+        drag = inputs[Dynamic.Vehicle.DRAG]
+        thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
+        TAS = inputs[Dynamic.Atmosphere.VELOCITY]
 
-        outputs[Dynamic.Mission.VELOCITY_RATE] = (
-            GRAV_ENGLISH_GASP / weight) * (thrust - drag)
+        outputs[Dynamic.Atmosphere.VELOCITY_RATE] = (GRAV_ENGLISH_GASP / weight) * (
+            thrust - drag
+        )
         outputs[Dynamic.Mission.DISTANCE_RATE] = TAS
 
     def compute_partials(self, inputs, J):
-        weight = inputs[Dynamic.Mission.MASS] * GRAV_ENGLISH_LBM
-        drag = inputs[Dynamic.Mission.DRAG]
-        thrust = inputs[Dynamic.Mission.THRUST_TOTAL]
+        weight = inputs[Dynamic.Vehicle.MASS] * GRAV_ENGLISH_LBM
+        drag = inputs[Dynamic.Vehicle.DRAG]
+        thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
 
-        J[Dynamic.Mission.VELOCITY_RATE, Dynamic.Mission.MASS] = \
+        J[Dynamic.Atmosphere.VELOCITY_RATE, Dynamic.Vehicle.MASS] = (
             -(GRAV_ENGLISH_GASP / weight**2) * (thrust - drag) * GRAV_ENGLISH_LBM
-        J[Dynamic.Mission.VELOCITY_RATE, Dynamic.Mission.DRAG] = - \
-            (GRAV_ENGLISH_GASP / weight)
-        J[Dynamic.Mission.VELOCITY_RATE, Dynamic.Mission.THRUST_TOTAL] = GRAV_ENGLISH_GASP / weight
+        )
+        J[Dynamic.Atmosphere.VELOCITY_RATE, Dynamic.Vehicle.DRAG] = -(
+            GRAV_ENGLISH_GASP / weight
+        )
+        J[Dynamic.Atmosphere.VELOCITY_RATE, Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = (
+            GRAV_ENGLISH_GASP / weight
+        )

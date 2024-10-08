@@ -188,33 +188,39 @@ class TakeoffBrakeReleaseToDecisionSpeed(PhaseBuilderBase):
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.Mission.VELOCITY, fix_initial=True, lower=0, ref=max_velocity,
-            defect_ref=max_velocity, units=units, upper=max_velocity,
-            rate_source=Dynamic.Mission.VELOCITY_RATE)
+            Dynamic.Atmosphere.VELOCITY,
+            fix_initial=True,
+            lower=0,
+            ref=max_velocity,
+            defect_ref=max_velocity,
+            units=units,
+            upper=max_velocity,
+            rate_source=Dynamic.Atmosphere.VELOCITY_RATE,
+        )
 
         phase.add_state(
-            Dynamic.Mission.MASS, fix_initial=True, fix_final=False,
+            Dynamic.Vehicle.MASS, fix_initial=True, fix_final=False,
             lower=0.0, upper=1e9, ref=5e4, units='kg',
-            rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            targets=Dynamic.Mission.MASS,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            targets=Dynamic.Vehicle.MASS,
         )
 
         # TODO: Energy phase places this under an if num_engines > 0.
         phase.add_control(
-            Dynamic.Mission.THROTTLE,
-            targets=Dynamic.Mission.THROTTLE, units='unitless',
+            Dynamic.Vehicle.Propulsion.THROTTLE,
+            targets=Dynamic.Vehicle.Propulsion.THROTTLE, units='unitless',
             opt=False
         )
 
         phase.add_parameter('angle_of_attack', val=0.0, opt=False, units='deg')
 
         phase.add_timeseries_output(
-            Dynamic.Mission.THRUST_TOTAL,
-            output_name=Dynamic.Mission.THRUST_TOTAL, units='lbf'
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf'
         )
 
         phase.add_timeseries_output(
-            Dynamic.Mission.DRAG, output_name=Dynamic.Mission.DRAG, units='lbf'
+            Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf'
         )
 
         return phase
@@ -355,21 +361,33 @@ class TakeoffDecisionSpeedToRotate(PhaseBuilderBase):
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.Mission.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
-            defect_ref=max_velocity, units=units, upper=max_velocity,
-            rate_source=Dynamic.Mission.VELOCITY_RATE)
+            Dynamic.Atmosphere.VELOCITY,
+            fix_initial=False,
+            lower=0,
+            ref=max_velocity,
+            defect_ref=max_velocity,
+            units=units,
+            upper=max_velocity,
+            rate_source=Dynamic.Atmosphere.VELOCITY_RATE,
+        )
 
         phase.add_state(
-            Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
-            rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            targets=Dynamic.Mission.MASS,
+            Dynamic.Vehicle.MASS,
+            fix_initial=False,
+            fix_final=False,
+            lower=0.0,
+            upper=1e9,
+            ref=5e4,
+            defect_ref=5e4,
+            units='kg',
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            targets=Dynamic.Vehicle.MASS,
         )
 
         # TODO: Energy phase places this under an if num_engines > 0.
         phase.add_control(
-            Dynamic.Mission.THROTTLE,
-            targets=Dynamic.Mission.THROTTLE, units='unitless',
+            Dynamic.Vehicle.Propulsion.THROTTLE,
+            targets=Dynamic.Vehicle.Propulsion.THROTTLE, units='unitless',
             opt=False
         )
 
@@ -378,12 +396,12 @@ class TakeoffDecisionSpeedToRotate(PhaseBuilderBase):
         phase.add_parameter('angle_of_attack', val=0.0, opt=False, units='deg')
 
         phase.add_timeseries_output(
-            Dynamic.Mission.THRUST_TOTAL,
-            output_name=Dynamic.Mission.THRUST_TOTAL, units='lbf'
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf'
         )
 
         phase.add_timeseries_output(
-            Dynamic.Mission.DRAG, output_name=Dynamic.Mission.DRAG, units='lbf'
+            Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf'
         )
 
         phase.add_timeseries_output(
@@ -630,22 +648,34 @@ class TakeoffRotateToLiftoff(PhaseBuilderBase):
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.Mission.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
-            defect_ref=max_velocity, units=units, upper=max_velocity,
-            rate_source=Dynamic.Mission.VELOCITY_RATE)
+            Dynamic.Atmosphere.VELOCITY,
+            fix_initial=False,
+            lower=0,
+            ref=max_velocity,
+            defect_ref=max_velocity,
+            units=units,
+            upper=max_velocity,
+            rate_source=Dynamic.Atmosphere.VELOCITY_RATE,
+        )
 
         max_angle_of_attack, units = user_options.get_item('max_angle_of_attack')
 
         phase.add_state(
-            Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
-            rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            targets=Dynamic.Mission.MASS,
+            Dynamic.Vehicle.MASS,
+            fix_initial=False,
+            fix_final=False,
+            lower=0.0,
+            upper=1e9,
+            ref=5e4,
+            defect_ref=5e4,
+            units='kg',
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            targets=Dynamic.Vehicle.MASS,
         )
 
         phase.add_control(
-            Dynamic.Mission.THROTTLE,
-            targets=Dynamic.Mission.THROTTLE, units='unitless',
+            Dynamic.Vehicle.Propulsion.THROTTLE,
+            targets=Dynamic.Vehicle.Propulsion.THROTTLE, units='unitless',
             opt=False
         )
 
@@ -655,12 +685,12 @@ class TakeoffRotateToLiftoff(PhaseBuilderBase):
             ref=max_angle_of_attack)
 
         phase.add_timeseries_output(
-            Dynamic.Mission.DRAG, output_name=Dynamic.Mission.DRAG, units='lbf'
+            Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf'
         )
 
         phase.add_timeseries_output(
-            Dynamic.Mission.THRUST_TOTAL,
-            output_name=Dynamic.Mission.THRUST_TOTAL, units='lbf'
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf'
         )
 
         phase.add_timeseries_output(
@@ -815,35 +845,58 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
         altitude_ref, units = user_options.get_item('altitude_ref')
 
         phase.add_state(
-            Dynamic.Mission.ALTITUDE, fix_initial=True, lower=0, ref=altitude_ref,
-            defect_ref=altitude_ref, units=units, upper=altitude_ref,
-            rate_source=Dynamic.Mission.ALTITUDE_RATE)
+            Dynamic.Mission.ALTITUDE,
+            fix_initial=True,
+            lower=0,
+            ref=altitude_ref,
+            defect_ref=altitude_ref,
+            units=units,
+            upper=altitude_ref,
+            rate_source=Dynamic.Mission.ALTITUDE_RATE,
+        )
 
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.Mission.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
-            defect_ref=max_velocity, units=units, upper=max_velocity,
-            rate_source=Dynamic.Mission.VELOCITY_RATE)
+            Dynamic.Atmosphere.VELOCITY,
+            fix_initial=False,
+            lower=0,
+            ref=max_velocity,
+            defect_ref=max_velocity,
+            units=units,
+            upper=max_velocity,
+            rate_source=Dynamic.Atmosphere.VELOCITY_RATE,
+        )
 
         flight_path_angle_ref, units = user_options.get_item('flight_path_angle_ref')
 
         phase.add_state(
-            Dynamic.Mission.FLIGHT_PATH_ANGLE, fix_initial=True, lower=0,
-            ref=flight_path_angle_ref, upper=flight_path_angle_ref,
-            defect_ref=flight_path_angle_ref, units=units,
-            rate_source=Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE)
+            Dynamic.Mission.FLIGHT_PATH_ANGLE,
+            fix_initial=True,
+            lower=0,
+            ref=flight_path_angle_ref,
+            upper=flight_path_angle_ref,
+            defect_ref=flight_path_angle_ref,
+            units=units,
+            rate_source=Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
+        )
 
         phase.add_state(
-            Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
-            rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            targets=Dynamic.Mission.MASS,
+            Dynamic.Vehicle.MASS,
+            fix_initial=False,
+            fix_final=False,
+            lower=0.0,
+            upper=1e9,
+            ref=5e4,
+            defect_ref=5e4,
+            units='kg',
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            targets=Dynamic.Vehicle.MASS,
         )
 
         phase.add_control(
-            Dynamic.Mission.THROTTLE,
-            targets=Dynamic.Mission.THROTTLE, units='unitless',
+            Dynamic.Vehicle.Propulsion.THROTTLE,
+            targets=Dynamic.Vehicle.Propulsion.THROTTLE, units='unitless',
             opt=False
         )
 
@@ -857,12 +910,12 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
             ref=angle_of_attack_ref)
 
         phase.add_timeseries_output(
-            Dynamic.Mission.DRAG, output_name=Dynamic.Mission.DRAG, units='lbf'
+            Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf'
         )
 
         phase.add_timeseries_output(
-            Dynamic.Mission.THRUST_TOTAL,
-            output_name=Dynamic.Mission.THRUST_TOTAL, units='lbf'
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf'
         )
 
         obstacle_height, units = aviary_options.get_item(
@@ -878,7 +931,13 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
         h = obstacle_height + airport_altitude
 
         phase.add_boundary_constraint(
-            Dynamic.Mission.ALTITUDE, loc='final', equals=h, ref=h, units=units, linear=True)
+            Dynamic.Mission.ALTITUDE,
+            loc='final',
+            equals=h,
+            ref=h,
+            units=units,
+            linear=True,
+        )
 
         phase.add_path_constraint(
             'v_over_v_stall', lower=1.25, ref=2.0)
@@ -931,7 +990,8 @@ TakeoffLiftoffToObstacle._add_initial_guess_meta_data(
 TakeoffLiftoffToObstacle._add_initial_guess_meta_data(InitialGuessState('altitude'))
 
 TakeoffLiftoffToObstacle._add_initial_guess_meta_data(
-    InitialGuessState(Dynamic.Mission.FLIGHT_PATH_ANGLE))
+    InitialGuessState(Dynamic.Mission.FLIGHT_PATH_ANGLE)
+)
 
 
 @_init_initial_guess_meta_data
@@ -1048,35 +1108,56 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
         altitude_ref, units = user_options.get_item('altitude_ref')
 
         phase.add_state(
-            Dynamic.Mission.ALTITUDE, fix_initial=False, lower=0, ref=altitude_ref,
-            defect_ref=altitude_ref, units=units,
-            rate_source=Dynamic.Mission.ALTITUDE_RATE)
+            Dynamic.Mission.ALTITUDE,
+            fix_initial=False,
+            lower=0,
+            ref=altitude_ref,
+            defect_ref=altitude_ref,
+            units=units,
+            rate_source=Dynamic.Mission.ALTITUDE_RATE,
+        )
 
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.Mission.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
-            defect_ref=max_velocity, units=units, upper=max_velocity,
-            rate_source=Dynamic.Mission.VELOCITY_RATE)
+            Dynamic.Atmosphere.VELOCITY,
+            fix_initial=False,
+            lower=0,
+            ref=max_velocity,
+            defect_ref=max_velocity,
+            units=units,
+            upper=max_velocity,
+            rate_source=Dynamic.Atmosphere.VELOCITY_RATE,
+        )
 
         flight_path_angle_ref, units = user_options.get_item('flight_path_angle_ref')
 
         phase.add_state(
-            Dynamic.Mission.FLIGHT_PATH_ANGLE, fix_initial=False, lower=0,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE,
+            fix_initial=False,
+            lower=0,
             ref=flight_path_angle_ref,
-            defect_ref=flight_path_angle_ref, units=units,
-            rate_source=Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE)
+            defect_ref=flight_path_angle_ref,
+            units=units,
+            rate_source=Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
+        )
 
         phase.add_state(
-            Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
-            rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            targets=Dynamic.Mission.MASS,
+            Dynamic.Vehicle.MASS,
+            fix_initial=False,
+            fix_final=False,
+            lower=0.0,
+            upper=1e9,
+            ref=5e4,
+            defect_ref=5e4,
+            units='kg',
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            targets=Dynamic.Vehicle.MASS,
         )
 
         phase.add_control(
-            Dynamic.Mission.THROTTLE,
-            targets=Dynamic.Mission.THROTTLE, units='unitless',
+            Dynamic.Vehicle.Propulsion.THROTTLE,
+            targets=Dynamic.Vehicle.Propulsion.THROTTLE, units='unitless',
             opt=False
         )
 
@@ -1090,12 +1171,12 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
             ref=angle_of_attack_ref)
 
         phase.add_timeseries_output(
-            Dynamic.Mission.DRAG, output_name=Dynamic.Mission.DRAG, units='lbf'
+            Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf'
         )
 
         phase.add_timeseries_output(
-            Dynamic.Mission.THRUST_TOTAL,
-            output_name=Dynamic.Mission.THRUST_TOTAL, units='lbf'
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf'
         )
 
         final_altitude, units = user_options.get_item('mic_altitude')
@@ -1106,7 +1187,13 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
         h = final_altitude + airport_altitude
 
         phase.add_boundary_constraint(
-            Dynamic.Mission.ALTITUDE, loc='final', equals=h, ref=h, units=units, linear=True)
+            Dynamic.Mission.ALTITUDE,
+            loc='final',
+            equals=h,
+            ref=h,
+            units=units,
+            linear=True,
+        )
 
         phase.add_boundary_constraint(
             'v_over_v_stall', loc='final', lower=1.25, ref=1.25)
@@ -1160,7 +1247,8 @@ TakeoffObstacleToMicP2._add_initial_guess_meta_data(
 TakeoffObstacleToMicP2._add_initial_guess_meta_data(InitialGuessState('altitude'))
 
 TakeoffObstacleToMicP2._add_initial_guess_meta_data(
-    InitialGuessState(Dynamic.Mission.FLIGHT_PATH_ANGLE))
+    InitialGuessState(Dynamic.Mission.FLIGHT_PATH_ANGLE)
+)
 
 
 @_init_initial_guess_meta_data
@@ -1277,35 +1365,56 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
         altitude_ref, units = user_options.get_item('altitude_ref')
 
         phase.add_state(
-            Dynamic.Mission.ALTITUDE, fix_initial=False, lower=0, ref=altitude_ref,
-            defect_ref=altitude_ref, units=units,
-            rate_source=Dynamic.Mission.ALTITUDE_RATE)
+            Dynamic.Mission.ALTITUDE,
+            fix_initial=False,
+            lower=0,
+            ref=altitude_ref,
+            defect_ref=altitude_ref,
+            units=units,
+            rate_source=Dynamic.Mission.ALTITUDE_RATE,
+        )
 
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.Mission.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
-            defect_ref=max_velocity, units=units, upper=max_velocity,
-            rate_source=Dynamic.Mission.VELOCITY_RATE)
+            Dynamic.Atmosphere.VELOCITY,
+            fix_initial=False,
+            lower=0,
+            ref=max_velocity,
+            defect_ref=max_velocity,
+            units=units,
+            upper=max_velocity,
+            rate_source=Dynamic.Atmosphere.VELOCITY_RATE,
+        )
 
         flight_path_angle_ref, units = user_options.get_item('flight_path_angle_ref')
 
         phase.add_state(
-            Dynamic.Mission.FLIGHT_PATH_ANGLE, fix_initial=False, lower=0,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE,
+            fix_initial=False,
+            lower=0,
             ref=flight_path_angle_ref,
-            defect_ref=flight_path_angle_ref, units=units,
-            rate_source=Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE)
+            defect_ref=flight_path_angle_ref,
+            units=units,
+            rate_source=Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
+        )
 
         phase.add_state(
-            Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
-            rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            targets=Dynamic.Mission.MASS,
+            Dynamic.Vehicle.MASS,
+            fix_initial=False,
+            fix_final=False,
+            lower=0.0,
+            upper=1e9,
+            ref=5e4,
+            defect_ref=5e4,
+            units='kg',
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            targets=Dynamic.Vehicle.MASS,
         )
 
         phase.add_control(
-            Dynamic.Mission.THROTTLE,
-            targets=Dynamic.Mission.THROTTLE, units='unitless',
+            Dynamic.Vehicle.Propulsion.THROTTLE,
+            targets=Dynamic.Vehicle.Propulsion.THROTTLE, units='unitless',
             opt=False
         )
 
@@ -1319,12 +1428,12 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
             ref=angle_of_attack_ref)
 
         phase.add_timeseries_output(
-            Dynamic.Mission.DRAG, output_name=Dynamic.Mission.DRAG, units='lbf'
+            Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf'
         )
 
         phase.add_timeseries_output(
-            Dynamic.Mission.THRUST_TOTAL,
-            output_name=Dynamic.Mission.THRUST_TOTAL, units='lbf'
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf'
         )
 
         # start engine cutback phase at this range, where this phase ends
@@ -1390,7 +1499,8 @@ TakeoffMicP2ToEngineCutback._add_initial_guess_meta_data(
 TakeoffMicP2ToEngineCutback._add_initial_guess_meta_data(InitialGuessState('altitude'))
 
 TakeoffMicP2ToEngineCutback._add_initial_guess_meta_data(
-    InitialGuessState(Dynamic.Mission.FLIGHT_PATH_ANGLE))
+    InitialGuessState(Dynamic.Mission.FLIGHT_PATH_ANGLE)
+)
 
 
 @_init_initial_guess_meta_data
@@ -1502,35 +1612,56 @@ class TakeoffEngineCutback(PhaseBuilderBase):
         altitude_ref, units = user_options.get_item('altitude_ref')
 
         phase.add_state(
-            Dynamic.Mission.ALTITUDE, fix_initial=False, lower=0, ref=altitude_ref,
-            defect_ref=altitude_ref, units=units,
-            rate_source=Dynamic.Mission.ALTITUDE_RATE)
+            Dynamic.Mission.ALTITUDE,
+            fix_initial=False,
+            lower=0,
+            ref=altitude_ref,
+            defect_ref=altitude_ref,
+            units=units,
+            rate_source=Dynamic.Mission.ALTITUDE_RATE,
+        )
 
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.Mission.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
-            defect_ref=max_velocity, units=units, upper=max_velocity,
-            rate_source=Dynamic.Mission.VELOCITY_RATE)
+            Dynamic.Atmosphere.VELOCITY,
+            fix_initial=False,
+            lower=0,
+            ref=max_velocity,
+            defect_ref=max_velocity,
+            units=units,
+            upper=max_velocity,
+            rate_source=Dynamic.Atmosphere.VELOCITY_RATE,
+        )
 
         flight_path_angle_ref, units = user_options.get_item('flight_path_angle_ref')
 
         phase.add_state(
-            Dynamic.Mission.FLIGHT_PATH_ANGLE, fix_initial=False, lower=0,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE,
+            fix_initial=False,
+            lower=0,
             ref=flight_path_angle_ref,
-            defect_ref=flight_path_angle_ref, units=units,
-            rate_source=Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE)
+            defect_ref=flight_path_angle_ref,
+            units=units,
+            rate_source=Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
+        )
 
         phase.add_state(
-            Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
-            rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            targets=Dynamic.Mission.MASS,
+            Dynamic.Vehicle.MASS,
+            fix_initial=False,
+            fix_final=False,
+            lower=0.0,
+            upper=1e9,
+            ref=5e4,
+            defect_ref=5e4,
+            units='kg',
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            targets=Dynamic.Vehicle.MASS,
         )
 
         phase.add_control(
-            Dynamic.Mission.THROTTLE,
-            targets=Dynamic.Mission.THROTTLE, units='unitless',
+            Dynamic.Vehicle.Propulsion.THROTTLE,
+            targets=Dynamic.Vehicle.Propulsion.THROTTLE, units='unitless',
             opt=False
         )
 
@@ -1544,12 +1675,12 @@ class TakeoffEngineCutback(PhaseBuilderBase):
             ref=angle_of_attack_ref)
 
         phase.add_timeseries_output(
-            Dynamic.Mission.DRAG, output_name=Dynamic.Mission.DRAG, units='lbf'
+            Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf'
         )
 
         phase.add_timeseries_output(
-            Dynamic.Mission.THRUST_TOTAL,
-            output_name=Dynamic.Mission.THRUST_TOTAL, units='lbf'
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf'
         )
 
         phase.add_boundary_constraint(
@@ -1598,7 +1729,8 @@ TakeoffEngineCutback._add_initial_guess_meta_data(
 TakeoffEngineCutback._add_initial_guess_meta_data(InitialGuessState('altitude'))
 
 TakeoffEngineCutback._add_initial_guess_meta_data(
-    InitialGuessState(Dynamic.Mission.FLIGHT_PATH_ANGLE))
+    InitialGuessState(Dynamic.Mission.FLIGHT_PATH_ANGLE)
+)
 
 
 @_init_initial_guess_meta_data
@@ -1715,35 +1847,56 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilderBase):
         altitude_ref, units = user_options.get_item('altitude_ref')
 
         phase.add_state(
-            Dynamic.Mission.ALTITUDE, fix_initial=False, lower=0, ref=altitude_ref,
-            defect_ref=altitude_ref, units=units,
-            rate_source=Dynamic.Mission.ALTITUDE_RATE)
+            Dynamic.Mission.ALTITUDE,
+            fix_initial=False,
+            lower=0,
+            ref=altitude_ref,
+            defect_ref=altitude_ref,
+            units=units,
+            rate_source=Dynamic.Mission.ALTITUDE_RATE,
+        )
 
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.Mission.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
-            defect_ref=max_velocity, units=units, upper=max_velocity,
-            rate_source=Dynamic.Mission.VELOCITY_RATE)
+            Dynamic.Atmosphere.VELOCITY,
+            fix_initial=False,
+            lower=0,
+            ref=max_velocity,
+            defect_ref=max_velocity,
+            units=units,
+            upper=max_velocity,
+            rate_source=Dynamic.Atmosphere.VELOCITY_RATE,
+        )
 
         flight_path_angle_ref, units = user_options.get_item('flight_path_angle_ref')
 
         phase.add_state(
-            Dynamic.Mission.FLIGHT_PATH_ANGLE, fix_initial=False, lower=0,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE,
+            fix_initial=False,
+            lower=0,
             ref=flight_path_angle_ref,
-            defect_ref=flight_path_angle_ref, units=units,
-            rate_source=Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE)
+            defect_ref=flight_path_angle_ref,
+            units=units,
+            rate_source=Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
+        )
 
         phase.add_state(
-            Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
-            rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            targets=Dynamic.Mission.MASS,
+            Dynamic.Vehicle.MASS,
+            fix_initial=False,
+            fix_final=False,
+            lower=0.0,
+            upper=1e9,
+            ref=5e4,
+            defect_ref=5e4,
+            units='kg',
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            targets=Dynamic.Vehicle.MASS,
         )
 
         phase.add_control(
-            Dynamic.Mission.THROTTLE,
-            targets=Dynamic.Mission.THROTTLE, units='unitless',
+            Dynamic.Vehicle.Propulsion.THROTTLE,
+            targets=Dynamic.Vehicle.Propulsion.THROTTLE, units='unitless',
             opt=False
         )
 
@@ -1757,12 +1910,12 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilderBase):
             ref=angle_of_attack_ref)
 
         phase.add_timeseries_output(
-            Dynamic.Mission.DRAG, output_name=Dynamic.Mission.DRAG, units='lbf'
+            Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf'
         )
 
         phase.add_timeseries_output(
-            Dynamic.Mission.THRUST_TOTAL,
-            output_name=Dynamic.Mission.THRUST_TOTAL, units='lbf'
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf'
         )
 
         mic_range, units = user_options.get_item('mic_range')
@@ -1824,7 +1977,8 @@ TakeoffEngineCutbackToMicP1._add_initial_guess_meta_data(
 TakeoffEngineCutbackToMicP1._add_initial_guess_meta_data(InitialGuessState('altitude'))
 
 TakeoffEngineCutbackToMicP1._add_initial_guess_meta_data(
-    InitialGuessState(Dynamic.Mission.FLIGHT_PATH_ANGLE))
+    InitialGuessState(Dynamic.Mission.FLIGHT_PATH_ANGLE)
+)
 
 
 @_init_initial_guess_meta_data
@@ -1941,35 +2095,56 @@ class TakeoffMicP1ToClimb(PhaseBuilderBase):
         altitude_ref, units = user_options.get_item('altitude_ref')
 
         phase.add_state(
-            Dynamic.Mission.ALTITUDE, fix_initial=False, lower=0, ref=altitude_ref,
-            defect_ref=altitude_ref, units=units,
-            rate_source=Dynamic.Mission.ALTITUDE_RATE)
+            Dynamic.Mission.ALTITUDE,
+            fix_initial=False,
+            lower=0,
+            ref=altitude_ref,
+            defect_ref=altitude_ref,
+            units=units,
+            rate_source=Dynamic.Mission.ALTITUDE_RATE,
+        )
 
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.Mission.VELOCITY, fix_initial=False, lower=0, ref=max_velocity,
-            defect_ref=max_velocity, units=units, upper=max_velocity,
-            rate_source=Dynamic.Mission.VELOCITY_RATE)
+            Dynamic.Atmosphere.VELOCITY,
+            fix_initial=False,
+            lower=0,
+            ref=max_velocity,
+            defect_ref=max_velocity,
+            units=units,
+            upper=max_velocity,
+            rate_source=Dynamic.Atmosphere.VELOCITY_RATE,
+        )
 
         flight_path_angle_ref, units = user_options.get_item('flight_path_angle_ref')
 
         phase.add_state(
-            Dynamic.Mission.FLIGHT_PATH_ANGLE, fix_initial=False, lower=0,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE,
+            fix_initial=False,
+            lower=0,
             ref=flight_path_angle_ref,
-            defect_ref=flight_path_angle_ref, units=units,
-            rate_source=Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE)
+            defect_ref=flight_path_angle_ref,
+            units=units,
+            rate_source=Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
+        )
 
         phase.add_state(
-            Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
-            rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            targets=Dynamic.Mission.MASS,
+            Dynamic.Vehicle.MASS,
+            fix_initial=False,
+            fix_final=False,
+            lower=0.0,
+            upper=1e9,
+            ref=5e4,
+            defect_ref=5e4,
+            units='kg',
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            targets=Dynamic.Vehicle.MASS,
         )
 
         phase.add_control(
-            Dynamic.Mission.THROTTLE,
-            targets=Dynamic.Mission.THROTTLE, units='unitless',
+            Dynamic.Vehicle.Propulsion.THROTTLE,
+            targets=Dynamic.Vehicle.Propulsion.THROTTLE, units='unitless',
             opt=False
         )
 
@@ -1983,12 +2158,12 @@ class TakeoffMicP1ToClimb(PhaseBuilderBase):
             ref=angle_of_attack_ref)
 
         phase.add_timeseries_output(
-            Dynamic.Mission.DRAG, output_name=Dynamic.Mission.DRAG, units='lbf'
+            Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf'
         )
 
         phase.add_timeseries_output(
-            Dynamic.Mission.THRUST_TOTAL,
-            output_name=Dynamic.Mission.THRUST_TOTAL, units='lbf'
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf'
         )
 
         mic_range, units = user_options.get_item('mic_range')
@@ -2049,7 +2224,8 @@ TakeoffMicP1ToClimb._add_initial_guess_meta_data(
 TakeoffMicP1ToClimb._add_initial_guess_meta_data(InitialGuessState('altitude'))
 
 TakeoffMicP1ToClimb._add_initial_guess_meta_data(
-    InitialGuessState(Dynamic.Mission.FLIGHT_PATH_ANGLE))
+    InitialGuessState(Dynamic.Mission.FLIGHT_PATH_ANGLE)
+)
 
 
 @_init_initial_guess_meta_data
@@ -2158,21 +2334,33 @@ class TakeoffBrakeToAbort(PhaseBuilderBase):
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.Mission.VELOCITY, fix_initial=False, fix_final=True,
-            lower=0, ref=max_velocity, upper=max_velocity,
-            defect_ref=max_velocity, units=units,
-            rate_source=Dynamic.Mission.VELOCITY_RATE)
+            Dynamic.Atmosphere.VELOCITY,
+            fix_initial=False,
+            fix_final=True,
+            lower=0,
+            ref=max_velocity,
+            upper=max_velocity,
+            defect_ref=max_velocity,
+            units=units,
+            rate_source=Dynamic.Atmosphere.VELOCITY_RATE,
+        )
 
         phase.add_state(
-            Dynamic.Mission.MASS, fix_initial=False, fix_final=False,
-            lower=0.0, upper=1e9, ref=5e4, defect_ref=5e4, units='kg',
-            rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            targets=Dynamic.Mission.MASS,
+            Dynamic.Vehicle.MASS,
+            fix_initial=False,
+            fix_final=False,
+            lower=0.0,
+            upper=1e9,
+            ref=5e4,
+            defect_ref=5e4,
+            units='kg',
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            targets=Dynamic.Vehicle.MASS,
         )
 
         phase.add_control(
-            Dynamic.Mission.THROTTLE,
-            targets=Dynamic.Mission.THROTTLE, units='unitless',
+            Dynamic.Vehicle.Propulsion.THROTTLE,
+            targets=Dynamic.Vehicle.Propulsion.THROTTLE, units='unitless',
             opt=False
         )
 

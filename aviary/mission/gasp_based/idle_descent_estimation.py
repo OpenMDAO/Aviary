@@ -29,12 +29,12 @@ def add_descent_estimation_as_submodel(
     traj = FlexibleTraj(
         Phases=phases,
         traj_initial_state_input=[
-            Dynamic.Mission.MASS,
+            Dynamic.Vehicle.MASS,
             Dynamic.Mission.DISTANCE,
             Dynamic.Mission.ALTITUDE,
         ],
         traj_final_state_output=[
-            Dynamic.Mission.MASS,
+            Dynamic.Vehicle.MASS,
             Dynamic.Mission.DISTANCE,
             Dynamic.Mission.ALTITUDE,
         ],
@@ -143,7 +143,7 @@ def add_descent_estimation_as_submodel(
     model.set_input_defaults(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, 0)
     model.set_input_defaults(
         Aircraft.Design.OPERATING_MASS, val=0, units='lbm')
-    model.set_input_defaults('descent_traj.'+Dynamic.Mission.THROTTLE, 0)
+    model.set_input_defaults('descent_traj.' + Dynamic.Vehicle.Propulsion.THROTTLE, 0)
 
     promote_aircraft_and_mission_vars(model)
 

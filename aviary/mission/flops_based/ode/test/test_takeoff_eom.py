@@ -27,16 +27,19 @@ class TakeoffEOMTest(unittest.TestCase):
             input_keys=[
                 'angle_of_attack',
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
-                Dynamic.Mission.VELOCITY,
-                Dynamic.Mission.MASS,
-                Dynamic.Mission.LIFT,
-                Dynamic.Mission.THRUST_TOTAL,
-                Dynamic.Mission.DRAG],
+                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Vehicle.MASS,
+                Dynamic.Vehicle.LIFT,
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                Dynamic.Vehicle.DRAG,
+            ],
             output_keys=[
                 Dynamic.Mission.DISTANCE_RATE,
                 Dynamic.Mission.ALTITUDE_RATE,
-                Dynamic.Mission.VELOCITY_RATE],
-            tol=1e-2)
+                Dynamic.Atmosphere.VELOCITY_RATE,
+            ],
+            tol=1e-2,
+        )
 
     def test_case_climbing(self):
         prob = self._make_prob(climbing=True)
@@ -49,16 +52,21 @@ class TakeoffEOMTest(unittest.TestCase):
             input_keys=[
                 'angle_of_attack',
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
-                Dynamic.Mission.VELOCITY,
-                Dynamic.Mission.MASS,
-                Dynamic.Mission.LIFT,
-                Dynamic.Mission.THRUST_TOTAL,
-                Dynamic.Mission.DRAG],
+                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Vehicle.MASS,
+                Dynamic.Vehicle.LIFT,
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                Dynamic.Vehicle.DRAG,
+            ],
             output_keys=[
                 Dynamic.Mission.DISTANCE_RATE,
                 Dynamic.Mission.ALTITUDE_RATE,
-                Dynamic.Mission.VELOCITY_RATE],
-            tol=1e-2, atol=1e-9, rtol=1e-11)
+                Dynamic.Atmosphere.VELOCITY_RATE,
+            ],
+            tol=1e-2,
+            atol=1e-9,
+            rtol=1e-11,
+        )
 
     @staticmethod
     def _make_prob(climbing):
@@ -102,7 +110,7 @@ class TakeoffEOMTest(unittest.TestCase):
             "stall_speed", StallSpeed(num_nodes=2), promotes=["*"]
         )
         prob.model.set_input_defaults(
-            Dynamic.Mission.DENSITY, np.array([1, 2]), units="kg/m**3"
+            Dynamic.Atmosphere.DENSITY, np.array([1, 2]), units="kg/m**3"
         )
         prob.model.set_input_defaults(
             "area", 10, units="m**2"
@@ -136,7 +144,7 @@ class TakeoffEOMTest(unittest.TestCase):
             Dynamic.Mission.FLIGHT_PATH_ANGLE, np.array([0.612, 4.096]), units="rad"
         )
         prob.model.set_input_defaults(
-            Dynamic.Mission.VELOCITY, np.array([5.23, 2.7]), units="m/s"
+            Dynamic.Atmosphere.VELOCITY, np.array([5.23, 2.7]), units="m/s"
         )
 
         prob.setup(check=False, force_alloc_complex=True)
@@ -147,8 +155,9 @@ class TakeoffEOMTest(unittest.TestCase):
                 [4.280758, -1.56085]), tol
         )
         assert_near_equal(
-            prob[Dynamic.Mission.ALTITUDE_RATE], np.array(
-                [3.004664, -2.203122]), tol
+            prob[Dynamic.Mission.ALTITUDE_RATE],
+            np.array([3.004664, -2.203122]),
+            tol,
         )
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
@@ -168,7 +177,7 @@ class TakeoffEOMTest(unittest.TestCase):
             Dynamic.Mission.FLIGHT_PATH_ANGLE, np.array([0.0, 0.0]), units="rad"
         )
         prob.model.set_input_defaults(
-            Dynamic.Mission.VELOCITY, np.array([1.0, 2.0]), units="m/s"
+            Dynamic.Atmosphere.VELOCITY, np.array([1.0, 2.0]), units="m/s"
         )
 
         prob.setup(check=False, force_alloc_complex=True)
@@ -234,8 +243,9 @@ class TakeoffEOMTest(unittest.TestCase):
         prob.run_model()
 
         assert_near_equal(
-            prob[Dynamic.Mission.VELOCITY_RATE], np.array(
-                [100.5284, 206.6343]), tol
+            prob[Dynamic.Atmosphere.VELOCITY_RATE],
+            np.array([100.5284, 206.6343]),
+            tol,
         )
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
@@ -264,8 +274,9 @@ class TakeoffEOMTest(unittest.TestCase):
         prob.run_model()
 
         assert_near_equal(
-            prob[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE], np.array(
-                [0.3039257, 0.51269018]), tol
+            prob[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE],
+            np.array([0.3039257, 0.51269018]),
+            tol,
         )
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
@@ -283,16 +294,18 @@ class TakeoffEOMTest(unittest.TestCase):
             "sum1", SumForces(num_nodes=2, climbing=True, aviary_options=aviary_options), promotes=["*"]
         )
         prob.model.set_input_defaults(
-            Dynamic.Mission.MASS, np.array([106292, 106292]), units="lbm"
+            Dynamic.Vehicle.MASS, np.array([106292, 106292]), units="lbm"
         )
         prob.model.set_input_defaults(
-            Dynamic.Mission.DRAG, np.array([47447.13138523, 44343.01567596]), units="N"
+            Dynamic.Vehicle.DRAG, np.array([47447.13138523, 44343.01567596]), units="N"
         )
         prob.model.set_input_defaults(
-            Dynamic.Mission.LIFT, np.array([482117.47027692, 568511.57097785]), units="N"
+            Dynamic.Vehicle.LIFT,
+            np.array([482117.47027692, 568511.57097785]),
+            units="N",
         )
         prob.model.set_input_defaults(
-            Dynamic.Mission.THRUST_TOTAL, np.array([4980.3, 4102]), units="N"
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL, np.array([4980.3, 4102]), units="N"
         )
 
         prob.setup(check=False, force_alloc_complex=True)
@@ -322,16 +335,18 @@ class TakeoffEOMTest(unittest.TestCase):
             "sum2", SumForces(num_nodes=2, climbing=False, aviary_options=aviary_options), promotes=["*"]
         )
         prob.model.set_input_defaults(
-            Dynamic.Mission.MASS, np.array([106292, 106292]), units="lbm"
+            Dynamic.Vehicle.MASS, np.array([106292, 106292]), units="lbm"
         )
         prob.model.set_input_defaults(
-            Dynamic.Mission.DRAG, np.array([47447.13138523, 44343.01567596]), units="N"
+            Dynamic.Vehicle.DRAG, np.array([47447.13138523, 44343.01567596]), units="N"
         )
         prob.model.set_input_defaults(
-            Dynamic.Mission.LIFT, np.array([482117.47027692, 568511.57097785]), units="N"
+            Dynamic.Vehicle.LIFT,
+            np.array([482117.47027692, 568511.57097785]),
+            units="N",
         )
         prob.model.set_input_defaults(
-            Dynamic.Mission.THRUST_TOTAL, np.array([4980.3, 4102]), units="N"
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL, np.array([4980.3, 4102]), units="N"
         )
 
         prob.setup(check=False, force_alloc_complex=True)
@@ -359,16 +374,18 @@ class TakeoffEOMTest(unittest.TestCase):
             "climb_grad", ClimbGradientForces(num_nodes=2, aviary_options=aviary_options), promotes=["*"]
         )
         prob.model.set_input_defaults(
-            Dynamic.Mission.MASS, np.array([106292, 106292]), units="lbm"
+            Dynamic.Vehicle.MASS, np.array([106292, 106292]), units="lbm"
         )
         prob.model.set_input_defaults(
-            Dynamic.Mission.DRAG, np.array([47447.13138523, 44343.01567596]), units="N"
+            Dynamic.Vehicle.DRAG, np.array([47447.13138523, 44343.01567596]), units="N"
         )
         prob.model.set_input_defaults(
-            Dynamic.Mission.LIFT, np.array([482117.47027692, 568511.57097785]), units="N"
+            Dynamic.Vehicle.LIFT,
+            np.array([482117.47027692, 568511.57097785]),
+            units="N",
         )
         prob.model.set_input_defaults(
-            Dynamic.Mission.THRUST_TOTAL, np.array([4980.3, 4102]), units="N"
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL, np.array([4980.3, 4102]), units="N"
         )
         prob.model.set_input_defaults(
             Dynamic.Mission.FLIGHT_PATH_ANGLE, np.array([0.612, 4.096]), units="rad"

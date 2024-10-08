@@ -77,49 +77,56 @@ class TableEngineBuilder(EngineModel):
                 engine_data[:, 1] == engine_data[i, 1]) & (engine_data[:, 2] == 1.0))[0][0]
             thrust_max[i] = engine_data[index, 3]
 
-        print(Dynamic.Mission.THRUST, '--------------------------------------')
+        print(Dynamic.Vehicle.Propulsion.THRUST,
+              '--------------------------------------')
 
         # add inputs and outputs to interpolator
-        engine.add_input(Dynamic.Mission.MACH,
-                         engine_data[:, 0],
-                         units='unitless',
-                         desc='Current flight Mach number')
-        engine.add_input(Dynamic.Mission.ALTITUDE,
-                         engine_data[:, 1],
-                         units='ft',
-                         desc='Current flight altitude')
-        engine.add_input(Dynamic.Mission.THROTTLE,
+        engine.add_input(
+            Dynamic.Atmosphere.MACH,
+            engine_data[:, 0],
+            units='unitless',
+            desc='Current flight Mach number',
+        )
+        engine.add_input(
+            Dynamic.Mission.ALTITUDE,
+            engine_data[:, 1],
+            units='ft',
+            desc='Current flight altitude',
+        )
+        engine.add_input(Dynamic.Vehicle.Propulsion.THROTTLE,
                          engine_data[:, 2],
                          units='unitless',
                          desc='Current engine throttle')
-        engine.add_output(Dynamic.Mission.THRUST,
+        engine.add_output(Dynamic.Vehicle.Propulsion.THRUST,
                           engine_data[:, 3],
                           units='lbf',
                           desc='Current net thrust produced')
-        engine.add_output(Dynamic.Mission.THRUST_MAX,
+        engine.add_output(Dynamic.Vehicle.Propulsion.THRUST_MAX,
                           thrust_max,
                           units='lbf',
                           desc='Max net thrust produced')
-        engine.add_output(Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE,
+        engine.add_output(Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE,
                           -engine_data[:, 4],
                           units='lbm/s',
                           desc='Current fuel flow rate ')
-        engine.add_output(Dynamic.Mission.ELECTRIC_POWER_IN,
+        engine.add_output(Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN,
                           zeros_array,
                           units='kW',
                           desc='Current electric energy rate')
-        engine.add_output(Dynamic.Mission.NOX_RATE,
+        engine.add_output(Dynamic.Vehicle.Propulsion.NOX_RATE,
                           zeros_array,
                           units='lb/h',
                           desc='Current NOx emission rate')
-        engine.add_output(Dynamic.Mission.TEMPERATURE_T4,
-                          zeros_array,
-                          units='degR',
-                          desc='Current turbine exit temperature')
+        engine.add_output(
+            Dynamic.Vehicle.Propulsion.TEMPERATURE_T4,
+            zeros_array,
+            units='degR',
+            desc='Current turbine exit temperature',
+        )
         return engine
 
     def get_bus_variables(self):
-      # Transfer training data from pre-mission to mission
+        # Transfer training data from pre-mission to mission
         return vars_to_connect
 
     def get_controls(self, phase_name):

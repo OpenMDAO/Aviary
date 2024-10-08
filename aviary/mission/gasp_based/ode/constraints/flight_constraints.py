@@ -25,7 +25,7 @@ class FlightConstraints(om.ExplicitComponent):
         arange = np.arange(nn)
 
         self.add_input(
-            Dynamic.Mission.MASS,
+            Dynamic.Vehicle.MASS,
             val=np.ones(nn),
             units="lbm",
             desc="mass of aircraft",
@@ -35,7 +35,7 @@ class FlightConstraints(om.ExplicitComponent):
 
         add_aviary_input(
             self,
-            Dynamic.Mission.DENSITY,
+            Dynamic.Atmosphere.DENSITY,
             val=np.ones(nn),
             units="slug/ft**3",
             desc="density of air",
@@ -63,7 +63,7 @@ class FlightConstraints(om.ExplicitComponent):
         )
         add_aviary_input(
             self,
-            Dynamic.Mission.VELOCITY,
+            Dynamic.Atmosphere.VELOCITY,
             val=np.ones(nn),
             units="ft/s",
             desc="true airspeed",
@@ -85,7 +85,11 @@ class FlightConstraints(om.ExplicitComponent):
         self.add_output("TAS_min", val=np.zeros(nn), units="ft/s")
 
         self.declare_partials(
-            "theta", [Dynamic.Mission.FLIGHT_PATH_ANGLE, "alpha"], rows=arange, cols=arange)
+            "theta",
+            [Dynamic.Mission.FLIGHT_PATH_ANGLE, "alpha"],
+            rows=arange,
+            cols=arange,
+        )
         self.declare_partials(
             "theta",
             [
@@ -95,10 +99,10 @@ class FlightConstraints(om.ExplicitComponent):
         self.declare_partials(
             "TAS_violation",
             [
-                Dynamic.Mission.MASS,
-                Dynamic.Mission.DENSITY,
+                Dynamic.Vehicle.MASS,
+                Dynamic.Atmosphere.DENSITY,
                 "CL_max",
-                Dynamic.Mission.VELOCITY,
+                Dynamic.Atmosphere.VELOCITY,
             ],
             rows=arange,
             cols=arange,
@@ -111,7 +115,7 @@ class FlightConstraints(om.ExplicitComponent):
         )
         self.declare_partials(
             "TAS_min",
-            [Dynamic.Mission.MASS, Dynamic.Mission.DENSITY, "CL_max"],
+            [Dynamic.Vehicle.MASS, Dynamic.Atmosphere.DENSITY, "CL_max"],
             rows=arange,
             cols=arange,
         )
@@ -124,14 +128,14 @@ class FlightConstraints(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
 
-        weight = inputs[Dynamic.Mission.MASS] * GRAV_ENGLISH_LBM
+        weight = inputs[Dynamic.Vehicle.MASS] * GRAV_ENGLISH_LBM
         wing_area = inputs[Aircraft.Wing.AREA]
-        rho = inputs[Dynamic.Mission.DENSITY]
+        rho = inputs[Dynamic.Atmosphere.DENSITY]
         CL_max = inputs["CL_max"]
         gamma = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
         i_wing = inputs[Aircraft.Wing.INCIDENCE]
         alpha = inputs["alpha"]
-        TAS = inputs[Dynamic.Mission.VELOCITY]
+        TAS = inputs[Dynamic.Atmosphere.VELOCITY]
 
         V_stall = (2 * weight / (wing_area * rho * CL_max)) ** 0.5  # stall speed
         TAS_min = (
@@ -144,39 +148,39 @@ class FlightConstraints(om.ExplicitComponent):
 
     def compute_partials(self, inputs, J):
 
-        weight = inputs[Dynamic.Mission.MASS] * GRAV_ENGLISH_LBM
+        weight = inputs[Dynamic.Vehicle.MASS] * GRAV_ENGLISH_LBM
         wing_area = inputs[Aircraft.Wing.AREA]
-        rho = inputs[Dynamic.Mission.DENSITY]
+        rho = inputs[Dynamic.Atmosphere.DENSITY]
         CL_max = inputs["CL_max"]
         gamma = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
         i_wing = inputs[Aircraft.Wing.INCIDENCE]
         alpha = inputs["alpha"]
-        TAS = inputs[Dynamic.Mission.VELOCITY]
+        TAS = inputs[Dynamic.Atmosphere.VELOCITY]
 
         J["theta", Dynamic.Mission.FLIGHT_PATH_ANGLE] = 1
         J["theta", "alpha"] = 1
         J["theta", Aircraft.Wing.INCIDENCE] = -1
 
-        J["TAS_violation", Dynamic.Mission.MASS] = (
+        J["TAS_violation", Dynamic.Vehicle.MASS] = (
             1.1 * 0.5 * (2 / (wing_area * rho * CL_max)) ** 0.5 *
             weight ** (-0.5) * GRAV_ENGLISH_LBM
         )
-        J["TAS_violation", Dynamic.Mission.DENSITY] = (
+        J["TAS_violation", Dynamic.Atmosphere.DENSITY] = (
             1.1 * (2 * weight / (wing_area * CL_max)) ** 0.5 * (-0.5) * rho ** (-1.5)
         )
         J["TAS_violation", "CL_max"] = (
             1.1 * (2 * weight / (wing_area * rho)) ** 0.5 * (-0.5) * CL_max ** (-1.5)
         )
-        J["TAS_violation", Dynamic.Mission.VELOCITY] = -1
+        J["TAS_violation", Dynamic.Atmosphere.VELOCITY] = -1
         J["TAS_violation", Aircraft.Wing.AREA] = (
             1.1 * (2 * weight / (rho * CL_max)) ** 0.5 * (-0.5) * wing_area ** (-1.5)
         )
 
-        J["TAS_min", Dynamic.Mission.MASS] = 1.1 * (
+        J["TAS_min", Dynamic.Vehicle.MASS] = 1.1 * (
             0.5 * (2 / (wing_area * rho * CL_max)) ** 0.5 *
             weight ** (-0.5) * GRAV_ENGLISH_LBM
         )
-        J["TAS_min", Dynamic.Mission.DENSITY] = 1.1 * (
+        J["TAS_min", Dynamic.Atmosphere.DENSITY] = 1.1 * (
             (2 * weight / (wing_area * CL_max)) ** 0.5 * (-0.5) * rho ** (-1.5)
         )
         J["TAS_min", "CL_max"] = 1.1 * (
@@ -193,21 +197,20 @@ class ClimbAtTopOfClimb(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input(Dynamic.Mission.VELOCITY, units="ft/s", val=-200)
-        self.add_input(
-            Dynamic.Mission.FLIGHT_PATH_ANGLE, units="rad", val=0.)
+        self.add_input(Dynamic.Atmosphere.VELOCITY, units="ft/s", val=-200)
+        self.add_input(Dynamic.Mission.FLIGHT_PATH_ANGLE, units="rad", val=0.0)
         self.add_output("ROC", units="ft/s")
         self.declare_partials("*", "*")
 
     def compute(self, inputs, outputs):
-        outputs["ROC"] = inputs[Dynamic.Mission.VELOCITY] * np.sin(
+        outputs["ROC"] = inputs[Dynamic.Atmosphere.VELOCITY] * np.sin(
             inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
         )
 
     def compute_partials(self, inputs, J):
-        J["ROC", Dynamic.Mission.VELOCITY] = np.sin(
+        J["ROC", Dynamic.Atmosphere.VELOCITY] = np.sin(
             inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
         )
         J["ROC", Dynamic.Mission.FLIGHT_PATH_ANGLE] = inputs[
-            Dynamic.Mission.VELOCITY
+            Dynamic.Atmosphere.VELOCITY
         ] * np.cos(inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE])

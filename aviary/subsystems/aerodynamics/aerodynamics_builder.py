@@ -173,37 +173,46 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
         if self.code_origin is FLOPS:
             if method == 'computed':
-                promotes = [Dynamic.Mission.STATIC_PRESSURE,
-                            Dynamic.Mission.MACH,
-                            Dynamic.Mission.TEMPERATURE,
-                            Dynamic.Mission.MASS,
-                            'aircraft:*', 'mission:*']
+                promotes = [
+                    Dynamic.Atmosphere.STATIC_PRESSURE,
+                    Dynamic.Atmosphere.MACH,
+                    Dynamic.Atmosphere.TEMPERATURE,
+                    Dynamic.Vehicle.MASS,
+                    'aircraft:*',
+                    'mission:*',
+                ]
 
             elif method == 'solved_alpha':
-                promotes = [Dynamic.Mission.ALTITUDE,
-                            Dynamic.Mission.MACH,
-                            Dynamic.Mission.MASS,
-                            Dynamic.Mission.STATIC_PRESSURE,
-                            'aircraft:*']
+                promotes = [
+                    Dynamic.Mission.ALTITUDE,
+                    Dynamic.Atmosphere.MACH,
+                    Dynamic.Vehicle.MASS,
+                    Dynamic.Atmosphere.STATIC_PRESSURE,
+                    'aircraft:*',
+                ]
 
             elif method == 'low_speed':
-                promotes = ['angle_of_attack',
-                            Dynamic.Mission.ALTITUDE,
-                            Dynamic.Mission.FLIGHT_PATH_ANGLE,
-                            Mission.Takeoff.DRAG_COEFFICIENT_MIN,
-                            Aircraft.Wing.ASPECT_RATIO,
-                            Aircraft.Wing.HEIGHT,
-                            Aircraft.Wing.SPAN,
-                            Dynamic.Mission.DYNAMIC_PRESSURE,
-                            Aircraft.Wing.AREA]
+                promotes = [
+                    'angle_of_attack',
+                    Dynamic.Mission.ALTITUDE,
+                    Dynamic.Mission.FLIGHT_PATH_ANGLE,
+                    Mission.Takeoff.DRAG_COEFFICIENT_MIN,
+                    Aircraft.Wing.ASPECT_RATIO,
+                    Aircraft.Wing.HEIGHT,
+                    Aircraft.Wing.SPAN,
+                    Dynamic.Atmosphere.DYNAMIC_PRESSURE,
+                    Aircraft.Wing.AREA,
+                ]
 
             elif method == 'tabular':
-                promotes = [Dynamic.Mission.ALTITUDE,
-                            Dynamic.Mission.MACH,
-                            Dynamic.Mission.MASS,
-                            Dynamic.Mission.VELOCITY,
-                            Dynamic.Mission.DENSITY,
-                            'aircraft:*']
+                promotes = [
+                    Dynamic.Mission.ALTITUDE,
+                    Dynamic.Atmosphere.MACH,
+                    Dynamic.Vehicle.MASS,
+                    Dynamic.Atmosphere.VELOCITY,
+                    Dynamic.Atmosphere.DENSITY,
+                    'aircraft:*',
+                ]
 
             else:
                 raise ValueError('FLOPS-based aero method is not one of the following: '
@@ -234,24 +243,25 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
         promotes = ['*']
 
         if self.code_origin is FLOPS:
-            promotes = [Dynamic.Mission.DRAG, Dynamic.Mission.LIFT]
+            promotes = [Dynamic.Vehicle.DRAG, Dynamic.Vehicle.LIFT]
 
         elif self.code_origin is GASP:
             if method == 'low_speed':
-                promotes = [Dynamic.Mission.DRAG,
-                            Dynamic.Mission.LIFT,
-                            'CL', 'CD', 'flap_factor', 'gear_factor']
+                promotes = [
+                    Dynamic.Vehicle.DRAG,
+                    Dynamic.Vehicle.LIFT,
+                    'CL',
+                    'CD',
+                    'flap_factor',
+                    'gear_factor',
+                ]
 
             elif method == 'cruise':
                 if 'output_alpha' in kwargs:
                     if kwargs['output_alpha']:
-                        promotes = [Dynamic.Mission.DRAG,
-                                    Dynamic.Mission.LIFT,
-                                    'alpha']
+                        promotes = [Dynamic.Vehicle.DRAG, Dynamic.Vehicle.LIFT, 'alpha']
                 else:
-                    promotes = [Dynamic.Mission.DRAG,
-                                Dynamic.Mission.LIFT,
-                                'CL_max']
+                    promotes = [Dynamic.Vehicle.DRAG, Dynamic.Vehicle.LIFT, 'CL_max']
 
             else:
                 raise ValueError('GASP-based aero method is not one of the following: '

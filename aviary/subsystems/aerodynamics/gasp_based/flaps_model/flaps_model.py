@@ -54,8 +54,8 @@ class FlapsGroup(om.Group):
             "CLmaxCalculation",
             CLmaxCalculation(),
             promotes_inputs=[
-                Dynamic.Mission.SPEED_OF_SOUND,
-                Dynamic.Mission.STATIC_PRESSURE,
+                Dynamic.Atmosphere.SPEED_OF_SOUND,
+                Dynamic.Atmosphere.STATIC_PRESSURE,
                 "kinematic_viscosity",
                 "VLAM1",
                 "VLAM2",
@@ -72,10 +72,10 @@ class FlapsGroup(om.Group):
                 "VLAM13",
                 "VLAM14",
                 "fus_lift",
-                Dynamic.Mission.TEMPERATURE,
+                Dynamic.Atmosphere.TEMPERATURE,
             ]
             + ["aircraft:*"],
-            promotes_outputs=["CL_max", Dynamic.Mission.MACH, "reynolds"],
+            promotes_outputs=["CL_max", Dynamic.Atmosphere.MACH, "reynolds"],
         )
 
         self.add_subsystem(
@@ -86,7 +86,7 @@ class FlapsGroup(om.Group):
                 "flap_defl",
                 "slat_defl_ratio",
                 "reynolds",
-                Dynamic.Mission.MACH,
+                Dynamic.Atmosphere.MACH,
                 "body_to_span_ratio",
                 "chord_to_body_ratio",
             ]

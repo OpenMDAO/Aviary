@@ -15,12 +15,14 @@ class RangeRate(om.ExplicitComponent):
             Dynamic.Mission.ALTITUDE_RATE,
             val=np.ones(nn),
             desc='climb rate',
-            units='m/s')
+            units='m/s',
+        )
         self.add_input(
-            Dynamic.Mission.VELOCITY,
+            Dynamic.Atmosphere.VELOCITY,
             val=np.ones(nn),
             desc='current velocity',
-            units='m/s')
+            units='m/s',
+        )
         self.add_output(
             Dynamic.Mission.DISTANCE_RATE,
             val=np.ones(nn),
@@ -29,7 +31,7 @@ class RangeRate(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         climb_rate = inputs[Dynamic.Mission.ALTITUDE_RATE]
-        velocity = inputs[Dynamic.Mission.VELOCITY]
+        velocity = inputs[Dynamic.Atmosphere.VELOCITY]
         climb_rate_2 = climb_rate**2
         velocity_2 = velocity**2
         if (climb_rate_2 >= velocity_2).any():
@@ -40,14 +42,19 @@ class RangeRate(om.ExplicitComponent):
     def setup_partials(self):
         arange = np.arange(self.options['num_nodes'])
         self.declare_partials(
-            Dynamic.Mission.DISTANCE_RATE, [
-                Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.VELOCITY], rows=arange, cols=arange)
+            Dynamic.Mission.DISTANCE_RATE,
+            [Dynamic.Mission.ALTITUDE_RATE, Dynamic.Atmosphere.VELOCITY],
+            rows=arange,
+            cols=arange,
+        )
 
     def compute_partials(self, inputs, J):
         climb_rate = inputs[Dynamic.Mission.ALTITUDE_RATE]
-        velocity = inputs[Dynamic.Mission.VELOCITY]
+        velocity = inputs[Dynamic.Atmosphere.VELOCITY]
 
-        J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Mission.ALTITUDE_RATE] = -climb_rate / \
-            (velocity**2 - climb_rate**2)**0.5
-        J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Mission.VELOCITY] = velocity / \
-            (velocity**2 - climb_rate**2)**0.5
+        J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Mission.ALTITUDE_RATE] = (
+            -climb_rate / (velocity**2 - climb_rate**2) ** 0.5
+        )
+        J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Atmosphere.VELOCITY] = (
+            velocity / (velocity**2 - climb_rate**2) ** 0.5
+        )

@@ -87,10 +87,10 @@ class GearboxBuilder(SubsystemBuilderBase):
 
     def get_outputs(self):
         return [
-            Dynamic.Mission.RPM_GEARBOX,
-            Dynamic.Mission.SHAFT_POWER_GEARBOX,
-            Dynamic.Mission.SHAFT_POWER_MAX_GEARBOX,
-            Dynamic.Mission.TORQUE_GEARBOX,
+            Dynamic.Vehicle.Propulsion.RPM_GEARBOX,
+            Dynamic.Vehicle.Propulsion.SHAFT_POWER_GEARBOX,
+            Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX_GEARBOX,
+            Dynamic.Vehicle.Propulsion.TORQUE_GEARBOX,
             Mission.Constraints.SHAFT_POWER_RESIDUAL,
         ]
 

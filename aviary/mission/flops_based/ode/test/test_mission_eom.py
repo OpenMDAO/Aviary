@@ -17,22 +17,34 @@ class MissionEOMTest(unittest.TestCase):
             "mission", MissionEOM(num_nodes=3), promotes=["*"]
         )
         prob.model.set_input_defaults(
-            Dynamic.Mission.MASS, np.array([81796.1389890711, 74616.9849763798, 65193.7423491884]), units="kg"
+            Dynamic.Vehicle.MASS,
+            np.array([81796.1389890711, 74616.9849763798, 65193.7423491884]),
+            units="kg",
         )
         prob.model.set_input_defaults(
-            Dynamic.Mission.DRAG, np.array([9978.32211087097, 8769.90342254821, 7235.03338269778]), units="lbf"
+            Dynamic.Vehicle.DRAG,
+            np.array([9978.32211087097, 8769.90342254821, 7235.03338269778]),
+            units="lbf",
         )
         prob.model.set_input_defaults(
-            Dynamic.Mission.ALTITUDE_RATE, np.array([29.8463233754212, -5.69941245767868E-09, -4.32644785970493]), units="ft/s"
+            Dynamic.Mission.ALTITUDE_RATE,
+            np.array([29.8463233754212, -5.69941245767868e-09, -4.32644785970493]),
+            units="ft/s",
         )
         prob.model.set_input_defaults(
-            Dynamic.Mission.VELOCITY_RATE, np.array([0.558739800813549, 3.33665416459715E-17, -0.38372209277242]), units="m/s**2"
+            Dynamic.Atmosphere.VELOCITY_RATE,
+            np.array([0.558739800813549, 3.33665416459715e-17, -0.38372209277242]),
+            units="m/s**2",
         )
         prob.model.set_input_defaults(
-            Dynamic.Mission.VELOCITY, np.array([164.029012458452, 232.775306059091, 117.638805929526]), units="m/s"
+            Dynamic.Atmosphere.VELOCITY,
+            np.array([164.029012458452, 232.775306059091, 117.638805929526]),
+            units="m/s",
         )
         prob.model.set_input_defaults(
-            Dynamic.Mission.THRUST_MAX_TOTAL, np.array([40799.6009633346, 11500.32, 42308.2709683461]), units="lbf"
+            Dynamic.Vehicle.Propulsion.THRUST_MAX_TOTAL,
+            np.array([40799.6009633346, 11500.32, 42308.2709683461]),
+            units="lbf",
         )
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -44,8 +56,11 @@ class MissionEOMTest(unittest.TestCase):
         tol = 1e-6
         self.prob.run_model()
 
-        assert_near_equal(self.prob.get_val(Dynamic.Mission.ALTITUDE_RATE_MAX, units='ft/min'),
-                          np.array([3679.0525544843, 760.55416759, 6557.07891846677]), tol)
+        assert_near_equal(
+            self.prob.get_val(Dynamic.Vehicle.ALTITUDE_RATE_MAX, units='ft/min'),
+            np.array([3679.0525544843, 760.55416759, 6557.07891846677]),
+            tol,
+        )
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-12)

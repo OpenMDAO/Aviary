@@ -95,10 +95,10 @@ class UnsteadySolvedODE(BaseODE):
             subsys=Atmosphere(num_nodes=nn, output_dsos_dh=True),
             promotes_inputs=[Dynamic.Mission.ALTITUDE],
             promotes_outputs=[
-                Dynamic.Mission.DENSITY,
-                Dynamic.Mission.SPEED_OF_SOUND,
-                Dynamic.Mission.TEMPERATURE,
-                Dynamic.Mission.STATIC_PRESSURE,
+                Dynamic.Atmosphere.DENSITY,
+                Dynamic.Atmosphere.SPEED_OF_SOUND,
+                Dynamic.Atmosphere.TEMPERATURE,
+                Dynamic.Atmosphere.STATIC_PRESSURE,
                 "viscosity",
                 "drhos_dh",
                 "dsos_dh",
@@ -132,10 +132,10 @@ class UnsteadySolvedODE(BaseODE):
 
         throttle_balance_comp = om.BalanceComp()
         throttle_balance_comp.add_balance(
-            Dynamic.Mission.THROTTLE,
+            Dynamic.Vehicle.Propulsion.THROTTLE,
             units="unitless",
             val=np.ones(nn) * 0.5,
-            lhs_name=Dynamic.Mission.THRUST_TOTAL,
+            lhs_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
             rhs_name="thrust_req",
             eq_units="lbf",
             normalize=False,
@@ -195,8 +195,8 @@ class UnsteadySolvedODE(BaseODE):
 
         input_list = [
             '*',
-            (Dynamic.Mission.THRUST_TOTAL, "thrust_req"),
-            Dynamic.Mission.VELOCITY,
+            (Dynamic.Vehicle.Propulsion.THRUST_TOTAL, "thrust_req"),
+            Dynamic.Atmosphere.VELOCITY,
         ]
         control_iter_group.add_subsystem("eom", subsys=eom_comp,
                                          promotes_inputs=input_list,
@@ -232,38 +232,46 @@ class UnsteadySolvedODE(BaseODE):
         # control_iter_group.nonlinear_solver.linesearch = om.BoundsEnforceLS()
         control_iter_group.linear_solver = om.DirectSolver(assemble_jac=True)
 
-        self.add_subsystem("mass_rate",
-                           om.ExecComp("dmass_dr = fuelflow * dt_dr",
-                                       fuelflow={"units": "lbm/s", "shape": nn},
-                                       dt_dr={"units": "s/distance_units", "shape": nn},
-                                       dmass_dr={"units": "lbm/distance_units",
-                                                 "shape": nn,
-                                                 "tags": ['dymos.state_rate_source:mass',
-                                                          'dymos.state_units:lbm']},
-                                       has_diag_partials=True),
-                           promotes_inputs=[
-                               ("fuelflow", Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL), "dt_dr"],
-                           promotes_outputs=["dmass_dr"])
+        self.add_subsystem(
+            "mass_rate",
+            om.ExecComp(
+                "dmass_dr = fuelflow * dt_dr",
+                fuelflow={"units": "lbm/s", "shape": nn},
+                dt_dr={"units": "s/distance_units", "shape": nn},
+                dmass_dr={
+                    "units": "lbm/distance_units",
+                    "shape": nn,
+                    "tags": ['dymos.state_rate_source:mass', 'dymos.state_units:lbm'],
+                },
+                has_diag_partials=True,
+            ),
+            promotes_inputs=[
+                ("fuelflow", Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL),
+                "dt_dr",
+            ],
+            promotes_outputs=["dmass_dr"],
+        )
 
         if self.options["include_param_comp"]:
             ParamPort.set_default_vals(self)
 
         onn = np.ones(nn)
-        self.set_input_defaults(name=Dynamic.Mission.DENSITY,
-                                val=rho_sl * onn, units="slug/ft**3")
         self.set_input_defaults(
-            name=Dynamic.Mission.SPEED_OF_SOUND,
-            val=1116.4 * onn,
-            units="ft/s")
+            name=Dynamic.Atmosphere.DENSITY, val=rho_sl * onn, units="slug/ft**3"
+        )
+        self.set_input_defaults(
+            name=Dynamic.Atmosphere.SPEED_OF_SOUND, val=1116.4 * onn, units="ft/s"
+        )
         if not self.options['ground_roll']:
             self.set_input_defaults(
-                name=Dynamic.Mission.FLIGHT_PATH_ANGLE, val=0.0 * onn, units="rad")
-        self.set_input_defaults(name=Dynamic.Mission.VELOCITY,
-                                val=250. * onn, units="kn")
+                name=Dynamic.Mission.FLIGHT_PATH_ANGLE, val=0.0 * onn, units="rad"
+            )
         self.set_input_defaults(
-            name=Dynamic.Mission.ALTITUDE,
-            val=10000. * onn,
-            units="ft")
+            name=Dynamic.Atmosphere.VELOCITY, val=250.0 * onn, units="kn"
+        )
+        self.set_input_defaults(
+            name=Dynamic.Mission.ALTITUDE, val=10000.0 * onn, units="ft"
+        )
         self.set_input_defaults(name="dh_dr", val=0. * onn, units="ft/distance_units")
         self.set_input_defaults(name="d2h_dr2", val=0. * onn,
                                 units="ft/distance_units**2")
