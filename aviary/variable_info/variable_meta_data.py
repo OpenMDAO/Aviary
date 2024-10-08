@@ -6282,22 +6282,6 @@ add_meta_data(
     desc="Atmospheric temperature at vehicle's current flight condition",
 )
 
-add_meta_data(
-    Dynamic.Atmosphere.VELOCITY,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='ft/s',
-    desc='Current velocity of the vehicle along its body axis',
-)
-
-add_meta_data(
-    Dynamic.Atmosphere.VELOCITY_RATE,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='ft/s**2',
-    desc='Current rate of change in velocity (acceleration) of the vehicle along its '
-    'body axis',
-)
 
 #  __  __   _               _
 # |  \/  | (_)             (_)
@@ -6394,6 +6378,23 @@ add_meta_data(
     units='m/s',
     desc='Specific excess power of the vehicle at current flight condition and at '
     'hypothetical maximum thrust',
+)
+
+add_meta_data(
+    Dynamic.Mission.VELOCITY,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='ft/s',
+    desc='Current velocity of the vehicle along its body axis',
+)
+
+add_meta_data(
+    Dynamic.Mission.VELOCITY_RATE,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='ft/s**2',
+    desc='Current rate of change in velocity (acceleration) of the vehicle along its '
+    'body axis',
 )
 
 #  __      __         _       _          _
