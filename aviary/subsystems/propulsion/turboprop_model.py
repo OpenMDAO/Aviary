@@ -190,6 +190,16 @@ class TurbopropModel(EngineModel):
             params.update(self.propeller_model.get_parameters())
         return params
 
+    def get_design_vars(self):
+        desvars = super().get_design_vars()  # calls from EngineModel
+        if self.shaft_power_model is not None:
+            desvars.update(self.shaft_power_model.get_design_vars())
+        if self.gearbox_model is not None:
+            desvars.update(self.gearbox_model.get_design_vars())
+        if self.propeller_model is not None:
+            desvars.update(self.propeller_model.get_design_vars())
+        return desvars
+
 
 class TurbopropMission(om.Group):
     def initialize(self):
