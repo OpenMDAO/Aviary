@@ -1510,7 +1510,7 @@ class AviaryProblem(om.Problem):
                                      ref=10000., add_constraint=True)
                     self.model.connect(
                         f'traj.{first_flight_phase_name}.states:mass',
-                        'link_climb_mass.lhs:mass',
+                        f'link_{first_flight_phase_name}_mass.lhs:mass',
                         src_indices=[0],
                         flat_src_indices=True,
                     )
