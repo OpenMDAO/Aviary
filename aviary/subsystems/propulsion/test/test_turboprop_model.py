@@ -5,7 +5,9 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from pathlib import Path
+from openmdao.utils.testing_utils import use_tempdirs
 
+from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
 from aviary.subsystems.propulsion.propeller.propeller_performance import (
     PropellerPerformance,
@@ -19,6 +21,7 @@ from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.subsystems.propulsion.motor.motor_builder import MotorBuilder
 
 
+@use_tempdirs
 class TurbopropTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
