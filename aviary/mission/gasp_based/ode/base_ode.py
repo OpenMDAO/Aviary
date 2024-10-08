@@ -2,15 +2,19 @@ import numpy as np
 
 import openmdao.api as om
 
+from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
+from aviary.mission.ode.altitude_rate import AltitudeRate
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import AnalysisScheme, AlphaModes, SpeedType
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic
-from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
-from aviary.mission.ode.altitude_rate import AltitudeRate
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class BaseODE(om.Group):
+    """
+    The base class for all GASP based ODE components.
+    """
+
     def initialize(self):
         self.options.declare("num_nodes", default=1, types=int)
         self.options.declare(
@@ -25,7 +29,6 @@ class BaseODE(om.Group):
             desc='collection of Aircraft/Mission specific options'
         )
 
-        # TODO finish description
         self.options.declare(
             'core_subsystems',
             desc='list of core subsystems'
@@ -233,6 +236,7 @@ class BaseODE(om.Group):
             )
 
     def add_atmosphere(self, nn, input_speed_type=SpeedType.TAS):
+        """Add atmosphere component"""
         self.add_subsystem(
             name='atmosphere',
             subsys=Atmosphere(num_nodes=nn, input_speed_type=input_speed_type),
@@ -240,6 +244,7 @@ class BaseODE(om.Group):
         )
 
     def add_excess_rate_comps(self, nn):
+        """Add SpecificEnergyRate and AltitudeRate components"""
         self.add_subsystem(
             name='SPECIFIC_ENERGY_RATE_EXCESS',
             subsys=SpecificEnergyRate(num_nodes=nn),

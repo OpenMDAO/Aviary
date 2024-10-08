@@ -1,17 +1,22 @@
 import openmdao.api as om
 
-from aviary.variable_info.variables import Aircraft
-
-from aviary.utils.aviary_values import AviaryValues
 from aviary.subsystems.geometry.flops_based.prep_geom import PrepGeom
 from aviary.subsystems.geometry.gasp_based.size_group import SizeGroup
+from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import LegacyCode
+from aviary.variable_info.variables import Aircraft
 
 FLOPS = LegacyCode.FLOPS
 GASP = LegacyCode.GASP
 
 
 class CombinedGeometry(om.Group):
+    """
+    Group that contains both FLOPS and GASP based pre-mission geometry components, for models that require both sets of geometry calculations.
+
+    The "code_origin_to_prioritize" flag is used to determine which method's outputs should be used if both FLOPS and  GASP methods compute the same variable.
+    """
+
     def initialize(self):
         self.options.declare(
             'aviary_options', types=AviaryValues,

@@ -7,13 +7,17 @@ from openmdao.utils.assert_utils import assert_check_partials
 from aviary.mission.gasp_based.ode.climb_ode import ClimbODE
 from aviary.mission.gasp_based.ode.params import set_params_for_unit_tests
 from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.test_utils.IO_test_util import check_prob_outputs
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
+from aviary.utils.test_utils.IO_test_util import check_prob_outputs
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class ClimbODETestCase(unittest.TestCase):
+    """
+    Test 2-degree of freedom climb ODE
+    """
+
     def setUp(self):
         self.prob = om.Problem()
 
@@ -30,7 +34,7 @@ class ClimbODETestCase(unittest.TestCase):
         )
 
     def test_start_of_climb(self):
-        """Test against GASP start of climb at 250 kts EAS, check partials"""
+        # Test against GASP start of climb at 250 kts EAS, check partials
         self.sys.options["EAS_target"] = 250
 
         self.prob.setup(check=False, force_alloc_complex=True)
@@ -68,7 +72,7 @@ class ClimbODETestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
     def test_end_of_climb(self):
-        """Test against GASP at 270 kts EAS and at cruise Mach."""
+        # Test against GASP at 270 kts EAS and at cruise Mach.
         self.sys.options["num_nodes"] = 2
         self.sys.options["EAS_target"] = 270
 

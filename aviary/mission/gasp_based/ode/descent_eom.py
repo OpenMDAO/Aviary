@@ -6,6 +6,8 @@ from aviary.variable_info.variables import Dynamic
 
 
 class DescentRates(om.ExplicitComponent):
+    """Descent rate equations of motion."""
+
     def initialize(self):
         self.options.declare("num_nodes", types=int)
 
