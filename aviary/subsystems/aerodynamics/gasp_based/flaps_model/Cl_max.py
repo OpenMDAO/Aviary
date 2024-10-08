@@ -130,7 +130,7 @@ class CLmaxCalculation(om.ExplicitComponent):
             desc="DELCLF: fuselage lift increment",
         )
         self.add_input(
-            Dynamic.Mission.KINEMATIC_VISCOSITY,
+            Dynamic.Atmosphere.KINEMATIC_VISCOSITY,
             val=0.15723e-03,
             units="ft**2/s",
             desc="XKV: kinematic viscosity",
@@ -269,7 +269,7 @@ class CLmaxCalculation(om.ExplicitComponent):
         wing_loading = inputs[Aircraft.Wing.LOADING]
         P = inputs[Dynamic.Atmosphere.STATIC_PRESSURE]
         avg_chord = inputs[Aircraft.Wing.AVERAGE_CHORD]
-        kinematic_viscosity = inputs[Dynamic.Mission.KINEMATIC_VISCOSITY]
+        kinematic_viscosity = inputs[Dynamic.Atmosphere.KINEMATIC_VISCOSITY]
         max_lift_reference = inputs[Aircraft.Wing.MAX_LIFT_REF]
         leading_lift_increment = inputs[Aircraft.Wing.SLAT_LIFT_INCREMENT_OPTIMUM]
         fus_lift = inputs["fus_lift"]

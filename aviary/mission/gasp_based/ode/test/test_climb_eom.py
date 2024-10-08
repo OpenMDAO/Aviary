@@ -92,7 +92,7 @@ class ClimbTestCase2(unittest.TestCase):
             Dynamic.Mission.DRAG, np.array([9091.517, 9091.517]), units="lbf"
         )
         prob.model.set_input_defaults(
-            Dynamic.Mission.MASS, np.array([171481, 171481]), units="lbm"
+            Dynamic.Vehicle.MASS, np.array([171481, 171481]), units="lbm"
         )
         prob.setup(check=False, force_alloc_complex=True)
 

@@ -1150,8 +1150,9 @@ class AviaryProblem(om.Problem):
                 if not self.pre_mission_info['include_takeoff']:
                     first_flight_phase_name = list(phase_info.keys())[0]
                     first_flight_phase = traj._phases[first_flight_phase_name]
-                    first_flight_phase.set_state_options(Dynamic.Mission.MASS,
-                                                         fix_initial=False)
+                    first_flight_phase.set_state_options(
+                        Dynamic.Vehicle.MASS, fix_initial=False
+                    )
 
         self.traj = traj
 

@@ -83,7 +83,8 @@ class RotationEOMTestCase2(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem("group", RotationEOM(num_nodes=2), promotes=["*"])
         prob.model.set_input_defaults(
-            Dynamic.Mission.MASS, val=175400 * np.ones(2), units="lbm")
+            Dynamic.Vehicle.MASS, val=175400 * np.ones(2), units="lbm"
+        )
         prob.model.set_input_defaults(
             Dynamic.Mission.THRUST_TOTAL, val=22000 * np.ones(2), units="lbf")
         prob.model.set_input_defaults(

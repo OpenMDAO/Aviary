@@ -425,7 +425,7 @@ class AeroGeom(om.ExplicitComponent):
             desc="Speed of sound at current altitude",
         )
         self.add_input(
-            Dynamic.Mission.KINEMATIC_VISCOSITY,
+            Dynamic.Atmosphere.KINEMATIC_VISCOSITY,
             val=1.0,
             units="ft**2/s",
             shape=nn,

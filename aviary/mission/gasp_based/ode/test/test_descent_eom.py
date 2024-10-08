@@ -95,7 +95,7 @@ class DescentTestCase2(unittest.TestCase):
             Dynamic.Mission.DRAG, np.array([7966.927, 7966.927]), units="lbf"
         )
         prob.model.set_input_defaults(
-            Dynamic.Mission.MASS, np.array([147661, 147661]), units="lbm"
+            Dynamic.Vehicle.MASS, np.array([147661, 147661]), units="lbm"
         )
         prob.model.set_input_defaults("alpha", np.array([3.2, 3.2]), units="deg")
         prob.setup(check=False, force_alloc_complex=True)
