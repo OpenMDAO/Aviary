@@ -4,6 +4,11 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 
 class ParamPort(om.ExplicitComponent):
+    """
+    Component that adds variables needed by mission systems to the OpenMDAO problem
+    This is to be replaced with curated lists in the areo and propulsion builders using
+    the get_parameters() method.
+    """
 
     param_data = {
         Aircraft.Wing.INCIDENCE: dict(units="deg", val=0),

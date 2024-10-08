@@ -11,6 +11,10 @@ from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 
 
 class LandingCalcTest(unittest.TestCase):
+    """
+    Test computation in LandingCalc class (the simplified landing)
+    """
+
     def setUp(self):
 
         self.prob = om.Problem()
@@ -77,6 +81,10 @@ class LandingCalcTest2(unittest.TestCase):
 
 
 class LandingGroupTest(unittest.TestCase):
+    """
+    Test the computation of LandingGroup
+    """
+
     def setUp(self):
 
         self.prob = om.Problem()

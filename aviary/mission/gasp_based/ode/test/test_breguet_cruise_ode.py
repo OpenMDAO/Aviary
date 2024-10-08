@@ -30,7 +30,7 @@ class CruiseODETestCase(unittest.TestCase):
         )
 
     def test_cruise(self):
-        """Test partial derivatives"""
+        # test partial derivatives
         self.prob.setup(check=False, force_alloc_complex=True)
 
         self.prob.set_val(Dynamic.Mission.MACH, [0.7, 0.7], units="unitless")

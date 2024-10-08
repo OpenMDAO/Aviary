@@ -11,6 +11,10 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class FlightConstraintTestCase(unittest.TestCase):
+    """
+    Test minimum TAS computation
+    """
+
     def setUp(self):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
