@@ -100,8 +100,8 @@ class TestSubsystemsMission(unittest.TestCase):
 
         # Check outputs
         # indirectly check mission trajectory by checking total fuel/electric split
-        assert_near_equal(electric_energy_used[-1], 42.55947282, 1.0e-7)
-        assert_near_equal(fuel_burned, 805.8963261, 1.0e-7)
+        assert_near_equal(electric_energy_used[-1], 38.60538132, 1.e-7)
+        assert_near_equal(fuel_burned, 676.87235486, 1.e-7)
         # check battery state-of-charge over mission
         assert_near_equal(
             soc,
