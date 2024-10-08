@@ -248,6 +248,10 @@ class SimuPyProblem(SimulationMixin):
                 prob.model.list_inputs(out_stream=outfile,)
             print(states)
 
+    def add_parameter(self, name, units, **kwargs):
+        self.parameters[name] = units
+        self.dim_parameters = len(self.parameters)
+
     @property
     def time(self):
         return self.prob.get_val(self.t_name)[0]
@@ -447,10 +451,10 @@ class SGMTrajBase(om.ExplicitComponent):
         self.adjoint_int_opts = DEFAULT_INTEGRATOR_OPTIONS.copy()
         self.adjoint_int_opts['nsteps'] = 5000
         self.adjoint_int_opts['name'] = "dop853"
+        self.additional_parameters = {}
 
     def add_parameter(self, name, units=None, **kwargs):
-        self.add_input('parameters:'+name, units=units)
-        self.options["param_dict"].get(name, {}).update({'units': units})
+        self.additional_parameters['parameters:'+name] = {'units': units}
 
     def setup_params(
             self,
@@ -515,7 +519,7 @@ class SGMTrajBase(om.ExplicitComponent):
             }
 
         self.traj_promote_initial_input = {
-            **self.options["param_dict"], **traj_promote_initial_input}
+            **self.options["param_dict"], **traj_promote_initial_input, **self.additional_parameters}
         for name, kwargs in self.traj_promote_initial_input.items():
             self.add_input(name, **kwargs)
 
@@ -621,7 +625,7 @@ class SGMTrajBase(om.ExplicitComponent):
         for input in self.traj_promote_initial_input.keys():
             for ode in self.ODEs:
                 try:
-                    ode.set_val(input, inputs[input])
+                    ode.set_val(input.removeprefix('parameters:'), inputs[input])
                 except KeyError:
                     if self.verbosity >= Verbosity.VERBOSE:
                         print(
