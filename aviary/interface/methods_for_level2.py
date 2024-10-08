@@ -681,12 +681,6 @@ class AviaryProblem(om.Problem):
         self.cruise_alt = self.aviary_inputs.get_val(
             Mission.Design.CRUISE_ALTITUDE, units='ft')
 
-        # Add taxi subsystem
-        self.model.add_subsystem(
-            "taxi", TaxiSegment(**(self.ode_args)),
-            promotes_inputs=['aircraft:*', 'mission:*'],
-        )
-
         if self.analysis_scheme is AnalysisScheme.COLLOCATION:
             # Add event transformation subsystem
             self.model.add_subsystem(
@@ -708,6 +702,12 @@ class AviaryProblem(om.Problem):
                 ],
                 promotes_outputs=["t_init_gear", "t_init_flaps"],
             )
+
+        # Add taxi subsystem
+        self.model.add_subsystem(
+            "taxi", TaxiSegment(**(self.ode_args)),
+            promotes_inputs=['aircraft:*', 'mission:*'],
+        )
 
         # Calculate speed at which to initiate rotation
         self.model.add_subsystem(
