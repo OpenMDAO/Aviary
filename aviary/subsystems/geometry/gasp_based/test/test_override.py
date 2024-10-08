@@ -36,17 +36,6 @@ class GASPOverrideTestCase(unittest.TestCase):
         prob.model = AviaryGroup(aviary_options=aviary_options,
                                  aviary_metadata=BaseMetaData)
 
-        # pre_mission = CorePreMission(aviary_options=aviary_options,
-        #                              subsystems=subsystems)
-        # pre_mission.add_subsystem("geom", AeroGeom(
-        #     aviary_options=self.aviary_inputs),
-        #     promotes_inputs=["*"],promotes_outputs=["*"])
-        # prob.model.add_subsystem(
-        #     'pre_mission',
-        #     pre_mission,
-        #     promotes_inputs=['aircraft:*', 'mission:*'],
-        #     promotes_outputs=['aircraft:*', 'mission:*']
-        # )
         prob.model.add_subsystem(
             'pre_mission',
             CorePreMission(aviary_options=aviary_options,
