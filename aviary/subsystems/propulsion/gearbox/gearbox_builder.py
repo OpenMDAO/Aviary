@@ -35,23 +35,22 @@ class GearboxBuilder(SubsystemBuilderBase):
     def get_design_vars(self):
         """
         Design vars are only tested to see if they exist in pre_mission
-        Returns a dictionary of design variables for the gearbox subsystem, where the keys are the 
-        names of the design variables, and the values are dictionaries that contain the units for 
-        the design variable, the lower and upper bounds for the design variable, and any 
+        Returns a dictionary of design variables for the gearbox subsystem, where the keys are the
+        names of the design variables, and the values are dictionaries that contain the units for
+        the design variable, the lower and upper bounds for the design variable, and any
         additional keyword arguments required by OpenMDAO for the design variable.
         """
 
         DVs = {
             Aircraft.Engine.Gearbox.GEAR_RATIO: {
-                'opt': True,
                 'units': 'unitless',
                 'lower': 1.0,
                 'upper': 20.0,
-                'val':  10  # initial value
+                #'val':  10  # initial value
             },
             # This var appears in both mission and pre-mission
             Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN: {
-                'val': 10000,
+                #'val': 10000,
                 'units': 'kW',
                 'lower': 1.0,
                 'upper': None,
@@ -84,6 +83,12 @@ class GearboxBuilder(SubsystemBuilderBase):
                 'units': 'unitless',
                 'static_target': True,
             },
+            Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN: {
+                'val': 1.0,
+                'units': 'kW',
+                'lower': 1.0,
+                'upper': None,
+            }
         }
 
         return parameters

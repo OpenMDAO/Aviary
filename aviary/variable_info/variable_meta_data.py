@@ -2384,7 +2384,6 @@ add_meta_data(
     units='kW',
     desc='A guess for the maximum power that will be transmitted through the gearbox during the mission (max shp input).',
     default_value=1.0,
-    option=True,
 )
 
 add_meta_data(

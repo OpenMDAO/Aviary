@@ -44,25 +44,22 @@ class PropellerBuilder(SubsystemBuilderBase):
         # TODO bounds are rough placeholders
         DVs = {
             Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR: {
-                'opt': True,
                 'units': 'unitless',
                 'lower': 100,
                 'upper': 200,
-                'val': 100,  # initial value
+                #'val': 100,  # initial value
             },
             Aircraft.Engine.PROPELLER_DIAMETER: {
-                'opt': True,
                 'units': 'ft',
                 'lower': 0.0,
                 'upper': None,
-                'val': 8,  # initial value
+                #'val': 8,  # initial value
             },
             Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT: {
-                'opt': True,
                 'units': 'unitless',
                 'lower': 0.0,
                 'upper': 0.5,
-                'val': 0.5,
+                #'val': 0.5,
             },
         }
         return DVs
