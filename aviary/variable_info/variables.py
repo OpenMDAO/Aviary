@@ -657,8 +657,8 @@ class Dynamic:
         THRUST_MAX_TOTAL = 'thrust_net_max_total'
         THRUST_TOTAL = 'thrust_net_total'
         TORQUE = 'torque'
-        TORQUE_MAX = 'torque_max'
         TORQUE_GEARBOX = 'torque_gearbox'
+        TORQUE_MAX = 'torque_max'
         VELOCITY = 'velocity'
         VELOCITY_RATE = 'velocity_rate'
 
