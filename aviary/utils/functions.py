@@ -258,7 +258,7 @@ def add_opts2vals(Group: om.Group, OptionsToValues, aviary_options: AviaryValues
     return Group
 
 
-def create_printcomp(all_inputs: list, input_units: dict = {}, meta_data=_MetaData):
+def create_printcomp(all_inputs: list, input_units: dict = {}, meta_data=_MetaData, num_nodes=1):
     """
     Creates a component that prints the value of all inputs.
 
@@ -293,10 +293,16 @@ def create_printcomp(all_inputs: list, input_units: dict = {}, meta_data=_MetaDa
             for variable_name in all_inputs:
                 units = get_units(variable_name)
                 if ':' in variable_name:
-                    add_aviary_input(self, variable_name, units=units)
+                    try:
+                        add_aviary_input(self, variable_name,
+                                         units=units, shape=num_nodes)
+                    except TypeError:
+                        self.add_input(variable_name, units=units,
+                                       shape=num_nodes, val=1.23456)
                 else:
                     # using an arbitrary number that will stand out for unconnected variables
-                    self.add_input(variable_name, units=units, val=1.23456)
+                    self.add_input(variable_name, units=units,
+                                   shape=num_nodes, val=1.23456)
 
         def compute(self, inputs, outputs):
             print_string = ['v'*20]
