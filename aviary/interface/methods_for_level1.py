@@ -111,7 +111,6 @@ def run_level_1(
     outdir='output',
     optimizer='SNOPT',
     phase_info=None,
-    n2=False,
     max_iter=50,
     analysis_scheme=AnalysisScheme.COLLOCATION,
 ):
@@ -141,15 +140,15 @@ def run_level_1(
 
     prob = run_aviary(input_deck, phase_info, **kwargs)
 
-    if n2:
-        outfile = os.path.join(outdir, "n2.html")
-        if outdir != '':
-            os.makedirs(outdir, exist_ok=True)
-        om.n2(
-            prob,
-            outfile=outfile,
-            show_browser=False,
-        )
+    # update n2 diagram after run.
+    outfile = os.path.join(outdir, "n2.html")
+    if outdir != '':
+        os.makedirs(outdir, exist_ok=True)
+    om.n2(
+        prob,
+        outfile=outfile,
+        show_browser=False,
+    )
 
     return prob
 
@@ -175,8 +174,6 @@ def _setup_level1_parser(parser):
         default=None,
         help="Path to phase info file"
     )
-    parser.add_argument("--n2", action="store_true",
-                        help="Generate an n2 diagram after the analysis")
     parser.add_argument(
         "--max_iter",
         type=int,
@@ -212,7 +209,6 @@ def _exec_level1(args, user_args):
         outdir=args.outdir,
         optimizer=args.optimizer,
         phase_info=args.phase_info,
-        n2=args.n2,
         max_iter=args.max_iter,
         analysis_scheme=analysis_scheme,
     )
