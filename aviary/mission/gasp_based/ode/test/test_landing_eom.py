@@ -92,28 +92,28 @@ class GlideTestCase(unittest.TestCase):
         )  # note: EAS in GASP, although at this altitude they are nearly identical. actual GASP value is 109.73
         assert_near_equal(
             self.prob.get_val("TAS_touchdown", units="kn"), 126.3081, tol
-                          )  # note: actual GASP value is: 126.27
+        )  # note: actual GASP value is: 126.27
         assert_near_equal(
             self.prob.get_val("density_ratio", units="unitless"), 1.0, tol
-                          )  # note: calculated from GASP glide speed values as: .998739
+        )  # note: calculated from GASP glide speed values as: .998739
         assert_near_equal(
             self.prob.get_val("wing_loading_land", units="lbf/ft**2"), 120.61519375, tol
-                          )  # note: actual GASP value is: 120.61
+        )  # note: actual GASP value is: 120.61
         assert_near_equal(
             self.prob.get_val("theta", units="deg"), 3.56857, tol
-                          )  # note: actual GASP value is: 3.57
+        )  # note: actual GASP value is: 3.57
         assert_near_equal(
             self.prob.get_val("glide_distance", units="ft"), 801.7444, tol
-                          )  # note: actual GASP value is: 802
+        )  # note: actual GASP value is: 802
         assert_near_equal(
             self.prob.get_val("tr_distance", units="ft"), 166.5303, tol
-                          )  # note: actual GASP value is: 167
+        )  # note: actual GASP value is: 167
         assert_near_equal(
             self.prob.get_val("delay_distance", units="ft"), 213.184, tol
-                          )  # note: actual GASP value is: 213
+        )  # note: actual GASP value is: 213
         assert_near_equal(
             self.prob.get_val("flare_alt", units="ft"), 20.73407, tol
-                          )  # note: actual GASP value is: 20.8
+        )  # note: actual GASP value is: 20.8
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-12)
@@ -202,7 +202,7 @@ class GroundRollTestCase(unittest.TestCase):
         )  # actual GASP value is: 1798
         assert_near_equal(
             self.prob[Mission.Landing.GROUND_DISTANCE], 3588.43116212, tol
-                          )  # actual GASP value is: 2980
+        )  # actual GASP value is: 2980
         assert_near_equal(
             self.prob["average_acceleration"], 0.29308129, tol
         )  # actual GASP value is: 0.3932
