@@ -6,7 +6,6 @@ from aviary.variable_info.variables import Dynamic
 
 
 class ClimbRates(om.ExplicitComponent):
-
     """
     Compute the altitude rate, distance rate, required lift, and flight path angle for
     an aircraft in a climb phase of flight.

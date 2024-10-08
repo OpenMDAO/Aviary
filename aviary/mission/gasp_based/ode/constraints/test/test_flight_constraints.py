@@ -1,5 +1,4 @@
 import unittest
-import os
 
 import numpy as np
 import openmdao.api as om
@@ -12,6 +11,10 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class FlightConstraintTestCase(unittest.TestCase):
+    """
+    Test minimum TAS computation
+    """
+
     def setUp(self):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -54,6 +57,30 @@ class FlightConstraintTestCase(unittest.TestCase):
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=3e-11, rtol=1e-12)
+
+
+class FlightConstraintTestCase2(unittest.TestCase):
+    """
+    Test mass-weight conversion
+    """
+
+    def setUp(self):
+        import aviary.mission.gasp_based.ode.constraints.flight_constraints as constraints
+        constraints.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.mission.gasp_based.ode.constraints.flight_constraints as constraints
+        constraints.GRAV_ENGLISH_LBM = 1.0
+
+    def test_case1(self):
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "group", FlightConstraints(num_nodes=2), promotes=["*"]
+        )
+        prob.setup(check=False, force_alloc_complex=True)
+
+        partial_data = prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
 if __name__ == "__main__":

@@ -8,17 +8,23 @@ from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_
 from aviary.subsystems.propulsion.throttle_allocation import ThrottleAllocator
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import promote_aircraft_and_mission_vars
+from aviary.variable_info.enums import AnalysisScheme, ThrottleAllocation, SpeedType
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-from aviary.variable_info.enums import AnalysisScheme, ThrottleAllocation, SpeedType
 
 
 class ExternalSubsystemGroup(om.Group):
+    """
+    For external subsystem group, promote relevant aircraft and mission variables.
+    """
+
     def configure(self):
         promote_aircraft_and_mission_vars(self)
 
 
 class MissionODE(om.Group):
+    """Define the ODE of motion"""
+
     def initialize(self):
         self.options.declare(
             'num_nodes', types=int,

@@ -3,17 +3,21 @@ Define the ODE for takeoff.
 '''
 import numpy as np
 import openmdao.api as om
-from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
 from aviary.mission.flops_based.ode.takeoff_eom import StallSpeed, TakeoffEOM
 from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import promote_aircraft_and_mission_vars
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.enums import AnalysisScheme
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class ExternalSubsystemGroup(om.Group):
+    """
+    For external subsystem group, promote relevant aircraft and mission variables.
+    """
+
     def configure(self):
         promote_aircraft_and_mission_vars(self)
 

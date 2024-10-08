@@ -13,6 +13,10 @@ from aviary.variable_info.variables import Dynamic
 
 
 class AccelerationODETestCase(unittest.TestCase):
+    """
+    Test 2-degree of freedom acceleration ODE.
+    """
+
     def setUp(self):
         self.prob = om.Problem()
 
@@ -25,7 +29,7 @@ class AccelerationODETestCase(unittest.TestCase):
                                               core_subsystems=default_mission_subsystems)
 
     def test_accel(self):
-        """Test both points in GASP Large Single Aisle 1 acceleration segment"""
+        # Test both points in GASP Large Single Aisle 1 acceleration segment
         self.prob.setup(check=False, force_alloc_complex=True)
 
         throttle_climb = 0.956

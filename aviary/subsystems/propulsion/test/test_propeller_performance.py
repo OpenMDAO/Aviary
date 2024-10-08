@@ -2,11 +2,9 @@ import unittest
 
 import numpy as np
 import openmdao.api as om
-
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
-from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
-from aviary.variable_info.variables import Aircraft
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.propulsion.propeller.propeller_performance import (
     OutMachs, PropellerPerformance, TipSpeedLimit,
 )
@@ -167,6 +165,10 @@ install_eff = np.array(
 
 
 class PropellerPerformanceTest(unittest.TestCase):
+    """
+    Test computation of propeller performance test using Hamilton Standard model.
+    """
+
     def setUp(self):
         options = get_option_defaults()
         options.set_val(
@@ -468,7 +470,13 @@ class PropellerPerformanceTest(unittest.TestCase):
 
 
 class OutMachsTest(unittest.TestCase):
+    """
+    Test the computation of OutMachs: Given two of Mach, helical Mach, and tip Mach,
+    compute the other.
+    """
+
     def test_helical_mach(self):
+        # Given Mach and tip Mach, compute helical Mach.
         tol = 1e-5
         prob = om.Problem()
         prob.model.add_subsystem(
@@ -491,6 +499,7 @@ class OutMachsTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-4, rtol=1e-4)
 
     def test_mach(self):
+        # Given helical Mach and tip Mach, compute Mach.
         tol = 1e-5
         prob = om.Problem()
         prob.model.add_subsystem(
@@ -513,6 +522,7 @@ class OutMachsTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-4, rtol=1e-4)
 
     def test_tip_mach(self):
+        # Given helical Mach and Mach, compute tip Mach.
         tol = 1e-5
         prob = om.Problem()
         prob.model.add_subsystem(
@@ -536,6 +546,10 @@ class OutMachsTest(unittest.TestCase):
 
 
 class TipSpeedLimitTest(unittest.TestCase):
+    """
+    Test computation of tip speed limit in TipSpeedLimit class.
+    """
+
     def test_tipspeed(self):
         tol = 1e-5
 

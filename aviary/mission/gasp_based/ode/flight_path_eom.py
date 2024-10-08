@@ -1,15 +1,13 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.variable_info.functions import add_aviary_input
-from aviary.variable_info.variables import Aircraft, Dynamic
-
 from aviary.constants import GRAV_ENGLISH_GASP, GRAV_ENGLISH_LBM, MU_TAKEOFF
 from aviary.variable_info.functions import add_aviary_input
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class FlightPathEOM(om.ExplicitComponent):
+    """2-degree of freedom flight path EOM."""
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

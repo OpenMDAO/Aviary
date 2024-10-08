@@ -1,12 +1,33 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.subsystems.energy.battery_sizing import SizeBattery
+from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class BatteryBuilder(SubsystemBuilderBase):
+    """
+    Builder for the battery model. This simplified battery is sized with a simple energy density relation, and tracks state of charge over the mission (with an efficiency).
+
+    Methods
+    -------
+    build_pre_mission(self, aviary_inputs=None) -> openmdao.core.System:
+        Builds an OpenMDAO system for the pre-mission computations of the subsystem.
+    build_mission(self, num_nodes, aviary_inputs=None) -> om.Group:
+        Builds an OpenMDAO system for the mission computations of the subsystem.
+    get_mass_names(self) -> list:
+        Returns the name of variable Aircraft.Battery.MASS as a list
+    get_states(self) -> dict:
+        Returns a dictionary of the subsystem's states, where the keys are the names 
+        of the state variables, and the values are dictionaries that contain the units 
+        for the state variable and any additional keyword arguments required by OpenMDAO 
+        for the state variable.
+    get_constraints(self) -> dict:
+        Returns a dictionary of constraints for the battery subsystem.
+
+    """
+
     default_name = 'battery'
 
     def build_pre_mission(self, aviary_inputs=None):

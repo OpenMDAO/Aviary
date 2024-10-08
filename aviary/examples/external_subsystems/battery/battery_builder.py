@@ -1,31 +1,34 @@
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
-from aviary.examples.external_subsystems.battery.model.battery_premission import BatteryPreMission
-from aviary.examples.external_subsystems.battery.model.battery_mission import BatteryMission
 from aviary.examples.external_subsystems.battery.battery_variables import Aircraft, Mission
 from aviary.examples.external_subsystems.battery.battery_variable_meta_data import ExtendedMetaData
+from aviary.examples.external_subsystems.battery.model.battery_mission import BatteryMission
+from aviary.examples.external_subsystems.battery.model.battery_premission import BatteryPreMission
+from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 
 
 class BatteryBuilder(SubsystemBuilderBase):
     '''
     Define the builder for a battery subsystem that provides methods to define the battery subsystem's states, design variables, fixed values, initial guesses, and mass names.
-
     It also provides methods to build OpenMDAO systems for the pre-mission and mission computations of the subsystem, to get the constraints for the subsystem, and to preprocess the inputs for the subsystem.
 
+    As a contrast, The battery in the examples is a "simple" battery
+    model which only tracks state-of-charge throughout the mission. This battery model is only an example, and is not used by any of Aviary's core subsystems (like the pycycle or OAS examples).
 
     Attributes
     ----------
-    name : str ('battery_voltage')
+    name : str ('battery')
         object label
+    include_constraints: boolean
+        flag whether to include constraints.
 
     Methods
     -------
-    __init__(self, name='battery_voltage'):
+    __init__(self, name='battery', include_constraints=True):
         Initializes the BatteryBuilder object with a given name.
     get_states(self) -> dict:
         Returns a dictionary of the subsystem's states, where the keys are the names of the state variables, and the values are dictionaries that contain the units for the state variable and any additional keyword arguments required by OpenMDAO for the state variable.
     get_linked_variables(self) -> list:
         Returns an empty list since no variable linking is required for the battery subsystem.
-    build_pre_mission(self) -> openmdao.core.System:
+    build_pre_mission(self, aviary_inputs) -> openmdao.core.System:
         Builds an OpenMDAO system for the pre-mission computations of the subsystem.
     build_mission(self, num_nodes, aviary_inputs) -> openmdao.core.System:
         Builds an OpenMDAO system for the mission computations of the subsystem.
@@ -33,7 +36,7 @@ class BatteryBuilder(SubsystemBuilderBase):
         Returns a dictionary of constraints for the battery subsystem, where the keys are the names of the variables to be constrained, and the values are dictionaries that contain the lower and upper bounds for the constraint and any additional keyword arguments accepted by Dymos for the constraint.
     get_design_vars(self) -> dict:
         Returns a dictionary of design variables for the battery subsystem, where the keys are the names of the design variables, and the values are dictionaries that contain the units for the design variable, the lower and upper bounds for the design variable, and any additional keyword arguments required by OpenMDAO for the design variable.
-    get_parameters(self) -> dict:
+    get_parameters(self, aviary_inputs=None, phase_info=None) -> dict:
         Returns a dictionary of fixed values for the battery subsystem, where the keys are the names of the fixed values, and the values are dictionaries that contain the fixed value for the variable, the units for the variable, and any additional keyword arguments required by OpenMDAO for the variable.
     get_initial_guesses(self) -> dict:
         Returns a dictionary of initial guesses for the battery subsystem, where the keys are the names of the initial guesses, and the values are dictionaries that contain the initial guess value, the type of variable (state or control), and any additional keyword arguments required by OpenMDAO for the variable.

@@ -1,9 +1,8 @@
-from aviary.variable_info.enums import SpeedType, AlphaModes
 from aviary.mission.gasp_based.phases.time_integration_phases import SGMGroundroll, \
     SGMRotation, SGMAscentCombined, SGMAccel, SGMClimb, SGMCruise, SGMDescent
 from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.enums import AlphaModes, SpeedType, Verbosity
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
-from aviary.variable_info.enums import Verbosity
 
 # defaults for 2DOF based forward in time integeration phases
 cruise_alt = 35e3,
@@ -194,6 +193,9 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs: Av
 
 
 def add_default_sgm_args(phase_info: dict, ode_args: dict, verbosity=None):
+    """
+    Add default SGM arguments to phase_info
+    """
     for phase_name, info in phase_info.items():
         kwargs = info.get('kwargs', {})
         if 'ode_args' not in kwargs:

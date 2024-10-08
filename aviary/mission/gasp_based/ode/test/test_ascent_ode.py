@@ -25,7 +25,7 @@ class AscentODETestCase(unittest.TestCase):
                                     core_subsystems=default_mission_subsystems)
 
     def test_ascent_partials(self):
-        """Test partial derivatives"""
+        # Test partial derivatives
         self.prob.setup(check=False, force_alloc_complex=True)
 
         self.prob.set_val(Dynamic.Mission.VELOCITY, [100, 100], units="kn")

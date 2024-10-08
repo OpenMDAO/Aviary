@@ -6,7 +6,9 @@ from aviary.utils.test_utils.assert_utils import warn_timeseries_near_equal
 
 
 def compare_against_expected_values(prob, expected_dict):
-
+    """
+    Compare values in prob with the ones in expected_dict.
+    """
     expected_times = expected_dict['times']
     expected_altitudes = expected_dict['altitudes']
     expected_masses = expected_dict['masses']
@@ -23,12 +25,8 @@ def compare_against_expected_values(prob, expected_dict):
 
         times.extend(prob.get_val(f'traj.{phase}.timeseries.time', units='s',
                                   get_remote=True))
-        try:
-            altitudes.extend(prob.get_val(
-                f'traj.{phase}.timeseries.altitude', units='m', get_remote=True))
-        except KeyError:
-            altitudes.extend(prob.get_val(
-                f'traj.{phase}.timeseries.altitude', units='m', get_remote=True))
+        altitudes.extend(prob.get_val(
+            f'traj.{phase}.timeseries.altitude', units='m', get_remote=True))
         velocities.extend(prob.get_val(
             f'traj.{phase}.timeseries.velocity', units='m/s', get_remote=True))
         masses.extend(

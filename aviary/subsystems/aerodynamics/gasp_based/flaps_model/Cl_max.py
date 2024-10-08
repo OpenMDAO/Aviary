@@ -5,6 +5,10 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class CLmaxCalculation(om.ExplicitComponent):
+    """
+    CL_max calculation for GASP-based aerodynamics
+    """
+
     def setup(self):
 
         # inputs
@@ -68,10 +72,16 @@ class CLmaxCalculation(om.ExplicitComponent):
             desc="VLAM7: sensitivity of flap clean wing maximum lift coefficient to wing flap span",
         )
         self.add_input(
-            "VLAM13", val=1.03512, units='unitless', desc="VLAM13: reynolds number correction factor"
+            "VLAM13",
+            val=1.03512,
+            units='unitless',
+            desc="VLAM13: reynolds number correction factor",
         )
         self.add_input(
-            "VLAM14", val=0.99124, units='unitless', desc="VLAM14: mach number correction factor "
+            "VLAM14",
+            val=0.99124,
+            units='unitless',
+            desc="VLAM14: mach number correction factor ",
         )
 
         # other inputs
@@ -113,10 +123,14 @@ class CLmaxCalculation(om.ExplicitComponent):
             units='unitless',
             desc="VLAM12: sensitivity of slat clean wing maximum lift coefficient to leading edge sweepback",
         )
-        self.add_input("fus_lift", val=0.05498, units='unitless',
-                       desc="DELCLF: fuselage lift increment")
         self.add_input(
-            "kinematic_viscosity",
+            "fus_lift",
+            val=0.05498,
+            units='unitless',
+            desc="DELCLF: fuselage lift increment",
+        )
+        self.add_input(
+            Dynamic.Mission.KINEMATIC_VISCOSITY,
             val=0.15723e-03,
             units="ft**2/s",
             desc="XKV: kinematic viscosity",
@@ -130,16 +144,21 @@ class CLmaxCalculation(om.ExplicitComponent):
 
         # outputs
 
-        self.add_output("CL_max", val=2.8155,
-                        desc="CLMAX: maximum lift coefficient", units="unitless")
+        self.add_output(
+            "CL_max",
+            val=2.8155,
+            desc="CLMAX: maximum lift coefficient",
+            units="unitless",
+        )
         self.add_output(
             Dynamic.Atmosphere.MACH,
             val=0.17522,
             units='unitless',
             desc="SMN: mach number",
         )
-        self.add_output("reynolds", val=157.1111, units='unitless',
-                        desc="RNW: reynolds number")
+        self.add_output(
+            "reynolds", val=157.1111, units='unitless', desc="RNW: reynolds number"
+        )
 
     def setup_partials(self):
 
@@ -200,7 +219,7 @@ class CLmaxCalculation(om.ExplicitComponent):
         self.declare_partials(
             "reynolds",
             [
-                "kinematic_viscosity",
+                Dynamic.Atmosphere.KINEMATIC_VISCOSITY,
                 Dynamic.Atmosphere.SPEED_OF_SOUND,
                 Aircraft.Wing.AVERAGE_CHORD,
                 Dynamic.Atmosphere.STATIC_PRESSURE,
@@ -250,7 +269,7 @@ class CLmaxCalculation(om.ExplicitComponent):
         wing_loading = inputs[Aircraft.Wing.LOADING]
         P = inputs[Dynamic.Atmosphere.STATIC_PRESSURE]
         avg_chord = inputs[Aircraft.Wing.AVERAGE_CHORD]
-        kinematic_viscosity = inputs["kinematic_viscosity"]
+        kinematic_viscosity = inputs[Dynamic.Mission.KINEMATIC_VISCOSITY]
         max_lift_reference = inputs[Aircraft.Wing.MAX_LIFT_REF]
         leading_lift_increment = inputs[Aircraft.Wing.SLAT_LIFT_INCREMENT_OPTIMUM]
         fus_lift = inputs["fus_lift"]

@@ -5,15 +5,19 @@ import numpy as np
 
 from openmdao.components.ks_comp import KSfunction
 
+from aviary.subsystems.propulsion.propeller.hamilton_standard import HamiltonStandard, PostHamiltonStandard, PreHamiltonStandard
+from aviary.subsystems.propulsion.propeller.propeller_map import PropellerMap
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.enums import OutMachType
 from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.subsystems.propulsion.propeller.hamilton_standard import HamiltonStandard, PostHamiltonStandard, PreHamiltonStandard
-from aviary.subsystems.propulsion.propeller.propeller_map import PropellerMap
 
 
 class TipSpeedLimit(om.ExplicitComponent):
+    """
+    Computation of propeller tip speed.
+    """
+
     def initialize(self):
         self.options.declare(
             'num_nodes', types=int, default=1,

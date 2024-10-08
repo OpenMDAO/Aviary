@@ -6,6 +6,10 @@ from aviary.variable_info.variables import Aircraft
 
 
 class StrutCalcs(om.ExplicitComponent):
+    """
+    Given strut location as a non-dimensional function of wing half-span or distance from aircraft center, compute the other value not provided.
+    """
+
     def initialize(self):
         self.options.declare(
             'aviary_options', types=AviaryValues,
@@ -61,6 +65,10 @@ class StrutCalcs(om.ExplicitComponent):
 
 
 class FoldCalcs(om.ExplicitComponent):
+    """
+    Dimensional and non-dimensional conversion of fold calculation.
+    """
+
     def initialize(self):
         self.options.declare(
             'aviary_options', types=AviaryValues,
@@ -112,6 +120,10 @@ class FoldCalcs(om.ExplicitComponent):
 
 
 class DimensionalNonDimensionalInterchange(om.Group):
+    """
+    Dimensional and non-dimensional conversion of strut and fold calculation if any.
+    """
+
     def initialize(self):
 
         self.options.declare(

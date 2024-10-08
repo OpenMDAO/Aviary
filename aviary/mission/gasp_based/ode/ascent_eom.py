@@ -7,6 +7,12 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class AscentEOM(om.ExplicitComponent):
+    """
+    Ascent equation of motion: Compute the velocity rate, flight path angle rate, 
+    altitude rate, distance rate, normal forces, fuselage pitch angle, load factor
+    and angle of attack rate.
+    """
+
     def initialize(self):
         self.options.declare("num_nodes", types=int)
 

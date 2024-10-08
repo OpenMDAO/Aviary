@@ -120,7 +120,7 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
     Performs basic sanity checks on inputs that are universal to all EngineModels.
 
     !!! WARNING !!!
-    Values in aviary_options can be overwritten with corresponding values from 
+    Values in aviary_options can be overwritten with corresponding values from
     engine_models!
 
     Parameters
@@ -161,15 +161,23 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
             if dtype is None:
                 if isinstance(default_value, np.ndarray):
                     dtype = default_value.dtype
+                elif default_value is None:
+                    # With no default value, we cannot determine a dtype.
+                    dtype = None
                 else:
                     dtype = type(default_value)
+
             # if dtype has multiple options, use type of default value
-            if isinstance(dtype, (list, tuple)):
+            elif isinstance(dtype, (list, tuple)):
                 # if default value is a list/tuple, find type inside that
                 if isinstance(default_value, (list, tuple)):
                     dtype = type(default_value[0])
+                elif default_value is None:
+                    # With no default value, we cannot determine a dtype.
+                    dtype = None
                 else:
                     dtype = type(default_value)
+
             # if var is supposed to be a unique array per engine model, assemble flat
             # vector manually to avoid ragged arrays (such as for wing engine locations)
             if isinstance(default_value, (list, np.ndarray)):
