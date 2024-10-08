@@ -152,11 +152,9 @@ class GroundrollODE(BaseODE):
             Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units="deg"
         )
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.zeros(nn), units="ft")
+        self.set_input_defaults(Dynamic.Mission.VELOCITY, val=np.zeros(nn), units="kn")
         self.set_input_defaults(
-            Dynamic.Atmosphere.VELOCITY, val=np.zeros(nn), units="kn"
-        )
-        self.set_input_defaults(
-            Dynamic.Atmosphere.VELOCITY_RATE, val=np.zeros(nn), units="kn/s"
+            Dynamic.Mission.VELOCITY_RATE, val=np.zeros(nn), units="kn/s"
         )
 
         self.set_input_defaults(Aircraft.Wing.INCIDENCE, val=1.0, units="deg")

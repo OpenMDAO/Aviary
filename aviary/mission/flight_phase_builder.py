@@ -299,8 +299,8 @@ class FlightPhaseBase(PhaseBuilderBase):
         )
 
         phase.add_timeseries_output(
-            Dynamic.Atmosphere.VELOCITY,
-            output_name=Dynamic.Atmosphere.VELOCITY,
+            Dynamic.Mission.VELOCITY,
+            output_name=Dynamic.Mission.VELOCITY,
             units='m/s',
         )
 
@@ -373,10 +373,10 @@ class FlightPhaseBase(PhaseBuilderBase):
 
         if (
             required_available_climb_rate is not None
-            and not Dynamic.Vehicle.ALTITUDE_RATE_MAX in constraints
+            and not Dynamic.Mission.ALTITUDE_RATE_MAX in constraints
         ):
             phase.add_path_constraint(
-                Dynamic.Vehicle.ALTITUDE_RATE_MAX,
+                Dynamic.Mission.ALTITUDE_RATE_MAX,
                 lower=required_available_climb_rate,
                 units=units,
             )

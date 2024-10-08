@@ -87,7 +87,7 @@ class TestUnsteadySolvedODE(unittest.TestCase):
         )
         dmass_dr = p.model.get_val("dmass_dr", units="lbm/ft")
         dt_dr = p.model.get_val("dt_dr", units="s/ft")
-        tas = p.model.get_val(Dynamic.Atmosphere.VELOCITY, units="ft/s")
+        tas = p.model.get_val(Dynamic.Mission.VELOCITY, units="ft/s")
         iwing = p.model.get_val(Aircraft.Wing.INCIDENCE, units="deg")
         alpha = p.model.get_val("alpha", units="deg")
 

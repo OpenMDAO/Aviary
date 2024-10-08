@@ -43,7 +43,7 @@ class FlightConditions(om.ExplicitComponent):
 
         if in_type is SpeedType.TAS:
             self.add_input(
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
                 val=np.zeros(nn),
                 units="ft/s",
                 desc="true air speed",
@@ -63,19 +63,19 @@ class FlightConditions(om.ExplicitComponent):
 
             self.declare_partials(
                 Dynamic.Atmosphere.DYNAMIC_PRESSURE,
-                [Dynamic.Atmosphere.DENSITY, Dynamic.Atmosphere.VELOCITY],
+                [Dynamic.Atmosphere.DENSITY, Dynamic.Mission.VELOCITY],
                 rows=arange,
                 cols=arange,
             )
             self.declare_partials(
                 Dynamic.Atmosphere.MACH,
-                [Dynamic.Atmosphere.SPEED_OF_SOUND, Dynamic.Atmosphere.VELOCITY],
+                [Dynamic.Atmosphere.SPEED_OF_SOUND, Dynamic.Mission.VELOCITY],
                 rows=arange,
                 cols=arange,
             )
             self.declare_partials(
                 "EAS",
-                [Dynamic.Atmosphere.VELOCITY, Dynamic.Atmosphere.DENSITY],
+                [Dynamic.Mission.VELOCITY, Dynamic.Atmosphere.DENSITY],
                 rows=arange,
                 cols=arange,
             )
@@ -87,7 +87,7 @@ class FlightConditions(om.ExplicitComponent):
                 desc="equivalent air speed at",
             )
             self.add_output(
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
                 val=np.zeros(nn),
                 units="ft/s",
                 desc="true air speed",
@@ -116,7 +116,7 @@ class FlightConditions(om.ExplicitComponent):
                 cols=arange,
             )
             self.declare_partials(
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
                 [Dynamic.Atmosphere.DENSITY, "EAS"],
                 rows=arange,
                 cols=arange,
@@ -135,7 +135,7 @@ class FlightConditions(om.ExplicitComponent):
                 desc="equivalent air speed",
             )
             self.add_output(
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
                 val=np.zeros(nn),
                 units="ft/s",
                 desc="true air speed",
@@ -152,7 +152,7 @@ class FlightConditions(om.ExplicitComponent):
                 cols=arange,
             )
             self.declare_partials(
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
                 [Dynamic.Atmosphere.SPEED_OF_SOUND, Dynamic.Atmosphere.MACH],
                 rows=arange,
                 cols=arange,
@@ -176,14 +176,14 @@ class FlightConditions(om.ExplicitComponent):
         sos = inputs[Dynamic.Atmosphere.SPEED_OF_SOUND]
 
         if in_type is SpeedType.TAS:
-            TAS = inputs[Dynamic.Atmosphere.VELOCITY]
+            TAS = inputs[Dynamic.Mission.VELOCITY]
             outputs[Dynamic.Atmosphere.MACH] = mach = TAS / sos
             outputs["EAS"] = TAS * (rho / constants.RHO_SEA_LEVEL_ENGLISH) ** 0.5
             outputs[Dynamic.Atmosphere.DYNAMIC_PRESSURE] = 0.5 * rho * TAS**2
 
         elif in_type is SpeedType.EAS:
             EAS = inputs["EAS"]
-            outputs[Dynamic.Atmosphere.VELOCITY] = TAS = (
+            outputs[Dynamic.Mission.VELOCITY] = TAS = (
                 EAS / (rho / constants.RHO_SEA_LEVEL_ENGLISH) ** 0.5
             )
             outputs[Dynamic.Atmosphere.MACH] = mach = TAS / sos
@@ -193,7 +193,7 @@ class FlightConditions(om.ExplicitComponent):
 
         elif in_type is SpeedType.MACH:
             mach = inputs[Dynamic.Atmosphere.MACH]
-            outputs[Dynamic.Atmosphere.VELOCITY] = TAS = sos * mach
+            outputs[Dynamic.Mission.VELOCITY] = TAS = sos * mach
             outputs["EAS"] = TAS * (rho / constants.RHO_SEA_LEVEL_ENGLISH) ** 0.5
             outputs[Dynamic.Atmosphere.DYNAMIC_PRESSURE] = 0.5 * rho * sos**2 * mach**2
 
@@ -204,21 +204,19 @@ class FlightConditions(om.ExplicitComponent):
         sos = inputs[Dynamic.Atmosphere.SPEED_OF_SOUND]
 
         if in_type is SpeedType.TAS:
-            TAS = inputs[Dynamic.Atmosphere.VELOCITY]
+            TAS = inputs[Dynamic.Mission.VELOCITY]
 
-            J[Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Atmosphere.VELOCITY] = (
-                rho * TAS
-            )
+            J[Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Mission.VELOCITY] = rho * TAS
             J[Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Atmosphere.DENSITY] = (
                 0.5 * TAS**2
             )
 
-            J[Dynamic.Atmosphere.MACH, Dynamic.Atmosphere.VELOCITY] = 1 / sos
+            J[Dynamic.Atmosphere.MACH, Dynamic.Mission.VELOCITY] = 1 / sos
             J[Dynamic.Atmosphere.MACH, Dynamic.Atmosphere.SPEED_OF_SOUND] = (
                 -TAS / sos**2
             )
 
-            J["EAS", Dynamic.Atmosphere.VELOCITY] = (
+            J["EAS", Dynamic.Mission.VELOCITY] = (
                 rho / constants.RHO_SEA_LEVEL_ENGLISH
             ) ** 0.5
             J["EAS", Dynamic.Atmosphere.DENSITY] = (
@@ -240,8 +238,8 @@ class FlightConditions(om.ExplicitComponent):
             J[Dynamic.Atmosphere.MACH, Dynamic.Atmosphere.SPEED_OF_SOUND] = (
                 -TAS / sos**2
             )
-            J[Dynamic.Atmosphere.VELOCITY, Dynamic.Atmosphere.DENSITY] = dTAS_dRho
-            J[Dynamic.Atmosphere.VELOCITY, "EAS"] = dTAS_dEAS
+            J[Dynamic.Mission.VELOCITY, Dynamic.Atmosphere.DENSITY] = dTAS_dRho
+            J[Dynamic.Mission.VELOCITY, "EAS"] = dTAS_dEAS
 
         elif in_type is SpeedType.MACH:
             mach = inputs[Dynamic.Atmosphere.MACH]
@@ -256,8 +254,8 @@ class FlightConditions(om.ExplicitComponent):
             J[Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Atmosphere.DENSITY] = (
                 0.5 * sos**2 * mach**2
             )
-            J[Dynamic.Atmosphere.VELOCITY, Dynamic.Atmosphere.SPEED_OF_SOUND] = mach
-            J[Dynamic.Atmosphere.VELOCITY, Dynamic.Atmosphere.MACH] = sos
+            J[Dynamic.Mission.VELOCITY, Dynamic.Atmosphere.SPEED_OF_SOUND] = mach
+            J[Dynamic.Mission.VELOCITY, Dynamic.Atmosphere.MACH] = sos
             J["EAS", Dynamic.Atmosphere.SPEED_OF_SOUND] = (
                 mach * (rho / constants.RHO_SEA_LEVEL_ENGLISH) ** 0.5
             )

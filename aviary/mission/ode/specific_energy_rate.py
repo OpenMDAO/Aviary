@@ -17,7 +17,7 @@ class SpecificEnergyRate(om.ExplicitComponent):
         nn = self.options['num_nodes']
 
         self.add_input(
-            Dynamic.Atmosphere.VELOCITY,
+            Dynamic.Mission.VELOCITY,
             val=np.ones(nn),
             desc='current velocity',
             units='m/s',
@@ -42,7 +42,7 @@ class SpecificEnergyRate(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
-        velocity = inputs[Dynamic.Atmosphere.VELOCITY]
+        velocity = inputs[Dynamic.Mission.VELOCITY]
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
         drag = inputs[Dynamic.Vehicle.DRAG]
         weight = inputs[Dynamic.Vehicle.MASS] * gravity
@@ -55,7 +55,7 @@ class SpecificEnergyRate(om.ExplicitComponent):
         self.declare_partials(
             Dynamic.Mission.SPECIFIC_ENERGY_RATE,
             [
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
                 Dynamic.Vehicle.MASS,
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                 Dynamic.Vehicle.DRAG,
@@ -65,12 +65,12 @@ class SpecificEnergyRate(om.ExplicitComponent):
         )
 
     def compute_partials(self, inputs, J):
-        velocity = inputs[Dynamic.Atmosphere.VELOCITY]
+        velocity = inputs[Dynamic.Mission.VELOCITY]
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
         drag = inputs[Dynamic.Vehicle.DRAG]
         weight = inputs[Dynamic.Vehicle.MASS] * gravity
 
-        J[Dynamic.Mission.SPECIFIC_ENERGY_RATE, Dynamic.Atmosphere.VELOCITY] = (
+        J[Dynamic.Mission.SPECIFIC_ENERGY_RATE, Dynamic.Mission.VELOCITY] = (
             thrust - drag
         ) / weight
         J[

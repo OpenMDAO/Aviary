@@ -103,7 +103,7 @@ class BreguetCruiseODESolution(BaseODE):
                 ("cruise_time_initial", "initial_time"),
                 "mass",
                 Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-                ("TAS_cruise", Dynamic.Atmosphere.VELOCITY),
+                ("TAS_cruise", Dynamic.Mission.VELOCITY),
             ],
             promotes_outputs=[
                 ("cruise_range", Dynamic.Mission.DISTANCE),
@@ -115,7 +115,7 @@ class BreguetCruiseODESolution(BaseODE):
             name='SPECIFIC_ENERGY_RATE_EXCESS',
             subsys=SpecificEnergyRate(num_nodes=nn),
             promotes_inputs=[
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
                 Dynamic.Vehicle.MASS,
                 (
                     Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
@@ -139,8 +139,8 @@ class BreguetCruiseODESolution(BaseODE):
                     Dynamic.Mission.SPECIFIC_ENERGY_RATE,
                     Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
                 ),
-                Dynamic.Atmosphere.VELOCITY_RATE,
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY_RATE,
+                Dynamic.Mission.VELOCITY,
             ],
             promotes_outputs=[
                 (Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.ALTITUDE_RATE_MAX)

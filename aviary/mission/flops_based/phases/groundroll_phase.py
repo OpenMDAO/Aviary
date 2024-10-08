@@ -83,7 +83,7 @@ class GroundrollPhase(PhaseBuilderBase):
             fix_initial=True,
             fix_duration=False,
             units="kn",
-            name=Dynamic.Atmosphere.VELOCITY,
+            name=Dynamic.Mission.VELOCITY,
             duration_bounds=duration_bounds,
             duration_ref=duration_ref,
         )
@@ -111,7 +111,7 @@ class GroundrollPhase(PhaseBuilderBase):
         phase.add_timeseries_output("normal_force")
         phase.add_timeseries_output(Dynamic.Atmosphere.MACH)
         phase.add_timeseries_output("EAS", units="kn")
-        phase.add_timeseries_output(Dynamic.Atmosphere.VELOCITY, units="kn")
+        phase.add_timeseries_output(Dynamic.Mission.VELOCITY, units="kn")
         phase.add_timeseries_output(Dynamic.Vehicle.LIFT)
         phase.add_timeseries_output(Dynamic.Vehicle.DRAG)
         phase.add_timeseries_output("time")

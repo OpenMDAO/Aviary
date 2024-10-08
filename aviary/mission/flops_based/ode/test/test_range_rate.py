@@ -36,7 +36,7 @@ class RangeRateTest(unittest.TestCase):
             'full_mission_test_data',
             input_validation_data=data,
             output_validation_data=data,
-            input_keys=[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Atmosphere.VELOCITY],
+            input_keys=[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.VELOCITY],
             output_keys=Dynamic.Mission.DISTANCE_RATE,
             tol=1e-12,
         )

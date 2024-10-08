@@ -140,7 +140,7 @@ class LandingSegment(BaseODE):
             subsys=Atmosphere(num_nodes=1),
             promotes_inputs=[
                 (Dynamic.Mission.ALTITUDE, Mission.Landing.AIRPORT_ALTITUDE),
-                (Dynamic.Atmosphere.VELOCITY, "TAS_touchdown"),
+                (Dynamic.Mission.VELOCITY, "TAS_touchdown"),
             ],
             promotes_outputs=[
                 (Dynamic.Atmosphere.DENSITY, "rho_td"),

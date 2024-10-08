@@ -54,9 +54,8 @@ class TabularAeroGroupFileTest(unittest.TestCase):
         # test data from large_single_aisle_2 climb profile
         # tabular aero was set to large_single_aisle_1, expected value adjusted accordingly
         self.prob.set_val(
-            Dynamic.Atmosphere.VELOCITY,
-            val=115,
-            units='m/s')  # convert from knots to ft/s
+            Dynamic.Mission.VELOCITY, val=115, units='m/s'
+        )  # convert from knots to ft/s
         self.prob.set_val(Dynamic.Mission.ALTITUDE, val=10582, units='m')
         self.prob.set_val(Dynamic.Vehicle.MASS, val=80442, units='kg')
         self.prob.set_val(Dynamic.Atmosphere.MACH, val=0.3876, units='unitless')
@@ -129,9 +128,8 @@ class TabularAeroGroupDataTest(unittest.TestCase):
         # test data from large_single_aisle_2 climb profile
         # tabular aero was set to large_single_aisle_1 data, expected value adjusted accordingly
         self.prob.set_val(
-            Dynamic.Atmosphere.VELOCITY,
-            val=115,
-            units='m/s')  # convert from knots to ft/s
+            Dynamic.Mission.VELOCITY, val=115, units='m/s'
+        )  # convert from knots to ft/s
         self.prob.set_val(Dynamic.Mission.ALTITUDE, val=10582, units='m')
         self.prob.set_val(Dynamic.Vehicle.MASS, val=80442, units='kg')
         self.prob.set_val(Dynamic.Atmosphere.MACH, val=0.3876, units='unitless')
@@ -192,7 +190,7 @@ class ComputedVsTabularTest(unittest.TestCase):
 
         dynamic_inputs = AviaryValues()
 
-        dynamic_inputs.set_val(Dynamic.Atmosphere.VELOCITY, val=vel, units=vel_units)
+        dynamic_inputs.set_val(Dynamic.Mission.VELOCITY, val=vel, units=vel_units)
         dynamic_inputs.set_val(Dynamic.Mission.ALTITUDE, val=alt, units=alt_units)
         dynamic_inputs.set_val(Dynamic.Vehicle.MASS, val=mass, units=units)
 

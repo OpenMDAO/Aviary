@@ -196,7 +196,7 @@ class UnsteadySolvedODE(BaseODE):
         input_list = [
             '*',
             (Dynamic.Vehicle.Propulsion.THRUST_TOTAL, "thrust_req"),
-            Dynamic.Atmosphere.VELOCITY,
+            Dynamic.Mission.VELOCITY,
         ]
         control_iter_group.add_subsystem("eom", subsys=eom_comp,
                                          promotes_inputs=input_list,
@@ -267,7 +267,7 @@ class UnsteadySolvedODE(BaseODE):
                 name=Dynamic.Mission.FLIGHT_PATH_ANGLE, val=0.0 * onn, units="rad"
             )
         self.set_input_defaults(
-            name=Dynamic.Atmosphere.VELOCITY, val=250.0 * onn, units="kn"
+            name=Dynamic.Mission.VELOCITY, val=250.0 * onn, units="kn"
         )
         self.set_input_defaults(
             name=Dynamic.Mission.ALTITUDE, val=10000.0 * onn, units="ft"

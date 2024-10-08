@@ -95,7 +95,7 @@ class TabularAeroGroup(om.Group):
         self.add_subsystem(
             Dynamic.Atmosphere.DYNAMIC_PRESSURE,
             _DynamicPressure(num_nodes=nn),
-            promotes_inputs=[Dynamic.Atmosphere.VELOCITY, Dynamic.Atmosphere.DENSITY],
+            promotes_inputs=[Dynamic.Mission.VELOCITY, Dynamic.Atmosphere.DENSITY],
             promotes_outputs=[Dynamic.Atmosphere.DYNAMIC_PRESSURE],
         )
 
@@ -147,7 +147,7 @@ class _DynamicPressure(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
 
-        self.add_input(Dynamic.Atmosphere.VELOCITY, val=np.ones(nn), units='m/s')
+        self.add_input(Dynamic.Mission.VELOCITY, val=np.ones(nn), units='m/s')
         self.add_input(Dynamic.Atmosphere.DENSITY, val=np.ones(nn), units='kg/m**3')
 
         self.add_output(
@@ -164,22 +164,22 @@ class _DynamicPressure(om.ExplicitComponent):
 
         self.declare_partials(
             Dynamic.Atmosphere.DYNAMIC_PRESSURE,
-            [Dynamic.Atmosphere.VELOCITY, Dynamic.Atmosphere.DENSITY],
+            [Dynamic.Mission.VELOCITY, Dynamic.Atmosphere.DENSITY],
             rows=rows_cols,
             cols=rows_cols,
         )
 
     def compute(self, inputs, outputs):
-        TAS = inputs[Dynamic.Atmosphere.VELOCITY]
+        TAS = inputs[Dynamic.Mission.VELOCITY]
         rho = inputs[Dynamic.Atmosphere.DENSITY]
 
         outputs[Dynamic.Atmosphere.DYNAMIC_PRESSURE] = 0.5 * rho * TAS**2
 
     def compute_partials(self, inputs, partials):
-        TAS = inputs[Dynamic.Atmosphere.VELOCITY]
+        TAS = inputs[Dynamic.Mission.VELOCITY]
         rho = inputs[Dynamic.Atmosphere.DENSITY]
 
-        partials[Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Atmosphere.VELOCITY] = (
+        partials[Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Mission.VELOCITY] = (
             rho * TAS
         )
         partials[Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Atmosphere.DENSITY] = (

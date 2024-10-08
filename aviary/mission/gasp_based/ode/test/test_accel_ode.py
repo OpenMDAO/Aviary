@@ -35,7 +35,7 @@ class AccelerationODETestCase(unittest.TestCase):
             [throttle_climb, throttle_climb],
             units='unitless',
         )
-        self.prob.set_val(Dynamic.Atmosphere.VELOCITY, [185, 252], units="kn")
+        self.prob.set_val(Dynamic.Mission.VELOCITY, [185, 252], units="kn")
         self.prob.set_val(Dynamic.Vehicle.MASS, [174974, 174878], units="lbm")
 
         set_params_for_unit_tests(self.prob)

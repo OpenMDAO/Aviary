@@ -97,7 +97,7 @@ def custom_run_aviary(aircraft_filename, optimizer=None,
         traj_event_trigger_input=[
             (
                 'groundroll',
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
                 0,
             ),
             (

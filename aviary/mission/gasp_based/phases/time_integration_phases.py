@@ -35,7 +35,7 @@ class SGMGroundroll(SimuPyProblem):
                 Dynamic.Vehicle.MASS,
                 Dynamic.Mission.DISTANCE,
                 Dynamic.Mission.ALTITUDE,
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
             ],
             # state_units=['lbm','nmi','ft','ft/s'],
             alternate_state_rate_names={
@@ -46,7 +46,7 @@ class SGMGroundroll(SimuPyProblem):
 
         self.phase_name = phase_name
         self.VR_value = VR_value
-        self.add_trigger(Dynamic.Atmosphere.VELOCITY, "VR_value")
+        self.add_trigger(Dynamic.Mission.VELOCITY, "VR_value")
 
 
 class SGMRotation(SimuPyProblem):
@@ -70,7 +70,7 @@ class SGMRotation(SimuPyProblem):
                 Dynamic.Vehicle.MASS,
                 Dynamic.Mission.DISTANCE,
                 Dynamic.Mission.ALTITUDE,
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
             ],
             # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
@@ -126,7 +126,7 @@ class SGMAscent(SimuPyProblem):
                 Dynamic.Vehicle.MASS,
                 Dynamic.Mission.DISTANCE,
                 Dynamic.Mission.ALTITUDE,
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 "alpha",
             ],
@@ -374,7 +374,7 @@ class SGMAccel(SimuPyProblem):
                 Dynamic.Vehicle.MASS,
                 Dynamic.Mission.DISTANCE,
                 Dynamic.Mission.ALTITUDE,
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
             ],
             # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
@@ -430,7 +430,7 @@ class SGMClimb(SimuPyProblem):
                 "lift",
                 "mach",
                 "EAS",
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                 "drag",
                 Dynamic.Mission.ALTITUDE_RATE,
@@ -489,7 +489,7 @@ class SGMCruise(SimuPyProblem):
                 "alpha",  # ?
                 "lift",
                 "EAS",
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                 "drag",
                 Dynamic.Mission.ALTITUDE_RATE,
@@ -498,7 +498,7 @@ class SGMCruise(SimuPyProblem):
                 Dynamic.Vehicle.MASS,
                 Dynamic.Mission.DISTANCE,
                 Dynamic.Mission.ALTITUDE,
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
             ],
             # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
@@ -553,7 +553,7 @@ class SGMDescent(SimuPyProblem):
                 "required_lift",
                 "lift",
                 "EAS",
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                 "drag",
                 Dynamic.Mission.ALTITUDE_RATE,

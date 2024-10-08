@@ -1040,7 +1040,7 @@ class AviaryProblem(om.Problem):
                     # third key is event_idx associated with input
                     (
                         'groundroll',
-                        Dynamic.Atmosphere.VELOCITY,
+                        Dynamic.Mission.VELOCITY,
                         0,
                     ),
                     (
@@ -1502,9 +1502,7 @@ class AviaryProblem(om.Problem):
                         # if either phase is rotation, we need to connect velocity
                         # ascent to accel also requires velocity
                         if 'rotation' in (phase1, phase2) or ('ascent', 'accel') == (phase1, phase2):
-                            states_to_link[Dynamic.Atmosphere.VELOCITY] = (
-                                true_unless_mpi
-                            )
+                            states_to_link[Dynamic.Mission.VELOCITY] = true_unless_mpi
                             # if the first phase is rotation, we also need alpha
                             if phase1 == 'rotation':
                                 states_to_link['alpha'] = False
@@ -2176,7 +2174,7 @@ class AviaryProblem(om.Problem):
                 "altitude",
                 "mass",
                 Dynamic.Mission.DISTANCE,
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
                 "flight_path_angle",
                 "alpha",
             ]

@@ -39,14 +39,14 @@ class AccelerationRates(om.ExplicitComponent):
             desc="total thrust",
         )
         self.add_input(
-            Dynamic.Atmosphere.VELOCITY,
+            Dynamic.Mission.VELOCITY,
             val=np.zeros(nn),
             units="ft/s",
             desc="true air speed",
         )
 
         self.add_output(
-            Dynamic.Atmosphere.VELOCITY_RATE,
+            Dynamic.Mission.VELOCITY_RATE,
             val=np.zeros(nn),
             units="ft/s**2",
             desc="rate of change of true air speed",
@@ -59,7 +59,7 @@ class AccelerationRates(om.ExplicitComponent):
         )
 
         self.declare_partials(
-            Dynamic.Atmosphere.VELOCITY_RATE,
+            Dynamic.Mission.VELOCITY_RATE,
             [
                 Dynamic.Vehicle.MASS,
                 Dynamic.Vehicle.DRAG,
@@ -68,16 +68,21 @@ class AccelerationRates(om.ExplicitComponent):
             rows=arange,
             cols=arange,
         )
-        self.declare_partials(Dynamic.Mission.DISTANCE_RATE, [
-                              Dynamic.Atmosphere.VELOCITY], rows=arange, cols=arange, val=1.)
+        self.declare_partials(
+            Dynamic.Mission.DISTANCE_RATE,
+            [Dynamic.Mission.VELOCITY],
+            rows=arange,
+            cols=arange,
+            val=1.0,
+        )
 
     def compute(self, inputs, outputs):
         weight = inputs[Dynamic.Vehicle.MASS] * GRAV_ENGLISH_LBM
         drag = inputs[Dynamic.Vehicle.DRAG]
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
-        TAS = inputs[Dynamic.Atmosphere.VELOCITY]
+        TAS = inputs[Dynamic.Mission.VELOCITY]
 
-        outputs[Dynamic.Atmosphere.VELOCITY_RATE] = (GRAV_ENGLISH_GASP / weight) * (
+        outputs[Dynamic.Mission.VELOCITY_RATE] = (GRAV_ENGLISH_GASP / weight) * (
             thrust - drag
         )
         outputs[Dynamic.Mission.DISTANCE_RATE] = TAS
@@ -87,12 +92,12 @@ class AccelerationRates(om.ExplicitComponent):
         drag = inputs[Dynamic.Vehicle.DRAG]
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
 
-        J[Dynamic.Atmosphere.VELOCITY_RATE, Dynamic.Vehicle.MASS] = (
+        J[Dynamic.Mission.VELOCITY_RATE, Dynamic.Vehicle.MASS] = (
             -(GRAV_ENGLISH_GASP / weight**2) * (thrust - drag) * GRAV_ENGLISH_LBM
         )
-        J[Dynamic.Atmosphere.VELOCITY_RATE, Dynamic.Vehicle.DRAG] = -(
+        J[Dynamic.Mission.VELOCITY_RATE, Dynamic.Vehicle.DRAG] = -(
             GRAV_ENGLISH_GASP / weight
         )
-        J[Dynamic.Atmosphere.VELOCITY_RATE, Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = (
+        J[Dynamic.Mission.VELOCITY_RATE, Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = (
             GRAV_ENGLISH_GASP / weight
         )

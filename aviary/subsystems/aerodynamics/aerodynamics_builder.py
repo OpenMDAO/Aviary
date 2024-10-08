@@ -209,7 +209,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                     Dynamic.Mission.ALTITUDE,
                     Dynamic.Atmosphere.MACH,
                     Dynamic.Vehicle.MASS,
-                    Dynamic.Atmosphere.VELOCITY,
+                    Dynamic.Mission.VELOCITY,
                     Dynamic.Atmosphere.DENSITY,
                     'aircraft:*',
                 ]

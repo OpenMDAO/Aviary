@@ -231,7 +231,7 @@ class TurbopropMission(om.Group):
                 Dynamic.Atmosphere.MACH,
                 Aircraft.Engine.Propeller.TIP_SPEED_MAX,
                 Dynamic.Atmosphere.DENSITY,
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
                 Aircraft.Engine.Propeller.DIAMETER,
                 Aircraft.Engine.Propeller.ACTIVITY_FACTOR,
                 Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT,

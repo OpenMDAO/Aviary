@@ -95,7 +95,7 @@ class MissionODE(om.Group):
                 ('mach_rate', Dynamic.Atmosphere.MACH_RATE),
                 ('sos', Dynamic.Atmosphere.SPEED_OF_SOUND),
             ],
-            promotes_outputs=[('velocity_rate', Dynamic.Atmosphere.VELOCITY_RATE)],
+            promotes_outputs=[('velocity_rate', Dynamic.Mission.VELOCITY_RATE)],
         )
 
         base_options = {'num_nodes': nn, 'aviary_inputs': aviary_options}
@@ -143,16 +143,16 @@ class MissionODE(om.Group):
             name='mission_EOM',
             subsys=MissionEOM(num_nodes=nn),
             promotes_inputs=[
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
                 Dynamic.Vehicle.MASS,
                 Dynamic.Vehicle.Propulsion.THRUST_MAX_TOTAL,
                 Dynamic.Vehicle.DRAG,
                 Dynamic.Mission.ALTITUDE_RATE,
-                Dynamic.Atmosphere.VELOCITY_RATE,
+                Dynamic.Mission.VELOCITY_RATE,
             ],
             promotes_outputs=[
                 Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
-                Dynamic.Vehicle.ALTITUDE_RATE_MAX,
+                Dynamic.Mission.ALTITUDE_RATE_MAX,
                 Dynamic.Mission.DISTANCE_RATE,
                 'thrust_required',
             ],
@@ -222,9 +222,7 @@ class MissionODE(om.Group):
             Dynamic.Atmosphere.MACH, val=np.ones(nn), units='unitless'
         )
         self.set_input_defaults(Dynamic.Vehicle.MASS, val=np.ones(nn), units='kg')
-        self.set_input_defaults(
-            Dynamic.Atmosphere.VELOCITY, val=np.ones(nn), units='m/s'
-        )
+        self.set_input_defaults(Dynamic.Mission.VELOCITY, val=np.ones(nn), units='m/s')
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.ones(nn), units='m')
         self.set_input_defaults(
             Dynamic.Mission.ALTITUDE_RATE, val=np.ones(nn), units='m/s'

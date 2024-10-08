@@ -34,14 +34,14 @@ class GroundrollODETestCase(unittest.TestCase):
 
         set_params_for_unit_tests(self.prob)
 
-        self.prob.set_val(Dynamic.Atmosphere.VELOCITY, [100, 100], units="kn")
+        self.prob.set_val(Dynamic.Mission.VELOCITY, [100, 100], units="kn")
         self.prob.set_val("t_curr", [1, 2], units="s")
         self.prob.set_val("aircraft:wing:incidence", 0, units="deg")
 
         self.prob.run_model()
 
         testvals = {
-            Dynamic.Atmosphere.VELOCITY_RATE: [1413548.36, 1413548.36],
+            Dynamic.Mission.VELOCITY_RATE: [1413548.36, 1413548.36],
             Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE: [0.0, 0.0],
             Dynamic.Mission.ALTITUDE_RATE: [0.0, 0.0],
             Dynamic.Mission.DISTANCE_RATE: [168.781, 168.781],

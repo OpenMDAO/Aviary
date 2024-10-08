@@ -23,7 +23,7 @@ class DescentTestCase(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            Dynamic.Atmosphere.VELOCITY, np.array([459, 459]), units="kn"
+            Dynamic.Mission.VELOCITY, np.array([459, 459]), units="kn"
         )
         self.prob.model.set_input_defaults(
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL, np.array([452, 452]), units="lbf"

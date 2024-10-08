@@ -444,14 +444,14 @@ class PhaseBuilderBase(ABC):
         velocity_ref0 = user_options.get_val('velocity_ref0', units='kn')
         velocity_defect_ref = user_options.get_val('velocity_defect_ref', units='kn')
         self.phase.add_state(
-            Dynamic.Atmosphere.VELOCITY,
+            Dynamic.Mission.VELOCITY,
             fix_initial=user_options.get_val('fix_initial'),
             fix_final=False,
             lower=velocity_lower,
             upper=velocity_upper,
             units="kn",
-            rate_source=Dynamic.Atmosphere.VELOCITY_RATE,
-            targets=Dynamic.Atmosphere.VELOCITY,
+            rate_source=Dynamic.Mission.VELOCITY_RATE,
+            targets=Dynamic.Mission.VELOCITY,
             ref=velocity_ref,
             ref0=velocity_ref0,
             defect_ref=velocity_defect_ref,

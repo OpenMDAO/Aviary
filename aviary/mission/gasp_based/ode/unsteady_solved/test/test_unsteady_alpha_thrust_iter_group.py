@@ -62,7 +62,7 @@ class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
         p.set_val(
             Dynamic.Atmosphere.DENSITY, 0.000659904 * np.ones(nn), units="slug/ft**3"
         )
-        p.set_val(Dynamic.Atmosphere.VELOCITY, 487 * np.ones(nn), units="kn")
+        p.set_val(Dynamic.Mission.VELOCITY, 487 * np.ones(nn), units="kn")
         p.set_val("mass", 170_000 * np.ones(nn), units="lbm")
         p.set_val("dTAS_dr", 0.0 * np.ones(nn), units="kn/NM")
 

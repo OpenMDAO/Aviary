@@ -12,7 +12,7 @@ class MachNumber(om.ExplicitComponent):
         nn = self.options['num_nodes']
 
         self.add_input(
-            Dynamic.Atmosphere.VELOCITY,
+            Dynamic.Mission.VELOCITY,
             val=np.ones(nn),
             desc='true airspeed',
             units='m/s',
@@ -32,7 +32,7 @@ class MachNumber(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         sos = inputs[Dynamic.Atmosphere.SPEED_OF_SOUND]
-        velocity = inputs[Dynamic.Atmosphere.VELOCITY]
+        velocity = inputs[Dynamic.Mission.VELOCITY]
 
         outputs[Dynamic.Atmosphere.MACH] = velocity / sos
 
@@ -40,16 +40,16 @@ class MachNumber(om.ExplicitComponent):
         arange = np.arange(self.options['num_nodes'])
         self.declare_partials(
             Dynamic.Atmosphere.MACH,
-            [Dynamic.Atmosphere.SPEED_OF_SOUND, Dynamic.Atmosphere.VELOCITY],
+            [Dynamic.Atmosphere.SPEED_OF_SOUND, Dynamic.Mission.VELOCITY],
             rows=arange,
             cols=arange,
         )
 
     def compute_partials(self, inputs, J):
         sos = inputs[Dynamic.Atmosphere.SPEED_OF_SOUND]
-        velocity = inputs[Dynamic.Atmosphere.VELOCITY]
+        velocity = inputs[Dynamic.Mission.VELOCITY]
 
-        J[Dynamic.Atmosphere.MACH, Dynamic.Atmosphere.VELOCITY] = 1 / sos
+        J[Dynamic.Atmosphere.MACH, Dynamic.Mission.VELOCITY] = 1 / sos
         J[Dynamic.Atmosphere.MACH, Dynamic.Atmosphere.SPEED_OF_SOUND] = (
             -velocity / sos**2
         )

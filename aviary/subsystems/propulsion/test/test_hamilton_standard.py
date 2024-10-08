@@ -46,7 +46,7 @@ class PreHamiltonStandardTest(unittest.TestCase):
             [0.00237717, 0.00237717, 0.00106526],
             units="slug/ft**3",
         )
-        prob.set_val(Dynamic.Atmosphere.VELOCITY, [100.0, 100, 100], units="ft/s")
+        prob.set_val(Dynamic.Mission.VELOCITY, [100.0, 100, 100], units="ft/s")
         prob.set_val(
             Dynamic.Atmosphere.SPEED_OF_SOUND,
             [661.46474547, 661.46474547, 601.93668333],

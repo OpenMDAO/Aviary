@@ -106,8 +106,8 @@ class ClimbPhase(PhaseBuilderBase):
         phase.add_timeseries_output(
             "TAS_violation", output_name="TAS_violation", units="kn")
         phase.add_timeseries_output(
-            Dynamic.Atmosphere.VELOCITY,
-            output_name=Dynamic.Atmosphere.VELOCITY,
+            Dynamic.Mission.VELOCITY,
+            output_name=Dynamic.Mission.VELOCITY,
             units="kn",
         )
         phase.add_timeseries_output("aero.CL", output_name="CL", units="unitless")

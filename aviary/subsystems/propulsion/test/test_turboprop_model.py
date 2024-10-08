@@ -350,7 +350,7 @@ class ExamplePropModel(SubsystemBuilderBase):
                 Dynamic.Atmosphere.SPEED_OF_SOUND,
                 Aircraft.Engine.Propeller.TIP_SPEED_MAX,
                 Dynamic.Atmosphere.DENSITY,
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
                 Aircraft.Engine.Propeller.DIAMETER,
                 Dynamic.Vehicle.Propulsion.SHAFT_POWER,
                 Aircraft.Engine.Propeller.ACTIVITY_FACTOR,
@@ -366,7 +366,7 @@ class ExamplePropModel(SubsystemBuilderBase):
             units="ft/s",
         )
         pp.set_input_defaults(
-            Dynamic.Atmosphere.VELOCITY, 100.0 * np.ones(num_nodes), units="knot"
+            Dynamic.Mission.VELOCITY, 100.0 * np.ones(num_nodes), units="knot"
         )
 
         return prop_group

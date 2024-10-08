@@ -36,13 +36,13 @@ class FlightPathODETestCase(unittest.TestCase):
 
         set_params_for_unit_tests(self.prob)
 
-        self.prob.set_val(Dynamic.Atmosphere.VELOCITY, [100, 100], units="kn")
+        self.prob.set_val(Dynamic.Mission.VELOCITY, [100, 100], units="kn")
         self.prob.set_val(Dynamic.Vehicle.MASS, [100000, 100000], units="lbm")
         self.prob.set_val(Dynamic.Mission.ALTITUDE, [500, 500], units="ft")
 
         self.prob.run_model()
         testvals = {
-            Dynamic.Atmosphere.VELOCITY_RATE: [14.0673, 14.0673],
+            Dynamic.Mission.VELOCITY_RATE: [14.0673, 14.0673],
             Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE: [-0.1429133, -0.1429133],
             Dynamic.Mission.ALTITUDE_RATE: [0.0, 0.0],
             Dynamic.Mission.DISTANCE_RATE: [168.781, 168.781],
@@ -73,13 +73,13 @@ class FlightPathODETestCase(unittest.TestCase):
 
         set_params_for_unit_tests(self.prob)
 
-        self.prob.set_val(Dynamic.Atmosphere.VELOCITY, [100, 100], units="kn")
+        self.prob.set_val(Dynamic.Mission.VELOCITY, [100, 100], units="kn")
         self.prob.set_val(Dynamic.Vehicle.MASS, [100000, 100000], units="lbm")
         self.prob.set_val(Dynamic.Mission.ALTITUDE, [500, 500], units="ft")
 
         self.prob.run_model()
         testvals = {
-            Dynamic.Atmosphere.VELOCITY_RATE: [13.58489, 13.58489],
+            Dynamic.Mission.VELOCITY_RATE: [13.58489, 13.58489],
             Dynamic.Mission.DISTANCE_RATE: [168.781, 168.781],
             "normal_force": [74910.12, 74910.12],
             "fuselage_pitch": [0.0, 0.0],

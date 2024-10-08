@@ -24,10 +24,14 @@ class RequiredThrust(om.ExplicitComponent):
             units='m/s',
             desc='rate of change of altitude',
         )
-        self.add_input(Dynamic.Atmosphere.VELOCITY, val=np.zeros(nn),
-                       units='m/s', desc=Dynamic.Atmosphere.VELOCITY)
         self.add_input(
-            Dynamic.Atmosphere.VELOCITY_RATE,
+            Dynamic.Mission.VELOCITY,
+            val=np.zeros(nn),
+            units='m/s',
+            desc=Dynamic.Mission.VELOCITY,
+        )
+        self.add_input(
+            Dynamic.Mission.VELOCITY_RATE,
             val=np.zeros(nn),
             units='m/s**2',
             desc='rate of change of velocity',
@@ -43,17 +47,18 @@ class RequiredThrust(om.ExplicitComponent):
             'thrust_required', Dynamic.Mission.ALTITUDE_RATE, rows=ar, cols=ar
         )
         self.declare_partials(
-            'thrust_required', Dynamic.Atmosphere.VELOCITY, rows=ar, cols=ar)
+            'thrust_required', Dynamic.Mission.VELOCITY, rows=ar, cols=ar
+        )
         self.declare_partials(
-            'thrust_required', Dynamic.Atmosphere.VELOCITY_RATE, rows=ar, cols=ar
+            'thrust_required', Dynamic.Mission.VELOCITY_RATE, rows=ar, cols=ar
         )
         self.declare_partials('thrust_required', Dynamic.Vehicle.MASS, rows=ar, cols=ar)
 
     def compute(self, inputs, outputs):
         drag = inputs[Dynamic.Vehicle.DRAG]
         altitude_rate = inputs[Dynamic.Mission.ALTITUDE_RATE]
-        velocity = inputs[Dynamic.Atmosphere.VELOCITY]
-        velocity_rate = inputs[Dynamic.Atmosphere.VELOCITY_RATE]
+        velocity = inputs[Dynamic.Mission.VELOCITY]
+        velocity_rate = inputs[Dynamic.Mission.VELOCITY_RATE]
         mass = inputs[Dynamic.Vehicle.MASS]
 
         thrust_required = drag + (altitude_rate*gravity/velocity + velocity_rate) * mass
@@ -62,16 +67,17 @@ class RequiredThrust(om.ExplicitComponent):
 
     def compute_partials(self, inputs, partials):
         altitude_rate = inputs[Dynamic.Mission.ALTITUDE_RATE]
-        velocity = inputs[Dynamic.Atmosphere.VELOCITY]
-        velocity_rate = inputs[Dynamic.Atmosphere.VELOCITY_RATE]
+        velocity = inputs[Dynamic.Mission.VELOCITY]
+        velocity_rate = inputs[Dynamic.Mission.VELOCITY_RATE]
         mass = inputs[Dynamic.Vehicle.MASS]
 
         partials['thrust_required', Dynamic.Vehicle.DRAG] = 1.0
         partials['thrust_required', Dynamic.Mission.ALTITUDE_RATE] = (
             gravity / velocity * mass
         )
-        partials['thrust_required', Dynamic.Atmosphere.VELOCITY] = - \
-            altitude_rate*gravity/velocity**2 * mass
-        partials['thrust_required', Dynamic.Atmosphere.VELOCITY_RATE] = mass
+        partials['thrust_required', Dynamic.Mission.VELOCITY] = (
+            -altitude_rate * gravity / velocity**2 * mass
+        )
+        partials['thrust_required', Dynamic.Mission.VELOCITY_RATE] = mass
         partials['thrust_required', Dynamic.Vehicle.MASS] = altitude_rate * \
             gravity/velocity + velocity_rate

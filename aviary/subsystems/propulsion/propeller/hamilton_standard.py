@@ -483,9 +483,7 @@ class PreHamiltonStandard(om.ExplicitComponent):
         add_aviary_input(
             self, Dynamic.Atmosphere.DENSITY, val=np.zeros(nn), units='slug/ft**3'
         )
-        add_aviary_input(
-            self, Dynamic.Atmosphere.VELOCITY, val=np.zeros(nn), units='knot'
-        )
+        add_aviary_input(self, Dynamic.Mission.VELOCITY, val=np.zeros(nn), units='knot')
         add_aviary_input(
             self, Dynamic.Atmosphere.SPEED_OF_SOUND, val=np.zeros(nn), units='knot'
         )
@@ -513,7 +511,7 @@ class PreHamiltonStandard(om.ExplicitComponent):
         self.declare_partials(
             'advance_ratio',
             [
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
                 Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED,
             ],
             rows=arange,
@@ -534,7 +532,7 @@ class PreHamiltonStandard(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         diam_prop = inputs[Aircraft.Engine.Propeller.DIAMETER]
         shp = inputs[Dynamic.Vehicle.Propulsion.SHAFT_POWER]
-        vktas = inputs[Dynamic.Atmosphere.VELOCITY]
+        vktas = inputs[Dynamic.Mission.VELOCITY]
         tipspd = inputs[Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED]
         sos = inputs[Dynamic.Atmosphere.SPEED_OF_SOUND]
 
@@ -570,7 +568,7 @@ class PreHamiltonStandard(om.ExplicitComponent):
             / (tipspd**3 * diam_prop**2)
 
     def compute_partials(self, inputs, partials):
-        vktas = inputs[Dynamic.Atmosphere.VELOCITY]
+        vktas = inputs[Dynamic.Mission.VELOCITY]
         tipspd = inputs[Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED]
         rho = inputs[Dynamic.Atmosphere.DENSITY]
         diam_prop = inputs[Aircraft.Engine.Propeller.DIAMETER]
@@ -584,7 +582,7 @@ class PreHamiltonStandard(om.ExplicitComponent):
         )
         partials["tip_mach", Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED] = 1 / sos
         partials["tip_mach", Dynamic.Atmosphere.SPEED_OF_SOUND] = -tipspd / sos**2
-        partials["advance_ratio", Dynamic.Atmosphere.VELOCITY] = 5.309 / tipspd
+        partials["advance_ratio", Dynamic.Mission.VELOCITY] = 5.309 / tipspd
         partials["advance_ratio", Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED] = (
             -5.309 * vktas / (tipspd * tipspd)
         )

@@ -21,7 +21,7 @@ class ClimbTestCase(unittest.TestCase):
         self.prob.model.add_subsystem("group", ClimbRates(num_nodes=2), promotes=["*"])
 
         self.prob.model.set_input_defaults(
-            Dynamic.Atmosphere.VELOCITY, np.array([459, 459]), units="kn"
+            Dynamic.Mission.VELOCITY, np.array([459, 459]), units="kn"
         )
         self.prob.model.set_input_defaults(
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL,

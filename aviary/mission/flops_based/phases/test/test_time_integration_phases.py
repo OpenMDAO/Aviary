@@ -143,7 +143,7 @@ class HE_SGMDescentTestCase(unittest.TestCase):
     #         simupy_args=dict(verbosity=Verbosity.DEBUG,)
     #         )
     #     brake_release_to_decision.clear_triggers()
-    #     brake_release_to_decision.add_trigger(Dynamic.Atmosphere.VELOCITY, value=167.85, units='kn')
+    #     brake_release_to_decision.add_trigger(Dynamic.Mission.VELOCITY, value=167.85, units='kn')
 
     #     phases = {'HE': {
     #         'ode': brake_release_to_decision,

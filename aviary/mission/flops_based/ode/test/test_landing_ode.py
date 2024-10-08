@@ -51,7 +51,7 @@ class FlareODETest(unittest.TestCase):
             input_keys=[
                 'angle_of_attack',
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
                 Dynamic.Vehicle.MASS,
                 Dynamic.Vehicle.LIFT,
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,

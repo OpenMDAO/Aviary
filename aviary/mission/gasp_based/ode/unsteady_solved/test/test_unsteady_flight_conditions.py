@@ -48,7 +48,7 @@ class TestUnsteadyFlightConditions(unittest.TestCase):
 
         if input_speed_type is SpeedType.TAS:
             p.set_val(Dynamic.Mission.ALTITUDE, 37500, units="ft")
-            p.set_val(Dynamic.Atmosphere.VELOCITY, 250, units="kn")
+            p.set_val(Dynamic.Mission.VELOCITY, 250, units="kn")
             p.set_val("dTAS_dr", np.zeros(nn), units="kn/km")
         elif input_speed_type is SpeedType.EAS:
             p.set_val(Dynamic.Mission.ALTITUDE, 37500, units="ft")
@@ -63,7 +63,7 @@ class TestUnsteadyFlightConditions(unittest.TestCase):
 
         mach = p.get_val(Dynamic.Atmosphere.MACH)
         eas = p.get_val("EAS")
-        tas = p.get_val(Dynamic.Atmosphere.VELOCITY, units="m/s")
+        tas = p.get_val(Dynamic.Mission.VELOCITY, units="m/s")
         sos = p.get_val(Dynamic.Atmosphere.SPEED_OF_SOUND, units="m/s")
         rho = p.get_val(Dynamic.Atmosphere.DENSITY, units="kg/m**3")
         rho_sl = RHO_SEA_LEVEL_METRIC

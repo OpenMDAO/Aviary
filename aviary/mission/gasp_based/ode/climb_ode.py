@@ -64,10 +64,10 @@ class ClimbODE(BaseODE):
 
         if input_speed_type is SpeedType.EAS:
             speed_inputs = ["EAS"]
-            speed_outputs = ["mach", Dynamic.Atmosphere.VELOCITY]
+            speed_outputs = ["mach", Dynamic.Mission.VELOCITY]
         elif input_speed_type is SpeedType.MACH:
             speed_inputs = ["mach"]
-            speed_outputs = ["EAS", Dynamic.Atmosphere.VELOCITY]
+            speed_outputs = ["EAS", Dynamic.Mission.VELOCITY]
 
         if analysis_scheme is AnalysisScheme.SHOOTING:
             add_SGM_required_inputs(
@@ -202,7 +202,7 @@ class ClimbODE(BaseODE):
             ClimbRates(num_nodes=nn),
             promotes_inputs=[
                 Dynamic.Vehicle.MASS,
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
                 Dynamic.Vehicle.DRAG,
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
             ],
@@ -230,7 +230,7 @@ class ClimbODE(BaseODE):
                 "CL_max",
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 Dynamic.Vehicle.MASS,
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
             ]
             + ["aircraft:*"],
             promotes_outputs=["theta", "TAS_violation"],

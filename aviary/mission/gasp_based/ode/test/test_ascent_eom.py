@@ -26,7 +26,7 @@ class AscentEOMTestCase(unittest.TestCase):
             Dynamic.Vehicle.DRAG, val=10000 * np.ones(2), units="lbf"
         )
         self.prob.model.set_input_defaults(
-            Dynamic.Atmosphere.VELOCITY, val=10 * np.ones(2), units="ft/s"
+            Dynamic.Mission.VELOCITY, val=10 * np.ones(2), units="ft/s"
         )
         self.prob.model.set_input_defaults(
             Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(2), units="rad"
@@ -42,7 +42,7 @@ class AscentEOMTestCase(unittest.TestCase):
         self.prob.run_model()
 
         assert_near_equal(
-            self.prob[Dynamic.Atmosphere.VELOCITY_RATE],
+            self.prob[Dynamic.Mission.VELOCITY_RATE],
             np.array([2.202965, 2.202965]),
             tol,
         )
