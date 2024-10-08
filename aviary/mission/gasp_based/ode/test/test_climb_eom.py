@@ -86,10 +86,12 @@ class ClimbTestCase2(unittest.TestCase):
         prob.model.set_input_defaults(
             Dynamic.Mission.VELOCITY, np.array([459, 459]), units="kn")
         prob.model.set_input_defaults(
-            Dynamic.Mission.THRUST_TOTAL, np.array([10473, 10473]), units="lbf"
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            np.array([10473, 10473]),
+            units="lbf",
         )
         prob.model.set_input_defaults(
-            Dynamic.Mission.DRAG, np.array([9091.517, 9091.517]), units="lbf"
+            Dynamic.Vehicle.DRAG, np.array([9091.517, 9091.517]), units="lbf"
         )
         prob.model.set_input_defaults(
             Dynamic.Vehicle.MASS, np.array([171481, 171481]), units="lbm"

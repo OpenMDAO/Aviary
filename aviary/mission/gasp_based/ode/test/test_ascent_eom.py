@@ -76,12 +76,14 @@ class AscentEOMTestCase2(unittest.TestCase):
             Dynamic.Vehicle.MASS, val=175400 * np.ones(2), units="lbm"
         )
         prob.model.set_input_defaults(
-            Dynamic.Mission.THRUST_TOTAL, val=22000 * np.ones(2), units="lbf"
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL, val=22000 * np.ones(2), units="lbf"
         )
         prob.model.set_input_defaults(
-            Dynamic.Mission.LIFT, val=200 * np.ones(2), units="lbf")
+            Dynamic.Vehicle.LIFT, val=200 * np.ones(2), units="lbf"
+        )
         prob.model.set_input_defaults(
-            Dynamic.Mission.DRAG, val=10000 * np.ones(2), units="lbf")
+            Dynamic.Vehicle.DRAG, val=10000 * np.ones(2), units="lbf"
+        )
         prob.model.set_input_defaults(
             Dynamic.Mission.VELOCITY, val=10 * np.ones(2), units="ft/s")
         prob.model.set_input_defaults(

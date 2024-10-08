@@ -90,9 +90,10 @@ class DescentTestCase2(unittest.TestCase):
         prob.model.set_input_defaults(
             Dynamic.Mission.VELOCITY, np.array([459, 459]), units="kn")
         prob.model.set_input_defaults(
-            Dynamic.Mission.THRUST_TOTAL, np.array([452, 452]), units="lbf")
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL, np.array([452, 452]), units="lbf"
+        )
         prob.model.set_input_defaults(
-            Dynamic.Mission.DRAG, np.array([7966.927, 7966.927]), units="lbf"
+            Dynamic.Vehicle.DRAG, np.array([7966.927, 7966.927]), units="lbf"
         )
         prob.model.set_input_defaults(
             Dynamic.Vehicle.MASS, np.array([147661, 147661]), units="lbm"

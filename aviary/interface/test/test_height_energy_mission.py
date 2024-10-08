@@ -259,13 +259,13 @@ class AircraftMissionTestSuite(unittest.TestCase):
         modified_phase_info = deepcopy(self.phase_info)
         modified_phase_info['climb']['user_options']['constraints'] = {
             'throttle_1': {
-                'target': Dynamic.Mission.THROTTLE,
+                'target': Dynamic.Vehicle.Propulsion.THROTTLE,
                 'equals': 0.2,
                 'loc': 'initial',
                 'type': 'boundary',
             },
             'throttle_2': {
-                'target': Dynamic.Mission.THROTTLE,
+                'target': Dynamic.Vehicle.Propulsion.THROTTLE,
                 'equals': 0.8,
                 'loc': 'final',
                 'type': 'boundary',

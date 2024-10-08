@@ -115,7 +115,13 @@ class TestBreguetPartials2(unittest.TestCase):
         prob.model.set_input_defaults(
             "mass", np.linspace(171481, 171481 - 10000, nn), units="lbm")
         prob.model.set_input_defaults(
-            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, -5870 * np.ones(nn,), units="lbm/h")
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            -5870
+            * np.ones(
+                nn,
+            ),
+            units="lbm/h",
+        )
         prob.setup(check=False, force_alloc_complex=True)
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
