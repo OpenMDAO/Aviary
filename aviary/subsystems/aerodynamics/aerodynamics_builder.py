@@ -473,7 +473,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                 "drag_loss_due_to_shielded_wing_area": {
                     "mission_name": ['drag_loss_due_to_shielded_wing_area'],
                     # "post_mission_name": ['drag_loss_due_to_shielded_wing_area'],
-                    "units": "lbf",
+                    "units": "unitless",
                 },
             }
         else:
