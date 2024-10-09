@@ -20,7 +20,7 @@ from aviary.models.large_turboprop_freighter.phase_info import (
 
 @use_tempdirs
 # TODO need to add asserts with "truth" values
-class LargeTurbopropFreighterBenchmark(unittest.TestCase):
+class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
 
     def build_and_run_problem(self):
 
@@ -34,8 +34,11 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
 
         # options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
         # options.set_val(Aircraft.Engine.WING_LOCATIONS, 0.385)
-        options.set_val(Aircraft.Engine.RPM_DESIGN, 1_019.916, 'rpm')
-        options.set_val(Aircraft.Engine.Gearbox.GEAR_RATIO, 1.0)
+        options.set_val(Aircraft.Engine.RPM_DESIGN, 6000, 'rpm')
+        options.set_val(Aircraft.Engine.FIXED_RPM, 6000, 'rpm')
+        options.set_val(Aircraft.Engine.Gearbox.GEAR_RATIO, 5.88)
+        options.set_val(Aircraft.Engine.Gearbox.EFFICIENCY, 1.0)
+        options.set_val(Aircraft.Engine.SCALE_FACTOR, 3.0)  # 11.87)
 
         # turboprop = TurbopropModel('turboprop', options=options)
         # turboprop2 = TurbopropModel('turboprop2', options=options)
@@ -51,7 +54,7 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         # load_inputs needs to be updated to accept an already existing aviary options
         prob.load_inputs(
             options,  # "models/large_turboprop_freighter/large_turboprop_freighter.csv",
-            two_dof_phase_info,
+            energy_phase_info,
             engine_builders=[electroprop],
         )
         prob.aviary_inputs.set_val(Settings.VERBOSITY, 2)
@@ -71,7 +74,7 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
 
         prob.setup()
         # prob.model.list_vars(units=True, print_arrays=True)
-        # om.n2(prob)
+        om.n2(prob)
 
         prob.set_initial_guesses()
         prob.run_aviary_problem("dymos_solution.db")
@@ -80,5 +83,5 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    test = LargeTurbopropFreighterBenchmark()
+    test = LargeElectrifiedTurbopropFreighterBenchmark()
     test.build_and_run_problem()
