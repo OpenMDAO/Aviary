@@ -17,6 +17,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.named_values import NamedValues, get_keys, get_items
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.enums import GASPEngineType
 
 
 class EngineModelVariables(Enum):
@@ -173,7 +174,7 @@ def build_engine_deck(aviary_options: AviaryValues, meta_data=_MetaData):
                     if val_dim > expected_dim + 1:
                         UserWarning(
                             f'Provided vector for {var} has too many dimensions: '
-                            'expecting a {expected_dim+1}D array ({expected_dim}D '
+                            f'expecting a {expected_dim+1}D array ({expected_dim}D '
                             'per engine)'
                         )
                 # if neither metadata nor aviary_val are numpy arrays, cannot check dimensions
@@ -202,16 +203,22 @@ def build_engine_deck(aviary_options: AviaryValues, meta_data=_MetaData):
         except (KeyError, TypeError):
             continue
 
-    # local import to avoid circular import
-    from aviary.subsystems.propulsion.engine_deck import EngineDeck
-
     # name engine deck after filename
-    return [
-        EngineDeck(
-            Path(engine_options.get_val(Aircraft.Engine.DATA_FILE)).stem,
-            options=engine_options,
-        )
-    ]
+    filename = Path(engine_options.get_val(Aircraft.Engine.DATA_FILE)).stem
+    engine_type = aviary_options._mapping.get(
+        Aircraft.Engine.TYPE, GASPEngineType.TURBOJET)
+    if engine_type is GASPEngineType.TURBOJET:
+        # local import to avoid circular import
+        from aviary.subsystems.propulsion.engine_deck import EngineDeck
+        return [
+            EngineDeck(filename, options=engine_options)
+        ]
+    else:
+        # local import to avoid circular import
+        from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
+        return [
+            TurbopropModel(filename, options=engine_options)
+        ]
 
 
 # TODO combine with aviary/utils/data_interpolator_builder.py build_data_interpolator

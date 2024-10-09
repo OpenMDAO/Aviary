@@ -360,3 +360,5 @@ two_dof_phase_info = {
         },
     },
 }
+
+phase_info = two_dof_phase_info
