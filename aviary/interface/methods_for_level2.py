@@ -681,20 +681,14 @@ class AviaryProblem(om.Problem):
         self.cruise_alt = self.aviary_inputs.get_val(
             Mission.Design.CRUISE_ALTITUDE, units='ft')
 
-        # Add taxi subsystem
-        self.model.add_subsystem(
-            "taxi", TaxiSegment(**(self.ode_args)),
-            promotes_inputs=['aircraft:*', 'mission:*'],
-        )
-
         if self.analysis_scheme is AnalysisScheme.COLLOCATION:
             # Add event transformation subsystem
             self.model.add_subsystem(
                 "event_xform",
                 om.ExecComp(
                     ["t_init_gear=m*tau_gear+b", "t_init_flaps=m*tau_flaps+b"],
-                    t_init_gear={"units": "s"},
-                    t_init_flaps={"units": "s"},
+                    t_init_gear={"units": "s"},  # initial time that gear comes up
+                    t_init_flaps={"units": "s"},  # initial time that flaps retract
                     tau_gear={"units": "unitless"},
                     tau_flaps={"units": "unitless"},
                     m={"units": "s"},
@@ -708,6 +702,12 @@ class AviaryProblem(om.Problem):
                 ],
                 promotes_outputs=["t_init_gear", "t_init_flaps"],  # link to h_fit
             )
+
+        # Add taxi subsystem
+        self.model.add_subsystem(
+            "taxi", TaxiSegment(**(self.ode_args)),
+            promotes_inputs=['aircraft:*', 'mission:*'],
+        )
 
         # Calculate speed at which to initiate rotation
         self.model.add_subsystem(
@@ -788,7 +788,7 @@ class AviaryProblem(om.Problem):
                                            promotes_outputs=[
                 ('subsystem_mass', Aircraft.Design.EXTERNAL_SUBSYSTEMS_MASS)])
 
-    def _add_groundroll_eq_constraint(self, phase):
+    def _add_groundroll_eq_constraint(self):
         """
         Add an equality constraint to the problem to ensure that the TAS at the end of the
         groundroll phase is equal to the rotation velocity at the start of the rotation phase.
@@ -809,14 +809,6 @@ class AviaryProblem(om.Problem):
             "groundroll_boundary.lhs:velocity",
             src_indices=[-1],
             flat_src_indices=True,
-        )
-
-        ascent_tx = phase.options["transcription"]
-        ascent_num_nodes = ascent_tx.grid_data.num_nodes
-        self.model.add_subsystem(
-            "h_fit",
-            PolynomialFit(N_cp=ascent_num_nodes),
-            promotes_inputs=["t_init_gear", "t_init_flaps"],
         )
 
     def _get_phase(self, phase_name, phase_idx):
@@ -1114,7 +1106,7 @@ class AviaryProblem(om.Problem):
                         self.phase_info[phase_name]['phase_type'] = phase_name
 
                         if phase_name == 'ascent':
-                            self._add_groundroll_eq_constraint(phase)
+                            self._add_groundroll_eq_constraint()
 
             # loop through phase_info and external subsystems
             external_parameters = {}
@@ -1579,13 +1571,13 @@ class AviaryProblem(om.Problem):
 
                 # imitate input_initial for taxi -> groundroll
                 eq = self.model.add_subsystem(
-                    "link_taxi_groundroll", om.EQConstraintComp())
+                    "taxi_groundroll_mass_constraint", om.EQConstraintComp())
                 eq.add_eq_output("mass", eq_units="lbm", normalize=False,
                                  ref=10000., add_constraint=True)
-                self.model.connect("taxi.mass", "link_taxi_groundroll.rhs:mass")
+                self.model.connect("taxi.mass", "taxi_groundroll_mass_constraint.rhs:mass")
                 self.model.connect(
                     "traj.groundroll.states:mass",
-                    "link_taxi_groundroll.lhs:mass",
+                    "taxi_groundroll_mass_constraint.lhs:mass",
                     src_indices=[0],
                     flat_src_indices=True,
                 )
@@ -2671,6 +2663,7 @@ class AviaryProblem(om.Problem):
         )
 
     def _add_objectives(self):
+        "add objectives and some constraints"
         self.model.add_subsystem(
             "fuel_obj",
             om.ExecComp(
@@ -2700,6 +2693,15 @@ class AviaryProblem(om.Problem):
                 ("ascent_duration", Mission.Takeoff.ASCENT_DURATION),
             ],
             promotes_outputs=[("reg_objective", Mission.Objectives.RANGE)],
+        )
+
+        ascent_phase = getattr(self.traj.phases,'ascent')
+        ascent_tx = ascent_phase.options["transcription"]
+        ascent_num_nodes = ascent_tx.grid_data.num_nodes
+        self.model.add_subsystem(
+            "h_fit",
+            PolynomialFit(N_cp=ascent_num_nodes),
+            promotes_inputs=["t_init_gear", "t_init_flaps"],
         )
 
         self.model.add_subsystem(
