@@ -11,12 +11,7 @@ SWETFCT = 1.02
 class AeroFormfactors(om.ExplicitComponent):
     """Compute aero form factors"""
 
-    def initialize(self):
-        self.options.declare("num_nodes", default=1, types=int)
-
     def setup(self):
-        nn = self.options["num_nodes"]
-
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED)
         # add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_TIP)
         add_aviary_input(self, Aircraft.VerticalTail.THICKNESS_TO_CHORD)
@@ -38,32 +33,30 @@ class AeroFormfactors(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Nacelle.FORM_FACTOR, 1.23456)
 
     def setup_partials(self):
-        nn = self.options["num_nodes"]
-        # arange = np.arange(nn)
         self.declare_partials(
             Aircraft.Wing.FORM_FACTOR, [
                 Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED,
                 Mission.Design.MACH,
-                Aircraft.Wing.SWEEP])  # , rows=arange, cols=arange)
+                Aircraft.Wing.SWEEP])
         self.declare_partials(
             Aircraft.VerticalTail.FORM_FACTOR, [
                 Aircraft.VerticalTail.THICKNESS_TO_CHORD,
                 Mission.Design.MACH,
-                Aircraft.VerticalTail.SWEEP])  # , rows=arange, cols=arange)
+                Aircraft.VerticalTail.SWEEP])
         self.declare_partials(
             Aircraft.HorizontalTail.FORM_FACTOR, [
                 Aircraft.HorizontalTail.THICKNESS_TO_CHORD,
                 Mission.Design.MACH,
                 Aircraft.HorizontalTail.SWEEP,
-                Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION])  # , rows=arange, cols=arange)
+                Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION])
         self.declare_partials(
             Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR, [
                 Aircraft.Strut.THICKNESS_TO_CHORD,
-                Mission.Design.MACH])  # , rows=arange, cols=arange)
+                Mission.Design.MACH])
         self.declare_partials(
             Aircraft.Nacelle.FORM_FACTOR, [
                 Aircraft.Nacelle.AVG_DIAMETER,
-                Aircraft.Nacelle.AVG_LENGTH])  # , rows=arange, cols=arange)
+                Aircraft.Nacelle.AVG_LENGTH])
 
     def compute(self, inputs, outputs):
         tc, tcvt, tcht, tcstrt, rlmc4, rswpvt, rswpht, sah, smn, dbarn, xln = inputs.values()
