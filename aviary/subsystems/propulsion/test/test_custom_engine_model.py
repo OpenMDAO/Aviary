@@ -40,7 +40,7 @@ class SimpleEngine(om.ExplicitComponent):
         nn = self.options['num_nodes']
         # add inputs and outputs to interpolator
         self.add_input(
-            Dynamic.Mission.MACH,
+            Dynamic.Atmosphere.MACH,
             shape=nn,
             units='unitless',
             desc='Current flight Mach number',
@@ -52,7 +52,7 @@ class SimpleEngine(om.ExplicitComponent):
             desc='Current flight altitude',
         )
         self.add_input(
-            Dynamic.Mission.THROTTLE,
+            Dynamic.Vehicle.Propulsion.THROTTLE,
             shape=nn,
             units='unitless',
             desc='Current engine throttle',
@@ -66,37 +66,37 @@ class SimpleEngine(om.ExplicitComponent):
         self.add_input('y', units='m**2', desc='Dummy variable for bus testing')
 
         self.add_output(
-            Dynamic.Mission.THRUST,
+            Dynamic.Vehicle.Propulsion.THRUST,
             shape=nn,
             units='lbf',
             desc='Current net thrust produced (scaled)',
         )
         self.add_output(
-            Dynamic.Mission.THRUST_MAX,
+            Dynamic.Vehicle.Propulsion.THRUST_MAX,
             shape=nn,
             units='lbf',
             desc='Current net thrust produced (scaled)',
         )
         self.add_output(
-            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE,
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE,
             shape=nn,
             units='lbm/s',
             desc='Current fuel flow rate (scaled)',
         )
         self.add_output(
-            Dynamic.Mission.ELECTRIC_POWER_IN,
+            Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN,
             shape=nn,
             units='W',
             desc='Current electric energy rate (scaled)',
         )
         self.add_output(
-            Dynamic.Mission.NOX_RATE,
+            Dynamic.Vehicle.Propulsion.NOX_RATE,
             shape=nn,
             units='lbm/s',
             desc='Current NOx emission rate (scaled)',
         )
         self.add_output(
-            Dynamic.Mission.TEMPERATURE_T4,
+            Dynamic.Vehicle.Propulsion.TEMPERATURE_T4,
             shape=nn,
             units='degR',
             desc='Current turbine exit temperature',
@@ -106,14 +106,15 @@ class SimpleEngine(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         combined_throttle = (
-            inputs[Dynamic.Mission.THROTTLE] + inputs['different_throttle']
+            inputs[Dynamic.Vehicle.Propulsion.THROTTLE] + inputs['different_throttle']
         )
 
         # calculate outputs
-        outputs[Dynamic.Mission.THRUST] = 10000.0 * combined_throttle
-        outputs[Dynamic.Mission.THRUST_MAX] = 10000.0
-        outputs[Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE] = -10.0 * combined_throttle
-        outputs[Dynamic.Mission.TEMPERATURE_T4] = 2800.0
+        outputs[Dynamic.Vehicle.Propulsion.THRUST] = 10000.0 * combined_throttle
+        outputs[Dynamic.Vehicle.Propulsion.THRUST_MAX] = 10000.0
+        outputs[Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE] = - \
+            10.0 * combined_throttle
+        outputs[Dynamic.Vehicle.Propulsion.TEMPERATURE_T4] = 2800.0
 
 
 class SimpleTestEngine(EngineModel):
@@ -291,14 +292,14 @@ class TurbopropTest(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.Engine.DATA_FILE, engine_filepath)
         options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
-        options.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 10, units='ft')
+        options.set_val(Aircraft.Engine.Propeller.DIAMETER, 10, units='ft')
 
         options.set_val(
-            Aircraft.Engine.COMPUTE_PROPELLER_INSTALLATION_LOSS,
+            Aircraft.Engine.Propeller.COMPUTE_INSTALLATION_LOSS,
             val=True,
             units='unitless',
         )
-        options.set_val(Aircraft.Engine.NUM_PROPELLER_BLADES, val=4, units='unitless')
+        options.set_val(Aircraft.Engine.Propeller.NUM_BLADES, val=4, units='unitless')
 
         engine = TurbopropModel(options=options)
 
@@ -335,22 +336,22 @@ class TurbopropTest(unittest.TestCase):
         prob.set_initial_guesses()
 
         prob.set_val(
-            f'traj.cruise.rhs_all.{Aircraft.Engine.PROPELLER_TIP_SPEED_MAX}',
+            f'traj.cruise.rhs_all.{Aircraft.Engine.Propeller.TIP_SPEED_MAX}',
             710.0,
             units='ft/s',
         )
         prob.set_val(
-            f'traj.cruise.rhs_all.{Aircraft.Engine.PROPELLER_DIAMETER}', 10, units='ft'
+            f'traj.cruise.rhs_all.{Aircraft.Engine.Propeller.DIAMETER}', 10, units='ft'
         )
         prob.set_val(
-            f'traj.cruise.rhs_all.{Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR}',
+            f'traj.cruise.rhs_all.{Aircraft.Engine.Propeller.ACTIVITY_FACTOR}',
             150.0,
             units='unitless',
         )
         prob.set_val(
             (
                 'traj.cruise.rhs_all.'
-                f'{Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT}'
+                f'{Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT}'
             ),
             0.5,
             units='unitless',

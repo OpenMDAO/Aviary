@@ -87,7 +87,7 @@ class TestSubsystemsMission(unittest.TestCase):
         prob.run_aviary_problem()
 
         electric_energy_used = prob.get_val(
-            f'traj.cruise.timeseries.{av.Dynamic.Mission.CUMULATIVE_ELECTRIC_ENERGY_USED}', units='kW*h')
+            f'traj.cruise.timeseries.{av.Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED}', units='kW*h')
         fuel_burned = prob.get_val(av.Mission.Summary.FUEL_BURNED, units='lbm')
 
         # Check outputs

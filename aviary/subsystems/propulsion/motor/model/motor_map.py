@@ -42,14 +42,14 @@ class MotorMap(om.Group):
 
     Inputs
     ----------
-    Dynamic.Mission.THROTTLE : float (unitless) (0 to 1)
+    Dynamic.Vehicle.Propulsion.THROTTLE : float (unitless) (0 to 1)
         The throttle command which will be translated into torque output from the engine
-    Aircraft.Engine.SCALE_FACTOR : float (unitless) (positive) 
+    Aircraft.Engine.SCALE_FACTOR : float (unitless) (positive)
     Aircraft.Motor.RPM : float (rpm) (0 to 6000)
 
     Outputs
     ----------
-    Dynamic.Mission.TORQUE : float (positive)
+    Dynamic.Vehicle.Propulsion.TORQUE : float (positive)
     Dynamic.Mission.Motor.EFFICIENCY : float (positive)
 
     '''
@@ -71,9 +71,12 @@ class MotorMap(om.Group):
         motor = om.MetaModelStructuredComp(method="slinear",
                                            vec_size=n,
                                            extrapolate=True)
-        motor.add_input(Dynamic.Mission.RPM, val=np.ones(n),
-                        training_data=rpm_vals,
-                        units="rpm")
+        motor.add_input(
+            Dynamic.Vehicle.Propulsion.RPM,
+            val=np.ones(n),
+            training_data=rpm_vals,
+            units="rpm",
+        )
         motor.add_input("torque_unscaled", val=np.ones(n),  # unscaled torque
                         training_data=torque_vals,
                         units="N*m")
@@ -81,29 +84,40 @@ class MotorMap(om.Group):
                          training_data=motor_map,
                          units='unitless')
 
-        self.add_subsystem('throttle_to_torque',
-                           om.ExecComp('torque_unscaled = torque_max * throttle',
-                                       torque_unscaled={
-                                           'val': np.ones(n), 'units': 'N*m'},
-                                       torque_max={
-                                           'val': torque_vals[-1], 'units': 'N*m'},
-                                       throttle={'val': np.ones(n), 'units': 'unitless'}),
-                           promotes=["torque_unscaled",
-                                     ("throttle", Dynamic.Mission.THROTTLE)])
+        self.add_subsystem(
+            'throttle_to_torque',
+            om.ExecComp(
+                'torque_unscaled = torque_max * throttle',
+                torque_unscaled={'val': np.ones(n), 'units': 'N*m'},
+                torque_max={'val': torque_vals[-1], 'units': 'N*m'},
+                throttle={'val': np.ones(n), 'units': 'unitless'},
+            ),
+            promotes=[
+                "torque_unscaled",
+                ("throttle", Dynamic.Vehicle.Propulsion.THROTTLE),
+            ],
+        )
 
-        self.add_subsystem(name="motor_efficiency",
-                           subsys=motor,
-                           promotes_inputs=[Dynamic.Mission.RPM, "torque_unscaled"],
-                           promotes_outputs=["motor_efficiency"])
+        self.add_subsystem(
+            name="motor_efficiency",
+            subsys=motor,
+            promotes_inputs=[Dynamic.Vehicle.Propulsion.RPM, "torque_unscaled"],
+            promotes_outputs=["motor_efficiency"],
+        )
 
         # now that we know the efficiency, scale up the torque correctly for the engine size selected
         # Note: This allows the optimizer to optimize the motor size if desired
-        self.add_subsystem('scale_motor_torque',
-                           om.ExecComp('torque = torque_unscaled * scale_factor',
-                                       torque={'val': np.ones(n), 'units': 'N*m'},
-                                       torque_unscaled={
-                                           'val': np.ones(n), 'units': 'N*m'},
-                                       scale_factor={'val': 1.0, 'units': 'unitless'}),
-                           promotes=[("torque", Dynamic.Mission.TORQUE),
-                                     "torque_unscaled",
-                                     ("scale_factor", Aircraft.Engine.SCALE_FACTOR)])
+        self.add_subsystem(
+            'scale_motor_torque',
+            om.ExecComp(
+                'torque = torque_unscaled * scale_factor',
+                torque={'val': np.ones(n), 'units': 'N*m'},
+                torque_unscaled={'val': np.ones(n), 'units': 'N*m'},
+                scale_factor={'val': 1.0, 'units': 'unitless'},
+            ),
+            promotes=[
+                ("torque", Dynamic.Vehicle.Propulsion.TORQUE),
+                "torque_unscaled",
+                ("scale_factor", Aircraft.Engine.SCALE_FACTOR),
+            ],
+        )

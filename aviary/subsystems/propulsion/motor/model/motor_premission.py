@@ -28,13 +28,13 @@ class MotorPreMission(om.Group):
         # without inputs and it will return the max torque
         # based on the non-dimensional scale factor chosen by the optimizer.
         # The max torque is then used in pre-mission to determine weight of the system.
-        self.set_input_defaults(Dynamic.Mission.THROTTLE, 1.0, units=None)
+        self.set_input_defaults(Dynamic.Vehicle.Propulsion.THROTTLE, 1.0, units=None)
 
         self.add_subsystem('motor_map', MotorMap(num_nodes=1),
                            promotes_inputs=[Aircraft.Engine.SCALE_FACTOR,
-                                            Dynamic.Mission.THROTTLE,
-                                            Dynamic.Mission.RPM],
-                           promotes_outputs=[(Dynamic.Mission.TORQUE,
+                                            Dynamic.Vehicle.Propulsion.THROTTLE,
+                                            Dynamic.Vehicle.Propulsion.RPM],
+                           promotes_outputs=[(Dynamic.Vehicle.Propulsion.TORQUE,
                                               Aircraft.Engine.Motor.TORQUE_MAX)])
 
         # Motor mass relationship based on continuous torque rating for aerospace motors (Figure 10)
@@ -55,7 +55,7 @@ class MotorPreMission(om.Group):
                                        torque={'val': 0.0, 'units': 'kN*m'},
                                        RPM={'val': 0.0, 'units': 'rpm'}),
                            promotes_inputs=[('torque', Aircraft.Engine.Motor.TORQUE_MAX),
-                                            ('RPM', Dynamic.Mission.RPM)],
+                                            ('RPM', Dynamic.Vehicle.Propulsion.RPM)],
                            promotes_outputs=[('power', 'shaft_power_max')])
 
         self.add_subsystem('gearbox_PRM',
@@ -75,6 +75,6 @@ class MotorPreMission(om.Group):
                                        power={'val': 0.0, 'units': 'hp'},
                                        RPM_out={'val': 0.0, 'units': 'rpm'},
                                        RPM_in={'val': 0.0, 'units': 'rpm'},),
-                           promotes_inputs=[('power', Dynamic.Mission.SHAFT_POWER_MAX),
+                           promotes_inputs=[('power', Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX),
                                             'RPM_out', 'RPM_in'],
                            promotes_outputs=[('gearbox_mass', Aircraft.Engine.Gearbox.MASS)])

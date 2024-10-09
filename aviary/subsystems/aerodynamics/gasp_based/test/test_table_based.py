@@ -25,12 +25,13 @@ class TestCruiseAero(unittest.TestCase):
         prob.setup(force_alloc_complex=True)
 
         prob.set_val(
-            Dynamic.Mission.MACH, [
-                0.381, 0.384, 0.391, 0.399, 0.8, 0.8, 0.8, 0.8])
+            Dynamic.Atmosphere.MACH, [0.381, 0.384, 0.391, 0.399, 0.8, 0.8, 0.8, 0.8]
+        )
         prob.set_val("alpha", [5.19, 5.19, 5.19, 5.18, 3.58, 3.81, 4.05, 4.18])
         prob.set_val(
-            Dynamic.Mission.ALTITUDE, [
-                500, 1000, 2000, 3000, 35000, 36000, 37000, 37500])
+            Dynamic.Mission.ALTITUDE,
+            [500, 1000, 2000, 3000, 35000, 36000, 37000, 37500],
+        )
         prob.run_model()
 
         cl_exp = np.array(
@@ -55,7 +56,7 @@ class TestCruiseAero(unittest.TestCase):
         prob.model = TabularCruiseAero(num_nodes=2, aero_data=fp)
         prob.setup(force_alloc_complex=True)
 
-        prob.set_val(Dynamic.Mission.MACH, [0.8, 0.8])
+        prob.set_val(Dynamic.Atmosphere.MACH, [0.8, 0.8])
         prob.set_val("alpha", [4.216, 3.146])
         prob.set_val(Dynamic.Mission.ALTITUDE, [37500, 37500])
         prob.run_model()
@@ -101,7 +102,7 @@ class TestLowSpeedAero(unittest.TestCase):
 
         prob.set_val("t_curr", [0.0, 1.0, 2.0, 3.0])
         prob.set_val(Dynamic.Mission.ALTITUDE, 0)
-        prob.set_val(Dynamic.Mission.MACH, [0.0, 0.009, 0.018, 0.026])
+        prob.set_val(Dynamic.Atmosphere.MACH, [0.0, 0.009, 0.018, 0.026])
         prob.set_val("alpha", 0)
         # TODO set q if we want to test lift/drag forces
 
@@ -143,8 +144,9 @@ class TestLowSpeedAero(unittest.TestCase):
         alts = [44.2, 62.7, 84.6, 109.7, 373.0, 419.4, 465.3, 507.8]
         prob.set_val(Dynamic.Mission.ALTITUDE, alts)
         prob.set_val(
-            Dynamic.Mission.MACH, [
-                0.257, 0.260, 0.263, 0.265, 0.276, 0.277, 0.279, 0.280])
+            Dynamic.Atmosphere.MACH,
+            [0.257, 0.260, 0.263, 0.265, 0.276, 0.277, 0.279, 0.280],
+        )
         prob.set_val("alpha", [8.94, 8.74, 8.44, 8.24, 6.45, 6.34, 6.76, 7.59])
         # TODO set q if we want to test lift/drag forces
 

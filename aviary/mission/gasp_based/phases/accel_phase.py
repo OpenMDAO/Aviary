@@ -64,11 +64,17 @@ class AccelPhase(PhaseBuilderBase):
         # Timeseries Outputs
         phase.add_timeseries_output("EAS", output_name="EAS", units="kn")
         phase.add_timeseries_output(
-            Dynamic.Mission.MACH, output_name=Dynamic.Mission.MACH, units="unitless")
+            Dynamic.Atmosphere.MACH,
+            output_name=Dynamic.Atmosphere.MACH,
+            units="unitless",
+        )
         phase.add_timeseries_output("alpha", output_name="alpha", units="deg")
         phase.add_timeseries_output("aero.CL", output_name="CL", units="unitless")
         phase.add_timeseries_output(
-            Dynamic.Mission.THRUST_TOTAL, output_name=Dynamic.Mission.THRUST_TOTAL, units="lbf")
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            units="lbf",
+        )
         phase.add_timeseries_output("aero.CD", output_name="CD", units="unitless")
 
         return phase

@@ -57,10 +57,10 @@ class Atmosphere(om.Group):
             promotes_inputs=[('h', Dynamic.Mission.ALTITUDE)],
             promotes_outputs=[
                 '*',
-                ('sos', Dynamic.Mission.SPEED_OF_SOUND),
-                ('rho', Dynamic.Mission.DENSITY),
-                ('temp', Dynamic.Mission.TEMPERATURE),
-                ('pres', Dynamic.Mission.STATIC_PRESSURE),
+                ('sos', Dynamic.Atmosphere.SPEED_OF_SOUND),
+                ('rho', Dynamic.Atmosphere.DENSITY),
+                ('temp', Dynamic.Atmosphere.TEMPERATURE),
+                ('pres', Dynamic.Atmosphere.STATIC_PRESSURE),
             ],
         )
 

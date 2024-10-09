@@ -74,10 +74,10 @@ class DescentODE(BaseODE):
             subsys=Atmosphere(num_nodes=nn),
             promotes_inputs=[Dynamic.Mission.ALTITUDE],
             promotes_outputs=[
-                Dynamic.Mission.DENSITY,
-                Dynamic.Mission.SPEED_OF_SOUND,
-                Dynamic.Mission.TEMPERATURE,
-                Dynamic.Mission.STATIC_PRESSURE,
+                Dynamic.Atmosphere.DENSITY,
+                Dynamic.Atmosphere.SPEED_OF_SOUND,
+                Dynamic.Atmosphere.TEMPERATURE,
+                Dynamic.Atmosphere.STATIC_PRESSURE,
                 "viscosity",
             ],
         )
@@ -103,7 +103,7 @@ class DescentODE(BaseODE):
                 mach_balance_group.linear_solver = om.DirectSolver(assemble_jac=True)
 
                 speed_bal = om.BalanceComp(
-                    name=Dynamic.Mission.MACH,
+                    name=Dynamic.Atmosphere.MACH,
                     val=mach_cruise * np.ones(nn),
                     units="unitless",
                     lhs_name="KS",
@@ -116,7 +116,7 @@ class DescentODE(BaseODE):
                     "speed_bal",
                     speed_bal,
                     promotes_inputs=["KS"],
-                    promotes_outputs=[Dynamic.Mission.MACH],
+                    promotes_outputs=[Dynamic.Atmosphere.MACH],
                 )
 
                 mach_balance_group.add_subsystem(
@@ -126,7 +126,7 @@ class DescentODE(BaseODE):
                         mach_cruise=mach_cruise,
                         EAS_target=EAS_limit,
                     ),
-                    promotes_inputs=["EAS", Dynamic.Mission.MACH],
+                    promotes_inputs=["EAS", Dynamic.Atmosphere.MACH],
                     promotes_outputs=["speed_constraint"],
                 )
                 mach_balance_group.add_subsystem(
@@ -150,7 +150,7 @@ class DescentODE(BaseODE):
             promotes_inputs=['*'],  # + speed_inputs,
             promotes_outputs=[
                 '*'
-            ],  # [Dynamic.Mission.DYNAMIC_PRESSURE] + speed_outputs,
+            ],  # [Dynamic.Atmosphere.DYNAMIC_PRESSURE] + speed_outputs,
         )
 
         # maybe replace this with the solver in AddAlphaControl?
@@ -166,10 +166,10 @@ class DescentODE(BaseODE):
             "descent_eom",
             DescentRates(num_nodes=nn),
             promotes_inputs=[
-                Dynamic.Mission.MASS,
+                Dynamic.Vehicle.MASS,
                 Dynamic.Mission.VELOCITY,
-                Dynamic.Mission.DRAG,
-                Dynamic.Mission.THRUST_TOTAL,
+                Dynamic.Vehicle.DRAG,
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                 "alpha",
             ],
             promotes_outputs=[
@@ -184,9 +184,9 @@ class DescentODE(BaseODE):
             "constraints",
             FlightConstraints(num_nodes=nn),
             promotes_inputs=[
-                Dynamic.Mission.MASS,
+                Dynamic.Vehicle.MASS,
                 "alpha",
-                Dynamic.Mission.DENSITY,
+                Dynamic.Atmosphere.DENSITY,
                 "CL_max",
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 Dynamic.Mission.VELOCITY,
@@ -224,13 +224,16 @@ class DescentODE(BaseODE):
         self.add_excess_rate_comps(nn)
 
         ParamPort.set_default_vals(self)
-        self.set_input_defaults(Dynamic.Mission.ALTITUDE,
-                                val=37500 * np.ones(nn), units="ft")
-        self.set_input_defaults(Dynamic.Mission.MASS,
-                                val=147000 * np.ones(nn), units="lbm")
-        self.set_input_defaults(Dynamic.Mission.MACH,
-                                val=0 * np.ones(nn), units="unitless")
-        self.set_input_defaults(Dynamic.Mission.THROTTLE,
+        self.set_input_defaults(
+            Dynamic.Mission.ALTITUDE, val=37500 * np.ones(nn), units="ft"
+        )
+        self.set_input_defaults(
+            Dynamic.Vehicle.MASS, val=147000 * np.ones(nn), units="lbm"
+        )
+        self.set_input_defaults(
+            Dynamic.Atmosphere.MACH, val=0 * np.ones(nn), units="unitless"
+        )
+        self.set_input_defaults(Dynamic.Vehicle.Propulsion.THROTTLE,
                                 val=0 * np.ones(nn), units="unitless")
 
         self.set_input_defaults(Aircraft.Wing.AREA, val=1.0, units="ft**2")
