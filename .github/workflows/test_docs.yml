@@ -40,7 +40,7 @@ jobs:
             SNOPT: '7.7'
             #OPENMDAO: 'latest'
             OPENMDAO: '3.34.2'
-            DYMOS: 'latest'
+            DYMOS: 'dev'
             SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
             SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
             SNOPT_LOCATION_77: ${{ secrets.SNOPT_LOCATION_77 }}
