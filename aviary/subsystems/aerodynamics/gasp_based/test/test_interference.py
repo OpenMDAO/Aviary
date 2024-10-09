@@ -4,9 +4,9 @@ from dymos.models.atmosphere.atmos_1976 import USatm1976Comp
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
-from aviary.subsystems.aerodynamics.gasp_based.interference import root_chord, \
-    common_variables, top_and_bottom_width, body_ratios, interference_drag, \
-    WingFuselageInterference_premission, WingFuselageInterference_dynamic
+from aviary.subsystems.aerodynamics.gasp_based.interference import RootChord, \
+    CommonVariables, TopAndBottomWidth, BodyRatios, InterferenceDrag, \
+    WingFuselageInterferencePremission, WingFuselageInterferenceMission
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -14,9 +14,9 @@ tol = 1e-6
 
 
 class TestPreMissionSubComponents(unittest.TestCase):
-    def testRootChord(self):
+    def test_root_chord(self):
         prob = om.Problem()
-        prob.model.add_subsystem("comp", root_chord(), promotes=["*"])
+        prob.model.add_subsystem("comp", RootChord(), promotes=["*"])
         prob.setup(force_alloc_complex=True)
 
         prob.set_val(Aircraft.Wing.AREA, 1400)
@@ -30,9 +30,9 @@ class TestPreMissionSubComponents(unittest.TestCase):
         partial_data = prob.check_partials(method="cs", out_stream=None)
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-14)
 
-    def testCommonVars(self):
+    def test_common_vars(self):
         prob = om.Problem()
-        prob.model.add_subsystem("comp", common_variables(), promotes=["*"])
+        prob.model.add_subsystem("comp", CommonVariables(), promotes=["*"])
         prob.setup(force_alloc_complex=True)
 
         prob.set_val('CROOT', 12)
@@ -48,9 +48,9 @@ class TestPreMissionSubComponents(unittest.TestCase):
         partial_data = prob.check_partials(method="cs", out_stream=None)
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-14)
 
-    def testTopAndBottom(self):
+    def test_top_and_bottom(self):
         prob = om.Problem()
-        prob.model.add_subsystem("comp", top_and_bottom_width(), promotes=["*"])
+        prob.model.add_subsystem("comp", TopAndBottomWidth(), promotes=["*"])
         prob.setup(force_alloc_complex=True)
 
         prob.set_val('wtofd', .14)
@@ -65,9 +65,9 @@ class TestPreMissionSubComponents(unittest.TestCase):
             partial_data = prob.check_partials(method="cs", out_stream=None)
             assert_check_partials(partial_data, atol=1e-12, rtol=1e-14)
 
-    def testBodyRatios(self):
+    def test_body_ratios(self):
         prob = om.Problem()
-        prob.model.add_subsystem("comp", body_ratios(), promotes=["*"])
+        prob.model.add_subsystem("comp", BodyRatios(), promotes=["*"])
         prob.setup(force_alloc_complex=True)
 
         prob.set_val('WBODYWF', 2.5)
@@ -85,9 +85,9 @@ class TestPreMissionSubComponents(unittest.TestCase):
         partial_data = prob.check_partials(method="cs", out_stream=None)
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-14)
 
-    def testInterferenceDrag(self):
+    def test_interference_drag(self):
         prob = om.Problem()
-        prob.model.add_subsystem("comp", interference_drag(), promotes=["*"])
+        prob.model.add_subsystem("comp", InterferenceDrag(), promotes=["*"])
         prob.setup(force_alloc_complex=True)
 
         prob.set_val('WBODYWF', 2.5)
@@ -109,10 +109,10 @@ class TestPreMissionSubComponents(unittest.TestCase):
 
 
 class TestPreMission(unittest.TestCase):
-    def testCompleteGroup(self):
+    def test_complete_group(self):
         prob = om.Problem()
         prob.model.add_subsystem(
-            "comp", WingFuselageInterference_premission(),
+            "comp", WingFuselageInterferencePremission(),
             promotes=["aircraft:*",
                       'interference_independent_of_shielded_area',
                       'drag_loss_due_to_shielded_wing_area'])
@@ -138,8 +138,8 @@ class TestPreMission(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-14)
 
 
-class TestDynamic(unittest.TestCase):
-    def testCompleteGroup(self):
+class TestMission(unittest.TestCase):
+    def test_complete_group(self):
         nn = 2
         prob = om.Problem()
         prob.model.add_subsystem(
@@ -161,7 +161,7 @@ class TestDynamic(unittest.TestCase):
             promotes=["*", ('nu', Dynamic.Mission.KINEMATIC_VISCOSITY)],
         )
         prob.model.add_subsystem(
-            "comp", WingFuselageInterference_dynamic(num_nodes=nn),
+            "comp", WingFuselageInterferenceMission(num_nodes=nn),
             promotes=["*"])
         prob.setup(force_alloc_complex=True)
 

@@ -11,7 +11,9 @@ FCFWC = 1
 FCFWT = 1
 
 
-class root_chord(om.ExplicitComponent):
+class RootChord(om.ExplicitComponent):
+    """Calculates the wing root chord"""
+
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.AREA)
         add_aviary_input(self, Aircraft.Wing.SPAN)
@@ -40,7 +42,13 @@ class root_chord(om.ExplicitComponent):
         J['CROOT', Aircraft.Wing.TAPER_RATIO] = -2*SW/(B*(1.0 + SLM)**2)
 
 
-class common_variables(om.ExplicitComponent):
+class CommonVariables(om.ExplicitComponent):
+    """
+    Calculates the wing_thickness_over_fuselage_diameter and an
+    intermediate reference variable that maps the wing attachment
+    location from -1 (bottom of fuselage) to +1 (top of fuselage)
+    """
+
     def setup(self):
         self.add_input('CROOT')
         add_aviary_input(self, Aircraft.Wing.MOUNTING_TYPE)
@@ -73,7 +81,9 @@ class common_variables(om.ExplicitComponent):
         J['wtofd', Aircraft.Fuselage.AVG_DIAMETER] = -TCR*CROOT/SWF**2
 
 
-class top_and_bottom_width(om.ExplicitComponent):
+class TopAndBottomWidth(om.ExplicitComponent):
+    """Calculates the fuselage width at the top and bottom"""
+
     def setup(self):
         self.add_input('ZW_RF')
         self.add_input('wtofd')
@@ -128,7 +138,9 @@ class top_and_bottom_width(om.ExplicitComponent):
         J['WBODYWF', Aircraft.Fuselage.AVG_DIAMETER] = 0.5*(dTOP_dSWF + dBOT_dSWF)
 
 
-class body_ratios(om.ExplicitComponent):
+class BodyRatios(om.ExplicitComponent):
+    """Calculates some intermediate variables that are based on unitless ratios"""
+
     def setup(self):
         self.add_input('WBODYWF')
         self.add_input('CROOT')
@@ -176,7 +188,12 @@ class body_ratios(om.ExplicitComponent):
         J['CBODYWF', Aircraft.Wing.TAPER_RATIO] = CROOT*(WBODYWF/B)
 
 
-class interference_drag(om.ExplicitComponent):
+class InterferenceDrag(om.ExplicitComponent):
+    """
+    Calculates the interference_independent_of_shielded_area and
+    drag_loss_due_to_shielded_wing_area
+    """
+
     def setup(self):
         self.add_input('WBODYWF')
         self.add_input('CROOT')
@@ -254,26 +271,29 @@ class interference_drag(om.ExplicitComponent):
         J['drag_loss_due_to_shielded_wing_area', 'WBODYWF'] = 0.5*(CROOT + CBODYWF)
 
 
-class WingFuselageInterference_premission(om.Group):
+class WingFuselageInterferencePremission(om.Group):
     """
-    This calculates an additional flat plate drag area due to general aerodynamic interference for wing-fuselage interference
-    (based on results from Hoerner's drag)
+    Calculates the interference_independent_of_shielded_area and
+    drag_loss_due_to_shielded_wing_area from static geometry parameters
+    that will be fed to the dynamic portion during the mission.
+    Separating out some of the basic quantities that are used in multiple places
+    allowed for simplification of derivatives.
     """
 
     def setup(self):
-        self.add_subsystem('root_chord', root_chord(),
+        self.add_subsystem('root_chord', RootChord(),
                            promotes_inputs=['*'], promotes_outputs=['*'])
-        self.add_subsystem('common_variables', common_variables(),
+        self.add_subsystem('common_variables', CommonVariables(),
                            promotes_inputs=['*'], promotes_outputs=['*'])
-        self.add_subsystem('top_and_bottom_width', top_and_bottom_width(),
+        self.add_subsystem('top_and_bottom_width', TopAndBottomWidth(),
                            promotes_inputs=['*'], promotes_outputs=['*'])
-        self.add_subsystem('body_ratios', body_ratios(),
+        self.add_subsystem('body_ratios', BodyRatios(),
                            promotes_inputs=['*'], promotes_outputs=['*'])
-        self.add_subsystem('interference_drag', interference_drag(),
+        self.add_subsystem('interference_drag', InterferenceDrag(),
                            promotes_inputs=['*'], promotes_outputs=['*'])
 
 
-class WingFuselageInterference_dynamic(om.ExplicitComponent):
+class WingFuselageInterferenceMission(om.ExplicitComponent):
     """
     This calculates an additional flat plate drag area due to general aerodynamic interference for wing-fuselage interference
     (based on results from Hoerner's drag)
@@ -361,17 +381,3 @@ class WingFuselageInterference_dynamic(om.ExplicitComponent):
         J['wing_fuselage_interference_flat_plate_equivalent',
             'interference_independent_of_shielded_area'] = \
             -CDWI * CKW * ((np.log10(RELI * CBARW)/7.)**(-2.6))
-
-
-class WingFuselageInterference(om.Group):
-    def initialize(self):
-        self.options.declare("num_nodes", default=1, types=int)
-
-    def setup(self):
-        nn = self.options["num_nodes"]
-
-        if os.environ['TESTFLO_RUNNING']:
-            self.add_subsystem("static_calculations",
-                               WingFuselageInterference_premission(), promotes=["*"])
-        self.add_subsystem("dynamic_calculations", WingFuselageInterference_dynamic(
-            num_nodes=nn), promotes=["*"])

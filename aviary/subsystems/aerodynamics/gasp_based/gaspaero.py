@@ -12,7 +12,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import add_aviary_input
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.utils.aviary_values import AviaryValues
-from aviary.subsystems.aerodynamics.gasp_based.interference import WingFuselageInterference_dynamic
+from aviary.subsystems.aerodynamics.gasp_based.interference import WingFuselageInterferenceMission
 
 
 #

@@ -10,7 +10,7 @@ tol = 1e-8
 
 
 class TestAeroCoeffs(unittest.TestCase):
-    def testAeroCoeffs(self):
+    def test_aero_coeffs(self):
         aero_coeffs = AeroFormfactors()
         prob = om.Problem()
         prob.model.add_subsystem("comp", aero_coeffs, promotes=["*"])
