@@ -1,9 +1,9 @@
 import unittest
 from pathlib import Path
 
-from aviary.utils.functions import get_path
 from openmdao.utils.testing_utils import use_tempdirs
 
+from aviary.utils.functions import get_path
 from aviary.utils.fortran_to_aviary import LegacyCode, _exec_F2A
 
 
@@ -19,6 +19,10 @@ class DummyArgs(object):
 
 @use_tempdirs
 class TestFortranToAviary(unittest.TestCase):
+    """
+    Test fortran_to_aviary legacy code input file conversion utility by comparing against already converted input files.
+    """
+
     def prepare_and_run(self, filepath, out_file=None, legacy_code=LegacyCode.GASP):
         args = DummyArgs()
 

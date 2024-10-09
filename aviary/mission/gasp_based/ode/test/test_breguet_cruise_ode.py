@@ -30,7 +30,7 @@ class CruiseODETestCase(unittest.TestCase):
         )
 
     def test_cruise(self):
-        """Test partial derivatives"""
+        # test partial derivatives
         self.prob.setup(check=False, force_alloc_complex=True)
 
         self.prob.set_val(Dynamic.Atmosphere.MACH, [0.7, 0.7], units="unitless")
@@ -41,7 +41,7 @@ class CruiseODETestCase(unittest.TestCase):
 
         tol = tol = 1e-6
         assert_near_equal(
-            self.prob[Dynamic.Atmosphere.VELOCITY_RATE], np.array([1.0, 1.0]), tol
+            self.prob[Dynamic.Mission.VELOCITY_RATE], np.array([1.0, 1.0]), tol
         )
         assert_near_equal(
             self.prob[Dynamic.Mission.DISTANCE], np.array(
@@ -55,7 +55,7 @@ class CruiseODETestCase(unittest.TestCase):
             tol,
         )
         assert_near_equal(
-            self.prob[Dynamic.Vehicle.ALTITUDE_RATE_MAX],
+            self.prob[Dynamic.Mission.ALTITUDE_RATE_MAX],
             np.array([-17.63194, -16.62814]),
             tol,
         )

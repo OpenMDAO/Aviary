@@ -15,6 +15,9 @@ from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
+from aviary.variable_info.enums import SpeedType
+from aviary.variable_info.options import get_option_defaults
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class TestUnsteadySolvedODE(unittest.TestCase):
@@ -87,7 +90,7 @@ class TestUnsteadySolvedODE(unittest.TestCase):
         )
         dmass_dr = p.model.get_val("dmass_dr", units="lbm/ft")
         dt_dr = p.model.get_val("dt_dr", units="s/ft")
-        tas = p.model.get_val(Dynamic.Atmosphere.VELOCITY, units="ft/s")
+        tas = p.model.get_val(Dynamic.Mission.VELOCITY, units="ft/s")
         iwing = p.model.get_val(Aircraft.Wing.INCIDENCE, units="deg")
         alpha = p.model.get_val("alpha", units="deg")
 

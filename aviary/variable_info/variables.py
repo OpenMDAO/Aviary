@@ -605,8 +605,10 @@ class Dynamic:
 
     class Atmosphere:
         """Atmospheric and freestream conditions"""
+
         DENSITY = 'density'
         DYNAMIC_PRESSURE = 'dynamic_pressure'
+        KINEMATIC_VISCOSITY = 'kinematic_viscosity'
         MACH = 'mach'
         MACH_RATE = 'mach_rate'
         SPEED_OF_SOUND = 'speed_of_sound'
@@ -619,6 +621,7 @@ class Dynamic:
         These values are typically ingested by the Equations of Motion to determine
         vehicle state at a later time.
         """
+
         # TODO Vehicle summary forces, torques, etc. in X,Y,Z axes should also go here
         ALTITUDE = 'altitude'
         ALTITUDE_RATE = 'altitude_rate'
@@ -636,6 +639,7 @@ class Dynamic:
 
     class Vehicle:
         """Vehicle properties and states in a vehicle-fixed reference frame."""
+
         BATTERY_STATE_OF_CHARGE = 'battery_state_of_charge'
         CUMULATIVE_ELECTRIC_ENERGY_USED = 'cumulative_electric_energy_used'
         DRAG = 'drag'

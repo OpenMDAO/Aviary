@@ -15,11 +15,15 @@ from aviary.mission.flops_based.ode.takeoff_ode import TakeoffODE as _TakeoffODE
 from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import promote_aircraft_and_mission_vars
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.enums import AnalysisScheme
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class ExternalSubsystemGroup(om.Group):
+    """
+    For external subsystem group, promote relevant aircraft and mission variables.
+    """
+
     def configure(self):
         promote_aircraft_and_mission_vars(self)
 
@@ -156,7 +160,7 @@ class FlareODE(om.Group):
             FlareEOM(**kwargs),
             promotes_inputs=[
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
                 Dynamic.Vehicle.MASS,
                 Dynamic.Vehicle.LIFT,
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
@@ -168,7 +172,7 @@ class FlareODE(om.Group):
             promotes_outputs=[
                 Dynamic.Mission.DISTANCE_RATE,
                 Dynamic.Mission.ALTITUDE_RATE,
-                Dynamic.Atmosphere.VELOCITY_RATE,
+                Dynamic.Mission.VELOCITY_RATE,
                 Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
                 'forces_perpendicular',
                 'required_thrust',
@@ -183,10 +187,12 @@ class FlareODE(om.Group):
                 v_over_v_stall={'units': 'unitless', 'shape': nn},
                 v={'units': 'm/s', 'shape': nn},
                 # NOTE: FLOPS detailed takeoff stall speed is not dynamic - see above
-                v_stall={'units': 'm/s', 'shape': nn}),
-            promotes_inputs=[('v', Dynamic.Atmosphere.VELOCITY), 'v_stall'],
-            promotes_outputs=['v_over_v_stall'])
+                v_stall={'units': 'm/s', 'shape': nn},
+            ),
+            promotes_inputs=[('v', Dynamic.Mission.VELOCITY), 'v_stall'],
+            promotes_outputs=['v_over_v_stall'],
+        )
 
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, np.zeros(nn), 'm')
-        self.set_input_defaults(Dynamic.Atmosphere.VELOCITY, np.zeros(nn), 'm/s')
+        self.set_input_defaults(Dynamic.Mission.VELOCITY, np.zeros(nn), 'm/s')
         self.set_input_defaults(Aircraft.Wing.AREA, 1.0, 'm**2')

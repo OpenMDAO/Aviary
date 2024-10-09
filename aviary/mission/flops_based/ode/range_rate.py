@@ -5,6 +5,11 @@ from aviary.variable_info.variables import Dynamic
 
 
 class RangeRate(om.ExplicitComponent):
+    """
+    Compute the range rate using equation:
+    distance_rate = (velocity**2 - climb_rate**2)**0.5
+    """
+
     def initialize(self):
         self.options.declare('num_nodes', types=int)
 
@@ -18,7 +23,7 @@ class RangeRate(om.ExplicitComponent):
             units='m/s',
         )
         self.add_input(
-            Dynamic.Atmosphere.VELOCITY,
+            Dynamic.Mission.VELOCITY,
             val=np.ones(nn),
             desc='current velocity',
             units='m/s',
@@ -31,7 +36,7 @@ class RangeRate(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         climb_rate = inputs[Dynamic.Mission.ALTITUDE_RATE]
-        velocity = inputs[Dynamic.Atmosphere.VELOCITY]
+        velocity = inputs[Dynamic.Mission.VELOCITY]
         climb_rate_2 = climb_rate**2
         velocity_2 = velocity**2
         if (climb_rate_2 >= velocity_2).any():
@@ -43,18 +48,18 @@ class RangeRate(om.ExplicitComponent):
         arange = np.arange(self.options['num_nodes'])
         self.declare_partials(
             Dynamic.Mission.DISTANCE_RATE,
-            [Dynamic.Mission.ALTITUDE_RATE, Dynamic.Atmosphere.VELOCITY],
+            [Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.VELOCITY],
             rows=arange,
             cols=arange,
         )
 
     def compute_partials(self, inputs, J):
         climb_rate = inputs[Dynamic.Mission.ALTITUDE_RATE]
-        velocity = inputs[Dynamic.Atmosphere.VELOCITY]
+        velocity = inputs[Dynamic.Mission.VELOCITY]
 
         J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Mission.ALTITUDE_RATE] = (
             -climb_rate / (velocity**2 - climb_rate**2) ** 0.5
         )
-        J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Atmosphere.VELOCITY] = (
+        J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Mission.VELOCITY] = (
             velocity / (velocity**2 - climb_rate**2) ** 0.5
         )

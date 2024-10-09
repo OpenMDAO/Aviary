@@ -1,11 +1,10 @@
 import dymos as dm
 
 from aviary.mission.phase_builder_base import PhaseBuilderBase, register
-from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessIntegrationVariable, InitialGuessControl, InitialGuessPolynomialControl
+from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessIntegrationVariable, InitialGuessPolynomialControl
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.mission.flops_based.phases.phase_utils import add_subsystem_variables_to_phase, get_initial
 from aviary.variable_info.variables import Dynamic
 from aviary.mission.gasp_based.ode.groundroll_ode import GroundrollODE
 
@@ -83,7 +82,7 @@ class GroundrollPhase(PhaseBuilderBase):
             fix_initial=True,
             fix_duration=False,
             units="kn",
-            name=Dynamic.Atmosphere.VELOCITY,
+            name=Dynamic.Mission.VELOCITY,
             duration_bounds=duration_bounds,
             duration_ref=duration_ref,
         )
@@ -111,7 +110,7 @@ class GroundrollPhase(PhaseBuilderBase):
         phase.add_timeseries_output("normal_force")
         phase.add_timeseries_output(Dynamic.Atmosphere.MACH)
         phase.add_timeseries_output("EAS", units="kn")
-        phase.add_timeseries_output(Dynamic.Atmosphere.VELOCITY, units="kn")
+        phase.add_timeseries_output(Dynamic.Mission.VELOCITY, units="kn")
         phase.add_timeseries_output(Dynamic.Vehicle.LIFT)
         phase.add_timeseries_output(Dynamic.Vehicle.DRAG)
         phase.add_timeseries_output("time")

@@ -1,13 +1,15 @@
 import openmdao.api as om
 
-from aviary.mission.ode.altitude_rate import AltitudeRate
-from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
 from aviary.mission.flops_based.ode.range_rate import RangeRate
 from aviary.mission.flops_based.ode.required_thrust import RequiredThrust
+from aviary.mission.ode.altitude_rate import AltitudeRate
+from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
 from aviary.variable_info.variables import Dynamic
 
 
 class MissionEOM(om.Group):
+    """Define the mission equation of motion for the energy method"""
+
     def initialize(self):
         self.options.declare('num_nodes', types=int,
                              desc='Number of nodes to be evaluated in the RHS')
@@ -21,8 +23,8 @@ class MissionEOM(om.Group):
             promotes_inputs=[
                 Dynamic.Vehicle.DRAG,
                 Dynamic.Mission.ALTITUDE_RATE,
-                Dynamic.Atmosphere.VELOCITY,
-                Dynamic.Atmosphere.VELOCITY_RATE,
+                Dynamic.Mission.VELOCITY,
+                Dynamic.Mission.VELOCITY_RATE,
                 Dynamic.Vehicle.MASS,
             ],
             promotes_outputs=['thrust_required'],
@@ -33,7 +35,7 @@ class MissionEOM(om.Group):
             subsys=RangeRate(num_nodes=nn),
             promotes_inputs=[
                 Dynamic.Mission.ALTITUDE_RATE,
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
             ],
             promotes_outputs=[Dynamic.Mission.DISTANCE_RATE],
         )
@@ -46,7 +48,7 @@ class MissionEOM(om.Group):
                     Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                     Dynamic.Vehicle.Propulsion.THRUST_MAX_TOTAL,
                 ),
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
                 Dynamic.Vehicle.MASS,
                 Dynamic.Vehicle.DRAG,
             ],
@@ -58,17 +60,17 @@ class MissionEOM(om.Group):
             ],
         )
         self.add_subsystem(
-            name=Dynamic.Vehicle.ALTITUDE_RATE_MAX,
+            name=Dynamic.Mission.ALTITUDE_RATE_MAX,
             subsys=AltitudeRate(num_nodes=nn),
             promotes_inputs=[
                 (
                     Dynamic.Mission.SPECIFIC_ENERGY_RATE,
                     Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
                 ),
-                Dynamic.Atmosphere.VELOCITY_RATE,
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY_RATE,
+                Dynamic.Mission.VELOCITY,
             ],
             promotes_outputs=[
-                (Dynamic.Mission.ALTITUDE_RATE, Dynamic.Vehicle.ALTITUDE_RATE_MAX)
+                (Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.ALTITUDE_RATE_MAX)
             ],
         )

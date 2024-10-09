@@ -8,10 +8,13 @@ from openmdao.utils.assert_utils import (assert_check_partials,
 from aviary.mission.gasp_based.ode.unsteady_solved.gamma_comp import GammaComp
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_eom import \
     UnsteadySolvedEOM
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class TestUnsteadyFlightEOM(unittest.TestCase):
+    """
+    Test 2-degree of freedom equations of motion for unsteady flight
+    """
 
     def _test_unsteady_flight_eom(self, ground_roll=False):
         nn = 5
@@ -24,7 +27,7 @@ class TestUnsteadyFlightEOM(unittest.TestCase):
 
         p.setup(force_alloc_complex=True)
 
-        p.set_val(Dynamic.Atmosphere.VELOCITY, 250, units="kn")
+        p.set_val(Dynamic.Mission.VELOCITY, 250, units="kn")
         p.set_val(Dynamic.Vehicle.MASS, 175_000, units="lbm")
         p.set_val(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, 20_000, units="lbf")
         p.set_val(Dynamic.Vehicle.LIFT, 175_000, units="lbf")
@@ -67,9 +70,7 @@ class TestUnsteadyFlightEOM(unittest.TestCase):
             assert_near_equal(dgam_dt, np.zeros(nn), tolerance=1.0E-12)
             assert_near_equal(dgam_dt_approx, np.zeros(nn), tolerance=1.0E-12)
 
-        p.set_val(
-            Dynamic.Atmosphere.VELOCITY, 250 + 10 * np.random.rand(nn), units="kn"
-        )
+        p.set_val(Dynamic.Mission.VELOCITY, 250 + 10 * np.random.rand(nn), units="kn")
         p.set_val(
             Dynamic.Vehicle.MASS, 175_000 + 1000 * np.random.rand(nn), units="lbm"
         )

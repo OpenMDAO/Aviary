@@ -114,5 +114,5 @@ class UnsteadyControlIterGroup(om.Group):
                 name=Dynamic.Mission.FLIGHT_PATH_ANGLE, val=0.0 * onn, units="rad"
             )
         self.set_input_defaults(
-            name=Dynamic.Atmosphere.VELOCITY, val=250.0 * onn, units="kn"
+            name=Dynamic.Mission.VELOCITY, val=250.0 * onn, units="kn"
         )

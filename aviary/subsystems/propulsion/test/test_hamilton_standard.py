@@ -1,11 +1,9 @@
 import unittest
 
-import numpy as np
 import openmdao.api as om
 
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
-from aviary.variable_info.variables import Aircraft
 from aviary.subsystems.propulsion.propeller.hamilton_standard import (
     HamiltonStandard, PreHamiltonStandard, PostHamiltonStandard,
 )
@@ -15,6 +13,10 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class PreHamiltonStandardTest(unittest.TestCase):
+    """
+    Test computation in PreHamiltonStandard class.
+    """
+
     def setUp(self):
         prob = om.Problem()
 
@@ -46,7 +48,7 @@ class PreHamiltonStandardTest(unittest.TestCase):
             [0.00237717, 0.00237717, 0.00106526],
             units="slug/ft**3",
         )
-        prob.set_val(Dynamic.Atmosphere.VELOCITY, [100.0, 100, 100], units="ft/s")
+        prob.set_val(Dynamic.Mission.VELOCITY, [100.0, 100, 100], units="ft/s")
         prob.set_val(
             Dynamic.Atmosphere.SPEED_OF_SOUND,
             [661.46474547, 661.46474547, 601.93668333],
@@ -79,6 +81,10 @@ class PreHamiltonStandardTest(unittest.TestCase):
 
 
 class HamiltonStandardTest(unittest.TestCase):
+    """
+    Test computation in HamiltonStandard class.
+    """
+
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Engine.Propeller.NUM_BLADES, val=4, units='unitless')
@@ -131,6 +137,10 @@ class HamiltonStandardTest(unittest.TestCase):
 
 
 class PostHamiltonStandardTest(unittest.TestCase):
+    """
+    Test computation in PostHamiltonStandard class.
+    """
+
     def setUp(self):
         prob = om.Problem()
 

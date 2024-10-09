@@ -55,7 +55,6 @@ def build_data_interpolator(num_nodes, interpolator_data=None, interpolator_outp
 
     Returns
     -------
-
     interp_comp : om.MetaModelSemiStructuredComp, om.MetaModelStructuredComp
         OpenMDAO metamodel component using the provided data and flags
     """

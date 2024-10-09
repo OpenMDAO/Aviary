@@ -3,7 +3,7 @@ import openmdao.api as om
 
 from aviary import constants
 from aviary.variable_info.enums import SpeedType
-from aviary.variable_info.variables import Dynamic, Mission
+from aviary.variable_info.variables import Dynamic
 
 
 class UnsteadySolvedFlightConditions(om.ExplicitComponent):
@@ -11,14 +11,14 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
     Cross-compute TAS, EAS, and Mach regardless of the input speed type.
 
     Inputs:
-        rho : local atmospheric density
-        sos : local speed of sound
+        Dynamic.Atmosphere.DENSITY : local atmospheric density
+        Dynamic.Mission.SPEED_OF_SOUND : local speed of sound
 
     Additional inputs if ground_roll = False:
-        flight_path_angle : flight path angle
+        Dynamic.Mission.FLIGHT_PATH_ANGLE : flight path angle
 
     Additional inputs when input_speed_type = SpeedType.TAS:
-        TAS : true airspeed
+        Dynamic.Mission.VELOCITY : true airspeed
         dTAS_dr : approximate rate of change of true airspeed per unit range
 
     Additional inputs when input_speed_type = SpeedType.EAS:
@@ -26,7 +26,7 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
         dEAS_dr : approximate rate of change of equivalent airspeed per unit range
 
     Additional inputs when input_speed_type = SpeedType.MACH:
-        mach : Mach number
+        Dynamic.Mission.MACH : Mach number
         dmach_dr : approximate rate of change of Mach number per unit range
 
     Outputs always provided:
@@ -35,11 +35,11 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
 
     Additional outputs when input_speed_type = SpeedType.TAS
         EAS : equivalent airspeed
-        mach : Mach number
+        Dynamic.Mission.MACH : Mach number
 
     Outputs provided when input_speed_type = SpeedType.EAS:
         TAS : true airspeed
-        mach : Mach number
+        Dynamic.Mission.MACH : Mach number
     """
 
     def initialize(self):
@@ -98,7 +98,7 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
 
         if in_type is SpeedType.TAS:
             self.add_input(
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
                 val=np.zeros(nn),
                 units="m/s",
                 desc="true air speed",
@@ -126,19 +126,19 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
 
             self.declare_partials(
                 of=Dynamic.Atmosphere.DYNAMIC_PRESSURE,
-                wrt=[Dynamic.Atmosphere.DENSITY, Dynamic.Atmosphere.VELOCITY],
+                wrt=[Dynamic.Atmosphere.DENSITY, Dynamic.Mission.VELOCITY],
                 rows=ar,
                 cols=ar,
             )
             self.declare_partials(
                 of=Dynamic.Atmosphere.MACH,
-                wrt=[Dynamic.Atmosphere.SPEED_OF_SOUND, Dynamic.Atmosphere.VELOCITY],
+                wrt=[Dynamic.Atmosphere.SPEED_OF_SOUND, Dynamic.Mission.VELOCITY],
                 rows=ar,
                 cols=ar,
             )
             self.declare_partials(
                 of="EAS",
-                wrt=[Dynamic.Atmosphere.VELOCITY, Dynamic.Atmosphere.DENSITY],
+                wrt=[Dynamic.Mission.VELOCITY, Dynamic.Atmosphere.DENSITY],
                 rows=ar,
                 cols=ar,
             )
@@ -146,7 +146,7 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
                                   wrt=["dTAS_dr"],
                                   rows=ar, cols=ar)
             self.declare_partials(
-                of="dTAS_dt_approx", wrt=[Dynamic.Atmosphere.VELOCITY], rows=ar, cols=ar
+                of="dTAS_dt_approx", wrt=[Dynamic.Mission.VELOCITY], rows=ar, cols=ar
             )
 
             if not ground_roll:
@@ -178,7 +178,7 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
             )
 
             self.add_output(
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
                 val=np.zeros(nn),
                 units="m/s",
                 desc="true air speed",
@@ -207,7 +207,7 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
                 cols=ar,
             )
             self.declare_partials(
-                of=Dynamic.Atmosphere.VELOCITY,
+                of=Dynamic.Mission.VELOCITY,
                 wrt=[Dynamic.Atmosphere.DENSITY, "EAS"],
                 rows=ar,
                 cols=ar,
@@ -254,7 +254,7 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
                 desc="equivalent air speed",
             )
             self.add_output(
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
                 val=np.zeros(nn),
                 units="m/s",
                 desc="true air speed",
@@ -272,7 +272,7 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
             )
 
             self.declare_partials(
-                of=Dynamic.Atmosphere.VELOCITY,
+                of=Dynamic.Mission.VELOCITY,
                 wrt=[Dynamic.Atmosphere.SPEED_OF_SOUND, Dynamic.Atmosphere.MACH],
                 rows=ar,
                 cols=ar,
@@ -306,7 +306,7 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
         sgam = 0.0 if ground_roll else np.sin(inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE])
 
         if in_type is SpeedType.TAS:
-            tas = inputs[Dynamic.Atmosphere.VELOCITY]
+            tas = inputs[Dynamic.Mission.VELOCITY]
             dtas_dr = inputs["dTAS_dr"]
             outputs[Dynamic.Atmosphere.MACH] = tas / sos
             outputs["EAS"] = tas * sqrt_rho_rho_sl
@@ -316,7 +316,7 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
             eas = inputs["EAS"]
             drho_dh = inputs["drho_dh"]
             deas_dr = inputs["dEAS_dr"]
-            outputs[Dynamic.Atmosphere.VELOCITY] = tas = eas / sqrt_rho_rho_sl
+            outputs[Dynamic.Mission.VELOCITY] = tas = eas / sqrt_rho_rho_sl
             outputs[Dynamic.Atmosphere.MACH] = tas / sos
             drho_dt_approx = drho_dh * tas * sgam
             deas_dt_approx = deas_dr * tas * cgam
@@ -326,7 +326,7 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
         else:
             mach = inputs[Dynamic.Atmosphere.MACH]
             dmach_dr = inputs["dmach_dr"]
-            outputs[Dynamic.Atmosphere.VELOCITY] = tas = sos * mach
+            outputs[Dynamic.Mission.VELOCITY] = tas = sos * mach
             outputs["EAS"] = tas * sqrt_rho_rho_sl
             dmach_dt_approx = dmach_dr * tas * cgam
             dsos_dt_approx = inputs["dsos_dh"] * tas * sgam
@@ -349,28 +349,28 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
         sgam = 0.0 if ground_roll else np.sin(inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE])
 
         if in_type is SpeedType.TAS:
-            TAS = inputs[Dynamic.Atmosphere.VELOCITY]  # Why is there tas and TAS?
+            TAS = inputs[Dynamic.Mission.VELOCITY]  # Why is there tas and TAS?
 
-            tas = inputs[Dynamic.Atmosphere.VELOCITY]
+            tas = inputs[Dynamic.Mission.VELOCITY]
             dTAS_dr = inputs["dTAS_dr"]
 
-            partials[
-                Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Atmosphere.VELOCITY
-            ] = (rho * TAS)
+            partials[Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Mission.VELOCITY] = (
+                rho * TAS
+            )
             partials[
                 Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Atmosphere.DENSITY
             ] = (0.5 * TAS**2)
 
-            partials[Dynamic.Atmosphere.MACH, Dynamic.Atmosphere.VELOCITY] = 1 / sos
+            partials[Dynamic.Atmosphere.MACH, Dynamic.Mission.VELOCITY] = 1 / sos
             partials[Dynamic.Atmosphere.MACH, Dynamic.Atmosphere.SPEED_OF_SOUND] = (
                 -TAS / sos**2
             )
 
-            partials["EAS", Dynamic.Atmosphere.VELOCITY] = sqrt_rho_rho_sl
+            partials["EAS", Dynamic.Mission.VELOCITY] = sqrt_rho_rho_sl
             partials["EAS", Dynamic.Atmosphere.DENSITY] = tas * dsqrt_rho_rho_sl_drho
 
             partials["dTAS_dt_approx", "dTAS_dr"] = tas * cgam
-            partials["dTAS_dt_approx", Dynamic.Atmosphere.VELOCITY] = dTAS_dr * cgam
+            partials["dTAS_dt_approx", Dynamic.Mission.VELOCITY] = dTAS_dr * cgam
 
             if not ground_roll:
                 partials["dTAS_dt_approx", Dynamic.Mission.FLIGHT_PATH_ANGLE] = (
@@ -392,10 +392,8 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
             partials[Dynamic.Atmosphere.MACH, Dynamic.Atmosphere.SPEED_OF_SOUND] = (
                 -TAS / sos**2
             )
-            partials[Dynamic.Atmosphere.VELOCITY, Dynamic.Atmosphere.DENSITY] = (
-                dTAS_dRho
-            )
-            partials[Dynamic.Atmosphere.VELOCITY, "EAS"] = dTAS_dEAS
+            partials[Dynamic.Mission.VELOCITY, Dynamic.Atmosphere.DENSITY] = dTAS_dRho
+            partials[Dynamic.Mission.VELOCITY, "EAS"] = dTAS_dEAS
             partials["dTAS_dt_approx", "dEAS_dr"] = TAS * cgam * (rho_sl / rho)**1.5
             partials['dTAS_dt_approx', 'drho_dh'] = -0.5 * \
                 EAS * TAS * sgam * rho_sl**1.5 / rho_sl**2.5
@@ -413,10 +411,8 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
             partials[
                 Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Atmosphere.DENSITY
             ] = (0.5 * sos**2 * mach**2)
-            partials[Dynamic.Atmosphere.VELOCITY, Dynamic.Atmosphere.SPEED_OF_SOUND] = (
-                mach
-            )
-            partials[Dynamic.Atmosphere.VELOCITY, Dynamic.Atmosphere.MACH] = sos
+            partials[Dynamic.Mission.VELOCITY, Dynamic.Atmosphere.SPEED_OF_SOUND] = mach
+            partials[Dynamic.Mission.VELOCITY, Dynamic.Atmosphere.MACH] = sos
             partials["EAS", Dynamic.Atmosphere.SPEED_OF_SOUND] = mach * sqrt_rho_rho_sl
             partials["EAS", Dynamic.Atmosphere.MACH] = sos * sqrt_rho_rho_sl
             partials["EAS", Dynamic.Atmosphere.DENSITY] = (

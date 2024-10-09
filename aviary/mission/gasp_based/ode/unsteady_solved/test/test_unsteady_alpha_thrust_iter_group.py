@@ -11,14 +11,16 @@ from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_control_iter_group i
     UnsteadyControlIterGroup
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_flight_conditions import \
     UnsteadySolvedFlightConditions
-from aviary.variable_info.enums import SpeedType
+from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
+from aviary.variable_info.enums import LegacyCode, SpeedType
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
-from aviary.variable_info.enums import LegacyCode
 
 
 class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
+    """
+    Test the UnsteadyControlIterGroup.
+    """
 
     def _test_unsteady_alpha_thrust_iter_group(self, ground_roll=False):
         nn = 5
@@ -62,7 +64,7 @@ class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
         p.set_val(
             Dynamic.Atmosphere.DENSITY, 0.000659904 * np.ones(nn), units="slug/ft**3"
         )
-        p.set_val(Dynamic.Atmosphere.VELOCITY, 487 * np.ones(nn), units="kn")
+        p.set_val(Dynamic.Mission.VELOCITY, 487 * np.ones(nn), units="kn")
         p.set_val("mass", 170_000 * np.ones(nn), units="lbm")
         p.set_val("dTAS_dr", 0.0 * np.ones(nn), units="kn/NM")
 

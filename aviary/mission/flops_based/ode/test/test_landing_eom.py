@@ -44,7 +44,7 @@ class FlareEOMTest(unittest.TestCase):
             input_keys=[
                 'angle_of_attack',
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
                 Dynamic.Vehicle.MASS,
                 Dynamic.Vehicle.LIFT,
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
@@ -75,11 +75,13 @@ class FlareEOMTest(unittest.TestCase):
 
 
 class OtherTest(unittest.TestCase):
+    """
+    Test against data of detailed landing glide slope forces, flare sum forces, 
+    and ground sum forces from models/N3CC/N3CC_data.py
+    """
 
     def test_GlideSlopeForces(self):
-        """
-        test on single component GlideSlopeForces
-        """
+        # test on single component GlideSlopeForces
 
         tol = 1e-6
         aviary_options = inputs
@@ -122,9 +124,7 @@ class OtherTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-12)
 
     def test_FlareSumForces(self):
-        """
-        test on single component FlareSumForces
-        """
+        # test on single component FlareSumForces
 
         tol = 1e-6
         aviary_options = inputs
@@ -170,9 +170,7 @@ class OtherTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-9, rtol=1e-12)
 
     def test_GroundSumForces(self):
-        """
-        test on single component GroundSumForces
-        """
+        # test on single component GroundSumForces
 
         tol = 1e-6
         prob = om.Problem()

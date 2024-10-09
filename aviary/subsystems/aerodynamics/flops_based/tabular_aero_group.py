@@ -4,13 +4,12 @@ import openmdao.api as om
 from pathlib import Path
 
 from aviary.subsystems.aerodynamics.flops_based.drag import TotalDrag as Drag
-from aviary.subsystems.aerodynamics.flops_based.lift import \
-    LiftEqualsWeight as CL
+from aviary.subsystems.aerodynamics.flops_based.lift import LiftEqualsWeight as CL
 from aviary.utils.csv_data_file import read_data_file
+from aviary.utils.data_interpolator_builder import build_data_interpolator
 from aviary.utils.functions import get_path
 from aviary.utils.named_values import NamedValues
 from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.utils.data_interpolator_builder import build_data_interpolator
 
 
 # Map of variable names to allowed headers for data files (only lowercase required,
@@ -35,26 +34,57 @@ aliases = {
 
 
 class TabularAeroGroup(om.Group):
+    """
+    Define the OpenMDAO system for estimating aerodynamic performance of the vehicle
+    by interpolating from a provided drag polar. Separate data tables for lift-dependent
+    drag (CDI_data) and zero-lift drag (CD0_data) are required, and can be provided
+    either in a .csv data table or an NamedValues object.
+
+    Data is checked for its structure, and attempts to use a structured grid metamodel
+    component where possible. The "structured" flag forces the use of the structured
+    metamodel components (for both tables).
+
+    The "connect_training_data" flag instructs the metamodel components to look for the
+    drag data tables to be connected through OpenMDAO as inputs to this system, for cases
+    where you are using another component to generate the drag data. When
+    "connect_training_data" is True, anything provided in "CD0_data" and "CDI_data" are
+    ignored.
+    """
+
     def initialize(self):
         options = self.options
 
         options.declare('num_nodes', types=int)
 
-        options.declare('CD0_data', types=(str, Path, NamedValues),
-                        desc='Data file or NamedValues object containing zero-lift drag '
-                             'coefficient table.')
+        options.declare(
+            'CD0_data',
+            types=(str, Path, NamedValues),
+            desc='Data file or NamedValues object containing zero-lift drag '
+            'coefficient table.',
+        )
 
-        options.declare('CDI_data', types=(str, Path, NamedValues),
-                        desc='Data file or NamedValues object containing lift-dependent '
-                             'drag coefficient table.')
+        options.declare(
+            'CDI_data',
+            types=(str, Path, NamedValues),
+            desc='Data file or NamedValues object containing lift-dependent '
+            'drag coefficient table.',
+        )
 
-        options.declare('structured', types=bool, default=True,
-                        desc='Flag that sets if data is a structured grid.')
+        options.declare(
+            'structured',
+            types=bool,
+            default=True,
+            desc='Flag that sets if data is a structured grid.',
+        )
 
-        options.declare('connect_training_data', types=bool, default=False,
-                        desc='Flag that sets if drag data for interpolation will be '
-                             'passed via openMDAO connections. If True, provided values  '
-                             'for drag coefficients in data will be ignored.')
+        options.declare(
+            'connect_training_data',
+            types=bool,
+            default=False,
+            desc='Flag that sets if drag data for interpolation will be '
+            'passed via openMDAO connections. If True, provided values '
+            'for drag coefficients in data will be ignored.',
+        )
 
     def setup(self):
         options = self.options
@@ -79,23 +109,29 @@ class TabularAeroGroup(om.Group):
         else:
             method = '2D-lagrange3'
 
-        CD0_interp = build_data_interpolator(nn, interpolator_data=CD0_table,
-                                             interpolator_outputs={'zero_lift_drag_coefficient':
-                                                                   'unitless'},
-                                             method=method, structured=structured,
-                                             connect_training_data=connect_training_data)
+        CD0_interp = build_data_interpolator(
+            nn,
+            interpolator_data=CD0_table,
+            interpolator_outputs={'zero_lift_drag_coefficient': 'unitless'},
+            method=method,
+            structured=structured,
+            connect_training_data=connect_training_data,
+        )
 
-        CDI_interp = build_data_interpolator(nn, interpolator_data=CDI_table,
-                                             interpolator_outputs={'lift_dependent_drag_coefficient':
-                                                                   'unitless'},
-                                             method=method, structured=structured,
-                                             connect_training_data=connect_training_data)
+        CDI_interp = build_data_interpolator(
+            nn,
+            interpolator_data=CDI_table,
+            interpolator_outputs={'lift_dependent_drag_coefficient': 'unitless'},
+            method=method,
+            structured=structured,
+            connect_training_data=connect_training_data,
+        )
 
         # add subsystems
         self.add_subsystem(
             Dynamic.Atmosphere.DYNAMIC_PRESSURE,
             _DynamicPressure(num_nodes=nn),
-            promotes_inputs=[Dynamic.Atmosphere.VELOCITY, Dynamic.Atmosphere.DENSITY],
+            promotes_inputs=[Dynamic.Mission.VELOCITY, Dynamic.Atmosphere.DENSITY],
             promotes_outputs=[Dynamic.Atmosphere.DYNAMIC_PRESSURE],
         )
 
@@ -110,13 +146,13 @@ class TabularAeroGroup(om.Group):
             promotes_outputs=[('cl', 'lift_coefficient'), Dynamic.Vehicle.LIFT],
         )
 
-        self.add_subsystem('CD0_interp', CD0_interp,
-                           promotes_inputs=['*'],
-                           promotes_outputs=['*'])
+        self.add_subsystem(
+            'CD0_interp', CD0_interp, promotes_inputs=['*'], promotes_outputs=['*']
+        )
 
-        self.add_subsystem('CDI_interp', CDI_interp,
-                           promotes_inputs=['*'],
-                           promotes_outputs=['*'])
+        self.add_subsystem(
+            'CDI_interp', CDI_interp, promotes_inputs=['*'], promotes_outputs=['*']
+        )
 
         self.add_subsystem(
             Dynamic.Vehicle.DRAG,
@@ -147,7 +183,7 @@ class _DynamicPressure(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
 
-        self.add_input(Dynamic.Atmosphere.VELOCITY, val=np.ones(nn), units='m/s')
+        self.add_input(Dynamic.Mission.VELOCITY, val=np.ones(nn), units='m/s')
         self.add_input(Dynamic.Atmosphere.DENSITY, val=np.ones(nn), units='kg/m**3')
 
         self.add_output(
@@ -164,22 +200,22 @@ class _DynamicPressure(om.ExplicitComponent):
 
         self.declare_partials(
             Dynamic.Atmosphere.DYNAMIC_PRESSURE,
-            [Dynamic.Atmosphere.VELOCITY, Dynamic.Atmosphere.DENSITY],
+            [Dynamic.Mission.VELOCITY, Dynamic.Atmosphere.DENSITY],
             rows=rows_cols,
             cols=rows_cols,
         )
 
     def compute(self, inputs, outputs):
-        TAS = inputs[Dynamic.Atmosphere.VELOCITY]
+        TAS = inputs[Dynamic.Mission.VELOCITY]
         rho = inputs[Dynamic.Atmosphere.DENSITY]
 
         outputs[Dynamic.Atmosphere.DYNAMIC_PRESSURE] = 0.5 * rho * TAS**2
 
     def compute_partials(self, inputs, partials):
-        TAS = inputs[Dynamic.Atmosphere.VELOCITY]
+        TAS = inputs[Dynamic.Mission.VELOCITY]
         rho = inputs[Dynamic.Atmosphere.DENSITY]
 
-        partials[Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Atmosphere.VELOCITY] = (
+        partials[Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Mission.VELOCITY] = (
             rho * TAS
         )
         partials[Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Atmosphere.DENSITY] = (

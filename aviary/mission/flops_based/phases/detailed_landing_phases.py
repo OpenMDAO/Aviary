@@ -167,14 +167,14 @@ class LandingApproachToMicP3(PhaseBuilderBase):
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.Atmosphere.VELOCITY,
+            Dynamic.Mission.VELOCITY,
             fix_initial=False,
             fix_final=False,
             lower=0,
             ref=max_velocity,
             defect_ref=max_velocity,
             units=units,
-            rate_source=Dynamic.Atmosphere.VELOCITY_RATE,
+            rate_source=Dynamic.Mission.VELOCITY_RATE,
         )
 
         phase.add_control(
@@ -377,7 +377,7 @@ class LandingMicP3ToObstacle(LandingApproachToMicP3):
         # at the moment, these state options are the only differences between phases of
         # this class and phases of its base class
         phase.set_state_options(Dynamic.Mission.DISTANCE, fix_final=True)
-        phase.set_state_options(Dynamic.Atmosphere.VELOCITY, fix_final=True)
+        phase.set_state_options(Dynamic.Mission.VELOCITY, fix_final=True)
         phase.set_state_options(Dynamic.Vehicle.MASS, fix_initial=False)
 
         return phase
@@ -499,13 +499,13 @@ class LandingObstacleToFlare(PhaseBuilderBase):
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.Atmosphere.VELOCITY,
+            Dynamic.Mission.VELOCITY,
             fix_initial=True,
             lower=0,
             ref=max_velocity,
             defect_ref=max_velocity,
             units=units,
-            rate_source=Dynamic.Atmosphere.VELOCITY_RATE,
+            rate_source=Dynamic.Mission.VELOCITY_RATE,
         )
 
         phase.add_control(
@@ -723,13 +723,13 @@ class LandingFlareToTouchdown(PhaseBuilderBase):
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.Atmosphere.VELOCITY,
+            Dynamic.Mission.VELOCITY,
             fix_initial=False,
             lower=0,
             ref=max_velocity,
             defect_ref=max_velocity,
             units=units,
-            rate_source=Dynamic.Atmosphere.VELOCITY_RATE,
+            rate_source=Dynamic.Mission.VELOCITY_RATE,
         )
 
         phase.add_control(
@@ -943,13 +943,13 @@ class LandingTouchdownToNoseDown(PhaseBuilderBase):
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.Atmosphere.VELOCITY,
+            Dynamic.Mission.VELOCITY,
             fix_initial=False,
             lower=0,
             ref=max_velocity,
             defect_ref=max_velocity,
             units=units,
-            rate_source=Dynamic.Atmosphere.VELOCITY_RATE,
+            rate_source=Dynamic.Mission.VELOCITY_RATE,
         )
 
         phase.add_state(
@@ -1126,14 +1126,14 @@ class LandingNoseDownToStop(PhaseBuilderBase):
         max_velocity, units = user_options.get_item('max_velocity')
 
         phase.add_state(
-            Dynamic.Atmosphere.VELOCITY,
+            Dynamic.Mission.VELOCITY,
             fix_initial=False,
             fix_final=True,
             lower=0,
             ref=max_velocity,
             defect_ref=max_velocity,
             units=units,
-            rate_source=Dynamic.Atmosphere.VELOCITY_RATE,
+            rate_source=Dynamic.Mission.VELOCITY_RATE,
         )
 
         phase.add_state(

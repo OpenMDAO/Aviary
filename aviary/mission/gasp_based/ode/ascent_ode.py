@@ -69,13 +69,13 @@ class AscentODE(BaseODE):
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                 Dynamic.Vehicle.LIFT,
                 Dynamic.Vehicle.DRAG,
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 "alpha",
             ]
             + ["aircraft:*"],
             promotes_outputs=[
-                Dynamic.Atmosphere.VELOCITY_RATE,
+                Dynamic.Mission.VELOCITY_RATE,
                 Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
                 Dynamic.Mission.ALTITUDE_RATE,
                 Dynamic.Mission.DISTANCE_RATE,
@@ -96,9 +96,7 @@ class AscentODE(BaseODE):
             Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units="deg"
         )
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.zeros(nn), units="ft")
-        self.set_input_defaults(
-            Dynamic.Atmosphere.VELOCITY, val=np.zeros(nn), units="kn"
-        )
+        self.set_input_defaults(Dynamic.Mission.VELOCITY, val=np.zeros(nn), units="kn")
         self.set_input_defaults("t_curr", val=np.zeros(nn), units="s")
         self.set_input_defaults('aero_ramps.flap_factor:final_val', val=0.)
         self.set_input_defaults('aero_ramps.gear_factor:final_val', val=0.)

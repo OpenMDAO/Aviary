@@ -11,6 +11,10 @@ from aviary.variable_info.variables import Dynamic
 
 
 class MissionEOMTest(unittest.TestCase):
+    """
+    Test energy-method equations of motion
+    """
+
     def setUp(self):
         self.prob = prob = om.Problem()
         prob.model.add_subsystem(
@@ -32,12 +36,12 @@ class MissionEOMTest(unittest.TestCase):
             units="ft/s",
         )
         prob.model.set_input_defaults(
-            Dynamic.Atmosphere.VELOCITY_RATE,
+            Dynamic.Mission.VELOCITY_RATE,
             np.array([0.558739800813549, 3.33665416459715e-17, -0.38372209277242]),
             units="m/s**2",
         )
         prob.model.set_input_defaults(
-            Dynamic.Atmosphere.VELOCITY,
+            Dynamic.Mission.VELOCITY,
             np.array([164.029012458452, 232.775306059091, 117.638805929526]),
             units="m/s",
         )
@@ -57,7 +61,7 @@ class MissionEOMTest(unittest.TestCase):
         self.prob.run_model()
 
         assert_near_equal(
-            self.prob.get_val(Dynamic.Vehicle.ALTITUDE_RATE_MAX, units='ft/min'),
+            self.prob.get_val(Dynamic.Mission.ALTITUDE_RATE_MAX, units='ft/min'),
             np.array([3679.0525544843, 760.55416759, 6557.07891846677]),
             tol,
         )

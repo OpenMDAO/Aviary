@@ -6,6 +6,8 @@ from aviary.variable_info.variables import Dynamic
 
 
 class DescentRates(om.ExplicitComponent):
+    """Descent rate equations of motion."""
+
     def initialize(self):
         self.options.declare("num_nodes", types=int)
 
@@ -14,7 +16,7 @@ class DescentRates(om.ExplicitComponent):
         arange = np.arange(nn)
 
         self.add_input(
-            Dynamic.Atmosphere.VELOCITY,
+            Dynamic.Mission.VELOCITY,
             val=np.zeros(nn),
             units="ft/s",
             desc="true air speed",
@@ -68,7 +70,7 @@ class DescentRates(om.ExplicitComponent):
         self.declare_partials(
             Dynamic.Mission.ALTITUDE_RATE,
             [
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                 Dynamic.Vehicle.DRAG,
                 Dynamic.Vehicle.MASS,
@@ -79,7 +81,7 @@ class DescentRates(om.ExplicitComponent):
         self.declare_partials(
             Dynamic.Mission.DISTANCE_RATE,
             [
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                 Dynamic.Vehicle.DRAG,
                 Dynamic.Vehicle.MASS,
@@ -111,7 +113,7 @@ class DescentRates(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
 
-        TAS = inputs[Dynamic.Atmosphere.VELOCITY]
+        TAS = inputs[Dynamic.Mission.VELOCITY]
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
         drag = inputs[Dynamic.Vehicle.DRAG]
         weight = inputs[Dynamic.Vehicle.MASS] * GRAV_ENGLISH_LBM
@@ -126,7 +128,7 @@ class DescentRates(om.ExplicitComponent):
 
     def compute_partials(self, inputs, J):
 
-        TAS = inputs[Dynamic.Atmosphere.VELOCITY]
+        TAS = inputs[Dynamic.Mission.VELOCITY]
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
         drag = inputs[Dynamic.Vehicle.DRAG]
         weight = inputs[Dynamic.Vehicle.MASS] * GRAV_ENGLISH_LBM
@@ -134,7 +136,7 @@ class DescentRates(om.ExplicitComponent):
 
         gamma = (thrust - drag) / weight
 
-        J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Atmosphere.VELOCITY] = np.sin(gamma)
+        J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.VELOCITY] = np.sin(gamma)
         J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = (
             TAS * np.cos(gamma) / weight
         )
@@ -145,7 +147,7 @@ class DescentRates(om.ExplicitComponent):
             TAS * np.cos(gamma) * (-(thrust - drag) / weight**2) * GRAV_ENGLISH_LBM
         )
 
-        J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Atmosphere.VELOCITY] = np.cos(gamma)
+        J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Mission.VELOCITY] = np.cos(gamma)
         J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = (
             -TAS * np.sin(gamma) / weight
         )

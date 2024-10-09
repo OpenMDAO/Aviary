@@ -5,13 +5,17 @@ from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.phases.landing_components import (
     GlideConditionComponent, LandingAltitudeComponent,
     LandingGroundRollComponent)
-from aviary.variable_info.enums import SpeedType
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
+from aviary.variable_info.enums import SpeedType
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class LandingSegment(BaseODE):
+    """
+    Group for a 2-degree of freedom landing ODE.
+    """
+
     def setup(self):
         aviary_options = self.options['aviary_options']
         core_subsystems = self.options['core_subsystems']
@@ -140,7 +144,7 @@ class LandingSegment(BaseODE):
             subsys=Atmosphere(num_nodes=1),
             promotes_inputs=[
                 (Dynamic.Mission.ALTITUDE, Mission.Landing.AIRPORT_ALTITUDE),
-                (Dynamic.Atmosphere.VELOCITY, "TAS_touchdown"),
+                (Dynamic.Mission.VELOCITY, "TAS_touchdown"),
             ],
             promotes_outputs=[
                 (Dynamic.Atmosphere.DENSITY, "rho_td"),

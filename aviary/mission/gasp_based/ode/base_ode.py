@@ -2,15 +2,19 @@ import numpy as np
 
 import openmdao.api as om
 
+from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
+from aviary.mission.ode.altitude_rate import AltitudeRate
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import AnalysisScheme, AlphaModes, SpeedType
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic
-from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
-from aviary.mission.ode.altitude_rate import AltitudeRate
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class BaseODE(om.Group):
+    """
+    The base class for all GASP based ODE components.
+    """
+
     def initialize(self):
         self.options.declare("num_nodes", default=1, types=int)
         self.options.declare(
@@ -25,7 +29,6 @@ class BaseODE(om.Group):
             desc='collection of Aircraft/Mission specific options'
         )
 
-        # TODO finish description
         self.options.declare(
             'core_subsystems',
             desc='list of core subsystems'
@@ -102,14 +105,14 @@ class BaseODE(om.Group):
                 name="alpha",
                 val=np.full(nn, 10),  # initial guess
                 units="deg",
-                lhs_name=Dynamic.Atmosphere.VELOCITY_RATE,
+                lhs_name=Dynamic.Mission.VELOCITY_RATE,
                 rhs_name='target_tas_rate',
                 rhs_val=target_tas_rate,
                 eq_units="kn/s",
                 upper=25.0,
                 lower=-2.0,
             )
-            alpha_comp_inputs = [Dynamic.Atmosphere.VELOCITY_RATE]
+            alpha_comp_inputs = [Dynamic.Mission.VELOCITY_RATE]
 
         elif alpha_mode is AlphaModes.REQUIRED_LIFT:
             alpha_comp = om.BalanceComp(
@@ -238,6 +241,7 @@ class BaseODE(om.Group):
             )
 
     def add_atmosphere(self, nn, input_speed_type=SpeedType.TAS):
+        """Add atmosphere component"""
         self.add_subsystem(
             name='atmosphere',
             subsys=Atmosphere(num_nodes=nn, input_speed_type=input_speed_type),
@@ -245,11 +249,12 @@ class BaseODE(om.Group):
         )
 
     def add_excess_rate_comps(self, nn):
+        """Add SpecificEnergyRate and AltitudeRate components"""
         self.add_subsystem(
             name='SPECIFIC_ENERGY_RATE_EXCESS',
             subsys=SpecificEnergyRate(num_nodes=nn),
             promotes_inputs=[
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
                 Dynamic.Vehicle.MASS,
                 (
                     Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
@@ -273,8 +278,8 @@ class BaseODE(om.Group):
                     Dynamic.Mission.SPECIFIC_ENERGY_RATE,
                     Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
                 ),
-                Dynamic.Atmosphere.VELOCITY_RATE,
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY_RATE,
+                Dynamic.Mission.VELOCITY,
             ],
             promotes_outputs=[
                 (Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.ALTITUDE_RATE_MAX)

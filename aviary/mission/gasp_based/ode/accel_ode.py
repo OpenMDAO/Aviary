@@ -62,12 +62,12 @@ class AccelODE(BaseODE):
             AccelerationRates(num_nodes=nn),
             promotes_inputs=[
                 Dynamic.Vehicle.MASS,
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
                 Dynamic.Vehicle.DRAG,
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
             ],
             promotes_outputs=[
-                Dynamic.Atmosphere.VELOCITY_RATE,
+                Dynamic.Mission.VELOCITY_RATE,
                 Dynamic.Mission.DISTANCE_RATE,
             ],
         )
@@ -82,5 +82,5 @@ class AccelODE(BaseODE):
             Dynamic.Mission.ALTITUDE, val=500 * np.ones(nn), units="ft"
         )
         self.set_input_defaults(
-            Dynamic.Atmosphere.VELOCITY, val=200 * np.ones(nn), units="m/s"
+            Dynamic.Mission.VELOCITY, val=200 * np.ones(nn), units="m/s"
         )  # val here is nominal

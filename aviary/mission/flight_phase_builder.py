@@ -2,16 +2,15 @@ import numpy as np
 
 import dymos as dm
 
+from aviary.mission.initial_guess_builders import InitialGuessState
+from aviary.mission.flops_based.ode.mission_ODE import MissionODE
+from aviary.mission.flops_based.phases.phase_utils import add_subsystem_variables_to_phase, get_initial
 from aviary.mission.phase_builder_base import PhaseBuilderBase, register
-from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessIntegrationVariable, InitialGuessControl
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.mission.flops_based.phases.phase_utils import add_subsystem_variables_to_phase, get_initial
-from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.mission.flops_based.ode.mission_ODE import MissionODE
 from aviary.variable_info.enums import EquationsOfMotion, ThrottleAllocation
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 # TODO: support/handle the following in the base class
@@ -21,6 +20,10 @@ from aviary.variable_info.variables import Aircraft
 # - self.meta_data, with cls.default_meta_data customization point
 @register
 class FlightPhaseBase(PhaseBuilderBase):
+    """
+    The base class for flight phase
+    """
+
     __slots__ = ('external_subsystems', 'meta_data')
 
     # region : derived type customization points
@@ -299,8 +302,8 @@ class FlightPhaseBase(PhaseBuilderBase):
         )
 
         phase.add_timeseries_output(
-            Dynamic.Atmosphere.VELOCITY,
-            output_name=Dynamic.Atmosphere.VELOCITY,
+            Dynamic.Mission.VELOCITY,
+            output_name=Dynamic.Mission.VELOCITY,
             units='m/s',
         )
 
@@ -373,10 +376,10 @@ class FlightPhaseBase(PhaseBuilderBase):
 
         if (
             required_available_climb_rate is not None
-            and not Dynamic.Vehicle.ALTITUDE_RATE_MAX in constraints
+            and not Dynamic.Mission.ALTITUDE_RATE_MAX in constraints
         ):
             phase.add_path_constraint(
-                Dynamic.Vehicle.ALTITUDE_RATE_MAX,
+                Dynamic.Mission.ALTITUDE_RATE_MAX,
                 lower=required_available_climb_rate,
                 units=units,
             )

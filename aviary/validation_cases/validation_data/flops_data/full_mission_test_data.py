@@ -83,7 +83,7 @@ data.set_val(
 
 data.set_val(
     # outputs
-    Dynamic.Vehicle.ALTITUDE_RATE_MAX,
+    Dynamic.Mission.ALTITUDE_RATE_MAX,
     val=[
         3679.0525544843,
         3.86361517135375,
@@ -213,7 +213,7 @@ data.set_val(
 
 data.set_val(
     # states:velocity
-    Dynamic.Atmosphere.VELOCITY,
+    Dynamic.Mission.VELOCITY,
     val=[
         164.029012458452,
         232.775306059091,
@@ -224,7 +224,7 @@ data.set_val(
 
 data.set_val(
     # state_rates:velocity
-    Dynamic.Atmosphere.VELOCITY_RATE,
+    Dynamic.Mission.VELOCITY_RATE,
     val=[
         0.558739800813549,
         3.33665416459715e-17,

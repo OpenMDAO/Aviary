@@ -56,7 +56,7 @@ class FlightPathODE(BaseODE):
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
             Dynamic.Vehicle.LIFT,
             Dynamic.Vehicle.DRAG,
-            Dynamic.Atmosphere.VELOCITY,
+            Dynamic.Mission.VELOCITY,
             Dynamic.Mission.FLIGHT_PATH_ANGLE,
         ] + ['aircraft:*']
         if not self.options['ground_roll']:
@@ -183,7 +183,7 @@ class FlightPathODE(BaseODE):
             ),
             promotes_inputs=EOM_inputs,
             promotes_outputs=[
-                Dynamic.Atmosphere.VELOCITY_RATE,
+                Dynamic.Mission.VELOCITY_RATE,
                 Dynamic.Mission.DISTANCE_RATE,
                 "normal_force",
                 "fuselage_pitch",
@@ -216,6 +216,4 @@ class FlightPathODE(BaseODE):
             Dynamic.Atmosphere.MACH, val=np.zeros(nn), units="unitless"
         )
         self.set_input_defaults(Dynamic.Vehicle.MASS, val=np.zeros(nn), units="lbm")
-        self.set_input_defaults(
-            Dynamic.Atmosphere.VELOCITY, val=np.zeros(nn), units="kn"
-        )
+        self.set_input_defaults(Dynamic.Mission.VELOCITY, val=np.zeros(nn), units="kn")

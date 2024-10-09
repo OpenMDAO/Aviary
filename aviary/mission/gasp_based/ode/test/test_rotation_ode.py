@@ -13,6 +13,10 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class RotationODETestCase(unittest.TestCase):
+    """
+    Test 2-degree of freedom rotation ODE
+    """
+
     def setUp(self):
         self.prob = om.Problem()
 
@@ -25,13 +29,13 @@ class RotationODETestCase(unittest.TestCase):
                                       core_subsystems=default_mission_subsystems)
 
     def test_rotation_partials(self):
-        """Check partial derivatives"""
+        # Check partial derivatives
         self.prob.setup(check=False, force_alloc_complex=True)
 
         self.prob.set_val(Aircraft.Wing.INCIDENCE, 1.5, units="deg")
         self.prob.set_val(Dynamic.Vehicle.MASS, [100000, 100000], units="lbm")
         self.prob.set_val("alpha", [1.5, 1.5], units="deg")
-        self.prob.set_val(Dynamic.Atmosphere.VELOCITY, [100, 100], units="kn")
+        self.prob.set_val(Dynamic.Mission.VELOCITY, [100, 100], units="kn")
         self.prob.set_val("t_curr", [1, 2], units="s")
 
         set_params_for_unit_tests(self.prob)
@@ -40,7 +44,7 @@ class RotationODETestCase(unittest.TestCase):
 
         tol = 1e-6
         assert_near_equal(
-            self.prob[Dynamic.Atmosphere.VELOCITY_RATE],
+            self.prob[Dynamic.Mission.VELOCITY_RATE],
             np.array([13.66655, 13.66655]),
             tol,
         )

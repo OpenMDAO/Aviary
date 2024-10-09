@@ -16,6 +16,10 @@ takeoff_subsystem_options = deepcopy(takeoff_subsystem_options)
 
 
 class TakeoffODETest(unittest.TestCase):
+    """
+    Test detailed takeoff ODE
+    """
+
     def test_case_ground(self):
         prob = self._make_prob(climbing=False)
 
@@ -28,7 +32,7 @@ class TakeoffODETest(unittest.TestCase):
                 'angle_of_attack',
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 Dynamic.Mission.ALTITUDE,
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
                 Dynamic.Vehicle.MASS,
                 Dynamic.Vehicle.LIFT,
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
@@ -37,7 +41,7 @@ class TakeoffODETest(unittest.TestCase):
             output_keys=[
                 Dynamic.Mission.DISTANCE_RATE,
                 Dynamic.Mission.ALTITUDE_RATE,
-                Dynamic.Atmosphere.VELOCITY_RATE,
+                Dynamic.Mission.VELOCITY_RATE,
             ],
             tol=1e-2,
             atol=1e-9,
@@ -58,7 +62,7 @@ class TakeoffODETest(unittest.TestCase):
                 'angle_of_attack',
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 Dynamic.Mission.ALTITUDE,
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
                 Dynamic.Vehicle.MASS,
                 Dynamic.Vehicle.LIFT,
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
@@ -67,7 +71,7 @@ class TakeoffODETest(unittest.TestCase):
             output_keys=[
                 Dynamic.Mission.DISTANCE_RATE,
                 Dynamic.Mission.ALTITUDE_RATE,
-                Dynamic.Atmosphere.VELOCITY_RATE,
+                Dynamic.Mission.VELOCITY_RATE,
             ],
             tol=1e-2,
             atol=1e-9,

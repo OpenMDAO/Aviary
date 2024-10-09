@@ -54,10 +54,10 @@ class DescentODE(BaseODE):
 
         if input_speed_type is SpeedType.EAS:
             speed_inputs = ["EAS"]
-            speed_outputs = ["mach", Dynamic.Atmosphere.VELOCITY]
+            speed_outputs = ["mach", Dynamic.Mission.VELOCITY]
         elif input_speed_type is SpeedType.MACH:
             speed_inputs = ["mach"]
-            speed_outputs = ["EAS", Dynamic.Atmosphere.VELOCITY]
+            speed_outputs = ["EAS", Dynamic.Mission.VELOCITY]
 
         if analysis_scheme is AnalysisScheme.SHOOTING:
             add_SGM_required_inputs(self, {
@@ -167,7 +167,7 @@ class DescentODE(BaseODE):
             DescentRates(num_nodes=nn),
             promotes_inputs=[
                 Dynamic.Vehicle.MASS,
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
                 Dynamic.Vehicle.DRAG,
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                 "alpha",
@@ -189,7 +189,7 @@ class DescentODE(BaseODE):
                 Dynamic.Atmosphere.DENSITY,
                 "CL_max",
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
             ]
             + ["aircraft:*"],
             promotes_outputs=["theta", "TAS_violation"],

@@ -8,17 +8,23 @@ from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_
 from aviary.subsystems.propulsion.throttle_allocation import ThrottleAllocator
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import promote_aircraft_and_mission_vars
+from aviary.variable_info.enums import AnalysisScheme, ThrottleAllocation, SpeedType
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-from aviary.variable_info.enums import AnalysisScheme, ThrottleAllocation, SpeedType
 
 
 class ExternalSubsystemGroup(om.Group):
+    """
+    For external subsystem group, promote relevant aircraft and mission variables.
+    """
+
     def configure(self):
         promote_aircraft_and_mission_vars(self)
 
 
 class MissionODE(om.Group):
+    """Define the ODE of motion"""
+
     def initialize(self):
         self.options.declare(
             'num_nodes', types=int,
@@ -95,7 +101,7 @@ class MissionODE(om.Group):
                 ('mach_rate', Dynamic.Atmosphere.MACH_RATE),
                 ('sos', Dynamic.Atmosphere.SPEED_OF_SOUND),
             ],
-            promotes_outputs=[('velocity_rate', Dynamic.Atmosphere.VELOCITY_RATE)],
+            promotes_outputs=[('velocity_rate', Dynamic.Mission.VELOCITY_RATE)],
         )
 
         base_options = {'num_nodes': nn, 'aviary_inputs': aviary_options}
@@ -143,16 +149,16 @@ class MissionODE(om.Group):
             name='mission_EOM',
             subsys=MissionEOM(num_nodes=nn),
             promotes_inputs=[
-                Dynamic.Atmosphere.VELOCITY,
+                Dynamic.Mission.VELOCITY,
                 Dynamic.Vehicle.MASS,
                 Dynamic.Vehicle.Propulsion.THRUST_MAX_TOTAL,
                 Dynamic.Vehicle.DRAG,
                 Dynamic.Mission.ALTITUDE_RATE,
-                Dynamic.Atmosphere.VELOCITY_RATE,
+                Dynamic.Mission.VELOCITY_RATE,
             ],
             promotes_outputs=[
                 Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
-                Dynamic.Vehicle.ALTITUDE_RATE_MAX,
+                Dynamic.Mission.ALTITUDE_RATE_MAX,
                 Dynamic.Mission.DISTANCE_RATE,
                 'thrust_required',
             ],
@@ -222,9 +228,7 @@ class MissionODE(om.Group):
             Dynamic.Atmosphere.MACH, val=np.ones(nn), units='unitless'
         )
         self.set_input_defaults(Dynamic.Vehicle.MASS, val=np.ones(nn), units='kg')
-        self.set_input_defaults(
-            Dynamic.Atmosphere.VELOCITY, val=np.ones(nn), units='m/s'
-        )
+        self.set_input_defaults(Dynamic.Mission.VELOCITY, val=np.ones(nn), units='m/s')
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.ones(nn), units='m')
         self.set_input_defaults(
             Dynamic.Mission.ALTITUDE_RATE, val=np.ones(nn), units='m/s'

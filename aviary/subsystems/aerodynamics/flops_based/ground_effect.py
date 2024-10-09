@@ -18,7 +18,9 @@ class GroundEffect(om.ExplicitComponent):
     '''
     Define a component for adjusting lift and drag to accomodate ground effect.
 
-    Note, it is an error (no diagnostic) to try to calculate ground effect for an
+    Note
+    ----
+    It is an error (no diagnostic) to try to calculate ground effect for an
     aircraft flying "underground" - current `altitude` must ALWAYS be greater than or
     equal to `ground_altitude`.
     '''
