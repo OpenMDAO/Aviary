@@ -32,15 +32,18 @@ jobs:
       - name: prepare_docs_environment
         uses: ./actions/.github/actions/prepare_environment
         with:
-            NAME: dev
-            PY: 3
+            NAME: 'latest'
+            PY: 3.12
             NUMPY: 1
             SCIPY: 1
-            PYOPTSPARSE: 'latest'
+            PYOPTSPARSE: 'v2.9.1'
             SNOPT: '7.7'
-            #OPENMDAO: 'dev'
+            #OPENMDAO: 'latest'
             OPENMDAO: '3.34.2'
-            DYMOS: 'dev'
+            DYMOS: 'latest'
+            SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+            SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
+            SNOPT_LOCATION_77: ${{ secrets.SNOPT_LOCATION_77 }}
 
       - name: Check docs linting
         shell: bash -l {0}
