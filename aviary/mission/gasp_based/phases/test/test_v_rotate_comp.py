@@ -59,7 +59,7 @@ class TestVRotateComp2(unittest.TestCase):
         prob.set_val("dVR", val=5, units="kn")
         prob.set_val(Aircraft.Wing.AREA, val=1370, units="ft**2")
         prob.set_val(
-            Dynamic.Mission.DENSITY, val=RHO_SEA_LEVEL_ENGLISH, units="slug/ft**3"
+            Dynamic.Atmosphere.DENSITY, val=RHO_SEA_LEVEL_ENGLISH, units="slug/ft**3"
         )
         prob.set_val("CL_max", val=2.1886, units="unitless")
         prob.set_val("mass", val=175_000, units="lbm")

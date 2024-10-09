@@ -11,7 +11,7 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
     Cross-compute TAS, EAS, and Mach regardless of the input speed type.
 
     Inputs:
-        Dynamic.Mission.DENSITY : local atmospheric density
+        Dynamic.Atmosphere.DENSITY : local atmospheric density
         Dynamic.Mission.SPEED_OF_SOUND : local speed of sound
 
     Additional inputs if ground_roll = False:
