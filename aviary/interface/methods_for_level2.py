@@ -701,12 +701,12 @@ class AviaryProblem(om.Problem):
                     b={"units": "s"},
                 ),
                 promotes_inputs=[
-                    "tau_gear",
-                    "tau_flaps",
+                    "tau_gear",  # design var
+                    "tau_flaps",  # design var
                     ("m", Mission.Takeoff.ASCENT_DURATION),
                     ("b", Mission.Takeoff.ASCENT_T_INTIIAL),
                 ],
-                promotes_outputs=["t_init_gear", "t_init_flaps"],
+                promotes_outputs=["t_init_gear", "t_init_flaps"],  # link to h_fit
             )
 
         # Calculate speed at which to initiate rotation
