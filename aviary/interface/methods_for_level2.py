@@ -1574,7 +1574,8 @@ class AviaryProblem(om.Problem):
                     "taxi_groundroll_mass_constraint", om.EQConstraintComp())
                 eq.add_eq_output("mass", eq_units="lbm", normalize=False,
                                  ref=10000., add_constraint=True)
-                self.model.connect("taxi.mass", "taxi_groundroll_mass_constraint.rhs:mass")
+                self.model.connect(
+                    "taxi.mass", "taxi_groundroll_mass_constraint.rhs:mass")
                 self.model.connect(
                     "traj.groundroll.states:mass",
                     "taxi_groundroll_mass_constraint.lhs:mass",
@@ -2695,7 +2696,7 @@ class AviaryProblem(om.Problem):
             promotes_outputs=[("reg_objective", Mission.Objectives.RANGE)],
         )
 
-        ascent_phase = getattr(self.traj.phases,'ascent')
+        ascent_phase = getattr(self.traj.phases, 'ascent')
         ascent_tx = ascent_phase.options["transcription"]
         ascent_num_nodes = ascent_tx.grid_data.num_nodes
         self.model.add_subsystem(
