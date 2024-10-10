@@ -52,7 +52,7 @@ class TaxiFuelComponent(om.ExplicitComponent):
             Dynamic.Mission.MASS, Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             rows=arange, cols=arange)
         self.declare_partials(
-            Dynamic.Mission.MASS, Mission.Summary.GROSS_MASS)
+            Dynamic.Mission.MASS, Mission.Summary.GROSS_MASS, val=1)
 
     def compute(self, inputs, outputs):
         fuelflow, takeoff_mass = inputs.values()
@@ -65,10 +65,8 @@ class TaxiFuelComponent(om.ExplicitComponent):
 
         dt_taxi = self.options['aviary_options'].get_val(Mission.Taxi.DURATION, 's')
 
-        J["taxi_fuel_consumed", Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL] = \
-            -np.ones(nn) * dt_taxi
+        J["taxi_fuel_consumed", Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL] = -dt_taxi
 
-        J[Dynamic.Mission.MASS, Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL] = \
-            np.ones(nn) * dt_taxi
+        J[Dynamic.Mission.MASS, Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL] = dt_taxi
 
         J[Dynamic.Mission.MASS, Mission.Summary.GROSS_MASS] = np.ones(nn)
