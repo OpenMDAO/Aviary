@@ -217,7 +217,7 @@ two_dof_phase_info = {
             'num_segments': 1,
             'order': 3,
             'fix_initial': False,
-            'EAS_target': (150, 'kn'),
+            'EAS_target': (250, 'kn'),
             'mach_cruise': 0.475,
             'target_mach': False,
             'final_altitude': (10.0e3, 'ft'),
@@ -247,7 +247,7 @@ two_dof_phase_info = {
             'num_segments': 3,
             'order': 3,
             'fix_initial': False,
-            'EAS_target': (160, 'kn'),
+            'EAS_target': (250, 'kn'),
             'mach_cruise': 0.475,
             'target_mach': True,
             'final_altitude': (21_000, 'ft'),
@@ -271,7 +271,7 @@ two_dof_phase_info = {
         'initial_guesses': {
             'time': ([216.0, 1300.0], 's'),
             'distance': ([100.0e3, 200.0e3], 'ft'),
-            'altitude': ([10_000, 20_000], 'ft'),
+            'altitude': ([10_000, 21_000], 'ft'),
             'throttle': ([0.956, 0.956], 'unitless'),
         },
     },
@@ -295,7 +295,7 @@ two_dof_phase_info = {
             'order': 3,
             'fix_initial': False,
             'input_initial': False,
-            'EAS_limit': (160, 'kn'),
+            'EAS_limit': (350, 'kn'),
             'mach_cruise': 0.475,
             'input_speed_type': SpeedType.MACH,
             'final_altitude': (10_000, 'ft'),
@@ -360,3 +360,5 @@ two_dof_phase_info = {
         },
     },
 }
+
+phase_info = two_dof_phase_info

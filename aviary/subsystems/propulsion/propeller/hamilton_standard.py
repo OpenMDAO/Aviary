@@ -826,8 +826,7 @@ class HamiltonStandard(om.ExplicitComponent):
                         if (run_flag == 1):
                             # off lower bound only.
                             print(
-                                f"ERROR IN PROP. PERF.-- NERPT={NERPT}, run_flag={
-                                    run_flag}, il = {il}, kl = {kl}"
+                                f"ERROR IN PROP. PERF.-- NERPT={NERPT}, run_flag={run_flag}, il = {il}, kl = {kl}"
                             )
                         if (inputs['advance_ratio'][i_node] != 0.0):
                             ZMCRT, run_flag = _unint(
