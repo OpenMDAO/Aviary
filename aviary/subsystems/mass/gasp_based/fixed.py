@@ -2359,11 +2359,9 @@ class GearMass(om.ExplicitComponent):
 
         # A minimum gear height of 6 feet is enforced here using a smoothing function to
         # prevent discontinuities in the function and it's derivatives.
-        # TODO: XJ
-        # x = sigX(gear_height_temp-6)
-        # y = sigmoidX(gear_height_temp, 6, 1/320.)
+        gear_height_temp = gear_height_temp[0]
         gear_height = gear_height_temp * \
-            sigX(gear_height_temp-6) + 6 * sigX(6-gear_height_temp)
+            sigmoidX(gear_height_temp, 6, 1/320.) + 6 * sigmoidX(gear_height_temp, 6, -1/320.)
 
         # Low wing aircraft (defined as having the wing at the lowest position on the
         # fuselage) have a separate equation for calculating gear mass. A smoothing
