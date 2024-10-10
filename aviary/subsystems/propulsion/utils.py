@@ -204,21 +204,16 @@ def build_engine_deck(aviary_options: AviaryValues, meta_data=_MetaData):
             continue
 
     # name engine deck after filename
-    filename = Path(engine_options.get_val(Aircraft.Engine.DATA_FILE)).stem
-    engine_type = aviary_options._mapping.get(
-        Aircraft.Engine.TYPE, GASPEngineType.TURBOJET)
-    if engine_type is GASPEngineType.TURBOJET:
-        # local import to avoid circular import
-        from aviary.subsystems.propulsion.engine_deck import EngineDeck
-        return [
-            EngineDeck(filename, options=engine_options)
-        ]
-    else:
-        # local import to avoid circular import
-        from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
-        return [
-            TurbopropModel(filename, options=engine_options)
-        ]
+    # local import to avoid circular import
+    from aviary.subsystems.propulsion.engine_deck import EngineDeck
+
+    # name engine deck after filename
+    return [
+        EngineDeck(
+            Path(engine_options.get_val(Aircraft.Engine.DATA_FILE)).stem,
+            options=engine_options,
+        )
+    ]
 
 
 # TODO combine with aviary/utils/data_interpolator_builder.py build_data_interpolator
