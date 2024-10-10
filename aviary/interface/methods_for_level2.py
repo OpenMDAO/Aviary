@@ -1380,7 +1380,7 @@ class AviaryProblem(om.Problem):
                                               promotes_inputs=[('rhs:mass',
                                                                 Mission.Summary.GROSS_MASS)])
                 eq.add_eq_output('mass', eq_units='lbm', normalize=False,
-                                 ref=10000., add_constraint=True)
+                                 ref=100000., add_constraint=True)
                 self.model.connect(
                     f'traj.{first_flight_phase_name}.states:mass',
                     f'link_{first_flight_phase_name}_mass.lhs:mass',
@@ -2031,6 +2031,19 @@ class AviaryProblem(om.Problem):
             super().setup(**kwargs)
 
     def set_initial_guesses(self, parent_prob=None, parent_prefix=""):
+        """
+        Call `set_val` on the trajectory for states and controls to seed
+        the problem with reasonable initial guesses. This is especially
+        important for collocation methods.
+        This method first identifies all phases in the trajectory then
+        loops over each phase. Specific initial guesses
+        are added depending on the phase and mission method. Cruise is treated
+        as a special phase for GASP-based missions because it is an AnalyticPhase
+        in Dymos. For this phase, we handle the initial guesses first separately
+        and continue to the next phase after that. For other phases, we set the initial
+        guesses for states and controls according to the information available
+        in the 'initial_guesses' attribute of the phase.
+        """
         setvalprob = self
         if parent_prob is not None and parent_prefix != "":
             setvalprob = parent_prob
@@ -2092,6 +2105,28 @@ class AviaryProblem(om.Problem):
             self._add_guesses(phase_name, phase, guesses, setvalprob, parent_prefix)
 
     def _process_guess_var(self, val, key, phase):
+        """
+        Process the guess variable, which can either be a float or an array of floats.
+        This method is responsible for interpolating initial guesses when the user
+        provides a list or array of values rather than a single float. It interpolates
+        the guess values across the phase's domain for a given variable, be it a control
+        or a state variable. The interpolation is performed between -1 and 1 (representing
+        the normalized phase time domain), using the numpy linspace function.
+        The result of this method is a single value or an array of interpolated values
+        that can be used to seed the optimization problem with initial guesses.
+        Parameters
+        ----------
+        val : float or list/array of floats
+            The initial guess value(s) for a particular variable.
+        key : str
+            The key identifying the variable for which the initial guess is provided.
+        phase : Phase
+            The phase for which the variable is being set.
+        Returns
+        -------
+        val : float or array of floats
+            The processed guess value(s) to be used in the optimization problem.
+        """
         # Check if val is not a single float
         if not isinstance(val, float):
             # If val is an array of values
@@ -2118,6 +2153,21 @@ class AviaryProblem(om.Problem):
         return val
 
     def _add_subsystem_guesses(self, phase_name, phase, setvalprob, parent_prefix):
+        """
+        Adds the initial guesses for each subsystem of a given phase to the problem.
+        This method first fetches all subsystems associated with the given phase.
+        It then loops over each subsystem and fetches its initial guesses. For each
+        guess, it identifies whether the guess corresponds to a state or a control
+        variable and then processes the guess variable. After this, the initial
+        guess is set in the problem using the `set_val` method.
+        Parameters
+        ----------
+        phase_name : str
+            The name of the phase for which the subsystem guesses are being added.
+        phase : Phase
+            The phase object for which the subsystem guesses are being added.
+        """
+
         # Get all subsystems associated with the phase
         all_subsystems = self._get_all_subsystems(
             self.phase_info[phase_name]['external_subsystems'])
@@ -2144,6 +2194,23 @@ class AviaryProblem(om.Problem):
                     parent_prefix+f'traj.{phase_name}.{path_string}:{key}', **val)
 
     def _add_guesses(self, phase_name, phase, guesses, setvalprob, parent_prefix):
+                """
+        Adds the initial guesses for each variable of a given phase to the problem.
+        This method sets the initial guesses for time, control, state, and problem-specific
+        variables for a given phase. If using the GASP model, it also handles some special
+        cases that are not covered in the `phase_info` object. These include initial guesses
+        for mass, time, and distance, which are determined based on the phase name and other
+        mission-related variables.
+        Parameters
+        ----------
+        phase_name : str
+            The name of the phase for which the guesses are being added.
+        phase : Phase
+            The phase object for which the guesses are being added.
+        guesses : dict
+            A dictionary containing the initial guesses for the phase.
+        """
+
         # If using the GASP model, set initial guesses for the rotation mass and flight duration
         if self.mission_method is TWO_DEGREES_OF_FREEDOM:
             rotation_mass = self.initialization_guesses['rotation_mass']
