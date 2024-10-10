@@ -34,11 +34,17 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
 
         # options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
         # options.set_val(Aircraft.Engine.WING_LOCATIONS, 0.385)
+        scale_factor = 3
         options.set_val(Aircraft.Engine.RPM_DESIGN, 6000, 'rpm')
         options.set_val(Aircraft.Engine.FIXED_RPM, 6000, 'rpm')
         options.set_val(Aircraft.Engine.Gearbox.GEAR_RATIO, 5.88)
         options.set_val(Aircraft.Engine.Gearbox.EFFICIENCY, 1.0)
-        options.set_val(Aircraft.Engine.SCALE_FACTOR, 3.0)  # 11.87)
+        options.set_val(Aircraft.Engine.SCALE_FACTOR, scale_factor)  # 11.87)
+        options.set_val(
+            Aircraft.Engine.SCALED_SLS_THRUST,
+            options.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf') * scale_factor,
+            'lbf',
+        )
 
         # turboprop = TurbopropModel('turboprop', options=options)
         # turboprop2 = TurbopropModel('turboprop2', options=options)
