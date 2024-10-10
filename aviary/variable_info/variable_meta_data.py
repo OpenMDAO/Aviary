@@ -241,12 +241,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.Battery.EFFICIENCY,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.EFF_BAT',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={"GASP": 'INGASP.EFF_BAT', "FLOPS": None, "LEAPS1": None},
     units='unitless',
-    desc="battery pack efficiency"
+    default_value=1.0,
+    desc="battery pack efficiency",
 )
 
 add_meta_data(
@@ -618,6 +616,9 @@ add_meta_data(
 #                                                     |___/
 # ======================================================================================
 
+# TODO: Set initial defaults better
+# from aviary.utils.aviary_values import AviaryValues
+
 add_meta_data(
     Aircraft.CrewPayload.BAGGAGE_MASS,
     meta_data=_MetaData,
@@ -699,6 +700,64 @@ add_meta_data(
     units='lbm',
     desc='mass of catering items per passenger',
     default_value=0.7,
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": 'WTIN.NPB',  # ['&DEFINE.WTIN.NPB', 'WTS.NPB'],
+                     "LEAPS1": 'aircraft.inputs.L0_crew_and_payload.business_class_count'
+                     },
+    units='unitless',
+    desc='number of business class passengers that the aircraft is designed to accommodate',
+    types=int,
+    option=True,
+    default_value=0,  # AviaryValues.get_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS),
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.Design.NUM_FIRST_CLASS,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": 'WTIN.NPF',  # ['&DEFINE.WTIN.NPF', 'WTS.NPF'],
+                     "LEAPS1": 'aircraft.inputs.L0_crew_and_payload.first_class_count'
+                     },
+    units='unitless',
+    desc='number of first class passengers that the aircraft is designed to accommodate',
+    types=int,
+    option=True,
+    default_value=0,
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.Design.NUM_PASSENGERS,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.PAX',  # number of passenger seats excluding crew
+                     "FLOPS": None,  # ['CSTDAT.NSV', '~WEIGHT.NPASS', '~WTSTAT.NPASS'],
+                     "LEAPS1": 'aircraft.outputs.L0_crew_and_payload.passenger_count'
+                     },
+    units='unitless',
+    desc='total number of passengers that the aircraft is designed to accommodate',
+    option=True,
+    default_value=0,
+    types=int,
+)
+
+
+# TODO rename to economy?
+add_meta_data(
+    Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": 'WTIN.NPT',  # ['&DEFINE.WTIN.NPT', 'WTS.NPT'],
+                     "LEAPS1": 'aircraft.inputs.L0_crew_and_payload.tourist_class_count'
+                     },
+    units='unitless',
+    desc='number of tourist class passengers that the aircraft is designed to accommodate',
+    types=int,
+    option=True,
+    default_value=0,
 )
 
 add_meta_data(
@@ -790,8 +849,8 @@ add_meta_data(
     Aircraft.CrewPayload.NUM_BUSINESS_CLASS,
     meta_data=_MetaData,
     historical_name={"GASP": None,
-                     "FLOPS": 'WTIN.NPB',  # ['&DEFINE.WTIN.NPB', 'WTS.NPB'],
-                     "LEAPS1": 'aircraft.inputs.L0_crew_and_payload.business_class_count'
+                     "FLOPS": None,  # ['&DEFINE.WTIN.NPB', 'WTS.NPB'],
+                     "LEAPS1": None,  # 'aircraft.inputs.L0_crew_and_payload.business_class_count'
                      },
     units='unitless',
     desc='number of business class passengers',
@@ -804,8 +863,8 @@ add_meta_data(
     Aircraft.CrewPayload.NUM_FIRST_CLASS,
     meta_data=_MetaData,
     historical_name={"GASP": None,
-                     "FLOPS": 'WTIN.NPF',  # ['&DEFINE.WTIN.NPF', 'WTS.NPF'],
-                     "LEAPS1": 'aircraft.inputs.L0_crew_and_payload.first_class_count'
+                     "FLOPS": None,  # ['&DEFINE.WTIN.NPF', 'WTS.NPF'],
+                     "LEAPS1": None,  # 'aircraft.inputs.L0_crew_and_payload.first_class_count'
                      },
     units='unitless',
     desc='number of first class passengers',
@@ -866,9 +925,9 @@ add_meta_data(
 add_meta_data(
     Aircraft.CrewPayload.NUM_PASSENGERS,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.PAX',
+    historical_name={"GASP": None,  # 'INGASP.PAX' here we assume previous studies were changing Design.num_pax not as-flown
                      "FLOPS": None,  # ['CSTDAT.NSV', '~WEIGHT.NPASS', '~WTSTAT.NPASS'],
-                     "LEAPS1": 'aircraft.outputs.L0_crew_and_payload.passenger_count'
+                     "LEAPS1": None,  # 'aircraft.outputs.L0_crew_and_payload.passenger_count'
                      },
     units='unitless',
     desc='total number of passengers',
@@ -882,8 +941,8 @@ add_meta_data(
     Aircraft.CrewPayload.NUM_TOURIST_CLASS,
     meta_data=_MetaData,
     historical_name={"GASP": None,
-                     "FLOPS": 'WTIN.NPT',  # ['&DEFINE.WTIN.NPT', 'WTS.NPT'],
-                     "LEAPS1": 'aircraft.inputs.L0_crew_and_payload.tourist_class_count'
+                     "FLOPS": None,  # ['&DEFINE.WTIN.NPT', 'WTS.NPT'],
+                     "LEAPS1": None,  # 'aircraft.inputs.L0_crew_and_payload.tourist_class_count'
                      },
     units='unitless',
     desc='number of tourist class passengers',
@@ -1017,7 +1076,6 @@ add_meta_data(
 #                             __/ |
 #                            |___/
 # =========================================
-
 add_meta_data(
     Aircraft.Design.BASE_AREA,
     meta_data=_MetaData,
@@ -1272,7 +1330,7 @@ add_meta_data(
                      },
     units='unitless',
     desc='ratio of maximum landing mass to maximum takeoff mass',
-    default_value=None,
+    default_value=0.9,
 )
 
 add_meta_data(
@@ -3890,7 +3948,8 @@ add_meta_data(
                      "LEAPS1": 'aircraft.inputs.L0_overrides.landing_gear_main_weight'
                      },
     units='unitless',
-    desc='mass scaler of the main landing gear structure'
+    desc='mass scaler of the main landing gear structure',
+    default_value=1.0,
 )
 
 add_meta_data(

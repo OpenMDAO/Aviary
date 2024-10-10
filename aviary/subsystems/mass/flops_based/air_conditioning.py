@@ -37,7 +37,7 @@ class TransportAirCondMass(om.ExplicitComponent):
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
         aviary_options: AviaryValues = self.options['aviary_options']
         pax = aviary_options.get_val(
-            Aircraft.CrewPayload.NUM_PASSENGERS, units='unitless')
+            Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless')
 
         scaler = inputs[Aircraft.AirConditioning.MASS_SCALER]
         avionics_wt = inputs[Aircraft.Avionics.MASS] * GRAV_ENGLISH_LBM
@@ -52,7 +52,7 @@ class TransportAirCondMass(om.ExplicitComponent):
     def compute_partials(self, inputs, J):
         aviary_options: AviaryValues = self.options['aviary_options']
         pax = aviary_options.get_val(
-            Aircraft.CrewPayload.NUM_PASSENGERS, units='unitless')
+            Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless')
 
         scaler = inputs[Aircraft.AirConditioning.MASS_SCALER]
         avionics_wt = inputs[Aircraft.Avionics.MASS] * GRAV_ENGLISH_LBM
@@ -101,7 +101,7 @@ class AltAirCondMass(om.ExplicitComponent):
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
         aviary_options: AviaryValues = self.options['aviary_options']
         num_pax = aviary_options.get_val(
-            Aircraft.CrewPayload.NUM_PASSENGERS, units='unitless')
+            Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless')
 
         scaler = inputs[Aircraft.AirConditioning.MASS_SCALER]
 
@@ -111,7 +111,7 @@ class AltAirCondMass(om.ExplicitComponent):
     def compute_partials(self, inputs, J):
         aviary_options: AviaryValues = self.options['aviary_options']
         num_pax = aviary_options.get_val(
-            Aircraft.CrewPayload.NUM_PASSENGERS, units='unitless')
+            Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless')
 
         J[Aircraft.AirConditioning.MASS, Aircraft.AirConditioning.MASS_SCALER] = \
             26.0 * num_pax / GRAV_ENGLISH_LBM

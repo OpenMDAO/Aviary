@@ -30,7 +30,7 @@ class TransportAPUMass(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         aviary_options: AviaryValues = self.options['aviary_options']
         pax = aviary_options.get_val(
-            Aircraft.CrewPayload.NUM_PASSENGERS, units='unitless')
+            Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless')
         scaler = inputs[Aircraft.APU.MASS_SCALER]
         planform = inputs[Aircraft.Fuselage.PLANFORM_AREA]
 
@@ -40,7 +40,7 @@ class TransportAPUMass(om.ExplicitComponent):
     def compute_partials(self, inputs, J):
         aviary_options: AviaryValues = self.options['aviary_options']
         pax = aviary_options.get_val(
-            Aircraft.CrewPayload.NUM_PASSENGERS, units='unitless')
+            Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless')
         scaler = inputs[Aircraft.APU.MASS_SCALER]
         planform = inputs[Aircraft.Fuselage.PLANFORM_AREA]
 

@@ -189,6 +189,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
 
         bt = btb / (ar**(0.25*fstrt) * (1.0 + (0.5*faert - 0.16*fstrt)
                     * sa**2 + 0.03*caya * (1.0-0.5*faert)*sa))
+
         outputs[Aircraft.Wing.BENDING_FACTOR] = bt
 
         inertia_factor = np.zeros(num_engine_type, dtype=chord.dtype)

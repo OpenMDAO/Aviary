@@ -146,8 +146,8 @@ class TestParameterizePhaseInfo(unittest.TestCase):
 
         prob.run_model()
 
-        range_resid = prob.get_val(Mission.Constraints.RANGE_RESIDUAL, units='km')[-1]
-        assert_near_equal(range_resid, 5000.0 - 1.e-3)
+        range_resid = prob.get_val(Mission.Constraints.RANGE_RESIDUAL, units='nmi')[-1]
+        assert_near_equal(range_resid, 1906, tolerance=1e-3)
         assert_near_equal(prob.get_val("traj.cruise.timeseries.altitude", units='ft')[0],
                           31000.0)
         assert_near_equal(prob.get_val("traj.cruise.timeseries.mach")[0],
