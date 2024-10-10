@@ -81,10 +81,7 @@ class PropulsionPreMission(om.Group):
             out_stream = sys.stdout
 
         comp_list = [
-            self._get_subsystem(group)
-            for group in dir(self)
-            if self._get_subsystem(group)
-            and group not in ['pre_mission_mux', 'propulsion_sum']
+            self._get_subsystem(engine.name) for engine in self.options['engine_models']
         ]
 
         # Dictionary of all unique inputs/outputs from all new components, keys are
@@ -97,6 +94,7 @@ class PropulsionPreMission(om.Group):
         output_dict = {}
 
         for idx, comp in enumerate(comp_list):
+
             # Patterns to identify which inputs/outputs are vectorized and need to be
             # split then re-muxed
             pattern = ['engine:', 'nacelle:']
@@ -137,7 +135,8 @@ class PropulsionPreMission(om.Group):
 
             # slice incoming inputs for this component, so it only gets the correct index
             self.promotes(
-                comp.name, inputs=input_dict[comp.name].keys(), src_indices=om.slicer[idx])
+                comp.name, inputs=[*input_dict[comp.name]], src_indices=om.slicer[idx]
+            )
 
             # promote all other inputs/outputs for this component normally (handle vectorized outputs later)
             self.promotes(
