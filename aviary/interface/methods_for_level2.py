@@ -2696,14 +2696,16 @@ class AviaryProblem(om.Problem):
             promotes_outputs=[("reg_objective", Mission.Objectives.RANGE)],
         )
 
-        ascent_phase = getattr(self.traj.phases, 'ascent')
-        ascent_tx = ascent_phase.options["transcription"]
-        ascent_num_nodes = ascent_tx.grid_data.num_nodes
-        self.model.add_subsystem(
-            "h_fit",
-            PolynomialFit(N_cp=ascent_num_nodes),
-            promotes_inputs=["t_init_gear", "t_init_flaps"],
-        )
+        if self.analysis_scheme is AnalysisScheme.COLLOCATION:
+            if self.mission_method is TWO_DEGREES_OF_FREEDOM:
+                ascent_phase = getattr(self.traj.phases, 'ascent')
+                ascent_tx = ascent_phase.options["transcription"]
+                ascent_num_nodes = ascent_tx.grid_data.num_nodes
+                self.model.add_subsystem(
+                    "h_fit",
+                    PolynomialFit(N_cp=ascent_num_nodes),
+                    promotes_inputs=["t_init_gear", "t_init_flaps"],
+                )
 
         self.model.add_subsystem(
             "range_constraint",
