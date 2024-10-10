@@ -27,8 +27,8 @@ class PropulsionPreMissionTest(unittest.TestCase):
                                                engine_models=build_engine_deck(options))
 
         self.prob.setup(force_alloc_complex=True)
-        self.prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, options.get_val(
-            Aircraft.Engine.SCALED_SLS_THRUST, units='lbf'))
+        # self.prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, options.get_val(
+        #     Aircraft.Engine.SCALED_SLS_THRUST, units='lbf'))
 
         self.prob.run_model()
 

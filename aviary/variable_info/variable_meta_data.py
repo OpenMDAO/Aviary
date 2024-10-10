@@ -2333,15 +2333,12 @@ add_meta_data(
 add_meta_data(
     Aircraft.Engine.TYPE,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.NTYE',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={"GASP": 'INGASP.NTYE', "FLOPS": None, "LEAPS1": None},
     option=True,
     default_value=GASPEngineType.TURBOJET,
     types=GASPEngineType,
     units="unitless",
-    desc='specifies engine type used for engine mass calculation',
+    desc='specifies engine type used for GASP-based engine mass calculation',
 )
 
 add_meta_data(
