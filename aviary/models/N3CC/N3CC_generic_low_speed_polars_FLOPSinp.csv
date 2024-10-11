@@ -69,8 +69,7 @@ aircraft:fuselage:max_width,12.3,ft
 aircraft:fuselage:military_cargo_floor,False,unitless
 aircraft:fuselage:num_fuselages,1,unitless
 aircraft:fuselage:passenger_compartment_length,97.5,ft
-aircraft:fuselage:wetted_area,4235.082096,lbm
-aircraft:fuselage:wetted_area_scaler,1.0,unitless
+aircraft:fuselage:wetted_area,4235.082096,ft**2
 aircraft:horizontal_tail:area,349.522730527158,ft**2
 aircraft:horizontal_tail:aspect_ratio,5.22699386503068,unitless
 aircraft:horizontal_tail:laminar_flow_lower,0,unitless
@@ -80,8 +79,7 @@ aircraft:horizontal_tail:sweep,30.5853213018973,deg
 aircraft:horizontal_tail:taper_ratio,0.2734375,unitless
 aircraft:horizontal_tail:thickness_to_chord,0.115,unitless
 aircraft:horizontal_tail:vertical_tail_fraction,0,unitless
-aircraft:horizontal_tail:wetted_area,576.571192,lbm
-aircraft:horizontal_tail:wetted_area_scaler,1.0,unitless
+aircraft:horizontal_tail:wetted_area,576.571192,ft**2
 aircraft:hydraulics:mass_scaler,0.95543,unitless
 aircraft:hydraulics:system_pressure,5000,psi
 aircraft:instruments:mass_scaler,1.66955,unitless
@@ -95,7 +93,7 @@ aircraft:nacelle:avg_diameter,7.2,ft
 aircraft:nacelle:avg_length,35,ft
 aircraft:nacelle:laminar_flow_lower,0,unitless
 aircraft:nacelle:laminar_flow_upper,0,unitless
-aircraft:nacelle:wetted_area_scaler,244.468282,unitless
+aircraft:nacelle:wetted_area,244.468282,ft**2
 aircraft:paint:mass_per_unit_area,0,lbm/ft**2
 aircraft:propulsion:engine_oil_mass_scaler,1,unitless
 aircraft:propulsion:misc_mass_scaler,0,unitless
@@ -108,7 +106,7 @@ aircraft:vertical_tail:num_tails,1,unitless
 aircraft:vertical_tail:sweep,39.735053245438,deg
 aircraft:vertical_tail:taper_ratio,0.25,unitless
 aircraft:vertical_tail:thickness_to_chord,0.1,unitless
-aircraft:vertical_tail:wetted_area_scaler,445.645658,unitless
+aircraft:vertical_tail:wetted_area,445.645658,ft**2
 aircraft:wing:aeroelastic_tailoring_factor,0.33333,unitless
 aircraft:wing:airfoil_technology,1.6,unitless
 aircraft:wing:area,1220,1,0,0,0,0,ft**2
@@ -144,8 +142,7 @@ aircraft:wing:thickness_to_chord_dist,0.14233,0.12233,0.1108,0.1058,unitless
 aircraft:wing:thickness_to_chord_reference,0.116565,unitless
 aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:wing:var_sweep_mass_penalty,0,unitless
-aircraft:wing:wetted_area,2210.280228,lbm
-aircraft:wing:wetted_area_scaler,1.0,unitless
+aircraft:wing:wetted_area,2210.280228,ft**2
 mission:constraints:max_mach,0.785,unitless
 mission:design:gross_mass,1,lbm
 mission:design:lift_coefficient,-1,unitless

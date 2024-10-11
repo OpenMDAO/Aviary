@@ -1,6 +1,7 @@
 import unittest
 
 import openmdao.api as om
+from openmdao.utils.assert_utils import assert_check_partials
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.furnishings import (
@@ -106,6 +107,38 @@ class BWBFurnishingsGroupMassTest(unittest.TestCase):
 
     def test_IO(self):
         assert_match_varnames(self.prob.model)
+
+
+class BWBFurnishingsGroupMassTest2(unittest.TestCase):
+    '''
+    Test mass-weight conversion
+    '''
+
+    def setUp(self):
+        import aviary.subsystems.mass.flops_based.furnishings as furnishings
+        furnishings.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.subsystems.mass.flops_based.furnishings as furnishings
+        furnishings.GRAV_ENGLISH_LBM = 1.0
+
+    def test_case(self):
+        prob = om.Problem()
+        flops_inputs = get_flops_inputs("N3CC", preprocess=True)
+        flops_inputs.update({
+            Aircraft.Fuselage.MILITARY_CARGO_FLOOR: (False, 'unitless'),
+            Aircraft.BWB.NUM_BAYS: (5, 'unitless')
+        })
+        prob.model.add_subsystem(
+            'furnishings',
+            BWBFurnishingsGroupMass(aviary_options=flops_inputs),
+            promotes_outputs=['*'],
+            promotes_inputs=['*']
+        )
+        prob.setup(check=False, force_alloc_complex=True)
+
+        partial_data = prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
 class AltFurnishingsGroupMassBaseTest(unittest.TestCase):

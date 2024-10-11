@@ -52,7 +52,7 @@ def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
     # TODO generate both an Aviary input file and a phase_info file
 
     vehicle_data = {'input_values': NamedValues(), 'unused_values': NamedValues(),
-                    'initial_guesses': initial_guesses, 'verbosity': verbosity}
+                    'initialization_guesses': initialization_guesses, 'verbosity': verbosity}
 
     fortran_deck: Path = get_path(fortran_deck, verbose=False)
 
@@ -135,9 +135,9 @@ def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
         if legacy_code is GASP:
             # Values used in initial guessing of the trajectory
             writer.writerow([])
-            writer.writerow(['# Initial Guesses'])
-            for var_name in sorted(vehicle_data['initial_guesses']):
-                row = [var_name, vehicle_data['initial_guesses'][var_name]]
+            writer.writerow(['# Initialization Guesses'])
+            for var_name in sorted(vehicle_data['initialization_guesses']):
+                row = [var_name, vehicle_data['initialization_guesses'][var_name]]
                 writer.writerow(row)
 
         # Values that were not successfully converted
@@ -235,7 +235,7 @@ def process_and_store_data(data, var_name, legacy_code, current_namelist, altern
     The variables are also sorted based on whether they will set an Aviary variable or they are for initial guessing
     '''
 
-    guess_names = list(initial_guesses.keys())
+    guess_names = list(initialization_guesses.keys())
     var_ind = data_units = None
     skip_variable = False
     # skip any variables that shouldn't get converted
@@ -270,7 +270,7 @@ def process_and_store_data(data, var_name, legacy_code, current_namelist, altern
         if not skip_variable:
             if name in guess_names and legacy_code is GASP:
                 # all initial guesses take only a single value
-                vehicle_data['initial_guesses'][name] = float(var_values[0])
+                vehicle_data['initialization_guesses'][name] = float(var_values[0])
                 continue
 
             elif name in _MetaData:
@@ -390,6 +390,9 @@ def update_gasp_options(vehicle_data):
     """
     input_values: NamedValues = vehicle_data['input_values']
 
+    for var_name in gasp_scaler_variables:
+        update_gasp_scaler_variables(var_name, input_values)
+
     flap_types = ["plain", "split", "single_slotted", "double_slotted",
                   "triple_slotted", "fowler", "double_slotted_fowler"]
 
@@ -492,6 +495,21 @@ def update_gasp_options(vehicle_data):
     else:
         ValueError('"FRESF" is not valid between 0 and 10.')
 
+    # if the value is negative, we are asking the code to calculate it
+    # if it is positive, then we are going to use it as an override
+    if input_values.get_val(Aircraft.Wing.FORM_FACTOR)[0] < 0:
+        input_values.delete(Aircraft.Wing.FORM_FACTOR)
+    if input_values.get_val(Aircraft.HorizontalTail.FORM_FACTOR)[0] < 0:
+        input_values.delete(Aircraft.HorizontalTail.FORM_FACTOR)
+    if input_values.get_val(Aircraft.VerticalTail.FORM_FACTOR)[0] < 0:
+        input_values.delete(Aircraft.VerticalTail.FORM_FACTOR)
+    if input_values.get_val(Aircraft.Fuselage.FORM_FACTOR)[0] < 0:
+        input_values.delete(Aircraft.Fuselage.FORM_FACTOR)
+    if input_values.get_val(Aircraft.Nacelle.FORM_FACTOR)[0] < 0:
+        input_values.delete(Aircraft.Nacelle.FORM_FACTOR)
+    if input_values.get_val(Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR)[0] < 0:
+        input_values.delete(Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR)
+
     vehicle_data['input_values'] = input_values
     return vehicle_data
 
@@ -502,8 +520,8 @@ def update_flops_options(vehicle_data):
     """
     input_values: NamedValues = vehicle_data['input_values']
 
-    for var_name in flops_scalar_variables:
-        update_flops_scalar_variables(var_name, input_values)
+    for var_name in flops_scaler_variables:
+        update_flops_scaler_variables(var_name, input_values)
 
     # TWR <= 0 is not valid in Aviary (parametric variation)
     if Aircraft.Design.THRUST_TO_WEIGHT_RATIO in input_values:
@@ -512,7 +530,7 @@ def update_flops_options(vehicle_data):
 
     # WSR
 
-    # Additional mass fraction scalar set to zero to not add mass twice
+    # Additional mass fraction scaler set to zero to not add mass twice
     if Aircraft.Engine.ADDITIONAL_MASS_FRACTION in input_values:
         if input_values.get_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION)[0] >= 1:
             input_values.set_val(Aircraft.Engine.ADDITIONAL_MASS,
@@ -534,33 +552,63 @@ def update_flops_options(vehicle_data):
     return vehicle_data
 
 
-def update_flops_scalar_variables(var_name, input_values: NamedValues):
-    # The following parameters are used to modify or override
-    # internally computed weights for various components as follows:
-    # < 0., negative of starting weight which will be modified
-    #   as appropriate during optimization or parametric
-    #   variation, lb
-    # = 0., no weight for that component
-    # > 0. but < 5., scale factor applied to internally
-    #   computed weight
-    # > 5., actual fixed weight for component, lb
-    # Same rules also applied to various other FLOPS scalar parameters
-    scalar_name = var_name + '_scaler'
-    if scalar_name not in input_values:
+def update_flops_scaler_variables(var_name, input_values: NamedValues):
+    """
+    The following parameters are used to modify or override
+    internally computed weights and areas for various components as follows:
+    < 0., negative of starting weight which will be modified
+    as appropriate during optimization or parametric variation, lb or ft**2
+    = 0., no weight for that component
+    > 0. but < 5., scale factor applied to internally computed weight or area
+    > 5., actual fixed weight for component, lb or ft**2
+    Same rules also applied to various other FLOPS scaler parameters
+    """
+    scaler_name = var_name + '_scaler'
+    if scaler_name not in input_values:
         return
-    scalar_value = input_values.get_val(scalar_name)[0]
-    if scalar_value <= 0:
-        input_values.delete(scalar_name)
-    elif scalar_value < 5:
+    scaler_value = input_values.get_val(scaler_name)[0]
+    if scaler_value <= 0:
+        input_values.delete(scaler_name)
+    elif scaler_value < 5:
         return
-    elif scalar_value > 5:
-        input_values.set_val(var_name, [scalar_value], 'lbm')
-        input_values.set_val(scalar_name, [1.0])
+    elif scaler_value > 5:
+        if "area" in var_name.lower():
+            input_values.set_val(var_name, [scaler_value], 'ft**2')
+        else:
+            input_values.set_val(var_name, [scaler_value], 'lbm')
+        input_values.delete(scaler_name)
+
+
+def update_gasp_scaler_variables(var_name, input_values: NamedValues):
+    """
+    The following parameters are used to modify or override
+    internally computed weights and areas for various components as follows:
+    < 0., negative of starting weight which will be modified
+    as appropriate during optimization or parametric variation, lb or ft**2
+    = 0., no weight/area for that component
+    > 0. but < 10., scale factor applied to internally computed weight
+    > 10., actual fixed weight for component, lb or ft**2
+    Same rules also applied to various other FLOPS scaler parameters
+    """
+    scaler_name = var_name + '_scaler'
+    if scaler_name not in input_values:
+        return
+    scaler_value = input_values.get_val(scaler_name)[0]
+    if scaler_value <= 0:
+        input_values.delete(scaler_name)
+    elif scaler_value < 10:
+        return
+    elif scaler_value > 10:
+        if "area" in var_name.lower():
+            input_values.set_val(var_name, [scaler_value], 'ft**2')
+        else:
+            input_values.set_val(var_name, [scaler_value], 'lbm')
+        input_values.delete(scaler_name)
 
 
 # list storing information on Aviary variables that are split from single
 # FLOPS variables that use the same value-based branching behavior
-flops_scalar_variables = [
+flops_scaler_variables = [
     Aircraft.AirConditioning.MASS,
     Aircraft.AntiIcing.MASS,
     Aircraft.APU.MASS,
@@ -587,20 +635,26 @@ flops_scalar_variables = [
     Aircraft.LandingGear.MAIN_GEAR_MASS,
     Aircraft.LandingGear.NOSE_GEAR_MASS,
     Aircraft.Nacelle.MASS,
+    Aircraft.Nacelle.WETTED_AREA,
     Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS,
     Aircraft.VerticalTail.MASS_SCALER,
-    Aircraft.VerticalTail.WETTED_AREA_SCALER,
+    Aircraft.VerticalTail.WETTED_AREA,
     Aircraft.Wing.MASS,
     Aircraft.Wing.SHEAR_CONTROL_MASS,
     Aircraft.Wing.SURFACE_CONTROL_MASS,
     Aircraft.Wing.WETTED_AREA,
 ]
 
-initial_guesses = {
-    # initial_guesses is a dictionary that contains values used to initialize the trajectory
+# GASP variables that use the same value-based branching behavior
+gasp_scaler_variables = [
+    Aircraft.Fuselage.WETTED_AREA,
+]
+
+initialization_guesses = {
+    # initialization_guesses is a dictionary that contains values used to initialize the trajectory
     'actual_takeoff_mass': 0,
-    'rotation_mass': .99,
-    'fuel_burn_per_passenger_mile': 0.1,
+    'rotation_mass': 0,
+    'fuel_burn_per_passenger_mile': 0,
     'cruise_mass_final': 0,
     'flight_duration': 0,
     'time_to_climb': 0,

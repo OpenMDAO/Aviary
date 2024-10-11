@@ -1,7 +1,9 @@
 import numpy as np
+from scipy import interpolate
+
 import openmdao.api as om
 from openmdao.utils import units
-from scipy import interpolate
+
 from simupy.block_diagram import DEFAULT_INTEGRATOR_OPTIONS, SimulationMixin
 from simupy.systems import DynamicalSystem
 
@@ -11,6 +13,13 @@ from aviary.variable_info.variable_meta_data import _MetaData
 
 
 def add_SGM_required_inputs(group: om.Group, inputs_to_add: dict):
+    """
+    This is a simple utility that can be used to add inputs that are necessary for SGM but not collocation.
+    The SGM integrator expects that all states are inputs to the ODE. If any states aren't required by the EOM
+    they can be added to the ODE with this function, in order to minimize the differences between ODEs that are
+    used for both SGM and collocation.
+    """
+
     blank_component = om.ExplicitComponent()
     for input, details in inputs_to_add.items():
         blank_component.add_input(input, **details)
@@ -21,6 +30,13 @@ def add_SGM_required_inputs(group: om.Group, inputs_to_add: dict):
 
 
 def add_SGM_required_outputs(group: om.Group, outputs_to_add: dict):
+    """
+    This is a simple utility that can be used to add inputs that are necessary for SGM but not collocation.
+    The SGM integrator expects that all state rates are outputs from the ODE. If any state rates aren't
+    calculated by the EOM they can be added to the ODE with this function, in order to minimize the
+    differences between ODEs that are used for both SGM and collocation.
+    """
+
     iv_comp = om.IndepVarComp()
     for output, details in outputs_to_add.items():
         iv_comp.add_output(output, **details)
@@ -31,6 +47,14 @@ def add_SGM_required_outputs(group: om.Group, outputs_to_add: dict):
 
 
 class event_trigger():
+    """
+    event_trigger is used by SimuPyProblem to track the information that is required to trigger events during phases.
+    The state name, trigger value, and trigger units are required. Optionally a channel_name can be specified if it is
+    different from the state name.
+    Users are expect to interact with triggers primarily through SimuPyProblem.add_trigger() and
+    SimuPyProblem.clear_triggers(), but may want more detailed control over the triggers.
+    """
+
     def __init__(
             self,
             state: str,
@@ -47,7 +71,10 @@ class event_trigger():
 
 
 class SimuPyProblem(SimulationMixin):
-    # Subproblem used as a basis for forward in time integration phases.
+    """
+    Subproblem used as a basis for forward in time integration phases.
+    """
+
     def __init__(
         self,
         ode,
@@ -108,6 +135,14 @@ class SimuPyProblem(SimulationMixin):
 
         self.prob = prob
         prob.setup(check=False, force_alloc_complex=True)
+
+        # TODO - This is a hack to mimic the behavior of the old paramport, which
+        # contains some initial default values. It is unclear how actual "parameter"
+        # values are supposed to propagate from the pre-mission and top ivcs into
+        # the SGM phases.
+        from aviary.mission.gasp_based.ode.params import set_params_for_unit_tests
+        set_params_for_unit_tests(prob)
+
         prob.final_setup()
 
         if triggers is None:
@@ -237,6 +272,10 @@ class SimuPyProblem(SimulationMixin):
             with open('input_list_simupy'+problem_name+'.txt', 'w') as outfile:
                 prob.model.list_inputs(out_stream=outfile,)
             print(states)
+
+    def add_parameter(self, name, units, **kwargs):
+        self.parameters[name] = units
+        self.dim_parameters = len(self.parameters)
 
     @property
     def time(self):
@@ -427,6 +466,13 @@ class SimuPyProblem(SimulationMixin):
 
 
 class SGMTrajBase(om.ExplicitComponent):
+    """
+    SGMTrajBase is intended to mimic the dymos trajectory used in collocation problems as closely as possible.
+    Users are expected to mostly use FlexibleTraj which has some additions and helper functions that are more
+    specific to Aviary and aircraft simulation, whereas this base class is intended to be more generic and
+    provides a framework for any sort of SGM based trajectory.
+    """
+
     def initialize(self, verbosity=Verbosity.QUIET):
         # needs to get passed to each ODE
         # TODO: param_dict
@@ -437,6 +483,10 @@ class SGMTrajBase(om.ExplicitComponent):
         self.adjoint_int_opts = DEFAULT_INTEGRATOR_OPTIONS.copy()
         self.adjoint_int_opts['nsteps'] = 5000
         self.adjoint_int_opts['name'] = "dop853"
+        self.additional_parameters = {}
+
+    def add_parameter(self, name, units=None, **kwargs):
+        self.additional_parameters['parameters:'+name] = {'units': units}
 
     def setup_params(
             self,
@@ -490,8 +540,18 @@ class SGMTrajBase(om.ExplicitComponent):
                         continue
                     traj_promote_initial_input[prom_name] = data
 
+            # TODO - This is a hack to mimic the behavior of the old paramport, which
+            # contains some initial default values. It is unclear how actual "parameter"
+            # values are supposed to propagate from the pre-mission and top ivcs into
+            # the SGM phases.
+            from aviary.mission.gasp_based.ode.params import params_for_unit_tests
+            traj_promote_initial_input = {
+                **params_for_unit_tests,
+                **traj_promote_initial_input
+            }
+
         self.traj_promote_initial_input = {
-            **self.options["param_dict"], **traj_promote_initial_input}
+            **self.options["param_dict"], **traj_promote_initial_input, **self.additional_parameters}
         for name, kwargs in self.traj_promote_initial_input.items():
             self.add_input(name, **kwargs)
 
@@ -597,7 +657,7 @@ class SGMTrajBase(om.ExplicitComponent):
         for input in self.traj_promote_initial_input.keys():
             for ode in self.ODEs:
                 try:
-                    ode.set_val(input, inputs[input])
+                    ode.set_val(input.removeprefix('parameters:'), inputs[input])
                 except KeyError:
                     if self.verbosity >= Verbosity.VERBOSE:
                         print(

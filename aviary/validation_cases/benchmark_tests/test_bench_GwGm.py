@@ -1,18 +1,23 @@
 from copy import deepcopy
 import unittest
 
+from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
-from openmdao.core.problem import _clear_problem_names
 
 from aviary.interface.default_phase_info.two_dof import phase_info
 from aviary.interface.methods_for_level1 import run_aviary
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 from aviary.variable_info.enums import AnalysisScheme
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 @use_tempdirs
 class ProblemPhaseTestCase(unittest.TestCase):
+    """
+    Test the setup and run of a large single aisle commercial transport aircraft using 
+    GASP mass method and TWO_DEGREES_OF_FREEDOM mission method. Expected outputs
+    based on 'models/test_aircraft/aircraft_for_bench_FwFm.csv' model.
+    """
 
     def setUp(self):
         _clear_problem_names()  # need to reset these to simulate separate runs

@@ -8,6 +8,10 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 
 class NamedValuesTest(unittest.TestCase):
+    """
+    Test NamedValues class
+    """
+
     def test_init(self):
         d = NamedValues()
         self._do_test_full_equal(d, _empty, [_data1, _data2, _data3])

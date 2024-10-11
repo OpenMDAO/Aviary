@@ -1,23 +1,26 @@
 import unittest
 
 import numpy as np
+
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal, assert_check_partials
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.mission.gasp_based.ode.params import ParamPort
+from aviary.mission.gasp_based.ode.params import set_params_for_unit_tests
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_control_iter_group import \
     UnsteadyControlIterGroup
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_flight_conditions import \
     UnsteadySolvedFlightConditions
-from aviary.variable_info.enums import SpeedType
+from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
+from aviary.variable_info.enums import LegacyCode, SpeedType
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
-from aviary.variable_info.enums import LegacyCode
 
 
 class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
+    """
+    Test the UnsteadyControlIterGroup.
+    """
 
     def _test_unsteady_alpha_thrust_iter_group(self, ground_roll=False):
         nn = 5
@@ -26,11 +29,6 @@ class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
         aero = CoreAerodynamicsBuilder(code_origin=LegacyCode.GASP)
 
         p = om.Problem()
-
-        # TODO: paramport
-        param_port = ParamPort()
-
-        p.model.add_subsystem("params", param_port, promotes=["*"])
 
         fc = UnsteadySolvedFlightConditions(num_nodes=nn,
                                             input_speed_type=SpeedType.TAS,
@@ -51,12 +49,12 @@ class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
                                    promotes_inputs=["*"],
                                    promotes_outputs=["*"])
 
-        for key, data in param_port.param_data.items():
-            p.model.set_input_defaults(key, **data)
         if ground_roll:
             ig.set_input_defaults("alpha", np.zeros(nn), units="deg")
 
         p.setup(force_alloc_complex=True)
+
+        set_params_for_unit_tests(p)
 
         p.final_setup()
 

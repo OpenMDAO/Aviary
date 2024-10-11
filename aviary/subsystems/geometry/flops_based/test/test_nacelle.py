@@ -7,10 +7,13 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from aviary.subsystems.geometry.flops_based.nacelle import Nacelles
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import get_flops_inputs
-from aviary.variable_info.variables import Aircraft, Settings
+from aviary.variable_info.variables import Aircraft
 
 
 class NacelleTest(unittest.TestCase):
+    """
+    Test nacelle wetted area computation.
+    """
 
     def setUp(self):
         self.prob = om.Problem()

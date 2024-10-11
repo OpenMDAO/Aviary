@@ -9,8 +9,8 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 from aviary.interface.default_phase_info.height_energy import phase_info
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.models.multi_engine_single_aisle.multi_engine_single_aisle_data import inputs, engine_1_inputs, engine_2_inputs
-from aviary.variable_info.enums import ThrottleAllocation
 from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.variable_info.enums import ThrottleAllocation
 
 
 # Build problem
@@ -36,6 +36,9 @@ local_phase_info['descent']['user_options']['use_polynomial_control'] = True
 
 @use_tempdirs
 class MultiengineTestcase(unittest.TestCase):
+    """
+    Test the different throttle allocation methods for models with multiple, unique EngineModels.
+    """
 
     def setUp(self):
         om.clear_reports()

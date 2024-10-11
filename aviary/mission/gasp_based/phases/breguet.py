@@ -6,6 +6,10 @@ from aviary.variable_info.variables import Dynamic
 
 
 class RangeComp(om.ExplicitComponent):
+    """
+    Compute the cruise range and time for the breguet range component
+    """
+
     def initialize(self):
         self.options.declare("num_nodes", types=int)
 

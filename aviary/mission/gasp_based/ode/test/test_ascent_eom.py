@@ -50,5 +50,42 @@ class AscentEOMTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+class AscentEOMTestCase2(unittest.TestCase):
+    """
+    Test mass-weight conversion
+    """
+
+    def setUp(self):
+        import aviary.mission.gasp_based.ode.ascent_eom as ascent
+        ascent.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.mission.gasp_based.ode.ascent_eom as ascent
+        ascent.GRAV_ENGLISH_LBM = 1.0
+
+    def test_case1(self):
+        prob = om.Problem()
+        prob.model.add_subsystem("group", AscentEOM(num_nodes=2), promotes=["*"])
+        prob.model.set_input_defaults(
+            Dynamic.Mission.MASS, val=175400 * np.ones(2), units="lbm"
+        )
+        prob.model.set_input_defaults(
+            Dynamic.Mission.THRUST_TOTAL, val=22000 * np.ones(2), units="lbf"
+        )
+        prob.model.set_input_defaults(
+            Dynamic.Mission.LIFT, val=200 * np.ones(2), units="lbf")
+        prob.model.set_input_defaults(
+            Dynamic.Mission.DRAG, val=10000 * np.ones(2), units="lbf")
+        prob.model.set_input_defaults(
+            Dynamic.Mission.VELOCITY, val=10 * np.ones(2), units="ft/s")
+        prob.model.set_input_defaults(
+            Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(2), units="rad")
+        prob.model.set_input_defaults("alpha", val=np.zeros(2), units="deg")
+        prob.setup(check=False, force_alloc_complex=True)
+
+        partial_data = prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
 if __name__ == "__main__":
     unittest.main()

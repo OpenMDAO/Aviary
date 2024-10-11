@@ -5,14 +5,19 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
 
 from aviary.mission.gasp_based.ode.climb_ode import ClimbODE
+from aviary.mission.gasp_based.ode.params import set_params_for_unit_tests
+from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.utils.test_utils.IO_test_util import check_prob_outputs
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 
 
 class ClimbODETestCase(unittest.TestCase):
+    """
+    Test 2-degree of freedom climb ODE
+    """
+
     def setUp(self):
         self.prob = om.Problem()
 
@@ -29,7 +34,7 @@ class ClimbODETestCase(unittest.TestCase):
         )
 
     def test_start_of_climb(self):
-        """Test against GASP start of climb at 250 kts EAS, check partials"""
+        # Test against GASP start of climb at 250 kts EAS, check partials
         self.sys.options["EAS_target"] = 250
 
         self.prob.setup(check=False, force_alloc_complex=True)
@@ -42,6 +47,10 @@ class ClimbODETestCase(unittest.TestCase):
         self.prob.set_val("EAS", 250, units="kn")
         # slightly greater than zero to help check partials
         self.prob.set_val(Aircraft.Wing.INCIDENCE, 0.0000001, units="deg")
+        self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
+        self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
+
+        set_params_for_unit_tests(self.prob)
 
         self.prob.run_model()
 
@@ -65,7 +74,7 @@ class ClimbODETestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
     def test_end_of_climb(self):
-        """Test against GASP at 270 kts EAS and at cruise Mach."""
+        # Test against GASP at 270 kts EAS and at cruise Mach.
         self.sys.options["num_nodes"] = 2
         self.sys.options["EAS_target"] = 270
 
@@ -78,6 +87,10 @@ class ClimbODETestCase(unittest.TestCase):
         self.prob.set_val(Dynamic.Mission.ALTITUDE, np.array([11000, 37000]), units="ft")
         self.prob.set_val(Dynamic.Mission.MASS, np.array([174149, 171592]), units="lbm")
         self.prob.set_val("EAS", np.array([270, 270]), units="kn")
+        self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
+        self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
+
+        set_params_for_unit_tests(self.prob)
 
         self.prob.run_model()
 

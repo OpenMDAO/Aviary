@@ -5,13 +5,17 @@ from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.phases.landing_components import (
     GlideConditionComponent, LandingAltitudeComponent,
     LandingGroundRollComponent)
-from aviary.variable_info.enums import SpeedType
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
+from aviary.variable_info.enums import SpeedType
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class LandingSegment(BaseODE):
+    """
+    Group for a 2-degree of freedom landing ODE.
+    """
+
     def setup(self):
         aviary_options = self.options['aviary_options']
         core_subsystems = self.options['core_subsystems']
@@ -131,6 +135,7 @@ class LandingSegment(BaseODE):
             promotes_outputs=[
                 (Dynamic.Mission.DENSITY, "rho_td"),
                 (Dynamic.Mission.SPEED_OF_SOUND, "sos_td"),
+                (Dynamic.Mission.TEMPERATURE, "T_td"),
                 ("viscosity", "viscosity_td"),
                 (Dynamic.Mission.DYNAMIC_PRESSURE, "q_td"),
                 (Dynamic.Mission.MACH, "mach_td"),
@@ -197,7 +202,9 @@ class LandingSegment(BaseODE):
         )
 
         ParamPort.set_default_vals(self)
+
         self.set_input_defaults(Mission.Landing.INITIAL_MACH, val=0.1)
+
         # landing doesn't change flap or gear position
         self.set_input_defaults("t_init_flaps_app", val=1e10)
         self.set_input_defaults("t_init_gear_app", val=1e10)
@@ -207,3 +214,5 @@ class LandingSegment(BaseODE):
         self.set_input_defaults('aero_ramps.gear_factor:final_val', val=1.)
         self.set_input_defaults('aero_ramps.flap_factor:initial_val', val=0.)
         self.set_input_defaults('aero_ramps.gear_factor:initial_val', val=0.)
+
+        self.set_input_defaults(Aircraft.Wing.AREA, val=1.0, units="ft**2")
