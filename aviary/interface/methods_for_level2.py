@@ -2183,7 +2183,7 @@ class AviaryProblem(om.Problem):
                     parent_prefix+f'traj.{phase_name}.{path_string}:{key}', **val)
 
     def _add_guesses(self, phase_name, phase, guesses, setvalprob, parent_prefix):
-                """
+        """
         Adds the initial guesses for each variable of a given phase to the problem.
         This method sets the initial guesses for time, control, state, and problem-specific
         variables for a given phase. If using the GASP model, it also handles some special
@@ -2199,7 +2199,7 @@ class AviaryProblem(om.Problem):
         guesses : dict
             A dictionary containing the initial guesses for the phase.
         """
-
+                
         # If using the GASP model, set initial guesses for the rotation mass and flight duration
         if self.mission_method is TWO_DEGREES_OF_FREEDOM:
             rotation_mass = self.initialization_guesses['rotation_mass']

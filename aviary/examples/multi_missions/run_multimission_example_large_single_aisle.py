@@ -2,6 +2,13 @@
 authors: Jatin Soni, Eliot Aretskin
 Multi Mission Optimization Example using Aviary
 
+In this example, Two seperate aviary problems are instantiated using the typical aviaryProblem calls like load_inputs,
+check_and_preprocess_payload, etc.. Once those problems are setup and all of their phases are linked together,
+we copy those problems as group into a super_problem. We then promote GROSS_MASS, RANGE, SPAN, and wing AREA from each
+of those sub-groups (group1 and group2) up to the super_probem so the optimizer can control them. The fuel_burn results
+from each of the group1 and group2 dymos missions are summed and weighted to create the objective function the 
+optimizer sees.
+
 For the deadhead mission: 
 aircraft:crew_and_payload:num_passengers,0,unitless
 aircraft:crew_and_payload:num_tourist_class,0,unitless
@@ -319,5 +326,6 @@ if __name__ == '__main__':
 
     super_prob = large_single_aisle_example(makeN2=makeN2)
 
+    # Uncomment the following lines to see further details on each mission.
     # super_prob.model.group_1.list_vars(val=True, units=True, print_arrays=False)
-    # https://openmdao.org/newdocs/versions/latest/features/debugging/listing_variables.html?highlight=list_driver_vars
+    # super_prob.model.group_2.list_vars(val=True, units=True, print_arrays=False)
