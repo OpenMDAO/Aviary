@@ -47,6 +47,8 @@ class DescentODETestCase(unittest.TestCase):
                 0, 0]), units='unitless')
         self.prob.set_val(Dynamic.Mission.ALTITUDE, np.array([36500, 14500]), units="ft")
         self.prob.set_val(Dynamic.Mission.MASS, np.array([147661, 147572]), units="lbm")
+        self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
+        self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
 
         set_params_for_unit_tests(self.prob)
 
@@ -85,6 +87,8 @@ class DescentODETestCase(unittest.TestCase):
         self.prob.set_val(Dynamic.Mission.ALTITUDE, 1500, units="ft")
         self.prob.set_val(Dynamic.Mission.MASS, 147410, units="lbm")
         self.prob.set_val("EAS", 250, units="kn")
+        self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
+        self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
 
         set_params_for_unit_tests(self.prob)
 
