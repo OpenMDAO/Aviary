@@ -3051,6 +3051,7 @@ add_meta_data(
                      },
     units='unitless',
     desc='fuselage form factor',
+    default_value=1
 )
 
 add_meta_data(

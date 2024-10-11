@@ -49,6 +49,7 @@ aircraft:engine:data_file=models/engines/turbofan_23k_1.deck
  CKF=1.146,	! fuselage drag form factor (derated for non-advanced)
  CKW=1.60,	! wing form factor (numerical function of TCR and TCT)
  CKW=1.667,	! wing form factor (derated for non-advanced)
+ CKW=-1,	! Testing fortran_to_aviary
  CKI=1.10,	! Wing/Fuselage Interference Factor (0.0, i.e No interference drag)
  CKI=1.21,	! Wing/Fuselage Interference Factor (derated for non-advanced)
  CKN=1.25,	! nacelle form factor (numerical function of nacelle fineness ratio)

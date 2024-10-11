@@ -136,8 +136,8 @@ class AviaryGroup(om.Group):
         # Find promoted name of every input in the model.
         all_prom_inputs = []
 
-        # We can call list_inputs on the groups.
-        for system in self.system_iter(recurse=False, typ=om.Group):
+        # We can call list_inputs on the subsystems.
+        for system in self.system_iter(recurse=False):
             var_abs = system.list_inputs(out_stream=None, val=False)
             var_prom = [v['prom_name'] for k, v in var_abs]
             all_prom_inputs.extend(var_prom)
@@ -662,6 +662,7 @@ class AviaryProblem(om.Problem):
                 cruise_mach=self.cruise_mach,
                 cruise_alt=self.cruise_alt,
                 reserve_fuel='reserve_fuel_estimate',
+                all_subsystems=self._get_all_subsystems(),
             )
 
         # Add thrust-to-weight ratio subsystem
@@ -1079,6 +1080,7 @@ class AviaryProblem(om.Problem):
                 src_indices=[-1],
                 flat_src_indices=True,
             )
+            self.traj = full_traj
             return traj
 
         def add_subsystem_timeseries_outputs(phase, phase_name):
@@ -1917,8 +1919,8 @@ class AviaryProblem(om.Problem):
         for external_subsystem in all_subsystems:
             bus_variables = external_subsystem.get_bus_variables()
             if bus_variables is not None:
-                for bus_variable in bus_variables:
-                    mission_variable_name = bus_variables[bus_variable]['mission_name']
+                for bus_variable, variable_data in bus_variables.items():
+                    mission_variable_name = variable_data['mission_name']
 
                     # check if mission_variable_name is a list
                     if not isinstance(mission_variable_name, list):
@@ -1926,50 +1928,44 @@ class AviaryProblem(om.Problem):
 
                     # loop over the mission_variable_name list and add each variable to the trajectory
                     for mission_var_name in mission_variable_name:
-                        if 'mission_name' in bus_variables[bus_variable]:
-                            if mission_var_name not in self.meta_data:
-                                # base_units = self.model.get_io_metadata(includes=f'pre_mission.{external_subsystem.name}.{bus_variable}')[f'pre_mission.{external_subsystem.name}.{bus_variable}']['units']
-                                base_units = bus_variables[bus_variable]['units']
+                        if mission_var_name not in self.meta_data:
+                            # base_units = self.model.get_io_metadata(includes=f'pre_mission.{external_subsystem.name}.{bus_variable}')[f'pre_mission.{external_subsystem.name}.{bus_variable}']['units']
+                            base_units = variable_data['units']
 
-                                shape = bus_variables[bus_variable].get(
-                                    'shape', _unspecified)
+                            shape = variable_data.get('shape', _unspecified)
 
-                                targets = mission_var_name
-                                if '.' in mission_var_name:
-                                    # Support for non-hierarchy variables as parameters.
-                                    mission_var_name = mission_var_name.split('.')[-1]
+                            targets = mission_var_name
+                            if '.' in mission_var_name:
+                                # Support for non-hierarchy variables as parameters.
+                                mission_var_name = mission_var_name.split('.')[-1]
 
-                                if 'phases' in bus_variables[bus_variable]:
-                                    # Support for connecting bus variables into a subset of
-                                    # phases.
-                                    phases = bus_variables[bus_variable]['phases']
+                            if 'phases' in variable_data:
+                                # Support for connecting bus variables into a subset of
+                                # phases.
+                                for phase_name in variable_data['phases']:
+                                    phase = getattr(self.traj.phases, phase_name)
 
-                                    for phase_name in phases:
-                                        phase = getattr(self.traj.phases, phase_name)
+                                    phase.add_parameter(mission_var_name, opt=False, static_target=True,
+                                                        units=base_units, shape=shape, targets=targets)
 
-                                        phase.add_parameter(mission_var_name, opt=False, static_target=True,
-                                                            units=base_units, shape=shape, targets=targets)
+                                    self.model.connect(f'pre_mission.{bus_variable}',
+                                                       f'traj.{phase_name}.parameters:{mission_var_name}')
 
-                                        self.model.connect(f'pre_mission.{bus_variable}',
-                                                           f'traj.{phase_name}.parameters:{mission_var_name}')
+                            else:
+                                self.traj.add_parameter(mission_var_name, opt=False, static_target=True,
+                                                        units=base_units, shape=shape, targets={
+                                                            phase_name: [mission_var_name] for phase_name in base_phases})
 
-                                else:
-                                    phases = base_phases
+                                self.model.connect(
+                                    f'pre_mission.{bus_variable}', f'traj.parameters:'+mission_var_name)
 
-                                    self.traj.add_parameter(mission_var_name, opt=False, static_target=True,
-                                                            units=base_units, shape=shape, targets={
-                                                                phase_name: [mission_var_name] for phase_name in phases})
-
-                                    self.model.connect(
-                                        f'pre_mission.{bus_variable}', f'traj.parameters:'+mission_var_name)
-
-                        if 'post_mission_name' in bus_variables[bus_variable]:
+                        if 'post_mission_name' in variable_data:
                             self.model.connect(f'pre_mission.{external_subsystem.name}.{bus_variable}',
-                                               f'post_mission.{external_subsystem.name}.{bus_variables[bus_variable]["post_mission_name"]}')
+                                               f'post_mission.{external_subsystem.name}.{variable_data["post_mission_name"]}')
 
     def setup(self, **kwargs):
         """
-        Lightly wrappd setup() method for the problem.
+        Lightly wrapped setup() method for the problem.
         """
         # suppress warnings:
         # "input variable '...' promoted using '*' was already promoted using 'aircraft:*'
@@ -2662,6 +2658,12 @@ class AviaryProblem(om.Problem):
                              (Dynamic.Mission.MASS, Mission.Landing.TOUCHDOWN_MASS)],
             promotes_outputs=['mission:*'],
         )
+        self.model.connect(
+            'pre_mission.interference_independent_of_shielded_area',
+            'landing.interference_independent_of_shielded_area')
+        self.model.connect(
+            'pre_mission.drag_loss_due_to_shielded_wing_area',
+            'landing.drag_loss_due_to_shielded_wing_area')
 
     def _add_objectives(self):
         "add objectives and some constraints"
