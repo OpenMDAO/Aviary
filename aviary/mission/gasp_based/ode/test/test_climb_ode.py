@@ -9,6 +9,7 @@ from aviary.mission.gasp_based.ode.params import set_params_for_unit_tests
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.utils.test_utils.IO_test_util import check_prob_outputs
+from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
 
@@ -22,6 +23,7 @@ class ClimbODETestCase(unittest.TestCase):
         self.prob = om.Problem()
 
         aviary_options = get_option_defaults()
+        aviary_options.set_val('verbosity', Verbosity.BRIEF)
         default_mission_subsystems = get_default_mission_subsystems(
             'GASP', build_engine_deck(aviary_options))
 
@@ -58,7 +60,7 @@ class ClimbODETestCase(unittest.TestCase):
             "alpha": 5.16398,
             "CL": 0.59766664,
             "CD": 0.03070836,
-            Dynamic.Mission.ALTITUDE_RATE: 56.9104,  # ft/s
+            Dynamic.Mission.ALTITUDE_RATE: 3414.624 / 60,  # ft/s
             # TAS (kts -> ft/s) * cos(gamma), 253.6827 * 1.68781 * cos(0.13331060446181708)
             Dynamic.Mission.DISTANCE_RATE: 424.36918705874785,  # ft/s
             Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: -13448.29,  # lbm/h
@@ -98,7 +100,7 @@ class ClimbODETestCase(unittest.TestCase):
             "alpha": [4.0557, 4.06615],
             "CL": [0.512628, 0.615819],
             "CD": [0.02692759, 0.03299578],
-            Dynamic.Mission.ALTITUDE_RATE: [50.894, 7.1791],  # ft/s
+            Dynamic.Mission.ALTITUDE_RATE: [3053.64 / 60, 430.746 / 60],  # ft/s
             # TAS (kts -> ft/s) * cos(gamma), [319, 459] kts
             Dynamic.Mission.DISTANCE_RATE: [536.23446, 774.40085],  # ft/s
             Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: [-11419.94,  -6050.26],
