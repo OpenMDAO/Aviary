@@ -556,7 +556,7 @@ def update_aviary_options(vehicle_data):
         pass
     else:
         scale_factor = scaled_thrust / ref_thrust
-        input_values.set_val(Aircraft.Engine.SCALE_FACTOR, scale_factor)
+        input_values.set_val(Aircraft.Engine.SCALE_FACTOR, [scale_factor])
 
     vehicle_data['input_values'] = input_values
     return vehicle_data
