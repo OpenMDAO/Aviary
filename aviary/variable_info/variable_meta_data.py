@@ -616,9 +616,6 @@ add_meta_data(
 #                                                     |___/
 # ======================================================================================
 
-# TODO: Set initial defaults better
-# from aviary.utils.aviary_values import AviaryValues
-
 add_meta_data(
     Aircraft.CrewPayload.BAGGAGE_MASS,
     meta_data=_MetaData,
