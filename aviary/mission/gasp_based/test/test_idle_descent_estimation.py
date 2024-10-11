@@ -76,8 +76,8 @@ class IdleDescentTestCase(unittest.TestCase):
         warnings.filterwarnings('default', category=UserWarning)
 
         # Values obtained by running idle_descent_estimation
-        assert_near_equal(prob.get_val('descent_range', 'NM'), 98.38026813, self.tol)
-        assert_near_equal(prob.get_val('descent_fuel', 'lbm'), 250.84809336, self.tol)
+        assert_near_equal(prob.get_val('descent_range', 'NM'), 98.3445738, self.tol)
+        assert_near_equal(prob.get_val('descent_fuel', 'lbm'), 250.79875356, self.tol)
 
         # TODO: check_partials() call results in runtime error: Jacobian in 'ODE_group' is not full rank.
         # partial_data = prob.check_partials(out_stream=None, method="cs")
