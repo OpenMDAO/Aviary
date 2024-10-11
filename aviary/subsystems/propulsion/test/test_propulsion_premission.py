@@ -23,8 +23,12 @@ class PropulsionPreMissionTest(unittest.TestCase):
         options.set_val(Settings.VERBOSITY, 0)
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
 
-        self.prob.model = PropulsionPreMission(aviary_options=options,
-                                               engine_models=build_engine_deck(options))
+        prop = PropulsionPreMission(aviary_options=options,
+                                    engine_models=build_engine_deck(options))
+        self.prob.model.add_subsystem('propulsion', prop,
+                                      promotes=['*'])
+
+        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, np.ones(1))
 
         self.prob.setup(force_alloc_complex=True)
         # self.prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, options.get_val(
@@ -53,6 +57,8 @@ class PropulsionPreMissionTest(unittest.TestCase):
 
         self.prob.model = PropulsionPreMission(aviary_options=options,
                                                engine_models=engine_models)
+
+        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, np.ones(2))
 
         self.prob.setup(force_alloc_complex=True)
         self.prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, options.get_val(
