@@ -450,12 +450,12 @@ class AeroGeom(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.HorizontalTail.AVERAGE_CHORD, val=50.0)
 
-        add_aviary_input(self, Aircraft.VerticalTail.AVERAGE_CHORD, val=1.0)
+        add_aviary_input(self, Aircraft.VerticalTail.AVERAGE_CHORD, val=15.0)
 
-        add_aviary_input(self, Aircraft.Fuselage.LENGTH, val=1.0)
+        add_aviary_input(self, Aircraft.Fuselage.LENGTH, val=100.0)
 
         add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH,
-                         val=np.ones(num_engine_type))
+                         val=np.ones(num_engine_type)*15)
 
         add_aviary_input(self, Aircraft.HorizontalTail.AREA, val=0.0)
 
