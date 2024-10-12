@@ -158,9 +158,9 @@ class WingTailRatios(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.AREA, val=1370.3)
 
-        add_aviary_input(self, Aircraft.Wing.SPAN, val=100.0)
+        add_aviary_input(self, Aircraft.Wing.SPAN, val=0.0)
 
-        add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, val=10.0)
+        add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, val=0.0)
 
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, val=0.33)
 
@@ -176,7 +176,7 @@ class WingTailRatios(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.HorizontalTail.AREA, val=0.0)
 
-        add_aviary_input(self, Aircraft.HorizontalTail.AVERAGE_CHORD, val=50.0)
+        add_aviary_input(self, Aircraft.HorizontalTail.AVERAGE_CHORD, val=0.0)
 
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, val=0.0)
 
@@ -272,7 +272,7 @@ class Xlifts(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.HorizontalTail.SWEEP, val=25.0)
 
-        add_aviary_input(self, Aircraft.HorizontalTail.MOMENT_RATIO, val=0.3)
+        add_aviary_input(self, Aircraft.HorizontalTail.MOMENT_RATIO, val=0.0)
 
         # geometry from wing-tail ratios
         self.add_input(
@@ -444,18 +444,18 @@ class AeroGeom(om.ExplicitComponent):
 
         # geometric data from sizing
 
-        add_aviary_input(self, Aircraft.Wing.SPAN, val=100.0)
+        add_aviary_input(self, Aircraft.Wing.SPAN, val=0.0)
 
-        add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, val=10.0)
+        add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, val=0.0)
 
-        add_aviary_input(self, Aircraft.HorizontalTail.AVERAGE_CHORD, val=50.0)
+        add_aviary_input(self, Aircraft.HorizontalTail.AVERAGE_CHORD, val=0.0)
 
-        add_aviary_input(self, Aircraft.VerticalTail.AVERAGE_CHORD, val=15.0)
+        add_aviary_input(self, Aircraft.VerticalTail.AVERAGE_CHORD, val=0.0)
 
-        add_aviary_input(self, Aircraft.Fuselage.LENGTH, val=100.0)
+        add_aviary_input(self, Aircraft.Fuselage.LENGTH, val=0.0)
 
         add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH,
-                         val=np.ones(num_engine_type)*15)
+                         val=np.zeros(num_engine_type))
 
         add_aviary_input(self, Aircraft.HorizontalTail.AREA, val=0.0)
 
@@ -868,9 +868,9 @@ class DragCoef(om.ExplicitComponent):
 
         # from sizing
 
-        add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, val=10.0)
+        add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, val=0.0)
 
-        add_aviary_input(self, Aircraft.Wing.SPAN, val=100.0)
+        add_aviary_input(self, Aircraft.Wing.SPAN, val=0.0)
 
         add_aviary_input(self, Aircraft.Wing.AREA, val=1370.3)
 
@@ -1074,9 +1074,9 @@ class LiftCoeff(om.ExplicitComponent):
 
         # from sizing
 
-        add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, val=10.0)
+        add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, val=0.0)
 
-        add_aviary_input(self, Aircraft.Wing.SPAN, val=100.0)
+        add_aviary_input(self, Aircraft.Wing.SPAN, val=0.0)
 
         self.add_output(
             "CL_base", units="unitless", shape=nn, desc="Base lift coefficient")
