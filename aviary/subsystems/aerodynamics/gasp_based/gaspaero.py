@@ -176,7 +176,7 @@ class WingTailRatios(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.HorizontalTail.AREA, val=0.0)
 
-        add_aviary_input(self, Aircraft.HorizontalTail.AVERAGE_CHORD, val=1.0)
+        add_aviary_input(self, Aircraft.HorizontalTail.AVERAGE_CHORD, val=50.0)
 
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, val=0.0)
 
@@ -448,7 +448,7 @@ class AeroGeom(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, val=10.0)
 
-        add_aviary_input(self, Aircraft.HorizontalTail.AVERAGE_CHORD, val=1.0)
+        add_aviary_input(self, Aircraft.HorizontalTail.AVERAGE_CHORD, val=50.0)
 
         add_aviary_input(self, Aircraft.VerticalTail.AVERAGE_CHORD, val=1.0)
 
