@@ -23,7 +23,7 @@ class SpecificEnergyRate(om.ExplicitComponent):
             units='m/s')
         self.add_input(
             Dynamic.Mission.MASS,
-            val=np.ones(nn),
+            val=np.ones(nn)*100000,
             desc='current mass',
             units='kg')
         self.add_input(Dynamic.Mission.THRUST_TOTAL, val=np.ones(nn),
