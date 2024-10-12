@@ -160,7 +160,7 @@ class WingTailRatios(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.SPAN, val=100.0)
 
-        add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, val=1.0)
+        add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, val=10.0)
 
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, val=0.33)
 
@@ -446,7 +446,7 @@ class AeroGeom(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.SPAN, val=100.0)
 
-        add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, val=1.0)
+        add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, val=10.0)
 
         add_aviary_input(self, Aircraft.HorizontalTail.AVERAGE_CHORD, val=1.0)
 
@@ -868,7 +868,7 @@ class DragCoef(om.ExplicitComponent):
 
         # from sizing
 
-        add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, val=1.0)
+        add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, val=10.0)
 
         add_aviary_input(self, Aircraft.Wing.SPAN, val=100.0)
 
@@ -1074,7 +1074,7 @@ class LiftCoeff(om.ExplicitComponent):
 
         # from sizing
 
-        add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, val=1.0)
+        add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, val=10.0)
 
         add_aviary_input(self, Aircraft.Wing.SPAN, val=100.0)
 
