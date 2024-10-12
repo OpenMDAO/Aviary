@@ -272,7 +272,7 @@ class Xlifts(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.HorizontalTail.SWEEP, val=25.0)
 
-        add_aviary_input(self, Aircraft.HorizontalTail.MOMENT_RATIO, val=1.0)
+        add_aviary_input(self, Aircraft.HorizontalTail.MOMENT_RATIO, val=0.3)
 
         # geometry from wing-tail ratios
         self.add_input(
