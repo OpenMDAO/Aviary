@@ -359,7 +359,7 @@ class TurbopropTest(unittest.TestCase):
         prob.set_solver_print(level=0)
 
         # and run mission
-        dm.run_problem(prob, run_driver=True, simulate=False, make_plots=True)
+        dm.run_problem(prob, run_driver=True, simulate=False, make_plots=False)
 
 
 if __name__ == '__main__':
