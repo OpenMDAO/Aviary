@@ -21,7 +21,7 @@ class Atmosphere(om.Group):
         self.options.declare(
             'h_def',
             values=('geopotential', 'geodetic'),
-            default='geodetic',
+            default='geopotential',
             desc='The definition of altitude provided as input to the component. If '
             '"geodetic", it will be converted to geopotential based on Equation 19 in '
             'the original standard.',
