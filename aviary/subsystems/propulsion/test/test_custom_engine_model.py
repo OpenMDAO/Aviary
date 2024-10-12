@@ -270,7 +270,7 @@ class TurbopropTest(unittest.TestCase):
                     "initial_mach": (0.76, "unitless"),
                     "final_mach": (0.76, "unitless"),
                     "mach_bounds": ((0.7, 0.78), "unitless"),
-                    "initial_altitude": (35000.0, "ft"),
+                    "initial_altitude": (34000.0, "ft"),
                     "final_altitude": (35000.0, "ft"),
                     "altitude_bounds": ((23000.0, 38000.0), "ft"),
                     "throttle_enforcement": "boundary_constraint",
