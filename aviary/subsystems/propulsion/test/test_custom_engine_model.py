@@ -292,6 +292,7 @@ class TurbopropTest(unittest.TestCase):
         options.set_val(Aircraft.Engine.DATA_FILE, engine_filepath)
         options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
         options.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 10, units='ft')
+        options.set_val(Aircraft.Engine.GEOPOTENTIAL_ALT, False)
 
         options.set_val(
             Aircraft.Engine.COMPUTE_PROPELLER_INSTALLATION_LOSS,
