@@ -260,10 +260,11 @@ class TurbopropTest(unittest.TestCase):
             'cruise': {
                 "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
                 "user_options": {
+                    "altitude_bounds": ((23000.0, 38000.0), "ft"),
                     "optimize_mach": False,
                     "optimize_altitude": False,
                     "polynomial_control_order": 1,
-                    "num_segments": 5,
+                    "num_segments": 2,
                     "order": 3,
                     "solve_for_distance": False,
                     "initial_mach": (0.76, "unitless"),
