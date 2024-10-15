@@ -62,7 +62,7 @@ def add_aviary_output(comp, varname, val, units=None, desc=None, shape_by_conn=F
                     desc=output_desc, shape_by_conn=shape_by_conn)
 
 
-def override_aviary_vars(group, aviary_inputs: AviaryValues,
+def override_aviary_vars(group: om.Group, aviary_inputs: AviaryValues,
                          manual_overrides=None, external_overrides=None):
     '''
     This function provides the capability to override output variables
