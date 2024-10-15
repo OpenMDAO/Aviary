@@ -1012,7 +1012,7 @@ class DragCoefClean(om.ExplicitComponent):
 
         mach_div = SA1 + SA2 * CL + div_drag_supercrit
 
-        sig = sigmoid(mach, mach_div, alpha=0.005)
+        sig = sigmoidX(mach, mach_div, alpha=0.005)
         delcdm = sig * (10 * (mach - mach_div) ** 3)
 
         # delcdm = np.zeros_like(mach)
