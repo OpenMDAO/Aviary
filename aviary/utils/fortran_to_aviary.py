@@ -98,6 +98,7 @@ def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
         vehicle_data = update_gasp_options(vehicle_data)
     elif legacy_code is FLOPS:
         vehicle_data = update_flops_options(vehicle_data)
+    vehicle_data = update_aviary_options(vehicle_data)
 
     if not out_file.is_file():  # default outputted file to be in same directory as input
         out_file = fortran_deck.parent / out_file
@@ -551,6 +552,30 @@ def update_flops_options(vehicle_data):
                                      Aircraft.Propulsion.MISC_MASS_SCALER),
                                  'lbm')
             input_values.set_val(Aircraft.Propulsion.MISC_MASS_SCALER, [0.0])
+
+    vehicle_data['input_values'] = input_values
+    return vehicle_data
+
+
+def update_aviary_options(vehicle_data):
+    """
+    Special handling for variables that occurs for either legacy code
+    """
+    input_values: NamedValues = vehicle_data['input_values']
+
+    # if reference + scaled thrust both provided, set scale factor
+    try:
+        ref_thrust = input_values.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf')[
+            0
+        ]
+        scaled_thrust = input_values.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf')[
+            0
+        ]
+    except KeyError:
+        pass
+    else:
+        scale_factor = scaled_thrust / ref_thrust
+        input_values.set_val(Aircraft.Engine.SCALE_FACTOR, [scale_factor])
 
     vehicle_data['input_values'] = input_values
     return vehicle_data

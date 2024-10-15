@@ -82,6 +82,8 @@ class MissionDragTest(unittest.TestCase):
             promotes=['*']
         )
 
+        prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, np.ones(1))
+
         prob.setup(force_alloc_complex=True)
         prob.set_solver_print(level=2)
 
@@ -194,6 +196,8 @@ class MissionDragTest(unittest.TestCase):
             promotes=['*']
         )
 
+        prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, np.ones(1))
+
         prob.setup()
 
         # Mission params
@@ -304,6 +308,8 @@ class MissionDragTest(unittest.TestCase):
                                        **{'method': 'computed'}),
             promotes=['*']
         )
+
+        prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, np.ones(1))
 
         prob.setup()
 

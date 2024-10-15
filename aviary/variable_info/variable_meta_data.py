@@ -2313,7 +2313,7 @@ add_meta_data(
     default_value=GASPEngineType.TURBOJET,
     types=GASPEngineType,
     units="unitless",
-    desc='specifies engine type used for engine mass calculation',
+    desc='specifies engine type used for GASP-based engine mass calculation',
 )
 
 add_meta_data(

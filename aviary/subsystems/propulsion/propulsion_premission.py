@@ -17,11 +17,12 @@ class PropulsionPreMission(om.Group):
 
     def initialize(self):
         self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+            'aviary_options',
+            types=AviaryValues,
+            desc='collection of Aircraft/Mission specific options',
+        )
         self.options.declare(
-            'engine_models', types=list,
-            desc='list of EngineModels on aircraft'
+            'engine_models', types=list, desc='list of EngineModels on aircraft'
         )
 
     def setup(self):
@@ -41,26 +42,24 @@ class PropulsionPreMission(om.Group):
                     proms = None
                 else:
                     proms = ['*']
-                self.add_subsystem(engine.name,
-                                   subsys=subsys,
-                                   promotes_outputs=proms,
-                                   )
+                self.add_subsystem(
+                    engine.name,
+                    subsys=subsys,
+                    promotes_outputs=proms,
+                )
 
         if num_engine_type > 1:
             # Add an empty mux comp, which will be customized to handle all required
             # outputs in configure()
             self.add_subsystem(
-                'pre_mission_mux',
-                subsys=om.MuxComp(),
-                promotes_outputs=['*']
+                'pre_mission_mux', subsys=om.MuxComp(), promotes_outputs=['*']
             )
 
         self.add_subsystem(
             'propulsion_sum',
-            subsys=PropulsionSum(
-                aviary_options=options),
+            subsys=PropulsionSum(aviary_options=options),
             promotes_inputs=['*'],
-            promotes_outputs=['*']
+            promotes_outputs=['*'],
         )
 
     def configure(self):
@@ -162,7 +161,7 @@ class PropulsionPreMission(om.Group):
             # slice incoming inputs for this engine, so it only gets the correct index
             self.promotes(
                 engine.name,
-                inputs=[input for input in input_dict[engine.name]],
+                inputs=[*input_dict[engine.name]],
                 src_indices=om.slicer[idx],
             )
 
@@ -211,29 +210,40 @@ class PropulsionSum(om.ExplicitComponent):
 
     def initialize(self):
         self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+            'aviary_options',
+            types=AviaryValues,
+            desc='collection of Aircraft/Mission specific options',
+        )
 
     def setup(self):
-        num_engine_type = len(self.options['aviary_options'].get_val(
-            Aircraft.Engine.NUM_ENGINES))
+        num_engine_type = len(
+            self.options['aviary_options'].get_val(Aircraft.Engine.NUM_ENGINES)
+        )
 
-        add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST,
-                         val=np.zeros(num_engine_type))
+        add_aviary_input(
+            self, Aircraft.Engine.SCALED_SLS_THRUST, val=np.zeros(num_engine_type)
+        )
 
-        add_aviary_output(
-            self, Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, val=0.0)
+        add_aviary_output(self, Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, val=0.0)
 
     def setup_partials(self):
-        num_engines = self.options['aviary_options'].get_val(Aircraft.Engine.NUM_ENGINES)
+        num_engines = self.options['aviary_options'].get_val(
+            Aircraft.Engine.NUM_ENGINES
+        )
 
-        self.declare_partials(Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST,
-                              Aircraft.Engine.SCALED_SLS_THRUST, val=num_engines)
+        self.declare_partials(
+            Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST,
+            Aircraft.Engine.SCALED_SLS_THRUST,
+            val=num_engines,
+        )
 
     def compute(self, inputs, outputs):
-        num_engines = self.options['aviary_options'].get_val(Aircraft.Engine.NUM_ENGINES)
+        num_engines = self.options['aviary_options'].get_val(
+            Aircraft.Engine.NUM_ENGINES
+        )
 
         thrust = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
 
         outputs[Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST] = np.dot(
-            thrust, num_engines)
+            thrust, num_engines
+        )
