@@ -57,7 +57,7 @@ aviary_inputs_deadhead.set_val(
     'aircraft:crew_and_payload:num_first_class', 0, 'unitless')
 aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.MISC_CARGO, 0.0, 'lbm')
 
-
+# Use this to change the target range of the deadhead mission
 # phase_info_deadhead['post_mission']['target_range'] = [1500, "nmi"]
 
 
@@ -326,6 +326,6 @@ if __name__ == '__main__':
 
     super_prob = large_single_aisle_example(makeN2=makeN2)
 
-    # Uncomment the following lines to see further details on each mission.
+    # Uncomment the following lines to see mass breakdown details for each mission.
     # super_prob.model.group_1.list_vars(val=True, units=True, print_arrays=False)
     # super_prob.model.group_2.list_vars(val=True, units=True, print_arrays=False)
