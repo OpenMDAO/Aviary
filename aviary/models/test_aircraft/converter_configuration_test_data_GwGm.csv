@@ -33,6 +33,7 @@ aircraft:engine:pod_mass_scaler,1,unitless
 aircraft:engine:pylon_factor,1.25,unitless
 aircraft:engine:reference_diameter,6.15,ft
 aircraft:engine:reference_sls_thrust,28690,lbf
+aircraft:engine:scale_factor,0.7376089229696758,unitless
 aircraft:engine:scaled_sls_thrust,21162,lbf
 aircraft:engine:type,7,unitless
 aircraft:engine:wing_locations,0.2143,unitless
@@ -109,7 +110,6 @@ aircraft:wing:flap_type,double_slotted,unitless
 aircraft:wing:fold_dimensional_location_specified,True,unitless
 aircraft:wing:fold_mass_coefficient,0.2,unitless
 aircraft:wing:folded_span,0,ft
-aircraft:wing:form_factor,1.667,unitless
 aircraft:wing:fuselage_interference_factor,1.21,unitless
 aircraft:wing:has_fold,True,unitless
 aircraft:wing:has_strut,True,unitless

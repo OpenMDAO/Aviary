@@ -262,6 +262,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.EFF_BAT', "FLOPS": None, "LEAPS1": None},
     units='unitless',
+    default_value=1.0,
     desc="battery pack efficiency",
 )
 
@@ -2313,7 +2314,7 @@ add_meta_data(
     default_value=GASPEngineType.TURBOJET,
     types=GASPEngineType,
     units="unitless",
-    desc='specifies engine type used for engine mass calculation',
+    desc='specifies engine type used for GASP-based engine mass calculation',
 )
 
 add_meta_data(
@@ -3002,7 +3003,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.CKF', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='fuselage form factor',
-    default_value=1.25,
+    default_value=1,
 )
 
 add_meta_data(

@@ -91,11 +91,6 @@ class MotorBuilder(SubsystemBuilderBase):
                 'lower': 0.001,
                 'upper': None,
             },
-            Aircraft.Engine.Gearbox.GEAR_RATIO: {
-                'units': 'unitless',
-                'lower': 1.0,
-                'upper': 1.0,
-            },
         }
 
         return DVs

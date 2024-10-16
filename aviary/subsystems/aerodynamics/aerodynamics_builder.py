@@ -462,6 +462,23 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
         return params
 
+    def get_bus_variables(self):
+        if self.code_origin is GASP:
+            return {
+                "interference_independent_of_shielded_area": {
+                    "mission_name": ['interference_independent_of_shielded_area'],
+                    # "post_mission_name": ['interference_independent_of_shielded_area'],
+                    "units": "unitless",
+                },
+                "drag_loss_due_to_shielded_wing_area": {
+                    "mission_name": ['drag_loss_due_to_shielded_wing_area'],
+                    # "post_mission_name": ['drag_loss_due_to_shielded_wing_area'],
+                    "units": "unitless",
+                },
+            }
+        else:
+            return {}
+
     def report(self, prob, reports_folder, **kwargs):
         """
         Generate the report for Aviary core aerodynamics analysis
@@ -556,7 +573,6 @@ AERO_2DOF_INPUTS = [
     Aircraft.Fuselage.WETTED_AREA,
     Aircraft.HorizontalTail.AREA,
     Aircraft.HorizontalTail.AVERAGE_CHORD,
-    Aircraft.HorizontalTail.FORM_FACTOR,
     Aircraft.HorizontalTail.MOMENT_RATIO,
     Aircraft.HorizontalTail.SPAN,
     Aircraft.HorizontalTail.SWEEP,
@@ -569,13 +585,10 @@ AERO_2DOF_INPUTS = [
     Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR,
     Aircraft.VerticalTail.AREA,
     Aircraft.VerticalTail.AVERAGE_CHORD,
-    Aircraft.VerticalTail.FORM_FACTOR,
     Aircraft.VerticalTail.SPAN,
     Aircraft.Wing.AVERAGE_CHORD,
     Aircraft.Wing.AREA,
     Aircraft.Wing.ASPECT_RATIO,
-    Aircraft.Wing.CENTER_DISTANCE,
-    Aircraft.Wing.FORM_FACTOR,
     Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR,
     Aircraft.Wing.MAX_THICKNESS_LOCATION,
     Aircraft.Wing.MIN_PRESSURE_LOCATION,
@@ -583,8 +596,6 @@ AERO_2DOF_INPUTS = [
     Aircraft.Wing.SPAN,
     Aircraft.Wing.SWEEP,
     Aircraft.Wing.TAPER_RATIO,
-    Aircraft.Wing.THICKNESS_TO_CHORD_TIP,
-    Aircraft.Wing.THICKNESS_TO_CHORD_ROOT,
     Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED,
     Aircraft.Wing.ZERO_LIFT_ANGLE,
 ]

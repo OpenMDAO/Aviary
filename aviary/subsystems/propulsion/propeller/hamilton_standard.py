@@ -557,6 +557,7 @@ class PreHamiltonStandard(om.ExplicitComponent):
         outputs['tip_mach'] = tipspd / sos
         outputs['advance_ratio'] = math.pi * vtas / tipspd
         # TODO back out what is going on with unit conversion factor 10e10/(2*6966)
+
         outputs['power_coefficient'] = (
             shp
             * 10.0e10
