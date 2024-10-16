@@ -532,8 +532,8 @@ def sigmoidX(x, x0, alpha=0.1):
 
     if isinstance(x, np.ndarray):
         n_size = x.size
-        y = np.zeros(n_size)
-        x = x.real
+        y = np.zeros(n_size, dtype=complex)
+        #x = x.real
         calc_idx = np.where((x - x0) / alpha > -320)
         y[calc_idx] = 1 / (1 + np.exp(-(x[calc_idx] - x0) / alpha))
         pass
@@ -561,7 +561,8 @@ def dSigmoidXdx(x, x0, alpha=0.1):
 
     if isinstance(x, np.ndarray):
         n_size = x.size
-        y = np.zeros(n_size)
+        y = np.zeros(n_size, dtype=complex)
+        #x = x.real
         term = np.zeros(n_size)
         term2 = np.zeros(n_size)
         calc_idx = np.where((x - x0) / alpha > -320)

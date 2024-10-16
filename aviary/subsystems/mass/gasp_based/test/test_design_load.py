@@ -955,6 +955,3 @@ class DesignLoadGroupTestCase2smooth(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-    #thisClass = LoadSpeedsTestCase7smooth()
-    #thisClass.setUp()
-    #thisClass.test_case1()

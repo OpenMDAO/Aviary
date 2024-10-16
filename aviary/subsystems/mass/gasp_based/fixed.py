@@ -10,7 +10,7 @@ from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission
 
 
-def sigX(x):
+def sigXr(x):
     # sig = np.divide(1, (1 + np.exp(-320*x)), out=np.zeros_like(x), where=x>-1)
     sig = 1 / (1 + np.exp(-320*x)) if x > -1 else 0
     return sig
@@ -133,8 +133,8 @@ class MassParameters(om.ExplicitComponent):
         ):
             # smooth transition for c_gear_loc from 0.95 to 1 when gear_location varies
             # between 0 and 1% of span
-            c_gear_loc = .95 * sigmoidX(gear_location, 0.005, -0.01) + \
-                1 * sigmoidX(gear_location, 0.005, 0.01)
+            c_gear_loc = .95 * sigmoidX(gear_location, 0.005, -0.01 / 320.0) + \
+                1 * sigmoidX(gear_location, 0.005, 0.01 / 320.0)
         else:
             if gear_location == 0:
                 c_gear_loc = 0.95
@@ -218,21 +218,21 @@ class MassParameters(om.ExplicitComponent):
             * dTanHS_dAR
         )
 
-        J[Aircraft.Engine.POSITION_FACTOR, "max_mach"] = -dSigXdX(
-            0.75 - max_mach
-        ) + 1.05 * dSigXdX(max_mach - 0.75)
+        J[Aircraft.Engine.POSITION_FACTOR, "max_mach"] = -dSigmoidXdx(
+            max_mach, 0.75, 1/320.0
+        ) + 1.05 * dSigmoidXdx(max_mach, 0.75, 1/320.0)
         if (
             not_fuselage_mounted
             and num_engines == 2
             or num_engines == 3
         ):
-            J[Aircraft.Engine.POSITION_FACTOR, "max_mach"] = -0.98 * dSigXdX(
-                0.75 - max_mach
-            ) + 0.95 * dSigXdX(max_mach - 0.75)
+            J[Aircraft.Engine.POSITION_FACTOR, "max_mach"] = -0.98 * dSigmoidXdx(
+                max_mach, 0.75, 1 / 320.0
+            ) + 0.95 * dSigmoidXdx(max_mach, 0.75, 1 / 320.0)
         if not_fuselage_mounted and num_engines == 4:
-            J[Aircraft.Engine.POSITION_FACTOR, "max_mach"] = -0.95 * dSigXdX(
-                0.75 - max_mach
-            ) + 0.9 * dSigXdX(max_mach - 0.75)
+            J[Aircraft.Engine.POSITION_FACTOR, "max_mach"] = -0.95 * dSigmoidXdx(
+                max_mach, 0.75, 1 / 320.0
+            ) + 0.9 * dSigmoidXdx(max_mach, 0.75, 1 / 320.0)
 
         J["half_sweep", Aircraft.Wing.SWEEP] = (
             1 / (tan_half_sweep**2 + 1) * dTanHS_dSC4
@@ -251,8 +251,8 @@ class MassParameters(om.ExplicitComponent):
             Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, units='unitless'
         ):
             J["c_gear_loc", Aircraft.LandingGear.MAIN_GEAR_LOCATION] = (
-                .95 * (-100) * dSigXdX((0.005 - gear_location)*100)
-                + 1 * (100) * dSigXdX(100*(gear_location - 0.005)))
+                .95 * (-100) * dSigmoidXdx(gear_location, 0.005, 0.01 / 320.0)
+                + 1 * (100) * dSigmoidXdx(gear_location, 0.005, 0.01 / 320.0))
 
 
 class PayloadMass(om.ExplicitComponent):
@@ -2370,8 +2370,8 @@ class GearMass(om.ExplicitComponent):
         # versions at 0% and at or above 1%.
         c_gear_mass_modified = (
             (c_gear_mass * 0.85 * (1.0 + 0.1765 * gear_height / 6.0))
-            * sigX(100 * (.005 - wing_loc))
-            + c_gear_mass * sigX(100 * (wing_loc - .005)))
+            * sigmoidX(wing_loc, 0.005, -0.01 / 320)
+            + c_gear_mass * sigmoidX(wing_loc, 0.005, 0.01 / 320))
 
         landing_gear_wt = c_gear_mass_modified * gross_wt_initial
 
@@ -2392,40 +2392,41 @@ class GearMass(om.ExplicitComponent):
         gear_height_temp = KSfunction.compute(val, 50.0)
         dKS, _ = KSfunction.derivatives(val, 50.0)
 
+        gear_height_temp = gear_height_temp[0]
         gear_height = gear_height_temp * \
-            sigX(gear_height_temp-6) + 6 * sigX(6-gear_height_temp)
+            sigmoidX(gear_height_temp, 6, 1 /320.0) + 6 * sigmoidX(gear_height_temp, 6, -1 / 320.0)
 
         dLGW_dCGW = (
             (0.85 * (1.0 + 0.1765 * gear_height / 6.0))
-            * sigX(100 * (.005 - wing_loc))
-            + sigX(100 * (wing_loc - .005))) * gross_wt_initial
+            * sigmoidX(wing_loc, 0.005, -0.01 / 320.0)
+            + sigmoidX(wing_loc, 0.005, 0.01 / 320.0)) * gross_wt_initial
 
         dGH_dCR = (
             (
-                sigX(gear_height_temp - 6) * nacelle_diam
-                + gear_height_temp * dSigXdX(gear_height_temp - 6) * nacelle_diam)
-            + (6 * dSigXdX(6 - gear_height_temp) * -nacelle_diam)) * dKS
+                sigmoidX(gear_height_temp, 6, 1 / 320.0) * nacelle_diam
+                + gear_height_temp * dSigmoidXdx(gear_height_temp, 6, 1 / 320.0) * nacelle_diam)
+            + (6 * dSigmoidXdx(gear_height_temp, 6, 1 / 320.0) * -nacelle_diam)) * dKS
 
         dGH_dND = (
             (
-                sigX(gear_height_temp - 6) * (1 + clearance_ratio)
-                + gear_height_temp * dSigXdX(gear_height_temp - 6)
+                sigmoidX(gear_height_temp, 6, 1 / 320.0) * (1 + clearance_ratio)
+                + gear_height_temp * dSigmoidXdx(gear_height_temp, 6, 1 / 320.0)
                 * (1 + clearance_ratio)) * dKS
 
-            + (6 * dSigXdX(6 - gear_height_temp) * (1 + clearance_ratio)))
+            + (6 * dSigmoidXdx(gear_height_temp, 6, 1 / 320.0) * (1 + clearance_ratio)))
 
         c_gear_mass_modified = (
             (c_gear_mass * 0.85 * (1.0 + 0.1765 * gear_height / 6.0))
-            * sigX(100 * (.005 - wing_loc))
-            + c_gear_mass * sigX(100 * (wing_loc - .005)))
+            * sigmoidX(wing_loc, 0.005, -0.01 / 320.0)
+            + c_gear_mass * sigmoidX(wing_loc, 0.005, 0.01 / 320.0))
 
         dLGW_dCR = max(
             (c_gear_mass * 0.85 * 0.1765 / 6 * dGH_dCR * gross_wt_initial)
-            * sigX(100 * (.005 - wing_loc)))
+            * sigmoidX(wing_loc, 0.005, -0.01 / 320.0))
 
         dLGW_dND = max(
             (c_gear_mass * 0.85 * 0.1765 / 6 * dGH_dND * gross_wt_initial)
-            * sigX(100 * (.005 - wing_loc)))
+            * sigmoidX(wing_loc, 0.005, -0.01 / 320.0))
 
         J[Aircraft.LandingGear.TOTAL_MASS, Aircraft.LandingGear.MASS_COEFFICIENT] = \
             dLGW_dCGW / GRAV_ENGLISH_LBM
@@ -2446,8 +2447,8 @@ class GearMass(om.ExplicitComponent):
             c_main_gear * dLGW_dND / GRAV_ENGLISH_LBM
 
         J[Aircraft.LandingGear.MAIN_GEAR_MASS, Aircraft.LandingGear.MASS_COEFFICIENT] = (
-            c_main_gear * dLGW_dCGW * sigX(100 * (.005 - wing_loc))
-            + c_main_gear * gross_wt_initial * sigX(100 * (wing_loc - .005))) / GRAV_ENGLISH_LBM
+            c_main_gear * dLGW_dCGW * sigmoidX(wing_loc, 0.005, -0.01 / 320.0)
+            + c_main_gear * gross_wt_initial * sigmoidX(wing_loc, .005, 0.01 / 320.0)) / GRAV_ENGLISH_LBM
 
         J[Aircraft.LandingGear.MAIN_GEAR_MASS, Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT] = \
             c_gear_mass_modified * gross_wt_initial / GRAV_ENGLISH_LBM
