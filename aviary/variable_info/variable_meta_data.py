@@ -3048,6 +3048,7 @@ add_meta_data(
                      },
     units='unitless',
     desc='fuselage form factor',
+    default_value=1
 )
 
 add_meta_data(
@@ -6772,6 +6773,15 @@ add_meta_data(
     historical_name={"GASP": 'TORQUE', "FLOPS": None, "LEAPS1": None},
     units='N*m',
     desc='Current torque being produced, per engine',
+)
+
+add_meta_data(
+    Dynamic.Mission.TORQUE_MAX,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='N*m',
+    desc='Hypothetical maximum possible torque being produced at the current flight '
+    'condition, per engine',
 )
 
 add_meta_data(
