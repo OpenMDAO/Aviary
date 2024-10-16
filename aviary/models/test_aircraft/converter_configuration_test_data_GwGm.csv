@@ -109,7 +109,6 @@ aircraft:wing:flap_type,double_slotted,unitless
 aircraft:wing:fold_dimensional_location_specified,True,unitless
 aircraft:wing:fold_mass_coefficient,0.2,unitless
 aircraft:wing:folded_span,0,ft
-aircraft:wing:form_factor,1.667,unitless
 aircraft:wing:fuselage_interference_factor,1.21,unitless
 aircraft:wing:has_fold,True,unitless
 aircraft:wing:has_strut,True,unitless
