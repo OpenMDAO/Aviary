@@ -91,8 +91,8 @@ class TestSubsystemsMission(unittest.TestCase):
         fuel_burned = prob.get_val(av.Mission.Summary.FUEL_BURNED, units='lbm')
 
         # Check outputs
-        assert_near_equal(electric_energy_used[-1], 38.60538132, 1.e-7)
-        assert_near_equal(fuel_burned, 676.87235486, 1.e-7)
+        assert_near_equal(electric_energy_used[-1], 38.60747069, 1.e-7)
+        assert_near_equal(fuel_burned, 676.93670291, 1.e-7)
 
 
 if __name__ == "__main__":

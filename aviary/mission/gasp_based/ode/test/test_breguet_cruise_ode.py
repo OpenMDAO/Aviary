@@ -34,6 +34,8 @@ class CruiseODETestCase(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
         self.prob.set_val(Dynamic.Atmosphere.MACH, [0.7, 0.7], units="unitless")
+        self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
+        self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
 
         set_params_for_unit_tests(self.prob)
 
@@ -45,18 +47,18 @@ class CruiseODETestCase(unittest.TestCase):
         )
         assert_near_equal(
             self.prob[Dynamic.Mission.DISTANCE], np.array(
-                [0.0, 881.8116]), tol)
+                [0.0, 882.5769]), tol)
         assert_near_equal(
             self.prob["time"], np.array(
-                [0, 7906.83]), tol)
+                [0, 7913.69]), tol)
         assert_near_equal(
             self.prob[Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS],
-            np.array([3.429719, 4.433518]),
+            np.array([3.439203, 4.440962]),
             tol,
         )
         assert_near_equal(
             self.prob[Dynamic.Mission.ALTITUDE_RATE_MAX],
-            np.array([-17.63194, -16.62814]),
+            np.array([-17.622456, -16.62070]),
             tol,
         )
 

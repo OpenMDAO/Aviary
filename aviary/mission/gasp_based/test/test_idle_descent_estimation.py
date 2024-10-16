@@ -54,6 +54,9 @@ class IdleDescentTestCase(unittest.TestCase):
         ivc = om.IndepVarComp()
         ivc.add_output(Aircraft.Design.OPERATING_MASS, 97500, units='lbm')
         ivc.add_output(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, 36000, units='lbm')
+        ivc.add_output(
+            "parameters:interference_independent_of_shielded_area", 1.89927266)
+        ivc.add_output("parameters:drag_loss_due_to_shielded_wing_area", 68.02065834)
         prob.model.add_subsystem('IVC', ivc, promotes=['*'])
 
         add_descent_estimation_as_submodel(
@@ -62,7 +65,9 @@ class IdleDescentTestCase(unittest.TestCase):
             ode_args=self.ode_args,
             cruise_alt=35000,
             reserve_fuel=4500,
+            all_subsystems=self.ode_args['core_subsystems'],
         )
+        prob.model.promotes('idle_descent_estimation', inputs=['parameters:*'])
 
         prob.setup()
 
@@ -73,8 +78,8 @@ class IdleDescentTestCase(unittest.TestCase):
         warnings.filterwarnings('default', category=UserWarning)
 
         # Values obtained by running idle_descent_estimation
-        assert_near_equal(prob.get_val('descent_range', 'NM'), 98.38026813, self.tol)
-        assert_near_equal(prob.get_val('descent_fuel', 'lbm'), 250.84809336, self.tol)
+        assert_near_equal(prob.get_val('descent_range', 'NM'), 98.3445738, self.tol)
+        assert_near_equal(prob.get_val('descent_fuel', 'lbm'), 250.79875356, self.tol)
 
         # TODO: check_partials() call results in runtime error: Jacobian in 'ODE_group' is not full rank.
         # partial_data = prob.check_partials(out_stream=None, method="cs")

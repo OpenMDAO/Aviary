@@ -28,12 +28,12 @@ class DescentODETestCase(unittest.TestCase):
         default_mission_subsystems = get_default_mission_subsystems(
             'GASP', build_engine_deck(aviary_options))
 
-        self.sys = self.prob.model = DescentODE(num_nodes=1,
-                                                mach_cruise=0.8,
-                                                aviary_options=get_option_defaults(),
-                                                core_subsystems=default_mission_subsystems)
+        self.sys = self.prob.model = DescentODE(
+            num_nodes=1, mach_cruise=0.8, aviary_options=get_option_defaults(),
+            core_subsystems=default_mission_subsystems)
 
-    @unittest.skipIf(version.parse(openmdao.__version__) < version.parse("3.26"), "Skipping due to OpenMDAO version being too low (<3.26)")
+    @unittest.skipIf(version.parse(openmdao.__version__) < version.parse("3.26"),
+                     "Skipping due to OpenMDAO version being too low (<3.26)")
     def test_high_alt(self):
         # Test descent above 10k ft with Mach under and over the EAS limit
         self.sys.options["num_nodes"] = 2
@@ -49,27 +49,29 @@ class DescentODETestCase(unittest.TestCase):
             Dynamic.Mission.ALTITUDE, np.array([36500, 14500]), units="ft"
         )
         self.prob.set_val(Dynamic.Vehicle.MASS, np.array([147661, 147572]), units="lbm")
+        self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
+        self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
 
         set_params_for_unit_tests(self.prob)
 
         self.prob.run_model()
 
         testvals = {
-            "alpha": np.array([3.23388, 1.203234]),
-            "CL": np.array([0.51849367, 0.25908653]),
-            "CD": np.array([0.02794324, 0.01862946]),
+            "alpha": np.array([3.22047, 1.20346]),
+            "CL": np.array([0.5169255, 0.25908651]),
+            "CD": np.array([0.02786507, 0.01862951]),
             # ft/s
-            Dynamic.Mission.ALTITUDE_RATE: np.array([-2356.7705, -2877.9606]) / 60,
+            Dynamic.Mission.ALTITUDE_RATE: np.array([-39.28806432, -47.9587925]),
             # TAS (ft/s) * cos(gamma), [458.67774, 437.62297] kts
-            Dynamic.Mission.DISTANCE_RATE: [773.1637, 737.0653],  # ft/s
+            Dynamic.Mission.DISTANCE_RATE: [773.1451, 736.9446],  # ft/s
             # lbm/h
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL: np.array(
-                [-451.0239, -997.1514]
+                [-451.02392, -997.0488]
             ),
-            "EAS": [417.87419406, 590.73344937],  # ft/s ([247.58367, 349.99997] kts)
-            Dynamic.Atmosphere.MACH: [0.8, 0.697266],
+            "EAS": [418.50757579, 590.73344999],  # ft/s ([247.95894, 349.99997] kts)
+            Dynamic.Atmosphere.MACH: [0.8, 0.697125],
             # gamma, rad ([-2.908332, -3.723388] deg)
-            Dynamic.Mission.FLIGHT_PATH_ANGLE: [-0.05075997, -0.06498538],
+            Dynamic.Mission.FLIGHT_PATH_ANGLE: [-0.05077223, -0.06498624],
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
@@ -89,6 +91,8 @@ class DescentODETestCase(unittest.TestCase):
         self.prob.set_val(Dynamic.Mission.ALTITUDE, 1500, units="ft")
         self.prob.set_val(Dynamic.Vehicle.MASS, 147410, units="lbm")
         self.prob.set_val("EAS", 250, units="kn")
+        self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
+        self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
 
         set_params_for_unit_tests(self.prob)
 
@@ -98,9 +102,9 @@ class DescentODETestCase(unittest.TestCase):
             "alpha": 4.19956,
             "CL": 0.507578,
             "CD": 0.0268404,
-            Dynamic.Mission.ALTITUDE_RATE: -1138.583 / 60,
+            Dynamic.Mission.ALTITUDE_RATE: -18.97635475,
             # TAS (ft/s) * cos(gamma) = 255.5613 * 1.68781 * cos(-0.0440083)
-            Dynamic.Mission.DISTANCE_RATE: 430.9213,
+            Dynamic.Mission.DISTANCE_RATE: 430.92063193,
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL: -1295.11,
             Dynamic.Mission.FLIGHT_PATH_ANGLE: -0.0440083,  # rad (-2.52149 deg)
         }

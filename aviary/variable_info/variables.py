@@ -661,11 +661,8 @@ class Dynamic:
             NOX_RATE_TOTAL = 'nox_rate_total'
             PROPELLER_TIP_SPEED = 'propeller_tip_speed'
             RPM = 'rotations_per_minute'
-            RPM_GEARBOX = 'rotations_per_minute_gearbox'
             SHAFT_POWER = 'shaft_power'
-            SHAFT_POWER_GEARBOX = 'shaft_power_gearbox'
             SHAFT_POWER_MAX = 'shaft_power_max'
-            SHAFT_POWER_MAX_GEARBOX = 'shaft_power_max_gearbox'
             TEMPERATURE_T4 = 't4'
             THROTTLE = 'throttle'
             THRUST = 'thrust_net'
@@ -673,7 +670,7 @@ class Dynamic:
             THRUST_MAX_TOTAL = 'thrust_net_max_total'
             THRUST_TOTAL = 'thrust_net_total'
             TORQUE = 'torque'
-            TORQUE_GEARBOX = 'torque_gearbox'
+            TORQUE_MAX = 'torque_max'
 
 
 class Mission:

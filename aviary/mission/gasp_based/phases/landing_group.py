@@ -149,6 +149,7 @@ class LandingSegment(BaseODE):
             promotes_outputs=[
                 (Dynamic.Atmosphere.DENSITY, "rho_td"),
                 (Dynamic.Atmosphere.SPEED_OF_SOUND, "sos_td"),
+                (Dynamic.Atmosphere.TEMPERATURE, "T_td"),
                 ("viscosity", "viscosity_td"),
                 (Dynamic.Atmosphere.DYNAMIC_PRESSURE, "q_td"),
                 (Dynamic.Atmosphere.MACH, "mach_td"),
