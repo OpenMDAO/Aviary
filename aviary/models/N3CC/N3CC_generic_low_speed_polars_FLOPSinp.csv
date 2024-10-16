@@ -43,6 +43,7 @@ aircraft:engine:num_fuselage_engines,0,unitless
 aircraft:engine:num_wing_engines,2,unitless
 aircraft:engine:reference_mass,6293.8,lbm
 aircraft:engine:reference_sls_thrust,22200.5,lbf
+aircraft:engine:scale_factor,0.99997747798473,unitless
 aircraft:engine:scaled_sls_thrust,22200,0,0,0,0,0,lbf
 aircraft:engine:subsonic_fuel_flow_scaler,1,unitless
 aircraft:engine:supersonic_fuel_flow_scaler,1,unitless
