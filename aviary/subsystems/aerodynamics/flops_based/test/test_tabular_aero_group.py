@@ -1,27 +1,33 @@
+from copy import deepcopy
 from parameterized import parameterized
 import unittest
 
 import numpy as np
 
 import openmdao.api as om
-from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
+from aviary.interface.default_phase_info.height_energy import phase_info
+from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.premission import CorePreMission
-from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
 from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.aviary_values import AviaryValues, get_items
+from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import set_aviary_initial_values
 from aviary.utils.named_values import NamedValues
+from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
 from aviary.validation_cases.validation_tests import (get_flops_inputs,
                                                       get_flops_outputs,
                                                       print_case)
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 from aviary.variable_info.enums import LegacyCode
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 FLOPS = LegacyCode.FLOPS
 GASP = LegacyCode.GASP
+
+CDI_table = "subsystems/aerodynamics/flops_based/test/large_single_aisle_1_CDI_polar.csv"
+CD0_table = "subsystems/aerodynamics/flops_based/test/large_single_aisle_1_CD0_polar.csv"
 
 
 class TabularAeroGroupFileTest(unittest.TestCase):
@@ -30,9 +36,6 @@ class TabularAeroGroupFileTest(unittest.TestCase):
         self.prob = om.Problem()
         aviary_options = AviaryValues()
         aviary_options.set_val(Settings.VERBOSITY, 0)
-
-        CDI_table = "subsystems/aerodynamics/flops_based/test/large_single_aisle_1_CDI_polar.csv"
-        CD0_table = "subsystems/aerodynamics/flops_based/test/large_single_aisle_1_CD0_polar.csv"
 
         kwargs = {'method': 'tabular', 'CDI_data': CDI_table,
                   'CD0_data': CD0_table}
@@ -81,6 +84,45 @@ class TabularAeroGroupFileTest(unittest.TestCase):
         assert_check_partials(
             partial_data, atol=1e-9, rtol=1e-12
         )  # check the partial derivatives
+
+    def test_parameters(self):
+
+        local_phase_info = deepcopy(phase_info)
+        core_aero = local_phase_info['cruise']['subsystem_options']['core_aerodynamics']
+
+        core_aero['method'] = 'tabular'
+        core_aero['CDI_data'] = CDI_table
+        core_aero['CD0_data'] = CD0_table
+        local_phase_info.pop('climb')
+        local_phase_info.pop('descent')
+
+        prob = AviaryProblem()
+
+        prob.load_inputs(
+            "subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv",
+            local_phase_info
+        )
+
+        # Preprocess inputs
+        prob.check_and_preprocess_inputs()
+
+        prob.add_pre_mission_systems()
+        prob.add_phases()
+        prob.add_post_mission_systems()
+
+        prob.link_phases()
+
+        prob.setup()
+
+        prob.set_initial_guesses()
+
+        print('about to run')
+        prob.run_model()
+
+        # verify that we are promoting the parameters.
+        wing_area = prob.get_val("traj.cruise.rhs_all.aircraft:wing:area", units='ft**2')
+        actual_wing_area = prob.aviary_inputs.get_val(Aircraft.Wing.AREA, units='ft**2')
+        assert_near_equal(wing_area, actual_wing_area)
 
 
 class TabularAeroGroupDataTest(unittest.TestCase):
@@ -582,10 +624,12 @@ class _ComputedAeroHarness(om.Group):
         # Upstream pre-mission analysis for aero
         pre_mission: om.Group = self.add_subsystem(
             'pre_mission',
-            CorePreMission(aviary_options=aviary_options,
-                           subsystems=default_premission_subsystems),
-            promotes_inputs=['aircraft:*', 'mission:*'],
-            promotes_outputs=['aircraft:*', 'mission:*'])
+            CorePreMission(
+                aviary_options=aviary_options, subsystems=default_premission_subsystems
+            ),
+            promotes_inputs=['aircraft:*'],
+            promotes_outputs=['aircraft:*', 'mission:*'],
+        )
 
         kwargs = {'method': 'computed', 'gamma': gamma}
 

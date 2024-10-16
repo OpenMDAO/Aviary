@@ -1,6 +1,7 @@
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variables import Mission
 
+# defaults for 2DOF based phases
 mission_distance = 3675
 
 phase_info = {
@@ -297,6 +298,8 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs):
     ----------
     phase_info : dict
         Dictionary of phase settings for a mission profile
+    post_mission_info : dict
+        Dictionary of phase settings for a post mission profile
     aviary_inputs : <AviaryValues>
         Object containing values and units for all aviary inputs and options
 

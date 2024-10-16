@@ -17,20 +17,33 @@ from aviary.subsystems.propulsion.propulsion_premission import PropulsionPreMiss
 from aviary.subsystems.propulsion.propulsion_mission import PropulsionMission
 from aviary.subsystems.propulsion.engine_model import EngineModel
 
-from aviary.variable_info.variables import Aircraft
-
 # NOTE These are currently needed to get around variable hierarchy being class-based.
 #      Ideally, an alternate solution to loop through the hierarchy will be created and
 #      these can be replaced.
 from aviary.utils.preprocessors import _get_engine_variables
+from aviary.variable_info.variables import Aircraft
 
 _default_name = 'propulsion'
 
 
-# NOTE unlike the other subsystem builders, it is not reccomended to create additional
-#      propulsion subsystems, as propulsion is intended to be an agnostic carrier of
-#      all propulsion-related subsystem builders.
 class PropulsionBuilderBase(SubsystemBuilderBase):
+    """
+    Base class for propulsion builder
+
+    Note
+    ----
+    unlike the other subsystem builders, it is not reccomended to create additional
+    propulsion subsystems, as propulsion is intended to be an agnostic carrier of
+    all propulsion-related subsystem builders in the form of EngineModels.
+
+    Methods
+    -------
+    mission_inputs()
+        class method to return mission inputs.
+    mission_outputs()
+        class method to return mission outputs.
+    """
+
     def __init__(self, name=None, meta_data=None):
         if name is None:
             name = _default_name
@@ -45,7 +58,40 @@ class PropulsionBuilderBase(SubsystemBuilderBase):
 
 
 class CorePropulsionBuilder(PropulsionBuilderBase):
-    # code_origin is not necessary for this subsystem, catch with kwargs and ignore
+    """
+    Core propulsion builder.
+    Methods
+    -------
+    build_pre_mission(self, aviary_inputs) -> openmdao.core.System:
+        Build pre-mission.
+    build_mission(self, num_nodes, aviary_inputs, **kwargs) -> openmdao.core.System:
+        Build pre-mission.
+    get_states(self) -> dict:
+        Call get_states() on all engine models and return combined result.
+    get_parameters(self, aviary_inputs=None, phase_info=None) -> dict:
+        Set expected shape of all variables that need to be vectorized for multiple engine types.
+    get_controls(self, phase_name=None) -> dict:
+        Call get_controls() on all engine models and return combined result.
+    get_linked_variables(self) -> dict:
+        Call get_linked_variables() on all engine models and return combined result.
+    get_bus_variables(self) -> dict
+        Call get_linked_variables() on all engine models and return combined result.
+    define_order(self) -> list:
+        Call define_order() on all engine models and return combined result.
+    get_design_vars(self) -> dict:
+        Call get_design_vars() on all engine models and return combined result.
+    get_initial_guesses(self) -> dict:
+        Call get_initial_guesses() on all engine models and return combined result.
+    get_mass_names(self) -> list:
+        Call get_mass_names() on all engine models and return combined result.
+    preprocess_inputs(self) -> aviary_inputs:
+        Call get_mass_names() on all engine models and return combined result.
+    get_outputs(self) -> list:
+        Call get_outputs() on all engine models and return combined result.
+    report(self):
+        Generate the report for Aviary core propulsion analysis.
+    """
+
     def __init__(self, name=None, meta_data=None, engine_models=None, **kwargs):
         if name is None:
             name = 'core_propulsion'
