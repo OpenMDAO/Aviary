@@ -147,7 +147,7 @@ class TestMission(unittest.TestCase):
             USatm1976Comp(num_nodes=nn),
             promotes_inputs=[("h", Dynamic.Mission.ALTITUDE)],
             promotes_outputs=['rho', "viscosity",
-                              ("temp", Dynamic.Mission.TEMPERATURE)],
+                              ("temp", Dynamic.Atmosphere.TEMPERATURE)],
         )
         prob.model.add_subsystem(
             "kin_visc",
@@ -158,7 +158,7 @@ class TestMission(unittest.TestCase):
                 nu={"units": "ft**2/s", "shape": nn},
                 has_diag_partials=True,
             ),
-            promotes=["*", ('nu', Dynamic.Mission.KINEMATIC_VISCOSITY)],
+            promotes=["*", ('nu', Dynamic.Atmosphere.KINEMATIC_VISCOSITY)],
         )
         prob.model.add_subsystem(
             "comp", WingFuselageInterferenceMission(num_nodes=nn),

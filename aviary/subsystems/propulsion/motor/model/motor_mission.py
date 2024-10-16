@@ -41,7 +41,7 @@ class MotorMission(om.Group):
                 Dynamic.Vehicle.Propulsion.RPM,
             ],
             promotes_outputs=[
-                (Dynamic.Vehicle.Propulsion.TORQUE, 'motor_torque'),
+                Dynamic.Vehicle.Propulsion.TORQUE,
                 'motor_efficiency',
             ],
         )
@@ -55,8 +55,7 @@ class MotorMission(om.Group):
                 RPM={'val': np.ones(nn), 'units': 'rad/s'},
                 has_diag_partials=True,
             ),  # fixed RPM system
-            promotes_inputs=[('torque', 'motor_torque'),
-                             ('RPM', Dynamic.Vehicle.Propulsion.RPM)],
+            promotes_inputs=[('RPM', Dynamic.Vehicle.Propulsion.RPM)],
             promotes_outputs=[('shaft_power', Dynamic.Vehicle.Propulsion.SHAFT_POWER)],
         )
 
