@@ -263,7 +263,7 @@ class TurbopropTest(unittest.TestCase):
                     "optimize_mach": False,
                     "optimize_altitude": False,
                     "polynomial_control_order": 1,
-                    "num_segments": 3,
+                    "num_segments": 2,
                     "order": 3,
                     "solve_for_distance": False,
                     "initial_mach": (0.76, "unitless"),
