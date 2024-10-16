@@ -104,7 +104,7 @@ class TestFLOPSBalancedFieldLength(unittest.TestCase):
         liftoff.add_objective(
             Dynamic.Mission.DISTANCE, loc='final', ref=distance_max, units=units)
 
-        varnames = [Aircraft.Wing.ASPECT_RATIO]
+        varnames = [Aircraft.Wing.ASPECT_RATIO, Aircraft.Engine.SCALE_FACTOR]
         set_aviary_input_defaults(takeoff.model, varnames, aviary_options)
 
         # suppress warnings:

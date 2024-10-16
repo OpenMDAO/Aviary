@@ -113,7 +113,7 @@ class TestFLOPSDetailedTakeoff(unittest.TestCase):
             'traj.takeoff_decision_speed.states:velocity',
             equals=155.36, units='kn', ref=159.0, indices=[-1])
 
-        varnames = [Aircraft.Wing.ASPECT_RATIO]
+        varnames = [Aircraft.Wing.ASPECT_RATIO, Aircraft.Engine.SCALE_FACTOR]
         set_aviary_input_defaults(takeoff.model, varnames, aviary_options)
 
         # suppress warnings:
