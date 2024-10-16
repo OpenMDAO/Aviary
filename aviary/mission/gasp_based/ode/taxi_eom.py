@@ -42,7 +42,8 @@ class TaxiFuelComponent(om.ExplicitComponent):
         )
 
     def setup_partials(self):
-        arange = np.arange(self.options['num_nodes'])
+        nn = np.arange(self.options['num_nodes'])
+        arange = np.arange(nn)
 
         self.declare_partials(
             "taxi_fuel_consumed", [
