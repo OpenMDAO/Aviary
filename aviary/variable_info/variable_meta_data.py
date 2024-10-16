@@ -262,6 +262,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.EFF_BAT', "FLOPS": None, "LEAPS1": None},
     units='unitless',
+    default_value=1.0,
     desc="battery pack efficiency",
 )
 

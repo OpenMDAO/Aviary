@@ -41,13 +41,13 @@ class TestSubsystemsMission(unittest.TestCase):
                     "constrain_final": False,
                     "fix_duration": False,
                     "initial_bounds": ((0.0, 0.0), "min"),
-                    "duration_bounds": ((10., 30.), "min"),
+                    "duration_bounds": ((10.0, 30.0), "min"),
                 },
             },
             'post_mission': {
                 'include_landing': False,
                 'external_subsystems': [],
-            }
+            },
         }
 
     def test_subsystems_in_a_mission(self):
@@ -56,7 +56,8 @@ class TestSubsystemsMission(unittest.TestCase):
         prob = av.AviaryProblem()
 
         prob.load_inputs(
-            "models/test_aircraft/aircraft_for_bench_FwFm_with_electric.csv", phase_info)
+            "models/test_aircraft/aircraft_for_bench_FwFm_with_electric.csv", phase_info
+        )
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
@@ -83,16 +84,33 @@ class TestSubsystemsMission(unittest.TestCase):
         prob.set_val(av.Aircraft.Battery.PACK_ENERGY_DENSITY, 550, units='kJ/kg')
         prob.set_val(av.Aircraft.Battery.PACK_MASS, 1000, units='lbm')
         prob.set_val(av.Aircraft.Battery.ADDITIONAL_MASS, 115, units='lbm')
+        prob.set_val(av.Aircraft.Battery.EFFICIENCY, 0.95, units='unitless')
 
         prob.run_aviary_problem()
 
         electric_energy_used = prob.get_val(
-            f'traj.cruise.timeseries.{av.Dynamic.Mission.CUMULATIVE_ELECTRIC_ENERGY_USED}', units='kW*h')
+            'traj.cruise.timeseries.'
+            f'{av.Dynamic.Mission.CUMULATIVE_ELECTRIC_ENERGY_USED}',
+            units='kW*h',
+        )
         fuel_burned = prob.get_val(av.Mission.Summary.FUEL_BURNED, units='lbm')
+        soc = prob.get_val(
+            'traj.cruise.rhs_all.battery.battery_state_of_charge', units='unitless'
+        )
 
         # Check outputs
+        # indirectly check mission trajectory by checking total fuel/electric split
         assert_near_equal(electric_energy_used[-1], 38.60538132, 1.e-7)
         assert_near_equal(fuel_burned, 676.87235486, 1.e-7)
+        # check battery state-of-charge over mission
+        assert_near_equal(
+            soc,
+            [0.99999578, 0.97551324, 0.94173584, 0.93104625, 0.93104625,
+             0.8810605, 0.81210498, 0.79028433, 0.79028433, 0.73088701,
+             0.64895148, 0.62302415, 0.62302415, 0.57309323, 0.50421334,
+             0.48241661, 0.48241661, 0.45797918, 0.42426402, 0.41359413],
+            1e-7,
+        )
 
 
 if __name__ == "__main__":
