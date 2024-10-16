@@ -456,7 +456,7 @@ def create_aviary_variables_table_data_nested(script_name, recorder_file):
     return table_data_nested
 
 
-def convert_case_recorder_file_to_df(recorder_file_name):
+def convert_driver_case_recorder_file_to_df(recorder_file_name):
     """
     Convert a case recorder file into a Pandas data frame.
 
@@ -646,8 +646,9 @@ def create_optimization_history_plot_test():
     layout = pn.Column(checkbox_group, p)
     return layout
 
-def create_optimization_history_plot(df):
-    # testing the plotting
+def create_optimization_history_plot(cr, df):
+
+
     
     import pandas as pd
     import numpy as np
@@ -662,30 +663,95 @@ def create_optimization_history_plot(df):
     source = ColumnDataSource(df)
 
     # Create a Bokeh figure
-    p = bp.figure(title='Optimization History', width=600, height=600)
+    p = bp.figure(title='Optimization History', width=1000, height=600)
+    
+    p.yaxis.visible = False
+
+    # p = figure(sizing_mode="stretch_width", max_width=1000, height=600)
+
+    
     p.xaxis.axis_label = 'Iterations'
     p.yaxis.axis_label = 'Variables'
     # p.legend.visible = True
-    
+
+
+    from bokeh.models import NumeralTickFormatter, PrintfTickFormatter
+    # p.xaxis.formatter = NumeralTickFormatter(format="0.00")
+    # p.yaxis.formatter = NumeralTickFormatter(format="0.00")
+    # p.xaxis.formatter = PrintfTickFormatter(format="%0.3g")
+    # p.yaxis.formatter = PrintfTickFormatter(format="%0.3g")
+    p.yaxis.formatter = PrintfTickFormatter(format="%5.2e")
+
 
     # # Plot each time series and keep references to the renderers
     renderers = {}
-    colors = ['blue', 'red', 'green']
     series_list = list(df.columns)[1:]
+    
+    from bokeh.palettes import Category10, Category20
+    # Choose a palette
+    palette = Category20[20]
+    
+    # series_list = series_list[:4]
+    
     for i, series in enumerate(series_list):
         renderers[series] = p.line(
             x='iter_count',
             y=series,
             source=source,
-            color=colors[i % 3],
+            color=palette[i%20],
             line_width=2,
             visible=False,
         )
 
+        from bokeh.models import Range1d, LinearAxis
+
+        if True:
+            color = palette[i%20]
+            extra_y_axis = LinearAxis(y_range_name=f"extra_y_{series}", 
+                                      axis_label=f"{series}", 
+                                    #   axis_line_color=color, 
+                                    #   major_tick_line_color=color, 
+                                    #   minor_tick_line_color=color, 
+                                      axis_label_text_color=color)
+            p.add_layout(extra_y_axis, 'right')
+            p.right[i].visible = False
+
+            extra_y_axis = LinearAxis(y_range_name=f"extra_y_{series}", 
+                                      axis_label=f"{series}", 
+                                    #   axis_line_color=color, 
+                                    #   major_tick_line_color=color, 
+                                    #   minor_tick_line_color=color, 
+                                      axis_label_text_color=color)
+            p.add_layout(extra_y_axis, 'left')
+            
+            if len(p.left)<=3:
+                print(f"{p.left=}")
+            len_series_list = len(series_list)
+            print(f"{len_series_list=} {len(p.left)=} {i=} {len_series_list - i - 1=}")
+            # p.left[len_series_list - i - 1].visible = False
+            p.left[i + 1].visible = False
+
+            # set the range
+            y_min = df[series].min()
+            y_max = df[series].max()
+            # if the range is zero, the axis will not be displayed. Plus need some range to make it 
+            #    look good
+            if y_min == y_max:
+                y_min = y_min - 1
+                y_max = y_max + 1
+            # p.extra_y_ranges[f"extra_y_{series}"] = Range1d(df[series].min(), df[series].max())
+            p.extra_y_ranges[f"extra_y_{series}"] = Range1d(y_min, y_max)
+            # p.extra_y_ranges[f"extra_y_{series}"] = Range1d(0,10.234456)
+            
+            
+            # p.add_layout(extra_y_axis, 'left')
+            # p.left[i].visible = True
+
+
 
     # Create the legend manually using LegendItem
     # legend_items = [LegendItem(label=series, renderers=[renderers[series]]) for series in series_list]
-    legend_items = []
+    legend_items = []  # TODO need this?
     legend = Legend(items=legend_items, location=(-50, 0))
 
     # # Create a CheckBoxGroup widget using Panel
@@ -715,7 +781,17 @@ def create_optimization_history_plot(df):
     # legend.items = [LegendItem(label=series, renderers=[renderers[series]]) for series in series_list]
     # legend.items = [LegendItem(label=series, renderers=[renderers[series]]) for series in series_list[:5]]
 
+
+    # Need this?
     legend_items = [LegendItem(label=series, renderers=[renderers[series]]) for series in series_list]
+    
+    legend_items = []
+    for series in series_list:
+        units = cr.problem_metadata['variables'][series]['units']
+        # print(f"{series} units are '{units}'")
+        legend_item = LegendItem(label=f"{series} ({units})", renderers=[renderers[series]])
+        legend_items.append(legend_item)
+    
 
     p.add_layout(legend, 'below')
 
@@ -746,9 +822,11 @@ def create_optimization_history_plot(df):
     )
 
     ti = TextInput(placeholder='Enter filter')
+    
+    
 
     # CustomJS callback for checkbox changes
-    checkbox_callback = CustomJS(args=dict(ds=ds,renderers=renderers,legend=legend, legend_items=legend_items), code="""
+    checkbox_callback = CustomJS(args=dict(ds=ds,p=p, renderers=renderers,legend=legend, legend_items=legend_items), code="""
     // The incoming Legend is empty. The items are passed in separately
     var doc = Bokeh.documents[0];
     
@@ -756,11 +834,51 @@ def create_optimization_history_plot(df):
     const isChecked = cb_obj.checked;
     ds.data['checked'][checkedIndex] = isChecked;
     renderers[ds.data['options'][checkedIndex]].visible = isChecked;
-            
+
+
+    var default_y_axis_left = p.left[0];
+    default_y_axis_left.visible = false;
+
+
+
     // empty the Legend items and then add in the ones for the variables that are checked         
     legend.items = [];
+    
+    let put_on_left_side = true;
+
     for (let i =0; i < legend_items.length; i++){
-        if ( ds.data['checked'][i] ) {
+       var extra_y_axis = p.left[i + 1];
+       extra_y_axis.visible = false ;
+
+       var extra_y_axis = p.right[i];
+       extra_y_axis.visible = false ;
+    }
+    
+    for (let i =0; i < legend_items.length; i++){
+        if (ds.data['checked'][i]){
+            if (put_on_left_side){
+                p.left[i + 1].visible = true;
+            } else {
+                p.right[i].visible = true;
+            }
+            put_on_left_side = ! put_on_left_side ;
+        }
+    }
+    
+    for (let i =0; i < legend_items.length; i++){
+        
+       //var extra_y_axis = p.left[i + 1];
+       //extra_y_axis.visible = ds.data['checked'][i] ;
+
+       //var extra_y_axis = p.right[i];
+       //extra_y_axis.visible = ds.data['checked'][i] ;
+
+
+       //var extra_y_axis = p.left[i];
+       //extra_y_axis.visible = ds.data['checked'][i] ;
+
+
+       if ( ds.data['checked'][i] ) {
             legend.items.push(legend_items[i]);
         }
     }
@@ -908,20 +1026,22 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
     ####### Optimization Tab #######
     optimization_tabs_list = []
     
-    opt_plot_testing_pane = create_optimization_history_plot_test() 
-    optimization_tabs_list.append(("Optimization History test", opt_plot_testing_pane))
+    # TODO - remove!
+    # opt_plot_testing_pane = create_optimization_history_plot_test() 
+    # optimization_tabs_list.append(("Optimization History test", opt_plot_testing_pane))
 
     # Optimization History Plot
     if driver_recorder:
         if os.path.isfile(driver_recorder):
-            df = convert_case_recorder_file_to_df(f"{driver_recorder}")
-            opt_history_pane = create_optimization_history_plot(df) 
+            df = convert_driver_case_recorder_file_to_df(f"{driver_recorder}")
+            cr = om.CaseReader(f"{driver_recorder}")
+            opt_history_pane = create_optimization_history_plot(cr,df) 
             optimization_tabs_list.append(("Optimization History", opt_history_pane))
 
-    # Desvars, cons, opt interactive plot
+    # Desvars, cons, opt interactive plot    TODO remove becaus the one above supercedes it
     if driver_recorder:
         if os.path.isfile(driver_recorder):
-            df = convert_case_recorder_file_to_df(f"{driver_recorder}")
+            df = convert_driver_case_recorder_file_to_df(f"{driver_recorder}")
             if df is not None:
                 variables = pn.widgets.CheckBoxGroup(
                     name="Variables",
