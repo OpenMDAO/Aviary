@@ -12,13 +12,8 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import add_aviary_input
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.utils.aviary_values import AviaryValues
+from aviary.subsystems.aerodynamics.gasp_based.interference import WingFuselageInterferenceMission
 
-#
-# data from INTERFERENCE - polynomial coefficients
-#
-ckl = np.array([0.13077, 1.9791, 3.3325, -10.095, 4.7229])
-ckv = np.array([0.0194, -0.14817, 1.3515])
-ckdt = np.array([0.73543, 0.028571])
 
 #
 # data from EAERO
@@ -433,8 +428,6 @@ class AeroGeom(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Fuselage.FLAT_PLATE_AREA_INCREMENT, val=0.25)
 
-        add_aviary_input(self, Aircraft.Wing.CENTER_DISTANCE, val=0.463)
-
         add_aviary_input(self, Aircraft.Wing.MIN_PRESSURE_LOCATION, val=0.3)
 
         add_aviary_input(self, Aircraft.Wing.MAX_THICKNESS_LOCATION, val=0.4)
@@ -445,15 +438,9 @@ class AeroGeom(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.SWEEP, val=25.0)
 
-        add_aviary_input(self, Aircraft.Wing.MOUNTING_TYPE, val=0.0)
-
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, val=0.33)
 
         add_aviary_input(self, Aircraft.Strut.AREA_RATIO, val=0.0)
-
-        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15)
-
-        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_TIP, val=0.12)
 
         # geometric data from sizing
 
@@ -486,6 +473,9 @@ class AeroGeom(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED, val=0.0)
 
         add_aviary_input(self, Aircraft.Strut.CHORD, val=0.0)
+
+        self.add_input('interference_independent_of_shielded_area')
+        self.add_input('drag_loss_due_to_shielded_wing_area')
 
         # outputs
         for i in range(7):
@@ -566,12 +556,8 @@ class AeroGeom(om.ExplicitComponent):
             Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR,
             Aircraft.Design.DRAG_COEFFICIENT_INCREMENT,
             Aircraft.Fuselage.FLAT_PLATE_AREA_INCREMENT,
-            Aircraft.Wing.CENTER_DISTANCE,
-            Aircraft.Wing.MOUNTING_TYPE,
             Aircraft.Wing.TAPER_RATIO,
             Aircraft.Strut.AREA_RATIO,
-            Aircraft.Wing.THICKNESS_TO_CHORD_ROOT,
-            Aircraft.Wing.THICKNESS_TO_CHORD_TIP,
             Aircraft.Wing.SPAN,
             Aircraft.Wing.AVERAGE_CHORD,
             Aircraft.HorizontalTail.AVERAGE_CHORD,
@@ -584,6 +570,8 @@ class AeroGeom(om.ExplicitComponent):
             Aircraft.Wing.AREA,
             Aircraft.Fuselage.AVG_DIAMETER,
             Aircraft.VerticalTail.AREA,
+            'interference_independent_of_shielded_area',
+            'drag_loss_due_to_shielded_wing_area',
         ]
         self.declare_partials("SA5", most_params, method="cs")
         self.declare_partials(
@@ -610,16 +598,12 @@ class AeroGeom(om.ExplicitComponent):
             strut_fus_intf,
             cd0_inc,
             fe_fus_inc,
-            wing_center_dist,
             wing_min_pressure_loc,
             wing_max_thickness_loc,
             AR,
             sweep_c4,
-            wing_loc,
             taper_ratio,
             strut_wing_area_ratio,
-            tc_ratio_root,
-            tc_ratio_tip,
             wingspan,
             avg_chord,
             htail_chord,
@@ -634,6 +618,8 @@ class AeroGeom(om.ExplicitComponent):
             vtail_area,
             tc_ratio,
             strut_chord,
+            feintwf,
+            areashieldwf,
         ) = inputs.values()
         # skin friction coeff at Re = 10**7
         cf = 0.455 / 7**2.58 / (1 + 0.144 * mach**2) ** 0.65
@@ -697,35 +683,9 @@ class AeroGeom(om.ExplicitComponent):
         festrt = strut_fus_intf * strut_wing_area_ratio * wing_area * cf * fstrtre
 
         # begin INTERFERENCE - get flat plate equivalent for wing-fuselage interference
-        croot = 2 * wing_area / (wingspan * (1 + taper_ratio))
         # wing profile drag coefficient
         cdw0 = few / wing_area
-        zw_rf = 2 * wing_loc - 1
-        x = tc_ratio_root * croot / cabin_width
-        if cs.abs(zw_rf + x) >= 1:
-            widthftop = 0.0
-        else:
-            widthftop = cabin_width * np.sqrt(1 - (zw_rf + x) ** 2)
-        if cs.abs(zw_rf - x) >= 1:
-            widthfbot = 0.0
-        else:
-            widthfbot = cabin_width * np.sqrt(1 - (zw_rf - x) ** 2)
-        wbodywf = 0.5 * (widthftop + widthfbot)
-        tcbodywf = tc_ratio_root - wbodywf / wingspan * (tc_ratio_root - tc_ratio_tip)
-        cbodywf = croot * (1 - wbodywf / wingspan * (1 - taper_ratio))
-        # factor due to vertical location
-        kvwf = ckv[0] + zw_rf * (ckv[1] + zw_rf * ckv[2])
-        # factor due to longitudinal location
-        klwf = ckl[0] + wing_center_dist * (
-            ckl[1]
-            + wing_center_dist
-            * (ckl[2] + wing_center_dist * (ckl[3] + wing_center_dist * ckl[4]))
-        )
-        # factor due to fuselage diameter / thickness
-        kdtwf = ckdt[0] + ckdt[1] * cabin_width / (tcbodywf * cbodywf)
         # interference drag independent of shielded area
-        feintwf = 1.5 * tcbodywf**3 * cbodywf**2 * kvwf * klwf * kdtwf
-        areashieldwf = 0.5 * (croot + cbodywf) * wbodywf
         feshieldwf = cdw0 * areashieldwf
         feiwf = wing_fus_intf * (feintwf - feshieldwf)
         # end INTERFERENCE

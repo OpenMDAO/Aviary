@@ -25,7 +25,7 @@ class MotorPreMission(om.Group):
 
         # We create a set of default inputs for this group so that in pre-mission, the
         #   group can be instantiated with only scale_factor as an input.
-        # Without inputs and it will return the max torque based on the non-dimensional
+        # Without inputs it will return the max torque based on the non-dimensional
         #   scale factor chosen by the optimizer.
         # The max torque is then used in pre-mission to determine weight of the system.
         design_rpm = self.options['aviary_inputs'].get_val(

@@ -3002,7 +3002,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.CKF', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='fuselage form factor',
-    default_value=1.25,
+    default_value=1,
 )
 
 add_meta_data(
