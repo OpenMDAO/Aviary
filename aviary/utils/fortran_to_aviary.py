@@ -495,6 +495,21 @@ def update_gasp_options(vehicle_data):
     else:
         ValueError('"FRESF" is not valid between 0 and 10.')
 
+    # if the value is negative, we are asking the code to calculate it
+    # if it is positive, then we are going to use it as an override
+    if input_values.get_val(Aircraft.Wing.FORM_FACTOR)[0] < 0:
+        input_values.delete(Aircraft.Wing.FORM_FACTOR)
+    if input_values.get_val(Aircraft.HorizontalTail.FORM_FACTOR)[0] < 0:
+        input_values.delete(Aircraft.HorizontalTail.FORM_FACTOR)
+    if input_values.get_val(Aircraft.VerticalTail.FORM_FACTOR)[0] < 0:
+        input_values.delete(Aircraft.VerticalTail.FORM_FACTOR)
+    if input_values.get_val(Aircraft.Fuselage.FORM_FACTOR)[0] < 0:
+        input_values.delete(Aircraft.Fuselage.FORM_FACTOR)
+    if input_values.get_val(Aircraft.Nacelle.FORM_FACTOR)[0] < 0:
+        input_values.delete(Aircraft.Nacelle.FORM_FACTOR)
+    if input_values.get_val(Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR)[0] < 0:
+        input_values.delete(Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR)
+
     vehicle_data['input_values'] = input_values
     return vehicle_data
 

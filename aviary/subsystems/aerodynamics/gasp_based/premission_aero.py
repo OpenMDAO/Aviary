@@ -10,6 +10,8 @@ from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.aerodynamics.gasp_based.flaps_model import FlapsGroup
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.enums import SpeedType
+from aviary.subsystems.aerodynamics.gasp_based.gasp_aero_coeffs import AeroFormfactors
+from aviary.subsystems.aerodynamics.gasp_based.interference import WingFuselageInterferencePremission
 
 # TODO: add subsystems to compute CLMXFU, CLMXTO, CLMXLD using dynamic aero components
 # with alpha > alpha_stall
@@ -19,6 +21,19 @@ class PreMissionAero(om.Group):
     """Takeoff and landing flaps modeling"""
 
     def setup(self):
+
+        self.add_subsystem("wing_fus_interference_premission",
+                           WingFuselageInterferencePremission(),
+                           promotes_inputs=["aircraft:*"],
+                           promotes_outputs=[
+                               "interference_independent_of_shielded_area",
+                               "drag_loss_due_to_shielded_wing_area"],
+                           )
+
+        self.add_subsystem("aero_form_factors", AeroFormfactors(),
+                           promotes_inputs=["*"],
+                           promotes_outputs=["*"],
+                           )
 
         # speeds weren't originally computed here, speedtype of Mach is intended
         # to avoid multiple sources for computed Mach (gets calculated somewhere upstream)

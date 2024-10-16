@@ -52,6 +52,9 @@ class IdleDescentTestCase(unittest.TestCase):
         ivc = om.IndepVarComp()
         ivc.add_output(Aircraft.Design.OPERATING_MASS, 97500, units='lbm')
         ivc.add_output(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, 36000, units='lbm')
+        ivc.add_output(
+            "parameters:interference_independent_of_shielded_area", 1.89927266)
+        ivc.add_output("parameters:drag_loss_due_to_shielded_wing_area", 68.02065834)
         prob.model.add_subsystem('IVC', ivc, promotes=['*'])
 
         add_descent_estimation_as_submodel(
@@ -60,7 +63,9 @@ class IdleDescentTestCase(unittest.TestCase):
             ode_args=self.ode_args,
             cruise_alt=35000,
             reserve_fuel=4500,
+            all_subsystems=self.ode_args['core_subsystems'],
         )
+        prob.model.promotes('idle_descent_estimation', inputs=['parameters:*'])
 
         prob.setup()
 

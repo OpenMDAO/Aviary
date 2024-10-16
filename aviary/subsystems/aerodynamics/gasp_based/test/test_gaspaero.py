@@ -157,6 +157,8 @@ class GASPAeroTest(unittest.TestCase):
 
 def _init_geom(prob):
     """Initialize user inputs and geometry/sizing data"""
+    prob.set_val("interference_independent_of_shielded_area", 1.89927266)
+    prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
     # i.e. common auto IVC vars for the setup + cruise and ground aero models
     prob.set_val(Aircraft.Wing.AREA, setup_data["sw"])
     prob.set_val(Aircraft.Wing.SPAN, setup_data["b"])
@@ -187,13 +189,11 @@ def _init_geom(prob):
     prob.set_val(Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR, setup_data["ckstrt"])
     prob.set_val(Aircraft.Design.DRAG_COEFFICIENT_INCREMENT, setup_data["delcd"])
     prob.set_val(Aircraft.Fuselage.FLAT_PLATE_AREA_INCREMENT, setup_data["delfe"])
-    prob.set_val(Aircraft.Wing.CENTER_DISTANCE, setup_data["xwqlf"])
     prob.set_val(Aircraft.Wing.MIN_PRESSURE_LOCATION, setup_data["xcps"])
     prob.set_val(
         Aircraft.Wing.MAX_THICKNESS_LOCATION, 0.4
     )  # overriden in standalone code
     prob.set_val(Aircraft.Strut.AREA_RATIO, setup_data["sstqsw"])
-    prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_TIP, setup_data["tct"])
     prob.set_val(Aircraft.VerticalTail.AVERAGE_CHORD, setup_data["cbarvt"])
     prob.set_val(Aircraft.Fuselage.LENGTH, setup_data["elf"])
     prob.set_val(Aircraft.Nacelle.AVG_LENGTH, setup_data["eln"])

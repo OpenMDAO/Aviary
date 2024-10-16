@@ -165,7 +165,7 @@ def add_aviary_option(comp, name, val=_unspecified, units=None, desc=None, meta_
                              types=meta['types'], desc=desc)
 
 
-def override_aviary_vars(group, aviary_inputs: AviaryValues,
+def override_aviary_vars(group: om.Group, aviary_inputs: AviaryValues,
                          manual_overrides=None, external_overrides=None):
     '''
     This function provides the capability to override output variables

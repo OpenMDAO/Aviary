@@ -30,6 +30,8 @@ class AscentODETestCase(unittest.TestCase):
 
         self.prob.set_val(Dynamic.Mission.VELOCITY, [100, 100], units="kn")
         self.prob.set_val("t_curr", [1, 2], units="s")
+        self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
+        self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
 
         set_params_for_unit_tests(self.prob)
 

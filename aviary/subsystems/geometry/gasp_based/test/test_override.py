@@ -7,6 +7,7 @@ from aviary.variable_info.variables import Aircraft
 
 from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
 from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.subsystems.aerodynamics.gasp_based.gaspaero import AeroGeom
 from aviary.utils.process_input_decks import create_vehicle
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.variable_info.functions import setup_model_options
@@ -35,6 +36,7 @@ class GASPOverrideTestCase(unittest.TestCase):
 
         prob.model = AviaryGroup(aviary_options=aviary_options,
                                  aviary_metadata=BaseMetaData)
+
         prob.model.add_subsystem(
             'pre_mission',
             CorePreMission(aviary_options=aviary_options,
@@ -114,6 +116,29 @@ class GASPOverrideTestCase(unittest.TestCase):
         prob.run_model()
 
         assert_near_equal(self.prob[Aircraft.Fuselage.WETTED_AREA], 4000, 1e-6)
+
+    def test_case_aero_coeffs(self):
+        """
+        Test overriding from csv (vertical tail) and overriding from code (horizontal tail)
+        Also checks non-overriden (wing) and default (strut)
+        """
+        prob = self.prob
+        prob.model.add_subsystem("geom", AeroGeom(), promotes=["*"])
+        self.aviary_inputs.set_val(Aircraft.HorizontalTail.FORM_FACTOR, val=1.5)
+
+        setup_model_options(prob, self.aviary_inputs)
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", om.PromotionWarning)
+            prob.setup()
+
+        prob.run_model()
+
+        assert_near_equal(self.prob[Aircraft.Wing.FORM_FACTOR], 2.47320154, 1e-6)
+        assert_near_equal(self.prob[Aircraft.HorizontalTail.FORM_FACTOR], 1.5, 1e-6)
+        assert_near_equal(self.prob[Aircraft.VerticalTail.FORM_FACTOR], 2, 1e-6)
+        assert_near_equal(
+            self.prob[Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR], 1.125, 1e-6)
 
 
 if __name__ == '__main__':
