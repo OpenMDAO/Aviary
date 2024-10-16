@@ -4,6 +4,7 @@ import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.utils.aviary_values import AviaryValues
+from aviary.utils.functions import sigmoidX, dSigmoidXdx
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission, Settings
@@ -138,7 +139,7 @@ class BodyTankCalculations(om.ExplicitComponent):
         smooth = self.options["aviary_options"].get_val(
             Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, units='unitless')
 
-        extra_fuel_volume = sigX(design_fuel_vol - max_wingfuel_vol) * (
+        extra_fuel_volume = sigmoidX(design_fuel_vol - max_wingfuel_vol, 0) * (
             design_fuel_vol - geometric_fuel_vol
         )
 
@@ -151,19 +152,19 @@ class BodyTankCalculations(om.ExplicitComponent):
 
         extra_fuel_wt = req_fuel_wt - max_wingfuel_wt
         if smooth:
-            extra_fuel_wt = extra_fuel_wt * sigX(extra_fuel_wt / 50)
+            extra_fuel_wt = extra_fuel_wt * sigmoidX(extra_fuel_wt, 0, 1 / 50)
         else:
             if extra_fuel_wt < 0:
                 extra_fuel_wt = 0
         max_extra_fuel_wt = extra_fuel_volume * rho_fuel
         wingfuel_wt_min = fuel_wt_min - max_extra_fuel_wt
-        wingfuel_wt_min = wingfuel_wt_min * sigX(wingfuel_wt_min)
+        wingfuel_wt_min = wingfuel_wt_min * sigmoidX(wingfuel_wt_min, 0)
         max_fuel_avail_est = fuel_wt_des + extra_fuel_wt
         max_fuel_avail_new = gross_wt_initial - OEW
         est_GTOW = OEW + max_fuel_avail_est
-        max_fuel_avail = max_fuel_avail_est * sigX(
-            (gross_wt_initial - est_GTOW) / 110
-        ) + max_fuel_avail_new * sigX((est_GTOW - gross_wt_initial) / 110)
+        max_fuel_avail = max_fuel_avail_est * sigmoidX(
+            gross_wt_initial - est_GTOW, 0, 1. / 110.0
+        ) + max_fuel_avail_new * sigmoidX(est_GTOW - gross_wt_initial, 0, 1 / 110.0)
 
         outputs[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY] = \
             extra_fuel_wt / GRAV_ENGLISH_LBM
@@ -190,14 +191,14 @@ class BodyTankCalculations(om.ExplicitComponent):
         smooth = self.options["aviary_options"].get_val(
             Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, units='unitless')
 
-        extra_fuel_volume = sigX(design_fuel_vol - max_wingfuel_vol) * (
+        extra_fuel_volume = sigmoidX(design_fuel_vol - max_wingfuel_vol, 0) * (
             design_fuel_vol - geometric_fuel_vol
         )
         max_extra_fuel_wt = extra_fuel_volume * rho_fuel
 
         extra_fuel_wt = req_fuel_wt - max_wingfuel_wt
         if smooth:
-            extra_fuel_wt = extra_fuel_wt * sigX(extra_fuel_wt / 50)
+            extra_fuel_wt = extra_fuel_wt * sigmoidX(extra_fuel_wt, 0, 1 / 50.0)
         else:
             if extra_fuel_wt < 0:
                 extra_fuel_wt = 0
@@ -207,16 +208,16 @@ class BodyTankCalculations(om.ExplicitComponent):
 
         if smooth:
             dExtraFuelWt_dReqFuelWt = (
-                sigX((req_fuel_wt - max_wingfuel_wt) / 50)
+                sigmoidX(req_fuel_wt - max_wingfuel_wt, 0, 1 / 50.0)
                 + (req_fuel_wt - max_wingfuel_wt)
-                * dSigXdX((req_fuel_wt - max_wingfuel_wt) / 50)
+                * dSigmoidXdx(req_fuel_wt - max_wingfuel_wt, 0, 1 / 50.0)
                 * 1
                 / 50
             )
-            dExtraFuelWt_dMaxWingfuelWt = -1 * sigX(
-                (req_fuel_wt - max_wingfuel_wt) / 50
-            ) + (req_fuel_wt - max_wingfuel_wt) * dSigXdX(
-                (req_fuel_wt - max_wingfuel_wt) / 50
+            dExtraFuelWt_dMaxWingfuelWt = -1 * sigmoidX(
+                (req_fuel_wt - max_wingfuel_wt), 0, 1 / 50.0
+            ) + (req_fuel_wt - max_wingfuel_wt) * dSigmoidXdx(
+                req_fuel_wt - max_wingfuel_wt, 0, 1 / 50.0
             ) * (
                 -1 / 50
             )
@@ -228,33 +229,33 @@ class BodyTankCalculations(om.ExplicitComponent):
         J[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY,
             "max_wingfuel_mass"] = dExtraFuelWt_dMaxWingfuelWt
 
-        J["extra_fuel_volume", Aircraft.Fuel.WING_VOLUME_DESIGN] = dSigXdX(
-            design_fuel_vol - max_wingfuel_vol
-        ) * (design_fuel_vol - geometric_fuel_vol) + sigX(
-            design_fuel_vol - max_wingfuel_vol
+        J["extra_fuel_volume", Aircraft.Fuel.WING_VOLUME_DESIGN] = dSigmoidXdx(
+            design_fuel_vol - max_wingfuel_vol, 0
+        ) * (design_fuel_vol - geometric_fuel_vol) + sigmoidX(
+            design_fuel_vol - max_wingfuel_vol, 0
         )
         J["extra_fuel_volume", Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX] = (
-            dSigXdX(design_fuel_vol - max_wingfuel_vol)
+            dSigmoidXdx(design_fuel_vol - max_wingfuel_vol, 0)
             * (-1)
             * (design_fuel_vol - geometric_fuel_vol)
         )
-        J["extra_fuel_volume", Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX] = -sigX(
-            design_fuel_vol - max_wingfuel_vol
+        J["extra_fuel_volume", Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX] = -sigmoidX(
+            design_fuel_vol - max_wingfuel_vol, 0
         )
 
         dMEFWt_dDesFuelVol = (
-            dSigXdX(design_fuel_vol - max_wingfuel_vol)
+            dSigmoidXdx(design_fuel_vol - max_wingfuel_vol, 0)
             * (design_fuel_vol - geometric_fuel_vol)
-            + sigX(design_fuel_vol - max_wingfuel_vol)
+            + sigmoidX(design_fuel_vol - max_wingfuel_vol, 0)
         ) * rho_fuel
         dMEFWt_dMaxWingfuelVol = (
-            dSigXdX(design_fuel_vol - max_wingfuel_vol)
+            dSigmoidXdx(design_fuel_vol - max_wingfuel_vol, 0)
             * (-1)
             * (design_fuel_vol - geometric_fuel_vol)
             * rho_fuel
         )
         dMEFWt_dGeomFuelVol = (
-            -sigX(design_fuel_vol - max_wingfuel_vol) * rho_fuel
+            -sigmoidX(design_fuel_vol - max_wingfuel_vol, 0) * rho_fuel
         )
 
         J["max_extra_fuel_mass", Aircraft.Fuel.WING_VOLUME_DESIGN] = \
@@ -262,65 +263,65 @@ class BodyTankCalculations(om.ExplicitComponent):
         J["max_extra_fuel_mass", Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX] = \
             dMEFWt_dMaxWingfuelVol / GRAV_ENGLISH_LBM
         J["max_extra_fuel_mass", Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX] = \
-            dMEFWt_dGeomFuelVol / GRAV_ENGLISH_LBM
+            dMEFWt_dGeomFuelVol / GRAV_ENGLISH_LBM,
         J["max_extra_fuel_mass", Aircraft.Fuel.DENSITY] = dMEFWt_dRhoFuel = extra_fuel_volume
 
-        J["wingfuel_mass_min", "fuel_mass_min"] = sigX(fuel_wt_min - max_extra_fuel_wt) + (
+        J["wingfuel_mass_min", "fuel_mass_min"] = sigmoidX(fuel_wt_min - max_extra_fuel_wt, 0) + (
             fuel_wt_min - max_extra_fuel_wt
-        ) * dSigXdX(fuel_wt_min - max_extra_fuel_wt)
+        ) * dSigmoidXdx(fuel_wt_min - max_extra_fuel_wt, 0)
         J["wingfuel_mass_min", Aircraft.Fuel.WING_VOLUME_DESIGN] = ((
             fuel_wt_min - max_extra_fuel_wt
-        ) * dSigXdX(fuel_wt_min - max_extra_fuel_wt) * (
+        ) * dSigmoidXdx(fuel_wt_min - max_extra_fuel_wt, 0) * (
             -dMEFWt_dDesFuelVol
-        ) - dMEFWt_dDesFuelVol * sigX(
-            fuel_wt_min - max_extra_fuel_wt
+        ) - dMEFWt_dDesFuelVol * sigmoidX(
+            fuel_wt_min - max_extra_fuel_wt, 0
         )) / GRAV_ENGLISH_LBM
-        J["wingfuel_mass_min", Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX] = (fuel_wt_min * dSigXdX(
-            fuel_wt_min - max_extra_fuel_wt
+        J["wingfuel_mass_min", Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX] = (fuel_wt_min * dSigmoidXdx(
+            fuel_wt_min - max_extra_fuel_wt, 0
         ) * (-dMEFWt_dMaxWingfuelVol) - (
-            dMEFWt_dMaxWingfuelVol * sigX(fuel_wt_min - max_extra_fuel_wt)
+            dMEFWt_dMaxWingfuelVol * sigmoidX(fuel_wt_min - max_extra_fuel_wt, 0)
             + max_extra_fuel_wt
-            * dSigXdX(fuel_wt_min - max_extra_fuel_wt)
+            * dSigmoidXdx(fuel_wt_min - max_extra_fuel_wt, 0)
             * (-dMEFWt_dMaxWingfuelVol)
         )) / GRAV_ENGLISH_LBM
-        J["wingfuel_mass_min", Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX] = (fuel_wt_min * dSigXdX(
-            fuel_wt_min - max_extra_fuel_wt
+        J["wingfuel_mass_min", Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX] = (fuel_wt_min * dSigmoidXdx(
+            fuel_wt_min - max_extra_fuel_wt, 0
         ) * (-dMEFWt_dGeomFuelVol) - (
-            dMEFWt_dGeomFuelVol * sigX(fuel_wt_min - max_extra_fuel_wt)
+            dMEFWt_dGeomFuelVol * sigmoidX(fuel_wt_min - max_extra_fuel_wt, 0)
             + max_extra_fuel_wt
-            * dSigXdX(fuel_wt_min - max_extra_fuel_wt)
+            * dSigmoidXdx(fuel_wt_min - max_extra_fuel_wt, 0)
             * (-dMEFWt_dGeomFuelVol)
         )) / GRAV_ENGLISH_LBM
-        J["wingfuel_mass_min", Aircraft.Fuel.DENSITY] = fuel_wt_min * dSigXdX(
-            fuel_wt_min - max_extra_fuel_wt
+        J["wingfuel_mass_min", Aircraft.Fuel.DENSITY] = fuel_wt_min * dSigmoidXdx(
+            fuel_wt_min - max_extra_fuel_wt, 0
         ) * (-dMEFWt_dRhoFuel) - (
-            dMEFWt_dRhoFuel * sigX(fuel_wt_min - max_extra_fuel_wt)
+            dMEFWt_dRhoFuel * sigmoidX(fuel_wt_min - max_extra_fuel_wt, 0)
             + max_extra_fuel_wt
-            * dSigXdX(fuel_wt_min - max_extra_fuel_wt)
+            * dSigmoidXdx(fuel_wt_min - max_extra_fuel_wt, 0)
             * (-dMEFWt_dRhoFuel)
         )
 
-        int1 = sigX((gross_wt_initial - est_GTOW) / 110)
-        int2 = sigX((est_GTOW - gross_wt_initial) / 110)
+        int1 = sigmoidX(gross_wt_initial - est_GTOW, 0, 1 / 110.0)
+        int2 = sigmoidX(est_GTOW - gross_wt_initial, 0, 1 / 110.0)
         max_fuel_avail = max_fuel_avail_est * int1 + max_fuel_avail_new * int2
 
-        dInt1_dFuelWtDes = dSigXdX((gross_wt_initial - est_GTOW) / 110) * (-1 / 110)
-        dInt1_dReqFuelWt = dSigXdX((gross_wt_initial - est_GTOW) / 110) * (
+        dInt1_dFuelWtDes = dSigmoidXdx(gross_wt_initial - est_GTOW, 0, 1 / 110.0) * (-1 / 110)
+        dInt1_dReqFuelWt = dSigmoidXdx(gross_wt_initial - est_GTOW, 0, 1 / 110.0) * (
             -dExtraFuelWt_dReqFuelWt
         )
-        dInt1_dMaxWingfuelWt = dSigXdX((gross_wt_initial - est_GTOW) / 110) * (
+        dInt1_dMaxWingfuelWt = dSigmoidXdx(gross_wt_initial - est_GTOW, 0, 1 / 110.0) * (
             -dExtraFuelWt_dMaxWingfuelWt
         )
 
-        dInt2_dOEM = dSigXdX((est_GTOW - gross_wt_initial) / 110) / 110
-        dInt2_dFuelWtDes = dSigXdX((est_GTOW - gross_wt_initial) / 110) / 110
+        dInt2_dOEM = dSigmoidXdx(est_GTOW - gross_wt_initial, 0, 1 / 110.0) / 110
+        dInt2_dFuelWtDes = dSigmoidXdx(est_GTOW - gross_wt_initial, 0, 1 / 110.0) / 110
         dInt2_dReqFuelWt = (
-            dSigXdX((est_GTOW - gross_wt_initial) / 110) * dExtraFuelWt_dReqFuelWt
+            dSigmoidXdx(est_GTOW - gross_wt_initial, 0, 1 / 110.0) * dExtraFuelWt_dReqFuelWt
         )
         dInt2_dMaxWingfuelWt = (
-            dSigXdX((est_GTOW - gross_wt_initial) / 110) * dExtraFuelWt_dMaxWingfuelWt
+            dSigmoidXdx(est_GTOW - gross_wt_initial, 0, 1 / 110.0) * dExtraFuelWt_dMaxWingfuelWt
         )
-        dInt2_dGTOW = dSigXdX((est_GTOW - gross_wt_initial) / 110) * (-1 / 110)
+        dInt2_dGTOW = dSigmoidXdx(est_GTOW - gross_wt_initial, 0, 1 / 110.0) * (-1 / 110)
 
         dMFAest_dFuelWtDes = 1
         dMFAest_dReqFuelWt = dExtraFuelWt_dReqFuelWt
@@ -525,9 +526,9 @@ class FuelAndOEMOutputs(om.ExplicitComponent):
         OEW = propulsion_wt + control_wt + struct_wt + fixed_equip_wt + useful_wt
 
         volume_wingfuel_wt = geometric_fuel_vol * rho_fuel
-        max_wingfuel_wt = OEM_wingfuel_wt * sigX(
-            (volume_wingfuel_wt - OEM_wingfuel_wt) / 95
-        ) + volume_wingfuel_wt * sigX((OEM_wingfuel_wt - volume_wingfuel_wt) / 95)
+        max_wingfuel_wt = OEM_wingfuel_wt * sigmoidX(
+            volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0
+        ) + volume_wingfuel_wt * sigmoidX(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
         payload_wt_max_fuel = gross_wt_initial - OEW - max_fuel_avail
         max_wingfuel_vol = max_wingfuel_wt / (rho_fuel)
 
@@ -568,9 +569,9 @@ class FuelAndOEMOutputs(om.ExplicitComponent):
             - useful_wt
         )
         volume_wingfuel_wt = geometric_fuel_vol * rho_fuel
-        max_wingfuel_wt = OEM_wingfuel_wt * sigX(
-            (volume_wingfuel_wt - OEM_wingfuel_wt) / 95
-        ) + volume_wingfuel_wt * sigX((OEM_wingfuel_wt - volume_wingfuel_wt) / 95)
+        max_wingfuel_wt = OEM_wingfuel_wt * sigmoidX(
+            volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0
+        ) + volume_wingfuel_wt * sigmoidX(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
 
         J["OEM_wingfuel_mass", Mission.Design.GROSS_MASS] = dOEMwingfuelWt_dGTOW = 1
         J["OEM_wingfuel_mass", Aircraft.Propulsion.MASS] = dOEMwingfuelWt_dPropWt = -1
@@ -610,91 +611,91 @@ class FuelAndOEMOutputs(om.ExplicitComponent):
 
         dMaxWFWt_dGTOW = (
             OEM_wingfuel_wt
-            * dSigXdX((volume_wingfuel_wt - OEM_wingfuel_wt) / 95)
+            * dSigmoidXdx(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
             * dOEMwingfuelWt_dGTOW
             + dOEMwingfuelWt_dGTOW *
-            sigX((volume_wingfuel_wt - OEM_wingfuel_wt) / 95)
+            sigmoidX(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
             + volume_wingfuel_wt
-            * dSigXdX((OEM_wingfuel_wt - volume_wingfuel_wt) / 95)
+            * dSigmoidXdx(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
             * dOEMwingfuelWt_dGTOW
         )
         dMaxWFWt_dPropWt = (
             OEM_wingfuel_wt
-            * dSigXdX((volume_wingfuel_wt - OEM_wingfuel_wt) / 95)
+            * dSigmoidXdx(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
             * dOEMwingfuelWt_dPropWt
             + dOEMwingfuelWt_dPropWt *
-            sigX((volume_wingfuel_wt - OEM_wingfuel_wt) / 95)
+            sigmoidX(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
             + volume_wingfuel_wt
-            * dSigXdX((OEM_wingfuel_wt - volume_wingfuel_wt) / 95)
+            * dSigmoidXdx(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
             * dOEMwingfuelWt_dPropWt
         )
         dMaxWFWt_dControlWt = (
             OEM_wingfuel_wt
-            * dSigXdX((volume_wingfuel_wt - OEM_wingfuel_wt) / 95)
+            * dSigmoidXdx(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
             * dOEMwingfuelWt_dControlWt
             + dOEMwingfuelWt_dControlWt
-            * sigX((volume_wingfuel_wt - OEM_wingfuel_wt) / 95)
+            * sigmoidX(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
             + volume_wingfuel_wt
-            * dSigXdX((OEM_wingfuel_wt - volume_wingfuel_wt) / 95)
+            * dSigmoidXdx(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
             * dOEMwingfuelWt_dControlWt
         )
         dMaxWFWt_dControlWt = (
             OEM_wingfuel_wt
-            * dSigXdX((volume_wingfuel_wt - OEM_wingfuel_wt) / 95)
+            * dSigmoidXdx(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
             * dOEMwingfuelWt_dControlWt
             + dOEMwingfuelWt_dControlWt
-            * sigX((volume_wingfuel_wt - OEM_wingfuel_wt) / 95)
+            * sigmoidX(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
             + volume_wingfuel_wt
-            * dSigXdX((OEM_wingfuel_wt - volume_wingfuel_wt) / 95)
+            * dSigmoidXdx(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
             * dOEMwingfuelWt_dControlWt
         )
         dMaxWFWt_dStructWt = (
             OEM_wingfuel_wt
-            * dSigXdX((volume_wingfuel_wt - OEM_wingfuel_wt) / 95)
+            * dSigmoidXdx(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
             * dOEMwingfuelWt_dStructWt
             + dOEMwingfuelWt_dStructWt
-            * sigX((volume_wingfuel_wt - OEM_wingfuel_wt) / 95)
+            * sigmoidX(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
             + volume_wingfuel_wt
-            * dSigXdX((OEM_wingfuel_wt - volume_wingfuel_wt) / 95)
+            * dSigmoidXdx(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
             * dOEMwingfuelWt_dStructWt
         )
         dMaxWFWt_dFEqWt = (
             OEM_wingfuel_wt
-            * dSigXdX((volume_wingfuel_wt - OEM_wingfuel_wt) / 95)
+            * dSigmoidXdx(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
             * dOEMwingfuelWt_dFEqWt
             + dOEMwingfuelWt_dFEqWt *
-            sigX((volume_wingfuel_wt - OEM_wingfuel_wt) / 95)
+            sigmoidX(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
             + volume_wingfuel_wt
-            * dSigXdX((OEM_wingfuel_wt - volume_wingfuel_wt) / 95)
+            * dSigmoidXdx(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
             * dOEMwingfuelWt_dFEqWt
         )
         dMaxWFWt_dUsefulWt = (
             OEM_wingfuel_wt
-            * dSigXdX((volume_wingfuel_wt - OEM_wingfuel_wt) / 95)
+            * dSigmoidXdx(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
             * dOEMwingfuelWt_dUsefulWt
             + dOEMwingfuelWt_dUsefulWt
-            * sigX((volume_wingfuel_wt - OEM_wingfuel_wt) / 95)
+            * sigmoidX(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
             + volume_wingfuel_wt
-            * dSigXdX((OEM_wingfuel_wt - volume_wingfuel_wt) / 95)
+            * dSigmoidXdx(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
             * dOEMwingfuelWt_dUsefulWt
         )
         dMaxWFWt_dGeomFuelVol = (
             OEM_wingfuel_wt
-            * dSigXdX((volume_wingfuel_wt - OEM_wingfuel_wt) / 95)
+            * dSigmoidXdx(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
             * rho_fuel
             + volume_wingfuel_wt
-            * dSigXdX((OEM_wingfuel_wt - volume_wingfuel_wt) / 95)
+            * dSigmoidXdx(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
             * rho_fuel
-            + rho_fuel * sigX((OEM_wingfuel_wt - volume_wingfuel_wt) / 95)
+            + rho_fuel * sigmoidX(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
         )
         dMaxWFWt_dRhoFuel = (
             OEM_wingfuel_wt
-            * dSigXdX((volume_wingfuel_wt - OEM_wingfuel_wt) / 95)
+            * dSigmoidXdx(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
             * geometric_fuel_vol
             + volume_wingfuel_wt
-            * dSigXdX((OEM_wingfuel_wt - volume_wingfuel_wt) / 95)
+            * dSigmoidXdx(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
             * geometric_fuel_vol
-            + geometric_fuel_vol * sigX((OEM_wingfuel_wt - volume_wingfuel_wt) / 95)
+            + geometric_fuel_vol * sigmoidX(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
         )
 
         J["max_wingfuel_mass", Mission.Design.GROSS_MASS] = dMaxWFWt_dGTOW

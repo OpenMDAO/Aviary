@@ -517,7 +517,7 @@ def wrapped_convert_units(val_unit_tuple, new_units):
         return convert_units(value, units, new_units)
 
 
-def sigmoidX(x, x0, alpha=0.1):
+def sigmoidX(x, x0, alpha=1.0):
     """
     Sigmoid used to smoothly transition between piecewise functions
 
@@ -546,7 +546,7 @@ def sigmoidX(x, x0, alpha=0.1):
     return y
 
 
-def dSigmoidXdx(x, x0, alpha=0.1):
+def dSigmoidXdx(x, x0, alpha=1.0):
     """
     Derivative of sigmoid function
     
@@ -563,8 +563,8 @@ def dSigmoidXdx(x, x0, alpha=0.1):
         n_size = x.size
         y = np.zeros(n_size, dtype=complex)
         #x = x.real
-        term = np.zeros(n_size)
-        term2 = np.zeros(n_size)
+        term = np.zeros(n_size, dtype=complex)
+        term2 = np.zeros(n_size, dtype=complex)
         calc_idx = np.where((x - x0) / alpha > -320)
         term[calc_idx] = np.exp(-(x[calc_idx] - x0) / alpha)
         term2[calc_idx] = (1 + term[calc_idx]) * (1 + term[calc_idx])

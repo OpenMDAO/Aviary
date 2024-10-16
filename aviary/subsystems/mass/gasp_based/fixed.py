@@ -10,7 +10,7 @@ from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission
 
 
-def sigXr(x):
+def sigX(x):
     # sig = np.divide(1, (1 + np.exp(-320*x)), out=np.zeros_like(x), where=x>-1)
     sig = 1 / (1 + np.exp(-320*x)) if x > -1 else 0
     return sig
