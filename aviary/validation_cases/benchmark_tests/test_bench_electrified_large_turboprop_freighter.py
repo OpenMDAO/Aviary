@@ -32,6 +32,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
             "models/large_turboprop_freighter/large_turboprop_freighter.csv"
         )
 
+        options.set_val(Settings.EQUATIONS_OF_MOTION, 'height_energy')
         # options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
         # options.set_val(Aircraft.Engine.WING_LOCATIONS, 0.385)
         scale_factor = 3
