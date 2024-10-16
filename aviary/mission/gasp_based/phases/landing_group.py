@@ -38,15 +38,15 @@ class LandingSegment(BaseODE):
             subsys=Atmosphere(num_nodes=1, input_speed_type=SpeedType.MACH),
             promotes_inputs=[
                 (Dynamic.Mission.ALTITUDE, Mission.Landing.INITIAL_ALTITUDE),
-                (Dynamic.Mission.MACH, Mission.Landing.INITIAL_MACH),
+                (Dynamic.Atmosphere.MACH, Mission.Landing.INITIAL_MACH),
             ],
             promotes_outputs=[
-                (Dynamic.Mission.DENSITY, "rho_app"),
-                (Dynamic.Mission.SPEED_OF_SOUND, "sos_app"),
-                (Dynamic.Mission.TEMPERATURE, "T_app"),
-                (Dynamic.Mission.STATIC_PRESSURE, "P_app"),
+                (Dynamic.Atmosphere.DENSITY, "rho_app"),
+                (Dynamic.Atmosphere.SPEED_OF_SOUND, "sos_app"),
+                (Dynamic.Atmosphere.TEMPERATURE, "T_app"),
+                (Dynamic.Atmosphere.STATIC_PRESSURE, "P_app"),
                 ("viscosity", "viscosity_app"),
-                (Dynamic.Mission.DYNAMIC_PRESSURE, "q_app"),
+                (Dynamic.Atmosphere.DYNAMIC_PRESSURE, "q_app"),
             ],
         )
 
@@ -63,13 +63,16 @@ class LandingSegment(BaseODE):
                     aero_system,
                     promotes_inputs=[
                         "*",
-                        (Dynamic.Mission.ALTITUDE, Mission.Landing.INITIAL_ALTITUDE),
-                        (Dynamic.Mission.DENSITY, "rho_app"),
-                        (Dynamic.Mission.SPEED_OF_SOUND, "sos_app"),
+                        (
+                            Dynamic.Mission.ALTITUDE,
+                            Mission.Landing.INITIAL_ALTITUDE,
+                        ),
+                        (Dynamic.Atmosphere.DENSITY, "rho_app"),
+                        (Dynamic.Atmosphere.SPEED_OF_SOUND, "sos_app"),
                         ("viscosity", "viscosity_app"),
                         ("airport_alt", Mission.Landing.AIRPORT_ALTITUDE),
-                        (Dynamic.Mission.MACH, Mission.Landing.INITIAL_MACH),
-                        (Dynamic.Mission.DYNAMIC_PRESSURE, "q_app"),
+                        (Dynamic.Atmosphere.MACH, Mission.Landing.INITIAL_MACH),
+                        (Dynamic.Atmosphere.DYNAMIC_PRESSURE, "q_app"),
                         ("flap_defl", Aircraft.Wing.FLAP_DEFLECTION_LANDING),
                         ("t_init_flaps", "t_init_flaps_app"),
                         ("t_init_gear", "t_init_gear_app"),
@@ -89,12 +92,23 @@ class LandingSegment(BaseODE):
             if isinstance(subsystem, PropulsionBuilderBase):
                 propulsion_system = subsystem.build_mission(
                     num_nodes=1, aviary_inputs=aviary_options)
-                propulsion_mission = self.add_subsystem(subsystem.name,
-                                                        propulsion_system,
-                                                        promotes_inputs=[
-                                                            "*", (Dynamic.Mission.ALTITUDE, Mission.Landing.INITIAL_ALTITUDE), (Dynamic.Mission.MACH, Mission.Landing.INITIAL_MACH)],
-                                                        promotes_outputs=[(Dynamic.Mission.THRUST_TOTAL, "thrust_idle")])
-                propulsion_mission.set_input_defaults(Dynamic.Mission.THROTTLE, 0.0)
+                propulsion_mission = self.add_subsystem(
+                    subsystem.name,
+                    propulsion_system,
+                    promotes_inputs=[
+                        "*",
+                        (
+                            Dynamic.Mission.ALTITUDE,
+                            Mission.Landing.INITIAL_ALTITUDE,
+                        ),
+                        (Dynamic.Atmosphere.MACH, Mission.Landing.INITIAL_MACH),
+                    ],
+                    promotes_outputs=[
+                        (Dynamic.Vehicle.Propulsion.THRUST_TOTAL, "thrust_idle")
+                    ],
+                )
+                propulsion_mission.set_input_defaults(
+                    Dynamic.Vehicle.Propulsion.THROTTLE, 0.0)
 
         self.add_subsystem(
             "glide",
@@ -102,7 +116,7 @@ class LandingSegment(BaseODE):
             promotes_inputs=[
                 "rho_app",
                 Mission.Landing.MAXIMUM_SINK_RATE,
-                Dynamic.Mission.MASS,
+                Dynamic.Vehicle.MASS,
                 Aircraft.Wing.AREA,
                 Mission.Landing.GLIDE_TO_STALL_RATIO,
                 "CL_max",
@@ -133,12 +147,12 @@ class LandingSegment(BaseODE):
                 (Dynamic.Mission.VELOCITY, "TAS_touchdown"),
             ],
             promotes_outputs=[
-                (Dynamic.Mission.DENSITY, "rho_td"),
-                (Dynamic.Mission.SPEED_OF_SOUND, "sos_td"),
-                (Dynamic.Mission.TEMPERATURE, "T_td"),
+                (Dynamic.Atmosphere.DENSITY, "rho_td"),
+                (Dynamic.Atmosphere.SPEED_OF_SOUND, "sos_td"),
+                (Dynamic.Atmosphere.TEMPERATURE, "T_td"),
                 ("viscosity", "viscosity_td"),
-                (Dynamic.Mission.DYNAMIC_PRESSURE, "q_td"),
-                (Dynamic.Mission.MACH, "mach_td"),
+                (Dynamic.Atmosphere.DYNAMIC_PRESSURE, "q_td"),
+                (Dynamic.Atmosphere.MACH, "mach_td"),
             ],
         )
 
@@ -154,12 +168,12 @@ class LandingSegment(BaseODE):
             promotes_inputs=[
                 "*",
                 (Dynamic.Mission.ALTITUDE, Mission.Landing.AIRPORT_ALTITUDE),
-                (Dynamic.Mission.DENSITY, "rho_td"),
-                (Dynamic.Mission.SPEED_OF_SOUND, "sos_td"),
+                (Dynamic.Atmosphere.DENSITY, "rho_td"),
+                (Dynamic.Atmosphere.SPEED_OF_SOUND, "sos_td"),
                 ("viscosity", "viscosity_td"),
                 ("airport_alt", Mission.Landing.AIRPORT_ALTITUDE),
-                (Dynamic.Mission.MACH, "mach_td"),
-                (Dynamic.Mission.DYNAMIC_PRESSURE, "q_td"),
+                (Dynamic.Atmosphere.MACH, "mach_td"),
+                (Dynamic.Atmosphere.DYNAMIC_PRESSURE, "q_td"),
                 ("alpha", Aircraft.Wing.INCIDENCE),
                 ("flap_defl", Aircraft.Wing.FLAP_DEFLECTION_LANDING),
                 ("CL_max_flaps", Mission.Landing.LIFT_COEFFICIENT_MAX),
@@ -194,11 +208,14 @@ class LandingSegment(BaseODE):
                 "tr_distance",
                 "delay_distance",
                 "CL_max",
-                Dynamic.Mission.MASS,
-                'mission:*'
+                Dynamic.Vehicle.MASS,
+                'mission:*',
             ],
             promotes_outputs=[
-                "ground_roll_distance", "average_acceleration", 'mission:*'],
+                "ground_roll_distance",
+                "average_acceleration",
+                'mission:*',
+            ],
         )
 
         ParamPort.set_default_vals(self)

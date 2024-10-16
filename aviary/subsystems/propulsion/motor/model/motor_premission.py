@@ -31,7 +31,7 @@ class MotorPreMission(om.Group):
             Aircraft.Engine.RPM_DESIGN, units='rpm'
         )
 
-        self.set_input_defaults(Dynamic.Mission.THROTTLE, 1.0, units=None)
+        self.set_input_defaults(Dynamic.Vehicle.Propulsion.THROTTLE, 1.0, units=None)
         self.set_input_defaults('design_rpm', design_rpm, units='rpm')
 
         self.add_subsystem(
@@ -39,11 +39,11 @@ class MotorPreMission(om.Group):
             MotorMap(num_nodes=1),
             promotes_inputs=[
                 Aircraft.Engine.SCALE_FACTOR,
-                Dynamic.Mission.THROTTLE,
-                (Dynamic.Mission.RPM, 'design_rpm'),
+                Dynamic.Vehicle.Propulsion.THROTTLE,
+                (Dynamic.Vehicle.Propulsion.RPM, 'design_rpm'),
             ],
             promotes_outputs=[
-                (Dynamic.Mission.TORQUE, Aircraft.Engine.Motor.TORQUE_MAX)
+                (Dynamic.Vehicle.Propulsion.TORQUE, Aircraft.Engine.Motor.TORQUE_MAX)
             ],
         )
 

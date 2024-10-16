@@ -130,7 +130,7 @@ class TurbopropModel(EngineModel):
                 )
 
         # turboprop_group.set_input_default(
-        #     Aircraft.Engine.PROPELLER_TIP_SPEED_MAX, val=0.0, units='ft/s'
+        #     Aircraft.Engine.Propeller.TIP_SPEED_MAX, val=0.0, units='ft/s'
         # )
 
         return turboprop_group
@@ -187,15 +187,20 @@ class TurbopropMission(om.Group):
                     subsys=propeller_model_mission,
                     promotes_inputs=[
                         '*',
-                        (Dynamic.Mission.SHAFT_POWER, 'propeller_shaft_power'),
+                        (
+                            Dynamic.Vehicle.Propulsion.SHAFT_POWER,
+                            'propeller_shaft_power',
+                        ),
                     ],
                     promotes_outputs=[
                         '*',
-                        (Dynamic.Mission.THRUST, 'propeller_thrust'),
+                        (Dynamic.Vehicle.Propulsion.THRUST, 'propeller_thrust'),
                     ],
                 )
 
-                self.connect(Dynamic.Mission.SHAFT_POWER, 'propeller_shaft_power')
+                self.connect(
+                    Dynamic.Vehicle.Propulsion.SHAFT_POWER, 'propeller_shaft_power'
+                )
 
                 propeller_model_mission_max = propeller_model.build_mission(
                     num_nodes, aviary_inputs, **propeller_kwargs
@@ -203,27 +208,35 @@ class TurbopropMission(om.Group):
                 max_thrust_group.add_subsystem(
                     propeller_model.name + '_max',
                     subsys=propeller_model_mission_max,
-                    promotes_inputs=['*',
-                                     (Dynamic.Mission.SHAFT_POWER, 'propeller_shaft_power_max')],
-                    promotes_outputs=[(Dynamic.Mission.THRUST, 'propeller_thrust_max')]
+                    promotes_inputs=[
+                        '*',
+                        (
+                            Dynamic.Vehicle.Propulsion.SHAFT_POWER,
+                            'propeller_shaft_power_max',
+                        ),
+                    ],
+                    promotes_outputs=[
+                        (Dynamic.Vehicle.Propulsion.THRUST, 'propeller_thrust_max')
+                    ],
                 )
 
                 self.connect(
-                    Dynamic.Mission.SHAFT_POWER_MAX, 'propeller_shaft_power_max'
+                    Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX,
+                    'propeller_shaft_power_max',
                 )
 
         else:  # use the Hamilton Standard model
             # only promote top-level inputs to avoid conflicts with max group
             prop_inputs = [
-                Dynamic.Mission.MACH,
-                Aircraft.Engine.PROPELLER_TIP_SPEED_MAX,
-                Dynamic.Mission.DENSITY,
+                Dynamic.Atmosphere.MACH,
+                Aircraft.Engine.Propeller.TIP_SPEED_MAX,
+                Dynamic.Atmosphere.DENSITY,
                 Dynamic.Mission.VELOCITY,
-                Aircraft.Engine.PROPELLER_DIAMETER,
-                Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,
-                Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT,
+                Aircraft.Engine.Propeller.DIAMETER,
+                Aircraft.Engine.Propeller.ACTIVITY_FACTOR,
+                Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT,
                 Aircraft.Nacelle.AVG_DIAMETER,
-                Dynamic.Mission.SPEED_OF_SOUND,
+                Dynamic.Atmosphere.SPEED_OF_SOUND,
             ]
             try:
                 propeller_kwargs = kwargs['hamilton_standard']
@@ -239,15 +252,17 @@ class TurbopropMission(om.Group):
                 ),
                 promotes_inputs=[
                     *prop_inputs,
-                    (Dynamic.Mission.SHAFT_POWER, 'propeller_shaft_power'),
+                    (Dynamic.Vehicle.Propulsion.SHAFT_POWER, 'propeller_shaft_power'),
                 ],
                 promotes_outputs=[
                     '*',
-                    (Dynamic.Mission.THRUST, 'propeller_thrust'),
+                    (Dynamic.Vehicle.Propulsion.THRUST, 'propeller_thrust'),
                 ],
             )
 
-            self.connect(Dynamic.Mission.SHAFT_POWER, 'propeller_shaft_power')
+            self.connect(
+                Dynamic.Vehicle.Propulsion.SHAFT_POWER, 'propeller_shaft_power'
+            )
 
             max_thrust_group.add_subsystem(
                 'propeller_model_max',
@@ -258,12 +273,20 @@ class TurbopropMission(om.Group):
                 ),
                 promotes_inputs=[
                     *prop_inputs,
-                    (Dynamic.Mission.SHAFT_POWER, 'propeller_shaft_power_max'),
+                    (
+                        Dynamic.Vehicle.Propulsion.SHAFT_POWER,
+                        'propeller_shaft_power_max',
+                    ),
                 ],
-                promotes_outputs=[(Dynamic.Mission.THRUST, 'propeller_thrust_max')],
+                promotes_outputs=[
+                    (Dynamic.Vehicle.Propulsion.THRUST, 'propeller_thrust_max')
+                ],
             )
 
-            self.connect(Dynamic.Mission.SHAFT_POWER_MAX, 'propeller_shaft_power_max')
+            self.connect(
+                Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX,
+                'propeller_shaft_power_max',
+            )
 
         thrust_adder = om.ExecComp(
             'turboprop_thrust=turboshaft_thrust+propeller_thrust',
@@ -283,21 +306,26 @@ class TurbopropMission(om.Group):
             'thrust_adder',
             subsys=thrust_adder,
             promotes_inputs=['*'],
-            promotes_outputs=[('turboprop_thrust', Dynamic.Mission.THRUST)],
+            promotes_outputs=[('turboprop_thrust', Dynamic.Vehicle.Propulsion.THRUST)],
         )
 
         max_thrust_group.add_subsystem(
             'max_thrust_adder',
             subsys=max_thrust_adder,
             promotes_inputs=['*'],
-            promotes_outputs=[('turboprop_thrust_max', Dynamic.Mission.THRUST_MAX)]
+            promotes_outputs=[
+                (
+                    'turboprop_thrust_max',
+                    Dynamic.Vehicle.Propulsion.THRUST_MAX,
+                )
+            ],
         )
 
         self.add_subsystem(
             'turboprop_max_group',
             max_thrust_group,
             promotes_inputs=['*'],
-            promotes_outputs=[Dynamic.Mission.THRUST_MAX],
+            promotes_outputs=[Dynamic.Vehicle.Propulsion.THRUST_MAX],
         )
 
     def configure(self):
@@ -309,14 +337,19 @@ class TurbopropMission(om.Group):
 
         outputs = ['*']
 
-        if Dynamic.Mission.THRUST in [
+        if Dynamic.Vehicle.Propulsion.THRUST in [
             output_dict[key]['prom_name'] for key in output_dict
         ]:
-            outputs.append((Dynamic.Mission.THRUST, 'turboshaft_thrust'))
+            outputs.append((Dynamic.Vehicle.Propulsion.THRUST, 'turboshaft_thrust'))
 
-        if Dynamic.Mission.THRUST_MAX in [
+        if Dynamic.Vehicle.Propulsion.THRUST_MAX in [
             output_dict[key]['prom_name'] for key in output_dict
         ]:
-            outputs.append((Dynamic.Mission.THRUST_MAX, 'turboshaft_thrust_max'))
+            outputs.append(
+                (
+                    Dynamic.Vehicle.Propulsion.THRUST_MAX,
+                    'turboshaft_thrust_max',
+                )
+            )
 
         self.promotes(shp_model.name, outputs=outputs)

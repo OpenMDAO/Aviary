@@ -21,10 +21,10 @@ class RequiredThrustTest(unittest.TestCase):
             "req_thrust", RequiredThrust(num_nodes=2), promotes=["*"]
         )
         prob.model.set_input_defaults(
-            Dynamic.Mission.DRAG, np.array([47447.13138523, 44343.01567596]), units="N"
+            Dynamic.Vehicle.DRAG, np.array([47447.13138523, 44343.01567596]), units="N"
         )
         prob.model.set_input_defaults(
-            Dynamic.Mission.MASS, np.array([106292, 106292]), units="lbm"
+            Dynamic.Vehicle.MASS, np.array([106292, 106292]), units="lbm"
         )
         prob.model.set_input_defaults(
             Dynamic.Mission.ALTITUDE_RATE, np.array([1.72, 11.91]), units="m/s"

@@ -86,16 +86,16 @@ class MissionDragTest(unittest.TestCase):
         prob.set_solver_print(level=2)
 
         # Mission params
-        prob.set_val(Dynamic.Mission.MACH, val=mach)
-        prob.set_val(Dynamic.Mission.STATIC_PRESSURE, val=P, units='lbf/ft**2')
-        prob.set_val(Dynamic.Mission.TEMPERATURE, val=T, units='degR')
-        prob.set_val(Dynamic.Mission.MASS, val=mass, units='lbm')
+        prob.set_val(Dynamic.Atmosphere.MACH, val=mach)
+        prob.set_val(Dynamic.Atmosphere.STATIC_PRESSURE, val=P, units='lbf/ft**2')
+        prob.set_val(Dynamic.Atmosphere.TEMPERATURE, val=T, units='degR')
+        prob.set_val(Dynamic.Vehicle.MASS, val=mass, units='lbm')
 
         set_aviary_initial_values(prob, flops_inputs)
 
         prob.run_model()
 
-        D = prob.get_val(Dynamic.Mission.DRAG, 'lbf')
+        D = prob.get_val(Dynamic.Vehicle.DRAG, 'lbf')
         CD = D / (Sref * 0.5 * 1.4 * P * mach ** 2)
 
         data = np.array([
@@ -197,16 +197,16 @@ class MissionDragTest(unittest.TestCase):
         prob.setup()
 
         # Mission params
-        prob.set_val(Dynamic.Mission.MACH, val=mach)
-        prob.set_val(Dynamic.Mission.STATIC_PRESSURE, val=P, units='lbf/ft**2')
-        prob.set_val(Dynamic.Mission.TEMPERATURE, val=T, units='degR')
-        prob.set_val(Dynamic.Mission.MASS, val=mass, units='lbm')
+        prob.set_val(Dynamic.Atmosphere.MACH, val=mach)
+        prob.set_val(Dynamic.Atmosphere.STATIC_PRESSURE, val=P, units='lbf/ft**2')
+        prob.set_val(Dynamic.Atmosphere.TEMPERATURE, val=T, units='degR')
+        prob.set_val(Dynamic.Vehicle.MASS, val=mass, units='lbm')
 
         set_aviary_initial_values(prob, flops_inputs)
 
         prob.run_model()
 
-        D = prob.get_val(Dynamic.Mission.DRAG, 'lbf')
+        D = prob.get_val(Dynamic.Vehicle.DRAG, 'lbf')
         CD = D / (Sref * 0.5 * 1.4 * P * mach ** 2)
 
         data = np.array([
@@ -308,16 +308,16 @@ class MissionDragTest(unittest.TestCase):
         prob.setup()
 
         # Mission params
-        prob.set_val(Dynamic.Mission.MACH, val=mach)
-        prob.set_val(Dynamic.Mission.STATIC_PRESSURE, val=P, units='lbf/ft**2')
-        prob.set_val(Dynamic.Mission.TEMPERATURE, val=T, units='degR')
-        prob.set_val(Dynamic.Mission.MASS, val=mass, units='lbm')
+        prob.set_val(Dynamic.Atmosphere.MACH, val=mach)
+        prob.set_val(Dynamic.Atmosphere.STATIC_PRESSURE, val=P, units='lbf/ft**2')
+        prob.set_val(Dynamic.Atmosphere.TEMPERATURE, val=T, units='degR')
+        prob.set_val(Dynamic.Vehicle.MASS, val=mass, units='lbm')
 
         set_aviary_initial_values(prob, flops_inputs)
 
         prob.run_model()
 
-        D = prob.get_val(Dynamic.Mission.DRAG, 'lbf')
+        D = prob.get_val(Dynamic.Vehicle.DRAG, 'lbf')
         CD = D / (Sref * 0.5 * 1.4 * P * mach ** 2)
 
         data = np.array([

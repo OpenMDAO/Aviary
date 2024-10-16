@@ -43,9 +43,9 @@ class ClimbODETestCase(unittest.TestCase):
 
         throttle_climb = 0.956
         self.prob.set_val(
-            Dynamic.Mission.THROTTLE, throttle_climb, units='unitless')
+            Dynamic.Vehicle.Propulsion.THROTTLE, throttle_climb, units='unitless')
         self.prob.set_val(Dynamic.Mission.ALTITUDE, 1000, units="ft")
-        self.prob.set_val(Dynamic.Mission.MASS, 174845, units="lbm")
+        self.prob.set_val(Dynamic.Vehicle.MASS, 174845, units="lbm")
         self.prob.set_val("EAS", 250, units="kn")
         # slightly greater than zero to help check partials
         self.prob.set_val(Aircraft.Wing.INCIDENCE, 0.0000001, units="deg")
@@ -61,9 +61,10 @@ class ClimbODETestCase(unittest.TestCase):
             "CL": 0.59766664,
             "CD": 0.03070836,
             Dynamic.Mission.ALTITUDE_RATE: 3414.624 / 60,  # ft/s
-            # TAS (kts -> ft/s) * cos(gamma), 253.6827 * 1.68781 * cos(0.13331060446181708)
+            # TAS (kts -> ft/s) * cos(gamma), 253.6827 * 1.68781 *
+            # cos(0.13331060446181708)
             Dynamic.Mission.DISTANCE_RATE: 424.36918705874785,  # ft/s
-            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: -13448.29,  # lbm/h
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL: -13448.29,  # lbm/h
             "theta": 0.22343906,  # rad (12.8021 deg)
             Dynamic.Mission.FLIGHT_PATH_ANGLE: 0.13331060446181708,  # rad (7.638135 deg)
         }
@@ -84,10 +85,12 @@ class ClimbODETestCase(unittest.TestCase):
 
         throttle_climb = 0.956
         self.prob.set_val(
-            Dynamic.Mission.THROTTLE, np.array([
+            Dynamic.Vehicle.Propulsion.THROTTLE, np.array([
                 throttle_climb, throttle_climb]), units='unitless')
-        self.prob.set_val(Dynamic.Mission.ALTITUDE, np.array([11000, 37000]), units="ft")
-        self.prob.set_val(Dynamic.Mission.MASS, np.array([174149, 171592]), units="lbm")
+        self.prob.set_val(
+            Dynamic.Mission.ALTITUDE, np.array([11000, 37000]), units="ft"
+        )
+        self.prob.set_val(Dynamic.Vehicle.MASS, np.array([174149, 171592]), units="lbm")
         self.prob.set_val("EAS", np.array([270, 270]), units="kn")
         self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
         self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
@@ -103,10 +106,13 @@ class ClimbODETestCase(unittest.TestCase):
             Dynamic.Mission.ALTITUDE_RATE: [3053.64 / 60, 430.746 / 60],  # ft/s
             # TAS (kts -> ft/s) * cos(gamma), [319, 459] kts
             Dynamic.Mission.DISTANCE_RATE: [536.23446, 774.40085],  # ft/s
-            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: [-11419.94,  -6050.26],
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL: [
+                -11419.94,
+                -6050.26,
+            ],
             "theta": [0.16541191, 0.08023799],  # rad ([9.47740, 4.59730] deg),
             Dynamic.Mission.FLIGHT_PATH_ANGLE: [0.09462652, 0.00927027],  # rad, gamma
-            Dynamic.Mission.THRUST_TOTAL: [25561.393, 10784.245],
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL: [25561.393, 10784.245],
         }
         check_prob_outputs(self.prob, testvals, 1e-6)
 

@@ -97,8 +97,10 @@ class MissionODE(om.Group):
                 velocity_rate={'units': 'm/s**2', 'shape': (nn,)},
                 has_diag_partials=True,
             ),
-            promotes_inputs=[('mach_rate', Dynamic.Mission.MACH_RATE),
-                             ('sos', Dynamic.Mission.SPEED_OF_SOUND)],
+            promotes_inputs=[
+                ('mach_rate', Dynamic.Atmosphere.MACH_RATE),
+                ('sos', Dynamic.Atmosphere.SPEED_OF_SOUND),
+            ],
             promotes_outputs=[('velocity_rate', Dynamic.Mission.VELOCITY_RATE)],
         )
 
@@ -147,16 +149,20 @@ class MissionODE(om.Group):
             name='mission_EOM',
             subsys=MissionEOM(num_nodes=nn),
             promotes_inputs=[
-                Dynamic.Mission.VELOCITY, Dynamic.Mission.MASS,
-                Dynamic.Mission.THRUST_MAX_TOTAL,
-                Dynamic.Mission.DRAG, Dynamic.Mission.ALTITUDE_RATE,
-                Dynamic.Mission.VELOCITY_RATE],
+                Dynamic.Mission.VELOCITY,
+                Dynamic.Vehicle.MASS,
+                Dynamic.Vehicle.Propulsion.THRUST_MAX_TOTAL,
+                Dynamic.Vehicle.DRAG,
+                Dynamic.Mission.ALTITUDE_RATE,
+                Dynamic.Mission.VELOCITY_RATE,
+            ],
             promotes_outputs=[
                 Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
                 Dynamic.Mission.ALTITUDE_RATE_MAX,
                 Dynamic.Mission.DISTANCE_RATE,
                 'thrust_required',
-            ])
+            ],
+        )
 
         # THROTTLE Section
         # TODO: Split this out into a function that can be used by the other ODEs.
@@ -164,18 +170,21 @@ class MissionODE(om.Group):
 
             # Multi Engine
 
-            self.add_subsystem(name='throttle_balance',
-                               subsys=om.BalanceComp(name="aggregate_throttle",
-                                                     units="unitless",
-                                                     val=np.ones((nn, )),
-                                                     lhs_name='thrust_required',
-                                                     rhs_name=Dynamic.Mission.THRUST_TOTAL,
-                                                     eq_units="lbf",
-                                                     normalize=False,
-                                                     res_ref=1.0e6,
-                                                     ),
-                               promotes_inputs=['*'],
-                               promotes_outputs=['*'])
+            self.add_subsystem(
+                name='throttle_balance',
+                subsys=om.BalanceComp(
+                    name="aggregate_throttle",
+                    units="unitless",
+                    val=np.ones((nn,)),
+                    lhs_name='thrust_required',
+                    rhs_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                    eq_units="lbf",
+                    normalize=False,
+                    res_ref=1.0e6,
+                ),
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
+            )
 
             self.add_subsystem(
                 "throttle_allocator",
@@ -193,33 +202,37 @@ class MissionODE(om.Group):
             # Single Engine
 
             # Add a balance comp to compute throttle based on the required thrust.
-            self.add_subsystem(name='throttle_balance',
-                               subsys=om.BalanceComp(name=Dynamic.Mission.THROTTLE,
-                                                     units="unitless",
-                                                     val=np.ones((nn, )),
-                                                     lhs_name='thrust_required',
-                                                     rhs_name=Dynamic.Mission.THRUST_TOTAL,
-                                                     eq_units="lbf",
-                                                     normalize=False,
-                                                     lower=0.0
-                                                     if options['throttle_enforcement'] == 'bounded'
-                                                     else None,
-                                                     upper=1.0
-                                                     if options['throttle_enforcement'] == 'bounded'
-                                                     else None,
-                                                     res_ref=1.0e6,
-                                                     ),
-                               promotes_inputs=['*'],
-                               promotes_outputs=['*'])
+            self.add_subsystem(
+                name='throttle_balance',
+                subsys=om.BalanceComp(
+                    name=Dynamic.Vehicle.Propulsion.THROTTLE,
+                    units="unitless",
+                    val=np.ones((nn,)),
+                    lhs_name='thrust_required',
+                    rhs_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                    eq_units="lbf",
+                    normalize=False,
+                    lower=0.0 if options['throttle_enforcement'] == 'bounded' else None,
+                    upper=1.0 if options['throttle_enforcement'] == 'bounded' else None,
+                    res_ref=1.0e6,
+                ),
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
+            )
 
-            self.set_input_defaults(Dynamic.Mission.THROTTLE, val=1.0, units='unitless')
+            self.set_input_defaults(
+                Dynamic.Vehicle.Propulsion.THROTTLE, val=1.0, units='unitless'
+            )
 
-        self.set_input_defaults(Dynamic.Mission.MACH, val=np.ones(nn), units='unitless')
-        self.set_input_defaults(Dynamic.Mission.MASS, val=np.ones(nn), units='kg')
+        self.set_input_defaults(
+            Dynamic.Atmosphere.MACH, val=np.ones(nn), units='unitless'
+        )
+        self.set_input_defaults(Dynamic.Vehicle.MASS, val=np.ones(nn), units='kg')
         self.set_input_defaults(Dynamic.Mission.VELOCITY, val=np.ones(nn), units='m/s')
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.ones(nn), units='m')
-        self.set_input_defaults(Dynamic.Mission.ALTITUDE_RATE,
-                                val=np.ones(nn), units='m/s')
+        self.set_input_defaults(
+            Dynamic.Mission.ALTITUDE_RATE, val=np.ones(nn), units='m/s'
+        )
 
         if options['use_actual_takeoff_mass']:
             exec_comp_string = 'initial_mass_residual = initial_mass - mass[0]'
@@ -236,12 +249,15 @@ class MissionODE(om.Group):
             initial_mass_residual={'units': 'kg', 'res_ref': 1.0e5},
         )
 
-        self.add_subsystem('initial_mass_residual_constraint', initial_mass_residual_constraint,
-                           promotes_inputs=[
-                               ('initial_mass', initial_mass_string),
-                               ('mass', Dynamic.Mission.MASS)
-                           ],
-                           promotes_outputs=['initial_mass_residual'])
+        self.add_subsystem(
+            'initial_mass_residual_constraint',
+            initial_mass_residual_constraint,
+            promotes_inputs=[
+                ('initial_mass', initial_mass_string),
+                ('mass', Dynamic.Vehicle.MASS),
+            ],
+            promotes_outputs=['initial_mass_residual'],
+        )
 
         if analysis_scheme is AnalysisScheme.SHOOTING:
             SGM_required_outputs = {

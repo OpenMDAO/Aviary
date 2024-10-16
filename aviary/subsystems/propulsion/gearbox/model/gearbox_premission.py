@@ -23,15 +23,21 @@ class GearboxPreMission(om.Group):
         self.name = 'gearbox_premission'
 
     def setup(self):
-        self.add_subsystem('gearbox_PRM',
-                           om.ExecComp('RPM_out = RPM_in / gear_ratio',
-                                       RPM_out={'val': 0.0, 'units': 'rpm'},
-                                       gear_ratio={'val': 1.0, 'units': 'unitless'},
-                                       RPM_in={'val': 0.0, 'units': 'rpm'},
-                                       has_diag_partials=True),
-                           promotes_inputs=[('RPM_in', Aircraft.Engine.RPM_DESIGN),
-                                            ('gear_ratio', Aircraft.Engine.Gearbox.GEAR_RATIO)],
-                           promotes_outputs=['RPM_out'])
+        self.add_subsystem(
+            'gearbox_PRM',
+            om.ExecComp(
+                'RPM_out = RPM_in / gear_ratio',
+                RPM_out={'val': 0.0, 'units': 'rpm'},
+                gear_ratio={'val': 1.0, 'units': 'unitless'},
+                RPM_in={'val': 0.0, 'units': 'rpm'},
+                has_diag_partials=True,
+            ),
+            promotes_inputs=[
+                ('RPM_in', Aircraft.Engine.RPM_DESIGN),
+                ('gear_ratio', Aircraft.Engine.Gearbox.GEAR_RATIO),
+            ],
+            promotes_outputs=['RPM_out'],
+        )
 
         # max torque is calculated based on input shaft power and output RPM
         self.add_subsystem('torque_comp',
@@ -59,13 +65,20 @@ class GearboxPreMission(om.Group):
             # This gearbox mass calc can work for large systems but can produce negative weights for some inputs
             # Gearbox mass from "An N+3 Technolgoy Level Reference Propulsion System" by Scott Jones, William Haller, and Michael Tong
             # NASA TM 2017-219501
-            self.add_subsystem('gearbox_mass',
-                               om.ExecComp('gearbox_mass = (shaftpower / RPM_out)**(0.75) * (RPM_in / RPM_out)**(0.15)',
-                                           gearbox_mass={'val': 0.0, 'units': 'lb'},
-                                           shaftpower={'val': 0.0, 'units': 'hp'},
-                                           RPM_out={'val': 0.0, 'units': 'rpm'},
-                                           RPM_in={'val': 0.0, 'units': 'rpm'},
-                                           has_diag_partials=True),
-                               promotes_inputs=[('shaftpower', Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN),
-                                                'RPM_out', ('RPM_in', Aircraft.Engine.RPM_DESIGN)],
-                               promotes_outputs=[('gearbox_mass', Aircraft.Engine.Gearbox.MASS)])
+            self.add_subsystem(
+                'gearbox_mass',
+                om.ExecComp(
+                    'gearbox_mass = (shaftpower / RPM_out)**(0.75) * (RPM_in / RPM_out)**(0.15)',
+                    gearbox_mass={'val': 0.0, 'units': 'lb'},
+                    shaftpower={'val': 0.0, 'units': 'hp'},
+                    RPM_out={'val': 0.0, 'units': 'rpm'},
+                    RPM_in={'val': 0.0, 'units': 'rpm'},
+                    has_diag_partials=True,
+                ),
+                promotes_inputs=[
+                    ('shaftpower', Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN),
+                    'RPM_out',
+                    ('RPM_in', Aircraft.Engine.RPM_DESIGN),
+                ],
+                promotes_outputs=[('gearbox_mass', Aircraft.Engine.Gearbox.MASS)],
+            )

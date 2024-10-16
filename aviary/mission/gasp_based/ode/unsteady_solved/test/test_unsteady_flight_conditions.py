@@ -28,10 +28,10 @@ class TestUnsteadyFlightConditions(unittest.TestCase):
             subsys=Atmosphere(num_nodes=nn, output_dsos_dh=True),
             promotes_inputs=[Dynamic.Mission.ALTITUDE],
             promotes_outputs=[
-                Dynamic.Mission.DENSITY,
-                Dynamic.Mission.SPEED_OF_SOUND,
-                Dynamic.Mission.TEMPERATURE,
-                Dynamic.Mission.STATIC_PRESSURE,
+                Dynamic.Atmosphere.DENSITY,
+                Dynamic.Atmosphere.SPEED_OF_SOUND,
+                Dynamic.Atmosphere.TEMPERATURE,
+                Dynamic.Atmosphere.STATIC_PRESSURE,
                 "viscosity",
                 "drhos_dh",
                 "dsos_dh",
@@ -59,16 +59,16 @@ class TestUnsteadyFlightConditions(unittest.TestCase):
             p.set_val("dEAS_dr", np.zeros(nn), units="kn/km")
         else:
             p.set_val(Dynamic.Mission.ALTITUDE, 37500, units="ft")
-            p.set_val(Dynamic.Mission.MACH, 0.78, units="unitless")
+            p.set_val(Dynamic.Atmosphere.MACH, 0.78, units="unitless")
             p.set_val("dmach_dr", np.zeros(nn), units="unitless/km")
 
         p.run_model()
 
-        mach = p.get_val(Dynamic.Mission.MACH)
+        mach = p.get_val(Dynamic.Atmosphere.MACH)
         eas = p.get_val("EAS")
         tas = p.get_val(Dynamic.Mission.VELOCITY, units="m/s")
-        sos = p.get_val(Dynamic.Mission.SPEED_OF_SOUND, units="m/s")
-        rho = p.get_val(Dynamic.Mission.DENSITY, units="kg/m**3")
+        sos = p.get_val(Dynamic.Atmosphere.SPEED_OF_SOUND, units="m/s")
+        rho = p.get_val(Dynamic.Atmosphere.DENSITY, units="kg/m**3")
         rho_sl = RHO_SEA_LEVEL_METRIC
         dTAS_dt_approx = p.get_val("dTAS_dt_approx")
 
