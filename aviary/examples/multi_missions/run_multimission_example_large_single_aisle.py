@@ -34,31 +34,24 @@ from aviary.validation_cases.validation_tests import get_flops_inputs
 # fly the same mission twice with two different passenger loads
 phase_info_primary = copy.deepcopy(phase_info)
 phase_info_deadhead = copy.deepcopy(phase_info)
-# phase_info_deadhead['post_mission']['target_range'] = [500, "nmi"]
 
-# get large single aisle values
-aviary_inputs_primary = get_flops_inputs('LargeSingleAisle2FLOPS')
-aviary_inputs_primary.set_val(
-    Aircraft.CrewPayload.Design.NUM_PASSENGERS, 162, 'unitless')
-aviary_inputs_primary.set_val(
-    'aircraft:crew_and_payload:design:num_tourist_class', 150, 'unitless')
-aviary_inputs_primary.set_val(
-    'aircraft:crew_and_payload:design:num_business_class', 0, 'unitless')
-aviary_inputs_primary.set_val(
-    'aircraft:crew_and_payload:design:num_first_class', 12, 'unitless')
+# get large single aisle aviary_values
+aviary_inputs_primary = get_flops_inputs('LargeSingleAisle2FLOPS', preprocess=False)
 
+# Revise the guess for Design.GROSS_MASS to be lower than the final expected result
+# this will cause SLSQP to work harder to optimize the design because we start infeasible
+aviary_inputs_primary.set_val(Mission.Design.GROSS_MASS, val=100000, units='lbm')
+
+# Set deadhead aviary_values
 aviary_inputs_deadhead = copy.deepcopy(aviary_inputs_primary)
-aviary_inputs_deadhead.set_val('aircraft:crew_and_payload:num_passengers', 0, 'unitless')
+aviary_inputs_deadhead.set_val(
+    'aircraft:crew_and_payload:num_passengers', 0, 'unitless')
 aviary_inputs_deadhead.set_val(
     'aircraft:crew_and_payload:num_tourist_class', 0, 'unitless')
 aviary_inputs_deadhead.set_val(
     'aircraft:crew_and_payload:num_business_class', 0, 'unitless')
 aviary_inputs_deadhead.set_val(
     'aircraft:crew_and_payload:num_first_class', 0, 'unitless')
-aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.MISC_CARGO, 0.0, 'lbm')
-
-# Use this to change the target range of the deadhead mission
-# phase_info_deadhead['post_mission']['target_range'] = [1500, "nmi"]
 
 
 class MultiMissionProblem(om.Problem):
@@ -95,7 +88,7 @@ class MultiMissionProblem(om.Problem):
             prob.link_phases()
 
             # alternate prevents use of equality constraint b/w design and summary gross mass
-            prob.problem_type = ProblemType.ALTERNATE
+            prob.problem_type = ProblemType.MULTI_MISSION
             prob.add_design_variables()
             self.probs.append(prob)
             # phase names for each traj (can be used later to make plots/print outputs)
@@ -327,5 +320,5 @@ if __name__ == '__main__':
     super_prob = large_single_aisle_example(makeN2=makeN2)
 
     # Uncomment the following lines to see mass breakdown details for each mission.
-    # super_prob.model.group_1.list_vars(val=True, units=True, print_arrays=False)
-    # super_prob.model.group_2.list_vars(val=True, units=True, print_arrays=False)
+    # super_prob.model.group_1.list_vars(val=True, units=True, print_arrays=False) # Primary
+    # super_prob.model.group_2.list_vars(val=True, units=True, print_arrays=False) # Deadhead

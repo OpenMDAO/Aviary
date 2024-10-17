@@ -1863,6 +1863,42 @@ class AviaryProblem(om.Problem):
             elif self.problem_type is ProblemType.FALLOUT:
                 print('No design variables for Fallout missions')
 
+            elif self.problem_type is ProblemType.MULTI_MISSION:
+                self.model.add_design_var(
+                    Mission.Summary.GROSS_MASS,
+                    lower=10.,
+                    upper=900e3,
+                    units='lbm',
+                    ref=175e3,
+                )
+
+                self.model.add_constraint(
+                    Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=10
+                )
+
+                # We must ensure that design.gross_mass is greater than mission.summary.gross_mass
+                # and this must hold true for each of the different missions that is flown
+                # the result will be the design.gross_mass should be equal to the mission.summary.gross_mass
+                # of the heaviest mission
+                self.model.add_subsystem(
+                    "GROSS_MASS_constraint",
+                    om.ExecComp(
+                        "gross_mass_resid = design_mass - actual_mass",
+                        design_mass={"val": 1, "units": "kg"},
+                        actual_mass={"val": 0, "units": "kg"},
+                        gross_mass_resid={"val": 30, "units": "kg"},
+                    ),
+                    promotes_inputs=[
+                        ("design_mass", Mission.Design.GROSS_MASS),
+                        ("actual_mass", Mission.Summary.GROSS_MASS),
+                    ],
+                    promotes_outputs=["gross_mass_resid"],
+                )
+
+                self.model.add_constraint(
+                    "gross_mass_resid", lower=0
+                )
+
             if self.mission_method is TWO_DEGREES_OF_FREEDOM and self.analysis_scheme is AnalysisScheme.COLLOCATION:
                 # problem formulation to make the trajectory work
                 self.model.add_design_var(Mission.Takeoff.ASCENT_T_INTIIAL,
