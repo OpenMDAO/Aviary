@@ -70,4 +70,3 @@ class TaxiFuelComponent(om.ExplicitComponent):
 
         J[Dynamic.Mission.MASS, Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL] = dt_taxi
 
-        J[Dynamic.Mission.MASS, Mission.Summary.GROSS_MASS] = np.ones(nn)
