@@ -1,3 +1,7 @@
+from enum import IntEnum
+
+import numpy as np
+
 import openmdao.api as om
 from openmdao.core.component import Component
 from openmdao.utils.units import convert_units
@@ -127,6 +131,56 @@ def units_setter(opt_meta, value):
     return (converted_val, units)
 
 
+def int_enum_setter(opt_meta, value):
+    """
+    Support setting the option with a string or int and converting it to the
+    proper intenum object.
+
+    Parameters
+    ----------
+    opt_meta : dict
+        Dictionary of entries for the option.
+    value : any
+        New value for the option.
+
+    Returns
+    -------
+    any
+        Post processed value to set into the option.
+    """
+    types = opt_meta['types']
+    for type_ in types:
+        if type_ not in (list, np.ndarray):
+            enum_class = type_
+            break
+
+    if isinstance(value, IntEnum):
+        return value
+
+    elif isinstance(value, int):
+        return enum_class(value)
+
+    elif isinstance(value, str):
+        return getattr(enum_class, value)
+
+    elif isinstance(value, list):
+        values = []
+        for val in value:
+            if isinstance(value, IntEnum):
+                values.append(val)
+            elif isinstance(val, int):
+                values.append(enum_class(val))
+            elif isinstance(value, str):
+                values.append(getattr(enum_class, value))
+            else:
+                break
+
+        return values
+
+    msg = f"Value '{value}' not valid for option with types {enum_class}"
+    raise TypeError(msg)
+
+
 def add_aviary_option(comp, name, val=_unspecified, units=None, desc=None, meta_data=_MetaData):
     """
     Adds an option to an Aviary component. Default values from the metadata are used
@@ -160,6 +214,12 @@ def add_aviary_option(comp, name, val=_unspecified, units=None, desc=None, meta_
         comp.options.declare(name, default=(val, units),
                              types=types, desc=desc,
                              set_function=units_setter)
+
+    elif isinstance(val, IntEnum):
+        comp.options.declare(name, default=val,
+                             types=meta['types'], desc=desc,
+                             set_function=int_enum_setter)
+
     else:
         comp.options.declare(name, default=val,
                              types=meta['types'], desc=desc)

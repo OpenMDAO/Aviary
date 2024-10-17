@@ -2341,7 +2341,7 @@ add_meta_data(
                      },
     option=True,
     default_value=GASPEngineType.TURBOJET,
-    types=(list, GASPEngineType, int, np.ndarray),
+    types=(GASPEngineType, list),
     units="unitless",
     desc='specifies engine type used for engine mass calculation',
 )

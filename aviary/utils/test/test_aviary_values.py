@@ -87,26 +87,24 @@ class TestTypes(unittest.TestCase):
         except:
             self.fail('Expecting to be able to set the value of an Enum.')
 
-        # TODO - When we moved the aviary_options into individual component options,
-        # we lost the ability to set them as strings.
-        # try:
-            # vals.set_val(Aircraft.Engine.TYPE, 'turbojet')
-            # self.assertTrue(vals.get_val(Aircraft.Engine.TYPE)
-                            #== GASPEngineType.TURBOJET)
-        # except:
-            # self.fail('Expecting to be able to set the value of an Enum from an int.')
+        try:
+            vals.set_val(Aircraft.Engine.TYPE, 'turbojet')
+            self.assertTrue(vals.get_val(Aircraft.Engine.TYPE)
+                            == GASPEngineType.TURBOJET)
+        except:
+            self.fail('Expecting to be able to set the value of an Enum from an int.')
 
-        # try:
-            # vals.set_val(Aircraft.Engine.TYPE, 'TURBOJET')
-            # self.assertTrue(vals.get_val(Aircraft.Engine.TYPE)
-                            #is GASPEngineType.TURBOJET)
-        # except:
-            # self.fail('Expecting to be able to set the value of an Enum from a string.')
+        try:
+            vals.set_val(Aircraft.Engine.TYPE, 'TURBOJET')
+            self.assertTrue(vals.get_val(Aircraft.Engine.TYPE)
+                            is GASPEngineType.TURBOJET)
+        except:
+            self.fail('Expecting to be able to set the value of an Enum from a string.')
 
         try:
             vals.set_val(Aircraft.Engine.TYPE, 7)
             self.assertTrue(vals.get_val(Aircraft.Engine.TYPE)
-                            == GASPEngineType.TURBOJET)
+                            is GASPEngineType.TURBOJET)
         except:
             self.fail('Expecting to be able to set the value of an Enum from an int.')
 
