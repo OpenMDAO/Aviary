@@ -21,14 +21,14 @@ class TestGearbox(unittest.TestCase):
 
         prob.setup(force_alloc_complex=True)
 
-        prob.set_val(Dynamic.Mission.THROTTLE, np.linspace(0, 1, nn))
-        prob.set_val(Dynamic.Mission.RPM, np.linspace(0, 6000, nn))
+        prob.set_val(Dynamic.Vehicle.Propulsion.THROTTLE, np.linspace(0, 1, nn))
+        prob.set_val(Dynamic.Vehicle.Propulsion.RPM, np.linspace(0, 6000, nn))
         prob.set_val('torque_unscaled', np.linspace(0, 1800, nn), 'N*m')
         prob.set_val(Aircraft.Engine.SCALE_FACTOR, 1.12)
 
         prob.run_model()
 
-        torque = prob.get_val(Dynamic.Mission.TORQUE)
+        torque = prob.get_val(Dynamic.Vehicle.Propulsion.TORQUE)
         efficiency = prob.get_val('motor_efficiency')
 
         torque_expected = np.array([0.0, 900.0, 1800.0]) * 1.12

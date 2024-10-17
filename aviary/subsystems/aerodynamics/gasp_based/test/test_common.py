@@ -21,13 +21,13 @@ class TestAeroForces(unittest.TestCase):
 
         prob.set_val("CL", [1.0, 0.9, 0.8])
         prob.set_val("CD", [1.0, 0.95, 0.85])
-        prob.set_val(Dynamic.Mission.DYNAMIC_PRESSURE, 1, units="psf")
+        prob.set_val(Dynamic.Atmosphere.DYNAMIC_PRESSURE, 1, units="psf")
         prob.set_val(Aircraft.Wing.AREA, 1370.3, units="ft**2")
 
         prob.run_model()
 
-        lift = prob.get_val(Dynamic.Mission.LIFT)
-        drag = prob.get_val(Dynamic.Mission.DRAG)
+        lift = prob.get_val(Dynamic.Vehicle.LIFT)
+        drag = prob.get_val(Dynamic.Vehicle.DRAG)
         assert_near_equal(lift, [1370.3, 1233.27, 1096.24])
         assert_near_equal(drag, [1370.3, 1301.785, 1164.755])
 

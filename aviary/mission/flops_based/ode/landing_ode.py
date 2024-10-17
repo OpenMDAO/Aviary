@@ -109,7 +109,7 @@ class FlareODE(om.Group):
             StallSpeed(num_nodes=nn),
             promotes_inputs=[
                 "mass",
-                Dynamic.Mission.DENSITY,
+                Dynamic.Atmosphere.DENSITY,
                 ('area', Aircraft.Wing.AREA),
                 ("lift_coefficient_max", Mission.Landing.LIFT_COEFFICIENT_MAX),
             ],
@@ -170,10 +170,10 @@ class FlareODE(om.Group):
             promotes_inputs=[
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 Dynamic.Mission.VELOCITY,
-                Dynamic.Mission.MASS,
-                Dynamic.Mission.LIFT,
-                Dynamic.Mission.THRUST_TOTAL,
-                Dynamic.Mission.DRAG,
+                Dynamic.Vehicle.MASS,
+                Dynamic.Vehicle.LIFT,
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                Dynamic.Vehicle.DRAG,
                 'angle_of_attack',
                 'angle_of_attack_rate',
                 Mission.Landing.FLARE_RATE,

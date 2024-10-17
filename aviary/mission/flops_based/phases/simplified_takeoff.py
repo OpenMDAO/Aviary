@@ -25,7 +25,7 @@ class StallSpeed(om.ExplicitComponent):
         )
 
         self.add_input(
-            Dynamic.Mission.DENSITY,
+            Dynamic.Atmosphere.DENSITY,
             val=1.225,
             units="kg/m**3",
             desc="atmospheric density",
@@ -56,7 +56,7 @@ class StallSpeed(om.ExplicitComponent):
         # This is only necessary because the equation expects newtons,
         # but the mission expects pounds mass instead of pounds force.
         weight = weight*4.44822
-        rho = inputs[Dynamic.Mission.DENSITY]
+        rho = inputs[Dynamic.Atmosphere.DENSITY]
         S = inputs["planform_area"]
         Cl_max = inputs["Cl_max"]
 
@@ -67,7 +67,7 @@ class StallSpeed(om.ExplicitComponent):
     def compute_partials(self, inputs, J):
 
         weight = inputs["mass"] * GRAV_ENGLISH_LBM
-        rho = inputs[Dynamic.Mission.DENSITY]
+        rho = inputs[Dynamic.Atmosphere.DENSITY]
         S = inputs["planform_area"]
         Cl_max = inputs["Cl_max"]
 
@@ -75,7 +75,7 @@ class StallSpeed(om.ExplicitComponent):
 
         J["v_stall", "mass"] = 0.5 * 4.44822**.5 * \
             rad ** (-0.5) * 2 * GRAV_ENGLISH_LBM / (rho * S * Cl_max)
-        J["v_stall", Dynamic.Mission.DENSITY] = (
+        J["v_stall", Dynamic.Atmosphere.DENSITY] = (
             0.5 * 4.44822**0.5 * rad ** (-0.5) * (-2 * weight) / (rho**2 * S * Cl_max)
         )
         J["v_stall", "planform_area"] = (
@@ -109,7 +109,7 @@ class FinalTakeoffConditions(om.ExplicitComponent):
         add_aviary_input(self, Mission.Takeoff.FUEL_SIMPLE, val=10.e3)
 
         self.add_input(
-            Dynamic.Mission.DENSITY,
+            Dynamic.Atmosphere.DENSITY,
             val=1.225,
             units="kg/m**3",
             desc="atmospheric density",
@@ -143,7 +143,7 @@ class FinalTakeoffConditions(om.ExplicitComponent):
             Mission.Takeoff.GROUND_DISTANCE,
             [
                 Mission.Summary.GROSS_MASS,
-                Dynamic.Mission.DENSITY,
+                Dynamic.Atmosphere.DENSITY,
                 Aircraft.Wing.AREA,
                 Mission.Takeoff.LIFT_COEFFICIENT_MAX,
                 Mission.Design.THRUST_TAKEOFF_PER_ENG,
@@ -168,7 +168,7 @@ class FinalTakeoffConditions(om.ExplicitComponent):
         v_stall = inputs["v_stall"]
         gross_mass = inputs[Mission.Summary.GROSS_MASS]
         ramp_weight = gross_mass * GRAV_ENGLISH_LBM
-        rho = inputs[Dynamic.Mission.DENSITY]
+        rho = inputs[Dynamic.Atmosphere.DENSITY]
         S = inputs[Aircraft.Wing.AREA]
         Cl_max = inputs[Mission.Takeoff.LIFT_COEFFICIENT_MAX]
         thrust = inputs[Mission.Design.THRUST_TAKEOFF_PER_ENG]
@@ -220,7 +220,7 @@ class FinalTakeoffConditions(om.ExplicitComponent):
         rho_SL = RHO_SEA_LEVEL_METRIC
 
         ramp_weight = inputs[Mission.Summary.GROSS_MASS] * GRAV_ENGLISH_LBM
-        rho = inputs[Dynamic.Mission.DENSITY]
+        rho = inputs[Dynamic.Atmosphere.DENSITY]
         S = inputs[Aircraft.Wing.AREA]
         Cl_max = inputs[Mission.Takeoff.LIFT_COEFFICIENT_MAX]
         thrust = inputs[Mission.Design.THRUST_TAKEOFF_PER_ENG]
@@ -362,7 +362,7 @@ class FinalTakeoffConditions(om.ExplicitComponent):
 
         J[Mission.Takeoff.GROUND_DISTANCE,
             Mission.Summary.GROSS_MASS] = dRD_dM + dRot_dM + dCout_dM
-        J[Mission.Takeoff.GROUND_DISTANCE, Dynamic.Mission.DENSITY] = (
+        J[Mission.Takeoff.GROUND_DISTANCE, Dynamic.Atmosphere.DENSITY] = (
             dRD_dRho + dRot_dRho + dCout_dRho
         )
         J[Mission.Takeoff.GROUND_DISTANCE,
@@ -402,7 +402,7 @@ class TakeoffGroup(om.Group):
             ],
             promotes_inputs=[
                 ("mass", Mission.Summary.GROSS_MASS),
-                Dynamic.Mission.DENSITY,
+                Dynamic.Atmosphere.DENSITY,
                 ('planform_area', Aircraft.Wing.AREA),
                 ("Cl_max", Mission.Takeoff.LIFT_COEFFICIENT_MAX),
             ],
@@ -414,7 +414,7 @@ class TakeoffGroup(om.Group):
             promotes_inputs=[
                 "v_stall",
                 Mission.Summary.GROSS_MASS,
-                Dynamic.Mission.DENSITY,
+                Dynamic.Atmosphere.DENSITY,
                 Aircraft.Wing.AREA,
                 Mission.Takeoff.FUEL_SIMPLE,
                 Mission.Takeoff.LIFT_COEFFICIENT_MAX,

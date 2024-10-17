@@ -881,14 +881,18 @@ class EngineDeck(EngineModel):
                                 alt_table, packed_data[ALTITUDE][M, A, 0])
 
                 # add inputs and outputs to interpolator
-                interp_throttles.add_input(Dynamic.Mission.MACH,
-                                           mach_table,
-                                           units='unitless',
-                                           desc='Current flight Mach number')
-                interp_throttles.add_input(Dynamic.Mission.ALTITUDE,
-                                           alt_table,
-                                           units=units[ALTITUDE],
-                                           desc='Current flight altitude')
+                interp_throttles.add_input(
+                    Dynamic.Atmosphere.MACH,
+                    mach_table,
+                    units='unitless',
+                    desc='Current flight Mach number',
+                )
+                interp_throttles.add_input(
+                    Dynamic.Mission.ALTITUDE,
+                    alt_table,
+                    units=units[ALTITUDE],
+                    desc='Current flight altitude',
+                )
                 if not self.global_throttle:
                     interp_throttles.add_output('throttle_max',
                                                 self.throttle_max,
@@ -907,14 +911,18 @@ class EngineDeck(EngineModel):
             max_thrust_engine = om.MetaModelSemiStructuredComp(
                 method=interp_method, extrapolate=False, vec_size=num_nodes)
 
-            max_thrust_engine.add_input(Dynamic.Mission.MACH,
-                                        self.data[MACH],
-                                        units='unitless',
-                                        desc='Current flight Mach number')
-            max_thrust_engine.add_input(Dynamic.Mission.ALTITUDE,
-                                        self.data[ALTITUDE],
-                                        units=units[ALTITUDE],
-                                        desc='Current flight altitude')
+            max_thrust_engine.add_input(
+                Dynamic.Atmosphere.MACH,
+                self.data[MACH],
+                units='unitless',
+                desc='Current flight Mach number',
+            )
+            max_thrust_engine.add_input(
+                Dynamic.Mission.ALTITUDE,
+                self.data[ALTITUDE],
+                units=units[ALTITUDE],
+                desc='Current flight altitude',
+            )
             # replace throttle coming from mission with max value based on flight condition
             max_thrust_engine.add_input('throttle_max',
                                         self.data[THROTTLE],
@@ -946,7 +954,7 @@ class EngineDeck(EngineModel):
         # add created subsystems to engine_group
         outputs = []
         if getattr(self, 'use_t4', False):
-            outputs.append(Dynamic.Mission.TEMPERATURE_T4)
+            outputs.append(Dynamic.Vehicle.Propulsion.TEMPERATURE_T4)
 
         engine_group.add_subsystem('interpolation',
                                    engine,
@@ -962,9 +970,9 @@ class EngineDeck(EngineModel):
                 'uncorrect_shaft_power',
                 subsys=UncorrectData(num_nodes=num_nodes, aviary_options=self.options),
                 promotes_inputs=[
-                    Dynamic.Mission.TEMPERATURE,
-                    Dynamic.Mission.STATIC_PRESSURE,
-                    Dynamic.Mission.MACH,
+                    Dynamic.Atmosphere.TEMPERATURE,
+                    Dynamic.Atmosphere.STATIC_PRESSURE,
+                    Dynamic.Atmosphere.MACH,
                 ],
             )
 
@@ -997,9 +1005,9 @@ class EngineDeck(EngineModel):
                         num_nodes=num_nodes, aviary_options=self.options
                     ),
                     promotes_inputs=[
-                        Dynamic.Mission.TEMPERATURE,
-                        Dynamic.Mission.STATIC_PRESSURE,
-                        Dynamic.Mission.MACH,
+                        Dynamic.Atmosphere.TEMPERATURE,
+                        Dynamic.Atmosphere.STATIC_PRESSURE,
+                        Dynamic.Atmosphere.MACH,
                     ],
                 )
 
@@ -1018,7 +1026,7 @@ class EngineDeck(EngineModel):
                 aviary_options=self.options,
                 engine_variables=engine_outputs,
             ),
-            promotes_inputs=[Aircraft.Engine.SCALE_FACTOR, Dynamic.Mission.MACH],
+            promotes_inputs=[Aircraft.Engine.SCALE_FACTOR, Dynamic.Atmosphere.MACH],
             promotes_outputs=['*'],
         )
 

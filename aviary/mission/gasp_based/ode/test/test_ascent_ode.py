@@ -39,14 +39,18 @@ class AscentODETestCase(unittest.TestCase):
 
         tol = tol = 1e-6
         assert_near_equal(
-            self.prob[Dynamic.Mission.VELOCITY_RATE], np.array(
-                [641174.75, 641174.75]), tol)
+            self.prob[Dynamic.Mission.VELOCITY_RATE],
+            np.array([641174.75, 641174.75]),
+            tol,
+        )
         assert_near_equal(
-            self.prob[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE], np.array(
-                [2260.644, 2260.644]), tol)
+            self.prob[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE],
+            np.array([2260.644, 2260.644]),
+            tol,
+        )
         assert_near_equal(
-            self.prob[Dynamic.Mission.ALTITUDE_RATE], np.array(
-                [0.0, 0.0]), tol)
+            self.prob[Dynamic.Mission.ALTITUDE_RATE], np.array([0.0, 0.0]), tol
+        )
         assert_near_equal(
             self.prob[Dynamic.Mission.DISTANCE_RATE], np.array(
                 [168.781, 168.781]), tol)

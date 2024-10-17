@@ -121,10 +121,13 @@ class TakeoffAeroGroup(om.Group):
         }
 
         inputs = [
-            'angle_of_attack', Dynamic.Mission.ALTITUDE, Dynamic.Mission.FLIGHT_PATH_ANGLE,
+            'angle_of_attack',
+            Dynamic.Mission.ALTITUDE,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE,
             ('minimum_drag_coefficient', Mission.Takeoff.DRAG_COEFFICIENT_MIN),
-            Aircraft.Wing.ASPECT_RATIO, Aircraft.Wing.HEIGHT,
-            Aircraft.Wing.SPAN
+            Aircraft.Wing.ASPECT_RATIO,
+            Aircraft.Wing.HEIGHT,
+            Aircraft.Wing.SPAN,
         ]
 
         self.add_subsystem(
@@ -177,8 +180,8 @@ class TakeoffAeroGroup(om.Group):
         self.connect('ground_effect.drag_coefficient', 'ground_effect_drag')
         self.connect('climb_drag_coefficient', 'aero_forces.CD')
 
-        inputs = [Dynamic.Mission.DYNAMIC_PRESSURE, Aircraft.Wing.AREA]
-        outputs = [Dynamic.Mission.LIFT, Dynamic.Mission.DRAG]
+        inputs = [Dynamic.Atmosphere.DYNAMIC_PRESSURE, Aircraft.Wing.AREA]
+        outputs = [Dynamic.Vehicle.LIFT, Dynamic.Vehicle.DRAG]
 
         self.add_subsystem(
             'aero_forces', AeroForces(num_nodes=nn),
