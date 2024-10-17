@@ -87,7 +87,7 @@ class AltEngineOilMass(om.ExplicitComponent):
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
         aviary_options: AviaryValues = self.options['aviary_options']
         pax = aviary_options.get_val(
-            Aircraft.CrewPayload.NUM_PASSENGERS, units='unitless')
+            Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless')
 
         scaler = inputs[Aircraft.Propulsion.ENGINE_OIL_MASS_SCALER]
 
@@ -97,7 +97,7 @@ class AltEngineOilMass(om.ExplicitComponent):
     def compute_partials(self, inputs, J):
         aviary_options: AviaryValues = self.options['aviary_options']
         pax = aviary_options.get_val(
-            Aircraft.CrewPayload.NUM_PASSENGERS, units='unitless')
+            Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless')
 
         J[Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS,
           Aircraft.Propulsion.ENGINE_OIL_MASS_SCALER
