@@ -42,7 +42,8 @@ class TaxiFuelComponent(om.ExplicitComponent):
         )
 
     def setup_partials(self):
-        arange = np.arange(self.options['num_nodes'])
+        nn = np.arange(self.options['num_nodes'])
+        arange = np.arange(nn)
 
         self.declare_partials(
             "taxi_fuel_consumed", [
@@ -52,7 +53,7 @@ class TaxiFuelComponent(om.ExplicitComponent):
             Dynamic.Mission.MASS, Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             rows=arange, cols=arange)
         self.declare_partials(
-            Dynamic.Mission.MASS, Mission.Summary.GROSS_MASS, val=1)
+            Dynamic.Mission.MASS, Mission.Summary.GROSS_MASS, val=np.ones(nn))
 
     def compute(self, inputs, outputs):
         fuelflow, takeoff_mass = inputs.values()
@@ -68,5 +69,3 @@ class TaxiFuelComponent(om.ExplicitComponent):
         J["taxi_fuel_consumed", Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL] = -dt_taxi
 
         J[Dynamic.Mission.MASS, Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL] = dt_taxi
-
-        J[Dynamic.Mission.MASS, Mission.Summary.GROSS_MASS] = np.ones(nn)
