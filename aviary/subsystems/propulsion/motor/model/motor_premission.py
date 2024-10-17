@@ -13,7 +13,8 @@ class MotorPreMission(om.Group):
 
     def initialize(self):
         self.options.declare(
-            "aviary_inputs", types=AviaryValues,
+            "aviary_inputs",
+            types=AviaryValues,
             desc="collection of Aircraft/Mission specific options",
             default=None,
         )

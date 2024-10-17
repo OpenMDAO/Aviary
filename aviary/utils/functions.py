@@ -128,6 +128,10 @@ def convert_strings_to_data(string_list):
     return value_list
 
 
+# TODO this function is only used in a single place (process_input_decks.py), and its
+#      functionality can get handled in other places (convert_strings_to_data being able
+#      to handle lists/arrays, and other special handling directly present in
+#      process_input_decks.py)
 def set_value(var_name, var_value, aviary_values: AviaryValues, units=None, is_array=False, meta_data=_MetaData):
     """
     Wrapper for AviaryValues.set_val(). Existing value/units of the provided variable name are used as defaults if
@@ -151,17 +155,17 @@ def set_value(var_name, var_value, aviary_values: AviaryValues, units=None, is_a
 
     if is_array:
         var_value = np.atleast_1d(var_value)
-    elif len(var_value) == 1 and not isinstance(current_value, list):
+    elif len(var_value) == 1 and not isinstance(current_value, (list, np.ndarray)):
         # if only a single value is provided, don't store it as a list
         var_value = var_value[0]
 
     # TODO handle enums in an automated method via checking metadata for enum type
     if var_name == 'settings:problem_type':
-        var_values = ProblemType(var_value)
+        var_value = ProblemType(var_value)
     if var_name == 'settings:equations_of_motion':
-        var_values = EquationsOfMotion(var_value)
+        var_value = EquationsOfMotion(var_value)
     if var_name == 'settings:mass_method':
-        var_values = LegacyCode(var_value)
+        var_value = LegacyCode(var_value)
 
     aviary_values.set_val(var_name, val=var_value, units=units, meta_data=meta_data)
     return aviary_values

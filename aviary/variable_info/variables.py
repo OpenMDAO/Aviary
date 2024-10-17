@@ -618,8 +618,8 @@ class Dynamic:
     class Mission:
         """
         Kinematic description of vehicle states in a ground-fixed axis.
-        These values are typically ingested by the Equations of Motion to determine
-        vehicle state at a later time.
+        These values are typically used by the Equations of Motion to determine
+        vehicle states at other timesteps.
         """
 
         # TODO Vehicle summary forces, torques, etc. in X,Y,Z axes should also go here
