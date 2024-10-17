@@ -17,7 +17,8 @@ class SizeGroupTestCase1(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM,
                         val=False, units='unitless')
-        options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS,
+                        val=180, units='unitless')
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units="inch")
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.Fuselage.NUM_SEATS_ABREAST, 6)
@@ -164,7 +165,8 @@ class SizeGroupTestCase2(unittest.TestCase):
         options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM,
                         val=False, units='unitless')
-        options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS,
+                        val=180, units='unitless')
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
         options.set_val(Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED,
                         val=True, units='unitless')
@@ -384,7 +386,8 @@ class SizeGroupTestCase3(unittest.TestCase):
                         val=True, units='unitless')
         options.set_val(Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF,
                         val=True, units='unitless')
-        options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS,
+                        val=180, units='unitless')
         options.set_val(Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED,
                         val=True, units='unitless')
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units="inch")
@@ -607,7 +610,8 @@ class SizeGroupTestCase4(unittest.TestCase):
                         val=False, units='unitless')
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM,
                         val=False, units='unitless')
-        options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS,
+                        val=180, units='unitless')
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units="inch")
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.Fuselage.NUM_SEATS_ABREAST, 1)

@@ -151,10 +151,18 @@ class ProblemType(Enum):
     weight and empty weight constant. Using the specified actual
     gross weight, it will then find the maximum distance the off-design
     aircraft can fly.
+
+    MULTI_MISSION: Similar to a SIZING mission, however it varies the 
+    design gross weight and actual gross weight across multiple missions 
+    to and closes design range for each mission. This causes the empty 
+    weight and the fuel weight to change. The final result will be a 
+    single empty weight, for all the different missions, and multiple
+    values for fuel weight, unique to each mission.
     """
     SIZING = 'sizing'
     ALTERNATE = 'alternate'
     FALLOUT = 'fallout'
+    MULTI_MISSION = 'multimission'
 
 
 class SpeedType(Enum):
