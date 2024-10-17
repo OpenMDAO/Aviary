@@ -26,14 +26,20 @@ class DescentODETestCase(unittest.TestCase):
 
         aviary_options = get_option_defaults()
         default_mission_subsystems = get_default_mission_subsystems(
-            'GASP', build_engine_deck(aviary_options))
+            'GASP', build_engine_deck(aviary_options)
+        )
 
-        self.sys = self.prob.model = DescentODE(num_nodes=1,
-                                                mach_cruise=0.8,
-                                                aviary_options=get_option_defaults(),
-                                                core_subsystems=default_mission_subsystems)
+        self.sys = self.prob.model = DescentODE(
+            num_nodes=1,
+            mach_cruise=0.8,
+            aviary_options=get_option_defaults(),
+            core_subsystems=default_mission_subsystems,
+        )
 
-    @unittest.skipIf(version.parse(openmdao.__version__) < version.parse("3.26"), "Skipping due to OpenMDAO version being too low (<3.26)")
+    @unittest.skipIf(
+        version.parse(openmdao.__version__) < version.parse("3.26"),
+        "Skipping due to OpenMDAO version being too low (<3.26)",
+    )
     def test_high_alt(self):
         # Test descent above 10k ft with Mach under and over the EAS limit
         self.sys.options["num_nodes"] = 2
@@ -49,6 +55,8 @@ class DescentODETestCase(unittest.TestCase):
             Dynamic.Mission.ALTITUDE, np.array([36500, 14500]), units="ft"
         )
         self.prob.set_val(Dynamic.Vehicle.MASS, np.array([147661, 147572]), units="lbm")
+        self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
+        self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
 
         set_params_for_unit_tests(self.prob)
 
@@ -89,6 +97,8 @@ class DescentODETestCase(unittest.TestCase):
         self.prob.set_val(Dynamic.Mission.ALTITUDE, 1500, units="ft")
         self.prob.set_val(Dynamic.Vehicle.MASS, 147410, units="lbm")
         self.prob.set_val("EAS", 250, units="kn")
+        self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
+        self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
 
         set_params_for_unit_tests(self.prob)
 

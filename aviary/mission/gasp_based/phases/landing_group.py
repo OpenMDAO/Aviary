@@ -3,8 +3,10 @@ from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.mission.gasp_based.ode.base_ode import BaseODE
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.phases.landing_components import (
-    GlideConditionComponent, LandingAltitudeComponent,
-    LandingGroundRollComponent)
+    GlideConditionComponent,
+    LandingAltitudeComponent,
+    LandingGroundRollComponent,
+)
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
 from aviary.variable_info.enums import SpeedType
@@ -55,9 +57,9 @@ class LandingSegment(BaseODE):
             if isinstance(subsystem, AerodynamicsBuilderBase):
                 kwargs = {'method': 'low_speed'}
                 aero_builder = subsystem
-                aero_system = subsystem.build_mission(num_nodes=1,
-                                                      aviary_inputs=aviary_options,
-                                                      **kwargs)
+                aero_system = subsystem.build_mission(
+                    num_nodes=1, aviary_inputs=aviary_options, **kwargs
+                )
                 self.add_subsystem(
                     subsystem.name,
                     aero_system,
@@ -91,7 +93,8 @@ class LandingSegment(BaseODE):
 
             if isinstance(subsystem, PropulsionBuilderBase):
                 propulsion_system = subsystem.build_mission(
-                    num_nodes=1, aviary_inputs=aviary_options)
+                    num_nodes=1, aviary_inputs=aviary_options
+                )
                 propulsion_mission = self.add_subsystem(
                     subsystem.name,
                     propulsion_system,
@@ -108,7 +111,8 @@ class LandingSegment(BaseODE):
                     ],
                 )
                 propulsion_mission.set_input_defaults(
-                    Dynamic.Vehicle.Propulsion.THROTTLE, 0.0)
+                    Dynamic.Vehicle.Propulsion.THROTTLE, 0.0
+                )
 
         self.add_subsystem(
             "glide",
@@ -149,15 +153,14 @@ class LandingSegment(BaseODE):
             promotes_outputs=[
                 (Dynamic.Atmosphere.DENSITY, "rho_td"),
                 (Dynamic.Atmosphere.SPEED_OF_SOUND, "sos_td"),
+                (Dynamic.Atmosphere.TEMPERATURE, "T_td"),
                 ("viscosity", "viscosity_td"),
                 (Dynamic.Atmosphere.DYNAMIC_PRESSURE, "q_td"),
                 (Dynamic.Atmosphere.MACH, "mach_td"),
             ],
         )
 
-        kwargs = {'method': 'low_speed',
-                  'retract_flaps': True,
-                  'retract_gear': False}
+        kwargs = {'method': 'low_speed', 'retract_flaps': True, 'retract_gear': False}
 
         self.add_subsystem(
             "aero_td",
@@ -224,11 +227,10 @@ class LandingSegment(BaseODE):
         # landing doesn't change flap or gear position
         self.set_input_defaults("t_init_flaps_app", val=1e10)
         self.set_input_defaults("t_init_gear_app", val=1e10)
-        self.set_input_defaults(
-            Mission.Landing.INITIAL_ALTITUDE, val=50, units="ft")
-        self.set_input_defaults('aero_ramps.flap_factor:final_val', val=1.)
-        self.set_input_defaults('aero_ramps.gear_factor:final_val', val=1.)
-        self.set_input_defaults('aero_ramps.flap_factor:initial_val', val=0.)
-        self.set_input_defaults('aero_ramps.gear_factor:initial_val', val=0.)
+        self.set_input_defaults(Mission.Landing.INITIAL_ALTITUDE, val=50, units="ft")
+        self.set_input_defaults('aero_ramps.flap_factor:final_val', val=1.0)
+        self.set_input_defaults('aero_ramps.gear_factor:final_val', val=1.0)
+        self.set_input_defaults('aero_ramps.flap_factor:initial_val', val=0.0)
+        self.set_input_defaults('aero_ramps.gear_factor:initial_val', val=0.0)
 
         self.set_input_defaults(Aircraft.Wing.AREA, val=1.0, units="ft**2")

@@ -4,7 +4,10 @@ import openmdao.api as om
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
 from aviary.mission.flops_based.ode.mission_EOM import MissionEOM
-from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs, add_SGM_required_outputs
+from aviary.mission.gasp_based.ode.time_integration_base_classes import (
+    add_SGM_required_inputs,
+    add_SGM_required_outputs,
+)
 from aviary.subsystems.propulsion.throttle_allocation import ThrottleAllocator
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import promote_aircraft_and_mission_vars
@@ -27,36 +30,49 @@ class MissionODE(om.Group):
 
     def initialize(self):
         self.options.declare(
-            'num_nodes', types=int,
-            desc='Number of nodes to be evaluated in the RHS')
+            'num_nodes', types=int, desc='Number of nodes to be evaluated in the RHS'
+        )
         self.options.declare(
-            'subsystem_options', types=dict, default={},
-            desc='dictionary of parameters to be passed to the subsystem builders')
+            'subsystem_options',
+            types=dict,
+            default={},
+            desc='dictionary of parameters to be passed to the subsystem builders',
+        )
         self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+            'aviary_options',
+            types=AviaryValues,
+            desc='collection of Aircraft/Mission specific options',
+        )
         self.options.declare(
             'core_subsystems',
-            desc='list of core subsystem builder instances to be added to the ODE'
+            desc='list of core subsystem builder instances to be added to the ODE',
         )
         self.options.declare(
-            'external_subsystems', default=[],
-            desc='list of external subsystem builder instances to be added to the ODE')
+            'external_subsystems',
+            default=[],
+            desc='list of external subsystem builder instances to be added to the ODE',
+        )
         self.options.declare(
-            'meta_data', default=_MetaData,
-            desc='metadata associated with the variables to be passed into the ODE')
+            'meta_data',
+            default=_MetaData,
+            desc='metadata associated with the variables to be passed into the ODE',
+        )
         self.options.declare(
-            'use_actual_takeoff_mass', default=False,
-            desc='flag to use actual takeoff mass in the climb phase, otherwise assume 100 kg fuel burn')
+            'use_actual_takeoff_mass',
+            default=False,
+            desc='flag to use actual takeoff mass in the climb phase, otherwise assume 100 kg fuel burn',
+        )
         self.options.declare(
-            'throttle_enforcement', default='path_constraint',
+            'throttle_enforcement',
+            default='path_constraint',
             values=['path_constraint', 'boundary_constraint', 'bounded', None],
-            desc='flag to enforce throttle constraints on the path or at the segment boundaries or using solver bounds'
+            desc='flag to enforce throttle constraints on the path or at the segment boundaries or using solver bounds',
         )
         self.options.declare(
-            'throttle_allocation', default=ThrottleAllocation.FIXED,
+            'throttle_allocation',
+            default=ThrottleAllocation.FIXED,
             types=ThrottleAllocation,
-            desc='Flag that determines how to handle throttles for multiple engines.'
+            desc='Flag that determines how to handle throttles for multiple engines.',
         )
         self.options.declare(
             "analysis_scheme",
@@ -117,10 +133,12 @@ class MissionODE(om.Group):
             system = subsystem.build_mission(**kwargs)
 
             if system is not None:
-                self.add_subsystem(subsystem.name,
-                                   system,
-                                   promotes_inputs=subsystem.mission_inputs(**kwargs),
-                                   promotes_outputs=subsystem.mission_outputs(**kwargs))
+                self.add_subsystem(
+                    subsystem.name,
+                    system,
+                    promotes_inputs=subsystem.mission_inputs(**kwargs),
+                    promotes_outputs=subsystem.mission_outputs(**kwargs),
+                )
 
         # Create a lightly modified version of an OM group to add external subsystems
         # to the ODE with a special configure() method that promotes
@@ -130,11 +148,13 @@ class MissionODE(om.Group):
 
         for subsystem in self.options['external_subsystems']:
             subsystem_mission = subsystem.build_mission(
-                num_nodes=nn, aviary_inputs=aviary_options)
+                num_nodes=nn, aviary_inputs=aviary_options
+            )
             if subsystem_mission is not None:
                 add_subsystem_group = True
-                external_subsystem_group.add_subsystem(subsystem.name,
-                                                       subsystem_mission)
+                external_subsystem_group.add_subsystem(
+                    subsystem.name, subsystem_mission
+                )
 
         # Only add the external subsystem group if it has at least one subsystem.
         # Without this logic there'd be an empty OM group added to the ODE.
@@ -143,7 +163,8 @@ class MissionODE(om.Group):
                 name='external_subsystems',
                 subsys=external_subsystem_group,
                 promotes_inputs=['*'],
-                promotes_outputs=['*'])
+                promotes_outputs=['*'],
+            )
 
         self.add_subsystem(
             name='mission_EOM',
@@ -191,10 +212,10 @@ class MissionODE(om.Group):
                 ThrottleAllocator(
                     num_nodes=nn,
                     aviary_options=aviary_options,
-                    throttle_allocation=self.options['throttle_allocation']
+                    throttle_allocation=self.options['throttle_allocation'],
                 ),
                 promotes_inputs=['*'],
-                promotes_outputs=['*']
+                promotes_outputs=['*'],
             )
 
         else:
@@ -267,10 +288,11 @@ class MissionODE(om.Group):
 
         print_level = 0 if analysis_scheme is AnalysisScheme.SHOOTING else 2
 
-        self.nonlinear_solver = om.NewtonSolver(solve_subsystems=True,
-                                                atol=1.0e-10,
-                                                rtol=1.0e-10,
-                                                )
+        self.nonlinear_solver = om.NewtonSolver(
+            solve_subsystems=True,
+            atol=1.0e-10,
+            rtol=1.0e-10,
+        )
         self.nonlinear_solver.linesearch = om.BoundsEnforceLS()
         self.linear_solver = om.DirectSolver(assemble_jac=True)
         self.nonlinear_solver.options['err_on_non_converge'] = True
