@@ -42,7 +42,7 @@ class TaxiFuelComponent(om.ExplicitComponent):
         )
 
     def setup_partials(self):
-        nn = np.arange(self.options['num_nodes'])
+        nn = self.options['num_nodes']
         arange = np.arange(nn)
 
         self.declare_partials(
