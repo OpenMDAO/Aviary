@@ -6550,14 +6550,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Vehicle.Propulsion.RPM_GEARBOX,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='rpm',
-    desc='Rotational rate of shaft coming out of the gearbox and into the prop.',
-)
-
-add_meta_data(
     Dynamic.Vehicle.Propulsion.SHAFT_POWER,
     meta_data=_MetaData,
     historical_name={"GASP": ['SHP, EHP'], "FLOPS": None, "LEAPS1": None},
@@ -6566,27 +6558,11 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Vehicle.Propulsion.SHAFT_POWER_GEARBOX,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='kW',
-    desc='current shaft power coming out of the gearbox, per gearbox',
-)
-
-add_meta_data(
     Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='hp',
     desc='The maximum possible shaft power currently producible, per engine',
-)
-
-add_meta_data(
-    Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX_GEARBOX,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='hp',
-    desc='The maximum possible shaft power the gearbox can currently produce, per gearbox',
 )
 
 add_meta_data(
@@ -6651,15 +6627,6 @@ add_meta_data(
 
 add_meta_data(
     Dynamic.Vehicle.Propulsion.TORQUE_MAX,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='N*m',
-    desc='Hypothetical maximum possible torque being produced at the current flight '
-    'condition, per engine',
-)
-
-add_meta_data(
-    Dynamic.Vehicle.Propulsion.TORQUE_GEARBOX,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='N*m',

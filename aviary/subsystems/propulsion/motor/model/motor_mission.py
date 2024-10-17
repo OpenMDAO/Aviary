@@ -61,7 +61,7 @@ class MotorMission(om.Group):
 
         # Can't promote torque as an input, as it will create a feedback loop with
         # propulsion mux component. Connect it here instead
-        motor_group.connect(Dynamic.Mission.TORQUE, 'power_comp.torque')
+        motor_group.connect(Dynamic.Vehicle.Propulsion.TORQUE, 'power_comp.torque')
 
         motor_group.add_subsystem(
             'energy_comp',
