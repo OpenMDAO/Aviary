@@ -9,23 +9,6 @@ from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
-check = 1
-
-
-def sigX(x):
-    sig = 1 / (1 + np.exp(-check * x))
-
-    return sig
-
-
-def dSigXdX(x):
-    # avoid overflow in squared term, underflow seems to be ok
-    if x[0] < -300:
-        return 0
-    derivative = -1 / (1 + np.exp(-check * x)) ** 2 * (-check * np.exp(-check * x))
-
-    return derivative
-
 
 class BodyTankCalculations(om.ExplicitComponent):
     """
@@ -305,7 +288,8 @@ class BodyTankCalculations(om.ExplicitComponent):
         int2 = sigmoidX(est_GTOW - gross_wt_initial, 0, 1 / 110.0)
         max_fuel_avail = max_fuel_avail_est * int1 + max_fuel_avail_new * int2
 
-        dInt1_dFuelWtDes = dSigmoidXdx(gross_wt_initial - est_GTOW, 0, 1 / 110.0) * (-1 / 110)
+        dInt1_dFuelWtDes = dSigmoidXdx(
+            gross_wt_initial - est_GTOW, 0, 1 / 110.0) * (-1 / 110)
         dInt1_dReqFuelWt = dSigmoidXdx(gross_wt_initial - est_GTOW, 0, 1 / 110.0) * (
             -dExtraFuelWt_dReqFuelWt
         )
@@ -316,10 +300,12 @@ class BodyTankCalculations(om.ExplicitComponent):
         dInt2_dOEM = dSigmoidXdx(est_GTOW - gross_wt_initial, 0, 1 / 110.0) / 110
         dInt2_dFuelWtDes = dSigmoidXdx(est_GTOW - gross_wt_initial, 0, 1 / 110.0) / 110
         dInt2_dReqFuelWt = (
-            dSigmoidXdx(est_GTOW - gross_wt_initial, 0, 1 / 110.0) * dExtraFuelWt_dReqFuelWt
+            dSigmoidXdx(est_GTOW - gross_wt_initial, 0, 1 / 110.0) *
+            dExtraFuelWt_dReqFuelWt
         )
         dInt2_dMaxWingfuelWt = (
-            dSigmoidXdx(est_GTOW - gross_wt_initial, 0, 1 / 110.0) * dExtraFuelWt_dMaxWingfuelWt
+            dSigmoidXdx(est_GTOW - gross_wt_initial, 0, 1 / 110.0) *
+            dExtraFuelWt_dMaxWingfuelWt
         )
         dInt2_dGTOW = dSigmoidXdx(est_GTOW - gross_wt_initial, 0, 1 / 110.0) * (-1 / 110)
 
@@ -695,7 +681,8 @@ class FuelAndOEMOutputs(om.ExplicitComponent):
             + volume_wingfuel_wt
             * dSigmoidXdx(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
             * geometric_fuel_vol
-            + geometric_fuel_vol * sigmoidX(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
+            + geometric_fuel_vol *
+            sigmoidX(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
         )
 
         J["max_wingfuel_mass", Mission.Design.GROSS_MASS] = dMaxWFWt_dGTOW

@@ -8,14 +8,6 @@ from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission
 
 
-def sig(x):
-    return 1 / (1 + np.exp(-100 * x))
-
-
-def dsig(x):
-    return 100 * np.exp(-100 * x) / (np.exp(-100 * x) + 1) ** 2
-
-
 def dquotient(u, v, du, dv):
     """d(u/v) / dv"""
     return (du * v - u * dv) / v**2
@@ -95,8 +87,8 @@ class LoadSpeeds(om.ExplicitComponent):
             VCMIN = VCCOF * (wing_loading**0.5)
 
             if smooth:
-                VCMIN = VCMIN * sigmoidX(VCMIN/VCMAX, 1, -0.01) + VCMAX * sigmoidX(VCMIN/VCMAX, 1, 0.01)
-                pass
+                VCMIN = VCMIN * sigmoidX(VCMIN/VCMAX, 1, -0.01) + \
+                    VCMAX * sigmoidX(VCMIN/VCMAX, 1, 0.01)
             else:
                 if VCMIN > VCMAX:
                     VCMIN = VCMAX
@@ -458,8 +450,9 @@ class LoadParameters(om.ExplicitComponent):
                 # this line creates a smooth bounded density_ratio such that .6820<=density_ratio<=1
                 density_ratio = (
                     0.6820 * sigmoidX(density_ratio / 0.6820, 1, -0.01)
-                    + density_ratio * sigmoidX(density_ratio /
-                                          0.6820, 1, 0.01) * sigmoidX(density_ratio, 1, -0.01)
+                    + density_ratio *
+                    sigmoidX(density_ratio / 0.6820, 1, 0.01) *
+                    sigmoidX(density_ratio, 1, -0.01)
                     + sigmoidX(density_ratio, 1, 0.01)
                 )
 
@@ -467,8 +460,9 @@ class LoadParameters(om.ExplicitComponent):
                 # this line creates a smooth bounded density_ratio such that .53281<=density_ratio<=1
                 density_ratio = (
                     0.53281 * sigmoidX(density_ratio / 0.53281, 1, -0.01)
-                    + density_ratio * sigmoidX(density_ratio /
-                                          0.53281, 1, 0.01) * sigmoidX(density_ratio, 1, -0.01)
+                    + density_ratio *
+                    sigmoidX(density_ratio / 0.53281, 1, 0.01) *
+                    sigmoidX(density_ratio, 1, -0.01)
                     + sigmoidX(density_ratio, 1, 0.01)
                 )
 
@@ -544,7 +538,8 @@ class LoadParameters(om.ExplicitComponent):
             V9_1 = vel_c * sigmoidX(density_ratio, 1, -0.01) + 661.7 * \
                 max_mach * sigmoidX(density_ratio, 1, 0.01)
             dV9_dmax_airspeed = (
-                vel_c * dSigmoidXdx(density_ratio, 1, 0.01) * -ddensity_ratio_dmax_airspeed
+                vel_c * dSigmoidXdx(density_ratio, 1, 0.01) *
+                (-ddensity_ratio_dmax_airspeed)
                 + 661.7
                 * dmax_mach_dmax_airspeed
                 * sigmoidX(density_ratio, 1, 0.01)
@@ -560,8 +555,9 @@ class LoadParameters(om.ExplicitComponent):
                 # this line creates a smooth bounded density_ratio such that .6820<=density_ratio<=1
                 density_ratio_1 = (
                     0.6820 * sigmoidX(density_ratio / 0.6820, 1, -0.01)
-                    + density_ratio * sigmoidX(density_ratio /
-                                          0.6820, 1, 0.01) * sigmoidX(density_ratio, 1, -0.01)
+                    + density_ratio *
+                    sigmoidX(density_ratio / 0.6820, 1, 0.01) *
+                    sigmoidX(density_ratio, 1, -0.01)
                     + sigmoidX(density_ratio, 1, 0.01)
                 )
                 ddensity_ratio_dmax_airspeed = (
@@ -590,8 +586,8 @@ class LoadParameters(om.ExplicitComponent):
                 # this line creates a smooth bounded density_ratio such that .53281<=density_ratio<=1
                 density_ratio_1 = (
                     0.53281 * sigmoidX(density_ratio / 0.53281, 1, -0.01)
-                    + density_ratio * sigmoidX(density_ratio /
-                                          0.53281, 1, 0.01) * sigmoidX(density_ratio, 1, -0.01)
+                    + density_ratio * sigmoidX(density_ratio / 0.53281, 1, 0.01) *
+                    sigmoidX(density_ratio, 1, -0.01)
                     + sigmoidX(density_ratio, 1, 0.01)
                 )
                 ddensity_ratio_dmax_airspeed = (
@@ -1083,7 +1079,7 @@ class LoadFactors(om.ExplicitComponent):
                 gust_load_factor
                 * sigmoidX(max_maneuver_factor / gust_load_factor, 1, 0.01)
                 + max_maneuver_factor
-                * sig((max_maneuver_factor - gust_load_factor) / gust_load_factor)
+                * sigmoidX(max_maneuver_factor / gust_load_factor, 1, 0.01)
             )
             dULF_dmax_maneuver_factor = 1.5 * (
                 gust_load_factor

@@ -9,14 +9,6 @@ from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission
 
 
-def sig(x):
-    return 1 / (1 + np.exp(-100 * x))
-
-
-def dsig(x):
-    return 100 * np.exp(-100 * x) / (np.exp(-100 * x) + 1) ** 2
-
-
 class EquipAndUsefulLoadMass(om.ExplicitComponent):
     """
     Computation of fixed equipment mass and useful load for GASP-based mass.
@@ -205,7 +197,7 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
             -1e-5 < inputs[Aircraft.AntiIcing.MASS] < 1e-5
         ):  # note: this technically creates a discontinuity !WILL NOT CHANGE
             icing_wt = inputs[Aircraft.AntiIcing.MASS] * GRAV_ENGLISH_LBM
- 
+
         aux_wt = 0.0
 
         if smooth:

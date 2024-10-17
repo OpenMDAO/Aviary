@@ -10,18 +10,6 @@ from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission
 
 
-def sigX(x):
-    # sig = np.divide(1, (1 + np.exp(-320*x)), out=np.zeros_like(x), where=x>-1)
-    sig = 1 / (1 + np.exp(-320*x)) if x > -1 else 0
-    return sig
-
-
-def dSigXdX(x):
-    derivative = -1 / (1 + np.exp(-320 * x)) ** 2 * \
-        (-320 * np.exp(-320 * x)) if x > -1 else 0
-    return derivative
-
-
 class MassParameters(om.ExplicitComponent):
     """
     Computation of various parameters (such as correction factor for the use of
@@ -139,15 +127,18 @@ class MassParameters(om.ExplicitComponent):
             if gear_location == 0:
                 c_gear_loc = 0.95
 
-        c_eng_pos = 1.0 * sigmoidX(max_mach, 0.75, -1./320.) + 1.05 * sigmoidX(max_mach, 0.75, 1./320.)
+        c_eng_pos = 1.0 * sigmoidX(max_mach, 0.75, -1./320.) + \
+            1.05 * sigmoidX(max_mach, 0.75, 1./320.)
         if (
             not_fuselage_mounted
             and num_engines == 2
             or num_engines == 3
         ):
-            c_eng_pos = 0.98 * sigmoidX(max_mach, 0.75, -1./320.) + 0.95 * sigmoidX(max_mach, 0.75, 1./320.)
+            c_eng_pos = 0.98 * sigmoidX(max_mach, 0.75, -1./320.) + \
+                0.95 * sigmoidX(max_mach, 0.75, 1./320.)
         if not_fuselage_mounted and num_engines == 4:
-            c_eng_pos = 0.95 * sigmoidX(max_mach, 0.75, -1./320.) + 0.9 * sigmoidX(max_mach, 0.75, 1./320.)
+            c_eng_pos = 0.95 * sigmoidX(max_mach, 0.75, -1./320.) + \
+                0.9 * sigmoidX(max_mach, 0.75, 1./320.)
 
         outputs[Aircraft.Wing.MATERIAL_FACTOR] = c_material
         outputs["c_strut_braced"] = c_strut_braced
@@ -2361,7 +2352,8 @@ class GearMass(om.ExplicitComponent):
         # prevent discontinuities in the function and it's derivatives.
         gear_height_temp = gear_height_temp[0]
         gear_height = gear_height_temp * \
-            sigmoidX(gear_height_temp, 6, 1/320.) + 6 * sigmoidX(gear_height_temp, 6, -1/320.)
+            sigmoidX(gear_height_temp, 6, 1 / 320.)
+        + 6 * sigmoidX(gear_height_temp, 6, -1 / 320.)
 
         # Low wing aircraft (defined as having the wing at the lowest position on the
         # fuselage) have a separate equation for calculating gear mass. A smoothing
@@ -2394,7 +2386,8 @@ class GearMass(om.ExplicitComponent):
 
         gear_height_temp = gear_height_temp[0]
         gear_height = gear_height_temp * \
-            sigmoidX(gear_height_temp, 6, 1 /320.0) + 6 * sigmoidX(gear_height_temp, 6, -1 / 320.0)
+            sigmoidX(gear_height_temp, 6, 1 / 320.0)
+        + 6 * sigmoidX(gear_height_temp, 6, -1 / 320.0)
 
         dLGW_dCGW = (
             (0.85 * (1.0 + 0.1765 * gear_height / 6.0))
