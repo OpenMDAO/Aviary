@@ -145,13 +145,6 @@ def cla(ar, sweep, mach):
     )
 
 
-def sigmoid(x, x0, alpha=0.1):
-    """Sigmoid used to smoothly transition between piecewise functions"""
-    if alpha == 0:
-        raise ValueError("alpha must be non-zero")
-    return 1 / (1 + np.exp(-(x - x0) / alpha))
-
-
 class WingTailRatios(om.ExplicitComponent):
     """Pre-mission calculation of ratios between tail and wing parameters"""
 
