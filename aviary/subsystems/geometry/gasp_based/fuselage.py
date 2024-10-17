@@ -8,18 +8,6 @@ from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Settings
 
 
-def sigX(x):
-    sig = 1 / (1 + np.exp(-x))
-
-    return sig
-
-
-def dSigXdX(x):
-    derivative = -1 / (1 + np.exp(-x)) ** 2 * (-1 * np.exp(-x))
-
-    return derivative
-
-
 class FuselageParameters(om.ExplicitComponent):
     """
     Computation of average fuselage diameter, cabin height, cabin length and nose height.
@@ -98,8 +86,10 @@ class FuselageParameters(om.ExplicitComponent):
         aviary_options: AviaryValues = self.options['aviary_options']
         seats_abreast = aviary_options.get_val(Aircraft.Fuselage.NUM_SEATS_ABREAST)
 
-        J["nose_height", Aircraft.Fuselage.DELTA_DIAMETER] = -sigmoidX(seats_abreast, 1.5, 0.01)
-        J["cabin_height", Aircraft.Fuselage.DELTA_DIAMETER] = sigmoidX(seats_abreast, 1.5, -0.01)
+        J["nose_height", Aircraft.Fuselage.DELTA_DIAMETER] = -sigmoidX(
+            seats_abreast, 1.5, 0.01)
+        J["cabin_height", Aircraft.Fuselage.DELTA_DIAMETER] = sigmoidX(
+            seats_abreast, 1.5, -0.01)
 
 
 class FuselageSize(om.ExplicitComponent):
