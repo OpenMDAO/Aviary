@@ -5,6 +5,7 @@ Classes
 -------
 FlareODE : the ODE for the flare phase of landing
 '''
+
 import numpy as np
 
 import openmdao.api as om
@@ -12,26 +13,20 @@ from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
 from aviary.mission.flops_based.ode.landing_eom import FlareEOM, StallSpeed
 from aviary.mission.flops_based.ode.takeoff_ode import TakeoffODE as _TakeoffODE
-from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
+from aviary.mission.gasp_based.ode.time_integration_base_classes import (
+    add_SGM_required_inputs,
+)
+from aviary.mission.utils import ExternalSubsystemGroup
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.functions import promote_aircraft_and_mission_vars
 from aviary.variable_info.enums import AnalysisScheme
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-
-
-class ExternalSubsystemGroup(om.Group):
-    """
-    For external subsystem group, promote relevant aircraft and mission variables.
-    """
-
-    def configure(self):
-        promote_aircraft_and_mission_vars(self)
 
 
 class LandingODE(_TakeoffODE):
     '''
     Define the ODE for most phases of landing.
     '''
+
     # region : derived type customization points
     stall_speed_lift_coefficient_name = Mission.Landing.LIFT_COEFFICIENT_MAX
     # endregion : derived type customization points
@@ -46,24 +41,34 @@ class FlareODE(om.Group):
         options = self.options
 
         options.declare(
-            'num_nodes', default=1, types=int,
-            desc='Number of nodes to be evaluated in the RHS')
+            'num_nodes',
+            default=1,
+            types=int,
+            desc='Number of nodes to be evaluated in the RHS',
+        )
 
         options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+            'aviary_options',
+            types=AviaryValues,
+            desc='collection of Aircraft/Mission specific options',
+        )
 
         self.options.declare(
-            'subsystem_options', types=dict, default={},
-            desc='dictionary of parameters to be passed to the subsystem builders')
+            'subsystem_options',
+            types=dict,
+            default={},
+            desc='dictionary of parameters to be passed to the subsystem builders',
+        )
 
         self.options.declare(
             'core_subsystems',
-            desc='list of core subsystem builder instances to be added to the ODE'
+            desc='list of core subsystem builder instances to be added to the ODE',
         )
         self.options.declare(
-            'external_subsystems', default=[],
-            desc='list of external subsystem builder instances to be added to the ODE')
+            'external_subsystems',
+            default=[],
+            desc='list of external subsystem builder instances to be added to the ODE',
+        )
 
         self.options.declare(
             "analysis_scheme",
@@ -124,10 +129,12 @@ class FlareODE(om.Group):
             system = subsystem.build_mission(**kwargs)
 
             if system is not None:
-                self.add_subsystem(subsystem.name,
-                                   system,
-                                   promotes_inputs=subsystem.mission_inputs(**kwargs),
-                                   promotes_outputs=subsystem.mission_outputs(**kwargs))
+                self.add_subsystem(
+                    subsystem.name,
+                    system,
+                    promotes_inputs=subsystem.mission_inputs(**kwargs),
+                    promotes_outputs=subsystem.mission_outputs(**kwargs),
+                )
 
         # Create a lightly modified version of an OM group to add external subsystems
         # to the ODE with a special configure() method that promotes
@@ -137,10 +144,13 @@ class FlareODE(om.Group):
 
         for subsystem in self.options['external_subsystems']:
             subsystem_mission = subsystem.build_mission(
-                num_nodes=nn, aviary_inputs=aviary_options)
+                num_nodes=nn, aviary_inputs=aviary_options
+            )
             if subsystem_mission is not None:
                 add_subsystem_group = True
-                external_subsystem_group.add_subsystem(subsystem.name, subsystem_mission)
+                external_subsystem_group.add_subsystem(
+                    subsystem.name, subsystem_mission
+                )
 
         # Only add the external subsystem group if it has at least one subsystem.
         # Without this logic there'd be an empty OM group added to the ODE.
@@ -149,25 +159,34 @@ class FlareODE(om.Group):
                 name='external_subsystems',
                 subsys=external_subsystem_group,
                 promotes_inputs=['*'],
-                promotes_outputs=['*'])
+                promotes_outputs=['*'],
+            )
 
-        kwargs = {
-            'num_nodes': nn,
-            'aviary_options':  options['aviary_options']}
+        kwargs = {'num_nodes': nn, 'aviary_options': options['aviary_options']}
 
         self.add_subsystem(
             'landing_eom',
             FlareEOM(**kwargs),
             promotes_inputs=[
-                Dynamic.Mission.FLIGHT_PATH_ANGLE, Dynamic.Mission.VELOCITY, Dynamic.Mission.MASS, Dynamic.Mission.LIFT,
-                Dynamic.Mission.THRUST_TOTAL, Dynamic.Mission.DRAG, 'angle_of_attack',
-                'angle_of_attack_rate', Mission.Landing.FLARE_RATE
+                Dynamic.Mission.FLIGHT_PATH_ANGLE,
+                Dynamic.Mission.VELOCITY,
+                Dynamic.Mission.MASS,
+                Dynamic.Mission.LIFT,
+                Dynamic.Mission.THRUST_TOTAL,
+                Dynamic.Mission.DRAG,
+                'angle_of_attack',
+                'angle_of_attack_rate',
+                Mission.Landing.FLARE_RATE,
             ],
             promotes_outputs=[
-                Dynamic.Mission.DISTANCE_RATE, Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.VELOCITY_RATE,
-                Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, 'forces_perpendicular',
-                'required_thrust', 'net_alpha_rate'
-            ]
+                Dynamic.Mission.DISTANCE_RATE,
+                Dynamic.Mission.ALTITUDE_RATE,
+                Dynamic.Mission.VELOCITY_RATE,
+                Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
+                'forces_perpendicular',
+                'required_thrust',
+                'net_alpha_rate',
+            ],
         )
 
         self.add_subsystem(
@@ -177,9 +196,11 @@ class FlareODE(om.Group):
                 v_over_v_stall={'units': 'unitless', 'shape': nn},
                 v={'units': 'm/s', 'shape': nn},
                 # NOTE: FLOPS detailed takeoff stall speed is not dynamic - see above
-                v_stall={'units': 'm/s', 'shape': nn}),
+                v_stall={'units': 'm/s', 'shape': nn},
+            ),
             promotes_inputs=[('v', Dynamic.Mission.VELOCITY), 'v_stall'],
-            promotes_outputs=['v_over_v_stall'])
+            promotes_outputs=['v_over_v_stall'],
+        )
 
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, np.zeros(nn), 'm')
         self.set_input_defaults(Dynamic.Mission.VELOCITY, np.zeros(nn), 'm/s')

@@ -78,10 +78,12 @@ class TestFLOPSDetailedLanding(unittest.TestCase):
         # Upstream static analysis for aero
         landing.model.add_subsystem(
             'pre_mission',
-            CorePreMission(aviary_options=aviary_options,
-                           subsystems=default_premission_subsystems),
-            promotes_inputs=['aircraft:*', 'mission:*'],
-            promotes_outputs=['aircraft:*', 'mission:*'])
+            CorePreMission(
+                aviary_options=aviary_options, subsystems=default_premission_subsystems
+            ),
+            promotes_inputs=['aircraft:*'],
+            promotes_outputs=['aircraft:*', 'mission:*'],
+        )
 
         # Instantiate the trajectory and add the phases
         traj = dm.Trajectory()
