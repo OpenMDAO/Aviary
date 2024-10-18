@@ -1981,7 +1981,7 @@ add_meta_data(
          '(fuselage, wing, or otherwise)',
     types=(list, np.ndarray, int),
     option=True,
-    default_value=np.array([2])
+    default_value=[2]
 )
 
 add_meta_data(
@@ -2339,7 +2339,7 @@ add_meta_data(
                      },
     option=True,
     default_value=GASPEngineType.TURBOJET,
-    types=(GASPEngineType, list),
+    types=(GASPEngineType, list, int, str),
     units="unitless",
     desc='specifies engine type used for engine mass calculation',
 )
