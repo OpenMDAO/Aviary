@@ -39,7 +39,7 @@ class MetaModelGroup(om.Group):
             desc="ratio of flap chord to wing chord",
         )
 
-        if flap_type == FlapType.PLAIN or flap_type == FlapType.SPLIT:
+        if flap_type  is FlapType.PLAIN or flap_type  is FlapType.SPLIT:
 
             VDEL1_interp.add_output(
                 "VDEL1",
@@ -374,7 +374,7 @@ class MetaModelGroup(om.Group):
             desc="average wing thickness to chord ratio",
         )
 
-        if flap_type == FlapType.PLAIN or flap_type == FlapType.SPLIT:
+        if flap_type  is FlapType.PLAIN or flap_type  is FlapType.SPLIT:
 
             VLAM4_interp.add_output(
                 "VLAM4",
@@ -446,7 +446,7 @@ class MetaModelGroup(om.Group):
             desc="ratio of flap chord to wing chord",
         )
 
-        if flap_type == FlapType.PLAIN or flap_type == FlapType.SPLIT:
+        if flap_type  is FlapType.PLAIN or flap_type  is FlapType.SPLIT:
 
             VLAM5_interp.add_output(
                 "VLAM5",
@@ -457,9 +457,9 @@ class MetaModelGroup(om.Group):
             )
 
         elif (
-            flap_type == FlapType.SINGLE_SLOTTED
-            or flap_type == FlapType.DOUBLE_SLOTTED
-            or flap_type == FlapType.TRIPLE_SLOTTED
+            flap_type  is FlapType.SINGLE_SLOTTED
+            or flap_type  is FlapType.DOUBLE_SLOTTED
+            or flap_type  is FlapType.TRIPLE_SLOTTED
         ):
 
             VLAM5_interp.add_output(
@@ -516,7 +516,7 @@ class MetaModelGroup(om.Group):
             desc="flap deflection",
         )
 
-        if flap_type == FlapType.PLAIN or flap_type == FlapType.SPLIT:
+        if flap_type  is FlapType.PLAIN or flap_type  is FlapType.SPLIT:
 
             VLAM6_interp.add_output(
                 "VLAM6",
@@ -543,9 +543,9 @@ class MetaModelGroup(om.Group):
             )
 
         elif (
-            flap_type == FlapType.SINGLE_SLOTTED
-            or flap_type == FlapType.DOUBLE_SLOTTED
-            or flap_type == FlapType.TRIPLE_SLOTTED
+            flap_type  is FlapType.SINGLE_SLOTTED
+            or flap_type  is FlapType.DOUBLE_SLOTTED
+            or flap_type  is FlapType.TRIPLE_SLOTTED
         ):
 
             VLAM6_interp.add_output(
@@ -572,7 +572,7 @@ class MetaModelGroup(om.Group):
                 desc="sensitivity of flap clean wing maximum lift coefficient to wing flap deflection",
             )
 
-        elif (flap_type == FlapType.FOWLER or flap_type == FlapType.DOUBLE_SLOTTED_FOWLER):
+        elif (flap_type  is FlapType.FOWLER or flap_type  is FlapType.DOUBLE_SLOTTED_FOWLER):
 
             VLAM6_interp.add_output(
                 "VLAM6",

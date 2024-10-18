@@ -5316,7 +5316,7 @@ add_meta_data(
                      },
     units="unitless",
     default_value=FlapType.DOUBLE_SLOTTED,
-    types=FlapType,
+    types=(FlapType, list, int, str),
     option=True,
     desc='Set the flap type. Available choices are: plain, split, single_slotted, '
          'double_slotted, triple_slotted, fowler, and double_slotted_fowler. '
