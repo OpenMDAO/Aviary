@@ -6,8 +6,7 @@ from aviary.subsystems.mass.flops_based.distributed_prop import (
     distributed_engine_count_factor,
     distributed_nacelle_diam_factor,
     distributed_nacelle_diam_factor_deriv)
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft
 
 
@@ -18,13 +17,11 @@ class AntiIcingMass(om.ExplicitComponent):
     '''
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
+        add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_ENGINES)
 
     def setup(self):
-        num_engine_type = len(self.options['aviary_options'].get_val(
-            Aircraft.Engine.NUM_ENGINES))
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
         add_aviary_input(self, Aircraft.AntiIcing.MASS_SCALER, val=1.0)
 
@@ -43,9 +40,8 @@ class AntiIcingMass(om.ExplicitComponent):
         self.declare_partials("*", "*")
 
     def compute(self, inputs, outputs):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        total_engines = aviary_options.get_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES)
-        num_engines = aviary_options.get_val(Aircraft.Engine.NUM_ENGINES)
+        total_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
+        num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
 
         scaler = inputs[Aircraft.AntiIcing.MASS_SCALER]
         max_width = inputs[Aircraft.Fuselage.MAX_WIDTH]
@@ -61,9 +57,8 @@ class AntiIcingMass(om.ExplicitComponent):
             + 3.8 * f_nacelle * count_factor + 1.5 * max_width) * scaler / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        total_engines = aviary_options.get_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES)
-        num_engines = aviary_options.get_val(Aircraft.Engine.NUM_ENGINES)
+        total_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
+        num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
 
         scaler = inputs[Aircraft.AntiIcing.MASS_SCALER]
         max_width = inputs[Aircraft.Fuselage.MAX_WIDTH]

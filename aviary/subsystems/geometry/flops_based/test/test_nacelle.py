@@ -22,13 +22,13 @@ class NacelleTest(unittest.TestCase):
         # test with multiple engine types
         prob = self.prob
 
-        aviary_options = get_flops_inputs('LargeSingleAisle1FLOPS')
-        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2, 2, 3]))
-        aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 7)
+        options = {
+            Aircraft.Engine.NUM_ENGINES: np.array([2, 2, 3]),
+        }
 
         prob.model.add_subsystem(
             'nacelles',
-            Nacelles(aviary_options=aviary_options),
+            Nacelles(**options),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )

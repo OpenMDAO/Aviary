@@ -104,10 +104,10 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
         code_origin = self.code_origin
 
         if code_origin is GASP:
-            aero_group = PreMissionAero(aviary_options=aviary_inputs)
+            aero_group = PreMissionAero()
 
         elif code_origin is FLOPS:
-            aero_group = Design(aviary_options=aviary_inputs)
+            aero_group = Design()
 
         return aero_group
 
@@ -118,12 +118,10 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
             method = None
         if self.code_origin is FLOPS:
             if method is None:
-                aero_group = ComputedAeroGroup(num_nodes=num_nodes,
-                                               aviary_options=aviary_inputs)
+                aero_group = ComputedAeroGroup(num_nodes=num_nodes)
 
             elif method == 'computed':
                 aero_group = ComputedAeroGroup(num_nodes=num_nodes,
-                                               aviary_options=aviary_inputs,
                                                **kwargs)
 
             elif method == 'low_speed':
@@ -162,7 +160,6 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                                                    **kwargs)
                 else:
                     aero_group = CruiseAero(num_nodes=num_nodes,
-                                            aviary_options=aviary_inputs,
                                             **kwargs)
 
             elif method == 'low_speed':
@@ -180,7 +177,6 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
                 else:
                     aero_group = LowSpeedAero(num_nodes=num_nodes,
-                                              aviary_options=aviary_inputs,
                                               **kwargs)
 
             else:

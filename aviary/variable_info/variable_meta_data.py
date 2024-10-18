@@ -1716,9 +1716,11 @@ add_meta_data(
                      "LEAPS1": 'aircraft.inputs.L0_propulsion.misc_weight'
                      },
     units='unitless',
+    option=True,
     desc='fraction of (scaled) engine mass used to calculate additional propulsion '
          'system mass added to engine control and starter mass, or used to '
          'calculate engine installation mass',
+    types=(float, int, list, np.ndarray),
     default_value=0.0,
 )
 
@@ -1734,7 +1736,7 @@ add_meta_data(
     units="unitless",
     option=True,
     default_value=True,
-    types=bool,
+    types=(bool, list),
     desc='if true, compute installation loss factor based on blockage factor',
 )
 
@@ -1977,9 +1979,9 @@ add_meta_data(
     units='unitless',
     desc='total number of engines per model on the aircraft '
          '(fuselage, wing, or otherwise)',
-    types=int,
+    types=(list, np.ndarray, int),
     option=True,
-    default_value=2
+    default_value=[2]
 )
 
 add_meta_data(
@@ -1992,7 +1994,7 @@ add_meta_data(
     units='unitless',
     desc='number of fuselage mounted engines per model',
     option=True,
-    types=int,
+    types=(list, np.ndarray, int),
     default_value=0
 )
 
@@ -2006,7 +2008,7 @@ add_meta_data(
     units='unitless',
     desc='number of blades per propeller',
     option=True,
-    types=int,
+    types=(int, list, np.ndarray),
     default_value=0
 )
 
@@ -2021,8 +2023,8 @@ add_meta_data(
     units='unitless',
     desc='number of wing mounted engines per model',
     option=True,
-    types=int,
-    default_value=0
+    types=(list, np.ndarray, int),
+    default_value=[0]
 )
 
 add_meta_data(
@@ -2224,7 +2226,7 @@ add_meta_data(
                      },
     desc='Toggle for enabling scaling of engine mass',
     option=True,
-    types=bool,
+    types=(bool, list),
     default_value=True,
 )
 
@@ -2240,7 +2242,7 @@ add_meta_data(
     desc='Toggle for enabling scaling of engine performance including thrust, fuel flow, '
          'and electric power',
     option=True,
-    types=bool,
+    types=(bool, list),
     default_value=True,
 )
 
@@ -2337,7 +2339,7 @@ add_meta_data(
                      },
     option=True,
     default_value=GASPEngineType.TURBOJET,
-    types=GASPEngineType,
+    types=(GASPEngineType, list, int, str),
     units="unitless",
     desc='specifies engine type used for engine mass calculation',
 )
@@ -2351,7 +2353,7 @@ add_meta_data(
                      },
     option=True,
     default_value=False,
-    types=bool,
+    types=(bool, list),
     units="unitless",
     desc='flag whether to use propeller map or Hamilton-Standard model.'
 )
@@ -4940,6 +4942,7 @@ add_meta_data(
          'conventional technology wing (Default); 2.0 represents advanced '
          'technology wing.',
     default_value=1.0,
+    types=float,
     option=True,
 )
 
@@ -5313,7 +5316,7 @@ add_meta_data(
                      },
     units="unitless",
     default_value=FlapType.DOUBLE_SLOTTED,
-    types=FlapType,
+    types=(FlapType, list, int, str),
     option=True,
     desc='Set the flap type. Available choices are: plain, split, single_slotted, '
          'double_slotted, triple_slotted, fowler, and double_slotted_fowler. '
@@ -6923,11 +6926,11 @@ add_meta_data(
                      "FLOPS": None,
                      "LEAPS1": None
                      },
-    option=True,
     units='ft',
-    default_value=25000,
+    option=True,
+    default_value=25000.0,
+    types=(int, float),
     desc='design mission cruise altitude',
-    types=[int, float]
 )
 
 add_meta_data(

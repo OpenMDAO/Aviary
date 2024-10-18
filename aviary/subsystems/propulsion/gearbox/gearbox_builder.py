@@ -6,14 +6,14 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 class GearboxBuilder(SubsystemBuilderBase):
     """
-    Define the builder for a single gearbox subsystem that provides methods 
-    to define the gearbox subsystem's states, design variables, fixed values, 
-    initial guesses, and mass names. It also provides methods to build OpenMDAO 
-    systems for the pre-mission and mission computations of the subsystem, 
+    Define the builder for a single gearbox subsystem that provides methods
+    to define the gearbox subsystem's states, design variables, fixed values,
+    initial guesses, and mass names. It also provides methods to build OpenMDAO
+    systems for the pre-mission and mission computations of the subsystem,
     to get the constraints for the subsystem, and to preprocess the inputs for
-    the subsystem. 
+    the subsystem.
 
-    This is meant to be computations for a single gearbox, so there is no notion 
+    This is meant to be computations for a single gearbox, so there is no notion
     of "num_gearboxs" in this code.
 
     This is a reduction gearbox, so gear ratio is input_RPM/output_RPM.
@@ -26,18 +26,18 @@ class GearboxBuilder(SubsystemBuilderBase):
 
     def build_pre_mission(self, aviary_inputs):
         """Builds an OpenMDAO system for the pre-mission computations of the subsystem."""
-        return GearboxPreMission(aviary_inputs=aviary_inputs, simple_mass=True)
+        return GearboxPreMission(simple_mass=True)
 
     def build_mission(self, num_nodes, aviary_inputs):
         """Builds an OpenMDAO system for the mission computations of the subsystem."""
-        return GearboxMission(num_nodes=num_nodes, aviary_inputs=aviary_inputs)
+        return GearboxMission(num_nodes=num_nodes)
 
     def get_design_vars(self):
         """
         Design vars are only tested to see if they exist in pre_mission
-        Returns a dictionary of design variables for the gearbox subsystem, where the keys are the 
-        names of the design variables, and the values are dictionaries that contain the units for 
-        the design variable, the lower and upper bounds for the design variable, and any 
+        Returns a dictionary of design variables for the gearbox subsystem, where the keys are the
+        names of the design variables, and the values are dictionaries that contain the units for
+        the design variable, the lower and upper bounds for the design variable, and any
         additional keyword arguments required by OpenMDAO for the design variable.
         """
 
@@ -63,9 +63,9 @@ class GearboxBuilder(SubsystemBuilderBase):
         """
         Parameters are only tested to see if they exist in mission.
         A value the doesn't change throught the mission mission
-        Returns a dictionary of fixed values for the gearbox subsystem, where the keys are the names 
-        of the fixed values, and the values are dictionaries that contain the fixed value for the 
-        variable, the units for the variable, and any additional keyword arguments required by 
+        Returns a dictionary of fixed values for the gearbox subsystem, where the keys are the names
+        of the fixed values, and the values are dictionaries that contain the fixed value for the
+        variable, the units for the variable, and any additional keyword arguments required by
         OpenMDAO for the variable.
 
         Returns

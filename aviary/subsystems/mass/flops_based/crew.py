@@ -4,8 +4,7 @@ non-flight) as well as their baggage.
 '''
 import openmdao.api as om
 
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft
 
 
@@ -15,9 +14,8 @@ class NonFlightCrewMass(om.ExplicitComponent):
     '''
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS)
+        add_aviary_option(self, Aircraft.CrewPayload.NUM_GALLEY_CREW)
 
     def setup(self):
         add_aviary_input(
@@ -34,11 +32,8 @@ class NonFlightCrewMass(om.ExplicitComponent):
     def compute(
         self, inputs, outputs, discrete_inputs=None, discrete_outputs=None
     ):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        flight_attendants_count = \
-            aviary_options.get_val(Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS)
-        galley_crew_count = \
-            aviary_options.get_val(Aircraft.CrewPayload.NUM_GALLEY_CREW)
+        flight_attendants_count = self.options[Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS]
+        galley_crew_count = self.options[Aircraft.CrewPayload.NUM_GALLEY_CREW]
 
         mass_per_flight_attendant = self._mass_per_flight_attendant
         mass_per_galley_crew = self._mass_per_galley_crew
@@ -52,11 +47,8 @@ class NonFlightCrewMass(om.ExplicitComponent):
         ) * mass_scaler
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        flight_attendants_count = \
-            aviary_options.get_val(Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS)
-        galley_crew_count = \
-            aviary_options.get_val(Aircraft.CrewPayload.NUM_GALLEY_CREW)
+        flight_attendants_count = self.options[Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS]
+        galley_crew_count = self.options[Aircraft.CrewPayload.NUM_GALLEY_CREW]
 
         mass_per_flight_attendant = self._mass_per_flight_attendant
         mass_per_galley_crew = self._mass_per_galley_crew
@@ -79,9 +71,8 @@ class FlightCrewMass(om.ExplicitComponent):
     '''
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.CrewPayload.NUM_FLIGHT_CREW)
+        add_aviary_option(self, Aircraft.LandingGear.CARRIER_BASED)
 
     def setup(self):
         add_aviary_input(
@@ -98,9 +89,7 @@ class FlightCrewMass(om.ExplicitComponent):
     def compute(
         self, inputs, outputs, discrete_inputs=None, discrete_outputs=None
     ):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        flight_crew_count = \
-            aviary_options.get_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW)
+        flight_crew_count = self.options[Aircraft.CrewPayload.NUM_FLIGHT_CREW]
 
         mass_per_flight_crew = self._mass_per_flight_crew(inputs)
 
@@ -110,9 +99,7 @@ class FlightCrewMass(om.ExplicitComponent):
             flight_crew_count * mass_per_flight_crew * mass_scaler
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        flight_crew_count = \
-            aviary_options.get_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW)
+        flight_crew_count = self.options[Aircraft.CrewPayload.NUM_FLIGHT_CREW]
 
         mass_per_flight_crew = self._mass_per_flight_crew(inputs)
 
@@ -126,11 +113,10 @@ class FlightCrewMass(om.ExplicitComponent):
         Return the mass, in pounds, of one member of the flight crew and
         their baggage.
         '''
-        aviary_options: AviaryValues = self.options['aviary_options']
         mass_per_flight_crew = 225.0  # lbm
 
         # account for machine precision error
-        if 0.9 <= aviary_options.get_val(Aircraft.LandingGear.CARRIER_BASED):
+        if 0.9 <= self.options[Aircraft.LandingGear.CARRIER_BASED]:
             mass_per_flight_crew -= 35.0  # lbm
 
         return mass_per_flight_crew
