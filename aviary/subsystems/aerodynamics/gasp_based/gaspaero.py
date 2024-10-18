@@ -795,8 +795,7 @@ class AeroSetup(om.Group):
                           ('nu', Dynamic.Mission.KINEMATIC_VISCOSITY)],
             )
 
-        self.add_subsystem("geom", AeroGeom(num_nodes=nn),
-                           promotes=["*"])
+        self.add_subsystem("geom", AeroGeom(num_nodes=nn), promotes=["*"])
 
 
 class DragCoef(om.ExplicitComponent):
@@ -1255,8 +1254,7 @@ class CruiseAero(om.Group):
         nn = self.options["num_nodes"]
         self.add_subsystem(
             "aero_setup",
-            AeroSetup(num_nodes=nn,
-                      input_atmos=self.options["input_atmos"]),
+            AeroSetup(num_nodes=nn, input_atmos=self.options["input_atmos"]),
             promotes=["*"],
         )
         if self.options["output_alpha"]:

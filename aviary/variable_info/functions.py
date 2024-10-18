@@ -1,4 +1,4 @@
-from enum import IntEnum
+from enum import Enum
 
 import numpy as np
 
@@ -134,7 +134,7 @@ def units_setter(opt_meta, value):
 def int_enum_setter(opt_meta, value):
     """
     Support setting the option with a string or int and converting it to the
-    proper intenum object.
+    proper enum object.
 
     Parameters
     ----------
@@ -154,7 +154,7 @@ def int_enum_setter(opt_meta, value):
             enum_class = type_
             break
 
-    if isinstance(value, IntEnum):
+    if isinstance(value, Enum):
         return value
 
     elif isinstance(value, int):
@@ -166,7 +166,7 @@ def int_enum_setter(opt_meta, value):
     elif isinstance(value, list):
         values = []
         for val in value:
-            if isinstance(value, IntEnum):
+            if isinstance(value, Enum):
                 values.append(val)
             elif isinstance(val, int):
                 values.append(enum_class(val))
@@ -215,7 +215,7 @@ def add_aviary_option(comp, name, val=_unspecified, units=None, desc=None, meta_
                              types=types, desc=desc,
                              set_function=units_setter)
 
-    elif isinstance(val, IntEnum):
+    elif isinstance(val, Enum):
         comp.options.declare(name, default=val,
                              types=meta['types'], desc=desc,
                              set_function=int_enum_setter)

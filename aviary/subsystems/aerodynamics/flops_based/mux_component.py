@@ -66,9 +66,8 @@ class MuxComponent(om.ExplicitComponent):
             nc += num
 
         num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
-        num_nacelles = int(sum(num_engines))
         num_engine_models = len(num_engines)
-        self.num_nacelles = num_nacelles
+        self.num_nacelles = int(sum(num_engines))
 
         if self.num_nacelles > 0:
             add_aviary_input(self, Aircraft.Nacelle.WETTED_AREA,
