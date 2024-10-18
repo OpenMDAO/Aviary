@@ -142,9 +142,8 @@ class AviaryGroup(om.Group):
             var_prom = [v['prom_name'] for k, v in var_abs]
             all_prom_inputs.extend(var_prom)
 
-        # Component promotes aren't handled until this group resolves.
-        # Here, we address anything promoted with an alias in AviaryProblem.
-        for system in self.system_iter(recurse=False, typ=Component):
+            # Calls to promotes aren't handled until this group resolves.
+            # Here, we address anything promoted with an alias in AviaryProblem.
             input_meta = system._var_promotes['input']
             var_prom = [v[0][1] for v in input_meta if isinstance(v[0], tuple)]
             all_prom_inputs.extend(var_prom)
@@ -1741,7 +1740,7 @@ class AviaryProblem(om.Problem):
 
         Depending on the mission model and problem type, different design variables and constraints are added.
 
-        If using the FLOPS model, a design variable is added for the gross mass of the aircraft, with a lower bound of 100,000 lbm and an upper bound of 200,000 lbm.
+        If using the FLOPS model, a design variable is added for the gross mass of the aircraft, with a lower bound of 10 lbm and an upper bound of 900,000 lbm.
 
         If using the GASP model, the following design variables are added depending on the mission type:
             - the initial thrust-to-weight ratio of the aircraft during ascent
@@ -1776,7 +1775,7 @@ class AviaryProblem(om.Problem):
             optimize_mass = self.pre_mission_info.get('optimize_mass')
             if optimize_mass:
                 self.model.add_design_var(Mission.Design.GROSS_MASS, units='lbm',
-                                          lower=100.e2, upper=900.e3, ref=135.e3)
+                                          lower=10, upper=900.e3, ref=175.e3)
 
         elif self.mission_method in (HEIGHT_ENERGY, TWO_DEGREES_OF_FREEDOM):
             # vehicle sizing problem
@@ -1785,14 +1784,14 @@ class AviaryProblem(om.Problem):
                 self.model.add_design_var(
                     Mission.Design.GROSS_MASS,
                     lower=10.0,
-                    upper=400e3,
+                    upper=None,
                     units='lbm',
                     ref=175e3,
                 )
                 self.model.add_design_var(
                     Mission.Summary.GROSS_MASS,
                     lower=10.0,
-                    upper=400e3,
+                    upper=None,
                     units='lbm',
                     ref=175e3,
                 )

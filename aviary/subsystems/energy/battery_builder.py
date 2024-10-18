@@ -58,23 +58,48 @@ class BatteryBuilder(SubsystemBuilderBase):
         return battery_group
 
     def get_states(self):
-        state_dict = {Dynamic.Mission.CUMULATIVE_ELECTRIC_ENERGY_USED: {'fix_initial': True,
-                                                                        'fix_final': False,
-                                                                        'lower': 0.0,
-                                                                        'ref': 1e4,
-                                                                        'defect_ref': 1e6,
-                                                                        'units': 'kJ',
-                                                                        'rate_source': Dynamic.Mission.ELECTRIC_POWER_IN_TOTAL,
-                                                                        'input_initial': 0.0}}
+        # need to add subsystem name to target name ('battery.') for state due
+        # to issue where non aircraft or mission variables are not fully promoted
+        # TODO fix this by not promoting only 'aircraft:*' and 'mission:*'
+        state_dict = {
+            Dynamic.Mission.CUMULATIVE_ELECTRIC_ENERGY_USED: {
+                'fix_initial': True,
+                'fix_final': False,
+                'lower': 0.0,
+                'ref': 1e4,
+                'defect_ref': 1e6,
+                'units': 'kJ',
+                'rate_source': Dynamic.Mission.ELECTRIC_POWER_IN_TOTAL,
+                'input_initial': 0.0,
+                'targets': f'{self.name}.{Dynamic.Mission.CUMULATIVE_ELECTRIC_ENERGY_USED}',
+            }
+        }
 
         return state_dict
 
     def get_constraints(self):
         constraint_dict = {
             # Can add constraints here; state of charge is a common one in many battery applications
-            f'battery.{Dynamic.Mission.BATTERY_STATE_OF_CHARGE}':
-            {'type': 'boundary',
-             'loc': 'final',
-             'lower': 0.2},
+            f'{self.name}.{Dynamic.Mission.BATTERY_STATE_OF_CHARGE}': {
+                'type': 'boundary',
+                'loc': 'final',
+                'lower': 0.2,
+            },
         }
         return constraint_dict
+
+    def get_parameters(self, aviary_inputs=None, phase_info=None):
+        params = {
+            Aircraft.Battery.ENERGY_CAPACITY: {
+                'val': 0.0,
+                'units': 'kJ',
+                'static_target': True,
+            },
+            Aircraft.Battery.EFFICIENCY: {
+                'val': 0.0,
+                'units': 'unitless',
+                'static_target': True,
+            },
+        }
+
+        return params
