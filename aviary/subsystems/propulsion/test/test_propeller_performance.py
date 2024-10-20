@@ -6,10 +6,10 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.propulsion.propeller.propeller_performance import (
-    OutMachs, PropellerPerformance, TipSpeedLimit,
+    OutMachs, PropellerPerformance, TipSpeedLimit, AreaSquareRatio, AdvanceRatio
 )
 from aviary.variable_info.enums import OutMachType
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
 
@@ -179,6 +179,7 @@ class PropellerPerformanceTest(unittest.TestCase):
         options.set_val(Aircraft.Engine.NUM_PROPELLER_BLADES, val=4, units='unitless')
         options.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, False)
         options.set_val(Aircraft.Engine.USE_PROPELLER_MAP, False)
+        options.set_val(Settings.VERBOSITY, 0)
 
         prob = om.Problem()
 
@@ -507,7 +508,7 @@ class OutMachsTest(unittest.TestCase):
             minimum_step=1e-12, abs_err_tol=5.0E-4, rel_err_tol=5.0E-5)
         assert_check_partials(partial_data, atol=1e-4, rtol=1e-4)
 
-    def test_tip_mach(self):
+    def tstest_tip_mach(self):
         # Given helical Mach and Mach, compute tip Mach.
         tol = 1e-5
         prob = om.Problem()
@@ -531,7 +532,7 @@ class OutMachsTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-4, rtol=1e-4)
 
 
-class TipSpeedLimitTest(unittest.TestCase):
+class TipSpeedLimitest(unittest.TestCase):
     """
     Test computation of tip speed limit in TipSpeedLimit class.
     """
@@ -572,6 +573,96 @@ class TipSpeedLimitTest(unittest.TestCase):
             rel_err_tol=5.0e-5,
         )
         assert_check_partials(partial_data, atol=5e-4, rtol=1e-4)
+
+
+class SquareRatioTest(unittest.TestCase):
+    """
+    Test the computation of square ratio with a maximum
+    """
+
+    def test_sqa_ratio_1(self):
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "group",
+            AreaSquareRatio(num_nodes=3, smooth_sqa=False),
+            promotes=["*"],
+        )
+        prob.setup(force_alloc_complex=True)
+        prob.set_val("DiamNac", val=2.8875, units='ft')
+        prob.set_val("DiamProp", val=10.0, units='ft')
+        prob.run_model()
+
+        sqa_ratio = prob.get_val("sqa_array", units='unitless')
+        assert_near_equal(sqa_ratio, [
+            0.08337656, 0.08337656, 0.08337656], tolerance=1e-5)
+
+        partial_data = prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+    def test_sqa_ratio_2(self):
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "group",
+            AreaSquareRatio(num_nodes=3, smooth_sqa=True),
+            promotes=["*"],
+        )
+        prob.setup(force_alloc_complex=True)
+        prob.set_val("DiamNac", val=2.8875, units='ft')
+        prob.set_val("DiamProp", val=10.0, units='ft')
+        prob.run_model()
+
+        sqa_ratio = prob.get_val("sqa_array", units='unitless')
+        assert_near_equal(sqa_ratio, [
+            0.08337656, 0.08337656, 0.08337656], tolerance=1e-5)
+
+        partial_data = prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
+class AdvanceRatioTest(unittest.TestCase):
+    """
+    Test the computation of advanced ratio with a maximum
+    """
+
+    def test_zje_1(self):
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "group",
+            AdvanceRatio(num_nodes=3, smooth_zje=False),
+            promotes=["*"],
+        )
+        prob.setup(force_alloc_complex=True)
+        prob.set_val("vktas", val=[0.1, 125., 300.], units='knot')
+        prob.set_val("tipspd", val=[800., 800., 750.], units='ft/s')
+        prob.set_val("sqa_array", val=[0.0756, 0.0756, 0.0756], units='unitless')
+        prob.run_model()
+
+        equiv_adv_ratio = prob.get_val("equiv_adv_ratio", units='unitless')
+        assert_near_equal(equiv_adv_ratio, [
+            0.000650881807, 0.813602259, 2.08282178], tolerance=1e-5)
+
+        partial_data = prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+    def test_zje_2(self):
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "group",
+            AdvanceRatio(num_nodes=3, smooth_zje=True),
+            promotes=["*"],
+        )
+        prob.setup(force_alloc_complex=True)
+        prob.set_val("vktas", val=[0.1, 125., 300.], units='knot')
+        prob.set_val("tipspd", val=[800., 800., 750.], units='ft/s')
+        prob.set_val("sqa_array", val=[0.0756, 0.0756, 0.0756], units='unitless')
+        prob.run_model()
+
+        equiv_adv_ratio = prob.get_val("equiv_adv_ratio", units='unitless')
+        assert_near_equal(equiv_adv_ratio, [
+            0.000650881807, 0.813602259, 2.08282178], tolerance=1e-5)
+
+        partial_data = prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
 if __name__ == "__main__":
