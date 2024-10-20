@@ -32,7 +32,7 @@ def smooth_min(x, b, alpha=100.0):
 
 def d_smooth_min(x, b, alpha=100.0):
     """
-    Derivative of function smooth_min
+    Derivative of function smooth_min(x)
 
     Parameters:
     x (float or array-like): First value.
