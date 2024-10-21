@@ -12,7 +12,7 @@ from aviary.mission.energy_phase import EnergyPhase
 from aviary.variable_info.variables import Dynamic
 
 
-# @use_tempdirs
+@use_tempdirs
 class AircraftMissionTestSuite(unittest.TestCase):
 
     def setUp(self):
