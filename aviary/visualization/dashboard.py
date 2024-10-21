@@ -14,16 +14,12 @@ import numpy as np
 
 import pandas as pd
 
-import bokeh
-import bokeh.palettes as bp
 from bokeh.models import Legend, LegendItem, CheckboxGroup, CustomJS, TextInput, ColumnDataSource, CustomJS, Div, Range1d, LinearAxis, PrintfTickFormatter
 from bokeh.plotting import figure
 from bokeh.layouts import column
-
-import hvplot.pandas  # noqa # need this ! Otherwise hvplot using DataFrames does not work
+from bokeh.palettes import Category10, Category20, d3
 
 import panel as pn
-from panel.theme import DefaultTheme   # TODO need?
 
 import openmdao.api as om
 from openmdao.utils.general_utils import env_truthy
@@ -569,150 +565,156 @@ def _get_interactive_plot_sources(data_by_varname_and_phase, x_varname, y_varnam
     else:
         return [], []
 
-def create_optimization_history_plot(cr, df):
+def create_optimization_history_plot(case_recorder, df):
     
-    # Enable the Panel extension (for Jupyter notebooks; optional if running as a script)
-    # pn.extension()  TODO remove?
-
     # Create a ColumnDataSource
     source = ColumnDataSource(df)
 
     # Create a Bokeh figure
-    p = bokeh.plotting.figure(title='Optimization History', width=1000, height=600)  # TODO how to handle imports?
-    
-    p.yaxis.visible = False
-    
-    p.xaxis.axis_label = 'Iterations'   # TODO need these?
-    p.yaxis.axis_label = 'Variables'
+    plotting_figure = figure(title='Optimization History',
+                                            width=1000, 
+                                            height=600,
+                                            )
+    plotting_figure.title.align = 'center'
+    plotting_figure.yaxis.visible = False
+    plotting_figure.xaxis.axis_label = 'Iterations'
+    plotting_figure.yaxis.formatter = PrintfTickFormatter(format="%5.2e")
+    plotting_figure.title.text_font_size = "25px"
 
-    p.yaxis.formatter = PrintfTickFormatter(format="%5.2e")
-
-    # # Plot each time series and keep references to the renderers
-    renderers = {}
-    series_list = list(df.columns)[1:]
-    
-    from bokeh.palettes import Category10, Category20
     # Choose a palette
     palette = Category20[20]
-    
-    for i, series in enumerate(series_list):
-        renderers[series] = p.line(
+
+    # Plot each time series and keep references to the renderers
+    renderers = {}
+    variable_names = list(df.columns)[1:] 
+    for i, variable_name in enumerate(variable_names):
+        color = palette[i%20]
+
+        renderers[variable_name] = plotting_figure.line(
             x='iter_count',
-            y=series,
+            y=variable_name,
             source=source,
-            color=palette[i%20],
+            color=color,
             line_width=2,
-            visible=False,
+            visible=False,  # hide them all initially. clicking checkboxes makes them visible
         )
+        
+        # create axes both to the right and left of the plot.
+        # hide them initially
+        # as the user selects/deselects variables to be plotted, they get turned on/off
+        extra_y_axis = LinearAxis(y_range_name=f"extra_y_{variable_name}", 
+                                    axis_label=f"{variable_name}", 
+                                    axis_label_text_color=color)
+        plotting_figure.add_layout(extra_y_axis, 'right')
+        plotting_figure.right[i].visible = False
 
+        extra_y_axis = LinearAxis(y_range_name=f"extra_y_{variable_name}", 
+                                    axis_label=f"{variable_name}", 
+                                    axis_label_text_color=color)
+        plotting_figure.add_layout(extra_y_axis, 'left')       
+        plotting_figure.left[i + 1].visible = False
 
-        if True:
-            color = palette[i%20]
-            extra_y_axis = LinearAxis(y_range_name=f"extra_y_{series}", 
-                                      axis_label=f"{series}", 
-                                      axis_label_text_color=color)
-            p.add_layout(extra_y_axis, 'right')
-            p.right[i].visible = False
+        # set the range
+        y_min = df[variable_name].min()
+        y_max = df[variable_name].max()
+        # if the range is zero, the axis will not be displayed. Plus need some range to make it 
+        #    look good. Some other code seems to do +- 1 for the range in this case.
+        if y_min == y_max:
+            y_min = y_min - 1
+            y_max = y_max + 1
+        plotting_figure.extra_y_ranges[f"extra_y_{variable_name}"] = Range1d(y_min, y_max)
 
-            extra_y_axis = LinearAxis(y_range_name=f"extra_y_{series}", 
-                                      axis_label=f"{series}", 
-                                      axis_label_text_color=color)
-            p.add_layout(extra_y_axis, 'left')
-            
-            len_series_list = len(series_list)
-            p.left[i + 1].visible = False
+    # Make a Legend with no items in it. those will be added in JavaScript 
+    #    as users select variables to be plotted
+    legend = Legend(items=[], location=(-50, -10), border_line_width=0)
 
-            # set the range
-            y_min = df[series].min()
-            y_max = df[series].max()
-            # if the range is zero, the axis will not be displayed. Plus need some range to make it 
-            #    look good
-            if y_min == y_max:
-                y_min = y_min - 1
-                y_max = y_max + 1
-            p.extra_y_ranges[f"extra_y_{series}"] = Range1d(y_min, y_max)
-
-    # Create the legend manually using LegendItem
-    legend_items = []  # TODO need this?
-    legend = Legend(items=legend_items, location=(-50, 0))
-
-    # TODO Need this?
-    legend_items = [LegendItem(label=series, renderers=[renderers[series]]) for series in series_list]
-    
+    # make the legend items in Python. Pass them to JavaScript where they can be added to the Legend
     legend_items = []
-    for series in series_list:
-        units = cr.problem_metadata['variables'][series]['units']
-        legend_item = LegendItem(label=f"{series} ({units})", renderers=[renderers[series]])
+    for variable_name in variable_names:
+        units = case_recorder.problem_metadata['variables'][variable_name]['units']
+        legend_item = LegendItem(label=f"{variable_name} ({units})", renderers=[renderers[variable_name]])
         legend_items.append(legend_item)
 
-    p.add_layout(legend, 'below')
-    
+    plotting_figure.add_layout(legend, 'below')   
 
-    ds = ColumnDataSource(data=dict(options=series_list, checked=[False]*len(series_list)))
+    # make the list of variables with checkboxes
+    data_source = ColumnDataSource(data=dict(options=variable_names, checked=[False]*len(variable_names)))
    # Create a Div to act as a scrollable container
-    scroll_box = Div(
+    variable_scroll_box = Div(
         styles={
             'overflow-y': 'scroll', 
-            'height': '300px', 
+            'height': '500px', 
             'border': '1px solid #ddd',
             'padding': '10px'
         }
     )
 
-    ti = TextInput(placeholder='Enter filter')
+    # make the text box used to filter variables
+    filter_variables_text_box = TextInput(placeholder='Variable name filter')
 
     # CustomJS callback for checkbox changes
-    checkbox_callback = CustomJS(args=dict(ds=ds,p=p, renderers=renderers,legend=legend, legend_items=legend_items), code="""
+    variable_checkbox_callback = CustomJS(args=dict(data_source=data_source,
+                                                    plotting_figure=plotting_figure, 
+                                                    renderers=renderers,
+                                                    legend=legend, 
+                                                    legend_items=legend_items), 
+                                                    code="""
+    // Three things happen in this code. 
+    //   1. turn on/off the plot lines
+    //   2. show the legend items for the items being plotted
+    //   3. show the y axes for each of the lines being plotted
     // The incoming Legend is empty. The items are passed in separately
-    var doc = Bokeh.documents[0];
-    
+   
+    // 1. Plots
+    // turn off or on the line plot for the clicked on variable
     const checkedIndex = cb_obj.index;
     const isChecked = cb_obj.checked;
-    ds.data['checked'][checkedIndex] = isChecked;
-    renderers[ds.data['options'][checkedIndex]].visible = isChecked;
+    data_source.data['checked'][checkedIndex] = isChecked;
+    renderers[data_source.data['options'][checkedIndex]].visible = isChecked;
 
-    var default_y_axis_left = p.left[0];
-    default_y_axis_left.visible = false;
-
+    // 2. Legend
     // empty the Legend items and then add in the ones for the variables that are checked         
     legend.items = [];
-    
-    let put_on_left_side = true;
-
     for (let i =0; i < legend_items.length; i++){
-       var extra_y_axis = p.left[i + 1];
-       extra_y_axis.visible = false ;
-
-       var extra_y_axis = p.right[i];
-       extra_y_axis.visible = false ;
+       if ( data_source.data['checked'][i] ) {
+            legend.items.push(legend_items[i]);
+        }
     }
     
+    // 3. Y axes
+    // first hide all of them
     for (let i =0; i < legend_items.length; i++){
-        if (ds.data['checked'][i]){
+       var extra_y_axis = plotting_figure.left[i + 1];
+       extra_y_axis.visible = false ;
+
+       var extra_y_axis = plotting_figure.right[i];
+       extra_y_axis.visible = false ;
+    }
+    // alternate between making visible the axes on the left and the right to make it more even.
+    // this variable keeps track of which side to add the axes to.
+    let put_on_left_side = true;
+    for (let i =0; i < legend_items.length; i++){
+        if (data_source.data['checked'][i]){
             if (put_on_left_side){
-                p.left[i + 1].visible = true;
+                plotting_figure.left[i + 1].visible = true;
             } else {
-                p.right[i].visible = true;
+                plotting_figure.right[i].visible = true;
             }
             put_on_left_side = ! put_on_left_side ;
         }
     }
-    
-    for (let i =0; i < legend_items.length; i++){
-        
-       if ( ds.data['checked'][i] ) {
-            legend.items.push(legend_items[i]);
-        }
-    }
+    data_source.change.emit();    
+    """)
 
-ds.change.emit();    """)
-
-    # Update the main CustomJS callback
-    callback = CustomJS(args=dict(ds=ds, scroll_box=scroll_box, checkbox_callback=checkbox_callback), code="""
+    # CustomJS callback for the variable filtering
+    filter_variables_callback = CustomJS(args=dict(data_source=data_source, 
+                                                   variable_scroll_box=variable_scroll_box, 
+                                                   variable_checkbox_callback=variable_checkbox_callback), 
+                                                   code="""
                         
         const filter_text = cb_obj.value.toLowerCase();
-        const all_options = ds.data['options'];
-        const checked_states = ds.data['checked'];
+        const all_options = data_source.data['options'];
+        const checked_states = data_source.data['checked'];
         
         // Filter options
         const filtered_options = all_options.filter(option => 
@@ -726,29 +728,29 @@ ds.change.emit();    """)
             checkboxes_html += `
                 <label style="display:block; margin-bottom:5px;">
                     <input type="checkbox" value="${label}" ${checked_states[index] ? 'checked' : ''}
-                        onchange="Bokeh.documents[0].get_model_by_id('${checkbox_callback.id}').execute({index: ${index}, checked: this.checked})">
+                        onchange="Bokeh.documents[0].get_model_by_id('${variable_checkbox_callback.id}').execute({index: ${index}, checked: this.checked})">
                     ${label}
                 </label>
             `;
         });
-        scroll_box.text = checkboxes_html;
+        variable_scroll_box.text = checkboxes_html;
     """)
 
-    ti.js_on_change('value', callback)
+    filter_variables_text_box.js_on_change('value', filter_variables_callback)
 
     # Initial population of the scroll box
     initial_html = ''.join(f"""
         <label style="display:block; margin-bottom:5px;">
-            <input type="checkbox" value="{option}"
-                onchange="Bokeh.documents[0].get_model_by_id('{checkbox_callback.id}').execute({{index: {i}, checked: this.checked}})">
-            {option}
+            <input type="checkbox" value="{variable_name}"
+                onchange="Bokeh.documents[0].get_model_by_id('{variable_checkbox_callback.id}').execute({{index: {i}, checked: this.checked}})">
+            {variable_name}
         </label>
-    """ for i, option in enumerate(series_list))
-    scroll_box.text = initial_html
-
+    """ for i, variable_name in enumerate(variable_names))
+    variable_scroll_box.text = initial_html
 
     # Arrange the layout using Panel
-    layout = pn.Row(pn.Column(ti, scroll_box), p)
+    layout = pn.Row(pn.Column(filter_variables_text_box, variable_scroll_box), plotting_figure)
+
     return layout
 
 # The main script that generates all the tabs in the dashboard
@@ -853,63 +855,6 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
             cr = om.CaseReader(f"{driver_recorder}")
             opt_history_pane = create_optimization_history_plot(cr,df) 
             optimization_tabs_list.append(("Optimization History", opt_history_pane))
-
-    # Desvars, cons, opt interactive plot    TODO remove becaus the one above supercedes it
-    if driver_recorder:
-        if os.path.isfile(driver_recorder):
-            df = convert_driver_case_recorder_file_to_df(f"{driver_recorder}")
-            if df is not None:
-                variables = pn.widgets.CheckBoxGroup(
-                    name="Variables",
-                    options=list(df.columns),
-                    # just so all of them aren't plotted from the beginning. Skip the iter count
-                    value=list(df.columns)[1:2],
-                )
-                ipipeline = df.interactive()
-                ihvplot = ipipeline.hvplot(
-                    y=variables,
-                    responsive=True,
-                    min_height=400,
-                    color=list(bp.Category10[10]),
-                    yformatter="%.0f",
-                    title="Model Optimization using OpenMDAO",
-                    legend=False,
-                    # legend="bottom",
-                    # legend_cols=True,
-                    # legend_muted=True,
-                    # legend_position='right', legend_offset=(-200, -200)
-                )
-                # ihvplot.opts(show_legend='bottom') # does not work. Still on right
-                # print(dir(ihvplot))
-                # hm = hm.opts(legend_position='top')
-
-                optimization_plot_pane = pn.Column(
-                    pn.Row(
-                        pn.Column(
-                            variables,
-                            pn.VSpacer(height=30),
-                            pn.VSpacer(height=30),
-                            # width=300,
-                        ),
-                        ihvplot.panel(),
-                    )
-                )
-            else:
-                optimization_plot_pane = pn.pane.Markdown(
-                    f"# Recorder file '{driver_recorder}' does not have Driver case recordings."
-                )
-        else:
-            optimization_plot_pane = pn.pane.Markdown(
-                f"# Recorder file containing optimization history,'{driver_recorder}', not found.")
-
-        optimization_plot_pane_with_doc = pn.Column(
-            pn.pane.HTML(f"<p>Plot of design variables, constraints, and objectives.</p>",
-                         styles={'text-align': documentation_text_align}),
-            optimization_plot_pane
-        )
-        optimization_tabs_list.append(
-            ("History", optimization_plot_pane_with_doc)
-        )
 
     # IPOPT report
     if os.path.isfile(f"{reports_dir}/IPOPT.out"):
@@ -1131,7 +1076,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
                 ],
             )
 
-            colors = bokeh.palettes.d3['Category20'][20][0::2] + bokeh.palettes.d3['Category20'][20][1::2]
+            colors = d3['Category20'][20][0::2] + d3['Category20'][20][1::2]
             legend_data = []
             phases = sorted(phases, key=str.casefold)
             for i, phase in enumerate(phases):
@@ -1266,7 +1211,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
         header_background="rgb(0, 212, 169)",
         header=header,
         background_color="white",
-        theme=DefaultTheme,
+        theme=pn.theme.DefaultTheme,
         theme_toggle=False,
         main_layout=None,
         css_files=["assets/aviary_styles.css"],
