@@ -10,8 +10,9 @@ from aviary.subsystems.aerodynamics.gasp_based.common import (AeroForces,
                                                               TanhRampComp)
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import sigmoidX
+from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import add_aviary_input
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 from aviary.utils.aviary_values import AviaryValues
 from aviary.subsystems.aerodynamics.gasp_based.interference import WingFuselageInterferenceMission
 
@@ -1368,7 +1369,9 @@ class LowSpeedAero(om.Group):
                 # so ensure this is what's passed to DragCoef
                 promotes_outputs=[("CL", "CL_full_flaps")],
             )
-            warnings.warn("Alpha is NOT an output from LowSpeedAero.")
+            verbosity = self.options['aviary_options'].get_val(Settings.VERBOSITY)
+            if verbosity >= Verbosity.BRIEF:
+                warnings.warn("Alpha is NOT an output from LowSpeedAero.")
         else:
             self.add_subsystem(
                 "lift_coef",
