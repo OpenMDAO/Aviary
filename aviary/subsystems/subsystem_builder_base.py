@@ -30,6 +30,12 @@ class SubsystemBuilderBase(ABC):
             meta_data = _MetaData
         self.meta_data = meta_data
 
+    def needs_mission_solver(self, aviary_inputs):
+        """
+        Return True if the mission subsystem needs to be in the solver loop.
+        """
+        return True
+
     def build_pre_mission(self, aviary_inputs, **kwargs):
         """
         Build an OpenMDAO System for the pre-mission computations of the subsystem.
