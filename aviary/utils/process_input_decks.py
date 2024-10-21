@@ -369,7 +369,8 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
 
     try:
         num_engines = aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)
-        scaled_sls_thrust = aircraft_values.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf')
+        scaled_sls_thrust = aircraft_values.get_val(Aircraft.Engine.SCALED_SLS_THRUST,
+                                                    'lbf')
 
         # This happens before preprocessing, and we end up with the default when unspecified.
         if isinstance(num_engines, list):
