@@ -86,7 +86,7 @@ class MassParameters(om.ExplicitComponent):
         )
 
         self.declare_partials(
-            "c_gear_loc", Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0)
+            "c_gear_loc", Aircraft.LandingGear.MAIN_GEAR_LOCATION)
 
     def compute(self, inputs, outputs):
         aviary_options: AviaryValues = self.options['aviary_options']
