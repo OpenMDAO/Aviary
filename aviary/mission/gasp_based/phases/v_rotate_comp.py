@@ -12,10 +12,10 @@ class VRotateComp(om.ExplicitComponent):
 
     def setup(self):
         # Temporarily set this to shape (1, 1) to avoid OpenMDAO bug
-        add_aviary_input(self, Dynamic.Mission.MASS, shape=(1, 1), units="lbm")
+        add_aviary_input(self, Dynamic.Vehicle.MASS, shape=(1, 1), units="lbm")
         add_aviary_input(
             self,
-            Dynamic.Mission.DENSITY,
+            Dynamic.Atmosphere.DENSITY,
             shape=(1,),
             units="slug/ft**3",
             val=RHO_SEA_LEVEL_ENGLISH,
@@ -38,8 +38,8 @@ class VRotateComp(om.ExplicitComponent):
         self.declare_partials(
             of="Vrot",
             wrt=[
-                Dynamic.Mission.MASS,
-                Dynamic.Mission.DENSITY,
+                Dynamic.Vehicle.MASS,
+                Dynamic.Atmosphere.DENSITY,
                 Aircraft.Wing.AREA,
                 "CL_max",
             ],
@@ -55,7 +55,7 @@ class VRotateComp(om.ExplicitComponent):
         K = 0.5 * ((2 * mass * GRAV_ENGLISH_LBM) /
                    (rho * wing_area * CL_max)) ** 0.5
 
-        partials["Vrot", Dynamic.Mission.MASS] = K / mass
-        partials["Vrot", Dynamic.Mission.DENSITY] = -K / rho
+        partials["Vrot", Dynamic.Vehicle.MASS] = K / mass
+        partials["Vrot", Dynamic.Atmosphere.DENSITY] = -K / rho
         partials["Vrot", Aircraft.Wing.AREA] = -K / wing_area
         partials["Vrot", "CL_max"] = -K / CL_max

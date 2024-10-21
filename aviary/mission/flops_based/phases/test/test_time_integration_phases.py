@@ -31,7 +31,8 @@ class HE_SGMDescentTestCase(unittest.TestCase):
         aviary_inputs, initialization_guesses = create_vehicle(
             'models/test_aircraft/aircraft_for_bench_FwFm.csv')
         aviary_inputs.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=28690, units="lbf")
-        aviary_inputs.set_val(Dynamic.Mission.THROTTLE, val=0, units="unitless")
+        aviary_inputs.set_val(Dynamic.Vehicle.Propulsion.THROTTLE,
+                              val=0, units="unitless")
         aviary_inputs.set_val(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT,
                               val=0.0175, units="unitless")
         aviary_inputs.set_val(Mission.Takeoff.BRAKING_FRICTION_COEFFICIENT,
@@ -69,11 +70,13 @@ class HE_SGMDescentTestCase(unittest.TestCase):
         traj = FlexibleTraj(
             Phases=phases,
             promote_all_auto_ivc=True,
-            traj_final_state_output=[Dynamic.Mission.MASS,
-                                     Dynamic.Mission.DISTANCE,
-                                     Dynamic.Mission.ALTITUDE],
+            traj_final_state_output=[
+                Dynamic.Vehicle.MASS,
+                Dynamic.Mission.DISTANCE,
+                Dynamic.Mission.ALTITUDE,
+            ],
             traj_initial_state_input=[
-                Dynamic.Mission.MASS,
+                Dynamic.Vehicle.MASS,
                 Dynamic.Mission.DISTANCE,
                 Dynamic.Mission.ALTITUDE,
             ],

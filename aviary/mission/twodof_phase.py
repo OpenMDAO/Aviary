@@ -79,7 +79,7 @@ class TwoDOFPhase(FlightPhaseBase):
 
         phase.add_timeseries_output("EAS", units="kn")
         phase.add_timeseries_output(Dynamic.Mission.VELOCITY, units="kn")
-        phase.add_timeseries_output(Dynamic.Mission.LIFT)
+        phase.add_timeseries_output(Dynamic.Vehicle.LIFT)
 
         return phase
 

@@ -307,10 +307,9 @@ class WingFuselageInterferenceMission(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.FORM_FACTOR, 1.25)
         add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD)
-        add_aviary_input(self, Dynamic.Mission.MACH, shape=nn)
-        add_aviary_input(self, Dynamic.Mission.TEMPERATURE, shape=nn)
-        add_aviary_input(self, Dynamic.Mission.KINEMATIC_VISCOSITY,
-                         shape=nn)
+        add_aviary_input(self, Dynamic.Atmosphere.MACH, shape=nn)
+        add_aviary_input(self, Dynamic.Atmosphere.TEMPERATURE, shape=nn)
+        add_aviary_input(self, Dynamic.Atmosphere.KINEMATIC_VISCOSITY, shape=nn)
         self.add_input('interference_independent_of_shielded_area')
         self.add_input('drag_loss_due_to_shielded_wing_area')
 
@@ -321,11 +320,15 @@ class WingFuselageInterferenceMission(om.ExplicitComponent):
         nn = self.options["num_nodes"]
         arange = np.arange(nn)
         self.declare_partials(
-            'wing_fuselage_interference_flat_plate_equivalent', [
-                Dynamic.Mission.MACH,
-                Dynamic.Mission.TEMPERATURE,
-                Dynamic.Mission.KINEMATIC_VISCOSITY],
-            rows=arange, cols=arange)
+            'wing_fuselage_interference_flat_plate_equivalent',
+            [
+                Dynamic.Atmosphere.MACH,
+                Dynamic.Atmosphere.TEMPERATURE,
+                Dynamic.Atmosphere.KINEMATIC_VISCOSITY,
+            ],
+            rows=arange,
+            cols=arange,
+        )
         self.declare_partials(
             'wing_fuselage_interference_flat_plate_equivalent', [
                 Aircraft.Wing.FORM_FACTOR,
@@ -368,16 +371,54 @@ class WingFuselageInterferenceMission(om.ExplicitComponent):
         J['wing_fuselage_interference_flat_plate_equivalent', Aircraft.Wing.AVERAGE_CHORD] = \
             2.6*CDWI * CKW * ((np.log10(RELI * CBARW)/7.)**(-3.6))*AREASHIELDWF \
             * 1/(np.log(10)*(CBARW)*7)
-        J['wing_fuselage_interference_flat_plate_equivalent', Dynamic.Mission.MACH] = -CKW * AREASHIELDWF * (((np.log10(RELI * CBARW)/7.)**(-2.6)) * (
-            FCFWC*FCFWT * dCFIN_dEM) + CFIN*(-2.6*((np.log10(RELI * CBARW)/7.)**(-3.6)) / (np.log(10)*(RELI)*7)*(dRELI_dEM)))
-        J['wing_fuselage_interference_flat_plate_equivalent', Dynamic.Mission.TEMPERATURE] = \
-            -CDWI * CKW * -2.6*((np.log10(RELI * CBARW)/7.)**(-3.6))*AREASHIELDWF \
-            * 1/(np.log(10)*(RELI)*7) * np.sqrt(1.4*GRAV_ENGLISH_GASP*53.32) \
-            * EM * .5/(XKV*np.sqrt(T0))
-        J['wing_fuselage_interference_flat_plate_equivalent', Dynamic.Mission.KINEMATIC_VISCOSITY] = \
-            CDWI * CKW * -2.6*((np.log10(RELI * CBARW)/7.)**(-3.6))*AREASHIELDWF \
-            * 1/(np.log(10)*(RELI)*7) * np.sqrt(1.4*GRAV_ENGLISH_GASP*53.32) \
-            * EM * np.sqrt(T0) / XKV**2
+        J[
+            'wing_fuselage_interference_flat_plate_equivalent', Dynamic.Atmosphere.MACH
+        ] = (
+            -CKW
+            * AREASHIELDWF
+            * (
+                ((np.log10(RELI * CBARW) / 7.0) ** (-2.6)) * (FCFWC * FCFWT * dCFIN_dEM)
+                + CFIN
+                * (
+                    -2.6
+                    * ((np.log10(RELI * CBARW) / 7.0) ** (-3.6))
+                    / (np.log(10) * (RELI) * 7)
+                    * (dRELI_dEM)
+                )
+            )
+        )
+        J[
+            'wing_fuselage_interference_flat_plate_equivalent',
+            Dynamic.Atmosphere.TEMPERATURE,
+        ] = (
+            -CDWI
+            * CKW
+            * -2.6
+            * ((np.log10(RELI * CBARW) / 7.0) ** (-3.6))
+            * AREASHIELDWF
+            * 1
+            / (np.log(10) * (RELI) * 7)
+            * np.sqrt(1.4 * GRAV_ENGLISH_GASP * 53.32)
+            * EM
+            * 0.5
+            / (XKV * np.sqrt(T0))
+        )
+        J[
+            'wing_fuselage_interference_flat_plate_equivalent',
+            Dynamic.Atmosphere.KINEMATIC_VISCOSITY,
+        ] = (
+            CDWI
+            * CKW
+            * -2.6
+            * ((np.log10(RELI * CBARW) / 7.0) ** (-3.6))
+            * AREASHIELDWF
+            * 1
+            / (np.log(10) * (RELI) * 7)
+            * np.sqrt(1.4 * GRAV_ENGLISH_GASP * 53.32)
+            * EM
+            * np.sqrt(T0)
+            / XKV**2
+        )
         J['wing_fuselage_interference_flat_plate_equivalent',
             'interference_independent_of_shielded_area'] = \
             -CDWI * CKW * ((np.log10(RELI * CBARW)/7.)**(-2.6))

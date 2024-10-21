@@ -52,11 +52,11 @@ class TurbopropTest(unittest.TestCase):
         options.set_val(Aircraft.Engine.INTERPOLATION_METHOD, 'slinear')
 
         options.set_val(
-            Aircraft.Engine.COMPUTE_PROPELLER_INSTALLATION_LOSS,
+            Aircraft.Engine.Propeller.COMPUTE_INSTALLATION_LOSS,
             val=True,
             units='unitless',
         )
-        options.set_val(Aircraft.Engine.NUM_PROPELLER_BLADES, val=4, units='unitless')
+        options.set_val(Aircraft.Engine.Propeller.NUM_BLADES, val=4, units='unitless')
 
         num_nodes = len(test_points)
 
@@ -66,9 +66,12 @@ class TurbopropTest(unittest.TestCase):
         preprocess_propulsion(options, [engine])
 
         machs, alts, throttles = zip(*test_points)
-        IVC = om.IndepVarComp(Dynamic.Mission.MACH, np.array(machs), units='unitless')
+        IVC = om.IndepVarComp(
+            Dynamic.Atmosphere.MACH, np.array(machs), units='unitless'
+        )
         IVC.add_output(Dynamic.Mission.ALTITUDE, np.array(alts), units='ft')
-        IVC.add_output(Dynamic.Mission.THROTTLE, np.array(throttles), units='unitless')
+        IVC.add_output(Dynamic.Vehicle.Propulsion.THROTTLE,
+                       np.array(throttles), units='unitless')
         self.prob.model.add_subsystem('IVC', IVC, promotes=['*'])
 
         # calculate atmospheric properties
@@ -91,15 +94,16 @@ class TurbopropTest(unittest.TestCase):
         self.prob.set_val(Aircraft.Engine.SCALE_FACTOR, 1, units='unitless')
 
     def get_results(self, point_names=None, display_results=False):
-        shp = self.prob.get_val(Dynamic.Mission.SHAFT_POWER, units='hp')
-        total_thrust = self.prob.get_val(Dynamic.Mission.THRUST, units='lbf')
+        shp = self.prob.get_val(Dynamic.Vehicle.Propulsion.SHAFT_POWER, units='hp')
+        total_thrust = self.prob.get_val(Dynamic.Vehicle.Propulsion.THRUST, units='lbf')
         prop_thrust = self.prob.get_val('turboprop_model.propeller_thrust', units='lbf')
         tailpipe_thrust = self.prob.get_val(
             'turboprop_model.turboshaft_thrust', units='lbf'
         )
-        max_thrust = self.prob.get_val(Dynamic.Mission.THRUST_MAX, units='lbf')
+        max_thrust = self.prob.get_val(
+            Dynamic.Vehicle.Propulsion.THRUST_MAX, units='lbf')
         fuel_flow = self.prob.get_val(
-            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE, units='lbm/h'
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE, units='lbm/h'
         )
 
         results = []
@@ -140,39 +144,39 @@ class TurbopropTest(unittest.TestCase):
                 -643.9999999999998,
             ),
             (
-                2466.55094358958,
+                2467.832484316763,
                 21.30000000000001,
-                1833.4755577366554,
-                1854.7755577366554,
-                1854.7755577366554,
+                1834.4155407944743,
+                1855.7155407944742,
+                1855.7155407944742,
                 -839.7000000000685,
             ),
         ]
 
         options = get_option_defaults()
         options.set_val(
-            Aircraft.Engine.COMPUTE_PROPELLER_INSTALLATION_LOSS,
+            Aircraft.Engine.Propeller.COMPUTE_INSTALLATION_LOSS,
             val=True,
             units='unitless',
         )
-        options.set_val(Aircraft.Engine.NUM_PROPELLER_BLADES, val=4, units='unitless')
+        options.set_val(Aircraft.Engine.Propeller.NUM_BLADES, val=4, units='unitless')
         options.set_val('speed_type', SpeedType.MACH)
 
         prop_group = ExamplePropModel('custom_prop_model')
 
         self.prepare_model(test_points, filename, prop_group)
 
-        self.prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 10.5, units="ft")
+        self.prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 10.5, units="ft")
         self.prob.set_val(
-            Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, 114.0, units="unitless"
+            Aircraft.Engine.Propeller.ACTIVITY_FACTOR, 114.0, units="unitless"
         )
         # self.prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
         #                   np.array([1, 1, 0.7]), units="unitless")
         self.prob.set_val(
-            Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT, 0.5, units="unitless"
+            Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT, 0.5, units="unitless"
         )
 
-        self.prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED_MAX, 800, units="ft/s")
+        self.prob.set_val(Aircraft.Engine.Propeller.TIP_SPEED_MAX, 800, units="ft/s")
 
         self.prob.run_model()
         results = self.get_results()
@@ -204,28 +208,28 @@ class TurbopropTest(unittest.TestCase):
                 -643.9999999999998,
             ),
             (
-                2466.55094358958,
+                2467.832484316763,
                 21.30000000000001,
-                1833.4755577366554,
-                1854.7755577366554,
-                1854.7755577366554,
+                1834.4155407944743,
+                1855.7155407944742,
+                1855.7155407944742,
                 -839.7000000000685,
             ),
         ]
 
         self.prepare_model(test_points, filename)
 
-        self.prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 10.5, units="ft")
+        self.prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 10.5, units="ft")
         self.prob.set_val(
-            Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, 114.0, units="unitless"
+            Aircraft.Engine.Propeller.ACTIVITY_FACTOR, 114.0, units="unitless"
         )
         # self.prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
         #                   np.array([1,1,0.7]), units="unitless")
         self.prob.set_val(
-            Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT, 0.5, units="unitless"
+            Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT, 0.5, units="unitless"
         )
 
-        self.prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED_MAX, 800, units="ft/s")
+        self.prob.set_val(Aircraft.Engine.Propeller.TIP_SPEED_MAX, 800, units="ft/s")
 
         self.prob.run_model()
 
@@ -257,25 +261,25 @@ class TurbopropTest(unittest.TestCase):
                 -643.9999999999998,
             ),
             (
-                2466.55094358958,
+                2467.832484316763,
                 0.0,
-                1833.4755577366554,
-                1833.4755577366554,
-                1833.4755577366554,
+                1834.4155407944743,
+                1834.4155407944743,
+                1834.4155407944743,
                 -839.7000000000685,
             ),
         ]
 
         self.prepare_model(test_points, filename)
 
-        self.prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 10.5, units="ft")
+        self.prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 10.5, units="ft")
         self.prob.set_val(
-            Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, 114.0, units="unitless"
+            Aircraft.Engine.Propeller.ACTIVITY_FACTOR, 114.0, units="unitless"
         )
         self.prob.set_val(
-            Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT, 0.5, units="unitless"
+            Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT, 0.5, units="unitless"
         )
-        self.prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED_MAX, 800, units="ft/s")
+        self.prob.set_val(Aircraft.Engine.Propeller.TIP_SPEED_MAX, 800, units="ft/s")
 
         self.prob.run_model()
 
@@ -293,17 +297,18 @@ class TurbopropTest(unittest.TestCase):
         motor_model = MotorBuilder()
 
         self.prepare_model(test_points, motor_model, input_rpm=True)
-        self.prob.set_val(Dynamic.Mission.RPM, np.ones(num_nodes) * 2000.0, units='rpm')
+        self.prob.set_val(Dynamic.Vehicle.Propulsion.RPM,
+                          np.ones(num_nodes) * 2000.0, units='rpm')
 
-        self.prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 10.5, units="ft")
+        self.prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 10.5, units="ft")
         self.prob.set_val(
-            Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, 114.0, units="unitless"
+            Aircraft.Engine.Propeller.ACTIVITY_FACTOR, 114.0, units="unitless"
         )
         self.prob.set_val(
-            Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT, 0.5, units="unitless"
+            Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT, 0.5, units="unitless"
         )
 
-        self.prob.set_val(Aircraft.Engine.PROPELLER_TIP_SPEED_MAX, 800, units="ft/s")
+        self.prob.set_val(Aircraft.Engine.Propeller.TIP_SPEED_MAX, 800, units="ft/s")
 
         self.prob.run_model()
 
@@ -311,15 +316,15 @@ class TurbopropTest(unittest.TestCase):
         prop_thrust_expected = total_thrust_expected = [
             610.35808,
             2627.26329,
-            312.27342,
+            312.06783,
         ]
         electric_power_expected = [0.0, 408.4409047, 408.4409047]
 
-        shp = self.prob.get_val(Dynamic.Mission.SHAFT_POWER, units='hp')
-        total_thrust = self.prob.get_val(Dynamic.Mission.THRUST, units='lbf')
+        shp = self.prob.get_val(Dynamic.Vehicle.Propulsion.SHAFT_POWER, units='hp')
+        total_thrust = self.prob.get_val(Dynamic.Vehicle.Propulsion.THRUST, units='lbf')
         prop_thrust = self.prob.get_val('turboprop_model.propeller_thrust', units='lbf')
         electric_power = self.prob.get_val(
-            Dynamic.Mission.ELECTRIC_POWER_IN, units='kW'
+            Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN, units='kW'
         )
 
         assert_near_equal(shp, shp_expected, tolerance=1e-8)
@@ -341,22 +346,22 @@ class ExamplePropModel(SubsystemBuilderBase):
             'propeller_performance',
             PropellerPerformance(aviary_options=aviary_inputs, num_nodes=num_nodes),
             promotes_inputs=[
-                Dynamic.Mission.MACH,
-                Dynamic.Mission.SPEED_OF_SOUND,
-                Aircraft.Engine.PROPELLER_TIP_SPEED_MAX,
-                Dynamic.Mission.DENSITY,
+                Dynamic.Atmosphere.MACH,
+                Dynamic.Atmosphere.SPEED_OF_SOUND,
+                Aircraft.Engine.Propeller.TIP_SPEED_MAX,
+                Dynamic.Atmosphere.DENSITY,
                 Dynamic.Mission.VELOCITY,
-                Aircraft.Engine.PROPELLER_DIAMETER,
-                Dynamic.Mission.SHAFT_POWER,
-                Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR,
-                Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT,
+                Aircraft.Engine.Propeller.DIAMETER,
+                Dynamic.Vehicle.Propulsion.SHAFT_POWER,
+                Aircraft.Engine.Propeller.ACTIVITY_FACTOR,
+                Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT,
             ],
             promotes_outputs=['*'],
         )
 
-        pp.set_input_defaults(Aircraft.Engine.PROPELLER_DIAMETER, 10, units="ft")
+        pp.set_input_defaults(Aircraft.Engine.Propeller.DIAMETER, 10, units="ft")
         pp.set_input_defaults(
-            Dynamic.Mission.PROPELLER_TIP_SPEED,
+            Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED,
             800.0 * np.ones(num_nodes),
             units="ft/s",
         )

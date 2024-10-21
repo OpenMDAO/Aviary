@@ -16,41 +16,52 @@ class AeroForces(om.ExplicitComponent):
 
         self.add_input("CL", 1.0, units="unitless", shape=nn, desc="Lift coefficient")
         self.add_input("CD", 1.0, units="unitless", shape=nn, desc="Drag coefficient")
-        self.add_input(Dynamic.Mission.DYNAMIC_PRESSURE, 1.0,
-                       units="psf", shape=nn, desc="Dynamic pressure")
+        self.add_input(
+            Dynamic.Atmosphere.DYNAMIC_PRESSURE,
+            1.0,
+            units="psf",
+            shape=nn,
+            desc="Dynamic pressure",
+        )
 
         add_aviary_input(self, Aircraft.Wing.AREA, val=1370.3)
 
-        self.add_output(Dynamic.Mission.LIFT, units="lbf", shape=nn, desc="Lift force")
-        self.add_output(Dynamic.Mission.DRAG, units="lbf", shape=nn, desc="Drag force")
+        self.add_output(Dynamic.Vehicle.LIFT, units="lbf", shape=nn, desc="Lift force")
+        self.add_output(Dynamic.Vehicle.DRAG, units="lbf", shape=nn, desc="Drag force")
 
     def setup_partials(self):
         nn = self.options["num_nodes"]
         arange = np.arange(nn)
         self.declare_partials(
-            Dynamic.Mission.LIFT, [
-                "CL", Dynamic.Mission.DYNAMIC_PRESSURE], rows=arange, cols=arange)
-        self.declare_partials(Dynamic.Mission.LIFT, [Aircraft.Wing.AREA])
+            Dynamic.Vehicle.LIFT,
+            ["CL", Dynamic.Atmosphere.DYNAMIC_PRESSURE],
+            rows=arange,
+            cols=arange,
+        )
+        self.declare_partials(Dynamic.Vehicle.LIFT, [Aircraft.Wing.AREA])
         self.declare_partials(
-            Dynamic.Mission.DRAG, [
-                "CD", Dynamic.Mission.DYNAMIC_PRESSURE], rows=arange, cols=arange)
-        self.declare_partials(Dynamic.Mission.DRAG, [Aircraft.Wing.AREA])
+            Dynamic.Vehicle.DRAG,
+            ["CD", Dynamic.Atmosphere.DYNAMIC_PRESSURE],
+            rows=arange,
+            cols=arange,
+        )
+        self.declare_partials(Dynamic.Vehicle.DRAG, [Aircraft.Wing.AREA])
 
     def compute(self, inputs, outputs):
         CL, CD, q, wing_area = inputs.values()
-        outputs[Dynamic.Mission.LIFT] = q * CL * wing_area
-        outputs[Dynamic.Mission.DRAG] = q * CD * wing_area
+        outputs[Dynamic.Vehicle.LIFT] = q * CL * wing_area
+        outputs[Dynamic.Vehicle.DRAG] = q * CD * wing_area
 
     def compute_partials(self, inputs, J):
         CL, CD, q, wing_area = inputs.values()
 
-        J[Dynamic.Mission.LIFT, "CL"] = q * wing_area
-        J[Dynamic.Mission.LIFT, Dynamic.Mission.DYNAMIC_PRESSURE] = CL * wing_area
-        J[Dynamic.Mission.LIFT, Aircraft.Wing.AREA] = q * CL
+        J[Dynamic.Vehicle.LIFT, "CL"] = q * wing_area
+        J[Dynamic.Vehicle.LIFT, Dynamic.Atmosphere.DYNAMIC_PRESSURE] = CL * wing_area
+        J[Dynamic.Vehicle.LIFT, Aircraft.Wing.AREA] = q * CL
 
-        J[Dynamic.Mission.DRAG, "CD"] = q * wing_area
-        J[Dynamic.Mission.DRAG, Dynamic.Mission.DYNAMIC_PRESSURE] = CD * wing_area
-        J[Dynamic.Mission.DRAG, Aircraft.Wing.AREA] = q * CD
+        J[Dynamic.Vehicle.DRAG, "CD"] = q * wing_area
+        J[Dynamic.Vehicle.DRAG, Dynamic.Atmosphere.DYNAMIC_PRESSURE] = CD * wing_area
+        J[Dynamic.Vehicle.DRAG, Aircraft.Wing.AREA] = q * CD
 
 
 class CLFromLift(om.ExplicitComponent):
@@ -62,8 +73,13 @@ class CLFromLift(om.ExplicitComponent):
     def setup(self):
         nn = self.options["num_nodes"]
         self.add_input("lift_req", 1, units="lbf", shape=nn, desc="Lift force")
-        self.add_input(Dynamic.Mission.DYNAMIC_PRESSURE, 1.0,
-                       units="psf", shape=nn, desc="Dynamic pressure")
+        self.add_input(
+            Dynamic.Atmosphere.DYNAMIC_PRESSURE,
+            1.0,
+            units="psf",
+            shape=nn,
+            desc="Dynamic pressure",
+        )
 
         add_aviary_input(self, Aircraft.Wing.AREA, val=1370.3)
 
@@ -72,7 +88,8 @@ class CLFromLift(om.ExplicitComponent):
     def setup_partials(self):
         ar = np.arange(self.options["num_nodes"])
         self.declare_partials(
-            "CL", ["lift_req", Dynamic.Mission.DYNAMIC_PRESSURE], rows=ar, cols=ar)
+            "CL", ["lift_req", Dynamic.Atmosphere.DYNAMIC_PRESSURE], rows=ar, cols=ar
+        )
         self.declare_partials("CL", [Aircraft.Wing.AREA])
 
     def compute(self, inputs, outputs):
@@ -82,7 +99,7 @@ class CLFromLift(om.ExplicitComponent):
     def compute_partials(self, inputs, J):
         lift_req, q, wing_area = inputs.values()
         J["CL", "lift_req"] = 1 / (q * wing_area)
-        J["CL", Dynamic.Mission.DYNAMIC_PRESSURE] = -lift_req / (q**2 * wing_area)
+        J["CL", Dynamic.Atmosphere.DYNAMIC_PRESSURE] = -lift_req / (q**2 * wing_area)
         J["CL", Aircraft.Wing.AREA] = -lift_req / (q * wing_area**2)
 
 

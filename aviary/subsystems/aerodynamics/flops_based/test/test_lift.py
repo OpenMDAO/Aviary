@@ -31,10 +31,10 @@ class SimpleLiftTest(unittest.TestCase):
 
         # dynamic pressure = 4 digits precision
         # lift coefficient = 5 digits precision
-        mission_keys = (Dynamic.Mission.DYNAMIC_PRESSURE, 'cl')
+        mission_keys = (Dynamic.Atmosphere.DYNAMIC_PRESSURE, 'cl')
 
         # lift = 6 digits precision
-        outputs_keys = (Dynamic.Mission.LIFT,)
+        outputs_keys = (Dynamic.Vehicle.LIFT,)
 
         # use lowest precision from all available data
         tol = 1e-4
@@ -42,7 +42,7 @@ class SimpleLiftTest(unittest.TestCase):
         prob = om.Problem()
         model = prob.model
 
-        q, _ = mission_data.get_item(Dynamic.Mission.DYNAMIC_PRESSURE)
+        q, _ = mission_data.get_item(Dynamic.Atmosphere.DYNAMIC_PRESSURE)
         nn = len(q)
         model.add_subsystem('simple_lift', SimpleLift(num_nodes=nn), promotes=['*'])
 
@@ -74,7 +74,7 @@ class SimpleLiftTest(unittest.TestCase):
         assert_check_partials(data, atol=2.5e-10, rtol=1e-12)
 
         assert_near_equal(
-            prob.get_val(Dynamic.Mission.LIFT), mission_simple_data[case_name], 1e-6
+            prob.get_val(Dynamic.Vehicle.LIFT), mission_simple_data[case_name], 1e-6
         )
 
 
@@ -91,11 +91,11 @@ class LiftEqualsWeightTest(unittest.TestCase):
 
         # dynamic pressure = 4 digits precision
         # mass = 6 digits precision
-        mission_keys = (Dynamic.Mission.DYNAMIC_PRESSURE, Dynamic.Mission.MASS)
+        mission_keys = (Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Vehicle.MASS)
 
         # lift coefficient = 5 digits precision
         # lift = 6 digits precision
-        outputs_keys = ('cl', Dynamic.Mission.LIFT)
+        outputs_keys = ('cl', Dynamic.Vehicle.LIFT)
 
         # use lowest precision from all available data
         tol = 1e-4
@@ -103,7 +103,7 @@ class LiftEqualsWeightTest(unittest.TestCase):
         prob = om.Problem()
         model = prob.model
 
-        q, _ = mission_data.get_item(Dynamic.Mission.DYNAMIC_PRESSURE)
+        q, _ = mission_data.get_item(Dynamic.Atmosphere.DYNAMIC_PRESSURE)
         nn = len(q)
 
         model.add_subsystem(
@@ -138,7 +138,7 @@ class LiftEqualsWeightTest(unittest.TestCase):
         assert_check_partials(data, atol=2.5e-10, rtol=1e-12)
 
         assert_near_equal(
-            prob.get_val(Dynamic.Mission.LIFT), mission_equal_data[case_name], 1e-6
+            prob.get_val(Dynamic.Vehicle.LIFT), mission_equal_data[case_name], 1e-6
         )
 
 
@@ -152,31 +152,31 @@ mission_equal_data = {}
 
 mission_test_data['LargeSingleAisle1FLOPS'] = _mission_data = AviaryValues()
 _mission_data.set_val(
-    Dynamic.Mission.DYNAMIC_PRESSURE, [206.0, 205.6, 205.4], 'lbf/ft**2'
+    Dynamic.Atmosphere.DYNAMIC_PRESSURE, [206.0, 205.6, 205.4], 'lbf/ft**2'
 )
 _mission_data.set_val('cl', [0.62630, 0.62623, 0.62619])
-_mission_data.set_val(Dynamic.Mission.LIFT, [176751.0, 176400.0, 176185.0], 'lbf')
-_mission_data.set_val(Dynamic.Mission.MASS, [176751.0, 176400.0, 176185.0], 'lbm')
+_mission_data.set_val(Dynamic.Vehicle.LIFT, [176751.0, 176400.0, 176185.0], 'lbf')
+_mission_data.set_val(Dynamic.Vehicle.MASS, [176751.0, 176400.0, 176185.0], 'lbm')
 mission_simple_data['LargeSingleAisle1FLOPS'] = [786242.68, 784628.29, 783814.96]
 mission_equal_data['LargeSingleAisle1FLOPS'] = [786227.62, 784666.29, 783709.93]
 
 mission_test_data['LargeSingleAisle2FLOPS'] = _mission_data = AviaryValues()
 _mission_data.set_val(
-    Dynamic.Mission.DYNAMIC_PRESSURE, [215.4, 215.4, 215.4], 'lbf/ft**2'
+    Dynamic.Atmosphere.DYNAMIC_PRESSURE, [215.4, 215.4, 215.4], 'lbf/ft**2'
 )
 _mission_data.set_val('cl', [0.58761, 0.58578, 0.57954])
-_mission_data.set_val(Dynamic.Mission.LIFT, [169730.0, 169200.0, 167400.0], 'lbf')
-_mission_data.set_val(Dynamic.Mission.MASS, [169730.0, 169200.0, 167400.0], 'lbm')
+_mission_data.set_val(Dynamic.Vehicle.LIFT, [169730.0, 169200.0, 167400.0], 'lbf')
+_mission_data.set_val(Dynamic.Vehicle.MASS, [169730.0, 169200.0, 167400.0], 'lbm')
 mission_simple_data['LargeSingleAisle2FLOPS'] = [755005.42, 752654.10, 744636.48]
 mission_equal_data['LargeSingleAisle2FLOPS'] = [754996.65, 752639.10, 744632.30]
 
 mission_test_data['N3CC'] = _mission_data = AviaryValues()
 _mission_data.set_val(
-    Dynamic.Mission.DYNAMIC_PRESSURE, [208.4, 288.5, 364.0], 'lbf/ft**2'
+    Dynamic.Atmosphere.DYNAMIC_PRESSURE, [208.4, 288.5, 364.0], 'lbf/ft**2'
 )
 _mission_data.set_val('cl', [0.50651, 0.36573, 0.28970])
-_mission_data.set_val(Dynamic.Mission.LIFT, [128777.0, 128721.0, 128667.0], 'lbf')
-_mission_data.set_val(Dynamic.Mission.MASS, [128777.0, 128721.0, 128667.0], 'lbm')
+_mission_data.set_val(Dynamic.Vehicle.LIFT, [128777.0, 128721.0, 128667.0], 'lbf')
+_mission_data.set_val(Dynamic.Vehicle.MASS, [128777.0, 128721.0, 128667.0], 'lbm')
 mission_simple_data['N3CC'] = [572838.22, 572601.72, 572263.60]
 mission_equal_data['N3CC'] = [572828.63, 572579.53, 572339.33]
 
