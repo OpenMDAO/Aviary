@@ -535,15 +535,25 @@ def sigmoidX(x, x0, alpha=1.0):
         raise ValueError("alpha must be non-zero")
 
     if isinstance(x, np.ndarray):
+        if np.isrealobj(x):
+            dtype = float
+        else:
+            dtype = complex
         n_size = x.size
-        y = np.zeros(n_size, dtype=complex)
+        y = np.zeros(n_size, dtype=dtype)
         # avoid overflow in squared term, underflow seems to be ok
-        calc_idx = np.where((x - x0) / alpha > -320)
+        calc_idx = np.where((x.real - x0) / alpha > -320)
         y[calc_idx] = 1 / (1 + np.exp(-(x[calc_idx] - x0) / alpha))
     else:
+        if isinstance(x, float):
+            dtype = float
+        else:
+            dtype = complex
         y = 0
         if (x - x0)*alpha > -320:
             y = 1 / (1 + np.exp(-(x - x0) / alpha))
+    if dtype == float:
+        y = y.real
     return y
 
 
@@ -561,12 +571,16 @@ def dSigmoidXdx(x, x0, alpha=1.0):
         raise ValueError("alpha must be non-zero")
 
     if isinstance(x, np.ndarray):
+        if np.isrealobj(x):
+            dtype = float
+        else:
+            dtype = complex
         n_size = x.size
-        y = np.zeros(n_size, dtype=complex)
-        term = np.zeros(n_size, dtype=complex)
-        term2 = np.zeros(n_size, dtype=complex)
+        y = np.zeros(n_size, dtype=dtype)
+        term = np.zeros(n_size, dtype=dtype)
+        term2 = np.zeros(n_size, dtype=dtype)
         # avoid overflow in squared term, underflow seems to be ok
-        calc_idx = np.where((x - x0) / alpha > -320)
+        calc_idx = np.where((x.real - x0) / alpha > -320)
         term[calc_idx] = np.exp(-(x[calc_idx] - x0) / alpha)
         term2[calc_idx] = (1 + term[calc_idx]) * (1 + term[calc_idx])
         y[calc_idx] = term[calc_idx] / alpha / term2[calc_idx]
@@ -576,4 +590,6 @@ def dSigmoidXdx(x, x0, alpha=1.0):
             term = np.exp(-(x - x0) / alpha)
             term2 = (1 + term) * (1 + term)
             y = term / alpha / term2
+    if dtype == float:
+        y = y.real
     return y
