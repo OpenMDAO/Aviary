@@ -6717,7 +6717,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Mission.Constraints.SHAFT_POWER_RESIDUAL,
+    Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='kW',

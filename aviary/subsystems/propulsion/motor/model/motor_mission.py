@@ -120,8 +120,8 @@ class MotorMission(om.Group):
                 has_diag_partials=True,
             ),
             promotes_inputs=[
-                ('max_torque', Dynamic.Mission.TORQUE_MAX),
-                ('RPM', Dynamic.Mission.RPM),
+                ('max_torque', Dynamic.Vehicle.Propulsion.TORQUE_MAX),
+                ('RPM', Dynamic.Vehicle.Propulsion.RPM),
             ],
             promotes_outputs=[
                 ('max_power', Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX)
