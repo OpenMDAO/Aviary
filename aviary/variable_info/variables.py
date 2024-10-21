@@ -683,7 +683,7 @@ class Mission:
         MAX_MACH = 'mission:constraints:max_mach'
         RANGE_RESIDUAL = 'mission:constraints:range_residual'
         RANGE_RESIDUAL_RESERVE = 'mission:constraints:range_residual_reserve'
-        SHAFT_POWER_RESIDUAL = 'mission:constraints:shaft_power_residual'
+        GEARBOX_SHAFT_POWER_RESIDUAL = 'mission:constraints:gearbox_shaft_power_residual'
 
     class Design:
         # These values MAY change in design mission, but in off-design

@@ -167,7 +167,7 @@ class TestMission(unittest.TestCase):
 
         prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
         prob.set_val(Aircraft.Wing.AVERAGE_CHORD, 12)
-        prob.set_val(Dynamic.Mission.MACH, (.6, .65))
+        prob.set_val(Dynamic.Atmosphere.MACH, (.6, .65))
         prob.set_val(Dynamic.Mission.ALTITUDE, (30000, 30000))
         prob.set_val('interference_independent_of_shielded_area', 0.35794891)
         prob.set_val('drag_loss_due_to_shielded_wing_area', 83.53366)
