@@ -14,7 +14,6 @@ cargo_test_data['1'] = AviaryValues({
     Aircraft.CrewPayload.MISC_CARGO: (2000., 'lbm'),  # custom
     Aircraft.CrewPayload.WING_CARGO: (1000., 'lbm'),  # custom
     Aircraft.CrewPayload.BAGGAGE_MASS: (9200., 'lbm'),  # custom
-    Aircraft.CrewPayload.NUM_PASSENGERS: (184, 'unitless'),  # custom
     Aircraft.CrewPayload.PASSENGER_MASS: (33120., 'lbm'),  # custom
     Aircraft.CrewPayload.CARGO_MASS: (3000., 'lbm'),  # custom
     Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS: (45320., 'lbm')  # custom

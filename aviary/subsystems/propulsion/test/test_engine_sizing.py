@@ -35,11 +35,11 @@ class EngineSizingTest1(unittest.TestCase):
         # engine2 = EngineDeck(name='engine2', options=options)
         # preprocess_propulsion(options, [engine, engine2])
 
-        ref_thrust = engine.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf')
 
+        ref_thrust = engine.get_item(Aircraft.Engine.REFERENCE_SLS_THRUST)
         options = {
             Aircraft.Engine.SCALE_PERFORMANCE: True,
-            Aircraft.Engine.REFERENCE_SLS_THRUST: (ref_thrust, 'lbf'),
+            Aircraft.Engine.REFERENCE_SLS_THRUST: ref_thrust,
         }
 
         self.prob.model.add_subsystem('engine', SizeEngine(**options),

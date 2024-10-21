@@ -310,8 +310,7 @@ class PayloadMassTestCase(unittest.TestCase):
                         val=200, units="lbm")  # bug fixed value and original value
 
         self.prob = om.Problem()
-        self.prob.model.add_subsystem("payload", PayloadMass(),
-                                      promotes=["*"])
+        self.prob.model.add_subsystem("payload", PayloadMass(), promotes=["*"])
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.CARGO_MASS, val=10040, units="lbm"
         )  # bug fixed value and original value

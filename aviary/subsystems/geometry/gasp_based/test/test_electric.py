@@ -18,8 +18,7 @@ class ElectricTestCase(unittest.TestCase):
         aviary_options = AviaryValues()
         aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 2)
 
-        self.prob.model.add_subsystem("cable", CableSize(),
-                                      promotes=["*"])
+        self.prob.model.add_subsystem("cable", CableSize(), promotes=["*"])
 
         self.prob.model.set_input_defaults(
             Aircraft.Engine.WING_LOCATIONS, 0.35, units="unitless"
@@ -56,8 +55,7 @@ class ElectricTestCaseMultiEngine(unittest.TestCase):
         # aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2, 4]))
         aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 6)
 
-        prob.model.add_subsystem("cable", CableSize(),
-                                 promotes=["*"])
+        prob.model.add_subsystem("cable", CableSize(), promotes=["*"])
 
         prob.model.set_input_defaults(
             Aircraft.Engine.WING_LOCATIONS, np.array([0.35, 0.2, 0.6]), units="unitless"

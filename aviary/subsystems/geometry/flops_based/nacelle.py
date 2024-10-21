@@ -54,7 +54,10 @@ class Nacelles(om.ExplicitComponent):
     def compute(
         self, inputs, outputs, discrete_inputs=None, discrete_outputs=None
     ):
+        # how many of each unique engine type are on the aircraft (array)
         num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
+
+        # how many unique engine types are there (int)
         num_engine_type = len(num_engines)
 
         avg_diam = inputs[Aircraft.Nacelle.AVG_DIAMETER]

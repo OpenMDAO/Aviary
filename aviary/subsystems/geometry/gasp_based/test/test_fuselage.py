@@ -105,9 +105,7 @@ class FuselageSizeTestCase1(unittest.TestCase):
     def setUp(self):
 
         self.prob = om.Problem()
-        self.prob.model.add_subsystem(
-            "size", FuselageSize(), promotes=["*"]
-        )
+        self.prob.model.add_subsystem("size", FuselageSize(), promotes=["*"])
 
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.NOSE_FINENESS, 1, units="unitless")

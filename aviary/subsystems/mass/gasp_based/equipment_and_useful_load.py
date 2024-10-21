@@ -87,11 +87,6 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
         fus_len = inputs[Aircraft.Fuselage.LENGTH]
         wingspan = inputs[Aircraft.Wing.SPAN]
 
-        if self.options[Aircraft.LandingGear.FIXED_GEAR]:
-            gear_type = 1
-        else:
-            gear_type = 0
-
         landing_gear_wt = inputs[Aircraft.LandingGear.TOTAL_MASS] * \
             GRAV_ENGLISH_LBM
         control_wt = inputs[Aircraft.Controls.TOTAL_MASS] * GRAV_ENGLISH_LBM
@@ -130,11 +125,10 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
             * fus_len**0.05
             * wingspan**0.696
         )
-        gear_val = 1 - gear_type
         hydraulic_wt = (
             inputs[Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT] * control_wt +
             inputs[Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT] *
-            landing_gear_wt * gear_val
+            landing_gear_wt * (not self.options[Aircraft.LandingGear.FIXED_GEAR])
         )
 
         electrical_wt = 16.0 * PAX + 170.0
@@ -396,11 +390,6 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
         fus_len = inputs[Aircraft.Fuselage.LENGTH]
         wingspan = inputs[Aircraft.Wing.SPAN]
 
-        if self.options[Aircraft.LandingGear.FIXED_GEAR]:
-            gear_type = 1
-        else:
-            gear_type = 0
-
         landing_gear_wt = inputs[Aircraft.LandingGear.TOTAL_MASS] * \
             GRAV_ENGLISH_LBM
         control_wt = inputs[Aircraft.Controls.TOTAL_MASS] * GRAV_ENGLISH_LBM
@@ -462,7 +451,7 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
             * wingspan ** (0.696 - 1)
         )
 
-        gear_val = 1 - gear_type
+        gear_val = not self.options[Aircraft.LandingGear.FIXED_GEAR]
 
         dhydraulic_wt_dmass_coeff_2 = control_wt
         dhydraulic_wt_dcontrol_wt = inputs[Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT]

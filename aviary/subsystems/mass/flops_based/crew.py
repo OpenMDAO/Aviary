@@ -116,7 +116,7 @@ class FlightCrewMass(om.ExplicitComponent):
         mass_per_flight_crew = 225.0  # lbm
 
         # account for machine precision error
-        if 0.9 <= self.options[Aircraft.LandingGear.CARRIER_BASED]:
+        if self.options[Aircraft.LandingGear.CARRIER_BASED]:
             mass_per_flight_crew -= 35.0  # lbm
 
         return mass_per_flight_crew

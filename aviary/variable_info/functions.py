@@ -166,16 +166,16 @@ def int_enum_setter(opt_meta, value):
     elif isinstance(value, list):
         values = []
         for val in value:
-            if isinstance(value, Enum):
+            if isinstance(val, Enum):
                 values.append(val)
             elif isinstance(val, int):
                 values.append(enum_class(val))
-            elif isinstance(value, str):
-                values.append(getattr(enum_class, value))
+            elif isinstance(val, str):
+                values.append(getattr(enum_class, val))
             else:
                 break
-
-        return values
+        else:
+            return values
 
     msg = f"Value '{value}' not valid for option with types {enum_class}"
     raise TypeError(msg)

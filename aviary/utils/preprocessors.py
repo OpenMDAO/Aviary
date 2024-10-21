@@ -161,8 +161,6 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
             if dtype is None:
                 if isinstance(default_value, np.ndarray):
                     dtype = default_value.dtype
-                elif isinstance(default_value, np.ndarray):
-                    dtype = default_value.dtype
                 elif default_value is None:
                     # With no default value, we cannot determine a dtype.
                     dtype = None

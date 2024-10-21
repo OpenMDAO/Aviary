@@ -37,7 +37,6 @@ class EngineMass(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         options = self.options
-        # cast to numpy arrays to ensure values are always correct type
         num_engines = options[Aircraft.Engine.NUM_ENGINES]
         scale_mass = options[Aircraft.Engine.SCALE_MASS]
         addtl_mass_fraction = options[Aircraft.Engine.ADDITIONAL_MASS_FRACTION]
