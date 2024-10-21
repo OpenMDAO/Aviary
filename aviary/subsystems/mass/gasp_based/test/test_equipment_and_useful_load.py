@@ -7,6 +7,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from aviary.subsystems.mass.gasp_based.equipment_and_useful_load import \
     EquipAndUsefulLoadMass
 from aviary.variable_info.enums import GASPEngineType
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission
 
@@ -24,7 +25,7 @@ class FixedEquipMassTestCase1(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "equip",
-            EquipAndUsefulLoadMass(aviary_options=options),
+            EquipAndUsefulLoadMass(),
             promotes=["*"],
         )
 
@@ -86,6 +87,8 @@ class FixedEquipMassTestCase1(unittest.TestCase):
             Aircraft.Fuel.WING_FUEL_FRACTION, val=0.6, units="unitless"
         )
 
+        setup_model_options(self.prob, options)
+
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
@@ -113,7 +116,7 @@ class FixedEquipMassTestCase2(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "equip",
-            EquipAndUsefulLoadMass(aviary_options=options),
+            EquipAndUsefulLoadMass(),
             promotes=["*"],
         )
 
@@ -174,6 +177,8 @@ class FixedEquipMassTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_FUEL_FRACTION, val=0.6, units="unitless"
         )
+
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -204,7 +209,7 @@ class FixedEquipMassTestCase3(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "equip",
-            EquipAndUsefulLoadMass(aviary_options=options),
+            EquipAndUsefulLoadMass(),
             promotes=["*"],
         )
 
@@ -265,6 +270,8 @@ class FixedEquipMassTestCase3(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_FUEL_FRACTION, val=0.6, units="unitless"
         )
+
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -298,9 +305,7 @@ class FixedEquipMassTestCase4smooth(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "equip",
-            EquipAndUsefulLoadMass(
-                aviary_options=options,
-            ),
+            EquipAndUsefulLoadMass(),
             promotes=["*"],
         )
 
@@ -361,6 +366,8 @@ class FixedEquipMassTestCase4smooth(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_FUEL_FRACTION, val=0.6, units="unitless"
         )
+
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -392,9 +399,7 @@ class FixedEquipMassTestCase5smooth(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "equip",
-            EquipAndUsefulLoadMass(
-                aviary_options=options,
-            ),
+            EquipAndUsefulLoadMass(),
             promotes=["*"],
         )
 
@@ -455,6 +460,8 @@ class FixedEquipMassTestCase5smooth(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_FUEL_FRACTION, val=0.6, units="unitless"
         )
+
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -488,9 +495,7 @@ class FixedEquipMassTestCase6smooth(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "equip",
-            EquipAndUsefulLoadMass(
-                aviary_options=options
-            ),
+            EquipAndUsefulLoadMass(),
             promotes=["*"],
         )
 
@@ -551,6 +556,8 @@ class FixedEquipMassTestCase6smooth(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_FUEL_FRACTION, val=0.6, units="unitless"
         )
+
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -582,7 +589,7 @@ class EquipAndUsefulMassGroupTestCase1(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "group",
-            EquipAndUsefulLoadMass(aviary_options=options),
+            EquipAndUsefulLoadMass(),
             promotes=["*"],
         )
 
@@ -645,6 +652,8 @@ class EquipAndUsefulMassGroupTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_FUEL_FRACTION, val=0.6, units="unitless"
         )
+
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -684,7 +693,7 @@ class FixedEquipMassTestCase7(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem(
             "equip",
-            EquipAndUsefulLoadMass(aviary_options=options),
+            EquipAndUsefulLoadMass(),
             promotes=["*"],
         )
 
@@ -737,6 +746,9 @@ class FixedEquipMassTestCase7(unittest.TestCase):
             Aircraft.Engine.SCALED_SLS_THRUST, val=[29500.0], units="lbf")
         prob.model.set_input_defaults(
             Aircraft.Fuel.WING_FUEL_FRACTION, val=0.6, units="unitless")
+
+        setup_model_options(prob, options)
+
         prob.setup(check=False, force_alloc_complex=True)
 
         partial_data = prob.check_partials(out_stream=None, method="cs")

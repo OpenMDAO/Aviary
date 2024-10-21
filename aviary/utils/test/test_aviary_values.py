@@ -90,9 +90,9 @@ class TestTypes(unittest.TestCase):
         try:
             vals.set_val(Aircraft.Engine.TYPE, 'turbojet')
             self.assertTrue(vals.get_val(Aircraft.Engine.TYPE)
-                            is GASPEngineType.TURBOJET)
+                            == GASPEngineType.TURBOJET)
         except:
-            self.fail('Expecting to be able to set the value of an Enum from a string.')
+            self.fail('Expecting to be able to set the value of an Enum from an int.')
 
         try:
             vals.set_val(Aircraft.Engine.TYPE, 'TURBOJET')
@@ -144,8 +144,8 @@ class TestTypes(unittest.TestCase):
         except TypeError as err:
             self.assertEqual(
                 str(err),
-                f"{Mission.Design.CRUISE_ALTITUDE} is of type(s) [<class 'int'>, <class"
-                " 'float'>] but you have provided a value of type <class 'bool'>.")
+                f"{Mission.Design.CRUISE_ALTITUDE} is of type(s) (<class 'int'>, <class"
+                " 'float'>) but you have provided a value of type <class 'bool'>.")
         else:
             self.fail('Expecting TypeError.')
 
@@ -154,8 +154,8 @@ class TestTypes(unittest.TestCase):
         except TypeError as err:
             self.assertEqual(
                 str(err),
-                f"{Mission.Design.CRUISE_ALTITUDE} is of type(s) [<class 'int'>, <class"
-                " 'float'>] but you have provided a value of type <class 'str'>.")
+                f"{Mission.Design.CRUISE_ALTITUDE} is of type(s) (<class 'int'>, <class"
+                " 'float'>) but you have provided a value of type <class 'str'>.")
         else:
             self.fail('Expecting TypeError.')
 

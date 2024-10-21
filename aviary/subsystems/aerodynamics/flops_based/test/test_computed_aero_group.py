@@ -10,6 +10,7 @@ from aviary.utils.functions import set_aviary_initial_values
 from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
 from aviary.validation_cases.validation_tests import get_flops_inputs, get_flops_outputs
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 
 
@@ -81,6 +82,9 @@ class MissionDragTest(unittest.TestCase):
                                        **{'method': 'computed'}),
             promotes=['*']
         )
+
+        # Set all options
+        setup_model_options(prob, flops_inputs)
 
         prob.setup(force_alloc_complex=True)
         prob.set_solver_print(level=2)
@@ -194,6 +198,9 @@ class MissionDragTest(unittest.TestCase):
             promotes=['*']
         )
 
+        # Set all options
+        setup_model_options(prob, flops_inputs)
+
         prob.setup()
 
         # Mission params
@@ -304,6 +311,9 @@ class MissionDragTest(unittest.TestCase):
                                        **{'method': 'computed'}),
             promotes=['*']
         )
+
+        # Set all options
+        setup_model_options(prob, flops_inputs)
 
         prob.setup()
 

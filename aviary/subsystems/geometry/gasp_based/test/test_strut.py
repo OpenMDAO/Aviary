@@ -12,8 +12,7 @@ class SizeGroupTestCase1(unittest.TestCase):
     def setUp(self):
 
         self.prob = om.Problem()
-        self.prob.model.add_subsystem("strut", StrutGeom(
-            aviary_options=get_option_defaults()), promotes=["*"])
+        self.prob.model.add_subsystem("strut", StrutGeom(), promotes=["*"])
 
         self.prob.model.set_input_defaults(
             Aircraft.Strut.AREA_RATIO, val=.2, units=None

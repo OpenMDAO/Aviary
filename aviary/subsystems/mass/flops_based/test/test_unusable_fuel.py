@@ -10,7 +10,7 @@ from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (Version,
                                                       flops_validation_test,
                                                       get_flops_case_names,
-                                                      get_flops_inputs,
+                                                      get_flops_options,
                                                       print_case)
 from aviary.variable_info.variables import Aircraft
 
@@ -28,14 +28,15 @@ class TransportUnusableFuelMassTest(unittest.TestCase):
     def test_case(self, case_name):
 
         prob = self.prob
-        flops_inputs = get_flops_inputs(case_name, preprocess=True)
 
         prob.model.add_subsystem(
             'unusable_fuel',
-            TransportUnusableFuelMass(aviary_options=flops_inputs),
+            TransportUnusableFuelMass(),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )
+
+        prob.model_options['*'] = get_flops_options(case_name, preprocess=True)
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -72,13 +73,16 @@ class TransportUnusableFuelMassTest2(unittest.TestCase):
 
     def test_case(self):
         prob = om.Problem()
-        flops_inputs = get_flops_inputs("N3CC", preprocess=True)
+
         prob.model.add_subsystem(
             'unusable_fuel',
-            TransportUnusableFuelMass(aviary_options=flops_inputs),
+            TransportUnusableFuelMass(),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )
+
+        prob.model_options['*'] = get_flops_options("N3CC", preprocess=True)
+
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.Fuel.TOTAL_CAPACITY, 30000.0, 'lbm')
         prob.set_val(Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, 40000.0, 'lbf')
@@ -104,7 +108,7 @@ class AltUnusableFuelMassTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             'unusable_fuel',
-            AltUnusableFuelMass(aviary_options=get_flops_inputs(case_name)),
+            AltUnusableFuelMass(),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )
@@ -141,7 +145,7 @@ class AltUnusableFuelMassTest2(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem(
             'unusable_fuel',
-            AltUnusableFuelMass(aviary_options=get_flops_inputs("N3CC")),
+            AltUnusableFuelMass(),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )

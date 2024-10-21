@@ -8,8 +8,9 @@ from openmdao.components.ks_comp import KSfunction
 from aviary.subsystems.propulsion.propeller.hamilton_standard import HamiltonStandard, PostHamiltonStandard, PreHamiltonStandard
 from aviary.subsystems.propulsion.propeller.propeller_map import PropellerMap
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.functions import add_aviary_input, add_aviary_output
+
 from aviary.variable_info.enums import OutMachType
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -314,9 +315,6 @@ class InstallLoss(om.Group):
         self.options.declare(
             'num_nodes', types=int, default=1,
             desc='Number of nodes to be evaluated in the RHS')
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
         nn = self.options['num_nodes']
@@ -422,7 +420,7 @@ class PropellerPerformance(om.Group):
     """
     Computation of propeller thrust coefficient based on the Hamilton Standard model or a user
     provided propeller map. Note that a propeller map allows either the helical Mach number or
-    free stream Mach number as input. This infomation will be detected automatically when the 
+    free stream Mach number as input. This infomation will be detected automatically when the
     propeller map is loaded into memory.
     The installation loss factor is either a user input or computed internally.
     """
@@ -438,19 +436,22 @@ class PropellerPerformance(om.Group):
         self.options.declare('aviary_options', types=AviaryValues,
                              desc='collection of Aircraft/Mission specific options')
 
+        add_aviary_option(self, Aircraft.Engine.COMPUTE_PROPELLER_INSTALLATION_LOSS)
+        add_aviary_option(self, Aircraft.Engine.PROPELLER_DATA_FILE)
+        add_aviary_option(self, Aircraft.Engine.USE_PROPELLER_MAP)
+
     def setup(self):
         options = self.options
         nn = options['num_nodes']
         aviary_options = options['aviary_options']
 
         # TODO options are lists here when using full Aviary problem - need further investigation
-        compute_installation_loss = aviary_options.get_val(
-            Aircraft.Engine.COMPUTE_PROPELLER_INSTALLATION_LOSS
-        )
+        compute_installation_loss = options[Aircraft.Engine.COMPUTE_PROPELLER_INSTALLATION_LOSS]
+
         if isinstance(compute_installation_loss, (list, np.ndarray)):
             compute_installation_loss = compute_installation_loss[0]
 
-        use_propeller_map = aviary_options.get_val(Aircraft.Engine.USE_PROPELLER_MAP)
+        use_propeller_map = options[Aircraft.Engine.USE_PROPELLER_MAP]
         if isinstance(use_propeller_map, (list, np.ndarray)):
             use_propeller_map = use_propeller_map[0]
 
@@ -518,8 +519,7 @@ class PropellerPerformance(om.Group):
 
         if use_propeller_map:
             prop_model = PropellerMap('prop', aviary_options)
-            prop_file_path = aviary_options.get_val(
-                Aircraft.Engine.PROPELLER_DATA_FILE)
+            prop_file_path = options[Aircraft.Engine.PROPELLER_DATA_FILE]
             mach_type = prop_model.read_and_set_mach_type(prop_file_path)
             if mach_type == OutMachType.HELICAL_MACH:
                 self.add_subsystem(
@@ -560,7 +560,7 @@ class PropellerPerformance(om.Group):
         else:
             self.add_subsystem(
                 name='hamilton_standard',
-                subsys=HamiltonStandard(num_nodes=nn, aviary_options=aviary_options),
+                subsys=HamiltonStandard(num_nodes=nn),
                 promotes_inputs=[
                     Dynamic.Mission.MACH,
                     "power_coefficient",

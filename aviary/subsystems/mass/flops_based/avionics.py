@@ -1,8 +1,7 @@
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -14,9 +13,7 @@ class TransportAvionicsMass(om.ExplicitComponent):
     '''
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.CrewPayload.NUM_FLIGHT_CREW)
 
     def setup(self):
         add_aviary_input(self, Aircraft.Avionics.MASS_SCALER, val=1.0)
@@ -31,8 +28,7 @@ class TransportAvionicsMass(om.ExplicitComponent):
         self.declare_partials('*', '*')
 
     def compute(self, inputs, outputs):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        crew = aviary_options.get_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW)
+        crew = self.options[Aircraft.CrewPayload.NUM_FLIGHT_CREW]
         scaler = inputs[Aircraft.Avionics.MASS_SCALER]
         planform = inputs[Aircraft.Fuselage.PLANFORM_AREA]
         des_range = inputs[Mission.Design.RANGE]
@@ -41,8 +37,7 @@ class TransportAvionicsMass(om.ExplicitComponent):
             15.8 * des_range**0.1 * crew**0.7 * planform**0.43 * scaler / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        crew = aviary_options.get_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW)
+        crew = self.options[Aircraft.CrewPayload.NUM_FLIGHT_CREW]
         scaler = inputs[Aircraft.Avionics.MASS_SCALER]
         planform = inputs[Aircraft.Fuselage.PLANFORM_AREA]
         des_range = inputs[Mission.Design.RANGE]
