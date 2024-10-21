@@ -9,7 +9,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.aerodynamics.gasp_based.gaspaero import CruiseAero, LowSpeedAero
 from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 from aviary.utils.aviary_values import AviaryValues
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -118,18 +118,21 @@ class GASPAeroTest(unittest.TestCase):
                 assert_check_partials(partial_data, atol=4.5, rtol=5e-3)
 
     def test_ground_alpha_out(self):
+        aviary_options = get_option_defaults()
+        aviary_options.set_val(Settings.VERBOSITY, 0)
+
         # Test that drag output matches between alpha in/out cases
         prob = om.Problem()
         prob.model.add_subsystem(
             "alpha_in",
-            LowSpeedAero(aviary_options=get_option_defaults()),
+            LowSpeedAero(aviary_options=aviary_options),
             promotes_inputs=["*", ("alpha", "alpha_in")],
             promotes_outputs=[(Dynamic.Mission.LIFT, "lift_req")],
         )
 
         prob.model.add_subsystem(
             "alpha_out",
-            LowSpeedAero(aviary_options=get_option_defaults(), output_alpha=True),
+            LowSpeedAero(aviary_options=aviary_options, output_alpha=True),
             promotes_inputs=["*", "lift_req"],
         )
 
