@@ -626,7 +626,7 @@ def create_optimization_history_plot(case_recorder, df):
 
     # Make a Legend with no items in it. those will be added in JavaScript 
     #    as users select variables to be plotted
-    legend = Legend(items=[], location=(-50, -10), border_line_width=0)
+    legend = Legend(items=[], location=(-50, -5), border_line_width=0)
 
     # make the legend items in Python. Pass them to JavaScript where they can be added to the Legend
     legend_items = []
