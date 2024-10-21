@@ -1,5 +1,6 @@
 import unittest
 from pathlib import Path
+from datetime import datetime
 
 from openmdao.utils.testing_utils import use_tempdirs
 
@@ -56,6 +57,11 @@ class TestFortranToAviary(unittest.TestCase):
         with open('TEST_'+filename, 'r') as f_in, open(validation_data, 'r') as expected:
             for line in f_in:
                 if any(s in line for s in skip_list):
+                    break
+                # skip first header line, as it changes based on time of execution and
+                # username
+                timestamp = datetime.now().strftime('%m/%d/%y at')
+                if f'# created {timestamp}' in line:
                     break
                 # Remove whitespace and compare
                 expected_line = ''.join(expected.readline().split())
