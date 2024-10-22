@@ -1,9 +1,9 @@
-import subprocess
 import unittest
 from pathlib import Path
 
 from aviary.utils.functions import get_aviary_resource_path
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
+from openmdao.core.problem import _clear_problem_names
 import aviary.api as av
 from aviary.interface.default_phase_info.height_energy import phase_info, phase_info_parameterization
 
@@ -40,19 +40,24 @@ class TestJson(unittest.TestCase):
         prob.setup()
         prob.set_initial_guesses()
 
+        _clear_problem_names()
+
     def test_save_json(self):
         self.prob.run_aviary_problem()
         self.prob.save_sizing_to_json()
+        _clear_problem_names()
 
     def test_alternate(self):
         filepath = self.get_file('interface/test/sizing_problem_for_test.json')
         prob_alternate = self.prob.alternate_mission(
             run_mission=False, json_filename=filepath, phase_info=phase_info)
+        _clear_problem_names()
 
     def test_fallout(self):
         filepath = self.get_file('interface/test/sizing_problem_for_test.json')
         prob_fallout = self.prob.fallout_mission(
             run_mission=False, json_filename=filepath, phase_info=phase_info)
+        _clear_problem_names()
 
 
 if __name__ == "__main__":
