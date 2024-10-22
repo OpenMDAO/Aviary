@@ -121,7 +121,8 @@ class DesignEngineGroup(om.Group):
         self.add_subsystem('negative_fuel_rate', om.ExecComp('y=-x',
                                                              x={'val': np.ones(
                                                                  vec_size), 'units': 'lbm/s'},
-                                                             y={'val': np.ones(vec_size), 'units': 'lbm/s'}),
+                                                             y={'val': np.ones(vec_size), 'units': 'lbm/s'},
+                                                             has_diag_partials=True,),
                            promotes_inputs=[('x', 'Wf_td')],
                            promotes_outputs=[('y', 'Wf_inv_train')])
 
