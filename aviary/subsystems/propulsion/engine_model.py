@@ -39,9 +39,8 @@ class EngineModel(SubsystemBuilderBase):
 
     default_name = 'engine_model'
 
-    def __init__(
-        self, name: str = None, options: AviaryValues = None, meta_data: dict = None,
-    ):
+    def __init__(self, name: str = None, options: AviaryValues = None,
+                 meta_data: dict = None, **kwargs):
         super().__init__(name, meta_data=meta_data)
         if options is not None:
             self.options = options.deepcopy()
@@ -149,14 +148,16 @@ class EngineModel(SubsystemBuilderBase):
                             raise UserWarning(f'Multidimensional {type(val)} was given '
                                               f'for variable {key} in EngineModel '
                                               f'<{self.name}>, but '
-                                              f"{type(self.meta_data[key]['default_value'])} "
+                                              f"{type(
+                                                  self.meta_data[key]['default_value'])} "
                                               'was expected.')
                         # use first item in val and warn user
                         if verbosity >= 1:
                             if len(val) > 1:
                                 warnings.warn(
                                     f'The value of {key} passed to EngineModel '
-                                    f'<{self.name}> is {type(val)}. Only the first entry in '
+                                    f'<{self.name}> is {
+                                        type(val)}. Only the first entry in '
                                     'this iterable will be used.')
 
                     # if val is supposed to be an iterable...
@@ -164,7 +165,8 @@ class EngineModel(SubsystemBuilderBase):
                         # but val is multidimensional, use first item and warn user
                         if isinstance(val[0], (list, np.ndarray, tuple)):
                             warnings.warn(
-                                f'The value of {key} passed to EngineModel <{self.name}> '
+                                f'The value of {key} passed to EngineModel <{
+                                    self.name}> '
                                 f'is multidimensional {type(val)}. Only the first entry '
                                 'in this iterable will be used.')
                         # and val is 1-D, then it is ok!

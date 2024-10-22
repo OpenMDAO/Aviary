@@ -217,6 +217,8 @@ class Aircraft:
         FUEL_FLOW_SCALER_LINEAR_TERM = 'aircraft:engine:fuel_flow_scaler_linear_term'
         GENERATE_FLIGHT_IDLE = 'aircraft:engine:generate_flight_idle'
         GEOPOTENTIAL_ALT = 'aircraft:engine:geopotential_alt'
+        GLOBAL_HYBRID_THROTTLE = 'aircraft:engine:global_hybrid_throttle'
+        GLOBAL_THROTTLE = 'aircraft:engine:global_throttle'
         HAS_PROPELLERS = 'aircraft:engine:has_propellers'
         IGNORE_NEGATIVE_THRUST = 'aircraft:engine:ignore_negative_thrust'
         INTERPOLATION_METHOD = 'aircraft:engine:interpolation_method'

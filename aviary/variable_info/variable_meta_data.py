@@ -1884,6 +1884,42 @@ add_meta_data(
     default_value=False
 )
 
+# Global hybrid throttle is also disabled to account for parallel-hybrid engines that
+# can't operate at every power level at every condition due to other constraints
+add_meta_data(
+    Aircraft.Engine.GLOBAL_HYBRID_THROTTLE, meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='unitless',
+    desc='Flag for engine decks if the range of provided hybrid throttles is consistent '
+    'across all flight conditions (e.g. the maximum hybrid throttle seen in the entire '
+    'deck is 1.0, but a given flight condition only goes to 0.9 -> GLOBAL_HYBRID_THROTTLE '
+    '= TRUE means the engine can be extrapolated out to 1.0 at that point. If '
+    "GLOBAL_HYBRID_THROTTLE is False, then each flight condition's hybrid throttle range is "
+    'individually normalized from 0 to 1 independent of other points on the deck).',
+    default_value=True, types=bool, option=False)
+
+# TODO Disabling global throttle ranges is preferred (therefore default) to prevent
+# unintended extrapolation, but breaks missions using GASP-based engines that have uneven
+# throttle ranges (need t4 constraint on mission to truly fix).
+add_meta_data(
+    Aircraft.Engine.GLOBAL_THROTTLE,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='unitless',
+    desc='Flag for engine decks if the range of provided throttles is consistent '
+         'across all flight conditions (e.g. the maximum throttle seen in the entire '
+         'deck is 1.0, but a given flight condition only goes to 0.9 -> GLOBAL_THROTTLE '
+         '= TRUE means the engine can be extrapolated out to 1.0 at that point. If '
+         "GLOBAL_THROTTLE is False, then each flight condition's throttle range is "
+         'individually normalized from 0 to 1 independent of other points on the deck).',
+    default_value=False,
+    types=bool,
+    option=True
+)
+
 # TODO dependency on NTYE? Does this var need preprocessing? Can this mention be removed?
 add_meta_data(
     Aircraft.Engine.HAS_PROPELLERS,
