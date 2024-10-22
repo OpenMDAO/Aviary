@@ -57,6 +57,8 @@ aviary_variables_json_file_name = "aviary_vars.json"
 documentation_text_align = 'left'
 
 # functions for the aviary command line command
+
+
 def _none_or_str(value):
     """
     Get the value of the argparse option.
@@ -564,16 +566,17 @@ def _get_interactive_plot_sources(data_by_varname_and_phase, x_varname, y_varnam
     else:
         return [], []
 
+
 def create_optimization_history_plot(case_recorder, df):
-    
+
     # Create a ColumnDataSource
     source = ColumnDataSource(df)
 
     # Create a Bokeh figure
     plotting_figure = figure(title='Optimization History',
-                                            width=1000, 
-                                            height=600,
-                                            )
+                             width=1000,
+                             height=600,
+                             )
     plotting_figure.title.align = 'center'
     plotting_figure.yaxis.visible = False
     plotting_figure.xaxis.axis_label = 'Iterations'
@@ -585,9 +588,9 @@ def create_optimization_history_plot(case_recorder, df):
 
     # Plot each time series and keep references to the renderers
     renderers = {}
-    variable_names = list(df.columns)[1:] 
+    variable_names = list(df.columns)[1:]
     for i, variable_name in enumerate(variable_names):
-        color = palette[i%20]
+        color = palette[i % 20]
 
         renderers[variable_name] = plotting_figure.line(
             x='iter_count',
@@ -597,33 +600,34 @@ def create_optimization_history_plot(case_recorder, df):
             line_width=2,
             visible=False,  # hide them all initially. clicking checkboxes makes them visible
         )
-        
+
         # create axes both to the right and left of the plot.
         # hide them initially
         # as the user selects/deselects variables to be plotted, they get turned on/off
-        extra_y_axis = LinearAxis(y_range_name=f"extra_y_{variable_name}", 
-                                    axis_label=f"{variable_name}", 
-                                    axis_label_text_color=color)
+        extra_y_axis = LinearAxis(y_range_name=f"extra_y_{variable_name}",
+                                  axis_label=f"{variable_name}",
+                                  axis_label_text_color=color)
         plotting_figure.add_layout(extra_y_axis, 'right')
         plotting_figure.right[i].visible = False
 
-        extra_y_axis = LinearAxis(y_range_name=f"extra_y_{variable_name}", 
-                                    axis_label=f"{variable_name}", 
-                                    axis_label_text_color=color)
-        plotting_figure.add_layout(extra_y_axis, 'left')       
+        extra_y_axis = LinearAxis(y_range_name=f"extra_y_{variable_name}",
+                                  axis_label=f"{variable_name}",
+                                  axis_label_text_color=color)
+        plotting_figure.add_layout(extra_y_axis, 'left')
         plotting_figure.left[i + 1].visible = False
 
         # set the range
         y_min = df[variable_name].min()
         y_max = df[variable_name].max()
-        # if the range is zero, the axis will not be displayed. Plus need some range to make it 
+        # if the range is zero, the axis will not be displayed. Plus need some range to make it
         #    look good. Some other code seems to do +- 1 for the range in this case.
         if y_min == y_max:
             y_min = y_min - 1
             y_max = y_max + 1
-        plotting_figure.extra_y_ranges[f"extra_y_{variable_name}"] = Range1d(y_min, y_max)
+        plotting_figure.extra_y_ranges[f"extra_y_{variable_name}"] = Range1d(
+            y_min, y_max)
 
-    # Make a Legend with no items in it. those will be added in JavaScript 
+    # Make a Legend with no items in it. those will be added in JavaScript
     #    as users select variables to be plotted
     legend = Legend(items=[], location=(-50, -5), border_line_width=0)
 
@@ -631,18 +635,20 @@ def create_optimization_history_plot(case_recorder, df):
     legend_items = []
     for variable_name in variable_names:
         units = case_recorder.problem_metadata['variables'][variable_name]['units']
-        legend_item = LegendItem(label=f"{variable_name} ({units})", renderers=[renderers[variable_name]])
+        legend_item = LegendItem(label=f"{variable_name} ({units})", renderers=[
+                                 renderers[variable_name]])
         legend_items.append(legend_item)
 
-    plotting_figure.add_layout(legend, 'below')   
+    plotting_figure.add_layout(legend, 'below')
 
     # make the list of variables with checkboxes
-    data_source = ColumnDataSource(data=dict(options=variable_names, checked=[False]*len(variable_names)))
+    data_source = ColumnDataSource(
+        data=dict(options=variable_names, checked=[False]*len(variable_names)))
    # Create a Div to act as a scrollable container
     variable_scroll_box = Div(
         styles={
-            'overflow-y': 'scroll', 
-            'height': '500px', 
+            'overflow-y': 'scroll',
+            'height': '500px',
             'border': '1px solid #ddd',
             'padding': '10px'
         }
@@ -653,11 +659,11 @@ def create_optimization_history_plot(case_recorder, df):
 
     # CustomJS callback for checkbox changes
     variable_checkbox_callback = CustomJS(args=dict(data_source=data_source,
-                                                    plotting_figure=plotting_figure, 
+                                                    plotting_figure=plotting_figure,
                                                     renderers=renderers,
-                                                    legend=legend, 
-                                                    legend_items=legend_items), 
-                                                    code="""
+                                                    legend=legend,
+                                                    legend_items=legend_items),
+                                          code="""
     // Three things happen in this code. 
     //   1. turn on/off the plot lines
     //   2. show the legend items for the items being plotted
@@ -706,10 +712,10 @@ def create_optimization_history_plot(case_recorder, df):
     """)
 
     # CustomJS callback for the variable filtering
-    filter_variables_callback = CustomJS(args=dict(data_source=data_source, 
-                                                   variable_scroll_box=variable_scroll_box, 
-                                                   variable_checkbox_callback=variable_checkbox_callback), 
-                                                   code="""
+    filter_variables_callback = CustomJS(args=dict(data_source=data_source,
+                                                   variable_scroll_box=variable_scroll_box,
+                                                   variable_checkbox_callback=variable_checkbox_callback),
+                                         code="""
                         
         const filter_text = cb_obj.value.toLowerCase();
         const all_options = data_source.data['options'];
@@ -748,11 +754,14 @@ def create_optimization_history_plot(case_recorder, df):
     variable_scroll_box.text = initial_html
 
     # Arrange the layout using Panel
-    layout = pn.Row(pn.Column(filter_variables_text_box, variable_scroll_box), plotting_figure)
+    layout = pn.Row(pn.Column(filter_variables_text_box,
+                    variable_scroll_box), plotting_figure)
 
     return layout
 
 # The main script that generates all the tabs in the dashboard
+
+
 def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_background=False):
     """
     Generate the dashboard app display.
@@ -846,13 +855,13 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
 
     ####### Optimization Tab #######
     optimization_tabs_list = []
-    
+
     # Optimization History Plot
     if driver_recorder:
         if os.path.isfile(driver_recorder):
             df = convert_driver_case_recorder_file_to_df(f"{driver_recorder}")
             cr = om.CaseReader(f"{driver_recorder}")
-            opt_history_pane = create_optimization_history_plot(cr,df) 
+            opt_history_pane = create_optimization_history_plot(cr, df)
             optimization_tabs_list.append(("Optimization History", opt_history_pane))
 
     # IPOPT report
@@ -1233,7 +1242,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
     home_dir = "."
     if port == 0:
         port = get_free_port()
-        
+
     server = pn.serve(
         template,
         port=port,
