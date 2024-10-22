@@ -391,8 +391,8 @@ class AreaSquareRatio(om.ExplicitComponent):
         if smooth:
             alpha = self.options['alpha']
             sqa = smooth_min(sqa, 0.50, alpha)
-            dSQA_dNacDiam = d_smooth_min(sqa, alpha) * dSQA_dNacDiam
-            dSQA_dPropDiam = d_smooth_min(sqa, alpha) * dSQA_dPropDiam
+            dSQA_dNacDiam = d_smooth_min(sqa,  0.50, alpha) * dSQA_dNacDiam
+            dSQA_dPropDiam = d_smooth_min(sqa,  0.50, alpha) * dSQA_dPropDiam
 
         partials['sqa_array', "DiamNac"] = np.ones(nn) * dSQA_dNacDiam
         partials['sqa_array', "DiamProp"] = np.ones(nn) * dSQA_dPropDiam
@@ -454,9 +454,9 @@ class AdvanceRatio(om.ExplicitComponent):
         smooth = self.options["smooth_zje"]
         if smooth:
             alpha = self.options["alpha"]
-            djze_dsqa = d_smooth_min(sqa_array, alpha) * djze_dsqa
-            djze_dvktas = d_smooth_min(sqa_array, alpha) * djze_dvktas
-            djze_dtipspd = d_smooth_min(sqa_array, alpha) * djze_dtipspd
+            djze_dsqa = d_smooth_min(sqa_array,  0.50, alpha) * djze_dsqa
+            djze_dvktas = d_smooth_min(sqa_array,  0.50, alpha) * djze_dvktas
+            djze_dtipspd = d_smooth_min(sqa_array,  0.50, alpha) * djze_dtipspd
 
         partials["equiv_adv_ratio", "sqa_array"] = djze_dsqa
         partials["equiv_adv_ratio", "vktas"] = djze_dvktas
