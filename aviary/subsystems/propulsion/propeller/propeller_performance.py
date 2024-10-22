@@ -392,8 +392,10 @@ class AreaSquareRatio(om.ExplicitComponent):
             dSQA_dNacDiam = d_smooth_min(sqa, 0.50, alpha) * dSQA_dNacDiam
             dSQA_dPropDiam = d_smooth_min(sqa, 0.50, alpha) * dSQA_dPropDiam
         else:
-            dSQA_dNacDiam = np.piecewise(sqa, [sqa < 0.5, sqa >= 0.5], [1, 0]) * dSQA_dNacDiam
-            dSQA_dPropDiam = np.piecewise(sqa, [sqa < 0.5, sqa >= 0.5], [1, 0]) * dSQA_dPropDiam
+            dSQA_dNacDiam = np.piecewise(
+                sqa, [sqa < 0.5, sqa >= 0.5], [1, 0]) * dSQA_dNacDiam
+            dSQA_dPropDiam = np.piecewise(
+                sqa, [sqa < 0.5, sqa >= 0.5], [1, 0]) * dSQA_dPropDiam
         partials['sqa_array', "DiamNac"] = dSQA_dNacDiam
         partials['sqa_array', "DiamProp"] = dSQA_dPropDiam
 
