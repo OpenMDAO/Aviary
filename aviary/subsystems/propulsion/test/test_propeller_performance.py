@@ -3,6 +3,7 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.core.constants import _DEFAULT_OUT_STREAM, _UNDEFINED
 
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.propulsion.propeller.propeller_performance import (
@@ -584,7 +585,7 @@ class SquareRatioTest(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem(
             "group",
-            AreaSquareRatio(num_nodes=3, smooth_sqa=False),
+            AreaSquareRatio(num_nodes=2, smooth_sqa=False),
             promotes=["*"],
         )
         prob.setup(force_alloc_complex=True)
@@ -594,7 +595,7 @@ class SquareRatioTest(unittest.TestCase):
 
         sqa_ratio = prob.get_val("sqa_array", units='unitless')
         assert_near_equal(sqa_ratio, [
-            0.08337656, 0.08337656, 0.08337656], tolerance=1e-5)
+            0.08337656, 0.08337656], tolerance=1e-5)
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
@@ -603,7 +604,7 @@ class SquareRatioTest(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem(
             "group",
-            AreaSquareRatio(num_nodes=3, smooth_sqa=True),
+            AreaSquareRatio(num_nodes=2, smooth_sqa=True),
             promotes=["*"],
         )
         prob.setup(force_alloc_complex=True)
@@ -612,8 +613,28 @@ class SquareRatioTest(unittest.TestCase):
         prob.run_model()
 
         sqa_ratio = prob.get_val("sqa_array", units='unitless')
-        assert_near_equal(sqa_ratio, [
-            0.08337656, 0.08337656, 0.08337656], tolerance=1e-5)
+        assert_near_equal(sqa_ratio, [0.08337656, 0.08337656], tolerance=1e-5)
+
+        partial_data = prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+    def test_sqa_ratio_3(self):
+        """
+        Smooth, above 0.5
+        """
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "group",
+            AreaSquareRatio(num_nodes=2, smooth_sqa=True),
+            promotes=["*"],
+        )
+        prob.setup(force_alloc_complex=True)
+        prob.set_val("DiamNac", val=8, units='ft')
+        prob.set_val("DiamProp", val=10.0, units='ft')
+        prob.run_model()
+
+        sqa_ratio = prob.get_val("sqa_array", units='unitless')
+        assert_near_equal(sqa_ratio, [0.5, 0.5], tolerance=1e-5)
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
@@ -648,18 +669,18 @@ class AdvanceRatioTest(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem(
             "group",
-            AdvanceRatio(num_nodes=3, smooth_zje=True),
+            AdvanceRatio(num_nodes=4, smooth_zje=True),
             promotes=["*"],
         )
         prob.setup(force_alloc_complex=True)
-        prob.set_val("vktas", val=[0.1, 125., 300.], units='knot')
-        prob.set_val("tipspd", val=[800., 800., 750.], units='ft/s')
-        prob.set_val("sqa_array", val=[0.0756, 0.0756, 0.0756], units='unitless')
+        prob.set_val("vktas", val=[0.1, 125., 300., 1000.], units='knot')
+        prob.set_val("tipspd", val=[800., 800., 750., 500.], units='ft/s')
+        prob.set_val("sqa_array", val=[0.0756, 0.0756, 0.0756, 1.0], units='unitless')
         prob.run_model()
 
         equiv_adv_ratio = prob.get_val("equiv_adv_ratio", units='unitless')
         assert_near_equal(equiv_adv_ratio, [
-            0.000650881807, 0.813602259, 2.08282178], tolerance=1e-5)
+            0.000650881807, 0.813602259, 2.08282178, 5], tolerance=1e-5)
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)

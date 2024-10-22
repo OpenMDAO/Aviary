@@ -379,7 +379,6 @@ class AreaSquareRatio(om.ExplicitComponent):
         outputs["sqa_array"] = np.ones(nn) * sqa
 
     def compute_partials(self, inputs, partials):
-        nn = self.options["num_nodes"]
         diamNac = inputs["DiamNac"]
         diamProp = inputs["DiamProp"]
         sqa = diamNac**2 / diamProp**2
@@ -390,12 +389,13 @@ class AreaSquareRatio(om.ExplicitComponent):
         smooth = self.options["smooth_sqa"]
         if smooth:
             alpha = self.options['alpha']
-            sqa = smooth_min(sqa, 0.50, alpha)
-            dSQA_dNacDiam = d_smooth_min(sqa,  0.50, alpha) * dSQA_dNacDiam
-            dSQA_dPropDiam = d_smooth_min(sqa,  0.50, alpha) * dSQA_dPropDiam
-
-        partials['sqa_array', "DiamNac"] = np.ones(nn) * dSQA_dNacDiam
-        partials['sqa_array', "DiamProp"] = np.ones(nn) * dSQA_dPropDiam
+            dSQA_dNacDiam = d_smooth_min(sqa, 0.50, alpha) * dSQA_dNacDiam
+            dSQA_dPropDiam = d_smooth_min(sqa, 0.50, alpha) * dSQA_dPropDiam
+        else:
+            dSQA_dNacDiam = np.piecewise(sqa, [sqa < 0.5, sqa >= 0.5], [1, 0]) * dSQA_dNacDiam
+            dSQA_dPropDiam = np.piecewise(sqa, [sqa < 0.5, sqa >= 0.5], [1, 0]) * dSQA_dPropDiam
+        partials['sqa_array', "DiamNac"] = dSQA_dNacDiam
+        partials['sqa_array', "DiamProp"] = dSQA_dPropDiam
 
 
 class AdvanceRatio(om.ExplicitComponent):
@@ -431,7 +431,6 @@ class AdvanceRatio(om.ExplicitComponent):
         vktas = inputs["vktas"]
         tipspd = inputs["tipspd"]
         sqa_array = inputs["sqa_array"]
-
         equiv_adv_ratio = (1.0 - 0.254 * sqa_array) * 5.309 * vktas / tipspd
 
         smooth = self.options["smooth_zje"]
@@ -447,6 +446,7 @@ class AdvanceRatio(om.ExplicitComponent):
         vktas = inputs["vktas"]
         tipspd = inputs["tipspd"]
         sqa_array = inputs["sqa_array"]
+        jze = (1.0 - 0.254 * sqa_array) * 5.309 * vktas / tipspd
 
         djze_dsqa = -0.254 * 5.309 * vktas / tipspd
         djze_dvktas = (1.0 - 0.254 * sqa_array) * 5.309 / tipspd
@@ -455,10 +455,13 @@ class AdvanceRatio(om.ExplicitComponent):
         smooth = self.options["smooth_zje"]
         if smooth:
             alpha = self.options["alpha"]
-            djze_dsqa = d_smooth_min(sqa_array,  np.ones(nn) * 5.0, alpha) * djze_dsqa
-            djze_dvktas = d_smooth_min(sqa_array,  np.ones(nn) * 5.0, alpha) * djze_dvktas
-            djze_dtipspd = d_smooth_min(sqa_array,  np.ones(nn) * 5.0, alpha) * djze_dtipspd
-
+            djze_dsqa = d_smooth_min(jze,  np.ones(nn) * 5.0, alpha) * djze_dsqa
+            djze_dvktas = d_smooth_min(jze,  np.ones(nn) * 5.0, alpha) * djze_dvktas
+            djze_dtipspd = d_smooth_min(jze,  np.ones(nn) * 5.0, alpha) * djze_dtipspd
+        else:
+            djze_dsqa = np.piecewise(jze, [jze < 5, jze >= 5], [1, 0]) * djze_dsqa
+            djze_dvktas = np.piecewise(jze, [jze < 5, jze >= 5], [1, 0]) * djze_dvktas
+            djze_dtipspd = np.piecewise(jze, [jze < 5, jze >= 5], [1, 0]) * djze_dtipspd
         partials["equiv_adv_ratio", "sqa_array"] = djze_dsqa
         partials["equiv_adv_ratio", "vktas"] = djze_dvktas
         partials["equiv_adv_ratio", "tipspd"] = djze_dtipspd
