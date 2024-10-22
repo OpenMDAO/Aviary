@@ -532,7 +532,7 @@ class OutMachsTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-4, rtol=1e-4)
 
 
-class TipSpeedLimitest(unittest.TestCase):
+class TipSpeedLimittest(unittest.TestCase):
     """
     Test computation of tip speed limit in TipSpeedLimit class.
     """
@@ -628,18 +628,18 @@ class AdvanceRatioTest(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem(
             "group",
-            AdvanceRatio(num_nodes=3, smooth_zje=False),
+            AdvanceRatio(num_nodes=4, smooth_zje=False),
             promotes=["*"],
         )
         prob.setup(force_alloc_complex=True)
-        prob.set_val("vktas", val=[0.1, 125., 300.], units='knot')
-        prob.set_val("tipspd", val=[800., 800., 750.], units='ft/s')
-        prob.set_val("sqa_array", val=[0.0756, 0.0756, 0.0756], units='unitless')
+        prob.set_val("vktas", val=[0.1, 125., 300., 1000.], units='knot')
+        prob.set_val("tipspd", val=[800., 800., 750., 500.], units='ft/s')
+        prob.set_val("sqa_array", val=[0.0756, 0.0756, 0.0756, 1.0], units='unitless')
         prob.run_model()
 
         equiv_adv_ratio = prob.get_val("equiv_adv_ratio", units='unitless')
         assert_near_equal(equiv_adv_ratio, [
-            0.000650881807, 0.813602259, 2.08282178], tolerance=1e-5)
+            0.000650881807, 0.813602259, 2.08282178, 5], tolerance=1e-5)
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
