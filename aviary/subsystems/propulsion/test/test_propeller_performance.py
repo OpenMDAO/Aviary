@@ -508,7 +508,7 @@ class OutMachsTest(unittest.TestCase):
             minimum_step=1e-12, abs_err_tol=5.0E-4, rel_err_tol=5.0E-5)
         assert_check_partials(partial_data, atol=1e-4, rtol=1e-4)
 
-    def tstest_tip_mach(self):
+    def test_tip_mach(self):
         # Given helical Mach and Mach, compute tip Mach.
         tol = 1e-5
         prob = om.Problem()
