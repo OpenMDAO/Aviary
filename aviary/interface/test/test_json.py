@@ -10,15 +10,6 @@ from aviary.interface.default_phase_info.height_energy import phase_info, phase_
 
 @use_tempdirs
 class TestJson(unittest.TestCase):
-    def run_and_test_cmd(self, cmd):
-        # this only tests that a given command line tool returns a 0 return code. It doesn't
-        # check the expected output at all.  The underlying functions that implement the
-        # commands should be tested seperately.
-        try:
-            output = subprocess.check_output(cmd.split())
-        except subprocess.CalledProcessError as err:
-            self.fail(f"Command '{cmd}' failed.  Return code: {err.returncode}")
-
     def get_file(self, filename):
         filepath = get_aviary_resource_path(filename)
         if not Path(filepath).exists():
