@@ -9,6 +9,7 @@ from aviary.interface.default_phase_info.height_energy import phase_info, phase_
 
 
 @use_tempdirs
+@require_pyoptsparse
 class TestJson(unittest.TestCase):
     def get_file(self, filename):
         filepath = get_aviary_resource_path(filename)
