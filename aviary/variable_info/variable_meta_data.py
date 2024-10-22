@@ -241,12 +241,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.Battery.EFFICIENCY,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.EFF_BAT',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={"GASP": 'INGASP.EFF_BAT', "FLOPS": None, "LEAPS1": None},
     units='unitless',
-    desc="battery pack efficiency"
+    default_value=1.0,
+    desc="battery pack efficiency",
 )
 
 add_meta_data(
@@ -3051,6 +3049,7 @@ add_meta_data(
                      },
     units='unitless',
     desc='fuselage form factor',
+    default_value=1
 )
 
 add_meta_data(
