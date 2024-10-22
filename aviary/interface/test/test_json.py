@@ -30,7 +30,7 @@ class TestJson(unittest.TestCase):
 
         # Link phases and variables
         prob.link_phases()
-        prob.add_driver('SNOPT', max_iter=0)
+        prob.add_driver('IPOPT', max_iter=0)
         prob.add_design_variables()
 
         # Load optimization problem formulation
