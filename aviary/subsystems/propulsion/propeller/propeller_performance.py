@@ -454,9 +454,9 @@ class AdvanceRatio(om.ExplicitComponent):
         smooth = self.options["smooth_zje"]
         if smooth:
             alpha = self.options["alpha"]
-            djze_dsqa = d_smooth_min(sqa_array,  0.50, alpha) * djze_dsqa
-            djze_dvktas = d_smooth_min(sqa_array,  0.50, alpha) * djze_dvktas
-            djze_dtipspd = d_smooth_min(sqa_array,  0.50, alpha) * djze_dtipspd
+            djze_dsqa = d_smooth_min(sqa_array,  5.0, alpha) * djze_dsqa
+            djze_dvktas = d_smooth_min(sqa_array,  5.0, alpha) * djze_dvktas
+            djze_dtipspd = d_smooth_min(sqa_array,  5.0, alpha) * djze_dtipspd
 
         partials["equiv_adv_ratio", "sqa_array"] = djze_dsqa
         partials["equiv_adv_ratio", "vktas"] = djze_dvktas
