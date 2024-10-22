@@ -443,6 +443,7 @@ class AdvanceRatio(om.ExplicitComponent):
         outputs["equiv_adv_ratio"] = jze
 
     def compute_partials(self, inputs, partials):
+        nn = self.options['num_nodes']
         vktas = inputs["vktas"]
         tipspd = inputs["tipspd"]
         sqa_array = inputs["sqa_array"]
@@ -454,9 +455,9 @@ class AdvanceRatio(om.ExplicitComponent):
         smooth = self.options["smooth_zje"]
         if smooth:
             alpha = self.options["alpha"]
-            djze_dsqa = d_smooth_min(sqa_array,  5.0, alpha) * djze_dsqa
-            djze_dvktas = d_smooth_min(sqa_array,  5.0, alpha) * djze_dvktas
-            djze_dtipspd = d_smooth_min(sqa_array,  5.0, alpha) * djze_dtipspd
+            djze_dsqa = d_smooth_min(sqa_array,  np.ones(nn) * 5.0, alpha) * djze_dsqa
+            djze_dvktas = d_smooth_min(sqa_array,  np.ones(nn) * 5.0, alpha) * djze_dvktas
+            djze_dtipspd = d_smooth_min(sqa_array,  np.ones(nn) * 5.0, alpha) * djze_dtipspd
 
         partials["equiv_adv_ratio", "sqa_array"] = djze_dsqa
         partials["equiv_adv_ratio", "vktas"] = djze_dvktas
