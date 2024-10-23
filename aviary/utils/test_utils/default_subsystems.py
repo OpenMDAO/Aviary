@@ -29,8 +29,7 @@ def get_default_premission_subsystems(legacy_code, engines=None):
 
 def get_default_mission_subsystems(legacy_code, engines=None):
     """
-    Get default mission subsystems aerodynamics and propulsion
-    in this order.
+    Get default mission subsystems aerodynamics and propulsion in this order.
 
     Arguments:
     ----------
