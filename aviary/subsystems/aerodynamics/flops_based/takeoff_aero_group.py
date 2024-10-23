@@ -155,7 +155,8 @@ class TakeoffAeroGroup(om.Group):
                 om.ExecComp(
                     f'climb_lift_coefficient = ground_effect_lift + {spoiler_lift}',
                     climb_lift_coefficient={'units': 'unitless', 'shape': nn},
-                    ground_effect_lift={'units': 'unitless', 'shape': nn}),
+                    ground_effect_lift={'units': 'unitless', 'shape': nn},
+                    has_diag_partials=True,),
                 promotes_inputs=['ground_effect_lift'],
                 promotes_outputs=['climb_lift_coefficient'])
 
@@ -170,7 +171,8 @@ class TakeoffAeroGroup(om.Group):
             om.ExecComp(
                 f,
                 climb_drag_coefficient={'units': 'unitless', 'shape': nn},
-                ground_effect_drag={'units': 'unitless', 'shape': nn}),
+                ground_effect_drag={'units': 'unitless', 'shape': nn},
+                has_diag_partials=True,),
             promotes_inputs=['ground_effect_drag'],
             promotes_outputs=['climb_drag_coefficient'])
 

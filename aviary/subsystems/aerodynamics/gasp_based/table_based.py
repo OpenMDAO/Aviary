@@ -145,6 +145,7 @@ class TabularLowSpeedAero(om.Group):
                 val=8.0, units="ft", desc="Wing height above ground at 0 alt"
             ),
             hob=dict(shape=(nn,), desc="Wing height/span", units="unitless"),
+            has_diag_partials=True,
         )
         self.add_subsystem(
             "hob",

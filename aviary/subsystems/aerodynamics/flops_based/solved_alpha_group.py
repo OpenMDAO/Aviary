@@ -87,6 +87,7 @@ class SolvedAlphaGroup(om.Group):
                                        mass={'units': 'kg', 'shape': nn},
                                        computed_lift={'units': 'N', 'shape': nn},
                                        lift_resid={'shape': nn},
+                                       has_diag_partials=True,
                                        ),
                            promotes_inputs=[('mass', Dynamic.Mission.MASS),
                                             ('computed_lift', Dynamic.Mission.LIFT)]
