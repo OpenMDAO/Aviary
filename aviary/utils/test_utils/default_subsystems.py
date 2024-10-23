@@ -7,6 +7,17 @@ from aviary.variable_info.enums import LegacyCode
 
 
 def get_default_premission_subsystems(legacy_code, engines=None):
+    """
+    Get default premission subsystems propulsion, geometry, aerodynamics, and mass
+    in this order.
+
+    Arguments:
+    ----------
+    legacy_code : str
+        either 'FLOPS' or 'GASP'
+    engine : <list of EngineDecks>
+        List of EngineDecks
+    """
     legacy_code = LegacyCode(legacy_code)
     prop = CorePropulsionBuilder('core_propulsion', BaseMetaData, engine_models=engines)
     mass = CoreMassBuilder('core_mass', BaseMetaData, legacy_code)
@@ -17,6 +28,18 @@ def get_default_premission_subsystems(legacy_code, engines=None):
 
 
 def get_default_mission_subsystems(legacy_code, engines=None):
+    """
+    Get default mission subsystems aerodynamics and propulsion
+    in this order.
+
+    Arguments:
+    ----------
+    legacy_code : str
+        either 'FLOPS' or 'GASP'
+    engine : <list of EngineDecks>
+        List of EngineDecks
+    """
+
     legacy_code = LegacyCode(legacy_code)
     prop = CorePropulsionBuilder('core_propulsion', BaseMetaData, engine_models=engines)
     aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, legacy_code)
