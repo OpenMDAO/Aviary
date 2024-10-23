@@ -41,7 +41,7 @@ class TestFortranToAviary(unittest.TestCase):
         # Execute the conversion
         _exec_F2A(args, None)
 
-    def compare_files(self, filepath, skip_list=[]):
+    def compare_files(self, filepath, skip_list=['# created ']):
         """
         Compares the converted file with a validation file.
 
@@ -58,11 +58,7 @@ class TestFortranToAviary(unittest.TestCase):
             for line in f_in:
                 if any(s in line for s in skip_list):
                     break
-                # skip first header line, as it changes based on time of execution and
-                # username
-                timestamp = datetime.now().strftime('%m/%d/%y at')
-                if f'# created {timestamp}' in line:
-                    break
+
                 # Remove whitespace and compare
                 expected_line = ''.join(expected.readline().split())
                 line_no_whitespace = ''.join(line.split())
