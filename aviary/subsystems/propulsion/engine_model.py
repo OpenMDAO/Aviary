@@ -145,12 +145,12 @@ class EngineModel(SubsystemBuilderBase):
 
                         # if val is multidimensional, raise error
                         if isinstance(val[0], (list, np.ndarray, tuple)):
-                            raise UserWarning(f'Multidimensional {type(val)} was given '
-                                              f'for variable {key} in EngineModel '
-                                              f'<{self.name}>, but '
-                                              f"{type(
-                                                  self.meta_data[key]['default_value'])} "
-                                              'was expected.')
+                            raise UserWarning(
+                                f'Multidimensional {type(val)} was given for variable '
+                                f'{key} in EngineModel <{self.name}>, but '
+                                f'"{type(self.meta_data[key]['default_value'])}" '
+                                'was expected.'
+                            )
                         # use first item in val and warn user
                         if verbosity >= 1:
                             if len(val) > 1:
