@@ -533,7 +533,7 @@ class OutMachsTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-4, rtol=1e-4)
 
 
-class TipSpeedLimittest(unittest.TestCase):
+class TipSpeedLimitTest(unittest.TestCase):
     """
     Test computation of tip speed limit in TipSpeedLimit class.
     """
