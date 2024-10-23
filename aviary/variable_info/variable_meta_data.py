@@ -1896,7 +1896,10 @@ add_meta_data(
     '= TRUE means the engine can be extrapolated out to 1.0 at that point. If '
     "GLOBAL_HYBRID_THROTTLE is False, then each flight condition's hybrid throttle range is "
     'individually normalized from 0 to 1 independent of other points on the deck).',
-    default_value=True, types=bool, option=False)
+    default_value=True,
+    types=bool,
+    option=True
+)
 
 # TODO Disabling global throttle ranges is preferred (therefore default) to prevent
 # unintended extrapolation, but breaks missions using GASP-based engines that have uneven

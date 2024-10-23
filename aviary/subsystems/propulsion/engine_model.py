@@ -165,10 +165,9 @@ class EngineModel(SubsystemBuilderBase):
                         # but val is multidimensional, use first item and warn user
                         if isinstance(val[0], (list, np.ndarray, tuple)):
                             warnings.warn(
-                                f'The value of {key} passed to EngineModel <{
-                                    self.name}> '
-                                f'is multidimensional {type(val)}. Only the first entry '
-                                'in this iterable will be used.')
+                                f'The value of {key} passed to EngineModel '
+                                f'<{self.name}> is multidimensional {type(val)}. Only '
+                                'the first entry in this iterable will be used.')
                         # and val is 1-D, then it is ok!
                         else:
                             continue
