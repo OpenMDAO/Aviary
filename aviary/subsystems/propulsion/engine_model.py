@@ -148,7 +148,7 @@ class EngineModel(SubsystemBuilderBase):
                             raise UserWarning(
                                 f'Multidimensional {type(val)} was given for variable '
                                 f'{key} in EngineModel <{self.name}>, but '
-                                f'"{type(self.meta_data[key]['default_value'])}" '
+                                f"{type(self.meta_data[key]['default_value'])} "
                                 'was expected.'
                             )
                         # use first item in val and warn user
