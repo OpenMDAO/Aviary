@@ -54,13 +54,14 @@ def gramatical_list(list_of_strings: list, cc='and', add_accents=False) -> str:
     str
         A string that combines the elements of the list into a string with proper punctuation
     """
-    list_of_strings = ['`'+s+'`' if add_accents else s for s in list_of_strings]
+    list_of_strings = ['`'+str(s)+'`' if add_accents else str(s)
+                       for s in list_of_strings]
     if len(list_of_strings) == 1:
-        return str(list_of_strings[0])
+        return list_of_strings[0]
     elif len(list_of_strings) == 2:
-        return str(list_of_strings[0])+' '+cc+' '+str(list_of_strings[1])
+        return list_of_strings[0]+' '+cc+' '+list_of_strings[1]
     else:
-        return ', '.join([str(s) for s in list_of_strings[:-1]]+[cc+' '+str(list_of_strings[-1])])
+        return ', '.join([s for s in list_of_strings[:-1]]+[cc+' '+list_of_strings[-1]])
 
 
 def check_value(val1, val2, error_type=ValueError):
