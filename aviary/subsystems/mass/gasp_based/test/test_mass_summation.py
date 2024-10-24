@@ -3302,4 +3302,7 @@ class MassSummationTestCase9(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    # unittest.main()
+    test = MassSummationTestCase1()
+    test.setUp()
+    test.test_case1()

@@ -15,6 +15,7 @@ aircraft:design:structural_mass_increment,0,lbm
 aircraft:design:supercritical_drag_shift,0.033,unitless
 aircraft:engine:constant_fuel_consumption,0.,lbm/h
 aircraft:engine:data_file,models/engines/turbofan_23k_1.deck,unitless
+aircraft:engine:global_throttle, True, unitless
 aircraft:engine:enable_sizing,False,unitless
 aircraft:engine:mass_specific,0.21366,lbm/lbf
 aircraft:engine:fuel_flow_scaler_constant_term,0.,unitless
