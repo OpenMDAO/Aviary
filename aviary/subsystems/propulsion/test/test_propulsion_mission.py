@@ -182,7 +182,7 @@ class PropulsionMissionTest(unittest.TestCase):
             Dynamic.Mission.THROTTLE, om.IndepVarComp(Dynamic.Mission.THROTTLE, np.vstack((throttle, throttle)).transpose(), units='unitless'), promotes=['*'])
 
         self.prob.setup(force_alloc_complex=True)
-        self.prob.set_val(Aircraft.Engine.SCALE_FACTOR, [0.975], units='unitless')
+        self.prob.set_val(Aircraft.Engine.SCALE_FACTOR, [0.975, 0.975], units='unitless')
 
         self.prob.run_model()
 
