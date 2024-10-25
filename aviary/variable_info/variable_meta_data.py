@@ -6657,6 +6657,14 @@ add_meta_data(
 # ===========================================================================
 
 add_meta_data(
+    Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='kW',
+    desc='Must be zero or positive to ensure that the gearbox is sized large enough to handle the maximum shaft power the engine could output during any part of the mission',
+)
+
+add_meta_data(
     Mission.Constraints.MASS_RESIDUAL,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -6714,14 +6722,6 @@ add_meta_data(
     desc='residual to make sure aircraft reserve mission range is equal to the targeted '
          'range, value should be zero at convergence (within acceptable '
          'tolerance)',
-)
-
-add_meta_data(
-    Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='kW',
-    desc='Must be zero or positive to ensure that the gearbox is sized large enough to handle the maximum shaft power the engine could output during any part of the mission',
 )
 
 #  _____                 _
