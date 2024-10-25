@@ -96,6 +96,4 @@ class TestTheTests(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    # unittest.main()
-    test = VariableStructureTest()
-    test.test_alphabetization()
+    unittest.main()
