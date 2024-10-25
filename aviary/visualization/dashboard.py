@@ -174,18 +174,9 @@ def _dashboard_cmd(options, user_args):
 
     # check to see if options.script_name is a zip file
     # if yes, then unzip into reports directory and run dashboard on it
-    # TODO fix!!!
-    
-    # TODO need to save .db files in the zip file. 
-    
-
-    
     if zipfile.is_zipfile(options.script_name):
-        # report_dir_name = Path(options.script_name).stem
         report_dir_name = Path(options.script_name).stem
-        report_dir_path = Path(f"{report_dir_name}_out") / "reports"
-        # report_dir_path = Path("reports") / report_dir_name
-        # report_dir_path = Path(f"{report_dir_name}_out") / "reports"
+        report_dir_path = Path(f"{report_dir_name}_out")
         # need to check to see if that directory already exists
         if not options.force and report_dir_path.is_dir():
             raise RuntimeError(
@@ -193,7 +184,6 @@ def _dashboard_cmd(options, user_args):
         if report_dir_path.is_dir():  # need to delete it. The unpacking will just add to what is there, not do a clean unpack
             shutil.rmtree(report_dir_path)
 
-        # shutil.unpack_archive(options.script_name, f"reports/{report_dir_name}")
         shutil.unpack_archive(options.script_name, report_dir_path)
         dashboard(
             report_dir_name,
@@ -211,13 +201,7 @@ def _dashboard_cmd(options, user_args):
         else:
             save_filename_stem = Path(options.save).stem
         print(f"Saving to {save_filename_stem}.zip")
-        # shutil.make_archive(save_filename_stem, "zip", f"reports/{options.script_name}")
-        shutil.make_archive(save_filename_stem, "zip", f"{options.script_name}_out/reports")
-        
-        # TODO use Path more
-        
-        # TODO does zip file also include the .db files?
-
+        shutil.make_archive(save_filename_stem, "zip", f"{options.script_name}_out")
         return
 
     dashboard(
@@ -483,7 +467,6 @@ def create_aviary_variables_table_data_nested(script_name, recorder_file):
             )
 
     aviary_variables_file_path = (
-        # f"reports/{script_name}/aviary_vars/{aviary_variables_json_file_name}"
         f"{script_name}_out/reports/aviary_vars/{aviary_variables_json_file_name}"
     )
     with open(aviary_variables_file_path, "w") as fp:
@@ -622,12 +605,6 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
     port : int
         HTTP port used for the dashboard webapp. If 0, use any free port
     """
-    # if "reports/" not in script_name:
-    #     reports_dir = f"reports/{script_name}"
-    # else:
-    #     reports_dir = script_name
-        
-        
     reports_dir = f"{script_name}_out/reports/"
     out_dir = f"{script_name}_out/"
 
@@ -639,7 +616,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
 
     problem_recorder_path = Path(out_dir) / problem_recorder
     driver_recorder_path = Path(out_dir) / driver_recorder
-    
+
     if not os.path.isfile(problem_recorder_path):
         issue_warning(
             f"Given Problem case recorder file {problem_recorder_path} does not exist.")
@@ -649,7 +626,6 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
     model_tabs_list = []
 
     #  Debug Input List
-    # input_list_pane = create_report_frame("text", f"{reports_dir}/input_list.txt", '''
     input_list_pane = create_report_frame("text", Path(reports_dir) / "input_list.txt", '''
        A plain text display of the model inputs. Recommended for beginners. Only created if Settings.VERBOSITY is set to at least 2 in the input deck.
         The variables are listed in a tree structure. There are three columns. The left column is a list of variable names,
@@ -661,7 +637,6 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
     model_tabs_list.append(("Debug Input List", input_list_pane))
 
     #  Debug Output List
-    # output_list_pane = create_report_frame("text", f"{reports_dir}/output_list.txt", '''
     output_list_pane = create_report_frame("text", Path(reports_dir) / "output_list.txt", '''
        A plain text display of the model outputs. Recommended for beginners. Only created if Settings.VERBOSITY is set to at least 2 in the input deck.
         The variables are listed in a tree structure. There are three columns. The left column is a list of variable names,
@@ -678,7 +653,6 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
     model_tabs_list.append(("Inputs", inputs_pane))
 
     # N2
-    # n2_pane = create_report_frame("html", f"{reports_dir}/n2.html", '''
     n2_pane = create_report_frame("html", Path(reports_dir) / "n2.html", '''
         The N2 diagram, sometimes referred to as an eXtended Design Structure Matrix (XDSM), is a
         powerful tool for understanding your model in OpenMDAO. It is an N-squared diagram in the
@@ -797,7 +771,8 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
 
     # Coloring report
     coloring_report_pane = create_report_frame(
-        "html", Path(reports_dir) / "total_coloring.html", "The report shows metadata associated with the creation of the coloring."
+        "html", Path(
+            reports_dir) / "total_coloring.html", "The report shows metadata associated with the creation of the coloring."
     )
     optimization_tabs_list.append(("Total Coloring", coloring_report_pane))
 
@@ -827,7 +802,6 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
     if os.path.isfile(problem_recorder_path):
 
         # Make dir reports/script_name/aviary_vars if needed
-        # aviary_vars_dir = Path(f"reports/{script_name}/aviary_vars")
         aviary_vars_dir = Path(reports_dir) / "aviary_vars"
         aviary_vars_dir.mkdir(parents=True, exist_ok=True)
 
@@ -1098,8 +1072,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
 
     def save_dashboard(event):
         print(f"Saving dashboard files to {script_name}.zip")
-        # shutil.make_archive(script_name, "zip", f"reports/{script_name}")
-        shutil.make_archive(script_name, "zip", f"{script_name}_out/reports")
+        shutil.make_archive(script_name, "zip", f"{script_name}_out")
 
     save_dashboard_button.on_click(save_dashboard)
 
