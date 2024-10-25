@@ -45,6 +45,11 @@ class PreMissionGroupTest(unittest.TestCase):
             promotes_outputs=['*'],
         )
 
+        prob.model.set_input_defaults(
+            Aircraft.Engine.SCALE_FACTOR,
+            flops_inputs.get_val(
+                Aircraft.Engine.SCALE_FACTOR))
+
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_solver_print(2)
 
@@ -103,6 +108,11 @@ class PreMissionGroupTest(unittest.TestCase):
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        prob.model.set_input_defaults(
+            Aircraft.Engine.SCALE_FACTOR,
+            flops_inputs.get_val(
+                Aircraft.Engine.SCALE_FACTOR))
 
         prob.setup(check=False)
 

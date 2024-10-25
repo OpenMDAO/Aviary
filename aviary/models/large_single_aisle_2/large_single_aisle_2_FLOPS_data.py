@@ -155,25 +155,15 @@ filename = get_path(
     'models/engines/turbofan_24k_1.deck')
 
 inputs.set_val(Aircraft.Engine.DATA_FILE, filename)
-engine_mass = 8071.35
-engine_mass_units = 'lbm'
-inputs.set_val(Aircraft.Engine.MASS, engine_mass, engine_mass_units)
-inputs.set_val(
-    Aircraft.Engine.REFERENCE_MASS,
-    engine_mass,
-    engine_mass_units)
-scaled_sls_thrust = 27301.0
-scaled_sls_thrust_units = 'lbf'
+inputs.set_val(Aircraft.Engine.MASS, 8071.35, 'lbm')
+inputs.set_val(Aircraft.Engine.REFERENCE_MASS, 8071.35, 'lbm')
+inputs.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 27301.0, 'lbf')
+inputs.set_val(Aircraft.Engine.SCALE_FACTOR, 1.0)
 inputs.set_val(Aircraft.Engine.SCALED_SLS_THRUST,
-               scaled_sls_thrust, scaled_sls_thrust_units)
-inputs.set_val(
-    Aircraft.Engine.REFERENCE_SLS_THRUST, scaled_sls_thrust, scaled_sls_thrust_units)
-num_engines = 2
-inputs.set_val(Aircraft.Engine.NUM_ENGINES, num_engines)
-num_fuselage_engines = 0
-inputs.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, num_fuselage_engines)
-num_wing_engines = 2
-inputs.set_val(Aircraft.Engine.NUM_WING_ENGINES, num_wing_engines)
+               27301.0, 'lbf')
+inputs.set_val(Aircraft.Engine.NUM_ENGINES, 2)
+inputs.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, 0)
+inputs.set_val(Aircraft.Engine.NUM_WING_ENGINES, 2)
 inputs.set_val(Aircraft.Engine.THRUST_REVERSERS_MASS_SCALER, 1.0)
 inputs.set_val(Aircraft.Engine.SCALE_MASS, True)
 inputs.set_val(Aircraft.Engine.MASS_SCALER, 1.15)
@@ -181,8 +171,7 @@ inputs.set_val(Aircraft.Engine.SCALE_PERFORMANCE, True)
 inputs.set_val(Aircraft.Engine.SCALE_FACTOR, 1.0)
 inputs.set_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER, 1.0)
 inputs.set_val(Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER, 1.0)
-inputs.set_val(
-    Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM, 0.0)
+inputs.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM, 0.0)
 inputs.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM, 0.0)
 inputs.set_val(Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION, 0.0, units='lbm/h')
 inputs.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.0)
@@ -310,13 +299,11 @@ outputs.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS, 497.7, 'lbm')
 
 outputs.set_val(Aircraft.Furnishings.MASS, 14690., 'lbm')
 
-avg_diameter = (13.0208 + 12.33) / 2
-avg_diameter_units = 'ft'
-outputs.set_val(Aircraft.Fuselage.AVG_DIAMETER, avg_diameter, avg_diameter_units)
+outputs.set_val(Aircraft.Fuselage.AVG_DIAMETER, (13.0208 + 12.33) / 2, 'ft')
 outputs.set_val(Aircraft.Fuselage.CHARACTERISTIC_LENGTH, 124.75, 'ft')
 outputs.set_val(
     Aircraft.Fuselage.CROSS_SECTION,
-    pi * (avg_diameter / 2.0)**2.0, 'ft**2')
+    pi * (12.6754 / 2.0)**2.0, 'ft**2')
 outputs.set_val(Aircraft.Fuselage.DIAMETER_TO_WING_SPAN, 0.112598)
 outputs.set_val(Aircraft.Fuselage.FINENESS, 9.8419)
 outputs.set_val(Aircraft.Fuselage.LENGTH_TO_DIAMETER, 9.841898)
@@ -344,13 +331,11 @@ outputs.set_val(Aircraft.Nacelle.MASS, 1612.2, 'lbm')
 outputs.set_val(Aircraft.Nacelle.WETTED_AREA, np.array([228.34]), 'ft**2')
 
 outputs.set_val(Aircraft.Paint.MASS, 582.3, 'lbm')
-
 outputs.set_val(
     Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST,
-    scaled_sls_thrust * num_engines, scaled_sls_thrust_units)
+    27301.0 * 2, 'lbf')
 
-total_num_engines = num_engines
-outputs.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, total_num_engines)
+outputs.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2)
 
 ctrls_mass = 0.26 * 2 * 27301.0**0.5  # 85.92
 ctrls_mass_units = 'lbm'
@@ -364,30 +349,21 @@ outputs.set_val(
 
 outputs.set_val(Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS, 125.42, 'lbm')
 
-outputs.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, num_wing_engines)
+outputs.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 2)
 
-outputs.set_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES, num_fuselage_engines)
+outputs.set_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES, 2)
 
-outputs.set_val(
-    Aircraft.Propulsion.TOTAL_ENGINE_MASS,
-    engine_mass * num_engines, engine_mass_units)
+outputs.set_val(Aircraft.Propulsion.TOTAL_ENGINE_MASS, 16143., 'lbm')
 
 outputs.set_val(Aircraft.Engine.MASS, 16143./2.0, 'lbm')
 outputs.set_val(Aircraft.Engine.POD_MASS, 10350, 'lbm')
 outputs.set_val(Aircraft.Engine.ADDITIONAL_MASS, 0.0, 'lbm')
 outputs.set_val(Aircraft.Propulsion.TOTAL_MISC_MASS, 550.4, 'lbm')
-outputs.set_val(Aircraft.Engine.SCALE_FACTOR, 1.0)
 outputs.set_val(
     Aircraft.Propulsion.TOTAL_STARTER_MASS, 11.0 * 2 * 0.82**0.32 * 7.0**1.6, 'lbm')
 
-thrust_reversers_mass = 1856.4
-thrust_reversers_mass_units = 'lbm'
-outputs.set_val(
-    Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS,
-    thrust_reversers_mass, thrust_reversers_mass_units)
-outputs.set_val(
-    Aircraft.Engine.THRUST_REVERSERS_MASS,
-    thrust_reversers_mass, thrust_reversers_mass_units)
+outputs.set_val(Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS, 1856.4, 'lbm')
+outputs.set_val(Aircraft.Engine.THRUST_REVERSERS_MASS, 1856.4, 'lbm')
 
 outputs.set_val(Aircraft.VerticalTail.CHARACTERISTIC_LENGTH, 11.30, 'ft')
 outputs.set_val(Aircraft.VerticalTail.FINENESS, 0.1375)
