@@ -5,6 +5,7 @@ import importlib.util
 import json
 import os
 import pathlib
+from pathlib import Path
 import re
 import shutil
 import warnings
@@ -173,17 +174,23 @@ def _dashboard_cmd(options, user_args):
 
     # check to see if options.script_name is a zip file
     # if yes, then unzip into reports directory and run dashboard on it
+    # TODO fix!!!
+    
+    # TODO need to save .db files in the zip file. 
+    
     if zipfile.is_zipfile(options.script_name):
         report_dir_name = Path(options.script_name).stem
-        report_dir_path = Path("reports") / report_dir_name
+        # report_dir_path = Path("reports") / report_dir_name
+        report_dir_path = Path(f"{report_dir_name}_out") / "reports"
         # need to check to see if that directory already exists
         if not options.force and report_dir_path.is_dir():
             raise RuntimeError(
-                f"The reports directory {report_dir_name} already exists. If you wish to overrite the existing directory, use the --force option")
+                f"The reports directory {report_dir_path} already exists. If you wish to overrite the existing directory, use the --force option")
         if report_dir_path.is_dir():  # need to delete it. The unpacking will just add to what is there, not do a clean unpack
             shutil.rmtree(report_dir_path)
 
-        shutil.unpack_archive(options.script_name, f"reports/{report_dir_name}")
+        # shutil.unpack_archive(options.script_name, f"reports/{report_dir_name}")
+        shutil.unpack_archive(options.script_name, f"{report_dir_path}")
         dashboard(
             report_dir_name,
             options.problem_recorder,
@@ -200,7 +207,13 @@ def _dashboard_cmd(options, user_args):
         else:
             save_filename_stem = Path(options.save).stem
         print(f"Saving to {save_filename_stem}.zip")
-        shutil.make_archive(save_filename_stem, "zip", f"reports/{options.script_name}")
+        # shutil.make_archive(save_filename_stem, "zip", f"reports/{options.script_name}")
+        shutil.make_archive(save_filename_stem, "zip", f"{options.script_name}_out/reports")
+        
+        # TODO use Path more
+        
+        # TODO does zip file also include the .db files?
+
         return
 
     dashboard(
@@ -466,7 +479,8 @@ def create_aviary_variables_table_data_nested(script_name, recorder_file):
             )
 
     aviary_variables_file_path = (
-        f"reports/{script_name}/aviary_vars/{aviary_variables_json_file_name}"
+        # f"reports/{script_name}/aviary_vars/{aviary_variables_json_file_name}"
+        f"{script_name}_out/reports/aviary_vars/{aviary_variables_json_file_name}"
     )
     with open(aviary_variables_file_path, "w") as fp:
         json.dump(table_data_nested, fp)
@@ -560,7 +574,7 @@ def create_aircraft_3d_file(recorder_file, reports_dir, outfilepath):
         The path to the location where the file should be created.
     """
     # Get the location of the HTML template file for this HTML file
-    aviary_dir = pathlib.Path(importlib.util.find_spec("aviary").origin).parent
+    aviary_dir = Path(importlib.util.find_spec("aviary").origin).parent
     aircraft_3d_template_filepath = aviary_dir.joinpath(
         "visualization/assets/aircraft_3d_file_template.html"
     )
@@ -604,27 +618,34 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
     port : int
         HTTP port used for the dashboard webapp. If 0, use any free port
     """
-    if "reports/" not in script_name:
-        reports_dir = f"reports/{script_name}"
-    else:
-        reports_dir = script_name
+    # if "reports/" not in script_name:
+    #     reports_dir = f"reports/{script_name}"
+    # else:
+    #     reports_dir = script_name
+        
+        
+    reports_dir = f"{script_name}_out/reports/"
+    out_dir = f"{script_name}_out/"
 
-    if not pathlib.Path(reports_dir).is_dir():
+    if not Path(reports_dir).is_dir():
         raise ValueError(
             f"The script name, '{script_name}', does not have a reports folder associated with it. "
             f"The directory '{reports_dir}' does not exist."
         )
 
-    if not os.path.isfile(problem_recorder):
+    problem_recorder_path = Path(out_dir) / problem_recorder
+    driver_recorder_path = Path(out_dir) / driver_recorder
+    
+    if not os.path.isfile(problem_recorder_path):
         issue_warning(
-            f"Given Problem case recorder file {problem_recorder} does not exist.")
+            f"Given Problem case recorder file {problem_recorder_path} does not exist.")
 
     # TODO - use lists and functions to do this with a lot less code
     ####### Model Tab #######
     model_tabs_list = []
 
     #  Debug Input List
-    input_list_pane = create_report_frame("text", "input_list.txt", '''
+    input_list_pane = create_report_frame("text", f"{reports_dir}/input_list.txt", '''
        A plain text display of the model inputs. Recommended for beginners. Only created if Settings.VERBOSITY is set to at least 2 in the input deck.
         The variables are listed in a tree structure. There are three columns. The left column is a list of variable names,
         the middle column is the value, and the right column is the
@@ -635,7 +656,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
     model_tabs_list.append(("Debug Input List", input_list_pane))
 
     #  Debug Output List
-    output_list_pane = create_report_frame("text", "output_list.txt", '''
+    output_list_pane = create_report_frame("text", f"{reports_dir}/output_list.txt", '''
        A plain text display of the model outputs. Recommended for beginners. Only created if Settings.VERBOSITY is set to at least 2 in the input deck.
         The variables are listed in a tree structure. There are three columns. The left column is a list of variable names,
         the middle column is the value, and the right column is the
@@ -684,9 +705,9 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
     model_tabs_list.append(("Driver Scaling", driver_scaling_report_pane))
 
     # Desvars, cons, opt interactive plot
-    if driver_recorder:
-        if os.path.isfile(driver_recorder):
-            df = convert_case_recorder_file_to_df(f"{driver_recorder}")
+    if driver_recorder_path:
+        if os.path.isfile(driver_recorder_path):
+            df = convert_case_recorder_file_to_df(f"{driver_recorder_path}")
             if df is not None:
                 variables = pn.widgets.CheckBoxGroup(
                     name="Variables",
@@ -716,11 +737,11 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
                 )
             else:
                 optimization_plot_pane = pn.pane.Markdown(
-                    f"# Recorder file '{driver_recorder}' does not have Driver case recordings."
+                    f"# Recorder file '{driver_recorder_path}' does not have Driver case recordings."
                 )
         else:
             optimization_plot_pane = pn.pane.Markdown(
-                f"# Recorder file containing optimization history,'{driver_recorder}', not found.")
+                f"# Recorder file containing optimization history,'{driver_recorder_path}', not found.")
 
         optimization_plot_pane_with_doc = pn.Column(
             pn.pane.HTML(f"<p>Plot of design variables, constraints, and objectives.</p>",
@@ -777,11 +798,11 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
     results_tabs_list = []
 
     # Aircraft 3d model display
-    if problem_recorder:
-        if os.path.isfile(problem_recorder):
+    if problem_recorder_path:
+        if os.path.isfile(problem_recorder_path):
             try:
                 create_aircraft_3d_file(
-                    problem_recorder, reports_dir, f"{reports_dir}/aircraft_3d.html"
+                    problem_recorder_path, reports_dir, f"{reports_dir}/aircraft_3d.html"
                 )
                 aircraft_3d_pane = create_report_frame(
                     "html", f"{reports_dir}/aircraft_3d.html",
@@ -795,14 +816,15 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
             results_tabs_list.append(("Aircraft 3d model", aircraft_3d_pane))
 
     # Make the Aviary variables table pane
-    if os.path.isfile(problem_recorder):
+    if os.path.isfile(problem_recorder_path):
 
         # Make dir reports/script_name/aviary_vars if needed
-        aviary_vars_dir = pathlib.Path(f"reports/{script_name}/aviary_vars")
+        # aviary_vars_dir = Path(f"reports/{script_name}/aviary_vars")
+        aviary_vars_dir = Path(f"{reports_dir}/aviary_vars")
         aviary_vars_dir.mkdir(parents=True, exist_ok=True)
 
         # copy index.html file to reports/script_name/aviary_vars/index.html
-        aviary_dir = pathlib.Path(importlib.util.find_spec("aviary").origin).parent
+        aviary_dir = Path(importlib.util.find_spec("aviary").origin).parent
 
         shutil.copy(
             aviary_dir.joinpath("visualization/assets/aviary_vars/index.html"),
@@ -817,7 +839,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
         # create the json file and put it in reports/script_name/aviary_vars/aviary_vars.json
         try:
             create_aviary_variables_table_data_nested(
-                script_name, problem_recorder
+                script_name, problem_recorder_path
             )  # create the json file
 
             aviary_vars_pane = create_report_frame(
@@ -868,9 +890,9 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
     )
 
     # Interactive XY plot of mission variables
-    if problem_recorder:
-        if os.path.exists(problem_recorder):
-            cr = om.CaseReader(problem_recorder)
+    if problem_recorder_path:
+        if os.path.exists(problem_recorder_path):
+            cr = om.CaseReader(problem_recorder_path)
 
             # determine what trajectories there are
             traj_nodes = [n for n in _meta_tree_subsys_iter(
@@ -1007,7 +1029,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
             )
         else:
             interactive_mission_var_plot_pane = pn.pane.Markdown(
-                f"# Recorder file '{problem_recorder}' not found.")
+                f"# Recorder file '{problem_recorder_path}' not found.")
 
         interactive_mission_var_plot_pane_with_doc = pn.Column(
             pn.pane.HTML(f"<p>Plot of mission variables allowing user to select X and Y plot values.</p>",
@@ -1024,7 +1046,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
     # Look through subsystems directory for markdown files
     # The subsystems report tab shows selected results for every major subsystem in the Aviary problem
 
-    for md_file in sorted(pathlib.Path(f"{reports_dir}subsystems").glob("*.md"), key=str):
+    for md_file in sorted(Path(f"{reports_dir}subsystems").glob("*.md"), key=str):
         subsystems_pane = create_report_frame("markdown", str(
             md_file),
             f'''
@@ -1068,7 +1090,8 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
 
     def save_dashboard(event):
         print(f"Saving dashboard files to {script_name}.zip")
-        shutil.make_archive(script_name, "zip", f"reports/{script_name}")
+        # shutil.make_archive(script_name, "zip", f"reports/{script_name}")
+        shutil.make_archive(script_name, "zip", f"{script_name}_out/reports")
 
     save_dashboard_button.on_click(save_dashboard)
 
@@ -1103,7 +1126,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
     if run_in_background:
         show = False
 
-    assets_dir = pathlib.Path(
+    assets_dir = Path(
         importlib.util.find_spec("aviary").origin
     ).parent.joinpath("visualization/assets/")
     home_dir = "."
