@@ -39,7 +39,7 @@ class MassParameters(om.ExplicitComponent):
         num_engine_type = len(self.options['aviary_options'].get_val(
             Aircraft.Engine.NUM_ENGINES))
 
-        add_aviary_input(self, Aircraft.Wing.SWEEP, val=25)
+        add_aviary_input(self, Aircraft.Wing.SWEEP, val=25, units='deg')
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, val=0.33)
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, val=10.13)
         add_aviary_input(self, Aircraft.Wing.SPAN, val=117.8)
@@ -608,7 +608,7 @@ class EngineMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Engine.MASS_SPECIFIC,
                          val=np.full(num_engine_type, 0.21366))
         add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST,
-                         val=np.full(num_engine_type, 4000))
+                         val=np.full(num_engine_type, 4000), units="lbf")
         add_aviary_input(self, Aircraft.Nacelle.MASS_SPECIFIC,
                          val=np.full(num_engine_type, 3))
         add_aviary_input(self, Aircraft.Nacelle.SURFACE_AREA,
