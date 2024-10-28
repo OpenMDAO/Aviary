@@ -14,7 +14,7 @@ import aviary.api as av
 
 GASP = LegacyCode.GASP
 
-class TestMassBuilder(av.TestSubsystemBuilderBase):
+class TestGASPMassBuilder(av.TestSubsystemBuilderBase):
     """
     That class inherits from TestSubsystemBuilder. So all the test functions are
     within that inherited class. The setUp() method prepares the class and is run
