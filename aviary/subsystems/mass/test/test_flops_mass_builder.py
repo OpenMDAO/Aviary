@@ -13,6 +13,7 @@ import aviary.api as av
 
 FLOPS = LegacyCode.FLOPS
 
+
 class TestFLOPSMassBuilder(av.TestSubsystemBuilderBase):
     """
     That class inherits from TestSubsystemBuilder. So all the test functions are
@@ -21,11 +22,13 @@ class TestFLOPSMassBuilder(av.TestSubsystemBuilderBase):
     """
 
     def setUp(self):
-        self.subsystem_builder = CoreMassBuilder('test_core_mass', meta_data=BaseMetaData, code_origin=FLOPS)
+        self.subsystem_builder = CoreMassBuilder(
+            'test_core_mass', meta_data=BaseMetaData, code_origin=FLOPS)
         self.aviary_values = av.AviaryValues()
         self.aviary_values.set_val(Aircraft.Design.USE_ALT_MASS, True, units='unitless')
         self.aviary_values.set_val(Aircraft.Engine.NUM_ENGINES, [1], units='unitless')
-        self.aviary_values.set_val(Aircraft.Engine.NUM_WING_ENGINES, [2], units='unitless')
+        self.aviary_values.set_val(
+            Aircraft.Engine.NUM_WING_ENGINES, [2], units='unitless')
 
 
 if __name__ == '__main__':

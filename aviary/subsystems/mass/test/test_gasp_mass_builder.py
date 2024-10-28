@@ -14,6 +14,7 @@ import aviary.api as av
 
 GASP = LegacyCode.GASP
 
+
 class TestGASPMassBuilder(av.TestSubsystemBuilderBase):
     """
     That class inherits from TestSubsystemBuilder. So all the test functions are
@@ -22,11 +23,15 @@ class TestGASPMassBuilder(av.TestSubsystemBuilderBase):
     """
 
     def setUp(self):
-        self.subsystem_builder = CoreMassBuilder('test_core_mass', meta_data=BaseMetaData, code_origin=GASP)
+        self.subsystem_builder = CoreMassBuilder(
+            'test_core_mass', meta_data=BaseMetaData, code_origin=GASP)
         self.aviary_values = av.AviaryValues()
-        self.aviary_values.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, 3, units='unitless')
-        self.aviary_values.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2, units='unitless')
-        self.aviary_values.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, True, units='unitless')
+        self.aviary_values.set_val(
+            Aircraft.Design.PART25_STRUCTURAL_CATEGORY, 3, units='unitless')
+        self.aviary_values.set_val(
+            Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2, units='unitless')
+        self.aviary_values.set_val(
+            Aircraft.Electrical.HAS_HYBRID_SYSTEM, True, units='unitless')
         self.aviary_values.set_val(Aircraft.Wing.HAS_FOLD, True, units='unitless')
         self.aviary_values.set_val(Aircraft.Wing.HAS_STRUT, True, units='unitless')
         self.aviary_values.set_val(Aircraft.Engine.NUM_ENGINES, [1], units='unitless')
