@@ -18,6 +18,7 @@ def dsig(x):
 def dquotient(u, v, du, dv):
     return (du * v - u * dv) / v**2
 
+
 deg_to_rad = np.pi / 180.
 
 
@@ -657,7 +658,8 @@ class LiftCurveSlopeAtCruise(om.ExplicitComponent):
 
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, val=10.13)
-        add_aviary_input(self, Aircraft.Wing.SWEEP, val=25, units="deg")  # approx 0.436 rad
+        add_aviary_input(self, Aircraft.Wing.SWEEP, val=25,
+                         units="deg")  # approx 0.436 rad
         add_aviary_input(self, Mission.Design.MACH, val=0.8)
 
         add_aviary_output(self, Aircraft.Design.LIFT_CURVE_SLOPE, val=7.1765)
