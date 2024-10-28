@@ -20,6 +20,8 @@ def dSigXdX(x):
         (-320 * np.exp(-320 * x)) if x > -1 else 0
     return derivative
 
+deg_to_rad = np.pi / 180.
+
 
 class MassParameters(om.ExplicitComponent):
     """
@@ -113,7 +115,7 @@ class MassParameters(om.ExplicitComponent):
         gear_location = inputs[Aircraft.LandingGear.MAIN_GEAR_LOCATION]
 
         tan_half_sweep = \
-            np.tan(sweep_c4 * 0.017453) - (1.0 - taper_ratio) / (1.0 + taper_ratio) / AR
+            np.tan(sweep_c4 * deg_to_rad) - (1.0 - taper_ratio) / (1.0 + taper_ratio) / AR
 
         half_sweep = np.arctan(tan_half_sweep)
         cos_half_sweep = np.cos(half_sweep)
@@ -168,7 +170,7 @@ class MassParameters(om.ExplicitComponent):
         gear_location = inputs[Aircraft.LandingGear.MAIN_GEAR_LOCATION]
 
         tan_half_sweep = (
-            np.tan(sweep_c4 * 0.017453) - (1.0 - taper_ratio) / (1.0 + taper_ratio) / AR
+            np.tan(sweep_c4 * deg_to_rad) - (1.0 - taper_ratio) / (1.0 + taper_ratio) / AR
         )
         half_sweep = np.arctan(tan_half_sweep)
         cos_half_sweep = np.cos(half_sweep)
@@ -178,7 +180,7 @@ class MassParameters(om.ExplicitComponent):
         not_fuselage_mounted = self.options["aviary_options"].get_val(
             Aircraft.Engine.NUM_FUSELAGE_ENGINES) == 0
 
-        dTanHS_dSC4 = (1 / np.cos(sweep_c4 * 0.017453) ** 2) * 0.017453
+        dTanHS_dSC4 = (1 / np.cos(sweep_c4 * deg_to_rad) ** 2) * deg_to_rad
         dTanHS_TR = (
             -(1 / AR)
             * ((1 + taper_ratio) * (-1) - (1 - taper_ratio))
