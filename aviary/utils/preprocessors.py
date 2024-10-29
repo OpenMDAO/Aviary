@@ -24,6 +24,10 @@ def preprocess_options(aviary_options: AviaryValues, **kwargs):
     except KeyError:
         engine_models = None
 
+    if Settings.VERBOSITY not in aviary_options:
+        aviary_options.set_val(
+            Settings.VERBOSITY, _MetaData[Settings.VERBOSITY]['default_value'])
+
     preprocess_crewpayload(aviary_options)
     preprocess_propulsion(aviary_options, engine_models)
 
