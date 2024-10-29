@@ -13,8 +13,8 @@ def get_default_premission_subsystems(legacy_code, engines=None):
 
     Arguments:
     ----------
-    legacy_code : str
-        either 'FLOPS' or 'GASP'
+    legacy_code : str, LegacyCode
+        either FLOPS or GASP LegacyCode Enums, or their strings equivalents ('FLOPS', 'GASP')
     engine : <list of EngineDecks>
         List of EngineDecks
     """
