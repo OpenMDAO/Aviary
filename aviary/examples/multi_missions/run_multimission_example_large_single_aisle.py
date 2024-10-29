@@ -4,7 +4,7 @@ Multi Mission Optimization Example using Aviary
 
 In this example, Two seperate aviary problems are instantiated using the typical aviaryProblem calls like load_inputs,
 check_and_preprocess_payload, etc.. Once those problems are setup and all of their phases are linked together,
-we copy those problems as group into a super_problem. We then promote GROSS_MASS, RANGE, SPAN, and wing AREA from each
+we copy those problems as group into a super_problem. We then promote GROSS_MASS, RANGE, and wing SWEEP from each
 of those sub-groups (group1 and group2) up to the super_probem so the optimizer can control them. The fuel_burn results
 from each of the group1 and group2 dymos missions are summed and weighted to create the objective function the 
 optimizer sees.
@@ -46,6 +46,8 @@ aviary_inputs_deadhead.set_val(
     'aircraft:crew_and_payload:num_business_class', 0, 'unitless')
 aviary_inputs_deadhead.set_val(
     'aircraft:crew_and_payload:num_first_class', 0, 'unitless')
+
+Optimizer = 'SLSQP'  # SLSQP or SNOPT
 
 
 class MultiMissionProblem(om.Problem):
@@ -98,20 +100,27 @@ class MultiMissionProblem(om.Problem):
                 self.group_prefix + f'_{i}', prob.model,
                 promotes_inputs=[Mission.Design.GROSS_MASS,
                                  Mission.Design.RANGE,
-                                 Aircraft.Wing.SPAN,
-                                 Aircraft.Wing.AREA],
+                                 Aircraft.Wing.SWEEP],
                 promotes_outputs=[(Mission.Objectives.FUEL, promoted_name)])
 
     def add_design_variables(self):
         self.model.add_design_var(Mission.Design.GROSS_MASS,
                                   lower=10., upper=900e3, units='lbm')
-        self.model.add_design_var(Aircraft.Wing.SPAN, lower=100., upper=500., units='ft')
-        self.model.add_design_var(Aircraft.Wing.AREA, lower=10.,
-                                  upper=1e6, units='ft**2')
+        self.model.add_design_var(Aircraft.Wing.SWEEP, lower=20., upper=35., units='deg')
 
     def add_driver(self):
         self.driver = om.pyOptSparseDriver()
-        self.driver.options["optimizer"] = "SLSQP"
+        if Optimizer == "SLSQP":
+            self.driver.options["optimizer"] = "SLSQP"
+        elif Optimizer == "SNOPT":
+            self.driver.options["optimizer"] = "SNOPT"
+            self.driver.opt_settings["Major optimality tolerance"] = 1e-7
+            self.driver.opt_settings["Major feasibility tolerance"] = 1e-7
+            # self.driver.opt_settings["Major iterations"] = 0
+            self.driver.opt_settings["iSumm"] = 6
+            self.driver.opt_settings["iPrint"] = 9
+            self.driver.opt_settings['Verify level'] = -1
+            self.driver.opt_settings["Nonderivative linesearch"] = None
         self.driver.declare_coloring()
         # linear solver causes nan entry error for landing to takeoff mass ratio param
         # self.model.linear_solver = om.DirectSolver()
@@ -128,7 +137,9 @@ class MultiMissionProblem(om.Problem):
 
         # adding compound execComp to super problem
         self.model.add_subsystem('compound_fuel_burn_objective', om.ExecComp(
-            "compound = "+weighted_str, has_diag_partials=True), promotes=["compound"])
+            "compound = "+weighted_str, has_diag_partials=True),
+            promotes_inputs=self.fuel_vars,
+            promotes_outputs=["compound"])
         self.model.add_objective('compound')
 
     def setup_wrapper(self):
@@ -291,7 +302,8 @@ def large_single_aisle_example(makeN2=False):
         (Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, 'unitless'),
         (Mission.Summary.CRUISE_MACH, 'unitless'),
         (Aircraft.Furnishings.MASS, 'lbm'),
-        (Aircraft.CrewPayload.PASSENGER_SERVICE_MASS, 'lbm')]
+        (Aircraft.CrewPayload.PASSENGER_SERVICE_MASS, 'lbm'),
+        (Aircraft.Wing.SWEEP, 'deg')]
     super_prob.print_vars(vars=printoutputs)
 
     plotvars = [('altitude', 'ft'),
