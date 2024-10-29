@@ -635,7 +635,7 @@ class HamiltonStandard(om.ExplicitComponent):
             TXCLI = np.zeros(6)
             CTTT = np.zeros(4)
             XXXFT = np.zeros(4)
-            act_factor = inputs[Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR]
+            act_factor = inputs[Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR][0]
             for k in range(2):
                 AF_adj_CP[k], run_flag = _unint(Act_Factor_arr, AFCPC[k], act_factor)
                 AF_adj_CT[k], run_flag = _unint(Act_Factor_arr, AFCTC[k], act_factor)
@@ -667,7 +667,7 @@ class HamiltonStandard(om.ExplicitComponent):
             # flag that given lift coeff (cli) does not fall on a node point of CL_arr
             CL_tab_idx_flg = 0  # NCL_flg
             ifnd = 0
-            cli = inputs[Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT]
+            cli = inputs[Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT][0]
             power_coefficient = inputs['power_coefficient'][i_node]
             for ii in range(6):
                 cl_idx = ii
@@ -740,7 +740,7 @@ class HamiltonStandard(om.ExplicitComponent):
                         CL_tab_idx = CL_tab_idx+1
                     if (CL_tab_idx_flg != 1):
                         PCLI, run_flag = _unint(
-                            CL_arr[CL_tab_idx_begin:CL_tab_idx_begin+4], PXCLI[CL_tab_idx_begin:CL_tab_idx_begin+4], inputs[Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT])
+                            CL_arr[CL_tab_idx_begin:CL_tab_idx_begin+4], PXCLI[CL_tab_idx_begin:CL_tab_idx_begin+4], inputs[Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT][0])
                     else:
                         PCLI = PXCLI[CL_tab_idx_begin]
                         # PCLI = CLI adjustment to power_coefficient
@@ -752,7 +752,7 @@ class HamiltonStandard(om.ExplicitComponent):
                     try:
                         CTT[kdx], run_flag = _unint(
                             # thrust coeff at baseline point for kdx
-                            Blade_angle_table[kdx], CT_Angle_table[idx_blade][kdx][:ang_len], BLL[kdx])
+                            Blade_angle_table[kdx][:ang_len], CT_Angle_table[idx_blade][kdx][:ang_len], BLL[kdx])
                     except IndexError:
                         raise om.AnalysisError(
                             "interp failed for CTT (thrust coefficient) in hamilton_standard.py")
@@ -810,7 +810,7 @@ class HamiltonStandard(om.ExplicitComponent):
                             XFFT[kl], run_flag = _biquad(comp_mach_CT_arr, 1, DMN, CTE2)
                         CL_tab_idx = CL_tab_idx + 1
                     if (CL_tab_idx_flg != 1):
-                        cli = inputs[Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT]
+                        cli = inputs[Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT][0]
                         TCLII, run_flag = _unint(
                             CL_arr[CL_tab_idx_begin:CL_tab_idx_begin+4], TXCLI[CL_tab_idx_begin:CL_tab_idx_begin+4], cli)
                         xft, run_flag = _unint(
