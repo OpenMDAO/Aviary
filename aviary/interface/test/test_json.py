@@ -3,7 +3,7 @@ from pathlib import Path
 from copy import deepcopy
 
 from aviary.utils.functions import get_aviary_resource_path
-from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
+from openmdao.utils.testing_utils import use_tempdirs
 import aviary.api as av
 from aviary.interface.default_phase_info.height_energy import phase_info, phase_info_parameterization
 
@@ -12,7 +12,6 @@ local_phase_info = deepcopy(phase_info)
 
 
 @use_tempdirs
-@require_pyoptsparse
 class TestJson(unittest.TestCase):
     """
     These tests just check that the json files can be saved or loaded
@@ -42,7 +41,7 @@ class TestJson(unittest.TestCase):
 
         # Link phases and variables
         prob.link_phases()
-        prob.add_driver('IPOPT', max_iter=0)
+        prob.add_driver('SLSQP', max_iter=0)
         prob.add_design_variables()
 
         # Load optimization problem formulation

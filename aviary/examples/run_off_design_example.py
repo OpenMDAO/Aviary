@@ -119,7 +119,7 @@ prob.add_post_mission_systems()
 # Link phases and variables
 prob.link_phases()
 if env_truthy("TESTFLO_RUNNING"):
-    prob.add_driver('IPOPT', max_iter=100)
+    prob.add_driver('SLSQP', max_iter=100)
 else:
     prob.add_driver('SNOPT', max_iter=100)
 prob.add_design_variables()
