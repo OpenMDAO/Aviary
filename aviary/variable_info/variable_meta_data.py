@@ -699,6 +699,12 @@ add_meta_data(
     default_value=0.7,
 )
 
+#   ___               _               
+#  |   \   ___   ___ (_)  __ _   _ _  
+#  | |) | / -_) (_-< | | / _` | | ' \ 
+#  |___/  \___| /__/ |_| \__, | |_||_|
+#  ====================== |___/ ======      
+
 add_meta_data(
     Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS,
     meta_data=_MetaData,

@@ -198,7 +198,7 @@ class MultiMissionProblem(om.Problem):
             plt.xlabel("Time (s)")
             plt.ylabel(f"{var.title()} ({unit})")
             plt.grid()
-        plt.figlegend([f"Plane {i}" for i in range(self.num_missions)])
+        plt.figlegend([f"Mission {i}" for i in range(self.num_missions)])
         if show:
             plt.show()
 
