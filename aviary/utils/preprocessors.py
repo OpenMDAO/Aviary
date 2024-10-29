@@ -1,4 +1,3 @@
-from aviary.variable_info.enums import Verbosity
 import warnings
 
 import numpy as np
@@ -7,9 +6,8 @@ import openmdao.api as om
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.named_values import get_keys
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 from aviary.utils.test_utils.variable_test import get_names_from_hierarchy
-from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 
 
 def preprocess_options(aviary_options: AviaryValues, **kwargs):
@@ -37,6 +35,8 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
     returns the modified collection.
     """
 
+    verbosity = aviary_options.get_val(Settings.VERBOSITY)
+
     # Grab Default all values for num_pax and 1TB (1st class, Tourist Class, Business Class Passengers) to make
     #   sure they are accessible so we don't have to run checks if they exist again
     for key in (
@@ -49,7 +49,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
             Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS,
             Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS,):
         if key not in aviary_options:
-            aviary_options.set_val(key, BaseMetaData[key]['default_value'])
+            aviary_options.set_val(key, _MetaData[key]['default_value'])
 
     # Sum passenger Counts for later checks and assignments
     passenger_count = 0
@@ -67,12 +67,12 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
     # or if it was set to it's default value of zero
     if passenger_count != 0 and aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS) == 0:
         aviary_options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, passenger_count)
-        if Verbosity >= 2:
+        if verbosity >= 2:
             print("User has specified supporting values for NUM_PASSENGERS but has left NUM_PASSENGERS=0. Replacing NUM_PASSENGERS with passenger_count.")
     if design_passenger_count != 0 and aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS) == 0:
         aviary_options.set_val(
             Aircraft.CrewPayload.Design.NUM_PASSENGERS, design_passenger_count)
-        if Verbosity >= 2:
+        if verbosity >= 2:
             print("User has specified supporting values for Design.NUM_PASSENGERS but has left Design.NUM_PASSENGERS=0. Replacing Design.NUM_PASSENGERS with design_passenger_count.")
 
     num_pax = aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)
@@ -104,7 +104,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
     # Copy data over if only one set of data exists
     # User has given detailed values for 1TB as flow and NO design values at all
     if passenger_count != 0 and design_num_pax == 0 and design_passenger_count == 0:
-        if Verbosity >= 2:
+        if verbosity >= 2:
             print(
                 "User has not input design passengers data. Assuming design is equal to as-flow passenger data.")
         aviary_options.set_val(
@@ -117,11 +117,11 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
                                aviary_options.get_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS))
     # user has not supplied detailed information on design but has supplied summary information on passengers
     elif num_pax != 0 and design_num_pax == 0:
-        if Verbosity >= 2:
+        if verbosity >= 2:
             print("User has specified as-flown NUM_PASSENGERS but not how many passengers the aircraft was designed for in Design.NUM_PASSENGERS. Assuming they are equal.")
         aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, num_pax)
     elif design_passenger_count != 0 and num_pax == 0 and passenger_count == 0:
-        if Verbosity >= 1:
+        if verbosity >= 1:
             print("User has not input as-flown passengers data. Assuming as-flow is equal to design passenger data.")
             print("If you intended to have no passengers on this flight, please set Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS to zero in aviary_values.")
         aviary_options.set_val(
@@ -134,7 +134,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
                                aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS))
     # user has not supplied detailed information on design but has supplied summary information on passengers
     elif design_num_pax != 0 and num_pax == 0:
-        if Verbosity >= 1:
+        if verbosity >= 1:
             print("User has specified Design.NUM_PASSENGERS but not how many passengers are on the flight in NUM_PASSENGERS. Assuming they are equal.")
             print("If you intended to have no passengers on this flight, please set Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS to zero in aviary_values.")
         aviary_options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, design_num_pax)
