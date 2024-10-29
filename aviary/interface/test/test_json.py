@@ -2,14 +2,20 @@ import unittest
 from pathlib import Path
 
 from aviary.utils.functions import get_aviary_resource_path
-from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
+from openmdao.utils.testing_utils import use_tempdirs
 import aviary.api as av
 from aviary.interface.default_phase_info.height_energy import phase_info, phase_info_parameterization
 
 
 @use_tempdirs
-@require_pyoptsparse
 class TestJson(unittest.TestCase):
+    """
+    These tests just check that the json files can be saved or loaded
+    They don't check that the files were properly created or that the
+    off-design mission ran correctly.
+    run_off_design_example.py in aviary/examples tests the full functionality
+    """
+
     def get_file(self, filename):
         filepath = get_aviary_resource_path(filename)
         if not Path(filepath).exists():
