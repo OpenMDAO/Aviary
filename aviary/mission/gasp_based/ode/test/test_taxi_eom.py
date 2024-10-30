@@ -17,25 +17,23 @@ class TaxiFuelComponentTestCase(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem(model=om.Group())
 
-        num_nodes = 2
-
         aviary_options = AviaryValues()
         aviary_options.set_val(Mission.Taxi.DURATION, 0.1677, units="h")
 
         self.prob.model.add_subsystem('taxi', TaxiFuelComponent(
-            num_nodes=num_nodes, aviary_options=aviary_options), promotes=['*'])
+            aviary_options=aviary_options), promotes=['*'])
 
     def test_fuel_consumed(self):
         self.prob.setup(force_alloc_complex=True)
 
         self.prob.set_val(Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-                          [-1512, -1000], units="lbm/h")
+                          -1512, units="lbm/h")
         self.prob.set_val(Mission.Summary.GROSS_MASS, 175400.0, units="lbm")
 
         self.prob.run_model()
 
         assert_near_equal(self.prob["taxi_fuel_consumed"],
-                          [1512 * 0.1677, 1000 * 0.1677], 1e-6)
+                          1512 * 0.1677, 1e-6)
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
