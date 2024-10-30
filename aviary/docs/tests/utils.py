@@ -44,27 +44,24 @@ def gramatical_list(list_of_strings: list, cc='and', add_accents=False) -> str:
     ----------
     list_of_strings : list
         A list of strings (or elements with a string representation)
-    cc : str, optional
-        The coordinating conjunction to use with the list (default is `and`)
-    add_accents : bool, optional
-        Whether or not to wrap each element with ` characters (default is False)
+    cc : str
+        The coordinating conjunction to use with the list
 
     Returns
     -------
     str
         A string that combines the elements of the list into a string with proper punctuation
     """
-    list_of_strings = ['`'+str(s)+'`' if add_accents else str(s)
-                       for s in list_of_strings]
+    list_of_strings = ['`'+s+'`' if add_accents else s for s in list_of_strings]
     if len(list_of_strings) == 1:
-        return list_of_strings[0]
+        return str(list_of_strings[0])
     elif len(list_of_strings) == 2:
-        return list_of_strings[0]+' '+cc+' '+list_of_strings[1]
+        return str(list_of_strings[0])+' '+cc+' '+str(list_of_strings[1])
     else:
-        return ', '.join([s for s in list_of_strings[:-1]]+[cc+' '+list_of_strings[-1]])
+        return ', '.join([str(s) for s in list_of_strings[:-1]]+[cc+' '+str(list_of_strings[-1])])
 
 
-def check_value(val1, val2, error_type=ValueError):
+def check_value(val1, val2):
     """
     Compares two values and raises a ValueError if they are not equal.
 
@@ -78,20 +75,18 @@ def check_value(val1, val2, error_type=ValueError):
         The first value to be compared.
     val2 : any
         The second value to be compared.
-    error_type : Exception, optional
-        The exception to raise (default is ValueError)
 
     Raises
     ------
     ValueError
         If the values are not equal (or not the same object for non-primitive types).
     """
-    if isinstance(val1, (str, int, float, list, tuple, dict, set, np.ndarray, type({}.keys()))):
+    if isinstance(val1, (str, int, float, list, tuple, dict, set, np.ndarray)):
         if val1 != val2:
-            raise error_type(f"{val1} is not equal to {val2}")
+            raise ValueError(f"{val1} is not equal to {val2}")
     else:
         if val1 is not val2:
-            raise error_type(f"{val1} is not {val2}")
+            raise ValueError(f"{val1} is not {val2}")
 
 
 def check_contains(expected_values, actual_values, error_string="{var} not in {actual_values}", error_type=RuntimeError):
@@ -104,10 +99,10 @@ def check_contains(expected_values, actual_values, error_string="{var} not in {a
     expected_values : any iterable
         This can also be a single value, in which case it will be wrapped into a list
     actual_values : any iterable
-    error_string : str, optional
+    error_string : str
         The string to display as the error message,
         kwarg substitutions will be made using .format() for "var" and "actual_values"
-    error_type : Exception, optional
+    error_type : Exception
         The exception to raise (default is RuntimeError)
 
     Raises
@@ -123,7 +118,7 @@ def check_contains(expected_values, actual_values, error_string="{var} not in {a
             raise error_type(error_string.format(var=var, actual_values=actual_values))
 
 
-def check_args(func, expected_args: list | dict | str, args_to_ignore: list | tuple = ['self'], exact=True, error_type=ValueError):
+def check_args(func, expected_args: tuple[list, dict, str], args_to_ignore: tuple[list, tuple] = ['self'], exact=True):
     """
     Checks that the expected arguments are valid for a given function.
 
@@ -143,8 +138,6 @@ def check_args(func, expected_args: list | dict | str, args_to_ignore: list | tu
         Arguments to ignore during the check (default is ['self']).
     exact : bool, optional
         Whether to check for an exact match of arguments (default is True).
-    error_type : Exception, optional
-        The exception to raise (default is ValueError)
 
     Raises
     ------
@@ -165,9 +158,9 @@ def check_args(func, expected_args: list | dict | str, args_to_ignore: list | tu
     else:
         for arg in expected_args:
             if arg not in available_args:
-                raise error_type(f'{arg} is not a valid argument for {func.__name__}')
+                raise ValueError(f'{arg} is not a valid argument for {func.__name__}')
             elif isinstance(expected_args, dict) and expected_args[arg] != available_args[arg]:
-                raise error_type(
+                raise ValueError(
                     f"the default value of {arg} is {available_args[arg]}, not {expected_args[arg]}")
 
 
@@ -202,7 +195,7 @@ def run_command_no_file_error(command: str):
                 rc.check_returncode()
 
 
-def get_attribute_name(object: object, attribute, error_type=AttributeError) -> str:
+def get_attribute_name(object: object, attribute) -> str:
     """
     Gets the name of an object's attribute based on it's value
 
@@ -216,8 +209,6 @@ def get_attribute_name(object: object, attribute, error_type=AttributeError) -> 
         The object whose attributes will be searched
     attribute : any
         The value of interest
-    error_type : Exception, optional
-        The exception to raise (default is AttributeError)
 
     Returns
     -------
@@ -233,7 +224,7 @@ def get_attribute_name(object: object, attribute, error_type=AttributeError) -> 
         if val == attribute:
             return name
 
-    raise error_type(
+    raise AttributeError(
         f"`{object.__name__}` object has no attribute with a value of `{attribute}`")
 
 
