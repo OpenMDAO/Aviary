@@ -1,16 +1,18 @@
 import numpy as np
 import openmdao.api as om
 import subprocess as subprocess
-from openmdao.utils.file_wrap import FileParser
-from aviary.subsystems.propulsion.engine_sizing import SizeEngine
-from aviary.utils.functions import get_path
-import time
-import os
 
-from aviary.examples.external_subsystems.engine_NPSS.engine_variables import Aircraft, Dynamic
+from openmdao.utils.file_wrap import FileParser
+
+from aviary.examples.external_subsystems.engine_NPSS.engine_variables import Aircraft
+from aviary.utils.functions import get_path
 
 
 class NPSSExternalCodeComp(om.ExternalCodeComp):
+    """
+    Component that wraps NPSS engine model
+    """
+
     def initialize(self):
         self.options.declare('vec_size', default=72, types=int,
                              desc='number of points in NPSS model deck. Will need to be updated if size of deck changes')
@@ -101,6 +103,10 @@ class NPSSExternalCodeComp(om.ExternalCodeComp):
 
 
 class DesignEngineGroup(om.Group):
+    """
+    Group that contains NPSSExternalCodeComp and component to calculate negative fuel flow rate
+    """
+
     def initialize(self):
         self.options.declare('vec_size', default=72, types=int,
                              desc='number of points in NPSS model deck. Will need to be updated if size of deck changes')
@@ -112,10 +118,11 @@ class DesignEngineGroup(om.Group):
                            promotes_outputs=[('Fn_SLS', Aircraft.Engine.SCALED_SLS_THRUST), ('thrust_training_data', 'Fn_train'),
                                              ('thrustmax_training_data', 'Fn_max_train'), ('Wf_training_data', 'Wf_td')])
 
-        self.add_subsystem('negative_fuel_rate', om.ExecComp('y=-x',
-                                                             x={'val': np.ones(
-                                                                 vec_size), 'units': 'lbm/s'},
-                                                             y={'val': np.ones(vec_size), 'units': 'lbm/s'}),
+        self.add_subsystem('negative_fuel_rate',
+                           om.ExecComp('y=-x',
+                                       x={'val': np.ones(vec_size), 'units': 'lbm/s'},
+                                       y={'val': np.ones(vec_size), 'units': 'lbm/s'},
+                                       has_diag_partials=True,),
                            promotes_inputs=[('x', 'Wf_td')],
                            promotes_outputs=[('y', 'Wf_inv_train')])
 

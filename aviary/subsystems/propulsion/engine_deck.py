@@ -5,14 +5,15 @@ Classes
 -------
 EngineDeck : the interface for an engine deck builder.
 
-Attributes
-----------
+Aliases
+-------
 accepted_headers : dict
     The strings that are accepted as valid header names after converted to all lowercase
     with all whitespace removed, mapped to the enum EngineModelVariables.
 
-required_variables : set
-    Variables that must be present in an EngineDeck's DATA_FILE (Mach, altitude, etc.)
+default_required_variables : set
+    Variables that must be present in an EngineDeck's DATA_FILE (Mach, altitude, etc.).
+    Can be replaced by user-provided list.
 
 required_options : tuple
     Options that must be present in an EngineDeck's options attribute.
@@ -30,6 +31,7 @@ import openmdao.api as om
 
 from openmdao.utils.units import convert_units
 
+from aviary.interface.utils.markdown_utils import round_it
 from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.subsystems.propulsion.engine_scaling import EngineScaling
 from aviary.subsystems.propulsion.engine_sizing import SizeEngine
@@ -41,11 +43,10 @@ from aviary.subsystems.propulsion.utils import (
     max_variables,
 )
 from aviary.utils.aviary_values import AviaryValues, NamedValues, get_keys, get_items
+from aviary.utils.csv_data_file import read_data_file
+from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
-from aviary.variable_info.enums import Verbosity
-from aviary.utils.csv_data_file import read_data_file
-from aviary.interface.utils.markdown_utils import round_it
 
 
 MACH = EngineModelVariables.MACH
@@ -99,6 +100,7 @@ default_required_variables = {
 
 # EngineDecks internally require these options to have values. Input checks will set
 # these options to default values in self.options if they are not provided
+# TODO should this instead be a set to prevent duplicates?
 required_options = (
     Aircraft.Engine.SCALE_PERFORMANCE,
     Aircraft.Engine.IGNORE_NEGATIVE_THRUST,

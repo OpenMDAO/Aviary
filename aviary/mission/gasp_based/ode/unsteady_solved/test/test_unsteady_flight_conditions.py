@@ -10,10 +10,13 @@ from aviary.constants import RHO_SEA_LEVEL_METRIC
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_flight_conditions import \
     UnsteadySolvedFlightConditions
 from aviary.variable_info.enums import SpeedType
-from aviary.variable_info.variables import Dynamic, Mission
+from aviary.variable_info.variables import Dynamic
 
 
 class TestUnsteadyFlightConditions(unittest.TestCase):
+    """
+    Unit test for UnsteadySolvedFlightConditions
+    """
 
     def _test_unsteady_flight_conditions(self, ground_roll=False, input_speed_type=SpeedType.TAS):
         nn = 5

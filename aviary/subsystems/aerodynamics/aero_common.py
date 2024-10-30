@@ -5,6 +5,10 @@ from aviary.variable_info.variables import Dynamic
 
 
 class DynamicPressure(om.ExplicitComponent):
+    """
+    Compute dynamic pressure as
+    Dynamic.Mission.DYNAMIC_PRESSURE = 0.5 * gamma * P * M**2
+    """
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)

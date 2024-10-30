@@ -10,16 +10,18 @@ from aviary.utils.functions import get_path
 
 
 class MetaDataExtensionTest(unittest.TestCase):
+    """
+    Test set_value with units for extended MetaData.
+    """
+
     def test_set_value_metadata_extension(self):
         option_defaults = AviaryValues()
 
         filename = get_path(
             'models/engines/turbofan_23k_1.deck')
         option_defaults.set_val(Aircraft.Engine.DATA_FILE, filename)
-        option_defaults.set_val(Aircraft.Engine.NUM_ENGINES, val=[
-                                2], units='unitless', meta_data=ExtendedMetaData)
-        option_defaults.set_val(Aircraft.Wing.AERO_CENTER, val=5, units='ft', meta_data=ExtendedMetaData
-                                )
+        option_defaults.set_val(Aircraft.Wing.AERO_CENTER, val=5, units='ft',
+                                meta_data=ExtendedMetaData)
 
         option_defaults = set_value(Aircraft.Wing.AERO_CENTER, [
                                     1.0], option_defaults, 'ft', ExtendedMetaData)

@@ -1,12 +1,9 @@
-import warnings
-
 import openmdao.api as om
 
-from aviary.interface.default_phase_info.two_dof_fiti_deprecated import create_2dof_based_descent_phases
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic
-from aviary.variable_info.enums import Verbosity
 from aviary.utils.functions import promote_aircraft_and_mission_vars
+from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.enums import Verbosity
 
 
 def add_descent_estimation_as_submodel(
@@ -18,13 +15,20 @@ def add_descent_estimation_as_submodel(
         cruise_alt=None,
         cruise_mach=None,
         reserve_fuel=None,
+        all_subsystems=None,
         verbosity=Verbosity.QUIET,
 ):
-
+    """
+    This creates a sub model that contains a copy of the descent portion of the mission's trajectory. This is used to calculate an estimation of the fuel burn and distance required for the descent, so that they can be used as triggers for the cruise phase. The sub model is then added to the main problem.
+    The user can specify certain initial conditions or requirements such as cruise Mach number, reserve fuel required, etc.
+    """
     if phases is None:
         from aviary.interface.default_phase_info.two_dof_fiti import \
             descent_phases as phases, add_default_sgm_args
         add_default_sgm_args(phases, ode_args)
+
+    if all_subsystems is None:
+        all_subsystems = []
 
     traj = FlexibleTraj(
         Phases=phases,
@@ -74,9 +78,20 @@ def add_descent_estimation_as_submodel(
             promotes_outputs=['mass_initial']
         )
 
+    all_bus_vars = set()
+    for subsystem in all_subsystems:
+        bus_vars = subsystem.get_bus_variables()
+        for var, data in bus_vars.items():
+            mission_variable_name = data['mission_name']
+            if not isinstance(mission_variable_name, list):
+                mission_variable_name = [mission_variable_name]
+            for mission_var_name in mission_variable_name:
+                all_bus_vars.add(mission_var_name)
+
     model.add_subsystem(
         'descent_traj', traj,
-        promotes_inputs=['altitude_initial', 'mass_initial', 'aircraft:*'],
+        promotes_inputs=['altitude_initial', 'mass_initial', 'aircraft:*'] +
+        [(var, 'parameters:'+var) for var in all_bus_vars],
         promotes_outputs=['mass_final', 'distance_final'],
     )
 

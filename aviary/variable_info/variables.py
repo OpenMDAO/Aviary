@@ -628,6 +628,7 @@ class Dynamic:
         FUEL_FLOW_RATE_NEGATIVE_TOTAL = 'fuel_flow_rate_negative_total'
         FUEL_FLOW_RATE_TOTAL = 'fuel_flow_rate_total'
         HYBRID_THROTTLE = 'hybrid_throttle'
+        KINEMATIC_VISCOSITY = 'kinematic_viscosity'
         LIFT = 'lift'
         MACH = 'mach'
         MACH_RATE = 'mach_rate'
@@ -657,6 +658,7 @@ class Dynamic:
         THRUST_TOTAL = 'thrust_net_total'
         TORQUE = 'torque'
         TORQUE_GEARBOX = 'torque_gearbox'
+        TORQUE_MAX = 'torque_max'
         VELOCITY = 'velocity'
         VELOCITY_RATE = 'velocity_rate'
 

@@ -4,6 +4,7 @@ from dymos.utils.misc import _unspecified
 from openmdao.core.component import Component
 
 from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.variables import Settings
 from aviary.variable_info.variable_meta_data import _MetaData
 
 # ---------------------------
@@ -61,7 +62,7 @@ def add_aviary_output(comp, varname, val, units=None, desc=None, shape_by_conn=F
                     desc=output_desc, shape_by_conn=shape_by_conn)
 
 
-def override_aviary_vars(group, aviary_inputs: AviaryValues,
+def override_aviary_vars(group: om.Group, aviary_inputs: AviaryValues,
                          manual_overrides=None, external_overrides=None):
     '''
     This function provides the capability to override output variables
@@ -144,14 +145,18 @@ def override_aviary_vars(group, aviary_inputs: AviaryValues,
             group.promotes(comp.name, inputs=in_var_names, outputs=comp_promoted_outputs)
 
     if overridden_outputs:
-        print("\nThe following variables have been overridden:")
-        for prom_name in sorted(overridden_outputs):
-            print(f"  '{prom_name}")
+        if aviary_inputs.get_val(Settings.VERBOSITY).value >= 1:  # Verbosity.BRIEF
+            print("\nThe following variables have been overridden:")
+            for prom_name in sorted(overridden_outputs):
+                val, units = aviary_inputs.get_item(prom_name)
+                print(f"  '{prom_name}  {val}  {units}")
 
     if external_overridden_outputs:
-        print("\nThe following variables have been overridden by an external subsystem:")
-        for prom_name in sorted(external_overridden_outputs):
-            print(f"  '{prom_name}")
+        if aviary_inputs.get_val(Settings.VERBOSITY).value >= 1:
+            print("\nThe following variables have been overridden by an external subsystem:")
+            for prom_name in sorted(external_overridden_outputs):
+                # do not print values because they will be updated by an external subsystem later.
+                print(f"  '{prom_name}")
 
     return overridden_outputs
 

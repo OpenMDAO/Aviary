@@ -9,7 +9,7 @@ import openmdao.api as om
 import numpy as np
 from openmdao.utils.units import convert_units
 
-from aviary.utils.aviary_values import AviaryValues, get_keys, get_items
+from aviary.utils.aviary_values import AviaryValues, get_items
 from aviary.variable_info.enums import ProblemType, EquationsOfMotion, LegacyCode
 from aviary.variable_info.functions import add_aviary_output, add_aviary_input
 from aviary.variable_info.variable_meta_data import _MetaData
@@ -101,9 +101,11 @@ def set_aviary_input_defaults(model, inputs, aviary_inputs: AviaryValues,
 
 
 def convert_strings_to_data(string_list):
-    # convert_strings_to_data will convert a list of strings to usable data.
-    # Strings that can't be converted to numbers will attempt to store as a logical,
-    # otherwise they are passed as is
+    """
+    convert_strings_to_data will convert a list of strings to usable data.
+    Strings that can't be converted to numbers will attempt to store as a logical,
+    otherwise they are passed as is
+    """
     value_list = [0]*len(string_list)
     for ii, dat in enumerate(string_list):
         dat = dat.strip('[]')
@@ -126,7 +128,18 @@ def convert_strings_to_data(string_list):
     return value_list
 
 
+# TODO this function is only used in a single place (process_input_decks.py), and its
+#      functionality can get handled in other places (convert_strings_to_data being able
+#      to handle lists/arrays, and other special handling directly present in
+#      process_input_decks.py)
 def set_value(var_name, var_value, aviary_values: AviaryValues, units=None, is_array=False, meta_data=_MetaData):
+    """
+    Wrapper for AviaryValues.set_val(). Existing value/units of the provided variable name are used as defaults if
+    they exist and not provided in this function. Special list handling provided: if 'is_array' is true, 'var_value' is
+    always added to 'aviary_values' as a numpy array. Otherwise, if 'var_value' is a list or numpy array of length
+    one and existing value in 'aviary_values' or default value in 'meta_data' is not a list or numpy array,
+    individual value is pulled out of 'var_value' to be stored in 'aviary_values'.
+    """
     if var_name in aviary_values:
         current_value, current_units = aviary_values.get_item(var_name)
     else:
@@ -142,17 +155,17 @@ def set_value(var_name, var_value, aviary_values: AviaryValues, units=None, is_a
 
     if is_array:
         var_value = np.atleast_1d(var_value)
-    elif len(var_value) == 1 and not isinstance(current_value, list):
+    elif len(var_value) == 1 and not isinstance(current_value, (list, np.ndarray)):
         # if only a single value is provided, don't store it as a list
         var_value = var_value[0]
 
     # TODO handle enums in an automated method via checking metadata for enum type
     if var_name == 'settings:problem_type':
-        var_values = ProblemType(var_value)
+        var_value = ProblemType(var_value)
     if var_name == 'settings:equations_of_motion':
-        var_values = EquationsOfMotion(var_value)
+        var_value = EquationsOfMotion(var_value)
     if var_name == 'settings:mass_method':
-        var_values = LegacyCode(var_value)
+        var_value = LegacyCode(var_value)
 
     aviary_values.set_val(var_name, val=var_value, units=units, meta_data=meta_data)
     return aviary_values
@@ -258,7 +271,7 @@ def add_opts2vals(Group: om.Group, OptionsToValues, aviary_options: AviaryValues
     return Group
 
 
-def create_printcomp(all_inputs: list, input_units: dict = {}, meta_data=_MetaData):
+def create_printcomp(all_inputs: list, input_units: dict = {}, meta_data=_MetaData, num_nodes=1):
     """
     Creates a component that prints the value of all inputs.
 
@@ -293,10 +306,16 @@ def create_printcomp(all_inputs: list, input_units: dict = {}, meta_data=_MetaDa
             for variable_name in all_inputs:
                 units = get_units(variable_name)
                 if ':' in variable_name:
-                    add_aviary_input(self, variable_name, units=units)
+                    try:
+                        add_aviary_input(self, variable_name,
+                                         units=units, shape=num_nodes)
+                    except TypeError:
+                        self.add_input(variable_name, units=units,
+                                       shape=num_nodes, val=1.23456)
                 else:
                     # using an arbitrary number that will stand out for unconnected variables
-                    self.add_input(variable_name, units=units, val=1.23456)
+                    self.add_input(variable_name, units=units,
+                                   shape=num_nodes, val=1.23456)
 
         def compute(self, inputs, outputs):
             print_string = ['v'*20]
@@ -311,6 +330,9 @@ def create_printcomp(all_inputs: list, input_units: dict = {}, meta_data=_MetaDa
 
 
 def promote_aircraft_and_mission_vars(group):
+    """
+    Promotes inputs and outputs in Aircraft and Mission hierarchy categories for provided group.
+    """
     external_outputs = []
     for comp in group.system_iter(recurse=False):
 
@@ -479,7 +501,7 @@ def wrapped_convert_units(val_unit_tuple, new_units):
     val_unit_tuple : tuple
         Tuple of the form (value, units) where value is a float and units is a
         string.
-    new_units : string
+    new_units : str
         New units to convert to.
 
     Returns

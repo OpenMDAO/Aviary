@@ -241,12 +241,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.Battery.EFFICIENCY,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.EFF_BAT',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={"GASP": 'INGASP.EFF_BAT', "FLOPS": None, "LEAPS1": None},
     units='unitless',
-    desc="battery pack efficiency"
+    default_value=1.0,
+    desc="battery pack efficiency",
 )
 
 add_meta_data(
@@ -3051,6 +3049,7 @@ add_meta_data(
                      },
     units='unitless',
     desc='fuselage form factor',
+    default_value=1
 )
 
 add_meta_data(
@@ -6462,6 +6461,17 @@ add_meta_data(
 )
 
 add_meta_data(
+    Dynamic.Mission.KINEMATIC_VISCOSITY,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'XKV',
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='ft**2/s',
+    desc="Atmospheric kinematic viscosity at the vehicle's current flight condition"
+)
+
+add_meta_data(
     Dynamic.Mission.LIFT,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -6764,6 +6774,15 @@ add_meta_data(
     historical_name={"GASP": 'TORQUE', "FLOPS": None, "LEAPS1": None},
     units='N*m',
     desc='Current torque being produced, per engine',
+)
+
+add_meta_data(
+    Dynamic.Mission.TORQUE_MAX,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='N*m',
+    desc='Hypothetical maximum possible torque being produced at the current flight '
+    'condition, per engine',
 )
 
 add_meta_data(

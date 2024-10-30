@@ -4,6 +4,11 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 
 class ParamPort(om.ExplicitComponent):
+    """
+    Component that adds variables needed by mission systems to the OpenMDAO problem
+    This is to be replaced with curated lists in the areo and propulsion builders using
+    the get_parameters() method.
+    """
 
     param_data = {
         Aircraft.Wing.INCIDENCE: dict(units="deg", val=0),
@@ -121,13 +126,9 @@ params_for_unit_tests = {
     Aircraft.Wing.MOUNTING_TYPE: dict(units="unitless", val=0),
     Aircraft.Design.STATIC_MARGIN: dict(units="unitless", val=0.03),
     Aircraft.Design.CG_DELTA: dict(units="unitless", val=0.25),
-    Aircraft.Wing.FORM_FACTOR: dict(units="unitless", val=1.25),
     Aircraft.Fuselage.FORM_FACTOR: dict(units="unitless", val=1.25),
     Aircraft.Nacelle.FORM_FACTOR: dict(units="unitless", val=1.5),
-    Aircraft.VerticalTail.FORM_FACTOR: dict(units="unitless", val=1.25),
-    Aircraft.HorizontalTail.FORM_FACTOR: dict(units="unitless", val=1.25),
     Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR: dict(units="unitless", val=1.1),
-    Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR: dict(units="unitless", val=0),
     Aircraft.Design.DRAG_COEFFICIENT_INCREMENT: dict(units="unitless", val=0.00175),
     Aircraft.Fuselage.FLAT_PLATE_AREA_INCREMENT: dict(units="ft**2", val=0.25),
     Aircraft.Wing.CENTER_DISTANCE: dict(units="unitless", val=0.463),

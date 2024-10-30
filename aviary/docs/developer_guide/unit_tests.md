@@ -18,7 +18,7 @@ Running `testflo .` at the base of the Aviary repository will run all unit tests
 ```bash
 OK
 
-Passed:  885
+Passed:  1065
 Failed:  0
 Skipped: 3
 
@@ -51,7 +51,7 @@ There are other similar assertions like `assertIsNone`, `assertIsNotNone`, `asse
 
 ### assert_check_partials
 
-The second most used assertion is `assert_check_partials` from the OpenMDAO utility. This is critically important because it checks whether the partial derivatives coded by develops are correct. It is the key in optimization. To use this test, you first prepare the partial derivative `data` by calling `check_partials` on an object. Then call `assert_check_partials` function with the `data`.
+The second most used assertion is `assert_check_partials` from the OpenMDAO utility. This is critically important because it checks whether the partial derivatives coded by develops are correct. It is the key in optimization. To use this test, you first prepare the partial derivative `data` by calling `check_partials` on a model after the model is setup. Then call `assert_check_partials` function with the `data`. Note that you don't need to run the model if you only want to check partials.
 
 ```
 data = prob.check_partials(out_stream=None)
@@ -121,3 +121,5 @@ If there's not, you can create one.
 Add a new file to this directory with the name `test_<name_of_file>.py` where `<name_of_file>` is the name of the file you're adding or modifying.
 Within this file, add a class called `Test<name_of_file>` that inherits from `unittest.TestCase`.
 Within this class, add a method called `test_<name_of_test>` where `<name_of_test>` is the name of the test you're adding.
+
+Do not write docstrings to unit test methods as we explain in [Guidelines for Contributing Code](contributing_guidelines.md).

@@ -269,14 +269,16 @@ class TurbopropMission(om.Group):
             'turboprop_thrust=turboshaft_thrust+propeller_thrust',
             turboprop_thrust={'val': np.zeros(num_nodes), 'units': 'lbf'},
             turboshaft_thrust={'val': np.zeros(num_nodes), 'units': 'lbf'},
-            propeller_thrust={'val': np.zeros(num_nodes), 'units': 'lbf'}
+            propeller_thrust={'val': np.zeros(num_nodes), 'units': 'lbf'},
+            has_diag_partials=True,
         )
 
         max_thrust_adder = om.ExecComp(
             'turboprop_thrust_max=turboshaft_thrust_max+propeller_thrust_max',
             turboprop_thrust_max={'val': np.zeros(num_nodes), 'units': 'lbf'},
             turboshaft_thrust_max={'val': np.zeros(num_nodes), 'units': 'lbf'},
-            propeller_thrust_max={'val': np.zeros(num_nodes), 'units': 'lbf'}
+            propeller_thrust_max={'val': np.zeros(num_nodes), 'units': 'lbf'},
+            has_diag_partials=True,
         )
 
         self.add_subsystem(
