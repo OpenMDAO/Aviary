@@ -213,7 +213,7 @@ def _dashboard_cmd(options, user_args):
     )
 
 
-def create_table_pane_from_json(json_filepath):
+def create_table_pane_from_json(json_filepath, documentation):
     """
     Create a Tabulator Pane with Name and Value columns using tabular data
     from a JSON file.
@@ -243,10 +243,20 @@ def create_table_pane_from_json(json_filepath):
                                               'Name': '',
                                               'Value': '',
                                           })
+        table_pane_with_doc = pn.Column(
+            pn.pane.HTML(f"<p>{documentation}</p>",
+                         styles={'text-align': documentation_text_align}),
+            table_pane
+        )
     except Exception as err:
-        warnings.warn(f"Unable to generate table due to: {err}.")
-        table_pane = None
-    return table_pane
+        table_pane_with_doc = pn.Column(
+            pn.pane.HTML(f"<p>{documentation}</p>",
+                         styles={'text-align': documentation_text_align}),
+            pn.pane.Markdown(
+                f"# Table not shown because data source JSON file, '{json_filepath}', not found.")
+        )
+
+    return table_pane_with_doc
 
 
 # functions for creating Panel Panes given different kinds of
@@ -840,7 +850,8 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
     results_tabs_list.append(("Mission Summary", mission_summary_pane))
 
     # Run status pane
-    status_pane = create_table_pane_from_json(Path(reports_dir) / "status.json")
+    status_pane = create_table_pane_from_json(
+        Path(reports_dir) / "status.json", "A high level overview of the status of the run")
     results_tabs_list.append(("Run status pane", status_pane))
     run_status_pane_tab_number = len(results_tabs_list) - 1
 
