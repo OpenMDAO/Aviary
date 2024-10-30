@@ -19,9 +19,6 @@ def dquotient(u, v, du, dv):
     return (du * v - u * dv) / v**2
 
 
-deg_to_rad = np.pi / 180.
-
-
 class LoadSpeeds(om.ExplicitComponent):
     """
     Computation of load speeds (such as maximum operating equivalent airspeed,
@@ -658,8 +655,7 @@ class LiftCurveSlopeAtCruise(om.ExplicitComponent):
 
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, val=10.13)
-        add_aviary_input(self, Aircraft.Wing.SWEEP, val=25,
-                         units="deg")  # approx 0.436 rad
+        add_aviary_input(self, Aircraft.Wing.SWEEP, val=0.436, units="rad")
         add_aviary_input(self, Mission.Design.MACH, val=0.8)
 
         add_aviary_output(self, Aircraft.Design.LIFT_CURVE_SLOPE, val=7.1765)
@@ -669,7 +665,6 @@ class LiftCurveSlopeAtCruise(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         AR = inputs[Aircraft.Wing.ASPECT_RATIO]
         DLMC4 = inputs[Aircraft.Wing.SWEEP]
-        DLMC4 = DLMC4 * deg_to_rad
         mach = inputs[Mission.Design.MACH]
 
         outputs[Aircraft.Design.LIFT_CURVE_SLOPE] = (
@@ -678,7 +673,6 @@ class LiftCurveSlopeAtCruise(om.ExplicitComponent):
     def compute_partials(self, inputs, partials):
         AR = inputs[Aircraft.Wing.ASPECT_RATIO]
         DLMC4 = inputs[Aircraft.Wing.SWEEP]
-        DLMC4 = DLMC4 * deg_to_rad
         mach = inputs[Mission.Design.MACH]
 
         c1 = np.sqrt(AR**2 * (-mach**2*np.cos(DLMC4)**2 + 1) + 4*np.cos(DLMC4)**2)
@@ -689,8 +683,7 @@ class LiftCurveSlopeAtCruise(om.ExplicitComponent):
         partials[Aircraft.Design.LIFT_CURVE_SLOPE, Mission.Design.MACH] = (
             2 * np.pi * AR**3 * mach * np.cos(DLMC4)**3) / (c1 * c2**2)
         partials[Aircraft.Design.LIFT_CURVE_SLOPE, Aircraft.Wing.SWEEP] = (-np.pi * AR * (-8 * np.cos(DLMC4)**3 * np.sin(
-            DLMC4) + 4 * np.cos(DLMC4)**2 * np.sin(2*DLMC4) + AR**2 * np.sin(2*DLMC4))) / (np.cos(DLMC4) * c1 * c2**2) * \
-            deg_to_rad
+            DLMC4) + 4 * np.cos(DLMC4)**2 * np.sin(2*DLMC4) + AR**2 * np.sin(2*DLMC4))) / (np.cos(DLMC4) * c1 * c2**2)
 
 
 class LoadFactors(om.ExplicitComponent):
