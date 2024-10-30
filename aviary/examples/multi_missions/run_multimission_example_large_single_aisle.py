@@ -78,7 +78,6 @@ class MultiMissionProblem(om.Problem):
             prob = av.AviaryProblem()
             prob.load_inputs(aviary_values, phase_info)
             prob.check_and_preprocess_inputs()
-            exit()
             prob.add_pre_mission_systems()
             prob.add_phases()
             prob.add_post_mission_systems()
