@@ -61,7 +61,52 @@ def gramatical_list(list_of_strings: list, cc='and', add_accents=False) -> str:
     elif len(list_of_strings) == 2:
         return list_of_strings[0]+' '+cc+' '+list_of_strings[1]
     else:
-        return ', '.join([s for s in list_of_strings[:-1]]+[cc+' '+list_of_strings[-1]])
+        return ', '.join(list_of_strings[:-1]+[cc+' '+list_of_strings[-1]])
+
+
+def get_previous_line(n=1) -> str:
+    """
+    returns the previous n line(s) of code as a string
+
+    Parameters
+    ----------
+    n : int
+        The number of lines to return (default is 1)
+
+    Returns
+    -------
+    str
+        A string that contains the previous line of code or a
+        list that contains the previous n lines of code
+    """
+    pframe = inspect.currentframe().f_back  # get the previous frame that called this function
+    # get the lines of code as a list of strings
+    lines = inspect.getsourcelines(pframe)[0]
+    lineno = pframe.f_lineno  # get the line number of the line that called this function
+    # get the previous lines
+    return lines[lineno-n-1:lineno-1] if n > 1 else lines[lineno-2].strip()
+
+
+def get_variable_name(variable) -> str:
+    """
+    returns the name of the variable passed to the function as a string
+
+    Parameters
+    ----------
+    variable : any
+        The variable of interest
+
+    Returns
+    -------
+    str
+        A string that contains the name of variable passed to this function
+    """
+    pframe = inspect.currentframe().f_back  # get the previous frame that called this function
+    # get the lines of code as a list of strings
+    lines = inspect.getsourcelines(pframe)[0]
+    calling_line = lines[pframe.f_lineno-1]  # get the line that called this function
+    # extract the argument
+    return calling_line.split('get_variable_name(')[1].split(')')[0].strip()
 
 
 def check_value(val1, val2, error_type=ValueError):
@@ -323,6 +368,8 @@ def glue_variable(name: str, val=None, md_code=False, display=True):
         val = name
     if md_code:
         val = Markdown('`'+val+'`')
+    else:
+        val = Markdown(val)
     glue(name, val, display)
 
 
