@@ -28,7 +28,7 @@ class MassParameters(om.ExplicitComponent):
         num_engine_type = len(self.options['aviary_options'].get_val(
             Aircraft.Engine.NUM_ENGINES))
 
-        add_aviary_input(self, Aircraft.Wing.SWEEP, val=25)
+        add_aviary_input(self, Aircraft.Wing.SWEEP, val=0.436, units='rad')
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, val=0.33)
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, val=10.13)
         add_aviary_input(self, Aircraft.Wing.SPAN, val=117.8)
@@ -102,7 +102,8 @@ class MassParameters(om.ExplicitComponent):
         gear_location = inputs[Aircraft.LandingGear.MAIN_GEAR_LOCATION]
 
         tan_half_sweep = \
-            np.tan(sweep_c4 * 0.017453) - (1.0 - taper_ratio) / (1.0 + taper_ratio) / AR
+            np.tan(sweep_c4) - \
+            (1.0 - taper_ratio) / (1.0 + taper_ratio) / AR
 
         half_sweep = np.arctan(tan_half_sweep)
         cos_half_sweep = np.cos(half_sweep)
@@ -160,7 +161,8 @@ class MassParameters(om.ExplicitComponent):
         gear_location = inputs[Aircraft.LandingGear.MAIN_GEAR_LOCATION]
 
         tan_half_sweep = (
-            np.tan(sweep_c4 * 0.017453) - (1.0 - taper_ratio) / (1.0 + taper_ratio) / AR
+            np.tan(sweep_c4) -
+            (1.0 - taper_ratio) / (1.0 + taper_ratio) / AR
         )
         half_sweep = np.arctan(tan_half_sweep)
         cos_half_sweep = np.cos(half_sweep)
@@ -170,7 +172,7 @@ class MassParameters(om.ExplicitComponent):
         not_fuselage_mounted = self.options["aviary_options"].get_val(
             Aircraft.Engine.NUM_FUSELAGE_ENGINES) == 0
 
-        dTanHS_dSC4 = (1 / np.cos(sweep_c4 * 0.017453) ** 2) * 0.017453
+        dTanHS_dSC4 = (1 / np.cos(sweep_c4) ** 2)
         dTanHS_TR = (
             -(1 / AR)
             * ((1 + taper_ratio) * (-1) - (1 - taper_ratio))
@@ -600,7 +602,7 @@ class EngineMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Engine.MASS_SPECIFIC,
                          val=np.full(num_engine_type, 0.21366))
         add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST,
-                         val=np.full(num_engine_type, 4000))
+                         val=np.full(num_engine_type, 4000), units="lbf")
         add_aviary_input(self, Aircraft.Nacelle.MASS_SPECIFIC,
                          val=np.full(num_engine_type, 3))
         add_aviary_input(self, Aircraft.Nacelle.SURFACE_AREA,
