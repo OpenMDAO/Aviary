@@ -46,6 +46,7 @@ from aviary.utils.options import list_options
 from aviary.constants import GRAV_METRIC_GASP, GRAV_ENGLISH_GASP, GRAV_METRIC_FLOPS, GRAV_ENGLISH_FLOPS, GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH, RHO_SEA_LEVEL_METRIC, MU_TAKEOFF, MU_LANDING, PSLS_PSF, TSLS_DEGR, RADIUS_EARTH_METRIC
 from aviary.subsystems.test.subsystem_tester import TestSubsystemBuilderBase, skipIfMissingDependencies
 from aviary.subsystems.propulsion.utils import build_engine_deck
+import aviary.docs.tests.utils as doctape
 
 ###################
 # Level 3 Imports #
@@ -74,8 +75,8 @@ from aviary.mission.gasp_based.ode.descent_ode import DescentODE as TwoDOFDescen
 from aviary.mission.gasp_based.ode.flight_path_ode import FlightPathODE as TwoDOFFlightPathODE
 from aviary.mission.gasp_based.ode.groundroll_ode import GroundrollODE as TwoDOFGroundrollODE
 from aviary.mission.gasp_based.ode.rotation_ode import RotationODE as TwoDOFRotationODE
-from aviary.mission.gasp_based.phases.landing_group import LandingSegment as TwoDOFSimplifiedLanding
-from aviary.mission.gasp_based.phases.taxi_group import TaxiSegment as AnalyticTaxi
+from aviary.mission.gasp_based.ode.landing_ode import LandingSegment as TwoDOFSimplifiedLanding
+from aviary.mission.gasp_based.ode.taxi_ode import TaxiSegment as AnalyticTaxi
 from aviary.mission.flops_based.phases.simplified_takeoff import TakeoffGroup as HeightEnergySimplifiedTakeoff
 from aviary.mission.flops_based.phases.simplified_landing import LandingGroup as HeightEnergySimplifiedLanding
 

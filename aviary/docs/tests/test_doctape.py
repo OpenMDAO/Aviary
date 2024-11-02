@@ -6,7 +6,7 @@ import aviary.docs.tests.utils as doctape
 class DocTAPETests(unittest.TestCase):
     """
     Testing the DocTAPE functions to make sure they all run in all supported Python versions
-    Docs are only built with latest, but these will be run with latest and dev as well
+    Docs are only built with latest, but these test will be run with latest and dev as well
     """
 
     def test_gramatical_list(self):
@@ -34,6 +34,12 @@ class DocTAPETests(unittest.TestCase):
 
     def test_get_value(self):
         doctape.get_value({'d1': {'d2': 2}}, 'd1.d2')
+
+    def test_get_previous_line(self):
+        doctape.get_previous_line()
+
+    def test_get_variable_name(self):
+        doctape.get_variable_name(self)
 
     # requires IPython shell
     # def test_glue_variable(self):
