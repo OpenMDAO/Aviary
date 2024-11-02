@@ -87,26 +87,31 @@ def get_previous_line(n=1) -> str:
     return lines[lineno-n-1:lineno-1] if n > 1 else lines[lineno-2].strip()
 
 
-def get_variable_name(variable) -> str:
+def get_variable_name(*variables) -> str:
     """
     returns the name of the variable passed to the function as a string
 
     Parameters
     ----------
-    variable : any
-        The variable of interest
+    variables : any
+        The variable(s) of interest
 
     Returns
     -------
     str
         A string that contains the name of variable passed to this function
+        (or list of strings, if multiple arguments are passed)
     """
     pframe = inspect.currentframe().f_back  # get the previous frame that called this function
     # get the lines of code as a list of strings
     lines = inspect.getsourcelines(pframe)[0]
     calling_line = lines[pframe.f_lineno-1]  # get the line that called this function
-    # extract the argument
-    return calling_line.split('get_variable_name(')[1].split(')')[0].strip()
+    # extract the argument and remove all whitespace
+    arg: str = ''.join(calling_line.split('get_variable_name(')[1].split(')')[0].split())
+    if ',' in arg:
+        return arg.split(',')
+    else:
+        return arg
 
 
 def check_value(val1, val2, error_type=ValueError):
@@ -282,7 +287,7 @@ def get_attribute_name(object: object, attribute, error_type=AttributeError) -> 
         f"`{object.__name__}` object has no attribute with a value of `{attribute}`")
 
 
-def get_all_keys(dict_of_dicts: dict, track_layers=False, all_keys=None):
+def get_all_keys(dict_of_dicts: dict, track_layers=False, all_keys=None) -> list:
     """
     Recursively get all of the keys from a dict of dicts
     Note: this will not add duplicates of keys, but will
@@ -351,7 +356,7 @@ def glue_variable(name: str, val=None, md_code=False, display=True):
     Glue a variable for later use in markdown cells of notebooks
 
     Note:
-    glue_variable(f'{Aircraft.APU.MASS=}'.split('=')[0])
+    glue_variable(get_variable_name(Aircraft.APU.MASS))
     can be used to glue the name of the variable (Aircraft.APU.MASS)
     not the value of the variable ('aircraft:apu:mass')
 
@@ -373,7 +378,7 @@ def glue_variable(name: str, val=None, md_code=False, display=True):
     glue(name, val, display)
 
 
-def glue_keys(dict_of_dicts: dict, display=True):
+def glue_keys(dict_of_dicts: dict, display=True) -> list:
     """
     Recursively glue all of the keys from a dict of dicts
 
