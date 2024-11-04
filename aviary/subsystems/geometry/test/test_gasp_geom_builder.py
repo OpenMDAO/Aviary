@@ -13,6 +13,7 @@ import aviary.api as av
 
 GASP = LegacyCode.GASP
 
+
 class TestGASPGeomBuilder(av.TestSubsystemBuilderBase):
     """
     That class inherits from TestSubsystemBuilder. So all the test functions are
