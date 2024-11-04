@@ -78,6 +78,8 @@ class TestFLOPSGeomBuilderHybrid(av.TestSubsystemBuilderBase):
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, True, units='unitless')
         self.aviary_values.set_val(
             Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, True, units='unitless')
+        self.aviary_values.set_val(
+            Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 2, units='unitless')
 
 
 if __name__ == '__main__':
