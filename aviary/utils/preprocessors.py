@@ -41,6 +41,21 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
 
     verbosity = aviary_options.get_val(Settings.VERBOSITY)
 
+    # Some tests, but not all, do not correctly set default values
+    # # so we need to ensure all these values are available.
+
+    for key in (
+            Aircraft.CrewPayload.NUM_PASSENGERS,
+            Aircraft.CrewPayload.NUM_FIRST_CLASS,
+            Aircraft.CrewPayload.NUM_BUSINESS_CLASS,
+            Aircraft.CrewPayload.NUM_TOURIST_CLASS,
+            Aircraft.CrewPayload.Design.NUM_PASSENGERS,
+            Aircraft.CrewPayload.Design.NUM_FIRST_CLASS,
+            Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS,
+            Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS,):
+        if key not in aviary_options:
+            aviary_options.set_val(key, _MetaData[key]['default_value'])
+
     # Sum passenger Counts for later checks and assignments
     passenger_count = 0
     for key in (Aircraft.CrewPayload.NUM_FIRST_CLASS,
