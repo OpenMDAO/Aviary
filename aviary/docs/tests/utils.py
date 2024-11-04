@@ -118,7 +118,7 @@ def check_contains(expected_values, actual_values, error_string="{var} not in {a
             raise error_type(error_string.format(var=var, actual_values=actual_values))
 
 
-def check_args(func, expected_args: list | dict | str, args_to_ignore: list | tuple = ['self'], exact=True):
+def check_args(func, expected_args: tuple[list, dict, str], args_to_ignore: tuple[list, tuple] = ['self'], exact=True):
     """
     Checks that the expected arguments are valid for a given function.
 

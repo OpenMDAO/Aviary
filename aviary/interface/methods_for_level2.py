@@ -2509,12 +2509,12 @@ class AviaryProblem(om.Problem):
 
                     # Lists are fine except if they contain enums
                     if type_value == list:
-                        if type(type(value[0])) == enum.EnumType:
+                        if isinstance(value[0], enum.Enum):
                             for i in range(len(value)):
                                 value[i] = str([value[i]])
 
                     # Enums need converting to a string
-                    if type(type(value)) == enum.EnumType:
+                    if isinstance(value, enum.Enum):
                         value = str([value])
 
                 # Append the data to the list
