@@ -83,7 +83,7 @@ def get_previous_line(n=1) -> str:
     # get the lines of code as a list of strings
     lines, first_line = inspect.getsourcelines(pframe)
     # get the line number of the line that called this function
-    lineno = pframe.f_lineno - first_line
+    lineno = pframe.f_lineno - first_line if first_line else pframe.f_lineno - 1
     # get the previous lines
     return lines[lineno-n:lineno] if n > 1 else lines[lineno-1].strip()
 
@@ -106,10 +106,11 @@ def get_variable_name(*variables) -> str:
     pframe = inspect.currentframe().f_back  # get the previous frame that called this function
     # get the lines of code as a list of strings
     lines, first_line = inspect.getsourcelines(pframe)
-    # get the line that called this function
-    calling_line = lines[pframe.f_lineno - first_line]
+    # get the line number that called this function
+    lineno = pframe.f_lineno - first_line if first_line else pframe.f_lineno - 1
     # extract the argument and remove all whitespace
-    arg: str = ''.join(calling_line.split('get_variable_name(')[1].split(')')[0].split())
+    arg: str = ''.join(lines[lineno].split(
+        'get_variable_name(')[1].split(')')[0].split())
     if ',' in arg:
         return arg.split(',')
     else:
