@@ -154,8 +154,8 @@ class MultiMissionProblem(om.Problem):
         # some warnings related to variable promotion. Replicating that here with
         # setup for the super problem
         with warnings.catch_warnings():
-            # warnings.simplefilter("ignore", om.OpenMDAOWarning)
-            # warnings.simplefilter("ignore", om.PromotionWarning)
+            warnings.simplefilter("ignore", om.OpenMDAOWarning)
+            warnings.simplefilter("ignore", om.PromotionWarning)
             self.setup(check='all')
 
     def run(self):
