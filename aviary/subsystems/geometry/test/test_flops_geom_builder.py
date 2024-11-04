@@ -13,7 +13,7 @@ import aviary.api as av
 
 FLOPS = LegacyCode.FLOPS
 
-class TestAeroBuilder(av.TestSubsystemBuilderBase):
+class TestFLOPSGeomBuilder(av.TestSubsystemBuilderBase):
     """
     That class inherits from TestSubsystemBuilder. So all the test functions are
     within that inherited class. The setUp() method prepares the class and is run
@@ -21,21 +21,29 @@ class TestAeroBuilder(av.TestSubsystemBuilderBase):
     """
 
     def setUp(self):
-        self.subsystem_builder = CoreGeometryBuilder('core_geometry',
-                                   BaseMetaData,
-                                   use_both_geometries=True,
-                                   code_origin_to_prioritize=FLOPS)
+        self.subsystem_builder = CoreGeometryBuilder(
+            'core_geometry',
+            BaseMetaData,
+            use_both_geometries=True,
+            code_origin_to_prioritize=FLOPS)
         self.aviary_values = av.AviaryValues()
         self.aviary_values.set_val(Aircraft.Engine.NUM_ENGINES, [1], units='unitless')
-        self.aviary_values.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, False, units='unitless')
+        self.aviary_values.set_val(
+            Aircraft.Electrical.HAS_HYBRID_SYSTEM, False, units='unitless')
         self.aviary_values.set_val(Aircraft.Wing.HAS_FOLD, True, units='unitless')
         self.aviary_values.set_val(Aircraft.Wing.HAS_STRUT, True, units='unitless')
-        self.aviary_values.set_val(Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF, True, units='unitless')
-        self.aviary_values.set_val(Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF, True, units='unitless')
-        self.aviary_values.set_val(Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION, True, units='unitless')
-        self.aviary_values.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, True, units='unitless')
-        self.aviary_values.set_val(Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, True, units='unitless')
-        self.aviary_values.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, True, units='unitless')
+        self.aviary_values.set_val(
+            Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF, True, units='unitless')
+        self.aviary_values.set_val(
+            Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF, True, units='unitless')
+        self.aviary_values.set_val(
+            Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION, True, units='unitless')
+        self.aviary_values.set_val(
+            Aircraft.Wing.CHOOSE_FOLD_LOCATION, True, units='unitless')
+        self.aviary_values.set_val(
+            Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, True, units='unitless')
+        self.aviary_values.set_val(
+            Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, True, units='unitless')
 
 
 class TestAeroBuilderHybrid(av.TestSubsystemBuilderBase):
@@ -46,21 +54,29 @@ class TestAeroBuilderHybrid(av.TestSubsystemBuilderBase):
     """
 
     def setUp(self):
-        self.subsystem_builder = CoreGeometryBuilder('core_geometry',
-                                   BaseMetaData,
-                                   use_both_geometries=True,
-                                   code_origin_to_prioritize=FLOPS)
+        self.subsystem_builder = CoreGeometryBuilder(
+            'core_geometry',
+            BaseMetaData,
+            use_both_geometries=True,
+            code_origin_to_prioritize=FLOPS)
         self.aviary_values = av.AviaryValues()
         self.aviary_values.set_val(Aircraft.Engine.NUM_ENGINES, [1], units='unitless')
-        self.aviary_values.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, True, units='unitless')
+        self.aviary_values.set_val(
+            Aircraft.Electrical.HAS_HYBRID_SYSTEM, True, units='unitless')
         self.aviary_values.set_val(Aircraft.Wing.HAS_FOLD, True, units='unitless')
         self.aviary_values.set_val(Aircraft.Wing.HAS_STRUT, True, units='unitless')
-        self.aviary_values.set_val(Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF, True, units='unitless')
-        self.aviary_values.set_val(Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF, True, units='unitless')
-        self.aviary_values.set_val(Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION, True, units='unitless')
-        self.aviary_values.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, True, units='unitless')
-        self.aviary_values.set_val(Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, True, units='unitless')
-        self.aviary_values.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, True, units='unitless')
+        self.aviary_values.set_val(
+            Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF, True, units='unitless')
+        self.aviary_values.set_val(
+            Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF, True, units='unitless')
+        self.aviary_values.set_val(
+            Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION, True, units='unitless')
+        self.aviary_values.set_val(
+            Aircraft.Wing.CHOOSE_FOLD_LOCATION, True, units='unitless')
+        self.aviary_values.set_val(
+            Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, True, units='unitless')
+        self.aviary_values.set_val(
+            Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, True, units='unitless')
 
 
 if __name__ == '__main__':
