@@ -102,7 +102,7 @@ class MultiMissionProblem(om.Problem):
                 promotes_inputs=[Mission.Design.GROSS_MASS,
                                  Mission.Design.RANGE,
                                  Aircraft.Wing.SWEEP],
-                promotes_outputs=[(Mission.Objectives.FUEL, promoted_name)])
+                promotes_outputs=[(Mission.Summary.FUEL_BURNED, promoted_name)])
 
     def add_design_variables(self):
         self.model.add_design_var(Mission.Design.GROSS_MASS,
