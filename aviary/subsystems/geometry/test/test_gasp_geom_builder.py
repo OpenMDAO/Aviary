@@ -13,7 +13,7 @@ import aviary.api as av
 
 GASP = LegacyCode.GASP
 
-class TestGASPGeomuilder(av.TestSubsystemBuilderBase):
+class TestGASPGeomBuilder(av.TestSubsystemBuilderBase):
     """
     That class inherits from TestSubsystemBuilder. So all the test functions are
     within that inherited class. The setUp() method prepares the class and is run
@@ -46,7 +46,7 @@ class TestGASPGeomuilder(av.TestSubsystemBuilderBase):
             Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, True, units='unitless')
 
 
-class TestAeroBuilderHybrid(av.TestSubsystemBuilderBase):
+class TestGASPGeomBuilderHybrid(av.TestSubsystemBuilderBase):
     """
     That class inherits from TestSubsystemBuilder. So all the test functions are
     within that inherited class. The setUp() method prepares the class and is run

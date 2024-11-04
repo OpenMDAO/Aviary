@@ -46,7 +46,7 @@ class TestFLOPSGeomBuilder(av.TestSubsystemBuilderBase):
             Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, True, units='unitless')
 
 
-class TestAeroBuilderHybrid(av.TestSubsystemBuilderBase):
+class TestFLOPSGeomBuilderHybrid(av.TestSubsystemBuilderBase):
     """
     That class inherits from TestSubsystemBuilder. So all the test functions are
     within that inherited class. The setUp() method prepares the class and is run
