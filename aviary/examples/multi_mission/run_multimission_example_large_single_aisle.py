@@ -17,7 +17,7 @@ aircraft:crew_and_payload:num_first_class,0,unitless
 """
 import copy as copy
 from aviary.examples.example_phase_info import phase_info
-from aviary.variable_info.variables import Mission, Aircraft
+from aviary.variable_info.variables import Mission, Aircraft, Settings
 from aviary.variable_info.enums import ProblemType
 import aviary.api as av
 import openmdao.api as om
@@ -37,6 +37,7 @@ phase_info_deadhead = copy.deepcopy(phase_info)
 # get large single aisle values
 aviary_inputs_primary = get_flops_inputs('LargeSingleAisle2FLOPS')
 aviary_inputs_primary.set_val(Mission.Design.GROSS_MASS, val=100000, units='lbm')
+aviary_inputs_primary.set_val(Settings.VERBOSITY, val=1)
 
 aviary_inputs_deadhead = copy.deepcopy(aviary_inputs_primary)
 aviary_inputs_deadhead.set_val('aircraft:crew_and_payload:num_passengers', 1, 'unitless')
@@ -153,8 +154,8 @@ class MultiMissionProblem(om.Problem):
         # some warnings related to variable promotion. Replicating that here with
         # setup for the super problem
         with warnings.catch_warnings():
-            warnings.simplefilter("ignore", om.OpenMDAOWarning)
-            warnings.simplefilter("ignore", om.PromotionWarning)
+            # warnings.simplefilter("ignore", om.OpenMDAOWarning)
+            # warnings.simplefilter("ignore", om.PromotionWarning)
             self.setup(check='all')
 
     def run(self):

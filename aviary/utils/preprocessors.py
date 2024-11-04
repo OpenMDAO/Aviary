@@ -41,20 +41,6 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
 
     verbosity = aviary_options.get_val(Settings.VERBOSITY)
 
-    # Grab Default all values for num_pax and 1TB (1st class, Tourist Class, Business Class Passengers) to make
-    #   sure they are accessible so we don't have to run checks if they exist again
-    for key in (
-            Aircraft.CrewPayload.NUM_PASSENGERS,
-            Aircraft.CrewPayload.NUM_FIRST_CLASS,
-            Aircraft.CrewPayload.NUM_BUSINESS_CLASS,
-            Aircraft.CrewPayload.NUM_TOURIST_CLASS,
-            Aircraft.CrewPayload.Design.NUM_PASSENGERS,
-            Aircraft.CrewPayload.Design.NUM_FIRST_CLASS,
-            Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS,
-            Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS,):
-        if key not in aviary_options:
-            aviary_options.set_val(key, _MetaData[key]['default_value'])
-
     # Sum passenger Counts for later checks and assignments
     passenger_count = 0
     for key in (Aircraft.CrewPayload.NUM_FIRST_CLASS,
@@ -126,7 +112,9 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
         aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, num_pax)
     elif design_passenger_count != 0 and num_pax == 0 and passenger_count == 0:
         if verbosity >= 1:
-            print("User has not input as-flown passengers data. Assuming as-flow is equal to design passenger data.")
+            print("User has specified Design.NUM_* passenger values but CrewPyaload.NUM_* has been left blank or set to zero.")
+            print(
+                "Assuming they are equal to maintain backwards compatibility with GASP and FLOPS output files.")
             print("If you intended to have no passengers on this flight, please set Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS to zero in aviary_values.")
         aviary_options.set_val(
             Aircraft.CrewPayload.NUM_PASSENGERS, design_passenger_count)
@@ -139,7 +127,9 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
     # user has not supplied detailed information on design but has supplied summary information on passengers
     elif design_num_pax != 0 and num_pax == 0:
         if verbosity >= 1:
-            print("User has specified Design.NUM_PASSENGERS but not how many passengers are on the flight in NUM_PASSENGERS. Assuming they are equal.")
+            print("User has specified Design.NUM_PASSENGERS but CrewPayload.NUM_PASSENGERS has been left blank or set to zero.")
+            print(
+                "Assuming they are equal to maintain backwards compatibility with GASP and FLOPS output files.")
             print("If you intended to have no passengers on this flight, please set Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS to zero in aviary_values.")
         aviary_options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, design_num_pax)
 
