@@ -14,7 +14,7 @@ with open(Path(__file__).parent / "README.md", encoding="utf-8") as f:
 
 pkgname = "aviary"
 extras_require = {
-    "test": ["testflo", "pre-commit", "sphinx_book_theme==1.1.0", "myst-nb"],
+    "test": ["testflo", "pre-commit", "sphinx_book_theme==1.1.0"],
     "examples": ["openaerostruct", "ambiance", "itables"],
 }
 
@@ -41,6 +41,7 @@ setup(
         "panel>=1.0.0",
         "parameterized",
         "simupy",
+        "myst-nb",
     ],
     extras_require=extras_require,
     package_data={
