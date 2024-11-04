@@ -66,7 +66,7 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, val=7.5)
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, val=13.1)
         add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST,
-                         val=np.full(num_engine_type, 28690))
+                         val=np.full(num_engine_type, 4000), units="lbf")
         add_aviary_input(self, Aircraft.Fuel.WING_FUEL_FRACTION, val=0.5)
         add_aviary_input(self, Aircraft.Design.EXTERNAL_SUBSYSTEMS_MASS, val=0.)
 
