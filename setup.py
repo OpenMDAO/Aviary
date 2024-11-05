@@ -23,6 +23,7 @@ for packages in extras_require.values():
     all_packages.extend(packages)
 
 extras_require["all"] = all_packages
+extras_require["docs"] = ["myst-nb"]
 
 setup(
     name="om-aviary",
@@ -41,7 +42,6 @@ setup(
         "panel>=1.0.0",
         "parameterized",
         "simupy",
-        # "myst-nb",
     ],
     extras_require=extras_require,
     package_data={
