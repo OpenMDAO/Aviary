@@ -596,6 +596,7 @@ def create_optimization_history_plot(case_recorder, df):
             x='iter_count',
             y=variable_name,
             source=source,
+            y_range_name=f"extra_y_{variable_name}",
             color=color,
             line_width=2,
             visible=False,  # hide them all initially. clicking checkboxes makes them visible
