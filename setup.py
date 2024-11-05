@@ -41,7 +41,7 @@ setup(
         "panel>=1.0.0",
         "parameterized",
         "simupy",
-        "myst-nb",
+        # "myst-nb",
     ],
     extras_require=extras_require,
     package_data={
