@@ -14,7 +14,7 @@ with open(Path(__file__).parent / "README.md", encoding="utf-8") as f:
 
 pkgname = "aviary"
 extras_require = {
-    "test": ["testflo", "pre-commit", "sphinx_book_theme==1.1.0", "myst-nb"],
+    "test": ["testflo", "pre-commit", "sphinx_book_theme==1.1.0"],
     "examples": ["openaerostruct", "ambiance", "itables"],
 }
 
