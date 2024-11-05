@@ -23,7 +23,6 @@ for packages in extras_require.values():
     all_packages.extend(packages)
 
 extras_require["all"] = all_packages
-# extras_require["docs"] = ["myst-nb"]
 
 setup(
     name="om-aviary",

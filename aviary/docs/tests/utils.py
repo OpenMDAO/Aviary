@@ -3,7 +3,6 @@ import subprocess
 import tempfile
 import os
 import numpy as np
-from IPython.display import Markdown
 
 
 """
@@ -373,6 +372,7 @@ def glue_variable(name: str, val=None, md_code=False, display=True):
     """
     # local import so myst isn't required unless glue is being used
     from myst_nb import glue
+    from IPython.display import Markdown
     if val is None:
         val = name
     if md_code:
