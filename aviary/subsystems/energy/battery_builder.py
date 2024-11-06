@@ -45,7 +45,8 @@ class BatteryBuilder(SubsystemBuilderBase):
                           energy_capacity={'val': 10.0, 'units': 'kJ'},
                           cumulative_electric_energy_used={
                               'val': np.zeros(num_nodes), 'units': 'kJ'},
-                          efficiency={'val': 0.95, 'units': 'unitless'})
+                          efficiency={'val': 0.95, 'units': 'unitless'},
+                          has_diag_partials=True)
 
         battery_group.add_subsystem('state_of_charge',
                                     subsys=soc,

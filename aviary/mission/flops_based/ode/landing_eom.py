@@ -113,7 +113,8 @@ class FlareEOM(om.Group):
             expr,
             flare_rate={'shape': 1, 'units': 'deg/s'},
             angle_of_attack_rate={'shape': nn, 'units': 'deg/s'},
-            net_alpha_rate={'shape': nn, 'units': 'deg/s'}
+            net_alpha_rate={'shape': nn, 'units': 'deg/s'},
+            has_diag_partials=True,
         )
         self.add_subsystem(
             "flare_rate",
