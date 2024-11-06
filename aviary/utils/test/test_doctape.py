@@ -3,7 +3,7 @@ import numpy as np
 
 from openmdao.utils.assert_utils import assert_near_equal, assert_equal_numstrings, assert_equal_arrays
 
-import aviary.docs.tests.utils as doctape
+from aviary.utils.doctape import gramatical_list, check_value, check_contains, check_args, run_command_no_file_error, get_attribute_name, get_all_keys, get_value, get_previous_line, get_variable_name
 
 
 class DocTAPETests(unittest.TestCase):
@@ -13,54 +13,54 @@ class DocTAPETests(unittest.TestCase):
     """
 
     def test_gramatical_list(self):
-        string = doctape.gramatical_list(['a', 'b', 'c'])
+        string = gramatical_list(['a', 'b', 'c'])
         assert_equal_numstrings(string, 'a, b, and c')
 
     def test_check_value(self):
-        doctape.check_value(1, 1.0)
+        check_value(1, 1.0)
 
     def test_check_contains(self):
-        doctape.check_contains(1, [1, 2, 3])
+        check_contains(1, [1, 2, 3])
 
     def test_check_args(self):
-        doctape.check_args(doctape.check_args, 'func')
+        check_args(check_args, 'func')
 
     def test_run_command_no_file_error(self):
-        doctape.run_command_no_file_error('python -c "print()"')
+        run_command_no_file_error('python -c "print()"')
 
     def test_get_attribute_name(self):
         class dummy_object:
             attr1 = 1
-        name = doctape.get_attribute_name(dummy_object, 1)
+        name = get_attribute_name(dummy_object, 1)
         assert_equal_numstrings(name, 'attr1')
 
     def test_get_all_keys(self):
-        keys = doctape.get_all_keys({'d1': {'d2': 2}})
+        keys = get_all_keys({'d1': {'d2': 2}})
         assert_equal_arrays(np.array(keys), np.array(['d1', 'd2']))
 
     def test_get_value(self):
-        val = doctape.get_value({'d1': {'d2': 2}}, 'd1.d2')
+        val = get_value({'d1': {'d2': 2}}, 'd1.d2')
         assert_near_equal(val, 2)
 
     def test_get_previous_line(self):
         something = "something_else"
-        line1 = doctape.get_previous_line()
-        line2 = doctape.get_previous_line(2)
+        line1 = get_previous_line()
+        line2 = get_previous_line(2)
         assert_equal_numstrings(line1, 'something = "something_else"')
-        assert_equal_numstrings(line2[1].strip(), 'line1 = doctape.get_previous_line()')
+        assert_equal_numstrings(line2[1].strip(), 'line1 = get_previous_line()')
 
     def test_get_variable_name(self):
         var = 7
-        name = doctape.get_variable_name(var)
+        name = get_variable_name(var)
         assert_equal_numstrings(name, 'var')
 
     # requires IPython shell
     # def test_glue_variable(self):
-    #     doctape.glue_variable('plain_text')
+    #     glue_variable('plain_text')
 
     # requires IPython shell
     # def test_glue_keys(self):
-    #     doctape.glue_keys({'d1':{'d2':2}})
+    #     glue_keys({'d1':{'d2':2}})
 
 
 if __name__ == '__main__':
