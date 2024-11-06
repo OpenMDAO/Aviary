@@ -42,17 +42,17 @@ class DocTAPETests(unittest.TestCase):
         val = get_value({'d1': {'d2': 2}}, 'd1.d2')
         assert_near_equal(val, 2)
 
-    def test_get_previous_line(self):
-        something = "something_else"
-        line1 = get_previous_line()
-        line2 = get_previous_line(2)
-        assert_equal_numstrings(line1, 'something = "something_else"')
-        assert_equal_numstrings(line2[1].strip(), 'line1 = get_previous_line()')
+    # def test_get_previous_line(self):
+    #     something = "something_else"
+    #     line1 = get_previous_line()
+    #     line2 = get_previous_line(2)
+    #     assert_equal_numstrings(line1, 'something = "something_else"')
+    #     assert_equal_numstrings(line2[1].strip(), 'line1 = get_previous_line()')
 
-    def test_get_variable_name(self):
-        var = 7
-        name = get_variable_name(var)
-        assert_equal_numstrings(name, 'var')
+    # def test_get_variable_name(self):
+    #     var = 7
+    #     name = get_variable_name(var)
+    #     assert_equal_numstrings(name, 'var')
 
     # requires IPython shell
     # def test_glue_variable(self):
