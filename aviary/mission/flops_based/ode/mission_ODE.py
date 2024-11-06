@@ -158,11 +158,11 @@ class MissionODE(om.Group):
             if subsystem_mission is not None:
 
                 if subsystem.needs_mission_solver(aviary_options):
-                    add_subsystem_group = True
-                    target = external_subsystem_group
-                else:
                     add_subsystem_group_solver = True
                     target = external_subsystem_group_solver
+                else:
+                    add_subsystem_group = True
+                    target = external_subsystem_group
 
                 target.add_subsystem(
                     subsystem.name, subsystem_mission
@@ -180,7 +180,7 @@ class MissionODE(om.Group):
         if add_subsystem_group_solver:
             sub1.add_subsystem(
                 name='external_subsystems',
-                subsys=external_subsystem_group,
+                subsys=external_subsystem_group_solver,
                 promotes_inputs=['*'],
                 promotes_outputs=['*'],
             )

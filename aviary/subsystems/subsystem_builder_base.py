@@ -32,7 +32,9 @@ class SubsystemBuilderBase(ABC):
 
     def needs_mission_solver(self, aviary_inputs):
         """
-        Return True if the mission subsystem needs to be in the solver loop.
+        Return True if the mission subsystem needs to be in the solver loop in mission, otherwise
+        return False. Aviary will only place it in the solver loop when True. The default is
+        True.
         """
         return True
 
