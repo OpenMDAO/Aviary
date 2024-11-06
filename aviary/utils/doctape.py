@@ -241,6 +241,7 @@ def run_command_no_file_error(command: str):
     CalledProcessError
         If the command returns a non-zero exit code (except for FileNotFoundError).
     """
+    cwd = os.getcwd()
     with tempfile.TemporaryDirectory() as tempdir:
         os.chdir(tempdir)
         rc = subprocess.run(command.split(), capture_output=True, text=True)
@@ -251,6 +252,7 @@ def run_command_no_file_error(command: str):
             else:
                 print(rc.stderr)
                 rc.check_returncode()
+    os.chdir(cwd)
 
 
 def get_attribute_name(object: object, attribute, error_type=AttributeError) -> str:
