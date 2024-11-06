@@ -3,7 +3,7 @@ import numpy as np
 
 from openmdao.utils.assert_utils import assert_near_equal, assert_equal_numstrings, assert_equal_arrays
 
-from aviary.docs.tests.utils import gramatical_list, check_value, check_contains, check_args, run_command_no_file_error, get_attribute_name, get_all_keys, get_value, get_previous_line, get_variable_name
+from aviary.utils.doctape import gramatical_list, check_value, check_contains, check_args, run_command_no_file_error, get_attribute_name, get_all_keys, get_value, get_previous_line, get_variable_name
 
 
 class DocTAPETests(unittest.TestCase):
