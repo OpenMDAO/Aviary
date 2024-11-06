@@ -296,7 +296,7 @@ def get_all_keys(dict_of_dicts: dict, track_layers=False, all_keys=None) -> list
     Parameters
     ----------
     dict_of_dicts : dict
-        The dictionary who's keys will are to be gathered
+        The dictionary who's keys will be gathered
     track_layers : Bool
         Whether or not to track where keys inside the dict of dicts
         came from. This will get every key, by ensuring that all keys
