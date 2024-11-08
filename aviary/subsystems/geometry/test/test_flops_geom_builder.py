@@ -25,7 +25,7 @@ class TestFLOPSGeomBuilder(av.TestSubsystemBuilderBase):
         self.subsystem_builder = CoreGeometryBuilder(
             'core_geometry',
             BaseMetaData,
-            use_both_geometries=True,
+            use_both_geometries=False,
             code_origin_to_prioritize=FLOPS)
         self.aviary_values = av.AviaryValues()
         self.aviary_values.set_val(Aircraft.Engine.NUM_ENGINES, [1], units='unitless')
@@ -58,7 +58,7 @@ class TestFLOPSGeomBuilderHybrid(av.TestSubsystemBuilderBase):
         self.subsystem_builder = CoreGeometryBuilder(
             'core_geometry',
             BaseMetaData,
-            use_both_geometries=True,
+            use_both_geometries=False,
             code_origin_to_prioritize=FLOPS)
         self.aviary_values = av.AviaryValues()
         self.aviary_values.set_val(Aircraft.Engine.NUM_ENGINES, [1], units='unitless')
