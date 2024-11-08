@@ -123,7 +123,7 @@ class MissionODE(om.Group):
         base_options = {'num_nodes': nn, 'aviary_inputs': aviary_options}
 
         sub1 = self.add_subsystem('solver_sub', om.Group(),
-                                   promotes=['*'])
+                                  promotes=['*'])
 
         for subsystem in core_subsystems:
             # check if subsystem_options has entry for a subsystem of this name

@@ -29,12 +29,11 @@ phase_info.pop('descent')
 
 class TestSolvedAero(unittest.TestCase):
 
-    def test_needs_mission_solver(self):
-
-        # Solve
+    def test_mission_solver(self):
 
         local_phase_info = deepcopy(phase_info)
-        local_phase_info['cruise']['external_subsystems'] = [SolverBuilder(name='solve_me')]
+        local_phase_info['cruise']['external_subsystems'] = [
+            SolverBuilder(name='solve_me')]
 
         prob = AviaryProblem()
 
@@ -61,10 +60,11 @@ class TestSolvedAero(unittest.TestCase):
             "solve_me"
         ))
 
-        # No Solve
+    def test_no_mission_solver(self):
 
         local_phase_info = deepcopy(phase_info)
-        local_phase_info['cruise']['external_subsystems'] = [NoSolverBuilder(name='do_not_solve_me')]
+        local_phase_info['cruise']['external_subsystems'] = [
+            NoSolverBuilder(name='do_not_solve_me')]
 
         prob = AviaryProblem()
 
