@@ -1,3 +1,4 @@
+import numpy as np
 import openmdao.api as om
 
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option
@@ -34,6 +35,7 @@ class TaxiFuelComponent(om.ExplicitComponent):
             desc="mass after taxi",
         )
 
+    def setup_partials(self):
         self.declare_partials(
             "taxi_fuel_consumed", [
                 Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL])
