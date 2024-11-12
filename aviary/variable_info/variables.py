@@ -163,6 +163,10 @@ class Aircraft:
         LIFT_CURVE_SLOPE = 'aircraft:design:lift_curve_slope'
         LIFT_DEPENDENT_DRAG_COEFF_FACTOR = \
             'aircraft:design:lift_dependent_drag_coeff_factor'
+
+        LIFT_DEPENDENT_DRAG_POLAR = 'aircraft:design:lift_dependent_drag_polar'
+        LIFT_INDEPENDENT_DRAG_POLAR = 'aircraft:design:lift_independent_drag_polar'
+
         LIFT_POLAR = 'aircraft:design:lift_polar'
 
         MAX_FUSELAGE_PITCH_ANGLE = 'aircraft:design:max_fuselage_pitch_angle'

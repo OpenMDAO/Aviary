@@ -330,7 +330,8 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                 method = 'computed'
 
             if phase_info is not None:
-                # Only solved_alpha has connectable inputs.
+
+                # Only some methods have connectable training inputs.
                 if method == 'solved_alpha':
                     aero_data = aero_opt['aero_data']
 
@@ -368,6 +369,63 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
                         params[Aircraft.Design.LIFT_POLAR] = lift_opts
                         params[Aircraft.Design.DRAG_POLAR] = drag_opts
+
+                elif method == 'tabular':
+                    CD0_data = aero_opt['CD0_data']
+
+                    if isinstance(CD0_data, NamedValues):
+                        altitude = CD0_data.get_item('altitude')[0]
+                        mach = CD0_data.get_item('mach')[0]
+
+                        n1 = altitude.size
+                        n2 = mach.size
+                        n1u = np.unique(altitude).size
+
+                        if n1 > n1u:
+                            # Data is free-format instead of pre-formatted.
+                            n1 = n1u
+                            n2 = np.unique(mach).size
+
+                        shape = (n1, n2)
+
+                        if aviary_inputs is not None and Aircraft.Design.LIFT_INDEPENDENT_DRAG_POLAR in aviary_inputs:
+                            opts = {
+                                'val': aviary_inputs.get_val(Aircraft.Design.LIFT_INDEPENDENT_DRAG_POLAR),
+                                'static_target': True
+                            }
+                        else:
+                            opts = {'shape': shape,
+                                    'static_target': True}
+
+                        params[Aircraft.Design.LIFT_INDEPENDENT_DRAG_POLAR] = opts
+
+                    CDI_data = aero_opt['CDI_data']
+
+                    if isinstance(CDI_data, NamedValues):
+                        mach = CDI_data.get_item('mach')[0]
+                        cl = CDI_data.get_item('lift_coefficient')[0]
+
+                        n1 = mach.size
+                        n2 = cl.size
+                        n1u = np.unique(mach).size
+
+                        if n1 > n1u:
+                            # Data is free-format instead of pre-formatted.
+                            n1 = n1u
+                            n2 = np.unique(cl).size
+
+                        shape = (n1, n2)
+
+                        if aviary_inputs is not None and Aircraft.Design.LIFT_DEPENDENT_DRAG_POLAR in aviary_inputs:
+                            opts = {
+                                'val': aviary_inputs.get_val(Aircraft.Design.LIFT_DEPENDENT_DRAG_POLAR),
+                                'static_target': True
+                            }
+                        else:
+                            opts = {'shape': shape,
+                                    'static_target': True}
+
+                        params[Aircraft.Design.LIFT_DEPENDENT_DRAG_POLAR] = opts
 
             if method == 'computed':
 

@@ -134,15 +134,13 @@ class TabularAeroGroupDataTest(unittest.TestCase):
 
         CDI_table = _default_CDI_data()
         CDI_values = CDI_table.get_val('lift_dependent_drag_coefficient')
-        # CDI_table.delete('lift_dependent_drag_coefficient')
         CD0_table = _default_CD0_data()
         CD0_values = CD0_table.get_val('zero_lift_drag_coefficient')
-        # CD0_table.delete('zero_lift_drag_coefficient')
 
         drag_data = om.ExecComp()
-        drag_data.add_output('zero_lift_drag_coefficient_train',
+        drag_data.add_output(Aircraft.Design.LIFT_INDEPENDENT_DRAG_POLAR,
                              CD0_values, units='unitless')
-        drag_data.add_output('lift_dependent_drag_coefficient_train',
+        drag_data.add_output(Aircraft.Design.LIFT_DEPENDENT_DRAG_POLAR,
                              CDI_values, units='unitless')
 
         self.prob.model.add_subsystem(
@@ -151,8 +149,33 @@ class TabularAeroGroupDataTest(unittest.TestCase):
             promotes_outputs=['*']
         )
 
-        kwargs = {'method': 'tabular', 'CDI_data': CDI_table, 'CD0_data': CD0_table, }
-        #   'training_data': True}
+        # Pass zero-arrays for the training data, so that this test won't pass unless
+        # we are passing the values from the drag_data component.
+        shape = CDI_table.get_item('lift_dependent_drag_coefficient')[0].shape
+        CDI_clean_table = _default_CDI_data()
+        CDI_clean_table.set_val(
+            'lift_dependent_drag_coefficient',
+            np.zeros(shape)
+        )
+
+        shape = CD0_table.get_item('zero_lift_drag_coefficient')[0].shape
+        CD0_clean_table = _default_CD0_data()
+        CD0_clean_table.set_val(
+            'zero_lift_drag_coefficient',
+            np.zeros(shape)
+        )
+
+        self.CDI_values = CDI_values
+        self.CD0_values = CD0_values
+        self.CDI_clean_table = CDI_clean_table
+        self.CD0_clean_table = CD0_clean_table
+
+        kwargs = {
+            'method': 'tabular',
+            'CDI_data': CDI_clean_table,
+            'CD0_data': CD0_clean_table,
+            'connect_training_data': True
+        }
 
         aero_builder = CoreAerodynamicsBuilder(code_origin=FLOPS)
 
@@ -198,6 +221,56 @@ class TabularAeroGroupDataTest(unittest.TestCase):
         assert_check_partials(
             partial_data, atol=1e-9, rtol=1e-12
         )  # check the partial derivatives
+
+    def test_parameters(self):
+
+        local_phase_info = deepcopy(phase_info)
+        core_aero = local_phase_info['cruise']['subsystem_options']['core_aerodynamics']
+
+        core_aero['method'] = 'tabular'
+        core_aero['connect_training_data'] = True
+        core_aero['CDI_data'] = self.CDI_clean_table
+        core_aero['CD0_data'] = self.CD0_clean_table
+        local_phase_info.pop('climb')
+        local_phase_info.pop('descent')
+
+        prob = AviaryProblem()
+
+        prob.load_inputs(
+            "subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv",
+            local_phase_info
+        )
+
+        # Preprocess inputs
+        prob.check_and_preprocess_inputs()
+
+        prob.add_pre_mission_systems()
+        prob.add_phases()
+        prob.add_post_mission_systems()
+
+        prob.link_phases()
+
+        # Connect or set.
+        prob.aviary_inputs.set_val(
+            Aircraft.Design.LIFT_INDEPENDENT_DRAG_POLAR,
+            self.CD0_values
+        )
+        prob.aviary_inputs.set_val(
+            Aircraft.Design.LIFT_DEPENDENT_DRAG_POLAR,
+            self.CDI_values
+        )
+
+        prob.setup()
+
+        prob.set_initial_guesses()
+
+        prob.run_model()
+
+        assert_near_equal(
+            prob.get_val("traj.cruise.rhs_all.drag", units='lbf')[0],
+            9896.0,
+            1.0e-3
+        )
 
 
 data_sets = ['LargeSingleAisle1FLOPS', 'LargeSingleAisle2FLOPS', 'N3CC']
