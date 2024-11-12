@@ -93,7 +93,6 @@ class TabularAeroGroup(om.Group):
         else:
             method = '2D-lagrange3'
 
-
         CD0_interp = build_data_interpolator(
             nn,
             interpolator_data=CD0_table,
