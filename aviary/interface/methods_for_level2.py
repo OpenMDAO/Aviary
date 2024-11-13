@@ -20,10 +20,13 @@ from openmdao.utils.mpi import MPI
 from openmdao.utils.reports_system import _default_reports
 
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
+from aviary.interface.default_phase_info.two_dof_fiti import add_default_sgm_args
+from aviary.interface.utils.check_phase_info import check_phase_info
+from aviary.mission.energy_phase import EnergyPhase
 from aviary.mission.flops_based.phases.build_landing import Landing
 from aviary.mission.flops_based.phases.build_takeoff import Takeoff
-from aviary.mission.energy_phase import EnergyPhase
 from aviary.mission.twodof_phase import TwoDOFPhase
+from aviary.mission.gasp_based.idle_descent_estimation import add_descent_estimation_as_submodel
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 from aviary.mission.gasp_based.phases.groundroll_phase import GroundrollPhase
@@ -34,34 +37,30 @@ from aviary.mission.gasp_based.phases.cruise_phase import CruisePhase
 from aviary.mission.gasp_based.phases.accel_phase import AccelPhase
 from aviary.mission.gasp_based.phases.ascent_phase import AscentPhase
 from aviary.mission.gasp_based.phases.descent_phase import DescentPhase
-from aviary.mission.gasp_based.phases.landing_group import LandingSegment
-from aviary.mission.gasp_based.phases.taxi_group import TaxiSegment
+from aviary.mission.gasp_based.ode.landing_ode import LandingSegment
+from aviary.mission.gasp_based.ode.taxi_ode import TaxiSegment
 from aviary.mission.gasp_based.phases.v_rotate_comp import VRotateComp
 from aviary.mission.gasp_based.polynomial_fit import PolynomialFit
-from aviary.subsystems.premission import CorePreMission
-from aviary.utils.functions import create_opts2vals, add_opts2vals, promote_aircraft_and_mission_vars, wrapped_convert_units
-from aviary.utils.process_input_decks import create_vehicle, update_GASP_options, initial_guessing
-from aviary.utils.preprocessors import preprocess_crewpayload
-from aviary.interface.utils.check_phase_info import check_phase_info
-from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.functions import convert_strings_to_data, set_value
+from aviary.mission.phase_builder_base import PhaseBuilderBase
 
-from aviary.variable_info.functions import setup_trajectory_params, override_aviary_vars
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
-from aviary.variable_info.enums import AnalysisScheme, ProblemType, EquationsOfMotion, LegacyCode, Verbosity
-from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
-
-from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
+from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
 from aviary.subsystems.mass.mass_builder import CoreMassBuilder
-from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
-from aviary.utils.preprocessors import preprocess_propulsion
-from aviary.utils.merge_variable_metadata import merge_meta_data
+from aviary.subsystems.premission import CorePreMission
+from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
 
-from aviary.interface.default_phase_info.two_dof_fiti import add_default_sgm_args
-from aviary.mission.gasp_based.idle_descent_estimation import add_descent_estimation_as_submodel
-from aviary.mission.phase_builder_base import PhaseBuilderBase
+from aviary.utils.aviary_values import AviaryValues
+from aviary.utils.functions import create_opts2vals, add_opts2vals, promote_aircraft_and_mission_vars, wrapped_convert_units
+from aviary.utils.functions import convert_strings_to_data, set_value
+from aviary.utils.merge_variable_metadata import merge_meta_data
+from aviary.utils.preprocessors import preprocess_crewpayload, preprocess_propulsion
+from aviary.utils.process_input_decks import create_vehicle, update_GASP_options, initialization_guessing
+
+from aviary.variable_info.enums import AnalysisScheme, ProblemType, EquationsOfMotion, LegacyCode, Verbosity
+from aviary.variable_info.functions import setup_trajectory_params, override_aviary_vars
+from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
+from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 
 
 FLOPS = LegacyCode.FLOPS
@@ -78,7 +77,14 @@ else:
 
 
 class PreMissionGroup(om.Group):
+    """OpenMDAO group that holds all pre-mission systems"""
+
     def configure(self):
+        """
+        Configure this group for pre-mission.
+        Promote aircraft and mission variables.
+        Override output aviary variables.
+        """
         external_outputs = promote_aircraft_and_mission_vars(self)
 
         pre_mission = self.core_subsystems
@@ -91,7 +97,13 @@ class PreMissionGroup(om.Group):
 
 
 class PostMissionGroup(om.Group):
+    """OpenMDAO group that holds all post-mission systems"""
+
     def configure(self):
+        """
+        Congigure this group for post-mission.
+        Promote aircraft and mission variables.
+        """
         promote_aircraft_and_mission_vars(self)
 
 
@@ -103,6 +115,7 @@ class AviaryGroup(om.Group):
     """
 
     def initialize(self):
+        """declare options"""
         self.options.declare(
             'aviary_options', types=AviaryValues,
             desc='collection of Aircraft/Mission specific options')
@@ -114,21 +127,23 @@ class AviaryGroup(om.Group):
             desc='phase-specific settings.')
 
     def configure(self):
+        """
+        Configure the Aviary group
+        """
         aviary_options = self.options['aviary_options']
         aviary_metadata = self.options['aviary_metadata']
 
         # Find promoted name of every input in the model.
         all_prom_inputs = []
 
-        # We can call list_inputs on the groups.
-        for system in self.system_iter(recurse=False, typ=om.Group):
+        # We can call list_inputs on the subsystems.
+        for system in self.system_iter(recurse=False):
             var_abs = system.list_inputs(out_stream=None, val=False)
             var_prom = [v['prom_name'] for k, v in var_abs]
             all_prom_inputs.extend(var_prom)
 
-        # Component promotes aren't handled until this group resolves.
-        # Here, we address anything promoted with an alias in AviaryProblem.
-        for system in self.system_iter(recurse=False, typ=Component):
+            # Calls to promotes aren't handled until this group resolves.
+            # Here, we address anything promoted with an alias in AviaryProblem.
             input_meta = system._var_promotes['input']
             var_prom = [v[0][1] for v in input_meta if isinstance(v[0], tuple)]
             all_prom_inputs.extend(var_prom)
@@ -261,7 +276,7 @@ class AviaryProblem(om.Problem):
         ## LOAD INPUT FILE ###
         # Create AviaryValues object from file (or process existing AviaryValues object
         # with default values from metadata) and generate initial guesses
-        aviary_inputs, initial_guesses = create_vehicle(
+        aviary_inputs, initialization_guesses = create_vehicle(
             aviary_inputs, meta_data=meta_data, verbosity=verbosity)
 
         # pull which methods will be used for subsystems and mission
@@ -271,10 +286,10 @@ class AviaryProblem(om.Problem):
 
         if mission_method is TWO_DEGREES_OF_FREEDOM or mass_method is GASP:
             aviary_inputs = update_GASP_options(aviary_inputs)
-        initial_guesses = initial_guessing(aviary_inputs, initial_guesses,
-                                           engine_builders)
+        initialization_guesses = initialization_guessing(aviary_inputs, initialization_guesses,
+                                                         engine_builders)
         self.aviary_inputs = aviary_inputs
-        self.initial_guesses = initial_guesses
+        self.initialization_guesses = initialization_guesses
 
         ## LOAD PHASE_INFO ###
         if phase_info is None:
@@ -344,9 +359,9 @@ class AviaryProblem(om.Problem):
 
         if mission_method is TWO_DEGREES_OF_FREEDOM:
             aviary_inputs.set_val(Mission.Summary.CRUISE_MASS_FINAL,
-                                  val=self.initial_guesses['cruise_mass_final'], units='lbm')
+                                  val=self.initialization_guesses['cruise_mass_final'], units='lbm')
             aviary_inputs.set_val(Mission.Summary.GROSS_MASS,
-                                  val=self.initial_guesses['actual_takeoff_mass'], units='lbm')
+                                  val=self.initialization_guesses['actual_takeoff_mass'], units='lbm')
 
             # Commonly referenced values
             self.cruise_alt = aviary_inputs.get_val(
@@ -364,7 +379,7 @@ class AviaryProblem(om.Problem):
         elif mission_method is HEIGHT_ENERGY:
             self.problem_type = aviary_inputs.get_val(Settings.PROBLEM_TYPE)
             aviary_inputs.set_val(Mission.Summary.GROSS_MASS,
-                                  val=self.initial_guesses['actual_takeoff_mass'], units='lbm')
+                                  val=self.initialization_guesses['actual_takeoff_mass'], units='lbm')
             if 'target_range' in self.post_mission_info:
                 aviary_inputs.set_val(Mission.Design.RANGE, wrapped_convert_units(
                     phase_info['post_mission']['target_range'], 'NM'), units='NM')
@@ -646,6 +661,7 @@ class AviaryProblem(om.Problem):
                 cruise_mach=self.cruise_mach,
                 cruise_alt=self.cruise_alt,
                 reserve_fuel='reserve_fuel_estimate',
+                all_subsystems=self._get_all_subsystems(),
             )
 
         # Add thrust-to-weight ratio subsystem
@@ -665,33 +681,33 @@ class AviaryProblem(om.Problem):
         self.cruise_alt = self.aviary_inputs.get_val(
             Mission.Design.CRUISE_ALTITUDE, units='ft')
 
-        # Add taxi subsystem
-        self.model.add_subsystem(
-            "taxi", TaxiSegment(**(self.ode_args)),
-            promotes_inputs=['aircraft:*', 'mission:*'],
-        )
-
         if self.analysis_scheme is AnalysisScheme.COLLOCATION:
             # Add event transformation subsystem
             self.model.add_subsystem(
                 "event_xform",
                 om.ExecComp(
                     ["t_init_gear=m*tau_gear+b", "t_init_flaps=m*tau_flaps+b"],
-                    t_init_gear={"units": "s"},
-                    t_init_flaps={"units": "s"},
+                    t_init_gear={"units": "s"},  # initial time that gear comes up
+                    t_init_flaps={"units": "s"},  # initial time that flaps retract
                     tau_gear={"units": "unitless"},
                     tau_flaps={"units": "unitless"},
                     m={"units": "s"},
                     b={"units": "s"},
                 ),
                 promotes_inputs=[
-                    "tau_gear",
-                    "tau_flaps",
+                    "tau_gear",  # design var
+                    "tau_flaps",  # design var
                     ("m", Mission.Takeoff.ASCENT_DURATION),
                     ("b", Mission.Takeoff.ASCENT_T_INTIIAL),
                 ],
-                promotes_outputs=["t_init_gear", "t_init_flaps"],
+                promotes_outputs=["t_init_gear", "t_init_flaps"],  # link to h_fit
             )
+
+        # Add taxi subsystem
+        self.model.add_subsystem(
+            "taxi", TaxiSegment(**(self.ode_args)),
+            promotes_inputs=['aircraft:*', 'mission:*'],
+        )
 
         # Calculate speed at which to initiate rotation
         self.model.add_subsystem(
@@ -772,7 +788,7 @@ class AviaryProblem(om.Problem):
                                            promotes_outputs=[
                 ('subsystem_mass', Aircraft.Design.EXTERNAL_SUBSYSTEMS_MASS)])
 
-    def _add_groundroll_eq_constraint(self, phase):
+    def _add_groundroll_eq_constraint(self):
         """
         Add an equality constraint to the problem to ensure that the TAS at the end of the
         groundroll phase is equal to the rotation velocity at the start of the rotation phase.
@@ -793,14 +809,6 @@ class AviaryProblem(om.Problem):
             "groundroll_boundary.lhs:velocity",
             src_indices=[-1],
             flat_src_indices=True,
-        )
-
-        ascent_tx = phase.options["transcription"]
-        ascent_num_nodes = ascent_tx.grid_data.num_nodes
-        self.model.add_subsystem(
-            "h_fit",
-            PolynomialFit(N_cp=ascent_num_nodes),
-            promotes_inputs=["t_init_gear", "t_init_flaps"],
         )
 
     def _get_phase(self, phase_name, phase_idx):
@@ -1071,6 +1079,7 @@ class AviaryProblem(om.Problem):
                 src_indices=[-1],
                 flat_src_indices=True,
             )
+            self.traj = full_traj
             return traj
 
         def add_subsystem_timeseries_outputs(phase, phase_name):
@@ -1098,7 +1107,7 @@ class AviaryProblem(om.Problem):
                         self.phase_info[phase_name]['phase_type'] = phase_name
 
                         if phase_name == 'ascent':
-                            self._add_groundroll_eq_constraint(phase)
+                            self._add_groundroll_eq_constraint()
 
             # loop through phase_info and external subsystems
             external_parameters = {}
@@ -1115,7 +1124,15 @@ class AviaryProblem(om.Problem):
                         external_parameters[phase_name][parameter] = parameter_dict[parameter]
 
             traj = setup_trajectory_params(
-                self.model, traj, self.aviary_inputs, phases, meta_data=self.meta_data, external_parameters=external_parameters)
+                self.model, traj, self.aviary_inputs, phases, meta_data=self.meta_data,
+                external_parameters=external_parameters)
+
+            if self.mission_method is HEIGHT_ENERGY:
+                if not self.pre_mission_info['include_takeoff']:
+                    first_flight_phase_name = list(phase_info.keys())[0]
+                    first_flight_phase = traj._phases[first_flight_phase_name]
+                    first_flight_phase.set_state_options(Dynamic.Mission.MASS,
+                                                         fix_initial=False)
 
         self.traj = traj
 
@@ -1322,6 +1339,23 @@ class AviaryProblem(om.Problem):
         if self.mission_method in (HEIGHT_ENERGY, TWO_DEGREES_OF_FREEDOM):
             self.post_mission.add_constraint(
                 Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.e5)
+
+        if self.mission_method is HEIGHT_ENERGY:
+
+            if not self.pre_mission_info['include_takeoff']:
+                first_flight_phase_name = list(self.phase_info.keys())[0]
+                eq = self.model.add_subsystem(f'link_{first_flight_phase_name}_mass',
+                                              om.EQConstraintComp(),
+                                              promotes_inputs=[('rhs:mass',
+                                                                Mission.Summary.GROSS_MASS)])
+                eq.add_eq_output('mass', eq_units='lbm', normalize=False,
+                                 ref=100000., add_constraint=True)
+                self.model.connect(
+                    f'traj.{first_flight_phase_name}.states:mass',
+                    f'link_{first_flight_phase_name}_mass.lhs:mass',
+                    src_indices=[0],
+                    flat_src_indices=True,
+                )
 
     def _link_phases_helper_with_options(self, phases, option_name, var, **kwargs):
         # Initialize a list to keep track of indices where option_name is True
@@ -1538,13 +1572,14 @@ class AviaryProblem(om.Problem):
 
                 # imitate input_initial for taxi -> groundroll
                 eq = self.model.add_subsystem(
-                    "link_taxi_groundroll", om.EQConstraintComp())
+                    "taxi_groundroll_mass_constraint", om.EQConstraintComp())
                 eq.add_eq_output("mass", eq_units="lbm", normalize=False,
                                  ref=10000., add_constraint=True)
-                self.model.connect("taxi.mass", "link_taxi_groundroll.rhs:mass")
+                self.model.connect(
+                    "taxi.mass", "taxi_groundroll_mass_constraint.rhs:mass")
                 self.model.connect(
                     "traj.groundroll.states:mass",
-                    "link_taxi_groundroll.lhs:mass",
+                    "taxi_groundroll_mass_constraint.lhs:mass",
                     src_indices=[0],
                     flat_src_indices=True,
                 )
@@ -1697,7 +1732,7 @@ class AviaryProblem(om.Problem):
 
         Depending on the mission model and problem type, different design variables and constraints are added.
 
-        If using the FLOPS model, a design variable is added for the gross mass of the aircraft, with a lower bound of 100,000 lbm and an upper bound of 200,000 lbm.
+        If using the FLOPS model, a design variable is added for the gross mass of the aircraft, with a lower bound of 10 lbm and an upper bound of 900,000 lbm.
 
         If using the GASP model, the following design variables are added depending on the mission type:
             - the initial thrust-to-weight ratio of the aircraft during ascent
@@ -1732,7 +1767,7 @@ class AviaryProblem(om.Problem):
             optimize_mass = self.pre_mission_info.get('optimize_mass')
             if optimize_mass:
                 self.model.add_design_var(Mission.Design.GROSS_MASS, units='lbm',
-                                          lower=100.e2, upper=900.e3, ref=135.e3)
+                                          lower=10, upper=900.e3, ref=175.e3)
 
         elif self.mission_method in (HEIGHT_ENERGY, TWO_DEGREES_OF_FREEDOM):
             # vehicle sizing problem
@@ -1741,14 +1776,14 @@ class AviaryProblem(om.Problem):
                 self.model.add_design_var(
                     Mission.Design.GROSS_MASS,
                     lower=10.0,
-                    upper=400e3,
+                    upper=None,
                     units='lbm',
                     ref=175e3,
                 )
                 self.model.add_design_var(
                     Mission.Summary.GROSS_MASS,
                     lower=10.0,
-                    upper=400e3,
+                    upper=None,
                     units='lbm',
                     ref=175e3,
                 )
@@ -1883,8 +1918,8 @@ class AviaryProblem(om.Problem):
         for external_subsystem in all_subsystems:
             bus_variables = external_subsystem.get_bus_variables()
             if bus_variables is not None:
-                for bus_variable in bus_variables:
-                    mission_variable_name = bus_variables[bus_variable]['mission_name']
+                for bus_variable, variable_data in bus_variables.items():
+                    mission_variable_name = variable_data['mission_name']
 
                     # check if mission_variable_name is a list
                     if not isinstance(mission_variable_name, list):
@@ -1892,50 +1927,44 @@ class AviaryProblem(om.Problem):
 
                     # loop over the mission_variable_name list and add each variable to the trajectory
                     for mission_var_name in mission_variable_name:
-                        if 'mission_name' in bus_variables[bus_variable]:
-                            if mission_var_name not in self.meta_data:
-                                # base_units = self.model.get_io_metadata(includes=f'pre_mission.{external_subsystem.name}.{bus_variable}')[f'pre_mission.{external_subsystem.name}.{bus_variable}']['units']
-                                base_units = bus_variables[bus_variable]['units']
+                        if mission_var_name not in self.meta_data:
+                            # base_units = self.model.get_io_metadata(includes=f'pre_mission.{external_subsystem.name}.{bus_variable}')[f'pre_mission.{external_subsystem.name}.{bus_variable}']['units']
+                            base_units = variable_data['units']
 
-                                shape = bus_variables[bus_variable].get(
-                                    'shape', _unspecified)
+                            shape = variable_data.get('shape', _unspecified)
 
-                                targets = mission_var_name
-                                if '.' in mission_var_name:
-                                    # Support for non-hierarchy variables as parameters.
-                                    mission_var_name = mission_var_name.split('.')[-1]
+                            targets = mission_var_name
+                            if '.' in mission_var_name:
+                                # Support for non-hierarchy variables as parameters.
+                                mission_var_name = mission_var_name.split('.')[-1]
 
-                                if 'phases' in bus_variables[bus_variable]:
-                                    # Support for connecting bus variables into a subset of
-                                    # phases.
-                                    phases = bus_variables[bus_variable]['phases']
+                            if 'phases' in variable_data:
+                                # Support for connecting bus variables into a subset of
+                                # phases.
+                                for phase_name in variable_data['phases']:
+                                    phase = getattr(self.traj.phases, phase_name)
 
-                                    for phase_name in phases:
-                                        phase = getattr(self.traj.phases, phase_name)
+                                    phase.add_parameter(mission_var_name, opt=False, static_target=True,
+                                                        units=base_units, shape=shape, targets=targets)
 
-                                        phase.add_parameter(mission_var_name, opt=False, static_target=True,
-                                                            units=base_units, shape=shape, targets=targets)
+                                    self.model.connect(f'pre_mission.{bus_variable}',
+                                                       f'traj.{phase_name}.parameters:{mission_var_name}')
 
-                                        self.model.connect(f'pre_mission.{bus_variable}',
-                                                           f'traj.{phase_name}.parameters:{mission_var_name}')
+                            else:
+                                self.traj.add_parameter(mission_var_name, opt=False, static_target=True,
+                                                        units=base_units, shape=shape, targets={
+                                                            phase_name: [mission_var_name] for phase_name in base_phases})
 
-                                else:
-                                    phases = base_phases
+                                self.model.connect(
+                                    f'pre_mission.{bus_variable}', f'traj.parameters:'+mission_var_name)
 
-                                    self.traj.add_parameter(mission_var_name, opt=False, static_target=True,
-                                                            units=base_units, shape=shape, targets={
-                                                                phase_name: [mission_var_name] for phase_name in phases})
-
-                                    self.model.connect(
-                                        f'pre_mission.{bus_variable}', f'traj.parameters:'+mission_var_name)
-
-                        if 'post_mission_name' in bus_variables[bus_variable]:
+                        if 'post_mission_name' in variable_data:
                             self.model.connect(f'pre_mission.{external_subsystem.name}.{bus_variable}',
-                                               f'post_mission.{external_subsystem.name}.{bus_variables[bus_variable]["post_mission_name"]}')
+                                               f'post_mission.{external_subsystem.name}.{variable_data["post_mission_name"]}')
 
     def setup(self, **kwargs):
         """
-        Lightly wrappd setup() method for the problem.
+        Lightly wrapped setup() method for the problem.
         """
         # suppress warnings:
         # "input variable '...' promoted using '*' was already promoted using 'aircraft:*'
@@ -2137,8 +2166,8 @@ class AviaryProblem(om.Problem):
 
         # If using the GASP model, set initial guesses for the rotation mass and flight duration
         if self.mission_method is TWO_DEGREES_OF_FREEDOM:
-            rotation_mass = self.initial_guesses['rotation_mass']
-            flight_duration = self.initial_guesses['flight_duration']
+            rotation_mass = self.initialization_guesses['rotation_mass']
+            flight_duration = self.initialization_guesses['flight_duration']
 
         if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
             control_keys = ["mach", "altitude"]
@@ -2480,12 +2509,12 @@ class AviaryProblem(om.Problem):
 
                     # Lists are fine except if they contain enums
                     if type_value == list:
-                        if type(type(value[0])) == enum.EnumType:
+                        if isinstance(value[0], enum.Enum):
                             for i in range(len(value)):
                                 value[i] = str([value[i]])
 
                     # Enums need converting to a string
-                    if type(type(value)) == enum.EnumType:
+                    if isinstance(value, enum.Enum):
                         value = str([value])
 
                 # Append the data to the list
@@ -2628,8 +2657,15 @@ class AviaryProblem(om.Problem):
                              (Dynamic.Mission.MASS, Mission.Landing.TOUCHDOWN_MASS)],
             promotes_outputs=['mission:*'],
         )
+        self.model.connect(
+            'pre_mission.interference_independent_of_shielded_area',
+            'landing.interference_independent_of_shielded_area')
+        self.model.connect(
+            'pre_mission.drag_loss_due_to_shielded_wing_area',
+            'landing.drag_loss_due_to_shielded_wing_area')
 
     def _add_objectives(self):
+        "add objectives and some constraints"
         self.model.add_subsystem(
             "fuel_obj",
             om.ExecComp(
@@ -2660,6 +2696,17 @@ class AviaryProblem(om.Problem):
             ],
             promotes_outputs=[("reg_objective", Mission.Objectives.RANGE)],
         )
+
+        if self.analysis_scheme is AnalysisScheme.COLLOCATION:
+            if self.mission_method is TWO_DEGREES_OF_FREEDOM:
+                ascent_phase = getattr(self.traj.phases, 'ascent')
+                ascent_tx = ascent_phase.options["transcription"]
+                ascent_num_nodes = ascent_tx.grid_data.num_nodes
+                self.model.add_subsystem(
+                    "h_fit",
+                    PolynomialFit(N_cp=ascent_num_nodes),
+                    promotes_inputs=["t_init_gear", "t_init_flaps"],
+                )
 
         self.model.add_subsystem(
             "range_constraint",

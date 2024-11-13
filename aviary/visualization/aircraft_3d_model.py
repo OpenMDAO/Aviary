@@ -305,7 +305,8 @@ class AircraftModelReader(object):
 
         abs2prom = self._problem_metadata["abs2prom"]
         for abs_name, prom_name in abs2prom["input"].items():
-            if prom_name == var_prom_name:
+            # the phrase "_OVERRIDE" in a variable indicates it is a calculated value that we are discarding
+            if prom_name == var_prom_name and '_OVERRIDE' not in abs_name:
                 val = self._final_case.get_val(abs_name, units=units)
                 return float(val)
 

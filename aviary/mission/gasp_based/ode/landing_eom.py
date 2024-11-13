@@ -7,6 +7,10 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class LandingAltitudeComponent(om.ExplicitComponent):
+    """
+    Compute the landing altitude.
+    """
+
     def setup(self):
         add_aviary_input(self, Mission.Landing.OBSTACLE_HEIGHT, val=50.0)
         add_aviary_input(self, Mission.Landing.AIRPORT_ALTITUDE, val=0.0)
@@ -27,6 +31,10 @@ class LandingAltitudeComponent(om.ExplicitComponent):
 
 
 class GlideConditionComponent(om.ExplicitComponent):
+    """
+    Compute the initial conditions of the 2DOF glide phase.
+    """
+
     def setup(self):
         self.add_input("rho_app", val=0.0, units="slug/ft**3", desc="air density")
         add_aviary_input(self, Mission.Landing.MAXIMUM_SINK_RATE, val=900.0)
@@ -569,6 +577,10 @@ class GlideConditionComponent(om.ExplicitComponent):
 
 
 class LandingGroundRollComponent(om.ExplicitComponent):
+    """
+    Compute the groundroll distance and average acceleration/deceleration
+    """
+
     def setup(self):
 
         self.add_input("touchdown_CD", val=0.0, units='unitless',

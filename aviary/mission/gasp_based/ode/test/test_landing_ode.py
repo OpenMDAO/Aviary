@@ -8,27 +8,29 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
 
 from aviary.mission.gasp_based.ode.params import set_params_for_unit_tests
-from aviary.mission.gasp_based.phases.landing_group import LandingSegment
+from aviary.mission.gasp_based.ode.landing_ode import LandingSegment
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.utils.test_utils.IO_test_util import check_prob_outputs
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Dynamic, Mission
 
-# TODO - Why does this test landing instead of taxi?
-
 
 class DLandTestCase(unittest.TestCase):
+    """
+    Test 2DOF landing group
+    """
+
     def setUp(self):
 
         self.prob = om.Problem()
 
         options = get_option_defaults()
-        default_mission_subsystems = get_default_mission_subsystems(
-            'GASP', build_engine_deck(options))
+        engine = build_engine_deck(options)
+        core_subsystems = get_default_mission_subsystems('GASP', engine)
 
         self.prob.model = LandingSegment(
-            aviary_options=options, core_subsystems=default_mission_subsystems)
+            aviary_options=options, core_subsystems=core_subsystems)
 
     @unittest.skipIf(version.parse(openmdao.__version__) < version.parse("3.26"), "Skipping due to OpenMDAO version being too low (<3.26)")
     def test_dland(self):
@@ -69,3 +71,6 @@ class DLandTestCase(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+    # test = DLandTestCase()
+    # test.setUp()
+    # test.test_dland()

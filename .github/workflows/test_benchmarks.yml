@@ -33,12 +33,13 @@ jobs:
         uses: ./actions/.github/actions/prepare_environment
         with:
             NAME: 'latest'
-            PY: 3
+            PY: 3.12
             NUMPY: 1
             SCIPY: 1
             PYOPTSPARSE: 'v2.9.1'
             SNOPT: '7.7'
-            OPENMDAO: 'latest'
+            #OPENMDAO: 'latest'
+            OPENMDAO: '3.34.2'
             DYMOS: 'latest'
             SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
             SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}

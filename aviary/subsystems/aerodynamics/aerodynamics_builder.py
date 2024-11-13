@@ -14,16 +14,6 @@ import numpy as np
 import openmdao.api as om
 from dymos.utils.misc import _unspecified
 
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic
-
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
-from aviary.subsystems.aerodynamics.flops_based.aero_report import AeroReport
-from aviary.subsystems.aerodynamics.flops_based.design import Design
-from aviary.subsystems.aerodynamics.gasp_based.premission_aero import PreMissionAero
-from aviary.subsystems.aerodynamics.gasp_based.gaspaero import CruiseAero
-from aviary.subsystems.aerodynamics.gasp_based.gaspaero import LowSpeedAero
-from aviary.subsystems.aerodynamics.gasp_based.table_based import TabularCruiseAero
-from aviary.subsystems.aerodynamics.gasp_based.table_based import TabularLowSpeedAero
 from aviary.subsystems.aerodynamics.flops_based.computed_aero_group import \
     ComputedAeroGroup
 from aviary.subsystems.aerodynamics.flops_based.takeoff_aero_group import \
@@ -32,9 +22,18 @@ from aviary.subsystems.aerodynamics.flops_based.solved_alpha_group import \
     SolvedAlphaGroup
 from aviary.subsystems.aerodynamics.flops_based.tabular_aero_group import \
     TabularAeroGroup
+from aviary.subsystems.aerodynamics.flops_based.drag_polar import DragPolar
+from aviary.subsystems.aerodynamics.flops_based.design import Design
+from aviary.subsystems.aerodynamics.gasp_based.premission_aero import PreMissionAero
+from aviary.subsystems.aerodynamics.gasp_based.gaspaero import CruiseAero
+from aviary.subsystems.aerodynamics.gasp_based.gaspaero import LowSpeedAero
+from aviary.subsystems.aerodynamics.gasp_based.table_based import TabularCruiseAero
+from aviary.subsystems.aerodynamics.gasp_based.table_based import TabularLowSpeedAero
+from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.utils.named_values import NamedValues
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 
 
 GASP = LegacyCode.GASP
@@ -44,6 +43,19 @@ _default_name = 'aerodynamics'
 
 
 class AerodynamicsBuilderBase(SubsystemBuilderBase):
+    """
+    Base class of aerodynamics builder
+
+    Methods
+    -------
+    __init__(self, name=None, meta_data=None):
+        Initializes the AerodynamicsBuilderBase object with a given name.
+    mission_inputs(self, **kwargs) -> list:
+        Return mission inputs.
+    mission_outputs(self, **kwargs) -> list:
+        Return mission outputs.
+    """
+
     def __init__(self, name=None, meta_data=None):
         if name is None:
             name = _default_name
@@ -58,6 +70,25 @@ class AerodynamicsBuilderBase(SubsystemBuilderBase):
 
 
 class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
+    """
+    Core aerodynamics builder.
+
+    Method
+    ------
+    build_pre_mission()
+        Build pre-mission.
+    build_mission()
+        Build mission.
+    mission_inputs()
+        Return mission inputs.
+    mission_outputs()
+        Return mission outputs.
+    get_parameters()
+        Return a dictionary of fixed values for the subsystem.
+    report()
+        Generate the report for Aviary core aerodynamics analysis.
+    """
+
     def __init__(self, name=None, meta_data=None, code_origin=None):
         if name is None:
             name = 'core_aerodynamics'
@@ -76,16 +107,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
             aero_group = PreMissionAero(aviary_options=aviary_inputs)
 
         elif code_origin is FLOPS:
-            aero_group = om.Group()
-            aero_group.add_subsystem(
-                'design', Design(aviary_options=aviary_inputs),
-                promotes_inputs=['*'],
-                promotes_outputs=['*'])
-
-            aero_group.add_subsystem(
-                'aero_report', AeroReport(aviary_options=aviary_inputs),
-                promotes_inputs=['*'],
-                promotes_outputs=['*'])
+            aero_group = Design(aviary_options=aviary_inputs)
 
         return aero_group
 
@@ -166,6 +188,12 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                                  '(cruise, low_speed)')
 
         return aero_group
+
+    # TODO DragPolar comp is unfinished and currently does nothing
+    # def build_post_mission(self, aviary_inputs, **kwargs):
+    #     aero_group = DragPolar(aviary_options=aviary_inputs),
+
+    #     return aero_group
 
     def mission_inputs(self, **kwargs):
         method = kwargs['method']
@@ -364,6 +392,26 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                 for var in ENGINE_SIZED_INPUTS:
                     params[var] = {'shape': (num_engine_type, ), 'static_target': True}
 
+            elif method == 'tabular':
+
+                for var in TABULAR_CORE_INPUTS:
+
+                    meta = _MetaData[var]
+
+                    val = meta['default_value']
+                    if val is None:
+                        val = _unspecified
+                    units = meta['units']
+
+                    if var in aviary_inputs:
+                        try:
+                            val = aviary_inputs.get_val(var, units)
+                        except TypeError:
+                            val = aviary_inputs.get_val(var)
+
+                    params[var] = {'val': val,
+                                   'static_target': True}
+
             elif method == "low_speed":
 
                 for var in LOW_SPEED_CORE_INPUTS:
@@ -413,6 +461,23 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                                'static_target': True}
 
         return params
+
+    def get_bus_variables(self):
+        if self.code_origin is GASP:
+            return {
+                "interference_independent_of_shielded_area": {
+                    "mission_name": ['interference_independent_of_shielded_area'],
+                    # "post_mission_name": ['interference_independent_of_shielded_area'],
+                    "units": "unitless",
+                },
+                "drag_loss_due_to_shielded_wing_area": {
+                    "mission_name": ['drag_loss_due_to_shielded_wing_area'],
+                    # "post_mission_name": ['drag_loss_due_to_shielded_wing_area'],
+                    "units": "unitless",
+                },
+            }
+        else:
+            return {}
 
     def report(self, prob, reports_folder, **kwargs):
         """
@@ -475,6 +540,10 @@ COMPUTED_CORE_INPUTS = [
     Mission.Design.MACH,
 ]
 
+TABULAR_CORE_INPUTS = [
+    Aircraft.Wing.AREA,
+]
+
 # Parameters for low speed aero.
 LOW_SPEED_CORE_INPUTS = [
     Aircraft.Wing.AREA,
@@ -504,7 +573,6 @@ AERO_2DOF_INPUTS = [
     Aircraft.Fuselage.WETTED_AREA,
     Aircraft.HorizontalTail.AREA,
     Aircraft.HorizontalTail.AVERAGE_CHORD,
-    Aircraft.HorizontalTail.FORM_FACTOR,
     Aircraft.HorizontalTail.MOMENT_RATIO,
     Aircraft.HorizontalTail.SPAN,
     Aircraft.HorizontalTail.SWEEP,
@@ -517,13 +585,10 @@ AERO_2DOF_INPUTS = [
     Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR,
     Aircraft.VerticalTail.AREA,
     Aircraft.VerticalTail.AVERAGE_CHORD,
-    Aircraft.VerticalTail.FORM_FACTOR,
     Aircraft.VerticalTail.SPAN,
     Aircraft.Wing.AVERAGE_CHORD,
     Aircraft.Wing.AREA,
     Aircraft.Wing.ASPECT_RATIO,
-    Aircraft.Wing.CENTER_DISTANCE,
-    Aircraft.Wing.FORM_FACTOR,
     Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR,
     Aircraft.Wing.MAX_THICKNESS_LOCATION,
     Aircraft.Wing.MIN_PRESSURE_LOCATION,
@@ -531,8 +596,6 @@ AERO_2DOF_INPUTS = [
     Aircraft.Wing.SPAN,
     Aircraft.Wing.SWEEP,
     Aircraft.Wing.TAPER_RATIO,
-    Aircraft.Wing.THICKNESS_TO_CHORD_TIP,
-    Aircraft.Wing.THICKNESS_TO_CHORD_ROOT,
     Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED,
     Aircraft.Wing.ZERO_LIFT_ANGLE,
 ]

@@ -5,6 +5,10 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class CLmaxCalculation(om.ExplicitComponent):
+    """
+    CL_max calculation for GASP-based aerodynamics
+    """
+
     def setup(self):
 
         # inputs
@@ -113,7 +117,7 @@ class CLmaxCalculation(om.ExplicitComponent):
         self.add_input("fus_lift", val=0.05498, units='unitless',
                        desc="DELCLF: fuselage lift increment")
         self.add_input(
-            "kinematic_viscosity",
+            Dynamic.Mission.KINEMATIC_VISCOSITY,
             val=0.15723e-03,
             units="ft**2/s",
             desc="XKV: kinematic viscosity",
@@ -193,7 +197,7 @@ class CLmaxCalculation(om.ExplicitComponent):
         self.declare_partials(
             "reynolds",
             [
-                "kinematic_viscosity",
+                Dynamic.Mission.KINEMATIC_VISCOSITY,
                 Dynamic.Mission.SPEED_OF_SOUND,
                 Aircraft.Wing.AVERAGE_CHORD,
                 Dynamic.Mission.STATIC_PRESSURE,
@@ -243,7 +247,7 @@ class CLmaxCalculation(om.ExplicitComponent):
         wing_loading = inputs[Aircraft.Wing.LOADING]
         P = inputs[Dynamic.Mission.STATIC_PRESSURE]
         avg_chord = inputs[Aircraft.Wing.AVERAGE_CHORD]
-        kinematic_viscosity = inputs["kinematic_viscosity"]
+        kinematic_viscosity = inputs[Dynamic.Mission.KINEMATIC_VISCOSITY]
         max_lift_reference = inputs[Aircraft.Wing.MAX_LIFT_REF]
         leading_lift_increment = inputs[Aircraft.Wing.SLAT_LIFT_INCREMENT_OPTIMUM]
         fus_lift = inputs["fus_lift"]

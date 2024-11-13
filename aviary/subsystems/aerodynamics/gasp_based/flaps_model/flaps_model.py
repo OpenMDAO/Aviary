@@ -15,7 +15,9 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 class FlapsGroup(om.Group):
     """
-    Group connecting four components of the flaps model.
+    Group connecting four components of the flaps model. They are: BasicFlapsCalculations,
+    CLmaxCalculation, MetaModelGroup, and LiftAndDragIncrements. Then, a non-linear solver
+    is provided.
     """
 
     def initialize(self):
@@ -56,7 +58,7 @@ class FlapsGroup(om.Group):
             promotes_inputs=[
                 Dynamic.Mission.SPEED_OF_SOUND,
                 Dynamic.Mission.STATIC_PRESSURE,
-                "kinematic_viscosity",
+                Dynamic.Mission.KINEMATIC_VISCOSITY,
                 "VLAM1",
                 "VLAM2",
                 "VLAM3",

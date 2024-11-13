@@ -22,6 +22,9 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class ComputedAeroGroup(om.Group):
+    """
+    FLOPS-based computed aero group
+    """
 
     def initialize(self):
         self.options.declare(
@@ -148,6 +151,9 @@ class ComputedAeroGroup(om.Group):
 
 
 class ComputedDrag(om.Group):
+    """
+    FLOPS-based computed drag group
+    """
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)

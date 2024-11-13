@@ -6,11 +6,15 @@ from openmdao.utils.assert_utils import (assert_check_partials,
                                          assert_near_equal)
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.mission.gasp_based.phases.breguet import RangeComp
+from aviary.mission.gasp_based.ode.breguet_cruise_eom import RangeComp
 from aviary.variable_info.variables import Dynamic
 
 
 class TestBreguetResults(unittest.TestCase):
+    """
+    Test cruise range and time in RangeComp component
+    """
+
     def setUp(self):
         nn = 10
 
@@ -80,6 +84,36 @@ class TestBreguetPartials(unittest.TestCase):
             self.prob.model.list_outputs(prom_name=True, print_arrays=True)
             partial_data = self.prob.check_partials(method="cs")  # , out_stream=None)
         assert_check_partials(partial_data, atol=tol, rtol=tol)
+
+
+class TestBreguetPartials2(unittest.TestCase):
+    """
+    Test mass-weight conversion
+    """
+
+    def setUp(self):
+        import aviary.mission.gasp_based.ode.breguet_cruise_eom as breguet
+        breguet.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.mission.gasp_based.ode.breguet_cruise_eom as breguet
+        breguet.GRAV_ENGLISH_LBM = 1.0
+
+    def test_partials(self):
+        nn = 2
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "range_comp", RangeComp(num_nodes=nn), promotes=["*"])
+        prob.model.set_input_defaults(
+            "TAS_cruise", 458.8 + 50 * np.random.rand(nn,), units="kn")
+        prob.model.set_input_defaults(
+            "mass", np.linspace(171481, 171481 - 10000, nn), units="lbm")
+        prob.model.set_input_defaults(
+            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, -5870 * np.ones(nn,), units="lbm/h")
+        prob.setup(check=False, force_alloc_complex=True)
+
+        partial_data = prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
 class TestBreguetResults(unittest.TestCase):

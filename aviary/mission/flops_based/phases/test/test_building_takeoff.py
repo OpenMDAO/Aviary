@@ -1,5 +1,4 @@
 import unittest
-import numpy as np
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
@@ -9,6 +8,10 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 
 class TakeoffPhaseTest(unittest.TestCase):
+    """
+    Test takeoff phase builder
+    """
+
     def test_case1(self):
         takeoff_options = Takeoff(
             airport_altitude=0,  # ft

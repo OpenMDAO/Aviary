@@ -8,24 +8,26 @@ from openmdao.core.driver import Driver
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
-from aviary.subsystems.premission import CorePreMission
-
-from aviary.utils.functions import \
-    set_aviary_initial_values, set_aviary_input_defaults
-
 from aviary.models.N3CC.N3CC_data import (
-    inputs as _inputs, outputs as _outputs,
+    inputs as _inputs,
     landing_trajectory_builder as _landing_trajectory_builder,
     landing_fullstop_user_options as _landing_fullstop_user_options)
 
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
+from aviary.utils.functions import \
+    set_aviary_initial_values, set_aviary_input_defaults
 from aviary.utils.preprocessors import preprocess_options
+from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 @use_tempdirs
 class TestFLOPSDetailedLanding(unittest.TestCase):
+    """
+    Test detailed landing using N3CC data
+    """
+
     # @require_pyoptsparse(optimizer='IPOPT')
     # def bench_test_IPOPT(self):
     #     driver = om.pyOptSparseDriver()
@@ -76,10 +78,12 @@ class TestFLOPSDetailedLanding(unittest.TestCase):
         # Upstream static analysis for aero
         landing.model.add_subsystem(
             'pre_mission',
-            CorePreMission(aviary_options=aviary_options,
-                           subsystems=default_premission_subsystems),
-            promotes_inputs=['aircraft:*', 'mission:*'],
-            promotes_outputs=['aircraft:*', 'mission:*'])
+            CorePreMission(
+                aviary_options=aviary_options, subsystems=default_premission_subsystems
+            ),
+            promotes_inputs=['aircraft:*'],
+            promotes_outputs=['aircraft:*', 'mission:*'],
+        )
 
         # Instantiate the trajectory and add the phases
         traj = dm.Trajectory()

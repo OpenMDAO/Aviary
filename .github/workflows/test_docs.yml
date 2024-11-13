@@ -14,7 +14,7 @@ on:
   # Allow running the workflow manually from the Actions tab
   workflow_dispatch:
 
-      
+
 jobs:
 
   latest_docs:
@@ -28,22 +28,23 @@ jobs:
           sparse-checkout: |
             .github/actions
           path: actions
-    
+
       - name: prepare_docs_environment
         uses: ./actions/.github/actions/prepare_environment
         with:
             NAME: 'latest'
-            PY: 3
+            PY: 3.12
             NUMPY: 1
             SCIPY: 1
             PYOPTSPARSE: 'v2.9.1'
             SNOPT: '7.7'
-            OPENMDAO: 'latest'
-            DYMOS: 'latest'  
+            #OPENMDAO: 'latest'
+            OPENMDAO: '3.34.2'
+            DYMOS: 'latest'
             SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
             SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
             SNOPT_LOCATION_77: ${{ secrets.SNOPT_LOCATION_77 }}
-  
+
       - name: Check docs linting
         shell: bash -l {0}
         run: |
@@ -51,7 +52,7 @@ jobs:
           echo "Lint the docs"
           echo "============================================================="
           python aviary/docs/tests/check_jupyter_output_linting.py
-  
+
       - name: Build docs
         id: build_docs
         shell: bash -l {0}
