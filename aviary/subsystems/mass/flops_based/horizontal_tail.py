@@ -20,7 +20,7 @@ class HorizontalTailMass(om.ExplicitComponent):
     def setup(self):
         add_aviary_input(self, Aircraft.HorizontalTail.AREA, val=0.0)
 
-        add_aviary_input(self, Aircraft.HorizontalTail.TAPER_RATIO, val=0.0)
+        add_aviary_input(self, Aircraft.HorizontalTail.TAPER_RATIO, val=0.352)
 
         add_aviary_input(self, Mission.Design.GROSS_MASS, val=0.0)
 
