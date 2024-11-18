@@ -269,6 +269,7 @@ class PayloadMass(om.ExplicitComponent):
 
     def setup(self):
         add_aviary_input(self, Aircraft.CrewPayload.CARGO_MASS, val=10040)
+        add_aviary_input(self, Aircraft.CrewPayload.Design.CARGO_MASS, val=10040)
 
         add_aviary_output(self, Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, val=0)
 
