@@ -2,7 +2,7 @@ from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
 from aviary.mission.gasp_based.ode.base_ode import BaseODE
 from aviary.mission.gasp_based.ode.params import ParamPort
-from aviary.mission.gasp_based.phases.landing_components import (
+from aviary.mission.gasp_based.ode.landing_eom import (
     GlideConditionComponent, LandingAltitudeComponent,
     LandingGroundRollComponent)
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase

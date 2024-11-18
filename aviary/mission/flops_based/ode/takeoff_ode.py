@@ -198,6 +198,7 @@ class TakeoffODE(om.Group):
                 v={'units': 'm/s', 'shape': nn},
                 # NOTE: FLOPS detailed takeoff stall speed is not dynamic - see above
                 v_stall={'units': 'm/s', 'shape': nn},
+                has_diag_partials=True,
             ),
             promotes_inputs=[('v', Dynamic.Mission.VELOCITY), 'v_stall'],
             promotes_outputs=['v_over_v_stall'],
