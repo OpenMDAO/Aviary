@@ -684,7 +684,19 @@ add_meta_data(
                                 ]
                      },
     units='lbm',
-    desc='total mass of cargo'
+    desc='total mass of as-flown cargo'
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.Design.CARGO_MASS,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='lbm',
+    desc='total mass of cargo for the design mission',
+    default_value=10040,
 )
 
 add_meta_data(

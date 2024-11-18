@@ -1237,7 +1237,7 @@ class FuelMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, val=36000)
 
         self.add_input(
-            "payload_mass_max",
+            "payload_mass",
             val=46040,
             units="lbm",
             desc="WPLMAX: maximum payload that the aircraft is being asked to carry (design payload + cargo)",
@@ -1265,6 +1265,7 @@ class FuelMass(om.ExplicitComponent):
                 Aircraft.Design.FIXED_EQUIPMENT_MASS,
                 Aircraft.Design.FIXED_USEFUL_LOAD,
                 "payload_mass_des",
+                "payload_mass",
                 Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER,
                 Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT,
                 Aircraft.Fuel.DENSITY,
@@ -1297,7 +1298,7 @@ class FuelMass(om.ExplicitComponent):
                 Aircraft.Controls.TOTAL_MASS,
                 Aircraft.Design.FIXED_EQUIPMENT_MASS,
                 Aircraft.Design.FIXED_USEFUL_LOAD,
-                "payload_mass_max",
+                "payload_mass_des",
                 Aircraft.Fuel.FUEL_SYSTEM_MASS,
             ],
             val=-1,
@@ -1318,9 +1319,7 @@ class FuelMass(om.ExplicitComponent):
         CK21 = inputs[Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER]
         c_mass_trend_fuel_sys = inputs[Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT]
         rho_fuel = inputs[Aircraft.Fuel.DENSITY] * GRAV_ENGLISH_LBM
-        payload_wt = inputs[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS] * \
-            GRAV_ENGLISH_LBM
-        payload_wt_max = inputs["payload_mass_max"] * GRAV_ENGLISH_LBM
+        payload_wt = inputs["payload_mass"] * GRAV_ENGLISH_LBM
         fuel_margin = inputs[Aircraft.Fuel.FUEL_MARGIN]
 
         outputs[Mission.Design.FUEL_MASS] = (
@@ -1354,7 +1353,7 @@ class FuelMass(om.ExplicitComponent):
             - control_wt
             - fixed_equip_wt
             - useful_wt
-            - payload_wt_max
+            - payload_wt_des
             - fuel_sys_wt
         ) / GRAV_ENGLISH_LBM
 
@@ -1373,9 +1372,7 @@ class FuelMass(om.ExplicitComponent):
         CK21 = inputs[Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER]
         c_mass_trend_fuel_sys = inputs[Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT]
         rho_fuel = inputs[Aircraft.Fuel.DENSITY] * GRAV_ENGLISH_LBM
-        payload_wt = inputs[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS] * \
-            GRAV_ENGLISH_LBM
-        payload_wt_max = inputs["payload_mass_max"] * GRAV_ENGLISH_LBM
+        payload_wt = inputs["payload_mass"] * GRAV_ENGLISH_LBM
         fuel_margin = inputs[Aircraft.Fuel.FUEL_MARGIN]
 
         J[Mission.Design.FUEL_MASS, Mission.Design.GROSS_MASS] = 1 / (
@@ -1531,7 +1528,7 @@ class FuelMassGroup(om.Group):
         ]
         higher_level_inputs3 = [
             "payload_mass_des",
-            "payload_mass_max",
+            "payload_mass",
             "eng_comb_mass",
         ]
 

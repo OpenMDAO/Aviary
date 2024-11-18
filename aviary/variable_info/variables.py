@@ -133,6 +133,7 @@ class Aircraft:
             NUM_FIRST_CLASS = 'aircraft:crew_and_payload:design:num_first_class'
             NUM_TOURIST_CLASS = 'aircraft:crew_and_payload:design:num_tourist_class'
             NUM_PASSENGERS = 'aircraft:crew_and_payload:design:num_passengers'
+            CARGO_MASS = 'aircraft:crew_and_payload:design:cargo_mass'
 
     class Design:
         # These variables are values that do not fall into a particular aircraft
