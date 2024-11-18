@@ -9,7 +9,6 @@ To modify the docs, simply add a file to the repo within the docs folder.
 You can then add it to the `docs/_toc.yml` file following the structure for the skeletal outline.
 
 You can then run the `build_book.sh` bash script using the `sh build_book.sh` command to build the docs.
-Currently, they are not hosted publicly online.
 To view the docs you must build them locally.
 The built docs live at `..Aviary/aviary/docs/_build/html/intro.html`.
 Navigate to this file in your file manager once you have built the docs, and you can open it from there to your favorite internet browser.
@@ -57,3 +56,7 @@ When writing docs, please
 - write each sentence on a new line (this helps make diffs more clear)
 - use the active voice
 - consider the audience of the particular section you're writing
+
+## Doc Testing
+
+To ensure that doc pages don't get out of date when changes are made to the code, we have added [several utilities](./doctape) to allow developers to add tests into their documentation pages.
