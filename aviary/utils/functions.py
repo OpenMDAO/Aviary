@@ -469,7 +469,7 @@ def get_path(path: Union[str, Path], verbose: bool = False) -> Path:
     # If the path still doesn't exist, attempt to find it in the models directory.
     if not path.exists():
         try:
-            hangar_based_path = get_model(original_path)
+            hangar_based_path = get_model(original_path, verbose=verbose)
             if verbose:
                 print(
                     f"Unable to locate '{aviary_based_path}' as an Aviary package path, checking built-in models")

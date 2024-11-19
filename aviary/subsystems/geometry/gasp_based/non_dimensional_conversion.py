@@ -73,7 +73,7 @@ class FoldCalcs(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.SPAN, val=0)
 
         if self.options[Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED]:
-            add_aviary_input(self, Aircraft.Wing.FOLDED_SPAN, val=0)
+            add_aviary_input(self, Aircraft.Wing.FOLDED_SPAN, val=25)
             add_aviary_output(self, Aircraft.Wing.FOLDED_SPAN_DIMENSIONLESS, val=0)
         else:
             add_aviary_input(self, Aircraft.Wing.FOLDED_SPAN_DIMENSIONLESS, val=0)

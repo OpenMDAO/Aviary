@@ -14,7 +14,7 @@ class GearboxBuilder(SubsystemBuilderBase):
     the subsystem.
 
     This is meant to be computations for a single gearbox, so there is no notion
-    of "num_gearboxs" in this code.
+    of "num_gearboxes" in this code.
 
     This is a reduction gearbox, so gear ratio is input_RPM/output_RPM.
     """
@@ -87,17 +87,17 @@ class GearboxBuilder(SubsystemBuilderBase):
 
     def get_outputs(self):
         return [
-            Dynamic.Mission.RPM_GEARBOX,
-            Dynamic.Mission.SHAFT_POWER_GEARBOX,
-            Dynamic.Mission.SHAFT_POWER_MAX_GEARBOX,
-            Dynamic.Mission.TORQUE_GEARBOX,
-            Mission.Constraints.SHAFT_POWER_RESIDUAL,
+            Dynamic.Mission.SHAFT_POWER + '_out',
+            Dynamic.Mission.SHAFT_POWER_MAX + '_out',
+            Dynamic.Mission.RPM + '_out',
+            Dynamic.Mission.TORQUE + '_out',
+            Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL,
         ]
 
     def get_constraints(self):
         if self.include_constraints:
             constraints = {
-                Mission.Constraints.SHAFT_POWER_RESIDUAL: {
+                Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL: {
                     'lower': 0.0,
                     'type': 'path',
                     'units': 'kW',
