@@ -36,7 +36,9 @@ class GlideConditionComponent(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input("rho_app", val=0.0, units="slug/ft**3", desc="air density")
+        self.add_input(
+            Dynamic.Mission.DENSITY, val=0.0, units="slug/ft**3", desc="air density"
+        )
         add_aviary_input(self, Mission.Landing.MAXIMUM_SINK_RATE, val=900.0)
         self.add_input(Dynamic.Mission.MASS, val=0.0, units="lbm",
                        desc="aircraft mass at start of landing")
@@ -94,19 +96,34 @@ class GlideConditionComponent(om.ExplicitComponent):
 
         self.declare_partials(
             Mission.Landing.INITIAL_VELOCITY,
-            [Dynamic.Mission.MASS, Aircraft.Wing.AREA, "CL_max", "rho_app",
-                Mission.Landing.GLIDE_TO_STALL_RATIO],
+            [
+                Dynamic.Mission.MASS,
+                Aircraft.Wing.AREA,
+                "CL_max",
+                Dynamic.Mission.DENSITY,
+                Mission.Landing.GLIDE_TO_STALL_RATIO,
+            ],
         )
         self.declare_partials(
-            Mission.Landing.STALL_VELOCITY, [
-                Dynamic.Mission.MASS, Aircraft.Wing.AREA, "CL_max", "rho_app"]
+            Mission.Landing.STALL_VELOCITY,
+            [
+                Dynamic.Mission.MASS,
+                Aircraft.Wing.AREA,
+                "CL_max",
+                Dynamic.Mission.DENSITY,
+            ],
         )
         self.declare_partials(
             "TAS_touchdown",
-            [Mission.Landing.GLIDE_TO_STALL_RATIO, Dynamic.Mission.MASS,
-                Aircraft.Wing.AREA, "CL_max", "rho_app"],
+            [
+                Mission.Landing.GLIDE_TO_STALL_RATIO,
+                Dynamic.Mission.MASS,
+                Aircraft.Wing.AREA,
+                "CL_max",
+                Dynamic.Mission.DENSITY,
+            ],
         )
-        self.declare_partials("density_ratio", ["rho_app"])
+        self.declare_partials("density_ratio", [Dynamic.Mission.DENSITY])
         self.declare_partials("wing_loading_land", [
                               Dynamic.Mission.MASS, Aircraft.Wing.AREA])
         self.declare_partials(
@@ -116,7 +133,7 @@ class GlideConditionComponent(om.ExplicitComponent):
                 Dynamic.Mission.MASS,
                 Aircraft.Wing.AREA,
                 "CL_max",
-                "rho_app",
+                Dynamic.Mission.DENSITY,
                 Mission.Landing.GLIDE_TO_STALL_RATIO,
             ],
         )
@@ -128,7 +145,7 @@ class GlideConditionComponent(om.ExplicitComponent):
                 Dynamic.Mission.MASS,
                 Aircraft.Wing.AREA,
                 "CL_max",
-                "rho_app",
+                Dynamic.Mission.DENSITY,
                 Mission.Landing.GLIDE_TO_STALL_RATIO,
             ],
         )
@@ -140,7 +157,7 @@ class GlideConditionComponent(om.ExplicitComponent):
                 Dynamic.Mission.MASS,
                 Aircraft.Wing.AREA,
                 "CL_max",
-                "rho_app",
+                Dynamic.Mission.DENSITY,
                 Mission.Landing.GLIDE_TO_STALL_RATIO,
                 Mission.Landing.MAXIMUM_SINK_RATE,
             ],
@@ -152,7 +169,7 @@ class GlideConditionComponent(om.ExplicitComponent):
                 Dynamic.Mission.MASS,
                 Aircraft.Wing.AREA,
                 "CL_max",
-                "rho_app",
+                Dynamic.Mission.DENSITY,
                 Mission.Landing.BRAKING_DELAY,
             ],
         )
@@ -165,7 +182,7 @@ class GlideConditionComponent(om.ExplicitComponent):
                 Dynamic.Mission.MASS,
                 Aircraft.Wing.AREA,
                 "CL_max",
-                "rho_app",
+                Dynamic.Mission.DENSITY,
                 Mission.Landing.GLIDE_TO_STALL_RATIO,
             ],
         )
@@ -274,9 +291,9 @@ class GlideConditionComponent(om.ExplicitComponent):
         J[Mission.Landing.INITIAL_VELOCITY, "CL_max"] = dTasGlide_dClMax = (
             dTasStall_dClMax * glide_to_stall_ratio
         )
-        J[Mission.Landing.INITIAL_VELOCITY, "rho_app"] = dTasGlide_dRhoApp = (
-            dTasStall_dRhoApp * glide_to_stall_ratio
-        )
+        J[Mission.Landing.INITIAL_VELOCITY, Dynamic.Mission.DENSITY] = (
+            dTasGlide_dRhoApp
+        ) = (dTasStall_dRhoApp * glide_to_stall_ratio)
         J[Mission.Landing.INITIAL_VELOCITY,
             Mission.Landing.GLIDE_TO_STALL_RATIO] = TAS_stall
 
@@ -284,7 +301,7 @@ class GlideConditionComponent(om.ExplicitComponent):
             dTasStall_dWeight * GRAV_ENGLISH_LBM
         J[Mission.Landing.STALL_VELOCITY, Aircraft.Wing.AREA] = dTasStall_dWingArea
         J[Mission.Landing.STALL_VELOCITY, "CL_max"] = dTasStall_dClMax
-        J[Mission.Landing.STALL_VELOCITY, "rho_app"] = dTasStall_dRhoApp
+        J[Mission.Landing.STALL_VELOCITY, Dynamic.Mission.DENSITY] = dTasStall_dRhoApp
 
         J["TAS_touchdown", Mission.Landing.GLIDE_TO_STALL_RATIO] = dTasTd_dGlideToStallRatio = (
             0.5 * TAS_stall
@@ -296,11 +313,11 @@ class GlideConditionComponent(om.ExplicitComponent):
         J["TAS_touchdown", "CL_max"] = dTasTd_dClMax = (
             touchdown_velocity_ratio * dTasStall_dClMax
         )
-        J["TAS_touchdown", "rho_app"] = dTasTd_dRhoApp = (
+        J["TAS_touchdown", Dynamic.Mission.DENSITY] = dTasTd_dRhoApp = (
             touchdown_velocity_ratio * dTasStall_dRhoApp
         )
 
-        J["density_ratio", "rho_app"] = 1 / RHO_SEA_LEVEL_ENGLISH
+        J["density_ratio", Dynamic.Mission.DENSITY] = 1 / RHO_SEA_LEVEL_ENGLISH
 
         J["wing_loading_land", Dynamic.Mission.MASS] = GRAV_ENGLISH_LBM / wing_area
         J["wing_loading_land", Aircraft.Wing.AREA] = -weight / wing_area**2
@@ -323,7 +340,7 @@ class GlideConditionComponent(om.ExplicitComponent):
             * (-rate_of_sink_max / (60.0 * TAS_glide**2))
             * dTasGlide_dClMax
         )
-        J["theta", "rho_app"] = dTheta_dRhoApp = (
+        J["theta", Dynamic.Mission.DENSITY] = dTheta_dRhoApp = (
             (1 - (rate_of_sink_max / (60.0 * TAS_glide)) ** 2) ** (-0.5)
             * (-rate_of_sink_max / (60.0 * TAS_glide**2))
             * dTasGlide_dRhoApp
@@ -361,7 +378,7 @@ class GlideConditionComponent(om.ExplicitComponent):
             * (1 / np.cos(theta)) ** 2
             * dTheta_dClMax
         )
-        J["glide_distance", "rho_app"] = (
+        J["glide_distance", Dynamic.Mission.DENSITY] = (
             -approach_alt
             / (np.tan(theta)) ** 2
             * (1 / np.cos(theta)) ** 2
@@ -475,7 +492,7 @@ class GlideConditionComponent(om.ExplicitComponent):
             dInter1_dWingArea * inter2 + inter1 * dInter2_dWingArea
         )
         J["tr_distance", "CL_max"] = dInter1_dClMax * inter2 + inter1 * dInter2_dClMax
-        J["tr_distance", "rho_app"] = (
+        J["tr_distance", Dynamic.Mission.DENSITY] = (
             dInter1_dRhoApp * inter2 + inter1 * dInter2_dRhoApp
         )
         J["tr_distance", Mission.Landing.GLIDE_TO_STALL_RATIO] = (
@@ -490,7 +507,7 @@ class GlideConditionComponent(om.ExplicitComponent):
             time_delay * dTasTd_dWeight * GRAV_ENGLISH_LBM
         J["delay_distance", Aircraft.Wing.AREA] = time_delay * dTasTd_dWingArea
         J["delay_distance", "CL_max"] = time_delay * dTasTd_dClMax
-        J["delay_distance", "rho_app"] = time_delay * dTasTd_dRhoApp
+        J["delay_distance", Dynamic.Mission.DENSITY] = time_delay * dTasTd_dRhoApp
         J["delay_distance", Mission.Landing.BRAKING_DELAY] = TAS_touchdown
 
         flare_alt = (
@@ -553,7 +570,7 @@ class GlideConditionComponent(om.ExplicitComponent):
                 * (2 * theta * dTheta_dClMax - 2 * gamma_touchdown * dGammaTd_dClMax)
             )
         )
-        J["flare_alt", "rho_app"] = (
+        J["flare_alt", Dynamic.Mission.DENSITY] = (
             1
             / (2.0 * G * (landing_flare_load_factor - 1.0))
             * (
