@@ -193,7 +193,7 @@ def _setup_level1_parser(parser):
         type=int,
         default=1,
         help="verbosity setting",
-        choices=(0,1,2,3))
+        choices=(0, 1, 2, 3))
 
 
 def _exec_level1(args, user_args):
