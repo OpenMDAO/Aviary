@@ -43,7 +43,7 @@ class MassPremission(om.Group):
         # output values from fixed_mass that are connected to fuel_mass via promotion
         fuel_mass_fixed_mass_values = [
             "payload_mass_des",
-            "payload_mass_max",
+            "payload_mass",
             "wing_mounted_mass",
             "eng_comb_mass",
         ]

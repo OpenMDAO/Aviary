@@ -269,6 +269,7 @@ class PayloadMass(om.ExplicitComponent):
 
     def setup(self):
         add_aviary_input(self, Aircraft.CrewPayload.CARGO_MASS, val=10040)
+        add_aviary_input(self, Aircraft.CrewPayload.Design.CARGO_MASS, val=10040)
 
         add_aviary_output(self, Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, val=0)
 
@@ -276,7 +277,7 @@ class PayloadMass(om.ExplicitComponent):
             "payload_mass_des", val=0, units="lbm", desc="WPLDES: design payload"
         )
         self.add_output(
-            "payload_mass_max",
+            "payload_mass",
             val=0,
             units="lbm",
             desc="WPLMAX: maximum payload that the aircraft is being asked to carry"
@@ -284,7 +285,7 @@ class PayloadMass(om.ExplicitComponent):
         )
 
         self.declare_partials(
-            "payload_mass_max", [
+            "payload_mass", [
                 Aircraft.CrewPayload.CARGO_MASS],
             val=1.0)
 
@@ -294,12 +295,15 @@ class PayloadMass(om.ExplicitComponent):
             Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS, units='lbm')
         PAX = aviary_options.get_val(
             Aircraft.CrewPayload.NUM_PASSENGERS, units='unitless')
+        PAX_des = aviary_options.get_val(
+            Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless')
         cargo_mass = inputs[Aircraft.CrewPayload.CARGO_MASS]
+        cargo_mass_des = inputs[Aircraft.CrewPayload.Design.CARGO_MASS]
 
         outputs[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS] = \
             payload_mass = pax_mass * PAX
-        outputs["payload_mass_des"] = payload_mass
-        outputs["payload_mass_max"] = pax_mass * PAX + cargo_mass
+        outputs["payload_mass_des"] = pax_mass * PAX_des + cargo_mass_des
+        outputs["payload_mass"] = pax_mass * PAX + cargo_mass
 
 
 class ElectricAugmentationMass(om.ExplicitComponent):
@@ -2488,7 +2492,7 @@ class FixedMassGroup(om.Group):
             "payload",
             PayloadMass(aviary_options=aviary_options),
             promotes_inputs=["aircraft:*"],
-            promotes_outputs=["payload_mass_des", "payload_mass_max", ] + ["aircraft:*"],
+            promotes_outputs=["payload_mass_des", "payload_mass", ] + ["aircraft:*"],
         )
 
         self.add_subsystem(
