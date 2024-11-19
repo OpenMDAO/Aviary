@@ -8,7 +8,7 @@ from aviary.constants import RHO_SEA_LEVEL_ENGLISH
 from aviary.mission.gasp_based.ode.landing_eom import (
     GlideConditionComponent, LandingAltitudeComponent,
     LandingGroundRollComponent)
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 
 
 class LandingAltTestCase(unittest.TestCase):
@@ -55,7 +55,7 @@ class GlideTestCase(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            "rho_app", RHO_SEA_LEVEL_ENGLISH, units="slug/ft**3"
+            Dynamic.Mission.DENSITY, RHO_SEA_LEVEL_ENGLISH, units="slug/ft**3"
         )  # value from online calculator
 
         self.prob.model.set_input_defaults(
@@ -137,7 +137,8 @@ class GlideTestCase2(unittest.TestCase):
         prob.model.add_subsystem(
             "group", GlideConditionComponent(), promotes=["*"])
         prob.model.set_input_defaults(
-            "rho_app", RHO_SEA_LEVEL_ENGLISH, units="slug/ft**3")
+            Dynamic.Mission.DENSITY, RHO_SEA_LEVEL_ENGLISH, units="slug/ft**3"
+        )
         prob.model.set_input_defaults(
             Mission.Landing.MAXIMUM_SINK_RATE, 900, units="ft/min")
         prob.model.set_input_defaults("mass", 165279, units="lbm")
