@@ -130,8 +130,6 @@ def run_level_1(
     #     kwargs['optimizer'] = 'IPOPT'
     # else:
     kwargs['optimizer'] = optimizer
-    import pdb
-    pdb.set_trace()
     kwargs['verbosity'] = Verbosity(verbosity)
 
     if isinstance(phase_info, str):
