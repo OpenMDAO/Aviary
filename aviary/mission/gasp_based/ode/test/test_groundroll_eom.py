@@ -16,19 +16,23 @@ class GroundrollEOMTestCase(unittest.TestCase):
             "group", GroundrollEOM(num_nodes=2), promotes=["*"]
         )
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.MASS, val=175400 * np.ones(2), units="lbm"
+            Dynamic.Vehicle.MASS, val=175400 * np.ones(2), units="lbm"
         )
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.THRUST_TOTAL, val=22000 * np.ones(2), units="lbf"
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL, val=22000 * np.ones(2), units="lbf"
         )
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.LIFT, val=200 * np.ones(2), units="lbf")
+            Dynamic.Vehicle.LIFT, val=200 * np.ones(2), units="lbf"
+        )
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.DRAG, val=10000 * np.ones(2), units="lbf")
+            Dynamic.Vehicle.DRAG, val=10000 * np.ones(2), units="lbf"
+        )
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.VELOCITY, val=10 * np.ones(2), units="ft/s")
+            Dynamic.Mission.VELOCITY, val=10 * np.ones(2), units="ft/s"
+        )
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(2), units="rad")
+            Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(2), units="rad"
+        )
         self.prob.model.set_input_defaults(Aircraft.Wing.INCIDENCE, val=0, units="deg")
         self.prob.model.set_input_defaults("alpha", val=np.zeros(2), units="deg")
 
@@ -40,14 +44,16 @@ class GroundrollEOMTestCase(unittest.TestCase):
         self.prob.run_model()
 
         assert_near_equal(
-            self.prob[Dynamic.Mission.VELOCITY_RATE], np.array(
-                [1.5597, 1.5597]), tol)
+            self.prob[Dynamic.Mission.VELOCITY_RATE],
+            np.array([1.5597, 1.5597]),
+            tol,
+        )
         assert_near_equal(
-            self.prob[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE], np.array(
-                [0.0, 0.0]), tol)
+            self.prob[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE], np.array([0.0, 0.0]), tol
+        )
         assert_near_equal(
-            self.prob[Dynamic.Mission.ALTITUDE_RATE], np.array(
-                [0.0, 0.0]), tol)
+            self.prob[Dynamic.Mission.ALTITUDE_RATE], np.array([0.0, 0.0]), tol
+        )
         assert_near_equal(
             self.prob[Dynamic.Mission.DISTANCE_RATE], np.array(
                 [10.0, 10.0]), tol)
@@ -80,15 +86,17 @@ class GroundrollEOMTestCase2(unittest.TestCase):
             "group", GroundrollEOM(num_nodes=2), promotes=["*"]
         )
         prob.model.set_input_defaults(
-            Dynamic.Mission.MASS, val=175400 * np.ones(2), units="lbm"
+            Dynamic.Vehicle.MASS, val=175400 * np.ones(2), units="lbm"
         )
         prob.model.set_input_defaults(
-            Dynamic.Mission.THRUST_TOTAL, val=22000 * np.ones(2), units="lbf"
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL, val=22000 * np.ones(2), units="lbf"
         )
         prob.model.set_input_defaults(
-            Dynamic.Mission.LIFT, val=200 * np.ones(2), units="lbf")
+            Dynamic.Vehicle.LIFT, val=200 * np.ones(2), units="lbf"
+        )
         prob.model.set_input_defaults(
-            Dynamic.Mission.DRAG, val=10000 * np.ones(2), units="lbf")
+            Dynamic.Vehicle.DRAG, val=10000 * np.ones(2), units="lbf"
+        )
         prob.model.set_input_defaults(
             Dynamic.Mission.VELOCITY, val=10 * np.ones(2), units="ft/s")
         prob.model.set_input_defaults(

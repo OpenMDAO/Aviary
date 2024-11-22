@@ -117,8 +117,8 @@ class MotorBuilder(SubsystemBuilderBase):
         '''
 
         return [
-            Dynamic.Mission.TORQUE,
-            Dynamic.Mission.SHAFT_POWER,
-            Dynamic.Mission.SHAFT_POWER_MAX,
-            Dynamic.Mission.ELECTRIC_POWER_IN,
+            Dynamic.Vehicle.Propulsion.TORQUE,
+            Dynamic.Vehicle.Propulsion.SHAFT_POWER,
+            Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX,
+            Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN,
         ]

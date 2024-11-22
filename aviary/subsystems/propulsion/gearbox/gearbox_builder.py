@@ -35,9 +35,9 @@ class GearboxBuilder(SubsystemBuilderBase):
     def get_design_vars(self):
         """
         Design vars are only tested to see if they exist in pre_mission
-        Returns a dictionary of design variables for the gearbox subsystem, where the keys are the 
-        names of the design variables, and the values are dictionaries that contain the units for 
-        the design variable, the lower and upper bounds for the design variable, and any 
+        Returns a dictionary of design variables for the gearbox subsystem, where the keys are the
+        names of the design variables, and the values are dictionaries that contain the units for
+        the design variable, the lower and upper bounds for the design variable, and any
         additional keyword arguments required by OpenMDAO for the design variable.
         """
 
@@ -47,7 +47,7 @@ class GearboxBuilder(SubsystemBuilderBase):
                 'units': 'unitless',
                 'lower': 1.0,
                 'upper': 20.0,
-                'val':  10  # initial value
+                'val': 10  # initial value
             },
             # This var appears in both mission and pre-mission
             Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN: {
@@ -63,9 +63,9 @@ class GearboxBuilder(SubsystemBuilderBase):
         """
         Parameters are only tested to see if they exist in mission.
         A value the doesn't change throught the mission mission
-        Returns a dictionary of fixed values for the gearbox subsystem, where the keys are the names 
-        of the fixed values, and the values are dictionaries that contain the fixed value for the 
-        variable, the units for the variable, and any additional keyword arguments required by 
+        Returns a dictionary of fixed values for the gearbox subsystem, where the keys are the names
+        of the fixed values, and the values are dictionaries that contain the fixed value for the
+        variable, the units for the variable, and any additional keyword arguments required by
         OpenMDAO for the variable.
 
         Returns
@@ -87,10 +87,10 @@ class GearboxBuilder(SubsystemBuilderBase):
 
     def get_outputs(self):
         return [
-            Dynamic.Mission.SHAFT_POWER + '_out',
-            Dynamic.Mission.SHAFT_POWER_MAX + '_out',
-            Dynamic.Mission.RPM + '_out',
-            Dynamic.Mission.TORQUE + '_out',
+            Dynamic.Vehicle.Propulsion.SHAFT_POWER + '_out',
+            Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX + '_out',
+            Dynamic.Vehicle.Propulsion.RPM + '_out',
+            Dynamic.Vehicle.Propulsion.TORQUE + '_out',
             Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL,
         ]
 

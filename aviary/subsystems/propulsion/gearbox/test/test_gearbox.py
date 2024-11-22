@@ -53,38 +53,38 @@ class TestGearbox(unittest.TestCase):
 
         prob.setup(force_alloc_complex=True)
 
-        prob.set_val(av.Dynamic.Mission.RPM + '_in', [5000, 6195, 6195], units='rpm')
-        prob.set_val(
-            av.Dynamic.Mission.SHAFT_POWER + '_in', [100, 200, 375], units='hp'
-        )
-        prob.set_val(
-            av.Dynamic.Mission.SHAFT_POWER_MAX + '_in', [375, 300, 375], units='hp'
-        )
+        prob.set_val(av.Dynamic.Vehicle.Propulsion.RPM + '_in',
+                     [5000, 6195, 6195], units='rpm')
+        prob.set_val(av.Dynamic.Vehicle.Propulsion.SHAFT_POWER + '_in',
+                     [100, 200, 375], units='hp')
+        prob.set_val(av.Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX + '_in',
+                     [375, 300, 375], units='hp')
         prob.set_val(av.Aircraft.Engine.Gearbox.GEAR_RATIO, 12.6, units=None)
         prob.set_val(av.Aircraft.Engine.Gearbox.EFFICIENCY, 0.98, units=None)
 
         prob.run_model()
 
-        SHAFT_POWER_GEARBOX = prob.get_val(
-            av.Dynamic.Mission.SHAFT_POWER + '_out', 'hp'
+        shaft_power = prob.get_val(
+            av.Dynamic.Vehicle.Propulsion.SHAFT_POWER + '_out', 'hp'
         )
-        RPM_GEARBOX = prob.get_val(av.Dynamic.Mission.RPM + '_out', 'rpm')
-        TORQUE_GEARBOX = prob.get_val(av.Dynamic.Mission.TORQUE + '_out', 'ft*lbf')
-        SHAFT_POWER_MAX_GEARBOX = prob.get_val(
-            av.Dynamic.Mission.SHAFT_POWER_MAX + '_out', 'hp'
+        rpm = prob.get_val(av.Dynamic.Vehicle.Propulsion.RPM + '_out', 'rpm')
+        torque = prob.get_val(
+            av.Dynamic.Vehicle.Propulsion.TORQUE + '_out', 'ft*lbf')
+        shaft_power_max = prob.get_val(
+            av.Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX + '_out', 'hp'
         )
 
-        SHAFT_POWER_GEARBOX_expected = [98.,  196.,  367.5]
-        RPM_GEARBOX_expected = [396.82539683, 491.66666667, 491.66666667]
-        TORQUE_GEARBOX_expected = [1297.0620786,  2093.72409783, 3925.73268342]
-        SHAFT_POWER_MAX_GEARBOX_expected = [367.5, 294.,  367.5]
+        shaft_power_expected = [98., 196., 367.5]
+        rpm_expected = [396.82539683, 491.66666667, 491.66666667]
+        torque_expected = [1297.0620786, 2093.72409783, 3925.73268342]
+        shaft_power_max_expected = [367.5, 294., 367.5]
 
-        assert_near_equal(SHAFT_POWER_GEARBOX,
-                          SHAFT_POWER_GEARBOX_expected, tolerance=1e-6)
-        assert_near_equal(RPM_GEARBOX, RPM_GEARBOX_expected, tolerance=1e-6)
-        assert_near_equal(TORQUE_GEARBOX, TORQUE_GEARBOX_expected, tolerance=1e-6)
-        assert_near_equal(SHAFT_POWER_MAX_GEARBOX,
-                          SHAFT_POWER_MAX_GEARBOX_expected, tolerance=1e-6)
+        assert_near_equal(shaft_power,
+                          shaft_power_expected, tolerance=1e-6)
+        assert_near_equal(rpm, rpm_expected, tolerance=1e-6)
+        assert_near_equal(torque, torque_expected, tolerance=1e-6)
+        assert_near_equal(shaft_power_max,
+                          shaft_power_max_expected, tolerance=1e-6)
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-9, rtol=1e-9)
