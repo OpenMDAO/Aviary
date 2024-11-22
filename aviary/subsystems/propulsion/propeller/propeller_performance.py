@@ -313,9 +313,12 @@ class OutMachs(om.ExplicitComponent):
         if out_type is OutMachType.HELICAL_MACH:
             mach = inputs["mach"]
             tip_mach = inputs["tip_mach"]
-            J["helical_mach", "mach"] = mach / np.sqrt(mach * mach + tip_mach * tip_mach)
-            J["helical_mach", "tip_mach"] = tip_mach / \
-                np.sqrt(mach * mach + tip_mach * tip_mach)
+            J["helical_mach", "mach"] = mach / np.sqrt(
+                mach * mach + tip_mach * tip_mach
+            )
+            J["helical_mach", "tip_mach"] = tip_mach / np.sqrt(
+                mach * mach + tip_mach * tip_mach
+            )
         elif out_type is OutMachType.MACH:
             tip_mach = inputs["tip_mach"]
             helical_mach = inputs["helical_mach"]

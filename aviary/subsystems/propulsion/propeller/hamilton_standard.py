@@ -579,6 +579,7 @@ class PreHamiltonStandard(om.ExplicitComponent):
         outputs['tip_mach'] = tipspd / sos
         outputs['advance_ratio'] = math.pi * vtas / tipspd
         # TODO back out what is going on with unit conversion factor 10e10/(2*6966)
+
         outputs['power_coefficient'] = (
             shp
             * 10.0e10
@@ -776,7 +777,7 @@ class HamiltonStandard(om.ExplicitComponent):
                             CP_CLi_table[CL_tab_idx][:cli_len], XPCLI[CL_tab_idx], CPE1X)
                         if (run_flag == 1):
                             ichck = ichck + 1
-                        if verbosity >= Verbosity.DEBUG or ichck <= 1:
+                        if verbosity == Verbosity.DEBUG or ichck <= Verbosity.BRIEF:
                             if (run_flag == 1):
                                 warnings.warn(
                                     f"Mach = {inputs[Dynamic.Atmosphere.MACH][i_node]}\n"
@@ -819,9 +820,9 @@ class HamiltonStandard(om.ExplicitComponent):
                             "interp failed for CTT (thrust coefficient) in hamilton_standard.py")
                     if run_flag > 1:
                         NERPT = 2
-                        if verbosity >= Verbosity.DEBUG:
-                            print(
-                                f"ERROR IN PROP. PERF.-- NERPT={NERPT}, run_flag={run_flag}")
+                        print(
+                            f"ERROR IN PROP. PERF.-- NERPT={NERPT}, run_flag={run_flag}"
+                        )
 
                 BLLL[ibb], run_flag = _unint(
                     advance_ratio_array[J_begin:J_begin+4], BLL[J_begin:J_begin+4], inputs['advance_ratio'][i_node])
@@ -855,9 +856,10 @@ class HamiltonStandard(om.ExplicitComponent):
                         NERPT = 5
                         if (run_flag == 1):
                             # off lower bound only.
-                            if verbosity >= Verbosity.DEBUG:
-                                print(
-                                    f"ERROR IN PROP. PERF.-- NERPT={NERPT}, run_flag={run_flag}, il = {il}, kl = {kl}")
+                            print(
+                                f"ERROR IN PROP. PERF.-- NERPT={NERPT}, run_flag={
+                                    run_flag}, il = {il}, kl = {kl}"
+                            )
                         if (inputs['advance_ratio'][i_node] != 0.0):
                             ZMCRT, run_flag = _unint(
                                 advance_ratio_array2, mach_corr_table[CL_tab_idx], inputs['advance_ratio'][i_node])
@@ -911,7 +913,7 @@ class HamiltonStandard(om.ExplicitComponent):
                 xft, run_flag = _unint(num_blades_arr, XXXFT, num_blades)
 
             # NOTE this could be handled via the metamodel comps (extrapolate flag)
-            if verbosity >= Verbosity.DEBUG and ichck > 0:
+            if ichck > 0:
                 print(f"  table look-up error = {ichck} (if you go outside the tables.)")
 
             outputs['thrust_coefficient'][i_node] = ct

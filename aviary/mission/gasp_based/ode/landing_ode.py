@@ -1,3 +1,5 @@
+import numpy as np
+
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
 from aviary.mission.gasp_based.ode.base_ode import BaseODE
@@ -32,7 +34,9 @@ class LandingSegment(BaseODE):
                 Mission.Landing.OBSTACLE_HEIGHT,
                 Mission.Landing.AIRPORT_ALTITUDE,
             ],
-            promotes_outputs=[Mission.Landing.INITIAL_ALTITUDE],
+            promotes_outputs=[
+                (Mission.Landing.INITIAL_ALTITUDE, Dynamic.Mission.ALTITUDE)
+            ],
         )
 
         self.add_subsystem(
@@ -93,26 +97,18 @@ class LandingSegment(BaseODE):
 
             if isinstance(subsystem, PropulsionBuilderBase):
                 propulsion_system = subsystem.build_mission(
-                    num_nodes=1, aviary_inputs=aviary_options
-                )
+                    num_nodes=1, aviary_inputs=aviary_options)
                 propulsion_mission = self.add_subsystem(
                     subsystem.name,
                     propulsion_system,
                     promotes_inputs=[
                         "*",
-                        (
-                            Dynamic.Mission.ALTITUDE,
-                            Mission.Landing.INITIAL_ALTITUDE,
-                        ),
                         (Dynamic.Atmosphere.MACH, Mission.Landing.INITIAL_MACH),
                     ],
                     promotes_outputs=[
-                        (Dynamic.Vehicle.Propulsion.THRUST_TOTAL, "thrust_idle")
-                    ],
+                        (Dynamic.Vehicle.Propulsion.THRUST_TOTAL, "thrust_idle")],
                 )
-                propulsion_mission.set_input_defaults(
-                    Dynamic.Vehicle.Propulsion.THROTTLE, 0.0
-                )
+                propulsion_mission.set_input_defaults(Dynamic.Mission.THROTTLE, 0.0)
 
         self.add_subsystem(
             "glide",
@@ -147,7 +143,7 @@ class LandingSegment(BaseODE):
             name='atmosphere_td',
             subsys=Atmosphere(num_nodes=1),
             promotes_inputs=[
-                (Dynamic.Mission.ALTITUDE, Mission.Landing.AIRPORT_ALTITUDE),
+                Dynamic.Mission.ALTITUDE,
                 (Dynamic.Mission.VELOCITY, "TAS_touchdown"),
             ],
             promotes_outputs=[
@@ -169,7 +165,7 @@ class LandingSegment(BaseODE):
             ),
             promotes_inputs=[
                 "*",
-                (Dynamic.Mission.ALTITUDE, Mission.Landing.AIRPORT_ALTITUDE),
+                Dynamic.Mission.ALTITUDE,
                 (Dynamic.Atmosphere.DENSITY, "rho_td"),
                 (Dynamic.Atmosphere.SPEED_OF_SOUND, "sos_td"),
                 ("viscosity", "viscosity_td"),
@@ -234,3 +230,9 @@ class LandingSegment(BaseODE):
         self.set_input_defaults('aero_ramps.gear_factor:initial_val', val=0.0)
 
         self.set_input_defaults(Aircraft.Wing.AREA, val=1.0, units="ft**2")
+
+        # Throttle Idle
+        num_engine_types = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
+        self.set_input_defaults(
+            Dynamic.Mission.THROTTLE, np.zeros((1, num_engine_types))
+        )

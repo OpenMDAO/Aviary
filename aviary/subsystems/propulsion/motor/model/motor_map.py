@@ -38,7 +38,8 @@ class MotorMap(om.Group):
     this also allows us to solve for motor efficiency
     then we scale the torque up based on the actual scale factor of the motor.
     This avoids the need to rescale the map values, and still allows for the motor scale to be optimized.
-    Scaling only effects Torque. RPM is not scaled and is assumed to be maxed at 6,000 rpm.
+    Scaling only effects torque (and therefore shaft power production, and electric power consumption).
+    RPM is not scaled and is assumed to be maxed at 6,000 rpm.
     The original maps were put together for a 746kw (1,000 hp) electric motor published in the TTBW paper:
     https://ntrs.nasa.gov/api/citations/20230016987/downloads/TTBW_SciTech_2024_Final_12_5_2023.pdf
     The map is shown in Figure 4.
@@ -105,9 +106,7 @@ class MotorMap(om.Group):
                 throttle={'val': np.ones(n), 'units': 'unitless'},
                 has_diag_partials=True,
             ),
-            promotes=[
-                "torque_unscaled",
-                ("throttle", Dynamic.Vehicle.Propulsion.THROTTLE)],
+            promotes=[("throttle", Dynamic.Mission.THROTTLE)],
         )
 
         self.add_subsystem(
@@ -117,7 +116,8 @@ class MotorMap(om.Group):
             promotes_outputs=["motor_efficiency"],
         )
 
-        # now that we know the efficiency, scale up the torque correctly for the engine size selected
+        # Now that we know the efficiency, scale up the torque correctly for the engine
+        #   size selected
         # Note: This allows the optimizer to optimize the motor size if desired
         self.add_subsystem(
             'scale_motor_torque',
@@ -130,7 +130,11 @@ class MotorMap(om.Group):
             ),
             promotes=[
                 ("torque", Dynamic.Vehicle.Propulsion.TORQUE),
-                "torque_unscaled",
                 ("scale_factor", Aircraft.Engine.SCALE_FACTOR),
             ],
+        )
+
+        self.connect(
+            'throttle_to_torque.torque_unscaled',
+            ['motor_efficiency.torque_unscaled', 'scale_motor_torque.torque_unscaled'],
         )

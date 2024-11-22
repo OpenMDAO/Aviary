@@ -252,16 +252,20 @@ def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
             # By always keeping minimum T4 zero for normalization, throttle stays
             #   consistent with fraction of T4max
             # TODO flight condition dependent throttle range?
-            # NOTE this often leaves max throttles less than 1 in the deck - this caues
+            # NOTE this often leaves max throttles less than 1 in the deck - this causes
             #     problems when finding reference SLS thrust, as there is often no max
             #     power data at that point in the engine deck. It is recommended GASP
             #     engine decks override Aircraft.Engine.REFERENCE_THRUST in EngineDecks
             data[THROTTLE] = normalize(data[TEMPERATURE], minimum=0.0, maximum=t4max)
 
         else:
+            # data[THROTTLE] = normalize(
+            #     T4T2, minimum=scalars['t4flight_idle'], maximum=t4max
+            # )
             data[THROTTLE] = normalize(T4T2, minimum=0.0, maximum=t4max)
 
         # TODO save these points as commented out?
+        # remove points above T4max
         valid_idx = np.where(data[THROTTLE] <= 1.0)
         data[MACH] = data[MACH][valid_idx]
         data[ALTITUDE] = data[ALTITUDE][valid_idx]

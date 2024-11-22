@@ -368,8 +368,13 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
             (60 * 60)
 
     try:
-        total_thrust = aircraft_values.get_val(
-            Aircraft.Engine.SCALED_SLS_THRUST, 'lbf') * aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)
+        if aircraft_values.get_val(Aircraft.Engine.HAS_PROPELLERS):
+            # For large turboprops, 1 pound of thrust per hp at takeoff seems to be close enough
+            total_thrust = aircraft_values.get_val(
+                Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN, 'hp') * aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)
+        else:
+            total_thrust = aircraft_values.get_val(
+                Aircraft.Engine.SCALED_SLS_THRUST, 'lbf') * aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)
     except KeyError:
         # heterogeneous engine-model case. Get thrust from the engine decks instead.
         total_thrust = 0
@@ -433,7 +438,7 @@ dependent_options = [
     [Aircraft.Design.PART25_STRUCTURAL_CATEGORY, {
         'val': 0, 'relation': '<', 'target': Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER, 'result': True, 'alternate': False}],
     [Aircraft.Engine.TYPE, {
-        'val': [1, 2, 3, 4, 11, 12, 13, 14], 'relation': 'in', 'target': Aircraft.Engine.HAS_PROPELLERS, 'result': True, 'alternate': False}],
+        'val': [1, 2, 3, 4, 6, 11, 12, 13, 14], 'relation': 'in', 'target': Aircraft.Engine.HAS_PROPELLERS, 'result': True, 'alternate': False}],
     ['JENGSZ', {
         'val': 4, 'relation': '!=', 'target': Aircraft.Engine.SCALE_PERFORMANCE, 'result': True, 'alternate': False}],
     [Aircraft.HorizontalTail.VOLUME_COEFFICIENT, {
