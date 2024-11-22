@@ -95,7 +95,6 @@ class TipSpeed(om.ExplicitComponent):
             Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED,
             val=np.zeros(num_nodes),
             units='ft/s',
-            units='ft/s',
         )
         self.add_output(
             'propeller_tip_speed_limit', val=np.zeros(num_nodes), units='ft/s'
@@ -129,8 +128,6 @@ class TipSpeed(om.ExplicitComponent):
             [
                 Dynamic.Vehicle.Propulsion.RPM,
             ],
-            rows=r,
-            cols=r,
             rows=r,
             cols=r,
         )

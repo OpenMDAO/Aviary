@@ -514,7 +514,7 @@ class PreHamiltonStandard(om.ExplicitComponent):
         arange = np.arange(self.options['num_nodes'])
 
         # self.declare_partials(
-        #     'density_ratio', Dynamic.Mission.DENSITY, rows=arange, cols=arange)
+        #     'density_ratio', Dynamic.Atmosphere.DENSITY, rows=arange, cols=arange)
         self.declare_partials(
             'tip_mach',
             [
@@ -597,7 +597,7 @@ class PreHamiltonStandard(om.ExplicitComponent):
 
         unit_conversion_const = 10.E10 / (2 * 6966.)
 
-        # partials["density_ratio", Dynamic.Mission.DENSITY] = 1 / RHO_SEA_LEVEL_ENGLISH
+        # partials["density_ratio", Dynamic.Atmosphere.DENSITY] = 1 / RHO_SEA_LEVEL_ENGLISH
         partials["tip_mach", Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED] = 1 / sos
         partials["tip_mach", Dynamic.Atmosphere.SPEED_OF_SOUND] = -tipspd / sos**2
         partials["advance_ratio", Dynamic.Mission.VELOCITY] = math.pi / tipspd
@@ -657,8 +657,8 @@ class HamiltonStandard(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         verbosity = self.options['aviary_options'].get_val(Settings.VERBOSITY)
-        act_factor = inputs[Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR][0]
-        cli = inputs[Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT][0]
+        act_factor = inputs[Aircraft.Engine.Propeller.ACTIVITY_FACTOR][0]
+        cli = inputs[Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT][0]
         num_blades = self.options['aviary_options'].get_val(
             Aircraft.Engine.Propeller.NUM_BLADES
         )
@@ -940,7 +940,7 @@ class PostHamiltonStandard(om.ExplicitComponent):
             val=np.zeros(nn),
             units='ft/s',
         )
-        self.add_input(Dynamic.Mission.DENSITY, val=np.zeros(nn), units='slug/ft**3')
+        self.add_input(Dynamic.Atmosphere.DENSITY, val=np.zeros(nn), units='slug/ft**3')
         self.add_input('advance_ratio', val=np.zeros(nn), units='unitless')
         self.add_input('power_coefficient', val=np.zeros(nn), units='unitless')
 

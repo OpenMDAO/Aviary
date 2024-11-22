@@ -26,7 +26,7 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
         dEAS_dr : approximate rate of change of equivalent airspeed per unit range
 
     Additional inputs when input_speed_type = SpeedType.MACH:
-        Dynamic.Mission.MACH : Mach number
+        Dynamic.Atmosphere.MACH : Mach number
         dmach_dr : approximate rate of change of Mach number per unit range
 
     Outputs always provided:
@@ -35,11 +35,11 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
 
     Additional outputs when input_speed_type = SpeedType.TAS
         EAS : equivalent airspeed
-        Dynamic.Mission.MACH : Mach number
+        Dynamic.Atmosphere.MACH : Mach number
 
     Outputs provided when input_speed_type = SpeedType.EAS:
         TAS : true airspeed
-        Dynamic.Mission.MACH : Mach number
+        Dynamic.Atmosphere.MACH : Mach number
     """
 
     def initialize(self):

@@ -2,7 +2,7 @@ from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
 from aviary.mission.gasp_based.ode.base_ode import BaseODE
 from aviary.mission.gasp_based.ode.params import ParamPort
-from aviary.mission.gasp_based.phases.landing_components import (
+from aviary.mission.gasp_based.ode.landing_eom import (
     GlideConditionComponent,
     LandingAltitudeComponent,
     LandingGroundRollComponent,
@@ -118,7 +118,7 @@ class LandingSegment(BaseODE):
             "glide",
             GlideConditionComponent(),
             promotes_inputs=[
-                Dynamic.Mission.DENSITY,
+                Dynamic.Atmosphere.DENSITY,
                 Mission.Landing.MAXIMUM_SINK_RATE,
                 Dynamic.Vehicle.MASS,
                 Aircraft.Wing.AREA,

@@ -163,7 +163,7 @@ class PostHamiltonStandardTest(unittest.TestCase):
         prob = self.prob
         prob.set_val("power_coefficient", [0.3871, 0.3147, 0.2815], units="unitless")
         prob.set_val("advance_ratio", [0.4494, 0.4194, 0.3932], units="unitless")
-        prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED,
+        prob.set_val(Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED,
                      [700.0, 750.0, 800.0], units="ft/s")
         prob.set_val(
             Dynamic.Atmosphere.DENSITY,

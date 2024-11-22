@@ -179,7 +179,6 @@ class PropellerPerformanceTest(unittest.TestCase):
         )
         options.set_val(Aircraft.Engine.Propeller.NUM_BLADES, val=4, units='unitless')
         options.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, False)
-        options.set_val(Aircraft.Engine.USE_PROPELLER_MAP, False)
         options.set_val(Settings.VERBOSITY, 0)
 
         prob = om.Problem()
