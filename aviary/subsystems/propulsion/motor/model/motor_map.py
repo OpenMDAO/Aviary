@@ -106,13 +106,13 @@ class MotorMap(om.Group):
                 throttle={'val': np.ones(n), 'units': 'unitless'},
                 has_diag_partials=True,
             ),
-            promotes=[("throttle", Dynamic.Mission.THROTTLE)],
+            promotes=[("throttle", Dynamic.Vehicle.Propulsion.THROTTLE)],
         )
 
         self.add_subsystem(
             name="motor_efficiency",
             subsys=motor,
-            promotes_inputs=[Dynamic.Vehicle.Propulsion.RPM, "torque_unscaled"],
+            promotes_inputs=[Dynamic.Vehicle.Propulsion.RPM],
             promotes_outputs=["motor_efficiency"],
         )
 

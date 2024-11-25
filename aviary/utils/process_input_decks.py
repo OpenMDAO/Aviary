@@ -367,6 +367,7 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
         initialization_guesses['flight_duration'] = initialization_guesses['flight_duration'] * \
             (60 * 60)
 
+    # TODO this does not work at all for mixed-type engines (some propeller and some not)
     try:
         if aircraft_values.get_val(Aircraft.Engine.HAS_PROPELLERS):
             # For large turboprops, 1 pound of thrust per hp at takeoff seems to be close enough
@@ -375,13 +376,18 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
         else:
             total_thrust = aircraft_values.get_val(
                 Aircraft.Engine.SCALED_SLS_THRUST, 'lbf') * aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)
+
     except KeyError:
-        # heterogeneous engine-model case. Get thrust from the engine decks instead.
-        total_thrust = 0
-        for model in engine_builders:
-            thrust = model.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf')
-            num_engines = model.get_val(Aircraft.Engine.NUM_ENGINES)
-            total_thrust += thrust * num_engines
+        if len(aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)) <= 1:
+            total_thrust = aircraft_values.get_val(
+                Aircraft.Engine.SCALED_SLS_THRUST, 'lbf') * aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)
+        else:
+            # heterogeneous engine-model case. Get thrust from the engine models instead.
+            total_thrust = 0
+            for model in engine_builders:
+                thrust = model.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf')
+                num_engines = model.get_val(Aircraft.Engine.NUM_ENGINES)
+                total_thrust += thrust * num_engines
 
     gamma_guess = np.arcsin(.5*total_thrust / mission_mass)
     avg_speed_guess = (.5 * 667 * cruise_mach)  # kts

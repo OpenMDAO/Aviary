@@ -300,9 +300,12 @@ class TurbopropMission(om.Group):
                 propeller_model_mission_max,
                 promotes_inputs=[
                     *prop_inputs,
-                    (Dynamic.Mission.SHAFT_POWER, Dynamic.Mission.SHAFT_POWER_MAX),
+                    (Dynamic.Vehicle.Propulsion.SHAFT_POWER,
+                     Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX),
                 ],
-                promotes_outputs=[(Dynamic.Mission.THRUST, Dynamic.Mission.THRUST_MAX)],
+                promotes_outputs=[
+                    (Dynamic.Vehicle.Propulsion.THRUST,
+                     Dynamic.Vehicle.Propulsion.THRUST_MAX)],
             )
 
             self.add_subsystem('propeller_model', propeller_group)
@@ -550,8 +553,8 @@ class TurbopropMission(om.Group):
             else:
                 self.promotes('fixed_rpm_source', ['*'])
             # models such as motor take RPM as input
-            if Dynamic.Mission.RPM in shp_input_list:
-                shp_inputs.append((Dynamic.Mission.RPM, 'fixed_rpm'))
+            if Dynamic.Vehicle.Propulsion.RPM in shp_input_list:
+                shp_inputs.append((Dynamic.Vehicle.Propulsion.RPM, 'fixed_rpm'))
         else:
             rpm_ivc.add_output(
                 'AUTO_OVERRIDE:' +

@@ -96,14 +96,6 @@
         "<class 'bool'>"
     ],
     [
-        "aircraft:engine:compute_propeller_installation_loss",
-        [
-            true
-        ],
-        "unitless",
-        "<class 'list'>"
-    ],
-    [
         "aircraft:engine:constant_fuel_consumption",
         [
             0.0
@@ -208,14 +200,6 @@
         "<class 'numpy.ndarray'>"
     ],
     [
-        "aircraft:engine:num_propeller_blades",
-        [
-            0
-        ],
-        "unitless",
-        "<class 'numpy.ndarray'>"
-    ],
-    [
         "aircraft:engine:num_wing_engines",
         [
             2
@@ -264,19 +248,19 @@
         "<class 'list'>"
     ],
     [
-        "aircraft:engine:use_propeller_map",
+        "aircraft:engine:propeller:compute_installation_loss",
         [
-            false
+            true
         ],
         "unitless",
         "<class 'list'>"
     ],
     [
-        "aircraft:engine:shaft_power_design",
+        "aircraft:engine:propeller:num_blades",
         [
-            1.0
+            0
         ],
-        "hp",
+        "unitless",
         "<class 'numpy.ndarray'>"
     ],
     [
@@ -1222,7 +1206,7 @@
     ],
     [
         "mission:design:gross_mass",
-        175864.58080717592,
+        175882.47923293157,
         "lbm",
         "<class 'int'>"
     ],
@@ -1282,7 +1266,7 @@
     ],
     [
         "mission:summary:gross_mass",
-        175864.58080717592,
+        175882.47923293157,
         "lbm",
         "<class 'int'>"
     ],

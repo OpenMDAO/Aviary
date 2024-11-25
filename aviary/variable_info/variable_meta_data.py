@@ -6066,7 +6066,6 @@ add_meta_data(
     Dynamic.Atmosphere.MACH,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='Current Mach number of the vehicle',
 )
@@ -6162,9 +6161,7 @@ add_meta_data(
     Dynamic.Mission.FLIGHT_PATH_ANGLE,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='rad',
-    desc='Current flight path angle',
     desc='Current flight path angle',
 )
 
@@ -6172,9 +6169,7 @@ add_meta_data(
     Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='rad/s',
-    desc='Current rate at which flight path angle is changing',
     desc='Current rate at which flight path angle is changing',
 )
 
@@ -6266,9 +6261,7 @@ add_meta_data(
     Dynamic.Vehicle.MASS,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='lbm',
-    desc='Current total mass of the vehicle',
     desc='Current total mass of the vehicle',
 )
 
@@ -6276,9 +6269,7 @@ add_meta_data(
     Dynamic.Vehicle.MASS_RATE,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='lbm/s',
-    desc='Current rate at which the mass of the vehicle is changing',
     desc='Current rate at which the mass of the vehicle is changing',
 )
 
@@ -6384,7 +6375,6 @@ add_meta_data(
     Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='ft/s',
     desc='linear propeller tip speed due to rotation (not airspeed at propeller tip)',
     default_value=500.0,
@@ -6427,16 +6417,13 @@ add_meta_data(
     Dynamic.Vehicle.Propulsion.THROTTLE,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='unitless',
-    desc='Current throttle setting for each individual engine model on the vehicle',
     desc='Current throttle setting for each individual engine model on the vehicle',
 )
 
 add_meta_data(
     Dynamic.Vehicle.Propulsion.THRUST,
     meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='lbf',
     desc='Current net thrust produced by engines, per single instance of each engine '
@@ -6447,7 +6434,6 @@ add_meta_data(
     Dynamic.Vehicle.Propulsion.THRUST_MAX,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='lbf',
     desc="Hypothetical maximum possible net thrust that can be produced per single "
     "instance of each engine model at the vehicle's current flight condition",
@@ -6457,7 +6443,6 @@ add_meta_data(
     Dynamic.Vehicle.Propulsion.THRUST_MAX_TOTAL,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='lbf',
     desc='Hypothetical maximum possible net thrust produced by the vehicle at its '
     'current flight condition',
@@ -6466,7 +6451,6 @@ add_meta_data(
 add_meta_data(
     Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
     meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='lbf',
     desc='Current total net thrust produced by the vehicle',
