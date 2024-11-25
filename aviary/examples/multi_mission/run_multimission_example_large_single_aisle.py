@@ -2,17 +2,13 @@
 authors: Jatin Soni, Eliot Aretskin
 Multi Mission Optimization Example using Aviary
 
-In this example, Two seperate aviary problems are instantiated using the typical aviaryProblem calls like load_inputs,
-check_and_preprocess_payload, etc.. Once those problems are setup and all of their phases are linked together,
-we copy those problems as group into a super_problem. We then promote GROSS_MASS, RANGE, and wing SWEEP from each
-of those sub-groups (group1 and group2) up to the super_probem so the optimizer can control them. The fuel_burn results
-from each of the group1 and group2 dymos missions are summed and weighted to create the objective function the 
-optimizer sees.
-
-For the deadhead mission: 
-aircraft:crew_and_payload:num_passengers,0,unitless
-aircraft:crew_and_payload:num_tourist_class,0,unitless
-aircraft:crew_and_payload:num_first_class,0,unitless
+In this example, a monolithic optimization is created by instantiating two aviary problems 
+using typical AviaryProblem calls like load_inputs(), check_and_preprocess_payload(), 
+etc. Once those problems are setup and all of their phases are linked together, we copy 
+those problems as group into a super_problem. We then promote GROSS_MASS, RANGE, and 
+wing SWEEP from each of those sub-groups (group1 and group2) up to the super_probem so 
+the optimizer can control them. The fuel_burn results from each of the group1 and group2 
+dymos missions are summed and weighted to create the objective function the optimizer sees.
 
 """
 import copy as copy
@@ -40,13 +36,18 @@ aviary_inputs_primary.set_val(Mission.Design.GROSS_MASS, val=100000, units='lbm'
 aviary_inputs_primary.set_val(Settings.VERBOSITY, val=1)
 
 aviary_inputs_deadhead = copy.deepcopy(aviary_inputs_primary)
-aviary_inputs_deadhead.set_val('aircraft:crew_and_payload:num_passengers', 1, 'unitless')
-aviary_inputs_deadhead.set_val(
-    'aircraft:crew_and_payload:num_tourist_class', 1, 'unitless')
-aviary_inputs_deadhead.set_val(
-    'aircraft:crew_and_payload:num_business_class', 0, 'unitless')
-aviary_inputs_deadhead.set_val(
-    'aircraft:crew_and_payload:num_first_class', 0, 'unitless')
+
+# Due to current limitations in Aviary's ability to detect user input vs. default values,
+# the only way to set an aircraft to zero passengers is by setting
+# TOTAL_PAYLOAD_MASS = X CARGO_MASS + 0 PASSENGER_PAYLOAD_MASS.
+# This zeros out passenger and baggage mass.
+# Due to issue #610, setting PASSENGER_PAYLOAD_MASS = 0 will not work yet.
+# aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 4077, 'lbm')
+
+aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, 1, 'unitless')
+aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS, 1, 'unitless')
+aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS, 0, 'unitless')
+aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.NUM_FIRST_CLASS, 0, 'unitless')
 
 Optimizer = 'SLSQP'  # SLSQP or SNOPT
 
@@ -107,7 +108,7 @@ class MultiMissionProblem(om.Problem):
     def add_design_variables(self):
         self.model.add_design_var(Mission.Design.GROSS_MASS,
                                   lower=10., upper=900e3, units='lbm')
-        self.model.add_design_var(Aircraft.Wing.SWEEP, lower=20., upper=35., units='deg')
+        self.model.add_design_var(Aircraft.Wing.SWEEP, lower=23., upper=27., units='deg')
 
     def add_driver(self):
         self.driver = om.pyOptSparseDriver()
@@ -203,33 +204,6 @@ class MultiMissionProblem(om.Problem):
         if show:
             plt.show()
 
-    def create_payload_range_plot(self, show=True):
-        """Creates payload range diagram for the super problem. Appends a point for max payload
-            and 0 range. """
-        payloads = []
-        ranges = []
-        for i in range(self.num_missions):
-            ref = f"{self.group_prefix}_{i}"
-            payloads.append(
-                self.get_val(
-                    f"{ref}.{Aircraft.CrewPayload.CARGO_MASS}", units='lbm'))
-            lastphase = self.phases[ref][-1]
-            ranges.append(
-                self.get_val(
-                    f"{ref}.traj.{lastphase}.timeseries.distance",
-                    units='nmi', indices=-1)[0])
-        payloads, ranges = zip(*sorted(zip(payloads, ranges)))
-        payloads, ranges = list(payloads), list(ranges)
-        payloads.append(payloads[-1])
-        ranges.append(0)
-        plt.figure()
-        plt.plot(ranges, payloads)
-        plt.xlabel("Range (nmi)")
-        plt.ylabel("Payload (lbm)")
-        plt.grid()
-        if show:
-            plt.show()
-
     def print_vars(self, vars=[]):
         """Specify vars with name and unit in a tuple, e.g. vars = [ (Mission.Summary.FUEL_BURNED, 'lbm') ]"""
 
@@ -240,11 +214,14 @@ class MultiMissionProblem(om.Problem):
             print(f"{name:^30}", end='| ')
         print()
         for var, unit in vars:
-            varname = f"Variable: {var.replace(':', '.').upper()}"
+            varname = f"{var.replace(':', '.').upper()}"
             print(f"{varname:40}", end=": ")
             for i in range(self.num_missions):
-                val = self.get_val(f'group_{i}.{var}', units=unit)[0]
-                printstatement = f"{val} ({unit})"
+                try:
+                    val = self.get_val(f'group_{i}.{var}', units=unit)[0]
+                    printstatement = f"{val} ({unit})"
+                except:
+                    printstatement = f"unable get get_val({var})"
                 print(f"{printstatement:^30}", end="| ")
             print()
 
@@ -292,16 +269,18 @@ def large_single_aisle_example(makeN2=False):
     printoutputs = [
         (Mission.Design.GROSS_MASS, 'lbm'),
         (Aircraft.Design.EMPTY_MASS, 'lbm'),
-        (Mission.Summary.GROSS_MASS, 'lbm'),
-        (Mission.Summary.FUEL_BURNED, 'lbm'),
-        (Mission.Summary.TOTAL_FUEL_MASS, 'lbm'),
+        (Aircraft.Wing.SWEEP, 'deg'),
         (Aircraft.LandingGear.MAIN_GEAR_MASS, 'lbm'),
         (Aircraft.LandingGear.NOSE_GEAR_MASS, 'lbm'),
         (Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, 'unitless'),
-        (Mission.Summary.CRUISE_MACH, 'unitless'),
         (Aircraft.Furnishings.MASS, 'lbm'),
         (Aircraft.CrewPayload.PASSENGER_SERVICE_MASS, 'lbm'),
-        (Aircraft.Wing.SWEEP, 'deg')]
+        (Mission.Summary.GROSS_MASS, 'lbm'),
+        (Mission.Summary.FUEL_BURNED, 'lbm'),
+        (Aircraft.CrewPayload.PASSENGER_MASS, 'lbm'),
+        (Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, 'lbm'),
+        (Aircraft.CrewPayload.CARGO_MASS, 'lbm'),
+        (Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 'lbm')]
     super_prob.print_vars(vars=printoutputs)
 
     plotvars = [('altitude', 'ft'),
@@ -312,7 +291,6 @@ def large_single_aisle_example(makeN2=False):
                 ('mach', 'unitless')]
     super_prob.create_timeseries_plots(plotvars=plotvars, show=False)
 
-    super_prob.create_payload_range_plot(show=False)
     plt.show()
 
     return super_prob
