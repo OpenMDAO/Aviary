@@ -130,7 +130,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
             print("User has specified Design.NUM_* passenger values but CrewPyaload.NUM_* has been left blank or set to zero.")
             print(
                 "Assuming they are equal to maintain backwards compatibility with GASP and FLOPS output files.")
-            print("If you intended to have no passengers on this flight, please set Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS to zero in aviary_values.")
+            print("If you intended to have no passengers on this flight, please set Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS to zero in aviary_values.")
         aviary_options.set_val(
             Aircraft.CrewPayload.NUM_PASSENGERS, design_passenger_count)
         aviary_options.set_val(Aircraft.CrewPayload.NUM_FIRST_CLASS,
@@ -145,7 +145,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
             print("User has specified Design.NUM_PASSENGERS but CrewPayload.NUM_PASSENGERS has been left blank or set to zero.")
             print(
                 "Assuming they are equal to maintain backwards compatibility with GASP and FLOPS output files.")
-            print("If you intended to have no passengers on this flight, please set Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS to zero in aviary_values.")
+            print("If you intended to have no passengers on this flight, please set Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS to zero in aviary_values.")
         aviary_options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, design_num_pax)
 
     # Performe checks on the final data tables to ensure Design is always large then As-Flow
