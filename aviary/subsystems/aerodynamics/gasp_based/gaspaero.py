@@ -517,10 +517,6 @@ class AeroGeom(om.ExplicitComponent):
             units="unitless",
             shape=nn,
             desc="CFIN: Skin friction coefficient at Re=1e7",
-            "cf",
-            units="unitless",
-            shape=nn,
-            desc="CFIN: Skin friction coefficient at Re=1e7",
         )
 
     def setup_partials(self):

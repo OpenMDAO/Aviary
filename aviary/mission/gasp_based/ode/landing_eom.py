@@ -46,12 +46,6 @@ class GlideConditionComponent(om.ExplicitComponent):
             units="lbm",
             desc="aircraft mass at start of landing",
         )
-        self.add_input(
-            Dynamic.Vehicle.MASS,
-            val=0.0,
-            units="lbm",
-            desc="aircraft mass at start of landing",
-        )
         add_aviary_input(self, Aircraft.Wing.AREA, val=1.0)
         add_aviary_input(self, Mission.Landing.GLIDE_TO_STALL_RATIO, val=1.3)
         self.add_input("CL_max", val=0.0, units='unitless',
