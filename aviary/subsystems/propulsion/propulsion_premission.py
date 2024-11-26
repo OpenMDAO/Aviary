@@ -159,10 +159,15 @@ class PropulsionPreMission(om.Group):
             )
 
             # slice incoming inputs for this engine, so it only gets the correct index
+            if num_engine_type > 1:
+                src_indices = om.slicer[idx]
+            else:
+                src_indices = None
+
             self.promotes(
                 engine.name,
                 inputs=[*input_dict[engine.name]],
-                src_indices=om.slicer[idx],
+                src_indices=src_indices,
             )
 
             # promote all other inputs/outputs for this engine normally (handle vectorized outputs later)
