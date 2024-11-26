@@ -34,9 +34,7 @@ class LandingSegment(BaseODE):
                 Mission.Landing.OBSTACLE_HEIGHT,
                 Mission.Landing.AIRPORT_ALTITUDE,
             ],
-            promotes_outputs=[
-                (Mission.Landing.INITIAL_ALTITUDE, Dynamic.Mission.ALTITUDE)
-            ],
+            promotes_outputs=[Mission.Landing.INITIAL_ALTITUDE],
         )
 
         self.add_subsystem(
