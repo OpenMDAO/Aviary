@@ -190,7 +190,7 @@ def _setup_level1_parser(parser):
         "--verbosity",
         type=int,
         default=1,
-        help="verbosity setting",
+        help="verbosity settings: 0=quiet, 1=brief, 2=verbose, 3=debug",
         choices=(0, 1, 2, 3))
 
 
