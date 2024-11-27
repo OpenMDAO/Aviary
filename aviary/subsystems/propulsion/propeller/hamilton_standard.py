@@ -88,7 +88,7 @@ def _unint(xa, ya, x):
 
 def _biquad(T, i, xi, yi):
     """
-    This routine interpolates over a 4 point interval using a 
+    This routine interpolates over a 4 point interval using a
     variation of 2nd degree interpolation to produce a continuity
     of slope between adjacent intervals.
 
@@ -619,8 +619,8 @@ class PreHamiltonStandard(om.ExplicitComponent):
 
 class HamiltonStandard(om.ExplicitComponent):
     """
-    This is Hamilton Standard component rewritten from Fortran code. 
-    The original documentation is available at 
+    This is Hamilton Standard component rewritten from Fortran code.
+    The original documentation is available at
     https://ntrs.nasa.gov/api/citations/19720010354/downloads/19720010354.pdf
     It computes the thrust coefficient of a propeller blade.
     """
