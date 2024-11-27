@@ -82,6 +82,9 @@ parts:
     - file: developer_guide/unit_tests
     - file: developer_guide/contributing_guidelines
     - file: developer_guide/how_to_contribute_docs
+      sections:
+      - file: developer_guide/doctape.ipynb
+      - file: developer_guide/doctape_examples.ipynb
     - file: developer_guide/debugging_env_from_github
 
 - caption: Miscellaneous Resources
