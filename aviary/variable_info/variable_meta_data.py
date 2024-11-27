@@ -1886,8 +1886,8 @@ add_meta_data(
     default_value=False
 )
 
-# Global hybrid throttle is also disabled to account for parallel-hybrid engines that
-# can't operate at every power level at every condition due to other constraints
+# Global hybrid throttle is also False by default to account for parallel-hybrid engines
+# that can't operate at every power level at every condition due to other constraints
 add_meta_data(
     Aircraft.Engine.GLOBAL_HYBRID_THROTTLE, meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
@@ -1898,7 +1898,7 @@ add_meta_data(
     '= TRUE means the engine can be extrapolated out to 1.0 at that point. If '
     "GLOBAL_HYBRID_THROTTLE is False, then each flight condition's hybrid throttle range is "
     'individually normalized from 0 to 1 independent of other points on the deck).',
-    default_value=True,
+    default_value=False,
     types=bool,
     option=True
 )
