@@ -5,7 +5,7 @@ We're using [jupyter-book](https://jupyterbook.org/) for the docs, which is a we
 To build the docs, you'll need to install jupyter-book following [these instructions](https://jupyterbook.org/en/stable/start/overview.html).
 Jupyter-book allows for arbitrary Jupyter notebook usage to intersperse code and documentation and it uses [MyST markdown](https://jupyterbook.org/en/stable/content/myst.html). 
 
-Whenever a page contains code, it should be a Jupyter notebook. Otherwise, you can write it as markdown page. Note that if you run an optimiser in a Jupyter notebook, don't use `SNOPT` because it is not available in test run on Github.
+Whenever a page contains code, it should be a Jupyter notebook. Otherwise, you can write it as markdown page. Note that if you run an optimiser in a Jupyter notebook, don't use `SNOPT` because it is not available in test run on Github. Also, if you plan to push a Jupyter notebook to the Aviary repository, make sure you run `reset_notebook` on that page.
 
 To modify the docs, simply add a file to the repo within the docs folder.
 You can then add it to the `docs/_toc.yml` file following the structure for the skeletal outline.
