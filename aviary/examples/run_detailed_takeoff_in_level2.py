@@ -355,7 +355,11 @@ if __name__ == '__main__':
 
     prob.run_aviary_problem(record_filename='detailed_takeoff.db')
 
-    cr = om.CaseReader('detailed_takeoff.db')
+    try:
+        cr = om.CaseReader('run_detailed_takeoff_in_level2_out/detailed_takeoff.db')
+    except:
+        cr = om.CaseReader('detailed_takeoff.db')
+
     cases = cr.get_cases('problem')
     case = cases[0]
 
