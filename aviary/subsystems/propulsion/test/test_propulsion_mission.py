@@ -154,7 +154,6 @@ class PropulsionMissionTest(unittest.TestCase):
 
         options = get_flops_inputs('LargeSingleAisle2FLOPS')
         options.set_val(Settings.VERBOSITY, 0)
-        options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
 
         engine = build_engine_deck(options)[0]
         engine2 = build_engine_deck(options)[0]
