@@ -1,3 +1,5 @@
+from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.preprocessors import preprocess_options
 import unittest
 
 import openmdao.api as om
@@ -157,6 +159,8 @@ class LandingGearLengthTest(unittest.TestCase):
         prob = self.prob
         model = prob.model
         flops_inputs = get_flops_inputs(case_name)
+        engine = build_engine_deck(flops_inputs)
+        preprocess_options(flops_inputs, engine_models=engine)
 
         model.add_subsystem(
             'main', MainGearLength(aviary_options=flops_inputs), promotes=['*'])
