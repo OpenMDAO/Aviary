@@ -33,7 +33,7 @@ class TestGearbox(unittest.TestCase):
         prob.run_model()
 
         mass = prob.get_val(av.Aircraft.Engine.Gearbox.MASS, 'lb')
-        torque_max = prob.get_val('torque_max', 'lbf*ft')
+        torque_max = prob.get_val('gearbox_premission.torque_comp.torque_max', 'lbf*ft')
 
         torque_max_expected = 4005.84967696
         mass_expected = 116.25002688

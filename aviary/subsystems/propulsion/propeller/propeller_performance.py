@@ -5,7 +5,11 @@ import numpy as np
 
 from openmdao.components.ks_comp import KSfunction
 
-from aviary.subsystems.propulsion.propeller.hamilton_standard import HamiltonStandard, PostHamiltonStandard, PreHamiltonStandard
+from aviary.subsystems.propulsion.propeller.hamilton_standard import (
+    HamiltonStandard,
+    PostHamiltonStandard,
+    PreHamiltonStandard,
+)
 from aviary.subsystems.propulsion.propeller.propeller_map import PropellerMap
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import add_aviary_input, add_aviary_output
@@ -47,15 +51,20 @@ def d_smooth_min(x, b, alpha=100.0):
     return d_sum_log_exp
 
 
-class TipSpeedLimit(om.ExplicitComponent):
+class TipSpeed(om.ExplicitComponent):
     """
-    Computation of propeller tip speed.
+    Compute current propeller speed and allowable max tip speed
+    Maximum allowable tip speed is lower of helical tip Mach limited speed and
+    tip rotational speed limit
     """
 
     def initialize(self):
         self.options.declare(
-            'num_nodes', types=int, default=1,
-            desc='Number of nodes to be evaluated in the RHS')
+            'num_nodes',
+            types=int,
+            default=1,
+            desc='Number of nodes to be evaluated in the RHS',
+        )
 
     def setup(self):
         num_nodes = self.options['num_nodes']
@@ -70,8 +79,12 @@ class TipSpeedLimit(om.ExplicitComponent):
             units='ft/s',
         )
         add_aviary_input(
+            self, Dynamic.Vehicle.Propulsion.RPM, val=np.zeros(num_nodes), units='rpm'
+        )
+        add_aviary_input(
             self, Aircraft.Engine.Propeller.TIP_MACH_MAX, val=1.0, units='unitless'
         )
+
         add_aviary_input(
             self, Aircraft.Engine.Propeller.TIP_SPEED_MAX, val=0.0, units='ft/s'
         )
@@ -84,9 +97,7 @@ class TipSpeedLimit(om.ExplicitComponent):
             units='ft/s',
         )
         self.add_output(
-            'rpm',
-            val=np.zeros(num_nodes),
-            units='rpm'
+            'propeller_tip_speed_limit', val=np.zeros(num_nodes), units='ft/s'
         )
 
     def setup_partials(self):
@@ -96,10 +107,26 @@ class TipSpeedLimit(om.ExplicitComponent):
         r = np.arange(num_nodes)
 
         self.declare_partials(
-            Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED,
+            'propeller_tip_speed_limit',
             [
                 Dynamic.Mission.VELOCITY,
                 Dynamic.Atmosphere.SPEED_OF_SOUND,
+            ],
+            rows=r,
+            cols=r,
+        )
+        self.declare_partials(
+            'propeller_tip_speed_limit',
+            [
+                Aircraft.Engine.Propeller.TIP_MACH_MAX,
+                Aircraft.Engine.Propeller.TIP_SPEED_MAX,
+            ],
+        )
+
+        self.declare_partials(
+            Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED,
+            [
+                Dynamic.Vehicle.Propulsion.RPM,
             ],
             rows=r,
             cols=r,
@@ -108,26 +135,6 @@ class TipSpeedLimit(om.ExplicitComponent):
         self.declare_partials(
             Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED,
             [
-                Aircraft.Engine.Propeller.TIP_MACH_MAX,
-                Aircraft.Engine.Propeller.TIP_SPEED_MAX,
-            ],
-        )
-
-        self.declare_partials(
-            'rpm',
-            [
-                Dynamic.Mission.VELOCITY,
-                Dynamic.Atmosphere.SPEED_OF_SOUND,
-            ],
-            rows=r,
-            cols=r,
-        )
-
-        self.declare_partials(
-            'rpm',
-            [
-                Aircraft.Engine.Propeller.TIP_MACH_MAX,
-                Aircraft.Engine.Propeller.TIP_SPEED_MAX,
                 Aircraft.Engine.Propeller.DIAMETER,
             ],
         )
@@ -139,33 +146,35 @@ class TipSpeedLimit(om.ExplicitComponent):
         sos = inputs[Dynamic.Atmosphere.SPEED_OF_SOUND]
         tip_mach_max = inputs[Aircraft.Engine.Propeller.TIP_MACH_MAX]
         tip_speed_max = inputs[Aircraft.Engine.Propeller.TIP_SPEED_MAX]
+        rpm = inputs[Dynamic.Vehicle.Propulsion.RPM]
         diam = inputs[Aircraft.Engine.Propeller.DIAMETER]
 
-        tip_speed_mach_limit = ((sos * tip_mach_max)**2 - velocity**2)**0.5
+        tip_speed_mach_limit = ((sos * tip_mach_max) ** 2 - velocity**2) ** 0.5
         # use KSfunction for smooth derivitive across minimum
         tip_speed_max_nn = np.tile(tip_speed_max, num_nodes)
-        prop_tip_speed = -KSfunction.compute(
+        propeller_tip_speed_limit = -KSfunction.compute(
             -np.stack((tip_speed_max_nn, tip_speed_mach_limit), axis=1)
         ).flatten()
-        rpm = prop_tip_speed / (diam * math.pi / 60)
+        propeller_tip_speed = rpm * diam * math.pi / 60
 
-        outputs[Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED] = prop_tip_speed
-        outputs['rpm'] = rpm
+        outputs[Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED] = propeller_tip_speed
+        outputs['propeller_tip_speed_limit'] = propeller_tip_speed_limit
 
     def compute_partials(self, inputs, J):
         num_nodes = self.options['num_nodes']
 
         velocity = inputs[Dynamic.Mission.VELOCITY]
         sos = inputs[Dynamic.Atmosphere.SPEED_OF_SOUND]
+        rpm = inputs[Dynamic.Vehicle.Propulsion.RPM]
         tip_mach_max = inputs[Aircraft.Engine.Propeller.TIP_MACH_MAX]
         tip_speed_max = inputs[Aircraft.Engine.Propeller.TIP_SPEED_MAX]
         diam = inputs[Aircraft.Engine.Propeller.DIAMETER]
 
         tip_speed_max_nn = np.tile(tip_speed_max, num_nodes)
 
-        tip_speed_mach_limit = ((sos * tip_mach_max)**2 - velocity**2)**0.5
+        tip_speed_mach_limit = ((sos * tip_mach_max) ** 2 - velocity**2) ** 0.5
         val = -np.stack((tip_speed_max_nn, tip_speed_mach_limit), axis=1)
-        prop_tip_speed = -KSfunction.compute(val).flatten()
+        # prop_tip_speed = -KSfunction.compute(val).flatten()
 
         dKS, _ = KSfunction.derivatives(val)
 
@@ -178,36 +187,25 @@ class TipSpeedLimit(om.ExplicitComponent):
         dspeed_dmm = dKS[:, 1] * dtpml_m
         dspeed_dsm = dKS[:, 0]
 
-        J[Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED, Dynamic.Mission.VELOCITY] = (
-            dspeed_dv
+        J['propeller_tip_speed_limit', Dynamic.Mission.VELOCITY] = dspeed_dv
+        J['propeller_tip_speed_limit', Dynamic.Atmosphere.SPEED_OF_SOUND] = dspeed_ds
+        J['propeller_tip_speed_limit', Aircraft.Engine.Propeller.TIP_MACH_MAX] = (
+            dspeed_dmm
         )
-        J[
-            Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED,
-            Dynamic.Atmosphere.SPEED_OF_SOUND,
-        ] = dspeed_ds
-        J[
-            Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED,
-            Aircraft.Engine.Propeller.TIP_MACH_MAX,
-        ] = dspeed_dmm
-        J[
-            Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED,
-            Aircraft.Engine.Propeller.TIP_SPEED_MAX,
-        ] = dspeed_dsm
-
-        rpm_fact = (diam * math.pi / 60)
-
-        J['rpm', Dynamic.Mission.VELOCITY] = dspeed_dv / rpm_fact
-        J['rpm', Dynamic.Atmosphere.SPEED_OF_SOUND] = dspeed_ds / rpm_fact
-        J['rpm', Aircraft.Engine.Propeller.TIP_MACH_MAX] = dspeed_dmm / rpm_fact
-        J['rpm', Aircraft.Engine.Propeller.TIP_SPEED_MAX] = dspeed_dsm / rpm_fact
-
-        J['rpm', Aircraft.Engine.Propeller.DIAMETER] = (
-            -60 * prop_tip_speed / (math.pi * diam**2)
+        J['propeller_tip_speed_limit', Aircraft.Engine.Propeller.TIP_SPEED_MAX] = (
+            dspeed_dsm
         )
+
+        J[Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED,
+          Dynamic.Vehicle.Propulsion.RPM] = (diam * math.pi / 60)
+
+        J[Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED,
+          Aircraft.Engine.Propeller.DIAMETER] = (rpm * math.pi / 60)
 
 
 class OutMachs(om.ExplicitComponent):
-    """This utility sets up relations among helical Mach, free stream Mach and propeller tip Mach.
+    """
+    This utility sets up relations among helical Mach, free stream Mach and propeller tip Mach.
     helical_mach = sqrt(mach^2 + tip_mach^2).
     It computes the value of one from the inputs of the other two.
     """
@@ -245,8 +243,9 @@ class OutMachs(om.ExplicitComponent):
                 units="unitless",
                 desc="helical Mach number",
             )
-            self.declare_partials("helical_mach", [
-                                  "tip_mach", "mach"], rows=arange, cols=arange)
+            self.declare_partials(
+                "helical_mach", ["tip_mach", "mach"], rows=arange, cols=arange
+            )
         elif out_type is OutMachType.MACH:
             self.add_input(
                 "tip_mach",
@@ -266,8 +265,9 @@ class OutMachs(om.ExplicitComponent):
                 units="unitless",
                 desc="Mach number",
             )
-            self.declare_partials("mach", [
-                                  "tip_mach", "helical_mach"], rows=arange, cols=arange)
+            self.declare_partials(
+                "mach", ["tip_mach", "helical_mach"], rows=arange, cols=arange
+            )
         elif out_type is OutMachType.TIP_MACH:
             self.add_input(
                 "mach",
@@ -287,8 +287,9 @@ class OutMachs(om.ExplicitComponent):
                 units="unitless",
                 desc="tip Mach number of a blade",
             )
-            self.declare_partials("tip_mach", [
-                                  "mach", "helical_mach"], rows=arange, cols=arange)
+            self.declare_partials(
+                "tip_mach", ["mach", "helical_mach"], rows=arange, cols=arange
+            )
 
     def compute(self, inputs, outputs):
         out_type = self.options["output_mach_type"]
@@ -312,23 +313,30 @@ class OutMachs(om.ExplicitComponent):
         if out_type is OutMachType.HELICAL_MACH:
             mach = inputs["mach"]
             tip_mach = inputs["tip_mach"]
-            J["helical_mach", "mach"] = mach / np.sqrt(mach * mach + tip_mach * tip_mach)
-            J["helical_mach", "tip_mach"] = tip_mach / \
-                np.sqrt(mach * mach + tip_mach * tip_mach)
+            J["helical_mach", "mach"] = mach / np.sqrt(
+                mach * mach + tip_mach * tip_mach
+            )
+            J["helical_mach", "tip_mach"] = tip_mach / np.sqrt(
+                mach * mach + tip_mach * tip_mach
+            )
         elif out_type is OutMachType.MACH:
             tip_mach = inputs["tip_mach"]
             helical_mach = inputs["helical_mach"]
-            J["mach", "helical_mach"] = helical_mach / \
-                np.sqrt(helical_mach * helical_mach - tip_mach * tip_mach)
-            J["mach", "tip_mach"] = -tip_mach / \
-                np.sqrt(helical_mach * helical_mach - tip_mach * tip_mach)
+            J["mach", "helical_mach"] = helical_mach / np.sqrt(
+                helical_mach * helical_mach - tip_mach * tip_mach
+            )
+            J["mach", "tip_mach"] = -tip_mach / np.sqrt(
+                helical_mach * helical_mach - tip_mach * tip_mach
+            )
         elif out_type is OutMachType.TIP_MACH:
             mach = inputs["mach"]
             helical_mach = inputs["helical_mach"]
-            J["tip_mach", "helical_mach"] = helical_mach / \
-                np.sqrt(helical_mach * helical_mach - mach * mach)
-            J["tip_mach", "mach"] = -mach / \
-                np.sqrt(helical_mach * helical_mach - mach * mach)
+            J["tip_mach", "helical_mach"] = helical_mach / np.sqrt(
+                helical_mach * helical_mach - mach * mach
+            )
+            J["tip_mach", "mach"] = -mach / np.sqrt(
+                helical_mach * helical_mach - mach * mach
+            )
 
 
 class AreaSquareRatio(om.ExplicitComponent):
@@ -407,13 +415,13 @@ class AdvanceRatio(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
         range = np.arange(nn)
-        self.add_input("vktas", val=np.zeros(nn), units='knot')
+        self.add_input("vtas", val=np.zeros(nn), units='ft/s')
         self.add_input("tipspd", val=np.zeros(nn), units='ft/s')
         self.add_input("sqa_array", val=np.zeros(nn), units='unitless')
         self.add_output("equiv_adv_ratio", val=np.zeros(nn), units='unitless')
 
         self.declare_partials("equiv_adv_ratio",
-                              ["vktas", "tipspd"],
+                              ["vtas", "tipspd"],
                               rows=range, cols=range)
 
         self.declare_partials("equiv_adv_ratio",
@@ -422,10 +430,10 @@ class AdvanceRatio(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         nn = self.options['num_nodes']
-        vktas = inputs["vktas"]
+        vtas = inputs["vtas"]
         tipspd = inputs["tipspd"]
         sqa_array = inputs["sqa_array"]
-        equiv_adv_ratio = (1.0 - 0.254 * sqa_array) * 5.309 * vktas / tipspd
+        equiv_adv_ratio = (1.0 - 0.254 * sqa_array) * math.pi * vtas / tipspd
 
         smooth = self.options["smooth_zje"]
         if smooth:
@@ -437,27 +445,157 @@ class AdvanceRatio(om.ExplicitComponent):
 
     def compute_partials(self, inputs, partials):
         nn = self.options['num_nodes']
-        vktas = inputs["vktas"]
+        vtas = inputs["vtas"]
         tipspd = inputs["tipspd"]
         sqa_array = inputs["sqa_array"]
-        jze = (1.0 - 0.254 * sqa_array) * 5.309 * vktas / tipspd
+        jze = (1.0 - 0.254 * sqa_array) * math.pi * vtas / tipspd
 
-        djze_dsqa = -0.254 * 5.309 * vktas / tipspd
-        djze_dvktas = (1.0 - 0.254 * sqa_array) * 5.309 / tipspd
-        djze_dtipspd = -(1.0 - 0.254 * sqa_array) * 5.309 * vktas / tipspd**2
+        djze_dsqa = -0.254 * math.pi * vtas / tipspd
+        djze_dvtas = (1.0 - 0.254 * sqa_array) * math.pi / tipspd
+        djze_dtipspd = -(1.0 - 0.254 * sqa_array) * math.pi * vtas / tipspd**2
 
         smooth = self.options["smooth_zje"]
         if smooth:
             alpha = self.options["alpha"]
             djze_dsqa = d_smooth_min(jze, np.ones(nn) * 5.0, alpha) * djze_dsqa
-            djze_dvktas = d_smooth_min(jze, np.ones(nn) * 5.0, alpha) * djze_dvktas
+            djze_dvtas = d_smooth_min(jze, np.ones(nn) * 5.0, alpha) * djze_dvtas
             djze_dtipspd = d_smooth_min(jze, np.ones(nn) * 5.0, alpha) * djze_dtipspd
         else:
             djze_dsqa = np.piecewise(jze, [jze < 5, jze >= 5], [1, 0]) * djze_dsqa
-            djze_dvktas = np.piecewise(jze, [jze < 5, jze >= 5], [1, 0]) * djze_dvktas
+            djze_dvtas = np.piecewise(jze, [jze < 5, jze >= 5], [1, 0]) * djze_dvtas
             djze_dtipspd = np.piecewise(jze, [jze < 5, jze >= 5], [1, 0]) * djze_dtipspd
         partials["equiv_adv_ratio", "sqa_array"] = djze_dsqa
-        partials["equiv_adv_ratio", "vktas"] = djze_dvktas
+        partials["equiv_adv_ratio", "vtas"] = djze_dvtas
+        partials["equiv_adv_ratio", "tipspd"] = djze_dtipspd
+
+
+class AreaSquareRatio(om.ExplicitComponent):
+    """
+    Compute the area ratio nacelle and propeller with a maximum 0.5.
+    """
+
+    def initialize(self):
+        self.options.declare("num_nodes", types=int)
+        self.options.declare('smooth_sqa', default=True, types=bool)
+        self.options.declare('alpha', default=100.0, types=float)
+
+    def setup(self):
+        nn = self.options["num_nodes"]
+        arange = np.arange(self.options["num_nodes"])
+        self.add_input("DiamNac", val=0.0, units='ft')
+        self.add_input("DiamProp", val=0.0, units='ft')
+
+        self.add_output('sqa_array', val=np.zeros(nn), units='unitless')
+
+        self.declare_partials("sqa_array",
+                              [
+                                  "DiamNac",
+                                  "DiamProp",
+                              ],
+                              rows=arange, cols=np.zeros(nn))
+
+    def compute(self, inputs, outputs):
+        nn = self.options["num_nodes"]
+        diamNac = inputs["DiamNac"]
+        diamProp = inputs["DiamProp"]
+        sqa = diamNac**2 / diamProp**2
+
+        smooth = self.options["smooth_sqa"]
+        if smooth:
+            alpha = self.options['alpha']
+            sqa = smooth_min(sqa, 0.50, alpha)
+        else:
+            sqa = np.minimum(sqa, 0.50)
+        outputs["sqa_array"] = np.ones(nn) * sqa
+
+    def compute_partials(self, inputs, partials):
+        diamNac = inputs["DiamNac"]
+        diamProp = inputs["DiamProp"]
+        sqa = diamNac**2 / diamProp**2
+
+        dSQA_dNacDiam = 2 * diamNac / diamProp**2
+        dSQA_dPropDiam = -2 * diamNac**2 / diamProp**3
+
+        smooth = self.options["smooth_sqa"]
+        if smooth:
+            alpha = self.options['alpha']
+            dSQA_dNacDiam = d_smooth_min(sqa, 0.50, alpha) * dSQA_dNacDiam
+            dSQA_dPropDiam = d_smooth_min(sqa, 0.50, alpha) * dSQA_dPropDiam
+        else:
+            dSQA_dNacDiam = np.piecewise(
+                sqa, [sqa < 0.5, sqa >= 0.5], [1, 0]) * dSQA_dNacDiam
+            dSQA_dPropDiam = np.piecewise(
+                sqa, [sqa < 0.5, sqa >= 0.5], [1, 0]) * dSQA_dPropDiam
+        partials['sqa_array', "DiamNac"] = dSQA_dNacDiam
+        partials['sqa_array', "DiamProp"] = dSQA_dPropDiam
+
+
+class AdvanceRatio(om.ExplicitComponent):
+    """
+    Compute the advance ratio jze with a maximum 5.0.
+    """
+
+    def initialize(self):
+        self.options.declare(
+            'num_nodes', types=int, default=1,
+            desc='Number of nodes to be evaluated in the RHS')
+        self.options.declare('smooth_zje', default=True, types=bool)
+        self.options.declare('alpha', default=100.0, types=float)
+
+    def setup(self):
+        nn = self.options['num_nodes']
+        range = np.arange(nn)
+        self.add_input("vtas", val=np.zeros(nn), units='ft/s')
+        self.add_input("tipspd", val=np.zeros(nn), units='ft/s')
+        self.add_input("sqa_array", val=np.zeros(nn), units='unitless')
+        self.add_output("equiv_adv_ratio", val=np.zeros(nn), units='unitless')
+
+        self.declare_partials("equiv_adv_ratio",
+                              ["vtas", "tipspd"],
+                              rows=range, cols=range)
+
+        self.declare_partials("equiv_adv_ratio",
+                              ["sqa_array"],
+                              rows=range, cols=range)
+
+    def compute(self, inputs, outputs):
+        nn = self.options['num_nodes']
+        vtas = inputs["vtas"]
+        tipspd = inputs["tipspd"]
+        sqa_array = inputs["sqa_array"]
+        equiv_adv_ratio = (1.0 - 0.254 * sqa_array) * math.pi * vtas / tipspd
+
+        smooth = self.options["smooth_zje"]
+        if smooth:
+            alpha = self.options['alpha']
+            jze = smooth_min(equiv_adv_ratio, np.ones(nn) * 5.0, alpha)
+        else:
+            jze = np.minimum(equiv_adv_ratio, np.ones(nn) * 5.0)
+        outputs["equiv_adv_ratio"] = jze
+
+    def compute_partials(self, inputs, partials):
+        nn = self.options['num_nodes']
+        vtas = inputs["vtas"]
+        tipspd = inputs["tipspd"]
+        sqa_array = inputs["sqa_array"]
+        jze = (1.0 - 0.254 * sqa_array) * math.pi * vtas / tipspd
+
+        djze_dsqa = -0.254 * math.pi * vtas / tipspd
+        djze_dvtas = (1.0 - 0.254 * sqa_array) * math.pi / tipspd
+        djze_dtipspd = -(1.0 - 0.254 * sqa_array) * math.pi * vtas / tipspd**2
+
+        smooth = self.options["smooth_zje"]
+        if smooth:
+            alpha = self.options["alpha"]
+            djze_dsqa = d_smooth_min(jze, np.ones(nn) * 5.0, alpha) * djze_dsqa
+            djze_dvtas = d_smooth_min(jze, np.ones(nn) * 5.0, alpha) * djze_dvtas
+            djze_dtipspd = d_smooth_min(jze, np.ones(nn) * 5.0, alpha) * djze_dtipspd
+        else:
+            djze_dsqa = np.piecewise(jze, [jze < 5, jze >= 5], [1, 0]) * djze_dsqa
+            djze_dvtas = np.piecewise(jze, [jze < 5, jze >= 5], [1, 0]) * djze_dvtas
+            djze_dtipspd = np.piecewise(jze, [jze < 5, jze >= 5], [1, 0]) * djze_dtipspd
+        partials["equiv_adv_ratio", "sqa_array"] = djze_dsqa
+        partials["equiv_adv_ratio", "vtas"] = djze_dvtas
         partials["equiv_adv_ratio", "tipspd"] = djze_dtipspd
 
 
@@ -468,11 +606,16 @@ class InstallLoss(om.Group):
 
     def initialize(self):
         self.options.declare(
-            'num_nodes', types=int, default=1,
-            desc='Number of nodes to be evaluated in the RHS')
+            'num_nodes',
+            types=int,
+            default=1,
+            desc='Number of nodes to be evaluated in the RHS',
+        )
         self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+            'aviary_options',
+            types=AviaryValues,
+            desc='collection of Aircraft/Mission specific options',
+        )
 
     def setup(self):
         nn = self.options['num_nodes']
@@ -489,15 +632,16 @@ class InstallLoss(om.Group):
         self.add_subsystem(
             name='zje_comp',
             subsys=AdvanceRatio(num_nodes=nn, smooth_zje=True),
-            promotes_inputs=["sqa_array", ("vktas", Dynamic.Mission.VELOCITY),
+            promotes_inputs=["sqa_array", ("vtas", Dynamic.Mission.VELOCITY),
                              ("tipspd", Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED)],
             promotes_outputs=["equiv_adv_ratio"],
         )
 
         self.blockage_factor_interp = self.add_subsystem(
             "blockage_factor_interp",
-            om.MetaModelStructuredComp(method="2D-slinear",
-                                       extrapolate=True, vec_size=nn),
+            om.MetaModelStructuredComp(
+                method="2D-slinear", extrapolate=True, vec_size=nn
+            ),
             promotes_inputs=["sqa_array", "equiv_adv_ratio"],
             promotes_outputs=[
                 "blockage_factor",
@@ -515,7 +659,7 @@ class InstallLoss(om.Group):
         self.blockage_factor_interp.add_input(
             "equiv_adv_ratio",
             0.0,
-            training_data=[0., 0.5, 1.0, 2.0, 3.0, 4.0, 5.0],
+            training_data=[0.0, 0.5, 1.0, 2.0, 3.0, 4.0, 5.0],
             units="unitless",
             desc="square of DiamNac vs DiamProp",
         )
@@ -526,16 +670,18 @@ class InstallLoss(om.Group):
             units="unitless",
             desc="blockage factor",
             training_data=np.array(
-                [[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-                 [0.992, 0.991, 0.988, 0.983, 0.976, 0.970, 0.963],
-                 [0.986, 0.982, 0.977, 0.965, 0.953, 0.940, 0.927],
-                 [0.979, 0.974, 0.967, 0.948, 0.929, 0.908, 0.887],
-                 [0.972, 0.965, 0.955, 0.932, 0.905, 0.872, 0.835],
-                 [0.964, 0.954, 0.943, 0.912, 0.876, 0.834, 0.786],
-                 [0.955, 0.943, 0.928, 0.892, 0.848, 0.801, 0.751],
-                 [0.948, 0.935, 0.917, 0.872, 0.820, 0.763, 0.706],
-                 [0.940, 0.924, 0.902, 0.848, 0.790, 0.726, 0.662],
-                 [0.904, 0.875, 0.835, 0.740, 0.655, 0.560, 0.464]]
+                [
+                    [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+                    [0.992, 0.991, 0.988, 0.983, 0.976, 0.970, 0.963],
+                    [0.986, 0.982, 0.977, 0.965, 0.953, 0.940, 0.927],
+                    [0.979, 0.974, 0.967, 0.948, 0.929, 0.908, 0.887],
+                    [0.972, 0.965, 0.955, 0.932, 0.905, 0.872, 0.835],
+                    [0.964, 0.954, 0.943, 0.912, 0.876, 0.834, 0.786],
+                    [0.955, 0.943, 0.928, 0.892, 0.848, 0.801, 0.751],
+                    [0.948, 0.935, 0.917, 0.872, 0.820, 0.763, 0.706],
+                    [0.940, 0.924, 0.902, 0.848, 0.790, 0.726, 0.662],
+                    [0.904, 0.875, 0.835, 0.740, 0.655, 0.560, 0.464],
+                ]
             ),
         )
 
@@ -563,14 +709,17 @@ class PropellerPerformance(om.Group):
 
     def initialize(self):
         self.options.declare(
-            'num_nodes', types=int, default=1,
-            desc='Number of nodes to be evaluated in the RHS')
-        self.options.declare(
-            'input_rpm', types=bool, default=False,
-            desc='If True, the input is RPM, otherwise RPM is set by propeller limits')
+            'num_nodes',
+            types=int,
+            default=1,
+            desc='Number of nodes to be evaluated in the RHS',
+        )
 
-        self.options.declare('aviary_options', types=AviaryValues,
-                             desc='collection of Aircraft/Mission specific options')
+        self.options.declare(
+            'aviary_options',
+            types=AviaryValues,
+            desc='collection of Aircraft/Mission specific options',
+        )
 
     def setup(self):
         options = self.options
@@ -592,33 +741,12 @@ class PropellerPerformance(om.Group):
         if isinstance(prop_file_path, (list, np.ndarray)):
             prop_file_path = prop_file_path[0]
 
-        if self.options['input_rpm']:
-            # compute the propeller tip speed based on the input RPM and diameter of the propeller
-            # NOTE allows for violation of tip speed limits
-            self.add_subsystem(
-                'compute_tip_speed',
-                om.ExecComp(
-                    'prop_tip_speed = diameter * rpm * pi / 60.',
-                    prop_tip_speed={'units': "ft/s", 'shape': nn},
-                    diameter={'val': 0.0, 'units': "ft"},
-                    rpm={'units': "rpm", 'shape': nn},
-                    has_diag_partials=True,
-                ),
-                promotes_inputs=[
-                    'rpm',  # TODO this should be in dynamic
-                    ('diameter', Aircraft.Engine.Propeller.DIAMETER),
-                ],
-                promotes_outputs=[
-                    ('prop_tip_speed', Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED)
-                ],
-            )
-
-        else:
-            self.add_subsystem(
-                'tip_speed_limit',
-                subsys=TipSpeedLimit(num_nodes=nn),
-                promotes=['*']
-            )
+        # compute the propeller tip speed based on the input RPM and diameter of the propeller
+        # NOTE allows for violation of tip speed limits
+        # TODO provide warning to user when max tip speeds are violated
+        self.add_subsystem(
+            'compute_tip_speed', subsys=TipSpeed(num_nodes=nn), promotes=['*']
+        )
 
         if compute_installation_loss:
             self.add_subsystem(
@@ -634,7 +762,8 @@ class PropellerPerformance(om.Group):
             )
         else:
             self.set_input_defaults(
-                'install_loss_factor', val=np.ones(nn), units="unitless")
+                'install_loss_factor', val=np.ones(nn), units="unitless"
+            )
 
         self.add_subsystem(
             name='pre_hamilton_standard',
@@ -651,7 +780,7 @@ class PropellerPerformance(om.Group):
                 "power_coefficient",
                 "advance_ratio",
                 "tip_mach",
-                "density_ratio",
+                # "density_ratio",
             ],
         )
 
@@ -692,11 +821,13 @@ class PropellerPerformance(om.Group):
                 ],
                 promotes_outputs=[
                     "thrust_coefficient",
-                ])
+                ],
+            )
 
             # propeller map has taken compresibility into account.
-            self.set_input_defaults('comp_tip_loss_factor',
-                                    np.linspace(1.0, 1.0, nn), units='unitless')
+            self.set_input_defaults(
+                'comp_tip_loss_factor', np.linspace(1.0, 1.0, nn), units='unitless'
+            )
         else:
             self.add_subsystem(
                 name='hamilton_standard',
@@ -723,7 +854,7 @@ class PropellerPerformance(om.Group):
                 "comp_tip_loss_factor",
                 Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED,
                 Aircraft.Engine.Propeller.DIAMETER,
-                "density_ratio",
+                Dynamic.Atmosphere.DENSITY,
                 'install_loss_factor',
                 "advance_ratio",
                 "power_coefficient",

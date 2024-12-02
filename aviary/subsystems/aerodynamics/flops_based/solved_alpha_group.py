@@ -40,8 +40,10 @@ class SolvedAlphaGroup(om.Group):
         self.options.declare('structured', types=bool, default=True,
                              desc='Flag that sets if data is a structured grid')
 
-        self.options.declare('extrapolate', default=True, desc='Flag that sets if drag '
-                                                               'data can be extrapolated')
+        self.options.declare(
+            'extrapolate', default=True,
+            desc='Flag that sets if drag '
+            'data can be extrapolated')
 
     def setup(self):
         options = self.options
@@ -101,6 +103,7 @@ class SolvedAlphaGroup(om.Group):
                 mass={'units': 'kg', 'shape': nn},
                 computed_lift={'units': 'N', 'shape': nn},
                 lift_resid={'shape': nn},
+                has_diag_partials=True,
             ),
             promotes_inputs=[
                 ('mass', Dynamic.Vehicle.MASS),

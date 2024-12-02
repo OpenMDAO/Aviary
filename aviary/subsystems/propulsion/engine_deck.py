@@ -1066,7 +1066,13 @@ class EngineDeck(EngineModel):
         return engine_group
 
     def get_parameters(self):
-        params = {Aircraft.Engine.SCALE_FACTOR: {'static_target': True}}
+        params = {
+            Aircraft.Engine.SCALE_FACTOR: {
+                'val': 1.0,
+                'units': 'unitless',
+                'static_target': True,
+            }
+        }
         return params
 
     def report(self, problem, reports_file, **kwargs):

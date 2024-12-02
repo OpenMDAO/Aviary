@@ -507,7 +507,7 @@ class AeroGeom(om.ExplicitComponent):
 
         # outputs
         for i in range(7):
-            name = f"SA{i+1}"
+            name = f"SA{i + 1}"
             self.add_output(
                 name, units="unitless", shape=nn, desc=f"{name}: Drag param"
             )
@@ -830,18 +830,15 @@ class AeroSetup(om.Group):
         self.add_subsystem("interp", interp, promotes=["*"])
 
         self.add_subsystem(
-            "ufac_calc",
-            om.ExecComp(
+            "ufac_calc", om.ExecComp(
                 "ufac=(1 + lift_ratio)**2 / (sigstr*(lift_ratio/bbar)**2 + 2*sigma*lift_ratio/bbar + 1)",
                 lift_ratio={'units': "unitless", "shape": nn},
                 bbar={'units': "unitless"},
                 sigma={'units': "unitless"},
                 sigstr={'units': "unitless"},
                 ufac={'units': "unitless", "shape": nn},
-                has_diag_partials=True,
-            ),
-            promotes=["*"],
-        )
+                has_diag_partials=True,),
+            promotes=["*"],)
 
         if not self.options["input_atmos"]:
             # self.add_subsystem(
@@ -1065,10 +1062,13 @@ class DragCoefClean(om.ExplicitComponent):
         )
 
         # user inputs
-
+        add_aviary_input(self, Aircraft.Design.SUPERCRITICAL_DIVERGENCE_SHIFT, val=0.033)
+        add_aviary_input(self, Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, val=1.0)
+        add_aviary_input(self, Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR, val=1.0)
         add_aviary_input(
-            self, Aircraft.Design.SUPERCRITICAL_DIVERGENCE_SHIFT, val=0.033
+            self, Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, val=1.0
         )
+        add_aviary_input(self, Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR, val=1.0)
 
         # from aero setup
         self.add_input(
@@ -1100,7 +1100,21 @@ class DragCoefClean(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
-        mach, CL, div_drag_supercrit, cf, SA1, SA2, SA5, SA6, SA7 = inputs.values()
+        (
+            mach,
+            CL,
+            div_drag_supercrit,
+            subsonic_factor,
+            supersonic_factor,
+            lift_factor,
+            zero_lift_factor,
+            cf,
+            SA1,
+            SA2,
+            SA5,
+            SA6,
+            SA7,
+        ) = inputs.values()
 
         mach_div = SA1 + SA2 * CL + div_drag_supercrit
 
@@ -1116,7 +1130,14 @@ class DragCoefClean(om.ExplicitComponent):
         # induced drag
         cdi = SA7 * CL**2
 
-        outputs["CD"] = cd0 + cdi + delcdm
+        CD = cd0 * zero_lift_factor + cdi * lift_factor + delcdm
+
+        # scale drag
+        idx_sup = np.where(mach >= 1.0)
+        CD_scaled = CD * subsonic_factor
+        CD_scaled[idx_sup] = CD[idx_sup] * supersonic_factor
+
+        outputs["CD"] = CD_scaled
 
 
 class LiftCoeff(om.ExplicitComponent):
