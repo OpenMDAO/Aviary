@@ -1,3 +1,5 @@
+from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.preprocessors import preprocess_options
 import unittest
 
 import openmdao.api as om

@@ -24,7 +24,7 @@ class FuselageParameters(om.ExplicitComponent):
     """
 
     def initialize(self):
-        add_aviary_option(self, Aircraft.CrewPayload.NUM_PASSENGERS)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
         add_aviary_option(self, Aircraft.Fuselage.AISLE_WIDTH, units='inch')
         add_aviary_option(self, Aircraft.Fuselage.NUM_AISLES)
         add_aviary_option(self, Aircraft.Fuselage.NUM_SEATS_ABREAST)
@@ -62,7 +62,7 @@ class FuselageParameters(om.ExplicitComponent):
         seat_width, _ = options[Aircraft.Fuselage.SEAT_WIDTH]
         num_aisle = options[Aircraft.Fuselage.NUM_AISLES]
         aisle_width, _ = options[Aircraft.Fuselage.AISLE_WIDTH]
-        PAX = options[Aircraft.CrewPayload.NUM_PASSENGERS]
+        PAX = options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
         seat_pitch, _ = options[Aircraft.Fuselage.SEAT_PITCH]
 
         delta_diameter = inputs[Aircraft.Fuselage.DELTA_DIAMETER]

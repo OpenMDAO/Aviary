@@ -286,7 +286,7 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
         Updated aircraft values and initial guesses.
     """
     problem_type = aircraft_values.get_val(Settings.PROBLEM_TYPE)
-    num_pax = aircraft_values.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)
+    num_pax = aircraft_values.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS)
     reserve_val = aircraft_values.get_val(
         Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm')
     reserve_frac = aircraft_values.get_val(

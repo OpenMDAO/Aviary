@@ -21,7 +21,7 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
     """
 
     def initialize(self):
-        add_aviary_option(self, Aircraft.CrewPayload.NUM_PASSENGERS)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
         add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
         add_aviary_option(self, Aircraft.Engine.TYPE)
@@ -79,7 +79,7 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
 
-        PAX = self.options[Aircraft.CrewPayload.NUM_PASSENGERS]
+        PAX = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
 
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
@@ -382,7 +382,7 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
             GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, partials):
-        PAX = self.options[Aircraft.CrewPayload.NUM_PASSENGERS]
+        PAX = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
 
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM

@@ -18,7 +18,8 @@ class FixedEquipMassTestCase1(unittest.TestCase):
     def setUp(self):
 
         options = get_option_defaults()
-        options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS,
+                        val=180, units='unitless')
         options.set_val(Aircraft.LandingGear.FIXED_GEAR,
                         val=False, units='unitless')
 
@@ -109,7 +110,8 @@ class FixedEquipMassTestCase2(unittest.TestCase):
     def setUp(self):
 
         options = get_option_defaults()
-        options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=5, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS,
+                        val=5, units='unitless')
         options.set_val(Aircraft.LandingGear.FIXED_GEAR,
                         val=False, units='unitless')
 
@@ -296,7 +298,8 @@ class FixedEquipMassTestCase4smooth(unittest.TestCase):
     def setUp(self):
 
         options = get_option_defaults()
-        options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS,
+                        val=180, units='unitless')
         options.set_val(Aircraft.LandingGear.FIXED_GEAR,
                         val=False, units='unitless')
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES,
@@ -390,7 +393,8 @@ class FixedEquipMassTestCase5smooth(unittest.TestCase):
     def setUp(self):
 
         options = get_option_defaults()
-        options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=5, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS,
+                        val=5, units='unitless')
         options.set_val(Aircraft.LandingGear.FIXED_GEAR,
                         val=False, units='unitless')
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES,
@@ -484,7 +488,8 @@ class FixedEquipMassTestCase6smooth(unittest.TestCase):
     def setUp(self):
 
         options = get_option_defaults()
-        options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=5, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS,
+                        val=5, units='unitless')
         options.set_val(Aircraft.Engine.TYPE,
                         val=[GASPEngineType.RECIP_CARB], units='unitless')
         options.set_val(Aircraft.LandingGear.FIXED_GEAR,
@@ -582,7 +587,8 @@ class EquipAndUsefulMassGroupTestCase1(unittest.TestCase):
     def setUp(self):
 
         options = get_option_defaults()
-        options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS,
+                        val=180, units='unitless')
         options.set_val(Aircraft.LandingGear.FIXED_GEAR,
                         val=False, units='unitless')
 
@@ -686,7 +692,8 @@ class FixedEquipMassTestCase7(unittest.TestCase):
 
     def test_case1(self):
         options = get_option_defaults()
-        options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS,
+                        val=180, units='unitless')
         options.set_val(Aircraft.LandingGear.FIXED_GEAR,
                         val=False, units='unitless')
 

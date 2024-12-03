@@ -17,9 +17,9 @@ class PassengerServiceMass(om.ExplicitComponent):
     '''
 
     def initialize(self):
-        add_aviary_option(self, Aircraft.CrewPayload.NUM_BUSINESS_CLASS)
-        add_aviary_option(self, Aircraft.CrewPayload.NUM_FIRST_CLASS)
-        add_aviary_option(self, Aircraft.CrewPayload.NUM_TOURIST_CLASS)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS)
         add_aviary_option(self, Mission.Constraints.MAX_MACH)
 
     def setup(self):
@@ -45,9 +45,9 @@ class PassengerServiceMass(om.ExplicitComponent):
         self.declare_partials('*', '*')
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
-        first_class_count = self.options[Aircraft.CrewPayload.NUM_FIRST_CLASS]
-        business_class_count = self.options[Aircraft.CrewPayload.NUM_BUSINESS_CLASS]
-        tourist_class_count = self.options[Aircraft.CrewPayload.NUM_TOURIST_CLASS]
+        first_class_count = self.options[Aircraft.CrewPayload.Design.NUM_FIRST_CLASS]
+        business_class_count = self.options[Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS]
+        tourist_class_count = self.options[Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS]
 
         design_range = inputs[Mission.Design.RANGE]
         max_mach = self.options[Mission.Constraints.MAX_MACH]
@@ -67,9 +67,9 @@ class PassengerServiceMass(om.ExplicitComponent):
             passenger_service_weight / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
-        first_class_count = self.options[Aircraft.CrewPayload.NUM_FIRST_CLASS]
-        business_class_count = self.options[Aircraft.CrewPayload.NUM_BUSINESS_CLASS]
-        tourist_class_count = self.options[Aircraft.CrewPayload.NUM_TOURIST_CLASS]
+        first_class_count = self.options[Aircraft.CrewPayload.Design.NUM_FIRST_CLASS]
+        business_class_count = self.options[Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS]
+        tourist_class_count = self.options[Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS]
 
         design_range = inputs[Mission.Design.RANGE]
         max_mach = self.options[Mission.Constraints.MAX_MACH]
@@ -106,7 +106,7 @@ class AltPassengerServiceMass(om.ExplicitComponent):
     '''
 
     def initialize(self):
-        add_aviary_option(self, Aircraft.CrewPayload.NUM_PASSENGERS)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
 
     def setup(self):
         add_aviary_input(
@@ -120,7 +120,7 @@ class AltPassengerServiceMass(om.ExplicitComponent):
     def compute(
         self, inputs, outputs, discrete_inputs=None, discrete_outputs=None
     ):
-        passenger_count = self.options[Aircraft.CrewPayload.NUM_PASSENGERS]
+        passenger_count = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
 
         passenger_service_mass_scaler = \
             inputs[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER]
@@ -132,7 +132,7 @@ class AltPassengerServiceMass(om.ExplicitComponent):
             passenger_service_weight / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
-        passenger_count = self.options[Aircraft.CrewPayload.NUM_PASSENGERS]
+        passenger_count = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
 
         J[
             Aircraft.CrewPayload.PASSENGER_SERVICE_MASS,

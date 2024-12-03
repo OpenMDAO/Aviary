@@ -45,7 +45,7 @@ class TransportAirCondMassTest(unittest.TestCase):
                         Aircraft.Fuselage.MAX_HEIGHT,
                         Aircraft.Fuselage.PLANFORM_AREA],
             output_keys=Aircraft.AirConditioning.MASS,
-            aviary_option_keys=[Aircraft.CrewPayload.NUM_PASSENGERS],
+            aviary_option_keys=[Aircraft.CrewPayload.Design.NUM_PASSENGERS],
             version=Version.TRANSPORT,
             tol=3.0e-4,
             atol=1e-11)
@@ -124,7 +124,7 @@ class AltAirCondMassTest(unittest.TestCase):
             case_name,
             input_keys=Aircraft.AirConditioning.MASS_SCALER,
             output_keys=Aircraft.AirConditioning.MASS,
-            aviary_option_keys=Aircraft.CrewPayload.NUM_PASSENGERS,
+            aviary_option_keys=Aircraft.CrewPayload.Design.NUM_PASSENGERS,
             version=Version.ALTERNATE)
 
     def test_IO(self):

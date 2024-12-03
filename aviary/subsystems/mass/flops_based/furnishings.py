@@ -13,10 +13,10 @@ class TransportFurnishingsGroupMass(om.ExplicitComponent):
     '''
 
     def initialize(self):
-        add_aviary_option(self, Aircraft.CrewPayload.NUM_BUSINESS_CLASS)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)
         add_aviary_option(self, Aircraft.CrewPayload.NUM_FLIGHT_CREW)
-        add_aviary_option(self, Aircraft.CrewPayload.NUM_FIRST_CLASS)
-        add_aviary_option(self, Aircraft.CrewPayload.NUM_TOURIST_CLASS)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS)
         add_aviary_option(self, Aircraft.Fuselage.NUM_FUSELAGES)
 
     def setup(self):
@@ -36,9 +36,9 @@ class TransportFurnishingsGroupMass(om.ExplicitComponent):
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
 
         flight_crew_count = self.options[Aircraft.CrewPayload.NUM_FLIGHT_CREW]
-        first_class_count = self.options[Aircraft.CrewPayload.NUM_FIRST_CLASS]
-        business_class_count = self.options[Aircraft.CrewPayload.NUM_BUSINESS_CLASS]
-        tourist_class_count = self.options[Aircraft.CrewPayload.NUM_TOURIST_CLASS]
+        first_class_count = self.options[Aircraft.CrewPayload.Design.NUM_FIRST_CLASS]
+        business_class_count = self.options[Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS]
+        tourist_class_count = self.options[Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS]
 
         fuse_count = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
 
@@ -59,9 +59,9 @@ class TransportFurnishingsGroupMass(om.ExplicitComponent):
 
     def compute_partials(self, inputs, J):
         flight_crew_count = self.options[Aircraft.CrewPayload.NUM_FLIGHT_CREW]
-        first_class_count = self.options[Aircraft.CrewPayload.NUM_FIRST_CLASS]
-        business_class_count = self.options[Aircraft.CrewPayload.NUM_BUSINESS_CLASS]
-        tourist_class_count = self.options[Aircraft.CrewPayload.NUM_TOURIST_CLASS]
+        first_class_count = self.options[Aircraft.CrewPayload.Design.NUM_FIRST_CLASS]
+        business_class_count = self.options[Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS]
+        tourist_class_count = self.options[Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS]
 
         fuse_count = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
 
@@ -96,10 +96,10 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Aircraft.BWB.NUM_BAYS)
-        add_aviary_option(self, Aircraft.CrewPayload.NUM_BUSINESS_CLASS)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)
         add_aviary_option(self, Aircraft.CrewPayload.NUM_FLIGHT_CREW)
-        add_aviary_option(self, Aircraft.CrewPayload.NUM_FIRST_CLASS)
-        add_aviary_option(self, Aircraft.CrewPayload.NUM_TOURIST_CLASS)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS)
         add_aviary_option(self, Aircraft.Fuselage.MILITARY_CARGO_FLOOR)
 
     def setup(self):
@@ -123,9 +123,9 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
 
         flight_crew_count = self.options[Aircraft.CrewPayload.NUM_FLIGHT_CREW]
-        first_class_count = self.options[Aircraft.CrewPayload.NUM_FIRST_CLASS]
-        business_class_count = self.options[Aircraft.CrewPayload.NUM_BUSINESS_CLASS]
-        tourist_class_count = self.options[Aircraft.CrewPayload.NUM_TOURIST_CLASS]
+        first_class_count = self.options[Aircraft.CrewPayload.Design.NUM_FIRST_CLASS]
+        business_class_count = self.options[Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS]
+        tourist_class_count = self.options[Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS]
 
         scaler = inputs[Aircraft.Furnishings.MASS_SCALER]
         fuse_max_width = inputs[Aircraft.Fuselage.MAX_WIDTH]
@@ -155,9 +155,9 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
 
     def compute_partials(self, inputs, J):
         flight_crew_count = self.options[Aircraft.CrewPayload.NUM_FLIGHT_CREW]
-        first_class_count = self.options[Aircraft.CrewPayload.NUM_FIRST_CLASS]
-        business_class_count = self.options[Aircraft.CrewPayload.NUM_BUSINESS_CLASS]
-        tourist_class_count = self.options[Aircraft.CrewPayload.NUM_TOURIST_CLASS]
+        first_class_count = self.options[Aircraft.CrewPayload.Design.NUM_FIRST_CLASS]
+        business_class_count = self.options[Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS]
+        tourist_class_count = self.options[Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS]
 
         scaler = inputs[Aircraft.Furnishings.MASS_SCALER]
 
@@ -236,7 +236,7 @@ class AltFurnishingsGroupMassBase(om.ExplicitComponent):
     '''
 
     def initialize(self):
-        add_aviary_option(self, Aircraft.CrewPayload.NUM_PASSENGERS)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
 
     def setup(self):
         add_aviary_input(self, Aircraft.Furnishings.MASS_SCALER, val=1.0)
@@ -249,14 +249,14 @@ class AltFurnishingsGroupMassBase(om.ExplicitComponent):
     def compute(
         self, inputs, outputs, discrete_inputs=None, discrete_outputs=None
     ):
-        pax_count = self.options[Aircraft.CrewPayload.NUM_PASSENGERS]
+        pax_count = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
         scaler = inputs[Aircraft.Furnishings.MASS_SCALER]
 
         outputs[Aircraft.Furnishings.MASS_BASE] = \
             (82.15 * pax_count + 3600.0) * scaler
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
-        pax_count = self.options[Aircraft.CrewPayload.NUM_PASSENGERS]
+        pax_count = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
 
         J[
             Aircraft.Furnishings.MASS_BASE,

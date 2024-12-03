@@ -15,7 +15,7 @@ class ElectricalMass(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Aircraft.CrewPayload.NUM_FLIGHT_CREW)
-        add_aviary_option(self, Aircraft.CrewPayload.NUM_PASSENGERS)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
         add_aviary_option(self, Aircraft.Fuselage.NUM_FUSELAGES)
         add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_ENGINES)
 
@@ -32,7 +32,8 @@ class ElectricalMass(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         nfuse = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
         ncrew = self.options[Aircraft.CrewPayload.NUM_FLIGHT_CREW]
-        npass = self.options[Aircraft.CrewPayload.NUM_PASSENGERS]
+        npass = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
+
         length = inputs[Aircraft.Fuselage.LENGTH]
         width = inputs[Aircraft.Fuselage.MAX_WIDTH]
         num_eng = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
@@ -46,7 +47,8 @@ class ElectricalMass(om.ExplicitComponent):
     def compute_partials(self, inputs, J):
         nfuse = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
         ncrew = self.options[Aircraft.CrewPayload.NUM_FLIGHT_CREW]
-        npass = self.options[Aircraft.CrewPayload.NUM_PASSENGERS]
+        npass = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
+
         length = inputs[Aircraft.Fuselage.LENGTH]
         width = inputs[Aircraft.Fuselage.MAX_WIDTH]
         num_eng = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
@@ -76,7 +78,7 @@ class AltElectricalMass(om.ExplicitComponent):
     """
 
     def initialize(self):
-        add_aviary_option(self, Aircraft.CrewPayload.NUM_PASSENGERS)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
 
     def setup(self):
         add_aviary_input(self, Aircraft.Electrical.MASS_SCALER, 1.0)
@@ -87,14 +89,14 @@ class AltElectricalMass(om.ExplicitComponent):
         self.declare_partials(of='*', wrt='*')
 
     def compute(self, inputs, outputs):
-        npass = self.options[Aircraft.CrewPayload.NUM_PASSENGERS]
+        npass = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
         mass_scaler = inputs[Aircraft.Electrical.MASS_SCALER]
 
         outputs[Aircraft.Electrical.MASS] = 16.3 * \
             npass * mass_scaler / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
-        npass = self.options[Aircraft.CrewPayload.NUM_PASSENGERS]
+        npass = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
 
         J[Aircraft.Electrical.MASS, Aircraft.Electrical.MASS_SCALER] = \
             16.3 * npass / GRAV_ENGLISH_LBM

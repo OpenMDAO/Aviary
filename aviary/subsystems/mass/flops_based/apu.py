@@ -12,7 +12,7 @@ class TransportAPUMass(om.ExplicitComponent):
     """
 
     def initialize(self):
-        add_aviary_option(self, Aircraft.CrewPayload.NUM_PASSENGERS)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
 
     def setup(self):
         add_aviary_input(self, Aircraft.APU.MASS_SCALER, val=1.0)
@@ -25,7 +25,7 @@ class TransportAPUMass(om.ExplicitComponent):
         self.declare_partials('*', '*')
 
     def compute(self, inputs, outputs):
-        pax = self.options[Aircraft.CrewPayload.NUM_PASSENGERS]
+        pax = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
         scaler = inputs[Aircraft.APU.MASS_SCALER]
         planform = inputs[Aircraft.Fuselage.PLANFORM_AREA]
 
@@ -33,7 +33,7 @@ class TransportAPUMass(om.ExplicitComponent):
             54.0 * planform ** 0.3 + 5.4 * pax ** 0.9) * scaler / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
-        pax = self.options[Aircraft.CrewPayload.NUM_PASSENGERS]
+        pax = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
         scaler = inputs[Aircraft.APU.MASS_SCALER]
         planform = inputs[Aircraft.Fuselage.PLANFORM_AREA]
 
