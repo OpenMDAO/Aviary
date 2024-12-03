@@ -154,7 +154,7 @@ class MultiMissionProblem(om.Problem):
 
             # Use OpenMDAO's model options to pass all options through the system hierarchy.
             prefix = self.group_prefix + f'_{i}'
-            setup_model_options(prob, prob.aviary_inputs, prob.meta_data,
+            setup_model_options(self, prob.aviary_inputs, prob.meta_data,
                                 prefix=f'{prefix}.')
 
         # Aviary's problem setup wrapper uses these ignored warnings to suppress
