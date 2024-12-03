@@ -2,6 +2,7 @@ import inspect
 import subprocess
 import tempfile
 import numpy as np
+import re
 
 
 """
@@ -88,6 +89,7 @@ def get_previous_line(n=1) -> str:
 def get_variable_name(*variables) -> str:
     """
     returns the name of the variable passed to the function as a string
+    # NOTE: You cannot call this function multiple times on one line
 
     Parameters
     ----------
@@ -107,7 +109,14 @@ def get_variable_name(*variables) -> str:
     lineno = pframe.f_lineno - first_line if first_line else pframe.f_lineno - 1
     # extract the argument and remove all whitespace
     pre_arg, arg = ''.join(lines[lineno].split()).split('get_variable_name(', 1)
-    arg = ')'.join(arg.split(')')[:-(1+pre_arg.count('('))])
+
+    num_paren = 1
+    for ind, el in enumerate(arg.split(')')):
+        num_paren += el.count('(')-1
+        if num_paren == 0:
+            break
+    arg = ')'.join(arg.split(')')[:ind+1])
+
     if ',' in arg:
         return arg.split(',')
     else:
