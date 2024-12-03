@@ -108,14 +108,12 @@ def get_variable_name(*variables) -> str:
     # get the line number that called this function
     lineno = pframe.f_lineno - first_line if first_line else pframe.f_lineno - 1
     # extract the argument and remove all whitespace
-    pre_arg, arg = ''.join(lines[lineno].split()).split('get_variable_name(', 1)
+    arg = ''.join(lines[lineno].split()).split('get_variable_name(', 1)[1]
 
-    num_paren = 1
-    for ind, el in enumerate(arg.split(')')):
-        num_paren += el.count('(')-1
-        if num_paren == 0:
-            break
-    arg = ')'.join(arg.split(')')[:ind+1])
+    # Use regex to match balanced parentheses
+    match = re.match(r'([^()]*\([^()]*\))*[^()]*', arg)
+    if match:
+        arg = match.group(0)
 
     if ',' in arg:
         return arg.split(',')
