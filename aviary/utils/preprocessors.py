@@ -412,7 +412,6 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
             except KeyError:
                 aviary_options.set_val(var, np.zeros(num_engine_type))
 
-
     if Mission.Summary.FUEL_FLOW_SCALER not in aviary_options:
         aviary_options.set_val(Mission.Summary.FUEL_FLOW_SCALER, 1.0)
 
