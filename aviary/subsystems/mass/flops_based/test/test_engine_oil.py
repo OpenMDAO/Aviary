@@ -108,7 +108,7 @@ class AltEngineOilMassTest(unittest.TestCase):
         inputs = get_flops_inputs(case_name, preprocess=True)
 
         options = {
-            Aircraft.CrewPayload.NUM_PASSENGERS: inputs.get_val(Aircraft.CrewPayload.NUM_PASSENGERS),
+            Aircraft.CrewPayload.Design.NUM_PASSENGERS: inputs.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS),
         }
 
         prob.model.add_subsystem(
@@ -152,7 +152,7 @@ class AltEngineOilMassTest2(unittest.TestCase):
         inputs = get_flops_inputs("N3CC", preprocess=True)
 
         options = {
-            Aircraft.CrewPayload.NUM_PASSENGERS: inputs.get_val(Aircraft.CrewPayload.NUM_PASSENGERS),
+            Aircraft.CrewPayload.Design.NUM_PASSENGERS: inputs.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS),
         }
 
         prob.model.add_subsystem(

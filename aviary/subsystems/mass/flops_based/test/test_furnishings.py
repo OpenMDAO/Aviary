@@ -73,10 +73,10 @@ class BWBFurnishingsGroupMassTest(unittest.TestCase):
 
         opts = {
             Aircraft.BWB.NUM_BAYS: 5,
-            Aircraft.CrewPayload.NUM_BUSINESS_CLASS: flops_inputs.get_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS),
+            Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS: flops_inputs.get_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS),
             Aircraft.CrewPayload.NUM_FLIGHT_CREW: flops_inputs.get_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW),
-            Aircraft.CrewPayload.NUM_FIRST_CLASS: flops_inputs.get_val(Aircraft.CrewPayload.NUM_FIRST_CLASS),
-            Aircraft.CrewPayload.NUM_TOURIST_CLASS: flops_inputs.get_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS),
+            Aircraft.CrewPayload.Design.NUM_FIRST_CLASS: flops_inputs.get_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS),
+            Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS: flops_inputs.get_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS),
             Aircraft.Fuselage.MILITARY_CARGO_FLOOR: False,
         }
 
@@ -138,10 +138,10 @@ class BWBFurnishingsGroupMassTest2(unittest.TestCase):
 
         opts = {
             Aircraft.BWB.NUM_BAYS: 5,
-            Aircraft.CrewPayload.NUM_BUSINESS_CLASS: flops_inputs.get_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS),
+            Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS: flops_inputs.get_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS),
             Aircraft.CrewPayload.NUM_FLIGHT_CREW: flops_inputs.get_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW),
-            Aircraft.CrewPayload.NUM_FIRST_CLASS: flops_inputs.get_val(Aircraft.CrewPayload.NUM_FIRST_CLASS),
-            Aircraft.CrewPayload.NUM_TOURIST_CLASS: flops_inputs.get_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS),
+            Aircraft.CrewPayload.Design.NUM_FIRST_CLASS: flops_inputs.get_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS),
+            Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS: flops_inputs.get_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS),
             Aircraft.Fuselage.MILITARY_CARGO_FLOOR: False,
         }
 
