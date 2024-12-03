@@ -101,7 +101,9 @@ def run_aviary(aircraft_filename, phase_info, optimizer=None,
     prob.set_initial_guesses()
 
     prob.run_aviary_problem(
-        record_filename, restart_filename=restart_filename, run_driver=run_driver, make_plots=make_plots, optimization_history_filename=optimization_history_filename)
+        record_filename, restart_filename=restart_filename, run_driver=run_driver,
+        make_plots=make_plots,
+        optimization_history_filename=optimization_history_filename)
 
     return prob
 
@@ -155,9 +157,8 @@ def run_level_1(
 
 def _setup_level1_parser(parser):
     def_outdir = os.path.join(os.getcwd(), "output")
-    parser.add_argument(
-        'input_deck', metavar='indeck', type=str, nargs=1, help='Name of vehicle input deck file'
-    )
+    parser.add_argument('input_deck', metavar='indeck', type=str,
+                        nargs=1, help='Name of vehicle input deck file')
     parser.add_argument(
         "-o", "--outdir", default=def_outdir, help="Directory to write outputs"
     )
