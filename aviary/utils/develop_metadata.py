@@ -6,6 +6,7 @@ def add_meta_data(
         default_value=0.0,
         option=False,
         types=None,
+        multivalue=False,
         historical_name=None,
         _check_unique=True):
     '''
@@ -37,6 +38,10 @@ def add_meta_data(
 
     types : type
         gives the allowable type(s) of the variable in the aviary API.
+
+    multivalue : bool
+        when True, the variable can become a list of elements whose type is in types.
+        This is mainly used when there are multiple engine types.
 
     historical_name : dict or None
         dictionary of names that the variable held in prior codes
@@ -91,6 +96,7 @@ def add_meta_data(
         'option': option,
         'default_value': default_value,
         'types': types,
+        'multivalue': multivalue,
     }
 
 
@@ -102,6 +108,7 @@ def update_meta_data(
         default_value=0.0,
         option=False,
         types=None,
+        multivalue=False,
         historical_name=None):
     '''
     Update existing meta data associated with variables in the Aviary data hierarchy.
@@ -132,6 +139,10 @@ def update_meta_data(
 
     types : type
         gives the allowable type(s) of the variable
+
+    multivalue : bool
+        when True, the variable can become a list of elements whose type is in types.
+        This is mainly used when there are multiple engine types.
 
     historical_name : dict or None
         dictionary of names that the variable held in prior codes
@@ -173,4 +184,6 @@ def update_meta_data(
             f'You provided the variable {key} to a variable metadata dictionary via the update_meta_data function, but {key} does not exist in the dictionary. If you are sure you want to add this variable to the dictionary, call the add_meta_data function instead.')
 
     add_meta_data(key=key, meta_data=meta_data, units=units, desc=desc,
-                  default_value=default_value, option=option, types=types, historical_name=historical_name, _check_unique=False)
+                  default_value=default_value, option=option, types=types,
+                  multivalue=multivalue, historical_name=historical_name,
+                  _check_unique=False)

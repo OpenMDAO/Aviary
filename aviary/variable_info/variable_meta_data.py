@@ -2214,6 +2214,7 @@ add_meta_data(
     desc='Toggle for enabling scaling of engine mass',
     option=True,
     types=(bool, list),
+    multivalue=True,
     default_value=True,
 )
 
