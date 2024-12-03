@@ -115,6 +115,13 @@ def get_variable_name(*variables) -> str:
     if match:
         arg = match.group(0)
 
+    # # Requires Python 3.11, but allows this to be called multiple times on one line
+    # positions = inspect.getframeinfo(pframe).positions
+    # calling_lines = lines[positions.lineno-1:positions.end_lineno]
+    # calling_lines[-1] = calling_lines[-1][:positions.end_col_offset-1]
+    # calling_lines[0] = calling_lines[0][positions.col_offset:].removeprefix('get_variable_name(')
+    # arg = ''.join([l.strip() for l in calling_lines])
+
     if ',' in arg:
         return arg.split(',')
     else:
@@ -396,8 +403,8 @@ def glue_variable(name: str, val=None, md_code=False, display=True):
 
     with io.capture_output() as captured:
         glue(name, val, display)
-    if display:
-        captured.show()
+    # if display:
+    captured.show()
 
 
 def glue_keys(dict_of_dicts: dict, display=True) -> list:
