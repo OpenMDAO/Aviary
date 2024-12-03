@@ -209,6 +209,13 @@ def add_aviary_option(comp, name, val=_unspecified, units=None, desc=None, meta_
     if val is _unspecified:
         val = meta['default_value']
 
+    types = meta['types']
+    if meta['multivalue']:
+        if isinstance(types, tuple):
+            types = (list, *types)
+        else:
+            types = (list, types)
+
     if units not in [None, 'unitless']:
         types = tuple
         comp.options.declare(name, default=(val, units),
@@ -217,12 +224,12 @@ def add_aviary_option(comp, name, val=_unspecified, units=None, desc=None, meta_
 
     elif isinstance(val, Enum):
         comp.options.declare(name, default=val,
-                             types=meta['types'], desc=desc,
+                             types=types, desc=desc,
                              set_function=int_enum_setter)
 
     else:
         comp.options.declare(name, default=val,
-                             types=meta['types'], desc=desc)
+                             types=types, desc=desc)
 
 
 def override_aviary_vars(group: om.Group, aviary_inputs: AviaryValues,
@@ -461,7 +468,7 @@ def extract_options(aviary_inputs: AviaryValues, metadata=_MetaData) -> dict:
 
 
 def setup_model_options(prob: om.Problem, aviary_inputs: AviaryValues,
-                        meta_data=_MetaData, engine_models=None):
+                        meta_data=_MetaData, engine_models=None, prefix=''):
     """
     Setup the correct model options for an aviary problem.
 
@@ -476,11 +483,13 @@ def setup_model_options(prob: om.Problem, aviary_inputs: AviaryValues,
         metadata by default.
     engine_models : List of EngineModels or None
         (Optional) Engine models
+    prefix : str
+        Prefix for model options. Used for multi-mission.
     """
 
     # Use OpenMDAO's model options to pass all options through the system hierarchy.
-    prob.model_options['*'] = extract_options(aviary_inputs,
-                                              meta_data)
+    prob.model_options[f'{prefix}*'] = extract_options(aviary_inputs,
+                                                       meta_data)
 
     # Multi-engines need to index into their options.
     try:
@@ -516,5 +525,5 @@ def setup_model_options(prob: om.Problem, aviary_inputs: AviaryValues,
                 val, units = aviary_inputs.get_item(key)
                 opts[key] = (val[idx], units)
 
-            path = f"*core_propulsion.{eng_name}*"
+            path = f"{prefix}*core_propulsion.{eng_name}*"
             prob.model_options[path] = opts
