@@ -397,6 +397,22 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
     aviary_options.set_val(Aircraft.Engine.NUM_WING_ENGINES, num_wing_engines_all)
     aviary_options.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, num_fuse_engines_all)
 
+    # Update nacelle-related variables in aero to be sized to the number of
+    # engine types.
+    if num_engine_type > 1:
+
+        keys = [
+            Aircraft.Nacelle.LAMINAR_FLOW_LOWER,
+            Aircraft.Nacelle.LAMINAR_FLOW_UPPER
+        ]
+
+        for var in keys:
+            try:
+                aviary_options.get_val(var)
+            except KeyError:
+                aviary_options.set_val(var, np.zeros(num_engine_type))
+
+
     if Mission.Summary.FUEL_FLOW_SCALER not in aviary_options:
         aviary_options.set_val(Mission.Summary.FUEL_FLOW_SCALER, 1.0)
 
