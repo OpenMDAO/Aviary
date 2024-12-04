@@ -5,15 +5,17 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal, assert_check_partials
 
 from aviary.subsystems.premission import CorePreMission
+from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import set_aviary_initial_values
+from aviary.utils.preprocessors import preprocess_options
+from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
 from aviary.validation_cases.validation_tests import (
     flops_validation_test, get_flops_inputs, get_flops_outputs, get_flops_case_names, print_case
 )
+
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Mission, Settings
-from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
-from aviary.utils.preprocessors import preprocess_options
 
 
 class PreMissionGroupTest(unittest.TestCase):
@@ -44,6 +46,8 @@ class PreMissionGroupTest(unittest.TestCase):
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        setup_model_options(prob, flops_inputs)
 
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_solver_print(2)
@@ -103,6 +107,8 @@ class PreMissionGroupTest(unittest.TestCase):
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        setup_model_options(prob, flops_inputs)
 
         prob.setup(check=False)
 

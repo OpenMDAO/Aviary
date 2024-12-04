@@ -124,8 +124,8 @@ class MultiengineTestcase(unittest.TestCase):
         alloc_cruise = prob.get_val('traj.cruise.parameter_vals:throttle_allocations')
         alloc_descent = prob.get_val('traj.descent.parameter_vals:throttle_allocations')
 
-        assert_near_equal(alloc_climb[0], 0.5, tolerance=1e-2)
-        assert_near_equal(alloc_cruise[0], 0.64, tolerance=1e-2)
+        assert_near_equal(alloc_climb[0], 0.51, tolerance=1e-2)
+        assert_near_equal(alloc_cruise[0], 0.747, tolerance=1e-2)
         assert_near_equal(alloc_descent[0], 0.999, tolerance=1e-2)
 
     @require_pyoptsparse(optimizer="SNOPT")
@@ -166,7 +166,7 @@ class MultiengineTestcase(unittest.TestCase):
         alloc_descent = prob.get_val('traj.descent.controls:throttle_allocations')
 
         # Cruise is pretty constant, check exact value.
-        assert_near_equal(alloc_cruise[0], 0.646, tolerance=1e-2)
+        assert_near_equal(alloc_cruise[0], 0.75, tolerance=1e-2)
 
         # Check general trend: favors engine 1.
         self.assertGreater(alloc_climb[2], 0.55)

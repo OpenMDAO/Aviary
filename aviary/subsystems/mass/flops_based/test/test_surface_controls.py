@@ -10,7 +10,7 @@ from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (Version,
                                                       flops_validation_test,
                                                       get_flops_case_names,
-                                                      get_flops_inputs,
+                                                      get_flops_options,
                                                       print_case)
 from aviary.variable_info.variables import Aircraft, Mission
 
@@ -28,9 +28,11 @@ class SurfaceCtrlMassTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             "surf_ctrl",
-            SurfaceControlMass(aviary_options=get_flops_inputs(case_name)),
+            SurfaceControlMass(),
             promotes=['*']
         )
+
+        prob.model_options['*'] = get_flops_options(case_name, preprocess=True)
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -69,9 +71,12 @@ class SurfaceCtrlMassTest2(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem(
             "surf_ctrl",
-            SurfaceControlMass(aviary_options=get_flops_inputs("N3CC")),
+            SurfaceControlMass(),
             promotes=['*']
         )
+
+        prob.model_options['*'] = get_flops_options("N3CC", preprocess=True)
+
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Mission.Design.GROSS_MASS, 130000, 'lbm')
         prob.set_val(Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO, 1, 'unitless')
@@ -93,9 +98,11 @@ class AltSurfaceCtrlMassTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             "surf_ctrl",
-            AltSurfaceControlMass(aviary_options=get_flops_inputs(case_name)),
+            AltSurfaceControlMass(),
             promotes=['*']
         )
+
+        prob.model_options['*'] = get_flops_options(case_name, preprocess=True)
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -133,9 +140,12 @@ class AltSurfaceCtrlMassTest2(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem(
             "surf_ctrl",
-            AltSurfaceControlMass(aviary_options=get_flops_inputs("N3CC")),
+            AltSurfaceControlMass(),
             promotes=['*']
         )
+
+        prob.model_options['*'] = get_flops_options("N3CC", preprocess=True)
+
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.Wing.AREA, 1000, 'ft**2')
         prob.set_val(Aircraft.HorizontalTail.WETTED_AREA, 100, 'ft**2')

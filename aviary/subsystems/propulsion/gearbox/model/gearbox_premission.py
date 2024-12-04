@@ -2,24 +2,18 @@ import openmdao.api as om
 import numpy as np
 
 from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.utils.aviary_values import AviaryValues
 
 
 class GearboxPreMission(om.Group):
     """
     Calculate gearbox mass for a single gearbox.
 
-    Gearbox design assumes collective control which means that RPM coming into the 
+    Gearbox design assumes collective control which means that RPM coming into the
     gearbox is fixed and RPM going out of the gearbox is fixed over the whole mission.
     """
 
     def initialize(self, ):
         self.options.declare("simple_mass", types=bool, default=True)
-        self.options.declare(
-            "aviary_inputs", types=AviaryValues,
-            desc="collection of Aircraft/Mission specific options",
-            default=None,
-        )
         self.name = 'gearbox_premission'
 
     def setup(self):
