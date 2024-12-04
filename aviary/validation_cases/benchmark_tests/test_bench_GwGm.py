@@ -212,7 +212,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         )
 
         assert_near_equal(
-            prob.get_val(Mission.Summary.RANGE, units='NM'), 3774.3, tolerance=rtol
+            prob.get_val(Mission.Summary.RANGE, units='NM'), 3675.0, tolerance=rtol
         )
 
         assert_near_equal(

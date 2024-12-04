@@ -45,6 +45,7 @@ parts:
       - file: user_guide/features/overriding
       - file: user_guide/FLOPS_based_detailed_takeoff_and_landing
       - file: user_guide/reserve_missions
+      - file: user_guide/multi_mission
       - file: user_guide/off_design_missions
       - file: user_guide/SGM_capabilities
     - file: user_guide/troubleshooting
@@ -57,6 +58,7 @@ parts:
     - file: examples/coupled_aircraft_mission_optimization
     - file: examples/additional_flight_phases
     - file: examples/reserve_missions
+    - file: examples/multi_mission
     - file: examples/off_design_example
     - file: examples/OAS_subsystem
     - file: examples/level_2_detailed_takeoff_and_landing
