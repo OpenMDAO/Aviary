@@ -33,6 +33,11 @@ class TaxiTestCase(unittest.TestCase):
             aviary_options=options, core_subsystems=default_mission_subsystems
         )
 
+        self.prob.model.set_input_defaults(
+            Mission.Takeoff.AIRPORT_ALTITUDE,
+            0.0,
+        )
+
     @unittest.skipIf(
         version.parse(openmdao.__version__) < version.parse("3.26"),
         "Skipping due to OpenMDAO version being too low (<3.26)",

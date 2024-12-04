@@ -56,8 +56,7 @@ class TestSubsystemsMission(unittest.TestCase):
         prob = av.AviaryProblem()
 
         prob.load_inputs(
-            "models/test_aircraft/aircraft_for_bench_FwFm_with_electric.csv", phase_info
-        )
+            "models/test_aircraft/aircraft_for_bench_FwFm_with_electric.csv", phase_info)
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
@@ -84,7 +83,6 @@ class TestSubsystemsMission(unittest.TestCase):
         prob.set_val(av.Aircraft.Battery.PACK_ENERGY_DENSITY, 550, units='kJ/kg')
         prob.set_val(av.Aircraft.Battery.PACK_MASS, 1000, units='lbm')
         prob.set_val(av.Aircraft.Battery.ADDITIONAL_MASS, 115, units='lbm')
-        prob.set_val(av.Aircraft.Battery.EFFICIENCY, 0.95, units='unitless')
 
         prob.run_aviary_problem()
 
@@ -94,9 +92,6 @@ class TestSubsystemsMission(unittest.TestCase):
             units='kW*h',
         )
         fuel_burned = prob.get_val(av.Mission.Summary.FUEL_BURNED, units='lbm')
-        soc = prob.get_val(
-            'traj.cruise.rhs_all.battery.battery_state_of_charge', units='unitless'
-        )
 
         # Check outputs
         # indirectly check mission trajectory by checking total fuel/electric split

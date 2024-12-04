@@ -18,7 +18,7 @@ class FuselageParametersTestCase1(unittest.TestCase):
     def setUp(self):
 
         options = get_option_defaults()
-        options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180)
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units="inch")
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.Fuselage.NUM_SEATS_ABREAST, 6)
@@ -57,7 +57,8 @@ class FuselageParametersTestCase2(unittest.TestCase):
     def setUp(self):
 
         options = get_option_defaults()
-        options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=30, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS,
+                        val=30, units='unitless')
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units="inch")
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.Fuselage.NUM_SEATS_ABREAST, 1)
@@ -93,7 +94,7 @@ class FuselageParametersTestCase2(unittest.TestCase):
 
 
 class FuselageSizeTestCase1(unittest.TestCase):
-    """ 
+    """
     this is the GASP test case, input and output values based on large single aisle 1 v3 without bug fix
     """
 
@@ -186,7 +187,8 @@ class FuselageGroupTestCase1(
     def setUp(self):
 
         options = get_option_defaults()
-        options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS,
+                        val=180, units='unitless')
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units="inch")
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.Fuselage.NUM_SEATS_ABREAST, 6)
@@ -235,7 +237,8 @@ class FuselageGroupTestCase2(unittest.TestCase):
     def setUp(self):
 
         options = get_option_defaults()
-        options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS,
+                        val=180, units='unitless')
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24,
                         units="inch")  # not actual GASP value
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)  # not actual GASP value
@@ -295,7 +298,8 @@ class FuselageGroupTestCase3(unittest.TestCase):
     def setUp(self):
 
         options = get_option_defaults()
-        options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=30, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS,
+                        val=30, units='unitless')
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24,
                         units="inch")  # not actual GASP value
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)  # not actual GASP value
@@ -355,7 +359,8 @@ class FuselageGroupTestCase4(unittest.TestCase):
     def setUp(self):
 
         options = get_option_defaults()
-        options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=30, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS,
+                        val=30, units='unitless')
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24,
                         units="inch")  # not actual GASP value
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)  # not actual GASP value

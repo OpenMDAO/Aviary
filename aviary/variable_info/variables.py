@@ -130,6 +130,12 @@ class Aircraft:
         WATER_MASS_PER_OCCUPANT = 'aircraft:crew_and_payload:water_mass_per_occupant'
         WING_CARGO = 'aircraft:crew_and_payload:wing_cargo'
 
+        class Design:
+            NUM_BUSINESS_CLASS = 'aircraft:crew_and_payload:design:num_business_class'
+            NUM_FIRST_CLASS = 'aircraft:crew_and_payload:design:num_first_class'
+            NUM_TOURIST_CLASS = 'aircraft:crew_and_payload:design:num_tourist_class'
+            NUM_PASSENGERS = 'aircraft:crew_and_payload:design:num_passengers'
+
     class Design:
         # These variables are values that do not fall into a particular aircraft
         # component.

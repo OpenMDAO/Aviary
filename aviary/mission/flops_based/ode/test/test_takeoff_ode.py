@@ -11,6 +11,7 @@ from aviary.models.N3CC.N3CC_data import (
     detailed_takeoff_climbing, detailed_takeoff_ground, takeoff_subsystem_options, inputs)
 from aviary.validation_cases.validation_tests import do_validation_test
 from aviary.variable_info.variables import Dynamic, Mission, Aircraft
+from aviary.utils.preprocessors import preprocess_options
 
 takeoff_subsystem_options = deepcopy(takeoff_subsystem_options)
 
@@ -87,9 +88,12 @@ class TakeoffODETest(unittest.TestCase):
         time, _ = detailed_takeoff_climbing.get_item('time')
         nn = len(time)
         aviary_options = inputs
+        engine = build_engine_deck(aviary_options)
+
+        preprocess_options(aviary_options, engine_models=engine)
 
         default_mission_subsystems = get_default_mission_subsystems(
-            'FLOPS', build_engine_deck(aviary_options))
+            'FLOPS', engine)
 
         prob.model.add_subsystem(
             "takeoff_ode",
