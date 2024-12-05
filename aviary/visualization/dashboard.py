@@ -180,8 +180,10 @@ def _dashboard_cmd(options, user_args):
         report_dir_path = Path(f"{report_dir_name}_out")
         # need to check to see if that directory already exists
         if not options.force and report_dir_path.is_dir():
-            raise RuntimeError(f"The reports directory {
-                report_dir_path} already exists. If you wish to overrite the existing directory, use the --force option")
+            raise RuntimeError(
+                f"The reports directory {report_dir_path} already exists. If you wish "
+                "to overrite the existing directory, use the --force option"
+            )
         if report_dir_path.is_dir(
         ):  # need to delete it. The unpacking will just add to what is there, not do a clean unpack
             shutil.rmtree(report_dir_path)
@@ -681,7 +683,7 @@ def create_optimization_history_plot(case_recorder, df):
     # make the list of variables with checkboxes
     data_source = ColumnDataSource(
         data=dict(options=variable_names, checked=[False] * len(variable_names)))
-   # Create a Div to act as a scrollable container
+    # Create a Div to act as a scrollable container
     variable_scroll_box = Div(
         styles={
             'overflow-y': 'scroll',
@@ -787,12 +789,12 @@ def create_optimization_history_plot(case_recorder, df):
         f"""
         <label style="display:block; margin-bottom:5px;">
             <input type="checkbox" value="{variable_name}"
-                onchange="Bokeh.documents[0].get_model_by_id('{
-            variable_checkbox_callback.id}').execute({
-            index: {i}, checked: this.checked} )">
+                onchange="Bokeh.documents[0].get_model_by_id('{variable_checkbox_callback.id}').execute({index: {i}, checked: this.checked} )">
             {variable_name}
         </label>
-    """ for i, variable_name in enumerate(variable_names))
+    """
+        for i, variable_name in enumerate(variable_names)
+    )
     variable_scroll_box.text = initial_html
 
     # Arrange the layout using Panel

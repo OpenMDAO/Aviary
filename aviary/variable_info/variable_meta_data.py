@@ -3889,7 +3889,7 @@ add_meta_data(
     },
     units='unitless',
     desc='mass scaler of the main landing gear structure',
-    default_value=1.0, ,
+    default_value=1.0,
 )
 
 add_meta_data(
