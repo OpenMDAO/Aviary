@@ -22,16 +22,17 @@ class FlightConstraintTestCase(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.MASS, np.array([174878.0, 174878.0]), units="lbm"
+            Dynamic.Vehicle.MASS, np.array([174878.0, 174878.0]), units="lbm"
         )
         self.prob.model.set_input_defaults(Aircraft.Wing.AREA, 1370.3, units="ft**2")
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.DENSITY, 0.0023081 * np.ones(2), units="slug/ft**3"
+            Dynamic.Atmosphere.DENSITY, 0.0023081 * np.ones(2), units="slug/ft**3"
         )
         self.prob.model.set_input_defaults(
             "CL_max", 1.2596 * np.ones(2), units="unitless")
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.FLIGHT_PATH_ANGLE, 7.76 * np.ones(2), units="deg")
+            Dynamic.Mission.FLIGHT_PATH_ANGLE, 7.76 * np.ones(2), units="deg"
+        )
         self.prob.model.set_input_defaults(Aircraft.Wing.INCIDENCE, 0.0, units="deg")
         self.prob.model.set_input_defaults("alpha", 5.19 * np.ones(2), units="deg")
         self.prob.model.set_input_defaults(

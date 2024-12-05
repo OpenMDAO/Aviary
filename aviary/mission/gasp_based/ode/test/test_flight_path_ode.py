@@ -23,11 +23,14 @@ class FlightPathODETestCase(unittest.TestCase):
 
         aviary_options = get_option_defaults()
         default_mission_subsystems = get_default_mission_subsystems(
-            'GASP', build_engine_deck(aviary_options))
+            'GASP', build_engine_deck(aviary_options)
+        )
 
-        self.fp = self.prob.model = FlightPathODE(num_nodes=2,
-                                                  aviary_options=get_option_defaults(),
-                                                  core_subsystems=default_mission_subsystems)
+        self.fp = self.prob.model = FlightPathODE(
+            num_nodes=2,
+            aviary_options=get_option_defaults(),
+            core_subsystems=default_mission_subsystems,
+        )
 
     def test_case1(self):
         # ground_roll = False (the aircraft is not confined to the ground)
@@ -37,7 +40,7 @@ class FlightPathODETestCase(unittest.TestCase):
         set_params_for_unit_tests(self.prob)
 
         self.prob.set_val(Dynamic.Mission.VELOCITY, [100, 100], units="kn")
-        self.prob.set_val(Dynamic.Mission.MASS, [100000, 100000], units="lbm")
+        self.prob.set_val(Dynamic.Vehicle.MASS, [100000, 100000], units="lbm")
         self.prob.set_val(Dynamic.Mission.ALTITUDE, [500, 500], units="ft")
         self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
         self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
@@ -58,8 +61,7 @@ class FlightPathODETestCase(unittest.TestCase):
 
         tol = 1e-6
         assert_near_equal(
-            self.prob[Dynamic.Mission.ALTITUDE_RATE], np.array(
-                [0, 0]), tol
+            self.prob[Dynamic.Mission.ALTITUDE_RATE], np.array([0, 0]), tol
         )
 
         partial_data = self.prob.check_partials(
@@ -76,7 +78,7 @@ class FlightPathODETestCase(unittest.TestCase):
         set_params_for_unit_tests(self.prob)
 
         self.prob.set_val(Dynamic.Mission.VELOCITY, [100, 100], units="kn")
-        self.prob.set_val(Dynamic.Mission.MASS, [100000, 100000], units="lbm")
+        self.prob.set_val(Dynamic.Vehicle.MASS, [100000, 100000], units="lbm")
         self.prob.set_val(Dynamic.Mission.ALTITUDE, [500, 500], units="ft")
         self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
         self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
