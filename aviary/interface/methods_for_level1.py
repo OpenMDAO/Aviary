@@ -158,7 +158,7 @@ def run_level_1(
 def _setup_level1_parser(parser):
     def_outdir = os.path.join(os.getcwd(), "output")
     parser.add_argument(
-        'input_deck', metavar='indeck', type=str, nargs=1, 
+        'input_deck', metavar='indeck', type=str, nargs=1,
         help='Name of vehicle input deck file'
     )
     parser.add_argument(
