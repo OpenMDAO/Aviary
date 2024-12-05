@@ -178,7 +178,7 @@ class GlideSlopeForces(om.ExplicitComponent):
 
         alpha0 = aviary_options.get_val(Mission.Takeoff.ANGLE_OF_ATTACK_RUNWAY, 'rad')
         t_inc = aviary_options.get_val(Mission.Takeoff.THRUST_INCIDENCE, 'rad')
-        total_num_engines = aviary_options.get_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES)
+        # total_num_engines = aviary_options.get_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES)
 
         mass = inputs[Dynamic.Mission.MASS]
         lift = inputs[Dynamic.Mission.LIFT]
@@ -216,7 +216,7 @@ class GlideSlopeForces(om.ExplicitComponent):
 
         alpha0 = aviary_options.get_val(Mission.Takeoff.ANGLE_OF_ATTACK_RUNWAY, 'rad')
         t_inc = aviary_options.get_val(Mission.Takeoff.THRUST_INCIDENCE, 'rad')
-        total_num_engines = aviary_options.get_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES)
+        # total_num_engines = aviary_options.get_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES)
 
         mass = inputs[Dynamic.Mission.MASS]
         lift = inputs[Dynamic.Mission.LIFT]
