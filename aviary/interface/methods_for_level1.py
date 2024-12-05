@@ -157,8 +157,10 @@ def run_level_1(
 
 def _setup_level1_parser(parser):
     def_outdir = os.path.join(os.getcwd(), "output")
-    parser.add_argument('input_deck', metavar='indeck', type=str,
-                        nargs=1, help='Name of vehicle input deck file')
+    parser.add_argument(
+        'input_deck', metavar='indeck', type=str, nargs=1, 
+        help='Name of vehicle input deck file'
+    )
     parser.add_argument(
         "-o", "--outdir", default=def_outdir, help="Directory to write outputs"
     )
@@ -179,7 +181,8 @@ def _setup_level1_parser(parser):
         "--max_iter",
         type=int,
         default=50,
-        help="maximum number of iterations")
+        help="maximum number of iterations"
+    )
     parser.add_argument(
         "--shooting",
         action="store_true",
