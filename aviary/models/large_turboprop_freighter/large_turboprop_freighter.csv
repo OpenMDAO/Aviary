@@ -1,0 +1,249 @@
+# GASP-derived aircraft input deck converted from large_turboprop_freighter.dat
+
+# Input Values
+aircraft:air_conditioning:mass_coefficient, 2.65, unitless
+aircraft:anti_icing:mass, 644, lbm
+aircraft:apu:mass, 756, lbm
+aircraft:avionics:mass, 936, lbm
+aircraft:controls:cockpit_control_mass_scaler, 1, unitless
+aircraft:controls:control_mass_increment, 0, lbm
+aircraft:controls:stability_augmentation_system_mass, 0, lbm
+aircraft:controls:stability_augmentation_system_mass_scaler, 1, unitless
+aircraft:crew_and_payload:cargo_mass, 31273, lbm
+aircraft:crew_and_payload:catering_items_mass_per_passenger, 0, lbm
+aircraft:crew_and_payload:num_passengers, 60, unitless
+aircraft:crew_and_payload:passenger_mass_with_bags, 190, lbm
+aircraft:crew_and_payload:passenger_service_mass_per_passenger, 0, lbm
+aircraft:crew_and_payload:water_mass_per_occupant, 0, lbm
+aircraft:design:cg_delta, 0.25, unitless
+aircraft:design:cockpit_control_mass_coefficient, 20, unitless
+aircraft:design:drag_increment, 0.0015, unitless
+aircraft:design:emergency_equipment_mass, 25, lbm
+aircraft:design:max_structural_speed, 320, mi/h
+aircraft:design:part25_structural_category, 3, unitless
+aircraft:design:reserve_fuel_additional, 0.667, lbm
+aircraft:design:static_margin, 0.05, unitless
+aircraft:design:structural_mass_increment, 0, lbm
+aircraft:design:supercritical_drag_shift, 0, unitless
+aircraft:engine:additional_mass_fraction, 0.34, unitless
+aircraft:engine:mass_scaler, 1, unitless
+aircraft:engine:mass_specific, 0.37026, lbm/lbf
+aircraft:engine:num_engines, 4, unitless
+aircraft:engine:data_file, models/engines/turboshaft_4465hp.deck
+aircraft:engine:pod_mass_scaler, 1, unitless
+aircraft:engine:pylon_factor, 0.7, unitless
+aircraft:engine:reference_diameter, 5.8, ft
+aircraft:engine:reference_sls_thrust, 28690, lbf
+aircraft:engine:scaled_sls_thrust, 28690, lbf
+aircraft:engine:type, 6, unitless
+aircraft:engine:wing_locations, [0.385, 0.385], unitless
+aircraft:engine:propeller_diameter, 13.5, ft
+aircraft:engine:num_propeller_blades, 4, unitless
+aircraft:engine:propeller_activity_factor, 167, unitless
+aircraft:engine:propeller_tip_speed_max, 720, ft/s
+# aircraft:engine:gearbox:gear_ratio, 13.53, unitless
+aircraft:engine:fixed_rpm, 1019, rpm
+aircraft:fuel:density, 6.687, lbm/galUS
+aircraft:fuel:fuel_margin, 15, unitless
+aircraft:fuel:fuel_system_mass_coefficient, 0.065, unitless
+aircraft:fuel:fuel_system_mass_scaler, 1, unitless
+aircraft:fuel:unusable_fuel_mass_coefficient, 4.5, unitless
+aircraft:fuel:wing_fuel_fraction, 0.324, unitless
+aircraft:furnishings:mass, 0, lbm
+aircraft:fuselage:aisle_width, 48.8, inch
+aircraft:fuselage:delta_diameter, 5, ft
+aircraft:fuselage:flat_plate_area_increment, 2, ft**2
+aircraft:fuselage:form_factor, -1, unitless
+aircraft:fuselage:mass_coefficient, 145.87, unitless
+aircraft:fuselage:nose_fineness, 1, unitless
+aircraft:fuselage:num_aisles, 1, unitless
+aircraft:fuselage:num_seats_abreast, 6, unitless
+aircraft:fuselage:pilot_compartment_length, 10.6, ft
+aircraft:fuselage:pressure_differential, 6.55, psi
+aircraft:fuselage:seat_pitch, 41.24, inch
+aircraft:fuselage:seat_width, 18, inch
+aircraft:fuselage:tail_fineness, 2.9, unitless
+aircraft:fuselage:wetted_area_factor, 1, unitless
+aircraft:horizontal_tail:area, 0, ft**2
+aircraft:horizontal_tail:aspect_ratio, 6.03, unitless
+aircraft:horizontal_tail:form_factor, -1, unitless
+aircraft:horizontal_tail:mass_coefficient, 0.2285, unitless
+aircraft:horizontal_tail:moment_ratio, 0.3061, unitless
+aircraft:horizontal_tail:sweep, 0, deg
+aircraft:horizontal_tail:taper_ratio, 0.374, unitless
+aircraft:horizontal_tail:thickness_to_chord, 0.15, unitless
+aircraft:horizontal_tail:vertical_tail_fraction, 0, unitless
+aircraft:horizontal_tail:volume_coefficient, 0.8614, unitless
+aircraft:hydraulics:flight_control_mass_coefficient, 0.102, unitless
+aircraft:hydraulics:gear_mass_coefficient, 0.11, unitless
+aircraft:instruments:mass_coefficient, 0.0416, unitless
+aircraft:landing_gear:fixed_gear, True, unitless
+aircraft:landing_gear:main_gear_location, 0, unitless
+aircraft:landing_gear:main_gear_mass_coefficient, 0.916, unitless
+aircraft:landing_gear:mass_coefficient, 0.0337, unitless
+aircraft:landing_gear:tail_hook_mass_scaler, 1, unitless
+aircraft:landing_gear:total_mass_scaler, 1, unitless
+aircraft:nacelle:clearance_ratio, 0.2, unitless
+aircraft:nacelle:core_diameter_ratio, 1.15, unitless
+aircraft:nacelle:fineness, 0.38, unitless
+aircraft:nacelle:form_factor, -1, unitless
+aircraft:nacelle:mass_specific, 3, lbm/ft**2
+aircraft:strut:area_ratio, 0, unitless
+aircraft:strut:attachment_location, 0, ft
+aircraft:strut:attachment_location_dimensionless, 0, unitless
+aircraft:strut:dimensional_location_specified, False, unitless
+aircraft:strut:fuselage_interference_factor, 0, unitless
+aircraft:strut:mass_coefficient, 0, unitless
+aircraft:vertical_tail:area, 0, ft**2
+aircraft:vertical_tail:aspect_ratio, 1.81, unitless
+aircraft:vertical_tail:form_factor, -1, unitless
+aircraft:vertical_tail:mass_coefficient, 0.2035, unitless
+aircraft:vertical_tail:moment_ratio, 2.809, unitless
+aircraft:vertical_tail:sweep, 0, deg
+aircraft:vertical_tail:taper_ratio, 0.296, unitless
+aircraft:vertical_tail:thickness_to_chord, 0.15, unitless
+aircraft:vertical_tail:volume_coefficient, 0.05355, unitless
+aircraft:wing:aspect_ratio, 10.078, unitless
+aircraft:wing:center_distance, 0.45, unitless
+aircraft:wing:choose_fold_location, True, unitless
+aircraft:wing:flap_chord_ratio, 0.28, unitless
+aircraft:wing:flap_deflection_landing, 15, deg
+aircraft:wing:flap_deflection_takeoff, 10, deg
+aircraft:wing:flap_drag_increment_optimum, 0.23, unitless
+aircraft:wing:flap_lift_increment_optimum, 1.4, unitless
+aircraft:wing:flap_span_ratio, 0.6, unitless
+aircraft:wing:flap_type, double_slotted, unitless
+aircraft:wing:fold_dimensional_location_specified, False, unitless
+aircraft:wing:fold_mass_coefficient, 0, unitless
+aircraft:wing:folded_span, 0, ft
+aircraft:wing:form_factor, -1, unitless
+aircraft:wing:fuselage_interference_factor, 1, unitless
+aircraft:wing:has_fold, False, unitless
+aircraft:wing:has_strut, False, unitless
+aircraft:wing:height, 14.5, ft
+aircraft:wing:high_lift_mass_coefficient, 1.2, unitless
+aircraft:wing:incidence, 2, deg
+aircraft:wing:loading, 88.846, lbf/ft**2
+aircraft:wing:mass_coefficient, 131.32, unitless
+aircraft:wing:max_lift_ref, 1.5, unitless
+aircraft:wing:max_slat_deflection_landing, 0, deg
+aircraft:wing:max_slat_deflection_takeoff, 0, deg
+aircraft:wing:max_thickness_location, 0.35, unitless
+aircraft:wing:min_pressure_location, 0.3, unitless
+aircraft:wing:mounting_type, 1, unitless
+aircraft:wing:num_flap_segments, 2, unitless
+aircraft:wing:optimum_flap_deflection, 55, deg
+aircraft:wing:optimum_slat_deflection, 45, deg
+aircraft:wing:slat_chord_ratio, 0, unitless
+aircraft:wing:slat_lift_increment_optimum, 0.93, unitless
+aircraft:wing:slat_span_ratio, 0.9, unitless
+aircraft:wing:surface_ctrl_mass_coefficient, 0.588, unitless
+aircraft:wing:sweep, 0, deg
+aircraft:wing:taper_ratio, 0.52, unitless
+aircraft:wing:thickness_to_chord_root, 0.18, unitless
+aircraft:wing:thickness_to_chord_tip, 0.12, unitless
+aircraft:wing:zero_lift_angle, -1, deg
+mission:design:cruise_altitude, 21000, ft
+mission:design:gross_mass, 155000, lbm
+mission:design:mach, 0.475, unitless
+mission:design:range, 0, NM
+mission:design:rate_of_climb_at_top_of_climb, 300, ft/min
+mission:landing:airport_altitude, 0, ft
+mission:landing:braking_delay, 2, s
+mission:landing:glide_to_stall_ratio, 1.3, unitless
+mission:landing:maximum_flare_load_factor, 1.15, unitless
+mission:landing:maximum_sink_rate, 900, ft/min
+mission:landing:obstacle_height, 50, ft
+mission:landing:touchdown_sink_rate, 5, ft/s
+mission:summary:fuel_flow_scaler, 1, unitless
+mission:takeoff:decision_speed_increment, 5, kn
+mission:takeoff:rotation_speed_increment, 5, kn
+mission:taxi:duration, 0.15, h
+settings:problem_type, fallout, unitless
+settings:equations_of_motion, 2DOF
+settings:mass_method, GASP
+
+mission:constraints:max_mach, 0.5, unitless
+
+# Initial Guesses
+actual_takeoff_mass, 0
+climb_range, 0
+cruise_mass_final, 0
+flight_duration, 0
+fuel_burn_per_passenger_mile, 0.1
+reserves, 0
+rotation_mass, 0.99
+time_to_climb, 0
+
+# Unconverted Values
+INGASP.ACDCDR, 1, 1, 1, 1, 1.15, 1.392, 1.7855, 3.5714, 5.36
+INGASP.ACLS, 0, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8
+INGASP.BENGOB, 0.05
+INGASP.CK10, 1
+INGASP.CK11, 1
+INGASP.CK18, 1
+INGASP.CK7, 1
+INGASP.CK8, 1
+INGASP.CK9, 1
+INGASP.CW, , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0
+INGASP.DCDSE, 0
+INGASP.EMCRU, 0.475
+INGASP.HNCRU, 21000
+INGASP.HPORT, 0
+INGASP.HSCREQ, 10000
+INGASP.HTMAX, 400
+INGASP.ICLM, 1
+INGASP.ICRUS, 0
+INGASP.IFERRY, 0
+INGASP.IPART, 1
+INGASP.ISWING, 0
+INGASP.IWLD, 2
+INGASP.JENGSZ, 2
+INGASP.KNAC, 1
+INGASP.KWCD, 9
+INGASP.LCWING, 0
+INGASP.MX, 0
+INGASP.NFAIL, 0
+INGASP.RCCRU, 10
+INGASP.RELP, 0
+INGASP.RELR, 0.4
+INGASP.RF, 3, 100, 10000, 1500, 4, 5, 0, 1
+INGASP.ROSCAB, 500
+INGASP.RWCRTX, 0.985
+INGASP.SKPES, 0.335
+INGASP.TBO, 0
+INGASP.TDELLD, 0
+INGASP.TDELTO, 0
+INGASP.TDELTX, 0
+INGASP.TIDLE, 200
+INGASP.VCLMB, 180
+INGASP.VRAT, 1.15
+INGASP.WLPCT, 0.976
+INGASP.WPLX, 25000
+INGASP.XLFMAX, 1.2
+INGASP.XTORQ, 4500
+INPROP.AF, 167
+INPROP.ANCQHP, 0.03405
+INPROP.BL, 4
+INPROP.BLANG, 0
+INPROP.CLI, 0.5
+INPROP.CTI, 0.2
+INPROP.DIST, 1000
+INPROP.DPROP, 13.5
+INPROP.GR, 0.0738
+INPROP.HNOYS, 1000
+INPROP.HPMSLS, 4465
+INPROP.IDATE, 1980
+INPROP.JSIZE, 1
+INPROP.KNOYS, -1
+INPROP.KODECR, 7
+INPROP.KODETH, 6
+INPROP.NTYP, 5
+INPROP.PCLER, 0.1724
+INPROP.PCNCCL, 1.0228
+INPROP.PCNCCR, 1.05357
+INPROP.PCNCTO, 1
+INPROP.TSPDMX, 720
+INPROP.WKPFAC, 1.1
+INPROP.WPROP1, 4500
+INPROP.XNMAX, 13820

@@ -36,7 +36,7 @@ class CharacteristicLengths(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, 0.0)
 
         add_aviary_input(self, Aircraft.HorizontalTail.AREA, 0.0)
-        add_aviary_input(self, Aircraft.HorizontalTail.ASPECT_RATIO, 0.0)
+        add_aviary_input(self, Aircraft.HorizontalTail.ASPECT_RATIO, 4.75)
         # add_aviary_input(self, Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER, 0.0)
         # add_aviary_input(self, Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER, 0.0)
         add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 0.0)
