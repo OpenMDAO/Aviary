@@ -7,6 +7,7 @@ AerodynamicsBuilderBase : the interface for an aerodynamics subsystem builder.
 
 CoreAerodynamicsBuilder : the interface for Aviary's core aerodynamics subsystem builder
 """
+import numpy as np
 from itertools import chain
 
 # from dymos.utils.misc import _unspecified
