@@ -45,18 +45,23 @@ inputs.set_val(Aircraft.Canard.THICKNESS_TO_CHORD, 0.0)
 
 # Crew and Payload
 # ---------------------------
+inputs.set_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS, 0)
+inputs.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 11)
+inputs.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, 169, units='unitless')
+inputs.set_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS, 158)
 inputs.set_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS, 0)
-inputs.set_val(Aircraft.CrewPayload.CARGO_CONTAINER_MASS_SCALER, 1.0)
 inputs.set_val(Aircraft.CrewPayload.NUM_FIRST_CLASS, 11)
+inputs.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, 169, units='unitless')
+inputs.set_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS, 158)
+
+inputs.set_val(Aircraft.CrewPayload.CARGO_CONTAINER_MASS_SCALER, 1.0)
 inputs.set_val(Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS, 3)
 inputs.set_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW, 2)
 inputs.set_val(Aircraft.CrewPayload.FLIGHT_CREW_MASS_SCALER, 1.0)
 inputs.set_val(Aircraft.CrewPayload.NUM_GALLEY_CREW, 0)
 inputs.set_val(Aircraft.CrewPayload.MISC_CARGO, 0., 'lbm')
 inputs.set_val(Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS_SCALER, 1.0)
-inputs.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, 169, units='unitless')
 inputs.set_val(Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER, 1.)
-inputs.set_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS, 158)
 inputs.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER, 180., 'lbm')
 inputs.set_val(Aircraft.CrewPayload.WING_CARGO, 0., 'lbm')
 

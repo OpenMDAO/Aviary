@@ -141,18 +141,10 @@ params_for_unit_tests = {
     Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP: dict(units="unitless", val=1.2596),
     Mission.Takeoff.LIFT_COEFFICIENT_MAX: dict(units="unitless", val=2.1886),
     Mission.Landing.LIFT_COEFFICIENT_MAX: dict(units="unitless", val=2.8155),
-    Mission.Takeoff.LIFT_COEFFICIENT_FLAP_INCREMENT: dict(
-        units="unitless", val=0.4182
-    ),
-    Mission.Landing.LIFT_COEFFICIENT_FLAP_INCREMENT: dict(
-        units="unitless", val=1.0293
-    ),
-    Mission.Takeoff.DRAG_COEFFICIENT_FLAP_INCREMENT: dict(
-        units="unitless", val=0.0085
-    ),
-    Mission.Landing.DRAG_COEFFICIENT_FLAP_INCREMENT: dict(
-        units="unitless", val=0.0406
-    ),
+    Mission.Takeoff.LIFT_COEFFICIENT_FLAP_INCREMENT: dict(units="unitless", val=0.4182),
+    Mission.Landing.LIFT_COEFFICIENT_FLAP_INCREMENT: dict(units="unitless", val=1.0293),
+    Mission.Takeoff.DRAG_COEFFICIENT_FLAP_INCREMENT: dict(units="unitless", val=0.0085),
+    Mission.Landing.DRAG_COEFFICIENT_FLAP_INCREMENT: dict(units="unitless", val=0.0406),
 }
 
 

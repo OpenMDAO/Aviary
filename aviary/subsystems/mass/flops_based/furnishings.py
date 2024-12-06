@@ -38,13 +38,14 @@ class TransportFurnishingsGroupMass(om.ExplicitComponent):
         aviary_options: AviaryValues = self.options['aviary_options']
 
         flight_crew_count = aviary_options.get_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW)
-        first_class_count = aviary_options.get_val(Aircraft.CrewPayload.NUM_FIRST_CLASS)
+        first_class_count = aviary_options.get_val(
+            Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
 
         business_class_count = aviary_options.get_val(
-            Aircraft.CrewPayload.NUM_BUSINESS_CLASS)
+            Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)
 
         tourist_class_count = aviary_options.get_val(
-            Aircraft.CrewPayload.NUM_TOURIST_CLASS)
+            Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS)
 
         fuse_count = aviary_options.get_val(Aircraft.Fuselage.NUM_FUSELAGES)
 
@@ -67,13 +68,14 @@ class TransportFurnishingsGroupMass(om.ExplicitComponent):
         aviary_options: AviaryValues = self.options['aviary_options']
 
         flight_crew_count = aviary_options.get_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW)
-        first_class_count = aviary_options.get_val(Aircraft.CrewPayload.NUM_FIRST_CLASS)
+        first_class_count = aviary_options.get_val(
+            Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
 
         business_class_count = aviary_options.get_val(
-            Aircraft.CrewPayload.NUM_BUSINESS_CLASS)
+            Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)
 
         tourist_class_count = aviary_options.get_val(
-            Aircraft.CrewPayload.NUM_TOURIST_CLASS)
+            Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS)
 
         fuse_count = aviary_options.get_val(Aircraft.Fuselage.NUM_FUSELAGES)
 
@@ -135,13 +137,14 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
         aviary_options: AviaryValues = self.options['aviary_options']
 
         flight_crew_count = aviary_options.get_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW)
-        first_class_count = aviary_options.get_val(Aircraft.CrewPayload.NUM_FIRST_CLASS)
+        first_class_count = aviary_options.get_val(
+            Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
 
         business_class_count = aviary_options.get_val(
-            Aircraft.CrewPayload.NUM_BUSINESS_CLASS)
+            Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)
 
         tourist_class_count = aviary_options.get_val(
-            Aircraft.CrewPayload.NUM_TOURIST_CLASS)
+            Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS)
 
         scaler = inputs[Aircraft.Furnishings.MASS_SCALER]
         fuse_max_width = inputs[Aircraft.Fuselage.MAX_WIDTH]
@@ -173,13 +176,14 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
         aviary_options: AviaryValues = self.options['aviary_options']
 
         flight_crew_count = aviary_options.get_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW)
-        first_class_count = aviary_options.get_val(Aircraft.CrewPayload.NUM_FIRST_CLASS)
+        first_class_count = aviary_options.get_val(
+            Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
 
         business_class_count = aviary_options.get_val(
-            Aircraft.CrewPayload.NUM_BUSINESS_CLASS)
+            Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)
 
         tourist_class_count = aviary_options.get_val(
-            Aircraft.CrewPayload.NUM_TOURIST_CLASS)
+            Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS)
 
         scaler = inputs[Aircraft.Furnishings.MASS_SCALER]
 
@@ -275,7 +279,7 @@ class AltFurnishingsGroupMassBase(om.ExplicitComponent):
     ):
         aviary_options: AviaryValues = self.options['aviary_options']
         pax_count = aviary_options.get_val(
-            Aircraft.CrewPayload.NUM_PASSENGERS, units='unitless')
+            Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless')
         scaler = inputs[Aircraft.Furnishings.MASS_SCALER]
 
         outputs[Aircraft.Furnishings.MASS_BASE] = \
@@ -284,7 +288,7 @@ class AltFurnishingsGroupMassBase(om.ExplicitComponent):
     def compute_partials(self, inputs, J, discrete_inputs=None):
         aviary_options: AviaryValues = self.options['aviary_options']
         pax_count = aviary_options.get_val(
-            Aircraft.CrewPayload.NUM_PASSENGERS, units='unitless')
+            Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless')
 
         J[
             Aircraft.Furnishings.MASS_BASE,

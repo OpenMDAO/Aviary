@@ -128,6 +128,12 @@ class Aircraft:
         WATER_MASS_PER_OCCUPANT = 'aircraft:crew_and_payload:water_mass_per_occupant'
         WING_CARGO = 'aircraft:crew_and_payload:wing_cargo'
 
+        class Design:
+            NUM_BUSINESS_CLASS = 'aircraft:crew_and_payload:design:num_business_class'
+            NUM_FIRST_CLASS = 'aircraft:crew_and_payload:design:num_first_class'
+            NUM_TOURIST_CLASS = 'aircraft:crew_and_payload:design:num_tourist_class'
+            NUM_PASSENGERS = 'aircraft:crew_and_payload:design:num_passengers'
+
     class Design:
         # These variables are values that do not fall into a particular aircraft
         # component.
@@ -210,6 +216,7 @@ class Aircraft:
         CONSTANT_FUEL_CONSUMPTION = 'aircraft:engine:constant_fuel_consumption'
         CONTROLS_MASS = 'aircraft:engine:controls_mass'
         DATA_FILE = 'aircraft:engine:data_file'
+        FIXED_RPM = 'aircraft:engine:fixed_rpm'
         FLIGHT_IDLE_MAX_FRACTION = 'aircraft:engine:flight_idle_max_fraction'
         FLIGHT_IDLE_MIN_FRACTION = 'aircraft:engine:flight_idle_min_fraction'
         FLIGHT_IDLE_THRUST_FRACTION = 'aircraft:engine:flight_idle_thrust_fraction'
@@ -636,14 +643,10 @@ class Dynamic:
         MASS_RATE = 'mass_rate'
         NOX_RATE = 'nox_rate'
         NOX_RATE_TOTAL = 'nox_rate_total'
-        # PERCENT_ROTOR_RPM_CORRECTED = 'percent_rotor_rpm_corrected'
         PROPELLER_TIP_SPEED = 'propeller_tip_speed'
         RPM = 'rotations_per_minute'
-        RPM_GEARBOX = 'rotations_per_minute_gearbox'
         SHAFT_POWER = 'shaft_power'
-        SHAFT_POWER_GEARBOX = 'shaft_power_gearbox'
         SHAFT_POWER_MAX = 'shaft_power_max'
-        SHAFT_POWER_MAX_GEARBOX = 'shaft_power_max_gearbox'
         SPECIFIC_ENERGY = 'specific_energy'
         SPECIFIC_ENERGY_RATE = 'specific_energy_rate'
         SPECIFIC_ENERGY_RATE_EXCESS = 'specific_energy_rate_excess'
@@ -657,7 +660,6 @@ class Dynamic:
         THRUST_MAX_TOTAL = 'thrust_net_max_total'
         THRUST_TOTAL = 'thrust_net_total'
         TORQUE = 'torque'
-        TORQUE_GEARBOX = 'torque_gearbox'
         TORQUE_MAX = 'torque_max'
         VELOCITY = 'velocity'
         VELOCITY_RATE = 'velocity_rate'
@@ -669,11 +671,13 @@ class Mission:
     class Constraints:
         # these can be residuals (for equality constraints),
         # upper bounds, or lower bounds
+        GEARBOX_SHAFT_POWER_RESIDUAL = (
+            'mission:constraints:gearbox_shaft_power_residual'
+        )
         MASS_RESIDUAL = 'mission:constraints:mass_residual'
         MAX_MACH = 'mission:constraints:max_mach'
         RANGE_RESIDUAL = 'mission:constraints:range_residual'
         RANGE_RESIDUAL_RESERVE = 'mission:constraints:range_residual_reserve'
-        SHAFT_POWER_RESIDUAL = 'shaft_power_residual'
 
     class Design:
         # These values MAY change in design mission, but in off-design

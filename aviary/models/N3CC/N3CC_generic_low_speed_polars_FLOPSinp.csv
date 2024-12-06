@@ -1,3 +1,6 @@
+# created unknown date
+# FLOPS-derived aircraft input deck converted from N3CC_generic_low_speed_polars_FLOPSinp.txt
+
 # Input Values
 aircraft:air_conditioning:mass_scaler,0.98094,unitless
 aircraft:anti_icing:mass_scaler,0.53202,unitless
@@ -7,16 +10,16 @@ aircraft:canard:laminar_flow_lower,0,unitless
 aircraft:canard:laminar_flow_upper,0,unitless
 aircraft:canard:mass_scaler,1,unitless
 aircraft:crew_and_payload:baggage_mass_per_passenger,35,lbm
+aircraft:crew_and_payload:design:num_business_class,20,unitless
+aircraft:crew_and_payload:design:num_first_class,16,unitless
+aircraft:crew_and_payload:design:num_tourist_class,118,unitless
 aircraft:crew_and_payload:flight_crew_mass_scaler,1,unitless
 aircraft:crew_and_payload:mass_per_passenger,165,lbm
 aircraft:crew_and_payload:misc_cargo,0,lbm
 aircraft:crew_and_payload:non_flight_crew_mass_scaler,1,unitless
-aircraft:crew_and_payload:num_business_class,20,unitless
-aircraft:crew_and_payload:num_first_class,16,unitless
 aircraft:crew_and_payload:num_flight_attendants,-1,unitless
 aircraft:crew_and_payload:num_flight_crew,-1,unitless
 aircraft:crew_and_payload:num_galley_crew,-1,unitless
-aircraft:crew_and_payload:num_tourist_class,118,unitless
 aircraft:crew_and_payload:passenger_service_mass_scaler,1,unitless
 aircraft:crew_and_payload:wing_cargo,0,lbm
 aircraft:design:base_area,0,ft**2

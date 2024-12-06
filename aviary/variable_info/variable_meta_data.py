@@ -699,6 +699,70 @@ add_meta_data(
     default_value=0.7,
 )
 
+#   ___               _
+#  |   \   ___   ___ (_)  __ _   _ _
+#  | |) | / -_) (_-< | | / _` | | ' \
+#  |___/  \___| /__/ |_| \__, | |_||_|
+#  ====================== |___/ ======
+
+add_meta_data(
+    Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": 'WTIN.NPB',  # ['&DEFINE.WTIN.NPB', 'WTS.NPB'],
+                     "LEAPS1": 'aircraft.inputs.L0_crew_and_payload.business_class_count'
+                     },
+    units='unitless',
+    desc='number of business class passengers that the aircraft is designed to accommodate',
+    types=int,
+    option=True,
+    default_value=0,  # AviaryValues.get_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS),
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.Design.NUM_FIRST_CLASS,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": 'WTIN.NPF',  # ['&DEFINE.WTIN.NPF', 'WTS.NPF'],
+                     "LEAPS1": 'aircraft.inputs.L0_crew_and_payload.first_class_count'
+                     },
+    units='unitless',
+    desc='number of first class passengers that the aircraft is designed to accommodate',
+    types=int,
+    option=True,
+    default_value=0,
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.Design.NUM_PASSENGERS,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.PAX',  # number of passenger seats excluding crew
+                     "FLOPS": None,  # ['CSTDAT.NSV', '~WEIGHT.NPASS', '~WTSTAT.NPASS'],
+                     "LEAPS1": 'aircraft.outputs.L0_crew_and_payload.passenger_count'
+                     },
+    units='unitless',
+    desc='total number of passengers that the aircraft is designed to accommodate',
+    option=True,
+    default_value=0,
+    types=int,
+)
+
+
+# TODO rename to economy?
+add_meta_data(
+    Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": 'WTIN.NPT',  # ['&DEFINE.WTIN.NPT', 'WTS.NPT'],
+                     "LEAPS1": 'aircraft.inputs.L0_crew_and_payload.tourist_class_count'
+                     },
+    units='unitless',
+    desc='number of tourist class passengers that the aircraft is designed to accommodate',
+    types=int,
+    option=True,
+    default_value=0,
+)
+
 add_meta_data(
     # Note user override
     #    - see also: Aircraft.CrewPayload.FLIGHT_CREW_MASS_SCALER
@@ -788,8 +852,8 @@ add_meta_data(
     Aircraft.CrewPayload.NUM_BUSINESS_CLASS,
     meta_data=_MetaData,
     historical_name={"GASP": None,
-                     "FLOPS": 'WTIN.NPB',  # ['&DEFINE.WTIN.NPB', 'WTS.NPB'],
-                     "LEAPS1": 'aircraft.inputs.L0_crew_and_payload.business_class_count'
+                     "FLOPS": None,  # ['&DEFINE.WTIN.NPB', 'WTS.NPB'],
+                     "LEAPS1": None,  # 'aircraft.inputs.L0_crew_and_payload.business_class_count'
                      },
     units='unitless',
     desc='number of business class passengers',
@@ -802,8 +866,8 @@ add_meta_data(
     Aircraft.CrewPayload.NUM_FIRST_CLASS,
     meta_data=_MetaData,
     historical_name={"GASP": None,
-                     "FLOPS": 'WTIN.NPF',  # ['&DEFINE.WTIN.NPF', 'WTS.NPF'],
-                     "LEAPS1": 'aircraft.inputs.L0_crew_and_payload.first_class_count'
+                     "FLOPS": None,  # ['&DEFINE.WTIN.NPF', 'WTS.NPF'],
+                     "LEAPS1": None,  # 'aircraft.inputs.L0_crew_and_payload.first_class_count'
                      },
     units='unitless',
     desc='number of first class passengers',
@@ -864,9 +928,9 @@ add_meta_data(
 add_meta_data(
     Aircraft.CrewPayload.NUM_PASSENGERS,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.PAX',
+    historical_name={"GASP": None,  # 'INGASP.PAX' here we assume previous studies were changing Design.num_pax not as-flown
                      "FLOPS": None,  # ['CSTDAT.NSV', '~WEIGHT.NPASS', '~WTSTAT.NPASS'],
-                     "LEAPS1": 'aircraft.outputs.L0_crew_and_payload.passenger_count'
+                     "LEAPS1": None,  # 'aircraft.outputs.L0_crew_and_payload.passenger_count'
                      },
     units='unitless',
     desc='total number of passengers',
@@ -880,8 +944,8 @@ add_meta_data(
     Aircraft.CrewPayload.NUM_TOURIST_CLASS,
     meta_data=_MetaData,
     historical_name={"GASP": None,
-                     "FLOPS": 'WTIN.NPT',  # ['&DEFINE.WTIN.NPT', 'WTS.NPT'],
-                     "LEAPS1": 'aircraft.inputs.L0_crew_and_payload.tourist_class_count'
+                     "FLOPS": None,  # ['&DEFINE.WTIN.NPT', 'WTS.NPT'],
+                     "LEAPS1": None,  # 'aircraft.inputs.L0_crew_and_payload.tourist_class_count'
                      },
     units='unitless',
     desc='number of tourist class passengers',
@@ -920,7 +984,8 @@ add_meta_data(
 add_meta_data(
     Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS,
     meta_data=_MetaData,
-    # note: this GASP variable does not include cargo, but it does include passenger baggage
+    # note: this GASP variable does not include cargo, but it does include
+    # passenger baggage
     historical_name={"GASP": 'INGASP.WPL',
                      "FLOPS": None,
                      "LEAPS1": None
@@ -1015,7 +1080,6 @@ add_meta_data(
 #                             __/ |
 #                            |___/
 # =========================================
-
 add_meta_data(
     Aircraft.Design.BASE_AREA,
     meta_data=_MetaData,
@@ -1225,16 +1289,11 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.IJEFF,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.IJEFF',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    Aircraft.Design.IJEFF, meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.IJEFF', "FLOPS": None, "LEAPS1": None},
     desc="A flag used by Jeff V. Bowles to debug GASP code during his 53 years supporting the development of GASP. "
-         "This flag is planted here to thank him for his hard work and dedication, Aviary wouldn't be what it is today "
-         "without his help.",
-)
+    "This flag is planted here to thank him for his hard work and dedication, Aviary wouldn't be what it is today "
+    "without his help.",)
 
 add_meta_data(
     Aircraft.Design.LAMINAR_FLOW_LOWER,
@@ -1270,7 +1329,7 @@ add_meta_data(
                      },
     units='unitless',
     desc='ratio of maximum landing mass to maximum takeoff mass',
-    default_value=None,
+    default_value=0.9,
 )
 
 add_meta_data(
@@ -1375,21 +1434,15 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.RESERVE_FUEL_FRACTION,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    option=True,
-    units="unitless",
+    Aircraft.Design.RESERVE_FUEL_FRACTION, meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    option=True, units="unitless",
     desc='required fuel reserves: given as a proportion of mission fuel. This value must be nonnegative. '
-          'Mission fuel only includes normal phases and excludes reserve phases. '
-          'If it is 0.5, the reserve fuel is half of the mission fuel (one third of the total fuel). Note '
-          'it can be greater than 1. If it is 2, there would be twice as much reserve fuel as mission fuel '
-          '(the total fuel carried would be 1/3 for the mission and 2/3 for the reserve)',
-    default_value=0,
-)
+    'Mission fuel only includes normal phases and excludes reserve phases. '
+    'If it is 0.5, the reserve fuel is half of the mission fuel (one third of the total fuel). Note '
+    'it can be greater than 1. If it is 2, there would be twice as much reserve fuel as mission fuel '
+    '(the total fuel carried would be 1/3 for the mission and 2/3 for the reserve)',
+    default_value=0,)
 
 add_meta_data(
     Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES,
@@ -1741,15 +1794,16 @@ add_meta_data(
 add_meta_data(
     Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": 'MISSIN.FLEAK',
-                     "LEAPS1": ['iengine.fuel_leak', 'aircraft.inputs.L0_engine.fuel_leak']
-                     },
+    historical_name={
+        "GASP": None,
+        "FLOPS": 'MISSIN.FLEAK',
+        "LEAPS1": [
+            'iengine.fuel_leak',
+            'aircraft.inputs.L0_engine.fuel_leak']},
     option=True,
     units='lbm/h',
     desc='Additional constant fuel flow. This value is not scaled with the engine',
-    default_value=0.0
-)
+    default_value=0.0)
 
 add_meta_data(
     Aircraft.Engine.CONTROLS_MASS,
@@ -1776,6 +1830,17 @@ add_meta_data(
     default_value=None,
     option=True,
     desc='filepath to data file containing engine performance tables'
+)
+
+add_meta_data(
+    Aircraft.Engine.FIXED_RPM,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='rpm',
+    default_value=1.0,
+    desc='RPM the engine is set to be running at. Overrides RPM provided by '
+    'engine model or chosen by optimizer. Typically used when pairing a motor or '
+    'turboshaft using a fixed operating RPM with a propeller.',
 )
 
 add_meta_data(
@@ -1886,19 +1951,11 @@ add_meta_data(
 
 # TODO dependency on NTYE? Does this var need preprocessing? Can this mention be removed?
 add_meta_data(
-    Aircraft.Engine.HAS_PROPELLERS,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    option=True,
-    units="unitless",
-    default_value=False,
-    types=bool,
+    Aircraft.Engine.HAS_PROPELLERS, meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    option=True, units="unitless", default_value=False, types=bool,
     desc='if True, the aircraft has propellers, otherwise aircraft is assumed to have no '
-         'propellers. In GASP this depended on NTYE',
-)
+    'propellers. In GASP this depended on NTYE',)
 
 add_meta_data(
     Aircraft.Engine.IGNORE_NEGATIVE_THRUST,
@@ -1916,19 +1973,11 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Engine.INTERPOLATION_METHOD,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units="unitless",
-    option=True,
-    default_value='slinear',
-    types=str,
+    Aircraft.Engine.INTERPOLATION_METHOD, meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units="unitless", option=True, default_value='slinear', types=str,
     desc="method used for interpolation on an engine deck's data file, allowable values are "
-         'table methods from openmdao.components.interp_util.interp',
-)
+    'table methods from openmdao.components.interp_util.interp',)
 
 add_meta_data(
     Aircraft.Engine.MASS,
@@ -2114,10 +2163,11 @@ add_meta_data(
 add_meta_data(
     Aircraft.Engine.PROPELLER_TIP_MACH_MAX,
     meta_data=_MetaData,
-    historical_name={"GASP": None,  # TODO this needs verification
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={
+        "GASP": None,  # TODO this needs verification
+        "FLOPS": None,
+        "LEAPS1": None,
+    },
     units='unitless',
     desc='maximum allowable Mach number at propeller tip (based on helical speed)',
     default_value=1.0,
@@ -2132,7 +2182,7 @@ add_meta_data(
         "LEAPS1": None,
     },
     units='ft/s',
-    desc='maximum allowable propeller linear tip speed',
+    desc='maximum allowable linear propeller tip speed due to rotation',
     default_value=800.0,
 )
 
@@ -2397,11 +2447,8 @@ add_meta_data(
 add_meta_data(
     Aircraft.Engine.Gearbox.MASS,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='kg',
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='lbm',
     desc='The mass of the gearbox.',
     default_value=0,
 )
@@ -2409,24 +2456,22 @@ add_meta_data(
 add_meta_data(
     Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INPROP.HPMSLS',  # max sea level static horsepower, hp
-                     "FLOPS": None,
-                     "LEAPS1": None,
-                     },
-    units='kW',
-    desc='A guess for the maximum power that will be transmitted through the gearbox during the mission.',
+    historical_name={
+        "GASP": 'INPROP.HPMSLS',  # max sea level static horsepower, hp
+        "FLOPS": None,
+        "LEAPS1": None,
+    },
+    units='hp',
+    desc='A guess for the maximum power that will be transmitted through the gearbox during the mission (max shp input).',
     default_value=1.0,
-    option=True
+    option=True,
 )
 
 add_meta_data(
     Aircraft.Engine.Gearbox.SPECIFIC_TORQUE,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='N*m/kg',
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='lbf*ft/lbm',
     desc='The specific torque of the gearbox, used to calculate gearbox mass. ',
     default_value=100,
 )
@@ -2441,7 +2486,7 @@ add_meta_data(
     Aircraft.Engine.Motor.MASS,
     meta_data=_MetaData,
     historical_name={"GASP": 'WMOTOR', "FLOPS": None, "LEAPS1": None},
-    units='kg',
+    units='lbm',
     desc='Total motor mass (considers number of motors)',
     default_value=0.0,
 )
@@ -2449,13 +2494,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.Engine.Motor.TORQUE_MAX,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='N*m',
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='lbf*ft',
     desc='Max torque value that can be output from a single motor. Used to determine '
-         'motor mass in pre-mission',
+    'motor mass in pre-mission',
 )
 
 #  ______   _
@@ -3827,19 +3869,11 @@ add_meta_data(
     desc='landing gear drag coefficient')
 
 add_meta_data(
-    Aircraft.LandingGear.FIXED_GEAR,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.IGEAR',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    option=True,
-    default_value=True,
-    types=bool,
-    units="unitless",
+    Aircraft.LandingGear.FIXED_GEAR, meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.IGEAR', "FLOPS": None, "LEAPS1": None},
+    option=True, default_value=True, types=bool, units="unitless",
     desc='Type of landing gear. In GASP, 0 is retractable and 1 is deployed (fixed). Here, '
-          'false is retractable and true is deployed (fixed).',
-)
+    'false is retractable and true is deployed (fixed).',)
 
 add_meta_data(
     Aircraft.LandingGear.MAIN_GEAR_LOCATION,
@@ -3886,7 +3920,8 @@ add_meta_data(
                      "LEAPS1": 'aircraft.inputs.L0_overrides.landing_gear_main_weight'
                      },
     units='unitless',
-    desc='mass scaler of the main landing gear structure'
+    desc='mass scaler of the main landing gear structure',
+    default_value=1.0,
 )
 
 add_meta_data(
@@ -5318,19 +5353,11 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units="unitless",
-    default_value=False,
-    types=bool,
-    option=True,
+    Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units="unitless", default_value=False, types=bool, option=True,
     desc='if true, fold location from the chosen input is an actual fold span, '
-         'if false it is normalized to the half span. In GASP this depended on STRUT or YWFOLD'
-)
+    'if false it is normalized to the half span. In GASP this depended on STRUT or YWFOLD')
 
 add_meta_data(
     Aircraft.Wing.FOLD_MASS,
@@ -6410,16 +6437,11 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE, meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='lbm/h',
     desc='Current rate of fuel consumption of the vehicle, per single instance of each '
-         'engine model. Consumption (i.e. mass reduction) of fuel is defined as negative.'
-)
+    'engine model. Consumption (i.e. mass reduction) of fuel is defined as negative.')
 
 add_meta_data(
     Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
@@ -6546,18 +6568,6 @@ add_meta_data(
     desc='Current total rate of nitrous oxide (NOx) production by the vehicle'
 )
 
-# add_meta_data(
-#     Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
-#     meta_data=_MetaData,
-#     historical_name={"GASP": None,
-#                      "FLOPS": None,
-#                      "LEAPS1": None
-#                      },
-#     units='unitless',
-#     desc='percent of the corrected rotor speed',
-#     default_value=0.9,
-# )
-
 add_meta_data(
     Dynamic.Mission.PROPELLER_TIP_SPEED,
     meta_data=_MetaData,
@@ -6576,16 +6586,6 @@ add_meta_data(
     historical_name={"GASP": ['RPM', 'RPMe'], "FLOPS": None, "LEAPS1": None},
     units='rpm',
     desc='Rotational rate of shaft, per engine.',
-)
-
-add_meta_data(
-    Dynamic.Mission.RPM_GEARBOX,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None},
-    units='rpm',
-    desc='Rotational rate of shaft coming out of the gearbox and into the prop.',
 )
 
 add_meta_data(
@@ -6621,14 +6621,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Mission.SHAFT_POWER_GEARBOX,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='kW',
-    desc='current shaft power coming out of the gearbox, per gearbox',
-)
-
-add_meta_data(
     Dynamic.Mission.SHAFT_POWER_MAX,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -6637,17 +6629,6 @@ add_meta_data(
                      },
     units='hp',
     desc='The maximum possible shaft power currently producible, per engine'
-)
-
-add_meta_data(
-    Dynamic.Mission.SHAFT_POWER_MAX_GEARBOX,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='hp',
-    desc='The maximum possible shaft power the gearbox can currently produce, per gearbox'
 )
 
 add_meta_data(
@@ -6783,14 +6764,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Mission.TORQUE_GEARBOX,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='N*m',
-    desc='Current torque being produced, per gearbox',
-)
-
-add_meta_data(
     Dynamic.Mission.VELOCITY,
     meta_data=_MetaData,
     historical_name={"GASP": None,
@@ -6834,6 +6807,13 @@ add_meta_data(
 # | |____  | (_) | | | | | \__ \ | |_  | |    | (_| | | | | | | | | |_  \__ \
 #  \_____|  \___/  |_| |_| |___/  \__| |_|     \__,_| |_| |_| |_|  \__| |___/
 # ===========================================================================
+add_meta_data(
+    Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='kW',
+    desc='Must be zero or positive to ensure that the gearbox is sized large enough to handle the maximum shaft power the engine could output during any part of the mission',
+)
 
 add_meta_data(
     Mission.Constraints.MASS_RESIDUAL,
@@ -6893,14 +6873,6 @@ add_meta_data(
     desc='residual to make sure aircraft reserve mission range is equal to the targeted '
          'range, value should be zero at convergence (within acceptable '
          'tolerance)',
-)
-
-add_meta_data(
-    Mission.Constraints.SHAFT_POWER_RESIDUAL,
-    meta_data=_MetaData,
-    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units='kW',
-    desc='Must be zero or positive to ensure that the gearbox is sized large enough to handle the maximum shaft power the engine could output during any part of the mission',
 )
 
 #  _____                 _
@@ -7139,7 +7111,7 @@ add_meta_data(
     #     'FLOPS': ['&DEFTOL.TOLIN.BRAKMU', 'BALFLD.BRAKMU'],
     #     'GASP': None,
     #     'LEAPS1': 'aircraft.inputs.L0_takeoff_and_landing.braking_mu'},
-    historical_name={'FLOPS': None, 'GASP': None, 'LEAPS1': None},    default_value=0.3,
+    historical_name={'FLOPS': None, 'GASP': None, 'LEAPS1': None}, default_value=0.3,
     units='unitless',
     desc='landing coefficient of friction, with brakes on')
 
@@ -7959,21 +7931,19 @@ add_meta_data(
 )
 
 add_meta_data(
-    Settings.VERBOSITY,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    Settings.VERBOSITY, meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     desc='Sets how much information Aviary outputs when run. Options include:'
-         '0. QUIET: All output except errors are suppressed'
-         '1. BRIEF: Only important information is output, in human-readable format'
-         '2. VERBOSE: All user-relevant information is output, in human-readable format'
-         '3. DEBUG: Any information can be outtputed, including warnings, intermediate calculations, etc., with no formatting requirement',
-    option=True,
-    types=Verbosity,
-    default_value=Verbosity.BRIEF
-)
+    '0. QUIET: All output except errors are suppressed'
+    '1. BRIEF: Only important information is output, in human-readable format'
+    '2. VERBOSE: All user-relevant information is output, in human-readable format'
+    '3. DEBUG: Any information can be outtputed, including warnings, intermediate calculations, etc., with no formatting requirement',
+    option=True, types=Verbosity, default_value=Verbosity.BRIEF)
 
-# here we create a copy of the Aviary-core metadata. The reason for this copy is that if we simply imported the Aviary _MetaData in all the external subsystem extensions, we would be modifying the original and the original _MetaData in the core of Aviary could get altered in undesirable ways. By importing this copy to the API the user modifies a new MetaData designed just for their purposes.
+# here we create a copy of the Aviary-core metadata. The reason for this
+# copy is that if we simply imported the Aviary _MetaData in all the
+# external subsystem extensions, we would be modifying the original and
+# the original _MetaData in the core of Aviary could get altered in
+# undesirable ways. By importing this copy to the API the user modifies a
+# new MetaData designed just for their purposes.
 CoreMetaData = deepcopy(_MetaData)
