@@ -1,5 +1,6 @@
 from copy import deepcopy
 import unittest
+import numpy as np
 
 import openmdao.api as om
 from openmdao.core.problem import _clear_problem_names
@@ -11,6 +12,7 @@ from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.models.multi_engine_single_aisle.multi_engine_single_aisle_data import inputs, engine_1_inputs, engine_2_inputs
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.variable_info.enums import ThrottleAllocation
+from aviary.variable_info.variables import Aircraft
 
 
 # Build problem
@@ -32,6 +34,9 @@ local_phase_info['descent']['user_options']['optimize_mach'] = False
 local_phase_info['descent']['user_options']['optimize_altitude'] = False
 local_phase_info['descent']['user_options']['no_climb'] = True
 local_phase_info['descent']['user_options']['use_polynomial_control'] = True
+
+inputs.set_val(Aircraft.Nacelle.LAMINAR_FLOW_LOWER, np.zeros(2))
+inputs.set_val(Aircraft.Nacelle.LAMINAR_FLOW_UPPER, np.zeros(2))
 
 
 @use_tempdirs
@@ -124,8 +129,8 @@ class MultiengineTestcase(unittest.TestCase):
         alloc_cruise = prob.get_val('traj.cruise.parameter_vals:throttle_allocations')
         alloc_descent = prob.get_val('traj.descent.parameter_vals:throttle_allocations')
 
-        assert_near_equal(alloc_climb[0], 0.5, tolerance=1e-2)
-        assert_near_equal(alloc_cruise[0], 0.64, tolerance=1e-2)
+        assert_near_equal(alloc_climb[0], 0.512, tolerance=1e-2)
+        assert_near_equal(alloc_cruise[0], 0.747, tolerance=1e-2)
         assert_near_equal(alloc_descent[0], 0.999, tolerance=1e-2)
 
     @require_pyoptsparse(optimizer="SNOPT")
@@ -166,7 +171,7 @@ class MultiengineTestcase(unittest.TestCase):
         alloc_descent = prob.get_val('traj.descent.controls:throttle_allocations')
 
         # Cruise is pretty constant, check exact value.
-        assert_near_equal(alloc_cruise[0], 0.646, tolerance=1e-2)
+        assert_near_equal(alloc_cruise[0], 0.751, tolerance=1e-2)
 
         # Check general trend: favors engine 1.
         self.assertGreater(alloc_climb[2], 0.55)

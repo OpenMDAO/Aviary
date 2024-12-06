@@ -122,6 +122,9 @@ class MissionODE(om.Group):
 
         base_options = {'num_nodes': nn, 'aviary_inputs': aviary_options}
 
+        sub1 = self.add_subsystem('solver_sub', om.Group(),
+                                  promotes=['*'])
+
         for subsystem in core_subsystems:
             # check if subsystem_options has entry for a subsystem of this name
             if subsystem.name in subsystem_options:
@@ -133,7 +136,7 @@ class MissionODE(om.Group):
             system = subsystem.build_mission(**kwargs)
 
             if system is not None:
-                self.add_subsystem(
+                sub1.add_subsystem(
                     subsystem.name,
                     system,
                     promotes_inputs=subsystem.mission_inputs(**kwargs),
@@ -144,15 +147,24 @@ class MissionODE(om.Group):
         # to the ODE with a special configure() method that promotes
         # all aircraft:* and mission:* variables to the ODE.
         external_subsystem_group = ExternalSubsystemGroup()
+        external_subsystem_group_solver = ExternalSubsystemGroup()
         add_subsystem_group = False
+        add_subsystem_group_solver = False
 
         for subsystem in self.options['external_subsystems']:
             subsystem_mission = subsystem.build_mission(
                 num_nodes=nn, aviary_inputs=aviary_options
             )
             if subsystem_mission is not None:
-                add_subsystem_group = True
-                external_subsystem_group.add_subsystem(
+
+                if subsystem.needs_mission_solver(aviary_options):
+                    add_subsystem_group_solver = True
+                    target = external_subsystem_group_solver
+                else:
+                    add_subsystem_group = True
+                    target = external_subsystem_group
+
+                target.add_subsystem(
                     subsystem.name, subsystem_mission
                 )
 
@@ -165,8 +177,15 @@ class MissionODE(om.Group):
                 promotes_inputs=['*'],
                 promotes_outputs=['*'],
             )
+        if add_subsystem_group_solver:
+            sub1.add_subsystem(
+                name='external_subsystems',
+                subsys=external_subsystem_group_solver,
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
+            )
 
-        self.add_subsystem(
+        sub1.add_subsystem(
             name='mission_EOM',
             subsys=MissionEOM(num_nodes=nn),
             promotes_inputs=[
@@ -191,7 +210,7 @@ class MissionODE(om.Group):
 
             # Multi Engine
 
-            self.add_subsystem(
+            sub1.add_subsystem(
                 name='throttle_balance',
                 subsys=om.BalanceComp(
                     name="aggregate_throttle",
@@ -207,7 +226,7 @@ class MissionODE(om.Group):
                 promotes_outputs=['*'],
             )
 
-            self.add_subsystem(
+            sub1.add_subsystem(
                 "throttle_allocator",
                 ThrottleAllocator(
                     num_nodes=nn,
@@ -223,7 +242,7 @@ class MissionODE(om.Group):
             # Single Engine
 
             # Add a balance comp to compute throttle based on the required thrust.
-            self.add_subsystem(
+            sub1.add_subsystem(
                 name='throttle_balance',
                 subsys=om.BalanceComp(
                     name=Dynamic.Mission.THROTTLE,
@@ -284,12 +303,14 @@ class MissionODE(om.Group):
 
         print_level = 0 if analysis_scheme is AnalysisScheme.SHOOTING else 2
 
-        self.nonlinear_solver = om.NewtonSolver(
+        sub1.nonlinear_solver = om.NewtonSolver(
             solve_subsystems=True,
             atol=1.0e-10,
             rtol=1.0e-10,
         )
-        self.nonlinear_solver.linesearch = om.BoundsEnforceLS()
-        self.linear_solver = om.DirectSolver(assemble_jac=True)
-        self.nonlinear_solver.options['err_on_non_converge'] = True
-        self.nonlinear_solver.options['iprint'] = print_level
+        sub1.nonlinear_solver.linesearch = om.BoundsEnforceLS()
+        sub1.linear_solver = om.DirectSolver(assemble_jac=True)
+        sub1.nonlinear_solver.options['err_on_non_converge'] = True
+        sub1.nonlinear_solver.options['iprint'] = print_level
+
+        self.options['auto_order'] = True
