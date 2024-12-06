@@ -91,6 +91,10 @@ class TestSubsystemsMission(unittest.TestCase):
             f'{av.Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED}',
             units='kW*h',
         )
+        soc = prob.get_val(
+            'traj.cruise.timeseries.'
+            f'{av.Dynamic.Vehicle.BATTERY_STATE_OF_CHARGE}',
+        )
         fuel_burned = prob.get_val(av.Mission.Summary.FUEL_BURNED, units='lbm')
 
         # Check outputs
@@ -100,7 +104,7 @@ class TestSubsystemsMission(unittest.TestCase):
         # check battery state-of-charge over mission
 
         assert_near_equal(
-            soc,
+            soc.ravel(),
             [0.9999957806265609,
              0.975511918724275,
              0.9417326925421843,
