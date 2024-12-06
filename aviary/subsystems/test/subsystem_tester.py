@@ -164,11 +164,11 @@ class TestSubsystemBuilderBase(unittest.TestCase):
                 val, dict, "The values in the dictionary returned by get_parameters() should be dictionaries")
 
         # Verify that the dictionaries have the correct keys
-        for val in parameters.values():
+        for key, val in parameters.items():
             self.assertIn(
-                'val', val, "The dictionaries returned by get_parameters() should have a 'val' key")
+                'val', val, f"The dictionaries returned by get_parameters() should have a 'val' key for {key}")
             self.assertIn(
-                'units', val, "The dictionaries returned by get_parameters() should have a 'units' key")
+                'units', val, f"The dictionaries returned by get_parameters() should have a 'units' key for {key}")
 
     def test_get_initial_guesses(self):
         initial_guesses = self.subsystem_builder.get_initial_guesses()
