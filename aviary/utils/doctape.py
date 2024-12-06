@@ -222,7 +222,7 @@ def check_args(func, expected_args: tuple[list, dict, str], args_to_ignore: tupl
                     f"the default value of {arg} is {available_args[arg]}, not {expected_args[arg]}")
 
 
-def run_command_no_file_error(command: str):
+def run_command_no_file_error(command: str, verbose=False):
     """
     Executes a CLI command and handles FileNotFoundError separately.
 
@@ -235,6 +235,8 @@ def run_command_no_file_error(command: str):
     ----------
     command : str
         The CLI command to be executed.
+    verbose : bool
+        Whether or not to include the error message if FileNotFoundError is raised
 
     Raises
     ------
@@ -244,9 +246,12 @@ def run_command_no_file_error(command: str):
     with tempfile.TemporaryDirectory() as tempdir:
         rc = subprocess.run(command.split(), cwd=tempdir, capture_output=True, text=True)
         if rc.returncode:
-            err = rc.stderr.split('\n')[-2].split(':')[0]
+            err, info = rc.stderr.split('\n')[-2].split(':', 1)
             if err == 'FileNotFoundError':
-                print(err)
+                if verbose:
+                    print(info)
+                print(
+                    f"A file required by {command} couldn't be found, continuing anyway")
             else:
                 print(rc.stderr)
                 rc.check_returncode()
