@@ -369,12 +369,16 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
 
     try:
         total_thrust = aircraft_values.get_val(
-            Aircraft.Engine.SCALED_SLS_THRUST, 'lbf') * aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)
+            Aircraft.Engine.REFERENCE_SLS_THRUST,
+            'lbf') * aircraft_values.get_val(
+            Aircraft.Engine.SCALE_FACTOR) * aircraft_values.get_val(
+            Aircraft.Engine.NUM_ENGINES)
     except KeyError:
         # heterogeneous engine-model case. Get thrust from the engine decks instead.
         total_thrust = 0
         for model in engine_builders:
-            thrust = model.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf')
+            thrust = model.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST,
+                                   'lbf') * model.get_val(Aircraft.Engine.SCALE_FACTOR)
             num_engines = model.get_val(Aircraft.Engine.NUM_ENGINES)
             total_thrust += thrust * num_engines
 

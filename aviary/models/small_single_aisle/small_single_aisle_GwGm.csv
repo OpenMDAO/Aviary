@@ -33,6 +33,7 @@ aircraft:engine:pod_mass_scaler,1,unitless
 aircraft:engine:pylon_factor,0.6,unitless
 aircraft:engine:reference_diameter,6.04,ft
 aircraft:engine:reference_sls_thrust,28690,lbf
+aircraft:engine:scale_factor,0.8295573370512374,unitless
 aircraft:engine:scaled_sls_thrust,23800,lbf
 aircraft:engine:type,7,unitless
 aircraft:engine:wing_locations,0.272,unitless
