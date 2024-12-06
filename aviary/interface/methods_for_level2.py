@@ -1403,7 +1403,7 @@ class AviaryProblem(om.Problem):
             if not self.pre_mission_info['include_takeoff']:
                 first_flight_phase_name = list(self.phase_info.keys())[0]
                 eq = self.model.add_subsystem(
-                    f'link_{first_flight_phase_name} _mass', om.EQConstraintComp(),
+                    f'link_{first_flight_phase_name}_mass', om.EQConstraintComp(),
                     promotes_inputs=[('rhs:mass', Mission.Summary.GROSS_MASS)])
                 eq.add_eq_output('mass', eq_units='lbm', normalize=False,
                                  ref=100000., add_constraint=True)
