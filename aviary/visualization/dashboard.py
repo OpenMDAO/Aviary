@@ -134,17 +134,15 @@ def _dashboard_setup_parser(parser):
         help="show debugging output",
     )
 
-    parser.add_argument("--save",
-                        nargs='?',
-                        const=True,
-                        default=False,
-                        help="Name of zip file in which dashboard files are saved. If no argument given, use the script name to name the zip file",
-                        )
+    parser.add_argument(
+        "--save", nargs='?', const=True, default=False,
+        help="Name of zip file in which dashboard files are saved. If no argument given, use the script name to name the zip file",
+    )
 
-    parser.add_argument("--force",
-                        action='store_true',
-                        help="When displaying data from a shared zip file, if the directory in the reports directory exists, overrite if this is True",
-                        )
+    parser.add_argument(
+        "--force", action='store_true',
+        help="When displaying data from a shared zip file, if the directory in the reports directory exists, overrite if this is True",
+    )
 
 
 def _dashboard_cmd(options, user_args):
