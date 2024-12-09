@@ -29,7 +29,7 @@ from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import set_aviary_input_defaults
 from aviary.utils.functions import set_aviary_initial_values
-from aviary.utils.preprocessors import preprocess_crewpayload
+from aviary.utils.preprocessors import preprocess_crewpayload, preprocess_propulsion
 from aviary.utils.test_utils.assert_utils import warn_timeseries_near_equal
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.validation_cases.validation_tests import get_flops_inputs
@@ -188,6 +188,7 @@ def run_trajectory(sim=True):
 
     # default subsystems
     engine = build_engine_deck(aviary_inputs)
+    preprocess_propulsion(aviary_inputs, engine)
     default_mission_subsystems = get_default_mission_subsystems('FLOPS', engine)
 
     climb_options = EnergyPhase(
