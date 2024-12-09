@@ -37,7 +37,6 @@ local_phase_info['descent']['user_options']['use_polynomial_control'] = True
 
 inputs.set_val(Aircraft.Nacelle.LAMINAR_FLOW_LOWER, np.zeros(2))
 inputs.set_val(Aircraft.Nacelle.LAMINAR_FLOW_UPPER, np.zeros(2))
-inputs.set_val(Aircraft.Engine.SCALE_FACTOR, 1.0)
 
 
 @use_tempdirs
