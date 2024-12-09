@@ -1344,7 +1344,7 @@ class FuelMass(om.ExplicitComponent):
             - control_wt
             - fixed_equip_wt
             - useful_wt
-            - payload_wt
+            - payload_wt_des
             - fuel_sys_wt
         ) / GRAV_ENGLISH_LBM
         outputs["fuel_mass_min"] = (
