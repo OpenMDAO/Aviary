@@ -294,12 +294,14 @@ class PayloadMass(om.ExplicitComponent):
             Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS, units='lbm')
         PAX = aviary_options.get_val(
             Aircraft.CrewPayload.NUM_PASSENGERS, units='unitless')
+        PAX_des = aviary_options.get_val(
+            Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless')
         cargo_mass = inputs[Aircraft.CrewPayload.CARGO_MASS]
 
         outputs[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS] = \
             payload_mass = pax_mass * PAX
-        outputs["payload_mass_des"] = payload_mass
-        outputs["payload_mass_max"] = pax_mass * PAX + cargo_mass
+        outputs["payload_mass_des"] = pax_mass * PAX_des
+        outputs["payload_mass_max"] = pax_mass * PAX_des + cargo_mass
 
 
 class ElectricAugmentationMass(om.ExplicitComponent):
