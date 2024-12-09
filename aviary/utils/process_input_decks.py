@@ -378,7 +378,7 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
                 Aircraft.Engine.SCALED_SLS_THRUST, 'lbf') * aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)
 
     except KeyError:
-        if len(aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)) <= 1:
+        if len(engine_builders) <= 1:
             total_thrust = aircraft_values.get_val(
                 Aircraft.Engine.SCALED_SLS_THRUST, 'lbf') * aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)
         else:
