@@ -269,9 +269,9 @@ class PayloadMass(om.ExplicitComponent):
 
     def setup(self):
         add_aviary_input(self, Aircraft.CrewPayload.CARGO_MASS, val=10040)
+        add_aviary_input(self,Aircraft.CrewPayload.Design.CARGO_MASS, val=0)
 
         add_aviary_output(self, Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, val=0)
-
         add_aviary_output(self, Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, val=0)
 
         self.add_output(
@@ -299,8 +299,7 @@ class PayloadMass(om.ExplicitComponent):
         PAX_des = aviary_options.get_val(
             Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless')
         cargo_mass = inputs[Aircraft.CrewPayload.CARGO_MASS]
-        cargo_mass_des = aviary_options.get_val(
-            Aircraft.CrewPayload.Design.CARGO_MASS, units='lbm')
+        cargo_mass_des = inputs[Aircraft.CrewPayload.Design.CARGO_MASS]
         cargo_mass_max = aviary_options.get_val(Aircraft.CrewPayload.MAX_CARGO_MASS, units='lbm')
 
         outputs[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS] = \
