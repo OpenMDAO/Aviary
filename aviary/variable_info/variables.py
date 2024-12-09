@@ -87,6 +87,7 @@ class Aircraft:
             'aircraft:crew_and_payload:flight_crew_mass_scaler'
 
         MASS_PER_PASSENGER = 'aircraft:crew_and_payload:mass_per_passenger'
+        MAX_CARGO_MASS = 'aircraft:crew_and_payload:max_cargo_mass'
 
         MISC_CARGO = 'aircraft:crew_and_payload:misc_cargo'
 

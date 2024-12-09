@@ -301,11 +301,12 @@ class PayloadMass(om.ExplicitComponent):
         cargo_mass = inputs[Aircraft.CrewPayload.CARGO_MASS]
         cargo_mass_des = aviary_options.get_val(
             Aircraft.CrewPayload.Design.CARGO_MASS, units='lbm')
+        cargo_mass_max = aviary_options.get_val(Aircraft.CrewPayload.MAX_CARGO_MASS, units='lbm')
 
         outputs[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS] = \
             payload_mass = pax_mass * PAX
-        outputs["payload_mass_des"] = pax_mass * PAX_des + cargo_mass
-        outputs["payload_mass_max"] = pax_mass * PAX_des + cargo_mass_des
+        outputs["payload_mass_des"] = pax_mass * PAX_des + cargo_mass_des
+        outputs["payload_mass_max"] = pax_mass * PAX_des + cargo_mass_max
         outputs[Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS] = pax_mass * PAX + cargo_mass
 
 
