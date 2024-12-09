@@ -7,8 +7,8 @@ aircraft:controls:control_mass_increment,0,lbm
 aircraft:controls:stability_augmentation_system_mass,0,lbm
 aircraft:controls:stability_augmentation_system_mass_scaler,1,unitless
 aircraft:crew_and_payload:cargo_mass,0,lbm
-aircraft:crew_and_payload:design:cargo_mass,0,lbm
-aircraft:crew_and_payload:max_cargo_mass,10040,lbm
+#aircraft:crew_and_payload:design:cargo_mass,0,lbm
+#aircraft:crew_and_payload:max_cargo_mass,10040,lbm
 aircraft:crew_and_payload:catering_items_mass_per_passenger,7.6,lbm
 aircraft:crew_and_payload:design:num_passengers,180,unitless
 aircraft:crew_and_payload:passenger_mass_with_bags,200,lbm
