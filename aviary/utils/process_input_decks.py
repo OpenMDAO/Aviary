@@ -378,16 +378,18 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
                 Aircraft.Engine.SCALED_SLS_THRUST, 'lbf') * aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)
 
     except KeyError:
-        if len(engine_builders) <= 1:
-            total_thrust = aircraft_values.get_val(
-                Aircraft.Engine.SCALED_SLS_THRUST, 'lbf') * aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)
-        else:
+        if engine_builders is not None and len(engine_builders) > 1:
+
             # heterogeneous engine-model case. Get thrust from the engine models instead.
             total_thrust = 0
             for model in engine_builders:
                 thrust = model.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf')
                 num_engines = model.get_val(Aircraft.Engine.NUM_ENGINES)
                 total_thrust += thrust * num_engines
+
+        else:
+            total_thrust = aircraft_values.get_val(
+                Aircraft.Engine.SCALED_SLS_THRUST, 'lbf') * aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)
 
     gamma_guess = np.arcsin(.5*total_thrust / mission_mass)
     avg_speed_guess = (.5 * 667 * cruise_mach)  # kts
