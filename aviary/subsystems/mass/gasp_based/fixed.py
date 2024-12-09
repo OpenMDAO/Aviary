@@ -272,6 +272,8 @@ class PayloadMass(om.ExplicitComponent):
 
         add_aviary_output(self, Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, val=0)
 
+        add_aviary_output(self, Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, val=0)
+
         self.add_output(
             "payload_mass_des", val=0, units="lbm", desc="WPLDES: design payload"
         )
@@ -297,11 +299,14 @@ class PayloadMass(om.ExplicitComponent):
         PAX_des = aviary_options.get_val(
             Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless')
         cargo_mass = inputs[Aircraft.CrewPayload.CARGO_MASS]
+        cargo_mass_des = aviary_options.get_val(
+            Aircraft.CrewPayload.Design.CARGO_MASS, units='lbm')
 
         outputs[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS] = \
             payload_mass = pax_mass * PAX
-        outputs["payload_mass_des"] = pax_mass * PAX_des
-        outputs["payload_mass_max"] = pax_mass * PAX_des + cargo_mass
+        outputs["payload_mass_des"] = pax_mass * PAX_des + cargo_mass
+        outputs["payload_mass_max"] = pax_mass * PAX_des + cargo_mass_des
+        outputs[Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS] = pax_mass * PAX + cargo_mass
 
 
 class ElectricAugmentationMass(om.ExplicitComponent):
