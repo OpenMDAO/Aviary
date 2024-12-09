@@ -181,7 +181,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
         elif input_des_cargo:
             # user has set cargo & des: assume max = des
             des_cargo = aviary_options.get_val(Aircraft.CrewPayload.Design.CARGO_MASS,'lbm')
-            max_cargo = des
+            max_cargo = des_cargo
             print('Aircraft.CrewPayload.MAX_CARGO_MASS missing, assume MAX_CARGO_MASS = Design.CARGO_MASS')
         else:
             # user has set cargo only: assume intention to set max only and 
@@ -231,6 +231,8 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
     as_flown_payload = as_flown_passenger_payload_mass + cargo
     if as_flown_payload > des_payload:
         print('WARNING! as flown payload > design payload! Please re-design the aircraft!')
+        raise om.AnalysisError(
+            f"ERROR: In preprocesssors.py: as_flown payload {as_flown_payload} = passenger_payload_mass {as_flown_passenger_payload_mass} + cargo_mass {cargo} is larger than the design payload {des_payload} = design_passenger_payload {design_passenger_payload_mass} + Design.cargo_mass {des_cargo} : Aricraft must be re-designed")
     
     # set assumed cargo mass variables:
     aviary_options.set_val(Aircraft.CrewPayload.CARGO_MASS, cargo, 'lbm')
