@@ -358,6 +358,7 @@ if __name__ == '__main__':
     import os
     z1 = os.getcwd()
     z2 = os.listdir()
+    z3 = os.listdir('problem_out')
     raise RuntimeError(f"{z1} / {z2}")
 
     try:
