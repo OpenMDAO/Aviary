@@ -87,9 +87,7 @@ class BatteryBuilder(SubsystemBuilderBase):
                 'units': 'kJ',
                 'rate_source': Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL,
                 'input_initial': 0.0,
-                'targets': f'{
-                    self.name}.{
-                    Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED}',
+                'targets': f'{self.name}.{Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED}',
             }}
 
         return state_dict
