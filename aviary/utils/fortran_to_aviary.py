@@ -322,9 +322,7 @@ def process_and_store_data(
     var_ind = data_units = None
     skip_variable = False
     # skip any variables that shouldn't get converted
-    if re.search(
-        current_namelist + '.' + var_name + '\\Z', str(unused_vars), re.IGNORECASE
-    ):
+    if re.search(current_namelist + '.' + var_name, str(unused_vars), re.IGNORECASE):
         return vehicle_data
     # remove any elements that are empty (caused by trailing commas or extra commas)
     data_list = [dat for dat in data.split(',') if dat != '']

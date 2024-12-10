@@ -110,3 +110,6 @@ class TestFortranToAviary(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+    # test = TestFortranToAviary()
+    # test.test_N3CC()
