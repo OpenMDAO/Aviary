@@ -1347,7 +1347,8 @@ class AviaryProblem(om.Problem):
             mass_resid={'units': 'lbm'})
 
         if self.mass_method is GASP:
-            payload_mass_src = Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS
+            #payload_mass_src = Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS
+            payload_mass_src = Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS
         else:
             payload_mass_src = Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS
 
@@ -2942,7 +2943,7 @@ def _read_sizing_json(aviary_problem, json_filename):
 
 
 def _load_off_design(json_filename, ProblemType, phase_info,
-                     payload, mission_range, mission_gross_mass):
+                     num_pax, cargo_mass, mission_range, mission_gross_mass):
     """
     This function loads a sized aircraft, and sets up an aviary problem
     for a specified off design mission.
@@ -2955,8 +2956,10 @@ def _load_off_design(json_filename, ProblemType, phase_info,
         Alternate or Fallout. Alternate requires mission_range input and
          Fallout requires mission_fuel input
     phase_info:     phase_info dictionary for off design mission
-    payload:            float
-        Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS
+    num_pax:            integer
+        Aircraft.CrewPayload.NUM_PASSENGERS
+    cargo_mass:         float
+        Aircraft.CrewPayload.CARGO_MASS
     mission_range       float
         Mission.Summary.RANGE 'NM'
     mission_gross_mass  float
@@ -2979,7 +2982,8 @@ def _load_off_design(json_filename, ProblemType, phase_info,
 
     # Set Payload
     prob.aviary_inputs.set_val(
-        Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, payload, units='lbm')
+        Aircraft.CrewPayload.NUM_PASSENGERS, num_pax, units='unitless')
+    prob.aviary_inputs.set_val(Aircraft.CrewPayload.CARGO_MASS, cargo_mass, 'lbm')
 
     if ProblemType == ProblemType.ALTERNATE:
         # Set mission range, aviary will calculate required fuel
