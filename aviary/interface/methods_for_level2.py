@@ -2088,10 +2088,9 @@ class AviaryProblem(om.Problem):
 
                         if 'post_mission_name' in variable_data:
                             self.model.connect(
-                                f'pre_mission.{
-                                    external_subsystem.name}.{bus_variable}', f'post_mission.{
-                                    external_subsystem.name}.{
-                                    variable_data["post_mission_name"]}')
+                                f'pre_mission.{external_subsystem.name}.{bus_variable}',
+                                f'post_mission.{external_subsystem.name}.{variable_data["post_mission_name"]}'
+                            )
 
     def setup(self, **kwargs):
         """
