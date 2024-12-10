@@ -777,7 +777,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.CrewPayload.Design.CARGO_MASS,
     meta_data=_MetaData,
-    historical_name={"GASP": None
+    historical_name={"GASP": None,
                      "FLOPS": None,
                      "LEAPS1": None
                      },

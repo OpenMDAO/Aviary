@@ -7,6 +7,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.named_values import get_keys
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Mission, Settings
+from aviary.variable_info.enums import ProblemType
 from aviary.utils.test_utils.variable_test import get_names_from_hierarchy
 
 
@@ -166,6 +167,8 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
     input_cargo = Aircraft.CrewPayload.CARGO_MASS in aviary_options
     input_max_cargo = Aircraft.CrewPayload.MAX_CARGO_MASS in aviary_options
     input_des_cargo = Aircraft.CrewPayload.Design.CARGO_MASS in aviary_options
+
+    problem_type = aviary_options.get_val(Settings.PROBLEM_TYPE)
     
     if input_cargo:
         cargo = aviary_options.get_val(Aircraft.CrewPayload.CARGO_MASS,'lbm')
@@ -173,6 +176,9 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
             max_cargo = aviary_options.get_val(Aircraft.CrewPayload.MAX_CARGO_MASS,'lbm')
             if input_des_cargo:
                 des_cargo = aviary_options.get_val(Aircraft.CrewPayload.Design.CARGO_MASS,'lbm')
+                if problem_type == ProblemType.SIZING and cargo != des_cargo:
+                    cargo = des_cargo
+                    print('Warning! Aircraft.CrewPayload.CARGO_MASS != Aircraft.CrewPayload.Design.CARGO_MASS for sizing mission. Setting as-flown CARGO_MASS = Design.CARGO_MASS')
                 # user has set all three check if consistent
             else:
                 # user has set cargo & max: assume des = max
@@ -221,6 +227,8 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
     
     if cargo > max_cargo or des_cargo > max_cargo:
         print('WARNING! as flown and/or design cargo > max_cargo')
+        raise om.AnalysisError(
+            f"ERROR: In preprocesssors.py: Aircraft.CrewPayload.CARGO_MASS {cargo} and/or Aircraft.CrewPayload.Design.CARGO_MASS {des_cargo} > Aircraft.CrewPayload.MAX_CARGO_MASS {max_cargo}")
     
     # calculate and check total payload NOTE this is only used for error messaging the calculations for analysis are subsystems/mass/gasp_based:
     pax_mass = aviary_options.get_val(Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS,'lbm')
