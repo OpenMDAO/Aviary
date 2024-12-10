@@ -1996,8 +1996,10 @@ class AviaryProblem(om.Problem):
             if objective_type == 'mass':
                 if self.analysis_scheme is AnalysisScheme.COLLOCATION:
                     self.model.add_objective(
-                        f"traj.{final_phase_name}.timeseries.{
-                            Dynamic.Vehicle.MASS}", index=-1, ref=ref)
+                        f"traj.{final_phase_name}.timeseries.{Dynamic.Vehicle.MASS}",
+                        index=-1,
+                        ref=ref
+                    )
                 else:
                     last_phase = self.traj._phases.items()[final_phase_name]
                     last_phase.add_objective(
