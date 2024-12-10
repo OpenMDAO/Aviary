@@ -525,8 +525,7 @@ class AviaryProblem(om.Problem):
                         self.phase_info[phase_name].update({"initial_guesses": {"time": (
                             (target_duration[0], target_duration[0]), target_duration[1])}})
                         # Set Fixed_duration to true:
-                        self.phase_info[phase_name]["user_options"].update({
-                            "fix_duration": True})
+                        self.phase_info[phase_name]["user_options"].update({"fix_duration": True})
 
         if self.analysis_scheme is AnalysisScheme.COLLOCATION:
             check_phase_info(self.phase_info, self.mission_method)
@@ -2423,8 +2422,9 @@ class AviaryProblem(om.Problem):
                         units=units)
                 else:
                     # raise error if the guess key is not recognized
-                    raise ValueError(f"Initial guess key {guess_key} in {
-                        phase_name} is not recognized.")
+                    raise ValueError(
+                        f"Initial guess key {guess_key} in {phase_name} is not recognized."
+                    )
 
         if self.mission_method is SOLVED_2DOF:
             return
