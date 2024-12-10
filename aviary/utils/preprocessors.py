@@ -239,8 +239,8 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
     as_flown_payload = as_flown_passenger_payload_mass + cargo
     if as_flown_payload > des_payload:
         print('WARNING! as flown payload > design payload! Please re-design the aircraft!')
-        raise om.AnalysisError(
-            f"ERROR: In preprocesssors.py: as_flown payload {as_flown_payload} = passenger_payload_mass {as_flown_passenger_payload_mass} + cargo_mass {cargo} is larger than the design payload {des_payload} = design_passenger_payload {design_passenger_payload_mass} + Design.cargo_mass {des_cargo} : Aricraft must be re-designed")
+        #raise om.AnalysisError(
+        #    f"ERROR: In preprocesssors.py: as_flown payload {as_flown_payload} = passenger_payload_mass {as_flown_passenger_payload_mass} + cargo_mass {cargo} is larger than the design payload {des_payload} = design_passenger_payload {design_passenger_payload_mass} + Design.cargo_mass {des_cargo} : Aricraft must be re-designed")
     
     # set assumed cargo mass variables:
     aviary_options.set_val(Aircraft.CrewPayload.CARGO_MASS, cargo, 'lbm')
