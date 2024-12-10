@@ -182,7 +182,8 @@ if __name__ == '__main__':
     prob.run_aviary_problem(record_filename='detailed_landing.db')
 
     try:
-        cr = om.CaseReader('run_detailed_landing_in_level2_out/detailed_landing.db')
+        loc = prob.get_outputs_dir()
+        cr = om.CaseReader(f'{loc}/detailed_landing.db')
     except:
         cr = om.CaseReader('detailed_landing.db')
 
