@@ -66,22 +66,29 @@ class TestFortranToAviary(unittest.TestCase):
                     raise Exception(exc_string)
 
     def test_large_single_aisle(self):
-        filepath = 'models/large_single_aisle_1/large_single_aisle_1_GwGm.dat'
+        filepath = 'models/large_single_aisle_1/large_single_aisle_1_GASP.dat'
+        comparison_filepath = (
+            'utils/test/data/converter_test_data_large_single_aisle_1_GASP.csv'
+        )
 
         self.prepare_and_run(filepath)
-        self.compare_files(filepath)
+        self.compare_files(comparison_filepath)
 
     def test_small_single_aisle(self):
-        filepath = 'models/small_single_aisle/small_single_aisle_GwGm.dat'
+        filepath = 'models/small_single_aisle_1/small_single_aisle_1_GASP.dat'
+        comparison_filepath = (
+            'utils/test/data/converter_test_data_small_single_aisle_1_GASP.csv'
+        )
 
         self.prepare_and_run(filepath)
-        self.compare_files(filepath)
+        self.compare_files(comparison_filepath)
 
     def test_diff_configuration(self):
-        filepath = 'utils/test/data/converter_configuration_test_data_GwGm.dat'
+        filepath = 'utils/test/data/converter_test_data_GASP.dat'
+        comparison_filepath = 'utils/test/data/converter_test_data_GASP.csv'
 
         self.prepare_and_run(filepath)
-        self.compare_files(filepath)
+        self.compare_files(comparison_filepath)
 
     def test_N3CC(self):
         # Note: The csv comparison file N3CC_generic_low_speed_polars_FLOPSinp.csv was generated using the fortran-to-Aviary converter
@@ -89,11 +96,10 @@ class TestFortranToAviary(unittest.TestCase):
         # test.
 
         filepath = 'models/N3CC/N3CC_generic_low_speed_polars_FLOPSinp.txt'
-        out_file = Path.cwd() / 'TEST_models/N3CC/N3CC_generic_low_speed_polars_FLOPSinp.csv'
+        comparison_filepath = 'utils/test/data/converter_test_data_N3CC_FLOPS.csv'
 
-        self.prepare_and_run(filepath, out_file=out_file, legacy_code=LegacyCode.FLOPS)
-        self.compare_files(
-            'models/N3CC/N3CC_generic_low_speed_polars_FLOPSinp.csv')
+        self.prepare_and_run(filepath, legacy_code=LegacyCode.FLOPS)
+        self.compare_files(comparison_filepath)
 
 
 if __name__ == "__main__":
