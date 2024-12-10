@@ -4,8 +4,10 @@ from datetime import datetime
 
 from openmdao.utils.testing_utils import use_tempdirs
 
+from aviary.variable_info.enums import LegacyCode
+
 from aviary.utils.functions import get_path
-from aviary.utils.fortran_to_aviary import LegacyCode, _exec_F2A
+from aviary.utils.fortran_to_aviary import _exec_F2A
 
 
 class DummyArgs(object):
@@ -108,3 +110,6 @@ class TestFortranToAviary(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+    # test = TestFortranToAviary()
+    # test.test_small_single_aisle()
