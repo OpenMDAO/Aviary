@@ -883,8 +883,8 @@ class AviaryProblem(om.Problem):
             if 'phase_builder' in phase_options:
                 phase_builder = phase_options['phase_builder']
                 if not issubclass(phase_builder, PhaseBuilderBase):
-                    raise TypeError(f"phase_builder for the phase called {
-                        phase_name} must be a PhaseBuilderBase object.")
+                    raise TypeError(f"phase_builder for the phase called "
+                                    "{phase_name} must be a PhaseBuilderBase object.")
             else:
                 phase_builder = EnergyPhase
 
