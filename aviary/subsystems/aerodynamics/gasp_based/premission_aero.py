@@ -23,8 +23,9 @@ class PreMissionAero(om.Group):
 
     def initialize(self):
         self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options'
+            'aviary_options',
+            types=AviaryValues,
+            desc='collection of Aircraft/Mission specific options',
         )
 
     def setup(self):
@@ -60,9 +61,11 @@ class PreMissionAero(om.Group):
                 rho={"units": "slug/ft**3"},
                 kinematic_viscosity={"units": "ft**2/s"},
             ),
-            promotes=["viscosity",
-                      ("kinematic_viscosity", Dynamic.Mission.KINEMATIC_VISCOSITY),
-                      ("rho", Dynamic.Mission.DENSITY)],
+            promotes=[
+                "viscosity",
+                ("kinematic_viscosity", Dynamic.Atmosphere.KINEMATIC_VISCOSITY),
+                ("rho", Dynamic.Atmosphere.DENSITY),
+            ],
         )
 
         self.add_subsystem(
@@ -79,8 +82,11 @@ class PreMissionAero(om.Group):
             "flaps_takeoff",
             FlapsGroup(aviary_options=aviary_options),
             # slat deflection same for takeoff and landing
-            promotes_inputs=["*", ("flap_defl", Aircraft.Wing.FLAP_DEFLECTION_TAKEOFF),
-                             ("slat_defl", Aircraft.Wing.MAX_SLAT_DEFLECTION_TAKEOFF)],
+            promotes_inputs=[
+                "*",
+                ("flap_defl", Aircraft.Wing.FLAP_DEFLECTION_TAKEOFF),
+                ("slat_defl", Aircraft.Wing.MAX_SLAT_DEFLECTION_TAKEOFF),
+            ],
             promotes_outputs=[
                 ("CL_max", Mission.Takeoff.LIFT_COEFFICIENT_MAX),
                 (
@@ -96,8 +102,11 @@ class PreMissionAero(om.Group):
         self.add_subsystem(
             "flaps_landing",
             FlapsGroup(aviary_options=aviary_options),
-            promotes_inputs=["*", ("flap_defl", Aircraft.Wing.FLAP_DEFLECTION_LANDING),
-                             ("slat_defl", Aircraft.Wing.MAX_SLAT_DEFLECTION_LANDING)],
+            promotes_inputs=[
+                "*",
+                ("flap_defl", Aircraft.Wing.FLAP_DEFLECTION_LANDING),
+                ("slat_defl", Aircraft.Wing.MAX_SLAT_DEFLECTION_LANDING),
+            ],
             promotes_outputs=[
                 ("CL_max", Mission.Landing.LIFT_COEFFICIENT_MAX),
                 (

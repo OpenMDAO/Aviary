@@ -55,7 +55,7 @@ class GlideTestCase(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.DENSITY, RHO_SEA_LEVEL_ENGLISH, units="slug/ft**3"
+            Dynamic.Atmosphere.DENSITY, RHO_SEA_LEVEL_ENGLISH, units="slug/ft**3"
         )  # value from online calculator
 
         self.prob.model.set_input_defaults(
@@ -137,7 +137,7 @@ class GlideTestCase2(unittest.TestCase):
         prob.model.add_subsystem(
             "group", GlideConditionComponent(), promotes=["*"])
         prob.model.set_input_defaults(
-            Dynamic.Mission.DENSITY, RHO_SEA_LEVEL_ENGLISH, units="slug/ft**3"
+            Dynamic.Atmosphere.DENSITY, RHO_SEA_LEVEL_ENGLISH, units="slug/ft**3"
         )
         prob.model.set_input_defaults(
             Mission.Landing.MAXIMUM_SINK_RATE, 900, units="ft/min")

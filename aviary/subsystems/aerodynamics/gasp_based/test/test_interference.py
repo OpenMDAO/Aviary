@@ -147,7 +147,7 @@ class TestMission(unittest.TestCase):
             USatm1976Comp(num_nodes=nn),
             promotes_inputs=[("h", Dynamic.Mission.ALTITUDE)],
             promotes_outputs=['rho', "viscosity",
-                              ("temp", Dynamic.Mission.TEMPERATURE)],
+                              ("temp", Dynamic.Atmosphere.TEMPERATURE)],
         )
         prob.model.add_subsystem(
             "kin_visc",
@@ -158,7 +158,7 @@ class TestMission(unittest.TestCase):
                 nu={"units": "ft**2/s", "shape": nn},
                 has_diag_partials=True,
             ),
-            promotes=["*", ('nu', Dynamic.Mission.KINEMATIC_VISCOSITY)],
+            promotes=["*", ('nu', Dynamic.Atmosphere.KINEMATIC_VISCOSITY)],
         )
         prob.model.add_subsystem(
             "comp", WingFuselageInterferenceMission(num_nodes=nn),
@@ -167,7 +167,7 @@ class TestMission(unittest.TestCase):
 
         prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
         prob.set_val(Aircraft.Wing.AVERAGE_CHORD, 12)
-        prob.set_val(Dynamic.Mission.MACH, (.6, .65))
+        prob.set_val(Dynamic.Atmosphere.MACH, (.6, .65))
         prob.set_val(Dynamic.Mission.ALTITUDE, (30000, 30000))
         prob.set_val('interference_independent_of_shielded_area', 0.35794891)
         prob.set_val('drag_loss_due_to_shielded_wing_area', 83.53366)

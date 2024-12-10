@@ -23,10 +23,8 @@ class BuffetLift(om.ExplicitComponent):
 
         # Simulation inputs
         self.add_input(
-            Dynamic.Mission.MACH,
-            shape=(nn),
-            units='unitless',
-            desc="Mach number")
+            Dynamic.Atmosphere.MACH, shape=(nn), units='unitless', desc="Mach number"
+        )
 
         # Aero design inputs
         add_aviary_input(self, Mission.Design.MACH, 0.0)
@@ -45,10 +43,8 @@ class BuffetLift(om.ExplicitComponent):
         nn = self.options["num_nodes"]
 
         self.declare_partials(
-            'DELCLB',
-            Dynamic.Mission.MACH,
-            rows=np.arange(nn),
-            cols=np.arange(nn))
+            'DELCLB', Dynamic.Atmosphere.MACH, rows=np.arange(nn), cols=np.arange(nn)
+        )
         self.declare_partials('DELCLB', [Aircraft.Wing.ASPECT_RATIO,
                                          Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN,
                                          Aircraft.Wing.SWEEP,
@@ -113,7 +109,7 @@ class BuffetLift(om.ExplicitComponent):
         # wrt CAM
         dCLB_dCAM = FCLB * AR / 10.0 * cos_fact
 
-        partials["DELCLB", Dynamic.Mission.MACH] = dCLB_dMach
+        partials["DELCLB", Dynamic.Atmosphere.MACH] = dCLB_dMach
         partials["DELCLB", Mission.Design.MACH] = dCLB_ddesign_Mach
         partials['DELCLB', Aircraft.Wing.ASPECT_RATIO] = dCLB_dAR
         partials['DELCLB', Aircraft.Wing.THICKNESS_TO_CHORD] = dCLB_dTC

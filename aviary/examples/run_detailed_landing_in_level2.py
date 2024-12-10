@@ -1,3 +1,5 @@
+
+
 import openmdao.api as om
 import aviary.api as av
 
@@ -179,7 +181,12 @@ if __name__ == '__main__':
 
     prob.run_aviary_problem(record_filename='detailed_landing.db')
 
-    cr = om.CaseReader('detailed_landing.db')
+    try:
+        loc = prob.get_outputs_dir()
+        cr = om.CaseReader(f'{loc}/detailed_landing.db')
+    except:
+        cr = om.CaseReader('detailed_landing.db')
+
     cases = cr.get_cases('problem')
     case = cases[0]
 

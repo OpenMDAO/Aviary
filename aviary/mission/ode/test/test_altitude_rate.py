@@ -27,15 +27,19 @@ class AltitudeRateTest(unittest.TestCase):
 
     def test_case1(self):
 
-        do_validation_test(self.prob,
-                           'full_mission_test_data',
-                           input_validation_data=data,
-                           output_validation_data=data,
-                           input_keys=[Dynamic.Mission.SPECIFIC_ENERGY_RATE,
-                                       Dynamic.Mission.VELOCITY,
-                                       Dynamic.Mission.VELOCITY_RATE],
-                           output_keys=Dynamic.Mission.ALTITUDE_RATE,
-                           tol=1e-9)
+        do_validation_test(
+            self.prob,
+            'full_mission_test_data',
+            input_validation_data=data,
+            output_validation_data=data,
+            input_keys=[
+                Dynamic.Mission.SPECIFIC_ENERGY_RATE,
+                Dynamic.Mission.VELOCITY,
+                Dynamic.Mission.VELOCITY_RATE,
+            ],
+            output_keys=Dynamic.Mission.ALTITUDE_RATE,
+            tol=1e-9,
+        )
 
     def test_IO(self):
         assert_match_varnames(self.prob.model)
