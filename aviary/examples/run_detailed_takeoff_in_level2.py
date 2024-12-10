@@ -355,14 +355,9 @@ if __name__ == '__main__':
 
     prob.run_aviary_problem(record_filename='detailed_takeoff.db')
 
-    import os
-    z1 = os.getcwd()
-    z2 = os.listdir()
-    z3 = os.listdir('problem_out')
-    raise RuntimeError(f"{z1} / {z2} / {z3}")
-
     try:
-        cr = om.CaseReader('run_detailed_takeoff_in_level2_out/detailed_takeoff.db')
+        loc = prob.get_outputs_dir()
+        cr = om.CaseReader(f'{loc}/detailed_takeoff.db')
     except:
         cr = om.CaseReader('detailed_takeoff.db')
 
