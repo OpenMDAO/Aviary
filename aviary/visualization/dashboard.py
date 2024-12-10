@@ -1088,8 +1088,7 @@ def dashboard(script_name, problem_recorder, driver_recorder,
             phases = set()
             varnames = set()
             # pattern used to parse out the phase names and variable names
-            pattern = fr"{
-                traj_name}\.phases\.([a-zA-Z0-9_]+)\.timeseries\.timeseries_comp\.([a-zA-Z0-9_]+)"
+            pattern = fr"{traj_name}\.phases\.([a-zA-Z0-9_]+)\.timeseries\.timeseries_comp\.([a-zA-Z0-9_]+)"
             for varname, meta in outputs:
                 match = re.match(pattern, varname)
                 if match:
