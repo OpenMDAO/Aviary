@@ -827,9 +827,8 @@ def dashboard(script_name, problem_recorder, driver_recorder,
 
     if not Path(reports_dir).is_dir():
         raise ValueError(
-            f"The script name, '{
-                script_name}', does not have a reports folder associated with it. "
-            f"The directory '{reports_dir}' does not exist."
+            f"The script name, '{script_name}', does not have a reports folder "
+            f"associated with it. The directory '{reports_dir}' does not exist."
         )
 
     problem_recorder_path = Path(out_dir) / problem_recorder
