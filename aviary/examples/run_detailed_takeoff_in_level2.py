@@ -359,7 +359,7 @@ if __name__ == '__main__':
     z1 = os.getcwd()
     z2 = os.listdir()
     z3 = os.listdir('problem_out')
-    raise RuntimeError(f"{z1} / {z2}")
+    raise RuntimeError(f"{z1} / {z2} / {z3}")
 
     try:
         cr = om.CaseReader('run_detailed_takeoff_in_level2_out/detailed_takeoff.db')
