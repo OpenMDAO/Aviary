@@ -358,7 +358,13 @@ if __name__ == '__main__':
     try:
         cr = om.CaseReader('run_detailed_takeoff_in_level2_out/detailed_takeoff.db')
     except:
-        cr = om.CaseReader('detailed_takeoff.db')
+        try:
+            cr = om.CaseReader('detailed_takeoff.db')
+        except:
+            import os
+            z1 = os.getcwd()
+            z2 = os.listdir()
+            raise RuntimeError(f"{z1} / {z2}")
 
     cases = cr.get_cases('problem')
     case = cases[0]
