@@ -7,17 +7,7 @@ from openmdao.utils.testing_utils import use_tempdirs
 from aviary.variable_info.enums import LegacyCode
 
 from aviary.utils.functions import get_path
-from aviary.utils.fortran_to_aviary import _exec_F2A
-
-
-class DummyArgs(object):
-    def __init__(self):
-        self.input_deck = None
-        self.out_file = None
-        self.legacy_code = None
-        self.defaults_deck = False
-        self.force = False
-        self.verbosity = 0
+from aviary.utils.fortran_to_aviary import fortran_to_aviary
 
 
 @use_tempdirs
@@ -27,21 +17,19 @@ class TestFortranToAviary(unittest.TestCase):
     """
 
     def prepare_and_run(self, filepath, out_file=None, legacy_code=LegacyCode.GASP):
-        args = DummyArgs()
-
         # Specify the input file and the legacy code
-        args.input_deck = filepath
+        input_deck = filepath
 
         # Specify the output file
         filename = filepath.split('.')[0]+'.csv'
         if not out_file:
-            args.out_file = Path.cwd() / Path('TEST_'+filename)
+            out_file = Path.cwd() / Path('TEST_' + filename)
         else:
-            args.out_file = Path(out_file)
-        args.legacy_code = legacy_code
+            out_file = Path(out_file)
+        legacy_code = legacy_code
 
         # Execute the conversion
-        _exec_F2A(args, None)
+        fortran_to_aviary(filepath, legacy_code, out_file, force=True, verbosity=0)
 
     def compare_files(self, filepath, skip_list=['# created ']):
         """
@@ -59,7 +47,7 @@ class TestFortranToAviary(unittest.TestCase):
         with open('TEST_'+filename, 'r') as f_in, open(validation_data, 'r') as expected:
             for line in f_in:
                 if any(s in line for s in skip_list):
-                    break
+                    continue
 
                 # Remove whitespace and compare
                 expected_line = ''.join(expected.readline().split())
@@ -90,7 +78,7 @@ class TestFortranToAviary(unittest.TestCase):
         self.compare_files(filepath)
 
     def test_diff_configuration(self):
-        filepath = 'models/test_aircraft/converter_configuration_test_data_GwGm.dat'
+        filepath = 'utils/test/data/converter_configuration_test_data_GwGm.dat'
 
         self.prepare_and_run(filepath)
         self.compare_files(filepath)
@@ -109,7 +97,7 @@ class TestFortranToAviary(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    # unittest.main()
 
-    # test = TestFortranToAviary()
-    # test.test_small_single_aisle()
+    test = TestFortranToAviary()
+    test.test_diff_configuration()

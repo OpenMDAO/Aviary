@@ -1,6 +1,7 @@
 from aviary.utils.named_values import NamedValues
 
 ## Defaults ##
+# commented out values were not in metadata at the time
 gasp_default_values = NamedValues(
     {
         'INGASP.ALPHL0': (-1.2, 'deg'),
@@ -11,21 +12,23 @@ gasp_default_values = NamedValues(
         'INGASP.ARNGE(3)': (0, 'NM'),
         'INGASP.ARVT': (1.67, 'unitless'),
         'INGASP.AS': (1, 'unitless'),
+        'INGASP.B': (117.8, 'ft'),  # needs verification
         'INGASP.BLEOB': (0.9, 'unitless'),
         'INGASP.BOELTV': (0, 'unitless'),
         'INGASP.BTEOB': (0.75, 'unitless'),
         'INGASP.CATD': (3, 'unitless'),
+        'INGASP.CBARW': (12.615, 'ft'),  # needs verification
         'INGASP.CFOC': (0.3, 'unitless'),
         'INGASP.CK5': (1, 'unitless'),
-        'INGASP.CK7': (1, 'unitless'),
-        'INGASP.CK8': (1, 'unitless'),
-        'INGASP.CK9': (1, 'unitless'),
-        'INGASP.CK10': (1, 'unitless'),
-        'INGASP.CK11': (1, 'unitless'),
+        # 'INGASP.CK7': (1, 'unitless'),
+        # 'INGASP.CK8': (1, 'unitless'),
+        # 'INGASP.CK9': (1, 'unitless'),
+        # 'INGASP.CK10': (1, 'unitless'),
+        # 'INGASP.CK11': (1, 'unitless'),
         'INGASP.CK12': (1, 'unitless'),
         'INGASP.CK14': (1, 'unitless'),
         'INGASP.CK15': (1, 'unitless'),
-        'INGASP.CK18': (1, 'unitless'),
+        # 'INGASP.CK18': (1, 'unitless'),
         'INGASP.CK19': (1, 'unitless'),
         'INGASP.CK21': (1, 'unitless'),
         'INGASP.CKF': (1, 'unitless'),
@@ -36,23 +39,24 @@ gasp_default_values = NamedValues(
         'INGASP.CKSTRT': (0, 'unitless'),
         'INGASP.CKVT': (1, 'unitless'),
         'INGASP.CKW': (1, 'unitless'),
+        'INGASP.CLALPH': (7.1765, '1/rad'),  # needs verification
         'INGASP.CLEARqDN': (0.2, 'unitless'),
         'INGASP.CLEOC': (0, 'unitless'),
         'INGASP.COELTH': (0, 'unitless'),
         'INGASP.CRALT': (37500, 'ft'),
         'INGASP.CRMACH': (0.8, 'unitless'),
-        'INGASP.CW(1)': (0, 'unitless'),
+        'INGASP.CW(1)': (0, 'lbm'),
         'INGASP.CW(2)': (0.0862, 'unitless'),
         'INGASP.CW(3)': (0.1, 'unitless'),
         'INGASP.CW(4)': (0.16, 'unitless'),
-        'INGASP.CW(5)': (0, 'unitless'),
+        'INGASP.CW(5)': (0, 'lbm'),
         'INGASP.CW(6)': (1, 'unitless'),
-        'INGASP.CW(7)': (0, 'unitless'),
-        'INGASP.CW(8)': (0, 'unitless'),
-        'INGASP.CW(9)': (2, 'unitless'),
-        'INGASP.CW(10)': (1, 'unitless'),
-        'INGASP.CW(11)': (0, 'unitless'),
-        'INGASP.CW(12)': (0.7, 'unitless'),
+        'INGASP.CW(7)': (0, 'lbm'),
+        'INGASP.CW(8)': (0, 'lbm'),
+        'INGASP.CW(9)': (2, 'lbm'),
+        'INGASP.CW(10)': (1, 'lbm'),
+        'INGASP.CW(11)': (0, 'lbm'),
+        'INGASP.CW(12)': (0.7, 'lbm'),
         'INGASP.CW(13)': (6, 'unitless'),
         'INGASP.DCDOTE': (0, 'unitless'),
         'INGASP.DCLMLE': (0.93, 'unitless'),
@@ -76,6 +80,7 @@ gasp_default_values = NamedValues(
         'INGASP.DVR': (5, 'kn'),
         'INGASP.DWPQCH': (25, 'deg'),
         'INGASP.DWPQCV': (35, 'deg'),
+        'INGASP.ELF': (0, 'ft'),  # needs verification
         'INGASP.ELODN': (2, 'unitless'),
         'INGASP.ELODT': (3.2, 'unitless'),
         'INGASP.ELPC': (4.44, 'ft'),
@@ -88,12 +93,12 @@ gasp_default_values = NamedValues(
         'INGASP.FUELD': (6.687, 'lbm/galUS'),
         'INGASP.FVOL_MRG': (0, 'unitless'),
         'INGASP.HAPP': (50, 'ft'),
-        'INGASP.HCK': (2.47, 'unitless'),
-        'INGASP.HPORT': (0, 'ft'),
+        'INGASP.HCK': (2.47, 'ft'),
+        # 'INGASP.HPORT': (0, 'ft'),
         'INGASP.HTG': (3, 'ft'),
         'INGASP.HWING': (0, 'unitless'),
         'INGASP.IGEAR': (False, 'unitless'),
-        'INGASP.JENGSZ': (4, 'unitless'),
+        # 'INGASP.JENGSZ': (4, 'unitless'),
         'INGASP.JFLTYP': ('single_slotted', 'unitless'),
         'INGASP.NTYE': (7, 'unitless'),
         'INGASP.PAX': (180, 'unitless'),
@@ -142,7 +147,7 @@ gasp_default_values = NamedValues(
         'INGASP.VBARVX': (0, 'unitless'),
         'INGASP.VMLFSL': (402.5, 'mi/h'),
         'INGASP.VRATT': (1.3, 'unitless'),
-        'INGASP.WAS': (24, 'in'),
+        'INGASP.WAS': (24, 'inch'),
         'INGASP.WCARGO': (0, 'lbm'),
         'INGASP.WCFLAP': (0, 'unitless'),
         'INGASP.WG': (150000, 'lbm'),
@@ -158,12 +163,6 @@ gasp_default_values = NamedValues(
         'INGASP.YWFOLD': (0, 'ft'),
     }
 )
-# Commented out from old GASP defaults list
-# $INGASP
-# B=117.8,ft
-# CBARW=12.615,ft
-# CLALPH=7.1765,1/rad
-# ELF=0,ft
 
 ## Depreciated Variables ##
 gasp_deprecated_vars = []
