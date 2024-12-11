@@ -54,10 +54,11 @@ class CommandEntryPointsTestCases(unittest.TestCase):
         shutil.rmtree(out_dir)
 
     def test_expected_path(self):
-        aviary_path = get_model('converter_configuration_test_data_GwGm.dat')
+        aviary_path = get_model('large_single_aisle_1_GASP.dat')
 
         expected_path = get_aviary_resource_path(
-            'models/test_aircraft/converter_configuration_test_data_GwGm.dat')
+            'models/large_single_aisle_1/large_single_aisle_1_GASP.dat'
+        )
         self.assertTrue(str(aviary_path) == str(expected_path))
 
 
