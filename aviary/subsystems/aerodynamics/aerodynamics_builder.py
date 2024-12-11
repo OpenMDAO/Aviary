@@ -325,7 +325,8 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                 aero_opt = phase_info['subsystem_options'][self.name]
                 method = aero_opt['method']
             except KeyError:
-                method = None
+                raise ValueError('FLOPS-based aero method is not one of the following: '
+                                 '(computed, low_speed, solved_alpha, tabular)')
 
             if phase_info is not None:
                 # Only solved_alpha has connectable inputs.
