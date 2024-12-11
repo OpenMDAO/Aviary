@@ -58,7 +58,8 @@ class fortran_to_aviaryTestCases(CommandEntryPointsTestCases):
 
     def test_small_single_aisle_conversion(self):
         filepath = get_aviary_resource_path(
-            'models/small_single_aisle/small_single_aisle_GwGm.dat')
+            'models/small_single_aisle/small_single_aisle_GASP.dat'
+        )
         outfile = Path.cwd() / 'small_single_aisle' / 'output.dat'
         cmd = f'aviary fortran_to_aviary {filepath} -o {outfile} -l GASP'
         self.run_and_test_cmd(cmd)
@@ -96,12 +97,12 @@ class hangarTestCases(CommandEntryPointsTestCases):
         self.run_and_test_cmd(cmd)
 
     def test_copy_multiple(self):
-        cmd = f'aviary hangar small_single_aisle_GwGm.dat small_single_aisle_GwGm.csv'
+        cmd = f'aviary hangar small_single_aisle_GASP.dat small_single_aisle_GASP.csv'
         self.run_and_test_cmd(cmd)
 
     def test_copy_to(self):
         outfile = Path.cwd() / 'example_files'
-        cmd = f'aviary hangar small_single_aisle_GwGm.dat -o {outfile}'
+        cmd = f'aviary hangar small_single_aisle_GASP.dat -o {outfile}'
         self.run_and_test_cmd(cmd)
 
 
