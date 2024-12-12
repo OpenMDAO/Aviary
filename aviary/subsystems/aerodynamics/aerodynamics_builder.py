@@ -325,8 +325,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                 aero_opt = phase_info['subsystem_options'][self.name]
                 method = aero_opt['method']
             except KeyError:
-                raise ValueError('FLOPS-based aero method is not one of the following: '
-                                 '(computed, low_speed, solved_alpha, tabular)')
+                method = None
 
             if phase_info is not None:
                 # Only solved_alpha has connectable inputs.
@@ -469,12 +468,12 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
         if self.code_origin is GASP:
             return {
                 "interference_independent_of_shielded_area": {
-                    "mission_name": 'interference_independent_of_shielded_area',
+                    "mission_name": ['interference_independent_of_shielded_area'],
                     # "post_mission_name": ['interference_independent_of_shielded_area'],
                     "units": "unitless",
                 },
                 "drag_loss_due_to_shielded_wing_area": {
-                    "mission_name": 'drag_loss_due_to_shielded_wing_area',
+                    "mission_name": ['drag_loss_due_to_shielded_wing_area'],
                     # "post_mission_name": ['drag_loss_due_to_shielded_wing_area'],
                     "units": "unitless",
                 },
