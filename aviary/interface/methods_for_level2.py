@@ -2779,7 +2779,7 @@ class AviaryProblem(om.Problem):
                     "val": self.target_range, "units": "NM"},
             ),
             promotes_inputs=[
-                ("actual_range", Mission.Summary.Range),
+                ("actual_range", Mission.Summary.RANGE),
                 ("ascent_duration", Mission.Takeoff.ASCENT_DURATION),
             ],
             promotes_outputs=[("reg_objective", Mission.Objectives.RANGE)],
@@ -2805,7 +2805,7 @@ class AviaryProblem(om.Problem):
                 range_resid={"val": 30, "units": "NM"},
             ),
             promotes_inputs=[
-                ("actual_range", Mission.Summary.RANGE)
+                ("actual_range", Mission.Summary.RANGE),
                 "target_range",
             ],
             promotes_outputs=[
