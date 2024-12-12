@@ -1498,7 +1498,7 @@ class AviaryProblem(om.Problem):
                                       connected=true_unless_mpi)
 
                 self.model.connect(f'traj.{self.regular_phases[-1]}.timeseries.distance',
-                                   Mission.Summary.Range,
+                                   Mission.Summary.RANGE,
                                    src_indices=[-1], flat_src_indices=True)
 
             elif self.mission_method is SOLVED_2DOF:
@@ -1628,7 +1628,7 @@ class AviaryProblem(om.Problem):
                 connect_map = {
                     "taxi.mass": "traj.mass_initial",
                     Mission.Takeoff.ROTATION_VELOCITY: "traj.SGMGroundroll_velocity_trigger",
-                    "traj.distance_final": Mission.Summary.Range,
+                    "traj.distance_final": Mission.Summary.RANGE,
                     "traj.mass_final": Mission.Landing.TOUCHDOWN_MASS,
                 }
 
