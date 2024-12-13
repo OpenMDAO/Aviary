@@ -53,7 +53,7 @@ class fortran_to_aviaryTestCases(CommandEntryPointsTestCases):
         filepath = get_aviary_resource_path(
             'utils/test/data/converter_test_data_GASP.dat'
         )
-        outfile = Path.cwd() / 'test_aircraft/converter_test_data_GASP' / 'output.dat'
+        outfile = Path.cwd() / 'utils/test/data/converter_test_data_GASP' / 'output.dat'
         cmd = f'aviary fortran_to_aviary {filepath} -o {outfile} -l GASP'
         self.run_and_test_cmd(cmd)
 
