@@ -120,17 +120,6 @@ class PropulsionPreMission(om.Group):
                 for key in eng_inputs
                 if any([x in key for x in pattern])
             )
-            # Track list of ALL inputs present in prop pre-mission in a "flat" dict.
-            # Repeating inputs will just override what's already in the dict - we don't
-            # care if units get overridden, if they differ openMDAO will convert
-            # (if they aren't compatible, then a component specified the wrong units and
-            # needs to be fixed there)
-            # unique_inputs.update(
-            #     [
-            #         (key, input_dict[engine.name][key]['units'])
-            #         for key in input_dict[engine.name]
-            #     ]
-            # )
 
             # do the same thing with outputs
             eng_outputs = engine.list_outputs(
