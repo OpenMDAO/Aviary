@@ -1,4 +1,4 @@
-# GASP-derived aircraft input deck converted from converter_test_data_GASP.dat
+# GASP-derived aircraft input deck converted from configuration_test_data_GASP.dat
 
 # Input Values
 aircraft:air_conditioning:mass_coefficient,1.65,unitless

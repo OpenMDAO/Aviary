@@ -65,7 +65,7 @@ class TestFortranToAviary(unittest.TestCase):
     def test_large_single_aisle(self):
         filepath = 'models/large_single_aisle_1/large_single_aisle_1_GASP.dat'
         comparison_filepath = (
-            'utils/test/data/converter_test_data_large_single_aisle_1_GASP.csv'
+            'utils/test/data/converter_test_large_single_aisle_1_GASP.csv'
         )
 
         self.prepare_and_run(
@@ -77,7 +77,7 @@ class TestFortranToAviary(unittest.TestCase):
     def test_small_single_aisle(self):
         filepath = 'models/small_single_aisle/small_single_aisle_GASP.dat'
         comparison_filepath = (
-            'utils/test/data/converter_test_data_small_single_aisle_GASP.csv'
+            'utils/test/data/converter_test_small_single_aisle_GASP.csv'
         )
 
         self.prepare_and_run(
@@ -87,10 +87,12 @@ class TestFortranToAviary(unittest.TestCase):
         self.compare_files(comparison_filepath)
 
     def test_diff_configuration(self):
-        filepath = 'utils/test/data/converter_test_data_GASP.dat'
-        comparison_filepath = 'utils/test/data/converter_test_data_GASP.csv'
+        filepath = 'utils/test/data/configuration_test_data_GASP.dat'
+        comparison_filepath = 'utils/test/data/converter_test_configuration_GASP.csv'
 
-        self.prepare_and_run(filepath)
+        self.prepare_and_run(
+            filepath, out_file=Path.cwd() / Path('TEST_' + comparison_filepath)
+        )
         self.compare_files(comparison_filepath)
 
     def test_N3CC(self):
@@ -99,7 +101,7 @@ class TestFortranToAviary(unittest.TestCase):
         # test.
 
         filepath = 'models/N3CC/N3CC_generic_low_speed_polars_FLOPS.txt'
-        comparison_filepath = 'utils/test/data/converter_test_data_N3CC_FLOPS.csv'
+        comparison_filepath = 'utils/test/data/converter_test_N3CC_FLOPS.csv'
         self.prepare_and_run(
             filepath,
             out_file=Path.cwd() / Path('TEST_' + comparison_filepath),

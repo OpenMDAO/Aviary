@@ -51,9 +51,9 @@ class run_missionTestCases(CommandEntryPointsTestCases):
 class fortran_to_aviaryTestCases(CommandEntryPointsTestCases):
     def test_diff_configuration_conversion(self):
         filepath = get_aviary_resource_path(
-            'utils/test/data/converter_test_data_GASP.dat'
+            'utils/test/data/configuration_test_data_GASP.dat'
         )
-        outfile = Path.cwd() / 'utils/test/data/converter_test_data_GASP' / 'output.dat'
+        outfile = Path.cwd() / 'utils/test/data/configuration_test_data_GASP' / 'output.dat'
         cmd = f'aviary fortran_to_aviary {filepath} -o {outfile} -l GASP'
         self.run_and_test_cmd(cmd)
 
