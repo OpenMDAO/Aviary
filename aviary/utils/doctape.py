@@ -1,3 +1,4 @@
+import ast
 import inspect
 import subprocess
 import tempfile
@@ -405,3 +406,53 @@ def glue_keys(dict_of_dicts: dict, display=True) -> list:
     for key in all_keys:
         glue_variable(key, md_code=True, display=display)
     return all_keys
+
+
+def get_class_names(file_path):
+    """
+    Retrieve all class names from a given file and return as a set
+
+    Parameters
+    ----------
+    file_path: str or Path
+        file path
+    """
+    # Read the content of the file
+    with open(file_path, 'r') as file:
+        file_content = file.read()
+    
+    # Parse the file content into an AST
+    tree = ast.parse(file_content)
+    
+    # Extract class names
+    class_names = [
+        node.name for node in ast.walk(tree)
+        if isinstance(node, ast.ClassDef)
+    ]
+    
+    return set(class_names)
+
+
+def get_function_names(file_path):
+    """
+    Get all function names in a given file and return as a set.
+
+    Parameters
+    ----------
+    file_path: str or Path
+        file path
+    """
+    # Read the content of the file
+    with open(file_path, 'r') as file:
+        file_content = file.read()
+    
+    # Parse the file content into an AST
+    tree = ast.parse(file_content)
+    
+    # Extract function names
+    function_names = [
+        node.name for node in ast.walk(tree)
+        if isinstance(node, ast.FunctionDef)
+    ]
+    
+    return set(function_names)
