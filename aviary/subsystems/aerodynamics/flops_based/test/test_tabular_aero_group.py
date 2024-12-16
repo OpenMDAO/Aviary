@@ -643,7 +643,8 @@ class _ComputedAeroHarness(om.Group):
             promotes_outputs=['*'],
         )
 
-        key = Aircraft.Engine.SCALED_SLS_THRUST
+        # key = Aircraft.Engine.SCALED_SLS_THRUST
+        key = Aircraft.Engine.SCALE_FACTOR
         val, units = aviary_options.get_item(key)
         pre_mission.set_input_defaults(key, val, units)
 
@@ -655,6 +656,6 @@ _design_altitudes = AviaryValues({
 
 if __name__ == "__main__":
     unittest.main()
-    # test = TabularAeroGroupDataTest()
+    # test = ComputedVsTabularTest()
     # test.setUp()
     # test.test_case()
