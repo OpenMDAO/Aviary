@@ -143,13 +143,16 @@ def fortran_to_aviary(
     vehicle_data['input_values'].set_val(Settings.EQUATIONS_OF_MOTION, eom)
     vehicle_data['input_values'].set_val(Settings.MASS_METHOD, mass)
 
-    if not out_file.is_file():  # default outputted file to be in same directory as input
+    if (
+        not out_file.is_file()
+    ):  # default outputted file to be in same directory as input
         out_file = fortran_deck.parent / out_file
 
     if out_file.is_file():
         if not force:
-            raise RuntimeError(f'{out_file} already exists. Choose a new name or enable '
-                               '--force')
+            raise RuntimeError(
+                f'{out_file} already exists. Choose a new name or enable ' '--force'
+            )
         elif verbosity >= Verbosity.BRIEF:
             print(f'Overwriting existing file: {out_file.name}')
 
@@ -260,12 +263,14 @@ def parse_input_file(
                 for ii in range(number_of_variables):
                     # Each of the following elements contains all of the data for the current variable
                     # and the last element is the name of the next variable
-                    sub_list = sub_line[ii+1].split(',')
-                    if ii+1 < number_of_variables:
+                    sub_list = sub_line[ii + 1].split(',')
+                    if ii + 1 < number_of_variables:
                         next_var_name = sub_list.pop()
                         if not next_var_name[0].isalpha():
-                            index = next((i for i, c in enumerate(
-                                next_var_name) if c.isalpha()), len(next_var_name))
+                            index = next(
+                                (i for i, c in enumerate(next_var_name) if c.isalpha()),
+                                len(next_var_name),
+                            )
                             sub_list.append(next_var_name[:index])
                             next_var_name = next_var_name[index:]
 
@@ -285,9 +290,11 @@ def parse_input_file(
                         )
                     except Exception as err:
                         if current_namelist == '':
-                            raise RuntimeError(line + ' could not be parsed successfully.'
-                                               '\nIf this was intended as a comment, '
-                                               'add an "!" at the beginning of the line.') from err
+                            raise RuntimeError(
+                                line + ' could not be parsed successfully.'
+                                '\nIf this was intended as a comment, '
+                                'add an "!" at the beginning of the line.'
+                            ) from err
                         else:
                             raise err
                     var_name = next_var_name
@@ -383,7 +390,7 @@ def process_and_store_data(
 def set_value(
     var_name, var_value, units=None, value_dict: NamedValues = None, var_ind=None
 ):
-    ''' 
+    '''
     set_value will update the current value of a variable in a value dictionary that contains a value
     and it's associated units.
     If units are specified for the new value, they will be used, otherwise the current units in the
@@ -406,9 +413,9 @@ def set_value(
         if isinstance(current_value, list):
             max_ind = len(current_value) - 1
             if var_ind > max_ind:
-                current_value.extend((var_ind-max_ind)*[0])
+                current_value.extend((var_ind - max_ind) * [0])
         else:
-            current_value = [current_value]+[0]*var_ind
+            current_value = [current_value] + [0] * var_ind
         current_value[var_ind] = var_value[0]
         value_dict.set_val(var_name, current_value, units)
     else:
@@ -484,8 +491,15 @@ def update_gasp_options(vehicle_data):
     for var_name in gasp_scaler_variables:
         update_gasp_scaler_variables(var_name, input_values)
 
-    flap_types = ["plain", "split", "single_slotted", "double_slotted",
-                  "triple_slotted", "fowler", "double_slotted_fowler"]
+    flap_types = [
+        "plain",
+        "split",
+        "single_slotted",
+        "double_slotted",
+        "triple_slotted",
+        "fowler",
+        "double_slotted_fowler",
+    ]
 
     ## PROBLEM TYPE ##
     # if multiple values of target_range are specified, use the one that corresponds to the problem_type
@@ -531,49 +545,69 @@ def update_gasp_options(vehicle_data):
         strut_loc = abs(strut_loc)
 
     if strut_loc < 1:
-        input_values.set_val(Aircraft.Strut.ATTACHMENT_LOCATION_DIMENSIONLESS,
-                             [strut_loc], 'unitless')
-        input_values.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, [
-                             False], 'unitless')
+        input_values.set_val(
+            Aircraft.Strut.ATTACHMENT_LOCATION_DIMENSIONLESS, [strut_loc], 'unitless'
+        )
+        input_values.set_val(
+            Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, [False], 'unitless'
+        )
     else:
         input_values.set_val(Aircraft.Strut.ATTACHMENT_LOCATION, [strut_loc], 'ft')
         input_values.set_val(
-            Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, [True], 'unitless')
+            Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, [True], 'unitless'
+        )
 
     if input_values.get_val(Aircraft.Wing.HAS_FOLD)[0]:
         if not input_values.get_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION)[0]:
-            input_values.set_val(Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED,
-                                 [True], 'unitless')
+            input_values.set_val(
+                Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, [True], 'unitless'
+            )
         else:
             if input_values.get_val(Aircraft.Wing.FOLDED_SPAN, 'ft')[0] > 1:
-                input_values.set_val(Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED,
-                                     [True], 'unitless')
+                input_values.set_val(
+                    Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED,
+                    [True],
+                    'unitless',
+                )
             else:
-                input_values.set_val(Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED,
-                                     [False], 'unitless')
+                input_values.set_val(
+                    Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED,
+                    [False],
+                    'unitless',
+                )
     else:
         input_values.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, [True], 'unitless')
-        input_values.set_val(Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, [
-                             False], 'unitless')
+        input_values.set_val(
+            Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, [False], 'unitless'
+        )
 
     ## FLAPS ##
     flap_type = input_values.get_val(Aircraft.Wing.FLAP_TYPE)[0]
     if not isinstance(flap_type, str):
-        flap_type = flap_types[flap_type-1]
+        flap_type = flap_types[flap_type - 1]
         input_values.set_val(Aircraft.Wing.FLAP_TYPE, [flap_type])
     flap_ind = flap_types.index(flap_type)
     if input_values.get_val(Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT)[0] <= 0:
-        input_values.set_val(Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT,
-                             [[0.62, 1.0, 0.733, 1.2, 1.32, 0.633, 0.678][flap_ind]])
+        input_values.set_val(
+            Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT,
+            [[0.62, 1.0, 0.733, 1.2, 1.32, 0.633, 0.678][flap_ind]],
+        )
     if input_values.get_val(Aircraft.Wing.OPTIMUM_FLAP_DEFLECTION, 'deg')[0] == 0:
-        input_values.set_val(Aircraft.Wing.OPTIMUM_FLAP_DEFLECTION,
-                             [[60, 60, 40, 55, 55, 30, 30][flap_ind]], 'deg')
+        input_values.set_val(
+            Aircraft.Wing.OPTIMUM_FLAP_DEFLECTION,
+            [[60, 60, 40, 55, 55, 30, 30][flap_ind]],
+            'deg',
+        )
     if input_values.get_val(Aircraft.Wing.FLAP_LIFT_INCREMENT_OPTIMUM)[0] == 0:
-        input_values.set_val(Aircraft.Wing.FLAP_LIFT_INCREMENT_OPTIMUM,
-                             [[.9, .8, 1.18, 1.4, 1.6, 1.67, 2.25][flap_ind]])
+        input_values.set_val(
+            Aircraft.Wing.FLAP_LIFT_INCREMENT_OPTIMUM,
+            [[0.9, 0.8, 1.18, 1.4, 1.6, 1.67, 2.25][flap_ind]],
+        )
     if input_values.get_val(Aircraft.Wing.FLAP_DRAG_INCREMENT_OPTIMUM)[0] == 0:
-        input_values.set_val(Aircraft.Wing.FLAP_DRAG_INCREMENT_OPTIMUM,
-                             [[.12, .23, .13, .23, .23, .1, .15][flap_ind]])
+        input_values.set_val(
+            Aircraft.Wing.FLAP_DRAG_INCREMENT_OPTIMUM,
+            [[0.12, 0.23, 0.13, 0.23, 0.23, 0.1, 0.15][flap_ind]],
+        )
 
     reserve_fuel_additional = input_values.get_val(
         Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm'
@@ -586,8 +620,9 @@ def update_gasp_options(vehicle_data):
             units='unitless',
         )
     elif reserve_fuel_additional >= 10:
-        input_values.set_val(Aircraft.Design.RESERVE_FUEL_FRACTION,
-                             [0], units='unitless')
+        input_values.set_val(
+            Aircraft.Design.RESERVE_FUEL_FRACTION, [0], units='unitless'
+        )
     else:
         ValueError('"FRESF" is not valid between 0 and 10.')
 
@@ -605,6 +640,13 @@ def update_gasp_options(vehicle_data):
         input_values.delete(Aircraft.Nacelle.FORM_FACTOR)
     if input_values.get_val(Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR)[0] < 0:
         input_values.delete(Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR)
+
+    # GASP-converted engine decks have uneven throttle ranges, which require the enabling
+    # of global throttle range. This will result in extrapolation of the engine deck,
+    # but provides closer matches to legacy results. To remove use of global throttle
+    # (and therefore eliminate extrapolation), a T4 limit needs to be manually set for
+    # the mission
+    input_values.set_val(Aircraft.Engine.GLOBAL_THROTTLE, [True])
 
     # GEARBOX
     # Aviary has a reduction gearbox which is 1/gear ratio of GASP gearbox
@@ -637,19 +679,21 @@ def update_flops_options(vehicle_data):
     # Additional mass fraction scaler set to zero to not add mass twice
     if Aircraft.Engine.ADDITIONAL_MASS_FRACTION in input_values:
         if input_values.get_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION)[0] >= 1:
-            input_values.set_val(Aircraft.Engine.ADDITIONAL_MASS,
-                                 input_values.get_val(
-                                     Aircraft.Engine.ADDITIONAL_MASS_FRACTION),
-                                 'lbm')
+            input_values.set_val(
+                Aircraft.Engine.ADDITIONAL_MASS,
+                input_values.get_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION),
+                'lbm',
+            )
             input_values.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, [0.0])
 
     # Miscellaneous propulsion mass trigger point 1 instead of 5
     if Aircraft.Propulsion.MISC_MASS_SCALER in input_values:
         if input_values.get_val(Aircraft.Propulsion.MISC_MASS_SCALER)[0] >= 1:
-            input_values.set_val(Aircraft.Propulsion.TOTAL_MISC_MASS,
-                                 input_values.get_val(
-                                     Aircraft.Propulsion.MISC_MASS_SCALER),
-                                 'lbm')
+            input_values.set_val(
+                Aircraft.Propulsion.TOTAL_MISC_MASS,
+                input_values.get_val(Aircraft.Propulsion.MISC_MASS_SCALER),
+                'lbm',
+            )
             input_values.set_val(Aircraft.Propulsion.MISC_MASS_SCALER, [0.0])
 
     vehicle_data['input_values'] = input_values
@@ -763,7 +807,7 @@ initialization_guesses = {
     'flight_duration': 0,
     'time_to_climb': 0,
     'climb_range': 0,
-    'reserves': 0
+    'reserves': 0,
 }
 
 
@@ -786,7 +830,7 @@ def _setup_F2A_parser(parser):
         "-o",
         "--out_file",
         default=None,
-        help="Filename for converted input deck, including partial or complete path."
+        help="Filename for converted input deck, including partial or complete path.",
     )
     parser.add_argument(
         "-l",
@@ -794,7 +838,7 @@ def _setup_F2A_parser(parser):
         type=LegacyCode,
         help="Name of the legacy code the deck originated from",
         choices=set(LegacyCode),
-        required=True
+        required=True,
     )
     parser.add_argument(
         "--force",
