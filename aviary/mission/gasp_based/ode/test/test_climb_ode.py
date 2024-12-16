@@ -23,16 +23,19 @@ class ClimbODETestCase(unittest.TestCase):
         self.prob = om.Problem()
 
         aviary_options = get_option_defaults()
-        aviary_options.set_val('verbosity', Verbosity.BRIEF)
+        aviary_options.set_val('verbosity', Verbosity.QUIET)
+        aviary_options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
+
         default_mission_subsystems = get_default_mission_subsystems(
-            'GASP', build_engine_deck(aviary_options))
+            'GASP', build_engine_deck(aviary_options)
+        )
 
         self.sys = self.prob.model = ClimbODE(
             num_nodes=1,
             EAS_target=250,
             mach_cruise=0.8,
-            aviary_options=get_option_defaults(),
-            core_subsystems=default_mission_subsystems
+            aviary_options=aviary_options,
+            core_subsystems=default_mission_subsystems,
         )
 
     def test_start_of_climb(self):
@@ -43,7 +46,8 @@ class ClimbODETestCase(unittest.TestCase):
 
         throttle_climb = 0.956
         self.prob.set_val(
-            Dynamic.Vehicle.Propulsion.THROTTLE, throttle_climb, units='unitless')
+            Dynamic.Vehicle.Propulsion.THROTTLE, throttle_climb, units='unitless'
+        )
         self.prob.set_val(Dynamic.Mission.ALTITUDE, 1000, units="ft")
         self.prob.set_val(Dynamic.Vehicle.MASS, 174845, units="lbm")
         self.prob.set_val("EAS", 250, units="kn")
@@ -85,8 +89,10 @@ class ClimbODETestCase(unittest.TestCase):
 
         throttle_climb = 0.956
         self.prob.set_val(
-            Dynamic.Vehicle.Propulsion.THROTTLE, np.array([
-                throttle_climb, throttle_climb]), units='unitless')
+            Dynamic.Vehicle.Propulsion.THROTTLE,
+            np.array([throttle_climb, throttle_climb]),
+            units='unitless',
+        )
         self.prob.set_val(
             Dynamic.Mission.ALTITUDE, np.array([11000, 37000]), units="ft"
         )

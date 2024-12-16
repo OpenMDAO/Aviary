@@ -10,7 +10,7 @@ from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.utils.test_utils.IO_test_util import check_prob_outputs
 from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class FlightPathODETestCase(unittest.TestCase):
@@ -22,6 +22,7 @@ class FlightPathODETestCase(unittest.TestCase):
         self.prob = om.Problem()
 
         aviary_options = get_option_defaults()
+        aviary_options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
         default_mission_subsystems = get_default_mission_subsystems(
             'GASP', build_engine_deck(aviary_options)
         )

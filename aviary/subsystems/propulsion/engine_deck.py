@@ -100,7 +100,6 @@ default_required_variables = {
 
 # EngineDecks internally require these options to have values. Input checks will set
 # these options to default values in self.options if they are not provided
-# TODO should this instead be a set to prevent duplicates?
 required_options = (
     Aircraft.Engine.SCALE_PERFORMANCE,
     Aircraft.Engine.IGNORE_NEGATIVE_THRUST,
@@ -109,7 +108,7 @@ required_options = (
     # TODO fuel flow scaler is required for the EngineScaling component but does not need
     #      to be defined on a per-engine basis, so it could exist only in the problem-
     #      level aviary_options without issue. Is this a propulsion_preprocessor task?
-    Mission.Summary.FUEL_FLOW_SCALER
+    Mission.Summary.FUEL_FLOW_SCALER,
 )
 
 # options that are only required based on the value of another option
@@ -146,9 +145,14 @@ class EngineDeck(EngineModel):
     update
     """
 
-    def __init__(self, name='engine_deck', options: AviaryValues = None,
-                 data: NamedValues = None,
-                 required_variables: set = default_required_variables):
+    def __init__(
+        self,
+        name='engine_deck',
+        options: AviaryValues = None,
+        data: NamedValues = None,
+        required_variables: set = default_required_variables,
+        meta_data: dict = _MetaData,
+    ):
         if data is not None:
             self.read_from_file = False
         else:
@@ -156,7 +160,7 @@ class EngineDeck(EngineModel):
             # TODO update default name to be based on filename
 
         # also calls _preprocess_inputs() as part of EngineModel __init__
-        super().__init__(name, options)
+        super().__init__(name, options, meta_data=meta_data)
 
         # copy of raw data read from data_file or memory, never modified or used outside
         #     EngineDeck
@@ -180,12 +184,20 @@ class EngineDeck(EngineModel):
         # Create dict for variables present in engine data with associated units
         self.engine_variables = {}
 
-        # TODO make this an option - disabling global throttle ranges is better to
-        #      prevent unintended extrapolation, but breaks missions using GASP-based
-        #      engines that have uneven throttle ranges (need t4 constraint on mission
-        #      to truly fix)
-        self.global_throttle = True
-        self.global_hybrid_throttle = True
+        if Aircraft.Engine.GLOBAL_THROTTLE in options:
+            self.global_throttle = self.options.get_val(Aircraft.Engine.GLOBAL_THROTTLE)
+        else:
+            default = meta_data[Aircraft.Engine.GLOBAL_THROTTLE]['default_value']
+            self.options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, default)
+            self.global_throttle = default
+        if Aircraft.Engine.GLOBAL_HYBRID_THROTTLE in options:
+            self.global_hybrid_throttle = self.options.get_val(
+                Aircraft.Engine.GLOBAL_HYBRID_THROTTLE
+            )
+        else:
+            default = meta_data[Aircraft.Engine.GLOBAL_HYBRID_THROTTLE]['default_value']
+            self.options.set_val(Aircraft.Engine.GLOBAL_HYBRID_THROTTLE, default)
+            self.global_hybrid_throttle = default
 
         # ensure required variables are a set
         self.required_variables = {*required_variables}
@@ -216,8 +228,8 @@ class EngineDeck(EngineModel):
 
         for key in additional_options + required_options:
             if key not in options:
-                val = _MetaData[key]['default_value']
-                units = _MetaData[key]['units']
+                val = self.meta_data[key]['default_value']
+                units = self.meta_data[key]['units']
 
                 if self.get_val(Settings.VERBOSITY) >= Verbosity.BRIEF:
                     warnings.warn(
@@ -232,8 +244,8 @@ class EngineDeck(EngineModel):
             if self.get_val(key):
                 for item in dependent_options[key]:
                     if item not in options:
-                        val = _MetaData[item]['default_value']
-                        units = _MetaData[item]['units']
+                        val = self.meta_data[item]['default_value']
+                        units = self.meta_data[item]['units']
                         self.set_val(item, val, units)
 
         # LOGIC CHECKS
