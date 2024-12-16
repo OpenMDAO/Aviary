@@ -28,6 +28,7 @@ aircraft:design:static_margin,0.03,unitless
 aircraft:design:structural_mass_increment,0,lbm
 aircraft:design:supercritical_drag_shift,0.033,unitless
 aircraft:engine:additional_mass_fraction,0.14,unitless
+aircraft:engine:global_throttle,True,unitless
 aircraft:engine:mass_scaler,1,unitless
 aircraft:engine:mass_specific,0.21366,lbm/lbf
 aircraft:engine:num_engines,2,unitless
